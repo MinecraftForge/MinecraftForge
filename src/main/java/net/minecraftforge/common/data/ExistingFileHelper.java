@@ -56,10 +56,10 @@ public class ExistingFileHelper {
 
     @Deprecated//TODO: Remove in 1.17
     public ExistingFileHelper(Collection<Path> existingPacks, boolean enable) {
-        this(existingPacks, Collections.emptySet(), enable);
+        this(existingPacks, Collections.emptySet(), enable, true);
     }
 
-    public ExistingFileHelper(Collection<Path> existingPacks, Set<String> existingMods, boolean enable) {
+    public ExistingFileHelper(Collection<Path> existingPacks, Set<String> existingMods, boolean enable, boolean includeForge) {
         this.clientResources = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
         this.serverData = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
         this.clientResources.addResourcePack(new VanillaPack("minecraft", "realms"));
@@ -70,10 +70,13 @@ public class ExistingFileHelper {
             this.clientResources.addResourcePack(pack);
             this.serverData.addResourcePack(pack);
         }
-        //Always add forge's resources
-        addModResources("forge");
+        if (includeForge) {
+            addModResources("forge");
+        }
         for (String existingMod : existingMods) {
-            if (!existingMod.equals("forge")) {//Ensure forge only gets added once if someone manually specifies it
+            //Ensure forge only gets added once if someone manually specifies it or if we aren't
+            // automatically adding forge and it gets manually specified as existing
+            if (!includeForge || !existingMod.equals("forge")) {
                 addModResources(existingMod);
             }
         }

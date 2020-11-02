@@ -52,7 +52,7 @@ public class DatagenModLoader {
         Bootstrap.register();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);
         ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
-        existingFileHelper = new ExistingFileHelper(existingPacks, existingMods, structureValidator);
+        existingFileHelper = new ExistingFileHelper(existingPacks, existingMods, structureValidator, !mods.contains("forge"));
         ModLoader.get().runEventGenerator(mc->new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper));
         dataGeneratorConfig.runAll();
     }
