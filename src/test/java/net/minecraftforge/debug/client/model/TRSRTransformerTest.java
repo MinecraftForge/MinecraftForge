@@ -128,8 +128,8 @@ public class TRSRTransformerTest {
         }
 
         @Override
-        public boolean func_230044_c_() {
-            return base.func_230044_c_();
+        public boolean isSideLit() {
+            return base.isSideLit();
         }
 
         @Override

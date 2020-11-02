@@ -47,10 +47,10 @@ public class ReverseTagWrapper<T>
     public Set<ResourceLocation> getTagNames()
     {
         ITagCollection<T> collection = colSupplier.get();
-        if (cache == null || colCache != collection.func_241833_a()) // Identity equals.
+        if (cache == null || colCache != collection.getIDTagMap()) // Identity equals.
         {
             this.cache = Collections.unmodifiableSet(new HashSet<>(collection.getOwningTags(target)));
-            this.colCache = collection.func_241833_a();
+            this.colCache = collection.getIDTagMap();
         }
         return this.cache;
     }

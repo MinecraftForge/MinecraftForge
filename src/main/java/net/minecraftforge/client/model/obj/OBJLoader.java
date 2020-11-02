@@ -30,6 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelLoader;
 
 import javax.annotation.Nullable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -71,19 +72,15 @@ public class OBJLoader implements IModelLoader<OBJModel>
     public OBJModel loadModel(OBJModel.ModelSettings settings)
     {
         return modelCache.computeIfAbsent(settings, (data) -> {
-            IResource resource;
-            try
-            {
-                resource = manager.getResource(settings.modelLocation);
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException("Could not find OBJ model", e);
-            }
 
-            try(LineReader rdr = new LineReader(resource))
+            try(IResource resource = manager.getResource(settings.modelLocation);
+                LineReader rdr = new LineReader(resource))
             {
                 return new OBJModel(rdr, settings);
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new RuntimeException("Could not find OBJ model", e);
             }
             catch (Exception e)
             {
@@ -95,19 +92,14 @@ public class OBJLoader implements IModelLoader<OBJModel>
     public MaterialLibrary loadMaterialLibrary(ResourceLocation materialLocation)
     {
         return materialCache.computeIfAbsent(materialLocation, (location) -> {
-            IResource resource;
-            try
-            {
-                resource = manager.getResource(location);
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException("Could not find OBJ material library", e);
-            }
-
-            try(LineReader rdr = new LineReader(resource))
+            try(IResource resource = manager.getResource(location);
+                LineReader rdr = new LineReader(resource))
             {
                 return new MaterialLibrary(rdr);
+            }
+            catch (FileNotFoundException e)
+            {
+                throw new RuntimeException("Could not find OBJ material library", e);
             }
             catch (Exception e)
             {

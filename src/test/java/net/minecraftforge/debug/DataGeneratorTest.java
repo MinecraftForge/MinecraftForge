@@ -150,7 +150,7 @@ public class DataGeneratorTest
                 .patternLine("XXX")
                 .key('X', Blocks.DIRT)
                 .setGroup("")
-                .addCriterion("has_dirt", hasItem(Blocks.DIRT)) //Doesn't actually print... TODO: nested/conditional advancements?
+                .addCriterion("has_dirt", hasItem(Blocks.DIRT)) // DUMMY: Necessary, but not used when a custom advancement is provided through setAdvancement
                 ::build
             )
             .setAdvancement(ID,
@@ -175,6 +175,29 @@ public class DataGeneratorTest
                 )
             )
             .build(consumer, ID);
+
+            ConditionalRecipe.builder()
+                    .addCondition(
+                            not(
+                                and(
+                                        not(modLoaded("minecraft")),
+                                        itemExists("minecraft", "dirt"),
+                                        FALSE()
+                                )
+                            )
+                    )
+                    .addRecipe(
+                            ShapedRecipeBuilder.shapedRecipe(Blocks.DIAMOND_BLOCK, 64)
+                                    .patternLine("XXX")
+                                    .patternLine("XXX")
+                                    .patternLine("XXX")
+                                    .key('X', Blocks.DIRT)
+                                    .setGroup("")
+                                    .addCriterion("has_dirt", hasItem(Blocks.DIRT))
+                                    ::build
+                    )
+                    .generateAdvancement()
+                    .build(consumer, new ResourceLocation("data_gen_test", "conditional2"));
         }
     }
 
@@ -188,24 +211,24 @@ public class DataGeneratorTest
         @Override
         protected void registerTags()
         {
-            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
-                .func_240532_a_(Blocks.DIAMOND_BLOCK)
-                .func_240531_a_(BlockTags.STONE_BRICKS)
+            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
+                .addItemEntry(Blocks.DIAMOND_BLOCK)
+                .addTag(BlockTags.STONE_BRICKS)
                 .addOptional(new ResourceLocation("chisel", "marble/raw"))
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
 
             // Hopefully sorting issues
-            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/one").toString()))
-                    .func_240532_a_(Blocks.COBBLESTONE);
-            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/two").toString()))
-                    .func_240532_a_(Blocks.DIORITE);
-            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/three").toString()))
-                    .func_240532_a_(Blocks.ANDESITE);
+            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/one").toString()))
+                    .addItemEntry(Blocks.COBBLESTONE);
+            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/two").toString()))
+                    .addItemEntry(Blocks.DIORITE);
+            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/three").toString()))
+                    .addItemEntry(Blocks.ANDESITE);
 
-            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "things").toString()))
-                    .func_240532_a_(Blocks.COBBLESTONE)
-                    .func_240532_a_(Blocks.DIORITE)
-                    .func_240532_a_(Blocks.ANDESITE);
+            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "things").toString()))
+                    .addItemEntry(Blocks.COBBLESTONE)
+                    .addItemEntry(Blocks.DIORITE)
+                    .addItemEntry(Blocks.ANDESITE);
         }
     }
 
@@ -399,7 +422,7 @@ public class DataGeneratorTest
             models().getBuilder("cube")
                     .parent(block)
                     .element()
-                    .allFaces((dir, face) -> face.texture("#" + dir.func_176610_l()).cullface(dir));
+                    .allFaces((dir, face) -> face.texture("#" + dir.getString()).cullface(dir));
 
             ModelFile furnace = models().orientable("furnace", mcLoc("block/furnace_side"), mcLoc("block/furnace_front"), mcLoc("block/furnace_top"));
             ModelFile furnaceLit = models().orientable("furnace_on", mcLoc("block/furnace_side"), mcLoc("block/furnace_front_on"), mcLoc("block/furnace_top"));

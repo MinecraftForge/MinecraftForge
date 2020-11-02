@@ -14,6 +14,11 @@
   "fml.menu.mods.info.authors":"Authors: {0}",
   "fml.menu.mods.info.displayurl":"Homepage: {0}",
   "fml.menu.mods.info.license":"License: {0}",
+  "fml.menu.mods.info.securejardisabled": "Secure mod features disabled, update JDK",
+  "fml.menu.mods.info.signature":"Signature: {0}",
+  "fml.menu.mods.info.signature.unsigned":"UNSIGNED",
+  "fml.menu.mods.info.trust": "Trust: {0}",
+  "fml.menu.mods.info.trust.noauthority": "None",
   "fml.menu.mods.info.nochildmods":"No child mods found",
   "fml.menu.mods.info.childmods":"Child mods: {0}",
   "fml.menu.mods.info.updateavailable":"Update available: {0}",
@@ -56,6 +61,7 @@
   "fml.modloading.brokenfile.liteloader": "File {2} is a LiteLoader mod and cannot be loaded",
   "fml.modloading.brokenfile.fabric": "File {2} is a Fabric mod and cannot be loaded",
   "fml.modloading.brokenfile.optifine": "File {2} is an incompatible version of OptiFine",
+  "fml.modloading.brokenfile.bukkit": "File {2} is a Bukkit or Bukkit-implementor (Spigot, Paper, etc.) plugin and cannot be loaded",
   "fml.modloading.brokenfile.invalidzip": "File {2} is not a jar file",
   "fml.modloading.brokenresources": "File {2} failed to load a valid ResourcePackInfo",
   "fml.modloading.missinglicense": "Missing License Information in file {3}",
@@ -156,6 +162,12 @@
   "forge.controlsgui.alt": "ALT + %s",
 
   "forge.container.enchant.limitedEnchantability": "Limited Enchantability",
-  "attribute.name.generic.reachDistance": "Reach Distance",
-  "attribute.name.forge.swimSpeed": "Swim Speed"
+  "attribute.name.forge.swim_speed": "Swim Speed",
+  "attribute.name.forge.nametag_distance": "Nametag Render Distance",
+  "attribute.name.forge.entity_gravity": "Entity Gravity",
+  "attribute.name.generic.reach_distance": "Reach Distance",
+  "forge.swimSpeed": "Swim Speed",
+  "forge.nameTagDistance": "Nametag Render Distance",
+  "forge.entity_gravity": "Entity Gravity",
+  "generic.reachDistance": "Reach Distance"
 }

@@ -125,7 +125,7 @@ public class ConfigFileTypeHandler {
     {
         public ConfigLoadingException(ModConfig config, Exception cause)
         {
-            super("Failed loading config file " + config.getFullPath().toString() + " with type " + config.getType() + " for modid " + config.getModId(), cause);
+            super("Failed loading config file " + config.getFileName() + " of type " + config.getType() + " for modid " + config.getModId(), cause);
         }
     }
 }

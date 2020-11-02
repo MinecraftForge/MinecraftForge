@@ -36,7 +36,7 @@ public interface IForgeTagBuilder<T>
     default TagsProvider.Builder<T> addTags(ITag.INamedTag<T>... values) {
         TagsProvider.Builder<T> builder = getBuilder();
         for (ITag.INamedTag<T> value : values) {
-            builder.func_240531_a_(value);
+            builder.addTag(value);
         }
         return builder;
     }
@@ -44,7 +44,7 @@ public interface IForgeTagBuilder<T>
     default TagsProvider.Builder<T> add(RegistryKey<T>... keys) {
         TagsProvider.Builder<T> builder = getBuilder();
         for (RegistryKey<T> key : keys) {
-            builder.getInternalBuilder().func_232961_a_(key.func_240901_a_(), getBuilder().getModID());
+            builder.getInternalBuilder().addItemEntry(key.getLocation(), getBuilder().getModID());
         }
         return builder;
     }
