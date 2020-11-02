@@ -93,17 +93,24 @@ public class ConfigFileTypeHandler {
         return true;
     }
 
-    public static void backUpConfig(final CommentedFileConfig commentedFileConfig) {
-        int maxBackups = 5;
+    public static void backUpConfig(final CommentedFileConfig commentedFileConfig)
+    {
+        backUpConfig(commentedFileConfig, 5); //TODO: Think of a way for mods to set their own preference (include a sanity check as well, no disk stuffing)
+    }
+
+    public static void backUpConfig(final CommentedFileConfig commentedFileConfig, final int maxBackups)
+    {
         File bakFileLocation = commentedFileConfig.getFile().getParentFile();
         String bakFileName = FilenameUtils.removeExtension(commentedFileConfig.getFile().getName());
         String bakFileExtension = FilenameUtils.getExtension(commentedFileConfig.getFile().getName()) + ".bak";
         File bakFile = new File(bakFileLocation, bakFileName + "-1" + "." + bakFileExtension);
         try
         {
-            for(int i = maxBackups; i > 0; i--){
+            for(int i = maxBackups; i > 0; i--)
+            {
                 File oldBak = new File(bakFileLocation, bakFileName + "-" + i + "." + bakFileExtension);
-                if(oldBak.exists()){
+                if(oldBak.exists())
+                {
                     if(i == maxBackups)
                     {
                         if (oldBak.delete()) continue;
