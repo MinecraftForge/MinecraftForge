@@ -121,6 +121,17 @@
     public boolean func_219970_i(ItemStack p_219970_1_) {
        return p_219970_1_.func_77973_b() == Items.field_222114_py;
     }
+@@ -306,4 +349,10 @@
++   @Deprecated
+   @Nullable
+   public Food func_219967_s() {
+      return this.field_219974_q;
+   }
++
++   @Nullable
++   public Food getFood(ItemStack stack) {
++      return this.field_219974_q;
++   }
 @@ -333,6 +376,9 @@
        private Rarity field_208104_e = Rarity.COMMON;
        private Food field_221541_f;
