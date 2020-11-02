@@ -374,11 +374,12 @@ public class GameData
     }
 
     public static CompletableFuture<List<Throwable>> checkForRevertToVanilla(final Executor executor, final CompletableFuture<List<Throwable>> listCompletableFuture) {
-        return listCompletableFuture.thenApplyAsync(errors -> {
-            if (!errors.isEmpty()) {
+        return listCompletableFuture.whenCompleteAsync((errors, except) -> {
+            if (except != null) {
+                LOGGER.fatal("Detected errors during registry event dispatch, rolling back to VANILLA state");
                 revertTo(RegistryManager.VANILLA, false);
+                LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
             }
-            return errors;
         }, executor);
     }
 
