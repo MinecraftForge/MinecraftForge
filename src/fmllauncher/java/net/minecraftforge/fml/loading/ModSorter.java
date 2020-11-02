@@ -74,6 +74,11 @@ public class ModSorter
         } catch (EarlyLoadingException ele) {
             earlyLoadingException = ele;
             ms.sortedList = Collections.emptyList();
+            try {
+                ms.buildUniqueList();
+            } catch (EarlyLoadingException ele2) {
+                //IGNORE
+            }
         }
         return LoadingModList.of(ms.modFiles, ms.sortedList, earlyLoadingException);
     }
