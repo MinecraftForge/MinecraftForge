@@ -39,7 +39,6 @@ net/minecraft/item/FilledMapItem.getCustomMapData(Lnet/minecraft/item/ItemStack;
 net/minecraft/item/ItemStack.<init>(Lnet/minecraft/util/IItemProvider;ILnet/minecraft/nbt/CompoundNBT;)V=|p_i48204_1_,p_i48204_2_,capNBT
 net/minecraft/item/ItemStack.onItemUse(Lnet/minecraft/item/ItemUseContext;)Lnet/minecraft/util/ActionResultType;=|p_196084_1_
 net/minecraft/item/ItemStack.onItemUse(Lnet/minecraft/item/ItemUseContext;Ljava/util/function/Function;)Lnet/minecraft/util/ActionResultType;=|p_196084_1_,callback
-net/minecraft/network/play/server/SEntityPropertiesPacket.writePacketData(Lnet/minecraft/network/PacketBuffer;Lnet/minecraftforge/fml/network/ConnectionType;)V=|p_148840_1_,connectionType
 net/minecraft/network/PacketBuffer.writeItemStack(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/network/PacketBuffer;=|p_150788_1_,limitedTag
 net/minecraft/potion/PotionBrewing$MixPredicate.<init>(Lnet/minecraftforge/registries/ForgeRegistryEntry;Lnet/minecraft/item/crafting/Ingredient;Lnet/minecraftforge/registries/ForgeRegistryEntry;)V=|p_i47570_1_,p_i47570_2_,p_i47570_3_
 net/minecraft/server/management/PlayerInteractionManager.removeBlock(Lnet/minecraft/util/math/BlockPos;Z)Z=|p_180235_1_,canHarvest
