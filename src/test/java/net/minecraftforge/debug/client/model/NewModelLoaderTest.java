@@ -269,7 +269,8 @@ public class NewModelLoaderTest
                             .modelLocation(new ResourceLocation("new_model_loader_test:models/item/sugar_glider.obj"))
                             .flipV(true)
                     .end()
-                    .texture("test1", "#test")
+                    .texture("qr", "minecraft:block/oak_planks")
+                    .texture("particle", "#qr")
             );
         }
     }
