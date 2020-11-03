@@ -879,7 +879,8 @@ project(':forge') {
                 FORGE_NAME: project.name,
                 MC_VERSION: MC_VERSION,
                 MAPPING_CHANNEL: MAPPING_CHANNEL,
-                MAPPING_VERSION: MAPPING_VERSION
+                MAPPING_VERSION: MAPPING_VERSION,
+                LOADER_VERSION: SPEC_VERSION.substring(0, SPEC_VERSION.indexOf("."))
             ])
             rename 'gitignore\\.txt', '.gitignore'
             rename 'gitattributes\\.txt', '.gitattributes'
