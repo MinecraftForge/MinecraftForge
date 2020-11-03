@@ -93,9 +93,6 @@ public class CommandSetDimension
                 .modifyStyle((style) -> style.setFormatting(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/execute in " + dimName + " run tp " + finalCmdTarget + finalPosTarget)));
         ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.setdim.deprecated", suggestion), true);
 
-        //if (!DimensionManager.isDimensionRegistered(dim))
-        //    throw INVALID_DIMENSION.create(dim);
-
         return 0;
     }
 
