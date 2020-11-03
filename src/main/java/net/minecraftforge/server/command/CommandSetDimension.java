@@ -39,6 +39,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
+import com.mojang.brigadier.tree.CommandNode;
 
 import java.util.Collection;
 
@@ -69,19 +70,27 @@ public class CommandSetDimension
             throw NO_ENTITIES.create();
 
         String cmdTarget = "@s";
+        String posTarget = "";
         for (ParsedCommandNode<CommandSource> parsed : ctx.getNodes())
         {
-            if (parsed.getNode() instanceof ArgumentCommandNode && "targets".equals(parsed.getNode().getName()))
+            final CommandNode<CommandSource> node = parsed.getNode();
+            if (parsed.getNode() instanceof ArgumentCommandNode)
             {
-                cmdTarget = parsed.getRange().get(ctx.getInput());
-                break;
+                if ("target".equals(parsed.getNode().getName()))
+                {
+                    cmdTarget = parsed.getRange().get(ctx.getInput());
+                }
+                else if ("pos".equals(parsed.getNode().getName()))
+                {
+                    posTarget = " " + parsed.getRange().get(ctx.getInput());
+                }
             }
         }
-
         final String dimName = dim.getDimensionKey().getLocation().toString();
         final String finalCmdTarget = cmdTarget;
-        ITextComponent suggestion = new TranslationTextComponent("/execute in %s run tp %s", dimName, cmdTarget)
-                .modifyStyle((style) -> style.setFormatting(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/execute in " + dimName + " run tp " + finalCmdTarget)));
+        final String finalPosTarget = posTarget;
+        ITextComponent suggestion = new TranslationTextComponent("/execute in %s run tp %s%s", dimName, cmdTarget, finalPosTarget)
+                .modifyStyle((style) -> style.setFormatting(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/execute in " + dimName + " run tp " + finalCmdTarget + finalPosTarget)));
         ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.setdim.deprecated", suggestion), true);
 
         //if (!DimensionManager.isDimensionRegistered(dim))
