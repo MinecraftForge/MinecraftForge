@@ -96,6 +96,7 @@
   "commands.forge.setdim.invalid.entity": "The entity selected ({0}) is not valid.",
   "commands.forge.setdim.invalid.dim": "The dimension ID specified ({0}) is not valid.",
   "commands.forge.setdim.invalid.nochange": "The entity selected ({0}) is already in the dimension specified ({1}).",
+  "commands.forge.setdim.deprecated": "This command is deprecated for removal in 1.17, use %s instead.",
   "commands.forge.tps.invalid": "Invalid dimension {0} Possible values: {1}",
   "commands.forge.tps.summary.all": "Overall: Mean tick time: {0} ms. Mean TPS: {1}",
   "commands.forge.mods.list": "Mod List: {0}",
