@@ -60,8 +60,6 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
         return Stream.of(enumClass.getEnumConstants()).map(Object::toString).collect(Collectors.toList());
     }
 
-    //     JAVAC HATES RAW TYPES!
-    @SuppressWarnings({"rawtypes", "unchecked"})
     public static class Serializer implements IArgumentSerializer<EnumArgument<?>>
     {
         @Override
@@ -70,6 +68,7 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
             buffer.writeString(argument.enumClass.getName());
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public EnumArgument<?> read(PacketBuffer buffer)
         {
