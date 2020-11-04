@@ -68,7 +68,7 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
             buffer.writeString(argument.enumClass.getName());
         }
 
-        @SuppressWarnings("unchecked")
+        @SuppressWarnings({"unchecked", "rawtypes"})
         @Override
         public EnumArgument<?> read(PacketBuffer buffer)
         {
