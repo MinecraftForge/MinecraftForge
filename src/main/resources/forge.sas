@@ -109,3 +109,4 @@ net/minecraft/world/biome/BiomeAmbience func_235222_e_()Ljava/util/Optional; # g
 net/minecraft/world/biome/BiomeAmbience func_235224_f_()Ljava/util/Optional; # getMoodSound
 net/minecraft/world/biome/BiomeAmbience func_235226_g_()Ljava/util/Optional; # getAdditionsSound
 net/minecraft/world/biome/BiomeAmbience func_235228_h_()Ljava/util/Optional; # getMusic
+net/minecraft/network/play/server/SCommandListPacket func_197693_a()Lcom/mojang/brigadier/tree/RootCommandNode; # getRoot

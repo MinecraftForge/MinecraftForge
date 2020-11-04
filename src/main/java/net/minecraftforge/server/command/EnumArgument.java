@@ -19,6 +19,7 @@
 
 package net.minecraftforge.server.command;
 
+import com.google.gson.JsonObject;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -26,6 +27,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.command.arguments.IArgumentSerializer;
+import net.minecraft.network.PacketBuffer;
+
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -56,28 +60,34 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
         return Stream.of(enumClass.getEnumConstants()).map(Object::toString).collect(Collectors.toList());
     }
 
-    /* JAVAC HATES RAW TYPES!
+    //     JAVAC HATES RAW TYPES!
     @SuppressWarnings({"rawtypes", "unchecked"})
-    public static class Serialzier implements IArgumentSerializer<EnumArgument> {
+    public static class Serializer implements IArgumentSerializer<EnumArgument<?>>
+    {
         @Override
-        public void write(EnumArgument argument, PacketBuffer buffer) {
+        public void write(EnumArgument<?> argument, PacketBuffer buffer)
+        {
             buffer.writeString(argument.enumClass.getName());
         }
 
         @Override
-        public EnumArgument<?> read(PacketBuffer buffer) {
-            try {
+        public EnumArgument<?> read(PacketBuffer buffer)
+        {
+            try
+            {
                 String name = buffer.readString();
                 return new EnumArgument(Class.forName(name));
-            } catch (ClassNotFoundException e) {
+            }
+            catch (ClassNotFoundException e)
+            {
                 return null;
             }
         }
 
         @Override
-        public void write(EnumArgument argument, JsonObject json) {
+        public void write(EnumArgument<?> argument, JsonObject json)
+        {
             json.addProperty("enum", argument.enumClass.getName());
         }
     }
-    */
 }

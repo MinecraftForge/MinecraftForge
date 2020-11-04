@@ -19,6 +19,9 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.command.arguments.ArgumentSerializer;
+import net.minecraft.command.arguments.ArgumentTypes;
+import net.minecraft.command.arguments.IArgumentSerializer;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.util.SoundEvent;
@@ -34,6 +37,8 @@ import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.server.command.EnumArgument;
+import net.minecraftforge.server.command.ModIdArgument;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -139,13 +144,15 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         VersionChecker.startVersionCheck();
 
-        /*
-         * We can't actually add any of these, because vanilla clients will choke on unknown argument types
-         * So our custom arguments will not validate client-side, but they do still work
-        ArgumentTypes.register("forge:enum", EnumArgument.class, new EnumArgument.Serializer());
+        registerArgumentTypes();
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void registerArgumentTypes()
+    {
+        ArgumentTypes.register("forge:enum", EnumArgument.class, (IArgumentSerializer) new EnumArgument.Serializer());
         ArgumentTypes.register("forge:modid", ModIdArgument.class, new ArgumentSerializer<>(ModIdArgument::modIdArgument));
-        ArgumentTypes.register("forge:structure_type", StructureArgument.class, new ArgumentSerializer<>(StructureArgument::structure));
-        */
+//        ArgumentTypes.register("forge:structure_type", StructureArgument.class, new ArgumentSerializer<>(StructureArgument::structure));
     }
 
     public void serverStopping(FMLServerStoppingEvent evt)
