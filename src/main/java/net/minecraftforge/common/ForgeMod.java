@@ -152,7 +152,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         ArgumentTypes.register("forge:enum", EnumArgument.class, (IArgumentSerializer) new EnumArgument.Serializer());
         ArgumentTypes.register("forge:modid", ModIdArgument.class, new ArgumentSerializer<>(ModIdArgument::modIdArgument));
-//        ArgumentTypes.register("forge:structure_type", StructureArgument.class, new ArgumentSerializer<>(StructureArgument::structure));
     }
 
     public void serverStopping(FMLServerStoppingEvent evt)
