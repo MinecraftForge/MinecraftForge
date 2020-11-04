@@ -112,7 +112,7 @@ public class BlockSnapshot
     @Nullable
     public TileEntity getTileEntity()
     {
-        return getNbt() != null ? TileEntity.func_235657_b_(getReplacedBlock(), getNbt()) : null;
+        return getNbt() != null ? TileEntity.readTileEntity(getReplacedBlock(), getNbt()) : null;
     }
 
     public boolean restore()
@@ -155,7 +155,7 @@ public class BlockSnapshot
             te = world.getTileEntity(pos);
             if (te != null)
             {
-                te.func_230337_a_(getReplacedBlock(), getNbt());
+                te.read(getReplacedBlock(), getNbt());
                 te.markDirty();
             }
         }
@@ -200,7 +200,7 @@ public class BlockSnapshot
         {
             this.toString =
                 "BlockSnapshot[" +
-                "World:" + this.dim.func_240901_a_() + ',' +
+                "World:" + this.dim.getLocation() + ',' +
                 "Pos: " + this.pos + ',' +
                 "State: " + this.block + ',' +
                 "Flags: " + this.flags + ',' +

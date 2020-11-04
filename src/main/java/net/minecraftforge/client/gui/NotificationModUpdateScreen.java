@@ -52,7 +52,7 @@ public class NotificationModUpdateScreen extends Screen
     }
 
     @Override
-    public void func_231160_c_()
+    public void init()
     {
         if (!hasCheckedForUpdates)
         {
@@ -66,7 +66,7 @@ public class NotificationModUpdateScreen extends Screen
 
     @SuppressWarnings("deprecation")
     @Override
-    public void func_230430_a_(MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
+    public void render(MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
         if (showNotification == null || !showNotification.shouldDraw() || !FMLConfig.runVersionCheck())
         {
@@ -76,19 +76,19 @@ public class NotificationModUpdateScreen extends Screen
         Minecraft.getInstance().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
         RenderSystem.color4f(1, 1, 1, 1);
 
-        int x = modButton.field_230690_l_;
-        int y = modButton.field_230691_m_;
-        int w = modButton.func_230998_h_();
-        int h = modButton.func_238483_d_();
+        int x = modButton.x;
+        int y = modButton.y;
+        int w = modButton.getWidth();
+        int h = modButton.getHeightRealms();
 
-        func_238463_a_(mStack, x + w - (h / 2 + 4), y + (h / 2 - 4), showNotification.getSheetOffset() * 8, (showNotification.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
+        blit(mStack, x + w - (h / 2 + 4), y + (h / 2 - 4), showNotification.getSheetOffset() * 8, (showNotification.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
     }
 
     public static NotificationModUpdateScreen init(MainMenuScreen guiMainMenu, Button modButton)
     {
         NotificationModUpdateScreen notificationModUpdateScreen = new NotificationModUpdateScreen(modButton);
-        notificationModUpdateScreen.func_231152_a_(guiMainMenu.getMinecraft(), guiMainMenu.field_230708_k_, guiMainMenu.field_230709_l_);
-        notificationModUpdateScreen.func_231160_c_();
+        notificationModUpdateScreen.resize(guiMainMenu.getMinecraft(), guiMainMenu.width, guiMainMenu.height);
+        notificationModUpdateScreen.init();
         return notificationModUpdateScreen;
     }
 

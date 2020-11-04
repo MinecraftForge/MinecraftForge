@@ -808,6 +808,6 @@ public interface IForgeBlockState
      */
     default boolean isScaffolding(LivingEntity entity)
     {
-        return getBlockState().getBlock().isScaffolding(getBlockState(), entity.world, entity.func_233580_cy_(), entity);
+        return getBlockState().getBlock().isScaffolding(getBlockState(), entity.world, entity.getPosition(), entity);
     }
 }

@@ -101,7 +101,7 @@ public class CustomTagTypesTest
         ItemStack itemStack = event.getItemStack();
         if (!itemStack.isEmpty())
         {
-            LOGGER.info("{} {} {}", Items.BONE.getTags(), OPTIONAL_TEST.func_230236_b_().size(), TagCollectionManager.func_242178_a().func_241836_b().get(new ResourceLocation(MODID, "optional_test")));
+            LOGGER.info("{} {} {}", Items.BONE.getTags(), OPTIONAL_TEST.getAllElements().size(), TagCollectionManager.getManager().getItemTags().get(new ResourceLocation(MODID, "optional_test")));
             EnchantmentHelper.getEnchantments(itemStack).forEach((enchantment, level) -> logTagsIfPresent(enchantment.getTags()));
             if (itemStack.getItem() instanceof PotionItem) logTagsIfPresent(PotionUtils.getPotionFromItem(itemStack).getTags());
             TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
@@ -119,7 +119,7 @@ public class CustomTagTypesTest
 
     public static class Custom extends ForgeRegistryEntry<Custom>
     {
-        private final ReverseTagWrapper<Custom> reverseTags = new ReverseTagWrapper<>(this, () -> TagCollectionManager.func_242178_a().getCustomTypeCollection(CUSTOM_REG.get()));
+        private final ReverseTagWrapper<Custom> reverseTags = new ReverseTagWrapper<>(this, () -> TagCollectionManager.getManager().getCustomTypeCollection(CUSTOM_REG.get()));
 
         public Set<ResourceLocation> getTags()
         {
@@ -128,7 +128,7 @@ public class CustomTagTypesTest
 
         public boolean isIn(ITag<Custom> tag)
         {
-            return tag.func_230235_a_(this);
+            return tag.contains(this);
         }
     }
 
@@ -142,7 +142,7 @@ public class CustomTagTypesTest
         @Override
         protected void registerTags()
         {
-            func_240522_a_(TESTS).func_240532_a_(CUSTOM.get());
+            getOrCreateBuilder(TESTS).addItemEntry(CUSTOM.get());
         }
 
         @Override
@@ -162,7 +162,7 @@ public class CustomTagTypesTest
         @Override
         protected void registerTags()
         {
-            func_240522_a_(FIRE).func_240534_a_(Enchantments.FIRE_ASPECT, Enchantments.FLAME);
+            getOrCreateBuilder(FIRE).add(Enchantments.FIRE_ASPECT, Enchantments.FLAME);
         }
 
         @Override
@@ -182,7 +182,7 @@ public class CustomTagTypesTest
         @Override
         protected void registerTags()
         {
-            func_240522_a_(DAMAGE).func_240534_a_(Potions.HARMING, Potions.STRONG_HARMING);
+            getOrCreateBuilder(DAMAGE).add(Potions.HARMING, Potions.STRONG_HARMING);
         }
 
         @Override
@@ -202,7 +202,7 @@ public class CustomTagTypesTest
         @Override
         protected void registerTags()
         {
-            func_240522_a_(STORAGE).func_240534_a_(TileEntityType.BARREL, TileEntityType.CHEST, TileEntityType.ENDER_CHEST);
+            getOrCreateBuilder(STORAGE).add(TileEntityType.BARREL, TileEntityType.CHEST, TileEntityType.ENDER_CHEST);
         }
 
         @Override

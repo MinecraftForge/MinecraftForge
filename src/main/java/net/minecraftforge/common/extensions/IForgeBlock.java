@@ -110,7 +110,7 @@ public interface IForgeBlock
      */
     default boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
     {
-        return state.getBlock().isIn(BlockTags.field_232878_as_);
+        return state.getBlock().isIn(BlockTags.CLIMBABLE);
     }
 
     /**
@@ -303,7 +303,7 @@ public interface IForgeBlock
      */
     default boolean canBeReplacedByLeaves(BlockState state, IWorldReader world, BlockPos pos)
     {
-        return isAir(state, world, pos) || state.func_235714_a_(BlockTags.LEAVES);
+        return isAir(state, world, pos) || state.isIn(BlockTags.LEAVES);
     }
 
     /**
@@ -316,7 +316,7 @@ public interface IForgeBlock
      */
     default boolean canBeReplacedByLogs(BlockState state, IWorldReader world, BlockPos pos)
     {
-        return (isAir(state, world, pos) || state.func_235714_a_(BlockTags.LEAVES)) || this == Blocks.GRASS_BLOCK || state.func_235714_a_(Tags.Blocks.DIRT)
+        return (isAir(state, world, pos) || state.isIn(BlockTags.LEAVES)) || this == Blocks.GRASS_BLOCK || state.isIn(Tags.Blocks.DIRT)
             || getBlock().isIn(BlockTags.LOGS) || getBlock().isIn(BlockTags.SAPLINGS) || this == Blocks.VINE;
     }
 
@@ -465,7 +465,7 @@ public interface IForgeBlock
      */
     default void onPlantGrow(BlockState state, IWorld world, BlockPos pos, BlockPos source)
     {
-        if (state.func_235714_a_(Tags.Blocks.DIRT))
+        if (state.isIn(Tags.Blocks.DIRT))
             world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
     }
 
@@ -750,7 +750,7 @@ public interface IForgeBlock
      */
     default int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face)
     {
-        return ((FireBlock)Blocks.FIRE).func_220274_q(state);
+        return ((FireBlock)Blocks.FIRE).getFlammability(state);
     }
 
     /**
@@ -791,7 +791,7 @@ public interface IForgeBlock
      */
     default int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face)
     {
-        return ((FireBlock)Blocks.FIRE).func_220275_r(state);
+        return ((FireBlock)Blocks.FIRE).getFireSpreadSpeed(state);
     }
 
     /**
@@ -807,7 +807,7 @@ public interface IForgeBlock
      */
     default boolean isFireSource(BlockState state, IWorldReader world, BlockPos pos, Direction side)
     {
-        return state.func_235714_a_(world.func_230315_m_().func_241515_q_());
+        return state.isIn(world.getDimensionType().isInfiniBurn());
     }
 
     /**
@@ -822,7 +822,7 @@ public interface IForgeBlock
     {
         if (entity instanceof EnderDragonEntity)
         {
-            return !BlockTags.DRAGON_IMMUNE.func_230235_a_(this.getBlock());
+            return !BlockTags.DRAGON_IMMUNE.contains(this.getBlock());
         }
         else if ((entity instanceof WitherEntity) ||
                  (entity instanceof WitherSkullEntity))
