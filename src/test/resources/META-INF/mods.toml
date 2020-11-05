@@ -92,3 +92,11 @@ license="LGPL v2.1"
     modId="player_game_mode_event_test"
 [[mods]]
     modId="structure_spawn_list_event_test"
+[[mods]]
+    modId="implement_on_test"
+[[dependencies.implement_on_test]]
+    modId="forge"
+    mandatory=true
+    versionRange="[1,)"
+    ordering="AFTER"
+    side="BOTH"

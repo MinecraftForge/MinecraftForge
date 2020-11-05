@@ -19,29 +19,8 @@
 
 package net.minecraftforge.fml.loading;
 
-import cpw.mods.modlauncher.Launcher;
-import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
-import cpw.mods.modlauncher.TransformingClassLoader;
-import cpw.mods.modlauncher.api.IEnvironment;
-import cpw.mods.modlauncher.api.ILaunchHandlerService;
-import cpw.mods.modlauncher.api.INameMappingService;
-import cpw.mods.modlauncher.api.ITransformationService;
-import cpw.mods.modlauncher.api.ITransformingClassLoader;
-import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
-import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
-import net.minecraftforge.accesstransformer.service.AccessTransformerService;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
-import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.progress.EarlyProgressVisualization;
-import net.minecraftforge.fml.loading.progress.StartupMessageManager;
-import net.minecraftforge.forgespi.Environment;
-import net.minecraftforge.forgespi.coremod.ICoreModProvider;
-import net.minecraftforge.forgespi.locating.IModFile;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static net.minecraftforge.fml.loading.LogMarkers.CORE;
+import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 import java.net.URL;
 import java.nio.file.Path;
@@ -56,8 +35,32 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
-import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
+import net.minecraftforge.accesstransformer.service.AccessTransformerService;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.asm.RuntimeSidedImplementor;
+import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
+import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.loading.progress.EarlyProgressVisualization;
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
+import net.minecraftforge.forgespi.Environment;
+import net.minecraftforge.forgespi.coremod.ICoreModProvider;
+import net.minecraftforge.forgespi.locating.IModFile;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import cpw.mods.modlauncher.Launcher;
+import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
+import cpw.mods.modlauncher.TransformingClassLoader;
+import cpw.mods.modlauncher.api.IEnvironment;
+import cpw.mods.modlauncher.api.ILaunchHandlerService;
+import cpw.mods.modlauncher.api.INameMappingService;
+import cpw.mods.modlauncher.api.ITransformationService;
+import cpw.mods.modlauncher.api.ITransformingClassLoader;
+import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
+import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 
 public class FMLLoader
 {
@@ -72,6 +75,7 @@ public class FMLLoader
     private static LoadingModList loadingModList;
     private static TransformingClassLoader launchClassLoader;
     private static RuntimeDistCleaner runtimeDistCleaner;
+    private static RuntimeSidedImplementor runtimeSidedImplementor;
     private static Path gamePath;
     private static Path forgePath;
     private static Path[] mcPaths;
@@ -128,6 +132,12 @@ public class FMLLoader
             return new IncompatibleEnvironmentException("Missing DistCleaner, cannot run!");
         });
         LOGGER.debug(CORE, "Found Runtime Dist Cleaner");
+
+        runtimeSidedImplementor = (RuntimeSidedImplementor) environment.findLaunchPlugin("runtimesidedimplementer").orElseThrow(()-> {
+            LOGGER.fatal(CORE,"Sided Implementor is missing, we need this to run");
+            return new IncompatibleEnvironmentException("Missing SidedImplementor, cannot run!");
+        });
+        LOGGER.debug(CORE, "Found Runtime Sided Implementor");
 
         final ArrayList<ICoreModProvider> coreModProviders = new ArrayList<>();
         ServiceLoaderStreamUtils.errorHandlingServiceLoader(ICoreModProvider.class, serviceConfigurationError -> LOGGER.fatal(CORE, "Failed to load a coremod library, expect problems", serviceConfigurationError)).forEach(coreModProviders::add);
@@ -204,6 +214,7 @@ public class FMLLoader
         languageLoadingProvider.addForgeLanguage(forgePath);
 
         runtimeDistCleaner.getExtension().accept(dist);
+        runtimeSidedImplementor.getExtension().accept(dist);
         progressWindowTick.run();
     }
     public static Map<IModFile.Type, List<ModFile>> beginModScan(final Map<String,?> arguments)
