@@ -1,7 +1,6 @@
 package net.minecraftforge.common.world.biomes.conditions;
 
 import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.world.biomes.ForgeBiomeModifiers;
 import net.minecraftforge.common.world.biomes.conditions.base.BiomeConditionType;

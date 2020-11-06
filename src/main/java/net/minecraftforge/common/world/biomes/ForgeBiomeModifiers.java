@@ -2,7 +2,6 @@ package net.minecraftforge.common.world.biomes;
 
 import net.minecraftforge.common.world.biomes.conditions.*;
 import net.minecraftforge.common.world.biomes.conditions.base.BiomeConditionType;
-import net.minecraftforge.common.world.biomes.conditions.NonVoidBiomeCondition;
 import net.minecraftforge.common.world.biomes.modifiers.SimpleFeaturesAdditions;
 import net.minecraftforge.common.world.biomes.modifiers.SimpleSpawnsAdditions;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifierType;

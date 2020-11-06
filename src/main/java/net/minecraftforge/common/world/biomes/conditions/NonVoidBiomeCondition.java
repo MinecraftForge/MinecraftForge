@@ -22,6 +22,6 @@ public class NonVoidBiomeCondition implements IBiomeCondition
     @Override
     public boolean test(Biome biome)
     {
-        return !biome.getRegistryName().equals(Biomes.THE_VOID.func_240901_a_());
+        return !biome.getRegistryName().equals(Biomes.THE_VOID.getLocation());
     }
 }

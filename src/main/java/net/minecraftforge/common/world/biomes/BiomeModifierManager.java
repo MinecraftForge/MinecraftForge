@@ -16,7 +16,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldSettingsImport;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.world.biomes.conditions.base.IBiomeCondition;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifier;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,7 +32,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = "forge")
@@ -44,7 +42,7 @@ public class BiomeModifierManager extends JsonReloadListener
     public static final Codec<Pair<Boolean, List<ResourceLocation>>> BIOME_MODIFIER_LIST =
             Codec.mapPair(
                     Codec.BOOL.optionalFieldOf("replace", false),
-                    ResourceLocation.field_240908_a_.listOf().fieldOf("entries")
+                    ResourceLocation.CODEC.listOf().fieldOf("entries")
             ).codec();
 
     private static final Logger LOGGER = LogManager.getLogger("BiomeModifierManager");
@@ -147,11 +145,11 @@ public class BiomeModifierManager extends JsonReloadListener
 
     private Biome getModifiedBiome(Biome base)
     {
-        List<BiomeModifications> modifications = this.getDeserializedModifiers().stream()
-                .map(bm -> bm.getModifications(base))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-        return BiomeModifications.performModifications(modifications, base);
+        Biome ret = base;
+        for (BiomeModifier modifier : this.getDeserializedModifiers())
+            ret = modifier.performModification(ret);
+
+        return base.getRegistryName() != null ? ret.setRegistryName(base.getRegistryName()) : ret;
     }
 
     @SubscribeEvent
@@ -184,29 +182,29 @@ public class BiomeModifierManager extends JsonReloadListener
 
         public ModificationAccess(IResourceManager manager)
         {
-            this.dataObjectLoader = WorldSettingsImport.IResourceAccess.func_244345_a(manager);
+            this.dataObjectLoader = WorldSettingsImport.IResourceAccess.create(manager);
         }
 
         @Override
-        public Collection<ResourceLocation> func_241880_a(RegistryKey<? extends Registry<?>> key)
+        public Collection<ResourceLocation> getRegistryObjects(RegistryKey<? extends Registry<?>> key)
         {
-            Collection<ResourceLocation> baseLocs = dataObjectLoader.func_241880_a(key);
-            if(!key.equals(Registry.field_239720_u_))
+            Collection<ResourceLocation> baseLocs = dataObjectLoader.getRegistryObjects(key);
+            if(!key.equals(Registry.BIOME_KEY))
                 return baseLocs;
 
             //have to trick it into thinking all of these are valid jsons (avoids log spam)
             baseLocs.addAll(eventCopiedBiomes.keySet().stream()
-                    .map(rl -> new ResourceLocation(rl.getNamespace(), ForgeRegistries.Keys.BIOMES.func_240901_a_().getPath() + "/" + rl.getPath() + ".json"))
+                    .map(rl -> new ResourceLocation(rl.getNamespace(), ForgeRegistries.Keys.BIOMES.getLocation().getPath() + "/" + rl.getPath() + ".json"))
                     .collect(Collectors.toSet()));
             return baseLocs;
         }
 
         @Override
-        public <E> DataResult<Pair<E, OptionalInt>> func_241879_a(DynamicOps<JsonElement> ops, RegistryKey<? extends Registry<E>> regKey, RegistryKey<E> key, Decoder<E> decoder)
+        public <E> DataResult<Pair<E, OptionalInt>> decode(DynamicOps<JsonElement> ops, RegistryKey<? extends Registry<E>> regKey, RegistryKey<E> key, Decoder<E> decoder)
         {
-            DataResult<Pair<E, OptionalInt>> dataObj = dataObjectLoader.func_241879_a(ops, regKey, key, decoder);
+            DataResult<Pair<E, OptionalInt>> dataObj = dataObjectLoader.decode(ops, regKey, key, decoder);
             //only handle biomes.
-            if(!regKey.equals(Registry.field_239720_u_))
+            if(!regKey.equals(Registry.BIOME_KEY))
                 return dataObj;
 
             BiomeModifierManager.INSTANCE.properlyDeserializeModifiers(ops); //ops here will be a WorldSettingsImport
@@ -219,7 +217,7 @@ public class BiomeModifierManager extends JsonReloadListener
                 return dataObj;
             }
 
-            ResourceLocation loc = key.func_240901_a_();
+            ResourceLocation loc = key.getLocation();
 
             //If it's not there, the previous error was a real one, so return it.
             if(!eventCopiedBiomes.containsKey(loc))

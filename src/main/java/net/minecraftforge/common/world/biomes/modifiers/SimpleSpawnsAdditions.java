@@ -1,7 +1,6 @@
 package net.minecraftforge.common.world.biomes.modifiers;
 
 import com.google.common.collect.ImmutableMap;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -10,18 +9,15 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraftforge.common.world.biomes.BiomeExposer;
 import net.minecraftforge.common.world.biomes.ForgeBiomeModifiers;
 import net.minecraftforge.common.world.biomes.conditions.base.IBiomeCondition;
-import net.minecraftforge.common.world.biomes.BiomeModifications;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifier;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifierType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,13 +27,13 @@ public class SimpleSpawnsAdditions extends BiomeModifier
 
     public static final Codec<Map<EntityClassification, List<MobSpawnInfo.Spawners>>> SPAWNERS_CODEC =
             Codec.simpleMap(
-                    EntityClassification.field_233667_g_,
-                    MobSpawnInfo.Spawners.field_242587_b.listOf().promotePartial(Util.func_240982_a_("Spawn data: ", LOGGER::error)),
-                    IStringSerializable.func_233025_a_(EntityClassification.values())
+                    EntityClassification.CODEC,
+                    MobSpawnInfo.Spawners.CODEC.listOf().promotePartial(Util.func_240982_a_("Spawn data: ", LOGGER::error)),
+                    IStringSerializable.createKeyable(EntityClassification.values())
             ).codec();
 
     public static final Codec<Map<EntityType<?>, MobSpawnInfo.SpawnCosts>> SPAWN_COSTS_CODEC =
-            Codec.simpleMap(Registry.ENTITY_TYPE, MobSpawnInfo.SpawnCosts.field_242579_a, Registry.ENTITY_TYPE).codec();
+            Codec.simpleMap(Registry.ENTITY_TYPE, MobSpawnInfo.SpawnCosts.CODEC, Registry.ENTITY_TYPE).codec();
 
     public static final MapCodec<SimpleSpawnsAdditions> CODEC = RecordCodecBuilder.mapCodec(inst ->
             inst.group(
@@ -58,22 +54,15 @@ public class SimpleSpawnsAdditions extends BiomeModifier
     }
 
     @Override
-    public BiomeModifications modifyBiome(Biome biome)
+    public void modifyBiome(BiomeExposer exposer)
     {
-        return new BiomeModifications()
-                .modifySpawners(sp ->
-                {
-                    Map<EntityClassification, List<MobSpawnInfo.Spawners>> mutable = new HashMap<>(sp.entrySet().stream().map(e -> Pair.of(e.getKey(), new ArrayList<>(e.getValue()))).collect(Pair.toMap()));
-                    for(EntityClassification cls : this.spawners.keySet())
-                        mutable.computeIfAbsent(cls, k -> new ArrayList<>()).addAll(this.spawners.get(cls));
-                    return mutable;
-                })
-                .modifySpawnCosts(sc ->
-                {
-                    Map<EntityType<?>, MobSpawnInfo.SpawnCosts> mutable = new HashMap<>(sc);
-                    mutable.putAll(this.spawnCosts);
-                    return mutable;
-                });
+        for(Map.Entry<EntityClassification, List<MobSpawnInfo.Spawners>> e : spawners.entrySet()) {
+            for (MobSpawnInfo.Spawners spawn : e.getValue())
+                exposer.getSpawns().withSpawner(e.getKey(), spawn);
+        }
+
+        for(Map.Entry<EntityType<?>, MobSpawnInfo.SpawnCosts> e : spawnCosts.entrySet())
+            exposer.getSpawns().withSpawnCost(e.getKey(), e.getValue().getEntitySpawnCost(), e.getValue().getMaxSpawnCost());
     }
 
     @Override

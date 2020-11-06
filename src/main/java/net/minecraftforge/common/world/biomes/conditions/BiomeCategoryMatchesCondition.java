@@ -15,8 +15,8 @@ public class BiomeCategoryMatchesCondition implements IBiomeCondition
 {
     public static final MapCodec<BiomeCategoryMatchesCondition> CODEC =
             Codec.mapEither(
-                    Biome.Category.field_235102_r_.listOf().fieldOf("categories"),
-                    Biome.Category.field_235102_r_.fieldOf("category")
+                    Biome.Category.CODEC.listOf().fieldOf("categories"),
+                    Biome.Category.CODEC.fieldOf("category")
             ).xmap(e ->
             {
                 if(e.left().isPresent())

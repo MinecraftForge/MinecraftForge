@@ -5,21 +5,18 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Util;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.StructureFeature;
+import net.minecraftforge.common.world.biomes.BiomeExposer;
 import net.minecraftforge.common.world.biomes.ForgeBiomeModifiers;
 import net.minecraftforge.common.world.biomes.conditions.base.IBiomeCondition;
-import net.minecraftforge.common.world.biomes.BiomeModifications;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifier;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifierType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class SimpleFeaturesAdditions extends BiomeModifier
 {
@@ -50,26 +47,15 @@ public class SimpleFeaturesAdditions extends BiomeModifier
     }
 
     @Override
-    public BiomeModifications modifyBiome(Biome biome)
+    public void modifyBiome(BiomeExposer exposer)
     {
-        return new BiomeModifications()
-                .modifyFeatures(fts -> {
-                    List<List<Supplier<ConfiguredFeature<?, ?>>>> mutable = new ArrayList<>(fts).stream().map(ArrayList::new).collect(Collectors.toList());
-                    int size = mutable.size();
-                    int sizeNeeded = this.features.size();
-                    if(sizeNeeded > size) //Fill any missing lists
-                        for(int i = size; i < sizeNeeded; i++)
-                            mutable.add(new ArrayList<>());
+        for (List<Supplier<ConfiguredFeature<?,?>>> cfs : features) {
+            for(Supplier<ConfiguredFeature<?, ?>> feature : cfs)
+                exposer.getGeneration().withFeature(this.features.indexOf(cfs), feature);
+        }
 
-                    for(int i = 0; i < sizeNeeded; i++)
-                        mutable.get(i).addAll(this.features.get(i));
-                    return mutable;
-                })
-                .modifyStructures(strs -> {
-                    List<Supplier<StructureFeature<?, ?>>> mutable = new ArrayList<>(strs);
-                    mutable.addAll(this.structures);
-                    return mutable;
-                });
+        for (Supplier<StructureFeature<? ,?>> struct : structures)
+            exposer.getGeneration().withStructure(struct.get());
     }
 
     @Override

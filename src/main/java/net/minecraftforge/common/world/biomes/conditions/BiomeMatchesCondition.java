@@ -16,8 +16,8 @@ public class BiomeMatchesCondition implements IBiomeCondition
 {
     public static final MapCodec<BiomeMatchesCondition> CODEC =
             Codec.mapEither(
-                    ResourceLocation.field_240908_a_.listOf().fieldOf("biomes"),
-                    ResourceLocation.field_240908_a_.fieldOf("biome")
+                    ResourceLocation.CODEC.listOf().fieldOf("biomes"),
+                    ResourceLocation.CODEC.fieldOf("biome")
             ).xmap(e ->
             {
                 if(e.left().isPresent())

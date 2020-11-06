@@ -16,7 +16,7 @@ import java.util.function.Predicate;
 
 public interface IBiomeCondition extends Predicate<Biome>
 {
-    Codec<BiomeConditionType<?>> FROM_REGISTRY = ResourceLocation.field_240908_a_.xmap(ForgeRegistries.BIOME_CONDITION_TYPES::getValue, ForgeRegistries.BIOME_CONDITION_TYPES::getKey);
+    Codec<BiomeConditionType<?>> FROM_REGISTRY = ResourceLocation.CODEC.xmap(ForgeRegistries.BIOME_CONDITION_TYPES::getValue, ForgeRegistries.BIOME_CONDITION_TYPES::getKey);
 
     /**
      * Use this to create a {@link BiomeModifier}'s Codec. This is to be able to parse it alone, so it must be present
