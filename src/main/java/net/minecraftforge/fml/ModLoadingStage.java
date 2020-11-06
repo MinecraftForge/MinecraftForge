@@ -34,6 +34,7 @@ import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.registries.GameData;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -50,8 +51,8 @@ public enum ModLoadingStage
     ERROR(),
     VALIDATE(),
     CONSTRUCT(FMLConstructModEvent.class),
-    CREATE_REGISTRIES(()->Stream.of(EventGenerator.fromFunction(RegistryEvent.NewRegistry::new)), EventDispatcher.identity()),
-    LOAD_REGISTRIES(GameData::generateRegistryEvents, GameData.buildRegistryEventDispatch()),
+    CREATE_REGISTRIES(()->Stream.of(EventGenerator.fromFunction(RegistryEvent.NewRegistry::new))),
+    LOAD_REGISTRIES(GameData::generateRegistryEvents, GameData::preRegistryEventDispatch, GameData::postRegistryEventDispatch, GameData::checkForRevertToVanilla),
     COMMON_SETUP(FMLCommonSetupEvent.class),
     SIDED_SETUP(DistExecutor.unsafeRunForDist(()->()->FMLClientSetupEvent.class, ()->()->FMLDedicatedServerSetupEvent.class)),
     ENQUEUE_IMC(InterModEnqueueEvent.class),
@@ -60,31 +61,38 @@ public enum ModLoadingStage
     DONE();
 
     private final Supplier<Stream<EventGenerator<?>>> eventFunctionStream;
-    private final EventDispatcher<?> eventManager;
     private final Optional<Class<? extends ParallelDispatchEvent>> parallelEventClass;
     private final ThreadSelector threadSelector;
     private final BiFunction<Executor, CompletableFuture<List<Throwable>>, CompletableFuture<List<Throwable>>> finalActivityGenerator;
+    private final BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<List<Throwable>>> preDispatchHook;
+    private final BiFunction<Executor, ? extends EventGenerator<?>, CompletableFuture<List<Throwable>>> postDispatchHook;
     private DeferredWorkQueue deferredWorkQueue;
 
     ModLoadingStage(Class<? extends ParallelDispatchEvent> parallelClass) {
         final EventGenerator<?> event = EventGenerator.fromFunction(LamdbaExceptionUtils.rethrowFunction((ModContainer mc) -> parallelClass.getConstructor(ModContainer.class).newInstance(mc)));
         this.eventFunctionStream = ()->Stream.of(event);
         this.threadSelector = ThreadSelector.PARALLEL;
-        this.eventManager = EventDispatcher.identity();
         this.parallelEventClass = Optional.of(parallelClass);
         deferredWorkQueue = new DeferredWorkQueue(this, parallelClass);
         this.finalActivityGenerator = (e, prev) -> prev.thenApplyAsync((List<Throwable> t) -> {
             deferredWorkQueue.runTasks();
             return t;
         }, e);
+        this.preDispatchHook = (t,f)->CompletableFuture.completedFuture(Collections.emptyList());
+        this.postDispatchHook = (t,f)->CompletableFuture.completedFuture(Collections.emptyList());
     }
 
-    <T extends Event & IModBusEvent> ModLoadingStage(Supplier<Stream<EventGenerator<?>>> eventStream, EventDispatcher<?> eventManager) {
+    ModLoadingStage(Supplier<Stream<EventGenerator<?>>> eventStream) {
+        this(eventStream, (t,f)->CompletableFuture.completedFuture(Collections.emptyList()), (t,f)->CompletableFuture.completedFuture(Collections.emptyList()), (e, prev) ->prev.thenApplyAsync(Function.identity(), e));
+    }
+
+    <T extends Event & IModBusEvent> ModLoadingStage(Supplier<Stream<EventGenerator<?>>> eventStream, final BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> preDispatchHook, final BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> postDispatchHook, final BiFunction<Executor, CompletableFuture<List<Throwable>>, CompletableFuture<List<Throwable>>> finalActivityGenerator) {
         this.eventFunctionStream = eventStream;
         this.parallelEventClass = Optional.empty();
-        this.eventManager = eventManager;
         this.threadSelector = ThreadSelector.SYNC;
-        this.finalActivityGenerator = (e, prev) ->prev.thenApplyAsync(Function.identity(), e);
+        this.preDispatchHook = preDispatchHook;
+        this.postDispatchHook = postDispatchHook;
+        this.finalActivityGenerator = finalActivityGenerator;
     }
 
     ModLoadingStage() {
@@ -97,17 +105,10 @@ public enum ModLoadingStage
     @SuppressWarnings("unchecked")
     public <T extends Event & IModBusEvent> CompletableFuture<List<Throwable>> buildTransition(final Executor syncExecutor, final Executor parallelExecutor, Function<Executor, CompletableFuture<Void>> preSyncTask, Function<Executor, CompletableFuture<Void>> postSyncTask) {
         List<CompletableFuture<List<Throwable>>> cfs = new ArrayList<>();
-        EventDispatcher<T> em = (EventDispatcher<T>) this.eventManager;
-        eventFunctionStream.get()
+        this.eventFunctionStream.get()
                 .map(f->(EventGenerator<T>)f)
-                .reduce((head, tail)->{
-                    cfs.add(ModList.get()
-                            .futureVisitor(head, em, ModLoadingStage::currentState)
-                            .apply(threadSelector.apply(syncExecutor, parallelExecutor))
-                    );
-                    return tail;
-                })
-                .ifPresent(last->cfs.add(ModList.get().futureVisitor(last, em, ModLoadingStage::nextState).apply(threadSelector.apply(syncExecutor, parallelExecutor))));
+                .reduce((head, tail)-> addCompletableFutureTaskForModDispatch(syncExecutor, parallelExecutor, cfs, head, ModLoadingStage::currentState, tail))
+                .ifPresent(last-> addCompletableFutureTaskForModDispatch(syncExecutor, parallelExecutor, cfs, last, ModLoadingStage::nextState, null));
         final CompletableFuture<Void> preSyncTaskCF = preSyncTask.apply(syncExecutor);
         final CompletableFuture<List<Throwable>> eventDispatchCF = ModList.gather(cfs).thenCompose(ModList::completableFutureFromExceptionList);
         final CompletableFuture<List<Throwable>> postEventDispatchCF = preSyncTaskCF.thenComposeAsync(n -> eventDispatchCF, parallelExecutor).thenApply(r -> {
@@ -115,6 +116,14 @@ public enum ModLoadingStage
             return r;
         });
         return this.finalActivityGenerator.apply(syncExecutor, postEventDispatchCF);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends Event & IModBusEvent> EventGenerator<T> addCompletableFutureTaskForModDispatch(final Executor syncExecutor, final Executor parallelExecutor, final List<CompletableFuture<List<Throwable>>> completeableFutures, final EventGenerator<T> eventGenerator, BiFunction<ModLoadingStage, Throwable, ModLoadingStage> nextState, final EventGenerator<T> nextGenerator) {
+        completeableFutures.add(((BiFunction<Executor, EventGenerator<T>, CompletableFuture<List<Throwable>>>)preDispatchHook).apply(threadSelector.apply(syncExecutor, parallelExecutor), eventGenerator));
+        completeableFutures.add(ModList.get().futureVisitor(eventGenerator, nextState).apply(threadSelector.apply(syncExecutor, parallelExecutor)));
+        completeableFutures.add(((BiFunction<Executor, EventGenerator<T>, CompletableFuture<List<Throwable>>>)postDispatchHook).apply(threadSelector.apply(syncExecutor, parallelExecutor), eventGenerator));
+        return nextGenerator;
     }
 
     ModLoadingStage nextState(Throwable exception) {
@@ -151,11 +160,6 @@ public enum ModLoadingStage
     public interface EventGenerator<T extends Event & IModBusEvent> extends Function<ModContainer, T> {
         static <FN extends Event & IModBusEvent> EventGenerator<FN> fromFunction(Function<ModContainer, FN> fn) {
             return fn::apply;
-        }
-    }
-    public interface EventDispatcher<T extends Event & IModBusEvent> extends Function<Consumer<? super T>, Consumer<? super T>> {
-        static <FN extends Event & IModBusEvent> EventDispatcher<FN> identity() {
-            return consumer -> consumer;
         }
     }
 }

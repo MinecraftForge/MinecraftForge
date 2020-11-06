@@ -182,7 +182,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         }
 
         @Override
-        public boolean func_230044_c_()
+        public boolean isSideLit()
         {
             return isSideLit;
         }
@@ -245,7 +245,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
                 .put("cutout", RenderType.getCutout())
                 .put("cutout_mipped", RenderType.getCutoutMipped())
                 .put("translucent", RenderType.getTranslucent())
-                .put("tripwire", RenderType.func_241715_r_())
+                .put("tripwire", RenderType.getTripwire())
                 .build();
 
         public static final Loader INSTANCE = new Loader();

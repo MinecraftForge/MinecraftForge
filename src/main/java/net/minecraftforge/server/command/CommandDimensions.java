@@ -45,11 +45,11 @@ public class CommandDimensions
             .requires(cs->cs.hasPermissionLevel(0)) //permission
             .executes(ctx -> {
                 ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.dimensions.list"), true);
-                final Registry<DimensionType> reg = ctx.getSource().func_241861_q().func_243612_b(Registry.field_239698_ad_);
+                final Registry<DimensionType> reg = ctx.getSource().func_241861_q().getRegistry(Registry.DIMENSION_TYPE_KEY);
 
                 Map<ResourceLocation, List<ResourceLocation>> types = new HashMap<>();
                 for (ServerWorld dim : ctx.getSource().getServer().getWorlds()) {
-                    types.computeIfAbsent(reg.getKey(dim.func_230315_m_()), k -> new ArrayList<>()).add(dim.func_234923_W_().func_240901_a_());
+                    types.computeIfAbsent(reg.getKey(dim.getDimensionType()), k -> new ArrayList<>()).add(dim.getDimensionKey().getLocation());
                 }
 
                 types.keySet().stream().sorted().forEach(key -> {

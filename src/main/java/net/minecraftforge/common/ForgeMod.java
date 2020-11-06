@@ -76,6 +76,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
@@ -86,11 +87,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Attribute.class, "forge");
 
-    public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("forge.swimSpeed", 1.0D, 0.0D, 1024.0D).func_233753_a_(true));
-    public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.nameTagDistance", 64.0D, 0.0D, Float.MAX_VALUE).func_233753_a_(true));
-    public static final RegistryObject<Attribute> ENTITY_GRAVITY = ATTRIBUTES.register("entity_gravity", () -> new RangedAttribute("forge.entity_gravity", 0.08D, -8.0D, 8.0D).func_233753_a_(true));
+    public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("forge.swimSpeed", 1.0D, 0.0D, 1024.0D).setShouldWatch(true));
+    public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.nameTagDistance", 64.0D, 0.0D, 64.0).setShouldWatch(true));
+    public static final RegistryObject<Attribute> ENTITY_GRAVITY = ATTRIBUTES.register("entity_gravity", () -> new RangedAttribute("forge.entity_gravity", 0.08D, -8.0D, 8.0D).setShouldWatch(true));
 
-    public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute( "generic.reachDistance", 5.0D, 0.0D, 1024.0D).func_233753_a_(true));
+    public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 5.0D, 0.0D, 1024.0D).setShouldWatch(true));
 
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance()
@@ -103,6 +104,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         LOGGER.info(FORGEMOD,"Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
         INSTANCE = this;
         MinecraftForge.initialize();
+        CrashReportExtender.registerCrashCallable("Crash Report UUID", ()-> {
+            final UUID uuid = UUID.randomUUID();
+            LOGGER.fatal("Preparing crash report with UUID {}", uuid);
+            return uuid.toString();
+        });
         WorldPersistenceHooks.addHook(this);
         WorldPersistenceHooks.addHook(new FMLWorldPersistenceHook());
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -123,6 +129,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.register(this);
+        BiomeDictionary.init();
     }
 
     public void preInit(FMLCommonSetupEvent evt)

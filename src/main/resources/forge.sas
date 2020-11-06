@@ -74,6 +74,7 @@ net/minecraft/item/crafting/IRecipe func_193358_e()Ljava/lang/String; # getGroup
 	net/minecraft/item/crafting/SingleItemRecipe func_193358_e()Ljava/lang/String;
 net/minecraft/nbt/CompressedStreamTools func_74797_a(Ljava/io/File;)Lnet/minecraft/nbt/CompoundNBT; # read
 net/minecraft/nbt/CompressedStreamTools func_74795_b(Lnet/minecraft/nbt/CompoundNBT;Ljava/io/File;)V # write
+net/minecraft/network/play/server/SEntityPropertiesPacket func_149441_d()Ljava/util/List; # getSnapshots
 net/minecraft/potion/Effect func_220303_e()Lnet/minecraft/potion/EffectType; # getEffectType
 net/minecraft/potion/Effect func_111186_k()Ljava/util/Map; # getAttributeModifierMap
 net/minecraft/potion/Effect func_188408_i()Z # isBeneficial
@@ -92,6 +93,7 @@ net/minecraft/util/Direction$Axis func_176717_a(Ljava/lang/String;)Lnet/minecraf
 net/minecraft/util/math/vector/Vector3d func_216371_e()Lnet/minecraft/util/math/vector/Vector3d;
 net/minecraft/util/math/vector/Vector3d func_189984_a(Lnet/minecraft/util/math/vector/Vector2f;)Lnet/minecraft/util/math/vector/Vector3d; # fromPitchYaw
 net/minecraft/util/math/vector/Vector3d func_189986_a(FF)Lnet/minecraft/util/math/vector/Vector3d; # fromPitchYaw
+net/minecraft/util/math/vector/Vector4f # Vector 4f Class
 net/minecraft/util/text/Style func_240719_a_(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/util/text/Style; #setFontId
 net/minecraft/util/text/Style func_240723_c_(Lnet/minecraft/util/text/TextFormatting;)Lnet/minecraft/util/text/Style; #forceFormatting
 # BiomeAmbiance getters, needed for it to be useful during BiomeLoadingEvent to be useful

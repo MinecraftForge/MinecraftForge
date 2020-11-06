@@ -302,4 +302,8 @@ public class FMLLoader
     public static boolean isProduction() {
         return production;
     }
+
+    public static boolean isSecureJarEnabled() {
+        return Launcher.INSTANCE.environment().getProperty(IEnvironment.Keys.SECURED_JARS_ENABLED.get()).orElse(false);
+    }
 }

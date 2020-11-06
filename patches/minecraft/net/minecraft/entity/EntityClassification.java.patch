@@ -9,12 +9,27 @@
     MONSTER("monster", 70, false, false, 128),
     CREATURE("creature", 10, true, true, 128),
     AMBIENT("ambient", 15, true, false, 128),
-@@ -57,6 +57,10 @@
+@@ -14,7 +14,7 @@
+    WATER_AMBIENT("water_ambient", 20, true, false, 64),
+    MISC("misc", -1, true, true, 128);
+ 
+-   public static final Codec<EntityClassification> field_233667_g_ = IStringSerializable.func_233023_a_(EntityClassification::values, EntityClassification::func_233670_a_);
++   public static final Codec<EntityClassification> field_233667_g_ = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(EntityClassification::values, EntityClassification::func_233670_a_);
+    private static final Map<String, EntityClassification> field_220364_f = Arrays.stream(values()).collect(Collectors.toMap(EntityClassification::func_220363_a, (p_220362_0_) -> {
+       return p_220362_0_;
+    }));
+@@ -57,6 +57,16 @@
        return this.field_82707_i;
     }
  
 +   public static EntityClassification create(String name, String id, int maxNumberOfCreatureIn, boolean isPeacefulCreatureIn, boolean isAnimalIn, int despawnDistance) {
 +      throw new IllegalStateException("Enum not extended");
++   }
++
++   @Override
++   @Deprecated
++   public void init() {
++      field_220364_f.put(this.func_220363_a(), this);
 +   }
 +
     public int func_233671_f_() {

@@ -27,6 +27,8 @@ import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
+import javax.annotation.Nullable;
+
 /**
  * This event fires when a Biome is created from json or when a registered biome is re-created for worldgen.
  * It allows mods to edit a biome (like add a mob spawn) before it gets used for worldgen.
@@ -56,7 +58,7 @@ public class BiomeLoadingEvent extends Event
     private final BiomeGenerationSettingsBuilder gen;
     private final MobSpawnInfoBuilder spawns;
 
-    public BiomeLoadingEvent(final ResourceLocation name, final Biome.Climate climate, final Biome.Category category, final float depth, final float scale, final BiomeAmbience effects, final BiomeGenerationSettingsBuilder gen, final MobSpawnInfoBuilder spawns)
+    public BiomeLoadingEvent(@Nullable final ResourceLocation name, final Biome.Climate climate, final Biome.Category category, final float depth, final float scale, final BiomeAmbience effects, final BiomeGenerationSettingsBuilder gen, final MobSpawnInfoBuilder spawns)
     {
         this.name = name;
         this.climate = climate;
@@ -68,6 +70,12 @@ public class BiomeLoadingEvent extends Event
         this.spawns = spawns;
     }
 
+    /**
+     * This will get the registry name of the biome.
+     * It generally SHOULD NOT be null, but due to vanilla's biome handling and codec weirdness, there may be cases where it is.
+     * Do check for this possibility!
+     */
+    @Nullable
     public ResourceLocation getName()
     {
         return name;

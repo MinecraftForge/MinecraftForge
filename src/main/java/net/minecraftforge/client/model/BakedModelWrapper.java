@@ -70,9 +70,9 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
     }
 
     @Override
-    public boolean func_230044_c_()
+    public boolean isSideLit()
     {
-        return originalModel.func_230044_c_();
+        return originalModel.isSideLit();
     }
 
     @Override

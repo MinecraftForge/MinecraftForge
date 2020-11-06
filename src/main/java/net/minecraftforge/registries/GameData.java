@@ -22,8 +22,8 @@ package net.minecraftforge.registries;
 import com.google.common.collect.*;
 import com.mojang.serialization.Lifecycle;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -94,12 +94,8 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 
 import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -149,10 +145,10 @@ public class GameData
         makeRegistry(EFFECTS, Effect.class ).legacyName("potions").create();
         //makeRegistry(BIOMES, Biome.class).legacyName("biomes").create();
         makeRegistry(SOUND_EVENTS, SoundEvent.class).legacyName("soundevents").create();
-        makeRegistry(POTIONS, Potion.class, "empty").legacyName("potiontypes").create();
-        makeRegistry(ENCHANTMENTS, Enchantment.class).legacyName("enchantments").create();
+        makeRegistry(POTIONS, Potion.class, "empty").legacyName("potiontypes").tagFolder("potions").create();
+        makeRegistry(ENCHANTMENTS, Enchantment.class).legacyName("enchantments").tagFolder("enchantments").create();
         makeRegistry(ENTITY_TYPES, c(EntityType.class), "pig").legacyName("entities").create();
-        makeRegistry(TILE_ENTITY_TYPES, c(TileEntityType.class)).disableSaving().legacyName("tileentities").create();
+        makeRegistry(TILE_ENTITY_TYPES, c(TileEntityType.class)).disableSaving().legacyName("tileentities").tagFolder("tile_entity_types").create();
         makeRegistry(PARTICLE_TYPES, c(ParticleType.class)).disableSaving().create();
         makeRegistry(CONTAINER_TYPES, c(ContainerType.class)).disableSaving().create();
         makeRegistry(PAINTING_TYPES, PaintingType.class, "kebab").create();
@@ -194,15 +190,15 @@ public class GameData
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, int min, int max)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setIDRange(min, max).hasWrapper();
+        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setIDRange(min, max).hasWrapper();
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, String _default)
     {
-        return new RegistryBuilder<T>().setName(key.func_240901_a_()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
+        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
     }
 
     public static <T extends IForgeRegistryEntry<T>> SimpleRegistry<T> getWrapper(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle)
@@ -304,29 +300,34 @@ public class GameData
         LOGGER.debug(REGISTRIES, "All registries frozen");
     }
 
+    public static void revertToFrozen() {
+        revertTo(RegistryManager.FROZEN, true);
+    }
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static void revertToFrozen()
+    public static void revertTo(final RegistryManager target, boolean fireEvents)
     {
-        if (RegistryManager.FROZEN.registries.isEmpty())
+        if (target.registries.isEmpty())
         {
-            LOGGER.warn(REGISTRIES, "Can't revert to frozen GameData state without freezing first.");
+            LOGGER.warn(REGISTRIES, "Can't revert to {} GameData state without a valid snapshot.", target.getName());
             return;
         }
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
 
-        LOGGER.debug(REGISTRIES, "Reverting to frozen data state.");
+        LOGGER.debug(REGISTRIES, "Reverting to {} data state.", target.getName());
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
-            loadRegistry(r.getKey(), RegistryManager.FROZEN, RegistryManager.ACTIVE, clazz, true);
+            loadRegistry(r.getKey(), target, RegistryManager.ACTIVE, clazz, true);
         }
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.bake());
         // the id mapping has reverted, fire remap events for those that care about id changes
+        if (fireEvents) {
         fireRemapEvent(ImmutableMap.of(), true);
+            ObjectHolderRegistry.applyObjectHolders();
+        }
 
-        ObjectHolderRegistry.applyObjectHolders();
         // the id mapping has reverted, ensure we sync up the object holders
-        LOGGER.debug(REGISTRIES, "Frozen state restored.");
+        LOGGER.debug(REGISTRIES, "{} state restored.", target.getName());
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -344,28 +345,46 @@ public class GameData
         keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
 
         //Move Blocks to first, and Items to second.
-        keys.remove(BLOCKS.func_240901_a_());
-        keys.remove(ITEMS.func_240901_a_());
+        keys.remove(BLOCKS.getLocation());
+        keys.remove(ITEMS.getLocation());
 
-        keys.add(0, BLOCKS.func_240901_a_());
-        keys.add(1, ITEMS.func_240901_a_());
+        keys.add(0, BLOCKS.getLocation());
+        keys.add(1, ITEMS.getLocation());
 
-        final Function<ResourceLocation, ? extends RegistryEvent.Register<?>> modContainerEventGeneratorFunction = rl -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl);
-        return keys.stream().map(rl -> ModLoadingStage.EventGenerator.fromFunction(mc -> modContainerEventGeneratorFunction.apply(rl)));
+        final Function<ResourceLocation, ? extends RegistryEvent.Register<?>> registerEventGenerator = rl -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl);
+        return keys.stream().map(rl -> ModLoadingStage.EventGenerator.fromFunction(mc -> registerEventGenerator.apply(rl)));
     }
 
-    public static ModLoadingStage.EventDispatcher<RegistryEvent.Register<?>> buildRegistryEventDispatch() {
-        return eventConsumer -> eventToSend -> {
-            final ResourceLocation rl = eventToSend.getName();
-            ForgeRegistry<?> fr = (ForgeRegistry<?>) eventToSend.getRegistry();
-            StartupMessageManager.modLoaderConsumer().ifPresent(s->s.accept("REGISTERING "+rl));
-            fr.unfreeze();
-            eventConsumer.accept(eventToSend);
+    public static CompletableFuture<List<Throwable>> preRegistryEventDispatch(final Executor executor, final ModLoadingStage.EventGenerator<? extends RegistryEvent.Register<?>> eventGenerator) {
+        return CompletableFuture.runAsync(()-> {
+                    final RegistryEvent.Register<?> event = eventGenerator.apply(null);
+                    final ResourceLocation rl = event.getName();
+                    ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
+                    StartupMessageManager.modLoaderConsumer().ifPresent(s -> s.accept("REGISTERING " + rl));
+                    fr.unfreeze();
+                }, executor).thenApply(v->Collections.emptyList());
+    }
+
+    public static CompletableFuture<List<Throwable>> postRegistryEventDispatch(final Executor executor, final ModLoadingStage.EventGenerator<? extends RegistryEvent.Register<?>> eventGenerator) {
+        return CompletableFuture.runAsync(()-> {
+            final RegistryEvent.Register<?> event = eventGenerator.apply(null);
+            final ResourceLocation rl = event.getName();
+            ForgeRegistry<?> fr = (ForgeRegistry<?>) event.getRegistry();
             fr.freeze();
-            LOGGER.debug(REGISTRIES,"Applying holder lookups: {}", rl.toString());
+            LOGGER.debug(REGISTRIES, "Applying holder lookups: {}", rl.toString());
             ObjectHolderRegistry.applyObjectHolders(rl::equals);
-            LOGGER.debug(REGISTRIES,"Holder lookups applied: {}", rl.toString());
-        };
+            LOGGER.debug(REGISTRIES, "Holder lookups applied: {}", rl.toString());
+        }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
+    }
+
+    public static CompletableFuture<List<Throwable>> checkForRevertToVanilla(final Executor executor, final CompletableFuture<List<Throwable>> listCompletableFuture) {
+        return listCompletableFuture.whenCompleteAsync((errors, except) -> {
+            if (except != null) {
+                LOGGER.fatal("Detected errors during registry event dispatch, rolling back to VANILLA state");
+                revertTo(RegistryManager.VANILLA, false);
+                LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
+            }
+        }, executor);
     }
 
     public static void setCustomTagTypesFromRegistries()
@@ -378,7 +397,7 @@ public class GameData
             {
                 LOGGER.debug(REGISTRIES, "Registering custom tag type for: {}", registryName);
                 customTagTypes.add(registryName);
-                TagRegistryManager.func_242196_a(registryName, tagCollectionSupplier -> tagCollectionSupplier.getCustomTypeCollection(registryName));
+                TagRegistryManager.create(registryName, tagCollectionSupplier -> tagCollectionSupplier.getCustomTypeCollection(registryName));
             }
         }
         ForgeTagHandler.setCustomTagTypes(customTagTypes);
@@ -550,7 +569,8 @@ public class GameData
         @Override
         public void onValidate(IForgeRegistryInternal<Attribute> owner, RegistryManager stage, int id, ResourceLocation key, Attribute obj)
         {
-            GlobalEntityTypeAttributes.func_233834_a_();
+            // some stuff hard patched in can cause this to derp if it's JUST vanilla, so skip
+            if (stage!=RegistryManager.VANILLA) GlobalEntityTypeAttributes.validateEntityAttributes();
         }
     }
 
@@ -727,7 +747,7 @@ public class GameData
                 {
                     LOGGER.error(REGISTRIES,()->new AdvancedLogMessageAdapter(sb->{
                        sb.append("Unidentified mapping from registry ").append(name).append('\n');
-                       lst.forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
+                       lst.stream().sorted().forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
                     }));
                 }
                 event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.FAIL).forEach(fail -> failed.put(name, fail.key));
@@ -750,7 +770,7 @@ public class GameData
                 defaulted.asMap().forEach((name, entries) ->
                 {
                     buf.append("Missing ").append(name).append(":\n");
-                    entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
+                    entries.stream().sorted((o1, o2) -> o1.compareNamespaced(o2)).forEach(rl -> buf.append("    ").append(rl).append("\n"));
                     buf.append("\n");
                 });
             }

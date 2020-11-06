@@ -141,7 +141,7 @@ public class ChunkGenWorker implements IWorker
 
         if (queue.size() == 0)
         {
-            listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.complete", genned, total, dim.func_234923_W_().func_240901_a_()), true);
+            listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.complete", genned, total, dim.getDimensionKey().getLocation()), true);
             /* TODO: Readd if/when we introduce world unloading, or get Mojang to do it.
             if (keepingLoaded != null && !keepingLoaded)
                 DimensionManager.keepLoaded(dim, false);
