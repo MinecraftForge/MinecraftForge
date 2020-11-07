@@ -120,7 +120,7 @@ public class ConfigFileTypeHandler {
         }
         catch (IOException exception)
         {
-            LOGGER.warn(CONFIG, "Failed to back up config file " + commentedFileConfig.getNioPath(), exception);
+            LOGGER.warn(CONFIG, "Failed to back up config file {}", commentedFileConfig.getNioPath(), exception);
         }
     }
 
