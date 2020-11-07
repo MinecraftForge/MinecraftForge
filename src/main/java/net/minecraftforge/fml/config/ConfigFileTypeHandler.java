@@ -30,7 +30,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -100,32 +99,28 @@ public class ConfigFileTypeHandler {
 
     public static void backUpConfig(final CommentedFileConfig commentedFileConfig, final int maxBackups)
     {
-        File bakFileLocation = commentedFileConfig.getFile().getParentFile();
+        Path bakFileLocation = commentedFileConfig.getNioPath().getParent();
         String bakFileName = FilenameUtils.removeExtension(commentedFileConfig.getFile().getName());
         String bakFileExtension = FilenameUtils.getExtension(commentedFileConfig.getFile().getName()) + ".bak";
-        File bakFile = new File(bakFileLocation, bakFileName + "-1" + "." + bakFileExtension);
+        Path bakFile = bakFileLocation.resolve(bakFileName + "-1" + "." + bakFileExtension);
         try
         {
             for(int i = maxBackups; i > 0; i--)
             {
-                File oldBak = new File(bakFileLocation, bakFileName + "-" + i + "." + bakFileExtension);
-                if(oldBak.exists())
+                Path oldBak = bakFileLocation.resolve(bakFileName + "-" + i + "." + bakFileExtension);
+                if(Files.exists(oldBak))
                 {
-                    if(i == maxBackups)
-                    {
-                        if (oldBak.delete()) continue;
-                        LOGGER.warn(CONFIG, "Failed to back up config file {} as the oldest backup, {}, could not be deleted", commentedFileConfig.getFile().getName(), oldBak.getAbsolutePath());
-                        return;
-                    }
-                    if (!oldBak.renameTo(new File(bakFileLocation, bakFileName + "-" + (i + 1) + "." + bakFileExtension)))
-                        LOGGER.warn(CONFIG, "Failed to back up config file {} as an old backup, {}, could not be renamed", commentedFileConfig.getFile().getName(), oldBak.getAbsolutePath());
+                    if(i >= maxBackups)
+                        Files.delete(oldBak);
+                    else
+                        Files.move(oldBak, bakFileLocation.resolve(bakFileName + "-" + (i + 1) + "." + bakFileExtension));
                 }
             }
-            Files.copy(commentedFileConfig.getNioPath(),bakFile.toPath());
+            Files.copy(commentedFileConfig.getNioPath(), bakFile);
         }
         catch (IOException exception)
         {
-            LOGGER.warn(CONFIG, "Failed to back up config file {}", commentedFileConfig.getFile().getName());
+            LOGGER.warn(CONFIG, "Failed to back up config file " + commentedFileConfig.getNioPath(), exception);
         }
     }
 
