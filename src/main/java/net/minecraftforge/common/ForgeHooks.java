@@ -43,6 +43,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -91,6 +93,8 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.*;
+import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -1225,5 +1229,19 @@ public class ForgeHooks
         List<String> modpacks = getModPacks();
         modpacks.add("vanilla");
         return modpacks;
+    }
+
+    /**
+     * Fixes MC-194811
+     * When a structure mod is removed, this map may contain null keys. This will make the world unable to save if this persists.
+     * If we remove a structure from the save data in this way, we then mark the chunk for saving
+     */
+    public static void fixNullStructureReferences(IChunk chunk, Map<Structure<?>, LongSet> structureReferences)
+    {
+        if (structureReferences.remove(null) != null)
+        {
+            chunk.setModified(true);
+        }
+        chunk.setStructureReferences(structureReferences);
     }
 }
