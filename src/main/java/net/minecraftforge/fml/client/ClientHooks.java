@@ -170,7 +170,7 @@ public class ClientHooks
         }
 
         Minecraft.getInstance().getTextureManager().bindTexture(iconSheet);
-        AbstractGui.func_238466_a_(mStack, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
+        AbstractGui.blit(mStack, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
 
         if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26)
             //TODO using StringTextComponent here is a hack, we should be using TranslationTextComponents.

@@ -55,9 +55,9 @@ public interface IExtensibleEnum
     default void init() {}
 
     /**
-     * Use this instead of {@link IStringSerializable#func_233023_a_(Supplier, Function)} for extensible enums because this not cache the enum values on construction
+     * Use this instead of {@link IStringSerializable#createEnumCodec(Supplier, Function)} for extensible enums because this not cache the enum values on construction
      */
     static <E extends Enum<E> & IStringSerializable> Codec<E> createCodecForExtensibleEnum(Supplier<E[]> valuesSupplier, Function<? super String, ? extends E> enumValueFromNameFunction) {
-        return IStringSerializable.func_233024_a_(Enum::ordinal, (id) -> valuesSupplier.get()[id], enumValueFromNameFunction);
+        return IStringSerializable.createCodec(Enum::ordinal, (id) -> valuesSupplier.get()[id], enumValueFromNameFunction);
     }
 }

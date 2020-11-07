@@ -19,7 +19,7 @@
 +       return add(new TagRegistry.OptionalNamedTag<>(key, defaults));
 +   }
 +
-+   /** Call via ForgeTagHandler#makeWrapperTag to avoid any exceptions due to calling this after it is safe to call {@link #func_232937_a_(String)} */
++   /** Call via ForgeTagHandler#makeWrapperTag to avoid any exceptions due to calling this after it is safe to call {@link #createTag(String)} */
 +   public static <T> ITag.INamedTag<T> createDelayedTag(ResourceLocation tagRegistry, ResourceLocation name) {
 +      return delayedAdd(tagRegistry, new TagRegistry.NamedTag<>(name));
 +   }

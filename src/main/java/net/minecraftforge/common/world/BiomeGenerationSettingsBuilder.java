@@ -37,26 +37,26 @@ public class BiomeGenerationSettingsBuilder extends BiomeGenerationSettings.Buil
 {
     public BiomeGenerationSettingsBuilder(BiomeGenerationSettings orig)
     {
-        field_242504_a = Optional.of(orig.func_242500_d());
-        orig.getCarvingStages().forEach(k -> field_242505_b.put(k, new ArrayList<>(orig.func_242489_a(k))));
-        orig.func_242498_c().forEach(l -> field_242506_c.add(new ArrayList<>(l)));
-        field_242507_d.addAll(orig.func_242487_a());
+        surfaceBuilder = Optional.of(orig.getSurfaceBuilder());
+        orig.getCarvingStages().forEach(k -> carvers.put(k, new ArrayList<>(orig.getCarvers(k))));
+        orig.getFeatures().forEach(l -> features.add(new ArrayList<>(l)));
+        structures.addAll(orig.getStructures());
     }
 
     public List<Supplier<ConfiguredFeature<?, ?>>> getFeatures(GenerationStage.Decoration stage) {
-        func_242509_a(stage.ordinal());
-        return field_242506_c.get(stage.ordinal());
+        populateStageEntries(stage.ordinal());
+        return features.get(stage.ordinal());
     }
 
     public Optional<Supplier<ConfiguredSurfaceBuilder<?>>> getSurfaceBuilder() {
-        return field_242504_a;
+        return surfaceBuilder;
     }
 
     public List<Supplier<ConfiguredCarver<?>>> getCarvers(GenerationStage.Carving stage) {
-        return field_242505_b.computeIfAbsent(stage, key -> new ArrayList<>());
+        return carvers.computeIfAbsent(stage, key -> new ArrayList<>());
     }
 
     public List<Supplier<StructureFeature<?, ?>>> getStructures() {
-        return field_242507_d;
+        return structures;
     }
 }

@@ -241,10 +241,10 @@ public class ForgeHooksClient
         if (status == BETA || status == BETA_OUTDATED)
         {
             // render a warning at the top of the screen,
-            ITextComponent line = new TranslationTextComponent("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET).func_240699_a_(TextFormatting.RED);
-            AbstractGui.func_238472_a_(mStack, font, line, width / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
+            ITextComponent line = new TranslationTextComponent("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET).mergeStyle(TextFormatting.RED);
+            AbstractGui.drawCenteredString(mStack, font, line, width / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
             line = new TranslationTextComponent("forge.update.beta.2");
-            AbstractGui.func_238472_a_(mStack, font, line, width / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
+            AbstractGui.drawCenteredString(mStack, font, line, width / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
         }
 
         String line = null;
@@ -280,7 +280,7 @@ public class ForgeHooksClient
     public static void drawScreen(Screen screen, MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
         if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mStack, mouseX, mouseY, partialTicks)))
-            screen.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
+            screen.render(mStack, mouseX, mouseY, partialTicks);
         MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mStack, mouseX, mouseY, partialTicks));
     }
 
@@ -751,7 +751,7 @@ public class ForgeHooksClient
             IVertexBuilder ivertexbuilder;
             if (fabulous)
             {
-                ivertexbuilder = ItemRenderer.func_239391_c_(bufferIn, rendertype, true, itemStackIn.hasEffect());
+                ivertexbuilder = ItemRenderer.getEntityGlintVertexBuilder(bufferIn, rendertype, true, itemStackIn.hasEffect());
             } else {
                 ivertexbuilder = ItemRenderer.getBuffer(bufferIn, rendertype, true, itemStackIn.hasEffect());
             }

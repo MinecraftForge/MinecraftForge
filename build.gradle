@@ -10,7 +10,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.179'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.187'
         classpath 'org.ow2.asm:asm:7.2'
         classpath 'org.ow2.asm:asm-tree:7.2'
     }
@@ -53,9 +53,9 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20200514-1.16.3'
-    MC_VERSION = '1.16.3'
-    MCP_VERSION = '20200911.084530'
+    MAPPING_VERSION = '20201028-1.16.3'
+    MC_VERSION = '1.16.4'
+    MCP_VERSION = '20201102.104115'
 }
 
 project(':mcp') {
@@ -197,7 +197,7 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '34.1' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '35.0' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
@@ -353,8 +353,10 @@ project(':forge') {
                     '--mod', 'global_loot_test',
                     '--mod', 'scaffolding_test',
                     '--mod', 'custom_tag_types_test',
+                    '--mod', 'new_model_loader_test',
                     '--output', rootProject.file('src/generated_test/resources/'),
-                    '--existing', sourceSets.main.resources.srcDirs[0]
+                    '--existing', sourceSets.main.resources.srcDirs[0],
+                    '--existing', sourceSets.test.resources.srcDirs[0]
             }
         }
     }
@@ -435,7 +437,7 @@ project(':forge') {
         installer 'org.ow2.asm:asm-tree:7.2'
         installer 'org.ow2.asm:asm-util:7.2'
         installer 'org.ow2.asm:asm-analysis:7.2'
-        installer 'cpw.mods:modlauncher:8.0.5'
+        installer 'cpw.mods:modlauncher:8.0.6'
         installer 'cpw.mods:grossjava9hacks:1.3.+'
         installer 'net.minecraftforge:accesstransformers:2.2.+:shadowed'
         installer 'net.minecraftforge:eventbus:3.0.+:service'
@@ -877,7 +879,9 @@ project(':forge') {
                 FORGE_NAME: project.name,
                 MC_VERSION: MC_VERSION,
                 MAPPING_CHANNEL: MAPPING_CHANNEL,
-                MAPPING_VERSION: MAPPING_VERSION
+                MAPPING_VERSION: MAPPING_VERSION,
+                FORGE_SPEC_VERSION: SPEC_VERSION.split("\\.")[0],
+                MC_NEXT_VERSION: "1."+((MC_VERSION.split("\\.")[1] as int)+1)
             ])
             rename 'gitignore\\.txt', '.gitignore'
             rename 'gitattributes\\.txt', '.gitattributes'
