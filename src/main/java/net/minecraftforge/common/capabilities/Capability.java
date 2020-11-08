@@ -91,7 +91,7 @@ public class Capability<T>
     public String getName() { return name; }
 
     /**
-     * @return The target interface of this capability.
+     * @return The target interface of this capability, the value of the {@link CapabilityInject} annotation.
      */
     public Class<T> getType() { return type; }
 
@@ -149,9 +149,9 @@ public class Capability<T>
 
     // INTERNAL
     private final String name;
+    private final Class<T> type;
     private final IStorage<T> storage;
     private final Callable<? extends T> factory;
-    private final Class<T> type;
 
     Capability(String name, Class<T> type, IStorage<T> storage, Callable<? extends T> factory)
     {
