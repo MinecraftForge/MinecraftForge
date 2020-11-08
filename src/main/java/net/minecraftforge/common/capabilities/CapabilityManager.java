@@ -72,7 +72,7 @@ public enum CapabilityManager
                 throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
             }
 
-            cap = new Capability<>(realName, storage, factory);
+            cap = new Capability<>(realName, type, storage, factory);
             providers.put(realName, cap);
         }
 

@@ -91,6 +91,11 @@ public class Capability<T>
     public String getName() { return name; }
 
     /**
+     * @return The target interface of this capability.
+     */
+    public Class<T> getType() { return type; }
+
+    /**
      * @return An instance of the default storage handler. You can safely use this store your default implementation in NBT.
      */
     public IStorage<T> getStorage() { return storage; }
@@ -146,11 +151,13 @@ public class Capability<T>
     private final String name;
     private final IStorage<T> storage;
     private final Callable<? extends T> factory;
+    private final Class<T> type;
 
-    Capability(String name, IStorage<T> storage, Callable<? extends T> factory)
+    Capability(String name, Class<T> type, IStorage<T> storage, Callable<? extends T> factory)
     {
         this.name = name;
         this.storage = storage;
         this.factory = factory;
+        this.type = type;
     }
 }
