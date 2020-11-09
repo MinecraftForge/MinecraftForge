@@ -154,7 +154,7 @@
        this.field_175008_n.func_217628_a(p_215319_1_, p_215319_2_, p_215319_3_, p_215319_4_);
     }
  
-+   @Deprecated // Forge: use item aware function below
++   /**@deprecated Use {@link WorldRenderer#playRecord(SoundEvent, BlockPos, MusicDiscItem)}*/@Deprecated
     public void func_184377_a(@Nullable SoundEvent p_184377_1_, BlockPos p_184377_2_) {
 +      this.playRecord(p_184377_1_, p_184377_2_, p_184377_1_ == null? null : MusicDiscItem.func_185074_a(p_184377_1_));
 +   }

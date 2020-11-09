@@ -4,7 +4,7 @@
        this.field_214014_c = p_i49964_2_;
     }
  
-+   @Deprecated // Forge: get burn times by calling ForgeHooks#getBurnTime(ItemStack)
++   /**@deprecated Use {@link net.minecraftforge.common.ForgeHooks#getBurnTime(ItemStack)}*/@Deprecated
     public static Map<Item, Integer> func_214001_f() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        func_213996_a(map, Items.field_151129_at, 20000);

@@ -11,7 +11,7 @@
     private static final List<ItemStack> field_190535_b = Collections.emptyList();
     private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
     private static double field_70155_l = 1.0D;
-+   @Deprecated // Forge: Use the getter to allow overriding in mods
++   /**@deprecated Use {@link Entity#getType()}*/@Deprecated
     private final EntityType<?> field_200606_g;
     private int field_145783_c = field_213331_b.incrementAndGet();
     public boolean field_70156_m;
@@ -19,7 +19,7 @@
     public boolean field_70124_G;
     public boolean field_70133_I;
     protected Vector3d field_213328_B = Vector3d.field_186680_a;
-+   @Deprecated // Forge: Use isAlive, remove(boolean) and revive() instead of directly accessing this field. To allow the entity to react to and better control this information.
++   /**@deprecated Use {@link Entity#isAlive()}, {@link Entity#remove(boolean)}, and {@link Entity#revive()} to allow the entity to react to and better control this information*/@Deprecated
     public boolean field_70128_L;
     public float field_70141_P;
     public float field_70140_Q;
@@ -205,7 +205,7 @@
        return !this.func_184188_bt().isEmpty();
     }
  
-+   @Deprecated // Forge: Use rider sensitive version
++   /**@deprecated Use {@link Entity#canBeRiddenInWater(Entity)}*/@Deprecated
     public boolean func_205710_ba() {
        return true;
     }

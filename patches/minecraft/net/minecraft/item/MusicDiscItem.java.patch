@@ -4,14 +4,14 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class MusicDiscItem extends Item {
-+   @Deprecated // Forge: refer to WorldRender#playRecord. Modders: there's no need to reflectively modify this map!
++   /**@deprecated Use {@link net.minecraft.client.renderer.WorldRenderer#playRecord(SoundEvent, BlockPos, MusicDiscItem)}. Modders don't need to modify this map.*/@Deprecated
     private static final Map<SoundEvent, MusicDiscItem> field_150928_b = Maps.newHashMap();
     private final int field_195977_c;
-+   @Deprecated // Forge: refer to soundSupplier
++   /**@deprecated Use {@link MusicDiscItem#soundSupplier}*/@Deprecated
     private final SoundEvent field_185076_b;
 +   private final java.util.function.Supplier<SoundEvent> soundSupplier;
  
-+   @Deprecated // Forge: Use the constructor that takes a supplier instead
++   /**@deprecated Use {@link MusicDiscItem#MusicDiscItem(int, java.util.function.Supplier, Item.Properties)}*/@Deprecated
     public MusicDiscItem(int p_i48475_1_, SoundEvent p_i48475_2_, Item.Properties p_i48475_3_) {
        super(p_i48475_3_);
        this.field_195977_c = p_i48475_1_;

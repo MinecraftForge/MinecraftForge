@@ -116,7 +116,7 @@
        return this.field_71474_y.field_211842_aO;
     }
  
-+   @Deprecated // Forge: Use selective refreshResources method in FMLClientHandler
++   /**@deprecated Use {@link net.minecraftforge.client.ForgeHooksClient#refreshResources(Minecraft, VanillaResourceType...)}*/@Deprecated
     public CompletableFuture<Void> func_213237_g() {
        if (this.field_213276_aV != null) {
           return this.field_213276_aV;
@@ -518,7 +518,7 @@
        return field_71432_P;
     }
  
-+   @Deprecated // Forge: Use selective scheduleResourceRefresh method in FMLClientHandler
++   /**@deprecated Use {@link net.minecraftforge.client.ForgeHooksClient#refreshResources(Minecraft, net.minecraftforge.resource.VanillaResourceType...)}*/@Deprecated // TODO make an actual replacement for this maybe?
     public CompletableFuture<Void> func_213245_w() {
        return this.func_213169_a(this::func_213237_g).thenCompose((p_229993_0_) -> {
           return p_229993_0_;

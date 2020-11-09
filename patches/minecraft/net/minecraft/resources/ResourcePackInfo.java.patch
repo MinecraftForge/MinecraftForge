@@ -12,7 +12,7 @@
        return null;
     }
  
-+   @Deprecated
++   /**@deprecated Use {@link ResourcePackInfo#ResourcePackInfo(String, boolean, Supplier, ITextComponent, ITextComponent, PackCompatibility, ResourcePackInfo.Priority, boolean, IPackNameDecorator, boolean)}*/@Deprecated
     public ResourcePackInfo(String p_i231422_1_, boolean p_i231422_2_, Supplier<IResourcePack> p_i231422_3_, ITextComponent p_i231422_4_, ITextComponent p_i231422_5_, PackCompatibility p_i231422_6_, ResourcePackInfo.Priority p_i231422_7_, boolean p_i231422_8_, IPackNameDecorator p_i231422_9_) {
 +       this(p_i231422_1_, p_i231422_2_, p_i231422_3_, p_i231422_4_, p_i231422_5_, p_i231422_6_, p_i231422_7_, p_i231422_8_, p_i231422_9_, false);
 +   }
@@ -28,7 +28,7 @@
 +      this.hidden = hidden;
     }
  
-+   @Deprecated
++   /**@deprecated Use {@link ResourcePackInfo#ResourcePackInfo(String, boolean, Supplier, IResourcePack, PackMetadataSection, Priority, IPackNameDecorator, boolean)}*/@Deprecated
     public ResourcePackInfo(String p_i231421_1_, boolean p_i231421_2_, Supplier<IResourcePack> p_i231421_3_, IResourcePack p_i231421_4_, PackMetadataSection p_i231421_5_, ResourcePackInfo.Priority p_i231421_6_, IPackNameDecorator p_i231421_7_) {
 -      this(p_i231421_1_, p_i231421_2_, p_i231421_3_, new StringTextComponent(p_i231421_4_.func_195762_a()), p_i231421_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i231421_5_.func_198962_b()), p_i231421_6_, false, p_i231421_7_);
 +       this(p_i231421_1_, p_i231421_2_, p_i231421_3_, p_i231421_4_, p_i231421_5_, p_i231421_6_, p_i231421_7_, false);

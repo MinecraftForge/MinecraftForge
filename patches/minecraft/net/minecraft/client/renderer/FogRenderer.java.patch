@@ -29,12 +29,11 @@
        RenderSystem.clearColor(field_205093_c, field_205094_d, field_205095_e, 0.0F);
     }
  
-@@ -174,10 +185,17 @@
-       RenderSystem.fogDensity(0.0F);
+@@ -175,9 +186,17 @@
        RenderSystem.fogMode(GlStateManager.FogMode.EXP2);
     }
--
-+   @Deprecated // Forge: Pass in partialTicks
+ 
++   /**@deprecated Use {@link FogRenderer#setupFog(ActiveRenderInfo, FogType, float, boolean, float)}*/@Deprecated
     public static void func_228372_a_(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_) {
 +      setupFog(p_228372_0_, p_228372_1_, p_228372_2_, p_228372_3_, 0);
 +   }
@@ -48,7 +47,7 @@
        if (fluidstate.func_206884_a(FluidTags.field_206959_a)) {
           float f = 1.0F;
           f = 0.05F;
-@@ -228,6 +246,7 @@
+@@ -228,6 +247,7 @@
           RenderSystem.fogEnd(f3);
           RenderSystem.fogMode(GlStateManager.FogMode.LINEAR);
           RenderSystem.setupNvFogDistance();

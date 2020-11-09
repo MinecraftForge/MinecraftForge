@@ -20,7 +20,7 @@
  
     }
  
-+   @Deprecated // Forge: Use other method or manually call ForgeHooks.modifyLoot
++   /**@deprecated Use {@link LootTable#generate(LootContext)} or {@link net.minecraftforge.common.ForgeHooks#modifyLoot(List, LootContext)}*/@Deprecated
     public void func_216120_b(LootContext p_216120_1_, Consumer<ItemStack> p_216120_2_) {
        this.func_216114_a(p_216120_1_, func_216124_a(p_216120_2_));
     }

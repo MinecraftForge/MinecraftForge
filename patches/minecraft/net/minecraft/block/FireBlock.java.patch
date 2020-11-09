@@ -57,12 +57,12 @@
        return p_176537_1_.func_175727_C(p_176537_2_) || p_176537_1_.func_175727_C(p_176537_2_.func_177976_e()) || p_176537_1_.func_175727_C(p_176537_2_.func_177974_f()) || p_176537_1_.func_175727_C(p_176537_2_.func_177978_c()) || p_176537_1_.func_175727_C(p_176537_2_.func_177968_d());
     }
  
-+   @Deprecated // Forge: Use IForgeBlockState.getFlammability, Public for default implementation only.
++   /**@deprecated Use {@link BlockState#getFlammability(IBlockReader, BlockPos, Direction)}. Public for default implementation only.*/@Deprecated
     public int func_220274_q(BlockState p_220274_1_) {
        return p_220274_1_.func_235901_b_(BlockStateProperties.field_208198_y) && p_220274_1_.func_177229_b(BlockStateProperties.field_208198_y) ? 0 : this.field_149848_b.getInt(p_220274_1_.func_177230_c());
     }
  
-+   @Deprecated // Forge: Use IForgeBlockState.getFireSpreadSpeed
++   /**@deprecated Use {@link BlockState#getFireSpreadSpeed(IBlockReader, BlockPos, Direction)}*/@Deprecated
     public int func_220275_r(BlockState p_220275_1_) {
        return p_220275_1_.func_235901_b_(BlockStateProperties.field_208198_y) && p_220275_1_.func_177229_b(BlockStateProperties.field_208198_y) ? 0 : this.field_149849_a.getInt(p_220275_1_.func_177230_c());
     }
@@ -108,7 +108,7 @@
        }
     }
  
-+   @Deprecated // Forge: Use canCatchFire with more context
++   /**@deprecated Use {@link FireBlock#canCatchFire(IBlockReader, BlockPos, Direction)}*/@Deprecated
     protected boolean func_196446_i(BlockState p_196446_1_) {
        return this.func_220275_r(p_196446_1_) > 0;
     }

@@ -181,14 +181,14 @@
 +      return perWorldTickTimes.get(dim);
 +   }
 +
-+   @Deprecated // Forge: INTERNAL USE ONLY! You can screw up a lot of things if you mess with this map.
++   /**@deprecated For Forge use only, modders stay away! Many things can go wrong if you mess with this map.*/@Deprecated
 +   public synchronized Map<RegistryKey<World>, ServerWorld> forgeGetWorldMap() {
 +      return this.field_71305_c;
 +   }
 +   private int worldArrayMarker = 0;
 +   private int worldArrayLast = -1;
 +   private ServerWorld[] worldArray;
-+   @Deprecated // Forge: INTERNAL USE ONLY! Use to protect against concurrent modifications in the world tick loop.
++   /**@deprecated For Forge use only, modders stay away! Used to prevent {@link java.util.ConcurrentModificationException}s in the world tick loop.*/@Deprecated
 +   public synchronized void markWorldsDirty() {
 +      worldArrayMarker++;
 +   }

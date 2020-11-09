@@ -42,7 +42,7 @@
        return p_188363_1_ == EquipmentSlotType.LEGS;
     }
  
-+   @Deprecated //Use the more sensitive version getArmorResource below
++   /**@deprecated Use {@link BipedArmorLayer#getArmorResource(net.minecraft.entity.Entity, ItemStack, EquipmentSlotType, String)}*/@Deprecated
     private ResourceLocation func_241737_a_(ArmorItem p_241737_1_, boolean p_241737_2_, @Nullable String p_241737_3_) {
        String s = "textures/models/armor/" + p_241737_1_.func_200880_d().func_200897_d() + "_layer_" + (p_241737_2_ ? 2 : 1) + (p_241737_3_ == null ? "" : "_" + p_241737_3_) + ".png";
        return field_177191_j.computeIfAbsent(s, ResourceLocation::new);

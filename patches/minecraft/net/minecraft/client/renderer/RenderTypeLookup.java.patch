@@ -4,7 +4,7 @@
  
  @OnlyIn(Dist.CLIENT)
  public class RenderTypeLookup {
-+   @Deprecated
++   /**@deprecated Use {@link RenderTypeLookup#canRenderInLayer(BlockState, RenderType)}*/@Deprecated
     private static final Map<Block, RenderType> field_228386_a_ = Util.func_200696_a(Maps.newHashMap(), (p_228395_0_) -> {
        RenderType rendertype = RenderType.func_241715_r_();
        p_228395_0_.put(Blocks.field_150473_bD, rendertype);
@@ -12,7 +12,7 @@
        p_228395_0_.put(Blocks.field_185778_de, rendertype3);
        p_228395_0_.put(Blocks.field_203203_C, rendertype3);
     });
-+   @Deprecated
++   /**@deprecated Use {@link RenderTypeLookup#canRenderInLayer(FluidState, RenderType)}*/@Deprecated
     private static final Map<Fluid, RenderType> field_228387_b_ = Util.func_200696_a(Maps.newHashMap(), (p_228392_0_) -> {
        RenderType rendertype = RenderType.func_228645_f_();
        p_228392_0_.put(Fluids.field_207212_b, rendertype);
@@ -20,7 +20,7 @@
     });
     private static boolean field_228388_c_;
  
-+   @Deprecated // Forge: Use canRenderInLayer
++   /**@deprecated Use {@link RenderTypeLookup#canRenderInLayer(BlockState, RenderType)}*/@Deprecated
     public static RenderType func_228390_a_(BlockState p_228390_0_) {
        Block block = p_228390_0_.func_177230_c();
        if (block instanceof LeavesBlock) {
@@ -28,7 +28,7 @@
        }
     }
  
-+   @Deprecated // Forge: Use canRenderInLayer
++   /**@deprecated Use {@link RenderTypeLookup#canRenderInLayer(BlockState, RenderType)}*/@Deprecated
     public static RenderType func_239221_b_(BlockState p_239221_0_) {
        Block block = p_239221_0_.func_177230_c();
        if (block instanceof LeavesBlock) {
@@ -46,7 +46,7 @@
        }
     }
  
-+   @Deprecated // Forge: Use canRenderInLayer
++   /**@deprecated Use {@link RenderTypeLookup#canRenderInLayer(FluidState, RenderType)}*/@Deprecated
     public static RenderType func_228391_a_(FluidState p_228391_0_) {
        RenderType rendertype = field_228387_b_.get(p_228391_0_.func_206886_c());
        return rendertype != null ? rendertype : RenderType.func_228639_c_();

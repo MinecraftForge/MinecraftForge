@@ -8,7 +8,7 @@
 +   protected final net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
 +   private final net.minecraftforge.common.data.ExistingFileHelper.IResourceType resourceType;
  
-+   @Deprecated//Forge, Use ModID version.
++   /**@deprecated Use {@link TagsProvider#TagsProvider(DataGenerator, Registry, String, net.minecraftforge.common.data.ExistingFileHelper)}*/@Deprecated
     protected TagsProvider(DataGenerator p_i49827_1_, Registry<T> p_i49827_2_) {
 +      this(p_i49827_1_, p_i49827_2_, "vanilla", null);
 +   }

@@ -1,27 +1,24 @@
 --- a/net/minecraft/client/renderer/model/IBakedModel.java
 +++ b/net/minecraft/client/renderer/model/IBakedModel.java
-@@ -10,7 +10,9 @@
+@@ -10,7 +10,8 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
 -public interface IBakedModel {
 +public interface IBakedModel extends net.minecraftforge.client.extensions.IForgeBakedModel {
-+   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getQuads(IBlockState, EnumFacing, Random, net.minecraftforge.client.model.data.IModelData)}*/
-+   @Deprecated
++   /**@deprecated Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getQuads(BlockState, Direction, Random, net.minecraftforge.client.model.data.IModelData)}*/@Deprecated
     List<BakedQuad> func_200117_a(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_);
  
     boolean func_177555_b();
-@@ -21,9 +23,13 @@
+@@ -21,9 +22,11 @@
  
     boolean func_188618_c();
  
-+   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getParticleTexture(net.minecraftforge.client.model.data.IModelData)}*/
-+   @Deprecated
++   /**@deprecated Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getParticleTexture(net.minecraftforge.client.model.data.IModelData)}*/@Deprecated
     TextureAtlasSprite func_177554_e();
  
 -   ItemCameraTransforms func_177552_f();
-+   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#handlePerspective(net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType, com.mojang.blaze3d.matrix.MatrixStack)} instead */
-+   @Deprecated
++   /**@deprecated Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#handlePerspective(net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType, com.mojang.blaze3d.matrix.MatrixStack)}*/@Deprecated
 +   default ItemCameraTransforms func_177552_f() { return ItemCameraTransforms.field_178357_a; }
  
     ItemOverrideList func_188617_f();

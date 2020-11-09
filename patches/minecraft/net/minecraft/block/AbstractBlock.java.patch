@@ -52,7 +52,7 @@
        return 0;
     }
  
-+   @Deprecated // Forge: Use state.hasTileEntity()
++   /**@deprecated Use {@link BlockState#hasTileEntity()}*/@Deprecated
     public final boolean func_235695_q_() {
        return this instanceof ITileEntityProvider;
     }
@@ -80,12 +80,11 @@
     public abstract static class AbstractBlockState extends StateHolder<Block, BlockState> {
        private final int field_215708_d;
        private final boolean field_215709_e;
-@@ -428,14 +439,18 @@
+@@ -428,14 +439,16 @@
           return this.field_215708_d;
        }
  
-+      /** @deprecated use {@link BlockState#isAir(IBlockReader, BlockPos) */
-+      @Deprecated
++      /**@deprecated Use {@link BlockState#isAir(IBlockReader, BlockPos)*/@Deprecated
        public boolean func_196958_f() {
 -         return this.field_235702_f_;
 +         return this.func_177230_c().isAir((BlockState)this);
@@ -95,12 +94,11 @@
           return this.field_235704_h_;
        }
  
-+      /** @deprecated use {@link BlockState#rotate(IWorld, BlockPos, Rotation) */
-+      @Deprecated
++      /**@deprecated Use {@link BlockState#rotate(IWorld, BlockPos, Rotation)*/@Deprecated
        public BlockState func_185907_a(Rotation p_185907_1_) {
           return this.func_177230_c().func_185499_a(this.func_230340_p_(), p_185907_1_);
        }
-@@ -802,6 +817,9 @@
+@@ -802,6 +815,9 @@
        private ResourceLocation field_222381_j;
        private boolean field_226895_m_ = true;
        private boolean field_235813_o_;
@@ -110,7 +108,7 @@
        private AbstractBlock.IExtendedPositionPredicate<EntityType<?>> field_235814_p_ = (p_235832_0_, p_235832_1_, p_235832_2_, p_235832_3_) -> {
           return p_235832_0_.func_224755_d(p_235832_1_, p_235832_2_, Direction.UP) && p_235832_0_.func_185906_d() < 14;
        };
-@@ -863,6 +881,8 @@
+@@ -863,6 +879,8 @@
           abstractblock$properties.field_226895_m_ = p_200950_0_.field_235684_aB_.field_226895_m_;
           abstractblock$properties.field_235813_o_ = p_200950_0_.field_235684_aB_.field_235813_o_;
           abstractblock$properties.field_235806_h_ = p_200950_0_.field_235684_aB_.field_235806_h_;
@@ -119,7 +117,7 @@
           return abstractblock$properties;
        }
  
-@@ -877,6 +897,24 @@
+@@ -877,6 +895,24 @@
           return this;
        }
  
@@ -144,7 +142,7 @@
        public AbstractBlock.Properties func_200941_a(float p_200941_1_) {
           this.field_200961_i = p_200941_1_;
           return this;
-@@ -932,11 +970,17 @@
+@@ -932,11 +968,17 @@
           return this;
        }
  

@@ -92,7 +92,7 @@
        }
     }
  
-+   @Deprecated //Use location sensitive version below
++   /**@deprecated Use {@link PlayerEntity#getDigSpeed(BlockState, BlockPos)}*/@Deprecated
     public float func_184813_a(BlockState p_184813_1_) {
 +      return getDigSpeed(p_184813_1_, null);
 +   }

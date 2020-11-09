@@ -34,12 +34,11 @@
        return iparticlefactory == null ? null : iparticlefactory.func_199234_a(p_199927_1_, this.field_78878_a, p_199927_2_, p_199927_4_, p_199927_6_, p_199927_8_, p_199927_10_, p_199927_12_);
     }
  
-@@ -313,16 +313,29 @@
+@@ -313,16 +313,28 @@
        }
     }
  
-+   /** @deprecated Forge: use {@link #renderParticles(MatrixStack, IRenderTypeBuffer.Impl, LightTexture, ActiveRenderInfo, float, net.minecraft.client.renderer.culling.ClippingHelper)} with ClippingHelper as additional parameter */
-+   @Deprecated
++   /**@deprecated Use {@link #renderParticles(MatrixStack, IRenderTypeBuffer.Impl, LightTexture, ActiveRenderInfo, float, net.minecraft.client.renderer.culling.ClippingHelper)}*/@Deprecated
     public void func_228345_a_(MatrixStack p_228345_1_, IRenderTypeBuffer.Impl p_228345_2_, LightTexture p_228345_3_, ActiveRenderInfo p_228345_4_, float p_228345_5_) {
 +      renderParticles(p_228345_1_, p_228345_2_, p_228345_3_, p_228345_4_, p_228345_5_, null);
 +   }
@@ -65,7 +64,7 @@
           Iterable<Particle> iterable = this.field_78876_b.get(iparticlerendertype);
           if (iterable != null) {
              RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -331,6 +344,7 @@
+@@ -331,6 +343,7 @@
              iparticlerendertype.func_217600_a(bufferbuilder, this.field_78877_c);
  
              for(Particle particle : iterable) {
@@ -73,7 +72,7 @@
                 try {
                    particle.func_225606_a_(bufferbuilder, p_228345_4_, p_228345_5_);
                 } catch (Throwable throwable) {
-@@ -362,7 +376,7 @@
+@@ -362,7 +375,7 @@
     }
  
     public void func_180533_a(BlockPos p_180533_1_, BlockState p_180533_2_) {
@@ -82,7 +81,7 @@
           VoxelShape voxelshape = p_180533_2_.func_196954_c(this.field_78878_a, p_180533_1_);
           double d0 = 0.25D;
           voxelshape.func_197755_b((p_228348_3_, p_228348_5_, p_228348_7_, p_228348_9_, p_228348_11_, p_228348_13_) -> {
-@@ -434,6 +448,12 @@
+@@ -434,6 +447,12 @@
        return String.valueOf(this.field_78876_b.values().stream().mapToInt(Collection::size).sum());
     }
  

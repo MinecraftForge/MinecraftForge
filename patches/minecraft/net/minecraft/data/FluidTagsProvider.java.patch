@@ -4,7 +4,7 @@
  import net.minecraft.util.registry.Registry;
  
  public class FluidTagsProvider extends TagsProvider<Fluid> {
-+   @Deprecated
++   /**@deprecated Use {@link FluidTagsProvider#FluidTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper)}*/@Deprecated
     public FluidTagsProvider(DataGenerator p_i49156_1_) {
        super(p_i49156_1_, Registry.field_212619_h);
     }

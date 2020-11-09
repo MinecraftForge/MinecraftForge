@@ -26,8 +26,8 @@
 +      throw new IllegalStateException("Enum not extended");
 +   }
 +
++   /**@deprecated For Forge use only! Modders stay away!*/@Deprecated
 +   @Override
-+   @Deprecated
 +   public void init() {
 +      field_220364_f.put(this.func_220363_a(), this);
 +   }

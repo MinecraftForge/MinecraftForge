@@ -33,7 +33,7 @@
        });
     }
  
-+   @Deprecated // Forge: Use Forge version
++   /**@deprecated Use {@link Template#processBlockInfos(IWorld, BlockPos, BlockPos, PlacementSettings, List, Template)}*/@Deprecated
     public static List<Template.BlockInfo> func_237145_a_(IWorld p_237145_0_, BlockPos p_237145_1_, BlockPos p_237145_2_, PlacementSettings p_237145_3_, List<Template.BlockInfo> p_237145_4_) {
 +      return processBlockInfos(p_237145_0_, p_237145_1_, p_237145_2_, p_237145_3_, p_237145_4_, null);
 +   }

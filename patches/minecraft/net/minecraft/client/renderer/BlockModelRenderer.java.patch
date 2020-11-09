@@ -4,7 +4,7 @@
        this.field_187499_a = p_i46575_1_;
     }
  
-+   @Deprecated // Forge: Model data argument
++   /**@deprecated Use {@link BlockModelRenderer#renderModel(IBlockDisplayReader, IBakedModel, BlockState, BlockPos, MatrixStack, IVertexBuilder, boolean, Random, long, int, net.minecraftforge.client.model.data.IModelData)}*/@Deprecated
     public boolean func_228802_a_(IBlockDisplayReader p_228802_1_, IBakedModel p_228802_2_, BlockState p_228802_3_, BlockPos p_228802_4_, MatrixStack p_228802_5_, IVertexBuilder p_228802_6_, boolean p_228802_7_, Random p_228802_8_, long p_228802_9_, int p_228802_11_) {
 -      boolean flag = Minecraft.func_71379_u() && p_228802_3_.func_185906_d() == 0 && p_228802_2_.func_177555_b();
 -      Vector3d vector3d = p_228802_3_.func_191059_e(p_228802_1_, p_228802_4_);
@@ -30,7 +30,7 @@
        }
     }
  
-+   @Deprecated // Forge: Model data argument
++   /**@deprecated Use {@link BlockModelRenderer#renderModelSmooth(IBlockDisplayReader, IBakedModel, BlockState, BlockPos, MatrixStack, IVertexBuilder, boolean, Random, long, int, net.minecraftforge.client.model.data.IModelData)}*/@Deprecated
     public boolean func_228805_b_(IBlockDisplayReader p_228805_1_, IBakedModel p_228805_2_, BlockState p_228805_3_, BlockPos p_228805_4_, MatrixStack p_228805_5_, IVertexBuilder p_228805_6_, boolean p_228805_7_, Random p_228805_8_, long p_228805_9_, int p_228805_11_) {
 +       return renderModelSmooth(p_228805_1_, p_228805_2_, p_228805_3_, p_228805_4_, p_228805_5_, p_228805_6_, p_228805_7_, p_228805_8_, p_228805_9_, p_228805_11_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
 +   }
@@ -66,7 +66,7 @@
        return flag;
     }
  
-+   @Deprecated // Forge: Model data argument
++   /**@deprecated Use {@link BlockModelRenderer#renderModelFlat(IBlockDisplayReader, IBakedModel, BlockState, BlockPos, MatrixStack, IVertexBuilder, boolean, Random, long, int, net.minecraftforge.client.model.data.IModelData)}*/@Deprecated
     public boolean func_228806_c_(IBlockDisplayReader p_228806_1_, IBakedModel p_228806_2_, BlockState p_228806_3_, BlockPos p_228806_4_, MatrixStack p_228806_5_, IVertexBuilder p_228806_6_, boolean p_228806_7_, Random p_228806_8_, long p_228806_9_, int p_228806_11_) {
 +       return renderModelFlat(p_228806_1_, p_228806_2_, p_228806_3_, p_228806_4_, p_228806_5_, p_228806_6_, p_228806_7_, p_228806_8_, p_228806_9_, p_228806_11_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
 +   }
@@ -103,7 +103,7 @@
  
     }
  
-+   @Deprecated // Forge: Model data argument
++   /**@deprecated Use {@link BlockModelRenderer#renderModel(MatrixStack.Entry, IVertexBuilder, BlockState, IBakedModel, float, float, float, int, int, net.minecraftforge.client.model.data.IModelData)}*/@Deprecated
     public void func_228804_a_(MatrixStack.Entry p_228804_1_, IVertexBuilder p_228804_2_, @Nullable BlockState p_228804_3_, IBakedModel p_228804_4_, float p_228804_5_, float p_228804_6_, float p_228804_7_, int p_228804_8_, int p_228804_9_) {
 +      renderModel(p_228804_1_, p_228804_2_, p_228804_3_, p_228804_4_, p_228804_5_, p_228804_6_, p_228804_7_, p_228804_8_, p_228804_9_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
 +   }

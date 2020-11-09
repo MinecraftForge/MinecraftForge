@@ -4,7 +4,7 @@
     protected static final VoxelShape field_196450_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
     private final Block field_196452_c;
  
-+   @Deprecated // Forge: Mods should use the constructor below
++   /**@deprecated Mods should use {@link FlowerPotBlock#FlowerPotBlock(Supplier, Supplier, Properties)}*/@Deprecated
     public FlowerPotBlock(Block p_i48395_1_, AbstractBlock.Properties p_i48395_2_) {
 -      super(p_i48395_2_);
 -      this.field_196452_c = p_i48395_1_;

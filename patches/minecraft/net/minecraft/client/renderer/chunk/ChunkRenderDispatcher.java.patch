@@ -81,7 +81,7 @@
           @Nullable
           protected ChunkRenderCache field_228938_d_;
  
-+         @Deprecated
++         /**@deprecated Use {@link RebuildTask#RebuildTask(net.minecraft.util.math.ChunkPos, double, ChunkRenderCache)}*/@Deprecated
           public RebuildTask(double p_i226024_2_, @Nullable ChunkRenderCache p_i226024_4_) {
 -            super(p_i226024_2_);
 +            this(null, p_i226024_2_, p_i226024_4_);
@@ -159,7 +159,7 @@
        class SortTransparencyTask extends ChunkRenderDispatcher.ChunkRender.ChunkRenderTask {
           private final ChunkRenderDispatcher.CompiledChunk field_228945_e_;
  
-+         @Deprecated
++         /**@deprecated Use {@link SortTransparencyTask#SortTransparencyTask(net.minecraft.util.math.ChunkPos, double, CompiledChunk)}*/@Deprecated
           public SortTransparencyTask(double p_i226025_2_, ChunkRenderDispatcher.CompiledChunk p_i226025_4_) {
 -            super(p_i226025_2_);
 +            this(null, p_i226025_2_, p_i226025_4_);
