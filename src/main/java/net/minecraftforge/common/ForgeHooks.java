@@ -1234,7 +1234,7 @@ public class ForgeHooks
     {
         forgeAttributes.clear();
         for (Map.Entry<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> entry : newAttributes.entrySet()){
-            forgeAttributes.put(entry.getKey(), entry.getValue().func_233813_a_());
+            forgeAttributes.put(entry.getKey(), entry.getValue().create());
         }
     }
 
