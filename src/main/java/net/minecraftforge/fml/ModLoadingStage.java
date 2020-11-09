@@ -56,7 +56,7 @@ public enum ModLoadingStage
     PROCESS_ATTRIBUTES(()->Stream.of(EventGenerator.fromFunction(GameData::generateEntityAttributeEvent)),
             (t,f)->CompletableFuture.completedFuture(Collections.emptyList()),
             GameData::postGenerateEntityAttributeEvent,
-            (t,f)->CompletableFuture.completedFuture(Collections.emptyList())),
+            (e, prev) ->prev.thenApply(Function.identity())),
     COMMON_SETUP(FMLCommonSetupEvent.class),
     SIDED_SETUP(DistExecutor.unsafeRunForDist(()->()->FMLClientSetupEvent.class, ()->()->FMLDedicatedServerSetupEvent.class)),
     ENQUEUE_IMC(InterModEnqueueEvent.class),
