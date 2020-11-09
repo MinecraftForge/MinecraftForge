@@ -12,16 +12,13 @@
     public double func_233804_a_(Attribute p_233804_1_) {
        return this.func_233810_d_(p_233804_1_).func_111126_e();
     }
-@@ -70,6 +75,15 @@
+@@ -70,6 +75,12 @@
        private final Map<Attribute, ModifiableAttributeInstance> field_233811_a_ = Maps.newHashMap();
        private boolean field_233812_b_;
  
-+      public MutableAttribute()
-+      {
-+      }
++      public MutableAttribute() { }
 +
-+      public MutableAttribute(AttributeModifierMap attributeMap)
-+      {
++      public MutableAttribute(AttributeModifierMap attributeMap) {
 +         this.field_233811_a_.putAll(attributeMap.getMap());
 +      }
 +
