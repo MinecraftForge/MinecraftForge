@@ -206,7 +206,7 @@
 +   /**
 +    * <strong>FOR INTERNAL USE ONLY</strong>
 +    * <p>
-+    * Only public for use in {@link AnvilChunkLoader}.
++    * Only public for use in {@link net.minecraft.world.chunk.storage.ChunkSerializer}.
 +    */
 +   @java.lang.Deprecated
 +   @javax.annotation.Nullable
@@ -217,7 +217,7 @@
 +   /**
 +    * <strong>FOR INTERNAL USE ONLY</strong>
 +    * <p>
-+    * Only public for use in {@link AnvilChunkLoader}.
++    * Only public for use in {@link net.minecraft.world.chunk.storage.ChunkSerializer}.
 +    */
 +   @java.lang.Deprecated
 +   public final void readCapsFromNBT(CompoundNBT tag) {

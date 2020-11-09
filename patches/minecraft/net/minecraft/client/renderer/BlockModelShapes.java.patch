@@ -4,7 +4,7 @@
        this.field_178128_c = p_i46245_1_;
     }
  
-+   @Deprecated
++   /**@deprecated Use {@link BlockModelShapes#getTexture(BlockState, net.minecraft.world.World, net.minecraft.util.math.BlockPos)}*/@Deprecated
     public TextureAtlasSprite func_178122_a(BlockState p_178122_1_) {
 -      return this.func_178125_b(p_178122_1_).func_177554_e();
 +      return this.func_178125_b(p_178122_1_).getParticleTexture(net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);

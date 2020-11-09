@@ -8,7 +8,7 @@
 +public class Block extends AbstractBlock implements IItemProvider, net.minecraftforge.common.extensions.IForgeBlock {
     protected static final Logger field_196273_d = LogManager.getLogger();
 -   public static final ObjectIntIdentityMap<BlockState> field_176229_d = new ObjectIntIdentityMap<>();
-+   @Deprecated //Forge: Do not use, use GameRegistry
++   /**@deprecated Use {@link net.minecraftforge.fml.common.registry.GameRegistry}*/@Deprecated
 +   public static final ObjectIntIdentityMap<BlockState> field_176229_d = net.minecraftforge.registries.GameData.getBlockStateIDMap();
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
@@ -44,7 +44,7 @@
  
     }
  
-+   @Deprecated //Forge: Use more sensitive version
++   /**@deprecated Use more sensitive version {@link Block#getExplosionResistance(BlockState, IBlockReader, BlockPos, Explosion)}*/@Deprecated
     public float func_149638_a() {
        return this.field_235689_au_;
     }
@@ -52,7 +52,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
-+   @Deprecated //Forge: Use more sensitive version
++   /**@deprecated Use more sensitive version {@link Block#asItem}.*/@Deprecated 
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
     }
@@ -60,7 +60,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
-+   @Deprecated //Forge: Use more sensitive version
++   /**@deprecated Use more sensitive version {@link Block#canDropFromExplosion(BlockState, IBlockReader, BlockPos, Explosion)}*/@Deprecated
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
@@ -68,7 +68,7 @@
        return this.field_196275_y;
     }
  
-+   @Deprecated //Forge: Use more sensitive version {@link IForgeBlockState#getSoundType(IWorldReader, BlockPos, Entity) }
++   /**@deprecated Use more sensitive version {@link net.minecraftforge.common.extensions.IForgeBlockState#getSoundType(IWorldReader, BlockPos, Entity)}*/@Deprecated 
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }

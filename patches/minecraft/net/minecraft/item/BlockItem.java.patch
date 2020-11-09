@@ -15,7 +15,7 @@
        }
     }
  
-+   @Deprecated //Forge: Use more sensitive version {@link BlockItem#getPlaceSound(BlockState, IBlockReader, BlockPos, Entity) }
++   /**@deprecated Use {@link BlockItem#getPlaceSound(BlockState, World, BlockPos, PlayerEntity)}*/@Deprecated
     protected SoundEvent func_219983_a(BlockState p_219983_1_) {
        return p_219983_1_.func_215695_r().func_185841_e();
     }

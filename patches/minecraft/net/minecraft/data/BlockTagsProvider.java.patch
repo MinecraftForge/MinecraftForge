@@ -4,7 +4,7 @@
  import net.minecraft.util.registry.Registry;
  
  public class BlockTagsProvider extends TagsProvider<Block> {
-+   @Deprecated
++   /**@deprecated Use {@link BlockTagsProvider#BlockTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper)}*/@Deprecated
     public BlockTagsProvider(DataGenerator p_i48256_1_) {
        super(p_i48256_1_, Registry.field_212618_g);
     }

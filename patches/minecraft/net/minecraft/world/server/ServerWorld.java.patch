@@ -126,7 +126,7 @@
  
     }
  
-+   @Deprecated //Forge: Use removeEntityComplete(entity,boolean)
++   /**@deprecated Use {@link ServerWorld#removeEntityComplete(Entity, boolean)}*/@Deprecated
     public void func_217484_g(Entity p_217484_1_) {
 +      removeEntityComplete(p_217484_1_, false);
 +   }

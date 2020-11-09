@@ -4,7 +4,7 @@
        return voxelshape;
     }
  
-+   @Deprecated // Forge: Use the other constructor that takes a Supplier
++   /**@deprecated Use {@link StairsBlock#StairsBlock(java.util.function.Supplier, Properties)}*/@Deprecated
     public StairsBlock(BlockState p_i48321_1_, AbstractBlock.Properties p_i48321_2_) {
        super(p_i48321_2_);
        this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176309_a, Direction.NORTH).func_206870_a(field_176308_b, Half.BOTTOM).func_206870_a(field_176310_M, StairsShape.STRAIGHT).func_206870_a(field_204513_t, Boolean.valueOf(false)));

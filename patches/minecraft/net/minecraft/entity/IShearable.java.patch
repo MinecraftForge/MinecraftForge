@@ -4,11 +4,11 @@
  
  import net.minecraft.util.SoundCategory;
  
-+@Deprecated // Forge: Use IForgeShearable
++/**@deprecated Use {@link net.minecraftforge.common.IForgeShearable}*/@Deprecated
  public interface IShearable {
-+   @Deprecated // Forge: Use IForgeShearable
++   /**@deprecated Use {@link net.minecraftforge.common.IForgeShearable#onSheared(net.minecraft.entity.player.PlayerEntity, net.minecraft.item.ItemStack, net.minecraft.world.World, net.minecraft.util.math.BlockPos, int)}*/@Deprecated
     void func_230263_a_(SoundCategory p_230263_1_);
  
-+   @Deprecated // Forge: Use IForgeShearable
++   /**@deprecated Use {@link net.minecraftforge.common.IForgeShearable#isShearable(net.minecraft.item.ItemStack, net.minecraft.world.World, net.minecraft.util.math.BlockPos)}*/@Deprecated
     boolean func_230262_K__();
  }

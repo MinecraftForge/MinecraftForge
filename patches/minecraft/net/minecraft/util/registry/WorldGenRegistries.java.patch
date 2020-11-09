@@ -5,7 +5,7 @@
     });
     public static final Registry<JigsawPattern> field_243656_h = func_243667_a(Registry.field_243555_ax, JigsawPatternRegistry::func_244093_a);
 -   public static final Registry<Biome> field_243657_i = func_243667_a(Registry.field_239720_u_, () -> {
-+   @Deprecated public static final Registry<Biome> field_243657_i = forge(Registry.field_239720_u_, () -> {
++   /**@deprecated Use {@link net.minecraftforge.registries.ForgeRegistries#BIOMES}*/@Deprecated public static final Registry<Biome> field_243657_i = forge(Registry.field_239720_u_, () -> {
        return BiomeRegistry.field_244200_a;
     });
     public static final Registry<DimensionSettings> field_243658_j = func_243667_a(Registry.field_243549_ar, DimensionSettings::func_242746_i);

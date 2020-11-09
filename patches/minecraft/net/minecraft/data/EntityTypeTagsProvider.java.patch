@@ -4,7 +4,7 @@
  import net.minecraft.util.registry.Registry;
  
  public class EntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
-+   @Deprecated
++   /**@deprecated Use {@link EntityTypeTagsProvider#EntityTypeTagsProvider(DataGenerator, String, net.minecraftforge.common.data.ExistingFileHelper)}*/@Deprecated
     public EntityTypeTagsProvider(DataGenerator p_i50784_1_) {
        super(p_i50784_1_, Registry.field_212629_r);
     }

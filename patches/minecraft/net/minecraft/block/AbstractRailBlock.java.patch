@@ -39,7 +39,7 @@
        return blockstate.func_206870_a(this.func_176560_l(), flag ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH);
     }
  
-+   @Deprecated //Forge: Use getRailDirection(IBlockAccess, BlockPos, IBlockState, EntityMinecart) for enhanced ability
++   /**@deprecated Use {@link AbstractRailBlock#getRailDirection(BlockState, IBlockReader, BlockPos, net.minecraft.entity.item.minecart.AbstractMinecartEntity)}*/@Deprecated
     public abstract Property<RailShape> func_176560_l();
 +
 +   /* ======================================== FORGE START =====================================*/
