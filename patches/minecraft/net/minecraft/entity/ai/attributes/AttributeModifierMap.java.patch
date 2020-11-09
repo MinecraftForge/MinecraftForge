@@ -22,7 +22,7 @@
 +
 +      public MutableAttribute(AttributeModifierMap attributeMap)
 +      {
-+         field_233811_a_.putAll(attributeMap.getMap());
++         this.field_233811_a_.putAll(attributeMap.getMap());
 +      }
 +
        private ModifiableAttributeInstance func_233817_b_(Attribute p_233817_1_) {
