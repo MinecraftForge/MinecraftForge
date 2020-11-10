@@ -41,7 +41,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -53,6 +52,10 @@ public enum ModLoadingStage
     CONSTRUCT(FMLConstructModEvent.class),
     CREATE_REGISTRIES(()->Stream.of(EventGenerator.fromFunction(RegistryEvent.NewRegistry::new))),
     LOAD_REGISTRIES(GameData::generateRegistryEvents, GameData::preRegistryEventDispatch, GameData::postRegistryEventDispatch, GameData::checkForRevertToVanilla),
+    PROCESS_ATTRBIUTES(()->Stream.of(EventGenerator.fromFunction(GameData::generateEntityAttributeEvent)),
+            (t,f)->CompletableFuture.completedFuture(Collections.emptyList()),
+            GameData::postGenerateEntityAttributeEvent,
+            (t,f)->CompletableFuture.completedFuture(Collections.emptyList())),
     COMMON_SETUP(FMLCommonSetupEvent.class),
     SIDED_SETUP(DistExecutor.unsafeRunForDist(()->()->FMLClientSetupEvent.class, ()->()->FMLDedicatedServerSetupEvent.class)),
     ENQUEUE_IMC(InterModEnqueueEvent.class),

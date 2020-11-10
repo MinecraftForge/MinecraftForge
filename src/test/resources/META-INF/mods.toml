@@ -98,3 +98,5 @@ license="LGPL v2.1"
     modId="render_local_player_test"
 [[mods]]
     modId="forge_world_type_test"
+[[mods]]
+    modId="add_entity_attribute_test"

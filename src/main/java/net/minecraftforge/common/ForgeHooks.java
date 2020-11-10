@@ -48,6 +48,8 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.fluid.*;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
@@ -58,10 +60,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.minecart.ContainerMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -1251,12 +1249,35 @@ public class ForgeHooks
      * When a structure mod is removed, this map may contain null keys. This will make the world unable to save if this persists.
      * If we remove a structure from the save data in this way, we then mark the chunk for saving
      */
-    public static void fixNullStructureReferences(IChunk chunk, Map<Structure<?>, LongSet> structureReferences)
-    {
-        if (structureReferences.remove(null) != null)
-        {
+    public static void fixNullStructureReferences(IChunk chunk, Map<Structure<?>, LongSet> structureReferences) {
+        if (structureReferences.remove(null) != null) {
             chunk.setModified(true);
         }
         chunk.setStructureReferences(structureReferences);
+    }
+
+    public static void copyAttributesToForgeMap(Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> newAttributes,
+                                                Map<EntityType<? extends LivingEntity>, AttributeModifierMap> forgeAttributes){
+        forgeAttributes.clear();
+        for (Map.Entry<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> entry : newAttributes.entrySet()){
+            forgeAttributes.put(entry.getKey(), entry.getValue().create());
+        }
+    }
+
+    public static Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> getCombinedAttributeModifierMap(
+            Map<EntityType<? extends LivingEntity>, AttributeModifierMap> forgeAttributes,
+            Map<EntityType<? extends LivingEntity>, AttributeModifierMap> vanillaAttributes)
+    {
+        Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> mutable = new HashMap<>();
+        Set<EntityType<? extends LivingEntity>> forgeKeys = forgeAttributes.keySet();
+        for (Map.Entry<EntityType<? extends LivingEntity>, AttributeModifierMap> entry : forgeAttributes.entrySet()){
+            mutable.put(entry.getKey(), new AttributeModifierMap.MutableAttribute(entry.getValue()));
+        }
+        for (Map.Entry<EntityType<? extends LivingEntity>, AttributeModifierMap> entry : vanillaAttributes.entrySet()){
+            if (!forgeKeys.contains(entry.getKey())){
+                mutable.put(entry.getKey(), new AttributeModifierMap.MutableAttribute(entry.getValue()));
+            }
+        }
+        return mutable;
     }
 }
