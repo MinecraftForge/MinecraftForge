@@ -58,6 +58,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.fluid.*;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.loot.LootContext;
@@ -1322,10 +1323,8 @@ public class ForgeHooks
      * When a structure mod is removed, this map may contain null keys. This will make the world unable to save if this persists.
      * If we remove a structure from the save data in this way, we then mark the chunk for saving
      */
-    public static void fixNullStructureReferences(IChunk chunk, Map<Structure<?>, LongSet> structureReferences)
-    {
-        if (structureReferences.remove(null) != null)
-        {
+    public static void fixNullStructureReferences(IChunk chunk, Map<Structure<?>, LongSet> structureReferences) {
+        if (structureReferences.remove(null) != null) {
             chunk.setModified(true);
         }
         chunk.setStructureReferences(structureReferences);
@@ -1341,9 +1340,8 @@ public class ForgeHooks
      * Restores previously "deleted" dimensions to the world.
      * The {@link LenientUnboundedMapCodec} prevents this from happening, this is to fix any world from before the fix.
      */
-    public static <T> Dynamic<T> fixUpDimensionsData(Dynamic<T> data)
-    {
-        if(!(data.getOps() instanceof WorldSettingsImport))
+    public static <T> Dynamic<T> fixUpDimensionsData(Dynamic<T> data) {
+        if (!(data.getOps() instanceof WorldSettingsImport))
             return data;
 
         WorldSettingsImport<T> ops = (WorldSettingsImport<T>) data.getOps();
@@ -1354,8 +1352,7 @@ public class ForgeHooks
             Set<String> currentDimNames = currentList.stream().map(Pair::getFirst).collect(Collectors.toSet());
 
             // FixUp deleted vanilla dims.
-            if (!currentDimNames.containsAll(VANILLA_DIMS))
-            {
+            if (!currentDimNames.containsAll(VANILLA_DIMS)) {
                 LOGGER.warn("Detected missing vanilla dimensions from the world!");
                 DynamicRegistries regs = ObfuscationReflectionHelper.getPrivateValue(WorldSettingsImport.class, ops, "field_240872_d_");
                 if (regs == null) // should not happen, but it could after a MC version update.
@@ -1377,29 +1374,52 @@ public class ForgeHooks
                 // If they did, this will be seen in newly generated chunks.
                 // Since this is to fix an older world, from before the fixes by forge, there is no way to know the state of the dimension when it was "deleted".
                 dimReg = CODEC.getValue().encodeStart(WorldGenSettingsExport.create(ops, regs), dimReg).flatMap(t -> CODEC.getValue().parse(ops, t)).result().orElse(dimReg);
-                for (String name : VANILLA_DIMS)
-                {
+                for (String name : VANILLA_DIMS) {
                     if (currentDimNames.contains(name))
                         continue;
                     Dimension dim = dimReg.getOrDefault(new ResourceLocation(name));
-                    if (dim == null)
-                    {
+                    if (dim == null) {
                         LOGGER.error("The world is missing dimension: " + name + ", but the attempt to re-inject it failed.");
                         continue;
                     }
                     LOGGER.info("Fixing world: re-injected dimension: " + name);
-                    Optional<T> dimT = Dimension.CODEC.encodeStart(WorldGenSettingsExport.create(ops, regs), dim).resultOrPartial(s->{});
+                    Optional<T> dimT = Dimension.CODEC.encodeStart(WorldGenSettingsExport.create(ops, regs), dim).resultOrPartial(s -> {
+                    });
                     if (dimT.isPresent())
                         currentList.add(Pair.of(name, dimT.get()));
                     else
                         LOGGER.error("Could not re-encode dimension " + name + ", can not be re-injected.");
                 }
-            }
-            else
+            } else
                 return dymData;
 
             return new Dynamic<>(ops, ops.createMap(currentList.stream().map(p -> p.mapFirst(ops::createString))));
         }).result().orElse(dymData);
         return data.set(DIMENSIONS_KEY, withInjected);
+    }
+
+    public static void copyAttributesToForgeMap(Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> newAttributes,
+                                                Map<EntityType<? extends LivingEntity>, AttributeModifierMap> forgeAttributes){
+        forgeAttributes.clear();
+        for (Map.Entry<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> entry : newAttributes.entrySet()){
+            forgeAttributes.put(entry.getKey(), entry.getValue().create());
+        }
+    }
+
+    public static Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> getCombinedAttributeModifierMap(
+            Map<EntityType<? extends LivingEntity>, AttributeModifierMap> forgeAttributes,
+            Map<EntityType<? extends LivingEntity>, AttributeModifierMap> vanillaAttributes)
+    {
+        Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> mutable = new HashMap<>();
+        Set<EntityType<? extends LivingEntity>> forgeKeys = forgeAttributes.keySet();
+        for (Map.Entry<EntityType<? extends LivingEntity>, AttributeModifierMap> entry : forgeAttributes.entrySet()){
+            mutable.put(entry.getKey(), new AttributeModifierMap.MutableAttribute(entry.getValue()));
+        }
+        for (Map.Entry<EntityType<? extends LivingEntity>, AttributeModifierMap> entry : vanillaAttributes.entrySet()){
+            if (!forgeKeys.contains(entry.getKey())){
+                mutable.put(entry.getKey(), new AttributeModifierMap.MutableAttribute(entry.getValue()));
+            }
+        }
+        return mutable;
     }
 }
