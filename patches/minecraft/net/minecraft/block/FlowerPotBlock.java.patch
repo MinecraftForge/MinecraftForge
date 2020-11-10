@@ -20,7 +20,7 @@
 +    * flower pots from altering vanilla behavior.
 +    *
 +    * @param emptyPot    The empty pot for this pot, or null for self.
-+    * @param p_i48395_1_ The flower block.
++    * @param block The flower block.
 +    * @param properties
 +    */
 +   public FlowerPotBlock(@javax.annotation.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_i48395_1_, AbstractBlock.Properties properties) {

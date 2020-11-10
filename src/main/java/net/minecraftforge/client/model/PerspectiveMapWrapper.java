@@ -128,7 +128,7 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
     @Override public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
     @Override public boolean isAmbientOcclusion(BlockState state) { return parent.isAmbientOcclusion(state); }
     @Override public boolean isGui3d() { return parent.isGui3d(); }
-    @Override public boolean func_230044_c_() { return parent.func_230044_c_(); }
+    @Override public boolean isSideLit() { return parent.isSideLit(); }
     @Override public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
     @Override public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
     @SuppressWarnings("deprecation")
@@ -165,9 +165,9 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
 
         @Nullable
         @Override
-        public IBakedModel func_239290_a_(IBakedModel model, ItemStack stack, @Nullable ClientWorld worldIn, @Nullable LivingEntity entityIn)
+        public IBakedModel getOverrideModel(IBakedModel model, ItemStack stack, @Nullable ClientWorld worldIn, @Nullable LivingEntity entityIn)
         {
-            model = parent.getOverrides().func_239290_a_(parent, stack, worldIn, entityIn);
+            model = parent.getOverrides().getOverrideModel(parent, stack, worldIn, entityIn);
             return new PerspectiveMapWrapper(model, transforms);
         }
 

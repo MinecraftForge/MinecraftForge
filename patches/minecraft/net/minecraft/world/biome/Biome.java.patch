@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public final class Biome {
-+public final class Biome extends net.minecraftforge.registries.ForgeRegistryEntry<Biome> {
++public final class Biome extends net.minecraftforge.registries.ForgeRegistryEntry.UncheckedRegistryEntry<Biome> {
     public static final Logger field_150586_aC = LogManager.getLogger();
     public static final Codec<Biome> field_242418_b = RecordCodecBuilder.create((p_235064_0_) -> {
        return p_235064_0_.group(Biome.Climate.field_242459_a.forGetter((p_242446_0_) -> {
@@ -14,9 +14,9 @@
        }), MobSpawnInfo.field_242552_c.forGetter((p_242442_0_) -> {
           return p_242442_0_.field_242425_l;
 -      })).apply(p_235064_0_, Biome::new);
-+      }), ResourceLocation.field_240908_a_.fieldOf("forge:registry_name").forGetter(Biome::getRegistryName))
++      }), ResourceLocation.field_240908_a_.optionalFieldOf("forge:registry_name").forGetter(b -> Optional.ofNullable(b.getRegistryName())))
 +      .apply(p_235064_0_, (climate, category, depth, scale, effects, gen, spawns, name) ->
-+          net.minecraftforge.common.ForgeHooks.enhanceBiome(name, climate, category, depth, scale, effects, gen, spawns, p_235064_0_, Biome::new));
++          net.minecraftforge.common.ForgeHooks.enhanceBiome(name.orElse(null), climate, category, depth, scale, effects, gen, spawns, p_235064_0_, Biome::new));
     });
     public static final Codec<Biome> field_242419_c = RecordCodecBuilder.create((p_242432_0_) -> {
        return p_242432_0_.group(Biome.Climate.field_242459_a.forGetter((p_242441_0_) -> {

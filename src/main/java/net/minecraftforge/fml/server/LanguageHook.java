@@ -81,7 +81,7 @@ public class LanguageHook
 
     private static void loadLanguage(String langName, MinecraftServer server) {
         String langFile = String.format("lang/%s.json", langName);
-        IResourceManager resourceManager = server.getDataPackRegistries().func_240970_h_();
+        IResourceManager resourceManager = server.getDataPackRegistries().getResourceManager();
         resourceManager.getResourceNamespaces().forEach(namespace -> {
             try {
                 ResourceLocation langResource = new ResourceLocation(namespace, langFile);

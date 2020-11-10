@@ -78,7 +78,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
         public EntityInteractSpecific(PlayerEntity player, Hand hand, Entity target, Vector3d localPos)
         {
-            super(player, hand, target.func_233580_cy_(), null);
+            super(player, hand, target.getPosition(), null);
             this.localPos = localPos;
             this.target = target;
         }
@@ -118,7 +118,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
         public EntityInteract(PlayerEntity player, Hand hand, Entity target)
         {
-            super(player, hand, target.func_233580_cy_(), null);
+            super(player, hand, target.getPosition(), null);
             this.target = target;
         }
 
@@ -210,7 +210,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public RightClickItem(PlayerEntity player, Hand hand)
         {
-            super(player, hand, player.func_233580_cy_(), null);
+            super(player, hand, player.getPosition(), null);
         }
     }
 
@@ -223,7 +223,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public RightClickEmpty(PlayerEntity player, Hand hand)
         {
-            super(player, hand, player.func_233580_cy_(), null);
+            super(player, hand, player.getPosition(), null);
         }
     }
 
@@ -297,7 +297,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public LeftClickEmpty(PlayerEntity player)
         {
-            super(player, Hand.MAIN_HAND, player.func_233580_cy_(), null);
+            super(player, Hand.MAIN_HAND, player.getPosition(), null);
         }
     }
 

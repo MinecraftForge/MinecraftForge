@@ -52,7 +52,7 @@ public final class TimeValues
         }
 
         @Override
-        public String func_176610_l()
+        public String getString()
         {
             return "identity";
         }
@@ -244,7 +244,7 @@ public final class TimeValues
         }
 
         @Override
-        public String func_176610_l()
+        public String getString()
         {
             return parameterName;
         }
@@ -346,7 +346,7 @@ public final class TimeValues
                     }
                     else if(parameter instanceof IStringSerializable)
                     {
-                        out.value("#" + ((IStringSerializable)parameter).func_176610_l());
+                        out.value("#" + ((IStringSerializable)parameter).getString());
                     }
                 }
 

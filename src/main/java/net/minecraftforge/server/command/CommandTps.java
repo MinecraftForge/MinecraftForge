@@ -58,15 +58,15 @@ class CommandTps
 
     private static int sendTime(CommandSource cs, ServerWorld dim) throws CommandSyntaxException
     {
-        long[] times = cs.getServer().getTickTime(dim.func_234923_W_());
+        long[] times = cs.getServer().getTickTime(dim.getDimensionKey());
 
         if (times == null) // Null means the world is unloaded. Not invalid. That's taken car of by DimensionArgument itself.
             times = UNLOADED;
 
-        final Registry<DimensionType> reg = cs.func_241861_q().func_243612_b(Registry.field_239698_ad_);
+        final Registry<DimensionType> reg = cs.func_241861_q().getRegistry(Registry.DIMENSION_TYPE_KEY);
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
-        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.func_234923_W_().func_240901_a_().toString(), reg.getKey(dim.func_230315_m_()), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
+        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.getDimensionKey().getLocation().toString(), reg.getKey(dim.getDimensionType()), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
 
         return 1;
     }
