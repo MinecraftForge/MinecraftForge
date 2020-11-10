@@ -53,7 +53,15 @@
           if (p_241847_1_.func_175659_aa() != Difficulty.HARD && this.field_70146_Z.nextBoolean()) {
              return;
           }
-@@ -448,7 +454,7 @@
+@@ -381,6 +387,7 @@
+          zombievillagerentity.func_223727_a(villagerentity.func_223722_es().func_234058_a_(NBTDynamicOps.field_210820_a).getValue());
+          zombievillagerentity.func_213790_g(villagerentity.func_213706_dY().func_222199_a());
+          zombievillagerentity.func_213789_a(villagerentity.func_213708_dV());
++         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_241847_2_, zombievillagerentity);
+          if (!this.func_174814_R()) {
+             p_241847_1_.func_217378_a((PlayerEntity)null, 1026, this.func_233580_cy_(), 0);
+          }
+@@ -448,7 +455,7 @@
     }
  
     public static boolean func_241399_a_(Random p_241399_0_) {
@@ -62,7 +70,7 @@
     }
  
     protected void func_207304_a(float p_207304_1_) {
-@@ -468,7 +474,7 @@
+@@ -468,7 +475,7 @@
     }
  
     protected void func_230291_eT_() {

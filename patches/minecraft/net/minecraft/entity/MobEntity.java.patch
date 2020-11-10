@@ -50,12 +50,3 @@
           }
        } else {
           return EquipmentSlotType.HEAD;
-@@ -1139,7 +1150,7 @@
-                }
-             }
-          }
--
-+         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, t);
-          this.field_70170_p.func_217376_c(t);
-          if (this.func_184218_aH()) {
-             Entity entity = this.func_184187_bx();
