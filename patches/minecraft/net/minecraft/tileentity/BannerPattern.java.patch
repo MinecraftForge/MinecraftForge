@@ -17,7 +17,7 @@
 +      throw new IllegalStateException("Enum not extended");
 +   }
 +
-+   public static BannerPattern create(String enumName, String fileNameIn, String hashNameIn, boolean p_i231861_5_) {
++   public static BannerPattern create(String enumName, String fileNameIn, String hashNameIn, boolean hasPatternItem) {
 +      throw new IllegalStateException("Enum not extended");
 +   }
 +

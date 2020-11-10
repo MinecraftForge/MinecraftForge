@@ -50,4 +50,8 @@ public class Java9BackportUtils
             emptyAction.run();
         }
     }
+
+    public static <T> Stream<T> toStream(final Optional<T> optional) {
+        return optional.map(Stream::of).orElseGet(Stream::empty);
+    }
 }

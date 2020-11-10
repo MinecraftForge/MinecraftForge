@@ -27,7 +27,8 @@ public enum ConnectionType
 
     private final Function<String, Integer> versionExtractor;
 
-    ConnectionType(Function<String, Integer> versionExtractor) {
+    ConnectionType(Function<String, Integer> versionExtractor)
+    {
         this.versionExtractor = versionExtractor;
     }
 
@@ -36,7 +37,14 @@ public enum ConnectionType
         return vers.startsWith(FMLNetworkConstants.FMLNETMARKER) ? MODDED : VANILLA;
     }
 
-    public int getFMLVersionNumber(final String fmlVersion) {
+    public int getFMLVersionNumber(final String fmlVersion)
+    {
         return versionExtractor.apply(fmlVersion);
     }
+
+    public boolean isVanilla()
+    {
+        return this == VANILLA;
+    }
+
 }

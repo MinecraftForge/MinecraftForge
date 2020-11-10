@@ -293,7 +293,7 @@ public class BiomeDictionary
         addTypes(Biomes.TAIGA, COLD, CONIFEROUS, FOREST, OVERWORLD);
         addTypes(Biomes.SWAMP, WET, SWAMP, OVERWORLD);
         addTypes(Biomes.RIVER, RIVER, OVERWORLD);
-        addTypes(Biomes.field_235254_j_, HOT, DRY, NETHER);
+        addTypes(Biomes.NETHER_WASTES, HOT, DRY, NETHER);
         addTypes(Biomes.THE_END, COLD, DRY, END);
         addTypes(Biomes.FROZEN_OCEAN, COLD, OCEAN, SNOWY, OVERWORLD);
         addTypes(Biomes.FROZEN_RIVER, COLD, RIVER, SNOWY, OVERWORLD);
@@ -360,10 +360,10 @@ public class BiomeDictionary
         addTypes(Biomes.MODIFIED_BADLANDS_PLATEAU, HOT, DRY, SPARSE, MOUNTAIN, RARE, OVERWORLD, PLATEAU, MODIFIED);
         addTypes(Biomes.BAMBOO_JUNGLE, HOT, WET, RARE, JUNGLE, OVERWORLD);
         addTypes(Biomes.BAMBOO_JUNGLE_HILLS, HOT, WET, RARE, JUNGLE, HILLS, OVERWORLD);
-        addTypes(Biomes.field_235252_ay_, HOT, DRY, NETHER);
-        addTypes(Biomes.field_235253_az_, HOT, DRY, NETHER, FOREST);
-        addTypes(Biomes.field_235250_aA_, HOT, DRY, NETHER, FOREST);
-        addTypes(Biomes.field_235251_aB_, HOT, DRY, NETHER);
+        addTypes(Biomes.SOUL_SAND_VALLEY, HOT, DRY, NETHER);
+        addTypes(Biomes.CRIMSON_FOREST, HOT, DRY, NETHER, FOREST);
+        addTypes(Biomes.WARPED_FOREST, HOT, DRY, NETHER, FOREST);
+        addTypes(Biomes.BASALT_DELTAS, HOT, DRY, NETHER);
 
         if (DEBUG)
         {
@@ -372,7 +372,7 @@ public class BiomeDictionary
             Type.byName.forEach((name, type) ->
                 buf.append("    ").append(type.name).append(": ")
                 .append(type.biomes.stream()
-                    .map(RegistryKey::func_240901_a_)
+                    .map(RegistryKey::getLocation)
                     .sorted((a,b) -> a.compareNamespaced(b))
                     .map(Object::toString)
                     .collect(Collectors.joining(", "))
@@ -382,7 +382,7 @@ public class BiomeDictionary
 
             boolean missing = false;
             List<RegistryKey<Biome>> all = StreamSupport.stream(ForgeRegistries.BIOMES.spliterator(), false)
-                .map(b -> RegistryKey.func_240903_a_(Registry.field_239720_u_, b.getRegistryName()))
+                .map(b -> RegistryKey.getOrCreateKey(Registry.BIOME_KEY, b.getRegistryName()))
                 .sorted().collect(Collectors.toList());
 
             for (RegistryKey<Biome> key : all) {
@@ -391,7 +391,7 @@ public class BiomeDictionary
                         buf.append("Missing:\n");
                         missing = true;
                     }
-                    buf.append("    ").append(key.func_240901_a_()).append('\n');
+                    buf.append("    ").append(key.getLocation()).append('\n');
                 }
             }
             LOGGER.debug(buf.toString());

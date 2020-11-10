@@ -27,9 +27,12 @@ import net.minecraftforge.fml.common.Mod;
 
 
 /**
- * A special event used when the {@link Mod#certificateFingerprint()} doesn't match the certificate loaded from the JAR
- * file. You could use this to log a warning that the code that is running might not be yours, for example.
+ * DEPRECATED WITHOUT REPLACEMENT. REMOVE FROM YOUR CODE!!!
+ * IT HAS NEVER BEEN FIRED IN 1.13+ AND WILL NEVER FIRE AGAIN!!!
+ * FIRE.JPG FIRE.JPG FIRE.JPG
+ * DELET THIS
  */
+@Deprecated
 public class FMLFingerprintViolationEvent extends ModLifecycleEvent
 {
 
