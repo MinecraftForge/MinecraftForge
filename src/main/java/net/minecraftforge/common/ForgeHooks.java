@@ -177,7 +177,7 @@ public class ForgeHooks
     {
         //state = state.getActualState(world, pos);
         if (!state.getRequiresTool())
-            return true;
+            return ForgeEventFactory.doPlayerHarvestCheck(player, state, true);
 
         ItemStack stack = player.getHeldItemMainhand();
         ToolType tool = state.getHarvestTool();
