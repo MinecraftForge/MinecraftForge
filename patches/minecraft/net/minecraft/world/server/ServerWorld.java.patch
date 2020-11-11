@@ -214,7 +214,7 @@
        explosion.func_77278_a();
        explosion.func_77279_a(false);
        if (p_230546_12_ == Explosion.Mode.NONE) {
-@@ -1410,4 +1446,14 @@
+@@ -1410,4 +1446,19 @@
           p_241121_0_.func_175656_a(p_241122_1_, Blocks.field_150343_Z.func_176223_P());
        });
     }
@@ -227,5 +227,10 @@
 +
 +   public java.util.stream.Stream<Entity> getEntities() {
 +       return field_217498_x.values().stream();
++   }
++
++   @Override // FORGE: The method in World is hardcoded to 63, but here we can delegate to the chunk generator which mods can override!
++   public int func_181545_F() {
++      return func_72863_F().func_201711_g().func_230356_f_();
 +   }
  }
