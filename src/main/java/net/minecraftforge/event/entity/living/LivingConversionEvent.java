@@ -34,6 +34,10 @@ public class LivingConversionEvent extends LivingEvent
      * LivingConversionEvent.Pre is triggered when an entity is trying
      * to replace itself with another entity
      *
+     * This event may trigger every tick even if it was cancelled last tick
+     * for entities like Zombies and Hoglins. To prevent it, the timer must
+     * be reset manually
+     *
      * This event is {@link Cancelable}
      * If cancelled, the replacement will not occur
      */
