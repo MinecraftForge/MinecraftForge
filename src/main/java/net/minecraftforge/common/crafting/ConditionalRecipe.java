@@ -38,6 +38,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.registries.ObjectHolder;
 
+import javax.annotation.Nullable;
+
 public class ConditionalRecipe
 {
     @ObjectHolder("forge:conditional")
@@ -130,14 +132,36 @@ public class ConditionalRecipe
             return this;
         }
 
+        public Builder generateAdvancement()
+        {
+            return generateAdvancement(null);
+        }
+
+        public Builder generateAdvancement(@Nullable ResourceLocation id)
+        {
+            ConditionalAdvancement.Builder builder = ConditionalAdvancement.builder();
+            for(int i=0;i<recipes.size();i++)
+            {
+                for(ICondition cond : conditions.get(i))
+                    builder = builder.addCondition(cond);
+                builder = builder.addAdvancement(recipes.get(i));
+            }
+            return setAdvancement(id, builder);
+        }
+
+        public Builder setAdvancement(ConditionalAdvancement.Builder advancement)
+        {
+            return setAdvancement(null, advancement);
+        }
+
         public Builder setAdvancement(String namespace, String path, ConditionalAdvancement.Builder advancement)
         {
             return setAdvancement(new ResourceLocation(namespace, path), advancement);
         }
 
-        public Builder setAdvancement(ResourceLocation id, ConditionalAdvancement.Builder advancement)
+        public Builder setAdvancement(@Nullable ResourceLocation id, ConditionalAdvancement.Builder advancement)
         {
-            if (this.advId != null)
+            if (this.adv != null)
                 throw new IllegalStateException("Invalid ConditionalRecipeBuilder, Advancement already set");
             this.advId = id;
             this.adv = advancement;
@@ -156,6 +180,11 @@ public class ConditionalRecipe
             if (recipes.isEmpty())
                 throw new IllegalStateException("Invalid ConditionalRecipe builder, No recipes");
 
+            if (advId == null && adv != null)
+            {
+                advId = new ResourceLocation(id.getNamespace(), "recipes/" + id.getPath());
+            }
+
             consumer.accept(new Finished(id, conditions, recipes, advId, adv));
         }
     }
@@ -168,7 +197,7 @@ public class ConditionalRecipe
         private final ResourceLocation advId;
         private final ConditionalAdvancement.Builder adv;
 
-        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<IFinishedRecipe> recipes, ResourceLocation advId, ConditionalAdvancement.Builder adv)
+        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<IFinishedRecipe> recipes, @Nullable ResourceLocation advId, @Nullable ConditionalAdvancement.Builder adv)
         {
             this.id = id;
             this.conditions = conditions;

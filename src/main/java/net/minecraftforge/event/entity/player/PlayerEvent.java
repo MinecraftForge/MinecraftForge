@@ -25,6 +25,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -508,6 +509,42 @@ public class PlayerEvent extends LivingEvent
         public RegistryKey<World> getTo()
         {
             return this.toDim;
+        }
+    }
+
+    /**
+     * Fired when the game type of a server player is changed to a different value than what it was previously. Eg Creative to Survival, not Survival to Survival.
+     * If the event is cancelled the game mode of the player is not changed and the value of <code>newGameMode</code> is ignored.
+     */
+    @Cancelable
+    public static class PlayerChangeGameModeEvent extends PlayerEvent
+    {
+        private final GameType currentGameMode;
+        private GameType newGameMode;
+
+        public PlayerChangeGameModeEvent(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
+        {
+            super(player);
+            this.currentGameMode = currentGameMode;
+            this.newGameMode = newGameMode;
+        }
+
+        public GameType getCurrentGameMode()
+        {
+            return currentGameMode;
+        }
+
+        public GameType getNewGameMode()
+        {
+            return newGameMode;
+        }
+
+        /**
+         * Sets the game mode the player will be changed to if this event is not cancelled.
+         */
+        public void setNewGameMode(GameType newGameMode)
+        {
+            this.newGameMode = newGameMode;
         }
     }
 }
