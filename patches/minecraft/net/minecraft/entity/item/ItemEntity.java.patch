@@ -27,7 +27,7 @@
        if (this.func_92059_d().func_190926_b()) {
           this.func_70106_y();
        } else {
-@@ -144,7 +150,14 @@
+@@ -144,7 +150,13 @@
              }
           }
  
@@ -38,12 +38,11 @@
 +             if (hook < 0) this.func_70106_y();
 +             else          this.lifespan += hook;
 +         }
-+
 +         if (item.func_190926_b()) {
              this.func_70106_y();
           }
  
-@@ -202,6 +215,8 @@
+@@ -202,6 +214,8 @@
           return false;
        } else if (p_226532_1_.func_77942_o() ^ p_226532_0_.func_77942_o()) {
           return false;
@@ -52,7 +51,7 @@
        } else {
           return !p_226532_1_.func_77942_o() || p_226532_1_.func_77978_p().equals(p_226532_0_.func_77978_p());
        }
-@@ -235,6 +250,7 @@
+@@ -235,6 +249,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -60,7 +59,7 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (!this.func_92059_d().func_190926_b() && this.func_92059_d().func_77973_b() == Items.field_151156_bN && p_70097_1_.func_94541_c()) {
-@@ -256,6 +272,7 @@
+@@ -256,6 +271,7 @@
        p_213281_1_.func_74777_a("Health", (short)this.field_70291_e);
        p_213281_1_.func_74777_a("Age", (short)this.field_70292_b);
        p_213281_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -68,7 +67,7 @@
        if (this.func_200214_m() != null) {
           p_213281_1_.func_186854_a("Thrower", this.func_200214_m());
        }
-@@ -276,6 +293,7 @@
+@@ -276,6 +292,7 @@
        if (p_70037_1_.func_74764_b("PickupDelay")) {
           this.field_145804_b = p_70037_1_.func_74765_d("PickupDelay");
        }
@@ -76,7 +75,7 @@
  
        if (p_70037_1_.func_186855_b("Owner")) {
           this.field_145802_g = p_70037_1_.func_186857_a("Owner");
-@@ -295,10 +313,18 @@
+@@ -295,10 +312,16 @@
  
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
@@ -85,10 +84,8 @@
           Item item = itemstack.func_77973_b();
           int i = itemstack.func_190916_E();
 -         if (this.field_145804_b == 0 && (this.field_145802_g == null || this.field_145802_g.equals(p_70100_1_.func_110124_au())) && p_70100_1_.field_71071_by.func_70441_a(itemstack)) {
-+
 +         int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_70100_1_);
 +         if (hook < 0) return;
-+
 +         ItemStack copy = itemstack.func_77946_l();
 +         if (this.field_145804_b == 0 && (this.field_145802_g == null || lifespan - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_110124_au())) && (hook == 1 || i <= 0 || p_70100_1_.field_71071_by.func_70441_a(itemstack))) {
 +            copy.func_190920_e(copy.func_190916_E() - func_92059_d().func_190916_E());
@@ -96,7 +93,7 @@
              p_70100_1_.func_71001_a(this, i);
              if (itemstack.func_190926_b()) {
                 this.func_70106_y();
-@@ -322,8 +348,8 @@
+@@ -322,8 +345,8 @@
     }
  
     @Nullable
@@ -107,7 +104,7 @@
        if (!this.field_70170_p.field_72995_K && entity instanceof ItemEntity) {
           ((ItemEntity)entity).func_85054_d();
        }
-@@ -396,7 +422,7 @@
+@@ -396,7 +419,7 @@
  
     public void func_174870_v() {
        this.func_174871_r();

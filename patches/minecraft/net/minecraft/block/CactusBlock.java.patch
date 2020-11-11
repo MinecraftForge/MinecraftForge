@@ -25,17 +25,16 @@
              if (j == 15) {
                 p_225542_2_.func_175656_a(blockpos, this.func_176223_P());
                 BlockState blockstate = p_225542_1_.func_206870_a(field_176587_a, Integer.valueOf(0));
-@@ -53,7 +55,8 @@
-             } else {
+@@ -54,6 +56,8 @@
                 p_225542_2_.func_180501_a(p_225542_3_, p_225542_1_.func_206870_a(field_176587_a, Integer.valueOf(j + 1)), 4);
              }
--
+ 
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
 +            }
           }
        }
     }
-@@ -84,7 +87,7 @@
+@@ -84,7 +88,7 @@
        }
  
        BlockState blockstate1 = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
@@ -44,7 +43,7 @@
     }
  
     public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
-@@ -98,4 +101,14 @@
+@@ -98,4 +102,14 @@
     public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
        return false;
     }

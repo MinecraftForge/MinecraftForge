@@ -25,7 +25,7 @@
           Optional<BlockPos> optional1 = Optional.of(new BlockPos(p_70107_1_, p_70107_3_, p_70107_5_));
           if (!optional1.equals(optional)) {
              this.field_70180_af.func_187227_b(field_184701_b, optional1);
-@@ -283,6 +285,12 @@
+@@ -283,6 +285,11 @@
              if (blockpos1.func_177956_o() > 0 && this.field_70170_p.func_175623_d(blockpos1) && this.field_70170_p.func_175723_af().func_177746_a(blockpos1) && this.field_70170_p.func_226665_a__(this, new AxisAlignedBB(blockpos1))) {
                 Direction direction = this.func_234299_g_(blockpos1);
                 if (direction != null) {
@@ -33,7 +33,6 @@
 +                   if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) direction = null;
 +                   blockpos1 = new BlockPos(event.getTargetX(), event.getTargetY(), event.getTargetZ());
 +               }
-+
 +               if (direction != null) {
                    this.field_70180_af.func_187227_b(field_184700_a, direction);
                    this.func_184185_a(SoundEvents.field_187791_eX, 1.0F, 1.0F);

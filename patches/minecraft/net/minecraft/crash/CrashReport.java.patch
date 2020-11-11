@@ -8,24 +8,24 @@
     }
  
     public String func_71501_a() {
-@@ -87,14 +88,8 @@
+@@ -87,14 +88,10 @@
        if (this.field_85060_g != null && this.field_85060_g.length > 0) {
           p_71506_1_.append("-- Head --\n");
           p_71506_1_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
 -         p_71506_1_.append("Stacktrace:\n");
--
+ 
 -         for(StackTraceElement stacktraceelement : this.field_85060_g) {
 -            p_71506_1_.append("\t").append("at ").append((Object)stacktraceelement);
 -            p_71506_1_.append("\n");
 -         }
--
+ 
 -         p_71506_1_.append("\n");
 +         p_71506_1_.append("Stacktrace:");
 +         p_71506_1_.append(net.minecraftforge.fml.CrashReportExtender.generateEnhancedStackTrace(this.field_85060_g));
        }
  
        for(CrashReportCategory crashreportcategory : this.field_71512_c) {
-@@ -121,23 +116,13 @@
+@@ -121,23 +118,14 @@
           throwable.setStackTrace(this.field_71511_b.getStackTrace());
        }
  
@@ -39,7 +39,7 @@
 -         IOUtils.closeQuietly((Writer)stringwriter);
 -         IOUtils.closeQuietly((Writer)printwriter);
 -      }
--
+ 
 -      return s;
 +      return net.minecraftforge.fml.CrashReportExtender.generateEnhancedStackTrace(throwable);
     }

@@ -9,20 +9,19 @@
     private static final Logger field_200731_aJ = LogManager.getLogger();
     public static final EntityType<AreaEffectCloudEntity> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.<AreaEffectCloudEntity>func_220322_a(AreaEffectCloudEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(6.0F, 0.5F).func_233606_a_(10).func_233608_b_(Integer.MAX_VALUE));
     public static final EntityType<ArmorStandEntity> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.<ArmorStandEntity>func_220322_a(ArmorStandEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 1.975F).func_233606_a_(10));
-@@ -270,6 +270,12 @@
+@@ -269,6 +269,11 @@
+    @Nullable
     private ResourceLocation field_220358_bg;
     private final EntitySize field_220359_bi;
- 
 +   private final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier;
 +   private final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier;
 +   private final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier;
 +   private final java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory;
 +   private final net.minecraftforge.common.util.ReverseTagWrapper<EntityType<?>> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.EntityTypeTags::func_219762_a);
-+
+ 
     private static <T extends Entity> EntityType<T> func_200712_a(String p_200712_0_, EntityType.Builder<T> p_200712_1_) {
        return Registry.func_218325_a(Registry.field_212629_r, p_200712_0_, p_200712_1_.func_206830_a(p_200712_0_));
-    }
-@@ -283,6 +289,9 @@
+@@ -283,6 +288,9 @@
     }
  
     public EntityType(EntityType.IFactory<T> p_i231489_1_, EntityClassification p_i231489_2_, boolean p_i231489_3_, boolean p_i231489_4_, boolean p_i231489_5_, boolean p_i231489_6_, ImmutableSet<Block> p_i231489_7_, EntitySize p_i231489_8_, int p_i231489_9_, int p_i231489_10_) {
@@ -32,7 +31,7 @@
        this.field_200732_aK = p_i231489_1_;
        this.field_220355_ba = p_i231489_2_;
        this.field_225438_be = p_i231489_6_;
-@@ -293,6 +302,10 @@
+@@ -293,6 +301,10 @@
        this.field_220359_bi = p_i231489_8_;
        this.field_233594_bl_ = p_i231489_9_;
        this.field_233595_bm_ = p_i231489_10_;
@@ -43,7 +42,7 @@
     }
  
     @Nullable
-@@ -304,6 +317,7 @@
+@@ -304,6 +316,7 @@
     public T func_220342_a(ServerWorld p_220342_1_, @Nullable CompoundNBT p_220342_2_, @Nullable ITextComponent p_220342_3_, @Nullable PlayerEntity p_220342_4_, BlockPos p_220342_5_, SpawnReason p_220342_6_, boolean p_220342_7_, boolean p_220342_8_) {
        T t = this.func_220349_b(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_, p_220342_7_, p_220342_8_);
        if (t != null) {
@@ -51,7 +50,7 @@
           p_220342_1_.func_242417_l(t);
        }
  
-@@ -504,14 +518,23 @@
+@@ -504,14 +517,23 @@
     }
  
     public int func_233602_m_() {
@@ -75,7 +74,7 @@
        return this != field_200729_aH && this != field_200770_J && this != field_200760_az && this != field_200791_e && this != field_200766_F && this != field_200768_H && this != field_200782_V && this != field_200801_o && this != field_200805_s;
     }
  
-@@ -519,6 +542,19 @@
+@@ -519,6 +541,19 @@
        return p_220341_1_.func_230235_a_(this);
     }
  
@@ -95,19 +94,18 @@
     public static class Builder<T extends Entity> {
        private final EntityType.IFactory<T> field_200709_a;
        private final EntityClassification field_220324_b;
-@@ -531,6 +567,11 @@
+@@ -530,6 +565,10 @@
+       private int field_233604_h_ = 5;
        private int field_233605_i_ = 3;
        private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
- 
 +      private java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier = EntityType::defaultVelocitySupplier;
 +      private java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier = EntityType::defaultTrackingRangeSupplier;
 +      private java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier = EntityType::defaultUpdateIntervalSupplier;
 +      private java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory;
-+
+ 
        private Builder(EntityType.IFactory<T> p_i50479_1_, EntityClassification p_i50479_2_) {
           this.field_200709_a = p_i50479_1_;
-          this.field_220324_b = p_i50479_2_;
-@@ -587,12 +628,36 @@
+@@ -587,12 +626,36 @@
           return this;
        }
  

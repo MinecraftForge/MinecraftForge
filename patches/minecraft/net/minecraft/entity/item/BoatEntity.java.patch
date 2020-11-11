@@ -9,20 +9,3 @@
                          ++k1;
                       }
                    }
-@@ -817,6 +817,16 @@
-       return this.field_184469_aF == BoatEntity.Status.UNDER_WATER || this.field_184469_aF == BoatEntity.Status.UNDER_FLOWING_WATER;
-    }
- 
-+   // Forge: Fix MC-119811 by instantly completing lerp on board
-+   @Override
-+   protected void func_184200_o(Entity passenger) {
-+      super.func_184200_o(passenger);
-+      if (this.func_184186_bw() && this.field_184476_at > 0) {
-+         this.field_184476_at = 0;
-+         this.func_70080_a(this.field_70281_h, this.field_184477_av, this.field_184478_aw, (float)this.field_70273_g, (float)this.field_184479_ay);
-+      }
-+   }
-+
-    public static enum Status {
-       IN_WATER,
-       UNDER_WATER,

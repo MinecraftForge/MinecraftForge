@@ -85,25 +85,23 @@
     public static class Players {
        private final int field_151336_a;
        private final int field_151334_b;
-@@ -143,6 +190,10 @@
+@@ -143,6 +190,9 @@
              serverstatusresponse.func_151320_a(JSONUtils.func_151200_h(jsonobject, "favicon"));
           }
  
 +         if (jsonobject.has("forgeData")) {
 +            serverstatusresponse.setForgeData(net.minecraftforge.fml.network.FMLStatusPing.Serializer.deserialize(JSONUtils.func_152754_s(jsonobject, "forgeData"), p_deserialize_3_));
 +         }
-+
           return serverstatusresponse;
        }
  
-@@ -164,6 +215,10 @@
+@@ -164,6 +214,9 @@
              jsonobject.addProperty("favicon", p_serialize_1_.func_151316_d());
           }
  
 +         if(p_serialize_1_.getForgeData() != null){
 +            jsonobject.add("forgeData", net.minecraftforge.fml.network.FMLStatusPing.Serializer.serialize(p_serialize_1_.getForgeData(), p_serialize_3_));
 +         }
-+
           return jsonobject;
        }
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/LivingRenderer.java
 +++ b/net/minecraft/client/renderer/entity/LivingRenderer.java
-@@ -48,14 +48,17 @@
+@@ -48,14 +48,16 @@
     }
  
     public void func_225623_a_(T p_225623_1_, float p_225623_2_, float p_225623_3_, MatrixStack p_225623_4_, IRenderTypeBuffer p_225623_5_, int p_225623_6_) {
@@ -8,7 +8,6 @@
        p_225623_4_.func_227860_a_();
        this.field_77045_g.field_217112_c = this.func_77040_d(p_225623_1_, p_225623_3_);
 -      this.field_77045_g.field_217113_d = p_225623_1_.func_184218_aH();
-+
 +      boolean shouldSit = p_225623_1_.func_184218_aH() && (p_225623_1_.func_184187_bx() != null && p_225623_1_.func_184187_bx().shouldRiderSit());
 +      this.field_77045_g.field_217113_d = shouldSit;
        this.field_77045_g.field_217114_e = p_225623_1_.func_70631_g_();
@@ -20,7 +19,7 @@
           LivingEntity livingentity = (LivingEntity)p_225623_1_.func_184187_bx();
           f = MathHelper.func_219805_h(p_225623_3_, livingentity.field_70760_ar, livingentity.field_70761_aq);
           f2 = f1 - f;
-@@ -92,7 +95,7 @@
+@@ -92,7 +94,7 @@
        p_225623_4_.func_227861_a_(0.0D, (double)-1.501F, 0.0D);
        float f8 = 0.0F;
        float f5 = 0.0F;
@@ -29,7 +28,7 @@
           f8 = MathHelper.func_219799_g(p_225623_3_, p_225623_1_.field_184618_aE, p_225623_1_.field_70721_aZ);
           f5 = p_225623_1_.field_184619_aG - p_225623_1_.field_70721_aZ * (1.0F - p_225623_3_);
           if (p_225623_1_.func_70631_g_()) {
-@@ -125,6 +128,7 @@
+@@ -125,6 +127,7 @@
  
        p_225623_4_.func_227865_b_();
        super.func_225623_a_(p_225623_1_, p_225623_2_, p_225623_3_, p_225623_4_, p_225623_5_, p_225623_6_);

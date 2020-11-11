@@ -17,16 +17,15 @@
        this.field_76645_j = new ClassInheritanceMultiMap[16];
        this.field_76637_e = p_i225781_1_;
        this.field_212816_F = p_i225781_2_;
-@@ -119,7 +120,7 @@
-             field_150817_t.warn("Could not set level chunk sections, array length is {} instead of {}", p_i225781_9_.length, this.field_76652_q.length);
+@@ -120,6 +121,7 @@
           }
        }
--
+ 
 +      this.gatherCapabilities();
     }
  
     public Chunk(World p_i49947_1_, ChunkPrimer p_i49947_2_) {
-@@ -264,14 +265,14 @@
+@@ -264,14 +266,14 @@
  
           if (!this.field_76637_e.field_72995_K) {
              blockstate.func_196947_b(this.field_76637_e, p_177436_1_, p_177436_2_, p_177436_3_);
@@ -43,7 +42,7 @@
                 TileEntity tileentity = this.func_177424_a(p_177436_1_, Chunk.CreateEntityType.CHECK);
                 if (tileentity != null) {
                    tileentity.func_145836_u();
-@@ -282,10 +283,10 @@
+@@ -282,10 +284,10 @@
                 p_177436_2_.func_215705_a(this.field_76637_e, p_177436_1_, blockstate, p_177436_3_);
              }
  
@@ -56,7 +55,7 @@
                    this.field_76637_e.func_175690_a(p_177436_1_, tileentity1);
                 } else {
                    tileentity1.func_145836_u();
-@@ -321,11 +322,13 @@
+@@ -321,11 +323,13 @@
           k = this.field_76645_j.length - 1;
        }
  
@@ -70,7 +69,7 @@
     }
  
     public void func_201607_a(Heightmap.Type p_201607_1_, long[] p_201607_2_) {
-@@ -346,6 +349,7 @@
+@@ -346,6 +350,7 @@
        }
  
        this.field_76645_j[p_76608_2_].remove(p_76608_1_);
@@ -78,7 +77,7 @@
     }
  
     public int func_201576_a(Heightmap.Type p_201576_1_, int p_201576_2_, int p_201576_3_) {
-@@ -356,7 +360,7 @@
+@@ -356,7 +361,7 @@
     private TileEntity func_177422_i(BlockPos p_177422_1_) {
        BlockState blockstate = this.func_180495_p(p_177422_1_);
        Block block = blockstate.func_177230_c();
@@ -87,7 +86,7 @@
     }
  
     @Nullable
-@@ -367,6 +371,10 @@
+@@ -367,6 +372,10 @@
     @Nullable
     public TileEntity func_177424_a(BlockPos p_177424_1_, Chunk.CreateEntityType p_177424_2_) {
        TileEntity tileentity = this.field_150816_i.get(p_177424_1_);
@@ -98,7 +97,7 @@
        if (tileentity == null) {
           CompoundNBT compoundnbt = this.field_201618_i.remove(p_177424_1_);
           if (compoundnbt != null) {
-@@ -382,9 +390,6 @@
+@@ -382,9 +391,6 @@
              tileentity = this.func_177422_i(p_177424_1_);
              this.field_76637_e.func_175690_a(p_177424_1_, tileentity);
           }
@@ -108,7 +107,7 @@
        }
  
        return tileentity;
-@@ -399,7 +404,7 @@
+@@ -399,7 +405,7 @@
     }
  
     public void func_177426_a(BlockPos p_177426_1_, TileEntity p_177426_2_) {
@@ -117,7 +116,7 @@
           p_177426_2_.func_226984_a_(this.field_76637_e, p_177426_1_);
           p_177426_2_.func_145829_t();
           TileEntity tileentity = this.field_150816_i.put(p_177426_1_.func_185334_h(), p_177426_2_);
-@@ -418,9 +423,14 @@
+@@ -418,9 +424,14 @@
     public CompoundNBT func_223134_j(BlockPos p_223134_1_) {
        TileEntity tileentity = this.func_175625_s(p_223134_1_);
        if (tileentity != null && !tileentity.func_145837_r()) {
@@ -132,7 +131,7 @@
        } else {
           CompoundNBT compoundnbt = this.field_201618_i.get(p_223134_1_);
           if (compoundnbt != null) {
-@@ -455,8 +465,8 @@
+@@ -455,8 +466,8 @@
     }
  
     public void func_177414_a(@Nullable Entity p_177414_1_, AxisAlignedBB p_177414_2_, List<Entity> p_177414_3_, @Nullable Predicate<? super Entity> p_177414_4_) {
@@ -143,7 +142,7 @@
        i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
        j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -486,8 +496,8 @@
+@@ -486,8 +497,8 @@
     }
  
     public <T extends Entity> void func_217313_a(@Nullable EntityType<?> p_217313_1_, AxisAlignedBB p_217313_2_, List<? super T> p_217313_3_, Predicate<? super T> p_217313_4_) {
@@ -154,7 +153,7 @@
        i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
        j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -502,8 +512,8 @@
+@@ -502,8 +513,8 @@
     }
  
     public <T extends Entity> void func_177430_a(Class<? extends T> p_177430_1_, AxisAlignedBB p_177430_2_, List<T> p_177430_3_, @Nullable Predicate<? super T> p_177430_4_) {
@@ -165,7 +164,7 @@
        i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
        j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
-@@ -535,6 +545,11 @@
+@@ -535,6 +546,10 @@
        };
        Sets.newHashSet(this.field_150816_i.keySet()).stream().filter(predicate).forEach(this.field_76637_e::func_175713_t);
  
@@ -173,7 +172,6 @@
 +         tileEntity.func_145836_u();
 +         tileEntity.func_195044_w();
 +      }
-+
        for(int i = 0; i < this.field_76652_q.length; ++i) {
           ChunkSection chunksection = this.field_76652_q[i];
           if ((p_227073_4_ & 1 << i) == 0) {

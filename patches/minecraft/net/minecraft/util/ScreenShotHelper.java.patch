@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/ScreenShotHelper.java
 +++ b/net/minecraft/util/ScreenShotHelper.java
-@@ -50,13 +50,23 @@
+@@ -50,13 +50,22 @@
           file2 = new File(file1, p_228051_1_);
        }
  
@@ -10,7 +10,6 @@
 +         return;
 +      }
 +      final File target = event.getScreenshotFile();
-+
        Util.func_240992_g_().execute(() -> {
           try {
 -            nativeimage.func_209271_a(file2);

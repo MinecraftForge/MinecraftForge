@@ -18,16 +18,15 @@
                 flag = true;
              }
  
-@@ -97,7 +97,7 @@
-             } else {
+@@ -98,6 +98,7 @@
                 this.func_185605_c(p_225542_2_, p_225542_3_);
              }
--
+ 
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_225542_2_, p_225542_3_, p_225542_1_);
           }
        }
     }
-@@ -133,7 +133,7 @@
+@@ -133,7 +134,7 @@
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
        BlockState blockstate = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
        if (blockstate.func_177230_c() != this.field_196405_b && !blockstate.func_203425_a(Blocks.field_150377_bs)) {
@@ -36,7 +35,7 @@
              return false;
           } else {
              boolean flag = false;
-@@ -146,7 +146,7 @@
+@@ -146,7 +147,7 @@
                    }
  
                    flag = true;

@@ -22,16 +22,17 @@
              throw new StitcherException(stitcher$holder.field_229213_a_, list.stream().map((p_229212_0_) -> {
                 return p_229212_0_.field_229213_a_;
              }).collect(ImmutableList.toImmutableList()));
-@@ -103,7 +111,7 @@
+@@ -103,7 +111,8 @@
           boolean flag4 = flag2 && j != l;
           boolean flag;
           if (flag3 ^ flag4) {
 -            flag = flag3;
-+            flag = !flag3 && flag1; // Forge: Fix stitcher not expanding entire height before growing width, and (potentially) growing larger then the max size.
++            // Forge: Fix stitcher not expanding entire height before growing width, and (potentially) growing larger then the max size.
++            flag = !flag3 && flag1;
           } else {
              flag = flag1 && i <= j;
           }
-@@ -140,7 +148,7 @@
+@@ -140,7 +149,7 @@
        }
  
        public String toString() {

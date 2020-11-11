@@ -23,7 +23,7 @@
           }
  
           this.field_186022_c.func_186041_a(this.field_205526_g);
-@@ -138,12 +143,16 @@
+@@ -138,12 +143,15 @@
        this.func_210459_b();
        int i = p_186010_1_.readByte();
        if (this.field_186024_e != i) {
@@ -34,7 +34,6 @@
        this.field_186022_c.func_186038_a(p_186010_1_);
        p_186010_1_.func_186873_b(this.field_186021_b.func_188143_a());
        this.func_210460_c();
-+
 +      int regSize = MathHelper.func_151241_e(this.field_205523_d.func_186804_a());
 +      if (this.field_186022_c == field_205521_b && this.field_186024_e != regSize) // Resize bits to fit registry.
 +         this.onResize(regSize, field_205526_g);

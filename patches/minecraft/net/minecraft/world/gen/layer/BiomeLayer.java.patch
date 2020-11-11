@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/layer/BiomeLayer.java
 +++ b/net/minecraft/world/gen/layer/BiomeLayer.java
-@@ -10,12 +10,13 @@
+@@ -10,12 +10,14 @@
     private static final int[] field_202746_t = new int[]{4, 3, 5, 1};
     private static final int[] field_202747_u = new int[]{12, 12, 12, 30};
     private int[] field_151623_c = field_202744_r;
@@ -11,14 +11,14 @@
 -      if (p_i232147_1_) {
 -         this.field_151623_c = field_202743_q;
 -      }
--
+ 
 +      this.legacyDesert = p_i232147_1_;
 +      for (net.minecraftforge.common.BiomeManager.BiomeType type : net.minecraftforge.common.BiomeManager.BiomeType.values())
 +         biomes[type.ordinal()] = new java.util.ArrayList<>(net.minecraftforge.common.BiomeManager.getBiomes(type));
     }
  
     public int func_202726_a(INoiseRandom p_202726_1_, int p_202726_2_) {
-@@ -28,21 +29,21 @@
+@@ -28,21 +30,21 @@
                 return p_202726_1_.func_202696_a(3) == 0 ? 39 : 38;
              }
  
@@ -44,7 +44,7 @@
           default:
              return 14;
           }
-@@ -50,4 +51,17 @@
+@@ -50,4 +52,17 @@
           return p_202726_2_;
        }
     }

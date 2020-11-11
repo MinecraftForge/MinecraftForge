@@ -5,7 +5,7 @@
  
     public static <T> DataParameter<T> func_187226_a(Class<? extends Entity> p_187226_0_, IDataSerializer<T> p_187226_1_) {
 -      if (field_190303_a.isDebugEnabled()) {
-+      if (true || field_190303_a.isDebugEnabled()) { // Forge: This is very useful for mods that register keys on classes that are not their own
++      if (true) { // Forge: This is very useful for mods that register keys on classes that are not their own
           try {
              Class<?> oclass = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName());
              if (!oclass.equals(p_187226_0_)) {

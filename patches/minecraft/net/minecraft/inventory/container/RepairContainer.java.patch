@@ -1,15 +1,14 @@
 --- a/net/minecraft/inventory/container/RepairContainer.java
 +++ b/net/minecraft/inventory/container/RepairContainer.java
-@@ -48,6 +48,8 @@
+@@ -48,6 +48,7 @@
           p_230301_1_.func_82242_a(-this.field_82854_e.func_221495_b());
        }
  
 +      float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_230301_1_, p_230301_2_, RepairContainer.this.field_234643_d_.func_70301_a(0), RepairContainer.this.field_234643_d_.func_70301_a(1));
-+
        this.field_234643_d_.func_70299_a(0, ItemStack.field_190927_a);
        if (this.field_82856_l > 0) {
           ItemStack itemstack = this.field_234643_d_.func_70301_a(1);
-@@ -64,7 +66,7 @@
+@@ -64,7 +65,7 @@
        this.field_82854_e.func_221494_a(0);
        this.field_234644_e_.func_221486_a((p_234633_1_, p_234633_2_) -> {
           BlockState blockstate = p_234633_1_.func_180495_p(p_234633_2_);
@@ -18,12 +17,11 @@
              BlockState blockstate1 = AnvilBlock.func_196433_f(blockstate);
              if (blockstate1 == null) {
                 p_234633_1_.func_217377_a(p_234633_2_, false);
-@@ -96,8 +98,11 @@
+@@ -96,8 +97,10 @@
           Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
           j = j + itemstack.func_82838_A() + (itemstack2.func_190926_b() ? 0 : itemstack2.func_82838_A());
           this.field_82856_l = 0;
 +         boolean flag = false;
-+
           if (!itemstack2.func_190926_b()) {
 -            boolean flag = itemstack2.func_77973_b() == Items.field_151134_bR && !EnchantedBookItem.func_92110_g(itemstack2).isEmpty();
 +            if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_234642_c_, field_82857_m, j, this.field_234645_f_)) return;
@@ -31,7 +29,7 @@
              if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2)) {
                 int l2 = Math.min(itemstack1.func_77952_i(), itemstack1.func_77958_k() / 4);
                 if (l2 <= 0) {
-@@ -214,6 +219,7 @@
+@@ -214,6 +217,7 @@
              i += k;
              itemstack1.func_200302_a(new StringTextComponent(this.field_82857_m));
           }
@@ -39,7 +37,7 @@
  
           this.field_82854_e.func_221494_a(j + i);
           if (i <= 0) {
-@@ -269,4 +275,8 @@
+@@ -269,4 +273,8 @@
     public int func_216976_f() {
        return this.field_82854_e.func_221495_b();
     }

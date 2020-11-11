@@ -36,18 +36,15 @@
     }
  
     public void func_147279_a(SAnimateHandPacket p_147279_1_) {
-@@ -1004,8 +1008,10 @@
-          clientplayerentity1.func_233645_dx_().func_233784_a_(clientplayerentity.func_233645_dx_());
-       }
+@@ -1006,6 +1010,7 @@
  
-+      clientplayerentity1.updateSyncFields(clientplayerentity); // Forge: fix MC-10657
        clientplayerentity1.func_70065_x();
        clientplayerentity1.func_175158_f(s);
 +      net.minecraftforge.fml.client.ClientHooks.firePlayerRespawn(this.field_147299_f.field_71442_b, clientplayerentity, clientplayerentity1, clientplayerentity1.field_71174_a.func_147298_b());
        this.field_147300_g.func_217408_a(i, clientplayerentity1);
        clientplayerentity1.field_70177_z = -180.0F;
        clientplayerentity1.field_71158_b = new MovementInputFromOptions(this.field_147299_f.field_71474_y);
-@@ -1131,6 +1137,12 @@
+@@ -1131,6 +1136,12 @@
  
        if (flag && this.field_147299_f.field_71462_r instanceof CommandBlockScreen) {
           ((CommandBlockScreen)this.field_147299_f.field_71462_r).func_184075_a();
@@ -60,7 +57,7 @@
        }
  
     }
-@@ -1299,6 +1311,7 @@
+@@ -1299,6 +1310,7 @@
        clientrecipebook.func_243196_a(this.field_199528_o.func_199510_b());
        clientrecipebook.func_199642_d().forEach(imutablesearchtree::func_217872_a);
        imutablesearchtree.func_194040_a();
@@ -68,7 +65,7 @@
     }
  
     public void func_200232_a(SPlayerLookPacket p_200232_1_) {
-@@ -1376,7 +1389,7 @@
+@@ -1376,7 +1388,7 @@
        PacketThreadUtil.func_218797_a(p_147260_1_, this, this.field_147299_f);
        Entity entity = this.field_147300_g.func_73045_a(p_147260_1_.func_149426_d());
        if (entity instanceof LivingEntity) {
@@ -77,7 +74,7 @@
           if (effect != null) {
              EffectInstance effectinstance = new EffectInstance(effect, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              effectinstance.func_100012_b(p_147260_1_.func_149429_c());
-@@ -1388,11 +1401,14 @@
+@@ -1388,11 +1400,14 @@
     public void func_199723_a(STagsListPacket p_199723_1_) {
        PacketThreadUtil.func_218797_a(p_199723_1_, this, this.field_147299_f);
        ITagCollectionSupplier itagcollectionsupplier = p_199723_1_.func_199858_a();
@@ -93,7 +90,7 @@
           this.field_199725_m = itagcollectionsupplier;
           if (!this.field_147302_e.func_150731_c()) {
              itagcollectionsupplier.func_242212_e();
-@@ -1885,10 +1901,12 @@
+@@ -1885,10 +1900,12 @@
              int l5 = packetbuffer.readInt();
              this.field_147299_f.field_184132_p.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);
           } else {

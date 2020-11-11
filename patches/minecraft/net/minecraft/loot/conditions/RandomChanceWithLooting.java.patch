@@ -1,6 +1,6 @@
 --- a/net/minecraft/loot/conditions/RandomChanceWithLooting.java
 +++ b/net/minecraft/loot/conditions/RandomChanceWithLooting.java
-@@ -33,12 +33,7 @@
+@@ -33,12 +33,8 @@
     }
  
     public boolean test(LootContext p_test_1_) {
@@ -9,7 +9,7 @@
 -      if (entity instanceof LivingEntity) {
 -         i = EnchantmentHelper.func_185283_h((LivingEntity)entity);
 -      }
--
+ 
 +      int i = p_test_1_.getLootingModifier();
        return p_test_1_.func_216032_b().nextFloat() < this.field_186627_a + (float)i * this.field_186628_b;
     }

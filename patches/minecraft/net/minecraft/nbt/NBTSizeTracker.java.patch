@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/NBTSizeTracker.java
 +++ b/net/minecraft/nbt/NBTSizeTracker.java
-@@ -18,4 +18,34 @@
+@@ -18,4 +18,31 @@
           throw new RuntimeException("Tried to read NBT tag that was too big; tried to allocate: " + this.field_152453_c + "bytes where max allowed: " + this.field_152452_b);
        }
     }
@@ -20,10 +20,8 @@
 +      func_152450_a(16); //Header length
 +      if (data == null)
 +         return data;
-+
 +      int len = data.length();
 +      int utflen = 0;
-+
 +      for (int i = 0; i < len; i++) {
 +          int c = data.charAt(i);
 +          if ((c >= 0x0001) && (c <= 0x007F)) utflen += 1;
@@ -31,7 +29,6 @@
 +          else                                utflen += 2;
 +      }
 +      func_152450_a(8 * utflen);
-+
 +      return data;
 +   }
  }

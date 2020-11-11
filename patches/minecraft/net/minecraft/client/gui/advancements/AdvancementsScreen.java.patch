@@ -8,11 +8,10 @@
  
     public AdvancementsScreen(ClientAdvancementManager p_i47383_1_) {
        super(NarratorChatListener.field_216868_a);
-@@ -44,7 +45,13 @@
-       } else {
+@@ -45,6 +46,13 @@
           this.field_191946_h.func_194230_a(this.field_191940_s == null ? null : this.field_191940_s.func_193935_c(), true);
        }
--
+ 
 +      if (this.field_191947_i.size() > AdvancementTabType.MAX_TABS) {
 +          int guiLeft = (this.field_230708_k_ - 252) / 2;
 +          int guiTop = (this.field_230709_l_ - 140) / 2;
@@ -23,7 +22,7 @@
     }
  
     public void func_231164_f_() {
-@@ -62,7 +69,7 @@
+@@ -62,7 +70,7 @@
           int j = (this.field_230709_l_ - 140) / 2;
  
           for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {
@@ -32,7 +31,7 @@
                 this.field_191946_h.func_194230_a(advancementtabgui.func_193935_c(), true);
                 break;
              }
-@@ -86,6 +93,12 @@
+@@ -86,6 +94,12 @@
        int i = (this.field_230708_k_ - 252) / 2;
        int j = (this.field_230709_l_ - 140) / 2;
        this.func_230446_a_(p_230430_1_);
@@ -45,7 +44,7 @@
        this.func_238696_c_(p_230430_1_, p_230430_2_, p_230430_3_, i, j);
        this.func_238695_a_(p_230430_1_, i, j);
        this.func_238697_d_(p_230430_1_, p_230430_2_, p_230430_3_, i, j);
-@@ -132,6 +145,7 @@
+@@ -132,6 +146,7 @@
           this.field_230706_i_.func_110434_K().func_110577_a(field_191945_g);
  
           for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {
@@ -53,7 +52,7 @@
              advancementtabgui.func_238683_a_(p_238695_1_, p_238695_2_, p_238695_3_, advancementtabgui == this.field_191940_s);
           }
  
-@@ -139,6 +153,7 @@
+@@ -139,6 +154,7 @@
           RenderSystem.defaultBlendFunc();
  
           for(AdvancementTabGui advancementtabgui1 : this.field_191947_i.values()) {
@@ -61,12 +60,11 @@
              advancementtabgui1.func_191796_a(p_238695_2_, p_238695_3_, this.field_230707_j_);
           }
  
-@@ -161,7 +176,7 @@
+@@ -161,6 +177,7 @@
  
        if (this.field_191947_i.size() > 1) {
           for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {
--            if (advancementtabgui.func_195627_a(p_238697_4_, p_238697_5_, (double)p_238697_2_, (double)p_238697_3_)) {
-+            if (advancementtabgui.getPage() == tabPage && advancementtabgui.func_195627_a(p_238697_4_, p_238697_5_, (double)p_238697_2_, (double)p_238697_3_)) {
++            if (advancementtabgui.getPage() == tabPage)
+             if (advancementtabgui.func_195627_a(p_238697_4_, p_238697_5_, (double)p_238697_2_, (double)p_238697_3_)) {
                 this.func_238652_a_(p_238697_1_, advancementtabgui.func_238685_d_(), p_238697_2_, p_238697_3_);
              }
-          }

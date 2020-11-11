@@ -32,16 +32,15 @@
        }
  
        @Nullable
-@@ -335,6 +342,8 @@
+@@ -335,6 +342,7 @@
           CompoundNBT compoundnbt1 = new CompoundNBT();
           compoundnbt1.func_218657_a("Data", compoundnbt);
  
 +         net.minecraftforge.fml.WorldPersistenceHooks.handleWorldDataSave(this, p_237288_2_, compoundnbt1);
-+
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              CompressedStreamTools.func_244264_a(compoundnbt1, file2);
-@@ -352,6 +361,10 @@
+@@ -352,6 +360,10 @@
           return this.field_237279_c_.resolve("icon.png").toFile();
        }
  

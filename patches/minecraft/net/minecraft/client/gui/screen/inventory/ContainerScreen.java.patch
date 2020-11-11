@@ -105,7 +105,7 @@
                 this.func_184098_a(slot, k, p_231048_5_, ClickType.CLONE);
              } else {
                 boolean flag1 = k != -999 && (InputMappings.func_216506_a(Minecraft.func_71410_x().func_228018_at_().func_198092_i(), 340) || InputMappings.func_216506_a(Minecraft.func_71410_x().func_228018_at_().func_198092_i(), 344));
-@@ -530,34 +540,39 @@
+@@ -530,17 +540,18 @@
     }
  
     public boolean func_231046_a_(int p_231046_1_, int p_231046_2_, int p_231046_3_) {
@@ -117,26 +117,17 @@
           this.func_231175_as__();
           return true;
        } else {
--         this.func_195363_d(p_231046_1_, p_231046_2_);
-+         boolean handled = this.func_195363_d(p_231046_1_, p_231046_2_);// Forge MC-146650: Needs to return true when the key is handled
+          this.func_195363_d(p_231046_1_, p_231046_2_);
           if (this.field_147006_u != null && this.field_147006_u.func_75216_d()) {
 -            if (this.field_230706_i_.field_71474_y.field_74322_I.func_197976_a(p_231046_1_, p_231046_2_)) {
 +            if (this.field_230706_i_.field_71474_y.field_74322_I.isActiveAndMatches(mouseKey)) {
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, 0, ClickType.CLONE);
 -            } else if (this.field_230706_i_.field_71474_y.field_74316_C.func_197976_a(p_231046_1_, p_231046_2_)) {
-+               handled = true;
 +            } else if (this.field_230706_i_.field_71474_y.field_74316_C.isActiveAndMatches(mouseKey)) {
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, func_231172_r_() ? 1 : 0, ClickType.THROW);
-+               handled = true;
              }
-+         } else if (this.field_230706_i_.field_71474_y.field_74316_C.isActiveAndMatches(mouseKey)) {
-+             handled = true; // Forge MC-146650: Emulate MC bug, so we don't drop from hotbar when pressing drop without hovering over a item.
           }
- 
--         return true;
-+         return handled;
-       }
-    }
+@@ -551,13 +562,13 @@
  
     protected boolean func_195363_d(int p_195363_1_, int p_195363_2_) {
        if (this.field_230706_i_.field_71439_g.field_71071_by.func_70445_o().func_190926_b() && this.field_147006_u != null) {
@@ -152,7 +143,7 @@
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                 return true;
              }
-@@ -589,6 +604,18 @@
+@@ -589,6 +600,18 @@
        return this.field_147002_h;
     }
  

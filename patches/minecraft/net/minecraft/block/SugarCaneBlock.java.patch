@@ -28,8 +28,8 @@
     }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-+      BlockState soil = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
-+      if (soil.canSustainPlant(p_196260_2_, p_196260_3_.func_177977_b(), Direction.UP, this)) return true;
++      if (net.minecraftforge.common.ForgeHooks.canSustainPlant(p_196260_2_, p_196260_3_.func_177977_b(), Direction.UP, this))
++         return true;
        BlockState blockstate = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
        if (blockstate.func_177230_c() == this) {
           return true;

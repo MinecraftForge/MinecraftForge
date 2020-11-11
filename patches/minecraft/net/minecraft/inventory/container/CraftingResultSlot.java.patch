@@ -8,13 +8,13 @@
        }
  
        if (this.field_75224_c instanceof IRecipeHolder) {
-@@ -54,8 +55,9 @@
+@@ -54,8 +55,10 @@
  
     public ItemStack func_190901_a(PlayerEntity p_190901_1_, ItemStack p_190901_2_) {
        this.func_75208_c(p_190901_2_);
 +      net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_190901_1_);
        NonNullList<ItemStack> nonnulllist = p_190901_1_.field_70170_p.func_199532_z().func_215369_c(IRecipeType.field_222149_a, this.field_75239_a, p_190901_1_.field_70170_p);
--
+ 
 +      net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
        for(int i = 0; i < nonnulllist.size(); ++i) {
           ItemStack itemstack = this.field_75239_a.func_70301_a(i);

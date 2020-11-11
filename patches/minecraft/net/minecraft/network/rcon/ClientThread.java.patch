@@ -1,11 +1,11 @@
 --- a/net/minecraft/network/rcon/ClientThread.java
 +++ b/net/minecraft/network/rcon/ClientThread.java
-@@ -116,13 +116,14 @@
+@@ -116,13 +116,15 @@
     }
  
     private void func_72655_a(int p_72655_1_, String p_72655_2_) throws IOException {
 -      int i = p_72655_2_.length();
--
+ 
 +      byte[] whole = p_72655_2_.getBytes(StandardCharsets.UTF_8);
 +      int i = whole.length;
 +      int start = 0;

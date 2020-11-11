@@ -26,16 +26,15 @@
                    }, "mouseReleased event handler", this.field_198036_a.field_71462_r.getClass().getCanonicalName());
                 }
              }
-@@ -110,7 +115,7 @@
-                }
+@@ -111,6 +116,7 @@
              }
           }
--
+ 
 +         net.minecraftforge.client.ForgeHooksClient.fireMouseInput(p_198023_3_, p_198023_4_, p_198023_5_);
        }
     }
  
-@@ -121,7 +126,9 @@
+@@ -121,7 +127,9 @@
              if (this.field_198036_a.field_71462_r != null) {
                 double d1 = this.field_198040_e * (double)this.field_198036_a.func_228018_at_().func_198107_o() / (double)this.field_198036_a.func_228018_at_().func_198105_m();
                 double d2 = this.field_198041_f * (double)this.field_198036_a.func_228018_at_().func_198087_p() / (double)this.field_198036_a.func_228018_at_().func_198083_n();
@@ -46,7 +45,7 @@
              } else if (this.field_198036_a.field_71439_g != null) {
                 if (this.field_200542_o != 0.0D && Math.signum(d0) != Math.signum(this.field_200542_o)) {
                    this.field_200542_o = 0.0D;
-@@ -134,6 +141,7 @@
+@@ -134,6 +142,7 @@
                 }
  
                 this.field_200542_o -= (double)f1;
@@ -54,7 +53,7 @@
                 if (this.field_198036_a.field_71439_g.func_175149_v()) {
                    if (this.field_198036_a.field_71456_v.func_175187_g().func_175262_a()) {
                       this.field_198036_a.field_71456_v.func_175187_g().func_195621_a((double)(-f1));
-@@ -202,7 +210,9 @@
+@@ -202,7 +211,9 @@
                 double d2 = (p_198022_3_ - this.field_198040_e) * (double)this.field_198036_a.func_228018_at_().func_198107_o() / (double)this.field_198036_a.func_228018_at_().func_198105_m();
                 double d3 = (p_198022_5_ - this.field_198041_f) * (double)this.field_198036_a.func_228018_at_().func_198087_p() / (double)this.field_198036_a.func_228018_at_().func_198083_n();
                 Screen.func_231153_a_(() -> {
@@ -65,7 +64,7 @@
                 }, "mouseDragged event handler", iguieventlistener.getClass().getCanonicalName());
              }
           }
-@@ -267,6 +277,10 @@
+@@ -267,6 +278,10 @@
        return this.field_198039_d;
     }
  
@@ -76,7 +75,7 @@
     public double func_198024_e() {
        return this.field_198040_e;
     }
-@@ -275,6 +289,14 @@
+@@ -275,6 +290,14 @@
        return this.field_198041_f;
     }
  

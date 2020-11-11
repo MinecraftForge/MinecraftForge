@@ -147,18 +147,17 @@
  
           if (!this.field_184236_aF.isEmpty()) {
              ListNBT listnbt = new ListNBT();
-@@ -1388,6 +1405,10 @@
+@@ -1388,6 +1405,9 @@
              p_189511_1_.func_218657_a("Tags", listnbt);
           }
  
 +         CompoundNBT caps = serializeCaps();
 +         if (caps != null) p_189511_1_.func_218657_a("ForgeCaps", caps);
 +         if (persistentData != null) p_189511_1_.func_218657_a("ForgeData", persistentData);
-+
           this.func_213281_b(p_189511_1_);
           if (this.func_184207_aI()) {
              ListNBT listnbt1 = new ListNBT();
-@@ -1458,6 +1479,9 @@
+@@ -1458,6 +1478,9 @@
                 this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
                 this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
                 this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
@@ -168,7 +167,7 @@
                 if (p_70020_1_.func_150297_b("Tags", 9)) {
                    this.field_184236_aF.clear();
                    ListNBT listnbt3 = p_70020_1_.func_150295_c("Tags", 8);
-@@ -1546,6 +1570,8 @@
+@@ -1546,6 +1569,8 @@
        } else {
           ItemEntity itementity = new ItemEntity(this.field_70170_p, this.func_226277_ct_(), this.func_226278_cu_() + (double)p_70099_2_, this.func_226281_cx_(), p_70099_1_);
           itementity.func_174869_p();
@@ -177,7 +176,7 @@
           this.field_70170_p.func_217376_c(itementity);
           return itementity;
        }
-@@ -1582,6 +1608,7 @@
+@@ -1582,6 +1607,7 @@
  
     public void func_70098_U() {
        this.func_213317_d(Vector3d.field_186680_a);
@@ -185,7 +184,7 @@
        this.func_70071_h_();
        if (this.func_184218_aH()) {
           this.func_184187_bx().func_184232_k(this);
-@@ -1627,6 +1654,7 @@
+@@ -1627,6 +1653,7 @@
           }
        }
  
@@ -193,7 +192,7 @@
        if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this)) {
           if (this.func_184218_aH()) {
              this.func_184210_p();
-@@ -1659,6 +1687,7 @@
+@@ -1659,6 +1686,7 @@
     public void func_233575_bb_() {
        if (this.field_184239_as != null) {
           Entity entity = this.field_184239_as;
@@ -201,7 +200,7 @@
           this.field_184239_as = null;
           entity.func_184225_p(this);
        }
-@@ -1816,6 +1845,7 @@
+@@ -1816,6 +1844,7 @@
        return !this.func_184188_bt().isEmpty();
     }
  
@@ -209,7 +208,7 @@
     public boolean func_205710_ba() {
        return true;
     }
-@@ -2032,7 +2062,7 @@
+@@ -2032,7 +2061,7 @@
     }
  
     protected ITextComponent func_225513_by_() {
@@ -218,7 +217,7 @@
     }
  
     public boolean func_70028_i(Entity p_70028_1_) {
-@@ -2087,14 +2117,19 @@
+@@ -2087,14 +2116,19 @@
  
     @Nullable
     public Entity func_241206_a_(ServerWorld p_241206_1_) {
@@ -239,7 +238,7 @@
              this.field_70170_p.func_217381_Z().func_219895_b("reloading");
              Entity entity = this.func_200600_R().func_200721_a(p_241206_1_);
              if (entity != null) {
-@@ -2102,17 +2137,19 @@
+@@ -2102,17 +2136,19 @@
                 entity.func_70012_b(portalinfo.field_222505_a.field_72450_a, portalinfo.field_222505_a.field_72448_b, portalinfo.field_222505_a.field_72449_c, portalinfo.field_242960_c, entity.field_70125_A);
                 entity.func_213317_d(portalinfo.field_222506_b);
                 p_241206_1_.func_217460_e(entity);
@@ -261,7 +260,7 @@
           }
        } else {
           return null;
-@@ -2320,9 +2357,10 @@
+@@ -2320,9 +2356,10 @@
     public void func_213323_x_() {
        EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
@@ -274,7 +273,7 @@
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
-@@ -2796,6 +2834,7 @@
+@@ -2796,6 +2833,7 @@
  
           this.field_233555_aA_ = true;
        }
@@ -282,7 +281,7 @@
  
     }
  
-@@ -2811,4 +2850,63 @@
+@@ -2811,4 +2849,63 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }

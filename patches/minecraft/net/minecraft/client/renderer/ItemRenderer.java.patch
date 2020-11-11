@@ -18,17 +18,16 @@
           p_229111_4_.func_227861_a_(-0.5D, -0.5D, -0.5D);
           if (!p_229111_8_.func_188618_c() && (p_229111_1_.func_77973_b() != Items.field_203184_eO || flag)) {
              boolean flag1;
-@@ -105,7 +105,8 @@
-             } else {
+@@ -106,6 +106,8 @@
                 flag1 = true;
              }
--
+ 
 +            if (p_229111_8_.isLayered()) { net.minecraftforge.client.ForgeHooksClient.drawItemLayered(this, p_229111_8_, p_229111_1_, p_229111_4_, p_229111_5_, p_229111_6_, p_229111_7_, flag1); }
 +            else {
              RenderType rendertype = RenderTypeLookup.func_239219_a_(p_229111_1_, flag1);
              IVertexBuilder ivertexbuilder;
              if (p_229111_1_.func_77973_b() == Items.field_151111_aL && p_229111_1_.func_77962_s()) {
-@@ -131,8 +132,9 @@
+@@ -131,8 +133,9 @@
              }
  
              this.func_229114_a_(p_229111_8_, p_229111_1_, p_229111_6_, p_229111_7_, p_229111_4_, ivertexbuilder);
@@ -39,7 +38,7 @@
           }
  
           p_229111_4_.func_227865_b_();
-@@ -176,7 +178,7 @@
+@@ -176,7 +179,7 @@
           float f = (float)(i >> 16 & 255) / 255.0F;
           float f1 = (float)(i >> 8 & 255) / 255.0F;
           float f2 = (float)(i & 255) / 255.0F;
@@ -48,7 +47,7 @@
        }
  
     }
-@@ -267,6 +269,7 @@
+@@ -267,6 +270,7 @@
              crashreportcategory.func_189529_a("Item Type", () -> {
                 return String.valueOf((Object)p_239387_2_.func_77973_b());
              });
@@ -56,7 +55,7 @@
              crashreportcategory.func_189529_a("Item Damage", () -> {
                 return String.valueOf(p_239387_2_.func_77952_i());
              });
-@@ -298,18 +301,16 @@
+@@ -298,18 +302,16 @@
              irendertypebuffer$impl.func_228461_a_();
           }
  
@@ -79,7 +78,7 @@
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
              RenderSystem.enableBlend();
-@@ -347,4 +348,9 @@
+@@ -347,4 +349,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175059_m.func_178085_b();
     }

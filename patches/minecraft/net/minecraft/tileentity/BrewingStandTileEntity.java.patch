@@ -8,7 +8,7 @@
        if (itemstack.func_190926_b()) {
           return false;
        } else if (!PotionBrewing.func_185205_a(itemstack)) {
-@@ -163,22 +164,22 @@
+@@ -163,22 +164,23 @@
     }
  
     private void func_145940_l() {
@@ -18,7 +18,7 @@
 -      for(int i = 0; i < 3; ++i) {
 -         this.field_145945_j.set(i, PotionBrewing.func_185212_d(itemstack, this.field_145945_j.get(i)));
 -      }
--
+ 
 -      itemstack.func_190918_g(1);
 +      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, itemstack, field_145947_i);
 +      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j);
@@ -38,7 +38,7 @@
  
        this.field_145945_j.set(3, itemstack);
        this.field_145850_b.func_217379_c(1035, blockpos, 0);
-@@ -229,13 +230,13 @@
+@@ -229,13 +231,13 @@
  
     public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_) {
        if (p_94041_1_ == 3) {
@@ -54,13 +54,12 @@
           }
        }
     }
-@@ -267,4 +268,27 @@
+@@ -267,4 +269,26 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return new BrewingStandContainer(p_213906_1_, p_213906_2_, this, this.field_213954_a);
     }
 +
-+   net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =
-+           net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
++   net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers = net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {

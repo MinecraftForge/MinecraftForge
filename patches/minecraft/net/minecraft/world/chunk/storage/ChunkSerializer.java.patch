@@ -34,16 +34,15 @@
           return new ChunkPrimerWrapper((Chunk)ichunk);
        } else {
           ChunkPrimer chunkprimer1 = (ChunkPrimer)ichunk;
-@@ -216,6 +218,8 @@
+@@ -216,6 +218,7 @@
              chunkprimer1.func_205767_a(generationstage$carving, BitSet.valueOf(compoundnbt5.func_74770_j(s1)));
           }
  
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, p_222656_4_, chunkstatus$type));
-+
           return chunkprimer1;
        }
     }
-@@ -295,12 +299,22 @@
+@@ -295,12 +298,22 @@
           for(int k = 0; k < chunk.func_177429_s().length; ++k) {
              for(Entity entity : chunk.func_177429_s()[k]) {
                 CompoundNBT compoundnbt3 = new CompoundNBT();

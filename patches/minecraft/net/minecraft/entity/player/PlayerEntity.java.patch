@@ -278,18 +278,17 @@
              this.func_226567_ej_();
              return true;
           }
-@@ -1479,6 +1517,10 @@
+@@ -1479,6 +1517,9 @@
     }
  
     public void func_195068_e(int p_195068_1_) {
 +      net.minecraftforge.event.entity.player.PlayerXpEvent.XpChange event = new net.minecraftforge.event.entity.player.PlayerXpEvent.XpChange(this, p_195068_1_);
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
 +      p_195068_1_ = event.getAmount();
-+
        this.func_85039_t(p_195068_1_);
        this.field_71106_cc += (float)p_195068_1_ / (float)this.func_71050_bK();
        this.field_71067_cb = MathHelper.func_76125_a(this.field_71067_cb + p_195068_1_, 0, Integer.MAX_VALUE);
-@@ -1507,7 +1549,7 @@
+@@ -1507,7 +1548,7 @@
     }
  
     public void func_192024_a(ItemStack p_192024_1_, int p_192024_2_) {
@@ -298,18 +297,17 @@
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
           this.field_71106_cc = 0.0F;
-@@ -1518,6 +1560,10 @@
+@@ -1518,6 +1559,9 @@
     }
  
     public void func_82242_a(int p_82242_1_) {
 +      net.minecraftforge.event.entity.player.PlayerXpEvent.LevelChange event = new net.minecraftforge.event.entity.player.PlayerXpEvent.LevelChange(this, p_82242_1_);
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
 +      p_82242_1_ = event.getLevels();
-+
        this.field_71068_ca += p_82242_1_;
        if (this.field_71068_ca < 0) {
           this.field_71068_ca = 0;
-@@ -1708,7 +1754,11 @@
+@@ -1708,7 +1752,11 @@
     }
  
     public ITextComponent func_145748_c_() {
@@ -322,7 +320,7 @@
        return this.func_208016_c(iformattabletextcomponent);
     }
  
-@@ -1987,4 +2037,62 @@
+@@ -1987,4 +2035,62 @@
           return this.field_221260_g;
        }
     }

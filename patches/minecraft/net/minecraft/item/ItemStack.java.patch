@@ -9,17 +9,16 @@
     public static final Codec<ItemStack> field_234691_a_ = RecordCodecBuilder.create((p_234698_0_) -> {
        return p_234698_0_.group(Registry.field_212630_s.fieldOf("id").forGetter((p_234706_0_) -> {
           return p_234706_0_.field_151002_e;
-@@ -82,6 +82,9 @@
+@@ -82,6 +82,8 @@
           return Optional.ofNullable(p_234704_0_.field_77990_d);
        })).apply(p_234698_0_, ItemStack::new);
     });
 +   private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
 +   private CompoundNBT capNBT;
-+
     private static final Logger field_199558_c = LogManager.getLogger();
     public static final ItemStack field_190927_a = new ItemStack((Item)null);
     public static final DecimalFormat field_111284_a = Util.func_200696_a(new DecimalFormat("#.##"), (p_234699_0_) -> {
-@@ -109,14 +112,18 @@
+@@ -109,14 +111,18 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
@@ -40,7 +39,7 @@
     }
  
     private void func_190923_F() {
-@@ -125,6 +132,8 @@
+@@ -125,6 +131,8 @@
     }
  
     private ItemStack(CompoundNBT p_i47263_1_) {
@@ -49,7 +48,7 @@
        this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(p_i47263_1_.func_74779_i("id")));
        this.field_77994_a = p_i47263_1_.func_74771_c("Count");
        if (p_i47263_1_.func_150297_b("tag", 10)) {
-@@ -132,11 +141,12 @@
+@@ -132,11 +140,12 @@
           this.func_77973_b().func_179215_a(p_i47263_1_);
        }
  
@@ -63,7 +62,7 @@
     }
  
     public static ItemStack func_199557_a(CompoundNBT p_199557_0_) {
-@@ -151,7 +161,7 @@
+@@ -151,7 +160,7 @@
     public boolean func_190926_b() {
        if (this == field_190927_a) {
           return true;
@@ -72,7 +71,7 @@
           return this.field_77994_a <= 0;
        } else {
           return true;
-@@ -167,10 +177,19 @@
+@@ -167,10 +176,19 @@
     }
  
     public Item func_77973_b() {
@@ -93,7 +92,7 @@
        PlayerEntity playerentity = p_196084_1_.func_195999_j();
        BlockPos blockpos = p_196084_1_.func_195995_a();
        CachedBlockInfo cachedblockinfo = new CachedBlockInfo(p_196084_1_.func_195991_k(), blockpos, false);
-@@ -178,7 +197,7 @@
+@@ -178,7 +196,7 @@
           return ActionResultType.PASS;
        } else {
           Item item = this.func_77973_b();
@@ -102,11 +101,10 @@
           if (playerentity != null && actionresulttype.func_226246_a_()) {
              playerentity.func_71029_a(Stats.field_75929_E.func_199076_b(item));
           }
-@@ -206,12 +225,15 @@
-       if (this.field_77990_d != null) {
+@@ -207,11 +225,15 @@
           p_77955_1_.func_218657_a("tag", this.field_77990_d.func_74737_b());
        }
--
+ 
 +      CompoundNBT cnbt = this.serializeCaps();
 +      if (cnbt != null && !cnbt.isEmpty()) {
 +         p_77955_1_.func_218657_a("ForgeCaps", cnbt);

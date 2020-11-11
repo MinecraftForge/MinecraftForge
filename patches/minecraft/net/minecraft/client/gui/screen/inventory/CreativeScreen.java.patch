@@ -40,11 +40,10 @@
           if (this.field_230706_i_.field_71474_y.field_74310_D.func_197976_a(p_231046_1_, p_231046_2_)) {
              this.field_195377_F = true;
              this.func_147050_b(ItemGroup.field_78027_g);
-@@ -330,6 +338,32 @@
+@@ -330,6 +338,30 @@
     private void func_147053_i() {
        (this.field_147002_h).field_148330_a.clear();
        this.field_214085_w.clear();
-+
 +      ItemGroup tab = ItemGroup.field_78032_a[field_147058_w];
 +      if (tab.hasSearchBar() && tab != ItemGroup.field_78027_g) {
 +         tab.func_78018_a(field_147002_h.field_148330_a);
@@ -69,11 +68,10 @@
 +         field_147002_h.func_148329_a(0.0F);
 +         return;
 +      }
-+
        String s = this.field_147062_A.func_146179_b();
        if (s.isEmpty()) {
           for(Item item : Registry.field_212630_s) {
-@@ -375,9 +409,9 @@
+@@ -375,9 +407,9 @@
  
     protected void func_230451_b_(MatrixStack p_230451_1_, int p_230451_2_, int p_230451_3_) {
        ItemGroup itemgroup = ItemGroup.field_78032_a[field_147058_w];
@@ -85,7 +83,7 @@
        }
  
     }
-@@ -388,7 +422,7 @@
+@@ -388,7 +420,7 @@
           double d1 = p_231044_3_ - (double)this.field_147009_r;
  
           for(ItemGroup itemgroup : ItemGroup.field_78032_a) {
@@ -94,7 +92,7 @@
                 return true;
              }
           }
-@@ -409,7 +443,7 @@
+@@ -409,7 +441,7 @@
           this.field_147066_y = false;
  
           for(ItemGroup itemgroup : ItemGroup.field_78032_a) {
@@ -103,7 +101,7 @@
                 this.func_147050_b(itemgroup);
                 return true;
              }
-@@ -420,12 +454,15 @@
+@@ -420,12 +452,15 @@
     }
  
     private boolean func_147055_p() {
@@ -119,7 +117,7 @@
        this.field_147008_s.clear();
        (this.field_147002_h).field_148330_a.clear();
        if (p_147050_1_ == ItemGroup.field_192395_m) {
-@@ -502,13 +539,15 @@
+@@ -502,13 +537,15 @@
        }
  
        if (this.field_147062_A != null) {
@@ -136,7 +134,7 @@
  
              this.func_147053_i();
           } else {
-@@ -568,16 +607,35 @@
+@@ -568,16 +605,35 @@
        this.func_230446_a_(p_230430_1_);
        super.func_230430_a_(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
  
@@ -174,7 +172,7 @@
        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
        this.func_230459_a_(p_230430_1_, p_230430_2_, p_230430_3_);
     }
-@@ -612,7 +670,10 @@
+@@ -612,7 +668,10 @@
              list1.add(1, itemgroup.func_242392_c().func_230532_e_().func_240699_a_(TextFormatting.BLUE));
           }
  
@@ -186,7 +184,7 @@
        } else {
           super.func_230457_a_(p_230457_1_, p_230457_2_, p_230457_3_, p_230457_4_);
        }
-@@ -623,25 +684,44 @@
+@@ -623,25 +682,41 @@
        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
        ItemGroup itemgroup = ItemGroup.field_78032_a[field_147058_w];
  
@@ -196,7 +194,6 @@
 +      int start = tabPage * 10;
 +      int end = Math.min(ItemGroup.field_78032_a.length, ((tabPage + 1) * 10 + 2));
 +      if (tabPage != 0) start += 2;
-+
 +      for (int idx = start; idx < end; idx++) {
 +         ItemGroup itemgroup1 = ItemGroup.field_78032_a[idx];
 +         if (itemgroup1 != null && itemgroup1.func_78021_a() != field_147058_w) {
@@ -216,7 +213,6 @@
 +            func_238808_a_(p_230450_1_, ItemGroup.field_78036_m);
 +         }
 +      }
-+
 +      this.field_230706_i_.func_110434_K().func_110577_a(itemgroup.getBackgroundImage());
        this.func_238474_b_(p_230450_1_, this.field_147003_i, this.field_147009_r, 0, 0, this.field_146999_f, this.field_147000_g);
        this.field_147062_A.func_230430_a_(p_230450_1_, p_230450_3_, p_230450_4_, p_230450_2_);
@@ -232,11 +228,10 @@
  
 +      if ((itemgroup == null || itemgroup.getTabPage() != tabPage) && (itemgroup != ItemGroup.field_78027_g && itemgroup != ItemGroup.field_78036_m))
 +         return;
-+
        this.func_238808_a_(p_230450_1_, itemgroup);
        if (itemgroup == ItemGroup.field_78036_m) {
           InventoryScreen.func_228187_a_(this.field_147003_i + 88, this.field_147009_r + 45, 20, (float)(this.field_147003_i + 88 - p_230450_3_), (float)(this.field_147009_r + 45 - 30 - p_230450_4_), this.field_230706_i_.field_71439_g);
-@@ -650,6 +730,7 @@
+@@ -650,6 +725,7 @@
     }
  
     protected boolean func_195375_a(ItemGroup p_195375_1_, double p_195375_2_, double p_195375_4_) {
@@ -244,7 +239,7 @@
        int i = p_195375_1_.func_78020_k();
        int j = 28 * i;
        int k = 0;
-@@ -718,6 +799,8 @@
+@@ -718,6 +794,8 @@
           i1 = i1 + (this.field_147000_g - 4);
        }
  
@@ -253,7 +248,7 @@
        this.func_238474_b_(p_238808_1_, l, i1, j, k, 28, 32);
        this.field_230707_j_.field_77023_b = 100.0F;
        l = l + 6;
-@@ -884,6 +967,22 @@
+@@ -884,6 +962,22 @@
        public boolean func_82869_a(PlayerEntity p_82869_1_) {
           return this.field_148332_b.func_82869_a(p_82869_1_);
        }

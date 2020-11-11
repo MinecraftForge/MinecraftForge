@@ -10,16 +10,15 @@
           if (p_191973_2_.func_77942_o()) {
              itemstack.func_77982_d(p_191973_2_.func_77978_p().func_74737_b());
           }
-@@ -238,7 +239,7 @@
-             }
+@@ -239,6 +240,7 @@
           }
        }
--
+ 
 +      field_70460_b.forEach(e -> e.onArmorTick(field_70458_d.field_70170_p, field_70458_d));
     }
  
     public boolean func_70441_a(ItemStack p_70441_1_) {
-@@ -287,6 +288,8 @@
+@@ -287,6 +289,8 @@
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.func_85055_a(throwable, "Adding item to inventory");
              CrashReportCategory crashreportcategory = crashreport.func_85058_a("Item being added");

@@ -61,14 +61,13 @@
  
        ResourceLoadProgressGui.func_212970_a(this);
        List<IResourcePack> list = this.field_110448_aq.func_232623_f_();
-@@ -508,7 +505,14 @@
-             if (SharedConstants.field_206244_b) {
+@@ -509,6 +506,14 @@
                 this.func_213256_aB();
              }
--
-+            if (net.minecraftforge.fml.client.ClientModLoader.completeModLoading()) return; // Do not overwrite the error screen
-+            // FORGE: Move opening initial screen to after startup and events are enabled.
-+            // Also Fixes MC-145102
+ 
++            // Do not overwrite the error screen
++            if (net.minecraftforge.fml.client.ClientModLoader.completeModLoading()) return;
++            // FORGE: Move opening initial screen to after startup and events are enabled. Also Fixes MC-145102
 +            if (s != null) {
 +               this.func_147108_a(new ConnectingScreen(new MainMenuScreen(), this, s, i));
 +            } else {
@@ -77,7 +76,7 @@
           });
        }, false));
     }
-@@ -556,7 +560,7 @@
+@@ -556,7 +561,7 @@
     }
  
     private void func_229988_a_(Throwable p_229988_1_) {
@@ -86,7 +85,7 @@
           ITextComponent itextcomponent;
           if (p_229988_1_ instanceof SimpleReloadableResourceManager.FailedPackException) {
              itextcomponent = new StringTextComponent(((SimpleReloadableResourceManager.FailedPackException)p_229988_1_).func_241203_a().func_195762_a());
-@@ -644,7 +648,7 @@
+@@ -644,7 +649,7 @@
           return Stream.of(Registry.field_212630_s.func_177774_c(p_213251_0_.func_77973_b()));
        });
        SearchTreeReloadable<ItemStack> searchtreereloadable = new SearchTreeReloadable<>((p_213235_0_) -> {
@@ -95,7 +94,7 @@
        });
        NonNullList<ItemStack> nonnulllist = NonNullList.func_191196_a();
  
-@@ -714,13 +718,13 @@
+@@ -714,13 +719,13 @@
        Bootstrap.func_179870_a(p_71377_0_.func_71502_e());
        if (p_71377_0_.func_71497_f() != null) {
           Bootstrap.func_179870_a("#@!@# Game crashed! Crash report saved to: #@!@# " + p_71377_0_.func_71497_f());
@@ -112,7 +111,7 @@
        }
  
     }
-@@ -729,6 +733,7 @@
+@@ -729,6 +734,7 @@
        return this.field_71474_y.field_211842_aO;
     }
  
@@ -120,18 +119,17 @@
     public CompletableFuture<Void> func_213237_g() {
        if (this.field_213276_aV != null) {
           return this.field_213276_aV;
-@@ -817,10 +822,6 @@
+@@ -817,9 +823,6 @@
     }
  
     public void func_147108_a(@Nullable Screen p_147108_1_) {
 -      if (this.field_71462_r != null) {
 -         this.field_71462_r.func_231164_f_();
 -      }
--
+ 
        if (p_147108_1_ == null && this.field_71441_e == null) {
           p_147108_1_ = new MainMenuScreen();
-       } else if (p_147108_1_ == null && this.field_71439_g.func_233643_dh_()) {
-@@ -831,6 +832,14 @@
+@@ -831,6 +834,14 @@
           }
        }
  
@@ -146,7 +144,7 @@
        if (p_147108_1_ instanceof MainMenuScreen || p_147108_1_ instanceof MultiplayerScreen) {
           this.field_71474_y.field_74330_P = false;
           this.field_71456_v.func_146158_b().func_146231_a(true);
-@@ -962,11 +971,13 @@
+@@ -962,11 +973,13 @@
        RenderSystem.enableCull();
        this.field_71424_I.func_76319_b();
        if (!this.field_71454_w) {
@@ -160,7 +158,7 @@
        }
  
        if (this.field_238174_aV_ != null) {
-@@ -1065,6 +1076,7 @@
+@@ -1065,6 +1078,7 @@
  
        Framebuffer framebuffer = this.func_147110_a();
        framebuffer.func_216491_a(this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l(), field_142025_a);
@@ -168,7 +166,7 @@
        this.field_71460_t.func_147704_a(this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l());
        this.field_71417_B.func_198021_g();
     }
-@@ -1253,11 +1265,21 @@
+@@ -1253,11 +1267,21 @@
           if (p_147115_1_ && this.field_71476_x != null && this.field_71476_x.func_216346_c() == RayTraceResult.Type.BLOCK) {
              BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.field_71476_x;
              BlockPos blockpos = blockraytraceresult.func_216350_a();
@@ -192,7 +190,7 @@
                 }
              }
  
-@@ -1276,6 +1298,8 @@
+@@ -1276,6 +1300,8 @@
              }
  
           } else if (!this.field_71439_g.func_184838_M()) {
@@ -201,7 +199,7 @@
              switch(this.field_71476_x.func_216346_c()) {
              case ENTITY:
                 this.field_71442_b.func_78764_a(this.field_71439_g, ((EntityRayTraceResult)this.field_71476_x).func_216348_a());
-@@ -1283,7 +1307,7 @@
+@@ -1283,7 +1309,7 @@
              case BLOCK:
                 BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.field_71476_x;
                 BlockPos blockpos = blockraytraceresult.func_216350_a();
@@ -210,7 +208,7 @@
                    this.field_71442_b.func_180511_b(blockpos, blockraytraceresult.func_216354_b());
                    break;
                 }
-@@ -1293,8 +1317,10 @@
+@@ -1293,8 +1319,10 @@
                 }
  
                 this.field_71439_g.func_184821_cY();
@@ -221,7 +219,7 @@
              this.field_71439_g.func_184609_a(Hand.MAIN_HAND);
           }
        }
-@@ -1309,6 +1335,11 @@
+@@ -1309,6 +1337,11 @@
              }
  
              for(Hand hand : Hand.values()) {
@@ -233,7 +231,7 @@
                 ItemStack itemstack = this.field_71439_g.func_184586_b(hand);
                 if (this.field_71476_x != null) {
                    switch(this.field_71476_x.func_216346_c()) {
-@@ -1322,6 +1353,7 @@
+@@ -1322,6 +1355,7 @@
  
                       if (actionresulttype.func_226246_a_()) {
                          if (actionresulttype.func_226247_b_()) {
@@ -241,7 +239,7 @@
                             this.field_71439_g.func_184609_a(hand);
                          }
  
-@@ -1334,6 +1366,7 @@
+@@ -1334,6 +1368,7 @@
                       ActionResultType actionresulttype1 = this.field_71442_b.func_217292_a(this.field_71439_g, this.field_71441_e, hand, blockraytraceresult);
                       if (actionresulttype1.func_226246_a_()) {
                          if (actionresulttype1.func_226247_b_()) {
@@ -249,7 +247,7 @@
                             this.field_71439_g.func_184609_a(hand);
                             if (!itemstack.func_190926_b() && (itemstack.func_190916_E() != i || this.field_71442_b.func_78758_h())) {
                                this.field_71460_t.field_78516_c.func_187460_a(hand);
-@@ -1349,6 +1382,9 @@
+@@ -1349,6 +1384,9 @@
                    }
                 }
  
@@ -259,20 +257,18 @@
                 if (!itemstack.func_190926_b()) {
                    ActionResultType actionresulttype2 = this.field_71442_b.func_187101_a(this.field_71439_g, this.field_71441_e, hand);
                    if (actionresulttype2.func_226246_a_()) {
-@@ -1375,6 +1411,8 @@
+@@ -1375,6 +1413,7 @@
           --this.field_71467_ac;
        }
  
 +      net.minecraftforge.fml.hooks.BasicEventHooks.onPreClientTick();
-+
        this.field_71424_I.func_76320_a("gui");
        if (!this.field_71445_n) {
           this.field_71456_v.func_73831_a();
-@@ -1500,6 +1538,8 @@
+@@ -1500,6 +1539,7 @@
        this.field_71424_I.func_219895_b("keyboard");
        this.field_195559_v.func_204870_b();
        this.field_71424_I.func_76319_b();
-+
 +      net.minecraftforge.fml.hooks.BasicEventHooks.onPostClientTick();
     }
  
