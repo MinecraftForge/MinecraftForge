@@ -13,12 +13,15 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.NetworkManager;
 
-public abstract class TargetedNetworkFilter extends MessageToMessageEncoder<IPacket<?>>
+/**
+ * A filter for vanilla network packets.
+ */
+public abstract class VanillaPacketFilter extends MessageToMessageEncoder<IPacket<?>>
 {
 
     protected final Map<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>> handlers;
 
-    protected TargetedNetworkFilter(Map<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>> handlers)
+    protected VanillaPacketFilter(Map<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>> handlers)
     {
         this.handlers = handlers;
     }
@@ -41,6 +44,9 @@ public abstract class TargetedNetworkFilter extends MessageToMessageEncoder<IPac
         return new AbstractMap.SimpleEntry<>(cls, consumer);
     }
 
+    /**
+     * Whether this filter is necessary on the given connection.
+     */
     protected abstract boolean isNecessary(NetworkManager manager);
 
     @Override

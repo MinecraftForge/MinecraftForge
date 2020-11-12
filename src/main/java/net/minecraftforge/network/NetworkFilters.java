@@ -14,7 +14,7 @@ public class NetworkFilters
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Map<String, TargetedNetworkFilter> instances = ImmutableMap.of(
+    private static final Map<String, VanillaPacketFilter> instances = ImmutableMap.of(
             "forge:vanilla_filter", new VanillaConnectionNetworkFilter(),
             "forge:forge_fixes", new ForgeConnectionNetworkFilter()
     );

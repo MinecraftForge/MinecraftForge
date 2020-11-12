@@ -13,8 +13,11 @@ import net.minecraftforge.fml.network.NetworkHooks;
 
 import com.google.common.collect.ImmutableMap;
 
+/**
+ * Network filter for forge-forge connections.
+ */
 @ChannelHandler.Sharable
-public class ForgeConnectionNetworkFilter extends TargetedNetworkFilter
+public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
 {
 
     public ForgeConnectionNetworkFilter()

@@ -27,12 +27,16 @@ import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableSet;
 
+/**
+ * A custom payload channel that allows sending vanilla server-to-client packets, even if they would normally
+ * be too large for the vanilla protocol. This is achieved by splitting them into multiple custom payload packets.
+ */
 public class VanillaPacketSplitter
 {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final ResourceLocation CHANNEL = new ResourceLocation("forge", "split_vanilla");
+    private static final ResourceLocation CHANNEL = new ResourceLocation("forge", "split");
     private static final String VERSION = "1.0";
 
     private static final Set<Class<? extends IPacket<?>>> ALLOWED_PACKETS = ImmutableSet.of(
@@ -55,6 +59,10 @@ public class VanillaPacketSplitter
         channel.addListener(VanillaPacketSplitter::onClientPacket);
     }
 
+    /**
+     * Append the given packet to the given list. If the packet needs to be split, multiple packets will be appened.
+     * Otherwise only the packet itself.
+     */
     public static void appendPackets(ProtocolType protocol, PacketDirection direction, IPacket<?> packet, List<? super IPacket<?>> out)
     {
         if (heuristicIsDefinitelySmallEnough(packet))

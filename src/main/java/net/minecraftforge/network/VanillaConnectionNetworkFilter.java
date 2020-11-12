@@ -20,22 +20,17 @@
 package net.minecraftforge.network;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiConsumer;
 
 import javax.annotation.Nonnull;
 
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketDirection;
-import net.minecraft.network.ProtocolType;
 import net.minecraft.network.play.server.SCommandListPacket;
 import net.minecraft.network.play.server.SEntityPropertiesPacket;
-import net.minecraft.network.play.server.SUpdateRecipesPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -51,7 +46,7 @@ import com.mojang.brigadier.tree.RootCommandNode;
  * will cause errors or warnings on vanilla clients, for example entity attributes that are added by Forge or mods.
  */
 @ChannelHandler.Sharable
-public class VanillaConnectionNetworkFilter extends TargetedNetworkFilter
+public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
 {
 
     private static final Logger LOGGER = LogManager.getLogger();
