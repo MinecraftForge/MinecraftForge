@@ -21,18 +21,18 @@ package net.minecraftforge.fml.loading.progress;
 
 import com.google.common.base.Ascii;
 import com.google.common.base.CharMatcher;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class StartupMessageManager {
-    private static final EnumMap<MessageType, List<Message>> messages = new EnumMap<>(MessageType.class);
-    static {
-        Arrays.stream(MessageType.values()).forEach(mt->messages.computeIfAbsent(mt, k->new CopyOnWriteArrayList<>()));
-    }
+
+    private static volatile Map<MessageType, List<Message>> messages = ImmutableMap.of();
 
     public static List<Pair<Integer,Message>> getMessages() {
         final long ts = System.nanoTime();
@@ -88,22 +88,41 @@ public class StartupMessageManager {
         }
     }
 
+    private synchronized static void addMessage(MessageType type, String message, int maxSize)
+    {
+        Map<MessageType, List<Message>> messages = StartupMessageManager.messages;
+
+        List<Message> oldMessagesForType = messages.getOrDefault(type, ImmutableList.of());
+        List<Message> newMessagesForType = ImmutableList.<Message>builder()
+                .addAll(maxSize < 0 ? oldMessagesForType : oldMessagesForType.subList(0, Math.min(oldMessagesForType.size(), maxSize)))
+                .add(new Message(message, type))
+                .build();
+
+        ImmutableMap.Builder<MessageType, List<Message>> builder = ImmutableMap.builder();
+
+        StartupMessageManager.messages.entrySet().stream()
+                .filter(entry -> entry.getKey() != type)
+                .forEach(builder::put);
+
+        builder.put(type, newMessagesForType);
+
+        StartupMessageManager.messages = builder.build();
+    }
+
     public static void addModMessage(final String message) {
         final String safeMessage = Ascii.truncate(CharMatcher.ascii().retainFrom(message),80,"~");
-        final List<Message> messages = StartupMessageManager.messages.get(MessageType.MOD);
-        messages.subList(0, Math.max(0, messages.size() - 20)).clear();
-        messages.add(new Message(safeMessage, MessageType.MOD));
+        addMessage(MessageType.MOD, safeMessage, 20);
     }
 
     public static Optional<Consumer<String>> modLoaderConsumer() {
-        return Optional.of(s-> messages.get(MessageType.ML).add(new Message(s, MessageType.ML)));
+        return Optional.of(s-> addMessage(MessageType.ML, s, -1));
     }
 
     public static Optional<Consumer<String>> locatorConsumer() {
-        return Optional.of(s -> messages.get(MessageType.LOC).add(new Message(s, MessageType.LOC)));
+        return Optional.of(s -> addMessage(MessageType.LOC, s, -1));
     }
 
     public static Optional<Consumer<String>> mcLoaderConsumer() {
-        return Optional.of(s-> messages.get(MessageType.MC).add(new Message(s, MessageType.MC)));
+        return Optional.of(s-> addMessage(MessageType.MC, s, -1));
     }
 }
