@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
@@ -82,6 +83,7 @@ public class VanillaPacketSplitter
             }
             if (buf.readableBytes() <= PROTOCOL_MAX)
             {
+                buf.release();
                 out.add(packet);
             }
             else
@@ -89,25 +91,35 @@ public class VanillaPacketSplitter
                 int parts = (int)Math.ceil(((double)buf.readableBytes()) / PART_SIZE);
                 if (parts == 1)
                 {
+                    buf.release();
                     out.add(packet);
                 }
                 else
                 {
                     for (int part = 0; part < parts; part++)
                     {
-                        PacketBuffer partBuf = new PacketBuffer(Unpooled.buffer());
+                        ByteBuf partPrefix;
                         if (part == 0)
                         {
-                            partBuf.writeByte(STATE_FIRST);
-                            partBuf.writeVarInt(protocol.getPacketId(direction, packet));
+                            partPrefix = Unpooled.buffer(5);
+                            partPrefix.writeByte(STATE_FIRST);
+                            new PacketBuffer(partPrefix).writeVarInt(protocol.getPacketId(direction, packet));
                         }
                         else
                         {
-                            partBuf.writeByte(part == parts - 1 ? STATE_LAST : 0);
+                            partPrefix = Unpooled.buffer(1);
+                            partPrefix.writeByte(part == parts - 1 ? STATE_LAST : 0);
                         }
-                        partBuf.writeBytes(buf, Math.min(PART_SIZE, buf.readableBytes()));
-                        out.add(new SCustomPayloadPlayPacket(CHANNEL, partBuf));
+                        int partSize = Math.min(PART_SIZE, buf.readableBytes());
+                        ByteBuf partBuf = Unpooled.wrappedBuffer(
+                                partPrefix,
+                                buf.retainedSlice(buf.readerIndex(), partSize)
+                        );
+                        buf.skipBytes(partSize);
+                        out.add(new SCustomPayloadPlayPacket(CHANNEL, new PacketBuffer(partBuf)));
                     }
+                    // we retained all the slices, so we do not need this one anymore
+                    buf.release();
                 }
             }
         }
@@ -122,19 +134,26 @@ public class VanillaPacketSplitter
     private static final List<PacketBuffer> receivedBuffers = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
-    private static void onClientPacket(NetworkEvent.ClientCustomPayloadEvent event)
+    private static void onClientPacket(NetworkEvent.ServerCustomPayloadEvent event)
     {
         NetworkEvent.Context ctx = event.getSource().get();
         PacketDirection direction = ctx.getDirection() == NetworkDirection.PLAY_TO_CLIENT ? PacketDirection.CLIENTBOUND : PacketDirection.SERVERBOUND;
         ProtocolType protocol = ProtocolType.PLAY;
+
+        ctx.setPacketHandled(true);
 
         PacketBuffer buf = event.getPayload();
 
         byte state = buf.readByte();
         if (state == STATE_FIRST)
         {
-            receivedBuffers.clear();
+            if (!receivedBuffers.isEmpty())
+            {
+                LOGGER.warn("forge:split received out of order - inbound buffer not empty when receiving first");
+                receivedBuffers.clear();
+            }
         }
+        buf.retain(); // retain the buffer, it is released after this handler otherwise
         receivedBuffers.add(buf);
         if (state == STATE_LAST)
         {
@@ -158,6 +177,9 @@ public class VanillaPacketSplitter
                 catch (IOException e)
                 {
                     throw new UncheckedIOException(e);
+                } finally {
+                    receivedBuffers.clear();
+                    full.release();
                 }
                 ctx.enqueueWork(() -> ((IPacket<ClientPlayNetHandler>)packet).processPacket(Minecraft.getInstance().getConnection()));
             }
