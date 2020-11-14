@@ -29,35 +29,34 @@ import java.util.stream.Collectors;
 @Mod("unittesting")
 public class UnitTesting
 {
-    private static final SoundEvent SSSSS = new SoundEvent(new ResourceLocation("unittesting:entity.creeper.demoman_sssss"));
-	
-	static {
-		SSSSS.setRegistryName("unittesting", "entity.creeper.demoman_sssss");
-	}
+    private static final SoundEvent DEMO_HISS = new SoundEvent(new ResourceLocation("unittesting:entity.creeper.demoman_DEMO_HISS"));
+    
+    static {
+        DEMO_HISS.setRegistryName("unittesting", "entity.creeper.demoman_DEMO_HISS");
+    }
     
     public UnitTesting() 
     {
         MinecraftForge.EVENT_BUS.register(this);
-		MinecraftForge.EVENT_BUS.register(Implementation.class);
-		GameRegistry.findRegistry(SoundEvent.class).register(SSSSS);
+        MinecraftForge.EVENT_BUS.register(Implementation.class);
+        GameRegistry.findRegistry(SoundEvent.class).register(DEMO_HISS);
     }
     
     public static class Implementation 
     {
-	    @SubscribeEvent
+        @SubscribeEvent
         public static void onEntityPlayedSound(EntityEmittedSoundEvent evt) 
         {
             Entity source = evt.getEntity();
             if (source instanceof CreeperEntity)
             {
-                CreeperEntity awwMan = (CreeperEntity)source;
-                if (awwMan.isCharged() && evt.getSound().getName().getPath().equals("entity.creeper.primed")) 
+                CreeperEntity creeper = (CreeperEntity)source;
+                if (creeper.isCharged() && evt.getSound().getName().getPath().equals("entity.creeper.primed")) 
                 {
-                    evt.setSound(SSSSS);
+                    evt.setSound(DEMO_HISS);
                     evt.setPitch(1f);
                 }
             }
         }
-    	
     }
 }
