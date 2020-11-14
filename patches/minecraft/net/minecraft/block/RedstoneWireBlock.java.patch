@@ -30,7 +30,7 @@
 @@ -250,11 +250,12 @@
     }
  
-    private int func_235557_o_(BlockState p_235557_1_) {
+    public int func_235557_o_(BlockState p_235557_1_) {
 -      return p_235557_1_.func_203425_a(this) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
 +      return (p_235557_1_.func_203425_a(this) || (p_235557_1_.func_177230_c() instanceof RedstoneWireBlock && ((RedstoneWireBlock) p_235557_1_.func_177230_c()).canConnectToOther(p_235557_1_))) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
     }
