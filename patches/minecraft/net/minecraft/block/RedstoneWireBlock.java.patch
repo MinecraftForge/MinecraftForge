@@ -41,24 +41,6 @@
           p_176344_1_.func_195593_d(p_176344_2_, this);
  
           for(Direction direction : Direction.values()) {
-@@ -265,7 +265,7 @@
-    }
- 
-    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
--      if (!p_220082_4_.func_203425_a(p_220082_1_.func_177230_c()) && !p_220082_2_.field_72995_K) {
-+      if (!p_220082_4_.func_203425_a(this) && !p_220082_2_.field_72995_K) {
-          this.func_235547_a_(p_220082_2_, p_220082_3_, p_220082_1_);
- 
-          for(Direction direction : Direction.Plane.VERTICAL) {
-@@ -277,7 +277,7 @@
-    }
- 
-    public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
--      if (!p_196243_5_ && !p_196243_1_.func_203425_a(p_196243_4_.func_177230_c())) {
-+      if (!p_196243_5_ && !p_196243_1_.func_203425_a(this)) {
-          super.func_196243_a(p_196243_1_, p_196243_2_, p_196243_3_, p_196243_4_, p_196243_5_);
-          if (!p_196243_2_.field_72995_K) {
-             for(Direction direction : Direction.values()) {
 @@ -335,12 +335,8 @@
        }
     }
