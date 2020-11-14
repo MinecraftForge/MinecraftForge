@@ -27,21 +27,22 @@
     }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-@@ -250,11 +250,11 @@
+@@ -250,11 +250,12 @@
     }
  
     private int func_235557_o_(BlockState p_235557_1_) {
 -      return p_235557_1_.func_203425_a(this) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
-+      return p_235557_1_.func_235714_a_(net.minecraftforge.common.Tags.Blocks.REDSTONE_WIRE) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
++      return (p_235557_1_.func_203425_a(this) || (p_235557_1_.func_177230_c() instanceof RedstoneWireBlock && ((RedstoneWireBlock) p_235557_1_.func_177230_c()).canConnectToOther(p_235557_1_))) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
     }
  
     private void func_176344_d(World p_176344_1_, BlockPos p_176344_2_) {
 -      if (p_176344_1_.func_180495_p(p_176344_2_).func_203425_a(this)) {
-+      if (p_176344_1_.func_180495_p(p_176344_2_).func_235714_a_(net.minecraftforge.common.Tags.Blocks.REDSTONE_WIRE)) {
++      BlockState state = p_176344_1_.func_180495_p(p_176344_2_);
++      if (state.func_203425_a(this) || (state.func_177230_c() instanceof RedstoneWireBlock && ((RedstoneWireBlock) state.func_177230_c()).canConnectToOther(state))) {
           p_176344_1_.func_195593_d(p_176344_2_, this);
  
           for(Direction direction : Direction.values()) {
-@@ -335,12 +335,8 @@
+@@ -335,20 +336,18 @@
        }
     }
  
@@ -50,13 +51,14 @@
 -   }
 -
 -   protected static boolean func_176343_a(BlockState p_176343_0_, @Nullable Direction p_176343_1_) {
--      if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
 +   protected static boolean canConnectTo(BlockState p_176343_0_, IBlockReader world, BlockPos pos, @Nullable Direction p_176343_1_) {
-+      if (p_176343_0_.func_235714_a_(net.minecraftforge.common.Tags.Blocks.REDSTONE_WIRE)) {
+       if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
           return true;
++      } else if (p_176343_0_.func_177230_c() instanceof RedstoneWireBlock && ((RedstoneWireBlock)p_176343_0_.func_177230_c()).canConnectToOther(p_176343_0_)) {
++        return true;
        } else if (p_176343_0_.func_203425_a(Blocks.field_196633_cV)) {
           Direction direction = p_176343_0_.func_177229_b(RepeaterBlock.field_185512_D);
-@@ -348,7 +344,7 @@
+          return direction == p_176343_1_ || direction.func_176734_d() == p_176343_1_;
        } else if (p_176343_0_.func_203425_a(Blocks.field_190976_dk)) {
           return p_176343_1_ == p_176343_0_.func_177229_b(ObserverBlock.field_176387_N);
        } else {
@@ -65,3 +67,18 @@
        }
     }
  
+@@ -463,4 +462,14 @@
+       }
+ 
+    }
++
++   /**
++    * If this returns true the wire is fully interoperable with vanilla redstone wire.
++    * To transmit power you still need to override {@link #getPower(BlockState)}. See example mod (custom_redstone_wire) for help
++    * If this returns false it changes to vanilla behaviour
++    * */
++   public boolean canConnectToOther(BlockState state) {
++      return false;
++   }
++
+ }

@@ -1,15 +1,11 @@
 package net.minecraftforge.debug.block;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.RedstoneWireBlock;
+import net.minecraft.block.*;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -26,7 +22,17 @@ public class CustomRedstoneWireTest {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-	public static final RegistryObject<RedstoneWireBlock> CUSTOM_REDSTONE_WIRE = BLOCKS.register(BLOCK_ID, () -> new RedstoneWireBlock(AbstractBlock.Properties.from(Blocks.REDSTONE_WIRE)));
+	public static final RegistryObject<RedstoneWireBlock> CUSTOM_REDSTONE_WIRE = BLOCKS.register(BLOCK_ID, () -> new RedstoneWireBlock(AbstractBlock.Properties.from(Blocks.REDSTONE_WIRE)) {
+		@Override
+		public boolean canConnectToOther(BlockState state) {
+			return true;
+		}
+
+		@Override
+		public int getPower(BlockState state) {
+			return (state.isIn(this) || (state.getBlock() instanceof RedstoneWireBlock)) ? state.get(POWER) : 0;
+		}
+	});
 
 	static {
 		ITEMS.register(BLOCK_ID, () -> new BlockItem(CUSTOM_REDSTONE_WIRE.get(), new Item.Properties()));
@@ -40,7 +46,7 @@ public class CustomRedstoneWireTest {
 		ITEMS.register(bus);
 	}
 
-	private void clientSetup(final FMLClientSetupEvent event){
+	private void clientSetup(final FMLClientSetupEvent event) {
 		RenderTypeLookup.setRenderLayer(CUSTOM_REDSTONE_WIRE.get(), RenderType.getCutout());
 	}
 
