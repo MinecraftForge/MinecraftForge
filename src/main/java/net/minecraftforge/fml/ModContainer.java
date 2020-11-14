@@ -76,6 +76,16 @@ public abstract class ModContainer
     }
 
     /**
+     * Errored container state, used for filtering. Does nothing.
+     */
+    ModContainer()
+    {
+        this.modLoadingStage = ModLoadingStage.ERROR;
+        modId = "BROKEN";
+        namespace = "BROKEN";
+        modInfo = null;
+    }
+    /**
      * @return the modid for this mod
      */
     public final String getModId()
