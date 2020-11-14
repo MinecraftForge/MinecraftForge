@@ -29,17 +29,17 @@ import java.util.stream.Collectors;
 @Mod("unittesting")
 public class UnitTesting
 {
-    private static final SoundEvent DEMO_HISS = new SoundEvent(new ResourceLocation("unittesting:entity.creeper.demoman_DEMO_HISS"));
+    private static final SoundEvent SAWTOOTH_WAVE = new SoundEvent(new ResourceLocation("unittesting:implementation.sawtooth"));
     
     static {
-        DEMO_HISS.setRegistryName("unittesting", "entity.creeper.demoman_DEMO_HISS");
+        SAWTOOTH_WAVE.setRegistryName("unittesting", "implementation.sawtooth");
     }
     
     public UnitTesting() 
     {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(Implementation.class);
-        GameRegistry.findRegistry(SoundEvent.class).register(DEMO_HISS);
+        GameRegistry.findRegistry(SoundEvent.class).register(SAWTOOTH_WAVE);
     }
     
     public static class Implementation 
@@ -53,7 +53,7 @@ public class UnitTesting
                 CreeperEntity creeper = (CreeperEntity)source;
                 if (creeper.isCharged() && evt.getSound().getName().getPath().equals("entity.creeper.primed")) 
                 {
-                    evt.setSound(DEMO_HISS);
+                    evt.setSound(SAWTOOTH_WAVE);
                     evt.setPitch(1f);
                 }
             }

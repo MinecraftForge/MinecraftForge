@@ -1,7 +1,7 @@
 {
-	"entity.creeper.demoman_sssss" : {
+	"implementation.sawtooth" : {
 		"sounds" : [
-			"unittesting:demoman_jeers02"
+			"unittesting:sawtooth"
 		]
 	}
 }
