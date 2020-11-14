@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 public class StartupMessageManager {
 
-    private static volatile Map<MessageType, List<Message>> messages = ImmutableMap.of();
+    private static volatile EnumMap<MessageType, List<Message>> messages = new EnumMap<>(MessageType.class);
 
     public static List<Pair<Integer,Message>> getMessages() {
         final long ts = System.nanoTime();
@@ -90,23 +90,24 @@ public class StartupMessageManager {
 
     private synchronized static void addMessage(MessageType type, String message, int maxSize)
     {
-        Map<MessageType, List<Message>> messages = StartupMessageManager.messages;
-
-        List<Message> oldMessagesForType = messages.getOrDefault(type, ImmutableList.of());
-        List<Message> newMessagesForType = ImmutableList.<Message>builder()
-                .addAll(maxSize < 0 ? oldMessagesForType : oldMessagesForType.subList(0, Math.min(oldMessagesForType.size(), maxSize)))
-                .add(new Message(message, type))
-                .build();
-
-        ImmutableMap.Builder<MessageType, List<Message>> builder = ImmutableMap.builder();
-
-        StartupMessageManager.messages.entrySet().stream()
-                .filter(entry -> entry.getKey() != type)
-                .forEach(builder::put);
-
-        builder.put(type, newMessagesForType);
-
-        StartupMessageManager.messages = builder.build();
+        EnumMap<MessageType, List<Message>> newMessages = new EnumMap<>(messages);
+        newMessages.compute(type, (key, existingList) -> {
+            List<Message> newList = new ArrayList<>();
+            if (existingList != null)
+            {
+                if (maxSize < 0)
+                {
+                    newList.addAll(existingList);
+                }
+                else
+                {
+                    newList.addAll(existingList.subList(0, Math.min(existingList.size(), maxSize)));
+                }
+            }
+            newList.add(new Message(message, type));
+            return newList;
+        });
+        messages = newMessages;
     }
 
     public static void addModMessage(final String message) {
