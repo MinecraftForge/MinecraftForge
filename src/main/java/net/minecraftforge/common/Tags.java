@@ -123,6 +123,8 @@ public class Tags
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
 
+        public static final IOptionalNamedTag<Block> REDSTONE_WIRE = tag("redstone_wire");
+
         private static IOptionalNamedTag<Block> tag(String name)
         {
             return BlockTags.createOptional(new ResourceLocation("forge", name));

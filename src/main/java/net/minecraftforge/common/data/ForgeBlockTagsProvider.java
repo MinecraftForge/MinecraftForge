@@ -92,6 +92,7 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         getOrCreateBuilder(STORAGE_BLOCKS_QUARTZ).add(Blocks.QUARTZ_BLOCK);
         getOrCreateBuilder(STORAGE_BLOCKS_REDSTONE).add(Blocks.REDSTONE_BLOCK);
         getOrCreateBuilder(STORAGE_BLOCKS_NETHERITE).add(Blocks.NETHERITE_BLOCK);
+        getOrCreateBuilder(REDSTONE_WIRE).add(Blocks.REDSTONE_WIRE);
     }
 
     private void addColored(Consumer<Block> consumer, ITag.INamedTag<Block> group, String pattern)

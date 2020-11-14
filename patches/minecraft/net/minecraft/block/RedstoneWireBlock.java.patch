@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/RedstoneWireBlock.java
 +++ b/net/minecraft/block/RedstoneWireBlock.java
+@@ -47,7 +47,7 @@
+    private final Map<BlockState, VoxelShape> field_235541_j_ = Maps.newHashMap();
+    private static final Vector3f[] field_235542_k_ = new Vector3f[16];
+    private final BlockState field_235543_o_;
+-   private boolean field_150181_a = true;
++   private static boolean field_150181_a = true;
+ 
+    public RedstoneWireBlock(AbstractBlock.Properties p_i48344_1_) {
+       super(p_i48344_1_);
 @@ -184,7 +184,7 @@
        BlockState blockstate = p_235545_1_.func_180495_p(blockpos);
        if (p_235545_4_) {
@@ -18,7 +27,39 @@
     }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-@@ -335,11 +335,7 @@
+@@ -250,11 +250,11 @@
+    }
+ 
+    private int func_235557_o_(BlockState p_235557_1_) {
+-      return p_235557_1_.func_203425_a(this) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
++      return p_235557_1_.func_235714_a_(net.minecraftforge.common.Tags.Blocks.REDSTONE_WIRE) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
+    }
+ 
+    private void func_176344_d(World p_176344_1_, BlockPos p_176344_2_) {
+-      if (p_176344_1_.func_180495_p(p_176344_2_).func_203425_a(this)) {
++      if (p_176344_1_.func_180495_p(p_176344_2_).func_235714_a_(net.minecraftforge.common.Tags.Blocks.REDSTONE_WIRE)) {
+          p_176344_1_.func_195593_d(p_176344_2_, this);
+ 
+          for(Direction direction : Direction.values()) {
+@@ -265,7 +265,7 @@
+    }
+ 
+    public void func_220082_b(BlockState p_220082_1_, World p_220082_2_, BlockPos p_220082_3_, BlockState p_220082_4_, boolean p_220082_5_) {
+-      if (!p_220082_4_.func_203425_a(p_220082_1_.func_177230_c()) && !p_220082_2_.field_72995_K) {
++      if (!p_220082_4_.func_203425_a(this) && !p_220082_2_.field_72995_K) {
+          this.func_235547_a_(p_220082_2_, p_220082_3_, p_220082_1_);
+ 
+          for(Direction direction : Direction.Plane.VERTICAL) {
+@@ -277,7 +277,7 @@
+    }
+ 
+    public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
+-      if (!p_196243_5_ && !p_196243_1_.func_203425_a(p_196243_4_.func_177230_c())) {
++      if (!p_196243_5_ && !p_196243_1_.func_203425_a(this)) {
+          super.func_196243_a(p_196243_1_, p_196243_2_, p_196243_3_, p_196243_4_, p_196243_5_);
+          if (!p_196243_2_.field_72995_K) {
+             for(Direction direction : Direction.values()) {
+@@ -335,12 +335,8 @@
        }
     }
  
@@ -27,10 +68,12 @@
 -   }
 -
 -   protected static boolean func_176343_a(BlockState p_176343_0_, @Nullable Direction p_176343_1_) {
+-      if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
 +   protected static boolean canConnectTo(BlockState p_176343_0_, IBlockReader world, BlockPos pos, @Nullable Direction p_176343_1_) {
-       if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
++      if (p_176343_0_.func_235714_a_(net.minecraftforge.common.Tags.Blocks.REDSTONE_WIRE)) {
           return true;
        } else if (p_176343_0_.func_203425_a(Blocks.field_196633_cV)) {
+          Direction direction = p_176343_0_.func_177229_b(RepeaterBlock.field_185512_D);
 @@ -348,7 +344,7 @@
        } else if (p_176343_0_.func_203425_a(Blocks.field_190976_dk)) {
           return p_176343_1_ == p_176343_0_.func_177229_b(ObserverBlock.field_176387_N);
