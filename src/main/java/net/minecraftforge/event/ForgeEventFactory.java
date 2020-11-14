@@ -96,6 +96,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.EntityEmittedSoundEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -745,6 +746,13 @@ public class ForgeEventFactory
     public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity player, Pose pose, EntitySize size, float eyeHeight)
     {
         EntityEvent.Size evt = new EntityEvent.Size(player, pose, size, eyeHeight);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+    
+    public static EntityEmittedSoundEvent entityEmittedSound(Entity source, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch)
+    {
+        EntityEmittedSoundEvent evt = new EntityEmittedSoundEvent(source, new net.minecraft.util.math.vector.Vector3d(x, y, z), soundIn, category, volume, pitch);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
     }

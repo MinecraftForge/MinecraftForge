@@ -19,6 +19,9 @@
 
 package net.minecraftforge.common.extensions;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
 public interface IForgeWorld extends ICapabilityProvider
@@ -36,4 +39,31 @@ public interface IForgeWorld extends ICapabilityProvider
      * @return The new max radius
      */
     public double increaseMaxEntityRadius(double value);
+    
+    /**
+     * Emits a sound from a specific source entity for the purpose
+     * of contextually managing this sound in {@link net.minecraftforge.event.entity.EntityEmittedSoundEvent}.
+     * 
+     * @param source The entity that is playing this sound.
+     * @param x The X coordinate of the position the sound is being played at.
+     * @param y The Y coordinate of the position the sound is being played at.
+     * @param z The Z coordinate of the position the sound is being played at.
+     * @param soundIn The sound being played.
+     * @param category The category of the sound being played.
+     * @param volume The volume multiplier for this sound.
+     * @param pitch The pitch multiplier for this sound.
+     */
+    public default void playSoundFromEntity(Entity source, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch)
+    {
+        net.minecraftforge.event.entity.EntityEmittedSoundEvent evt = net.minecraftforge.event.ForgeEventFactory.entityEmittedSound(source, x, y, z, soundIn, category, volume, pitch);
+        if (evt.isCanceled() || evt.getSound() == null || evt.getPosition() == null) return;
+        x = evt.getPosition().x;
+        y = evt.getPosition().y;
+        z = evt.getPosition().z;
+        soundIn = evt.getSound();
+        category = evt.getCategory();
+        volume = evt.getVolume();
+        pitch = evt.getPitch();
+        source.world.playSound((net.minecraft.entity.player.PlayerEntity)null, x, y, z, soundIn, category, volume, pitch);
+     }
 }

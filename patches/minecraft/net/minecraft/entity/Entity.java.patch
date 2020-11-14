@@ -127,6 +127,15 @@
           this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
        }
     }
+@@ -868,7 +883,7 @@
+ 
+    public void func_184185_a(SoundEvent p_184185_1_, float p_184185_2_, float p_184185_3_) {
+       if (!this.func_174814_R()) {
+-         this.field_70170_p.func_184148_a((PlayerEntity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), p_184185_1_, this.func_184176_by(), p_184185_2_, p_184185_3_);
++         this.field_70170_p.playSoundFromEntity(this, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), p_184185_1_, this.func_184176_by(), p_184185_2_, p_184185_3_);
+       }
+ 
+    }
 @@ -1056,9 +1071,10 @@
        int k = MathHelper.func_76128_c(this.func_226281_cx_());
        BlockPos blockpos = new BlockPos(i, j, k);

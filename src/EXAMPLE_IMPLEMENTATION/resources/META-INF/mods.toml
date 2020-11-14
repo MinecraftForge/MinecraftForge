@@ -1,0 +1,32 @@
+ # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
+modLoader="javafml"
+# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
+# Forge for 1.15.2 is version 31
+loaderVersion="[31,)"
+license="https://opensource.org/licenses/MIT"
+# If the mods defined in this file should show as seperate resource packs
+showAsResourcePack=false
+
+[[mods]]
+  modId="unittesting"
+  version="1.0.0.0"
+  displayName="Eti's Unit Testing Mod"
+  authors="Eti"
+  license="https://opensource.org/licenses/MIT"
+  description='''
+  I got my SwaawS
+  '''
+
+  [[dependencies.unittesting]]
+    modId="forge"
+    mandatory=true
+    versionRange="[31,)"
+    ordering="NONE"
+    side="BOTH"
+
+  [[dependencies.unittesting]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.4]"
+    ordering="NONE"
+    side="BOTH"
