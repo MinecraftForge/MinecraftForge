@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml;
 
+import com.electronwill.nightconfig.core.Config;
 import com.google.common.collect.ImmutableList;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -154,6 +155,8 @@ public class ModLoader
      * @param periodicTask Optional periodic task to perform on the main thread while other activities run
      */
     public void gatherAndInitializeMods(final ModWorkManager.DrivenExecutor syncExecutor, final Executor parallelExecutor, final Runnable periodicTask) {
+        // do this here to ensure it happens before any mods are loaded
+        Config.setInsertionOrderPreserved(true);
         loadingStateValid = true;
         statusConsumer.ifPresent(c->c.accept("Waiting for scan to complete"));
         FMLLoader.backgroundScanHandler.waitForScanToComplete(periodicTask);
