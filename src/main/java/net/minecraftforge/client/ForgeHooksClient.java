@@ -22,6 +22,7 @@ package net.minecraftforge.client;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
@@ -76,6 +77,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -106,6 +108,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -768,5 +771,23 @@ public class ForgeHooksClient
             }
         }
         return !(squareDistance > 4096.0f);
+    }
+
+    public static void renderPistonMovedBlocks(BlockPos pos, BlockState state, MatrixStack stack, IRenderTypeBuffer buffer, World world, boolean checkSides, int combinedOverlay, BlockRendererDispatcher blockRenderer) {
+        RenderType.getBlockRenderTypes().stream()
+                .filter(t -> RenderTypeLookup.canRenderInLayer(state, t))
+                .forEach(rendertype ->
+                {
+                    rendertype = rendertype == RenderType.getTranslucent() ? RenderType.getTranslucentMovingBlock() : rendertype;
+                    setRenderLayer(rendertype);
+                    IVertexBuilder ivertexbuilder = buffer.getBuffer(rendertype);
+                    BlockRendererDispatcher renderer;
+                    if (blockRenderer == null)
+                        renderer = Minecraft.getInstance().getBlockRendererDispatcher();
+                    else
+                        renderer = blockRenderer;
+                    renderer.getBlockModelRenderer().renderModel(world, renderer.getModelForState(state), state, pos, stack, ivertexbuilder, checkSides, new Random(), state.getPositionRandom(pos), combinedOverlay);
+                });
+        setRenderLayer(null);
     }
 }
