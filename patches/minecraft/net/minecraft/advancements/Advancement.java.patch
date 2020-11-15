@@ -1,6 +1,43 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
-@@ -309,6 +_,7 @@
+@@ -230,12 +230,36 @@
+          }
+       }
+ 
++      @Deprecated //Forge: use the other Method with the fileHelper
+       public Advancement func_203904_a(Consumer<Advancement> p_203904_1_, String p_203904_2_) {
+          Advancement advancement = this.func_192056_a(new ResourceLocation(p_203904_2_));
+          p_203904_1_.accept(advancement);
+          return advancement;
+       }
+ 
++      public Advancement register(Consumer<Advancement> consumer, ResourceLocation id, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
++         Advancement advancement = this.build(id, fileHelper);
++         consumer.accept(advancement);
++         return advancement;
++      }
++
++       public Advancement build(ResourceLocation id, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
++           if (!this.func_192058_a((p_199750_0_) -> {
++              if(fileHelper.exists(p_199750_0_, net.minecraft.resources.ResourcePackType.SERVER_DATA, ".json", "advancements")) {
++                  return new Advancement(p_199750_0_, null, null, AdvancementRewards.field_192114_a, Maps.newHashMap(), this.field_192066_f);
++              }
++               return null;
++           })) {
++               throw new IllegalStateException("Tried to build incomplete advancement!");
++           } else {
++               if (this.field_192066_f == null) {
++                   this.field_192066_f = this.field_199751_g.createRequirements(this.field_192065_e.keySet());
++               }
++
++               return new Advancement(id, this.field_192062_b, this.field_192063_c, this.field_192064_d, this.field_192065_e, this.field_192066_f);
++           }
++       }
++
+       public JsonObject func_200273_b() {
+          if (this.field_192066_f == null) {
+             this.field_192066_f = this.field_199751_g.createRequirements(this.field_192065_e.keySet());
+@@ -309,6 +333,7 @@
        }
  
        public static Advancement.Builder func_241043_a_(JsonObject p_241043_0_, ConditionArrayParser p_241043_1_) {
