@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/platform/GlStateManager.java
 +++ b/com/mojang/blaze3d/platform/GlStateManager.java
-@@ -556,10 +556,17 @@
+@@ -572,10 +572,17 @@
        GL13.glClientActiveTexture(p_227747_0_);
     }
  

@@ -155,7 +155,7 @@ public class ForgeRegistries
 
         private static <T> RegistryKey<Registry<T>> key(String name)
         {
-            return RegistryKey.func_240904_a_(new ResourceLocation(name));
+            return RegistryKey.getOrCreateRootKey(new ResourceLocation(name));
         }
         private static void init() {}
     }

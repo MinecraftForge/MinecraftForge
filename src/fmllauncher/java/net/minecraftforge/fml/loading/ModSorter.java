@@ -36,17 +36,11 @@ import org.apache.logging.log4j.util.StringBuilderFormattable;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
-import java.util.AbstractMap;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
@@ -65,21 +59,41 @@ public class ModSorter
     public static LoadingModList sort(List<ModFile> mods)
     {
         final ModSorter ms = new ModSorter(mods);
-        EarlyLoadingException earlyLoadingException = null;
         try {
-            ms.findLanguages();
             ms.buildUniqueList();
-            ms.verifyDependencyVersions();
-            ms.sort();
-        } catch (EarlyLoadingException ele) {
-            earlyLoadingException = ele;
-            ms.sortedList = Collections.emptyList();
+        } catch (EarlyLoadingException e) {
+            // We cannot build any list with duped mods. We have to abort immediately and report it
+            return LoadingModList.of(Collections.emptyList(), Collections.emptyList(), e);
         }
-        return LoadingModList.of(ms.modFiles, ms.sortedList, earlyLoadingException);
+        // try and locate languages and validate dependencies
+        List<EarlyLoadingException.ExceptionData> missingLangs = ms.findLanguages();
+        List<EarlyLoadingException.ExceptionData> missingDeps = ms.verifyDependencyVersions();
+        final List<ExceptionData> failedList = Stream.concat(missingLangs.stream(), missingDeps.stream()).collect(Collectors.toList());
+        // if we miss one or the other, we abort now
+        if (!failedList.isEmpty()) {
+            return LoadingModList.of(Collections.emptyList(), Collections.emptyList(), new EarlyLoadingException("failure to validate mod list", null, failedList));
+        } else {
+            // Otherwise, lets try and sort the modlist and proceed
+            EarlyLoadingException earlyLoadingException = null;
+            try {
+                ms.sort();
+            } catch (EarlyLoadingException e) {
+                earlyLoadingException = e;
+            }
+            return LoadingModList.of(ms.modFiles, ms.sortedList, earlyLoadingException);
+        }
     }
 
-    private void findLanguages() {
-        modFiles.forEach(ModFile::identifyLanguage);
+    private List<EarlyLoadingException.ExceptionData> findLanguages() {
+        List<EarlyLoadingException.ExceptionData> errorData = new ArrayList<>();
+        modFiles.forEach(modFile -> {
+            try {
+                modFile.identifyLanguage();
+            } catch (EarlyLoadingException e) {
+                errorData.addAll(e.getAllData());
+            }
+        });
+        return errorData;
     }
 
     @SuppressWarnings("UnstableApiUsage")
@@ -213,7 +227,7 @@ public class ModSorter
         return new AbstractMap.SimpleImmutableEntry<>(fullList.getKey(), modInfoList.get(0));
     }
 
-    private void verifyDependencyVersions()
+    private List<EarlyLoadingException.ExceptionData> verifyDependencyVersions()
     {
         final Map<String, ArtifactVersion> modVersions = modFiles
                 .stream()
@@ -237,24 +251,24 @@ public class ModSorter
         LOGGER.debug(LOADING, "Found {} mandatory requirements", mandatoryModVersions.size());
         final Set<IModInfo.ModVersion> missingVersions = mandatoryModVersions
                 .stream()
-                .filter(mv->this.modVersionMatches(mv, modVersions))
+                .filter(mv->this.modVersionNotContained(mv, modVersions))
                 .collect(Collectors.toSet());
         LOGGER.debug(LOADING, "Found {} mandatory mod requirements missing", missingVersions.size());
 
         if (!missingVersions.isEmpty()) {
-            final List<EarlyLoadingException.ExceptionData> exceptionData = missingVersions
+            return missingVersions
                     .stream()
-                    .map(mv -> new EarlyLoadingException.ExceptionData("fml.modloading.missingdependency", mv.getOwner(),
+                    .map(mv -> new ExceptionData("fml.modloading.missingdependency", mv.getOwner(),
                             mv.getModId(), mv.getOwner().getModId(), mv.getVersionRange(),
                             modVersions.getOrDefault(mv.getModId(), new DefaultArtifactVersion("null"))))
                     .collect(Collectors.toList());
-            throw new EarlyLoadingException("Missing mods", null, exceptionData);
         }
+        return Collections.emptyList();
     }
 
-    private boolean modVersionMatches(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)
+    private boolean modVersionNotContained(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)
     {
-        return !(modVersions.containsKey(mv.getModId()) &&
-                (mv.getVersionRange().containsVersion(modVersions.get(mv.getModId())) || modVersions.get(mv.getModId()).toString().equals("NONE")));
+        return !(VersionSupportMatrix.testVersionSupportMatrix(mv.getVersionRange(), mv.getModId(), "mod", (modId, range) -> modVersions.containsKey(modId) &&
+                (range.containsVersion(modVersions.get(modId)) || modVersions.get(modId).toString().equals("NONE"))));
     }
 }
