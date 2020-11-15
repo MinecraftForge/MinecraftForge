@@ -135,6 +135,7 @@ public class DataGeneratorTest
         {
             gen.addProvider(new Recipes(gen));
             gen.addProvider(new Tags(gen, event.getExistingFileHelper()));
+            gen.addProvider(new Advancements(gen, event.getExistingFileHelper()));
         }
     }
 
@@ -879,6 +880,77 @@ public class DataGeneratorTest
         @Override
         public String getName() {
             return "Forge Test Blockstates";
+        }
+    }
+
+    public static class Advancements extends AdvancementProvider
+    {
+
+        public Advancements(DataGenerator generatorIn, ExistingFileHelper fileHelper)
+        {
+            super(generatorIn, fileHelper);
+        }
+
+        @Override
+        protected void registerAdvancement(Consumer<Advancement> consumer, ExistingFileHelper fileHelper)
+        {
+            Advancement.Builder.builder().withDisplay(Items.DIRT,
+                    new TranslationTextComponent(Items.DIRT.getTranslationKey()),
+                    new TranslationTextComponent("dirt_description"),
+                    new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                    FrameType.TASK,
+                    true,
+                    true,
+                    false)
+                    .withCriterion("has_dirt", InventoryChangeTrigger.Instance.forItems(Items.DIRT))
+                    .register(consumer, new ResourceLocation(MODID, "obtain_dirt"), fileHelper);
+
+            Advancement.Builder.builder().withDisplay(Items.DIAMOND_BLOCK,
+                    new TranslationTextComponent(Items.DIAMOND_BLOCK.getTranslationKey()),
+                    new StringTextComponent("You obtained a DiamondBlock"),
+                    new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                    FrameType.CHALLENGE,
+                    true,
+                    true,
+                    false)
+                    .withCriterion("obtained_diamond_block", InventoryChangeTrigger.Instance.forItems(Items.DIAMOND_BLOCK))
+                    .register(consumer, new ResourceLocation("obtain_diamond_block"), fileHelper);
+
+            Advancement.Builder.builder()
+                    .withDisplay(Blocks.GRASS_BLOCK,
+                            new TranslationTextComponent("advancements.story.root.title"),
+                            new StringTextComponent("Changed Description"),
+                            new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                            FrameType.TASK,
+                            false,
+                            false,
+                            false)
+                    .withCriterion("crafting_table", InventoryChangeTrigger.Instance.forItems(Blocks.CRAFTING_TABLE))
+                    .register(consumer, new ResourceLocation("story/root"), fileHelper);
+
+/*            Advancement.Builder.builder().withDisplay(Blocks.COBBLESTONE,
+                    new TranslationTextComponent(Items.COBBLESTONE.getTranslationKey()),
+                    new StringTextComponent("You got cobblestone"),
+                    new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                    FrameType.TASK,
+                    false,
+                    false,
+                    false)
+                    .withCriterion("get_cobbleStone", InventoryChangeTrigger.Instance.forItems(Items.COBBLESTONE))
+                    .withParentId(new ResourceLocation("not_there/not_here"))
+                    .register(consumer, "illegalParent");*/
+
+            Advancement.Builder.builder().withDisplay(Blocks.COBBLESTONE,
+                    new TranslationTextComponent(Items.COBBLESTONE.getTranslationKey()),
+                    new StringTextComponent("You got cobblestone"),
+                    new ResourceLocation("textures/gui/advancements/backgrounds/stone.png"),
+                    FrameType.TASK,
+                    false,
+                    false,
+                    false)
+                    .withCriterion("get_cobbleStone", InventoryChangeTrigger.Instance.forItems(Items.COBBLESTONE))
+                    .withParentId(new ResourceLocation("forge", "dummy_parent"))
+                    .register(consumer, new ResourceLocation("good_parent"), fileHelper);
         }
     }
 
