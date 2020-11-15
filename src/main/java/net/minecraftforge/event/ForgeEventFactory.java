@@ -73,6 +73,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
@@ -750,9 +751,9 @@ public class ForgeEventFactory
         return evt;
     }
     
-    public static EntityEmittedSoundEvent entityEmittedSound(Entity source, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch)
+    public static EntityEmittedSoundEvent onEntityEmittedSound(Entity source, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch)
     {
-        EntityEmittedSoundEvent evt = new EntityEmittedSoundEvent(source, new net.minecraft.util.math.vector.Vector3d(x, y, z), soundIn, category, volume, pitch);
+        EntityEmittedSoundEvent evt = new EntityEmittedSoundEvent(source, new Vector3d(x, y, z), soundIn, category, volume, pitch);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
     }

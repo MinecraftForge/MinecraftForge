@@ -48,7 +48,7 @@ import net.minecraft.util.math.vector.Vector3d;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 public class EntityEmittedSoundEvent extends EntityEvent
 {
     private SoundEvent name;

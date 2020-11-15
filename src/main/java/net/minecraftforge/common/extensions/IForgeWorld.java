@@ -55,7 +55,7 @@ public interface IForgeWorld extends ICapabilityProvider
      */
     public default void playSoundFromEntity(Entity source, double x, double y, double z, SoundEvent soundIn, SoundCategory category, float volume, float pitch)
     {
-        net.minecraftforge.event.entity.EntityEmittedSoundEvent evt = net.minecraftforge.event.ForgeEventFactory.entityEmittedSound(source, x, y, z, soundIn, category, volume, pitch);
+        net.minecraftforge.event.entity.EntityEmittedSoundEvent evt = net.minecraftforge.event.ForgeEventFactory.onEntityEmittedSound(source, x, y, z, soundIn, category, volume, pitch);
         if (evt.isCanceled() || evt.getSound() == null || evt.getPosition() == null) return;
         x = evt.getPosition().x;
         y = evt.getPosition().y;
