@@ -21,6 +21,9 @@ import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.entity.Entity;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
 
 
 import java.util.stream.Collectors;
@@ -38,13 +41,16 @@ public class EntityEmittedSoundEventTest
     static 
     {
         // Do not create registries if the mod is not enabled.
-        if (!ENABLE) {
+        if (!ENABLE) 
+        {
             SOUND_REGISTRY = null;
             SAWTOOTH_WAVE = null;
-            return;
+        } 
+        else 
+        {
+            SOUND_REGISTRY = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MODID);
+            SAWTOOTH_WAVE = SOUND_REGISTRY.register("sawtooth", () -> new SoundEvent(new ResourceLocation(MODID, "sawtooth")));
         }
-        SOUND_REGISTRY = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, MODID);
-        SAWTOOTH_WAVE = SOUND_REGISTRY.register("sawtooth", () -> new SoundEvent(new ResourceLocation(MODID, "sawtooth")));
     }
     
     public EntityEmittedSoundEventTest() 
@@ -52,10 +58,11 @@ public class EntityEmittedSoundEventTest
         // Do not register events if the mod is not enabled.
         if (!ENABLE) return;
         MinecraftForge.EVENT_BUS.register(this);
+        SOUND_REGISTRY.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
     
     @SubscribeEvent
-    public static void onEntityPlayedSound(EntityEmittedSoundEvent evt) 
+    public void onEntityPlayedSound(EntityEmittedSoundEvent evt) 
     {
         if (!ENABLE) return;
         
@@ -65,7 +72,9 @@ public class EntityEmittedSoundEventTest
             CreeperEntity creeper = (CreeperEntity)source;
             if (creeper.isCharged() && evt.getSound().getName().getPath().equals("entity.creeper.primed")) 
             {
-                evt.setSound(SAWTOOTH_WAVE);
+                // docs say to use a method to test if it exists, but in this case I will not do this
+                // If it doesn't exist, it needs to error out because that means there's a problem.
+                evt.setSound(SAWTOOTH_WAVE.get());
                 evt.setPitch(1f);
             }
         }
