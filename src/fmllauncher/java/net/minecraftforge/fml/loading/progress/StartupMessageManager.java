@@ -21,9 +21,6 @@ package net.minecraftforge.fml.loading.progress;
 
 import com.google.common.base.Ascii;
 import com.google.common.base.CharMatcher;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
