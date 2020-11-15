@@ -286,7 +286,7 @@ public class GameData
         });
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
             reg.freeze();
-            reg.bake();
+            reg.bake(IForgeRegistry.BakeReason.FREEZE);
             reg.dump(name);
         });
 
@@ -315,7 +315,7 @@ public class GameData
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
             loadRegistry(r.getKey(), target, RegistryManager.ACTIVE, clazz, true);
         }
-        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.bake());
+        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.bake(IForgeRegistry.BakeReason.REVERT));
         // the id mapping has reverted, fire remap events for those that care about id changes
         if (fireEvents) {
         fireRemapEvent(ImmutableMap.of(), true);
@@ -419,7 +419,7 @@ public class GameData
         }
     }
 
-    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.BakeCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
+    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.BakeCallbackNew<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
 
@@ -489,7 +489,7 @@ public class GameData
         }
 
         @Override
-        public void onBake(IForgeRegistryInternal<Block> owner, RegistryManager stage)
+        public void onBake(IForgeRegistryInternal<Block> owner, RegistryManager stage, IForgeRegistry.BakeReason reason)
         {
             @SuppressWarnings("unchecked")
             ClearableObjectIntIdentityMap<BlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
@@ -499,7 +499,15 @@ public class GameData
                 for (BlockState state : block.getStateContainer().getValidStates())
                 {
                     blockstateMap.add(state);
-                    state.cacheState();
+                    if (reason == IForgeRegistry.BakeReason.FREEZE || reason == IForgeRegistry.BakeReason.REMOTE_SNAPSHOT_INJECT)
+                    {
+                        //If the reason is freeze or remote snapshot inject, the data will be recomputed later anyway. Do not waste time recomputing it twice
+                        state.clearCache();
+                    }
+                    else
+                    {
+                        state.cacheState();
+                    }
                 }
 
                 block.getLootTable();
@@ -816,8 +824,9 @@ public class GameData
             loadRegistry(key, STAGING, RegistryManager.ACTIVE, registrySuperType, true);
         });
 
+        IForgeRegistry.BakeReason reason = isLocalWorld ? IForgeRegistry.BakeReason.LOCAL_SNAPSHOT_INJECT : IForgeRegistry.BakeReason.REMOTE_SNAPSHOT_INJECT;
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
-            reg.bake();
+            reg.bake(reason);
 
             // Dump the active registry
             reg.dump(name);

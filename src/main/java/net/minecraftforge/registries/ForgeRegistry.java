@@ -79,7 +79,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final AddCallback<V> add;
     private final ClearCallback<V> clear;
     private final ValidateCallback<V> validate;
-    private final BakeCallback<V> bake;
+    private final BakeCallbackNew<V> bake;
     private final MissingFactory<V> missing;
     private final BitSet availabilityMap;
     private final Set<ResourceLocation> dummies = Sets.newHashSet();
@@ -117,7 +117,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.add = builder.getAdd();
         this.clear = builder.getClear();
         this.validate = builder.getValidate();
-        this.bake = builder.getBake();
+        this.bake = builder.getBakeNew();
         this.missing = builder.getMissingFactory();
         this.dummyFactory = builder.getDummyFactory();
         this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
@@ -518,10 +518,16 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
     }
 
-    public void bake()
+    @Deprecated
+    //TODO 1.17: Remove
+    public void bake() {
+        bake(null);
+    }
+
+    public void bake(BakeReason reason)
     {
         if (this.bake != null)
-            this.bake.onBake(this, this.stage);
+            this.bake.onBake(this, this.stage, reason);
     }
 
     void sync(ResourceLocation name, ForgeRegistry<V> from)
