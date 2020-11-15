@@ -9,40 +9,69 @@
  
     public RedstoneWireBlock(AbstractBlock.Properties p_i48344_1_) {
        super(p_i48344_1_);
-@@ -184,7 +184,7 @@
+@@ -182,9 +182,10 @@
+    private RedstoneSide func_235545_a_(IBlockReader p_235545_1_, BlockPos p_235545_2_, Direction p_235545_3_, boolean p_235545_4_) {
+       BlockPos blockpos = p_235545_2_.func_177972_a(p_235545_3_);
        BlockState blockstate = p_235545_1_.func_180495_p(blockpos);
++      BlockState thisState = p_235545_1_.func_180495_p(p_235545_2_);
        if (p_235545_4_) {
           boolean flag = this.func_235552_b_(p_235545_1_, blockpos, blockstate);
 -         if (flag && func_176346_d(p_235545_1_.func_180495_p(blockpos.func_177984_a()))) {
-+         if (flag && canConnectTo(p_235545_1_.func_180495_p(blockpos.func_177984_a()), p_235545_1_, blockpos.func_177984_a(), null) ) {
++         if (flag && canConnectTo(thisState, p_235545_1_.func_180495_p(blockpos.func_177984_a()), p_235545_1_, blockpos.func_177984_a(), null) ) {
              if (blockstate.func_224755_d(p_235545_1_, blockpos, p_235545_3_.func_176734_d())) {
                 return RedstoneSide.UP;
              }
-@@ -193,7 +193,7 @@
+@@ -193,7 +194,7 @@
           }
        }
  
 -      return !func_176343_a(blockstate, p_235545_3_) && (blockstate.func_215686_e(p_235545_1_, blockpos) || !func_176346_d(p_235545_1_.func_180495_p(blockpos.func_177977_b()))) ? RedstoneSide.NONE : RedstoneSide.SIDE;
-+      return !canConnectTo(blockstate, p_235545_1_, blockpos, p_235545_3_) && (blockstate.func_215686_e(p_235545_1_, blockpos) || !canConnectTo(p_235545_1_.func_180495_p(blockpos.func_177977_b()), p_235545_1_, blockpos.func_177977_b(), null)) ? RedstoneSide.NONE : RedstoneSide.SIDE;
++      return !canConnectTo(thisState, blockstate, p_235545_1_, blockpos, p_235545_3_) && (blockstate.func_215686_e(p_235545_1_, blockpos) || !canConnectTo(thisState, p_235545_1_.func_180495_p(blockpos.func_177977_b()), p_235545_1_, blockpos.func_177977_b(), null)) ? RedstoneSide.NONE : RedstoneSide.SIDE;
     }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
-@@ -250,11 +250,12 @@
+@@ -228,6 +229,7 @@
     }
  
-    public int func_235557_o_(BlockState p_235557_1_) {
+    private int func_235546_a_(World p_235546_1_, BlockPos p_235546_2_) {
++      BlockState thisState = p_235546_1_.func_180495_p(p_235546_2_);
+       this.field_150181_a = false;
+       int i = p_235546_1_.func_175687_A(p_235546_2_);
+       this.field_150181_a = true;
+@@ -236,12 +238,12 @@
+          for(Direction direction : Direction.Plane.HORIZONTAL) {
+             BlockPos blockpos = p_235546_2_.func_177972_a(direction);
+             BlockState blockstate = p_235546_1_.func_180495_p(blockpos);
+-            j = Math.max(j, this.func_235557_o_(blockstate));
++            j = Math.max(j, this.getPower(thisState, blockstate));
+             BlockPos blockpos1 = p_235546_2_.func_177984_a();
+             if (blockstate.func_215686_e(p_235546_1_, blockpos) && !p_235546_1_.func_180495_p(blockpos1).func_215686_e(p_235546_1_, blockpos1)) {
+-               j = Math.max(j, this.func_235557_o_(p_235546_1_.func_180495_p(blockpos.func_177984_a())));
++               j = Math.max(j, this.getPower(thisState, p_235546_1_.func_180495_p(blockpos.func_177984_a())));
+             } else if (!blockstate.func_215686_e(p_235546_1_, blockpos)) {
+-               j = Math.max(j, this.func_235557_o_(p_235546_1_.func_180495_p(blockpos.func_177977_b())));
++               j = Math.max(j, this.getPower(thisState, p_235546_1_.func_180495_p(blockpos.func_177977_b())));
+             }
+          }
+       }
+@@ -249,12 +251,13 @@
+       return Math.max(i, j - 1);
+    }
+ 
+-   public int func_235557_o_(BlockState p_235557_1_) {
 -      return p_235557_1_.func_203425_a(this) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
-+      return (p_235557_1_.func_203425_a(this) || (p_235557_1_.func_177230_c() instanceof RedstoneWireBlock && ((RedstoneWireBlock) p_235557_1_.func_177230_c()).canConnectToOther(p_235557_1_))) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
++   public int getPower(BlockState thisState, BlockState p_235557_1_) {
++      return (p_235557_1_.func_203425_a(this) || net.minecraftforge.common.ForgeHooks.canRedstoneWiresConnect(thisState, p_235557_1_)) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
     }
  
     private void func_176344_d(World p_176344_1_, BlockPos p_176344_2_) {
 -      if (p_176344_1_.func_180495_p(p_176344_2_).func_203425_a(this)) {
 +      BlockState state = p_176344_1_.func_180495_p(p_176344_2_);
-+      if (state.func_203425_a(this) || (state.func_177230_c() instanceof RedstoneWireBlock && ((RedstoneWireBlock) state.func_177230_c()).canConnectToOther(state))) {
++      if (state.func_203425_a(this)) {
           p_176344_1_.func_195593_d(p_176344_2_, this);
  
           for(Direction direction : Direction.values()) {
-@@ -335,20 +336,18 @@
+@@ -335,20 +338,18 @@
        }
     }
  
@@ -51,10 +80,11 @@
 -   }
 -
 -   protected static boolean func_176343_a(BlockState p_176343_0_, @Nullable Direction p_176343_1_) {
-+   protected static boolean canConnectTo(BlockState p_176343_0_, IBlockReader world, BlockPos pos, @Nullable Direction p_176343_1_) {
-       if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
+-      if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
++   protected static boolean canConnectTo(BlockState thisState, BlockState p_176343_0_, IBlockReader world, BlockPos pos, @Nullable Direction p_176343_1_) {
++      if (p_176343_0_.func_203425_a(thisState.func_177230_c())) {
           return true;
-+      } else if (p_176343_0_.func_177230_c() instanceof RedstoneWireBlock && ((RedstoneWireBlock)p_176343_0_.func_177230_c()).canConnectToOther(p_176343_0_)) {
++      } else if (net.minecraftforge.common.ForgeHooks.canRedstoneWiresConnect(thisState, p_176343_0_)) {
 +        return true;
        } else if (p_176343_0_.func_203425_a(Blocks.field_196633_cV)) {
           Direction direction = p_176343_0_.func_177229_b(RepeaterBlock.field_185512_D);
@@ -67,18 +97,17 @@
        }
     }
  
-@@ -463,4 +462,14 @@
+@@ -463,4 +464,13 @@
        }
  
     }
 +
 +   /**
-+    * If this returns true the wire is fully interoperable with vanilla redstone wire.
-+    * To transmit power you still need to override {@link #getPower(BlockState)}. See example mod (custom_redstone_wire) for help
-+    * If this returns false it changes to vanilla behaviour
++    * If this returns true the wire is fully interoperable with all redstone wires.
++    * To transmit power you still need to override {@link #getPower(BlockState, BlockState)}. See example mod (custom_redstone_wire) for help
++    * By default this makes redstone only connect to itself
 +    * */
 +   public boolean canConnectToOther(BlockState state) {
-+      return false;
++      return state.func_203425_a(this);
 +   }
-+
  }

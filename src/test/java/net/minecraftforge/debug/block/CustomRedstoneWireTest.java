@@ -27,11 +27,6 @@ public class CustomRedstoneWireTest {
 		public boolean canConnectToOther(BlockState state) {
 			return true;
 		}
-
-		@Override
-		public int getPower(BlockState state) {
-			return (state.isIn(this) || (state.getBlock() instanceof RedstoneWireBlock)) ? state.get(POWER) : 0;
-		}
 	});
 
 	static {

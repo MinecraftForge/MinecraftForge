@@ -44,7 +44,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.block.Block;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.fluid.*;
 import net.minecraft.loot.LootContext;
@@ -52,7 +52,6 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.*;
-import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -65,7 +64,6 @@ import net.minecraft.entity.item.minecart.ContainerMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.block.Blocks;
 import net.minecraft.inventory.container.RepairContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -1231,5 +1229,18 @@ public class ForgeHooks
         List<String> modpacks = getModPacks();
         modpacks.add("vanilla");
         return modpacks;
+    }
+    
+    public static boolean canRedstoneWiresConnect(BlockState a, BlockState b)
+    {
+        if (a.getBlock() instanceof RedstoneWireBlock)
+        {
+            if (b.getBlock() instanceof RedstoneWireBlock)
+            {
+                RedstoneWireBlock aBlock = (RedstoneWireBlock)a.getBlock(), bBlock = (RedstoneWireBlock)b.getBlock();
+                return aBlock.canConnectToOther(b) && bBlock.canConnectToOther(a);
+            }
+        }
+        return false;
     }
 }
