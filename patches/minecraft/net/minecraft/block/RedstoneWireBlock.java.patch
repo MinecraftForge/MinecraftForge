@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/RedstoneWireBlock.java
 +++ b/net/minecraft/block/RedstoneWireBlock.java
+@@ -34,7 +34,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class RedstoneWireBlock extends Block {
++public class RedstoneWireBlock extends Block implements net.minecraftforge.common.extensions.IRedstoneWireBlock {
+    public static final EnumProperty<RedstoneSide> field_176348_a = BlockStateProperties.field_208160_M;
+    public static final EnumProperty<RedstoneSide> field_176347_b = BlockStateProperties.field_208159_L;
+    public static final EnumProperty<RedstoneSide> field_176349_M = BlockStateProperties.field_208161_N;
 @@ -47,7 +47,7 @@
     private final Map<BlockState, VoxelShape> field_235541_j_ = Maps.newHashMap();
     private static final Vector3f[] field_235542_k_ = new Vector3f[16];
@@ -97,17 +106,3 @@
        }
     }
  
-@@ -463,4 +464,13 @@
-       }
- 
-    }
-+
-+   /**
-+    * If this returns true the wire is fully interoperable with all redstone wires.
-+    * To transmit power you still need to override {@link #getPower(BlockState, BlockState)}. See example mod (custom_redstone_wire) for help
-+    * By default this makes redstone only connect to itself
-+    * */
-+   public boolean canConnectToOther(BlockState state) {
-+      return state.func_203425_a(this);
-+   }
- }

@@ -1238,7 +1238,7 @@ public class ForgeHooks
             if (b.getBlock() instanceof RedstoneWireBlock)
             {
                 RedstoneWireBlock aBlock = (RedstoneWireBlock)a.getBlock(), bBlock = (RedstoneWireBlock)b.getBlock();
-                return aBlock.canConnectToOther(b) && bBlock.canConnectToOther(a);
+                return aBlock.canConnectToOther(a, b) && bBlock.canConnectToOther(b, a);
             }
         }
         return false;

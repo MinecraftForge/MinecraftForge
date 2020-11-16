@@ -24,7 +24,7 @@ public class CustomRedstoneWireTest {
 
 	public static final RegistryObject<RedstoneWireBlock> CUSTOM_REDSTONE_WIRE = BLOCKS.register(BLOCK_ID, () -> new RedstoneWireBlock(AbstractBlock.Properties.from(Blocks.REDSTONE_WIRE)) {
 		@Override
-		public boolean canConnectToOther(BlockState state) {
+		public boolean canConnectToOther(BlockState thisState, BlockState otherState) {
 			return true;
 		}
 	});
