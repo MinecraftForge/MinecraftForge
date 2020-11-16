@@ -29,7 +29,8 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 
 /**
- * PlaySoundAtEntityEvent is fired a sound is to be played at an Entity<br>
+ * PlaySoundAtEntityEvent is fired when a sound is going to be played for a specific Entity.<br>
+ * This event contains the entity that will hear the sound. If you instead wish to access the Entity that emitted the sound, use {@link EntityEmittedSoundEvent}.<br>
  * This event is fired whenever a sound is set to be played at an Entity such as in
  * {@link ClientPlayerEntity#playSound(SoundEvent, float, float)} and {@link World#playSound(PlayerEntity, double, double, double, SoundEvent, SoundCategory, float, float)}.<br>
  * <br>
