@@ -22,14 +22,7 @@ public class CustomRedstoneWireTest
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-	public static final RegistryObject<RedstoneWireBlock> CUSTOM_REDSTONE_WIRE = BLOCKS.register(BLOCK_ID, () -> new RedstoneWireBlock(AbstractBlock.Properties.from(Blocks.REDSTONE_WIRE))
-	{
-		@Override
-		public boolean canConnectToOther(BlockState thisState, BlockState otherState)
-		{
-			return true;
-		}
-	});
+	public static final RegistryObject<RedstoneWireBlock> CUSTOM_REDSTONE_WIRE = BLOCKS.register(BLOCK_ID, () -> new RedstoneWireBlock(AbstractBlock.Properties.from(Blocks.REDSTONE_WIRE)));
 
 	static
 	{

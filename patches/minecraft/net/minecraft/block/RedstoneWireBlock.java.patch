@@ -9,24 +9,59 @@
     public static final EnumProperty<RedstoneSide> field_176348_a = BlockStateProperties.field_208160_M;
     public static final EnumProperty<RedstoneSide> field_176347_b = BlockStateProperties.field_208159_L;
     public static final EnumProperty<RedstoneSide> field_176349_M = BlockStateProperties.field_208161_N;
-@@ -47,7 +47,7 @@
+@@ -47,6 +47,7 @@
     private final Map<BlockState, VoxelShape> field_235541_j_ = Maps.newHashMap();
     private static final Vector3f[] field_235542_k_ = new Vector3f[16];
     private final BlockState field_235543_o_;
--   private boolean field_150181_a = true;
-+   private static boolean field_150181_a = true;
++   static // because AT's don't work if static is in the same line
+    private boolean field_150181_a = true;
  
     public RedstoneWireBlock(AbstractBlock.Properties p_i48344_1_) {
-       super(p_i48344_1_);
-@@ -182,9 +182,10 @@
-    private RedstoneSide func_235545_a_(IBlockReader p_235545_1_, BlockPos p_235545_2_, Direction p_235545_3_, boolean p_235545_4_) {
+@@ -122,7 +123,7 @@
+ 
+       for(Direction direction : Direction.Plane.HORIZONTAL) {
+          if (!p_235551_2_.func_177229_b(field_196498_A.get(direction)).func_235921_b_()) {
+-            RedstoneSide redstoneside = this.func_235545_a_(p_235551_1_, p_235551_3_, direction, flag);
++            RedstoneSide redstoneside = this.recalculateSide(p_235551_1_, p_235551_3_, direction, flag, p_235551_2_);
+             p_235551_2_ = p_235551_2_.func_206870_a(field_196498_A.get(direction), redstoneside);
+          }
+       }
+@@ -136,7 +137,7 @@
+       } else if (p_196271_2_ == Direction.UP) {
+          return this.func_235544_a_(p_196271_4_, p_196271_1_, p_196271_5_);
+       } else {
+-         RedstoneSide redstoneside = this.func_208074_a(p_196271_4_, p_196271_5_, p_196271_2_);
++         RedstoneSide redstoneside = this.getSide(p_196271_4_, p_196271_5_, p_196271_2_, p_196271_1_);
+          return redstoneside.func_235921_b_() == p_196271_1_.func_177229_b(field_196498_A.get(p_196271_2_)).func_235921_b_() && !func_235555_m_(p_196271_1_) ? p_196271_1_.func_206870_a(field_196498_A.get(p_196271_2_), redstoneside) : this.func_235544_a_(p_196271_4_, this.field_235543_o_.func_206870_a(field_176351_O, p_196271_1_.func_177229_b(field_176351_O)).func_206870_a(field_196498_A.get(p_196271_2_), redstoneside), p_196271_5_);
+       }
+    }
+@@ -154,7 +155,7 @@
+ 
+       for(Direction direction : Direction.Plane.HORIZONTAL) {
+          RedstoneSide redstoneside = p_196248_1_.func_177229_b(field_196498_A.get(direction));
+-         if (redstoneside != RedstoneSide.NONE && !p_196248_2_.func_180495_p(blockpos$mutable.func_239622_a_(p_196248_3_, direction)).func_203425_a(this)) {
++         if (redstoneside != RedstoneSide.NONE && !net.minecraftforge.common.ForgeHooks.canRedstoneWiresConnect(p_196248_1_, p_196248_2_.func_180495_p(blockpos$mutable.func_239622_a_(p_196248_3_, direction))).isPresent()) {
+             blockpos$mutable.func_189536_c(Direction.DOWN);
+             BlockState blockstate = p_196248_2_.func_180495_p(blockpos$mutable);
+             if (!blockstate.func_203425_a(Blocks.field_190976_dk)) {
+@@ -175,16 +176,16 @@
+ 
+    }
+ 
+-   private RedstoneSide func_208074_a(IBlockReader p_208074_1_, BlockPos p_208074_2_, Direction p_208074_3_) {
+-      return this.func_235545_a_(p_208074_1_, p_208074_2_, p_208074_3_, !p_208074_1_.func_180495_p(p_208074_2_.func_177984_a()).func_215686_e(p_208074_1_, p_208074_2_));
++   private RedstoneSide getSide(IBlockReader p_208074_1_, BlockPos p_208074_2_, Direction p_208074_3_, BlockState state) {
++      return this.recalculateSide(p_208074_1_, p_208074_2_, p_208074_3_, !p_208074_1_.func_180495_p(p_208074_2_.func_177984_a()).func_215686_e(p_208074_1_, p_208074_2_), state);
+    }
+ 
+-   private RedstoneSide func_235545_a_(IBlockReader p_235545_1_, BlockPos p_235545_2_, Direction p_235545_3_, boolean p_235545_4_) {
++   private RedstoneSide recalculateSide(IBlockReader p_235545_1_, BlockPos p_235545_2_, Direction p_235545_3_, boolean p_235545_4_, BlockState state) {
        BlockPos blockpos = p_235545_2_.func_177972_a(p_235545_3_);
        BlockState blockstate = p_235545_1_.func_180495_p(blockpos);
-+      BlockState thisState = p_235545_1_.func_180495_p(p_235545_2_);
        if (p_235545_4_) {
           boolean flag = this.func_235552_b_(p_235545_1_, blockpos, blockstate);
 -         if (flag && func_176346_d(p_235545_1_.func_180495_p(blockpos.func_177984_a()))) {
-+         if (flag && canConnectTo(thisState, p_235545_1_.func_180495_p(blockpos.func_177984_a()), p_235545_1_, blockpos.func_177984_a(), null) ) {
++         if (flag && canConnectTo(state, p_235545_1_.func_180495_p(blockpos.func_177984_a()), p_235545_1_, blockpos.func_177984_a(), null) ) {
              if (blockstate.func_224755_d(p_235545_1_, blockpos, p_235545_3_.func_176734_d())) {
                 return RedstoneSide.UP;
              }
@@ -35,7 +70,7 @@
        }
  
 -      return !func_176343_a(blockstate, p_235545_3_) && (blockstate.func_215686_e(p_235545_1_, blockpos) || !func_176346_d(p_235545_1_.func_180495_p(blockpos.func_177977_b()))) ? RedstoneSide.NONE : RedstoneSide.SIDE;
-+      return !canConnectTo(thisState, blockstate, p_235545_1_, blockpos, p_235545_3_) && (blockstate.func_215686_e(p_235545_1_, blockpos) || !canConnectTo(thisState, p_235545_1_.func_180495_p(blockpos.func_177977_b()), p_235545_1_, blockpos.func_177977_b(), null)) ? RedstoneSide.NONE : RedstoneSide.SIDE;
++      return !canConnectTo(state, blockstate, p_235545_1_, blockpos, p_235545_3_) && (blockstate.func_215686_e(p_235545_1_, blockpos) || !canConnectTo(state, p_235545_1_.func_180495_p(blockpos.func_177977_b()), p_235545_1_, blockpos.func_177977_b(), null)) ? RedstoneSide.NONE : RedstoneSide.SIDE;
     }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
@@ -63,24 +98,43 @@
              }
           }
        }
-@@ -249,12 +251,13 @@
+@@ -249,12 +251,12 @@
        return Math.max(i, j - 1);
     }
  
--   public int func_235557_o_(BlockState p_235557_1_) {
+-   private int func_235557_o_(BlockState p_235557_1_) {
 -      return p_235557_1_.func_203425_a(this) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
-+   public int getPower(BlockState thisState, BlockState p_235557_1_) {
-+      return (p_235557_1_.func_203425_a(this) || net.minecraftforge.common.ForgeHooks.canRedstoneWiresConnect(thisState, p_235557_1_)) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
++   private int getPower(BlockState thisState, BlockState p_235557_1_) {
++      return net.minecraftforge.common.ForgeHooks.canRedstoneWiresConnect(thisState, p_235557_1_).orElse(false) ? p_235557_1_.func_177229_b(field_176351_O) : 0;
     }
  
-    private void func_176344_d(World p_176344_1_, BlockPos p_176344_2_) {
+-   private void func_176344_d(World p_176344_1_, BlockPos p_176344_2_) {
 -      if (p_176344_1_.func_180495_p(p_176344_2_).func_203425_a(this)) {
-+      BlockState state = p_176344_1_.func_180495_p(p_176344_2_);
-+      if (state.func_203425_a(this)) {
++   private void notifyWireNeighborsOfStateChange(World p_176344_1_, BlockPos p_176344_2_, BlockPos myPos) {
++      if (net.minecraftforge.common.ForgeHooks.canRedstoneWiresConnect(p_176344_1_.func_180495_p(myPos), p_176344_1_.func_180495_p(p_176344_2_)).orElse(false)) {
           p_176344_1_.func_195593_d(p_176344_2_, this);
  
           for(Direction direction : Direction.values()) {
-@@ -335,20 +338,18 @@
+@@ -292,15 +294,15 @@
+ 
+    private void func_235553_d_(World p_235553_1_, BlockPos p_235553_2_) {
+       for(Direction direction : Direction.Plane.HORIZONTAL) {
+-         this.func_176344_d(p_235553_1_, p_235553_2_.func_177972_a(direction));
++         this.notifyWireNeighborsOfStateChange(p_235553_1_, p_235553_2_.func_177972_a(direction), p_235553_2_);
+       }
+ 
+       for(Direction direction1 : Direction.Plane.HORIZONTAL) {
+          BlockPos blockpos = p_235553_2_.func_177972_a(direction1);
+          if (p_235553_1_.func_180495_p(blockpos).func_215686_e(p_235553_1_, blockpos)) {
+-            this.func_176344_d(p_235553_1_, blockpos.func_177984_a());
++            this.notifyWireNeighborsOfStateChange(p_235553_1_, blockpos.func_177984_a(), p_235553_2_);
+          } else {
+-            this.func_176344_d(p_235553_1_, blockpos.func_177977_b());
++            this.notifyWireNeighborsOfStateChange(p_235553_1_, blockpos.func_177977_b(), p_235553_2_);
+          }
+       }
+ 
+@@ -335,20 +337,17 @@
        }
     }
  
@@ -90,11 +144,11 @@
 -
 -   protected static boolean func_176343_a(BlockState p_176343_0_, @Nullable Direction p_176343_1_) {
 -      if (p_176343_0_.func_203425_a(Blocks.field_150488_af)) {
+-         return true;
 +   protected static boolean canConnectTo(BlockState thisState, BlockState p_176343_0_, IBlockReader world, BlockPos pos, @Nullable Direction p_176343_1_) {
-+      if (p_176343_0_.func_203425_a(thisState.func_177230_c())) {
-          return true;
-+      } else if (net.minecraftforge.common.ForgeHooks.canRedstoneWiresConnect(thisState, p_176343_0_)) {
-+        return true;
++      java.util.Optional<Boolean> wiresCanConnect = net.minecraftforge.common.ForgeHooks.canRedstoneWiresConnect(thisState, p_176343_0_);
++      if (wiresCanConnect.isPresent()) {
++         return wiresCanConnect.get();
        } else if (p_176343_0_.func_203425_a(Blocks.field_196633_cV)) {
           Direction direction = p_176343_0_.func_177229_b(RepeaterBlock.field_185512_D);
           return direction == p_176343_1_ || direction.func_176734_d() == p_176343_1_;

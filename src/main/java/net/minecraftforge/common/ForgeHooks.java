@@ -22,13 +22,7 @@ package net.minecraftforge.common;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.google.common.base.Throwables;
@@ -1231,16 +1225,20 @@ public class ForgeHooks
         return modpacks;
     }
     
-    public static boolean canRedstoneWiresConnect(BlockState a, BlockState b)
+    /**
+     * If the 2 states are not redstone wires, returns {@link Optional#empty()}.
+     * Otherwise, returns whether the wires can connect as determined by {@link RedstoneWireBlock#canConnectToOther(BlockState, BlockState)}.
+     */
+    public static Optional<Boolean> canRedstoneWiresConnect(BlockState a, BlockState b)
     {
         if (a.getBlock() instanceof RedstoneWireBlock)
         {
             if (b.getBlock() instanceof RedstoneWireBlock)
             {
                 RedstoneWireBlock aBlock = (RedstoneWireBlock)a.getBlock(), bBlock = (RedstoneWireBlock)b.getBlock();
-                return aBlock.canConnectToOther(a, b) && bBlock.canConnectToOther(b, a);
+                return Optional.of(aBlock.canConnectToOther(a, b) && bBlock.canConnectToOther(b, a));
             }
         }
-        return false;
+        return Optional.empty();
     }
 }
