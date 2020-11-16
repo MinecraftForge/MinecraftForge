@@ -28,7 +28,8 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.vector.Vector3d;
 
 /**
- * EntityEmittedSoundEvent is fired when an entity requests that a sound is played in its corresponding {@link net.minecraft.world.World}.<br>
+ * EntityEmittedSoundEvent is fired when an Entity requests that a sound is played in its corresponding {@link net.minecraft.world.World}.<br>
+ * This event contains the Entity that played the sound. If you instead wish to access the entity that will hear the sound, use {@link PlaySoundAtEntityEvent}.<br>
  * This event is fired in
  * {@link net.minecraftforge.common.extensions.IForgeWorld.playSoundFromEntity(Entity, double, double, double, SoundEvent, SoundCategory, float, float)}.<br>
  * <br>
