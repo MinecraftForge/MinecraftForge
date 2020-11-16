@@ -109,8 +109,8 @@ public class LoadingModList
     public Path findResource(final String className)
     {
         for (ModFileInfo mf : modFiles) {
-            final Path resource = mf.getFile().findResource(className);
-            if (Files.exists(resource)) return resource;
+            final Path resource = mf.getFile().findResourceIfExists(className);
+            if (resource != null) return resource;
         }
         return null;
     }
@@ -147,8 +147,8 @@ public class LoadingModList
             private URL findNextURL() {
                 while (modFileIterator.hasNext()) {
                     final ModFileInfo next = modFileIterator.next();
-                    final Path resource = next.getFile().findResource(resourceName);
-                    if (Files.exists(resource)) {
+                    final Path resource = next.getFile().findResourceIfExists(resourceName);
+                    if (resource != null) {
                         return LamdbaExceptionUtils.uncheck(()->new URL("modjar://" + next.getMods().get(0).getModId() + "/" + resourceName));
                     }
                 }

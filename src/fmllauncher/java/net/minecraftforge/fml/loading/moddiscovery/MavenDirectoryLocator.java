@@ -37,7 +37,7 @@ public class MavenDirectoryLocator extends AbstractJarFileLocator {
     public List<IModFile> scanMods() {
         return modCoords.stream()
                 .map(mc -> ModFile.newFMLInstance(mc, this))
-                .peek(f->modJars.compute(f, (mf, fs)->createFileSystem(mf)))
+                .peek(f->modJars.compute(f, (mf, fs)-> createFileSystemCache(mf)))
                 .collect(Collectors.toList());
     }
 
