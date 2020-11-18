@@ -28,6 +28,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
+import java.util.Optional;
+
 /**
  * EntityEvent is fired when an event involving any Entity occurs.<br>
  * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
@@ -155,7 +157,7 @@ public class EntityEvent extends Event
         private final EntitySize oldSize;
         private EntitySize newSize;
         private final float oldEyeHeight;
-        private float newEyeHeight;
+        private Optional<Float> newEyeHeight;
 
         public Size(Entity entity, Pose pose, EntitySize size, float defaultEyeHeight)
         {
@@ -164,7 +166,7 @@ public class EntityEvent extends Event
             this.oldSize = size;
             this.newSize = size;
             this.oldEyeHeight = defaultEyeHeight;
-            this.newEyeHeight = defaultEyeHeight;
+            this.newEyeHeight = Optional.empty();
         }
 
 
@@ -173,7 +175,7 @@ public class EntityEvent extends Event
         public EntitySize getNewSize() { return newSize; }
         public void setNewSize(EntitySize size) { this.newSize = size; }
         public float getOldEyeHeight() { return oldEyeHeight; }
-        public float getNewEyeHeight() { return newEyeHeight; }
-        public void setNewEyeHeight(float newHeight) { this.newEyeHeight = newHeight; }
+        public Optional<Float> getNewEyeHeight() { return newEyeHeight; }
+        public void setNewEyeHeight(Optional<Float> newHeight) { this.newEyeHeight = newHeight; }
     }
 }
