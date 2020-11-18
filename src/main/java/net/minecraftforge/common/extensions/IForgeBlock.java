@@ -297,33 +297,6 @@ public interface IForgeBlock
     }
 
     /**
-     * Used during tree growth to determine if newly generated leaves can replace this block.
-     *
-     * @param state The current state
-     * @param world The current world
-     * @param pos Block position in world
-     * @return true if this block can be replaced by growing leaves.
-     */
-    default boolean canBeReplacedByLeaves(BlockState state, IWorldReader world, BlockPos pos)
-    {
-        return isAir(state, world, pos) || state.is(BlockTags.LEAVES);
-    }
-
-    /**
-     * Used during tree growth to determine if newly generated logs can replace this block.
-     *
-     * @param state The current state
-     * @param world The current world
-     * @param pos Block position in world
-     * @return true if this block can be replaced by growing leaves.
-     */
-    default boolean canBeReplacedByLogs(BlockState state, IWorldReader world, BlockPos pos)
-    {
-        return (isAir(state, world, pos) || state.is(BlockTags.LEAVES)) || this == Blocks.GRASS_BLOCK || state.is(Tags.Blocks.DIRT)
-            || getBlock().is(BlockTags.LOGS) || getBlock().is(BlockTags.SAPLINGS) || this == Blocks.VINE;
-    }
-
-    /**
      * Location sensitive version of getExplosionResistance
      *
      * @param world The current world

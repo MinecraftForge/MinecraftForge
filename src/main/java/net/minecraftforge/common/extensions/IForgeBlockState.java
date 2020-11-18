@@ -247,30 +247,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * Used during tree growth to determine if newly generated leaves can replace this block.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return true if this block can be replaced by growing leaves.
-     */
-    default boolean canBeReplacedByLeaves(IWorldReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().canBeReplacedByLeaves(getBlockState(), world, pos);
-    }
-
-    /**
-     * Used during tree growth to determine if newly generated logs can replace this block.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return true if this block can be replaced by growing leaves.
-     */
-    default boolean canBeReplacedByLogs(IWorldReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().canBeReplacedByLogs(getBlockState(), world, pos);
-    }
-
-    /**
      * Location sensitive version of getExplosionResistance
      *
      * @param world The current world
