@@ -4,7 +4,7 @@
           }
        }
  
-+      @Deprecated //Forge: use the other Method with the fileHelper
++      @Deprecated //Forge: Use Advancement#register(Consumer<Advancement>, ResourceLocation, ExistingFileHelper)
        public Advancement func_203904_a(Consumer<Advancement> p_203904_1_, String p_203904_2_) {
           Advancement advancement = this.func_192056_a(new ResourceLocation(p_203904_2_));
           p_203904_1_.accept(advancement);
