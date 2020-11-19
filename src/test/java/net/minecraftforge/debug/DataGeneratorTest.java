@@ -67,6 +67,7 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.model.Variant;
 import net.minecraft.client.renderer.model.BlockModel.GuiLight;
+import net.minecraft.data.AdvancementProvider;
 import net.minecraft.data.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
