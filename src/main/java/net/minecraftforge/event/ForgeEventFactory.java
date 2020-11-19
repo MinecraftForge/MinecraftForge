@@ -742,9 +742,10 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
     }
 
-    public static EntityEvent.Size onEntitySize(Entity entity, Pose pose, EntitySize size)
+    //TODO remove float parameter
+    public static EntityEvent.Size getEntitySizeForge(Entity entity, Pose pose, EntitySize size, float eyeHeight)
     {
-        EntityEvent.Size event = new EntityEvent.Size(entity, pose, size);
+        EntityEvent.Size event = new EntityEvent.Size(entity, pose, size, eyeHeight);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }

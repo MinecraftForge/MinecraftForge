@@ -36,7 +36,7 @@
        this.field_70180_af.func_187214_a(field_213330_X, Pose.STANDING);
        this.func_70088_a();
 -      this.field_213326_aJ = this.func_213316_a(Pose.STANDING, this.field_213325_aI);
-+      this.field_213325_aI = net.minecraftforge.event.ForgeEventFactory.onEntitySize(this, Pose.STANDING, this.field_213325_aI).getNewSize();
++      this.field_213325_aI = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, Pose.STANDING, this.field_213325_aI, 0.0F).getNewSize();
 +      this.field_213326_aJ = net.minecraftforge.event.ForgeEventFactory.onEntityEyeHeight(this, Pose.STANDING, this.field_213325_aI, func_213316_a(Pose.STANDING, this.field_213325_aI)).getNewEyeHeight();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
 +      this.gatherCapabilities();
@@ -265,7 +265,7 @@
        EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
 -      EntitySize entitysize1 = this.func_213305_a(pose);
-+      EntitySize entitysize1 = net.minecraftforge.event.ForgeEventFactory.onEntitySize(this, pose, this.func_213305_a(pose)).getNewSize();
++      EntitySize entitysize1 = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, this.func_213305_a(pose), 0.0F).getNewSize();
        this.field_213325_aI = entitysize1;
 -      this.field_213326_aJ = this.func_213316_a(pose, entitysize1);
 +      this.field_213326_aJ = net.minecraftforge.event.ForgeEventFactory.onEntityEyeHeight(this, pose, entitysize1, func_213316_a(pose, entitysize1)).getNewEyeHeight();

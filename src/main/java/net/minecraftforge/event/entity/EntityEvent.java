@@ -154,19 +154,55 @@ public class EntityEvent extends Event
         private final Pose pose;
         private final EntitySize oldSize;
         private EntitySize newSize;
+        /**
+         * @deprecated Use {@link EyeHeight}
+         * <br>
+         * TODO remove this field
+         */
+        @Deprecated
+        private final float oldEyeHeight;
+        /**
+         * @deprecated Use {@link EyeHeight}
+         * <br>
+         * TODO remove this field
+         */
+        private float newEyeHeight;
 
-        public Size(Entity entity, Pose pose, EntitySize size)
+        public Size(Entity entity, Pose pose, EntitySize size, float defaultEyeHeight)
         {
             super(entity);
             this.pose = pose;
             this.oldSize = size;
             this.newSize = size;
+            this.oldEyeHeight = defaultEyeHeight;
+            this.newEyeHeight = defaultEyeHeight;
         }
         
         public Pose getPose() { return pose; }
         public EntitySize getOldSize() { return oldSize; }
         public EntitySize getNewSize() { return newSize; }
         public void setNewSize(EntitySize size) { this.newSize = size; }
+        /**
+         * @deprecated Use {@link EyeHeight}
+         * <br>
+         * TODO remove this method
+         */
+        @Deprecated
+        public float getOldEyeHeight() { return oldEyeHeight; }
+        /**
+         * @deprecated Use {@link EyeHeight}
+         * <br>
+         * TODO remove this method
+         */
+        @Deprecated
+        public float getNewEyeHeight() { return newEyeHeight; }
+        /**
+         * @deprecated Use {@link EyeHeight}
+         * <br>
+         * TODO remove this method
+         */
+        @Deprecated
+        public void setNewEyeHeight(float newHeight) { this.newEyeHeight = newHeight; }
     }
 
     /**
