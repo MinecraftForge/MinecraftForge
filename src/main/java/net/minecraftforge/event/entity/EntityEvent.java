@@ -141,9 +141,9 @@ public class EntityEvent extends Event
     }
 
     /**
-     * This event is fired whenever the {@link Pose} changes, and in a few other hardcoded scenarios.<br>
+     * This event is fired whenever the {@link Pose} changes, and in a few other hardcoded scenarios, before {@link EyeHeight} is fired.<br>
      * CAREFUL: This is also fired in the Entity constructor. Therefore the entity(subclass) might not be fully initialized. Check Entity#isAddedToWorld() or !Entity#firstUpdate.<br>
-     * If you change the player's size, you probably want to set the eye height accordingly as well<br>
+     * If you change the player's size, you probably want to set the eye height accordingly as well via {@link EyeHeight}<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -156,26 +156,50 @@ public class EntityEvent extends Event
         private final Pose pose;
         private final EntitySize oldSize;
         private EntitySize newSize;
-        private final float oldEyeHeight;
-        private Optional<Float> newEyeHeight;
 
-        public Size(Entity entity, Pose pose, EntitySize size, float defaultEyeHeight)
+        public Size(Entity entity, Pose pose, EntitySize size)
         {
             super(entity);
             this.pose = pose;
             this.oldSize = size;
             this.newSize = size;
-            this.oldEyeHeight = defaultEyeHeight;
-            this.newEyeHeight = Optional.empty();
         }
-
-
+        
         public Pose getPose() { return pose; }
         public EntitySize getOldSize() { return oldSize; }
         public EntitySize getNewSize() { return newSize; }
         public void setNewSize(EntitySize size) { this.newSize = size; }
+    }
+
+    /**
+     * This event is fired whenever the {@link Pose} changes, and in a few other hardcoded scenarios, after {@link Size} is fired.<br>
+     * CAREFUL: This is also fired in the Entity constructor. Therefore the entity(subclass) might not be fully initialized. Check Entity#isAddedToWorld() or !Entity#firstUpdate.<br>
+     * <br>
+     * This event is not {@link Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     **/
+    public static class EyeHeight extends EntityEvent
+    {
+        private final Pose pose;
+        private final EntitySize size;
+        private final float oldEyeHeight;
+        private float newEyeHeight;
+        
+        public EyeHeight(Entity entity, Pose pose, EntitySize size, float eyeHeight){
+            super(entity);
+            this.pose = pose;
+            this.size = size;
+            this.oldEyeHeight = eyeHeight;
+            this.newEyeHeight = eyeHeight;
+        }
+        
+        public Pose getPose() { return pose; }
+        public EntitySize getSize() { return size; }
         public float getOldEyeHeight() { return oldEyeHeight; }
-        public Optional<Float> getNewEyeHeight() { return newEyeHeight; }
-        public void setNewEyeHeight(Optional<Float> newHeight) { this.newEyeHeight = newHeight; }
+        public float getNewEyeHeight() { return newEyeHeight; }
+        public void setNewEyeHeight(float eyeHeight) {newEyeHeight = eyeHeight; }
     }
 }

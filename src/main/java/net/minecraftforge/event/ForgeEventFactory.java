@@ -742,10 +742,17 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
     }
 
-    public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity player, Pose pose, EntitySize size, float eyeHeight)
+    public static EntityEvent.Size onEntitySize(Entity entity, Pose pose, EntitySize size)
     {
-        EntityEvent.Size evt = new EntityEvent.Size(player, pose, size, eyeHeight);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt;
+        EntityEvent.Size event = new EntityEvent.Size(entity, pose, size);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+    
+    public static EntityEvent.EyeHeight onEntityEyeHeight(Entity entity, Pose pose, EntitySize size, float eyeHeight)
+    {
+        EntityEvent.EyeHeight event = new EntityEvent.EyeHeight(entity, pose, size, eyeHeight);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 }
