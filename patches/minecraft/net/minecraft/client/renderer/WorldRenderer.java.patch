@@ -137,7 +137,7 @@
        RenderSystem.disableBlend();
        RenderSystem.popMatrix();
        FogRenderer.func_228370_a_();
-+      net.minecraftforge.client.ForgeHooksClient.dispatchRenderWorldLast(this, p_228426_1_, p_228426_2_, clippinghelper, p_228426_6_, field_228415_m_);
++      net.minecraftforge.client.ForgeHooksClient.dispatchRenderWorldLast(this, p_228426_1_, p_228426_2_, clippinghelper, p_228426_6_, field_228415_m_, p_228426_9_, p_228426_3_);
     }
  
     private void func_228423_a_(MatrixStack p_228423_1_) {

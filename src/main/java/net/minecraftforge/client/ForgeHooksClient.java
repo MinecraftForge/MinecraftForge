@@ -154,44 +154,53 @@ public class ForgeHooksClient
 
     public static void dispatchRenderWorldTerrainUpdate(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers, long finishTimeNano)
     {
-        Minecraft.getInstance().getProfiler().endStartSection("forge_render_terrain_update");
+        Minecraft.getInstance().getProfiler().startSection("forge_render_terrain_update");
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldTerrainUpdateEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers, finishTimeNano));
+        Minecraft.getInstance().getProfiler().endSection();
     }
 
     public static void dispatchRenderWorldBlockLayer(WorldRenderer context, MatrixStack mStack, RenderTypeBuffers renderTypeBuffers, RenderType blockLayer, double cameraX, double cameraY, double cameraZ)
     {
-        Minecraft.getInstance().getProfiler().endStartSection("forge_render_block_layer_" + blockLayer.toString());
+        Minecraft.getInstance().getProfiler().startSection("forge_render_block_layer_" + blockLayer.toString());
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldBlockLayerEvent(context, mStack, renderTypeBuffers, blockLayer, cameraX, cameraY, cameraZ));
+        Minecraft.getInstance().getProfiler().endSection();
     }
 
     public static void dispatchRenderWorldEntities(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
     {
-        Minecraft.getInstance().getProfiler().endStartSection("forge_render_entities");
+        Minecraft.getInstance().getProfiler().startSection("forge_render_entities");
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldEntitiesEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers));
+        Minecraft.getInstance().getProfiler().endSection();
     }
 
     public static void dispatchRenderWorldTileEntities(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
     {
-        Minecraft.getInstance().getProfiler().endStartSection("forge_render_tile_entities");
+        Minecraft.getInstance().getProfiler().startSection("forge_render_tile_entities");
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldTileEntitiesEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers));
+        Minecraft.getInstance().getProfiler().endSection();
     }
 
     public static void dispatchRenderWorldEnd(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
     {
-        Minecraft.getInstance().getProfiler().endStartSection("forge_render_main_buffer_end");
+        Minecraft.getInstance().getProfiler().startSection("forge_render_main_buffer_end");
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldEndEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers));
+        Minecraft.getInstance().getProfiler().endSection();
     }
 
     public static void dispatchRenderWorldPreWeather(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
     {
-        Minecraft.getInstance().getProfiler().endStartSection("forge_render_pre_weather");
+        Minecraft.getInstance().getProfiler().startSection("forge_render_pre_weather");
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldPreWeatherEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers));
+        Minecraft.getInstance().getProfiler().endSection();
     }
 
-    public static void dispatchRenderWorldLast(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers)
+    // TODO: 1.17 remove projectionMatrix and finishTimeNano arguments
+    public static void dispatchRenderWorldLast(WorldRenderer context, MatrixStack mStack, float partialTicks, ClippingHelper clippinghelper, ActiveRenderInfo activeRenderInfoIn, RenderTypeBuffers renderTypeBuffers, Matrix4f projectionMatrix, long finishTimeNano)
     {
-        Minecraft.getInstance().getProfiler().endStartSection("forge_render_last");
+        Minecraft.getInstance().getProfiler().startSection("forge_render_last");
         MinecraftForge.EVENT_BUS.post(new RenderWorldEvent.RenderWorldLastEvent(context, mStack, partialTicks, clippinghelper, activeRenderInfoIn, renderTypeBuffers));
+        MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, mStack, partialTicks, projectionMatrix, finishTimeNano));
+        Minecraft.getInstance().getProfiler().endSection();
     }
 
     public static boolean renderSpecificFirstPersonHand(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
