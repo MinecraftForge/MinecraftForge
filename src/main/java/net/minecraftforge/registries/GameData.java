@@ -51,10 +51,7 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.stats.StatType;
 import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ObjectIntIdentityMap;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
@@ -77,6 +74,7 @@ import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.ModLoadingStage;
@@ -115,6 +113,7 @@ public class GameData
 
     private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
+    private static final ResourceLocation BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE = new ResourceLocation("minecraft:blockstatetopointofinteresttype");
     private static final ResourceLocation SERIALIZER_TO_ENTRY = new ResourceLocation("forge:serializer_to_entry");
     private static final ResourceLocation STRUCTURES = new ResourceLocation("minecraft:structures");
 
@@ -157,7 +156,7 @@ public class GameData
 
         // Villagers
         makeRegistry(VILLAGER_PROFESSIONS, VillagerProfession.class, "none").create();
-        makeRegistry(POI_TYPES, PointOfInterestType.class, "unemployed").disableSync().create();
+        makeRegistry(POI_TYPES, PointOfInterestType.class, "unemployed").addCallback(PointOfInterestTypeCallbacks.INSTANCE).disableSync().create();
         makeRegistry(MEMORY_MODULE_TYPES, c(MemoryModuleType.class), "dummy").disableSync().create();
         makeRegistry(SENSOR_TYPES, c(SensorType.class), "dummy").disableSaving().disableSync().create();
         makeRegistry(SCHEDULES, Schedule.class).disableSaving().disableSync().create();
@@ -229,6 +228,12 @@ public class GameData
     public static ObjectIntIdentityMap<BlockState> getBlockStateIDMap()
     {
         return RegistryManager.ACTIVE.getRegistry(Block.class).getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static Map<BlockState, PointOfInterestType> getBlockStatePointOfInterestTypeMap()
+    {
+        return RegistryManager.ACTIVE.getRegistry(PointOfInterestType.class).getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -615,6 +620,38 @@ public class GameData
         }
     }
 
+    private static class PointOfInterestTypeCallbacks implements IForgeRegistry.AddCallback<PointOfInterestType> , IForgeRegistry.ClearCallback<PointOfInterestType>, IForgeRegistry.CreateCallback<PointOfInterestType>
+    {
+        static final PointOfInterestTypeCallbacks INSTANCE = new PointOfInterestTypeCallbacks();
+        
+        @Override
+        public void onAdd(IForgeRegistryInternal<PointOfInterestType> owner, RegistryManager stage, int id, PointOfInterestType obj, @Nullable PointOfInterestType oldObj)
+        {
+            Map<BlockState, PointOfInterestType> map = owner.getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class);
+            if (oldObj != null)
+            {
+                oldObj.getBlockStates().forEach(map::remove);
+            }
+            obj.getBlockStates().forEach((state) -> 
+            {
+                if (map.put(state, obj) != null)
+                {
+                    throw Util.pauseDevMode(new IllegalStateException(String.format("%s is defined in too many tags", state)));
+                }
+            });
+        }
+
+        @Override public void onClear(IForgeRegistryInternal<PointOfInterestType> owner, RegistryManager stage)
+        {
+            owner.getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class).clear();
+        }
+
+        @Override public void onCreate(IForgeRegistryInternal<PointOfInterestType> owner, RegistryManager stage)
+        {
+            owner.setSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, new HashMap<>());
+        }
+    }
+    
     private static <T extends IForgeRegistryEntry<T>> void loadRegistry(final ResourceLocation registryName, final RegistryManager from, final RegistryManager to, final Class<T> regType, boolean freeze)
     {
         ForgeRegistry<T> fromRegistry = from.getRegistry(registryName);
