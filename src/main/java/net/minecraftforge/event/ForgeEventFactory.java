@@ -21,6 +21,7 @@ package net.minecraftforge.event;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -751,9 +752,9 @@ public class ForgeEventFactory
         return evt;
     }
 
-    public static boolean canLivingConvert(LivingEntity entity, EntityType<? extends LivingEntity> outcome)
+    public static boolean canLivingConvert(LivingEntity entity, EntityType<? extends LivingEntity> outcome, Consumer<Integer> timer)
     {
-        return !MinecraftForge.EVENT_BUS.post(new LivingConversionEvent.Pre(entity, outcome));
+        return !MinecraftForge.EVENT_BUS.post(new LivingConversionEvent.Pre(entity, outcome, timer));
     }
 
     public static void onLivingConvert(LivingEntity entity, LivingEntity outcome)

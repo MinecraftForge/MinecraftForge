@@ -39,7 +39,10 @@ public class LivingConversionEventTest
     public void canLivingConversion(LivingConversionEvent.Pre event)
     {
         if (event.getEntityLiving() instanceof PiglinEntity)
+        {
             event.setCanceled(true);
+            event.setConversionTimer(0);
+        }
     }
 
     public void onLivingConversion(LivingConversionEvent.Post event)

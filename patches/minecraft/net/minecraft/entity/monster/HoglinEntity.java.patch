@@ -5,7 +5,7 @@
        if (this.func_234364_eK_()) {
           ++this.field_234358_by_;
 -         if (this.field_234358_by_ > 300) {
-+         if (this.field_234358_by_ > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.field_233590_aW_)) {
++         if (this.field_234358_by_ > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.field_233590_aW_, (timer) -> this.field_234358_by_ = timer)) {
              this.func_241412_a_(SoundEvents.field_232715_fE_);
              this.func_234360_a_((ServerWorld)this.field_70170_p);
           }

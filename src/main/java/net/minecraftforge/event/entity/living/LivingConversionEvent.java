@@ -23,6 +23,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.eventbus.api.Cancelable;
 
+import java.util.function.Consumer;
+
 public class LivingConversionEvent extends LivingEvent
 {
     public LivingConversionEvent(LivingEntity entity)
@@ -35,8 +37,8 @@ public class LivingConversionEvent extends LivingEvent
      * to replace itself with another entity
      *
      * This event may trigger every tick even if it was cancelled last tick
-     * for entities like Zombies and Hoglins. To prevent it, the timer must
-     * be reset manually
+     * for entities like Zombies and Hoglins. To prevent it, the conversion
+     * timer needs to be changed or reset
      *
      * This event is {@link Cancelable}
      * If cancelled, the replacement will not occur
@@ -45,11 +47,13 @@ public class LivingConversionEvent extends LivingEvent
     public static class Pre extends LivingConversionEvent
     {
         private final EntityType<? extends LivingEntity> outcome;
+        private final Consumer<Integer> timer;
 
-        public Pre(LivingEntity entity, EntityType<? extends LivingEntity> outcome)
+        public Pre(LivingEntity entity, EntityType<? extends LivingEntity> outcome, Consumer<Integer> timer)
         {
             super(entity);
             this.outcome = outcome;
+            this.timer = timer;
         }
 
         /**
@@ -60,6 +64,19 @@ public class LivingConversionEvent extends LivingEvent
         public EntityType<? extends LivingEntity> getOutcome()
         {
             return outcome;
+        }
+
+        /**
+         * Sets the conversion timer, by changing this it prevents the
+         * event being triggered every tick
+         * Do note the timer of some of the entities are increments, but
+         * some of them are decrements
+         * Not every conversion is applicable for this
+         * @param ticks timer ticks
+         */
+        public void setConversionTimer(int ticks)
+        {
+            timer.accept(ticks);
         }
     }
 
