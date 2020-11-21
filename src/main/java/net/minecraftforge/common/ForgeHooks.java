@@ -668,7 +668,8 @@ public class ForgeHooks
 
                     world.markAndNotifyBlock(snap.getPos(), world.getChunkAt(snap.getPos()), oldBlock, newBlock, updateFlag, 512);
                 }
-                player.addStat(Stats.ITEM_USED.get(item));
+                if (player != null)
+                    player.addStat(Stats.ITEM_USED.get(item));
             }
         }
         world.capturedBlockSnapshots.clear();
