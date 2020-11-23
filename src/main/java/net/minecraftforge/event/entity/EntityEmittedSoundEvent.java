@@ -19,27 +19,28 @@
 
 package net.minecraftforge.event.entity;
 
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.vector.Vector3d;
 
 /**
- * PlaySoundAtEntityEvent is fired when a sound is going to be played for a specific Entity.<br>
- * This event contains the entity that will hear the sound. If you instead wish to access the Entity that emitted the sound, use {@link EntityEmittedSoundEvent}.<br>
- * This event is fired whenever a sound is set to be played at an Entity such as in
- * {@link ClientPlayerEntity#playSound(SoundEvent, float, float)} and {@link World#playSound(PlayerEntity, double, double, double, SoundEvent, SoundCategory, float, float)}.<br>
+ * EntityEmittedSoundEvent is fired when an Entity requests that a sound is played in its corresponding {@link net.minecraft.world.World}.<br>
+ * This event contains the Entity that played the sound. If you instead wish to access the entity that will hear the sound, use {@link PlaySoundAtEntityEvent}.<br>
+ * This event is fired in
+ * {@link net.minecraftforge.common.extensions.IForgeWorld.playSoundFromEntity(Entity, double, double, double, SoundEvent, SoundCategory, float, float)}.<br>
  * <br>
  * {@link #name} contains the name of the sound to be played at the Entity.<br>
+ * {@link #position} represents the position that the sound was emitted at in the world.<br>
  * {@link #volume} contains the volume at which the sound is to be played originally.<br>
  * {@link #pitch} contains the pitch at which the sound is to be played originally.<br>
  * {@link #newVolume} contains the volume at which the sound is actually played.<br>
  * {@link #newPitch} contains the pitch at which the sound is actually played.<br>
  * Changing the {@link #name} field will cause the sound of this name to be played instead of the originally intended sound.<br>
+ * Similarly, changing the {@link #position} will move the effective position of the sound. Setting this to a null value will cause the sound to not be played.<br>
  * <br>
  * This event is {@link Cancelable}.<br>
  * If this event is canceled, the sound is not played.<br>
@@ -48,8 +49,8 @@ import net.minecraft.util.SoundEvent;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-@net.minecraftforge.eventbus.api.Cancelable
-public class PlaySoundAtEntityEvent extends EntityEvent
+@Cancelable
+public class EntityEmittedSoundEvent extends EntityEvent
 {
     private SoundEvent name;
     private SoundCategory category;
@@ -57,14 +58,16 @@ public class PlaySoundAtEntityEvent extends EntityEvent
     private final float pitch;
     private float newVolume;
     private float newPitch;
+    private Vector3d position;
 
-    public PlaySoundAtEntityEvent(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch)
+    public EntityEmittedSoundEvent(Entity source, Vector3d position, SoundEvent name, SoundCategory category, float volume, float pitch)
     {
-        super(entity);
+        super(source);
         this.name = name;
         this.category = category;
         this.volume = volume;
         this.pitch = pitch;
+        this.position = position;
         this.newVolume = volume;
         this.newPitch = pitch;
     }
@@ -75,8 +78,10 @@ public class PlaySoundAtEntityEvent extends EntityEvent
     public float getDefaultPitch() { return this.pitch; }
     public float getVolume() { return this.newVolume; }
     public float getPitch() { return this.newPitch; }
+    public Vector3d getPosition() { return this.position; }
     public void setSound(SoundEvent value) { this.name = value; }
     public void setCategory(SoundCategory category) { this.category = category; }
     public void setVolume(float value) { this.newVolume = value; }
     public void setPitch(float value) { this.newPitch = value; }
+    public void setPosition(Vector3d value) { this.position = value; }
 }

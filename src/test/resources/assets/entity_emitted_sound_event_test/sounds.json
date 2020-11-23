@@ -1,0 +1,7 @@
+{
+	"sawtooth" : {
+		"sounds" : [
+			"entity_emitted_sound_event_test:sawtooth"
+		]
+	}
+}
