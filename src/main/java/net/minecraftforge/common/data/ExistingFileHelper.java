@@ -56,10 +56,10 @@ public class ExistingFileHelper {
 
     @Deprecated//TODO: Remove in 1.17
     public ExistingFileHelper(Collection<Path> existingPacks, boolean enable) {
-        this(existingPacks, Collections.emptySet(), enable, true);
+        this(existingPacks, Collections.emptySet(), enable);
     }
 
-    public ExistingFileHelper(Collection<Path> existingPacks, Set<String> existingMods, boolean enable, boolean includeForge) {
+    public ExistingFileHelper(Collection<Path> existingPacks, Set<String> existingMods, boolean enable) {
         this.clientResources = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
         this.serverData = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
         this.clientResources.addResourcePack(new VanillaPack("minecraft", "realms"));
@@ -70,26 +70,15 @@ public class ExistingFileHelper {
             this.clientResources.addResourcePack(pack);
             this.serverData.addResourcePack(pack);
         }
-        if (includeForge) {
-            addModResources("forge");
-        }
         for (String existingMod : existingMods) {
-            //Ensure forge only gets added once if someone manually specifies it or if we aren't
-            // automatically adding forge and it gets manually specified as existing
-            if (!includeForge || !existingMod.equals("forge")) {
-                addModResources(existingMod);
+            ModFileInfo modFileInfo = ModList.get().getModFileById(existingMod);
+            if (modFileInfo != null) {
+                IResourcePack pack = new ModFileResourcePack(modFileInfo.getFile());
+                this.clientResources.addResourcePack(pack);
+                this.serverData.addResourcePack(pack);
             }
         }
         this.enable = enable;
-    }
-
-    private void addModResources(String modid) {
-        ModFileInfo modFileInfo = ModList.get().getModFileById(modid);
-        if (modFileInfo != null) {
-            IResourcePack pack = new ModFileResourcePack(modFileInfo.getFile());
-            this.clientResources.addResourcePack(pack);
-            this.serverData.addResourcePack(pack);
-        }
     }
 
     private IResourceManager getManager(ResourcePackType type) {
