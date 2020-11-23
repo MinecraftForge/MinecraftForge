@@ -47,7 +47,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         private final ExistingFileHelper delegate;
 
         public ExistingFileHelperIncludingGenerated(ExistingFileHelper delegate) {
-            super(Collections.emptyList(), true);
+            super(Collections.emptyList(), Collections.emptySet(), true);
             this.delegate = delegate;
         }
 

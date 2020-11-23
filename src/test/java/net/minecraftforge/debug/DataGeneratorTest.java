@@ -214,6 +214,7 @@ public class DataGeneratorTest
             getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
                 .addItemEntry(Blocks.DIAMOND_BLOCK)
                 .addTag(BlockTags.STONE_BRICKS)
+                .addTag(net.minecraftforge.common.Tags.Blocks.COBBLESTONE)
                 .addOptional(new ResourceLocation("chisel", "marble/raw"))
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
 

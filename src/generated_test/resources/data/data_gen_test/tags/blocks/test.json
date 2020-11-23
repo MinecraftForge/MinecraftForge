@@ -3,6 +3,7 @@
   "values": [
     "minecraft:diamond_block",
     "#minecraft:stone_bricks",
+    "#forge:cobblestone",
     {
       "id": "chisel:marble/raw",
       "required": false
