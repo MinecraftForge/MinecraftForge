@@ -116,6 +116,21 @@ public class WorldEvent extends Event
     }
 
     /**
+     * WorldEvent.PersistentForcedChunksLoaded is fired when Minecraft reregister's the forced chunks for a world.<br>
+     * Modders should use this event to reregister any persistent forced chunks they have custom chunk loading tickets for.
+     * <br>
+     * This event is not {@link Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult} <br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     **/
+    public static class PersistentForcedChunksLoaded extends WorldEvent
+    {
+        public PersistentForcedChunksLoaded(IWorld world) { super(world); }
+    }
+
+    /**
      * Called by WorldServer to gather a list of all possible entities that can spawn at the specified location.
      * If an entry is added to the list, it needs to be a globally unique instance.
      * The event is called in {@link WorldServer#getSpawnListEntryForTypeAt(EnumCreatureType, BlockPos)} as well as
