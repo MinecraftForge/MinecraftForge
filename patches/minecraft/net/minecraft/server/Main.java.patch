@@ -60,7 +60,7 @@
              }
  
 +            // Forge: Deserialize the DimensionGeneratorSettings to ensure modded dims are loaded on first server load (see SimpleRegistryCodec#decode). Vanilla behaviour only loads from the server.properties and deserializes only after the 2nd server load.
-+            dimensiongeneratorsettings = DimensionGeneratorSettings.field_236201_a_.encodeStart(worldsettingsimport, dimensiongeneratorsettings).flatMap(nbt -> DimensionGeneratorSettings.field_236201_a_.parse(worldsettingsimport, nbt)).getOrThrow(false, errorMsg->{});
++            dimensiongeneratorsettings = DimensionGeneratorSettings.field_236201_a_.encodeStart(net.minecraft.util.registry.WorldGenSettingsExport.func_240896_a_(NBTDynamicOps.field_210820_a, dynamicregistries$impl), dimensiongeneratorsettings).flatMap(nbt -> DimensionGeneratorSettings.field_236201_a_.parse(worldsettingsimport, nbt)).getOrThrow(false, errorMsg->{});
              iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
           }
  
