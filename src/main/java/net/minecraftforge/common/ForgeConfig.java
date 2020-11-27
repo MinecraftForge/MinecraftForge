@@ -125,7 +125,8 @@ public class ForgeConfig
                     .push("general");
 
             defaultWorldType = builder
-                    .comment("Defines a default world type to use. The vanilla default world type is represented by 'default'.")
+                    .comment("Defines a default world type to use. The vanilla default world type is represented by 'default'.",
+                             "The modded world types are registry names which should include the registry namespace, such as 'examplemod:example_world_type'.")
                     .translation("forge.configgui.defaultWorldType")
                     .define("defaultWorldType", "default");
 
