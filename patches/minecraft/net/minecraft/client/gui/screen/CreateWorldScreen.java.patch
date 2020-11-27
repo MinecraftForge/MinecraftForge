@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/gui/screen/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screen/CreateWorldScreen.java
+@@ -110,7 +110,7 @@
+ 
+    public static CreateWorldScreen func_243425_a(@Nullable Screen p_243425_0_) {
+       DynamicRegistries.Impl dynamicregistries$impl = DynamicRegistries.func_239770_b_();
+-      return new CreateWorldScreen(p_243425_0_, DatapackCodec.field_234880_a_, new WorldOptionsScreen(dynamicregistries$impl, DimensionGeneratorSettings.func_242751_a(dynamicregistries$impl.func_243612_b(Registry.field_239698_ad_), dynamicregistries$impl.func_243612_b(Registry.field_239720_u_), dynamicregistries$impl.func_243612_b(Registry.field_243549_ar)), Optional.of(BiomeGeneratorTypeScreens.field_239066_a_), OptionalLong.empty()));
++      return new CreateWorldScreen(p_243425_0_, DatapackCodec.field_234880_a_, new WorldOptionsScreen(dynamicregistries$impl, DimensionGeneratorSettings.func_242751_a(dynamicregistries$impl.func_243612_b(Registry.field_239698_ad_), dynamicregistries$impl.func_243612_b(Registry.field_239720_u_), dynamicregistries$impl.func_243612_b(Registry.field_243549_ar)), net.minecraftforge.client.ForgeHooksClient.getDefaultWorldType(), OptionalLong.empty()));
+    }
+ 
+    private CreateWorldScreen(@Nullable Screen p_i242063_1_, DatapackCodec p_i242063_2_, WorldOptionsScreen p_i242063_3_) {
 @@ -542,6 +542,7 @@
           File file1 = path.toFile();
           if (this.field_243416_G == null) {
