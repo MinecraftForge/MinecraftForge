@@ -22,6 +22,7 @@ package net.minecraftforge.fml.loading.progress;
 import net.minecraftforge.api.distmarker.Dist;
 
 import java.util.Locale;
+import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
@@ -40,6 +41,10 @@ public enum EarlyProgressVisualization {
         return visualization.handOffWindow(width, height, title, monitor);
     }
 
+    public void updateFBSize(IntConsumer width, IntConsumer height) {
+        visualization.updateFBSize(width, height);
+    }
+
     interface Visualization {
         Runnable start();
 
@@ -50,6 +55,9 @@ public enum EarlyProgressVisualization {
                     return org.lwjgl.glfw.GLFW.glfwCreateWindow(width.getAsInt(), height.getAsInt(), title.get(), monitorSupplier.getAsLong(), 0L);
                 }
             }.getAsLong();
+        }
+
+        default void updateFBSize(IntConsumer width, IntConsumer height) {
         }
     }
 

@@ -82,9 +82,12 @@ public class ModList
     }
 
     private String fileToLine(ModFile mf) {
-        return mf.getFileName() + " " + mf.getModInfos().get(0).getDisplayName() + " " +
-                mf.getModInfos().stream().map(mi -> mi.getModId() + "@" + mi.getVersion() + " " +
-                getModContainerState(mi.getModId())).collect(Collectors.joining(", ", "{", "}"));
+        return String.format("%-50.50s|%-30.30s|%-30.30s|%-20.20s|%-10.10s|%s", mf.getFileName(),
+                mf.getModInfos().get(0).getDisplayName(),
+                mf.getModInfos().get(0).getModId(),
+                mf.getModInfos().get(0).getVersion(),
+                getModContainerState(mf.getModInfos().get(0).getModId()),
+                ((ModFileInfo)mf.getModFileInfo()).getCodeSigningFingerprint().orElse("NOSIGNATURE"));
     }
     private String crashReport() {
         return "\n"+applyForEachModFile(this::fileToLine).collect(Collectors.joining("\n\t\t", "\t\t", ""));
@@ -120,11 +123,10 @@ public class ModList
 
     <T extends Event & IModBusEvent> Function<Executor, CompletableFuture<List<Throwable>>> futureVisitor(
             final ModLoadingStage.EventGenerator<T> eventGenerator,
-            final ModLoadingStage.EventDispatcher<T> eventManager,
             final BiFunction<ModLoadingStage, Throwable, ModLoadingStage> stateChange) {
         return executor -> gather(
                 this.mods.stream()
-                .map(m -> ModContainer.buildTransitionHandler(m, eventGenerator, eventManager, stateChange, executor))
+                .map(mod -> ModContainer.buildTransitionHandler(mod, eventGenerator, stateChange, executor))
                 .collect(Collectors.toList()))
             .thenComposeAsync(ModList::completableFutureFromExceptionList, executor);
     }

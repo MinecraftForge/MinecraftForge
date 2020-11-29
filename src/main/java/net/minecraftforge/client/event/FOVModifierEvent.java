@@ -34,7 +34,7 @@ public class FOVModifierEvent extends Event
     {
         this.entity = entity;
         this.fov = fov;
-        this.setFOV(MathHelper.lerp(Minecraft.getInstance().gameSettings.field_243227_aN, 1.0F, fov));
+        this.setFOV(MathHelper.lerp(Minecraft.getInstance().gameSettings.fovScaleEffect, 1.0F, fov));
     }
 
     public PlayerEntity getEntity()

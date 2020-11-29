@@ -76,6 +76,16 @@ public abstract class ModContainer
     }
 
     /**
+     * Errored container state, used for filtering. Does nothing.
+     */
+    ModContainer()
+    {
+        this.modLoadingStage = ModLoadingStage.ERROR;
+        modId = "BROKEN";
+        namespace = "BROKEN";
+        modInfo = null;
+    }
+    /**
      * @return the modid for this mod
      */
     public final String getModId()
@@ -102,14 +112,13 @@ public abstract class ModContainer
     public static <T extends Event & IModBusEvent> CompletableFuture<Void> buildTransitionHandler(
             final ModContainer target,
             final ModLoadingStage.EventGenerator<T> eventGenerator,
-            final ModLoadingStage.EventDispatcher<T> eventDispatcher,
             final BiFunction<ModLoadingStage, Throwable, ModLoadingStage> stateChangeHandler,
             final Executor executor) {
         return CompletableFuture
                 .runAsync(() -> {
                     ModLoadingContext.get().setActiveContainer(target, target.contextExtension.get());
                     target.activityMap.getOrDefault(target.modLoadingStage, ()->{}).run();
-                    eventDispatcher.apply(target::acceptEvent).accept(eventGenerator.apply(target));
+                    target.acceptEvent(eventGenerator.apply(target));
                 }, executor)
                 .whenComplete((mc, exception) -> {
                     target.modLoadingStage = stateChangeHandler.apply(target.modLoadingStage, exception);

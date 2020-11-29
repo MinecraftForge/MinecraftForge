@@ -33,6 +33,7 @@ import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.InvalidModIdentifier;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -44,13 +45,7 @@ import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
@@ -120,6 +115,11 @@ public class ModLoader
         this.loadingWarnings = FMLLoader.getLoadingModList().
                 getBrokenFiles().stream().map(file -> new ModLoadingWarning(null, ModLoadingStage.VALIDATE,
                     InvalidModIdentifier.identifyJarProblem(file.getFilePath()).orElse("fml.modloading.brokenfile"), file.getFileName())).collect(Collectors.toList());
+        FMLLoader.getLoadingModList()
+                .getModFiles().stream().filter(ModFileInfo::missingLicense) //Search for files with missing licenses
+                .filter(modFileInfo -> modFileInfo.getMods().stream().noneMatch(thisModInfo -> this.loadingExceptions.stream().map(ModLoadingException::getModInfo).anyMatch(otherInfo -> otherInfo == thisModInfo))) //Ignore files where any other mod already encountered an error
+                .map(modFileInfo -> new ModLoadingException(null, ModLoadingStage.VALIDATE, "fml.modloading.missinglicense", null, modFileInfo.getFile()))
+                .forEach(this.loadingExceptions::add);
         LOGGER.debug(CORE, "Loading Network data for FML net version: {}", FMLNetworkConstants.init());
         CrashReportExtender.registerCrashCallable("ModLauncher", FMLLoader::getLauncherInfo);
         CrashReportExtender.registerCrashCallable("ModLauncher launch target", FMLLoader::launcherHandlerName);
@@ -190,10 +190,10 @@ public class ModLoader
         dispatchAndHandleError(ModLoadingStage.CREATE_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
-        statusConsumer.ifPresent(c->c.accept("Populating registries"));
-        dispatchAndHandleError(ModLoadingStage.LOAD_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
         statusConsumer.ifPresent(c->c.accept("Adding custom tag types"));
         GameData.setCustomTagTypesFromRegistries();
+        statusConsumer.ifPresent(c->c.accept("Populating registries"));
+        dispatchAndHandleError(ModLoadingStage.LOAD_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
         statusConsumer.ifPresent(c->c.accept("Early mod loading complete"));
     }
 
@@ -269,8 +269,10 @@ public class ModLoader
         final Map<String, IModInfo> modInfoMap = modFile.getModFileInfo().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
 
         LOGGER.debug(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
-        final List<ModContainer> containers = modFile.getScanResult().getTargets().entrySet().stream().
-                map(e -> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e))
+        final List<ModContainer> containers = modFile.getScanResult().getTargets()
+                .entrySet()
+                .stream()
+                .map(e -> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         if (containers.size() != modInfoMap.size()) {
@@ -280,7 +282,8 @@ public class ModLoader
                     modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList()));
             loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
         }
-        return containers;
+        // remove errored mod containers
+        return containers.stream().filter(mc -> mc.modLoadingStage != ModLoadingStage.ERROR).collect(Collectors.toList());
     }
 
     private ModContainer buildModContainerFromTOML(final ModFile modFile, final TransformingClassLoader modClassLoader, final Map<String, IModInfo> modInfoMap, final Map.Entry<String, ? extends IModLanguageProvider.IModLanguageLoader> idToProviderEntry) {
@@ -292,9 +295,10 @@ public class ModLoader
                     orElseThrow(()->new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingmetadata", null, modId));
             return languageLoader.loadMod(info, modClassLoader, modFile.getScanResult());
         } catch (ModLoadingException mle) {
-            // exceptions are caught and added to the error list for later handling. Null is returned here.
+            // exceptions are caught and added to the error list for later handling
             loadingExceptions.add(mle);
-            return null;
+            // return an errored container instance here, because we tried and failed building a container.
+            return new ErroredModContainer();
         }
     }
 
@@ -336,5 +340,21 @@ public class ModLoader
 
     public static boolean isDataGenRunning () {
         return runningDataGen;
+    }
+
+    private static class ErroredModContainer extends ModContainer {
+        public ErroredModContainer() {
+            super();
+        }
+
+        @Override
+        public boolean matches(final Object mod) {
+            return false;
+        }
+
+        @Override
+        public Object getMod() {
+            return null;
+        }
     }
 }

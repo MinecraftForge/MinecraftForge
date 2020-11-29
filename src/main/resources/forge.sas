@@ -27,6 +27,7 @@ net/minecraft/block/Block func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/m
 	net/minecraft/block/TallSeaGrassBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
 # Vanilla blocks calling these sided methods in getItem
 net/minecraft/tileentity/BannerTileEntity func_190615_l(Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
+net/minecraft/block/BannerBlock func_196287_a(Lnet/minecraft/item/DyeColor;)Lnet/minecraft/block/Block;
 net/minecraft/block/AttachedStemBlock func_196279_O_()Lnet/minecraft/item/Item;
 net/minecraft/block/StemBlock func_176481_j()Lnet/minecraft/item/Item;
 #=====================================
@@ -74,6 +75,8 @@ net/minecraft/item/crafting/IRecipe func_193358_e()Ljava/lang/String; # getGroup
 	net/minecraft/item/crafting/SingleItemRecipe func_193358_e()Ljava/lang/String;
 net/minecraft/nbt/CompressedStreamTools func_74797_a(Ljava/io/File;)Lnet/minecraft/nbt/CompoundNBT; # read
 net/minecraft/nbt/CompressedStreamTools func_74795_b(Lnet/minecraft/nbt/CompoundNBT;Ljava/io/File;)V # write
+net/minecraft/network/play/server/SCommandListPacket func_197693_a()Lcom/mojang/brigadier/tree/RootCommandNode; # getRoot
+net/minecraft/network/play/server/SEntityPropertiesPacket func_149441_d()Ljava/util/List; # getSnapshots
 net/minecraft/potion/Effect func_220303_e()Lnet/minecraft/potion/EffectType; # getEffectType
 net/minecraft/potion/Effect func_111186_k()Ljava/util/Map; # getAttributeModifierMap
 net/minecraft/potion/Effect func_188408_i()Z # isBeneficial
@@ -92,5 +95,19 @@ net/minecraft/util/Direction$Axis func_176717_a(Ljava/lang/String;)Lnet/minecraf
 net/minecraft/util/math/vector/Vector3d func_216371_e()Lnet/minecraft/util/math/vector/Vector3d;
 net/minecraft/util/math/vector/Vector3d func_189984_a(Lnet/minecraft/util/math/vector/Vector2f;)Lnet/minecraft/util/math/vector/Vector3d; # fromPitchYaw
 net/minecraft/util/math/vector/Vector3d func_189986_a(FF)Lnet/minecraft/util/math/vector/Vector3d; # fromPitchYaw
+net/minecraft/util/math/vector/Vector4f # Vector 4f Class
 net/minecraft/util/text/Style func_240719_a_(Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/util/text/Style; #setFontId
 net/minecraft/util/text/Style func_240723_c_(Lnet/minecraft/util/text/TextFormatting;)Lnet/minecraft/util/text/Style; #forceFormatting
+# BiomeAmbiance getters, needed for it to be useful during BiomeLoadingEvent to be useful
+net/minecraft/world/biome/BiomeAmbience func_235213_a_()I # getFogColor
+net/minecraft/world/biome/BiomeAmbience func_235216_b_()I # getWaterColor
+net/minecraft/world/biome/BiomeAmbience func_235218_c_()I # getWaterFogColor
+net/minecraft/world/biome/BiomeAmbience func_242527_d()I # getSkyColor
+net/minecraft/world/biome/BiomeAmbience func_242528_e()Ljava/util/Optional; # getFoliageColor
+net/minecraft/world/biome/BiomeAmbience func_242529_f()Ljava/util/Optional; # getGrassColor
+net/minecraft/world/biome/BiomeAmbience func_242531_g()Lnet/minecraft/world/biome/BiomeAmbience$GrassColorModifier; # getGrassColorModifier
+net/minecraft/world/biome/BiomeAmbience func_235220_d_()Ljava/util/Optional; # getParticle
+net/minecraft/world/biome/BiomeAmbience func_235222_e_()Ljava/util/Optional; # getAmbientSound
+net/minecraft/world/biome/BiomeAmbience func_235224_f_()Ljava/util/Optional; # getMoodSound
+net/minecraft/world/biome/BiomeAmbience func_235226_g_()Ljava/util/Optional; # getAdditionsSound
+net/minecraft/world/biome/BiomeAmbience func_235228_h_()Ljava/util/Optional; # getMusic

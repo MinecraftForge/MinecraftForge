@@ -100,7 +100,7 @@ public class CompositeModel implements IDynamicBakedModel
     }
 
     @Override
-    public boolean func_230044_c_()
+    public boolean isSideLit()
     {
         return isSideLit;
     }
@@ -214,7 +214,7 @@ public class CompositeModel implements IDynamicBakedModel
                     continue;
                 bakedParts.put(part.getKey(), submodel.bakeModel(bakery, spriteGetter, modelTransform, modelLocation));
             }
-            return new CompositeModel(owner.isShadedInGui(), owner.useSmoothLighting(), owner.isSideLit(), particle, bakedParts.build(), owner.getCombinedTransform(), overrides);
+            return new CompositeModel(owner.isShadedInGui(), owner.isSideLit(), owner.useSmoothLighting(), particle, bakedParts.build(), owner.getCombinedTransform(), overrides);
         }
 
         @Override

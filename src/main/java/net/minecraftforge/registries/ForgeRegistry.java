@@ -22,6 +22,7 @@ package net.minecraftforge.registries;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +105,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
         this.name = name;
-        this.key = RegistryKey.func_240904_a_(name);
+        this.key = RegistryKey.getOrCreateRootKey(name);
         this.builder = builder;
         this.stage = stage;
         this.superType = builder.getType();
@@ -373,7 +374,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
 
         this.names.put(key, value);
-        this.keys.put(RegistryKey.func_240903_a_(this.key, key), value);
+        this.keys.put(RegistryKey.getOrCreateKey(this.key, key), value);
         this.ids.put(idToUse, value);
         this.availabilityMap.set(idToUse);
         this.owners.put(new OverrideOwner(owner == null ? key.getPath() : owner, key), value);
@@ -840,11 +841,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     public static class Snapshot
     {
-        public final Map<ResourceLocation, Integer> ids = Maps.newTreeMap();
-        public final Map<ResourceLocation, ResourceLocation> aliases = Maps.newTreeMap();
+        private static final Comparator<ResourceLocation> sorter = (a,b) -> a.compareNamespaced(b);
+        public final Map<ResourceLocation, Integer> ids = Maps.newTreeMap(sorter);
+        public final Map<ResourceLocation, ResourceLocation> aliases = Maps.newTreeMap(sorter);
         public final Set<Integer> blocked = Sets.newTreeSet();
-        public final Set<ResourceLocation> dummied = Sets.newTreeSet();
-        public final Map<ResourceLocation, String> overrides = Maps.newTreeMap();
+        public final Set<ResourceLocation> dummied = Sets.newTreeSet(sorter);
+        public final Map<ResourceLocation, String> overrides = Maps.newTreeMap(sorter);
         private PacketBuffer binary = null;
 
         public CompoundNBT write()

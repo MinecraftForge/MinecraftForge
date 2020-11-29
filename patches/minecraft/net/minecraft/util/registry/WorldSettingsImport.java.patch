@@ -1,0 +1,18 @@
+--- a/net/minecraft/util/registry/WorldSettingsImport.java
++++ b/net/minecraft/util/registry/WorldSettingsImport.java
+@@ -190,6 +190,7 @@
+                ) {
+                   JsonParser jsonparser = new JsonParser();
+                   JsonElement jsonelement = jsonparser.parse(reader);
++                  if (jsonelement!= null) jsonelement.getAsJsonObject().addProperty("forge:registry_name", p_241879_3_.func_240901_a_().toString());
+                   return p_241879_4_.parse(p_241879_1_, jsonelement).map((p_244347_0_) -> {
+                      return Pair.of(p_244347_0_, OptionalInt.empty());
+                   });
+@@ -231,6 +232,7 @@
+ 
+          public <E> DataResult<Pair<E, OptionalInt>> func_241879_a(DynamicOps<JsonElement> p_241879_1_, RegistryKey<? extends Registry<E>> p_241879_2_, RegistryKey<E> p_241879_3_, Decoder<E> p_241879_4_) {
+             JsonElement jsonelement = this.field_244349_a.get(p_241879_3_);
++            if (jsonelement!= null) jsonelement.getAsJsonObject().addProperty("forge:registry_name", p_241879_3_.func_240901_a_().toString());
+             return jsonelement == null ? DataResult.error("Unknown element: " + p_241879_3_) : p_241879_4_.parse(p_241879_1_, jsonelement).setLifecycle(this.field_244351_c.get(p_241879_3_)).map((p_244353_2_) -> {
+                return Pair.of(p_244353_2_, OptionalInt.of(this.field_244350_b.getInt(p_241879_3_)));
+             });

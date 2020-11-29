@@ -63,7 +63,7 @@ public class ClientChatReceivedEvent extends Event
 
     /**
      * The UUID of the player or entity that sent this message, or null if not known.
-     * This will be equal to {@link net.minecraft.util.Util#field_240973_b_} for system messages.
+     * This will be equal to {@link net.minecraft.util.Util#DUMMY_UUID} for system messages.
      */
     public UUID getSenderUUID()
     {

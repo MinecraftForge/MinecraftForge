@@ -112,7 +112,7 @@ public class BlockModelConfiguration implements IModelConfiguration
     @Override
     public boolean isSideLit()
     {
-        return owner.func_230176_c_().func_230178_a_();
+        return owner.getGuiLight().isSideLit();
     }
 
     @Override

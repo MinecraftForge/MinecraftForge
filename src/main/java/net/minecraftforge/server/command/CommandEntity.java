@@ -69,11 +69,11 @@ class CommandEntity
                 .then(Commands.argument("filter", StringArgumentType.string())
                     .suggests((ctx, builder) -> ISuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(ResourceLocation::toString).map(StringArgumentType::escapeIfRequired), builder))
                     .then(Commands.argument("dim", DimensionArgument.getDimension())
-                        .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.getDimensionArgument(ctx, "dim").func_234923_W_()))
+                        .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.getDimensionArgument(ctx, "dim").getDimensionKey()))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().getWorld().func_234923_W_()))
+                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().getWorld().getDimensionKey()))
                 )
-                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().getWorld().func_234923_W_()));
+                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().getWorld().getDimensionKey()));
         }
 
         private static int execute(CommandSource sender, String filter, RegistryKey<World> dim) throws CommandSyntaxException
@@ -92,7 +92,7 @@ class CommandEntity
             Map<ResourceLocation, MutablePair<Integer, Map<ChunkPos, Integer>>> list = Maps.newHashMap();
             world.getEntities().forEach(e -> {
                 MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(e.getType().getRegistryName(), k -> MutablePair.of(0, Maps.newHashMap()));
-                ChunkPos chunk = new ChunkPos(e.func_233580_cy_());
+                ChunkPos chunk = new ChunkPos(e.getPosition());
                 info.left++;
                 info.right.put(chunk, info.right.getOrDefault(chunk, 0) + 1);
             });

@@ -48,13 +48,13 @@ public class NameplateRenderingEventTest
 
         if(event.getEntity() instanceof CowEntity)
         {
-            event.setContent(new StringTextComponent("Evil Cow").func_240699_a_(TextFormatting.RED));
+            event.setContent(new StringTextComponent("Evil Cow").mergeStyle(TextFormatting.RED));
             event.setResult(Event.Result.ALLOW);
         }
 
         if(event.getEntity() instanceof PlayerEntity)
         {
-            event.setContent(event.getEntity().getDisplayName().func_230532_e_().func_240701_a_(TextFormatting.GOLD));
+            event.setContent(event.getEntity().getDisplayName().deepCopy().mergeStyle(TextFormatting.GOLD));
         }
     }
 }

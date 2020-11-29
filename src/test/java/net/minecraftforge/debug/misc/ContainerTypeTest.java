@@ -86,9 +86,9 @@ public class ContainerTypeTest
         }
 
         @Override
-        protected void func_230450_a_(MatrixStack mStack, float partialTicks, int mouseX, int mouseY)
+        protected void drawGuiContainerBackgroundLayer(MatrixStack mStack, float partialTicks, int mouseX, int mouseY)
         {
-            func_238476_c_(mStack, this.field_230712_o_, getContainer().text, mouseX, mouseY, -1);
+            drawString(mStack, this.font, getContainer().text, mouseX, mouseY, -1);
         }
     }
 

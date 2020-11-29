@@ -27,6 +27,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.tags.ITagCollection;
 import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.text.StringTextComponent;
@@ -62,7 +64,17 @@ public class NetworkHooks
 
     public static ConnectionType getConnectionType(final Supplier<NetworkManager> connection)
     {
-        return ConnectionType.forVersionFlag(connection.get().channel().attr(FMLNetworkConstants.FML_NETVERSION).get());
+        return getConnectionType(connection.get().channel());
+    }
+
+    public static ConnectionType getConnectionType(ChannelHandlerContext context)
+    {
+        return getConnectionType(context.channel());
+    }
+
+    private static ConnectionType getConnectionType(Channel channel)
+    {
+        return ConnectionType.forVersionFlag(channel.attr(FMLNetworkConstants.FML_NETVERSION).get());
     }
 
     public static IPacket<?> getEntitySpawningPacket(Entity entity)
@@ -119,9 +131,14 @@ public class NetworkHooks
         FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.DimensionInfoMessage(player.dimension), manager, NetworkDirection.PLAY_TO_CLIENT);
     }*/
 
-    public static void handleClientLoginSuccess(NetworkManager manager) {
+    public static boolean isVanillaConnection(NetworkManager manager)
+    {
         if (manager == null || manager.channel() == null) throw new NullPointerException("ARGH! Network Manager is null (" + manager != null ? "CHANNEL" : "MANAGER"+")" );
-        if (getConnectionType(()->manager) == ConnectionType.VANILLA) {
+        return getConnectionType(() -> manager) == ConnectionType.VANILLA;
+    }
+
+    public static void handleClientLoginSuccess(NetworkManager manager) {
+        if (isVanillaConnection(manager)) {
             LOGGER.info("Connected to a vanilla server. Catching up missing behaviour.");
             ConfigTracker.INSTANCE.loadDefaultServerConfigs();
         } else {

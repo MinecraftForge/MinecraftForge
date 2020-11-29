@@ -32,6 +32,7 @@ import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,6 +46,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.CodeSigner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -57,6 +59,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -213,6 +217,24 @@ public class ModDiscoverer {
                 e.printStackTrace();
             }
             LOGGER.debug(SCAN,"Scan finished: {}", modFile);
+        }
+
+        @Override
+        public Pair<Optional<Manifest>, Optional<CodeSigner[]>> findManifestAndSigners(final Path file) {
+            if (Files.isDirectory(mcJar)) {
+                return Pair.of(Optional.empty(), Optional.empty());
+            }
+            try (JarFile jf = new JarFile(mcJar.toFile())) {
+                final Manifest manifest = jf.getManifest();
+                if (manifest!=null) {
+                    final JarEntry jarEntry = jf.getJarEntry(JarFile.MANIFEST_NAME);
+                    LamdbaExceptionUtils.uncheck(() -> AbstractJarFileLocator.ENSURE_INIT.invoke(jf));
+                    return Pair.of(Optional.of(manifest), Optional.ofNullable(jarEntry.getCodeSigners()));
+                }
+            } catch (IOException ioe) {
+                return Pair.of(Optional.empty(), Optional.empty());
+            }
+            return Pair.of(Optional.empty(), Optional.empty());
         }
 
         @Override
