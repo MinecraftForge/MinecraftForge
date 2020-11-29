@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/server/ServerChunkProvider.java
++++ b/net/minecraft/world/server/ServerChunkProvider.java
+@@ -353,7 +353,7 @@
+                if (optional1.isPresent()) {
+                   Chunk chunk = optional1.get();
+                   ChunkPos chunkpos = p_241099_7_.func_219277_h();
+-                  if (!this.field_217237_a.func_219243_d(chunkpos)) {
++                  if (!this.field_217237_a.func_219243_d(chunkpos) || field_217237_a.func_219246_e().shouldForceTicks(chunkpos.func_201841_a())) {
+                      chunk.func_177415_c(chunk.func_177416_w() + j);
+                      if (flag1 && (this.field_217246_l || this.field_217247_m) && this.field_73251_h.func_175723_af().func_177730_a(chunk.func_76632_l())) {
+                         WorldEntitySpawner.func_234979_a_(this.field_73251_h, chunk, worldentityspawner$entitydensitymanager, this.field_217247_m, this.field_217246_l, flag2);
