@@ -20,7 +20,7 @@
        } else {
           Ticket<?> ticket = (Ticket)p_equals_1_;
 -         return this.field_219481_b == ticket.field_219481_b && Objects.equals(this.field_219480_a, ticket.field_219480_a) && Objects.equals(this.field_219482_c, ticket.field_219482_c);
-+         return this.field_219481_b == ticket.field_219481_b && Objects.equals(this.field_219480_a, ticket.field_219480_a) && Objects.equals(this.field_219482_c, ticket.field_219482_c) && this.forceTicks == forceTicks;
++         return this.field_219481_b == ticket.field_219481_b && Objects.equals(this.field_219480_a, ticket.field_219480_a) && Objects.equals(this.field_219482_c, ticket.field_219482_c) && this.forceTicks == ticket.forceTicks;
        }
     }
  
