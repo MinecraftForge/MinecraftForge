@@ -50,6 +50,7 @@ public class ModSorter
     private List<ModFile> modFiles;
     private List<ModInfo> sortedList;
     private Map<String, ModInfo> modIdNameLookup;
+    private List<ModFile> forgeAndMC;
 
     private ModSorter(final List<ModFile> modFiles)
     {
@@ -63,7 +64,7 @@ public class ModSorter
             ms.buildUniqueList();
         } catch (EarlyLoadingException e) {
             // We cannot build any list with duped mods. We have to abort immediately and report it
-            return LoadingModList.of(Collections.emptyList(), Collections.emptyList(), e);
+            return LoadingModList.of(ms.forgeAndMC, ms.forgeAndMC.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(Collectors.toList()), e);
         }
         // try and locate languages and validate dependencies
         List<EarlyLoadingException.ExceptionData> missingLangs = ms.findLanguages();
@@ -71,7 +72,7 @@ public class ModSorter
         final List<ExceptionData> failedList = Stream.concat(missingLangs.stream(), missingDeps.stream()).collect(Collectors.toList());
         // if we miss one or the other, we abort now
         if (!failedList.isEmpty()) {
-            return LoadingModList.of(Collections.emptyList(), Collections.emptyList(), new EarlyLoadingException("failure to validate mod list", null, failedList));
+            return LoadingModList.of(ms.forgeAndMC, ms.forgeAndMC.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(Collectors.toList()), new EarlyLoadingException("failure to validate mod list", null, failedList));
         } else {
             // Otherwise, lets try and sort the modlist and proceed
             EarlyLoadingException earlyLoadingException = null;
@@ -180,6 +181,11 @@ public class ModSorter
         final Map<String, List<IModFile>> modFilesByFirstId = modFiles
                 .stream()
                 .collect(Collectors.groupingBy(mf -> mf.getModInfos().get(0).getModId()));
+
+        // Capture forge and MC here, so we can keep them for later
+        forgeAndMC = new ArrayList<>();
+        forgeAndMC.add((ModFile)modFilesByFirstId.get("minecraft").get(0));
+        forgeAndMC.add((ModFile)modFilesByFirstId.get("forge").get(0));
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         this.modFiles = modFilesByFirstId.entrySet().stream()

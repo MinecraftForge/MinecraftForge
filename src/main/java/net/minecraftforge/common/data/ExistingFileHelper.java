@@ -26,6 +26,8 @@ import java.util.Collection;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import java.util.Collections;
+import java.util.Set;
 import net.minecraft.resources.FilePack;
 import net.minecraft.resources.FolderPack;
 import net.minecraft.resources.IResource;
@@ -35,20 +37,29 @@ import net.minecraft.resources.ResourcePackType;
 import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.resources.VanillaPack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.fml.packs.ModFileResourcePack;
 
 /**
  * Enables data providers to check if other data files currently exist. The
  * instance provided in the {@link GatherDataEvent} utilizes the standard
- * resources (via {@link VanillaPack}), as well as any extra resource packs
- * passed in via the {@code --existing} argument.
+ * resources (via {@link VanillaPack}), forge's resources, as well as any
+ * extra resource packs passed in via the {@code --existing} argument,
+ * or mod resources via the {@code --existing-mod} argument.
  */
 public class ExistingFileHelper {
 
     private final SimpleReloadableResourceManager clientResources, serverData;
     private final boolean enable;
 
+    @Deprecated//TODO: Remove in 1.17
     public ExistingFileHelper(Collection<Path> existingPacks, boolean enable) {
+        this(existingPacks, Collections.emptySet(), enable);
+    }
+
+    public ExistingFileHelper(Collection<Path> existingPacks, Set<String> existingMods, boolean enable) {
         this.clientResources = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
         this.serverData = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
         this.clientResources.addResourcePack(new VanillaPack("minecraft", "realms"));
@@ -58,7 +69,15 @@ public class ExistingFileHelper {
             IResourcePack pack = file.isDirectory() ? new FolderPack(file) : new FilePack(file);
             this.clientResources.addResourcePack(pack);
             this.serverData.addResourcePack(pack);
-        };
+        }
+        for (String existingMod : existingMods) {
+            ModFileInfo modFileInfo = ModList.get().getModFileById(existingMod);
+            if (modFileInfo != null) {
+                IResourcePack pack = new ModFileResourcePack(modFileInfo.getFile());
+                this.clientResources.addResourcePack(pack);
+                this.serverData.addResourcePack(pack);
+            }
+        }
         this.enable = enable;
     }
 
