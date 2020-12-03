@@ -32,9 +32,9 @@ public enum EarlyProgressVisualization {
 
     private Visualization visualization;
 
-    public Runnable accept(final Dist dist, final boolean isData) {
+    public Runnable accept(final Dist dist, final boolean isData, String mcVersion) {
         visualization = !isData && dist.isClient() && Boolean.parseBoolean(System.getProperty("fml.earlyprogresswindow", "true")) ? new ClientVisualization() : new NoVisualization();
-        return visualization.start();
+        return visualization.start(mcVersion);
     }
 
     public long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, final LongSupplier monitor) {
@@ -46,7 +46,7 @@ public enum EarlyProgressVisualization {
     }
 
     interface Visualization {
-        Runnable start();
+        Runnable start(String mcVersion);
 
         default long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, LongSupplier monitorSupplier) {
             return new LongSupplier() {
@@ -63,7 +63,7 @@ public enum EarlyProgressVisualization {
 
     private static class NoVisualization implements Visualization {
         @Override
-        public Runnable start() {
+        public Runnable start(String mcVersion) {
             return () -> {};
         }
     }
