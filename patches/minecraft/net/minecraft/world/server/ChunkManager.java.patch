@@ -8,11 +8,20 @@
                 }
  
                 this.func_219229_a(p_219185_5_);
-@@ -601,6 +_,7 @@
+@@ -582,6 +_,7 @@
+             if (this.field_219254_h.add(chunkpos.func_201841_a())) {
+                chunk.func_177417_c(true);
+                this.field_219255_i.func_147448_a(chunk.func_177434_r().values());
++               p_219200_1_.func_219276_a(ChunkStatus.field_222617_m, this).thenRun(() -> { //Forge: Delay EntityJoinWorld events until chunk is available to prevent deadlocks
+                List<Entity> list = null;
+                ClassInheritanceMultiMap<Entity>[] aclassinheritancemultimap = chunk.func_177429_s();
+                int i = aclassinheritancemultimap.length;
+@@ -601,6 +_,8 @@
                 if (list != null) {
                    list.forEach(chunk::func_76622_b);
                 }
 +               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(chunk));
++               });
              }
  
              return chunk;
