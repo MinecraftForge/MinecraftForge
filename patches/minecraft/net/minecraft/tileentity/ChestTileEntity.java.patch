@@ -51,7 +51,7 @@
 +   }
 +
 +   @Override
-+   public void invalidateCaps() {
++   protected void invalidateCaps() {
 +      super.invalidateCaps();
 +      if (chestHandler != null)
 +        chestHandler.invalidate();
