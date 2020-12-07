@@ -1,0 +1,10 @@
+--- a/net/minecraft/block/SoundType.java
++++ b/net/minecraft/block/SoundType.java
+@@ -3,6 +3,7 @@
+ import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.SoundEvents;
+ 
++// Forge: Use {@link net.minecraftforge.common.util.ForgeSoundType} instead for suppliers
+ public class SoundType {
+    public static final SoundType field_185848_a = new SoundType(1.0F, 1.0F, SoundEvents.field_187881_gQ, SoundEvents.field_187897_gY, SoundEvents.field_187891_gV, SoundEvents.field_187889_gU, SoundEvents.field_187887_gT);
+    public static final SoundType field_185849_b = new SoundType(1.0F, 1.0F, SoundEvents.field_187581_bW, SoundEvents.field_187668_ca, SoundEvents.field_187587_bZ, SoundEvents.field_187585_bY, SoundEvents.field_187583_bX);
