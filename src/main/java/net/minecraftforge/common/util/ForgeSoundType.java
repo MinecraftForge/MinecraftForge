@@ -19,12 +19,34 @@
 
 package net.minecraftforge.common.util;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.DeferredRegister;
 
 import javax.annotation.Nonnull;
 import java.util.function.Supplier;
 
+/**
+ * A subclass of {@link SoundType} that uses {@link Supplier<SoundEvent>}s.
+ * <p>
+ * This class allows mod developers to safely create custom {@code SoundType}s for use in their e.g. {@link Block}.
+ * <p>
+ * The problem with using {@code SoundType} directly is it requires {@link SoundEvent} instances directly, because
+ * {@code SoundType}s are required to be present during {@link Block} creation and registration. However,
+ * {@code SoundEvent} must also be registered.
+ * <p>
+ * A possible solution of initializing {@code SoundEvent}s first would require static initialization of the
+ * {@code SoundEvent} instances and later registration, which goes against the contract of the registry system and
+ * prevents the use of {@link DeferredRegister} and {@link RegistryObject}s.
+ * <p>
+ * This class offers an alternative and preferable solution, by allowing mods to create {@link SoundType}s using
+ * {@link Supplier}s of {@link SoundEvent}s instead, which do not require static initialization of {@code SoundEvent}s
+ * and allow the direct use of {@code RegistryObject}s.
+ *
+ * @see SoundType
+ */
 public class ForgeSoundType extends SoundType
 {
     private final Supplier<SoundEvent> breakSound;
