@@ -17,7 +17,8 @@ public class AddEntityAttributeTest {
 
     public AddEntityAttributeTest()
     {
-        if (ENABLE) {
+        if (ENABLE)
+        {
             ATTRIBUTES.register(FMLJavaModLoadingContext.get().getModEventBus());
             FMLJavaModLoadingContext.get().getModEventBus().register(this);
         }
