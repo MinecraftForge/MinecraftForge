@@ -43,9 +43,9 @@
 +   }
 +
 +   @Override
-+   public void remove(boolean keepData) {
-+      super.remove(keepData);
-+      if (!keepData && itemHandler != null) {
++   protected void invalidateCaps() {
++      super.invalidateCaps();
++      if (itemHandler != null) {
 +         itemHandler.invalidate();
 +         itemHandler = null;
 +      }
