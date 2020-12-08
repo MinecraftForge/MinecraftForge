@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class EntityAttributeSetupEvent extends Event implements IModBusEvent {
+public class EntityAttributeSetupEvent extends Event implements IModBusEvent
+{
     private final Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> entityAttributes;
 
     public EntityAttributeSetupEvent(ModContainer modContainer)
