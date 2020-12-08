@@ -1331,7 +1331,6 @@ public class ForgeHooks
         }
         chunk.setStructureReferences(structureReferences);
     }
-<<<<<<< HEAD
 
     private static final Set<String> VANILLA_DIMS = Sets.newHashSet("minecraft:overworld", "minecraft:the_nether", "minecraft:the_end");
     private static final String DIMENSIONS_KEY = "dimensions";

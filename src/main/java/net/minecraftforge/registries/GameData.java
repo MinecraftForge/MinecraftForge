@@ -355,15 +355,15 @@ public class GameData
 
     public static CompletableFuture<List<Throwable>> postGenerateEntityAttributeEvent(final Executor executor, final ModLoadingStage.EventGenerator<EntityAttributeSetupEvent> eventGenerator)
     {
-        return CompletableFuture.runAsync(()-> {
+        return CompletableFuture.runAsync(()->
+        {
             Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> finalMap = new HashMap<>();
-            AttributeSetupState.getAttributeEvents().forEach(tuple -> {
-                tuple.getB().getEntityAttributes().forEach((entityType, mutableAttribute) -> {
-                    AttributeModifierMap.MutableAttribute finalEntry = finalMap.computeIfAbsent(entityType, (type) ->
-                            new AttributeModifierMap.MutableAttribute());
-                    finalEntry.combine(mutableAttribute);
-                });
-            });
+            AttributeSetupState.getAttributeEvents().forEach(tuple ->
+                    tuple.getB().getEntityAttributes().forEach((entityType, mutableAttribute) ->
+                    {
+                        AttributeModifierMap.MutableAttribute finalEntry = finalMap.computeIfAbsent(entityType, (type) -> new AttributeModifierMap.MutableAttribute());
+                        finalEntry.combine(mutableAttribute);
+                    }));
             finalMap.forEach(GlobalEntityTypeAttributes::combineWithExisting);
             AttributeSetupState.clearState();
         }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
@@ -994,7 +994,8 @@ public class GameData
 
     }
 
-    private static class AttributeSetupState {
+    private static class AttributeSetupState
+    {
         private static final List<Tuple<ModContainer, EntityAttributeSetupEvent>> ATTRIBUTE_EVENTS = new ArrayList<>();
 
         private static void clearState()
@@ -1009,7 +1010,8 @@ public class GameData
             return event;
         }
 
-        private static List<Tuple<ModContainer, EntityAttributeSetupEvent>> getAttributeEvents(){
+        private static List<Tuple<ModContainer, EntityAttributeSetupEvent>> getAttributeEvents()
+        {
             return ATTRIBUTE_EVENTS;
         }
     }
