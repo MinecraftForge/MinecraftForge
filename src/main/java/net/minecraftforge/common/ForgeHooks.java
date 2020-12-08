@@ -1323,12 +1323,15 @@ public class ForgeHooks
      * When a structure mod is removed, this map may contain null keys. This will make the world unable to save if this persists.
      * If we remove a structure from the save data in this way, we then mark the chunk for saving
      */
-    public static void fixNullStructureReferences(IChunk chunk, Map<Structure<?>, LongSet> structureReferences) {
-        if (structureReferences.remove(null) != null) {
+    public static void fixNullStructureReferences(IChunk chunk, Map<Structure<?>, LongSet> structureReferences)
+    {
+        if (structureReferences.remove(null) != null)
+        {
             chunk.setModified(true);
         }
         chunk.setStructureReferences(structureReferences);
     }
+<<<<<<< HEAD
 
     private static final Set<String> VANILLA_DIMS = Sets.newHashSet("minecraft:overworld", "minecraft:the_nether", "minecraft:the_end");
     private static final String DIMENSIONS_KEY = "dimensions";
@@ -1396,31 +1399,5 @@ public class ForgeHooks
             return new Dynamic<>(ops, ops.createMap(currentList.stream().map(p -> p.mapFirst(ops::createString))));
         }).result().orElse(dymData);
         return data.set(DIMENSIONS_KEY, withInjected);
-    }
-
-    public static void copyAttributesToForgeMap(Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> newAttributes,
-                                                Map<EntityType<? extends LivingEntity>, AttributeModifierMap> forgeAttributes)
-    {
-        forgeAttributes.clear();
-        for (Map.Entry<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> entry : newAttributes.entrySet()){
-            forgeAttributes.put(entry.getKey(), entry.getValue().create());
-        }
-    }
-
-    public static Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> getCombinedAttributeModifierMap(
-            Map<EntityType<? extends LivingEntity>, AttributeModifierMap> forgeAttributes,
-            Map<EntityType<? extends LivingEntity>, AttributeModifierMap> vanillaAttributes)
-    {
-        Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> mutable = new HashMap<>();
-        Set<EntityType<? extends LivingEntity>> forgeKeys = forgeAttributes.keySet();
-        for (Map.Entry<EntityType<? extends LivingEntity>, AttributeModifierMap> entry : forgeAttributes.entrySet()){
-            mutable.put(entry.getKey(), new AttributeModifierMap.MutableAttribute(entry.getValue()));
-        }
-        for (Map.Entry<EntityType<? extends LivingEntity>, AttributeModifierMap> entry : vanillaAttributes.entrySet()){
-            if (!forgeKeys.contains(entry.getKey())){
-                mutable.put(entry.getKey(), new AttributeModifierMap.MutableAttribute(entry.getValue()));
-            }
-        }
-        return mutable;
     }
 }
