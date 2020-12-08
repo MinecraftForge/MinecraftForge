@@ -369,7 +369,6 @@ public class GameData
         }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
     }
 
-
     @SuppressWarnings("rawtypes") //Eclipse compiler generics issue.
     public static Stream<ModLoadingStage.EventGenerator<?>> generateRegistryEvents() {
         List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
