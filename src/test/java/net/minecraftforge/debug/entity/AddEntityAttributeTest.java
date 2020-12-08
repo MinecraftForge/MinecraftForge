@@ -10,7 +10,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 
 @Mod("add_entity_attribute_test")
-public class AddEntityAttributeTest {
+public class AddEntityAttributeTest
+{
     public static final boolean ENABLE = true;
     private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Attribute.class, "add_entity_attribute_test");
     public static final RegistryObject<Attribute> TEST_ATTR = ATTRIBUTES.register("test_attr", () -> new RangedAttribute("forge.test_attr", 1.0D, 0.0D, 1024.0D).setShouldWatch(true));
