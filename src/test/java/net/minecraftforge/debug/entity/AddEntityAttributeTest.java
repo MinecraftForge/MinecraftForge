@@ -26,6 +26,6 @@ public class AddEntityAttributeTest {
     @SubscribeEvent
     public void entityAttributeSetup(EntityAttributeSetupEvent event)
     {
-        event.getEntityAttributes().forEach((type, map) -> map.createMutableAttribute(TEST_ATTR.get()));
+        event.getTypes().forEach(entityType -> event.addAttributeToEntityType(entityType, TEST_ATTR.get()));
     }
 }

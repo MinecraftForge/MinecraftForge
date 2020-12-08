@@ -1,24 +1,17 @@
 --- a/net/minecraft/entity/ai/attributes/AttributeModifierMap.java
 +++ b/net/minecraft/entity/ai/attributes/AttributeModifierMap.java
-@@ -24,6 +24,10 @@
-       }
-    }
- 
-+   private Map<Attribute, ModifiableAttributeInstance> getMap() {
-+      return field_233802_a_;
-+   }
-+
-    public double func_233804_a_(Attribute p_233804_1_) {
-       return this.func_233810_d_(p_233804_1_).func_111126_e();
-    }
-@@ -70,6 +74,12 @@
+@@ -70,6 +70,16 @@
        private final Map<Attribute, ModifiableAttributeInstance> field_233811_a_ = Maps.newHashMap();
        private boolean field_233812_b_;
  
 +      public MutableAttribute() { }
 +
 +      public MutableAttribute(AttributeModifierMap attributeMap) {
-+         this.field_233811_a_.putAll(attributeMap.getMap());
++         this.field_233811_a_.putAll(attributeMap.field_233802_a_);
++      }
++
++      public void combine(MutableAttribute other) {
++         this.field_233811_a_.putAll(other.field_233811_a_);
 +      }
 +
        private ModifiableAttributeInstance func_233817_b_(Attribute p_233817_1_) {

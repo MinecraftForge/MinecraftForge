@@ -53,10 +53,7 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.stats.StatType;
 import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ObjectIntIdentityMap;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
@@ -99,7 +96,6 @@ import java.lang.reflect.Field;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -340,20 +336,32 @@ public class GameData
         LOGGER.debug(REGISTRIES, "Reverting complete");
     }
 
-    private static Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> attrReplacementMap = null;
-
     public static EntityAttributeSetupEvent generateEntityAttributeEvent(ModContainer c)
     {
-        if (attrReplacementMap == null){
-            attrReplacementMap = GlobalEntityTypeAttributes.getCombinedAttributes();
-        }
-        return new EntityAttributeSetupEvent(attrReplacementMap);
+        return AttributeSetupState.createEvent(c);
+    }
+
+    public static CompletableFuture<List<Throwable>> preGenerateEntityAttributeEvent(final Executor executor, final ModLoadingStage.EventGenerator<EntityAttributeSetupEvent> eventGenerator)
+    {
+        return CompletableFuture.runAsync(AttributeSetupState::clearState, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
     }
 
     public static CompletableFuture<List<Throwable>> postGenerateEntityAttributeEvent(final Executor executor, final ModLoadingStage.EventGenerator<EntityAttributeSetupEvent> eventGenerator)
     {
-        return CompletableFuture.runAsync(()-> GlobalEntityTypeAttributes.replaceForgeAttributes(attrReplacementMap), executor).thenApply(v->Collections.emptyList());
+        return CompletableFuture.runAsync(()-> {
+            Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> finalMap = new HashMap<>();
+            AttributeSetupState.getAttributeEvents().forEach(tuple -> {
+                tuple.getB().getEntityAttributes().forEach((entityType, mutableAttribute) -> {
+                    AttributeModifierMap.MutableAttribute finalEntry = finalMap.computeIfAbsent(entityType, (type) ->
+                            new AttributeModifierMap.MutableAttribute());
+                    finalEntry.combine(mutableAttribute);
+                });
+            });
+            finalMap.forEach(GlobalEntityTypeAttributes::combineWithExisting);
+            AttributeSetupState.clearState();
+        }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
     }
+
 
     @SuppressWarnings("rawtypes") //Eclipse compiler generics issue.
     public static Stream<ModLoadingStage.EventGenerator<?>> generateRegistryEvents() {
@@ -942,5 +950,25 @@ public class GameData
             throw new RuntimeException(e);
         }
 
+    }
+
+    private static class AttributeSetupState {
+        private static final List<Tuple<ModContainer, EntityAttributeSetupEvent>> ATTRIBUTE_EVENTS = new ArrayList<>();
+
+        private static void clearState()
+        {
+            ATTRIBUTE_EVENTS.clear();
+        }
+
+        private static EntityAttributeSetupEvent createEvent(ModContainer container)
+        {
+            EntityAttributeSetupEvent event = new EntityAttributeSetupEvent(container);
+            ATTRIBUTE_EVENTS.add(new Tuple<>(container, event));
+            return event;
+        }
+
+        private static List<Tuple<ModContainer, EntityAttributeSetupEvent>> getAttributeEvents(){
+            return ATTRIBUTE_EVENTS;
+        }
     }
 }
