@@ -255,7 +255,7 @@ public abstract class BlockStateProvider implements IDataProvider {
     }
 
     public void horizontalFaceBlock(Block block, Function<BlockState, ModelFile> modelFunc) {
-        horizontalBlock(block, modelFunc, DEFAULT_ANGLE_OFFSET);
+        horizontalFaceBlock(block, modelFunc, DEFAULT_ANGLE_OFFSET);
     }
 
     public void horizontalFaceBlock(Block block, Function<BlockState, ModelFile> modelFunc, int angleOffset) {

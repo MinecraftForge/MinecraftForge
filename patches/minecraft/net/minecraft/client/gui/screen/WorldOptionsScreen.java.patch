@@ -1,0 +1,19 @@
+--- a/net/minecraft/client/gui/screen/WorldOptionsScreen.java
++++ b/net/minecraft/client/gui/screen/WorldOptionsScreen.java
+@@ -134,6 +134,7 @@
+       this.field_239035_i_.field_230693_o_ = this.field_239040_n_.isPresent();
+       this.field_239036_j_ = p_239048_1_.func_230480_a_(new Button(j, 120, 150, 20, new TranslationTextComponent("selectWorld.customizeType"), (p_239044_3_) -> {
+          BiomeGeneratorTypeScreens.IFactory biomegeneratortypescreens$ifactory = BiomeGeneratorTypeScreens.field_239069_d_.get(this.field_239040_n_);
++         biomegeneratortypescreens$ifactory = net.minecraftforge.client.ForgeHooksClient.getBiomeGeneratorTypeScreenFactory(this.field_239040_n_, biomegeneratortypescreens$ifactory);
+          if (biomegeneratortypescreens$ifactory != null) {
+             p_239048_2_.func_147108_a(biomegeneratortypescreens$ifactory.createEditScreen(p_239048_1_, this.field_239039_m_));
+          }
+@@ -292,7 +293,7 @@
+       } else {
+          this.field_239034_h_.field_230694_p_ = p_239059_1_;
+          this.field_239027_a_.field_230694_p_ = p_239059_1_;
+-         this.field_239036_j_.field_230694_p_ = p_239059_1_ && BiomeGeneratorTypeScreens.field_239069_d_.containsKey(this.field_239040_n_);
++         this.field_239036_j_.field_230694_p_ = p_239059_1_ && (BiomeGeneratorTypeScreens.field_239069_d_.containsKey(this.field_239040_n_) || net.minecraftforge.client.ForgeHooksClient.hasBiomeGeneratorSettingsOptionsScreen(this.field_239040_n_));
+          this.field_239037_k_.field_230694_p_ = p_239059_1_;
+       }
+ 

@@ -55,7 +55,16 @@
           SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
           SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
           MinecraftServer.func_240777_a_(saveformat$levelsave);
-@@ -169,6 +176,7 @@
+@@ -142,6 +149,8 @@
+                dimensiongeneratorsettings = optionset.has(optionspec3) ? serverproperties.field_241082_U_.func_236230_k_() : serverproperties.field_241082_U_;
+             }
+ 
++            // Forge: Deserialize the DimensionGeneratorSettings to ensure modded dims are loaded on first server load (see SimpleRegistryCodec#decode). Vanilla behaviour only loads from the server.properties and deserializes only after the 2nd server load.
++            dimensiongeneratorsettings = DimensionGeneratorSettings.field_236201_a_.encodeStart(net.minecraft.util.registry.WorldGenSettingsExport.func_240896_a_(NBTDynamicOps.field_210820_a, dynamicregistries$impl), dimensiongeneratorsettings).flatMap(nbt -> DimensionGeneratorSettings.field_236201_a_.parse(worldsettingsimport, nbt)).getOrThrow(false, errorMsg->{});
+             iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
+          }
+ 
+@@ -169,6 +178,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
                 dedicatedserver.func_71263_m(true);

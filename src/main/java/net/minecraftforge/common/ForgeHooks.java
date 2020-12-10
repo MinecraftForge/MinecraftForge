@@ -43,6 +43,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -91,6 +93,8 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.*;
+import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -116,6 +120,7 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
+import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -177,7 +182,7 @@ public class ForgeHooks
     {
         //state = state.getActualState(world, pos);
         if (!state.getRequiresTool())
-            return true;
+            return ForgeEventFactory.doPlayerHarvestCheck(player, state, true);
 
         ItemStack stack = player.getHeldItemMainhand();
         ToolType tool = state.getHarvestTool();
@@ -672,9 +677,15 @@ public class ForgeHooks
         return ret;
     }
 
+    @Deprecated // TODO: Remove 1.17 - Use player-contextual version below.
     public static boolean onAnvilChange(RepairContainer container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
     {
-        AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
+        return onAnvilChange(container, left, right, outputSlot, name, baseCost, null);
+    }
+
+    public static boolean onAnvilChange(RepairContainer container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost, PlayerEntity player)
+    {
+        AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost, player);
         if (MinecraftForge.EVENT_BUS.post(e)) return false;
         if (e.getOutput().isEmpty()) return true;
 
@@ -867,6 +878,14 @@ public class ForgeHooks
                     .sound(SoundEvents.ITEM_BUCKET_FILL_LAVA, SoundEvents.ITEM_BUCKET_EMPTY_LAVA)
                     .build(fluid);
         throw new RuntimeException("Mod fluids must override createAttributes.");
+    }
+
+    public static String getDefaultWorldType()
+    {
+        ForgeWorldType def = ForgeWorldType.getDefaultWorldType();
+        if (def != null)
+            return def.getRegistryName().toString();
+        return "default";
     }
 
     @FunctionalInterface
@@ -1225,5 +1244,19 @@ public class ForgeHooks
         List<String> modpacks = getModPacks();
         modpacks.add("vanilla");
         return modpacks;
+    }
+
+    /**
+     * Fixes MC-194811
+     * When a structure mod is removed, this map may contain null keys. This will make the world unable to save if this persists.
+     * If we remove a structure from the save data in this way, we then mark the chunk for saving
+     */
+    public static void fixNullStructureReferences(IChunk chunk, Map<Structure<?>, LongSet> structureReferences)
+    {
+        if (structureReferences.remove(null) != null)
+        {
+            chunk.setModified(true);
+        }
+        chunk.setStructureReferences(structureReferences);
     }
 }
