@@ -22,8 +22,24 @@
     }
  
     public void func_219972_a(World p_219972_1_, LivingEntity p_219972_2_, ItemStack p_219972_3_, int p_219972_4_) {
-@@ -120,10 +124,12 @@
-       return this.func_219971_r() ? p_77654_3_.func_213357_a(p_77654_2_, p_77654_1_) : p_77654_1_;
+@@ -103,9 +107,9 @@
+    }
+ 
+    public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
+-      if (this.func_219971_r()) {
++      if (this.isFood(p_77659_2_.func_184586_b(p_77659_3_))) {
+          ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
+-         if (p_77659_2_.func_71043_e(this.func_219967_s().func_221468_d())) {
++         if (p_77659_2_.func_71043_e(this.getFood(itemstack).func_221468_d())) {
+             p_77659_2_.func_184598_c(p_77659_3_);
+             return ActionResult.func_226249_b_(itemstack);
+          } else {
+@@ -117,13 +121,15 @@
+    }
+ 
+    public ItemStack func_77654_b(ItemStack p_77654_1_, World p_77654_2_, LivingEntity p_77654_3_) {
+-      return this.func_219971_r() ? p_77654_3_.func_213357_a(p_77654_2_, p_77654_1_) : p_77654_1_;
++      return this.isFood(p_77654_1_) ? p_77654_3_.func_213357_a(p_77654_2_, p_77654_1_) : p_77654_1_;
     }
  
 +   @Deprecated // Use ItemStack sensitive version.
@@ -48,6 +64,22 @@
     public boolean func_77634_r() {
        return this.field_77700_c != null;
     }
+@@ -197,12 +205,12 @@
+    }
+ 
+    public UseAction func_77661_b(ItemStack p_77661_1_) {
+-      return p_77661_1_.func_77973_b().func_219971_r() ? UseAction.EAT : UseAction.NONE;
++      return p_77661_1_.func_77973_b().isFood(p_77661_1_) ? UseAction.EAT : UseAction.NONE;
+    }
+ 
+    public int func_77626_a(ItemStack p_77626_1_) {
+-      if (p_77626_1_.func_77973_b().func_219971_r()) {
+-         return this.func_219967_s().func_221465_e() ? 16 : 32;
++      if (p_77626_1_.func_77973_b().isFood(p_77626_1_)) {
++         return this.getFood(p_77626_1_).func_221465_e() ? 16 : 32;
+       } else {
+          return 0;
+       }
 @@ -241,7 +249,7 @@
     }
  
@@ -121,7 +153,21 @@
     public boolean func_219970_i(ItemStack p_219970_1_) {
        return p_219970_1_.func_77973_b() == Items.field_222114_py;
     }
-@@ -333,6 +376,9 @@
+@@ -300,11 +343,13 @@
+       return p_206844_1_.func_230235_a_(this);
+    }
+ 
++   @Deprecated//Forge: Use stack sensitive version
+    public boolean func_219971_r() {
+       return this.field_219974_q != null;
+    }
+ 
+    @Nullable
++   @Deprecated//Forge: Use stack sensitive version
+    public Food func_219967_s() {
+       return this.field_219974_q;
+    }
+@@ -333,6 +378,9 @@
        private Rarity field_208104_e = Rarity.COMMON;
        private Food field_221541_f;
        private boolean field_234688_g_;
@@ -131,7 +177,7 @@
  
        public Item.Properties func_221540_a(Food p_221540_1_) {
           this.field_221541_f = p_221540_1_;
-@@ -377,5 +423,20 @@
+@@ -377,5 +425,20 @@
           this.field_234688_g_ = true;
           return this;
        }

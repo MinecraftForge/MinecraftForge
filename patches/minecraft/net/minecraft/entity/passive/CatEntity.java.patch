@@ -1,5 +1,17 @@
 --- a/net/minecraft/entity/passive/CatEntity.java
 +++ b/net/minecraft/entity/passive/CatEntity.java
+@@ -375,9 +375,9 @@
+          if (this.func_70909_n()) {
+             if (this.func_152114_e(p_230254_1_)) {
+                if (!(item instanceof DyeItem)) {
+-                  if (item.func_219971_r() && this.func_70877_b(itemstack) && this.func_110143_aJ() < this.func_110138_aP()) {
++                  if (item.isFood(itemstack) && this.func_70877_b(itemstack) && this.func_110143_aJ() < this.func_110138_aP()) {
+                      this.func_175505_a(p_230254_1_, itemstack);
+-                     this.func_70691_i((float)item.func_219967_s().func_221466_a());
++                     this.func_70691_i((float)item.getFood(itemstack).func_221466_a());
+                      return ActionResultType.CONSUME;
+                   }
+ 
 @@ -402,7 +402,7 @@
              }
           } else if (this.func_70877_b(itemstack)) {

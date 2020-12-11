@@ -41,6 +41,7 @@ import net.minecraft.entity.monster.piglin.PiglinTasks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.Food;
 import net.minecraft.item.Items;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
@@ -855,5 +856,26 @@ public interface IForgeItem
     default boolean isDamageable(ItemStack stack)
     {
         return this.getItem().isDamageable();
+    }
+
+    /**
+     * Used to test if this item is food, but with the ItemStack in question.
+     *
+     * @param stack ItemStack in question.
+     */
+    default boolean isFood(ItemStack stack)
+    {
+        return getItem().isFood();
+    }
+
+    /**
+     * Used to get the food this stack represents.
+     *
+     * @param stack ItemStack in question.
+     */
+    @Nullable
+    default Food getFood(ItemStack stack)
+    {
+        return getItem().getFood();
     }
 }

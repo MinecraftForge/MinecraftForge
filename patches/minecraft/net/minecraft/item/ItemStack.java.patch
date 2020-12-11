@@ -223,8 +223,12 @@
        }
  
        return multimap;
-@@ -954,6 +978,35 @@
-       return this.func_77973_b().func_219971_r();
+@@ -951,9 +975,38 @@
+    }
+ 
+    public boolean func_222117_E() {
+-      return this.func_77973_b().func_219971_r();
++      return this.func_77973_b().isFood(this);
     }
  
 +   // FORGE START
