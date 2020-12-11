@@ -19,7 +19,11 @@
 
 package net.minecraftforge.client.model.generators;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -33,20 +37,19 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraft.client.renderer.model.BlockFaceUV;
+import net.minecraft.client.renderer.model.BlockModel.GuiLight;
 import net.minecraft.client.renderer.model.BlockPart;
 import net.minecraft.client.renderer.model.BlockPartFace;
 import net.minecraft.client.renderer.model.BlockPartRotation;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.model.BlockModel.GuiLight;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
-import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 /**
  * General purpose model builder, contains all the commonalities between item
@@ -146,7 +149,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     public T texture(String key, ResourceLocation texture) {
         Preconditions.checkNotNull(key, "Key must not be null");
         Preconditions.checkNotNull(texture, "Texture must not be null");
-        Preconditions.checkArgument(existingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"),
+        Preconditions.checkArgument(existingFileHelper.exists(texture, ModelProvider.TEXTURE),
                 "Texture %s does not exist in any known resource pack", texture);
         this.textures.put(key, texture.toString());
         return self();
