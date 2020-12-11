@@ -1,11 +1,12 @@
 --- a/net/minecraft/data/TagsProvider.java
 +++ b/net/minecraft/data/TagsProvider.java
-@@ -28,10 +28,18 @@
+@@ -28,10 +28,20 @@
     protected final DataGenerator field_200433_a;
     protected final Registry<T> field_200435_c;
     protected final Map<ResourceLocation, ITag.Builder> field_200434_b = Maps.newLinkedHashMap();
 +   protected final String modId;
 +   protected final net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
++   private final net.minecraftforge.common.data.ExistingFileHelper.IResourceType resourceType;
  
 +   @Deprecated//Forge, Use ModID version.
     protected TagsProvider(DataGenerator p_i49827_1_, Registry<T> p_i49827_2_) {
@@ -16,10 +17,11 @@
        this.field_200435_c = p_i49827_2_;
 +      this.modId = modId;
 +      this.existingFileHelper = existingFileHelper;
++      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.resources.ResourcePackType.SERVER_DATA, ".json", "tags/" + getTagFolder());
     }
  
     protected abstract void func_200432_c();
-@@ -47,12 +55,14 @@
+@@ -47,12 +57,14 @@
           return this.field_200435_c.func_241873_b(p_240527_1_).orElse((T)null);
        };
        this.field_200434_b.forEach((p_240524_4_, p_240524_5_) -> {
@@ -35,7 +37,7 @@
  
              try {
                 String s = field_200437_e.toJson((JsonElement)jsonobject);
-@@ -74,11 +84,26 @@
+@@ -74,20 +86,36 @@
        });
     }
  
@@ -44,7 +46,7 @@
 +      // We only care about non-optional tag entries, this is the only type that can reference a resource and needs validation
 +      // Optional tags should not be validated
 +      if (entry instanceof ITag.TagEntry) {
-+         return existingFileHelper == null || !existingFileHelper.exists(((ITag.TagEntry)entry).getId(), net.minecraft.resources.ResourcePackType.SERVER_DATA, ".json", "tags/" + getTagFolder());
++         return existingFileHelper == null || !existingFileHelper.exists(((ITag.TagEntry)entry).getId(), resourceType);
 +      }
 +      return false;
 +   }
@@ -63,7 +65,9 @@
     }
  
     protected ITag.Builder func_240525_b_(ITag.INamedTag<T> p_240525_1_) {
-@@ -87,7 +112,7 @@
+       return this.field_200434_b.computeIfAbsent(p_240525_1_.func_230234_a_(), (p_240526_0_) -> {
++         existingFileHelper.trackGenerated(p_240526_0_, resourceType);
+          return new ITag.Builder();
        });
     }
  
@@ -72,7 +76,7 @@
        private final ITag.Builder field_240528_a_;
        private final Registry<T> field_240529_b_;
        private final String field_240530_c_;
-@@ -115,5 +140,18 @@
+@@ -115,5 +143,18 @@
           });
           return this;
        }
