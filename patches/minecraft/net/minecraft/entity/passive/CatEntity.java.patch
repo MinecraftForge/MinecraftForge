@@ -1,5 +1,8 @@
 --- a/net/minecraft/entity/passive/CatEntity.java
 +++ b/net/minecraft/entity/passive/CatEntity.java
+@@ -380,1 +380,1 @@
+-                       this.func_70691_i((float)item.func_219967_s().func_221466_a());
++                       this.func_70691_i((float)item.getFood(itemstack).func_221466_a());
 @@ -402,7 +402,7 @@
              }
           } else if (this.func_70877_b(itemstack)) {

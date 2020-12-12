@@ -1,0 +1,5 @@
+--- a/net/minecraft/util/FoodStats.java
++++ b/net/minecraft/util/FoodStats.java
+@@ -31,1 +31,1 @@
+-         Food food = p_221410_1_.func_219967_s();
++         Food food = p_221410_1_.func_219967_s(stack);

@@ -22,6 +22,9 @@
     }
  
     public void func_219972_a(World p_219972_1_, LivingEntity p_219972_2_, ItemStack p_219972_3_, int p_219972_4_) {
+@@ -108,1 +112,1 @@
+-         if (p_77659_2_.func_71043_e(this.func_219967_s().func_221468_d())) {
++         if (p_77659_2_.func_71043_e(this.getFood(itemstack).func_221468_d())) {
 @@ -120,10 +124,12 @@
        return this.func_219971_r() ? p_77654_3_.func_213357_a(p_77654_2_, p_77654_1_) : p_77654_1_;
     }
@@ -48,6 +51,9 @@
     public boolean func_77634_r() {
        return this.field_77700_c != null;
     }
+@@ -205,1 +213,1 @@
+-         return this.func_219967_s().func_221465_e() ? 16 : 32;
++         return this.getFood(stack).func_221465_e() ? 16 : 32;
 @@ -241,7 +249,7 @@
     }
  

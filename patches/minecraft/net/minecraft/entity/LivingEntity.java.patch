@@ -396,6 +396,9 @@
              this.field_184627_bm.func_222121_b(this.field_70170_p, this, this.func_184605_cv());
              if (this.func_226299_p_()) {
                 this.func_226293_b_(this.field_184627_bm, 5);
+@@ -2690,1 +2734,1 @@
+-      Food food = this.field_184627_bm.func_77973_b().func_219967_s();
++      Food food = this.field_184627_bm.func_77973_b().getFood(field_184627_bm);
 @@ -2717,8 +2761,10 @@
     public void func_184598_c(Hand p_184598_1_) {
        ItemStack itemstack = this.func_184586_b(p_184598_1_);
@@ -481,6 +484,9 @@
     }
  
     public boolean func_70094_T() {
+@@ -3049,1 +3105,1 @@
+-         for(Pair<EffectInstance, Float> pair : item.func_219967_s().func_221464_f()) {
++         for(Pair<EffectInstance, Float> pair : item.getFood(p_213349_1_).func_221464_f()) {
 @@ -3082,6 +3138,60 @@
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }
