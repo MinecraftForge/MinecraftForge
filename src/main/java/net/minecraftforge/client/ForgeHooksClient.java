@@ -22,6 +22,7 @@ package net.minecraftforge.client;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
@@ -30,6 +31,7 @@ import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.ClientBossInfo;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens;
 import net.minecraft.client.gui.screen.MainMenuScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.play.NetworkPlayerInfo;
@@ -52,6 +54,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
@@ -75,10 +78,13 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.Event;
@@ -98,12 +104,15 @@ import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.lwjgl.opengl.GL13;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -239,10 +248,10 @@ public class ForgeHooksClient
         if (status == BETA || status == BETA_OUTDATED)
         {
             // render a warning at the top of the screen,
-            ITextComponent line = new TranslationTextComponent("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET).func_240699_a_(TextFormatting.RED);
-            AbstractGui.func_238472_a_(mStack, font, line, width / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
+            ITextComponent line = new TranslationTextComponent("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET).mergeStyle(TextFormatting.RED);
+            AbstractGui.drawCenteredString(mStack, font, line, width / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
             line = new TranslationTextComponent("forge.update.beta.2");
-            AbstractGui.func_238472_a_(mStack, font, line, width / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
+            AbstractGui.drawCenteredString(mStack, font, line, width / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
         }
 
         String line = null;
@@ -278,7 +287,7 @@ public class ForgeHooksClient
     public static void drawScreen(Screen screen, MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
         if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mStack, mouseX, mouseY, partialTicks)))
-            screen.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
+            screen.render(mStack, mouseX, mouseY, partialTicks);
         MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mStack, mouseX, mouseY, partialTicks));
     }
 
@@ -749,12 +758,60 @@ public class ForgeHooksClient
             IVertexBuilder ivertexbuilder;
             if (fabulous)
             {
-                ivertexbuilder = ItemRenderer.func_239391_c_(bufferIn, rendertype, true, itemStackIn.hasEffect());
+                ivertexbuilder = ItemRenderer.getEntityGlintVertexBuilder(bufferIn, rendertype, true, itemStackIn.hasEffect());
             } else {
                 ivertexbuilder = ItemRenderer.getBuffer(bufferIn, rendertype, true, itemStackIn.hasEffect());
             }
             renderer.renderModel(layer, itemStackIn, combinedLightIn, combinedOverlayIn, matrixStackIn, ivertexbuilder);
         }
         net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+    }
+
+    public static boolean isNameplateInRenderDistance(Entity entity, double squareDistance) {
+        if (entity instanceof LivingEntity) {
+            final ModifiableAttributeInstance attribute = ((LivingEntity) entity).getAttribute(ForgeMod.NAMETAG_DISTANCE.get());
+            if (attribute != null) {
+                return !(squareDistance > (attribute.getValue() * attribute.getValue()));
+            }
+        }
+        return !(squareDistance > 4096.0f);
+    }
+
+    public static void renderPistonMovedBlocks(BlockPos pos, BlockState state, MatrixStack stack, IRenderTypeBuffer buffer, World world, boolean checkSides, int combinedOverlay, BlockRendererDispatcher blockRenderer) {
+        RenderType.getBlockRenderTypes().stream()
+                .filter(t -> RenderTypeLookup.canRenderInLayer(state, t))
+                .forEach(rendertype ->
+                {
+                    rendertype = rendertype == RenderType.getTranslucent() ? RenderType.getTranslucentMovingBlock() : rendertype;
+                    setRenderLayer(rendertype);
+                    IVertexBuilder ivertexbuilder = buffer.getBuffer(rendertype);
+                    blockRenderer.getBlockModelRenderer().renderModel(world, blockRenderer.getModelForState(state), state, pos, stack, ivertexbuilder, checkSides, new Random(), state.getPositionRandom(pos), combinedOverlay);
+                });
+        setRenderLayer(null);
+    }
+
+    public static void registerForgeWorldTypeScreens()
+    {
+        ForgeWorldTypeScreens.registerTypes();
+    }
+
+    public static BiomeGeneratorTypeScreens.IFactory getBiomeGeneratorTypeScreenFactory(Optional<BiomeGeneratorTypeScreens> generator, @Nullable BiomeGeneratorTypeScreens.IFactory biomegeneratortypescreens$ifactory)
+    {
+        return ForgeWorldTypeScreens.getGeneratorScreenFactory(generator, biomegeneratortypescreens$ifactory);
+    }
+
+    public static boolean hasBiomeGeneratorSettingsOptionsScreen(Optional<BiomeGeneratorTypeScreens> generator)
+    {
+        return getBiomeGeneratorTypeScreenFactory(generator, null) != null;
+    }
+
+    public static Optional<BiomeGeneratorTypeScreens> getWorldTypeFromGenerator(DimensionGeneratorSettings dimensionGeneratorSettings)
+    {
+        return BiomeGeneratorTypeScreens.func_239079_a_(dimensionGeneratorSettings);
+    }
+
+    public static Optional<BiomeGeneratorTypeScreens> getDefaultWorldType()
+    {
+        return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
     }
 }

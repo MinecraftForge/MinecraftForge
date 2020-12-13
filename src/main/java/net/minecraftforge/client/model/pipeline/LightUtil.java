@@ -87,13 +87,13 @@ public class LightUtil
 
     public static void putBakedQuad(IVertexConsumer consumer, BakedQuad quad)
     {
-        consumer.setTexture(quad.func_187508_a());
+        consumer.setTexture(quad.getSprite());
         consumer.setQuadOrientation(quad.getFace());
         if(quad.hasTintIndex())
         {
             consumer.setQuadTint(quad.getTintIndex());
         }
-        consumer.setApplyDiffuseLighting(quad.func_239287_f_());
+        consumer.setApplyDiffuseLighting(quad.applyDiffuseLighting());
         float[] data = new float[4];
         VertexFormat formatFrom = consumer.getVertexFormat();
         VertexFormat formatTo = DefaultVertexFormats.BLOCK;

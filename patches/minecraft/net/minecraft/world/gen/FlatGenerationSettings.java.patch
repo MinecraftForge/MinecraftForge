@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/FlatGenerationSettings.java
++++ b/net/minecraft/world/gen/FlatGenerationSettings.java
+@@ -174,7 +174,7 @@
+          }
+       }
+ 
+-      return (new Biome.Builder()).func_205415_a(biome.func_201851_b()).func_205419_a(biome.func_201856_r()).func_205421_a(biome.func_185355_j()).func_205420_b(biome.func_185360_m()).func_205414_c(biome.func_242445_k()).func_205417_d(biome.func_76727_i()).func_235097_a_(biome.func_235089_q_()).func_242457_a(biomegenerationsettings$builder.func_242508_a()).func_242458_a(biome.func_242433_b()).func_242455_a();
++      return (new Biome.Builder()).func_205415_a(biome.func_201851_b()).func_205419_a(biome.func_201856_r()).func_205421_a(biome.func_185355_j()).func_205420_b(biome.func_185360_m()).func_205414_c(biome.func_242445_k()).func_205417_d(biome.func_76727_i()).func_235097_a_(biome.func_235089_q_()).func_242457_a(biomegenerationsettings$builder.func_242508_a()).func_242458_a(biome.func_242433_b()).func_242455_a().setRegistryName(biome.getRegistryName());
+    }
+ 
+    public DimensionStructuresSettings func_236943_d_() {

@@ -31,18 +31,18 @@ import net.minecraft.world.biome.MobSpawnInfo;
 
 public class MobSpawnInfoBuilder extends MobSpawnInfo.Builder
 {
-    private final Set<EntityClassification> typesView = Collections.unmodifiableSet(this.field_242567_a.keySet());
-    private final Set<EntityType<?>> costView = Collections.unmodifiableSet(this.field_242568_b.keySet());
+    private final Set<EntityClassification> typesView = Collections.unmodifiableSet(this.spawners.keySet());
+    private final Set<EntityType<?>> costView = Collections.unmodifiableSet(this.spawnCosts.keySet());
 
     public MobSpawnInfoBuilder(MobSpawnInfo orig)
     {
         orig.getSpawnerTypes().forEach(k -> {
-            field_242567_a.get(k).clear();
-            field_242567_a.get(k).addAll(new java.util.ArrayList<>(orig.func_242559_a(k)));
+            spawners.get(k).clear();
+            spawners.get(k).addAll(new java.util.ArrayList<>(orig.getSpawners(k)));
         });
-        orig.getEntityTypes().forEach(k -> field_242568_b.put(k, orig.func_242558_a(k)));
-        field_242569_c = orig.func_242557_a();
-        field_242570_d = orig.func_242562_b();
+        orig.getEntityTypes().forEach(k -> spawnCosts.put(k, orig.getSpawnCost(k)));
+        creatureSpawnProbability = orig.getCreatureSpawnProbability();
+        validSpawnBiomeForPlayer = orig.isValidSpawnBiomeForPlayer();
     }
 
     public Set<EntityClassification> getSpawnerTypes()
@@ -52,7 +52,7 @@ public class MobSpawnInfoBuilder extends MobSpawnInfo.Builder
 
     public List<MobSpawnInfo.Spawners> getSpawner(EntityClassification type)
     {
-        return this.field_242567_a.get(type);
+        return this.spawners.get(type);
     }
 
     public Set<EntityType<?>> getEntityTypes()
@@ -63,17 +63,17 @@ public class MobSpawnInfoBuilder extends MobSpawnInfo.Builder
     @Nullable
     public MobSpawnInfo.SpawnCosts getCost(EntityType<?> type)
     {
-        return this.field_242568_b.get(type);
+        return this.spawnCosts.get(type);
     }
 
     public float getProbability()
     {
-        return this.field_242569_c;
+        return this.creatureSpawnProbability;
     }
 
     public MobSpawnInfoBuilder disablePlayerSpawn()
     {
-        this.field_242570_d = false;
+        this.validSpawnBiomeForPlayer = false;
         return this;
     }
 }

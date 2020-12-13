@@ -52,7 +52,7 @@ public enum ModLoadingStage
     VALIDATE(),
     CONSTRUCT(FMLConstructModEvent.class),
     CREATE_REGISTRIES(()->Stream.of(EventGenerator.fromFunction(RegistryEvent.NewRegistry::new))),
-    LOAD_REGISTRIES(GameData::generateRegistryEvents, GameData::preRegistryEventDispatch, GameData::postRegistryEventDispatch),
+    LOAD_REGISTRIES(GameData::generateRegistryEvents, GameData::preRegistryEventDispatch, GameData::postRegistryEventDispatch, GameData::checkForRevertToVanilla),
     COMMON_SETUP(FMLCommonSetupEvent.class),
     SIDED_SETUP(DistExecutor.unsafeRunForDist(()->()->FMLClientSetupEvent.class, ()->()->FMLDedicatedServerSetupEvent.class)),
     ENQUEUE_IMC(InterModEnqueueEvent.class),
@@ -83,16 +83,16 @@ public enum ModLoadingStage
     }
 
     ModLoadingStage(Supplier<Stream<EventGenerator<?>>> eventStream) {
-        this(eventStream, (t,f)->CompletableFuture.completedFuture(Collections.emptyList()), (t,f)->CompletableFuture.completedFuture(Collections.emptyList()));
+        this(eventStream, (t,f)->CompletableFuture.completedFuture(Collections.emptyList()), (t,f)->CompletableFuture.completedFuture(Collections.emptyList()), (e, prev) ->prev.thenApplyAsync(Function.identity(), e));
     }
-    @SuppressWarnings("unchecked")
-    <T extends Event & IModBusEvent> ModLoadingStage(Supplier<Stream<EventGenerator<?>>> eventStream, final BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> preDispatchHook, final BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> postDispatchHook) {
+
+    <T extends Event & IModBusEvent> ModLoadingStage(Supplier<Stream<EventGenerator<?>>> eventStream, final BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> preDispatchHook, final BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> postDispatchHook, final BiFunction<Executor, CompletableFuture<List<Throwable>>, CompletableFuture<List<Throwable>>> finalActivityGenerator) {
         this.eventFunctionStream = eventStream;
         this.parallelEventClass = Optional.empty();
         this.threadSelector = ThreadSelector.SYNC;
         this.preDispatchHook = preDispatchHook;
         this.postDispatchHook = postDispatchHook;
-        this.finalActivityGenerator = (e, prev) ->prev.thenApplyAsync(Function.identity(), e);
+        this.finalActivityGenerator = finalActivityGenerator;
     }
 
     ModLoadingStage() {

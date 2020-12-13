@@ -27,6 +27,7 @@ net/minecraft/block/Block func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/m
 	net/minecraft/block/TallSeaGrassBlock func_185473_a(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
 # Vanilla blocks calling these sided methods in getItem
 net/minecraft/tileentity/BannerTileEntity func_190615_l(Lnet/minecraft/block/BlockState;)Lnet/minecraft/item/ItemStack;
+net/minecraft/block/BannerBlock func_196287_a(Lnet/minecraft/item/DyeColor;)Lnet/minecraft/block/Block;
 net/minecraft/block/AttachedStemBlock func_196279_O_()Lnet/minecraft/item/Item;
 net/minecraft/block/StemBlock func_176481_j()Lnet/minecraft/item/Item;
 #=====================================
@@ -74,6 +75,8 @@ net/minecraft/item/crafting/IRecipe func_193358_e()Ljava/lang/String; # getGroup
 	net/minecraft/item/crafting/SingleItemRecipe func_193358_e()Ljava/lang/String;
 net/minecraft/nbt/CompressedStreamTools func_74797_a(Ljava/io/File;)Lnet/minecraft/nbt/CompoundNBT; # read
 net/minecraft/nbt/CompressedStreamTools func_74795_b(Lnet/minecraft/nbt/CompoundNBT;Ljava/io/File;)V # write
+net/minecraft/network/play/server/SCommandListPacket func_197693_a()Lcom/mojang/brigadier/tree/RootCommandNode; # getRoot
+net/minecraft/network/play/server/SEntityPropertiesPacket func_149441_d()Ljava/util/List; # getSnapshots
 net/minecraft/potion/Effect func_220303_e()Lnet/minecraft/potion/EffectType; # getEffectType
 net/minecraft/potion/Effect func_111186_k()Ljava/util/Map; # getAttributeModifierMap
 net/minecraft/potion/Effect func_188408_i()Z # isBeneficial

@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml;
 
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
@@ -76,6 +75,16 @@ public abstract class ModContainer
                 (incoming, isNetwork)->Objects.equals(incoming, this.modInfo.getVersion().toString())));
     }
 
+    /**
+     * Errored container state, used for filtering. Does nothing.
+     */
+    ModContainer()
+    {
+        this.modLoadingStage = ModLoadingStage.ERROR;
+        modId = "BROKEN";
+        namespace = "BROKEN";
+        modInfo = null;
+    }
     /**
      * @return the modid for this mod
      */

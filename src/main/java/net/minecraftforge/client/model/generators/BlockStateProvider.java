@@ -95,7 +95,7 @@ public abstract class BlockStateProvider implements IDataProvider {
         this.blockModels = new BlockModelProvider(gen, modid, exFileHelper) {
             @Override protected void registerModels() {}
         };
-        this.itemModels = new ItemModelProvider(gen, modid, exFileHelper) {
+        this.itemModels = new ItemModelProvider(gen, modid, this.blockModels.existingFileHelper) {
             @Override protected void registerModels() {}
         };
     }
@@ -255,7 +255,7 @@ public abstract class BlockStateProvider implements IDataProvider {
     }
 
     public void horizontalFaceBlock(Block block, Function<BlockState, ModelFile> modelFunc) {
-        horizontalBlock(block, modelFunc, DEFAULT_ANGLE_OFFSET);
+        horizontalFaceBlock(block, modelFunc, DEFAULT_ANGLE_OFFSET);
     }
 
     public void horizontalFaceBlock(Block block, Function<BlockState, ModelFile> modelFunc, int angleOffset) {
@@ -425,10 +425,10 @@ public abstract class BlockStateProvider implements IDataProvider {
     }
     
     public static final ImmutableMap<Direction, Property<WallHeight>> WALL_PROPS = ImmutableMap.<Direction, Property<WallHeight>>builder()
-    		.put(Direction.EAST,  BlockStateProperties.field_235908_S_)
-    		.put(Direction.NORTH, BlockStateProperties.field_235909_T_)
-    		.put(Direction.SOUTH, BlockStateProperties.field_235910_U_)
-    		.put(Direction.WEST,  BlockStateProperties.field_235911_V_)
+    		.put(Direction.EAST,  BlockStateProperties.WALL_HEIGHT_EAST)
+    		.put(Direction.NORTH, BlockStateProperties.WALL_HEIGHT_NORTH)
+    		.put(Direction.SOUTH, BlockStateProperties.WALL_HEIGHT_SOUTH)
+    		.put(Direction.WEST,  BlockStateProperties.WALL_HEIGHT_WEST)
     		.build();
 
     public void wallBlock(WallBlock block, ModelFile post, ModelFile side, ModelFile sideTall) {

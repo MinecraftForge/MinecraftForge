@@ -93,4 +93,10 @@ license="LGPL v2.1"
 [[mods]]
     modId="structure_spawn_list_event_test"
 [[mods]]
+    modId="forge_codecs_test"
+[[mods]]
+    modId="render_local_player_test"
+[[mods]]
+    modId="forge_world_type_test"
+[[mods]]
     modId="codec_extra_test"
