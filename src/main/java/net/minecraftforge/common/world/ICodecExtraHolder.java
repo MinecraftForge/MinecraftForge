@@ -27,10 +27,8 @@ public interface ICodecExtraHolder
 
     default void setupExtras(List<ICodecExtra> extras)
     {
-        if(PrivateFieldHolder.EXTRA_HOLDER.put(this, extras) != null)
-        {
-            throw new RuntimeException("Setup extras on the same object twice!");
-        }
+        for(ICodecExtra extra : extras)
+            setExtra(extra);
     }
 
     default <A extends ICodecExtra> Optional<A> getExtra(CodecExtraType<A> type)
