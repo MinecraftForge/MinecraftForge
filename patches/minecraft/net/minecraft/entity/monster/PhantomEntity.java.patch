@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/monster/PhantomEntity.java
 +++ b/net/minecraft/entity/monster/PhantomEntity.java
+@@ -121,7 +121,7 @@
+ 
+    public void func_70636_d() {
+       if (this.func_70089_S() && this.func_204609_dp()) {
+-         this.func_70015_d(8);
++         net.minecraftforge.event.ForgeEventFactory.onLivingBurnBySunlight(this, 8);
+       }
+ 
+       super.func_70636_d();
 @@ -214,7 +214,7 @@
              this.field_203142_b = 60;
              List<PlayerEntity> list = PhantomEntity.this.field_70170_p.func_217373_a(this.field_220842_b, PhantomEntity.this, PhantomEntity.this.func_174813_aQ().func_72314_b(16.0D, 64.0D, 16.0D));

@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/monster/AbstractSkeletonEntity.java
 +++ b/net/minecraft/entity/monster/AbstractSkeletonEntity.java
+@@ -109,7 +109,7 @@
+          }
+ 
+          if (flag) {
+-            this.func_70015_d(8);
++            net.minecraftforge.event.ForgeEventFactory.onLivingBurnBySunlight(this, 8);
+          }
+       }
+ 
 @@ -155,7 +155,7 @@
           this.field_70714_bg.func_85156_a(this.field_85038_e);
           this.field_70714_bg.func_85156_a(this.field_85037_d);
