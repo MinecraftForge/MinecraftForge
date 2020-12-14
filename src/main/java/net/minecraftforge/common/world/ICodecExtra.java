@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface ICodecExtra
 {
-    Codec<CodecExtraType<?>> FROM_REGISTRY = ResourceLocation.field_240908_a_.xmap(ForgeRegistries.CODEC_EXTRA_TYPES::getValue, ForgeRegistries.CODEC_EXTRA_TYPES::getKey);
+    Codec<CodecExtraType<?>> FROM_REGISTRY = ResourceLocation.CODEC.xmap(ForgeRegistries.CODEC_EXTRA_TYPES::getValue, ForgeRegistries.CODEC_EXTRA_TYPES::getKey);
     Codec<ICodecExtra> GENERIC_CODEC = FROM_REGISTRY.dispatch(ICodecExtra::getType, CodecExtraType::getCodec);
     Codec<List<ICodecExtra>> LIST_CODEC = GENERIC_CODEC.listOf().fieldOf("forge_extras").codec().flatXmap(ICodecExtra::ensureUnique, ICodecExtra::ensureUnique);
 

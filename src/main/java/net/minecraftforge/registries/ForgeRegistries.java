@@ -57,6 +57,7 @@ import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.world.CodecExtraType;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -113,6 +114,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
     public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
     public static final IForgeRegistry<ForgeWorldType> WORLD_TYPES = RegistryManager.ACTIVE.getRegistry(ForgeWorldType.class);
+    public static final IForgeRegistry<CodecExtraType<?>> CODEC_EXTRA_TYPES = RegistryManager.ACTIVE.getRegistry(CodecExtraType.class);
 
     public static final class Keys {
         //Vanilla
@@ -155,6 +157,7 @@ public class ForgeRegistries
         public static final RegistryKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final RegistryKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
         public static final RegistryKey<Registry<ForgeWorldType>> WORLD_TYPES = key("forge:world_types");
+        public static final RegistryKey<Registry<CodecExtraType<?>>> CODEC_EXTRA_TYPES = key("forge:codec_extra_types");
 
         private static <T> RegistryKey<Registry<T>> key(String name)
         {
