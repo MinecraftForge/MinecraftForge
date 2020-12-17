@@ -32,6 +32,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraft.world.spawner.WorldEntitySpawner;
 import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -116,10 +117,10 @@ public class WorldEvent extends Event
     }
 
     /**
-     * Called by WorldServer to gather a list of all possible entities that can spawn at the specified location.
+     * Called by WorldEntitySpawner to gather a list of all possible entities that can spawn at the specified location.
      * If an entry is added to the list, it needs to be a globally unique instance.
-     * The event is called in {@link WorldServer#getSpawnListEntryForTypeAt(EnumCreatureType, BlockPos)} as well as
-     * {@link WorldServer#canCreatureTypeSpawnHere(EnumCreatureType, SpawnListEntry, BlockPos)}
+     * The event is called in {@link WorldEntitySpawner#func_234977_a_} as well as
+     * {@link WorldEntitySpawner#func_234976_a_}
      * where the latter checks for identity, meaning both events must add the same instance.
      * Canceling the event will result in a empty list, meaning no entity will be spawned.
      */
