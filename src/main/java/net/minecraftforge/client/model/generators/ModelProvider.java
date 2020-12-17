@@ -21,7 +21,6 @@ package net.minecraftforge.client.model.generators;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -35,60 +34,19 @@ import com.google.gson.GsonBuilder;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
-import net.minecraft.resources.IResource;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
 
 public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataProvider {
 
-    private class ExistingFileHelperIncludingGenerated extends ExistingFileHelper {
-
-        private final ExistingFileHelper delegate;
-
-        public ExistingFileHelperIncludingGenerated(ExistingFileHelper delegate) {
-            super(Collections.emptyList(), true);
-            this.delegate = delegate;
-        }
-
-        @Override
-        public boolean exists(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix)
-        {
-            if (pathPrefix.equals("models") && pathSuffix.equals(".json"))
-            {
-                if (generatedModels.containsKey(loc))
-                {
-                    return true;
-                }
-            }
-            return delegate.exists(loc, type, pathSuffix, pathPrefix);
-        }
-
-        @Override
-        public boolean exists(ResourceLocation loc, ResourcePackType type) {
-            if (loc.getPath().startsWith("models/") && loc.getPath().endsWith(".json"))
-            {
-                ResourceLocation modelLoc = new ResourceLocation(
-                        loc.getNamespace(),
-                        loc.getPath().substring("models/".length(), loc.getPath().length() - ".json".length())
-                );
-                if (generatedModels.containsKey(modelLoc))
-                {
-                    return true;
-                }
-            }
-            return delegate.exists(loc, type);
-        }
-
-        @Override
-        public IResource getResource(ResourceLocation loc, ResourcePackType type) throws IOException
-        {
-            return delegate.getResource(loc, type);
-        }
-    }
-
     public static final String BLOCK_FOLDER = "block";
     public static final String ITEM_FOLDER = "item";
+
+    protected static final ResourceType TEXTURE = new ResourceType(ResourcePackType.CLIENT_RESOURCES, ".png", "textures");
+    protected static final ResourceType MODEL = new ResourceType(ResourcePackType.CLIENT_RESOURCES, ".json", "models");
+    protected static final ResourceType MODEL_WITH_EXTENSION = new ResourceType(ResourcePackType.CLIENT_RESOURCES, "", "models");
 
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
     protected final DataGenerator generator;
@@ -112,7 +70,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         Preconditions.checkNotNull(factory);
         this.factory = factory;
         Preconditions.checkNotNull(existingFileHelper);
-        this.existingFileHelper = new ExistingFileHelperIncludingGenerated(existingFileHelper);
+        this.existingFileHelper = existingFileHelper;
     }
 
     public ModelProvider(DataGenerator generator, String modid, String folder, BiFunction<ResourceLocation, ExistingFileHelper, T> builderFromModId, ExistingFileHelper existingFileHelper) {
@@ -122,6 +80,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     public T getBuilder(String path) {
         Preconditions.checkNotNull(path, "Path must not be null");
         ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path));
+        this.existingFileHelper.trackGenerated(outputLoc, MODEL);
         return generatedModels.computeIfAbsent(outputLoc, factory);
     }
 

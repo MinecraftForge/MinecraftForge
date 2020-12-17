@@ -74,6 +74,7 @@ import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.common.world.biomes.conditions.base.BiomeConditionType;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifierType;
 import net.minecraftforge.event.RegistryEvent;
@@ -182,6 +183,7 @@ public class GameData
         // Custom forge registries
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
         makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync().create();
+        makeRegistry(WORLD_TYPES, ForgeWorldType.class).disableSaving().disableSync().create();
         makeRegistry(BIOME_CONDITION_TYPE, c(BiomeConditionType.class)).disableSaving().disableSync().create();
         makeRegistry(BIOME_MODIFIER_TYPE, c(BiomeModifierType.class)).disableSaving().disableSync().create();
     }
@@ -684,6 +686,9 @@ public class GameData
 
                 for (ResourceLocation s : missingRegs)
                     text.append(s).append("\n");
+
+                LOGGER.warn(REGISTRIES, header);
+                LOGGER.warn(REGISTRIES, text.toString());
             }
         }
 
@@ -696,7 +701,7 @@ public class GameData
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(key);
             remaps.put(key, Maps.newLinkedHashMap());
-            missing.put(key, Maps.newHashMap());
+            missing.put(key, Maps.newLinkedHashMap());
             loadPersistentDataToStagingRegistry(RegistryManager.ACTIVE, STAGING, remaps.get(key), missing.get(key), key, value, clazz);
         });
 
@@ -773,6 +778,9 @@ public class GameData
                     entries.stream().sorted((o1, o2) -> o1.compareNamespaced(o2)).forEach(rl -> buf.append("    ").append(rl).append("\n"));
                     buf.append("\n");
                 });
+
+                LOGGER.warn(REGISTRIES, header);
+                LOGGER.warn(REGISTRIES, buf.toString());
             }
 
             if (!defaulted.isEmpty())
@@ -865,7 +873,7 @@ public class GameData
     {
         ForgeRegistry<T> frozen = RegistryManager.FROZEN.getRegistry(name);
         ForgeRegistry<T> newRegistry = STAGING.getRegistry(name, RegistryManager.FROZEN);
-        Map<ResourceLocation, Integer> _new = Maps.newHashMap();
+        Map<ResourceLocation, Integer> _new = Maps.newLinkedHashMap();
         frozen.getKeys().stream().filter(key -> !newRegistry.containsKey(key)).forEach(key -> _new.put(key, frozen.getID(key)));
         newRegistry.loadIds(_new, frozen.getOverrideOwners(), Maps.newLinkedHashMap(), remaps, frozen, name);
     }

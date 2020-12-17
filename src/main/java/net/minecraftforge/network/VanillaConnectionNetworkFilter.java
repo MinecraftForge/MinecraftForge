@@ -28,8 +28,11 @@ import javax.annotation.Nonnull;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SCommandListPacket;
 import net.minecraft.network.play.server.SEntityPropertiesPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -39,6 +42,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
+import com.mojang.brigadier.tree.RootCommandNode;
 
 /**
  * A filter for network packets, used to filter/modify parts of vanilla network messages that
@@ -51,6 +55,7 @@ public class VanillaConnectionNetworkFilter extends MessageToMessageEncoder<IPac
 
     private static final Map<Class<? extends IPacket<?>>, Function<IPacket<?>, ? extends IPacket<?>>> handlers = ImmutableMap.<Class<? extends IPacket<?>>, Function<IPacket<?>, ? extends IPacket<?>>>builder()
             .put(handler(SEntityPropertiesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
+            .put(handler(SCommandListPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
             .build();
 
 
@@ -87,6 +92,21 @@ public class VanillaConnectionNetworkFilter extends MessageToMessageEncoder<IPac
                 })
                 .forEach(snapshot -> newPacket.getSnapshots().add(snapshot));
         return newPacket;
+    }
+
+    /**
+     * Filter for SCommandListPacket. Uses {@link CommandTreeCleaner} to filter out any ArgumentTypes that are not in the "minecraft" or "brigadier" namespace.
+     * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
+     */
+    @Nonnull
+    private static SCommandListPacket filterCommandList(SCommandListPacket packet)
+    {
+        RootCommandNode<ISuggestionProvider> root = packet.getRoot();
+        RootCommandNode<ISuggestionProvider> newRoot = CommandTreeCleaner.cleanArgumentTypes(root, argType -> {
+            ResourceLocation id = ArgumentTypes.getId(argType);
+            return id != null && (id.getNamespace().equals("minecraft") || id.getNamespace().equals("brigadier"));
+        });
+        return new SCommandListPacket(newRoot);
     }
 
     @Override

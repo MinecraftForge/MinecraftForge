@@ -41,6 +41,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.ObjectArrays;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -214,6 +215,7 @@ public class DataGeneratorTest
             getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
                 .addItemEntry(Blocks.DIAMOND_BLOCK)
                 .addTag(BlockTags.STONE_BRICKS)
+                .addTag(net.minecraftforge.common.Tags.Blocks.COBBLESTONE)
                 .addOptional(new ResourceLocation("chisel", "marble/raw"))
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
 
@@ -437,7 +439,7 @@ public class DataGeneratorTest
             ModelFile barrel = models().cubeBottomTop("barrel", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top"));
             ModelFile barrelOpen = models().cubeBottomTop("barrel_open", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top_open"));
             directionalBlock(Blocks.BARREL, state -> state.get(BarrelBlock.PROPERTY_OPEN) ? barrelOpen : barrel); // Testing custom state interpreter
-
+            
             logBlock((RotatedPillarBlock) Blocks.ACACIA_LOG);
 
             stairsBlock((StairsBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));
@@ -456,6 +458,9 @@ public class DataGeneratorTest
 
             simpleBlock(Blocks.TORCH, models().torch("torch", mcLoc("block/torch")));
             horizontalBlock(Blocks.WALL_TORCH, models().torchWall("wall_torch", mcLoc("block/torch")), 90);
+
+            models().cubeAll("test_block", mcLoc("block/stone"));
+            itemModels().withExistingParent("test_block", modLoc("block/test_block"));
         }
 
         // Testing the outputs
@@ -464,6 +469,7 @@ public class DataGeneratorTest
         // Vanilla doesn't generate these models yet, so they have minor discrepancies that are hard to test
         // This list should probably be cleared and investigated after each major version update
         private static final Set<ResourceLocation> IGNORED_MODELS = ImmutableSet.of(new ResourceLocation(MODID, "block/cube"));
+        private static final Set<ResourceLocation> CUSTOM_MODELS = ImmutableSet.of(new ResourceLocation(MODID, "block/test_block"));
 
         private List<String> errors = new ArrayList<>();
 
@@ -471,7 +477,7 @@ public class DataGeneratorTest
         public void act(DirectoryCache cache) throws IOException
         {
             super.act(cache);
-            this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, IGNORED_MODELS));
+            this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, Sets.union(IGNORED_MODELS, CUSTOM_MODELS)));
             this.registeredBlocks.forEach((block, state) -> {
                 if (IGNORED_BLOCKS.contains(block)) return;
                 JsonObject generated = state.toJson();
