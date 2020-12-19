@@ -223,7 +223,7 @@
              }
  
              Display.setFullscreen(this.field_71431_Q);
-+            if (!this.field_71431_Q) //Forge: Fix MC-68754, Screen is not resizeable after exiting fullscreen due to LWJGL bug https://github.com/LWJGL/lwjgl/issues/142 which is fixed, but not in the version MC ships
++            if (!this.field_71431_Q && (Util.func_110647_a() == Util.EnumOS.WINDOWS)) //Forge: Fix MC-68754, Screen is not resizeable after exiting fullscreen due to LWJGL bug https://github.com/LWJGL/lwjgl/issues/142 which is fixed, but not in the version MC ships
 +            {
 +                Display.setResizable(false);
 +                Display.setResizable(true);
