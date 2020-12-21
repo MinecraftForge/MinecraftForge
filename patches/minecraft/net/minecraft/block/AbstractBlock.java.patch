@@ -144,7 +144,7 @@
        public AbstractBlock.Properties func_200941_a(float p_200941_1_) {
           this.field_200961_i = p_200941_1_;
           return this;
-@@ -933,7 +971,7 @@
+@@ -933,10 +971,15 @@
        }
  
        public AbstractBlock.Properties func_222379_b(Block p_222379_1_) {
@@ -153,3 +153,11 @@
           return this;
        }
  
++      public AbstractBlock.Properties lootFrom(java.util.function.Supplier<? extends Block> blockIn) {
++          this.lootTableSupplier = () -> blockIn.get().func_220068_i();
++          return this;
++      }
++
+       public AbstractBlock.Properties func_235859_g_() {
+          this.field_235813_o_ = true;
+          return this;
