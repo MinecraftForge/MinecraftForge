@@ -5,7 +5,7 @@
           int i = this.func_190735_dq();
           this.field_82234_d -= i;
 -         if (this.field_82234_d <= 0) {
-+         if (this.field_82234_d <= 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.field_200756_av, (timer) -> this.conversionTime = timer)) {
++         if (this.field_82234_d <= 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.field_200756_av, (timer) -> this.field_82234_d = timer)) {
              this.func_213791_a((ServerWorld)this.field_70170_p);
           }
        }

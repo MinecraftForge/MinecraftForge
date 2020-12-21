@@ -6,7 +6,7 @@
              --this.field_204708_bE;
 -            if (this.field_204708_bE < 0) {
 +
-+            if (this.field_204708_bE < 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.field_200725_aD, (timer) -> this.drownedConversionTime = timer)) {
++            if (this.field_204708_bE < 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.field_200725_aD, (timer) -> this.field_204708_bE = timer)) {
                 this.func_207302_dI();
              }
           } else if (this.func_204703_dA()) {
