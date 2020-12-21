@@ -27,14 +27,16 @@ import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.storage.IServerConfiguration;
 import net.minecraft.world.storage.SaveFormat;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
+import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.server.command.EnumArgument;
@@ -71,7 +73,6 @@ import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -118,12 +119,14 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
+        modEventBus.addListener(this::loadComplete);
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ForgeConfig.commonSpec);
         modEventBus.register(ForgeConfig.class);
         // Forge does not display problems when the remote is not matching.
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, ()-> Pair.of(()->"ANY", (remote, isServer)-> true));
@@ -152,6 +155,12 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         ArgumentTypes.register("forge:enum", EnumArgument.class, (IArgumentSerializer) new EnumArgument.Serializer());
         ArgumentTypes.register("forge:modid", ModIdArgument.class, new ArgumentSerializer<>(ModIdArgument::modIdArgument));
+    }
+
+    public void loadComplete(FMLLoadCompleteEvent event)
+    {
+        if (FMLEnvironment.dist == Dist.CLIENT)
+            ForgeHooksClient.registerForgeWorldTypeScreens();
     }
 
     public void serverStopping(FMLServerStoppingEvent evt)

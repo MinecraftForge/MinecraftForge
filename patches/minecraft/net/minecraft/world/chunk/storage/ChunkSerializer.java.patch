@@ -17,6 +17,15 @@
                    chunkprimer.func_201637_h(blockpos);
                 }
              }
+@@ -167,7 +168,7 @@
+       Heightmap.func_222690_a(ichunk, enumset);
+       CompoundNBT compoundnbt4 = compoundnbt.func_74775_l("Structures");
+       ichunk.func_201612_a(func_235967_a_(p_222656_1_, compoundnbt4, p_222656_0_.func_72905_C()));
+-      ichunk.func_201606_b(func_227075_a_(p_222656_3_, compoundnbt4));
++      net.minecraftforge.common.ForgeHooks.fixNullStructureReferences(ichunk, func_227075_a_(p_222656_3_, compoundnbt4));
+       if (compoundnbt.func_74767_n("shouldSave")) {
+          ichunk.func_177427_f(true);
+       }
 @@ -183,6 +184,7 @@
        }
  

@@ -318,13 +318,17 @@ public class LazyOptional<T>
      * call this, if they are covered with a microblock panel, thus cutting off pipe
      * connectivity to this side.
      * <p>
-     * Also should be called for all when a TE is invalidated, or a world/chunk
-     * unloads, or a entity dies, etc... This allows modders to keep a cache of
-     * capability objects instead of re-checking them every tick.
+     * Also should be called for all when a TE is invalidated (for example, when
+     * the TE is removed or unloaded), or a world/chunk unloads, or a entity dies,
+     * etc... This allows modders to keep a cache of capability objects instead of
+     * re-checking them every tick.
      */
     public void invalidate()
     {
-        this.isValid = false;
-        this.listeners.forEach(e -> e.accept(this));
+        if (this.isValid)
+        {
+            this.isValid = false;
+            this.listeners.forEach(e -> e.accept(this));
+        }
     }
 }
