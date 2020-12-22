@@ -2,6 +2,7 @@ package net.minecraftforge.common.world.biomes.conditions;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.world.biomes.BiomeExposer;
 import net.minecraftforge.common.world.biomes.ForgeBiomeModifiers;
 import net.minecraftforge.common.world.biomes.conditions.base.BiomeConditionType;
 import net.minecraftforge.common.world.biomes.conditions.base.IBiomeCondition;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public class BiomeAndCondition implements IBiomeCondition
 {
-    public static final MapCodec<BiomeAndCondition> CODEC = IBiomeCondition.INNER_CODEC.listOf().xmap(BiomeAndCondition::new, and -> and.conditions).fieldOf("conditions");
+    public static final MapCodec<BiomeAndCondition> CODEC = IBiomeCondition.GENERAL_CODEC.listOf().xmap(BiomeAndCondition::new, and -> and.conditions).fieldOf("conditions");
 
     private final List<IBiomeCondition> conditions;
 
@@ -26,7 +27,7 @@ public class BiomeAndCondition implements IBiomeCondition
     }
 
     @Override
-    public boolean test(Biome biome)
+    public boolean test(BiomeExposer biome)
     {
         for(IBiomeCondition cond : conditions)
         {

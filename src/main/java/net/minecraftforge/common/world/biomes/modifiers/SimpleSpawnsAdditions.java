@@ -37,7 +37,6 @@ public class SimpleSpawnsAdditions extends BiomeModifier
 
     public static final MapCodec<SimpleSpawnsAdditions> CODEC = RecordCodecBuilder.mapCodec(inst ->
             inst.group(
-                    IBiomeCondition.FIELD_CODEC.forGetter(BiomeModifier::getCondition),
                     SPAWNERS_CODEC.optionalFieldOf("spawners", ImmutableMap.of()).forGetter(m -> m.spawners),
                     SPAWN_COSTS_CODEC.optionalFieldOf("spawns_costs", ImmutableMap.of()).forGetter(m -> m.spawnCosts)
             ).apply(inst, SimpleSpawnsAdditions::new)
@@ -46,9 +45,8 @@ public class SimpleSpawnsAdditions extends BiomeModifier
     private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawners;
     private final Map<EntityType<?>, MobSpawnInfo.SpawnCosts> spawnCosts;
 
-    public SimpleSpawnsAdditions(IBiomeCondition condition, Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawners, Map<EntityType<?>, MobSpawnInfo.SpawnCosts> spawnCosts)
+    public SimpleSpawnsAdditions(Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawners, Map<EntityType<?>, MobSpawnInfo.SpawnCosts> spawnCosts)
     {
-        super(condition);
         this.spawners = spawners;
         this.spawnCosts = spawnCosts;
     }

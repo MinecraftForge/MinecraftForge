@@ -277,8 +277,16 @@
     }
  
     private boolean func_244600_aM() {
-@@ -1747,7 +1787,12 @@
+@@ -1646,7 +1686,7 @@
           return p_238192_2_.func_234958_g_();
+       }, (p_238187_3_, p_238187_4_, p_238187_5_, p_238187_6_) -> {
+          WorldGenSettingsExport<JsonElement> worldgensettingsexport = WorldGenSettingsExport.func_240896_a_(JsonOps.INSTANCE, p_238192_3_);
+-         WorldSettingsImport<JsonElement> worldsettingsimport = WorldSettingsImport.func_244335_a(JsonOps.INSTANCE, p_238187_5_, p_238192_3_);
++         WorldSettingsImport<JsonElement> worldsettingsimport = WorldSettingsImport.createWithBiomeModifiers(JsonOps.INSTANCE, p_238187_5_, p_238192_3_);
+          DataResult<DimensionGeneratorSettings> dataresult = DimensionGeneratorSettings.field_236201_a_.encodeStart(worldgensettingsexport, p_238192_4_).setLifecycle(Lifecycle.stable()).flatMap((p_243209_1_) -> {
+             return DimensionGeneratorSettings.field_236201_a_.parse(worldsettingsimport, p_243209_1_);
+          });
+@@ -1747,7 +1787,12 @@
           networkmanager.func_150719_a(new ClientLoginNetHandler(networkmanager, this, (Screen)null, (p_229998_0_) -> {
           }));
           networkmanager.func_179290_a(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));

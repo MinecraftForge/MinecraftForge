@@ -1,5 +1,9 @@
 {
   "comment" : "The FIRST entry is executed LAST, to have the MOST priority. Datapack order is also reversed, the modifiers of the first datapack are executed last.",
   "replace" : false,
-  "entries": []
+  "entries": [
+    "test_biome_mods:test_mod",
+    "test_biome_mods:another_one",
+    "test_biome_mods:some_mod"
+  ]
 }

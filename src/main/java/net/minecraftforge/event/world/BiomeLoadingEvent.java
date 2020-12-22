@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
  * always be the same, depending on other mods.
  *
  * The event is okay to use for simple changes but json defined biome modifications should still be preferred, as their
- * order is much more controllable and they can be turned removed if needed independently of the mod author.
+ * order is much more controllable and they can be removed if needed independently of the mod author.
  */
 @Deprecated
 public class BiomeLoadingEvent extends Event
@@ -72,7 +72,7 @@ public class BiomeLoadingEvent extends Event
 
     /**
      * This will get the registry name of the biome.
-     * It generally SHOULD NOT be null, but due to vanilla's biome handling and codec weirdness, there may be cases where it is.
+     * It generally SHOULD not be null, but due to vanilla's biome handling and codec weirdness, there may be cases where it is.
      * Do check for this possibility!
      */
     @Nullable

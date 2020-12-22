@@ -16,7 +16,7 @@
 -      })).apply(p_235064_0_, Biome::new);
 +      }), ResourceLocation.field_240908_a_.optionalFieldOf("forge:registry_name").forGetter(b -> Optional.ofNullable(b.getRegistryName())))
 +      .apply(p_235064_0_, (climate, category, depth, scale, effects, gen, spawns, name) ->
-+          net.minecraftforge.common.ForgeHooks.enhanceBiome(name, climate, category, depth, scale, effects, gen, spawns, Biome::new));
++          net.minecraftforge.common.ForgeHooks.enhanceBiome(name.orElse(null), climate, category, depth, scale, effects, gen, spawns, Biome::new));
     });
     public static final Codec<Biome> field_242419_c = RecordCodecBuilder.create((p_242432_0_) -> {
        return p_242432_0_.group(Biome.Climate.field_242459_a.forGetter((p_242441_0_) -> {

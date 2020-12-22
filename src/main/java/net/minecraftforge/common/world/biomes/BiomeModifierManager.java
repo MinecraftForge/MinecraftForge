@@ -16,6 +16,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldSettingsImport;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.world.biomes.conditions.base.IBiomeCondition;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifier;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,6 +33,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Mod.EventBusSubscriber(modid = "forge")
@@ -48,10 +50,10 @@ public class BiomeModifierManager extends JsonReloadListener
     private static final Logger LOGGER = LogManager.getLogger("BiomeModifierManager");
     private static final Gson GSON = new GsonBuilder().create();
     private static final String FOLDER = "biome_modifiers";
-    private static final Map<ResourceLocation, Biome> eventCopiedBiomes = new HashMap<>();
 
-    private List<BiomeModifier> deserializedModifiers = null;
-    private Function<DynamicOps<JsonElement>, List<BiomeModifier>> modifiers = ops -> { throw new IllegalStateException(); };
+    private List<Pair<IBiomeCondition, BiomeModifier>> deserializedModifiers = null;
+    private Function<DynamicOps<JsonElement>, List<Pair<IBiomeCondition, BiomeModifier>>> modifiers = ops -> { throw new IllegalStateException(); };
+    private List<IBiomeCondition> conditions = new ArrayList<>();
 
     private static boolean worldGenFinished = false;
 
@@ -65,15 +67,10 @@ public class BiomeModifierManager extends JsonReloadListener
         return !worldGenFinished;
     }
 
-    public static void addBiomeLoadingEventResult(ResourceLocation name, Biome afterEvent)
-    {
-        eventCopiedBiomes.put(name, afterEvent);
-    }
-
     @Override
     protected void apply(Map<ResourceLocation, JsonElement> resources, IResourceManager resourceManager, IProfiler profiler)
     {
-        List<ResourceLocation> modifierLocs = new LinkedList<>();
+        List<ResourceLocation> modifierLocs = new ArrayList<>();
         ResourceLocation modifierList = new ResourceLocation("forge:biome_modifiers/global_biome_modifiers.json");
         try
         {
@@ -92,7 +89,7 @@ public class BiomeModifierManager extends JsonReloadListener
 
                     if(globalModifiers.getFirst())
                         modifierLocs.clear();
-                    List<ResourceLocation> toAdd = globalModifiers.getSecond().stream().filter(rl -> !modifierLocs.contains(rl)).collect(Collectors.toCollection(LinkedList::new));
+                    List<ResourceLocation> toAdd = globalModifiers.getSecond().stream().filter(rl -> !modifierLocs.contains(rl)).collect(Collectors.toList());
                     Collections.reverse(toAdd); //reverse, for the correct priority. last => most priority
                     modifierLocs.addAll(toAdd);
                 }
@@ -111,17 +108,26 @@ public class BiomeModifierManager extends JsonReloadListener
             LOGGER.error("Couldn't read global loot modifier list from {}", modifierList, e);
         }
 
+        //Deserialize the conditions separately, so they can be used to check how many biomes
+        // will get modified.
+        this.conditions = new ArrayList<>();
+        modifierLocs.forEach(loc ->
+                IBiomeCondition.GENERAL_CODEC.fieldOf("condition").codec().parse(JsonOps.INSTANCE, resources.get(loc)).get()
+                        .ifLeft(this.conditions::add)
+                        .ifRight(e -> LOGGER.error("Could not parse {} : {}", loc, e)));
+
         this.modifiers = ops ->
         {
-            List<BiomeModifier> modifiers = new ArrayList<>();
+            List<Pair<IBiomeCondition, BiomeModifier>> modifiers = new ArrayList<>();
             modifierLocs.forEach(loc ->
-                    BiomeModifier.GENERAL_CODEC.parse(ops, resources.get(loc)).get()
+                    BiomeModifier.CONDITION_MODIFIER_PAIR_CODEC.parse(ops, resources.get(loc)).get()
                             .ifLeft(modifiers::add)
                             .ifRight(e -> LOGGER.error("Could not parse {} : {}", loc, e.message())));
             return modifiers;
         };
 
-        LOGGER.info("Should load {} biome modifiers", modifierLocs.size());
+        if (modifierLocs.size() != 0)
+            LOGGER.info("Should load {} biome modifiers", modifierLocs.size());
     }
 
     /**
@@ -136,7 +142,7 @@ public class BiomeModifierManager extends JsonReloadListener
         }
     }
 
-    private List<BiomeModifier> getDeserializedModifiers()
+    private List<Pair<IBiomeCondition, BiomeModifier>> getDeserializedModifiers()
     {
         if(deserializedModifiers == null)
             throw new IllegalStateException();
@@ -145,11 +151,27 @@ public class BiomeModifierManager extends JsonReloadListener
 
     private Biome getModifiedBiome(Biome base)
     {
-        Biome ret = base;
-        for (BiomeModifier modifier : this.getDeserializedModifiers())
-            ret = modifier.performModification(ret);
+        BiomeExposer exposer = BiomeExposer.fromBiome(base);
+        for (Pair<IBiomeCondition, BiomeModifier> modifier : this.getDeserializedModifiers())
+        {
+            if (modifier.getFirst().test(exposer))
+                modifier.getSecond().modifyBiome(exposer);
+        }
 
+        Biome ret = exposer.createBiome();
         return base.getRegistryName() != null ? ret.setRegistryName(base.getRegistryName()) : ret;
+    }
+
+    private List<ResourceLocation> getBiomesToModify()
+    {
+        Predicate<Biome> anyMatch = b -> BiomeModifierManager.INSTANCE.conditions.stream().anyMatch(cond -> cond.test(BiomeExposer.fromBiome(b)));
+
+        return ForgeRegistries.BIOMES.getEntries().stream()
+        .filter(e -> anyMatch.test(e.getValue()))
+        .map(e -> new ResourceLocation(
+                e.getKey().getLocation().getNamespace(),
+                ForgeRegistries.Keys.BIOMES.getLocation().getPath() + "/" + e.getKey().getLocation().getPath() + ".json"))
+        .collect(Collectors.toList());
     }
 
     @SubscribeEvent
@@ -192,10 +214,7 @@ public class BiomeModifierManager extends JsonReloadListener
             if(!key.equals(Registry.BIOME_KEY))
                 return baseLocs;
 
-            //have to trick it into thinking all of these are valid jsons (avoids log spam)
-            baseLocs.addAll(eventCopiedBiomes.keySet().stream()
-                    .map(rl -> new ResourceLocation(rl.getNamespace(), ForgeRegistries.Keys.BIOMES.getLocation().getPath() + "/" + rl.getPath() + ".json"))
-                    .collect(Collectors.toSet()));
+            baseLocs.addAll(BiomeModifierManager.INSTANCE.getBiomesToModify());
             return baseLocs;
         }
 
@@ -220,12 +239,12 @@ public class BiomeModifierManager extends JsonReloadListener
             ResourceLocation loc = key.getLocation();
 
             //If it's not there, the previous error was a real one, so return it.
-            if(!eventCopiedBiomes.containsKey(loc))
+            if(!ForgeRegistries.BIOMES.containsKey(loc))
                 return dataObj;
 
             //Used to get the numerical id.
             ForgeRegistry<Biome> reg = (ForgeRegistry<Biome>) ForgeRegistries.BIOMES;
-            Biome modified = BiomeModifierManager.INSTANCE.getModifiedBiome(BiomeModifierManager.eventCopiedBiomes.get(loc));
+            Biome modified = BiomeModifierManager.INSTANCE.getModifiedBiome(ForgeRegistries.BIOMES.getValue(loc));
             return DataResult.success(Pair.of((E)modified, OptionalInt.of(reg.getID(loc))), Lifecycle.experimental());
         }
     }

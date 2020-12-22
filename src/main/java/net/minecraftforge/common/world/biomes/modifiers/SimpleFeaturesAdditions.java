@@ -30,7 +30,6 @@ public class SimpleFeaturesAdditions extends BiomeModifier
 
     public static final MapCodec<SimpleFeaturesAdditions> CODEC = RecordCodecBuilder.mapCodec(inst ->
             inst.group(
-                    IBiomeCondition.FIELD_CODEC.forGetter(BiomeModifier::getCondition),
                     FEATURES_CODEC.optionalFieldOf("features", ImmutableList.of()).forGetter(m -> m.features),
                     STRUCTURES_CODEC.optionalFieldOf("starts", ImmutableList.of()).forGetter(m -> m.structures)
             ).apply(inst, SimpleFeaturesAdditions::new)
@@ -39,9 +38,8 @@ public class SimpleFeaturesAdditions extends BiomeModifier
     private final List<List<Supplier<ConfiguredFeature<?, ?>>>> features;
     private final List<Supplier<StructureFeature<?, ?>>> structures;
 
-    public SimpleFeaturesAdditions(IBiomeCondition condition, List<List<Supplier<ConfiguredFeature<?, ?>>>> features, List<Supplier<StructureFeature<?, ?>>> structures)
+    public SimpleFeaturesAdditions(List<List<Supplier<ConfiguredFeature<?, ?>>>> features, List<Supplier<StructureFeature<?, ?>>> structures)
     {
-        super(condition);
         this.features = features;
         this.structures = structures;
     }

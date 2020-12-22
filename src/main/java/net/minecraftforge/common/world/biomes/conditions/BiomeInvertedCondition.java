@@ -2,13 +2,14 @@ package net.minecraftforge.common.world.biomes.conditions;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.world.biomes.BiomeExposer;
 import net.minecraftforge.common.world.biomes.ForgeBiomeModifiers;
 import net.minecraftforge.common.world.biomes.conditions.base.BiomeConditionType;
 import net.minecraftforge.common.world.biomes.conditions.base.IBiomeCondition;
 
 public class BiomeInvertedCondition implements IBiomeCondition
 {
-    public static final MapCodec<BiomeInvertedCondition> CODEC = IBiomeCondition.INNER_CODEC.xmap(BiomeInvertedCondition::new, inv -> inv.condition).fieldOf("inverse");
+    public static final MapCodec<BiomeInvertedCondition> CODEC = IBiomeCondition.GENERAL_CODEC.xmap(BiomeInvertedCondition::new, inv -> inv.condition).fieldOf("inverse");
 
     final IBiomeCondition condition;
 
@@ -24,7 +25,7 @@ public class BiomeInvertedCondition implements IBiomeCondition
     }
 
     @Override
-    public boolean test(Biome biome)
+    public boolean test(BiomeExposer biome)
     {
         return !condition.test(biome);
     }

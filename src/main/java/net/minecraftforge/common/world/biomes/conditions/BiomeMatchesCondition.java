@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.world.biomes.BiomeExposer;
 import net.minecraftforge.common.world.biomes.ForgeBiomeModifiers;
 import net.minecraftforge.common.world.biomes.conditions.base.BiomeConditionType;
 import net.minecraftforge.common.world.biomes.conditions.base.IBiomeCondition;
@@ -45,9 +46,8 @@ public class BiomeMatchesCondition implements IBiomeCondition
     }
 
     @Override
-    public boolean test(Biome biome)
+    public boolean test(BiomeExposer biome)
     {
-        //TODO test, this might not actually work... -> test ForgeRegistries.BIOMES.getKey(biome)
-        return locations.contains(biome.getRegistryName());
+        return locations.contains(biome.getName());
     }
 }
