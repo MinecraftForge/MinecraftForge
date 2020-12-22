@@ -43,6 +43,8 @@ import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
+import javax.annotation.Nullable;
+
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.opengl.GL11.*;
@@ -60,7 +62,7 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     private GLFWFramebufferSizeCallback framebufferSizeCallback;
     private int[] fbSize;
 
-    private void initWindow( String mcVersion) {
+    private void initWindow(@Nullable String mcVersion) {
         GLFWErrorCallback.createPrint(System.err).set();
 
         long glfwInitBegin = System.nanoTime();
@@ -82,12 +84,15 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-        // this emulates what we would get without early progress window
-        // as vanilla never sets these, so GLFW uses the first window title
-        // set them explicitly to avoid it using "FML early loading progress" as the class
-        String vanillaWindowTitle = "Minecraft* " + mcVersion;
-        glfwWindowHintString(GLFW_X11_CLASS_NAME, vanillaWindowTitle);
-        glfwWindowHintString(GLFW_X11_INSTANCE_NAME, vanillaWindowTitle);
+        if (mcVersion != null)
+        {
+            // this emulates what we would get without early progress window
+            // as vanilla never sets these, so GLFW uses the first window title
+            // set them explicitly to avoid it using "FML early loading progress" as the class
+            String vanillaWindowTitle = "Minecraft* " + mcVersion;
+            glfwWindowHintString(GLFW_X11_CLASS_NAME, vanillaWindowTitle);
+            glfwWindowHintString(GLFW_X11_INSTANCE_NAME, vanillaWindowTitle);
+        }
 
         window = glfwCreateWindow(screenWidth, screenHeight, "FML early loading progress", NULL, NULL);
         if (window == NULL) {
@@ -308,7 +313,7 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     }
 
     @Override
-    public Runnable start(String mcVersion) {
+    public Runnable start(@Nullable String mcVersion) {
         initWindow(mcVersion);
         renderThread.setDaemon(true); // Don't hang the game if it terminates before handoff (i.e. datagen)
         renderThread.start();
