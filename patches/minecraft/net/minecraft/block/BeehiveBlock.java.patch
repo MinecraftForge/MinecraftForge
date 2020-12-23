@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BeehiveBlock.java
++++ b/net/minecraft/block/BeehiveBlock.java
+@@ -87,6 +87,8 @@
+          List<PlayerEntity> list1 = p_226881_1_.func_217357_a(PlayerEntity.class, (new AxisAlignedBB(p_226881_2_)).func_72314_b(8.0D, 6.0D, 8.0D));
+          int i = list1.size();
+ 
++         // Forge: Fix crash when there are no nearby players.
++         if (i > 0)
+          for(BeeEntity beeentity : list) {
+             if (beeentity.func_70638_az() == null) {
+                beeentity.func_70624_b(list1.get(p_226881_1_.field_73012_v.nextInt(i)));
