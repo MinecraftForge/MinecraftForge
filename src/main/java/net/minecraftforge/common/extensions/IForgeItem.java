@@ -169,19 +169,40 @@ public interface IForgeItem
      * @param stack The stack to send the NBT tag for
      * @return The NBT tag
      */
-    @Nullable
+    @Nullable //TODO 1.17 rename to getMinimalNetworkTag
     default CompoundNBT getShareTag(ItemStack stack)
     {
         return stack.getTag();
     }
 
     /**
+     * Get the NBT data to be used when sending the full item over the network.
+     *
+     * Note that this will sometimes be applied multiple times, the following MUST
+     * be supported:
+     *   Item item = stack.getItem();
+     *   NBTTagCompound nbtShare1 = item.getFullNetworkTag(stack);
+     *   stack.setTagCompound(nbtShare1);
+     *   NBTTagCompound nbtShare2 = item.getFullNetworkTag(stack);
+     *   assert nbtShare1.equals(nbtShare2);
+     *
+     * @param stack The stack to send the NBT tag for
+     * @return The NBT tag
+     */
+    @Nullable
+    default CompoundNBT getFullNetworkTag(ItemStack stack)
+    {
+        return stack.getTag();
+    }
+
+    /**
      * Override this method to decide what to do with the NBT data received from
-     * getNBTShareTag().
+     * getNBTShareTag() and getFullNetworkTag().
      *
      * @param stack The stack that received NBT
      * @param nbt   Received NBT, can be null
      */
+    //TODO 1.17 rename to readNetworkTag
     default void readShareTag(ItemStack stack, @Nullable CompoundNBT nbt)
     {
         stack.setTag(nbt);
