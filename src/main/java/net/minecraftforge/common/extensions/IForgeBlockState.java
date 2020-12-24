@@ -483,6 +483,7 @@ public interface IForgeBlockState
     * @param changed The updated block.
     * @param changedPos The updated block's position.
     */
+   @Deprecated//TODO - 1.17: Remove (unused)
     default void observedNeighborChange(World world, BlockPos pos, Block changed, BlockPos changedPos)
     {
         getBlockState().getBlock().observedNeighborChange(getBlockState(), world, pos, changed, changedPos);

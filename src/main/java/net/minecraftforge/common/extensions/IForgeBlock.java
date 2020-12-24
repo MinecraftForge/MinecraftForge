@@ -466,6 +466,7 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @param source Source plant's position in world
      */
+    @Deprecated//TODO - 1.17: Remove (unused)
     default void onPlantGrow(BlockState state, IWorld world, BlockPos pos, BlockPos source)
     {
         if (state.isIn(Tags.Blocks.DIRT))
@@ -565,6 +566,7 @@ public interface IForgeBlock
     * @param changedBlock The updated block.
     * @param changedBlockPos The updated block's position.
     */
+   @Deprecated//TODO - 1.17: Remove (unused)
     default void observedNeighborChange(BlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos){}
 
    /**
