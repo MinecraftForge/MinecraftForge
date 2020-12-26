@@ -74,7 +74,6 @@ import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.ModLoadingStage;
@@ -634,19 +633,22 @@ public class GameData
             }
             obj.getBlockStates().forEach((state) -> 
             {
-                if (map.put(state, obj) != null)
+                PointOfInterestType oldType = map.put(state, obj);
+                if (oldType != null)
                 {
-                    throw Util.pauseDevMode(new IllegalStateException(String.format("%s is defined in too many tags", state)));
+                    throw new IllegalStateException(String.format("Point of interest types %s and %s both list %s in their blockstates, this is not allowed. Blockstates can only have one point of interest type each.", oldType, obj, state));
                 }
             });
         }
 
-        @Override public void onClear(IForgeRegistryInternal<PointOfInterestType> owner, RegistryManager stage)
+        @Override
+        public void onClear(IForgeRegistryInternal<PointOfInterestType> owner, RegistryManager stage)
         {
             owner.getSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, Map.class).clear();
         }
 
-        @Override public void onCreate(IForgeRegistryInternal<PointOfInterestType> owner, RegistryManager stage)
+        @Override
+        public void onCreate(IForgeRegistryInternal<PointOfInterestType> owner, RegistryManager stage)
         {
             owner.setSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, new HashMap<>());
         }
