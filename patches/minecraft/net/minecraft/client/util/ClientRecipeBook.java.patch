@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/util/ClientRecipeBook.java
++++ b/net/minecraft/client/util/ClientRecipeBook.java
+@@ -88,7 +88,7 @@
+             return RecipeBookCategories.CRAFTING_EQUIPMENT;
+          }
+       } else if (irecipetype == IRecipeType.field_222150_b) {
+-         if (p_202887_0_.func_77571_b().func_77973_b().func_219971_r()) {
++         if (p_202887_0_.func_77571_b().func_77973_b().isFood(p_202887_0_.func_77571_b())) {
+             return RecipeBookCategories.FURNACE_FOOD;
+          } else {
+             return p_202887_0_.func_77571_b().func_77973_b() instanceof BlockItem ? RecipeBookCategories.FURNACE_BLOCKS : RecipeBookCategories.FURNACE_MISC;

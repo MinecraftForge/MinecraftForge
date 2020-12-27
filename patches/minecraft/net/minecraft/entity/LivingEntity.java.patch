@@ -396,6 +396,15 @@
              this.field_184627_bm.func_222121_b(this.field_70170_p, this, this.func_184605_cv());
              if (this.func_226299_p_()) {
                 this.func_226293_b_(this.field_184627_bm, 5);
+@@ -2687,7 +2731,7 @@
+ 
+    private boolean func_226299_p_() {
+       int i = this.func_184605_cv();
+-      Food food = this.field_184627_bm.func_77973_b().func_219967_s();
++      Food food = this.field_184627_bm.func_77973_b().getFood(this.field_184627_bm);
+       boolean flag = food != null && food.func_221465_e();
+       flag = flag | i <= this.field_184627_bm.func_77988_m() - 7;
+       return flag && i % 4 == 0;
 @@ -2717,8 +2761,10 @@
     public void func_184598_c(Hand p_184598_1_) {
        ItemStack itemstack = this.func_184586_b(p_184598_1_);
@@ -481,6 +490,17 @@
     }
  
     public boolean func_70094_T() {
+@@ -3045,8 +3101,8 @@
+ 
+    private void func_213349_a(ItemStack p_213349_1_, World p_213349_2_, LivingEntity p_213349_3_) {
+       Item item = p_213349_1_.func_77973_b();
+-      if (item.func_219971_r()) {
+-         for(Pair<EffectInstance, Float> pair : item.func_219967_s().func_221464_f()) {
++      if (item.isFood(p_213349_1_)) {
++         for(Pair<EffectInstance, Float> pair : item.getFood(p_213349_1_).func_221464_f()) {
+             if (!p_213349_2_.field_72995_K && pair.getFirst() != null && p_213349_2_.field_73012_v.nextFloat() < pair.getSecond()) {
+                p_213349_3_.func_195064_c(new EffectInstance(pair.getFirst()));
+             }
 @@ -3082,6 +3138,58 @@
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }

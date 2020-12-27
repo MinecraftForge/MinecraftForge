@@ -1,5 +1,23 @@
 --- a/net/minecraft/entity/passive/FoxEntity.java
 +++ b/net/minecraft/entity/passive/FoxEntity.java
+@@ -217,7 +217,7 @@
+    }
+ 
+    private boolean func_213464_j(ItemStack p_213464_1_) {
+-      return p_213464_1_.func_77973_b().func_219971_r() && this.func_70638_az() == null && this.field_70122_E && !this.func_70608_bn();
++      return p_213464_1_.func_77973_b().isFood(p_213464_1_) && this.func_70638_az() == null && this.field_70122_E && !this.func_70608_bn();
+    }
+ 
+    protected void func_180481_a(DifficultyInstance p_180481_1_) {
+@@ -438,7 +438,7 @@
+    public boolean func_175448_a(ItemStack p_175448_1_) {
+       Item item = p_175448_1_.func_77973_b();
+       ItemStack itemstack = this.func_184582_a(EquipmentSlotType.MAINHAND);
+-      return itemstack.func_190926_b() || this.field_213522_bP > 0 && item.func_219971_r() && !itemstack.func_77973_b().func_219971_r();
++      return itemstack.func_190926_b() || this.field_213522_bP > 0 && item.isFood(p_175448_1_) && !itemstack.func_77973_b().isFood(itemstack);
+    }
+ 
+    private void func_213495_k(ItemStack p_213495_1_) {
 @@ -761,7 +761,7 @@
        }
  

@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/passive/WolfEntity.java
 +++ b/net/minecraft/entity/passive/WolfEntity.java
+@@ -316,7 +316,7 @@
+                   itemstack.func_190918_g(1);
+                }
+ 
+-               this.func_70691_i((float)item.func_219967_s().func_221466_a());
++               this.func_70691_i((float)item.getFood(itemstack).func_221466_a());
+                return ActionResultType.SUCCESS;
+             }
+ 
 @@ -347,7 +347,7 @@
                 itemstack.func_190918_g(1);
              }
@@ -9,3 +18,12 @@
                 this.func_193101_c(p_230254_1_);
                 this.field_70699_by.func_75499_g();
                 this.func_70624_b((LivingEntity)null);
+@@ -389,7 +389,7 @@
+ 
+    public boolean func_70877_b(ItemStack p_70877_1_) {
+       Item item = p_70877_1_.func_77973_b();
+-      return item.func_219971_r() && item.func_219967_s().func_221467_c();
++      return item.isFood(p_70877_1_) && item.getFood(p_70877_1_).func_221467_c();
+    }
+ 
+    public int func_70641_bl() {
