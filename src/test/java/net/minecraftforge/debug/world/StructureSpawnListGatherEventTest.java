@@ -44,12 +44,12 @@ public class StructureSpawnListGatherEventTest
 
     private void onStructureSpawnListGather(StructureSpawnListGatherEvent event)
     {
-        if (event.getStructure() == Structure.field_236375_k_)
+        if (event.getStructure() == Structure.STRONGHOLD)
         {
             event.addEntitySpawn(EntityClassification.MONSTER, new MobSpawnInfo.Spawners(EntityType.WITHER_SKELETON, 100, 5, 15));
             LOGGER.info("Adding wither skeleton spawns to strong holds");
         }
-        else if (event.getStructure() == Structure.field_236373_i_)
+        else if (event.getStructure() == Structure.SHIPWRECK)
         {
             event.setInsideOnly(false);
             event.addEntitySpawn(EntityClassification.MONSTER, new MobSpawnInfo.Spawners(EntityType.GUARDIAN, 100, 5, 15));

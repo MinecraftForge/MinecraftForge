@@ -29,7 +29,7 @@ public class TextComponentMessageFormatHandler {
     public static int handle(final TranslationTextComponent parent, final List<ITextProperties> children, final Object[] formatArgs, final String format) {
         try {
             StringTextComponent component = new StringTextComponent(ForgeI18n.parseFormat(format, formatArgs));
-            component.getStyle().func_240717_a_(parent.getStyle());
+            component.getStyle().mergeStyle(parent.getStyle());
             children.add(component);
             return format.length();
         } catch (IllegalArgumentException ex) {

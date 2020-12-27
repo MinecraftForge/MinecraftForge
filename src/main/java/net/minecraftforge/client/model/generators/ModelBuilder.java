@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -36,20 +37,19 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraft.client.renderer.model.BlockFaceUV;
+import net.minecraft.client.renderer.model.BlockModel.GuiLight;
 import net.minecraft.client.renderer.model.BlockPart;
 import net.minecraft.client.renderer.model.BlockPartFace;
 import net.minecraft.client.renderer.model.BlockPartRotation;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.model.BlockModel.GuiLight;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
-import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 /**
  * General purpose model builder, contains all the commonalities between item
@@ -74,6 +74,8 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     protected GuiLight guiLight = null;
 
     protected final List<ElementBuilder> elements = new ArrayList<>();
+
+    protected CustomLoaderBuilder customLoader = null;
 
     protected ModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) {
         super(outputLocation);
@@ -147,7 +149,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     public T texture(String key, ResourceLocation texture) {
         Preconditions.checkNotNull(key, "Key must not be null");
         Preconditions.checkNotNull(texture, "Texture must not be null");
-        Preconditions.checkArgument(existingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"),
+        Preconditions.checkArgument(existingFileHelper.exists(texture, ModelProvider.TEXTURE),
                 "Texture %s does not exist in any known resource pack", texture);
         this.textures.put(key, texture.toString());
         return self();
@@ -178,6 +180,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     }
 
     public ElementBuilder element() {
+        Preconditions.checkState(customLoader == null, "Cannot use elements and custom loaders at the same time");
         ElementBuilder ret = new ElementBuilder();
         elements.add(ret);
         return ret;
@@ -191,13 +194,29 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
      * @throws IndexOutOfBoundsException if {@code} index is out of bounds
      */
     public ElementBuilder element(int index) {
+        Preconditions.checkState(customLoader == null, "Cannot use elements and custom loaders at the same time");
         Preconditions.checkElementIndex(index, elements.size(), "Element index");
         return elements.get(index);
+    }
+
+    /**
+     * Use a custom loader instead of the vanilla elements.
+     * @param customLoaderFactory
+     * @return the custom loader builder
+     */
+    public <L extends CustomLoaderBuilder<T>> L customLoader(BiFunction<T, ExistingFileHelper, L> customLoaderFactory)
+    {
+        Preconditions.checkState(elements.size() == 0, "Cannot use elements and custom loaders at the same time");
+        Preconditions.checkNotNull(customLoaderFactory, "customLoaderFactory must not be null");
+        L customLoader  = customLoaderFactory.apply(self(), existingFileHelper);
+        this.customLoader = customLoader;
+        return customLoader;
     }
 
     @VisibleForTesting
     public JsonObject toJson() {
         JsonObject root = new JsonObject();
+
         if (this.parent != null) {
             root.addProperty("parent", this.parent.getLocation().toString());
         }
@@ -249,7 +268,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                 if (part.partRotation != null) {
                     JsonObject rotation = new JsonObject();
                     rotation.add("origin", serializeVector3f(part.partRotation.origin));
-                    rotation.addProperty("axis", part.partRotation.axis.func_176610_l());
+                    rotation.addProperty("axis", part.partRotation.axis.getString());
                     rotation.addProperty("angle", part.partRotation.angle);
                     if (part.partRotation.rescale) {
                         rotation.addProperty("rescale", part.partRotation.rescale);
@@ -272,7 +291,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                         faceObj.add("uv", new Gson().toJsonTree(face.blockFaceUV.uvs));
                     }
                     if (face.cullFace != null) {
-                        faceObj.addProperty("cullface", face.cullFace.func_176610_l());
+                        faceObj.addProperty("cullface", face.cullFace.getString());
                     }
                     if (face.blockFaceUV.rotation != 0) {
                         faceObj.addProperty("rotation", face.blockFaceUV.rotation);
@@ -280,7 +299,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
                     if (face.tintIndex != -1) {
                         faceObj.addProperty("tintindex", face.tintIndex);
                     }
-                    faces.add(dir.func_176610_l(), faceObj);
+                    faces.add(dir.getString(), faceObj);
                 }
                 if (!part.mapFaces.isEmpty()) {
                     partObj.add("faces", faces);
@@ -289,6 +308,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             });
             root.add("elements", elements);
         }
+
+        if (customLoader != null)
+            return customLoader.toJson(root);
 
         return root;
     }

@@ -19,12 +19,15 @@
 
 package net.minecraftforge.fluids;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -35,6 +38,8 @@ import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Optional;
 
 /**
  * ItemStack substitute for Fluids.
@@ -49,6 +54,18 @@ public class FluidStack
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static final FluidStack EMPTY = new FluidStack(Fluids.EMPTY, 0);
+
+    public static final Codec<FluidStack> CODEC = RecordCodecBuilder.create(
+            instance -> instance.group(
+                    Registry.FLUID.fieldOf("FluidName").forGetter(FluidStack::getFluid),
+                    Codec.INT.fieldOf("Amount").forGetter(FluidStack::getAmount),
+                    CompoundNBT.CODEC.optionalFieldOf("Tag").forGetter(stack -> Optional.ofNullable(stack.getTag()))
+            ).apply(instance, (fluid, amount, tag) -> {
+                FluidStack stack = new FluidStack(fluid, amount);
+                tag.ifPresent(stack::setTag);
+                return stack;
+            })
+    );
 
     private boolean isEmpty;
     private int amount;

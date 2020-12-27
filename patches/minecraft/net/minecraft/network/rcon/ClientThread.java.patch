@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/rcon/ClientThread.java
 +++ b/net/minecraft/network/rcon/ClientThread.java
-@@ -115,13 +115,14 @@
+@@ -116,13 +116,14 @@
     }
  
     private void func_72655_a(int p_72655_1_, String p_72655_2_) throws IOException {

@@ -82,9 +82,12 @@ public class ModList
     }
 
     private String fileToLine(ModFile mf) {
-        return mf.getFileName() + " " + mf.getModInfos().get(0).getDisplayName() + " " +
-                mf.getModInfos().stream().map(mi -> mi.getModId() + "@" + mi.getVersion() + " " +
-                getModContainerState(mi.getModId())).collect(Collectors.joining(", ", "{", "}"));
+        return String.format("%-50.50s|%-30.30s|%-30.30s|%-20.20s|%-10.10s|%s", mf.getFileName(),
+                mf.getModInfos().get(0).getDisplayName(),
+                mf.getModInfos().get(0).getModId(),
+                mf.getModInfos().get(0).getVersion(),
+                getModContainerState(mf.getModInfos().get(0).getModId()),
+                ((ModFileInfo)mf.getModFileInfo()).getCodeSigningFingerprint().orElse("NOSIGNATURE"));
     }
     private String crashReport() {
         return "\n"+applyForEachModFile(this::fileToLine).collect(Collectors.joining("\n\t\t", "\t\t", ""));

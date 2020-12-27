@@ -344,7 +344,7 @@ public class FMLPlayMessages
         public static void encode(SyncCustomTagTypes msg, PacketBuffer buf)
         {
             buf.writeVarInt(msg.customTagTypeCollections.size());
-            msg.customTagTypeCollections.forEach((registryName, modded) -> forgeTagCollectionWrite(buf, registryName, modded.func_241833_a()));
+            msg.customTagTypeCollections.forEach((registryName, modded) -> forgeTagCollectionWrite(buf, registryName, modded.getIDTagMap()));
         }
 
         private static <T> void forgeTagCollectionWrite(PacketBuffer buf, ResourceLocation registryName, Map<ResourceLocation, ITag<T>> tags)
@@ -353,7 +353,7 @@ public class FMLPlayMessages
             buf.writeVarInt(tags.size());
             tags.forEach((name, tag) -> {
                 buf.writeResourceLocation(name);
-                List<T> elements = tag.func_230236_b_();
+                List<T> elements = tag.getAllElements();
                 buf.writeVarInt(elements.size());
                 for (T element : elements)
                 {
@@ -395,9 +395,9 @@ public class FMLPlayMessages
                         elementBuilder.add(element);
                     }
                 }
-                tags.put(name, ITag.func_232946_a_(elementBuilder.build()));
+                tags.put(name, ITag.getTagOf(elementBuilder.build()));
             }
-            return ITagCollection.func_242202_a(tags);
+            return ITagCollection.getTagCollectionFromMap(tags);
         }
 
         public static void handle(SyncCustomTagTypes msg, Supplier<NetworkEvent.Context> ctx)
@@ -412,7 +412,7 @@ public class FMLPlayMessages
                     //Note: We gracefully ignore any tag types the server may have that we don't as they won't be in our tag registry
                     // so they won't be validated
                     //Override and use the tags from the packet to test for validation before we actually set them
-                    Multimap<ResourceLocation, ResourceLocation> missingTags = TagRegistryManager.func_242198_b(ForgeTagHandler.withSpecificCustom(tagCollectionSupplier, msg.customTagTypeCollections));
+                    Multimap<ResourceLocation, ResourceLocation> missingTags = TagRegistryManager.validateTags(ForgeTagHandler.withSpecificCustom(tagCollectionSupplier, msg.customTagTypeCollections));
                     if (missingTags.isEmpty())
                     {
                         //If we have no missing tags, update the custom tag types
