@@ -45,7 +45,7 @@ public abstract class ConfiguredStructureFeatureProvider extends RegistryBackedP
     public ConfiguredStructureFeatureProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
         //TODO This codec is dispatched for the vanilla STRUCTURE_FEATURE registry, and won't affect any mod added structures.
-        super(StructureFeature.field_236267_a_, regOps, Registry.field_243553_av);
+        super(StructureFeature.field_236267_a_, regOps, Registry.CONFIGURED_STRUCTURE_FEATURE_KEY);
         this.generator = generator;
         this.modid = modid;
     }

@@ -57,7 +57,7 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension>
 
     protected DimensionProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
-        super(Dimension.field_236052_a_, regOps);
+        super(Dimension.CODEC, regOps);
         this.generator = generator;
         this.modid = modid;
     }
@@ -108,12 +108,12 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension>
 
         public Builder setDimType(ResourceLocation location)
         {
-            return setDimType(regOps.getObject(Registry.field_239698_ad_, location));
+            return setDimType(regOps.getObject(Registry.DIMENSION_TYPE_KEY, location));
         }
 
         public Builder setDimType(RegistryKey<DimensionType> location)
         {
-            return setDimType(location.func_240901_a_());
+            return setDimType(location.getLocation());
         }
 
         public Builder setChunkGenerator(ChunkGenerator generator)
@@ -152,13 +152,13 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension>
 
             public NoiseChunkGeneratorBuilder setSettings(ResourceLocation location)
             {
-                this.settings = () -> DimensionProvider.this.regOps.getObject(Registry.field_243549_ar, location);
+                this.settings = () -> DimensionProvider.this.regOps.getObject(Registry.NOISE_SETTINGS_KEY, location);
                 return this;
             }
 
             public NoiseChunkGeneratorBuilder setSettings(RegistryKey<DimensionSettings> key)
             {
-                return setSettings(key.func_240901_a_());
+                return setSettings(key.getLocation());
             }
 
             public NoiseChunkGeneratorBuilder setSeed(long seed)
@@ -252,12 +252,12 @@ public abstract class DimensionProvider extends CodecBackedProvider<Dimension>
 
                     public AttributeBiomePairBuilder setBiome(ResourceLocation biome)
                     {
-                        return setBiome(regOps.getObject(Registry.field_239720_u_, biome));
+                        return setBiome(regOps.getObject(Registry.BIOME_KEY, biome));
                     }
 
                     public AttributeBiomePairBuilder setBiome(RegistryKey<Biome> biome)
                     {
-                        return setBiome(biome.func_240901_a_());
+                        return setBiome(biome.getLocation());
                     }
 
                     public AttributeBiomePairBuilder setBiome(Biome biome)

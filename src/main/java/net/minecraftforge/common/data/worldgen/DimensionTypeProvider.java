@@ -41,7 +41,7 @@ public abstract class DimensionTypeProvider extends RegistryBackedProvider<Dimen
 
     public DimensionTypeProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
-        super(DimensionType.field_235997_a_, regOps, Registry.field_239698_ad_);
+        super(DimensionType.CODEC, regOps, Registry.DIMENSION_TYPE_KEY);
         this.generator = generator;
         this.modid = modid;
     }
@@ -88,8 +88,8 @@ public abstract class DimensionTypeProvider extends RegistryBackedProvider<Dimen
         private boolean respawnAnchorWorks = false;
         private boolean hasRaids = true;
         private int logicalHeight = 256; //[0, 256]
-        private ResourceLocation infiniburn = BlockTags.field_241277_aC_.func_230234_a_();
-        private ResourceLocation effects = DimensionType.field_242710_a; //if unknown defaults to OW anyway. only 3 exists for vanilla.
+        private ResourceLocation infiniburn = BlockTags.INFINIBURN_OVERWORLD.getName();
+        private ResourceLocation effects = DimensionType.OVERWORLD_ID; //if unknown defaults to OW anyway. only 3 exists for vanilla.
         private float ambientLight = 0.0F;
 
         protected DimensionType build()

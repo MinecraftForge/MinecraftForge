@@ -58,8 +58,9 @@ public class DatagenModLoader {
             //If we aren't generating data for forge, automatically add forge as an existing so mods can access forge's data
             existingMods.add("forge");
         }
+        regOps = new RegistryOpsHelper(inputs);
         existingFileHelper = new ExistingFileHelper(existingPacks, existingMods, structureValidator);
-        ModLoader.get().runEventGenerator(mc->new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper));
+        ModLoader.get().runEventGenerator(mc->new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper, regOps));
         dataGeneratorConfig.runAll();
     }
 }

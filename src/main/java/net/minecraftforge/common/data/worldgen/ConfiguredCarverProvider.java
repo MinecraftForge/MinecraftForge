@@ -43,7 +43,7 @@ public abstract class ConfiguredCarverProvider extends RegistryBackedProvider<Co
     public ConfiguredCarverProvider(DataGenerator generator, RegistryOpsHelper helper, String modid)
     {
         //TODO This codec is dispatched for the vanilla CARVER registry, and won't affect any mod added carvers.
-        super(ConfiguredCarver.field_236235_a_, helper, Registry.field_243551_at);
+        super(ConfiguredCarver.field_236235_a_, helper, Registry.CONFIGURED_CARVER_KEY);
         this.generator = generator;
         this.modid = modid;
     }

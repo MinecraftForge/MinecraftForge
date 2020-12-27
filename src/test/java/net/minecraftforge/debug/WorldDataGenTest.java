@@ -22,7 +22,6 @@ package net.minecraftforge.debug;
 import com.google.common.collect.ImmutableList;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
@@ -88,7 +87,7 @@ public class WorldDataGenTest
         @Override
         protected void start()
         {
-            this.put(new ResourceLocation(MODID, "configured_struct_test_0"), Structure.field_236367_c_.func_236391_a_(new MineshaftConfig(0.1467f, MineshaftStructure.Type.MESA)));
+            this.put(new ResourceLocation(MODID, "configured_struct_test_0"), Structure.MINESHAFT.withConfiguration(new MineshaftConfig(0.1467f, MineshaftStructure.Type.MESA)));
         }
     }
 
@@ -156,8 +155,8 @@ public class WorldDataGenTest
             this.put(new ResourceLocation(MODID, "jigsaw_pattern_test_0"), new Builder()
                     .setName(new ResourceLocation(MODID,"boat/ocean/captain_quarters"))
                     .addAll(ImmutableList.of(
-                            Pair.of(JigsawPiece.func_242845_a(this.regOps.getObject(Registry.field_243552_au, new ResourceLocation(MODID, "feature_test_0"))), 1),
-                            Pair.of(JigsawPiece.func_242861_b("bastion/units/ramparts/ramparts_2", this.regOps.getObject(Registry.field_243554_aw, new ResourceLocation(MODID, "proc_list_test_0")) ), 2)
+                            Pair.of(JigsawPiece.func_242845_a(this.regOps.getObject(Registry.CONFIGURED_FEATURE_KEY, new ResourceLocation(MODID, "feature_test_0"))), 1),
+                            Pair.of(JigsawPiece.func_242861_b("bastion/units/ramparts/ramparts_2", this.regOps.getObject(Registry.STRUCTURE_PROCESSOR_LIST_KEY, new ResourceLocation(MODID, "proc_list_test_0")) ), 2)
                     ), JigsawPattern.PlacementBehaviour.RIGID)
             );
         }
@@ -179,7 +178,7 @@ public class WorldDataGenTest
                             END_STONE.getDefaultState(), FeatureSpread.func_242253_a(2, 2), 1, builder.add(
                             STONE.getDefaultState(), SAND.getDefaultState(), RED_SAND.getDefaultState(), DIORITE.getDefaultState(), ANDESITE.getDefaultState(), GRANITE.getDefaultState())
                             .addAll(WATER.getStateContainer().getValidStates()).build()
-                    )).withPlacement(Placement.ICEBERG.configure(NoPlacementConfig.field_236556_b_).func_242729_a(15)).func_242731_b(4)
+                    )).withPlacement(Placement.ICEBERG.configure(NoPlacementConfig.INSTANCE).chance(15)).func_242731_b(4)
             );
         }
     }
@@ -195,7 +194,7 @@ public class WorldDataGenTest
         protected void start()
         {
             this.put(new ResourceLocation(MODID, "carver_test_0"), WorldCarver.CANYON.func_242761_a(new ProbabilityConfig(0.08F)));
-            this.put(new ResourceLocation(MODID, "carver_test_1"), WorldCarver.field_236240_b_.func_242761_a(new ProbabilityConfig(0.5F)));
+            this.put(new ResourceLocation(MODID, "carver_test_1"), WorldCarver.NETHER_CAVE.func_242761_a(new ProbabilityConfig(0.5F)));
         }
     }
 
@@ -232,16 +231,16 @@ public class WorldDataGenTest
         protected void start()
         {
             this.put(new ResourceLocation(MODID, "biome_test_0"),
-                    BiomeMaker.func_244216_a(0.85F, 0.78F, ConfiguredSurfaceBuilders.field_244169_a, false)
+                    BiomeMaker.makeMountainBiome(0.85F, 0.78F, ConfiguredSurfaceBuilders.field_244169_a, false)
             );
             this.put(new ResourceLocation(MODID, "biome_test_1"),
-                    BiomeMaker.func_244216_a(0.65F, 0.33F, ConfiguredSurfaceBuilders.field_244174_f, false)
+                    BiomeMaker.makeMountainBiome(0.65F, 0.33F, ConfiguredSurfaceBuilders.field_244174_f, false)
             );
             this.put(new ResourceLocation(MODID, "biome_test_2"),
-                    BiomeMaker.func_244216_a(0.2F, 0.45F, ConfiguredSurfaceBuilders.field_244186_r, false)
+                    BiomeMaker.makeMountainBiome(0.2F, 0.45F, ConfiguredSurfaceBuilders.field_244186_r, false)
             );
             this.put(new ResourceLocation(MODID, "biome_test_3"),
-                    BiomeMaker.func_244216_a(0.5F, 0.125F, ConfiguredSurfaceBuilders.field_244176_h, false)
+                    BiomeMaker.makeMountainBiome(0.5F, 0.125F, ConfiguredSurfaceBuilders.field_244176_h, false)
             );
 
             Biome.Builder biome = new Biome.Builder();
@@ -249,39 +248,39 @@ public class WorldDataGenTest
             BiomeAmbience.Builder ambience = new BiomeAmbience.Builder();
             BiomeGenerationSettings.Builder biomeGen = new BiomeGenerationSettings.Builder();
 
-            mobBuilder.func_242572_a(0.25F);
-            DefaultBiomeFeatures.func_243735_b(mobBuilder, 200, 0, 200);
-            DefaultBiomeFeatures.func_243749_i(mobBuilder);
-            DefaultBiomeFeatures.func_243714_a(mobBuilder);
-            mobBuilder.func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(EntityType.HORSE, 5, 2, 6));
-            mobBuilder.func_242575_a(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(EntityType.DONKEY, 1, 1, 3));
-            biome.func_242458_a(mobBuilder.func_242577_b());
+            mobBuilder.withCreatureSpawnProbability(0.25F);
+            DefaultBiomeFeatures.withHostileMobs(mobBuilder, 200, 0, 200);
+            DefaultBiomeFeatures.withEndermen(mobBuilder);
+            DefaultBiomeFeatures.withPassiveMobs(mobBuilder);
+            mobBuilder.withSpawner(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(EntityType.HORSE, 5, 2, 6));
+            mobBuilder.withSpawner(EntityClassification.CREATURE, new MobSpawnInfo.Spawners(EntityType.DONKEY, 1, 1, 3));
+            biome.withMobSpawnSettings(mobBuilder.copy());
 
-            biome.precipitation(Biome.RainType.SNOW).category(Biome.Category.ICY).depth(0.2F).scale(0.95F).temperature(-10F).func_242456_a(Biome.TemperatureModifier.FROZEN).downfall(0.10F);
-            ambience.func_242537_a(BiomeAmbience.GrassColorModifier.DARK_FOREST).func_235239_a_(0xc1d2db).func_235246_b_(0xbbddf0).func_235248_c_(0x8ec1de).func_242539_d(0xa9d1e8);
-            biome.func_235097_a_(ambience.func_235238_a_());
+            biome.precipitation(Biome.RainType.SNOW).category(Biome.Category.ICY).depth(0.2F).scale(0.95F).temperature(-10F).withTemperatureModifier(Biome.TemperatureModifier.FROZEN).downfall(0.10F);
+            ambience.withGrassColorModifier(BiomeAmbience.GrassColorModifier.DARK_FOREST).setFogColor(0xc1d2db).setWaterColor(0xbbddf0).setWaterFogColor(0x8ec1de).withSkyColor(0xa9d1e8);
+            biome.setEffects(ambience.build());
 
-            biomeGen.func_242517_a(this.regOps.getObject(Registry.field_243550_as, new ResourceLocation(MODID, "ice_surface_builder_test_0")));
-            biomeGen.func_242512_a(GenerationStage.Carving.AIR, regOps.getObject(Registry.field_243551_at ,new ResourceLocation(MODID, "carver_test_1")));
-            biomeGen.func_242512_a(GenerationStage.Carving.LIQUID, ConfiguredCarvers.field_243772_f);
-            biomeGen.func_242513_a(GenerationStage.Decoration.UNDERGROUND_ORES, regOps.getObject(Registry.field_243552_au, new ResourceLocation(MODID, "feature_test_0")));
-            DefaultBiomeFeatures.func_243736_c(biomeGen);
-            DefaultBiomeFeatures.func_243742_f(biomeGen);
-            DefaultBiomeFeatures.func_243746_h(biomeGen);
-            DefaultBiomeFeatures.func_243750_j(biomeGen);
-            DefaultBiomeFeatures.func_243753_m(biomeGen);
-            DefaultBiomeFeatures.func_243758_r(biomeGen);
-            DefaultBiomeFeatures.func_243763_w(biomeGen);
-            DefaultBiomeFeatures.func_243694_H(biomeGen);
-            DefaultBiomeFeatures.func_243694_H(biomeGen);
-            DefaultBiomeFeatures.func_243694_H(biomeGen);
-            DefaultBiomeFeatures.func_243727_ak(biomeGen);
-            DefaultBiomeFeatures.func_243729_am(biomeGen);
-            DefaultBiomeFeatures.func_243687_A(biomeGen);
-            biomeGen.func_242516_a(StructureFeatures.field_244157_w);
-            biome.func_242457_a(biomeGen.func_242508_a());
+            biomeGen.withSurfaceBuilder(this.regOps.getObject(Registry.CONFIGURED_SURFACE_BUILDER_KEY, new ResourceLocation(MODID, "ice_surface_builder_test_0")));
+            biomeGen.withCarver(GenerationStage.Carving.AIR, regOps.getObject(Registry.CONFIGURED_CARVER_KEY ,new ResourceLocation(MODID, "carver_test_1")));
+            biomeGen.withCarver(GenerationStage.Carving.LIQUID, ConfiguredCarvers.field_243772_f);
+            biomeGen.withFeature(GenerationStage.Decoration.UNDERGROUND_ORES, regOps.getObject(Registry.CONFIGURED_FEATURE_KEY, new ResourceLocation(MODID, "feature_test_0")));
+            DefaultBiomeFeatures.withOceanStructures(biomeGen);
+            DefaultBiomeFeatures.withLavaAndWaterLakes(biomeGen);
+            DefaultBiomeFeatures.withMonsterRoom(biomeGen);
+            DefaultBiomeFeatures.withOverworldOres(biomeGen);
+            DefaultBiomeFeatures.withInfestedStone(biomeGen);
+            DefaultBiomeFeatures.withChanceBerries(biomeGen);
+            DefaultBiomeFeatures.withTreesInWater(biomeGen);
+            DefaultBiomeFeatures.withSnowySpruces(biomeGen);
+            DefaultBiomeFeatures.withSnowySpruces(biomeGen);
+            DefaultBiomeFeatures.withSnowySpruces(biomeGen);
+            DefaultBiomeFeatures.withLavaAndWaterSprings(biomeGen);
+            DefaultBiomeFeatures.withBlueIce(biomeGen);
+            DefaultBiomeFeatures.withSavannaTrees(biomeGen);
+            biomeGen.withStructure(StructureFeatures.VILLAGE_SNOWY);
+            biome.withGenerationSettings(biomeGen.build());
 
-            this.put(new ResourceLocation(MODID, "biome_test_4"), biome.func_242455_a());
+            this.put(new ResourceLocation(MODID, "biome_test_4"), biome.build());
         }
     }
 
@@ -339,7 +338,7 @@ public class WorldDataGenTest
                     .setTemperature(0.05F)
                     .setAltitude(0.15F)
                     .buildNext()
-                    .setBiome(regOps.getObject(Registry.field_239720_u_, Biomes.SNOWY_MOUNTAINS))
+                    .setBiome(regOps.getObject(Registry.BIOME_KEY, Biomes.SNOWY_MOUNTAINS))
                     .finish()
                     .finish()
                     .finish()

@@ -48,7 +48,7 @@ public abstract class JigsawPatternProvider extends RegistryBackedProvider<Jigsa
 
     public JigsawPatternProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
-        super(JigsawPattern.field_236852_a_, regOps, Registry.field_243555_ax);
+        super(JigsawPattern.field_236852_a_, regOps, Registry.JIGSAW_POOL_KEY);
         this.generator = generator;
         this.modid = modid;
     }
@@ -80,8 +80,8 @@ public abstract class JigsawPatternProvider extends RegistryBackedProvider<Jigsa
 
     public static class Builder
     {
-        private ResourceLocation name = JigsawPatternRegistry.field_244091_a.func_240901_a_(); //empty
-        private ResourceLocation fallBack = JigsawPatternRegistry.field_244091_a.func_240901_a_(); //empty
+        private ResourceLocation name = JigsawPatternRegistry.field_244091_a.getLocation(); //empty
+        private ResourceLocation fallBack = JigsawPatternRegistry.field_244091_a.getLocation(); //empty
         private final List<Pair<JigsawPiece, Integer>> weightedList = new ArrayList<>();
 
         public JigsawPattern build()

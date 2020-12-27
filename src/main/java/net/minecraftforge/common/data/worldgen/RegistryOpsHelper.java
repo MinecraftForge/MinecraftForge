@@ -29,7 +29,6 @@ import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenSettingsExport;
 import net.minecraft.util.registry.WorldSettingsImport;
-import net.minecraftforge.common.data.worldgen.RegistryBackedProvider;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -39,7 +38,7 @@ import java.util.Collection;
  * Helper to deal with properly referencing objects instead of
  * inlining them everywhere.
  *
- * Creates a custom {@link DynamicRegistries.Impl} based on the vanilla objects and
+ * Creates a {@link DynamicRegistries.Impl} based on the vanilla objects and
  * any objects found in the paths specified by the '--input' arg.
  * It is then used to create a {@link WorldGenSettingsExport} that will be able to
  * prevent inlining objects.
@@ -67,11 +66,11 @@ public class RegistryOpsHelper
             inputResources.addResourcePack(pack);
         }
         //this dynamic registry impl contains all vanilla objects and not the recreated ones.
-        dynamicRegistries = DynamicRegistries.field_243600_c;
+        dynamicRegistries = DynamicRegistries.registries;
         //This functions loads all of the registry objects present in the resourcepacks
         // and registers them into the passed in dynamic registry.
-        WorldSettingsImport.func_244335_a(JsonOps.INSTANCE, inputResources, dynamicRegistries);
-        serializer = WorldGenSettingsExport.func_240896_a_(JsonOps.INSTANCE, dynamicRegistries);
+        WorldSettingsImport.create(JsonOps.INSTANCE, inputResources, dynamicRegistries);
+        serializer = WorldGenSettingsExport.create(JsonOps.INSTANCE, dynamicRegistries);
     }
 
     /**
@@ -92,7 +91,7 @@ public class RegistryOpsHelper
      */
     public <T> void registerObject(RegistryKey<? extends Registry<T>> regKey, ResourceLocation name, T obj)
     {
-        dynamicRegistries.func_243612_b(regKey).register(RegistryKey.func_240903_a_(regKey, name), obj, Lifecycle.experimental());
+        dynamicRegistries.getRegistry(regKey).register(RegistryKey.getOrCreateKey(regKey, name), obj, Lifecycle.experimental());
     }
 
     /**
@@ -109,12 +108,12 @@ public class RegistryOpsHelper
      */
     public <T> T getObject(RegistryKey<? extends Registry<T>> regKey, ResourceLocation objName)
     {
-        return dynamicRegistries.func_243612_b(regKey).func_241873_b(objName)
+        return dynamicRegistries.getRegistry(regKey).getOptional(objName)
                 .orElseThrow(() -> new RuntimeException("Could not retrieve " + objName + " in reg " + regKey));
     }
 
     public <T> T getObject(RegistryKey<? extends Registry<T>> regKey, RegistryKey<T> objKey)
     {
-        return getObject(regKey, objKey.func_240901_a_());
+        return getObject(regKey, objKey.getLocation());
     }
 }

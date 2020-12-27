@@ -44,7 +44,7 @@ public abstract class ProcessorListProvider extends RegistryBackedProvider<Struc
 
     public ProcessorListProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
-        super(IStructureProcessorType.field_242921_l, regOps, Registry.field_243554_aw);
+        super(IStructureProcessorType.field_242921_l, regOps, Registry.STRUCTURE_PROCESSOR_LIST_KEY);
         this.generator = generator;
         this.modid = modid;
     }

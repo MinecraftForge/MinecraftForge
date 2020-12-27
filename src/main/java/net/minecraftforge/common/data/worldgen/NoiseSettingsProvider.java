@@ -50,7 +50,7 @@ public abstract class NoiseSettingsProvider extends RegistryBackedProvider<Dimen
 
     public NoiseSettingsProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
-        super(DimensionSettings.field_236097_a_, regOps, Registry.field_243549_ar);
+        super(DimensionSettings.field_236097_a_, regOps, Registry.NOISE_SETTINGS_KEY);
         this.generator = generator;
         this.modid = modid;
     }

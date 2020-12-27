@@ -44,7 +44,7 @@ public abstract class ConfiguredFeatureProvider extends RegistryBackedProvider<C
     public ConfiguredFeatureProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
         //TODO This codec is dispatched for the vanilla FEATURE registry, and won't affect any mod added features.
-        super(ConfiguredFeature.field_242763_a, regOps, Registry.field_243552_au);
+        super(ConfiguredFeature.field_242763_a, regOps, Registry.CONFIGURED_FEATURE_KEY);
         this.generator = generator;
         this.modid = modid;
     }

@@ -43,6 +43,12 @@ public class GatherDataEvent extends Event implements IModBusEvent
     private final ModContainer modContainer;
     private final RegistryOpsHelper regOps;
 
+    @Deprecated //TODO remove in 1.17
+    public GatherDataEvent(final ModContainer mc, final DataGenerator dataGenerator, final DataGeneratorConfig dataGeneratorConfig, ExistingFileHelper existingFileHelper)
+    {
+        this(mc, dataGenerator, dataGeneratorConfig, existingFileHelper, null);
+    }
+
     public GatherDataEvent(final ModContainer mc, final DataGenerator dataGenerator, final DataGeneratorConfig dataGeneratorConfig, ExistingFileHelper existingFileHelper, RegistryOpsHelper regOps)
     {
         this.modContainer = mc;

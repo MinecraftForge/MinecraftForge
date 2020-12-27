@@ -52,7 +52,7 @@ public abstract class BiomeDataProvider extends RegistryBackedProvider<Biome>
 
     protected BiomeDataProvider(DataGenerator generator, RegistryOpsHelper helper, String modid)
     {
-        super(Biome.field_242418_b, helper, Registry.field_239720_u_);
+        super(Biome.CODEC, helper, Registry.BIOME_KEY);
         this.generator = generator;
         this.modid = modid;
     }

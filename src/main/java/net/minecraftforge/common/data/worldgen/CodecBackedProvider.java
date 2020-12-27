@@ -25,7 +25,6 @@ import com.mojang.serialization.Codec;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.data.worldgen.RegistryOpsHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

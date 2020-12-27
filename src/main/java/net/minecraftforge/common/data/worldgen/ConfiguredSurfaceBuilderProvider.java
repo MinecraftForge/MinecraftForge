@@ -47,7 +47,7 @@ public abstract class ConfiguredSurfaceBuilderProvider extends RegistryBackedPro
     public ConfiguredSurfaceBuilderProvider(DataGenerator generator, RegistryOpsHelper regOps, String modid)
     {
         //TODO This codec is dispatched for the vanilla SURFACE_BUILDER registry, and won't affect any mod added SURFACE_BUILDERs.
-        super(ConfiguredSurfaceBuilder.field_237168_a_, regOps, Registry.field_243550_as);
+        super(ConfiguredSurfaceBuilder.field_237168_a_, regOps, Registry.CONFIGURED_SURFACE_BUILDER_KEY);
         this.generator = generator;
         this.modid = modid;
     }
