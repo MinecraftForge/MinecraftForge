@@ -95,7 +95,7 @@ public abstract class BlockStateProvider implements IDataProvider {
         this.blockModels = new BlockModelProvider(gen, modid, exFileHelper) {
             @Override protected void registerModels() {}
         };
-        this.itemModels = new ItemModelProvider(gen, modid, exFileHelper) {
+        this.itemModels = new ItemModelProvider(gen, modid, this.blockModels.existingFileHelper) {
             @Override protected void registerModels() {}
         };
     }
