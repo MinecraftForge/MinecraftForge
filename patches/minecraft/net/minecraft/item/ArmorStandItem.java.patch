@@ -1,0 +1,17 @@
+--- a/net/minecraft/item/ArmorStandItem.java
++++ b/net/minecraft/item/ArmorStandItem.java
+@@ -44,12 +44,11 @@
+                if (armorstandentity == null) {
+                   return ActionResultType.FAIL;
+                }
+-
+-               serverworld.func_242417_l(armorstandentity);
++               
+                float f = (float)MathHelper.func_76141_d((MathHelper.func_76142_g(p_195939_1_.func_195990_h() - 180.0F) + 22.5F) / 45.0F) * 45.0F;
+                armorstandentity.func_70012_b(armorstandentity.func_226277_ct_(), armorstandentity.func_226278_cu_(), armorstandentity.func_226281_cx_(), f, 0.0F);
+                this.func_179221_a(armorstandentity, world.field_73012_v);
+-               world.func_217376_c(armorstandentity);
++               serverworld.func_242417_l(armorstandentity);
+                world.func_184148_a((PlayerEntity)null, armorstandentity.func_226277_ct_(), armorstandentity.func_226278_cu_(), armorstandentity.func_226281_cx_(), SoundEvents.field_187710_m, SoundCategory.BLOCKS, 0.75F, 0.8F);
+             }
+ 
