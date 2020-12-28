@@ -1,6 +1,24 @@
 --- a/net/minecraft/entity/monster/ZombieEntity.java
 +++ b/net/minecraft/entity/monster/ZombieEntity.java
-@@ -268,12 +268,16 @@
+@@ -186,7 +186,8 @@
+       if (!this.field_70170_p.field_72995_K && this.func_70089_S() && !this.func_175446_cd()) {
+          if (this.func_204706_dD()) {
+             --this.field_204708_bE;
+-            if (this.field_204708_bE < 0) {
++
++            if (this.field_204708_bE < 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.field_200725_aD, (timer) -> this.field_204708_bE = timer)) {
+                this.func_207302_dI();
+             }
+          } else if (this.func_204703_dA()) {
+@@ -248,6 +249,7 @@
+       if (zombieentity != null) {
+          zombieentity.func_207304_a(zombieentity.field_70170_p.func_175649_E(zombieentity.func_233580_cy_()).func_180170_c());
+          zombieentity.func_146070_a(zombieentity.func_204900_dz() && this.func_146072_bX());
++         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombieentity);
+       }
+ 
+    }
+@@ -268,12 +270,16 @@
              livingentity = (LivingEntity)p_70097_1_.func_76346_g();
           }
  
@@ -19,7 +37,7 @@
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
                 int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
-@@ -284,6 +288,7 @@
+@@ -284,6 +290,7 @@
                 if (WorldEntitySpawner.func_209382_a(entityspawnplacementregistry$placementtype, this.field_70170_p, blockpos, entitytype) && EntitySpawnPlacementRegistry.func_223515_a(entitytype, serverworld, SpawnReason.REINFORCEMENT, blockpos, this.field_70170_p.field_73012_v)) {
                    zombieentity.func_70107_b((double)i1, (double)j1, (double)k1);
                    if (!this.field_70170_p.func_217358_a((double)i1, (double)j1, (double)k1, 7.0D) && this.field_70170_p.func_226668_i_(zombieentity) && this.field_70170_p.func_226669_j_(zombieentity) && !this.field_70170_p.func_72953_d(zombieentity.func_174813_aQ())) {
@@ -27,7 +45,24 @@
                       zombieentity.func_70624_b(livingentity);
                       zombieentity.func_213386_a(serverworld, this.field_70170_p.func_175649_E(zombieentity.func_233580_cy_()), SpawnReason.REINFORCEMENT, (ILivingEntityData)null, (CompoundNBT)null);
                       serverworld.func_242417_l(zombieentity);
-@@ -448,7 +453,7 @@
+@@ -369,7 +376,7 @@
+ 
+    public void func_241847_a(ServerWorld p_241847_1_, LivingEntity p_241847_2_) {
+       super.func_241847_a(p_241847_1_, p_241847_2_);
+-      if ((p_241847_1_.func_175659_aa() == Difficulty.NORMAL || p_241847_1_.func_175659_aa() == Difficulty.HARD) && p_241847_2_ instanceof VillagerEntity) {
++      if ((p_241847_1_.func_175659_aa() == Difficulty.NORMAL || p_241847_1_.func_175659_aa() == Difficulty.HARD) && p_241847_2_ instanceof VillagerEntity && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(p_241847_2_, EntityType.field_200727_aF, (timer) -> {})) {
+          if (p_241847_1_.func_175659_aa() != Difficulty.HARD && this.field_70146_Z.nextBoolean()) {
+             return;
+          }
+@@ -381,6 +388,7 @@
+          zombievillagerentity.func_223727_a(villagerentity.func_223722_es().func_234058_a_(NBTDynamicOps.field_210820_a).getValue());
+          zombievillagerentity.func_213790_g(villagerentity.func_213706_dY().func_222199_a());
+          zombievillagerentity.func_213789_a(villagerentity.func_213708_dV());
++         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(p_241847_2_, zombievillagerentity);
+          if (!this.func_174814_R()) {
+             p_241847_1_.func_217378_a((PlayerEntity)null, 1026, this.func_233580_cy_(), 0);
+          }
+@@ -448,7 +456,7 @@
     }
  
     public static boolean func_241399_a_(Random p_241399_0_) {
@@ -36,7 +71,7 @@
     }
  
     protected void func_207304_a(float p_207304_1_) {
-@@ -468,7 +473,7 @@
+@@ -468,7 +476,7 @@
     }
  
     protected void func_230291_eT_() {
