@@ -137,6 +137,7 @@ import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
@@ -383,12 +384,23 @@ public class ForgeHooks
         return event.getLootingLevel();
     }
 
+    /**
+     * TODO 1.17 remove
+     * Unused
+     */
+    @Deprecated
     public static double getPlayerVisibilityDistance(PlayerEntity player, double xzDistance, double maxXZDistance)
     {
         PlayerEvent.Visibility event = new PlayerEvent.Visibility(player);
         MinecraftForge.EVENT_BUS.post(event);
         double value = event.getVisibilityModifier() * xzDistance;
         return value >= maxXZDistance ? maxXZDistance : value;
+    }
+
+    public static double getEntityVisibilityMultiplier(LivingEntity entity, Entity lookingEntity, double originalMultiplier){
+        LivingEvent.LivingVisibilityEvent event = new LivingEvent.LivingVisibilityEvent(entity, lookingEntity, originalMultiplier);
+        MinecraftForge.EVENT_BUS.post(event);
+        return Math.max(0,event.getVisibilityModifier());
     }
 
     public static boolean isLivingOnLadder(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity)
