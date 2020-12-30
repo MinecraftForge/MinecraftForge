@@ -22,20 +22,29 @@ package net.minecraftforge.debug;
 import static net.minecraftforge.debug.DataGeneratorTest.MODID;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.google.gson.JsonNull;
+import com.google.gson.JsonPrimitive;
 import net.minecraft.block.*;
 import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.data.SoundDefinition;
 import net.minecraftforge.common.data.SoundDefinitionsProvider;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.utils.InputStreamReader;
@@ -208,19 +217,18 @@ public class DataGeneratorTest
 
     public static class SoundDefinitions extends SoundDefinitionsProvider
     {
+        private static final Logger LOGGER = LogManager.getLogger();
+        private final ExistingFileHelper helper;
+
         public SoundDefinitions(final DataGenerator generator, final ExistingFileHelper helper)
         {
             super(generator, MODID, helper);
+            this.helper = helper;
         }
 
         @Override
         public void registerSounds()
         {
-            // Taken from vanilla's 'sounds.json'. These are supposed to be 1-to-1 copies, but currently
-            // automatic testing of those copies cannot be performed due to limitations in the data-gen
-            // system, where the additional data pack that vanilla loads from the launcher's assets/
-            // directory isn't actually loaded when running data-gen.
-
             // ambient.underwater.loop.additions
             this.add(SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS, definition().with(
                     sound("ambient/underwater/additions/bubbles1"),
@@ -279,6 +287,148 @@ public class DataGeneratorTest
 
             //music_disc.blocks
             this.add(SoundEvents.MUSIC_DISC_BLOCKS, definition().with(sound("records/blocks").stream()));
+        }
+
+        @Override
+        public void act(DirectoryCache cache) throws IOException
+        {
+            super.act(cache);
+            test();
+        }
+
+        private void test() throws IOException
+        {
+            final JsonObject generated;
+            try
+            {
+                generated = reflect();
+            }
+            catch (ReflectiveOperationException e)
+            {
+                throw new RuntimeException("Unable to test for errors due to reflection error", e);
+            }
+            final JsonObject actual = GSON.fromJson(
+                    new InputStreamReader(this.helper.getResource(new ResourceLocation("sounds.json"), ResourcePackType.CLIENT_RESOURCES).getInputStream()),
+                    JsonObject.class
+            );
+
+            final JsonObject filtered = new JsonObject();
+            generated.entrySet().forEach(it -> filtered.add(it.getKey(), Optional.ofNullable(actual.get(it.getKey())).orElseGet(JsonNull::new)));
+
+            final List<String> errors = this.compareObjects(filtered, generated);
+
+            if (!errors.isEmpty()) {
+                LOGGER.error("Found {} discrepancies between generated and vanilla sound definitions: ", errors.size());
+                for (String s : errors) {
+                    LOGGER.error("    {}", s);
+                }
+                throw new RuntimeException("Generated sounds.json differed from vanilla equivalent, check above errors.");
+            }
+        }
+
+        private JsonObject reflect() throws ReflectiveOperationException
+        {
+            // This is not supposed to be done by client code, so we just run with reflection to avoid exposing
+            // something that shouldn't be exposed in the first place
+            final Method mapToJson = this.getClass().getSuperclass().getDeclaredMethod("mapToJson", Map.class);
+            mapToJson.setAccessible(true);
+            final Field map = this.getClass().getSuperclass().getDeclaredField("sounds");
+            map.setAccessible(true);
+            //noinspection JavaReflectionInvocation
+            return (JsonObject) mapToJson.invoke(this, map.get(this));
+        }
+
+        private List<String> compareAndGatherErrors(final Triple<String, JsonElement, JsonElement> triple)
+        {
+            return this.compare(triple.getRight(), triple.getMiddle()).stream().map(it -> triple.getLeft() + ": " + it).collect(Collectors.toList());
+        }
+
+        private List<String> compare(final JsonElement vanilla, final JsonElement generated)
+        {
+            if (vanilla.isJsonPrimitive())
+            {
+                return this.comparePrimitives(vanilla.getAsJsonPrimitive(), generated);
+            }
+            else if (vanilla.isJsonObject())
+            {
+                return this.compareObjects(vanilla.getAsJsonObject(), generated);
+            }
+            else if (vanilla.isJsonArray())
+            {
+                return this.compareArrays(vanilla.getAsJsonArray(), generated);
+            }
+            else if (vanilla.isJsonNull() && !generated.isJsonNull())
+            {
+                return Collections.singletonList("null value in vanilla doesn't match non-null value in generated");
+            }
+            throw new RuntimeException("Unable to match " + vanilla + " to any JSON type");
+        }
+
+        private List<String> comparePrimitives(final JsonPrimitive vanilla, final JsonElement generated)
+        {
+            if (!generated.isJsonPrimitive()) return Collections.singletonList("Primitive in vanilla isn't matched by generated " + generated);
+
+            final JsonPrimitive generatedPrimitive = generated.getAsJsonPrimitive();
+
+            if (vanilla.isBoolean())
+            {
+                if (!generatedPrimitive.isBoolean()) return Collections.singletonList("Boolean in vanilla isn't matched by non-boolean " + generatedPrimitive);
+
+                if (vanilla.getAsBoolean() != generated.getAsBoolean())
+                {
+                    return Collections.singletonList("Boolean '" + vanilla.getAsBoolean() + "' does not match generated '" + generatedPrimitive.getAsBoolean() + "'");
+                }
+            }
+            else if (vanilla.isNumber())
+            {
+                if (!generatedPrimitive.isNumber()) return Collections.singletonList("Number in vanilla isn't matched by non-number " + generatedPrimitive);
+
+                // Handle numbers via big decimal so we are sure there isn't any sort of errors due to float/long
+                final BigDecimal vanillaNumber = vanilla.getAsBigDecimal();
+                final BigDecimal generatedNumber = vanilla.getAsBigDecimal();
+
+                if (vanillaNumber.compareTo(generatedNumber) != 0)
+                {
+                    return Collections.singletonList("Number '" + vanillaNumber + "' does not match generated '" + generatedNumber + "'");
+                }
+            }
+            else if (vanilla.isString())
+            {
+                if (!generatedPrimitive.isString()) return Collections.singletonList("String in vanilla isn't matched by non-string " + generatedPrimitive);
+
+                if (!vanilla.getAsString().equals(generatedPrimitive.getAsString()))
+                {
+                    return Collections.singletonList("String '" + vanilla.getAsString() + "' does not match generated '" + generatedPrimitive.getAsString() + "'");
+                }
+            }
+
+            return new ArrayList<>();
+        }
+
+        private List<String> compareObjects(final JsonObject vanilla, final JsonElement generated)
+        {
+            if (!generated.isJsonObject()) return Collections.singletonList("Object in vanilla isn't matched by generated " + generated);
+
+            final JsonObject generatedObject = generated.getAsJsonObject();
+
+            return vanilla.entrySet().stream()
+                    .map(it -> Triple.of(it.getKey(), it.getValue(), generatedObject.get(it.getKey())))
+                    .map(this::compareAndGatherErrors)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+        }
+
+        private List<String> compareArrays(final JsonArray vanilla, final JsonElement generated)
+        {
+            if (!generated.isJsonArray()) return Collections.singletonList("Array in vanilla isn't matched by generated " + generated);
+
+            final JsonArray generatedArray = generated.getAsJsonArray();
+
+            return IntStream.range(0, vanilla.size())
+                    .mapToObj(it -> Triple.of("[" + it + "]", vanilla.get(it), generatedArray.get(it)))
+                    .map(this::compareAndGatherErrors)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -520,7 +670,7 @@ public class DataGeneratorTest
             ModelFile barrel = models().cubeBottomTop("barrel", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top"));
             ModelFile barrelOpen = models().cubeBottomTop("barrel_open", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top_open"));
             directionalBlock(Blocks.BARREL, state -> state.getValue(BarrelBlock.OPEN) ? barrelOpen : barrel); // Testing custom state interpreter
-            
+
             logBlock((RotatedPillarBlock) Blocks.ACACIA_LOG);
 
             stairsBlock((StairsBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));
