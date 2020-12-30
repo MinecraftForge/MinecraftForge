@@ -1,0 +1,19 @@
+--- a/net/minecraft/block/BeehiveBlock.java
++++ b/net/minecraft/block/BeehiveBlock.java
+@@ -85,6 +85,7 @@
+       List<BeeEntity> list = p_226881_1_.func_217357_a(BeeEntity.class, (new AxisAlignedBB(p_226881_2_)).func_72314_b(8.0D, 6.0D, 8.0D));
+       if (!list.isEmpty()) {
+          List<PlayerEntity> list1 = p_226881_1_.func_217357_a(PlayerEntity.class, (new AxisAlignedBB(p_226881_2_)).func_72314_b(8.0D, 6.0D, 8.0D));
++         if (list1.isEmpty()) return; //Forge: Prevent Error when no players are around.
+          int i = list1.size();
+ 
+          for(BeeEntity beeentity : list) {
+@@ -105,7 +106,7 @@
+       int i = p_225533_1_.func_177229_b(field_226873_c_);
+       boolean flag = false;
+       if (i >= 5) {
+-         if (itemstack.func_77973_b() == Items.field_151097_aZ) {
++         if (itemstack.func_77973_b() instanceof net.minecraft.item.ShearsItem) {
+             p_225533_2_.func_184148_a(p_225533_4_, p_225533_4_.func_226277_ct_(), p_225533_4_.func_226278_cu_(), p_225533_4_.func_226281_cx_(), SoundEvents.field_226133_ah_, SoundCategory.NEUTRAL, 1.0F, 1.0F);
+             func_226878_a_(p_225533_2_, p_225533_3_);
+             itemstack.func_222118_a(1, p_225533_4_, (p_226874_1_) -> {

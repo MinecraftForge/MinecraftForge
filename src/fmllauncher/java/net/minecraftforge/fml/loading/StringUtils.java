@@ -42,12 +42,12 @@ public class StringUtils
     }
 
     public static URL toURL(final String string) {
-        try
-        {
-            return new URL(string);
-        }
-        catch (MalformedURLException e)
-        {
+        if (string == null || string.trim().isEmpty() || string.contains("myurl.me") || string.contains("example.invalid"))
+            return null;
+
+        try {
+            return new URL(string); }
+        catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
