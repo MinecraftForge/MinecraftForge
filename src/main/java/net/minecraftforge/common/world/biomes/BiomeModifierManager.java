@@ -232,7 +232,7 @@ public class BiomeModifierManager extends JsonReloadListener
             // instead of the vanilla object.
             if(!dataObj.error().isPresent())
             {
-                dataObj.map(p -> p.mapFirst(e -> (Biome) e).mapFirst(BiomeModifierManager.INSTANCE::getModifiedBiome));
+                dataObj.map(p -> p.mapFirst(e -> BiomeModifierManager.INSTANCE.getModifiedBiome((Biome) e)));
                 return dataObj;
             }
 

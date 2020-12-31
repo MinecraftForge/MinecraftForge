@@ -19,12 +19,9 @@ public class BiomeCategoryMatchesCondition implements IBiomeCondition
                     Biome.Category.CODEC.listOf().fieldOf("categories"),
                     Biome.Category.CODEC.fieldOf("category")
             ).xmap(e ->
-            {
-                if(e.left().isPresent())
-                    return new BiomeCategoryMatchesCondition(e.left().get());
-                else
-                    return new BiomeCategoryMatchesCondition(e.right().get());
-            }, cond -> cond.categories.size() == 1 ? Either.right(cond.categories.get(0)) : Either.left(cond.categories));
+                    e.left().isPresent() ? new BiomeCategoryMatchesCondition(e.left().get()) : new BiomeCategoryMatchesCondition(e.right().get()),
+                    cond -> cond.categories.size() == 1 ? Either.right(cond.categories.get(0)) : Either.left(cond.categories)
+            );
 
     private final List<Biome.Category> categories;
 

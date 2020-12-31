@@ -72,7 +72,7 @@ public class BiomeLoadingEvent extends Event
 
     /**
      * This will get the registry name of the biome.
-     * It generally SHOULD not be null, but due to vanilla's biome handling and codec weirdness, there may be cases where it is.
+     * It generally SHOULD NOT be null, but due to vanilla's biome handling and codec weirdness, there may be cases where it is.
      * Do check for this possibility!
      */
     @Nullable

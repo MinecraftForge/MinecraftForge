@@ -28,11 +28,6 @@ public class BiomeAndCondition implements IBiomeCondition
     @Override
     public boolean test(BiomeExposer biome)
     {
-        for(IBiomeCondition cond : conditions)
-        {
-            if(!cond.test(biome))
-                return false;
-        }
-        return true;
+        return conditions.stream().allMatch(c -> c.test(biome));
     }
 }

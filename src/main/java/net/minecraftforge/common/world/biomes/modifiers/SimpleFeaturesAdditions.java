@@ -39,7 +39,7 @@ public class SimpleFeaturesAdditions extends BiomeModifier
 
     /**
      *  The provided structures and features must be registered (by code or json), so the entries are all
-     *  resource locations. Otherwise this may have cause an unexpected error due to how lists of registry objects are parsed.
+     *  resource locations. Otherwise this may cause an unexpected error due to how lists of registry objects are parsed.
      */
     public SimpleFeaturesAdditions(List<List<Supplier<ConfiguredFeature<?, ?>>>> features, List<Supplier<StructureFeature<?, ?>>> structures)
     {
