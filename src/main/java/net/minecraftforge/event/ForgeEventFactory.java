@@ -21,6 +21,7 @@ package net.minecraftforge.event;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,6 +37,7 @@ import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
@@ -103,6 +105,7 @@ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
+import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
@@ -747,5 +750,15 @@ public class ForgeEventFactory
         EntityEvent.Size evt = new EntityEvent.Size(player, pose, size, eyeHeight);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
+    }
+
+    public static boolean canLivingConvert(LivingEntity entity, EntityType<? extends LivingEntity> outcome, Consumer<Integer> timer)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new LivingConversionEvent.Pre(entity, outcome, timer));
+    }
+
+    public static void onLivingConvert(LivingEntity entity, LivingEntity outcome)
+    {
+        MinecraftForge.EVENT_BUS.post(new LivingConversionEvent.Post(entity, outcome));
     }
 }
