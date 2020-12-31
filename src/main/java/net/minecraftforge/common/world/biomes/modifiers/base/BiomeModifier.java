@@ -3,12 +3,9 @@ package net.minecraftforge.common.world.biomes.modifiers.base;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.world.biomes.BiomeExposer;
 import net.minecraftforge.common.world.biomes.conditions.base.IBiomeCondition;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import javax.annotation.Nullable;
 
 public abstract class BiomeModifier
 {

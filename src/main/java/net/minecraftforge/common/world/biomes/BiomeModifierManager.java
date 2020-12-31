@@ -164,14 +164,13 @@ public class BiomeModifierManager extends JsonReloadListener
 
     private List<ResourceLocation> getBiomesToModify()
     {
-        Predicate<Biome> anyMatch = b -> BiomeModifierManager.INSTANCE.conditions.stream().anyMatch(cond -> cond.test(BiomeExposer.fromBiome(b)));
-
         return ForgeRegistries.BIOMES.getEntries().stream()
-        .filter(e -> anyMatch.test(e.getValue()))
-        .map(e -> new ResourceLocation(
-                e.getKey().getLocation().getNamespace(),
-                ForgeRegistries.Keys.BIOMES.getLocation().getPath() + "/" + e.getKey().getLocation().getPath() + ".json"))
-        .collect(Collectors.toList());
+                .map(e -> Pair.of(e.getKey(), BiomeExposer.fromBiome(e.getValue())))
+                .filter(p -> BiomeModifierManager.INSTANCE.conditions.stream().anyMatch(cond -> cond.test(p.getSecond())))
+                .map(p -> new ResourceLocation(
+                        p.getFirst().getLocation().getNamespace(),
+                        ForgeRegistries.Keys.BIOMES.getLocation().getPath() + "/" + p.getFirst().getLocation().getPath() + ".json"))
+                .collect(Collectors.toList());
     }
 
     @SubscribeEvent
@@ -227,8 +226,9 @@ public class BiomeModifierManager extends JsonReloadListener
                 return dataObj;
 
             BiomeModifierManager.INSTANCE.properlyDeserializeModifiers(ops); //ops here will be a WorldSettingsImport
+
             //First check that the data object did not error, then it's a data defined biome
-            // This is to ensure that data overrides of registered biomes are modified relative to the override
+            // This is done first to ensure that data overrides of registered biomes are modified relative to the override
             // instead of the vanilla object.
             if(!dataObj.error().isPresent())
             {

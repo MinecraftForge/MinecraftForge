@@ -2,15 +2,11 @@ package net.minecraftforge.common.world.biomes.conditions.base;
 
 import com.google.common.collect.Lists;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.world.biomes.BiomeExposer;
 import net.minecraftforge.common.world.biomes.conditions.BiomeAndCondition;
 import net.minecraftforge.common.world.biomes.conditions.BiomeInvertedCondition;
 import net.minecraftforge.common.world.biomes.conditions.BiomeOrCondition;
-import net.minecraftforge.common.world.biomes.modifiers.SimpleFeaturesAdditions;
-import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifier;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.function.Predicate;

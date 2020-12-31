@@ -9,7 +9,6 @@ import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.StructureFeature;
 import net.minecraftforge.common.world.biomes.BiomeExposer;
 import net.minecraftforge.common.world.biomes.ForgeBiomeModifiers;
-import net.minecraftforge.common.world.biomes.conditions.base.IBiomeCondition;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifier;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifierType;
 import org.apache.logging.log4j.LogManager;
@@ -38,6 +37,10 @@ public class SimpleFeaturesAdditions extends BiomeModifier
     private final List<List<Supplier<ConfiguredFeature<?, ?>>>> features;
     private final List<Supplier<StructureFeature<?, ?>>> structures;
 
+    /**
+     *  The provided structures and features must be registered (by code or json), so the entries are all
+     *  resource locations. Otherwise this may have cause an unexpected error due to how lists of registry objects are parsed.
+     */
     public SimpleFeaturesAdditions(List<List<Supplier<ConfiguredFeature<?, ?>>>> features, List<Supplier<StructureFeature<?, ?>>> structures)
     {
         this.features = features;

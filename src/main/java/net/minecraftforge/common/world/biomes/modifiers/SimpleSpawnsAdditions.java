@@ -12,7 +12,6 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.common.world.biomes.BiomeExposer;
 import net.minecraftforge.common.world.biomes.ForgeBiomeModifiers;
-import net.minecraftforge.common.world.biomes.conditions.base.IBiomeCondition;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifier;
 import net.minecraftforge.common.world.biomes.modifiers.base.BiomeModifierType;
 import org.apache.logging.log4j.LogManager;

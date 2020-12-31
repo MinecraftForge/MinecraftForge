@@ -59,15 +59,7 @@
         "minecraft:ore_infested"
       ],
       [
-        "minecraft:trees_mountain",
-        "minecraft:flower_default",
-        "minecraft:patch_grass_badlands",
-        "minecraft:brown_mushroom_normal",
-        "minecraft:red_mushroom_normal",
-        "minecraft:patch_sugar_cane",
-        "minecraft:patch_pumpkin",
-        "minecraft:spring_water",
-        "minecraft:spring_lava"
+        "minecraft:trees_savanna"
       ],
       [
         "minecraft:freeze_top_layer"
