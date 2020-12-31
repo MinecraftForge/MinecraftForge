@@ -82,19 +82,19 @@ public class ModFileResourcePack extends ResourcePack
     {
         try
         {
-            Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName()).toAbsolutePath();
+            Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName(), resourceNamespace).toAbsolutePath();
             Path inputPath = root.getFileSystem().getPath(pathIn);
 
             return Files.walk(root).
                     map(path -> root.relativize(path.toAbsolutePath())).
-                    filter(path -> path.getNameCount() > 1 && path.getNameCount() - 1 <= maxDepth). // Make sure the depth is within bounds, ignoring domain
+                    filter(path -> path.getNameCount() <= maxDepth). // Make sure the depth is within bounds
                     filter(path -> !path.toString().endsWith(".mcmeta")). // Ignore .mcmeta files
-                    filter(path -> path.subpath(1, path.getNameCount()).startsWith(inputPath)). // Make sure the target path is inside this one (again ignoring domain)
+                    filter(path -> path.startsWith(inputPath)). // Make sure the target path is inside this one
                     filter(path -> filter.test(path.getFileName().toString())). // Test the file name against the predicate
                     // Finally we need to form the RL, so use the first name as the domain, and the rest as the path
                     // It is VERY IMPORTANT that we do not rely on Path.toString as this is inconsistent between operating systems
                     // Join the path names ourselves to force forward slashes
-                    map(path -> new ResourceLocation(path.getName(0).toString(), Joiner.on('/').join(path.subpath(1,Math.min(maxDepth, path.getNameCount()))))).
+                    map(path -> new ResourceLocation(resourceNamespace, Joiner.on('/').join(path))).
                     collect(Collectors.toList());
         }
         catch (IOException e)

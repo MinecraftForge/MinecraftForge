@@ -20,6 +20,7 @@
 package net.minecraftforge.network;
 
 import java.util.AbstractMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -84,7 +85,7 @@ public class VanillaConnectionNetworkFilter extends MessageToMessageEncoder<IPac
     @Nonnull
     private static SEntityPropertiesPacket filterEntityProperties(SEntityPropertiesPacket msg)
     {
-        SEntityPropertiesPacket newPacket = new SEntityPropertiesPacket();
+        SEntityPropertiesPacket newPacket = new SEntityPropertiesPacket(msg.getEntityId(), Collections.emptyList());
         msg.getSnapshots().stream()
                 .filter(snapshot -> {
                     ResourceLocation key = ForgeRegistries.ATTRIBUTES.getKey(snapshot.func_240834_a_());

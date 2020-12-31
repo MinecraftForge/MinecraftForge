@@ -136,6 +136,12 @@ public class CompoundIngredient extends Ingredient
        }
     }
 
+    @Override
+    public boolean hasNoMatchingItems()
+    {
+        return getMatchingStacks().length == 0;
+    }
+
     public static class Serializer implements IIngredientSerializer<CompoundIngredient>
     {
         public static final Serializer INSTANCE = new Serializer();
