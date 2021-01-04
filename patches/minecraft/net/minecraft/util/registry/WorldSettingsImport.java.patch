@@ -1,6 +1,31 @@
 --- a/net/minecraft/util/registry/WorldSettingsImport.java
 +++ b/net/minecraft/util/registry/WorldSettingsImport.java
-@@ -190,6 +190,7 @@
+@@ -91,6 +91,7 @@
+       Collection<ResourceLocation> collection = this.field_244332_c.func_241880_a(p_241797_2_);
+       DataResult<SimpleRegistry<E>> dataresult = DataResult.success(p_241797_1_, Lifecycle.stable());
+       String s = p_241797_2_.func_240901_a_().func_110623_a() + "/";
++      org.apache.commons.lang3.mutable.MutableObject<String> error = new org.apache.commons.lang3.mutable.MutableObject<>("");
+ 
+       for(ResourceLocation resourcelocation : collection) {
+          String s1 = resourcelocation.func_110623_a();
+@@ -104,12 +105,15 @@
+             dataresult = dataresult.flatMap((p_240885_4_) -> {
+                return this.func_241805_a_(p_241797_2_, p_240885_4_, p_241797_3_, resourcelocation1).map((p_240877_1_) -> {
+                   return p_240885_4_;
++               }).mapError(msg -> {
++                  error.setValue(error.getValue() + "[" + resourcelocation1 + " -> ( " + msg + ")] ");
++                  return msg;
+                });
+             });
+          }
+       }
+ 
+-      return dataresult.setPartial(p_241797_1_);
++      return dataresult.setPartial(p_241797_1_).mapError(msg -> error.getValue());
+    }
+ 
+    private <E> DataResult<Supplier<E>> func_241805_a_(RegistryKey<? extends Registry<E>> p_241805_1_, MutableRegistry<E> p_241805_2_, Codec<E> p_241805_3_, ResourceLocation p_241805_4_) {
+@@ -190,6 +194,7 @@
                 ) {
                    JsonParser jsonparser = new JsonParser();
                    JsonElement jsonelement = jsonparser.parse(reader);
@@ -8,7 +33,7 @@
                    return p_241879_4_.parse(p_241879_1_, jsonelement).map((p_244347_0_) -> {
                       return Pair.of(p_244347_0_, OptionalInt.empty());
                    });
-@@ -231,6 +232,7 @@
+@@ -231,6 +236,7 @@
  
           public <E> DataResult<Pair<E, OptionalInt>> func_241879_a(DynamicOps<JsonElement> p_241879_1_, RegistryKey<? extends Registry<E>> p_241879_2_, RegistryKey<E> p_241879_3_, Decoder<E> p_241879_4_) {
              JsonElement jsonelement = this.field_244349_a.get(p_241879_3_);

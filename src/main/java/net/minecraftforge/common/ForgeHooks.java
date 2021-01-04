@@ -29,8 +29,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -40,6 +42,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import javax.annotation.Nonnull;
@@ -96,6 +102,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.registry.WorldGenSettingsExport;
 import net.minecraft.util.text.*;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.feature.structure.Structure;
@@ -123,6 +130,7 @@ import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.ImprovedListCodec;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
@@ -1282,5 +1290,52 @@ public class ForgeHooks
             chunk.setModified(true);
         }
         chunk.setStructureReferences(structureReferences);
+    }
+
+    public static <O> Codec<List<Supplier<O>>> fixRegistryKeyCodec(Codec<Supplier<O>> registeredCodec, Codec<O> objectCodec, ResourceLocation registryName)
+    {
+        Codec<List<Supplier<O>>> improvedListCodec = ImprovedListCodec.createNoPartials(registeredCodec);
+        Codec<List<Supplier<O>>> inlinedCodec = objectCodec.<Supplier<O>>xmap(o -> () -> o, Supplier::get).listOf();
+        return new Codec<List<Supplier<O>>>()
+        {
+             /**
+             * First tries to decode the list using the {@link ImprovedListCodec},
+             * if it fails tries the inlined one, if that fails
+             * returns the promoted partial result of the first result.
+             *
+             * This makes it so that only the unregistered elements of the list are nuked, but the correctly registered ones
+             * are taken into account.
+             */
+            @Override
+            public <T> DataResult<Pair<List<Supplier<O>>, T>> decode(DynamicOps<T> ops, T input)
+            {
+                DataResult<Pair<List<Supplier<O>>, T>> registeredObj = improvedListCodec.decode(ops, input);
+                if (registeredObj.result().isPresent())
+                    return registeredObj;
+                DataResult<Pair<List<Supplier<O>>, T>> inlinedObj = inlinedCodec.decode(ops, input);
+                if (inlinedObj.result().isPresent())
+                    return inlinedObj;
+                //Promote the partial here, so that any registered objects in the list are not nuked for
+                // the presence of an unregistered one.
+                return registeredObj.promotePartial(s -> LOGGER.warn("Error decoding object list: " + input.toString() + " (" + s + ")"));
+            }
+
+            /**
+             * When encoding if the ops is {@link WorldGenSettingsExport} then the registeredCodec will not error
+             * (no more then the inlinedCodec).
+             * If it is isn't, then the referenced codec will perform this instance check later down the line anyway.
+             */
+            @Override
+            public <T> DataResult<T> encode(List<Supplier<O>> input, DynamicOps<T> ops, T prefix)
+            {
+                return ops instanceof WorldGenSettingsExport ? improvedListCodec.encode(input, ops, prefix) : inlinedCodec.encode(input, ops, prefix);
+            }
+
+            @Override
+            public String toString()
+            {
+                return "Forge-RegistryObjectListCodec(" + registryName + ")[" + objectCodec + "]";
+            }
+        };
     }
 }

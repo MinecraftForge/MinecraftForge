@@ -9,3 +9,12 @@
        MutableRegistry<E> mutableregistry = p_243607_0_.func_243612_b(registrykey);
  
        for(Entry<RegistryKey<E>, E> entry : registry.func_239659_c_()) {
+@@ -141,7 +143,7 @@
+       });
+       DataResult<SimpleRegistry<E>> dataresult = p_243610_0_.func_241797_a_(simpleregistry, p_243610_2_.func_243622_a(), p_243610_2_.func_243623_b());
+       dataresult.error().ifPresent((p_243603_0_) -> {
+-         field_243598_a.error("Error loading registry data: {}", (Object)p_243603_0_.message());
++         field_243598_a.error("Error loading registry ({}) [{}]", registrykey.func_240901_a_(), p_243603_0_.message());
+       });
+    }
+ 
