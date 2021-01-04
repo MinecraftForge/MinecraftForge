@@ -97,7 +97,7 @@ public class PlayerInteractEvent extends PlayerEvent
             return localPos;
         }
 
-        public Entity getTarget()
+        public Entity getTargetEntity()
         {
             return target;
         }
@@ -125,7 +125,7 @@ public class PlayerInteractEvent extends PlayerEvent
             this.target = target;
         }
 
-        public Entity getTarget()
+        public Entity getTargetEntity()
         {
             return target;
         }
@@ -324,7 +324,6 @@ public class PlayerInteractEvent extends PlayerEvent
     /**
      * @return The hand involved in this interaction. Will never be null.
      */
-    @Nonnull
     public Hand getHand()
     {
         return hand;
@@ -333,10 +332,9 @@ public class PlayerInteractEvent extends PlayerEvent
     /**
      * @return The itemstack involved in this interaction, {@code ItemStack.EMPTY} if the hand was empty.
      */
-    @Nonnull
     public ItemStack getItemStack()
     {
-        return getPlayer().getHeldItem(hand);
+        return getEntity().getHeldItem(hand);
     }
 
     /**
@@ -347,7 +345,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * @return The position involved in this interaction.
      */
     @Nonnull
-    public BlockPos getPos()
+    public BlockPos getBlockPos()
     {
         return pos;
     }
@@ -366,13 +364,13 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public World getWorld()
     {
-        return getPlayer().getEntityWorld();
+        return getEntity().getEntityWorld();
     }
 
     /**
      * @return The effective, i.e. logical, side of this interaction. This will be {@link LogicalSide#CLIENT} on the client thread, and {@link LogicalSide#SERVER} on the server thread.
      */
-    public LogicalSide getSide()
+    public LogicalSide getLogicalSide()
     {
         return getWorld().isRemote ? LogicalSide.CLIENT : LogicalSide.SERVER;
     }

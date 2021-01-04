@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * This event is called when a player fishes an item.
  *
- * This event is {@link net.minecraftforge.eventbus.api.Cancelable}
+ * This event is {@link Cancelable}
  * Canceling the event will cause the player to receive no items at all.
  * The hook will still take the damage specified
  */

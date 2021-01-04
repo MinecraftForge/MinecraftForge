@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.client.event.render;
 
 import javax.annotation.Nonnull;
 
@@ -45,12 +45,11 @@ public class RenderHandEvent extends Event
     private final float interpolatedPitch;
     private final float swingProgress;
     private final float equipProgress;
-    @Nonnull
     private final ItemStack stack;
 
     public RenderHandEvent(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light,
                            float partialTicks, float interpolatedPitch,
-                           float swingProgress, float equipProgress, @Nonnull ItemStack stack)
+                           float swingProgress, float equipProgress, ItemStack stack)
     {
         this.hand = hand;
         this.mat = mat;
@@ -77,7 +76,7 @@ public class RenderHandEvent extends Event
         return buffers;
     }
 
-    public int getLight() {
+    public int getPackedLight() {
         return light;
     }
 
@@ -113,7 +112,6 @@ public class RenderHandEvent extends Event
     /**
      * @return The ItemStack to be rendered
      */
-    @Nonnull
     public ItemStack getItemStack()
     {
         return stack;

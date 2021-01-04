@@ -4,7 +4,7 @@
           if (entity instanceof ServerPlayerEntity) {
              ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entity;
              if (serverplayerentity.field_71135_a.func_147298_b().func_150724_d() && serverplayerentity.field_70170_p == this.field_70170_p && !serverplayerentity.func_70608_bn()) {
-+               net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(serverplayerentity, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 5.0F);
++               net.minecraftforge.event.entity.living.LivingTeleportEvent event = new net.minecraftforge.event.entity.living.LivingTeleportEvent(serverplayerentity, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 5.0F);
 +               if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) { // Don't indent to lower patch size
                 if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
                    EndermiteEntity endermiteentity = EntityType.field_200804_r.func_200721_a(this.field_70170_p);
@@ -17,7 +17,7 @@
 +               entity.func_70634_a(event.getTargetX(), event.getTargetY(), event.getTargetZ());
                 entity.field_70143_R = 0.0F;
 -               entity.func_70097_a(DamageSource.field_76379_h, 5.0F);
-+               entity.func_70097_a(DamageSource.field_76379_h, event.getAttackDamage());
++               entity.func_70097_a(DamageSource.field_76379_h, event.getTeleportDamage());
 +               } //Forge: End
              }
           } else if (entity != null) {

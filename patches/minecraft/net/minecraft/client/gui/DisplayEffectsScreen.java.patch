@@ -4,7 +4,7 @@
           this.field_147003_i = (this.field_230708_k_ - this.field_146999_f) / 2;
           this.field_147045_u = false;
        } else {
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.PotionShiftEvent(this)))
++         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.PotionShiftEvent(this)))
 +            this.field_147003_i = (this.field_230708_k_ - this.field_146999_f) / 2;
 +         else
           this.field_147003_i = 160 + (this.field_230708_k_ - this.field_146999_f - 200) / 2;

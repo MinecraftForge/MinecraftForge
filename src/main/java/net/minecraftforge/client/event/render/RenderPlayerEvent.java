@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.client.event.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -45,10 +45,10 @@ public abstract class RenderPlayerEvent extends PlayerEvent
     }
 
     public PlayerRenderer getRenderer() { return renderer; }
-    public float getPartialRenderTick() { return partialRenderTick; }
+    public float getPartialTicks() { return partialRenderTick; }
     public MatrixStack getMatrixStack() { return stack; }
     public IRenderTypeBuffer getBuffers() { return buffers; }
-    public int getLight() { return light; }
+    public int getPackedLight() { return light; }
 
     @Cancelable
     public static class Pre extends RenderPlayerEvent
@@ -64,5 +64,4 @@ public abstract class RenderPlayerEvent extends PlayerEvent
             super(player, renderer, tick, stack, buffers, light);
         }
     }
-
 }

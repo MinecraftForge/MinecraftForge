@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.client.event.render;
 
 import java.util.Collections;
 import java.util.List;
@@ -44,9 +44,8 @@ import net.minecraftforge.eventbus.api.Event;
  * <li>{@link RenderTooltipEvent.PostText}</li>
  * </ul>
  */
-public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api.Event
+public abstract class RenderTooltipEvent extends Event
 {
-    @Nonnull
     protected final ItemStack stack;
     protected final List<? extends ITextProperties> lines;
     protected final MatrixStack matrixStack;
@@ -54,7 +53,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     protected int y;
     protected FontRenderer fr;
 
-    public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> lines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr)
+    public RenderTooltipEvent(ItemStack stack, List<? extends ITextProperties> lines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr)
     {
         this.stack = stack;
         this.lines = Collections.unmodifiableList(lines); // Leave editing to ItemTooltipEvent
@@ -67,7 +66,6 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     /**
      * @return The stack which the tooltip is being rendered for. As tooltips can be drawn without itemstacks, this stack may be empty.
      */
-    @Nonnull
     public ItemStack getStack()
     {
         return stack;
@@ -78,7 +76,6 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * 
      * @return An <i>unmodifiable</i> list of strings. Use {@link ItemTooltipEvent} to modify tooltip text.
      */
-    @Nonnull
     public List<? extends ITextProperties> getLines()
     {
         return lines;
@@ -111,7 +108,6 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     /**
      * @return The {@link FontRenderer} instance the current render is using.
      */
-    @Nonnull
     public FontRenderer getFontRenderer()
     {
         return fr;
@@ -122,14 +118,14 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * <p>
      * This event is {@link Cancelable}.
      */
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class Pre extends RenderTooltipEvent
     {
         private int screenWidth;
         private int screenHeight;
         private int maxWidth;
 
-        public Pre(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> lines, MatrixStack matrixStack, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull FontRenderer fr)
+        public Pre(ItemStack stack, List<? extends ITextProperties> lines, MatrixStack matrixStack, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull FontRenderer fr)
         {
             super(stack, lines, matrixStack, x, y, fr);
             this.screenWidth = screenWidth;
@@ -176,7 +172,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         /**
          * Sets the {@link FontRenderer} to be used to render text.
          */
-        public void setFontRenderer(@Nonnull FontRenderer fr)
+        public void setFontRenderer(FontRenderer fr)
         {
             this.fr = fr;
         }
@@ -212,7 +208,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private final int width;
         private final int height;
         
-        public Post(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, MatrixStack matrixStack,int x, int y, @Nonnull FontRenderer fr, int width, int height)
+        public Post(ItemStack stack, List<? extends ITextProperties> textLines, MatrixStack matrixStack,int x, int y, @Nonnull FontRenderer fr, int width, int height)
         {
             super(stack, textLines, matrixStack, x, y, fr);
             this.width = width;
@@ -241,7 +237,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      */
     public static class PostBackground extends Post 
     {
-        public PostBackground(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr, int width, int height)
+        public PostBackground(ItemStack stack, List<? extends ITextProperties> textLines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr, int width, int height)
             { super(stack, textLines, matrixStack, x, y, fr, width, height); }
     }
 
@@ -250,7 +246,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      */
     public static class PostText extends Post
     {
-        public PostText(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr, int width, int height)
+        public PostText(ItemStack stack, List<? extends ITextProperties> textLines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr, int width, int height)
             { super(stack, textLines, matrixStack, x, y, fr, width, height); }
     }
     
@@ -266,7 +262,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int borderStart;
         private int borderEnd;
 
-        public Color(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr, int background, int borderStart,
+        public Color(ItemStack stack, List<? extends ITextProperties> textLines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr, int background, int borderStart,
                 int borderEnd)
         {
             super(stack, textLines, matrixStack, x, y, fr);

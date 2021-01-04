@@ -63,7 +63,7 @@ public class VillageSiegeEvent extends Event
         return world;
     }
 
-    public PlayerEntity getPlayer()
+    public PlayerEntity getPlayerEntity()
     {
         return player;
     }

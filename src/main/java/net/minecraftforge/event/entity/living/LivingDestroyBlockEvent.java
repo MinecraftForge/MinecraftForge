@@ -50,12 +50,12 @@ public class LivingDestroyBlockEvent extends LivingEvent
         this.state = state;
     }
 
-    public BlockState getState()
+    public BlockState getBlockState()
     {
         return state;
     }
     
-    public BlockPos getPos()
+    public BlockPos getBlockPos()
     {
         return pos;
     }

@@ -55,22 +55,22 @@ public class ChunkWatchEventTest
     @SubscribeEvent
     public static void onUnwatch(ChunkWatchEvent.UnWatch event)
     {
-        int watched = watchedByPlayer.getInt(event.getPlayer().getUniqueID());
+        int watched = watchedByPlayer.getInt(event.getPlayerEntity().getUniqueID());
         --watched;
-        watchedByPlayer.put(event.getPlayer().getUniqueID(), watched);
+        watchedByPlayer.put(event.getPlayerEntity().getUniqueID(), watched);
         logger.info("Unwatching chunk {} in dimension {}. Player's dimension: {}, total chunks watched by player {}",
-                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getEntityWorld()),
+                event.getChunkPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayerEntity().getEntityWorld()),
                 watched);
     }
 
     @SubscribeEvent
     public static void onWatch(ChunkWatchEvent.Watch event)
     {
-        int watched = watchedByPlayer.getInt(event.getPlayer().getUniqueID());
+        int watched = watchedByPlayer.getInt(event.getPlayerEntity().getUniqueID());
         ++watched;
-        watchedByPlayer.put(event.getPlayer().getUniqueID(), watched);
+        watchedByPlayer.put(event.getPlayerEntity().getUniqueID(), watched);
         logger.info("Watching chunk {} in dimension {}. Player's dimension: {}, total chunks watched by player {}",
-                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getEntityWorld()),
+                event.getChunkPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayerEntity().getEntityWorld()),
                 watched);
     }
 

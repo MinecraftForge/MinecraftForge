@@ -24,6 +24,7 @@ import net.minecraft.entity.player.PlayerEntity.SleepResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -40,31 +41,29 @@ import java.util.Optional;
  **/
 public class PlayerSleepInBedEvent extends PlayerEvent
 {
+    @Nullable
     private SleepResult result = null;
-    private final Optional<BlockPos> pos;
+    private final BlockPos pos;
 
-    public PlayerSleepInBedEvent(PlayerEntity player, Optional<BlockPos> pos)
+    public PlayerSleepInBedEvent(PlayerEntity player, BlockPos pos)
     {
         super(player);
         this.pos = pos;
     }
 
-    public SleepResult getResultStatus()
+    @Nullable
+    public SleepResult getSleepResult()
     {
         return result;
     }
 
-    public void setResult(SleepResult result)
+    public void setSleepResult(@Nullable SleepResult result)
     {
         this.result = result;
     }
 
-    public BlockPos getPos()
+    public BlockPos getBlockPos()
     {
-        return pos.orElse(null);
-    }
-
-    public Optional<BlockPos> getOptionalPos() {
         return pos;
     }
 

@@ -19,27 +19,41 @@
 
 package net.minecraftforge.client.event;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.MovementInput;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.eventbus.api.Event;
 
-/**
- * This event is fired after player movement inputs are updated.<br>
- * Handlers can freely manipulate {@link MovementInput} to cancel movement.<br>
- */
-public class InputUpdateEvent extends PlayerEvent
+public class FOVModifierEvent extends Event
 {
-    private final MovementInput movementInput;
+    private final PlayerEntity entity;
+    private final float fov;
+    private float newFOV;
 
-    public InputUpdateEvent(PlayerEntity player, MovementInput movementInput)
+    public FOVModifierEvent(PlayerEntity entity, float fov)
     {
-        super(player);
-        this.movementInput = movementInput;
+        this.entity = entity;
+        this.fov = fov;
+        this.setFOV(MathHelper.lerp(Minecraft.getInstance().gameSettings.fovScaleEffect, 1.0F, fov));
     }
 
-    public MovementInput getMovementInput()
+    public PlayerEntity getEntity()
     {
-        return movementInput;
+        return entity;
     }
 
+    public float getOriginalFOV()
+    {
+        return fov;
+    }
+
+    public float getFOV()
+    {
+        return newFOV;
+    }
+
+    public void setFOV(float newFOV)
+    {
+        this.newFOV = newFOV;
+    }
 }

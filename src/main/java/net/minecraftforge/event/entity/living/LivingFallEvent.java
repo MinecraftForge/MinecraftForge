@@ -33,7 +33,7 @@ import net.minecraft.entity.LivingEntity;
  * <br>
  * {@link #distance} contains the distance the Entity is to fall. If this event is canceled, this value is set to 0.0F.
  * <br>
- * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+ * This event is {@link Cancelable}.<br>
  * If this event is canceled, the Entity does not fall.<br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>

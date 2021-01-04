@@ -19,41 +19,32 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraft.client.gui.screen.Screen;
 
-public class FOVUpdateEvent extends Event
+/**
+ * This event is called before any Gui will open.
+ * If you don't want this to happen, cancel the event.
+ * If you want to override this Gui, simply set the gui variable to your own Gui.
+ *
+ */
+@Cancelable
+public class ScreenOpenEvent extends Event
 {
-    private final PlayerEntity entity;
-    private final float fov;
-    private float newfov;
-
-    public FOVUpdateEvent(PlayerEntity entity, float fov)
+    private Screen gui;
+    public ScreenOpenEvent(Screen gui)
     {
-        this.entity = entity;
-        this.fov = fov;
-        this.setNewfov(MathHelper.lerp(Minecraft.getInstance().gameSettings.fovScaleEffect, 1.0F, fov));
+        this.setScreen(gui);
     }
 
-    public PlayerEntity getEntity()
+    public Screen getScreen()
     {
-        return entity;
+        return gui;
     }
 
-    public float getFov()
+    public void setScreen(Screen gui)
     {
-        return fov;
-    }
-
-    public float getNewfov()
-    {
-        return newfov;
-    }
-
-    public void setNewfov(float newfov)
-    {
-        this.newfov = newfov;
+        this.gui = gui;
     }
 }

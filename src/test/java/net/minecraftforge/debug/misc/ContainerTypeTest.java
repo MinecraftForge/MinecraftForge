@@ -113,10 +113,10 @@ public class ContainerTypeTest
     {
         if (!event.getWorld().isRemote && event.getHand() == Hand.MAIN_HAND)
         {
-            if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.SPONGE)
+            if (event.getWorld().getBlockState(event.getBlockPos()).getBlock() == Blocks.SPONGE)
             {
                 String text = "Hello World!";
-                NetworkHooks.openGui((ServerPlayerEntity) event.getPlayer(), new INamedContainerProvider()
+                NetworkHooks.openGui((ServerPlayerEntity) event.getPlayerEntity(), new INamedContainerProvider()
                 {
                     @Override
                     public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_)

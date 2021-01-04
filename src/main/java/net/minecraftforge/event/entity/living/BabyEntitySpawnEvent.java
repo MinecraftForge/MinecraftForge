@@ -25,6 +25,8 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
+
 import javax.annotation.Nullable;
 
 /**
@@ -47,11 +49,13 @@ import javax.annotation.Nullable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class BabyEntitySpawnEvent extends net.minecraftforge.eventbus.api.Event
+public class BabyEntitySpawnEvent extends Event
 {
     private final MobEntity parentA;
     private final MobEntity parentB;
+    @Nullable
     private final PlayerEntity causedByPlayer;
+    @Nullable
     private AgeableEntity child;
 
     public BabyEntitySpawnEvent(MobEntity parentA, MobEntity parentB, @Nullable AgeableEntity proposedChild)
@@ -84,18 +88,18 @@ public class BabyEntitySpawnEvent extends net.minecraftforge.eventbus.api.Event
     }
 
     @Nullable
-    public PlayerEntity getCausedByPlayer()
+    public PlayerEntity getPlayerEntity()
     {
         return causedByPlayer;
     }
 
     @Nullable
-    public AgeableEntity getChild()
+    public AgeableEntity getChildEntity()
     {
         return child;
     }
 
-    public void setChild(AgeableEntity proposedChild)
+    public void setChildEntity(@Nullable AgeableEntity proposedChild)
     {
         child = proposedChild;
     }

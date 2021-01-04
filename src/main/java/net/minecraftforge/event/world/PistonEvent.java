@@ -62,7 +62,7 @@ public abstract class PistonEvent extends BlockEvent
      */
     public BlockPos getFaceOffsetPos()
     {
-        return this.getPos().offset(direction);
+        return this.getBlockPos().offset(direction);
     }
 
     /**
@@ -80,7 +80,7 @@ public abstract class PistonEvent extends BlockEvent
     public PistonBlockStructureHelper getStructureHelper()
     {
         if(this.getWorld() instanceof World) {
-            return new PistonBlockStructureHelper((World) this.getWorld(), this.getPos(), this.getDirection(), this.getPistonMoveType().isExtend);
+            return new PistonBlockStructureHelper((World) this.getWorld(), this.getBlockPos(), this.getDirection(), this.getPistonMoveType().isExtend);
         } else {
             return null;
         }

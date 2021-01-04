@@ -32,7 +32,7 @@ import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.text.ITextProperties;
 import net.minecraft.util.text.LanguageMap;
 import net.minecraft.util.text.Style;
-import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.client.event.render.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.opengl.GL11;

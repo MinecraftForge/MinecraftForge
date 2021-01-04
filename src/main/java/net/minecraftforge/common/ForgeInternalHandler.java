@@ -21,7 +21,6 @@ package net.minecraftforge.common;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.server.ServerWorld;
@@ -36,7 +35,6 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
@@ -77,7 +75,7 @@ public class ForgeInternalHandler
     @SubscribeEvent
     public void onServerTick(ServerTickEvent event)
     {
-        WorldWorkerManager.tick(event.phase == TickEvent.Phase.START);
+        WorldWorkerManager.tick(event.getTickPhase() == Phase.START);
     }
 
     @SubscribeEvent
@@ -106,7 +104,7 @@ public class ForgeInternalHandler
     @SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        UsernameCache.setUsername(event.getPlayer().getUniqueID(), event.getPlayer().getGameProfile().getName());
+        UsernameCache.setUsername(event.getEntity().getUniqueID(), event.getEntity().getGameProfile().getName());
     }
 
     @SubscribeEvent

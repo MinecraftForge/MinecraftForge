@@ -46,7 +46,7 @@ public class ClientPlayerNetworkEvent extends Event {
      * @return the player instance (if present - may be null)
      */
     @Nullable
-    public ClientPlayerEntity getPlayer() {
+    public ClientPlayerEntity getPlayerEntity() {
         return player;
     }
 
@@ -95,12 +95,8 @@ public class ClientPlayerNetworkEvent extends Event {
             this.oldPlayer = oldPlayer;
         }
 
-        public ClientPlayerEntity getOldPlayer() {
+        public ClientPlayerEntity getOldPlayerEntity() {
             return oldPlayer;
-        }
-
-        public ClientPlayerEntity getNewPlayer() {
-            return super.getPlayer();
         }
     }
 }

@@ -39,7 +39,7 @@ import net.minecraft.entity.effect.LightningBoltEntity;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 public class EntityStruckByLightningEvent extends EntityEvent
 {
     private final LightningBoltEntity lightning;
@@ -50,7 +50,7 @@ public class EntityStruckByLightningEvent extends EntityEvent
         this.lightning = lightning;
     }
 
-    public LightningBoltEntity getLightning()
+    public LightningBoltEntity getLightningEntity()
     {
         return lightning;
     }

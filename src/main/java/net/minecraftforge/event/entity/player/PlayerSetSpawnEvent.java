@@ -56,7 +56,7 @@ public class PlayerSetSpawnEvent extends PlayerEvent
      * The new spawn position, or null if the spawn position is being reset.
      */
     @Nullable
-    public BlockPos getNewSpawn()
+    public BlockPos getNewSpawnPos()
     {
         return newSpawn;
     }

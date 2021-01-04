@@ -124,7 +124,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
 
         public ImmutableList<Mapping<T>> getMappings()
         {
-            return ImmutableList.copyOf(this.mappings.stream().filter(e -> e.key.getNamespace().equals(this.activeMod.getModId())).collect(Collectors.toList()));
+            return ImmutableList.copyOf(this.mappings.stream().filter(e -> e.getKey().getNamespace().equals(this.activeMod.getModId())).collect(Collectors.toList()));
         }
 
         public ImmutableList<Mapping<T>> getAllMappings()
@@ -166,10 +166,10 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
 
         public static class Mapping<T extends IForgeRegistryEntry<T>> implements Comparable<Mapping<T>>
         {
-            public final IForgeRegistry<T> registry;
+            private final IForgeRegistry<T> registry;
             private final IForgeRegistry<T> pool;
-            public final ResourceLocation key;
-            public final int id;
+            private final ResourceLocation key;
+            private final int id;
             private Action action = Action.DEFAULT;
             private T target;
 
@@ -230,6 +230,27 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             public T getTarget()
             {
                 return target;
+            }
+
+            public IForgeRegistry<T> getRegistry()
+            {
+                return registry;
+            }
+
+            /**
+             * @return The registered name of the missing mapping
+             */
+            public ResourceLocation getKey()
+            {
+                return key;
+            }
+
+            /**
+             * @return The internal numerical id of the mapping
+             */
+            public int getId()
+            {
+                return id;
             }
 
             @Override

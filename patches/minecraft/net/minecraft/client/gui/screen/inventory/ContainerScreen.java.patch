@@ -4,7 +4,7 @@
        int i = this.field_147003_i;
        int j = this.field_147009_r;
        this.func_230450_a_(p_230430_1_, p_230430_4_, p_230430_2_, p_230430_3_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawBackground(this, p_230430_1_, p_230430_2_, p_230430_3_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ContainerScreenEvent.DrawBackground(this, p_230430_1_, p_230430_2_, p_230430_3_));
        RenderSystem.disableRescaleNormal();
        RenderSystem.disableDepthTest();
        super.func_230430_a_(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
@@ -21,7 +21,7 @@
        }
  
        this.func_230451_b_(p_230430_1_, p_230430_2_, p_230430_3_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, p_230430_1_, p_230430_2_, p_230430_3_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ContainerScreenEvent.DrawForeground(this, p_230430_1_, p_230430_2_, p_230430_3_));
        PlayerInventory playerinventory = this.field_230706_i_.field_71439_g.field_71071_by;
        ItemStack itemstack = this.field_147012_x.func_190926_b() ? playerinventory.func_70445_o() : this.field_147012_x;
        if (!itemstack.func_190926_b()) {

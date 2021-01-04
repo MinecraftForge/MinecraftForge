@@ -64,18 +64,16 @@ import javax.annotation.Nullable;
  **/
 public class PlayerDestroyItemEvent extends PlayerEvent
 {
-    @Nonnull
     private final ItemStack original;
     @Nullable
     private final Hand hand; // May be null if this player destroys the item by any use besides holding it.
-    public PlayerDestroyItemEvent(PlayerEntity player, @Nonnull ItemStack original, @Nullable Hand hand)
+    public PlayerDestroyItemEvent(PlayerEntity player, ItemStack original, @Nullable Hand hand)
     {
         super(player);
         this.original = original;
         this.hand = hand;
     }
 
-    @Nonnull
     public ItemStack getOriginal() { return this.original; }
     @Nullable
     public Hand getHand() { return this.hand; }

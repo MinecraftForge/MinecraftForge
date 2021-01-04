@@ -49,7 +49,7 @@ public class LivingSetAttackTargetEvent extends LivingEvent
         this.target = target;
     }
 
-    public LivingEntity getTarget()
+    public LivingEntity getTargetEntity()
     {
         return target;
     }

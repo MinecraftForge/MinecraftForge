@@ -36,7 +36,7 @@ public class TextureStitchEvent extends Event implements IModBusEvent
         this.map = map;
     }
 
-    public AtlasTexture getMap()
+    public AtlasTexture getAtlas()
     {
         return map;
     }

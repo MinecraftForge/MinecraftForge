@@ -53,7 +53,7 @@ public class LivingDeathEvent extends LivingEvent
         this.source = source;
     }
 
-    public DamageSource getSource()
+    public DamageSource getDamageSource()
     {
         return source;
     }

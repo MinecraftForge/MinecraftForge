@@ -36,7 +36,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.eventbus.api.Event;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
 import javax.annotation.Nonnull;
 
@@ -49,17 +49,16 @@ import javax.annotation.Nonnull;
  **/
 public class PlayerEvent extends LivingEvent
 {
-    private final PlayerEntity entityPlayer;
     public PlayerEvent(PlayerEntity player)
     {
         super(player);
-        entityPlayer = player;
     }
 
     /**
      * @return Player
      */
-    public PlayerEntity getPlayer() { return entityPlayer; }
+    @Override
+    public PlayerEntity getEntity() { return (PlayerEntity) super.getEntity(); }
     /**
      * HarvestCheck is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
@@ -125,15 +124,15 @@ public class PlayerEvent extends LivingEvent
             super(player);
             this.state = state;
             this.originalSpeed = original;
-            this.setNewSpeed(original);
+            this.setSpeed(original);
             this.pos = pos;
         }
 
-        public BlockState getState() { return state; }
+        public BlockState getBlockState() { return state; }
         public float getOriginalSpeed() { return originalSpeed; }
-        public float getNewSpeed() { return newSpeed; }
-        public void setNewSpeed(float newSpeed) { this.newSpeed = newSpeed; }
-        public BlockPos getPos() { return pos; }
+        public float getSpeed() { return newSpeed; }
+        public void setSpeed(float newSpeed) { this.newSpeed = newSpeed; }
+        public BlockPos getBlockPos() { return pos; }
     }
 
     /**
@@ -161,7 +160,7 @@ public class PlayerEvent extends LivingEvent
         {
             super(player);
             this.username = username;
-            this.setDisplayname(username);
+            this.setDisplayName(username);
         }
 
         public ITextComponent getUsername()
@@ -169,12 +168,12 @@ public class PlayerEvent extends LivingEvent
             return username;
         }
 
-        public ITextComponent getDisplayname()
+        public ITextComponent getDisplayName()
         {
             return displayname;
         }
 
-        public void setDisplayname(ITextComponent displayname)
+        public void setDisplayName(ITextComponent displayname)
         {
             this.displayname = displayname;
         }
@@ -189,9 +188,9 @@ public class PlayerEvent extends LivingEvent
         private final PlayerEntity original;
         private final boolean wasDeath;
 
-        public Clone(PlayerEntity _new, PlayerEntity oldPlayer, boolean wasDeath)
+        public Clone(PlayerEntity newPlayer, PlayerEntity oldPlayer, boolean wasDeath)
         {
-            super(_new);
+            super(newPlayer);
             this.original = oldPlayer;
             this.wasDeath = wasDeath;
         }
@@ -199,7 +198,7 @@ public class PlayerEvent extends LivingEvent
         /**
          * The old EntityPlayer that this new entity is a clone of.
          */
-        public PlayerEntity getOriginal()
+        public PlayerEntity getOriginalEntity()
         {
             return original;
         }
@@ -231,7 +230,7 @@ public class PlayerEvent extends LivingEvent
         /**
          * The Entity now being tracked.
          */
-        public Entity getTarget()
+        public Entity getTargetEntity()
         {
             return target;
         }
@@ -254,7 +253,7 @@ public class PlayerEvent extends LivingEvent
         /**
          * The Entity no longer being tracked.
          */
-        public Entity getTarget()
+        public Entity getTargetEntity()
         {
             return target;
         }
@@ -408,7 +407,7 @@ public class PlayerEvent extends LivingEvent
             this.stack = stack;
         }
 
-        public ItemStack getStack() {
+        public ItemStack getItemStack() {
             return stack;
         }
 
@@ -418,18 +417,16 @@ public class PlayerEvent extends LivingEvent
     }
 
     public static class ItemCraftedEvent extends PlayerEvent {
-        @Nonnull
         private final ItemStack crafting;
         private final IInventory craftMatrix;
-        public ItemCraftedEvent(PlayerEntity player, @Nonnull ItemStack crafting, IInventory craftMatrix)
+        public ItemCraftedEvent(PlayerEntity player, ItemStack crafting, IInventory craftMatrix)
         {
             super(player);
             this.crafting = crafting;
             this.craftMatrix = craftMatrix;
         }
 
-        @Nonnull
-        public ItemStack getCrafting()
+        public ItemStack getResultStack()
         {
             return this.crafting;
         }
@@ -441,7 +438,6 @@ public class PlayerEvent extends LivingEvent
     }
 
     public static class ItemSmeltedEvent extends PlayerEvent {
-        @Nonnull
         private final ItemStack smelting;
         public ItemSmeltedEvent(PlayerEntity player, @Nonnull ItemStack crafting)
         {
@@ -449,8 +445,7 @@ public class PlayerEvent extends LivingEvent
             this.smelting = crafting;
         }
 
-        @Nonnull
-        public ItemStack getSmelting()
+        public ItemStack getResultStack()
         {
             return this.smelting;
         }

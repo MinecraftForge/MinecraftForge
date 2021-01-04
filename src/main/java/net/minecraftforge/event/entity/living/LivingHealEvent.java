@@ -32,7 +32,7 @@ import net.minecraft.entity.LivingEntity;
  * <br>
  * {@link #amount} contains the amount of healing done to the Entity that was healed. <br>
  * <br>
- * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+ * This event is {@link Cancelable}.<br>
  * If this event is canceled, the Entity is not healed.<br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>
@@ -46,15 +46,15 @@ public class LivingHealEvent extends LivingEvent
     public LivingHealEvent(LivingEntity entity, float amount)
     {
         super(entity);
-        this.setAmount(amount);
+        this.setHealAmount(amount);
     }
 
-    public float getAmount()
+    public float getHealAmount()
     {
         return amount;
     }
 
-    public void setAmount(float amount)
+    public void setHealAmount(float amount)
     {
         this.amount = amount;
     }

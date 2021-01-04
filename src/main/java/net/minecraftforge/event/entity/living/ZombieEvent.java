@@ -31,6 +31,8 @@ import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
+import javax.annotation.Nullable;
+
 /**
  * ZombieEvent is fired whenever a zombie is spawned for aid.
  * If a method utilizes this {@link Event} as its parameter, the method will
@@ -45,9 +47,10 @@ public class ZombieEvent extends EntityEvent {
         super(entity);
     }
 
-    public ZombieEntity getSummoner()
+    @Override
+    public ZombieEntity getEntity()
     {
-        return (ZombieEntity) getEntity();
+        return (ZombieEntity) super.getEntity();
     }
     
     /**
@@ -75,16 +78,18 @@ public class ZombieEvent extends EntityEvent {
      **/
     @HasResult
     public static class SummonAidEvent extends ZombieEvent {
+        @Nullable
         private ZombieEntity customSummonedAid;
         
         private final World world;
         private final int x;
         private final int y;
         private final int z;
+        @Nullable
         private final LivingEntity attacker;
         private final double summonChance;
         
-        public SummonAidEvent(ZombieEntity entity, World world, int x, int y, int z, LivingEntity attacker, double summonChance)
+        public SummonAidEvent(ZombieEntity entity, World world, int x, int y, int z, @Nullable LivingEntity attacker, double summonChance)
         {
             super(entity);
             this.world = world;
@@ -98,12 +103,14 @@ public class ZombieEvent extends EntityEvent {
         /**
          * Populate this field to have a custom zombie instead of a normal zombie summoned
          */
+        @Nullable
         public ZombieEntity getCustomSummonedAid() { return customSummonedAid; }
         public void setCustomSummonedAid(ZombieEntity customSummonedAid) { this.customSummonedAid = customSummonedAid; }
         public World getWorld() { return world; }
         public int getX() { return x; }
         public int getY() { return y; }
         public int getZ() { return z; }
+        @Nullable
         public LivingEntity getAttacker() { return attacker; }
         public double getSummonChance() { return summonChance; }
     }

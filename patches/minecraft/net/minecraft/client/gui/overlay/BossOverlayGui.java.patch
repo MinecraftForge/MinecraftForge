@@ -4,7 +4,7 @@
  
           for(ClientBossInfo clientbossinfo : this.field_184060_g.values()) {
              int k = i / 2 - 91;
-+            net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo event =
++            net.minecraftforge.client.event.render.RenderGameOverlayEvent.BossInfo event =
 +               net.minecraftforge.client.ForgeHooksClient.bossBarRenderPre(p_238484_1_, this.field_184059_f.func_228018_at_(), clientbossinfo, k, j, 10 + this.field_184059_f.field_71466_p.field_78288_b);
 +            if (!event.isCanceled()) {
              RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);

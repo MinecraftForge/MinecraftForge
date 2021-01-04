@@ -42,17 +42,17 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         this.renderPartialTicks = renderPartialTicks;
     }
 
-    public GameRenderer getRenderer()
+    public GameRenderer getGameRenderer()
     {
         return renderer;
     }
 
-    public ActiveRenderInfo getInfo()
+    public ActiveRenderInfo getActiveRenderInfo()
     {
         return info;
     }
 
-    public double getRenderPartialTicks()
+    public double getPartialTicks()
     {
         return renderPartialTicks;
     }
@@ -172,11 +172,11 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
      * Event that allows mods to alter the raw FOV itself.
      * This directly affects to the FOV without being modified.
      * */
-    public static class FOVModifier extends EntityViewRenderEvent
+    public static class FOVUpdate extends EntityViewRenderEvent
     {
         private double fov;
 
-        public FOVModifier(GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, double fov) {
+        public FOVUpdate(GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, double fov) {
             super(renderer, info, renderPartialTicks);
             this.setFOV(fov);
         }

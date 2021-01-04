@@ -58,7 +58,7 @@ public class CriticalHitEvent extends PlayerEvent
     /**
     * The Entity that was damaged by the player.
     */
-    public Entity getTarget()
+    public Entity getTargetEntity()
     {
         return target;
     }
@@ -85,7 +85,7 @@ public class CriticalHitEvent extends PlayerEvent
     * The orignal damage modifier for the hit wthout any changes.<br>
     * This is 1.5F for ciritcal hits and 1F for normal hits .
     */
-    public float getOldDamageModifier()
+    public float getOriginalDamageModifier()
     {
         return this.oldDamageModifier;
     }

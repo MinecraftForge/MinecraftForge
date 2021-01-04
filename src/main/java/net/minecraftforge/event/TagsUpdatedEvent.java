@@ -41,7 +41,7 @@ public class TagsUpdatedEvent extends Event
     /**
      * @return The network tag manager that has been updated with newly received tags.
      */
-    public ITagCollectionSupplier getTagManager()
+    public ITagCollectionSupplier getCollections()
     {
         return manager;
     }

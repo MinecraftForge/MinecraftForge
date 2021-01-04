@@ -28,21 +28,20 @@ import net.minecraft.entity.LivingEntity;
  *
  */
 @Cancelable
-public class EnderTeleportEvent extends LivingEvent
+public class LivingTeleportEvent extends LivingEvent
 {
-
     private double targetX;
     private double targetY;
     private double targetZ;
     private float attackDamage;
 
-    public EnderTeleportEvent(LivingEntity entity, double targetX, double targetY, double targetZ, float attackDamage)
+    public LivingTeleportEvent(LivingEntity entity, double targetX, double targetY, double targetZ, float attackDamage)
     {
         super(entity);
         this.setTargetX(targetX);
         this.setTargetY(targetY);
         this.setTargetZ(targetZ);
-        this.setAttackDamage(attackDamage);
+        this.setTeleportDamage(attackDamage);
     }
 
     public double getTargetX() { return targetX; }
@@ -51,6 +50,6 @@ public class EnderTeleportEvent extends LivingEvent
     public void setTargetY(double targetY) { this.targetY = targetY; }
     public double getTargetZ() { return targetZ; }
     public void setTargetZ(double targetZ) { this.targetZ = targetZ; }
-    public float getAttackDamage() { return attackDamage; }
-    public void setAttackDamage(float attackDamage) { this.attackDamage = attackDamage; }
+    public float getTeleportDamage() { return attackDamage; }
+    public void setTeleportDamage(float attackDamage) { this.attackDamage = attackDamage; }
 }

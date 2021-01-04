@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.client.event.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
@@ -41,7 +41,7 @@ public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
         this.finishTimeNano = finishTimeNano;
     }
 
-    public WorldRenderer getContext()
+    public WorldRenderer getWorldRenderer()
     {
         return context;
     }

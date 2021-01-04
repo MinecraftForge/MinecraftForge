@@ -33,15 +33,12 @@ import javax.annotation.Nonnull;
  */
 public class AnvilRepairEvent extends PlayerEvent
 {
-    @Nonnull
     private final ItemStack left; // The left side of the input
-    @Nonnull
     private final ItemStack right; // The right side of the input
-    @Nonnull
     private final ItemStack output; // Set this to set the output stack
     private float breakChance; // Anvil's chance to break (reduced by 1 durability) when this is complete. Default is 12% (0.12f)
 
-    public AnvilRepairEvent(PlayerEntity player, @Nonnull ItemStack left, @Nonnull ItemStack right, @Nonnull ItemStack output)
+    public AnvilRepairEvent(PlayerEntity player, ItemStack left, ItemStack right, ItemStack output)
     {
         super(player);
         this.output = output;
@@ -54,22 +51,19 @@ public class AnvilRepairEvent extends PlayerEvent
      * Get the output result from the anvil
      * @return the output
      */
-    @Nonnull
-    public ItemStack getItemResult() { return output; }
+    public ItemStack getResultStack() { return output; }
 
     /**
      * Get the first item input into the anvil
      * @return the first input slot
      */
-    @Nonnull
-    public ItemStack getItemInput() { return left; }
+    public ItemStack getInputStack() { return left; }
 
     /**
      * Get the second item input into the anvil
      * @return the second input slot
      */
-    @Nonnull
-    public ItemStack getIngredientInput() { return right; }
+    public ItemStack getIngredientStack() { return right; }
 
     public float getBreakChance() { return breakChance; }
     public void setBreakChance(float breakChance) { this.breakChance = breakChance; }
