@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/PumpkinBlock.java
++++ b/net/minecraft/block/PumpkinBlock.java
+@@ -20,7 +20,7 @@
+ 
+    public ActionResultType func_225533_a_(BlockState p_225533_1_, World p_225533_2_, BlockPos p_225533_3_, PlayerEntity p_225533_4_, Hand p_225533_5_, BlockRayTraceResult p_225533_6_) {
+       ItemStack itemstack = p_225533_4_.func_184586_b(p_225533_5_);
+-      if (itemstack.func_77973_b() == Items.field_151097_aZ) {
++      if (itemstack.func_77973_b() instanceof net.minecraft.item.ShearsItem) {
+          if (!p_225533_2_.field_72995_K) {
+             Direction direction = p_225533_6_.func_216354_b();
+             Direction direction1 = direction.func_176740_k() == Direction.Axis.Y ? p_225533_4_.func_174811_aO().func_176734_d() : direction;

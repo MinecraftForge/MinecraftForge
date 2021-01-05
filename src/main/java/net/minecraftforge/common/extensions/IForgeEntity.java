@@ -140,7 +140,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean canBeRiddenInWater(Entity rider)
     {
-        return this instanceof LivingEntity;
+        return getEntity().canBeRiddenInWater();
     }
 
     /**
