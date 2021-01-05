@@ -71,7 +71,7 @@
        synchronized(this.field_181024_n) {
           for(TileEntity tileentity : this.field_181024_n) {
 +            if(!clippinghelper.func_228957_a_(tileentity.getRenderBoundingBox())) continue;
-+            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderTileEntityEvent(tileentity1))) continue;
++            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderTileEntityEvent(tileentity))) continue;
              BlockPos blockpos2 = tileentity.func_174877_v();
              p_228426_1_.func_227860_a_();
              p_228426_1_.func_227861_a_((double)blockpos2.func_177958_n() - d0, (double)blockpos2.func_177956_o() - d1, (double)blockpos2.func_177952_p() - d2);
