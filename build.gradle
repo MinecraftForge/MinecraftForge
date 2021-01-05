@@ -949,6 +949,7 @@ project(':forge') {
         exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
         exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
         exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
+        exclude 'net/minecraftforge/common/LenientUnboundedMapCodec.java'
 
         tasks {
             main {
