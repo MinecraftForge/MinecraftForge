@@ -53,6 +53,7 @@
        for(Entity entity : this.field_72769_h.func_217416_b()) {
 -         if ((this.field_175010_j.func_229086_a_(entity, clippinghelper, d0, d1, d2) || entity.func_184215_y(this.field_72777_q.field_71439_g)) && (entity != p_228426_6_.func_216773_g() || p_228426_6_.func_216770_i() || p_228426_6_.func_216773_g() instanceof LivingEntity && ((LivingEntity)p_228426_6_.func_216773_g()).func_70608_bn()) && (!(entity instanceof ClientPlayerEntity) || p_228426_6_.func_216773_g() == entity)) {
 +         if ((this.field_175010_j.func_229086_a_(entity, clippinghelper, d0, d1, d2) || entity.func_184215_y(this.field_72777_q.field_71439_g)) && (entity != p_228426_6_.func_216773_g() || p_228426_6_.func_216770_i() || p_228426_6_.func_216773_g() instanceof LivingEntity && ((LivingEntity)p_228426_6_.func_216773_g()).func_70608_bn()) && (!(entity instanceof ClientPlayerEntity) || p_228426_6_.func_216773_g() == entity || (entity == field_72777_q.field_71439_g && !field_72777_q.field_71439_g.func_175149_v()))) { //FORGE: render local player entity when it is not the renderViewEntity
++            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderEntityEvent(entity))) continue;
              ++this.field_72749_I;
              if (entity.field_70173_aa == 0) {
                 entity.field_70142_S = entity.func_226277_ct_();
@@ -61,6 +62,7 @@
           if (!list.isEmpty()) {
              for(TileEntity tileentity1 : list) {
 +               if(!clippinghelper.func_228957_a_(tileentity1.getRenderBoundingBox())) continue;
++               if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderTileEntityEvent(tileentity1))) continue;
                 BlockPos blockpos3 = tileentity1.func_174877_v();
                 IRenderTypeBuffer irendertypebuffer1 = irendertypebuffer$impl;
                 p_228426_1_.func_227860_a_();
@@ -69,6 +71,7 @@
        synchronized(this.field_181024_n) {
           for(TileEntity tileentity : this.field_181024_n) {
 +            if(!clippinghelper.func_228957_a_(tileentity.getRenderBoundingBox())) continue;
++            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderTileEntityEvent(tileentity1))) continue;
              BlockPos blockpos2 = tileentity.func_174877_v();
              p_228426_1_.func_227860_a_();
              p_228426_1_.func_227861_a_((double)blockpos2.func_177958_n() - d0, (double)blockpos2.func_177956_o() - d1, (double)blockpos2.func_177952_p() - d2);
