@@ -28,7 +28,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod("stencil_enable_test")
 public class StencilEnableTest {
-    public static boolean ENABLED = true;
+    public static boolean ENABLED = false;
 
     public StencilEnableTest() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::clientSetup);

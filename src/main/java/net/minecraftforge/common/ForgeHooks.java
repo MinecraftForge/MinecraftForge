@@ -1317,7 +1317,7 @@ public class ForgeHooks
                     return inlinedObj;
                 //Promote the partial here, so that any registered objects in the list are not nuked for
                 // the presence of an unregistered one.
-                return registeredObj.promotePartial(s -> LOGGER.warn("Error decoding object list: " + input.toString() + " (" + s + ")"));
+                return registeredObj.promotePartial(err -> LOGGER.warn("Error decoding object list: " + input.toString() + " (" + err + ")"));
             }
 
             /**
