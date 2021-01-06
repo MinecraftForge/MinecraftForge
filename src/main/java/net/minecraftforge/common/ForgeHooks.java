@@ -1294,7 +1294,7 @@ public class ForgeHooks
 
     public static <O> Codec<List<Supplier<O>>> fixRegistryKeyCodec(Codec<Supplier<O>> registeredCodec, Codec<O> objectCodec, ResourceLocation registryName)
     {
-        Codec<List<Supplier<O>>> improvedListCodec = ImprovedListCodec.createNoPartials(registeredCodec);
+        Codec<List<Supplier<O>>> improvedListCodec = new ImprovedListCodec<>(registeredCodec);
         Codec<List<Supplier<O>>> inlinedCodec = objectCodec.<Supplier<O>>xmap(o -> () -> o, Supplier::get).listOf();
         return new Codec<List<Supplier<O>>>()
         {
