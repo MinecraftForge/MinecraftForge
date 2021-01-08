@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -855,5 +856,20 @@ public interface IForgeItem
     default boolean isDamageable(ItemStack stack)
     {
         return this.getItem().isDamageable();
+    }
+
+    /**
+     * Used to spawn mob given a mob entity is right clicked by this item.
+     * This should handle creating and spawning the entity in the world before returning.
+     * This is called only on the logical server.
+     * 
+     * @param stack The stack being right-clicked on the entity
+     * @param player The player causing the interaction
+     * @param mob The mob being interacted with
+     * @return An optional containing the mob spawned in the world or else {@code #empty} if the process failed
+     */
+    default Optional<MobEntity> getMobToSpawn(ItemStack stack, PlayerEntity player, MobEntity mob)
+    {
+        return Optional.empty();
     }
 }

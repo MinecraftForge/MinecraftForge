@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.Optional;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -502,5 +503,19 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     default boolean elytraFlightTick(LivingEntity entity, int flightTicks)
     {
         return getStack().getItem().elytraFlightTick(getStack(), entity, flightTicks);
+    }
+
+    /**
+     * Used to spawn a mob given a mob entity is right clicked by this item.
+     * This should handle creating and spawning the entity in the world before returning.
+     * This is called only on the logical server.
+     * 
+     * @param player The player causing the interaction
+     * @param mob The mob being interacted with
+     * @return An optional containing the mob spawned in the world or else {@code #empty} if the process failed
+     */
+    default Optional<MobEntity> getMobToSpawn(PlayerEntity player, MobEntity mob)
+    {
+        return getStack().getItem().getMobToSpawn(getStack(), player, mob);
     }
 }

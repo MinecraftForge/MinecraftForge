@@ -50,3 +50,11 @@
           }
        } else {
           return EquipmentSlotType.HEAD;
+@@ -1055,6 +1066,7 @@
+             }
+          }
+ 
++         if(this.field_70170_p instanceof ServerWorld && itemstack.getMobToSpawn(p_233661_1_, this).map(child -> { this.func_213406_a(p_233661_1_, child); return child;}).isPresent()) return ActionResultType.SUCCESS;
+          if (itemstack.func_77973_b() instanceof SpawnEggItem) {
+             if (this.field_70170_p instanceof ServerWorld) {
+                SpawnEggItem spawneggitem = (SpawnEggItem)itemstack.func_77973_b();
