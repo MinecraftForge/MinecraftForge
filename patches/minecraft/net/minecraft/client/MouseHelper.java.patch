@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/MouseHelper.java
 +++ b/net/minecraft/client/MouseHelper.java
+
+import net.minecraft.client.util.NativeUtil;
++ import net.minecraft.util.Util;
+import net.minecraft.util.math.MathHelper;
+
+private final Minecraft minecraft;
++ public static final boolean IS_RUNNING_ON_MAC = Util.getOSType() == Util.OS.OSX;
+private boolean middleDown;
+
 @@ -71,6 +71,7 @@
              this.field_198042_g = -1;
           }
@@ -36,6 +45,12 @@
     }
  
 @@ -121,7 +126,9 @@
+          if (handle == Minecraft.getInstance().getMainWindow().getHandle()) {
++            if (IS_RUNNING_ON_MAC) {
++               double d0 = (this.minecraft.gameSettings.discreteMouseScroll ? Math.signum(xpffset + yoffset) : (xoffset + yoffset)) * this.minecraft.gameSettings.mouseWheelSensitivity;
++            } else {
+                double d0 = (this.minecraft.gameSettings.discreteMouseScroll ? Math.signum(yoffset) : yoffset) * this.minecraft.gameSettings.mouseWheelSensitivity;
++            }
              if (this.field_198036_a.field_71462_r != null) {
                 double d1 = this.field_198040_e * (double)this.field_198036_a.func_228018_at_().func_198107_o() / (double)this.field_198036_a.func_228018_at_().func_198105_m();
                 double d2 = this.field_198041_f * (double)this.field_198036_a.func_228018_at_().func_198087_p() / (double)this.field_198036_a.func_228018_at_().func_198083_n();
