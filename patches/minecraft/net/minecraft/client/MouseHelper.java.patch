@@ -1,24 +1,6 @@
 --- a/net/minecraft/client/MouseHelper.java
 +++ b/net/minecraft/client/MouseHelper.java
-@@ -1,9 +1,5 @@
- package net.minecraft.client;
- 
--import java.nio.file.Path;
--import java.nio.file.Paths;
--import java.util.Arrays;
--import java.util.List;
- import net.minecraft.client.gui.IGuiEventListener;
- import net.minecraft.client.gui.screen.Screen;
- import net.minecraft.client.settings.KeyBinding;
-@@ -15,9 +11,15 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
- import org.lwjgl.glfw.GLFWDropCallback;
- 
-+import java.nio.file.Path;
-+import java.nio.file.Paths;
-+import java.util.Arrays;
-+import java.util.List;
-+
+@@ -18,6 +18,7 @@
  @OnlyIn(Dist.CLIENT)
  public class MouseHelper {
     private final Minecraft field_198036_a;
@@ -26,7 +8,7 @@
     private boolean field_198037_b;
     private boolean field_198038_c;
     private boolean field_198039_d;
-@@ -116,7 +118,12 @@
+@@ -116,7 +117,12 @@
  
     private void func_198020_a(long p_198020_1_, double p_198020_3_, double p_198020_5_) {
        if (p_198020_1_ == Minecraft.func_71410_x().func_228018_at_().func_198092_i()) {
@@ -40,7 +22,7 @@
           if (this.field_198036_a.field_213279_p == null) {
              if (this.field_198036_a.field_71462_r != null) {
                 double d1 = this.field_198040_e * (double)this.field_198036_a.func_228018_at_().func_198107_o() / (double)this.field_198036_a.func_228018_at_().func_198105_m();
-@@ -267,6 +274,10 @@
+@@ -267,6 +273,10 @@
        return this.field_198039_d;
     }
  
