@@ -37,7 +37,7 @@
           for(int j = 0; j < bitset.length(); ++j) {
              if (bitset.get(j)) {
 -               list.addAll(this.field_188626_f.get(j).getRight().func_200117_a(p_200117_1_, p_200117_2_, new Random(k)));
-+               list.addAll(this.field_188626_f.get(j).getRight().getQuads(p_200117_1_, p_200117_2_, new Random(k), modelData));
++               list.addAll(this.field_188626_f.get(j).getRight().getQuads(p_200117_1_, p_200117_2_, new Random(k), net.minecraftforge.client.model.data.MultipartModelData.resolve(this.field_188626_f.get(j).getRight(), modelData)));
              }
           }
  
@@ -52,7 +52,7 @@
     public boolean func_177556_c() {
        return this.field_188622_b;
     }
-@@ -86,14 +93,24 @@
+@@ -86,18 +93,33 @@
        return false;
     }
  
@@ -77,3 +77,12 @@
     public ItemOverrideList func_188617_f() {
        return this.field_188625_e;
     }
+ 
++   @Override
++   public net.minecraftforge.client.model.data.IModelData getModelData(net.minecraft.world.IBlockDisplayReader world, net.minecraft.util.math.BlockPos pos, BlockState state, net.minecraftforge.client.model.data.IModelData tileData) {
++      return net.minecraftforge.client.model.data.MultipartModelData.create(field_188626_f, world, pos, state, tileData);
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    public static class Builder {
+       private final List<Pair<Predicate<BlockState>, IBakedModel>> field_188649_a = Lists.newArrayList();
