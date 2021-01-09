@@ -8,12 +8,12 @@
  
           try {
 +            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions")) {
-+               field_199521_c.debug("Skipping loading recipe {} as it's conditions were not met", resourcelocation);
++               field_199521_c.debug("Skipping loading recipe {} as its conditions were not met", resourcelocation);
 +               continue;
 +            }
              IRecipe<?> irecipe = func_215377_a(resourcelocation, JSONUtils.func_151210_l(entry.getValue(), "top element"));
 +            if (irecipe == null) {
-+               field_199521_c.info("Skipping loading recipe {} as it's serializer returned null", resourcelocation);
++               field_199521_c.info("Skipping loading recipe {} as its serializer returned null", resourcelocation);
 +               continue;
 +            }
              map.computeIfAbsent(irecipe.func_222127_g(), (p_223391_0_) -> {
