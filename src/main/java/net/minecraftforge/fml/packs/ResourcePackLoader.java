@@ -60,6 +60,7 @@ public class ResourcePackLoader
                 .map(mf -> new ModFileResourcePack(mf.getFile()))
                 .collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity(), (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },  LinkedHashMap::new));
         resourcePacks.addPackFinder(new LambdaFriendlyPackFinder(packFinder.apply(modResourcePacks, ModFileResourcePack::setPackInfo)));
+        resourcePacks.addPackFinder(new ExtraModDatapackFinder());
     }
 
     public static List<String> getPackNames()
