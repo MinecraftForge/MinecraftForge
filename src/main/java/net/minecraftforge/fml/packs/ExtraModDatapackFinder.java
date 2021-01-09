@@ -27,26 +27,21 @@ public class ExtraModDatapackFinder implements IPackFinder
     };
 
     @Override
-    @SuppressWarnings("CatchMayIgnoreException")
     public void findPacks(Consumer<ResourcePackInfo> consumer, ResourcePackInfo.IFactory factory)
     {
         ModList.get().getModFiles().stream().map(ModFileInfo::getFile).forEach(mf ->
         {
-            try
-            {
-                File packs = mf.getLocator().findPath(mf, "packs").toFile();
-                if (!packs.exists() || !packs.isDirectory())
-                    return;
+            File packs = mf.getLocator().findPath(mf, "packs").toFile();
+            if (!packs.exists() || !packs.isDirectory())
+                return;
 
-                for (File f : packs.listFiles(FILE_FILTER))
-                {
-                    Supplier<IResourcePack> pack = () -> f.isDirectory() ? new FolderPack(f) : new FilePack(f);
-                    ResourcePackInfo info = ResourcePackInfo.createResourcePack("file/" + f.getName(), false, pack, factory, ResourcePackInfo.Priority.TOP, IPackNameDecorator.PLAIN);
-                    if (info != null)
-                        consumer.accept(info);
-                }
+            for (File f : packs.listFiles(FILE_FILTER))
+            {
+                Supplier<IResourcePack> pack = () -> f.isDirectory() ? new FolderPack(f) : new FilePack(f);
+                ResourcePackInfo info = ResourcePackInfo.createResourcePack("file/" + f.getName(), false, pack, factory, ResourcePackInfo.Priority.TOP, IPackNameDecorator.PLAIN);
+                if (info != null)
+                    consumer.accept(info);
             }
-            catch (Exception e) {}
         });
     }
 }
