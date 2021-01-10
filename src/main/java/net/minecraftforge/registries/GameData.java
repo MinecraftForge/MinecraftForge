@@ -57,7 +57,6 @@ import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
@@ -80,8 +79,9 @@ import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.event.entity.EntityAttributeSetupEvent;
-import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
@@ -347,32 +347,6 @@ public class GameData
         LOGGER.debug(REGISTRIES, "Reverting complete");
     }
 
-    public static EntityAttributeSetupEvent generateEntityAttributeEvent(ModContainer c)
-    {
-        return AttributeSetupState.createEvent(c);
-    }
-
-    public static CompletableFuture<List<Throwable>> preGenerateEntityAttributeEvent(final Executor executor, final ModLoadingStage.EventGenerator<EntityAttributeSetupEvent> eventGenerator)
-    {
-        return CompletableFuture.runAsync(AttributeSetupState::clearState, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
-    }
-
-    public static CompletableFuture<List<Throwable>> postGenerateEntityAttributeEvent(final Executor executor, final ModLoadingStage.EventGenerator<EntityAttributeSetupEvent> eventGenerator)
-    {
-        return CompletableFuture.runAsync(()->
-        {
-            Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> finalMap = new HashMap<>();
-            AttributeSetupState.getAttributeEvents().forEach(tuple ->
-                    tuple.getB().getEntityAttributes().forEach((entityType, mutableAttribute) ->
-                    {
-                        AttributeModifierMap.MutableAttribute finalEntry = finalMap.computeIfAbsent(entityType, (type) -> new AttributeModifierMap.MutableAttribute());
-                        finalEntry.combine(mutableAttribute);
-                    }));
-            finalMap.forEach(GlobalEntityTypeAttributes::combineWithExisting);
-            AttributeSetupState.clearState();
-        }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
-    }
-
     @SuppressWarnings("rawtypes") //Eclipse compiler generics issue.
     public static Stream<ModLoadingStage.EventGenerator<?>> generateRegistryEvents() {
         List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
@@ -418,6 +392,10 @@ public class GameData
                 revertTo(RegistryManager.VANILLA, false);
                 LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
             }
+            ModLoader.get().postEvent(new EntityAttributeCreationEvent());
+            Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> finalMap = new HashMap<>();
+            ModLoader.get().postEvent(new EntityAttributeModificationEvent(finalMap));
+            finalMap.forEach(GlobalEntityTypeAttributes::combineWithExisting);
         }, executor);
     }
 
@@ -995,27 +973,5 @@ public class GameData
             throw new RuntimeException(e);
         }
 
-    }
-
-    private static class AttributeSetupState
-    {
-        private static final List<Tuple<ModContainer, EntityAttributeSetupEvent>> ATTRIBUTE_EVENTS = new ArrayList<>();
-
-        private static void clearState()
-        {
-            ATTRIBUTE_EVENTS.clear();
-        }
-
-        private static EntityAttributeSetupEvent createEvent(ModContainer container)
-        {
-            EntityAttributeSetupEvent event = new EntityAttributeSetupEvent(container);
-            ATTRIBUTE_EVENTS.add(new Tuple<>(container, event));
-            return event;
-        }
-
-        private static List<Tuple<ModContainer, EntityAttributeSetupEvent>> getAttributeEvents()
-        {
-            return ATTRIBUTE_EVENTS;
-        }
     }
 }
