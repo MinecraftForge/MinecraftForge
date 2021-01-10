@@ -40,6 +40,9 @@ public class EntityAttributeCreationEvent extends Event implements IModBusEvent 
     }
 
     public void put(EntityType<? extends LivingEntity> entity, AttributeModifierMap map){
+        if (GlobalEntityTypeAttributes.doesEntityHaveAttributes(entity)){
+            throw new IllegalStateException("Duplicate GlobalEntityTypeAttributes entry: " + entity);
+        }
         GlobalEntityTypeAttributes.put(entity, map);
     }
 }
