@@ -17,3 +17,14 @@
        private ModifiableAttributeInstance func_233817_b_(Attribute p_233817_1_) {
           ModifiableAttributeInstance modifiableattributeinstance = new ModifiableAttributeInstance(p_233817_1_, (p_233816_2_) -> {
              if (this.field_233812_b_) {
+@@ -91,6 +101,10 @@
+          return this;
+       }
+ 
++      public boolean hasAttribute(Attribute attribute) {
++         return this.field_233811_a_.containsKey(attribute);
++      }
++
+       public AttributeModifierMap func_233813_a_() {
+          this.field_233812_b_ = true;
+          return new AttributeModifierMap(this.field_233811_a_);

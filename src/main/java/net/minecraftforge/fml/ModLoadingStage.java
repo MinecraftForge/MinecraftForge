@@ -21,7 +21,6 @@ package net.minecraftforge.fml;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.EntityAttributeSetupEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -42,6 +41,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -53,11 +53,6 @@ public enum ModLoadingStage
     CONSTRUCT(FMLConstructModEvent.class),
     CREATE_REGISTRIES(()->Stream.of(EventGenerator.fromFunction(RegistryEvent.NewRegistry::new))),
     LOAD_REGISTRIES(GameData::generateRegistryEvents, GameData::preRegistryEventDispatch, GameData::postRegistryEventDispatch, GameData::checkForRevertToVanilla),
-    PROCESS_ATTRIBUTES(()->Stream.of(
-            EventGenerator.fromFunction(GameData::generateEntityAttributeEvent)),
-            GameData::preGenerateEntityAttributeEvent,
-            GameData::postGenerateEntityAttributeEvent,
-            (e, prev)->prev.thenApply(Function.identity())),
     COMMON_SETUP(FMLCommonSetupEvent.class),
     SIDED_SETUP(DistExecutor.unsafeRunForDist(()->()->FMLClientSetupEvent.class, ()->()->FMLDedicatedServerSetupEvent.class)),
     ENQUEUE_IMC(InterModEnqueueEvent.class),
