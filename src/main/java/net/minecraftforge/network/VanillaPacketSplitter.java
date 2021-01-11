@@ -127,7 +127,6 @@ public class VanillaPacketSplitter
 
     private static boolean heuristicIsDefinitelySmallEnough(IPacket<?> packet)
     {
-        // todo: improve this
         return false;
     }
 
