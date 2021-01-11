@@ -34,6 +34,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.progress.EarlyProgressVisualization;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.Environment;
@@ -53,6 +54,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -183,11 +185,12 @@ public class FMLLoader
         naming = commonLaunchHandler.getNaming();
         dist = commonLaunchHandler.getDist();
         production = commonLaunchHandler.isProduction();
-        progressWindowTick = EarlyProgressVisualization.INSTANCE.accept(dist, commonLaunchHandler.isData());
+
+        mcVersion = (String) arguments.get("mcVersion");
+        progressWindowTick = EarlyProgressVisualization.INSTANCE.accept(dist, commonLaunchHandler.isData(), mcVersion);
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Early Loading!"));
         accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
 
-        mcVersion = (String) arguments.get("mcVersion");
         mcpVersion = (String) arguments.get("mcpVersion");
         forgeVersion = (String) arguments.get("forgeVersion");
         forgeGroup = (String) arguments.get("forgeGroup");
@@ -214,7 +217,7 @@ public class FMLLoader
         loadingModList = backgroundScanHandler.getLoadingModList();
         commonLaunchHandler.addLibraries(backgroundScanHandler.getModFiles().getOrDefault(IModFile.Type.LIBRARY, Collections.emptyList()));
         progressWindowTick.run();
-        return backgroundScanHandler.getModFiles();
+        return loadingModList.getModFiles().stream().map(ModFileInfo::getFile).collect(Collectors.groupingBy(ModFile::getType));
     }
 
     public static ICoreModProvider getCoreModProvider() {

@@ -3,7 +3,7 @@ loaderVersion="[28,)"
 license="LGPL v2.1"
 
 [[mods]]
-	modId="containertypetest"
+    modId="containertypetest"
 [[mods]]
     modId="potion_event_test"
 [[mods]]
@@ -89,6 +89,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="biome_loading_event_test"
 [[mods]]
+    modId="living_conversion_event_test"
+[[mods]]
     modId="player_game_mode_event_test"
 [[mods]]
     modId="structure_spawn_list_event_test"
@@ -96,3 +98,9 @@ license="LGPL v2.1"
     modId="forge_codecs_test"
 [[mods]]
     modId="render_local_player_test"
+[[mods]]
+    modId="forge_world_type_test"
+[[mods]]
+    modId="custom_sound_type_test"
+[[mods]]
+    modId="item_modifier_test"

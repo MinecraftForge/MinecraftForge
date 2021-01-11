@@ -33,6 +33,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
@@ -43,10 +44,15 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.fluid.*;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
@@ -91,6 +97,8 @@ import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.*;
+import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -116,10 +124,12 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
+import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -664,7 +674,8 @@ public class ForgeHooks
 
                     world.markAndNotifyBlock(snap.getPos(), world.getChunkAt(snap.getPos()), oldBlock, newBlock, updateFlag, 512);
                 }
-                player.addStat(Stats.ITEM_USED.get(item));
+                if (player != null)
+                    player.addStat(Stats.ITEM_USED.get(item));
             }
         }
         world.capturedBlockSnapshots.clear();
@@ -778,9 +789,17 @@ public class ForgeHooks
         return evt;
     }
 
+    @Deprecated //Use RayTraceResult version.  TODO: Remove 1.17
     public static PlayerInteractEvent.RightClickBlock onRightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face)
     {
         PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, pos, face);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static PlayerInteractEvent.RightClickBlock onRightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, BlockRayTraceResult hitVec)
+    {
+        PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, pos, hitVec);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
     }
@@ -873,6 +892,14 @@ public class ForgeHooks
                     .sound(SoundEvents.ITEM_BUCKET_FILL_LAVA, SoundEvents.ITEM_BUCKET_EMPTY_LAVA)
                     .build(fluid);
         throw new RuntimeException("Mod fluids must override createAttributes.");
+    }
+
+    public static String getDefaultWorldType()
+    {
+        ForgeWorldType def = ForgeWorldType.getDefaultWorldType();
+        if (def != null)
+            return def.getRegistryName().toString();
+        return "default";
     }
 
     @FunctionalInterface
@@ -1002,6 +1029,16 @@ public class ForgeHooks
     public static void onAdvancement(ServerPlayerEntity player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
+    }
+
+    /**
+     * Hook to fire {@link ItemAttributeModifierEvent}. Modders should use {@link ItemStack#getAttributeModifiers(EquipmentSlotType)} instead.
+     */
+    public static Multimap<Attribute,AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlotType equipmentSlot, Multimap<Attribute,AttributeModifier> attributes)
+    {
+        ItemAttributeModifierEvent event = new ItemAttributeModifierEvent(stack, equipmentSlot, attributes);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getModifiers();
     }
 
     /**
@@ -1231,5 +1268,19 @@ public class ForgeHooks
         List<String> modpacks = getModPacks();
         modpacks.add("vanilla");
         return modpacks;
+    }
+
+    /**
+     * Fixes MC-194811
+     * When a structure mod is removed, this map may contain null keys. This will make the world unable to save if this persists.
+     * If we remove a structure from the save data in this way, we then mark the chunk for saving
+     */
+    public static void fixNullStructureReferences(IChunk chunk, Map<Structure<?>, LongSet> structureReferences)
+    {
+        if (structureReferences.remove(null) != null)
+        {
+            chunk.setModified(true);
+        }
+        chunk.setStructureReferences(structureReferences);
     }
 }

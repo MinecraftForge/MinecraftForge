@@ -1,0 +1,10 @@
+--- a/net/minecraft/enchantment/EfficiencyEnchantment.java
++++ b/net/minecraft/enchantment/EfficiencyEnchantment.java
+@@ -22,6 +22,6 @@
+    }
+ 
+    public boolean func_92089_a(ItemStack p_92089_1_) {
+-      return p_92089_1_.func_77973_b() == Items.field_151097_aZ ? true : super.func_92089_a(p_92089_1_);
++      return p_92089_1_.func_77973_b() instanceof net.minecraft.item.ShearsItem ? true : super.func_92089_a(p_92089_1_);
+    }
+ }
