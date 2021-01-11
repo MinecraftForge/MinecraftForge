@@ -104,3 +104,5 @@ license="LGPL v2.1"
     modId="custom_sound_type_test"
 [[mods]]
     modId="item_modifier_test"
+[[mods]]
+    modId="goal_selector_add_goal_test"
