@@ -29,8 +29,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -40,6 +42,10 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import javax.annotation.Nonnull;
@@ -96,9 +102,16 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.registry.DynamicRegistries;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.util.registry.WorldSettingsImport;
 import net.minecraft.util.text.*;
+import net.minecraft.world.*;
 import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -110,12 +123,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameType;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeAmbience;
 import net.minecraft.world.biome.BiomeGenerationSettings;
@@ -155,6 +162,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -1282,5 +1290,73 @@ public class ForgeHooks
             chunk.setModified(true);
         }
         chunk.setStructureReferences(structureReferences);
+    }
+
+    private static final Set<String> VANILLA_DIMS = Sets.newHashSet("minecraft:overworld", "minecraft:the_nether", "minecraft:the_end");
+    private static final String DIMENSIONS_KEY = "dimensions";
+    private static final String SEED_KEY = "seed";
+    //No to static init!
+    private static final LazyValue<Codec<SimpleRegistry<Dimension>>> CODEC = new LazyValue<>(() -> SimpleRegistry.getSimpleRegistryCodec(Registry.DIMENSION_KEY, Lifecycle.stable(), Dimension.CODEC).xmap(Dimension::func_236062_a_, Function.identity()));
+
+    /**
+     * Restores previously "deleted" dimensions to the world.
+     * The {@link LenientUnboundedMapCodec} prevents this from happening, this is to fix any world from before the fix.
+     */
+    public static <T> Dynamic<T> fixUpDimensionsData(Dynamic<T> data)
+    {
+        if(!(data.getOps() instanceof WorldSettingsImport))
+            return data;
+
+        WorldSettingsImport<T> ops = (WorldSettingsImport<T>) data.getOps();
+        Dynamic<T> dymData = data.get(DIMENSIONS_KEY).orElseEmptyMap();
+        Dynamic<T> withInjected = dymData.asMapOpt().map(current ->
+        {
+            List<Pair<String, T>> currentList = current.map(p -> p.mapFirst(dyn -> dyn.asString().result().orElse("")).mapSecond(Dynamic::getValue)).collect(Collectors.toList());
+            Set<String> currentDimNames = currentList.stream().map(Pair::getFirst).collect(Collectors.toSet());
+
+            // FixUp deleted vanilla dims.
+            if (!currentDimNames.containsAll(VANILLA_DIMS))
+            {
+                LOGGER.warn("Detected missing vanilla dimensions from the world!");
+                DynamicRegistries regs = ObfuscationReflectionHelper.getPrivateValue(WorldSettingsImport.class, ops, "field_240872_d_");
+                if (regs == null) // should not happen, but it could after a MC version update.
+                    throw new RuntimeException("Could not access dynamic registries using reflection. " +
+                            "The world was detected to have missing vanilla dimensions and the attempted fix did not work.");
+
+                long seed = data.get(SEED_KEY).get().result().map(d -> d.asLong(0L)).orElse(0L);
+                Registry<Biome> biomeReg = regs.getRegistry(Registry.BIOME_KEY);
+                Registry<DimensionType> typeReg = regs.getRegistry(Registry.DIMENSION_TYPE_KEY);
+                Registry<DimensionSettings> noiseReg = regs.getRegistry(Registry.NOISE_SETTINGS_KEY);
+
+                //Loads the default nether and end
+                SimpleRegistry<Dimension> dimReg = DimensionType.getDefaultSimpleRegistry(typeReg, biomeReg, noiseReg, seed);
+                //Loads the default overworld
+                dimReg = DimensionGeneratorSettings.func_242749_a(typeReg, dimReg, DimensionGeneratorSettings.func_242750_a(biomeReg, noiseReg, seed));
+
+                // Encode and decode the registry. This adds any dimensions from datapacks (see SimpleRegistryCodec#decode), but only the vanilla overrides are needed.
+                // This assumes that the datapacks for the vanilla dimensions have not changed since they were "deleted"
+                // If they did, this will be seen in newly generated chunks.
+                // Since this is to fix an older world, from before the fixes by forge, there is no way to know the state of the dimension when it was "deleted".
+                dimReg = CODEC.getValue().encodeStart(ops, dimReg).flatMap(t -> CODEC.getValue().parse(ops, t)).result().orElse(dimReg);
+                for (String name : VANILLA_DIMS)
+                {
+                    if (currentDimNames.contains(name))
+                        continue;
+                    Dimension dim = dimReg.getOrDefault(new ResourceLocation(name));
+                    if (dim == null)
+                    {
+                        LOGGER.error("The world is missing dimension: " + name + ", but the attempt to re-inject it failed.");
+                        continue;
+                    }
+                    LOGGER.info("Fixing world: re-injected dimension: " + name);
+                    currentList.add(Pair.of(name, Dimension.CODEC.encodeStart(ops, dim).resultOrPartial(s->{}).orElse(ops.empty())));
+                }
+            }
+            else
+                return dymData;
+
+            return new Dynamic<>(ops, ops.createMap(currentList.stream().map(p -> p.mapFirst(ops::createString))));
+        }).result().orElse(dymData);
+        return data.set(DIMENSIONS_KEY, withInjected);
     }
 }
