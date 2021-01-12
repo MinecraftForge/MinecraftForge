@@ -11,17 +11,21 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.monster.AbstractSkeletonEntity;
 import net.minecraft.entity.monster.WitherSkeletonEntity;
 import net.minecraft.entity.monster.piglin.PiglinEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Hand;
+import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.GameType;
 import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -147,6 +151,14 @@ public class GoalSelectorAddGoalTest
             }
         }
 
+        /***
+         * This event happens during goal ticking
+         * Updating the held item can modify the goals for certain entities (e.g. skeletons)
+         * So we need to delay the disarming
+         * Thanks to @malte0811
+         * @see AbstractSkeletonEntity#setCombatTask()
+         * @see MinecraftServer#enqueue(Runnable)
+         */
         @SubscribeEvent
         public void onLivingAttackEvent(LivingAttackEvent event)
         {
@@ -154,10 +166,23 @@ public class GoalSelectorAddGoalTest
             if (entity instanceof MobEntity && createdEntities.contains(entity))
             {
                 MobEntity mob = (MobEntity) entity;
-                // Disarm mob with a 1 in 5 chance
-                if (world.rand.nextInt(5) == 0)
+                World world = mob.getEntityWorld();
+                if (world instanceof ServerWorld)
                 {
-                    mob.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+                    // Disarm mob with a 1 in 5 chance
+                    if (world.rand.nextInt(5) == 0)
+                    {
+                        MinecraftServer server = ((ServerWorld) world).getServer();
+                        // Delay till the next tick to avoid CME during goal ticking
+                        // Must use enqueue because execute will just run right away if it's on the server thread
+                        server.enqueue(new TickDelayedTask(server.getTickCounter(), () -> {
+                            // Check that the mob didn't die in the meantime
+                            if (mob.isAlive())
+                            {
+                                mob.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+                            }
+                        }));
+                    }
                 }
             }
         }
