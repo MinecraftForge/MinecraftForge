@@ -71,6 +71,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 
 public class ModDiscoverer {
+    private static final Path INVALID_PATH = Paths.get("This", "Path", "Should", "Never", "Exist", "Because", "That", "Would", "Be", "Stupid", "CON", "AUX", "/dev/null");
     private static final Logger LOGGER = LogManager.getLogger();
     private final ServiceLoader<IModLocator> locators;
     private final List<IModLocator> locatorList;
@@ -172,20 +173,23 @@ public class ModDiscoverer {
 
         @Override
         public Path findPath(final IModFile modFile, final String... path) {
-            String[] newPath = Arrays.copyOf(path, path.length);
-            if (path.length == 2 && Objects.equals(path[1], "mods.toml")) {
-                final URI jarFileURI;
-                try {
-                    jarFileURI = getClass().getClassLoader().getResource("minecraftmod.toml").toURI();
-                    if (Objects.equals(jarFileURI.getScheme(), "jar")) {
-                        // Initialize the filesystem for the forge jar, because otherwise this barfs?
-                        FileSystems.newFileSystem(jarFileURI, new HashMap<>());
+            if (path.length == 2 && Objects.equals(path[0], "META-INF")) {
+                if (Objects.equals(path[1], "mods.toml")) {
+                    final URI jarFileURI;
+                    try {
+                        jarFileURI = getClass().getClassLoader().getResource("minecraftmod.toml").toURI();
+                        if (Objects.equals(jarFileURI.getScheme(), "jar")) {
+                            // Initialize the filesystem for the forge jar, because otherwise this barfs?
+                            FileSystems.newFileSystem(jarFileURI, new HashMap<>());
+                        }
+                    } catch (URISyntaxException | IOException e) {
+                        LOGGER.fatal(SCAN, "Unable to read minecraft default mod");
+                        throw new RuntimeException(e);
                     }
-                } catch (URISyntaxException | IOException e) {
-                    LOGGER.fatal(SCAN, "Unable to read minecraft default mod");
-                    throw new RuntimeException(e);
+                    return Paths.get(jarFileURI);
+                } else if (Objects.equals(path[1], "coremods.json")) {
+                    return INVALID_PATH;
                 }
-                return Paths.get(jarFileURI);
             }
             if (Files.isDirectory(mcJar)) return findPathDirectory(modFile, path);
             return findPathJar(modFile, path);
