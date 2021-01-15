@@ -1,0 +1,19 @@
+{
+  "condition" : {
+    "type" : "forge:matches_category",
+    "category" : "plains"
+  },
+  "modifier" : {
+    "type" : "forge:spawns_additions",
+    "spawners" : {
+      "monster" : [
+        {
+          "type" : "minecraft:creeper",
+          "weight" : 500,
+          "minCount" : 50,
+          "maxCount" : 80
+        }
+      ]
+    }
+  }
+}
