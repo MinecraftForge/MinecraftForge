@@ -643,10 +643,6 @@ public class FluidUtil
             {
                 return new ItemStack(Items.LAVA_BUCKET);
             }
-            else if (fluid.getRegistryName().equals(new ResourceLocation("milk")))
-            {
-                return new ItemStack(Items.MILK_BUCKET);
-            }
         }
 
         return fluid.getAttributes().getBucket(fluidStack);

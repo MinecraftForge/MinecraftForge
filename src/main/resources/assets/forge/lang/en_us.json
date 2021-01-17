@@ -169,5 +169,8 @@
   "forge.swimSpeed": "Swim Speed",
   "forge.nameTagDistance": "Nametag Render Distance",
   "forge.entity_gravity": "Entity Gravity",
-  "generic.reachDistance": "Reach Distance"
+  "generic.reachDistance": "Reach Distance",
+
+  "fluid.minecraft.milk": "Milk",
+  "fluid.minecraft.flowing_milk": "Milk"
 }
