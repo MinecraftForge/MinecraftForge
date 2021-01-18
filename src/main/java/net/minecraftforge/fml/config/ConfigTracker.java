@@ -121,7 +121,6 @@ public class ConfigTracker {
             Optional.ofNullable(fileMap.get(s2CConfigData.getFileName())).ifPresent(mc-> {
                 mc.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(s2CConfigData.getBytes())));
                 mc.fireEvent(new ModConfig.Reloading(mc));
-                mc.getSpec().afterReload();
             });
         }
     }

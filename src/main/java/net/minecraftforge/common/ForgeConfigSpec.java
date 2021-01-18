@@ -90,6 +90,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 ((FileConfig) config).save();
             }
         }
+        this.afterReload();
     }
 
     public boolean isCorrecting() {
