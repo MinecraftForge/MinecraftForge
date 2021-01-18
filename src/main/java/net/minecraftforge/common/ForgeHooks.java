@@ -667,10 +667,7 @@ public class ForgeHooks
                     int updateFlag = snap.getFlag();
                     BlockState oldBlock = snap.getReplacedBlock();
                     BlockState newBlock = world.getBlockState(snap.getPos());
-                    if (!newBlock.hasTileEntity()) // Containers get placed automatically
-                    {
-                        newBlock.onBlockAdded(world, snap.getPos(), oldBlock, false);
-                    }
+                    newBlock.onBlockAdded(world, snap.getPos(), oldBlock, false);
 
                     world.markAndNotifyBlock(snap.getPos(), world.getChunkAt(snap.getPos()), oldBlock, newBlock, updateFlag, 512);
                 }
