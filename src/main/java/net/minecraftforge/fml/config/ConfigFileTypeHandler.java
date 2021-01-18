@@ -117,6 +117,7 @@ public class ConfigFileTypeHandler {
                 }
                 LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
                 this.modConfig.fireEvent(new ModConfig.Reloading(this.modConfig));
+                this.modConfig.getSpec().afterReload();
             }
         }
     }
