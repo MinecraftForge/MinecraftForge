@@ -57,7 +57,8 @@ import net.minecraftforge.common.capabilities.Capability;
 public class LazyOptional<T>
 {
     private final NonNullSupplier<T> supplier;
-    private AtomicReference<T> resolved;
+    private final Object lock = new Object();
+    private T resolved;
     private Set<NonNullConsumer<LazyOptional<T>>> listeners = new HashSet<>();
     private boolean isValid = true;
 
@@ -108,23 +109,21 @@ public class LazyOptional<T>
         if (!isValid)
             return null;
         if (resolved != null)
-            return resolved.get();
+            return resolved;
 
-        if (supplier != null)
-        {
-            resolved = new AtomicReference<>(null);
-            T temp = supplier.get();
-            if (temp == null)
+        synchronized (lock) {
+            // resolved == null: Double checked locking to prevent two threads from resolving
+            if (resolved == null && supplier != null)
             {
-                LOGGER.catching(Level.WARN, new NullPointerException("Supplier should not return null value"));
-                return null;
+                T temp = supplier.get();
+                if (temp == null)
+                    LOGGER.catching(Level.WARN, new NullPointerException("Supplier should not return null value"));
+                resolved = temp;
             }
-            resolved.set(temp);
-            return resolved.get();
         }
-        return null;
+        return resolved;
     }
-    
+
     private T getValueUnsafe()
     {
         T ret = getValue();
