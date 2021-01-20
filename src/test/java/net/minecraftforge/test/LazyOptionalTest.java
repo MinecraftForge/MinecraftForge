@@ -2,7 +2,7 @@ package net.minecraftforge.test;
 
 import com.mojang.datafixers.util.Unit;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.common.util.TextTable;
+import org.apache.commons.lang3.mutable.MutableInt;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -11,21 +11,27 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SlowLazyOptionalTest
+public class LazyOptionalTest
 {
     @Test
-    public void test() throws InterruptedException {
+    public void testConcurrentResolve() throws InterruptedException {
+        AtomicInteger supplierCalls = new AtomicInteger();
         LazyOptional<Unit> slowLazy = LazyOptional.of(() -> {
-            try {
+            supplierCalls.incrementAndGet();
+            try
+            {
                 Thread.sleep(1000);
-            } catch(InterruptedException e) {
+            }
+            catch(InterruptedException e)
+            {
                 e.printStackTrace();
             }
             return Unit.INSTANCE;
         });
         List<Thread> threads = new ArrayList<>();
         AtomicInteger successfulThreads = new AtomicInteger();
-        for (int i = 0; i < 2; ++i) {
+        for (int i = 0; i < 2; ++i)
+        {
             threads.add(new Thread(() -> {
                 // Resolve uses getValueUnsafe, so it throws if the value is unexpectedly absent
                 if (slowLazy.resolve().isPresent()) {
@@ -34,9 +40,23 @@ public class SlowLazyOptionalTest
             }));
         }
         threads.forEach(Thread::start);
-        for (Thread thread : threads) {
+        for (Thread thread : threads)
+        {
             thread.join();
         }
         assertEquals(threads.size(), successfulThreads.get());
+        assertEquals(1, supplierCalls.get());
+    }
+
+    @Test
+    public void testInvalidSupplier() {
+        MutableInt supplierCalls = new MutableInt();
+        LazyOptional<Unit> badLazy = LazyOptional.of(() -> {
+            supplierCalls.increment();
+            return null;
+        });
+        badLazy.ifPresent(u -> {});
+        badLazy.ifPresent(u -> {});
+        assertEquals(1, supplierCalls.intValue());
     }
 }
