@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,7 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.lang.reflect.Method;
+import java.io.InputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -44,6 +43,8 @@ import java.util.stream.Stream;
 import java.util.zip.ZipError;
 
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
+
+import com.google.common.io.ByteStreams;
 
 public abstract class AbstractJarFileLocator implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -84,10 +85,6 @@ public abstract class AbstractJarFileLocator implements IModLocator {
         LOGGER.debug(SCAN,"Scan finished: {}", file);
     }
 
-    static final Method ENSURE_INIT = LamdbaExceptionUtils.uncheck(()->JarFile.class.getDeclaredMethod("ensureInitialization"));
-    static {
-        ENSURE_INIT.setAccessible(true);
-    }
     @Override
     public Optional<Manifest> findManifest(final Path file)
     {
@@ -101,7 +98,9 @@ public abstract class AbstractJarFileLocator implements IModLocator {
             final Manifest manifest = jf.getManifest();
             if (manifest!=null) {
                 final JarEntry jarEntry = jf.getJarEntry(JarFile.MANIFEST_NAME);
-                LamdbaExceptionUtils.uncheck(() -> ENSURE_INIT.invoke(jf));
+                try (InputStream in = jf.getInputStream(jarEntry)) {
+                    ByteStreams.exhaust(in);
+                }
                 return Pair.of(Optional.of(manifest), Optional.ofNullable(jarEntry.getCodeSigners()));
             }
             return Pair.of(Optional.empty(), Optional.empty());

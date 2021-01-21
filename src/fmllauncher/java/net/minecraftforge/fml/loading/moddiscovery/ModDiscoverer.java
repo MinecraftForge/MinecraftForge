@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import cpw.mods.gross.Java9ClassLoaderUtil;
 import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
@@ -37,6 +36,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -68,6 +68,8 @@ import java.util.zip.ZipError;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
+
+import com.google.common.io.ByteStreams;
 
 
 public class ModDiscoverer {
@@ -135,7 +137,7 @@ public class ModDiscoverer {
 
     private static class LocatorClassLoader extends URLClassLoader {
         LocatorClassLoader() {
-            super(Java9ClassLoaderUtil.getSystemClassPathURLs(), getSystemClassLoader());
+            super(new URL[0], getSystemClassLoader());
         }
 
         @Override
@@ -228,7 +230,9 @@ public class ModDiscoverer {
                 final Manifest manifest = jf.getManifest();
                 if (manifest!=null) {
                     final JarEntry jarEntry = jf.getJarEntry(JarFile.MANIFEST_NAME);
-                    LamdbaExceptionUtils.uncheck(() -> AbstractJarFileLocator.ENSURE_INIT.invoke(jf));
+                    try (InputStream in = jf.getInputStream(jarEntry)) {
+                        ByteStreams.exhaust(in);
+                    }
                     return Pair.of(Optional.of(manifest), Optional.ofNullable(jarEntry.getCodeSigners()));
                 }
             } catch (IOException ioe) {
