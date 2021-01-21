@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:overworld",
+  "generator": {
+    "type": "chunk_generator_upgrade_world_test:chunk_generator"
+  }
+}
