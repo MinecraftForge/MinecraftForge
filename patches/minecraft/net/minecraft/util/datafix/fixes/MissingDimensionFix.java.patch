@@ -1,0 +1,12 @@
+--- a/net/minecraft/util/datafix/fixes/MissingDimensionFix.java
++++ b/net/minecraft/util/datafix/fixes/MissingDimensionFix.java
+@@ -39,7 +39,8 @@
+    protected TypeRewriteRule makeRule() {
+       Schema schema = this.getInputSchema();
+       TaggedChoiceType<String> taggedchoicetype = new TaggedChoiceType<>("type", DSL.string(), ImmutableMap.of("minecraft:debug", DSL.remainderType(), "minecraft:flat", func_241314_b_("settings", func_241313_a_("biome", schema.getType(TypeReferences.field_211305_u), "layers", DSL.list(func_241314_b_("block", schema.getType(TypeReferences.field_211300_p))))), "minecraft:noise", func_241313_a_("biome_source", DSL.taggedChoiceType("type", DSL.string(), ImmutableMap.of("minecraft:fixed", func_241312_a_("biome", schema.getType(TypeReferences.field_211305_u)), "minecraft:multi_noise", DSL.list(func_241312_a_("biome", schema.getType(TypeReferences.field_211305_u))), "minecraft:checkerboard", func_241312_a_("biomes", DSL.list(schema.getType(TypeReferences.field_211305_u))), "minecraft:vanilla_layered", DSL.remainderType(), "minecraft:the_end", DSL.remainderType())), "settings", DSL.or(DSL.string(), func_241313_a_("default_block", schema.getType(TypeReferences.field_211300_p), "default_fluid", schema.getType(TypeReferences.field_211300_p))))));
+-      CompoundListType<String, ?> compoundlisttype = DSL.compoundList(NamespacedSchema.func_233457_a_(), func_241312_a_("generator", taggedchoicetype));
++      //FORGE: Fix nuking nether & end when upgrading a world that had a dimension with a modded chunk generator. See V2551.
++      net.minecraftforge.common.world.fixes.FixedCompoundList.FixedCompoundListType<String, ?> compoundlisttype = new net.minecraftforge.common.world.fixes.FixedCompoundList.FixedCompoundListType<String, Pair<Pair<String, ?>, Dynamic<?>>>(NamespacedSchema.func_233457_a_(), func_241312_a_("generator", taggedchoicetype));
+       Type<?> type = DSL.and(compoundlisttype, DSL.remainderType());
+       Type<?> type1 = schema.getType(TypeReferences.field_233375_y_);
+       FieldFinder<?> fieldfinder = new FieldFinder<>("dimensions", type);

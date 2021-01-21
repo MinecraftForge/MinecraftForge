@@ -40,6 +40,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.DSL;
+import com.mojang.datafixers.types.templates.CompoundList;
+import com.mojang.datafixers.types.templates.TypeTemplate;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import javax.annotation.Nonnull;
@@ -126,6 +129,8 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
+import net.minecraftforge.common.world.fixes.FixedCompoundList;
+import net.minecraftforge.common.world.fixes.LenientCompoundListCodec;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -1282,5 +1287,13 @@ public class ForgeHooks
             chunk.setModified(true);
         }
         chunk.setStructureReferences(structureReferences);
+    }
+
+    /**
+     * Replace the vanilla {@link CompoundList} type with an almost identical version, except the codec was changed to
+     * {@link LenientCompoundListCodec}, which has better error handling.
+     */
+    public static TypeTemplate getFixedCompoundListType(TypeTemplate key, TypeTemplate element) {
+        return DSL.and(new FixedCompoundList(key, element), DSL.remainder());
     }
 }

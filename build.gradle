@@ -956,6 +956,8 @@ project(':forge') {
         exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
         exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
         exclude 'net/minecraftforge/common/LenientUnboundedMapCodec.java'
+        exclude 'net/minecraftforge/common/world/fixes/FixedCompoundList.java'
+        exclude 'net/minecraftforge/common/world/fixes/LenientCompoundListCodec.java'
 
         tasks {
             main {

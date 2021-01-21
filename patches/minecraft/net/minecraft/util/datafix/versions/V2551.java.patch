@@ -1,0 +1,12 @@
+--- a/net/minecraft/util/datafix/versions/V2551.java
++++ b/net/minecraft/util/datafix/versions/V2551.java
+@@ -17,7 +17,8 @@
+    public void registerTypes(Schema p_registerTypes_1_, Map<String, Supplier<TypeTemplate>> p_registerTypes_2_, Map<String, Supplier<TypeTemplate>> p_registerTypes_3_) {
+       super.registerTypes(p_registerTypes_1_, p_registerTypes_2_, p_registerTypes_3_);
+       p_registerTypes_1_.registerType(false, TypeReferences.field_233375_y_, () -> {
+-         return DSL.fields("dimensions", DSL.compoundList(DSL.constType(func_233457_a_()), DSL.fields("generator", DSL.taggedChoiceLazy("type", DSL.string(), ImmutableMap.of("minecraft:debug", DSL::remainder, "minecraft:flat", () -> {
++         //FORGE: Fix nuking nether & end when upgrading a world that had a dimension with a modded chunk generator.
++         return DSL.fields("dimensions", net.minecraftforge.common.ForgeHooks.getFixedCompoundListType(DSL.constType(func_233457_a_()), DSL.fields("generator", DSL.taggedChoiceLazy("type", DSL.string(), ImmutableMap.of("minecraft:debug", DSL::remainder, "minecraft:flat", () -> {
+             return DSL.optionalFields("settings", DSL.optionalFields("biome", TypeReferences.field_211305_u.in(p_registerTypes_1_), "layers", DSL.list(DSL.optionalFields("block", TypeReferences.field_211300_p.in(p_registerTypes_1_)))));
+          }, "minecraft:noise", () -> {
+             return DSL.optionalFields("biome_source", DSL.taggedChoiceLazy("type", DSL.string(), ImmutableMap.of("minecraft:fixed", () -> {
