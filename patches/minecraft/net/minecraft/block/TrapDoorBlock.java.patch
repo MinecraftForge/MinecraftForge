@@ -5,7 +5,7 @@
        return super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
     }
 +
-+   //Forge Start
++   // Forge Start
 +   @Override
 +   public boolean isLadder(BlockState state, net.minecraft.world.IWorldReader world, BlockPos pos, net.minecraft.entity.LivingEntity entity) {
 +      if (state.func_177229_b(field_176283_b)) {
@@ -15,6 +15,6 @@
 +      }
 +      return false;
 +   }
-+   //Forge End
++   // Forge End
 +
  }

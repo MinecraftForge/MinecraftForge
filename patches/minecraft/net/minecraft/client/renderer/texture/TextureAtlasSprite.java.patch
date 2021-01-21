@@ -17,7 +17,7 @@
           p_195667_3_[i].func_227788_a_(i, this.field_110975_c >> i, this.field_110974_d >> i, p_195667_1_ >> i, p_195667_2_ >> i, this.field_229226_c_.field_229245_b_ >> i, this.field_229226_c_.field_229246_c_ >> i, this.field_195670_c.length > 1, false);
        }
  
-@@ -341,4 +342,9 @@
+@@ -341,4 +342,10 @@
  
        }
     }
@@ -26,4 +26,5 @@
 +   public int getPixelRGBA(int frameIndex, int x, int y) {
 +      return this.field_195670_c[0].func_195709_a(x + this.field_195671_d[frameIndex] * func_94211_a(), y + this.field_195672_e[frameIndex] * func_94216_b());
 +   }
++   // Forge End
  }

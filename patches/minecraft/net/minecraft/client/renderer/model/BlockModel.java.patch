@@ -53,7 +53,7 @@
        return set1;
     }
  
-+   @Deprecated //Forge: Use Boolean variant
++   @Deprecated // Forge: Use Boolean variant
     public IBakedModel func_225613_a_(ModelBakery p_225613_1_, Function<RenderMaterial, TextureAtlasSprite> p_225613_2_, IModelTransform p_225613_3_, ResourceLocation p_225613_4_) {
        return this.func_228813_a_(p_225613_1_, this, p_225613_2_, p_225613_3_, p_225613_4_, true);
     }
@@ -62,7 +62,7 @@
 +      return net.minecraftforge.client.model.ModelLoaderRegistry.bakeHelper(this, p_228813_1_, p_228813_2_, p_228813_3_, p_228813_4_, p_228813_5_, p_228813_6_);
 +   }
 +
-+   @Deprecated //Forge: exposed for our callbacks only. Use the above function.
++   @Deprecated // Forge: Exposed for our callbacks only. Use the above function.
 +   public IBakedModel bakeVanilla(ModelBakery p_228813_1_, BlockModel p_228813_2_, Function<RenderMaterial, TextureAtlasSprite> p_228813_3_, IModelTransform p_228813_4_, ResourceLocation p_228813_5_, boolean p_228813_6_) {
        TextureAtlasSprite textureatlassprite = p_228813_3_.apply(this.func_228816_c_("particle"));
        if (this.func_178310_f() == ModelBakery.field_177616_r) {

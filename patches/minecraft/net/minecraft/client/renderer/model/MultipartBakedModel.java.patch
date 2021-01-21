@@ -27,7 +27,7 @@
     }
  
 -   public List<BakedQuad> func_200117_a(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_) {
-+   // FORGE: Implement our overloads (here and below) so child models can have custom logic 
++   // Forge: Implement our overloads (here and below) so child models can have custom logic 
 +   public List<BakedQuad> getQuads(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_, net.minecraftforge.client.model.data.IModelData modelData) {
        if (p_200117_1_ == null) {
           return Collections.emptyList();

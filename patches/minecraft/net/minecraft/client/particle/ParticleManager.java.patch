@@ -38,7 +38,7 @@
        }
     }
  
-+   /**@deprecated Forge: use {@link #renderParticles(MatrixStack, IRenderTypeBuffer.Impl, LightTexture, ActiveRenderInfo, float, net.minecraft.client.renderer.culling.ClippingHelper)} with ClippingHelper as additional parameter*/
++   /** @deprecated Forge: use {@link #renderParticles(MatrixStack, IRenderTypeBuffer.Impl, LightTexture, ActiveRenderInfo, float, net.minecraft.client.renderer.culling.ClippingHelper)} with ClippingHelper as additional parameter */
 +   @Deprecated
     public void func_228345_a_(MatrixStack p_228345_1_, IRenderTypeBuffer.Impl p_228345_2_, LightTexture p_228345_3_, ActiveRenderInfo p_228345_4_, float p_228345_5_) {
 +      renderParticles(p_228345_1_, p_228345_2_, p_228345_3_, p_228345_4_, p_228345_5_, null);
@@ -61,7 +61,7 @@
 -      for(IParticleRenderType iparticlerendertype : field_215241_b) {
 +      for(IParticleRenderType iparticlerendertype : this.field_78876_b.keySet()) { // Forge: allow custom IParticleRenderType's
 +         if (iparticlerendertype == IParticleRenderType.field_217606_f) continue;
-+         enable.run(); //Forge: MC-168672 Make sure all render types have the correct GL state.
++         enable.run(); // Forge: MC-168672 Make sure all render types have the correct GL state.
           Iterable<Particle> iterable = this.field_78876_b.get(iparticlerendertype);
           if (iterable != null) {
              RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);

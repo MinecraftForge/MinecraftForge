@@ -37,5 +37,5 @@
 +   private BlockState getModelState() {
 +       return stateSupplier.get();
 +   }
-+   // Forge end
++   // Forge End
  }

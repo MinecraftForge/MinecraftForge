@@ -8,7 +8,7 @@
 +public class Block extends AbstractBlock implements IItemProvider, net.minecraftforge.common.extensions.IForgeBlock {
     protected static final Logger field_196273_d = LogManager.getLogger();
 -   public static final ObjectIntIdentityMap<BlockState> field_176229_d = new ObjectIntIdentityMap<>();
-+   @Deprecated //Forge: Do not use, use GameRegistry
++   @Deprecated // Forge: Do not use, use GameRegistry
 +   public static final ObjectIntIdentityMap<BlockState> field_176229_d = net.minecraftforge.registries.GameData.getBlockStateIDMap();
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
@@ -44,7 +44,7 @@
  
     }
  
-+   @Deprecated //Forge: Use more sensitive version
++   @Deprecated // Forge: Use more sensitive version
     public float func_149638_a() {
        return this.field_235689_au_;
     }
@@ -52,7 +52,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
-+   @Deprecated //Forge: Use more sensitive version
++   @Deprecated // Forge: Use more sensitive version
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
     }
@@ -60,7 +60,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
-+   @Deprecated //Forge: Use more sensitive version
++   @Deprecated // Forge: Use more sensitive version
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
@@ -68,7 +68,7 @@
        return this.field_196275_y;
     }
  
-+   @Deprecated //Forge: Use more sensitive version {@link IForgeBlockState#getSoundType(IWorldReader, BlockPos, Entity) }
++   @Deprecated // Forge: Use more sensitive version {@link IForgeBlockState#getSoundType(IWorldReader, BlockPos, Entity) }
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
@@ -77,7 +77,7 @@
        }
  
 -      return this.field_220086_i;
-+      return this.field_220086_i.delegate.get(); //Forge: Vanilla caches the items, update with registry replacements.
++      return this.field_220086_i.delegate.get(); // Forge: Vanilla caches the items, update with registry replacements.
     }
  
     public boolean func_208619_r() {
@@ -94,7 +94,7 @@
        return this;
     }
  
-+   /* ======================================== FORGE START =====================================*/
++   // Forge Start
 +   protected Random RANDOM = new Random();
 +   private net.minecraftforge.common.ToolType harvestTool;
 +   private int harvestLevel;
@@ -156,20 +156,20 @@
 +         return isBeach && hasWater;
 +      }
 +      return false;
-+  }
++   }
 +
-+  @Override
-+  public final java.util.Set<net.minecraft.util.ResourceLocation> getTags() {
-+     return reverseTags.getTagNames();
-+  }
++   @Override
++   public final java.util.Set<net.minecraft.util.ResourceLocation> getTags() {
++      return reverseTags.getTagNames();
++   }
 +
-+  static {
-+      net.minecraftforge.common.ForgeHooks.setBlockToolSetter((block, tool, level) -> {
-+            block.harvestTool = tool;
-+            block.harvestLevel = level;
-+      });
-+  }
-+   /* ========================================= FORGE END ======================================*/
++   static {
++       net.minecraftforge.common.ForgeHooks.setBlockToolSetter((block, tool, level) -> {
++             block.harvestTool = tool;
++             block.harvestLevel = level;
++       });
++   }
++   //Forge End
 +
     public static final class RenderSideCacheKey {
        private final BlockState field_212164_a;

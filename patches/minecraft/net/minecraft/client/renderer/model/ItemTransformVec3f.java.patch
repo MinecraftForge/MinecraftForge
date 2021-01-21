@@ -1,12 +1,10 @@
 --- a/net/minecraft/client/renderer/model/ItemTransformVec3f.java
 +++ b/net/minecraft/client/renderer/model/ItemTransformVec3f.java
-@@ -14,7 +14,11 @@
+@@ -14,7 +14,9 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
-+/**
-+ * @deprecated use {@link net.minecraft.util.math.vector.TransformationMatrix} through {@link net.minecraftforge.client.extensions.IForgeBakedModel#handlePerspective}
-+ */
++/** @deprecated Use {@link net.minecraft.util.math.vector.TransformationMatrix} through {@link net.minecraftforge.client.extensions.IForgeBakedModel#handlePerspective */
  @OnlyIn(Dist.CLIENT)
 +@Deprecated
  public class ItemTransformVec3f {

@@ -4,7 +4,7 @@
        GlStateManager.func_227677_b_(3553, 10240, j);
     }
  
-+   // FORGE: This seems to have been stripped out, but we need it
++   // Forge: This seems to have been stripped out, but we need it
 +   private boolean lastBlur;
 +   private boolean lastMipmap;
 +

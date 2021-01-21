@@ -114,7 +114,7 @@
        this.field_74513_e = p_225593_1_;
     }
 +
-+   /****************** Forge Start *****************************/
++   // Forge Start
 +   private net.minecraftforge.client.settings.KeyModifier keyModifierDefault = net.minecraftforge.client.settings.KeyModifier.NONE;
 +   private net.minecraftforge.client.settings.KeyModifier keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
 +   private net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext = net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL;
@@ -192,5 +192,5 @@
 +       this.keyModifier = keyModifier;
 +       field_74514_b.addKey(keyCode, this);
 +   }
-+   /****************** Forge End *****************************/
++   // Forge End
  }

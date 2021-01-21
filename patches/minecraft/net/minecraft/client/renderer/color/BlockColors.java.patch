@@ -5,7 +5,7 @@
  @OnlyIn(Dist.CLIENT)
  public class BlockColors {
 -   private final ObjectIntIdentityMap<IBlockColor> field_186725_a = new ObjectIntIdentityMap<>(32);
-+   // FORGE: Use RegistryDelegates as non-Vanilla block ids are not constant
++   // Forge: Use RegistryDelegates as non-Vanilla block ids are not constant
 +   private final java.util.Map<net.minecraftforge.registries.IRegistryDelegate<Block>, IBlockColor> field_186725_a = new java.util.HashMap<>();
     private final Map<Block, Set<Property<?>>> field_225311_b = Maps.newHashMap();
  

@@ -5,7 +5,7 @@
  @OnlyIn(Dist.CLIENT)
  public class ItemColors {
 -   private final ObjectIntIdentityMap<IItemColor> field_186732_a = new ObjectIntIdentityMap<>(32);
-+   // FORGE: Use RegistryDelegates as non-Vanilla item ids are not constant
++   // Forge: Use RegistryDelegates as non-Vanilla item ids are not constant
 +   private final java.util.Map<net.minecraftforge.registries.IRegistryDelegate<Item>, IItemColor> field_186732_a = new java.util.HashMap<>();
  
     public static ItemColors func_186729_a(BlockColors p_186729_0_) {

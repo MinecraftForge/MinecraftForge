@@ -49,7 +49,7 @@
        return AtlasTexture.field_110575_b;
     }
 +   
-+   /*==================================== FORGE START ===========================================*/
++   // Forge Start
 +
 +   /**
 +    * @return If items should spread out when rendered in 3D
@@ -64,5 +64,5 @@
 +   public boolean shouldBob() {
 +      return true;
 +   }
-+   /*==================================== FORGE END =============================================*/
++   // Forge End
  }

@@ -248,8 +248,8 @@
           i1 = i1 + (this.field_147000_g - 4);
        }
  
-+      RenderSystem.color3f(1F, 1F, 1F); //Forge: Reset color in case Items change it.
-+      RenderSystem.enableBlend(); //Forge: Make sure blend is enabled else tabs show a white border.
++      RenderSystem.color3f(1F, 1F, 1F); // Forge: Reset color in case Items change it.
++      RenderSystem.enableBlend(); // Forge: Make sure blend is enabled else tabs show a white border.
        this.func_238474_b_(p_238808_1_, l, i1, j, k, 28, 32);
        this.field_230707_j_.field_77023_b = 100.0F;
        l = l + 6;

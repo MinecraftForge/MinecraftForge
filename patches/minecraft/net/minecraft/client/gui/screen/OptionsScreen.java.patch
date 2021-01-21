@@ -1,15 +1,13 @@
 --- a/net/minecraft/client/gui/screen/OptionsScreen.java
 +++ b/net/minecraft/client/gui/screen/OptionsScreen.java
-@@ -146,4 +146,12 @@
+@@ -146,4 +146,10 @@
        func_238472_a_(p_230430_1_, this.field_230712_o_, this.field_230704_d_, this.field_230708_k_ / 2, 15, 16777215);
        super.func_230430_a_(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
     }
 +
 +    @Override
 +    public void func_231175_as__() {
-+        // We need to consider 2 potential parent screens here:
-+        // 1. From the main menu, in which case display the main menu
-+        // 2. From the pause menu, in which case exit back to game
++        // We need to consider 2 potential parent screens here: 1. From the main menu, in which case display the main menu 2. From the pause menu, in which case exit back to game
 +        this.field_230706_i_.func_147108_a(this.field_146441_g instanceof IngameMenuScreen ? null : this.field_146441_g);
 +    }
  }

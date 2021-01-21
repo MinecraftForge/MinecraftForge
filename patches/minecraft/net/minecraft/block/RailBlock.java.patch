@@ -4,7 +4,7 @@
              return p_185499_1_.func_206870_a(field_176565_b, RailShape.SOUTH_EAST);
           case NORTH_EAST:
              return p_185499_1_.func_206870_a(field_176565_b, RailShape.SOUTH_WEST);
-+         case NORTH_SOUTH: //Forge fix: MC-196102
++         case NORTH_SOUTH: //Forge: MC-196102 Rails Rotation is missing two cases.
 +         case EAST_WEST:
 +            return p_185499_1_;
           }

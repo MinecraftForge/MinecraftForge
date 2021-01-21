@@ -5,7 +5,7 @@
     public TextureAtlasSprite func_199309_a(ItemStack p_199309_1_) {
        IBakedModel ibakedmodel = this.func_178089_a(p_199309_1_);
 -      return ibakedmodel == this.field_178090_d.func_174951_a() && p_199309_1_.func_77973_b() instanceof BlockItem ? this.field_178090_d.func_174954_c().func_178122_a(((BlockItem)p_199309_1_.func_77973_b()).func_179223_d().func_176223_P()) : ibakedmodel.func_177554_e();
-+      // FORGE: Make sure to call the item overrides
++      // Forge: Make sure to call the item overrides
 +      return ibakedmodel == this.field_178090_d.func_174951_a() && p_199309_1_.func_77973_b() instanceof BlockItem ? this.field_178090_d.func_174954_c().func_178122_a(((BlockItem)p_199309_1_.func_77973_b()).func_179223_d().func_176223_P()) : ibakedmodel.func_188617_f().func_239290_a_(ibakedmodel, p_199309_1_, null, null).getParticleTexture(net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
     }
  

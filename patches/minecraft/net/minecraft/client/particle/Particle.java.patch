@@ -1,14 +1,11 @@
 --- a/net/minecraft/client/particle/Particle.java
 +++ b/net/minecraft/client/particle/Particle.java
-@@ -208,4 +208,12 @@
+@@ -208,4 +208,9 @@
     public void func_187108_a(AxisAlignedBB p_187108_1_) {
        this.field_187120_G = p_187108_1_;
     }
 +
-+   /**
-+    * Forge added method that controls if a particle should be culled to it's bounding box.
-+    * Default behaviour is culling enabled
-+    */
++   /** Forge added method that controls if a particle should be culled to it's bounding box.Default behaviour is culling enabled */
 +   public boolean shouldCull() {
 +      return true;
 +   }

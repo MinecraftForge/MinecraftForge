@@ -13,7 +13,7 @@
        return this.field_175028_a;
     }
  
-+   @Deprecated //Forge: Model parameter
++   @Deprecated // Forge: Model parameter
     public void func_228792_a_(BlockState p_228792_1_, BlockPos p_228792_2_, IBlockDisplayReader p_228792_3_, MatrixStack p_228792_4_, IVertexBuilder p_228792_5_) {
 -      if (p_228792_1_.func_185901_i() == BlockRenderType.MODEL) {
 -         IBakedModel ibakedmodel = this.field_175028_a.func_178125_b(p_228792_1_);
@@ -29,7 +29,7 @@
        }
     }
  
-+   @Deprecated //Forge: Model parameter
++   @Deprecated // Forge: Model parameter
     public boolean func_228793_a_(BlockState p_228793_1_, BlockPos p_228793_2_, IBlockDisplayReader p_228793_3_, MatrixStack p_228793_4_, IVertexBuilder p_228793_5_, boolean p_228793_6_, Random p_228793_7_) {
 +       return renderModel(p_228793_1_, p_228793_2_, p_228793_3_, p_228793_4_, p_228793_5_, p_228793_6_, p_228793_7_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
 +   }
@@ -51,7 +51,7 @@
        return this.field_175028_a.func_178125_b(p_184389_1_);
     }
  
-+   @Deprecated //Forge: Model parameter
++   @Deprecated // Forge: Model parameter
     public void func_228791_a_(BlockState p_228791_1_, MatrixStack p_228791_2_, IRenderTypeBuffer p_228791_3_, int p_228791_4_, int p_228791_5_) {
 +      renderBlock(p_228791_1_, p_228791_2_, p_228791_3_, p_228791_4_, p_228791_5_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
 +   }

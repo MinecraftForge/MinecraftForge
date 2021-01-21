@@ -4,7 +4,7 @@
     protected static final VoxelShape field_196450_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
     private final Block field_196452_c;
  
-+   @Deprecated // Mods should use the constructor below
++   @Deprecated // Forge: Mods should use the constructor below
     public FlowerPotBlock(Block p_i48395_1_, AbstractBlock.Properties p_i48395_2_) {
 -      super(p_i48395_2_);
 -      this.field_196452_c = p_i48395_1_;
@@ -69,7 +69,7 @@
        return false;
     }
 +
-+   //Forge Start
++   // Forge Start
 +   private final Map<net.minecraft.util.ResourceLocation, java.util.function.Supplier<? extends Block>> fullPots;
 +   private final java.util.function.Supplier<FlowerPotBlock> emptyPot;
 +   private final java.util.function.Supplier<? extends Block> flowerDelegate;
@@ -84,5 +84,5 @@
 +       }
 +       fullPots.put(flower, fullPot);
 +   }
-+   //Forge End
++   // Forge End
  }

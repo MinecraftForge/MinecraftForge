@@ -48,7 +48,7 @@
        return field_177191_j.computeIfAbsent(s, ResourceLocation::new);
     }
 +
-+   /*=================================== FORGE START =========================================*/
++   // Forge Start
 +
 +   /**
 +    * Hook to allow item-sensitive armor model. for LayerBipedArmor.
@@ -87,5 +87,5 @@
 +
 +      return resourcelocation;
 +   }
-+   /*=================================== FORGE END ===========================================*/
++   // Forge End
  }

@@ -20,7 +20,7 @@
     });
     private static boolean field_228388_c_;
  
-+   @Deprecated // FORGE: Use canRenderInLayer
++   @Deprecated // Forge: Use canRenderInLayer
     public static RenderType func_228390_a_(BlockState p_228390_0_) {
        Block block = p_228390_0_.func_177230_c();
        if (block instanceof LeavesBlock) {
@@ -28,7 +28,7 @@
        }
     }
  
-+   @Deprecated // FORGE: Use canRenderInLayer
++   @Deprecated // Forge: Use canRenderInLayer
     public static RenderType func_239221_b_(BlockState p_239221_0_) {
        Block block = p_239221_0_.func_177230_c();
        if (block instanceof LeavesBlock) {
@@ -42,17 +42,17 @@
           if (!Minecraft.func_238218_y_()) {
              return Atlases.func_228785_j_();
           } else {
-@@ -317,11 +320,60 @@
+@@ -317,12 +320,62 @@
        }
     }
  
-+   @Deprecated // FORGE: Use canRenderInLayer
++   @Deprecated // Forge: Use canRenderInLayer
     public static RenderType func_228391_a_(FluidState p_228391_0_) {
        RenderType rendertype = field_228387_b_.get(p_228391_0_.func_206886_c());
        return rendertype != null ? rendertype : RenderType.func_228639_c_();
     }
  
-+   // FORGE START
++   // Forge Start
 +
 +   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = Maps.newHashMap();
 +   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = Maps.newHashMap();
@@ -103,3 +103,5 @@
     public static void func_228393_a_(boolean p_228393_0_) {
        field_228388_c_ = p_228393_0_;
     }
++   // Forge End
+ }

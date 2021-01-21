@@ -6,7 +6,7 @@
        this.field_178636_l.put("slim", new PlayerRenderer(this, true));
 +   }
  
-+   //FORGE: Validate the existence of a renderer for each entity type after modded entity renderers have been added
++   // Forge: Validate the existence of a renderer for each entity type after modded entity renderers have been added
 +   public void validateRendererExistence() {
        for(EntityType<?> entitytype : Registry.field_212629_r) {
           if (entitytype != EntityType.field_200729_aH && !this.field_78729_o.containsKey(entitytype)) {

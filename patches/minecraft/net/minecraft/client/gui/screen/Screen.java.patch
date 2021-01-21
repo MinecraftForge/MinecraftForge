@@ -44,7 +44,7 @@
        if (p_231159_2_) {
           this.field_230706_i_.field_71456_v.func_146158_b().func_146239_a(p_231159_1_);
        }
-+      //if (net.minecraftforge.client.ClientCommandHandler.instance.executeCommand(mc.player, msg) != 0) return; //Forge: TODO Client command re-write
++      //if (net.minecraftforge.client.ClientCommandHandler.instance.executeCommand(mc.player, msg) != 0) return; // Forge: TODO Client command re-write
  
        this.field_230706_i_.field_71439_g.func_71165_d(p_231159_1_);
     }

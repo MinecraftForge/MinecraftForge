@@ -15,7 +15,7 @@
  
 -   public List<BakedQuad> func_200117_a(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_) {
 -      return (WeightedRandom.func_180166_a(this.field_177565_b, Math.abs((int)p_200117_3_.nextLong()) % this.field_177567_a)).field_185281_b.func_200117_a(p_200117_1_, p_200117_2_, p_200117_3_);
-+   // FORGE: Implement our overloads (here and below) so child models can have custom logic 
++   // Forge: Implement our overloads (here and below) so child models can have custom logic 
 +   public List<BakedQuad> getQuads(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_, net.minecraftforge.client.model.data.IModelData modelData) {
 +      return (WeightedRandom.func_180166_a(this.field_177565_b, Math.abs((int)p_200117_3_.nextLong()) % this.field_177567_a)).field_185281_b.getQuads(p_200117_1_, p_200117_2_, p_200117_3_, modelData);
     }

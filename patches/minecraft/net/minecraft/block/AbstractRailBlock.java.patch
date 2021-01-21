@@ -35,15 +35,14 @@
              p_196243_2_.func_195593_d(p_196243_3_.func_177984_a(), this);
           }
  
-@@ -129,5 +130,20 @@
+@@ -129,5 +130,19 @@
        return blockstate.func_206870_a(this.func_176560_l(), flag ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH);
     }
  
-+   @Deprecated //Forge: Use getRailDirection(IBlockAccess, BlockPos, IBlockState, EntityMinecart) for enhanced ability
++   @Deprecated // Forge: Use getRailDirection(IBlockAccess, BlockPos, IBlockState, EntityMinecart) for enhanced ability
     public abstract Property<RailShape> func_176560_l();
 +
-+   /* ======================================== FORGE START =====================================*/
-+
++   // Forge Start
 +   @Override
 +   public boolean isFlexibleRail(BlockState state, IBlockReader world, BlockPos pos)
 +   {
@@ -54,5 +53,5 @@
 +   public RailShape getRailDirection(BlockState state, IBlockReader world, BlockPos pos, @javax.annotation.Nullable net.minecraft.entity.item.minecart.AbstractMinecartEntity cart) {
 +      return state.func_177229_b(func_176560_l());
 +   }
-+   /* ========================================= FORGE END ======================================*/
++   // Forge End
  }

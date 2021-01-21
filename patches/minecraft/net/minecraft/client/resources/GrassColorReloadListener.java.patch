@@ -5,7 +5,7 @@
        GrassColors.func_77479_a(p_212853_1_);
     }
 +
-+   //@Override //Forge: TODO: Filtered resource reloading
++   //@Override // Forge: TODO: Filtered resource reloading
 +   public net.minecraftforge.resource.IResourceType getResourceType() {
 +      return net.minecraftforge.resource.VanillaResourceType.TEXTURES;
 +   }

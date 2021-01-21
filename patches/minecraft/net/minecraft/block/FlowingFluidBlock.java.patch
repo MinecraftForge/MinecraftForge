@@ -59,7 +59,7 @@
                    this.func_180688_d(p_204515_1_, p_204515_2_);
                    return false;
                 }
-@@ -153,4 +168,23 @@
+@@ -153,4 +168,24 @@
           return Fluids.field_204541_a;
        }
     }
@@ -82,4 +82,5 @@
 +         fluidStateCacheInitialized = true;
 +      }
 +   }
++   // Forge End
  }

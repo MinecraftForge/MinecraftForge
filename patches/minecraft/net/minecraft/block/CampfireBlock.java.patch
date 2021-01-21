@@ -14,7 +14,7 @@
           }
  
 -         boolean flag = VoxelShapes.func_197879_c(field_226912_f_, blockstate.func_215685_b(p_235474_0_, p_235474_1_, ISelectionContext.func_216377_a()), IBooleanFunction.field_223238_i_);
-+         boolean flag = VoxelShapes.func_197879_c(field_226912_f_, blockstate.func_215685_b(p_235474_0_, blockpos, ISelectionContext.func_216377_a()), IBooleanFunction.field_223238_i_);//Forge fix: MC-201374
++         boolean flag = VoxelShapes.func_197879_c(field_226912_f_, blockstate.func_215685_b(p_235474_0_, blockpos, ISelectionContext.func_216377_a()), IBooleanFunction.field_223238_i_); // Forge: MC-201374 Wrong position passed to getCollisionShape from CampfireBlock#isSmokingBlockAt
           if (flag) {
              BlockState blockstate1 = p_235474_0_.func_180495_p(blockpos.func_177977_b());
              return func_226915_i_(blockstate1);

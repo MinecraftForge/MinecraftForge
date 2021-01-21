@@ -45,7 +45,7 @@
        this.field_110451_am.func_219534_a(this.field_241557_ar_);
 -      this.field_71456_v = new IngameGui(this);
 +      this.field_71456_v = new net.minecraftforge.client.gui.ForgeIngameGui(this);
-+      this.field_71417_B.func_198029_a(this.field_195558_d.func_198092_i()); //Forge: Moved below ingameGUI setting to prevent NPEs in handeler.
++      this.field_71417_B.func_198029_a(this.field_195558_d.func_198092_i()); // Forge: Moved below ingameGUI setting to prevent NPEs in handeler.
        this.field_184132_p = new DebugRenderer(this);
        RenderSystem.setErrorCallback(this::func_195545_a);
        if (this.field_71474_y.field_74353_u && !this.field_195558_d.func_198113_j()) {
@@ -67,8 +67,8 @@
              }
 -
 +            if (net.minecraftforge.fml.client.ClientModLoader.completeModLoading()) return; // Do not overwrite the error screen
-+            // FORGE: Move opening initial screen to after startup and events are enabled.
-+            // Also Fixes MC-145102
++            // Forge: Move opening initial screen to after startup and events are enabled.
++            // Forge: MC-145102 "--server" client launch argument may crash the client on the loading screen
 +            if (s != null) {
 +               this.func_147108_a(new ConnectingScreen(new MainMenuScreen(), this, s, i));
 +            } else {
@@ -82,7 +82,7 @@
  
     private void func_229988_a_(Throwable p_229988_1_) {
 -      if (this.field_110448_aq.func_232621_d_().size() > 1) {
-+      if (this.field_110448_aq.func_198980_d().stream().anyMatch(e -> !e.func_195797_g())) { //Forge: This caused infinite loop if any resource packs are forced. Such as mod resources. So check if we can disable any.
++      if (this.field_110448_aq.func_198980_d().stream().anyMatch(e -> !e.func_195797_g())) { // Forge: This caused infinite loop if any resource packs are forced. Such as mod resources. So check if we can disable any.
           ITextComponent itextcomponent;
           if (p_229988_1_ instanceof SimpleReloadableResourceManager.FailedPackException) {
              itextcomponent = new StringTextComponent(((SimpleReloadableResourceManager.FailedPackException)p_229988_1_).func_241203_a().func_195762_a());

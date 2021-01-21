@@ -5,7 +5,7 @@
              JsonObject jsonobject = JSONUtils.func_151210_l(p_240923_3_, "advancement");
              Advancement.Builder advancement$builder = Advancement.Builder.func_241043_a_(jsonobject, new ConditionArrayParser(p_240923_2_, this.field_240922_d_));
 +            if (advancement$builder == null) {
-+                field_192782_a.debug("Skipping loading advancement {} as it's conditions were not met", p_240923_2_);
++                field_192782_a.debug("Skipping loading advancement {} as its conditions were not met", p_240923_2_);
 +                return;
 +            }
              map.put(p_240923_2_, advancement$builder);

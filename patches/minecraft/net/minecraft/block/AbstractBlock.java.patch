@@ -52,7 +52,7 @@
        return 0;
     }
  
-+   @Deprecated //Forge: Use state.hasTileEntity()
++   @Deprecated // Forge: Use state.hasTileEntity()
     public final boolean func_235695_q_() {
        return this instanceof ITileEntityProvider;
     }
@@ -73,9 +73,9 @@
 +      return ((AbstractBlockState)state).field_235702_f_;
 +   }
 +
-+   /* ======================================== FORGE START ===================================== */
++   // Forge Start
 +   private final java.util.function.Supplier<ResourceLocation> lootTableSupplier;
-+   /* ========================================= FORGE END ====================================== */
++   // Forge End
 +
     public abstract static class AbstractBlockState extends StateHolder<Block, BlockState> {
        private final int field_215708_d;
