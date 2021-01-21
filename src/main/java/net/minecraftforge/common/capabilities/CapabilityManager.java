@@ -68,8 +68,8 @@ public enum CapabilityManager
         synchronized (providers)
         {
             if (providers.containsKey(realName)) {
-                LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
-                throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
+                LOGGER.error(CAPABILITIES, "Cannot register a capability implementation multiple times: {}", realName);
+                throw new IllegalArgumentException("Cannot register a capability implementation multiple times: "+ realName);
             }
 
             cap = new Capability<>(realName, storage, factory);
