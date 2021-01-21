@@ -83,15 +83,15 @@ public class FMLModContainer extends ModContainer
         }
         catch (Throwable e)
         {
-            LOGGER.error(LOADING,"Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
+            LOGGER.error(LOADING,"Failed to create mod instance for ModID {} and class {}", getModId(), modClass.getName(), e);
             throw new ModLoadingException(modInfo, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmod", e, modClass);
         }
         try {
-            LOGGER.trace(LOADING, "Injecting Automatic event subscribers for {}", getModId());
+            LOGGER.trace(LOADING, "Injecting automatic event subscribers for {}", getModId());
             AutomaticEventSubscriber.inject(this, this.scanResults, this.modClass.getClassLoader());
-            LOGGER.trace(LOADING, "Completed Automatic event subscribers for {}", getModId());
+            LOGGER.trace(LOADING, "Completed automatic event subscribers for {}", getModId());
         } catch (Throwable e) {
-            LOGGER.error(LOADING,"Failed to register automatic subscribers. ModID: {}, class {}", getModId(), modClass.getName(), e);
+            LOGGER.error(LOADING,"Failed to register automatic subscribers for ModID {} and class {}", getModId(), modClass.getName(), e);
             throw new ModLoadingException(modInfo, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmod", e, modClass);
         }
     }
@@ -116,11 +116,11 @@ public class FMLModContainer extends ModContainer
     @Override
     protected <T extends Event & IModBusEvent> void acceptEvent(final T e) {
         try {
-            LOGGER.trace(LOADING, "Firing event for modid {} : {}", this.getModId(), e);
+            LOGGER.trace(LOADING, "Firing event for modid {}: {}", this.getModId(), e);
             this.eventBus.post(e);
-            LOGGER.trace(LOADING, "Fired event for modid {} : {}", this.getModId(), e);
+            LOGGER.trace(LOADING, "Fired event for modid {}: {}", this.getModId(), e);
         } catch (Throwable t) {
-            LOGGER.error(LOADING,"Caught exception during event {} dispatch for modid {}", e, this.getModId(), t);
+            LOGGER.error(LOADING,"Caught exception during event {} dispatch for modID {}", e, this.getModId(), t);
             throw new ModLoadingException(modInfo, modLoadingStage, "fml.modloading.errorduringevent", t);
         }
     }
