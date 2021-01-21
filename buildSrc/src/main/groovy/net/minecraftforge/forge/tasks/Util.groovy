@@ -59,11 +59,12 @@ public class Util {
 				url = "https://files.minecraftforge.net/maven/${path}"
 			}
 			//TODO remove when Mojang launcher is updated
-			if (!classifiers && art.classifier != null) { //Mojang launcher doesn't currently support classifiers, so... move it to part of the version, and force the extension to 'jar'
+			if (!classifiers && art.classifier != null) { 
+				//Mojang launcher doesn't currently support classifiers, so... move it to part of the version, and force the extension to 'jar'
+				// However, keep the path normal so that our mirror system works.
 				art.version = "${art.version}-${art.classifier}"
 				art.classifier = null
 				art.extension = 'jar'
-				path = "${art.group.replace('.', '/')}/${art.name}/${art.version}/${art.name}-${art.version}.jar"
 			}
 			ret[key] = [
 				name: "${art.group}:${art.name}:${art.version}" + (art.classifier == null ? '' : ":${art.classifier}") + (art.extension == 'jar' ? '' : "@${art.extension}"),

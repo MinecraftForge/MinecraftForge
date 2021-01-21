@@ -31,6 +31,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="new_fluid_test"
 [[mods]]
+    modId="milk_fluid_test"
+[[mods]]
     modId="data_gen_test"
 [[mods]]
     modId="piston_event_test"

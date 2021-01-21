@@ -24,20 +24,32 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.BiPredicate;
 
 public class VersionSupportMatrix {
-    private static final HashMap<String, ArtifactVersion> overrideVersions = new HashMap<>();
+    private static final HashMap<String, List<ArtifactVersion>> overrideVersions = new HashMap<>();
     static {
         final ArtifactVersion version = new DefaultArtifactVersion(FMLLoader.mcVersion);
-        if (MavenVersionAdapter.createFromVersionSpec("[1.16.4]").containsVersion(version)) {
-            overrideVersions.put("languageloader.javafml", new DefaultArtifactVersion("34")); // we also work with javafml 34
-            overrideVersions.put("mod.minecraft", new DefaultArtifactVersion("1.16.3")); // we work with anything declaring 1.16.3
-            overrideVersions.put("mod.forge", new DefaultArtifactVersion("34.1.42")); // we work with anything that supports forge 34.1.42
+        if (MavenVersionAdapter.createFromVersionSpec("[1.16.4,1.16.5]").containsVersion(version)) {
+            // 1.16.4 is Compatible with 1.16.3
+            add("languageloader.javafml", "34");
+            add("mod.minecraft",          "1.16.3");
+            add("mod.forge",              "34.1.42");
+            // 1.16.5 is Compatible with 1.16.4, and thus 1.16.3
+            add("languageloader.javafml", "35");
+            add("mod.minecraft",          "1.16.4");
+            add("mod.forge",              "35.1.37");
         }
     }
+    private static void add(String key, String value) {
+        overrideVersions.computeIfAbsent(key, k -> new ArrayList<>()).add(new DefaultArtifactVersion(value));
+    }
     public static <T> boolean testVersionSupportMatrix(VersionRange declaredRange, String lookupId, String type, BiPredicate<String, VersionRange> standardLookup) {
-        return standardLookup.test(lookupId, declaredRange) || overrideVersions.containsKey(type +"." +lookupId) && declaredRange.containsVersion(overrideVersions.get(type +"." +lookupId));
+        if (standardLookup.test(lookupId, declaredRange)) return true;
+        List<ArtifactVersion> custom = overrideVersions.get(type +"." +lookupId);
+        return custom == null ? false  : custom.stream().anyMatch(declaredRange::containsVersion);
     }
 }

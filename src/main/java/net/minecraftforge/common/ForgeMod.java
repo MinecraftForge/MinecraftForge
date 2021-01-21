@@ -24,13 +24,19 @@ import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.command.arguments.IArgumentSerializer;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.item.Items;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.storage.IServerConfiguration;
 import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
@@ -41,6 +47,8 @@ import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.server.command.EnumArgument;
 import net.minecraftforge.server.command.ModIdArgument;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -98,10 +106,22 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 5.0D, 0.0D, 1024.0D).setShouldWatch(true));
 
+    private static boolean enableMilkFluid = false;
+    public static final RegistryObject<Fluid> MILK = RegistryObject.of(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
+    public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.of(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
+
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance()
     {
         return INSTANCE;
+    }
+
+    /**
+     * Run this method during mod constructor to enable milk and add it to the Minecraft milk bucket
+     */
+    public static void enableMilkFluid()
+    {
+        enableMilkFluid = true;
     }
 
     public ForgeMod()
@@ -120,6 +140,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::loadComplete);
+        modEventBus.addGenericListener(Fluid.class, this::registerFluids);
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
@@ -205,9 +226,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         if (event.includeServer())
         {
-            ForgeBlockTagsProvider blockTags = new ForgeBlockTagsProvider(gen, event.getExistingFileHelper());
+            ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
+            ForgeBlockTagsProvider blockTags = new ForgeBlockTagsProvider(gen, existingFileHelper);
             gen.addProvider(blockTags);
-            gen.addProvider(new ForgeItemTagsProvider(gen, blockTags, event.getExistingFileHelper()));
+            gen.addProvider(new ForgeItemTagsProvider(gen, blockTags, existingFileHelper));
+            gen.addProvider(new ForgeFluidTagsProvider(gen, existingFileHelper));
             gen.addProvider(new ForgeRecipeProvider(gen));
             gen.addProvider(new ForgeLootTableProvider(gen));
         }
@@ -229,6 +252,20 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
                     mapping.ignore();
                 }
             }
+        }
+    }
+
+    // done in an event instead of deferred to only enable if a mod requests it
+    public void registerFluids(RegistryEvent.Register<Fluid> event)
+    {
+        if (enableMilkFluid)
+        {
+            // set up attributes
+            FluidAttributes.Builder attributesBuilder = FluidAttributes.builder(new ResourceLocation("forge", "block/milk_still"), new ResourceLocation("forge", "block/milk_flowing")).density(1024).viscosity(1024);
+            ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(MILK, FLOWING_MILK, attributesBuilder).bucket(() -> Items.MILK_BUCKET);
+            // register fluids
+            event.getRegistry().register(new ForgeFlowingFluid.Source(properties).setRegistryName(MILK.getId()));
+            event.getRegistry().register(new ForgeFlowingFluid.Flowing(properties).setRegistryName(FLOWING_MILK.getId()));
         }
     }
 
