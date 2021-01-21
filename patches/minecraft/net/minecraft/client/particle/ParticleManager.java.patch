@@ -61,7 +61,7 @@
 -      for(IParticleRenderType iparticlerendertype : field_215241_b) {
 +      for(IParticleRenderType iparticlerendertype : this.field_78876_b.keySet()) { // Forge: allow custom IParticleRenderType's
 +         if (iparticlerendertype == IParticleRenderType.field_217606_f) continue;
-+         enable.run(); // Forge: MC-168672 Make sure all render types have the correct GL state.
++         enable.run(); // Forge: Fixed MC-168672 Make sure all render types have the correct GL state.
           Iterable<Particle> iterable = this.field_78876_b.get(iparticlerendertype);
           if (iterable != null) {
              RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);

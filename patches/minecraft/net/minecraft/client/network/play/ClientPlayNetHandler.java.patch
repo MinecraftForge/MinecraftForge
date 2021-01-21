@@ -40,7 +40,7 @@
           clientplayerentity1.func_233645_dx_().func_233784_a_(clientplayerentity.func_233645_dx_());
        }
  
-+      clientplayerentity1.updateSyncFields(clientplayerentity); // Forge: MC-10657 Player entering nether portal while sneaking stuck in 'partial sneak'
++      clientplayerentity1.updateSyncFields(clientplayerentity); // Forge: Fixed MC-10657 Player entering nether portal while sneaking stuck in 'partial sneak'
        clientplayerentity1.func_70065_x();
        clientplayerentity1.func_175158_f(s);
 +      net.minecraftforge.fml.client.ClientHooks.firePlayerRespawn(this.field_147299_f.field_71442_b, clientplayerentity, clientplayerentity1, clientplayerentity1.field_71174_a.func_147298_b());

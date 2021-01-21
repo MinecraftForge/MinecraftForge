@@ -151,7 +151,7 @@
                 if (tileentityrenderer.func_188185_a(p_228942_3_)) {
                    p_228942_2_.add(p_228942_3_);
                 }
-+               else p_228942_1_.field_178499_e.add(p_228942_3_); //Forge: MC-112730 Beacon beam and structure block render twice per frame
++               else p_228942_1_.field_178499_e.add(p_228942_3_); //Forge: Fixed MC-112730 Beacon beam and structure block render twice per frame
              }
  
           }

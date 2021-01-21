@@ -68,7 +68,7 @@
 -
 +            if (net.minecraftforge.fml.client.ClientModLoader.completeModLoading()) return; // Do not overwrite the error screen
 +            // Forge: Move opening initial screen to after startup and events are enabled.
-+            // Forge: MC-145102 "--server" client launch argument may crash the client on the loading screen
++            // Forge: Fixed MC-145102 "--server" client launch argument may crash the client on the loading screen
 +            if (s != null) {
 +               this.func_147108_a(new ConnectingScreen(new MainMenuScreen(), this, s, i));
 +            } else {

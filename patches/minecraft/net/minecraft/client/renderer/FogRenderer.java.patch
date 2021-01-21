@@ -4,7 +4,7 @@
           }
  
           float f9 = Math.min(1.0F / field_205093_c, Math.min(1.0F / field_205094_d, 1.0F / field_205095_e));
-+         // Forge: MC-4647 Having both underwater/Night vision and Blindness turns the world black | Forge: MC-10480 Blindness + Night-vision Effects Create Complete Blindness
++         // Forge: Fixed MC-4647 Having both underwater/Night vision and Blindness turns the world black | Forge: Fixed MC-10480 Blindness + Night-vision Effects Create Complete Blindness
 +         if (Float.isInfinite(f9)) f9 = Math.nextAfter(f9, 0.0);
           field_205093_c = field_205093_c * (1.0F - f6) + field_205093_c * f9 * f6;
           field_205094_d = field_205094_d * (1.0F - f6) + field_205094_d * f9 * f6;
@@ -12,7 +12,7 @@
        } else if (p_228371_0_.func_216773_g() instanceof LivingEntity && ((LivingEntity)p_228371_0_.func_216773_g()).func_70644_a(Effects.field_76439_r)) {
           float f7 = GameRenderer.func_180438_a((LivingEntity)p_228371_0_.func_216773_g(), p_228371_1_);
           float f10 = Math.min(1.0F / field_205093_c, Math.min(1.0F / field_205094_d, 1.0F / field_205095_e));
-+         // Forge: MC-4647 Having both underwater/Night vision and Blindness turns the world black | Forge: MC-10480 Blindness + Night-vision Effects Create Complete Blindness
++         // Forge: Fixed MC-4647 Having both underwater/Night vision and Blindness turns the world black | Forge: Fixed MC-10480 Blindness + Night-vision Effects Create Complete Blindness
 +         if (Float.isInfinite(f10)) f10 = Math.nextAfter(f10, 0.0);
           field_205093_c = field_205093_c * (1.0F - f7) + field_205093_c * f10 * f7;
           field_205094_d = field_205094_d * (1.0F - f7) + field_205094_d * f10 * f7;
