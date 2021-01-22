@@ -78,9 +78,9 @@ public interface IForgeItem
     }
 
     /**
-     * Called when a player drops the item into the world, returning false from this
+     * Called when a player drops the item into the world. Returning false from this
      * will prevent the item from being removed from the players inventory and
-     * spawning in the world
+     * spawning in the world.
      *
      * @param player The player that dropped the item
      * @param item   The item stack, before the item is removed.
@@ -91,8 +91,8 @@ public interface IForgeItem
     }
 
     /**
-     * Allow the item one last chance to modify its name used for the tool highlight
-     * useful for adding something extra that can't be removed by a user in the
+     * Allow the item one last chance to modify its name used for the tool highlight.
+     * Useful for adding something extra that can't be removed by a user in the
      * displayed name, such as a mode of operation.
      *
      * @param item        the ItemStack for the item.
@@ -105,7 +105,7 @@ public interface IForgeItem
     }
 
     /**
-     * This is called when the item is used, before the block is activated.
+     * This is called when the item is used but before the block is activated.
      *
      * @return Return PASS to allow vanilla handling, any other to skip normal code.
      */
