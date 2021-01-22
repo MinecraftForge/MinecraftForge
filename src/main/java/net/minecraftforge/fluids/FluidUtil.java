@@ -312,14 +312,14 @@ public class FluidUtil
             FluidActionResult emptiedSimulated = tryEmptyContainer(container, fluidDestination, maxAmount, player, false);
             if (emptiedSimulated.isSuccess())
             {
-                // check if we can give the itemStack to the inventory
+                // Check if we can give the itemStack to the inventory
                 ItemStack remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedSimulated.getResult(), true);
                 if (remainder.isEmpty() || player != null)
                 {
                     FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, doDrain);
                     remainder = ItemHandlerHelper.insertItemStacked(inventory, emptiedReal.getResult(), !doDrain);
 
-                    // give it to the player or drop it at their feet
+                    // Give it to the player or drop it at their feet
                     if (!remainder.isEmpty() && player != null && doDrain)
                     {
                         ItemHandlerHelper.giveItemToPlayer(player, remainder);
@@ -552,7 +552,7 @@ public class FluidUtil
 
         BlockItemUseContext context = new BlockItemUseContext(new ItemUseContext(player, hand, new BlockRayTraceResult(Vector3d.ZERO, Direction.UP, pos, false))); //TODO: This neds proper context...
 
-        // check that we can place the fluid at the destination
+        // Check that we can place the fluid at the destination
         BlockState destBlockState = world.getBlockState(pos);
         Material destMaterial = destBlockState.getMaterial();
         boolean isDestNonSolid = !destMaterial.isSolid();
