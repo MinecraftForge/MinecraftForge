@@ -182,7 +182,7 @@ public class FMLHandshakeHandler {
         FMLNetworkConstants.handshakeChannel.reply(new FMLHandshakeMessages.C2SModListReply(), c.get());
 
         LOGGER.debug(FMLHSMARKER, "Accepted server connection");
-        // Set the modded marker on the channel so we know we got packets
+        // Set the modded marker on the channel so we know we have packets
         c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_NETVERSION).set(FMLNetworkConstants.NETVERSION);
 
         this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
@@ -272,8 +272,8 @@ public class FMLHandshakeHandler {
         FMLNetworkConstants.handshakeChannel.reply(new FMLHandshakeMessages.C2SAcknowledge(), contextSupplier.get());
     }
     /**
-     * FML will send packets, from Server to Client, from the messages queue until the queue is drained. Each message
-     * will be indexed, and placed into the "pending acknowledgement" queue.
+     * FML will send packets from Server to Client from the messages queue until the queue is drained. Each message
+     * will be indexed and placed into the "pending acknowledgement" queue.
      *
      * As indexed packets are received at the server, they will be removed from the "pending acknowledgement" queue.
      *

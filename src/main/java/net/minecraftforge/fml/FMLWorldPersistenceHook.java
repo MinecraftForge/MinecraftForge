@@ -98,12 +98,12 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
                 Optional<? extends ModContainer> container = ModList.get().getModContainerById(modId);
                 if (!container.isPresent())
                 {
-                    LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing, things may not work well", modId);
+                    LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing. Things may not work well!", modId);
                     continue;
                 }
                 if (!Objects.equals(modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion())))
                 {
-                    LOGGER.warn(WORLDPERSISTENCE,"This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion()));
+                    LOGGER.warn(WORLDPERSISTENCE,"This world was saved with mod {} version {}, which is now on version {}. Things may not work well!", modId, modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion()));
                 }
             }
         }
