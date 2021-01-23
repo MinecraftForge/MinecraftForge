@@ -13,7 +13,7 @@
     }
  
 -   public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) {
-+   public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) { //TODO: MARK
++   public void func_230337_a_(BlockState p_230337_1_, CompoundNBT p_230337_2_) { // Forge: TODO: MARK
        super.func_230337_a_(p_230337_1_, p_230337_2_);
        this.field_214012_a = NonNullList.func_191197_a(this.func_70302_i_(), ItemStack.field_190927_a);
        ItemStackHelper.func_191283_b(p_230337_2_, this.field_214012_a);

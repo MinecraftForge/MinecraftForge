@@ -108,12 +108,12 @@
 +   @Nullable
 +   @Override
 +   public net.minecraftforge.common.ToolType getHarvestTool(BlockState state) {
-+      return harvestTool; //TODO: RE-Evaluate
++      return harvestTool; // Forge: TODO: reevaluate
 +   }
 +
 +   @Override
 +   public int getHarvestLevel(BlockState state) {
-+     return harvestLevel; //TODO: RE-Evaluate
++     return harvestLevel; // Forge: TODO: reevaluate
 +   }
 +
 +   @Override

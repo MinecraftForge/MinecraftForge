@@ -49,7 +49,7 @@
 +      if (tab.hasSearchBar() && tab != ItemGroup.field_78027_g) {
 +         tab.func_78018_a(field_147002_h.field_148330_a);
 +         if (!this.field_147062_A.func_146179_b().isEmpty()) {
-+            //TODO: Make this a SearchTree not a manual search
++            // Forge: TODO: Make this a SearchTree not a manual search
 +            String search = this.field_147062_A.func_146179_b().toLowerCase(Locale.ROOT);
 +            java.util.Iterator<ItemStack> itr = field_147002_h.field_148330_a.iterator();
 +            while (itr.hasNext()) {

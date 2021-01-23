@@ -5,7 +5,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public abstract class AbstractBlock {
-+//TODO, Delegates are weird here now, because Block extends this.
++// Forge: TODO: Delegates are weird here now, because Block extends this.
 +public abstract class AbstractBlock extends net.minecraftforge.registries.ForgeRegistryEntry<Block> {
     protected static final Direction[] field_212556_a = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
     protected final Material field_149764_J;

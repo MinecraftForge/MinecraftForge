@@ -50,7 +50,7 @@
        this.field_229354_f_ = p_229355_1_;
     }
 +
-+   // TODO
++   // Forge: TODO:
 +   //@Override
 +   public net.minecraftforge.resource.IResourceType getResourceType() {
 +      return net.minecraftforge.resource.VanillaResourceType.MODELS;

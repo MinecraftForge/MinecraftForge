@@ -8,7 +8,7 @@
 +               if (blockstate1.isAir(p_185266_1_, blockpos$mutable)) {
                    BlockState blockstate2 = p_185266_1_.func_180495_p(blockpos);
 -                  if (blockstate2.func_185904_a() == Material.field_151586_h && blockstate2.func_177229_b(FlowingFluidBlock.field_176367_b) == 0 && blockstate.func_196955_c(p_185266_1_, blockpos) && p_185266_1_.func_226663_a_(blockstate, blockpos, ISelectionContext.func_216377_a())) {
-+                  boolean isFull = blockstate2.func_177230_c() == Blocks.field_150355_j && blockstate2.func_177229_b(FlowingFluidBlock.field_176367_b) == 0; //TODO: Forge, modded waters?
++                  boolean isFull = blockstate2.func_177230_c() == Blocks.field_150355_j && blockstate2.func_177229_b(FlowingFluidBlock.field_176367_b) == 0; // Forge: TODO: modded waters?
 +                  if (blockstate2.func_185904_a() == Material.field_151586_h && isFull && blockstate.func_196955_c(p_185266_1_, blockpos) && p_185266_1_.func_226663_a_(blockstate, blockpos, ISelectionContext.func_216377_a()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(p_185266_0_, net.minecraftforge.common.util.BlockSnapshot.create(p_185266_1_.func_234923_W_(), p_185266_1_, blockpos), net.minecraft.util.Direction.UP)) {
                       p_185266_1_.func_175656_a(blockpos, blockstate);
                       p_185266_1_.func_205220_G_().func_205360_a(blockpos, Blocks.field_185778_de, MathHelper.func_76136_a(p_185266_0_.func_70681_au(), 60, 120));
