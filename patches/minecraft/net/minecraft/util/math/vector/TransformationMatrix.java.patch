@@ -9,12 +9,12 @@
     private final Matrix4f field_227976_a_;
     private boolean field_227977_b_;
     @Nullable
-@@ -133,4 +133,32 @@
+@@ -133,4 +133,33 @@
     public int hashCode() {
        return Objects.hash(this.field_227976_a_);
     }
 +
-+    // FORGE START
++    // Forge Start
 +    public Vector3f getTranslation() {
 +        func_227990_e_();
 +        return field_227978_c_.func_229195_e_();
@@ -41,4 +41,5 @@
 +            normalTransform.func_226110_a_();
 +        }
 +    }
++    // Forge End
  }

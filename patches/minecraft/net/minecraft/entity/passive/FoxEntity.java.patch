@@ -17,7 +17,7 @@
 +         final boolean cancelled = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +         foxentity = (FoxEntity) event.getChild();
 +         if (cancelled) {
-+            //Reset the "inLove" state for the animals
++            // Reset the "inLove" state for the animals
 +            this.field_75390_d.func_70873_a(6000);
 +            this.field_75391_e.func_70873_a(6000);
 +            this.field_75390_d.func_70875_t();

@@ -36,7 +36,7 @@
           Chunk chunk = this.func_175726_f(p_241211_1_);
           Block block = p_241211_2_.func_177230_c();
 +
-+         p_241211_1_ = p_241211_1_.func_185334_h(); // Forge - prevent mutable BlockPos leaks
++         p_241211_1_ = p_241211_1_.func_185334_h(); // Forge: prevent mutable BlockPos leaks
 +         net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
 +         if (this.captureBlockSnapshots && !this.field_72995_K) {
 +             blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.create(this.field_73011_w, this, p_241211_1_, p_241211_3_);
@@ -60,7 +60,7 @@
                 this.func_217381_Z().func_76319_b();
              }
  
-+            if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
++            if (blockSnapshot == null) { // Forge: Don't notify clients or update physics while capturing blockstates
 +               this.markAndNotifyBlock(p_241211_1_, chunk, blockstate, p_241211_2_, p_241211_3_, p_241211_4_);
 +            }
 +            return true;
@@ -68,7 +68,7 @@
 +      }
 +   }
 +
-+   // Split off from original setBlockState(BlockPos, BlockState, int, int) method in order to directly send client and physic updates
++   // Forge: Split off from original setBlockState(BlockPos, BlockState, int, int) method in order to directly send client and physic updates
 +   public void markAndNotifyBlock(BlockPos p_241211_1_, @Nullable Chunk chunk, BlockState blockstate, BlockState p_241211_2_, int p_241211_3_, int p_241211_4_)
 +   {
 +       Block block = p_241211_2_.func_177230_c();
@@ -142,7 +142,7 @@
     }
  
     public boolean func_175700_a(TileEntity p_175700_1_) {
-+      if (p_175700_1_.func_145831_w() != this) p_175700_1_.func_226984_a_(this, p_175700_1_.func_174877_v()); // Forge - set the world early as vanilla doesn't set it until next tick
++      if (p_175700_1_.func_145831_w() != this) p_175700_1_.func_226984_a_(this, p_175700_1_.func_174877_v()); // Forge: set the world early as vanilla doesn't set it until next tick
        if (this.field_147481_N) {
           field_195596_d.error("Adding block entity while ticking: {} @ {}", () -> {
              return Registry.field_212626_o.func_177774_c(p_175700_1_.func_200662_C());
@@ -164,7 +164,7 @@
  
     public void func_147448_a(Collection<TileEntity> p_147448_1_) {
        if (this.field_147481_N) {
-+         p_147448_1_.stream().filter(te -> te.func_145831_w() != this).forEach(te -> te.func_226984_a_(this, te.func_174877_v())); // Forge - set the world early as vanilla doesn't set it until next tick
++         p_147448_1_.stream().filter(te -> te.func_145831_w() != this).forEach(te -> te.func_226984_a_(this, te.func_174877_v())); // Forge: set the world early as vanilla doesn't set it until next tick
           this.field_147484_a.addAll(p_147448_1_);
        } else {
           for(TileEntity tileentity : p_147448_1_) {
@@ -172,7 +172,7 @@
     public void func_217391_K() {
        IProfiler iprofiler = this.func_217381_Z();
        iprofiler.func_76320_a("blockEntities");
-+      this.field_147481_N = true;// Forge: Move above remove to prevent CMEs
++      this.field_147481_N = true; // Forge: Move above remove to prevent CMEs
        if (!this.field_147483_b.isEmpty()) {
 +         this.field_147483_b.forEach(e -> e.onChunkUnloaded());
           this.field_175730_i.removeAll(this.field_147483_b);
@@ -217,7 +217,7 @@
              this.field_147482_g.remove(tileentity);
              if (this.func_175667_e(tileentity.func_174877_v())) {
 -               this.func_175726_f(tileentity.func_174877_v()).func_177425_e(tileentity.func_174877_v());
-+               //Forge: Bugfix: If we set the tile entity it immediately sets it in the chunk, so we could be desyned
++               // Forge: Bugfix: If we set the tile entity it immediately sets it in the chunk, so we could be desyned
 +               Chunk chunk = this.func_175726_f(tileentity.func_174877_v());
 +               if (chunk.func_177424_a(tileentity.func_174877_v(), Chunk.CreateEntityType.CHECK) == tileentity)
 +                  chunk.func_177425_e(tileentity.func_174877_v());
@@ -252,7 +252,7 @@
  
     public void func_175690_a(BlockPos p_175690_1_, @Nullable TileEntity p_175690_2_) {
        if (!func_189509_E(p_175690_1_)) {
-+         p_175690_1_ = p_175690_1_.func_185334_h(); // Forge - prevent mutable BlockPos leaks
++         p_175690_1_ = p_175690_1_.func_185334_h(); // Forge: prevent mutable BlockPos leaks
           if (p_175690_2_ != null && !p_175690_2_.func_145837_r()) {
              if (this.field_147481_N) {
                 p_175690_2_.func_226984_a_(this, p_175690_1_);
@@ -270,7 +270,7 @@
        if (tileentity != null && this.field_147481_N) {
           tileentity.func_145843_s();
           this.field_147484_a.remove(tileentity);
-+         if (!(tileentity instanceof ITickableTileEntity)) //Forge: If they are not tickable they wont be removed in the update loop.
++         if (!(tileentity instanceof ITickableTileEntity)) // Forge: If they are not tickable they wont be removed in the update loop.
 +            this.field_147482_g.remove(tileentity);
        } else {
           if (tileentity != null) {
@@ -280,7 +280,7 @@
           this.func_175726_f(p_175713_1_).func_177425_e(p_175713_1_);
        }
 -
-+      this.func_175666_e(p_175713_1_, func_180495_p(p_175713_1_).func_177230_c()); //Notify neighbors of changes
++      this.func_175666_e(p_175713_1_, func_180495_p(p_175713_1_).func_177230_c()); // Forge: Notify neighbors of changes
     }
  
     public boolean func_195588_v(BlockPos p_195588_1_) {
@@ -348,7 +348,7 @@
           this.func_175726_f(p_175646_1_).func_76630_e();
        }
  
-+      this.func_175666_e(p_175646_1_, func_180495_p(p_175646_1_).func_177230_c()); //Notify neighbors of changes
++      this.func_175666_e(p_175646_1_, func_180495_p(p_175646_1_).func_177230_c()); // Forge: Notify neighbors of changes
     }
  
     public int func_181545_F() {

@@ -14,7 +14,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
-+      if (this.field_70170_p.field_72995_K || this.field_70128_L) return false; //Forge: Fixes MC-53850
++      if (this.field_70170_p.field_72995_K || this.field_70128_L) return false; // Forge: Fixed MC-53850 Invulnerable item entities and experience orbs are removed client-side when they take damage
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else {

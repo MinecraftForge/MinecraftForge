@@ -22,13 +22,12 @@
        };
     }
  
-@@ -84,6 +90,9 @@
-    public static void func_240594_a_(LanguageMap p_240594_0_) {
+@@ -85,6 +91,8 @@
        field_240592_d_ = p_240594_0_;
     }
-+   
-+   // FORGE START
-+   public Map<String, String> getLanguageData() { return ImmutableMap.of(); }
  
++   public Map<String, String> getLanguageData() { return ImmutableMap.of(); }
++
     public abstract String func_230503_a_(String p_230503_1_);
  
+    public abstract boolean func_230506_b_(String p_230506_1_);

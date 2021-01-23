@@ -8,7 +8,7 @@
 +      final boolean cancelled = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +      ageableentity = event.getChild();
 +      if (cancelled) {
-+         //Reset the "inLove" state for the animals
++         // Reset the "inLove" state for the animals
 +         this.func_70873_a(6000);
 +         p_234177_2_.func_70873_a(6000);
 +         this.func_70875_t();

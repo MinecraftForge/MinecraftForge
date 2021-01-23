@@ -18,7 +18,7 @@
                 entity.field_70143_R = 0.0F;
 -               entity.func_70097_a(DamageSource.field_76379_h, 5.0F);
 +               entity.func_70097_a(DamageSource.field_76379_h, event.getAttackDamage());
-+               } //Forge: End
++               }
              }
           } else if (entity != null) {
              entity.func_70634_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());

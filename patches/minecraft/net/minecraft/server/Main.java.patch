@@ -5,7 +5,7 @@
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec13 = optionparser.nonOptions();
 +      optionparser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
-+      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
++      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); // Forge: Consume this argument, we use it in the launcher, and the client side.
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
@@ -25,7 +25,7 @@
           Bootstrap.func_151354_b();
           Bootstrap.func_218821_c();
           Util.func_240994_l_();
-+         if (!optionset.has(optionspec1)) net.minecraftforge.fml.server.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
++         if (!optionset.has(optionspec1)) net.minecraftforge.fml.server.ServerModLoader.load(); // Forge: Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
           DynamicRegistries.Impl dynamicregistries$impl = DynamicRegistries.func_239770_b_();
           Path path = Paths.get("server.properties");
           ServerPropertiesProvider serverpropertiesprovider = new ServerPropertiesProvider(dynamicregistries$impl, path);
@@ -68,7 +68,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
                 dedicatedserver.func_71263_m(true);
-+               LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
++               LogManager.shutdown(); // Forge: we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
              }
           };
           thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_240759_a_));

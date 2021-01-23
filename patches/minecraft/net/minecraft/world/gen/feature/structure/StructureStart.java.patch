@@ -4,7 +4,7 @@
     public CompoundNBT func_143021_a(int p_143021_1_, int p_143021_2_) {
        CompoundNBT compoundnbt = new CompoundNBT();
        if (this.func_75069_d()) {
-+         if (Registry.field_218361_B.func_177774_c(this.func_214627_k()) == null) { // FORGE: This is just a more friendly error instead of the 'Null String' below
++         if (Registry.field_218361_B.func_177774_c(this.func_214627_k()) == null) { // Forge: This is just a more friendly error instead of the 'Null String' below
 +            throw new RuntimeException("StructureStart \"" + this.getClass().getName() + "\": \"" + this.func_214627_k() + "\" missing ID Mapping, Modder see MapGenStructureIO");
 +         }
           compoundnbt.func_74778_a("id", Registry.field_218361_B.func_177774_c(this.func_214627_k()).toString());

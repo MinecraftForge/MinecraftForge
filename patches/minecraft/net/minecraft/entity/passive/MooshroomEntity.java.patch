@@ -14,7 +14,7 @@
           this.func_184185_a(soundevent, 1.0F, 1.0F);
           return ActionResultType.func_233537_a_(this.field_70170_p.field_72995_K);
 -      } else if (itemstack.func_77973_b() == Items.field_151097_aZ && this.func_230262_K__()) {
-+      } else if (false && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_230262_K__()) { //Forge: Moved to onSheared
++      } else if (false && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_230262_K__()) { // Forge: Moved to onSheared
           this.func_230263_a_(SoundCategory.PLAYERS);
           if (!this.field_70170_p.field_72995_K) {
              itemstack.func_222118_a(1, p_230254_1_, (p_213442_1_) -> {

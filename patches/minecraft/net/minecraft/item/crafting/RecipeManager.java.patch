@@ -4,7 +4,7 @@
  
        for(Entry<ResourceLocation, JsonElement> entry : p_212853_1_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();
-+         if (resourcelocation.func_110623_a().startsWith("_")) continue; //Forge: filter anything beginning with "_" as it's used for metadata.
++         if (resourcelocation.func_110623_a().startsWith("_")) continue; // Forge: filter anything beginning with "_" as it's used for metadata.
  
           try {
 +            if (entry.getValue().isJsonObject() && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(entry.getValue().getAsJsonObject(), "conditions")) {

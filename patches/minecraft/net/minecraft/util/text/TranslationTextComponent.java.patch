@@ -5,7 +5,7 @@
           }
  
 +         if (j == 0) {
-+            // if we failed to match above, lets try the messageformat handler instead.
++            // Forge: if we failed to match above, lets try the messageformat handler instead.
 +            j = net.minecraftforge.fml.TextComponentMessageFormatHandler.handle(this, this.field_150278_b, this.field_150277_e, p_240758_1_);
 +         }
           if (j < p_240758_1_.length()) {

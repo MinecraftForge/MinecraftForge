@@ -230,7 +230,7 @@
        return this.func_77973_b().func_219971_r();
     }
  
-+   // FORGE START
++   // Forge Start
 +   public void deserializeNBT(CompoundNBT nbt) {
 +      final ItemStack itemStack = ItemStack.func_199557_a(nbt);
 +      getStack().func_77982_d(itemStack.func_77978_p());
@@ -262,3 +262,9 @@
     public SoundEvent func_226629_F_() {
        return this.func_77973_b().func_225520_U__();
     }
+@@ -977,4 +1031,5 @@
+          return this.field_242396_h;
+       }
+    }
++   // Forge End
+ }

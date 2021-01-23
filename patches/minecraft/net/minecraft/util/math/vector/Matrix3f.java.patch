@@ -1,14 +1,15 @@
 --- a/net/minecraft/util/math/vector/Matrix3f.java
 +++ b/net/minecraft/util/math/vector/Matrix3f.java
-@@ -444,4 +444,11 @@
+@@ -444,4 +444,12 @@
     public Matrix3f func_226121_d_() {
        return new Matrix3f(this);
     }
 +
-+    // Forge start
++    // Forge Start
 +    public void multiplyBackward(Matrix3f other) {
 +        Matrix3f copy = other.func_226121_d_();
 +        copy.func_226118_b_(this);
 +        this.func_226114_a_(copy);
 +    }
++    // Forge End
  }

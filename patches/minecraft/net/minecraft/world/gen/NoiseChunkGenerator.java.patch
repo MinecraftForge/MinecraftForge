@@ -17,7 +17,7 @@
     public List<MobSpawnInfo.Spawners> func_230353_a_(Biome p_230353_1_, StructureManager p_230353_2_, EntityClassification p_230353_3_, BlockPos p_230353_4_) {
 +      List<MobSpawnInfo.Spawners> spawns = net.minecraftforge.common.world.StructureSpawnManager.getStructureSpawns(p_230353_2_, p_230353_3_, p_230353_4_);
 +      if (spawns != null) return spawns;
-+      if (false) {//Forge: We handle these hardcoded cases above in StructureSpawnManager#getStructureSpawns, but allow for insideOnly to be changed and allow for creatures to be spawned in ones other than just the witch hut
++      if (false) { // Forge: We handle these hardcoded cases above in StructureSpawnManager#getStructureSpawns, but allow for insideOnly to be changed and allow for creatures to be spawned in ones other than just the witch hut
        if (p_230353_2_.func_235010_a_(p_230353_4_, true, Structure.field_236374_j_).func_75069_d()) {
           if (p_230353_3_ == EntityClassification.MONSTER) {
              return Structure.field_236374_j_.func_202279_e();

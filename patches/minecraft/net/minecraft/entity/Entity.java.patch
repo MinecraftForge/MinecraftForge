@@ -19,7 +19,7 @@
     public boolean field_70124_G;
     public boolean field_70133_I;
     protected Vector3d field_213328_B = Vector3d.field_186680_a;
-+   @Deprecated //Forge: Use isAlive, remove(boolean) and revive() instead of directly accessing this field. To allow the entity to react to and better control this information.
++   @Deprecated // Forge: Use isAlive, remove(boolean) and revive() instead of directly accessing this field. To allow the entity to react to and better control this information.
     public boolean field_70128_L;
     public float field_70141_P;
     public float field_70140_Q;
@@ -62,7 +62,7 @@
  
     public boolean func_233562_a_(Entity p_233562_1_, double p_233562_2_) {
        double d0 = p_233562_1_.field_233557_ao_.field_72450_a - this.field_233557_ao_.field_72450_a;
-+      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && field_70170_p instanceof ServerWorld) ((ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
++      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && field_70170_p instanceof ServerWorld) ((ServerWorld)this.field_70170_p).func_217464_b(this); // Forge: Process chunk registration after moving.
        double d1 = p_233562_1_.field_233557_ao_.field_72448_b - this.field_233557_ao_.field_72448_b;
        double d2 = p_233562_1_.field_233557_ao_.field_72449_c - this.field_233557_ao_.field_72449_c;
        return d0 * d0 + d1 * d1 + d2 * d2 < p_233562_2_ * p_233562_2_;
@@ -114,7 +114,7 @@
     public void func_174829_m() {
        AxisAlignedBB axisalignedbb = this.func_174813_aQ();
        this.func_226288_n_((axisalignedbb.field_72340_a + axisalignedbb.field_72336_d) / 2.0D, axisalignedbb.field_72338_b, (axisalignedbb.field_72339_c + axisalignedbb.field_72334_f) / 2.0D);
-+      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && field_70170_p instanceof ServerWorld) ((ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
++      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && field_70170_p instanceof ServerWorld) ((ServerWorld)this.field_70170_p).func_217464_b(this); // Forge: Process chunk registration after moving.
     }
  
     protected SoundEvent func_184184_Z() {
@@ -205,7 +205,7 @@
        return !this.func_184188_bt().isEmpty();
     }
  
-+   @Deprecated //Forge: Use rider sensitive version
++   @Deprecated // Forge: Use rider sensitive version
     public boolean func_205710_ba() {
        return true;
     }
@@ -235,7 +235,7 @@
           if (portalinfo == null) {
              return null;
           } else {
-+            Entity transportedEntity = teleporter.placeEntity(this, (ServerWorld) this.field_70170_p, p_241206_1_, this.field_70177_z, spawnPortal -> { //Forge: Start vanilla logic
++            Entity transportedEntity = teleporter.placeEntity(this, (ServerWorld) this.field_70170_p, p_241206_1_, this.field_70177_z, spawnPortal -> { // Forge: Start vanilla logic
              this.field_70170_p.func_217381_Z().func_219895_b("reloading");
              Entity entity = this.func_200600_R().func_200721_a(p_241206_1_);
              if (entity != null) {
@@ -249,7 +249,7 @@
                 }
              }
 +            return entity;
-+            }); //Forge: End vanilla logic
++            }); // Forge: End vanilla logic
  
              this.func_241204_bJ_();
              this.field_70170_p.func_217381_Z().func_76319_b();
@@ -278,16 +278,16 @@
  
           this.field_233555_aA_ = true;
        }
-+      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && !this.field_70128_L) this.field_70170_p.func_212866_a_((int) Math.floor(p_226288_1_) >> 4, (int) Math.floor(p_226288_5_) >> 4); // Forge - ensure target chunk is loaded.
++      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && !this.field_70128_L) this.field_70170_p.func_212866_a_((int) Math.floor(p_226288_1_) >> 4, (int) Math.floor(p_226288_5_) >> 4); // Forge: ensure target chunk is loaded.
  
     }
  
-@@ -2811,4 +2850,63 @@
+@@ -2811,4 +2850,64 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }
 +
-+   /* ================================== Forge Start =====================================*/
++   // Forge Start
 +
 +   private boolean canUpdate = true;
 +   @Override
@@ -345,4 +345,5 @@
 +      this.field_70128_L = false;
 +      this.reviveCaps();
 +   }
++   // Forge End
  }

@@ -49,7 +49,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -273,6 +275,32 @@
+@@ -273,6 +275,33 @@
  
     public int compareTo(EffectInstance p_compareTo_1_) {
        int i = 32147;
@@ -57,7 +57,7 @@
 +      return (this.func_76459_b() <= 32147 || p_compareTo_1_.func_76459_b() <= 32147) && (!this.func_82720_e() || !p_compareTo_1_.func_82720_e()) ? ComparisonChain.start().compare(this.func_82720_e(), p_compareTo_1_.func_82720_e()).compare(this.func_76459_b(), p_compareTo_1_.func_76459_b()).compare(this.func_188419_a().getGuiSortColor(this), p_compareTo_1_.func_188419_a().getGuiSortColor(this)).result() : ComparisonChain.start().compare(this.func_82720_e(), p_compareTo_1_.func_82720_e()).compare(this.func_188419_a().getGuiSortColor(this), p_compareTo_1_.func_188419_a().getGuiSortColor(this)).result();
     }
 +
-+   //======================= FORGE START ===========================
++   // Forge Start
 +   private java.util.List<net.minecraft.item.ItemStack> curativeItems;
 +
 +   @Override
@@ -82,4 +82,5 @@
 +
 +      return effect;
 +   }
++   // Forge End
  }

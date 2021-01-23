@@ -54,9 +54,9 @@
                 this.field_71296_Q = true;
              }
 +            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopping(this);
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
++            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // Forge: has to come before finalTick to avoid race conditions
           } else {
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
++            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // Forge: has to come before finalTick to avoid race conditions
              this.func_71228_a((CrashReport)null);
           }
        } catch (Throwable throwable1) {
@@ -64,7 +64,7 @@
              field_147145_h.error("We were unable to save this crash report to disk.");
           }
  
-+         net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
++         net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // Forge: has to come before finalTick to avoid race conditions
           this.func_71228_a(crashreport);
        } finally {
           try {
@@ -143,7 +143,7 @@
        p_71230_1_.func_85056_g().func_189529_a("Data Packs", () -> {
           StringBuilder stringbuilder = new StringBuilder();
  
-+               LogManager.shutdown(); // we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
++               LogManager.shutdown(); // Forge: we're manually managing the logging shutdown on the server. Make sure we do it here at the end.
           for(ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
              if (stringbuilder.length() > 0) {
                 stringbuilder.append(", ");
@@ -151,7 +151,7 @@
           this.func_184103_al().func_193244_w();
           this.field_200258_al.func_240946_a_(this.field_195576_ac.func_240960_a_());
           this.field_240765_ak_.func_195410_a(this.field_195576_ac.func_240970_h_());
-+         this.func_184103_al().func_181057_v().forEach(this.func_184103_al()::func_187243_f); //Forge: Fix newly added/modified commands not being sent to the client when commands reload.
++         this.func_184103_al().func_181057_v().forEach(this.func_184103_al()::func_187243_f); // Forge: Fix newly added/modified commands not being sent to the client when commands reload.
        }, this);
        if (this.func_213162_bc()) {
           this.func_213161_c(completablefuture::isDone);
@@ -181,14 +181,14 @@
 +      return perWorldTickTimes.get(dim);
 +   }
 +
-+   @Deprecated //Forge Internal use Only, You can screw up a lot of things if you mess with this map.
++   @Deprecated // Forge: INTERNAL USE ONLY! You can screw up a lot of things if you mess with this map.
 +   public synchronized Map<RegistryKey<World>, ServerWorld> forgeGetWorldMap() {
 +      return this.field_71305_c;
 +   }
 +   private int worldArrayMarker = 0;
 +   private int worldArrayLast = -1;
 +   private ServerWorld[] worldArray;
-+   @Deprecated //Forge Internal use Only, use to protect against concurrent modifications in the world tick loop.
++   @Deprecated // Forge: INTERNAL USE ONLY! Use to protect against concurrent modifications in the world tick loop.
 +   public synchronized void markWorldsDirty() {
 +      worldArrayMarker++;
 +   }

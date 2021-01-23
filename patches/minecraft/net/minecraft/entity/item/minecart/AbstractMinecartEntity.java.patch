@@ -178,7 +178,7 @@
     }
  
     public void func_70108_f(Entity p_70108_1_) {
-+      //net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartCollisionEvent(this, entityIn));
++      // net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartCollisionEvent(this, entityIn));
 +      if (getCollisionHandler() != null) {
 +         getCollisionHandler().onEntityCollision(this, p_70108_1_);
 +         return;
@@ -220,7 +220,7 @@
 +   @Override public double getDragAir() { return dragAir; }
 +   @Override public void setDragAir(double value) { dragAir = value; }
 +   @Override
-+   public double getMaxSpeedWithRail() { //Non-default because getMaximumSpeed is protected
++   public double getMaxSpeedWithRail() { // Non-default because getMaximumSpeed is protected
 +      if (!canUseRail()) return func_174898_m();
 +      BlockPos pos = this.getCurrentRailPosition();
 +      BlockState state = getMinecart().field_70170_p.func_180495_p(pos);
@@ -230,7 +230,7 @@
 +      return Math.min(railMaxSpeed, getCurrentCartSpeedCapOnRail());
 +   }
 +   @Override
-+   public void moveMinecartOnRail(BlockPos pos) { //Non-default because getMaximumSpeed is protected
++   public void moveMinecartOnRail(BlockPos pos) { // Non-default because getMaximumSpeed is protected
 +      AbstractMinecartEntity mc = getMinecart();
 +      double d24 = mc.func_184207_aI() ? 0.75D : 1.0D;
 +      double d25 = mc.getMaxSpeedWithRail();

@@ -18,14 +18,15 @@
     }
  
     public boolean func_195764_b(ResourcePackType p_195764_1_, ResourceLocation p_195764_2_) {
-@@ -226,4 +226,18 @@
+@@ -226,4 +226,19 @@
  
     public void close() {
     }
 +
-+   //Vanilla used to just grab from the classpath, this breaks dev environments, and Forge runtime
-+   //as forge ships vanilla assets in an 'extra' jar with no classes.
-+   //So find that extra jar using the .mcassetsroot marker.
++   /**
++    * Vanilla used to just grab from the classpath, this breaks dev environments, and Forge runtime as forge ships vanilla assets in an 'extra' jar with no classes.
++    * So find that extra jar using the .mcassetsroot marker.
++    */
 +   private InputStream getExtraInputStream(ResourcePackType type, String resource) {
 +      try {
 +         FileSystem fs = field_217810_e.get(type);

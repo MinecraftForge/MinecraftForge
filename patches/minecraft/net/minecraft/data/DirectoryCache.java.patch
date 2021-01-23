@@ -6,7 +6,7 @@
        IOUtils.writeLines(this.field_208329_f.entrySet().stream().map((p_208319_1_) -> {
 -         return (String)p_208319_1_.getValue() + ' ' + this.field_208325_b.relativize(p_208319_1_.getKey());
 -      }).collect(Collectors.toList()), System.lineSeparator(), writer);
-+         return (String)p_208319_1_.getValue() + ' ' + this.field_208325_b.relativize(p_208319_1_.getKey()).toString().replace('\\', '/'); //Forge: Standardize file paths.
++         return (String)p_208319_1_.getValue() + ' ' + this.field_208325_b.relativize(p_208319_1_.getKey()).toString().replace('\\', '/'); // Forge: Standardize file paths.
 +      }).sorted(java.util.Comparator.comparing(a -> a.split(" ")[1])).collect(Collectors.toList()), System.lineSeparator(), writer);
        writer.close();
        field_208324_a.debug("Caching: cache hits: {}, created: {} removed: {}", this.field_208327_d, this.field_208329_f.size() - this.field_208327_d, this.field_208328_e.size());

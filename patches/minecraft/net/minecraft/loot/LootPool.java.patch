@@ -46,7 +46,7 @@
        }
  
     }
-+   //======================== FORGE START =============================================
++   // Forge Start
 +   private boolean isFrozen = false;
 +   public void freeze() { this.isFrozen = true; }
 +   public boolean isFrozen(){ return this.isFrozen; }
@@ -59,7 +59,7 @@
 +   public IRandomRange getBonusRolls() { return this.field_186456_d; }
 +   public void setRolls     (RandomValueRange v){ checkFrozen(); this.field_186455_c = v; }
 +   public void setBonusRolls(RandomValueRange v){ checkFrozen(); this.field_186456_d = v; }
-+   //======================== FORGE END ===============================================
++   // Forge End
  
     public static LootPool.Builder func_216096_a() {
        return new LootPool.Builder();

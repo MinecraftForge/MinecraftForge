@@ -28,15 +28,15 @@
        try {
           UUID uuid = UUIDTypeAdapter.fromString(this.func_148255_b());
 -         return new GameProfile(uuid, this.func_111285_a());
-+         GameProfile ret = new GameProfile(uuid, this.func_111285_a());    //Forge: Adds cached GameProfile properties to returned GameProfile.
-+         if (properties != null) ret.getProperties().putAll(properties); // Helps to cut down on calls to the session service,
-+         return ret;                                                     // which helps to fix MC-52974.
++         GameProfile ret = new GameProfile(uuid, this.func_111285_a());    // Forge: Adds cached GameProfile properties to returned GameProfile. Helps to cut down on calls to the service session. 
++         if (properties != null) ret.getProperties().putAll(properties); // Forge: Aids to fix MC-52974 Host's skin not visible to other players when in LAN world
++         return ret;
        } catch (IllegalArgumentException illegalargumentexception) {
           return new GameProfile((UUID)null, this.func_111285_a());
        }
     }
  
-+   //For internal use only. Modders should never need to use this.
++   //Forge: INTERNAL USE ONLY! Modders should never need to use this.
 +   public void setProperties(com.mojang.authlib.properties.PropertyMap properties) {
 +       if (this.properties == null)
 +           this.properties = properties;

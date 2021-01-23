@@ -349,7 +349,7 @@
 -         networkmanager.func_179290_a(new CLoginStartPacket(this.func_110432_I().func_148256_e()));
 +         com.mojang.authlib.GameProfile gameProfile = this.func_110432_I().func_148256_e();
 +         if (!this.func_110432_I().hasCachedProperties()) {
-+            gameProfile = field_152355_az.fillProfileProperties(gameProfile, true); //Forge: Fill profile properties upon game load. Fixes MC-52974.
++            gameProfile = field_152355_az.fillProfileProperties(gameProfile, true); // Forge: Fixed MC-52974 Host's skin not visible to other players when in LAN world
 +            this.func_110432_I().setProperties(gameProfile.getProperties());
 +         }
 +         networkmanager.func_179290_a(new CLoginStartPacket(gameProfile));
@@ -510,7 +510,7 @@
 -         }
 +         if (!net.minecraftforge.client.ForgeHooksClient.onClickInput(2, this.field_71474_y.field_74322_I, Hand.MAIN_HAND).isCanceled())
 +         net.minecraftforge.common.ForgeHooks.onPickBlock(this.field_71476_x, this.field_71439_g, this.field_71441_e);
-+         // We delete this code wholly instead of commenting it out, to make sure we detect changes in it between MC versions
++         // Forge: We delete this code wholly instead of commenting it out, to make sure we detect changes in it between MC versions
        }
     }
  

@@ -13,7 +13,7 @@
           this.func_226286_f_((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p() + 0.5D);
           double d2 = 0.5D - (double)MathHelper.func_76126_a((0.5F + this.field_184706_by) * (float)Math.PI) * 0.5D;
           double d0 = 0.5D - (double)MathHelper.func_76126_a((0.5F + this.field_184705_bx) * (float)Math.PI) * 0.5D;
-+         if (this.isAddedToWorld() && this.field_70170_p instanceof net.minecraft.world.server.ServerWorld) ((net.minecraft.world.server.ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
++         if (this.isAddedToWorld() && this.field_70170_p instanceof net.minecraft.world.server.ServerWorld) ((net.minecraft.world.server.ServerWorld)this.field_70170_p).func_217464_b(this); // Forge: Process chunk registration after moving.
           Direction direction2 = this.func_184696_cZ().func_176734_d();
           this.func_174826_a((new AxisAlignedBB(this.func_226277_ct_() - 0.5D, this.func_226278_cu_(), this.func_226281_cx_() - 0.5D, this.func_226277_ct_() + 0.5D, this.func_226278_cu_() + 1.0D, this.func_226281_cx_() + 0.5D)).func_72321_a((double)direction2.func_82601_c() * d2, (double)direction2.func_96559_d() * d2, (double)direction2.func_82599_e() * d2));
           double d1 = d2 - d0;
@@ -21,7 +21,7 @@
        super.func_70107_b(p_70107_1_, p_70107_3_, p_70107_5_);
        if (this.field_70180_af != null && this.field_70173_aa != 0) {
           Optional<BlockPos> optional = this.field_70180_af.func_187225_a(field_184701_b);
-+         if (this.isAddedToWorld() && this.field_70170_p instanceof net.minecraft.world.server.ServerWorld) ((net.minecraft.world.server.ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
++         if (this.isAddedToWorld() && this.field_70170_p instanceof net.minecraft.world.server.ServerWorld) ((net.minecraft.world.server.ServerWorld)this.field_70170_p).func_217464_b(this); // Forge: Process chunk registration after moving.
           Optional<BlockPos> optional1 = Optional.of(new BlockPos(p_70107_1_, p_70107_3_, p_70107_5_));
           if (!optional1.equals(optional)) {
              this.field_70180_af.func_187227_b(field_184701_b, optional1);

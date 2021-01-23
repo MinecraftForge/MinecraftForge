@@ -45,7 +45,7 @@
        ++this.field_70725_aQ;
        if (this.field_70725_aQ == 20) {
 -         this.func_70106_y();
-+         this.remove(this instanceof net.minecraft.entity.player.ServerPlayerEntity); //Forge keep data until we revive player
++         this.remove(this instanceof net.minecraft.entity.player.ServerPlayerEntity); // Forge: keep data until we revive player
  
           for(int i = 0; i < 20; ++i) {
              double d0 = this.field_70146_Z.nextGaussian() * 0.02D;
@@ -277,7 +277,7 @@
              float f1 = this.func_110143_aJ();
 -            this.func_70606_j(f1 - f2);
              this.func_110142_aN().func_94547_a(p_70665_1_, f1, f2);
-+            this.func_70606_j(f1 - f2); // Forge: moved to fix MC-121048
++            this.func_70606_j(f1 - f2); // Forge: Fixed MC-121048 When an entity dies, the combat tracker only records the killing blow
              this.func_110149_m(this.func_110139_bj() - f2);
           }
        }
@@ -373,7 +373,7 @@
        if (flag && !this.field_70122_E && !this.func_184218_aH() && !this.func_70644_a(Effects.field_188424_y)) {
           ItemStack itemstack = this.func_184582_a(EquipmentSlotType.CHEST);
 +         flag = itemstack.canElytraFly(this) && itemstack.elytraFlightTick(this, this.field_184629_bo);
-+         if (false) //Forge: Moved to ElytraItem
++         if (false) // Forge: Moved to ElytraItem
           if (itemstack.func_77973_b() == Items.field_185160_cR && ElytraItem.func_185069_d(itemstack)) {
              flag = true;
              if (!this.field_70170_p.field_72995_K && (this.field_184629_bo + 1) % 20 == 0) {
@@ -412,7 +412,7 @@
           vector3d1 = vector3d1.func_178789_a(-this.field_70125_A * ((float)Math.PI / 180F));
           vector3d1 = vector3d1.func_178785_b(-this.field_70177_z * ((float)Math.PI / 180F));
           vector3d1 = vector3d1.func_72441_c(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_());
-+         if (this.field_70170_p instanceof ServerWorld) //Forge: Fix MC-2518 spawnParticle is nooped on server, need to use server specific variant
++         if (this.field_70170_p instanceof ServerWorld) // Forge: Fix MC-2518 spawnParticle is nooped on server, need to use server specific variant
 +             ((ServerWorld)this.field_70170_p).func_195598_a(new ItemParticleData(ParticleTypes.field_197591_B, p_195062_1_), vector3d1.field_72450_a, vector3d1.field_72448_b, vector3d1.field_72449_c, 1, vector3d.field_72450_a, vector3d.field_72448_b + 0.05D, vector3d.field_72449_c, 0.0D);
 +         else
           this.field_70170_p.func_195594_a(new ItemParticleData(ParticleTypes.field_197591_B, p_195062_1_), vector3d1.field_72450_a, vector3d1.field_72448_b, vector3d1.field_72449_c, vector3d.field_72450_a, vector3d.field_72448_b + 0.05D, vector3d.field_72449_c);
@@ -485,7 +485,7 @@
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }
  
-+   /* ==== FORGE START ==== */
++   // Forge Start
 +   /***
 +    * Removes all potion effects that have curativeItem as a curative item for its effect
 +    * @param curativeItem The itemstack we are using to cure potion effects
@@ -540,3 +540,9 @@
     @OnlyIn(Dist.CLIENT)
     public AxisAlignedBB func_184177_bl() {
        if (this.func_184582_a(EquipmentSlotType.HEAD).func_77973_b() == Items.field_196151_dA) {
+@@ -3091,4 +3199,5 @@
+          return super.func_184177_bl();
+       }
+    }
++   // Forge End
+ }

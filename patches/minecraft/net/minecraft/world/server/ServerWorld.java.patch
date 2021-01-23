@@ -66,7 +66,7 @@
                 this.func_217454_n(entity1);
                 objectiterator.remove();
 -               this.func_217484_g(entity1);
-+               this.removeEntityComplete(entity1, entity1 instanceof ServerPlayerEntity); //Forge: Keep cap data until revive. Every other entity removes directly.
++               this.removeEntityComplete(entity1, entity1 instanceof ServerPlayerEntity); // Forge: Keep cap data until revive. Every other entity removes directly.
              }
  
              iprofiler.func_76319_b();
@@ -126,7 +126,7 @@
  
     }
  
-+   @Deprecated //Forge: Use removeEntityComplete(entity,boolean)
++   @Deprecated // Forge: Use removeEntityComplete(entity,boolean)
     public void func_217484_g(Entity p_217484_1_) {
 +      removeEntityComplete(p_217484_1_, false);
 +   }

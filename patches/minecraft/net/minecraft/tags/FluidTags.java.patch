@@ -16,7 +16,7 @@
        return field_206961_c.func_241288_c_();
     }
 +
-+   //Forge: Readd this stripped getter like the other tag classes
++   // Forge: Readd this stripped getter like the other tag classes
 +   public static ITagCollection<Fluid> func_226157_a_() {
 +       return field_206961_c.func_232939_b_();
 +   }

@@ -4,7 +4,7 @@
  
     @Nullable
     public static MapData func_195950_a(ItemStack p_195950_0_, World p_195950_1_) {
-+      // FORGE: Add instance method for mods to override
++      // Forge: Add instance method for mods to override
 +      Item map = p_195950_0_.func_77973_b();
 +      if (map instanceof FilledMapItem) {
 +        return ((FilledMapItem)map).getCustomMapData(p_195950_0_, p_195950_1_);

@@ -33,7 +33,7 @@
        });
     }
  
-+   @Deprecated //Use Forge version
++   @Deprecated // Forge: Use Forge version
     public static List<Template.BlockInfo> func_237145_a_(IWorld p_237145_0_, BlockPos p_237145_1_, BlockPos p_237145_2_, PlacementSettings p_237145_3_, List<Template.BlockInfo> p_237145_4_) {
 +      return processBlockInfos(p_237145_0_, p_237145_1_, p_237145_2_, p_237145_3_, p_237145_4_, null);
 +   }
@@ -78,12 +78,12 @@
 +   private void addEntitiesToWorld(IServerWorld p_237143_1_, BlockPos p_237143_2_, PlacementSettings placementIn) {
 +      for(Template.EntityInfo template$entityinfo : processEntityInfos(this, p_237143_1_, p_237143_2_, placementIn, this.field_186271_b)) {
 +         BlockPos blockpos = func_207669_a(template$entityinfo.field_186248_b, placementIn.func_186212_b(), placementIn.func_186215_c(), placementIn.func_207664_d()).func_177971_a(p_237143_2_);
-+         blockpos = template$entityinfo.field_186248_b; // FORGE: Position will have already been transformed by processEntityInfos
++         blockpos = template$entityinfo.field_186248_b; // Forge: Position will have already been transformed by processEntityInfos
 +         if (placementIn.func_186213_g() == null || placementIn.func_186213_g().func_175898_b(blockpos)) {
              CompoundNBT compoundnbt = template$entityinfo.field_186249_c.func_74737_b();
 -            Vector3d vector3d = func_207667_a(template$entityinfo.field_186247_a, p_237143_3_, p_237143_4_, p_237143_5_);
 -            Vector3d vector3d1 = vector3d.func_72441_c((double)p_237143_2_.func_177958_n(), (double)p_237143_2_.func_177956_o(), (double)p_237143_2_.func_177952_p());
-+            Vector3d vector3d1 = template$entityinfo.field_186247_a; // FORGE: Position will have already been transformed by processEntityInfos
++            Vector3d vector3d1 = template$entityinfo.field_186247_a; // Forge: Position will have already been transformed by processEntityInfos
              ListNBT listnbt = new ListNBT();
              listnbt.add(DoubleNBT.func_229684_a_(vector3d1.field_72450_a));
              listnbt.add(DoubleNBT.func_229684_a_(vector3d1.field_72448_b));

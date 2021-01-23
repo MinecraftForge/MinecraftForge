@@ -12,7 +12,7 @@
           }
        }
  
-+      super.func_70624_b(p_70624_1_); //Forge: Moved down to allow event handlers to write data manager values.
++      super.func_70624_b(p_70624_1_); // Forge: Moved down to allow event handlers to write data manager values.
     }
  
     protected void func_70088_a() {

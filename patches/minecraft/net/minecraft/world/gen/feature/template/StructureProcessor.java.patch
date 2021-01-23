@@ -5,7 +5,7 @@
  public abstract class StructureProcessor {
     @Nullable
 -   public abstract Template.BlockInfo func_230386_a_(IWorldReader p_230386_1_, BlockPos p_230386_2_, BlockPos p_230386_3_, Template.BlockInfo p_230386_4_, Template.BlockInfo p_230386_5_, PlacementSettings p_230386_6_);
-+   @Deprecated //Forge: Use process below, with the Template context
++   @Deprecated // Forge: Use process below, with the Template context
 +   public Template.BlockInfo func_230386_a_(IWorldReader p_230386_1_, BlockPos p_230386_2_, BlockPos p_230386_3_, Template.BlockInfo p_230386_4_, Template.BlockInfo p_230386_5_, PlacementSettings p_230386_6_) {
 +      return p_230386_5_;
 +   }
@@ -18,7 +18,7 @@
 +   }
 +
 +   /**
-+    * FORGE: Add entity processing.
++    * Forge: Add entity processing.
 +    * <p>
 +    * Use this method to process entities from a structure in much the same way as
 +    * blocks, parameters are analogous.

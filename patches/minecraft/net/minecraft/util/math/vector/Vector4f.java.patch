@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/math/vector/Vector4f.java
 +++ b/net/minecraft/util/math/vector/Vector4f.java
-@@ -125,4 +125,16 @@
+@@ -125,4 +125,17 @@
     public String toString() {
        return "[" + this.field_229368_a_ + ", " + this.field_229369_b_ + ", " + this.field_229370_c_ + ", " + this.field_229371_d_ + "]";
     }
@@ -16,4 +16,5 @@
 +    public void setY(float y) { this.field_229369_b_ = y; }
 +    public void setZ(float z) { this.field_229370_c_ = z; }
 +    public void setW(float z) { this.field_229371_d_ = z; }
++    // Forge End
  }

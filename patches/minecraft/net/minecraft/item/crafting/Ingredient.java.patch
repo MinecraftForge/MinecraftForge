@@ -4,7 +4,7 @@
  import net.minecraft.util.registry.Registry;
  
  public class Ingredient implements Predicate<ItemStack> {
-+   //Because Mojang caches things... we need to invalidate them.. so... here we go..
++   // Forge: Because Mojang caches things... we need to invalidate them.. so... here we go..
 +   private static final java.util.Set<Ingredient> INSTANCES = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<Ingredient, Boolean>());
 +   public static void invalidateAll() {
 +      INSTANCES.stream().filter(e -> e != null).forEach(i -> i.invalidate());
@@ -81,12 +81,11 @@
           if (p_199802_0_.isJsonObject()) {
              return func_209357_a(Stream.of(func_199803_a(p_199802_0_.getAsJsonObject())));
           } else if (p_199802_0_.isJsonArray()) {
-@@ -192,6 +229,12 @@
+@@ -192,6 +229,11 @@
        }
     }
  
-+   //Merges several vanilla Ingredients together. As a quirk of how the json is structured, we can't tell if its a single Ingredient type or multiple so we split per item and re-merge here.
-+   //Only public for internal use, so we can access a private field in here.
++   // Forge: Merges several vanilla Ingredients together. As a quirk of how the json is structured, we can't tell if its a single Ingredient type or multiple so we split per item and re-merge here. Only public for internal use, so we can access a private field in here.
 +   public static Ingredient merge(Collection<Ingredient> parts) {
 +      return func_209357_a(parts.stream().flatMap(i -> Arrays.stream(i.field_199807_b)));
 +   }
@@ -94,7 +93,7 @@
     public interface IItemList {
        Collection<ItemStack> func_199799_a();
  
-@@ -230,6 +273,9 @@
+@@ -230,6 +272,9 @@
              list.add(new ItemStack(item));
           }
  

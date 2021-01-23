@@ -13,7 +13,7 @@
        return this.func_206886_c().func_207185_a(p_206884_1_);
     }
  
-+   @Deprecated //Forge: Use more sensitive version
++   @Deprecated // Forge: Use more sensitive version
     public float func_210200_l() {
        return this.func_206886_c().func_210195_d();
     }

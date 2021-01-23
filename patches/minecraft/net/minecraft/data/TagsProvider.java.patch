@@ -21,23 +21,23 @@
     }
  
     protected abstract void func_200432_c();
-@@ -47,12 +57,14 @@
+@@ -47,13 +57,13 @@
           return this.field_200435_c.func_241873_b(p_240527_1_).orElse((T)null);
        };
        this.field_200434_b.forEach((p_240524_4_, p_240524_5_) -> {
 -         List<ITag.Proxy> list = p_240524_5_.func_232963_b_(function, function1).collect(Collectors.toList());
-+         // FORGE: Add validation via existing resources
-+         List<ITag.Proxy> list = p_240524_5_.func_232963_b_(function, function1).filter(this::missing).collect(Collectors.toList());
++         List<ITag.Proxy> list = p_240524_5_.func_232963_b_(function, function1).filter(this::missing).collect(Collectors.toList()); // Forge: Add validation via existing resources
           if (!list.isEmpty()) {
              throw new IllegalArgumentException(String.format("Couldn't define tag %s as it is missing following references: %s", p_240524_4_, list.stream().map(Objects::toString).collect(Collectors.joining(","))));
           } else {
              JsonObject jsonobject = p_240524_5_.func_232965_c_();
              Path path = this.func_200431_a(p_240524_4_);
-+            if (path == null) return; //Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
- 
+-
++            if (path == null) return; // Forge: Allow running this data provider without writing it. Recipe provider needs valid tags.
              try {
                 String s = field_200437_e.toJson((JsonElement)jsonobject);
-@@ -74,20 +86,36 @@
+                String s1 = field_208307_a.hashUnencodedChars(s).toString();
+@@ -74,20 +84,36 @@
        });
     }
  
@@ -76,7 +76,7 @@
        private final ITag.Builder field_240528_a_;
        private final Registry<T> field_240529_b_;
        private final String field_240530_c_;
-@@ -115,5 +143,18 @@
+@@ -115,5 +141,18 @@
           });
           return this;
        }

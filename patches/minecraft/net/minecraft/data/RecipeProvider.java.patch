@@ -4,7 +4,7 @@
  
           }
        });
-+      if (this.getClass() == RecipeProvider.class) //Forge: Subclasses don't need this.
++      if (this.getClass() == RecipeProvider.class) // Forge: Subclasses don't need this.
        func_208310_b(p_200398_1_, Advancement.Builder.func_200278_a().func_200275_a("impossible", new ImpossibleTrigger.Instance()).func_200273_b(), path.resolve("data/minecraft/advancements/recipes/root.json"));
     }
  

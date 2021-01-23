@@ -1,17 +1,15 @@
 --- a/net/minecraft/entity/item/ItemEntity.java
 +++ b/net/minecraft/entity/item/ItemEntity.java
-@@ -38,6 +38,10 @@
+@@ -38,6 +38,8 @@
     private UUID field_145801_f;
     private UUID field_145802_g;
     public final float field_70290_d;
-+   /**
-+    * The maximum age of this EntityItem.  The item is expired once this is reached.
-+    */
++   /** The maximum age of this EntityItem.  The item is expired once this is reached. */
 +   public int lifespan = 6000;
  
     public ItemEntity(EntityType<? extends ItemEntity> p_i50217_1_, World p_i50217_2_) {
        super(p_i50217_1_, p_i50217_2_);
-@@ -54,6 +58,7 @@
+@@ -54,6 +56,7 @@
     public ItemEntity(World p_i1710_1_, double p_i1710_2_, double p_i1710_4_, double p_i1710_6_, ItemStack p_i1710_8_) {
        this(p_i1710_1_, p_i1710_2_, p_i1710_4_, p_i1710_6_);
        this.func_92058_a(p_i1710_8_);
@@ -19,7 +17,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -74,6 +79,7 @@
+@@ -74,6 +77,7 @@
     }
  
     public void func_70071_h_() {
@@ -27,7 +25,7 @@
        if (this.func_92059_d().func_190926_b()) {
           this.func_70106_y();
        } else {
-@@ -144,7 +150,14 @@
+@@ -144,7 +148,14 @@
              }
           }
  
@@ -43,7 +41,7 @@
              this.func_70106_y();
           }
  
-@@ -202,6 +215,8 @@
+@@ -202,6 +213,8 @@
           return false;
        } else if (p_226532_1_.func_77942_o() ^ p_226532_0_.func_77942_o()) {
           return false;
@@ -52,15 +50,15 @@
        } else {
           return !p_226532_1_.func_77942_o() || p_226532_1_.func_77978_p().equals(p_226532_0_.func_77978_p());
        }
-@@ -235,6 +250,7 @@
+@@ -235,6 +248,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
-+      if (this.field_70170_p.field_72995_K || this.field_70128_L) return false; //Forge: Fixes MC-53850
++      if (this.field_70170_p.field_72995_K || this.field_70128_L) return false; // Forge: Fixed MC-53850 Invulnerable item entities and experience orbs are removed client-side when they take damage
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (!this.func_92059_d().func_190926_b() && this.func_92059_d().func_77973_b() == Items.field_151156_bN && p_70097_1_.func_94541_c()) {
-@@ -256,6 +272,7 @@
+@@ -256,6 +270,7 @@
        p_213281_1_.func_74777_a("Health", (short)this.field_70291_e);
        p_213281_1_.func_74777_a("Age", (short)this.field_70292_b);
        p_213281_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -68,7 +66,7 @@
        if (this.func_200214_m() != null) {
           p_213281_1_.func_186854_a("Thrower", this.func_200214_m());
        }
-@@ -276,6 +293,7 @@
+@@ -276,6 +291,7 @@
        if (p_70037_1_.func_74764_b("PickupDelay")) {
           this.field_145804_b = p_70037_1_.func_74765_d("PickupDelay");
        }
@@ -76,7 +74,7 @@
  
        if (p_70037_1_.func_186855_b("Owner")) {
           this.field_145802_g = p_70037_1_.func_186857_a("Owner");
-@@ -295,10 +313,18 @@
+@@ -295,10 +311,18 @@
  
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
@@ -96,7 +94,7 @@
              p_70100_1_.func_71001_a(this, i);
              if (itemstack.func_190926_b()) {
                 this.func_70106_y();
-@@ -322,8 +348,8 @@
+@@ -322,8 +346,8 @@
     }
  
     @Nullable
@@ -107,7 +105,7 @@
        if (!this.field_70170_p.field_72995_K && entity instanceof ItemEntity) {
           ((ItemEntity)entity).func_85054_d();
        }
-@@ -396,7 +422,7 @@
+@@ -396,7 +420,7 @@
  
     public void func_174870_v() {
        this.func_174871_r();

@@ -5,7 +5,7 @@
              if (!itemstack.func_190926_b()) {
                 ItemStack itemstack1 = itemstack.func_77946_l();
 -               itemstack1.func_190920_e(p_215859_1_.func_190916_E());
-+               itemstack1.func_190920_e(p_215859_1_.func_190916_E() * itemstack.func_190916_E()); //Forge: Support smelting returning multiple
++               itemstack1.func_190920_e(p_215859_1_.func_190916_E() * itemstack.func_190916_E()); // Forge: Support smelting returning multiple
                 return itemstack1;
              }
           }

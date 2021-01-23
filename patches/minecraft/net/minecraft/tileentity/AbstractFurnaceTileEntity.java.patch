@@ -4,7 +4,7 @@
        this.field_214014_c = p_i49964_2_;
     }
  
-+   @Deprecated //Forge - get burn times by calling ForgeHooks#getBurnTime(ItemStack)
++   @Deprecated // Forge: get burn times by calling ForgeHooks#getBurnTime(ItemStack)
     public static Map<Item, Integer> func_214001_f() {
        Map<Item, Integer> map = Maps.newLinkedHashMap();
        func_213996_a(map, Items.field_151129_at, 20000);
@@ -61,11 +61,11 @@
              } else if (!itemstack1.func_77969_a(itemstack)) {
                 return false;
 -            } else if (itemstack1.func_190916_E() < this.func_70297_j_() && itemstack1.func_190916_E() < itemstack1.func_77976_d()) {
-+            } else if (itemstack1.func_190916_E() + itemstack.func_190916_E() <= this.func_70297_j_() && itemstack1.func_190916_E() + itemstack.func_190916_E() <= itemstack1.func_77976_d()) { // Forge fix: make furnace respect stack sizes in furnace recipes
++            } else if (itemstack1.func_190916_E() + itemstack.func_190916_E() <= this.func_70297_j_() && itemstack1.func_190916_E() + itemstack.func_190916_E() <= itemstack1.func_77976_d()) { // Forge: make furnace respect stack sizes in furnace recipes
                 return true;
              } else {
 -               return itemstack1.func_190916_E() < itemstack.func_77976_d();
-+               return itemstack1.func_190916_E() + itemstack.func_190916_E() <= itemstack.func_77976_d(); // Forge fix: make furnace respect stack sizes in furnace recipes
++               return itemstack1.func_190916_E() + itemstack.func_190916_E() <= itemstack.func_77976_d(); // Forge: make furnace respect stack sizes in furnace recipes
              }
           }
        } else {

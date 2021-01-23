@@ -20,7 +20,7 @@
  
     }
  
-+   @Deprecated //Use other method or manually call ForgeHooks.modifyLoot
++   @Deprecated // Forge: Use other method or manually call ForgeHooks.modifyLoot
     public void func_216120_b(LootContext p_216120_1_, Consumer<ItemStack> p_216120_2_) {
        this.func_216114_a(p_216120_1_, func_216124_a(p_216120_2_));
     }
@@ -47,7 +47,7 @@
        return new LootTable.Builder();
     }
  
-+   //======================== FORGE START =============================================
++   // Forge Start
 +   private boolean isFrozen = false;
 +   public void freeze() {
 +      this.isFrozen = true;
@@ -80,7 +80,7 @@
 +         throw new RuntimeException("Attempted to add a duplicate pool to loot table: " + pool.getName());
 +      this.field_186466_c.add(pool);
 +   }
-+   //======================== FORGE END ===============================================
++   // Forge End
 +
     public static class Builder implements ILootFunctionConsumer<LootTable.Builder> {
        private final List<LootPool> field_216041_a = Lists.newArrayList();

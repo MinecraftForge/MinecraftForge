@@ -66,7 +66,7 @@
        p_76612_1_.field_70162_ai = k;
        p_76612_1_.field_70164_aj = this.field_212816_F.field_77275_b;
        this.field_76645_j[k].add(p_76612_1_);
-+      this.func_76630_e(); // Forge - ensure chunks are marked to save after an entity add
++      this.func_76630_e(); // Forge: ensure chunks are marked to save after an entity add
     }
  
     public void func_201607_a(Heightmap.Type p_201607_1_, long[] p_201607_2_) {
@@ -74,7 +74,7 @@
        }
  
        this.field_76645_j[p_76608_2_].remove(p_76608_1_);
-+      this.func_76630_e(); // Forge - ensure chunks are marked to save after entity removals
++      this.func_76630_e(); // Forge: ensure chunks are marked to save after entity removals
     }
  
     public int func_201576_a(Heightmap.Type p_201576_1_, int p_201576_2_, int p_201576_3_) {

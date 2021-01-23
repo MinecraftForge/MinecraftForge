@@ -1,11 +1,11 @@
 --- a/net/minecraft/util/math/vector/Matrix4f.java
 +++ b/net/minecraft/util/math/vector/Matrix4f.java
-@@ -386,4 +386,78 @@
+@@ -386,4 +386,79 @@
        matrix4f.field_226586_l_ = p_226599_2_;
        return matrix4f;
     }
 +
-+    // Forge start
++    // Forge Start
 +    public Matrix4f(float[] values) {
 +        field_226575_a_ = values[0];
 +        field_226576_b_ = values[1];
@@ -78,4 +78,5 @@
 +        this.field_226582_h_ = y;
 +        this.field_226586_l_ = z;
 +    }
++    // Forge End
  }

@@ -4,7 +4,7 @@
     });
     public static final LootParameterSet field_216261_b = func_216253_a("chest", (p_216259_0_) -> {
        p_216259_0_.func_216269_a(LootParameters.field_237457_g_).func_216271_b(LootParameters.field_216281_a);
-+      p_216259_0_.func_216271_b(LootParameters.field_216284_d); //Forge: Chest Minecarts can have killers.
++      p_216259_0_.func_216271_b(LootParameters.field_216284_d); // Forge: Chest Minecarts can have killers.
     });
     public static final LootParameterSet field_227557_c_ = func_216253_a("command", (p_216250_0_) -> {
        p_216250_0_.func_216269_a(LootParameters.field_237457_g_).func_216271_b(LootParameters.field_216281_a);
@@ -12,7 +12,7 @@
     });
     public static final LootParameterSet field_216262_c = func_216253_a("fishing", (p_216258_0_) -> {
        p_216258_0_.func_216269_a(LootParameters.field_237457_g_).func_216269_a(LootParameters.field_216289_i).func_216271_b(LootParameters.field_216281_a);
-+      p_216258_0_.func_216271_b(LootParameters.field_216284_d).func_216271_b(LootParameters.field_216281_a); //Forge: Allow fisher, and bobber
++      p_216258_0_.func_216271_b(LootParameters.field_216284_d).func_216271_b(LootParameters.field_216281_a); // Forge: Allow fisher, and bobber
     });
     public static final LootParameterSet field_216263_d = func_216253_a("entity", (p_216251_0_) -> {
        p_216251_0_.func_216269_a(LootParameters.field_216281_a).func_216269_a(LootParameters.field_237457_g_).func_216269_a(LootParameters.field_216283_c).func_216271_b(LootParameters.field_216284_d).func_216271_b(LootParameters.field_216285_e).func_216271_b(LootParameters.field_216282_b);
