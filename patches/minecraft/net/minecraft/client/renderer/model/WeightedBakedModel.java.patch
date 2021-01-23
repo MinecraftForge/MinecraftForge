@@ -24,7 +24,7 @@
        return this.field_177566_c.func_177555_b();
     }
  
-+   @Override
++   @Override // Forge: Override
 +   public boolean isAmbientOcclusion(BlockState state) {
 +      return this.field_177566_c.isAmbientOcclusion(state);
 +   }
@@ -32,10 +32,11 @@
     public boolean func_177556_c() {
        return this.field_177566_c.func_177556_c();
     }
-@@ -47,10 +53,18 @@
+@@ -47,10 +53,20 @@
        return this.field_177566_c.func_177554_e();
     }
  
++   // Forge: Overloaded getParticleTexture()
 +   public TextureAtlasSprite getParticleTexture(net.minecraftforge.client.model.data.IModelData modelData) {
 +      return this.field_177566_c.getParticleTexture(modelData);
 +   }
@@ -44,6 +45,7 @@
        return this.field_177566_c.func_177552_f();
     }
  
++   // Forge: Add handlePerspective()
 +   public IBakedModel handlePerspective(net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType transformType, com.mojang.blaze3d.matrix.MatrixStack matrixStack) {
 +      return this.field_177566_c.handlePerspective(transformType, matrixStack);
 +   }
