@@ -28,9 +28,9 @@ import net.minecraftforge.eventbus.api.Event;
  */
 public class RecipesUpdatedEvent extends Event
 {
-    
+
     private final RecipeManager mgr;
-    
+
     public RecipesUpdatedEvent(RecipeManager mgr)
     {
         this.mgr = mgr;

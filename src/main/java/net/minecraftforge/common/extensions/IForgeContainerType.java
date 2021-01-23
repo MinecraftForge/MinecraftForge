@@ -30,6 +30,6 @@ public interface IForgeContainerType<T>
     {
         return new ContainerType<>(factory);
     }
-    
+
     T create(int windowId, PlayerInventory playerInv, PacketBuffer extraData);
 }

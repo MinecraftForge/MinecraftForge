@@ -30,8 +30,8 @@ import net.minecraft.client.world.ClientWorld;
  */
 @Deprecated
 public interface CloudRenderHandler extends IRenderHandler {
-	@Override
-	default void render(int ticks, float partialTicks, ClientWorld world, Minecraft mc) {}
+    @Override
+    default void render(int ticks, float partialTicks, ClientWorld world, Minecraft mc) {}
 
-	void render(int ticks, float partialTicks, MatrixStack matrixStack, ClientWorld world, Minecraft mc);
+    void render(int ticks, float partialTicks, MatrixStack matrixStack, ClientWorld world, Minecraft mc);
 }

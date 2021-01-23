@@ -37,7 +37,7 @@ public class ItemTossEvent extends ItemEvent
 
     /**
      * Creates a new event for EntityItems tossed by a player.
-     * 
+     *
      * @param entityItem The EntityItem being tossed.
      * @param player The player tossing the item.
      */

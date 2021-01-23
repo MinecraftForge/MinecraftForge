@@ -42,7 +42,7 @@ public class TextureStitchEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Fired when the TextureMap is told to refresh it's stitched texture.
+     * Fired when the TextureMap is told to refresh its stitched texture.
      * Called before the {@link net.minecraft.client.renderer.texture.TextureAtlasSprite} are loaded.
      */
     public static class Pre extends TextureStitchEvent

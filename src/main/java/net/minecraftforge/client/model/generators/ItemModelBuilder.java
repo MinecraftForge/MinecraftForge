@@ -51,7 +51,7 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
 
     /**
      * Get an existing override builder
-     * 
+     *
      * @param index the index of the existing override builder
      * @return the override builder
      * @throws IndexOutOfBoundsException if {@code} index is out of bounds

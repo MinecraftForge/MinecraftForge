@@ -49,7 +49,7 @@ import net.minecraftforge.fml.packs.ModFileResourcePack;
 /**
  * Enables data providers to check if other data files currently exist. The
  * instance provided in the {@link GatherDataEvent} utilizes the standard
- * resources (via {@link VanillaPack}), forge's resources, as well as any
+ * resources (via {@link VanillaPack}), Forge's resources, as well as any
  * extra resource packs passed in via the {@code --existing} argument,
  * or mod resources via the {@code --existing-mod} argument.
  */
@@ -95,12 +95,12 @@ public class ExistingFileHelper {
 
     /**
      * Create a new helper. This should probably <em>NOT</em> be used by mods, as
-     * the instance provided by forge is designed to be a central instance that
+     * the instance provided by Forge is designed to be a central instance that
      * tracks existence of generated data.
      * <p>
      * Only create a new helper if you intentionally want to ignore the existence of
      * other generated files.
-     * 
+     *
      * @param existingPacks
      * @param existingMods
      * @param enable
@@ -156,7 +156,7 @@ public class ExistingFileHelper {
      * convenience method to avoid repeating type/prefix/suffix and instead use the
      * common definitions in {@link ResourceType}, or a custom {@link IResourceType}
      * definition.
-     * 
+     *
      * @param loc  the base location of the resource, e.g.
      *             {@code "minecraft:block/stone"}
      * @param type a {@link IResourceType} describing how to form the path to the
@@ -170,7 +170,7 @@ public class ExistingFileHelper {
 
     /**
      * Check if a given resource exists in the known resource packs.
-     * 
+     *
      * @param loc        the base location of the resource, e.g.
      *                   {@code "minecraft:block/stone"}
      * @param packType   the type of resources to check
@@ -197,7 +197,7 @@ public class ExistingFileHelper {
      * <p>
      * This represents a <em>promise</em> to generate the file later, since other
      * datagen may rely on this file existing.
-     * 
+     *
      * @param loc  the base location of the resource, e.g.
      *             {@code "minecraft:block/stone"}
      * @param type a {@link IResourceType} describing how to form the path to the
@@ -218,7 +218,7 @@ public class ExistingFileHelper {
      * <p>
      * This represents a <em>promise</em> to generate the file later, since other
      * datagen may rely on this file existing.
-     * 
+     *
      * @param loc        the base location of the resource, e.g.
      *                   {@code "minecraft:block/stone"}
      * @param packType   the type of resources to check

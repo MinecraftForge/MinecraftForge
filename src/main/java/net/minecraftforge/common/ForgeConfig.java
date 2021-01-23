@@ -238,7 +238,7 @@ public class ForgeConfig
 
     @SubscribeEvent
     public static void onLoad(final ModConfig.Loading configEvent) {
-        LogManager.getLogger().debug(FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
+        LogManager.getLogger().debug(FORGEMOD, "Loaded Forge config file {}", configEvent.getConfig().getFileName());
     }
 
     @SubscribeEvent

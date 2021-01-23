@@ -75,7 +75,7 @@ public class DelegatingResourcePack extends ResourcePack
     {
         return name;
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getMetadata(IMetadataSectionSerializer<T> deserializer) throws IOException

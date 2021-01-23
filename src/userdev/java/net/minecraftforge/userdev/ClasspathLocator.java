@@ -73,7 +73,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
             throw new RuntimeException("wha?", e);
         }
     }
-    
+
     private void locateMods(String resource, String name, Predicate<Path> filter) throws IOException {
         final Enumeration<URL> modsTomls = ClassLoader.getSystemClassLoader().getResources(resource);
         while (modsTomls.hasMoreElements()) {

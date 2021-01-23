@@ -82,7 +82,7 @@ public interface IForgeBakedModel
     }
 
     /**
-     * Override to true, to tell forge to call the getLayerModels method below.
+     * Override to true, to tell Forge to call the getLayerModels method below.
      */
     default boolean isLayered()
     {

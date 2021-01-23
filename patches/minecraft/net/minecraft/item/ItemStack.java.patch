@@ -238,7 +238,7 @@
 +   }
 +
 +   /**
-+    * Set up forge's ItemStack additions.
++    * Set up Forge's ItemStack additions.
 +    */
 +   private void forgeInit() {
 +      Item item = getItemRaw();

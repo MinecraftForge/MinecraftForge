@@ -4,7 +4,7 @@
  
        return blockstate;
     }
-+   
++
 +   public static void initValidStates() {
 +      field_177464_a = StreamSupport.stream(Registry.field_212618_g.spliterator(), false).flatMap(block -> block.func_176194_O().func_177619_a().stream()).collect(Collectors.toList());
 +      field_177462_b = MathHelper.func_76123_f(MathHelper.func_76129_c(field_177464_a.size()));

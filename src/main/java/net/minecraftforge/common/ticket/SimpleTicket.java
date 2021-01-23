@@ -71,9 +71,9 @@ public abstract class SimpleTicket<T>
     }
 
     /**
-     * Called by the managing system when a ticket wishes to unload all of it's tickets, e.g. on chunk unload
+     * Called by the managing system when a ticket wishes to unload all of its tickets, e.g. on chunk unload
      * <br>The ticket must not remove itself from the manager that is calling the unload!
-     * The ticket must ensure that it removes itself from all of it's dummies when returning true
+     * The ticket must ensure that it removes itself from all of its dummies when returning true
      * @param unloadingManager The manager that is unloading this ticket
      * @return true if this ticket can be removed, false if not.
      */

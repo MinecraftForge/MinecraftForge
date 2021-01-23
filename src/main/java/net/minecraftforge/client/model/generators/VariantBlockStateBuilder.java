@@ -63,7 +63,7 @@ import net.minecraftforge.client.model.generators.BlockStateProvider.ConfiguredM
  * {@link #forAllStatesExcept(Function, Property...)} for cases where the model
  * for each variant can be decided dynamically based on the state's property
  * values.
- * 
+ *
  * @see BlockStateProvider
  */
 public class VariantBlockStateBuilder implements IGeneratedBlockstate {
@@ -100,7 +100,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
 
     /**
      * Assign some models to a given {@link PartialBlockstate partial state}.
-     * 
+     *
      * @param state  The {@link PartialBlockstate partial state} for which to add
      *               the models
      * @param models A set of models to add to this state
@@ -134,7 +134,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
      * Assign some models to a given {@link PartialBlockstate partial state},
      * throwing an exception if the state has already been configured. Otherwise,
      * simply calls {@link #addModels(PartialBlockstate, ConfiguredModel...)}.
-     * 
+     *
      * @param state  The {@link PartialBlockstate partial state} for which to set
      *               the models
      * @param models A set of models to assign to this state
@@ -213,7 +213,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
          * Creates a builder for models to assign to this state, which when completed
          * via {@link ConfiguredModel.Builder#addModel()} will assign the resultant set
          * of models to this state.
-         * 
+         *
          * @return the model builder
          * @see ConfiguredModel.Builder
          */
@@ -226,7 +226,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
          * Add models to the current state's variant. For use when it is more convenient
          * to add multiple sets of models, as a replacement for
          * {@link #setModels(ConfiguredModel...)}.
-         * 
+         *
          * @param models The models to add.
          * @return {@code this}
          * @throws NullPointerException If the parent builder is {@code null}
@@ -239,7 +239,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
 
         /**
          * Set this variant's models, and return the parent builder.
-         * 
+         *
          * @param models The models to set
          * @return The parent builder instance
          * @throws NullPointerException If the parent builder is {@code null}
@@ -253,7 +253,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
          * Complete this state without adding any new models, and return a new partial
          * state via the parent builder. For use after calling
          * {@link #addModels(ConfiguredModel...)}.
-         * 
+         *
          * @return A fresh partial state as specified by
          *         {@link VariantBlockStateBuilder#partialState()}.
          * @throws NullPointerException If the parent builder is {@code null}

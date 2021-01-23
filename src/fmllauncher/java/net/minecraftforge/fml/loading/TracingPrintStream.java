@@ -24,7 +24,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.PrintStream;
 
 /**
- * PrintStream which redirects it's output to a given logger.
+ * PrintStream which redirects its output to a given logger.
  *
  */
 public class TracingPrintStream extends PrintStream

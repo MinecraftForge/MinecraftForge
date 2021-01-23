@@ -27,7 +27,7 @@ import com.google.common.base.Preconditions;
 public class ModelDataMap implements IModelData
 {
     private final Map<ModelProperty<?>, Object> backingMap;
-    
+
     private ModelDataMap(Map<ModelProperty<?>, Object> map)
     {
         this.backingMap = new IdentityHashMap<>(map);
@@ -58,22 +58,22 @@ public class ModelDataMap implements IModelData
         Preconditions.checkArgument(prop.test(data), "Value is invalid for this property");
         return (T) backingMap.put(prop, data);
     }
-    
+
     public static class Builder
     {
         private final Map<ModelProperty<?>, Object> defaults = new IdentityHashMap<>();
-        
+
         public Builder withProperty(ModelProperty<?> prop)
         {
             return withInitial(prop, null);
         }
-        
+
         public <T> Builder withInitial(ModelProperty<T> prop, T data)
         {
             this.defaults.put(prop, data);
             return this;
         }
-        
+
         public ModelDataMap build()
         {
             return new ModelDataMap(defaults);

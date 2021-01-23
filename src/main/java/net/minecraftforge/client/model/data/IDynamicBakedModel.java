@@ -40,7 +40,7 @@ public interface IDynamicBakedModel extends IBakedModel
     {
         return getQuads(state, side, rand, EmptyModelData.INSTANCE);
     }
-    
+
     // Force this to be overriden otherwise this introduces a default cycle between the two overloads.
     @Override
     @Nonnull

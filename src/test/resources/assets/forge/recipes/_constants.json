@@ -1,15 +1,15 @@
 [
    {
-    	"name": "forge:some_wool",
-    	"ingredient": [
-    		{
-    			"item": "minecraft:wool",
-    			"data": 1
-    		},
-    		{
-    			"item": "minecraft:wool",
-    			"data": 2
-    		}    		
-    	]
+        "name": "forge:some_wool",
+        "ingredient": [
+            {
+                "item": "minecraft:wool",
+                "data": 1
+            },
+            {
+                "item": "minecraft:wool",
+                "data": 2
+            }
+        ]
    }
 ]

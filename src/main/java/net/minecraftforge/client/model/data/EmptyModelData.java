@@ -22,7 +22,7 @@ package net.minecraftforge.client.model.data;
 public enum EmptyModelData implements IModelData
 {
     INSTANCE;
-    
+
     @Override
     public boolean hasProperty(ModelProperty<?> prop) { return false; }
 

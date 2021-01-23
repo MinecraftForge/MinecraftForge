@@ -19,7 +19,7 @@
 +    * For mod use, eliminates the need to extend this class, and prevents modded
 +    * flower pots from altering vanilla behavior.
 +    *
-+    * @param emptyPot    The empty pot for this pot, or null for self.
++    * @param emptyPot The empty pot for this pot, or null for self.
 +    * @param block The flower block.
 +    * @param properties
 +    */

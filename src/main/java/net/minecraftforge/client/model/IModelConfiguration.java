@@ -61,7 +61,7 @@ public interface IModelConfiguration {
      * @return True if the item is a 3D model, false if it's a generated item model.
      * TODO: Rename.
      * This value has nothing to do with shading anymore, and this name is misleading.
-     * It's actual purpose seems to be relegated to translating the model during rendering, so that it's centered.
+     * Its actual purpose seems to be relegated to translating the model during rendering, so that it's centered.
      */
     boolean isShadedInGui();
 
@@ -82,7 +82,7 @@ public interface IModelConfiguration {
     ItemCameraTransforms getCameraTransforms();
 
     /**
-     * @return The combined transformation state including vanilla and forge transforms data.
+     * @return The combined transformation state including vanilla and Forge transforms data.
      */
     IModelTransform getCombinedTransform();
 

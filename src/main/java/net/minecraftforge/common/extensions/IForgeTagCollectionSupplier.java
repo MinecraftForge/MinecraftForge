@@ -39,8 +39,8 @@ public interface IForgeTagCollectionSupplier
     }
 
     /**
-     * Gets the {@link ITagCollection} for a forge registry with the given name, or throws an exception if the registry doesn't support custom tag types.
-     * @param regName Name of the forge registry
+     * Gets the {@link ITagCollection} for a Forge registry with the given name, or throws an exception if the registry doesn't support custom tag types.
+     * @param regName Name of the Forge registry
      * @return The tag collection
      */
     default ITagCollection<?> getCustomTypeCollection(ResourceLocation regName)
@@ -50,7 +50,7 @@ public interface IForgeTagCollectionSupplier
     }
 
     /**
-     * Gets the {@link ITagCollection} for a forge registry, or throws an exception if the registry doesn't support custom tag types.
+     * Gets the {@link ITagCollection} for a Forge registry, or throws an exception if the registry doesn't support custom tag types.
      * @param reg Forge registry
      * @return The tag collection
      */

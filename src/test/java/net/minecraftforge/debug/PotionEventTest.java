@@ -41,14 +41,14 @@ public class PotionEventTest
 
     public PotionEventTest()
     {
-    	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onSetup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onSetup);
     }
-    
+
     private void onSetup(FMLCommonSetupEvent event)
     {
-    	BrewingRecipeRegistry.addRecipe(Ingredient.fromItems(Items.ICE), Ingredient.fromItems(Items.LAVA_BUCKET), new ItemStack(Items.OBSIDIAN));
+        BrewingRecipeRegistry.addRecipe(Ingredient.fromItems(Items.ICE), Ingredient.fromItems(Items.LAVA_BUCKET), new ItemStack(Items.OBSIDIAN));
     }
-    
+
     @SubscribeEvent
     public static void onPotionAdded(PotionEvent.PotionAddedEvent event)
     {

@@ -13,7 +13,7 @@
     public T func_221506_a(int p_221506_1_, PlayerInventory p_221506_2_) {
        return this.field_221530_x.create(p_221506_1_, p_221506_2_);
     }
-+   
++
 +   @Override
 +   public T create(int windowId, PlayerInventory playerInv, net.minecraft.network.PacketBuffer extraData) {
 +      if (this.field_221530_x instanceof net.minecraftforge.fml.network.IContainerFactory) {

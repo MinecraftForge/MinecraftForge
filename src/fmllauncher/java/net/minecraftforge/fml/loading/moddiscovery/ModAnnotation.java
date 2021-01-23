@@ -70,7 +70,7 @@ public class ModAnnotation
         this.asmType = asmType;
         this.member = member;
     }
-    
+
     public ModAnnotation(Type asmType, ModAnnotation parent)
     {
         this.type = parent.type;

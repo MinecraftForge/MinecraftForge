@@ -6,8 +6,8 @@
             "all": "examplemod:blocks/slime_flow"
         },
         "model": "forge:fluid",
-     	"custom": { "fluid": "slime" },
-     	"uvlock": false
+        "custom": { "fluid": "slime" },
+        "uvlock": false
     },
     "variants": {
         "normal": [{

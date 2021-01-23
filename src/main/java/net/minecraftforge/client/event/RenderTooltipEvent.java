@@ -72,10 +72,10 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     {
         return stack;
     }
-    
+
     /**
      * The lines to be drawn. May change between {@link RenderTooltipEvent.Pre} and {@link RenderTooltipEvent.Post}.
-     * 
+     *
      * @return An <i>unmodifiable</i> list of strings. Use {@link ItemTooltipEvent} to modify tooltip text.
      */
     @Nonnull
@@ -107,7 +107,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     {
         return y;
     }
-    
+
     /**
      * @return The {@link FontRenderer} instance the current render is using.
      */
@@ -172,7 +172,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         {
             this.maxWidth = maxWidth;
         }
-        
+
         /**
          * Sets the {@link FontRenderer} to be used to render text.
          */
@@ -211,7 +211,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     {
         private final int width;
         private final int height;
-        
+
         public Post(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, MatrixStack matrixStack,int x, int y, @Nonnull FontRenderer fr, int width, int height)
         {
             super(stack, textLines, matrixStack, x, y, fr);
@@ -235,11 +235,11 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             return height;
         }
     }
-    
+
     /**
      * This event is fired directly after the tooltip background is drawn, but before any text is drawn.
      */
-    public static class PostBackground extends Post 
+    public static class PostBackground extends Post
     {
         public PostBackground(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr, int width, int height)
             { super(stack, textLines, matrixStack, x, y, fr, width, height); }
@@ -253,9 +253,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         public PostText(@Nonnull ItemStack stack, @Nonnull List<? extends ITextProperties> textLines, MatrixStack matrixStack, int x, int y, @Nonnull FontRenderer fr, int width, int height)
             { super(stack, textLines, matrixStack, x, y, fr, width, height); }
     }
-    
+
     /**
-     * This event is fired when the colours for the tooltip background are determined. 
+     * This event is fired when the colours for the tooltip background are determined.
      */
     public static class Color extends RenderTooltipEvent
     {

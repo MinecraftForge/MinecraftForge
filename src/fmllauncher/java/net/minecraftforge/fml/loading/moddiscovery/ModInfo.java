@@ -66,12 +66,12 @@ public class ModInfo implements IModInfo, IConfigurable
                 .orElseThrow(() -> new InvalidModFileException("Missing modId", owningFile));
         if (!VALID_LABEL.matcher(this.modId).matches()) {
             LOGGER.fatal("Invalid modId found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.modId, VALID_LABEL.pattern());
-            throw new InvalidModFileException("Invalid modId found : " + this.modId, owningFile);
+            throw new InvalidModFileException("Invalid modId found: " + this.modId, owningFile);
         }
         this.namespace = config.<String>getConfigElement("namespace").orElse(this.modId);
         if (!VALID_LABEL.matcher(this.namespace).matches()) {
             LOGGER.fatal("Invalid override namespace found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.namespace, VALID_LABEL.pattern());
-            throw new InvalidModFileException("Invalid override namespace found : " + this.namespace, owningFile);
+            throw new InvalidModFileException("Invalid override namespace found: " + this.namespace, owningFile);
         }
         this.version = config.<String>getConfigElement("version")
                 .map(s -> StringSubstitutor.replace(s, ownFile.map(ModFileInfo::getFile).orElse(null)))

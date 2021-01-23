@@ -93,9 +93,9 @@ public class FMLLoader
         final String version = LauncherVersion.getVersion();
         LOGGER.debug(CORE,"FML {} loading", version);
         final Package modLauncherPackage = ITransformationService.class.getPackage();
-        LOGGER.debug(CORE,"FML found ModLauncher version : {}", modLauncherPackage.getImplementationVersion());
+        LOGGER.debug(CORE,"FML found ModLauncher version: {}", modLauncherPackage.getImplementationVersion());
         if (!modLauncherPackage.isCompatibleWith("4.0")) {
-            LOGGER.fatal(CORE,"Found incompatible ModLauncher specification : {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
+            LOGGER.fatal(CORE,"Found incompatible ModLauncher specification: {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible modlauncher found "+modLauncherPackage.getSpecificationVersion());
         }
         LOGGER.debug(CORE, "Initializing modjar URL handler");
@@ -107,9 +107,9 @@ public class FMLLoader
         });
 
         final Package atPackage = accessTransformer.getClass().getPackage();
-        LOGGER.debug(CORE,"FML found AccessTransformer version : {}", atPackage.getImplementationVersion());
+        LOGGER.debug(CORE,"FML found AccessTransformer version: {}", atPackage.getImplementationVersion());
         if (!atPackage.isCompatibleWith("1.0")) {
-            LOGGER.fatal(CORE,"Found incompatible AccessTransformer specification : {}, version {} from {}", atPackage.getSpecificationVersion(), atPackage.getImplementationVersion(), atPackage.getImplementationVendor());
+            LOGGER.fatal(CORE,"Found incompatible AccessTransformer specification: {}, version {} from {}", atPackage.getSpecificationVersion(), atPackage.getImplementationVersion(), atPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible accesstransformer found "+atPackage.getSpecificationVersion());
         }
 
@@ -119,9 +119,9 @@ public class FMLLoader
         });
 
         final Package eventBusPackage = eventBus.getClass().getPackage();
-        LOGGER.debug(CORE,"FML found EventBus version : {}", eventBusPackage.getImplementationVersion());
+        LOGGER.debug(CORE,"FML found EventBus version: {}", eventBusPackage.getImplementationVersion());
         if (!eventBusPackage.isCompatibleWith("1.0")) {
-            LOGGER.fatal(CORE,"Found incompatible EventBus specification : {}, version {} from {}", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor());
+            LOGGER.fatal(CORE,"Found incompatible EventBus specification: {}, version {} from {}", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible eventbus found "+eventBusPackage.getSpecificationVersion());
         }
 
@@ -138,13 +138,13 @@ public class FMLLoader
             LOGGER.fatal(CORE, "Found no coremod provider. Cannot run");
             throw new IncompatibleEnvironmentException("No coremod library found");
         } else if (coreModProviders.size() > 1) {
-            LOGGER.fatal(CORE, "Found multiple coremod providers : {}. Cannot run", coreModProviders.stream().map(p -> p.getClass().getName()).collect(Collectors.toList()));
+            LOGGER.fatal(CORE, "Found multiple coremod providers: {}. Cannot run", coreModProviders.stream().map(p -> p.getClass().getName()).collect(Collectors.toList()));
             throw new IncompatibleEnvironmentException("Multiple coremod libraries found");
         }
 
         coreModProvider = coreModProviders.get(0);
         final Package coremodPackage = coreModProvider.getClass().getPackage();
-        LOGGER.debug(CORE,"FML found CoreMod version : {}", coremodPackage.getImplementationVersion());
+        LOGGER.debug(CORE,"FML found CoreMod version: {}", coremodPackage.getImplementationVersion());
 
 
         LOGGER.debug(CORE, "Found ForgeSPI package implementation version {}", Environment.class.getPackage().getImplementationVersion());
@@ -195,7 +195,7 @@ public class FMLLoader
         forgeVersion = (String) arguments.get("forgeVersion");
         forgeGroup = (String) arguments.get("forgeGroup");
 
-        LOGGER.debug(CORE,"Received command line version data  : MC Version: '{}' MCP Version: '{}' Forge Version: '{}' Forge group: '{}'", mcVersion, mcpVersion, forgeVersion, forgeGroup);
+        LOGGER.debug(CORE,"Received command line version data: MC Version: '{}' MCP Version: '{}' Forge Version: '{}' Forge group: '{}'", mcVersion, mcpVersion, forgeVersion, forgeGroup);
         forgePath = commonLaunchHandler.getForgePath(mcVersion, forgeVersion, forgeGroup);
         mcPaths = commonLaunchHandler.getMCPaths(mcVersion, mcpVersion, forgeVersion, forgeGroup);
 

@@ -69,7 +69,7 @@ public class LibraryFinder {
 
     static Path getForgeLibraryPath(final String mcVersion, final String forgeVersion, final String forgeGroup) {
         Path forgePath = findLibsPath().resolve(MavenCoordinateResolver.get(forgeGroup, "forge", "", "universal", mcVersion+"-"+forgeVersion));
-        LOGGER.debug(CORE, "Found forge path {} is {}", forgePath, pathStatus(forgePath));
+        LOGGER.debug(CORE, "Found Forge path {} is {}", forgePath, pathStatus(forgePath));
         return forgePath;
     }
 

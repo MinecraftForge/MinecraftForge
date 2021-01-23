@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
  * and damage the hoe.
  *
  * setResult(ALLOW) is the same as the old setHandled();
- * 
+ *
  * TODO: 1.17 Remove
  */
 @Cancelable

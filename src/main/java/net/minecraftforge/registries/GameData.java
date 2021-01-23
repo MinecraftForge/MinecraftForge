@@ -176,7 +176,7 @@ public class GameData
         // Dynamic Worldgen
         makeRegistry(BIOMES, Biome.class).create();
 
-        // Custom forge registries
+        // Custom Forge registries
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
         makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync().create();
         makeRegistry(WORLD_TYPES, ForgeWorldType.class).disableSaving().disableSync().create();
@@ -228,7 +228,7 @@ public class GameData
     {
         return RegistryManager.ACTIVE.getRegistry(Block.class).getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
     }
-    
+
     @SuppressWarnings("unchecked")
     public static Map<BlockState, PointOfInterestType> getBlockStatePointOfInterestTypeMap()
     {
@@ -622,7 +622,7 @@ public class GameData
     private static class PointOfInterestTypeCallbacks implements IForgeRegistry.AddCallback<PointOfInterestType> , IForgeRegistry.ClearCallback<PointOfInterestType>, IForgeRegistry.CreateCallback<PointOfInterestType>
     {
         static final PointOfInterestTypeCallbacks INSTANCE = new PointOfInterestTypeCallbacks();
-        
+
         @Override
         public void onAdd(IForgeRegistryInternal<PointOfInterestType> owner, RegistryManager stage, int id, PointOfInterestType obj, @Nullable PointOfInterestType oldObj)
         {
@@ -631,7 +631,7 @@ public class GameData
             {
                 oldObj.getBlockStates().forEach(map::remove);
             }
-            obj.getBlockStates().forEach((state) -> 
+            obj.getBlockStates().forEach((state) ->
             {
                 PointOfInterestType oldType = map.put(state, obj);
                 if (oldType != null)
@@ -653,7 +653,7 @@ public class GameData
             owner.setSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, new HashMap<>());
         }
     }
-    
+
     private static <T extends IForgeRegistryEntry<T>> void loadRegistry(final ResourceLocation registryName, final RegistryManager from, final RegistryManager to, final Class<T> regType, boolean freeze)
     {
         ForgeRegistry<T> fromRegistry = from.getRegistry(registryName);

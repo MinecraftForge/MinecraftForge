@@ -24,7 +24,7 @@
     }
 +
 +   /**
-+    * Vanilla used to just grab from the classpath, this breaks dev environments, and Forge runtime as forge ships vanilla assets in an 'extra' jar with no classes.
++    * Vanilla used to just grab from the classpath, this breaks dev environments, and Forge runtime as Forge ships vanilla assets in an 'extra' jar with no classes.
 +    * So find that extra jar using the .mcassetsroot marker.
 +    */
 +   private InputStream getExtraInputStream(ResourcePackType type, String resource) {

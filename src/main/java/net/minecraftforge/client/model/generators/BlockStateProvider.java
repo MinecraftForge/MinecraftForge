@@ -423,33 +423,33 @@ public abstract class BlockStateProvider implements IDataProvider {
     private void wallBlockInternal(WallBlock block, String baseName, ResourceLocation texture) {
         wallBlock(block, models().wallPost(baseName + "_post", texture), models().wallSide(baseName + "_side", texture), models().wallSideTall(baseName + "_side_tall", texture));
     }
-    
+
     public static final ImmutableMap<Direction, Property<WallHeight>> WALL_PROPS = ImmutableMap.<Direction, Property<WallHeight>>builder()
-    		.put(Direction.EAST,  BlockStateProperties.WALL_HEIGHT_EAST)
-    		.put(Direction.NORTH, BlockStateProperties.WALL_HEIGHT_NORTH)
-    		.put(Direction.SOUTH, BlockStateProperties.WALL_HEIGHT_SOUTH)
-    		.put(Direction.WEST,  BlockStateProperties.WALL_HEIGHT_WEST)
-    		.build();
+            .put(Direction.EAST,  BlockStateProperties.WALL_HEIGHT_EAST)
+            .put(Direction.NORTH, BlockStateProperties.WALL_HEIGHT_NORTH)
+            .put(Direction.SOUTH, BlockStateProperties.WALL_HEIGHT_SOUTH)
+            .put(Direction.WEST,  BlockStateProperties.WALL_HEIGHT_WEST)
+            .build();
 
     public void wallBlock(WallBlock block, ModelFile post, ModelFile side, ModelFile sideTall) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel()
                     .condition(WallBlock.UP, true).end();
         WALL_PROPS.entrySet().stream()
-        	.filter(e -> e.getKey().getAxis().isHorizontal())
-        	.forEach(e -> {
-        		wallSidePart(builder, side, e, WallHeight.LOW);
-        		wallSidePart(builder, sideTall, e, WallHeight.TALL);
-        	});
+            .filter(e -> e.getKey().getAxis().isHorizontal())
+            .forEach(e -> {
+                wallSidePart(builder, side, e, WallHeight.LOW);
+                wallSidePart(builder, sideTall, e, WallHeight.TALL);
+            });
     }
-    
+
     private void wallSidePart(MultiPartBlockStateBuilder builder, ModelFile model, Map.Entry<Direction, Property<WallHeight>> entry, WallHeight height) {
         builder.part()
-        	.modelFile(model)
-        		.rotationY((((int) entry.getKey().getHorizontalAngle()) + 180) % 360)
-        		.uvLock(true)
-        		.addModel()
-    		.condition(entry.getValue(), height);
+            .modelFile(model)
+                .rotationY((((int) entry.getKey().getHorizontalAngle()) + 180) % 360)
+                .uvLock(true)
+                .addModel()
+            .condition(entry.getValue(), height);
     }
 
     public void paneBlock(PaneBlock block, ResourceLocation pane, ResourceLocation edge) {

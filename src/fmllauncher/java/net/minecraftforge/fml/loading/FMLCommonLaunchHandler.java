@@ -114,8 +114,8 @@ public abstract class FMLCommonLaunchHandler
 
     protected void validatePaths(final Path forgePath, final Path[] mcPaths, String forgeVersion, String mcVersion, String mcpVersion) {
         if (!Files.exists(forgePath)) {
-            LOGGER.fatal(CORE, "Failed to find forge version {} for MC {} at {}", forgeVersion, mcVersion, forgePath);
-            throw new RuntimeException("Missing forge!");
+            LOGGER.fatal(CORE, "Failed to find Forge version {} for MC {} at {}", forgeVersion, mcVersion, forgePath);
+            throw new RuntimeException("Missing Forge!");
         }
 
         Stream.of(mcPaths).forEach(p->{

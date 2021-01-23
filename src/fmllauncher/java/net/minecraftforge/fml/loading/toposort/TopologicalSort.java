@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 /**
  * Provides a topological sort algorithm.
  *
- * <p>While this algorithm is used for mod loading in forge, it can be
+ * <p>While this algorithm is used for mod loading in Forge, it can be
  * utilized in other fashions, e.g. topology-based registry loading, prioritization
  * for renderers, and even mod module loading.
  */

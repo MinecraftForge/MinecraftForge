@@ -31,12 +31,12 @@ public class ToolInteractTest
 {
 
     private static final Logger LOGGER = LogManager.getLogger();
-	
+
     public ToolInteractTest()
     {
         MinecraftForge.EVENT_BUS.addListener(this::onToolInteraction);
     }
-	
+
     private void onToolInteraction(final BlockToolInteractEvent event)
     {
         //Test 1: No Changes, just test if event is called. State and Final State should be the same

@@ -84,13 +84,13 @@ public final class ConfiguredModel {
 
     /**
      * Construct a new {@link ConfiguredModel}.
-     * 
+     *
      * @param model     the underlying model
      * @param rotationX x-rotation to apply to the model
      * @param rotationY y-rotation to apply to the model
      * @param uvLock    if uvlock should be enabled
      * @param weight    the random weight of the model
-     * 
+     *
      * @throws NullPointerException     if {@code model} is {@code null}
      * @throws IllegalArgumentException if x and/or y rotation are not valid (see
      *                                  {@link ModelRotation})
@@ -110,12 +110,12 @@ public final class ConfiguredModel {
     /**
      * Construct a new {@link ConfiguredModel} with the {@link #DEFAULT_WEIGHT
      * default random weight}.
-     * 
+     *
      * @param model     the underlying model
      * @param rotationX x-rotation to apply to the model
      * @param rotationY y-rotation to apply to the model
      * @param uvLock    if uvlock should be enabled
-     * 
+     *
      * @throws NullPointerException     if {@code model} is {@code null}
      * @throws IllegalArgumentException if x and/or y rotation are not valid (see
      *                                  {@link ModelRotation})
@@ -127,7 +127,7 @@ public final class ConfiguredModel {
     /**
      * Construct a new {@link ConfiguredModel} with the default rotation (0, 0),
      * uvlock (false), and {@link #DEFAULT_WEIGHT default random weight}.
-     * 
+     *
      * @throws NullPointerException if {@code model} is {@code null}
      */
     public ConfiguredModel(ModelFile model) {
@@ -158,7 +158,7 @@ public final class ConfiguredModel {
 
     /**
      * Create a new unowned {@link Builder}.
-     * 
+     *
      * @return the builder
      * @see Builder
      */
@@ -211,7 +211,7 @@ public final class ConfiguredModel {
 
         /**
          * Set the underlying model object for this configured model.
-         * 
+         *
          * @param model the model
          * @return this builder
          * @throws NullPointerException if {@code model} is {@code null}
@@ -224,7 +224,7 @@ public final class ConfiguredModel {
 
         /**
          * Set the x-rotation for this model.
-         * 
+         *
          * @param value the x-rotation value
          * @return this builder
          * @throws IllegalArgumentException if {@code value} is not a valid x-rotation
@@ -238,7 +238,7 @@ public final class ConfiguredModel {
 
         /**
          * Set the y-rotation for this model.
-         * 
+         *
          * @param value the y-rotation value
          * @return this builder
          * @throws IllegalArgumentException if {@code value} is not a valid y-rotation
@@ -257,7 +257,7 @@ public final class ConfiguredModel {
 
         /**
          * Set the random weight for this model.
-         * 
+         *
          * @param value the weight value
          * @return this builder
          * @throws IllegalArgumentException if {@code value} is less than or equal to
@@ -272,7 +272,7 @@ public final class ConfiguredModel {
         /**
          * Build the most recent model, as if {@link #nextModel()} was never called.
          * Useful for single-model builders.
-         * 
+         *
          * @return the most recently configured model
          */
         public ConfiguredModel buildLast() {
@@ -281,7 +281,7 @@ public final class ConfiguredModel {
 
         /**
          * Build all configured models and return them as an array.
-         * 
+         *
          * @return the array of built models.
          */
         public ConfiguredModel[] build() {
@@ -298,7 +298,7 @@ public final class ConfiguredModel {
          * <li>{@link PartialBlockstate#modelForState()}</li>
          * <li>{@link MultiPartBlockStateBuilder#part()}</li>
          * </ul>
-         * 
+         *
          * @return the owning builder object
          * @throws NullPointerException if there is no owning builder (and thus no callback)
          */
@@ -310,7 +310,7 @@ public final class ConfiguredModel {
         /**
          * Complete the current model and return a new builder instance with the same
          * callback, and storing all previously built models.
-         * 
+         *
          * @return a new builder for configuring the next model
          */
         public Builder<T> nextModel() {

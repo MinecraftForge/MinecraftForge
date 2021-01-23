@@ -44,35 +44,35 @@
             "model": "shield_test:item/diamond_shield_blocking"
         }
     ],
-	"textures": {
-		"shield": "minecraft:entity/shield_base_nopattern"
-	},
-	"elements": [
-		{
-			"_comment": "plate",
-			"from": [ -6, -11, 1 ],
-			"to": [ 6, 11, 2 ],
-			"faces": {
-				"down": { "texture": "#shield", "uv": [ 3.50, 0.00, 6.25, 0.25 ] },
-				"up": { "texture": "#shield", "uv": [ 0.25, 0.00, 3.25, 0.25 ] },
-				"north": { "texture": "#shield", "uv": [ 3.50, 0.25, 6.50, 5.75 ] },
-				"south": { "texture": "#shield", "uv": [ 0.25, 0.25, 3.25, 5.75 ] },
-				"west": { "texture": "#shield", "uv": [ 0.00, 0.25, 0.25, 5.75 ] },
-				"east": { "texture": "#shield", "uv": [ 3.25, 0.25, 3.50, 5.75 ] }
-			}
-		},
-		{
-			"_comment": "handle",
-			"from": [ -1, -3, -5 ],
-			"to": [ 1, 3, 1 ],
-			"faces": {
-				"down": { "texture": "#shield", "uv": [ 8.50, 0.00, 9.00, 1.50 ] },
-				"up": { "texture": "#shield", "uv": [ 8.00, 0.00, 8.50, 1.50 ] },
-				"north": { "texture": "#shield", "uv": [ 10.00, 1.50, 10.50, 3.00 ] },
-				"south": { "texture": "#shield", "uv": [ 8.00, 1.50, 8.50, 3.00 ] },
-				"west": { "texture": "#shield", "uv": [ 8.50, 1.50, 10.00, 3.00 ] },
-				"east": { "texture": "#shield", "uv": [ 6.50, 1.50, 8.00, 3.00 ] }
-			}
-		}
-	]
+    "textures": {
+        "shield": "minecraft:entity/shield_base_nopattern"
+    },
+    "elements": [
+        {
+            "_comment": "plate",
+            "from": [ -6, -11, 1 ],
+            "to": [ 6, 11, 2 ],
+            "faces": {
+                "down": { "texture": "#shield", "uv": [ 3.50, 0.00, 6.25, 0.25 ] },
+                "up": { "texture": "#shield", "uv": [ 0.25, 0.00, 3.25, 0.25 ] },
+                "north": { "texture": "#shield", "uv": [ 3.50, 0.25, 6.50, 5.75 ] },
+                "south": { "texture": "#shield", "uv": [ 0.25, 0.25, 3.25, 5.75 ] },
+                "west": { "texture": "#shield", "uv": [ 0.00, 0.25, 0.25, 5.75 ] },
+                "east": { "texture": "#shield", "uv": [ 3.25, 0.25, 3.50, 5.75 ] }
+            }
+        },
+        {
+            "_comment": "handle",
+            "from": [ -1, -3, -5 ],
+            "to": [ 1, 3, 1 ],
+            "faces": {
+                "down": { "texture": "#shield", "uv": [ 8.50, 0.00, 9.00, 1.50 ] },
+                "up": { "texture": "#shield", "uv": [ 8.00, 0.00, 8.50, 1.50 ] },
+                "north": { "texture": "#shield", "uv": [ 10.00, 1.50, 10.50, 3.00 ] },
+                "south": { "texture": "#shield", "uv": [ 8.00, 1.50, 8.50, 3.00 ] },
+                "west": { "texture": "#shield", "uv": [ 8.50, 1.50, 10.00, 3.00 ] },
+                "east": { "texture": "#shield", "uv": [ 6.50, 1.50, 8.00, 3.00 ] }
+            }
+        }
+    ]
 }

@@ -50,7 +50,7 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
 
     @Override
     public Path getForgePath(final String mcVersion, final String forgeVersion, final String forgeGroup) {
-        // In forge dev, we just find the path for ForgeVersion for everything
+        // In Forge dev, we just find the path for ForgeVersion for everything
         compiledClasses = LibraryFinder.findJarPathFor("net/minecraftforge/versions/forge/ForgeVersion.class", "forge");
         resources = LibraryFinder.findJarPathFor("assets/minecraft/lang/en_us.json", "mcassets");
         return compiledClasses;
@@ -58,7 +58,7 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
 
     @Override
     public Path[] getMCPaths(final String mcVersion, final String mcpVersion, final String forgeVersion, final String forgeGroup) {
-        // In forge dev, we just find the path for ForgeVersion for everything
+        // In Forge dev, we just find the path for ForgeVersion for everything
         return new Path[] { compiledClasses, resources };
     }
 
@@ -79,7 +79,7 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
     @Override
     public void setup(IEnvironment environment, final Map<String, ?> arguments)
     {
-        // we're injecting forge into the exploded dir finder
+        // We're injecting Forge into the exploded dir finder
         final Path forgemodstoml = LibraryFinder.findJarPathFor("META-INF/mods.toml", "forgemodstoml");
         ((Map<String, List<Pair<Path,List<Path>>>>) arguments).computeIfAbsent("explodedTargets", a->new ArrayList<>()).
                 add(Pair.of(forgemodstoml, Collections.singletonList(compiledClasses)));

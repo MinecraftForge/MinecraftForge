@@ -66,16 +66,16 @@ public interface ITeleporter
     }
 
     /**
-     * Gets the PortalInfo. defaultPortalInfo references the 
-     * vanilla code and should not be used for your purposes. 
-     * Override this method to handle your own logic. 
+     * Gets the PortalInfo. defaultPortalInfo references the
+     * vanilla code and should not be used for your purposes.
+     * Override this method to handle your own logic.
      * <p>
      * Return {@code null} to prevent teleporting.
-     * 
+     *
      * @param entity The entity teleporting before the teleport
      * @param destWorld The world the entity is teleporting to
      * @param defaultPortalInfo A reference to the vanilla method for getting portal info. You should implement your own logic instead of using this
-     * 
+     *
      * @return The location, rotation, and motion of the entity in the destWorld after the teleport
      */
     @Nullable
@@ -83,7 +83,7 @@ public interface ITeleporter
     {
         return this.isVanilla() ? defaultPortalInfo.apply(destWorld) : new PortalInfo(entity.getPositionVec(), Vector3d.ZERO, entity.rotationYaw, entity.rotationPitch);
     }
-    
+
     /**
      * Is this teleporter the vanilla instance.
      */

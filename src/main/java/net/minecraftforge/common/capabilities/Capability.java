@@ -94,24 +94,24 @@ public class Capability<T>
      * @return An instance of the default storage handler. You can safely use this store your default implementation in NBT.
      */
     public IStorage<T> getStorage() { return storage; }
-    
+
     /**
-     * Quick access to the IStorage's readNBT. 
+     * Quick access to the IStorage's readNBT.
      * See {@link IStorage#readNBT(Capability, Object, EnumFacing, NBTBase)}  for documentation.
      */
     public void readNBT(T instance, Direction side, INBT nbt)
     {
-    	storage.readNBT(this, instance, side, nbt); 
+        storage.readNBT(this, instance, side, nbt);
     }
-    
+
     /**
-     * Quick access to the IStorage's writeNBT. 
+     * Quick access to the IStorage's writeNBT.
      * See {@link IStorage#writeNBT(Capability, Object, EnumFacing)} for documentation.
      */
     @Nullable
     public INBT writeNBT(T instance, Direction side)
     {
-    	return storage.writeNBT(this, instance, side);
+        return storage.writeNBT(this, instance, side);
     }
 
     /**
@@ -136,7 +136,7 @@ public class Capability<T>
             throw new RuntimeException(e);
         }
     }
-    
+
     public @Nonnull <R> LazyOptional<R> orEmpty(Capability<R> toCheck, LazyOptional<T> inst)
     {
         return this == toCheck ? inst.cast() : LazyOptional.empty();

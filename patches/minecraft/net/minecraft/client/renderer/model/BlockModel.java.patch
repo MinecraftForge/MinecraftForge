@@ -82,7 +82,7 @@
        public boolean func_230178_a_() {
           return this == SIDE;
        }
-+      
++
 +      public String getSerializedName() { return field_230177_c_; }
     }
  }

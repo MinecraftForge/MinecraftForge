@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 
 /**
  * Equivalent to {@link Predicate}, except with nonnull contract.
- * 
+ *
  * @see Predicate
  */
 @FunctionalInterface

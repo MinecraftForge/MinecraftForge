@@ -1,18 +1,18 @@
 modLoader="javafml"
 loaderVersion="[24,]"
-issueTrackerURL="http://www.minecraftforge.net/"
-logoFile="forge_logo.png"
 license="LGPL v2.1"
+issueTrackerURL="https://github.com/MinecraftForge/MinecraftForge/issues"
 
 [[mods]]
     modId="forge"
-    # We use the global forge version
+    # We use the global Forge version
     version="${global.forgeVersion}"
-    updateJSONURL="https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json"
     displayName="Forge"
-    credits="Anyone who has contributed on Github and supports our development"
-    authors="LexManos,cpw"
+    updateJSONURL="https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json"
+    displayURL="https://minecraftforge.net/"
+    logoFile="forge_logo.png"
+    credits="Anyone who has contributed on GitHub and supports our development"
+    authors="LexManos, cpw"
     description='''
     Forge, a broad compatibility API.
     '''
-    

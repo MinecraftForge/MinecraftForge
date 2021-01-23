@@ -93,7 +93,7 @@ public class ItemAttributeModifierEvent extends Event
      * Modifier must have a consistent UUID for consistency between equipping and unequipping items.
      * Modifier name should clearly identify the mod that added the modifier.
      * @param attribute  Attribute
-     * @param modifier   Modifier instance.
+     * @param modifier   Modifier instance
      * @return  True if the attribute was added, false if it was already present
      */
     public boolean addModifier(Attribute attribute, AttributeModifier modifier)

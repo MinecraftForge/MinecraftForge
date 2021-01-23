@@ -24,10 +24,10 @@ import net.minecraft.world.raid.Raid;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("raid_enum_test")
-public class RaidEnumTest 
+public class RaidEnumTest
 {
     private static final boolean ENABLE = false;
-	
+
     public RaidEnumTest()
     {
         if (ENABLE)

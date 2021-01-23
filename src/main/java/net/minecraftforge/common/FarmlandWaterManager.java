@@ -122,7 +122,7 @@ public class FarmlandWaterManager
         double d1 = (double)(pos.z * 16 + 8);
         double d2 = d0 - vec3d.x;
         double d3 = d1 - vec3d.z;
-        return  d2 * d2 + d3 * d3;
+        return d2 * d2 + d3 * d3;
     }
 
     /**

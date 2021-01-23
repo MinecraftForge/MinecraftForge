@@ -27,7 +27,7 @@ import net.minecraft.network.PacketBuffer;
 public interface IContainerFactory<T extends Container> extends ContainerType.IFactory<T>
 {
     T create(int windowId, PlayerInventory inv, PacketBuffer data);
-    
+
     @Override
     default T create(int p_create_1_, PlayerInventory p_create_2_)
     {

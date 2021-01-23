@@ -28,7 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Created to host any custom codecs forge may be adding.
+ * Created to host any custom codecs Forge may be adding.
  */
 @Mod("forge_codecs_test")
 public class CodecsTest

@@ -48,7 +48,7 @@
     public ResourceLocation func_110775_a(ItemEntity p_110775_1_) {
        return AtlasTexture.field_110575_b;
     }
-+   
++
 +   // Forge Start
 +
 +   /**

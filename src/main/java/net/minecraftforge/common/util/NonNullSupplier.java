@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 
 /**
  * Equivalent to {@link Supplier}, except with nonnull contract.
- * 
+ *
  * @see Supplier
  */
 @FunctionalInterface

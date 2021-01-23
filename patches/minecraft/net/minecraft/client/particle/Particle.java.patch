@@ -5,7 +5,7 @@
        this.field_187120_G = p_187108_1_;
     }
 +
-+   /** Forge added method that controls if a particle should be culled to it's bounding box.Default behaviour is culling enabled */
++   /** Forge added method that controls if a particle should be culled to its bounding box. Default behaviour is culling enabled */
 +   public boolean shouldCull() {
 +      return true;
 +   }

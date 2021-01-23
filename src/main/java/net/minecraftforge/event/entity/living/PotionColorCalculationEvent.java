@@ -26,9 +26,9 @@ import net.minecraft.potion.EffectInstance;
 
 /**
  * Fires after Potion Color Calculation.
- * 
+ *
  * this event is not {@link Cancelable}
- * 
+ *
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 public class PotionColorCalculationEvent extends LivingEvent
@@ -68,7 +68,7 @@ public class PotionColorCalculationEvent extends LivingEvent
 
     /**
      * Note that returned list is unmodifiable.
-     * 
+     *
      * @return effects
      */
     public Collection<EffectInstance> getEffects()

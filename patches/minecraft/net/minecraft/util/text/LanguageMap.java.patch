@@ -14,7 +14,7 @@
                 }, Style.field_240709_b_).isPresent();
              };
           }
-+         
++
 +         @Override
 +         public Map<String, String> getLanguageData() {
 +            return map;

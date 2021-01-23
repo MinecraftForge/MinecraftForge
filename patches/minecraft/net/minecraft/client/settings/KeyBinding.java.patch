@@ -69,7 +69,7 @@
 +      if (tCat == null && oCat != null) return 1;
 +      if (tCat != null && oCat == null) return -1;
 +      if (tCat == null && oCat == null) return I18n.func_135052_a(this.field_151471_f).compareTo(I18n.func_135052_a(p_compareTo_1_.field_151471_f));
-+      return  tCat.compareTo(oCat);
++      return tCat.compareTo(oCat);
     }
  
     public static Supplier<ITextComponent> func_193626_b(String p_193626_0_) {

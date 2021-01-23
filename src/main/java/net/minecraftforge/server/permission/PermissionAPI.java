@@ -33,7 +33,7 @@ import org.apache.logging.log4j.Logger;
 public class PermissionAPI
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    
+
     private static IPermissionHandler permissionHandler = DefaultPermissionHandler.INSTANCE;
 
     /**
@@ -56,7 +56,7 @@ public class PermissionAPI
      * <b>Only use this after PreInit state!</b>
      *
      * @param node  Permission node, best if it's lowercase and contains '.' (e.g. <code>"modid.subgroup.permission_id"</code>)
-     * @param level Default permission level for this node. If not isn't registered, it's level is going to be 'NONE'
+     * @param level Default permission level for this node. If isn't registered, it's level is going to be 'NONE'
      * @param desc  Optional description of the node
      */
     public static String registerNode(String node, DefaultPermissionLevel level, String desc)

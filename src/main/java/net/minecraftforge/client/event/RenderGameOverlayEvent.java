@@ -39,7 +39,7 @@ public class RenderGameOverlayEvent extends Event
     {
         return partialTicks;
     }
-    
+
     public MainWindow getWindow()
     {
         return window;

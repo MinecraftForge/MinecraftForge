@@ -37,7 +37,7 @@ import net.minecraft.loot.conditions.LootConditionManager;
 public abstract class LootModifier implements IGlobalLootModifier {
     protected final ILootCondition[] conditions;
     private final Predicate<LootContext> combinedConditions;
-    
+
     /**
      * Constructs a LootModifier.
      * @param conditionsIn the ILootConditions that need to be matched before the loot is modified.
@@ -46,13 +46,13 @@ public abstract class LootModifier implements IGlobalLootModifier {
         this.conditions = conditionsIn;
         this.combinedConditions = LootConditionManager.and(conditionsIn);
     }
-    
+
     @Nonnull
     @Override
     public final List<ItemStack> apply(List<ItemStack> generatedLoot, LootContext context) {
         return this.combinedConditions.test(context) ? this.doApply(generatedLoot, context) : generatedLoot;
     }
-    
+
     /**
      * Applies the modifier to the generated loot (all loot conditions have already been checked
      * and have returned true).

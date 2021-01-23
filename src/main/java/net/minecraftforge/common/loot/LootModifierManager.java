@@ -57,7 +57,7 @@ public class LootModifierManager extends JsonReloadListener {
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
-    
+
     public LootModifierManager() {
         super(GSON_INSTANCE, folder);
     }

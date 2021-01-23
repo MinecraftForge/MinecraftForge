@@ -37,7 +37,7 @@ import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
 /**
- * Wrapper for vanilla and forge buckets.
+ * Wrapper for vanilla and Forge buckets.
  * Swaps between empty bucket and filled bucket of the correct type.
  */
 public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvider
@@ -178,7 +178,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
         return FluidStack.EMPTY;
     }
-    
+
     @Override
     @Nonnull
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)

@@ -100,7 +100,7 @@ public class EntityEvent extends Event
             this.canUpdate = canUpdate;
         }
     }
-    
+
     /**
      * EnteringChunk is fired when an Entity enters a chunk. <br>
      * This event is fired whenever vanilla Minecraft determines that an entity <br>

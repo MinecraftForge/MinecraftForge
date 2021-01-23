@@ -177,7 +177,7 @@ public class NetworkRegistry
                 map(ni -> {
                     final String incomingVersion = ACCEPTVANILLA;
                     final boolean test = testFunction.apply(ni, incomingVersion);
-                    LOGGER.debug(NETREGISTRY, "Channel '{}' : Vanilla acceptance test: {}", ni.getChannelName(), test ? "ACCEPTED" : "REJECTED");
+                    LOGGER.debug(NETREGISTRY, "Channel '{}': Vanilla acceptance test: {}", ni.getChannelName(), test ? "ACCEPTED" : "REJECTED");
                     return Pair.of(ni.getChannelName(), test);
                 }).filter(p->!p.getRight()).collect(Collectors.toList());
 
@@ -223,7 +223,7 @@ public class NetworkRegistry
                 map(ni -> {
                     final String incomingVersion = incoming.getOrDefault(ni.getChannelName(), ABSENT);
                     final boolean test = testFunction.apply(ni, incomingVersion);
-                    LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' from {} : {}", ni.getChannelName(), incomingVersion, originName, test ? "ACCEPTED" : "REJECTED");
+                    LOGGER.debug(NETREGISTRY, "Channel '{}': Version test of '{}' from {}: {}", ni.getChannelName(), incomingVersion, originName, test ? "ACCEPTED" : "REJECTED");
                     return Pair.of(ni.getChannelName(), test);
                 }).filter(p->!p.getRight()).collect(Collectors.toList());
 
@@ -259,7 +259,7 @@ public class NetworkRegistry
                     final Pair<String, Boolean> incomingVersion = incoming.getOrDefault(ni.getChannelName(), Pair.of(ABSENT, true));
                     final boolean test = ni.tryServerVersionOnClient(incomingVersion.getLeft());
                     handled.add(ni.getChannelName());
-                    LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' during listping : {}", ni.getChannelName(), incomingVersion, test ? "ACCEPTED" : "REJECTED");
+                    LOGGER.debug(NETREGISTRY, "Channel '{}': Version test of '{}' during listping: {}", ni.getChannelName(), incomingVersion, test ? "ACCEPTED" : "REJECTED");
                     return Pair.of(ni.getChannelName(), test);
                 }).filter(p->!p.getRight()).collect(Collectors.toList());
         final List<ResourceLocation> missingButRequired = incoming.entrySet().stream().

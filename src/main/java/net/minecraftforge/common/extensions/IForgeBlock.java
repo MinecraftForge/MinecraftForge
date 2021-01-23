@@ -159,7 +159,7 @@ public interface IForgeBlock
     }
 
     /**
-     * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
+     * Determines if the player can harvest this block, obtaining its drops when the block is destroyed.
      *
      * @param world The current world
      * @param pos The block's current position
@@ -200,7 +200,7 @@ public interface IForgeBlock
     /**
      * Determines if this block is classified as a Bed, Allowing
      * players to sleep in it, though the block has to specifically
-     * perform the sleeping functionality in it's activated event.
+     * perform the sleeping functionality in its activated event.
      *
      * @param state The current state
      * @param world The current world
@@ -483,7 +483,7 @@ public interface IForgeBlock
         if (state.isIn(Blocks.FARMLAND))
             return state.get(FarmlandBlock.MOISTURE) > 0;
 
-        return  false;
+        return false;
     }
 
     /**

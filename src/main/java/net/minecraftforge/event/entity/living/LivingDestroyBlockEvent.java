@@ -42,7 +42,7 @@ public class LivingDestroyBlockEvent extends LivingEvent
 {
     private final BlockPos pos;
     private final BlockState state;
-    
+
     public LivingDestroyBlockEvent(LivingEntity entity, BlockPos pos, BlockState state)
     {
         super(entity);
@@ -54,7 +54,7 @@ public class LivingDestroyBlockEvent extends LivingEvent
     {
         return state;
     }
-    
+
     public BlockPos getPos()
     {
         return pos;

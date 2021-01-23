@@ -39,7 +39,7 @@ public class FileUtils
         }
         if (!Files.isDirectory(dirPath))
         {
-            LOGGER.debug(CORE,"Making {} directory : {}", dirLabel, dirPath);
+            LOGGER.debug(CORE,"Making {} directory: {}", dirLabel, dirPath);
             try {
                 Files.createDirectory(dirPath);
             } catch (IOException e) {
@@ -50,9 +50,9 @@ public class FileUtils
                 }
                 throw new RuntimeException("Problem creating directory", e);
             }
-            LOGGER.debug(CORE,"Created {} directory : {}", dirLabel, dirPath);
+            LOGGER.debug(CORE,"Created {} directory: {}", dirLabel, dirPath);
         } else {
-            LOGGER.debug(CORE,"Found existing {} directory : {}", dirLabel, dirPath);
+            LOGGER.debug(CORE,"Found existing {} directory: {}", dirLabel, dirPath);
         }
         return dirPath;
     }

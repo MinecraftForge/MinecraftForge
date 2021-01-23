@@ -46,9 +46,9 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 public class ModelDataManager
 {
     private static WeakReference<World> currentWorld = new WeakReference<>(null);
-    
+
     private static final Map<ChunkPos, Set<BlockPos>> needModelDataRefresh = new ConcurrentHashMap<>();
-    
+
     private static final Map<ChunkPos, Map<BlockPos, IModelData>> modelDataCache = new ConcurrentHashMap<>();
 
     private static void cleanCaches(World world)
@@ -62,7 +62,7 @@ public class ModelDataManager
             modelDataCache.clear();
         }
     }
-    
+
     public static void requestModelDataRefresh(TileEntity te)
     {
         Preconditions.checkNotNull(te, "Tile entity must not be null");
@@ -72,9 +72,9 @@ public class ModelDataManager
         needModelDataRefresh.computeIfAbsent(new ChunkPos(te.getPos()), $ -> Collections.synchronizedSet(new HashSet<>()))
                             .add(te.getPos());
     }
-    
+
     private static void refreshModelData(World world, ChunkPos chunk)
-    {        
+    {
         cleanCaches(world);
         Set<BlockPos> needUpdate = needModelDataRefresh.remove(chunk);
 
@@ -95,22 +95,22 @@ public class ModelDataManager
             }
         }
     }
-    
+
     @SubscribeEvent
     public static void onChunkUnload(ChunkEvent.Unload event)
     {
         if (!event.getChunk().getWorldForge().isRemote()) return;
-        
+
         ChunkPos chunk = event.getChunk().getPos();
         needModelDataRefresh.remove(chunk);
         modelDataCache.remove(chunk);
     }
-    
+
     public static @Nullable IModelData getModelData(World world, BlockPos pos)
     {
         return getModelData(world, new ChunkPos(pos)).get(pos);
     }
-    
+
     public static Map<BlockPos, IModelData> getModelData(World world, ChunkPos pos)
     {
         Preconditions.checkArgument(world.isRemote, "Cannot request model data for server world");

@@ -69,7 +69,7 @@ public class ItemModelMesherForge extends ItemModelMesher
         final ModelManager manager = this.getModelManager();
         for (Map.Entry<IRegistryDelegate<Item>, ModelResourceLocation> e : locations.entrySet())
         {
-        	models.put(e.getKey(), manager.getModel(e.getValue()));
+            models.put(e.getKey(), manager.getModel(e.getValue()));
         }
     }
 

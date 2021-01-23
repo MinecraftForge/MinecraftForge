@@ -1,13 +1,14 @@
 modLoader="minecraft"
 loaderVersion="1"
 license="Mojang Studios, All Rights Reserved"
+
 [[mods]]
     modId="minecraft"
     version="${global.mcVersion}"
     displayName="Minecraft"
     logoFile="mcplogo.png"
-    credits="Mojang, deobfuscated by MCP"
-    authors="MCP: Searge,ProfMobius,IngisKahn,Fesh0r,ZeuX,R4wk,LexManos,Bspkrs"
+    credits="Mojang Studios, deobfuscated by MCP"
+    authors="MCP: Searge, ProfMobius, IngisKahn, Fesh0r, ZeuX, R4wk, LexManos, Bspkrs"
     description='''
-    Minecraft, decompiled and deobfuscated with MCP technology
+    Minecraft, decompiled and deobfuscated with MCP technology.
     '''

@@ -33,14 +33,14 @@ import java.util.function.Supplier;
  * <p>
  * For example, an enum with the constructor {@code MyEnum(Object foo)} would
  * require the method:
- * 
+ *
  * <pre>
  * public static MyEnum create(String name, Object foo)
  * {
  *     throw new IllegalStateException("Enum not extended");
  * }
  * </pre>
- * 
+ *
  * The method contents will be replaced with ASM at runtime. Multiple
  * {@code create} methods <strong>can</strong> be defined as long as each
  * matches a constructor.

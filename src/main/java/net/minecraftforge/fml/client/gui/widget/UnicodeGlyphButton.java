@@ -35,7 +35,7 @@ import net.minecraftforge.fml.client.gui.GuiUtils;
 public class UnicodeGlyphButton extends ExtendedButton
 {
     public String glyph;
-    public float  glyphScale;
+    public float glyphScale;
 
     public UnicodeGlyphButton(int xPos, int yPos, int width, int height, ITextComponent displayString, String glyph, float glyphScale, IPressable handler)
     {

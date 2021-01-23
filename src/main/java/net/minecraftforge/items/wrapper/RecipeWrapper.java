@@ -99,7 +99,7 @@ public class RecipeWrapper implements IInventory {
     }
 
     @Override
-    public void clear() 
+    public void clear()
     {
         for(int i = 0; i < inv.getSlots(); i++)
         {

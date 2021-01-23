@@ -42,7 +42,7 @@ import net.minecraft.world.IBlockDisplayReader;
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
     protected static final VertexFormatElement NORMAL_4F = new VertexFormatElement(0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.NORMAL, 4);
-    
+
     // TODO 1.16/1.17 possibly refactor out the need for the "unpacked" format entirely. It's creating more headaches than solutions.
     // This mess reverses the conversion to float bits done in LightUtil.unpack
     private static final int LIGHTMAP_PACKING_FACTOR = ((256 << (8 * (DefaultVertexFormats.TEX_2SB.getType().getSize() - 1))) - 1) >>> 1;
@@ -62,7 +62,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     protected VertexFormat baseFormat;
     protected MatrixStack.Entry pose;
-    
+
     public VertexLighterFlat(BlockColors colors)
     {
         this.blockInfo = new BlockInfo(colors);
@@ -74,7 +74,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         super.setParent(parent);
         setVertexFormat(parent.getVertexFormat());
     }
-    
+
     public void setTransform(final MatrixStack.Entry pose)
     {
         this.pose = pose;

@@ -84,7 +84,7 @@ public class GuiContainerEvent extends Event
             return mouseY;
         }
     }
-    
+
     /**
      * This event is fired directly after the GuiContainer has draw any background elements,
      * This is useful for drawing new background elements.

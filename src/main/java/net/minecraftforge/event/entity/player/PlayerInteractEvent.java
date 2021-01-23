@@ -142,7 +142,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * If result equals {@link ActionResultType#PASS}, we proceed to {@link RightClickItem}.  <br>
      * <br>
      * There are various results to this event, see the getters below.  <br>
-     * Note that handling things differently on the client vs server may cause desynchronizations! 
+     * Note that handling things differently on the client vs server may cause desynchronizations!
      */
     @Cancelable
     public static class RightClickBlock extends PlayerInteractEvent

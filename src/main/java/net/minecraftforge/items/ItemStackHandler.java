@@ -80,7 +80,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     {
         if (stack.isEmpty())
             return ItemStack.EMPTY;
-            
+
         if (!isItemValid(slot, stack))
             return stack;
 

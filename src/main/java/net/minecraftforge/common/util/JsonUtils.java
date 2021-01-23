@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
 
 public class JsonUtils
 {
-    // http://stackoverflow.com/questions/7706772/deserializing-immutablelist-using-gson/21677349#21677349
+    // https://stackoverflow.com/questions/7706772/deserializing-immutablelist-using-gson/21677349#21677349
     public enum ImmutableListTypeAdapter implements JsonDeserializer<ImmutableList<?>>, JsonSerializer<ImmutableList<?>>
     {
         INSTANCE;

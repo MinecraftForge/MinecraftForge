@@ -78,7 +78,7 @@ public class ForgeTagHandler
     }
 
     /**
-     * Helper method that creates a named tag for a forge registry, erroring if the registry doesn't support custom tag types. If the custom tag types
+     * Helper method that creates a named tag for a Forge registry, erroring if the registry doesn't support custom tag types. If the custom tag types
      * have not been set yet, this method falls back and creates the tag reference delaying adding it to the tag registry to allow for statically
      * initializing and referencing the tag.
      * @param registry Registry the tag is for
@@ -99,7 +99,7 @@ public class ForgeTagHandler
     }
 
     /**
-     * Helper method that creates an optional tag for a forge registry, erroring if the registry doesn't support custom tag types. If the custom tag types
+     * Helper method that creates an optional tag for a Forge registry, erroring if the registry doesn't support custom tag types. If the custom tag types
      * have not been set yet, this method falls back and creates the tag reference delaying adding it to the tag registry to allow for statically
      * initializing and referencing the tag.
      * @param registry Registry the tag is for
@@ -113,7 +113,7 @@ public class ForgeTagHandler
     }
 
     /**
-     * Helper method that creates an optional tag for a forge registry, erroring if the registry doesn't support custom tag types. If the custom tag types
+     * Helper method that creates an optional tag for a Forge registry, erroring if the registry doesn't support custom tag types. If the custom tag types
      * have not been set yet, this method falls back and creates the tag reference delaying adding it to the tag registry to allow for statically
      * initializing and referencing the tag.
      * @param registry Registry the tag is for
@@ -135,7 +135,7 @@ public class ForgeTagHandler
     }
 
     /**
-     * Helper method for creating named tags for custom forge registries. If the custom tag types have not been set yet, this method falls back and creates
+     * Helper method for creating named tags for custom Forge registries. If the custom tag types have not been set yet, this method falls back and creates
      * the tag reference delaying adding it to the tag registry to allow for statically initializing and referencing the tag.
      * @param registryName Name of the registry the tag is for
      * @param name         Name of the tag
@@ -156,7 +156,7 @@ public class ForgeTagHandler
     }
 
     /**
-     * Helper method for creating optional tags for custom forge registries. If the custom tag types have not been set yet, this method falls back and creates
+     * Helper method for creating optional tags for custom Forge registries. If the custom tag types have not been set yet, this method falls back and creates
      * the tag reference delaying adding it to the tag registry to allow for statically initializing and referencing the tag.
      * @param registryName Name of the registry the tag is for
      * @param name         Name of the tag
@@ -171,7 +171,7 @@ public class ForgeTagHandler
     }
 
     /**
-     * Helper method for creating optional tags for custom forge registries. If the custom tag types have not been set yet, this method falls back and creates
+     * Helper method for creating optional tags for custom Forge registries. If the custom tag types have not been set yet, this method falls back and creates
      * the tag reference delaying adding it to the tag registry to allow for statically initializing and referencing the tag.
      * @param registryName Name of the registry the tag is for
      * @param name         Name of the tag
@@ -203,7 +203,7 @@ public class ForgeTagHandler
     /**
      * Gets a map of registry name to tag collection for all custom tag types.
      *
-     * @apiNote Prefer interacting with this via the current {@link ITagCollectionSupplier} and using one of the forge extension getCustomTypeCollection methods
+     * @apiNote Prefer interacting with this via the current {@link ITagCollectionSupplier} and using one of the Forge extension getCustomTypeCollection methods
      */
     public static Map<ResourceLocation, ITagCollection<?>> getCustomTagTypes()
     {
@@ -211,14 +211,14 @@ public class ForgeTagHandler
     }
 
     /**
-     * Sets the set containing the resource locations representing the registry name of each forge registry that supports custom tag types.
+     * Sets the set containing the resource locations representing the registry name of each Forge registry that supports custom tag types.
      *
      * @apiNote Internal: Calling this manually <strong>WILL</strong> cause a crash to occur as it can only be called once, and is done so by
-     * forge after all registries have been initialized.
+     * Forge after all registries have been initialized.
      */
     public static void setCustomTagTypes(Set<ResourceLocation> customTagTypes)
     {
-        if (tagTypesSet) throw new RuntimeException("Custom tag types have already been set, this method should only be called by forge, and after registries are initialized");
+        if (tagTypesSet) throw new RuntimeException("Custom tag types have already been set, this method should only be called by Forge, and after registries are initialized");
         tagTypesSet = true;
         customTagTypeNames = ImmutableSet.copyOf(customTagTypes);
         //Add the static references for custom tag types to the proper tag registries

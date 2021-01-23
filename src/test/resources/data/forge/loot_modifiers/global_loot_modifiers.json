@@ -1,8 +1,8 @@
 {
-	"replace": false,
-	"entries": [
-		"global_loot_test:silk_touch_bamboo",
-		"global_loot_test:smelting",
-		"global_loot_test:wheat_harvest"
-	]
+    "replace": false,
+    "entries": [
+        "global_loot_test:silk_touch_bamboo",
+        "global_loot_test:smelting",
+        "global_loot_test:wheat_harvest"
+    ]
 }

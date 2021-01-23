@@ -58,7 +58,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
 
     /**
      * Get the world object
-     * 
+     *
      * @return the world object
      */
     public World getWorld()
@@ -68,7 +68,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
 
     /**
      * Get the pos of the enchantment table
-     * 
+     *
      * @return the pos of the enchantment table
      */
     public BlockPos getPos()
@@ -78,7 +78,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
 
     /**
      * Get the row for which the enchantment level is being set
-     * 
+     *
      * @return the row for which the enchantment level is being set
      */
     public int getEnchantRow()
@@ -88,7 +88,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
 
     /**
      * Get the power (# of bookshelves) for the enchanting table
-     * 
+     *
      * @return the power (# of bookshelves) for the enchanting table
      */
     public int getPower()
@@ -98,7 +98,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
 
     /**
      * Get the item being enchanted
-     * 
+     *
      * @return the item being enchanted
      */
     @Nonnull
@@ -109,7 +109,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
 
     /**
      * Get the original level of the enchantment for this row (0-30)
-     * 
+     *
      * @return the original level of the enchantment for this row (0-30)
      */
     public int getOriginalLevel()
@@ -119,7 +119,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
 
     /**
      * Get the level of the enchantment for this row (0-30)
-     * 
+     *
      * @return the level of the enchantment for this row (0-30)
      */
     public int getLevel()
@@ -129,7 +129,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
 
     /**
      * Set the new level of the enchantment (0-30)
-     * 
+     *
      * @param level the new level of the enchantment (0-30)
      */
     public void setLevel(int level)

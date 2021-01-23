@@ -51,7 +51,7 @@ public class ForgeWorldType extends ForgeRegistryEntry<ForgeWorldType>
         ForgeWorldType def = ForgeRegistries.WORLD_TYPES.getValue(new ResourceLocation(defaultWorldType));
         if (def == null)
         {
-            LOGGER.error("The defaultWorldType '{}' specified in the forge config has not been registered. The vanilla default generator will be used.", defaultWorldType);
+            LOGGER.error("The defaultWorldType '{}' specified in the Forge config has not been registered. The vanilla default generator will be used.", defaultWorldType);
         }
 
         return def;

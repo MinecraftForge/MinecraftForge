@@ -38,7 +38,7 @@ public class PlayerSetSpawnEvent extends PlayerEvent
     private final boolean forced;
     @Nullable
     private final BlockPos newSpawn;
-    
+
     public PlayerSetSpawnEvent(PlayerEntity player, RegistryKey<World> spawnWorld, @Nullable BlockPos newSpawn, boolean forced)
     {
         super(player);

@@ -34,7 +34,7 @@ public class ItemEvent extends EntityEvent
 
     /**
      * Creates a new event for an EntityItem.
-     * 
+     *
      * @param itemEntity The EntityItem for this event
      */
     public ItemEvent(ItemEntity itemEntity)

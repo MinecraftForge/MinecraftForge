@@ -91,7 +91,7 @@ public class ModDiscoverer {
         locatorList = ServiceLoaderStreamUtils.toList(this.locators);
         locatorList.forEach(l->l.initArguments(arguments));
         locatorList.add(new MinecraftLocator());
-        LOGGER.debug(CORE,"Found Mod Locators : {}", ()->locatorList.stream().map(iModLocator -> "("+iModLocator.name() + ":" + iModLocator.getClass().getPackage().getImplementationVersion()+")").collect(Collectors.joining(",")));
+        LOGGER.debug(CORE,"Found Mod Locators: {}", ()->locatorList.stream().map(iModLocator -> "("+iModLocator.name() + ":" + iModLocator.getClass().getPackage().getImplementationVersion()+")").collect(Collectors.joining(",")));
     }
 
     ModDiscoverer(List<IModLocator> locatorList) {
@@ -179,7 +179,7 @@ public class ModDiscoverer {
                     try {
                         jarFileURI = getClass().getClassLoader().getResource("minecraftmod.toml").toURI();
                         if (Objects.equals(jarFileURI.getScheme(), "jar")) {
-                            // Initialize the filesystem for the forge jar, because otherwise this barfs?
+                            // Initialize the filesystem for the Forge jar, because otherwise this barfs?
                             FileSystems.newFileSystem(jarFileURI, new HashMap<>());
                         }
                     } catch (URISyntaxException | IOException e) {

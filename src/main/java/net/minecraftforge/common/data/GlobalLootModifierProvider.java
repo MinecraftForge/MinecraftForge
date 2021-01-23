@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Provider for forge's GlobalLootModifier system. See {@link LootModifier} and {@link GlobalLootModifierSerializer}.
+ * Provider for Forge's GlobalLootModifier system. See {@link LootModifier} and {@link GlobalLootModifierSerializer}.
  *
  * This provider only requires implementing {@link #start()} and calling {@link #add} from it.
  */
@@ -114,6 +114,6 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
     @Override
     public String getName()
     {
-        return "Global Loot Modifiers : " + modid;
+        return "Global Loot Modifiers: " + modid;
     }
 }

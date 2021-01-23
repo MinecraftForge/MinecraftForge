@@ -32,7 +32,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 /**
  * An event called whenever the selection highlight around blocks is about to be rendered.
  * Canceling this event stops the selection highlight from being rendered.
- * 
+ *
  * TODO: Rename to DrawSelectionEvent
  */
 @Cancelable

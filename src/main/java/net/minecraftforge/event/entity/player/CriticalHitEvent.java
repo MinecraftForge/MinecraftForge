@@ -45,7 +45,7 @@ public class CriticalHitEvent extends PlayerEvent
     private final float oldDamageModifier;
     private final Entity target;
     private final boolean vanillaCritical;
-    
+
     public CriticalHitEvent(PlayerEntity player, Entity target, float damageModifier, boolean vanillaCritical)
     {
         super(player);
@@ -54,7 +54,7 @@ public class CriticalHitEvent extends PlayerEvent
         this.oldDamageModifier = damageModifier;
         this.vanillaCritical = vanillaCritical;
     }
-    
+
     /**
     * The Entity that was damaged by the player.
     */
@@ -62,7 +62,7 @@ public class CriticalHitEvent extends PlayerEvent
     {
         return target;
     }
-    
+
     /**
     * This set the damage multiplier for the hit.
     * If you set it to 0, then the particles are still generated but damage is not done.
@@ -71,7 +71,7 @@ public class CriticalHitEvent extends PlayerEvent
     {
         this.damageModifier = mod;
     }
-    
+
     /**
     * The damage modifier for the hit.<br>
     * This is by default 1.5F for ciritcal hits and 1F for normal hits .
@@ -89,7 +89,7 @@ public class CriticalHitEvent extends PlayerEvent
     {
         return this.oldDamageModifier;
     }
-    
+
     /**
     * Returns true if this hit was critical by vanilla
     */

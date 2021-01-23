@@ -45,7 +45,7 @@
     public IPackNameDecorator func_232614_i_() {
        return this.field_232611_k_;
     }
-+   
++
 +   public boolean isHidden() { return hidden; }
  
     public boolean equals(Object p_equals_1_) {

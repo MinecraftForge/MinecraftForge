@@ -60,7 +60,7 @@ public class RenderNameplateEvent extends EntityEvent
     private final IRenderTypeBuffer renderTypeBuffer;
     private final int packedLight;
     private final float partialTicks;
-    
+
     public RenderNameplateEvent(Entity entity, ITextComponent content, EntityRenderer<?> entityRenderer, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int packedLight, float partialTicks)
     {
         super(entity);
@@ -128,7 +128,7 @@ public class RenderNameplateEvent extends EntityEvent
     {
         return this.packedLight;
     }
-    
+
     /**
      * The partial ticks used during the rendering of the name plate/tag
      */

@@ -42,9 +42,9 @@ public class ForgeVersion
     static {
         LOGGER.debug(CORE, "Forge Version package {} from {}", ForgeVersion.class.getPackage(), ForgeVersion.class.getClassLoader());
         String vers = JarVersionLookupHandler.getImplementationVersion(ForgeVersion.class).orElse(System.getenv("FORGE_VERSION"));
-        if (vers == null) throw new RuntimeException("Missing forge version, cannot continue");
+        if (vers == null) throw new RuntimeException("Missing Forge version, cannot continue");
         String spec = JarVersionLookupHandler.getSpecificationVersion(ForgeVersion.class).orElse(System.getenv("FORGE_SPEC"));
-        if (spec == null) throw new RuntimeException("Missing forge spec, cannot continue");
+        if (spec == null) throw new RuntimeException("Missing Forge spec, cannot continue");
         String group = JarVersionLookupHandler.getImplementationTitle(ForgeVersion.class).orElse(System.getenv("FORGE_GROUP"));
         if (group == null) {
             group = "net.minecraftforge"; // If all else fails, Our normal group

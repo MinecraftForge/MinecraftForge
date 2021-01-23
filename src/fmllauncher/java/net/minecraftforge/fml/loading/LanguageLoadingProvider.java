@@ -135,12 +135,12 @@ public class LanguageLoadingProvider
 
     void addForgeLanguage(final Path forgePath) {
         if (!languageProviderMap.containsKey("javafml")) {
-            LOGGER.debug(CORE,"Adding forge as a language from {}", forgePath.toString());
+            LOGGER.debug(CORE,"Adding Forge as a language from {}", forgePath.toString());
             addLanguagePaths(Stream.of(forgePath));
             serviceLoader.reload();
             loadLanguageProviders();
         } else {
-            LOGGER.debug(CORE, "Skipping adding forge jar - javafml is already present");
+            LOGGER.debug(CORE, "Skipping adding Forge jar - javafml is already present");
         }
     }
 

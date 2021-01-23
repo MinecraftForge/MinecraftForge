@@ -1,7 +1,7 @@
 Getting Support Surrounding Forge
 =================================
 
-**If you do not want to read the following wall of text, no matter its relevance for helping get your issue resolved quickly, please refer to the [Forge Forums](http://www.minecraftforge.net/forum/forum/18-support-bug-reports/) for support.**
+**If you do not want to read the following wall of text, no matter its relevance for helping get your issue resolved quickly, please refer to the [Forge Forums](https://forums.minecraftforge.net/forum/18-support-bug-reports/) for support.**
 
 Before reporting an issue on this repository's bug tracker, please carefully read this document. There are various resources that are more likely to be able to help you with certain kinds of issues. This document provides instructions on how to determine which place best to report to.
 
@@ -74,8 +74,8 @@ Please note that this list has to be considered incomplete as there is a large n
 
 If you're certain you've found an issue that is directly caused by Forge, you have the following three platforms available for dealing with it, with decreasing relevance for end-users:
 
- 1. **Forge Forums:** There's a dedicated [Support & Bug Report](http://www.minecraftforge.net/forum/forum/18-support-bug-reports/) section on the Forge forums, which is led by team of moderators and volunteers who will try to deal with your reports as quickly as possible. *As a player you should probably report here first.*
-   - For modders, there also is a separate [Modder Support](http://www.minecraftforge.net/forum/forum/70-modder-support/) section where you can ask all your development-related questions. *You should prefer this section for coding help.*
+ 1. **Forge Forums:** There's a dedicated [Support & Bug Report](https://forums.minecraftforge.net/forum/18-support-bug-reports/) section on the Forge forums, which is led by team of moderators and volunteers who will try to deal with your reports as quickly as possible. *As a player you should probably report here first.*
+   - For modders, there also is a separate [Modder Support](https://forums.minecraftforge.net/forum/70-modder-support/) section where you can ask all your development-related questions. *You should prefer this section for coding help.*
  2. **Forge IRC Channel:** You can find a lot of help on the official [`#minecraftforge`](irc://irc.esper.net:6667/minecraftforge) channel on EsperNet. Especially smaller issues that you quickly need help with could be reported there. *Be aware that the channel is more suited towards development questions, so while you may get support there as a player, you should almost always prefer the forums.*
  3. **Forge Issue Tracker:** If you're absolutely certain that you've found an issue in the Forge codebase (e.g. you're a modder yourself and have analyzed the stacktrace and relevant code), don't refrain from reporting it on this repository's [issue tracker](https://github.com/MinecraftForge/MinecraftForge/issues). *Please do not use the issues as a means of getting coding help. For developers, the IRC and the [official documentation](https://mcforge.readthedocs.io) are the best sources of information.*
 
@@ -88,7 +88,7 @@ A lot of mods also use GitHub or other source management systems and their integ
 
 ### Vanilla Support
 
-Just like Forge or mods, Mojang has its own issue tracker for Vanilla Minecraft. This official [bug tracker](https://bugs.mojang.com/projects/MC/issues/) has the exclusive purpose of managing any concrete issues with the game's code and functionality. It is *not* a place for requesting any features or getting help with playing the game, similar to the Forge issue tracker.
+Just like Forge or mods, Mojang Studios has its own issue tracker for Vanilla Minecraft. This official [bug tracker](https://bugs.mojang.com/projects/MC/issues/) has the exclusive purpose of managing any concrete issues with the game's code and functionality. It is *not* a place for requesting any features or getting help with playing the game, similar to the Forge issue tracker.
 
 Writing a Helpful Bug Report
 ----------------------------

@@ -26,7 +26,7 @@ import net.minecraft.entity.MobEntity;
 public class LivingPackSizeEvent extends LivingEvent
 {
     private int maxPackSize;
-    
+
     public LivingPackSizeEvent(MobEntity entity)
     {
         super(entity);

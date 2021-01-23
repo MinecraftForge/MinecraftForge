@@ -44,7 +44,7 @@ public class MavenCoordinateResolver {
     public static Path get(final String groupId, final String artifactId, final String extension, final String classifier, final String version)
     {
         final String fileName = artifactId + "-" + version +
-                (!classifier.isEmpty() ? "-"+ classifier : "") +
+                (!classifier.isEmpty() ? "-" + classifier : "") +
                 (!extension.isEmpty() ? "." + extension : ".jar");
 
         String[] groups = groupId.split("\\.");

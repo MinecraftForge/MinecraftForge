@@ -37,13 +37,13 @@ public class RenderBlockOverlayEvent extends Event
     public static enum OverlayType {
         FIRE, BLOCK, WATER
     }
-    
+
     private final PlayerEntity player;
     private final MatrixStack mat;
     private final OverlayType overlayType;
     private final BlockState blockForOverlay;
     private final BlockPos blockPos;
-    
+
     public RenderBlockOverlayEvent(PlayerEntity player, MatrixStack mat, OverlayType type, BlockState block, BlockPos blockPos)
     {
         this.player = player;
@@ -51,7 +51,7 @@ public class RenderBlockOverlayEvent extends Event
         this.overlayType = type;
         this.blockForOverlay = block;
         this.blockPos = blockPos;
-        
+
     }
 
     /**
@@ -64,7 +64,7 @@ public class RenderBlockOverlayEvent extends Event
      */
     public OverlayType getOverlayType() { return overlayType; }
     /**
-     * If the overlay type is BLOCK, then this is the block which the overlay is getting it's icon from
+     * If the overlay type is BLOCK, then this is the block which the overlay is getting its icon from
      */
     public BlockState getBlockForOverlay() { return blockForOverlay; }
     public BlockPos getBlockPos() { return blockPos; }

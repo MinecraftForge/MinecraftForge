@@ -60,7 +60,7 @@ import javax.annotation.Nullable;
  */
 public final class Clips
 {
-	private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Clip that does nothing.

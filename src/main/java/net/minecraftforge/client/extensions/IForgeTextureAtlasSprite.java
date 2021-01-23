@@ -58,7 +58,7 @@ public interface IForgeTextureAtlasSprite
     /**
      * @return all textures that should be loaded before this texture.
      */
-    default Collection<ResourceLocation> getDependencies() 
+    default Collection<ResourceLocation> getDependencies()
     {
         return ImmutableList.of();
     }

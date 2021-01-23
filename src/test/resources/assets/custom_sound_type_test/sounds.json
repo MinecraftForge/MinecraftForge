@@ -1,8 +1,8 @@
 {
-	"block.sound_type_test.step": {
-		"subtitle": "Test step",
-		"sounds": [
-			"minecraft:mob/horse/zombie/hit1"
-		]
-	}
+    "block.sound_type_test.step": {
+        "subtitle": "Test step",
+        "sounds": [
+            "minecraft:mob/horse/zombie/hit1"
+        ]
+    }
 }

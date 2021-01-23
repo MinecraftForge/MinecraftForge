@@ -36,7 +36,7 @@ public class ItemAttributeModifierTest
     public static final String MOD_ID = "item_modifier_test";
     public static final boolean ENABLED = true;
     private static final AttributeModifier MODIFIER = new AttributeModifier(MOD_ID, 10f, Operation.ADDITION);
-    
+
     @SubscribeEvent
     public static void onItemAttribute(ItemAttributeModifierEvent event)
     {

@@ -25,7 +25,7 @@ Entrypoint : ```FMLLaunchProvider.launch```
 - - If that wasn't found it'll be generated from the vanilla jar and patch/deobf files (see above)
 - Possible we'll use an alternative launch for the development environment
 
-(A goal is that we pre-generate this JAR during forge installation or modpack installation)
+(A goal is that we pre-generate this JAR during Forge installation or modpack installation)
 
 ## Loading
 

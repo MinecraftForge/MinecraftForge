@@ -36,18 +36,18 @@ public class RegisterCommandsEvent extends Event
 {
     private final CommandDispatcher<CommandSource> dispatcher;
     private final Commands.EnvironmentType environment;
-    
+
     public RegisterCommandsEvent(CommandDispatcher<CommandSource> dispatcher, Commands.EnvironmentType environment)
     {
         this.dispatcher = dispatcher;
         this.environment = environment;
     }
-    
+
     public CommandDispatcher<CommandSource> getDispatcher()
     {
         return dispatcher;
     }
-    
+
     public Commands.EnvironmentType getEnvironment()
     {
         return environment;

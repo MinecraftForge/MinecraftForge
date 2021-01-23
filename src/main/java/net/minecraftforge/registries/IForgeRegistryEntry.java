@@ -42,7 +42,7 @@ public interface IForgeRegistryEntry<V>
     V setRegistryName(ResourceLocation name);
 
     /**
-     * A unique identifier for this entry, if this entry is registered already it will return it's official registry name.
+     * A unique identifier for this entry, if this entry is registered already it will return its official registry name.
      * Otherwise it will return the name set in setRegistryName().
      * If neither are valid null is returned.
      *

@@ -33,6 +33,6 @@ public class Logging
     public static final Marker MODELLOADING = MarkerManager.getMarker("MODELLOADING");
 
     // --log CORE:+DEBUG,SCAN:-OFF
-    // forge log debug 5
+    // Forge log debug 5
 
 }

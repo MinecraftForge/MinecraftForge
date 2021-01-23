@@ -78,20 +78,20 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         final int flags = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
 
         FieldNode values = classNode.fields.stream().filter(f -> f.desc.contentEquals(array.getDescriptor()) && ((f.access & flags) == flags)).findFirst().orElse(null);
-        
+
         if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName())) {
             return ComputeFlags.NO_REWRITE;
         }
-        
+
         //Static methods named "create" with first argument as a string
         List<MethodNode> candidates = classNode.methods.stream()
                 .filter(m -> ((m.access & Opcodes.ACC_STATIC) != 0) && m.name.equals("create"))
                 .collect(Collectors.toList());
-        
+
         if (candidates.isEmpty()) {
             throw new IllegalStateException("IExtensibleEnum has no candidate factory methods: " + classType.getClassName());
         }
-        
+
         candidates.forEach(mtd ->
         {
             Type[] args = Type.getArgumentTypes(mtd.desc);
@@ -114,7 +114,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
                 }));
                 throw new IllegalStateException("Enum has create method with incorrect return type: " + mtd.name + mtd.desc);
             }
-            
+
             Type[] ctrArgs = new Type[args.length + 1];
             ctrArgs[0] = STRING;
             ctrArgs[1] = Type.INT_TYPE;

@@ -69,7 +69,7 @@ public class DeferredRegister<T extends IForgeRegistryEntry<T>>
     }
 
     /**
-     * Use for custom registries that are made during the NewRegistry event. 
+     * Use for custom registries that are made during the NewRegistry event.
      */
     public static <B extends IForgeRegistryEntry<B>> DeferredRegister<B> create(Class<B> base, String modid)
     {

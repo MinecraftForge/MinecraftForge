@@ -55,12 +55,12 @@ public class ContainerTypeTest
     public class TestContainer extends Container
     {
         private final String text;
-        
+
         protected TestContainer(int windowId, PlayerInventory playerInv, PacketBuffer extraData)
         {
             this(windowId, new Inventory(9), extraData.readString(128));
         }
-        
+
         public TestContainer(int windowId, Inventory inv, String text)
         {
             super(TYPE, windowId);
@@ -77,7 +77,7 @@ public class ContainerTypeTest
             return true;
         }
     }
-    
+
     public class TestGui extends ContainerScreen<TestContainer>
     {
         public TestGui(TestContainer container, PlayerInventory inv, ITextComponent name)
@@ -103,12 +103,12 @@ public class ContainerTypeTest
     {
         event.getRegistry().register(IForgeContainerType.create(TestContainer::new).setRegistryName("container"));
     }
-    
+
     private void setup(FMLClientSetupEvent event)
     {
         ScreenManager.registerFactory(TYPE, TestGui::new);
     }
-    
+
     private void onRightClick(PlayerInteractEvent.RightClickBlock event)
     {
         if (!event.getWorld().isRemote && event.getHand() == Hand.MAIN_HAND)
@@ -128,7 +128,7 @@ public class ContainerTypeTest
                         }
                         return new TestContainer(p_createMenu_1_, inv, text);
                     }
-                    
+
                     @Override
                     public ITextComponent getDisplayName()
                     {
