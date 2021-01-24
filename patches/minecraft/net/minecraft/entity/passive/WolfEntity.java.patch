@@ -1,6 +1,14 @@
 --- a/net/minecraft/entity/passive/WolfEntity.java
 +++ b/net/minecraft/entity/passive/WolfEntity.java
-@@ -347,7 +347,7 @@
+@@ -133,6 +133,7 @@
+          this.func_175547_a(DyeColor.func_196056_a(p_70037_1_.func_74762_e("CollarColor")));
+       }
+ 
++      if(!field_70170_p.field_72995_K) //FORGE: allow this entity to be read from nbt on client.
+       this.func_241358_a_((ServerWorld)this.field_70170_p, p_70037_1_);
+    }
+ 
+@@ -347,7 +348,7 @@
                 itemstack.func_190918_g(1);
              }
  
