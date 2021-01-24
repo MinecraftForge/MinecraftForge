@@ -9,7 +9,15 @@
              this.func_241412_a_(SoundEvents.field_232715_fE_);
              this.func_234360_a_((ServerWorld)this.field_70170_p);
           }
-@@ -212,6 +212,7 @@
+@@ -144,6 +144,7 @@
+          this.func_110148_a(Attributes.field_233823_f_).func_111128_a(6.0D);
+       }
+ 
++      super.func_175500_n();
+    }
+ 
+    public static boolean func_234361_c_(EntityType<HoglinEntity> p_234361_0_, IWorld p_234361_1_, SpawnReason p_234361_2_, BlockPos p_234361_3_, Random p_234361_4_) {
+@@ -212,6 +213,7 @@
        ZoglinEntity zoglinentity = this.func_233656_b_(EntityType.field_233590_aW_, true);
        if (zoglinentity != null) {
           zoglinentity.func_195064_c(new EffectInstance(Effects.field_76431_k, 200, 0));

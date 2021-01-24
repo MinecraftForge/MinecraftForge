@@ -1,0 +1,10 @@
+--- a/net/minecraft/entity/AgeableEntity.java
++++ b/net/minecraft/entity/AgeableEntity.java
+@@ -135,6 +135,7 @@
+    }
+ 
+    protected void func_175500_n() {
++      net.minecraftforge.event.ForgeEventFactory.onAgeableEntityAgeChange(this);
+    }
+ 
+    public boolean func_70631_g_() {

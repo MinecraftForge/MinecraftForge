@@ -42,6 +42,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.merchant.villager.VillagerEntity;
@@ -106,6 +107,7 @@ import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.living.AgeableEntityAgeChangeEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
@@ -768,6 +770,11 @@ public class ForgeEventFactory
     public static void onVillagerProfessionChange(VillagerEntity entity, VillagerProfession oldProfession)
     {
         MinecraftForge.EVENT_BUS.post(new VillagerProfessionChangeEvent(entity, oldProfession));
+    }
+
+    public static void onAgeableEntityAgeChange(AgeableEntity entity)
+    {
+        MinecraftForge.EVENT_BUS.post(new AgeableEntityAgeChangeEvent(entity));
     }
 
 }

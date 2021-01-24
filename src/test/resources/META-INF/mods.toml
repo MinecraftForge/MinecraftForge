@@ -118,3 +118,5 @@ license="LGPL v2.1"
     modId="add_entity_attribute_test"
 [[mods]]
     modId="villager_profession_change_event_test"
+[[mods]]
+    modId="ageable_entity_age_change_event_test"
