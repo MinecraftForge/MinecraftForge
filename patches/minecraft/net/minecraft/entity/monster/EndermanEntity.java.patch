@@ -20,7 +20,7 @@
        }
  
        this.func_195406_b(blockstate);
-+      if(!field_70170_p.field_72995_K) //FORGE: allow this entity to be read from nbt on client.
++      if(!field_70170_p.field_72995_K) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
        this.func_241358_a_((ServerWorld)this.field_70170_p, p_70037_1_);
     }
  

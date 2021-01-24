@@ -18,7 +18,7 @@
     public void func_70037_a(CompoundNBT p_70037_1_) {
        super.func_70037_a(p_70037_1_);
        this.func_70849_f(p_70037_1_.func_74767_n("PlayerCreated"));
-+      if(!field_70170_p.field_72995_K) //FORGE: allow this entity to be read from nbt on client.
++      if(!field_70170_p.field_72995_K) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
        this.func_241358_a_((ServerWorld)this.field_70170_p, p_70037_1_);
     }
  
