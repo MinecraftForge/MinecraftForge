@@ -28,12 +28,12 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeWorldTypeScreens;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -46,7 +46,6 @@ public class ForgeWorldTypeTest
     public ForgeWorldTypeTest()
     {
         FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ForgeWorldType.class, this::registerWorldTypes);
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerWorldTypeScreenFactories);
     }
 
     private void registerWorldTypes(RegistryEvent.Register<ForgeWorldType> event)
@@ -64,19 +63,24 @@ public class ForgeWorldTypeTest
         return DimensionGeneratorSettings.func_242750_a(biomes, dimensionSettings, seed);
     }
 
-    private void registerWorldTypeScreenFactories(FMLClientSetupEvent event)
+    @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+    private static class ClientEvents
     {
-        ForgeWorldTypeScreens.registerFactory(testWorldType, (returnTo, dimensionGeneratorSettings) -> new Screen(testWorldType.getDisplayName())
+        private void registerWorldTypeScreenFactories(FMLClientSetupEvent event)
         {
-            @Override
-            protected void init()
+            ForgeWorldTypeScreens.registerFactory(testWorldType, (returnTo, dimensionGeneratorSettings) -> new Screen(testWorldType.getDisplayName())
             {
-                super.init();
+                @Override
+                protected void init()
+                {
+                    super.init();
 
-                addButton(new Button(0, 0, 120, 20, new StringTextComponent("close"), btn -> {
-                    Minecraft.getInstance().displayGuiScreen(returnTo);
-                }));
-            }
-        });
+                    addButton(new Button(0, 0, 120, 20, new StringTextComponent("close"), btn ->
+                    {
+                        Minecraft.getInstance().displayGuiScreen(returnTo);
+                    }));
+                }
+            });
+        }
     }
 }
