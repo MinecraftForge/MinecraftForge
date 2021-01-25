@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.WoodType;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
@@ -164,6 +165,9 @@ public class ForgeHooksClient
         StartupMessageManager.mcLoaderConsumer().ifPresent(c->c.accept("Atlas Stitching : "+map.getTextureLocation().toString()));
         ModLoader.get().postEvent(new TextureStitchEvent.Pre(map, resourceLocations));
 //        ModelLoader.White.INSTANCE.register(map); // TODO Custom TAS
+        WoodType.getValues().forEach(woodType -> {
+            resourceLocations.add(new ResourceLocation(woodType.getResourceLocation().getNamespace(), "entity/signs/" + woodType.getResourceLocation().getPath()));
+        });
     }
 
     public static void onTextureStitchedPost(AtlasTexture map)

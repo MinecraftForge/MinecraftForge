@@ -1,0 +1,34 @@
+--- a/net/minecraft/block/WoodType.java
++++ b/net/minecraft/block/WoodType.java
+@@ -18,6 +18,7 @@
+ 
+    protected WoodType(String p_i225775_1_) {
+       this.field_227045_h_ = p_i225775_1_;
++      this.resourceLocation = new net.minecraft.util.ResourceLocation(p_i225775_1_);
+    }
+ 
+    public static WoodType func_227047_a_(WoodType p_227047_0_) {
+@@ -32,4 +33,23 @@
+    public String func_227048_b_() {
+       return this.field_227045_h_;
+    }
++
++   private final net.minecraft.util.ResourceLocation resourceLocation;
++
++   protected WoodType(net.minecraft.util.ResourceLocation resourceLocationIn) {
++      this.resourceLocation = resourceLocationIn;
++      this.field_227045_h_ = resourceLocationIn.func_110623_a();
++   }
++
++   public net.minecraft.util.ResourceLocation getResourceLocation() {
++      return this.resourceLocation;
++   }
++
++   /**
++    * Use this to create a new {@link WoodType}. Register it by using the register method during {@link net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent}.
++    * The register method is NOT threadsafe, so enqueue it.
++    */
++   public static WoodType create(net.minecraft.util.ResourceLocation resourceLocationIn) {
++      return new WoodType(resourceLocationIn);
++   }
+ }
