@@ -1,0 +1,85 @@
+--- a/net/minecraft/item/SpawnEggItem.java
++++ b/net/minecraft/item/SpawnEggItem.java
+@@ -35,18 +_,31 @@
+ 
+ public class SpawnEggItem extends Item {
+    private static final Map<EntityType<?>, SpawnEggItem> field_195987_b = Maps.newIdentityHashMap();
++   private static final java.util.List<SpawnEggItem> MOD_EGGS = new java.util.ArrayList<>();
+    private final int field_195988_c;
+    private final int field_195989_d;
+    private EntityType<?> field_200890_d;
++   private final java.util.function.Supplier<? extends EntityType<?>> typeSupplier;
+ 
++   /**@deprecated Use {@link SpawnEggItem#SpawnEggItem(java.util.function.Supplier, int, int, Item.Properties)}*/@Deprecated
+    public SpawnEggItem(EntityType<?> p_i48465_1_, int p_i48465_2_, int p_i48465_3_, Item.Properties p_i48465_4_) {
+       super(p_i48465_4_);
+       this.field_200890_d = p_i48465_1_;
++      this.typeSupplier = p_i48465_1_ == null ? () -> null : p_i48465_1_.delegate; //TODO - 1.17: Remove check for null and enforce it being nonnull
+       this.field_195988_c = p_i48465_2_;
+       this.field_195989_d = p_i48465_3_;
+       field_195987_b.put(p_i48465_1_, this);
+    }
+ 
++   public SpawnEggItem(java.util.function.Supplier<? extends EntityType<?>> typeIn, int primaryColorIn, int secondaryColorIn, Item.Properties builder) {
++      super(builder);
++      this.field_200890_d = null;
++      this.typeSupplier = typeIn;
++      this.field_195988_c = primaryColorIn;
++      this.field_195989_d = secondaryColorIn;
++      MOD_EGGS.add(this);
++   }
++
+    public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
+       World world = p_195939_1_.func_195991_k();
+       if (!(world instanceof ServerWorld)) {
+@@ -131,18 +_,18 @@
+    }
+ 
+    public static Iterable<SpawnEggItem> func_195985_g() {
+-      return Iterables.unmodifiableIterable(field_195987_b.values());
++      return Iterables.unmodifiableIterable(Iterables.concat(field_195987_b.values(), MOD_EGGS));
+    }
+ 
+    public EntityType<?> func_208076_b(@Nullable CompoundNBT p_208076_1_) {
+       if (p_208076_1_ != null && p_208076_1_.func_150297_b("EntityTag", 10)) {
+          CompoundNBT compoundnbt = p_208076_1_.func_74775_l("EntityTag");
+          if (compoundnbt.func_150297_b("id", 8)) {
+-            return EntityType.func_220327_a(compoundnbt.func_74779_i("id")).orElse(this.field_200890_d);
++            return EntityType.func_220327_a(compoundnbt.func_74779_i("id")).orElseGet(this.typeSupplier);
+          }
+       }
+ 
+-      return this.field_200890_d;
++      return this.typeSupplier.get();
+    }
+ 
+    public Optional<MobEntity> func_234809_a_(PlayerEntity p_234809_1_, MobEntity p_234809_2_, EntityType<? extends MobEntity> p_234809_3_, ServerWorld p_234809_4_, Vector3d p_234809_5_, ItemStack p_234809_6_) {
+@@ -178,4 +_,28 @@
+          }
+       }
+    }
++
++   /* ======================================== FORGE START ===================================== */
++   protected net.minecraft.dispenser.IDispenseItemBehavior createDispenseBehaviour() {
++      return new net.minecraft.dispenser.DefaultDispenseItemBehavior() {
++         public ItemStack func_82487_b(net.minecraft.dispenser.IBlockSource source, ItemStack stack) {
++            Direction facing = source.func_189992_e().func_177229_b(net.minecraft.block.DispenserBlock.field_176441_a);
++            EntityType<?> entitytype = ((SpawnEggItem)stack.func_77973_b()).func_208076_b(stack.func_77978_p());
++
++            entitytype.func_220331_a(source.func_197524_h(), stack, null, source.func_180699_d().func_177972_a(facing), SpawnReason.DISPENSER, facing != Direction.UP, false);
++            stack.func_190918_g(1);
++            return stack;
++         }
++      };
++   }
++
++   public static void finalizeModEggs() {
++      MOD_EGGS.forEach(egg -> {
++         egg.field_200890_d = egg.func_208076_b(null);
++         field_195987_b.put(egg.field_200890_d, egg);
++         net.minecraft.block.DispenserBlock.func_199774_a(egg, egg.createDispenseBehaviour());
++      });
++      MOD_EGGS.clear();
++   }
++   /* ========================================= FORGE END ====================================== */
+ }

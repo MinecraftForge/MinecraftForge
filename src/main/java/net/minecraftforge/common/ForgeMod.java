@@ -26,6 +26,7 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Items;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.storage.IServerConfiguration;
@@ -173,6 +174,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         registerArgumentTypes();
         VanillaPacketSplitter.register();
+
+        SpawnEggItem.finalizeModEggs();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
