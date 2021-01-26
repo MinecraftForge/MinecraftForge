@@ -277,7 +277,72 @@
     }
  
     private boolean func_244600_aM() {
-@@ -1747,7 +1787,12 @@
+@@ -1638,11 +1678,11 @@
+    }
+ 
+    public void func_238191_a_(String p_238191_1_) {
+-      this.func_238195_a_(p_238191_1_, DynamicRegistries.func_239770_b_(), Minecraft::func_238180_a_, Minecraft::func_238181_a_, false, Minecraft.WorldSelectionType.BACKUP);
++      this.loadWorld(p_238191_1_, DynamicRegistries.func_239770_b_(), Minecraft::func_238180_a_, Minecraft::func_238181_a_, false, Minecraft.WorldSelectionType.BACKUP, false);
+    }
+ 
+    public void func_238192_a_(String p_238192_1_, WorldSettings p_238192_2_, DynamicRegistries.Impl p_238192_3_, DimensionGeneratorSettings p_238192_4_) {
+-      this.func_238195_a_(p_238192_1_, p_238192_3_, (p_238179_1_) -> {
++      this.loadWorld(p_238192_1_, p_238192_3_, (p_238179_1_) -> {
+          return p_238192_2_.func_234958_g_();
+       }, (p_238187_3_, p_238187_4_, p_238187_5_, p_238187_6_) -> {
+          WorldGenSettingsExport<JsonElement> worldgensettingsexport = WorldGenSettingsExport.func_240896_a_(JsonOps.INSTANCE, p_238192_3_);
+@@ -1652,10 +1692,10 @@
+          });
+          DimensionGeneratorSettings dimensiongeneratorsettings = dataresult.resultOrPartial(Util.func_240982_a_("Error reading worldgen settings after loading data packs: ", field_147123_G::error)).orElse(p_238192_4_);
+          return new ServerWorldInfo(p_238192_2_, dimensiongeneratorsettings, dataresult.lifecycle());
+-      }, false, Minecraft.WorldSelectionType.CREATE);
++      }, false, Minecraft.WorldSelectionType.CREATE, true);
+    }
+ 
+-   private void func_238195_a_(String p_238195_1_, DynamicRegistries.Impl p_238195_2_, Function<SaveFormat.LevelSave, DatapackCodec> p_238195_3_, Function4<SaveFormat.LevelSave, DynamicRegistries.Impl, IResourceManager, DatapackCodec, IServerConfiguration> p_238195_4_, boolean p_238195_5_, Minecraft.WorldSelectionType p_238195_6_) {
++   private void loadWorld(String p_238195_1_, DynamicRegistries.Impl p_238195_2_, Function<SaveFormat.LevelSave, DatapackCodec> p_238195_3_, Function4<SaveFormat.LevelSave, DynamicRegistries.Impl, IResourceManager, DatapackCodec, IServerConfiguration> p_238195_4_, boolean p_238195_5_, Minecraft.WorldSelectionType p_238195_6_, boolean creating) {
+       SaveFormat.LevelSave saveformat$levelsave;
+       try {
+          saveformat$levelsave = this.field_71469_aa.func_237274_c_(p_238195_1_);
+@@ -1667,12 +1707,17 @@
+       }
+ 
+       Minecraft.PackManager minecraft$packmanager;
++      final DynamicRegistries.Impl dyn_f;
+       try {
+-         minecraft$packmanager = this.func_238189_a_(p_238195_2_, p_238195_3_, p_238195_4_, p_238195_5_, saveformat$levelsave);
++         Minecraft.PackManager mgr = this.func_238189_a_(p_238195_2_, p_238195_3_, p_238195_4_, p_238195_5_, saveformat$levelsave);
++         // We need to rebuild this if we're loading world, so that it gets all the information from AFTER we inject our mappings from the save.
++         dyn_f = creating ? p_238195_2_ : DynamicRegistries.func_239770_b_();
++         minecraft$packmanager = creating ? mgr : this.func_238189_a_(dyn_f, p_238195_3_, p_238195_4_, p_238195_5_, saveformat$levelsave); //Note this runs the injection again... which isn't good.. but hey.. we need a better spot to hook in.
++
+       } catch (Exception exception) {
+          field_147123_G.warn("Failed to load datapacks, can't proceed with server load", (Throwable)exception);
+          this.func_147108_a(new DatapackFailureScreen(() -> {
+-            this.func_238195_a_(p_238195_1_, p_238195_2_, p_238195_3_, p_238195_4_, true, p_238195_6_);
++            this.loadWorld(p_238195_1_, p_238195_2_, p_238195_3_, p_238195_4_, true, p_238195_6_, creating);
+          }));
+ 
+          try {
+@@ -1692,7 +1737,7 @@
+          this.field_213277_ad.set((TrackingChunkStatusListener)null);
+ 
+          try {
+-            saveformat$levelsave.func_237287_a_(p_238195_2_, iserverconfiguration);
++            saveformat$levelsave.func_237287_a_(dyn_f, iserverconfiguration);
+             minecraft$packmanager.func_238225_b_().func_240971_i_();
+             YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(this.field_110453_aa);
+             MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
+@@ -1702,7 +1747,7 @@
+             SkullTileEntity.func_184294_a(minecraftsessionservice);
+             PlayerProfileCache.func_187320_a(false);
+             this.field_71437_Z = MinecraftServer.func_240784_a_((p_238188_8_) -> {
+-               return new IntegratedServer(p_238188_8_, this, p_238195_2_, saveformat$levelsave, minecraft$packmanager.func_238224_a_(), minecraft$packmanager.func_238225_b_(), iserverconfiguration, minecraftsessionservice, gameprofilerepository, playerprofilecache, (p_238211_1_) -> {
++               return new IntegratedServer(p_238188_8_, this, dyn_f, saveformat$levelsave, minecraft$packmanager.func_238224_a_(), minecraft$packmanager.func_238225_b_(), iserverconfiguration, minecraftsessionservice, gameprofilerepository, playerprofilecache, (p_238211_1_) -> {
+                   TrackingChunkStatusListener trackingchunkstatuslistener = new TrackingChunkStatusListener(p_238211_1_ + 0);
+                   trackingchunkstatuslistener.func_219521_a();
+                   this.field_213277_ad.set(trackingchunkstatuslistener);
+@@ -1747,11 +1792,16 @@
           networkmanager.func_150719_a(new ClientLoginNetHandler(networkmanager, this, (Screen)null, (p_229998_0_) -> {
           }));
           networkmanager.func_179290_a(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
@@ -291,7 +356,12 @@
           this.field_71453_ak = networkmanager;
        } else {
           this.func_241559_a_(p_238195_6_, p_238195_1_, flag, () -> {
-@@ -1821,6 +1866,7 @@
+-            this.func_238195_a_(p_238195_1_, p_238195_2_, p_238195_3_, p_238195_4_, p_238195_5_, Minecraft.WorldSelectionType.NONE);
++            this.loadWorld(p_238195_1_, dyn_f, p_238195_3_, p_238195_4_, p_238195_5_, Minecraft.WorldSelectionType.NONE, creating);
+          });
+          minecraft$packmanager.close();
+ 
+@@ -1821,6 +1871,7 @@
     }
  
     public void func_71403_a(ClientWorld p_71403_1_) {
@@ -299,7 +369,7 @@
        WorkingScreen workingscreen = new WorkingScreen();
        workingscreen.func_200210_a(new TranslationTextComponent("connect.joining"));
        this.func_213241_c(workingscreen);
-@@ -1852,10 +1898,12 @@
+@@ -1852,10 +1903,12 @@
        IntegratedServer integratedserver = this.field_71437_Z;
        this.field_71437_Z = null;
        this.field_71460_t.func_190564_k();
@@ -312,7 +382,7 @@
           if (integratedserver != null) {
              this.field_71424_I.func_76320_a("waitForServer");
  
-@@ -1870,6 +1918,7 @@
+@@ -1870,6 +1923,7 @@
           this.field_71456_v.func_181029_i();
           this.field_71422_O = null;
           this.field_71455_al = false;
@@ -320,7 +390,7 @@
           this.field_213274_aO.func_216815_b();
        }
  
-@@ -1900,6 +1949,7 @@
+@@ -1900,6 +1954,7 @@
        this.field_71452_i.func_78870_a(p_213257_1_);
        TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_213257_1_);
        this.func_230150_b_();
@@ -328,7 +398,7 @@
     }
  
     public boolean func_238216_r_() {
-@@ -1945,112 +1995,9 @@
+@@ -1945,112 +2000,9 @@
  
     private void func_147112_ai() {
        if (this.field_71476_x != null && this.field_71476_x.func_216346_c() != RayTraceResult.Type.MISS) {
@@ -444,7 +514,7 @@
        }
     }
  
-@@ -2140,6 +2087,7 @@
+@@ -2140,6 +2092,7 @@
        return field_71432_P;
     }
  
@@ -452,7 +522,7 @@
     public CompletableFuture<Void> func_213245_w() {
        return this.func_213169_a(this::func_213237_g).thenCompose((p_229993_0_) -> {
           return p_229993_0_;
-@@ -2451,7 +2399,7 @@
+@@ -2451,7 +2404,7 @@
           supplier = func_228022_c_(supplier);
        }
  
@@ -461,7 +531,7 @@
     }
  
     private static Supplier<IResourcePack> func_228021_b_(Supplier<IResourcePack> p_228021_0_) {
-@@ -2470,6 +2418,14 @@
+@@ -2470,6 +2423,14 @@
        this.field_175617_aL.func_229355_a_(p_228020_1_);
     }
  
