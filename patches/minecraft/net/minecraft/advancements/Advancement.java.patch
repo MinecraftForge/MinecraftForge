@@ -1,6 +1,6 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
-@@ -230,12 +230,36 @@
+@@ -230,12 +230,35 @@
           }
        }
  
@@ -17,27 +17,26 @@
 +         return advancement;
 +      }
 +
-+       public Advancement build(ResourceLocation id, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
-+           if (!this.func_192058_a((p_199750_0_) -> {
-+              if(fileHelper.exists(p_199750_0_, net.minecraft.resources.ResourcePackType.SERVER_DATA, ".json", "advancements")) {
-+                  return new Advancement(p_199750_0_, null, null, AdvancementRewards.field_192114_a, Maps.newHashMap(), this.field_192066_f);
-+              }
-+               return null;
-+           })) {
-+               throw new IllegalStateException("Tried to build incomplete advancement!");
-+           } else {
-+               if (this.field_192066_f == null) {
-+                   this.field_192066_f = this.field_199751_g.createRequirements(this.field_192065_e.keySet());
-+               }
-+
-+               return new Advancement(id, this.field_192062_b, this.field_192063_c, this.field_192064_d, this.field_192065_e, this.field_192066_f);
-+           }
-+       }
++      public Advancement build(ResourceLocation id, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
++         if (!this.func_192058_a((p_199750_0_) -> {
++            if(fileHelper.exists(p_199750_0_, net.minecraft.resources.ResourcePackType.SERVER_DATA, ".json", "advancements")) {
++               return new Advancement(p_199750_0_, null, null, AdvancementRewards.field_192114_a, Maps.newHashMap(), this.field_192066_f);
++            }
++            return null;
++         })) {
++            throw new IllegalStateException("Tried to build incomplete advancement!");
++         } else {
++            if (this.field_192066_f == null) {
++               this.field_192066_f = this.field_199751_g.createRequirements(this.field_192065_e.keySet());
++            }
++            return new Advancement(id, this.field_192062_b, this.field_192063_c, this.field_192064_d, this.field_192065_e, this.field_192066_f);
++         }
++      }
 +
        public JsonObject func_200273_b() {
           if (this.field_192066_f == null) {
              this.field_192066_f = this.field_199751_g.createRequirements(this.field_192065_e.keySet());
-@@ -309,6 +333,7 @@
+@@ -309,6 +332,7 @@
        }
  
        public static Advancement.Builder func_241043_a_(JsonObject p_241043_0_, ConditionArrayParser p_241043_1_) {
