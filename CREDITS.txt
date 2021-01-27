@@ -6,19 +6,19 @@ several years now, but I would like to take this time thank a few people who hav
 helped it along its way.
 
 First, the people who originally created the Forge projects way back in Minecraft
-alpha. Eloraam of RedPower, and SpaceToad of Buildcraft, without their acceptiance
+alpha. Eloraam of RedPower and SpaceToad of Buildcraft, without their acceptance
 of me taking over the project, who knows what Minecraft modding would be today.
 
 Secondly, someone who has worked with me, and developed some of the core features
 that allow modding to be as functional, and as simple as it is, cpw. For developing
-FML, which stabelized the client and server modding ecosystem. As well as the base
-loading system that allows us to modify Minecraft's code as elegently as possible.
+FML, which stabilized the client and server modding ecosystem, as well as the base
+loading system that allows us to modify Minecraft's code as elegantly as possible.
 
-Mezz, who has stepped up as the issue and pull request manager. Helping to keep me
+Mezz, who has stepped up as the issue and pull request manager, helping to keep me
 sane as well as guiding the community into creating better additions to Forge.
 
-Searge, Bspks, Fesh0r, ProfMobious, and all the rest over on the MCP team {of which
-I am a part}. For creating some of the core tools needed to make Minecraft modding
+Searge, Bspks, Fesh0r, ProfMobius, and all the rest over on the MCP team (of which
+I am a part). For creating some of the core tools needed to make Minecraft modding
 both possible, and as stable as can be.
   On that note, here is some specific information of the MCP data we use:
     * Minecraft Coder Pack (MCP) *
@@ -39,8 +39,8 @@ This is Forge Mod Loader.
 
 You can find the source code at all times at https://github.com/MinecraftForge/MinecraftForge/tree/1.12.x/src/main/java/net/minecraftforge/fml
 
-This minecraft mod is a clean open source implementation of a mod loader for minecraft servers
-and minecraft clients.
+This Minecraft mod is a clean open source implementation of a mod loader for Minecraft servers
+and Minecraft clients.
 
 The code is authored by cpw.
 
