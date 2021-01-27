@@ -19,7 +19,7 @@ Forge is a free, open-source modding API all your favourite mods use!
 * [Documentation]
 
 #### Notes:
-- Introduced in 1.13 was a new FML. Its information can be found [here](NewFML.md).
+- Introduced in 1.13 was a new FML. More information on it can be found [here](NewFML.md).
 
 # Installing Forge
 
