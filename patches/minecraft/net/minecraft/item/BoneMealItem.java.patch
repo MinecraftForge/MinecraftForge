@@ -13,7 +13,7 @@
        }
     }
  
-+   @Deprecated //Forge: Use Player/Hand version
++   /**@deprecated Use {@link BoneMealItem#applyBonemeal(ItemStack, World, BlockPos, net.minecraft.entity.player.PlayerEntity)}*/@Deprecated
     public static boolean func_195966_a(ItemStack p_195966_0_, World p_195966_1_, BlockPos p_195966_2_) {
 +      if (p_195966_1_ instanceof net.minecraft.world.server.ServerWorld)
 +         return applyBonemeal(p_195966_0_, p_195966_1_, p_195966_2_, net.minecraftforge.common.util.FakePlayerFactory.getMinecraft((net.minecraft.world.server.ServerWorld)p_195966_1_));

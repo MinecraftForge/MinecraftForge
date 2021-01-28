@@ -5,7 +5,7 @@
           if (!list.isEmpty()) {
              List<AxisAlignedBB> list1 = voxelshape.func_197756_d();
 -            boolean flag = this.field_200231_a.func_203425_a(Blocks.field_180399_cE);
-+            boolean flag = this.field_200231_a.isSlimeBlock(); //TODO: is this patch really needed the logic of the original seems sound revisit later
++            boolean flag = this.field_200231_a.isSlimeBlock(); // Forge: TODO: is this patch really needed? The logic of the original seems sound. Revisit later...
              Iterator iterator = list.iterator();
  
              while(true) {

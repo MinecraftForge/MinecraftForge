@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,7 +26,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
  * Builder for block models, does not currently provide any additional
  * functionality over {@link ModelBuilder}, purely a stub class with a concrete
  * generic.
- * 
+ *
  * @see ModelProvider
  * @see ModelBuilder
  */

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -72,7 +72,7 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         long glfwInitEnd = System.nanoTime();
 
         if (glfwInitEnd - glfwInitBegin > 1e9) {
-            LogManager.getLogger().fatal("WARNING : glfwInit took {} seconds to start.", (glfwInitEnd-glfwInitBegin) / 1.0e9);
+            LogManager.getLogger().fatal("WARNING: glfwInit took {} seconds to start.", (glfwInitEnd-glfwInitBegin) / 1.0e9);
         }
 
         glfwDefaultWindowHints();
@@ -137,7 +137,7 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
                 glfwSetWindowIcon(window, glfwImages);
                 STBImage.stbi_image_free(imgBuffer);
             } catch (NullPointerException | IOException e) {
-                System.err.println("Failed to load forge logo");
+                System.err.println("Failed to load Forge logo");
             }
         }
         int[] w = new int[1];

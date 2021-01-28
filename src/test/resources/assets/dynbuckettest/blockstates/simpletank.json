@@ -1,9 +1,9 @@
 {
-	"forge_marker": 1,
-	"defaults": {
-	    "transform": "forge:default-block",
-	    "model": "builtin/generated"
-	},
+    "forge_marker": 1,
+    "defaults": {
+        "transform": "forge:default-block",
+        "model": "builtin/generated"
+    },
     "variants": {
         "normal": [{}]
     }

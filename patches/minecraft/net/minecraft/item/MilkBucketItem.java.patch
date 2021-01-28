@@ -4,7 +4,7 @@
     }
  
     public ItemStack func_77654_b(ItemStack p_77654_1_, World p_77654_2_, LivingEntity p_77654_3_) {
-+      if (!p_77654_2_.field_72995_K) p_77654_3_.curePotionEffects(p_77654_1_); // FORGE - move up so stack.shrink does not turn stack into air
++      if (!p_77654_2_.field_72995_K) p_77654_3_.curePotionEffects(p_77654_1_); // Forge: move up so stack.shrink does not turn stack into air
 +
        if (p_77654_3_ instanceof ServerPlayerEntity) {
           ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_77654_3_;

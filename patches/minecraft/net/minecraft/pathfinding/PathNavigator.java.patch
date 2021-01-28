@@ -5,10 +5,10 @@
        this.field_188561_o = this.field_75515_a.func_213311_cf() > 0.75F ? this.field_75515_a.func_213311_cf() / 2.0F : 0.75F - this.field_75515_a.func_213311_cf() / 2.0F;
        Vector3i vector3i = this.field_75514_c.func_242948_g();
 -      double d0 = Math.abs(this.field_75515_a.func_226277_ct_() - ((double)vector3i.func_177958_n() + 0.5D));
-+      double d0 = Math.abs(this.field_75515_a.func_226277_ct_() - ((double)vector3i.func_177958_n() + (this.field_75515_a.func_213311_cf() + 1) / 2D)); //Forge: Fix MC-94054
++      double d0 = Math.abs(this.field_75515_a.func_226277_ct_() - ((double)vector3i.func_177958_n() + (this.field_75515_a.func_213311_cf() + 1) / 2D)); //Forge: Fixed MC-94054 Cave spider spin around when walking
        double d1 = Math.abs(this.field_75515_a.func_226278_cu_() - (double)vector3i.func_177956_o());
 -      double d2 = Math.abs(this.field_75515_a.func_226281_cx_() - ((double)vector3i.func_177952_p() + 0.5D));
-+      double d2 = Math.abs(this.field_75515_a.func_226281_cx_() - ((double)vector3i.func_177952_p() + (this.field_75515_a.func_213311_cf() + 1) / 2D)); //Forge: Fix MC-94054
++      double d2 = Math.abs(this.field_75515_a.func_226281_cx_() - ((double)vector3i.func_177952_p() + (this.field_75515_a.func_213311_cf() + 1) / 2D)); //Forge: Fixed MC-94054 Cave spider spin around when walking
        boolean flag = d0 < (double)this.field_188561_o && d2 < (double)this.field_188561_o && d1 < 1.0D;
        if (flag || this.field_75515_a.func_233660_b_(this.field_75514_c.func_237225_h_().field_186287_m) && this.func_234112_b_(vector3d)) {
           this.field_75514_c.func_75875_a();

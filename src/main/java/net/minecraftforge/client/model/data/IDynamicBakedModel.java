@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ public interface IDynamicBakedModel extends IBakedModel
     {
         return getQuads(state, side, rand, EmptyModelData.INSTANCE);
     }
-    
+
     // Force this to be overriden otherwise this introduces a default cycle between the two overloads.
     @Override
     @Nonnull

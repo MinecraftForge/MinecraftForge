@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -104,7 +104,7 @@ public class ClientHooks
                     filter(e -> !ModList.get().isLoaded(e.getKey())).
                     collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-            LOGGER.debug(CLIENTHOOKS, "Received FML ping data from server at {}: FMLNETVER={}, mod list is compatible : {}, channel list is compatible: {}, extra server mods: {}", target.serverIP, fmlver, modsMatch, channelsMatch, extraServerMods);
+            LOGGER.debug(CLIENTHOOKS, "Received FML ping data from server at {}: FMLNETVER={}. Mod list is compatible: {}. Channel list is compatible: {}. Extra server mods: {}.", target.serverIP, fmlver, modsMatch, channelsMatch, extraServerMods);
 
             String extraReason = null;
 
@@ -235,7 +235,7 @@ public class ClientHooks
         }
         Logger logger = LogManager.getLogger("FML.TEXTURE_ERRORS");
         logger.error(Strings.repeat("+=", 25));
-        logger.error("The following texture errors were found.");
+        logger.error("The following texture errors were found:");
         Map<String, FallbackResourceManager> resManagers = ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getInstance().getResourceManager(), "field_199014"+"_c");
         for (String resourceDomain : badTextureDomains)
         {
@@ -266,7 +266,7 @@ public class ClientHooks
                     }
                     else
                     {
-                        logger.error("      unknown resourcepack type {} : {}", resPack.getClass().getName(), resPack.getName());
+                        logger.error("      unknown resourcepack type {}: {}", resPack.getClass().getName(), resPack.getName());
                     }
                 }
             }

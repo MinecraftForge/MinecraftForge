@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -82,7 +82,7 @@ public interface IForgeBakedModel
     }
 
     /**
-     * Override to true, to tell forge to call the getLayerModels method below.
+     * Override to true, to tell Forge to call the getLayerModels method below.
      */
     default boolean isLayered()
     {

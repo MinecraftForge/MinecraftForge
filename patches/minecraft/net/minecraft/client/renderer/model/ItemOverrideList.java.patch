@@ -4,7 +4,7 @@
        this.field_209582_c = Collections.emptyList();
     }
  
-+   @Deprecated //Forge: Use IUnbakedModel, add texture getter
++   /**@deprecated Use {@link ItemOverrideList#ItemOverrideList(ModelBakery, IUnbakedModel, Function, Function, List)}*/@Deprecated
     public ItemOverrideList(ModelBakery p_i50984_1_, BlockModel p_i50984_2_, Function<ResourceLocation, IUnbakedModel> p_i50984_3_, List<ItemOverride> p_i50984_4_) {
 +      this(p_i50984_1_, (IUnbakedModel)p_i50984_2_, p_i50984_3_, p_i50984_1_.getSpriteMap()::func_229151_a_, p_i50984_4_);
 +   }

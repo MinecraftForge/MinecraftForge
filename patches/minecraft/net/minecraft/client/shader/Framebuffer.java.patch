@@ -31,7 +31,7 @@
     }
  
 +
-+   /*================================ FORGE START ================================================*/
++   // Forge Start
 +   private boolean stencilEnabled = false;
 +   /**
 +    * Attempts to enable 8 bits of stencil buffer on this FrameBuffer.
@@ -54,7 +54,7 @@
 +   {
 +      return this.stencilEnabled;
 +   }
-+   /*================================ FORGE END   ================================================*/
++   // Forge End
 +
     public int func_242996_f() {
        return this.field_147617_g;

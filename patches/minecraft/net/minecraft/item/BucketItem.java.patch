@@ -1,11 +1,10 @@
 --- a/net/minecraft/item/BucketItem.java
 +++ b/net/minecraft/item/BucketItem.java
-@@ -32,14 +32,28 @@
+@@ -32,14 +32,27 @@
  public class BucketItem extends Item {
     private final Fluid field_77876_a;
  
-+   // Forge: Use the other constructor that takes a Supplier
-+   @Deprecated
++   /**@deprecated Use {@link BucketItem#BucketItem(java.util.function.Supplier, Item.Properties)}*/@Deprecated
     public BucketItem(Fluid p_i49025_1_, Item.Properties p_i49025_2_) {
        super(p_i49025_2_);
        this.field_77876_a = p_i49025_1_;
@@ -29,7 +28,7 @@
        if (raytraceresult.func_216346_c() == RayTraceResult.Type.MISS) {
           return ActionResult.func_226250_c_(itemstack);
        } else if (raytraceresult.func_216346_c() != RayTraceResult.Type.BLOCK) {
-@@ -56,7 +70,10 @@
+@@ -56,7 +69,10 @@
                    Fluid fluid = ((IBucketPickupHandler)blockstate1.func_177230_c()).func_204508_a(p_77659_1_, blockpos, blockstate1);
                    if (fluid != Fluids.field_204541_a) {
                       p_77659_2_.func_71029_a(Stats.field_75929_E.func_199076_b(this));
@@ -41,7 +40,7 @@
                       ItemStack itemstack1 = DrinkHelper.func_242398_a(itemstack, p_77659_2_, new ItemStack(fluid.func_204524_b()));
                       if (!p_77659_1_.field_72995_K) {
                          CriteriaTriggers.field_204813_j.func_204817_a((ServerPlayerEntity)p_77659_2_, new ItemStack(fluid.func_204524_b()));
-@@ -69,7 +86,7 @@
+@@ -69,7 +85,7 @@
                 return ActionResult.func_226251_d_(itemstack);
              } else {
                 BlockState blockstate = p_77659_1_.func_180495_p(blockpos);
@@ -50,7 +49,7 @@
                 if (this.func_180616_a(p_77659_2_, p_77659_1_, blockpos2, blockraytraceresult)) {
                    this.func_203792_a(p_77659_1_, itemstack, blockpos2);
                    if (p_77659_2_ instanceof ServerPlayerEntity) {
-@@ -117,7 +134,7 @@
+@@ -117,7 +133,7 @@
              }
  
              return true;
@@ -59,7 +58,7 @@
              ((ILiquidContainer)block).func_204509_a(p_180616_2_, p_180616_3_, blockstate, ((FlowingFluid)this.field_77876_a).func_207204_a(false));
              this.func_203791_b(p_180616_1_, p_180616_2_, p_180616_3_);
              return true;
-@@ -137,7 +154,24 @@
+@@ -137,7 +153,24 @@
     }
  
     protected void func_203791_b(@Nullable PlayerEntity p_203791_1_, IWorld p_203791_2_, BlockPos p_203791_3_) {

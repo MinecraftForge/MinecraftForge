@@ -51,7 +51,7 @@
              int j = this.field_147003_i;
              int k = this.field_147009_r;
              boolean flag1 = this.func_195361_a(p_231044_1_, p_231044_3_, j, k, p_231044_5_);
-+            if (slot != null) flag1 = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
++            if (slot != null) flag1 = false; // Forge: prevent dropping of items through slots outside of GUI boundaries
              int l = -1;
              if (slot != null) {
                 l = slot.field_75222_d;
@@ -77,12 +77,12 @@
     }
  
     public boolean func_231048_c_(double p_231048_1_, double p_231048_3_, int p_231048_5_) {
-+      super.func_231048_c_(p_231048_1_, p_231048_3_, p_231048_5_); //Forge, Call parent to release buttons
++      super.func_231048_c_(p_231048_1_, p_231048_3_, p_231048_5_); // Forge: Call parent to release buttons
        Slot slot = this.func_195360_a(p_231048_1_, p_231048_3_);
        int i = this.field_147003_i;
        int j = this.field_147009_r;
        boolean flag = this.func_195361_a(p_231048_1_, p_231048_3_, i, j, p_231048_5_);
-+      if (slot != null) flag = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
++      if (slot != null) flag = false; // Forge: prevent dropping of items through slots outside of GUI boundaries
 +      InputMappings.Input mouseKey = InputMappings.Type.MOUSE.func_197944_a(p_231048_5_);
        int k = -1;
        if (slot != null) {

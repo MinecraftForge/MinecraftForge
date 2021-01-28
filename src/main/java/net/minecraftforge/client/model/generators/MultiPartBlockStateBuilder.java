@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,7 +47,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
      * Creates a builder for models to assign to a {@link PartBuilder}, which when
      * completed via {@link ConfiguredModel.Builder#addModel()} will assign the
      * resultant set of models to the part and return it for further processing.
-     * 
+     *
      * @return the model builder
      * @see ConfiguredModel.Builder
      */
@@ -88,7 +88,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
         /**
          * Set a condition for this part, which consists of a property and a set of
          * valid values. Can be called multiple times for multiple different properties.
-         * 
+         *
          * @param <T>    the type of the property value
          * @param prop   the property
          * @param values a set of valid values

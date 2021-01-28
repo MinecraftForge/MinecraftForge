@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,18 +36,18 @@ public class RegisterCommandsEvent extends Event
 {
     private final CommandDispatcher<CommandSource> dispatcher;
     private final Commands.EnvironmentType environment;
-    
+
     public RegisterCommandsEvent(CommandDispatcher<CommandSource> dispatcher, Commands.EnvironmentType environment)
     {
         this.dispatcher = dispatcher;
         this.environment = environment;
     }
-    
+
     public CommandDispatcher<CommandSource> getDispatcher()
     {
         return dispatcher;
     }
-    
+
     public Commands.EnvironmentType getEnvironment()
     {
         return environment;

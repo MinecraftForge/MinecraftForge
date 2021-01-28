@@ -13,7 +13,7 @@
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
        BlockPos blockpos = p_196260_3_.func_177977_b();
-+      if (p_196260_1_.func_177230_c() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++      if (p_196260_1_.func_177230_c() == this) // Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
 +         return p_196260_2_.func_180495_p(blockpos).canSustainPlant(p_196260_2_, blockpos, Direction.UP, this);
        return this.func_200014_a_(p_196260_2_.func_180495_p(blockpos), p_196260_2_, blockpos);
     }

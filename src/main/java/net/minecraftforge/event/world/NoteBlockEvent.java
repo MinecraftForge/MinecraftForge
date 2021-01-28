@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -81,7 +81,7 @@ public class NoteBlockEvent extends BlockEvent
     }
 
     /**
-     * Fired when a Noteblock plays it's note. You can override the note and instrument
+     * Fired when a Noteblock plays its note. You can override the note and instrument
      * Canceling this event will stop the note from playing.
      */
     @Cancelable
@@ -108,7 +108,7 @@ public class NoteBlockEvent extends BlockEvent
 
     /**
      * Fired when a Noteblock is changed. You can adjust the note it will change to via {@link #setNote(Note, Octave)}.
-     * Canceling this event will not change the note and also stop the Noteblock from playing it's note.
+     * Canceling this event will not change the note and also stop the Noteblock from playing its note.
      */
     @Cancelable
     public static class Change extends NoteBlockEvent

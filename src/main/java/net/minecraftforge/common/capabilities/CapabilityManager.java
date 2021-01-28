@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -68,8 +68,8 @@ public enum CapabilityManager
         synchronized (providers)
         {
             if (providers.containsKey(realName)) {
-                LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
-                throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
+                LOGGER.error(CAPABILITIES, "Cannot register a capability implementation multiple times: {}", realName);
+                throw new IllegalArgumentException("Cannot register a capability implementation multiple times: "+ realName);
             }
 
             cap = new Capability<>(realName, storage, factory);

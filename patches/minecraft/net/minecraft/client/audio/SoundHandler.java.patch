@@ -4,7 +4,7 @@
        this.field_147694_f.func_195855_a(p_195478_1_, p_195478_2_);
     }
  
-+   //@Override //TODO: Filtered reload
++   // @Override // Forge: TODO: Filtered reload
 +   public net.minecraftforge.resource.IResourceType getResourceType() {
 +      return net.minecraftforge.resource.VanillaResourceType.SOUNDS;
 +   }

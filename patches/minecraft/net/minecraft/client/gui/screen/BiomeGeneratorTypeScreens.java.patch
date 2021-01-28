@@ -16,6 +16,6 @@
     }
 +
 +   // Forge start
-+   // For internal use only, automatically called for all ForgeWorldTypes. Register your ForgeWorldType in the forge registry!
++   // For internal use only, automatically called for all ForgeWorldTypes. Register your ForgeWorldType in the Forge registry!
 +   public static void registerGenerator(BiomeGeneratorTypeScreens gen) { field_239068_c_.add(gen); }
  }

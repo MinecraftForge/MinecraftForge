@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,8 +28,8 @@ import net.minecraftforge.eventbus.api.Event;
 import javax.annotation.Nullable;
 
 /**
- * 
- * AnvilUpdateEvent is fired when the inputs (either input stack, or the name) to an anvil are changed. <br> 
+ *
+ * AnvilUpdateEvent is fired when the inputs (either input stack, or the name) to an anvil are changed. <br>
  * It is called from {@link RepairContainer#updateRepairOutput}. <br>
  * If the event is canceled, vanilla behavior will not run, and the output will be set to {@link ItemStack#EMPTY}. <br>
  * If the event is not canceled, but the output is not empty, it will set the output and not run vanilla behavior. <br>
@@ -99,7 +99,7 @@ public class AnvilUpdateEvent extends Event
      * If this event is cancelled, this output stack is discarded.
      * @return The item to set in the output (rightmost) anvil slot.
      */
-    public ItemStack getOutput() 
+    public ItemStack getOutput()
     {
         return output;
     }
@@ -114,7 +114,7 @@ public class AnvilUpdateEvent extends Event
     }
 
     /**
-     * This is the level cost of this anvil operation. <br> 
+     * This is the level cost of this anvil operation. <br>
      * When unchanged, it is guaranteed to be left.getRepairCost() + right.getRepairCost().
      * @return The level cost of this anvil operation.
      */

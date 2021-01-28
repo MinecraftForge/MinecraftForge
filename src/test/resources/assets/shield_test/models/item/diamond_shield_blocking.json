@@ -1,5 +1,5 @@
 {
-	"parent": "shield_test:item/diamond_shield",
+    "parent": "shield_test:item/diamond_shield",
     "display": {
         "thirdperson_righthand": {
             "rotation": [ 45, 135, 0 ],

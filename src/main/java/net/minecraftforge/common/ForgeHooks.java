@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -1163,7 +1163,7 @@ public class ForgeHooks
 
     public static <T> void deserializeTagAdditions(List<ITag.ITagEntry> list, JsonObject json, List<ITag.Proxy> allList)
     {
-        //TODO 1.17 remove parsing the forge added "optional" array. Still here for compatibility with previously created tags.
+        //TODO 1.17 remove parsing the Forge added "optional" array. Still here for compatibility with previously created tags.
         if (json.has("optional"))
         {
             for (JsonElement entry : JSONUtils.getJsonArray(json, "optional"))

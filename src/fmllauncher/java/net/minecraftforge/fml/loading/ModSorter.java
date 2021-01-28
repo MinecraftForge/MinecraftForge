@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -182,7 +182,7 @@ public class ModSorter
                 .stream()
                 .collect(Collectors.groupingBy(mf -> mf.getModInfos().get(0).getModId()));
 
-        // Capture forge and MC here, so we can keep them for later
+        // Capture Forge and MC here, so we can keep them for later
         forgeAndMC = new ArrayList<>();
         forgeAndMC.add((ModFile)modFilesByFirstId.get("minecraft").get(0));
         forgeAndMC.add((ModFile)modFilesByFirstId.get("forge").get(0));

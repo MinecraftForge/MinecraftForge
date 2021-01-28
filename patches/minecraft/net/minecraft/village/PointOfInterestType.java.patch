@@ -34,7 +34,7 @@
     public static Optional<PointOfInterestType> func_221047_b(BlockState p_221047_0_) {
        return Optional.ofNullable(field_221073_u.get(p_221047_0_));
     }
-+   
++
 +   public ImmutableSet<BlockState> getBlockStates() {
 +      return ImmutableSet.copyOf(this.field_221075_w);
 +   }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ import net.minecraft.util.Direction;
 public class BakedQuadBuilder implements IVertexConsumer
 {
     private static final int SIZE = DefaultVertexFormats.BLOCK.getElements().size();
-    
+
     private final float[][][] unpackedData = new float[4][SIZE][4];
     private int tint = -1;
     private Direction orientation;
@@ -48,7 +48,7 @@ public class BakedQuadBuilder implements IVertexConsumer
     private boolean contractUVs = false;
 
     public BakedQuadBuilder() {}
-    
+
     public BakedQuadBuilder(TextureAtlasSprite texture)
     {
         this.texture = texture;

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -135,7 +135,7 @@ public class NetworkEvent extends Event
 
     /**
      * Fired when the channel registration (see minecraft custom channel documentation) changes. Note the payload
-     * is not exposed. This fires to the resource location that owns the channel, when it's registration changes state.
+     * is not exposed. This fires to the resource location that owns the channel, when its registration changes state.
      *
      * It seems plausible that this will fire multiple times for the same state, depending on what the server is doing.
      * It just directly dispatches upon receipt.

@@ -4,7 +4,7 @@
  public class ItemTagsProvider extends TagsProvider<Item> {
     private final Function<ITag.INamedTag<Block>, ITag.Builder> field_240520_d_;
  
-+   @Deprecated
++   /**@deprecated Use {@link ItemTagsProvider#ItemTagsProvider(DataGenerator, BlockTagsProvider, String, net.minecraftforge.common.data.ExistingFileHelper)}*/@Deprecated
     public ItemTagsProvider(DataGenerator p_i232552_1_, BlockTagsProvider p_i232552_2_) {
        super(p_i232552_1_, Registry.field_212630_s);
        this.field_240520_d_ = p_i232552_2_::func_240525_b_;

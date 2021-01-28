@@ -13,7 +13,7 @@
        return this.field_184469_aF == BoatEntity.Status.UNDER_WATER || this.field_184469_aF == BoatEntity.Status.UNDER_FLOWING_WATER;
     }
  
-+   // Forge: Fix MC-119811 by instantly completing lerp on board
++   // Forge: Fixed MC-119811 Boats rubberband on dismount
 +   @Override
 +   protected void func_184200_o(Entity passenger) {
 +      super.func_184200_o(passenger);

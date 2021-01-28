@@ -5,7 +5,7 @@
  
     public static <T> Codec<SimpleRegistry<T>> func_241745_c_(RegistryKey<? extends Registry<T>> p_241745_0_, Lifecycle p_241745_1_, Codec<T> p_241745_2_) {
 -      return Codec.unboundedMap(ResourceLocation.field_240908_a_.xmap(RegistryKey.func_240902_a_(p_241745_0_), RegistryKey::func_240901_a_), p_241745_2_).xmap((p_239656_2_) -> {
-+      // FORGE: Fix MC-197860
++      // Forge: Fixed MC-197860 Deleting a custom dimension in a datapack deletes Nether and End
 +      return new net.minecraftforge.common.LenientUnboundedMapCodec<>(ResourceLocation.field_240908_a_.xmap(RegistryKey.func_240902_a_(p_241745_0_), RegistryKey::func_240901_a_), p_241745_2_).xmap((p_239656_2_) -> {
           SimpleRegistry<T> simpleregistry = new SimpleRegistry<>(p_241745_0_, p_241745_1_);
           p_239656_2_.forEach((p_239653_2_, p_239653_3_) -> {

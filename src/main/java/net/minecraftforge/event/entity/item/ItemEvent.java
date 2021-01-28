@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@ public class ItemEvent extends EntityEvent
 
     /**
      * Creates a new event for an EntityItem.
-     * 
+     *
      * @param itemEntity The EntityItem for this event
      */
     public ItemEvent(ItemEntity itemEntity)

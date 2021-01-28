@@ -4,7 +4,7 @@
              while((b0 = CompoundNBT.func_152447_a(p_225649_1_, p_225649_3_)) != 0) {
                 String s = CompoundNBT.func_152448_b(p_225649_1_, p_225649_3_);
                 p_225649_3_.func_152450_a((long)(224 + 16 * s.length()));
-+               p_225649_3_.func_152450_a(32); //Forge: 4 extra bytes for the object allocation.
++               p_225649_3_.func_152450_a(32); // Forge: 4 extra bytes for the object allocation.
                 INBT inbt = CompoundNBT.func_229680_b_(NBTTypes.func_229710_a_(b0), s, p_225649_1_, p_225649_2_ + 1, p_225649_3_);
                 if (map.put(s, inbt) != null) {
                    p_225649_3_.func_152450_a(288L);

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -51,7 +51,7 @@ public class ForgeWorldType extends ForgeRegistryEntry<ForgeWorldType>
         ForgeWorldType def = ForgeRegistries.WORLD_TYPES.getValue(new ResourceLocation(defaultWorldType));
         if (def == null)
         {
-            LOGGER.error("The defaultWorldType '{}' specified in the forge config has not been registered. The vanilla default generator will be used.", defaultWorldType);
+            LOGGER.error("The defaultWorldType '{}' specified in the Forge config has not been registered. The vanilla default generator will be used.", defaultWorldType);
         }
 
         return def;

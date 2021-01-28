@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -93,7 +93,7 @@ public class ClientModLoader
     }
     public static void begin(final Minecraft minecraft, final ResourcePackList defaultResourcePacks, final IReloadableResourceManager mcResourceManager, DownloadingPackFinder metadataSerializer)
     {
-        // force log4j to shutdown logging in a shutdown hook. This is because we disable default shutdown hook so the server properly logs it's shutdown
+        // force log4j to shutdown logging in a shutdown hook. This is because we disable default shutdown hook so the server properly logs its shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(LogManager::shutdown));
         loading = true;
         ClientModLoader.mc = minecraft;
@@ -180,10 +180,10 @@ public class ClientModLoader
         }
         File dumpedLocation = null;
         if (error == null) {
-            // We can finally start the forge eventbus up
+            // We can finally start the Forge eventbus up
             MinecraftForge.EVENT_BUS.start();
         } else {
-            // Double check we have the langs loaded for forge
+            // Double check we have the langs loaded for Forge
             LanguageHook.loadForgeAndMCLangs();
             dumpedLocation = CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDir);
         }

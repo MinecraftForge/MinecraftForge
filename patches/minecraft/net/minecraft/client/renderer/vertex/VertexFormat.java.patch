@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/vertex/VertexFormat.java
 +++ b/net/minecraft/client/renderer/vertex/VertexFormat.java
-@@ -84,4 +84,11 @@
+@@ -84,4 +84,12 @@
  
        }
     }
@@ -11,4 +11,5 @@
 +   public boolean hasNormal() { return field_177355_b.stream().anyMatch(e -> e.func_177375_c() == VertexFormatElement.Usage.NORMAL); }
 +   public boolean hasColor() { return field_177355_b.stream().anyMatch(e -> e.func_177375_c() == VertexFormatElement.Usage.COLOR); }
 +   public boolean hasUV(int which) { return field_177355_b.stream().anyMatch(e -> e.func_177375_c() == VertexFormatElement.Usage.UV && e.func_177369_e() == which); }
++   // Forge End
  }

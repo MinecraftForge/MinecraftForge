@@ -31,7 +31,7 @@
        }
     }
  
-+   @Deprecated //Forge: DO NOT USE use BlockState.canEntityDestroy
++   /**@deprecated Use {@link BlockState#canEntityDestroy(net.minecraft.world.IBlockReader, BlockPos, Entity)}*/@Deprecated
     public static boolean func_181033_a(BlockState p_181033_0_) {
        return !p_181033_0_.func_196958_f() && !BlockTags.field_219755_X.func_230235_a_(p_181033_0_.func_177230_c());
     }

@@ -17,8 +17,8 @@
        }
     }
 +
-+   private Particle updateSprite(BlockPos pos) { //FORGE: we cannot assume that the x y z of the particles match the block pos of the block.
-+      if (pos != null) // There are cases where we are not able to obtain the correct source pos, and need to fallback to the non-model data version
++   private Particle updateSprite(BlockPos pos) { // Forge: we cannot assume that the x y z of the particles match the block pos of the block.
++      if (pos != null) // Forge: There are cases where we are not able to obtain the correct source pos, and need to fallback to the non-model data version
 +         this.func_217567_a(Minecraft.func_71410_x().func_175602_ab().func_175023_a().getTexture(field_174847_a, field_187122_b, pos));
 +      return this;
 +   }

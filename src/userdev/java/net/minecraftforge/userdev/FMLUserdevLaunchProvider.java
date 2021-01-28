@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
     public Path getForgePath(final String mcVersion, final String forgeVersion, final String forgeGroup) {
         final URL forgePath = getClass().getClassLoader().getResource(FORGE_VERSION_CLASS);
         if (forgePath == null) {
-            LOGGER.fatal(CORE, "Unable to locate forge on the classpath");
+            LOGGER.fatal(CORE, "Unable to locate Forge on the classpath");
             throw new RuntimeException("Unable to locate forge on the classpath");
         }
         forgeJar = LibraryFinder.findJarPathFor(FORGE_VERSION_CLASS, "forge", forgePath);

@@ -5,7 +5,7 @@
  
     public void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_) {
 -      this.field_70009_b.append(p_145747_1_.getString());
-+      this.field_70009_b.append(p_145747_1_.getString()).append("\n"); // FIX MC-7569 - RCON has no newlines in multiline output
++      this.field_70009_b.append(p_145747_1_.getString()).append("\n"); // Forge: Fixed MC-7569 RCON output has newlines removed
     }
  
     public boolean func_195039_a() {

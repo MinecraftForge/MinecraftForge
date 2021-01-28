@@ -4,7 +4,7 @@
  public class FishBucketItem extends BucketItem {
     private final EntityType<?> field_203794_a;
  
-+   @Deprecated
++   /**@deprecated Use {@link FishBucketItem#FishBucketItem(java.util.function.Supplier, java.util.function.Supplier, Item.Properties)}*/@Deprecated
     public FishBucketItem(EntityType<?> p_i49022_1_, Fluid p_i49022_2_, Item.Properties p_i49022_3_) {
        super(p_i49022_2_, p_i49022_3_);
        this.field_203794_a = p_i49022_1_;

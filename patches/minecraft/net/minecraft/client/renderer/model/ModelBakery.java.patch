@@ -57,11 +57,12 @@
     private void func_217843_a(ModelResourceLocation p_217843_1_) {
        IUnbakedModel iunbakedmodel = this.func_209597_a(p_217843_1_);
        this.field_217849_F.put(p_217843_1_, iunbakedmodel);
-@@ -456,7 +477,13 @@
+@@ -455,8 +476,14 @@
+       });
     }
  
++   /**@deprecated Use {@link ModelBakery#getBakedModel(ResourceLocation, IModelTransform, java.util.function.Function)}*/@Deprecated
     @Nullable
-+   @Deprecated
     public IBakedModel func_217845_a(ResourceLocation p_217845_1_, IModelTransform p_217845_2_) {
 +      return getBakedModel(p_217845_1_, p_217845_2_, this.field_229322_z_::func_229151_a_);
 +   }

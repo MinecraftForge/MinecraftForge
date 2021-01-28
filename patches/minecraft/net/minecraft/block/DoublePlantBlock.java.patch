@@ -4,7 +4,7 @@
           return super.func_196260_a(p_196260_1_, p_196260_2_, p_196260_3_);
        } else {
           BlockState blockstate = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
-+         if (p_196260_1_.func_177230_c() != this) return super.func_196260_a(p_196260_1_, p_196260_2_, p_196260_3_); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++         if (p_196260_1_.func_177230_c() != this) return super.func_196260_a(p_196260_1_, p_196260_2_, p_196260_3_); // Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
           return blockstate.func_203425_a(this) && blockstate.func_177229_b(field_176492_b) == DoubleBlockHalf.LOWER;
        }
     }

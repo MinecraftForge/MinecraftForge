@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,7 @@ import javax.annotation.Nullable;
 
 public class JsonUtils
 {
-    // http://stackoverflow.com/questions/7706772/deserializing-immutablelist-using-gson/21677349#21677349
+    // https://stackoverflow.com/questions/7706772/deserializing-immutablelist-using-gson/21677349#21677349
     public enum ImmutableListTypeAdapter implements JsonDeserializer<ImmutableList<?>>, JsonSerializer<ImmutableList<?>>
     {
         INSTANCE;

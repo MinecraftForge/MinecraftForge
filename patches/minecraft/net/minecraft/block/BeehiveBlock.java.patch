@@ -4,7 +4,7 @@
        List<BeeEntity> list = p_226881_1_.func_217357_a(BeeEntity.class, (new AxisAlignedBB(p_226881_2_)).func_72314_b(8.0D, 6.0D, 8.0D));
        if (!list.isEmpty()) {
           List<PlayerEntity> list1 = p_226881_1_.func_217357_a(PlayerEntity.class, (new AxisAlignedBB(p_226881_2_)).func_72314_b(8.0D, 6.0D, 8.0D));
-+         if (list1.isEmpty()) return; //Forge: Prevent Error when no players are around.
++         if (list1.isEmpty()) return; // Forge: Prevent Error when no players are around.
           int i = list1.size();
  
           for(BeeEntity beeentity : list) {

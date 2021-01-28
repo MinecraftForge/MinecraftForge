@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -421,7 +421,7 @@ public class GuiUtils
      * @param mouseX the mouse X position
      * @param mouseY the mouse Y position
      * @param screenWidth the available screen width for the tooltip to drawn in
-     * @param screenHeight the available  screen height for the tooltip to drawn in
+     * @param screenHeight the available screen height for the tooltip to drawn in
      * @param maxTextWidth the maximum width of the text in the tooltip box.
      *                     Set to a negative number to have no max width.
      * @param backgroundColor The background color of the box

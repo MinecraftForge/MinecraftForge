@@ -74,7 +74,7 @@ project(':clean') {
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-    
+
     repositories {
         mavenLocal()
         //mavenCentral() //TODO: Update Gradle to use HTTPS by default
@@ -83,7 +83,7 @@ project(':clean') {
             url 'https://repo.maven.apache.org/maven2/'
         }
     }
-    
+
     dependencies {
         implementation 'net.minecraftforge:forgespi:2.0.+'
     }
@@ -118,7 +118,7 @@ project(':clean') {
     }
 }
 
-project(':forge') {    
+project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
@@ -156,7 +156,7 @@ project(':forge') {
             runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
             java {
                 srcDirs = [
-                    "$rootDir/src/test/java", 
+                    "$rootDir/src/test/java",
                     "$rootDir/src/fmllaunchertest/java"
                 ]
             }
@@ -335,7 +335,7 @@ project(':forge') {
                 mods {
                     forge { source sourceSets.main }
                 }
-                
+
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/'), '--validate',
                         '--existing', sourceSets.main.resources.srcDirs[0]
             }
@@ -349,11 +349,11 @@ project(':forge') {
                 ideaModule "${rootProject.name}.${project.name}.userdev_test"
 
                 mods {
-                    tests { sources  sourceSets.test }
+                    tests { sources sourceSets.test }
                 }
-                
+
                 args '--flat', '--all', '--validate',
-                    '--mod', 'data_gen_test', 
+                    '--mod', 'data_gen_test',
                     '--mod', 'piston_event_test',
                     '--mod', 'global_loot_test',
                     '--mod', 'scaffolding_test',
@@ -365,7 +365,7 @@ project(':forge') {
             }
         }
     }
-    
+
     ext {
         MANIFESTS = [
             '/': [
@@ -423,7 +423,7 @@ project(':forge') {
             ] as LinkedHashMap
         ]
     }
-    
+
     applyPatches {
         canonicalizeAccess true
         canonicalizeWhitespace true
@@ -474,21 +474,21 @@ project(':forge') {
         testImplementation 'org.opentest4j:opentest4j:1.0.0' // needed for junit 5
         testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
     }
-    
+
     def extraTxts = [
         rootProject.file('CREDITS.txt'),
         rootProject.file('LICENSE.txt')
     ]
-    
+
     def changelog = rootProject.file('build/changelog.txt')
     if (changelog.exists())
         extraTxts += changelog
-    
+
     task crowdin(type: CrowdinTask) {
         key = project.hasProperty('crowdinKey') ? project.crowdinKey : null
         //TODO: Merge our english.json?
     }
-    
+
     // We apply the bin patches we just created to make a jar that is JUST our changes
     ['Client', 'Server', 'Joined'].each { side ->
         def gen = tasks.getByName("gen${side}BinPatches")
@@ -509,12 +509,12 @@ project(':forge') {
             output = file("build/create${name}SRG/output.jar")
         }
     }
-    
+
     task downloadLibraries(type: DownloadLibrariesTask, dependsOn: ':mcp:setupMCP') {
         input = VERSION_JSON
         output = rootProject.file('build/libraries/')
     }
-    
+
     task extractInheritance(type: ExtractInheritance, dependsOn: [genJoinedBinPatches, downloadLibraries]) {
         tool = INSTALLER_TOOLS + ':fatjar'
         input { genJoinedBinPatches.cleanJar }
@@ -528,17 +528,17 @@ project(':forge') {
             bows {
                 cls = 'net/minecraft/item/Items'
                 name = 'field_151031_f'
-				replacement = 'net/minecraft/item/BowItem'
+                replacement = 'net/minecraft/item/BowItem'
             }
             crossbows {
                 cls = 'net/minecraft/item/Items'
                 name = 'field_222114_py'
-				replacement = 'net/minecraft/item/CrossbowItem'
+                replacement = 'net/minecraft/item/CrossbowItem'
             }
             filled_map {
                 cls = 'net/minecraft/item/Items'
                 name = 'field_151098_aY'
-				replacement = 'net/minecraft/item/FilledMapItem'
+                replacement = 'net/minecraft/item/FilledMapItem'
                 blacklist 'net/minecraft/client/gui/screen/inventory/CartographyTableScreen', 'func_230450_a_', '(Lcom/mojang/blaze3d/matrix/MatrixStack;FII)V'
                 blacklist 'net/minecraft/client/renderer/entity/ItemFrameRenderer', 'func_225623_a_', '(Lnet/minecraft/entity/item/ItemFrameEntity;FFLcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;I)V'
                 blacklist 'net/minecraft/item/crafting/MapCloningRecipe'
@@ -547,12 +547,12 @@ project(':forge') {
             fishing_rod {
                 cls = 'net/minecraft/item/Items'
                 name = 'field_151112_aM'
-				replacement = 'net/minecraft/item/FishingRodItem'
+                replacement = 'net/minecraft/item/FishingRodItem'
             }
             shears {
                 cls = 'net/minecraft/item/Items'
                 name = 'field_151097_aZ'
-				replacement = 'net/minecraft/item/ShearsItem'
+                replacement = 'net/minecraft/item/ShearsItem'
             }
         }
     }
@@ -604,7 +604,7 @@ project(':forge') {
         outputs.file output
         doLast {
             def json_vanilla = vanilla.json()
-            def json = [            
+            def json = [
                 _comment_: comment,
                 id: id,
                 time: timestamp,
@@ -628,15 +628,15 @@ project(':forge') {
                                 size: launcherJar.archivePath.length()
                             ]
                         ]
-                    ] 
+                    ]
                 ]
             ]
-            
+
             def artifacts = getArtifacts(project, project.configurations.installer, false)
             artifacts.each { key, lib ->
                 json.libraries.add(lib)
             }
-            
+
             output.text = new JsonBuilder(json).toPrettyString()
         }
     }
@@ -782,13 +782,13 @@ project(':forge') {
             ]
             getClasspath(project, libs, MCP_ARTIFACT.descriptor) //Tell it to download mcp_config
             json.libraries = libs.values().sort{a,b -> a.name.compareTo(b.name)}
-            
+
             output.text = new JsonBuilder(json).toPrettyString()
         }
     }
-    
+
     ['client', 'server'].each { side ->
-        ['slim', 'extra'].each { type -> 
+        ['slim', 'extra'].each { type ->
             def name = "download${side.capitalize()}${type.capitalize()}"
             task "${name}"(type: DownloadMavenArtifact) {
                 artifact = "net.minecraft:${side}:${MC_VERSION}-${MCP_VERSION}:${type}"
@@ -797,10 +797,10 @@ project(':forge') {
             installerJson.inputs.file(tasks.getByName(name).output)
         }
     }
-    
+
     universalJar {
         from extraTxts
-        
+
         // add crowdin locales
         from { crowdin.output.exists() ? zipTree(crowdin.output) : null}
         dependsOn crowdin
@@ -816,7 +816,7 @@ project(':forge') {
             }
         }
     }
-    
+
     task launcherJar(type: Jar) {
         classifier 'launcher'
         from sourceSets.fmllauncher.output
@@ -827,7 +827,7 @@ project(':forge') {
                 classpath += "libraries/${lib.downloads.artifact.path} "
             }
             classpath += "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
-            
+
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
@@ -848,12 +848,12 @@ project(':forge') {
             }
         }
     }
-    
+
     task downloadInstaller(type: DownloadMavenArtifact) {
         artifact = 'net.minecraftforge:installer:2.0.+:shrunk'
         changing = true
     }
-    
+
     task installerJar(type: Zip, dependsOn: [downloadInstaller, installerJson, launcherJson, genClientBinPatches, genServerBinPatches, 'signUniversalJar', 'signLauncherJar']) {
         classifier = 'installer'
         extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
@@ -882,8 +882,8 @@ project(':forge') {
             duplicatesStrategy = 'exclude'
         }
     }
-    
-    [universalJar, launcherJar, installerJar].each { t -> 
+
+    [universalJar, launcherJar, installerJar].each { t ->
         task "sign${t.name.capitalize()}"(type: SignJar, dependsOn: t) {
             onlyIf {
                 JAR_SIGNER != null && t.state.failure == null
@@ -901,7 +901,7 @@ project(':forge') {
         }
         t.finalizedBy(tasks.getByName("sign${t.name.capitalize()}"))
     }
-    
+
     task makeMdk(type: Zip) {
         baseName = project.name
         classifier = 'mdk'
@@ -933,7 +933,7 @@ project(':forge') {
             rename 'gitattributes\\.txt', '.gitattributes'
         }
     }
-    
+
     userdevConfig {
         def artifacts = getArtifacts(project, project.configurations.installer, true)
         artifacts.each { key, lib ->
@@ -984,7 +984,7 @@ project(':forge') {
             }
         }
     }
-    
+
     license {
         header = file("$rootDir/LICENSE-header.txt")
 
@@ -1037,9 +1037,9 @@ project(':forge') {
     applyRangeMap {
         setSources sourceSets.userdev.java.srcDirs
     }
-    
+
     tasks.eclipse.dependsOn('genEclipseRuns')
-    
+
     if (project.hasProperty('UPDATE_MAPPINGS')) {
         extractRangeMap {
             sources sourceSets.test.java.srcDirs
@@ -1049,7 +1049,7 @@ project(':forge') {
         }
         sourceSets.test.java.srcDirs.each { extractMappedNew.addTarget it }
     }
-    
+
     publishing {
         publications {
             mavenJava(MavenPublication) {

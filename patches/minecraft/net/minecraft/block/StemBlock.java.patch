@@ -29,14 +29,15 @@
           }
  
        }
-@@ -97,4 +99,10 @@
+@@ -97,4 +99,11 @@
     public StemGrownBlock func_208486_d() {
        return this.field_149877_a;
     }
 +
-+   //FORGE START
++   // Forge start
 +   @Override
 +   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
 +      return net.minecraftforge.common.PlantType.CROP;
 +   }
++   // Forge End
  }

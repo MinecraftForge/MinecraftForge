@@ -54,7 +54,7 @@
         </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
-        <!-- make sure mojang's logging is set to 'info' so that their LOGGER.isDebugEnabled() behavior isn't active -->
+        <!-- make sure Mojang's logging is set to 'info' so that their LOGGER.isDebugEnabled() behavior isn't active -->
         <Logger level="${sys:forge.logging.mojang.level:-info}" name="com.mojang"/>
         <Logger level="${sys:forge.logging.mojang.level:-info}" name="net.minecraft"/>
         <Logger level="${sys:forge.logging.classtransformer.level:-info}" name="cpw.mods.modlauncher.ClassTransformer"/>

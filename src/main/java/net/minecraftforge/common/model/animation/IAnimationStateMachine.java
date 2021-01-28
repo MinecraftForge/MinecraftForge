@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ public interface IAnimationStateMachine
     /**
      * Sample the state and events at the current time.
      * Event iterable will contain all events that happened from the last invocation of this method, from most to least recent.
-     * Event offset is relative to the previous event, and for the first event it's relative to the current time. 
+     * Event offset is relative to the previous event, and for the first event it's relative to the current time.
      */
     Pair<IModelTransform, Iterable<Event>> apply(float time);
 

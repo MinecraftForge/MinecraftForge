@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -70,7 +70,7 @@ public class ModAnnotation
         this.asmType = asmType;
         this.member = member;
     }
-    
+
     public ModAnnotation(Type asmType, ModAnnotation parent)
     {
         this.type = parent.type;

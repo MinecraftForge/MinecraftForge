@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -100,7 +100,7 @@ public class EntityEvent extends Event
             this.canUpdate = canUpdate;
         }
     }
-    
+
     /**
      * EnteringChunk is fired when an Entity enters a chunk. <br>
      * This event is fired whenever vanilla Minecraft determines that an entity <br>

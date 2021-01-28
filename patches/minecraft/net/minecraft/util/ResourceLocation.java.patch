@@ -4,7 +4,7 @@
        return i;
     }
  
-+   // Normal compare sorts by path first, this compares namespace first.
++   // Forge: Normal compare sorts by path first, this compares namespace first.
 +   public int compareNamespaced(ResourceLocation o) {
 +      int ret = this.field_110626_a.compareTo(o.field_110626_a);
 +      return ret != 0 ? ret : this.field_110625_b.compareTo(o.field_110625_b);

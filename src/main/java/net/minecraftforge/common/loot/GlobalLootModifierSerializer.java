@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
  */
 public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier> implements IForgeRegistryEntry<GlobalLootModifierSerializer<?>> {
     private ResourceLocation registryName = null;
-    
+
     public final GlobalLootModifierSerializer<T> setRegistryName(String name) {
         if (getRegistryName() != null)
             throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
@@ -43,7 +43,7 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
         this.registryName = GameData.checkPrefix(name, true);
         return this;
     }
-    
+
     //Helpers
     @Override
     public final GlobalLootModifierSerializer<T> setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
@@ -54,7 +54,7 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
     public final ResourceLocation getRegistryName() {
         return registryName;
     }
-    
+
     /**
      * Most mods will likely not need more than<br/>
      * <code>return new MyModifier(conditionsIn)</code><br/>
@@ -90,7 +90,7 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
     public final Class<GlobalLootModifierSerializer<?>> getRegistryType() {
         return castClass(GlobalLootModifierSerializer.class);
     }
-    
+
     @SuppressWarnings("unchecked") // Need this wrapper, because generics
     private static <G> Class<G> castClass(Class<?> cls)
     {

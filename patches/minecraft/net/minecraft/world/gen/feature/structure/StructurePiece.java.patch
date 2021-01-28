@@ -4,7 +4,7 @@
     }
  
     public final CompoundNBT func_143010_b() {
-+      if (Registry.field_218362_C.func_177774_c(this.func_214807_k()) == null) { // FORGE: Friendlier error then the Null String error below.
++      if (Registry.field_218362_C.func_177774_c(this.func_214807_k()) == null) { // Forge: Friendlier error then the Null String error below.
 +         throw new RuntimeException("StructurePiece \"" + this.getClass().getName() + "\": \"" + this.func_214807_k() + "\" missing ID Mapping, Modder see MapGenStructureIO");
 +      }
        CompoundNBT compoundnbt = new CompoundNBT();

@@ -38,12 +38,12 @@
        }
     }
  
-+   @Deprecated //Forge: Prefer using IForgeBlock#catchFire
++   /**@deprecated Prefer {@link BlockState#catchFire(World, BlockPos, net.minecraft.util.Direction, LivingEntity)}*/@Deprecated
     public static void func_196534_a(World p_196534_0_, BlockPos p_196534_1_) {
        func_196535_a(p_196534_0_, p_196534_1_, (LivingEntity)null);
     }
  
-+   @Deprecated //Forge: Prefer using IForgeBlock#catchFire
++   /**@deprecated Prefer {@link BlockState#catchFire(World, BlockPos, net.minecraft.util.Direction, LivingEntity)}*/@Deprecated
     private static void func_196535_a(World p_196535_0_, BlockPos p_196535_1_, @Nullable LivingEntity p_196535_2_) {
        if (!p_196535_0_.field_72995_K) {
           TNTEntity tntentity = new TNTEntity(p_196535_0_, (double)p_196535_1_.func_177958_n() + 0.5D, (double)p_196535_1_.func_177956_o(), (double)p_196535_1_.func_177952_p() + 0.5D, p_196535_2_);

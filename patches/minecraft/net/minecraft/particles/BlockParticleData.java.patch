@@ -5,7 +5,7 @@
        return this.field_197587_c;
     }
 +
-+   //FORGE: Add a source pos property, so we can provide models with additional model data
++   // Forge: Add a source pos property, so we can provide models with additional model data
 +   private net.minecraft.util.math.BlockPos pos;
 +   public BlockParticleData setPos(net.minecraft.util.math.BlockPos pos) {
 +      this.pos = pos;

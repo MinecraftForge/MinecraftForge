@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,10 +24,10 @@ import net.minecraft.world.raid.Raid;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("raid_enum_test")
-public class RaidEnumTest 
+public class RaidEnumTest
 {
     private static final boolean ENABLE = false;
-	
+
     public RaidEnumTest()
     {
         if (ENABLE)

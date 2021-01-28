@@ -14,7 +14,7 @@
           this.field_148282_b = p_i232281_2_;
           this.field_148283_c = p_i232281_3_;
 -         this.field_148280_d = new Button(0, 0, 75, 20, p_i232281_3_, (p_214386_2_) -> {
-+         this.field_148280_d = new Button(0, 0, 75 + 20 /*Forge: add space*/, 20, p_i232281_3_, (p_214386_2_) -> {
++         this.field_148280_d = new Button(0, 0, 75 + 20 /* Forge: add space */, 20, p_i232281_3_, (p_214386_2_) -> {
              KeyBindingList.this.field_148191_k.field_146491_f = p_i232281_2_;
           }) {
              protected IFormattableTextComponent func_230442_c_() {

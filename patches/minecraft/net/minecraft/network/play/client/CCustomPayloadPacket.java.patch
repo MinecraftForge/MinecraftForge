@@ -14,7 +14,7 @@
     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
        p_148840_1_.func_192572_a(this.field_149562_a);
 -      p_148840_1_.writeBytes((ByteBuf)this.field_149561_c);
-+      p_148840_1_.writeBytes((ByteBuf)this.field_149561_c.copy()); //This may be access multiple times, from multiple threads, lets be safe like the S->C packet
++      p_148840_1_.writeBytes((ByteBuf)this.field_149561_c.copy()); //Forge: This may be access multiple times, from multiple threads, lets be safe like the S->C packet
     }
  
     public void func_148833_a(IServerPlayNetHandler p_148833_1_) {

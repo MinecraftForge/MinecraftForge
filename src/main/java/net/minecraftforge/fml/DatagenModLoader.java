@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,7 +53,7 @@ public class DatagenModLoader {
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator, flat);
         ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), ()->{});
         if (!mods.contains("forge")) {
-            //If we aren't generating data for forge, automatically add forge as an existing so mods can access forge's data
+            //If we aren't generating data for Forge, automatically add Forge as an existing so mods can access Forge's data
             existingMods.add("forge");
         }
         existingFileHelper = new ExistingFileHelper(existingPacks, existingMods, structureValidator);

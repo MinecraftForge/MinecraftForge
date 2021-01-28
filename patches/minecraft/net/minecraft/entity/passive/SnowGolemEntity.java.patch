@@ -32,7 +32,7 @@
     protected ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
 -      if (itemstack.func_77973_b() == Items.field_151097_aZ && this.func_230262_K__()) {
-+      if (false && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_230262_K__()) { //Forge: Moved to onSheared
++      if (false && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_230262_K__()) { // Forge: Moved to onSheared
           this.func_230263_a_(SoundCategory.PLAYERS);
           if (!this.field_70170_p.field_72995_K) {
              itemstack.func_222118_a(1, p_230254_1_, (p_213622_1_) -> {

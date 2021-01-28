@@ -92,7 +92,7 @@
        }
     }
  
-+   @Deprecated //Use location sensitive version below
++   /**@deprecated Use {@link PlayerEntity#getDigSpeed(BlockState, BlockPos)}*/@Deprecated
     public float func_184813_a(BlockState p_184813_1_) {
 +      return getDigSpeed(p_184813_1_, null);
 +   }
@@ -322,12 +322,12 @@
        return this.func_208016_c(iformattabletextcomponent);
     }
  
-@@ -1987,4 +2037,62 @@
+@@ -1987,4 +2037,63 @@
           return this.field_221260_g;
        }
     }
 +
-+   // =========== FORGE START ==============//
++   // Forge Start
 +   public Collection<IFormattableTextComponent> getPrefixes() {
 +       return this.prefixes;
 +   }
@@ -384,4 +384,5 @@
 +   public Pose getForcedPose() {
 +      return this.forcedPose;
 +   }
++   // Forge End
  }

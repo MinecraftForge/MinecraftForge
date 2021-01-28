@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ public class MavenCoordinateResolver {
     public static Path get(final String groupId, final String artifactId, final String extension, final String classifier, final String version)
     {
         final String fileName = artifactId + "-" + version +
-                (!classifier.isEmpty() ? "-"+ classifier : "") +
+                (!classifier.isEmpty() ? "-" + classifier : "") +
                 (!extension.isEmpty() ? "." + extension : ".jar");
 
         String[] groups = groupId.split("\\.");

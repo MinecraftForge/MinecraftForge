@@ -12,7 +12,7 @@
        }
  
        if (this.field_212979_g == -1L && this.field_212975_c.func_219554_d() && (!this.field_212977_e || f1 >= 2.0F)) {
-+         this.field_212979_g = Util.func_211177_b(); // Moved up to guard against inf loops caused by callback
++         this.field_212979_g = Util.func_211177_b(); // Moved up to guard against infinite loops caused by callback
           try {
              this.field_212975_c.func_219556_e();
              this.field_212976_d.accept(Optional.empty());

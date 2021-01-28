@@ -8,12 +8,12 @@
        ((Buffer)this.field_179001_a).clear();
        return Pair.of(bufferbuilder$drawstate, bytebuffer);
     }
-@@ -364,4 +365,15 @@
+@@ -364,4 +365,16 @@
           this.field_179018_e = p_i225907_2_;
        }
     }
 +
-+   // Forge start
++   // Forge Start
 +   public void putBulkData(ByteBuffer buffer) {
 +      func_181670_b(buffer.limit() + this.field_179011_q.func_177338_f());
 +      ((Buffer)this.field_179001_a).position(this.field_178997_d * this.field_179011_q.func_177338_f());
@@ -23,4 +23,5 @@
 +   }
 +
 +   public VertexFormat getVertexFormat() { return this.field_179011_q; }
++   // Forge End
  }

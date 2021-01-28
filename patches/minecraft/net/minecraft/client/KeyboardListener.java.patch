@@ -16,7 +16,7 @@
                 return;
              }
 +            } else if (p_197961_5_ == 0 /*GLFW_RELEASE*/ && this.field_197972_a.field_71462_r instanceof ControlsScreen)
-+               ((ControlsScreen)this.field_197972_a.field_71462_r).field_146491_f = null; //Forge: Unset pure modifiers.
++               ((ControlsScreen)this.field_197972_a.field_71462_r).field_146491_f = null; // Forge: Unset pure modifiers.
           }
  
           boolean flag = inestedguieventhandler == null || !(inestedguieventhandler.func_241217_q_() instanceof TextFieldWidget) || !((TextFieldWidget)inestedguieventhandler.func_241217_q_()).func_212955_f();

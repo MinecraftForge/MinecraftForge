@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 /**
  * An event called whenever the selection highlight around blocks is about to be rendered.
  * Canceling this event stops the selection highlight from being rendered.
- * 
+ *
  * TODO: Rename to DrawSelectionEvent
  */
 @Cancelable

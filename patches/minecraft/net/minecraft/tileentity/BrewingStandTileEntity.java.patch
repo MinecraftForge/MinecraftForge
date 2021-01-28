@@ -4,7 +4,7 @@
  
     private boolean func_145934_k() {
        ItemStack itemstack = this.field_145945_j.get(3);
-+      if (!itemstack.func_190926_b()) return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(field_145945_j, itemstack, field_145947_i); // divert to VanillaBrewingRegistry
++      if (!itemstack.func_190926_b()) return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(field_145945_j, itemstack, field_145947_i); // Forge: divert to VanillaBrewingRegistry
        if (itemstack.func_190926_b()) {
           return false;
        } else if (!PotionBrewing.func_185205_a(itemstack)) {

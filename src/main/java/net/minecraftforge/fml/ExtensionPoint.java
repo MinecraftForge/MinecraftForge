@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,7 +53,7 @@ public class ExtensionPoint<T>
      * <code><pre>
      *     registerExtensionPoint(DISPLAYTEST, ()->Pair.of(
      *      ()->FMLNetworkConstants.IGNORESERVERONLY, // ignore me, I'm a server only mod
-     *      (s,b)->true // i accept anything from the server or the save, if I'm asked
+     *      (s,b)->true // I accept anything from the server or the save, if I'm asked
      *     )
      * </pre></code>
      * </p>
@@ -61,8 +61,8 @@ public class ExtensionPoint<T>
      * Examples: A client only mod
      * <code><pre>
      *     registerExtensionPoint(DISPLAYTEST, ()->Pair.of(
-     *      ()->"anything. i don't care", // if i'm actually on the server, this string is sent but i'm a client only mod, so it won't be
-     *      (remoteversionstring,networkbool)->networkbool // i accept anything from the server, by returning true if it's asking about the server
+     *      ()->"anything. I don't care", // if I'm actually on the server, this string is sent but I'm a client only mod, so it won't be
+     *      (remoteversionstring,networkbool)->networkbool // I accept anything from the server, by returning true if it's asking about the server
      *     )
      * </pre></code>
      * </p>

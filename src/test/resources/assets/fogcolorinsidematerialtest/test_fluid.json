@@ -1,15 +1,15 @@
 {
-	"forge_marker": 1,
-	"defaults": {
-		"model": "forge:fluid"
-	},
-	"variants": {
-		"fluid": [
-			{
-				"custom": {
-					"fluid": "water"
-				}
-			}
-		]
-	}
+    "forge_marker": 1,
+    "defaults": {
+        "model": "forge:fluid"
+    },
+    "variants": {
+        "fluid": [
+            {
+                "custom": {
+                    "fluid": "water"
+                }
+            }
+        ]
+    }
 }

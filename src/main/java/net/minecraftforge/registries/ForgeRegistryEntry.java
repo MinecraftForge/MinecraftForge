@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -72,7 +72,7 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
     }
 
     /**
-     * This class exists for registry entries which are dynamic (e.g. loaded via data packs), and also exist in a forge registry prior to that.
+     * This class exists for registry entries which are dynamic (e.g. loaded via data packs), and also exist in a Forge registry prior to that.
      * Due to this, the registry name will be set via the codec not during initial registration, and as a result, we want to not warn about possible overrides as the registry name will be set outside of mod context.
      */
     public abstract static class UncheckedRegistryEntry<V extends IForgeRegistryEntry<V>> extends ForgeRegistryEntry<V>

@@ -13,7 +13,7 @@
        String s = JSONUtils.func_151219_a(p_199425_2_, "group", "");
        JsonElement jsonelement = (JsonElement)(JSONUtils.func_151202_d(p_199425_2_, "ingredient") ? JSONUtils.func_151214_t(p_199425_2_, "ingredient") : JSONUtils.func_152754_s(p_199425_2_, "ingredient"));
        Ingredient ingredient = Ingredient.func_199802_a(jsonelement);
-+      //Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
++      // Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
 +      if (!p_199425_2_.has("result")) throw new com.google.gson.JsonSyntaxException("Missing result, expected to find a string or object");
 +      ItemStack itemstack;
 +      if (p_199425_2_.get("result").isJsonObject()) itemstack = ShapedRecipe.func_199798_a(JSONUtils.func_152754_s(p_199425_2_, "result"));

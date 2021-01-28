@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,22 +46,22 @@ public class ModelLoaderErrorMessage extends SimpleMessage
 
     private static void buildLookups() {
         if (!reverseBlockMap.isEmpty()) return;
-        
+
         ForgeRegistries.BLOCKS.getValues().stream()
-        	.flatMap(block -> block.getStateContainer().getValidStates().stream())
-        	.forEach(state -> reverseBlockMap.put(BlockModelShapes.getModelLocation(state), state));
+            .flatMap(block -> block.getStateContainer().getValidStates().stream())
+            .forEach(state -> reverseBlockMap.put(BlockModelShapes.getModelLocation(state), state));
 
         ForgeRegistries.ITEMS.forEach(item ->
         {
-        	ModelResourceLocation memory = getInventoryVariant(ForgeRegistries.ITEMS.getKey(item).toString());
-        	reverseItemMap.put(memory, item.getRegistryName().toString());
+            ModelResourceLocation memory = getInventoryVariant(ForgeRegistries.ITEMS.getKey(item).toString());
+            reverseItemMap.put(memory, item.getRegistryName().toString());
         });
 
     }
 
     public ModelLoaderErrorMessage(ModelResourceLocation resourceLocation, Exception exception)
     {
-        // if we're logging these error messages, this will get built for reference
+        // If we're logging these error messages, this will get built for reference
         buildLookups();
         this.resourceLocation = resourceLocation;
         this.exception = exception;
@@ -98,19 +98,10 @@ public class ModelLoaderErrorMessage extends SimpleMessage
         if(exception instanceof ModelLoader.ItemLoadingException)
         {
             ModelLoader.ItemLoadingException ex = (ModelLoader.ItemLoadingException)exception;
-//            LOGGER.error("{}, normal location exception: ", errorMsg, ex.normalException);
-//            LOGGER.error("{}, blockstate location exception: ", errorMsg, ex.blockstateException);
         }
         else
         {
-//            LOGGER.error(errorMsg, entry.getValue());
         }
-//        ResourceLocation blockstateLocation = new ResourceLocation(resourceLocation.getResourceDomain(), resourceLocation.getResourcePath());
-//        if(loadingExceptions.containsKey(blockstateLocation) && !printedBlockStateErrors.contains(blockstateLocation))
-//        {
-//            LOGGER.error("Exception loading blockstate for the variant {}: ", location, loadingExceptions.get(blockstateLocation));
-//            printedBlockStateErrors.add(blockstateLocation);
-//        }
     }
     @Override
     public void formatTo(StringBuilder buffer)

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,7 @@ import net.minecraft.network.PacketBuffer;
 public interface IContainerFactory<T extends Container> extends ContainerType.IFactory<T>
 {
     T create(int windowId, PlayerInventory inv, PacketBuffer data);
-    
+
     @Override
     default T create(int p_create_1_, PlayerInventory p_create_2_)
     {

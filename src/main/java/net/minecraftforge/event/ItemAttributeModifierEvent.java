@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.event;
 
 import com.google.common.collect.HashMultimap;
@@ -92,7 +93,7 @@ public class ItemAttributeModifierEvent extends Event
      * Modifier must have a consistent UUID for consistency between equipping and unequipping items.
      * Modifier name should clearly identify the mod that added the modifier.
      * @param attribute  Attribute
-     * @param modifier   Modifier instance.
+     * @param modifier   Modifier instance
      * @return  True if the attribute was added, false if it was already present
      */
     public boolean addModifier(Attribute attribute, AttributeModifier modifier)

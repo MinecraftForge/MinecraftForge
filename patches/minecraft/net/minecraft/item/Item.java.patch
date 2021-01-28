@@ -26,12 +26,12 @@
        return this.func_219971_r() ? p_77654_3_.func_213357_a(p_77654_2_, p_77654_1_) : p_77654_1_;
     }
  
-+   @Deprecated // Use ItemStack sensitive version.
++   /**@deprecated Use {@link ItemStack#getMaxStackSize()}*/@Deprecated
     public final int func_77639_j() {
        return this.field_77777_bU;
     }
  
-+   @Deprecated // Use ItemStack sensitive version.
++   /**@deprecated Use {@link ItemStack#getMaxDamage()}*/@Deprecated
     public final int func_77612_l() {
        return this.field_77699_b;
     }
@@ -39,12 +39,12 @@
     }
  
     @Nullable
-+   @Deprecated // Use ItemStack sensitive version.
++   /**@deprecated Use {@link ItemStack#getContainerItem()}*/@Deprecated
     public final Item func_77668_q() {
        return this.field_77700_c;
     }
  
-+   @Deprecated // Use ItemStack sensitive version.
++   /**@deprecated Use {@link ItemStack#hasContainerItem()}*/@Deprecated
     public boolean func_77634_r() {
        return this.field_77700_c != null;
     }
@@ -80,7 +80,7 @@
        return false;
     }
  
-+   @Deprecated // Use ItemStack sensitive version.
++   /**@deprecated Use {@link ItemStack#getAttributeModifiers(EquipmentSlotType)}*/@Deprecated
     public Multimap<Attribute, AttributeModifier> func_111205_h(EquipmentSlotType p_111205_1_) {
        return ImmutableMultimap.of();
     }

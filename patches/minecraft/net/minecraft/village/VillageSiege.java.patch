@@ -16,7 +16,7 @@
           ZombieEntity zombieentity;
           try {
 -            zombieentity = new ZombieEntity(p_75530_1_);
-+            zombieentity = EntityType.field_200725_aD.func_200721_a(p_75530_1_); //Forge: Direct Initialization is deprecated, use EntityType.
++            zombieentity = EntityType.field_200725_aD.func_200721_a(p_75530_1_); // Forge: Direct Initialization is deprecated, use EntityType.
              zombieentity.func_213386_a(p_75530_1_, p_75530_1_.func_175649_E(zombieentity.func_233580_cy_()), SpawnReason.EVENT, (ILivingEntityData)null, (CompoundNBT)null);
           } catch (Exception exception) {
              field_242320_a.warn("Failed to create zombie for village siege at {}", vector3d, exception);

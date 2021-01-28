@@ -4,7 +4,7 @@
  
           this.field_186117_k = p_i231901_4_.func_74767_n("DragonKilled");
           this.field_186118_l = p_i231901_4_.func_74767_n("PreviouslyKilled");
-+         this.field_186120_n = !p_i231901_4_.func_74767_n("LegacyScanPerformed"); // Forge: fix MC-105080
++         this.field_186120_n = !p_i231901_4_.func_74767_n("LegacyScanPerformed"); // Forge: Fixed MC-105080 Ender Dragon is respawned if all Exit End Portal blocks are removed / legacy scanning is done for worlds with new dragon fight
           if (p_i231901_4_.func_74767_n("IsRespawning")) {
              this.field_186122_p = DragonSpawnState.START;
           }
@@ -12,7 +12,7 @@
  
        compoundnbt.func_74757_a("DragonKilled", this.field_186117_k);
        compoundnbt.func_74757_a("PreviouslyKilled", this.field_186118_l);
-+      compoundnbt.func_74757_a("LegacyScanPerformed", !this.field_186120_n); // Forge: fix MC-105080
++      compoundnbt.func_74757_a("LegacyScanPerformed", !this.field_186120_n); // Forge: Fixed MC-105080 Ender Dragon is respawned if all Exit End Portal blocks are removed / legacy scanning is done for worlds with new dragon fight
        if (this.field_186121_o != null) {
           compoundnbt.func_218657_a("ExitPortalLocation", NBTUtil.func_186859_a(this.field_186121_o));
        }

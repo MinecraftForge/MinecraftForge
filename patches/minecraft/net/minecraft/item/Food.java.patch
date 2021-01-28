@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/Food.java
 +++ b/net/minecraft/item/Food.java
-@@ -11,15 +11,26 @@
+@@ -11,15 +11,25 @@
     private final boolean field_221472_c;
     private final boolean field_221473_d;
     private final boolean field_221474_e;
@@ -16,8 +16,7 @@
 +      this.field_221475_f = builder.field_221463_f;
 +   }
 +
-+   // Forge: Use builder method instead
-+   @Deprecated
++   /**@deprecated Use {@link Food.Builder}*/@Deprecated
     private Food(int p_i50106_1_, float p_i50106_2_, boolean p_i50106_3_, boolean p_i50106_4_, boolean p_i50106_5_, List<Pair<EffectInstance, Float>> p_i50106_6_) {
        this.field_221470_a = p_i50106_1_;
        this.field_221471_b = p_i50106_2_;
@@ -29,7 +28,7 @@
     }
  
     public int func_221466_a() {
-@@ -43,7 +54,7 @@
+@@ -43,7 +53,7 @@
     }
  
     public List<Pair<EffectInstance, Float>> func_221464_f() {
@@ -38,7 +37,7 @@
     }
  
     public static class Builder {
-@@ -52,7 +63,7 @@
+@@ -52,7 +62,7 @@
        private boolean field_221460_c;
        private boolean field_221461_d;
        private boolean field_221462_e;
@@ -47,7 +46,7 @@
  
        public Food.Builder func_221456_a(int p_221456_1_) {
           this.field_221458_a = p_221456_1_;
-@@ -79,13 +90,20 @@
+@@ -79,13 +89,19 @@
           return this;
        }
  
@@ -56,8 +55,7 @@
 +          return this;
 +       }
 +
-+      // Forge: Use supplier method instead
-+      @Deprecated
++      /**@deprecated Use {@link Builder#effect(java.util.function.Supplier, float)}*/@Deprecated
        public Food.Builder func_221452_a(EffectInstance p_221452_1_, float p_221452_2_) {
 -         this.field_221463_f.add(Pair.of(p_221452_1_, p_221452_2_));
 +         this.field_221463_f.add(Pair.of(() -> p_221452_1_, p_221452_2_));

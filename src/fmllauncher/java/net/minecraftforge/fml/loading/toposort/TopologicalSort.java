@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
 /**
  * Provides a topological sort algorithm.
  *
- * <p>While this algorithm is used for mod loading in forge, it can be
+ * <p>While this algorithm is used for mod loading in Forge, it can be
  * utilized in other fashions, e.g. topology-based registry loading, prioritization
  * for renderers, and even mod module loading.
  */

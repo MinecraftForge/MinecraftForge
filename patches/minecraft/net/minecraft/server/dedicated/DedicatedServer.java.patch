@@ -18,7 +18,7 @@
           long j = Util.func_211178_c() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
           field_155771_h.info("Done ({})! For help, type \"help\"", (Object)s);
-+         this.field_211151_aa = Util.func_211177_b(); //Forge: Update server time to prevent watchdog/spaming during long load.
++         this.field_211151_aa = Util.func_211177_b(); // Forge: Update server time to prevent watchdog/spaming during long load.
           if (serverproperties.field_219027_u != null) {
              this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
           }
@@ -26,7 +26,7 @@
           }
  
           Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
-+         // <3 you Grum for this, saves us ~30 patch files! --^
++         // Forge: <3 you Grum for this, saves us ~30 patch files! --^
           if (serverproperties.field_241079_P_) {
              ServerInfoMBean.func_233490_a_(this);
           }
@@ -40,7 +40,7 @@
        return false;
     }
  
-+   @Override //Forge: Enable formated text for colors in console.
++   @Override // Forge: Enable formated text for colors in console.
 +   public void func_145747_a(net.minecraft.util.text.ITextComponent message, java.util.UUID p_145747_2_) {
 +      field_155771_h.info(message.getString());
 +   }

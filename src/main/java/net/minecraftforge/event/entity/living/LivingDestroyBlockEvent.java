@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,7 @@ public class LivingDestroyBlockEvent extends LivingEvent
 {
     private final BlockPos pos;
     private final BlockState state;
-    
+
     public LivingDestroyBlockEvent(LivingEntity entity, BlockPos pos, BlockState state)
     {
         super(entity);
@@ -54,7 +54,7 @@ public class LivingDestroyBlockEvent extends LivingEvent
     {
         return state;
     }
-    
+
     public BlockPos getPos()
     {
         return pos;

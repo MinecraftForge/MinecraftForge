@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -107,7 +107,7 @@ public class ProjectileImpactEvent extends EntityEvent
     }
 
     /**
-     * Event is cancellable, causes firework to ignore the current hit and continue on its journey.
+     * The event is cancellable. It causes the firework to ignore the current hit and continue on its journey.
      */
     @Cancelable
     public static class FireworkRocket extends ProjectileImpactEvent

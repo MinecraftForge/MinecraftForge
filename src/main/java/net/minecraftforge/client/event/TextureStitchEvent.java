@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,7 +42,7 @@ public class TextureStitchEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Fired when the TextureMap is told to refresh it's stitched texture.
+     * Fired when the TextureMap is told to refresh its stitched texture.
      * Called before the {@link net.minecraft.client.renderer.texture.TextureAtlasSprite} are loaded.
      */
     public static class Pre extends TextureStitchEvent

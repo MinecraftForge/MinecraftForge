@@ -5,7 +5,7 @@
                 ArgumentTypes.func_197483_a();
                 TagRegistryManager.func_242197_b();
 +               net.minecraftforge.registries.GameData.vanillaSnapshot();
-+               if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
++               if (false) // Forge: skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
                 func_179868_d();
              }
           }

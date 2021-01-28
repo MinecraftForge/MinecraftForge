@@ -95,7 +95,7 @@
        }
     }
  
-+   @Deprecated
++   /**@deprecated Use {@link FluidBlockRenderer#vertexVanilla(IVertexBuilder, double, double, double, float, float, float, float, float, float, int)}*/@Deprecated
     private void func_228797_a_(IVertexBuilder p_228797_1_, double p_228797_2_, double p_228797_4_, double p_228797_6_, float p_228797_8_, float p_228797_9_, float p_228797_10_, float p_228797_11_, float p_228797_12_, int p_228797_13_) {
 -      p_228797_1_.func_225582_a_(p_228797_2_, p_228797_4_, p_228797_6_).func_227885_a_(p_228797_8_, p_228797_9_, p_228797_10_, 1.0F).func_225583_a_(p_228797_11_, p_228797_12_).func_227886_a_(p_228797_13_).func_225584_a_(0.0F, 1.0F, 0.0F).func_181675_d();
 +       vertexVanilla(p_228797_1_, p_228797_2_, p_228797_4_, p_228797_6_, p_228797_8_, p_228797_9_, p_228797_10_, 1.0F, p_228797_11_, p_228797_12_, p_228797_13_);

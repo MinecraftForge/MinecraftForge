@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -73,7 +73,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
             throw new RuntimeException("wha?", e);
         }
     }
-    
+
     private void locateMods(String resource, String name, Predicate<Path> filter) throws IOException {
         final Enumeration<URL> modsTomls = ClassLoader.getSystemClassLoader().getResources(resource);
         while (modsTomls.hasMoreElements()) {

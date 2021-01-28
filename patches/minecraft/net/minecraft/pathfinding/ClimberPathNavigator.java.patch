@@ -5,7 +5,7 @@
        } else {
           if (this.field_179696_f != null) {
 -            if (!this.field_179696_f.func_218137_a(this.field_75515_a.func_213303_ch(), (double)this.field_75515_a.func_213311_cf()) && (!(this.field_75515_a.func_226278_cu_() > (double)this.field_179696_f.func_177956_o()) || !(new BlockPos((double)this.field_179696_f.func_177958_n(), this.field_75515_a.func_226278_cu_(), (double)this.field_179696_f.func_177952_p())).func_218137_a(this.field_75515_a.func_213303_ch(), (double)this.field_75515_a.func_213311_cf()))) {
-+            // FORGE: Fix MC-94054
++            // FORGE: Fixed MC-94054 Cave spider spin around when walking
 +            if (!this.field_179696_f.func_218137_a(this.field_75515_a.func_213303_ch(), Math.max((double)this.field_75515_a.func_213311_cf(), 1.0D)) && (!(this.field_75515_a.func_226278_cu_() > (double)this.field_179696_f.func_177956_o()) || !(new BlockPos((double)this.field_179696_f.func_177958_n(), this.field_75515_a.func_226278_cu_(), (double)this.field_179696_f.func_177952_p())).func_218137_a(this.field_75515_a.func_213303_ch(), Math.max((double)this.field_75515_a.func_213311_cf(), 1.0D)))) {
                 this.field_75515_a.func_70605_aq().func_75642_a((double)this.field_179696_f.func_177958_n(), (double)this.field_179696_f.func_177956_o(), (double)this.field_179696_f.func_177952_p(), this.field_75511_d);
              } else {

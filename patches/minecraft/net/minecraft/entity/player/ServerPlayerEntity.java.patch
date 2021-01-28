@@ -19,10 +19,10 @@
        ServerWorld serverworld = this.func_71121_q();
        RegistryKey<World> registrykey = serverworld.func_234923_W_();
 -      if (registrykey == World.field_234920_i_ && p_241206_1_.func_234923_W_() == World.field_234918_g_) {
-+      if (registrykey == World.field_234920_i_ && p_241206_1_.func_234923_W_() == World.field_234918_g_ && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
++      if (registrykey == World.field_234920_i_ && p_241206_1_.func_234923_W_() == World.field_234918_g_ && teleporter.isVanilla()) { // Forge: Fix non-vanilla teleporters triggering end credits
           this.func_213319_R();
 -         this.func_71121_q().func_217434_e(this);
-+         this.func_71121_q().removePlayer(this, true); //Forge: The player entity is cloned so keep the data until after cloning calls copyFrom
++         this.func_71121_q().removePlayer(this, true); // Forge: The player entity is cloned so keep the data until after cloning calls copyFrom
           if (!this.field_71136_j) {
              this.field_71136_j = true;
              this.field_71135_a.func_147359_a(new SChangeGameStatePacket(SChangeGameStatePacket.field_241768_e_, this.field_192040_cp ? 0.0F : 1.0F));
@@ -33,11 +33,11 @@
 -         serverworld.func_217434_e(this);
 -         this.field_70128_L = false;
 -         PortalInfo portalinfo = this.func_241829_a(p_241206_1_);
-+         serverworld.removeEntity(this, true); //Forge: the player entity is moved to the new world, NOT cloned. So keep the data alive with no matching invalidate call.
++         serverworld.removeEntity(this, true); // Forge: the player entity is moved to the new world, NOT cloned. So keep the data alive with no matching invalidate call.
 +         this.revive();
 +         PortalInfo portalinfo = teleporter.getPortalInfo(this, p_241206_1_, this::func_241829_a);
           if (portalinfo != null) {
-+            Entity e = teleporter.placeEntity(this, serverworld, p_241206_1_, this.field_70177_z, spawnPortal -> {//Forge: Start vanilla logic
++            Entity e = teleporter.placeEntity(this, serverworld, p_241206_1_, this.field_70177_z, spawnPortal -> { // Forge: Start vanilla logic
              serverworld.func_217381_Z().func_76320_a("moving");
              if (registrykey == World.field_234918_g_ && p_241206_1_.func_234923_W_() == World.field_234919_h_) {
                 this.field_193110_cw = this.func_213303_ch();
@@ -50,8 +50,8 @@
              this.func_225653_b_(portalinfo.field_222505_a.field_72450_a, portalinfo.field_222505_a.field_72448_b, portalinfo.field_222505_a.field_72449_c);
              serverworld.func_217381_Z().func_76319_b();
              this.func_213846_b(serverworld);
-+            return this;//forge: this is part of the ITeleporter patch
-+            });//Forge: End vanilla logic
++            return this; // Forge: this is part of the ITeleporter patch
++            }); // Forge: End vanilla logic
 +            if (e != this) throw new java.lang.IllegalArgumentException(String.format("Teleporter %s returned not the player entity but instead %s, expected PlayerEntity %s", teleporter, e, this));
              this.field_71134_c.func_73080_a(p_241206_1_);
              this.field_71135_a.func_147359_a(new SPlayerAbilitiesPacket(this.field_71075_bZ));
@@ -120,8 +120,8 @@
        this.func_192029_h(p_193104_1_.func_192023_dk());
        this.func_192031_i(p_193104_1_.func_192025_dl());
 +
-+      //Copy over a section of the Entity Data from the old player.
-+      //Allows mods to specify data that persists after players respawn.
++      // Copy over a section of the Entity Data from the old player.
++      // Allows mods to specify data that persists after players respawn.
 +      CompoundNBT old = p_193104_1_.getPersistentData();
 +      if (old.func_74764_b(PERSISTED_NBT_TAG))
 +          getPersistentData().func_218657_a(PERSISTED_NBT_TAG, old.func_74781_a(PERSISTED_NBT_TAG));
@@ -158,7 +158,7 @@
           this.field_71133_b.func_184103_al().func_187243_f(this);
 -         serverworld.func_217434_e(this);
 -         this.field_70128_L = false;
-+         serverworld.removePlayer(this, true); //Forge: The player entity itself is moved, and not cloned. So we need to keep the data alive with no matching invalidate call later.
++         serverworld.removePlayer(this, true); // Forge: The player entity itself is moved, and not cloned. So we need to keep the data alive with no matching invalidate call later.
 +         this.revive();
           this.func_70012_b(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
           this.func_70029_a(p_200619_1_);

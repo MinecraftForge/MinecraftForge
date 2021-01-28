@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -51,7 +51,7 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
 
     /**
      * Get an existing override builder
-     * 
+     *
      * @param index the index of the existing override builder
      * @return the override builder
      * @throws IndexOutOfBoundsException if {@code} index is out of bounds

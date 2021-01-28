@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -238,7 +238,7 @@ public class ForgeConfig
 
     @SubscribeEvent
     public static void onLoad(final ModConfig.Loading configEvent) {
-        LogManager.getLogger().debug(FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
+        LogManager.getLogger().debug(FORGEMOD, "Loaded Forge config file {}", configEvent.getConfig().getFileName());
     }
 
     @SubscribeEvent

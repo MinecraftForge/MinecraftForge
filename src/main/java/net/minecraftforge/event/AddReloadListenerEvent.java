@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,12 +43,12 @@ public class AddReloadListenerEvent extends Event
 {
     private final List<IFutureReloadListener> listeners = new ArrayList<>();
     private final DataPackRegistries dataPackRegistries;
-    
+
     public AddReloadListenerEvent(DataPackRegistries dataPackRegistries)
     {
         this.dataPackRegistries = dataPackRegistries;
     }
-    
+
    /**
     * @param listener the listener to add to the ResourceManager on reload
     */
@@ -61,7 +61,7 @@ public class AddReloadListenerEvent extends Event
    {
       return ImmutableList.copyOf(listeners);
    }
-    
+
     public DataPackRegistries getDataPackRegistries()
     {
         return dataPackRegistries;

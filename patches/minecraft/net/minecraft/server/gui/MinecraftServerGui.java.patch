@@ -17,7 +17,7 @@
     public void func_164247_a(JTextArea p_164247_1_, JScrollPane p_164247_2_, String p_164247_3_) {
 +      try {
 +         latch.await();
-+      } catch (InterruptedException e){} //Prevent logging until after constructor has ended.
++      } catch (InterruptedException e){} // Forge: Prevent logging until after constructor has ended.
        if (!SwingUtilities.isEventDispatchThread()) {
           SwingUtilities.invokeLater(() -> {
              this.func_164247_a(p_164247_1_, p_164247_2_, p_164247_3_);

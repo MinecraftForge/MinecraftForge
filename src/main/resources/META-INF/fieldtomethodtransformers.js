@@ -20,7 +20,7 @@ function initializeCoreMod() {
             'transformer': function(classNode) {
                 var asmapi=Java.type('net.minecraftforge.coremod.api.ASMAPI')
                 var fn = asmapi.mapField('field_204517_c') // fluid field - remap to mcp if necessary
-                asmapi.redirectFieldToMethod(classNode, fn, 'getFluid') // forge added method, doesn't need mapping
+                asmapi.redirectFieldToMethod(classNode, fn, 'getFluid') // Forge added method, doesn't need mapping
                 return classNode;
             }
         },
@@ -32,7 +32,7 @@ function initializeCoreMod() {
             'transformer': function(classNode) {
                 var asmapi=Java.type('net.minecraftforge.coremod.api.ASMAPI')
                 var fn = asmapi.mapField('field_77876_a') // containerFluid (wrongly named containedBlock) field - remap to mcp if necessary
-                asmapi.redirectFieldToMethod(classNode, fn, 'getFluid') // forge added method, doesn't need mapping
+                asmapi.redirectFieldToMethod(classNode, fn, 'getFluid') // Forge added method, doesn't need mapping
                 return classNode;
             }
         },
@@ -44,9 +44,9 @@ function initializeCoreMod() {
             'transformer': function(classNode) {
                 var asmapi=Java.type('net.minecraftforge.coremod.api.ASMAPI')
                 var blockField = asmapi.mapField('field_150149_b') // modelBlock - remap to mcp if necessary
-                asmapi.redirectFieldToMethod(classNode, blockField, 'getModelBlock') // forge added method, doesn't need mapping
+                asmapi.redirectFieldToMethod(classNode, blockField, 'getModelBlock') // Forge added method, doesn't need mapping
                 var stateField = asmapi.mapField('field_150151_M') // modelState - remap to mcp if necessary
-                asmapi.redirectFieldToMethod(classNode, stateField, 'getModelState') // forge added method, doesn't need mapping
+                asmapi.redirectFieldToMethod(classNode, stateField, 'getModelState') // Forge added method, doesn't need mapping
                 return classNode;
             }
         },

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -251,7 +251,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     public T wallSide(String name, ResourceLocation wall) {
         return singleTexture(name, BLOCK_FOLDER + "/template_wall_side", "wall", wall);
     }
-    
+
     public T wallSideTall(String name, ResourceLocation wall) {
         return singleTexture(name, BLOCK_FOLDER + "/template_wall_side_tall", "wall", wall);
     }
@@ -357,7 +357,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         ret.assertExistence();
         return ret;
     }
-    
+
     protected void clear() {
         generatedModels.clear();
     }

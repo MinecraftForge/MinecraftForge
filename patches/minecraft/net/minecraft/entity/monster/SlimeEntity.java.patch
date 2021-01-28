@@ -30,14 +30,11 @@
     }
  
     public void func_70108_f(Entity p_70108_1_) {
-@@ -324,6 +326,12 @@
+@@ -324,6 +326,9 @@
        return super.func_213305_a(p_213305_1_).func_220313_a(0.255F * (float)this.func_70809_q());
     }
  
-+   /**
-+    * Called when the slime spawns particles on landing, see onUpdate.
-+    * Return true to prevent the spawning of the default particles.
-+    */
++   /** Called when the slime spawns particles on landing, see onUpdate. Return true to prevent the spawning of the default particles. */
 +   protected boolean spawnCustomParticles() { return false; }
 +
     static class AttackGoal extends Goal {

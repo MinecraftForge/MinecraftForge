@@ -34,27 +34,23 @@
     }
  
     public void func_151368_a(LivingEntity p_151368_1_, Entity p_151368_2_, int p_151368_3_) {
-@@ -139,6 +148,24 @@
+@@ -138,7 +147,20 @@
+    public boolean func_230310_i_() {
        return true;
     }
- 
-+   /**
-+    * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
-+    * applies for <i>all possible</i> enchantments.
-+    * @param stack
-+    * @return
-+    */
++   
++   
++   // Forge Start
++   /** This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)} applies for <i>all possible</i> enchantments. @param stack @return */
 +   public boolean canApplyAtEnchantingTable(ItemStack stack) {
 +      return stack.canApplyAtEnchantingTable(this);
 +   }
-+
-+   /**
-+    * Is this enchantment allowed to be enchanted on books via Enchantment Table
-+    * @return false to disable the vanilla feature
-+    */
+ 
++   /** Is this enchantment allowed to be enchanted on books via Enchantment Table @return false to disable the vanilla feature */
 +   public boolean isAllowedOnBooks() {
 +      return true;
 +   }
++   // Forge End
 +
     public static enum Rarity {
        COMMON(10),

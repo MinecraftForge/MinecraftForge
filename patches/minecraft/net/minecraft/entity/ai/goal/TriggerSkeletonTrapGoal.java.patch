@@ -1,17 +1,16 @@
 --- a/net/minecraft/entity/ai/goal/TriggerSkeletonTrapGoal.java
 +++ b/net/minecraft/entity/ai/goal/TriggerSkeletonTrapGoal.java
-@@ -28,6 +28,10 @@
+@@ -28,6 +28,9 @@
  
     public void func_75246_d() {
        ServerWorld serverworld = (ServerWorld)this.field_188516_a.field_70170_p;
-+      // Forge: Trigger the trap in a tick task to avoid crashes when mods add goals to skeleton horses
-+      // (MC-206338/Forge PR #7509)
++      // Forge: Fixed MC-206338 Potential CME in skeleton trap code
 +      serverworld.func_73046_m().func_212871_a_(new net.minecraft.util.concurrent.TickDelayedTask(serverworld.func_73046_m().func_71259_af(), () -> {
 +      if (!this.field_188516_a.func_70089_S()) return;
        DifficultyInstance difficultyinstance = serverworld.func_175649_E(this.field_188516_a.func_233580_cy_());
        this.field_188516_a.func_190691_p(false);
        this.field_188516_a.func_110234_j(true);
-@@ -47,7 +51,7 @@
+@@ -47,7 +50,7 @@
           abstracthorseentity.func_70024_g(this.field_188516_a.func_70681_au().nextGaussian() * 0.5D, 0.0D, this.field_188516_a.func_70681_au().nextGaussian() * 0.5D);
           serverworld.func_242417_l(abstracthorseentity);
        }
