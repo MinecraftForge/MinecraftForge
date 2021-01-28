@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -1350,7 +1351,11 @@ public class ForgeHooks
                         continue;
                     }
                     LOGGER.info("Fixing world: re-injected dimension: " + name);
-                    currentList.add(Pair.of(name, Dimension.CODEC.encodeStart(ops, dim).resultOrPartial(s->{}).orElse(ops.empty())));
+                    Optional<T> dimT = Dimension.CODEC.encodeStart(WorldGenSettingsExport.create(ops, regs), dim).resultOrPartial(s->{});
+                    if (dimT.isPresent())
+                        currentList.add(Pair.of(name, dimT.get()));
+                    else
+                        LOGGER.error("Could not re-encode dimension " + name + ", can not be re-injected.");
                 }
             }
             else
