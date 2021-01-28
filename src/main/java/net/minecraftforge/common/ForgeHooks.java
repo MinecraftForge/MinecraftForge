@@ -106,6 +106,7 @@ import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.util.registry.WorldSettingsImport;
+import net.minecraft.util.registry.WorldGenSettingsExport;
 import net.minecraft.util.text.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.IChunk;
@@ -1337,7 +1338,7 @@ public class ForgeHooks
                 // This assumes that the datapacks for the vanilla dimensions have not changed since they were "deleted"
                 // If they did, this will be seen in newly generated chunks.
                 // Since this is to fix an older world, from before the fixes by forge, there is no way to know the state of the dimension when it was "deleted".
-                dimReg = CODEC.getValue().encodeStart(ops, dimReg).flatMap(t -> CODEC.getValue().parse(ops, t)).result().orElse(dimReg);
+                dimReg = CODEC.getValue().encodeStart(WorldGenSettingsExport.create(ops, regs), dimReg).flatMap(t -> CODEC.getValue().parse(ops, t)).result().orElse(dimReg);
                 for (String name : VANILLA_DIMS)
                 {
                     if (currentDimNames.contains(name))
