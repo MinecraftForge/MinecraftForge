@@ -159,12 +159,17 @@ public class EntityEvent extends Event
 
         public Size(Entity entity, Pose pose, EntitySize size, float defaultEyeHeight)
         {
+            this(entity, pose, size, size, defaultEyeHeight, defaultEyeHeight);
+        }
+
+        public Size(Entity entity, Pose pose, EntitySize oldSize, EntitySize newSize, float oldEyeHeight, float newEyeHeight)
+        {
             super(entity);
             this.pose = pose;
-            this.oldSize = size;
-            this.newSize = size;
-            this.oldEyeHeight = defaultEyeHeight;
-            this.newEyeHeight = defaultEyeHeight;
+            this.oldSize = oldSize;
+            this.newSize = newSize;
+            this.oldEyeHeight = oldEyeHeight;
+            this.newEyeHeight = newEyeHeight;
         }
 
 

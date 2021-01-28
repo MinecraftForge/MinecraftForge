@@ -261,12 +261,13 @@
           }
        } else {
           return null;
-@@ -2320,9 +2357,10 @@
+@@ -2320,9 +2357,11 @@
     public void func_213323_x_() {
        EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
 -      EntitySize entitysize1 = this.func_213305_a(pose);
-+      net.minecraftforge.event.entity.EntityEvent.Size sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, this.func_213305_a(pose), this.func_213316_a(pose, entitysize));
++      EntitySize newSize = this.func_213305_a(pose);
++      net.minecraftforge.event.entity.EntityEvent.Size sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, entitysize, newSize, this.func_213316_a(pose, newSize));
 +      EntitySize entitysize1 = sizeEvent.getNewSize();
        this.field_213325_aI = entitysize1;
 -      this.field_213326_aJ = this.func_213316_a(pose, entitysize1);
@@ -274,7 +275,7 @@
        if (entitysize1.field_220315_a < entitysize.field_220315_a) {
           double d0 = (double)entitysize1.field_220315_a / 2.0D;
           this.func_174826_a(new AxisAlignedBB(this.func_226277_ct_() - d0, this.func_226278_cu_(), this.func_226281_cx_() - d0, this.func_226277_ct_() + d0, this.func_226278_cu_() + (double)entitysize1.field_220316_b, this.func_226281_cx_() + d0));
-@@ -2796,6 +2834,7 @@
+@@ -2796,6 +2835,7 @@
  
           this.field_233555_aA_ = true;
        }
@@ -282,7 +283,7 @@
  
     }
  
-@@ -2811,4 +2850,63 @@
+@@ -2811,4 +2851,63 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }
