@@ -93,6 +93,7 @@ import net.minecraftforge.common.property.Properties;
  * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
 // TODO: Implement as a new model loader
+@SuppressWarnings("unused")
 public enum B3DLoader implements ISelectiveResourceReloadListener
 {
     INSTANCE;
@@ -111,7 +112,6 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         cache.clear();
     }
 
-    @SuppressWarnings("unchecked")
     public IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath());
@@ -445,6 +445,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
             return path;
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public Collection<RenderMaterial> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
@@ -459,6 +460,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
             return Collections.emptyList();
         }
 
+        @SuppressWarnings("deprecation")
         @Nullable
         @Override
         public IBakedModel bakeModel(ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
@@ -798,7 +800,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         }
 
         @Override
-        public boolean func_230044_c_()
+        public boolean isSideLit()
         {
             return isSideLit;
         }

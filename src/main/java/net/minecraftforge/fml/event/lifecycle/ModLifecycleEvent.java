@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  * Parent type to all ModLifecycle events. This is based on Forge EventBus. They fire through the
  * ModContainer's eventbus instance.
  */
-public class ModLifecycleEvent extends Event
+public class ModLifecycleEvent extends Event implements IModBusEvent
 {
     private final ModContainer container;
 
@@ -52,6 +52,10 @@ public class ModLifecycleEvent extends Event
 
     public Stream<InterModComms.IMCMessage> getIMCStream(Predicate<String> methodFilter) {
         return InterModComms.getMessages(this.container.getModId(), methodFilter);
+    }
+
+    ModContainer getContainer() {
+        return this.container;
     }
 
     @Override

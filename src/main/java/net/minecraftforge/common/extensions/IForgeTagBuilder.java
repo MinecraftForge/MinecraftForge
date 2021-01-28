@@ -21,11 +21,8 @@ package net.minecraftforge.common.extensions;
 
 import net.minecraft.data.TagsProvider;
 import net.minecraft.tags.ITag;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeHooks;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 //TODO, Tag removal support.
 public interface IForgeTagBuilder<T>
@@ -39,7 +36,15 @@ public interface IForgeTagBuilder<T>
     default TagsProvider.Builder<T> addTags(ITag.INamedTag<T>... values) {
         TagsProvider.Builder<T> builder = getBuilder();
         for (ITag.INamedTag<T> value : values) {
-            builder.func_240531_a_(value);
+            builder.addTag(value);
+        }
+        return builder;
+    }
+
+    default TagsProvider.Builder<T> add(RegistryKey<T>... keys) {
+        TagsProvider.Builder<T> builder = getBuilder();
+        for (RegistryKey<T> key : keys) {
+            builder.getInternalBuilder().addItemEntry(key.getLocation(), getBuilder().getModID());
         }
         return builder;
     }
@@ -53,25 +58,13 @@ public interface IForgeTagBuilder<T>
         return getBuilder();
     }
 
-    default TagsProvider.Builder<T> addOptional(final ResourceLocation... locations)
+    default TagsProvider.Builder<T> addOptional(final ResourceLocation location)
     {
-        return addOptional(Arrays.asList(locations));
+        return getBuilder().add(new ITag.OptionalItemEntry(location));
     }
 
-    @SuppressWarnings("deprecation")
-    default TagsProvider.Builder<T> addOptional(final Collection<ResourceLocation> locations)
+    default TagsProvider.Builder<T> addOptionalTag(final ResourceLocation location)
     {
-        return getBuilder().add(ForgeHooks.makeOptionalTag(true, locations));
-    }
-
-    default TagsProvider.Builder<T> addOptionalTag(final ResourceLocation... locations)
-    {
-        return addOptionalTag(Arrays.asList(locations));
-    }
-
-    @SuppressWarnings("deprecation")
-    default TagsProvider.Builder<T> addOptionalTag(final Collection<ResourceLocation> locations)
-    {
-        return getBuilder().add(ForgeHooks.makeOptionalTag(false, locations));
+        return getBuilder().add(new ITag.OptionalTagEntry(location));
     }
 }

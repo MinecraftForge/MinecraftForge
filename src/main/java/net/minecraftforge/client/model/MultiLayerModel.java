@@ -34,7 +34,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.resources.IResourceManager;
@@ -44,7 +43,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.client.MinecraftForgeClient;
 
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import org.apache.logging.log4j.LogManager;
@@ -109,7 +108,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         );
     }
 
-    private static final class MultiLayerBakedModel implements IBakedModel
+    private static final class MultiLayerBakedModel implements IDynamicBakedModel
     {
         private final ImmutableMap<RenderType, IBakedModel> models;
         private final ImmutableMap<TransformType, TransformationMatrix> cameraTransforms;
@@ -141,13 +140,6 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
                 if (convertRenderTypes) rt = ITEM_RENDER_TYPE_MAPPING.getOrDefault(rt, rt);
                 return Pair.of(kv.getSecond(), rt);
             }).collect(Collectors.toList());
-        }
-
-        @Deprecated
-        @Override
-        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
-        {
-            return getQuads(state, side, rand, EmptyModelData.INSTANCE);
         }
 
         @Nonnull
@@ -190,7 +182,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         }
 
         @Override
-        public boolean func_230044_c_()
+        public boolean isSideLit()
         {
             return isSideLit;
         }
@@ -253,7 +245,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
                 .put("cutout", RenderType.getCutout())
                 .put("cutout_mipped", RenderType.getCutoutMipped())
                 .put("translucent", RenderType.getTranslucent())
-                .put("tripwire", RenderType.func_241715_r_())
+                .put("tripwire", RenderType.getTripwire())
                 .build();
 
         public static final Loader INSTANCE = new Loader();

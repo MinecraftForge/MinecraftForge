@@ -29,6 +29,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 /**
  * Builder for item models, adds the ability to build overrides via
@@ -92,9 +93,9 @@ public class ItemModelBuilder extends ModelBuilder<ItemModelBuilder> {
         JsonObject toJson() {
             JsonObject ret = new JsonObject();
             JsonObject predicatesJson = new JsonObject();
-            predicates.forEach((key, val) -> predicatesJson.addProperty(serializeLoc(key), val));
+            predicates.forEach((key, val) -> predicatesJson.addProperty(key.toString(), val));
             ret.add("predicate", predicatesJson);
-            ret.addProperty("model", serializeLoc(model.getLocation()));
+            ret.addProperty("model", model.getLocation().toString());
             return ret;
         }
     }

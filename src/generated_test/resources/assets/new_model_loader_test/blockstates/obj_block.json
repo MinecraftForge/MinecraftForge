@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "new_model_loader_test:block/obj_block"
+    }
+  }
+}

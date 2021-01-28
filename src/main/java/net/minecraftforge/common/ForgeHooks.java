@@ -23,32 +23,42 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.Lifecycle;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.fluid.*;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.loot.LootContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
@@ -74,6 +84,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.EnchantedBookItem;
+import net.minecraft.item.HoeItem;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.PotionItem;
 import net.minecraft.item.ShovelItem;
@@ -91,10 +102,21 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.registry.DynamicRegistries;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.util.registry.WorldSettingsImport;
+import net.minecraft.util.registry.WorldGenSettingsExport;
 import net.minecraft.util.text.*;
+import net.minecraft.world.*;
+import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.gen.DimensionSettings;
+import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -102,19 +124,20 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.GameType;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
-import net.minecraftforge.common.data.IOptionalTagEntry;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeAmbience;
+import net.minecraft.world.biome.BiomeGenerationSettings;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
+import net.minecraftforge.common.world.ForgeWorldType;
+import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -135,10 +158,13 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -154,6 +180,7 @@ import org.apache.logging.log4j.util.TriConsumer;
 public class ForgeHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    @SuppressWarnings("unused")
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
 
     public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to)
@@ -168,28 +195,19 @@ public class ForgeHooks
     public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader world, @Nonnull BlockPos pos)
     {
         //state = state.getActualState(world, pos);
-        if (!state.func_235783_q_())
-            return true;
+        if (!state.getRequiresTool())
+            return ForgeEventFactory.doPlayerHarvestCheck(player, state, true);
 
         ItemStack stack = player.getHeldItemMainhand();
         ToolType tool = state.getHarvestTool();
         if (stack.isEmpty() || tool == null)
             return player.func_234569_d_(state);
 
-        int toolLevel = stack.getItem().getHarvestLevel(stack, tool, player, state);
+        int toolLevel = stack.getHarvestLevel(tool, player, state);
         if (toolLevel < 0)
             return player.func_234569_d_(state);
 
         return ForgeEventFactory.doPlayerHarvestCheck(player, state, toolLevel >= state.getHarvestLevel());
-    }
-
-    public static boolean canToolHarvestBlock(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
-    {
-        BlockState state = world.getBlockState(pos);
-        //state = state.getActualState(world, pos);
-        ToolType tool = state.getHarvestTool();
-        if (stack.isEmpty() || tool == null) return false;
-        return stack.getHarvestLevel(tool, null, null) >= state.getHarvestLevel();
     }
 
     public static boolean isToolEffective(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
@@ -215,12 +233,19 @@ public class ForgeHooks
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.PICKAXE, 0));
         blocks = getPrivateValue(ShovelItem.class, null, 0);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.SHOVEL, 0));
-        //TODO Axes check Material and Blocks now.
+        //Axes check Materials and Blocks now.
+        Set<Material> materials = getPrivateValue(AxeItem.class, null, 0);
+        for (Block block : ForgeRegistries.BLOCKS)
+            if (materials.contains(block.getDefaultState().getMaterial()))
+                blockToolSetter.accept(block, ToolType.AXE, 0);
         blocks = getPrivateValue(AxeItem.class, null, 1);
         blocks.forEach(block -> blockToolSetter.accept(block, ToolType.AXE, 0));
+        blocks = getPrivateValue(HoeItem.class, null, 0);
+        blocks.forEach(block -> blockToolSetter.accept(block, ToolType.HOE, 0));
 
-        //This is taken from ItemAxe, if that changes update here.
-        blockToolSetter.accept(Blocks.OBSIDIAN, ToolType.PICKAXE, 3);
+        //This is taken from PickaxeItem, if that changes update here.
+        for (Block block : new Block[]{Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN, Blocks.NETHERITE_BLOCK, Blocks.RESPAWN_ANCHOR, Blocks.ANCIENT_DEBRIS})
+            blockToolSetter.accept(block, ToolType.PICKAXE, 3);
         for (Block block : new Block[]{Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE})
             blockToolSetter.accept(block, ToolType.PICKAXE, 2);
         for (Block block : new Block[]{Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE})
@@ -230,6 +255,7 @@ public class ForgeHooks
     /**
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
+    @SuppressWarnings("resource")
     public static boolean onPickBlock(RayTraceResult target, PlayerEntity player, World world)
     {
         ItemStack result = ItemStack.EMPTY;
@@ -244,7 +270,7 @@ public class ForgeHooks
             if (state.isAir(world, pos))
                 return false;
 
-            if (isCreative && Screen.func_231172_r_() && state.hasTileEntity())
+            if (isCreative && Screen.hasControlDown() && state.hasTileEntity())
                 te = world.getTileEntity(pos);
 
             result = state.getPickBlock(target, world, pos, player);
@@ -313,9 +339,9 @@ public class ForgeHooks
         return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
-    public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, Entity attacker, float strength, double ratioX, double ratioZ)
+    public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, float strength, double ratioX, double ratioZ)
     {
-        LivingKnockBackEvent event = new LivingKnockBackEvent(target, attacker, strength, ratioX, ratioZ);
+        LivingKnockBackEvent event = new LivingKnockBackEvent(target, strength, ratioX, ratioZ);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
@@ -472,7 +498,7 @@ public class ForgeHooks
                 if (ichat == null)
                     ichat = new StringTextComponent(part);
                 else
-                    ichat.func_240702_b_(part);
+                    ichat.appendString(part);
             }
             lastEnd = end;
             String url = string.substring(start, end);
@@ -488,7 +514,7 @@ public class ForgeHooks
                         if (ichat == null)
                             ichat = new StringTextComponent(url);
                         else
-                            ichat.func_240702_b_(url);
+                            ichat.appendString(url);
                         continue;
                     }
                     url = "http://" + url;
@@ -498,16 +524,16 @@ public class ForgeHooks
             {
                 // Bad syntax bail out!
                 if (ichat == null) ichat = new StringTextComponent(url);
-                else ichat.func_240702_b_(url);
+                else ichat.appendString(url);
                 continue;
             }
 
             // Set the click event and append the link.
             ClickEvent click = new ClickEvent(ClickEvent.Action.OPEN_URL, url);
-            link.func_230530_a_(link.getStyle().func_240715_a_(click).setUnderlined(true).func_240718_a_(Color.func_240744_a_(TextFormatting.BLUE)));
+            link.setStyle(link.getStyle().setClickEvent(click).setUnderlined(true).setColor(Color.fromTextFormatting(TextFormatting.BLUE)));
             if (ichat == null)
                 ichat = new StringTextComponent("");
-            ichat.func_230529_a_(link);
+            ichat.append(link);
         }
 
         // Append the rest of the message.
@@ -515,7 +541,7 @@ public class ForgeHooks
         if (ichat == null)
             ichat = new StringTextComponent(end);
         else if (end.length() > 0)
-            ichat.func_230529_a_(new StringTextComponent(string.substring(lastEnd)));
+            ichat.append(new StringTextComponent(string.substring(lastEnd)));
         return ichat;
     }
 
@@ -657,7 +683,8 @@ public class ForgeHooks
 
                     world.markAndNotifyBlock(snap.getPos(), world.getChunkAt(snap.getPos()), oldBlock, newBlock, updateFlag, 512);
                 }
-                player.addStat(Stats.ITEM_USED.get(item));
+                if (player != null)
+                    player.addStat(Stats.ITEM_USED.get(item));
             }
         }
         world.capturedBlockSnapshots.clear();
@@ -665,9 +692,15 @@ public class ForgeHooks
         return ret;
     }
 
+    @Deprecated // TODO: Remove 1.17 - Use player-contextual version below.
     public static boolean onAnvilChange(RepairContainer container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
     {
-        AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
+        return onAnvilChange(container, left, right, outputSlot, name, baseCost, null);
+    }
+
+    public static boolean onAnvilChange(RepairContainer container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost, PlayerEntity player)
+    {
+        AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost, player);
         if (MinecraftForge.EVENT_BUS.post(e)) return false;
         if (e.getOutput().isEmpty()) return true;
 
@@ -765,9 +798,17 @@ public class ForgeHooks
         return evt;
     }
 
+    @Deprecated //Use RayTraceResult version.  TODO: Remove 1.17
     public static PlayerInteractEvent.RightClickBlock onRightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face)
     {
         PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, pos, face);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static PlayerInteractEvent.RightClickBlock onRightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, BlockRayTraceResult hitVec)
+    {
+        PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, pos, hitVec);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
     }
@@ -780,6 +821,17 @@ public class ForgeHooks
     public static void onEmptyLeftClick(PlayerEntity player)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
+    }
+
+    public static boolean onChangeGameMode(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
+    {
+        if (currentGameMode != newGameMode)
+        {
+            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameMode, newGameMode);
+            MinecraftForge.EVENT_BUS.post(evt);
+            return !evt.isCanceled();
+        }
+        return true;
     }
 
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
@@ -837,14 +889,41 @@ public class ForgeHooks
                     new ResourceLocation("block/water_flow"))
                     .overlay(new ResourceLocation("block/water_overlay"))
                     .translationKey("block.minecraft.water")
-                    .color(0xFF3F76E4).build(fluid);
+                    .color(0xFF3F76E4)
+                    .sound(SoundEvents.ITEM_BUCKET_FILL, SoundEvents.ITEM_BUCKET_EMPTY)
+                    .build(fluid);
         if (fluid instanceof LavaFluid)
             return net.minecraftforge.fluids.FluidAttributes.builder(
                     new ResourceLocation("block/lava_still"),
                     new ResourceLocation("block/lava_flow"))
                     .translationKey("block.minecraft.lava")
-                    .luminosity(15).density(3000).viscosity(6000).temperature(1300).build(fluid);
+                    .luminosity(15).density(3000).viscosity(6000).temperature(1300)
+                    .sound(SoundEvents.ITEM_BUCKET_FILL_LAVA, SoundEvents.ITEM_BUCKET_EMPTY_LAVA)
+                    .build(fluid);
         throw new RuntimeException("Mod fluids must override createAttributes.");
+    }
+
+    public static String getDefaultWorldType()
+    {
+        ForgeWorldType def = ForgeWorldType.getDefaultWorldType();
+        if (def != null)
+            return def.getRegistryName().toString();
+        return "default";
+    }
+
+    @FunctionalInterface
+    public interface BiomeCallbackFunction
+    {
+        Biome apply(final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience effects, final BiomeGenerationSettings gen, final MobSpawnInfo spawns);
+    }
+
+    public static Biome enhanceBiome(@Nullable final ResourceLocation name, final Biome.Climate climate, final Biome.Category category, final Float depth, final Float scale, final BiomeAmbience effects, final BiomeGenerationSettings gen, final MobSpawnInfo spawns, final RecordCodecBuilder.Instance<Biome> codec, final BiomeCallbackFunction callback)
+    {
+        BiomeGenerationSettingsBuilder genBuilder = new BiomeGenerationSettingsBuilder(gen);
+        MobSpawnInfoBuilder spawnBuilder = new MobSpawnInfoBuilder(spawns);
+        BiomeLoadingEvent event = new BiomeLoadingEvent(name, climate, category, depth, scale, effects, genBuilder, spawnBuilder);
+        MinecraftForge.EVENT_BUS.post(event);
+        return callback.apply(event.getClimate(), event.getCategory(), event.getDepth(), event.getScale(), event.getEffects(), event.getGeneration().build(), event.getSpawns().copy()).setRegistryName(name);
     }
 
     private static class LootTableContext
@@ -962,6 +1041,16 @@ public class ForgeHooks
     }
 
     /**
+     * Hook to fire {@link ItemAttributeModifierEvent}. Modders should use {@link ItemStack#getAttributeModifiers(EquipmentSlotType)} instead.
+     */
+    public static Multimap<Attribute,AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlotType equipmentSlot, Multimap<Attribute,AttributeModifier> attributes)
+    {
+        ItemAttributeModifierEvent event = new ItemAttributeModifierEvent(stack, equipmentSlot, attributes);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getModifiers();
+    }
+
+    /**
      * Used as the default implementation of {@link Item#getCreatorModId}. Call that method instead.
      */
     @Nullable
@@ -1073,15 +1162,16 @@ public class ForgeHooks
 
     public static <T> void deserializeTagAdditions(List<ITag.ITagEntry> list, JsonObject json, List<ITag.Proxy> allList)
     {
+        //TODO 1.17 remove parsing the forge added "optional" array. Still here for compatibility with previously created tags.
         if (json.has("optional"))
         {
             for (JsonElement entry : JSONUtils.getJsonArray(json, "optional"))
             {
                 String s = JSONUtils.getString(entry, "value");
                 if (!s.startsWith("#"))
-                    list.add(ForgeHooks.makeOptionalTag(true, Collections.singleton(new ResourceLocation(s))));
+                    list.add(new ITag.OptionalItemEntry(new ResourceLocation(s)));
                 else
-                    list.add(ForgeHooks.makeOptionalTag(false, Collections.singleton(new ResourceLocation(s.substring(1)))));
+                    list.add(new ITag.OptionalTagEntry(new ResourceLocation(s.substring(1))));
             }
         }
 
@@ -1095,7 +1185,7 @@ public class ForgeHooks
                     dummy = new ITag.ItemEntry(new ResourceLocation(s));
                 else
                     dummy = new ITag.TagEntry(new ResourceLocation(s.substring(1)));
-                allList.removeIf(e -> e.func_232968_a_().equals(dummy));
+                allList.removeIf(e -> e.getEntry().equals(dummy));
             }
         }
     }
@@ -1174,61 +1264,100 @@ public class ForgeHooks
         return list;
     }
 
-    @Deprecated//INTERNAL
-    public static IOptionalTagEntry makeOptionalTag(boolean items, Collection<ResourceLocation> locations) {
-        return items ? new OptionalItemTarget(locations) : new OptionalTagTarget(locations);
+    public static List<String> getModPacks()
+    {
+        List<String> modpacks = ResourcePackLoader.getPackNames();
+        if(modpacks.isEmpty())
+            throw new IllegalStateException("Attempted to retrieve mod packs before they were loaded in!");
+        return modpacks;
     }
 
-    private static class OptionalTagTarget implements IOptionalTagEntry
+    public static List<String> getModPacksWithVanilla()
     {
-
-        private final Collection<ResourceLocation> referents;
-
-        public OptionalTagTarget(Collection<ResourceLocation> referents)
-        {
-            this.referents = referents;
-        }
-
-        @Override
-        public <T> boolean func_230238_a_(Function<ResourceLocation, ITag<T>> tagLookup, Function<ResourceLocation, T> itemLookup, Consumer<T> collector)
-        {
-            referents.stream()
-                    .map(tagLookup)
-                    .filter(Objects::nonNull)
-                    .map(ITag::func_230236_b_)
-                    .flatMap(List::stream)
-                    .forEach(collector);
-            return true;
-        }
-
-        @Override
-        public void func_230237_a_(JsonArray array)
-        {
-            referents.stream().map(e -> "#" + e).forEach(array::add);
-        }
+        List<String> modpacks = getModPacks();
+        modpacks.add("vanilla");
+        return modpacks;
     }
 
-    private static class OptionalItemTarget implements IOptionalTagEntry
+    /**
+     * Fixes MC-194811
+     * When a structure mod is removed, this map may contain null keys. This will make the world unable to save if this persists.
+     * If we remove a structure from the save data in this way, we then mark the chunk for saving
+     */
+    public static void fixNullStructureReferences(IChunk chunk, Map<Structure<?>, LongSet> structureReferences)
     {
-
-        private final Collection<ResourceLocation> locations;
-
-        public OptionalItemTarget(Collection<ResourceLocation> locations)
+        if (structureReferences.remove(null) != null)
         {
-            this.locations = locations;
+            chunk.setModified(true);
         }
+        chunk.setStructureReferences(structureReferences);
+    }
 
-        @Override
-        public <T> boolean func_230238_a_(Function<ResourceLocation, ITag<T>> tagLookup, Function<ResourceLocation, T> itemLookup, Consumer<T> collector)
-        {
-            locations.stream().map(itemLookup).filter(Objects::nonNull).forEach(collector);
-            return true;
-        }
+    private static final Set<String> VANILLA_DIMS = Sets.newHashSet("minecraft:overworld", "minecraft:the_nether", "minecraft:the_end");
+    private static final String DIMENSIONS_KEY = "dimensions";
+    private static final String SEED_KEY = "seed";
+    //No to static init!
+    private static final LazyValue<Codec<SimpleRegistry<Dimension>>> CODEC = new LazyValue<>(() -> SimpleRegistry.getSimpleRegistryCodec(Registry.DIMENSION_KEY, Lifecycle.stable(), Dimension.CODEC).xmap(Dimension::func_236062_a_, Function.identity()));
 
-        @Override
-        public void func_230237_a_(JsonArray array)
+    /**
+     * Restores previously "deleted" dimensions to the world.
+     * The {@link LenientUnboundedMapCodec} prevents this from happening, this is to fix any world from before the fix.
+     */
+    public static <T> Dynamic<T> fixUpDimensionsData(Dynamic<T> data)
+    {
+        if(!(data.getOps() instanceof WorldSettingsImport))
+            return data;
+
+        WorldSettingsImport<T> ops = (WorldSettingsImport<T>) data.getOps();
+        Dynamic<T> dymData = data.get(DIMENSIONS_KEY).orElseEmptyMap();
+        Dynamic<T> withInjected = dymData.asMapOpt().map(current ->
         {
-            locations.stream().map(ResourceLocation::toString).forEach(array::add);
-        }
+            List<Pair<String, T>> currentList = current.map(p -> p.mapFirst(dyn -> dyn.asString().result().orElse("")).mapSecond(Dynamic::getValue)).collect(Collectors.toList());
+            Set<String> currentDimNames = currentList.stream().map(Pair::getFirst).collect(Collectors.toSet());
+
+            // FixUp deleted vanilla dims.
+            if (!currentDimNames.containsAll(VANILLA_DIMS))
+            {
+                LOGGER.warn("Detected missing vanilla dimensions from the world!");
+                DynamicRegistries regs = ObfuscationReflectionHelper.getPrivateValue(WorldSettingsImport.class, ops, "field_240872_d_");
+                if (regs == null) // should not happen, but it could after a MC version update.
+                    throw new RuntimeException("Could not access dynamic registries using reflection. " +
+                            "The world was detected to have missing vanilla dimensions and the attempted fix did not work.");
+
+                long seed = data.get(SEED_KEY).get().result().map(d -> d.asLong(0L)).orElse(0L);
+                Registry<Biome> biomeReg = regs.getRegistry(Registry.BIOME_KEY);
+                Registry<DimensionType> typeReg = regs.getRegistry(Registry.DIMENSION_TYPE_KEY);
+                Registry<DimensionSettings> noiseReg = regs.getRegistry(Registry.NOISE_SETTINGS_KEY);
+
+                //Loads the default nether and end
+                SimpleRegistry<Dimension> dimReg = DimensionType.getDefaultSimpleRegistry(typeReg, biomeReg, noiseReg, seed);
+                //Loads the default overworld
+                dimReg = DimensionGeneratorSettings.func_242749_a(typeReg, dimReg, DimensionGeneratorSettings.func_242750_a(biomeReg, noiseReg, seed));
+
+                // Encode and decode the registry. This adds any dimensions from datapacks (see SimpleRegistryCodec#decode), but only the vanilla overrides are needed.
+                // This assumes that the datapacks for the vanilla dimensions have not changed since they were "deleted"
+                // If they did, this will be seen in newly generated chunks.
+                // Since this is to fix an older world, from before the fixes by forge, there is no way to know the state of the dimension when it was "deleted".
+                dimReg = CODEC.getValue().encodeStart(WorldGenSettingsExport.create(ops, regs), dimReg).flatMap(t -> CODEC.getValue().parse(ops, t)).result().orElse(dimReg);
+                for (String name : VANILLA_DIMS)
+                {
+                    if (currentDimNames.contains(name))
+                        continue;
+                    Dimension dim = dimReg.getOrDefault(new ResourceLocation(name));
+                    if (dim == null)
+                    {
+                        LOGGER.error("The world is missing dimension: " + name + ", but the attempt to re-inject it failed.");
+                        continue;
+                    }
+                    LOGGER.info("Fixing world: re-injected dimension: " + name);
+                    currentList.add(Pair.of(name, Dimension.CODEC.encodeStart(ops, dim).resultOrPartial(s->{}).orElse(ops.empty())));
+                }
+            }
+            else
+                return dymData;
+
+            return new Dynamic<>(ops, ops.createMap(currentList.stream().map(p -> p.mapFirst(ops::createString))));
+        }).result().orElse(dymData);
+        return data.set(DIMENSIONS_KEY, withInjected);
     }
 }

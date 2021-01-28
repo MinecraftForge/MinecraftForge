@@ -1,0 +1,23 @@
+--- a/net/minecraft/tags/FluidTags.java
++++ b/net/minecraft/tags/FluidTags.java
+@@ -13,7 +13,20 @@
+       return field_206961_c.func_232937_a_(p_206956_0_);
+    }
+ 
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Fluid> createOptional(ResourceLocation name) {
++       return createOptional(name, null);
++   }
++
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Fluid> createOptional(ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<Fluid>> defaults) {
++      return field_206961_c.createOptional(name, defaults);
++   }
++
+    public static List<? extends ITag.INamedTag<Fluid>> func_241280_c_() {
+       return field_206961_c.func_241288_c_();
+    }
++
++   //Forge: Readd this stripped getter like the other tag classes
++   public static ITagCollection<Fluid> func_226157_a_() {
++       return field_206961_c.func_232939_b_();
++   }
+ }

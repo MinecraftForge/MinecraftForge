@@ -22,9 +22,7 @@ package net.minecraftforge.fml.loading.progress;
 import com.google.common.io.ByteStreams;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
-import org.lwjgl.glfw.GLFWErrorCallback;
-import org.lwjgl.glfw.GLFWImage;
-import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -40,9 +38,12 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
+import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
@@ -58,8 +59,10 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     private Thread renderThread = new Thread(this::renderThreadFunc);
 
     private boolean running = true;
+    private GLFWFramebufferSizeCallback framebufferSizeCallback;
+    private int[] fbSize;
 
-    private void initWindow() {
+    private void initWindow(@Nullable String mcVersion) {
         GLFWErrorCallback.createPrint(System.err).set();
 
         long glfwInitBegin = System.nanoTime();
@@ -81,10 +84,21 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
+        if (mcVersion != null)
+        {
+            // this emulates what we would get without early progress window
+            // as vanilla never sets these, so GLFW uses the first window title
+            // set them explicitly to avoid it using "FML early loading progress" as the class
+            String vanillaWindowTitle = "Minecraft* " + mcVersion;
+            glfwWindowHintString(GLFW_X11_CLASS_NAME, vanillaWindowTitle);
+            glfwWindowHintString(GLFW_X11_INSTANCE_NAME, vanillaWindowTitle);
+        }
+
         window = glfwCreateWindow(screenWidth, screenHeight, "FML early loading progress", NULL, NULL);
         if (window == NULL) {
             throw new RuntimeException("Failed to create the GLFW window"); // ignore it and make the GUI optional?
         }
+        framebufferSizeCallback = GLFWFramebufferSizeCallback.create(this::fbResize);
 
         try (MemoryStack stack = stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1);
@@ -126,6 +140,11 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
                 System.err.println("Failed to load forge logo");
             }
         }
+        int[] w = new int[1];
+        int[] h = new int[1];
+        glfwGetFramebufferSize(window, w, h);
+        fbSize = new int[] {w[0], h[0]};
+        glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
         glfwShowWindow(window);
         glfwPollEvents();
     }
@@ -220,6 +239,11 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glVertex2f(screenWidth, 0);
         glEnd();
     }
+    private void fbResize(long window, int width, int height) {
+        if (window == this.window && width != 0 && height != 0) {
+            fbSize = new int[] {width, height};
+        }
+    }
 
     private void renderMessages() {
         List<Pair<Integer, StartupMessageManager.Message>> messages = StartupMessageManager.getMessages();
@@ -231,6 +255,12 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
             renderMessage(msg.getText(), msg.getTypeColour(), ((screenHeight - 15) / 20) - i, fade);
         }
         renderMemoryInfo();
+    }
+
+    @Override
+    public void updateFBSize(final IntConsumer width, final IntConsumer height) {
+        width.accept(this.fbSize[0]);
+        height.accept(this.fbSize[1]);
     }
 
     private static final float[] memorycolour = new float[] { 0.0f, 0.0f, 0.0f};
@@ -283,8 +313,8 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
     }
 
     @Override
-    public Runnable start() {
-        initWindow();
+    public Runnable start(@Nullable String mcVersion) {
+        initWindow(mcVersion);
         renderThread.setDaemon(true); // Don't hang the game if it terminates before handoff (i.e. datagen)
         renderThread.start();
         return org.lwjgl.glfw.GLFW::glfwPollEvents;
@@ -309,6 +339,8 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glfwSwapInterval(0);
         glfwSwapBuffers(window);
         glfwSwapInterval(1);
+        final GLFWFramebufferSizeCallback previous = glfwSetFramebufferSizeCallback(window, null);
+        previous.free();
         return window;
     }
 }

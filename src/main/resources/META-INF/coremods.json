@@ -1,3 +1,4 @@
 {
-  "fieldtomethodtransformers": "META-INF/fieldtomethodtransformers.js"
+  "fieldtomethodtransformers": "META-INF/fieldtomethodtransformers.js",
+  "field_to_instanceof": "coremods/field_to_instanceof.js"
 }

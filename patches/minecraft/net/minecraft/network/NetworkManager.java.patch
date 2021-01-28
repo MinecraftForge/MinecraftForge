@@ -25,7 +25,7 @@
        }
  
        if (this.field_150746_k.eventLoop().inEventLoop()) {
-@@ -255,7 +257,9 @@
+@@ -259,7 +261,9 @@
  
     @OnlyIn(Dist.CLIENT)
     public static NetworkManager func_181124_a(InetAddress p_181124_0_, int p_181124_1_, boolean p_181124_2_) {
@@ -35,7 +35,7 @@
        Class<? extends SocketChannel> oclass;
        LazyValue<? extends EventLoopGroup> lazyvalue;
        if (Epoll.isAvailable() && p_181124_2_) {
-@@ -282,6 +286,7 @@
+@@ -286,6 +290,7 @@
     @OnlyIn(Dist.CLIENT)
     public static NetworkManager func_150722_a(SocketAddress p_150722_0_) {
        final NetworkManager networkmanager = new NetworkManager(PacketDirection.CLIENTBOUND);
@@ -43,7 +43,7 @@
        (new Bootstrap()).group(field_179296_e.func_179281_c()).handler(new ChannelInitializer<Channel>() {
           protected void initChannel(Channel p_initChannel_1_) throws Exception {
              p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
-@@ -373,6 +378,14 @@
+@@ -376,6 +381,14 @@
        return this.field_211397_t;
     }
  

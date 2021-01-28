@@ -1,38 +1,20 @@
 --- a/net/minecraft/entity/passive/AnimalEntity.java
 +++ b/net/minecraft/entity/passive/AnimalEntity.java
-@@ -120,7 +120,7 @@
-       ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
-       if (this.func_70877_b(itemstack)) {
-          int i = this.func_70874_b();
--         if (!this.field_70170_p.field_72995_K && i == 0 && this.func_204701_dC()) {
-+         if (!this.field_70170_p.field_72995_K && i == 0 && this.func_213743_em()) {
-             this.func_175505_a(p_230254_1_, itemstack);
-             this.func_146082_f(p_230254_1_);
-             return ActionResultType.SUCCESS;
-@@ -147,7 +147,7 @@
+@@ -199,6 +199,17 @@
  
-    }
- 
--   public boolean func_204701_dC() {
-+   public boolean func_213743_em() {
-       return this.field_70881_d <= 0;
-    }
- 
-@@ -198,6 +198,17 @@
- 
-    public void func_234177_a_(World p_234177_1_, AnimalEntity p_234177_2_) {
-       AgeableEntity ageableentity = this.func_90011_a(p_234177_2_);
-+       final net.minecraftforge.event.entity.living.BabyEntitySpawnEvent event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(this, p_234177_2_, ageableentity);
-+       final boolean cancelled = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+       ageableentity = event.getChild();
-+       if (cancelled) {
-+           //Reset the "inLove" state for the animals
-+           this.func_70873_a(6000);
-+           p_234177_2_.func_70873_a(6000);
-+           this.func_70875_t();
-+           p_234177_2_.func_70875_t();
-+           return;
-+       }
+    public void func_234177_a_(ServerWorld p_234177_1_, AnimalEntity p_234177_2_) {
+       AgeableEntity ageableentity = this.func_241840_a(p_234177_1_, p_234177_2_);
++      final net.minecraftforge.event.entity.living.BabyEntitySpawnEvent event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(this, p_234177_2_, ageableentity);
++      final boolean cancelled = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++      ageableentity = event.getChild();
++      if (cancelled) {
++         //Reset the "inLove" state for the animals
++         this.func_70873_a(6000);
++         p_234177_2_.func_70873_a(6000);
++         this.func_70875_t();
++         p_234177_2_.func_70875_t();
++         return;
++      }
        if (ageableentity != null) {
           ServerPlayerEntity serverplayerentity = this.func_191993_do();
           if (serverplayerentity == null && p_234177_2_.func_191993_do() != null) {

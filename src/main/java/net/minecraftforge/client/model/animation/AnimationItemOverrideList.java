@@ -61,8 +61,9 @@ public final class AnimationItemOverrideList extends ItemOverrideList
         this.bakedTextureGetter = bakedTextureGetter;
     }
 
+    @SuppressWarnings("resource")
     @Override
-    public IBakedModel func_239290_a_(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
+    public IBakedModel getOverrideModel(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
     {
         return stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
             .map(asm ->
@@ -81,6 +82,6 @@ public final class AnimationItemOverrideList extends ItemOverrideList
             })
             // TODO where should uvlock data come from?
             .map(state -> model.bakeModel(bakery, bakedTextureGetter, new ModelTransformComposition(state, this.state), modelLoc))
-            .orElseGet(() -> super.func_239290_a_(originalModel, stack, world, entity));
+            .orElseGet(() -> super.getOverrideModel(originalModel, stack, world, entity));
     }
 }

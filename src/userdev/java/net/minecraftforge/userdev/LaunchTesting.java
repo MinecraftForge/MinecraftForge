@@ -103,7 +103,7 @@ public class LaunchTesting
         }
 
         Launcher.main(lst.getArguments());
-        Thread.sleep(10000);// Why do we have this? -Lex 03/06/19
+        Thread.sleep(10000);// Why do we have this? -Lex 03/06/19 // because there's daemon threads that should cleanly exit -cpw 04/10/20
     }
 
     private static String getRandomNumbers(int length)

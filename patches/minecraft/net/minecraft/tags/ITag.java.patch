@@ -24,7 +24,7 @@
        public <T> Optional<ITag<T>> func_232959_a_(Function<ResourceLocation, ITag<T>> p_232959_1_, Function<ResourceLocation, T> p_232959_2_) {
           ImmutableSet.Builder<T> builder = ImmutableSet.builder();
  
-@@ -108,6 +118,7 @@
+@@ -103,6 +113,7 @@
              this.field_232953_a_.clear();
           }
  
@@ -32,40 +32,28 @@
           list.forEach((p_232958_2_) -> {
              this.field_232953_a_.add(new ITag.Proxy(p_232958_2_, p_232956_2_));
           });
-@@ -119,11 +130,20 @@
-          JsonArray jsonarray = new JsonArray();
- 
-          for(ITag.Proxy itag$proxy : this.field_232953_a_) {
-+            if(!(itag$proxy.field_232966_a_ instanceof net.minecraftforge.common.data.IOptionalTagEntry))
+@@ -138,7 +149,7 @@
              itag$proxy.func_232968_a_().func_230237_a_(jsonarray);
           }
  
 -         jsonobject.addProperty("replace", false);
-+         JsonArray optopnals = new JsonArray();
-+          func_232962_b_()
-+                 .map(e -> e.field_232966_a_)
-+                 .filter(e -> e instanceof net.minecraftforge.common.data.IOptionalTagEntry)
-+                 .forEach(e -> e.func_230237_a_(optopnals));
-+
 +         jsonobject.addProperty("replace", replace);
           jsonobject.add("values", jsonarray);
-+         if (optopnals.size() > 0)
-+             jsonobject.add("optional", optopnals);
           return jsonobject;
        }
-    }
-@@ -162,6 +182,7 @@
+@@ -178,6 +189,7 @@
        public String toString() {
           return this.field_232969_a_.toString();
        }
 +      @Override public boolean equals(Object o) { return o == this || (o instanceof ITag.ItemEntry && java.util.Objects.equals(this.field_232969_a_, ((ITag.ItemEntry) o).field_232969_a_)); }
     }
  
-    public static class Proxy {
-@@ -206,5 +227,6 @@
+    public static class OptionalItemEntry implements ITag.ITagEntry {
+@@ -278,5 +290,7 @@
        public String toString() {
           return "#" + this.field_200163_a;
        }
 +      @Override public boolean equals(Object o) { return o == this || (o instanceof ITag.TagEntry && java.util.Objects.equals(this.field_200163_a, ((ITag.TagEntry) o).field_200163_a)); }
++      public ResourceLocation getId() { return field_200163_a; }
     }
  }

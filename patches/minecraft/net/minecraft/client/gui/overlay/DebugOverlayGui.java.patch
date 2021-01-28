@@ -4,7 +4,7 @@
                 list.add(this.func_211534_a(entry));
              }
  
--            for(ResourceLocation resourcelocation : this.field_175242_a.func_147114_u().func_199724_l().func_199717_a().func_199913_a(blockstate.func_177230_c())) {
+-            for(ResourceLocation resourcelocation : this.field_175242_a.func_147114_u().func_199724_l().func_241835_a().func_199913_a(blockstate.func_177230_c())) {
 +            for(ResourceLocation resourcelocation : blockstate.func_177230_c().getTags()) {
                 list.add("#" + resourcelocation);
              }
@@ -13,7 +13,7 @@
                 list.add(this.func_211534_a(entry1));
              }
  
--            for(ResourceLocation resourcelocation1 : this.field_175242_a.func_147114_u().func_199724_l().func_205704_c().func_199913_a(fluidstate.func_206886_c())) {
+-            for(ResourceLocation resourcelocation1 : this.field_175242_a.func_147114_u().func_199724_l().func_241837_c().func_199913_a(fluidstate.func_206886_c())) {
 +            for(ResourceLocation resourcelocation1 : fluidstate.func_206886_c().getTags()) {
                 list.add("#" + resourcelocation1);
              }

@@ -17,11 +17,20 @@
                    chunkprimer.func_201637_h(blockpos);
                 }
              }
+@@ -167,7 +168,7 @@
+       Heightmap.func_222690_a(ichunk, enumset);
+       CompoundNBT compoundnbt4 = compoundnbt.func_74775_l("Structures");
+       ichunk.func_201612_a(func_235967_a_(p_222656_1_, compoundnbt4, p_222656_0_.func_72905_C()));
+-      ichunk.func_201606_b(func_227075_a_(p_222656_3_, compoundnbt4));
++      net.minecraftforge.common.ForgeHooks.fixNullStructureReferences(ichunk, func_227075_a_(p_222656_3_, compoundnbt4));
+       if (compoundnbt.func_74767_n("shouldSave")) {
+          ichunk.func_177427_f(true);
+       }
 @@ -183,6 +184,7 @@
        }
  
        if (chunkstatus$type == ChunkStatus.Type.LEVELCHUNK) {
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, compoundnbt, chunkstatus$type));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, p_222656_4_, chunkstatus$type));
           return new ChunkPrimerWrapper((Chunk)ichunk);
        } else {
           ChunkPrimer chunkprimer1 = (ChunkPrimer)ichunk;
@@ -29,7 +38,7 @@
              chunkprimer1.func_205767_a(generationstage$carving, BitSet.valueOf(compoundnbt5.func_74770_j(s1)));
           }
  
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, compoundnbt, chunkstatus$type));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(ichunk, p_222656_4_, chunkstatus$type));
 +
           return chunkprimer1;
        }

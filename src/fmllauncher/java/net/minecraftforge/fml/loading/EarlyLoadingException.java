@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.loading;
 
+import net.minecraftforge.forgespi.language.IModInfo;
+
 import java.util.List;
 
 /**
@@ -27,12 +29,17 @@ import java.util.List;
  */
 public class EarlyLoadingException extends RuntimeException {
     public static class ExceptionData {
-
-
+        private final IModInfo modInfo;
         private final String i18message;
         private final Object[] args;
+
         public ExceptionData(final String message, Object... args) {
+            this(message, null, args);
+        }
+
+        public ExceptionData(final String message, final IModInfo modInfo, Object... args) {
             this.i18message = message;
+            this.modInfo = modInfo;
             this.args = args;
         }
 
@@ -42,6 +49,10 @@ public class EarlyLoadingException extends RuntimeException {
 
         public Object[] getArgs() {
             return args;
+        }
+
+        public IModInfo getModInfo() {
+            return modInfo;
         }
     }
     private final List<ExceptionData> errorMessages;

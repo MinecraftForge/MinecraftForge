@@ -9,7 +9,7 @@
     private final ByteBuf field_150794_a;
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
-@@ -288,6 +288,15 @@
+@@ -292,6 +292,15 @@
     }
  
     public PacketBuffer func_150788_a(ItemStack p_150788_1_) {
@@ -25,16 +25,18 @@
        if (p_150788_1_.func_190926_b()) {
           this.writeBoolean(false);
        } else {
-@@ -297,7 +306,7 @@
+@@ -300,8 +309,8 @@
+          this.func_150787_b(Item.func_150891_b(item));
           this.writeByte(p_150788_1_.func_190916_E());
           CompoundNBT compoundnbt = null;
-          if (item.func_77645_m() || item.func_77651_p()) {
+-         if (item.func_77645_m() || item.func_77651_p()) {
 -            compoundnbt = p_150788_1_.func_77978_p();
++         if (item.isDamageable(p_150788_1_) || item.func_77651_p()) {
 +            compoundnbt = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.func_77978_p();
           }
  
           this.func_150786_a(compoundnbt);
-@@ -313,7 +322,7 @@
+@@ -317,7 +326,7 @@
           int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);

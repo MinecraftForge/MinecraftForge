@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/piglin/PiglinEntity.java
 +++ b/net/minecraft/entity/monster/piglin/PiglinEntity.java
-@@ -367,7 +367,7 @@
+@@ -307,7 +307,7 @@
     }
  
     protected void func_234439_n_(ItemStack p_234439_1_) {

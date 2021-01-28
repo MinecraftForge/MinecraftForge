@@ -20,8 +20,6 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
-import java.util.function.Predicate;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.*;
@@ -33,8 +31,6 @@ import net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tileentity.TileEntity;
@@ -195,12 +191,13 @@ public interface IForgeBlockState
      *
      * @param world The current world
      * @param pos Block position in world
+     * @param orientation The direction the entity is facing while getting into bed.
      * @param sleeper The sleeper or camera entity, null in some cases.
      * @return The spawn position
      */
-    default Optional<Vector3d> getBedSpawnPosition(EntityType<?> type, IWorldReader world, BlockPos pos, @Nullable LivingEntity sleeper)
+    default Optional<Vector3d> getBedSpawnPosition(EntityType<?> type, IWorldReader world, BlockPos pos, float orientation, @Nullable LivingEntity sleeper)
     {
-        return getBlockState().getBlock().getBedSpawnPosition(type, getBlockState(), world, pos, sleeper);
+        return getBlockState().getBlock().getBedSpawnPosition(type, getBlockState(), world, pos, orientation, sleeper);
     }
 
     /**
@@ -238,7 +235,12 @@ public interface IForgeBlockState
      * @param world The current world
      * @param pos Block position in world
      * @return True if the block considered air
+     * @deprecated TODO: Remove in 1.17, in favor of state only version. This is a old hook from before
+     *   block states were unlimited and people used TileEntities. If you still use the location
+     *   information in your TileEntity please explain why and how you can't use BlockState only version
+     *   here: https://github.com/MinecraftForge/MinecraftForge/issues/7409
      */
+    @Deprecated
     default boolean isAir(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().isAir(getBlockState(), world, pos);
@@ -428,7 +430,7 @@ public interface IForgeBlockState
      * @param pos Block position in world
      * @return True, to support being part of a nether portal frame, false otherwise.
      */
-    default boolean isPortalFrame(IWorldReader world, BlockPos pos)
+    default boolean isPortalFrame(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().isPortalFrame(getBlockState(), world, pos);
     }
@@ -777,5 +779,35 @@ public interface IForgeBlockState
     default boolean shouldDisplayFluidOverlay(IBlockDisplayReader world, BlockPos pos, FluidState fluidState)
     {
         return getBlockState().getBlock().shouldDisplayFluidOverlay(getBlockState(), world, pos, fluidState);
+    }
+
+    /**
+     * Returns the state that this block should transform into when right clicked by a tool.
+     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+     * Return null if vanilla behavior should be disabled.
+     *
+     * @param world The world
+     * @param pos The block position in world
+     * @param player The player clicking the block
+     * @param stack The stack being used by the player
+     * @param toolTypes The tool types to be considered when performing the action
+     * @return The resulting state after the action has been performed
+     */
+    @Nullable
+    default BlockState getToolModifiedState(World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
+    {
+        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(getBlockState(), world, pos, player, stack, toolType);
+        return eventState != getBlockState() ? eventState : getBlockState().getBlock().getToolModifiedState(getBlockState(), world, pos, player, stack, toolType);
+    }
+
+    /**
+     * Checks if a player or entity handles movement on this block like scaffolding.
+     *
+     * @param entity The entity on the scaffolding
+     * @return True if the block should act like scaffolding
+     */
+    default boolean isScaffolding(LivingEntity entity)
+    {
+        return getBlockState().getBlock().isScaffolding(getBlockState(), entity.world, entity.getPosition(), entity);
     }
 }

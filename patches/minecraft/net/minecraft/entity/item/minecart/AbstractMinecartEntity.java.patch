@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/minecart/AbstractMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/AbstractMinecartEntity.java
-@@ -47,7 +47,7 @@
+@@ -48,7 +48,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -9,7 +9,7 @@
     private static final DataParameter<Integer> field_184265_a = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187192_b);
     private static final DataParameter<Integer> field_184266_b = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187192_b);
     private static final DataParameter<Float> field_184267_c = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187193_c);
-@@ -88,6 +88,7 @@
+@@ -89,6 +89,7 @@
     private double field_70507_ar;
     @OnlyIn(Dist.CLIENT)
     private double field_70506_as;
@@ -17,12 +17,7 @@
  
     protected AbstractMinecartEntity(EntityType<?> p_i48538_1_, World p_i48538_2_) {
        super(p_i48538_1_, p_i48538_2_);
-@@ -134,11 +135,12 @@
- 
-    @Nullable
-    public AxisAlignedBB func_70114_g(Entity p_70114_1_) {
-+      if (getCollisionHandler() != null) return getCollisionHandler().getCollisionBox(this, p_70114_1_);
-       return p_70114_1_.func_70104_M() ? p_70114_1_.func_174813_aQ() : null;
+@@ -138,7 +139,7 @@
     }
  
     public boolean func_70104_M() {
@@ -30,8 +25,8 @@
 +      return canBePushed;
     }
  
-    public double func_70042_X() {
-@@ -304,9 +306,9 @@
+    protected Vector3d func_241839_a(Direction.Axis p_241839_1_, TeleportationRepositioner.Result p_241839_2_) {
+@@ -307,9 +308,9 @@
  
           BlockPos blockpos = new BlockPos(i, j, k);
           BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -43,7 +38,7 @@
                 this.func_96095_a(i, j, k, blockstate.func_177229_b(PoweredRailBlock.field_176569_M));
              }
           } else {
-@@ -331,8 +333,11 @@
+@@ -334,8 +335,11 @@
           }
  
           this.func_70101_b(this.field_70177_z, this.field_70125_A);
@@ -57,7 +52,7 @@
              if (!list.isEmpty()) {
                 for(int l = 0; l < list.size(); ++l) {
                    Entity entity1 = list.get(l);
-@@ -344,7 +349,7 @@
+@@ -347,7 +351,7 @@
                 }
              }
           } else {
@@ -66,15 +61,7 @@
                 if (!this.func_184196_w(entity) && entity.func_70104_M() && entity instanceof AbstractMinecartEntity) {
                    entity.func_70108_f(this);
                 }
-@@ -352,6 +357,7 @@
-          }
- 
-          this.func_233566_aG_();
-+         //net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.minecart.MinecartUpdateEvent(this, this.getCurrentRailPosition()));
-       }
-    }
- 
-@@ -363,16 +369,23 @@
+@@ -372,16 +376,23 @@
     }
  
     protected void func_180459_n() {
@@ -100,7 +87,7 @@
        }
  
     }
-@@ -387,29 +400,29 @@
+@@ -396,29 +407,29 @@
        boolean flag = false;
        boolean flag1 = false;
        AbstractRailBlock abstractrailblock = (AbstractRailBlock)p_180460_2_.func_177230_c();
@@ -136,7 +123,7 @@
           ++d1;
        }
  
-@@ -440,7 +453,7 @@
+@@ -449,7 +460,7 @@
           }
        }
  
@@ -145,7 +132,7 @@
           double d22 = Math.sqrt(func_213296_b(this.func_213322_ci()));
           if (d22 < 0.03D) {
              this.func_213317_d(Vector3d.field_186680_a);
-@@ -469,10 +482,7 @@
+@@ -478,10 +489,7 @@
        d0 = d23 + d4 * d14;
        d2 = d10 + d5 * d14;
        this.func_70107_b(d0, d1, d2);
@@ -157,7 +144,7 @@
        if (vector3i.func_177956_o() != 0 && MathHelper.func_76128_c(this.func_226277_ct_()) - p_180460_1_.func_177958_n() == vector3i.func_177958_n() && MathHelper.func_76128_c(this.func_226281_cx_()) - p_180460_1_.func_177952_p() == vector3i.func_177952_p()) {
           this.func_70107_b(this.func_226277_ct_(), this.func_226278_cu_() + (double)vector3i.func_177956_o(), this.func_226281_cx_());
        } else if (vector3i1.func_177956_o() != 0 && MathHelper.func_76128_c(this.func_226277_ct_()) - p_180460_1_.func_177958_n() == vector3i1.func_177958_n() && MathHelper.func_76128_c(this.func_226281_cx_()) - p_180460_1_.func_177952_p() == vector3i1.func_177952_p()) {
-@@ -500,7 +510,10 @@
+@@ -509,7 +517,10 @@
           this.func_213293_j(d26 * (double)(j - p_180460_1_.func_177958_n()), vector3d5.field_72448_b, d26 * (double)(i - p_180460_1_.func_177952_p()));
        }
  
@@ -169,7 +156,7 @@
           Vector3d vector3d6 = this.func_213322_ci();
           double d27 = Math.sqrt(func_213296_b(vector3d6));
           if (d27 > 0.01D) {
-@@ -555,7 +568,7 @@
+@@ -564,7 +575,7 @@
  
        BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
        if (AbstractRailBlock.func_208487_j(blockstate)) {
@@ -178,7 +165,7 @@
           p_70495_3_ = (double)j;
           if (railshape.func_208092_c()) {
              p_70495_3_ = (double)(j + 1);
-@@ -594,7 +607,7 @@
+@@ -603,7 +614,7 @@
  
        BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
        if (AbstractRailBlock.func_208487_j(blockstate)) {
@@ -187,7 +174,7 @@
           Pair<Vector3i, Vector3i> pair = func_226573_a_(railshape);
           Vector3i vector3i = pair.getFirst();
           Vector3i vector3i1 = pair.getSecond();
-@@ -657,6 +670,11 @@
+@@ -666,6 +677,11 @@
     }
  
     public void func_70108_f(Entity p_70108_1_) {
@@ -199,7 +186,7 @@
        if (!this.field_70170_p.field_72995_K) {
           if (!p_70108_1_.field_70145_X && !this.field_70145_X) {
              if (!this.func_184196_w(p_70108_1_)) {
-@@ -692,11 +710,11 @@
+@@ -701,11 +717,11 @@
  
                       Vector3d vector3d2 = this.func_213322_ci();
                       Vector3d vector3d3 = p_70108_1_.func_213322_ci();
@@ -213,16 +200,16 @@
                          p_70108_1_.func_213317_d(vector3d3.func_216372_d(0.2D, 1.0D, 0.2D));
                          p_70108_1_.func_70024_g(vector3d2.field_72450_a + d0, 0.0D, vector3d2.field_72449_c + d1);
                          this.func_213317_d(vector3d2.func_216372_d(0.95D, 1.0D, 0.95D));
-@@ -802,6 +820,40 @@
+@@ -811,6 +827,40 @@
        return new SSpawnObjectPacket(this);
     }
  
 +   private boolean canUseRail = true;
 +   @Override public boolean canUseRail() { return canUseRail; }
 +   @Override public void setCanUseRail(boolean value) { this.canUseRail = value; }
-+   private float currentSpeedOnRail;
-+   @Override public float getCurrentCartSpeedCapOnRail() { return currentSpeedOnRail; }
-+   @Override public void setCurrentCartSpeedCapOnRail(float value) { currentSpeedOnRail = Math.min(value, getMaxCartSpeedOnRail()); }
++   private float currentSpeedCapOnRail = getMaxCartSpeedOnRail();
++   @Override public float getCurrentCartSpeedCapOnRail() { return currentSpeedCapOnRail; }
++   @Override public void setCurrentCartSpeedCapOnRail(float value) { currentSpeedCapOnRail = Math.min(value, getMaxCartSpeedOnRail()); }
 +   private float maxSpeedAirLateral = DEFAULT_MAX_SPEED_AIR_LATERAL;
 +   @Override public float getMaxSpeedAirLateral() { return maxSpeedAirLateral; }
 +   @Override public void setMaxSpeedAirLateral(float value) { maxSpeedAirLateral = value; }

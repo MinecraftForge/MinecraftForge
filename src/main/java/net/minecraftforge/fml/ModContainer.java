@@ -21,17 +21,19 @@ package net.minecraftforge.fml;
 
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -55,7 +57,7 @@ public abstract class ModContainer
     protected final IModInfo modInfo;
     protected ModLoadingStage modLoadingStage;
     protected Supplier<?> contextExtension;
-    protected final Map<ModLoadingStage, Consumer<LifecycleEventProvider.LifecycleEvent>> triggerMap;
+    protected final Map<ModLoadingStage, Runnable> activityMap = new HashMap<>();
     protected final Map<ExtensionPoint, Supplier<?>> extensionPoints = new IdentityHashMap<>();
     protected final EnumMap<ModConfig.Type, ModConfig> configs = new EnumMap<>(ModConfig.Type.class);
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -67,13 +69,22 @@ public abstract class ModContainer
         // TODO: Currently not reading namespace from configuration..
         this.namespace = this.modId;
         this.modInfo = info;
-        this.triggerMap = new HashMap<>();
         this.modLoadingStage = ModLoadingStage.CONSTRUCT;
         // default displaytest extension checks for version string match
         registerExtensionPoint(ExtensionPoint.DISPLAYTEST, () -> Pair.of(()->this.modInfo.getVersion().toString(),
                 (incoming, isNetwork)->Objects.equals(incoming, this.modInfo.getVersion().toString())));
     }
 
+    /**
+     * Errored container state, used for filtering. Does nothing.
+     */
+    ModContainer()
+    {
+        this.modLoadingStage = ModLoadingStage.ERROR;
+        modId = "BROKEN";
+        namespace = "BROKEN";
+        modInfo = null;
+    }
     /**
      * @return the modid for this mod
      */
@@ -98,27 +109,21 @@ public abstract class ModContainer
         return modLoadingStage;
     }
 
-    /**
-     * Transition the mod to this event if possible.
-     * @param event to transition to
-     */
-    public final void transitionState(LifecycleEventProvider.LifecycleEvent event, Consumer<List<ModLoadingException>> errorHandler)
-    {
-        if (modLoadingStage == event.fromStage())
-        {
-            try
-            {
-                ModLoadingContext.get().setActiveContainer(this, contextExtension.get());
-                triggerMap.getOrDefault(modLoadingStage, e->{}).accept(event);
-                modLoadingStage = event.toStage();
-                ModLoadingContext.get().setActiveContainer(null, null);
-            }
-            catch (ModLoadingException e)
-            {
-                modLoadingStage = ModLoadingStage.ERROR;
-                errorHandler.accept(Collections.singletonList(e));
-            }
-        }
+    public static <T extends Event & IModBusEvent> CompletableFuture<Void> buildTransitionHandler(
+            final ModContainer target,
+            final ModLoadingStage.EventGenerator<T> eventGenerator,
+            final BiFunction<ModLoadingStage, Throwable, ModLoadingStage> stateChangeHandler,
+            final Executor executor) {
+        return CompletableFuture
+                .runAsync(() -> {
+                    ModLoadingContext.get().setActiveContainer(target, target.contextExtension.get());
+                    target.activityMap.getOrDefault(target.modLoadingStage, ()->{}).run();
+                    target.acceptEvent(eventGenerator.apply(target));
+                }, executor)
+                .whenComplete((mc, exception) -> {
+                    target.modLoadingStage = stateChangeHandler.apply(target.modLoadingStage, exception);
+                    ModLoadingContext.get().setActiveContainer(null, null);
+                });
     }
 
     /**
@@ -164,5 +169,5 @@ public abstract class ModContainer
      * Accept an arbitrary event for processing by the mod. Probably posted to an event bus in the lower level container.
      * @param e Event to accept
      */
-    protected void acceptEvent(Event e) {}
+    protected <T extends Event & IModBusEvent> void acceptEvent(T e) {}
 }

@@ -106,7 +106,7 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
     }
 
     @Override
-    public boolean func_231043_a_(double mouseX, double mouseY, double scroll)
+    public boolean mouseScrolled(double mouseX, double mouseY, double scroll)
     {
         if (scroll != 0)
         {
@@ -123,15 +123,15 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
     }
 
     @Override
-    public boolean func_231047_b_(double mouseX, double mouseY)
+    public boolean isMouseOver(double mouseX, double mouseY)
     {
         return mouseX >= this.left && mouseX <= this.left + this.width &&
                 mouseY >= this.top && mouseY <= this.bottom;
     }
 
     @Override
-    public boolean func_231044_a_(double mouseX, double mouseY, int button) {
-        if (super.func_231044_a_(mouseX, mouseY, button))
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (super.mouseClicked(mouseX, mouseY, button))
             return true;
 
         this.scrolling = button == 0 && mouseX >= barLeft && mouseX < barLeft + barWidth;
@@ -148,8 +148,8 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
     }
 
     @Override
-    public boolean func_231048_c_(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
-        if (super.func_231048_c_(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_))
+    public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
+        if (super.mouseReleased(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_))
             return true;
         boolean ret = this.scrolling;
         this.scrolling = false;
@@ -169,7 +169,7 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
     }
 
     @Override
-    public boolean func_231045_a_(double mouseX, double mouseY, int button, double deltaX, double deltaY)
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
     {
         if (this.scrolling)
         {
@@ -182,8 +182,9 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void func_230430_a_(MatrixStack matrix, int mouseX, int mouseY, float partialTicks)
+    public void render(MatrixStack matrix, int mouseX, int mouseY, float partialTicks)
     {
         this.drawBackground();
 
@@ -203,7 +204,7 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
         {
             RenderSystem.disableLighting();
             RenderSystem.disableFog();
-            this.client.getTextureManager().bindTexture(AbstractGui.field_230663_f_);
+            this.client.getTextureManager().bindTexture(AbstractGui.BACKGROUND_LOCATION);
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             final float texScale = 32.0F;
             worldr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
@@ -264,7 +265,7 @@ public abstract class ScrollPanel extends FocusableGui implements IRenderable
     }
 
     @Override
-    public List<? extends IGuiEventListener> func_231039_at__()
+    public List<? extends IGuiEventListener> getEventListeners()
     {
         return Collections.emptyList();
     }

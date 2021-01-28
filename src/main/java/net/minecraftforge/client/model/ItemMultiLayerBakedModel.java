@@ -34,7 +34,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
+import net.minecraftforge.client.model.data.IModelData;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -42,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public class ItemMultiLayerBakedModel implements IBakedModel
+public class ItemMultiLayerBakedModel implements IDynamicBakedModel
 {
     private final boolean smoothLighting;
     private final boolean shadedInGui;
@@ -67,10 +68,10 @@ public class ItemMultiLayerBakedModel implements IBakedModel
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData modelData)
     {
         List<BakedQuad> quads = Lists.newArrayList();
-        layerModels.forEach(lm -> quads.addAll(lm.getFirst().getQuads(state, side, rand, EmptyModelData.INSTANCE)));
+        layerModels.forEach(lm -> quads.addAll(lm.getFirst().getQuads(state, side, rand, modelData)));
         return quads;
     }
 
@@ -87,7 +88,7 @@ public class ItemMultiLayerBakedModel implements IBakedModel
     }
 
     @Override
-    public boolean func_230044_c_()
+    public boolean isSideLit()
     {
         return sideLit;
     }

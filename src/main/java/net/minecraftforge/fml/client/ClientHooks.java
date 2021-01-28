@@ -35,7 +35,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.MultiplayerScreen;
-import net.minecraft.client.gui.screen.WorldSelectionScreen;
 import net.minecraft.client.multiplayer.PlayerController;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -52,7 +51,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 
@@ -66,8 +64,6 @@ import net.minecraft.resources.FallbackResourceManager;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.storage.WorldSummary;
-import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
@@ -77,9 +73,6 @@ public class ClientHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker CLIENTHOOKS = MarkerManager.getMarker("CLIENTHOOKS");
-    // From FontRenderer.renderCharAtPos
-    private static final String ALLOWED_CHARS = "\u00c0\u00c1\u00c2\u00c8\u00ca\u00cb\u00cd\u00d3\u00d4\u00d5\u00da\u00df\u00e3\u00f5\u011f\u0130\u0131\u0152\u0153\u015e\u015f\u0174\u0175\u017e\u0207\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8\u00a3\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1\u00aa\u00ba\u00bf\u00ae\u00ac\u00bd\u00bc\u00a1\u00ab\u00bb\u2591\u2592\u2593\u2502\u2524\u2561\u2562\u2556\u2555\u2563\u2551\u2557\u255d\u255c\u255b\u2510\u2514\u2534\u252c\u251c\u2500\u253c\u255e\u255f\u255a\u2554\u2569\u2566\u2560\u2550\u256c\u2567\u2568\u2564\u2565\u2559\u2558\u2552\u2553\u256b\u256a\u2518\u250c\u2588\u2584\u258c\u2590\u2580\u03b1\u03b2\u0393\u03c0\u03a3\u03c3\u03bc\u03c4\u03a6\u0398\u03a9\u03b4\u221e\u2205\u2208\u2229\u2261\u00b1\u2265\u2264\u2320\u2321\u00f7\u2248\u00b0\u2219\u00b7\u221a\u207f\u00b2\u25a0\u0000";
-    private static final CharMatcher DISALLOWED_CHAR_MATCHER = CharMatcher.anyOf(ALLOWED_CHARS).negate();
 
     private static final ResourceLocation iconSheet = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/icons.png");
     @Nullable
@@ -94,8 +87,16 @@ public class ClientHooks
             boolean fmlNetMatches = fmlver == FMLNetworkConstants.FMLNETVERSION;
             boolean channelsMatch = NetworkRegistry.checkListPingCompatibilityForClient(remoteChannels);
             AtomicBoolean result = new AtomicBoolean(true);
-            ModList.get().forEachModContainer((modid, mc)-> mc.getCustomExtension(ExtensionPoint.DISPLAYTEST).ifPresent(ext->
-                    result.compareAndSet(true, ext.getRight().test(mods.get(modid), true))));
+            final List<String> extraClientMods = new ArrayList<>();
+            ModList.get().forEachModContainer((modid, mc) ->
+                    mc.getCustomExtension(ExtensionPoint.DISPLAYTEST).ifPresent(ext-> {
+                        boolean foundModOnServer = ext.getRight().test(mods.get(modid), true);
+                        result.compareAndSet(true, foundModOnServer);
+                        if (!foundModOnServer) {
+                            extraClientMods.add(modid);
+                        }
+                    })
+            );
             boolean modsMatch = result.get();
 
             final Map<String, String> extraServerMods = mods.entrySet().stream().
@@ -109,9 +110,13 @@ public class ClientHooks
 
             if (!extraServerMods.isEmpty()) {
                 extraReason = "fml.menu.multiplayer.extraservermods";
+                LOGGER.info(CLIENTHOOKS, ForgeI18n.parseMessage(extraReason) + ": {}", extraServerMods.entrySet().stream()
+                        .map(e -> e.getKey() + "@" + e.getValue())
+                        .collect(Collectors.joining(", ")));
             }
             if (!modsMatch) {
                 extraReason = "fml.menu.multiplayer.modsincompatible";
+                LOGGER.info(CLIENTHOOKS, "Client has mods that are missing on server: {}", extraClientMods);
             }
             if (!channelsMatch) {
                 extraReason = "fml.menu.multiplayer.networkincompatible";
@@ -165,7 +170,7 @@ public class ClientHooks
         }
 
         Minecraft.getInstance().getTextureManager().bindTexture(iconSheet);
-        AbstractGui.func_238466_a_(mStack, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
+        AbstractGui.blit(mStack, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
 
         if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26)
             //TODO using StringTextComponent here is a hack, we should be using TranslationTextComponents.
@@ -178,22 +183,10 @@ public class ClientHooks
         return description.endsWith(":NOFML§r") ? description.substring(0, description.length() - 8)+"§r" : description;
     }
 
+    @SuppressWarnings("resource")
     static File getSavesDir()
     {
         return new File(Minecraft.getInstance().gameDir, "saves");
-    }
-
-    public static void tryLoadExistingWorld(WorldSelectionScreen selectWorldGUI, WorldSummary comparator)
-    {
-        try
-        {
-            //TODO
-            //Minecraft.getInstance().launchIntegratedServer(comparator.getFileName(), comparator.getDisplayName(), null);
-        }
-        catch (StartupQuery.AbortedException e)
-        {
-            // ignore
-        }
     }
 
     private static NetworkManager getClientToServerNetworkManager()
@@ -211,12 +204,6 @@ public class ClientHooks
         }
     }
 
-
-    public static String stripSpecialChars(String message)
-    {
-        // We can't handle many unicode points in the splash renderer
-        return DISALLOWED_CHAR_MATCHER.removeFrom(net.minecraft.util.StringUtils.stripControlCodes(message));
-    }
 
     private static SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
     private static Set<String> badTextureDomains = Sets.newHashSet();

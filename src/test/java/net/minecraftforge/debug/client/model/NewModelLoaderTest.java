@@ -26,13 +26,11 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.RenderMaterial;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
@@ -45,16 +43,23 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.IBlockReader;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.IModelBuilder;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.loaders.ItemLayersModelBuilder;
+import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
+import net.minecraftforge.client.model.generators.loaders.SeparatePerspectiveModelBuilder;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -134,10 +139,11 @@ public class NewModelLoaderTest
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
 
-        modEventBus.addListener(this::clientSetup);
+        modEventBus.addListener(this::modelRegistry);
+        modEventBus.addListener(this::datagen);
     }
 
-    public void clientSetup(FMLClientSetupEvent event)
+    public void modelRegistry(ModelRegistryEvent event)
     {
         ModelLoaderRegistry.registerLoader(new ResourceLocation(MODID, "custom_loader"), new TestLoader());
     }
@@ -206,6 +212,66 @@ public class NewModelLoaderTest
         public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
         {
             return Collections.singleton(owner.resolveTexture("particle"));
+        }
+    }
+
+    private void datagen(GatherDataEvent event)
+    {
+        DataGenerator gen = event.getGenerator();
+
+        if (event.includeClient())
+        {
+            // Let blockstate provider see generated item models by passing its existing file helper
+            ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+            gen.addProvider(itemModels);
+            gen.addProvider(new BlockStates(gen, itemModels.existingFileHelper));
+        }
+    }
+
+    public static class ItemModels extends ItemModelProvider
+    {
+        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        {
+            super(generator, MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void registerModels()
+        {
+            withExistingParent(NewModelLoaderTest.item_layers.getId().getPath(), "forge:item/default")
+                    .texture("layer0", "minecraft:item/coal")
+                    .texture("layer1", "minecraft:item/stick")
+                    .customLoader(ItemLayersModelBuilder::begin)
+                        .fullbright(1)
+                    .end();
+            withExistingParent(NewModelLoaderTest.separate_perspective.getId().getPath(), "forge:item/default")
+                    .customLoader(SeparatePerspectiveModelBuilder::begin)
+                        .base(nested().parent(getExistingFile(mcLoc("minecraft:item/coal"))))
+                        .perspective(ItemCameraTransforms.TransformType.GUI, nested().parent(getExistingFile(mcLoc("minecraft:item/snowball"))))
+                        .perspective(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, nested().parent(getExistingFile(mcLoc("minecraft:item/bone"))))
+                    .end();
+        }
+    }
+
+    public static class BlockStates extends BlockStateProvider
+    {
+        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        {
+            super(gen, MODID, exFileHelper);
+        }
+
+        @Override
+        protected void registerStatesAndModels()
+        {
+            simpleBlock(NewModelLoaderTest.obj_block.get(), models()
+                    .getBuilder(NewModelLoaderTest.obj_block.getId().getPath())
+                    .customLoader(OBJLoaderBuilder::begin)
+                            .modelLocation(new ResourceLocation("new_model_loader_test:models/item/sugar_glider.obj"))
+                            .flipV(true)
+                    .end()
+                    .texture("qr", "minecraft:block/oak_planks")
+                    .texture("particle", "#qr")
+            );
         }
     }
 }

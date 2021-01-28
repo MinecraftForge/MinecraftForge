@@ -21,7 +21,6 @@ package net.minecraftforge.client.model.generators;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -37,29 +36,17 @@ import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
 
 public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataProvider {
 
-    private class ExistingFileHelperIncludingGenerated extends ExistingFileHelper {
-
-        private final ExistingFileHelper delegate;
-
-        public ExistingFileHelperIncludingGenerated(ExistingFileHelper delegate) {
-            super(Collections.emptyList(), true);
-            this.delegate = delegate;
-        }
-
-        @Override
-        public boolean exists(ResourceLocation loc, ResourcePackType type, String pathSuffix, String pathPrefix) {
-            if (generatedModels.containsKey(loc)) {
-                return true;
-            }
-            return delegate.exists(loc, type, pathSuffix, pathPrefix);
-        }
-    }
-
     public static final String BLOCK_FOLDER = "block";
     public static final String ITEM_FOLDER = "item";
+
+    protected static final ResourceType TEXTURE = new ResourceType(ResourcePackType.CLIENT_RESOURCES, ".png", "textures");
+    protected static final ResourceType MODEL = new ResourceType(ResourcePackType.CLIENT_RESOURCES, ".json", "models");
+    protected static final ResourceType MODEL_WITH_EXTENSION = new ResourceType(ResourcePackType.CLIENT_RESOURCES, "", "models");
 
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
     protected final DataGenerator generator;
@@ -83,7 +70,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
         Preconditions.checkNotNull(factory);
         this.factory = factory;
         Preconditions.checkNotNull(existingFileHelper);
-        this.existingFileHelper = new ExistingFileHelperIncludingGenerated(existingFileHelper);
+        this.existingFileHelper = existingFileHelper;
     }
 
     public ModelProvider(DataGenerator generator, String modid, String folder, BiFunction<ResourceLocation, ExistingFileHelper, T> builderFromModId, ExistingFileHelper existingFileHelper) {
@@ -93,6 +80,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     public T getBuilder(String path) {
         Preconditions.checkNotNull(path, "Path must not be null");
         ResourceLocation outputLoc = extendWithFolder(path.contains(":") ? new ResourceLocation(path) : new ResourceLocation(modid, path));
+        this.existingFileHelper.trackGenerated(outputLoc, MODEL);
         return generatedModels.computeIfAbsent(outputLoc, factory);
     }
 
@@ -169,6 +157,12 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
 
     public T cubeColumn(String name, ResourceLocation side, ResourceLocation end) {
         return withExistingParent(name, BLOCK_FOLDER + "/cube_column")
+                .texture("side", side)
+                .texture("end", end);
+    }
+
+    public T cubeColumnHorizontal(String name, ResourceLocation side, ResourceLocation end) {
+        return withExistingParent(name, BLOCK_FOLDER + "/cube_column_horizontal")
                 .texture("side", side)
                 .texture("end", end);
     }
@@ -257,6 +251,10 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     public T wallSide(String name, ResourceLocation wall) {
         return singleTexture(name, BLOCK_FOLDER + "/template_wall_side", "wall", wall);
     }
+    
+    public T wallSideTall(String name, ResourceLocation wall) {
+        return singleTexture(name, BLOCK_FOLDER + "/template_wall_side_tall", "wall", wall);
+    }
 
     public T wallInventory(String name, ResourceLocation wall) {
         return singleTexture(name, BLOCK_FOLDER + "/wall_inventory", "wall", wall);
@@ -339,11 +337,19 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     }
 
     public T torchWall(String name, ResourceLocation torch) {
-        return singleTexture(name, BLOCK_FOLDER + "/torch_wall", "torch", torch);
+        return singleTexture(name, BLOCK_FOLDER + "/template_torch_wall", "torch", torch);
     }
 
     public T carpet(String name, ResourceLocation wool) {
         return singleTexture(name, BLOCK_FOLDER + "/carpet", "wool", wool);
+    }
+
+    /**
+     * Gets a model builder that's not directly saved to disk. Meant for use in custom model loaders.
+     */
+    public T nested()
+    {
+        return factory.apply(new ResourceLocation("dummy:dummy"));
     }
 
     public ModelFile.ExistingModelFile getExistingFile(ResourceLocation path) {

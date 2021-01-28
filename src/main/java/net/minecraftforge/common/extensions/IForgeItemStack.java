@@ -94,10 +94,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * Queries the harvest level of this item stack for the specified tool class,
      * Returns -1 if this tool is not of the specified type
      *
-     * @param stack      This item stack instance
-     * @param toolClass  Tool Class
-     * @param player     The player trying to harvest the given blockstate
-     * @param state The block to harvest
+     * @param tool   the tool type of the item
+     * @param player The player trying to harvest the given blockstate
+     * @param state  The block to harvest
      * @return Harvest level, or -1 if not the specified tool type.
      */
     default int getHarvestLevel(ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState state)
@@ -475,5 +474,33 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     default boolean isEnderMask(PlayerEntity player, EndermanEntity endermanEntity)
     {
         return getStack().getItem().isEnderMask(getStack(), player, endermanEntity);
+    }
+
+    /**
+     * Used to determine if the player can use Elytra flight.
+     * This is called Client and Server side.
+     *
+     * @param entity The entity trying to fly.
+     * @return True if the entity can use Elytra flight.
+     */
+    default boolean canElytraFly(LivingEntity entity)
+    {
+        return getStack().getItem().canElytraFly(getStack(), entity);
+    }
+
+    /**
+     * Used to determine if the player can continue Elytra flight,
+     * this is called each tick, and can be used to apply ItemStack damage,
+     * consume Energy, or what have you.
+     * For example the Vanilla implementation of this, applies damage to the
+     * ItemStack every 20 ticks.
+     *
+     * @param entity      The entity currently in Elytra flight.
+     * @param flightTicks The number of ticks the entity has been Elytra flying for.
+     * @return True if the entity should continue Elytra flight or False to stop.
+     */
+    default boolean elytraFlightTick(LivingEntity entity, int flightTicks)
+    {
+        return getStack().getItem().elytraFlightTick(getStack(), entity, flightTicks);
     }
 }

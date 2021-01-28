@@ -21,6 +21,7 @@ package net.minecraftforge.common;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,12 +30,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.world.biome.Biomes;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.*;
 import static net.minecraftforge.common.BiomeDictionary.Type.*;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 public class BiomeDictionary
@@ -44,19 +45,18 @@ public class BiomeDictionary
 
     public static final class Type
     {
-
-        private static final Map<String, Type> byName = new HashMap<String, Type>();
+        private static final Map<String, Type> byName = new TreeMap<>();
         private static Collection<Type> allTypes = Collections.unmodifiableCollection(byName.values());
 
         /*Temperature-based tags. Specifying neither implies a biome is temperate*/
         public static final Type HOT = new Type("HOT");
         public static final Type COLD = new Type("COLD");
 
-        /*Tags specifying the amount of vegetation a biome has. Specifying neither implies a biome to have moderate amounts*/
+        //Tags specifying the amount of vegetation a biome has. Specifying neither implies a biome to have moderate amounts*/
         public static final Type SPARSE = new Type("SPARSE");
         public static final Type DENSE = new Type("DENSE");
 
-        /*Tags specifying how moist a biome is. Specifying neither implies the biome as having moderate humidity*/
+        //Tags specifying how moist a biome is. Specifying neither implies the biome as having moderate humidity*/
         public static final Type WET = new Type("WET");
         public static final Type DRY = new Type("DRY");
 
@@ -103,8 +103,8 @@ public class BiomeDictionary
 
         private final String name;
         private final List<Type> subTypes;
-        private final Set<Biome> biomes = new HashSet<Biome>();
-        private final Set<Biome> biomesUn = Collections.unmodifiableSet(biomes);
+        private final Set<RegistryKey<Biome>> biomes = new HashSet<>();
+        private final Set<RegistryKey<Biome>> biomesUn = Collections.unmodifiableSet(biomes);
 
         private Type(String name, Type... subTypes)
         {
@@ -174,16 +174,15 @@ public class BiomeDictionary
         }
     }
 
-    private static final Map<ResourceLocation, BiomeInfo> biomeInfoMap = new HashMap<ResourceLocation, BiomeInfo>();
+    private static final Map<RegistryKey<Biome>, BiomeInfo> biomeInfoMap = new HashMap<>();
 
     private static class BiomeInfo
     {
-
         private final Set<Type> types = new HashSet<Type>();
         private final Set<Type> typesUn = Collections.unmodifiableSet(this.types);
-
     }
 
+    public static void init() {}
     static
     {
         registerVanillaBiomes();
@@ -193,10 +192,8 @@ public class BiomeDictionary
      * Adds the given types to the biome.
      *
      */
-    public static void addTypes(Biome biome, Type... types)
+    public static void addTypes(RegistryKey<Biome> biome, Type... types)
     {
-        Preconditions.checkArgument(ForgeRegistries.BIOMES.containsValue(biome), "Cannot add types to unregistered biome %s", biome);
-
         Collection<Type> supertypes = listSupertypes(types);
         Collections.addAll(supertypes, types);
 
@@ -215,7 +212,7 @@ public class BiomeDictionary
      *
      */
     @Nonnull
-    public static Set<Biome> getBiomes(Type type)
+    public static Set<RegistryKey<Biome>> getBiomes(Type type)
     {
         return type.biomesUn;
     }
@@ -225,9 +222,8 @@ public class BiomeDictionary
      *
      */
     @Nonnull
-    public static Set<Type> getTypes(Biome biome)
+    public static Set<Type> getTypes(RegistryKey<Biome> biome)
     {
-        ensureHasTypes(biome);
         return getBiomeInfo(biome).typesUn;
     }
 
@@ -236,24 +232,18 @@ public class BiomeDictionary
      *
      * @return returns true if a common type is found, false otherwise
      */
-    public static boolean areSimilar(Biome biomeA, Biome biomeB)
+    public static boolean areSimilar(RegistryKey<Biome> biomeA, RegistryKey<Biome> biomeB)
     {
-        for (Type type : getTypes(biomeA))
-        {
-            if (getTypes(biomeB).contains(type))
-            {
-                return true;
-            }
-        }
-
-        return false;
+        Set<Type> typesA = getTypes(biomeA);
+        Set<Type> typesB = getTypes(biomeB);
+        return typesA.stream().anyMatch(typesB::contains);
     }
 
     /**
      * Checks if the given type has been added to the given biome.
      *
      */
-    public static boolean hasType(Biome biome, Type type)
+    public static boolean hasType(RegistryKey<Biome> biome, Type type)
     {
         return getTypes(biome).contains(type);
     }
@@ -262,89 +252,15 @@ public class BiomeDictionary
      * Checks if any type has been added to the given biome.
      *
      */
-    public static boolean hasAnyType(Biome biome)
+    public static boolean hasAnyType(RegistryKey<Biome> biome)
     {
         return !getBiomeInfo(biome).types.isEmpty();
     }
 
-    /**
-     * Automatically adds appropriate types to a given biome based on certain heuristics.
-     * If a biome's types are requested and no types have been added to the biome so far, the biome's types
-     * will be determined and added using this method.
-     *
-     */
-    public static void makeBestGuess(Biome biome)
-    {
-        Type type = Type.fromVanilla(biome.getCategory());
-        if (type != null)
-        {
-            BiomeDictionary.addTypes(biome, type);
-        }
-
-        if (biome.getDownfall() > 0.85f)
-        {
-            BiomeDictionary.addTypes(biome, WET);
-        }
-
-        if (biome.getDownfall() < 0.15f)
-        {
-            BiomeDictionary.addTypes(biome, DRY);
-        }
-
-        if (biome.getDefaultTemperature() > 0.85f)
-        {
-            BiomeDictionary.addTypes(biome, HOT);
-        }
-
-        if (biome.getDefaultTemperature() < 0.15f)
-        {
-            BiomeDictionary.addTypes(biome, COLD);
-        }
-
-        if (biome.isHighHumidity() && biome.getDepth() < 0.0F && (biome.getScale() <= 0.3F && biome.getScale() >= 0.0F))
-        {
-            BiomeDictionary.addTypes(biome, SWAMP);
-        }
-
-        if (biome.getDepth() <= -0.5F)
-        {
-            if (biome.getScale() == 0.0F)
-            {
-                BiomeDictionary.addTypes(biome, RIVER);
-            }
-            else
-            {
-                BiomeDictionary.addTypes(biome, OCEAN);
-            }
-        }
-
-        if (biome.getScale() >= 0.4F && biome.getScale() < 1.5F)
-        {
-            BiomeDictionary.addTypes(biome, HILLS);
-        }
-
-        if (biome.getScale() >= 1.5F)
-        {
-            BiomeDictionary.addTypes(biome, MOUNTAIN);
-        }
-    }
-
     //Internal implementation
-    private static BiomeInfo getBiomeInfo(Biome biome)
+    private static BiomeInfo getBiomeInfo(RegistryKey<Biome> biome)
     {
-        return biomeInfoMap.computeIfAbsent(biome.getRegistryName(), k -> new BiomeInfo());
-    }
-
-    /**
-     * Ensure that at least one type has been added to the given biome.
-     */
-    static void ensureHasTypes(Biome biome)
-    {
-        if (!hasAnyType(biome))
-        {
-            makeBestGuess(biome);
-            LOGGER.warn("No types have been added to Biome {}, types have been assigned on a best-effort guess: {}", biome.getRegistryName(), !getBiomeInfo(biome).types.isEmpty() ? getBiomeInfo(biome).types : "could not guess types");
-        }
+        return biomeInfoMap.computeIfAbsent(biome, k -> new BiomeInfo());
     }
 
     private static Collection<Type> listSupertypes(Type... types)
@@ -369,85 +285,115 @@ public class BiomeDictionary
 
     private static void registerVanillaBiomes()
     {
-		addTypes(Biomes.OCEAN, OCEAN, OVERWORLD);
-		addTypes(Biomes.PLAINS, PLAINS, OVERWORLD);
-		addTypes(Biomes.DESERT, HOT, DRY, SANDY, OVERWORLD);
-		addTypes(Biomes.MOUNTAINS, MOUNTAIN, HILLS, OVERWORLD);
-		addTypes(Biomes.FOREST, FOREST, OVERWORLD);
-		addTypes(Biomes.TAIGA, COLD, CONIFEROUS, FOREST, OVERWORLD);
-		addTypes(Biomes.SWAMP, WET, SWAMP, OVERWORLD);
-		addTypes(Biomes.RIVER, RIVER, OVERWORLD);
-		addTypes(Biomes.field_235254_j_, HOT, DRY, NETHER);
-		addTypes(Biomes.THE_END, COLD, DRY, END);
-		addTypes(Biomes.FROZEN_OCEAN, COLD, OCEAN, SNOWY, OVERWORLD);
-		addTypes(Biomes.FROZEN_RIVER, COLD, RIVER, SNOWY, OVERWORLD);
-		addTypes(Biomes.SNOWY_TUNDRA, COLD, SNOWY, WASTELAND, OVERWORLD);
-		addTypes(Biomes.SNOWY_MOUNTAINS, COLD, SNOWY, MOUNTAIN, OVERWORLD);
-		addTypes(Biomes.MUSHROOM_FIELDS, MUSHROOM, RARE, OVERWORLD);
-		addTypes(Biomes.MUSHROOM_FIELD_SHORE, MUSHROOM, BEACH, RARE, OVERWORLD);
-		addTypes(Biomes.BEACH, BEACH, OVERWORLD);
-		addTypes(Biomes.DESERT_HILLS, HOT, DRY, SANDY, HILLS, OVERWORLD);
-		addTypes(Biomes.WOODED_HILLS, FOREST, HILLS, OVERWORLD);
-		addTypes(Biomes.TAIGA_HILLS, COLD, CONIFEROUS, FOREST, HILLS, OVERWORLD);
-		addTypes(Biomes.MOUNTAIN_EDGE, MOUNTAIN, OVERWORLD);
-		addTypes(Biomes.JUNGLE, HOT, WET, DENSE, JUNGLE, OVERWORLD);
-		addTypes(Biomes.JUNGLE_HILLS, HOT, WET, DENSE, JUNGLE, HILLS, OVERWORLD);
-		addTypes(Biomes.JUNGLE_EDGE, HOT, WET, JUNGLE, FOREST, RARE, OVERWORLD);
-		addTypes(Biomes.DEEP_OCEAN, OCEAN, OVERWORLD);
-		addTypes(Biomes.STONE_SHORE, BEACH, OVERWORLD);
-		addTypes(Biomes.SNOWY_BEACH, COLD, BEACH, SNOWY, OVERWORLD);
-		addTypes(Biomes.BIRCH_FOREST, FOREST, OVERWORLD);
-		addTypes(Biomes.BIRCH_FOREST_HILLS, FOREST, HILLS, OVERWORLD);
-		addTypes(Biomes.DARK_FOREST, SPOOKY, DENSE, FOREST, OVERWORLD);
-		addTypes(Biomes.SNOWY_TAIGA, COLD, CONIFEROUS, FOREST, SNOWY, OVERWORLD);
-		addTypes(Biomes.SNOWY_TAIGA_HILLS, COLD, CONIFEROUS, FOREST, SNOWY, HILLS, OVERWORLD);
-		addTypes(Biomes.GIANT_TREE_TAIGA, COLD, CONIFEROUS, FOREST, OVERWORLD);
-		addTypes(Biomes.GIANT_TREE_TAIGA_HILLS, COLD, CONIFEROUS, FOREST, HILLS, OVERWORLD);
-		addTypes(Biomes.WOODED_MOUNTAINS, MOUNTAIN, FOREST, SPARSE, OVERWORLD);
-		addTypes(Biomes.SAVANNA, HOT, SAVANNA, PLAINS, SPARSE, OVERWORLD);
-		addTypes(Biomes.SAVANNA_PLATEAU, HOT, SAVANNA, PLAINS, SPARSE, RARE, OVERWORLD, PLATEAU);
-		addTypes(Biomes.BADLANDS, MESA, SANDY, DRY, OVERWORLD);
-		addTypes(Biomes.WOODED_BADLANDS_PLATEAU, MESA, SANDY, DRY, SPARSE, OVERWORLD, PLATEAU);
-		addTypes(Biomes.BADLANDS_PLATEAU, MESA, SANDY, DRY, OVERWORLD, PLATEAU);
-		addTypes(Biomes.SMALL_END_ISLANDS, END);
-		addTypes(Biomes.END_MIDLANDS, END);
-		addTypes(Biomes.END_HIGHLANDS, END);
-		addTypes(Biomes.END_BARRENS, END);
-		addTypes(Biomes.WARM_OCEAN, OCEAN, HOT, OVERWORLD);
-		addTypes(Biomes.LUKEWARM_OCEAN, OCEAN, OVERWORLD);
-		addTypes(Biomes.COLD_OCEAN, OCEAN, COLD, OVERWORLD);
-		addTypes(Biomes.DEEP_WARM_OCEAN, OCEAN, HOT, OVERWORLD);
-		addTypes(Biomes.DEEP_LUKEWARM_OCEAN, OCEAN, OVERWORLD);
-		addTypes(Biomes.DEEP_COLD_OCEAN, OCEAN, COLD, OVERWORLD);
-		addTypes(Biomes.DEEP_FROZEN_OCEAN, OCEAN, COLD, OVERWORLD);
-		addTypes(Biomes.THE_VOID, VOID);
-		addTypes(Biomes.SUNFLOWER_PLAINS, PLAINS, RARE, OVERWORLD);
-		addTypes(Biomes.DESERT_LAKES, HOT, DRY, SANDY, RARE, OVERWORLD);
-		addTypes(Biomes.GRAVELLY_MOUNTAINS, MOUNTAIN, SPARSE, RARE, OVERWORLD);
-		addTypes(Biomes.FLOWER_FOREST, FOREST, HILLS, RARE, OVERWORLD);
-		addTypes(Biomes.TAIGA_MOUNTAINS, COLD, CONIFEROUS, FOREST, MOUNTAIN, RARE, OVERWORLD);
-		addTypes(Biomes.SWAMP_HILLS, WET, SWAMP, HILLS, RARE, OVERWORLD);
-		addTypes(Biomes.ICE_SPIKES, COLD, SNOWY, HILLS, RARE, OVERWORLD);
-		addTypes(Biomes.MODIFIED_JUNGLE, HOT, WET, DENSE, JUNGLE, MOUNTAIN, RARE, OVERWORLD, MODIFIED);
-		addTypes(Biomes.MODIFIED_JUNGLE_EDGE, HOT, SPARSE, JUNGLE, HILLS, RARE, OVERWORLD, MODIFIED);
-		addTypes(Biomes.TALL_BIRCH_FOREST, FOREST, DENSE, HILLS, RARE, OVERWORLD);
-		addTypes(Biomes.TALL_BIRCH_HILLS, FOREST, DENSE, MOUNTAIN, RARE, OVERWORLD);
-		addTypes(Biomes.DARK_FOREST_HILLS, SPOOKY, DENSE, FOREST, MOUNTAIN, RARE, OVERWORLD);
-		addTypes(Biomes.SNOWY_TAIGA_MOUNTAINS, COLD, CONIFEROUS, FOREST, SNOWY, MOUNTAIN, RARE, OVERWORLD);
-		addTypes(Biomes.GIANT_SPRUCE_TAIGA, DENSE, FOREST, RARE, OVERWORLD);
-		addTypes(Biomes.GIANT_SPRUCE_TAIGA_HILLS, DENSE, FOREST, HILLS, RARE, OVERWORLD);
-		addTypes(Biomes.MODIFIED_GRAVELLY_MOUNTAINS, MOUNTAIN, SPARSE, RARE, OVERWORLD, MODIFIED);
-		addTypes(Biomes.SHATTERED_SAVANNA, HOT, DRY, SPARSE, SAVANNA, MOUNTAIN, RARE, OVERWORLD);
-		addTypes(Biomes.SHATTERED_SAVANNA_PLATEAU, HOT, DRY, SPARSE, SAVANNA, HILLS, RARE, OVERWORLD, PLATEAU);
-		addTypes(Biomes.ERODED_BADLANDS, HOT, DRY, SPARSE, MOUNTAIN, RARE, OVERWORLD);
-		addTypes(Biomes.MODIFIED_WOODED_BADLANDS_PLATEAU, HOT, DRY, SPARSE, HILLS, RARE, OVERWORLD, PLATEAU, MODIFIED);
-		addTypes(Biomes.MODIFIED_BADLANDS_PLATEAU, HOT, DRY, SPARSE, MOUNTAIN, RARE, OVERWORLD, PLATEAU, MODIFIED);
+        addTypes(Biomes.OCEAN, OCEAN, OVERWORLD);
+        addTypes(Biomes.PLAINS, PLAINS, OVERWORLD);
+        addTypes(Biomes.DESERT, HOT, DRY, SANDY, OVERWORLD);
+        addTypes(Biomes.MOUNTAINS, MOUNTAIN, HILLS, OVERWORLD);
+        addTypes(Biomes.FOREST, FOREST, OVERWORLD);
+        addTypes(Biomes.TAIGA, COLD, CONIFEROUS, FOREST, OVERWORLD);
+        addTypes(Biomes.SWAMP, WET, SWAMP, OVERWORLD);
+        addTypes(Biomes.RIVER, RIVER, OVERWORLD);
+        addTypes(Biomes.NETHER_WASTES, HOT, DRY, NETHER);
+        addTypes(Biomes.THE_END, COLD, DRY, END);
+        addTypes(Biomes.FROZEN_OCEAN, COLD, OCEAN, SNOWY, OVERWORLD);
+        addTypes(Biomes.FROZEN_RIVER, COLD, RIVER, SNOWY, OVERWORLD);
+        addTypes(Biomes.SNOWY_TUNDRA, COLD, SNOWY, WASTELAND, OVERWORLD);
+        addTypes(Biomes.SNOWY_MOUNTAINS, COLD, SNOWY, MOUNTAIN, OVERWORLD);
+        addTypes(Biomes.MUSHROOM_FIELDS, MUSHROOM, RARE, OVERWORLD);
+        addTypes(Biomes.MUSHROOM_FIELD_SHORE, MUSHROOM, BEACH, RARE, OVERWORLD);
+        addTypes(Biomes.BEACH, BEACH, OVERWORLD);
+        addTypes(Biomes.DESERT_HILLS, HOT, DRY, SANDY, HILLS, OVERWORLD);
+        addTypes(Biomes.WOODED_HILLS, FOREST, HILLS, OVERWORLD);
+        addTypes(Biomes.TAIGA_HILLS, COLD, CONIFEROUS, FOREST, HILLS, OVERWORLD);
+        addTypes(Biomes.MOUNTAIN_EDGE, MOUNTAIN, OVERWORLD);
+        addTypes(Biomes.JUNGLE, HOT, WET, DENSE, JUNGLE, OVERWORLD);
+        addTypes(Biomes.JUNGLE_HILLS, HOT, WET, DENSE, JUNGLE, HILLS, OVERWORLD);
+        addTypes(Biomes.JUNGLE_EDGE, HOT, WET, JUNGLE, FOREST, RARE, OVERWORLD);
+        addTypes(Biomes.DEEP_OCEAN, OCEAN, OVERWORLD);
+        addTypes(Biomes.STONE_SHORE, BEACH, OVERWORLD);
+        addTypes(Biomes.SNOWY_BEACH, COLD, BEACH, SNOWY, OVERWORLD);
+        addTypes(Biomes.BIRCH_FOREST, FOREST, OVERWORLD);
+        addTypes(Biomes.BIRCH_FOREST_HILLS, FOREST, HILLS, OVERWORLD);
+        addTypes(Biomes.DARK_FOREST, SPOOKY, DENSE, FOREST, OVERWORLD);
+        addTypes(Biomes.SNOWY_TAIGA, COLD, CONIFEROUS, FOREST, SNOWY, OVERWORLD);
+        addTypes(Biomes.SNOWY_TAIGA_HILLS, COLD, CONIFEROUS, FOREST, SNOWY, HILLS, OVERWORLD);
+        addTypes(Biomes.GIANT_TREE_TAIGA, COLD, CONIFEROUS, FOREST, OVERWORLD);
+        addTypes(Biomes.GIANT_TREE_TAIGA_HILLS, COLD, CONIFEROUS, FOREST, HILLS, OVERWORLD);
+        addTypes(Biomes.WOODED_MOUNTAINS, MOUNTAIN, FOREST, SPARSE, OVERWORLD);
+        addTypes(Biomes.SAVANNA, HOT, SAVANNA, PLAINS, SPARSE, OVERWORLD);
+        addTypes(Biomes.SAVANNA_PLATEAU, HOT, SAVANNA, PLAINS, SPARSE, RARE, OVERWORLD, PLATEAU);
+        addTypes(Biomes.BADLANDS, MESA, SANDY, DRY, OVERWORLD);
+        addTypes(Biomes.WOODED_BADLANDS_PLATEAU, MESA, SANDY, DRY, SPARSE, OVERWORLD, PLATEAU);
+        addTypes(Biomes.BADLANDS_PLATEAU, MESA, SANDY, DRY, OVERWORLD, PLATEAU);
+        addTypes(Biomes.SMALL_END_ISLANDS, END);
+        addTypes(Biomes.END_MIDLANDS, END);
+        addTypes(Biomes.END_HIGHLANDS, END);
+        addTypes(Biomes.END_BARRENS, END);
+        addTypes(Biomes.WARM_OCEAN, OCEAN, HOT, OVERWORLD);
+        addTypes(Biomes.LUKEWARM_OCEAN, OCEAN, OVERWORLD);
+        addTypes(Biomes.COLD_OCEAN, OCEAN, COLD, OVERWORLD);
+        addTypes(Biomes.DEEP_WARM_OCEAN, OCEAN, HOT, OVERWORLD);
+        addTypes(Biomes.DEEP_LUKEWARM_OCEAN, OCEAN, OVERWORLD);
+        addTypes(Biomes.DEEP_COLD_OCEAN, OCEAN, COLD, OVERWORLD);
+        addTypes(Biomes.DEEP_FROZEN_OCEAN, OCEAN, COLD, OVERWORLD);
+        addTypes(Biomes.THE_VOID, VOID);
+        addTypes(Biomes.SUNFLOWER_PLAINS, PLAINS, RARE, OVERWORLD);
+        addTypes(Biomes.DESERT_LAKES, HOT, DRY, SANDY, RARE, OVERWORLD);
+        addTypes(Biomes.GRAVELLY_MOUNTAINS, MOUNTAIN, SPARSE, RARE, OVERWORLD);
+        addTypes(Biomes.FLOWER_FOREST, FOREST, HILLS, RARE, OVERWORLD);
+        addTypes(Biomes.TAIGA_MOUNTAINS, COLD, CONIFEROUS, FOREST, MOUNTAIN, RARE, OVERWORLD);
+        addTypes(Biomes.SWAMP_HILLS, WET, SWAMP, HILLS, RARE, OVERWORLD);
+        addTypes(Biomes.ICE_SPIKES, COLD, SNOWY, HILLS, RARE, OVERWORLD);
+        addTypes(Biomes.MODIFIED_JUNGLE, HOT, WET, DENSE, JUNGLE, MOUNTAIN, RARE, OVERWORLD, MODIFIED);
+        addTypes(Biomes.MODIFIED_JUNGLE_EDGE, HOT, SPARSE, JUNGLE, HILLS, RARE, OVERWORLD, MODIFIED);
+        addTypes(Biomes.TALL_BIRCH_FOREST, FOREST, DENSE, HILLS, RARE, OVERWORLD);
+        addTypes(Biomes.TALL_BIRCH_HILLS, FOREST, DENSE, MOUNTAIN, RARE, OVERWORLD);
+        addTypes(Biomes.DARK_FOREST_HILLS, SPOOKY, DENSE, FOREST, MOUNTAIN, RARE, OVERWORLD);
+        addTypes(Biomes.SNOWY_TAIGA_MOUNTAINS, COLD, CONIFEROUS, FOREST, SNOWY, MOUNTAIN, RARE, OVERWORLD);
+        addTypes(Biomes.GIANT_SPRUCE_TAIGA, DENSE, FOREST, RARE, OVERWORLD);
+        addTypes(Biomes.GIANT_SPRUCE_TAIGA_HILLS, DENSE, FOREST, HILLS, RARE, OVERWORLD);
+        addTypes(Biomes.MODIFIED_GRAVELLY_MOUNTAINS, MOUNTAIN, SPARSE, RARE, OVERWORLD, MODIFIED);
+        addTypes(Biomes.SHATTERED_SAVANNA, HOT, DRY, SPARSE, SAVANNA, MOUNTAIN, RARE, OVERWORLD);
+        addTypes(Biomes.SHATTERED_SAVANNA_PLATEAU, HOT, DRY, SPARSE, SAVANNA, HILLS, RARE, OVERWORLD, PLATEAU);
+        addTypes(Biomes.ERODED_BADLANDS, HOT, DRY, SPARSE, MOUNTAIN, RARE, OVERWORLD);
+        addTypes(Biomes.MODIFIED_WOODED_BADLANDS_PLATEAU, HOT, DRY, SPARSE, HILLS, RARE, OVERWORLD, PLATEAU, MODIFIED);
+        addTypes(Biomes.MODIFIED_BADLANDS_PLATEAU, HOT, DRY, SPARSE, MOUNTAIN, RARE, OVERWORLD, PLATEAU, MODIFIED);
+        addTypes(Biomes.BAMBOO_JUNGLE, HOT, WET, RARE, JUNGLE, OVERWORLD);
+        addTypes(Biomes.BAMBOO_JUNGLE_HILLS, HOT, WET, RARE, JUNGLE, HILLS, OVERWORLD);
+        addTypes(Biomes.SOUL_SAND_VALLEY, HOT, DRY, NETHER);
+        addTypes(Biomes.CRIMSON_FOREST, HOT, DRY, NETHER, FOREST);
+        addTypes(Biomes.WARPED_FOREST, HOT, DRY, NETHER, FOREST);
+        addTypes(Biomes.BASALT_DELTAS, HOT, DRY, NETHER);
 
         if (DEBUG)
         {
             StringBuilder buf = new StringBuilder();
             buf.append("BiomeDictionary:\n");
-            Type.byName.forEach((name, type) -> buf.append("    ").append(type.name).append(": ").append(type.biomes.stream().map(b -> b.getRegistryName().toString()).collect(Collectors.joining(", "))).append('\n'));
+            Type.byName.forEach((name, type) ->
+                buf.append("    ").append(type.name).append(": ")
+                .append(type.biomes.stream()
+                    .map(RegistryKey::getLocation)
+                    .sorted((a,b) -> a.compareNamespaced(b))
+                    .map(Object::toString)
+                    .collect(Collectors.joining(", "))
+                )
+                .append('\n')
+            );
+
+            boolean missing = false;
+            List<RegistryKey<Biome>> all = StreamSupport.stream(ForgeRegistries.BIOMES.spliterator(), false)
+                .map(b -> RegistryKey.getOrCreateKey(Registry.BIOME_KEY, b.getRegistryName()))
+                .sorted().collect(Collectors.toList());
+
+            for (RegistryKey<Biome> key : all) {
+                if (!biomeInfoMap.containsKey(key)) {
+                    if (!missing) {
+                        buf.append("Missing:\n");
+                        missing = true;
+                    }
+                    buf.append("    ").append(key.getLocation()).append('\n');
+                }
+            }
             LOGGER.debug(buf.toString());
         }
     }

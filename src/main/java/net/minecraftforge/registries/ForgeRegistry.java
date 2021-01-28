@@ -22,6 +22,7 @@ package net.minecraftforge.registries;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,21 +52,15 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import net.minecraftforge.registries.IForgeRegistry.AddCallback;
-import net.minecraftforge.registries.IForgeRegistry.BakeCallback;
-import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
-import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
-import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
-import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
-import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
 
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
@@ -75,6 +70,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final RegistryManager stage;
     private final BiMap<Integer, V> ids = HashBiMap.create();
     private final BiMap<ResourceLocation, V> names = HashBiMap.create();
+    private final BiMap<RegistryKey<V>, V> keys = HashBiMap.create();
     private final Class<V> superType;
     private final Map<ResourceLocation, ResourceLocation> aliases = Maps.newHashMap();
     final Map<ResourceLocation, ?> slaves = Maps.newHashMap();
@@ -96,16 +92,20 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final int max;
     private final boolean allowOverrides;
     private final boolean isModifiable;
+    @Nullable
+    private final String tagFolder;
 
     private V defaultValue = null;
     boolean isFrozen = false;
 
     private final ResourceLocation name;
+    private final RegistryKey<Registry<V>> key;
     private final RegistryBuilder<V> builder;
 
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
         this.name = name;
+        this.key = RegistryKey.getOrCreateRootKey(name);
         this.builder = builder;
         this.stage = stage;
         this.superType = builder.getType();
@@ -123,6 +123,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
         this.allowOverrides = builder.getAllowOverrides();
         this.isModifiable = builder.getAllowModifications();
+        this.tagFolder = builder.getTagFolder();
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
@@ -167,10 +168,21 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return this.name;
     }
 
+    public RegistryKey<Registry<V>> getRegistryKey()
+    {
+        return this.key;
+    }
+
     @Override
     public Class<V> getRegistrySuperType()
     {
         return superType;
+    }
+
+    @Nullable
+    public String getTagFolder()
+    {
+        return tagFolder;
     }
 
     @Override
@@ -238,9 +250,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     @Override
-    public Set<Entry<ResourceLocation, V>> getEntries()
+    public Set<Entry<RegistryKey<V>, V>> getEntries()
     {
-        return Collections.unmodifiableSet(this.names.entrySet());
+        return Collections.unmodifiableSet(this.keys.entrySet());
     }
 
     @SuppressWarnings("unchecked")
@@ -283,6 +295,13 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     {
         V ret = this.ids.get(id);
         return ret == null ? this.defaultValue : ret;
+    }
+
+    @Nullable
+    public RegistryKey<V> getKey(int id)
+    {
+        V value = getValue(id);
+        return this.keys.inverse().get(value);
     }
 
     void validateKey()
@@ -355,6 +374,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
 
         this.names.put(key, value);
+        this.keys.put(RegistryKey.getOrCreateKey(this.key, key), value);
         this.ids.put(idToUse, value);
         this.availabilityMap.set(idToUse);
         this.owners.put(new OverrideOwner(owner == null ? key.getPath() : owner, key), value);
@@ -418,6 +438,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         LOGGER.trace(REGISTRIES,"Registry {} dummy: {}", this.superType.getSimpleName(), key);
     }
 
+    @SuppressWarnings("unchecked")
     private RegistryDelegate<V> getDelegate(V thing)
     {
         if (isDelegated)
@@ -526,6 +547,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         this.ids.clear();
         this.names.clear();
+        this.keys.clear();
         this.availabilityMap.clear(0, this.availabilityMap.length());
         this.defaultValue = null;
         this.overrides.clear();
@@ -596,6 +618,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
         this.ids.clear();
         this.names.clear();
+        this.keys.clear();
         this.availabilityMap.clear(0, this.availabilityMap.length());
     }
 
@@ -611,6 +634,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         V value = this.names.remove(key);
         if (value != null)
         {
+            RegistryKey<V> rkey = this.keys.inverse().remove(value);
+            if (rkey == null)
+                throw new IllegalStateException("Removed a entry that did not have an associated RegistryKey: " + key + " " + value.toString() + " This should never happen unless hackery!");
+
             Integer id = this.ids.inverse().remove(value);
             if (id == null)
                 throw new IllegalStateException("Removed a entry that did not have an associated id: " + key + " " + value.toString() + " This should never happen unless hackery!");
@@ -764,6 +791,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             if (value == null)
                 throw new IllegalStateException("ContainsKey for " + key + " was true, but removing by name returned no value.. This should never happen unless hackery!");
 
+            RegistryKey<V> rkey = this.keys.inverse().remove(value); // Remove from the RegistryKey -> Value map
+            if (rkey == null)
+                throw new IllegalStateException("Removed a entry that did not have an associated RegistryKey: " + key + " " + value.toString() + " This should never happen unless hackery!");
 
             Integer oldid = this.ids.inverse().remove(value);
             if (oldid == null)
@@ -811,11 +841,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     public static class Snapshot
     {
-        public final Map<ResourceLocation, Integer> ids = Maps.newTreeMap();
-        public final Map<ResourceLocation, ResourceLocation> aliases = Maps.newTreeMap();
+        private static final Comparator<ResourceLocation> sorter = (a,b) -> a.compareNamespaced(b);
+        public final Map<ResourceLocation, Integer> ids = Maps.newTreeMap(sorter);
+        public final Map<ResourceLocation, ResourceLocation> aliases = Maps.newTreeMap(sorter);
         public final Set<Integer> blocked = Sets.newTreeSet();
-        public final Set<ResourceLocation> dummied = Sets.newTreeSet();
-        public final Map<ResourceLocation, String> overrides = Maps.newTreeMap();
+        public final Set<ResourceLocation> dummied = Sets.newTreeSet(sorter);
+        public final Map<ResourceLocation, String> overrides = Maps.newTreeMap(sorter);
         private PacketBuffer binary = null;
 
         public CompoundNBT write()

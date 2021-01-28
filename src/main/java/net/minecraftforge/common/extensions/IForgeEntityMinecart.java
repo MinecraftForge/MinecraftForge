@@ -55,8 +55,8 @@ public interface IForgeEntityMinecart
         int x = MathHelper.floor(getMinecart().getPosX());
         int y = MathHelper.floor(getMinecart().getPosY());
         int z = MathHelper.floor(getMinecart().getPosZ());
-        BlockPos pos = new BlockPos(x, y - 1, z);
-        if (getMinecart().world.getBlockState(pos).func_235714_a_(BlockTags.RAILS)) pos = pos.down();
+        BlockPos pos = new BlockPos(x, y, z);
+        if (getMinecart().world.getBlockState(pos.down()).isIn(BlockTags.RAILS)) pos = pos.down();
         return pos;
     }
 

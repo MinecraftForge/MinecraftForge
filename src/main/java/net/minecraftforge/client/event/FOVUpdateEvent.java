@@ -19,13 +19,11 @@
 
 package net.minecraftforge.client.event;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.eventbus.api.Event;
 
-/**
- * Author: MachineMuse (Claire Semple)
- * Created: 6:07 PM, 9/5/13
- */
 public class FOVUpdateEvent extends Event
 {
     private final PlayerEntity entity;
@@ -36,7 +34,7 @@ public class FOVUpdateEvent extends Event
     {
         this.entity = entity;
         this.fov = fov;
-        this.setNewfov(fov);
+        this.setNewfov(MathHelper.lerp(Minecraft.getInstance().gameSettings.fovScaleEffect, 1.0F, fov));
     }
 
     public PlayerEntity getEntity()

@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/gui/recipebook/RecipeBookGui.java
 +++ b/net/minecraft/client/gui/recipebook/RecipeBookGui.java
-@@ -92,7 +92,7 @@
+@@ -95,7 +95,7 @@
        this.func_205702_a();
        this.field_193018_j.clear();
  
--      for(RecipeBookCategories recipebookcategories : ClientRecipeBook.func_216769_b(this.field_201522_g)) {
+-      for(RecipeBookCategories recipebookcategories : RecipeBookCategories.func_243236_a(this.field_201522_g.func_241850_m())) {
 +      for(RecipeBookCategories recipebookcategories : this.field_201522_g.getRecipeBookCategories()) {
           this.field_193018_j.add(new RecipeTabToggleWidget(recipebookcategories));
        }
  
-@@ -425,7 +425,7 @@
+@@ -434,7 +434,7 @@
  
           languagemanager.func_135045_a(language);
           this.field_191888_F.field_71474_y.field_74363_ab = language.getCode();

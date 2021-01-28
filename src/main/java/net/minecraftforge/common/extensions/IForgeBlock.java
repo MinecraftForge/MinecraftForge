@@ -19,11 +19,8 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
-
 import javax.annotation.Nullable;
 
 import net.minecraft.block.*;
@@ -42,15 +39,14 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.potion.Effects;
-import net.minecraft.item.DyeColor;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShovelItem;
 import net.minecraft.pathfinding.PathNodeType;
-import net.minecraft.state.Property;
-import net.minecraft.state.properties.BedPart;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -114,7 +110,7 @@ public interface IForgeBlock
      */
     default boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
     {
-        return state.getBlock().isIn(BlockTags.field_232878_as_);
+        return state.getBlock().isIn(BlockTags.CLIMBABLE);
     }
 
     /**
@@ -239,14 +235,15 @@ public interface IForgeBlock
      * @param state The current state
      * @param world The current world
      * @param pos Block position in world
+     * @param orientation The direction the entity is facing while getting into bed.
      * @param sleeper The sleeper or camera entity, null in some cases.
      * @return The spawn position
      */
-    default Optional<Vector3d> getBedSpawnPosition(EntityType<?> entityType, BlockState state, IWorldReader world, BlockPos pos, @Nullable LivingEntity sleeper)
+    default Optional<Vector3d> getBedSpawnPosition(EntityType<?> entityType, BlockState state, IWorldReader world, BlockPos pos, float orientation, @Nullable LivingEntity sleeper)
     {
         if (world instanceof World)
         {
-            return BedBlock.func_220172_a(entityType, world,pos,0);
+            return BedBlock.func_242652_a(entityType, world, pos, orientation);
         }
 
         return Optional.empty();
@@ -306,7 +303,7 @@ public interface IForgeBlock
      */
     default boolean canBeReplacedByLeaves(BlockState state, IWorldReader world, BlockPos pos)
     {
-        return isAir(state, world, pos) || state.func_235714_a_(BlockTags.LEAVES);
+        return isAir(state, world, pos) || state.isIn(BlockTags.LEAVES);
     }
 
     /**
@@ -319,7 +316,7 @@ public interface IForgeBlock
      */
     default boolean canBeReplacedByLogs(BlockState state, IWorldReader world, BlockPos pos)
     {
-        return (isAir(state, world, pos) || state.func_235714_a_(BlockTags.LEAVES)) || this == Blocks.GRASS_BLOCK || state.func_235714_a_(Tags.Blocks.DIRT)
+        return (isAir(state, world, pos) || state.isIn(BlockTags.LEAVES)) || this == Blocks.GRASS_BLOCK || state.isIn(Tags.Blocks.DIRT)
             || getBlock().isIn(BlockTags.LOGS) || getBlock().isIn(BlockTags.SAPLINGS) || this == Blocks.VINE;
     }
 
@@ -468,7 +465,7 @@ public interface IForgeBlock
      */
     default void onPlantGrow(BlockState state, IWorld world, BlockPos pos, BlockPos source)
     {
-        if (state.func_235714_a_(Tags.Blocks.DIRT))
+        if (state.isIn(Tags.Blocks.DIRT))
             world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
     }
 
@@ -513,7 +510,7 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @return True, to support being part of a nether portal frame, false otherwise.
      */
-    default boolean isPortalFrame(BlockState state, IWorldReader world, BlockPos pos)
+    default boolean isPortalFrame(BlockState state, IBlockReader world, BlockPos pos)
     {
         return state.isIn(Blocks.OBSIDIAN);
     }
@@ -753,7 +750,7 @@ public interface IForgeBlock
      */
     default int getFlammability(BlockState state, IBlockReader world, BlockPos pos, Direction face)
     {
-        return ((FireBlock)Blocks.FIRE).func_220274_q(state);
+        return ((FireBlock)Blocks.FIRE).getFlammability(state);
     }
 
     /**
@@ -794,7 +791,7 @@ public interface IForgeBlock
      */
     default int getFireSpreadSpeed(BlockState state, IBlockReader world, BlockPos pos, Direction face)
     {
-        return ((FireBlock)Blocks.FIRE).func_220275_r(state);
+        return ((FireBlock)Blocks.FIRE).getFireSpreadSpeed(state);
     }
 
     /**
@@ -810,7 +807,7 @@ public interface IForgeBlock
      */
     default boolean isFireSource(BlockState state, IWorldReader world, BlockPos pos, Direction side)
     {
-        return state.func_235714_a_(world.func_230315_m_().func_241515_q_());
+        return state.isIn(world.getDimensionType().isInfiniBurn());
     }
 
     /**
@@ -825,7 +822,7 @@ public interface IForgeBlock
     {
         if (entity instanceof EnderDragonEntity)
         {
-            return !BlockTags.DRAGON_IMMUNE.func_230235_a_(this.getBlock());
+            return !BlockTags.DRAGON_IMMUNE.contains(this.getBlock());
         }
         else if ((entity instanceof WitherEntity) ||
                  (entity instanceof WitherSkullEntity))
@@ -886,5 +883,39 @@ public interface IForgeBlock
     default boolean shouldDisplayFluidOverlay(BlockState state, IBlockDisplayReader world, BlockPos pos, FluidState fluidState)
     {
         return state.getBlock() instanceof BreakableBlock || state.getBlock() instanceof LeavesBlock;
+    }
+
+    /**
+     * Returns the state that this block should transform into when right clicked by a tool.
+     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+     * Return null if vanilla behavior should be disabled.
+     *
+     * @param state The current state
+     * @param world The world
+     * @param pos The block position in world
+     * @param player The player clicking the block
+     * @param stack The stack being used by the player
+     * @return The resulting state after the action has been performed
+     */
+    @Nullable
+    default BlockState getToolModifiedState(BlockState state, World world, BlockPos pos, PlayerEntity player, ItemStack stack, ToolType toolType)
+    {
+        if (toolType == ToolType.AXE) return AxeItem.getAxeStrippingState(state);
+        else if(toolType == ToolType.HOE) return HoeItem.getHoeTillingState(state);
+        else return toolType == ToolType.SHOVEL ? ShovelItem.getShovelPathingState(state) : null;
+    }
+
+    /**
+     * Checks if a player or entity handles movement on this block like scaffolding.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos The block position in world
+     * @param entity The entity on the scaffolding
+     * @return True if the block should act like scaffolding
+     */
+    default boolean isScaffolding(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
+    {
+        return state.isIn(Blocks.SCAFFOLDING);
     }
 }

@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.block.BlockState;
@@ -54,14 +53,11 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.animation.ITimeValue;
 
 // TODO review most of the methods in this "patch"
 public interface IForgeItem
@@ -241,6 +237,7 @@ public interface IForgeItem
      * @param itemStack The current ItemStack
      * @return The resulting ItemStack
      */
+    @SuppressWarnings("deprecation")
     default ItemStack getContainerItem(ItemStack itemStack)
     {
         if (!hasContainerItem(itemStack))
@@ -819,4 +816,44 @@ public interface IForgeItem
         return stack.getItem() == Blocks.CARVED_PUMPKIN.asItem();
     }
 
+    /**
+     * Used to determine if the player can use Elytra flight.
+     * This is called Client and Server side.
+     *
+     * @param stack The ItemStack in the Chest slot of the entity.
+     * @param entity The entity trying to fly.
+     * @return True if the entity can use Elytra flight.
+     */
+    default boolean canElytraFly(ItemStack stack, LivingEntity entity)
+    {
+        return false;
+    }
+
+    /**
+     * Used to determine if the player can continue Elytra flight,
+     * this is called each tick, and can be used to apply ItemStack damage,
+     * consume Energy, or what have you.
+     * For example the Vanilla implementation of this, applies damage to the
+     * ItemStack every 20 ticks.
+     *
+     * @param stack       ItemStack in the Chest slot of the entity.
+     * @param entity      The entity currently in Elytra flight.
+     * @param flightTicks The number of ticks the entity has been Elytra flying for.
+     * @return True if the entity should continue Elytra flight or False to stop.
+     */
+    default boolean elytraFlightTick(ItemStack stack, LivingEntity entity, int flightTicks)
+    {
+        return false;
+    }
+
+    /**
+     * Used to test if this item can be damaged, but with the ItemStack in question.
+     * Please note that in some cases no ItemStack is available, so the stack-less method will be used.
+     *
+     * @param stack       ItemStack in the Chest slot of the entity.
+     */
+    default boolean isDamageable(ItemStack stack)
+    {
+        return this.getItem().isDamageable();
+    }
 }

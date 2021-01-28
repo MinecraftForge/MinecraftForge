@@ -50,7 +50,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.GameType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -60,6 +59,7 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+@SuppressWarnings("deprecation")
 public class ForgeIngameGui extends IngameGui
 {
     //private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");
@@ -106,13 +106,13 @@ public class ForgeIngameGui extends IngameGui
     }
 
     @Override
-    public void func_238445_a_(MatrixStack mStack, float partialTicks)
+    public void renderIngameGui(MatrixStack mStack, float partialTicks)
     {
         this.scaledWidth = this.mc.getMainWindow().getScaledWidth();
         this.scaledHeight = this.mc.getMainWindow().getScaledHeight();
         eventParent = new RenderGameOverlayEvent(mStack, partialTicks, this.mc.getMainWindow());
         renderHealthMount = mc.player.getRidingEntity() instanceof LivingEntity;
-        renderFood = mc.player.getRidingEntity() == null;
+        renderFood = !renderHealthMount;
         renderJumpBar = mc.player.isRidingHorse();
 
         right_height = 39;
@@ -146,12 +146,12 @@ public class ForgeIngameGui extends IngameGui
         }
         else if (!this.mc.gameSettings.hideGUI)
         {
-            if (renderHotbar) func_238443_a_(partialTicks, mStack);
+            if (renderHotbar) renderHotbar(partialTicks, mStack);
         }
 
         if (!this.mc.gameSettings.hideGUI) {
             RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            func_230926_e_(-90);
+            setBlitOffset(-90);
             rand.setSeed((long)(ticks * 312871));
 
             if (renderCrosshairs) func_238456_d_(mStack);
@@ -169,7 +169,7 @@ public class ForgeIngameGui extends IngameGui
 
             if (renderJumpBar)
             {
-                func_238446_a_(mStack, this.scaledWidth / 2 - 91);
+                renderHorseJumpBar(mStack, this.scaledWidth / 2 - 91);
             }
             else if (renderExperiance)
             {
@@ -186,7 +186,7 @@ public class ForgeIngameGui extends IngameGui
 
         renderHUDText(this.scaledWidth, this.scaledHeight, mStack);
         renderFPSGraph(mStack);
-        func_238444_a_(mStack);
+        renderPotionIcons(mStack);
         if (!mc.gameSettings.hideGUI) {
             renderRecordOverlay(this.scaledWidth, this.scaledHeight, partialTicks, mStack);
             renderSubtitles(mStack);
@@ -226,7 +226,7 @@ public class ForgeIngameGui extends IngameGui
     protected void func_238456_d_(MatrixStack mStack)
     {
         if (pre(CROSSHAIRS, mStack)) return;
-        bind(AbstractGui.field_230665_h_);
+        bind(AbstractGui.GUI_ICONS_LOCATION);
         RenderSystem.enableBlend();
         RenderSystem.enableAlphaTest();
         super.func_238456_d_(mStack);
@@ -234,10 +234,10 @@ public class ForgeIngameGui extends IngameGui
     }
 
     @Override
-    protected void func_238444_a_(MatrixStack mStack)
+    protected void renderPotionIcons(MatrixStack mStack)
     {
         if (pre(POTION_ICONS, mStack)) return;
-        super.func_238444_a_(mStack);
+        super.renderPotionIcons(mStack);
         post(POTION_ICONS, mStack);
     }
 
@@ -251,7 +251,7 @@ public class ForgeIngameGui extends IngameGui
     protected void renderBossHealth(MatrixStack mStack)
     {
         if (pre(BOSSHEALTH, mStack)) return;
-        bind(AbstractGui.field_230665_h_);
+        bind(AbstractGui.GUI_ICONS_LOCATION);
         RenderSystem.defaultBlendFunc();
         mc.getProfiler().startSection("bossHealth");
         RenderSystem.enableBlend();
@@ -283,7 +283,7 @@ public class ForgeIngameGui extends IngameGui
 
         ItemStack itemstack = this.mc.player.inventory.armorItemInSlot(3);
 
-        if (this.mc.gameSettings.thirdPersonView == 0 && !itemstack.isEmpty())
+        if (this.mc.gameSettings.getPointOfView().func_243192_a() && !itemstack.isEmpty())
         {
             Item item = itemstack.getItem();
             if (item == Blocks.CARVED_PUMPKIN.asItem())
@@ -313,15 +313,15 @@ public class ForgeIngameGui extends IngameGui
         {
             if (i < level)
             {
-                func_238474_b_(mStack, left, top, 34, 9, 9, 9);
+                blit(mStack, left, top, 34, 9, 9, 9);
             }
             else if (i == level)
             {
-                func_238474_b_(mStack, left, top, 25, 9, 9, 9);
+                blit(mStack, left, top, 25, 9, 9, 9);
             }
             else if (i > level)
             {
-                func_238474_b_(mStack, left, top, 16, 9, 9, 9);
+                blit(mStack, left, top, 16, 9, 9, 9);
             }
             left += 8;
         }
@@ -349,7 +349,7 @@ public class ForgeIngameGui extends IngameGui
     }
 
     @Override
-    protected void func_238443_a_(float partialTicks, MatrixStack mStack)
+    protected void renderHotbar(float partialTicks, MatrixStack mStack)
     {
         if (pre(HOTBAR, mStack)) return;
 
@@ -359,7 +359,7 @@ public class ForgeIngameGui extends IngameGui
         }
         else
         {
-            super.func_238443_a_(partialTicks, mStack);
+            super.renderHotbar(partialTicks, mStack);
         }
 
         post(HOTBAR, mStack);
@@ -382,7 +382,7 @@ public class ForgeIngameGui extends IngameGui
 
             for (int i = 0; i < full + partial; ++i)
             {
-                func_238474_b_(mStack, left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
+                blit(mStack, left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
             }
             right_height += 10;
         }
@@ -394,7 +394,7 @@ public class ForgeIngameGui extends IngameGui
 
     public void renderHealth(int width, int height, MatrixStack mStack)
     {
-        bind(field_230665_h_);
+        bind(GUI_ICONS_LOCATION);
         if (pre(HEALTH, mStack)) return;
         mc.getProfiler().startSection("health");
         RenderSystem.enableBlend();
@@ -424,7 +424,7 @@ public class ForgeIngameGui extends IngameGui
         this.playerHealth = health;
         int healthLast = this.lastPlayerHealth;
 
-        ModifiableAttributeInstance attrMaxHealth = player.getAttribute(Attributes.field_233818_a_);
+        ModifiableAttributeInstance attrMaxHealth = player.getAttribute(Attributes.MAX_HEALTH);
         float healthMax = (float)attrMaxHealth.getValue();
         float absorb = MathHelper.ceil(player.getAbsorptionAmount());
 
@@ -461,35 +461,35 @@ public class ForgeIngameGui extends IngameGui
             if (health <= 4) y += rand.nextInt(2);
             if (i == regen) y -= 2;
 
-            func_238474_b_(mStack, x, y, BACKGROUND, TOP, 9, 9);
+            blit(mStack, x, y, BACKGROUND, TOP, 9, 9);
 
             if (highlight)
             {
                 if (i * 2 + 1 < healthLast)
-                    func_238474_b_(mStack, x, y, MARGIN + 54, TOP, 9, 9); //6
+                    blit(mStack, x, y, MARGIN + 54, TOP, 9, 9); //6
                 else if (i * 2 + 1 == healthLast)
-                    func_238474_b_(mStack, x, y, MARGIN + 63, TOP, 9, 9); //7
+                    blit(mStack, x, y, MARGIN + 63, TOP, 9, 9); //7
             }
 
             if (absorbRemaining > 0.0F)
             {
                 if (absorbRemaining == absorb && absorb % 2.0F == 1.0F)
                 {
-                    func_238474_b_(mStack, x, y, MARGIN + 153, TOP, 9, 9); //17
+                    blit(mStack, x, y, MARGIN + 153, TOP, 9, 9); //17
                     absorbRemaining -= 1.0F;
                 }
                 else
                 {
-                    func_238474_b_(mStack, x, y, MARGIN + 144, TOP, 9, 9); //16
+                    blit(mStack, x, y, MARGIN + 144, TOP, 9, 9); //16
                     absorbRemaining -= 2.0F;
                 }
             }
             else
             {
                 if (i * 2 + 1 < health)
-                    func_238474_b_(mStack, x, y, MARGIN + 36, TOP, 9, 9); //4
+                    blit(mStack, x, y, MARGIN + 36, TOP, 9, 9); //4
                 else if (i * 2 + 1 == health)
-                    func_238474_b_(mStack, x, y, MARGIN + 45, TOP, 9, 9); //5
+                    blit(mStack, x, y, MARGIN + 45, TOP, 9, 9); //5
             }
         }
 
@@ -533,12 +533,12 @@ public class ForgeIngameGui extends IngameGui
                 y = top + (rand.nextInt(3) - 1);
             }
 
-            func_238474_b_(mStack, x, y, 16 + background * 9, 27, 9, 9);
+            blit(mStack, x, y, 16 + background * 9, 27, 9, 9);
 
             if (idx < level)
-                func_238474_b_(mStack, x, y, icon + 36, 27, 9, 9);
+                blit(mStack, x, y, icon + 36, 27, 9, 9);
             else if (idx == level)
-                func_238474_b_(mStack, x, y, icon + 45, 27, 9, 9);
+                blit(mStack, x, y, icon + 45, 27, 9, 9);
         }
         RenderSystem.disableBlend();
         mc.getProfiler().endSection();
@@ -561,7 +561,7 @@ public class ForgeIngameGui extends IngameGui
             }
 
             int color = (int)(220.0F * opacity) << 24 | 1052704;
-            func_238467_a_(mStack, 0, 0, width, height, color);
+            fill(mStack, 0, 0, width, height, color);
             RenderSystem.enableAlphaTest();
             RenderSystem.enableDepthTest();
             mc.getProfiler().endSection();
@@ -570,7 +570,7 @@ public class ForgeIngameGui extends IngameGui
 
     protected void renderExperience(int x, MatrixStack mStack)
     {
-        bind(field_230665_h_);
+        bind(GUI_ICONS_LOCATION);
         if (pre(EXPERIENCE, mStack)) return;
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
@@ -586,14 +586,14 @@ public class ForgeIngameGui extends IngameGui
     }
 
     @Override
-    public void func_238446_a_(MatrixStack mStack, int x)
+    public void renderHorseJumpBar(MatrixStack mStack, int x)
     {
-        bind(field_230665_h_);
+        bind(GUI_ICONS_LOCATION);
         if (pre(JUMPBAR, mStack)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
 
-        super.func_238446_a_(mStack, x);
+        super.renderHorseJumpBar(mStack, x);
 
         RenderSystem.enableBlend();
         mc.getProfiler().endSection();
@@ -637,8 +637,8 @@ public class ForgeIngameGui extends IngameGui
             for (String msg : listL)
             {
                 if (msg == null) continue;
-                func_238467_a_(mStack, 1, top - 1, 2 + fontrenderer.getStringWidth(msg) + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
-                fontrenderer.func_238421_b_(mStack, msg, 2, top, 14737632);
+                fill(mStack, 1, top - 1, 2 + fontrenderer.getStringWidth(msg) + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
+                fontrenderer.drawString(mStack, msg, 2, top, 14737632);
                 top += fontrenderer.FONT_HEIGHT;
             }
 
@@ -648,8 +648,8 @@ public class ForgeIngameGui extends IngameGui
                 if (msg == null) continue;
                 int w = fontrenderer.getStringWidth(msg);
                 int left = width - 2 - w;
-                func_238467_a_(mStack, left - 1, top - 1, left + w + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
-                fontrenderer.func_238421_b_(mStack, msg, left, top, 14737632);
+                fill(mStack, left - 1, top - 1, left + w + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
+                fontrenderer.drawString(mStack, msg, left, top, 14737632);
                 top += fontrenderer.FONT_HEIGHT;
             }
         }
@@ -683,8 +683,8 @@ public class ForgeIngameGui extends IngameGui
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 int color = (animateOverlayMessageColor ? MathHelper.hsvToRGB(hue / 50.0F, 0.7F, 0.6F) & WHITE : WHITE);
-                func_238448_a_(mStack, fontrenderer, -4, fontrenderer.func_238414_a_(overlayMessage), 16777215 | (opacity << 24));
-                fontrenderer.func_238422_b_(mStack, overlayMessage, -fontrenderer.func_238414_a_(overlayMessage) / 2, -4, color | (opacity << 24));
+                func_238448_a_(mStack, fontrenderer, -4, fontrenderer.getStringPropertyWidth(overlayMessage), 16777215 | (opacity << 24));
+                fontrenderer.func_238422_b_(mStack, overlayMessage.func_241878_f(), -fontrenderer.getStringPropertyWidth(overlayMessage) / 2, -4, color | (opacity << 24));
                 RenderSystem.disableBlend();
                 RenderSystem.popMatrix();
             }
@@ -719,13 +719,13 @@ public class ForgeIngameGui extends IngameGui
                 RenderSystem.pushMatrix();
                 RenderSystem.scalef(4.0F, 4.0F, 4.0F);
                 int l = opacity << 24 & -16777216;
-                this.getFontRenderer().func_238407_a_(mStack, this.displayedTitle, (float)(-this.getFontRenderer().func_238414_a_(this.displayedTitle) / 2), -10.0F, 16777215 | l);
+                this.getFontRenderer().func_238407_a_(mStack, this.displayedTitle.func_241878_f(), (float)(-this.getFontRenderer().getStringPropertyWidth(this.displayedTitle) / 2), -10.0F, 16777215 | l);
                 RenderSystem.popMatrix();
                 if (this.displayedSubTitle != null)
                 {
                     RenderSystem.pushMatrix();
                     RenderSystem.scalef(2.0F, 2.0F, 2.0F);
-                    this.getFontRenderer().func_238407_a_(mStack, this.displayedSubTitle, (float)(-this.getFontRenderer().func_238414_a_(this.displayedSubTitle) / 2), 5.0F, 16777215 | l);
+                    this.getFontRenderer().func_238407_a_(mStack, this.displayedSubTitle.func_241878_f(), (float)(-this.getFontRenderer().getStringPropertyWidth(this.displayedSubTitle) / 2), 5.0F, 16777215 | l);
                     RenderSystem.popMatrix();
                 }
                 RenderSystem.disableBlend();
@@ -777,7 +777,7 @@ public class ForgeIngameGui extends IngameGui
         Entity tmp = player.getRidingEntity();
         if (!(tmp instanceof LivingEntity)) return;
 
-        bind(field_230665_h_);
+        bind(GUI_ICONS_LOCATION);
 
         if (pre(HEALTHMOUNT, mStack)) return;
 
@@ -808,12 +808,12 @@ public class ForgeIngameGui extends IngameGui
             for (int i = 0; i < rowCount; ++i)
             {
                 int x = left_align - i * 8 - 9;
-                func_238474_b_(mStack, x, top, BACKGROUND, 9, 9, 9);
+                blit(mStack, x, top, BACKGROUND, 9, 9, 9);
 
                 if (i * 2 + 1 + heart < health)
-                    func_238474_b_(mStack, x, top, FULL, 9, 9, 9);
+                    blit(mStack, x, top, FULL, 9, 9, 9);
                 else if (i * 2 + 1 + heart == health)
-                    func_238474_b_(mStack, x, top, HALF, 9, 9, 9);
+                    blit(mStack, x, top, HALF, 9, 9, 9);
             }
 
             right_height += 10;

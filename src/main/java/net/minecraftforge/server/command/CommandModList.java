@@ -24,9 +24,6 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-
 import java.util.stream.Collectors;
 
 public class CommandModList {
@@ -44,7 +41,7 @@ public class CommandModList {
                                                     modFile.getModInfos().get(0).getModId(),
                                                     modFile.getModInfos().get(0).getVersion(),
                                                     modFile.getModInfos().size())).
-                                        collect(Collectors.joining("\n• ","• ", ""))),
+                                        collect(Collectors.joining("\n\u2022 ","\n\u2022 ", ""))),
                                     false);
                             return 0;
                         }

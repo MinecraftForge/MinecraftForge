@@ -1,7 +1,7 @@
 --- a/net/minecraft/util/text/Style.java
 +++ b/net/minecraft/util/text/Style.java
-@@ -120,6 +120,18 @@
-       return new Style(this.field_150247_b, this.field_150248_c, p_240722_1_, this.field_150246_e, this.field_150243_f, this.field_150244_g, this.field_150251_h, this.field_150252_i, this.field_179990_j, this.field_240710_l_);
+@@ -125,6 +125,18 @@
+       return new Style(this.field_150247_b, this.field_150248_c, this.field_150245_d, p_244282_1_, this.field_150243_f, this.field_150244_g, this.field_150251_h, this.field_150252_i, this.field_179990_j, this.field_240710_l_);
     }
  
 +   public Style setUnderlined(@Nullable Boolean underlined) {

@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.network;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -26,6 +27,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.tags.ITagCollection;
+import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import org.apache.logging.log4j.LogManager;
@@ -59,7 +64,17 @@ public class NetworkHooks
 
     public static ConnectionType getConnectionType(final Supplier<NetworkManager> connection)
     {
-        return ConnectionType.forVersionFlag(connection.get().channel().attr(FMLNetworkConstants.FML_NETVERSION).get());
+        return getConnectionType(connection.get().channel());
+    }
+
+    public static ConnectionType getConnectionType(ChannelHandlerContext context)
+    {
+        return getConnectionType(context.channel());
+    }
+
+    private static ConnectionType getConnectionType(Channel channel)
+    {
+        return ConnectionType.forVersionFlag(channel.attr(FMLNetworkConstants.FML_NETVERSION).get());
     }
 
     public static IPacket<?> getEntitySpawningPacket(Entity entity)
@@ -116,9 +131,14 @@ public class NetworkHooks
         FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.DimensionInfoMessage(player.dimension), manager, NetworkDirection.PLAY_TO_CLIENT);
     }*/
 
-    public static void handleClientLoginSuccess(NetworkManager manager) {
+    public static boolean isVanillaConnection(NetworkManager manager)
+    {
         if (manager == null || manager.channel() == null) throw new NullPointerException("ARGH! Network Manager is null (" + manager != null ? "CHANNEL" : "MANAGER"+")" );
-        if (getConnectionType(()->manager) == ConnectionType.VANILLA) {
+        return getConnectionType(() -> manager) == ConnectionType.VANILLA;
+    }
+
+    public static void handleClientLoginSuccess(NetworkManager manager) {
+        if (isVanillaConnection(manager)) {
             LOGGER.info("Connected to a vanilla server. Catching up missing behaviour.");
             ConfigTracker.INSTANCE.loadDefaultServerConfigs();
         } else {
@@ -207,5 +227,32 @@ public class NetworkHooks
         player.openContainer = c;
         player.openContainer.addListener(player);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
+    }
+
+    /**
+     * Syncs the custom tag types attached to a {@link ITagCollectionSupplier} to all connected players.
+     * @param tagCollectionSupplier The tag collection supplier containing the custom tags
+     */
+    public static void syncCustomTagTypes(ITagCollectionSupplier tagCollectionSupplier)
+    {
+        Map<ResourceLocation, ITagCollection<?>> customTagTypes = tagCollectionSupplier.getCustomTagTypes();
+        if (!customTagTypes.isEmpty())
+        {
+            FMLNetworkConstants.playChannel.send(PacketDistributor.ALL.noArg(), new FMLPlayMessages.SyncCustomTagTypes(customTagTypes));
+        }
+    }
+
+    /**
+     * Syncs the custom tag types attached to a {@link ITagCollectionSupplier} to the given player.
+     * @param player                The player to sync the custom tags to.
+     * @param tagCollectionSupplier The tag collection supplier containing the custom tags
+     */
+    public static void syncCustomTagTypes(ServerPlayerEntity player, ITagCollectionSupplier tagCollectionSupplier)
+    {
+        Map<ResourceLocation, ITagCollection<?>> customTagTypes = tagCollectionSupplier.getCustomTagTypes();
+        if (!customTagTypes.isEmpty())
+        {
+            FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(customTagTypes), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+        }
     }
 }

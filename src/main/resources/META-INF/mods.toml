@@ -2,6 +2,7 @@ modLoader="javafml"
 loaderVersion="[24,]"
 issueTrackerURL="http://www.minecraftforge.net/"
 logoFile="forge_logo.png"
+license="LGPL v2.1"
 
 [[mods]]
     modId="forge"
@@ -9,8 +10,8 @@ logoFile="forge_logo.png"
     version="${global.forgeVersion}"
     updateJSONURL="https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json"
     displayName="Forge"
-    credits="LexManos,cpw,Mezz,fry,tterrag,gigaherz,illy"
-    authors="LexManos,cpw,Mezz,fry,Spacetoad,Eloraam"
+    credits="Anyone who has contributed on Github and supports our development"
+    authors="LexManos,cpw"
     description='''
     Forge, a broad compatibility API.
     '''

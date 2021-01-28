@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/registry/DynamicRegistries.java
++++ b/net/minecraft/util/registry/DynamicRegistries.java
+@@ -90,6 +90,8 @@
+       RegistryKey<? extends Registry<E>> registrykey = p_243607_2_.func_243622_a();
+       boolean flag = !registrykey.equals(Registry.field_243549_ar) && !registrykey.equals(Registry.field_239698_ad_);
+       Registry<E> registry = field_243600_c.func_243612_b(registrykey);
++      if (!registrykey.equals(Registry.field_239698_ad_))
++         registry = ((Registry<Registry<E>>)WorldGenRegistries.field_243650_b).func_230516_a_((RegistryKey<Registry<E>>)registrykey);
+       MutableRegistry<E> mutableregistry = p_243607_0_.func_243612_b(registrykey);
+ 
+       for(Entry<RegistryKey<E>, E> entry : registry.func_239659_c_()) {

@@ -41,6 +41,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.ObjectArrays;
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -70,10 +71,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.biome.Biomes;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
@@ -84,6 +83,7 @@ import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.common.crafting.ConditionalAdvancement;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.conditions.IConditionBuilder;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -113,13 +113,15 @@ public class DataGeneratorTest
         if (event.includeClient())
         {
             gen.addProvider(new Lang(gen));
-            gen.addProvider(new ItemModels(gen, event.getExistingFileHelper()));
-            gen.addProvider(new BlockStates(gen, event.getExistingFileHelper()));
+            // Let blockstate provider see generated item models by passing its existing file helper
+            ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+            gen.addProvider(itemModels);
+            gen.addProvider(new BlockStates(gen, itemModels.existingFileHelper));
         }
         if (event.includeServer())
         {
             gen.addProvider(new Recipes(gen));
-            gen.addProvider(new Tags(gen));
+            gen.addProvider(new Tags(gen, event.getExistingFileHelper()));
         }
     }
 
@@ -149,7 +151,7 @@ public class DataGeneratorTest
                 .patternLine("XXX")
                 .key('X', Blocks.DIRT)
                 .setGroup("")
-                .addCriterion("has_dirt", hasItem(Blocks.DIRT)) //Doesn't actually print... TODO: nested/conditional advancements?
+                .addCriterion("has_dirt", hasItem(Blocks.DIRT)) // DUMMY: Necessary, but not used when a custom advancement is provided through setAdvancement
                 ::build
             )
             .setAdvancement(ID,
@@ -174,38 +176,61 @@ public class DataGeneratorTest
                 )
             )
             .build(consumer, ID);
+
+            ConditionalRecipe.builder()
+                    .addCondition(
+                            not(
+                                and(
+                                        not(modLoaded("minecraft")),
+                                        itemExists("minecraft", "dirt"),
+                                        FALSE()
+                                )
+                            )
+                    )
+                    .addRecipe(
+                            ShapedRecipeBuilder.shapedRecipe(Blocks.DIAMOND_BLOCK, 64)
+                                    .patternLine("XXX")
+                                    .patternLine("XXX")
+                                    .patternLine("XXX")
+                                    .key('X', Blocks.DIRT)
+                                    .setGroup("")
+                                    .addCriterion("has_dirt", hasItem(Blocks.DIRT))
+                                    ::build
+                    )
+                    .generateAdvancement()
+                    .build(consumer, new ResourceLocation("data_gen_test", "conditional2"));
         }
     }
 
     public static class Tags extends BlockTagsProvider
     {
-
-        public Tags(DataGenerator gen)
+        public Tags(DataGenerator gen, ExistingFileHelper existingFileHelper)
         {
-            super(gen);
+            super(gen, MODID, existingFileHelper);
         }
 
         @Override
         protected void registerTags()
         {
-            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
-                .func_240532_a_(Blocks.DIAMOND_BLOCK)
-                .func_240531_a_(BlockTags.STONE_BRICKS)
+            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
+                .addItemEntry(Blocks.DIAMOND_BLOCK)
+                .addTag(BlockTags.STONE_BRICKS)
+                .addTag(net.minecraftforge.common.Tags.Blocks.COBBLESTONE)
                 .addOptional(new ResourceLocation("chisel", "marble/raw"))
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
 
             // Hopefully sorting issues
-            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/one").toString()))
-                    .func_240532_a_(Blocks.COBBLESTONE);
-            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/two").toString()))
-                    .func_240532_a_(Blocks.DIORITE);
-            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/three").toString()))
-                    .func_240532_a_(Blocks.ANDESITE);
+            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/one").toString()))
+                    .addItemEntry(Blocks.COBBLESTONE);
+            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/two").toString()))
+                    .addItemEntry(Blocks.DIORITE);
+            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/three").toString()))
+                    .addItemEntry(Blocks.ANDESITE);
 
-            func_240522_a_(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "things").toString()))
-                    .func_240532_a_(Blocks.COBBLESTONE)
-                    .func_240532_a_(Blocks.DIORITE)
-                    .func_240532_a_(Blocks.ANDESITE);
+            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "things").toString()))
+                    .addItemEntry(Blocks.COBBLESTONE)
+                    .addItemEntry(Blocks.DIORITE)
+                    .addItemEntry(Blocks.ANDESITE);
         }
     }
 
@@ -221,7 +246,7 @@ public class DataGeneratorTest
         {
             add(Blocks.STONE, "Stone");
             add(Items.DIAMOND, "Diamond");
-            add(Biomes.BEACH, "Beach");
+            //add(Biomes.BEACH, "Beach");
             add(Effects.POISON, "Poison");
             add(Enchantments.SHARPNESS, "Sharpness");
             add(EntityType.CAT, "Cat");
@@ -272,7 +297,9 @@ public class DataGeneratorTest
                     .texture("layer0", mcLoc("item/fishing_rod_cast"));
         }
 
-        private static final Set<String> IGNORED_MODELS = ImmutableSet.of("test_generated_model", "test_block_model");
+        private static final Set<String> IGNORED_MODELS = ImmutableSet.of("test_generated_model", "test_block_model",
+                "fishing_rod", "fishing_rod_cast" // Vanilla doesn't generate these yet, so they don't match due to having the minecraft domain
+                );
 
         @Override
         public void act(DirectoryCache cache) throws IOException
@@ -397,7 +424,7 @@ public class DataGeneratorTest
             models().getBuilder("cube")
                     .parent(block)
                     .element()
-                    .allFaces((dir, face) -> face.texture("#" + dir.func_176610_l()).cullface(dir));
+                    .allFaces((dir, face) -> face.texture("#" + dir.getString()).cullface(dir));
 
             ModelFile furnace = models().orientable("furnace", mcLoc("block/furnace_side"), mcLoc("block/furnace_front"), mcLoc("block/furnace_top"));
             ModelFile furnaceLit = models().orientable("furnace_on", mcLoc("block/furnace_side"), mcLoc("block/furnace_front_on"), mcLoc("block/furnace_top"));
@@ -412,7 +439,7 @@ public class DataGeneratorTest
             ModelFile barrel = models().cubeBottomTop("barrel", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top"));
             ModelFile barrelOpen = models().cubeBottomTop("barrel_open", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top_open"));
             directionalBlock(Blocks.BARREL, state -> state.get(BarrelBlock.PROPERTY_OPEN) ? barrelOpen : barrel); // Testing custom state interpreter
-
+            
             logBlock((RotatedPillarBlock) Blocks.ACACIA_LOG);
 
             stairsBlock((StairsBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));
@@ -431,12 +458,18 @@ public class DataGeneratorTest
 
             simpleBlock(Blocks.TORCH, models().torch("torch", mcLoc("block/torch")));
             horizontalBlock(Blocks.WALL_TORCH, models().torchWall("wall_torch", mcLoc("block/torch")), 90);
+
+            models().cubeAll("test_block", mcLoc("block/stone"));
+            itemModels().withExistingParent("test_block", modLoc("block/test_block"));
         }
 
         // Testing the outputs
 
         private static final Set<Block> IGNORED_BLOCKS = ImmutableSet.of(Blocks.BIRCH_FENCE_GATE, Blocks.STONE);
-        private static final Set<ResourceLocation> IGNORED_MODELS = ImmutableSet.of();
+        // Vanilla doesn't generate these models yet, so they have minor discrepancies that are hard to test
+        // This list should probably be cleared and investigated after each major version update
+        private static final Set<ResourceLocation> IGNORED_MODELS = ImmutableSet.of(new ResourceLocation(MODID, "block/cube"));
+        private static final Set<ResourceLocation> CUSTOM_MODELS = ImmutableSet.of(new ResourceLocation(MODID, "block/test_block"));
 
         private List<String> errors = new ArrayList<>();
 
@@ -444,7 +477,7 @@ public class DataGeneratorTest
         public void act(DirectoryCache cache) throws IOException
         {
             super.act(cache);
-            this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, IGNORED_MODELS));
+            this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, Sets.union(IGNORED_MODELS, CUSTOM_MODELS)));
             this.registeredBlocks.forEach((block, state) -> {
                 if (IGNORED_BLOCKS.contains(block)) return;
                 JsonObject generated = state.toJson();
@@ -649,6 +682,24 @@ public class DataGeneratorTest
                     }
                 }
 
+                JsonElement generatedTextures = generated.remove("textures");
+                JsonElement vanillaTextures = existing.remove("textures");
+                if (generatedTextures == null && vanillaTextures != null) {
+                    ret.add("Model " + loc + " is missing textures");
+                } else if (generatedTextures != null && vanillaTextures == null) {
+                    ret.add("Model " + loc + " has textures when vanilla equivalent does not");
+                } else if (generatedTextures != null) { // Both must be non-null
+                    for (Map.Entry<String, JsonElement> e : generatedTextures.getAsJsonObject().entrySet()) {
+                        String vanillaTexture = vanillaTextures.getAsJsonObject().get(e.getKey()).getAsString();
+                        if (!e.getValue().getAsString().equals(vanillaTexture)) {
+                            ret.add("Texture for variable '" + e.getKey() + "' for model " + loc + " does not match vanilla equivalent");
+                        }
+                    }
+                    if (generatedTextures.getAsJsonObject().size() != vanillaTextures.getAsJsonObject().size()) {
+                        ret.add("Model " + loc + " is missing textures from vanilla equivalent");
+                    }
+                }
+
                 if (!existing.equals(generated)) {
                     ret.add("Model " + loc + " does not match vanilla equivalent");
                 }
@@ -662,6 +713,6 @@ public class DataGeneratorTest
     private static String toVanillaModel(String model) {
         // We generate our own model jsons to test model building, but otherwise our blockstates should be identical
         // So remove modid to match
-        return model.replaceAll("^\\w+:", "");
+        return model.replaceAll("^\\w+:", "minecraft:");
     }
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/PlayerContainer.java
 +++ b/net/minecraft/inventory/container/PlayerContainer.java
-@@ -50,7 +50,7 @@
+@@ -51,7 +51,7 @@
              }
  
              public boolean func_75214_a(ItemStack p_75214_1_) {

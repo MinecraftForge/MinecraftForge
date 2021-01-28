@@ -48,6 +48,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+import java.util.Optional;
+
 public class FluidUtil
 {
     private FluidUtil()
@@ -428,7 +430,7 @@ public class FluidUtil
     /**
      * Helper method to get the fluid contained in an itemStack
      */
-    public static LazyOptional<FluidStack> getFluidContained(@Nonnull ItemStack container)
+    public static Optional<FluidStack> getFluidContained(@Nonnull ItemStack container)
     {
         if (!container.isEmpty())
         {
@@ -436,7 +438,7 @@ public class FluidUtil
             return getFluidHandler(container)
                     .map(handler -> handler.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.SIMULATE));
         }
-        return LazyOptional.empty();
+        return Optional.empty();
     }
 
     /**
@@ -560,7 +562,7 @@ public class FluidUtil
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.
         }
 
-        if (world.func_230315_m_().func_236040_e_() && fluid.getAttributes().doesVaporize(world, pos, resource))
+        if (world.getDimensionType().isUltrawarm() && fluid.getAttributes().doesVaporize(world, pos, resource))
         {
             FluidStack result = fluidSource.drain(resource, IFluidHandler.FluidAction.EXECUTE);
             if (!result.isEmpty())
@@ -640,10 +642,6 @@ public class FluidUtil
             else if (fluid == Fluids.LAVA)
             {
                 return new ItemStack(Items.LAVA_BUCKET);
-            }
-            else if (fluid.getRegistryName().equals(new ResourceLocation("milk")))
-            {
-                return new ItemStack(Items.MILK_BUCKET);
             }
         }
 

@@ -23,8 +23,7 @@ import com.google.gson.JsonObject;
 
 import net.minecraft.item.Item;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagCollectionManager;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 
@@ -57,8 +56,8 @@ public class TagEmptyCondition implements ICondition
     @Override
     public boolean test()
     {
-        ITag<Item> tag = ItemTags.getCollection().get(tag_name);
-        return tag == null || tag.func_230236_b_().isEmpty();
+        ITag<Item> tag = TagCollectionManager.getManager().getItemTags().get(tag_name);
+        return tag == null || tag.getAllElements().isEmpty();
     }
 
     @Override

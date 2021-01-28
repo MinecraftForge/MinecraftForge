@@ -80,8 +80,8 @@
 -      if (itemgroup.func_78019_g()) {
 +      if (itemgroup != null && itemgroup.func_78019_g()) {
           RenderSystem.disableBlend();
--         this.field_230712_o_.func_238421_b_(p_230451_1_, I18n.func_135052_a(itemgroup.func_78024_c()), 8.0F, 6.0F, 4210752);
-+         this.field_230712_o_.func_238421_b_(p_230451_1_, I18n.func_135052_a(itemgroup.func_78024_c()), 8.0F, 6.0F, itemgroup.getLabelColor());
+-         this.field_230712_o_.func_243248_b(p_230451_1_, itemgroup.func_242392_c(), 8.0F, 6.0F, 4210752);
++         this.field_230712_o_.func_243248_b(p_230451_1_, itemgroup.func_242392_c(), 8.0F, 6.0F, itemgroup.getLabelColor());
        }
  
     }
@@ -154,11 +154,11 @@
              break;
           }
        }
-+      if (!rendered && !func_238809_a_(p_230430_1_, ItemGroup.field_78027_g, p_230430_2_, p_230430_3_))
-+          func_238809_a_(p_230430_1_, ItemGroup.field_78036_m, p_230430_2_, p_230430_3_);
++      if (!rendered && !this.func_238809_a_(p_230430_1_, ItemGroup.field_78027_g, p_230430_2_, p_230430_3_))
++         this.func_238809_a_(p_230430_1_, ItemGroup.field_78036_m, p_230430_2_, p_230430_3_);
  
        if (this.field_147064_C != null && field_147058_w == ItemGroup.field_78036_m.func_78021_a() && this.func_195359_a(this.field_147064_C.field_75223_e, this.field_147064_C.field_75221_f, 16, 16, (double)p_230430_2_, (double)p_230430_3_)) {
-          this.func_238652_a_(p_230430_1_, new TranslationTextComponent("inventory.binSlot"), p_230430_2_, p_230430_3_);
+          this.func_238652_a_(p_230430_1_, field_243345_D, p_230430_2_, p_230430_3_);
        }
  
 +      if (maxPages != 0) {
@@ -166,7 +166,7 @@
 +          RenderSystem.disableLighting();
 +          this.func_230926_e_(300);
 +          this.field_230707_j_.field_77023_b = 300.0F;
-+          field_230712_o_.func_238407_a_(p_230430_1_, page, field_147003_i + (field_146999_f / 2) - (field_230712_o_.func_238414_a_(page) / 2), field_147009_r - 44, -1);
++          field_230712_o_.func_238407_a_(p_230430_1_, page.func_241878_f(), field_147003_i + (field_146999_f / 2) - (field_230712_o_.func_238414_a_(page) / 2), field_147009_r - 44, -1);
 +          this.func_230926_e_(0);
 +          this.field_230707_j_.field_77023_b = 0.0F;
 +      }
@@ -175,13 +175,13 @@
        this.func_230459_a_(p_230430_1_, p_230430_2_, p_230430_3_);
     }
 @@ -612,7 +670,10 @@
-             list1.add(1, (new TranslationTextComponent(itemgroup.func_78024_c())).func_240699_a_(TextFormatting.BLUE));
+             list1.add(1, itemgroup.func_242392_c().func_230532_e_().func_240699_a_(TextFormatting.BLUE));
           }
  
--         this.func_238654_b_(p_230457_1_, list1, p_230457_3_, p_230457_4_);
+-         this.func_243308_b(p_230457_1_, list1, p_230457_3_, p_230457_4_);
 +         net.minecraft.client.gui.FontRenderer font = p_230457_2_.func_77973_b().getFontRenderer(p_230457_2_);
 +         net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_230457_2_);
-+         this.func_238654_b_(p_230457_1_, list1, p_230457_3_, p_230457_4_, (font == null ? this.field_230712_o_ : font));
++         this.renderWrappedToolTip(p_230457_1_, list1, p_230457_3_, p_230457_4_, (font == null ? this.field_230712_o_ : font));
 +         net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
        } else {
           super.func_230457_a_(p_230457_1_, p_230457_2_, p_230457_3_, p_230457_4_);

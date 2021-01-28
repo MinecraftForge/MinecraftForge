@@ -25,6 +25,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -33,6 +34,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -152,26 +154,27 @@ public class PlayerEvent extends LivingEvent
      **/
     public static class NameFormat extends PlayerEvent
     {
-        private final String username;
-        private String displayname;
+        private final ITextComponent username;
+        private ITextComponent displayname;
 
-        public NameFormat(PlayerEntity player, String username) {
+        public NameFormat(PlayerEntity player, ITextComponent username) 
+        {
             super(player);
             this.username = username;
             this.setDisplayname(username);
         }
 
-        public String getUsername()
+        public ITextComponent getUsername()
         {
             return username;
         }
 
-        public String getDisplayname()
+        public ITextComponent getDisplayname()
         {
             return displayname;
         }
 
-        public void setDisplayname(String displayname)
+        public void setDisplayname(ITextComponent displayname)
         {
             this.displayname = displayname;
         }
@@ -506,6 +509,42 @@ public class PlayerEvent extends LivingEvent
         public RegistryKey<World> getTo()
         {
             return this.toDim;
+        }
+    }
+
+    /**
+     * Fired when the game type of a server player is changed to a different value than what it was previously. Eg Creative to Survival, not Survival to Survival.
+     * If the event is cancelled the game mode of the player is not changed and the value of <code>newGameMode</code> is ignored.
+     */
+    @Cancelable
+    public static class PlayerChangeGameModeEvent extends PlayerEvent
+    {
+        private final GameType currentGameMode;
+        private GameType newGameMode;
+
+        public PlayerChangeGameModeEvent(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
+        {
+            super(player);
+            this.currentGameMode = currentGameMode;
+            this.newGameMode = newGameMode;
+        }
+
+        public GameType getCurrentGameMode()
+        {
+            return currentGameMode;
+        }
+
+        public GameType getNewGameMode()
+        {
+            return newGameMode;
+        }
+
+        /**
+         * Sets the game mode the player will be changed to if this event is not cancelled.
+         */
+        public void setNewGameMode(GameType newGameMode)
+        {
+            this.newGameMode = newGameMode;
         }
     }
 }
