@@ -27,10 +27,10 @@ Go to [the Forge website](https://files.minecraftforge.net)
 and select the Minecraft version you wish to get Forge for from the list.
 
 You can download the installer for the *Recommended Build* or the
- *Latest build* there. Latest builds may have newer features but may be
- more unstable as a result. The installer will attempt to install Forge
- into your vanilla launcher environment, where you can then create a new
- profile using that version and play the game!
+*Latest Build* there. Latest builds may have newer features but may be
+more unstable as a result. The installer will attempt to install Forge
+into your vanilla launcher environment, where you can then create a new
+profile using that version and play the game!
 
 For support and questions, visit [the Support Forum](https://www.minecraftforge.net/forum/forum/18-support-bug-reports/).
 
@@ -45,7 +45,7 @@ For support and questions, visit [the Support Forum](https://www.minecraftforge.
 If you wish to actually inspect Forge, submit PRs or otherwise work
 with Forge itself, you're in the right place!
 
- [See the guide to setting up a Forge workspace](https://mcforge.readthedocs.io/en/latest/forgedev/).
+See the [guide to setting up a Forge workspace](https://mcforge.readthedocs.io/en/latest/forgedev/).
 
 ### Pull Requests
 

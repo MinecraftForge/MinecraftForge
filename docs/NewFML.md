@@ -3,10 +3,10 @@
 Entrypoint : ```FMLServiceProvider.onLoad```
 
 - Verify environment
--- Check all libraries are present: ```accesstransformer```, ```coremod```, ```deobfuscator```
--- Check versions are suitable: ```modlauncher```, ```accesstransformer```, ```coremod```, ```deobfuscator```
+-- Check that all libraries are present: ```accesstransformer```, ```coremod```, ```deobfuscator```
+-- Check that the versions are suitable: ```modlauncher```, ```accesstransformer```, ```coremod```, ```deobfuscator```
 - Find deobfuscated and patched MC
--- If not found, trigger job to generate that (loaded later at FMLLaunchProvider.launch)
+-- If not found, trigger the job to generate that (loaded later at FMLLaunchProvider.launch)
 
 Injected arguments:
 
@@ -22,10 +22,10 @@ Entrypoint : ```FMLServiceProvider.initializer```
 
 Entrypoint : ```FMLLaunchProvider.launch```
 - Launches the patched and deobfuscated game
-- - If that wasn't found it'll be generated from the vanilla jar and patch/deobf files (see above)
-- Possible we'll use an alternative launch for the development environment
+- - If that wasn't found, it'll be generated from the vanilla jar and patch/deobf files (see above)
+- It's possible we'll use an alternative launch for the development environment
 
-(A goal is that we pre-generate this JAR during Forge installation or modpack installation)
+(A goal is that we pre-generate this JAR during Forge installation or modpack installation.)
 
 ## Loading
 
@@ -41,7 +41,7 @@ Entrypoint : ```FMLLaunchProvider.launch```
 - - MODS are enqueued to the background loading system
 - FMLLaunchProvider will be triggered from the ModLauncher to start the game
 
-## Game loading
+## Game Loading
 
 - Events triggered from loadGame will launch various phases of modloading as before
 -- Deprecation of old "FML" events in favour of Forge events
@@ -96,7 +96,7 @@ This is the standard Java @Mod implementation provider
 
 #### ```ScalaModLanguageProvider```
 
-This is the scala language provider. It'll be provided separately as a JAR mod download.
+This is the Scala language provider. It'll be provided separately as a JAR mod download.
 
 - API contract will need definition
 
@@ -118,10 +118,8 @@ Javascript API for common coremod injection tasks needs to be developed, to allo
 
 Runtime coremod code (code that has been injected) is Java as usual.
 
-## Background loading thread
+## Background Loading Thread
 
 Early in loading, a background thread is triggered which will perform scanning tasks for common resources, such as @Mod instances and other annotations. This thread will also be responsible for loading any cached resources, either those defined at build time or pre-computed from previous runs. It may also be tasked with writing those precomputed resources.
 
-There will be a IPreLoaderJobProvider that will allow extension of the scope of these tasks
-
-
+There will be a IPreLoaderJobProvider that will allow extension of the scope of these tasks.
