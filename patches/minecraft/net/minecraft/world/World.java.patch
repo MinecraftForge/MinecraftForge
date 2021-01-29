@@ -184,7 +184,7 @@
        Iterator<TileEntity> iterator = this.field_175730_i.iterator();
  
        while(iterator.hasNext()) {
-@@ -440,8 +483,9 @@
+@@ -440,11 +483,14 @@
              BlockPos blockpos = tileentity.func_174877_v();
              if (this.func_72863_F().func_222866_a(blockpos) && this.func_175723_af().func_177746_a(blockpos)) {
                 try {
@@ -194,8 +194,13 @@
 +                     return String.valueOf(tileentity.func_200662_C().getRegistryName());
                    });
                    if (tileentity.func_200662_C().func_223045_a(this.func_180495_p(blockpos).func_177230_c())) {
++                     net.minecraftforge.fml.hooks.BasicEventHooks.onPreTileEntityTick(tileentity);
                       ((ITickableTileEntity)tileentity).func_73660_a();
-@@ -454,8 +498,16 @@
++                     net.minecraftforge.fml.hooks.BasicEventHooks.onPostTileEntityTick(tileentity);
+                   } else {
+                      tileentity.func_222814_r();
+                   }
+@@ -454,8 +500,16 @@
                    CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking block entity");
                    CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block entity being ticked");
                    tileentity.func_145828_a(crashreportcategory);
@@ -212,7 +217,7 @@
              }
           }
  
-@@ -463,7 +515,10 @@
+@@ -463,7 +517,10 @@
              iterator.remove();
              this.field_147482_g.remove(tileentity);
              if (this.func_175667_e(tileentity.func_174877_v())) {
@@ -224,7 +229,7 @@
              }
           }
        }
-@@ -495,12 +550,15 @@
+@@ -495,12 +552,15 @@
  
     public void func_217390_a(Consumer<Entity> p_217390_1_, Entity p_217390_2_) {
        try {
@@ -240,7 +245,7 @@
        }
     }
  
-@@ -514,6 +572,7 @@
+@@ -514,6 +574,7 @@
  
     public Explosion func_230546_a_(@Nullable Entity p_230546_1_, @Nullable DamageSource p_230546_2_, @Nullable ExplosionContext p_230546_3_, double p_230546_4_, double p_230546_6_, double p_230546_8_, float p_230546_10_, boolean p_230546_11_, Explosion.Mode p_230546_12_) {
        Explosion explosion = new Explosion(this, p_230546_1_, p_230546_2_, p_230546_3_, p_230546_4_, p_230546_6_, p_230546_8_, p_230546_10_, p_230546_11_, p_230546_12_);
@@ -248,7 +253,7 @@
        explosion.func_77278_a();
        explosion.func_77279_a(true);
        return explosion;
-@@ -561,6 +620,7 @@
+@@ -561,6 +622,7 @@
  
     public void func_175690_a(BlockPos p_175690_1_, @Nullable TileEntity p_175690_2_) {
        if (!func_189509_E(p_175690_1_)) {
@@ -256,7 +261,7 @@
           if (p_175690_2_ != null && !p_175690_2_.func_145837_r()) {
              if (this.field_147481_N) {
                 p_175690_2_.func_226984_a_(this, p_175690_1_);
-@@ -576,7 +636,8 @@
+@@ -576,7 +638,8 @@
  
                 this.field_147484_a.add(p_175690_2_);
              } else {
@@ -266,7 +271,7 @@
                 this.func_175700_a(p_175690_2_);
              }
           }
-@@ -589,6 +650,8 @@
+@@ -589,6 +652,8 @@
        if (tileentity != null && this.field_147481_N) {
           tileentity.func_145843_s();
           this.field_147484_a.remove(tileentity);
@@ -275,7 +280,7 @@
        } else {
           if (tileentity != null) {
              this.field_147484_a.remove(tileentity);
-@@ -598,7 +661,7 @@
+@@ -598,7 +663,7 @@
  
           this.func_175726_f(p_175713_1_).func_177425_e(p_175713_1_);
        }
@@ -284,7 +289,7 @@
     }
  
     public boolean func_195588_v(BlockPos p_195588_1_) {
-@@ -651,10 +714,10 @@
+@@ -651,10 +716,10 @@
     public List<Entity> func_175674_a(@Nullable Entity p_175674_1_, AxisAlignedBB p_175674_2_, @Nullable Predicate<? super Entity> p_175674_3_) {
        this.func_217381_Z().func_230035_c_("getEntities");
        List<Entity> list = Lists.newArrayList();
@@ -299,7 +304,7 @@
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
  
        for(int i1 = i; i1 <= j; ++i1) {
-@@ -671,10 +734,10 @@
+@@ -671,10 +736,10 @@
  
     public <T extends Entity> List<T> func_217394_a(@Nullable EntityType<T> p_217394_1_, AxisAlignedBB p_217394_2_, Predicate<? super T> p_217394_3_) {
        this.func_217381_Z().func_230035_c_("getEntities");
@@ -314,7 +319,7 @@
        List<T> list = Lists.newArrayList();
  
        for(int i1 = i; i1 < j; ++i1) {
-@@ -691,10 +754,10 @@
+@@ -691,10 +756,10 @@
  
     public <T extends Entity> List<T> func_175647_a(Class<? extends T> p_175647_1_, AxisAlignedBB p_175647_2_, @Nullable Predicate<? super T> p_175647_3_) {
        this.func_217381_Z().func_230035_c_("getEntities");
@@ -329,7 +334,7 @@
        List<T> list = Lists.newArrayList();
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
  
-@@ -712,10 +775,10 @@
+@@ -712,10 +777,10 @@
  
     public <T extends Entity> List<T> func_225316_b(Class<? extends T> p_225316_1_, AxisAlignedBB p_225316_2_, @Nullable Predicate<? super T> p_225316_3_) {
        this.func_217381_Z().func_230035_c_("getLoadedEntities");
@@ -344,7 +349,7 @@
        List<T> list = Lists.newArrayList();
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
  
-@@ -739,6 +802,7 @@
+@@ -739,6 +804,7 @@
           this.func_175726_f(p_175646_1_).func_76630_e();
        }
  
@@ -352,7 +357,7 @@
     }
  
     public int func_181545_F() {
-@@ -783,7 +847,7 @@
+@@ -783,7 +849,7 @@
     public int func_175651_c(BlockPos p_175651_1_, Direction p_175651_2_) {
        BlockState blockstate = this.func_180495_p(p_175651_1_);
        int i = blockstate.func_185911_a(this, p_175651_1_, p_175651_2_);
@@ -361,7 +366,7 @@
     }
  
     public boolean func_175640_z(BlockPos p_175640_1_) {
-@@ -938,16 +1002,15 @@
+@@ -938,16 +1004,15 @@
     public abstract Scoreboard func_96441_U();
  
     public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_) {
@@ -382,7 +387,7 @@
                    blockstate.func_215697_a(this, blockpos, p_175666_2_, p_175666_1_, false);
                 }
              }
-@@ -1024,6 +1087,18 @@
+@@ -1024,6 +1089,18 @@
        return this.field_226689_w_;
     }
  

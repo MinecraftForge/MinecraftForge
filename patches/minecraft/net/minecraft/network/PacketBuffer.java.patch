@@ -25,7 +25,7 @@
        if (p_150788_1_.func_190926_b()) {
           this.writeBoolean(false);
        } else {
-@@ -300,8 +309,8 @@
+@@ -300,10 +309,11 @@
           this.func_150787_b(Item.func_150891_b(item));
           this.writeByte(p_150788_1_.func_190916_E());
           CompoundNBT compoundnbt = null;
@@ -34,14 +34,20 @@
 +         if (item.isDamageable(p_150788_1_) || item.func_77651_p()) {
 +            compoundnbt = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.func_77978_p();
           }
- 
+-
++         compoundnbt = compoundnbt == null ? new CompoundNBT() : compoundnbt;
++         p_150788_1_.encodeNbt(compoundnbt, true);
           this.func_150786_a(compoundnbt);
-@@ -317,7 +326,7 @@
+       }
+ 
+@@ -317,7 +327,9 @@
           int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);
 -         itemstack.func_77982_d(this.func_150793_b());
-+         itemstack.readShareTag(this.func_150793_b());
++         CompoundNBT nbt = this.func_150793_b();
++         itemstack.readShareTag(nbt);
++         itemstack.decodeNbt(nbt);
           return itemstack;
        }
     }
