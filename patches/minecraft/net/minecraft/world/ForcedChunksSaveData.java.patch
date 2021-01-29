@@ -4,8 +4,8 @@
  
     public void func_76184_a(CompoundNBT p_76184_1_) {
        this.field_212439_a = new LongOpenHashSet(p_76184_1_.func_197645_o("Forced"));
-+      this.blockForcedChunks = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
-+      this.entityForcedChunks = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
++      this.blockForcedChunks = new java.util.HashMap<>();
++      this.entityForcedChunks = new java.util.HashMap<>();
 +      net.minecraftforge.common.world.ForgeChunkManager.readForgeForcedChunks(p_76184_1_, this.blockForcedChunks, this.entityForcedChunks);
     }
  
@@ -20,14 +20,14 @@
     }
 +
 +   /* ======================================== FORGE START =====================================*/
-+   private it.unimi.dsi.fastutil.objects.Object2LongMap<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<net.minecraft.util.math.BlockPos>> blockForcedChunks = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
-+   private it.unimi.dsi.fastutil.objects.Object2LongMap<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<java.util.UUID>> entityForcedChunks = new it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap<>();
++   private java.util.Map<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<net.minecraft.util.math.BlockPos>, LongSet> blockForcedChunks = new java.util.HashMap<>();
++   private java.util.Map<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<java.util.UUID>, LongSet> entityForcedChunks = new java.util.HashMap<>();
 +
-+   public it.unimi.dsi.fastutil.objects.Object2LongMap<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<net.minecraft.util.math.BlockPos>> getBlockForcedChunks() {
++   public java.util.Map<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<net.minecraft.util.math.BlockPos>, LongSet> getBlockForcedChunks() {
 +      return this.blockForcedChunks;
 +   }
 +
-+   public it.unimi.dsi.fastutil.objects.Object2LongMap<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<java.util.UUID>> getEntityForcedChunks() {
++   public java.util.Map<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<java.util.UUID>, LongSet> getEntityForcedChunks() {
 +      return this.entityForcedChunks;
 +   }
  }
