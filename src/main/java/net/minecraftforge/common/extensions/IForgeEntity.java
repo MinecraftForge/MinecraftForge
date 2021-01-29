@@ -40,8 +40,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.INetworkCapability;
 
-public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
+public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>, INetworkCapability
 {
     default Entity getEntity() { return (Entity) this; }
 

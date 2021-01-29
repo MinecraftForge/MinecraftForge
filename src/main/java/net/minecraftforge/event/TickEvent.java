@@ -21,14 +21,16 @@ package net.minecraftforge.event;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 
 public class TickEvent extends Event
 {
     public enum Type {
-        WORLD, PLAYER, CLIENT, SERVER, RENDER;
+        WORLD, PLAYER, CLIENT, SERVER, RENDER, TILE_ENTITY;
     }
 
     public enum Phase {
@@ -82,6 +84,15 @@ public class TickEvent extends Event
         {
             super(Type.RENDER, LogicalSide.CLIENT, phase);
             this.renderTickTime = renderTickTime;
+        }
+    }
+    
+    public static class TileEntityTickEvent extends TickEvent {
+        public final TileEntity tileEntity;
+        public TileEntityTickEvent(Phase phase, TileEntity tileEntity)
+        {
+            super(Type.TILE_ENTITY, tileEntity.getWorld() instanceof ServerWorld ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
+            this.tileEntity = tileEntity;
         }
     }
 }

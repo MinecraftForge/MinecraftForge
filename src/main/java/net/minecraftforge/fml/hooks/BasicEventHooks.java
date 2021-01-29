@@ -23,6 +23,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.Animation;
@@ -118,5 +119,15 @@ public class BasicEventHooks
     public static void onPostServerTick()
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END));
+    }
+    
+    public static void onPreTileEntityTick(TileEntity tileEntity)
+    {
+        MinecraftForge.EVENT_BUS.post(new TickEvent.TileEntityTickEvent(TickEvent.Phase.START, tileEntity));
+    }
+
+    public static void onPostTileEntityTick(TileEntity tileEntity)
+    {
+        MinecraftForge.EVENT_BUS.post(new TickEvent.TileEntityTickEvent(TickEvent.Phase.END, tileEntity));
     }
 }

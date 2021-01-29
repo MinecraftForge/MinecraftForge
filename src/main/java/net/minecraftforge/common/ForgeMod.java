@@ -83,6 +83,7 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.network.ForgeNetwork;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -91,9 +92,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-@Mod("forge")
+@Mod(ForgeMod.ID)
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 {
+    public static final String ID = "forge";
     public static final String VERSION_CHECK_CAT = "version_checking";
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEMOD = MarkerManager.getMarker("FORGEMOD");
@@ -169,6 +171,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         VersionChecker.startVersionCheck();
 
         registerArgumentTypes();
+        
+        ForgeNetwork.init();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

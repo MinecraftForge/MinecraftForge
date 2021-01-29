@@ -25,14 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import javax.annotation.Nonnull;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.network.play.server.SCommandListPacket;
 import net.minecraft.network.play.server.SEntityPropertiesPacket;
 import net.minecraft.util.ResourceLocation;
@@ -57,6 +56,7 @@ public class VanillaConnectionNetworkFilter extends MessageToMessageEncoder<IPac
     private static final Map<Class<? extends IPacket<?>>, Function<IPacket<?>, ? extends IPacket<?>>> handlers = ImmutableMap.<Class<? extends IPacket<?>>, Function<IPacket<?>, ? extends IPacket<?>>>builder()
             .put(handler(SEntityPropertiesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
             .put(handler(SCommandListPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
+            .put(handler(CCustomPayloadPacket.class, VanillaConnectionNetworkFilter::filterCustomPayload))
             .build();
 
 
@@ -72,7 +72,6 @@ public class VanillaConnectionNetworkFilter extends MessageToMessageEncoder<IPac
     /**
      * Helper function for building the handler map.
      */
-    @Nonnull
     private static <T extends IPacket<?>> Map.Entry<Class<? extends IPacket<?>>, Function<IPacket<?>, ? extends IPacket<?>>> handler(Class<T> cls, Function<T, ? extends IPacket<?>> function)
     {
         return new AbstractMap.SimpleEntry<>(cls, function.compose(cls::cast));
@@ -82,7 +81,6 @@ public class VanillaConnectionNetworkFilter extends MessageToMessageEncoder<IPac
      * Filter for SEntityPropertiesPacket. Filters out any entity attributes that are not in the "minecraft" namespace.
      * A vanilla client would ignore these with an error log.
      */
-    @Nonnull
     private static SEntityPropertiesPacket filterEntityProperties(SEntityPropertiesPacket msg)
     {
         SEntityPropertiesPacket newPacket = new SEntityPropertiesPacket(msg.getEntityId(), Collections.emptyList());
@@ -99,7 +97,6 @@ public class VanillaConnectionNetworkFilter extends MessageToMessageEncoder<IPac
      * Filter for SCommandListPacket. Uses {@link CommandTreeCleaner} to filter out any ArgumentTypes that are not in the "minecraft" or "brigadier" namespace.
      * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
      */
-    @Nonnull
     private static SCommandListPacket filterCommandList(SCommandListPacket packet)
     {
         RootCommandNode<ISuggestionProvider> root = packet.getRoot();
@@ -110,10 +107,24 @@ public class VanillaConnectionNetworkFilter extends MessageToMessageEncoder<IPac
         return new SCommandListPacket(newRoot);
     }
 
+    /**
+     * Filter for CCustomPayloadPacket. Removes Forge packets for vanilla clients.
+     */
+    private static CCustomPayloadPacket filterCustomPayload(CCustomPayloadPacket packet)
+    {
+       if (packet.getName().equals(ForgeNetwork.CHANNEL_NAME))
+       {
+           return null;
+       }
+       return packet;
+    }
+
     @Override
     protected void encode(ChannelHandlerContext ctx, IPacket<?> msg, List<Object> out)
     {
         Function<IPacket<?>, ? extends IPacket<?>> function = handlers.getOrDefault(msg.getClass(), Function.identity());
-        out.add(function.apply(msg));
+        IPacket<?> resultMsg = function.apply(msg);
+        if (resultMsg != null)
+            out.add(resultMsg);
     }
 }
