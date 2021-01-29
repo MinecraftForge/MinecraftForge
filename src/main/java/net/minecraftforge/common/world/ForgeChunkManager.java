@@ -15,9 +15,9 @@ import java.util.function.Function;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.UUIDCodec;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.ForcedChunksSaveData;
@@ -109,20 +109,23 @@ public class ForgeChunkManager
 
     public static void reinstatePersistentChunks(ServerWorld world, ForcedChunksSaveData saveData)
     {
-        //Gather owned tickets by modid for both block and entity
-        Map<String, Map<BlockPos, LongSet>> blockTickets = gatherTicketsByModId(saveData.getBlockForcedChunks());
-        Map<String, Map<UUID, LongSet>> entityTickets = gatherTicketsByModId(saveData.getEntityForcedChunks());
-        //Fire the callbacks allowing them to remove any tickets they don't want anymore
-        for (Map.Entry<String, LoadingCallback> entry : callbacks.entrySet())
+        if (!callbacks.isEmpty())
         {
-            String modId = entry.getKey();
-            boolean hasBlockTicket = blockTickets.containsKey(modId);
-            boolean hasEntityTicket = entityTickets.containsKey(modId);
-            if (hasBlockTicket || hasEntityTicket)
+            //If we have any callbacks, gather all owned tickets by modid for both blocks and entities
+            Map<String, Map<BlockPos, LongSet>> blockTickets = gatherTicketsByModId(saveData.getBlockForcedChunks());
+            Map<String, Map<UUID, LongSet>> entityTickets = gatherTicketsByModId(saveData.getEntityForcedChunks());
+            //Fire the callbacks allowing them to remove any tickets they don't want anymore
+            for (Map.Entry<String, LoadingCallback> entry : callbacks.entrySet())
             {
-                Map<BlockPos, LongSet> ownedBlockTickets = hasBlockTicket ? Collections.unmodifiableMap(blockTickets.get(modId)) : Collections.emptyMap();
-                Map<UUID, LongSet> ownedEntityTickets = hasEntityTicket ? Collections.unmodifiableMap(entityTickets.get(modId)) : Collections.emptyMap();
-                entry.getValue().validateTickets(world, new TicketHelper(saveData, modId, ownedBlockTickets, ownedEntityTickets));
+                String modId = entry.getKey();
+                boolean hasBlockTicket = blockTickets.containsKey(modId);
+                boolean hasEntityTicket = entityTickets.containsKey(modId);
+                if (hasBlockTicket || hasEntityTicket)
+                {
+                    Map<BlockPos, LongSet> ownedBlockTickets = hasBlockTicket ? Collections.unmodifiableMap(blockTickets.get(modId)) : Collections.emptyMap();
+                    Map<UUID, LongSet> ownedEntityTickets = hasEntityTicket ? Collections.unmodifiableMap(entityTickets.get(modId)) : Collections.emptyMap();
+                    entry.getValue().validateTickets(world, new TicketHelper(saveData, modId, ownedBlockTickets, ownedEntityTickets));
+                }
             }
         }
         //Reinstate the chunks that we want to load
@@ -221,19 +224,9 @@ public class ForgeChunkManager
                         blockForcedChunks.computeIfAbsent(new TicketOwner<>(modId, NBTUtil.readBlockPos(forcedBlocks.getCompound(k))), owner -> new LongOpenHashSet()).add(chunkPos);
                     }
                     ListNBT forcedEntities = modEntry.getList("Entities", Constants.NBT.TAG_INT_ARRAY);
-                    for (int k = 0; k < forcedEntities.size(); k++)
+                    for (INBT uuid : forcedEntities)
                     {
-                        //Based on how vanilla's NBTUtil handles UUIDs
-                        int[] rawUUID = forcedEntities.getIntArray(k);
-                        if (rawUUID.length == 4)
-                        {
-                            entityForcedChunks.computeIfAbsent(new TicketOwner<>(modId, UUIDCodec.decodeUUID(rawUUID)), owner -> new LongOpenHashSet()).add(chunkPos);
-                        }
-                        else
-                        {
-                            //Something went wrong, this should never happen unless the data gets corrupted, but validate it just in case
-                            LOGGER.warn("Found chunk loading data for mod {} with invalid UUID-Array of length {}, but expected length 4 - it will be removed from the world save.", modId, rawUUID.length);
-                        }
+                        entityForcedChunks.computeIfAbsent(new TicketOwner<>(modId, NBTUtil.readUniqueId(uuid)), owner -> new LongOpenHashSet()).add(chunkPos);
                     }
                 }
             }
