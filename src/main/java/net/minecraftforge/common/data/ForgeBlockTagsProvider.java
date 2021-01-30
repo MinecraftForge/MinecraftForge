@@ -53,6 +53,7 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         getOrCreateBuilder(COBBLESTONE).add(Blocks.COBBLESTONE, Blocks.INFESTED_COBBLESTONE, Blocks.MOSSY_COBBLESTONE);
         getOrCreateBuilder(DIRT).add(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.COARSE_DIRT, Blocks.PODZOL, Blocks.MYCELIUM);
         getOrCreateBuilder(END_STONES).add(Blocks.END_STONE);
+        getOrCreateBuilder(ENDERMAN_PLACE_ON_BLACKLIST);
         getOrCreateBuilder(FENCE_GATES).addTags(FENCE_GATES_WOODEN);
         getOrCreateBuilder(FENCE_GATES_WOODEN).add(Blocks.OAK_FENCE_GATE, Blocks.SPRUCE_FENCE_GATE, Blocks.BIRCH_FENCE_GATE, Blocks.JUNGLE_FENCE_GATE, Blocks.ACACIA_FENCE_GATE, Blocks.DARK_OAK_FENCE_GATE, Blocks.CRIMSON_FENCE_GATE, Blocks.WARPED_FENCE_GATE);
         getOrCreateBuilder(FENCES).addTags(FENCES_NETHER_BRICK, FENCES_WOODEN);
