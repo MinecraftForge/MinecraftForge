@@ -22,7 +22,7 @@
     }
  
     public void func_219972_a(World p_219972_1_, LivingEntity p_219972_2_, ItemStack p_219972_3_, int p_219972_4_) {
-@@ -120,10 +_,12 @@
+@@ -120,14 +_,17 @@
        return this.func_219971_r() ? p_77654_3_.func_213357_a(p_77654_2_, p_77654_1_) : p_77654_1_;
     }
  
@@ -34,6 +34,11 @@
 +   @Deprecated // Use ItemStack sensitive version.
     public final int func_77612_l() {
        return this.field_77699_b;
+    }
+ 
++   @Deprecated // Use ItemStack sensitive version. Calls to this method are redirected to stack sensitive method in vanilla if an ItemStack is available using the the stack_sensitive coremod transformer.
+    public boolean func_77645_m() {
+       return this.field_77699_b > 0;
     }
 @@ -178,10 +_,12 @@
     }
