@@ -20,6 +20,7 @@
 package net.minecraftforge.debug.gameplay.loot;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import net.minecraft.advancements.criterion.EnchantmentPredicate;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.advancements.criterion.MinMaxBounds;
@@ -48,7 +49,9 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
+import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -62,6 +65,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mod(GlobalLootModifiersTest.MODID)
 public class GlobalLootModifiersTest {
@@ -80,6 +84,7 @@ public class GlobalLootModifiersTest {
     private static final DeferredRegister<GlobalLootModifierSerializer<?>> GLM = DeferredRegister.create(ForgeRegistries.LOOT_MODIFIER_SERIALIZERS, MODID);
     private static final DeferredRegister<Enchantment> ENCHANTS = DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, MODID);
 
+    private static final RegistryObject<DungeonLootEnhancerModifier.Serializer> DUNGEON_LOOT = GLM.register("dungeon_loot", DungeonLootEnhancerModifier.Serializer::new);
     private static final RegistryObject<SmeltingEnchantmentModifier.Serializer> SMELTING = GLM.register("smelting", SmeltingEnchantmentModifier.Serializer::new);
     private static final RegistryObject<WheatSeedsConverterModifier.Serializer> WHEATSEEDS = GLM.register("wheat_harvest", WheatSeedsConverterModifier.Serializer::new);
     private static final RegistryObject<SilkTouchTestModifier.Serializer> SILKTOUCH = GLM.register("silk_touch_bamboo", SilkTouchTestModifier.Serializer::new);
@@ -120,6 +125,10 @@ public class GlobalLootModifiersTest {
                             BlockStateProperty.builder(Blocks.WHEAT).build()
                     },
                     3, Items.WHEAT_SEEDS, Items.WHEAT)
+            );
+
+            add("dungeon_loot", DUNGEON_LOOT.get(), new DungeonLootEnhancerModifier(
+                    new ILootCondition[] { LootTableIdCondition.builder(new ResourceLocation("chests/simple_dungeon")).build() })
             );
         }
     }
@@ -260,6 +269,43 @@ public class GlobalLootModifiersTest {
                 json.addProperty("seedItem", ForgeRegistries.ITEMS.getKey(instance.itemToCheck).toString());
                 json.addProperty("replacement", ForgeRegistries.ITEMS.getKey(instance.itemReward).toString());
                 return json;
+            }
+        }
+    }
+
+    private static class DungeonLootEnhancerModifier extends LootModifier {
+        private final int multiplicationFactor;
+
+        public DungeonLootEnhancerModifier(final ILootCondition[] conditionsIn, final int multiplicationFactor) {
+            super(conditionsIn);
+            this.multiplicationFactor = multiplicationFactor;
+        }
+
+        public DungeonLootEnhancerModifier(final ILootCondition[] conditionsIn) {
+            this(conditionsIn, 2);
+        }
+
+        @Override
+        protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
+            return generatedLoot.stream()
+                    .map(ItemStack::copy)
+                    .peek(stack -> stack.setCount(Math.min(stack.getMaxStackSize(), stack.getCount() * this.multiplicationFactor)))
+                    .collect(Collectors.toList());
+        }
+
+        private static class Serializer extends GlobalLootModifierSerializer<DungeonLootEnhancerModifier> {
+            @Override
+            public DungeonLootEnhancerModifier read(ResourceLocation location, JsonObject object, ILootCondition[] conditions) {
+                final int multiplicationFactor = JSONUtils.getInt(object, "multiplication_factor", 2);
+                if (multiplicationFactor <= 0) throw new JsonParseException("Unable to set a multiplication factor to a number lower than 1");
+                return new DungeonLootEnhancerModifier(conditions, multiplicationFactor);
+            }
+
+            @Override
+            public JsonObject write(DungeonLootEnhancerModifier instance) {
+                final JsonObject obj = this.makeConditions(instance.conditions);
+                obj.addProperty("multiplication_factor", instance.multiplicationFactor);
+                return obj;
             }
         }
     }
