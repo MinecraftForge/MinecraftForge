@@ -31,7 +31,7 @@
  
 +      private ColorModifier delegate;
 +      private GrassColorModifier(String name, ColorModifier delegate) {
-+         this.field_242543_e = name;
++         this(name);
 +         this.delegate = delegate;
 +      }
 +      public static GrassColorModifier create(String name, String id, ColorModifier delegate) {
