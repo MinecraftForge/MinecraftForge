@@ -22,24 +22,24 @@
        @OnlyIn(Dist.CLIENT)
 -      public abstract int func_241853_a(double p_241853_1_, double p_241853_3_, int p_241853_5_);
 +      public int func_241853_a(double p_241853_1_, double p_241853_3_, int p_241853_5_) {
-+         return delegate.apply(p_241853_1_, p_241853_3_, p_241853_5_);
++         return delegate.modifyGrassColor(p_241853_1_, p_241853_3_, p_241853_5_);
 +      }
  
        private GrassColorModifier(String p_i241940_3_) {
           this.field_242543_e = p_i241940_3_;
        }
  
-+      private BiDoubleIntToIntFunction delegate;
-+      private GrassColorModifier(String name, BiDoubleIntToIntFunction delegate) {
++      private ColorModifier delegate;
++      private GrassColorModifier(String name, ColorModifier delegate) {
 +         this.field_242543_e = name;
 +         this.delegate = delegate;
 +      }
-+      public static GrassColorModifier create(String name, String id, BiDoubleIntToIntFunction delegate) {
++      public static GrassColorModifier create(String name, String id, ColorModifier delegate) {
 +         throw new IllegalStateException("Enum not extended");
 +      }
 +      @FunctionalInterface
-+      private interface BiDoubleIntToIntFunction {
-+         int apply(double x, double z, int color);
++      public interface ColorModifier {
++         int modifyGrassColor(double x, double z, int color);
 +      }
        public String func_242547_b() {
           return this.field_242543_e;
