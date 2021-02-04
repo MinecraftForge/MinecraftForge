@@ -1,0 +1,46 @@
+--- a/net/minecraft/world/biome/BiomeAmbience.java
++++ b/net/minecraft/world/biome/BiomeAmbience.java
+@@ -204,7 +204,7 @@
+       }
+    }
+ 
+-   public static enum GrassColorModifier implements IStringSerializable {
++   public static enum GrassColorModifier implements IStringSerializable, net.minecraftforge.common.IExtensibleEnum {
+       NONE("none") {
+          @OnlyIn(Dist.CLIENT)
+          public int func_241853_a(double p_241853_1_, double p_241853_3_, int p_241853_5_) {
+@@ -226,18 +226,32 @@
+       };
+ 
+       private final String field_242543_e;
+-      public static final Codec<BiomeAmbience.GrassColorModifier> field_242542_d = IStringSerializable.func_233023_a_(BiomeAmbience.GrassColorModifier::values, BiomeAmbience.GrassColorModifier::func_242546_a);
++      public static final Codec<BiomeAmbience.GrassColorModifier> field_242542_d = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(BiomeAmbience.GrassColorModifier::values, BiomeAmbience.GrassColorModifier::func_242546_a);
+       private static final Map<String, BiomeAmbience.GrassColorModifier> field_242544_f = Arrays.stream(values()).collect(Collectors.toMap(BiomeAmbience.GrassColorModifier::func_242547_b, (p_242545_0_) -> {
+          return p_242545_0_;
+       }));
+ 
+       @OnlyIn(Dist.CLIENT)
+-      public abstract int func_241853_a(double p_241853_1_, double p_241853_3_, int p_241853_5_);
++      public int func_241853_a(double p_241853_1_, double p_241853_3_, int p_241853_5_) {
++         return delegate.apply(p_241853_1_, p_241853_3_, p_241853_5_);
++      }
+ 
+       private GrassColorModifier(String p_i241940_3_) {
+          this.field_242543_e = p_i241940_3_;
+       }
+ 
++      private BiDoubleIntToIntFunction delegate;
++      private GrassColorModifier(String name, BiDoubleIntToIntFunction delegate) {
++         this.field_242543_e = name;
++         this.delegate = delegate;
++      }
++      public static GrassColorModifier create(String name, String id, BiDoubleIntToIntFunction delegate) {
++         throw new IllegalStateException("Enum not extended");
++      }
++      @FunctionalInterface
++      private interface BiDoubleIntToIntFunction {
++         int apply(double x, double z, int color);
++      }
+       public String func_242547_b() {
+          return this.field_242543_e;
+       }
