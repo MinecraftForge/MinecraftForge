@@ -32,12 +32,17 @@ import org.apache.logging.log4j.Logger;
 public class ForgeChunkManager
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final TicketType<OwnedTicketInfo<BlockPos>> BLOCK = TicketType.create("forge:block", Comparator.comparing(info -> info));
-    private static final TicketType<OwnedTicketInfo<UUID>> ENTITY = TicketType.create("forge:entity", Comparator.comparing(info -> info));
-    private static final Map<String, LoadingCallback> callbacks = new HashMap<>();
+    private static final TicketType<TicketOwner<BlockPos>> BLOCK = TicketType.create("forge:block", Comparator.comparing(info -> info));
+    private static final TicketType<TicketOwner<UUID>> ENTITY = TicketType.create("forge:entity", Comparator.comparing(info -> info));
+    private static final Map<String, LoadingValidationCallback> callbacks = new HashMap<>();
 
-    //TODO: Note that this should be called from enqueueWork in CommonSetupEvent (given it just has a simple hashmap as the backing map)
-    public static void setForcedChunkLoadingCallback(String modId, LoadingCallback callback)
+    /**
+     * Sets the forced chunk loading validation callback for the given mod. This allows for validating and removing no longer valid tickets on world load.
+     *
+     * @apiNote This method should be called from a {@link net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent} using one of the {@link
+     * net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent} enqueueWork methods.
+     */
+    public static void setForcedChunkLoadingCallback(String modId, LoadingValidationCallback callback)
     {
         if (ModList.get().isLoaded(modId))
             callbacks.put(modId, callback);
@@ -45,24 +50,45 @@ public class ForgeChunkManager
             LOGGER.warn("A mod attempted to set the forced chunk validation loading callback for an unloaded mod of id: {}", modId);
     }
 
+    /**
+     * Forces a chunk to be loaded for the given mod with the "owner" of the ticket being a given block position.
+     *
+     * @param add {@code true} to force the chunk, {@code false} to unforce the chunk.
+     */
     public static boolean forceChunk(ServerWorld world, String modId, BlockPos owner, int chunkX, int chunkZ, boolean add)
     {
         return forceChunk(world, modId, owner, chunkX, chunkZ, add, BLOCK, ForcedChunksSaveData::getBlockForcedChunks);
     }
 
+    /**
+     * Forces a chunk to be loaded for the given mod with the "owner" of the ticket being the UUID of the given entity.
+     *
+     * @param add {@code true} to force the chunk, {@code false} to unforce the chunk.
+     */
     public static boolean forceChunk(ServerWorld world, String modId, Entity owner, int chunkX, int chunkZ, boolean add)
     {
         return forceChunk(world, modId, owner.getUniqueID(), chunkX, chunkZ, add);
     }
 
+    /**
+     * Forces a chunk to be loaded for the given mod with the "owner" of the ticket being a given UUID.
+     *
+     * @param add {@code true} to force the chunk, {@code false} to unforce the chunk.
+     */
     public static boolean forceChunk(ServerWorld world, String modId, UUID owner, int chunkX, int chunkZ, boolean add)
     {
         return forceChunk(world, modId, owner, chunkX, chunkZ, add, ENTITY, ForcedChunksSaveData::getEntityForcedChunks);
     }
 
-    //Based on ServerWorld#forceChunk
+    /**
+     * Forces a chunk to be loaded for the given mod with the given "owner".
+     *
+     * @param add {@code true} to force the chunk, {@code false} to unforce the chunk.
+     *
+     * @implNote Based on {@link ServerWorld#forceChunk(int, int, boolean)}
+     */
     private static <T extends Comparable<? super T>> boolean forceChunk(ServerWorld world, String modId, T owner, int chunkX, int chunkZ, boolean add,
-          TicketType<OwnedTicketInfo<T>> type, Function<ForcedChunksSaveData, Map<TicketOwner<T>, LongSet>> ticketGetter)
+          TicketType<TicketOwner<T>> type, Function<ForcedChunksSaveData, Map<TicketOwner<T>, LongSet>> ticketGetter)
     {
         if (!ModList.get().isLoaded(modId))
         {
@@ -96,17 +122,28 @@ public class ForgeChunkManager
         return success;
     }
 
-    private static <T extends Comparable<? super T>> void forceChunk(ServerWorld world, ChunkPos pos, TicketType<OwnedTicketInfo<T>> type, TicketOwner<T> value, boolean add)
+    /**
+     * Adds/Removes a ticket from the world's chunk provider with the proper levels to match the forced chunks.
+     *
+     * @param add {@code true} to force the chunk, {@code false} to unforce the chunk.
+     *
+     * @implNote We use distance 2 for what we pass, as when using register/releaseTicket the ticket's level is set to 33 - distance and the level that forced chunks use
+     * is 31.
+     */
+    private static <T extends Comparable<? super T>> void forceChunk(ServerWorld world, ChunkPos pos, TicketType<TicketOwner<T>> type, TicketOwner<T> owner, boolean add)
     {
-        //We use distance 2, as when using register/releaseTicket the ticket's level is set to 33 - distance
-        // and the level that forced chunks use is 31
-        OwnedTicketInfo<T> ticketInfo = new OwnedTicketInfo<>(value, pos);
         if (add)
-            world.getChunkProvider().registerTicket(type, pos, 2, ticketInfo);
+            world.getChunkProvider().registerTicket(type, pos, 2, owner);
         else
-            world.getChunkProvider().releaseTicket(type, pos, 2, ticketInfo);
+            world.getChunkProvider().releaseTicket(type, pos, 2, owner);
     }
 
+    /**
+     * Reinstates forge's forced chunks when vanilla initially loads a world and reinstates their forced chunks. This method also will validate all of forge's forced
+     * chunks using and registered {@link LoadingValidationCallback}.
+     *
+     * @apiNote Internal
+     */
     public static void reinstatePersistentChunks(ServerWorld world, ForcedChunksSaveData saveData)
     {
         if (!callbacks.isEmpty())
@@ -115,7 +152,7 @@ public class ForgeChunkManager
             Map<String, Map<BlockPos, LongSet>> blockTickets = gatherTicketsByModId(saveData.getBlockForcedChunks());
             Map<String, Map<UUID, LongSet>> entityTickets = gatherTicketsByModId(saveData.getEntityForcedChunks());
             //Fire the callbacks allowing them to remove any tickets they don't want anymore
-            for (Map.Entry<String, LoadingCallback> entry : callbacks.entrySet())
+            for (Map.Entry<String, LoadingValidationCallback> entry : callbacks.entrySet())
             {
                 String modId = entry.getKey();
                 boolean hasBlockTicket = blockTickets.containsKey(modId);
@@ -133,6 +170,9 @@ public class ForgeChunkManager
         reinstatePersistentChunks(world, ENTITY, saveData.getEntityForcedChunks());
     }
 
+    /**
+     * Gathers tickets into a mod filtered map for use in providing all tickets a mod has registered to its {@link LoadingValidationCallback}/
+     */
     private static <T extends Comparable<? super T>> Map<String, Map<T, LongSet>> gatherTicketsByModId(Map<TicketOwner<T>, LongSet> tickets)
     {
         Map<String, Map<T, LongSet>> modSortedOwnedChunks = new HashMap<>();
@@ -145,8 +185,10 @@ public class ForgeChunkManager
         return modSortedOwnedChunks;
     }
 
-    private static <T extends Comparable<? super T>> void reinstatePersistentChunks(ServerWorld world, TicketType<OwnedTicketInfo<T>> type,
-          Map<TicketOwner<T>, LongSet> tickets)
+    /**
+     * Adds back any persistent forced chunks to the world's chunk provider.
+     */
+    private static <T extends Comparable<? super T>> void reinstatePersistentChunks(ServerWorld world, TicketType<TicketOwner<T>> type, Map<TicketOwner<T>, LongSet> tickets)
     {
         for (Map.Entry<TicketOwner<T>, LongSet> entry : tickets.entrySet())
         {
@@ -157,12 +199,15 @@ public class ForgeChunkManager
         }
     }
 
+    /**
+     * Writes the forge forced chunks into the NBT compound. Format is List{modid, List{ChunkPos, List{BlockPos}, List{UUID}}}
+     *
+     * @apiNote Internal
+     */
     public static void writeForgeForcedChunks(CompoundNBT nbt, Map<TicketOwner<BlockPos>, LongSet> blockForcedChunks, Map<TicketOwner<UUID>, LongSet> entityForcedChunks)
     {
         if (!blockForcedChunks.isEmpty() || !entityForcedChunks.isEmpty())
         {
-            //TODO: Some sort of docs that the second part being a map is mainly for purpose of looking up same chunk entries
-            // but different other data but the data also contains the long
             Map<String, Long2ObjectMap<CompoundNBT>> forcedEntries = new HashMap<>();
             writeForcedChunkOwners(forcedEntries, blockForcedChunks, "Blocks", Constants.NBT.TAG_COMPOUND, (pos, forcedBlocks) -> forcedBlocks.add(NBTUtil.writeBlockPos(pos)));
             writeForcedChunkOwners(forcedEntries, entityForcedChunks, "Entities", Constants.NBT.TAG_INT_ARRAY, (uuid, forcedEntities) -> forcedEntities.add(NBTUtil.func_240626_a_(uuid)));
@@ -195,15 +240,19 @@ public class ForgeChunkManager
                 });
                 ListNBT ownerList = modEntry.getList(listKey, listType);
                 ownerWriter.accept(entry.getKey().owner, ownerList);
-                //TODO: Some sort of note that we can't just check if our entry already contains a list of listKey because
-                // if the type is mismatched somehow then it just returns a new list and to make sure we properly persist
-                // we are going to have to set it anyways
+                //Note: As getList returns a new list in the case the data is of the wrong type,
+                // we need to mimic was vanilla does in various places and put our list back in
+                // the CompoundNBT regardless.
                 modEntry.put(listKey, ownerList);
             }
         }
     }
 
-    //List{modid, List{ChunkPos, List{BlockPos}, List{UUID}}}
+    /**
+     * Reads the forge forced chunks into the NBT compound. Format is List{modid, List{ChunkPos, List{BlockPos}, List{UUID}}}
+     *
+     * @apiNote Internal
+     */
     public static void readForgeForcedChunks(CompoundNBT nbt, Map<TicketOwner<BlockPos>, LongSet> blockForcedChunks, Map<TicketOwner<UUID>, LongSet> entityForcedChunks)
     {
         ListNBT forcedChunks = nbt.getList("ForgeForced", Constants.NBT.TAG_COMPOUND);
@@ -238,11 +287,19 @@ public class ForgeChunkManager
     }
 
     @FunctionalInterface
-    public interface LoadingCallback
-    {
+    public interface LoadingValidationCallback {
+        /**
+         * Called back when tickets are about to be loaded and reinstated to allow mods to invalidate and remove specific tickets that may no longer be valid.
+         *
+         * @param world        The world
+         * @param ticketHelper Ticket helper to remove any invalid tickets.
+         */
         void validateTickets(ServerWorld world, TicketHelper ticketHelper);
     }
 
+    /**
+     * Class to help mods remove no longer valid tickets.
+     */
     public static class TicketHelper
     {
         private final Map<BlockPos, LongSet> blockTickets;
@@ -258,33 +315,63 @@ public class ForgeChunkManager
             this.entityTickets = entityTickets;
         }
 
-        //TODO: Note that it is immutable
+        /**
+         * Gets all "BLOCK" tickets this mod had registered and which block positions are forcing which chunks.
+         *
+         * @apiNote This map is unmodifiable and does not update to reflect removed tickets so it is safe to call the remove methods while iterating it.
+         */
         public Map<BlockPos, LongSet> getBlockTickets()
         {
             return blockTickets;
         }
 
-        //TODO: Note that it is immutable
+        /**
+         * Gets all "ENTITY" tickets this mod had registered and which entity (UUID) is forcing which chunks.
+         *
+         * @apiNote This map is unmodifiable and does not update to reflect removed tickets so it is safe to call the remove methods while iterating it.
+         */
         public Map<UUID, LongSet> getEntityTickets()
         {
             return entityTickets;
         }
 
+        /**
+         * Removes all tickets that a given block was responsible for.
+         *
+         * @param owner Block that was responsible.
+         */
         public void removeAllTickets(BlockPos owner)
         {
             saveData.getBlockForcedChunks().remove(new TicketOwner<>(modId, owner));
         }
 
+        /**
+         * Removes all tickets that a given entity (UUID) was responsible for.
+         *
+         * @param owner Entity (UUID) that was responsible.
+         */
         public void removeAllTickets(UUID owner)
         {
             saveData.getEntityForcedChunks().remove(new TicketOwner<>(modId, owner));
         }
 
+        /**
+         * Removes the ticket for the given chunk that a given block was responsible for.
+         *
+         * @param owner Block that was responsible.
+         * @param chunk Chunk to remove ticket of.
+         */
         public void removeTicket(BlockPos owner, long chunk)
         {
             removeTicket(saveData.getBlockForcedChunks(), owner, chunk);
         }
 
+        /**
+         * Removes the ticket for the given chunk that a given entity (UUID) was responsible for.
+         *
+         * @param owner Entity (UUID) that was responsible.
+         * @param chunk Chunk to remove ticket of.
+         */
         public void removeTicket(UUID owner, long chunk)
         {
             removeTicket(saveData.getEntityForcedChunks(), owner, chunk);
@@ -308,6 +395,9 @@ public class ForgeChunkManager
         }
     }
 
+    /**
+     * Helper class to keep track of a ticket owner by modid and owner object
+     */
     public static class TicketOwner<T extends Comparable<? super T>> implements Comparable<TicketOwner<T>>
     {
         private final String modId;
@@ -339,39 +429,6 @@ public class ForgeChunkManager
         public int hashCode()
         {
             return Objects.hash(modId, owner);
-        }
-    }
-
-    private static class OwnedTicketInfo<T extends Comparable<? super T>> implements Comparable<OwnedTicketInfo<T>>
-    {
-        private final ChunkPos chunkPos;
-        private final TicketOwner<T> owner;
-
-        public OwnedTicketInfo(TicketOwner<T> owner, ChunkPos chunkPos)
-        {
-            this.chunkPos = chunkPos;
-            this.owner = owner;
-        }
-
-        @Override
-        public int compareTo(OwnedTicketInfo<T> other)
-        {
-            int res = Long.compare(chunkPos.asLong(), other.chunkPos.asLong());
-            return res == 0 ? owner.compareTo(other.owner) : res;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            OwnedTicketInfo<?> other = (OwnedTicketInfo<?>) o;
-            return chunkPos.equals(other.chunkPos) && owner.equals(other.owner);
-        }
-
-        @Override
-        public int hashCode()
-        {
-            return Objects.hash(chunkPos, owner);
         }
     }
 }
