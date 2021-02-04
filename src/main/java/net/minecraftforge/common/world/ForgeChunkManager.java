@@ -51,6 +51,15 @@ public class ForgeChunkManager
     }
 
     /**
+     * Checks if a world has any forced chunks. Mainly used for seeing if a world should continue ticking with no players in it.
+     */
+    public static boolean hasForcedChunks(ServerWorld world)
+    {
+        ForcedChunksSaveData data = world.getSavedData().get(ForcedChunksSaveData::new, "chunks");
+        return data != null && (!data.getChunks().isEmpty() || !data.getBlockForcedChunks().isEmpty() || !data.getEntityForcedChunks().isEmpty());
+    }
+
+    /**
      * Forces a chunk to be loaded for the given mod with the "owner" of the ticket being a given block position.
      *
      * @param add {@code true} to force the chunk, {@code false} to unforce the chunk.
