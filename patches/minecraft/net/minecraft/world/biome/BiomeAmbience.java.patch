@@ -9,7 +9,7 @@
        NONE("none") {
           @OnlyIn(Dist.CLIENT)
           public int func_241853_a(double p_241853_1_, double p_241853_3_, int p_241853_5_) {
-@@ -226,18 +226,32 @@
+@@ -226,18 +226,36 @@
        };
  
        private final String field_242543_e;
@@ -36,6 +36,10 @@
 +      }
 +      public static GrassColorModifier create(String name, String id, ColorModifier delegate) {
 +         throw new IllegalStateException("Enum not extended");
++      }
++      @Override
++      public void init() {
++         field_242544_f.put(this.func_242547_b(), this);
 +      }
 +      @FunctionalInterface
 +      public interface ColorModifier {
