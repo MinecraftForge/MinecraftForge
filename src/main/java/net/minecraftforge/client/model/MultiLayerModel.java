@@ -156,9 +156,6 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
                 }
                 return builder.build();
             }
-            // fix translucent layer parts in piston-moving rendering as missing model
-            if (layer == RenderType.getTranslucentMovingBlock())
-                layer = RenderType.getTranslucent();
             // support for item layer rendering
             if (state == null && convertRenderTypes)
                 layer = ITEM_RENDER_TYPE_MAPPING.inverse().getOrDefault(layer, layer);
