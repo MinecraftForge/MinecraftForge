@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/server/ServerMultiWorld.java
 +++ b/net/minecraft/world/server/ServerMultiWorld.java
-@@ -10,11 +10,19 @@
+@@ -10,11 +10,22 @@
  import net.minecraft.world.storage.SaveHandler;
  
  public class ServerMultiWorld extends ServerWorld {
@@ -15,10 +15,12 @@
 +      p_i50708_1_.func_175723_af().func_177737_a(this.borderListener);
     }
  
--   protected void func_217389_a() {
+    protected void func_217389_a() {
+    }
++
 +   @Override
 +   public void close() throws java.io.IOException {
 +      super.close();
 +      this.delegate.func_175723_af().removeListener(this.borderListener); // Unlink ourselves, to prevent world leak.
-    }
++   }
  }
