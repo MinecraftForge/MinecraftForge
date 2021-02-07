@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/EntityDamageSource.java
++++ b/net/minecraft/util/EntityDamageSource.java
+@@ -40,7 +40,7 @@
+    }
+ 
+    public boolean func_76350_n() {
+-      return this.field_76386_o != null && this.field_76386_o instanceof LivingEntity && !(this.field_76386_o instanceof PlayerEntity);
++      return super.func_76350_n() && this.field_76386_o != null && this.field_76386_o instanceof LivingEntity && !(this.field_76386_o instanceof PlayerEntity);
+    }
+ 
+    @Nullable
