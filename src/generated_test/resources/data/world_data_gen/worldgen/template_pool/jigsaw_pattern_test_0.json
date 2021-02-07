@@ -1,0 +1,23 @@
+{
+  "name": "world_data_gen:boat/ocean/captain_quarters",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "feature": "world_data_gen:feature_test_0",
+        "projection": "rigid",
+        "element_type": "minecraft:feature_pool_element"
+      }
+    },
+    {
+      "weight": 2,
+      "element": {
+        "location": "minecraft:bastion/units/ramparts/ramparts_2",
+        "processors": "world_data_gen:proc_list_test_0",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

@@ -22,6 +22,7 @@ package net.minecraftforge.fml.event.lifecycle;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.worldgen.RegistryOpsHelper;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
 
@@ -40,13 +41,21 @@ public class GatherDataEvent extends Event implements IModBusEvent
     private final DataGeneratorConfig config;
     private final ExistingFileHelper existingFileHelper;
     private final ModContainer modContainer;
+    private final RegistryOpsHelper regOps;
 
+    @Deprecated //TODO remove in 1.17
     public GatherDataEvent(final ModContainer mc, final DataGenerator dataGenerator, final DataGeneratorConfig dataGeneratorConfig, ExistingFileHelper existingFileHelper)
+    {
+        this(mc, dataGenerator, dataGeneratorConfig, existingFileHelper, null);
+    }
+
+    public GatherDataEvent(final ModContainer mc, final DataGenerator dataGenerator, final DataGeneratorConfig dataGeneratorConfig, ExistingFileHelper existingFileHelper, RegistryOpsHelper regOps)
     {
         this.modContainer = mc;
         this.dataGenerator = dataGenerator;
         this.config = dataGeneratorConfig;
         this.existingFileHelper = existingFileHelper;
+        this.regOps = regOps;
     }
 
     public ModContainer getModContainer() {
@@ -55,6 +64,7 @@ public class GatherDataEvent extends Event implements IModBusEvent
 
     public DataGenerator getGenerator() { return this.dataGenerator; }
     public ExistingFileHelper getExistingFileHelper() { return existingFileHelper; }
+    public RegistryOpsHelper getRegistryOpsHelper() { return regOps; }
     public boolean includeServer() { return this.config.server; }
     public boolean includeClient() { return this.config.client; }
     public boolean includeDev() { return this.config.dev; }

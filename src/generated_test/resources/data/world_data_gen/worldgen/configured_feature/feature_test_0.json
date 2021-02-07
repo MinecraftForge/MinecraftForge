@@ -1,0 +1,160 @@
+{
+  "config": {
+    "feature": {
+      "config": {
+        "feature": {
+          "config": {
+            "state": {
+              "Name": "minecraft:end_stone"
+            },
+            "radius": {
+              "base": 2,
+              "spread": 2
+            },
+            "half_height": 1,
+            "targets": [
+              {
+                "Name": "minecraft:stone"
+              },
+              {
+                "Name": "minecraft:sand"
+              },
+              {
+                "Name": "minecraft:red_sand"
+              },
+              {
+                "Name": "minecraft:diorite"
+              },
+              {
+                "Name": "minecraft:andesite"
+              },
+              {
+                "Name": "minecraft:granite"
+              },
+              {
+                "Properties": {
+                  "level": "0"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "1"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "2"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "3"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "4"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "5"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "6"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "7"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "8"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "9"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "10"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "11"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "12"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "13"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "14"
+                },
+                "Name": "minecraft:water"
+              },
+              {
+                "Properties": {
+                  "level": "15"
+                },
+                "Name": "minecraft:water"
+              }
+            ]
+          },
+          "type": "minecraft:disk"
+        },
+        "decorator": {
+          "config": {
+            "outer": {
+              "config": {
+                "chance": 15
+              },
+              "type": "minecraft:chance"
+            },
+            "inner": {
+              "config": {},
+              "type": "minecraft:iceberg"
+            }
+          },
+          "type": "minecraft:decorated"
+        }
+      },
+      "type": "minecraft:decorated"
+    },
+    "decorator": {
+      "config": {
+        "count": 4
+      },
+      "type": "minecraft:count"
+    }
+  },
+  "type": "minecraft:decorated"
+}

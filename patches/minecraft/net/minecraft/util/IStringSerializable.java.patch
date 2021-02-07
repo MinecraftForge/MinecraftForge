@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/IStringSerializable.java
++++ b/net/minecraft/util/IStringSerializable.java
+@@ -39,7 +39,7 @@
+                return Pair.of(p_233035_1_, p_decode_1_.empty());
+             }) : p_decode_1_.getStringValue(p_decode_2_).flatMap((p_233033_1_) -> {
+                return Optional.ofNullable(p_233024_2_.apply(p_233033_1_)).map(DataResult::success).orElseGet(() -> {
+-                  return DataResult.error("Unknown element name: " + p_233033_1_);
++                  return DataResult.error("Unknown element name: " + p_233033_1_ + " (IExtensibleEnum from forge may be the cause!) ");
+                });
+             }).map((p_233030_1_) -> {
+                return Pair.of(p_233030_1_, p_decode_1_.empty());

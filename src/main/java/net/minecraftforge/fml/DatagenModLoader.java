@@ -22,6 +22,7 @@ package net.minecraftforge.fml;
 import java.util.Collections;
 import net.minecraft.util.registry.Bootstrap;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.worldgen.RegistryOpsHelper;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +35,7 @@ public class DatagenModLoader {
     private static final Logger LOGGER = LogManager.getLogger();
     private static GatherDataEvent.DataGeneratorConfig dataGeneratorConfig;
     private static ExistingFileHelper existingFileHelper;
+    private static RegistryOpsHelper regOps;
     private static boolean runningDataGen;
 
     public static boolean isRunningDataGen() {
@@ -56,8 +58,9 @@ public class DatagenModLoader {
             //If we aren't generating data for forge, automatically add forge as an existing so mods can access forge's data
             existingMods.add("forge");
         }
+        regOps = new RegistryOpsHelper(inputs);
         existingFileHelper = new ExistingFileHelper(existingPacks, existingMods, structureValidator);
-        ModLoader.get().runEventGenerator(mc->new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper));
+        ModLoader.get().runEventGenerator(mc->new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.isFlat() ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig, existingFileHelper, regOps));
         dataGeneratorConfig.runAll();
     }
 }

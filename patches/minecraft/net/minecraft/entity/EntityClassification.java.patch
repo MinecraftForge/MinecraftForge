@@ -21,7 +21,7 @@
 @@ -57,6 +57,16 @@
        return this.field_82707_i;
     }
- 
++
 +   public static EntityClassification create(String name, String id, int maxNumberOfCreatureIn, boolean isPeacefulCreatureIn, boolean isAnimalIn, int despawnDistance) {
 +      throw new IllegalStateException("Enum not extended");
 +   }
