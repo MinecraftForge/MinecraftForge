@@ -1,0 +1,66 @@
+--- a/net/minecraft/util/DamageSource.java
++++ b/net/minecraft/util/DamageSource.java
+@@ -47,51 +47,51 @@
+    public final String field_76373_n;
+ 
+    public static DamageSource func_226252_a_(LivingEntity p_226252_0_) {
+-      return new EntityDamageSource("sting", p_226252_0_);
++      return new EntityDamageSource("sting", p_226252_0_).func_76351_m();
+    }
+ 
+    public static DamageSource func_76358_a(LivingEntity p_76358_0_) {
+-      return new EntityDamageSource("mob", p_76358_0_);
++      return new EntityDamageSource("mob", p_76358_0_).func_76351_m();
+    }
+ 
+    public static DamageSource func_188403_a(Entity p_188403_0_, LivingEntity p_188403_1_) {
+-      return new IndirectEntityDamageSource("mob", p_188403_0_, p_188403_1_);
++      return new IndirectEntityDamageSource("mob", p_188403_0_, p_188403_1_).func_76351_m();
+    }
+ 
+    public static DamageSource func_76365_a(PlayerEntity p_76365_0_) {
+-      return new EntityDamageSource("player", p_76365_0_);
++      return new EntityDamageSource("player", p_76365_0_).func_76351_m();
+    }
+ 
+    public static DamageSource func_76353_a(AbstractArrowEntity p_76353_0_, @Nullable Entity p_76353_1_) {
+-      return (new IndirectEntityDamageSource("arrow", p_76353_0_, p_76353_1_)).func_76349_b();
++      return (new IndirectEntityDamageSource("arrow", p_76353_0_, p_76353_1_)).func_76349_b().func_76351_m();
+    }
+ 
+    public static DamageSource func_203096_a(Entity p_203096_0_, @Nullable Entity p_203096_1_) {
+-      return (new IndirectEntityDamageSource("trident", p_203096_0_, p_203096_1_)).func_76349_b();
++      return (new IndirectEntityDamageSource("trident", p_203096_0_, p_203096_1_)).func_76349_b().func_76351_m();
+    }
+ 
+    public static DamageSource func_233548_a_(FireworkRocketEntity p_233548_0_, @Nullable Entity p_233548_1_) {
+-      return (new IndirectEntityDamageSource("fireworks", p_233548_0_, p_233548_1_)).func_94540_d();
++      return (new IndirectEntityDamageSource("fireworks", p_233548_0_, p_233548_1_)).func_94540_d().func_76351_m();
+    }
+ 
+    public static DamageSource func_233547_a_(AbstractFireballEntity p_233547_0_, @Nullable Entity p_233547_1_) {
+-      return p_233547_1_ == null ? (new IndirectEntityDamageSource("onFire", p_233547_0_, p_233547_0_)).func_76361_j().func_76349_b() : (new IndirectEntityDamageSource("fireball", p_233547_0_, p_233547_1_)).func_76361_j().func_76349_b();
++      return p_233547_1_ == null ? (new IndirectEntityDamageSource("onFire", p_233547_0_, p_233547_0_)).func_76361_j().func_76349_b().func_76351_m() : (new IndirectEntityDamageSource("fireball", p_233547_0_, p_233547_1_)).func_76361_j().func_76349_b().func_76351_m();
+    }
+ 
+    public static DamageSource func_233549_a_(WitherSkullEntity p_233549_0_, Entity p_233549_1_) {
+-      return (new IndirectEntityDamageSource("witherSkull", p_233549_0_, p_233549_1_)).func_76349_b();
++      return (new IndirectEntityDamageSource("witherSkull", p_233549_0_, p_233549_1_)).func_76349_b().func_76351_m();
+    }
+ 
+    public static DamageSource func_76356_a(Entity p_76356_0_, @Nullable Entity p_76356_1_) {
+-      return (new IndirectEntityDamageSource("thrown", p_76356_0_, p_76356_1_)).func_76349_b();
++      return (new IndirectEntityDamageSource("thrown", p_76356_0_, p_76356_1_)).func_76349_b().func_76351_m();
+    }
+ 
+    public static DamageSource func_76354_b(Entity p_76354_0_, @Nullable Entity p_76354_1_) {
+-      return (new IndirectEntityDamageSource("indirectMagic", p_76354_0_, p_76354_1_)).func_76348_h().func_82726_p();
++      return (new IndirectEntityDamageSource("indirectMagic", p_76354_0_, p_76354_1_)).func_76348_h().func_82726_p().func_76351_m();
+    }
+ 
+    public static DamageSource func_92087_a(Entity p_92087_0_) {
+-      return (new EntityDamageSource("thorns", p_92087_0_)).func_180138_v().func_82726_p();
++      return (new EntityDamageSource("thorns", p_92087_0_)).func_180138_v().func_82726_p().func_76351_m();
+    }
+ 
+    public static DamageSource func_94539_a(@Nullable Explosion p_94539_0_) {
