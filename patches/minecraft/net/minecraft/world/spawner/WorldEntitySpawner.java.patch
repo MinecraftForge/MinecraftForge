@@ -27,7 +27,7 @@
                                return;
                             }
  
-@@ -253,6 +255,7 @@
+@@ -253,12 +255,13 @@
           return null;
        } else {
           List<MobSpawnInfo.Spawners> list = func_241463_a_(p_234977_0_, p_234977_1_, p_234977_2_, p_234977_3_, p_234977_5_, biome);
@@ -35,6 +35,13 @@
           return list.isEmpty() ? null : WeightedRandom.func_76271_a(p_234977_4_, list);
        }
     }
+ 
+    private static boolean func_234976_a_(ServerWorld p_234976_0_, StructureManager p_234976_1_, ChunkGenerator p_234976_2_, EntityClassification p_234976_3_, MobSpawnInfo.Spawners p_234976_4_, BlockPos p_234976_5_) {
+-      return func_241463_a_(p_234976_0_, p_234976_1_, p_234976_2_, p_234976_3_, p_234976_5_, (Biome)null).contains(p_234976_4_);
++      return net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(p_234976_0_, p_234976_3_, p_234976_5_, func_241463_a_(p_234976_0_, p_234976_1_, p_234976_2_, p_234976_3_, p_234976_5_, (Biome)null)).contains(p_234976_4_);
+    }
+ 
+    private static List<MobSpawnInfo.Spawners> func_241463_a_(ServerWorld p_241463_0_, StructureManager p_241463_1_, ChunkGenerator p_241463_2_, EntityClassification p_241463_3_, BlockPos p_241463_4_, @Nullable Biome p_241463_5_) {
 @@ -292,6 +295,13 @@
        if (p_209382_0_ == EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS) {
           return true;
