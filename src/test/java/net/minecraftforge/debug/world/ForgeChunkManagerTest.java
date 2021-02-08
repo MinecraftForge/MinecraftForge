@@ -22,6 +22,7 @@ package net.minecraftforge.debug.world;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.Map;
+import java.util.UUID;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -68,14 +69,22 @@ public class ForgeChunkManagerTest
             for (Map.Entry<BlockPos, Pair<LongSet, LongSet>> entry : ticketHelper.getBlockTickets().entrySet())
             {
                 BlockPos key = entry.getKey();
-                int ticketCount = entry.getValue().getFirst().size() + entry.getValue().getSecond().size();
+                int ticketCount = entry.getValue().getFirst().size();
+                int tickingTicketCount = entry.getValue().getSecond().size();
                 if (world.getBlockState(key).isIn(CHUNK_LOADER_BLOCK.get()))
-                    LOGGER.info("Allowing {} chunk tickets to be reinstated for position: {}.", ticketCount, key);
+                    LOGGER.info("Allowing {} chunk tickets and {} ticking chunk tickets to be reinstated for position: {}.", ticketCount, tickingTicketCount, key);
                 else
                 {
                     ticketHelper.removeAllTickets(key);
-                    LOGGER.info("Removing {} chunk tickets for no longer valid position: {}.", ticketCount, key);
+                    LOGGER.info("Removing {} chunk tickets and {} ticking chunk tickets for no longer valid position: {}.", ticketCount, tickingTicketCount, key);
                 }
+            }
+            for (Map.Entry<UUID, Pair<LongSet, LongSet>> entry : ticketHelper.getEntityTickets().entrySet())
+            {
+                UUID key = entry.getKey();
+                int ticketCount = entry.getValue().getFirst().size();
+                int tickingTicketCount = entry.getValue().getSecond().size();
+                LOGGER.info("Allowing {} chunk tickets and {} ticking chunk tickets to be reinstated for entity: {}.", ticketCount, tickingTicketCount, key);
             }
         }));
     }

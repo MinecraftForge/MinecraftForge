@@ -53,7 +53,9 @@ public class ForgeChunkManager
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final TicketType<TicketOwner<BlockPos>> BLOCK = TicketType.create("forge:block", Comparator.comparing(info -> info));
+    private static final TicketType<TicketOwner<BlockPos>> BLOCK_TICKING = TicketType.create("forge:block_ticking", Comparator.comparing(info -> info));
     private static final TicketType<TicketOwner<UUID>> ENTITY = TicketType.create("forge:entity", Comparator.comparing(info -> info));
+    private static final TicketType<TicketOwner<UUID>> ENTITY_TICKING = TicketType.create("forge:entity_ticking", Comparator.comparing(info -> info));
     private static final Map<String, LoadingValidationCallback> callbacks = new HashMap<>();
 
     /**
@@ -88,7 +90,7 @@ public class ForgeChunkManager
      */
     public static boolean forceChunk(ServerWorld world, String modId, BlockPos owner, int chunkX, int chunkZ, boolean add, boolean ticking)
     {
-        return forceChunk(world, modId, owner, chunkX, chunkZ, add, ticking, BLOCK, ForcedChunksSaveData::getBlockForcedChunks);
+        return forceChunk(world, modId, owner, chunkX, chunkZ, add, ticking, ticking ? BLOCK_TICKING : BLOCK, ForcedChunksSaveData::getBlockForcedChunks);
     }
 
     /**
@@ -110,7 +112,7 @@ public class ForgeChunkManager
      */
     public static boolean forceChunk(ServerWorld world, String modId, UUID owner, int chunkX, int chunkZ, boolean add, boolean ticking)
     {
-        return forceChunk(world, modId, owner, chunkX, chunkZ, add, ticking, ENTITY, ForcedChunksSaveData::getEntityForcedChunks);
+        return forceChunk(world, modId, owner, chunkX, chunkZ, add, ticking, ticking ? ENTITY_TICKING : ENTITY, ForcedChunksSaveData::getEntityForcedChunks);
     }
 
     /**
@@ -205,8 +207,10 @@ public class ForgeChunkManager
             }
         }
         //Reinstate the chunks that we want to load
-        reinstatePersistentChunks(world, BLOCK, saveData.getBlockForcedChunks());
-        reinstatePersistentChunks(world, ENTITY, saveData.getEntityForcedChunks());
+        reinstatePersistentChunks(world, BLOCK, saveData.getBlockForcedChunks().chunks, false);
+        reinstatePersistentChunks(world, BLOCK_TICKING, saveData.getBlockForcedChunks().tickingChunks, true);
+        reinstatePersistentChunks(world, ENTITY, saveData.getEntityForcedChunks().chunks, false);
+        reinstatePersistentChunks(world, ENTITY_TICKING, saveData.getEntityForcedChunks().tickingChunks, true);
     }
 
     /**
@@ -232,15 +236,6 @@ public class ForgeChunkManager
                   .computeIfAbsent(entry.getKey().owner, owner -> new Pair<>(new LongOpenHashSet(), new LongOpenHashSet()));
             typeGetter.apply(pair).addAll(entry.getValue());
         }
-    }
-
-    /**
-     * Adds back any persistent forced chunks to the world's chunk provider.
-     */
-    private static <T extends Comparable<? super T>> void reinstatePersistentChunks(ServerWorld world, TicketType<TicketOwner<T>> type, TicketTracker<T> tickets)
-    {
-        reinstatePersistentChunks(world, type, tickets.chunks, false);
-        reinstatePersistentChunks(world, type, tickets.tickingChunks, true);
     }
 
     /**
