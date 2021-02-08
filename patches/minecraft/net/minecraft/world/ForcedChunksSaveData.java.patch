@@ -4,8 +4,8 @@
  
     public void func_76184_a(CompoundNBT p_76184_1_) {
        this.field_212439_a = new LongOpenHashSet(p_76184_1_.func_197645_o("Forced"));
-+      this.blockForcedChunks = new java.util.HashMap<>();
-+      this.entityForcedChunks = new java.util.HashMap<>();
++      this.blockForcedChunks = new net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<>();
++      this.entityForcedChunks = new net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<>();
 +      net.minecraftforge.common.world.ForgeChunkManager.readForgeForcedChunks(p_76184_1_, this.blockForcedChunks, this.entityForcedChunks);
     }
  
@@ -20,14 +20,14 @@
     }
 +
 +   /* ======================================== FORGE START =====================================*/
-+   private java.util.Map<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<net.minecraft.util.math.BlockPos>, LongSet> blockForcedChunks = new java.util.HashMap<>();
-+   private java.util.Map<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<java.util.UUID>, LongSet> entityForcedChunks = new java.util.HashMap<>();
++   private net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<net.minecraft.util.math.BlockPos> blockForcedChunks = new net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<>();
++   private net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<java.util.UUID> entityForcedChunks = new net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<>();
 +
-+   public java.util.Map<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<net.minecraft.util.math.BlockPos>, LongSet> getBlockForcedChunks() {
++   public net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<net.minecraft.util.math.BlockPos> getBlockForcedChunks() {
 +      return this.blockForcedChunks;
 +   }
 +
-+   public java.util.Map<net.minecraftforge.common.world.ForgeChunkManager.TicketOwner<java.util.UUID>, LongSet> getEntityForcedChunks() {
++   public net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<java.util.UUID> getEntityForcedChunks() {
 +      return this.entityForcedChunks;
 +   }
  }

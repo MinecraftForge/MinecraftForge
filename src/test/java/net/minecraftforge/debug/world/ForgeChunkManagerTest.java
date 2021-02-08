@@ -19,6 +19,7 @@
 
 package net.minecraftforge.debug.world;
 
+import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.Map;
 import net.minecraft.block.AbstractBlock;
@@ -64,15 +65,16 @@ public class ForgeChunkManagerTest
     private void commonSetup(FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> ForgeChunkManager.setForcedChunkLoadingCallback(MODID, (world, ticketHelper) -> {
-            for (Map.Entry<BlockPos, LongSet> entry : ticketHelper.getBlockTickets().entrySet())
+            for (Map.Entry<BlockPos, Pair<LongSet, LongSet>> entry : ticketHelper.getBlockTickets().entrySet())
             {
                 BlockPos key = entry.getKey();
+                int ticketCount = entry.getValue().getFirst().size() + entry.getValue().getSecond().size();
                 if (world.getBlockState(key).isIn(CHUNK_LOADER_BLOCK.get()))
-                    LOGGER.info("Allowing {} chunk tickets to be reinstated for position: {}.", entry.getValue().size(), key);
+                    LOGGER.info("Allowing {} chunk tickets to be reinstated for position: {}.", ticketCount, key);
                 else
                 {
                     ticketHelper.removeAllTickets(key);
-                    LOGGER.info("Removing {} chunk tickets for no longer valid position: {}.", entry.getValue().size(), key);
+                    LOGGER.info("Removing {} chunk tickets for no longer valid position: {}.", ticketCount, key);
                 }
             }
         }));
@@ -93,7 +95,7 @@ public class ForgeChunkManagerTest
             if (worldIn instanceof ServerWorld)
             {
                 ChunkPos chunkPos = new ChunkPos(pos);
-                ForgeChunkManager.forceChunk((ServerWorld) worldIn, MODID, pos, chunkPos.x, chunkPos.z, true);
+                ForgeChunkManager.forceChunk((ServerWorld) worldIn, MODID, pos, chunkPos.x, chunkPos.z, true, false);
             }
         }
 
@@ -104,7 +106,7 @@ public class ForgeChunkManagerTest
             if (worldIn instanceof ServerWorld && !state.isIn(newState.getBlock()))
             {
                 ChunkPos chunkPos = new ChunkPos(pos);
-                ForgeChunkManager.forceChunk((ServerWorld) worldIn, MODID, pos, chunkPos.x, chunkPos.z, false);
+                ForgeChunkManager.forceChunk((ServerWorld) worldIn, MODID, pos, chunkPos.x, chunkPos.z, false, false);
             }
         }
     }
