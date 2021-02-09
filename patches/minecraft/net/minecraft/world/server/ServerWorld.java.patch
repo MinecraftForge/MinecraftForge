@@ -61,6 +61,15 @@
           }
  
           this.func_229856_ab_();
+@@ -395,7 +400,7 @@
+             }
+ 
+             iprofiler.func_76320_a("tick");
+-            if (!entity1.field_70128_L && !(entity1 instanceof EnderDragonPartEntity)) {
++            if (!entity1.field_70128_L && !(entity1 instanceof net.minecraftforge.entity.PartEntity)) {
+                this.func_217390_a(this::func_217479_a, entity1);
+             }
+ 
 @@ -404,7 +409,7 @@
              if (entity1.field_70128_L) {
                 this.func_217454_n(entity1);
@@ -128,12 +137,14 @@
  
 +   @Deprecated //Forge: Use removeEntityComplete(entity,boolean)
     public void func_217484_g(Entity p_217484_1_) {
+-      if (p_217484_1_ instanceof EnderDragonEntity) {
+-         for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)p_217484_1_).func_213404_dT()) {
+-            enderdragonpartentity.func_70106_y();
 +      removeEntityComplete(p_217484_1_, false);
 +   }
 +   public void removeEntityComplete(Entity p_217484_1_, boolean keepData) {
-       if (p_217484_1_ instanceof EnderDragonEntity) {
-          for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)p_217484_1_).func_213404_dT()) {
--            enderdragonpartentity.func_70106_y();
++      if (p_217484_1_.isMultipartEntity()) {
++         for(net.minecraftforge.entity.PartEntity<?> enderdragonpartentity : p_217484_1_.getParts()) {
 +            enderdragonpartentity.remove(keepData);
           }
        }
@@ -150,6 +161,17 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
+@@ -905,8 +923,8 @@
+          this.field_217499_z.add(p_217465_1_);
+       } else {
+          this.field_217498_x.put(p_217465_1_.func_145782_y(), p_217465_1_);
+-         if (p_217465_1_ instanceof EnderDragonEntity) {
+-            for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)p_217465_1_).func_213404_dT()) {
++         if (p_217465_1_.isMultipartEntity()) {
++            for(net.minecraftforge.entity.PartEntity<?> enderdragonpartentity : p_217465_1_.getParts()) {
+                this.field_217498_x.put(enderdragonpartentity.func_145782_y(), enderdragonpartentity);
+             }
+          }
 @@ -918,15 +936,19 @@
           }
        }
