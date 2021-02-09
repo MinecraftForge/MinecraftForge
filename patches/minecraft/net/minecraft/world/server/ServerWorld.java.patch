@@ -61,6 +61,15 @@
           }
  
           this.func_229856_ab_();
+@@ -338,7 +343,7 @@
+       this.func_147488_Z();
+       this.field_211159_Q = false;
+       iprofiler.func_219895_b("entities");
+-      boolean flag3 = !this.field_217491_A.isEmpty() || !this.func_217469_z().isEmpty();
++      boolean flag3 = !this.field_217491_A.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones
+       if (flag3) {
+          this.func_82742_i();
+       }
 @@ -395,7 +400,7 @@
              }
  

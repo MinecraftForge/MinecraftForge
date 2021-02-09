@@ -58,5 +58,6 @@ net/minecraft/world/gen/feature/template/Template.processEntityInfos(Lnet/minecr
 net/minecraft/world/server/ServerWorld.removeEntity(Lnet/minecraft/entity/Entity;Z)V=|p_217467_1_,keepData
 net/minecraft/world/server/ServerWorld.removeEntityComplete(Lnet/minecraft/entity/Entity;Z)V=|p_217484_1_,keepData
 net/minecraft/world/server/ServerWorld.removePlayer(Lnet/minecraft/entity/player/ServerPlayerEntity;Z)V=|p_217434_1_,keepData
+net/minecraft/world/server/Ticket.<init>(Lnet/minecraft/world/server/TicketType;ILjava/lang/Object;Z)V=|p_i226095_1_,p_i226095_2_,p_i226095_3_,forceTicks
 net/minecraft/world/spawner/WorldEntitySpawner.canSpawnAtBody(Lnet/minecraft/entity/EntitySpawnPlacementRegistry$PlacementType;Lnet/minecraft/world/IWorldReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/EntityType;)Z=|p_209382_0_,p_209382_1_,p_209382_2_,p_209382_3_
 net/minecraft/world/storage/SaveFormat.getReader(Lcom/mojang/serialization/DynamicOps;Lnet/minecraft/util/datafix/codec/DatapackCodec;Lnet/minecraft/world/storage/SaveFormat$LevelSave;)Ljava/util/function/BiFunction;=|p_237270_0_,p_237270_1_,levelSave
