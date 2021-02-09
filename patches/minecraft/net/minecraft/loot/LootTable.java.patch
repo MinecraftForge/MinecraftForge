@@ -83,7 +83,7 @@
 +
 +   public void addPool(LootPool pool) {
 +      checkFrozen();
-+      if (field_186466_c.stream().anyMatch(e -> e == pool || e.getName().equals(pool.getName())))
++      if (field_186466_c.stream().anyMatch(e -> e == pool || e.getName() != null && e.getName().equals(pool.getName())))
 +         throw new RuntimeException("Attempted to add a duplicate pool to loot table: " + pool.getName());
 +      this.field_186466_c.add(pool);
 +   }
