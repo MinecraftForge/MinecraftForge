@@ -34,7 +34,22 @@
     }
  
     public <T> void func_219356_a(TicketType<T> p_219356_1_, ChunkPos p_219356_2_, int p_219356_3_, T p_219356_4_) {
-@@ -242,6 +255,11 @@
+@@ -175,6 +188,14 @@
+       this.func_219349_b(p_219362_2_.func_201841_a(), ticket);
+    }
+ 
++   public <T> void registerTicking(TicketType<T> type, ChunkPos pos, int distance, T value) {
++      this.func_219347_a(pos.func_201841_a(), new Ticket<>(type, 33 - distance, value, true));
++   }
++
++   public <T> void releaseTicking(TicketType<T> type, ChunkPos pos, int distance, T value) {
++      this.func_219349_b(pos.func_201841_a(), new Ticket<>(type, 33 - distance, value, true));
++   }
++
+    private SortedArraySet<Ticket<?>> func_229848_e_(long p_229848_1_) {
+       return this.field_219377_e.computeIfAbsent(p_229848_1_, (p_229851_0_) -> {
+          return SortedArraySet.func_226172_a_(4);
+@@ -242,6 +263,11 @@
        return this.field_219384_l.func_225396_a();
     }
  

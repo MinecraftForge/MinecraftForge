@@ -374,7 +374,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     return false;
                 }
                 try {
-                    return acceptableValues.contains(converter.get(obj, defaultValue.getClass()));
+                    return acceptableValues.contains(converter.get(obj, defaultValue.getDeclaringClass()));
                 } catch (IllegalArgumentException | ClassCastException e) {
                     return false;
                 }
