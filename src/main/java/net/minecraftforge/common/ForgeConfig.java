@@ -119,7 +119,7 @@ public class ForgeConfig
     public static class Common {
         public final ForgeConfigSpec.ConfigValue<? extends String> defaultWorldType;
 
-        public final BooleanValue mergeWorldGenData;
+        public final BooleanValue mergeDataPackWorldGenData;
         public final BooleanValue injectModdedWorldGenData;
 
         Common(ForgeConfigSpec.Builder builder)
@@ -133,10 +133,10 @@ public class ForgeConfig
                     .translation("forge.configgui.defaultWorldType")
                     .define("defaultWorldType", "default");
 
-            mergeWorldGenData = builder
+            mergeDataPackWorldGenData = builder
                     .comment("Improves compatibility between world-gen datapacks by merging certain entries that would otherwise override and omit the content added by others.")
                     .translation("forge.configgui.mergeDatapacks")
-                    .define("mergeWorldGenData", false);
+                    .define("mergeDataPackWorldGenData", false);
 
             injectModdedWorldGenData = builder
                     .comment("Improves compatibility between world-gen mods & datapacks by injecting the mods' content after a datapack's that otherwise have been overridden and omitted.")

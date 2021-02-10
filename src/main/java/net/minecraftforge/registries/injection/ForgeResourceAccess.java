@@ -195,7 +195,7 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
     // Helper method for creating the forge IResourceAccess.
     public static WorldSettingsImport.IResourceAccess create(IResourceManager resourceManager)
     {
-        boolean merge = ForgeConfig.COMMON.mergeWorldGenData.get();
+        boolean merge = ForgeConfig.COMMON.mergeDataPackWorldGenData.get();
         boolean inject = ForgeConfig.COMMON.injectModdedWorldGenData.get();
 
         ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, RegistryEntryModifier<?>> builder = ImmutableMap.builder();
