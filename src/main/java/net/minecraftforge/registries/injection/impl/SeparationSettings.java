@@ -30,13 +30,14 @@ import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.settings.StructureSeparationSettings;
 import net.minecraftforge.registries.injection.ForgeResourceAccess;
 import net.minecraftforge.registries.injection.Injector;
+import net.minecraftforge.registries.injection.MergeStrategy;
 import net.minecraftforge.registries.injection.Merger;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 
 public final class SeparationSettings {
 
@@ -53,23 +54,32 @@ public final class SeparationSettings {
      */
     public static class MergerImpl implements Merger<DimensionSettings>
     {
+        private final MergeStrategy mergeStrategy;
+
+        public MergerImpl(MergeStrategy mergeStrategy)
+        {
+            this.mergeStrategy = mergeStrategy;
+        }
+
         @Override
         public void merge(RegistryKey<DimensionSettings> entryKey, JsonElement dest, JsonElement src) throws IOException
         {
             JsonObject destSeparationSettings = getStructureSeparations(dest);
-            Set<String> destNamespaces = getNamespaces(destSeparationSettings);
+            Set<String> excludedNamespaces = getNamespaceExclusions(destSeparationSettings, mergeStrategy);
 
             JsonObject srcSeparationSettings = getStructureSeparations(src);
             for (Map.Entry<String, JsonElement> entry : srcSeparationSettings.entrySet())
             {
-                ResourceLocation name = ResourceLocation.tryCreate(entry.getKey());
+                ResourceLocation registryName = ResourceLocation.tryCreate(entry.getKey());
+                if (registryName == null) continue;
 
-                // Check if dest has already been configured with content from the given namespace - assume omissions are intentional.
-                if (name == null || destNamespaces.contains(name.getNamespace())) continue;
+                if (excludedNamespaces.contains(registryName.getNamespace())) continue;
 
-                // If it's a new namespace it's new content.
-                ForgeResourceAccess.LOGGER.debug(" - Injected separation settings for {}", name);
-                destSeparationSettings.add(name.toString(), entry.getValue());
+                // Don't overwrite existing settings.
+                if (destSeparationSettings.has(entry.getKey())) continue;
+
+                destSeparationSettings.add(entry.getKey(), entry.getValue());
+                ForgeResourceAccess.LOGGER.info(" - Injected separation settings for {}", registryName);
             }
         }
     }
@@ -79,17 +89,11 @@ public final class SeparationSettings {
      */
     public static class InjectorImpl implements Injector<DimensionSettings>
     {
-        private final Predicate<ResourceLocation> predicate;
+        private final MergeStrategy mergeStrategy;
 
-        public InjectorImpl()
+        public InjectorImpl(MergeStrategy mergeStrategy)
         {
-            // Default behaviour is to only inject modded content.
-            this(name -> !name.getNamespace().equals("minecraft"));
-        }
-
-        public InjectorImpl(Predicate<ResourceLocation> predicate)
-        {
-            this.predicate = predicate;
+            this.mergeStrategy = mergeStrategy;
         }
 
         @Override
@@ -103,21 +107,22 @@ public final class SeparationSettings {
 
             // The json representation of dimensionSettings.getStructures().func_236195_a_()
             JsonObject separationSettingsData = getStructureSeparations(entryData);
-            Set<String> namespaces = getNamespaces(separationSettingsData);
+            Set<String> excludedNamespaces = getNamespaceExclusions(separationSettingsData, mergeStrategy);
 
             for (Map.Entry<Structure<?>, StructureSeparationSettings> entry : separationSettings.entrySet())
             {
                 ResourceLocation registryName = entry.getKey().getRegistryName();
-                // Filter out invalid entries.
-                if (registryName == null || !predicate.test(registryName)) continue;
+                if (registryName == null) continue;
 
-                // Check if the data has already been configured with content from the given namespace - assume omissions are intentional.
-                if (namespaces.contains(registryName.getNamespace())) continue;
+                if (excludedNamespaces.contains(registryName.getNamespace())) continue;
+
+                // Don't overwrite existing settings.
+                if (separationSettingsData.has(registryName.toString())) continue;
 
                 // Encode the settings to json and add to the entry's data.
                 StructureSeparationSettings.field_236664_a_.encodeStart(JsonOps.INSTANCE, entry.getValue()).result().ifPresent(data -> {
-                    ForgeResourceAccess.LOGGER.debug(" - Injected separation settings for {}", registryName);
                     separationSettingsData.add(registryName.toString(), data);
+                    ForgeResourceAccess.LOGGER.info(" - Injected separation settings for {}", registryName);
                 });
             }
         }
@@ -138,15 +143,28 @@ public final class SeparationSettings {
         return separationSettingsJson.getAsJsonObject();
     }
 
-    private static Set<String> getNamespaces(JsonObject data)
+    private static Set<String> getNamespaceExclusions(JsonObject data, MergeStrategy mergeStrategy)
     {
-        Set<String> namespaces = new HashSet<>();
-        for (Map.Entry<String, ?> entry : data.entrySet())
+        switch (mergeStrategy)
         {
-            ResourceLocation name = ResourceLocation.tryCreate(entry.getKey());
-            if (name != null) namespaces.add(name.getNamespace());
+            case ADD_ALL_CONTENT:
+                // Don't exclude any namespaces.
+                return Collections.emptySet();
+            case ADD_MOD_CONTENT:
+                // Exclude the vanilla namespace only.
+                return Collections.singleton("minecraft");
+            case ADD_MISSING_MOD_CONTENT:
+                // Exclude namespaces already contained in the data - we can assume that any omissions
+                // of content under those namespaces was intentional.
+                Set<String> namespaces = new HashSet<>();
+                for (Map.Entry<String, ?> entry : data.entrySet())
+                {
+                    ResourceLocation name = ResourceLocation.tryCreate(entry.getKey());
+                    if (name != null) namespaces.add(name.getNamespace());
+                }
+                return namespaces;
         }
-        return namespaces;
+        return Collections.emptySet();
     }
 
     private static void assertJsonObject(JsonElement element, String name) throws IOException

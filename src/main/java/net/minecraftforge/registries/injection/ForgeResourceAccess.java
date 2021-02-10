@@ -86,7 +86,7 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
 
             if (inject && modifier != null && modifier.hasInjections())
             {
-                LOGGER.debug("Injecting registry entry data into {}", entryKey);
+                LOGGER.info("Injecting registry entry data into {}", entryKey);
                 modifier.injectRaw(entryKey, entryDataResult);
             }
 
@@ -154,7 +154,7 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
 
         if (resources.size() > 1)
         {
-            LOGGER.debug("Merging datapack registry entries for {}", entryKey);
+            LOGGER.info("Merging datapack registry entries for {}", entryKey);
         }
 
         JsonElement entryDataResult = null;
@@ -196,14 +196,16 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
     public static WorldSettingsImport.IResourceAccess create(IResourceManager resourceManager)
     {
         boolean merge = ForgeConfig.COMMON.mergeDataPackWorldGenData.get();
-        boolean inject = ForgeConfig.COMMON.injectModdedWorldGenData.get();
+        boolean inject = ForgeConfig.COMMON.injectMissingWorldGenData.get();
+        MergeStrategy strategy = ForgeConfig.COMMON.worldGenDataMergeStrategy.get();
 
         ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, RegistryEntryModifier<?>> builder = ImmutableMap.builder();
         builder.put(Registry.NOISE_SETTINGS_KEY, RegistryEntryModifier.builder(Registry.NOISE_SETTINGS_KEY)
-                        .add(new SeparationSettings.InjectorImpl())
-                        .add(new SeparationSettings.MergerImpl())
+                        .add(new SeparationSettings.InjectorImpl(strategy))
+                        .add(new SeparationSettings.MergerImpl(strategy))
                         .build());
 
+        LOGGER.info("Creating datapack-loader with options: merge={}, inject={}, strategy={}", merge, inject, strategy);
         return new ForgeResourceAccess(resourceManager, builder.build(), merge, inject);
     }
 }

@@ -23,6 +23,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
 
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.registries.injection.MergeStrategy;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
@@ -120,7 +121,8 @@ public class ForgeConfig
         public final ForgeConfigSpec.ConfigValue<? extends String> defaultWorldType;
 
         public final BooleanValue mergeDataPackWorldGenData;
-        public final BooleanValue injectModdedWorldGenData;
+        public final BooleanValue injectMissingWorldGenData;
+        public final ForgeConfigSpec.ConfigValue<MergeStrategy> worldGenDataMergeStrategy;
 
         Common(ForgeConfigSpec.Builder builder)
         {
@@ -133,15 +135,25 @@ public class ForgeConfig
                     .translation("forge.configgui.defaultWorldType")
                     .define("defaultWorldType", "default");
 
+            builder.pop();
+
+            builder.comment("DataPack configuration settings")
+                    .push("datapack");
+
             mergeDataPackWorldGenData = builder
-                    .comment("Improves compatibility between world-gen datapacks by merging certain entries that would otherwise override and omit the content added by others.")
+                    .comment("Improves compatibility between world-gen datapacks by merging data from duplicate datapack entries.")
                     .translation("forge.configgui.mergeDataPackWorldGenData")
                     .define("mergeDataPackWorldGenData", false);
 
-            injectModdedWorldGenData = builder
-                    .comment("Improves compatibility between world-gen mods & datapacks by injecting the mods' content after a datapack's that otherwise have been overridden and omitted.")
-                    .translation("forge.configgui.injectModdedWorldGenData")
-                    .define("injectModdedWorldGenData", false);
+            injectMissingWorldGenData = builder
+                    .comment("Improves compatibility between world-gen mods & datapacks by injecting content that's missing from the datapack.")
+                    .translation("forge.configgui.injectMissingWorldGenData")
+                    .define("injectMissingWorldGenData", false);
+
+            worldGenDataMergeStrategy = builder
+                    .comment("Defines the strategy to be used when merging content with world-gen datapacks.")
+                    .translation("forge.configgui.dataPackMergeStrategy")
+                    .defineEnum("worldGenDataMergeStrategy", MergeStrategy.ADD_MISSING_MOD_CONTENT);
 
             builder.pop();
         }
