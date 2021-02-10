@@ -25,7 +25,9 @@ import net.minecraft.util.RegistryKey;
 import java.io.IOException;
 
 /**
- * Represents a function that merges two different json representations of the same registry entry.
+ * Represents an operation that merges two different json representations of the same registry entry.
+ *
+ * @param <E> The type of registry entry this merger applies to.
  */
 public interface Merger<E>
 {

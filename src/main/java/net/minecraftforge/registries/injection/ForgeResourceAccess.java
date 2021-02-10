@@ -50,7 +50,7 @@ import java.util.*;
  */
 public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
 {
-    public static final Logger LOGGER = LogManager.getLogger("ForgeResourceAccess");
+    public static final Logger LOGGER = LogManager.getLogger("ForgeResourceLoader");
     private static final JsonParser JSON_PARSER = new JsonParser();
 
     private final boolean merge;
@@ -106,8 +106,8 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
     }
 
     /**
-     * Attempts to load the json data for a given registry entry, applying the provided RegistryEntryModifier,
-     * if present, to the resulting data.
+     * Attempts to load the json data for a given registry entry applying the provided RegistryEntryModifier
+     * (if present) to the resulting data.
      *
      * @param entryKey The RegistryKey of the entry being loaded.
      * @param file     The resource file path to locate the entry's data at.
@@ -139,7 +139,7 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
 
     /**
      * Attempts to load the json data for a given registry entry from all datapacks contained in the
-     * ResourceManager, and uses the merge operation provided by the RegistryEntryModifier to combine
+     * ResourceManager and uses the merge operation provided by the RegistryEntryModifier to combine
      * the data into a single json object.
      *
      * @param entryKey The RegistryKey of the entry being loaded.
@@ -168,7 +168,7 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
                 JsonElement entryDataCandidate = JSON_PARSER.parse(reader);
                 if (entryDataResult == null)
                 {
-                    // Note: We don't need to merge the first candidate with itself!
+                    // We don't need to merge the first candidate with itself!
                     entryDataResult = entryDataCandidate;
                     continue;
                 }
