@@ -20,10 +20,14 @@
 package net.minecraftforge.registries.injection;
 
 import com.google.gson.JsonElement;
+import net.minecraft.util.RegistryKey;
 
 import java.io.IOException;
 
-public interface Merger {
-
-    void merge(JsonElement dest, JsonElement src) throws IOException;
+/**
+ * Represents a function that merges two different json representations of the same registry entry.
+ */
+public interface Merger<E>
+{
+    void merge(RegistryKey<E> entryKey, JsonElement dest, JsonElement src) throws IOException;
 }

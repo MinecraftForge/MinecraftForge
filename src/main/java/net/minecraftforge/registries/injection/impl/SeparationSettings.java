@@ -33,7 +33,9 @@ import net.minecraftforge.registries.injection.Injector;
 import net.minecraftforge.registries.injection.Merger;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public final class SeparationSettings {
@@ -46,27 +48,44 @@ public final class SeparationSettings {
 
     }
 
-    public static class MergerImpl implements Merger
+    /**
+     * Merges the structure separation setting maps of two different configurations for the same DimensionSettings entry.
+     */
+    public static class MergerImpl implements Merger<DimensionSettings>
     {
         @Override
-        public void merge(JsonElement dest, JsonElement src) throws IOException
+        public void merge(RegistryKey<DimensionSettings> entryKey, JsonElement dest, JsonElement src) throws IOException
         {
             JsonObject destSeparationSettings = getStructureSeparations(dest);
+            Set<String> destNamespaces = getNamespaces(destSeparationSettings);
+
             JsonObject srcSeparationSettings = getStructureSeparations(src);
             for (Map.Entry<String, JsonElement> entry : srcSeparationSettings.entrySet())
             {
-                if (!destSeparationSettings.has(entry.getKey()))
-                {
-                    ForgeResourceAccess.LOGGER.debug(" - Inserted separation settings for {}", entry.getKey());
-                    destSeparationSettings.add(entry.getKey(), entry.getValue());
-                }
+                ResourceLocation name = ResourceLocation.tryCreate(entry.getKey());
+
+                // Check if dest has already been configured with content from the given namespace - assume omissions are intentional.
+                if (name == null || destNamespaces.contains(name.getNamespace())) continue;
+
+                // If it's a new namespace it's new content.
+                ForgeResourceAccess.LOGGER.debug(" - Injected separation settings for {}", name);
+                destSeparationSettings.add(name.toString(), entry.getValue());
             }
         }
     }
 
+    /**
+     * Injects code-registered structure separation settings for a given DimensionSettings entry.
+     */
     public static class InjectorImpl implements Injector<DimensionSettings>
     {
         private final Predicate<ResourceLocation> predicate;
+
+        public InjectorImpl()
+        {
+            // Default behaviour is to only inject modded content.
+            this(name -> !name.getNamespace().equals("minecraft"));
+        }
 
         public InjectorImpl(Predicate<ResourceLocation> predicate)
         {
@@ -79,27 +98,26 @@ public final class SeparationSettings {
             DimensionSettings dimensionSettings = WorldGenRegistries.NOISE_SETTINGS.getValueForKey(entryKey);
             if (dimensionSettings == null) return;
 
-            // This map contains the vanilla and mod-provided default separation settings.
+            // Contains the vanilla and mod-provided default separation settings.
             Map<Structure<?>, StructureSeparationSettings> separationSettings = dimensionSettings.getStructures().func_236195_a_();
 
-            // This is the json representation of dimensionSettings.getStructures().func_236195_a_()
+            // The json representation of dimensionSettings.getStructures().func_236195_a_()
             JsonObject separationSettingsData = getStructureSeparations(entryData);
+            Set<String> namespaces = getNamespaces(separationSettingsData);
 
             for (Map.Entry<Structure<?>, StructureSeparationSettings> entry : separationSettings.entrySet())
             {
                 ResourceLocation registryName = entry.getKey().getRegistryName();
+                // Filter out invalid entries.
+                if (registryName == null || !predicate.test(registryName)) continue;
 
-                if (registryName == null) continue;
-                if (!predicate.test(registryName)) continue;
+                // Check if the data has already been configured with content from the given namespace - assume omissions are intentional.
+                if (namespaces.contains(registryName.getNamespace())) continue;
 
-                String name = registryName.toString();
-                // Do not overwrite existing data.
-                if (separationSettingsData.has(name)) continue;
-
-                // Encode to json and add to the entry's data
+                // Encode the settings to json and add to the entry's data.
                 StructureSeparationSettings.field_236664_a_.encodeStart(JsonOps.INSTANCE, entry.getValue()).result().ifPresent(data -> {
-                    ForgeResourceAccess.LOGGER.debug(" - Inserted separation settings for {}", name);
-                    separationSettingsData.add(name, data);
+                    ForgeResourceAccess.LOGGER.debug(" - Injected separation settings for {}", registryName);
+                    separationSettingsData.add(registryName.toString(), data);
                 });
             }
         }
@@ -109,13 +127,26 @@ public final class SeparationSettings {
     {
         assertJsonObject(entryData, "entryData");
 
+        // Json representation of DimensionStructureSettings
         JsonElement structureSettingsJson = entryData.getAsJsonObject().get(STRUCTURE_SETTINGS_KEY);
         assertJsonObject(structureSettingsJson, "structureSettings");
 
+        // Json representation of the Map<Structure,StructureSeparationSettings> field in DimensionStructureSettings
         JsonElement separationSettingsJson = structureSettingsJson.getAsJsonObject().get(SEPARATION_SETTINGS_KEY);
         assertJsonObject(separationSettingsJson, "structureSeparationSettings");
 
         return separationSettingsJson.getAsJsonObject();
+    }
+
+    private static Set<String> getNamespaces(JsonObject data)
+    {
+        Set<String> namespaces = new HashSet<>();
+        for (Map.Entry<String, ?> entry : data.entrySet())
+        {
+            ResourceLocation name = ResourceLocation.tryCreate(entry.getKey());
+            if (name != null) namespaces.add(name.getNamespace());
+        }
+        return namespaces;
     }
 
     private static void assertJsonObject(JsonElement element, String name) throws IOException

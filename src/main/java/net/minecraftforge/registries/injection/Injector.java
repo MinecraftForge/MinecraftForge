@@ -24,7 +24,15 @@ import net.minecraft.util.RegistryKey;
 
 import java.io.IOException;
 
-public interface Injector<E> {
-
+/**
+ * Represents a function that injects content into the json data of a registry entry.
+ * <p>
+ * To maintain compatibility with datapacks, content should only ever be additive and should
+ * not overwrite values already contained in the json data.
+ *
+ * @param <E> The type of registry entry this injector applied to.
+ */
+public interface Injector<E>
+{
     void inject(RegistryKey<E> entryKey, JsonElement entryData) throws IOException;
 }

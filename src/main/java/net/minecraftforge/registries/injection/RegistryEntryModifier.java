@@ -28,10 +28,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegistryEntryModifier<E> implements Merger, Injector<E>
+/**
+ * Contains all merge and injection operations to be applied to the given registry entry type's data.
+ *
+ * @param <E> The type of the registry entry that this modifier applies to.
+ */
+public class RegistryEntryModifier<E>
 {
     private final RegistryKey<Registry<E>> registryKey;
-    private final List<Merger> mergers;
+    private final List<Merger<E>> mergers;
     private final List<Injector<E>> injectors;
 
     private RegistryEntryModifier(Builder<E> builder)
@@ -39,24 +44,6 @@ public class RegistryEntryModifier<E> implements Merger, Injector<E>
         this.registryKey = builder.registryKey;
         this.mergers = ImmutableList.copyOf(builder.mergers);
         this.injectors = ImmutableList.copyOf(builder.injectors);
-    }
-
-    @Override
-    public void inject(RegistryKey<E> entryKey, JsonElement entryData) throws IOException
-    {
-        for (Injector<E> injector : injectors)
-        {
-            injector.inject(entryKey, entryData);
-        }
-    }
-
-    @Override
-    public void merge(JsonElement dest, JsonElement src) throws IOException
-    {
-        for (Merger merger : mergers)
-        {
-            merger.merge(dest, src);
-        }
     }
 
     public boolean isEmpty()
@@ -74,14 +61,52 @@ public class RegistryEntryModifier<E> implements Merger, Injector<E>
         return !injectors.isEmpty();
     }
 
-    public void injectRaw(RegistryKey<?> rawEntryKey, JsonElement entryData) throws IOException
+    /**
+     * Applies this modifier's merge operations on the given 'src' and 'dest' json data providing its
+     * entryKey is a valid type for this modifier.
+     *
+     * @param entryKey The RegistryKey of the entry being merged.
+     * @param dest     The json data that content will be merged into.
+     * @param src      The json data from which content will be merged.
+     * @throws IOException When an error occurs during the merge operations or if the entryKey is of an incorrect type.
+     */
+    public void mergeRaw(RegistryKey<?> entryKey, JsonElement dest, JsonElement src) throws IOException
+    {
+        RegistryKey<E> typedEntryKey = getTypedKey(entryKey);
+
+        for (Merger<E> merger : mergers)
+        {
+            merger.merge(typedEntryKey, dest, src);
+        }
+    }
+
+    /**
+     * Applies this modifier's inject operations on the registry entry's json data providing its
+     * entryKey is a valid type for this modifier.
+     *
+     * @param entryKey The RegistryKey of the entry being merged.
+     * @param entryData The json data for the registry entry.
+     * @throws IOException When an error occurs during the inject operations or if the entryKey is of an incorrect type.
+     */
+    public void injectRaw(RegistryKey<?> entryKey, JsonElement entryData) throws IOException
+    {
+        RegistryKey<E> typedEntryKey = getTypedKey(entryKey);
+
+        for (Injector<E> injector : injectors)
+        {
+            injector.inject(typedEntryKey, entryData);
+        }
+    }
+
+    // Returns the type-bound instance of the registry key.
+    private RegistryKey<E> getTypedKey(RegistryKey<?> rawEntryKey) throws IOException
     {
         RegistryKey<E> typedEntryKey = RegistryKey.getOrCreateKey(registryKey, rawEntryKey.getLocation());
 
         // Assert that the provided raw key was valid for this modifier.
         if (typedEntryKey != rawEntryKey) throw new IOException("Mismatching registry keys!");
 
-        inject(typedEntryKey, entryData);
+        return typedEntryKey;
     }
 
     public static <E> Builder<E> builder(RegistryKey<Registry<E>> registryKey)
@@ -92,7 +117,7 @@ public class RegistryEntryModifier<E> implements Merger, Injector<E>
     public static class Builder<E>
     {
         private final RegistryKey<Registry<E>> registryKey;
-        private final List<Merger> mergers = new ArrayList<>();
+        private final List<Merger<E>> mergers = new ArrayList<>();
         private final List<Injector<E>> injectors = new ArrayList<>();
 
         private Builder(RegistryKey<Registry<E>> registryKey)
@@ -100,7 +125,7 @@ public class RegistryEntryModifier<E> implements Merger, Injector<E>
             this.registryKey = registryKey;
         }
 
-        public Builder<E> add(Merger merger)
+        public Builder<E> add(Merger<E> merger)
         {
             mergers.add(merger);
             return this;
