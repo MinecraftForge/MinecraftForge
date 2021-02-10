@@ -135,12 +135,12 @@ public class ForgeConfig
 
             mergeDataPackWorldGenData = builder
                     .comment("Improves compatibility between world-gen datapacks by merging certain entries that would otherwise override and omit the content added by others.")
-                    .translation("forge.configgui.mergeDatapacks")
+                    .translation("forge.configgui.mergeDataPackWorldGenData")
                     .define("mergeDataPackWorldGenData", false);
 
             injectModdedWorldGenData = builder
                     .comment("Improves compatibility between world-gen mods & datapacks by injecting the mods' content after a datapack's that otherwise have been overridden and omitted.")
-                    .translation("forge.configgui.injectModData")
+                    .translation("forge.configgui.injectModdedWorldGenData")
                     .define("injectModdedWorldGenData", false);
 
             builder.pop();
