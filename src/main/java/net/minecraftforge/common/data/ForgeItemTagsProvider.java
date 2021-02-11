@@ -137,6 +137,10 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.STORAGE_BLOCKS_REDSTONE, Tags.Items.STORAGE_BLOCKS_REDSTONE);
         copy(Tags.Blocks.STORAGE_BLOCKS_NETHERITE, Tags.Items.STORAGE_BLOCKS_NETHERITE);
         getOrCreateBuilder(Tags.Items.STRING).add(Items.STRING);
+        copy(Tags.Blocks.ICES, Tags.Items.ICES);
+        copy(Tags.Blocks.ICES_ICE, Tags.Items.ICES_ICE);
+        copy(Tags.Blocks.ICES_PACKED, Tags.Items.ICES_PACKED);
+        copy(Tags.Blocks.ICES_BLUE, Tags.Items.ICES_BLUE);
     }
 
     private void addColored(Consumer<ITag.INamedTag<Item>> consumer, ITag.INamedTag<Item> group, String pattern)

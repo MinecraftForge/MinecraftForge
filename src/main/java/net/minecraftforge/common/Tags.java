@@ -127,6 +127,11 @@ public class Tags
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
 
+        public static final IOptionalNamedTag<Block> ICES = tag("ices");
+        public static final IOptionalNamedTag<Block> ICES_ICE = tag("ices/ice");
+        public static final IOptionalNamedTag<Block> ICES_PACKED = tag("ices/packed");
+        public static final IOptionalNamedTag<Block> ICES_BLUE = tag("ices/blue");
+
         private static IOptionalNamedTag<Block> tag(String name)
         {
             return BlockTags.createOptional(new ResourceLocation("forge", name));
@@ -284,6 +289,11 @@ public class Tags
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final IOptionalNamedTag<Item> STRING = tag("string");
+
+        public static final IOptionalNamedTag<Item> ICES = tag("ices");
+        public static final IOptionalNamedTag<Item> ICES_ICE = tag("ices/ice");
+        public static final IOptionalNamedTag<Item> ICES_PACKED = tag("ices/packed");
+        public static final IOptionalNamedTag<Item> ICES_BLUE = tag("ices/blue");
 
         private static IOptionalNamedTag<Item> tag(String name)
         {

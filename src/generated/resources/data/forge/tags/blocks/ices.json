@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:ices/ice",
+    "#forge:ices/packed",
+    "#forge:ices/blue"
+  ]
+}
