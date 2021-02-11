@@ -1,0 +1,24 @@
+--- a/net/minecraft/pathfinding/WalkAndSwimNodeProcessor.java
++++ b/net/minecraft/pathfinding/WalkAndSwimNodeProcessor.java
+@@ -216,10 +216,10 @@
+ 
+    public PathNodeType func_186330_a(IBlockReader p_186330_1_, int p_186330_2_, int p_186330_3_, int p_186330_4_) {
+       BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
+-      PathNodeType pathnodetype = func_237238_b_(p_186330_1_, blockpos$mutable.func_181079_c(p_186330_2_, p_186330_3_, p_186330_4_));
++      PathNodeType pathnodetype = func_237238_b_(p_186330_1_, blockpos$mutable.func_181079_c(p_186330_2_, p_186330_3_, p_186330_4_), this.field_186326_b);
+       if (pathnodetype == PathNodeType.WATER) {
+          for(Direction direction : Direction.values()) {
+-            PathNodeType pathnodetype2 = func_237238_b_(p_186330_1_, blockpos$mutable.func_181079_c(p_186330_2_, p_186330_3_, p_186330_4_).func_189536_c(direction));
++            PathNodeType pathnodetype2 = func_237238_b_(p_186330_1_, blockpos$mutable.func_181079_c(p_186330_2_, p_186330_3_, p_186330_4_).func_189536_c(direction), this.field_186326_b);
+             if (pathnodetype2 == PathNodeType.BLOCKED) {
+                return PathNodeType.WATER_BORDER;
+             }
+@@ -229,7 +229,7 @@
+       } else {
+          if (pathnodetype == PathNodeType.OPEN && p_186330_3_ >= 1) {
+             BlockState blockstate = p_186330_1_.func_180495_p(new BlockPos(p_186330_2_, p_186330_3_ - 1, p_186330_4_));
+-            PathNodeType pathnodetype1 = func_237238_b_(p_186330_1_, blockpos$mutable.func_181079_c(p_186330_2_, p_186330_3_ - 1, p_186330_4_));
++            PathNodeType pathnodetype1 = func_237238_b_(p_186330_1_, blockpos$mutable.func_181079_c(p_186330_2_, p_186330_3_ - 1, p_186330_4_), this.field_186326_b);
+             if (pathnodetype1 != PathNodeType.WALKABLE && pathnodetype1 != PathNodeType.OPEN && pathnodetype1 != PathNodeType.LAVA) {
+                pathnodetype = PathNodeType.WALKABLE;
+             } else {

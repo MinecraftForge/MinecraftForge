@@ -1,0 +1,15 @@
+--- a/net/minecraft/pathfinding/FlyingNodeProcessor.java
++++ b/net/minecraft/pathfinding/FlyingNodeProcessor.java
+@@ -249,10 +249,10 @@
+ 
+    public PathNodeType func_186330_a(IBlockReader p_186330_1_, int p_186330_2_, int p_186330_3_, int p_186330_4_) {
+       BlockPos.Mutable blockpos$mutable = new BlockPos.Mutable();
+-      PathNodeType pathnodetype = func_237238_b_(p_186330_1_, blockpos$mutable.func_181079_c(p_186330_2_, p_186330_3_, p_186330_4_));
++      PathNodeType pathnodetype = func_237238_b_(p_186330_1_, blockpos$mutable.func_181079_c(p_186330_2_, p_186330_3_, p_186330_4_), this.field_186326_b);
+       if (pathnodetype == PathNodeType.OPEN && p_186330_3_ >= 1) {
+          BlockState blockstate = p_186330_1_.func_180495_p(blockpos$mutable.func_181079_c(p_186330_2_, p_186330_3_ - 1, p_186330_4_));
+-         PathNodeType pathnodetype1 = func_237238_b_(p_186330_1_, blockpos$mutable.func_181079_c(p_186330_2_, p_186330_3_ - 1, p_186330_4_));
++         PathNodeType pathnodetype1 = func_237238_b_(p_186330_1_, blockpos$mutable.func_181079_c(p_186330_2_, p_186330_3_ - 1, p_186330_4_), this.field_186326_b);
+          if (pathnodetype1 != PathNodeType.DAMAGE_FIRE && !blockstate.func_203425_a(Blocks.field_196814_hQ) && pathnodetype1 != PathNodeType.LAVA && !blockstate.func_235714_a_(BlockTags.field_232882_ax_)) {
+             if (pathnodetype1 == PathNodeType.DAMAGE_CACTUS) {
+                pathnodetype = PathNodeType.DAMAGE_CACTUS;

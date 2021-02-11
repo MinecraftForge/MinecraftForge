@@ -1,10 +1,42 @@
 --- a/net/minecraft/pathfinding/WalkNodeProcessor.java
 +++ b/net/minecraft/pathfinding/WalkNodeProcessor.java
-@@ -463,9 +463,11 @@
+@@ -392,16 +392,21 @@
+    }
  
+    public PathNodeType func_186330_a(IBlockReader p_186330_1_, int p_186330_2_, int p_186330_3_, int p_186330_4_) {
+-      return func_237231_a_(p_186330_1_, new BlockPos.Mutable(p_186330_2_, p_186330_3_, p_186330_4_));
++      return func_237231_a_(p_186330_1_, new BlockPos.Mutable(p_186330_2_, p_186330_3_, p_186330_4_), this.field_186326_b);
+    }
+ 
++   @Deprecated
+    public static PathNodeType func_237231_a_(IBlockReader p_237231_0_, BlockPos.Mutable p_237231_1_) {
++      return func_237231_a_(p_237231_0_, p_237231_1_, null);
++   }
++
++   public static PathNodeType func_237231_a_(IBlockReader p_237231_0_, BlockPos.Mutable p_237231_1_, @Nullable MobEntity mobEntity) {
+       int i = p_237231_1_.func_177958_n();
+       int j = p_237231_1_.func_177956_o();
+       int k = p_237231_1_.func_177952_p();
+-      PathNodeType pathnodetype = func_237238_b_(p_237231_0_, p_237231_1_);
++      PathNodeType pathnodetype = func_237238_b_(p_237231_0_, p_237231_1_, mobEntity);
+       if (pathnodetype == PathNodeType.OPEN && j >= 1) {
+-         PathNodeType pathnodetype1 = func_237238_b_(p_237231_0_, p_237231_1_.func_181079_c(i, j - 1, k));
++         PathNodeType pathnodetype1 = func_237238_b_(p_237231_0_, p_237231_1_.func_181079_c(i, j - 1, k), mobEntity);
+          pathnodetype = pathnodetype1 != PathNodeType.WALKABLE && pathnodetype1 != PathNodeType.OPEN && pathnodetype1 != PathNodeType.WATER && pathnodetype1 != PathNodeType.LAVA ? PathNodeType.WALKABLE : PathNodeType.OPEN;
+          if (pathnodetype1 == PathNodeType.DAMAGE_FIRE) {
+             pathnodetype = PathNodeType.DAMAGE_FIRE;
+@@ -461,11 +466,18 @@
+       return p_237232_2_;
+    }
+ 
++   @Deprecated
     protected static PathNodeType func_237238_b_(IBlockReader p_237238_0_, BlockPos p_237238_1_) {
++      return func_237238_b_(p_237238_0_, p_237238_1_, null);
++   }
++
++   protected static PathNodeType func_237238_b_(IBlockReader p_237238_0_, BlockPos p_237238_1_, @Nullable MobEntity mobEntity) {
        BlockState blockstate = p_237238_0_.func_180495_p(p_237238_1_);
-+      PathNodeType type = blockstate.getAiPathNodeType(p_237238_0_, p_237238_1_);
++      PathNodeType type = blockstate.getAiPathNodeType(p_237238_0_, p_237238_1_, mobEntity);
 +      if (type != null) return type;
        Block block = blockstate.func_177230_c();
        Material material = blockstate.func_185904_a();

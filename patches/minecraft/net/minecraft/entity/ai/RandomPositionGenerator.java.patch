@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/RandomPositionGenerator.java
++++ b/net/minecraft/entity/ai/RandomPositionGenerator.java
+@@ -120,7 +120,7 @@
+                }
+ 
+                if (p_226339_5_ || !p_226339_0_.field_70170_p.func_204610_c(blockpos3).func_206884_a(FluidTags.field_206959_a)) {
+-                  PathNodeType pathnodetype = WalkNodeProcessor.func_237231_a_(p_226339_0_.field_70170_p, blockpos3.func_239590_i_());
++                  PathNodeType pathnodetype = WalkNodeProcessor.func_237231_a_(p_226339_0_.field_70170_p, blockpos3.func_239590_i_(), p_226339_0_);
+                   if (p_226339_0_.func_184643_a(pathnodetype) == 0.0F) {
+                      double d1 = p_226339_8_.applyAsDouble(blockpos3);
+                      if (d1 > d0) {

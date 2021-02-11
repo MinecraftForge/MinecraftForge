@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/goal/FollowOwnerGoal.java
++++ b/net/minecraft/entity/ai/goal/FollowOwnerGoal.java
+@@ -120,7 +120,7 @@
+    }
+ 
+    private boolean func_226329_a_(BlockPos p_226329_1_) {
+-      PathNodeType pathnodetype = WalkNodeProcessor.func_237231_a_(this.field_75342_a, p_226329_1_.func_239590_i_());
++      PathNodeType pathnodetype = WalkNodeProcessor.func_237231_a_(this.field_75342_a, p_226329_1_.func_239590_i_(), field_75338_d);
+       if (pathnodetype != PathNodeType.WALKABLE) {
+          return false;
+       } else {
