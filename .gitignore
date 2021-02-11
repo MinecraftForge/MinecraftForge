@@ -29,6 +29,9 @@
 /repo/
 src/generated/resources/.cache/
 
+#MacOSX
+.DS_Store
+
 #Patch rejects
 /patches-/
 *.patch.rej
