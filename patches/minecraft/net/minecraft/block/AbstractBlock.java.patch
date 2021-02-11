@@ -65,11 +65,12 @@
        }
  
        return this.field_220085_g;
-@@ -346,6 +349,14 @@
+@@ -346,6 +349,15 @@
        return this.field_235684_aB_.field_235800_b_.apply(this.func_230328_p_().func_176223_P());
     }
  
-+   protected boolean isAir(BlockState state) {
++   // Temporarily made public for graceful deprecation of Forge patches
++   public boolean isAir(BlockState state) {
 +      return ((AbstractBlockState)state).field_235702_f_;
 +   }
 +
@@ -80,12 +81,9 @@
     public abstract static class AbstractBlockState extends StateHolder<Block, BlockState> {
        private final int field_215708_d;
        private final boolean field_215709_e;
-@@ -428,14 +439,18 @@
-          return this.field_215708_d;
+@@ -429,13 +441,15 @@
        }
  
-+      /** @deprecated use {@link BlockState#isAir(IBlockReader, BlockPos) */
-+      @Deprecated
        public boolean func_196958_f() {
 -         return this.field_235702_f_;
 +         return this.func_177230_c().isAir((BlockState)this);
@@ -100,7 +98,7 @@
        public BlockState func_185907_a(Rotation p_185907_1_) {
           return this.func_177230_c().func_185499_a(this.func_230340_p_(), p_185907_1_);
        }
-@@ -802,6 +817,9 @@
+@@ -802,6 +816,9 @@
        private ResourceLocation field_222381_j;
        private boolean field_226895_m_ = true;
        private boolean field_235813_o_;
@@ -110,6 +108,14 @@
        private AbstractBlock.IExtendedPositionPredicate<EntityType<?>> field_235814_p_ = (p_235832_0_, p_235832_1_, p_235832_2_, p_235832_3_) -> {
           return p_235832_0_.func_224755_d(p_235832_1_, p_235832_2_, Direction.UP) && p_235832_0_.func_185906_d() < 14;
        };
+@@ -829,6 +846,7 @@
+       private Properties(Material p_i241199_1_, Function<BlockState, MaterialColor> p_i241199_2_) {
+          this.field_200953_a = p_i241199_1_;
+          this.field_235800_b_ = p_i241199_2_;
++         this.field_235813_o_ = p_i241199_1_ == Material.field_151579_a; // Temporary for graceful deprecation of positional .isAir
+       }
+ 
+       public static AbstractBlock.Properties func_200945_a(Material p_200945_0_) {
 @@ -863,6 +881,8 @@
           abstractblock$properties.field_226895_m_ = p_200950_0_.field_235684_aB_.field_226895_m_;
           abstractblock$properties.field_235813_o_ = p_200950_0_.field_235684_aB_.field_235813_o_;

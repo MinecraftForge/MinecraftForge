@@ -288,9 +288,10 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @return True if the block considered air
      */
+    @Deprecated
     default boolean isAir(BlockState state, IBlockReader world, BlockPos pos)
     {
-        return state.getMaterial() == Material.AIR;
+        return state.getBlock().isAir(state);
     }
 
     /**
