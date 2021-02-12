@@ -36,7 +36,6 @@ import net.minecraftforge.registries.injection.impl.SeparationSettings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -56,13 +55,16 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
     private final boolean merge;
     private final boolean inject;
     private final IResourceManager resourceManager;
+    private final WorldSettingsImport.IResourceAccess vanillaDelegate;
     private final Map<RegistryKey<? extends Registry<?>>, RegistryEntryModifier<?>> modifiers;
 
     public ForgeResourceAccess(IResourceManager resourceManager,
+                               WorldSettingsImport.IResourceAccess vanillaDelegate,
                                Map<RegistryKey<? extends Registry<?>>, RegistryEntryModifier<?>> modifiers,
                                boolean merge, boolean inject)
     {
         this.resourceManager = resourceManager;
+        this.vanillaDelegate = vanillaDelegate;
         this.modifiers = modifiers;
         this.merge = merge;
         this.inject = inject;
@@ -78,13 +80,16 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
     public <E> DataResult<Pair<E, OptionalInt>> decode(DynamicOps<JsonElement> ops, RegistryKey<? extends Registry<E>> registryKey, RegistryKey<E> entryKey, Decoder<E> decoder)
     {
         final RegistryEntryModifier<?> modifier = modifiers.get(registryKey);
-        final ResourceLocation resourceFile = getFileLocation(registryKey, entryKey.getLocation());
 
+        // Delegate to vanilla if there are no modifications to apply to the data.
+        if (modifier == null) return vanillaDelegate.decode(ops, registryKey, entryKey, decoder);
+
+        final ResourceLocation resourceFile = getFileLocation(registryKey, entryKey.getLocation());
         try
         {
             JsonObject entryDataResult = load(entryKey, resourceFile, modifier);
 
-            if (inject && modifier != null && modifier.hasInjections())
+            if (inject && modifier.hasInjections())
             {
                 LOGGER.info("Injecting registry entry data into {}", entryKey);
                 modifier.injectRaw(entryKey, entryDataResult);
@@ -100,9 +105,13 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
     }
 
     @Override
-    public String toString()
-    {
-        return "ForgeResourceAccess[" + resourceManager + "]";
+    public String toString() {
+        return "ForgeResourceAccess{" +
+                "merge=" + merge +
+                ", inject=" + inject +
+                ", resourceManager=" + resourceManager +
+                ", vanillaDelegate=" + vanillaDelegate +
+                '}';
     }
 
     /**
@@ -112,14 +121,14 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
      * @param entryKey The RegistryKey of the entry being loaded.
      * @param file     The resource file path to locate the entry's data at.
      * @param modifier The RegistryEntryModifier for this registry entry type.
-     * @return A JsonObject containing the registry entry in serialize form.
+     * @return A JsonObject containing the registry entry in serialized form.
      * @throws IOException When an error occurs loading or merging of the json content, or if the resulting json data is in the incorrect format.
      */
-    private JsonObject load(RegistryKey<?> entryKey, ResourceLocation file, @Nullable RegistryEntryModifier<?> modifier) throws IOException
+    private JsonObject load(RegistryKey<?> entryKey, ResourceLocation file, RegistryEntryModifier<?> modifier) throws IOException
     {
         final JsonElement entryDataResult;
 
-        if (merge && modifier != null && modifier.hasMergers())
+        if (merge && modifier.hasMergers())
         {
             entryDataResult = loadAndMerge(entryKey, file, modifier);
         }
@@ -193,11 +202,13 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
     }
 
     // Helper method for creating the forge IResourceAccess.
-    public static WorldSettingsImport.IResourceAccess create(IResourceManager resourceManager)
+    public static WorldSettingsImport.IResourceAccess create(IResourceManager resourceManager, WorldSettingsImport.IResourceAccess vanillaLoader)
     {
         boolean merge = ForgeConfig.COMMON.mergeDataPackWorldGenData.get();
         boolean inject = ForgeConfig.COMMON.injectMissingWorldGenData.get();
         MergeStrategy strategy = ForgeConfig.COMMON.worldGenDataMergeStrategy.get();
+
+        if (!merge && !inject) return vanillaLoader;
 
         ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, RegistryEntryModifier<?>> builder = ImmutableMap.builder();
         builder.put(Registry.NOISE_SETTINGS_KEY, RegistryEntryModifier.builder(Registry.NOISE_SETTINGS_KEY)
@@ -206,6 +217,6 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
                         .build());
 
         LOGGER.info("Creating datapack-loader with options: merge={}, inject={}, strategy={}", merge, inject, strategy);
-        return new ForgeResourceAccess(resourceManager, builder.build(), merge, inject);
+        return new ForgeResourceAccess(resourceManager, vanillaLoader, builder.build(), merge, inject);
     }
 }
