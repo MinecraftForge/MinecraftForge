@@ -48,6 +48,8 @@ net/minecraft/item/ItemStack.<init>(Lnet/minecraft/util/IItemProvider;ILnet/mine
 net/minecraft/item/ItemStack.onItemUse(Lnet/minecraft/item/ItemUseContext;)Lnet/minecraft/util/ActionResultType;=|p_196084_1_
 net/minecraft/item/ItemStack.onItemUse(Lnet/minecraft/item/ItemUseContext;Ljava/util/function/Function;)Lnet/minecraft/util/ActionResultType;=|p_196084_1_,callback
 net/minecraft/network/PacketBuffer.writeItemStack(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/network/PacketBuffer;=|p_150788_1_,limitedTag
+net/minecraft/pathfinding/WalkNodeProcessor.func_237231_a_(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos$Mutable;Lnet/minecraft/entity/MobEntity;)Lnet/minecraft/pathfinding/PathNodeType;=|p_237231_0_,p_237231_1_,mobEntity
+net/minecraft/pathfinding/WalkNodeProcessor.func_237238_b_(Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/MobEntity;)Lnet/minecraft/pathfinding/PathNodeType;=|p_237238_0_,p_237238_1_,mobEntity
 net/minecraft/potion/PotionBrewing$MixPredicate.<init>(Lnet/minecraftforge/registries/ForgeRegistryEntry;Lnet/minecraft/item/crafting/Ingredient;Lnet/minecraftforge/registries/ForgeRegistryEntry;)V=|p_i47570_1_,p_i47570_2_,p_i47570_3_
 net/minecraft/server/dedicated/DedicatedServer.sendMessage(Lnet/minecraft/util/text/ITextComponent;Ljava/util/UUID;)V=|message,p_145747_2_
 net/minecraft/server/management/PlayerInteractionManager.removeBlock(Lnet/minecraft/util/math/BlockPos;Z)Z=|p_180235_1_,canHarvest
