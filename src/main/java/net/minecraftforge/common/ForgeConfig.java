@@ -153,7 +153,7 @@ public class ForgeConfig
             worldGenDataMergeStrategy = builder
                     .comment("Defines the strategy to be used when merging content with world-gen datapacks.")
                     .translation("forge.configgui.dataPackMergeStrategy")
-                    .defineEnum("worldGenDataMergeStrategy", MergeStrategy.ADD_MISSING_MOD_CONTENT);
+                    .defineEnum("worldGenDataMergeStrategy", MergeStrategy.ABSENT_NAMESPACES);
 
             builder.pop();
         }

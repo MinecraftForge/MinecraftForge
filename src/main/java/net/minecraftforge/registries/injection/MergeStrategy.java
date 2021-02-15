@@ -2,18 +2,18 @@ package net.minecraftforge.registries.injection;
 
 public enum MergeStrategy {
     /**
-     * Adds all content from the source that is not already contained in the destination.
+     * Adds all content from all namespaces to the merge destination.
      */
-    ADD_ALL_CONTENT,
+    ALL_NAMESPACES,
 
     /**
-     * Adds all modded content from the source that is not already contained in the destination.
+     * Only adds content from modded namespaces to the merge destination (ie not "minecraft:").
      */
-    ADD_MOD_CONTENT,
+    MOD_NAMESPACES,
 
     /**
-     * Only adds content to the destination from mods whose namespace does not already appear in the destination.
+     * Only adds content from a namespace which does not already appear in the merge destination.
      */
-    ADD_MISSING_MOD_CONTENT,
+    ABSENT_NAMESPACES,
     ;
 }

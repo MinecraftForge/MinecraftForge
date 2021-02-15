@@ -147,13 +147,13 @@ public final class SeparationSettings {
     {
         switch (mergeStrategy)
         {
-            case ADD_ALL_CONTENT:
+            case ALL_NAMESPACES:
                 // Don't exclude any namespaces.
                 return Collections.emptySet();
-            case ADD_MOD_CONTENT:
+            case MOD_NAMESPACES:
                 // Exclude the vanilla namespace only.
                 return Collections.singleton("minecraft");
-            case ADD_MISSING_MOD_CONTENT:
+            case ABSENT_NAMESPACES:
                 // Exclude namespaces already contained in the data - we can assume that any omissions
                 // of content under those namespaces was intentional.
                 Set<String> namespaces = new HashSet<>();
