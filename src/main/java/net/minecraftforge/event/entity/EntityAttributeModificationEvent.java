@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event.entity;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -48,10 +49,12 @@ public class EntityAttributeModificationEvent extends Event implements IModBusEv
     public EntityAttributeModificationEvent(Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> mapIn)
     {
         this.entityAttributes = mapIn;
-        this.entityTypes = ForgeRegistries.ENTITIES.getValues().stream()
+        this.entityTypes = ImmutableList.copyOf(
+                ForgeRegistries.ENTITIES.getValues().stream()
                 .filter(GlobalEntityTypeAttributes::doesEntityHaveAttributes)
                 .map(entityType -> (EntityType<? extends LivingEntity>) entityType)
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+        );
     }
 
     public void add(EntityType<? extends LivingEntity> entityType, Attribute attribute, double value)

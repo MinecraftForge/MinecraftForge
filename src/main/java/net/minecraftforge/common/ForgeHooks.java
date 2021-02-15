@@ -51,6 +51,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.fluid.*;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.loot.LootContext;
@@ -63,6 +65,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
@@ -1282,5 +1285,52 @@ public class ForgeHooks
             chunk.setModified(true);
         }
         chunk.setStructureReferences(structureReferences);
+    }
+
+    private static final Map<EntityType<? extends LivingEntity>, AttributeModifierMap> FORGE_ATTRIBUTES = new HashMap<>();
+
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY
+     * ONLY EXISTS FOR LEGACY REASONS SHOULD BE REMOVED IN 1.17
+     */
+    public static AttributeModifierMap putAttributesOld(EntityType<? extends LivingEntity> type, AttributeModifierMap map)
+    {
+        LOGGER.warn("Called deprecated GlobalEntityTypeAttributes#put for {}, use EntityAttributeCreationEvent instead.", type.getRegistryName());
+        return putAttributes(type, map);
+    }
+
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY.
+     * Still use GlobalEntityTypeAttributes#getAttributesForEntity
+     */
+    @Nullable
+    public static AttributeModifierMap getAttributes(EntityType<? extends LivingEntity> livingEntity)
+    {
+        return FORGE_ATTRIBUTES.get(livingEntity);
+    }
+
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY.
+     * Still use GlobalEntityTypeAttributes#doesEntityHaveAttributes
+     */
+    public static boolean hasAttributes(EntityType<?> entityType)
+    {
+        return FORGE_ATTRIBUTES.containsKey(entityType);
+    }
+
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY.
+     * Make use of the interface provided in net.minecraftforge.event.entity.EntityAttributeModificationEvent
+     */
+    public static AttributeModifierMap combineAttributes(EntityType<? extends LivingEntity> type, AttributeModifierMap.MutableAttribute toCombine)
+    {
+        AttributeModifierMap modifiers = GlobalEntityTypeAttributes.getAttributesForEntity(type);
+        AttributeModifierMap.MutableAttribute newMutable = modifiers != null ? new AttributeModifierMap.MutableAttribute(modifiers) : new AttributeModifierMap.MutableAttribute();
+        newMutable.combine(toCombine);
+        return putAttributes(type, newMutable.create());
+    }
+
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY.
+     * Make use of the interface provided in net.minecraftforge.event.entity.EntityAttributeCreationEvent
+     */
+    public static AttributeModifierMap putAttributes(EntityType<? extends LivingEntity> type, AttributeModifierMap map)
+    {
+        return FORGE_ATTRIBUTES.put(type, map);
     }
 }
