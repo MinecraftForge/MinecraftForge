@@ -23,6 +23,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 
@@ -43,6 +44,6 @@ public class EntityAttributeCreationEvent extends Event implements IModBusEvent 
         if (GlobalEntityTypeAttributes.doesEntityHaveAttributes(entity)){
             throw new IllegalStateException("Duplicate GlobalEntityTypeAttributes entry: " + entity);
         }
-        GlobalEntityTypeAttributes.put(entity, map);
+        ForgeHooks.putAttributes(entity, map);
     }
 }

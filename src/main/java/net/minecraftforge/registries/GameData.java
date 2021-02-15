@@ -73,6 +73,7 @@ import net.minecraft.world.gen.foliageplacer.FoliagePlacerType;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
@@ -391,12 +392,18 @@ public class GameData
                 LOGGER.fatal("Detected errors during registry event dispatch, rolling back to VANILLA state");
                 revertTo(RegistryManager.VANILLA, false);
                 LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
+            } else {
+                postRegistrationWork();
             }
-            ModLoader.get().postEvent(new EntityAttributeCreationEvent());
-            Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> finalMap = new HashMap<>();
-            ModLoader.get().postEvent(new EntityAttributeModificationEvent(finalMap));
-            finalMap.forEach(GlobalEntityTypeAttributes::combineWithExisting);
         }, executor);
+    }
+
+    public static void postRegistrationWork()
+    {
+        ModLoader.get().postEvent(new EntityAttributeCreationEvent());
+        Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> finalMap = new HashMap<>();
+        ModLoader.get().postEvent(new EntityAttributeModificationEvent(finalMap));
+        finalMap.forEach(ForgeHooks::combineAttributes);
     }
 
     public static void setCustomTagTypesFromRegistries()
