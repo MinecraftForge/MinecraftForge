@@ -109,4 +109,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="item_modifier_test"
 [[mods]]
+    modId="shader_fix_test"
+[[mods]]
     modId="worldgen_registry_desync_test"
