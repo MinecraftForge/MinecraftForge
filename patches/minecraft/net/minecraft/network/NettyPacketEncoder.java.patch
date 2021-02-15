@@ -5,7 +5,7 @@
                 p_encode_2_.func_148840_b(packetbuffer);
              } catch (Throwable throwable) {
 -               field_150798_a.error(throwable);
-+               field_150798_a.error(String.format("Critical failure encoding packet: %s", packetbuffer.toString()), throwable); // FORGE: Get Minecraft to spit out more information about the Throwable we got.
++               field_150798_a.error("Error encoding packet", throwable); // Forge: Get Minecraft to spit out more information about the Throwable we got.
                 if (p_encode_2_.func_211402_a()) {
                    throw new SkipableEncoderException(throwable);
                 } else {
