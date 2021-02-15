@@ -26,7 +26,7 @@
     }
  
     public Chunk(World p_i49947_1_, ChunkPrimer p_i49947_2_) {
-@@ -264,14 +265,14 @@
+@@ -264,28 +265,28 @@
  
           if (!this.field_76637_e.field_72995_K) {
              blockstate.func_196947_b(this.field_76637_e, p_177436_1_, p_177436_2_, p_177436_3_);
@@ -43,7 +43,11 @@
                 TileEntity tileentity = this.func_177424_a(p_177436_1_, Chunk.CreateEntityType.CHECK);
                 if (tileentity != null) {
                    tileentity.func_145836_u();
-@@ -282,10 +283,10 @@
+                }
+             }
+ 
+-            if (!this.field_76637_e.field_72995_K) {
++            if (!this.field_76637_e.field_72995_K && !this.field_76637_e.captureBlockSnapshots) {
                 p_177436_2_.func_215705_a(this.field_76637_e, p_177436_1_, blockstate, p_177436_3_);
              }
  
@@ -143,6 +147,17 @@
        i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
        j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
+@@ -472,8 +482,8 @@
+                   p_177414_3_.add(entity);
+                }
+ 
+-               if (entity instanceof EnderDragonEntity) {
+-                  for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)entity).func_213404_dT()) {
++               if (entity.isMultipartEntity()) {
++                  for(net.minecraftforge.entity.PartEntity<?> enderdragonpartentity : entity.getParts()) {
+                      if (enderdragonpartentity != p_177414_1_ && enderdragonpartentity.func_174813_aQ().func_72326_a(p_177414_2_) && (p_177414_4_ == null || p_177414_4_.test(enderdragonpartentity))) {
+                         p_177414_3_.add(enderdragonpartentity);
+                      }
 @@ -486,8 +496,8 @@
     }
  

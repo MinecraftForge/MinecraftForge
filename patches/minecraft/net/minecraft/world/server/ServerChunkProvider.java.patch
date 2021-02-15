@@ -9,3 +9,18 @@
                       chunk.func_177415_c(chunk.func_177416_w() + j);
                       if (flag1 && (this.field_217246_l || this.field_217247_m) && this.field_73251_h.func_175723_af().func_177730_a(chunk.func_76632_l())) {
                          WorldEntitySpawner.func_234979_a_(this.field_73251_h, chunk, worldentityspawner$entitydensitymanager, this.field_217247_m, this.field_217246_l, flag2);
+@@ -429,6 +429,14 @@
+       this.field_217240_d.func_219362_d(p_217222_1_, p_217222_2_, p_217222_3_, p_217222_4_);
+    }
+ 
++   public <T> void registerTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
++      this.field_217240_d.registerTicking(type, pos, distance, value);
++   }
++
++   public <T> void releaseTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
++      this.field_217240_d.releaseTicking(type, pos, distance, value);
++   }
++
+    public void func_217206_a(ChunkPos p_217206_1_, boolean p_217206_2_) {
+       this.field_217240_d.func_219364_a(p_217206_1_, p_217206_2_);
+    }

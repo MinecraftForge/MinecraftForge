@@ -210,7 +210,14 @@
                 }
  
                 f = f + f1;
-@@ -1127,8 +1160,10 @@
+@@ -1122,13 +1155,15 @@
+                   EnchantmentHelper.func_151385_b(this, p_71059_1_);
+                   ItemStack itemstack1 = this.func_184614_ca();
+                   Entity entity = p_71059_1_;
+-                  if (p_71059_1_ instanceof EnderDragonPartEntity) {
+-                     entity = ((EnderDragonPartEntity)p_71059_1_).field_213852_b;
++                  if (p_71059_1_ instanceof net.minecraftforge.entity.PartEntity) {
++                     entity = ((net.minecraftforge.entity.PartEntity<?>) p_71059_1_).getParent();
                    }
  
                    if (!this.field_70170_p.field_72995_K && !itemstack1.func_190926_b() && entity instanceof LivingEntity) {

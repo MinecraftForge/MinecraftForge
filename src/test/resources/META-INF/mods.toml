@@ -91,6 +91,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="biome_loading_event_test"
 [[mods]]
+    modId="forge_chunk_manager_test"
+[[mods]]
     modId="living_conversion_event_test"
 [[mods]]
     modId="player_game_mode_event_test"
@@ -108,3 +110,5 @@ license="LGPL v2.1"
     modId="item_modifier_test"
 [[mods]]
     modId="shader_fix_test"
+[[mods]]
+    modId="worldgen_registry_desync_test"
