@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,6 +59,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.fluid.*;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.loot.LootContext;
@@ -70,6 +73,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
@@ -141,6 +145,8 @@ import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -166,6 +172,7 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
@@ -1401,5 +1408,40 @@ public class ForgeHooks
             return new Dynamic<>(ops, ops.createMap(currentList.stream().map(p -> p.mapFirst(ops::createString))));
         }).result().orElse(dymData);
         return data.set(DIMENSIONS_KEY, withInjected);
+    }
+
+    private static final Map<EntityType<? extends LivingEntity>, AttributeModifierMap> FORGE_ATTRIBUTES = new HashMap<>();
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
+    @Deprecated
+    public static Map<EntityType<? extends LivingEntity>, AttributeModifierMap> getAttributesView()
+    {
+        return Collections.unmodifiableMap(FORGE_ATTRIBUTES);
+    }
+
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY
+     * ONLY EXISTS FOR LEGACY REASONS SHOULD BE REMOVED IN 1.17
+     */
+    @Deprecated /// Internal use only, Remove in 1.17
+    public static AttributeModifierMap putAttributesOld(EntityType<? extends LivingEntity> type, AttributeModifierMap map)
+    {
+        LOGGER.warn("Called deprecated GlobalEntityTypeAttributes#put for {}, use EntityAttributeCreationEvent instead.", type.getRegistryName());
+        return FORGE_ATTRIBUTES.put(type, map);
+    }
+
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
+    @Deprecated
+    public static void modifyAttributes()
+    {
+        ModLoader.get().postEvent(new EntityAttributeCreationEvent(FORGE_ATTRIBUTES));
+        Map<EntityType<? extends LivingEntity>, AttributeModifierMap.MutableAttribute> finalMap = new HashMap<>();
+        ModLoader.get().postEvent(new EntityAttributeModificationEvent(finalMap));
+
+        finalMap.forEach((k, v) ->
+        {
+            AttributeModifierMap modifiers = GlobalEntityTypeAttributes.getAttributesForEntity(k);
+            AttributeModifierMap.MutableAttribute newMutable = modifiers != null ? new AttributeModifierMap.MutableAttribute(modifiers) : new AttributeModifierMap.MutableAttribute();
+            newMutable.combine(v);
+            FORGE_ATTRIBUTES.put(k, newMutable.create());
+        });
     }
 }
