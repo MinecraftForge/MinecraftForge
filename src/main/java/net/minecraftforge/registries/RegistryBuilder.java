@@ -97,7 +97,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         if (inst instanceof ValidateCallback)
             this.add((ValidateCallback<T>)inst);
         if (inst instanceof BakeCallback)
-            this.add((BakeCallback<T>) inst);
+            this.add((BakeCallback<T>)inst);
         if (inst instanceof DummyFactory)
             this.set((DummyFactory<T>)inst);
         if (inst instanceof MissingFactory)
@@ -149,7 +149,6 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this.add(validate);
     }
 
-    @Deprecated //TODO 1.17: Remove
     public RegistryBuilder<T> add(BakeCallback<T> bake)
     {
         this.bakeCallback.add(bake);
