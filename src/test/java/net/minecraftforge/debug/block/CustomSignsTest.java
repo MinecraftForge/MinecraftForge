@@ -2,6 +2,7 @@ package net.minecraftforge.debug.block;
 
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.Atlases;
 import net.minecraft.client.renderer.tileentity.SignTileEntityRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -27,7 +28,7 @@ public class CustomSignsTest
     public static final boolean ENABLE = true;
     public static final String MODID = "custom_signs_test";
 
-    public static final WoodType TEST_WOOD_TYPE = WoodType.create(new ResourceLocation(MODID, "test"));
+    public static final WoodType TEST_WOOD_TYPE = WoodType.create(new ResourceLocation(MODID, "test").toString());
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     public static final RegistryObject<CustomStandingSignBlock> TEST_STANDING_SIGN = BLOCKS.register("test_sign", () -> new CustomStandingSignBlock(Block.Properties.create(Material.WOOD).doesNotBlockMovement().hardnessAndResistance(1.0F).sound(SoundType.WOOD), CustomSignsTest.TEST_WOOD_TYPE));
@@ -56,6 +57,9 @@ public class CustomSignsTest
     private void clientSetup(final FMLClientSetupEvent event)
     {
         ClientRegistry.bindTileEntityRenderer(CUSTOM_SIGN.get(), SignTileEntityRenderer::new);
+        event.enqueueWork(() -> {
+           Atlases.addWoodType(TEST_WOOD_TYPE);
+        });
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)

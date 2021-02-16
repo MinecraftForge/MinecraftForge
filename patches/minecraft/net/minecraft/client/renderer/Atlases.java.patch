@@ -1,28 +1,24 @@
 --- a/net/minecraft/client/renderer/Atlases.java
 +++ b/net/minecraft/client/renderer/Atlases.java
-@@ -44,6 +44,7 @@
-    public static final List<RenderMaterial> field_228749_h_ = Stream.of("white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black").map((p_228777_0_) -> {
-       return new RenderMaterial(field_228742_a_, new ResourceLocation("entity/shulker/shulker_" + p_228777_0_));
-    }).collect(ImmutableList.toImmutableList());
-+   @Deprecated
-    public static final Map<WoodType, RenderMaterial> field_228750_i_ = WoodType.func_227046_a_().collect(Collectors.toMap(Function.identity(), Atlases::func_228773_a_));
-    public static final RenderMaterial[] field_228751_j_ = Arrays.stream(DyeColor.values()).sorted(Comparator.comparingInt(DyeColor::func_196059_a)).map((p_228770_0_) -> {
-       return new RenderMaterial(field_228743_b_, new ResourceLocation("entity/bed/" + p_228770_0_.func_176762_d()));
-@@ -110,7 +111,7 @@
-          p_228775_0_.accept(new RenderMaterial(field_228745_d_, bannerpattern.func_226957_a_(false)));
-       }
- 
--      field_228750_i_.values().forEach(p_228775_0_);
-+      WoodType.func_227046_a_().forEach(woodType -> p_228775_0_.accept(func_228773_a_(woodType)));
- 
-       for(RenderMaterial rendermaterial : field_228751_j_) {
-          p_228775_0_.accept(rendermaterial);
-@@ -129,7 +130,7 @@
+@@ -129,7 +129,8 @@
     }
  
     public static RenderMaterial func_228773_a_(WoodType p_228773_0_) {
 -      return new RenderMaterial(field_228746_e_, new ResourceLocation("entity/signs/" + p_228773_0_.func_227048_b_()));
-+      return new RenderMaterial(field_228746_e_, new ResourceLocation(p_228773_0_.getResourceLocation().func_110624_b(), "entity/signs/" + p_228773_0_.getResourceLocation().func_110623_a()));
++      ResourceLocation location = new ResourceLocation(p_228773_0_.func_227048_b_());
++      return new RenderMaterial(field_228746_e_, new ResourceLocation(location.func_110624_b(), "entity/signs/" + location.func_110623_a()));
     }
  
     private static RenderMaterial func_228774_a_(String p_228774_0_) {
+@@ -157,4 +158,11 @@
+          return p_228772_1_;
+       }
+    }
++
++   /**
++    * Not threadsafe. Enqueue it in client setup.
++    */
++   public static void addWoodType(WoodType woodType) {
++      field_228750_i_.put(woodType, func_228773_a_(woodType));
++   }
+ }
