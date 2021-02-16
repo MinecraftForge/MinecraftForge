@@ -419,7 +419,7 @@ public class GameData
         }
     }
 
-    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.BakeCallbackNew<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
+    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.BakeCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
 
@@ -486,6 +486,11 @@ public class GameData
             Block ret = new BlockDummyAir(Block.Properties.create(Material.AIR));
             GameData.forceRegistryName(ret, key);
             return ret;
+        }
+
+        @Override
+        public void onBake(IForgeRegistryInternal<Block> owner, RegistryManager stage) {
+            onBake(owner, stage, null);
         }
 
         @Override

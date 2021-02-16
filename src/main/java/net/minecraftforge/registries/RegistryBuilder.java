@@ -43,7 +43,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
     private List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
-    private List<BakeCallbackNew<T>> bakeCallback = Lists.newArrayList();
+    private List<BakeCallback<T>> bakeCallback = Lists.newArrayList();
     private boolean saveToDisc = true;
     private boolean sync = true;
     private boolean allowOverrides = true;
@@ -96,9 +96,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             this.add((CreateCallback<T>)inst);
         if (inst instanceof ValidateCallback)
             this.add((ValidateCallback<T>)inst);
-        if (inst instanceof BakeCallbackNew)
-            this.add((BakeCallbackNew<T>)inst);
-        else if (inst instanceof BakeCallback) //if it has the new interface, ignore the old interface TODO 1.17: remove
+        if (inst instanceof BakeCallback)
             this.add((BakeCallback<T>) inst);
         if (inst instanceof DummyFactory)
             this.set((DummyFactory<T>)inst);
@@ -154,23 +152,11 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     @Deprecated //TODO 1.17: Remove
     public RegistryBuilder<T> add(BakeCallback<T> bake)
     {
-        add((owner, stage, reason) -> bake.onBake(owner, stage));
-        return this;
-    }
-
-    public RegistryBuilder<T> add(BakeCallbackNew<T> bake)
-    {
         this.bakeCallback.add(bake);
         return this;
     }
 
-    @Deprecated //TODO 1.17: Remove
     public RegistryBuilder<T> onBake(BakeCallback<T> bake)
-    {
-        return this.add(bake);
-    }
-
-    public RegistryBuilder<T> onBake(BakeCallbackNew<T> bake)
     {
         return this.add(bake);
     }
@@ -319,28 +305,26 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         };
     }
 
-    @Deprecated //TODO 1.17: Remove
     @Nullable
     public BakeCallback<T> getBake()
-    {
-        BakeCallbackNew<T> newCallback = getBakeNew();
-        if (newCallback == null)
-            return null;
-        return (owner, stage) -> newCallback.onBake(owner, stage, null);
-    }
-
-    @Nullable
-    public BakeCallbackNew<T> getBakeNew() //TODO 1.17 rename to getBake
     {
         if (bakeCallback.isEmpty())
             return null;
         if (bakeCallback.size() == 1)
             return bakeCallback.get(0);
 
-        return (owner, stage, reason) ->
-        {
-            for (BakeCallbackNew<T> cb : this.bakeCallback)
-                cb.onBake(owner, stage, reason);
+        return new BakeCallback<T>() {
+
+            @Override
+            public void onBake(IForgeRegistryInternal<T> owner, RegistryManager stage) {
+                this.onBake(owner, stage, null);
+            }
+
+            @Override
+            public void onBake(IForgeRegistryInternal<T> owner, RegistryManager stage, BakeReason reason) {
+                for (BakeCallback<T> cb : RegistryBuilder.this.bakeCallback)
+                    cb.onBake(owner, stage, reason);
+            }
         };
     }
 

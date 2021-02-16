@@ -106,21 +106,18 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * Callback fired when the registry is done processing. Used to calculate state ID maps.
      */
     @FunctionalInterface
-    @Deprecated //TODO 1.17: Remove
     interface BakeCallback<V extends IForgeRegistryEntry<V>>
     {
+        // TODO 1.17: Remove and replace with signature below
         void onBake(IForgeRegistryInternal<V> owner, RegistryManager stage);
-    }
 
-    //TODO 1.17: Rename to BakeCallback
-    @FunctionalInterface
-    interface BakeCallbackNew<V extends IForgeRegistryEntry<V>>
-    {
-        void onBake(IForgeRegistryInternal<V> owner, RegistryManager stage, @Nullable BakeReason reason);
+        default void onBake(IForgeRegistryInternal<V> owner, RegistryManager stage, @Nullable BakeReason reason) {
+            onBake(owner, stage);
+        }
     }
 
     /**
-     * The reason why {@link BakeCallbackNew#onBake(IForgeRegistryInternal, RegistryManager, BakeReason)} has been called
+     * The reason why {@link BakeCallback#onBake(IForgeRegistryInternal, RegistryManager, BakeReason)} has been called
      */
     enum BakeReason
     {
