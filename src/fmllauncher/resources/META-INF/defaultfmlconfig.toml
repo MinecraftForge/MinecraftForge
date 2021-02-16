@@ -4,3 +4,11 @@ splashscreen = true
 maxThreads = -1
 # Enable forge global version checking
 versionCheck = true
+# the path to the defaultsconfig directory
+defaultConfigPath = "defaultconfigs"
+# Controls the behavior of the file name cache
+# Allowed values:
+# DISABLE: Always query the filesystem to check if a file is present. High CPU time, Low Memory overhead.
+# BALANCE: Cache the top two directories if they are small enough for every zip/jar file. Medium CPU time, Medium Memory overhead. Recommended
+# FULL: Store the names of all files for every zip/jar file. Low CPU time, High memory overhead.
+fileNameCacheMode = "BALANCE"

@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.commons.lang3.tuple.Pair;
@@ -30,7 +31,6 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.CodeSigner;
@@ -49,6 +49,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 public abstract class AbstractJarFileLocator implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
     protected final Map<IModFile, FileSystemCache> modJars;
+    private final FMLConfig.FileNameCacheMode fileNameCacheMode = FMLConfig.fileNameCacheMode();
 
     public AbstractJarFileLocator() {
         this.modJars = new HashMap<>();
@@ -56,7 +57,7 @@ public abstract class AbstractJarFileLocator implements IModLocator {
 
     protected FileSystemCache createFileSystemCache(IModFile modFile) {
         try {
-            return new FileSystemCache(modFile);
+            return new FileSystemCache(modFile, fileNameCacheMode);
         } catch (ZipError | IOException e) {
             LOGGER.debug(SCAN,"Invalid JAR file {} - no filesystem created", modFile.getFilePath());
             return null;
