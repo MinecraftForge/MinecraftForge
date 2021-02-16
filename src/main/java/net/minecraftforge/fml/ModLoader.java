@@ -268,7 +268,7 @@ public class ModLoader
     {
         final Map<String, IModInfo> modInfoMap = modFile.getModFileInfo().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
 
-        LOGGER.debug(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
+        LOGGER.trace(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
         final List<ModContainer> containers = modFile.getScanResult().getTargets()
                 .entrySet()
                 .stream()

@@ -18,7 +18,15 @@
        }
     }
  
-@@ -486,7 +488,7 @@
+@@ -439,6 +441,7 @@
+                RenderSystem.loadIdentity();
+                this.field_147707_d.func_148018_a(p_195458_1_);
+                RenderSystem.popMatrix();
++               RenderSystem.enableTexture(); //FORGE: Fix MC-194675
+             }
+ 
+             this.field_78531_r.func_147110_a().func_147610_a(true);
+@@ -486,7 +489,7 @@
              }
           } else if (this.field_78531_r.field_71462_r != null) {
              try {
@@ -27,7 +35,7 @@
              } catch (Throwable throwable) {
                 CrashReport crashreport1 = CrashReport.func_85055_a(throwable, "Rendering screen");
                 CrashReportCategory crashreportcategory1 = crashreport1.func_85058_a("Screen render details");
-@@ -595,9 +597,16 @@
+@@ -595,9 +598,16 @@
        Matrix4f matrix4f = matrixstack.func_227866_c_().func_227870_a_();
        this.func_228379_a_(matrix4f);
        activerenderinfo.func_216772_a(this.field_78531_r.field_71441_e, (Entity)(this.field_78531_r.func_175606_aa() == null ? this.field_78531_r.field_71439_g : this.field_78531_r.func_175606_aa()), !this.field_78531_r.field_71474_y.func_243230_g().func_243192_a(), this.field_78531_r.field_71474_y.func_243230_g().func_243193_b(), p_228378_1_);
@@ -44,7 +52,7 @@
        this.field_78531_r.func_213239_aq().func_219895_b("hand");
        if (this.field_175074_C) {
           RenderSystem.clear(256, Minecraft.field_142025_a);
-@@ -709,4 +718,9 @@
+@@ -709,4 +719,9 @@
     public OverlayTexture func_228385_m_() {
        return this.field_228375_t_;
     }

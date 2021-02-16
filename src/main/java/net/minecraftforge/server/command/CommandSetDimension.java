@@ -26,18 +26,25 @@ import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.util.ITeleporter;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.context.ParsedCommandNode;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+import com.mojang.brigadier.tree.ArgumentCommandNode;
+import com.mojang.brigadier.tree.CommandNode;
 
 import java.util.Collection;
-import java.util.function.Function;
 
+/** @deprecated For removal in 1.17, superseded by {@code /execute in <dim> run tp <targets>} */
+@Deprecated
 public class CommandSetDimension
 {
     private static final SimpleCommandExceptionType NO_ENTITIES = new SimpleCommandExceptionType(new TranslationTextComponent("commands.forge.setdim.invalid.entity"));
@@ -49,34 +56,42 @@ public class CommandSetDimension
             .then(Commands.argument("targets", EntityArgument.entities())
                 .then(Commands.argument("dim", DimensionArgument.getDimension())
                     .then(Commands.argument("pos", BlockPosArgument.blockPos())
-                        .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.getDimensionArgument(ctx, "dim"), BlockPosArgument.getBlockPos(ctx, "pos")))
+                        .executes(ctx -> execute(ctx, EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.getDimensionArgument(ctx, "dim"), BlockPosArgument.getBlockPos(ctx, "pos")))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.getDimensionArgument(ctx, "dim"), new BlockPos(ctx.getSource().getPos())))
+                    .executes(ctx -> execute(ctx, EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.getDimensionArgument(ctx, "dim"), new BlockPos(ctx.getSource().getPos())))
                 )
             );
     }
 
-    private static int execute(CommandSource sender, Collection<? extends Entity> entities, ServerWorld dim, BlockPos pos) throws CommandSyntaxException
+    private static int execute(CommandContext<CommandSource> ctx, Collection<? extends Entity> entities, ServerWorld dim, BlockPos pos) throws CommandSyntaxException
     {
         entities.removeIf(e -> !canEntityTeleport(e));
         if (entities.isEmpty())
             throw NO_ENTITIES.create();
 
-        //if (!DimensionManager.isDimensionRegistered(dim))
-        //    throw INVALID_DIMENSION.create(dim);
-
-        entities.stream().filter(e -> e.world == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName().getString(), dim), true));
-        entities.stream().filter(e -> e.world != dim).forEach(e ->  e.changeDimension(dim , new ITeleporter()
+        String cmdTarget = "@s";
+        String posTarget = "";
+        for (ParsedCommandNode<CommandSource> parsed : ctx.getNodes())
         {
-            @Override
-            public Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity)
+            final CommandNode<CommandSource> node = parsed.getNode();
+            if (parsed.getNode() instanceof ArgumentCommandNode)
             {
-                Entity repositionedEntity = repositionEntity.apply(false);
-                repositionedEntity.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
-                return repositionedEntity;
+                if ("target".equals(parsed.getNode().getName()))
+                {
+                    cmdTarget = parsed.getRange().get(ctx.getInput());
+                }
+                else if ("pos".equals(parsed.getNode().getName()))
+                {
+                    posTarget = " " + parsed.getRange().get(ctx.getInput());
+                }
             }
-        }));
-
+        }
+        final String dimName = dim.getDimensionKey().getLocation().toString();
+        final String finalCmdTarget = cmdTarget;
+        final String finalPosTarget = posTarget;
+        ITextComponent suggestion = new TranslationTextComponent("/execute in %s run tp %s%s", dimName, cmdTarget, finalPosTarget)
+                .modifyStyle((style) -> style.setFormatting(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/execute in " + dimName + " run tp " + finalCmdTarget + finalPosTarget)));
+        ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.setdim.deprecated", suggestion), true);
 
         return 0;
     }

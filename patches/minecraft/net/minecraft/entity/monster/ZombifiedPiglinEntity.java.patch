@@ -1,0 +1,10 @@
+--- a/net/minecraft/entity/monster/ZombifiedPiglinEntity.java
++++ b/net/minecraft/entity/monster/ZombifiedPiglinEntity.java
+@@ -173,6 +173,7 @@
+ 
+    public void func_70037_a(CompoundNBT p_70037_1_) {
+       super.func_70037_a(p_70037_1_);
++      if(!field_70170_p.field_72995_K) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
+       this.func_241358_a_((ServerWorld)this.field_70170_p, p_70037_1_);
+    }
+ 

@@ -3,7 +3,7 @@ loaderVersion="[28,)"
 license="LGPL v2.1"
 
 [[mods]]
-	modId="containertypetest"
+    modId="containertypetest"
 [[mods]]
     modId="potion_event_test"
 [[mods]]
@@ -30,6 +30,8 @@ license="LGPL v2.1"
     modId="gravity_attribute_test"
 [[mods]]
     modId="new_fluid_test"
+[[mods]]
+    modId="milk_fluid_test"
 [[mods]]
     modId="data_gen_test"
 [[mods]]
@@ -63,6 +65,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="composite_model_test"
 [[mods]]
+	modId="dyn_bucket_model_test"
+[[mods]]
     modId="music_disc_test"
 [[mods]]
     modId="stencil_enable_test"
@@ -89,6 +93,10 @@ license="LGPL v2.1"
 [[mods]]
     modId="biome_loading_event_test"
 [[mods]]
+    modId="forge_chunk_manager_test"
+[[mods]]
+    modId="living_conversion_event_test"
+[[mods]]
     modId="player_game_mode_event_test"
 [[mods]]
     modId="structure_spawn_list_event_test"
@@ -96,3 +104,15 @@ license="LGPL v2.1"
     modId="forge_codecs_test"
 [[mods]]
     modId="render_local_player_test"
+[[mods]]
+    modId="forge_world_type_test"
+[[mods]]
+    modId="custom_sound_type_test"
+[[mods]]
+    modId="item_modifier_test"
+[[mods]]
+    modId="shader_fix_test"
+[[mods]]
+    modId="worldgen_registry_desync_test"
+[[mods]]
+    modId="add_entity_attribute_test"

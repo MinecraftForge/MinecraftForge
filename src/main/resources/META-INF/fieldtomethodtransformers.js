@@ -73,6 +73,18 @@ function initializeCoreMod() {
                 asmapi.redirectFieldToMethod(classNode, fn, asmapi.mapMethod('getFishType'))
                 return classNode;
             }
+        },
+        'itemstack': {
+            'target': {
+                'type': 'CLASS',
+                'name': 'net.minecraft.item.ItemStack'
+            },
+            'transformer': function(classNode) {
+                var asmapi=Java.type('net.minecraftforge.coremod.api.ASMAPI')
+                var fn = asmapi.mapField('field_151002_e') // item - remap to mcp if necessary
+                asmapi.redirectFieldToMethod(classNode, fn, asmapi.mapMethod('func_77973_b'))
+                return classNode;
+            }
         }
     }
 }

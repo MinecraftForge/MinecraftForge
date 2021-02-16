@@ -28,7 +28,7 @@
                 if (f1 > 0.0F) {
                    float f2 = MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F));
                    float f3 = MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F));
-@@ -1010,4 +1012,22 @@
+@@ -1010,4 +1012,23 @@
        this.func_230273_eI_();
        return super.func_213386_a(p_213386_1_, p_213386_2_, p_213386_3_, p_213386_4_, p_213386_5_);
     }
@@ -43,11 +43,12 @@
 +   }
 +
 +   @Override
-+   public void remove(boolean keepData) {
-+      super.remove(keepData);
-+      if (!keepData && itemHandler != null) {
-+         itemHandler.invalidate();
++   protected void invalidateCaps() {
++      super.invalidateCaps();
++      if (itemHandler != null) {
++         net.minecraftforge.common.util.LazyOptional<?> oldHandler = itemHandler;
 +         itemHandler = null;
++         oldHandler.invalidate();
 +      }
 +   }
  }
