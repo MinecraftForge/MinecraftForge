@@ -39,12 +39,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public final class SeparationSettings {
+public final class StructureSeparationSettingsOps {
 
     private static final String STRUCTURE_SETTINGS_KEY = "structures";
     private static final String SEPARATION_SETTINGS_KEY = "structures";
 
-    private SeparationSettings()
+    private StructureSeparationSettingsOps()
     {
 
     }
@@ -52,11 +52,11 @@ public final class SeparationSettings {
     /**
      * Merges the structure separation setting maps of two different configurations for the same DimensionSettings entry.
      */
-    public static class MergerImpl implements Merger<DimensionSettings>
+    public static class Merge implements Merger<DimensionSettings>
     {
         private final MergeStrategy mergeStrategy;
 
-        public MergerImpl(MergeStrategy mergeStrategy)
+        public Merge(MergeStrategy mergeStrategy)
         {
             this.mergeStrategy = mergeStrategy;
         }
@@ -87,11 +87,11 @@ public final class SeparationSettings {
     /**
      * Injects code-registered structure separation settings for a given DimensionSettings entry.
      */
-    public static class InjectorImpl implements Injector<DimensionSettings>
+    public static class Inject implements Injector<DimensionSettings>
     {
         private final MergeStrategy mergeStrategy;
 
-        public InjectorImpl(MergeStrategy mergeStrategy)
+        public Inject(MergeStrategy mergeStrategy)
         {
             this.mergeStrategy = mergeStrategy;
         }

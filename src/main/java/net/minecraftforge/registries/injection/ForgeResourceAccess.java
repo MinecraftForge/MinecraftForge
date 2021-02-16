@@ -32,7 +32,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldSettingsImport;
 import net.minecraftforge.common.ForgeConfig;
-import net.minecraftforge.registries.injection.impl.SeparationSettings;
+import net.minecraftforge.registries.injection.impl.StructureSeparationSettingsOps;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -217,8 +217,8 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
 
         ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, RegistryEntryModifier<?>> builder = ImmutableMap.builder();
         builder.put(Registry.NOISE_SETTINGS_KEY, RegistryEntryModifier.builder(Registry.NOISE_SETTINGS_KEY)
-                        .add(new SeparationSettings.InjectorImpl(strategy))
-                        .add(new SeparationSettings.MergerImpl(strategy))
+                        .add(new StructureSeparationSettingsOps.Inject(strategy))
+                        .add(new StructureSeparationSettingsOps.Merge(strategy))
                         .build());
 
         LOGGER.info("Creating datapack-loader with options: merge={}, inject={}, strategy={}", merge, inject, strategy);
