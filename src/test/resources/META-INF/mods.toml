@@ -65,6 +65,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="composite_model_test"
 [[mods]]
+	modId="dyn_bucket_model_test"
+[[mods]]
     modId="music_disc_test"
 [[mods]]
     modId="stencil_enable_test"
@@ -110,3 +112,7 @@ license="LGPL v2.1"
     modId="item_modifier_test"
 [[mods]]
     modId="network_capability_test"
+[[mods]]
+    modId="shader_fix_test"
+[[mods]]
+    modId="worldgen_registry_desync_test"

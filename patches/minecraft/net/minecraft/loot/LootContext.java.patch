@@ -48,6 +48,15 @@
        public LootContext.Builder func_216023_a(Random p_216023_1_) {
           this.field_216027_d = p_216023_1_;
           return this;
+@@ -177,7 +207,7 @@
+ 
+       public LootContext func_216022_a(LootParameterSet p_216022_1_) {
+          Set<LootParameter<?>> set = Sets.difference(this.field_216025_b.keySet(), p_216022_1_.func_216276_b());
+-         if (!set.isEmpty()) {
++         if (false && !set.isEmpty()) { // Forge: Allow mods to pass custom loot parameters (not part of the vanilla loot table) to the loot context.
+             throw new IllegalArgumentException("Parameters not allowed in this parameter set: " + set);
+          } else {
+             Set<LootParameter<?>> set1 = Sets.difference(p_216022_1_.func_216277_a(), this.field_216025_b.keySet());
 @@ -190,7 +220,7 @@
                 }
  
