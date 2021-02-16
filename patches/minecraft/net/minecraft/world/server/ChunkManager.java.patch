@@ -8,14 +8,14 @@
                 }
  
                 this.func_219229_a(p_219185_5_);
-@@ -582,6 +_,7 @@
+@@ -581,6 +_,7 @@
+             chunk.func_217318_w();
              if (this.field_219254_h.add(chunkpos.func_201841_a())) {
                 chunk.func_177417_c(true);
++               p_219200_1_.func_219276_a(ChunkStatus.field_222617_m, this).thenRun(() -> { //Forge: Delay until the chunk is available to prevent deadlocks
                 this.field_219255_i.func_147448_a(chunk.func_177434_r().values());
-+               p_219200_1_.func_219276_a(ChunkStatus.field_222617_m, this).thenRun(() -> { //Forge: Delay EntityJoinWorld events until chunk is available to prevent deadlocks
                 List<Entity> list = null;
                 ClassInheritanceMultiMap<Entity>[] aclassinheritancemultimap = chunk.func_177429_s();
-                int i = aclassinheritancemultimap.length;
 @@ -601,6 +_,8 @@
                 if (list != null) {
                    list.forEach(chunk::func_76622_b);
