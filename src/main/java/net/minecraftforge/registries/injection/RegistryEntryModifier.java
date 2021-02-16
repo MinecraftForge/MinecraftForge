@@ -19,6 +19,7 @@
 
 package net.minecraftforge.registries.injection;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import net.minecraft.util.RegistryKey;
@@ -70,7 +71,7 @@ public class RegistryEntryModifier<E>
      * @param src      The json data from which content will be merged.
      * @throws IOException When an error occurs during the merge operations or if the entryKey is of an incorrect type.
      */
-    public void mergeRaw(RegistryKey<?> entryKey, JsonElement dest, JsonElement src) throws IOException
+    public void mergeRaw(RegistryKey<?> entryKey, JsonElement dest, JsonElement src) throws Exception
     {
         RegistryKey<E> typedEntryKey = getTypedKey(entryKey);
 
@@ -88,7 +89,7 @@ public class RegistryEntryModifier<E>
      * @param entryData The json data for the registry entry.
      * @throws IOException When an error occurs during the inject operations or if the entryKey is of an incorrect type.
      */
-    public void injectRaw(RegistryKey<?> entryKey, JsonElement entryData) throws IOException
+    public void injectRaw(RegistryKey<?> entryKey, JsonElement entryData) throws Exception
     {
         RegistryKey<E> typedEntryKey = getTypedKey(entryKey);
 
@@ -99,12 +100,13 @@ public class RegistryEntryModifier<E>
     }
 
     // Returns the type-bound instance of the registry key.
-    private RegistryKey<E> getTypedKey(RegistryKey<?> rawEntryKey) throws IOException
+    private RegistryKey<E> getTypedKey(RegistryKey<?> rawEntryKey) throws IllegalArgumentException
     {
         RegistryKey<E> typedEntryKey = RegistryKey.getOrCreateKey(registryKey, rawEntryKey.getLocation());
 
-        // Assert that the provided raw key was valid for this modifier.
-        if (typedEntryKey != rawEntryKey) throw new IOException("Mismatching registry keys!");
+        // The raw key should be the same instance as the typed key. If not, the raw key was created
+        // for a different registry (this shouldn't ever happen in practice but it's cheap to assert).
+        Preconditions.checkArgument(typedEntryKey == rawEntryKey, "Invalid registry key %s provided for RegistryEntryModifier targeting %s", rawEntryKey, registryKey);
 
         return typedEntryKey;
     }

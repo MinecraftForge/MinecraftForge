@@ -19,6 +19,7 @@
 
 package net.minecraftforge.registries.injection.impl;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
@@ -33,7 +34,6 @@ import net.minecraftforge.registries.injection.Injector;
 import net.minecraftforge.registries.injection.MergeStrategy;
 import net.minecraftforge.registries.injection.Merger;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -62,7 +62,7 @@ public final class SeparationSettings {
         }
 
         @Override
-        public void merge(RegistryKey<DimensionSettings> entryKey, JsonElement dest, JsonElement src) throws IOException
+        public void merge(RegistryKey<DimensionSettings> entryKey, JsonElement dest, JsonElement src) throws Exception
         {
             JsonObject destSeparationSettings = getStructureSeparations(dest);
             Set<String> excludedNamespaces = getNamespaceExclusions(destSeparationSettings, mergeStrategy);
@@ -97,7 +97,7 @@ public final class SeparationSettings {
         }
 
         @Override
-        public void inject(RegistryKey<DimensionSettings> entryKey, JsonElement entryData) throws IOException
+        public void inject(RegistryKey<DimensionSettings> entryKey, JsonElement entryData) throws Exception
         {
             DimensionSettings dimensionSettings = WorldGenRegistries.NOISE_SETTINGS.getValueForKey(entryKey);
             if (dimensionSettings == null) return;
@@ -128,7 +128,7 @@ public final class SeparationSettings {
         }
     }
 
-    private static JsonObject getStructureSeparations(JsonElement entryData) throws IOException
+    private static JsonObject getStructureSeparations(JsonElement entryData) throws Exception
     {
         assertJsonObject(entryData, "entryData");
 
@@ -167,9 +167,9 @@ public final class SeparationSettings {
         return Collections.emptySet();
     }
 
-    private static void assertJsonObject(JsonElement element, String name) throws IOException
+    private static void assertJsonObject(JsonElement element, String name) throws NullPointerException, IllegalStateException
     {
-        if (element == null) throw new IOException("Json assertion error!", new NullPointerException(name + " is null!"));
-        if (!element.isJsonObject()) throw new IOException("Json assertion error!", new IllegalArgumentException(name + " is not a json object!"));
+        Preconditions.checkNotNull(element, "%s is null!", name);
+        Preconditions.checkState(element.isJsonObject(), "%s is not a json object!", name);
     }
 }

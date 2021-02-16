@@ -33,13 +33,11 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldSettingsImport;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.registries.injection.impl.SeparationSettings;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -98,7 +96,7 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
             entryDataResult.addProperty("forge:registry_name", entryKey.getLocation().toString());
 
             return decoder.parse(ops, entryDataResult).map(entry -> Pair.of(entry, OptionalInt.empty()));
-        } catch (JsonIOException | JsonSyntaxException | IOException e) {
+        } catch (Exception e) {
             // Same message as anonymous implementation in WorldSettingsImport.IResourceAccess.
             return DataResult.error("Failed to parse " + resourceFile + " file: " + e.getMessage());
         }
@@ -122,9 +120,9 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
      * @param file     The resource file path to locate the entry's data at.
      * @param modifier The RegistryEntryModifier for this registry entry type.
      * @return A JsonObject containing the registry entry in serialized form.
-     * @throws IOException When an error occurs loading or merging of the json content, or if the resulting json data is in the incorrect format.
+     * @throws Exception When an error occurs loading or merging of the json content, or if the resulting json data is in the incorrect format.
      */
-    private JsonObject load(RegistryKey<?> entryKey, ResourceLocation file, RegistryEntryModifier<?> modifier) throws IOException
+    private JsonObject load(RegistryKey<?> entryKey, ResourceLocation file, RegistryEntryModifier<?> modifier) throws Exception
     {
         final JsonElement entryDataResult;
 
@@ -140,8 +138,8 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
             }
         }
 
-        if (entryDataResult == null) throw new IOException("entryDataResult is null!");
-        if (!entryDataResult.isJsonObject()) throw new IOException("entryDataResult is not a json object! " + entryDataResult.getClass());
+        if (entryDataResult == null) throw new NullPointerException("entryDataResult is null!");
+        if (!entryDataResult.isJsonObject()) throw new IllegalStateException("entryDataResult is not a json object! " + entryDataResult.getClass());
 
         return entryDataResult.getAsJsonObject();
     }
@@ -155,9 +153,9 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
      * @param file     The resource file path to locate the entry's data at.
      * @param modifier The RegistryEntryModifier for this registry entry type.
      * @return A JsonElement containing the merged data from all datapacks that contain a file for this resource entry.
-     * @throws IOException When an error occurs loading data from the resource manager or from errors thrown during merging the data.
+     * @throws Exception When an error occurs loading data from the resource manager or from errors thrown during merging the data.
      */
-    private JsonElement loadAndMerge(RegistryKey<?> entryKey, ResourceLocation file, RegistryEntryModifier<?> modifier) throws IOException {
+    private JsonElement loadAndMerge(RegistryKey<?> entryKey, ResourceLocation file, RegistryEntryModifier<?> modifier) throws Exception {
         // Note: The resource manager provides resources in order of priority, low to high.
         final List<IResource> resources = resourceManager.getAllResources(file);
 
@@ -183,6 +181,13 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
                 }
                 // Merge copies data from the candidate into the result.
                 modifier.mergeRaw(entryKey, entryDataResult, entryDataCandidate);
+            }
+            catch (Exception e)
+            {
+                // IResource contains an open InputStream so we manually close them all if an error
+                // occurs mid-iteration and then rethrow the error to exit.
+                resources.forEach(IOUtils::closeQuietly);
+                throw e;
             }
         }
 
