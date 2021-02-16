@@ -36,6 +36,17 @@
     }
  
     public void func_147279_a(SAnimateHandPacket p_147279_1_) {
+@@ -854,8 +858,8 @@
+          livingentity.func_213312_b(d0, d1, d2);
+          livingentity.field_70761_aq = (float)(p_147281_1_.func_149032_n() * 360) / 256.0F;
+          livingentity.field_70759_as = (float)(p_147281_1_.func_149032_n() * 360) / 256.0F;
+-         if (livingentity instanceof EnderDragonEntity) {
+-            EnderDragonPartEntity[] aenderdragonpartentity = ((EnderDragonEntity)livingentity).func_213404_dT();
++         if (livingentity.isMultipartEntity()) {
++            net.minecraftforge.entity.PartEntity<?>[] aenderdragonpartentity = livingentity.getParts();
+ 
+             for(int i = 0; i < aenderdragonpartentity.length; ++i) {
+                aenderdragonpartentity[i].func_145769_d(i + p_147281_1_.func_149024_d());
 @@ -1004,8 +1008,10 @@
           clientplayerentity1.func_233645_dx_().func_233784_a_(clientplayerentity.func_233645_dx_());
        }

@@ -22,6 +22,7 @@ package net.minecraftforge.fml.loading.progress;
 import com.google.common.io.ByteStreams;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -38,6 +39,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
@@ -74,6 +76,9 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         if (glfwInitEnd - glfwInitBegin > 1e9) {
             LogManager.getLogger().fatal("WARNING : glfwInit took {} seconds to start.", (glfwInitEnd-glfwInitBegin) / 1.0e9);
         }
+
+        // Clear the Last Exception (#7285 - Prevent Vanilla throwing an IllegalStateException due to invalid controller mappings)
+        handleLastGLFWError((error, description) -> LogManager.getLogger().error(String.format("Suppressing Last GLFW error: [0x%X]%s", error, description)));
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
@@ -239,9 +244,22 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glVertex2f(screenWidth, 0);
         glEnd();
     }
+
     private void fbResize(long window, int width, int height) {
         if (window == this.window && width != 0 && height != 0) {
             fbSize = new int[] {width, height};
+        }
+    }
+
+    private void handleLastGLFWError(BiConsumer<Integer, String> handler) {
+        try (MemoryStack memorystack = MemoryStack.stackPush()) {
+            PointerBuffer pointerbuffer = memorystack.mallocPointer(1);
+            int error = GLFW.glfwGetError(pointerbuffer);
+            if (error != GLFW_NO_ERROR) {
+                long pDescription = pointerbuffer.get();
+                String description = pDescription == 0L ? "" : MemoryUtil.memUTF8(pDescription);
+                handler.accept(error, description);
+            }
         }
     }
 
