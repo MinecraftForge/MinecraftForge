@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
@@ -707,6 +708,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public static class ConfigValue<T>
     {
+        @VisibleForTesting
+        static boolean USE_CACHES = true;
+
         private final Builder parent;
         private final List<String> path;
         private final Supplier<T> defaultSupplier;
@@ -734,8 +738,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             if (spec.childConfig == null)
                 return defaultSupplier.get();
 
-            if (cachedValue == null)
+            if (USE_CACHES && cachedValue == null)
                 cachedValue = getRaw(spec.childConfig, path, defaultSupplier);
+            else if (!USE_CACHES)
+                return getRaw(spec.childConfig, path, defaultSupplier);
 
             return cachedValue;
         }
