@@ -111,7 +111,7 @@ public class ForgeIngameGui extends IngameGui
         this.scaledHeight = this.mc.getMainWindow().getScaledHeight();
         eventParent = new RenderGameOverlayEvent(partialTicks, this.mc.getMainWindow());
         renderHealthMount = mc.player.getRidingEntity() instanceof LivingEntity;
-        renderFood = mc.player.getRidingEntity() == null;
+        renderFood = !renderHealthMount;
         renderJumpBar = mc.player.isRidingHorse();
 
         right_height = 39;
