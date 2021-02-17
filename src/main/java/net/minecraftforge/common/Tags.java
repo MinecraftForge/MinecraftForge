@@ -128,9 +128,10 @@ public class Tags
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
 
         public static final IOptionalNamedTag<Block> ICES = tag("ices");
-        public static final IOptionalNamedTag<Block> ICES_ICE = tag("ices/ice");
+        public static final IOptionalNamedTag<Block> ICES_NORMAL = tag("ices/normal");
         public static final IOptionalNamedTag<Block> ICES_PACKED = tag("ices/packed");
         public static final IOptionalNamedTag<Block> ICES_BLUE = tag("ices/blue");
+        public static final IOptionalNamedTag<Block> ICES_FROSTED = tag("ices/frosted");
 
         private static IOptionalNamedTag<Block> tag(String name)
         {
