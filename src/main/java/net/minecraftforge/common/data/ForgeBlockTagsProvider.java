@@ -93,8 +93,8 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         getOrCreateBuilder(STORAGE_BLOCKS_QUARTZ).add(Blocks.QUARTZ_BLOCK);
         getOrCreateBuilder(STORAGE_BLOCKS_REDSTONE).add(Blocks.REDSTONE_BLOCK);
         getOrCreateBuilder(STORAGE_BLOCKS_NETHERITE).add(Blocks.NETHERITE_BLOCK);
-        getOrCreateBuilder(ICES).addTags(ICES_ICE, ICES_PACKED, ICES_BLUE, ICES_FROSTED);
-        getOrCreateBuilder(ICES_ICE).add(Blocks.ICE);
+        getOrCreateBuilder(ICES).addTags(ICES_NORMAL, ICES_PACKED, ICES_BLUE, ICES_FROSTED);
+        getOrCreateBuilder(ICES_NORMAL).add(Blocks.ICE);
         getOrCreateBuilder(ICES_PACKED).add(Blocks.PACKED_ICE);
         getOrCreateBuilder(ICES_BLUE).add(Blocks.BLUE_ICE);
         getOrCreateBuilder(ICES_FROSTED).add(Blocks.FROSTED_ICE);

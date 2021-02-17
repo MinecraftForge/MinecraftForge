@@ -292,7 +292,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> STRING = tag("string");
 
         public static final IOptionalNamedTag<Item> ICES = tag("ices");
-        public static final IOptionalNamedTag<Item> ICES_ICE = tag("ices/ice");
+        public static final IOptionalNamedTag<Item> ICES_NORMAL = tag("ices/normal");
         public static final IOptionalNamedTag<Item> ICES_PACKED = tag("ices/packed");
         public static final IOptionalNamedTag<Item> ICES_BLUE = tag("ices/blue");
 
