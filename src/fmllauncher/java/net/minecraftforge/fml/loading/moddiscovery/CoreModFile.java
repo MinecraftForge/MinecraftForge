@@ -56,4 +56,9 @@ public class CoreModFile implements ICoreModFile {
     public String getOwnerId() {
         return this.file.getModInfos().get(0).getModId();
     }
+
+    @Override
+    public String toString() {
+        return "{Name: " + name + ", Owner: " + getOwnerId() + " @ " + getPath() + "}";
+    }
 }

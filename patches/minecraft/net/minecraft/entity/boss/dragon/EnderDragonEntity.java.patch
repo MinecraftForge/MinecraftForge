@@ -11,3 +11,18 @@
                       flag1 = this.field_70170_p.func_217377_a(blockpos, false) || flag1;
                    } else {
                       flag = true;
+@@ -842,4 +842,14 @@
+    public boolean func_184222_aU() {
+       return false;
+    }
++
++   @Override
++   public boolean isMultipartEntity() {
++      return true;
++   }
++
++   @Override
++   public net.minecraftforge.entity.PartEntity<?>[] getParts() {
++      return this.field_70977_g;
++   }
+ }

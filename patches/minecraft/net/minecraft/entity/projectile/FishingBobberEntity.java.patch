@@ -1,16 +1,5 @@
 --- a/net/minecraft/entity/projectile/FishingBobberEntity.java
 +++ b/net/minecraft/entity/projectile/FishingBobberEntity.java
-@@ -233,8 +233,8 @@
-    private boolean func_234600_a_(PlayerEntity p_234600_1_) {
-       ItemStack itemstack = p_234600_1_.func_184614_ca();
-       ItemStack itemstack1 = p_234600_1_.func_184592_cb();
--      boolean flag = itemstack.func_77973_b() == Items.field_151112_aM;
--      boolean flag1 = itemstack1.func_77973_b() == Items.field_151112_aM;
-+      boolean flag = itemstack.func_77973_b() instanceof net.minecraft.item.FishingRodItem;
-+      boolean flag1 = itemstack1.func_77973_b() instanceof net.minecraft.item.FishingRodItem;
-       if (!p_234600_1_.field_70128_L && p_234600_1_.func_70089_S() && (flag || flag1) && !(this.func_70068_e(p_234600_1_) > 1024.0D)) {
-          return false;
-       } else {
 @@ -300,7 +300,7 @@
              double d1 = (double)((float)MathHelper.func_76128_c(this.func_226278_cu_()) + 1.0F);
              double d2 = this.func_226281_cx_() + (double)(f2 * (float)this.field_146038_az * 0.1F);

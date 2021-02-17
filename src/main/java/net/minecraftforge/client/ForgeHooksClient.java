@@ -783,9 +783,8 @@ public class ForgeHooksClient
                 .filter(t -> RenderTypeLookup.canRenderInLayer(state, t))
                 .forEach(rendertype ->
                 {
-                    rendertype = rendertype == RenderType.getTranslucent() ? RenderType.getTranslucentMovingBlock() : rendertype;
                     setRenderLayer(rendertype);
-                    IVertexBuilder ivertexbuilder = buffer.getBuffer(rendertype);
+                    IVertexBuilder ivertexbuilder = buffer.getBuffer(rendertype == RenderType.getTranslucent() ? RenderType.getTranslucentMovingBlock() : rendertype);
                     blockRenderer.getBlockModelRenderer().renderModel(world, blockRenderer.getModelForState(state), state, pos, stack, ivertexbuilder, checkSides, new Random(), state.getPositionRandom(pos), combinedOverlay);
                 });
         setRenderLayer(null);

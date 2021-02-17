@@ -259,8 +259,9 @@ project(':forge') {
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
-                source sourceSets.main
-                source sourceSets.userdev
+                mods {
+                    forge { source sourceSets.main }
+                }
             }
 
             forge_test_client {
@@ -272,7 +273,8 @@ project(':forge') {
                 ideaModule "${rootProject.name}.${project.name}.userdev_test"
 
                 mods {
-                    TestMods { sources sourceSets.test }
+                    forge { source sourceSets.main }
+                    tests { sources sourceSets.test }
                 }
             }
 
@@ -294,8 +296,9 @@ project(':forge') {
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
-                source sourceSets.main
-                source sourceSets.userdev
+                mods {
+                    forge { source sourceSets.main }
+                }
             }
 
             forge_test_server {
@@ -307,7 +310,8 @@ project(':forge') {
                 ideaModule "${rootProject.name}.${project.name}.userdev_test"
 
                 mods {
-                    TestMods { sources sourceSets.test }
+                    forge { source sourceSets.main }
+                    tests { sources sourceSets.test }
                 }
             }
 
@@ -328,8 +332,9 @@ project(':forge') {
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
-                source sourceSets.main
-                source sourceSets.userdev
+                mods {
+                    forge { source sourceSets.main }
+                }
                 
                 args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/'), '--validate',
                         '--existing', sourceSets.main.resources.srcDirs[0]
@@ -437,9 +442,9 @@ project(':forge') {
         installer 'org.ow2.asm:asm-tree:9.0'
         installer 'org.ow2.asm:asm-util:9.0'
         installer 'org.ow2.asm:asm-analysis:9.0'
-        installer 'cpw.mods:modlauncher:8.0.+'
+        installer 'cpw.mods:modlauncher:8.0.9'
         installer 'cpw.mods:grossjava9hacks:1.3.+'
-        installer 'net.minecraftforge:accesstransformers:3.0.+'
+        installer 'net.minecraftforge:accesstransformers:3.0.1'
         installer 'org.antlr:antlr4-runtime:4.9.1' //Dep of AccessTransformer
         installer 'net.minecraftforge:eventbus:4.0.+'
         installer 'net.minecraftforge:forgespi:3.2.+'
@@ -493,15 +498,15 @@ project(':forge') {
             input = gen.output
             tool = BINPATCH_TOOL
         }
-        if (side != 'Joined') {
-            // Create SRG named Vanilla jars, using the SpecialSource we have in the installer
-            task "create${side}SRG"(type: RenameJar, dependsOn: gen) {
-                tool = SPECIAL_SOURCE + ':shaded'
-                args = ['--stable', '--in-jar', '{input}', '--out-jar', '{output}', '--srg-in', '{mappings}']
-                mappings = { gen.srg }
-                input = { gen.cleanJar }
-                output = file("build/create${name}SRG/output.jar")
-            }
+
+        def srgTask = tasks.getByName(patcher.notchObf ? 'createMcp2Obf' : 'createMcp2Srg')
+        // Create SRG named Vanilla jars, using the SpecialSource we have in the installer
+        task "create${side}SRG"(type: RenameJar, dependsOn: srgTask) {
+            tool = SPECIAL_SOURCE + ':shaded'
+            args = ['--stable', '--in-jar', '{input}', '--out-jar', '{output}', '--srg-in', '{mappings}']
+            mappings = { srgTask.output }
+            input = { gen.cleanJar }
+            output = file("build/create${name}SRG/output.jar")
         }
     }
     
@@ -515,23 +520,59 @@ project(':forge') {
         input { genJoinedBinPatches.cleanJar }
         doFirst { downloadLibraries.libraries.each{ addLibrary(it) } }
     }
-    
+
+    task findFieldInstanceChecks(type: FieldCompareFinder, dependsOn: ['createJoinedSRG']) {
+        jar = tasks.getByName('createJoinedSRG').output
+        output = rootProject.file('src/main/resources/coremods/field_to_instanceof.json')
+        fields {
+            bows {
+                cls = 'net/minecraft/item/Items'
+                name = 'field_151031_f'
+				replacement = 'net/minecraft/item/BowItem'
+            }
+            crossbows {
+                cls = 'net/minecraft/item/Items'
+                name = 'field_222114_py'
+				replacement = 'net/minecraft/item/CrossbowItem'
+            }
+            filled_map {
+                cls = 'net/minecraft/item/Items'
+                name = 'field_151098_aY'
+				replacement = 'net/minecraft/item/FilledMapItem'
+                blacklist 'net/minecraft/client/gui/screen/inventory/CartographyTableScreen', 'func_230450_a_', '(Lcom/mojang/blaze3d/matrix/MatrixStack;FII)V'
+                blacklist 'net/minecraft/client/renderer/entity/ItemFrameRenderer', 'func_225623_a_', '(Lnet/minecraft/entity/item/ItemFrameEntity;FFLcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;I)V'
+                blacklist 'net/minecraft/item/crafting/MapCloningRecipe'
+                blacklist 'net/minecraft/item/crafting/MapExtendingRecipe'
+            }
+            fishing_rod {
+                cls = 'net/minecraft/item/Items'
+                name = 'field_151112_aM'
+				replacement = 'net/minecraft/item/FishingRodItem'
+            }
+            shears {
+                cls = 'net/minecraft/item/Items'
+                name = 'field_151097_aZ'
+				replacement = 'net/minecraft/item/ShearsItem'
+            }
+        }
+    }
+
     task checkATs(type: CheckATs, dependsOn: extractInheritance) {
         inheritance = extractInheritance.output
         ats = patcher.accessTransformers
     }
-    
+
     task checkSAS(type: CheckSAS, dependsOn: extractInheritance) {
         inheritance = extractInheritance.output
         sass = patcher.sideAnnotationStrippers
     }
-    
+
     task checkExcs(type: CheckExcs, dependsOn: jar) {
         binary = jar.archivePath
         excs = patcher.excs
     }
-    
-    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs]){}
+
+    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
 
     task checkPatchesAndFix(type: CheckPatches) {
         patchDir = file("$rootDir/patches")

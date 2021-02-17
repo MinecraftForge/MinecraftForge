@@ -1,10 +1,11 @@
 --- a/net/minecraft/data/TagsProvider.java
 +++ b/net/minecraft/data/TagsProvider.java
-@@ -28,10 +28,20 @@
+@@ -28,10 +28,28 @@
     protected final DataGenerator field_200433_a;
     protected final Registry<T> field_200435_c;
     protected final Map<ResourceLocation, ITag.Builder> field_200434_b = Maps.newLinkedHashMap();
 +   protected final String modId;
++   protected final String folder;
 +   protected final net.minecraftforge.common.data.ExistingFileHelper existingFileHelper;
 +   private final net.minecraftforge.common.data.ExistingFileHelper.IResourceType resourceType;
  
@@ -13,15 +14,22 @@
 +      this(p_i49827_1_, p_i49827_2_, "vanilla", null);
 +   }
 +   protected TagsProvider(DataGenerator p_i49827_1_, Registry<T> p_i49827_2_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      this(p_i49827_1_, p_i49827_2_, modId, existingFileHelper, null);
++   }
++   protected TagsProvider(DataGenerator p_i49827_1_, Registry<T> p_i49827_2_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper, @javax.annotation.Nullable String folder) {
        this.field_200433_a = p_i49827_1_;
        this.field_200435_c = p_i49827_2_;
 +      this.modId = modId;
 +      this.existingFileHelper = existingFileHelper;
-+      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.resources.ResourcePackType.SERVER_DATA, ".json", "tags/" + getTagFolder());
++      if (folder == null) {//TODO - 1.17: Remove getTagFolder as a method, and inline the default implementation here
++         folder = getTagFolder();
++      }
++      this.folder = folder;
++      this.resourceType = new net.minecraftforge.common.data.ExistingFileHelper.ResourceType(net.minecraft.resources.ResourcePackType.SERVER_DATA, ".json", "tags/" + this.folder);
     }
  
     protected abstract void func_200432_c();
-@@ -47,12 +57,14 @@
+@@ -47,12 +65,14 @@
           return this.field_200435_c.func_241873_b(p_240527_1_).orElse((T)null);
        };
        this.field_200434_b.forEach((p_240524_4_, p_240524_5_) -> {
@@ -37,7 +45,7 @@
  
              try {
                 String s = field_200437_e.toJson((JsonElement)jsonobject);
-@@ -74,20 +86,36 @@
+@@ -74,20 +94,36 @@
        });
     }
  
@@ -76,7 +84,7 @@
        private final ITag.Builder field_240528_a_;
        private final Registry<T> field_240529_b_;
        private final String field_240530_c_;
-@@ -115,5 +143,18 @@
+@@ -115,5 +151,18 @@
           });
           return this;
        }
