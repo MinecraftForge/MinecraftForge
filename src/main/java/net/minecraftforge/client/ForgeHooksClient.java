@@ -242,6 +242,12 @@ public class ForgeHooksClient
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
+    @Deprecated // TODO: Remove in 1.17
+    public static void renderMainMenu(MainMenuScreen gui, MatrixStack mStack, FontRenderer font, int width, int height)
+    {
+        renderMainMenu(gui, mStack, font, width, height, -1);
+    }
+
     public static void renderMainMenu(MainMenuScreen gui, MatrixStack mStack, FontRenderer font, int width, int height, int alpha)
     {
         VersionChecker.Status status = ForgeVersion.getStatus();
