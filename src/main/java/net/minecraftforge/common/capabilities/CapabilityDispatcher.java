@@ -53,6 +53,8 @@ import net.minecraftforge.common.util.LazyOptional;
 @MethodsReturnNonnullByDefault
 public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>, ICapabilityProvider, INetworkCapability
 {
+    private static final String SYNC_END_MARKER = "END";
+
     private ICapabilityProvider[] caps;
     private INBTSerializable<INBT>[] writers;
     private String[] writerNames;
@@ -161,19 +163,15 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
     {
         this.listeners.forEach(Runnable::run);
     }
-    
+
     @Override
     public void encode(PacketBuffer out, boolean writeAll)
     {
-        out.writeVarInt(writeAll ? networkCapabilities.size() : (int)networkCapabilities.values()
-                .parallelStream()
-                .filter(INetworkCapability::requiresSync)
-                .count());
         ObjectIterator<Object2ObjectOpenHashMap.Entry<String, INetworkCapability>>  it = networkCapabilities.object2ObjectEntrySet().fastIterator();
         while (it.hasNext())
         {
             Object2ObjectOpenHashMap.Entry<String, INetworkCapability> entry = it.next();
-            if(!writeAll && !entry.getValue().requiresSync())
+            if (!writeAll && !entry.getValue().requiresSync())
                 continue;
             out.writeString(entry.getKey(), 0x100);
             PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
@@ -181,15 +179,15 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
             out.writeVarInt(capabilityData.readableBytes());
             out.writeBytes(capabilityData);
         }
+        out.writeString(SYNC_END_MARKER, 0x100);
     }
 
     @Override
     public void decode(PacketBuffer in)
     {
-        int size = in.readVarInt();
-        for (int x = 0; x < size; x++)
+        String name;
+        while (!(name = in.readString(0x100)).equals(SYNC_END_MARKER))
         {
-            String name = in.readString(0x100);
             int dataSize = in.readVarInt();
             INetworkCapability cap = networkCapabilities.get(name);
             if (cap == null)
@@ -200,7 +198,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
             cap.decode(in);
         }
     }
-    
+
     @Override
     public boolean requiresSync()
     {
