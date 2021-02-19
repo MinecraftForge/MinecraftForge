@@ -18,7 +18,7 @@
 +      }
 +
 +      public Advancement build(ResourceLocation id, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
-+         if (!net.minecraftforge.common.data.AdvancementBuilderHelper.build(fileHelper, this)){
++         if(!net.minecraftforge.common.data.AdvancementBuilderHelper.build(fileHelper, this)) {
 +            throw new IllegalStateException("Tried to build incomplete advancement!");
 +         } else {
 +            if (this.field_192066_f == null) {
