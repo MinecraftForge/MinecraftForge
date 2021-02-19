@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/storage/SaveFormat.java
 +++ b/net/minecraft/world/storage/SaveFormat.java
+@@ -95,7 +95,7 @@
+          }
+       }
+ 
+-      Dynamic<T> dynamic1 = p_237259_1_.update(TypeReferences.field_233375_y_, dynamic, p_237259_2_, SharedConstants.func_215069_a().getWorldVersion());
++      Dynamic<T> dynamic1 = net.minecraftforge.common.ForgeHooks.fixUpDimensionsData(p_237259_1_.update(TypeReferences.field_233375_y_, dynamic, p_237259_2_, SharedConstants.func_215069_a().getWorldVersion()));
+       DataResult<DimensionGeneratorSettings> dataresult = DimensionGeneratorSettings.field_236201_a_.parse(dynamic1);
+       return Pair.of(dataresult.resultOrPartial(Util.func_240982_a_("WorldGenSettings: ", field_215785_a::error)).orElseGet(() -> {
+          Registry<DimensionType> registry = RegistryLookupCodec.func_244331_a(Registry.field_239698_ad_).codec().parse(dynamic1).resultOrPartial(Util.func_240982_a_("Dimension type registry: ", field_215785_a::error)).orElseThrow(() -> {
 @@ -182,6 +182,10 @@
     }
  

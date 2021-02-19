@@ -20,9 +20,11 @@
 package net.minecraftforge.common;
 
 import net.minecraft.block.Block;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.tags.ITag.INamedTag;
@@ -33,6 +35,7 @@ public class Tags
     {
         Blocks.init();
         Items.init();
+        Fluids.init();
     }
 
     public static class Blocks
@@ -46,6 +49,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> COBBLESTONE = tag("cobblestone");
         public static final IOptionalNamedTag<Block> DIRT = tag("dirt");
         public static final IOptionalNamedTag<Block> END_STONES = tag("end_stones");
+        public static final IOptionalNamedTag<Block> ENDERMAN_PLACE_ON_BLACKLIST = tag("enderman_place_on_blacklist");
         public static final IOptionalNamedTag<Block> FENCE_GATES = tag("fence_gates");
         public static final IOptionalNamedTag<Block> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
         public static final IOptionalNamedTag<Block> FENCES = tag("fences");
@@ -284,6 +288,18 @@ public class Tags
         private static IOptionalNamedTag<Item> tag(String name)
         {
             return ItemTags.createOptional(new ResourceLocation("forge", name));
+        }
+    }
+
+    public static class Fluids
+    {
+        private static void init() {}
+
+        public static final IOptionalNamedTag<Fluid> MILK = tag("milk");
+
+        private static IOptionalNamedTag<Fluid> tag(String name)
+        {
+            return FluidTags.createOptional(new ResourceLocation("forge", name));
         }
     }
 

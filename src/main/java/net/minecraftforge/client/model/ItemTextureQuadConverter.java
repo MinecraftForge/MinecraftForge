@@ -80,60 +80,67 @@ public final class ItemTextureQuadConverter
         float hScale = 16f / (float)h;
         List<BakedQuad> quads = Lists.newArrayList();
 
-        // the upper left x-position of the current quad
-        int start = -1;
-        for (int y = 0; y < h; y++)
+        // the y-position of the current batch of quads
+        int startY = 0;
+        for (int y = 1; y <= h; y++)
         {
-            for (int x = 0; x < w; x++)
+            if (y < h)
             {
-                // current pixel
-                boolean isVisible = !template.isPixelTransparent(0, x, y);
-
-                // no current quad but found a new one
-                if (start < 0 && isVisible)
+                // we check if the visibility of the next row matches the one for the current row
+                // if they are, we can extend the quad downwards
+                boolean sameRow = true;
+                for (int x = 0; x < w; x++)
                 {
-                    start = x;
-                }
-                // got a current quad, but it ends here
-                if (start >= 0 && !isVisible)
-                {
-                    // we now check if the visibility of the next row matches the one fo the current row
-                    // if they are, we can extend the quad downwards
-                    int endY = y + 1;
-                    boolean sameRow = true;
-                    while (sameRow && endY < h)
+                    if (template.isPixelTransparent(0, x, y) != template.isPixelTransparent(0, x, startY))
                     {
-                        for (int i = 0; i < w; i++)
-                        {
-                            if (template.isPixelTransparent(0, i, y) != template.isPixelTransparent(0, i, endY))
-                            {
-                                sameRow = false;
-                                break;
-                            }
-                        }
-                        if (sameRow)
-                        {
-                            endY++;
-                        }
+                        sameRow = false;
+                        break;
+                    }
+                }
+
+                if (sameRow)
+                    continue; // continue to search for rows with same visibility
+            }
+
+            // all rows from startX (inclusive) to x (exclusive) have same visibility
+            // create a batch of quads
+            // the upper left x-position of the current quad
+            int startX = -1;
+            for (int x = 0; x <= w; x++)
+            {
+                if (x < w)
+                {
+                    // current pixel
+                    boolean isVisible = !template.isPixelTransparent(0, x, startY);
+
+                    // no current quad but found a new one
+                    if (startX < 0 && isVisible)
+                    {
+                        startX = x;
                     }
 
+                    if (isVisible)
+                        continue; // continue to search for visible pixels in the current quad
+                }
+
+                // got a current quad, but it ends here
+                if (startX >= 0)
+                {
                     // create the quad
                     quads.add(genQuad(transform,
-                                      (float)start * wScale,
-                                      (float)y * hScale,
+                                      (float)startX * wScale,
+                                      (float)startY * hScale,
                                       (float)x * wScale,
-                                      (float)endY * hScale,
+                                      (float)y * hScale,
                                       z, sprite, facing, color, tint, luminosity));
 
-                    // update Y if all the rows match. no need to rescan
-                    if (endY - y > 1)
-                    {
-                        y = endY - 1;
-                    }
                     // clear current quad
-                    start = -1;
+                    startX = -1;
                 }
             }
+
+            // next batch of quads start at the current line
+            startY = y;
         }
 
         return quads;
@@ -155,60 +162,67 @@ public final class ItemTextureQuadConverter
         float hScale = 16f / (float)h;
         List<BakedQuad> quads = Lists.newArrayList();
 
-        // the upper left y-position of the current quad
-        int start = -1;
-        for (int x = 0; x < w; x++)
+        // the x-position of the current batch of quads
+        int startX = 0;
+        for (int x = 1; x <= w; x++)
         {
-            for (int y = 0; y < h; y++)
+            if (x < w)
             {
-                // current pixel
-                boolean isVisible = !template.isPixelTransparent(0, x, y);
-
-                // no current quad but found a new one
-                if (start < 0 && isVisible)
+                // we check if the visibility of the next column matches the one for the current row
+                // if they are, we can extend the quad downwards
+                boolean sameColumn = true;
+                for (int y = 0; y < h; y++)
                 {
-                    start = y;
-                }
-                // got a current quad, but it ends here
-                if (start >= 0 && !isVisible)
-                {
-                    // we now check if the visibility of the next column matches the one fo the current row
-                    // if they are, we can extend the quad downwards
-                    int endX = x + 1;
-                    boolean sameColumn = true;
-                    while (sameColumn && endX < w)
+                    if (template.isPixelTransparent(0, x, y) != template.isPixelTransparent(0, startX, y))
                     {
-                        for (int i = 0; i < h; i++)
-                        {
-                            if (template.isPixelTransparent(0, x, i) != template.isPixelTransparent(0, endX, i))
-                            {
-                                sameColumn = false;
-                                break;
-                            }
-                        }
-                        if (sameColumn)
-                        {
-                            endX++;
-                        }
+                        sameColumn = false;
+                        break;
+                    }
+                }
+
+                if (sameColumn)
+                    continue; // continue to search for columns with same visibility
+            }
+
+            // all columns from startY (inclusive) to y (exclusive) have same visibility
+            // create a batch of quads
+            // the upper left y-position of the current quad
+            int startY = -1;
+            for (int y = 0; y <= h; y++)
+            {
+                if (y < h)
+                {
+                    // current pixel
+                    boolean isVisible = !template.isPixelTransparent(0, startX, y);
+
+                    // no current quad but found a new one
+                    if (startY < 0 && isVisible)
+                    {
+                        startY = y;
                     }
 
+                    if (isVisible)
+                        continue; // continue to search for visible pixels in the current quad
+                }
+
+                // got a current quad, but it ends here
+                if (startY >= 0)
+                {
                     // create the quad
                     quads.add(genQuad(transform,
+                                      (float)startX * wScale,
+                                      (float)startY * hScale,
                                       (float)x * wScale,
-                                      (float)start * hScale,
-                                      (float)endX * wScale,
                                       (float)y * hScale,
                                       z, sprite, facing, color, tint, luminosity));
 
-                    // update X if all the columns match. no need to rescan
-                    if (endX - x > 1)
-                    {
-                        x = endX - 1;
-                    }
                     // clear current quad
-                    start = -1;
+                    startY = -1;
                 }
             }
+
+            // next batch of quads start at the current column
+            startX = x;
         }
 
         return quads;

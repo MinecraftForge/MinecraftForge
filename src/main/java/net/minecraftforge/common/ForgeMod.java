@@ -24,21 +24,33 @@ import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.command.arguments.IArgumentSerializer;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.item.Items;
 import net.minecraft.util.SoundEvent;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.world.storage.IServerConfiguration;
 import net.minecraft.world.storage.SaveFormat;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.common.data.ForgeFluidTagsProvider;
+import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
+import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.server.command.EnumArgument;
 import net.minecraftforge.server.command.ModIdArgument;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
@@ -71,7 +83,6 @@ import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -97,10 +108,22 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 5.0D, 0.0D, 1024.0D).setShouldWatch(true));
 
+    private static boolean enableMilkFluid = false;
+    public static final RegistryObject<Fluid> MILK = RegistryObject.of(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
+    public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.of(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
+
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance()
     {
         return INSTANCE;
+    }
+
+    /**
+     * Run this method during mod constructor to enable milk and add it to the Minecraft milk bucket
+     */
+    public static void enableMilkFluid()
+    {
+        enableMilkFluid = true;
     }
 
     public ForgeMod()
@@ -118,12 +141,15 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
+        modEventBus.addListener(this::loadComplete);
+        modEventBus.addGenericListener(Fluid.class, this::registerFluids);
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ForgeConfig.commonSpec);
         modEventBus.register(ForgeConfig.class);
         // Forge does not display problems when the remote is not matching.
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, ()-> Pair.of(()->"ANY", (remote, isServer)-> true));
@@ -152,6 +178,12 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         ArgumentTypes.register("forge:enum", EnumArgument.class, (IArgumentSerializer) new EnumArgument.Serializer());
         ArgumentTypes.register("forge:modid", ModIdArgument.class, new ArgumentSerializer<>(ModIdArgument::modIdArgument));
+    }
+
+    public void loadComplete(FMLLoadCompleteEvent event)
+    {
+        if (FMLEnvironment.dist == Dist.CLIENT)
+            ForgeHooksClient.registerForgeWorldTypeScreens();
     }
 
     public void serverStopping(FMLServerStoppingEvent evt)
@@ -196,9 +228,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         if (event.includeServer())
         {
-            ForgeBlockTagsProvider blockTags = new ForgeBlockTagsProvider(gen, event.getExistingFileHelper());
+            ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
+            ForgeBlockTagsProvider blockTags = new ForgeBlockTagsProvider(gen, existingFileHelper);
             gen.addProvider(blockTags);
-            gen.addProvider(new ForgeItemTagsProvider(gen, blockTags, event.getExistingFileHelper()));
+            gen.addProvider(new ForgeItemTagsProvider(gen, blockTags, existingFileHelper));
+            gen.addProvider(new ForgeFluidTagsProvider(gen, existingFileHelper));
             gen.addProvider(new ForgeRecipeProvider(gen));
             gen.addProvider(new ForgeLootTableProvider(gen));
         }
@@ -223,6 +257,20 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         }
     }
 
+    // done in an event instead of deferred to only enable if a mod requests it
+    public void registerFluids(RegistryEvent.Register<Fluid> event)
+    {
+        if (enableMilkFluid)
+        {
+            // set up attributes
+            FluidAttributes.Builder attributesBuilder = FluidAttributes.builder(new ResourceLocation("forge", "block/milk_still"), new ResourceLocation("forge", "block/milk_flowing")).density(1024).viscosity(1024);
+            ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(MILK, FLOWING_MILK, attributesBuilder).bucket(() -> Items.MILK_BUCKET);
+            // register fluids
+            event.getRegistry().register(new ForgeFlowingFluid.Source(properties).setRegistryName(MILK.getId()));
+            event.getRegistry().register(new ForgeFlowingFluid.Flowing(properties).setRegistryName(FLOWING_MILK.getId()));
+        }
+    }
+
     @SubscribeEvent //ModBus, can't use addListener due to nested genetics.
     public void registerRecipeSerialziers(RegistryEvent.Register<IRecipeSerializer<?>> event)
     {
@@ -241,5 +289,13 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         event.getRegistry().register(new ConditionalRecipe.Serializer<IRecipe<?>>().setRegistryName(new ResourceLocation("forge", "conditional")));
 
+    }
+
+    @SubscribeEvent //ModBus
+    @SuppressWarnings("unused") // automatically called by Forge
+    public void registerLootData(RegistryEvent.Register<GlobalLootModifierSerializer<?>> event)
+    {
+        // Ignore the event itself: this is done only not to statically initialize our custom LootConditionType
+        Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
     }
 }

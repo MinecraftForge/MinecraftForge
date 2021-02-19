@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "forge_chunk_manager_test:block/chunk_loader"
+    }
+  }
+}

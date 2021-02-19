@@ -26,6 +26,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -60,7 +61,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     public boolean canFillFluidType(FluidStack fluid)
     {
-        if (fluid.getFluid() == Fluids.WATER || fluid.getFluid() == Fluids.LAVA || fluid.getFluid().getRegistryName().equals(new ResourceLocation("milk")))
+        if (fluid.getFluid() == Fluids.WATER || fluid.getFluid() == Fluids.LAVA)
         {
             return true;
         }
@@ -74,6 +75,10 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         if (item instanceof BucketItem)
         {
             return new FluidStack(((BucketItem)item).getFluid(), FluidAttributes.BUCKET_VOLUME);
+        }
+        else if (item instanceof MilkBucketItem && ForgeMod.MILK.isPresent())
+        {
+            return new FluidStack(ForgeMod.MILK.get(), FluidAttributes.BUCKET_VOLUME);
         }
         else
         {

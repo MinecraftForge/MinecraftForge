@@ -30,6 +30,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraftforge.common.util.Lazy;
+import net.minecraftforge.fluids.DispenseFluidContainer;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.fluid.FlowingFluid;
@@ -108,6 +109,7 @@ public class NewFluidTest
         Validate.isTrue(state.getBlock() == Blocks.WATER && state2 == state);
         ItemStack stack = Fluids.WATER.getAttributes().getBucket(new FluidStack(Fluids.WATER, 1));
         Validate.isTrue(stack.getItem() == Fluids.WATER.getFilledBucket());
+        event.enqueueWork(() -> DispenserBlock.registerDispenseBehavior(test_fluid_bucket.get(), DispenseFluidContainer.getInstance()));
     }
 
     // WARNING: this doesn't allow "any fluid", only the fluid from this test mod!

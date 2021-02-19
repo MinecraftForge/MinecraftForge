@@ -28,7 +28,7 @@
     public List<ItemStack> func_216113_a(LootContext p_216113_1_) {
        List<ItemStack> list = Lists.newArrayList();
        this.func_216120_b(p_216113_1_, list::add);
-+      list = net.minecraftforge.common.ForgeHooks.modifyLoot(list, p_216113_1_);
++      list = net.minecraftforge.common.ForgeHooks.modifyLoot(this.getLootTableId(), list, p_216113_1_);
        return list;
     }
  
@@ -43,7 +43,7 @@
        }
  
        for(int j = 0; j < this.field_216128_f.length; ++j) {
-@@ -173,6 +175,41 @@
+@@ -173,6 +175,48 @@
        return new LootTable.Builder();
     }
  
@@ -58,6 +58,13 @@
 +      if (this.isFrozen())
 +         throw new RuntimeException("Attempted to modify LootTable after being finalized!");
 +   }
++
++   private ResourceLocation lootTableId;
++   public void setLootTableId(final ResourceLocation id) {
++      if (this.lootTableId != null) throw new IllegalStateException("Attempted to rename loot table from '" + this.lootTableId + "' to '" + id + "': this is not supported");
++      this.lootTableId = java.util.Objects.requireNonNull(id);
++   }
++   public ResourceLocation getLootTableId() { return this.lootTableId; }
 +
 +   public LootPool getPool(String name) {
 +      return field_186466_c.stream().filter(e -> name.equals(e.getName())).findFirst().orElse(null);
@@ -76,7 +83,7 @@
 +
 +   public void addPool(LootPool pool) {
 +      checkFrozen();
-+      if (field_186466_c.stream().anyMatch(e -> e == pool || e.getName().equals(pool.getName())))
++      if (field_186466_c.stream().anyMatch(e -> e == pool || e.getName() != null && e.getName().equals(pool.getName())))
 +         throw new RuntimeException("Attempted to add a duplicate pool to loot table: " + pool.getName());
 +      this.field_186466_c.add(pool);
 +   }
@@ -85,7 +92,7 @@
     public static class Builder implements ILootFunctionConsumer<LootTable.Builder> {
        private final List<LootPool> field_216041_a = Lists.newArrayList();
        private final List<ILootFunction> field_216042_b = Lists.newArrayList();
-@@ -227,7 +264,7 @@
+@@ -227,7 +271,7 @@
              }
           }
  

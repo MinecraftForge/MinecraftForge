@@ -264,7 +264,7 @@ public class FMLHandshakeMessages
         }
 
         public static S2CConfigData decode(final PacketBuffer buffer) {
-            return new S2CConfigData(buffer.readString(128), buffer.readByteArray());
+            return new S2CConfigData(buffer.readString(32767), buffer.readByteArray());
         }
 
         public String getFileName() {

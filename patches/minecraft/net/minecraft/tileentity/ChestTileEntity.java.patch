@@ -17,7 +17,7 @@
           TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
           if (tileentity instanceof ChestTileEntity) {
              return ((ChestTileEntity)tileentity).field_145987_o;
-@@ -221,4 +222,39 @@
+@@ -221,4 +222,40 @@
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return ChestContainer.func_216992_a(p_213906_1_, p_213906_2_, this);
     }
@@ -26,8 +26,9 @@
 +   public void func_145836_u() {
 +      super.func_145836_u();
 +      if (this.chestHandler != null) {
-+         this.chestHandler.invalidate();
++         net.minecraftforge.common.util.LazyOptional<?> oldHandler = this.chestHandler;
 +         this.chestHandler = null;
++         oldHandler.invalidate();
 +      }
 +   }
 +
@@ -51,8 +52,8 @@
 +   }
 +
 +   @Override
-+   public void func_145843_s() {
-+      super.func_145843_s();
++   protected void invalidateCaps() {
++      super.invalidateCaps();
 +      if (chestHandler != null)
 +        chestHandler.invalidate();
 +   }

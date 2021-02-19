@@ -71,6 +71,15 @@
           this.func_82142_c(this.func_70644_a(Effects.field_76441_p));
        }
  
+@@ -747,7 +752,7 @@
+             d0 *= 0.5D;
+          }
+       }
+-
++      d0 = net.minecraftforge.common.ForgeHooks.getEntityVisibilityMultiplier(this, p_213340_1_, d0);
+       return d0;
+    }
+ 
 @@ -782,7 +787,9 @@
  
           boolean flag;
@@ -481,7 +490,7 @@
     }
  
     public boolean func_70094_T() {
-@@ -3082,6 +3138,60 @@
+@@ -3082,6 +3138,58 @@
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
     }
  
@@ -531,12 +540,10 @@
 +   }
 +
 +   @Override
-+   public void remove(boolean keepData) {
-+      super.remove(keepData);
-+      if (!keepData) {
-+         for (int x = 0; x < handlers.length; x++)
-+            handlers[x].invalidate();
-+      }
++   protected void invalidateCaps() {
++      super.invalidateCaps();
++      for (int x = 0; x < handlers.length; x++)
++         handlers[x].invalidate();
 +   }
 +
     @OnlyIn(Dist.CLIENT)

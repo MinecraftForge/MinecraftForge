@@ -185,11 +185,12 @@ public class FMLLoader
         naming = commonLaunchHandler.getNaming();
         dist = commonLaunchHandler.getDist();
         production = commonLaunchHandler.isProduction();
-        progressWindowTick = EarlyProgressVisualization.INSTANCE.accept(dist, commonLaunchHandler.isData());
+
+        mcVersion = (String) arguments.get("mcVersion");
+        progressWindowTick = EarlyProgressVisualization.INSTANCE.accept(dist, commonLaunchHandler.isData(), mcVersion);
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Early Loading!"));
         accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
 
-        mcVersion = (String) arguments.get("mcVersion");
         mcpVersion = (String) arguments.get("mcpVersion");
         forgeVersion = (String) arguments.get("forgeVersion");
         forgeGroup = (String) arguments.get("forgeGroup");
