@@ -95,9 +95,9 @@ public class ChunkEvent extends WorldEvent
     /**
      * Fired when chunks are ticking. See sub-events.
      **/
-    public static abstract class Tick extends ChunkEvent
+    public static abstract class BlockTick extends ChunkEvent
     {
-        public Tick(IChunk chunk)
+        public BlockTick(IChunk chunk)
         {
             super(chunk);
         }
@@ -113,7 +113,7 @@ public class ChunkEvent extends WorldEvent
          * <br>
          * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
          */
-        public static class Pre extends Tick
+        public static class Pre extends BlockTick
         {
             private int randomTickSpeed;
             public Pre(IChunk chunk, int randomTickSpeedIn)
@@ -140,7 +140,7 @@ public class ChunkEvent extends WorldEvent
          * <br>
          * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
          */
-        public static class Post extends Tick
+        public static class Post extends BlockTick
         {
             public Post(IChunk chunk)
             {

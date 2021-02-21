@@ -114,7 +114,6 @@ import net.minecraft.util.registry.WorldSettingsImport;
 import net.minecraft.util.registry.WorldGenSettingsExport;
 import net.minecraft.util.text.*;
 import net.minecraft.world.*;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.feature.structure.Structure;
@@ -1046,14 +1045,14 @@ public class ForgeHooks
 
     public static int onChunkTickPre(IChunk chunk, int randomTickSpeed)
     {
-        ChunkEvent.Tick.Pre event = new ChunkEvent.Tick.Pre(chunk, randomTickSpeed);
+        ChunkEvent.BlockTick.Pre event = new ChunkEvent.BlockTick.Pre(chunk, randomTickSpeed);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getRandomTickSpeed();
     }
 
     public static void onChunkTickPost(IChunk chunk)
     {
-        MinecraftForge.EVENT_BUS.post(new ChunkEvent.Tick.Post(chunk));
+        MinecraftForge.EVENT_BUS.post(new ChunkEvent.BlockTick.Post(chunk));
     }
 
     @Nullable
