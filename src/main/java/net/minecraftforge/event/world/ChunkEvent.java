@@ -92,6 +92,9 @@ public class ChunkEvent extends WorldEvent
         }
     }
 
+    /**
+     * Fired when chunks are ticking. See sub-events.
+     **/
     public static abstract class Tick extends ChunkEvent
     {
         public Tick(IChunk chunk)
@@ -99,6 +102,17 @@ public class ChunkEvent extends WorldEvent
             super(chunk);
         }
 
+        /**
+         * ChunkEvent.Tick.Pre is fired when the server world begins ticking blocks for the chunk. The current
+         * randomTickSpeed for the chunk can be obtained with getRandomTickSpeed() and set with setRandomTickSpeed().<br>
+         * <br>
+         * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}, but it will skip ticking
+         * if randomTickSpeed is set to 0.<br>
+         * <br>
+         * This event does not have a result. {@link HasResult} <br>
+         * <br>
+         * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+         */
         public static class Pre extends Tick
         {
             private int randomTickSpeed;
@@ -117,6 +131,15 @@ public class ChunkEvent extends WorldEvent
             }
         }
 
+        /**
+         * ChunkEvent.Tick.Post is fired when the server world finishes ticking blocks for the chunk.<br>
+         * <br>
+         * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+         * <br>
+         * This event does not have a result. {@link HasResult} <br>
+         * <br>
+         * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+         */
         public static class Post extends Tick
         {
             public Post(IChunk chunk)
