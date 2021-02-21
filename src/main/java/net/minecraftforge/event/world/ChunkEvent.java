@@ -91,4 +91,38 @@ public class ChunkEvent extends WorldEvent
             super(chunk);
         }
     }
+
+    public static abstract class Tick extends ChunkEvent
+    {
+        public Tick(IChunk chunk)
+        {
+            super(chunk);
+        }
+
+        public static class Pre extends Tick
+        {
+            private int randomTickSpeed;
+            public Pre(IChunk chunk, int randomTickSpeedIn)
+            {
+                super(chunk);
+                randomTickSpeed = randomTickSpeedIn;
+            }
+
+            public int getRandomTickSpeed() {
+                return randomTickSpeed;
+            }
+
+            public void setRandomTickSpeed(int randomTickSpeed) {
+                this.randomTickSpeed = randomTickSpeed;
+            }
+        }
+
+        public static class Post extends Tick
+        {
+            public Post(IChunk chunk)
+            {
+                super(chunk);
+            }
+        }
+    }
 }
