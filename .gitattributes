@@ -20,4 +20,4 @@ src/generated/**/.cache/cache text eol=lf
 src/generated/**/*.json text eol=lf
 src/generated_test/**/.cache/cache text eol=lf
 src/generated_test/**/*.json text eol=lf
-
+console.log("Message");
