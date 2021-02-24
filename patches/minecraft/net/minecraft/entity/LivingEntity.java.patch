@@ -71,6 +71,15 @@
           this.func_82142_c(this.func_70644_a(Effects.field_76441_p));
        }
  
+@@ -747,7 +752,7 @@
+             d0 *= 0.5D;
+          }
+       }
+-
++      d0 = net.minecraftforge.common.ForgeHooks.getEntityVisibilityMultiplier(this, p_213340_1_, d0);
+       return d0;
+    }
+ 
 @@ -782,7 +787,9 @@
  
           boolean flag;
