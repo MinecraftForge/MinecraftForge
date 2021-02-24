@@ -3,6 +3,7 @@ package net.minecraftforge.network;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -21,6 +22,7 @@ import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.PacketDistributor.PacketTarget;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.network.message.SyncEntityCapabilities;
+import net.minecraftforge.network.message.SyncEquipmentSlotCapabilities;
 import net.minecraftforge.network.message.SyncSlotCapabilities;
 import net.minecraftforge.network.message.SyncTileEntityCapabilities;
 
@@ -29,9 +31,7 @@ public class ForgeNetwork {
 
     public static final String PROTOCOL_VERSION = "0.0.1";
     public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(ForgeMod.ID, "main");
-    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            CHANNEL_NAME,
-            () -> PROTOCOL_VERSION,
+    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(CHANNEL_NAME, () -> PROTOCOL_VERSION,
             clientVersion -> clientVersion.equals(NetworkRegistry.ACCEPTVANILLA)
                     || clientVersion.equals(PROTOCOL_VERSION),
             PROTOCOL_VERSION::equals);
@@ -43,26 +43,31 @@ public class ForgeNetwork {
         if (initialized)
             throw new IllegalStateException("Forge network already initialized");
 
-        CHANNEL
-            .messageBuilder(SyncSlotCapabilities.class, 0x00, NetworkDirection.PLAY_TO_CLIENT)
+        // @formatter:off
+        CHANNEL.messageBuilder(SyncSlotCapabilities.class, 0x00, NetworkDirection.PLAY_TO_CLIENT)
             .encoder(SyncSlotCapabilities::encode)
             .decoder(SyncSlotCapabilities::decode)
             .consumer(SyncSlotCapabilities::handle)
             .add();
-        
-        CHANNEL
-            .messageBuilder(SyncEntityCapabilities.class, 0x01, NetworkDirection.PLAY_TO_CLIENT)
+
+        CHANNEL.messageBuilder(SyncEntityCapabilities.class, 0x01, NetworkDirection.PLAY_TO_CLIENT)
             .encoder(SyncEntityCapabilities::encode)
             .decoder(SyncEntityCapabilities::decode)
             .consumer(SyncEntityCapabilities::handle)
             .add();
-        
-        CHANNEL
-            .messageBuilder(SyncTileEntityCapabilities.class, 0x03, NetworkDirection.PLAY_TO_CLIENT)
+
+        CHANNEL.messageBuilder(SyncTileEntityCapabilities.class, 0x03, NetworkDirection.PLAY_TO_CLIENT)
             .encoder(SyncTileEntityCapabilities::encode)
             .decoder(SyncTileEntityCapabilities::decode)
             .consumer(SyncTileEntityCapabilities::handle)
             .add();
+        
+        CHANNEL.messageBuilder(SyncEquipmentSlotCapabilities.class, 0x04, NetworkDirection.PLAY_TO_CLIENT)
+            .encoder(SyncEquipmentSlotCapabilities::encode)
+            .decoder(SyncEquipmentSlotCapabilities::decode)
+            .consumer(SyncEquipmentSlotCapabilities::handle)
+            .add();
+     // @formatter:on
     }
 
     @SubscribeEvent
@@ -79,20 +84,23 @@ public class ForgeNetwork {
     public static void handleTileEntityTick(TickEvent.TileEntityTickEvent event)
     {
         if (event.phase == TickEvent.Phase.END && event.tileEntity.getWorld() != null)
-            sendTileEntityCapabilities(event.tileEntity, PacketDistributor.TRACKING_CHUNK.with(() -> event.tileEntity.getWorld().getChunkAt(event.tileEntity.getPos())), false);
+            sendTileEntityCapabilities(event.tileEntity, PacketDistributor.TRACKING_CHUNK
+                    .with(() -> event.tileEntity.getWorld().getChunkAt(event.tileEntity.getPos())), false);
     }
 
     @SubscribeEvent
     public static void handlePlayerStartTracking(PlayerEvent.StartTracking event)
     {
         if (event.getTarget() instanceof LivingEntity)
-            sendEntityCapabilities((LivingEntity)event.getTarget(), PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity)event.getPlayer()), true);
+            sendEntityCapabilities((LivingEntity) event.getTarget(),
+                    PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), true);
     }
 
     @SubscribeEvent
     public static void handleLivingUpdate(LivingUpdateEvent event)
     {
-        sendEntityCapabilities(event.getEntityLiving(), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(event::getEntityLiving), false);
+        sendEntityCapabilities(event.getEntityLiving(),
+                PacketDistributor.TRACKING_ENTITY_AND_SELF.with(event::getEntityLiving), false);
     }
 
     public static void sendTileEntityCapabilities(TileEntity tileEntity, PacketTarget target, boolean writeAll)
@@ -115,13 +123,26 @@ public class ForgeNetwork {
         }
     }
 
-    public static void sendSlotCapabilities(int slotIndex, ItemStack itemStack, ServerPlayerEntity target, boolean writeAll)
+    public static void sendSlotCapabilities(int slotIndex, ItemStack itemStack, ServerPlayerEntity target,
+            boolean writeAll)
     {
         if (writeAll || itemStack.requiresSync())
         {
             PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
             itemStack.encode(capabilityData, writeAll);
-            CHANNEL.send(PacketDistributor.PLAYER.with(() -> target), new SyncSlotCapabilities(target.getEntityId(), slotIndex, capabilityData));
+            CHANNEL.send(PacketDistributor.PLAYER.with(() -> target),
+                    new SyncSlotCapabilities(target.getEntityId(), slotIndex, capabilityData));
+        }
+    }
+
+    public static void sendEquipmentSlotCapabilities(int entityId, EquipmentSlotType equipmentSlotType,
+            ItemStack itemStack, PacketTarget target, boolean writeAll)
+    {
+        if (writeAll || itemStack.requiresSync())
+        {
+            PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
+            itemStack.encode(capabilityData, writeAll);
+            CHANNEL.send(target, new SyncEquipmentSlotCapabilities(entityId, equipmentSlotType, capabilityData));
         }
     }
 }
