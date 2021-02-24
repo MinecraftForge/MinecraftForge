@@ -226,6 +226,13 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(fovUpdateEvent);
         return fovUpdateEvent.getNewfov();
     }
+    
+    public static double getTurnSpeed(PlayerEntity player, double turnSpeed)
+    {
+        UpdatePlayerLookEvent event = new UpdatePlayerLookEvent(player, turnSpeed);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getMouseTurnSpeed();
+    }
 
     public static double getFOVModifier(GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, double fov) {
         EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, info, renderPartialTicks, fov);
