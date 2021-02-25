@@ -108,7 +108,20 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     @FunctionalInterface
     interface BakeCallback<V extends IForgeRegistryEntry<V>>
     {
+        // TODO 1.17: Remove and replace with signature below
         void onBake(IForgeRegistryInternal<V> owner, RegistryManager stage);
+
+        default void onBake(IForgeRegistryInternal<V> owner, RegistryManager stage, @Nullable BakeReason reason) {
+            onBake(owner, stage);
+        }
+    }
+
+    /**
+     * The reason why {@link BakeCallback#onBake(IForgeRegistryInternal, RegistryManager, BakeReason)} has been called
+     */
+    enum BakeReason
+    {
+        FREEZE, REMOTE_SNAPSHOT_INJECT, LOCAL_SNAPSHOT_INJECT, REVERT
     }
 
     /**

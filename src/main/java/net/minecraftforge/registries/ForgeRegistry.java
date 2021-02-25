@@ -518,10 +518,16 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
     }
 
-    public void bake()
+    @Deprecated
+    //TODO 1.17: Remove
+    public void bake() {
+        bake(null);
+    }
+
+    public void bake(BakeReason reason)
     {
         if (this.bake != null)
-            this.bake.onBake(this, this.stage);
+            this.bake.onBake(this, this.stage, reason);
     }
 
     void sync(ResourceLocation name, ForgeRegistry<V> from)

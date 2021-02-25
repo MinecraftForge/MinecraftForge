@@ -312,10 +312,18 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         if (bakeCallback.size() == 1)
             return bakeCallback.get(0);
 
-        return (owner, stage) ->
-        {
-            for (BakeCallback<T> cb : this.bakeCallback)
-                cb.onBake(owner, stage);
+        return new BakeCallback<T>() {
+
+            @Override
+            public void onBake(IForgeRegistryInternal<T> owner, RegistryManager stage) {
+                this.onBake(owner, stage, null);
+            }
+
+            @Override
+            public void onBake(IForgeRegistryInternal<T> owner, RegistryManager stage, BakeReason reason) {
+                for (BakeCallback<T> cb : RegistryBuilder.this.bakeCallback)
+                    cb.onBake(owner, stage, reason);
+            }
         };
     }
 
