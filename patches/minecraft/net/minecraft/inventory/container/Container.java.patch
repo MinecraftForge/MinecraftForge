@@ -16,7 +16,7 @@
 +         } else if(itemstack.requiresSync()) {
 +             for(IContainerListener listener : this.field_75149_d) {
 +                if (listener instanceof ServerPlayerEntity) {
-+                   net.minecraftforge.network.ForgeNetwork.sendSlotCapabilities(i, itemstack, (ServerPlayerEntity)listener, false);
++                   net.minecraftforge.network.ForgeNetwork.sendSlotCapabilities(this.field_75151_b.get(i), (ServerPlayerEntity)listener, false);
 +                   break;
 +                }
 +             }

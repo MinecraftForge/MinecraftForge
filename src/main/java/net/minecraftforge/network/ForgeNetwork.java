@@ -4,6 +4,7 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
@@ -123,15 +124,28 @@ public class ForgeNetwork {
         }
     }
 
-    public static void sendSlotCapabilities(int slotIndex, ItemStack itemStack, ServerPlayerEntity target,
-            boolean writeAll)
+    public static void sendSlotCapabilities(Slot slot, ServerPlayerEntity target, boolean writeAll)
     {
-        if (writeAll || itemStack.requiresSync())
+        if (slot.inventory == target.inventory)
+        {
+            for (ItemStack equipmentStack : target.getEquipmentAndArmor())
+            {
+                // If the item is equipment we don't need to sync it as Minecraft does
+                // that in a separate method (and if we sync it twice the capability wont think
+                // it's dirty anymore on the second call).
+                if (equipmentStack == slot.getStack())
+                {
+                    return;
+                }
+            }
+        }
+
+        if (writeAll || slot.getStack().requiresSync())
         {
             PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
-            itemStack.encode(capabilityData, writeAll);
+            slot.getStack().encode(capabilityData, writeAll);
             CHANNEL.send(PacketDistributor.PLAYER.with(() -> target),
-                    new SyncSlotCapabilities(target.getEntityId(), slotIndex, capabilityData));
+                    new SyncSlotCapabilities(target.getEntityId(), slot.getSlotIndex(), capabilityData));
         }
     }
 
