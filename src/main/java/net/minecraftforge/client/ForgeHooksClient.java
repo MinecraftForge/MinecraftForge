@@ -819,4 +819,9 @@ public class ForgeHooksClient
     {
         return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
     }
+
+    public static void onDimensionLightMapUpdate(World world, float partialTicks, float sunBrightness, float skyLight, float blockLight, Vector3f colors)
+    {
+        MinecraftForge.EVENT_BUS.post(new DimensionLightMapModificationEvent(world, blockLight, blockLight, blockLight, blockLight, colors));
+    }
 }
