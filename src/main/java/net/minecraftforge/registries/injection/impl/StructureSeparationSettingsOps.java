@@ -30,17 +30,18 @@ import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.settings.StructureSeparationSettings;
 import net.minecraftforge.registries.injection.ForgeResourceAccess;
-import net.minecraftforge.registries.injection.Injector;
+import net.minecraftforge.registries.injection.JsonOp;
 import net.minecraftforge.registries.injection.MergeStrategy;
-import net.minecraftforge.registries.injection.Merger;
+import org.apache.logging.log4j.Level;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public final class StructureSeparationSettingsOps {
-
+public final class StructureSeparationSettingsOps
+{
+    private static final Level LOG_LEVEL = Level.DEBUG;
     private static final String STRUCTURE_SETTINGS_KEY = "structures";
     private static final String SEPARATION_SETTINGS_KEY = "structures";
 
@@ -52,7 +53,7 @@ public final class StructureSeparationSettingsOps {
     /**
      * Merges the structure separation setting maps of two different configurations for the same DimensionSettings entry.
      */
-    public static class Merge implements Merger<DimensionSettings>
+    public static class Merge implements JsonOp.Merge<DimensionSettings>
     {
         private final MergeStrategy mergeStrategy;
 
@@ -79,7 +80,7 @@ public final class StructureSeparationSettingsOps {
                 if (destSeparationSettings.has(entry.getKey())) continue;
 
                 destSeparationSettings.add(entry.getKey(), entry.getValue());
-                ForgeResourceAccess.LOGGER.info(" - Injected separation settings for {}", registryName);
+                ForgeResourceAccess.LOGGER.log(LOG_LEVEL, " - Injected separation settings for structure: {} in: {}", registryName, entryKey);
             }
         }
     }
@@ -87,7 +88,7 @@ public final class StructureSeparationSettingsOps {
     /**
      * Injects code-registered structure separation settings for a given DimensionSettings entry.
      */
-    public static class Inject implements Injector<DimensionSettings>
+    public static class Inject implements JsonOp.Inject<DimensionSettings>
     {
         private final MergeStrategy mergeStrategy;
 
@@ -122,7 +123,7 @@ public final class StructureSeparationSettingsOps {
                 // Encode the settings to json and add to the entry's data.
                 StructureSeparationSettings.field_236664_a_.encodeStart(JsonOps.INSTANCE, entry.getValue()).result().ifPresent(data -> {
                     separationSettingsData.add(registryName.toString(), data);
-                    ForgeResourceAccess.LOGGER.info(" - Injected separation settings for {}", registryName);
+                    ForgeResourceAccess.LOGGER.log(LOG_LEVEL, " - Injected separation settings for structure: {} in: {}", registryName, entryKey);
                 });
             }
         }

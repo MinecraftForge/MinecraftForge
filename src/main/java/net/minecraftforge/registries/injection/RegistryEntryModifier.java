@@ -37,8 +37,8 @@ import java.util.List;
 public class RegistryEntryModifier<E>
 {
     private final RegistryKey<Registry<E>> registryKey;
-    private final List<Merger<E>> mergers;
-    private final List<Injector<E>> injectors;
+    private final List<JsonOp.Merge<E>> mergers;
+    private final List<JsonOp.Inject<E>> injectors;
 
     private RegistryEntryModifier(Builder<E> builder)
     {
@@ -75,7 +75,7 @@ public class RegistryEntryModifier<E>
     {
         RegistryKey<E> typedEntryKey = getTypedKey(entryKey);
 
-        for (Merger<E> merger : mergers)
+        for (JsonOp.Merge<E> merger : mergers)
         {
             merger.merge(typedEntryKey, dest, src);
         }
@@ -93,18 +93,25 @@ public class RegistryEntryModifier<E>
     {
         RegistryKey<E> typedEntryKey = getTypedKey(entryKey);
 
-        for (Injector<E> injector : injectors)
+        for (JsonOp.Inject<E> injector : injectors)
         {
             injector.inject(typedEntryKey, entryData);
         }
     }
 
-    // Returns the type-bound instance of the registry key.
+    /**
+     * Returns the type-bound instance of the entry's RegistryKey using the type information held
+     * by the {@link #registryKey} field.
+     *
+     * @param rawEntryKey The unbound registry entry key.
+     * @return The typed registry entry key.
+     * @throws IllegalArgumentException When the provided key is not a child of the registry that this modifier targets.
+     */
     private RegistryKey<E> getTypedKey(RegistryKey<?> rawEntryKey) throws IllegalArgumentException
     {
         RegistryKey<E> typedEntryKey = RegistryKey.getOrCreateKey(registryKey, rawEntryKey.getLocation());
 
-        // The raw key should be the same instance as the typed key. If not, the raw key was created
+        // The unbound key should be the same instance as the typed key. If not, the input key was created
         // for a different registry (this shouldn't ever happen in practice but it's cheap to assert).
         Preconditions.checkArgument(typedEntryKey == rawEntryKey, "Invalid registry key %s provided for RegistryEntryModifier targeting %s", rawEntryKey, registryKey);
 
@@ -119,21 +126,21 @@ public class RegistryEntryModifier<E>
     public static class Builder<E>
     {
         private final RegistryKey<Registry<E>> registryKey;
-        private final List<Merger<E>> mergers = new ArrayList<>();
-        private final List<Injector<E>> injectors = new ArrayList<>();
+        private final List<JsonOp.Merge<E>> mergers = new ArrayList<>();
+        private final List<JsonOp.Inject<E>> injectors = new ArrayList<>();
 
         private Builder(RegistryKey<Registry<E>> registryKey)
         {
             this.registryKey = registryKey;
         }
 
-        public Builder<E> add(Merger<E> merger)
+        public Builder<E> add(JsonOp.Merge<E> merger)
         {
             mergers.add(merger);
             return this;
         }
 
-        public Builder<E> add(Injector<E> injector)
+        public Builder<E> add(JsonOp.Inject<E> injector)
         {
             injectors.add(injector);
             return this;

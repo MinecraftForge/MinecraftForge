@@ -1,6 +1,7 @@
 package net.minecraftforge.registries.injection;
 
-public enum MergeStrategy {
+public enum MergeStrategy
+{
     /**
      * Adds all content from all namespaces to the registry entry's data.
      */

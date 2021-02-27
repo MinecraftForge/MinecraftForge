@@ -103,14 +103,17 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
             entryDataResult.addProperty("forge:registry_name", entryKey.getLocation().toString());
 
             return decoder.parse(ops, entryDataResult).map(entry -> Pair.of(entry, OptionalInt.empty()));
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             // Same message as anonymous implementation in WorldSettingsImport.IResourceAccess.
             return DataResult.error("Failed to parse " + resourceFile + " file: " + e.getMessage());
         }
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return "ForgeResourceAccess{" +
                 "merge=" + merge +
                 ", inject=" + inject +
@@ -206,14 +209,12 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
         return new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
     }
 
-    // Returns the full filepath of a given resource in ResourceLocation form.
     private static ResourceLocation getFileLocation(RegistryKey<?> registryKey, ResourceLocation entryName)
     {
         String filepath = registryKey.getLocation().getPath() + "/" + entryName.getPath() + ".json";
         return new ResourceLocation(entryName.getNamespace(), filepath);
     }
 
-    // Helper method for creating the forge IResourceAccess.
     public static WorldSettingsImport.IResourceAccess create(IResourceManager resourceManager, WorldSettingsImport.IResourceAccess vanillaLoader)
     {
         boolean merge = ForgeConfig.COMMON.mergeDataPackWorldGenData.get();
