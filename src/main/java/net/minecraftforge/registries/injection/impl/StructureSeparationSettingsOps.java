@@ -50,7 +50,7 @@ import java.util.Set;
  * Resulting Json:
  * {
  *   "structures": {
- *   "stronghold": {}
+ *     "stronghold": {},
  *     "structures": {
  *       "minecraft:structure_name": {
  *         "salt": #int,
