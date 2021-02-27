@@ -39,6 +39,34 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Operations that target entries of the {@link net.minecraft.world.gen.DimensionSettings} registry.
+ *
+ * Implementation is dependant on the following Codec schemas:
+ * - {@link net.minecraft.world.gen.DimensionSettings#field_236097_a_}
+ * - {@link net.minecraft.world.gen.settings.DimensionStructuresSettings#field_236190_a_}
+ * - {@link net.minecraft.world.gen.settings.StructureSeparationSettings#field_236664_a_}
+ *
+ * Resulting Json:
+ * {
+ *   "structures": {
+ *   "stronghold": {}
+ *     "structures": {
+ *       "minecraft:structure_name": {
+ *         "salt": #int,
+ *         "spacing": #int,
+ *         "separation": #int
+ *       }
+ *     }
+ *   }
+ * }
+ *
+ * The merge and inject operations target the innermost "structures" json-object which corresponds to
+ * the field found at {@link net.minecraft.world.gen.settings.DimensionStructuresSettings#field_236193_d_}.
+ * This is a map that holds the StructureSeparationSettings keyed by the Structure they apply to.
+ * The merge and inject operations in this class add the absent entries to that json-object according to the
+ * user-specified {@link MergeStrategy}.
+ */
 public final class StructureSeparationSettingsOps
 {
     private static final Level LOG_LEVEL = Level.DEBUG;
