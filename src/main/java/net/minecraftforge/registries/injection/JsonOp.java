@@ -3,7 +3,7 @@ package net.minecraftforge.registries.injection;
 import com.google.gson.JsonElement;
 import net.minecraft.util.RegistryKey;
 
-public interface JsonOp<E>
+public interface JsonOp
 {
     /**
      * Represents an operation that injects content into the json data of a registry entry.
