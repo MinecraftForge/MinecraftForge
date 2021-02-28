@@ -107,7 +107,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final RegistryKey<Registry<V>> key;
     private final RegistryBuilder<V> builder;
     
-    private final Codec<V> CODEC = new Codec<V>() {
+    private final Codec<V> codec = new Codec<V>() {
         @Override
         public <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input) {
             if(ops.compressMaps())
@@ -228,7 +228,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     @Override
     public Codec<V> getCodec() {
-        return this.CODEC;
+        return this.codec;
     }
 
     @Override
