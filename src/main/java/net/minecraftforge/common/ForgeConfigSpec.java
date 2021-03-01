@@ -41,6 +41,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.commons.lang3.tuple.Pair;
@@ -85,8 +86,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         if (config != null && !isCorrect(config)) {
             String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
             LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configName);
-            correct(config, (action, path, incorrectValue, correctedValue) ->
-                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to its default, {}. {}", DOT_JOINER.join( path ), incorrectValue, correctedValue, incorrectValue == correctedValue ? "This seems to be an error." : ""));
+            correct(config,
+                    (action, path, incorrectValue, correctedValue) ->
+                            LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to its default, {}. {}", DOT_JOINER.join( path ), incorrectValue, correctedValue, incorrectValue == correctedValue ? "This seems to be an error." : ""),
+                    (action, path, incorrectValue, correctedValue) ->
+                            LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This may create a backup.", path));
+
             if (config instanceof FileConfig) {
                 ((FileConfig) config).save();
             }
@@ -136,26 +141,30 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public synchronized boolean isCorrect(CommentedConfig config) {
         LinkedList<String> parentPath = new LinkedList<>();
-        return correct(this.config, config, parentPath, Collections.unmodifiableList( parentPath ), (a, b, c, d) -> {}, true) == 0;
+        return correct(this.config, config, parentPath, Collections.unmodifiableList( parentPath ), (a, b, c, d) -> {}, null, true) == 0;
     }
 
     public int correct(CommentedConfig config) {
-        return correct(config, (action, path, incorrectValue, correctedValue) -> {});
+        return correct(config, (action, path, incorrectValue, correctedValue) -> {}, null);
     }
 
     public synchronized int correct(CommentedConfig config, CorrectionListener listener) {
+        return correct(config, listener, null);
+    }
+
+    public synchronized int correct(CommentedConfig config, CorrectionListener listener, CorrectionListener commentListener) {
         LinkedList<String> parentPath = new LinkedList<>(); //Linked list for fast add/removes
         int ret = -1;
         try {
             isCorrecting = true;
-            ret = correct(this.config, config, parentPath, Collections.unmodifiableList(parentPath), listener, false);
+            ret = correct(this.config, config, parentPath, Collections.unmodifiableList(parentPath), listener, commentListener, false);
         } finally {
             isCorrecting = false;
         }
         return ret;
     }
 
-    private int correct(UnmodifiableConfig spec, CommentedConfig config, LinkedList<String> parentPath, List<String> parentPathUnmodifiable, CorrectionListener listener, boolean dryRun)
+    private int correct(UnmodifiableConfig spec, CommentedConfig config, LinkedList<String> parentPath, List<String> parentPathUnmodifiable, CorrectionListener listener, CorrectionListener commentListener, boolean dryRun)
     {
         int count = 0;
 
@@ -175,7 +184,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             {
                 if (configValue instanceof CommentedConfig)
                 {
-                    count += correct((Config)specValue, (CommentedConfig)configValue, parentPath, parentPathUnmodifiable, listener, dryRun);
+                    count += correct((Config)specValue, (CommentedConfig)configValue, parentPath, parentPathUnmodifiable, listener, commentListener, dryRun);
                     if (count > 0 && dryRun)
                         return count;
                 }
@@ -189,17 +198,19 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     configMap.put(key, newValue);
                     listener.onCorrect(action, parentPathUnmodifiable, configValue, newValue);
                     count++;
-                    count += correct((Config)specValue, newValue, parentPath, parentPathUnmodifiable, listener, dryRun);
+                    count += correct((Config)specValue, newValue, parentPath, parentPathUnmodifiable, listener, commentListener, dryRun);
                 }
 
                 String newComment = levelComments.get(parentPath);
                 String oldComment = config.getComment(key);
                 if (!stringsMatchIgnoringNewlines(oldComment, newComment))
                 {
+                    if(commentListener != null)
+                        commentListener.onCorrect(action, parentPathUnmodifiable, oldComment, newComment);
+
                     if (dryRun)
                         return 1;
 
-                    LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This might cause a backup to be created.", key);
                     config.setComment(key, newComment);
                 }
             }
@@ -219,11 +230,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 String oldComment = config.getComment(key);
                 if (!stringsMatchIgnoringNewlines(oldComment, valueSpec.getComment()))
                 {
+                    if (commentListener != null)
+                        commentListener.onCorrect(action, parentPathUnmodifiable, oldComment, valueSpec.getComment());
+
                     if (dryRun)
                         return 1;
 
-                    LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This might cause a backup to be created.", key);
-                    LogManager.getLogger().debug(CORE, "Current comment: {}, Spec: {}", oldComment, valueSpec.getComment());
                     config.setComment(key, valueSpec.getComment());
                 }
             }
