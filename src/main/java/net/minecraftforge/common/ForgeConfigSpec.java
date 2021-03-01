@@ -86,7 +86,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
             LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configName);
             correct(config, (action, path, incorrectValue, correctedValue) ->
-                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to its default, {}", DOT_JOINER.join( path ), incorrectValue, correctedValue));
+                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to its default, {}. {}", DOT_JOINER.join( path ), incorrectValue, correctedValue, incorrectValue == correctedValue ? "This seems to be an error." : ""));
             if (config instanceof FileConfig) {
                 ((FileConfig) config).save();
             }
@@ -199,7 +199,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     if (dryRun)
                         return 1;
 
-                    //TODO: Comment correction listener?
+                    LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This might cause a backup to be created.", key);
                     config.setComment(key, newComment);
                 }
             }
@@ -222,8 +222,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     if (dryRun)
                         return 1;
 
-                    LogManager.getLogger().warn(CORE, "The comment on key {} does not match the spec.", key);
-                    //TODO: Comment correction listener?
+                    LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This might cause a backup to be created.", key);
                     config.setComment(key, valueSpec.getComment());
                 }
             }
@@ -675,13 +674,19 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 boolean result = ((Number)min).doubleValue() <= n.doubleValue() && n.doubleValue() <= ((Number)max).doubleValue();
                 if(!result)
                 {
-                    LogManager.getLogger().debug(CORE, "Range value {} is deemed to need correction. Its bounds are {}-{}", n.doubleValue(), ((Number)min).doubleValue(), ((Number)max).doubleValue());
+                    LogManager.getLogger().debug(CORE, "Range value {} is not within its bounds {}-{}", n.doubleValue(), ((Number)min).doubleValue(), ((Number)max).doubleValue());
                 }
                 return result;
             }
             if (!clazz.isInstance(t)) return false;
             V c = clazz.cast(t);
-            return c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
+
+            boolean result = c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
+            if(!result)
+            {
+                LogManager.getLogger().debug(CORE, "Range value {} is not within its bounds {}-{}", c, min, max);
+            }
+            return result;
         }
 
         public Object correct(Object value, Object def)
