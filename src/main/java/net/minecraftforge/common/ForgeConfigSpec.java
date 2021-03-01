@@ -537,7 +537,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         }
         public Builder comment(String... comment)
         {
-            if(comment == null || comment.length < 1 || comment[comment.length - 1].length() < 1)
+            if(comment == null || comment.length < 1 || (comment.length == 1 && comment[0].length() < 1))
             {
                 comment = new String[] {"No comment"};
             }
