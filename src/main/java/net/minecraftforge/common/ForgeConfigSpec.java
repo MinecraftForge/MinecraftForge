@@ -194,7 +194,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
                 String newComment = levelComments.get(parentPath);
                 String oldComment = config.getComment(key);
-                if (!Objects.equals(oldComment, newComment))
+                if (!stringsMatchIgnoringNewlines(oldComment, newComment))
                 {
                     if (dryRun)
                         return 1;
@@ -217,7 +217,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     count++;
                 }
                 String oldComment = config.getComment(key);
-                if (!Objects.equals(oldComment, valueSpec.getComment()))
+                if (!stringsMatchIgnoringNewlines(oldComment, valueSpec.getComment()))
                 {
                     if (dryRun)
                         return 1;
@@ -247,6 +247,23 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             }
         }
         return count;
+    }
+
+    private boolean stringsMatchIgnoringNewlines(Object obj1, Object obj2)
+    {
+        if(obj1 instanceof String && obj2 instanceof String)
+        {
+            String string1 = (String) obj1;
+            String string2 = (String) obj2;
+
+            if(string1.length() > 0 && string2.length() > 0)
+            {
+                return string1.replaceAll("\r\n", "\n")
+                        .equals(string2.replaceAll("\r\n", "\n"));
+
+            }
+        }
+        return false;
     }
 
     public static class Builder
