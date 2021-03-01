@@ -263,7 +263,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
             }
         }
-        return false;
+        // Fallback for when we're not given Strings, or one of them is empty
+        return Objects.equals(obj1, obj2);
     }
 
     public static class Builder
