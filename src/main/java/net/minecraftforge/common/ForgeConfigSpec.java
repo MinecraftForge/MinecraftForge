@@ -605,7 +605,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private boolean worldRestart = false;
         private Class<?> clazz;
 
-        public void setComment(String... value) { this.comment = value == null ? new String[] {" "} : value; } // TODO 1.17: this should throw an IllegalStateException in future
+        public void setComment(String... value) { this.comment = value == null ? new String[] {"No comment"} : value; } // TODO 1.17: this should throw an IllegalStateException in future
         public boolean hasComment() { return this.comment.length > 0; }
         public String[] getComment() { return this.comment; }
         public String buildComment() { return LINE_JOINER.join(comment); }
