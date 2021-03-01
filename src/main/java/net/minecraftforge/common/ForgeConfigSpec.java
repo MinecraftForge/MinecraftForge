@@ -86,7 +86,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
             LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configName);
             correct(config, (action, path, incorrectValue, correctedValue) ->
-                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to {}", DOT_JOINER.join( path ), incorrectValue, correctedValue));
+                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to its default, {}", DOT_JOINER.join( path ), incorrectValue, correctedValue));
             if (config instanceof FileConfig) {
                 ((FileConfig) config).save();
             }
@@ -222,6 +222,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     if (dryRun)
                         return 1;
 
+                    LogManager.getLogger().warn(CORE, "The comment on key {} does not match the spec.", key);
                     //TODO: Comment correction listener?
                     config.setComment(key, valueSpec.getComment());
                 }
@@ -354,11 +355,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 @Override
                 public Object correct(Object value) {
                     if (value == null || !(value instanceof List) || ((List<?>)value).isEmpty()) {
+                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It is null, not a list, or an empty list. Modders, consider defineListAllowEmpty?", path.get(path.size() - 1));
                         return getDefault();
                     }
                     List<?> list = Lists.newArrayList((List<?>) value);
                     list.removeIf(elementValidator.negate());
                     if (list.isEmpty()) {
+                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
                         return getDefault();
                     }
                     return list;
@@ -372,11 +375,13 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 @Override
                 public Object correct(Object value) {
                     if (value == null || !(value instanceof List)) {
+                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction, as it is null or not a list.", path.get(path.size() - 1));
                         return getDefault();
                     }
                     List<?> list = Lists.newArrayList((List<?>) value);
                     list.removeIf(elementValidator.negate());
                     if (list.isEmpty()) {
+                        LogManager.getLogger().debug(CORE, "List on key {} is deemed to need correction. It failed validation.", path.get(path.size() - 1));
                         return getDefault();
                     }
                     return list;
@@ -600,7 +605,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private boolean worldRestart = false;
         private Class<?> clazz;
 
-        public void setComment(String... value) { this.comment = value == null ? new String[0] : value; }
+        public void setComment(String... value) { this.comment = value == null ? new String[0] : value; } // TODO 1.17: this should throw an IllegalStateException in future
         public boolean hasComment() { return this.comment.length > 0; }
         public String[] getComment() { return this.comment; }
         public String buildComment() { return LINE_JOINER.join(comment); }
@@ -667,7 +672,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             if (isNumber(t))
             {
                 Number n = (Number) t;
-                return ((Number)min).doubleValue() <= n.doubleValue() && n.doubleValue() <= ((Number)max).doubleValue();
+                boolean result = ((Number)min).doubleValue() <= n.doubleValue() && n.doubleValue() <= ((Number)max).doubleValue();
+                if(!result)
+                {
+                    LogManager.getLogger().debug(CORE, "Range value {} is deemed to need correction. Its bounds are {}-{}", n.doubleValue(), ((Number)min).doubleValue(), ((Number)max).doubleValue());
+                }
+                return result;
             }
             if (!clazz.isInstance(t)) return false;
             V c = clazz.cast(t);
