@@ -366,6 +366,24 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             }, defaultSupplier);
         }
 
+        public <T> ConfigValue<List<? extends T>> defineListAllowEmpty(List<String> path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
+            context.setClazz(List.class);
+            return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context) {
+                @Override
+                public Object correct(Object value) {
+                    if (value == null || !(value instanceof List)) {
+                        return getDefault();
+                    }
+                    List<?> list = Lists.newArrayList((List<?>) value);
+                    list.removeIf(elementValidator.negate());
+                    if (list.isEmpty()) {
+                        return getDefault();
+                    }
+                    return list;
+                }
+            }, defaultSupplier);
+        }
+
         //Enum
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue) {
             return defineEnum(split(path), defaultValue);
@@ -582,7 +600,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private boolean worldRestart = false;
         private Class<?> clazz;
 
-        public void setComment(String... value) { this.comment = value; }
+        public void setComment(String... value) { this.comment = value == null ? new String[0] : value; }
         public boolean hasComment() { return this.comment.length > 0; }
         public String[] getComment() { return this.comment; }
         public String buildComment() { return LINE_JOINER.join(comment); }
