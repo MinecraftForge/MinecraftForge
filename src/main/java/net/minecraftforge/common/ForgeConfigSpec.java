@@ -223,6 +223,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                         return 1;
 
                     LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This might cause a backup to be created.", key);
+                    LogManager.getLogger().debug(CORE, "Current comment: {}\n, Spec: {}\n", oldComment, valueSpec.getComment());
                     config.setComment(key, valueSpec.getComment());
                 }
             }
@@ -604,7 +605,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private boolean worldRestart = false;
         private Class<?> clazz;
 
-        public void setComment(String... value) { this.comment = value == null ? new String[0] : value; } // TODO 1.17: this should throw an IllegalStateException in future
+        public void setComment(String... value) { this.comment = value == null ? new String[] {" "} : value; } // TODO 1.17: this should throw an IllegalStateException in future
         public boolean hasComment() { return this.comment.length > 0; }
         public String[] getComment() { return this.comment; }
         public String buildComment() { return LINE_JOINER.join(comment); }
