@@ -223,7 +223,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                         return 1;
 
                     LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This might cause a backup to be created.", key);
-                    LogManager.getLogger().debug(CORE, "Current comment: {}\n, Spec: {}\n", oldComment, valueSpec.getComment());
+                    LogManager.getLogger().debug(CORE, "Current comment: {}, Spec: {}", oldComment, valueSpec.getComment());
                     config.setComment(key, valueSpec.getComment());
                 }
             }
