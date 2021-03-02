@@ -36,6 +36,8 @@ import java.util.List;
  */
 public class RegistryEntryModifier<E>
 {
+    private static final String ERROR_MESSAGE_FORMAT = "Error applying operation: %s on registry entry: %s";
+
     private final RegistryKey<Registry<E>> registryKey;
     private final List<JsonOp.Merge<E>> mergers;
     private final List<JsonOp.Inject<E>> injectors;
@@ -75,9 +77,16 @@ public class RegistryEntryModifier<E>
     {
         RegistryKey<E> typedEntryKey = getTypedKey(entryKey);
 
-        for (JsonOp.Merge<E> merger : mergers)
+        for (JsonOp.Merge<E> mergeOp : mergers)
         {
-            merger.merge(typedEntryKey, dest, src);
+            try
+            {
+                mergeOp.merge(typedEntryKey, dest, src);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(String.format(ERROR_MESSAGE_FORMAT, mergeOp.getName(), entryKey), e);
+            }
         }
     }
 
@@ -93,9 +102,16 @@ public class RegistryEntryModifier<E>
     {
         RegistryKey<E> typedEntryKey = getTypedKey(entryKey);
 
-        for (JsonOp.Inject<E> injector : injectors)
+        for (JsonOp.Inject<E> injectOp : injectors)
         {
-            injector.inject(typedEntryKey, entryData);
+            try
+            {
+                injectOp.inject(typedEntryKey, entryData);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(String.format(ERROR_MESSAGE_FORMAT, injectOp.getName(), entryKey), e);
+            }
         }
     }
 

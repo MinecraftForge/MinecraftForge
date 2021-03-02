@@ -6,6 +6,13 @@ import net.minecraft.util.RegistryKey;
 public interface JsonOp
 {
     /**
+     * Provides a contextual name for the implementing class's operation used for logging/exceptions.
+     *
+     * @return The name of the operation.
+     */
+    String getName();
+
+    /**
      * Represents an operation that injects content into the json data of a registry entry.
      * <p>
      * To maintain compatibility with datapacks, content should only ever be additive and should
@@ -13,7 +20,7 @@ public interface JsonOp
      *
      * @param <E> The type of registry entry this injector applies to.
      */
-    interface Inject<E>
+    interface Inject<E> extends JsonOp
     {
         void inject(RegistryKey<E> entryKey, JsonElement entryData) throws Exception;
     }
@@ -23,7 +30,7 @@ public interface JsonOp
      *
      * @param <E> The type of registry entry this merger applies to.
      */
-    interface Merge<E>
+    interface Merge<E> extends JsonOp
     {
         void merge(RegistryKey<E> entryKey, JsonElement dest, JsonElement src) throws Exception;
     }

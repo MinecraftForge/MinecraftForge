@@ -91,6 +91,11 @@ public final class StructureSeparationSettingsOps
         }
 
         @Override
+        public String getName() {
+            return "MergeStructureSeparationSettings";
+        }
+
+        @Override
         public void merge(RegistryKey<DimensionSettings> entryKey, JsonElement dest, JsonElement src) throws Exception
         {
             JsonObject destSeparationSettings = getStructureSeparations(dest);
@@ -123,6 +128,11 @@ public final class StructureSeparationSettingsOps
         public Inject(MergeStrategy mergeStrategy)
         {
             this.mergeStrategy = mergeStrategy;
+        }
+
+        @Override
+        public String getName() {
+            return "InjectStructureSeparationSettings";
         }
 
         @Override
@@ -159,15 +169,15 @@ public final class StructureSeparationSettingsOps
 
     private static JsonObject getStructureSeparations(JsonElement entryData) throws Exception
     {
-        assertJsonObject(entryData, "entryData");
+        assertJsonObject(entryData, "EntryData");
 
         // Json representation of DimensionStructureSettings
         JsonElement structureSettingsJson = entryData.getAsJsonObject().get(STRUCTURE_SETTINGS_KEY);
-        assertJsonObject(structureSettingsJson, "structureSettings");
+        assertJsonObject(structureSettingsJson, "StructureSettings");
 
         // Json representation of the Map<Structure,StructureSeparationSettings> field in DimensionStructureSettings
         JsonElement separationSettingsJson = structureSettingsJson.getAsJsonObject().get(SEPARATION_SETTINGS_KEY);
-        assertJsonObject(separationSettingsJson, "structureSeparationSettings");
+        assertJsonObject(separationSettingsJson, "StructureSeparationSettings");
 
         return separationSettingsJson.getAsJsonObject();
     }
