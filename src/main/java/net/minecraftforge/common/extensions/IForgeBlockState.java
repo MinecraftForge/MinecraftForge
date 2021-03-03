@@ -57,9 +57,9 @@ public interface IForgeBlockState
      * between 0 and 1.
      * <p>
      * Note that entities may reduce slipperiness by a certain factor of their own;
-     * for {@link net.minecraft.entity.EntityLivingBase}, this is {@code .91}.
-     * {@link net.minecraft.entity.item.EntityItem} uses {@code .98}, and
-     * {@link net.minecraft.entity.projectile.EntityFishHook} uses {@code .92}.
+     * for {@link net.minecraft.entity.LivingEntity}, this is {@code .91}.
+     * {@link net.minecraft.entity.item.ItemEntity} uses {@code .98}, and
+     * {@link net.minecraft.entity.projectile.FishingBobberEntity} uses {@code .92}.
      *
      * @param world the world
      * @param pos the position in the world
@@ -327,7 +327,7 @@ public interface IForgeBlockState
     }
    /**
     * Allows a block to override the standard vanilla running particles.
-    * This is called from {@link Entity#spawnRunningParticles} and is called both,
+    * This is called from {@link Entity#handleRunningEffect} and is called both,
     * Client and server side, it's up to the implementor to client check / server check.
     * By default vanilla spawns particles only on the client and the server methods no-op.
     *
@@ -478,12 +478,12 @@ public interface IForgeBlockState
    /**
     * Called on an Observer block whenever an update for an Observer is received.
     *
-    * @param observerState The Observer block's state.
     * @param world The current world.
     * @param pos The Observer block's position.
     * @param changed The updated block.
     * @param changedPos The updated block's position.
     */
+   @Deprecated//TODO - 1.17: Remove (unused)
     default void observedNeighborChange(World world, BlockPos pos, Block changed, BlockPos changedPos)
     {
         getBlockState().getBlock().observedNeighborChange(getBlockState(), world, pos, changed, changedPos);
@@ -553,7 +553,7 @@ public interface IForgeBlockState
     /**
      * @param world The world
      * @param pos The position of this state
-     * @param beaconPos The position of the beacon
+     * @param beacon The position of the beacon
      * @return A float RGB [0.0, 1.0] array to be averaged with a beacon's existing beam color, or null to do nothing to the beam
      */
     @Nullable
@@ -594,7 +594,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * @param state The state
      * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
      */
     default boolean isSlimeBlock()
@@ -603,7 +602,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * @param state The state
      * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
      */
     default boolean isStickyBlock()
@@ -790,7 +788,7 @@ public interface IForgeBlockState
      * @param pos The block position in world
      * @param player The player clicking the block
      * @param stack The stack being used by the player
-     * @param toolTypes The tool types to be considered when performing the action
+     * @param toolType The tool type to be considered when performing the action
      * @return The resulting state after the action has been performed
      */
     @Nullable

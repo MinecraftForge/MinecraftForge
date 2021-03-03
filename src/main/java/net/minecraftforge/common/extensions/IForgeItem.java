@@ -381,11 +381,11 @@ public interface IForgeItem
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
      * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.entity.EntityLiving#getSlotForItemStack(ItemStack)}.</em>
+     * {@link net.minecraft.entity.LivingEntity#getSlotForItemStack(ItemStack)}.</em>
      *
      * @param stack the ItemStack
      * @return the armor slot of the ItemStack, or {@code null} to let the default
-     *         vanilla logic as per {@code EntityLiving.getSlotForItemStack(stack)}
+     *         vanilla logic as per {@code LivingEntity.getSlotForItemStack(stack)}
      *         decide
      */
     @Nullable
@@ -733,8 +733,8 @@ public interface IForgeItem
      *
      * @param stack    The ItemStack
      * @param shield   The shield in question
-     * @param entity   The EntityLivingBase holding the shield
-     * @param attacker The EntityLivingBase holding the ItemStack
+     * @param entity   The LivingEntity holding the shield
+     * @param attacker The LivingEntity holding the ItemStack
      * @retrun True if this ItemStack can disable the shield in question.
      */
     default boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker)
