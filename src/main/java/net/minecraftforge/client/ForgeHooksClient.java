@@ -242,16 +242,22 @@ public class ForgeHooksClient
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
+    @Deprecated // TODO: Remove in 1.17
     public static void renderMainMenu(MainMenuScreen gui, MatrixStack mStack, FontRenderer font, int width, int height)
+    {
+        renderMainMenu(gui, mStack, font, width, height, -1);
+    }
+
+    public static void renderMainMenu(MainMenuScreen gui, MatrixStack mStack, FontRenderer font, int width, int height, int alpha)
     {
         VersionChecker.Status status = ForgeVersion.getStatus();
         if (status == BETA || status == BETA_OUTDATED)
         {
             // render a warning at the top of the screen,
             ITextComponent line = new TranslationTextComponent("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET).mergeStyle(TextFormatting.RED);
-            AbstractGui.drawCenteredString(mStack, font, line, width / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), -1);
+            AbstractGui.drawCenteredString(mStack, font, line, width / 2, 4 + (0 * (font.FONT_HEIGHT + 1)), 0xFFFFFF | alpha);
             line = new TranslationTextComponent("forge.update.beta.2");
-            AbstractGui.drawCenteredString(mStack, font, line, width / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), -1);
+            AbstractGui.drawCenteredString(mStack, font, line, width / 2, 4 + (1 * (font.FONT_HEIGHT + 1)), 0xFFFFFF | alpha);
         }
 
         String line = null;
