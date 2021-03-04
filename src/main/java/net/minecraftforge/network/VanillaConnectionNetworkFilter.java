@@ -19,17 +19,14 @@
 
 package net.minecraftforge.network;
 
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageEncoder;
+import com.google.common.collect.ImmutableMap;
+import com.mojang.brigadier.tree.RootCommandNode;
+
 import io.netty.channel.ChannelHandler;
-
-import javax.annotation.Nonnull;
-
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.network.IPacket;
@@ -41,12 +38,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import com.google.common.collect.ImmutableMap;
-import com.mojang.brigadier.tree.RootCommandNode;
-
 /**
  * A filter for network packets, used to filter/modify parts of vanilla network messages that
  * will cause errors or warnings on vanilla clients, for example entity attributes that are added by Forge or mods.
@@ -54,9 +45,6 @@ import com.mojang.brigadier.tree.RootCommandNode;
 @ChannelHandler.Sharable
 public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
 {
-
-    private static final Logger LOGGER = LogManager.getLogger();
-
     public VanillaConnectionNetworkFilter()
     {
         super(
@@ -109,7 +97,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      */
     private static void filterCustomPayload(IPacket<?> packet, List<? super IPacket<?>> out)
     {
-       if (!packet.getName().equals(ForgeNetwork.CHANNEL_NAME))
+       if (!((CCustomPayloadPacket) packet).getName().equals(ForgeNetwork.CHANNEL_NAME))
        {
            out.add(packet);
        }
