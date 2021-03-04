@@ -169,6 +169,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -1040,6 +1041,18 @@ public class ForgeHooks
     public static void onCropsGrowPost(World worldIn, BlockPos pos, BlockState state)
     {
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+    }
+
+    public static int onChunkTickPre(IChunk chunk, int randomTickSpeed)
+    {
+        ChunkEvent.BlockTick.Pre event = new ChunkEvent.BlockTick.Pre(chunk, randomTickSpeed);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getRandomTickSpeed();
+    }
+
+    public static void onChunkTickPost(IChunk chunk)
+    {
+        MinecraftForge.EVENT_BUS.post(new ChunkEvent.BlockTick.Post(chunk));
     }
 
     @Nullable
