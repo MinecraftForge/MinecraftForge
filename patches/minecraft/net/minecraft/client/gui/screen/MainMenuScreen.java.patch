@@ -38,7 +38,7 @@
  
           this.field_230706_i_.func_110434_K().func_110577_a(field_194400_H);
           func_238463_a_(p_230430_1_, j + 88, 67, 0.0F, 0.0F, 98, 14, 128, 16);
-+         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_230430_1_, this.field_230712_o_, this.field_230708_k_, this.field_230709_l_);
++         net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, p_230430_1_, this.field_230712_o_, this.field_230708_k_, this.field_230709_l_, l);
           if (this.field_73975_c != null) {
              RenderSystem.pushMatrix();
              RenderSystem.translatef((float)(this.field_230708_k_ / 2 + 90), 70.0F, 0.0F);

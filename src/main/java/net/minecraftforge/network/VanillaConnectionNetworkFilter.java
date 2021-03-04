@@ -22,11 +22,14 @@ package net.minecraftforge.network;
 import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiConsumer;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import io.netty.channel.ChannelHandler;
+
+import javax.annotation.Nonnull;
+
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.network.IPacket;
@@ -48,33 +51,27 @@ import com.mojang.brigadier.tree.RootCommandNode;
  * A filter for network packets, used to filter/modify parts of vanilla network messages that
  * will cause errors or warnings on vanilla clients, for example entity attributes that are added by Forge or mods.
  */
-public class VanillaConnectionNetworkFilter extends MessageToMessageEncoder<IPacket<?>>
+@ChannelHandler.Sharable
+public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
 {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final Map<Class<? extends IPacket<?>>, Function<IPacket<?>, ? extends IPacket<?>>> handlers = ImmutableMap.<Class<? extends IPacket<?>>, Function<IPacket<?>, ? extends IPacket<?>>>builder()
-            .put(handler(SEntityPropertiesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
-            .put(handler(SCommandListPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
-            .put(handler(CCustomPayloadPacket.class, VanillaConnectionNetworkFilter::filterCustomPayload))
-            .build();
-
-
-    public static void injectIfNecessary(NetworkManager manager)
+    public VanillaConnectionNetworkFilter()
     {
-        if (NetworkHooks.isVanillaConnection(manager))
-        {
-            manager.channel().pipeline().addBefore("packet_handler", "forge:vanilla_filter", new VanillaConnectionNetworkFilter());
-            LOGGER.debug("Injected into {}", manager);
-        }
+        super(
+                ImmutableMap.<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>>builder()
+                .put(handler(SEntityPropertiesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
+                .put(handler(SCommandListPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
+                .put(handler(CCustomPayloadPacket.class, VanillaConnectionNetworkFilter::filterCustomPayload))
+                .build()
+        );
     }
 
-    /**
-     * Helper function for building the handler map.
-     */
-    private static <T extends IPacket<?>> Map.Entry<Class<? extends IPacket<?>>, Function<IPacket<?>, ? extends IPacket<?>>> handler(Class<T> cls, Function<T, ? extends IPacket<?>> function)
+    @Override
+    protected boolean isNecessary(NetworkManager manager)
     {
-        return new AbstractMap.SimpleEntry<>(cls, function.compose(cls::cast));
+        return NetworkHooks.isVanillaConnection(manager);
     }
 
     /**
@@ -110,21 +107,11 @@ public class VanillaConnectionNetworkFilter extends MessageToMessageEncoder<IPac
     /**
      * Filter for CCustomPayloadPacket. Removes Forge packets for vanilla clients.
      */
-    private static CCustomPayloadPacket filterCustomPayload(CCustomPayloadPacket packet)
+    private static void filterCustomPayload(IPacket<?> packet, List<? super IPacket<?>> out)
     {
-       if (packet.getName().equals(ForgeNetwork.CHANNEL_NAME))
+       if (!packet.getName().equals(ForgeNetwork.CHANNEL_NAME))
        {
-           return null;
+           out.add(packet);
        }
-       return packet;
-    }
-
-    @Override
-    protected void encode(ChannelHandlerContext ctx, IPacket<?> msg, List<Object> out)
-    {
-        Function<IPacket<?>, ? extends IPacket<?>> function = handlers.getOrDefault(msg.getClass(), Function.identity());
-        IPacket<?> resultMsg = function.apply(msg);
-        if (resultMsg != null)
-            out.add(resultMsg);
     }
 }

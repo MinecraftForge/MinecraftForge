@@ -38,11 +38,3 @@
                    BlockState blockstate2 = this.func_196544_a(p_225542_1_, blockstate1, p_225542_4_);
                    if (blockstate1 != blockstate2 && this.func_196540_x(blockstate2)) {
                       p_225542_2_.func_180501_a(blockpos1, blockstate2, 2);
-@@ -322,4 +323,7 @@
-    public static BooleanProperty func_176267_a(Direction p_176267_0_) {
-       return field_196546_A.get(p_176267_0_);
-    }
-+
-+   @Override
-+   public boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, net.minecraft.entity.LivingEntity entity) { return true; }
- }

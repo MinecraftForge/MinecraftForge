@@ -116,3 +116,5 @@ license="LGPL v2.1"
     modId="shader_fix_test"
 [[mods]]
     modId="worldgen_registry_desync_test"
+[[mods]]
+    modId="add_entity_attribute_test"

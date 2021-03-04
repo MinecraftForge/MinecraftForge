@@ -27,6 +27,15 @@
        if (this.func_92059_d().func_190926_b()) {
           this.func_70106_y();
        } else {
+@@ -108,7 +114,7 @@
+             this.func_213315_a(MoverType.SELF, this.func_213322_ci());
+             float f1 = 0.98F;
+             if (this.field_70122_E) {
+-               f1 = this.field_70170_p.func_180495_p(new BlockPos(this.func_226277_ct_(), this.func_226278_cu_() - 1.0D, this.func_226281_cx_())).func_177230_c().func_208618_m() * 0.98F;
++               f1 = this.field_70170_p.func_180495_p(new BlockPos(this.func_226277_ct_(), this.func_226278_cu_() - 1.0D, this.func_226281_cx_())).getSlipperiness(field_70170_p, new BlockPos(this.func_226277_ct_(), this.func_226278_cu_() - 1.0D, this.func_226281_cx_()), this) * 0.98F;
+             }
+ 
+             this.func_213317_d(this.func_213322_ci().func_216372_d((double)f1, 0.98D, (double)f1));
 @@ -144,7 +150,14 @@
              }
           }
