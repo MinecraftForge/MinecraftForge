@@ -178,7 +178,7 @@ public class EntityEvent extends Event
         public EntitySize getNewSize() { return newSize; }
         public void setNewSize(EntitySize size)
         {
-            setNewSize(size, true);
+            setNewSize(size, false);
         }
 
         /**
