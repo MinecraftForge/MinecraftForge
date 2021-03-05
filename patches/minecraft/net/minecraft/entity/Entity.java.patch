@@ -281,7 +281,7 @@
  
     }
  
-@@ -2811,4 +2851,72 @@
+@@ -2811,4 +2851,71 @@
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
     }
@@ -346,7 +346,6 @@
 +   }
 +
 +   // no AT because of overrides
-+
 +   /**
 +    * Accessor method for {@link #getEyeHeight(Pose, EntitySize)}
 +    */
