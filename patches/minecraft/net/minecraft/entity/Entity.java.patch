@@ -261,14 +261,12 @@
           }
        } else {
           return null;
-@@ -2320,9 +2357,11 @@
-    public void func_213323_x_() {
+@@ -2321,8 +2358,10 @@
        EntitySize entitysize = this.field_213325_aI;
        Pose pose = this.func_213283_Z();
--      EntitySize entitysize1 = this.func_213305_a(pose);
-+      EntitySize newSize = this.func_213305_a(pose);
-+      net.minecraftforge.event.entity.EntityEvent.Size sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, entitysize, newSize, this.func_213316_a(pose, newSize));
-+      EntitySize entitysize1 = sizeEvent.getNewSize();
+       EntitySize entitysize1 = this.func_213305_a(pose);
++      net.minecraftforge.event.entity.EntityEvent.Size sizeEvent = net.minecraftforge.event.ForgeEventFactory.getEntitySizeForge(this, pose, entitysize, entitysize1, this.func_213316_a(pose, entitysize1));
++      entitysize1 = sizeEvent.getNewSize();
        this.field_213325_aI = entitysize1;
 -      this.field_213326_aJ = this.func_213316_a(pose, entitysize1);
 +      this.field_213326_aJ = sizeEvent.getNewEyeHeight();
