@@ -176,7 +176,22 @@ public class EntityEvent extends Event
         public Pose getPose() { return pose; }
         public EntitySize getOldSize() { return oldSize; }
         public EntitySize getNewSize() { return newSize; }
-        public void setNewSize(EntitySize size) { this.newSize = size; }
+        public void setNewSize(EntitySize size)
+        {
+            setNewSize(size, true);
+        }
+
+        /**
+         * Set the new size of the entity. Set updateEyeHeight to true to also update the eye height according to the new size.
+         */
+        public void setNewSize(EntitySize size, boolean updateEyeHeight)
+        {
+            this.newSize = size;
+            if (updateEyeHeight)
+            {
+                this.newEyeHeight = this.getEntity().getEyeHeightAccess(this.getPose(), this.newSize);
+            }
+        }
         public float getOldEyeHeight() { return oldEyeHeight; }
         public float getNewEyeHeight() { return newEyeHeight; }
         public void setNewEyeHeight(float newHeight) { this.newEyeHeight = newHeight; }
