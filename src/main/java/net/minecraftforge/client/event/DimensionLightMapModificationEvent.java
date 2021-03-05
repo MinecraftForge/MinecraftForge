@@ -23,15 +23,21 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.world.World;
 
 /**
- * Allows modders to adjust the lightmap colours for a specific Dimension
- * <br>
- * While DimensionRenderInfo could look like the closest solution for this task, its entries are stored in private, immutable map that is specific to a DimensionType
- * <br>
- * There can be many Dimension(s) per DimensionType, which means DimensionRenderInfo is limited in both functionality and encourages poor practices.
- * <br>
- * Hence, this event is the preferred solution over DimensionRenderInfo.
- * <br>
- * This event fired in {@link LightMapTexture#updateLightMap}
+ * <p>Allows modders to adjust the lightmap colors for a specific {@code Dimension}.</p>
+ *
+ * <p>While {@code DimensionRenderInfo} could look like the closest solution for this task,
+ * its entries are stored in private, immutable map that is specific to a {@code DimensionType}.
+ * There can be many {@code Dimension}(s) per {@code DimensionType}, which means
+ * {@code DimensionRenderInfo} is limited in both functionality and encourages poor practices.</p>
+ *
+ * <p>Hence, this event is the preferred solution over DimensionRenderInfo.</p>
+ *
+ * <p>This event is not {@linkplain net.minecraftforge.eventbus.api.Cancelable cancellable},
+ * and does not {@linkplain HasResult have a result}.</p>
+ *
+ * <p>This event fired in {@link LightMapTexture#updateLightMap}, on the
+ * {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS} only on the
+ * {@linkplain net.minecraftforge.fml.LogicalSide#CLIENT client-side}.
  */
 public class DimensionLightMapModificationEvent extends net.minecraftforge.eventbus.api.Event
 {
@@ -40,20 +46,20 @@ public class DimensionLightMapModificationEvent extends net.minecraftforge.event
     private final float sunBrightness;
     private final float skyLight;
     private final float blockLight;
-    private final Vector3f lightingColors;
+    private final Vector3f lightMapColors;
 
-    public DimensionLightMapModificationEvent(World world, float partialTicks, float sunBrightness, float skyLight, float blockLight, Vector3f lightingColors)
+    public DimensionLightMapModificationEvent(World world, float partialTicks, float sunBrightness, float skyLight, float blockLight, Vector3f lightMapColors)
     {
         this.world = world;
         this.partialTicks = partialTicks;
         this.sunBrightness = sunBrightness;
         this.skyLight = skyLight;
         this.blockLight = blockLight;
-        this.lightingColors = lightingColors;
+        this.lightMapColors = lightMapColors;
     }
 
     /**
-     * The world which we're modifying the lightmap colors for. Each dimension has one world instance, so dimensions and worlds have a one to one relationship.
+     * The {@code World} which we're modifying the lightmap colors for. Remember that each {@code Dimension} has one {@code World} instance, so a {@code Dimension} has a one to one relationship with a {@code World}.
      */
     public World getWorld()
     {
@@ -85,7 +91,7 @@ public class DimensionLightMapModificationEvent extends net.minecraftforge.event
     }
 
     /**
-     * Get block light brightness factor.
+     * Get the block light brightness factor.
      */
     public float getBlockLight()
     {
@@ -93,11 +99,11 @@ public class DimensionLightMapModificationEvent extends net.minecraftforge.event
     }
 
     /**
-     * The color values that will be used for the lighting in the dimension - (red, green, blue)
+     * The color values that can be used to adjust lighting in the dimension. Comprised of {@linkplain Vector3f#getX() Red}, {@linkplain Vector3f#getY() Green}, {@linkplain Vector3f#getZ() Blue}
      */
-    public Vector3f getLightingColors()
+    public Vector3f getLightMapColors()
     {
-        return this.lightingColors;
+        return this.lightMapColors;
     }
 
 }

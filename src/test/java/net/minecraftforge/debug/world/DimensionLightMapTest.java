@@ -38,11 +38,11 @@ public class DimensionLightMapTest
     public static ResourceLocation DIMENSION_LOC = new ResourceLocation(MODID,"custom_dimension_1");
     public static RegistryKey<World> TEST_WORLD;
     private static final boolean ENABLED = true;
+
     public DimensionLightMapTest()
     {
-        FMLJavaModLoadingContext.get().getModEventBus().register(this);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
-        if(ENABLED)
+        if (ENABLED)
         {
             MinecraftForge.EVENT_BUS.addListener(this::onDimensionLightMapModification);
         }
@@ -61,9 +61,9 @@ public class DimensionLightMapTest
         {
             //Make the lighting colors flash red. Works best in enclosed areas
             float red = 1F;
-            float green = event.getLightingColors().getX() * 1 - ((float)(Math.sin(event.getWorld().getGameTime() * 0.1)) * 0.5F);
-            float blue = event.getLightingColors().getX() * 1 - ((float)(Math.sin(event.getWorld().getGameTime() * 0.1)) * 0.5F);
-            event.getLightingColors().set(red, green, blue);
+            float green = event.getLightMapColors().getY() * 1 - ((float)(Math.sin(event.getWorld().getGameTime() * 0.1)) * 0.5F);
+            float blue = event.getLightMapColors().getZ() * 1 - ((float)(Math.sin(event.getWorld().getGameTime() * 0.1)) * 0.5F);
+            event.getLightMapColors().set(red, green, blue);
         }
     }
 
