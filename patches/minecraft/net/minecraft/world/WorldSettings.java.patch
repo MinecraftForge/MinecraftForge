@@ -1,10 +1,69 @@
 --- a/net/minecraft/world/WorldSettings.java
 +++ b/net/minecraft/world/WorldSettings.java
-@@ -62,6 +62,7 @@
+@@ -11,22 +11,27 @@
+    private final boolean field_77168_f;
+    private final GameRules field_234945_f_;
+    private final DatapackCodec field_234946_g_;
++   private final com.mojang.serialization.Lifecycle lifecycle;
+ 
+    public WorldSettings(String p_i231620_1_, GameType p_i231620_2_, boolean p_i231620_3_, Difficulty p_i231620_4_, boolean p_i231620_5_, GameRules p_i231620_6_, DatapackCodec p_i231620_7_) {
+-      this.field_234943_a_ = p_i231620_1_;
+-      this.field_77172_b = p_i231620_2_;
+-      this.field_77170_d = p_i231620_3_;
+-      this.field_234944_d_ = p_i231620_4_;
+-      this.field_77168_f = p_i231620_5_;
+-      this.field_234945_f_ = p_i231620_6_;
+-      this.field_234946_g_ = p_i231620_7_;
++      this(p_i231620_1_, p_i231620_2_, p_i231620_3_, p_i231620_4_, p_i231620_5_, p_i231620_6_, p_i231620_7_, com.mojang.serialization.Lifecycle.stable());
+    }
++   public WorldSettings(String worldName, GameType gameType, boolean hardcoreEnabled, Difficulty difficulty, boolean commandsAllowed, GameRules gameRules, DatapackCodec datapackCodec, com.mojang.serialization.Lifecycle  lifecycle) {
++      this.field_234943_a_ = worldName;
++      this.field_77172_b = gameType;
++      this.field_77170_d = hardcoreEnabled;
++      this.field_234944_d_ = difficulty;
++      this.field_77168_f = commandsAllowed;
++      this.field_234945_f_ = gameRules;
++      this.field_234946_g_ = datapackCodec;
++      this.lifecycle = lifecycle;
++   }
+ 
+    public static WorldSettings func_234951_a_(Dynamic<?> p_234951_0_, DatapackCodec p_234951_1_) {
+       GameType gametype = GameType.func_77146_a(p_234951_0_.get("GameType").asInt(0));
+       return new WorldSettings(p_234951_0_.get("LevelName").asString(""), gametype, p_234951_0_.get("hardcore").asBoolean(false), p_234951_0_.get("Difficulty").asNumber().map((p_234952_0_) -> {
+          return Difficulty.func_151523_a(p_234952_0_.byteValue());
+-      }).result().orElse(Difficulty.NORMAL), p_234951_0_.get("allowCommands").asBoolean(gametype == GameType.CREATIVE), new GameRules(p_234951_0_.get("GameRules")), p_234951_1_);
++      }).result().orElse(Difficulty.NORMAL), p_234951_0_.get("allowCommands").asBoolean(gametype == GameType.CREATIVE), new GameRules(p_234951_0_.get("GameRules")), p_234951_1_, net.minecraftforge.common.ForgeHooks.parseLifecycle(p_234951_0_.get("lifecycle").asString("stable")));
+    }
+ 
+    public String func_234947_a_() {
+@@ -58,18 +63,26 @@
+    }
+ 
+    public WorldSettings func_234950_a_(GameType p_234950_1_) {
+-      return new WorldSettings(this.field_234943_a_, p_234950_1_, this.field_77170_d, this.field_234944_d_, this.field_77168_f, this.field_234945_f_, this.field_234946_g_);
++      return new WorldSettings(this.field_234943_a_, p_234950_1_, this.field_77170_d, this.field_234944_d_, this.field_77168_f, this.field_234945_f_, this.field_234946_g_, this.lifecycle);
     }
  
     public WorldSettings func_234948_a_(Difficulty p_234948_1_) {
+-      return new WorldSettings(this.field_234943_a_, this.field_77172_b, this.field_77170_d, p_234948_1_, this.field_77168_f, this.field_234945_f_, this.field_234946_g_);
 +      net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_234948_1_, this.field_234944_d_);
-       return new WorldSettings(this.field_234943_a_, this.field_77172_b, this.field_77170_d, p_234948_1_, this.field_77168_f, this.field_234945_f_, this.field_234946_g_);
++      return new WorldSettings(this.field_234943_a_, this.field_77172_b, this.field_77170_d, p_234948_1_, this.field_77168_f, this.field_234945_f_, this.field_234946_g_, this.lifecycle);
     }
  
+    public WorldSettings func_234949_a_(DatapackCodec p_234949_1_) {
+-      return new WorldSettings(this.field_234943_a_, this.field_77172_b, this.field_77170_d, this.field_234944_d_, this.field_77168_f, this.field_234945_f_, p_234949_1_);
++      return new WorldSettings(this.field_234943_a_, this.field_77172_b, this.field_77170_d, this.field_234944_d_, this.field_77168_f, this.field_234945_f_, p_234949_1_, this.lifecycle);
+    }
+ 
+    public WorldSettings func_234959_h_() {
+-      return new WorldSettings(this.field_234943_a_, this.field_77172_b, this.field_77170_d, this.field_234944_d_, this.field_77168_f, this.field_234945_f_.func_234905_b_(), this.field_234946_g_);
++      return new WorldSettings(this.field_234943_a_, this.field_77172_b, this.field_77170_d, this.field_234944_d_, this.field_77168_f, this.field_234945_f_.func_234905_b_(), this.field_234946_g_, this.lifecycle);
+    }
++
++   public WorldSettings withLifecycle(com.mojang.serialization.Lifecycle lifecycle){
++      return new WorldSettings(this.field_234943_a_, this.field_77172_b, this.field_77170_d, this.field_234944_d_, this.field_77168_f, this.field_234945_f_, this.field_234946_g_, this.lifecycle.add(lifecycle));
++   }
++   public com.mojang.serialization.Lifecycle getLifecycle(){
++      return lifecycle;
++   }
+ }

@@ -1,0 +1,35 @@
+--- a/net/minecraft/client/gui/screen/WorldSelectionList.java
++++ b/net/minecraft/client/gui/screen/WorldSelectionList.java
+@@ -58,6 +58,7 @@
+    private static final DateFormat field_214377_b = new SimpleDateFormat();
+    private static final ResourceLocation field_214378_c = new ResourceLocation("textures/misc/unknown_server.png");
+    private static final ResourceLocation field_214379_d = new ResourceLocation("textures/gui/world_selection.png");
++   private static final ResourceLocation FORGE_EXPERIMENTAL_WARNING_ICON = new ResourceLocation("forge","textures/gui/experimental_warning.png");
+    private static final ITextComponent field_243462_r = (new TranslationTextComponent("selectWorld.tooltip.fromNewerVersion1")).func_240699_a_(TextFormatting.RED);
+    private static final ITextComponent field_243463_s = (new TranslationTextComponent("selectWorld.tooltip.fromNewerVersion2")).func_240699_a_(TextFormatting.RED);
+    private static final ITextComponent field_243464_t = (new TranslationTextComponent("selectWorld.tooltip.snapshot1")).func_240699_a_(TextFormatting.GOLD);
+@@ -183,6 +184,7 @@
+          RenderSystem.enableBlend();
+          AbstractGui.func_238463_a_(p_230432_1_, p_230432_4_, p_230432_3_, 0.0F, 0.0F, 32, 32, 32, 32);
+          RenderSystem.disableBlend();
++         renderExperimentalWarning(p_230432_1_, p_230432_7_, p_230432_8_, p_230432_3_, p_230432_4_);
+          if (this.field_214449_b.field_71474_y.field_85185_A || p_230432_9_) {
+             this.field_214449_b.func_110434_K().func_110577_a(WorldSelectionList.field_214379_d);
+             AbstractGui.func_238467_a_(p_230432_1_, p_230432_4_, p_230432_3_, p_230432_4_ + 32, p_230432_3_ + 32, -1601138544);
+@@ -398,5 +400,16 @@
+          }
+ 
+       }
++
++      private void renderExperimentalWarning(MatrixStack stack, int mouseX, int mouseY, int top, int left) {
++         if(field_214451_d.isExperimental()) {
++            this.field_214449_b.func_110434_K().func_110577_a(FORGE_EXPERIMENTAL_WARNING_ICON);
++            AbstractGui.func_238463_a_(stack,left +  WorldSelectionList.this.func_230949_c_() - 36, top, 0.0F, 0.0F, 32, 32, 32, 32);
++            this.field_214449_b.func_110434_K().func_110577_a(this.field_214454_g != null ? this.field_214452_e : WorldSelectionList.field_214378_c);
++            if(WorldSelectionList.this.func_230933_a_(mouseX, mouseY) == this && mouseX > (WorldSelectionList.this.func_230968_n_() + WorldSelectionList.this.func_230949_c_() - 36) && mouseX < (WorldSelectionList.this.func_230968_n_() + WorldSelectionList.this.func_230949_c_())) {
++               WorldSelectionList.this.field_186798_v.func_238652_a_(stack, new TranslationTextComponent("forge.experimentalsettings.tooltip"), mouseX, mouseY);
++            }
++         }
++      }
+    }
+ }

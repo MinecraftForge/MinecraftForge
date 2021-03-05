@@ -173,5 +173,9 @@
   "generic.reachDistance": "Reach Distance",
 
   "fluid.minecraft.milk": "Milk",
-  "fluid.minecraft.flowing_milk": "Milk"
+  "fluid.minecraft.flowing_milk": "Milk",
+
+  "forge.experimentalsettings.tooltip": "This world uses experimental settings.",
+  "forge.selectWorld.question.registriesChanged": "World and Client Registries Differ",
+  "forge.selectWorld.warning.registriesChanged": "This world was last loaded with different mod versions and some objects are missing. This may have major side-effects, a backup will be made if you proceed."
 }

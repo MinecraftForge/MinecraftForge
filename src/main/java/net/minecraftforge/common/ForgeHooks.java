@@ -52,7 +52,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
+import com.mojang.serialization.Lifecycle;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
@@ -1322,6 +1322,28 @@ public class ForgeHooks
         List<String> modpacks = getModPacks();
         modpacks.add("vanilla");
         return modpacks;
+    }
+
+    public static String encodeLifecycle(Lifecycle lifecycle)
+    {
+        if(lifecycle == Lifecycle.stable())
+            return "stable";
+        if(lifecycle == Lifecycle.experimental())
+            return "experimental";
+        if(lifecycle instanceof Lifecycle.Deprecated)
+            return "deprecated=" + ((Lifecycle.Deprecated) lifecycle).since();
+        throw new IllegalArgumentException("Unknown lifecycle.");
+    }
+
+    public static Lifecycle parseLifecycle(String lifecycle)
+    {
+        if(lifecycle.equals("stable"))
+            return Lifecycle.stable();
+        if(lifecycle.equals("experimental"))
+            return Lifecycle.experimental();
+        if(lifecycle.startsWith("deprecated="))
+            return Lifecycle.deprecated(Integer.parseInt(lifecycle.substring(lifecycle.indexOf('=')+1)));
+        throw new IllegalArgumentException("Unknown lifecycle.");
     }
 
     /**

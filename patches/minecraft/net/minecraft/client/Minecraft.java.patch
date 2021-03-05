@@ -324,7 +324,15 @@
           }));
  
           try {
-@@ -1692,7 +1737,7 @@
+@@ -1687,12 +1732,14 @@
+       IServerConfiguration iserverconfiguration = minecraft$packmanager.func_238226_c_();
+       boolean flag = iserverconfiguration.func_230418_z_().func_236229_j_();
+       boolean flag1 = iserverconfiguration.func_230401_A_() != Lifecycle.stable();
+-      if (p_238195_6_ == Minecraft.WorldSelectionType.NONE || !flag && !flag1) {
++      //Skip confirmation if it has been done already for this world and that the registries have not changed on client.
++      boolean skipConfirmation = iserverconfiguration instanceof ServerWorldInfo && ((ServerWorldInfo) iserverconfiguration).hasConfirmedExperimentalWarning() && !net.minecraftforge.fml.FMLWorldPersistenceHook.worldRegistriesChanged();
++      if (skipConfirmation || p_238195_6_ == Minecraft.WorldSelectionType.NONE || !flag && !flag1) {
+          this.func_213254_o();
           this.field_213277_ad.set((TrackingChunkStatusListener)null);
  
           try {
@@ -333,7 +341,7 @@
              minecraft$packmanager.func_238225_b_().func_240971_i_();
              YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(this.field_110453_aa);
              MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
-@@ -1702,7 +1747,7 @@
+@@ -1702,7 +1749,7 @@
              SkullTileEntity.func_184294_a(minecraftsessionservice);
              PlayerProfileCache.func_187320_a(false);
              this.field_71437_Z = MinecraftServer.func_240784_a_((p_238188_8_) -> {
@@ -342,7 +350,7 @@
                    TrackingChunkStatusListener trackingchunkstatuslistener = new TrackingChunkStatusListener(p_238211_1_ + 0);
                    trackingchunkstatuslistener.func_219521_a();
                    this.field_213277_ad.set(trackingchunkstatuslistener);
-@@ -1747,11 +1792,16 @@
+@@ -1747,12 +1794,19 @@
           networkmanager.func_150719_a(new ClientLoginNetHandler(networkmanager, this, (Screen)null, (p_229998_0_) -> {
           }));
           networkmanager.func_179290_a(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
@@ -355,13 +363,16 @@
 +         networkmanager.func_179290_a(new CLoginStartPacket(gameProfile));
           this.field_71453_ak = networkmanager;
        } else {
++         if(flag) //True for legacy world options, so let vanilla handle it.
           this.func_241559_a_(p_238195_6_, p_238195_1_, flag, () -> {
 -            this.func_238195_a_(p_238195_1_, p_238195_2_, p_238195_3_, p_238195_4_, p_238195_5_, Minecraft.WorldSelectionType.NONE);
 +            this.loadWorld(p_238195_1_, dyn_f, p_238195_3_, p_238195_4_, p_238195_5_, Minecraft.WorldSelectionType.NONE, creating);
           });
++         else net.minecraftforge.client.ForgeHooksClient.createWorldConfirmationScreen(this.field_71469_aa, p_238195_1_, flag1,p_238195_6_ == WorldSelectionType.CREATE, p_238195_4_, f4 -> () -> this.loadWorld(p_238195_1_, dyn_f, p_238195_3_, f4, p_238195_5_, WorldSelectionType.NONE, creating));
           minecraft$packmanager.close();
  
-@@ -1821,6 +1871,7 @@
+          try {
+@@ -1821,6 +1875,7 @@
     }
  
     public void func_71403_a(ClientWorld p_71403_1_) {
@@ -369,7 +380,7 @@
        WorkingScreen workingscreen = new WorkingScreen();
        workingscreen.func_200210_a(new TranslationTextComponent("connect.joining"));
        this.func_213241_c(workingscreen);
-@@ -1852,10 +1903,12 @@
+@@ -1852,10 +1907,12 @@
        IntegratedServer integratedserver = this.field_71437_Z;
        this.field_71437_Z = null;
        this.field_71460_t.func_190564_k();
@@ -382,7 +393,7 @@
           if (integratedserver != null) {
              this.field_71424_I.func_76320_a("waitForServer");
  
-@@ -1870,6 +1923,7 @@
+@@ -1870,6 +1927,7 @@
           this.field_71456_v.func_181029_i();
           this.field_71422_O = null;
           this.field_71455_al = false;
@@ -390,7 +401,7 @@
           this.field_213274_aO.func_216815_b();
        }
  
-@@ -1900,6 +1954,7 @@
+@@ -1900,6 +1958,7 @@
        this.field_71452_i.func_78870_a(p_213257_1_);
        TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_213257_1_);
        this.func_230150_b_();
@@ -398,7 +409,7 @@
     }
  
     public boolean func_238216_r_() {
-@@ -1945,112 +2000,9 @@
+@@ -1945,112 +2004,9 @@
  
     private void func_147112_ai() {
        if (this.field_71476_x != null && this.field_71476_x.func_216346_c() != RayTraceResult.Type.MISS) {
@@ -514,7 +525,7 @@
        }
     }
  
-@@ -2140,6 +2092,7 @@
+@@ -2140,6 +2096,7 @@
        return field_71432_P;
     }
  
@@ -522,7 +533,7 @@
     public CompletableFuture<Void> func_213245_w() {
        return this.func_213169_a(this::func_213237_g).thenCompose((p_229993_0_) -> {
           return p_229993_0_;
-@@ -2451,7 +2404,7 @@
+@@ -2451,7 +2408,7 @@
           supplier = func_228022_c_(supplier);
        }
  
@@ -531,7 +542,7 @@
     }
  
     private static Supplier<IResourcePack> func_228021_b_(Supplier<IResourcePack> p_228021_0_) {
-@@ -2470,6 +2423,14 @@
+@@ -2470,6 +2427,14 @@
        this.field_175617_aL.func_229355_a_(p_228020_1_);
     }
  

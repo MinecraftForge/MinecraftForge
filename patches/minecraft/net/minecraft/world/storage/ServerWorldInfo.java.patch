@@ -1,0 +1,54 @@
+--- a/net/minecraft/world/storage/ServerWorldInfo.java
++++ b/net/minecraft/world/storage/ServerWorldInfo.java
+@@ -75,6 +75,7 @@
+    private final Set<String> field_237338_B_;
+    private boolean field_237339_C_;
+    private final TimerCallbackManager<MinecraftServer> field_237340_D_;
++   private boolean confirmedExperimentalWarning = false;
+ 
+    private ServerWorldInfo(@Nullable DataFixer p_i242043_1_, int p_i242043_2_, @Nullable CompoundNBT p_i242043_3_, boolean p_i242043_4_, int p_i242043_5_, int p_i242043_6_, int p_i242043_7_, float p_i242043_8_, long p_i242043_9_, long p_i242043_11_, int p_i242043_13_, int p_i242043_14_, int p_i242043_15_, boolean p_i242043_16_, int p_i242043_17_, boolean p_i242043_18_, boolean p_i242043_19_, boolean p_i242043_20_, WorldBorder.Serializer p_i242043_21_, int p_i242043_22_, int p_i242043_23_, @Nullable UUID p_i242043_24_, LinkedHashSet<String> p_i242043_25_, TimerCallbackManager<MinecraftServer> p_i242043_26_, @Nullable CompoundNBT p_i242043_27_, CompoundNBT p_i242043_28_, WorldSettings p_i242043_29_, DimensionGeneratorSettings p_i242043_30_, Lifecycle p_i242043_31_) {
+       this.field_237350_j_ = p_i242043_1_;
+@@ -103,7 +104,7 @@
+       this.field_237340_D_ = p_i242043_26_;
+       this.field_237364_x_ = p_i242043_27_;
+       this.field_237363_w_ = p_i242043_28_;
+-      this.field_237342_b_ = p_i242043_29_;
++      this.field_237342_b_ = p_i242043_29_.withLifecycle(p_i242043_31_);
+       this.field_237343_c_ = p_i242043_30_;
+       this.field_237344_d_ = p_i242043_31_;
+    }
+@@ -119,7 +120,7 @@
+       });
+       return new ServerWorldInfo(p_237369_1_, p_237369_2_, p_237369_3_, p_237369_0_.get("WasModded").asBoolean(false), p_237369_0_.get("SpawnX").asInt(0), p_237369_0_.get("SpawnY").asInt(0), p_237369_0_.get("SpawnZ").asInt(0), p_237369_0_.get("SpawnAngle").asFloat(0.0F), i, p_237369_0_.get("DayTime").asLong(i), p_237369_5_.func_237323_a_(), p_237369_0_.get("clearWeatherTime").asInt(0), p_237369_0_.get("rainTime").asInt(0), p_237369_0_.get("raining").asBoolean(false), p_237369_0_.get("thunderTime").asInt(0), p_237369_0_.get("thundering").asBoolean(false), p_237369_0_.get("initialized").asBoolean(true), p_237369_0_.get("DifficultyLocked").asBoolean(false), WorldBorder.Serializer.func_235938_a_(p_237369_0_, WorldBorder.field_235925_b_), p_237369_0_.get("WanderingTraderSpawnDelay").asInt(0), p_237369_0_.get("WanderingTraderSpawnChance").asInt(0), p_237369_0_.get("WanderingTraderId").read(UUIDCodec.field_239775_a_).result().orElse((UUID)null), p_237369_0_.get("ServerBrands").asStream().flatMap((p_237368_0_) -> {
+          return Util.func_215081_a(p_237368_0_.asString().result());
+-      }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), new TimerCallbackManager<>(TimerCallbackSerializers.field_216342_a, p_237369_0_.get("ScheduledEvents").asStream()), (CompoundNBT)p_237369_0_.get("CustomBossEvents").orElseEmptyMap().getValue(), compoundnbt, p_237369_4_, p_237369_6_, p_237369_7_);
++      }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), new TimerCallbackManager<>(TimerCallbackSerializers.field_216342_a, p_237369_0_.get("ScheduledEvents").asStream()), (CompoundNBT)p_237369_0_.get("CustomBossEvents").orElseEmptyMap().getValue(), compoundnbt, p_237369_4_, p_237369_6_, p_237369_7_).withConfirmedWarning(p_237369_0_.get("confirmedExperimentalSettings").asBoolean(false));
+    }
+ 
+    public CompoundNBT func_230411_a_(DynamicRegistries p_230411_1_, @Nullable CompoundNBT p_230411_2_) {
+@@ -189,6 +190,8 @@
+          p_237370_2_.func_186854_a("WanderingTraderId", this.field_237337_A_);
+       }
+ 
++      p_237370_2_.func_74778_a("lifecycle", net.minecraftforge.common.ForgeHooks.encodeLifecycle(this.field_237342_b_.getLifecycle()));
++      p_237370_2_.func_74757_a("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
+    }
+ 
+    public int func_76079_c() {
+@@ -449,4 +452,16 @@
+    public WorldSettings func_230408_H_() {
+       return this.field_237342_b_.func_234959_h_();
+    }
++
++   //FORGE
++   public boolean hasConfirmedExperimentalWarning() {
++      return confirmedExperimentalWarning;
++   }
++   public ServerWorldInfo withConfirmedWarning(boolean confirmedExperimentalWarning) { //builder-like to not patch ctor
++      this.confirmedExperimentalWarning = confirmedExperimentalWarning;
++      return this;
++   }
++   public void setExperimentalWarningConfirmation(boolean confirmedExperimentalWarning) {
++      this.confirmedExperimentalWarning = confirmedExperimentalWarning;
++   }
+ }

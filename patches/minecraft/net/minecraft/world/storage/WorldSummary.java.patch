@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/storage/WorldSummary.java
++++ b/net/minecraft/world/storage/WorldSummary.java
+@@ -144,4 +144,8 @@
+          return iformattabletextcomponent;
+       }
+    }
++
++   public boolean isExperimental() {
++      return field_237307_a_.getLifecycle().equals(com.mojang.serialization.Lifecycle.experimental());
++   }
+ }

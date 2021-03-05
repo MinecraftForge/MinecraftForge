@@ -45,9 +45,9 @@ import org.apache.logging.log4j.MarkerManager;
  */
 public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.WorldPersistenceHook
 {
-
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker WORLDPERSISTENCE = MarkerManager.getMarker("WP");
+    private static boolean registriesChanged = false;
 
     @Override
     public String getModId()
@@ -121,18 +121,11 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
             failedElements = GameData.injectSnapshot(snapshot, true, true);
         }
 
-        if (failedElements != null && !failedElements.isEmpty())
-        {
-            StringBuilder buf = new StringBuilder();
-            buf.append("Forge Mod Loader could not load this save.\n\n")
-               .append("There are ").append(failedElements.size()).append(" unassigned registry entries in this save.\n")
-               .append("You will not be able to load until they are present again.\n\n");
+        //TODO reimplement old StartupQuery as a separate confirmation screen? injectSnapshot does all the logging already.
+        registriesChanged = failedElements != null && !failedElements.isEmpty();
+    }
 
-            failedElements.asMap().forEach((name, entries) ->
-            {
-                buf.append("Missing ").append(name).append(":\n");
-                entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
-            });
-        }
+    public static boolean worldRegistriesChanged() {
+        return registriesChanged;
     }
 }

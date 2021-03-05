@@ -778,10 +778,10 @@ public class GameData
         });
 
         int count = missing.values().stream().mapToInt(Map::size).sum();
+        Multimap<ResourceLocation, ResourceLocation> defaulted = ArrayListMultimap.create();
         if (count > 0)
         {
             LOGGER.debug(REGISTRIES,"There are {} mappings missing - attempting a mod remap", count);
-            Multimap<ResourceLocation, ResourceLocation> defaulted = ArrayListMultimap.create();
             Multimap<ResourceLocation, ResourceLocation> failed = ArrayListMultimap.create();
 
             missing.entrySet().stream().filter(e -> e.getValue().size() > 0).forEach(m ->
@@ -879,8 +879,8 @@ public class GameData
         // The id map changed, ensure we apply object holders
         ObjectHolderRegistry.applyObjectHolders();
 
-        // Return an empty list, because we're good
-        return ArrayListMultimap.create();
+        // Returns the missing objects when reading from disk. Network returns earlier if this wasn't empty.
+        return defaulted;
     }
 
     private static void fireRemapEvent(final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, final boolean isFreezing) {

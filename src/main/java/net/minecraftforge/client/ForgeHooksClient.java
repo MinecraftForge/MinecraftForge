@@ -22,6 +22,7 @@ package net.minecraftforge.client;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.datafixers.util.Function4;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
@@ -30,10 +31,10 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundEngine;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.ClientBossInfo;
+import net.minecraft.client.gui.DialogTexts;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.screen.BiomeGeneratorTypeScreens;
-import net.minecraft.client.gui.screen.MainMenuScreen;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screen.*;
+import net.minecraft.client.gui.toasts.SystemToast;
 import net.minecraft.client.network.play.NetworkPlayerInfo;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.FogRenderer.FogType;
@@ -61,10 +62,12 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.datafix.codec.DatapackCodec;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -73,6 +76,7 @@ import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -80,6 +84,9 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
+import net.minecraft.world.storage.IServerConfiguration;
+import net.minecraft.world.storage.SaveFormat;
+import net.minecraft.world.storage.ServerWorldInfo;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -88,6 +95,7 @@ import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.FMLWorldPersistenceHook;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -106,6 +114,7 @@ import org.lwjgl.opengl.GL13;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -114,6 +123,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
@@ -818,5 +828,62 @@ public class ForgeHooksClient
     public static Optional<BiomeGeneratorTypeScreens> getDefaultWorldType()
     {
         return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
+    }
+
+    public static void createWorldConfirmationScreen(
+            SaveFormat save, String worldName, boolean isExperimental, boolean creatingWorld,
+            Function4<SaveFormat.LevelSave, DynamicRegistries.Impl, IResourceManager, DatapackCodec, IServerConfiguration> f4,
+            Function<Function4<SaveFormat.LevelSave, DynamicRegistries.Impl, IResourceManager, DatapackCodec, IServerConfiguration>, Runnable> runAfter)
+    {
+        //instance check should always be true.
+        boolean vanillaConfirmation = creatingWorld || isExperimental;
+        boolean forgeConfirmation = FMLWorldPersistenceHook.worldRegistriesChanged();
+        if (!vanillaConfirmation && !forgeConfirmation) {
+            runAfter.apply(f4).run();
+            return;
+        }
+
+        ITextComponent title = forgeConfirmation ?
+                new TranslationTextComponent("forge.selectWorld.question.registriesChanged") :
+                new TranslationTextComponent("selectWorld.backupQuestion.experimental");
+        ITextComponent msg = forgeConfirmation ?
+                new TranslationTextComponent("forge.selectWorld.warning.registriesChanged") :
+                new TranslationTextComponent("selectWorld.backupWarning.experimental");
+
+        Screen screen = new ConfirmScreen(confirmed ->
+        {
+            if (confirmed)
+            {
+                if (forgeConfirmation) //backup when registries change
+                    EditWorldScreen.func_241651_a_(save, worldName);
+                //The IServerConfiguration is re-created when re-running the runnable,
+                // so make sure to be setting the field to true on the right instance.
+                runAfter.apply((a,b,c,d) -> {
+                    IServerConfiguration worldInfo = f4.apply(a,b,c,d);
+                    if (worldInfo instanceof ServerWorldInfo) //instance check should always be true.
+                        ((ServerWorldInfo)worldInfo).setExperimentalWarningConfirmation(true);
+                    return worldInfo;
+                }).run();
+            }
+            else
+            {
+                Minecraft.getInstance().displayGuiScreen(null);
+
+                if (creatingWorld) // delete save when cancelling creation.
+                {
+                    try (SaveFormat.LevelSave levelSave = save.getLevelSave(worldName))
+                    {
+                        levelSave.deleteSave();
+                    }
+                    catch (IOException e)
+                    {
+                        SystemToast.func_238538_b_(Minecraft.getInstance(), worldName);
+                        LOGGER.error("Failed to delete world {}", worldName, e);
+                    }
+                }
+            }
+        }, title, msg, DialogTexts.GUI_PROCEED, DialogTexts.GUI_CANCEL);
+
+        Minecraft.getInstance().displayGuiScreen(screen);
     }
 }
