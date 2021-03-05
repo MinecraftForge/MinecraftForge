@@ -42,8 +42,11 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.merchant.villager.VillagerEntity;
+import net.minecraft.entity.merchant.villager.VillagerProfession;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -104,6 +107,7 @@ import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.living.AgeableEntityAgeChangeEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
@@ -113,6 +117,7 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
+import net.minecraftforge.event.entity.living.VillagerProfessionChangeEvent;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
@@ -761,4 +766,15 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new LivingConversionEvent.Post(entity, outcome));
     }
+
+    public static void onVillagerProfessionChange(VillagerEntity entity, VillagerProfession oldProfession)
+    {
+        MinecraftForge.EVENT_BUS.post(new VillagerProfessionChangeEvent(entity, oldProfession));
+    }
+
+    public static void onAgeableEntityAgeChange(AgeableEntity entity)
+    {
+        MinecraftForge.EVENT_BUS.post(new AgeableEntityAgeChangeEvent(entity));
+    }
+
 }
