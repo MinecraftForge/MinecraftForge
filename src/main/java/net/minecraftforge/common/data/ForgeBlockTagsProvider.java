@@ -46,6 +46,8 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
     @Override
     public void registerTags()
     {
+        getOrCreateBuilder(BARRELS).addTag(BARRELS_WOODEN);
+        getOrCreateBuilder(BARRELS_WOODEN).add(Blocks.BARREL);
         getOrCreateBuilder(CHESTS).addTags(CHESTS_ENDER, CHESTS_TRAPPED, CHESTS_WOODEN);
         getOrCreateBuilder(CHESTS_ENDER).add(Blocks.ENDER_CHEST);
         getOrCreateBuilder(CHESTS_TRAPPED).add(Blocks.TRAPPED_CHEST);

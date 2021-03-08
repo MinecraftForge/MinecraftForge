@@ -45,6 +45,8 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
     @Override
     public void registerTags()
     {
+        copy(Tags.Blocks.BARRELS, Tags.Items.BARRELS);
+        copy(Tags.Blocks.BARRELS_WOODEN, Tags.Items.BARRELS_WOODEN);
         getOrCreateBuilder(Tags.Items.BONES).add(Items.BONE);
         getOrCreateBuilder(Tags.Items.BOOKSHELVES).add(Items.BOOKSHELF);
         copy(Tags.Blocks.CHESTS, Tags.Items.CHESTS);
