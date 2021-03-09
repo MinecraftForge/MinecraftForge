@@ -17,9 +17,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class WorldgenRegistryDesyncTest {
 
     public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, "worldgen_registry_desync_test");
-    public static final RegistryObject<Feature<NoFeatureConfig>> dungeon = FEATURES.register("dungeon", () -> new DungeonsFeature(NoFeatureConfig.field_236558_a_));
+    public static final RegistryObject<Feature<NoFeatureConfig>> dungeon = FEATURES.register("dungeon", () -> new DungeonsFeature(NoFeatureConfig.CODEC));
     public static final DeferredRegister<Biome> BIOMES = DeferredRegister.create(ForgeRegistries.BIOMES, "worldgen_registry_desync_test");
-    public static final RegistryObject<Biome> biome = BIOMES.register("biome", BiomeMaker::makeVoidBiome);
+    public static final RegistryObject<Biome> biome = BIOMES.register("biome", BiomeMaker::theVoidBiome);
 
     public WorldgenRegistryDesyncTest()
     {

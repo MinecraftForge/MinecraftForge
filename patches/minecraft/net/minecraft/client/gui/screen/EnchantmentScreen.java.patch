@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/EnchantmentScreen.java
 +++ b/net/minecraft/client/gui/screen/EnchantmentScreen.java
-@@ -149,7 +149,7 @@
+@@ -149,7 +_,7 @@
              int i2 = 86 - this.field_230712_o_.func_78256_a(s);
              ITextProperties itextproperties = EnchantmentNameParts.func_178176_a().func_238816_a_(this.field_230712_o_, i2);
              int j2 = 6839882;
@@ -9,7 +9,7 @@
                 this.func_238474_b_(p_230450_1_, j1, j + 14 + 19 * i1, 0, 185, 108, 19);
                 this.func_238474_b_(p_230450_1_, j1 + 1, j + 15 + 19 * i1, 16 * i1, 239, 16, 16);
                 this.field_230712_o_.func_238418_a_(itextproperties, k1, j + 16 + 19 * i1, i2, (j2 & 16711422) >> 1);
-@@ -188,10 +188,13 @@
+@@ -188,10 +_,13 @@
           Enchantment enchantment = Enchantment.func_185262_c((this.field_147002_h).field_185001_h[j]);
           int l = (this.field_147002_h).field_185002_i[j];
           int i1 = j + 1;

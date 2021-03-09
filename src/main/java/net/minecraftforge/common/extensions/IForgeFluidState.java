@@ -52,7 +52,7 @@ public interface IForgeFluidState
     default boolean isEntityInside(IWorldReader world, BlockPos pos, Entity entity, double yToTest, Tag<Fluid> tag, boolean testingHead)
     {
 //        return ifluidstate.isTagged(p_213290_1_) && d0 < (double)((float)blockpos.getY() + ifluidstate.getActualHeight(this.world, blockpos) + 0.11111111F);
-        return getFluidState().getFluid().isEntityInside(getFluidState(), world, pos, entity, yToTest, tag, testingHead);
+        return getFluidState().getType().isEntityInside(getFluidState(), world, pos, entity, yToTest, tag, testingHead);
     }
 
 
@@ -67,7 +67,7 @@ public interface IForgeFluidState
      */
     default float getExplosionResistance(IBlockReader world, BlockPos pos, Explosion explosion)
     {
-        return getFluidState().getFluid().getExplosionResistance(getFluidState(), world, pos, explosion);
+        return getFluidState().getType().getExplosionResistance(getFluidState(), world, pos, explosion);
     }
 
     /**

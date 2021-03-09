@@ -53,9 +53,9 @@ public class CompositeModelTest
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Block> composite_block = BLOCKS.register("composite_block", () ->
-            new Block(Block.Properties.create(Material.WOOD).hardnessAndResistance(10)) {
+            new Block(Block.Properties.of(Material.WOOD).strength(10)) {
                 @Override
-                protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+                protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
                 {
                     builder.add(BlockStateProperties.HORIZONTAL_FACING);
                 }
@@ -64,30 +64,30 @@ public class CompositeModelTest
                 @Override
                 public BlockState getStateForPlacement(BlockItemUseContext context)
                 {
-                    return getDefaultState().with(
-                            BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing()
+                    return defaultBlockState().setValue(
+                            BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection()
                     );
                 }
 
                 @Override
                 public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
                     return VoxelShapes.or(
-                            makeCuboidShape(5.6, 5.6, 5.6, 10.4, 10.4, 10.4),
-                            makeCuboidShape(0, 0, 0, 4.8, 4.8, 4.8),
-                            makeCuboidShape(11.2, 0, 0, 16, 4.8, 4.8),
-                            makeCuboidShape(0, 0, 11.2, 4.8, 4.8, 16),
-                            makeCuboidShape(11.2, 0, 11.2, 16, 4.8, 16),
-                            makeCuboidShape(0, 11.2, 0, 4.8, 16, 4.8),
-                            makeCuboidShape(11.2, 11.2, 0, 16, 16, 4.8),
-                            makeCuboidShape(0, 11.2, 11.2, 4.8, 16, 16),
-                            makeCuboidShape(11.2, 11.2, 11.2, 16, 16, 16)
+                            box(5.6, 5.6, 5.6, 10.4, 10.4, 10.4),
+                            box(0, 0, 0, 4.8, 4.8, 4.8),
+                            box(11.2, 0, 0, 16, 4.8, 4.8),
+                            box(0, 0, 11.2, 4.8, 4.8, 16),
+                            box(11.2, 0, 11.2, 16, 4.8, 16),
+                            box(0, 11.2, 0, 4.8, 16, 4.8),
+                            box(11.2, 11.2, 0, 16, 16, 4.8),
+                            box(0, 11.2, 11.2, 4.8, 16, 16),
+                            box(11.2, 11.2, 11.2, 16, 16, 16)
                     );
                 }
             }
     );
 
     public static RegistryObject<Item> composite_item = ITEMS.register("composite_block", () ->
-            new BlockItem(composite_block.get(), new Item.Properties().group(ItemGroup.MISC)) {
+            new BlockItem(composite_block.get(), new Item.Properties().tab(ItemGroup.TAB_MISC)) {
                 @Override
                 public boolean canEquip(ItemStack stack, EquipmentSlotType armorType, Entity entity)
                 {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/ShulkerBoxTileEntity.java
 +++ b/net/minecraft/tileentity/ShulkerBoxTileEntity.java
-@@ -284,6 +284,11 @@
+@@ -284,6 +_,11 @@
        return this.field_190599_i == ShulkerBoxTileEntity.AnimationStatus.CLOSED;
     }
  

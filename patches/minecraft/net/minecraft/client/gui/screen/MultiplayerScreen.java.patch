@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/MultiplayerScreen.java
 +++ b/net/minecraft/client/gui/screen/MultiplayerScreen.java
-@@ -241,6 +241,11 @@
+@@ -241,6 +_,11 @@
  
     }
  

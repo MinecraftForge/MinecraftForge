@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/RavagerEntity.java
 +++ b/net/minecraft/entity/monster/RavagerEntity.java
-@@ -134,7 +134,7 @@
+@@ -134,7 +_,7 @@
              this.func_110148_a(Attributes.field_233821_d_).func_111128_a(MathHelper.func_219803_d(0.1D, d1, d0));
           }
  

@@ -58,20 +58,20 @@ public class VanillaInventoryCodeHooks
                         ItemStack extractItem = handler.extractItem(i, 1, true);
                         if (!extractItem.isEmpty())
                         {
-                            for (int j = 0; j < dest.getSizeInventory(); j++)
+                            for (int j = 0; j < dest.getContainerSize(); j++)
                             {
-                                ItemStack destStack = dest.getStackInSlot(j);
-                                if (dest.isItemValidForSlot(j, extractItem) && (destStack.isEmpty() || destStack.getCount() < destStack.getMaxStackSize() && destStack.getCount() < dest.getInventoryStackLimit() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack)))
+                                ItemStack destStack = dest.getItem(j);
+                                if (dest.canPlaceItem(j, extractItem) && (destStack.isEmpty() || destStack.getCount() < destStack.getMaxStackSize() && destStack.getCount() < dest.getMaxStackSize() && ItemHandlerHelper.canItemStacksStack(extractItem, destStack)))
                                 {
                                     extractItem = handler.extractItem(i, 1, false);
                                     if (destStack.isEmpty())
-                                        dest.setInventorySlotContents(j, extractItem);
+                                        dest.setItem(j, extractItem);
                                     else
                                     {
                                         destStack.grow(1);
-                                        dest.setInventorySlotContents(j, destStack);
+                                        dest.setItem(j, destStack);
                                     }
-                                    dest.markDirty();
+                                    dest.setChanged();
                                     return true;
                                 }
                             }
@@ -88,8 +88,8 @@ public class VanillaInventoryCodeHooks
      */
     public static boolean dropperInsertHook(World world, BlockPos pos, DispenserTileEntity dropper, int slot, @Nonnull ItemStack stack)
     {
-        Direction enumfacing = world.getBlockState(pos).get(DropperBlock.FACING);
-        BlockPos blockpos = pos.offset(enumfacing);
+        Direction enumfacing = world.getBlockState(pos).getValue(DropperBlock.FACING);
+        BlockPos blockpos = pos.relative(enumfacing);
         return getItemHandler(world, (double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), enumfacing.getOpposite())
                 .map(destinationResult -> {
                     IItemHandler itemHandler = destinationResult.getKey();
@@ -107,7 +107,7 @@ public class VanillaInventoryCodeHooks
                         remainder = stack.copy();
                     }
 
-                    dropper.setInventorySlotContents(slot, remainder);
+                    dropper.setItem(slot, remainder);
                     return false;
                 })
                 .orElse(true);
@@ -118,7 +118,7 @@ public class VanillaInventoryCodeHooks
      */
     public static boolean insertHook(HopperTileEntity hopper)
     {
-        Direction hopperFacing = hopper.getBlockState().get(HopperBlock.FACING);
+        Direction hopperFacing = hopper.getBlockState().getValue(HopperBlock.FACING);
         return getItemHandler(hopper, hopperFacing)
                 .map(destinationResult -> {
                     IItemHandler itemHandler = destinationResult.getKey();
@@ -129,12 +129,12 @@ public class VanillaInventoryCodeHooks
                     }
                     else
                     {
-                        for (int i = 0; i < hopper.getSizeInventory(); ++i)
+                        for (int i = 0; i < hopper.getContainerSize(); ++i)
                         {
-                            if (!hopper.getStackInSlot(i).isEmpty())
+                            if (!hopper.getItem(i).isEmpty())
                             {
-                                ItemStack originalSlotContents = hopper.getStackInSlot(i).copy();
-                                ItemStack insertStack = hopper.decrStackSize(i, 1);
+                                ItemStack originalSlotContents = hopper.getItem(i).copy();
+                                ItemStack insertStack = hopper.removeItem(i, 1);
                                 ItemStack remainder = putStackInInventoryAllSlots(hopper, destination, itemHandler, insertStack);
 
                                 if (remainder.isEmpty())
@@ -142,7 +142,7 @@ public class VanillaInventoryCodeHooks
                                     return true;
                                 }
 
-                                hopper.setInventorySlotContents(i, originalSlotContents);
+                                hopper.setItem(i, originalSlotContents);
                             }
                         }
 
@@ -192,7 +192,7 @@ public class VanillaInventoryCodeHooks
                 {
                     HopperTileEntity destinationHopper = (HopperTileEntity)destination;
 
-                    if (!destinationHopper.mayTransfer())
+                    if (!destinationHopper.isOnCustomCooldown())
                     {
                         int k = 0;
                         if (source instanceof HopperTileEntity)
@@ -202,7 +202,7 @@ public class VanillaInventoryCodeHooks
                                 k = 1;
                             }
                         }
-                        destinationHopper.setTransferCooldown(8 - k);
+                        destinationHopper.setCooldown(8 - k);
                     }
                 }
             }
@@ -213,10 +213,10 @@ public class VanillaInventoryCodeHooks
 
     private static Optional<Pair<IItemHandler, Object>> getItemHandler(IHopper hopper, Direction hopperFacing)
     {
-        double x = hopper.getXPos() + (double) hopperFacing.getXOffset();
-        double y = hopper.getYPos() + (double) hopperFacing.getYOffset();
-        double z = hopper.getZPos() + (double) hopperFacing.getZOffset();
-        return getItemHandler(hopper.getWorld(), x, y, z, hopperFacing.getOpposite());
+        double x = hopper.getLevelX() + (double) hopperFacing.getStepX();
+        double y = hopper.getLevelY() + (double) hopperFacing.getStepY();
+        double z = hopper.getLevelZ() + (double) hopperFacing.getStepZ();
+        return getItemHandler(hopper.getLevel(), x, y, z, hopperFacing.getOpposite());
     }
 
     private static boolean isFull(IItemHandler itemHandler)
@@ -255,7 +255,7 @@ public class VanillaInventoryCodeHooks
 
         if (state.hasTileEntity())
         {
-            TileEntity tileentity = worldIn.getTileEntity(blockpos);
+            TileEntity tileentity = worldIn.getBlockEntity(blockpos);
             if (tileentity != null)
             {
                 return tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)

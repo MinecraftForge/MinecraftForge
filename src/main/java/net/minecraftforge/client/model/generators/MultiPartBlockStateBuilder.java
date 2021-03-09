@@ -138,7 +138,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
         }
 
         public boolean canApplyTo(Block b) {
-            return b.getStateContainer().getProperties().containsAll(conditions.keySet());
+            return b.getStateDefinition().getProperties().containsAll(conditions.keySet());
         }
     }
 }

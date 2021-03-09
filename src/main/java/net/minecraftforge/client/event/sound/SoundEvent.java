@@ -46,7 +46,7 @@ public class SoundEvent extends net.minecraftforge.eventbus.api.Event
         public SoundSourceEvent(SoundEngine manager, ISound sound, SoundSource source)
         {
             super(manager);
-            this.name = sound.getSoundLocation().getPath();
+            this.name = sound.getLocation().getPath();
             this.sound = sound;
             this.source = source;
         }

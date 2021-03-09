@@ -92,7 +92,7 @@ public class OrCondition implements ICondition
         public OrCondition read(JsonObject json)
         {
             List<ICondition> children = new ArrayList<>();
-            for (JsonElement j : JSONUtils.getJsonArray(json, "values"))
+            for (JsonElement j : JSONUtils.getAsJsonArray(json, "values"))
             {
                 if (!j.isJsonObject())
                     throw new JsonSyntaxException("Or condition values must be an array of JsonObjects");

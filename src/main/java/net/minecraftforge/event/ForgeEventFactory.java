@@ -151,14 +151,14 @@ public class ForgeEventFactory
     public static boolean onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, Direction direction)
     {
         BlockSnapshot snap = blockSnapshots.get(0);
-        BlockState placedAgainst = snap.getWorld().getBlockState(snap.getPos().offset(direction.getOpposite()));
+        BlockState placedAgainst = snap.getWorld().getBlockState(snap.getPos().relative(direction.getOpposite()));
         EntityMultiPlaceEvent event = new EntityMultiPlaceEvent(blockSnapshots, placedAgainst, entity);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onBlockPlace(@Nullable Entity entity, @Nonnull BlockSnapshot blockSnapshot, @Nonnull Direction direction)
     {
-        BlockState placedAgainst = blockSnapshot.getWorld().getBlockState(blockSnapshot.getPos().offset(direction.getOpposite()));
+        BlockState placedAgainst = blockSnapshot.getWorld().getBlockState(blockSnapshot.getPos().relative(direction.getOpposite()));
         EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(blockSnapshot, placedAgainst, entity);
         return MinecraftForge.EVENT_BUS.post(event);
     }
@@ -201,7 +201,7 @@ public class ForgeEventFactory
     {
         Result result = canEntitySpawn(entity, world, x, y, z, spawner, SpawnReason.SPAWNER);
         if (result == Result.DEFAULT)
-            return entity.canSpawn(world, SpawnReason.SPAWNER) && entity.isNotColliding(world); // vanilla logic (inverted)
+            return entity.checkSpawnRules(world, SpawnReason.SPAWNER) && entity.checkSpawnObstruction(world); // vanilla logic (inverted)
         else
             return result == Result.ALLOW;
     }
@@ -248,7 +248,7 @@ public class ForgeEventFactory
     {
         LivingPackSizeEvent maxCanSpawnEvent = new LivingPackSizeEvent(entity);
         MinecraftForge.EVENT_BUS.post(maxCanSpawnEvent);
-        return maxCanSpawnEvent.getResult() == Result.ALLOW ? maxCanSpawnEvent.getMaxPackSize() : entity.getMaxSpawnedInChunk();
+        return maxCanSpawnEvent.getResult() == Result.ALLOW ? maxCanSpawnEvent.getMaxPackSize() : entity.getMaxSpawnClusterSize();
     }
 
     public static ITextComponent getPlayerDisplayName(PlayerEntity player, ITextComponent username)
@@ -355,7 +355,7 @@ public class ForgeEventFactory
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         if (event.getResult() == Result.ALLOW)
         {
-            context.getItem().damageItem(1, context.getPlayer(), player -> player.sendBreakAnimation(context.getHand()));
+            context.getItemInHand().hurtAndBreak(1, context.getPlayer(), player -> player.broadcastBreakEvent(context.getHand()));
             return 1;
         }
         return 0;
@@ -374,7 +374,7 @@ public class ForgeEventFactory
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         if (event.getResult() == Result.ALLOW)
         {
-            if (!world.isRemote)
+            if (!world.isClientSide)
                 stack.shrink(1);
             return 1;
         }
@@ -389,15 +389,15 @@ public class ForgeEventFactory
 
         if (event.getResult() == Result.ALLOW)
         {
-            if (player.abilities.isCreativeMode)
+            if (player.abilities.instabuild)
                 return new ActionResult<ItemStack>(ActionResultType.SUCCESS, stack);
 
             stack.shrink(1);
             if (stack.isEmpty())
                 return new ActionResult<ItemStack>(ActionResultType.SUCCESS, event.getFilledBucket());
 
-            if (!player.inventory.addItemStackToInventory(event.getFilledBucket()))
-                player.dropItem(event.getFilledBucket(), false);
+            if (!player.inventory.add(event.getFilledBucket()))
+                player.drop(event.getFilledBucket(), false);
 
             return new ActionResult<ItemStack>(ActionResultType.SUCCESS, stack);
         }
@@ -421,7 +421,7 @@ public class ForgeEventFactory
     public static int onItemExpire(ItemEntity entity, @Nonnull ItemStack item)
     {
         if (item.isEmpty()) return -1;
-        ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.world)));
+        ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.level)));
         if (!MinecraftForge.EVENT_BUS.post(event)) return -1;
         return event.getExtraLife();
     }
@@ -435,11 +435,11 @@ public class ForgeEventFactory
 
     public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)
     {
-        boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.world, isMounting));
+        boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.level, isMounting));
 
         if(isCanceled)
         {
-            entityMounting.setPositionAndRotation(entityMounting.getPosX(), entityMounting.getPosY(), entityMounting.getPosZ(), entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
+            entityMounting.absMoveTo(entityMounting.getX(), entityMounting.getY(), entityMounting.getZ(), entityMounting.yRotO, entityMounting.xRotO);
             return false;
         }
         else
@@ -522,7 +522,7 @@ public class ForgeEventFactory
             boolean changed = false;
             for (int x = 0; x < stacks.size(); x++)
             {
-                changed |= ItemStack.areItemStacksEqual(tmp.get(x), stacks.get(x));
+                changed |= ItemStack.matches(tmp.get(x), stacks.get(x));
                 stacks.set(x, event.getItem(x));
             }
             if (changed)
@@ -545,13 +545,13 @@ public class ForgeEventFactory
     @OnlyIn(Dist.CLIENT)
     public static boolean renderFireOverlay(PlayerEntity player, MatrixStack mat)
     {
-        return renderBlockOverlay(player, mat, OverlayType.FIRE, Blocks.FIRE.getDefaultState(), player.getPosition());
+        return renderBlockOverlay(player, mat, OverlayType.FIRE, Blocks.FIRE.defaultBlockState(), player.blockPosition());
     }
 
     @OnlyIn(Dist.CLIENT)
     public static boolean renderWaterOverlay(PlayerEntity player, MatrixStack mat)
     {
-        return renderBlockOverlay(player, mat, OverlayType.WATER, Blocks.WATER.getDefaultState(), player.getPosition());
+        return renderBlockOverlay(player, mat, OverlayType.WATER, Blocks.WATER.defaultBlockState(), player.blockPosition());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -588,9 +588,9 @@ public class ForgeEventFactory
         Result canContinueSleep = evt.getResult();
         if (canContinueSleep == Result.DEFAULT)
         {
-            return player.getBedPosition().map(pos-> {
-                BlockState state = player.world.getBlockState(pos);
-                return state.getBlock().isBed(state, player.world, pos, player);
+            return player.getSleepingPos().map(pos-> {
+                BlockState state = player.level.getBlockState(pos);
+                return state.getBlock().isBed(state, player.level, pos, player);
             }).orElse(false);
         }
         else
@@ -604,7 +604,7 @@ public class ForgeEventFactory
 
         Result canContinueSleep = evt.getResult();
         if (canContinueSleep == Result.DEFAULT)
-            return !player.world.isDaytime();
+            return !player.level.isDay();
         else
             return canContinueSleep == Result.ALLOW;
     }
@@ -654,7 +654,7 @@ public class ForgeEventFactory
     {
         LootTableLoadEvent event = new LootTableLoadEvent(name, table, lootTableManager);
         if (MinecraftForge.EVENT_BUS.post(event))
-            return LootTable.EMPTY_LOOT_TABLE;
+            return LootTable.EMPTY;
         return event.getTable();
     }
 
@@ -691,7 +691,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
 
         Result result = event.getResult();
-        return result == Result.DEFAULT ? world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) : result == Result.ALLOW;
+        return result == Result.DEFAULT ? world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : result == Result.ALLOW;
     }
 
     public static boolean saplingGrowTree(IWorld world, Random rand, BlockPos pos)

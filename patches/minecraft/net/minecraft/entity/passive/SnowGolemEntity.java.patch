@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/SnowGolemEntity.java
 +++ b/net/minecraft/entity/passive/SnowGolemEntity.java
-@@ -40,7 +40,7 @@
+@@ -40,7 +_,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -9,7 +9,7 @@
     private static final DataParameter<Byte> field_184749_a = EntityDataManager.func_187226_a(SnowGolemEntity.class, DataSerializers.field_187191_a);
  
     public SnowGolemEntity(EntityType<? extends SnowGolemEntity> p_i50244_1_, World p_i50244_2_) {
-@@ -93,7 +93,7 @@
+@@ -93,7 +_,7 @@
              this.func_70097_a(DamageSource.field_76370_b, 1.0F);
           }
  
@@ -18,7 +18,7 @@
              return;
           }
  
-@@ -104,7 +104,7 @@
+@@ -104,7 +_,7 @@
              j = MathHelper.func_76128_c(this.func_226278_cu_());
              k = MathHelper.func_76128_c(this.func_226281_cx_() + (double)((float)(l / 2 % 2 * 2 - 1) * 0.25F));
              BlockPos blockpos = new BlockPos(i, j, k);
@@ -27,7 +27,7 @@
                 this.field_70170_p.func_175656_a(blockpos, blockstate);
              }
           }
-@@ -130,7 +130,7 @@
+@@ -130,7 +_,7 @@
  
     protected ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
@@ -36,10 +36,11 @@
           this.func_230263_a_(SoundCategory.PLAYERS);
           if (!this.field_70170_p.field_72995_K) {
              itemstack.func_222118_a(1, p_230254_1_, (p_213622_1_) -> {
-@@ -190,4 +190,20 @@
+@@ -189,5 +_,21 @@
+    @OnlyIn(Dist.CLIENT)
     public Vector3d func_241205_ce_() {
        return new Vector3d(0.0D, (double)(0.75F * this.func_70047_e()), (double)(this.func_213311_cf() * 0.4F));
-    }
++   }
 +
 +   @Override
 +   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, World world, BlockPos pos) {
@@ -55,5 +56,5 @@
 +         return java.util.Collections.singletonList(new ItemStack(Items.field_221689_cG));
 +      }
 +      return java.util.Collections.emptyList();
-+   }
+    }
  }

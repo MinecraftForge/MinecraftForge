@@ -40,9 +40,9 @@ public class RenderLocalPlayerTest
         if (ENABLED && event.getItemStack().getItem() == Items.STICK)
         {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.getRenderViewEntity() == mc.player)
+            if (mc.getCameraEntity() == mc.player)
             {
-                mc.setRenderViewEntity(event.getTarget());
+                mc.setCameraEntity(event.getTarget());
 
                 event.setCancellationResult(ActionResultType.SUCCESS);
                 event.setCanceled(true);
@@ -56,9 +56,9 @@ public class RenderLocalPlayerTest
         if (ENABLED && event.getItemStack().getItem() == Items.STICK)
         {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.getRenderViewEntity() != mc.player)
+            if (mc.getCameraEntity() != mc.player)
             {
-                mc.setRenderViewEntity(mc.player);
+                mc.setCameraEntity(mc.player);
 
                 event.setCancellationResult(ActionResultType.SUCCESS);
                 event.setCanceled(true);

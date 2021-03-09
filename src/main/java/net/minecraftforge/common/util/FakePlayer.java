@@ -47,16 +47,16 @@ public class FakePlayer extends ServerPlayerEntity
         super(world.getServer(), world, name, new PlayerInteractionManager(world));
     }
 
-    @Override public Vector3d getPositionVec(){ return new Vector3d(0, 0, 0); }
-    @Override public BlockPos getPosition(){ return BlockPos.ZERO; }
-    @Override public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar){}
+    @Override public Vector3d position(){ return new Vector3d(0, 0, 0); }
+    @Override public BlockPos blockPosition(){ return BlockPos.ZERO; }
+    @Override public void displayClientMessage(ITextComponent chatComponent, boolean actionBar){}
     @Override public void sendMessage(ITextComponent component, UUID senderUUID) {}
-    @Override public void addStat(Stat par1StatBase, int par2){}
+    @Override public void awardStat(Stat par1StatBase, int par2){}
     //@Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
     @Override public boolean isInvulnerableTo(DamageSource source){ return true; }
-    @Override public boolean canAttackPlayer(PlayerEntity player){ return false; }
-    @Override public void onDeath(DamageSource source){ return; }
+    @Override public boolean canHarmPlayer(PlayerEntity player){ return false; }
+    @Override public void die(DamageSource source){ return; }
     @Override public void tick(){ return; }
-    @Override public void handleClientSettings(CClientSettingsPacket pkt){ return; }
+    @Override public void updateOptions(CClientSettingsPacket pkt){ return; }
     @Override @Nullable public MinecraftServer getServer() { return ServerLifecycleHooks.getCurrentServer(); }
 }

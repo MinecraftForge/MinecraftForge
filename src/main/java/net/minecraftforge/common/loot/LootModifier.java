@@ -44,7 +44,7 @@ public abstract class LootModifier implements IGlobalLootModifier {
      */
     protected LootModifier(ILootCondition[] conditionsIn) {
         this.conditions = conditionsIn;
-        this.combinedConditions = LootConditionManager.and(conditionsIn);
+        this.combinedConditions = LootConditionManager.andConditions(conditionsIn);
     }
     
     @Nonnull

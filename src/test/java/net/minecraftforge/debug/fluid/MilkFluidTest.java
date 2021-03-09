@@ -48,7 +48,7 @@ public class MilkFluidTest
     ItemStack stack = event.getItemStack();
     if (stack.getItem() == Items.MILK_BUCKET)
     {
-      FluidUtil.getFluidContained(stack).ifPresent((fluid) -> event.getPlayer().sendStatusMessage(new StringTextComponent("Contains ").append(fluid.getDisplayName()), true));
+      FluidUtil.getFluidContained(stack).ifPresent((fluid) -> event.getPlayer().displayClientMessage(new StringTextComponent("Contains ").append(fluid.getDisplayName()), true));
     }
   }
 }

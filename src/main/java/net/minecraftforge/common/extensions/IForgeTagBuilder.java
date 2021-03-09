@@ -44,7 +44,7 @@ public interface IForgeTagBuilder<T>
     default TagsProvider.Builder<T> add(RegistryKey<T>... keys) {
         TagsProvider.Builder<T> builder = getBuilder();
         for (RegistryKey<T> key : keys) {
-            builder.getInternalBuilder().addItemEntry(key.getLocation(), getBuilder().getModID());
+            builder.getInternalBuilder().addElement(key.location(), getBuilder().getModID());
         }
         return builder;
     }

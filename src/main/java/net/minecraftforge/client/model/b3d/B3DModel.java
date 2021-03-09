@@ -670,10 +670,10 @@ public class B3DModel
                 {
                     totalWeight += bone.getLeft();
                     Matrix4f bm = animator.apply(bone.getRight());
-                    bm.mul(bone.getLeft());
+                    bm.multiply(bone.getLeft());
                     t.add(bm);
                 }
-                if(Math.abs(totalWeight) > 1e-4) t.mul(1f / totalWeight);
+                if(Math.abs(totalWeight) > 1e-4) t.multiply(1f / totalWeight);
                 else t.setIdentity();
             }
 
@@ -684,7 +684,7 @@ public class B3DModel
             pos.setW(1);
             trsr.transformPosition(pos);
             pos.normalize();
-            Vector3f rPos = new Vector3f(pos.getX(), pos.getY(), pos.getZ());
+            Vector3f rPos = new Vector3f(pos.x(), pos.y(), pos.z());
 
             // normal
             Vector3f rNormal = null;

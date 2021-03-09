@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/biome/BiomeAmbience.java
 +++ b/net/minecraft/world/biome/BiomeAmbience.java
-@@ -204,7 +204,7 @@
+@@ -204,7 +_,7 @@
        }
     }
  
@@ -9,7 +9,7 @@
        NONE("none") {
           @OnlyIn(Dist.CLIENT)
           public int func_241853_a(double p_241853_1_, double p_241853_3_, int p_241853_5_) {
-@@ -226,18 +226,36 @@
+@@ -226,18 +_,36 @@
        };
  
        private final String field_242543_e;

@@ -79,7 +79,7 @@ public class RegistryManager
 
     public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(RegistryKey<? extends Registry<V>> key)
     {
-        return getRegistry(key.getLocation());
+        return getRegistry(key.location());
     }
 
     public <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> getRegistry(Class<? super V> cls)

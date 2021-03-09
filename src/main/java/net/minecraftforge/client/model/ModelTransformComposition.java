@@ -45,7 +45,7 @@ public class ModelTransformComposition implements IModelTransform
     }
 
     @Override
-    public boolean isUvLock()
+    public boolean isUvLocked()
     {
         return uvLock;
     }

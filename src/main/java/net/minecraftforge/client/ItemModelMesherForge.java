@@ -79,7 +79,7 @@ public class ItemModelMesherForge extends ItemModelMesher
 
         if (location == null)
         {
-            location = ModelBakery.MODEL_MISSING;
+            location = ModelBakery.MISSING_MODEL_LOCATION;
         }
 
         return location;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/BaseTreeFeatureConfig.java
 +++ b/net/minecraft/world/gen/feature/BaseTreeFeatureConfig.java
-@@ -32,6 +32,7 @@
+@@ -32,6 +_,7 @@
           return p_236684_0_.field_236682_l_;
        })).apply(p_236683_0_, BaseTreeFeatureConfig::new);
     });

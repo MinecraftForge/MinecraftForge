@@ -118,7 +118,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         if (flipGas && fluid != Fluids.EMPTY && fluid.getAttributes().isLighterThanAir())
         {
             modelTransform = new SimpleModelTransform(
-                    modelTransform.getRotation().blockCornerToCenter().composeVanilla(
+                    modelTransform.getRotation().blockCornerToCenter().compose(
                             new TransformationMatrix(null, new Quaternion(0, 0, 1, 0), null, null)).blockCenterToCorner());
         }
 
@@ -259,9 +259,9 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         }
 
         @Override
-        public IBakedModel getOverrideModel(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
+        public IBakedModel resolve(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
         {
-            IBakedModel overriden = nested.getOverrideModel(originalModel, stack, world, entity);
+            IBakedModel overriden = nested.resolve(originalModel, stack, world, entity);
             if (overriden != originalModel) return overriden;
             return FluidUtil.getFluidContained(stack)
                     .map(fluidStack -> {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/chunk/ChunkStatus.java
 +++ b/net/minecraft/world/chunk/ChunkStatus.java
-@@ -23,7 +23,7 @@
+@@ -23,7 +_,7 @@
  import net.minecraft.world.server.ServerWorld;
  import net.minecraft.world.server.ServerWorldLightManager;
  

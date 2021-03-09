@@ -540,7 +540,7 @@ public class ModelBlockAnimation
                     {
                         float w = info.getWeights().get(i)[0];
                         tmp = trOp.getMatrix();
-                        tmp.mul(w);
+                        tmp.multiply(w);
                         m.add(tmp);
                         weight += w;
                     }
@@ -548,7 +548,7 @@ public class ModelBlockAnimation
             }
             if(weight > 1e-5)
             {
-                m.mul(1f / weight);
+                m.multiply(1f / weight);
                 return new TransformationMatrix(m);
             }
         }

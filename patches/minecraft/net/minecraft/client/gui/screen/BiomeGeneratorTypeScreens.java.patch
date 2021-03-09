@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/BiomeGeneratorTypeScreens.java
 +++ b/net/minecraft/client/gui/screen/BiomeGeneratorTypeScreens.java
-@@ -113,6 +113,9 @@
+@@ -113,6 +_,9 @@
     private BiomeGeneratorTypeScreens(String p_i232324_1_) {
        this.field_239076_k_ = new TranslationTextComponent("generator." + p_i232324_1_);
     }
@@ -10,7 +10,7 @@
  
     private static DimensionGeneratorSettings func_243452_a(DynamicRegistries p_243452_0_, DimensionGeneratorSettings p_243452_1_, BiomeGeneratorTypeScreens p_243452_2_, Biome p_243452_3_) {
        BiomeProvider biomeprovider = new SingleBiomeProvider(p_243452_3_);
-@@ -166,4 +169,8 @@
+@@ -166,4 +_,8 @@
     public interface IFactory {
        Screen createEditScreen(CreateWorldScreen p_createEditScreen_1_, DimensionGeneratorSettings p_createEditScreen_2_);
     }

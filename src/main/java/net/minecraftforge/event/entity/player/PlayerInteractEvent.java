@@ -81,7 +81,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
         public EntityInteractSpecific(PlayerEntity player, Hand hand, Entity target, Vector3d localPos)
         {
-            super(player, hand, target.getPosition(), null);
+            super(player, hand, target.blockPosition(), null);
             this.localPos = localPos;
             this.target = target;
         }
@@ -121,7 +121,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
         public EntityInteract(PlayerEntity player, Hand hand, Entity target)
         {
-            super(player, hand, target.getPosition(), null);
+            super(player, hand, target.blockPosition(), null);
             this.target = target;
         }
 
@@ -157,7 +157,7 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         public RightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, BlockRayTraceResult hitVec) {
-            super(player, hand, pos, hitVec.getFace());
+            super(player, hand, pos, hitVec.getDirection());
             this.hitVec = hitVec;
         }
 
@@ -230,7 +230,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public RightClickItem(PlayerEntity player, Hand hand)
         {
-            super(player, hand, player.getPosition(), null);
+            super(player, hand, player.blockPosition(), null);
         }
     }
 
@@ -243,7 +243,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public RightClickEmpty(PlayerEntity player, Hand hand)
         {
-            super(player, hand, player.getPosition(), null);
+            super(player, hand, player.blockPosition(), null);
         }
     }
 
@@ -317,7 +317,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public LeftClickEmpty(PlayerEntity player)
         {
-            super(player, Hand.MAIN_HAND, player.getPosition(), null);
+            super(player, Hand.MAIN_HAND, player.blockPosition(), null);
         }
     }
 
@@ -336,7 +336,7 @@ public class PlayerInteractEvent extends PlayerEvent
     @Nonnull
     public ItemStack getItemStack()
     {
-        return getPlayer().getHeldItem(hand);
+        return getPlayer().getItemInHand(hand);
     }
 
     /**
@@ -366,7 +366,7 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public World getWorld()
     {
-        return getPlayer().getEntityWorld();
+        return getPlayer().getCommandSenderWorld();
     }
 
     /**
@@ -374,7 +374,7 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public LogicalSide getSide()
     {
-        return getWorld().isRemote ? LogicalSide.CLIENT : LogicalSide.SERVER;
+        return getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER;
     }
 
     /**

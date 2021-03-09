@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/particle/Particle.java
 +++ b/net/minecraft/client/particle/Particle.java
-@@ -208,4 +208,12 @@
+@@ -208,4 +_,12 @@
     public void func_187108_a(AxisAlignedBB p_187108_1_) {
        this.field_187120_G = p_187108_1_;
     }

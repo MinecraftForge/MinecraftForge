@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/client/CCustomPayloadPacket.java
 +++ b/net/minecraft/network/play/client/CCustomPayloadPacket.java
-@@ -9,7 +9,7 @@
+@@ -9,7 +_,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -9,7 +9,7 @@
     public static final ResourceLocation field_210344_a = new ResourceLocation("brand");
     private ResourceLocation field_149562_a;
     private PacketBuffer field_149561_c;
-@@ -35,7 +35,7 @@
+@@ -35,7 +_,7 @@
  
     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
        p_148840_1_.func_192572_a(this.field_149562_a);

@@ -41,17 +41,17 @@ public class TRSRTransformer extends VertexTransformer
             case POSITION:
                 Vector4f pos = new Vector4f(data[0], data[1], data[2], data[3]);
                 transform.transformPosition(pos);
-                data[0] = pos.getX();
-                data[1] = pos.getY();
-                data[2] = pos.getZ();
-                data[3] = pos.getW();
+                data[0] = pos.x();
+                data[1] = pos.y();
+                data[2] = pos.z();
+                data[3] = pos.w();
                 break;
             case NORMAL:
                 Vector3f normal = new Vector3f(data);
                 transform.transformNormal(normal);
-                data[0] = normal.getX();
-                data[1] = normal.getY();
-                data[2] = normal.getZ();
+                data[0] = normal.x();
+                data[1] = normal.y();
+                data[2] = normal.z();
                 break;
         }
         super.put(element, data);

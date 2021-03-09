@@ -132,7 +132,7 @@ public class FluidAttributes
 
     protected FluidAttributes(Builder builder, Fluid fluid)
     {
-        this.translationKey = builder.translationKey != null ? builder.translationKey :  Util.makeTranslationKey("fluid", fluid.getRegistryName());
+        this.translationKey = builder.translationKey != null ? builder.translationKey :  Util.makeDescriptionId("fluid", fluid.getRegistryName());
         this.stillTexture = builder.stillTexture;
         this.flowingTexture = builder.flowingTexture;
         this.overlayTexture = builder.overlayTexture;
@@ -149,17 +149,17 @@ public class FluidAttributes
 
     public ItemStack getBucket(FluidStack stack)
     {
-        return new ItemStack(stack.getFluid().getFilledBucket());
+        return new ItemStack(stack.getFluid().getBucket());
     }
 
     public BlockState getBlock(IBlockDisplayReader reader, BlockPos pos, FluidState state)
     {
-        return state.getBlockState();
+        return state.createLegacyBlock();
     }
 
     public FluidState getStateForPlacement(IBlockDisplayReader reader, BlockPos pos, FluidStack state)
     {
-        return state.getFluid().getDefaultState();
+        return state.getFluid().defaultFluidState();
     }
 
     public final boolean canBePlacedInWorld(IBlockDisplayReader reader, BlockPos pos, FluidState state)
@@ -206,11 +206,11 @@ public class FluidAttributes
      */
     public void vaporize(@Nullable PlayerEntity player, World worldIn, BlockPos pos, FluidStack fluidStack)
     {
-        worldIn.playSound(player, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (worldIn.rand.nextFloat() - worldIn.rand.nextFloat()) * 0.8F);
+        worldIn.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (worldIn.random.nextFloat() - worldIn.random.nextFloat()) * 0.8F);
 
         for (int l = 0; l < 8; ++l)
         {
-            worldIn.addOptionalParticle(ParticleTypes.LARGE_SMOKE, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
+            worldIn.addAlwaysVisibleParticle(ParticleTypes.LARGE_SMOKE, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
         }
     }
 
@@ -443,7 +443,7 @@ public class FluidAttributes
         @Override
         public int getColor(IBlockDisplayReader world, BlockPos pos)
         {
-            return BiomeColors.getWaterColor(world, pos) | 0xFF000000;
+            return BiomeColors.getAverageWaterColor(world, pos) | 0xFF000000;
         }
 
         public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {

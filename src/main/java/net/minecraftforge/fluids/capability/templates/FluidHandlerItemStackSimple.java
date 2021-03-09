@@ -32,6 +32,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 /**
  * FluidHandlerItemStackSimple is a template capability provider for ItemStacks.
  * Data is stored directly in the vanilla NBT, in the same way as the old ItemFluidContainer.
@@ -196,7 +198,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
      */
     protected void setContainerToEmpty()
     {
-        container.removeChildTag(FLUID_NBT_KEY);
+        container.removeTagKey(FLUID_NBT_KEY);
     }
 
     @Override

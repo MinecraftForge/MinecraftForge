@@ -57,7 +57,7 @@ public class VertexBufferConsumer implements IVertexConsumer
         switch (e)
         {
         case 0: // POSITION_3F
-            renderer.pos(d0, d1, d2);
+            renderer.vertex(d0, d1, d2);
             break;
         case 4: // NORMAL_3B
             renderer.normal(d0, d1, d2);
@@ -66,10 +66,10 @@ public class VertexBufferConsumer implements IVertexConsumer
             renderer.color(d0, d1, d2, d3);
             break;
         case 2: // TEX_2F
-            renderer.tex(d0, d1);
+            renderer.uv(d0, d1);
             break;
         case 3: // TEX_2SB
-            renderer.lightmap((int) (d0 * 0xF0), (int) (d1 * 0xF0));
+            renderer.uv2((int) (d0 * 0xF0), (int) (d1 * 0xF0));
             break;
         case 5: // PADDING_1B
             break;

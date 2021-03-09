@@ -48,6 +48,6 @@ public class PlayerGameModeEventTest
     public static void onClientPlayerChangeGameModeEvent(ClientPlayerChangeGameModeEvent event)
     {
         if (!ENABLE) return;
-        LOGGER.info("Client notified of changed game mode from '{}'. Current GameType: {}. New Game Type: {}", event.getInfo().getGameProfile(), event.getCurrentGameMode(), event.getNewGameMode());
+        LOGGER.info("Client notified of changed game mode from '{}'. Current GameType: {}. New Game Type: {}", event.getInfo().getProfile(), event.getCurrentGameMode(), event.getNewGameMode());
     }
 }

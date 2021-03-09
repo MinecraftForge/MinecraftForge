@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/network/ServerPinger.java
 +++ b/net/minecraft/client/network/ServerPinger.java
-@@ -116,6 +116,7 @@
+@@ -116,6 +_,7 @@
                    p_147224_2_.run();
                 }
  

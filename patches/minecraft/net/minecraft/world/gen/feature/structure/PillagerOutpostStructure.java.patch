@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/structure/PillagerOutpostStructure.java
 +++ b/net/minecraft/world/gen/feature/structure/PillagerOutpostStructure.java
-@@ -19,7 +19,8 @@
+@@ -19,7 +_,8 @@
        super(p_i231977_1_, 0, true, true);
     }
  

@@ -151,14 +151,14 @@ public class FluidStack
     {
         buf.writeRegistryId(getFluid());
         buf.writeVarInt(getAmount());
-        buf.writeCompoundTag(tag);
+        buf.writeNbt(tag);
     }
 
     public static FluidStack readFromPacket(PacketBuffer buf)
     {
         Fluid fluid = buf.readRegistryId();
         int amount = buf.readVarInt();
-        CompoundNBT tag = buf.readCompoundTag();
+        CompoundNBT tag = buf.readNbt();
         if (fluid == Fluids.EMPTY) return EMPTY;
         return new FluidStack(fluid, amount, tag);
     }

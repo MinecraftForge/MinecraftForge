@@ -37,12 +37,12 @@ public interface IForgeKeybinding
      */
     default boolean isActiveAndMatches(InputMappings.Input keyCode)
     {
-        return keyCode != InputMappings.INPUT_INVALID && keyCode.equals(getKey()) && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
+        return keyCode != InputMappings.UNKNOWN && keyCode.equals(getKey()) && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
     }
     
     default void setToDefault()
     {
-        setKeyModifierAndCode(getKeyModifierDefault(), getKeyBinding().getDefault());
+        setKeyModifierAndCode(getKeyModifierDefault(), getKeyBinding().getDefaultKey());
     }
 
     void setKeyConflictContext(IKeyConflictContext keyConflictContext);

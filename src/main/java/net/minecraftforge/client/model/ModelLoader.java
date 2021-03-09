@@ -113,7 +113,7 @@ public final class ModelLoader extends ModelBakery
         {
             try
             {
-                missingModel = getUnbakedModel(MODEL_MISSING);
+                missingModel = getModel(MISSING_MODEL_LOCATION);
             }
             catch(Exception e)
             {
@@ -130,7 +130,7 @@ public final class ModelLoader extends ModelBakery
     {
         try
         {
-            return getUnbakedModel(location);
+            return getModel(location);
         }
         catch(Exception e)
         {
@@ -145,7 +145,7 @@ public final class ModelLoader extends ModelBakery
     {
         try
         {
-            return getUnbakedModel(location);
+            return getModel(location);
         }
         catch(Exception e)
         {
@@ -163,7 +163,7 @@ public final class ModelLoader extends ModelBakery
         {
             if (instance == null)
             {
-                instance = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, LOCATION).getSprite();
+                instance = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, LOCATION).sprite();
             }
             return instance;
         }
@@ -230,7 +230,7 @@ public final class ModelLoader extends ModelBakery
      */
     public void onPostBakeEvent(Map<ResourceLocation, IBakedModel> modelRegistry)
     {
-        IBakedModel missingModel = modelRegistry.get(MODEL_MISSING);
+        IBakedModel missingModel = modelRegistry.get(MISSING_MODEL_LOCATION);
         for(Map.Entry<ResourceLocation, Exception> entry : loadingExceptions.entrySet())
         {
             // ignoring pure ResourceLocation arguments, all things we care about pass ModelResourceLocation
@@ -265,7 +265,7 @@ public final class ModelLoader extends ModelBakery
      */
     public static Function<RenderMaterial, TextureAtlasSprite> defaultTextureGetter()
     {
-        return RenderMaterial::getSprite;
+        return RenderMaterial::sprite;
     }
 
     public static Function<ResourceLocation, IUnbakedModel> defaultModelGetter()

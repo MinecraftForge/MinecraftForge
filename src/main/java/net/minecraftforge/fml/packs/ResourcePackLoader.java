@@ -111,7 +111,7 @@ public class ResourcePackLoader
         }
 
         @Override
-        public void findPacks(Consumer<ResourcePackInfo> consumer, IFactory factory)
+        public void loadPacks(Consumer<ResourcePackInfo> consumer, IFactory factory)
         {
             wrapped.addPackInfos(consumer, factory);
         }

@@ -61,7 +61,7 @@ public class PacketDispatcher {
 
         private void dispatchPacket(final ResourceLocation resourceLocation, final PacketBuffer buffer) {
             final ICustomPacket<?> packet = this.customPacketSupplier.apply(Pair.of(buffer, packetIndex), resourceLocation);
-            this.manager.sendPacket(packet.getThis());
+            this.manager.send(packet.getThis());
         }
     }
 }

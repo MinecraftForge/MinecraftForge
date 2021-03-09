@@ -30,9 +30,9 @@ public class CommandModList {
     static ArgumentBuilder<CommandSource, ?> register()
     {
         return Commands.literal("mods")
-                .requires(cs->cs.hasPermissionLevel(0)) //permission
+                .requires(cs->cs.hasPermission(0)) //permission
                 .executes(ctx -> {
-                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.mods.list",
+                            ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.mods.list",
                                     ModList.get().applyForEachModFile(modFile ->
                                             // locator - filename : firstmod (version) - numberofmods\n
                                             String.format("%s %s : %s (%s) - %d",

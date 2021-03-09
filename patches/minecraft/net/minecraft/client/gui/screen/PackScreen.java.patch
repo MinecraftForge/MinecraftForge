@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/PackScreen.java
 +++ b/net/minecraft/client/gui/screen/PackScreen.java
-@@ -129,7 +129,7 @@
+@@ -129,7 +_,7 @@
  
     private void func_238899_a_(net.minecraft.client.gui.widget.list.ResourcePackList p_238899_1_, Stream<PackLoadingManager.IPack> p_238899_2_) {
        p_238899_1_.func_231039_at__().clear();

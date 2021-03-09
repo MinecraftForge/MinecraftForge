@@ -40,11 +40,11 @@ public class FiniteWaterTest
         {
             BlockState state = event.getState();
             FluidState fluidState = state.getFluidState();
-            if (fluidState.getFluid().isEquivalentTo(Fluids.WATER))
+            if (fluidState.getType().isSame(Fluids.WATER))
             {
                 event.setResult(Event.Result.DENY);
             }
-            else if (fluidState.getFluid().isEquivalentTo(Fluids.LAVA))
+            else if (fluidState.getType().isSame(Fluids.LAVA))
             {
                 event.setResult(Event.Result.ALLOW);
             }

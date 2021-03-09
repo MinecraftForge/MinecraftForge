@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/MushroomBlock.java
 +++ b/net/minecraft/block/MushroomBlock.java
-@@ -64,7 +64,7 @@
+@@ -64,7 +_,7 @@
        if (blockstate.func_235714_a_(BlockTags.field_242171_aD)) {
           return true;
        } else {

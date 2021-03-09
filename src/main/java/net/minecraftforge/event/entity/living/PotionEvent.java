@@ -64,14 +64,14 @@ public class PotionEvent extends LivingEvent
         
         public PotionRemoveEvent(LivingEntity living, Effect potion)
         {
-            super(living, living.getActivePotionEffect(potion));
+            super(living, living.getEffect(potion));
             this.potion = potion;
         }
         
         public PotionRemoveEvent(LivingEntity living, EffectInstance effect)
         {
             super(living, effect);
-            this.potion = effect.getPotion();            
+            this.potion = effect.getEffect();            
         }
         
         /**

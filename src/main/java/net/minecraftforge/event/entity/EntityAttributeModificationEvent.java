@@ -51,7 +51,7 @@ public class EntityAttributeModificationEvent extends Event implements IModBusEv
         this.entityAttributes = mapIn;
         this.entityTypes = ImmutableList.copyOf(
             ForgeRegistries.ENTITIES.getValues().stream()
-                .filter(GlobalEntityTypeAttributes::doesEntityHaveAttributes)
+                .filter(GlobalEntityTypeAttributes::hasSupplier)
                 .map(entityType -> (EntityType<? extends LivingEntity>) entityType)
                 .collect(Collectors.toList())
         );
@@ -61,7 +61,7 @@ public class EntityAttributeModificationEvent extends Event implements IModBusEv
     {
         AttributeModifierMap.MutableAttribute attributes = entityAttributes.computeIfAbsent(entityType,
                 (type) -> new AttributeModifierMap.MutableAttribute());
-        attributes.createMutableAttribute(attribute, value);
+        attributes.add(attribute, value);
     }
 
     public void add(EntityType<? extends LivingEntity> entityType, Attribute attribute)
@@ -71,7 +71,7 @@ public class EntityAttributeModificationEvent extends Event implements IModBusEv
 
     public boolean has(EntityType<? extends LivingEntity> entityType, Attribute attribute)
     {
-        AttributeModifierMap globalMap = GlobalEntityTypeAttributes.getAttributesForEntity(entityType);
+        AttributeModifierMap globalMap = GlobalEntityTypeAttributes.getSupplier(entityType);
         return globalMap.hasAttribute(attribute) || (entityAttributes.get(entityType) != null && entityAttributes.get(entityType).hasAttribute(attribute));
     }
 

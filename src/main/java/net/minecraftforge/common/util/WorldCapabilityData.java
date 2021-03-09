@@ -43,7 +43,7 @@ public class WorldCapabilityData extends WorldSavedData
     }
 
     @Override
-    public void read(CompoundNBT nbt)
+    public void load(CompoundNBT nbt)
     {
         this.capNBT = nbt;
         if (serializable != null)
@@ -54,7 +54,7 @@ public class WorldCapabilityData extends WorldSavedData
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT nbt)
+    public CompoundNBT save(CompoundNBT nbt)
     {
         if (serializable != null)
             nbt = serializable.serializeNBT();

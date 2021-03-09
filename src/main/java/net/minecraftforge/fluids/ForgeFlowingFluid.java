@@ -70,28 +70,28 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    public Fluid getFlowingFluid()
+    public Fluid getFlowing()
     {
         return flowing.get();
     }
 
     @Override
-    public Fluid getStillFluid()
+    public Fluid getSource()
     {
         return still.get();
     }
 
     @Override
-    protected boolean canSourcesMultiply()
+    protected boolean canConvertToSource()
     {
         return canMultiply;
     }
 
     @Override
-    protected void beforeReplacingBlock(IWorld worldIn, BlockPos pos, BlockState state)
+    protected void beforeDestroyingBlock(IWorld worldIn, BlockPos pos, BlockState state)
     {
-        TileEntity tileentity = state.getBlock().hasTileEntity(state) ? worldIn.getTileEntity(pos) : null;
-        Block.spawnDrops(state, worldIn, pos, tileentity);
+        TileEntity tileentity = state.getBlock().hasTileEntity(state) ? worldIn.getBlockEntity(pos) : null;
+        Block.dropResources(state, worldIn, pos, tileentity);
     }
 
     @Override
@@ -101,26 +101,26 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    protected int getLevelDecreasePerBlock(IWorldReader worldIn)
+    protected int getDropOff(IWorldReader worldIn)
     {
         return levelDecreasePerBlock;
     }
 
     @Override
-    public Item getFilledBucket()
+    public Item getBucket()
     {
         return bucket != null ? bucket.get() : Items.AIR;
     }
 
     @Override
-    protected boolean canDisplace(FluidState state, IBlockReader world, BlockPos pos, Fluid fluidIn, Direction direction)
+    protected boolean canBeReplacedWith(FluidState state, IBlockReader world, BlockPos pos, Fluid fluidIn, Direction direction)
     {
         // Based on the water implementation, may need to be overriden for mod fluids that shouldn't behave like water.
-        return direction == Direction.DOWN && !isEquivalentTo(fluidIn);
+        return direction == Direction.DOWN && !isSame(fluidIn);
     }
 
     @Override
-    public int getTickRate(IWorldReader world)
+    public int getTickDelay(IWorldReader world)
     {
         return tickRate;
     }
@@ -132,15 +132,15 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    protected BlockState getBlockState(FluidState state)
+    protected BlockState createLegacyBlock(FluidState state)
     {
         if (block != null)
-            return block.get().getDefaultState().with(FlowingFluidBlock.LEVEL, getLevelFromState(state));
-        return Blocks.AIR.getDefaultState();
+            return block.get().defaultBlockState().setValue(FlowingFluidBlock.LEVEL, getLegacyLevel(state));
+        return Blocks.AIR.defaultBlockState();
     }
 
     @Override
-    public boolean isEquivalentTo(Fluid fluidIn) {
+    public boolean isSame(Fluid fluidIn) {
         return fluidIn == still.get() || fluidIn == flowing.get();
     }
 
@@ -155,16 +155,16 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         public Flowing(Properties properties)
         {
             super(properties);
-            setDefaultState(getStateContainer().getBaseState().with(LEVEL_1_8, 7));
+            registerDefaultState(getStateDefinition().any().setValue(LEVEL, 7));
         }
 
-        protected void fillStateContainer(StateContainer.Builder<Fluid, FluidState> builder) {
-            super.fillStateContainer(builder);
-            builder.add(LEVEL_1_8);
+        protected void createFluidStateDefinition(StateContainer.Builder<Fluid, FluidState> builder) {
+            super.createFluidStateDefinition(builder);
+            builder.add(LEVEL);
         }
 
-        public int getLevel(FluidState state) {
-            return state.get(LEVEL_1_8);
+        public int getAmount(FluidState state) {
+            return state.getValue(LEVEL);
         }
 
         public boolean isSource(FluidState state) {
@@ -179,7 +179,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             super(properties);
         }
 
-        public int getLevel(FluidState state) {
+        public int getAmount(FluidState state) {
             return 8;
         }
 

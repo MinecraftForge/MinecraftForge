@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/piglin/StartAdmiringItemTask.java
 +++ b/net/minecraft/entity/monster/piglin/StartAdmiringItemTask.java
-@@ -13,7 +13,7 @@
+@@ -13,7 +_,7 @@
     }
  
     protected boolean func_212832_a_(ServerWorld p_212832_1_, E p_212832_2_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ItemGroup.java
 +++ b/net/minecraft/item/ItemGroup.java
-@@ -101,18 +101,23 @@
+@@ -101,18 +_,23 @@
     private final String field_78034_o;
     private final ITextComponent field_242391_q;
     private String field_199784_q;
@@ -26,7 +26,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -141,16 +146,29 @@
+@@ -141,16 +_,29 @@
     @OnlyIn(Dist.CLIENT)
     public abstract ItemStack func_78016_d();
  
@@ -56,7 +56,7 @@
     public ItemGroup func_199783_b(String p_199783_1_) {
        this.field_199784_q = p_199783_1_;
        return this;
-@@ -178,11 +196,13 @@
+@@ -178,11 +_,13 @@
  
     @OnlyIn(Dist.CLIENT)
     public int func_78020_k() {
@@ -70,10 +70,11 @@
        return this.field_78033_n < 6;
     }
  
-@@ -219,4 +239,59 @@
+@@ -218,5 +_,60 @@
+          item.func_150895_a(this, p_78018_1_);
        }
  
-    }
++   }
 +
 +   public int getTabPage() {
 +      return field_78033_n < 12 ? 0 : ((field_78033_n - 12) / 10) + 1;
@@ -128,5 +129,5 @@
 +      }
 +      field_78032_a[index] = newGroup;
 +      return index;
-+   }
+    }
  }

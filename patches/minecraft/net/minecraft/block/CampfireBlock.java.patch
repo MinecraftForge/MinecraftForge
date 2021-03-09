@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/CampfireBlock.java
 +++ b/net/minecraft/block/CampfireBlock.java
-@@ -181,7 +181,7 @@
+@@ -181,7 +_,7 @@
     public void func_220066_a(World p_220066_1_, BlockState p_220066_2_, BlockRayTraceResult p_220066_3_, ProjectileEntity p_220066_4_) {
        if (!p_220066_1_.field_72995_K && p_220066_4_.func_70027_ad()) {
           Entity entity = p_220066_4_.func_234616_v_();
@@ -9,7 +9,7 @@
           if (flag && !p_220066_2_.func_177229_b(field_220101_b) && !p_220066_2_.func_177229_b(field_220103_d)) {
              BlockPos blockpos = p_220066_3_.func_216350_a();
              p_220066_1_.func_180501_a(blockpos, p_220066_2_.func_206870_a(BlockStateProperties.field_208190_q, Boolean.valueOf(true)), 11);
-@@ -208,7 +208,7 @@
+@@ -208,7 +_,7 @@
              return true;
           }
  

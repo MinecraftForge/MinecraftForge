@@ -77,12 +77,12 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
     private static SEntityPropertiesPacket filterEntityProperties(SEntityPropertiesPacket msg)
     {
         SEntityPropertiesPacket newPacket = new SEntityPropertiesPacket(msg.getEntityId(), Collections.emptyList());
-        msg.getSnapshots().stream()
+        msg.getValues().stream()
                 .filter(snapshot -> {
-                    ResourceLocation key = ForgeRegistries.ATTRIBUTES.getKey(snapshot.func_240834_a_());
+                    ResourceLocation key = ForgeRegistries.ATTRIBUTES.getKey(snapshot.getAttribute());
                     return key != null && key.getNamespace().equals("minecraft");
                 })
-                .forEach(snapshot -> newPacket.getSnapshots().add(snapshot));
+                .forEach(snapshot -> newPacket.getValues().add(snapshot));
         return newPacket;
     }
 

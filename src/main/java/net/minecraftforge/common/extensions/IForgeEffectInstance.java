@@ -43,7 +43,7 @@ public interface IForgeEffectInstance {
      * @return true to display it (default), false to hide it.
      */
     default boolean shouldRender() {
-        return getEffectInstance().getPotion().shouldRender(getEffectInstance());
+        return getEffectInstance().getEffect().shouldRender(getEffectInstance());
     }
 
     /**
@@ -51,7 +51,7 @@ public interface IForgeEffectInstance {
      * @return true to draw the standard text
      */
     default boolean shouldRenderInvText() {
-        return getEffectInstance().getPotion().shouldRenderInvText(getEffectInstance());
+        return getEffectInstance().getEffect().shouldRenderInvText(getEffectInstance());
     }
 
     /**
@@ -59,7 +59,7 @@ public interface IForgeEffectInstance {
      * @return true to display it (default), false to hide it.
      */
     default boolean shouldRenderHUD() {
-        return getEffectInstance().getPotion().shouldRenderHUD(getEffectInstance());
+        return getEffectInstance().getEffect().shouldRenderHUD(getEffectInstance());
     }
 
     /**
@@ -74,7 +74,7 @@ public interface IForgeEffectInstance {
      */
     @OnlyIn(Dist.CLIENT)
     default void renderInventoryEffect(DisplayEffectsScreen<?> gui, MatrixStack mStack, int x, int y, float z) {
-        getEffectInstance().getPotion().renderInventoryEffect(getEffectInstance(), gui, mStack, x, y, z);
+        getEffectInstance().getEffect().renderInventoryEffect(getEffectInstance(), gui, mStack, x, y, z);
     }
 
     /**
@@ -90,7 +90,7 @@ public interface IForgeEffectInstance {
      */
     @OnlyIn(Dist.CLIENT)
     default void renderHUDEffect(AbstractGui gui, MatrixStack mStack, int x, int y, float z, float alpha) {
-        getEffectInstance().getPotion().renderHUDEffect(getEffectInstance(), gui, mStack, x, y, z, alpha);
+        getEffectInstance().getEffect().renderHUDEffect(getEffectInstance(), gui, mStack, x, y, z, alpha);
     }
 
     /***
@@ -107,7 +107,7 @@ public interface IForgeEffectInstance {
      * @return true if the given ItemStack is in the list of curative items for this PotionEffect, false otherwise
      */
     default boolean isCurativeItem(ItemStack stack) {
-       return this.getCurativeItems().stream().anyMatch(e -> e.isItemEqual(stack));
+       return this.getCurativeItems().stream().anyMatch(e -> e.sameItem(stack));
     }
 
     /***
@@ -127,7 +127,7 @@ public interface IForgeEffectInstance {
 
     default void writeCurativeItems(CompoundNBT nbt) {
        ListNBT list = new ListNBT();
-       getCurativeItems().forEach(s -> list.add(s.write(new CompoundNBT())));
+       getCurativeItems().forEach(s -> list.add(s.save(new CompoundNBT())));
        nbt.put("CurativeItems", list);
     }
 }

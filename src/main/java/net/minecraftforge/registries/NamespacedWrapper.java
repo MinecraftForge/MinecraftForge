@@ -50,7 +50,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public <V extends T> V register(int id, RegistryKey<T> key, V value, Lifecycle lifecycle)
+    public <V extends T> V registerMapping(int id, RegistryKey<T> key, V value, Lifecycle lifecycle)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
@@ -58,7 +58,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
         Validate.notNull(value);
 
         if (value.getRegistryName() == null)
-            value.setRegistryName(key.getLocation());
+            value.setRegistryName(key.location());
 
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
@@ -69,21 +69,21 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     @Override
     public <R extends T> R register(RegistryKey<T> key, R value, Lifecycle lifecycle)
     {
-        return register(-1, key, value, lifecycle);
+        return registerMapping(-1, key, value, lifecycle);
     }
 
     @Override
-    public <V extends T> V validateAndRegister(OptionalInt id, RegistryKey<T> key, V value, Lifecycle lifecycle) {
+    public <V extends T> V registerOrOverride(OptionalInt id, RegistryKey<T> key, V value, Lifecycle lifecycle) {
         int wanted = -1;
-        if (id.isPresent() && getByValue(id.getAsInt()) != null)
+        if (id.isPresent() && byId(id.getAsInt()) != null)
             wanted = id.getAsInt();
-        return register(wanted, key, value, lifecycle);
+        return registerMapping(wanted, key, value, lifecycle);
     }
 
     // Reading Functions
     @Override
     @Nullable
-    public T getOrDefault(@Nullable ResourceLocation name)
+    public T get(@Nullable ResourceLocation name)
     {
         return this.delegate.getRaw(name); //get without default
     }
@@ -96,9 +96,9 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
 
     @Override
     @Nullable
-    public T getValueForKey(@Nullable RegistryKey<T> name)
+    public T get(@Nullable RegistryKey<T> name)
     {
-        return name == null ? null : this.delegate.getRaw(name.getLocation()); //get without default
+        return name == null ? null : this.delegate.getRaw(name.location()); //get without default
     }
 
     @Override
@@ -122,7 +122,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
 
     @Override
     @Nullable
-    public T getByValue(int id)
+    public T byId(int id)
     {
         return this.delegate.getValue(id);
     }
@@ -140,7 +140,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public Set<Map.Entry<RegistryKey<T>, T>> getEntries()
+    public Set<Map.Entry<RegistryKey<T>, T>> entrySet()
     {
         return this.delegate.getEntries();
     }

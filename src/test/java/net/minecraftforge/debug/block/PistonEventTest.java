@@ -68,9 +68,9 @@ public class PistonEventTest
     private static DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static DeferredRegister<Item>  ITEMS  = DeferredRegister.create(ForgeRegistries.ITEMS,  MODID);
 
-    private static RegistryObject<Block> shiftOnMove = BLOCKS.register(blockName, () -> new Block(Block.Properties.create(Material.ROCK)));
+    private static RegistryObject<Block> shiftOnMove = BLOCKS.register(blockName, () -> new Block(Block.Properties.of(Material.STONE)));
     static {
-        ITEMS.register(blockName, () -> new BlockItem(shiftOnMove.get(), new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)));
+        ITEMS.register(blockName, () -> new BlockItem(shiftOnMove.get(), new Item.Properties().tab(ItemGroup.TAB_BUILDING_BLOCKS)));
     }
 
     public PistonEventTest()
@@ -89,28 +89,28 @@ public class PistonEventTest
             World world = (World) event.getWorld();
             PistonBlockStructureHelper pistonHelper = event.getStructureHelper();
             PlayerEntity player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
-            if (world.isRemote && player != null)
+            if (world.isClientSide && player != null)
             {
-                if (pistonHelper.canMove())
+                if (pistonHelper.resolve())
                 {
-                    player.sendMessage(new StringTextComponent(String.format("Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getBlocksToMove().size(), pistonHelper.getBlocksToDestroy().size())), player.getUniqueID());
+                    player.sendMessage(new StringTextComponent(String.format("Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getToPush().size(), pistonHelper.getToDestroy().size())), player.getUUID());
                 }
                 else
                 {
-                    player.sendMessage(new StringTextComponent("Piston won't extend"), player.getUniqueID());
+                    player.sendMessage(new StringTextComponent("Piston won't extend"), player.getUUID());
                 }
             }
 
-            if (pistonHelper.canMove())
+            if (pistonHelper.resolve())
             {
-                List<BlockPos> posList = pistonHelper.getBlocksToMove();
+                List<BlockPos> posList = pistonHelper.getToPush();
                 for (BlockPos newPos : posList)
                 {
                     BlockState state = event.getWorld().getBlockState(newPos);
                     if (state.getBlock() == Blocks.BLACK_WOOL)
                     {
-                        Block.spawnDrops(state, world, newPos);
-                        world.setBlockState(newPos, Blocks.AIR.getDefaultState());
+                        Block.dropResources(state, world, newPos);
+                        world.setBlockAndUpdate(newPos, Blocks.AIR.defaultBlockState());
                     }
                 }
             }
@@ -119,8 +119,8 @@ public class PistonEventTest
             BlockPos pushedBlockPos = event.getFaceOffsetPos();
             if (world.getBlockState(pushedBlockPos).getBlock() == shiftOnMove.get() && event.getDirection() != Direction.DOWN)
             {
-                world.setBlockState(pushedBlockPos, Blocks.AIR.getDefaultState());
-                world.setBlockState(pushedBlockPos.up(), shiftOnMove.get().getDefaultState());
+                world.setBlockAndUpdate(pushedBlockPos, Blocks.AIR.defaultBlockState());
+                world.setBlockAndUpdate(pushedBlockPos.above(), shiftOnMove.get().defaultBlockState());
             }
 
             // Block pushing cobblestone (directly, indirectly works)
@@ -131,22 +131,22 @@ public class PistonEventTest
             boolean isSticky = event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.STICKY_PISTON;
 
             PlayerEntity player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
-            if (event.getWorld().isRemote() && player != null)
+            if (event.getWorld().isClientSide() && player != null)
             {
                 if (isSticky)
                 {
-                    BlockPos targetPos = event.getFaceOffsetPos().offset(event.getDirection());
-                    boolean canPush = PistonBlock.canPush(event.getWorld().getBlockState(targetPos), (World) event.getWorld(), event.getFaceOffsetPos(), event.getDirection().getOpposite(), false, event.getDirection());
-                    boolean isAir = event.getWorld().isAirBlock(targetPos);
-                    player.sendMessage(new StringTextComponent(String.format("Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)), player.getUniqueID());
+                    BlockPos targetPos = event.getFaceOffsetPos().relative(event.getDirection());
+                    boolean canPush = PistonBlock.isPushable(event.getWorld().getBlockState(targetPos), (World) event.getWorld(), event.getFaceOffsetPos(), event.getDirection().getOpposite(), false, event.getDirection());
+                    boolean isAir = event.getWorld().isEmptyBlock(targetPos);
+                    player.sendMessage(new StringTextComponent(String.format("Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)), player.getUUID());
                 }
                 else
                 {
-                    player.sendMessage(new StringTextComponent("Piston will retract"), player.getUniqueID());
+                    player.sendMessage(new StringTextComponent("Piston will retract"), player.getUUID());
                 }
             }
             // Offset twice to see if retraction will pull cobblestone
-            event.setCanceled(event.getWorld().getBlockState(event.getFaceOffsetPos().offset(event.getDirection())).getBlock() == Blocks.COBBLESTONE && isSticky);
+            event.setCanceled(event.getWorld().getBlockState(event.getFaceOffsetPos().relative(event.getDirection())).getBlock() == Blocks.COBBLESTONE && isSticky);
         }
     }
 

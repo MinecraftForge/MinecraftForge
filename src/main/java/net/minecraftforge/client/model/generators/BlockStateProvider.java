@@ -101,7 +101,7 @@ public abstract class BlockStateProvider implements IDataProvider {
     }
 
     @Override
-    public void act(DirectoryCache cache) throws IOException {
+    public void run(DirectoryCache cache) throws IOException {
         models().clear();
         itemModels().clear();
         registeredBlocks.clear();
@@ -241,7 +241,7 @@ public abstract class BlockStateProvider implements IDataProvider {
         getVariantBuilder(block)
             .forAllStates(state -> ConfiguredModel.builder()
                     .modelFile(modelFunc.apply(state))
-                    .rotationY(((int) state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalAngle() + angleOffset) % 360)
+                    .rotationY(((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + angleOffset) % 360)
                     .build()
             );
     }
@@ -262,8 +262,8 @@ public abstract class BlockStateProvider implements IDataProvider {
         getVariantBuilder(block)
             .forAllStates(state -> ConfiguredModel.builder()
                     .modelFile(modelFunc.apply(state))
-                    .rotationX(state.get(BlockStateProperties.FACE).ordinal() * 90)
-                    .rotationY((((int) state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalAngle() + angleOffset) + (state.get(BlockStateProperties.FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
+                    .rotationX(state.getValue(BlockStateProperties.ATTACH_FACE).ordinal() * 90)
+                    .rotationY((((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + angleOffset) + (state.getValue(BlockStateProperties.ATTACH_FACE) == AttachFace.CEILING ? 180 : 0)) % 360)
                     .build()
             );
     }
@@ -283,11 +283,11 @@ public abstract class BlockStateProvider implements IDataProvider {
     public void directionalBlock(Block block, Function<BlockState, ModelFile> modelFunc, int angleOffset) {
         getVariantBuilder(block)
             .forAllStates(state -> {
-                Direction dir = state.get(BlockStateProperties.FACING);
+                Direction dir = state.getValue(BlockStateProperties.FACING);
                 return ConfiguredModel.builder()
                     .modelFile(modelFunc.apply(state))
                     .rotationX(dir == Direction.DOWN ? 180 : dir.getAxis().isHorizontal() ? 90 : 0)
-                    .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.getHorizontalAngle()) + angleOffset) % 360)
+                    .rotationY(dir.getAxis().isVertical() ? 0 : (((int) dir.toYRot()) + angleOffset) % 360)
                     .build();
             });
     }
@@ -318,10 +318,10 @@ public abstract class BlockStateProvider implements IDataProvider {
     public void stairsBlock(StairsBlock block, ModelFile stairs, ModelFile stairsInner, ModelFile stairsOuter) {
         getVariantBuilder(block)
             .forAllStatesExcept(state -> {
-               Direction facing = state.get(StairsBlock.FACING);
-               Half half = state.get(StairsBlock.HALF);
-               StairsShape shape = state.get(StairsBlock.SHAPE);
-               int yRot = (int) facing.rotateY().getHorizontalAngle(); // Stairs model is rotated 90 degrees clockwise for some reason
+               Direction facing = state.getValue(StairsBlock.FACING);
+               Half half = state.getValue(StairsBlock.HALF);
+               StairsShape shape = state.getValue(StairsBlock.SHAPE);
+               int yRot = (int) facing.getClockWise().toYRot(); // Stairs model is rotated 90 degrees clockwise for some reason
                if (shape == StairsShape.INNER_LEFT || shape == StairsShape.OUTER_LEFT) {
                    yRot += 270; // Left facing stairs are rotated 90 degrees clockwise
                }
@@ -361,10 +361,10 @@ public abstract class BlockStateProvider implements IDataProvider {
     }
 
     public void fourWayMultipart(MultiPartBlockStateBuilder builder, ModelFile side) {
-        SixWayBlock.FACING_TO_PROPERTY_MAP.entrySet().forEach(e -> {
+        SixWayBlock.PROPERTY_BY_DIRECTION.entrySet().forEach(e -> {
             Direction dir = e.getKey();
             if (dir.getAxis().isHorizontal()) {
-                builder.part().modelFile(side).rotationY((((int) dir.getHorizontalAngle()) + 180) % 360).uvLock(true).addModel()
+                builder.part().modelFile(side).rotationY((((int) dir.toYRot()) + 180) % 360).uvLock(true).addModel()
                     .condition(e.getValue(), true);
             }
         });
@@ -398,15 +398,15 @@ public abstract class BlockStateProvider implements IDataProvider {
     public void fenceGateBlock(FenceGateBlock block, ModelFile gate, ModelFile gateOpen, ModelFile gateWall, ModelFile gateWallOpen) {
         getVariantBuilder(block).forAllStatesExcept(state -> {
             ModelFile model = gate;
-            if (state.get(FenceGateBlock.IN_WALL)) {
+            if (state.getValue(FenceGateBlock.IN_WALL)) {
                 model = gateWall;
             }
-            if (state.get(FenceGateBlock.OPEN)) {
+            if (state.getValue(FenceGateBlock.OPEN)) {
                 model = model == gateWall ? gateWallOpen : gateOpen;
             }
             return ConfiguredModel.builder()
                     .modelFile(model)
-                    .rotationY((int) state.get(FenceGateBlock.HORIZONTAL_FACING).getHorizontalAngle())
+                    .rotationY((int) state.getValue(FenceGateBlock.FACING).toYRot())
                     .uvLock(true)
                     .build();
         }, FenceGateBlock.POWERED);
@@ -425,10 +425,10 @@ public abstract class BlockStateProvider implements IDataProvider {
     }
     
     public static final ImmutableMap<Direction, Property<WallHeight>> WALL_PROPS = ImmutableMap.<Direction, Property<WallHeight>>builder()
-    		.put(Direction.EAST,  BlockStateProperties.WALL_HEIGHT_EAST)
-    		.put(Direction.NORTH, BlockStateProperties.WALL_HEIGHT_NORTH)
-    		.put(Direction.SOUTH, BlockStateProperties.WALL_HEIGHT_SOUTH)
-    		.put(Direction.WEST,  BlockStateProperties.WALL_HEIGHT_WEST)
+    		.put(Direction.EAST,  BlockStateProperties.EAST_WALL)
+    		.put(Direction.NORTH, BlockStateProperties.NORTH_WALL)
+    		.put(Direction.SOUTH, BlockStateProperties.SOUTH_WALL)
+    		.put(Direction.WEST,  BlockStateProperties.WEST_WALL)
     		.build();
 
     public void wallBlock(WallBlock block, ModelFile post, ModelFile side, ModelFile sideTall) {
@@ -446,7 +446,7 @@ public abstract class BlockStateProvider implements IDataProvider {
     private void wallSidePart(MultiPartBlockStateBuilder builder, ModelFile model, Map.Entry<Direction, Property<WallHeight>> entry, WallHeight height) {
         builder.part()
         	.modelFile(model)
-        		.rotationY((((int) entry.getKey().getHorizontalAngle()) + 180) % 360)
+        		.rotationY((((int) entry.getKey().toYRot()) + 180) % 360)
         		.uvLock(true)
         		.addModel()
     		.condition(entry.getValue(), height);
@@ -472,7 +472,7 @@ public abstract class BlockStateProvider implements IDataProvider {
     public void paneBlock(PaneBlock block, ModelFile post, ModelFile side, ModelFile sideAlt, ModelFile noSide, ModelFile noSideAlt) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel().end();
-        SixWayBlock.FACING_TO_PROPERTY_MAP.entrySet().forEach(e -> {
+        SixWayBlock.PROPERTY_BY_DIRECTION.entrySet().forEach(e -> {
             Direction dir = e.getKey();
             if (dir.getAxis().isHorizontal()) {
                 boolean alt = dir == Direction.SOUTH;
@@ -502,9 +502,9 @@ public abstract class BlockStateProvider implements IDataProvider {
 
     public void doorBlock(DoorBlock block, ModelFile bottomLeft, ModelFile bottomRight, ModelFile topLeft, ModelFile topRight) {
         getVariantBuilder(block).forAllStatesExcept(state -> {
-            int yRot = ((int) state.get(DoorBlock.FACING).getHorizontalAngle()) + 90;
-            boolean rh = state.get(DoorBlock.HINGE) == DoorHingeSide.RIGHT;
-            boolean open = state.get(DoorBlock.OPEN);
+            int yRot = ((int) state.getValue(DoorBlock.FACING).toYRot()) + 90;
+            boolean rh = state.getValue(DoorBlock.HINGE) == DoorHingeSide.RIGHT;
+            boolean open = state.getValue(DoorBlock.OPEN);
             boolean right = rh ^ open;
             if (open) {
                 yRot += 90;
@@ -513,7 +513,7 @@ public abstract class BlockStateProvider implements IDataProvider {
                 yRot += 180;
             }
             yRot %= 360;
-            return ConfiguredModel.builder().modelFile(state.get(DoorBlock.HALF) == DoubleBlockHalf.LOWER ? (right ? bottomRight : bottomLeft) : (right ? topRight : topLeft))
+            return ConfiguredModel.builder().modelFile(state.getValue(DoorBlock.HALF) == DoubleBlockHalf.LOWER ? (right ? bottomRight : bottomLeft) : (right ? topRight : topLeft))
                     .rotationY(yRot)
                     .build();
         }, DoorBlock.POWERED);
@@ -537,9 +537,9 @@ public abstract class BlockStateProvider implements IDataProvider {
     public void trapdoorBlock(TrapDoorBlock block, ModelFile bottom, ModelFile top, ModelFile open, boolean orientable) {
         getVariantBuilder(block).forAllStatesExcept(state -> {
             int xRot = 0;
-            int yRot = ((int) state.get(TrapDoorBlock.HORIZONTAL_FACING).getHorizontalAngle()) + 180;
-            boolean isOpen = state.get(TrapDoorBlock.OPEN);
-            if (orientable && isOpen && state.get(TrapDoorBlock.HALF) == Half.TOP) {
+            int yRot = ((int) state.getValue(TrapDoorBlock.FACING).toYRot()) + 180;
+            boolean isOpen = state.getValue(TrapDoorBlock.OPEN);
+            if (orientable && isOpen && state.getValue(TrapDoorBlock.HALF) == Half.TOP) {
                 xRot += 180;
                 yRot += 180;
             }
@@ -547,7 +547,7 @@ public abstract class BlockStateProvider implements IDataProvider {
                 yRot = 0;
             }
             yRot %= 360;
-            return ConfiguredModel.builder().modelFile(isOpen ? open : state.get(TrapDoorBlock.HALF) == Half.TOP ? top : bottom)
+            return ConfiguredModel.builder().modelFile(isOpen ? open : state.getValue(TrapDoorBlock.HALF) == Half.TOP ? top : bottom)
                     .rotationX(xRot)
                     .rotationY(yRot)
                     .build();

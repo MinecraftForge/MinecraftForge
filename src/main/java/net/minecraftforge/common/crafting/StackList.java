@@ -37,7 +37,7 @@ public class StackList implements IItemList
     }
 
     @Override
-    public Collection<ItemStack> getStacks()
+    public Collection<ItemStack> getItems()
     {
         return items;
     }

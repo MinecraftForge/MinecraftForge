@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/Slot.java
 +++ b/net/minecraft/inventory/container/Slot.java
-@@ -77,7 +77,7 @@
+@@ -77,7 +_,7 @@
     @Nullable
     @OnlyIn(Dist.CLIENT)
     public Pair<ResourceLocation, ResourceLocation> func_225517_c_() {
@@ -9,10 +9,11 @@
     }
  
     public ItemStack func_75209_a(int p_75209_1_) {
-@@ -92,4 +92,36 @@
+@@ -91,5 +_,37 @@
+    @OnlyIn(Dist.CLIENT)
     public boolean func_111238_b() {
        return true;
-    }
++   }
 +
 +   /**
 +    * Retrieves the index in the inventory for this slot, this value should typically not
@@ -44,5 +45,5 @@
 +   public Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
 +       this.backgroundPair = Pair.of(atlas, sprite);
 +       return this;
-+   }
+    }
  }

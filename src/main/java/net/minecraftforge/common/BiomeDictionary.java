@@ -372,7 +372,7 @@ public class BiomeDictionary
             Type.byName.forEach((name, type) ->
                 buf.append("    ").append(type.name).append(": ")
                 .append(type.biomes.stream()
-                    .map(RegistryKey::getLocation)
+                    .map(RegistryKey::location)
                     .sorted((a,b) -> a.compareNamespaced(b))
                     .map(Object::toString)
                     .collect(Collectors.joining(", "))
@@ -382,7 +382,7 @@ public class BiomeDictionary
 
             boolean missing = false;
             List<RegistryKey<Biome>> all = StreamSupport.stream(ForgeRegistries.BIOMES.spliterator(), false)
-                .map(b -> RegistryKey.getOrCreateKey(Registry.BIOME_KEY, b.getRegistryName()))
+                .map(b -> RegistryKey.create(Registry.BIOME_REGISTRY, b.getRegistryName()))
                 .sorted().collect(Collectors.toList());
 
             for (RegistryKey<Biome> key : all) {
@@ -391,7 +391,7 @@ public class BiomeDictionary
                         buf.append("Missing:\n");
                         missing = true;
                     }
-                    buf.append("    ").append(key.getLocation()).append('\n');
+                    buf.append("    ").append(key.location()).append('\n');
                 }
             }
             LOGGER.debug(buf.toString());

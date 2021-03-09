@@ -55,7 +55,7 @@ public class ConditionalAdvancement
      */
     @Nullable
     public static JsonObject processConditional(JsonObject json) {
-        JsonArray entries = JSONUtils.getJsonArray(json, "advancements", null);
+        JsonArray entries = JSONUtils.getAsJsonArray(json, "advancements", null);
         if (entries == null)
         {
             return CraftingHelper.processConditions(json, "conditions") ? json : null;
@@ -66,8 +66,8 @@ public class ConditionalAdvancement
         {
             if (!ele.isJsonObject())
                 throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
-            if (CraftingHelper.processConditions(JSONUtils.getJsonArray(ele.getAsJsonObject(), "conditions")))
-                return JSONUtils.getJsonObject(ele.getAsJsonObject(), "advancement");
+            if (CraftingHelper.processConditions(JSONUtils.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+                return JSONUtils.getAsJsonObject(ele.getAsJsonObject(), "advancement");
             idx++;
         }
         return null;
@@ -99,12 +99,12 @@ public class ConditionalAdvancement
 
         public Builder addAdvancement(Advancement.Builder advancement)
         {
-            return addAdvancement(advancement::serialize);
+            return addAdvancement(advancement::serializeToJson);
         }
 
         public Builder addAdvancement(IFinishedRecipe fromRecipe)
         {
-            return addAdvancement(fromRecipe::getAdvancementJson);
+            return addAdvancement(fromRecipe::serializeAdvancement);
         }
 
         private Builder addAdvancement(Supplier<JsonElement> jsonSupplier)

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ShearsItem.java
 +++ b/net/minecraft/item/ShearsItem.java
-@@ -34,4 +34,25 @@
+@@ -34,4 +_,25 @@
           return 15.0F;
        }
     }

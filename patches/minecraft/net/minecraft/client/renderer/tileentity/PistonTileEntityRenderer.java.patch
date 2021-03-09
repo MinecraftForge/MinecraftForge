@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/tileentity/PistonTileEntityRenderer.java
 +++ b/net/minecraft/client/renderer/tileentity/PistonTileEntityRenderer.java
-@@ -61,8 +61,11 @@
+@@ -61,8 +_,11 @@
     }
  
     private void func_228876_a_(BlockPos p_228876_1_, BlockState p_228876_2_, MatrixStack p_228876_3_, IRenderTypeBuffer p_228876_4_, World p_228876_5_, boolean p_228876_6_, int p_228876_7_) {

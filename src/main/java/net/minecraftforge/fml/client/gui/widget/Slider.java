@@ -27,6 +27,8 @@ import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.gui.widget.button.Button.IPressable;
+
 /**
  * This class is blatantly stolen from iChunUtils with permission.
  *
@@ -82,7 +84,7 @@ public class Slider extends ExtendedButton
             precision = 0;
         }
 
-        setMessage(new StringTextComponent("").append(dispString).appendString(val).append(suffix));
+        setMessage(new StringTextComponent("").append(dispString).append(val).append(suffix));
 
         drawString = drawStr;
         if(!drawString)
@@ -176,7 +178,7 @@ public class Slider extends ExtendedButton
 
         if(drawString)
         {
-            setMessage(new StringTextComponent("").append(dispString).appendString(val).append(suffix));
+            setMessage(new StringTextComponent("").append(dispString).append(val).append(suffix));
         }
 
         if (parent != null)

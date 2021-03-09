@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/ExperienceOrbEntity.java
 +++ b/net/minecraft/entity/item/ExperienceOrbEntity.java
-@@ -98,7 +98,8 @@
+@@ -98,7 +_,8 @@
        this.func_213315_a(MoverType.SELF, this.func_213322_ci());
        float f = 0.98F;
        if (this.field_70122_E) {
@@ -10,7 +10,7 @@
        }
  
        this.func_213317_d(this.func_213322_ci().func_216372_d((double)f, 0.98D, (double)f));
-@@ -123,6 +124,7 @@
+@@ -123,6 +_,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -18,7 +18,7 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else {
-@@ -151,13 +153,14 @@
+@@ -151,13 +_,14 @@
     public void func_70100_b_(PlayerEntity p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
           if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0) {

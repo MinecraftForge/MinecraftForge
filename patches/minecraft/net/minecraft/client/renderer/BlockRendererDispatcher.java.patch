@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/BlockRendererDispatcher.java
 +++ b/net/minecraft/client/renderer/BlockRendererDispatcher.java
-@@ -33,7 +33,7 @@
+@@ -33,7 +_,7 @@
     public BlockRendererDispatcher(BlockModelShapes p_i46577_1_, BlockColors p_i46577_2_) {
        this.field_175028_a = p_i46577_1_;
        this.field_228790_e_ = p_i46577_2_;
@@ -9,7 +9,7 @@
        this.field_175025_e = new FluidBlockRenderer();
     }
  
-@@ -41,22 +41,30 @@
+@@ -41,22 +_,30 @@
        return this.field_175028_a;
     }
  
@@ -47,7 +47,7 @@
           throw new ReportedException(crashreport);
        }
     }
-@@ -80,7 +88,11 @@
+@@ -80,7 +_,11 @@
        return this.field_175028_a.func_178125_b(p_184389_1_);
     }
  
@@ -59,7 +59,7 @@
        BlockRenderType blockrendertype = p_228791_1_.func_185901_i();
        if (blockrendertype != BlockRenderType.INVISIBLE) {
           switch(blockrendertype) {
-@@ -90,10 +102,11 @@
+@@ -90,10 +_,11 @@
              float f = (float)(i >> 16 & 255) / 255.0F;
              float f1 = (float)(i >> 8 & 255) / 255.0F;
              float f2 = (float)(i & 255) / 255.0F;
@@ -73,13 +73,14 @@
           }
  
        }
-@@ -102,4 +115,9 @@
+@@ -101,5 +_,10 @@
+ 
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175025_e.func_178268_a();
-    }
++   }
 +
 +   @Override
 +   public net.minecraftforge.resource.IResourceType getResourceType() {
 +      return net.minecraftforge.resource.VanillaResourceType.MODELS;
-+   }
+    }
  }

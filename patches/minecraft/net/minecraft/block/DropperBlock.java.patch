@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/DropperBlock.java
 +++ b/net/minecraft/block/DropperBlock.java
-@@ -37,7 +37,7 @@
+@@ -37,7 +_,7 @@
           p_176439_1_.func_217379_c(1001, p_176439_2_, 0);
        } else {
           ItemStack itemstack = dispensertileentity.func_70301_a(i);

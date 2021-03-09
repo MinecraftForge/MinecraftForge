@@ -34,7 +34,7 @@ public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
     protected boolean isNecessary(NetworkManager manager)
     {
         // not needed on local connections, because packets are not encoded to bytes there
-        return !manager.isLocalChannel() && !NetworkHooks.isVanillaConnection(manager);
+        return !manager.isMemoryConnection() && !NetworkHooks.isVanillaConnection(manager);
     }
 
     private static void splitPacket(IPacket<?> packet, List<? super IPacket<?>> out)

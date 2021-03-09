@@ -32,17 +32,17 @@ import net.minecraft.world.biome.MobSpawnInfo;
 public class MobSpawnInfoBuilder extends MobSpawnInfo.Builder
 {
     private final Set<EntityClassification> typesView = Collections.unmodifiableSet(this.spawners.keySet());
-    private final Set<EntityType<?>> costView = Collections.unmodifiableSet(this.spawnCosts.keySet());
+    private final Set<EntityType<?>> costView = Collections.unmodifiableSet(this.mobSpawnCosts.keySet());
 
     public MobSpawnInfoBuilder(MobSpawnInfo orig)
     {
         orig.getSpawnerTypes().forEach(k -> {
             spawners.get(k).clear();
-            spawners.get(k).addAll(new java.util.ArrayList<>(orig.getSpawners(k)));
+            spawners.get(k).addAll(new java.util.ArrayList<>(orig.getMobs(k)));
         });
-        orig.getEntityTypes().forEach(k -> spawnCosts.put(k, orig.getSpawnCost(k)));
-        creatureSpawnProbability = orig.getCreatureSpawnProbability();
-        validSpawnBiomeForPlayer = orig.isValidSpawnBiomeForPlayer();
+        orig.getEntityTypes().forEach(k -> mobSpawnCosts.put(k, orig.getMobSpawnCost(k)));
+        creatureGenerationProbability = orig.getCreatureProbability();
+        playerCanSpawn = orig.playerSpawnFriendly();
     }
 
     public Set<EntityClassification> getSpawnerTypes()
@@ -63,17 +63,17 @@ public class MobSpawnInfoBuilder extends MobSpawnInfo.Builder
     @Nullable
     public MobSpawnInfo.SpawnCosts getCost(EntityType<?> type)
     {
-        return this.spawnCosts.get(type);
+        return this.mobSpawnCosts.get(type);
     }
 
     public float getProbability()
     {
-        return this.creatureSpawnProbability;
+        return this.creatureGenerationProbability;
     }
 
     public MobSpawnInfoBuilder disablePlayerSpawn()
     {
-        this.validSpawnBiomeForPlayer = false;
+        this.playerCanSpawn = false;
         return this;
     }
 }

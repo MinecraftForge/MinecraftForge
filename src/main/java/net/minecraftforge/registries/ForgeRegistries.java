@@ -158,7 +158,7 @@ public class ForgeRegistries
 
         private static <T> RegistryKey<Registry<T>> key(String name)
         {
-            return RegistryKey.getOrCreateRootKey(new ResourceLocation(name));
+            return RegistryKey.createRegistryKey(new ResourceLocation(name));
         }
         private static void init() {}
     }
@@ -170,7 +170,7 @@ public class ForgeRegistries
     {
         Keys.init();
         GameData.init();
-        Bootstrap.register();
+        Bootstrap.bootStrap();
         Tags.init();
     }
 }

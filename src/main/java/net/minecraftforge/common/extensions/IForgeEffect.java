@@ -106,6 +106,6 @@ public interface IForgeEffect {
      * @return a value used to sort {@code PotionEffect}s in GUIs
      */
     default int getGuiSortColor(EffectInstance potionEffect) {
-       return getEffect().getLiquidColor();
+       return getEffect().getColor();
     }
 }

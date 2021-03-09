@@ -66,7 +66,7 @@ public class ModLoadedCondition implements ICondition
         @Override
         public ModLoadedCondition read(JsonObject json)
         {
-            return new ModLoadedCondition(JSONUtils.getString(json, "modid"));
+            return new ModLoadedCondition(JSONUtils.getAsString(json, "modid"));
         }
 
         @Override

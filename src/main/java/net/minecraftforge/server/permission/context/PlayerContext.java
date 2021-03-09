@@ -35,7 +35,7 @@ public class PlayerContext extends Context
     @Override
     public World getWorld()
     {
-        return player.getEntityWorld();
+        return player.getCommandSenderWorld();
     }
 
     @Override

@@ -99,11 +99,11 @@ public class JsonUtils
     @Nullable
     public static CompoundNBT readNBT(JsonObject json, String key)
     {
-        if (net.minecraft.util.JSONUtils.hasField(json, key))
+        if (net.minecraft.util.JSONUtils.isValidNode(json, key))
         {
             try
             {
-                return JsonToNBT.getTagFromJson(net.minecraft.util.JSONUtils.getString(json, key));
+                return JsonToNBT.parseTag(net.minecraft.util.JSONUtils.getAsString(json, key));
             } catch (CommandSyntaxException e)
             {
                 throw new JsonSyntaxException("Malformed NBT tag", e);

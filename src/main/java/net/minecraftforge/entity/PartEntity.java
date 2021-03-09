@@ -26,7 +26,7 @@ public abstract class PartEntity<T extends Entity> extends Entity {
     private final T parent;
 
     public PartEntity(T parent) {
-        super(parent.getType(), parent.world);
+        super(parent.getType(), parent.level);
         this.parent = parent;
     }
 
@@ -35,7 +35,7 @@ public abstract class PartEntity<T extends Entity> extends Entity {
     }
 
     @Override
-    public IPacket<?> createSpawnPacket() {
+    public IPacket<?> getAddEntityPacket() {
         throw new UnsupportedOperationException();
     }
 }

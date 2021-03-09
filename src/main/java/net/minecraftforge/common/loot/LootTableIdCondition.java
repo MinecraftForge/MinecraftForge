@@ -43,7 +43,7 @@ public class LootTableIdCondition implements ILootCondition
     }
 
     @Override
-    public LootConditionType func_230419_b_()
+    public LootConditionType getType()
     {
         return LOOT_TABLE_ID;
     }
@@ -87,7 +87,7 @@ public class LootTableIdCondition implements ILootCondition
         @Override
         public LootTableIdCondition deserialize(JsonObject object, JsonDeserializationContext ctx)
         {
-            return new LootTableIdCondition(new ResourceLocation(JSONUtils.getString(object, "loot_table_id")));
+            return new LootTableIdCondition(new ResourceLocation(JSONUtils.getAsString(object, "loot_table_id")));
         }
     }
 }

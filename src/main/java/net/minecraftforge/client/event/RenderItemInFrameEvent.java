@@ -47,7 +47,7 @@ public class RenderItemInFrameEvent extends Event
     public RenderItemInFrameEvent(ItemFrameEntity itemFrame, ItemFrameRenderer renderItemFrame, MatrixStack matrix,
                                   IRenderTypeBuffer buffers, int light)
     {
-        item = itemFrame.getDisplayedItem();
+        item = itemFrame.getItem();
         entityItemFrame = itemFrame;
         renderer = renderItemFrame;
         this.matrix = matrix;

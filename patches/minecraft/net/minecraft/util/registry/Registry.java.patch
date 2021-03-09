@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/registry/Registry.java
 +++ b/net/minecraft/util/registry/Registry.java
-@@ -94,6 +94,10 @@
+@@ -94,6 +_,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -11,7 +11,7 @@
  public abstract class Registry<T> implements Codec<T>, Keyable, IObjectIntIterable<T> {
     protected static final Logger field_212616_e = LogManager.getLogger();
     private static final Map<ResourceLocation, Supplier<?>> field_218376_a = Maps.newLinkedHashMap();
-@@ -133,43 +137,43 @@
+@@ -133,43 +_,43 @@
     public static final RegistryKey<Registry<DimensionType>> field_239698_ad_ = func_239741_a_("dimension_type");
     public static final RegistryKey<Registry<World>> field_239699_ae_ = func_239741_a_("dimension");
     public static final RegistryKey<Registry<Dimension>> field_239700_af_ = func_239741_a_("dimension");
@@ -67,7 +67,7 @@
        return ChunkStatus.field_223226_a_;
     });
     public static final Registry<IRuleTestType<?>> field_218363_D = func_239746_a_(field_239673_K_, () -> {
-@@ -178,40 +182,40 @@
+@@ -178,40 +_,40 @@
     public static final Registry<IPosRuleTests<?>> field_239691_aJ_ = func_239746_a_(field_239674_L_, () -> {
        return IPosRuleTests.field_237103_a_;
     });
@@ -118,7 +118,7 @@
        return Activity.field_221366_b;
     });
     public static final Registry<LootPoolEntryType> field_239693_aY_ = func_239746_a_(field_239695_aa_, () -> {
-@@ -232,19 +236,19 @@
+@@ -232,19 +_,19 @@
     public static final RegistryKey<Registry<JigsawPattern>> field_243555_ax = func_239741_a_("worldgen/template_pool");
     public static final RegistryKey<Registry<Biome>> field_239720_u_ = func_239741_a_("worldgen/biome");
     public static final RegistryKey<Registry<SurfaceBuilder<?>>> field_239717_r_ = func_239741_a_("worldgen/surface_builder");
@@ -142,7 +142,7 @@
        return Structure.field_236367_c_;
     });
     public static final RegistryKey<Registry<IStructurePieceType>> field_239672_J_ = func_239741_a_("worldgen/structure_piece");
-@@ -252,7 +256,7 @@
+@@ -252,7 +_,7 @@
        return IStructurePieceType.field_214782_c;
     });
     public static final RegistryKey<Registry<Placement<?>>> field_239719_t_ = func_239741_a_("worldgen/decorator");
@@ -151,7 +151,7 @@
        return Placement.field_215022_h;
     });
     public static final RegistryKey<Registry<BlockStateProviderType<?>>> field_239721_v_ = func_239741_a_("worldgen/block_state_provider_type");
-@@ -265,19 +269,19 @@
+@@ -265,19 +_,19 @@
     public static final RegistryKey<Registry<Codec<? extends ChunkGenerator>>> field_239666_D_ = func_239741_a_("worldgen/chunk_generator");
     public static final RegistryKey<Registry<IStructureProcessorType<?>>> field_239675_M_ = func_239741_a_("worldgen/structure_processor");
     public static final RegistryKey<Registry<IJigsawDeserializer<?>>> field_239676_N_ = func_239741_a_("worldgen/structure_pool_element");
@@ -175,7 +175,7 @@
        return TreeDecoratorType.field_227426_b_;
     });
     public static final Registry<FeatureSizeType<?>> field_239702_ay_ = func_239746_a_(field_239663_A_, () -> {
-@@ -323,18 +327,34 @@
+@@ -323,16 +_,32 @@
        return func_239742_a_(p_239746_0_, Lifecycle.experimental(), p_239746_1_);
     }
  
@@ -201,12 +201,10 @@
 +
     private static <T> DefaultedRegistry<T> func_239744_a_(RegistryKey<? extends Registry<T>> p_239744_0_, String p_239744_1_, Lifecycle p_239744_2_, Supplier<T> p_239744_3_) {
        return func_239743_a_(p_239744_0_, new DefaultedRegistry<>(p_239744_1_, p_239744_0_, p_239744_2_), p_239744_3_, p_239744_2_);
-    }
- 
-+   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> DefaultedRegistry<T> forge(RegistryKey<? extends Registry<T>> key, String defKey, Lifecycle cycle, Supplier<T> def) {
-+      return func_239743_a_(key, net.minecraftforge.registries.GameData.getWrapper(key, cycle, defKey), def, cycle);
 +   }
 +
++   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> DefaultedRegistry<T> forge(RegistryKey<? extends Registry<T>> key, String defKey, Lifecycle cycle, Supplier<T> def) {
++      return func_239743_a_(key, net.minecraftforge.registries.GameData.getWrapper(key, cycle, defKey), def, cycle);
+    }
+ 
     private static <T, R extends MutableRegistry<T>> R func_239743_a_(RegistryKey<? extends Registry<T>> p_239743_0_, R p_239743_1_, Supplier<T> p_239743_2_, Lifecycle p_239743_3_) {
-       ResourceLocation resourcelocation = p_239743_0_.func_240901_a_();
-       field_218376_a.put(resourcelocation, p_239743_2_);

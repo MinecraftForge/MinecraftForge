@@ -40,7 +40,7 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
-    public boolean isItemValid(@Nonnull ItemStack stack)
+    public boolean mayPlace(@Nonnull ItemStack stack)
     {
         if (stack.isEmpty())
             return false;
@@ -49,33 +49,33 @@ public class SlotItemHandler extends Slot
 
     @Override
     @Nonnull
-    public ItemStack getStack()
+    public ItemStack getItem()
     {
         return this.getItemHandler().getStackInSlot(index);
     }
 
     // Override if your IItemHandler does not implement IItemHandlerModifiable
     @Override
-    public void putStack(@Nonnull ItemStack stack)
+    public void set(@Nonnull ItemStack stack)
     {
         ((IItemHandlerModifiable) this.getItemHandler()).setStackInSlot(index, stack);
-        this.onSlotChanged();
+        this.setChanged();
     }
 
     @Override
-    public void onSlotChange(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn)
+    public void onQuickCraft(@Nonnull ItemStack oldStackIn, @Nonnull ItemStack newStackIn)
     {
 
     }
 
     @Override
-    public int getSlotStackLimit()
+    public int getMaxStackSize()
     {
         return this.itemHandler.getSlotLimit(this.index);
     }
 
     @Override
-    public int getItemStackLimit(@Nonnull ItemStack stack)
+    public int getMaxStackSize(@Nonnull ItemStack stack)
     {
         ItemStack maxAdd = stack.copy();
         int maxInput = stack.getMaxStackSize();
@@ -105,14 +105,14 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
-    public boolean canTakeStack(PlayerEntity playerIn)
+    public boolean mayPickup(PlayerEntity playerIn)
     {
         return !this.getItemHandler().extractItem(index, 1, true).isEmpty();
     }
 
     @Override
     @Nonnull
-    public ItemStack decrStackSize(int amount)
+    public ItemStack remove(int amount)
     {
         return this.getItemHandler().extractItem(index, amount, false);
     }

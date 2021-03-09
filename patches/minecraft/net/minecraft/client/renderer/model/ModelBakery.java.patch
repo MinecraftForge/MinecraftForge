@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/ModelBakery.java
 +++ b/net/minecraft/client/renderer/model/ModelBakery.java
-@@ -146,8 +146,17 @@
+@@ -146,8 +_,17 @@
     });
  
     public ModelBakery(IResourceManager p_i226056_1_, BlockColors p_i226056_2_, IProfiler p_i226056_3_, int p_i226056_4_) {
@@ -18,7 +18,7 @@
        p_i226056_3_.func_76320_a("missing_model");
  
        try {
-@@ -180,12 +189,16 @@
+@@ -180,12 +_,16 @@
  
        p_i226056_3_.func_219895_b("special");
        this.func_217843_a(new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
@@ -35,7 +35,7 @@
        set.stream().filter((p_229346_0_) -> {
           return !p_229346_0_.getSecond().equals(field_229321_r_);
        }).forEach((p_229330_0_) -> {
-@@ -224,6 +237,7 @@
+@@ -224,6 +_,7 @@
           try {
              ibakedmodel = this.func_217845_a(p_229350_1_, ModelRotation.X0_Y0);
           } catch (Exception exception) {
@@ -43,7 +43,7 @@
              field_177603_c.warn("Unable to bake model: '{}': {}", p_229350_1_, exception);
           }
  
-@@ -442,6 +456,13 @@
+@@ -442,6 +_,13 @@
        this.field_217848_D.addAll(p_209593_2_.func_187965_e());
     }
  
@@ -57,7 +57,7 @@
     private void func_217843_a(ModelResourceLocation p_217843_1_) {
        IUnbakedModel iunbakedmodel = this.func_209597_a(p_217843_1_);
        this.field_217849_F.put(p_217843_1_, iunbakedmodel);
-@@ -456,7 +477,13 @@
+@@ -456,7 +_,13 @@
     }
  
     @Nullable
@@ -71,7 +71,7 @@
        Triple<ResourceLocation, TransformationMatrix, Boolean> triple = Triple.of(p_217845_1_, p_217845_2_.func_225615_b_(), p_217845_2_.func_188049_c());
        if (this.field_217850_G.containsKey(triple)) {
           return this.field_217850_G.get(triple);
-@@ -467,11 +494,11 @@
+@@ -467,11 +_,11 @@
           if (iunbakedmodel instanceof BlockModel) {
              BlockModel blockmodel = (BlockModel)iunbakedmodel;
              if (blockmodel.func_178310_f() == field_177606_o) {
@@ -85,7 +85,7 @@
           this.field_217850_G.put(triple, ibakedmodel);
           return ibakedmodel;
        }
-@@ -524,6 +551,10 @@
+@@ -524,11 +_,19 @@
        return this.field_225367_M;
     }
  
@@ -96,14 +96,12 @@
     @OnlyIn(Dist.CLIENT)
     static class BlockStateDefinitionException extends RuntimeException {
        public BlockStateDefinitionException(String p_i49526_1_) {
-@@ -531,6 +562,10 @@
+          super(p_i49526_1_);
        }
-    }
- 
-+   public SpriteMap getSpriteMap() {
-+      return this.field_229322_z_;
 +   }
 +
++   public SpriteMap getSpriteMap() {
++      return this.field_229322_z_;
+    }
+ 
     @OnlyIn(Dist.CLIENT)
-    static class ModelListWrapper {
-       private final List<IUnbakedModel> field_225339_a;

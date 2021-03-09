@@ -214,50 +214,50 @@ public class PacketDistributor<T> {
     }
 
     private Consumer<IPacket<?>> playerConsumer(final Supplier<ServerPlayerEntity> entityPlayerMPSupplier) {
-        return p -> entityPlayerMPSupplier.get().connection.netManager.sendPacket(p);
+        return p -> entityPlayerMPSupplier.get().connection.connection.send(p);
     }
     private Consumer<IPacket<?>> playerListDimConsumer(final Supplier<RegistryKey<World>> dimensionTypeSupplier) {
-        return p->getServer().getPlayerList().func_232642_a_(p, dimensionTypeSupplier.get());
+        return p->getServer().getPlayerList().broadcastAll(p, dimensionTypeSupplier.get());
     }
 
     private Consumer<IPacket<?>> playerListAll(final Supplier<Void> voidSupplier) {
-        return p -> getServer().getPlayerList().sendPacketToAllPlayers(p);
+        return p -> getServer().getPlayerList().broadcastAll(p);
     }
 
     private Consumer<IPacket<?>> clientToServer(final Supplier<Void> voidSupplier) {
-        return p -> Minecraft.getInstance().getConnection().sendPacket(p);
+        return p -> Minecraft.getInstance().getConnection().send(p);
     }
 
     private Consumer<IPacket<?>> playerListPointConsumer(final Supplier<TargetPoint> targetPointSupplier) {
         return p -> {
             final TargetPoint tp = targetPointSupplier.get();
-            getServer().getPlayerList().sendToAllNearExcept(tp.excluded, tp.x, tp.y, tp.z, tp.r2, tp.dim, p);
+            getServer().getPlayerList().broadcast(tp.excluded, tp.x, tp.y, tp.z, tp.r2, tp.dim, p);
         };
     }
 
     private Consumer<IPacket<?>> trackingEntity(final Supplier<Entity> entitySupplier) {
         return p-> {
             final Entity entity = entitySupplier.get();
-            ((ServerChunkProvider)entity.getEntityWorld().getChunkProvider()).sendToAllTracking(entity, p);
+            ((ServerChunkProvider)entity.getCommandSenderWorld().getChunkSource()).broadcast(entity, p);
         };
     }
 
     private Consumer<IPacket<?>> trackingEntityAndSelf(final Supplier<Entity> entitySupplier) {
         return p-> {
             final Entity entity = entitySupplier.get();
-            ((ServerChunkProvider)entity.getEntityWorld().getChunkProvider()).sendToTrackingAndSelf(entity, p);
+            ((ServerChunkProvider)entity.getCommandSenderWorld().getChunkSource()).broadcastAndSend(entity, p);
         };
     }
 
     private Consumer<IPacket<?>> trackingChunk(final Supplier<Chunk> chunkPosSupplier) {
         return p -> {
             final Chunk chunk = chunkPosSupplier.get();
-            ((ServerChunkProvider)chunk.getWorld().getChunkProvider()).chunkManager.getTrackingPlayers(chunk.getPos(), false).forEach(e -> e.connection.sendPacket(p));
+            ((ServerChunkProvider)chunk.getLevel().getChunkSource()).chunkMap.getPlayers(chunk.getPos(), false).forEach(e -> e.connection.send(p));
         };
     }
 
     private Consumer<IPacket<?>> networkManagerList(final Supplier<List<NetworkManager>> nmListSupplier) {
-        return p -> nmListSupplier.get().forEach(nm->nm.sendPacket(p));
+        return p -> nmListSupplier.get().forEach(nm->nm.send(p));
     }
 
     private MinecraftServer getServer() {

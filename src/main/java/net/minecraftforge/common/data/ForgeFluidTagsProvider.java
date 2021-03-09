@@ -33,9 +33,9 @@ public class ForgeFluidTagsProvider extends FluidTagsProvider
     }
 
     @Override
-    public void registerTags()
+    public void addTags()
     {
-        getOrCreateBuilder(MILK).addOptional(ForgeMod.MILK.getId()).addOptional(ForgeMod.FLOWING_MILK.getId());
+        tag(MILK).addOptional(ForgeMod.MILK.getId()).addOptional(ForgeMod.FLOWING_MILK.getId());
     }
 
     @Override

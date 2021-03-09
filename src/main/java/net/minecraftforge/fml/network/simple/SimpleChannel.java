@@ -101,12 +101,12 @@ public class SimpleChannel
 
     public <MSG> void sendToServer(MSG message)
     {
-        sendTo(message, Minecraft.getInstance().getConnection().getNetworkManager(), NetworkDirection.PLAY_TO_SERVER);
+        sendTo(message, Minecraft.getInstance().getConnection().getConnection(), NetworkDirection.PLAY_TO_SERVER);
     }
 
     public <MSG> void sendTo(MSG message, NetworkManager manager, NetworkDirection direction)
     {
-        manager.sendPacket(toVanillaPacket(message, direction));
+        manager.send(toVanillaPacket(message, direction));
     }
 
     /**

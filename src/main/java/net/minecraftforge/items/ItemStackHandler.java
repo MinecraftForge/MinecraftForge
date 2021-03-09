@@ -187,7 +187,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
             {
                 CompoundNBT itemTag = new CompoundNBT();
                 itemTag.putInt("Slot", i);
-                stacks.get(i).write(itemTag);
+                stacks.get(i).save(itemTag);
                 nbtTagList.add(itemTag);
             }
         }
@@ -209,7 +209,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
 
             if (slot >= 0 && slot < stacks.size())
             {
-                stacks.set(slot, ItemStack.read(itemTags));
+                stacks.set(slot, ItemStack.of(itemTags));
             }
         }
         onLoad();

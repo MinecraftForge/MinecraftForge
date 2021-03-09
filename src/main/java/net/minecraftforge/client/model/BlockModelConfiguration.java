@@ -95,13 +95,13 @@ public class BlockModelConfiguration implements IModelConfiguration
     @Override
     public boolean isTexturePresent(String name)
     {
-        return owner.isTexturePresent(name);
+        return owner.hasTexture(name);
     }
 
     @Override
     public RenderMaterial resolveTexture(String name)
     {
-        return owner.resolveTextureName(name);
+        return owner.getMaterial(name);
     }
 
     @Override
@@ -112,19 +112,19 @@ public class BlockModelConfiguration implements IModelConfiguration
     @Override
     public boolean isSideLit()
     {
-        return owner.getGuiLight().isSideLit();
+        return owner.getGuiLight().lightLikeBlock();
     }
 
     @Override
     public boolean useSmoothLighting()
     {
-        return owner.isAmbientOcclusion();
+        return owner.hasAmbientOcclusion();
     }
 
     @Override
     public ItemCameraTransforms getCameraTransforms()
     {
-        return owner.getAllTransforms();
+        return owner.getTransforms();
     }
 
     @Override

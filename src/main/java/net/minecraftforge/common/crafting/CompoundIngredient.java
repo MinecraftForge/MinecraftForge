@@ -57,13 +57,13 @@ public class CompoundIngredient extends Ingredient
 
     @Override
     @Nonnull
-    public ItemStack[] getMatchingStacks()
+    public ItemStack[] getItems()
     {
         if (stacks == null)
         {
             List<ItemStack> tmp = Lists.newArrayList();
             for (Ingredient child : children)
-                Collections.addAll(tmp, child.getMatchingStacks());
+                Collections.addAll(tmp, child.getItems());
             stacks = tmp.toArray(new ItemStack[tmp.size()]);
 
         }
@@ -72,14 +72,14 @@ public class CompoundIngredient extends Ingredient
 
     @Override
     @Nonnull
-    public IntList getValidItemStacksPacked()
+    public IntList getStackingIds()
     {
         //TODO: Add a child.isInvalid()?
         if (this.itemIds == null)
         {
             this.itemIds = new IntArrayList();
             for (Ingredient child : children)
-                this.itemIds.addAll(child.getValidItemStacksPacked());
+                this.itemIds.addAll(child.getStackingIds());
             this.itemIds.sort(IntComparators.NATURAL_COMPARATOR);
         }
 
@@ -122,24 +122,24 @@ public class CompoundIngredient extends Ingredient
     }
 
     @Override
-    public JsonElement serialize()
+    public JsonElement toJson()
     {
        if (this.children.size() == 1)
        {
-          return this.children.get(0).serialize();
+          return this.children.get(0).toJson();
        }
        else
        {
           JsonArray json = new JsonArray();
-          this.children.stream().forEach(e -> json.add(e.serialize()));
+          this.children.stream().forEach(e -> json.add(e.toJson()));
           return json;
        }
     }
 
     @Override
-    public boolean hasNoMatchingItems()
+    public boolean isEmpty()
     {
-        return getMatchingStacks().length == 0;
+        return getItems().length == 0;
     }
 
     public static class Serializer implements IIngredientSerializer<CompoundIngredient>
@@ -149,7 +149,7 @@ public class CompoundIngredient extends Ingredient
         @Override
         public CompoundIngredient parse(PacketBuffer buffer)
         {
-            return new CompoundIngredient(Stream.generate(() -> Ingredient.read(buffer)).limit(buffer.readVarInt()).collect(Collectors.toList()));
+            return new CompoundIngredient(Stream.generate(() -> Ingredient.fromNetwork(buffer)).limit(buffer.readVarInt()).collect(Collectors.toList()));
         }
 
         @Override
@@ -162,7 +162,7 @@ public class CompoundIngredient extends Ingredient
         public void write(PacketBuffer buffer, CompoundIngredient ingredient)
         {
             buffer.writeVarInt(ingredient.children.size());
-            ingredient.children.forEach(c -> c.write(buffer));
+            ingredient.children.forEach(c -> c.toNetwork(buffer));
         }
 
     }

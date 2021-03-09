@@ -117,7 +117,7 @@ public class FMLHandshakeHandler {
     {
         this.direction = side;
         this.manager = networkManager;
-        if (networkManager.isLocalChannel()) {
+        if (networkManager.isMemoryConnection()) {
             this.messageList = NetworkRegistry.gatherLoginPayloads(this.direction, true);
             LOGGER.debug(FMLHSMARKER, "Starting local connection.");
         } else if (NetworkHooks.getConnectionType(()->this.manager)==ConnectionType.VANILLA) {
@@ -176,7 +176,7 @@ public class FMLHandshakeHandler {
         c.get().setPacketHandled(true);
         if (!accepted) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
-            c.get().getNetworkManager().closeChannel(new StringTextComponent("Connection closed - mismatched mod channel list"));
+            c.get().getNetworkManager().disconnect(new StringTextComponent("Connection closed - mismatched mod channel list"));
             return;
         }
         FMLNetworkConstants.handshakeChannel.reply(new FMLHandshakeMessages.C2SModListReply(), c.get());
@@ -206,7 +206,7 @@ public class FMLHandshakeHandler {
         c.get().setPacketHandled(true);
         if (!accepted) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
-            c.get().getNetworkManager().closeChannel(new StringTextComponent("Connection closed - mismatched mod channel list"));
+            c.get().getNetworkManager().disconnect(new StringTextComponent("Connection closed - mismatched mod channel list"));
             return;
         }
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
@@ -255,7 +255,7 @@ public class FMLHandshakeHandler {
             LOGGER.debug(FMLHSMARKER, "Registry load complete, continuing handshake.");
         } else {
             LOGGER.error(FMLHSMARKER, "Failed to load registry, closing connection.");
-            this.manager.closeChannel(new StringTextComponent("Failed to synchronize registry data from server, closing connection"));
+            this.manager.disconnect(new StringTextComponent("Failed to synchronize registry data from server, closing connection"));
         }
         return successfulConnection.get();
     }

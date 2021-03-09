@@ -76,7 +76,7 @@ public class ItemExistsCondition implements ICondition
         @Override
         public ItemExistsCondition read(JsonObject json)
         {
-            return new ItemExistsCondition(new ResourceLocation(JSONUtils.getString(json, "item")));
+            return new ItemExistsCondition(new ResourceLocation(JSONUtils.getAsString(json, "item")));
         }
 
         @Override

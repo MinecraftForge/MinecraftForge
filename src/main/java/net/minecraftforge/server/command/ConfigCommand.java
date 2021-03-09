@@ -44,7 +44,7 @@ public class ConfigCommand {
     public static class ShowFile {
         static ArgumentBuilder<CommandSource, ?> register() {
             return Commands.literal("showfile").
-                    requires(cs->cs.hasPermissionLevel(0)).
+                    requires(cs->cs.hasPermission(0)).
                     then(Commands.argument("mod", ModIdArgument.modIdArgument()).
                         then(Commands.argument("type", EnumArgument.enumArgument(ModConfig.Type.class)).
                             executes(ShowFile::showFile)
@@ -58,13 +58,13 @@ public class ConfigCommand {
             final String configFileName = ConfigTracker.INSTANCE.getConfigFileName(modId, type);
             if (configFileName != null) {
                 File f = new File(configFileName);
-                context.getSource().sendFeedback(new TranslationTextComponent("commands.config.getwithtype",
+                context.getSource().sendSuccess(new TranslationTextComponent("commands.config.getwithtype",
                         modId, type,
-                        new StringTextComponent(f.getName()).mergeStyle(TextFormatting.UNDERLINE).
-                        modifyStyle((style) -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())))
+                        new StringTextComponent(f.getName()).withStyle(TextFormatting.UNDERLINE).
+                        withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, f.getAbsolutePath())))
                 ), true);
             } else {
-                context.getSource().sendFeedback(new TranslationTextComponent("commands.config.noconfig", modId, type),
+                context.getSource().sendSuccess(new TranslationTextComponent("commands.config.noconfig", modId, type),
                         true);
             }
             return 0;

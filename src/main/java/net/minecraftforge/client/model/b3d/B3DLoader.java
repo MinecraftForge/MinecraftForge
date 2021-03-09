@@ -447,10 +447,10 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
 
         @SuppressWarnings("deprecation")
         @Override
-        public Collection<RenderMaterial> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
+        public Collection<RenderMaterial> getMaterials(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<com.mojang.datafixers.util.Pair<String, String>> missingTextureErrors)
         {
             return textures.values().stream().filter(loc -> !loc.startsWith("#"))
-                    .map(t -> new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(t)))
+                    .map(t -> new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, new ResourceLocation(t)))
                     .collect(Collectors.toList());
         }
 
@@ -463,10 +463,10 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         @SuppressWarnings("deprecation")
         @Nullable
         @Override
-        public IBakedModel bakeModel(ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
+        public IBakedModel bake(ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
-            TextureAtlasSprite missing = spriteGetter.apply(new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, MissingTextureSprite.getLocation()));
+            TextureAtlasSprite missing = spriteGetter.apply(new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, MissingTextureSprite.getLocation()));
             for(Map.Entry<String, String> e : textures.entrySet())
             {
                 if(e.getValue().startsWith("#"))
@@ -476,7 +476,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 }
                 else
                 {
-                    builder.put(e.getKey(), spriteGetter.apply(new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(e.getValue()))));
+                    builder.put(e.getKey(), spriteGetter.apply(new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, new ResourceLocation(e.getValue()))));
                 }
             }
             builder.put("missingno", missing);
@@ -724,7 +724,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     else sprite = this.textures.get(textures.get(0).getPath());
                     BakedQuadBuilder quadBuilder = new BakedQuadBuilder(sprite);
                     quadBuilder.setContractUVs(true);
-                    quadBuilder.setQuadOrientation(Direction.getFacingFromVector(f.getNormal().getX(), f.getNormal().getY(), f.getNormal().getZ()));
+                    quadBuilder.setQuadOrientation(Direction.getNearest(f.getNormal().x(), f.getNormal().y(), f.getNormal().z()));
                     putVertexData(quadBuilder, f.getV1(), f.getNormal(), sprite);
                     putVertexData(quadBuilder, f.getV2(), f.getNormal(), sprite);
                     putVertexData(quadBuilder, f.getV3(), f.getNormal(), sprite);
@@ -743,12 +743,12 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 switch(vertexFormatElements.get(e).getUsage())
                 {
                 case POSITION:
-                    consumer.put(e, v.getPos().getX(), v.getPos().getY(), v.getPos().getZ(), 1);
+                    consumer.put(e, v.getPos().x(), v.getPos().y(), v.getPos().z(), 1);
                     break;
                 case COLOR:
                     if(v.getColor() != null)
                     {
-                        consumer.put(e, v.getColor().getX(), v.getColor().getY(), v.getColor().getZ(), v.getColor().getW());
+                        consumer.put(e, v.getColor().x(), v.getColor().y(), v.getColor().z(), v.getColor().w());
                     }
                     else
                     {
@@ -760,8 +760,8 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                     if(vertexFormatElements.get(e).getIndex() < v.getTexCoords().length)
                     {
                         consumer.put(e,
-                            sprite.getInterpolatedU(v.getTexCoords()[0].getX() * 16),
-                            sprite.getInterpolatedV(v.getTexCoords()[0].getY() * 16),
+                            sprite.getU(v.getTexCoords()[0].x() * 16),
+                            sprite.getV(v.getTexCoords()[0].y() * 16),
                             0,
                             1
                         );
@@ -774,11 +774,11 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
                 case NORMAL:
                     if(v.getNormal() != null)
                     {
-                        consumer.put(e, v.getNormal().getX(), v.getNormal().getY(), v.getNormal().getZ(), 0);
+                        consumer.put(e, v.getNormal().x(), v.getNormal().y(), v.getNormal().z(), 0);
                     }
                     else
                     {
-                        consumer.put(e, faceNormal.getX(), faceNormal.getY(), faceNormal.getZ(), 0);
+                        consumer.put(e, faceNormal.x(), faceNormal.y(), faceNormal.z(), 0);
                     }
                     break;
                 default:
@@ -788,7 +788,7 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         }
 
         @Override
-        public boolean isAmbientOcclusion()
+        public boolean useAmbientOcclusion()
         {
             return smooth;
         }
@@ -800,19 +800,19 @@ public enum B3DLoader implements ISelectiveResourceReloadListener
         }
 
         @Override
-        public boolean isSideLit()
+        public boolean usesBlockLight()
         {
             return isSideLit;
         }
 
         @Override
-        public boolean isBuiltInRenderer()
+        public boolean isCustomRenderer()
         {
             return false;
         }
 
         @Override
-        public TextureAtlasSprite getParticleTexture()
+        public TextureAtlasSprite getParticleIcon()
         {
             // FIXME somehow specify particle texture in the model
             return textures.values().asList().get(0);

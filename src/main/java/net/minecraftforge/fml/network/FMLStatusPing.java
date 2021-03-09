@@ -85,17 +85,17 @@ public class FMLStatusPing {
     public static class Serializer {
         public static FMLStatusPing deserialize(JsonObject forgeData, JsonDeserializationContext ctx) {
             try {
-                final Map<ResourceLocation, Pair<String, Boolean>> channels = StreamSupport.stream(JSONUtils.getJsonArray(forgeData, "channels").spliterator(), false).
+                final Map<ResourceLocation, Pair<String, Boolean>> channels = StreamSupport.stream(JSONUtils.getAsJsonArray(forgeData, "channels").spliterator(), false).
                         map(JsonElement::getAsJsonObject).
-                        collect(Collectors.toMap(jo -> new ResourceLocation(JSONUtils.getString(jo, "res")),
-                                jo -> Pair.of(JSONUtils.getString(jo, "version"), JSONUtils.getBoolean(jo, "required")))
+                        collect(Collectors.toMap(jo -> new ResourceLocation(JSONUtils.getAsString(jo, "res")),
+                                jo -> Pair.of(JSONUtils.getAsString(jo, "version"), JSONUtils.getAsBoolean(jo, "required")))
                         );
 
-                final Map<String, String> mods = StreamSupport.stream(JSONUtils.getJsonArray(forgeData, "mods").spliterator(), false).
+                final Map<String, String> mods = StreamSupport.stream(JSONUtils.getAsJsonArray(forgeData, "mods").spliterator(), false).
                         map(JsonElement::getAsJsonObject).
-                        collect(Collectors.toMap(jo -> JSONUtils.getString(jo, "modId"), jo->JSONUtils.getString(jo, "modmarker")));
+                        collect(Collectors.toMap(jo -> JSONUtils.getAsString(jo, "modId"), jo->JSONUtils.getAsString(jo, "modmarker")));
 
-                final int remoteFMLVersion = JSONUtils.getInt(forgeData, "fmlNetworkVersion");
+                final int remoteFMLVersion = JSONUtils.getAsInt(forgeData, "fmlNetworkVersion");
                 return new FMLStatusPing(channels, mods, remoteFMLVersion);
             } catch (JsonSyntaxException e) {
                 LOGGER.debug(NETWORK, "Encountered an error parsing status ping data", e);

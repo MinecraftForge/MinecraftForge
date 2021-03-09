@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/VineBlock.java
 +++ b/net/minecraft/block/VineBlock.java
-@@ -22,7 +22,7 @@
+@@ -22,7 +_,7 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.server.ServerWorld;
  
@@ -9,7 +9,7 @@
     public static final BooleanProperty field_176277_a = SixWayBlock.field_196496_z;
     public static final BooleanProperty field_176273_b = SixWayBlock.field_196488_a;
     public static final BooleanProperty field_176278_M = SixWayBlock.field_196490_b;
-@@ -152,14 +152,14 @@
+@@ -152,14 +_,14 @@
     }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
@@ -26,7 +26,7 @@
                    Direction direction3 = direction.func_176746_e();
                    Direction direction4 = direction.func_176735_f();
                    boolean flag = p_225542_1_.func_177229_b(func_176267_a(direction3));
-@@ -216,8 +216,9 @@
+@@ -216,8 +_,9 @@
              if (p_225542_3_.func_177956_o() > 0) {
                 BlockPos blockpos1 = p_225542_3_.func_177977_b();
                 BlockState blockstate = p_225542_2_.func_180495_p(blockpos1);

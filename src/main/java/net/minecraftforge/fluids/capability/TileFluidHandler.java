@@ -44,16 +44,16 @@ public class TileFluidHandler extends TileEntity
     }
 
     @Override
-    public void read(BlockState state, CompoundNBT tag)
+    public void load(BlockState state, CompoundNBT tag)
     {
-        super.read(state, tag);
+        super.load(state, tag);
         tank.readFromNBT(tag);
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tag)
+    public CompoundNBT save(CompoundNBT tag)
     {
-        tag = super.write(tag);
+        tag = super.save(tag);
         tank.writeToNBT(tag);
         return tag;
     }

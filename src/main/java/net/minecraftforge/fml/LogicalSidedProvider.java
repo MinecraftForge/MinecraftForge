@@ -31,7 +31,7 @@ public enum LogicalSidedProvider
 {
     WORKQUEUE((c)->c.get(), (s)->s.get()),
     INSTANCE((c)->c.get(), (s)->s.get()),
-    CLIENTWORLD((c)-> Optional.<World>of(c.get().world), (s)->Optional.<World>empty())
+    CLIENTWORLD((c)-> Optional.<World>of(c.get().level), (s)->Optional.<World>empty())
     ;
     private static Supplier<Minecraft> client;
     private static Supplier<MinecraftServer> server;

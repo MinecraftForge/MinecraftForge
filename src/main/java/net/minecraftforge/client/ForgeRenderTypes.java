@@ -29,16 +29,19 @@ import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.common.util.NonNullSupplier;
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.renderer.RenderState.TextureState;
+import net.minecraft.client.renderer.RenderType.State;
+
 @SuppressWarnings("deprecation")
 public enum ForgeRenderTypes
 {
-    ITEM_LAYERED_SOLID(()-> getItemLayeredSolid(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
-    ITEM_LAYERED_CUTOUT(()-> getItemLayeredCutout(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
-    ITEM_LAYERED_CUTOUT_MIPPED(()-> getItemLayeredCutoutMipped(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
-    ITEM_LAYERED_TRANSLUCENT(()-> getItemLayeredTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
-    ITEM_UNSORTED_TRANSLUCENT(()-> getUnsortedTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
-    ITEM_UNLIT_TRANSLUCENT(()-> getUnlitTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE)),
-    ITEM_UNSORTED_UNLIT_TRANSLUCENT(()-> getUnlitTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE, false));
+    ITEM_LAYERED_SOLID(()-> getItemLayeredSolid(AtlasTexture.LOCATION_BLOCKS)),
+    ITEM_LAYERED_CUTOUT(()-> getItemLayeredCutout(AtlasTexture.LOCATION_BLOCKS)),
+    ITEM_LAYERED_CUTOUT_MIPPED(()-> getItemLayeredCutoutMipped(AtlasTexture.LOCATION_BLOCKS)),
+    ITEM_LAYERED_TRANSLUCENT(()-> getItemLayeredTranslucent(AtlasTexture.LOCATION_BLOCKS)),
+    ITEM_UNSORTED_TRANSLUCENT(()-> getUnsortedTranslucent(AtlasTexture.LOCATION_BLOCKS)),
+    ITEM_UNLIT_TRANSLUCENT(()-> getUnlitTranslucent(AtlasTexture.LOCATION_BLOCKS)),
+    ITEM_UNSORTED_UNLIT_TRANSLUCENT(()-> getUnlitTranslucent(AtlasTexture.LOCATION_BLOCKS, false));
 
     /**
      * @return A RenderType fit for multi-layer solid item rendering.
@@ -135,76 +138,76 @@ public enum ForgeRenderTypes
         public static RenderType unsortedTranslucent(ResourceLocation textureLocation)
         {
             final boolean sortingEnabled = false;
-            State renderState = State.getBuilder()
-                    .texture(new TextureState(textureLocation, false, false))
-                    .transparency(TRANSLUCENT_TRANSPARENCY)
-                    .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
-                    .alpha(DEFAULT_ALPHA)
-                    .cull(CULL_DISABLED)
-                    .lightmap(LIGHTMAP_ENABLED)
-                    .overlay(OVERLAY_ENABLED)
-                    .build(true);
-            return makeType("forge_entity_unsorted_translucent", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, sortingEnabled, renderState);
+            State renderState = State.builder()
+                    .setTextureState(new TextureState(textureLocation, false, false))
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setDiffuseLightingState(DIFFUSE_LIGHTING)
+                    .setAlphaState(DEFAULT_ALPHA)
+                    .setCullState(NO_CULL)
+                    .setLightmapState(LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .createCompositeState(true);
+            return create("forge_entity_unsorted_translucent", DefaultVertexFormats.NEW_ENTITY, GL11.GL_QUADS, 256, true, sortingEnabled, renderState);
         }
 
         public static RenderType unlitTranslucent(ResourceLocation textureLocation, boolean sortingEnabled)
         {
-            State renderState = State.getBuilder()
-                    .texture(new TextureState(textureLocation, false, false))
-                    .transparency(TRANSLUCENT_TRANSPARENCY)
-                    .alpha(DEFAULT_ALPHA)
-                    .cull(CULL_DISABLED)
-                    .lightmap(LIGHTMAP_ENABLED)
-                    .overlay(OVERLAY_ENABLED)
-                    .build(true);
-            return makeType("forge_entity_unlit_translucent", DefaultVertexFormats.ENTITY, GL11.GL_QUADS, 256, true, sortingEnabled, renderState);
+            State renderState = State.builder()
+                    .setTextureState(new TextureState(textureLocation, false, false))
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setAlphaState(DEFAULT_ALPHA)
+                    .setCullState(NO_CULL)
+                    .setLightmapState(LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .createCompositeState(true);
+            return create("forge_entity_unlit_translucent", DefaultVertexFormats.NEW_ENTITY, GL11.GL_QUADS, 256, true, sortingEnabled, renderState);
         }
 
         public static RenderType layeredItemSolid(ResourceLocation locationIn) {
-            RenderType.State rendertype$state = RenderType.State.getBuilder()
-                    .texture(new RenderState.TextureState(locationIn, false, false))
-                    .transparency(NO_TRANSPARENCY)
-                    .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
-                    .lightmap(LIGHTMAP_ENABLED)
-                    .overlay(OVERLAY_ENABLED)
-                    .build(true);
-            return makeType("forge_item_entity_solid", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
+            RenderType.State rendertype$state = RenderType.State.builder()
+                    .setTextureState(new RenderState.TextureState(locationIn, false, false))
+                    .setTransparencyState(NO_TRANSPARENCY)
+                    .setDiffuseLightingState(DIFFUSE_LIGHTING)
+                    .setLightmapState(LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .createCompositeState(true);
+            return create("forge_item_entity_solid", DefaultVertexFormats.NEW_ENTITY, 7, 256, true, false, rendertype$state);
         }
 
         public static RenderType layeredItemCutout(ResourceLocation locationIn) {
-            RenderType.State rendertype$state = RenderType.State.getBuilder()
-                    .texture(new RenderState.TextureState(locationIn, false, false))
-                    .transparency(NO_TRANSPARENCY)
-                    .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
-                    .alpha(DEFAULT_ALPHA)
-                    .lightmap(LIGHTMAP_ENABLED)
-                    .overlay(OVERLAY_ENABLED)
-                    .build(true);
-            return makeType("forge_item_entity_cutout", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
+            RenderType.State rendertype$state = RenderType.State.builder()
+                    .setTextureState(new RenderState.TextureState(locationIn, false, false))
+                    .setTransparencyState(NO_TRANSPARENCY)
+                    .setDiffuseLightingState(DIFFUSE_LIGHTING)
+                    .setAlphaState(DEFAULT_ALPHA)
+                    .setLightmapState(LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .createCompositeState(true);
+            return create("forge_item_entity_cutout", DefaultVertexFormats.NEW_ENTITY, 7, 256, true, false, rendertype$state);
         }
 
         public static RenderType layeredItemCutoutMipped(ResourceLocation locationIn) {
-            RenderType.State rendertype$state = RenderType.State.getBuilder()
-                    .texture(new RenderState.TextureState(locationIn, false, true))
-                    .transparency(NO_TRANSPARENCY)
-                    .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
-                    .alpha(DEFAULT_ALPHA)
-                    .lightmap(LIGHTMAP_ENABLED)
-                    .overlay(OVERLAY_ENABLED)
-                    .build(true);
-            return makeType("forge_item_entity_cutout_mipped", DefaultVertexFormats.ENTITY, 7, 256, true, false, rendertype$state);
+            RenderType.State rendertype$state = RenderType.State.builder()
+                    .setTextureState(new RenderState.TextureState(locationIn, false, true))
+                    .setTransparencyState(NO_TRANSPARENCY)
+                    .setDiffuseLightingState(DIFFUSE_LIGHTING)
+                    .setAlphaState(DEFAULT_ALPHA)
+                    .setLightmapState(LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .createCompositeState(true);
+            return create("forge_item_entity_cutout_mipped", DefaultVertexFormats.NEW_ENTITY, 7, 256, true, false, rendertype$state);
         }
 
         public static RenderType layeredItemTranslucent(ResourceLocation locationIn) {
-            RenderType.State rendertype$state = RenderType.State.getBuilder()
-                    .texture(new RenderState.TextureState(locationIn, false, false))
-                    .transparency(TRANSLUCENT_TRANSPARENCY)
-                    .diffuseLighting(DIFFUSE_LIGHTING_ENABLED)
-                    .alpha(DEFAULT_ALPHA)
-                    .lightmap(LIGHTMAP_ENABLED)
-                    .overlay(OVERLAY_ENABLED)
-                    .build(true);
-            return makeType("forge_item_entity_translucent_cull", DefaultVertexFormats.ENTITY, 7, 256, true, true, rendertype$state);
+            RenderType.State rendertype$state = RenderType.State.builder()
+                    .setTextureState(new RenderState.TextureState(locationIn, false, false))
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setDiffuseLightingState(DIFFUSE_LIGHTING)
+                    .setAlphaState(DEFAULT_ALPHA)
+                    .setLightmapState(LIGHTMAP)
+                    .setOverlayState(OVERLAY)
+                    .createCompositeState(true);
+            return create("forge_item_entity_translucent_cull", DefaultVertexFormats.NEW_ENTITY, 7, 256, true, true, rendertype$state);
         }
     }
 }

@@ -61,11 +61,11 @@ public class BakedItemModel implements IBakedModel
         return guiTransform == null || guiTransform.isIdentity();
     }
 
-    @Override public boolean isAmbientOcclusion() { return true; }
+    @Override public boolean useAmbientOcclusion() { return true; }
     @Override public boolean isGui3d() { return false; }
-    @Override public boolean isSideLit() { return isSideLit; }
-    @Override public boolean isBuiltInRenderer() { return false; }
-    @Override public TextureAtlasSprite getParticleTexture() { return particle; }
+    @Override public boolean usesBlockLight() { return isSideLit; }
+    @Override public boolean isCustomRenderer() { return false; }
+    @Override public TextureAtlasSprite getParticleIcon() { return particle; }
     @Override public ItemOverrideList getOverrides() { return overrides; }
 
     @Override
@@ -98,7 +98,7 @@ public class BakedItemModel implements IBakedModel
             ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
             for (BakedQuad quad : originalModel.quads)
             {
-                if (quad.getFace() == Direction.SOUTH)
+                if (quad.getDirection() == Direction.SOUTH)
                 {
                     builder.add(quad);
                 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/DoublePlantBlock.java
 +++ b/net/minecraft/block/DoublePlantBlock.java
-@@ -51,6 +51,7 @@
+@@ -51,6 +_,7 @@
           return super.func_196260_a(p_196260_1_, p_196260_2_, p_196260_3_);
        } else {
           BlockState blockstate = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());

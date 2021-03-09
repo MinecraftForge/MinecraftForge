@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/structure/FortressStructure.java
 +++ b/net/minecraft/world/gen/feature/structure/FortressStructure.java
-@@ -30,7 +30,8 @@
+@@ -30,7 +_,8 @@
        return FortressStructure.Start::new;
     }
  

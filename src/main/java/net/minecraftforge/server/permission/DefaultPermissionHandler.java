@@ -73,7 +73,7 @@ public enum DefaultPermissionHandler implements IPermissionHandler
         }
 
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        return server != null && server.getPlayerList().canSendCommands(profile);
+        return server != null && server.getPlayerList().isOp(profile);
     }
 
     @Override

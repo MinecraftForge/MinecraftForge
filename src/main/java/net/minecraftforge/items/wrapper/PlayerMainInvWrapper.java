@@ -35,7 +35,7 @@ public class PlayerMainInvWrapper extends RangedWrapper
 
     public PlayerMainInvWrapper(PlayerInventory inv)
     {
-        super(new InvWrapper(inv), 0, inv.mainInventory.size());
+        super(new InvWrapper(inv), 0, inv.items.size());
         inventoryPlayer = inv;
     }
 
@@ -50,12 +50,12 @@ public class PlayerMainInvWrapper extends RangedWrapper
             ItemStack inSlot = getStackInSlot(slot);
             if(!inSlot.isEmpty())
             {
-                if (getInventoryPlayer().player.world.isRemote)
+                if (getInventoryPlayer().player.level.isClientSide)
                 {
-                    inSlot.setAnimationsToGo(5);
+                    inSlot.setPopTime(5);
                 }
                 else if(getInventoryPlayer().player instanceof ServerPlayerEntity) {
-                    getInventoryPlayer().player.openContainer.detectAndSendChanges();
+                    getInventoryPlayer().player.containerMenu.broadcastChanges();
                 }
             }
         }

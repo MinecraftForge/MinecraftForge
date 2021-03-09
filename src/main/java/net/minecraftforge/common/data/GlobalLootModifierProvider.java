@@ -73,7 +73,7 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
     protected abstract void start();
 
     @Override
-    public void act(DirectoryCache cache) throws IOException
+    public void run(DirectoryCache cache) throws IOException
     {
         start();
 

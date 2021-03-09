@@ -82,7 +82,7 @@ public final class Clips
         }
 
         @Override
-        public String getString()
+        public String getSerializedName()
         {
             return "identity";
         }
@@ -416,7 +416,7 @@ public final class Clips
         }
 
         @Override
-        public String getString()
+        public String getSerializedName()
         {
             return clipName;
         }
@@ -475,7 +475,7 @@ public final class Clips
                     // IdentityClip + ClipReference
                     if(clip instanceof IStringSerializable)
                     {
-                        out.value("#" + ((IStringSerializable)clip).getString());
+                        out.value("#" + ((IStringSerializable)clip).getSerializedName());
                         return;
                     }
                     else if(clip instanceof TimeClip)

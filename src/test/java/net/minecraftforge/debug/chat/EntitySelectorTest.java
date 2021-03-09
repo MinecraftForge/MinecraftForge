@@ -54,7 +54,7 @@ public class EntitySelectorTest
     private void healthArgument(EntitySelectorParser parser) throws CommandSyntaxException
     {
         MinMaxBounds.FloatBound bound = MinMaxBounds.FloatBound.fromReader(parser.getReader());
-        parser.addFilter(entity -> entity instanceof LivingEntity && bound.test(((LivingEntity) entity).getHealth()));
+        parser.addPredicate(entity -> entity instanceof LivingEntity && bound.matches(((LivingEntity) entity).getHealth()));
     }
 
     /**
@@ -66,25 +66,25 @@ public class EntitySelectorTest
         @Override
         public EntitySelector build(EntitySelectorParser parser) throws CommandSyntaxException
         {
-            parser.setSorter(EntitySelectorParser.RANDOM);
-            parser.setLimit(1);
-            parser.setIncludeNonPlayers(true);
-            parser.addFilter(Entity::isAlive);
-            parser.setSuggestionHandler((builder, consumer) -> builder.suggest(String.valueOf('[')).buildFuture());
+            parser.setOrder(EntitySelectorParser.ORDER_RANDOM);
+            parser.setMaxResults(1);
+            parser.setIncludesEntities(true);
+            parser.addPredicate(Entity::isAlive);
+            parser.setSuggestions((builder, consumer) -> builder.suggest(String.valueOf('[')).buildFuture());
             if (parser.getReader().canRead() && parser.getReader().peek() == '[')
             {
                 parser.getReader().skip();
-                parser.setSuggestionHandler((builder, consumer) -> {
+                parser.setSuggestions((builder, consumer) -> {
                     builder.suggest(String.valueOf(']'));
-                    EntityOptions.suggestOptions(parser, builder);
+                    EntityOptions.suggestNames(parser, builder);
                     return builder.buildFuture();
                 });
 
-                parser.parseArguments();
+                parser.parseOptions();
             }
 
-            parser.updateFilter();
-            return parser.build();
+            parser.finalizePredicates();
+            return parser.getSelector();
         }
 
         @Override

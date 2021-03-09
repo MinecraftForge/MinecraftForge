@@ -48,6 +48,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 @Mod(NewFluidTest.MODID)
 public class NewFluidTest
 {
@@ -76,18 +78,18 @@ public class NewFluidTest
     );
 
     public static RegistryObject<FlowingFluidBlock> test_fluid_block = BLOCKS.register("test_fluid_block", () ->
-            new FlowingFluidBlock(test_fluid, Block.Properties.create(net.minecraft.block.material.Material.WATER).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
+            new FlowingFluidBlock(test_fluid, Block.Properties.of(net.minecraft.block.material.Material.WATER).noCollission().strength(100.0F).noDrops())
     );
     public static RegistryObject<Item> test_fluid_bucket = ITEMS.register("test_fluid_bucket", () ->
-            new BucketItem(test_fluid, new Item.Properties().containerItem(Items.BUCKET).maxStackSize(1).group(ItemGroup.MISC))
+            new BucketItem(test_fluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(ItemGroup.TAB_MISC))
     );
 
     // WARNING: this doesn't allow "any fluid", only the fluid from this test mod!
     public static RegistryObject<Block> fluidloggable_block = BLOCKS.register("fluidloggable_block", () ->
-            new FluidloggableBlock(Block.Properties.create(Material.WOOD).doesNotBlockMovement().hardnessAndResistance(100.0F).noDrops())
+            new FluidloggableBlock(Block.Properties.of(Material.WOOD).noCollission().strength(100.0F).noDrops())
     );
     public static RegistryObject<Item> fluidloggable_blockitem = ITEMS.register("fluidloggable_block", () ->
-            new BlockItem(fluidloggable_block.get(), new Item.Properties().group(ItemGroup.MISC))
+            new BlockItem(fluidloggable_block.get(), new Item.Properties().tab(ItemGroup.TAB_MISC))
     );
 
     public NewFluidTest()
@@ -104,12 +106,12 @@ public class NewFluidTest
     public void loadComplete(FMLLoadCompleteEvent event)
     {
         // some sanity checks
-        BlockState state = Fluids.WATER.getDefaultState().getBlockState();
-        BlockState state2 = Fluids.WATER.getAttributes().getBlock(null,null,Fluids.WATER.getDefaultState());
+        BlockState state = Fluids.WATER.defaultFluidState().createLegacyBlock();
+        BlockState state2 = Fluids.WATER.getAttributes().getBlock(null,null,Fluids.WATER.defaultFluidState());
         Validate.isTrue(state.getBlock() == Blocks.WATER && state2 == state);
         ItemStack stack = Fluids.WATER.getAttributes().getBucket(new FluidStack(Fluids.WATER, 1));
-        Validate.isTrue(stack.getItem() == Fluids.WATER.getFilledBucket());
-        event.enqueueWork(() -> DispenserBlock.registerDispenseBehavior(test_fluid_bucket.get(), DispenseFluidContainer.getInstance()));
+        Validate.isTrue(stack.getItem() == Fluids.WATER.getBucket());
+        event.enqueueWork(() -> DispenserBlock.registerBehavior(test_fluid_bucket.get(), DispenseFluidContainer.getInstance()));
     }
 
     // WARNING: this doesn't allow "any fluid", only the fluid from this test mod!
@@ -120,26 +122,26 @@ public class NewFluidTest
         public FluidloggableBlock(Properties properties)
         {
             super(properties);
-            setDefaultState(getStateContainer().getBaseState().with(FLUIDLOGGED, false));
+            registerDefaultState(getStateDefinition().any().setValue(FLUIDLOGGED, false));
         }
 
         @Override
-        protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+        protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
         {
             builder.add(FLUIDLOGGED);
         }
 
         @Override
-        public boolean canContainFluid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
-            return !state.get(FLUIDLOGGED) && fluidIn == test_fluid.get();
+        public boolean canPlaceLiquid(IBlockReader worldIn, BlockPos pos, BlockState state, Fluid fluidIn) {
+            return !state.getValue(FLUIDLOGGED) && fluidIn == test_fluid.get();
         }
 
         @Override
-        public boolean receiveFluid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
-            if (canContainFluid(worldIn, pos, state, fluidStateIn.getFluid())) {
-                if (!worldIn.isRemote()) {
-                    worldIn.setBlockState(pos, state.with(FLUIDLOGGED, true), 3);
-                    worldIn.getPendingFluidTicks().scheduleTick(pos, fluidStateIn.getFluid(), fluidStateIn.getFluid().getTickRate(worldIn));
+        public boolean placeLiquid(IWorld worldIn, BlockPos pos, BlockState state, FluidState fluidStateIn) {
+            if (canPlaceLiquid(worldIn, pos, state, fluidStateIn.getType())) {
+                if (!worldIn.isClientSide()) {
+                    worldIn.setBlock(pos, state.setValue(FLUIDLOGGED, true), 3);
+                    worldIn.getLiquidTicks().scheduleTick(pos, fluidStateIn.getType(), fluidStateIn.getType().getTickDelay(worldIn));
                 }
 
                 return true;
@@ -149,9 +151,9 @@ public class NewFluidTest
         }
 
         @Override
-        public Fluid pickupFluid(IWorld worldIn, BlockPos pos, BlockState state) {
-            if (state.get(FLUIDLOGGED)) {
-                worldIn.setBlockState(pos, state.with(FLUIDLOGGED, false), 3);
+        public Fluid takeLiquid(IWorld worldIn, BlockPos pos, BlockState state) {
+            if (state.getValue(FLUIDLOGGED)) {
+                worldIn.setBlock(pos, state.setValue(FLUIDLOGGED, false), 3);
                 return test_fluid.get();
             } else {
                 return Fluids.EMPTY;
@@ -161,7 +163,7 @@ public class NewFluidTest
         @Override
         public FluidState getFluidState(BlockState state)
         {
-            return state.get(FLUIDLOGGED) ? test_fluid.get().getDefaultState() : Fluids.EMPTY.getDefaultState();
+            return state.getValue(FLUIDLOGGED) ? test_fluid.get().defaultFluidState() : Fluids.EMPTY.defaultFluidState();
         }
     }
 }

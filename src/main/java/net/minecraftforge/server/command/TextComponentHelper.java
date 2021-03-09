@@ -41,7 +41,7 @@ public class TextComponentHelper
     {
         if (isVanillaClient(source))
         {
-            return new StringTextComponent(String.format(LanguageMap.getInstance().func_230503_a_(translation), args));
+            return new StringTextComponent(String.format(LanguageMap.getInstance().getOrDefault(translation), args));
         }
         return new TranslationTextComponent(translation, args);
     }
@@ -52,7 +52,7 @@ public class TextComponentHelper
         {
             ServerPlayerEntity playerMP = (ServerPlayerEntity) sender;
             ServerPlayNetHandler channel = playerMP.connection;
-            return NetworkHooks.getConnectionType(()->channel.netManager) == ConnectionType.VANILLA;
+            return NetworkHooks.getConnectionType(()->channel.connection) == ConnectionType.VANILLA;
         }
         return false;
     }

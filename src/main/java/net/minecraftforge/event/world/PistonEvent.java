@@ -62,7 +62,7 @@ public abstract class PistonEvent extends BlockEvent
      */
     public BlockPos getFaceOffsetPos()
     {
-        return this.getPos().offset(direction);
+        return this.getPos().relative(direction);
     }
 
     /**

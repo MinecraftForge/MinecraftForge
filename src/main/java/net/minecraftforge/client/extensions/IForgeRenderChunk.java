@@ -40,6 +40,6 @@ public interface IForgeRenderChunk
      */
     default ChunkRenderCache createRegionRenderCache(World world, BlockPos from, BlockPos to, int subtract)
     {
-        return ChunkRenderCache.generateCache(world, from, to, subtract);
+        return ChunkRenderCache.createIfNotEmpty(world, from, to, subtract);
     }
 }

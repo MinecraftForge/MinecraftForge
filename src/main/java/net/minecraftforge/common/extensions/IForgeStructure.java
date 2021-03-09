@@ -60,7 +60,7 @@ public interface IForgeStructure
     default boolean getDefaultRestrictsSpawnsToInside()
     {
         //The Pillager Outpost and Ocean Monument check the full structure by default instead of limiting themselves to being within the structure's bounds
-        return getStructure() != Structure.PILLAGER_OUTPOST && getStructure() != Structure.MONUMENT;
+        return getStructure() != Structure.PILLAGER_OUTPOST && getStructure() != Structure.OCEAN_MONUMENT;
     }
 
     /**

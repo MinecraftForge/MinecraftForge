@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/SlimeEntity.java
 +++ b/net/minecraft/entity/monster/SlimeEntity.java
-@@ -127,6 +127,7 @@
+@@ -127,6 +_,7 @@
        if (this.field_70122_E && !this.field_175452_bi) {
           int i = this.func_70809_q();
  
@@ -8,7 +8,7 @@
           for(int j = 0; j < i * 8; ++j) {
              float f = this.field_70146_Z.nextFloat() * ((float)Math.PI * 2F);
              float f1 = this.field_70146_Z.nextFloat() * 0.5F + 0.5F;
-@@ -178,9 +179,10 @@
+@@ -178,9 +_,10 @@
        return (EntityType<? extends SlimeEntity>)super.func_200600_R();
     }
  
@@ -21,7 +21,7 @@
           ITextComponent itextcomponent = this.func_200201_e();
           boolean flag = this.func_175446_cd();
           float f = (float)i / 4.0F;
-@@ -204,7 +206,7 @@
+@@ -204,7 +_,7 @@
           }
        }
  
@@ -30,16 +30,16 @@
     }
  
     public void func_70108_f(Entity p_70108_1_) {
-@@ -324,6 +326,12 @@
+@@ -323,6 +_,12 @@
+    public EntitySize func_213305_a(Pose p_213305_1_) {
        return super.func_213305_a(p_213305_1_).func_220313_a(0.255F * (float)this.func_70809_q());
     }
- 
++
 +   /**
 +    * Called when the slime spawns particles on landing, see onUpdate.
 +    * Return true to prevent the spawning of the default particles.
 +    */
 +   protected boolean spawnCustomParticles() { return false; }
-+
+ 
     static class AttackGoal extends Goal {
        private final SlimeEntity field_179466_a;
-       private int field_179465_b;

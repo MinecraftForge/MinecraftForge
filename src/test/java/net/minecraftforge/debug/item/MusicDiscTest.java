@@ -44,7 +44,7 @@ public class MusicDiscTest
             () -> new SoundEvent(new ResourceLocation(MOD_ID, "test_sound_event")));
 
     private static final RegistryObject<Item> TEST_MUSIC_DISC = ITEMS.register("test_music_disc",
-            () -> new MusicDiscItem(1, TEST_SOUND_EVENT, new Item.Properties().maxStackSize(1).rarity(Rarity.EPIC)));
+            () -> new MusicDiscItem(1, TEST_SOUND_EVENT, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
 
     public MusicDiscTest()
     {

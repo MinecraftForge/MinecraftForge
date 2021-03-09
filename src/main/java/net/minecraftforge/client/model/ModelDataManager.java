@@ -54,7 +54,7 @@ public class ModelDataManager
     private static void cleanCaches(World world)
     {
         Preconditions.checkNotNull(world, "World must not be null");
-        Preconditions.checkArgument(world == Minecraft.getInstance().world, "Cannot use model data for a world other than the current client world");
+        Preconditions.checkArgument(world == Minecraft.getInstance().level, "Cannot use model data for a world other than the current client world");
         if (world != currentWorld.get())
         {
             currentWorld = new WeakReference<>(world);
@@ -66,11 +66,11 @@ public class ModelDataManager
     public static void requestModelDataRefresh(TileEntity te)
     {
         Preconditions.checkNotNull(te, "Tile entity must not be null");
-        World world = te.getWorld();
+        World world = te.getLevel();
 
         cleanCaches(world);
-        needModelDataRefresh.computeIfAbsent(new ChunkPos(te.getPos()), $ -> Collections.synchronizedSet(new HashSet<>()))
-                            .add(te.getPos());
+        needModelDataRefresh.computeIfAbsent(new ChunkPos(te.getBlockPos()), $ -> Collections.synchronizedSet(new HashSet<>()))
+                            .add(te.getBlockPos());
     }
     
     private static void refreshModelData(World world, ChunkPos chunk)
@@ -83,7 +83,7 @@ public class ModelDataManager
             Map<BlockPos, IModelData> data = modelDataCache.computeIfAbsent(chunk, $ -> new ConcurrentHashMap<>());
             for (BlockPos pos : needUpdate)
             {
-                TileEntity toUpdate = world.getTileEntity(pos);
+                TileEntity toUpdate = world.getBlockEntity(pos);
                 if (toUpdate != null && !toUpdate.isRemoved())
                 {
                     data.put(pos, toUpdate.getModelData());
@@ -99,7 +99,7 @@ public class ModelDataManager
     @SubscribeEvent
     public static void onChunkUnload(ChunkEvent.Unload event)
     {
-        if (!event.getChunk().getWorldForge().isRemote()) return;
+        if (!event.getChunk().getWorldForge().isClientSide()) return;
         
         ChunkPos chunk = event.getChunk().getPos();
         needModelDataRefresh.remove(chunk);
@@ -113,7 +113,7 @@ public class ModelDataManager
     
     public static Map<BlockPos, IModelData> getModelData(World world, ChunkPos pos)
     {
-        Preconditions.checkArgument(world.isRemote, "Cannot request model data for server world");
+        Preconditions.checkArgument(world.isClientSide, "Cannot request model data for server world");
         refreshModelData(world, pos);
         return modelDataCache.getOrDefault(pos, Collections.emptyMap());
     }

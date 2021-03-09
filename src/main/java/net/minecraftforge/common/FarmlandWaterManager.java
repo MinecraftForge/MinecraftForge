@@ -60,7 +60,7 @@ public class FarmlandWaterManager
     @SuppressWarnings("unchecked")
     public static<T extends SimpleTicket<Vector3d>> T addCustomTicket(World world, T ticket, ChunkPos masterChunk, ChunkPos... additionalChunks)
     {
-        Preconditions.checkArgument(!world.isRemote, "Water region is only determined server-side");
+        Preconditions.checkArgument(!world.isClientSide, "Water region is only determined server-side");
         Map<ChunkPos, ChunkTicketManager<Vector3d>> ticketMap =  customWaterHandler.computeIfAbsent(world, id -> new MapMaker().weakValues().makeMap());
         ChunkTicketManager<Vector3d>[] additionalTickets = new ChunkTicketManager[additionalChunks.length];
         for (int i = 0; i < additionalChunks.length; i++)
@@ -157,7 +157,7 @@ public class FarmlandWaterManager
     }
 
     private static ChunkTicketManager<Vector3d> getTicketManager(ChunkPos pos, IWorldReader world) {
-        Preconditions.checkArgument(!world.isRemote(), "Water region is only determined server-side");
+        Preconditions.checkArgument(!world.isClientSide(), "Water region is only determined server-side");
         Map<ChunkPos, ChunkTicketManager<Vector3d>> ticketMap = customWaterHandler.get(world);
         if (ticketMap == null)
         {

@@ -29,12 +29,12 @@ public class DummyWorldSaveData extends WorldSavedData {
     }
 
     @Override
-    public void read(final CompoundNBT nbt) {
+    public void load(final CompoundNBT nbt) {
         // NOOP
     }
 
     @Override
-    public CompoundNBT write(final CompoundNBT compound) {
+    public CompoundNBT save(final CompoundNBT compound) {
         // NOOP
         return null;
     }

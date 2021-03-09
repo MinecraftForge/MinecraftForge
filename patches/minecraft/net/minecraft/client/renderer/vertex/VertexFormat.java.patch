@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/vertex/VertexFormat.java
 +++ b/net/minecraft/client/renderer/vertex/VertexFormat.java
-@@ -84,4 +84,11 @@
+@@ -84,4 +_,11 @@
  
        }
     }

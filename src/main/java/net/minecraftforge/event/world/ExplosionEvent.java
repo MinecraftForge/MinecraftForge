@@ -94,7 +94,7 @@ public class ExplosionEvent extends Event
         /** return the list of blocks affected by the explosion. */
         public List<BlockPos> getAffectedBlocks()
         {
-            return getExplosion().getAffectedBlockPositions();
+            return getExplosion().getToBlow();
         }
 
         /** return the list of entities affected by the explosion. */

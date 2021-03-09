@@ -48,6 +48,6 @@ public class LivingConversionEventTest
     public void onLivingConversion(LivingConversionEvent.Post event)
     {
         if (event.getEntityLiving() instanceof VillagerEntity)
-            event.getEntityLiving().addPotionEffect(new EffectInstance(Effects.LUCK, 20));
+            event.getEntityLiving().addEffect(new EffectInstance(Effects.LUCK, 20));
     }
 }

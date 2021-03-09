@@ -66,16 +66,16 @@ public class ChunkGenWorker implements IWorker
         while (ret.size() < total)
         {
             for (int q = -radius + 1; q <= radius && ret.size() < total; q++)
-                ret.add(start.add(radius, 0, q));
+                ret.add(start.offset(radius, 0, q));
 
             for (int q = radius - 1; q >= -radius && ret.size() < total; q--)
-                ret.add(start.add(q, 0, radius));
+                ret.add(start.offset(q, 0, radius));
 
             for (int q = radius - 1; q >= -radius && ret.size() < total; q--)
-                ret.add(start.add(-radius, 0, q));
+                ret.add(start.offset(-radius, 0, q));
 
             for (int q = -radius + 1; q <= radius && ret.size() < total; q++)
-                ret.add(start.add(q, 0, -radius));
+                ret.add(start.offset(q, 0, -radius));
 
             radius++;
         }
@@ -122,7 +122,7 @@ public class ChunkGenWorker implements IWorker
 
             if (++lastNotification >= notificationFrequency || lastNotifcationTime < System.currentTimeMillis() - 60*1000)
             {
-                listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.progress", total - queue.size(), total), true);
+                listener.sendSuccess(new TranslationTextComponent("commands.forge.gen.progress", total - queue.size(), total), true);
                 lastNotification = 0;
                 lastNotifcationTime = System.currentTimeMillis();
             }
@@ -130,9 +130,9 @@ public class ChunkGenWorker implements IWorker
             int x = next.getX();
             int z = next.getZ();
 
-            if (!dim.chunkExists(x, z)) { //Chunk is unloaded
+            if (!dim.hasChunk(x, z)) { //Chunk is unloaded
                 IChunk chunk = dim.getChunk(x, z, ChunkStatus.EMPTY, true);
-                if (!chunk.getStatus().isAtLeast(ChunkStatus.FULL)) {
+                if (!chunk.getStatus().isOrAfter(ChunkStatus.FULL)) {
                     chunk = dim.getChunk(x, z, ChunkStatus.FULL);
                     genned++; //There isn't a way to check if the chunk is actually created just if it was loaded
                 }
@@ -141,7 +141,7 @@ public class ChunkGenWorker implements IWorker
 
         if (queue.size() == 0)
         {
-            listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.complete", genned, total, dim.getDimensionKey().getLocation()), true);
+            listener.sendSuccess(new TranslationTextComponent("commands.forge.gen.complete", genned, total, dim.dimension().location()), true);
             /* TODO: Readd if/when we introduce world unloading, or get Mojang to do it.
             if (keepingLoaded != null && !keepingLoaded)
                 DimensionManager.keepLoaded(dim, false);

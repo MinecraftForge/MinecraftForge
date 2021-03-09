@@ -56,8 +56,8 @@ public class TagEmptyCondition implements ICondition
     @Override
     public boolean test()
     {
-        ITag<Item> tag = TagCollectionManager.getManager().getItemTags().get(tag_name);
-        return tag == null || tag.getAllElements().isEmpty();
+        ITag<Item> tag = TagCollectionManager.getInstance().getItems().getTag(tag_name);
+        return tag == null || tag.getValues().isEmpty();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class TagEmptyCondition implements ICondition
         @Override
         public TagEmptyCondition read(JsonObject json)
         {
-            return new TagEmptyCondition(new ResourceLocation(JSONUtils.getString(json, "tag")));
+            return new TagEmptyCondition(new ResourceLocation(JSONUtils.getAsString(json, "tag")));
         }
 
         @Override

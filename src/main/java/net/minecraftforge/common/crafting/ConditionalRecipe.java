@@ -81,24 +81,24 @@ public class ConditionalRecipe
 
         @SuppressWarnings("unchecked") // We return a nested one, so we can't know what type it is.
         @Override
-        public T read(ResourceLocation recipeId, JsonObject json)
+        public T fromJson(ResourceLocation recipeId, JsonObject json)
         {
-            JsonArray items = JSONUtils.getJsonArray(json, "recipes");
+            JsonArray items = JSONUtils.getAsJsonArray(json, "recipes");
             int idx = 0;
             for (JsonElement ele : items)
             {
                 if (!ele.isJsonObject())
                     throw new JsonSyntaxException("Invalid recipes entry at index " + idx + " Must be JsonObject");
-                if (CraftingHelper.processConditions(JSONUtils.getJsonArray(ele.getAsJsonObject(), "conditions")))
-                    return (T)RecipeManager.deserializeRecipe(recipeId, JSONUtils.getJsonObject(ele.getAsJsonObject(), "recipe"));
+                if (CraftingHelper.processConditions(JSONUtils.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+                    return (T)RecipeManager.fromJson(recipeId, JSONUtils.getAsJsonObject(ele.getAsJsonObject(), "recipe"));
                 idx++;
             }
             return null;
         }
 
         //Should never get here as we return one of the recipes we wrap.
-        @Override public T read(ResourceLocation recipeId, PacketBuffer buffer) { return null; }
-        @Override public void write(PacketBuffer buffer, T recipe) {}
+        @Override public T fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) { return null; }
+        @Override public void toNetwork(PacketBuffer buffer, T recipe) {}
     }
 
     public static class Builder
@@ -207,7 +207,7 @@ public class ConditionalRecipe
         }
 
         @Override
-        public void serialize(JsonObject json) {
+        public void serializeRecipeData(JsonObject json) {
             JsonArray array = new JsonArray();
             json.add("recipes", array);
             for (int x = 0; x < conditions.size(); x++)
@@ -218,30 +218,30 @@ public class ConditionalRecipe
                 for (ICondition c : conditions.get(x))
                     conds.add(CraftingHelper.serialize(c));
                 holder.add("conditions", conds);
-                holder.add("recipe", recipes.get(x).getRecipeJson());
+                holder.add("recipe", recipes.get(x).serializeRecipe());
 
                 array.add(holder);
             }
         }
 
         @Override
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return id;
         }
 
         @Override
-        public IRecipeSerializer<?> getSerializer()
+        public IRecipeSerializer<?> getType()
         {
             return SERIALZIER;
         }
 
         @Override
-        public JsonObject getAdvancementJson() {
+        public JsonObject serializeAdvancement() {
             return adv == null ? null : adv.write();
         }
 
         @Override
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return advId;
         }
     }

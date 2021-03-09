@@ -51,7 +51,7 @@ public class CapabilityItemHandler
                     {
                         CompoundNBT itemTag = new CompoundNBT();
                         itemTag.putInt("Slot", i);
-                        stack.write(itemTag);
+                        stack.save(itemTag);
                         nbtTagList.add(itemTag);
                     }
                 }
@@ -72,7 +72,7 @@ public class CapabilityItemHandler
 
                     if (j >= 0 && j < instance.getSlots())
                     {
-                        itemHandlerModifiable.setStackInSlot(j, ItemStack.read(itemTags));
+                        itemHandlerModifiable.setStackInSlot(j, ItemStack.of(itemTags));
                     }
                 }
             }

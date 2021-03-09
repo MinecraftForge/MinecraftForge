@@ -129,8 +129,8 @@ public class BakedQuadBuilder implements IVertexConsumer
         }
         if(contractUVs)
         {
-            float tX = texture.getWidth() / (texture.getMaxU() - texture.getMinU());
-            float tY = texture.getHeight() / (texture.getMaxV() - texture.getMinV());
+            float tX = texture.getWidth() / (texture.getU1() - texture.getU0());
+            float tY = texture.getHeight() / (texture.getV1() - texture.getV0());
             float tS = tX > tY ? tX : tY;
             float ep = 1f / (tS * 0x100);
             int uve = 0;

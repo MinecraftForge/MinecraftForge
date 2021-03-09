@@ -65,7 +65,7 @@ public class NotCondition implements ICondition
         @Override
         public NotCondition read(JsonObject json)
         {
-            return new NotCondition(CraftingHelper.getCondition(JSONUtils.getJsonObject(json, "value")));
+            return new NotCondition(CraftingHelper.getCondition(JSONUtils.getAsJsonObject(json, "value")));
         }
 
         @Override

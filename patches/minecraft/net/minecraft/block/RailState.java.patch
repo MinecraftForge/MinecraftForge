@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/RailState.java
 +++ b/net/minecraft/block/RailState.java
-@@ -15,14 +15,16 @@
+@@ -15,14 +_,16 @@
     private BlockState field_196923_d;
     private final boolean field_208513_e;
     private final List<BlockPos> field_196924_e = Lists.newArrayList();
@@ -19,7 +19,7 @@
        this.func_208509_a(railshape);
     }
  
-@@ -178,7 +180,7 @@
+@@ -178,7 +_,7 @@
           }
        }
  
@@ -28,7 +28,7 @@
           if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos.func_177984_a())) {
              railshape = RailShape.ASCENDING_NORTH;
           }
-@@ -188,7 +190,7 @@
+@@ -188,7 +_,7 @@
           }
        }
  
@@ -37,7 +37,7 @@
           if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos3.func_177984_a())) {
              railshape = RailShape.ASCENDING_EAST;
           }
-@@ -304,7 +306,7 @@
+@@ -304,7 +_,7 @@
           }
        }
  
@@ -46,7 +46,7 @@
           if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos.func_177984_a())) {
              railshape = RailShape.ASCENDING_NORTH;
           }
-@@ -314,7 +316,7 @@
+@@ -314,7 +_,7 @@
           }
        }
  

@@ -52,13 +52,13 @@ public class CommandSetDimension
     static ArgumentBuilder<CommandSource, ?> register()
     {
         return Commands.literal("setdimension")
-            .requires(cs->cs.hasPermissionLevel(2)) //permission
+            .requires(cs->cs.hasPermission(2)) //permission
             .then(Commands.argument("targets", EntityArgument.entities())
-                .then(Commands.argument("dim", DimensionArgument.getDimension())
+                .then(Commands.argument("dim", DimensionArgument.dimension())
                     .then(Commands.argument("pos", BlockPosArgument.blockPos())
-                        .executes(ctx -> execute(ctx, EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.getDimensionArgument(ctx, "dim"), BlockPosArgument.getBlockPos(ctx, "pos")))
+                        .executes(ctx -> execute(ctx, EntityArgument.getOptionalEntities(ctx, "targets"), DimensionArgument.getDimension(ctx, "dim"), BlockPosArgument.getOrLoadBlockPos(ctx, "pos")))
                     )
-                    .executes(ctx -> execute(ctx, EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.getDimensionArgument(ctx, "dim"), new BlockPos(ctx.getSource().getPos())))
+                    .executes(ctx -> execute(ctx, EntityArgument.getOptionalEntities(ctx, "targets"), DimensionArgument.getDimension(ctx, "dim"), new BlockPos(ctx.getSource().getPosition())))
                 )
             );
     }
@@ -86,12 +86,12 @@ public class CommandSetDimension
                 }
             }
         }
-        final String dimName = dim.getDimensionKey().getLocation().toString();
+        final String dimName = dim.dimension().location().toString();
         final String finalCmdTarget = cmdTarget;
         final String finalPosTarget = posTarget;
         ITextComponent suggestion = new TranslationTextComponent("/execute in %s run tp %s%s", dimName, cmdTarget, finalPosTarget)
-                .modifyStyle((style) -> style.setFormatting(TextFormatting.GREEN).setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/execute in " + dimName + " run tp " + finalCmdTarget + finalPosTarget)));
-        ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.setdim.deprecated", suggestion), true);
+                .withStyle((style) -> style.withColor(TextFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/execute in " + dimName + " run tp " + finalCmdTarget + finalPosTarget)));
+        ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.setdim.deprecated", suggestion), true);
 
         return 0;
     }
@@ -99,6 +99,6 @@ public class CommandSetDimension
     private static boolean canEntityTeleport(Entity entity)
     {
         // use vanilla portal logic from BlockPortal#onEntityCollision
-        return !entity.isPassenger() && !entity.isBeingRidden() && entity.isNonBoss();
+        return !entity.isPassenger() && !entity.isVehicle() && entity.canChangeDimensions();
     }
 }

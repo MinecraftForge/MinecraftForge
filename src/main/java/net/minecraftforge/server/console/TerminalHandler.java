@@ -53,7 +53,7 @@ public final class TerminalHandler
         try
         {
             String line;
-            while (!server.isServerStopped() && server.isServerRunning())
+            while (!server.isStopped() && server.isRunning())
             {
                 try
                 {
@@ -71,13 +71,13 @@ public final class TerminalHandler
                 line = line.trim();
                 if (!line.isEmpty())
                 {
-                    server.handleConsoleInput(line, server.getCommandSource());
+                    server.handleConsoleInput(line, server.createCommandSourceStack());
                 }
             }
         }
         catch (UserInterruptException e)
         {
-            server.initiateShutdown(true);
+            server.halt(true);
         }
         finally
         {

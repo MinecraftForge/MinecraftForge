@@ -59,7 +59,7 @@ public class BlockSnapshot
     private BlockSnapshot(RegistryKey<World> dim, IWorld world, BlockPos pos, BlockState state, @Nullable CompoundNBT nbt, int flags)
     {
         this.dim = dim;
-        this.pos = pos.toImmutable();
+        this.pos = pos.immutable();
         this.block = state;
         this.flags = flags;
         this.nbt = nbt;
@@ -77,19 +77,19 @@ public class BlockSnapshot
 
     public static BlockSnapshot create(RegistryKey<World> dim, IWorld world, BlockPos pos, int flag)
     {
-        return new BlockSnapshot(dim, world, pos, world.getBlockState(pos), getTileNBT(world.getTileEntity(pos)), flag);
+        return new BlockSnapshot(dim, world, pos, world.getBlockState(pos), getTileNBT(world.getBlockEntity(pos)), flag);
     }
 
     @Nullable
     private static CompoundNBT getTileNBT(@Nullable TileEntity te)
     {
-        return te == null ? null : te.write(new CompoundNBT());
+        return te == null ? null : te.save(new CompoundNBT());
     }
 
     public BlockState getCurrentBlock()
     {
         IWorld world = getWorld();
-        return world == null ? Blocks.AIR.getDefaultState() : world.getBlockState(this.pos);
+        return world == null ? Blocks.AIR.defaultBlockState() : world.getBlockState(this.pos);
     }
 
     @Nullable
@@ -98,7 +98,7 @@ public class BlockSnapshot
         IWorld world = this.world != null ? this.world.get() : null;
         if (world == null)
         {
-            world = ServerLifecycleHooks.getCurrentServer().getWorld(this.dim);
+            world = ServerLifecycleHooks.getCurrentServer().getLevel(this.dim);
             this.world = new WeakReference<IWorld>(world);
         }
         return world;
@@ -112,7 +112,7 @@ public class BlockSnapshot
     @Nullable
     public TileEntity getTileEntity()
     {
-        return getNbt() != null ? TileEntity.readTileEntity(getReplacedBlock(), getNbt()) : null;
+        return getNbt() != null ? TileEntity.loadStatic(getReplacedBlock(), getNbt()) : null;
     }
 
     public boolean restore()
@@ -140,23 +140,23 @@ public class BlockSnapshot
         if (current != replaced)
         {
             if (force)
-                world.setBlockState(pos, replaced, flags);
+                world.setBlock(pos, replaced, flags);
             else
                 return false;
         }
 
-        world.setBlockState(pos, replaced, flags);
+        world.setBlock(pos, replaced, flags);
         if (world instanceof World)
-            ((World)world).notifyBlockUpdate(pos, current, replaced, flags);
+            ((World)world).sendBlockUpdated(pos, current, replaced, flags);
 
         TileEntity te = null;
         if (getNbt() != null)
         {
-            te = world.getTileEntity(pos);
+            te = world.getBlockEntity(pos);
             if (te != null)
             {
-                te.read(getReplacedBlock(), getNbt());
-                te.markDirty();
+                te.load(getReplacedBlock(), getNbt());
+                te.setChanged();
             }
         }
 
@@ -200,7 +200,7 @@ public class BlockSnapshot
         {
             this.toString =
                 "BlockSnapshot[" +
-                "World:" + this.dim.getLocation() + ',' +
+                "World:" + this.dim.location() + ',' +
                 "Pos: " + this.pos + ',' +
                 "State: " + this.block + ',' +
                 "Flags: " + this.flags + ',' +

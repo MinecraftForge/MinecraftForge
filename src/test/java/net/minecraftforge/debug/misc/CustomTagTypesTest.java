@@ -101,10 +101,10 @@ public class CustomTagTypesTest
         ItemStack itemStack = event.getItemStack();
         if (!itemStack.isEmpty())
         {
-            LOGGER.info("{} {} {}", Items.BONE.getTags(), OPTIONAL_TEST.getAllElements().size(), TagCollectionManager.getManager().getItemTags().get(new ResourceLocation(MODID, "optional_test")));
+            LOGGER.info("{} {} {}", Items.BONE.getTags(), OPTIONAL_TEST.getValues().size(), TagCollectionManager.getInstance().getItems().getTag(new ResourceLocation(MODID, "optional_test")));
             EnchantmentHelper.getEnchantments(itemStack).forEach((enchantment, level) -> logTagsIfPresent(enchantment.getTags()));
-            if (itemStack.getItem() instanceof PotionItem) logTagsIfPresent(PotionUtils.getPotionFromItem(itemStack).getTags());
-            TileEntity tileEntity = event.getWorld().getTileEntity(event.getPos());
+            if (itemStack.getItem() instanceof PotionItem) logTagsIfPresent(PotionUtils.getPotion(itemStack).getTags());
+            TileEntity tileEntity = event.getWorld().getBlockEntity(event.getPos());
             if (tileEntity != null) logTagsIfPresent(tileEntity.getType().getTags());
         }
     }
@@ -119,7 +119,7 @@ public class CustomTagTypesTest
 
     public static class Custom extends ForgeRegistryEntry<Custom>
     {
-        private final ReverseTagWrapper<Custom> reverseTags = new ReverseTagWrapper<>(this, () -> TagCollectionManager.getManager().getCustomTypeCollection(CUSTOM_REG.get()));
+        private final ReverseTagWrapper<Custom> reverseTags = new ReverseTagWrapper<>(this, () -> TagCollectionManager.getInstance().getCustomTypeCollection(CUSTOM_REG.get()));
 
         public Set<ResourceLocation> getTags()
         {
@@ -140,9 +140,9 @@ public class CustomTagTypesTest
         }
 
         @Override
-        protected void registerTags()
+        protected void addTags()
         {
-            getOrCreateBuilder(TESTS).addItemEntry(CUSTOM.get());
+            tag(TESTS).add(CUSTOM.get());
         }
 
         @Override
@@ -160,9 +160,9 @@ public class CustomTagTypesTest
         }
 
         @Override
-        protected void registerTags()
+        protected void addTags()
         {
-            getOrCreateBuilder(FIRE).add(Enchantments.FIRE_ASPECT, Enchantments.FLAME);
+            tag(FIRE).add(Enchantments.FIRE_ASPECT, Enchantments.FLAMING_ARROWS);
         }
 
         @Override
@@ -180,9 +180,9 @@ public class CustomTagTypesTest
         }
 
         @Override
-        protected void registerTags()
+        protected void addTags()
         {
-            getOrCreateBuilder(DAMAGE).add(Potions.HARMING, Potions.STRONG_HARMING);
+            tag(DAMAGE).add(Potions.HARMING, Potions.STRONG_HARMING);
         }
 
         @Override
@@ -200,9 +200,9 @@ public class CustomTagTypesTest
         }
 
         @Override
-        protected void registerTags()
+        protected void addTags()
         {
-            getOrCreateBuilder(STORAGE).add(TileEntityType.BARREL, TileEntityType.CHEST, TileEntityType.ENDER_CHEST);
+            tag(STORAGE).add(TileEntityType.BARREL, TileEntityType.CHEST, TileEntityType.ENDER_CHEST);
         }
 
         @Override

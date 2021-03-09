@@ -135,7 +135,7 @@ public final class ConfiguredModel {
     }
 
     static void checkRotation(int rotationX, int rotationY) {
-        Preconditions.checkArgument(ModelRotation.getModelRotation(rotationX, rotationY) != null, "Invalid model rotation x=%d, y=%d", rotationX, rotationY);
+        Preconditions.checkArgument(ModelRotation.by(rotationX, rotationY) != null, "Invalid model rotation x=%d, y=%d", rotationX, rotationY);
     }
 
     static void checkWeight(int weight) {

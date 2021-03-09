@@ -55,7 +55,7 @@ public interface IForgeBakedModel
         return getBakedModel().getQuads(state, side, rand);
     }
 
-    default boolean isAmbientOcclusion(BlockState state) { return getBakedModel().isAmbientOcclusion(); }
+    default boolean isAmbientOcclusion(BlockState state) { return getBakedModel().useAmbientOcclusion(); }
 
     /**
      * Override to tell the new model loader that it shouldn't wrap this model
@@ -78,7 +78,7 @@ public interface IForgeBakedModel
 
     default TextureAtlasSprite getParticleTexture(@Nonnull IModelData data)
     {
-        return getBakedModel().getParticleTexture();
+        return getBakedModel().getParticleIcon();
     }
 
     /**
@@ -94,6 +94,6 @@ public interface IForgeBakedModel
      */
     default List<Pair<IBakedModel, RenderType>> getLayerModels(ItemStack itemStack, boolean fabulous)
     {
-        return Collections.singletonList(Pair.of(getBakedModel(), RenderTypeLookup.func_239219_a_(itemStack, fabulous)));
+        return Collections.singletonList(Pair.of(getBakedModel(), RenderTypeLookup.getRenderType(itemStack, fabulous)));
     }
 }

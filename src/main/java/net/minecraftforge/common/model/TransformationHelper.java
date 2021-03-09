@@ -36,14 +36,14 @@ public final class TransformationHelper
     @OnlyIn(Dist.CLIENT)
     public static TransformationMatrix toTransformation(ItemTransformVec3f transform)
     {
-        if (transform.equals(ItemTransformVec3f.DEFAULT)) return TransformationMatrix.identity();
+        if (transform.equals(ItemTransformVec3f.NO_TRANSFORM)) return TransformationMatrix.identity();
 
         return new TransformationMatrix(transform.translation, quatFromXYZ(transform.rotation, true), transform.scale, null);
     }
 
     public static Quaternion quatFromXYZ(Vector3f xyz, boolean degrees)
     {
-        return new Quaternion(xyz.getX(), xyz.getY(), xyz.getZ(), degrees);
+        return new Quaternion(xyz.x(), xyz.y(), xyz.z(), degrees);
     }
 
     public static Quaternion quatFromXYZ(float[] xyz, boolean degrees)
@@ -74,19 +74,19 @@ public final class TransformationHelper
         // the shorter path. Note that v1 and -v1 are equivalent when
         // the negation is applied to all four components. Fix by
         // reversing one quaternion.
-        float dot = v0.getX() * v1.getX() + v0.getY() * v1.getY() + v0.getZ() * v1.getZ() + v0.getW() * v1.getW();
+        float dot = v0.i() * v1.i() + v0.j() * v1.j() + v0.k() * v1.k() + v0.r() * v1.r();
         if (dot < 0.0f) {
-            v1 = new Quaternion(-v1.getX(), -v1.getY(), -v1.getZ(), -v1.getW());
+            v1 = new Quaternion(-v1.i(), -v1.j(), -v1.k(), -v1.r());
             dot = -dot;
         }
 
         // If the inputs are too close for comfort, linearly interpolate
         // and normalize the result.
         if (dot > THRESHOLD) {
-            float x = MathHelper.lerp(t, v0.getX(), v1.getX());
-            float y = MathHelper.lerp(t, v0.getY(), v1.getY());
-            float z = MathHelper.lerp(t, v0.getZ(), v1.getZ());
-            float w = MathHelper.lerp(t, v0.getW(), v1.getW());
+            float x = MathHelper.lerp(t, v0.i(), v1.i());
+            float y = MathHelper.lerp(t, v0.j(), v1.j());
+            float z = MathHelper.lerp(t, v0.k(), v1.k());
+            float w = MathHelper.lerp(t, v0.r(), v1.r());
             return new Quaternion(x,y,z,w);
         }
 
@@ -101,10 +101,10 @@ public final class TransformationHelper
         float s0 = sin1t / sin01;
 
         return new Quaternion(
-                s0 * v0.getX() + s1 * v1.getX(),
-                s0 * v0.getY() + s1 * v1.getY(),
-                s0 * v0.getZ() + s1 * v1.getZ(),
-                s0 * v0.getW() + s1 * v1.getW()
+                s0 * v0.i() + s1 * v1.i(),
+                s0 * v0.j() + s1 * v1.j(),
+                s0 * v0.k() + s1 * v1.k(),
+                s0 * v0.r() + s1 * v1.r()
         );
     }
 
@@ -112,7 +112,7 @@ public final class TransformationHelper
     {
         return new TransformationMatrix(
             lerp(one.getTranslation(), that.getTranslation(), progress),
-            slerp(one.getRotationLeft(), that.getRotationLeft(), progress),
+            slerp(one.getLeftRotation(), that.getLeftRotation(), progress),
             lerp(one.getScale(), that.getScale(), progress),
             slerp(one.getRightRot(), that.getRightRot(), progress)
         );
@@ -120,10 +120,10 @@ public final class TransformationHelper
 
     public static boolean epsilonEquals(Vector4f v1, Vector4f v2, float epsilon)
     {
-        return MathHelper.abs(v1.getX()-v2.getX()) < epsilon &&
-               MathHelper.abs(v1.getY()-v2.getY()) < epsilon &&
-               MathHelper.abs(v1.getZ()-v2.getZ()) < epsilon &&
-               MathHelper.abs(v1.getW()-v2.getW()) < epsilon;
+        return MathHelper.abs(v1.x()-v2.x()) < epsilon &&
+               MathHelper.abs(v1.y()-v2.y()) < epsilon &&
+               MathHelper.abs(v1.z()-v2.z()) < epsilon &&
+               MathHelper.abs(v1.w()-v2.w()) < epsilon;
     }
 
     public static class Deserializer implements JsonDeserializer<TransformationMatrix>
@@ -348,7 +348,7 @@ public final class TransformationHelper
                     Quaternion ret = Quaternion.ONE.copy();
                     for (JsonElement a : e.getAsJsonArray())
                     {
-                        ret.multiply(parseAxisRotation(a));
+                        ret.mul(parseAxisRotation(a));
                     }
                     return ret;
                 }

@@ -43,7 +43,7 @@ public class StickyBlockTest
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().register((new Block(Block.Properties.create(Material.ROCK))
+        event.getRegistry().register((new Block(Block.Properties.of(Material.STONE))
         {
             @Override
             public boolean isStickyBlock(BlockState state)

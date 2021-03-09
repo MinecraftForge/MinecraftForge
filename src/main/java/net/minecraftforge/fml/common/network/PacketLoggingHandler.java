@@ -47,7 +47,7 @@ public class PacketLoggingHandler
     {
         ChannelPipeline pipeline = manager.channel().pipeline();
         final PacketDirection direction = manager.getDirection();
-        if (manager.isLocalChannel())
+        if (manager.isMemoryConnection())
         {
             pipeline.addBefore("packet_handler", "splitter", new SimpleChannelInboundHandler<IPacket<?>>()
             {
@@ -56,7 +56,7 @@ public class PacketLoggingHandler
                 protected void channelRead0(ChannelHandlerContext ctx, IPacket<?> msg) throws Exception
                 {
                     PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
-                    msg.writePacketData(buf);
+                    msg.write(buf);
                     LOGGER.debug("{} {}:\n{}", prefix, msg.getClass().getSimpleName(), ByteBufUtils.getContentDump(buf));
                     ctx.fireChannelRead(msg);
                 }
@@ -70,7 +70,7 @@ public class PacketLoggingHandler
                     if (msg instanceof IPacket<?>)
                     {
                         PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
-                        ((IPacket<?>)msg).writePacketData(buf);
+                        ((IPacket<?>)msg).write(buf);
                         LOGGER.debug("{} {}:\n{}", prefix, msg.getClass().getSimpleName(), ByteBufUtils.getContentDump(buf));
                     }
                     ctx.write(msg, promise);

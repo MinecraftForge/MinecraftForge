@@ -105,7 +105,7 @@ public class BiomeManager
      */
     public static void addAdditionalOverworldBiomes(RegistryKey<Biome> biome)
     {
-        if (!"minecraft".equals(biome.getLocation().getNamespace()) && additionalOverworldBiomes.stream().noneMatch(entry -> entry.getLocation().equals(biome.getLocation())))
+        if (!"minecraft".equals(biome.location().getNamespace()) && additionalOverworldBiomes.stream().noneMatch(entry -> entry.location().equals(biome.location())))
         {
             additionalOverworldBiomes.add(biome);
         }

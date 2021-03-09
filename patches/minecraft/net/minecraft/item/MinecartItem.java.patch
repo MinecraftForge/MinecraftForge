@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/MinecartItem.java
 +++ b/net/minecraft/item/MinecartItem.java
-@@ -26,7 +26,7 @@
+@@ -26,7 +_,7 @@
           double d2 = p_82487_1_.func_82616_c() + (double)direction.func_82599_e() * 1.125D;
           BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(direction);
           BlockState blockstate = world.func_180495_p(blockpos);
@@ -9,7 +9,7 @@
           double d3;
           if (blockstate.func_235714_a_(BlockTags.field_203437_y)) {
              if (railshape.func_208092_c()) {
-@@ -79,7 +79,7 @@
+@@ -79,7 +_,7 @@
        } else {
           ItemStack itemstack = p_195939_1_.func_195996_i();
           if (!world.field_72995_K) {

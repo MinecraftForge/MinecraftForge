@@ -62,7 +62,7 @@ public class ModFileResourcePack extends ResourcePack
     }
 
     @Override
-    protected InputStream getInputStream(String name) throws IOException
+    protected InputStream getResource(String name) throws IOException
     {
         final Path path = modFile.getLocator().findPath(modFile, name);
         if(!Files.exists(path))
@@ -71,18 +71,18 @@ public class ModFileResourcePack extends ResourcePack
     }
 
     @Override
-    protected boolean resourceExists(String name)
+    protected boolean hasResource(String name)
     {
         return Files.exists(modFile.getLocator().findPath(modFile, name));
     }
 
 
     @Override
-    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String resourceNamespace, String pathIn, int maxDepth, Predicate<String> filter)
+    public Collection<ResourceLocation> getResources(ResourcePackType type, String resourceNamespace, String pathIn, int maxDepth, Predicate<String> filter)
     {
         try
         {
-            Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName(), resourceNamespace).toAbsolutePath();
+            Path root = modFile.getLocator().findPath(modFile, type.getDirectory(), resourceNamespace).toAbsolutePath();
             Path inputPath = root.getFileSystem().getPath(pathIn);
 
             return Files.walk(root).
@@ -104,10 +104,10 @@ public class ModFileResourcePack extends ResourcePack
     }
 
     @Override
-    public Set<String> getResourceNamespaces(ResourcePackType type)
+    public Set<String> getNamespaces(ResourcePackType type)
     {
         try {
-            Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName()).toAbsolutePath();
+            Path root = modFile.getLocator().findPath(modFile, type.getDirectory()).toAbsolutePath();
             return Files.walk(root,1)
                     .map(path -> root.relativize(path.toAbsolutePath()))
                     .filter(path -> path.getNameCount() > 0) // skip the root entry
@@ -119,7 +119,7 @@ public class ModFileResourcePack extends ResourcePack
         {
             if (type == ResourcePackType.SERVER_DATA) //We still have to add the resource namespace if client resources exist, as we load langs (which are in assets) on server
             {
-                return this.getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES);
+                return this.getNamespaces(ResourcePackType.CLIENT_RESOURCES);
             }
             else
             {
@@ -128,19 +128,19 @@ public class ModFileResourcePack extends ResourcePack
         }
     }
 
-    public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
+    public InputStream getResource(ResourcePackType type, ResourceLocation location) throws IOException {
         if (location.getPath().startsWith("lang/")) {
-            return super.getResourceStream(ResourcePackType.CLIENT_RESOURCES, location);
+            return super.getResource(ResourcePackType.CLIENT_RESOURCES, location);
         } else {
-            return super.getResourceStream(type, location);
+            return super.getResource(type, location);
         }
     }
 
-    public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
+    public boolean hasResource(ResourcePackType type, ResourceLocation location) {
         if (location.getPath().startsWith("lang/")) {
-            return super.resourceExists(ResourcePackType.CLIENT_RESOURCES, location);
+            return super.hasResource(ResourcePackType.CLIENT_RESOURCES, location);
         } else {
-            return super.resourceExists(type, location);
+            return super.hasResource(type, location);
         }
     }
 

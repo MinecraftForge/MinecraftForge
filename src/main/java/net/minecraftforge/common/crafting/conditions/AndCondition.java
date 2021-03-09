@@ -91,7 +91,7 @@ public class AndCondition implements ICondition
         public AndCondition read(JsonObject json)
         {
             List<ICondition> children = new ArrayList<>();
-            for (JsonElement j : JSONUtils.getJsonArray(json, "values"))
+            for (JsonElement j : JSONUtils.getAsJsonArray(json, "values"))
             {
                 if (!j.isJsonObject())
                     throw new JsonSyntaxException("And condition values must be an array of JsonObjects");

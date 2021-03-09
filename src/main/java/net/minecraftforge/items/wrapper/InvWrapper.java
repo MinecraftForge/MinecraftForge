@@ -58,14 +58,14 @@ public class InvWrapper implements IItemHandlerModifiable
     @Override
     public int getSlots()
     {
-        return getInv().getSizeInventory();
+        return getInv().getContainerSize();
     }
 
     @Override
     @Nonnull
     public ItemStack getStackInSlot(int slot)
     {
-        return getInv().getStackInSlot(slot);
+        return getInv().getItem(slot);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class InvWrapper implements IItemHandlerModifiable
         if (stack.isEmpty())
             return ItemStack.EMPTY;
 
-        ItemStack stackInSlot = getInv().getStackInSlot(slot);
+        ItemStack stackInSlot = getInv().getItem(slot);
 
         int m;
         if (!stackInSlot.isEmpty())
@@ -86,7 +86,7 @@ public class InvWrapper implements IItemHandlerModifiable
             if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
                 return stack;
 
-            if (!getInv().isItemValidForSlot(slot, stack))
+            if (!getInv().canPlaceItem(slot, stack))
                 return stack;
 
             m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot)) - stackInSlot.getCount();
@@ -97,8 +97,8 @@ public class InvWrapper implements IItemHandlerModifiable
                 {
                     ItemStack copy = stack.copy();
                     copy.grow(stackInSlot.getCount());
-                    getInv().setInventorySlotContents(slot, copy);
-                    getInv().markDirty();
+                    getInv().setItem(slot, copy);
+                    getInv().setChanged();
                 }
 
                 return ItemStack.EMPTY;
@@ -111,8 +111,8 @@ public class InvWrapper implements IItemHandlerModifiable
                 {
                     ItemStack copy = stack.split(m);
                     copy.grow(stackInSlot.getCount());
-                    getInv().setInventorySlotContents(slot, copy);
-                    getInv().markDirty();
+                    getInv().setItem(slot, copy);
+                    getInv().setChanged();
                     return stack;
                 }
                 else
@@ -124,7 +124,7 @@ public class InvWrapper implements IItemHandlerModifiable
         }
         else
         {
-            if (!getInv().isItemValidForSlot(slot, stack))
+            if (!getInv().canPlaceItem(slot, stack))
                 return stack;
 
             m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot));
@@ -134,8 +134,8 @@ public class InvWrapper implements IItemHandlerModifiable
                 stack = stack.copy();
                 if (!simulate)
                 {
-                    getInv().setInventorySlotContents(slot, stack.split(m));
-                    getInv().markDirty();
+                    getInv().setItem(slot, stack.split(m));
+                    getInv().setChanged();
                     return stack;
                 }
                 else
@@ -148,8 +148,8 @@ public class InvWrapper implements IItemHandlerModifiable
             {
                 if (!simulate)
                 {
-                    getInv().setInventorySlotContents(slot, stack);
-                    getInv().markDirty();
+                    getInv().setItem(slot, stack);
+                    getInv().setChanged();
                 }
                 return ItemStack.EMPTY;
             }
@@ -164,7 +164,7 @@ public class InvWrapper implements IItemHandlerModifiable
         if (amount == 0)
             return ItemStack.EMPTY;
 
-        ItemStack stackInSlot = getInv().getStackInSlot(slot);
+        ItemStack stackInSlot = getInv().getItem(slot);
 
         if (stackInSlot.isEmpty())
             return ItemStack.EMPTY;
@@ -186,8 +186,8 @@ public class InvWrapper implements IItemHandlerModifiable
         {
             int m = Math.min(stackInSlot.getCount(), amount);
 
-            ItemStack decrStackSize = getInv().decrStackSize(slot, m);
-            getInv().markDirty();
+            ItemStack decrStackSize = getInv().removeItem(slot, m);
+            getInv().setChanged();
             return decrStackSize;
         }
     }
@@ -195,19 +195,19 @@ public class InvWrapper implements IItemHandlerModifiable
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
-        getInv().setInventorySlotContents(slot, stack);
+        getInv().setItem(slot, stack);
     }
 
     @Override
     public int getSlotLimit(int slot)
     {
-        return getInv().getInventoryStackLimit();
+        return getInv().getMaxStackSize();
     }
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack)
     {
-        return getInv().isItemValidForSlot(slot, stack);
+        return getInv().canPlaceItem(slot, stack);
     }
 
     public IInventory getInv()

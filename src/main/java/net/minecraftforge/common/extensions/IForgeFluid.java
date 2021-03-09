@@ -56,7 +56,7 @@ public interface IForgeFluid
      */
     default boolean isEntityInside(FluidState state, IWorldReader world, BlockPos pos, Entity entity, double yToTest, Tag<Fluid> tag, boolean testingHead)
     {
-        return state.isTagged(tag) && yToTest < (double)(pos.getY() + state.getActualHeight(world, pos) + 0.11111111F);
+        return state.is(tag) && yToTest < (double)(pos.getY() + state.getHeight(world, pos) + 0.11111111F);
     }
 
     /**

@@ -116,6 +116,6 @@ public class FMLMCRegisterPacketHandler {
         PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
         pb.writeBytes(getFrom(manager).toByteArray());
         final ICustomPacket<IPacket<?>> iPacketICustomPacket = dir.buildPacket(Pair.of(pb, 0), FMLNetworkConstants.MC_REGISTER_RESOURCE);
-        manager.sendPacket(iPacketICustomPacket.getThis());
+        manager.send(iPacketICustomPacket.getThis());
     }
 }

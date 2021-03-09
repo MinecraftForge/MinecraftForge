@@ -47,7 +47,7 @@ public class SlipperinessTest
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e)
     {
-        e.getRegistry().register((new Block(Block.Properties.create(Material.PACKED_ICE))
+        e.getRegistry().register((new Block(Block.Properties.of(Material.ICE_SOLID))
         {
             @Override
             public float getSlipperiness(BlockState state, IWorldReader world, BlockPos pos, Entity entity)

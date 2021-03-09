@@ -33,20 +33,20 @@ public class VanillaIngredientSerializer implements IIngredientSerializer<Ingred
 
     public Ingredient parse(PacketBuffer buffer)
     {
-        return Ingredient.fromItemListStream(Stream.generate(() -> new Ingredient.SingleItemList(buffer.readItemStack())).limit(buffer.readVarInt()));
+        return Ingredient.fromValues(Stream.generate(() -> new Ingredient.SingleItemList(buffer.readItem())).limit(buffer.readVarInt()));
     }
 
     public Ingredient parse(JsonObject json)
     {
-       return Ingredient.fromItemListStream(Stream.of(Ingredient.deserializeItemList(json)));
+       return Ingredient.fromValues(Stream.of(Ingredient.valueFromJson(json)));
     }
 
     public void write(PacketBuffer buffer, Ingredient ingredient)
     {
-        ItemStack[] items = ingredient.getMatchingStacks();
+        ItemStack[] items = ingredient.getItems();
         buffer.writeVarInt(items.length);
 
         for (ItemStack stack : items)
-            buffer.writeItemStack(stack);
+            buffer.writeItem(stack);
     }
 }

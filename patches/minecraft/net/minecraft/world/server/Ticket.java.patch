@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/server/Ticket.java
 +++ b/net/minecraft/world/server/Ticket.java
-@@ -9,9 +9,14 @@
+@@ -9,9 +_,14 @@
     private long field_219483_d;
  
     protected Ticket(TicketType<T> p_i226095_1_, int p_i226095_2_, T p_i226095_3_) {
@@ -15,7 +15,7 @@
     }
  
     public int compareTo(Ticket<?> p_compareTo_1_) {
-@@ -31,16 +36,16 @@
+@@ -31,16 +_,16 @@
           return false;
        } else {
           Ticket<?> ticket = (Ticket)p_equals_1_;
@@ -35,15 +35,16 @@
     }
  
     public TicketType<T> func_219479_a() {
-@@ -59,4 +64,11 @@
+@@ -58,5 +_,12 @@
+    protected boolean func_223182_a(long p_223182_1_) {
        long i = this.field_219480_a.func_223184_b();
        return i != 0L && p_223182_1_ - this.field_219483_d > i;
-    }
++   }
 +
 +   /* ======================================== FORGE START =====================================*/
 +   private final boolean forceTicks;
 +
 +   public boolean isForceTicks() {
 +      return forceTicks;
-+   }
+    }
  }

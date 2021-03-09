@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/Ingredient.java
 +++ b/net/minecraft/item/crafting/Ingredient.java
-@@ -28,15 +28,24 @@
+@@ -28,15 +_,24 @@
  import net.minecraft.util.registry.Registry;
  
  public class Ingredient implements Predicate<ItemStack> {
@@ -25,7 +25,7 @@
     }
  
     public ItemStack[] func_193365_a() {
-@@ -91,6 +100,10 @@
+@@ -91,6 +_,10 @@
  
     public final void func_199564_a(PacketBuffer p_199564_1_) {
        this.func_199806_d();
@@ -36,7 +36,7 @@
        p_199564_1_.func_150787_b(this.field_193371_b.length);
  
        for(int i = 0; i < this.field_193371_b.length; ++i) {
-@@ -117,6 +130,25 @@
+@@ -117,6 +_,25 @@
        return this.field_199807_b.length == 0 && (this.field_193371_b == null || this.field_193371_b.length == 0) && (this.field_194140_c == null || this.field_194140_c.isEmpty());
     }
  
@@ -62,7 +62,7 @@
     public static Ingredient func_209357_a(Stream<? extends Ingredient.IItemList> p_209357_0_) {
        Ingredient ingredient = new Ingredient(p_209357_0_);
        return ingredient.field_199807_b.length == 0 ? field_193370_a : ingredient;
-@@ -144,6 +176,9 @@
+@@ -144,6 +_,9 @@
  
     public static Ingredient func_199566_b(PacketBuffer p_199566_0_) {
        int i = p_199566_0_.func_150792_a();
@@ -72,7 +72,7 @@
        return func_209357_a(Stream.generate(() -> {
           return new Ingredient.SingleItemList(p_199566_0_.func_150791_c());
        }).limit((long)i));
-@@ -151,6 +186,8 @@
+@@ -151,6 +_,8 @@
  
     public static Ingredient func_199802_a(@Nullable JsonElement p_199802_0_) {
        if (p_199802_0_ != null && !p_199802_0_.isJsonNull()) {
@@ -81,7 +81,7 @@
           if (p_199802_0_.isJsonObject()) {
              return func_209357_a(Stream.of(func_199803_a(p_199802_0_.getAsJsonObject())));
           } else if (p_199802_0_.isJsonArray()) {
-@@ -192,6 +229,12 @@
+@@ -192,6 +_,12 @@
        }
     }
  
@@ -94,7 +94,7 @@
     public interface IItemList {
        Collection<ItemStack> func_199799_a();
  
-@@ -230,6 +273,9 @@
+@@ -230,6 +_,9 @@
              list.add(new ItemStack(item));
           }
  

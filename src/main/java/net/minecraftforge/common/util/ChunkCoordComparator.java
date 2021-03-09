@@ -30,8 +30,8 @@ public class ChunkCoordComparator implements java.util.Comparator<ChunkPos>
 
     public ChunkCoordComparator(ServerPlayerEntity entityplayer)
     {
-        x = (int) entityplayer.getPosX() >> 4;
-        z = (int) entityplayer.getPosZ() >> 4;
+        x = (int) entityplayer.getX() >> 4;
+        z = (int) entityplayer.getZ() >> 4;
     }
 
     @Override

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -156,17 +156,28 @@
+@@ -156,17 +_,28 @@
           }
  
           float f9 = Math.min(1.0F / field_205093_c, Math.min(1.0F / field_205094_d, 1.0F / field_205095_e));
@@ -29,7 +29,7 @@
        RenderSystem.clearColor(field_205093_c, field_205094_d, field_205095_e, 0.0F);
     }
  
-@@ -174,10 +185,17 @@
+@@ -174,10 +_,17 @@
        RenderSystem.fogDensity(0.0F);
        RenderSystem.fogMode(GlStateManager.FogMode.EXP2);
     }
@@ -48,7 +48,7 @@
        if (fluidstate.func_206884_a(FluidTags.field_206959_a)) {
           float f = 1.0F;
           f = 0.05F;
-@@ -228,6 +246,7 @@
+@@ -228,6 +_,7 @@
           RenderSystem.fogEnd(f3);
           RenderSystem.fogMode(GlStateManager.FogMode.LINEAR);
           RenderSystem.setupNvFogDistance();

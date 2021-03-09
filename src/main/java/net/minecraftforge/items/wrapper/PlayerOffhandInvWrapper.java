@@ -25,7 +25,7 @@ public class PlayerOffhandInvWrapper extends RangedWrapper
 {
     public PlayerOffhandInvWrapper(PlayerInventory inv)
     {
-        super(new InvWrapper(inv), inv.mainInventory.size() + inv.armorInventory.size(),
-                inv.mainInventory.size() + inv.armorInventory.size() + inv.offHandInventory.size());
+        super(new InvWrapper(inv), inv.items.size() + inv.armor.size(),
+                inv.items.size() + inv.armor.size() + inv.offhand.size());
     }
 }

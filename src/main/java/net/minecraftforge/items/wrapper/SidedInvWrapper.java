@@ -91,7 +91,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     public ItemStack getStackInSlot(int slot)
     {
         int i = getSlot(inv, slot, side);
-        return i == -1 ? ItemStack.EMPTY : inv.getStackInSlot(i);
+        return i == -1 ? ItemStack.EMPTY : inv.getItem(i);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         if (slot1 == -1)
             return stack;
 
-        ItemStack stackInSlot = inv.getStackInSlot(slot1);
+        ItemStack stackInSlot = inv.getItem(slot1);
 
         int m;
         if (!stackInSlot.isEmpty())
@@ -117,7 +117,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
             if (!ItemHandlerHelper.canItemStacksStack(stack, stackInSlot))
                 return stack;
 
-            if (!inv.canInsertItem(slot1, stack, side) || !inv.isItemValidForSlot(slot1, stack))
+            if (!inv.canPlaceItemThroughFace(slot1, stack, side) || !inv.canPlaceItem(slot1, stack))
                 return stack;
 
             m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot)) - stackInSlot.getCount();
@@ -153,7 +153,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         }
         else
         {
-            if (!inv.canInsertItem(slot1, stack, side) || !inv.isItemValidForSlot(slot1, stack))
+            if (!inv.canPlaceItemThroughFace(slot1, stack, side) || !inv.canPlaceItem(slot1, stack))
                 return stack;
 
             m = Math.min(stack.getMaxStackSize(), getSlotLimit(slot));
@@ -192,8 +192,8 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     }
 
     private void setInventorySlotContents(int slot, ItemStack stack) {
-      inv.markDirty(); //Notify vanilla of updates, We change the handler to be responsible for this instead of the caller. So mimic vanilla behavior
-      inv.setInventorySlotContents(slot, stack);
+      inv.setChanged(); //Notify vanilla of updates, We change the handler to be responsible for this instead of the caller. So mimic vanilla behavior
+      inv.setItem(slot, stack);
     }
 
     @Override
@@ -208,12 +208,12 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         if (slot1 == -1)
             return ItemStack.EMPTY;
 
-        ItemStack stackInSlot = inv.getStackInSlot(slot1);
+        ItemStack stackInSlot = inv.getItem(slot1);
 
         if (stackInSlot.isEmpty())
             return ItemStack.EMPTY;
 
-        if (!inv.canExtractItem(slot1, stackInSlot, side))
+        if (!inv.canTakeItemThroughFace(slot1, stackInSlot, side))
             return ItemStack.EMPTY;
 
         if (simulate)
@@ -232,8 +232,8 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         else
         {
             int m = Math.min(stackInSlot.getCount(), amount);
-            ItemStack ret = inv.decrStackSize(slot1, m);
-            inv.markDirty();
+            ItemStack ret = inv.removeItem(slot1, m);
+            inv.setChanged();
             return ret;
         }
     }
@@ -241,13 +241,13 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     @Override
     public int getSlotLimit(int slot)
     {
-        return inv.getInventoryStackLimit();
+        return inv.getMaxStackSize();
     }
 
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack)
     {
         int slot1 = getSlot(inv, slot, side);
-        return slot1 == -1 ? false : inv.isItemValidForSlot(slot1, stack);
+        return slot1 == -1 ? false : inv.canPlaceItem(slot1, stack);
     }
 }

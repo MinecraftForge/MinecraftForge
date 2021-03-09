@@ -46,7 +46,7 @@ public class QuadTransformer
 
     private void processVertices(int[] inData, int[] outData)
     {
-        int stride = DefaultVertexFormats.BLOCK.getSize();
+        int stride = DefaultVertexFormats.BLOCK.getVertexSize();
         int count = (inData.length * 4) / stride;
         for (int i=0;i<count;i++)
         {
@@ -59,9 +59,9 @@ public class QuadTransformer
             transform.transformPosition(pos);
             pos.perspectiveDivide();
 
-            putAtByteOffset(outData, offset, Float.floatToRawIntBits(pos.getX()));
-            putAtByteOffset(outData,offset + 4, Float.floatToRawIntBits(pos.getY()));
-            putAtByteOffset(outData,offset + 8, Float.floatToRawIntBits(pos.getZ()));
+            putAtByteOffset(outData, offset, Float.floatToRawIntBits(pos.x()));
+            putAtByteOffset(outData,offset + 4, Float.floatToRawIntBits(pos.y()));
+            putAtByteOffset(outData,offset + 8, Float.floatToRawIntBits(pos.z()));
         }
 
         for (int i=0;i<count;i++)
@@ -138,7 +138,7 @@ public class QuadTransformer
             throw new RuntimeException("Expected vertex format to have a POSITION attribute");
         if (element.getType() != VertexFormatElement.Type.FLOAT)
             throw new RuntimeException("Expected POSITION attribute to have data type FLOAT");
-        if (element.getSize() < 3)
+        if (element.getByteSize() < 3)
             throw new RuntimeException("Expected POSITION attribute to have at least 3 dimensions");
         return fmt.getOffset(index);
     }
@@ -160,7 +160,7 @@ public class QuadTransformer
             throw new IllegalStateException("BLOCK format does not have normals?");
         if (element.getType() != VertexFormatElement.Type.BYTE)
             throw new RuntimeException("Expected NORMAL attribute to have data type BYTE");
-        if (element.getSize() < 3)
+        if (element.getByteSize() < 3)
             throw new RuntimeException("Expected NORMAL attribute to have at least 3 dimensions");
         return fmt.getOffset(index);
     }
@@ -172,11 +172,11 @@ public class QuadTransformer
      */
     public BakedQuad processOne(BakedQuad input)
     {
-        int[] inData = input.getVertexData();
+        int[] inData = input.getVertices();
         int[] outData = Arrays.copyOf(inData, inData.length);
         processVertices(inData, outData);
 
-        return new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.getSprite(), input.applyDiffuseLighting());
+        return new BakedQuad(outData, input.getTintIndex(), input.getDirection(), input.getSprite(), input.isShade());
     }
 
     /**
@@ -186,7 +186,7 @@ public class QuadTransformer
      */
     public BakedQuad processOneInPlace(BakedQuad input)
     {
-        int[] data = input.getVertexData();
+        int[] data = input.getVertices();
         processVertices(data, data);
         return input;
     }
@@ -204,11 +204,11 @@ public class QuadTransformer
         List<BakedQuad> outputs = Lists.newArrayList();
         for(BakedQuad input : inputs)
         {
-            int[] inData = input.getVertexData();
+            int[] inData = input.getVertices();
             int[] outData = Arrays.copyOf(inData, inData.length);
             processVertices(inData, outData);
 
-            outputs.add(new BakedQuad(outData, input.getTintIndex(), input.getFace(), input.getSprite(), input.applyDiffuseLighting()));
+            outputs.add(new BakedQuad(outData, input.getTintIndex(), input.getDirection(), input.getSprite(), input.isShade()));
         }
         return outputs;
     }
@@ -224,7 +224,7 @@ public class QuadTransformer
 
         for(BakedQuad input : inputs)
         {
-            int[] data = input.getVertexData();
+            int[] data = input.getVertices();
             processVertices(data, data);
         }
     }

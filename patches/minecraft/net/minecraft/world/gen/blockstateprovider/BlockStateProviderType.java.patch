@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/blockstateprovider/BlockStateProviderType.java
 +++ b/net/minecraft/world/gen/blockstateprovider/BlockStateProviderType.java
-@@ -3,7 +3,7 @@
+@@ -3,7 +_,7 @@
  import com.mojang.serialization.Codec;
  import net.minecraft.util.registry.Registry;
  

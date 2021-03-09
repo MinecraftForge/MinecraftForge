@@ -76,7 +76,7 @@ public class ItemMultiLayerBakedModel implements IDynamicBakedModel
     }
 
     @Override
-    public boolean isAmbientOcclusion()
+    public boolean useAmbientOcclusion()
     {
         return smoothLighting;
     }
@@ -88,19 +88,19 @@ public class ItemMultiLayerBakedModel implements IDynamicBakedModel
     }
 
     @Override
-    public boolean isSideLit()
+    public boolean usesBlockLight()
     {
         return sideLit;
     }
 
     @Override
-    public boolean isBuiltInRenderer()
+    public boolean isCustomRenderer()
     {
         return false;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture()
+    public TextureAtlasSprite getParticleIcon()
     {
         return particle;
     }

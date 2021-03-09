@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/template/Template.java
 +++ b/net/minecraft/world/gen/feature/template/Template.java
-@@ -190,6 +190,10 @@
+@@ -190,6 +_,10 @@
        return func_207669_a(p_186266_1_, p_186266_0_.func_186212_b(), p_186266_0_.func_186215_c(), p_186266_0_.func_207664_d());
     }
  
@@ -11,7 +11,7 @@
     public void func_237144_a_(IServerWorld p_237144_1_, BlockPos p_237144_2_, PlacementSettings p_237144_3_, Random p_237144_4_) {
        p_237144_3_.func_186224_i();
        this.func_237152_b_(p_237144_1_, p_237144_2_, p_237144_3_, p_237144_4_);
-@@ -215,7 +219,7 @@
+@@ -215,7 +_,7 @@
              int i1 = Integer.MIN_VALUE;
              int j1 = Integer.MIN_VALUE;
  
@@ -20,7 +20,7 @@
                 BlockPos blockpos = template$blockinfo.field_186242_a;
                 if (mutableboundingbox == null || mutableboundingbox.func_175898_b(blockpos)) {
                    FluidState fluidstate = p_237146_4_.func_204763_l() ? p_237146_1_.func_204610_c(blockpos) : null;
-@@ -330,7 +334,7 @@
+@@ -330,7 +_,7 @@
              }
  
              if (!p_237146_4_.func_186221_e()) {
@@ -29,7 +29,7 @@
              }
  
              return true;
-@@ -359,14 +363,19 @@
+@@ -359,14 +_,19 @@
        });
     }
  
@@ -50,7 +50,7 @@
           }
  
           if (template$blockinfo1 != null) {
-@@ -377,13 +386,30 @@
+@@ -377,13 +_,30 @@
        return list;
     }
  
@@ -87,7 +87,7 @@
              ListNBT listnbt = new ListNBT();
              listnbt.add(DoubleNBT.func_229684_a_(vector3d1.field_72450_a));
              listnbt.add(DoubleNBT.func_229684_a_(vector3d1.field_72448_b));
-@@ -391,10 +417,10 @@
+@@ -391,10 +_,10 @@
              compoundnbt.func_218657_a("Pos", listnbt);
              compoundnbt.func_82580_o("UUID");
              func_215382_a(p_237143_1_, compoundnbt).ifPresent((p_242927_6_) -> {

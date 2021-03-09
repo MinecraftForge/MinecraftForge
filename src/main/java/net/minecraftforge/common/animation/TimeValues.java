@@ -52,7 +52,7 @@ public final class TimeValues
         }
 
         @Override
-        public String getString()
+        public String getSerializedName()
         {
             return "identity";
         }
@@ -244,7 +244,7 @@ public final class TimeValues
         }
 
         @Override
-        public String getString()
+        public String getSerializedName()
         {
             return parameterName;
         }
@@ -346,7 +346,7 @@ public final class TimeValues
                     }
                     else if(parameter instanceof IStringSerializable)
                     {
-                        out.value("#" + ((IStringSerializable)parameter).getString());
+                        out.value("#" + ((IStringSerializable)parameter).getSerializedName());
                     }
                 }
 

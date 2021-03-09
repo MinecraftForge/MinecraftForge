@@ -64,17 +64,17 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
         {
             return;
         }
-        if(blockRenderer == null) blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
-        BlockPos pos = te.getPos();
-        IBlockDisplayReader world = MinecraftForgeClient.getRegionRenderCacheOptional(te.getWorld(), pos)
-            .map(IBlockDisplayReader.class::cast).orElseGet(() -> te.getWorld());
+        if(blockRenderer == null) blockRenderer = Minecraft.getInstance().getBlockRenderer();
+        BlockPos pos = te.getBlockPos();
+        IBlockDisplayReader world = MinecraftForgeClient.getRegionRenderCacheOptional(te.getLevel(), pos)
+            .map(IBlockDisplayReader.class::cast).orElseGet(() -> te.getLevel());
         BlockState state = world.getBlockState(pos);
-        IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
-        IModelData data = model.getModelData(world, pos, state, ModelDataManager.getModelData(te.getWorld(), pos));
+        IBakedModel model = blockRenderer.getBlockModelShaper().getBlockModel(state);
+        IModelData data = model.getModelData(world, pos, state, ModelDataManager.getModelData(te.getLevel(), pos));
         if (data.hasProperty(Properties.AnimationProperty))
         {
             @SuppressWarnings("resource")
-            float time = Animation.getWorldTime(Minecraft.getInstance().world, partialTick);
+            float time = Animation.getWorldTime(Minecraft.getInstance().level, partialTick);
             cap
                 .map(asm -> asm.apply(time))
                 .ifPresent(pair -> {
@@ -82,7 +82,7 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
 
                     // TODO: caching?
                     data.setData(Properties.AnimationProperty, pair.getLeft());
-                    blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, mat, renderer.getBuffer(Atlases.getSolidBlockType()), false, new Random(), 42, light, data);
+                    blockRenderer.getModelRenderer().renderModel(world, model, state, pos, mat, renderer.getBuffer(Atlases.solidBlockSheet()), false, new Random(), 42, light, data);
                 });
         }
     }

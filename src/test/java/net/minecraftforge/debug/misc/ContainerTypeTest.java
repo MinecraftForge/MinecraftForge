@@ -58,7 +58,7 @@ public class ContainerTypeTest
         
         protected TestContainer(int windowId, PlayerInventory playerInv, PacketBuffer extraData)
         {
-            this(windowId, new Inventory(9), extraData.readString(128));
+            this(windowId, new Inventory(9), extraData.readUtf(128));
         }
         
         public TestContainer(int windowId, Inventory inv, String text)
@@ -72,7 +72,7 @@ public class ContainerTypeTest
         }
 
         @Override
-        public boolean canInteractWith(PlayerEntity playerIn)
+        public boolean stillValid(PlayerEntity playerIn)
         {
             return true;
         }
@@ -86,9 +86,9 @@ public class ContainerTypeTest
         }
 
         @Override
-        protected void drawGuiContainerBackgroundLayer(MatrixStack mStack, float partialTicks, int mouseX, int mouseY)
+        protected void renderBg(MatrixStack mStack, float partialTicks, int mouseX, int mouseY)
         {
-            drawString(mStack, this.font, getContainer().text, mouseX, mouseY, -1);
+            drawString(mStack, this.font, getMenu().text, mouseX, mouseY, -1);
         }
     }
 
@@ -106,12 +106,12 @@ public class ContainerTypeTest
     
     private void setup(FMLClientSetupEvent event)
     {
-        ScreenManager.registerFactory(TYPE, TestGui::new);
+        ScreenManager.register(TYPE, TestGui::new);
     }
     
     private void onRightClick(PlayerInteractEvent.RightClickBlock event)
     {
-        if (!event.getWorld().isRemote && event.getHand() == Hand.MAIN_HAND)
+        if (!event.getWorld().isClientSide && event.getHand() == Hand.MAIN_HAND)
         {
             if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.SPONGE)
             {
@@ -122,9 +122,9 @@ public class ContainerTypeTest
                     public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_)
                     {
                         Inventory inv = new Inventory(9);
-                        for (int i = 0; i < inv.getSizeInventory(); i++)
+                        for (int i = 0; i < inv.getContainerSize(); i++)
                         {
-                            inv.setInventorySlotContents(i, new ItemStack(Items.DIAMOND));
+                            inv.setItem(i, new ItemStack(Items.DIAMOND));
                         }
                         return new TestContainer(p_createMenu_1_, inv, text);
                     }
@@ -135,7 +135,7 @@ public class ContainerTypeTest
                         return new StringTextComponent("Test");
                     }
                 }, extraData -> {
-                    extraData.writeString(text);
+                    extraData.writeUtf(text);
                 });
             }
         }

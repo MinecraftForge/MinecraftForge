@@ -52,11 +52,11 @@ public interface IForgeEntityMinecart
      */
     default BlockPos getCurrentRailPosition()
     {
-        int x = MathHelper.floor(getMinecart().getPosX());
-        int y = MathHelper.floor(getMinecart().getPosY());
-        int z = MathHelper.floor(getMinecart().getPosZ());
+        int x = MathHelper.floor(getMinecart().getX());
+        int y = MathHelper.floor(getMinecart().getY());
+        int z = MathHelper.floor(getMinecart().getZ());
         BlockPos pos = new BlockPos(x, y, z);
-        if (getMinecart().world.getBlockState(pos.down()).isIn(BlockTags.RAILS)) pos = pos.down();
+        if (getMinecart().level.getBlockState(pos.below()).is(BlockTags.RAILS)) pos = pos.below();
         return pos;
     }
 

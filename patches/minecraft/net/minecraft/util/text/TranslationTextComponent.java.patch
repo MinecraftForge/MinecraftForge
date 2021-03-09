@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/text/TranslationTextComponent.java
 +++ b/net/minecraft/util/text/TranslationTextComponent.java
-@@ -88,6 +88,10 @@
+@@ -88,6 +_,10 @@
              }
           }
  

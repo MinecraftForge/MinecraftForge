@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/NettyPacketEncoder.java
 +++ b/net/minecraft/network/NettyPacketEncoder.java
-@@ -37,7 +37,7 @@
+@@ -37,7 +_,7 @@
              try {
                 p_encode_2_.func_148840_b(packetbuffer);
              } catch (Throwable throwable) {

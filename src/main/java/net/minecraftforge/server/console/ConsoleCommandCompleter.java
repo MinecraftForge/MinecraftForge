@@ -70,8 +70,8 @@ final class ConsoleCommandCompleter implements Completer
 
         try
         {
-            ParseResults<CommandSource> results = this.server.getCommandManager().getDispatcher().parse(stringReader, this.server.getCommandSource());
-            Suggestions tabComplete = this.server.getCommandManager().getDispatcher().getCompletionSuggestions(results).get();
+            ParseResults<CommandSource> results = this.server.getCommands().getDispatcher().parse(stringReader, this.server.createCommandSourceStack());
+            Suggestions tabComplete = this.server.getCommands().getDispatcher().getCompletionSuggestions(results).get();
             for (Suggestion suggestion : tabComplete.getList())
             {
                 String completion = suggestion.getText();

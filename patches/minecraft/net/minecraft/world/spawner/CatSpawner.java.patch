@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/spawner/CatSpawner.java
 +++ b/net/minecraft/world/spawner/CatSpawner.java
-@@ -80,6 +80,7 @@
+@@ -80,6 +_,7 @@
        if (catentity == null) {
           return 0;
        } else {

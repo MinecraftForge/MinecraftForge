@@ -75,7 +75,7 @@ public class VanillaPacketSplitter
             PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
             try
             {
-                packet.writePacketData(buf);
+                packet.write(buf);
             }
             catch (IOException e)
             {
@@ -158,7 +158,7 @@ public class VanillaPacketSplitter
         {
             PacketBuffer full = new PacketBuffer(Unpooled.wrappedBuffer(receivedBuffers.toArray(new PacketBuffer[0])));
             int packetId = full.readVarInt();
-            IPacket<?> packet = protocol.getPacket(direction, packetId);
+            IPacket<?> packet = protocol.createPacket(direction, packetId);
             if (packet == null)
             {
                 LOGGER.error("Received invalid packet ID {} in forge:split", packetId);
@@ -171,7 +171,7 @@ public class VanillaPacketSplitter
             {
                 try
                 {
-                    packet.readPacketData(full);
+                    packet.read(full);
                 }
                 catch (IOException e)
                 {
@@ -180,7 +180,7 @@ public class VanillaPacketSplitter
                     receivedBuffers.clear();
                     full.release();
                 }
-                ctx.enqueueWork(() -> ((IPacket<ClientPlayNetHandler>)packet).processPacket(Minecraft.getInstance().getConnection()));
+                ctx.enqueueWork(() -> ((IPacket<ClientPlayNetHandler>)packet).handle(Minecraft.getInstance().getConnection()));
             }
         }
     }

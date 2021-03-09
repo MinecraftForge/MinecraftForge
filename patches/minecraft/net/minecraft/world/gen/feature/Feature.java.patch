@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/Feature.java
 +++ b/net/minecraft/world/gen/feature/Feature.java
-@@ -15,7 +15,7 @@
+@@ -15,7 +_,7 @@
  import net.minecraft.world.gen.feature.structure.BasaltDeltasStructure;
  import net.minecraft.world.gen.feature.structure.NetherackBlobReplacementStructure;
  
@@ -9,7 +9,7 @@
     public static final Feature<NoFeatureConfig> field_227245_q_ = func_214468_a("no_op", new NoOpFeature(NoFeatureConfig.field_236558_a_));
     public static final Feature<BaseTreeFeatureConfig> field_236291_c_ = func_214468_a("tree", new TreeFeature(BaseTreeFeatureConfig.field_236676_a_));
     public static final FlowersFeature<BlockClusterFeatureConfig> field_227247_y_ = func_214468_a("flower", new DefaultFlowersFeature(BlockClusterFeatureConfig.field_236587_a_));
-@@ -97,11 +97,11 @@
+@@ -97,11 +_,11 @@
     public abstract boolean func_241855_a(ISeedReader p_241855_1_, ChunkGenerator p_241855_2_, Random p_241855_3_, BlockPos p_241855_4_, FC p_241855_5_);
  
     protected static boolean func_227249_a_(Block p_227249_0_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/spawner/WorldEntitySpawner.java
 +++ b/net/minecraft/world/spawner/WorldEntitySpawner.java
-@@ -82,7 +82,7 @@
+@@ -82,7 +_,7 @@
           } while(mobentity.func_104002_bU() || mobentity.func_213392_I());
  
           final Entity entity_f = entity;
@@ -9,7 +9,7 @@
           if (entityclassification != EntityClassification.MISC) {
              BlockPos blockpos = entity.func_233580_cy_();
              long i = ChunkPos.func_77272_a(blockpos.func_177958_n() >> 4, blockpos.func_177952_p() >> 4);
-@@ -169,13 +169,15 @@
+@@ -169,13 +_,15 @@
                          }
  
                          mobentity.func_70012_b(d0, (double)i, d1, p_234966_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
@@ -27,7 +27,7 @@
                                return;
                             }
  
-@@ -253,6 +255,7 @@
+@@ -253,6 +_,7 @@
           return null;
        } else {
           List<MobSpawnInfo.Spawners> list = func_241463_a_(p_234977_0_, p_234977_1_, p_234977_2_, p_234977_3_, p_234977_5_, biome);
@@ -35,7 +35,7 @@
           return list.isEmpty() ? null : WeightedRandom.func_76271_a(p_234977_4_, list);
        }
     }
-@@ -292,6 +295,13 @@
+@@ -292,6 +_,13 @@
        if (p_209382_0_ == EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS) {
           return true;
        } else if (p_209382_3_ != null && p_209382_1_.func_175723_af().func_177746_a(p_209382_2_)) {
@@ -49,7 +49,7 @@
           BlockState blockstate = p_209382_1_.func_180495_p(p_209382_2_);
           FluidState fluidstate = p_209382_1_.func_204610_c(p_209382_2_);
           BlockPos blockpos = p_209382_2_.func_177984_a();
-@@ -304,14 +314,12 @@
+@@ -304,14 +_,12 @@
           case ON_GROUND:
           default:
              BlockState blockstate1 = p_209382_1_.func_180495_p(blockpos1);
@@ -65,7 +65,7 @@
        }
     }
  
-@@ -355,6 +363,7 @@
+@@ -355,6 +_,7 @@
                       entity.func_70012_b(d0, (double)blockpos.func_177956_o(), d1, p_77191_4_.nextFloat() * 360.0F, 0.0F);
                       if (entity instanceof MobEntity) {
                          MobEntity mobentity = (MobEntity)entity;

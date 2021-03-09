@@ -363,7 +363,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     }
 
     @Override
-    public void act(DirectoryCache cache) throws IOException {
+    public void run(DirectoryCache cache) throws IOException {
         clear();
         registerModels();
         generateAll(cache);

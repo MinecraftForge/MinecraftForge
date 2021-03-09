@@ -79,7 +79,7 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
      */
     public JsonObject makeConditions(ILootCondition[] conditions) {
         JsonObject json = new JsonObject();
-        json.add("conditions", ConditionArraySerializer.field_235679_a_.func_235681_a_(conditions));
+        json.add("conditions", ConditionArraySerializer.INSTANCE.serializeConditions(conditions));
         return json;
     }
 

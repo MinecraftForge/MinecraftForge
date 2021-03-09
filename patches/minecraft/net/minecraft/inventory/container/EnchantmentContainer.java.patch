@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/EnchantmentContainer.java
 +++ b/net/minecraft/inventory/container/EnchantmentContainer.java
-@@ -56,7 +56,7 @@
+@@ -56,7 +_,7 @@
        });
        this.func_75146_a(new Slot(this.field_75168_e, 1, 35, 47) {
           public boolean func_75214_a(ItemStack p_75214_1_) {
@@ -9,7 +9,7 @@
           }
        });
  
-@@ -82,40 +82,28 @@
+@@ -82,40 +_,28 @@
        this.func_216958_a(IntReferenceHolder.func_221497_a(this.field_185002_i, 2));
     }
  
@@ -31,13 +31,13 @@
 -                        if (p_217002_2_.func_180495_p(p_217002_3_.func_177982_a(l * 2, 0, k * 2)).func_203425_a(Blocks.field_150342_X)) {
 -                           ++j;
 -                        }
-+                        power += getPower(p_217002_2_, p_217002_3_.func_177982_a(l * 2, 0, k * 2));
-+                        power += getPower(p_217002_2_, p_217002_3_.func_177982_a(l * 2, 1, k * 2));
- 
+-
 -                        if (p_217002_2_.func_180495_p(p_217002_3_.func_177982_a(l * 2, 1, k * 2)).func_203425_a(Blocks.field_150342_X)) {
 -                           ++j;
 -                        }
--
++                        power += getPower(p_217002_2_, p_217002_3_.func_177982_a(l * 2, 0, k * 2));
++                        power += getPower(p_217002_2_, p_217002_3_.func_177982_a(l * 2, 1, k * 2));
+ 
                          if (l != 0 && k != 0) {
 -                           if (p_217002_2_.func_180495_p(p_217002_3_.func_177982_a(l * 2, 0, k)).func_203425_a(Blocks.field_150342_X)) {
 -                              ++j;
@@ -61,7 +61,7 @@
                          }
                       }
                    }
-@@ -124,12 +112,13 @@
+@@ -124,12 +_,13 @@
                 this.field_75169_l.setSeed((long)this.field_178149_f.func_221495_b());
  
                 for(int i1 = 0; i1 < 3; ++i1) {

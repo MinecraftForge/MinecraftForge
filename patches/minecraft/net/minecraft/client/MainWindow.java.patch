@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/MainWindow.java
 +++ b/net/minecraft/client/MainWindow.java
-@@ -86,7 +86,7 @@
+@@ -86,7 +_,7 @@
        GLFW.glfwWindowHint(139266, 2);
        GLFW.glfwWindowHint(139267, 0);
        GLFW.glfwWindowHint(139272, 0);
@@ -9,7 +9,7 @@
        if (monitor != null) {
           VideoMode videomode = monitor.func_197992_a(this.field_198125_l ? this.field_198124_k : Optional.empty());
           this.field_198120_g = this.field_198127_n = monitor.func_197989_c() + videomode.func_198064_a() / 2 - this.field_198129_p / 2;
-@@ -271,6 +271,7 @@
+@@ -271,6 +_,7 @@
        GLFW.glfwGetFramebufferSize(this.field_198119_f, aint, aint1);
        this.field_198131_r = aint[0];
        this.field_198132_s = aint1[0];
