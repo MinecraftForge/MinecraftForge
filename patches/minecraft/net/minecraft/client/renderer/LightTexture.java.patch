@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/LightTexture.java
 +++ b/net/minecraft/client/renderer/LightTexture.java
-@@ -169,7 +_,7 @@
+@@ -123,6 +_,7 @@
                       }
                    }
  

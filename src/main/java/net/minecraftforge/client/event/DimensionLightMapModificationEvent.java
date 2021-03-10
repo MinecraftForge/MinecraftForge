@@ -99,7 +99,7 @@ public class DimensionLightMapModificationEvent extends net.minecraftforge.event
     }
 
     /**
-     * The color values that can be used to adjust lighting in the dimension. Comprised of {@linkplain Vector3f#getX() Red}, {@linkplain Vector3f#getY() Green}, {@linkplain Vector3f#getZ() Blue}
+     * The color values that can be used to adjust lighting in the dimension. Comprised of {@linkplain Vector3f#x() Red}, {@linkplain Vector3f#y() Green}, {@linkplain Vector3f#z() Blue}
      */
     public Vector3f getLightMapColors()
     {
