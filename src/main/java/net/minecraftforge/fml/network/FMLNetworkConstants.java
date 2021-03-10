@@ -41,6 +41,7 @@ public class FMLNetworkConstants
     static final AttributeKey<String> FML_NETVERSION = AttributeKey.valueOf("fml:netversion");
     static final AttributeKey<FMLHandshakeHandler> FML_HANDSHAKE_HANDLER = AttributeKey.valueOf("fml:handshake");
     static final AttributeKey<FMLMCRegisterPacketHandler.ChannelList> FML_MC_REGISTRY = AttributeKey.valueOf("minecraft:netregistry");
+    static final AttributeKey<FMLConnectionData> FML_CONNECTION_DATA = AttributeKey.valueOf("fml:conndata");
     static final ResourceLocation FML_HANDSHAKE_RESOURCE = new ResourceLocation("fml:handshake");
     static final ResourceLocation FML_PLAY_RESOURCE = new ResourceLocation("fml:play");
     static final ResourceLocation MC_REGISTER_RESOURCE = new ResourceLocation("minecraft:register");

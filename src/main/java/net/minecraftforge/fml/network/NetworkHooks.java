@@ -53,6 +53,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
 
+import javax.annotation.Nullable;
+
 public class NetworkHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -254,5 +256,11 @@ public class NetworkHooks
         {
             FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(customTagTypes), player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
         }
+    }
+
+    @Nullable
+    public static FMLConnectionData getConnectionData(NetworkManager mgr)
+    {
+        return mgr.channel().attr(FMLNetworkConstants.FML_CONNECTION_DATA).get();
     }
 }

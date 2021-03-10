@@ -135,6 +135,13 @@ public class SimpleChannel
     }
 
     /**
+     * Returns true if the channel is present in the given connection.
+     */
+    public boolean isRemotePresent(NetworkManager manager) {
+        return instance.isRemotePresent(manager);
+    }
+
+    /**
      * Build a new MessageBuilder. The type should implement {@link java.util.function.IntSupplier} if it is a login
      * packet.
      * @param type Type of message
