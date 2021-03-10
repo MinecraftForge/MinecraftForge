@@ -51,18 +51,18 @@ public class DimensionLightMapTest
     public void commonSetup(final FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> {
-            TEST_WORLD = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, DIMENSION_LOC);
+            TEST_WORLD = RegistryKey.create(Registry.DIMENSION_REGISTRY, DIMENSION_LOC);
         });
     }
 
     public void onDimensionLightMapModification(DimensionLightMapModificationEvent event)
     {
-        if (event.getWorld().getDimensionKey() == TEST_WORLD)
+        if (event.getWorld().dimension() == TEST_WORLD)
         {
             //Make the lighting colors flash red. Works best in enclosed areas
             float red = 1F;
-            float green = event.getLightMapColors().getY() * 1 - ((float)(Math.sin(event.getWorld().getGameTime() * 0.1)) * 0.5F);
-            float blue = event.getLightMapColors().getZ() * 1 - ((float)(Math.sin(event.getWorld().getGameTime() * 0.1)) * 0.5F);
+            float green = event.getLightMapColors().y() * 1 - ((float)(Math.sin(event.getWorld().getGameTime() * 0.1)) * 0.5F);
+            float blue = event.getLightMapColors().z() * 1 - ((float)(Math.sin(event.getWorld().getGameTime() * 0.1)) * 0.5F);
             event.getLightMapColors().set(red, green, blue);
         }
     }

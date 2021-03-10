@@ -1,5 +1,13 @@
 --- a/net/minecraft/client/renderer/LightTexture.java
 +++ b/net/minecraft/client/renderer/LightTexture.java
+@@ -123,6 +_,7 @@
+                      }
+                   }
+ 
++                  net.minecraftforge.client.ForgeHooksClient.onDimensionLightMapUpdate(clientworld, p_205106_1_, f, f4, f5, vector3f1);
+                   vector3f1.func_195901_a(0.0F, 1.0F);
+                   if (f2 > 0.0F) {
+                      float f10 = Math.max(vector3f1.func_195899_a(), Math.max(vector3f1.func_195900_b(), vector3f1.func_195902_c()));
 @@ -169,7 +_,7 @@
     }
  
