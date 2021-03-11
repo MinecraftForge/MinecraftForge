@@ -44,6 +44,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
+import net.minecraft.util.SharedConstants;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
@@ -90,7 +92,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                     (action, path, incorrectValue, correctedValue) ->
                             LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to its default, {}. {}", DOT_JOINER.join( path ), incorrectValue, correctedValue, incorrectValue == correctedValue ? "This seems to be an error." : ""),
                     (action, path, incorrectValue, correctedValue) ->
-                            LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This may create a backup.", path));
+                            LogManager.getLogger().debug(CORE, "The comment on key {} does not match the spec. This may create a backup.", DOT_JOINER.join( path )));
 
             if (config instanceof FileConfig) {
                 ((FileConfig) config).save();
@@ -540,18 +542,28 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         public Builder comment(String comment)
         {
-            if(comment == null || comment.length() < 1)
+            if(comment == null || comment.isEmpty())
             {
                 comment = "No comment";
+                if(!FMLEnvironment.production)
+                {
+                    LogManager.getLogger().error(CORE, "Null passed to comment for config option " + this.currentPath +
+                            ", this is invalid and may be disallowed in the future.");
+                }
             }
             context.setComment(comment);
             return this;
         }
         public Builder comment(String... comment)
         {
-            if(comment == null || comment.length < 1 || (comment.length == 1 && comment[0].length() < 1))
+            if(comment == null || comment.length < 1 || (comment.length == 1 && comment[0].isEmpty()))
             {
                 comment = new String[] {"No comment"};
+                if(!FMLEnvironment.production)
+                {
+                    LogManager.getLogger().error(CORE, "Null comment for config option " + this.currentPath +
+                            ", this is invalid and may be disallowed in the future.");
+                }
             }
 
             context.setComment(comment);
