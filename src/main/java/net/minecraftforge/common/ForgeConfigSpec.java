@@ -548,7 +548,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 if(!FMLEnvironment.production)
                 {
                     LogManager.getLogger().error(CORE, "Null comment for config option {}, this is invalid and may be disallowed in the future.",
-                            this.currentPath);
+                            DOT_JOINER.join(this.currentPath));
                 }
             }
             context.setComment(comment);
@@ -562,7 +562,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 if(!FMLEnvironment.production)
                 {
                     LogManager.getLogger().error(CORE, "Null comment for config option {}, this is invalid and may be disallowed in the future.",
-                            this.currentPath);
+                            DOT_JOINER.join(this.currentPath));
                 }
             }
 
