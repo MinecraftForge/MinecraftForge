@@ -188,7 +188,8 @@ project(':forge') {
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config
-        SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
+        SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.9.0'
+        SPECIAL_SOURCE_MCP = 'net.md-5:SpecialSource:1.8.3'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
@@ -476,7 +477,7 @@ project(':forge') {
         def srgTask = tasks.getByName(patcher.notchObf ? 'createMcp2Obf' : 'createMcp2Srg')
         // Create SRG named Vanilla jars, using the SpecialSource we have in the installer
         task "create${side}SRG"(type: net.minecraftforge.gradle.userdev.tasks.RenameJar, dependsOn: srgTask) {
-            tool = SPECIAL_SOURCE + ':shaded'
+            tool = SPECIAL_SOURCE_MCP + ':shaded'
             args = ['--stable', '--in-jar', '{input}', '--out-jar', '{output}', '--srg-in', '{mappings}']
             mappings = { srgTask.output }
             input = { gen.cleanJar }
@@ -731,8 +732,8 @@ project(':forge') {
                             '{MC_EXTRA}': '{MC_EXTRA_SHA}'
                         ]
                     ], [
-                        jar: SPECIAL_SOURCE,
-                        classpath: getClasspath(project, libs, SPECIAL_SOURCE),
+                        jar: SPECIAL_SOURCE_MCP,
+                        classpath: getClasspath(project, libs, SPECIAL_SOURCE_MCP),
                         args: [
                             //'--stable', Java 9 Is borked, https://bugs.openjdk.java.net/browse/JDK-8184940 TODO: find a fix.
                             '--in-jar', '{MC_SLIM}',
@@ -994,11 +995,16 @@ project(':forge') {
         classifier 'userdev-temp'
     }
 
+    reobfJar {
+        tool = SPECIAL_SOURCE + ':shaded'
+    }
+
     task userdevExtrasReobf(type:TaskReobfuscateJar) {
         dependsOn userdevExtras, createMcp2Srg
         input = tasks.userdevExtras.archivePath
         classpath = project.configurations.compile
         srg = tasks.createMcp2Srg.output
+        tool = SPECIAL_SOURCE + ':shaded'
     }
 
     userdevJar {
