@@ -91,4 +91,17 @@ public interface ITeleporter
     {
         return this.getClass() == Teleporter.class;
     }
+
+    /**
+     * Called when vanilla wants to play the portal sound after teleporting. Return true to "handle this" and not play the vanilla sound.
+     * @param player the player
+     * @param sourceWorld the source world
+     * @param destWorld the target world
+     * @return true to not play the vanilla sound
+     */
+    default boolean playTeleportSound(ServerPlayerEntity player, ServerWorld sourceWorld, ServerWorld destWorld)
+    {
+        return false;
+    }
+
 }

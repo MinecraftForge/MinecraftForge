@@ -56,7 +56,12 @@
              this.field_71134_c.func_73080_a(p_241206_1_);
              this.field_71135_a.func_147359_a(new SPlayerAbilitiesPacket(this.field_71075_bZ));
              playerlist.func_72354_b(this, p_241206_1_);
-@@ -670,6 +_,7 @@
+@@ -666,10 +_,12 @@
+                this.field_71135_a.func_147359_a(new SPlayEntityEffectPacket(this.func_145782_y(), effectinstance));
+             }
+ 
++            if (!teleporter.playTeleportSound(this, serverworld, p_241206_1_))
+             this.field_71135_a.func_147359_a(new SPlaySoundEventPacket(1032, BlockPos.field_177992_a, 0, false));
              this.field_71144_ck = -1;
              this.field_71149_ch = -1.0F;
              this.field_71146_ci = -1;
