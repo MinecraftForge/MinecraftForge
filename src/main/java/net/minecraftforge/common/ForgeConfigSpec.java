@@ -547,8 +547,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 comment = "No comment";
                 if(!FMLEnvironment.production)
                 {
-                    LogManager.getLogger().error(CORE, "Null passed to comment for config option " + this.currentPath +
-                            ", this is invalid and may be disallowed in the future.");
+                    LogManager.getLogger().error(CORE, "Null comment for config option {}, this is invalid and may be disallowed in the future.",
+                            this.currentPath);
                 }
             }
             context.setComment(comment);
@@ -561,8 +561,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
                 comment = new String[] {"No comment"};
                 if(!FMLEnvironment.production)
                 {
-                    LogManager.getLogger().error(CORE, "Null comment for config option " + this.currentPath +
-                            ", this is invalid and may be disallowed in the future.");
+                    LogManager.getLogger().error(CORE, "Null comment for config option {}, this is invalid and may be disallowed in the future.",
+                            this.currentPath);
                 }
             }
 
