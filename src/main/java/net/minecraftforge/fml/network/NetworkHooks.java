@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,6 +52,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
+
+import javax.annotation.Nullable;
 
 public class NetworkHooks
 {
@@ -254,5 +256,11 @@ public class NetworkHooks
         {
             FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(customTagTypes), player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
         }
+    }
+
+    @Nullable
+    public static FMLConnectionData getConnectionData(NetworkManager mgr)
+    {
+        return mgr.channel().attr(FMLNetworkConstants.FML_CONNECTION_DATA).get();
     }
 }

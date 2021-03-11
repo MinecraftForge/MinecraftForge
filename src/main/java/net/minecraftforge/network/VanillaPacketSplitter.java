@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2021.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.network;
 
 import java.io.IOException;
@@ -5,21 +24,20 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.PacketDirection;
-import net.minecraft.network.ProtocolType;
+import net.minecraft.network.*;
 import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
 import net.minecraft.network.play.server.STagsListPacket;
 import net.minecraft.network.play.server.SUpdateRecipesPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.event.EventNetworkChannel;
 
@@ -54,9 +72,12 @@ public class VanillaPacketSplitter
     private static final byte STATE_FIRST = 1;
     private static final byte STATE_LAST = 2;
 
+    private static EventNetworkChannel channel;
+
     public static void register()
     {
-        EventNetworkChannel channel = NetworkRegistry.newEventChannel(CHANNEL, () -> VERSION, VERSION::equals, VERSION::equals);
+        Predicate<String> versionCheck = NetworkRegistry.acceptMissingOr(VERSION);
+        channel = NetworkRegistry.newEventChannel(CHANNEL, () -> VERSION, versionCheck, versionCheck);
         channel.addListener(VanillaPacketSplitter::onClientPacket);
     }
 
@@ -185,4 +206,8 @@ public class VanillaPacketSplitter
         }
     }
 
+    public static boolean isRemoteCompatible(NetworkManager manager)
+    {
+        return !NetworkHooks.isVanillaConnection(manager) && channel.isRemotePresent(manager);
+    }
 }

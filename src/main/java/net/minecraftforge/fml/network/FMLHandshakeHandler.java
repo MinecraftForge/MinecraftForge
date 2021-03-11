@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -184,6 +184,8 @@ public class FMLHandshakeHandler {
         LOGGER.debug(FMLHSMARKER, "Accepted server connection");
         // Set the modded marker on the channel so we know we got packets
         c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_NETVERSION).set(FMLNetworkConstants.NETVERSION);
+        c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_CONNECTION_DATA)
+                .set(new FMLConnectionData(serverModList.getModList(), serverModList.getChannels()));
 
         this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
         this.registrySnapshots = Maps.newHashMap();
@@ -203,6 +205,8 @@ public class FMLHandshakeHandler {
     {
         LOGGER.debug(FMLHSMARKER, "Received client connection with modlist [{}]",  String.join(", ", clientModList.getModList()));
         boolean accepted = NetworkRegistry.validateServerChannels(clientModList.getChannels());
+        c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_CONNECTION_DATA)
+                .set(new FMLConnectionData(clientModList.getModList(), clientModList.getChannels()));
         c.get().setPacketHandled(true);
         if (!accepted) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
