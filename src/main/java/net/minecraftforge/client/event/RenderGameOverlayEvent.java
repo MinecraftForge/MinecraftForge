@@ -22,6 +22,7 @@ package net.minecraftforge.client.event;
 import java.util.ArrayList;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraftforge.client.gui.IIngameOverlay;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.MainWindow;
@@ -53,27 +54,12 @@ public class RenderGameOverlayEvent extends Event
     public static enum ElementType
     {
         ALL,
-        HELMET,
-        PORTAL,
-        CROSSHAIRS,
-        BOSSHEALTH, // All boss bars
+        LAYER,
         BOSSINFO,    // Individual boss bar
-        ARMOR,
-        HEALTH,
-        FOOD,
-        AIR,
-        HOTBAR,
-        EXPERIENCE,
         TEXT,
-        HEALTHMOUNT,
-        JUMPBAR,
         CHAT,
         PLAYER_LIST,
-        DEBUG,
-        POTION_ICONS,
-        SUBTITLES,
-        FPS_GRAPH,
-        VIGNETTE
+        DEBUG
     }
 
     private final MatrixStack mStack;
@@ -114,6 +100,38 @@ public class RenderGameOverlayEvent extends Event
         @Override public boolean isCancelable(){ return false; }
     }
 
+    public static class PreLayer extends Pre
+    {
+        private final IIngameOverlay overlay;
+
+        public PreLayer(MatrixStack mStack, RenderGameOverlayEvent parent, IIngameOverlay overlay)
+        {
+            super(mStack, parent, ElementType.LAYER);
+            this.overlay = overlay;
+        }
+
+        public IIngameOverlay getOverlay()
+        {
+            return overlay;
+        }
+    }
+
+    public static class PostLayer extends Post
+    {
+        private final IIngameOverlay overlay;
+
+        public PostLayer(MatrixStack mStack, RenderGameOverlayEvent parent, IIngameOverlay overlay)
+        {
+            super(mStack, parent, ElementType.LAYER);
+            this.overlay = overlay;
+        }
+
+        public IIngameOverlay getOverlay()
+        {
+            return overlay;
+        }
+    }
+
     public static class BossInfo extends Pre
     {
         private final ClientBossInfo bossInfo;
@@ -130,7 +148,7 @@ public class RenderGameOverlayEvent extends Event
         }
 
         /**
-         * @return The {@link BossInfoClient} currently being rendered
+         * @return The {@link ClientBossInfo} currently being rendered
          */
         public ClientBossInfo getBossInfo()
         {

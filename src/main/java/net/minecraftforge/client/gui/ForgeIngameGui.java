@@ -59,6 +59,8 @@ import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import javax.annotation.Nullable;
+
 @SuppressWarnings("deprecation")
 public class ForgeIngameGui extends IngameGui
 {
@@ -99,6 +101,265 @@ public class ForgeIngameGui extends IngameGui
     //private static final String MC_VERSION = MinecraftForge.MC_VERSION;
     private GuiOverlayDebugForge debugOverlay;
 
+    public void setupOverlayRenderState(boolean blend, boolean alpha, boolean depthText)
+    {
+        setupOverlayRenderState(blend, alpha, depthText, AbstractGui.GUI_ICONS_LOCATION);
+    }
+    
+    public void setupOverlayRenderState(boolean blend, boolean alpha, boolean depthTest, @Nullable ResourceLocation texture)
+    {
+        if (blend)
+        {
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
+        }
+        else
+        {
+            RenderSystem.disableBlend();
+        }
+
+        if (alpha)
+        {
+            RenderSystem.enableAlphaTest();
+        }
+        else
+        {
+            RenderSystem.disableAlphaTest();
+        }
+
+        if (depthTest)
+        {
+            RenderSystem.enableDepthTest();
+        }
+        else
+        {
+            RenderSystem.disableDepthTest();
+        }
+
+        if (texture != null)
+        {
+            RenderSystem.enableTexture();
+            bind(texture);
+        }
+        else
+        {
+            RenderSystem.disableTexture();
+        }
+        
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+    }
+
+    public static final IIngameOverlay VIGNETTE_ELEMENT = OverlayRegistry.registerOverlay(10, "Vignette", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (renderVignette && Minecraft.useFancyGraphics())
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            gui.renderVignette(gui.minecraft.getCameraEntity());
+        }
+    });
+
+    public static final IIngameOverlay HELMET_ELEMENT = OverlayRegistry.registerOverlay(20, "Helmet", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (renderHelmet)
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            gui.renderHelmet(partialTicks, mStack);
+        }
+    });
+
+    public static final IIngameOverlay HOTBAR_ELEMENT = OverlayRegistry.registerOverlay(30, "Hotbar", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (!gui.minecraft.options.hideGui)
+        {
+            if (gui.minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR)
+            {
+                if (renderSpectatorTooltip)
+                {
+                    gui.setupOverlayRenderState(true, false, false);
+                    gui.spectatorGui.renderHotbar(mStack, partialTicks);
+                }
+            }
+            else
+            {
+                if (renderHotbar)
+                {
+                    gui.setupOverlayRenderState(true, false, false);
+                    gui.renderHotbar(partialTicks, mStack);
+                }
+            }
+        }
+    });
+
+    public static final IIngameOverlay PORTAL_ELEMENT = OverlayRegistry.registerOverlay(40, "Portal", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+
+        if (renderPortal && !gui.minecraft.player.hasEffect(Effects.CONFUSION))
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            gui.renderPortalOverlay(partialTicks);
+        }
+
+    });
+
+    public static final IIngameOverlay CROSSHAIR_ELEMENT = OverlayRegistry.registerOverlay(50, "Crosshair", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (renderCrosshairs && !gui.minecraft.options.hideGui)
+        {
+            gui.setupOverlayRenderState(true, true, false);
+            gui.setBlitOffset(-90);
+            gui.random.setSeed((long) (gui.tickCount * 312871));
+
+            gui.renderCrosshair(mStack);
+        }
+    });
+
+    public static final IIngameOverlay BOSS_HEALTH_ELEMENT = OverlayRegistry.registerOverlay(60, "Boss Health", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (renderBossHealth && !gui.minecraft.options.hideGui)
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            gui.setBlitOffset(-90);
+            gui.random.setSeed((long) (gui.tickCount * 312871));
+
+            gui.renderBossHealth(mStack);
+        }
+    });
+
+    public static final IIngameOverlay PLAYER_HEALTH_ELEMENT = OverlayRegistry.registerOverlay(70, "Player Health", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (renderHealth && !gui.minecraft.options.hideGui && gui.shouldDrawSurvivalElements())
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            gui.renderHealth(screenWidth, screenHeight, mStack);
+        }
+    });
+
+    public static final IIngameOverlay ARMOR_LEVEL_ELEMENT = OverlayRegistry.registerOverlay(80, "Armor Level",(gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (renderArmor && !gui.minecraft.options.hideGui && gui.shouldDrawSurvivalElements())
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            gui.renderArmor(mStack, screenWidth, screenHeight);
+        }
+    });
+
+    public static final IIngameOverlay FOOD_LEVEL_ELEMENT = OverlayRegistry.registerOverlay(90, "Food Level", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (renderFood && !gui.minecraft.options.hideGui && gui.shouldDrawSurvivalElements())
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            gui.renderFood(screenWidth, screenHeight, mStack);
+        }
+    });
+
+    public static final IIngameOverlay MOUNT_HEALTH_ELEMENT = OverlayRegistry.registerOverlay(100, "Mount Health", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (renderHealthMount && !gui.minecraft.options.hideGui && gui.shouldDrawSurvivalElements())
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            gui.renderHealthMount(screenWidth, screenHeight, mStack);
+        }
+    });
+
+    public static final IIngameOverlay AIR_LEVEL_ELEMENT = OverlayRegistry.registerOverlay(110, "Air Level", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (renderAir && !gui.minecraft.options.hideGui && gui.shouldDrawSurvivalElements())
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            gui.renderAir(screenWidth, screenHeight, mStack);
+        }
+    });
+
+    public static final IIngameOverlay JUMP_BAR_ELEMENT = OverlayRegistry.registerOverlay(120, "Jump Bar", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (renderJumpBar && !gui.minecraft.options.hideGui)
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            gui.renderJumpMeter(mStack, screenWidth / 2 - 91);
+        }
+    });
+
+    public static final IIngameOverlay EXPERIENCE_BAR_ELEMENT = OverlayRegistry.registerOverlay(130, "Experience Bar", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (renderExperiance && !renderJumpBar && !gui.minecraft.options.hideGui)
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            gui.renderExperience(screenWidth / 2 - 91, mStack);
+        }
+    });
+
+    public static final IIngameOverlay ITEM_NAME_ELEMENT = OverlayRegistry.registerOverlay(140, "Item Name", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (!gui.minecraft.options.hideGui)
+        {
+            gui.setupOverlayRenderState(true, false, false);
+            if (gui.minecraft.options.heldItemTooltips && gui.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR) {
+                gui.renderSelectedItemName(mStack);
+            } else if (gui.minecraft.player.isSpectator()) {
+                gui.spectatorGui.renderTooltip(mStack);
+            }
+        }
+    });
+
+    public static final IIngameOverlay SLEEP_FADE_ELEMENT = OverlayRegistry.registerOverlay(150, "Sleep Fade", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        gui.renderSleepFade(screenWidth, screenHeight, mStack);
+    });
+
+    public static final IIngameOverlay HUD_TEXT_ELEMENT = OverlayRegistry.registerOverlay(160, "Text Columns", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        gui.renderHUDText(screenWidth, screenHeight, mStack);
+    });
+
+    public static final IIngameOverlay FPS_GRAPH_ELEMENT = OverlayRegistry.registerOverlay(170, "FPS Graph", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        gui.renderFPSGraph(mStack);
+    });
+
+    public static final IIngameOverlay POTION_ICONS_ELEMENT = OverlayRegistry.registerOverlay(180, "Potion Icons", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        gui.renderEffects(mStack);
+    });
+
+    public static final IIngameOverlay RECORD_OVERLAY_ELEMENT = OverlayRegistry.registerOverlay(190, "Record", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (!gui.minecraft.options.hideGui)
+        {
+            gui.renderRecordOverlay(screenWidth, screenHeight, partialTicks, mStack);
+        }
+    });
+
+    public static final IIngameOverlay SUBTITLES_ELEMENT = OverlayRegistry.registerOverlay(200, "Subtitles", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (!gui.minecraft.options.hideGui)
+        {
+            gui.renderSubtitles(mStack);
+        }
+    });
+
+    public static final IIngameOverlay TITLE_TEXT_ELEMENT = OverlayRegistry.registerOverlay(210, "Title Text", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+        if (!gui.minecraft.options.hideGui)
+        {
+            gui.renderTitle(screenWidth, screenHeight, partialTicks, mStack);
+        }
+    });
+
+    public static final IIngameOverlay SCOREBOARD_ELEMENT = OverlayRegistry.registerOverlay(220, "Scoreboard", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+
+        Scoreboard scoreboard = gui.minecraft.level.getScoreboard();
+        ScoreObjective objective = null;
+        ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(gui.minecraft.player.getScoreboardName());
+        if (scoreplayerteam != null)
+        {
+            int slot = scoreplayerteam.getColor().getId();
+            if (slot >= 0) objective = scoreboard.getDisplayObjective(3 + slot);
+        }
+        ScoreObjective scoreobjective1 = objective != null ? objective : scoreboard.getDisplayObjective(1);
+        if (renderObjective && scoreobjective1 != null)
+        {
+            gui.displayScoreboardSidebar(mStack, scoreobjective1);
+        }
+
+    });
+
+    public static final IIngameOverlay CHAT_PANEL_ELEMENT = OverlayRegistry.registerOverlay(230, "Chat History", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        RenderSystem.disableAlphaTest();
+
+        gui.renderChat(screenWidth, screenHeight, mStack);
+    });
+
+    public static final IIngameOverlay PLAYER_LIST_ELEMENT = OverlayRegistry.registerOverlay(240, "Player List", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+
+        RenderSystem.enableBlend();
+        RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        RenderSystem.disableAlphaTest();
+
+        gui.renderPlayerList(screenWidth, screenHeight, mStack);
+    });
+
     public ForgeIngameGui(Minecraft mc)
     {
         super(mc);
@@ -121,100 +382,15 @@ public class ForgeIngameGui extends IngameGui
         if (pre(ALL, mStack)) return;
 
         fontrenderer = minecraft.font;
+
         //mc.entityRenderer.setupOverlayRendering();
-        RenderSystem.enableBlend();
-        if (renderVignette && Minecraft.useFancyGraphics())
-        {
-            renderVignette(minecraft.getCameraEntity());
-        }
-        else
-        {
-            RenderSystem.enableDepthTest();
-            RenderSystem.defaultBlendFunc();
-        }
 
-        if (renderHelmet) renderHelmet(partialTicks, mStack);
-
-        if (renderPortal && !minecraft.player.hasEffect(Effects.CONFUSION))
-        {
-            renderPortalOverlay(partialTicks);
-        }
-
-        if (this.minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR)
-        {
-            if (renderSpectatorTooltip) spectatorGui.renderHotbar(mStack, partialTicks);
-        }
-        else if (!this.minecraft.options.hideGui)
-        {
-            if (renderHotbar) renderHotbar(partialTicks, mStack);
-        }
-
-        if (!this.minecraft.options.hideGui) {
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            setBlitOffset(-90);
-            random.setSeed((long)(tickCount * 312871));
-
-            if (renderCrosshairs) renderCrosshair(mStack);
-            if (renderBossHealth) renderBossHealth(mStack);
-
-            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            if (this.minecraft.gameMode.canHurtPlayer() && this.minecraft.getCameraEntity() instanceof PlayerEntity)
-            {
-                if (renderHealth) renderHealth(this.screenWidth, this.screenHeight, mStack);
-                if (renderArmor)  renderArmor(mStack, this.screenWidth, this.screenHeight);
-                if (renderFood)   renderFood(this.screenWidth, this.screenHeight, mStack);
-                if (renderHealthMount) renderHealthMount(this.screenWidth, this.screenHeight, mStack);
-                if (renderAir)    renderAir(this.screenWidth, this.screenHeight, mStack);
-            }
-
-            if (renderJumpBar)
-            {
-                renderJumpMeter(mStack, this.screenWidth / 2 - 91);
-            }
-            else if (renderExperiance)
-            {
-                renderExperience(this.screenWidth / 2 - 91, mStack);
-            }
-            if (this.minecraft.options.heldItemTooltips && this.minecraft.gameMode.getPlayerMode() != GameType.SPECTATOR) {
-                this.renderSelectedItemName(mStack);
-             } else if (this.minecraft.player.isSpectator()) {
-                this.spectatorGui.renderTooltip(mStack);
-             }
-        }
-
-        renderSleepFade(this.screenWidth, this.screenHeight, mStack);
-
-        renderHUDText(this.screenWidth, this.screenHeight, mStack);
-        renderFPSGraph(mStack);
-        renderEffects(mStack);
-        if (!minecraft.options.hideGui) {
-            renderRecordOverlay(this.screenWidth, this.screenHeight, partialTicks, mStack);
-            renderSubtitles(mStack);
-            renderTitle(this.screenWidth, this.screenHeight, partialTicks, mStack);
-        }
-
-
-        Scoreboard scoreboard = this.minecraft.level.getScoreboard();
-        ScoreObjective objective = null;
-        ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(minecraft.player.getScoreboardName());
-        if (scoreplayerteam != null)
-        {
-            int slot = scoreplayerteam.getColor().getId();
-            if (slot >= 0) objective = scoreboard.getDisplayObjective(3 + slot);
-        }
-        ScoreObjective scoreobjective1 = objective != null ? objective : scoreboard.getDisplayObjective(1);
-        if (renderObjective && scoreobjective1 != null)
-        {
-            this.displayScoreboardSidebar(mStack, scoreobjective1);
-        }
-
-        RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        RenderSystem.disableAlphaTest();
-
-        renderChat(this.screenWidth, this.screenHeight, mStack);
-
-        renderPlayerList(this.screenWidth, this.screenHeight, mStack);
+        OverlayRegistry.getOrdered().forEach(overlay ->
+                {
+                    if (pre(overlay, mStack)) return;
+                    overlay.render(this, mStack, partialTicks, screenWidth, screenHeight);
+                    post(overlay, mStack);
+                });
 
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableAlphaTest();
@@ -222,35 +398,18 @@ public class ForgeIngameGui extends IngameGui
         post(ALL, mStack);
     }
 
-    @Override
-    protected void renderCrosshair(MatrixStack mStack)
+    public boolean shouldDrawSurvivalElements()
     {
-        if (pre(CROSSHAIRS, mStack)) return;
-        bind(AbstractGui.GUI_ICONS_LOCATION);
-        RenderSystem.enableBlend();
-        RenderSystem.enableAlphaTest();
-        super.renderCrosshair(mStack);
-        post(CROSSHAIRS, mStack);
-    }
-
-    @Override
-    protected void renderEffects(MatrixStack mStack)
-    {
-        if (pre(POTION_ICONS, mStack)) return;
-        super.renderEffects(mStack);
-        post(POTION_ICONS, mStack);
+        return minecraft.gameMode.canHurtPlayer() && minecraft.getCameraEntity() instanceof PlayerEntity;
     }
 
     protected void renderSubtitles(MatrixStack mStack)
     {
-        if (pre(SUBTITLES, mStack)) return;
         this.subtitleOverlay.render(mStack);
-        post(SUBTITLES, mStack);
     }
 
     protected void renderBossHealth(MatrixStack mStack)
     {
-        if (pre(BOSSHEALTH, mStack)) return;
         bind(AbstractGui.GUI_ICONS_LOCATION);
         RenderSystem.defaultBlendFunc();
         minecraft.getProfiler().push("bossHealth");
@@ -258,28 +417,12 @@ public class ForgeIngameGui extends IngameGui
         this.bossOverlay.render(mStack);
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();
-        post(BOSSHEALTH, mStack);
     }
-
-    @Override
-    protected void renderVignette(Entity entity)
-    {
-        MatrixStack mStack = new MatrixStack();
-        if (pre(VIGNETTE, mStack))
-        {
-            // Need to put this here, since Vanilla assumes this state after the vignette was rendered.
-            RenderSystem.enableDepthTest();
-            RenderSystem.defaultBlendFunc();
-            return;
-        }
-        super.renderVignette(entity);
-        post(VIGNETTE, mStack);
-    }
-
 
     private void renderHelmet(float partialTicks, MatrixStack mStack)
     {
-        if (pre(HELMET, mStack)) return;
+        RenderSystem.enableDepthTest();
+        RenderSystem.defaultBlendFunc();
 
         ItemStack itemstack = this.minecraft.player.inventory.getArmor(3);
 
@@ -295,13 +438,10 @@ public class ForgeIngameGui extends IngameGui
                 item.renderHelmetOverlay(itemstack, minecraft.player, this.screenWidth, this.screenHeight, partialTicks);
             }
         }
-
-        post(HELMET, mStack);
     }
 
     protected void renderArmor(MatrixStack mStack, int width, int height)
     {
-        if (pre(ARMOR, mStack)) return;
         minecraft.getProfiler().push("armor");
 
         RenderSystem.enableBlend();
@@ -329,45 +469,21 @@ public class ForgeIngameGui extends IngameGui
 
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();
-        post(ARMOR, mStack);
     }
 
     @Override
     protected void renderPortalOverlay(float partialTicks)
     {
-        MatrixStack mStack = new MatrixStack();
-        if (pre(PORTAL, mStack)) return;
-
         float f1 = minecraft.player.oPortalTime + (minecraft.player.portalTime - minecraft.player.oPortalTime) * partialTicks;
 
         if (f1 > 0.0F)
         {
             super.renderPortalOverlay(f1);
         }
-
-        post(PORTAL, mStack);
-    }
-
-    @Override
-    protected void renderHotbar(float partialTicks, MatrixStack mStack)
-    {
-        if (pre(HOTBAR, mStack)) return;
-
-        if (minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR)
-        {
-            this.spectatorGui.renderHotbar(mStack, partialTicks);
-        }
-        else
-        {
-            super.renderHotbar(partialTicks, mStack);
-        }
-
-        post(HOTBAR, mStack);
     }
 
     protected void renderAir(int width, int height, MatrixStack mStack)
     {
-        if (pre(AIR, mStack)) return;
         minecraft.getProfiler().push("air");
         PlayerEntity player = (PlayerEntity)this.minecraft.getCameraEntity();
         RenderSystem.enableBlend();
@@ -389,13 +505,12 @@ public class ForgeIngameGui extends IngameGui
 
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();
-        post(AIR, mStack);
     }
 
     public void renderHealth(int width, int height, MatrixStack mStack)
     {
         bind(GUI_ICONS_LOCATION);
-        if (pre(HEALTH, mStack)) return;
+
         minecraft.getProfiler().push("health");
         RenderSystem.enableBlend();
 
@@ -495,12 +610,10 @@ public class ForgeIngameGui extends IngameGui
 
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();
-        post(HEALTH, mStack);
     }
 
     public void renderFood(int width, int height, MatrixStack mStack)
     {
-        if (pre(FOOD, mStack)) return;
         minecraft.getProfiler().push("food");
 
         PlayerEntity player = (PlayerEntity)this.minecraft.getCameraEntity();
@@ -542,7 +655,6 @@ public class ForgeIngameGui extends IngameGui
         }
         RenderSystem.disableBlend();
         minecraft.getProfiler().pop();
-        post(FOOD, mStack);
     }
 
     protected void renderSleepFade(int width, int height, MatrixStack mStack)
@@ -571,7 +683,6 @@ public class ForgeIngameGui extends IngameGui
     protected void renderExperience(int x, MatrixStack mStack)
     {
         bind(GUI_ICONS_LOCATION);
-        if (pre(EXPERIENCE, mStack)) return;
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
 
@@ -581,15 +692,12 @@ public class ForgeIngameGui extends IngameGui
         }
         RenderSystem.enableBlend();
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-        post(EXPERIENCE, mStack);
     }
 
     @Override
     public void renderJumpMeter(MatrixStack mStack, int x)
     {
         bind(GUI_ICONS_LOCATION);
-        if (pre(JUMPBAR, mStack)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
 
@@ -598,8 +706,6 @@ public class ForgeIngameGui extends IngameGui
         RenderSystem.enableBlend();
         minecraft.getProfiler().pop();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-        post(JUMPBAR, mStack);
     }
 
     protected void renderHUDText(int width, int height, MatrixStack mStack)
@@ -660,10 +766,9 @@ public class ForgeIngameGui extends IngameGui
 
     protected void renderFPSGraph(MatrixStack mStack)
     {
-        if (this.minecraft.options.renderDebug && this.minecraft.options.renderFpsChart && !pre(FPS_GRAPH, mStack))
+        if (this.minecraft.options.renderDebug && this.minecraft.options.renderFpsChart)
         {
             this.debugOverlay.render(mStack);
-            post(FPS_GRAPH, mStack);
         }
     }
 
@@ -779,8 +884,6 @@ public class ForgeIngameGui extends IngameGui
 
         bind(GUI_ICONS_LOCATION);
 
-        if (pre(HEALTHMOUNT, mStack)) return;
-
         boolean unused = false;
         int left_align = width / 2 + 91;
 
@@ -819,7 +922,6 @@ public class ForgeIngameGui extends IngameGui
             right_height += 10;
         }
         RenderSystem.disableBlend();
-        post(HEALTHMOUNT, mStack);
     }
 
     //Helper macros
@@ -830,6 +932,14 @@ public class ForgeIngameGui extends IngameGui
     private void post(ElementType type, MatrixStack mStack)
     {
         MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(mStack, eventParent, type));
+    }
+    private boolean pre(IIngameOverlay overlay, MatrixStack mStack)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.PreLayer(mStack, eventParent, overlay));
+    }
+    private void post(IIngameOverlay overlay, MatrixStack mStack)
+    {
+        MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.PostLayer(mStack, eventParent, overlay));
     }
     private void bind(ResourceLocation res)
     {
@@ -862,4 +972,5 @@ public class ForgeIngameGui extends IngameGui
         }
         private List<String> getRight(){ return this.getSystemInformation(); }
     }
+
 }
