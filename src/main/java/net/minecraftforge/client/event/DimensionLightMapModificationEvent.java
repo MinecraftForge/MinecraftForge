@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,18 +43,14 @@ public class DimensionLightMapModificationEvent extends net.minecraftforge.event
 {
     private final World world;
     private final float partialTicks;
-    private final float sunBrightness;
-    private final float skyLight;
-    private final float blockLight;
+    private float blockBrightness;
     private final Vector3f lightMapColors;
 
-    public DimensionLightMapModificationEvent(World world, float partialTicks, float sunBrightness, float skyLight, float blockLight, Vector3f lightMapColors)
+    public DimensionLightMapModificationEvent(World world, float partialTicks, float blockBrightness, Vector3f lightMapColors)
     {
         this.world = world;
         this.partialTicks = partialTicks;
-        this.sunBrightness = sunBrightness;
-        this.skyLight = skyLight;
-        this.blockLight = blockLight;
+        this.blockBrightness = blockBrightness;
         this.lightMapColors = lightMapColors;
     }
 
@@ -75,31 +71,22 @@ public class DimensionLightMapModificationEvent extends net.minecraftforge.event
     }
 
     /**
-     * Get the current sun brightness.
-     */
-    public float getSunBrightness()
-    {
-        return this.sunBrightness;
-    }
-
-    /**
-     * Get the sky light brightness factor.
-     */
-    public float getSkyLight()
-    {
-        return this.skyLight;
-    }
-
-    /**
      * Get the block light brightness factor.
      */
-    public float getBlockLight()
+    public float getBlockBrightness()
     {
-        return this.blockLight;
+        return this.blockBrightness;
+    }
+
+    public void setBlockBrightness(float blockBrightness)
+    {
+        this.blockBrightness = blockBrightness;
     }
 
     /**
-     * The color values that can be used to adjust lighting in the dimension. Comprised of {@linkplain Vector3f#x() Red}, {@linkplain Vector3f#y() Green}, {@linkplain Vector3f#z() Blue}
+     * The color values that can be used to adjust lighting in the dimension.
+     * <p> Comprised of {@linkplain Vector3f#x() Red}, {@linkplain Vector3f#y() Green}, {@linkplain Vector3f#z() Blue}.
+     * <br> Call {@link Vector3f#set(float, float, float)} to set the values you modified
      */
     public Vector3f getLightMapColors()
     {

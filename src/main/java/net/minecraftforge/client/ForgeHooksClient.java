@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -820,8 +820,10 @@ public class ForgeHooksClient
         return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
     }
 
-    public static void onDimensionLightMapUpdate(World world, float partialTicks, float sunBrightness, float skyLight, float blockLight, Vector3f lightMapColors)
+    public static DimensionLightMapModificationEvent onDimensionLightMapUpdate(World world, float partialTicks, float blockBrightness, Vector3f lightMapColors)
     {
-        MinecraftForge.EVENT_BUS.post(new DimensionLightMapModificationEvent(world, partialTicks, sunBrightness, skyLight, blockLight, lightMapColors));
+        DimensionLightMapModificationEvent event = new DimensionLightMapModificationEvent(world, partialTicks, blockBrightness, lightMapColors);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 }

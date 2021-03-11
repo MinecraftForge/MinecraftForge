@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,15 +55,33 @@ public class DimensionLightMapTest
         });
     }
 
+    /** Call this in your Client Side Event Handler class as the event is only fired on the Logical Client side*/
     public void onDimensionLightMapModification(DimensionLightMapModificationEvent event)
     {
         if (event.getWorld().dimension() == TEST_WORLD)
         {
-            //Make the lighting colors flash red. Works best in enclosed areas
-            float red = 1F;
-            float green = event.getLightMapColors().y() * 1 - ((float)(Math.sin(event.getWorld().getGameTime() * 0.1)) * 0.5F);
-            float blue = event.getLightMapColors().z() * 1 - ((float)(Math.sin(event.getWorld().getGameTime() * 0.1)) * 0.5F);
-            event.getLightMapColors().set(red, green, blue);
+            //Make the lighting colors flash using partial ticks and game time to interpolate. Works best in enclosed areas
+            boolean modColors = true;
+            if (modColors)
+            {
+                final int cycleTime = 60;
+                long tick = event.getWorld().getGameTime();
+                float hue = (tick + event.getPartialTicks()) % cycleTime / cycleTime;
+                int rgb = java.awt.Color.HSBtoRGB(hue, 1.0f, 1.0f);
+                float r = (rgb >> 16 & 255) / 255f; float g = (rgb >>  8 & 255) / 255f; float b = (rgb & 255) / 255f;
+                float red = event.getLightMapColors().x() + r / 2F;
+                float green = event.getLightMapColors().y() + g / 2F;
+                float blue = event.getLightMapColors().z() + b / 2F;
+                event.getLightMapColors().set(red, green, blue);
+            }
+
+            //Modify the block brightness factor
+            boolean modBlockLight = true;
+            if (modBlockLight)
+            {
+                float blockLight = event.getBlockBrightness() - 0.5F;
+                event.setBlockBrightness(blockLight);
+            }
         }
     }
 
