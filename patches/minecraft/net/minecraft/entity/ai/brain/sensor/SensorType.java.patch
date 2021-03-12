@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/brain/sensor/SensorType.java
 +++ b/net/minecraft/entity/ai/brain/sensor/SensorType.java
-@@ -4,7 +4,7 @@
+@@ -4,7 +_,7 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.registry.Registry;
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/entity/player/RemoteClientPlayerEntity.java
 +++ b/net/minecraft/client/entity/player/RemoteClientPlayerEntity.java
-@@ -29,6 +29,7 @@
+@@ -29,6 +_,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/BowItem.java
 +++ b/net/minecraft/item/BowItem.java
-@@ -24,18 +24,23 @@
+@@ -24,18 +_,23 @@
           PlayerEntity playerentity = (PlayerEntity)p_77615_3_;
           boolean flag = playerentity.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
           ItemStack itemstack = playerentity.func_213356_f(p_77615_1_);
@@ -26,7 +26,7 @@
                    abstractarrowentity.func_234612_a_(playerentity, playerentity.field_70125_A, playerentity.field_70177_z, 0.0F, f * 3.0F, 1.0F);
                    if (f == 1.0F) {
                       abstractarrowentity.func_70243_d(true);
-@@ -100,6 +105,10 @@
+@@ -100,6 +_,10 @@
     public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
        ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
        boolean flag = !p_77659_2_.func_213356_f(itemstack).func_190926_b();
@@ -37,14 +37,14 @@
        if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag) {
           return ActionResult.func_226251_d_(itemstack);
        } else {
-@@ -112,6 +121,10 @@
-       return field_220007_a;
-    }
+@@ -110,6 +_,10 @@
  
-+   public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
-+      return arrow;
+    public Predicate<ItemStack> func_220004_b() {
+       return field_220007_a;
 +   }
 +
-    public int func_230305_d_() {
-       return 15;
++   public AbstractArrowEntity customArrow(AbstractArrowEntity arrow) {
++      return arrow;
     }
+ 
+    public int func_230305_d_() {

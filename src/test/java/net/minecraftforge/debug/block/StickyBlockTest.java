@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,7 +43,7 @@ public class StickyBlockTest
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().register((new Block(Block.Properties.create(Material.ROCK))
+        event.getRegistry().register((new Block(Block.Properties.of(Material.STONE))
         {
             @Override
             public boolean isStickyBlock(BlockState state)

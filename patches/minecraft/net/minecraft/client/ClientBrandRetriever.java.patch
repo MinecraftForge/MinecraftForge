@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/ClientBrandRetriever.java
 +++ b/net/minecraft/client/ClientBrandRetriever.java
-@@ -6,6 +6,6 @@
+@@ -6,6 +_,6 @@
  @OnlyIn(Dist.CLIENT)
  public class ClientBrandRetriever {
     public static String getClientModName() {

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -58,6 +58,6 @@ public interface IExtensibleEnum
      * Use this instead of {@link IStringSerializable#createEnumCodec(Supplier, Function)} for extensible enums because this not cache the enum values on construction
      */
     static <E extends Enum<E> & IStringSerializable> Codec<E> createCodecForExtensibleEnum(Supplier<E[]> valuesSupplier, Function<? super String, ? extends E> enumValueFromNameFunction) {
-        return IStringSerializable.createCodec(Enum::ordinal, (id) -> valuesSupplier.get()[id], enumValueFromNameFunction);
+        return IStringSerializable.fromStringResolver(Enum::ordinal, (id) -> valuesSupplier.get()[id], enumValueFromNameFunction);
     }
 }

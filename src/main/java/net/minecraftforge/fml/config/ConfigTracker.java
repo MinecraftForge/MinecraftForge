@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -117,7 +117,7 @@ public class ConfigTracker {
     }
 
     public void receiveSyncedConfig(final FMLHandshakeMessages.S2CConfigData s2CConfigData, final Supplier<NetworkEvent.Context> contextSupplier) {
-        if (!Minecraft.getInstance().isIntegratedServerRunning()) {
+        if (!Minecraft.getInstance().isLocalServer()) {
             Optional.ofNullable(fileMap.get(s2CConfigData.getFileName())).ifPresent(mc-> {
                 mc.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(s2CConfigData.getBytes())));
                 mc.fireEvent(new ModConfig.Reloading(mc));

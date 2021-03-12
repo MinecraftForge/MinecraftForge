@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/ShapelessRecipe.java
 +++ b/net/minecraft/item/crafting/ShapelessRecipe.java
-@@ -17,12 +17,14 @@
+@@ -17,12 +_,14 @@
     private final String field_194138_c;
     private final ItemStack field_77580_a;
     private final NonNullList<Ingredient> field_77579_b;
@@ -15,7 +15,7 @@
     }
  
     public ResourceLocation func_199560_c() {
-@@ -47,17 +49,20 @@
+@@ -47,17 +_,20 @@
  
     public boolean func_77569_a(CraftingInventory p_77569_1_, World p_77569_2_) {
        RecipeItemHelper recipeitemhelper = new RecipeItemHelper();
@@ -37,7 +37,7 @@
     }
  
     public ItemStack func_77572_b(CraftingInventory p_77572_1_) {
-@@ -68,14 +73,15 @@
+@@ -68,14 +_,15 @@
        return p_194133_1_ * p_194133_2_ >= this.field_77579_b.size();
     }
  

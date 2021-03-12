@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/CraftingResultSlot.java
 +++ b/net/minecraft/inventory/container/CraftingResultSlot.java
-@@ -43,6 +43,7 @@
+@@ -43,6 +_,7 @@
     protected void func_75208_c(ItemStack p_75208_1_) {
        if (this.field_75237_g > 0) {
           p_75208_1_.func_77980_a(this.field_75238_b.field_70170_p, this.field_75238_b, this.field_75237_g);
@@ -8,7 +8,7 @@
        }
  
        if (this.field_75224_c instanceof IRecipeHolder) {
-@@ -54,8 +55,9 @@
+@@ -54,8 +_,9 @@
  
     public ItemStack func_190901_a(PlayerEntity p_190901_1_, ItemStack p_190901_2_) {
        this.func_75208_c(p_190901_2_);

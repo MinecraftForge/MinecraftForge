@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/Items.java
 +++ b/net/minecraft/item/Items.java
-@@ -12,6 +12,7 @@
+@@ -12,6 +_,7 @@
  import net.minecraft.util.SoundEvents;
  import net.minecraft.util.registry.Registry;
  

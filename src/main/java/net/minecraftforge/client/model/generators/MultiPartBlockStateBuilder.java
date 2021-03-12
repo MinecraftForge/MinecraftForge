@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -138,7 +138,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
         }
 
         public boolean canApplyTo(Block b) {
-            return b.getStateContainer().getProperties().containsAll(conditions.keySet());
+            return b.getStateDefinition().getProperties().containsAll(conditions.keySet());
         }
     }
 }

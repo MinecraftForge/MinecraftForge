@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,7 +52,7 @@ public class ForgeWorldTypeTest
     private void registerWorldTypes(RegistryEvent.Register<ForgeWorldType> event)
     {
         event.getRegistry().registerAll(
-                new ForgeWorldType(DimensionGeneratorSettings::func_242750_a).setRegistryName("test_world_type")
+                new ForgeWorldType(DimensionGeneratorSettings::makeDefaultOverworld).setRegistryName("test_world_type")
         );
         event.getRegistry().registerAll(
                 new ForgeWorldType(this::createChunkGenerator).setRegistryName("test_world_type2")
@@ -61,7 +61,7 @@ public class ForgeWorldTypeTest
 
     private ChunkGenerator createChunkGenerator(Registry<Biome> biomes, Registry<DimensionSettings> dimensionSettings, long seed, String settings)
     {
-        return DimensionGeneratorSettings.func_242750_a(biomes, dimensionSettings, seed);
+        return DimensionGeneratorSettings.makeDefaultOverworld(biomes, dimensionSettings, seed);
     }
 
     private void registerWorldTypeScreenFactories(FMLClientSetupEvent event)
@@ -74,7 +74,7 @@ public class ForgeWorldTypeTest
                 super.init();
 
                 addButton(new Button(0, 0, 120, 20, new StringTextComponent("close"), btn -> {
-                    Minecraft.getInstance().displayGuiScreen(returnTo);
+                    Minecraft.getInstance().setScreen(returnTo);
                 }));
             }
         });

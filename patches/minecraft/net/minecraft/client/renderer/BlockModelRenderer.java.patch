@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/BlockModelRenderer.java
 +++ b/net/minecraft/client/renderer/BlockModelRenderer.java
-@@ -37,65 +37,78 @@
+@@ -37,65 +_,78 @@
        this.field_187499_a = p_i46575_1_;
     }
  
@@ -99,7 +99,7 @@
           flag = true;
        }
  
-@@ -209,17 +222,21 @@
+@@ -209,17 +_,21 @@
  
     }
  

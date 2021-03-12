@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/MultipartBakedModel.java
 +++ b/net/minecraft/client/renderer/model/MultipartBakedModel.java
-@@ -18,7 +18,7 @@
+@@ -18,7 +_,7 @@
  import org.apache.commons.lang3.tuple.Pair;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,7 +9,7 @@
     private final List<Pair<Predicate<BlockState>, IBakedModel>> field_188626_f;
     protected final boolean field_188621_a;
     protected final boolean field_188622_b;
-@@ -27,10 +27,12 @@
+@@ -27,10 +_,12 @@
     protected final ItemCameraTransforms field_188624_d;
     protected final ItemOverrideList field_188625_e;
     private final Map<BlockState, BitSet> field_210277_g = new Object2ObjectOpenCustomHashMap<>(Util.func_212443_g());
@@ -22,7 +22,7 @@
        this.field_188621_a = ibakedmodel.func_177555_b();
        this.field_188622_b = ibakedmodel.func_177556_c();
        this.field_230185_c_ = ibakedmodel.func_230044_c_();
-@@ -39,7 +41,8 @@
+@@ -39,7 +_,8 @@
        this.field_188625_e = ibakedmodel.func_188617_f();
     }
  
@@ -32,7 +32,7 @@
        if (p_200117_1_ == null) {
           return Collections.emptyList();
        } else {
-@@ -62,7 +65,7 @@
+@@ -62,7 +_,7 @@
  
           for(int j = 0; j < bitset.length(); ++j) {
              if (bitset.get(j)) {
@@ -41,7 +41,7 @@
              }
           }
  
-@@ -74,6 +77,10 @@
+@@ -74,6 +_,10 @@
        return this.field_188621_a;
     }
  
@@ -52,7 +52,7 @@
     public boolean func_177556_c() {
        return this.field_188622_b;
     }
-@@ -86,18 +93,33 @@
+@@ -86,16 +_,31 @@
        return false;
     }
  
@@ -76,13 +76,11 @@
 +
     public ItemOverrideList func_188617_f() {
        return this.field_188625_e;
-    }
- 
++   }
++
 +   @Override
 +   public net.minecraftforge.client.model.data.IModelData getModelData(net.minecraft.world.IBlockDisplayReader world, net.minecraft.util.math.BlockPos pos, BlockState state, net.minecraftforge.client.model.data.IModelData tileData) {
 +      return net.minecraftforge.client.model.data.MultipartModelData.create(field_188626_f, world, pos, state, tileData);
-+   }
-+
+    }
+ 
     @OnlyIn(Dist.CLIENT)
-    public static class Builder {
-       private final List<Pair<Predicate<BlockState>, IBakedModel>> field_188649_a = Lists.newArrayList();

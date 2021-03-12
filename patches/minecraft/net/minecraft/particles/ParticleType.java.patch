@@ -1,6 +1,6 @@
 --- a/net/minecraft/particles/ParticleType.java
 +++ b/net/minecraft/particles/ParticleType.java
-@@ -4,7 +4,7 @@
+@@ -4,7 +_,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  

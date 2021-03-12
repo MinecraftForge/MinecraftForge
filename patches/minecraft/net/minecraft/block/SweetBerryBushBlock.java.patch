@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/SweetBerryBushBlock.java
 +++ b/net/minecraft/block/SweetBerryBushBlock.java
-@@ -52,8 +52,9 @@
+@@ -52,8 +_,9 @@
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
        int i = p_225542_1_.func_177229_b(field_220125_a);

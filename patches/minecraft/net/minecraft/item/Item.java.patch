@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/Item.java
 +++ b/net/minecraft/item/Item.java
-@@ -40,8 +40,8 @@
+@@ -40,8 +_,8 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -11,7 +11,7 @@
     protected static final UUID field_111210_e = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
     protected static final UUID field_185050_h = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
     protected static final Random field_77697_d = new Random();
-@@ -77,6 +77,10 @@
+@@ -77,6 +_,10 @@
        this.field_77777_bU = p_i48487_1_.field_200920_a;
        this.field_219974_q = p_i48487_1_.field_221541_f;
        this.field_234684_d_ = p_i48487_1_.field_234688_g_;
@@ -22,7 +22,7 @@
     }
  
     public void func_219972_a(World p_219972_1_, LivingEntity p_219972_2_, ItemStack p_219972_3_, int p_219972_4_) {
-@@ -120,10 +124,12 @@
+@@ -120,10 +_,12 @@
        return this.func_219971_r() ? p_77654_3_.func_213357_a(p_77654_2_, p_77654_1_) : p_77654_1_;
     }
  
@@ -35,7 +35,7 @@
     public final int func_77612_l() {
        return this.field_77699_b;
     }
-@@ -178,10 +184,12 @@
+@@ -178,10 +_,12 @@
     }
  
     @Nullable
@@ -48,7 +48,7 @@
     public boolean func_77634_r() {
        return this.field_77700_c != null;
     }
-@@ -241,7 +249,7 @@
+@@ -241,7 +_,7 @@
     }
  
     public boolean func_77616_k(ItemStack p_77616_1_) {
@@ -57,7 +57,7 @@
     }
  
     protected static BlockRayTraceResult func_219968_a(World p_219968_0_, PlayerEntity p_219968_1_, RayTraceContext.FluidMode p_219968_2_) {
-@@ -254,8 +262,8 @@
+@@ -254,8 +_,8 @@
        float f5 = MathHelper.func_76126_a(-f * ((float)Math.PI / 180F));
        float f6 = f3 * f4;
        float f7 = f2 * f4;
@@ -68,7 +68,7 @@
        return p_219968_0_.func_217299_a(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.OUTLINE, p_219968_2_, p_219968_1_));
     }
  
-@@ -271,6 +279,7 @@
+@@ -271,6 +_,7 @@
     }
  
     protected boolean func_194125_a(ItemGroup p_194125_1_) {
@@ -76,7 +76,7 @@
        ItemGroup itemgroup = this.func_77640_w();
        return itemgroup != null && (p_194125_1_ == ItemGroup.field_78027_g || p_194125_1_ == itemgroup);
     }
-@@ -284,10 +293,44 @@
+@@ -284,10 +_,44 @@
        return false;
     }
  
@@ -121,7 +121,7 @@
     public boolean func_219970_i(ItemStack p_219970_1_) {
        return p_219970_1_.func_77973_b() == Items.field_222114_py;
     }
-@@ -333,6 +376,9 @@
+@@ -333,6 +_,9 @@
        private Rarity field_208104_e = Rarity.COMMON;
        private Food field_221541_f;
        private boolean field_234688_g_;
@@ -131,10 +131,12 @@
  
        public Item.Properties func_221540_a(Food p_221540_1_) {
           this.field_221541_f = p_221540_1_;
-@@ -377,5 +423,20 @@
+@@ -375,6 +_,21 @@
+ 
+       public Item.Properties func_234689_a_() {
           this.field_234688_g_ = true;
-          return this;
-       }
++         return this;
++      }
 +
 +      public Item.Properties setNoRepair() {
 +         canRepair = false;
@@ -148,7 +150,6 @@
 +
 +      public Item.Properties setISTER(java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer>> ister) {
 +         this.ister = ister;
-+         return this;
-+      }
+          return this;
+       }
     }
- }

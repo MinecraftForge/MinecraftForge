@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -105,7 +105,7 @@ public class BiomeManager
      */
     public static void addAdditionalOverworldBiomes(RegistryKey<Biome> biome)
     {
-        if (!"minecraft".equals(biome.getLocation().getNamespace()) && additionalOverworldBiomes.stream().noneMatch(entry -> entry.getLocation().equals(biome.getLocation())))
+        if (!"minecraft".equals(biome.location().getNamespace()) && additionalOverworldBiomes.stream().noneMatch(entry -> entry.location().equals(biome.location())))
         {
             additionalOverworldBiomes.add(biome);
         }

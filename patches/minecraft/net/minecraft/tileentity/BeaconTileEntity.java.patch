@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/BeaconTileEntity.java
 +++ b/net/minecraft/tileentity/BeaconTileEntity.java
-@@ -112,8 +112,8 @@
+@@ -112,8 +_,8 @@
        for(int i1 = 0; i1 < 10 && blockpos.func_177956_o() <= l; ++i1) {
           BlockState blockstate = this.field_145850_b.func_180495_p(blockpos);
           Block block = blockstate.func_177230_c();

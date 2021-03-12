@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@ public class TextComponentMessageFormatHandler {
     public static int handle(final TranslationTextComponent parent, final List<ITextProperties> children, final Object[] formatArgs, final String format) {
         try {
             StringTextComponent component = new StringTextComponent(ForgeI18n.parseFormat(format, formatArgs));
-            component.getStyle().mergeStyle(parent.getStyle());
+            component.getStyle().applyTo(parent.getStyle());
             children.add(component);
             return format.length();
         } catch (IllegalArgumentException ex) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/SoundType.java
 +++ b/net/minecraft/block/SoundType.java
-@@ -59,6 +59,7 @@
+@@ -59,6 +_,7 @@
     private final SoundEvent field_185865_r;
     private final SoundEvent field_185866_s;
  

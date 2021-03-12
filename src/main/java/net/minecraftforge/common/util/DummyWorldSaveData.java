@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,12 +29,12 @@ public class DummyWorldSaveData extends WorldSavedData {
     }
 
     @Override
-    public void read(final CompoundNBT nbt) {
+    public void load(final CompoundNBT nbt) {
         // NOOP
     }
 
     @Override
-    public CompoundNBT write(final CompoundNBT compound) {
+    public CompoundNBT save(final CompoundNBT compound) {
         // NOOP
         return null;
     }

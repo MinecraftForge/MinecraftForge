@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -132,7 +132,7 @@ public class DataGeneratorTest
             super(gen);
         }
 
-        protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
+        protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer)
         {
             ResourceLocation ID = new ResourceLocation("data_gen_test", "conditional");
 
@@ -145,14 +145,14 @@ public class DataGeneratorTest
                 )
             )
             .addRecipe(
-                ShapedRecipeBuilder.shapedRecipe(Blocks.DIAMOND_BLOCK, 64)
-                .patternLine("XXX")
-                .patternLine("XXX")
-                .patternLine("XXX")
-                .key('X', Blocks.DIRT)
-                .setGroup("")
-                .addCriterion("has_dirt", hasItem(Blocks.DIRT)) // DUMMY: Necessary, but not used when a custom advancement is provided through setAdvancement
-                ::build
+                ShapedRecipeBuilder.shaped(Blocks.DIAMOND_BLOCK, 64)
+                .pattern("XXX")
+                .pattern("XXX")
+                .pattern("XXX")
+                .define('X', Blocks.DIRT)
+                .group("")
+                .unlockedBy("has_dirt", has(Blocks.DIRT)) // DUMMY: Necessary, but not used when a custom advancement is provided through setAdvancement
+                ::save
             )
             .setAdvancement(ID,
                 ConditionalAdvancement.builder()
@@ -164,15 +164,15 @@ public class DataGeneratorTest
                     )
                 )
                 .addAdvancement(
-                    Advancement.Builder.builder()
-                    .withParentId(new ResourceLocation("minecraft", "root"))
-                    .withDisplay(Blocks.DIAMOND_BLOCK,
+                    Advancement.Builder.advancement()
+                    .parent(new ResourceLocation("minecraft", "root"))
+                    .display(Blocks.DIAMOND_BLOCK,
                         new StringTextComponent("Dirt2Diamonds"),
                         new StringTextComponent("The BEST crafting recipe in the game!"),
                         null, FrameType.TASK, false, false, false
                     )
-                    .withRewards(AdvancementRewards.Builder.recipe(ID))
-                    .withCriterion("has_dirt", hasItem(Blocks.DIRT))
+                    .rewards(AdvancementRewards.Builder.recipe(ID))
+                    .addCriterion("has_dirt", has(Blocks.DIRT))
                 )
             )
             .build(consumer, ID);
@@ -188,14 +188,14 @@ public class DataGeneratorTest
                             )
                     )
                     .addRecipe(
-                            ShapedRecipeBuilder.shapedRecipe(Blocks.DIAMOND_BLOCK, 64)
-                                    .patternLine("XXX")
-                                    .patternLine("XXX")
-                                    .patternLine("XXX")
-                                    .key('X', Blocks.DIRT)
-                                    .setGroup("")
-                                    .addCriterion("has_dirt", hasItem(Blocks.DIRT))
-                                    ::build
+                            ShapedRecipeBuilder.shaped(Blocks.DIAMOND_BLOCK, 64)
+                                    .pattern("XXX")
+                                    .pattern("XXX")
+                                    .pattern("XXX")
+                                    .define('X', Blocks.DIRT)
+                                    .group("")
+                                    .unlockedBy("has_dirt", has(Blocks.DIRT))
+                                    ::save
                     )
                     .generateAdvancement()
                     .build(consumer, new ResourceLocation("data_gen_test", "conditional2"));
@@ -210,27 +210,27 @@ public class DataGeneratorTest
         }
 
         @Override
-        protected void registerTags()
+        protected void addTags()
         {
-            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "test").toString()))
-                .addItemEntry(Blocks.DIAMOND_BLOCK)
+            tag(BlockTags.bind(new ResourceLocation(MODID, "test").toString()))
+                .add(Blocks.DIAMOND_BLOCK)
                 .addTag(BlockTags.STONE_BRICKS)
                 .addTag(net.minecraftforge.common.Tags.Blocks.COBBLESTONE)
                 .addOptional(new ResourceLocation("chisel", "marble/raw"))
                 .addOptionalTag(new ResourceLocation("forge", "storage_blocks/ruby"));
 
             // Hopefully sorting issues
-            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/one").toString()))
-                    .addItemEntry(Blocks.COBBLESTONE);
-            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/two").toString()))
-                    .addItemEntry(Blocks.DIORITE);
-            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "thing/three").toString()))
-                    .addItemEntry(Blocks.ANDESITE);
+            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/one").toString()))
+                    .add(Blocks.COBBLESTONE);
+            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/two").toString()))
+                    .add(Blocks.DIORITE);
+            tag(BlockTags.bind(new ResourceLocation(MODID, "thing/three").toString()))
+                    .add(Blocks.ANDESITE);
 
-            getOrCreateBuilder(BlockTags.makeWrapperTag(new ResourceLocation(MODID, "things").toString()))
-                    .addItemEntry(Blocks.COBBLESTONE)
-                    .addItemEntry(Blocks.DIORITE)
-                    .addItemEntry(Blocks.ANDESITE);
+            tag(BlockTags.bind(new ResourceLocation(MODID, "things").toString()))
+                    .add(Blocks.COBBLESTONE)
+                    .add(Blocks.DIORITE)
+                    .add(Blocks.ANDESITE);
         }
     }
 
@@ -302,9 +302,9 @@ public class DataGeneratorTest
                 );
 
         @Override
-        public void act(DirectoryCache cache) throws IOException
+        public void run(DirectoryCache cache) throws IOException
         {
-            super.act(cache);
+            super.run(cache);
             List<String> errors = testModelResults(this.generatedModels, existingFileHelper, IGNORED_MODELS.stream().map(s -> new ResourceLocation(MODID, folder + "/" + s)).collect(Collectors.toSet()));
             if (!errors.isEmpty()) {
                 LOGGER.error("Found {} discrepancies between generated and vanilla item models: ", errors.size());
@@ -341,11 +341,11 @@ public class DataGeneratorTest
             ModelFile birchFenceGateWallOpen = models().fenceGateWallOpen("birch_fence_gate_wall_open", mcLoc("block/birch_planks"));
             ModelFile invisbleModel = new UncheckedModelFile(new ResourceLocation("builtin/generated"));
             VariantBlockStateBuilder builder = getVariantBuilder(Blocks.BIRCH_FENCE_GATE);
-            for (Direction dir : FenceGateBlock.HORIZONTAL_FACING.getAllowedValues()) {
-                int angle = (int) dir.getHorizontalAngle();
+            for (Direction dir : FenceGateBlock.FACING.getPossibleValues()) {
+                int angle = (int) dir.toYRot();
                 builder
                         .partialState()
-                        .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                        .with(FenceGateBlock.FACING, dir)
                         .with(FenceGateBlock.IN_WALL, false)
                         .with(FenceGateBlock.OPEN, false)
                         .modelForState()
@@ -357,7 +357,7 @@ public class DataGeneratorTest
                         .weight(100)
                         .addModel()
                         .partialState()
-                        .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                        .with(FenceGateBlock.FACING, dir)
                         .with(FenceGateBlock.IN_WALL, false)
                         .with(FenceGateBlock.OPEN, true)
                         .modelForState()
@@ -366,7 +366,7 @@ public class DataGeneratorTest
                         .uvLock(true)
                         .addModel()
                         .partialState()
-                        .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                        .with(FenceGateBlock.FACING, dir)
                         .with(FenceGateBlock.IN_WALL, true)
                         .with(FenceGateBlock.OPEN, false)
                         .modelForState()
@@ -375,7 +375,7 @@ public class DataGeneratorTest
                         .uvLock(true)
                         .addModel()
                         .partialState()
-                        .with(FenceGateBlock.HORIZONTAL_FACING, dir)
+                        .with(FenceGateBlock.FACING, dir)
                         .with(FenceGateBlock.IN_WALL, true)
                         .with(FenceGateBlock.OPEN, true)
                         .modelForState()
@@ -424,21 +424,21 @@ public class DataGeneratorTest
             models().getBuilder("cube")
                     .parent(block)
                     .element()
-                    .allFaces((dir, face) -> face.texture("#" + dir.getString()).cullface(dir));
+                    .allFaces((dir, face) -> face.texture("#" + dir.getSerializedName()).cullface(dir));
 
             ModelFile furnace = models().orientable("furnace", mcLoc("block/furnace_side"), mcLoc("block/furnace_front"), mcLoc("block/furnace_top"));
             ModelFile furnaceLit = models().orientable("furnace_on", mcLoc("block/furnace_side"), mcLoc("block/furnace_front_on"), mcLoc("block/furnace_top"));
 
             getVariantBuilder(Blocks.FURNACE)
                     .forAllStates(state -> ConfiguredModel.builder()
-                            .modelFile(state.get(FurnaceBlock.LIT) ? furnaceLit : furnace)
-                            .rotationY((int) state.get(FurnaceBlock.FACING).getOpposite().getHorizontalAngle())
+                            .modelFile(state.getValue(FurnaceBlock.LIT) ? furnaceLit : furnace)
+                            .rotationY((int) state.getValue(FurnaceBlock.FACING).getOpposite().toYRot())
                             .build()
                     );
 
             ModelFile barrel = models().cubeBottomTop("barrel", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top"));
             ModelFile barrelOpen = models().cubeBottomTop("barrel_open", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top_open"));
-            directionalBlock(Blocks.BARREL, state -> state.get(BarrelBlock.PROPERTY_OPEN) ? barrelOpen : barrel); // Testing custom state interpreter
+            directionalBlock(Blocks.BARREL, state -> state.getValue(BarrelBlock.OPEN) ? barrelOpen : barrel); // Testing custom state interpreter
             
             logBlock((RotatedPillarBlock) Blocks.ACACIA_LOG);
 
@@ -474,9 +474,9 @@ public class DataGeneratorTest
         private List<String> errors = new ArrayList<>();
 
         @Override
-        public void act(DirectoryCache cache) throws IOException
+        public void run(DirectoryCache cache) throws IOException
         {
-            super.act(cache);
+            super.run(cache);
             this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, Sets.union(IGNORED_MODELS, CUSTOM_MODELS)));
             this.registeredBlocks.forEach((block, state) -> {
                 if (IGNORED_BLOCKS.contains(block)) return;

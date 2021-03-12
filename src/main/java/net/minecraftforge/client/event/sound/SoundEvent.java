@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,7 +46,7 @@ public class SoundEvent extends net.minecraftforge.eventbus.api.Event
         public SoundSourceEvent(SoundEngine manager, ISound sound, SoundSource source)
         {
             super(manager);
-            this.name = sound.getSoundLocation().getPath();
+            this.name = sound.getLocation().getPath();
             this.sound = sound;
             this.source = source;
         }

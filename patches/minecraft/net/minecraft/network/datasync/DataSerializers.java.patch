@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/datasync/DataSerializers.java
 +++ b/net/minecraft/network/datasync/DataSerializers.java
-@@ -301,16 +301,16 @@
+@@ -301,16 +_,16 @@
     };
  
     public static void func_187189_a(IDataSerializer<?> p_187189_0_) {

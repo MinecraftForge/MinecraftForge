@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/AnimalEntity.java
 +++ b/net/minecraft/entity/passive/AnimalEntity.java
-@@ -199,6 +199,17 @@
+@@ -199,6 +_,17 @@
  
     public void func_234177_a_(ServerWorld p_234177_1_, AnimalEntity p_234177_2_) {
        AgeableEntity ageableentity = this.func_241840_a(p_234177_1_, p_234177_2_);

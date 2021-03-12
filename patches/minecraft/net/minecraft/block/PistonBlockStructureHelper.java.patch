@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/PistonBlockStructureHelper.java
 +++ b/net/minecraft/block/PistonBlockStructureHelper.java
-@@ -48,7 +48,7 @@
+@@ -48,7 +_,7 @@
        } else {
           for(int i = 0; i < this.field_177258_e.size(); ++i) {
              BlockPos blockpos = this.field_177258_e.get(i);
@@ -9,7 +9,7 @@
                 return false;
              }
           }
-@@ -57,24 +57,9 @@
+@@ -57,24 +_,9 @@
        }
     }
  
@@ -35,7 +35,7 @@
           return true;
        } else if (!PistonBlock.func_185646_a(blockstate, this.field_177261_a, p_177251_1_, this.field_177257_d, false, p_177251_2_)) {
           return true;
-@@ -87,12 +72,12 @@
+@@ -87,12 +_,12 @@
           if (i + this.field_177258_e.size() > 12) {
              return false;
           } else {
@@ -52,7 +52,7 @@
                    break;
                 }
  
-@@ -119,7 +104,7 @@
+@@ -119,7 +_,7 @@
  
                    for(int k = 0; k <= j + l; ++k) {
                       BlockPos blockpos2 = this.field_177258_e.get(k);
@@ -61,7 +61,7 @@
                          return false;
                       }
                    }
-@@ -128,7 +113,7 @@
+@@ -128,7 +_,7 @@
                 }
  
                 blockstate = this.field_177261_a.func_180495_p(blockpos1);
@@ -70,7 +70,7 @@
                    return true;
                 }
  
-@@ -173,7 +158,7 @@
+@@ -173,7 +_,7 @@
           if (direction.func_176740_k() != this.field_177257_d.func_176740_k()) {
              BlockPos blockpos = p_177250_1_.func_177972_a(direction);
              BlockState blockstate1 = this.field_177261_a.func_180495_p(blockpos);

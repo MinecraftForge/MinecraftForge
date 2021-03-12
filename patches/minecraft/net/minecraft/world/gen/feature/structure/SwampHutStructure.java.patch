@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/structure/SwampHutStructure.java
 +++ b/net/minecraft/world/gen/feature/structure/SwampHutStructure.java
-@@ -24,11 +24,13 @@
+@@ -24,11 +_,13 @@
        return SwampHutStructure.Start::new;
     }
  

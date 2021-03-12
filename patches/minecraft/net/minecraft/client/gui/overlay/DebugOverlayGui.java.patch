@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/overlay/DebugOverlayGui.java
 +++ b/net/minecraft/client/gui/overlay/DebugOverlayGui.java
-@@ -362,7 +362,7 @@
+@@ -362,7 +_,7 @@
                 list.add(this.func_211534_a(entry));
              }
  
@@ -9,7 +9,7 @@
                 list.add("#" + resourcelocation);
              }
           }
-@@ -378,7 +378,7 @@
+@@ -378,7 +_,7 @@
                 list.add(this.func_211534_a(entry1));
              }
  
@@ -18,7 +18,7 @@
                 list.add("#" + resourcelocation1);
              }
           }
-@@ -388,6 +388,7 @@
+@@ -388,6 +_,7 @@
              list.add("");
              list.add(TextFormatting.UNDERLINE + "Targeted Entity");
              list.add(String.valueOf((Object)Registry.field_212629_r.func_177774_c(entity.func_200600_R())));

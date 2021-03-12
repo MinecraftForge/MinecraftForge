@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/BlockState.java
 +++ b/net/minecraft/block/BlockState.java
-@@ -6,7 +6,7 @@
+@@ -6,7 +_,7 @@
  import net.minecraft.state.Property;
  import net.minecraft.util.registry.Registry;
  

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,7 @@ public class NBTIngredient extends Ingredient
         if (input == null)
             return false;
         //Can't use areItemStacksEqualUsingNBTShareTag because it compares stack size as well
-        return this.stack.getItem() == input.getItem() && this.stack.getDamage() == input.getDamage() && this.stack.areShareTagsEqual(input);
+        return this.stack.getItem() == input.getItem() && this.stack.getDamageValue() == input.getDamageValue() && this.stack.areShareTagsEqual(input);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class NBTIngredient extends Ingredient
     }
 
     @Override
-    public JsonElement serialize()
+    public JsonElement toJson()
     {
         JsonObject json = new JsonObject();
         json.addProperty("type", CraftingHelper.getID(Serializer.INSTANCE).toString());
@@ -78,7 +78,7 @@ public class NBTIngredient extends Ingredient
 
         @Override
         public NBTIngredient parse(PacketBuffer buffer) {
-            return new NBTIngredient(buffer.readItemStack());
+            return new NBTIngredient(buffer.readItem());
         }
 
         @Override
@@ -88,7 +88,7 @@ public class NBTIngredient extends Ingredient
 
         @Override
         public void write(PacketBuffer buffer, NBTIngredient ingredient) {
-            buffer.writeItemStack(ingredient.stack);
+            buffer.writeItem(ingredient.stack);
         }
     }
 }

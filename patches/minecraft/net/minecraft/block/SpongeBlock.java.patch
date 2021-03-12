@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/SpongeBlock.java
 +++ b/net/minecraft/block/SpongeBlock.java
-@@ -64,7 +64,7 @@
+@@ -64,7 +_,7 @@
                       queue.add(new Tuple<>(blockpos1, j + 1));
                    }
                 } else if (material == Material.field_203243_f || material == Material.field_204868_h) {

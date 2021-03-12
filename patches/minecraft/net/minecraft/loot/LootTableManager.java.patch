@@ -1,6 +1,6 @@
 --- a/net/minecraft/loot/LootTableManager.java
 +++ b/net/minecraft/loot/LootTableManager.java
-@@ -36,8 +36,8 @@
+@@ -36,8 +_,8 @@
        }
  
        p_212853_1_.forEach((p_237403_1_, p_237403_2_) -> {

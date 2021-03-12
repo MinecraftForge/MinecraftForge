@@ -1,6 +1,6 @@
 --- a/net/minecraft/village/VillageSiege.java
 +++ b/net/minecraft/village/VillageSiege.java
-@@ -78,7 +78,9 @@
+@@ -78,7 +_,9 @@
                    this.field_75532_g = blockpos.func_177958_n() + MathHelper.func_76141_d(MathHelper.func_76134_b(f) * 32.0F);
                    this.field_75538_h = blockpos.func_177956_o();
                    this.field_75539_i = blockpos.func_177952_p() + MathHelper.func_76141_d(MathHelper.func_76126_a(f) * 32.0F);
@@ -11,7 +11,7 @@
                       this.field_75534_e = 0;
                       this.field_75533_d = 20;
                       break;
-@@ -98,7 +100,7 @@
+@@ -98,7 +_,7 @@
        if (vector3d != null) {
           ZombieEntity zombieentity;
           try {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/ParrotEntity.java
 +++ b/net/minecraft/entity/passive/ParrotEntity.java
-@@ -237,7 +237,7 @@
+@@ -237,7 +_,7 @@
           }
  
           if (!this.field_70170_p.field_72995_K) {

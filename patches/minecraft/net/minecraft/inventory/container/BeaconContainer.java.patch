@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/BeaconContainer.java
 +++ b/net/minecraft/inventory/container/BeaconContainer.java
-@@ -87,10 +87,8 @@
+@@ -87,10 +_,8 @@
              }
  
              slot.func_75220_a(itemstack1, itemstack);

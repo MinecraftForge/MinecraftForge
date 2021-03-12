@@ -1,6 +1,6 @@
 --- a/net/minecraft/command/impl/LocateCommand.java
 +++ b/net/minecraft/command/impl/LocateCommand.java
-@@ -25,11 +25,18 @@
+@@ -25,11 +_,18 @@
           return p_198533_0_.func_197034_c(2);
        });
  

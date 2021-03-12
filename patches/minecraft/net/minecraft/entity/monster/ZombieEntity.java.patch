@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/ZombieEntity.java
 +++ b/net/minecraft/entity/monster/ZombieEntity.java
-@@ -186,7 +186,8 @@
+@@ -186,7 +_,8 @@
        if (!this.field_70170_p.field_72995_K && this.func_70089_S() && !this.func_175446_cd()) {
           if (this.func_204706_dD()) {
              --this.field_204708_bE;
@@ -10,7 +10,7 @@
                 this.func_207302_dI();
              }
           } else if (this.func_204703_dA()) {
-@@ -248,6 +249,7 @@
+@@ -248,6 +_,7 @@
        if (zombieentity != null) {
           zombieentity.func_207304_a(zombieentity.field_70170_p.func_175649_E(zombieentity.func_233580_cy_()).func_180170_c());
           zombieentity.func_146070_a(zombieentity.func_204900_dz() && this.func_146072_bX());
@@ -18,7 +18,7 @@
        }
  
     }
-@@ -268,12 +270,16 @@
+@@ -268,11 +_,15 @@
              livingentity = (LivingEntity)p_70097_1_.func_76346_g();
           }
  
@@ -27,17 +27,16 @@
              int j = MathHelper.func_76128_c(this.func_226278_cu_());
              int k = MathHelper.func_76128_c(this.func_226281_cx_());
 -            ZombieEntity zombieentity = new ZombieEntity(this.field_70170_p);
- 
++
 +         net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent event = net.minecraftforge.event.ForgeEventFactory.fireZombieSummonAid(this, field_70170_p, i, j, k, livingentity, this.func_110148_a(Attributes.field_233829_l_).func_111126_e());
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW  ||
 +            livingentity != null && this.field_70170_p.func_175659_aa() == Difficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(Attributes.field_233829_l_).func_111126_e() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
 +            ZombieEntity zombieentity = event.getCustomSummonedAid() != null && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW ? event.getCustomSummonedAid() : EntityType.field_200725_aD.func_200721_a(this.field_70170_p);
-+
+ 
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
-                int j1 = j + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
-@@ -284,6 +290,7 @@
+@@ -284,6 +_,7 @@
                 if (WorldEntitySpawner.func_209382_a(entityspawnplacementregistry$placementtype, this.field_70170_p, blockpos, entitytype) && EntitySpawnPlacementRegistry.func_223515_a(entitytype, serverworld, SpawnReason.REINFORCEMENT, blockpos, this.field_70170_p.field_73012_v)) {
                    zombieentity.func_70107_b((double)i1, (double)j1, (double)k1);
                    if (!this.field_70170_p.func_217358_a((double)i1, (double)j1, (double)k1, 7.0D) && this.field_70170_p.func_226668_i_(zombieentity) && this.field_70170_p.func_226669_j_(zombieentity) && !this.field_70170_p.func_72953_d(zombieentity.func_174813_aQ())) {
@@ -45,7 +44,7 @@
                       zombieentity.func_70624_b(livingentity);
                       zombieentity.func_213386_a(serverworld, this.field_70170_p.func_175649_E(zombieentity.func_233580_cy_()), SpawnReason.REINFORCEMENT, (ILivingEntityData)null, (CompoundNBT)null);
                       serverworld.func_242417_l(zombieentity);
-@@ -369,7 +376,7 @@
+@@ -369,7 +_,7 @@
  
     public void func_241847_a(ServerWorld p_241847_1_, LivingEntity p_241847_2_) {
        super.func_241847_a(p_241847_1_, p_241847_2_);
@@ -54,7 +53,7 @@
           if (p_241847_1_.func_175659_aa() != Difficulty.HARD && this.field_70146_Z.nextBoolean()) {
              return;
           }
-@@ -381,6 +388,7 @@
+@@ -381,6 +_,7 @@
           zombievillagerentity.func_223727_a(villagerentity.func_223722_es().func_234058_a_(NBTDynamicOps.field_210820_a).getValue());
           zombievillagerentity.func_213790_g(villagerentity.func_213706_dY().func_222199_a());
           zombievillagerentity.func_213789_a(villagerentity.func_213708_dV());
@@ -62,7 +61,7 @@
           if (!this.func_174814_R()) {
              p_241847_1_.func_217378_a((PlayerEntity)null, 1026, this.func_233580_cy_(), 0);
           }
-@@ -448,7 +456,7 @@
+@@ -448,7 +_,7 @@
     }
  
     public static boolean func_241399_a_(Random p_241399_0_) {
@@ -71,7 +70,7 @@
     }
  
     protected void func_207304_a(float p_207304_1_) {
-@@ -468,7 +476,7 @@
+@@ -468,7 +_,7 @@
     }
  
     protected void func_230291_eT_() {

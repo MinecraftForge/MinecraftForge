@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/EndermanEntity.java
 +++ b/net/minecraft/entity/monster/EndermanEntity.java
-@@ -98,7 +98,6 @@
+@@ -98,7 +_,6 @@
     }
  
     public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
@@ -8,7 +8,7 @@
        ModifiableAttributeInstance modifiableattributeinstance = this.func_110148_a(Attributes.field_233821_d_);
        if (p_70624_1_ == null) {
           this.field_184721_by = 0;
-@@ -113,6 +112,7 @@
+@@ -113,6 +_,7 @@
           }
        }
  
@@ -16,7 +16,7 @@
     }
  
     protected void func_70088_a() {
-@@ -181,12 +181,13 @@
+@@ -181,12 +_,13 @@
        }
  
        this.func_195406_b(blockstate);
@@ -31,7 +31,7 @@
           return false;
        } else {
           Vector3d vector3d = p_70821_1_.func_70676_i(1.0F).func_72432_b();
-@@ -265,7 +266,9 @@
+@@ -265,7 +_,9 @@
        boolean flag = blockstate.func_185904_a().func_76230_c();
        boolean flag1 = blockstate.func_204520_s().func_206884_a(FluidTags.field_206959_a);
        if (flag && !flag1) {
@@ -42,7 +42,7 @@
           if (flag2 && !this.func_174814_R()) {
              this.field_70170_p.func_184148_a((PlayerEntity)null, this.field_70169_q, this.field_70167_r, this.field_70166_s, SoundEvents.field_187534_aX, this.func_184176_by(), 1.0F, 1.0F);
              this.func_184185_a(SoundEvents.field_187534_aX, 1.0F, 1.0F);
-@@ -429,7 +432,7 @@
+@@ -429,7 +_,7 @@
        public boolean func_75250_a() {
           if (this.field_179475_a.func_195405_dq() == null) {
              return false;
@@ -51,7 +51,7 @@
              return false;
           } else {
              return this.field_179475_a.func_70681_au().nextInt(2000) == 0;
-@@ -449,7 +452,7 @@
+@@ -449,7 +_,7 @@
           BlockState blockstate2 = this.field_179475_a.func_195405_dq();
           if (blockstate2 != null) {
              blockstate2 = Block.func_199770_b(blockstate2, this.field_179475_a.field_70170_p, blockpos);
@@ -60,7 +60,7 @@
                 world.func_180501_a(blockpos, blockstate2, 3);
                 this.field_179475_a.func_195406_b((BlockState)null);
              }
-@@ -458,7 +461,7 @@
+@@ -458,7 +_,7 @@
        }
  
        private boolean func_220836_a(World p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_) {
@@ -69,7 +69,7 @@
        }
     }
  
-@@ -500,7 +503,7 @@
+@@ -500,7 +_,7 @@
        public boolean func_75250_a() {
           if (this.field_179473_a.func_195405_dq() != null) {
              return false;

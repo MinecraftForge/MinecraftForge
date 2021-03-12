@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -57,14 +57,14 @@ public class ForgeWorldTypeScreens
         ForgeWorldType def = ForgeWorldType.getDefaultWorldType();
         if (def == null)
         {
-            return BiomeGeneratorTypeScreens.field_239066_a_;
+            return BiomeGeneratorTypeScreens.NORMAL;
         }
 
         BiomeGeneratorTypeScreens gen = GENERATORS.get(def);
         if (gen == null)
         {
             LOGGER.error("The default world type '{}' has not been added to the GUI. Was it registered too late?", def.getRegistryName());
-            return BiomeGeneratorTypeScreens.field_239066_a_;
+            return BiomeGeneratorTypeScreens.NORMAL;
         }
 
         return gen;
@@ -103,14 +103,14 @@ public class ForgeWorldTypeScreens
 
         @Nonnull
         @Override
-        public DimensionGeneratorSettings func_241220_a_(@Nonnull DynamicRegistries.Impl dynamicRegistries, long seed, boolean generateStructures, boolean bonusChest)
+        public DimensionGeneratorSettings create(@Nonnull DynamicRegistries.Impl dynamicRegistries, long seed, boolean generateStructures, boolean bonusChest)
         {
             return worldType.createSettings(dynamicRegistries, seed, generateStructures, bonusChest, "");
         }
 
         @Nonnull
         @Override
-        protected ChunkGenerator func_241869_a(@Nonnull Registry<Biome> p_241869_1_, @Nonnull Registry<DimensionSettings> p_241869_2_, long p_241869_3_)
+        protected ChunkGenerator generator(@Nonnull Registry<Biome> p_241869_1_, @Nonnull Registry<DimensionSettings> p_241869_2_, long p_241869_3_)
         {
             return worldType.createChunkGenerator(p_241869_1_, p_241869_2_, p_241869_3_, "");
         }

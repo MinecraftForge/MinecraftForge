@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/EntityTypeTags.java
 +++ b/net/minecraft/tags/EntityTypeTags.java
-@@ -16,6 +16,14 @@
+@@ -16,6 +_,14 @@
        return field_219766_c.func_232937_a_(p_232896_0_);
     }
  

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,7 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
 {
     static IModelBuilder<?> of(IModelConfiguration owner, ItemOverrideList overrides, TextureAtlasSprite particle)
     {
-        return new Simple(new SimpleBakedModel.Builder(owner, overrides).setTexture(particle));
+        return new Simple(new SimpleBakedModel.Builder(owner, overrides).particle(particle));
     }
 
     T addFaceQuad(Direction facing, BakedQuad quad);
@@ -49,14 +49,14 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
         @Override
         public Simple addFaceQuad(Direction facing, BakedQuad quad)
         {
-            builder.addFaceQuad(facing, quad);
+            builder.addCulledFace(facing, quad);
             return this;
         }
 
         @Override
         public Simple addGeneralQuad(BakedQuad quad)
         {
-            builder.addGeneralQuad(quad);
+            builder.addUnculledFace(quad);
             return this;
         }
 

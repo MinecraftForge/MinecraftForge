@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ public abstract class LootModifier implements IGlobalLootModifier {
      */
     protected LootModifier(ILootCondition[] conditionsIn) {
         this.conditions = conditionsIn;
-        this.combinedConditions = LootConditionManager.and(conditionsIn);
+        this.combinedConditions = LootConditionManager.andConditions(conditionsIn);
     }
     
     @Nonnull

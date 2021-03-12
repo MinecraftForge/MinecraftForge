@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/biome/provider/OverworldBiomeProvider.java
 +++ b/net/minecraft/world/biome/provider/OverworldBiomeProvider.java
-@@ -35,7 +35,7 @@
+@@ -35,7 +_,7 @@
     private final Registry<Biome> field_242636_k;
  
     public OverworldBiomeProvider(long p_i241958_1_, boolean p_i241958_3_, boolean p_i241958_4_, Registry<Biome> p_i241958_5_) {

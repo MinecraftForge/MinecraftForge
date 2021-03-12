@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/BoatEntity.java
 +++ b/net/minecraft/entity/item/BoatEntity.java
-@@ -468,7 +468,7 @@
+@@ -468,7 +_,7 @@
                       blockpos$mutable.func_181079_c(l1, k2, i2);
                       BlockState blockstate = this.field_70170_p.func_180495_p(blockpos$mutable);
                       if (!(blockstate.func_177230_c() instanceof LilyPadBlock) && VoxelShapes.func_197879_c(blockstate.func_196952_d(this.field_70170_p, blockpos$mutable).func_197751_a((double)l1, (double)k2, (double)i2), voxelshape, IBooleanFunction.field_223238_i_)) {
@@ -9,10 +9,12 @@
                          ++k1;
                       }
                    }
-@@ -817,6 +817,16 @@
-       return this.field_184469_aF == BoatEntity.Status.UNDER_WATER || this.field_184469_aF == BoatEntity.Status.UNDER_FLOWING_WATER;
-    }
+@@ -815,6 +_,16 @@
  
+    public boolean func_204231_K() {
+       return this.field_184469_aF == BoatEntity.Status.UNDER_WATER || this.field_184469_aF == BoatEntity.Status.UNDER_FLOWING_WATER;
++   }
++
 +   // Forge: Fix MC-119811 by instantly completing lerp on board
 +   @Override
 +   protected void func_184200_o(Entity passenger) {
@@ -21,8 +23,6 @@
 +         this.field_184476_at = 0;
 +         this.func_70080_a(this.field_70281_h, this.field_184477_av, this.field_184478_aw, (float)this.field_70273_g, (float)this.field_184479_ay);
 +      }
-+   }
-+
+    }
+ 
     public static enum Status {
-       IN_WATER,
-       UNDER_WATER,

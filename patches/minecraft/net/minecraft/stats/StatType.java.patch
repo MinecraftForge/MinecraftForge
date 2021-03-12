@@ -1,6 +1,6 @@
 --- a/net/minecraft/stats/StatType.java
 +++ b/net/minecraft/stats/StatType.java
-@@ -10,7 +10,7 @@
+@@ -10,7 +_,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/SugarCaneBlock.java
 +++ b/net/minecraft/block/SugarCaneBlock.java
-@@ -15,7 +15,7 @@
+@@ -15,7 +_,7 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.server.ServerWorld;
  
@@ -9,7 +9,7 @@
     public static final IntegerProperty field_176355_a = BlockStateProperties.field_208171_X;
     protected static final VoxelShape field_196503_b = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
  
-@@ -43,12 +43,14 @@
+@@ -43,12 +_,14 @@
  
           if (i < 3) {
              int j = p_225542_1_.func_177229_b(field_176355_a);
@@ -24,7 +24,7 @@
           }
        }
  
-@@ -63,6 +65,8 @@
+@@ -63,6 +_,8 @@
     }
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
@@ -33,10 +33,11 @@
        BlockState blockstate = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
        if (blockstate.func_177230_c() == this) {
           return true;
-@@ -86,4 +90,14 @@
+@@ -85,5 +_,15 @@
+ 
     protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
        p_206840_1_.func_206894_a(field_176355_a);
-    }
++   }
 +
 +   @Override
 +   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
@@ -46,5 +47,5 @@
 +   @Override
 +   public BlockState getPlant(IBlockReader world, BlockPos pos) {
 +      return func_176223_P();
-+   }
+    }
  }

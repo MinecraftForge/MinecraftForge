@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/ScreenShotHelper.java
 +++ b/net/minecraft/util/ScreenShotHelper.java
-@@ -50,13 +50,23 @@
+@@ -50,13 +_,23 @@
           file2 = new File(file1, p_228051_1_);
        }
  

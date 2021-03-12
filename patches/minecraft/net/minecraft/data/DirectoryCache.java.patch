@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/DirectoryCache.java
 +++ b/net/minecraft/data/DirectoryCache.java
-@@ -55,8 +55,8 @@
+@@ -55,8 +_,8 @@
        }
  
        IOUtils.writeLines(this.field_208329_f.entrySet().stream().map((p_208319_1_) -> {

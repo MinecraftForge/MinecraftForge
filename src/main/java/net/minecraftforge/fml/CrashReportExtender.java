@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ public class CrashReportExtender
     {
         for (final ICrashCallable call: crashCallables)
         {
-            category.addDetail(call.getLabel(), call);
+            category.setDetail(call.getLabel(), call);
         }
     }
 
@@ -82,23 +82,23 @@ public class CrashReportExtender
 
 
     public static File dumpModLoadingCrashReport(final Logger logger, final LoadingFailedException error, final File topLevelDir) {
-        final CrashReport crashReport = CrashReport.makeCrashReport(new Exception("Mod Loading has failed"), "Mod loading error has occurred");
+        final CrashReport crashReport = CrashReport.forThrowable(new Exception("Mod Loading has failed"), "Mod loading error has occurred");
         error.getErrors().forEach(mle -> {
             final Optional<IModInfo> modInfo = Optional.ofNullable(mle.getModInfo());
-            final CrashReportCategory category = crashReport.makeCategory(modInfo.map(iModInfo -> "MOD "+iModInfo.getModId()).orElse("NO MOD INFO AVAILABLE"));
+            final CrashReportCategory category = crashReport.addCategory(modInfo.map(iModInfo -> "MOD "+iModInfo.getModId()).orElse("NO MOD INFO AVAILABLE"));
             Throwable cause = mle.getCause();
             int depth = 0;
             while (cause != null && cause.getCause() != null && cause.getCause()!=cause) {
-                category.addDetail("Caused by "+(depth++), cause + generateEnhancedStackTrace(cause.getStackTrace()).replaceAll(Strings.LINE_SEPARATOR+"\t", "\n\t\t"));
+                category.setDetail("Caused by "+(depth++), cause + generateEnhancedStackTrace(cause.getStackTrace()).replaceAll(Strings.LINE_SEPARATOR+"\t", "\n\t\t"));
                 cause = cause.getCause();
             }
             if (cause != null)
                 category.applyStackTrace(cause);
-            category.addDetail("Mod File", () -> modInfo.map(IModInfo::getOwningFile).map(t->((ModFileInfo)t).getFile().getFileName()).orElse("NO FILE INFO"));
-            category.addDetail("Failure message", () -> mle.getCleanMessage().replace("\n", "\n\t\t"));
-            category.addDetail("Mod Version", () -> modInfo.map(IModInfo::getVersion).map(Object::toString).orElse("NO MOD INFO AVAILABLE"));
-            category.addDetail("Mod Issue URL", () -> modInfo.map(IModInfo::getOwningFile).map(ModFileInfo.class::cast).flatMap(mfi->mfi.<String>getConfigElement("issueTrackerURL")).orElse("NOT PROVIDED"));
-            category.addDetail("Exception message", Objects.toString(cause, "MISSING EXCEPTION MESSAGE"));
+            category.setDetail("Mod File", () -> modInfo.map(IModInfo::getOwningFile).map(t->((ModFileInfo)t).getFile().getFileName()).orElse("NO FILE INFO"));
+            category.setDetail("Failure message", () -> mle.getCleanMessage().replace("\n", "\n\t\t"));
+            category.setDetail("Mod Version", () -> modInfo.map(IModInfo::getVersion).map(Object::toString).orElse("NO MOD INFO AVAILABLE"));
+            category.setDetail("Mod Issue URL", () -> modInfo.map(IModInfo::getOwningFile).map(ModFileInfo.class::cast).flatMap(mfi->mfi.<String>getConfigElement("issueTrackerURL")).orElse("NOT PROVIDED"));
+            category.setDetail("Exception message", Objects.toString(cause, "MISSING EXCEPTION MESSAGE"));
         });
         final File file1 = new File(topLevelDir, "crash-reports");
         final File file2 = new File(file1, "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-fml.txt");
@@ -107,7 +107,7 @@ public class CrashReportExtender
         } else {
             logger.fatal("Failed to save crash report");
         }
-        System.out.print(crashReport.getCompleteReport());
+        System.out.print(crashReport.getFriendlyReport());
         return file2;
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -94,7 +94,7 @@ public class ExplosionEvent extends Event
         /** return the list of blocks affected by the explosion. */
         public List<BlockPos> getAffectedBlocks()
         {
-            return getExplosion().getAffectedBlockPositions();
+            return getExplosion().getToBlow();
         }
 
         /** return the list of entities affected by the explosion. */

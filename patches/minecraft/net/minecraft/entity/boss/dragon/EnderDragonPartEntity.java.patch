@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/boss/dragon/EnderDragonPartEntity.java
 +++ b/net/minecraft/entity/boss/dragon/EnderDragonPartEntity.java
-@@ -7,13 +7,13 @@
+@@ -7,13 +_,13 @@
  import net.minecraft.network.IPacket;
  import net.minecraft.util.DamageSource;
  

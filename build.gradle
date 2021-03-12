@@ -2,17 +2,10 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url = 'https://files.minecraftforge.net/maven' }
-        jcenter()
-        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
-        maven {
-            name 'maven_central'
-            url 'https://repo.maven.apache.org/maven2/'
-        }
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.187'
-        classpath 'org.ow2.asm:asm:9.0'
-        classpath 'org.ow2.asm:asm-tree:9.0'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:4.1.+'
     }
 }
 
@@ -26,18 +19,16 @@ import static net.minecraftforge.forge.tasks.Util.*
 import net.minecraftforge.gradle.common.task.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.task.ExtractInheritance
 import net.minecraftforge.gradle.common.task.SignJar
-import net.minecraftforge.gradle.patcher.task.ApplyBinPatches
 import net.minecraftforge.gradle.patcher.task.TaskReobfuscateJar
-import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 plugins {
-    id 'net.minecrell.licenser' version '0.4'
-    id 'org.ajoberstar.grgit' version '3.1.1'
-    id 'com.github.ben-manes.versions' version '0.22.0'
+    id 'org.cadixdev.licenser' version '0.5.0'
+    id 'org.ajoberstar.grgit' version '4.1.0'
+    id 'com.github.ben-manes.versions' version '0.36.0'
+	id 'eclipse'
 }
-apply plugin: 'eclipse'
 
 Util.init() //Init all our extension methods!
 
@@ -52,10 +43,11 @@ ext {
             keystore: project.properties.keystore
         ]
     }
-    MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20201028-1.16.3'
+    MAPPING_CHANNEL = 'official'
+    MAPPING_VERSION = '1.16.5'
     MC_VERSION = '1.16.5'
     MCP_VERSION = '20210115.111550'
+	SPI_VERSION = '3.2.0'
 }
 
 project(':mcp') {
@@ -71,22 +63,20 @@ project(':mcp') {
 
 project(':clean') {
     evaluationDependsOn(':mcp')
-    apply plugin: 'eclipse'
-    apply plugin: 'net.minecraftforge.gradle.patcher'
-    compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+	apply plugin: 'eclipse'
+	apply plugin: 'net.minecraftforge.gradle.patcher'
+    
+    java.toolchain.languageVersion = JavaLanguageVersion.of(8)
     
     repositories {
         mavenLocal()
-        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
-        maven {
-            name 'maven_central'
-            url 'https://repo.maven.apache.org/maven2/'
-        }
+        mavenCentral()
     }
     
     dependencies {
-        implementation 'net.minecraftforge:forgespi:2.0.+'
+        implementation 'net.minecraftforge:forgespi:' + SPI_VERSION
     }
+    
     patcher {
         parent = project(':mcp')
         mcVersion = MC_VERSION
@@ -124,9 +114,9 @@ project(':forge') {
     apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
-    apply plugin: 'net.minecrell.licenser'
+    apply plugin: 'org.cadixdev.licenser'
 
-    compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+    java.toolchain.languageVersion = JavaLanguageVersion.of(8)
     group = 'net.minecraftforge'
 
     sourceSets {
@@ -189,11 +179,7 @@ project(':forge') {
 
     repositories {
         mavenLocal()
-        //mavenCentral() //TODO: Update Gradle to use HTTPS by default
-        maven {
-            name 'maven_central'
-            url 'https://repo.maven.apache.org/maven2/'
-        }
+        mavenCentral()
     }
 
     ext {
@@ -202,26 +188,20 @@ project(':forge') {
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config
-        SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.8.5'
+        SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.9.0'
+        SPECIAL_SOURCE_MCP = 'net.md-5:SpecialSource:1.8.3'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
     def getVersion = {
-        //TAG-offset-hash
-        def raw = grgit.describe(longDescr: true, tags:true)
-        def desc = (raw == null ? '0.0-0-unknown' : grgit.describe(longDescr: true, tags:true)).split('-') as List
-        def hash = desc.remove(desc.size() - 1)
-        def offset = desc.remove(desc.size() - 1)
-        def tag = desc.join('-')
-        def branch = grgit.branch.current().name
-        if (branch in ['master', 'HEAD', MC_VERSION, MC_VERSION + '.0'])
-            branch = null
-        if (branch != null && branch.endsWith('.x') && MC_VERSION.startsWith(branch.substring(0, branch.length() - 2))) //1.13.x
-            branch = null
+        def (tag, offset, hash) = (grgit.describe(longDescr: true, tags:true) ?: '0.0-0-unknown').rsplit('-', 2)
         SPEC_VERSION = tag
-        return "${MC_VERSION}-${tag}.${offset}${t -> if (branch != null) t << '-' + branch}".toString() //Bake the response instead of making it dynamic
+        def branch = grgit.branch.current().name
+        if (branch in [null, 'master', 'HEAD', MC_VERSION, MC_VERSION + '.0', MC_VERSION.rsplit('.', 1)[0] + '.x'])
+            return "${MC_VERSION}-${tag}.${offset}".toString()
+        return "${MC_VERSION}-${tag}.${offset}-${branch}".toString()
     }
 
     version = getVersion()
@@ -252,7 +232,7 @@ project(':forge') {
                 environment 'MCP_VERSION', MCP_VERSION
                 environment 'FORGE_GROUP', project.group
                 environment 'FORGE_SPEC', SPEC_VERSION
-                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1)
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
                 property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
                 property 'eventbus.checkTypesOnDispatch', 'true'
@@ -290,7 +270,7 @@ project(':forge') {
                 environment 'MCP_VERSION', MCP_VERSION
                 environment 'FORGE_GROUP', project.group
                 environment 'FORGE_SPEC', SPEC_VERSION
-                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1)
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
                 property 'eventbus.checkTypesOnDispatch', 'true'
 
@@ -327,7 +307,7 @@ project(':forge') {
                 environment 'MCP_VERSION', MCP_VERSION
                 environment 'FORGE_GROUP', project.group
                 environment 'FORGE_SPEC', SPEC_VERSION
-                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1)
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
@@ -424,17 +404,12 @@ project(':forge') {
         ]
     }
     
-    applyPatches {
-        canonicalizeAccess true
-        canonicalizeWhitespace true
-        maxFuzz 3
-    }
     configurations {
         installer {
             transitive = false //Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
         }
         api.extendsFrom(installer)
-        fmllauncherImplementation.extendsFrom(installer)
+        fmllauncherImplementation.extendsFrom(installer, implementation)
     }
     dependencies {
         installer 'org.ow2.asm:asm:9.0'
@@ -447,17 +422,17 @@ project(':forge') {
         installer 'net.minecraftforge:accesstransformers:3.0.1'
         installer 'org.antlr:antlr4-runtime:4.9.1' //Dep of AccessTransformer
         installer 'net.minecraftforge:eventbus:4.0.+'
-        installer 'net.minecraftforge:forgespi:3.2.+'
+        installer 'net.minecraftforge:forgespi:' + SPI_VERSION
         installer 'net.minecraftforge:coremods:4.0.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
-        installer 'com.electronwill.night-config:core:3.6.2'
-        installer 'com.electronwill.night-config:toml:3.6.2'
+        installer 'com.electronwill.night-config:core:3.6.3'
+        installer 'com.electronwill.night-config:toml:3.6.3'
         installer 'org.jline:jline:3.12.+'
-        installer 'org.apache.maven:maven-artifact:3.6.0'
-        installer 'net.jodah:typetools:0.8.+'
+        installer 'org.apache.maven:maven-artifact:3.6.3'
+        installer 'net.jodah:typetools:0.8.3'
         installer 'org.apache.logging.log4j:log4j-api:2.11.2'
         installer 'org.apache.logging.log4j:log4j-core:2.11.2'
-        installer 'net.minecrell:terminalconsoleappender:1.2.+'
+        installer 'net.minecrell:terminalconsoleappender:1.2.0'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
         installer 'org.spongepowered:mixin:0.8.2'
         // This is org.openjdk.nashorn:nashorn-core:15.1.1 repackaged so it doesn't crash on JREs < 15.
@@ -469,9 +444,9 @@ project(':forge') {
         fmllauncherImplementation 'org.lwjgl:lwjgl-glfw:3.2.2'
         fmllauncherImplementation 'org.lwjgl:lwjgl-opengl:3.2.2'
         fmllauncherImplementation 'org.lwjgl:lwjgl-stb:3.2.2'
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
         testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
-        testImplementation 'org.opentest4j:opentest4j:1.0.0' // needed for junit 5
+        testImplementation 'org.opentest4j:opentest4j:1.2.0' // needed for junit 5
         testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
     }
     
@@ -493,16 +468,16 @@ project(':forge') {
     ['Client', 'Server', 'Joined'].each { side ->
         def gen = tasks.getByName("gen${side}BinPatches")
         gen.tool = BINPATCH_TOOL
-        task "apply${side}BinPatches"(type: ApplyBinPatches, dependsOn: gen) {
+        task "apply${side}BinPatches"(type: net.minecraftforge.gradle.common.task.ApplyBinPatches, dependsOn: gen) {
             clean = { gen.cleanJar }
-            input = gen.output
+            patch = gen.output
             tool = BINPATCH_TOOL
         }
 
         def srgTask = tasks.getByName(patcher.notchObf ? 'createMcp2Obf' : 'createMcp2Srg')
         // Create SRG named Vanilla jars, using the SpecialSource we have in the installer
-        task "create${side}SRG"(type: RenameJar, dependsOn: srgTask) {
-            tool = SPECIAL_SOURCE + ':shaded'
+        task "create${side}SRG"(type: net.minecraftforge.gradle.userdev.tasks.RenameJar, dependsOn: srgTask) {
+            tool = SPECIAL_SOURCE_MCP + ':shaded'
             args = ['--stable', '--in-jar', '{input}', '--out-jar', '{output}', '--srg-in', '{mappings}']
             mappings = { srgTask.output }
             input = { gen.cleanJar }
@@ -528,17 +503,17 @@ project(':forge') {
             bows {
                 cls = 'net/minecraft/item/Items'
                 name = 'field_151031_f'
-				replacement = 'net/minecraft/item/BowItem'
+                replacement = 'net/minecraft/item/BowItem'
             }
             crossbows {
                 cls = 'net/minecraft/item/Items'
                 name = 'field_222114_py'
-				replacement = 'net/minecraft/item/CrossbowItem'
+                replacement = 'net/minecraft/item/CrossbowItem'
             }
             filled_map {
                 cls = 'net/minecraft/item/Items'
                 name = 'field_151098_aY'
-				replacement = 'net/minecraft/item/FilledMapItem'
+                replacement = 'net/minecraft/item/FilledMapItem'
                 blacklist 'net/minecraft/client/gui/screen/inventory/CartographyTableScreen', 'func_230450_a_', '(Lcom/mojang/blaze3d/matrix/MatrixStack;FII)V'
                 blacklist 'net/minecraft/client/renderer/entity/ItemFrameRenderer', 'func_225623_a_', '(Lnet/minecraft/entity/item/ItemFrameEntity;FFLcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;I)V'
                 blacklist 'net/minecraft/item/crafting/MapCloningRecipe'
@@ -547,12 +522,12 @@ project(':forge') {
             fishing_rod {
                 cls = 'net/minecraft/item/Items'
                 name = 'field_151112_aM'
-				replacement = 'net/minecraft/item/FishingRodItem'
+                replacement = 'net/minecraft/item/FishingRodItem'
             }
             shears {
                 cls = 'net/minecraft/item/Items'
                 name = 'field_151097_aZ'
-				replacement = 'net/minecraft/item/ShearsItem'
+                replacement = 'net/minecraft/item/ShearsItem'
             }
         }
     }
@@ -583,7 +558,10 @@ project(':forge') {
         patchDir = file("$rootDir/patches")
         autoFix = false
     }
-    project(':forge').getTasks().getByName('genPatches').finalizedBy(checkPatches)
+    genPatches {
+        finalizedBy checkPatches
+        autoHeader true
+    }
 
     task launcherJson(dependsOn: ['signUniversalJar', 'signLauncherJar']) {
         inputs.file universalJar.archivePath
@@ -754,8 +732,8 @@ project(':forge') {
                             '{MC_EXTRA}': '{MC_EXTRA_SHA}'
                         ]
                     ], [
-                        jar: SPECIAL_SOURCE,
-                        classpath: getClasspath(project, libs, SPECIAL_SOURCE),
+                        jar: SPECIAL_SOURCE_MCP,
+                        classpath: getClasspath(project, libs, SPECIAL_SOURCE_MCP),
                         args: [
                             //'--stable', Java 9 Is borked, https://bugs.openjdk.java.net/browse/JDK-8184940 TODO: find a fix.
                             '--in-jar', '{MC_SLIM}',
@@ -856,8 +834,8 @@ project(':forge') {
     
     task installerJar(type: Zip, dependsOn: [downloadInstaller, installerJson, launcherJson, genClientBinPatches, genServerBinPatches, 'signUniversalJar', 'signLauncherJar']) {
         classifier = 'installer'
-        extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
-        destinationDir = file('build/libs')
+        archiveExtension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
+        destinationDirectory = file('build/libs')
         from(extraTxts)
         from(rootProject.file('/installer_logo.png')) {
             rename{'big_logo.png'}
@@ -903,10 +881,10 @@ project(':forge') {
     }
     
     task makeMdk(type: Zip) {
-        baseName = project.name
+        archiveBaseName = project.name
         classifier = 'mdk'
-        version = project.version
-        destinationDir = file('build/libs')
+        archiveVersion = project.version
+        destinationDirectory = file('build/libs')
 
         from rootProject.file('gradlew')
         from rootProject.file('gradlew.bat')
@@ -988,6 +966,10 @@ project(':forge') {
     license {
         header = file("$rootDir/LICENSE-header.txt")
 
+        ext {
+            year = new Date().format("yyyy")
+        }
+
         include 'net/minecraftforge/'
         exclude 'net/minecraftforge/server/terminalconsole/'
         exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
@@ -1013,11 +995,16 @@ project(':forge') {
         classifier 'userdev-temp'
     }
 
+    reobfJar {
+        tool = SPECIAL_SOURCE + ':shaded'
+    }
+
     task userdevExtrasReobf(type:TaskReobfuscateJar) {
         dependsOn userdevExtras, createMcp2Srg
         input = tasks.userdevExtras.archivePath
         classpath = project.configurations.compile
         srg = tasks.createMcp2Srg.output
+        tool = SPECIAL_SOURCE + ':shaded'
     }
 
     userdevJar {
@@ -1043,6 +1030,7 @@ project(':forge') {
     if (project.hasProperty('UPDATE_MAPPINGS')) {
         extractRangeMap {
             sources sourceSets.test.java.srcDirs
+            addDependencies compileTestJava.classpath
         }
         applyRangeMap {
             sources sourceSets.test.java.srcDirs

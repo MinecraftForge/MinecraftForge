@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
 +++ b/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
-@@ -17,7 +17,7 @@
+@@ -17,7 +_,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,7 +9,7 @@
     private final AtlasTexture field_229225_b_;
     private final TextureAtlasSprite.Info field_229226_c_;
     private final AnimationMetadataSection field_110982_k;
-@@ -135,6 +135,7 @@
+@@ -135,6 +_,7 @@
  
     private void func_195667_a(int p_195667_1_, int p_195667_2_, NativeImage[] p_195667_3_) {
        for(int i = 0; i < this.field_195670_c.length; ++i) {
@@ -17,13 +17,14 @@
           p_195667_3_[i].func_227788_a_(i, this.field_110975_c >> i, this.field_110974_d >> i, p_195667_1_ >> i, p_195667_2_ >> i, this.field_229226_c_.field_229245_b_ >> i, this.field_229226_c_.field_229246_c_ >> i, this.field_195670_c.length > 1, false);
        }
  
-@@ -341,4 +342,9 @@
+@@ -340,5 +_,10 @@
+          }
  
        }
-    }
++   }
 +
 +   // Forge Start
 +   public int getPixelRGBA(int frameIndex, int x, int y) {
 +      return this.field_195670_c[0].func_195709_a(x + this.field_195671_d[frameIndex] * func_94211_a(), y + this.field_195672_e[frameIndex] * func_94216_b());
-+   }
+    }
  }

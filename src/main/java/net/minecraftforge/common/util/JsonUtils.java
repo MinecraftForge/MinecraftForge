@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -99,11 +99,11 @@ public class JsonUtils
     @Nullable
     public static CompoundNBT readNBT(JsonObject json, String key)
     {
-        if (net.minecraft.util.JSONUtils.hasField(json, key))
+        if (net.minecraft.util.JSONUtils.isValidNode(json, key))
         {
             try
             {
-                return JsonToNBT.getTagFromJson(net.minecraft.util.JSONUtils.getString(json, key));
+                return JsonToNBT.parseTag(net.minecraft.util.JSONUtils.getAsString(json, key));
             } catch (CommandSyntaxException e)
             {
                 throw new JsonSyntaxException("Malformed NBT tag", e);

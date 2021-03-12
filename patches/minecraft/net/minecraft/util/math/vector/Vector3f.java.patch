@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/math/vector/Vector3f.java
 +++ b/net/minecraft/util/math/vector/Vector3f.java
-@@ -196,4 +196,17 @@
+@@ -196,4 +_,17 @@
     public String toString() {
        return "[" + this.field_229184_g_ + ", " + this.field_229185_h_ + ", " + this.field_229186_i_ + "]";
     }
