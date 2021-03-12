@@ -24,6 +24,8 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.concurrent.ThreadTaskExecutor;
+import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -40,6 +42,8 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.server.command.ConfigCommand;
 
@@ -60,7 +64,8 @@ public class ForgeInternalHandler
                 {
                     entity.remove();
                     event.setCanceled(true);
-                    event.getWorld().addFreshEntity(newEntity);
+                    ThreadTaskExecutor<Runnable> executor = LogicalSidedProvider.WORKQUEUE.get(event.getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
+                    executor.tell(new TickDelayedTask(0, () -> event.getWorld().addFreshEntity(newEntity)));
                 }
             }
         }
