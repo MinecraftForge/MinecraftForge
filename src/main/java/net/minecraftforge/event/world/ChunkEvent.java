@@ -58,6 +58,7 @@ public class ChunkEvent extends WorldEvent
      * This event is fired during chunk loading in <br>
      * {@link ChunkProviderClient#loadChunk(int, int)}, <br>
      * Chunk.onChunkLoad(). <br>
+     * <strong>Note:</strong> This event may be called before the underlying {@link net.minecraft.world.chunk.Chunk} is promoted to {@link net.minecraft.world.chunk.ChunkStatus#FULL}. You will cause chunk loading deadlocks if you don't delay your world interactions.<br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
