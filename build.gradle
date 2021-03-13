@@ -437,7 +437,7 @@ project(':forge') {
         installer 'org.spongepowered:mixin:0.8.2'
         // This is org.openjdk.nashorn:nashorn-core:15.1.1 repackaged so it doesn't crash on JREs < 15.
         // See: https://github.com/LexManos/NashornLegacyPackager
-        installer 'net.minecraftforge:nashorn-core-compat:15.1.1'
+        installer 'net.minecraftforge:nashorn-core-compat:15.1.1.1'
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
         fmllauncherImplementation 'org.lwjgl:lwjgl:3.2.2'
