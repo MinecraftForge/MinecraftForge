@@ -45,6 +45,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
@@ -922,5 +923,19 @@ public interface IForgeBlock
     default boolean isScaffolding(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
     {
         return state.is(Blocks.SCAFFOLDING);
+    }
+
+    /**
+     * Called to determine whether this block causes concrete powder to convert to concrete.
+     * Defaults to the vanilla implementation.
+     * 
+     * @param state The state
+     * @param side The side of this block to determine if it causes concrete powder to convert to concrete, can be null
+     * @param world The world
+     * @param pos The position in the world
+     */
+    default boolean causesConcretePowderToSolidify(BlockState state, @Nullable Direction side, IBlockReader world, BlockPos pos)
+    {
+        return state.getFluidState().isTagged(FluidTags.WATER) && (side == null || (side != Direction.UP && !state.isSolidSide(world, pos, side)));
     }
 }

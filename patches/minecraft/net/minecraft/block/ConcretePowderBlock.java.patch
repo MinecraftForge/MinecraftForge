@@ -1,0 +1,35 @@
+--- a/net/minecraft/block/ConcretePowderBlock.java
++++ b/net/minecraft/block/ConcretePowderBlock.java
+@@ -34,7 +34,7 @@
+    }
+ 
+    private static boolean func_230137_b_(IBlockReader p_230137_0_, BlockPos p_230137_1_, BlockState p_230137_2_) {
+-      return func_212566_x(p_230137_2_) || func_196441_b(p_230137_0_, p_230137_1_);
++      return causesSolidify(p_230137_2_, null, p_230137_0_, p_230137_1_) || func_196441_b(p_230137_0_, p_230137_1_);
+    }
+ 
+    private static boolean func_196441_b(IBlockReader p_196441_0_, BlockPos p_196441_1_) {
+@@ -43,14 +43,12 @@
+ 
+       for(Direction direction : Direction.values()) {
+          BlockState blockstate = p_196441_0_.func_180495_p(blockpos$mutable);
+-         if (direction != Direction.DOWN || func_212566_x(blockstate)) {
+             blockpos$mutable.func_239622_a_(p_196441_1_, direction);
+             blockstate = p_196441_0_.func_180495_p(blockpos$mutable);
+-            if (func_212566_x(blockstate) && !blockstate.func_224755_d(p_196441_0_, p_196441_1_, direction.func_176734_d())) {
++            if (causesSolidify(blockstate, direction.func_176734_d(), p_196441_0_, blockpos$mutable)) {
+                flag = true;
+                break;
+             }
+-         }
+       }
+ 
+       return flag;
+@@ -59,6 +57,7 @@
+    private static boolean func_212566_x(BlockState p_212566_0_) {
+       return p_212566_0_.func_204520_s().func_206884_a(FluidTags.field_206959_a);
+    }
++   private static boolean causesSolidify(BlockState p_212566_0_, @javax.annotation.Nullable Direction side, IBlockReader world, BlockPos pos) { return p_212566_0_.causesConcretePowderToSolidify(side, world, pos); }
+ 
+    public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
+       return func_196441_b(p_196271_4_, p_196271_5_) ? this.field_200294_a : super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
