@@ -22,7 +22,7 @@ function addBouncer(className, conflictedName, expectedName, descriptor, signatu
        'transformer': function(node) {
             var mappedName = ASMAPI.mapMethod(conflictedName);
             if (mappedName == expectedName)
-                return; // No work to do!
+                return node; // No work to do!
 
             var method = new MethodNode(
                 /* access = */ Opcodes.ACC_PUBLIC,
