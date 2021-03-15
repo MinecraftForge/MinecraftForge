@@ -119,8 +119,8 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
         }
 
         /**
-         * Allows having nested groups of conditions if the current condition group is empty.
-         * @throws IllegalStateException if there are any normal conditions in the current condition group
+         * Allows having nested groups of conditions if there are not any normal conditions.
+         * @throws IllegalStateException if {@code !conditions.isEmpty()}
          */
         public final ConditionGroup nestedGroup()
         {
@@ -186,8 +186,8 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
             }
 
             /**
-             * Allows having nested groups of conditions if the current condition group is empty.
-             * @throws IllegalStateException if there are any normal conditions in the current condition group
+             * Allows having nested groups of conditions if there are not any normal conditions.
+             * @throws IllegalStateException if {@code !conditions.isEmpty()}
              */
             public ConditionGroup nestedGroup()
             {
