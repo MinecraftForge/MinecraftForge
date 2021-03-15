@@ -135,13 +135,11 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
         JsonObject toJson() {
             JsonObject out = new JsonObject();
             if (!conditions.isEmpty()) {
-                JsonObject when = MultiPartBlockStateBuilder.toJson(this.conditions, this.useOr);
-                out.add("when", when);
+                out.add("when", MultiPartBlockStateBuilder.toJson(this.conditions, this.useOr));
             }
             else if (!nestedConditionGroups.isEmpty())
             {
-                JsonObject when = MultiPartBlockStateBuilder.toJson(this.nestedConditionGroups, this.useOr);
-                out.add("when", when);
+                out.add("when", MultiPartBlockStateBuilder.toJson(this.nestedConditionGroups, this.useOr));
             }
             out.add("apply", models.toJSON());
             return out;
