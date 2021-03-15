@@ -31,14 +31,14 @@ public class CustomSignsTest
     public static final WoodType TEST_WOOD_TYPE = WoodType.create(new ResourceLocation(MODID, "test").toString());
 
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    public static final RegistryObject<CustomStandingSignBlock> TEST_STANDING_SIGN = BLOCKS.register("test_sign", () -> new CustomStandingSignBlock(Block.Properties.create(Material.WOOD).doesNotBlockMovement().hardnessAndResistance(1.0F).sound(SoundType.WOOD), CustomSignsTest.TEST_WOOD_TYPE));
-    public static final RegistryObject<CustomWallSignBlock> TEST_WALL_SIGN = BLOCKS.register("test_wall_sign", () -> new CustomWallSignBlock(Block.Properties.create(Material.WOOD).doesNotBlockMovement().hardnessAndResistance(1.0F).sound(SoundType.WOOD), CustomSignsTest.TEST_WOOD_TYPE));
+    public static final RegistryObject<CustomStandingSignBlock> TEST_STANDING_SIGN = BLOCKS.register("test_sign", () -> new CustomStandingSignBlock(Block.Properties.of(Material.WOOD).noCollission().strength(1.0F).sound(SoundType.WOOD), CustomSignsTest.TEST_WOOD_TYPE));
+    public static final RegistryObject<CustomWallSignBlock> TEST_WALL_SIGN = BLOCKS.register("test_wall_sign", () -> new CustomWallSignBlock(Block.Properties.of(Material.WOOD).noCollission().strength(1.0F).sound(SoundType.WOOD), CustomSignsTest.TEST_WOOD_TYPE));
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    public static final RegistryObject<SignItem> TEST_SIGN = ITEMS.register("test_sign", () -> new SignItem((new Item.Properties()).maxStackSize(16).group(ItemGroup.DECORATIONS), TEST_STANDING_SIGN.get(), TEST_WALL_SIGN.get()));
+    public static final RegistryObject<SignItem> TEST_SIGN = ITEMS.register("test_sign", () -> new SignItem((new Item.Properties()).stacksTo(16).tab(ItemGroup.TAB_DECORATIONS), TEST_STANDING_SIGN.get(), TEST_WALL_SIGN.get()));
 
     private static final DeferredRegister<TileEntityType<?>> TILE_ENTITIES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, MODID);
-    public static final RegistryObject<TileEntityType<CustomSignTileEntity>> CUSTOM_SIGN = TILE_ENTITIES.register("custom_sign", () -> TileEntityType.Builder.create(CustomSignTileEntity::new, TEST_WALL_SIGN.get(), TEST_STANDING_SIGN.get()).build(null));
+    public static final RegistryObject<TileEntityType<CustomSignTileEntity>> CUSTOM_SIGN = TILE_ENTITIES.register("custom_sign", () -> TileEntityType.Builder.of(CustomSignTileEntity::new, TEST_WALL_SIGN.get(), TEST_STANDING_SIGN.get()).build(null));
 
     public CustomSignsTest()
     {
@@ -82,7 +82,7 @@ public class CustomSignsTest
         }
 
         @Override
-        public TileEntity createNewTileEntity(IBlockReader worldIn)
+        public TileEntity newBlockEntity(IBlockReader worldIn)
         {
             return new CustomSignTileEntity();
         }
@@ -103,7 +103,7 @@ public class CustomSignsTest
         }
 
         @Override
-        public TileEntity createNewTileEntity(IBlockReader worldIn)
+        public TileEntity newBlockEntity(IBlockReader worldIn)
         {
             return new CustomSignTileEntity();
         }
