@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/tileentity/SignTileEntityRenderer.java
 +++ b/net/minecraft/client/renderer/tileentity/SignTileEntityRenderer.java
-@@ -89,7 +89,7 @@
+@@ -89,7 +_,7 @@
           woodtype = WoodType.field_227038_a_;
        }
  
