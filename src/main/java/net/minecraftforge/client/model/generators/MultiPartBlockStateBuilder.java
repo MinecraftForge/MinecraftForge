@@ -72,7 +72,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
         return main;
     }
 
-    public class PartBuilder implements IConditionGroup {
+    public class PartBuilder {
         public BlockStateProvider.ConfiguredModelList models;
         public boolean useOr;
         public final Multimap<Property<?>, Comparable<?>> conditions = MultimapBuilder.linkedHashKeys().arrayListValues().build();
@@ -82,6 +82,9 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
             this.models = models;
         }
 
+        /**
+         * Makes this part get applied if any of the conditions/condition groups are true, instead of all of them needing to be true.
+         */
         public PartBuilder useOr() {
             this.useOr = true;
             return this;
@@ -110,7 +113,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
             Preconditions.checkArgument(values.length > 0, "Value list must not be empty");
             Preconditions.checkArgument(!conditions.containsKey(prop), "Cannot set condition for property \"%s\" more than once", prop.getName());
             Preconditions.checkArgument(canApplyTo(owner), "IProperty %s is not valid for the block %s", prop, owner);
-            Preconditions.checkState(nestedConditionGroups.size() == 0, "Can't have normal conditions if there are already nested condition groups");
+            Preconditions.checkState(nestedConditionGroups.isEmpty(), "Can't have normal conditions if there are already nested condition groups");
             this.conditions.putAll(prop, Arrays.asList(values));
             return this;
         }
@@ -121,7 +124,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
          */
         public final ConditionGroup nestedGroup()
         {
-            Preconditions.checkState(conditions.size() == 0, "Can't have nested condition groups if there are already normal conditions");
+            Preconditions.checkState(conditions.isEmpty(), "Can't have nested condition groups if there are already normal conditions");
             ConditionGroup group = new ConditionGroup();
             this.nestedConditionGroups.add(group);
             return group;
@@ -129,43 +132,15 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
 
         public MultiPartBlockStateBuilder end() { return MultiPartBlockStateBuilder.this; }
 
-        public IConditionGroup endGroup() { return this; }
-
         JsonObject toJson() {
             JsonObject out = new JsonObject();
             if (!conditions.isEmpty()) {
-                JsonObject when = new JsonObject();
-                for (Entry<Property<?>, Collection<Comparable<?>>> e : conditions.asMap().entrySet()) {
-                    StringBuilder activeString = new StringBuilder();
-                    for (Comparable<?> val : e.getValue()) {
-                        if (activeString.length() > 0)
-                            activeString.append("|");
-                        activeString.append(((Property) e.getKey()).getName(val));
-                    }
-                    when.addProperty(e.getKey().getName(), activeString.toString());
-                }
-                if (useOr) {
-                    JsonArray innerWhen = new JsonArray();
-                    for (Entry<String, JsonElement> entry : when.entrySet())
-                    {
-                        JsonObject obj = new JsonObject();
-                        obj.add(entry.getKey(), entry.getValue());
-                        innerWhen.add(obj);
-                    }
-                    when = new JsonObject();
-                    when.add("OR", innerWhen);
-                }
+                JsonObject when = MultiPartBlockStateBuilder.toJson(this.conditions, this.useOr);
                 out.add("when", when);
             }
             else if (!nestedConditionGroups.isEmpty())
             {
-                JsonObject when = new JsonObject();
-                JsonArray innerWhen = new JsonArray();
-                when.add(useOr ? "OR" : "AND", innerWhen);
-                for (ConditionGroup group : nestedConditionGroups)
-                {
-                    innerWhen.add(group.toJson());
-                }
+                JsonObject when = MultiPartBlockStateBuilder.toJson(this.nestedConditionGroups, this.useOr);
                 out.add("when", when);
             }
             out.add("apply", models.toJSON());
@@ -176,12 +151,12 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
             return b.getStateDefinition().getProperties().containsAll(conditions.keySet());
         }
 
-        public class ConditionGroup implements IConditionGroup
+        public class ConditionGroup
         {
-            public boolean useOr;
-            private ConditionGroup parent = null;
             public final Multimap<Property<?>, Comparable<?>> conditions = MultimapBuilder.linkedHashKeys().arrayListValues().build();
             public final List<ConditionGroup> nestedConditionGroups = new ArrayList<>();
+            private ConditionGroup parent = null;
+            public boolean useOr;
 
             /**
              * Set a condition for this part, which consists of a property and a set of
@@ -207,7 +182,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
                 Preconditions.checkArgument(values.length > 0, "Value list must not be empty");
                 Preconditions.checkArgument(!conditions.containsKey(prop), "Cannot set condition for property \"%s\" more than once", prop.getName());
                 Preconditions.checkArgument(canApplyTo(owner), "IProperty %s is not valid for the block %s", prop, owner);
-                Preconditions.checkState(nestedConditionGroups.size() == 0, "Can't have normal conditions if there are already nested condition groups");
+                Preconditions.checkState(nestedConditionGroups.isEmpty(), "Can't have normal conditions if there are already nested condition groups");
                 this.conditions.putAll(prop, Arrays.asList(values));
                 return this;
             }
@@ -216,7 +191,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
              * Allows having nested groups of conditions if the current condition group is empty.
              * @throws IllegalStateException if there are any normal conditions in the current condition group
              */
-            public final ConditionGroup nestedGroup()
+            public ConditionGroup nestedGroup()
             {
                 Preconditions.checkState(conditions.size() == 0, "Can't have nested condition groups if there are already normal conditions");
                 ConditionGroup group = new ConditionGroup();
@@ -225,29 +200,33 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
                 return group;
             }
 
-            public IConditionGroup endGroup() 
+            /**
+             * Ends this nested condition group and returns the parent condition group
+             * 
+             * @throws IllegalStateException If this is not a nested condition group
+             */
+            public ConditionGroup endNestedGroup() 
             {
                 if (parent == null)
-                {
-                    return MultiPartBlockStateBuilder.PartBuilder.this; 
-                }
-                else {
-                    return parent;
-                }
+                    throw new IllegalStateException("This condition group is not nested, use end() instead"); 
+                return parent;
             }
 
-            public MultiPartBlockStateBuilder end()
+            /**
+             * Ends this condition group and returns the part builder
+             * 
+             * @throws IllegalStateException If this is a nested condition group
+             */
+            public MultiPartBlockStateBuilder.PartBuilder end()
             {
                 if (this.parent != null)
-                {
-                    return this.parent.end();
-                }
-                else
-                {
-                    return MultiPartBlockStateBuilder.PartBuilder.this.end();
-                }
+                    throw new IllegalStateException("This is a nested condition group, use endNestedGroup() instead");
+                return MultiPartBlockStateBuilder.PartBuilder.this;
             }
 
+            /**
+             * Makes this part get applied if any of the conditions/condition groups are true, instead of all of them needing to be true.
+             */
             public ConditionGroup useOr()
             {
                 this.useOr = true;
@@ -256,56 +235,57 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
 
             JsonObject toJson()
             {
-                if (!this.conditions.isEmpty()) {
-                    JsonObject groupJson = new JsonObject();
-                    for (Entry<Property<?>, Collection<Comparable<?>>> e : this.conditions.asMap().entrySet()) {
-                        StringBuilder activeString = new StringBuilder();
-                        for (Comparable<?> val : e.getValue()) {
-                            if (activeString.length() > 0)
-                                activeString.append("|");
-                            activeString.append(((Property) e.getKey()).getName(val));
-                        }
-                        groupJson.addProperty(e.getKey().getName(), activeString.toString());
-                    }
-                    if (useOr) {
-                        JsonArray innerWhen = new JsonArray();
-                        for (Entry<String, JsonElement> entry : groupJson.entrySet())
-                        {
-                            JsonObject obj = new JsonObject();
-                            obj.add(entry.getKey(), entry.getValue());
-                            innerWhen.add(obj);
-                        }
-                        groupJson = new JsonObject();
-                        groupJson.add("OR", innerWhen);
-                    }
-                    return groupJson;
+                if (!this.conditions.isEmpty())
+                {
+                    return MultiPartBlockStateBuilder.toJson(this.conditions, this.useOr);
                 } 
                 else if (!this.nestedConditionGroups.isEmpty())
                 {
-                    JsonObject groupJson = new JsonObject();
-                    JsonArray innerGroupJson = new JsonArray();
-                    groupJson.add(useOr ? "OR" : "AND", innerGroupJson);
-                    for (ConditionGroup group : this.nestedConditionGroups)
-                    {
-
-                        innerGroupJson.add(group.toJson());
-                    }
-                    return groupJson;
+                    return MultiPartBlockStateBuilder.toJson(this.nestedConditionGroups, this.useOr);
                 }
                 return new JsonObject();
             }
         }
     }
-
-    public interface IConditionGroup
+    
+    private static JsonObject toJson(List<PartBuilder.ConditionGroup> conditions, boolean useOr)
     {
-        IConditionGroup nestedGroup();
-        /**
-         * If this is a {@link PartBuilder}, returns itself.
-         */
-        IConditionGroup endGroup();
-        IConditionGroup useOr();
-        <T extends Comparable<T>> IConditionGroup condition(Property<T> prop, T... values);
-        MultiPartBlockStateBuilder end();
+        JsonObject groupJson = new JsonObject();
+        JsonArray innerGroupJson = new JsonArray();
+        groupJson.add(useOr ? "OR" : "AND", innerGroupJson);
+        for (PartBuilder.ConditionGroup group : conditions)
+        {
+            innerGroupJson.add(group.toJson());
+        }
+        return groupJson;
+    }
+    
+    private static JsonObject toJson(Multimap<Property<?>, Comparable<?>> conditions, boolean useOr)
+    {
+        JsonObject groupJson = new JsonObject();
+        for (Entry<Property<?>, Collection<Comparable<?>>> e : conditions.asMap().entrySet())
+        {
+            StringBuilder activeString = new StringBuilder();
+            for (Comparable<?> val : e.getValue())
+            {
+                if (activeString.length() > 0)
+                    activeString.append("|");
+                activeString.append(((Property) e.getKey()).getName(val));
+            }
+            groupJson.addProperty(e.getKey().getName(), activeString.toString());
+        }
+        if (useOr)
+        {
+            JsonArray innerWhen = new JsonArray();
+            for (Entry<String, JsonElement> entry : groupJson.entrySet())
+            {
+                JsonObject obj = new JsonObject();
+                obj.add(entry.getKey(), entry.getValue());
+                innerWhen.add(obj);
+            }
+            groupJson = new JsonObject();
+            groupJson.add("OR", innerWhen);
+        }
+        return groupJson;
     }
 }
