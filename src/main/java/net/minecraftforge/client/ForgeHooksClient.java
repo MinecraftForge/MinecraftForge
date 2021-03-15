@@ -164,6 +164,7 @@ public class ForgeHooksClient
         StartupMessageManager.mcLoaderConsumer().ifPresent(c->c.accept("Atlas Stitching : "+map.location().toString()));
         ModLoader.get().postEvent(new TextureStitchEvent.Pre(map, resourceLocations));
 //        ModelLoader.White.INSTANCE.register(map); // TODO Custom TAS
+        Atlases.SIGN_MATERIALS.values().forEach(material -> resourceLocations.add(material.texture()));
     }
 
     public static void onTextureStitchedPost(AtlasTexture map)
