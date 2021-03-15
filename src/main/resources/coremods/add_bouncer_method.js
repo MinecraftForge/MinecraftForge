@@ -1,14 +1,17 @@
 var ASMAPI = Java.type('net.minecraftforge.coremod.api.ASMAPI')
 var Opcodes = Java.type('org.objectweb.asm.Opcodes')
+var MethodNode = Java.type('org.objectweb.asm.tree.MethodNode')
+var VarInsnNode = Java.type('org.objectweb.asm.tree.VarInsnNode')
+var MethodInsnNode = Java.type('org.objectweb.asm.tree.MethodInsnNode')
+var InsnNode = Java.type('org.objectweb.asm.tree.InsnNode')
 
 function initializeCoreMod() {
     return {
-        "getLanguage_bouncer": addBouncer("net.minecraft.network.play.client.CClientSettingsPacket", "getLanguage", "func_227987_b_ ", false, "()V"),
+        "getLanguage_bouncer": addBouncer("net.minecraft.network.play.client.CClientSettingsPacket", "func_149524_c", "getLanguage", "()Ljava/lang/String;"),
     }
 }
 
-// TODO: hasArg -> compute actual list of arg instructions?
-function addBouncer(className, conflictingName, srgName, hasArg, descriptor, signature) {
+function addBouncer(className, conflictedName, expectedName, descriptor, signature) {
     if (signature == null)
         signature = descriptor;
     return {
@@ -17,27 +20,25 @@ function addBouncer(className, conflictingName, srgName, hasArg, descriptor, sig
            'name': className
        },
        'transformer': function(node) {
-            var mappedName = ASMAPI.mapMethod(srgName);
-            if (mappedName == conflictingName)
-                return; // No work to do!
+            var mappedName = ASMAPI.mapMethod(conflictedName);
+            if (mappedName == expectedName)
+                return node; // No work to do!
 
             var method = new MethodNode(
                 /* access = */ Opcodes.ACC_PUBLIC,
-                /* name = */ mappedName,
+                /* name = */ expectedName,
                 /* descriptor = */ descriptor,
                 /* signature = */ signature,
                 /* exceptions = */ null
             );
 
             method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0)); /*this*/
-            if (hasArg)
-                method.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1)); /*first arg*/
-            method.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, className.replace(".","/"), mappedName, descriptor));
-            method.instructions.add(new InsnNode(Opcodes.RETURN));
+            method.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, className.replaceAll("\\.","/"), mappedName, descriptor));
+            method.instructions.add(new InsnNode(Opcodes.ARETURN));
 
-            classNode.methods.add(method);
+            node.methods.add(method);
 
-            return classNode;
+            return node;
        }
    }
 }
