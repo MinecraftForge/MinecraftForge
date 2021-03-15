@@ -282,7 +282,7 @@
  
     }
  
-@@ -2810,5 +_,64 @@
+@@ -2810,5 +_,71 @@
     @FunctionalInterface
     public interface IMoveCallback {
        void accept(Entity p_accept_1_, double p_accept_2_, double p_accept_4_, double p_accept_6_);
@@ -345,5 +345,12 @@
 +   public void revive() {
 +      this.field_70128_L = false;
 +      this.reviveCaps();
++   }
++   // no AT because of overrides
++   /**
++    * Accessor method for {@link #getEyeHeight(Pose, EntitySize)}
++    */
++   public float getEyeHeightAccess(Pose pose, EntitySize size) {
++      return this.func_213316_a(pose, size);
     }
  }
