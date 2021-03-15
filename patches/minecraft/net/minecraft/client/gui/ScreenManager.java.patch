@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/ScreenManager.java
 +++ b/net/minecraft/client/gui/ScreenManager.java
-@@ -40,6 +40,10 @@
+@@ -40,6 +_,10 @@
     private static final Map<ContainerType<?>, ScreenManager.IScreenFactory<?, ?>> field_216914_b = Maps.newHashMap();
  
     public static <T extends Container> void func_216909_a(@Nullable ContainerType<T> p_216909_0_, Minecraft p_216909_1_, int p_216909_2_, ITextComponent p_216909_3_) {
@@ -11,7 +11,7 @@
        if (p_216909_0_ == null) {
           field_216913_a.warn("Trying to open invalid screen with name: {}", (Object)p_216909_3_.getString());
        } else {
-@@ -47,9 +51,10 @@
+@@ -47,9 +_,10 @@
           if (iscreenfactory == null) {
              field_216913_a.warn("Failed to create screen for menu type: {}", (Object)Registry.field_218366_G.func_177774_c(p_216909_0_));
           } else {

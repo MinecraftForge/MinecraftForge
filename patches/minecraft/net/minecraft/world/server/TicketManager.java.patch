@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/server/TicketManager.java
 +++ b/net/minecraft/world/server/TicketManager.java
-@@ -49,6 +49,8 @@
+@@ -49,6 +_,8 @@
     private final Executor field_219388_p;
     private long field_219389_q;
  
@@ -9,7 +9,7 @@
     protected TicketManager(Executor p_i50707_1_, Executor p_i50707_2_) {
        ITaskExecutor<Runnable> itaskexecutor = ITaskExecutor.func_213140_a("player ticket throttler", p_i50707_2_::execute);
        ChunkTaskPriorityQueueSorter chunktaskpriorityqueuesorter = new ChunkTaskPriorityQueueSorter(ImmutableList.of(itaskexecutor), p_i50707_1_, 4);
-@@ -143,6 +145,10 @@
+@@ -143,6 +_,10 @@
           this.field_219378_f.func_215491_b(p_219347_1_, p_219347_3_.func_219477_b(), true);
        }
  
@@ -20,7 +20,7 @@
     }
  
     private void func_219349_b(long p_219349_1_, Ticket<?> p_219349_3_) {
-@@ -155,6 +161,13 @@
+@@ -155,6 +_,13 @@
        }
  
        this.field_219378_f.func_215491_b(p_219349_1_, func_229844_a_(sortedarrayset), false);
@@ -34,15 +34,30 @@
     }
  
     public <T> void func_219356_a(TicketType<T> p_219356_1_, ChunkPos p_219356_2_, int p_219356_3_, T p_219356_4_) {
-@@ -242,6 +255,11 @@
-       return this.field_219384_l.func_225396_a();
+@@ -175,6 +_,14 @@
+       this.func_219349_b(p_219362_2_.func_201841_a(), ticket);
     }
  
++   public <T> void registerTicking(TicketType<T> type, ChunkPos pos, int distance, T value) {
++      this.func_219347_a(pos.func_201841_a(), new Ticket<>(type, 33 - distance, value, true));
++   }
++
++   public <T> void releaseTicking(TicketType<T> type, ChunkPos pos, int distance, T value) {
++      this.func_219349_b(pos.func_201841_a(), new Ticket<>(type, 33 - distance, value, true));
++   }
++
+    private SortedArraySet<Ticket<?>> func_229848_e_(long p_229848_1_) {
+       return this.field_219377_e.computeIfAbsent(p_229848_1_, (p_229851_0_) -> {
+          return SortedArraySet.func_226172_a_(4);
+@@ -240,6 +_,11 @@
+ 
+    public String func_225412_c() {
+       return this.field_219384_l.func_225396_a();
++   }
++
 +   public boolean shouldForceTicks(long chunkPos) {
 +       SortedArraySet<Ticket<?>> tickets = forcedTickets.get(chunkPos);
 +       return tickets != null && !tickets.isEmpty();
-+   }
-+
+    }
+ 
     class ChunkTicketTracker extends ChunkDistanceGraph {
-       public ChunkTicketTracker() {
-          super(ChunkManager.field_219249_a + 2, 16, 256);

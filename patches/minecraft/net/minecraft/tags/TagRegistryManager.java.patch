@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagRegistryManager.java
 +++ b/net/minecraft/tags/TagRegistryManager.java
-@@ -51,4 +51,23 @@
+@@ -51,4 +_,23 @@
           throw new IllegalStateException("Missing helper registrations");
        }
     }

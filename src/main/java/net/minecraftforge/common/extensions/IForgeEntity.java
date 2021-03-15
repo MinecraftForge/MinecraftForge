@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
+import java.util.Collections;
 import javax.annotation.Nullable;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
@@ -40,6 +41,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.entity.PartEntity;
 
 public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
 {
@@ -47,18 +49,18 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
 
     default void deserializeNBT(CompoundNBT nbt)
     {
-        getEntity().read(nbt);
+        getEntity().load(nbt);
     }
 
     default CompoundNBT serializeNBT()
     {
         CompoundNBT ret = new CompoundNBT();
-        String id = getEntity().getEntityString();
+        String id = getEntity().getEncodeId();
         if (id != null)
         {
-            ret.putString("id", getEntity().getEntityString());
+            ret.putString("id", getEntity().getEncodeId());
         }
-        return getEntity().writeWithoutTypeId(ret);
+        return getEntity().saveWithoutId(ret);
     }
 
     boolean canUpdate();
@@ -99,7 +101,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
             return new ItemStack(Items.LEAD);
         else if (this instanceof ItemFrameEntity)
         {
-            ItemStack held = ((ItemFrameEntity)this).getDisplayedItem();
+            ItemStack held = ((ItemFrameEntity)this).getItem();
             if (held.isEmpty())
                 return new ItemStack(Items.ITEM_FRAME);
             else
@@ -108,14 +110,14 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
         else if (this instanceof AbstractMinecartEntity)
             return ((AbstractMinecartEntity)this).getCartItem();
         else if (this instanceof BoatEntity)
-            return new ItemStack(((BoatEntity)this).getItemBoat());
+            return new ItemStack(((BoatEntity)this).getDropItem());
         else if (this instanceof ArmorStandEntity)
             return new ItemStack(Items.ARMOR_STAND);
         else if (this instanceof EnderCrystalEntity)
             return new ItemStack(Items.END_CRYSTAL);
         else
         {
-            SpawnEggItem egg = SpawnEggItem.getEgg(getEntity().getType());
+            SpawnEggItem egg = SpawnEggItem.byId(getEntity().getType());
             if (egg != null) return new ItemStack(egg);
         }
         return ItemStack.EMPTY;
@@ -140,7 +142,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean canBeRiddenInWater(Entity rider)
     {
-        return getEntity().canBeRiddenInWater();
+        return getEntity().rideableUnderWater();
     }
 
     /**
@@ -159,7 +161,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
      */
     default EntityClassification getClassification(boolean forSpawnCount)
     {
-        return getEntity().getType().getClassification();
+        return getEntity().getType().getCategory();
     }
 
     /**
@@ -192,4 +194,34 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
      * the entity to react to being revived.
      */
     void revive();
+
+
+    /**
+     * This is used to specify that your entity has multiple individual parts, such as the Vanilla Ender Dragon.
+     *
+     * See {@link net.minecraft.entity.boss.dragon.EnderDragonEntity} for an example implementation.
+     * @return true if this is a multipart entity.
+     */
+    default boolean isMultipartEntity()
+    {
+        return false;
+    }
+
+    /**
+     * Gets the individual sub parts that make up this entity.
+     *
+     * The entities returned by this method are NOT saved to the world in nay way, they exist as an extension
+     * of their host entity. The child entity does not track its server-side(or client-side) counterpart, and
+     * the host entity is responsible for moving and managing these children.
+     *
+     * Only used if {@link #isMultipartEntity()} returns true.
+     *
+     * See {@link net.minecraft.entity.boss.dragon.EnderDragonEntity} for an example implementation.
+     * @return The child parts of this entity. The value to be returned here should be cached.
+     */
+    @Nullable
+    default PartEntity<?>[] getParts()
+    {
+        return null;
+    }
 }

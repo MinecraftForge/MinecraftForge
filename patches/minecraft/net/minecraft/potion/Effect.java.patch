@@ -1,6 +1,6 @@
 --- a/net/minecraft/potion/Effect.java
 +++ b/net/minecraft/potion/Effect.java
-@@ -18,7 +18,7 @@
+@@ -18,7 +_,7 @@
  import net.minecraft.util.text.ITextComponent;
  import net.minecraft.util.text.TranslationTextComponent;
  

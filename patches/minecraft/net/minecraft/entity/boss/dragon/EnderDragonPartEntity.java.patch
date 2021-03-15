@@ -1,0 +1,18 @@
+--- a/net/minecraft/entity/boss/dragon/EnderDragonPartEntity.java
++++ b/net/minecraft/entity/boss/dragon/EnderDragonPartEntity.java
+@@ -7,13 +_,13 @@
+ import net.minecraft.network.IPacket;
+ import net.minecraft.util.DamageSource;
+ 
+-public class EnderDragonPartEntity extends Entity {
++public class EnderDragonPartEntity extends net.minecraftforge.entity.PartEntity<EnderDragonEntity> {
+    public final EnderDragonEntity field_213852_b;
+    public final String field_213853_c;
+    private final EntitySize field_213854_d;
+ 
+    public EnderDragonPartEntity(EnderDragonEntity p_i50232_1_, String p_i50232_2_, float p_i50232_3_, float p_i50232_4_) {
+-      super(p_i50232_1_.func_200600_R(), p_i50232_1_.field_70170_p);
++      super(p_i50232_1_);
+       this.field_213854_d = EntitySize.func_220314_b(p_i50232_3_, p_i50232_4_);
+       this.func_213323_x_();
+       this.field_213852_b = p_i50232_1_;

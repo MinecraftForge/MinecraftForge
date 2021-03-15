@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -59,7 +59,7 @@ public class MinecraftForgeClient
      */
     public static Locale getLocale()
     {
-        return Minecraft.getInstance().getLanguageManager().getCurrentLanguage().getJavaLocale();
+        return Minecraft.getInstance().getLanguageManager().getSelected().getJavaLocale();
     }
 
     private static BitSet stencilBits = new BitSet(8);
@@ -108,7 +108,7 @@ public class MinecraftForgeClient
             @Override
             public Optional<ChunkRenderCache> load(Pair<World, BlockPos> key)
             {
-                return Optional.ofNullable(ChunkRenderCache.generateCache(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1));
+                return Optional.ofNullable(ChunkRenderCache.createIfNotEmpty(key.getLeft(), key.getRight().offset(-1, -1, -1), key.getRight().offset(16, 16, 16), 1));
             }
         });
 

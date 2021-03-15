@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,12 +55,12 @@ public class StructureSpawnManager
         Map<Structure<?>, StructureSpawnInfo> structuresWithSpawns = new LinkedHashMap<>();
         gatherEntitySpawns(structuresWithSpawns, Structure.SWAMP_HUT);
         gatherEntitySpawns(structuresWithSpawns, Structure.PILLAGER_OUTPOST);
-        gatherEntitySpawns(structuresWithSpawns, Structure.MONUMENT);
-        gatherEntitySpawns(structuresWithSpawns, Structure.FORTRESS);
+        gatherEntitySpawns(structuresWithSpawns, Structure.OCEAN_MONUMENT);
+        gatherEntitySpawns(structuresWithSpawns, Structure.NETHER_BRIDGE);
         for (Structure<?> structure : ForgeRegistries.STRUCTURE_FEATURES.getValues())
         {
-            if (structure != Structure.SWAMP_HUT && structure != Structure.PILLAGER_OUTPOST && structure != Structure.MONUMENT &&
-                structure != Structure.FORTRESS)
+            if (structure != Structure.SWAMP_HUT && structure != Structure.PILLAGER_OUTPOST && structure != Structure.OCEAN_MONUMENT &&
+                structure != Structure.NETHER_BRIDGE)
             {
                 //If we didn't already gather the spawns already to ensure we do vanilla ones already
                 // gather the spawns for this structure
@@ -99,7 +99,7 @@ public class StructureSpawnManager
             Structure<?> structure = entry.getKey();
             StructureSpawnInfo spawnInfo = entry.getValue();
             //Note: We check if the structure has spawns for a type first before looking at the world as it should be a cheaper check
-            if (spawnInfo.spawns.containsKey(classification) && structureManager.getStructureStart(pos, spawnInfo.insideOnly, structure).isValid())
+            if (spawnInfo.spawns.containsKey(classification) && structureManager.getStructureAt(pos, spawnInfo.insideOnly, structure).isValid())
                 return spawnInfo.spawns.get(classification);
         }
         return null;

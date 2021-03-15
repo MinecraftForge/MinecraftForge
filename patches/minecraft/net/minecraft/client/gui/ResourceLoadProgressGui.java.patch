@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/ResourceLoadProgressGui.java
 +++ b/net/minecraft/client/gui/ResourceLoadProgressGui.java
-@@ -97,6 +97,7 @@
+@@ -97,6 +_,7 @@
        int l1 = (int)((double)this.field_212974_b.func_228018_at_().func_198087_p() * 0.8325D);
        float f3 = this.field_212975_c.func_219555_b();
        this.field_212978_f = MathHelper.func_76131_a(this.field_212978_f * 0.95F + f3 * 0.050000012F, 0.0F, 1.0F);
@@ -8,7 +8,7 @@
        if (f < 1.0F) {
           this.func_238629_a_(p_230430_1_, i / 2 - k1, l1 - 5, i / 2 + k1, l1 + 5, 1.0F - MathHelper.func_76131_a(f, 0.0F, 1.0F));
        }
-@@ -106,6 +107,7 @@
+@@ -106,6 +_,7 @@
        }
  
        if (this.field_212979_g == -1L && this.field_212975_c.func_219554_d() && (!this.field_212977_e || f1 >= 2.0F)) {
@@ -16,7 +16,7 @@
           try {
              this.field_212975_c.func_219556_e();
              this.field_212976_d.accept(Optional.empty());
-@@ -113,7 +115,6 @@
+@@ -113,7 +_,6 @@
              this.field_212976_d.accept(Optional.of(throwable));
           }
  

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,7 +61,7 @@ public abstract class LanguageProvider implements IDataProvider {
     protected abstract void addTranslations();
 
     @Override
-    public void act(DirectoryCache cache) throws IOException {
+    public void run(DirectoryCache cache) throws IOException {
         addTranslations();
         if (!data.isEmpty())
             save(cache, data, this.gen.getOutputFolder().resolve("assets/" + modid + "/lang/" + locale + ".json"));
@@ -75,8 +75,8 @@ public abstract class LanguageProvider implements IDataProvider {
     private void save(DirectoryCache cache, Object object, Path target) throws IOException {
         String data = GSON.toJson(object);
         data = JavaUnicodeEscaper.outsideOf(0, 0x7f).translate(data); // Escape unicode after the fact so that it's not double escaped by GSON
-        String hash = IDataProvider.HASH_FUNCTION.hashUnencodedChars(data).toString();
-        if (!Objects.equals(cache.getPreviousHash(target), hash) || !Files.exists(target)) {
+        String hash = IDataProvider.SHA1.hashUnencodedChars(data).toString();
+        if (!Objects.equals(cache.getHash(target), hash) || !Files.exists(target)) {
            Files.createDirectories(target.getParent());
 
            try (BufferedWriter bufferedwriter = Files.newBufferedWriter(target)) {
@@ -84,7 +84,7 @@ public abstract class LanguageProvider implements IDataProvider {
            }
         }
 
-        cache.recordHash(target, hash);
+        cache.putNew(target, hash);
     }
 
     public void addBlock(Supplier<? extends Block> key, String name) {
@@ -92,7 +92,7 @@ public abstract class LanguageProvider implements IDataProvider {
     }
 
     public void add(Block key, String name) {
-        add(key.getTranslationKey(), name);
+        add(key.getDescriptionId(), name);
     }
 
     public void addItem(Supplier<? extends Item> key, String name) {
@@ -100,7 +100,7 @@ public abstract class LanguageProvider implements IDataProvider {
     }
 
     public void add(Item key, String name) {
-        add(key.getTranslationKey(), name);
+        add(key.getDescriptionId(), name);
     }
 
     public void addItemStack(Supplier<ItemStack> key, String name) {
@@ -108,7 +108,7 @@ public abstract class LanguageProvider implements IDataProvider {
     }
 
     public void add(ItemStack key, String name) {
-        add(key.getTranslationKey(), name);
+        add(key.getDescriptionId(), name);
     }
 
     public void addEnchantment(Supplier<? extends Enchantment> key, String name) {
@@ -116,7 +116,7 @@ public abstract class LanguageProvider implements IDataProvider {
     }
 
     public void add(Enchantment key, String name) {
-        add(key.getName(), name);
+        add(key.getDescriptionId(), name);
     }
 
     /*
@@ -134,7 +134,7 @@ public abstract class LanguageProvider implements IDataProvider {
     }
 
     public void add(Effect key, String name) {
-        add(key.getName(), name);
+        add(key.getDescriptionId(), name);
     }
 
     public void addEntityType(Supplier<? extends EntityType<?>> key, String name) {
@@ -142,7 +142,7 @@ public abstract class LanguageProvider implements IDataProvider {
     }
 
     public void add(EntityType<?> key, String name) {
-        add(key.getTranslationKey(), name);
+        add(key.getDescriptionId(), name);
     }
 
     public void add(String key, String value) {

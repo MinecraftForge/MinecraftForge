@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/RecipeBookContainer.java
 +++ b/net/minecraft/inventory/container/RecipeBookContainer.java
-@@ -33,6 +33,10 @@
+@@ -33,6 +_,10 @@
     @OnlyIn(Dist.CLIENT)
     public abstract int func_203721_h();
  

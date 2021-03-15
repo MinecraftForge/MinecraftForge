@@ -1,11 +1,11 @@
 --- a/net/minecraft/network/ServerStatusResponse.java
 +++ b/net/minecraft/network/ServerStatusResponse.java
-@@ -19,13 +19,24 @@
+@@ -19,6 +_,16 @@
     private ServerStatusResponse.Players field_151324_b;
     private ServerStatusResponse.Version field_151325_c;
     private String field_151323_d;
 +   private transient net.minecraftforge.fml.network.FMLStatusPing forgeData;
- 
++
 +   public net.minecraftforge.fml.network.FMLStatusPing getForgeData() {
 +      return this.forgeData;
 +   }
@@ -14,10 +14,10 @@
 +      this.forgeData = data;
 +      invalidateJson();
 +   }
-+
+ 
     public ITextComponent func_151317_a() {
        return this.field_151326_a;
-    }
+@@ -26,6 +_,7 @@
  
     public void func_151315_a(ITextComponent p_151315_1_) {
        this.field_151326_a = p_151315_1_;
@@ -25,7 +25,7 @@
     }
  
     public ServerStatusResponse.Players func_151318_b() {
-@@ -34,6 +45,7 @@
+@@ -34,6 +_,7 @@
  
     public void func_151319_a(ServerStatusResponse.Players p_151319_1_) {
        this.field_151324_b = p_151319_1_;
@@ -33,7 +33,7 @@
     }
  
     public ServerStatusResponse.Version func_151322_c() {
-@@ -42,16 +54,51 @@
+@@ -42,16 +_,51 @@
  
     public void func_151321_a(ServerStatusResponse.Version p_151321_1_) {
        this.field_151325_c = p_151321_1_;
@@ -85,7 +85,7 @@
     public static class Players {
        private final int field_151336_a;
        private final int field_151334_b;
-@@ -143,6 +190,10 @@
+@@ -143,6 +_,10 @@
              serverstatusresponse.func_151320_a(JSONUtils.func_151200_h(jsonobject, "favicon"));
           }
  
@@ -96,14 +96,14 @@
           return serverstatusresponse;
        }
  
-@@ -164,6 +215,10 @@
-             jsonobject.addProperty("favicon", p_serialize_1_.func_151316_d());
-          }
+@@ -162,6 +_,10 @@
  
-+         if(p_serialize_1_.getForgeData() != null){
-+            jsonobject.add("forgeData", net.minecraftforge.fml.network.FMLStatusPing.Serializer.serialize(p_serialize_1_.getForgeData(), p_serialize_3_));
+          if (p_serialize_1_.func_151316_d() != null) {
+             jsonobject.addProperty("favicon", p_serialize_1_.func_151316_d());
 +         }
 +
++         if(p_serialize_1_.getForgeData() != null){
++            jsonobject.add("forgeData", net.minecraftforge.fml.network.FMLStatusPing.Serializer.serialize(p_serialize_1_.getForgeData(), p_serialize_3_));
+          }
+ 
           return jsonobject;
-       }
-    }

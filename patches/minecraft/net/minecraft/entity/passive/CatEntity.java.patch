@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/CatEntity.java
 +++ b/net/minecraft/entity/passive/CatEntity.java
-@@ -402,7 +402,7 @@
+@@ -402,7 +_,7 @@
              }
           } else if (this.func_70877_b(itemstack)) {
              this.func_175505_a(p_230254_1_, itemstack);

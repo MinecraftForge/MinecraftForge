@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/registry/SimpleRegistry.java
 +++ b/net/minecraft/util/registry/SimpleRegistry.java
-@@ -212,7 +212,8 @@
+@@ -212,7 +_,8 @@
     }
  
     public static <T> Codec<SimpleRegistry<T>> func_241745_c_(RegistryKey<? extends Registry<T>> p_241745_0_, Lifecycle p_241745_1_, Codec<T> p_241745_2_) {

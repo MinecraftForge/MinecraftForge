@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/PoweredRailBlock.java
 +++ b/net/minecraft/block/PoweredRailBlock.java
-@@ -14,10 +14,16 @@
+@@ -14,10 +_,16 @@
  public class PoweredRailBlock extends AbstractRailBlock {
     public static final EnumProperty<RailShape> field_176568_b = BlockStateProperties.field_208166_S;
     public static final BooleanProperty field_176569_M = BlockStateProperties.field_208194_u;
@@ -18,7 +18,7 @@
     }
  
     protected boolean func_176566_a(World p_176566_1_, BlockPos p_176566_2_, BlockState p_176566_3_, boolean p_176566_4_, int p_176566_5_) {
-@@ -99,13 +105,13 @@
+@@ -99,13 +_,13 @@
  
     protected boolean func_208071_a(World p_208071_1_, BlockPos p_208071_2_, boolean p_208071_3_, int p_208071_4_, RailShape p_208071_5_) {
        BlockState blockstate = p_208071_1_.func_180495_p(p_208071_2_);
@@ -35,7 +35,7 @@
                    return p_208071_1_.func_175640_z(p_208071_2_) ? true : this.func_176566_a(p_208071_1_, p_208071_2_, blockstate, p_208071_3_, p_208071_4_ + 1);
                 } else {
                    return false;
-@@ -156,6 +162,9 @@
+@@ -156,6 +_,9 @@
              return p_185499_1_.func_206870_a(field_176568_b, RailShape.SOUTH_EAST);
           case NORTH_EAST:
              return p_185499_1_.func_206870_a(field_176568_b, RailShape.SOUTH_WEST);
@@ -45,12 +45,13 @@
           }
        case COUNTERCLOCKWISE_90:
           switch((RailShape)p_185499_1_.func_177229_b(field_176568_b)) {
-@@ -255,4 +264,8 @@
+@@ -254,5 +_,9 @@
+ 
     protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
        p_206840_1_.func_206894_a(field_176568_b, field_176569_M);
-    }
++   }
 +
 +   public boolean isActivatorRail() {
 +      return isActivator;
-+   }
+    }
  }

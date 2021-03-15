@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/DeathScreen.java
 +++ b/net/minecraft/client/gui/screen/DeathScreen.java
-@@ -35,6 +35,7 @@
+@@ -35,6 +_,7 @@
        }));
        Button button = this.func_230480_a_(new Button(this.field_230708_k_ / 2 - 100, this.field_230709_l_ / 4 + 96, 200, 20, new TranslationTextComponent("deathScreen.titleScreen"), (p_213020_1_) -> {
           if (this.field_213023_c) {

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,17 +41,17 @@ public interface IForgeTransformationMatrix
 
     default void push(MatrixStack stack)
     {
-        stack.push();
+        stack.pushPose();
 
         Vector3f trans = getTransformaion().getTranslation();
-        stack.translate(trans.getX(), trans.getY(), trans.getZ());
+        stack.translate(trans.x(), trans.y(), trans.z());
 
-        stack.rotate(getTransformaion().getRotationLeft());
+        stack.mulPose(getTransformaion().getLeftRotation());
 
         Vector3f scale = getTransformaion().getScale();
-        stack.scale(scale.getX(), scale.getY(), scale.getZ());
+        stack.scale(scale.x(), scale.y(), scale.z());
 
-        stack.rotate(getTransformaion().getRightRot());
+        stack.mulPose(getTransformaion().getRightRot());
 
     }
 
@@ -60,7 +60,7 @@ public interface IForgeTransformationMatrix
         if (getTransformaion().isIdentity()) return other;
         if (other.isIdentity()) return getTransformaion();
         Matrix4f m = getTransformaion().getMatrix();
-        m.mul(other.getMatrix());
+        m.multiply(other.getMatrix());
         return new TransformationMatrix(m);
     }
 
@@ -85,7 +85,7 @@ public interface IForgeTransformationMatrix
 
     default Direction rotateTransform(Direction facing)
     {
-        return Direction.rotateFace(getTransformaion().getMatrix(), facing);
+        return Direction.rotate(getTransformaion().getMatrix(), facing);
     }
 
     /**
@@ -114,11 +114,11 @@ public interface IForgeTransformationMatrix
         if (transform.isIdentity()) return TransformationMatrix.identity();
 
         Matrix4f ret = transform.getMatrix();
-        Matrix4f tmp = Matrix4f.makeTranslate(origin.getX(), origin.getY(), origin.getZ());
+        Matrix4f tmp = Matrix4f.createTranslateMatrix(origin.x(), origin.y(), origin.z());
         ret.multiplyBackward(tmp);
         tmp.setIdentity();
-        tmp.setTranslation(-origin.getX(), -origin.getY(), -origin.getZ());
-        ret.mul(tmp);
+        tmp.setTranslation(-origin.x(), -origin.y(), -origin.z());
+        ret.multiply(tmp);
         return new TransformationMatrix(ret);
     }
 }

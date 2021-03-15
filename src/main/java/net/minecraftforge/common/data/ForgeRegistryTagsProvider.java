@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -56,24 +56,20 @@ public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>
         return GameData.getWrapper(forgeRegistry.getRegistryKey(), Lifecycle.experimental(), "default");
     }
 
-    private final String folder;
+    private static <T extends IForgeRegistryEntry<T>> String getTagFolder(IForgeRegistry<T> registryIn)
+    {
+        String tagFolder = ((ForgeRegistry<T>) registryIn).getTagFolder();
+        return tagFolder == null ? vanillaTypes.get(registryIn) : tagFolder;
+    }
 
     public ForgeRegistryTagsProvider(DataGenerator generatorIn, IForgeRegistry<T> registryIn, String modId, @Nullable ExistingFileHelper existingFileHelper)
     {
-        super(generatorIn, wrapRegistry(registryIn), modId, existingFileHelper);
-        String tagFolder = ((ForgeRegistry<T>) registryIn).getTagFolder();
-        folder = tagFolder == null ? vanillaTypes.get(registryIn) : tagFolder;
+        super(generatorIn, wrapRegistry(registryIn), modId, existingFileHelper, getTagFolder(registryIn));
     }
 
     @Override
-    protected Path makePath(ResourceLocation id)
+    protected Path getPath(ResourceLocation id)
     {
         return generator.getOutputFolder().resolve("data/" + id.getNamespace() + "/tags/" + folder + "/" + id.getPath() + ".json");
-    }
-
-    @Override
-    protected String getTagFolder()
-    {
-        return folder;
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ public interface IForgeTagBuilder<T>
     default TagsProvider.Builder<T> add(RegistryKey<T>... keys) {
         TagsProvider.Builder<T> builder = getBuilder();
         for (RegistryKey<T> key : keys) {
-            builder.getInternalBuilder().addItemEntry(key.getLocation(), getBuilder().getModID());
+            builder.getInternalBuilder().addElement(key.location(), getBuilder().getModID());
         }
         return builder;
     }

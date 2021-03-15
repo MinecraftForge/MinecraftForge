@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -64,7 +64,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 
         for (final EquipmentSlotType slot : EquipmentSlotType.values())
         {
-            if (slot.getSlotType() == slotType)
+            if (slot.getType() == slotType)
             {
                 slots.add(slot);
             }
@@ -83,7 +83,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     @Override
     public ItemStack getStackInSlot(final int slot)
     {
-        return entity.getItemStackFromSlot(validateSlotIndex(slot));
+        return entity.getItemBySlot(validateSlotIndex(slot));
     }
 
     @Nonnull
@@ -95,7 +95,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 
         final EquipmentSlotType equipmentSlot = validateSlotIndex(slot);
 
-        final ItemStack existing = entity.getItemStackFromSlot(equipmentSlot);
+        final ItemStack existing = entity.getItemBySlot(equipmentSlot);
 
         int limit = getStackLimit(slot, stack);
 
@@ -116,7 +116,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         {
             if (existing.isEmpty())
             {
-                entity.setItemStackToSlot(equipmentSlot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack);
+                entity.setItemSlot(equipmentSlot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack);
             }
             else
             {
@@ -136,7 +136,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
 
         final EquipmentSlotType equipmentSlot = validateSlotIndex(slot);
 
-        final ItemStack existing = entity.getItemStackFromSlot(equipmentSlot);
+        final ItemStack existing = entity.getItemBySlot(equipmentSlot);
 
         if (existing.isEmpty())
             return ItemStack.EMPTY;
@@ -147,7 +147,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         {
             if (!simulate)
             {
-                entity.setItemStackToSlot(equipmentSlot, ItemStack.EMPTY);
+                entity.setItemSlot(equipmentSlot, ItemStack.EMPTY);
             }
 
             return existing;
@@ -156,7 +156,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         {
             if (!simulate)
             {
-                entity.setItemStackToSlot(equipmentSlot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
+                entity.setItemSlot(equipmentSlot, ItemHandlerHelper.copyStackWithSize(existing, existing.getCount() - toExtract));
             }
 
             return ItemHandlerHelper.copyStackWithSize(existing, toExtract);
@@ -167,7 +167,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     public int getSlotLimit(final int slot)
     {
         final EquipmentSlotType equipmentSlot = validateSlotIndex(slot);
-        return equipmentSlot.getSlotType() == EquipmentSlotType.Group.ARMOR ? 1 : 64;
+        return equipmentSlot.getType() == EquipmentSlotType.Group.ARMOR ? 1 : 64;
     }
 
     protected int getStackLimit(final int slot, @Nonnull final ItemStack stack)
@@ -179,9 +179,9 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
     {
         final EquipmentSlotType equipmentSlot = validateSlotIndex(slot);
-        if (ItemStack.areItemStacksEqual(entity.getItemStackFromSlot(equipmentSlot), stack))
+        if (ItemStack.matches(entity.getItemBySlot(equipmentSlot), stack))
             return;
-        entity.setItemStackToSlot(equipmentSlot, stack);
+        entity.setItemSlot(equipmentSlot, stack);
     }
 
     @Override

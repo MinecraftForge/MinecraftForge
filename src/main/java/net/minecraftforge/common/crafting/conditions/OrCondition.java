@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -92,7 +92,7 @@ public class OrCondition implements ICondition
         public OrCondition read(JsonObject json)
         {
             List<ICondition> children = new ArrayList<>();
-            for (JsonElement j : JSONUtils.getJsonArray(json, "values"))
+            for (JsonElement j : JSONUtils.getAsJsonArray(json, "values"))
             {
                 if (!j.isJsonObject())
                     throw new JsonSyntaxException("Or condition values must be an array of JsonObjects");

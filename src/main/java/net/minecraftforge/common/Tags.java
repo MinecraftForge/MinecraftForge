@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -49,6 +49,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> COBBLESTONE = tag("cobblestone");
         public static final IOptionalNamedTag<Block> DIRT = tag("dirt");
         public static final IOptionalNamedTag<Block> END_STONES = tag("end_stones");
+        public static final IOptionalNamedTag<Block> ENDERMAN_PLACE_ON_BLACKLIST = tag("enderman_place_on_blacklist");
         public static final IOptionalNamedTag<Block> FENCE_GATES = tag("fence_gates");
         public static final IOptionalNamedTag<Block> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
         public static final IOptionalNamedTag<Block> FENCES = tag("fences");

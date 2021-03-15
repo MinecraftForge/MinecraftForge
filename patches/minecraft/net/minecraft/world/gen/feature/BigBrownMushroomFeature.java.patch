@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/BigBrownMushroomFeature.java
 +++ b/net/minecraft/world/gen/feature/BigBrownMushroomFeature.java
-@@ -24,7 +24,7 @@
+@@ -24,7 +_,7 @@
              boolean flag5 = flag2 || flag3;
              if (!flag4 || !flag5) {
                 p_225564_5_.func_239621_a_(p_225564_3_, j, p_225564_4_, k);

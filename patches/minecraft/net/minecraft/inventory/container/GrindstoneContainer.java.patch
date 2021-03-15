@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/GrindstoneContainer.java
 +++ b/net/minecraft/inventory/container/GrindstoneContainer.java
-@@ -141,12 +141,13 @@
+@@ -141,12 +_,13 @@
              }
  
              Item item = itemstack.func_77973_b();

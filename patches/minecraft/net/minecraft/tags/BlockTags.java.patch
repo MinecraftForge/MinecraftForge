@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/BlockTags.java
 +++ b/net/minecraft/tags/BlockTags.java
-@@ -97,6 +97,14 @@
+@@ -97,6 +_,14 @@
        return field_199899_c.func_232937_a_(p_199894_0_);
     }
  

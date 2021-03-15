@@ -1,6 +1,14 @@
 --- a/net/minecraft/item/ItemGroup.java
 +++ b/net/minecraft/item/ItemGroup.java
-@@ -107,12 +107,15 @@
+@@ -101,18 +_,23 @@
+    private final String field_78034_o;
+    private final ITextComponent field_242391_q;
+    private String field_199784_q;
++   @Deprecated
+    private String field_78043_p = "items.png";
++   private net.minecraft.util.ResourceLocation backgroundLocation;
+    private boolean field_78042_q = true;
+    private boolean field_78041_r = true;
     private EnchantmentType[] field_111230_s = new EnchantmentType[0];
     private ItemStack field_151245_t;
  
@@ -18,7 +26,37 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -178,11 +181,13 @@
+@@ -141,16 +_,29 @@
+    @OnlyIn(Dist.CLIENT)
+    public abstract ItemStack func_78016_d();
+ 
++   /**
++    * @deprecated Forge use {@link #getBackgroundImage()} instead
++    */
+    @OnlyIn(Dist.CLIENT)
++   @Deprecated
+    public String func_78015_f() {
+       return this.field_78043_p;
+    }
+ 
++   /**
++    * @deprecated Forge: use {@link #setBackgroundImage(net.minecraft.util.ResourceLocation)} instead
++    */
++   @Deprecated
+    public ItemGroup func_78025_a(String p_78025_1_) {
+       this.field_78043_p = p_78025_1_;
+       return this;
+    }
+ 
++   public ItemGroup setBackgroundImage(net.minecraft.util.ResourceLocation texture) {
++      this.backgroundLocation = texture;
++      return this;
++   }
++
+    public ItemGroup func_199783_b(String p_199783_1_) {
+       this.field_199784_q = p_199783_1_;
+       return this;
+@@ -178,11 +_,13 @@
  
     @OnlyIn(Dist.CLIENT)
     public int func_78020_k() {
@@ -32,10 +70,11 @@
        return this.field_78033_n < 6;
     }
  
-@@ -219,4 +224,58 @@
+@@ -218,5 +_,60 @@
+          item.func_150895_a(this, p_78018_1_);
        }
  
-    }
++   }
 +
 +   public int getTabPage() {
 +      return field_78033_n < 12 ? 0 : ((field_78033_n - 12) / 10) + 1;
@@ -57,6 +96,7 @@
 +
 +   @OnlyIn(Dist.CLIENT)
 +   public net.minecraft.util.ResourceLocation getBackgroundImage() {
++      if (backgroundLocation != null) return backgroundLocation; //FORGE: allow custom namespace
 +      return new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tab_" + this.func_78015_f());
 +   }
 +
@@ -89,5 +129,5 @@
 +      }
 +      field_78032_a[index] = newGroup;
 +      return index;
-+   }
+    }
  }

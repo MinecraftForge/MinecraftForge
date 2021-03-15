@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/CreateWorldScreen.java
 +++ b/net/minecraft/client/gui/screen/CreateWorldScreen.java
-@@ -110,7 +110,7 @@
+@@ -110,7 +_,7 @@
  
     public static CreateWorldScreen func_243425_a(@Nullable Screen p_243425_0_) {
        DynamicRegistries.Impl dynamicregistries$impl = DynamicRegistries.func_239770_b_();
@@ -9,7 +9,7 @@
     }
  
     private CreateWorldScreen(@Nullable Screen p_i242063_1_, DatapackCodec p_i242063_2_, WorldOptionsScreen p_i242063_3_) {
-@@ -542,6 +542,7 @@
+@@ -542,6 +_,7 @@
           File file1 = path.toFile();
           if (this.field_243416_G == null) {
              this.field_243416_G = new ResourcePackList(new ServerPackFinder(), new FolderPackFinder(file1, IPackNameDecorator.field_232625_a_));

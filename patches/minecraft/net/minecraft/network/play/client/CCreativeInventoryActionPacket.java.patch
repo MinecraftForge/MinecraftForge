@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/client/CCreativeInventoryActionPacket.java
 +++ b/net/minecraft/network/play/client/CCreativeInventoryActionPacket.java
-@@ -32,7 +32,7 @@
+@@ -32,7 +_,7 @@
  
     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
        p_148840_1_.writeShort(this.field_149629_a);

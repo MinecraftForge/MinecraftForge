@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/palette/PalettedContainer.java
 +++ b/net/minecraft/util/palette/PalettedContainer.java
-@@ -66,8 +66,11 @@
+@@ -66,8 +_,11 @@
     }
  
     private void func_186012_b(int p_186012_1_) {
@@ -14,7 +14,7 @@
           if (this.field_186024_e <= 4) {
              this.field_186024_e = 4;
              this.field_186022_c = new ArrayPalette<>(this.field_205523_d, this.field_186024_e, this, this.field_205524_e);
-@@ -76,6 +79,8 @@
+@@ -76,6 +_,8 @@
           } else {
              this.field_186022_c = this.field_205521_b;
              this.field_186024_e = MathHelper.func_151241_e(this.field_205523_d.func_186804_a());
@@ -23,7 +23,7 @@
           }
  
           this.field_186022_c.func_186041_a(this.field_205526_g);
-@@ -138,12 +143,16 @@
+@@ -138,12 +_,16 @@
        this.func_210459_b();
        int i = p_186010_1_.readByte();
        if (this.field_186024_e != i) {

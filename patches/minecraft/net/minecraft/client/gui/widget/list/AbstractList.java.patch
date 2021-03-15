@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/widget/list/AbstractList.java
 +++ b/net/minecraft/client/gui/widget/list/AbstractList.java
-@@ -492,6 +492,13 @@
+@@ -492,6 +_,13 @@
        p_238480_1_.field_230666_a_ = this;
     }
  

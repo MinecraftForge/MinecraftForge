@@ -1,6 +1,6 @@
 --- a/net/minecraft/fluid/WaterFluid.java
 +++ b/net/minecraft/fluid/WaterFluid.java
-@@ -60,7 +60,7 @@
+@@ -60,7 +_,7 @@
     }
  
     protected void func_205580_a(IWorld p_205580_1_, BlockPos p_205580_2_, BlockState p_205580_3_) {

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.network;
 
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.BusBuilder;
@@ -107,5 +109,10 @@ public class NetworkInstance
 
     void dispatchEvent(final NetworkEvent networkEvent) {
         this.networkEventBus.post(networkEvent);
+    }
+
+    public boolean isRemotePresent(NetworkManager manager) {
+        FMLConnectionData connectionData = NetworkHooks.getConnectionData(manager);
+        return connectionData != null && connectionData.getChannels().containsKey(channelName);
     }
 }

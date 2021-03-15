@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.schedule.Activity;
@@ -68,13 +70,17 @@ import net.minecraft.world.gen.foliageplacer.FoliagePlacerType;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
@@ -100,6 +106,8 @@ import java.util.stream.Stream;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
+
+import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 
 /**
  * INTERNAL ONLY
@@ -164,7 +172,7 @@ public class GameData
         // Worldgen
         makeRegistry(WORLD_CARVERS, c(WorldCarver.class)).disableSaving().disableSync().create();
         makeRegistry(SURFACE_BUILDERS, c(SurfaceBuilder.class)).disableSaving().disableSync().create();
-        makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().create();
+        makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(DECORATORS, c(Placement.class)).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, ChunkStatus.class, "empty").disableSaving().disableSync().create();
         makeRegistry(STRUCTURE_FEATURES, c(Structure.class)).disableSaving().disableSync().create();
@@ -174,7 +182,7 @@ public class GameData
         makeRegistry(TREE_DECORATOR_TYPES, c(TreeDecoratorType.class)).disableSaving().disableSync().create();
 
         // Dynamic Worldgen
-        makeRegistry(BIOMES, Biome.class).create();
+        makeRegistry(BIOMES, Biome.class).disableSync().create();
 
         // Custom forge registries
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
@@ -186,15 +194,15 @@ public class GameData
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type)
     {
-        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, int min, int max)
     {
-        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setIDRange(min, max).hasWrapper();
+        return new RegistryBuilder<T>().setName(key.location()).setType(type).setIDRange(min, max).hasWrapper();
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, String _default)
     {
-        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
+        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
     }
 
     public static <T extends IForgeRegistryEntry<T>> SimpleRegistry<T> getWrapper(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle)
@@ -228,7 +236,7 @@ public class GameData
     {
         return RegistryManager.ACTIVE.getRegistry(Block.class).getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
     }
-    
+
     @SuppressWarnings("unchecked")
     public static Map<BlockState, PointOfInterestType> getBlockStatePointOfInterestTypeMap()
     {
@@ -347,11 +355,11 @@ public class GameData
         keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
 
         //Move Blocks to first, and Items to second.
-        keys.remove(BLOCKS.getLocation());
-        keys.remove(ITEMS.getLocation());
+        keys.remove(BLOCKS.location());
+        keys.remove(ITEMS.location());
 
-        keys.add(0, BLOCKS.getLocation());
-        keys.add(1, ITEMS.getLocation());
+        keys.add(0, BLOCKS.location());
+        keys.add(1, ITEMS.location());
 
         final Function<ResourceLocation, ? extends RegistryEvent.Register<?>> registerEventGenerator = rl -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl);
         return keys.stream().map(rl -> ModLoadingStage.EventGenerator.fromFunction(mc -> registerEventGenerator.apply(rl)));
@@ -379,12 +387,15 @@ public class GameData
         }, executor).handle((v, t)->t != null ? Collections.singletonList(t): Collections.emptyList());
     }
 
+    @SuppressWarnings("deprecation")
     public static CompletableFuture<List<Throwable>> checkForRevertToVanilla(final Executor executor, final CompletableFuture<List<Throwable>> listCompletableFuture) {
         return listCompletableFuture.whenCompleteAsync((errors, except) -> {
             if (except != null) {
                 LOGGER.fatal("Detected errors during registry event dispatch, rolling back to VANILLA state");
                 revertTo(RegistryManager.VANILLA, false);
                 LOGGER.fatal("Detected errors during registry event dispatch, roll back to VANILLA complete");
+            } else {
+                net.minecraftforge.common.ForgeHooks.modifyAttributes();
             }
         }, executor);
     }
@@ -410,17 +421,17 @@ public class GameData
     {
         void clear()
         {
-            this.identityMap.clear();
-            this.objectList.clear();
+            this.tToId.clear();
+            this.idToT.clear();
             this.nextId = 0;
         }
 
         void remove(I key)
         {
-            Integer prev = this.identityMap.remove(key);
+            Integer prev = this.tToId.remove(key);
             if (prev != null)
             {
-                this.objectList.set(prev, null);
+                this.idToT.set(prev, null);
             }
         }
     }
@@ -434,19 +445,19 @@ public class GameData
         {
             if (oldBlock != null)
             {
-                StateContainer<Block, BlockState> oldContainer = oldBlock.getStateContainer();
-                StateContainer<Block, BlockState> newContainer = block.getStateContainer();
+                StateContainer<Block, BlockState> oldContainer = oldBlock.getStateDefinition();
+                StateContainer<Block, BlockState> newContainer = block.getStateDefinition();
 
                 // Test vanilla blockstates, if the number matches, make sure they also match in their string representations
                 if (block.getRegistryName().getNamespace().equals("minecraft") && !oldContainer.getProperties().equals(newContainer.getProperties()))
                 {
                     String oldSequence = oldContainer.getProperties().stream()
                             .map(s -> String.format("%s={%s}", s.getName(),
-                                    s.getAllowedValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
+                                    s.getPossibleValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
                             .collect(Collectors.joining(";"));
                     String newSequence = newContainer.getProperties().stream()
                             .map(s -> String.format("%s={%s}", s.getName(),
-                                    s.getAllowedValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
+                                    s.getPossibleValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
                             .collect(Collectors.joining(";"));
 
                     LOGGER.error(REGISTRIES,()-> new AdvancedLogMessageAdapter(sb-> {
@@ -474,7 +485,7 @@ public class GameData
                 @Override
                 public int getId(BlockState key)
                 {
-                    Integer integer = (Integer)this.identityMap.get(key);
+                    Integer integer = (Integer)this.tToId.get(key);
                     // There are some cases where this map is queried to serialize a state that is valid,
                     //but somehow not in this list, so attempt to get real metadata. Doing this hear saves us 7 patches
                     //if (integer == null && key != null)
@@ -489,7 +500,7 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            Block ret = new BlockDummyAir(Block.Properties.create(Material.AIR));
+            Block ret = new BlockDummyAir(Block.Properties.of(Material.AIR));
             GameData.forceRegistryName(ret, key);
             return ret;
         }
@@ -502,10 +513,10 @@ public class GameData
 
             for (Block block : owner)
             {
-                for (BlockState state : block.getStateContainer().getValidStates())
+                for (BlockState state : block.getStateDefinition().getPossibleStates())
                 {
                     blockstateMap.add(state);
-                    state.cacheState();
+                    state.initCache();
                 }
 
                 block.getLootTable();
@@ -521,7 +532,7 @@ public class GameData
             }
 
             @Override
-            public String getTranslationKey()
+            public String getDescriptionId()
             {
                 return "block.minecraft.air";
             }
@@ -545,7 +556,7 @@ public class GameData
             {
                 @SuppressWarnings("unchecked")
                 Map<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, Map.class);
-                ((BlockItem)item).addToBlockToItemMap(blockToItem, item);
+                ((BlockItem)item).registerBlocks(blockToItem, item);
             }
         }
 
@@ -572,7 +583,7 @@ public class GameData
         public void onValidate(IForgeRegistryInternal<Attribute> owner, RegistryManager stage, int id, ResourceLocation key, Attribute obj)
         {
             // some stuff hard patched in can cause this to derp if it's JUST vanilla, so skip
-            if (stage!=RegistryManager.VANILLA) GlobalEntityTypeAttributes.validateEntityAttributes();
+            if (stage!=RegistryManager.VANILLA) GlobalEntityTypeAttributes.validate();
         }
     }
 
@@ -622,7 +633,7 @@ public class GameData
     private static class PointOfInterestTypeCallbacks implements IForgeRegistry.AddCallback<PointOfInterestType> , IForgeRegistry.ClearCallback<PointOfInterestType>, IForgeRegistry.CreateCallback<PointOfInterestType>
     {
         static final PointOfInterestTypeCallbacks INSTANCE = new PointOfInterestTypeCallbacks();
-        
+
         @Override
         public void onAdd(IForgeRegistryInternal<PointOfInterestType> owner, RegistryManager stage, int id, PointOfInterestType obj, @Nullable PointOfInterestType oldObj)
         {
@@ -631,7 +642,7 @@ public class GameData
             {
                 oldObj.getBlockStates().forEach(map::remove);
             }
-            obj.getBlockStates().forEach((state) -> 
+            obj.getBlockStates().forEach((state) ->
             {
                 PointOfInterestType oldType = map.put(state, obj);
                 if (oldType != null)
@@ -653,7 +664,7 @@ public class GameData
             owner.setSlaveMap(BLOCKSTATE_TO_POINT_OF_INTEREST_TYPE, new HashMap<>());
         }
     }
-    
+
     private static <T extends IForgeRegistryEntry<T>> void loadRegistry(final ResourceLocation registryName, final RegistryManager from, final RegistryManager to, final Class<T> regType, boolean freeze)
     {
         ForgeRegistry<T> fromRegistry = from.getRegistry(registryName);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/integrated/IntegratedServer.java
 +++ b/net/minecraft/server/integrated/IntegratedServer.java
-@@ -56,9 +56,10 @@
+@@ -56,9 +_,10 @@
        this.func_71188_g(true);
        this.func_71245_h(true);
        this.func_244801_P();
@@ -12,7 +12,7 @@
     }
  
     public void func_71217_p(BooleanSupplier p_71217_1_) {
-@@ -172,6 +173,7 @@
+@@ -172,6 +_,7 @@
     }
  
     public void func_71263_m(boolean p_71263_1_) {

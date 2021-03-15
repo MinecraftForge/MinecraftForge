@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -62,6 +62,26 @@ public class NetworkRegistry
 
     @SuppressWarnings("RedundantStringConstructorCall")
     public static String ACCEPTVANILLA  = new String("ALLOWVANILLA \uD83D\uDC93\uD83D\uDC93\uD83D\uDC93");
+
+    /**
+     * Makes a version predicate that accepts connections to vanilla or without the channel.
+     * @param protocolVersion The protocol version, which will be matched exactly.
+     * @return A new predicate with the new conditions.
+     */
+    public static Predicate<String> acceptMissingOr(final String protocolVersion)
+    {
+        return acceptMissingOr(protocolVersion::equals);
+    }
+
+    /**
+     * Makes a version predicate that accepts connections to vanilla or without the channel.
+     * @param versionCheck The main version predicate, which should check the version number of the protocol.
+     * @return A new predicate with the new conditions.
+     */
+    public static Predicate<String> acceptMissingOr(Predicate<String> versionCheck)
+    {
+        return versionCheck.or(ABSENT::equals).or(ACCEPTVANILLA::equals);
+    }
 
     public static List<String> getServerNonVanillaNetworkMods()
     {

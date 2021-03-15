@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -78,7 +78,7 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
         EnumMap<ItemCameraTransforms.TransformType, TransformationMatrix> map = new EnumMap<>(ItemCameraTransforms.TransformType.class);
         for(ItemCameraTransforms.TransformType type : ItemCameraTransforms.TransformType.values())
         {
-            if (transforms.hasCustomTransform(type))
+            if (transforms.hasTransform(type))
             {
                 map.put(type, TransformationHelper.toTransformation(transforms.getTransform(type)));
             }
@@ -97,7 +97,7 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
             {
                 map.put(type, tr);
             }
-            else if (transforms.hasCustomTransform(type))
+            else if (transforms.hasTransform(type))
             {
                 map.put(type, TransformationHelper.toTransformation(transforms.getTransform(type)));
             }
@@ -125,14 +125,14 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
         return model;
     }
 
-    @Override public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
+    @Override public boolean useAmbientOcclusion() { return parent.useAmbientOcclusion(); }
     @Override public boolean isAmbientOcclusion(BlockState state) { return parent.isAmbientOcclusion(state); }
     @Override public boolean isGui3d() { return parent.isGui3d(); }
-    @Override public boolean isSideLit() { return parent.isSideLit(); }
-    @Override public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
-    @Override public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
+    @Override public boolean usesBlockLight() { return parent.usesBlockLight(); }
+    @Override public boolean isCustomRenderer() { return parent.isCustomRenderer(); }
+    @Override public TextureAtlasSprite getParticleIcon() { return parent.getParticleIcon(); }
     @SuppressWarnings("deprecation")
-    @Override public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
+    @Override public ItemCameraTransforms getTransforms() { return parent.getTransforms(); }
     @Override public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData extraData)
     {
         return parent.getQuads(state, side, rand, extraData);
@@ -165,9 +165,9 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
 
         @Nullable
         @Override
-        public IBakedModel getOverrideModel(IBakedModel model, ItemStack stack, @Nullable ClientWorld worldIn, @Nullable LivingEntity entityIn)
+        public IBakedModel resolve(IBakedModel model, ItemStack stack, @Nullable ClientWorld worldIn, @Nullable LivingEntity entityIn)
         {
-            model = parent.getOverrides().getOverrideModel(parent, stack, worldIn, entityIn);
+            model = parent.getOverrides().resolve(parent, stack, worldIn, entityIn);
             return new PerspectiveMapWrapper(model, transforms);
         }
 

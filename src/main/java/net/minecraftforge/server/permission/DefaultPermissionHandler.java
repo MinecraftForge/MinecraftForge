@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -73,7 +73,7 @@ public enum DefaultPermissionHandler implements IPermissionHandler
         }
 
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        return server != null && server.getPlayerList().canSendCommands(profile);
+        return server != null && server.getPlayerList().isOp(profile);
     }
 
     @Override

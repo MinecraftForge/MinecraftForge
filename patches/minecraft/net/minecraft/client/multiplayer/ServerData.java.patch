@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ServerData.java
 +++ b/net/minecraft/client/multiplayer/ServerData.java
-@@ -26,6 +26,7 @@
+@@ -26,6 +_,7 @@
     @Nullable
     private String field_147411_m;
     private boolean field_181042_l;

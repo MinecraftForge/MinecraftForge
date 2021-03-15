@@ -1,6 +1,6 @@
 --- a/net/minecraft/advancements/AdvancementList.java
 +++ b/net/minecraft/advancements/AdvancementList.java
-@@ -96,6 +96,7 @@
+@@ -96,6 +_,7 @@
           }
        }
  

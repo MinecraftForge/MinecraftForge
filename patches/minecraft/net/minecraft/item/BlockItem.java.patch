@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/BlockItem.java
 +++ b/net/minecraft/item/BlockItem.java
-@@ -69,8 +69,8 @@
+@@ -69,8 +_,8 @@
                    }
                 }
  
@@ -11,7 +11,7 @@
                 if (playerentity == null || !playerentity.field_71075_bZ.field_75098_d) {
                    itemstack.func_190918_g(1);
                 }
-@@ -81,10 +81,16 @@
+@@ -81,10 +_,16 @@
        }
     }
  
@@ -28,7 +28,7 @@
     @Nullable
     public BlockItemUseContext func_219984_b(BlockItemUseContext p_219984_1_) {
        return p_219984_1_;
-@@ -192,10 +198,18 @@
+@@ -192,10 +_,18 @@
     }
  
     public Block func_179223_d() {
@@ -41,9 +41,9 @@
  
     public void func_195946_a(Map<Block, Item> p_195946_1_, Item p_195946_2_) {
        p_195946_1_.put(this.func_179223_d(), p_195946_2_);
-    }
++   }
 +
 +   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
 +      blockToItemMap.remove(this.func_179223_d());
-+   }
+    }
  }

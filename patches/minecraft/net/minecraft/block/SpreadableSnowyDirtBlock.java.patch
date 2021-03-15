@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/SpreadableSnowyDirtBlock.java
 +++ b/net/minecraft/block/SpreadableSnowyDirtBlock.java
-@@ -33,6 +33,7 @@
+@@ -33,6 +_,7 @@
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
        if (!func_220257_b(p_225542_1_, p_225542_2_, p_225542_3_)) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/AbstractArrowEntity.java
 +++ b/net/minecraft/entity/projectile/AbstractArrowEntity.java
-@@ -130,7 +130,7 @@
+@@ -130,7 +_,7 @@
  
        BlockPos blockpos = this.func_233580_cy_();
        BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -9,7 +9,7 @@
           VoxelShape voxelshape = blockstate.func_196952_d(this.field_70170_p, blockpos);
           if (!voxelshape.func_197766_b()) {
              Vector3d vector3d1 = this.func_213303_ch();
-@@ -184,7 +184,7 @@
+@@ -184,7 +_,7 @@
                 }
              }
  

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ public class MusicDiscTest
             () -> new SoundEvent(new ResourceLocation(MOD_ID, "test_sound_event")));
 
     private static final RegistryObject<Item> TEST_MUSIC_DISC = ITEMS.register("test_music_disc",
-            () -> new MusicDiscItem(1, TEST_SOUND_EVENT, new Item.Properties().maxStackSize(1).rarity(Rarity.EPIC)));
+            () -> new MusicDiscItem(1, TEST_SOUND_EVENT, new Item.Properties().stacksTo(1).rarity(Rarity.EPIC)));
 
     public MusicDiscTest()
     {

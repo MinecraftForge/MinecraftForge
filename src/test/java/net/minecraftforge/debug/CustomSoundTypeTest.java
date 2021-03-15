@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -50,10 +50,10 @@ public class CustomSoundTypeTest
     private static final SoundType TEST_SOUND_TYPE = new ForgeSoundType(1.0F, 1.0F, TEST_STEP_EVENT, TEST_STEP_EVENT, TEST_STEP_EVENT, TEST_STEP_EVENT, TEST_STEP_EVENT);
 
     private static final RegistryObject<Block> TEST_STEP_BLOCK = BLOCKS.register("test_block",
-            () -> new Block(AbstractBlock.Properties.create(Material.WOOD).sound(TEST_SOUND_TYPE)));
+            () -> new Block(AbstractBlock.Properties.of(Material.WOOD).sound(TEST_SOUND_TYPE)));
 
     private static final RegistryObject<Item> TEST_STEP_BLOCK_ITEM = ITEMS.register("test_block",
-            () -> new BlockItem(TEST_STEP_BLOCK.get(), new Item.Properties().group(ItemGroup.MISC)));
+            () -> new BlockItem(TEST_STEP_BLOCK.get(), new Item.Properties().tab(ItemGroup.TAB_MISC)));
 
     public CustomSoundTypeTest()
     {
