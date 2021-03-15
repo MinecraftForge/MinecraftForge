@@ -1,17 +1,17 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
-@@ -230,12 +230,30 @@
+@@ -230,12 +_,30 @@
           }
        }
  
-+      @Deprecated //Forge: Use Advancement#register(Consumer<Advancement>, ResourceLocation, ExistingFileHelper)
++      @Deprecated //Forge: Use Advancement#save(Consumer<Advancement>, ResourceLocation, ExistingFileHelper)
        public Advancement func_203904_a(Consumer<Advancement> p_203904_1_, String p_203904_2_) {
           Advancement advancement = this.func_192056_a(new ResourceLocation(p_203904_2_));
           p_203904_1_.accept(advancement);
           return advancement;
        }
  
-+      public Advancement register(Consumer<Advancement> consumer, ResourceLocation id, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
++      public Advancement save(Consumer<Advancement> consumer, ResourceLocation id, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
 +         Advancement advancement = this.build(id, fileHelper);
 +         consumer.accept(advancement);
 +         return advancement;
@@ -31,7 +31,7 @@
        public JsonObject func_200273_b() {
           if (this.field_192066_f == null) {
              this.field_192066_f = this.field_199751_g.createRequirements(this.field_192065_e.keySet());
-@@ -309,6 +327,7 @@
+@@ -309,6 +_,7 @@
        }
  
        public static Advancement.Builder func_241043_a_(JsonObject p_241043_0_, ConditionArrayParser p_241043_1_) {
