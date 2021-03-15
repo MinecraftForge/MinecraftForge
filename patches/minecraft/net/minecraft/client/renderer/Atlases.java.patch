@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/Atlases.java
 +++ b/net/minecraft/client/renderer/Atlases.java
-@@ -129,7 +129,8 @@
+@@ -129,7 +_,8 @@
     }
  
     public static RenderMaterial func_228773_a_(WoodType p_228773_0_) {
@@ -10,15 +10,16 @@
     }
  
     private static RenderMaterial func_228774_a_(String p_228774_0_) {
-@@ -157,4 +158,11 @@
+@@ -156,5 +_,12 @@
+       default:
           return p_228772_1_;
        }
-    }
++   }
 +
 +   /**
 +    * Not threadsafe. Enqueue it in client setup.
 +    */
 +   public static void addWoodType(WoodType woodType) {
 +      field_228750_i_.put(woodType, func_228773_a_(woodType));
-+   }
+    }
  }
