@@ -79,8 +79,8 @@
 +      return onItemUse(p_196084_1_, (c) -> func_77973_b().func_195939_a(p_196084_1_));
 +   }
 +
-+   public ActionResultType onItemUseFirst(ItemUseContext context) {
-+      return onItemUse(context, (c) -> func_77973_b().onItemUseFirst(this, context));
++   public ActionResultType onItemUseFirst(ItemUseContext p_196084_1_) {
++      return onItemUse(p_196084_1_, (c) -> func_77973_b().onItemUseFirst(this, p_196084_1_));
 +   }
 +
 +   private ActionResultType onItemUse(ItemUseContext p_196084_1_, java.util.function.Function<ItemUseContext, ActionResultType> callback) {
