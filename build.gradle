@@ -25,9 +25,8 @@ import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 plugins {
     id 'org.cadixdev.licenser' version '0.5.0'
-    id 'org.ajoberstar.grgit' version '4.1.0'
     id 'com.github.ben-manes.versions' version '0.36.0'
-	id 'eclipse'
+    id 'eclipse'
 }
 
 Util.init() //Init all our extension methods!
@@ -47,7 +46,7 @@ ext {
     MAPPING_VERSION = '1.16.5'
     MC_VERSION = '1.16.5'
     MCP_VERSION = '20210115.111550'
-	SPI_VERSION = '3.2.0'
+    SPI_VERSION = '3.2.0'
 }
 
 project(':mcp') {
@@ -63,8 +62,8 @@ project(':mcp') {
 
 project(':clean') {
     evaluationDependsOn(':mcp')
-	apply plugin: 'eclipse'
-	apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: 'eclipse'
+    apply plugin: 'net.minecraftforge.gradle.patcher'
     
     java.toolchain.languageVersion = JavaLanguageVersion.of(8)
     
@@ -183,7 +182,8 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '36.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        GIT_INFO = Util.gitInfo(rootProject.file('.'))
+        SPEC_VERSION = GIT_INFO.tag
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
@@ -195,16 +195,7 @@ project(':forge') {
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    def getVersion = {
-        def (tag, offset, hash) = (grgit.describe(longDescr: true, tags:true) ?: '0.0-0-unknown').rsplit('-', 2)
-        SPEC_VERSION = tag
-        def branch = grgit.branch.current().name
-        if (branch in [null, 'master', 'HEAD', MC_VERSION, MC_VERSION + '.0', MC_VERSION.rsplit('.', 1)[0] + '.x'])
-            return "${MC_VERSION}-${tag}.${offset}".toString()
-        return "${MC_VERSION}-${tag}.${offset}-${branch}".toString()
-    }
-
-    version = getVersion()
+    version = Util.getVersion(GIT_INFO, MC_VERSION)
     println('Forge Version: ' + version)
 
     patcher {
@@ -350,8 +341,8 @@ project(':forge') {
         MANIFESTS = [
             '/': [
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'GitCommit': grgit.head().abbreviatedId,
-                'Git-Branch': grgit.branch.current().getName()
+                'GitCommit': GIT_INFO.abbreviatedId,
+                'Git-Branch': GIT_INFO.branch
             ] as LinkedHashMap,
             'net/minecraftforge/versions/forge/': [
                 'Specification-Title':      'Forge',
