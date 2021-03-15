@@ -104,7 +104,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
          * @throws IllegalArgumentException if {@code prop} has already been configured
          * @throws IllegalArgumentException if {@code prop} is not applicable to the
          *                                  current block's state
-         * @throws IllegalStateException    if {@code nestedConditionGroups.size() != 0}
+         * @throws IllegalStateException    if {@code !nestedConditionGroups.isEmpty()}
          */
         @SafeVarargs
         public final <T extends Comparable<T>> PartBuilder condition(Property<T> prop, T... values) {
@@ -172,7 +172,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
              * @throws IllegalArgumentException if {@code prop} has already been configured
              * @throws IllegalArgumentException if {@code prop} is not applicable to the
              *                                  current block's state
-             * @throws IllegalStateException    if {@code nestedConditionGroups.size() != 0}
+             * @throws IllegalStateException    if {@code !nestedConditionGroups.isEmpty()}
              */
             @SafeVarargs
             public final <T extends Comparable<T>> ConditionGroup condition(Property<T> prop, T... values)
@@ -247,7 +247,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
             }
         }
     }
-    
+
     private static JsonObject toJson(List<PartBuilder.ConditionGroup> conditions, boolean useOr)
     {
         JsonObject groupJson = new JsonObject();
@@ -259,7 +259,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
         }
         return groupJson;
     }
-    
+
     private static JsonObject toJson(Multimap<Property<?>, Comparable<?>> conditions, boolean useOr)
     {
         JsonObject groupJson = new JsonObject();
