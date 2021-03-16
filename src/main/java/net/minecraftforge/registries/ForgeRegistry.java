@@ -35,7 +35,6 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
-import com.mojang.serialization.Lifecycle;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
@@ -107,41 +106,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final RegistryKey<Registry<V>> key;
     private final RegistryBuilder<V> builder;
     
-    private final Codec<V> codec = new Codec<V>() {
-        @Override
-        public <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input) {
-            if(ops.compressMaps())
-            {
-                return ops.getNumberValue(input).flatMap(n ->
-                {
-                    int id = n.intValue();
-                    if(ids.get(id) == null)
-                    {
-                        return DataResult.error("Unknown registry id " + n);
-                    }
-                    V val = getValue(id);
-                    return DataResult.success(val);
-                }).map(v -> Pair.of(v, input));
-            }
-            else
-            {
-                return ResourceLocation.CODEC.decode(ops, input).flatMap(keyValuePair -> !ForgeRegistry.this.containsKey(keyValuePair.getFirst()) ?
-                        DataResult.error("Unknown registry key: " + keyValuePair.getFirst()) :
-                        DataResult.success(keyValuePair.mapFirst(ForgeRegistry.this::getValue)));
-            }
-        }
-
-        @Override
-        public <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix) {
-            ResourceLocation key = getKey(input);
-            if(key == null)
-            {
-                return DataResult.error("Unknown registry element " + input);
-            }
-            T toMerge = ops.compressMaps() ? ops.createInt(getID(input)) : ops.createString(key.toString());
-            return ops.mergeToPrimitive(prefix, toMerge);
-        }
-    };
+    private final Codec<V> codec = new RegistryCodec();
 
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
@@ -883,6 +848,42 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             ret.put(key, owner.owner);
         }
         return ret;
+    }
+
+    public class RegistryCodec implements Codec<V> {
+        @Override
+        public <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input) {
+            if(ops.compressMaps())
+            {
+                return ops.getNumberValue(input).flatMap(n ->
+                {
+                    int id = n.intValue();
+                    if(ids.get(id) == null)
+                    {
+                        return DataResult.error("Unknown registry id " + n);
+                    }
+                    V val = ForgeRegistry.this.getValue(id);
+                    return DataResult.success(val);
+                }).map(v -> Pair.of(v, input));
+            }
+            else
+            {
+                return ResourceLocation.CODEC.decode(ops, input).flatMap(keyValuePair -> !ForgeRegistry.this.containsKey(keyValuePair.getFirst()) ?
+                        DataResult.error("Unknown registry key: " + keyValuePair.getFirst()) :
+                        DataResult.success(keyValuePair.mapFirst(ForgeRegistry.this::getValue)));
+            }
+        }
+
+        @Override
+        public <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix) {
+            ResourceLocation key = getKey(input);
+            if(key == null)
+            {
+                return DataResult.error("Unknown registry element " + input);
+            }
+            T toMerge = ops.compressMaps() ? ops.createInt(getID(input)) : ops.createString(key.toString());
+            return ops.mergeToPrimitive(prefix, toMerge);
+        }
     }
 
     public static class Snapshot
