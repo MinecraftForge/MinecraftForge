@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/spawner/PatrolSpawner.java
 +++ b/net/minecraft/world/spawner/PatrolSpawner.java
-@@ -94,6 +94,7 @@
+@@ -94,6 +_,7 @@
           return false;
        } else {
           PatrollerEntity patrollerentity = EntityType.field_220350_aJ.func_200721_a(p_222695_1_);

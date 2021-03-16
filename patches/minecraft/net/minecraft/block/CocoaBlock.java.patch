@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/CocoaBlock.java
 +++ b/net/minecraft/block/CocoaBlock.java
-@@ -35,10 +35,11 @@
+@@ -35,10 +_,11 @@
     }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {

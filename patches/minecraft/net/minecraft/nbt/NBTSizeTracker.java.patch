@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/NBTSizeTracker.java
 +++ b/net/minecraft/nbt/NBTSizeTracker.java
-@@ -18,4 +18,34 @@
+@@ -18,4 +_,34 @@
           throw new RuntimeException("Tried to read NBT tag that was too big; tried to allocate: " + this.field_152453_c + "bytes where max allowed: " + this.field_152452_b);
        }
     }

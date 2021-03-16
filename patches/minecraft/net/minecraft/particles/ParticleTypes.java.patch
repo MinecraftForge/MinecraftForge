@@ -1,6 +1,6 @@
 --- a/net/minecraft/particles/ParticleTypes.java
 +++ b/net/minecraft/particles/ParticleTypes.java
-@@ -4,6 +4,7 @@
+@@ -4,6 +_,7 @@
  import java.util.function.Function;
  import net.minecraft.util.registry.Registry;
  

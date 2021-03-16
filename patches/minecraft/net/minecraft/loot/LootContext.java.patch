@@ -1,6 +1,6 @@
 --- a/net/minecraft/loot/LootContext.java
 +++ b/net/minecraft/loot/LootContext.java
-@@ -94,17 +94,47 @@
+@@ -94,17 +_,47 @@
        return this.field_186499_b;
     }
  
@@ -48,7 +48,7 @@
        public LootContext.Builder func_216023_a(Random p_216023_1_) {
           this.field_216027_d = p_216023_1_;
           return this;
-@@ -177,7 +207,7 @@
+@@ -177,7 +_,7 @@
  
        public LootContext func_216022_a(LootParameterSet p_216022_1_) {
           Set<LootParameter<?>> set = Sets.difference(this.field_216025_b.keySet(), p_216022_1_.func_216276_b());
@@ -57,7 +57,7 @@
              throw new IllegalArgumentException("Parameters not allowed in this parameter set: " + set);
           } else {
              Set<LootParameter<?>> set1 = Sets.difference(p_216022_1_.func_216277_a(), this.field_216025_b.keySet());
-@@ -190,7 +220,7 @@
+@@ -190,7 +_,7 @@
                 }
  
                 MinecraftServer minecraftserver = this.field_186474_a.func_73046_m();

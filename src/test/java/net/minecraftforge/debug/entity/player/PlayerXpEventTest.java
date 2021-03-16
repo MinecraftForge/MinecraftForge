@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,7 @@ public class PlayerXpEventTest
     public static void onPlayerPickupXp(PlayerXpEvent.PickupXp event)
     {
         if (!ENABLE) return;
-        logger.info("{} picked up an experience orb worth {}", event.getPlayer().getName().getString(), event.getOrb().getXpValue());
+        logger.info("{} picked up an experience orb worth {}", event.getPlayer().getName().getString(), event.getOrb().getValue());
     }
 
     @SubscribeEvent

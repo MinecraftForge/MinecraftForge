@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,9 +30,9 @@ public class CommandModList {
     static ArgumentBuilder<CommandSource, ?> register()
     {
         return Commands.literal("mods")
-                .requires(cs->cs.hasPermissionLevel(0)) //permission
+                .requires(cs->cs.hasPermission(0)) //permission
                 .executes(ctx -> {
-                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.mods.list",
+                            ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.mods.list",
                                     ModList.get().applyForEachModFile(modFile ->
                                             // locator - filename : firstmod (version) - numberofmods\n
                                             String.format("%s %s : %s (%s) - %d",

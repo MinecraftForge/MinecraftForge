@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/SmallFireballEntity.java
 +++ b/net/minecraft/entity/projectile/SmallFireballEntity.java
-@@ -49,7 +49,7 @@
+@@ -49,7 +_,7 @@
        super.func_230299_a_(p_230299_1_);
        if (!this.field_70170_p.field_72995_K) {
           Entity entity = this.func_234616_v_();

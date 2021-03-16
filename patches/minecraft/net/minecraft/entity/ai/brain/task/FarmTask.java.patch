@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/brain/task/FarmTask.java
 +++ b/net/minecraft/entity/ai/brain/task/FarmTask.java
-@@ -37,7 +37,7 @@
+@@ -37,7 +_,7 @@
     }
  
     protected boolean func_212832_a_(ServerWorld p_212832_1_, VillagerEntity p_212832_2_) {
@@ -9,7 +9,7 @@
           return false;
        } else if (p_212832_2_.func_213700_eh().func_221130_b() != VillagerProfession.field_221156_f) {
           return false;
-@@ -117,6 +117,11 @@
+@@ -117,6 +_,11 @@
                       } else if (itemstack.func_77973_b() == Items.field_185163_cU) {
                          p_212833_1_.func_180501_a(this.field_220422_a, Blocks.field_185773_cZ.func_176223_P(), 3);
                          flag = true;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/enchantment/Enchantments.java
 +++ b/net/minecraft/enchantment/Enchantments.java
-@@ -3,6 +3,7 @@
+@@ -3,6 +_,7 @@
  import net.minecraft.inventory.EquipmentSlotType;
  import net.minecraft.util.registry.Registry;
  

@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/LockableTileEntity.java
 +++ b/net/minecraft/tileentity/LockableTileEntity.java
-@@ -81,4 +81,21 @@
+@@ -81,4 +_,21 @@
     }
  
     protected abstract Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_);

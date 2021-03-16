@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/WolfEntity.java
 +++ b/net/minecraft/entity/passive/WolfEntity.java
-@@ -133,6 +133,7 @@
+@@ -133,6 +_,7 @@
           this.func_175547_a(DyeColor.func_196056_a(p_70037_1_.func_74762_e("CollarColor")));
        }
  
@@ -8,7 +8,7 @@
        this.func_241358_a_((ServerWorld)this.field_70170_p, p_70037_1_);
     }
  
-@@ -347,7 +348,7 @@
+@@ -347,7 +_,7 @@
                 itemstack.func_190918_g(1);
              }
  

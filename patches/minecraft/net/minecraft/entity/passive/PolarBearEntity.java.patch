@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/PolarBearEntity.java
 +++ b/net/minecraft/entity/passive/PolarBearEntity.java
-@@ -103,6 +103,7 @@
+@@ -103,6 +_,7 @@
  
     public void func_70037_a(CompoundNBT p_70037_1_) {
        super.func_70037_a(p_70037_1_);

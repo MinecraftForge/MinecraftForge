@@ -1,4 +1,5 @@
 {
   "fieldtomethodtransformers": "META-INF/fieldtomethodtransformers.js",
-  "field_to_instanceof": "coremods/field_to_instanceof.js"
+  "field_to_instanceof": "coremods/field_to_instanceof.js",
+  "add_bouncer_method": "coremods/add_bouncer_method.js"
 }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,9 +52,9 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
     }
 
     @Override
-    public boolean isAmbientOcclusion()
+    public boolean useAmbientOcclusion()
     {
-        return originalModel.isAmbientOcclusion();
+        return originalModel.useAmbientOcclusion();
     }
 
     @Override
@@ -70,27 +70,27 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
     }
 
     @Override
-    public boolean isSideLit()
+    public boolean usesBlockLight()
     {
-        return originalModel.isSideLit();
+        return originalModel.usesBlockLight();
     }
 
     @Override
-    public boolean isBuiltInRenderer()
+    public boolean isCustomRenderer()
     {
-        return originalModel.isBuiltInRenderer();
+        return originalModel.isCustomRenderer();
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture()
+    public TextureAtlasSprite getParticleIcon()
     {
-        return originalModel.getParticleTexture();
+        return originalModel.getParticleIcon();
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms()
+    public ItemCameraTransforms getTransforms()
     {
-        return originalModel.getItemCameraTransforms();
+        return originalModel.getTransforms();
     }
 
     @Override

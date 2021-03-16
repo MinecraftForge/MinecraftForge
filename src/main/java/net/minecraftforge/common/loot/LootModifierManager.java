@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,7 +53,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class LootModifierManager extends JsonReloadListener {
     public static final Logger LOGGER = LogManager.getLogger();
-    private static final Gson GSON_INSTANCE = LootSerializers.func_237387_b_().create();
+    private static final Gson GSON_INSTANCE = LootSerializers.createFunctionSerializer().create();
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
@@ -84,7 +84,7 @@ public class LootModifierManager extends JsonReloadListener {
         ResourceLocation resourcelocation = new ResourceLocation("forge","loot_modifiers/global_loot_modifiers.json");
         try {
             //read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
-            for(IResource iresource : resourceManagerIn.getAllResources(resourcelocation)) {
+            for(IResource iresource : resourceManagerIn.getResources(resourcelocation)) {
                 try (   InputStream inputstream = iresource.getInputStream();
                         Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
                         ) {
@@ -101,7 +101,7 @@ public class LootModifierManager extends JsonReloadListener {
                 }
 
                 catch (RuntimeException | IOException ioexception) {
-                    LOGGER.error("Couldn't read global loot modifier list {} in data pack {}", resourcelocation, iresource.getPackName(), ioexception);
+                    LOGGER.error("Couldn't read global loot modifier list {} in data pack {}", resourcelocation, iresource.getSourceName(), ioexception);
                 } finally {
                     IOUtils.closeQuietly((Closeable)iresource);
                 }
@@ -133,7 +133,7 @@ public class LootModifierManager extends JsonReloadListener {
         ResourceLocation serializer = location;
         if (object.has("type"))
         {
-            serializer = new ResourceLocation(JSONUtils.getString(object, "type"));
+            serializer = new ResourceLocation(JSONUtils.getAsString(object, "type"));
         }
 
         return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(serializer).read(location, object, lootConditions);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/FlyingEntity.java
 +++ b/net/minecraft/entity/FlyingEntity.java
-@@ -27,15 +27,16 @@
+@@ -27,15 +_,16 @@
           this.func_213315_a(MoverType.SELF, this.func_213322_ci());
           this.func_213317_d(this.func_213322_ci().func_186678_a(0.5D));
        } else {

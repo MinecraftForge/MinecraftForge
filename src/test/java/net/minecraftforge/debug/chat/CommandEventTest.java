@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,8 +55,8 @@ public class CommandEventTest
         // test: whenever a player uses the /give command, let everyone on the server know
         if (nodes.size() > 0 && nodes.get(0).getNode() == dispatcher.getRoot().getChild("give"))
         {
-            String msg = source.getName() + " used the give command: " + event.getParseResults().getReader().getString();
-            source.getServer().getPlayerList().getPlayers().forEach(player -> player.sendMessage(new StringTextComponent(msg), player.getUniqueID()));
+            String msg = source.getTextName() + " used the give command: " + event.getParseResults().getReader().getString();
+            source.getServer().getPlayerList().getPlayers().forEach(player -> player.sendMessage(new StringTextComponent(msg), player.getUUID()));
             return;
         }
 

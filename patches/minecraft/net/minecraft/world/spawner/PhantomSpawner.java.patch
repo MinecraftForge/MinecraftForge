@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/spawner/PhantomSpawner.java
 +++ b/net/minecraft/world/spawner/PhantomSpawner.java
-@@ -57,6 +57,7 @@
+@@ -57,6 +_,7 @@
  
                                   for(int i1 = 0; i1 < l; ++i1) {
                                      PhantomEntity phantomentity = EntityType.field_203097_aH.func_200721_a(p_230253_1_);

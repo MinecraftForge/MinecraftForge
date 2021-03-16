@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -81,6 +81,6 @@ public class FMLLoginWrapper {
 
     void sendServerToClientLoginPacket(final ResourceLocation resourceLocation, final PacketBuffer buffer, final int index, final NetworkManager manager) {
         PacketBuffer pb = wrapPacket(resourceLocation, buffer);
-        manager.sendPacket(NetworkDirection.LOGIN_TO_CLIENT.buildPacket(Pair.of(pb, index), WRAPPER).getThis());
+        manager.send(NetworkDirection.LOGIN_TO_CLIENT.buildPacket(Pair.of(pb, index), WRAPPER).getThis());
     }
 }

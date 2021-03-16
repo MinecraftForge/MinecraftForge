@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -235,14 +235,14 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             for (Entry<Perspective, ItemTransformVec3f> e : transforms.entrySet()) {
                 JsonObject transform = new JsonObject();
                 ItemTransformVec3f vec = e.getValue();
-                if (vec.equals(ItemTransformVec3f.DEFAULT)) continue;
-                if (!vec.rotation.equals(ItemTransformVec3f.Deserializer.ROTATION_DEFAULT)) {
+                if (vec.equals(ItemTransformVec3f.NO_TRANSFORM)) continue;
+                if (!vec.rotation.equals(ItemTransformVec3f.Deserializer.DEFAULT_ROTATION)) {
                     transform.add("rotation", serializeVector3f(vec.rotation));
                 }
-                if (!vec.translation.equals(ItemTransformVec3f.Deserializer.TRANSLATION_DEFAULT)) {
+                if (!vec.translation.equals(ItemTransformVec3f.Deserializer.DEFAULT_TRANSLATION)) {
                     transform.add("translation", serializeVector3f(e.getValue().translation));
                 }
-                if (!vec.scale.equals(ItemTransformVec3f.Deserializer.SCALE_DEFAULT)) {
+                if (!vec.scale.equals(ItemTransformVec3f.Deserializer.DEFAULT_SCALE)) {
                     transform.add("scale", serializeVector3f(e.getValue().scale));
                 }
                 display.add(e.getKey().name, transform);
@@ -262,16 +262,16 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             JsonArray elements = new JsonArray();
             this.elements.stream().map(ElementBuilder::build).forEach(part -> {
                 JsonObject partObj = new JsonObject();
-                partObj.add("from", serializeVector3f(part.positionFrom));
-                partObj.add("to", serializeVector3f(part.positionTo));
+                partObj.add("from", serializeVector3f(part.from));
+                partObj.add("to", serializeVector3f(part.to));
 
-                if (part.partRotation != null) {
+                if (part.rotation != null) {
                     JsonObject rotation = new JsonObject();
-                    rotation.add("origin", serializeVector3f(part.partRotation.origin));
-                    rotation.addProperty("axis", part.partRotation.axis.getString());
-                    rotation.addProperty("angle", part.partRotation.angle);
-                    if (part.partRotation.rescale) {
-                        rotation.addProperty("rescale", part.partRotation.rescale);
+                    rotation.add("origin", serializeVector3f(part.rotation.origin));
+                    rotation.addProperty("axis", part.rotation.axis.getSerializedName());
+                    rotation.addProperty("angle", part.rotation.angle);
+                    if (part.rotation.rescale) {
+                        rotation.addProperty("rescale", part.rotation.rescale);
                     }
                     partObj.add("rotation", rotation);
                 }
@@ -282,26 +282,26 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
                 JsonObject faces = new JsonObject();
                 for (Direction dir : Direction.values()) {
-                    BlockPartFace face = part.mapFaces.get(dir);
+                    BlockPartFace face = part.faces.get(dir);
                     if (face == null) continue;
 
                     JsonObject faceObj = new JsonObject();
                     faceObj.addProperty("texture", serializeLocOrKey(face.texture));
-                    if (!Arrays.equals(face.blockFaceUV.uvs, part.getFaceUvs(dir))) {
-                        faceObj.add("uv", new Gson().toJsonTree(face.blockFaceUV.uvs));
+                    if (!Arrays.equals(face.uv.uvs, part.uvsByFace(dir))) {
+                        faceObj.add("uv", new Gson().toJsonTree(face.uv.uvs));
                     }
-                    if (face.cullFace != null) {
-                        faceObj.addProperty("cullface", face.cullFace.getString());
+                    if (face.cullForDirection != null) {
+                        faceObj.addProperty("cullface", face.cullForDirection.getSerializedName());
                     }
-                    if (face.blockFaceUV.rotation != 0) {
-                        faceObj.addProperty("rotation", face.blockFaceUV.rotation);
+                    if (face.uv.rotation != 0) {
+                        faceObj.addProperty("rotation", face.uv.rotation);
                     }
                     if (face.tintIndex != -1) {
                         faceObj.addProperty("tintindex", face.tintIndex);
                     }
-                    faces.add(dir.getString(), faceObj);
+                    faces.add(dir.getSerializedName(), faceObj);
                 }
-                if (!part.mapFaces.isEmpty()) {
+                if (!part.faces.isEmpty()) {
                     partObj.add("faces", faces);
                 }
                 elements.add(partObj);
@@ -324,9 +324,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     private JsonArray serializeVector3f(Vector3f vec) {
         JsonArray ret = new JsonArray();
-        ret.add(serializeFloat(vec.getX()));
-        ret.add(serializeFloat(vec.getY()));
-        ret.add(serializeFloat(vec.getZ()));
+        ret.add(serializeFloat(vec.x()));
+        ret.add(serializeFloat(vec.y()));
+        ret.add(serializeFloat(vec.z()));
         return ret;
     }
 
@@ -350,9 +350,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         }
 
         private void validatePosition(Vector3f pos) {
-            validateCoordinate(pos.getX(), 'x');
-            validateCoordinate(pos.getY(), 'y');
-            validateCoordinate(pos.getZ(), 'z');
+            validateCoordinate(pos.x(), 'x');
+            validateCoordinate(pos.y(), 'y');
+            validateCoordinate(pos.z(), 'z');
         }
 
         /**

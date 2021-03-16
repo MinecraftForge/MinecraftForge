@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,7 @@ public class EnderMaskTest
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Item> ender_mask = ITEMS.register("ender_mask", () ->
-            new ArmorItem(ArmorMaterial.LEATHER, EquipmentSlotType.HEAD, (new Item.Properties().group(ItemGroup.MISC)))
+            new ArmorItem(ArmorMaterial.LEATHER, EquipmentSlotType.HEAD, (new Item.Properties().tab(ItemGroup.TAB_MISC)))
             {
                 @Override
                 public boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity)

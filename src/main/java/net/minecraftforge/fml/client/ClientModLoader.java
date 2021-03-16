@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -99,20 +99,20 @@ public class ClientModLoader
         ClientModLoader.mc = minecraft;
         LogicalSidedProvider.setClient(()->minecraft);
         LanguageHook.loadForgeAndMCLangs();
-        earlyLoaderGUI = new EarlyLoaderGUI(minecraft.getMainWindow());
+        earlyLoaderGUI = new EarlyLoaderGUI(minecraft.getWindow());
         createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), new SpacedRunnable(earlyLoaderGUI::renderTick))).run();
         if (error == null) {
             ResourcePackLoader.loadResourcePacks(defaultResourcePacks, ClientModLoader::buildPackFinder);
-            DatapackCodec.VANILLA_CODEC.addModPacks(ResourcePackLoader.getPackNames());
-            mcResourceManager.addReloadListener(ClientModLoader::onResourceReload);
-            mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
+            DatapackCodec.DEFAULT.addModPacks(ResourcePackLoader.getPackNames());
+            mcResourceManager.registerReloadListener(ClientModLoader::onResourceReload);
+            mcResourceManager.registerReloadListener(BrandingControl.resourceManagerReloadListener());
             ModelLoaderRegistry.init();
         }
     }
 
     private static CompletableFuture<Void> onResourceReload(final IFutureReloadListener.IStage stage, final IResourceManager resourceManager, final IProfiler prepareProfiler, final IProfiler executeProfiler, final Executor asyncExecutor, final Executor syncExecutor) {
         return CompletableFuture.runAsync(createRunnableWithCatch(() -> startModLoading(ModWorkManager.wrappedExecutor(syncExecutor), asyncExecutor)), ModWorkManager.parallelExecutor())
-                .thenCompose(stage::markCompleteAwaitingOthers)
+                .thenCompose(stage::wait)
                 .thenRunAsync(() -> finishModLoading(ModWorkManager.wrappedExecutor(syncExecutor), asyncExecutor), ModWorkManager.parallelExecutor());
     }
 
@@ -134,7 +134,7 @@ public class ClientModLoader
 
     private static void postSidedRunnable() {
         LOGGER.debug(LOADING, "Running post client event work");
-        RenderingRegistry.loadEntityRenderers(mc.getRenderManager());
+        RenderingRegistry.loadEntityRenderers(mc.getEntityRenderDispatcher());
     }
 
     private static void preSidedRunnable() {
@@ -147,7 +147,7 @@ public class ClientModLoader
         loading = false;
         loadingComplete = true;
         // reload game settings on main thread
-        syncExecutor.execute(()->mc.gameSettings.loadOptions());
+        syncExecutor.execute(()->mc.options.load());
     }
 
     public static VersionChecker.Status checkForUpdates()
@@ -185,10 +185,10 @@ public class ClientModLoader
         } else {
             // Double check we have the langs loaded for forge
             LanguageHook.loadForgeAndMCLangs();
-            dumpedLocation = CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDir);
+            dumpedLocation = CrashReportExtender.dumpModLoadingCrashReport(LOGGER, error, mc.gameDirectory);
         }
         if (error != null || !warnings.isEmpty()) {
-            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings, dumpedLocation));
+            mc.setScreen(new LoadingErrorScreen(error, warnings, dumpedLocation));
             return true;
         } else {
             ClientHooks.logMissingTextureErrors();
@@ -215,7 +215,7 @@ public class ClientModLoader
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
             final String name = "mod:" + mod.getModId();
-            final ResourcePackInfo packInfo = ResourcePackInfo.createResourcePack(name, false, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.PLAIN);
+            final ResourcePackInfo packInfo = ResourcePackInfo.create(name, false, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.DEFAULT);
             if (packInfo == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
@@ -229,9 +229,9 @@ public class ClientModLoader
                 hiddenPacks.add(e.getValue());
             }
         }
-        final ResourcePackInfo packInfo = ResourcePackInfo.createResourcePack("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources",
+        final ResourcePackInfo packInfo = ResourcePackInfo.create("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources",
                 new PackMetadataSection(new TranslationTextComponent("fml.resources.modresources", hiddenPacks.size()), 6),
-                hiddenPacks), factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.PLAIN);
+                hiddenPacks), factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.DEFAULT);
         consumer.accept(packInfo);
     }
 }

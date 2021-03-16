@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/entity/player/AbstractClientPlayerEntity.java
 +++ b/net/minecraft/client/entity/player/AbstractClientPlayerEntity.java
-@@ -126,6 +126,6 @@
+@@ -126,6 +_,6 @@
           f *= 1.0F - f1 * 0.15F;
        }
  

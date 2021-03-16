@@ -1,6 +1,6 @@
 --- a/net/minecraft/advancements/AdvancementRewards.java
 +++ b/net/minecraft/advancements/AdvancementRewards.java
-@@ -39,7 +39,7 @@
+@@ -39,7 +_,7 @@
  
     public void func_192113_a(ServerPlayerEntity p_192113_1_) {
        p_192113_1_.func_195068_e(this.field_192115_b);

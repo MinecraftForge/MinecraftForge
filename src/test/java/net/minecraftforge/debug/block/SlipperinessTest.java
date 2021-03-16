@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,7 +47,7 @@ public class SlipperinessTest
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e)
     {
-        e.getRegistry().register((new Block(Block.Properties.create(Material.PACKED_ICE))
+        e.getRegistry().register((new Block(Block.Properties.of(Material.ICE_SOLID))
         {
             @Override
             public float getSlipperiness(BlockState state, IWorldReader world, BlockPos pos, Entity entity)

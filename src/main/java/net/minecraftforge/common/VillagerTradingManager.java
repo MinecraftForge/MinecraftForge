@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,13 +43,13 @@ public class VillagerTradingManager
 
     static
     {
-        VillagerTrades.VILLAGER_DEFAULT_TRADES.entrySet().forEach(e ->
+        VillagerTrades.TRADES.entrySet().forEach(e ->
         {
             Int2ObjectMap<ITrade[]> copy = new Int2ObjectOpenHashMap<>();
             e.getValue().int2ObjectEntrySet().forEach(ent -> copy.put(ent.getIntKey(), Arrays.copyOf(ent.getValue(), ent.getValue().length)));
             VANILLA_TRADES.put(e.getKey(), copy);
         });
-        VillagerTrades.field_221240_b.int2ObjectEntrySet().forEach(e -> WANDERER_TRADES.put(e.getIntKey(), Arrays.copyOf(e.getValue(), e.getValue().length)));
+        VillagerTrades.WANDERING_TRADER_TRADES.int2ObjectEntrySet().forEach(e -> WANDERER_TRADES.put(e.getIntKey(), Arrays.copyOf(e.getValue(), e.getValue().length)));
     }
 
     static void loadTrades(FMLServerAboutToStartEvent e)
@@ -68,8 +68,8 @@ public class VillagerTradingManager
         Arrays.stream(WANDERER_TRADES.get(1)).forEach(generic::add);
         Arrays.stream(WANDERER_TRADES.get(2)).forEach(rare::add);
         MinecraftForge.EVENT_BUS.post(new WandererTradesEvent(generic, rare));
-        VillagerTrades.field_221240_b.put(1, generic.toArray(new ITrade[0]));
-        VillagerTrades.field_221240_b.put(2, rare.toArray(new ITrade[0]));
+        VillagerTrades.WANDERING_TRADER_TRADES.put(1, generic.toArray(new ITrade[0]));
+        VillagerTrades.WANDERING_TRADER_TRADES.put(2, rare.toArray(new ITrade[0]));
     }
 
     /**
@@ -92,7 +92,7 @@ public class VillagerTradingManager
             MinecraftForge.EVENT_BUS.post(new VillagerTradesEvent(mutableTrades, prof));
             Int2ObjectMap<ITrade[]> newTrades = new Int2ObjectOpenHashMap<>();
             mutableTrades.int2ObjectEntrySet().forEach(e -> newTrades.put(e.getIntKey(), e.getValue().toArray(new ITrade[0])));
-            VillagerTrades.VILLAGER_DEFAULT_TRADES.put(prof, newTrades);
+            VillagerTrades.TRADES.put(prof, newTrades);
         }
     }
 

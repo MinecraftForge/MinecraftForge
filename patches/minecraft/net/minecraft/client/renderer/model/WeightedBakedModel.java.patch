@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/WeightedBakedModel.java
 +++ b/net/minecraft/client/renderer/model/WeightedBakedModel.java
-@@ -12,7 +12,7 @@
+@@ -12,7 +_,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,7 +9,7 @@
     private final int field_177567_a;
     private final List<WeightedBakedModel.WeightedModel> field_177565_b;
     private final IBakedModel field_177566_c;
-@@ -23,14 +23,20 @@
+@@ -23,14 +_,20 @@
        this.field_177566_c = (p_i46073_1_.get(0)).field_185281_b;
     }
  
@@ -32,7 +32,7 @@
     public boolean func_177556_c() {
        return this.field_177566_c.func_177556_c();
     }
-@@ -47,10 +53,18 @@
+@@ -47,8 +_,16 @@
        return this.field_177566_c.func_177554_e();
     }
  
@@ -42,12 +42,10 @@
 +
     public ItemCameraTransforms func_177552_f() {
        return this.field_177566_c.func_177552_f();
-    }
- 
-+   public IBakedModel handlePerspective(net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType transformType, com.mojang.blaze3d.matrix.MatrixStack matrixStack) {
-+      return this.field_177566_c.handlePerspective(transformType, matrixStack);
 +   }
 +
-    public ItemOverrideList func_188617_f() {
-       return this.field_177566_c.func_188617_f();
++   public IBakedModel handlePerspective(net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType transformType, com.mojang.blaze3d.matrix.MatrixStack matrixStack) {
++      return this.field_177566_c.handlePerspective(transformType, matrixStack);
     }
+ 
+    public ItemOverrideList func_188617_f() {

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -48,13 +48,13 @@ public class NameplateRenderingEventTest
 
         if(event.getEntity() instanceof CowEntity)
         {
-            event.setContent(new StringTextComponent("Evil Cow").mergeStyle(TextFormatting.RED));
+            event.setContent(new StringTextComponent("Evil Cow").withStyle(TextFormatting.RED));
             event.setResult(Event.Result.ALLOW);
         }
 
         if(event.getEntity() instanceof PlayerEntity)
         {
-            event.setContent(event.getEntity().getDisplayName().deepCopy().mergeStyle(TextFormatting.GOLD));
+            event.setContent(event.getEntity().getDisplayName().copy().withStyle(TextFormatting.GOLD));
         }
     }
 }

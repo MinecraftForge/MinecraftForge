@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/storage/SaveFormat.java
 +++ b/net/minecraft/world/storage/SaveFormat.java
-@@ -95,7 +95,7 @@
+@@ -95,7 +_,7 @@
           }
        }
  
@@ -9,7 +9,7 @@
        DataResult<DimensionGeneratorSettings> dataresult = DimensionGeneratorSettings.field_236201_a_.parse(dynamic1);
        return Pair.of(dataresult.resultOrPartial(Util.func_240982_a_("WorldGenSettings: ", field_215785_a::error)).orElseGet(() -> {
           Registry<DimensionType> registry = RegistryLookupCodec.func_244331_a(Registry.field_239698_ad_).codec().parse(dynamic1).resultOrPartial(Util.func_240982_a_("Dimension type registry: ", field_215785_a::error)).orElseThrow(() -> {
-@@ -182,6 +182,10 @@
+@@ -182,6 +_,10 @@
     }
  
     private static BiFunction<File, DataFixer, ServerWorldInfo> func_237270_b_(DynamicOps<INBT> p_237270_0_, DatapackCodec p_237270_1_) {
@@ -20,7 +20,7 @@
        return (p_242976_2_, p_242976_3_) -> {
           try {
              CompoundNBT compoundnbt = CompressedStreamTools.func_244263_a(p_242976_2_);
-@@ -193,7 +197,10 @@
+@@ -193,7 +_,10 @@
              Pair<DimensionGeneratorSettings, Lifecycle> pair = func_237259_a_(dynamic, p_242976_3_, i);
              VersionData versiondata = VersionData.func_237324_a_(dynamic);
              WorldSettings worldsettings = WorldSettings.func_234951_a_(dynamic, p_237270_1_);
@@ -32,7 +32,7 @@
           } catch (Exception exception) {
              field_215785_a.error("Exception reading {}", p_242976_2_, exception);
              return null;
-@@ -314,7 +321,7 @@
+@@ -314,7 +_,7 @@
        @Nullable
        public IServerConfiguration func_237284_a_(DynamicOps<INBT> p_237284_1_, DatapackCodec p_237284_2_) {
           this.func_237301_i_();
@@ -41,7 +41,7 @@
        }
  
        @Nullable
-@@ -335,6 +342,8 @@
+@@ -335,6 +_,8 @@
           CompoundNBT compoundnbt1 = new CompoundNBT();
           compoundnbt1.func_218657_a("Data", compoundnbt);
  
@@ -50,14 +50,14 @@
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
              CompressedStreamTools.func_244264_a(compoundnbt1, file2);
-@@ -352,6 +361,10 @@
+@@ -350,6 +_,10 @@
+       public File func_237298_f_() {
+          this.func_237301_i_();
           return this.field_237279_c_.resolve("icon.png").toFile();
-       }
- 
-+      public Path getWorldDir() {
-+          return field_237279_c_;
 +      }
 +
++      public Path getWorldDir() {
++          return field_237279_c_;
+       }
+ 
        @OnlyIn(Dist.CLIENT)
-       public void func_237299_g_() throws IOException {
-          this.func_237301_i_();

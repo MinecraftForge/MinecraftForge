@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -57,9 +57,9 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
         return new BakedModel(
                 owner.useSmoothLighting(), owner.isShadedInGui(), owner.isSideLit(),
                 spriteGetter.apply(owner.resolveTexture("particle")), overrides,
-                baseModel.bakeModel(bakery, baseModel, spriteGetter, modelTransform, modelLocation, owner.isSideLit()),
+                baseModel.bake(bakery, baseModel, spriteGetter, modelTransform, modelLocation, owner.isSideLit()),
                 ImmutableMap.copyOf(Maps.transformValues(perspectives, value -> {
-                    return value.bakeModel(bakery, value, spriteGetter, modelTransform, modelLocation, owner.isSideLit());
+                    return value.bake(bakery, value, spriteGetter, modelTransform, modelLocation, owner.isSideLit());
                 }))
         );
     }
@@ -68,9 +68,9 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
     public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         Set<RenderMaterial> textures = Sets.newHashSet();
-        textures.addAll(baseModel.getTextures(modelGetter, missingTextureErrors));
+        textures.addAll(baseModel.getMaterials(modelGetter, missingTextureErrors));
         for(BlockModel model : perspectives.values())
-            textures.addAll(model.getTextures(modelGetter, missingTextureErrors));
+            textures.addAll(model.getMaterials(modelGetter, missingTextureErrors));
         return textures;
     }
 
@@ -102,7 +102,7 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
         }
 
         @Override
-        public boolean isAmbientOcclusion()
+        public boolean useAmbientOcclusion()
         {
             return isAmbientOcclusion;
         }
@@ -114,19 +114,19 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
         }
 
         @Override
-        public boolean isSideLit()
+        public boolean usesBlockLight()
         {
             return isSideLit;
         }
 
         @Override
-        public boolean isBuiltInRenderer()
+        public boolean isCustomRenderer()
         {
             return false;
         }
 
         @Override
-        public TextureAtlasSprite getParticleTexture()
+        public TextureAtlasSprite getParticleIcon()
         {
             return particle;
         }
@@ -144,9 +144,9 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
         }
 
         @Override
-        public ItemCameraTransforms getItemCameraTransforms()
+        public ItemCameraTransforms getTransforms()
         {
-            return ItemCameraTransforms.DEFAULT;
+            return ItemCameraTransforms.NO_TRANSFORMS;
         }
 
         @Override
@@ -186,16 +186,16 @@ public class SeparatePerspectiveModel implements IModelGeometry<SeparatePerspect
         @Override
         public SeparatePerspectiveModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
         {
-            BlockModel baseModel = deserializationContext.deserialize(JSONUtils.getJsonObject(modelContents, "base"), BlockModel.class);
+            BlockModel baseModel = deserializationContext.deserialize(JSONUtils.getAsJsonObject(modelContents, "base"), BlockModel.class);
 
-            JsonObject perspectiveData = JSONUtils.getJsonObject(modelContents, "perspectives");
+            JsonObject perspectiveData = JSONUtils.getAsJsonObject(modelContents, "perspectives");
 
             ImmutableMap.Builder<ItemCameraTransforms.TransformType, BlockModel> perspectives = ImmutableMap.builder();
             for(Map.Entry<String, ItemCameraTransforms.TransformType> perspective : PERSPECTIVES.entrySet())
             {
                 if (perspectiveData.has(perspective.getKey()))
                 {
-                    BlockModel perspectiveModel = deserializationContext.deserialize(JSONUtils.getJsonObject(perspectiveData, perspective.getKey()), BlockModel.class);
+                    BlockModel perspectiveModel = deserializationContext.deserialize(JSONUtils.getAsJsonObject(perspectiveData, perspective.getKey()), BlockModel.class);
                     perspectives.put(perspective.getValue(), perspectiveModel);
                 }
             }

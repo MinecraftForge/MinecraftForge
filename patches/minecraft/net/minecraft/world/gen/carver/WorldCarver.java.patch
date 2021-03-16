@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/carver/WorldCarver.java
 +++ b/net/minecraft/world/gen/carver/WorldCarver.java
-@@ -22,7 +22,7 @@
+@@ -22,7 +_,7 @@
  import net.minecraft.world.gen.feature.ProbabilityConfig;
  import org.apache.commons.lang3.mutable.MutableBoolean;
  

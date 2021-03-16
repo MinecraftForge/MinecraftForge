@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/goal/EatGrassGoal.java
 +++ b/net/minecraft/entity/ai/goal/EatGrassGoal.java
-@@ -59,7 +59,7 @@
+@@ -59,7 +_,7 @@
        if (this.field_151502_a == 4) {
           BlockPos blockpos = this.field_151500_b.func_233580_cy_();
           if (field_179505_b.test(this.field_151501_c.func_180495_p(blockpos))) {
@@ -9,7 +9,7 @@
                 this.field_151501_c.func_175655_b(blockpos, false);
              }
  
-@@ -67,7 +67,7 @@
+@@ -67,7 +_,7 @@
           } else {
              BlockPos blockpos1 = blockpos.func_177977_b();
              if (this.field_151501_c.func_180495_p(blockpos1).func_203425_a(Blocks.field_196658_i)) {

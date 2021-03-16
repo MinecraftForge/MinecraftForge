@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -116,6 +116,6 @@ public class FMLMCRegisterPacketHandler {
         PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
         pb.writeBytes(getFrom(manager).toByteArray());
         final ICustomPacket<IPacket<?>> iPacketICustomPacket = dir.buildPacket(Pair.of(pb, 0), FMLNetworkConstants.MC_REGISTER_RESOURCE);
-        manager.sendPacket(iPacketICustomPacket.getThis());
+        manager.send(iPacketICustomPacket.getThis());
     }
 }

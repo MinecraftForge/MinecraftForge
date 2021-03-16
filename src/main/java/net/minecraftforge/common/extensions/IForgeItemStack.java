@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,7 +61,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * ItemStack sensitive version of getContainerItem. Returns a full ItemStack
      * instance of the result.
      *
-     * @param itemStack The current ItemStack
      * @return The resulting ItemStack
      */
     default ItemStack getContainerItem()
@@ -72,7 +71,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     /**
      * ItemStack sensitive version of hasContainerItem
      *
-     * @param stack The current item stack
      * @return True if this item has a 'container'
      */
     default boolean hasContainerItem()
@@ -111,15 +109,15 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     default ActionResultType onItemUseFirst(ItemUseContext context)
     {
        PlayerEntity entityplayer = context.getPlayer();
-       BlockPos blockpos = context.getPos();
-       CachedBlockInfo blockworldstate = new CachedBlockInfo(context.getWorld(), blockpos, false);
-       if (entityplayer != null && !entityplayer.abilities.allowEdit && !getStack().canPlaceOn(context.getWorld().getTags(), blockworldstate)) {
+       BlockPos blockpos = context.getClickedPos();
+       CachedBlockInfo blockworldstate = new CachedBlockInfo(context.getLevel(), blockpos, false);
+       if (entityplayer != null && !entityplayer.abilities.mayBuild && !getStack().hasAdventureModePlaceTagForBlock(context.getLevel().getTagManager(), blockworldstate)) {
           return ActionResultType.PASS;
        } else {
           Item item = getStack().getItem();
           ActionResultType enumactionresult = item.onItemUseFirst(getStack(), context);
           if (entityplayer != null && enumactionresult == ActionResultType.SUCCESS) {
-             entityplayer.addStat(Stats.ITEM_USED.get(item));
+             entityplayer.awardStat(Stats.ITEM_USED.get(item));
           }
 
           return enumactionresult;
@@ -129,7 +127,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     default CompoundNBT serializeNBT()
     {
         CompoundNBT ret = new CompoundNBT();
-        getStack().write(ret);
+        getStack().save(ret);
         return ret;
     }
     /**
@@ -168,7 +166,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * check the individual implementation for reference. By default this will check
      * if the enchantment type is valid for this item type.
      *
-     * @param stack       the item stack to be enchanted
      * @param enchantment the enchantment to be applied
      * @return true if the enchantment can be applied to this item
      */
@@ -190,10 +187,10 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
      * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.entity.EntityLiving#getSlotForItemStack(ItemStack)}.</em>
+     * {@link net.minecraft.entity.LivingEntity#getSlotForItemStack(ItemStack)}.</em>
      *
      * @return the armor slot of the ItemStack, or {@code null} to let the default
-     *         vanilla logic as per {@code EntityLiving.getSlotForItemStack(stack)}
+     *         vanilla logic as per {@code LivingEntity.getSlotForItemStack(stack)}
      *         decide
      */
     @Nullable
@@ -206,8 +203,8 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * Can this Item disable a shield
      *
      * @param shield   The shield in question
-     * @param entity   The EntityLivingBase holding the shield
-     * @param attacker The EntityLivingBase holding the ItemStack
+     * @param entity   The LivingEntity holding the shield
+     * @param attacker The LivingEntity holding the ItemStack
      * @retrun True if this ItemStack can disable the shield in question.
      */
     default boolean canDisableShield(ItemStack shield, LivingEntity entity, LivingEntity attacker)
@@ -292,7 +289,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     }
 
     /**
-     * Called every tick from {@link EntityHorse#onUpdate()} on the item in the
+     * Called every tick from {@link HorseEntity#onUpdate()} on the item in the
      * armor slot.
      *
      * @param world the world the horse is in
@@ -319,7 +316,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     /**
      * Allow or forbid the specific book/item combination as an anvil enchant
      *
-     * @param stack The item
      * @param book  The book
      * @return if the enchantment is allowed
      */
@@ -335,7 +331,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * spawning in the world
      *
      * @param player The player that dropped the item
-     * @param item   The item stack, before the item is removed.
      */
     default boolean onDroppedByPlayer(PlayerEntity player)
     {
@@ -378,7 +373,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * Override this method to decide what to do with the NBT data received from
      * getNBTShareTag().
      *
-     * @param stack The stack that received NBT
      * @param nbt   Received NBT, can be null
      */
     default void readShareTag(@Nullable CompoundNBT nbt)
@@ -428,7 +422,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
             return other.isEmpty();
         else
             return !other.isEmpty() && getStack().getCount() == other.getCount() && getStack().getItem() == other.getItem() &&
-            (limitTags ? getStack().areShareTagsEqual(other) : ItemStack.areItemStackTagsEqual(getStack(), other));
+            (limitTags ? getStack().areShareTagsEqual(other) : ItemStack.tagMatches(getStack(), other));
     }
 
     /**

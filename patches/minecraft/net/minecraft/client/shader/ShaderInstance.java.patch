@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/shader/ShaderInstance.java
 +++ b/net/minecraft/client/shader/ShaderInstance.java
-@@ -51,7 +51,8 @@
+@@ -51,7 +_,8 @@
     private final ShaderLoader field_216563_s;
  
     public ShaderInstance(IResourceManager p_i50988_1_, String p_i50988_2_) throws IOException {
@@ -10,7 +10,7 @@
        this.field_216556_l = p_i50988_2_;
        IResource iresource = null;
  
-@@ -149,7 +150,8 @@
+@@ -149,7 +_,8 @@
     public static ShaderLoader func_216542_a(IResourceManager p_216542_0_, ShaderLoader.ShaderType p_216542_1_, String p_216542_2_) throws IOException {
        ShaderLoader shaderloader = p_216542_1_.func_148064_d().get(p_216542_2_);
        if (shaderloader == null) {

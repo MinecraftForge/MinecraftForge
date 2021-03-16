@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -91,7 +91,7 @@ public final class ItemTextureQuadConverter
                 boolean sameRow = true;
                 for (int x = 0; x < w; x++)
                 {
-                    if (template.isPixelTransparent(0, x, y) != template.isPixelTransparent(0, x, startY))
+                    if (template.isTransparent(0, x, y) != template.isTransparent(0, x, startY))
                     {
                         sameRow = false;
                         break;
@@ -111,7 +111,7 @@ public final class ItemTextureQuadConverter
                 if (x < w)
                 {
                     // current pixel
-                    boolean isVisible = !template.isPixelTransparent(0, x, startY);
+                    boolean isVisible = !template.isTransparent(0, x, startY);
 
                     // no current quad but found a new one
                     if (startX < 0 && isVisible)
@@ -173,7 +173,7 @@ public final class ItemTextureQuadConverter
                 boolean sameColumn = true;
                 for (int y = 0; y < h; y++)
                 {
-                    if (template.isPixelTransparent(0, x, y) != template.isPixelTransparent(0, startX, y))
+                    if (template.isTransparent(0, x, y) != template.isTransparent(0, startX, y))
                     {
                         sameColumn = false;
                         break;
@@ -193,7 +193,7 @@ public final class ItemTextureQuadConverter
                 if (y < h)
                 {
                     // current pixel
-                    boolean isVisible = !template.isPixelTransparent(0, startX, y);
+                    boolean isVisible = !template.isTransparent(0, startX, y);
 
                     // no current quad but found a new one
                     if (startY < 0 && isVisible)
@@ -243,10 +243,10 @@ public final class ItemTextureQuadConverter
     }
     public static BakedQuad genQuad(TransformationMatrix transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, Direction facing, int color, int tint, int luminosity)
     {
-        float u1 = sprite.getInterpolatedU(x1);
-        float v1 = sprite.getInterpolatedV(y1);
-        float u2 = sprite.getInterpolatedU(x2);
-        float v2 = sprite.getInterpolatedV(y2);
+        float u1 = sprite.getU(x1);
+        float v1 = sprite.getV(y1);
+        float u2 = sprite.getU(x2);
+        float v2 = sprite.getV(y2);
 
         x1 /= 16f;
         y1 /= 16f;
@@ -311,9 +311,9 @@ public final class ItemTextureQuadConverter
                     consumer.put(e, r, g, b, a);
                     break;
                 case NORMAL:
-                    float offX = (float) side.getXOffset();
-                    float offY = (float) side.getYOffset();
-                    float offZ = (float) side.getZOffset();
+                    float offX = (float) side.getStepX();
+                    float offY = (float) side.getStepY();
+                    float offZ = (float) side.getStepZ();
                     consumer.put(e, offX, offY, offZ, 0f);
                     break;
                 case UV:

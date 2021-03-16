@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/math/vector/Vector4f.java
 +++ b/net/minecraft/util/math/vector/Vector4f.java
-@@ -125,4 +125,16 @@
+@@ -125,4 +_,16 @@
     public String toString() {
        return "[" + this.field_229368_a_ + ", " + this.field_229369_b_ + ", " + this.field_229370_c_ + ", " + this.field_229371_d_ + "]";
     }

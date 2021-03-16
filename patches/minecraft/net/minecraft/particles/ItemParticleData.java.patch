@@ -1,6 +1,6 @@
 --- a/net/minecraft/particles/ItemParticleData.java
 +++ b/net/minecraft/particles/ItemParticleData.java
-@@ -37,7 +37,7 @@
+@@ -37,7 +_,7 @@
  
     public ItemParticleData(ParticleType<ItemParticleData> p_i47952_1_, ItemStack p_i47952_2_) {
        this.field_197558_b = p_i47952_1_;

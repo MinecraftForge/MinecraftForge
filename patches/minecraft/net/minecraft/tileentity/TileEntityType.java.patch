@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/TileEntityType.java
 +++ b/net/minecraft/tileentity/TileEntityType.java
-@@ -16,7 +16,7 @@
+@@ -16,7 +_,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
     private static final Logger field_206866_A = LogManager.getLogger();
     public static final TileEntityType<FurnaceTileEntity> field_200971_b = func_200966_a("furnace", TileEntityType.Builder.func_223042_a(FurnaceTileEntity::new, Blocks.field_150460_al));
     public static final TileEntityType<ChestTileEntity> field_200972_c = func_200966_a("chest", TileEntityType.Builder.func_223042_a(ChestTileEntity::new, Blocks.field_150486_ae));
-@@ -54,6 +54,7 @@
+@@ -54,6 +_,7 @@
     private final Supplier<? extends T> field_200995_z;
     private final Set<Block> field_223046_I;
     private final Type<?> field_206867_C;
@@ -17,18 +17,18 @@
  
     @Nullable
     public static ResourceLocation func_200969_a(TileEntityType<?> p_200969_0_) {
-@@ -75,6 +76,14 @@
+@@ -73,6 +_,14 @@
+       this.field_200995_z = p_i51497_1_;
+       this.field_223046_I = p_i51497_2_;
        this.field_206867_C = p_i51497_3_;
-    }
- 
++   }
++
 +   public java.util.Set<net.minecraft.util.ResourceLocation> getTags() {
 +      return reverseTags.getTagNames();
 +   }
 +
 +   public boolean isIn(net.minecraft.tags.ITag<TileEntityType<?>> tag) {
 +      return tag.func_230235_a_(this);
-+   }
-+
+    }
+ 
     @Nullable
-    public T func_200968_a() {
-       return this.field_200995_z.get();

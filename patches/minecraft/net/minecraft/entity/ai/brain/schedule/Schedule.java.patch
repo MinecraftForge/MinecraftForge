@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/brain/schedule/Schedule.java
 +++ b/net/minecraft/entity/ai/brain/schedule/Schedule.java
-@@ -8,7 +8,7 @@
+@@ -8,7 +_,7 @@
  import java.util.stream.Collectors;
  import net.minecraft.util.registry.Registry;
  

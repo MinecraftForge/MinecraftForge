@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/DataGenerator.java
 +++ b/net/minecraft/data/DataGenerator.java
-@@ -16,10 +16,11 @@
+@@ -16,10 +_,11 @@
     private final Collection<Path> field_200394_b;
     private final Path field_200395_c;
     private final List<IDataProvider> field_200396_d = Lists.newArrayList();
@@ -13,7 +13,7 @@
     }
  
     public Collection<Path> func_200389_a() {
-@@ -38,6 +39,7 @@
+@@ -38,6 +_,7 @@
  
        for(IDataProvider idataprovider : this.field_200396_d) {
           field_200393_a.info("Starting provider: {}", (Object)idataprovider.func_200397_b());
@@ -21,18 +21,18 @@
           stopwatch1.start();
           idataprovider.func_200398_a(directorycache);
           stopwatch1.stop();
-@@ -53,6 +55,14 @@
-       this.field_200396_d.add(p_200390_1_);
-    }
+@@ -51,6 +_,14 @@
  
+    public void func_200390_a(IDataProvider p_200390_1_) {
+       this.field_200396_d.add(p_200390_1_);
++   }
++
 +   public List<IDataProvider> getProviders() {
 +       return this.providerView;
 +   }
 +
 +   public void addInput(Path value) {
 +      this.field_200394_b.add(value);
-+   }
-+
-    static {
-       Bootstrap.func_151354_b();
     }
+ 
+    static {

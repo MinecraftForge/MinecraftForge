@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,16 +37,16 @@ class CommandGenerate
     static ArgumentBuilder<CommandSource, ?> register()
     {
         return Commands.literal("generate")
-            .requires(cs->cs.hasPermissionLevel(4)) //permission
+            .requires(cs->cs.hasPermission(4)) //permission
             .then(Commands.argument("pos", BlockPosArgument.blockPos())
                 .then(Commands.argument("count", IntegerArgumentType.integer(1))
-                    .then(Commands.argument("dim", DimensionArgument.getDimension())
+                    .then(Commands.argument("dim", DimensionArgument.dimension())
                         .then(Commands.argument("interval", IntegerArgumentType.integer())
-                            .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), DimensionArgument.getDimensionArgument(ctx, "dim"), getInt(ctx, "interval")))
+                            .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getOrLoadBlockPos(ctx, "pos"), getInt(ctx, "count"), DimensionArgument.getDimension(ctx, "dim"), getInt(ctx, "interval")))
                         )
-                        .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), DimensionArgument.getDimensionArgument(ctx, "dim"), -1))
+                        .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getOrLoadBlockPos(ctx, "pos"), getInt(ctx, "count"), DimensionArgument.getDimension(ctx, "dim"), -1))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), ctx.getSource().getWorld(), -1))
+                    .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getOrLoadBlockPos(ctx, "pos"), getInt(ctx, "count"), ctx.getSource().getLevel(), -1))
                 )
             );
     }
@@ -61,7 +61,7 @@ class CommandGenerate
         BlockPos chunkpos = new BlockPos(pos.getX() >> 4, 0, pos.getZ() >> 4);
 
         ChunkGenWorker worker = new ChunkGenWorker(source, chunkpos, count, dim, interval);
-        source.sendFeedback(worker.getStartMessage(source), true);
+        source.sendSuccess(worker.getStartMessage(source), true);
         WorldWorkerManager.addWorker(worker);
 
         return 0;

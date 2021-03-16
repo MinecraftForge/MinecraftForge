@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,28 +55,28 @@ public class ChunkWatchEventTest
     @SubscribeEvent
     public static void onUnwatch(ChunkWatchEvent.UnWatch event)
     {
-        int watched = watchedByPlayer.getInt(event.getPlayer().getUniqueID());
+        int watched = watchedByPlayer.getInt(event.getPlayer().getUUID());
         --watched;
-        watchedByPlayer.put(event.getPlayer().getUniqueID(), watched);
+        watchedByPlayer.put(event.getPlayer().getUUID(), watched);
         logger.info("Unwatching chunk {} in dimension {}. Player's dimension: {}, total chunks watched by player {}",
-                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getEntityWorld()),
+                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getCommandSenderWorld()),
                 watched);
     }
 
     @SubscribeEvent
     public static void onWatch(ChunkWatchEvent.Watch event)
     {
-        int watched = watchedByPlayer.getInt(event.getPlayer().getUniqueID());
+        int watched = watchedByPlayer.getInt(event.getPlayer().getUUID());
         ++watched;
-        watchedByPlayer.put(event.getPlayer().getUniqueID(), watched);
+        watchedByPlayer.put(event.getPlayer().getUUID(), watched);
         logger.info("Watching chunk {} in dimension {}. Player's dimension: {}, total chunks watched by player {}",
-                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getEntityWorld()),
+                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getCommandSenderWorld()),
                 watched);
     }
 
     @Nullable
     private static ResourceLocation getDimensionName(World w)
     {
-        return w.getDimensionKey().getLocation();
+        return w.dimension().location();
     }
 }

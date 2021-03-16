@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -146,7 +146,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
         this.name = name;
-        this.key = RegistryKey.getOrCreateRootKey(name);
+        this.key = RegistryKey.createRegistryKey(name);
         this.builder = builder;
         this.stage = stage;
         this.superType = builder.getType();
@@ -420,7 +420,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
 
         this.names.put(key, value);
-        this.keys.put(RegistryKey.getOrCreateKey(this.key, key), value);
+        this.keys.put(RegistryKey.create(this.key, key), value);
         this.ids.put(idToUse, value);
         this.availabilityMap.set(idToUse);
         this.owners.put(new OverrideOwner(owner == null ? key.getPath() : owner, key), value);
@@ -975,7 +975,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             }
 
             list = nbt.getList("dummied", 8);
-            list.forEach(e -> ret.dummied.add(new ResourceLocation(((StringNBT)e).getString())));
+            list.forEach(e -> ret.dummied.add(new ResourceLocation(((StringNBT)e).getAsString())));
 
             return ret;
         }
@@ -1000,7 +1000,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 pkt.writeVarInt(this.overrides.size());
                 this.overrides.forEach((k, v) -> {
                     pkt.writeResourceLocation(k);
-                    pkt.writeString(v, 0x100);
+                    pkt.writeUtf(v, 0x100);
                 });
 
                 pkt.writeVarInt(this.blocked.size());
@@ -1032,7 +1032,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
             len = buff.readVarInt();
             for (int x = 0; x < len; x++)
-                ret.overrides.put(buff.readResourceLocation(), buff.readString(0x100));
+                ret.overrides.put(buff.readResourceLocation(), buff.readUtf(0x100));
 
             len = buff.readVarInt();
             for (int x = 0; x < len; x++)

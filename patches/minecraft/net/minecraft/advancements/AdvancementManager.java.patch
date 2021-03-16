@@ -1,6 +1,6 @@
 --- a/net/minecraft/advancements/AdvancementManager.java
 +++ b/net/minecraft/advancements/AdvancementManager.java
-@@ -36,6 +36,10 @@
+@@ -36,6 +_,10 @@
           try {
              JsonObject jsonobject = JSONUtils.func_151210_l(p_240923_3_, "advancement");
              Advancement.Builder advancement$builder = Advancement.Builder.func_241043_a_(jsonobject, new ConditionArrayParser(p_240923_2_, this.field_240922_d_));

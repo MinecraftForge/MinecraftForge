@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -129,8 +129,8 @@ public class BakedQuadBuilder implements IVertexConsumer
         }
         if(contractUVs)
         {
-            float tX = texture.getWidth() / (texture.getMaxU() - texture.getMinU());
-            float tY = texture.getHeight() / (texture.getMaxV() - texture.getMinV());
+            float tX = texture.getWidth() / (texture.getU1() - texture.getU0());
+            float tY = texture.getHeight() / (texture.getV1() - texture.getV0());
             float tS = tX > tY ? tX : tY;
             float ep = 1f / (tS * 0x100);
             int uve = 0;

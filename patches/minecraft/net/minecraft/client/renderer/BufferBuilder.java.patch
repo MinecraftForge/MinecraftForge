@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/BufferBuilder.java
 +++ b/net/minecraft/client/renderer/BufferBuilder.java
-@@ -297,6 +297,7 @@
+@@ -297,6 +_,7 @@
        }
  
        ByteBuffer bytebuffer = this.field_179001_a.slice();
@@ -8,7 +8,7 @@
        ((Buffer)this.field_179001_a).clear();
        return Pair.of(bufferbuilder$drawstate, bytebuffer);
     }
-@@ -364,4 +365,15 @@
+@@ -364,4 +_,15 @@
           this.field_179018_e = p_i225907_2_;
        }
     }

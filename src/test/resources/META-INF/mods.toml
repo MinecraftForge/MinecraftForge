@@ -111,10 +111,14 @@ license="LGPL v2.1"
 [[mods]]
     modId="item_modifier_test"
 [[mods]]
+    modId="custom_signs_test"
+[[mods]]
     modId="shader_fix_test"
 [[mods]]
     modId="worldgen_registry_desync_test"
 [[mods]]
     modId="add_entity_attribute_test"
+[[mods]]
+    modId="enum_argument_test"
 [[mods]]
     modId="codec_registry_test"

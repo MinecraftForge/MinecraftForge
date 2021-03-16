@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/RecipeManager.java
 +++ b/net/minecraft/item/crafting/RecipeManager.java
-@@ -51,9 +51,18 @@
+@@ -51,9 +_,18 @@
  
        for(Entry<ResourceLocation, JsonElement> entry : p_212853_1_.entrySet()) {
           ResourceLocation resourcelocation = entry.getKey();

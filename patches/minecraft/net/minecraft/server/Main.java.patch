@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
-@@ -71,6 +71,8 @@
+@@ -71,6 +_,8 @@
        OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
        OptionSpec<String> optionspec13 = optionparser.nonOptions();
@@ -9,18 +9,18 @@
  
        try {
           OptionSet optionset = optionparser.parse(p_main_0_);
-@@ -78,33 +80,38 @@
+@@ -78,33 +_,38 @@
              optionparser.printHelpOn(System.err);
              return;
           }
 +         Path path1 = Paths.get("eula.txt");
 +         ServerEula servereula = new ServerEula(path1);
- 
++
 +         if (!servereula.func_154346_a()) {
 +            field_240759_a_.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
 +            return;
 +         }
-+
+ 
           CrashReport.func_230188_h_();
           Bootstrap.func_151354_b();
           Bootstrap.func_218821_c();
@@ -55,7 +55,7 @@
           SaveFormat saveformat = SaveFormat.func_237269_a_(file1.toPath());
           SaveFormat.LevelSave saveformat$levelsave = saveformat.func_237274_c_(s);
           MinecraftServer.func_240777_a_(saveformat$levelsave);
-@@ -142,6 +149,8 @@
+@@ -142,6 +_,8 @@
                 dimensiongeneratorsettings = optionset.has(optionspec3) ? serverproperties.field_241082_U_.func_236230_k_() : serverproperties.field_241082_U_;
              }
  
@@ -64,7 +64,7 @@
              iserverconfiguration = new ServerWorldInfo(worldsettings, dimensiongeneratorsettings, Lifecycle.stable());
           }
  
-@@ -169,6 +178,7 @@
+@@ -169,6 +_,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
                 dedicatedserver.func_71263_m(true);

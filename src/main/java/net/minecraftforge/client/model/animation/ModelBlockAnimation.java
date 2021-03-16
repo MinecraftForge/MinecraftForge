@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -540,7 +540,7 @@ public class ModelBlockAnimation
                     {
                         float w = info.getWeights().get(i)[0];
                         tmp = trOp.getMatrix();
-                        tmp.mul(w);
+                        tmp.multiply(w);
                         m.add(tmp);
                         weight += w;
                     }
@@ -548,7 +548,7 @@ public class ModelBlockAnimation
             }
             if(weight > 1e-5)
             {
-                m.mul(1f / weight);
+                m.multiply(1f / weight);
                 return new TransformationMatrix(m);
             }
         }

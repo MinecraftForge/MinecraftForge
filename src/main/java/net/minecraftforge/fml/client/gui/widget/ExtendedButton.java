@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,8 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
+
+import net.minecraft.client.gui.widget.button.Button.IPressable;
 
 /**
  * This class provides a button that fixes several bugs present in the vanilla GuiButton drawing code.
@@ -58,14 +60,14 @@ public class ExtendedButton extends Button
             this.renderBg(mStack, mc, mouseX, mouseY);
 
             ITextComponent buttonText = this.getMessage();
-            int strWidth = mc.fontRenderer.getStringPropertyWidth(buttonText);
-            int ellipsisWidth = mc.fontRenderer.getStringWidth("...");
+            int strWidth = mc.font.width(buttonText);
+            int ellipsisWidth = mc.font.width("...");
 
             if (strWidth > width - 6 && strWidth > ellipsisWidth)
                 //TODO, srg names make it hard to figure out how to append to an ITextProperties from this trim operation, wraping this in StringTextComponent is kinda dirty.
-                buttonText = new StringTextComponent(mc.fontRenderer.func_238417_a_(buttonText, width - 6 - ellipsisWidth).getString() + "...");
+                buttonText = new StringTextComponent(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
 
-            drawCenteredString(mStack, mc.fontRenderer, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
+            drawCenteredString(mStack, mc.font, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
         }
     }
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/ForcedChunksSaveData.java
 +++ b/net/minecraft/world/ForcedChunksSaveData.java
-@@ -14,14 +14,30 @@
+@@ -14,14 +_,30 @@
  
     public void func_76184_a(CompoundNBT p_76184_1_) {
        this.field_212439_a = new LongOpenHashSet(p_76184_1_.func_197645_o("Forced"));
@@ -17,7 +17,7 @@
  
     public LongSet func_212438_a() {
        return this.field_212439_a;
-    }
++   }
 +
 +   /* ======================================== FORGE START =====================================*/
 +   private net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<net.minecraft.util.math.BlockPos> blockForcedChunks = new net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<>();
@@ -29,5 +29,5 @@
 +
 +   public net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<java.util.UUID> getEntityForcedChunks() {
 +      return this.entityForcedChunks;
-+   }
+    }
  }

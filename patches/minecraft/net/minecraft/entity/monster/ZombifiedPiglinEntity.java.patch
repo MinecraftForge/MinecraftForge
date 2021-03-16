@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/monster/ZombifiedPiglinEntity.java
 +++ b/net/minecraft/entity/monster/ZombifiedPiglinEntity.java
-@@ -173,6 +173,7 @@
+@@ -173,6 +_,7 @@
  
     public void func_70037_a(CompoundNBT p_70037_1_) {
        super.func_70037_a(p_70037_1_);

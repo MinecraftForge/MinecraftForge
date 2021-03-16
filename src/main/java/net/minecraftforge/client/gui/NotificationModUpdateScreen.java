@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -73,13 +73,13 @@ public class NotificationModUpdateScreen extends Screen
             return;
         }
 
-        Minecraft.getInstance().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
+        Minecraft.getInstance().getTextureManager().bind(VERSION_CHECK_ICONS);
         RenderSystem.color4f(1, 1, 1, 1);
 
         int x = modButton.x;
         int y = modButton.y;
         int w = modButton.getWidth();
-        int h = modButton.getHeightRealms();
+        int h = modButton.getHeight();
 
         blit(mStack, x + w - (h / 2 + 4), y + (h / 2 - 4), showNotification.getSheetOffset() * 8, (showNotification.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
     }

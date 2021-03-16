@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,7 +41,7 @@ public class NotificationScreen extends Screen
         protected int getContentHeight()
         {
             int height = 0;
-            height += (textLines.length * field_230712_o_.FONT_HEIGHT) + 4;
+            height += (textLines.length * font.FONT_HEIGHT) + 4;
             if (height < this.height - 50)
                 height = this.height - 50;
             return height;
@@ -56,7 +56,7 @@ public class NotificationScreen extends Screen
         @Override
         protected int getScrollAmount()
         {
-            return field_230712_o_.FONT_HEIGHT * 3;
+            return font.FONT_HEIGHT * 3;
         }
     }
 
@@ -80,44 +80,44 @@ public class NotificationScreen extends Screen
     }
 
     @Override
-    public void func_231160_c_()
+    public void init()
     {
-        super.func_231160_c_();
-        int panelY = PADDING + headerLines.length * field_230712_o_.FONT_HEIGHT + PADDING;
-        int panelHeight = this.field_230709_l_ - PADDING - 20 - panelY;
+        super.init();
+        int panelY = PADDING + headerLines.length * font.FONT_HEIGHT + PADDING;
+        int panelHeight = this.height - PADDING - 20 - panelY;
         if (!action.isEmpty()) {
-            panelHeight = panelHeight - field_230712_o_.FONT_HEIGHT - PADDING;
+            panelHeight = panelHeight - font.FONT_HEIGHT - PADDING;
         }
-        textPanel = new TextPanel(this.field_230706_i_, this.field_230708_k_ - (PADDING * 2), panelHeight, panelY, PADDING);
-        this.field_230705_e_.add(textPanel);
+        textPanel = new TextPanel(this.minecraft, this.width - (PADDING * 2), panelHeight, panelY, PADDING);
+        this.children.add(textPanel);
         addConfirmationButtons();
     }
 
     protected void addConfirmationButtons() {
-        this.field_230710_m_.add(new Button(this.field_230708_k_ / 2 - 100, this.field_230709_l_ - PADDING - 20, 200, 20, new TranslationTextComponent("gui.done"), b -> {
-            NotificationScreen.this.field_230706_i_.displayGuiScreen(null);
+        this.buttons.add(new Button(this.width / 2 - 100, this.height - PADDING - 20, 200, 20, new TranslationTextComponent("gui.done"), b -> {
+            NotificationScreen.this.minecraft.displayGuiScreen(null);
             query.finish();
         }));
     }
 
     @Override
-    public void func_230430_a_(MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
+    public void render(MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
     {
-        this.func_230446_a_(mStack);
+        this.renderBackground(mStack);
 
         drawCenteredLines(mStack, PADDING, headerLines);
 
         if (textPanel != null)
         {
-            textPanel.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
+            textPanel.render(mStack, mouseX, mouseY, partialTicks);
         }
 
         if (!action.isEmpty())
         {
-            func_238471_a_(mStack, field_230712_o_, action, this.field_230708_k_ / 2, this.field_230709_l_ - PADDING - 20 - field_230712_o_.FONT_HEIGHT, -1);
+            drawCenteredString(mStack, font, action, this.width / 2, this.height - PADDING - 20 - font.FONT_HEIGHT, -1);
         }
 
-        super.func_230430_a_(mStack, mouseX, mouseY, partialTicks);
+        super.render(mStack, mouseX, mouseY, partialTicks);
     }
 
     protected void drawCenteredLines(MatrixStack mStack, int yStart, String... lines)
@@ -125,8 +125,8 @@ public class NotificationScreen extends Screen
         for (String line : lines)
         {
             if (!line.isEmpty())
-                this.func_238471_a_(mStack, field_230712_o_, line, this.field_230708_k_ / 2, yStart, 0xFFFFFF);
-            yStart += field_230712_o_.FONT_HEIGHT;
+                this.drawCenteredString(mStack, font, line, this.width / 2, yStart, 0xFFFFFF);
+            yStart += font.FONT_HEIGHT;
         }
     }
 }

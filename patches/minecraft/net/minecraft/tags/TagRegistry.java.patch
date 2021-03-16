@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/TagRegistry.java
 +++ b/net/minecraft/tags/TagRegistry.java
-@@ -16,13 +16,51 @@
+@@ -16,13 +_,51 @@
     private ITagCollection<T> field_232930_b_ = ITagCollection.func_242205_c();
     private final List<TagRegistry.NamedTag<T>> field_232931_c_ = Lists.newArrayList();
     private final Function<ITagCollectionSupplier, ITagCollection<T>> field_242184_c;
@@ -53,7 +53,7 @@
        this.field_232931_c_.add(namedtag);
        return namedtag;
     }
-@@ -46,6 +84,20 @@
+@@ -46,6 +_,20 @@
        });
     }
  
@@ -74,7 +74,7 @@
     public ITagCollection<T> func_232939_b_() {
        return this.field_232930_b_;
     }
-@@ -56,7 +108,7 @@
+@@ -56,7 +_,7 @@
  
     public Set<ResourceLocation> func_242189_b(ITagCollectionSupplier p_242189_1_) {
        ITagCollection<T> itagcollection = this.field_242184_c.apply(p_242189_1_);
@@ -83,10 +83,11 @@
        ImmutableSet<ResourceLocation> immutableset = ImmutableSet.copyOf(itagcollection.func_199908_a());
        return Sets.difference(set, immutableset);
     }
-@@ -93,5 +145,40 @@
+@@ -92,6 +_,41 @@
+ 
        public List<T> func_230236_b_() {
           return this.func_232944_c_().func_230236_b_();
-       }
++      }
 +
 +      @Override
 +      public String toString() {
@@ -94,7 +95,7 @@
 +      }
 +      @Override public boolean equals(Object o) { return (o == this) || (o instanceof ITag.INamedTag && java.util.Objects.equals(this.func_230234_a_(), ((ITag.INamedTag<T>)o).func_230234_a_())); }
 +      @Override public int hashCode() { return func_230234_a_().hashCode(); }
-    }
++   }
 +
 +   private static class OptionalNamedTag<T> extends NamedTag<T> implements net.minecraftforge.common.Tags.IOptionalNamedTag<T> {
 +      @Nullable
@@ -121,6 +122,6 @@
 +      @Override
 +      public String toString() {
 +          return "OptionalNamedTag[" + func_230234_a_().toString() + ']';
-+      }
-+   }
+       }
+    }
  }

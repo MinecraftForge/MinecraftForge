@@ -1,6 +1,6 @@
 --- a/net/minecraft/crash/CrashReport.java
 +++ b/net/minecraft/crash/CrashReport.java
-@@ -69,6 +69,7 @@
+@@ -69,6 +_,7 @@
           List<String> list = Util.func_211565_f().collect(Collectors.toList());
           return String.format("%d total; %s", list.size(), list.stream().collect(Collectors.joining(" ")));
        });
@@ -8,7 +8,7 @@
     }
  
     public String func_71501_a() {
-@@ -87,14 +88,8 @@
+@@ -87,14 +_,8 @@
        if (this.field_85060_g != null && this.field_85060_g.length > 0) {
           p_71506_1_.append("-- Head --\n");
           p_71506_1_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
@@ -25,7 +25,7 @@
        }
  
        for(CrashReportCategory crashreportcategory : this.field_71512_c) {
-@@ -121,23 +116,13 @@
+@@ -121,23 +_,13 @@
           throwable.setStackTrace(this.field_71511_b.getStackTrace());
        }
  

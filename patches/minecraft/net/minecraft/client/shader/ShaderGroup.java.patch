@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/shader/ShaderGroup.java
 +++ b/net/minecraft/client/shader/ShaderGroup.java
-@@ -164,7 +164,8 @@
+@@ -164,7 +_,8 @@
                          throw new JSONException("Render target '" + s4 + "' can't be used as depth buffer");
                       }
  
