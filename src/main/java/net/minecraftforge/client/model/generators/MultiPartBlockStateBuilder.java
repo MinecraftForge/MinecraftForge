@@ -191,7 +191,7 @@ public final class MultiPartBlockStateBuilder implements IGeneratedBlockstate {
              */
             public ConditionGroup nestedGroup()
             {
-                Preconditions.checkState(conditions.size() == 0, "Can't have nested condition groups if there are already normal conditions");
+                Preconditions.checkState(conditions.isEmpty(), "Can't have nested condition groups if there are already normal conditions");
                 ConditionGroup group = new ConditionGroup();
                 group.parent = this;
                 this.nestedConditionGroups.add(group);
