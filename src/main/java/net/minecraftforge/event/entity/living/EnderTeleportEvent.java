@@ -25,8 +25,9 @@ import net.minecraft.entity.LivingEntity;
 /**
  * Event for when an Enderman/Shulker teleports or an ender pearl is used.  Can be used to either modify the target position, or cancel the teleport outright.
  * @author Mithion
- *
+ * @deprecated Use {@link EntityTeleportEvent.EnderEntity} or {@link EntityTeleportEvent.EnderPearl}.
  */
+@Deprecated // Forge: Remove in 1.17
 @Cancelable
 public class EnderTeleportEvent extends LivingEvent
 {

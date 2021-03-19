@@ -60,6 +60,7 @@ import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.DataPackRegistries;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
@@ -113,6 +114,7 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
+import net.minecraftforge.event.entity.living.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
@@ -767,5 +769,30 @@ public class ForgeEventFactory
     public static void onLivingConvert(LivingEntity entity, LivingEntity outcome)
     {
         MinecraftForge.EVENT_BUS.post(new LivingConversionEvent.Post(entity, outcome));
+    }
+
+    public static Vector3d onEntityTeleportCommand(Entity entity, double targetX, double targetY, double targetZ)
+    {
+        return genericEntityTeleport(new EntityTeleportEvent.TeleportCommand(entity, targetX, targetY, targetZ));
+    }
+
+    public static Vector3d onEntityTeleportSpreadPlayersCommand(Entity entity, double targetX, double targetY, double targetZ)
+    {
+        return genericEntityTeleport(new EntityTeleportEvent.SpreadPlayersCommand(entity, targetX, targetY, targetZ));
+    }
+
+    public static Vector3d onEnderTeleport(Entity entity, double targetX, double targetY, double targetZ)
+    {
+        return genericEntityTeleport(new EntityTeleportEvent.EnderEntity(entity, targetX, targetY, targetZ));
+    }
+
+    public static Vector3d onChorusFruitTeleport(LivingEntity entity, double targetX, double targetY, double targetZ)
+    {
+        return genericEntityTeleport(new EntityTeleportEvent.ChorusFruit(entity, targetX, targetY, targetZ));
+    }
+
+    private static Vector3d genericEntityTeleport(EntityTeleportEvent event)
+    {
+        return MinecraftForge.EVENT_BUS.post(event) ? null : event.getTarget();
     }
 }
