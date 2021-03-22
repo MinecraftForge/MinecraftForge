@@ -9,7 +9,14 @@
  
        for(Item item : Registry.field_212630_s) {
           if (!field_195411_c.contains(item)) {
-@@ -95,7 +_,7 @@
+@@ -89,13 +_,14 @@
+ 
+    public void func_229111_a_(ItemStack p_229111_1_, ItemCameraTransforms.TransformType p_229111_2_, boolean p_229111_3_, MatrixStack p_229111_4_, IRenderTypeBuffer p_229111_5_, int p_229111_6_, int p_229111_7_, IBakedModel p_229111_8_) {
+       if (!p_229111_1_.func_190926_b()) {
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemEvent.Model(p_229111_4_, p_229111_1_, p_229111_5_, p_229111_6_, p_229111_7_, p_229111_8_));
+          p_229111_4_.func_227860_a_();
+          boolean flag = p_229111_2_ == ItemCameraTransforms.TransformType.GUI || p_229111_2_ == ItemCameraTransforms.TransformType.GROUND || p_229111_2_ == ItemCameraTransforms.TransformType.FIXED;
+          if (p_229111_1_.func_77973_b() == Items.field_203184_eO && flag) {
              p_229111_8_ = this.field_175059_m.func_178083_a().func_174953_a(new ModelResourceLocation("minecraft:trident#inventory"));
           }
  
@@ -56,12 +63,21 @@
              crashreportcategory.func_189529_a("Item Damage", () -> {
                 return String.valueOf(p_239387_2_.func_77952_i());
              });
+@@ -290,7 +_,7 @@
+    public void func_180453_a(FontRenderer p_180453_1_, ItemStack p_180453_2_, int p_180453_3_, int p_180453_4_, @Nullable String p_180453_5_) {
+       if (!p_180453_2_.func_190926_b()) {
+          MatrixStack matrixstack = new MatrixStack();
+-         if (p_180453_2_.func_190916_E() != 1 || p_180453_5_ != null) {
++         if ((p_180453_2_.func_190916_E() != 1 || p_180453_5_ != null) && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemEvent.Overlay(p_180453_1_, matrixstack, p_180453_2_, p_180453_3_, p_180453_4_, net.minecraftforge.client.event.RenderItemEvent.Overlay.OverlayPart.COUNT))) {
+             String s = p_180453_5_ == null ? String.valueOf(p_180453_2_.func_190916_E()) : p_180453_5_;
+             matrixstack.func_227861_a_(0.0D, 0.0D, (double)(this.field_77023_b + 200.0F));
+             IRenderTypeBuffer.Impl irendertypebuffer$impl = IRenderTypeBuffer.func_228455_a_(Tessellator.func_178181_a().func_178180_c());
 @@ -298,18 +_,16 @@
              irendertypebuffer$impl.func_228461_a_();
           }
  
 -         if (p_180453_2_.func_77951_h()) {
-+         if (p_180453_2_.func_77973_b().showDurabilityBar(p_180453_2_)) {
++         if (p_180453_2_.func_77973_b().showDurabilityBar(p_180453_2_) && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemEvent.Overlay(p_180453_1_, matrixstack, p_180453_2_, p_180453_3_, p_180453_4_, net.minecraftforge.client.event.RenderItemEvent.Overlay.OverlayPart.DURABILITY))) {
              RenderSystem.disableDepthTest();
              RenderSystem.disableTexture();
              RenderSystem.disableAlphaTest();
@@ -79,6 +95,24 @@
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
              RenderSystem.enableBlend();
+@@ -320,7 +_,7 @@
+ 
+          ClientPlayerEntity clientplayerentity = Minecraft.func_71410_x().field_71439_g;
+          float f3 = clientplayerentity == null ? 0.0F : clientplayerentity.func_184811_cZ().func_185143_a(p_180453_2_.func_77973_b(), Minecraft.func_71410_x().func_184121_ak());
+-         if (f3 > 0.0F) {
++         if (f3 > 0.0F && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemEvent.Overlay(p_180453_1_, matrixstack, p_180453_2_, p_180453_3_, p_180453_4_, net.minecraftforge.client.event.RenderItemEvent.Overlay.OverlayPart.COOLDOWN))) {
+             RenderSystem.disableDepthTest();
+             RenderSystem.disableTexture();
+             RenderSystem.enableBlend();
+@@ -331,7 +_,7 @@
+             RenderSystem.enableTexture();
+             RenderSystem.enableDepthTest();
+          }
+-
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemEvent.Overlay(p_180453_1_, matrixstack, p_180453_2_, p_180453_3_, p_180453_4_, net.minecraftforge.client.event.RenderItemEvent.Overlay.OverlayPart.EXTRA));
+       }
+    }
+ 
 @@ -346,5 +_,10 @@
  
     public void func_195410_a(IResourceManager p_195410_1_) {
