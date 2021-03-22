@@ -46,15 +46,21 @@ public class EntityJoinWorldEvent extends EntityEvent
 {
 
     private final World world;
+    private final boolean isSpawn;
 
-    public EntityJoinWorldEvent(Entity entity, World world)
+    public EntityJoinWorldEvent(Entity entity, World world, boolean isSpawn)
     {
         super(entity);
         this.world = world;
+        this.isSpawn = isSpawn;
     }
 
     public World getWorld()
     {
         return world;
+    }
+
+    public boolean isSpawn() {
+        return isSpawn;
     }
 }

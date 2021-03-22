@@ -21,7 +21,7 @@
     }
  
     private void func_217424_b(int p_217424_1_, Entity p_217424_2_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217424_2_, this))) return;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217424_2_, this, true))) return;
        this.func_217413_d(p_217424_1_);
        this.field_217429_b.put(p_217424_1_, p_217424_2_);
        this.func_72863_F().func_212849_a_(MathHelper.func_76128_c(p_217424_2_.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(p_217424_2_.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, true).func_76612_a(p_217424_2_);

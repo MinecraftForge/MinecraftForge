@@ -88,15 +88,21 @@
              }
  
              iprofiler.func_76319_b();
-@@ -475,6 +_,7 @@
+@@ -475,9 +_,10 @@
           BlockPos blockpos2 = this.func_205770_a(Heightmap.Type.MOTION_BLOCKING, this.func_217383_a(i, 0, j, 15));
           BlockPos blockpos3 = blockpos2.func_177977_b();
           Biome biome = this.func_226691_t_(blockpos2);
+-         if (biome.func_201848_a(this, blockpos3)) {
+-            this.func_175656_a(blockpos3, Blocks.field_150432_aD.func_176223_P());
+-         }
 +         if (this.isAreaLoaded(blockpos2, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
-          if (biome.func_201848_a(this, blockpos3)) {
-             this.func_175656_a(blockpos3, Blocks.field_150432_aD.func_176223_P());
-          }
-@@ -598,9 +_,10 @@
++            if (biome.func_201848_a(this, blockpos3)) {
++               this.func_175656_a(blockpos3, Blocks.field_150432_aD.func_176223_P());
++            }
+ 
+          if (flag && biome.func_201850_b(this, blockpos2)) {
+             this.func_175656_a(blockpos2, Blocks.field_150433_aE.func_176223_P());
+@@ -598,10 +_,11 @@
              ++p_217479_1_.field_70173_aa;
              IProfiler iprofiler = this.func_217381_Z();
              iprofiler.func_194340_a(() -> {
@@ -104,10 +110,12 @@
 +               return p_217479_1_.func_200600_R().getRegistryName() == null ? p_217479_1_.func_200600_R().toString() : p_217479_1_.func_200600_R().getRegistryName().toString();
              });
              iprofiler.func_230035_c_("tickNonPassenger");
+-            p_217479_1_.func_70071_h_();
 +            if (p_217479_1_.canUpdate())
-             p_217479_1_.func_70071_h_();
++               p_217479_1_.func_70071_h_();
              iprofiler.func_76319_b();
           }
+ 
 @@ -687,6 +_,7 @@
              p_217445_1_.func_200209_c(new TranslationTextComponent("menu.savingChunks"));
           }
@@ -120,7 +128,7 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217448_1_, this))) return;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217448_1_, this, true))) return;
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
           field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
@@ -128,7 +136,7 @@
        } else if (this.func_217478_l(p_72838_1_)) {
           return false;
        } else {
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_72838_1_, this))) return false;
++         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_72838_1_, this, false))) return false;
           IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(p_72838_1_.func_226277_ct_() / 16.0D), MathHelper.func_76128_c(p_72838_1_.func_226281_cx_() / 16.0D), ChunkStatus.field_222617_m, p_72838_1_.field_98038_p);
           if (!(ichunk instanceof Chunk)) {
              return false;
@@ -136,7 +144,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217440_1_, this))) return false;
++         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_217440_1_, this, false))) return false;
           this.func_217465_m(p_217440_1_);
           return true;
        }
@@ -258,6 +266,6 @@
 +   }
 +
 +   public java.util.stream.Stream<Entity> getEntities() {
-+       return field_217498_x.values().stream();
++      return field_217498_x.values().stream();
     }
  }
