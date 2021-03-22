@@ -69,3 +69,12 @@
        if (p_217384_1_ == this.field_73037_M.field_71439_g) {
           this.field_73037_M.func_147118_V().func_147682_a(new EntityTickableSound(p_217384_3_, p_217384_4_, p_217384_2_));
        }
+@@ -689,7 +706,7 @@
+    }
+ 
+    public double func_228331_m_() {
+-      return this.field_72986_A.func_76067_t() == WorldType.field_77138_c ? 0.0D : 63.0D;
++      return this.field_73011_w.getHorizonHeight();
+    }
+ 
+    public int func_228332_n_() {

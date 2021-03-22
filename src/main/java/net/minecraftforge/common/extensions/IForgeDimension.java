@@ -26,9 +26,8 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.Dimension;
@@ -237,6 +236,11 @@ public interface IForgeDimension
     default int getSeaLevel()
     {
         return 63;
+    }
+
+    default double getHorizonHeight()
+    {
+        return getWorld().getWorldInfo().getGenerator() == WorldType.FLAT ? 0.0D : 63.0D;
     }
 
     /**
