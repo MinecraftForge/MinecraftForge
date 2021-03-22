@@ -261,7 +261,9 @@ project(':forge') {
                 environment 'FORGE_SPEC', SPEC_VERSION
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
+
                 property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
+                property 'log4j.configurationFile', "${rootProject.projectDir.path}\\src\\fmllauncher\\resources\\log4j2.xml"
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
@@ -297,6 +299,8 @@ project(':forge') {
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
 
+                property 'log4j.configurationFile', "${rootProject.projectDir.path}\\src\\fmllauncher\\resources\\log4j2.xml"
+
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
                 source sourceSets.main
@@ -330,6 +334,8 @@ project(':forge') {
                 environment 'FORGE_SPEC', SPEC_VERSION
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
+
+                property 'log4j.configurationFile', "${rootProject.projectDir.path}\\src\\fmllauncher\\resources\\log4j2.xml"
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
