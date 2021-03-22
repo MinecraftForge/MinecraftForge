@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/gen/layer/ShoreLayer.java
++++ b/net/minecraft/world/gen/layer/ShoreLayer.java
+@@ -34,6 +34,9 @@
+ 
+    public int func_202748_a(INoiseRandom p_202748_1_, int p_202748_2_, int p_202748_3_, int p_202748_4_, int p_202748_5_, int p_202748_6_) {
+       Biome biome = Registry.field_212624_m.func_148745_a(p_202748_6_);
++      Biome edgeBiome = biome.getEdge(p_202748_1_, Registry.field_212624_m.func_148745_a(p_202748_2_), Registry.field_212624_m.func_148745_a(p_202748_3_), Registry.field_212624_m.func_148745_a(p_202748_4_), Registry.field_212624_m.func_148745_a(p_202748_5_));
++      if (edgeBiome != null) return Registry.field_212624_m.func_148757_b(edgeBiome);
++
+       if (p_202748_6_ == field_202784_r) {
+          if (LayerUtil.func_203631_b(p_202748_2_) || LayerUtil.func_203631_b(p_202748_3_) || LayerUtil.func_203631_b(p_202748_4_) || LayerUtil.func_203631_b(p_202748_5_)) {
+             return field_202785_s;
