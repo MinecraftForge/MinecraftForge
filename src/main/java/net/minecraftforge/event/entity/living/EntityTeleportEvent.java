@@ -55,6 +55,8 @@ public class EntityTeleportEvent extends EntityEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      * <br>
+     * This event is only fired on the {@link net.minecraftforge.fml.LogicalSide#SERVER} side.<br>
+     * <br>
      * If this event is canceled, the entity will not be teleported.
      */
     @Cancelable
@@ -77,6 +79,8 @@ public class EntityTeleportEvent extends EntityEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      * <br>
+     * This event is only fired on the {@link net.minecraftforge.fml.LogicalSide#SERVER} side.<br>
+     * <br>
      * If this event is canceled, the entity will not be teleported.
      */
     @Cancelable
@@ -98,6 +102,8 @@ public class EntityTeleportEvent extends EntityEvent
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      * <br>
+     * This event is only fired on the {@link net.minecraftforge.fml.LogicalSide#SERVER} side.<br>
+     * <br>
      * If this event is canceled, the entity will not be teleported.
      */
     @Cancelable
@@ -118,6 +124,8 @@ public class EntityTeleportEvent extends EntityEvent
      * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * <br>
+     * This event is only fired on the {@link net.minecraftforge.fml.LogicalSide#SERVER} side.<br>
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */
@@ -166,6 +174,8 @@ public class EntityTeleportEvent extends EntityEvent
      * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     * <br>
+     * This event is only fired on the {@link net.minecraftforge.fml.LogicalSide#SERVER} side.<br>
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */

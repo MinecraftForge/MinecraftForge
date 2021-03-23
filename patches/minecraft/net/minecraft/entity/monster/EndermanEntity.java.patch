@@ -37,10 +37,10 @@
        if (flag && !flag1) {
 -         boolean flag2 = this.func_213373_a(p_70825_1_, p_70825_3_, p_70825_5_, true);
 +         net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(this, p_70825_1_, p_70825_3_, p_70825_5_, 0);
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return false; // Forge: Scrap this event in 1.17
-+         net.minecraft.util.math.vector.Vector3d target = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, event.getTargetX(), event.getTargetY(), event.getTargetZ());
-+         if (target == null) return false;
-+         boolean flag2 = this.func_213373_a(target.field_72450_a, target.field_72448_b, target.field_72449_c, true);
++         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return false; //TODO Forge: Scrap this event in 1.17
++         net.minecraftforge.event.entity.living.EntityTeleportEvent.EnderEntity evt = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, event.getTargetX(), event.getTargetY(), event.getTargetZ());
++         if (evt.isCanceled()) return false;
++         boolean flag2 = this.func_213373_a(evt.getTargetX(), evt.getTargetY(), evt.getTargetZ(), true);
           if (flag2 && !this.func_174814_R()) {
              this.field_70170_p.func_184148_a((PlayerEntity)null, this.field_70169_q, this.field_70167_r, this.field_70166_s, SoundEvents.field_187534_aX, this.func_184176_by(), 1.0F, 1.0F);
              this.func_184185_a(SoundEvents.field_187534_aX, 1.0F, 1.0F);

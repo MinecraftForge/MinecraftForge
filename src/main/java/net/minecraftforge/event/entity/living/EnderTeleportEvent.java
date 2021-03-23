@@ -27,7 +27,7 @@ import net.minecraft.entity.LivingEntity;
  * @author Mithion
  * @deprecated Use {@link EntityTeleportEvent.EnderEntity} or {@link EntityTeleportEvent.EnderPearl}.
  */
-@Deprecated // Forge: Remove in 1.17
+@Deprecated //TODO Forge: Remove in 1.17
 @Cancelable
 public class EnderTeleportEvent extends LivingEvent
 {
