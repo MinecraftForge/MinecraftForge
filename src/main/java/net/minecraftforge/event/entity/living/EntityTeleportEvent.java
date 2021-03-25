@@ -109,9 +109,17 @@ public class EntityTeleportEvent extends EntityEvent
     @Cancelable
     public static class EnderEntity extends EntityTeleportEvent
     {
-        public EnderEntity(Entity entity, double targetX, double targetY, double targetZ)
+        private final LivingEntity entityLiving;
+
+        public EnderEntity(LivingEntity entity, double targetX, double targetY, double targetZ)
         {
             super(entity, targetX, targetY, targetZ);
+            this.entityLiving = entity;
+        }
+
+        public LivingEntity getEntityLiving()
+        {
+            return entityLiving;
         }
     }
 
@@ -136,7 +144,7 @@ public class EntityTeleportEvent extends EntityEvent
         private final EnderPearlEntity pearlEntity;
         private float attackDamage;
 
-        public EnderPearl(EnderPearlEntity pearlEntity, ServerPlayerEntity entity, double targetX, double targetY, double targetZ, float attackDamage)
+        public EnderPearl(ServerPlayerEntity entity, double targetX, double targetY, double targetZ, EnderPearlEntity pearlEntity, float attackDamage)
         {
             super(entity, targetX, targetY, targetZ);
             this.pearlEntity = pearlEntity;

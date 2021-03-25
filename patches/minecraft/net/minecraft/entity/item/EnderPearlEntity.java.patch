@@ -1,26 +1,23 @@
 --- a/net/minecraft/entity/item/EnderPearlEntity.java
 +++ b/net/minecraft/entity/item/EnderPearlEntity.java
-@@ -55,6 +_,10 @@
+@@ -55,6 +_,8 @@
           if (entity instanceof ServerPlayerEntity) {
              ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entity;
              if (serverplayerentity.field_71135_a.func_147298_b().func_150724_d() && serverplayerentity.field_70170_p == this.field_70170_p && !serverplayerentity.func_70608_bn()) {
-+               net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(serverplayerentity, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 5.0F);
-+               if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) { // Don't indent to lower patch size //TODO Forge: Scrap this event in 1.17
-+               net.minecraftforge.event.entity.living.EntityTeleportEvent.EnderPearl evt = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(this, serverplayerentity, event.getTargetX(), event.getTargetY(), event.getTargetZ(), event.getAttackDamage());
-+               if (!evt.isCanceled()) { // Don't indent to lower patch size
++               net.minecraftforge.event.entity.living.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayerentity, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this, 5.0F);
++               if (!event.isCanceled()) { // Don't indent to lower patch size
                 if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
                    EndermiteEntity endermiteentity = EntityType.field_200804_r.func_200721_a(this.field_70170_p);
                    endermiteentity.func_175496_a(true);
-@@ -66,9 +_,11 @@
+@@ -66,9 +_,10 @@
                    entity.func_184210_p();
                 }
  
 -               entity.func_70634_a(this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_());
-+               entity.func_70634_a(evt.getTargetX(), evt.getTargetY(), evt.getTargetZ());
++               entity.func_70634_a(event.getTargetX(), event.getTargetY(), event.getTargetZ());
                 entity.field_70143_R = 0.0F;
 -               entity.func_70097_a(DamageSource.field_76379_h, 5.0F);
-+               entity.func_70097_a(DamageSource.field_76379_h, evt.getAttackDamage());
-+               } //Forge: End
++               entity.func_70097_a(DamageSource.field_76379_h, event.getAttackDamage());
 +               } //Forge: End
              }
           } else if (entity != null) {

@@ -106,6 +106,7 @@ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
+import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -785,18 +786,32 @@ public class ForgeEventFactory
         return event;
     }
 
-    public static EntityTeleportEvent.EnderEntity onEnderTeleport(Entity entity, double targetX, double targetY, double targetZ)
+    public static EntityTeleportEvent.EnderEntity onEnderTeleport(LivingEntity entity, double targetX, double targetY, double targetZ)
     {
         EntityTeleportEvent.EnderEntity event = new EntityTeleportEvent.EnderEntity(entity, targetX, targetY, targetZ);
+        onOldEnderTeleport(entity, 0, event); //TODO Forge: Remove this line in 1.17
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
 
-    public static EntityTeleportEvent.EnderPearl onEnderPearlLand(EnderPearlEntity pearlEntity, ServerPlayerEntity entity, double targetX, double targetY, double targetZ, float attackDamage)
+    public static EntityTeleportEvent.EnderPearl onEnderPearlLand(ServerPlayerEntity entity, double targetX, double targetY, double targetZ, EnderPearlEntity pearlEntity, float attackDamage)
     {
-        EntityTeleportEvent.EnderPearl event = new EntityTeleportEvent.EnderPearl(pearlEntity, entity, targetX, targetY, targetZ, attackDamage);
+        EntityTeleportEvent.EnderPearl event = new EntityTeleportEvent.EnderPearl(entity, targetX, targetY, targetZ, pearlEntity, attackDamage);
+        event.setAttackDamage(onOldEnderTeleport(entity, attackDamage, event)); //TODO Forge: Remove this line in 1.17
         MinecraftForge.EVENT_BUS.post(event);
         return event;
+    }
+
+    @SuppressWarnings("deprecation") //TODO Forge: Scrap this method/event in 1.17 - it only exists for backwards-compatibility
+    private static float onOldEnderTeleport(LivingEntity entity, float attackDamage, EntityTeleportEvent event)
+    {
+        EnderTeleportEvent enderEvent = new EnderTeleportEvent(entity, event.getTargetX(), event.getTargetY(), event.getTargetZ(), attackDamage);
+        MinecraftForge.EVENT_BUS.post(enderEvent);
+        event.setCanceled(enderEvent.isCanceled());
+        event.setTargetX(enderEvent.getTargetX());
+        event.setTargetY(enderEvent.getTargetY());
+        event.setTargetZ(enderEvent.getTargetZ());
+        return enderEvent.getAttackDamage();
     }
 
     public static EntityTeleportEvent.ChorusFruit onChorusFruitTeleport(LivingEntity entity, double targetX, double targetY, double targetZ)
