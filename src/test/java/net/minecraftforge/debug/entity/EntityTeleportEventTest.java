@@ -21,7 +21,7 @@ public class EntityTeleportEventTest
     }
 
     @SubscribeEvent
-    public void registerCommands(EntityTeleportEvent event)
+    public void entityTeleport(EntityTeleportEvent event)
     {
         LOGGER.info("{} teleporting from {} to {}", event.getEntity(), event.getPrev(), event.getTarget());
     }
