@@ -304,7 +304,7 @@
        SaveFormat.LevelSave saveformat$levelsave;
        try {
           saveformat$levelsave = this.field_71469_aa.func_237274_c_(p_238195_1_);
-@@ -1667,12 +_,17 @@
+@@ -1667,12 +_,19 @@
        }
  
        Minecraft.PackManager minecraft$packmanager;
@@ -314,7 +314,9 @@
 +         Minecraft.PackManager mgr = this.func_238189_a_(p_238195_2_, p_238195_3_, p_238195_4_, p_238195_5_, saveformat$levelsave);
 +         // We need to rebuild this if we're loading world, so that it gets all the information from AFTER we inject our mappings from the save.
 +         dyn_f = creating ? p_238195_2_ : DynamicRegistries.func_239770_b_();
-+         minecraft$packmanager = creating ? mgr : this.func_238189_a_(dyn_f, p_238195_3_, p_238195_4_, p_238195_5_, saveformat$levelsave); //Note this runs the injection again... which isn't good.. but hey.. we need a better spot to hook in.
++         // revert to frozen so that 2nd injection works properly, do it _after_ grabbing the DynamicRegistries snapshot...
++         if (!creating) net.minecraftforge.registries.GameData.revertToFrozen();
++         minecraft$packmanager = creating ? mgr : this.func_238189_a_(dyn_f, p_238195_3_, p_238195_4_, p_238195_5_, saveformat$levelsave);
 +
        } catch (Exception exception) {
           field_147123_G.warn("Failed to load datapacks, can't proceed with server load", (Throwable)exception);

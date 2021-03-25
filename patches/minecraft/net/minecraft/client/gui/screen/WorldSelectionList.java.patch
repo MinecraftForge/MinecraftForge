@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screen/WorldSelectionList.java
++++ b/net/minecraft/client/gui/screen/WorldSelectionList.java
+@@ -353,7 +_,7 @@
+             this.field_214449_b.func_147108_a(new AlertScreen(() -> {
+                this.field_214449_b.func_147108_a(this.field_214450_c);
+             }, new TranslationTextComponent("selectWorld.recreate.error.title"), new TranslationTextComponent("selectWorld.recreate.error.text")));
+-         }
++         } finally { net.minecraftforge.registries.GameData.revertToFrozen(); }
+ 
+       }
+ 
