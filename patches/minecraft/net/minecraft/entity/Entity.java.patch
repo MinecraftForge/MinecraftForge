@@ -218,7 +218,7 @@
     }
  
     public boolean func_70028_i(Entity p_70028_1_) {
-@@ -2087,14 +_,19 @@
+@@ -2087,14 +_,20 @@
  
     @Nullable
     public Entity func_241206_a_(ServerWorld p_241206_1_) {
@@ -235,6 +235,7 @@
           if (portalinfo == null) {
              return null;
           } else {
++            p_241206_1_.removeEntityComplete(this, true); //Forge: The entity is cloned so keep the data until after cloning calls copyFrom
 +            Entity transportedEntity = teleporter.placeEntity(this, (ServerWorld) this.field_70170_p, p_241206_1_, this.field_70177_z, spawnPortal -> { //Forge: Start vanilla logic
              this.field_70170_p.func_217381_Z().func_219895_b("reloading");
              Entity entity = this.func_200600_R().func_200721_a(p_241206_1_);
