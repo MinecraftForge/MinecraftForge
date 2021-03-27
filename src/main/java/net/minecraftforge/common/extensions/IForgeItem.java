@@ -42,6 +42,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Items;
+import net.minecraft.item.Food;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.AxeItem;
@@ -855,5 +856,18 @@ public interface IForgeItem
     default boolean isDamageable(ItemStack stack)
     {
         return this.getItem().canBeDepleted();
+    }
+
+    /**
+     * Called to get the food properties on this item.
+     * For example when food is being eaten by a player
+     *
+     * @param stack ItemStack which may contain food properties.
+     * @return The food properties or {@code null} for the ItemStack
+     */
+    @Nullable
+    @SuppressWarnings("deprecation")
+    default Food getFoodProperties(ItemStack itemStack) {
+        return this.getItem().getFoodProperties();
     }
 }

@@ -139,24 +139,13 @@
     public boolean func_219970_i(ItemStack p_219970_1_) {
        return p_219970_1_.func_77973_b() == Items.field_222114_py;
     }
-@@ -305,10 +_,18 @@
+@@ -305,6 +_,7 @@
     }
  
     @Nullable
 +   @Deprecated // Use ItemStack sensitive version.
     public Food func_219967_s() {
        return this.field_219974_q;
-    }
- 
-+   /* ======================================== FORGE START =====================================*/
-+   @Nullable
-+   public Food getFoodProperties(ItemStack itemStack) {
-+      return this.func_219967_s();
-+   }
-+   /* ========================================= FORGE END ====================================== */
-+
-    public SoundEvent func_225520_U__() {
-       return SoundEvents.field_187664_bz;
     }
 @@ -333,6 +_,9 @@
        private Rarity field_208104_e = Rarity.COMMON;
