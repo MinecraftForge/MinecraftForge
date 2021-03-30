@@ -36,8 +36,8 @@
        boolean flag1 = blockstate.func_204520_s().func_206884_a(FluidTags.field_206959_a);
        if (flag && !flag1) {
 -         boolean flag2 = this.func_213373_a(p_70825_1_, p_70825_3_, p_70825_5_, true);
-+         net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(this, p_70825_1_, p_70825_3_, p_70825_5_, 0);
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return false;
++         net.minecraftforge.event.entity.living.EntityTeleportEvent.EnderEntity event = net.minecraftforge.event.ForgeEventFactory.onEnderTeleport(this, p_70825_1_, p_70825_3_, p_70825_5_);
++         if (event.isCanceled()) return false;
 +         boolean flag2 = this.func_213373_a(event.getTargetX(), event.getTargetY(), event.getTargetZ(), true);
           if (flag2 && !this.func_174814_R()) {
              this.field_70170_p.func_184148_a((PlayerEntity)null, this.field_70169_q, this.field_70167_r, this.field_70166_s, SoundEvents.field_187534_aX, this.func_184176_by(), 1.0F, 1.0F);
