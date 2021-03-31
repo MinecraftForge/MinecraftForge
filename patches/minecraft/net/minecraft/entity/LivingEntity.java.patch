@@ -19,7 +19,7 @@
     }
  
     protected void func_184231_a(double p_184231_1_, boolean p_184231_3_, BlockState p_184231_4_, BlockPos p_184231_5_) {
-@@ -260,9 +_,10 @@
+@@ -260,10 +_,11 @@
  
        if (!this.field_70170_p.field_72995_K && this.field_70143_R > 3.0F && p_184231_3_) {
           float f = (float)MathHelper.func_76123_f(this.field_70143_R - 3.0F);
@@ -27,10 +27,12 @@
 +         if (!p_184231_4_.isAir(field_70170_p, p_184231_5_)) {
              double d0 = Math.min((double)(0.2F + f / 15.0F), 2.5D);
              int i = (int)(150.0D * d0);
+-            ((ServerWorld)this.field_70170_p).func_195598_a(new BlockParticleData(ParticleTypes.field_197611_d, p_184231_4_), this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), i, 0.0D, 0.0D, 0.0D, (double)0.15F);
 +            if (!p_184231_4_.addLandingEffects((ServerWorld)this.field_70170_p, p_184231_5_, p_184231_4_, this, i))
-             ((ServerWorld)this.field_70170_p).func_195598_a(new BlockParticleData(ParticleTypes.field_197611_d, p_184231_4_), this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), i, 0.0D, 0.0D, 0.0D, (double)0.15F);
++            ((ServerWorld)this.field_70170_p).func_195598_a(new BlockParticleData(ParticleTypes.field_197611_d, p_184231_4_).setPos(p_184231_5_), this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), i, 0.0D, 0.0D, 0.0D, (double)0.15F);
           }
        }
+ 
 @@ -330,7 +_,7 @@
                 }
              }
