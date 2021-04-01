@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,7 +47,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
     @Override
     public boolean isIngredient(ItemStack stack)
     {
-        return PotionBrewing.isReagent(stack);
+        return PotionBrewing.isIngredient(stack);
     }
 
     /**
@@ -60,7 +60,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
     {
         if (!input.isEmpty() && !ingredient.isEmpty() && isIngredient(ingredient))
         {
-            ItemStack result = PotionBrewing.doReaction(ingredient, input);
+            ItemStack result = PotionBrewing.mix(ingredient, input);
             if (result != input)
             {
                 return result;

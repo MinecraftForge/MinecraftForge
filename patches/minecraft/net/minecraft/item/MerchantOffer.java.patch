@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/MerchantOffer.java
 +++ b/net/minecraft/item/MerchantOffer.java
-@@ -74,7 +74,7 @@
+@@ -74,7 +_,7 @@
        int i = this.field_222223_a.func_190916_E();
        ItemStack itemstack = this.field_222223_a.func_77946_l();
        int j = Math.max(0, MathHelper.func_76141_d((float)(i * this.field_222230_h) * this.field_222231_i));
@@ -9,7 +9,7 @@
        return itemstack;
     }
  
-@@ -178,7 +178,7 @@
+@@ -178,7 +_,7 @@
           return true;
        } else {
           ItemStack itemstack = p_222201_1_.func_77946_l();

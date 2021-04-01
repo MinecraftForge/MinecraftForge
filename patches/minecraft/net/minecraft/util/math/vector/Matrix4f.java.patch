@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/math/vector/Matrix4f.java
 +++ b/net/minecraft/util/math/vector/Matrix4f.java
-@@ -386,4 +386,78 @@
+@@ -386,4 +_,78 @@
        matrix4f.field_226586_l_ = p_226599_2_;
        return matrix4f;
     }

@@ -103,7 +103,7 @@ public class NetworkCapabilityTest {
     {
         event.getEntityLiving().getCapability(TEST_CAP).ifPresent(cap ->
         {
-            if (!event.getEntity().getEntityWorld().isRemote())
+            if (!event.getEntity().level.isClientSide())
             {
                 cap.update();
             }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -50,18 +50,18 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>, INet
 
     default void deserializeNBT(CompoundNBT nbt)
     {
-        getEntity().read(nbt);
+        getEntity().load(nbt);
     }
 
     default CompoundNBT serializeNBT()
     {
         CompoundNBT ret = new CompoundNBT();
-        String id = getEntity().getEntityString();
+        String id = getEntity().getEncodeId();
         if (id != null)
         {
-            ret.putString("id", getEntity().getEntityString());
+            ret.putString("id", getEntity().getEncodeId());
         }
-        return getEntity().writeWithoutTypeId(ret);
+        return getEntity().saveWithoutId(ret);
     }
 
     boolean canUpdate();
@@ -102,7 +102,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>, INet
             return new ItemStack(Items.LEAD);
         else if (this instanceof ItemFrameEntity)
         {
-            ItemStack held = ((ItemFrameEntity)this).getDisplayedItem();
+            ItemStack held = ((ItemFrameEntity)this).getItem();
             if (held.isEmpty())
                 return new ItemStack(Items.ITEM_FRAME);
             else
@@ -111,14 +111,14 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>, INet
         else if (this instanceof AbstractMinecartEntity)
             return ((AbstractMinecartEntity)this).getCartItem();
         else if (this instanceof BoatEntity)
-            return new ItemStack(((BoatEntity)this).getItemBoat());
+            return new ItemStack(((BoatEntity)this).getDropItem());
         else if (this instanceof ArmorStandEntity)
             return new ItemStack(Items.ARMOR_STAND);
         else if (this instanceof EnderCrystalEntity)
             return new ItemStack(Items.END_CRYSTAL);
         else
         {
-            SpawnEggItem egg = SpawnEggItem.getEgg(getEntity().getType());
+            SpawnEggItem egg = SpawnEggItem.byId(getEntity().getType());
             if (egg != null) return new ItemStack(egg);
         }
         return ItemStack.EMPTY;
@@ -143,7 +143,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>, INet
      */
     default boolean canBeRiddenInWater(Entity rider)
     {
-        return getEntity().canBeRiddenInWater();
+        return getEntity().rideableUnderWater();
     }
 
     /**
@@ -162,7 +162,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>, INet
      */
     default EntityClassification getClassification(boolean forSpawnCount)
     {
-        return getEntity().getType().getClassification();
+        return getEntity().getType().getCategory();
     }
 
     /**

@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/BrewingStandTileEntity.java
 +++ b/net/minecraft/tileentity/BrewingStandTileEntity.java
-@@ -146,6 +146,7 @@
+@@ -146,6 +_,7 @@
  
     private boolean func_145934_k() {
        ItemStack itemstack = this.field_145945_j.get(3);
@@ -8,7 +8,7 @@
        if (itemstack.func_190926_b()) {
           return false;
        } else if (!PotionBrewing.func_185205_a(itemstack)) {
-@@ -163,22 +164,22 @@
+@@ -163,22 +_,22 @@
     }
  
     private void func_145940_l() {
@@ -38,7 +38,7 @@
  
        this.field_145945_j.set(3, itemstack);
        this.field_145850_b.func_217379_c(1035, blockpos, 0);
-@@ -229,13 +230,13 @@
+@@ -229,13 +_,13 @@
  
     public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_) {
        if (p_94041_1_ == 3) {
@@ -54,10 +54,11 @@
           }
        }
     }
-@@ -267,4 +268,27 @@
+@@ -266,5 +_,28 @@
+ 
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return new BrewingStandContainer(p_213906_1_, p_213906_2_, this, this.field_213954_a);
-    }
++   }
 +
 +   net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =
 +           net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
@@ -80,5 +81,5 @@
 +      super.invalidateCaps();
 +      for (int x = 0; x < handlers.length; x++)
 +        handlers[x].invalidate();
-+   }
+    }
  }

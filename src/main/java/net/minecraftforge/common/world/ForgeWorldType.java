@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -71,7 +71,7 @@ public class ForgeWorldType extends ForgeRegistryEntry<ForgeWorldType>
 
     public String getTranslationKey()
     {
-        return Util.makeTranslationKey("generator", getRegistryName());
+        return Util.makeDescriptionId("generator", getRegistryName());
     }
 
     public ITextComponent getDisplayName()
@@ -99,12 +99,12 @@ public class ForgeWorldType extends ForgeRegistryEntry<ForgeWorldType>
         ChunkGenerator createChunkGenerator(Registry<Biome> biomeRegistry, Registry<DimensionSettings> dimensionSettingsRegistry, long seed, String generatorSettings);
 
         default DimensionGeneratorSettings createSettings(DynamicRegistries dynamicRegistries, long seed, boolean generateStructures, boolean bonusChest, String generatorSettings) {
-            Registry<Biome> biomeRegistry = dynamicRegistries.getRegistry(Registry.BIOME_KEY);
-            Registry<DimensionType> dimensionTypeRegistry = dynamicRegistries.getRegistry(Registry.DIMENSION_TYPE_KEY);
-            Registry<DimensionSettings> dimensionSettingsRegistry = dynamicRegistries.getRegistry(Registry.NOISE_SETTINGS_KEY);
+            Registry<Biome> biomeRegistry = dynamicRegistries.registryOrThrow(Registry.BIOME_REGISTRY);
+            Registry<DimensionType> dimensionTypeRegistry = dynamicRegistries.registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
+            Registry<DimensionSettings> dimensionSettingsRegistry = dynamicRegistries.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
             return new DimensionGeneratorSettings(seed, generateStructures, bonusChest,
-                    DimensionGeneratorSettings.func_242749_a(dimensionTypeRegistry,
-                            DimensionType.getDefaultSimpleRegistry(dimensionTypeRegistry, biomeRegistry, dimensionSettingsRegistry, seed),
+                    DimensionGeneratorSettings.withOverworld(dimensionTypeRegistry,
+                            DimensionType.defaultDimensions(dimensionTypeRegistry, biomeRegistry, dimensionSettingsRegistry, seed),
                             createChunkGenerator(biomeRegistry, dimensionSettingsRegistry, seed, generatorSettings)));
         }
     }

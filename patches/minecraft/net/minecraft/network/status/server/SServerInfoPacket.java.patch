@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/status/server/SServerInfoPacket.java
 +++ b/net/minecraft/network/status/server/SServerInfoPacket.java
-@@ -30,7 +30,7 @@
+@@ -30,7 +_,7 @@
     }
  
     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/ItemOverrideList.java
 +++ b/net/minecraft/client/renderer/model/ItemOverrideList.java
-@@ -24,10 +24,14 @@
+@@ -24,10 +_,14 @@
        this.field_209582_c = Collections.emptyList();
     }
  
@@ -16,12 +16,13 @@
        }).collect(Collectors.toList());
        Collections.reverse(this.field_209582_c);
  
-@@ -55,4 +59,8 @@
+@@ -54,5 +_,9 @@
+       }
  
        return p_239290_1_;
-    }
++   }
 +
 +   public com.google.common.collect.ImmutableList<ItemOverride> getOverrides() {
 +      return com.google.common.collect.ImmutableList.copyOf(field_188023_b);
-+   }
+    }
  }

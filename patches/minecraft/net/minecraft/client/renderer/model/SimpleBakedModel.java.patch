@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/SimpleBakedModel.java
 +++ b/net/minecraft/client/renderer/model/SimpleBakedModel.java
-@@ -77,6 +77,10 @@
+@@ -77,6 +_,10 @@
        private final boolean field_177653_e;
        private final ItemCameraTransforms field_177651_f;
  

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,7 +61,7 @@ public class PacketDispatcher {
 
         private void dispatchPacket(final ResourceLocation resourceLocation, final PacketBuffer buffer) {
             final ICustomPacket<?> packet = this.customPacketSupplier.apply(Pair.of(buffer, packetIndex), resourceLocation);
-            this.manager.sendPacket(packet.getThis());
+            this.manager.send(packet.getThis());
         }
     }
 }

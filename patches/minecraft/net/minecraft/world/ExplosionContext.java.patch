@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/ExplosionContext.java
 +++ b/net/minecraft/world/ExplosionContext.java
-@@ -7,7 +7,7 @@
+@@ -7,7 +_,7 @@
  
  public class ExplosionContext {
     public Optional<Float> func_230312_a_(Explosion p_230312_1_, IBlockReader p_230312_2_, BlockPos p_230312_3_, BlockState p_230312_4_, FluidState p_230312_5_) {

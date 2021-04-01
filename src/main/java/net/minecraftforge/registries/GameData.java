@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -107,6 +107,8 @@ import java.util.stream.Stream;
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
 
+import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
+
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
@@ -192,15 +194,15 @@ public class GameData
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type)
     {
-        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, int min, int max)
     {
-        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setIDRange(min, max).hasWrapper();
+        return new RegistryBuilder<T>().setName(key.location()).setType(type).setIDRange(min, max).hasWrapper();
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(RegistryKey<? extends Registry<T>> key, Class<T> type, String _default)
     {
-        return new RegistryBuilder<T>().setName(key.getLocation()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
+        return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
     }
 
     public static <T extends IForgeRegistryEntry<T>> SimpleRegistry<T> getWrapper(RegistryKey<? extends Registry<T>> key, Lifecycle lifecycle)
@@ -353,11 +355,11 @@ public class GameData
         keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
 
         //Move Blocks to first, and Items to second.
-        keys.remove(BLOCKS.getLocation());
-        keys.remove(ITEMS.getLocation());
+        keys.remove(BLOCKS.location());
+        keys.remove(ITEMS.location());
 
-        keys.add(0, BLOCKS.getLocation());
-        keys.add(1, ITEMS.getLocation());
+        keys.add(0, BLOCKS.location());
+        keys.add(1, ITEMS.location());
 
         final Function<ResourceLocation, ? extends RegistryEvent.Register<?>> registerEventGenerator = rl -> RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl);
         return keys.stream().map(rl -> ModLoadingStage.EventGenerator.fromFunction(mc -> registerEventGenerator.apply(rl)));
@@ -419,17 +421,17 @@ public class GameData
     {
         void clear()
         {
-            this.identityMap.clear();
-            this.objectList.clear();
+            this.tToId.clear();
+            this.idToT.clear();
             this.nextId = 0;
         }
 
         void remove(I key)
         {
-            Integer prev = this.identityMap.remove(key);
+            Integer prev = this.tToId.remove(key);
             if (prev != null)
             {
-                this.objectList.set(prev, null);
+                this.idToT.set(prev, null);
             }
         }
     }
@@ -443,19 +445,19 @@ public class GameData
         {
             if (oldBlock != null)
             {
-                StateContainer<Block, BlockState> oldContainer = oldBlock.getStateContainer();
-                StateContainer<Block, BlockState> newContainer = block.getStateContainer();
+                StateContainer<Block, BlockState> oldContainer = oldBlock.getStateDefinition();
+                StateContainer<Block, BlockState> newContainer = block.getStateDefinition();
 
                 // Test vanilla blockstates, if the number matches, make sure they also match in their string representations
                 if (block.getRegistryName().getNamespace().equals("minecraft") && !oldContainer.getProperties().equals(newContainer.getProperties()))
                 {
                     String oldSequence = oldContainer.getProperties().stream()
                             .map(s -> String.format("%s={%s}", s.getName(),
-                                    s.getAllowedValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
+                                    s.getPossibleValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
                             .collect(Collectors.joining(";"));
                     String newSequence = newContainer.getProperties().stream()
                             .map(s -> String.format("%s={%s}", s.getName(),
-                                    s.getAllowedValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
+                                    s.getPossibleValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
                             .collect(Collectors.joining(";"));
 
                     LOGGER.error(REGISTRIES,()-> new AdvancedLogMessageAdapter(sb-> {
@@ -483,7 +485,7 @@ public class GameData
                 @Override
                 public int getId(BlockState key)
                 {
-                    Integer integer = (Integer)this.identityMap.get(key);
+                    Integer integer = (Integer)this.tToId.get(key);
                     // There are some cases where this map is queried to serialize a state that is valid,
                     //but somehow not in this list, so attempt to get real metadata. Doing this hear saves us 7 patches
                     //if (integer == null && key != null)
@@ -498,7 +500,7 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            Block ret = new BlockDummyAir(Block.Properties.create(Material.AIR));
+            Block ret = new BlockDummyAir(Block.Properties.of(Material.AIR));
             GameData.forceRegistryName(ret, key);
             return ret;
         }
@@ -511,10 +513,10 @@ public class GameData
 
             for (Block block : owner)
             {
-                for (BlockState state : block.getStateContainer().getValidStates())
+                for (BlockState state : block.getStateDefinition().getPossibleStates())
                 {
                     blockstateMap.add(state);
-                    state.cacheState();
+                    state.initCache();
                 }
 
                 block.getLootTable();
@@ -530,7 +532,7 @@ public class GameData
             }
 
             @Override
-            public String getTranslationKey()
+            public String getDescriptionId()
             {
                 return "block.minecraft.air";
             }
@@ -554,7 +556,7 @@ public class GameData
             {
                 @SuppressWarnings("unchecked")
                 Map<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, Map.class);
-                ((BlockItem)item).addToBlockToItemMap(blockToItem, item);
+                ((BlockItem)item).registerBlocks(blockToItem, item);
             }
         }
 
@@ -581,7 +583,7 @@ public class GameData
         public void onValidate(IForgeRegistryInternal<Attribute> owner, RegistryManager stage, int id, ResourceLocation key, Attribute obj)
         {
             // some stuff hard patched in can cause this to derp if it's JUST vanilla, so skip
-            if (stage!=RegistryManager.VANILLA) GlobalEntityTypeAttributes.validateEntityAttributes();
+            if (stage!=RegistryManager.VANILLA) GlobalEntityTypeAttributes.validate();
         }
     }
 

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,9 +40,9 @@ public class RenderLocalPlayerTest
         if (ENABLED && event.getItemStack().getItem() == Items.STICK)
         {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.getRenderViewEntity() == mc.player)
+            if (mc.getCameraEntity() == mc.player)
             {
-                mc.setRenderViewEntity(event.getTarget());
+                mc.setCameraEntity(event.getTarget());
 
                 event.setCancellationResult(ActionResultType.SUCCESS);
                 event.setCanceled(true);
@@ -56,9 +56,9 @@ public class RenderLocalPlayerTest
         if (ENABLED && event.getItemStack().getItem() == Items.STICK)
         {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.getRenderViewEntity() != mc.player)
+            if (mc.getCameraEntity() != mc.player)
             {
-                mc.setRenderViewEntity(mc.player);
+                mc.setCameraEntity(mc.player);
 
                 event.setCancellationResult(ActionResultType.SUCCESS);
                 event.setCanceled(true);

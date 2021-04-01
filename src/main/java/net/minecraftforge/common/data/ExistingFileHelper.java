@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -108,20 +108,20 @@ public class ExistingFileHelper {
     public ExistingFileHelper(Collection<Path> existingPacks, Set<String> existingMods, boolean enable) {
         this.clientResources = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
         this.serverData = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
-        this.clientResources.addResourcePack(new VanillaPack("minecraft", "realms"));
-        this.serverData.addResourcePack(new VanillaPack("minecraft"));
+        this.clientResources.add(new VanillaPack("minecraft", "realms"));
+        this.serverData.add(new VanillaPack("minecraft"));
         for (Path existing : existingPacks) {
             File file = existing.toFile();
             IResourcePack pack = file.isDirectory() ? new FolderPack(file) : new FilePack(file);
-            this.clientResources.addResourcePack(pack);
-            this.serverData.addResourcePack(pack);
+            this.clientResources.add(pack);
+            this.serverData.add(pack);
         }
         for (String existingMod : existingMods) {
             ModFileInfo modFileInfo = ModList.get().getModFileById(existingMod);
             if (modFileInfo != null) {
                 IResourcePack pack = new ModFileResourcePack(modFileInfo.getFile());
-                this.clientResources.addResourcePack(pack);
-                this.serverData.addResourcePack(pack);
+                this.clientResources.add(pack);
+                this.serverData.add(pack);
             }
         }
         this.enable = enable;

@@ -113,8 +113,14 @@ license="LGPL v2.1"
 [[mods]]
     modId="network_capability_test"
 [[mods]]
+    modId="custom_signs_test"
+[[mods]]
     modId="shader_fix_test"
 [[mods]]
     modId="worldgen_registry_desync_test"
 [[mods]]
     modId="add_entity_attribute_test"
+[[mods]]
+    modId="enum_argument_test"
+[[mods]]
+    modId="entity_teleport_event_test"

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -85,12 +85,12 @@ public class FMLHandshakeMessages
             List<String> mods = new ArrayList<>();
             int len = input.readVarInt();
             for (int x = 0; x < len; x++)
-                mods.add(input.readString(0x100));
+                mods.add(input.readUtf(0x100));
 
             Map<ResourceLocation, String> channels = new HashMap<>();
             len = input.readVarInt();
             for (int x = 0; x < len; x++)
-                channels.put(input.readResourceLocation(), input.readString(0x100));
+                channels.put(input.readResourceLocation(), input.readUtf(0x100));
 
             List<ResourceLocation> registries = new ArrayList<>();
             len = input.readVarInt();
@@ -103,12 +103,12 @@ public class FMLHandshakeMessages
         public void encode(PacketBuffer output)
         {
             output.writeVarInt(mods.size());
-            mods.forEach(m -> output.writeString(m, 0x100));
+            mods.forEach(m -> output.writeUtf(m, 0x100));
 
             output.writeVarInt(channels.size());
             channels.forEach((k, v) -> {
                 output.writeResourceLocation(k);
-                output.writeString(v, 0x100);
+                output.writeUtf(v, 0x100);
             });
 
             output.writeVarInt(registries.size());
@@ -153,17 +153,17 @@ public class FMLHandshakeMessages
             List<String> mods = new ArrayList<>();
             int len = input.readVarInt();
             for (int x = 0; x < len; x++)
-                mods.add(input.readString(0x100));
+                mods.add(input.readUtf(0x100));
 
             Map<ResourceLocation, String> channels = new HashMap<>();
             len = input.readVarInt();
             for (int x = 0; x < len; x++)
-                channels.put(input.readResourceLocation(), input.readString(0x100));
+                channels.put(input.readResourceLocation(), input.readUtf(0x100));
 
             Map<ResourceLocation, String> registries = new HashMap<>();
             len = input.readVarInt();
             for (int x = 0; x < len; x++)
-                registries.put(input.readResourceLocation(), input.readString(0x100));
+                registries.put(input.readResourceLocation(), input.readUtf(0x100));
 
             return new C2SModListReply(mods, channels, registries);
         }
@@ -171,18 +171,18 @@ public class FMLHandshakeMessages
         public void encode(PacketBuffer output)
         {
             output.writeVarInt(mods.size());
-            mods.forEach(m -> output.writeString(m, 0x100));
+            mods.forEach(m -> output.writeUtf(m, 0x100));
 
             output.writeVarInt(channels.size());
             channels.forEach((k, v) -> {
                 output.writeResourceLocation(k);
-                output.writeString(v, 0x100);
+                output.writeUtf(v, 0x100);
             });
 
             output.writeVarInt(registries.size());
             registries.forEach((k, v) -> {
                 output.writeResourceLocation(k);
-                output.writeString(v, 0x100);
+                output.writeUtf(v, 0x100);
             });
         }
 
@@ -259,12 +259,12 @@ public class FMLHandshakeMessages
         }
 
         void encode(final PacketBuffer buffer) {
-            buffer.writeString(this.fileName);
+            buffer.writeUtf(this.fileName);
             buffer.writeByteArray(this.fileData);
         }
 
         public static S2CConfigData decode(final PacketBuffer buffer) {
-            return new S2CConfigData(buffer.readString(32767), buffer.readByteArray());
+            return new S2CConfigData(buffer.readUtf(32767), buffer.readByteArray());
         }
 
         public String getFileName() {

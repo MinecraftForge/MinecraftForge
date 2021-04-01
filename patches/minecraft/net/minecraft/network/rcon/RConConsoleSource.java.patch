@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/rcon/RConConsoleSource.java
 +++ b/net/minecraft/network/rcon/RConConsoleSource.java
-@@ -34,7 +34,7 @@
+@@ -34,7 +_,7 @@
     }
  
     public void func_145747_a(ITextComponent p_145747_1_, UUID p_145747_2_) {

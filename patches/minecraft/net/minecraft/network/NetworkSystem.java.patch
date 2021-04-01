@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/NetworkSystem.java
 +++ b/net/minecraft/network/NetworkSystem.java
-@@ -41,11 +41,12 @@
+@@ -41,11 +_,12 @@
  
  public class NetworkSystem {
     private static final Logger field_151275_b = LogManager.getLogger();
@@ -15,7 +15,7 @@
     });
     private final MinecraftServer field_151273_d;
     public volatile boolean field_151277_a;
-@@ -58,6 +59,7 @@
+@@ -58,6 +_,7 @@
     }
  
     public void func_151265_a(@Nullable InetAddress p_151265_1_, int p_151265_2_) throws IOException {
@@ -23,7 +23,7 @@
        synchronized(this.field_151274_e) {
           Class<? extends ServerSocketChannel> oclass;
           LazyValue<? extends EventLoopGroup> lazyvalue;
-@@ -78,7 +80,7 @@
+@@ -78,7 +_,7 @@
                 } catch (ChannelException channelexception) {
                 }
  

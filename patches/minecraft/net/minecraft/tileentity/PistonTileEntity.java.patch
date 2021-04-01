@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/PistonTileEntity.java
 +++ b/net/minecraft/tileentity/PistonTileEntity.java
-@@ -108,7 +108,7 @@
+@@ -108,7 +_,7 @@
           List<Entity> list = this.field_145850_b.func_72839_b((Entity)null, AabbHelper.func_227019_a_(axisalignedbb, direction, d0).func_111270_a(axisalignedbb));
           if (!list.isEmpty()) {
              List<AxisAlignedBB> list1 = voxelshape.func_197756_d();

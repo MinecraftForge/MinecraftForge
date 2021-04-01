@@ -1,6 +1,6 @@
 --- a/net/minecraft/enchantment/Enchantment.java
 +++ b/net/minecraft/enchantment/Enchantment.java
-@@ -18,7 +18,8 @@
+@@ -18,7 +_,8 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -10,7 +10,7 @@
     private final EquipmentSlotType[] field_185263_a;
     private final Enchantment.Rarity field_77333_a;
     public final EnchantmentType field_77351_y;
-@@ -37,6 +38,14 @@
+@@ -37,6 +_,14 @@
        this.field_185263_a = p_i46731_3_;
     }
  
@@ -25,7 +25,7 @@
     public Map<EquipmentSlotType, ItemStack> func_222181_a(LivingEntity p_222181_1_) {
        Map<EquipmentSlotType, ItemStack> map = Maps.newEnumMap(EquipmentSlotType.class);
  
-@@ -114,7 +123,7 @@
+@@ -114,7 +_,7 @@
     }
  
     public boolean func_92089_a(ItemStack p_92089_1_) {
@@ -34,10 +34,13 @@
     }
  
     public void func_151368_a(LivingEntity p_151368_1_, Entity p_151368_2_, int p_151368_3_) {
-@@ -139,6 +148,24 @@
-       return true;
+@@ -136,6 +_,24 @@
     }
  
+    public boolean func_230310_i_() {
++      return true;
++   }
++
 +   /**
 +    * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
 +    * applies for <i>all possible</i> enchantments.
@@ -53,9 +56,6 @@
 +    * @return false to disable the vanilla feature
 +    */
 +   public boolean isAllowedOnBooks() {
-+      return true;
-+   }
-+
-    public static enum Rarity {
-       COMMON(10),
-       UNCOMMON(5),
+       return true;
+    }
+ 

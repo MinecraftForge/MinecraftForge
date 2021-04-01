@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,7 +61,7 @@ public class DelegatingResourcePack extends ResourcePack
         Map<String, List<IResourcePack>> map = new HashMap<>();
         for (IResourcePack pack : packList)
         {
-            for (String namespace : pack.getResourceNamespaces(type))
+            for (String namespace : pack.getNamespaces(type))
             {
                 map.computeIfAbsent(namespace, k -> new ArrayList<>()).add(pack);
             }
@@ -78,9 +78,9 @@ public class DelegatingResourcePack extends ResourcePack
     
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getMetadata(IMetadataSectionSerializer<T> deserializer) throws IOException
+    public <T> T getMetadataSection(IMetadataSectionSerializer<T> deserializer) throws IOException
     {
-        if (deserializer.getSectionName().equals("pack"))
+        if (deserializer.getMetadataSectionName().equals("pack"))
         {
             return (T) packInfo;
         }
@@ -88,15 +88,15 @@ public class DelegatingResourcePack extends ResourcePack
     }
 
     @Override
-    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String pathIn, String pathIn2, int maxDepth, Predicate<String> filter)
+    public Collection<ResourceLocation> getResources(ResourcePackType type, String pathIn, String pathIn2, int maxDepth, Predicate<String> filter)
     {
         return delegates.stream()
-                .flatMap(r -> r.getAllResourceLocations(type, pathIn, pathIn2, maxDepth, filter).stream())
+                .flatMap(r -> r.getResources(type, pathIn, pathIn2, maxDepth, filter).stream())
                 .collect(Collectors.toList());
     }
 
     @Override
-    public Set<String> getResourceNamespaces(ResourcePackType type)
+    public Set<String> getNamespaces(ResourcePackType type)
     {
         return type == ResourcePackType.CLIENT_RESOURCES ? namespacesAssets.keySet() : namespacesData.keySet();
     }
@@ -111,45 +111,45 @@ public class DelegatingResourcePack extends ResourcePack
     }
 
     @Override
-    public InputStream getRootResourceStream(String fileName) throws IOException
+    public InputStream getRootResource(String fileName) throws IOException
     {
         // root resources do not make sense here
         throw new ResourcePackFileNotFoundException(this.file, fileName);
     }
 
     @Override
-    protected InputStream getInputStream(String resourcePath) throws IOException
+    protected InputStream getResource(String resourcePath) throws IOException
     {
         // never called, we override all methods that call this
         throw new ResourcePackFileNotFoundException(this.file, resourcePath);
     }
 
     @Override
-    protected boolean resourceExists(String resourcePath)
+    protected boolean hasResource(String resourcePath)
     {
         // never called, we override all methods that call this
         return false;
     }
 
     @Override
-    public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException
+    public InputStream getResource(ResourcePackType type, ResourceLocation location) throws IOException
     {
         for (IResourcePack pack : getCandidatePacks(type, location))
         {
-            if (pack.resourceExists(type, location))
+            if (pack.hasResource(type, location))
             {
-                return pack.getResourceStream(type, location);
+                return pack.getResource(type, location);
             }
         }
         throw new ResourcePackFileNotFoundException(this.file, getFullPath(type, location));
     }
 
     @Override
-    public boolean resourceExists(ResourcePackType type, ResourceLocation location)
+    public boolean hasResource(ResourcePackType type, ResourceLocation location)
     {
         for (IResourcePack pack : getCandidatePacks(type, location))
         {
-            if (pack.resourceExists(type, location))
+            if (pack.hasResource(type, location))
             {
                 return true;
             }
@@ -167,7 +167,7 @@ public class DelegatingResourcePack extends ResourcePack
     private static String getFullPath(ResourcePackType type, ResourceLocation location)
     {
         // stolen from ResourcePack
-        return String.format("%s/%s/%s", type.getDirectoryName(), location.getNamespace(), location.getPath());
+        return String.format("%s/%s/%s", type.getDirectory(), location.getNamespace(), location.getPath());
     }
 
 }

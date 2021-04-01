@@ -45,6 +45,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 @Mod(ForgeChunkManagerTest.MODID)
 public class ForgeChunkManagerTest
 {
@@ -52,8 +54,8 @@ public class ForgeChunkManagerTest
     private static final Logger LOGGER = LogManager.getLogger(MODID);
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    private static final RegistryObject<Block> CHUNK_LOADER_BLOCK = BLOCKS.register("chunk_loader", () -> new ChunkLoaderBlock(AbstractBlock.Properties.create(Material.ROCK)));
-    private static final RegistryObject<Item> CHUNK_LOADER_ITEM = ITEMS.register("chunk_loader", () -> new BlockItem(CHUNK_LOADER_BLOCK.get(), new Item.Properties().group(ItemGroup.MISC)));
+    private static final RegistryObject<Block> CHUNK_LOADER_BLOCK = BLOCKS.register("chunk_loader", () -> new ChunkLoaderBlock(AbstractBlock.Properties.of(Material.STONE)));
+    private static final RegistryObject<Item> CHUNK_LOADER_ITEM = ITEMS.register("chunk_loader", () -> new BlockItem(CHUNK_LOADER_BLOCK.get(), new Item.Properties().tab(ItemGroup.TAB_MISC)));
 
     public ForgeChunkManagerTest()
     {
@@ -71,7 +73,7 @@ public class ForgeChunkManagerTest
                 BlockPos key = entry.getKey();
                 int ticketCount = entry.getValue().getFirst().size();
                 int tickingTicketCount = entry.getValue().getSecond().size();
-                if (world.getBlockState(key).isIn(CHUNK_LOADER_BLOCK.get()))
+                if (world.getBlockState(key).is(CHUNK_LOADER_BLOCK.get()))
                     LOGGER.info("Allowing {} chunk tickets and {} ticking chunk tickets to be reinstated for position: {}.", ticketCount, tickingTicketCount, key);
                 else
                 {
@@ -98,9 +100,9 @@ public class ForgeChunkManagerTest
         }
 
         @Override
-        public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving)
+        public void onPlace(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving)
         {
-            super.onBlockAdded(state, worldIn, pos, oldState, isMoving);
+            super.onPlace(state, worldIn, pos, oldState, isMoving);
             if (worldIn instanceof ServerWorld)
             {
                 ChunkPos chunkPos = new ChunkPos(pos);
@@ -109,10 +111,10 @@ public class ForgeChunkManagerTest
         }
 
         @Deprecated
-        public void onReplaced(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving)
+        public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving)
         {
-            super.onReplaced(state, worldIn, pos, newState, isMoving);
-            if (worldIn instanceof ServerWorld && !state.isIn(newState.getBlock()))
+            super.onRemove(state, worldIn, pos, newState, isMoving);
+            if (worldIn instanceof ServerWorld && !state.is(newState.getBlock()))
             {
                 ChunkPos chunkPos = new ChunkPos(pos);
                 ForgeChunkManager.forceChunk((ServerWorld) worldIn, MODID, pos, chunkPos.x, chunkPos.z, false, false);

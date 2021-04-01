@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/SmithingRecipe.java
 +++ b/net/minecraft/item/crafting/SmithingRecipe.java
-@@ -65,7 +65,7 @@
+@@ -65,7 +_,7 @@
        return IRecipeType.field_234827_g_;
     }
  

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -60,7 +60,7 @@ public class FarmlandWaterManager
     @SuppressWarnings("unchecked")
     public static<T extends SimpleTicket<Vector3d>> T addCustomTicket(World world, T ticket, ChunkPos masterChunk, ChunkPos... additionalChunks)
     {
-        Preconditions.checkArgument(!world.isRemote, "Water region is only determined server-side");
+        Preconditions.checkArgument(!world.isClientSide, "Water region is only determined server-side");
         Map<ChunkPos, ChunkTicketManager<Vector3d>> ticketMap =  customWaterHandler.computeIfAbsent(world, id -> new MapMaker().weakValues().makeMap());
         ChunkTicketManager<Vector3d>[] additionalTickets = new ChunkTicketManager[additionalChunks.length];
         for (int i = 0; i < additionalChunks.length; i++)
@@ -157,7 +157,7 @@ public class FarmlandWaterManager
     }
 
     private static ChunkTicketManager<Vector3d> getTicketManager(ChunkPos pos, IWorldReader world) {
-        Preconditions.checkArgument(!world.isRemote(), "Water region is only determined server-side");
+        Preconditions.checkArgument(!world.isClientSide(), "Water region is only determined server-side");
         Map<ChunkPos, ChunkTicketManager<Vector3d>> ticketMap = customWaterHandler.get(world);
         if (ticketMap == null)
         {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/math/shapes/EntitySelectionContext.java
 +++ b/net/minecraft/util/math/shapes/EntitySelectionContext.java
-@@ -25,6 +25,11 @@
+@@ -25,6 +_,11 @@
     private final Predicate<Fluid> field_237493_e_;
  
     protected EntitySelectionContext(boolean p_i232177_1_, double p_i232177_2_, Item p_i232177_4_, Predicate<Fluid> p_i232177_5_) {
@@ -12,7 +12,7 @@
        this.field_227579_b_ = p_i232177_1_;
        this.field_216381_c = p_i232177_2_;
        this.field_216382_d = p_i232177_4_;
-@@ -33,7 +38,7 @@
+@@ -33,7 +_,7 @@
  
     @Deprecated
     protected EntitySelectionContext(Entity p_i51182_1_) {
@@ -21,15 +21,16 @@
           return false;
        });
     }
-@@ -53,4 +58,11 @@
+@@ -52,5 +_,12 @@
+ 
     public boolean func_216378_a(VoxelShape p_216378_1_, BlockPos p_216378_2_, boolean p_216378_3_) {
        return this.field_216381_c > (double)p_216378_2_.func_177956_o() + p_216378_1_.func_197758_c(Direction.Axis.Y) - (double)1.0E-5F;
-    }
++   }
 +
 +   private final @javax.annotation.Nullable Entity entity;
 +
 +   @Override
 +   public @javax.annotation.Nullable Entity getEntity() {
 +      return entity;
-+   }
+    }
  }

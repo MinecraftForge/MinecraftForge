@@ -42,8 +42,8 @@ public class SyncEntityCapabilities {
     {
         ctx.get().enqueueWork(() ->
         {
-            Optional<World> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
-            Entity entity = world.map(w -> w.getEntityByID(msg.entityId)).orElse(null);
+            Optional<World> level = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
+            Entity entity = level.map(w -> w.getEntity(msg.entityId)).orElse(null);
             if (entity == null)
             {
                 return;

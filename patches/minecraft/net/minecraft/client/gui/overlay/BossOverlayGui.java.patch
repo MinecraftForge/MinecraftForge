@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/overlay/BossOverlayGui.java
 +++ b/net/minecraft/client/gui/overlay/BossOverlayGui.java
-@@ -32,6 +32,9 @@
+@@ -32,6 +_,9 @@
  
           for(ClientBossInfo clientbossinfo : this.field_184060_g.values()) {
              int k = i / 2 - 91;
@@ -10,7 +10,7 @@
              RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
              this.field_184059_f.func_110434_K().func_110577_a(field_184058_a);
              this.func_238485_a_(p_238484_1_, k, j, clientbossinfo);
-@@ -40,7 +43,9 @@
+@@ -40,7 +_,9 @@
              int i1 = i / 2 - l / 2;
              int j1 = j - 9;
              this.field_184059_f.field_71466_p.func_243246_a(p_238484_1_, itextcomponent, (float)i1, (float)j1, 16777215);

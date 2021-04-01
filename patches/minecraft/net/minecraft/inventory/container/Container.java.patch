@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/container/Container.java
 +++ b/net/minecraft/inventory/container/Container.java
-@@ -120,12 +120,21 @@
+@@ -120,12 +_,21 @@
           ItemStack itemstack = this.field_75151_b.get(i).func_75211_c();
           ItemStack itemstack1 = this.field_75153_a.get(i);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
@@ -23,7 +23,7 @@
           }
        }
  
-@@ -500,14 +509,15 @@
+@@ -500,14 +_,15 @@
              ItemStack itemstack = slot.func_75211_c();
              if (!itemstack.func_190926_b() && func_195929_a(p_75135_1_, itemstack)) {
                 int j = itemstack.func_190916_E() + p_75135_1_.func_190916_E();
@@ -43,7 +43,7 @@
                    slot.func_75218_e();
                    flag = true;
                 }
-@@ -608,7 +618,7 @@
+@@ -608,7 +_,7 @@
           p_94525_2_.func_190920_e(1);
           break;
        case 2:

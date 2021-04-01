@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -88,11 +88,11 @@ public class TickEvent extends Event
     }
     
     public static class TileEntityTickEvent extends TickEvent {
-        public final TileEntity tileEntity;
-        public TileEntityTickEvent(Phase phase, TileEntity tileEntity)
+        public final TileEntity blockEntity;
+        public TileEntityTickEvent(Phase phase, TileEntity blockEntity)
         {
-            super(Type.TILE_ENTITY, tileEntity.getWorld() instanceof ServerWorld ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
-            this.tileEntity = tileEntity;
+            super(Type.TILE_ENTITY, blockEntity.getLevel() instanceof ServerWorld ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
+            this.blockEntity = blockEntity;
         }
     }
 }

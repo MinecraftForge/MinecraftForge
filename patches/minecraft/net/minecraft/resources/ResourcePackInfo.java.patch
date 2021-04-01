@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/ResourcePackInfo.java
 +++ b/net/minecraft/resources/ResourcePackInfo.java
-@@ -30,6 +30,7 @@
+@@ -30,6 +_,7 @@
     private final ResourcePackInfo.Priority field_195805_g;
     private final boolean field_195806_h;
     private final boolean field_195807_i;
@@ -8,7 +8,7 @@
     private final IPackNameDecorator field_232611_k_;
  
     @Nullable
-@@ -53,7 +54,12 @@
+@@ -53,7 +_,12 @@
        return null;
     }
  
@@ -21,7 +21,7 @@
        this.field_195800_b = p_i231422_1_;
        this.field_195801_c = p_i231422_3_;
        this.field_195802_d = p_i231422_4_;
-@@ -63,12 +69,18 @@
+@@ -63,10 +_,16 @@
        this.field_195805_g = p_i231422_7_;
        this.field_195807_i = p_i231422_8_;
        this.field_232611_k_ = p_i231422_9_;
@@ -32,16 +32,14 @@
     public ResourcePackInfo(String p_i231421_1_, boolean p_i231421_2_, Supplier<IResourcePack> p_i231421_3_, IResourcePack p_i231421_4_, PackMetadataSection p_i231421_5_, ResourcePackInfo.Priority p_i231421_6_, IPackNameDecorator p_i231421_7_) {
 -      this(p_i231421_1_, p_i231421_2_, p_i231421_3_, new StringTextComponent(p_i231421_4_.func_195762_a()), p_i231421_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i231421_5_.func_198962_b()), p_i231421_6_, false, p_i231421_7_);
 +       this(p_i231421_1_, p_i231421_2_, p_i231421_3_, p_i231421_4_, p_i231421_5_, p_i231421_6_, p_i231421_7_, false);
-    }
- 
-+   public ResourcePackInfo(String p_i231421_1_, boolean p_i231421_2_, Supplier<IResourcePack> p_i231421_3_, IResourcePack p_i231421_4_, PackMetadataSection p_i231421_5_, ResourcePackInfo.Priority p_i231421_6_, IPackNameDecorator p_i231421_7_, boolean hidden) {
-+      this(p_i231421_1_, p_i231421_2_, p_i231421_3_, new StringTextComponent(p_i231421_4_.func_195762_a()), p_i231421_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i231421_5_.func_198962_b()), p_i231421_6_, false, p_i231421_7_, hidden);
 +   }
 +
++   public ResourcePackInfo(String p_i231421_1_, boolean p_i231421_2_, Supplier<IResourcePack> p_i231421_3_, IResourcePack p_i231421_4_, PackMetadataSection p_i231421_5_, ResourcePackInfo.Priority p_i231421_6_, IPackNameDecorator p_i231421_7_, boolean hidden) {
++      this(p_i231421_1_, p_i231421_2_, p_i231421_3_, new StringTextComponent(p_i231421_4_.func_195762_a()), p_i231421_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i231421_5_.func_198962_b()), p_i231421_6_, false, p_i231421_7_, hidden);
+    }
+ 
     @OnlyIn(Dist.CLIENT)
-    public ITextComponent func_195789_b() {
-       return this.field_195802_d;
-@@ -113,6 +125,8 @@
+@@ -113,6 +_,8 @@
     public IPackNameDecorator func_232614_i_() {
        return this.field_232611_k_;
     }

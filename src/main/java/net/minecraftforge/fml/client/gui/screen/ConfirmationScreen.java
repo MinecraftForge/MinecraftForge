@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,16 +35,16 @@ public class ConfirmationScreen extends NotificationScreen
     @Override
     protected void addConfirmationButtons()
     {
-        this.func_230480_a_(new Button(this.field_230708_k_ / 2 - 104, this.field_230709_l_ - PADDING - 20, 100, 20, new StringTextComponent(ForgeI18n.parseMessage("gui.yes")), b ->
+        this.addButton(new Button(this.width / 2 - 104, this.height - PADDING - 20, 100, 20, new StringTextComponent(ForgeI18n.parseMessage("gui.yes")), b ->
             {
-                ConfirmationScreen.this.field_230706_i_.currentScreen = null;
+                ConfirmationScreen.this.minecraft.currentScreen = null;
                 query.setResult(true);
                 query.finish();
             }
         ));
-        this.func_230480_a_(new Button(this.field_230708_k_ / 2 + 4, this.field_230709_l_ - PADDING - 20, 100, 20, new StringTextComponent(ForgeI18n.parseMessage("gui.no")), b ->
+        this.addButton(new Button(this.width / 2 + 4, this.height - PADDING - 20, 100, 20, new StringTextComponent(ForgeI18n.parseMessage("gui.no")), b ->
             {
-                ConfirmationScreen.this.field_230706_i_.currentScreen = null;
+                ConfirmationScreen.this.minecraft.currentScreen = null;
                 query.setResult(false);
                 query.finish();
             }

@@ -28,7 +28,7 @@ public class SyncEquipmentSlotCapabilities {
     public static void encode(SyncEquipmentSlotCapabilities msg, PacketBuffer out)
     {
         out.writeVarInt(msg.entityId);
-        out.writeEnumValue(msg.slotType);
+        out.writeEnum(msg.slotType);
         out.writeVarInt(msg.capabilityData.readableBytes());
         out.writeBytes(msg.capabilityData);
     }
@@ -36,7 +36,7 @@ public class SyncEquipmentSlotCapabilities {
     public static SyncEquipmentSlotCapabilities decode(PacketBuffer in)
     {
         int entityId = in.readVarInt();
-        EquipmentSlotType slotType = in.readEnumValue(EquipmentSlotType.class);
+        EquipmentSlotType slotType = in.readEnum(EquipmentSlotType.class);
         byte[] capabilityData = new byte[in.readVarInt()];
         in.readBytes(capabilityData);
         return new SyncEquipmentSlotCapabilities(entityId, slotType,
@@ -47,14 +47,14 @@ public class SyncEquipmentSlotCapabilities {
     {
         ctx.get().enqueueWork(() ->
         {
-            Optional<World> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
-            Entity entity = world.map(w -> w.getEntityByID(msg.entityId)).orElse(null);
+            Optional<World> level = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
+            Entity entity = level.map(w -> w.getEntity(msg.entityId)).orElse(null);
             if (!(entity instanceof LivingEntity))
             {
                 return;
             }
 
-            ((LivingEntity) entity).getItemStackFromSlot(msg.slotType).decode(msg.capabilityData);
+            ((LivingEntity) entity).getItemBySlot(msg.slotType).decode(msg.capabilityData);
         });
         return true;
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/minecart/CommandBlockMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/CommandBlockMinecartEntity.java
-@@ -73,6 +73,8 @@
+@@ -73,6 +_,8 @@
     }
  
     public ActionResultType func_184230_a(PlayerEntity p_184230_1_, Hand p_184230_2_) {

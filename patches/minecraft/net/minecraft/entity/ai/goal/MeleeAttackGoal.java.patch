@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/goal/MeleeAttackGoal.java
 +++ b/net/minecraft/entity/ai/goal/MeleeAttackGoal.java
-@@ -20,6 +20,8 @@
+@@ -20,6 +_,8 @@
     private int field_234037_i_;
     private final int field_188493_g = 20;
     private long field_220720_k;
@@ -9,7 +9,7 @@
  
     public MeleeAttackGoal(CreatureEntity p_i1636_1_, double p_i1636_2_, boolean p_i1636_4_) {
        this.field_75441_b = p_i1636_1_;
-@@ -40,6 +42,15 @@
+@@ -40,6 +_,15 @@
           } else if (!livingentity.func_70089_S()) {
              return false;
           } else {
@@ -25,7 +25,7 @@
              this.field_75438_g = this.field_75441_b.func_70661_as().func_75494_a(livingentity, 0);
              if (this.field_75438_g != null) {
                 return true;
-@@ -92,6 +103,18 @@
+@@ -92,6 +_,18 @@
           this.field_151495_j = livingentity.func_226278_cu_();
           this.field_151496_k = livingentity.func_226281_cx_();
           this.field_75445_i = 4 + this.field_75441_b.func_70681_au().nextInt(7);

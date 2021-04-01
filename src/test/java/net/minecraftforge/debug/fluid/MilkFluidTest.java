@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -48,7 +48,7 @@ public class MilkFluidTest
     ItemStack stack = event.getItemStack();
     if (stack.getItem() == Items.MILK_BUCKET)
     {
-      FluidUtil.getFluidContained(stack).ifPresent((fluid) -> event.getPlayer().sendStatusMessage(new StringTextComponent("Contains ").append(fluid.getDisplayName()), true));
+      FluidUtil.getFluidContained(stack).ifPresent((fluid) -> event.getPlayer().displayClientMessage(new StringTextComponent("Contains ").append(fluid.getDisplayName()), true));
     }
   }
 }

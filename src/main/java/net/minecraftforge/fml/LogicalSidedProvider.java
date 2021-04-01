@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ public enum LogicalSidedProvider
 {
     WORKQUEUE((c)->c.get(), (s)->s.get()),
     INSTANCE((c)->c.get(), (s)->s.get()),
-    CLIENTWORLD((c)-> Optional.<World>of(c.get().world), (s)->Optional.<World>empty())
+    CLIENTWORLD((c)-> Optional.<World>of(c.get().level), (s)->Optional.<World>empty())
     ;
     private static Supplier<Minecraft> client;
     private static Supplier<MinecraftServer> server;

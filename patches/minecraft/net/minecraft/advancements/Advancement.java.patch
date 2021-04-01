@@ -1,6 +1,6 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
-@@ -309,6 +309,7 @@
+@@ -309,6 +_,7 @@
        }
  
        public static Advancement.Builder func_241043_a_(JsonObject p_241043_0_, ConditionArrayParser p_241043_1_) {

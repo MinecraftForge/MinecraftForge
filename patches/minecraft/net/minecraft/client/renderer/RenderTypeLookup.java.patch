@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/RenderTypeLookup.java
 +++ b/net/minecraft/client/renderer/RenderTypeLookup.java
-@@ -19,6 +19,7 @@
+@@ -19,6 +_,7 @@
  
  @OnlyIn(Dist.CLIENT)
  public class RenderTypeLookup {
@@ -8,7 +8,7 @@
     private static final Map<Block, RenderType> field_228386_a_ = Util.func_200696_a(Maps.newHashMap(), (p_228395_0_) -> {
        RenderType rendertype = RenderType.func_241715_r_();
        p_228395_0_.put(Blocks.field_150473_bD, rendertype);
-@@ -263,6 +264,7 @@
+@@ -263,6 +_,7 @@
        p_228395_0_.put(Blocks.field_185778_de, rendertype3);
        p_228395_0_.put(Blocks.field_203203_C, rendertype3);
     });
@@ -16,7 +16,7 @@
     private static final Map<Fluid, RenderType> field_228387_b_ = Util.func_200696_a(Maps.newHashMap(), (p_228392_0_) -> {
        RenderType rendertype = RenderType.func_228645_f_();
        p_228392_0_.put(Fluids.field_207212_b, rendertype);
-@@ -270,6 +272,7 @@
+@@ -270,6 +_,7 @@
     });
     private static boolean field_228388_c_;
  
@@ -24,7 +24,7 @@
     public static RenderType func_228390_a_(BlockState p_228390_0_) {
        Block block = p_228390_0_.func_177230_c();
        if (block instanceof LeavesBlock) {
-@@ -280,6 +283,7 @@
+@@ -280,6 +_,7 @@
        }
     }
  
@@ -32,7 +32,7 @@
     public static RenderType func_239221_b_(BlockState p_239221_0_) {
        Block block = p_239221_0_.func_177230_c();
        if (block instanceof LeavesBlock) {
-@@ -295,8 +299,7 @@
+@@ -295,8 +_,7 @@
     }
  
     public static RenderType func_239220_a_(BlockState p_239220_0_, boolean p_239220_1_) {
@@ -42,7 +42,7 @@
           if (!Minecraft.func_238218_y_()) {
              return Atlases.func_228785_j_();
           } else {
-@@ -317,11 +320,60 @@
+@@ -317,9 +_,58 @@
        }
     }
  
@@ -50,8 +50,8 @@
     public static RenderType func_228391_a_(FluidState p_228391_0_) {
        RenderType rendertype = field_228387_b_.get(p_228391_0_.func_206886_c());
        return rendertype != null ? rendertype : RenderType.func_228639_c_();
-    }
- 
++   }
++
 +   // FORGE START
 +
 +   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = Maps.newHashMap();
@@ -98,8 +98,6 @@
 +
 +   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
 +      fluidRenderChecks.put(fluid.delegate, predicate);
-+   }
-+
-    public static void func_228393_a_(boolean p_228393_0_) {
-       field_228388_c_ = p_228393_0_;
     }
+ 
+    public static void func_228393_a_(boolean p_228393_0_) {

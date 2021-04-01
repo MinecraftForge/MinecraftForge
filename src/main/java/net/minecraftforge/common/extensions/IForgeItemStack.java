@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -110,15 +110,15 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>, I
     default ActionResultType onItemUseFirst(ItemUseContext context)
     {
        PlayerEntity entityplayer = context.getPlayer();
-       BlockPos blockpos = context.getPos();
-       CachedBlockInfo blockworldstate = new CachedBlockInfo(context.getWorld(), blockpos, false);
-       if (entityplayer != null && !entityplayer.abilities.allowEdit && !getStack().canPlaceOn(context.getWorld().getTags(), blockworldstate)) {
+       BlockPos blockpos = context.getClickedPos();
+       CachedBlockInfo blockworldstate = new CachedBlockInfo(context.getLevel(), blockpos, false);
+       if (entityplayer != null && !entityplayer.abilities.mayBuild && !getStack().hasAdventureModePlaceTagForBlock(context.getLevel().getTagManager(), blockworldstate)) {
           return ActionResultType.PASS;
        } else {
           Item item = getStack().getItem();
           ActionResultType enumactionresult = item.onItemUseFirst(getStack(), context);
           if (entityplayer != null && enumactionresult == ActionResultType.SUCCESS) {
-             entityplayer.addStat(Stats.ITEM_USED.get(item));
+             entityplayer.awardStat(Stats.ITEM_USED.get(item));
           }
 
           return enumactionresult;
@@ -128,7 +128,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>, I
     default CompoundNBT serializeNBT()
     {
         CompoundNBT ret = new CompoundNBT();
-        getStack().write(ret);
+        getStack().save(ret);
         return ret;
     }
     /**
@@ -423,7 +423,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>, I
             return other.isEmpty();
         else
             return !other.isEmpty() && getStack().getCount() == other.getCount() && getStack().getItem() == other.getItem() &&
-            (limitTags ? getStack().areShareTagsEqual(other) : ItemStack.areItemStackTagsEqual(getStack(), other));
+            (limitTags ? getStack().areShareTagsEqual(other) : ItemStack.tagMatches(getStack(), other));
     }
 
     /**

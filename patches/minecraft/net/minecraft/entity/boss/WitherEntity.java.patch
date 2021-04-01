@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/boss/WitherEntity.java
 +++ b/net/minecraft/entity/boss/WitherEntity.java
-@@ -213,7 +213,7 @@
+@@ -213,7 +_,7 @@
        if (this.func_82212_n() > 0) {
           int j1 = this.func_82212_n() - 1;
           if (j1 <= 0) {
@@ -9,7 +9,7 @@
              this.field_70170_p.func_217398_a(this, this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_(), 7.0F, false, explosion$mode);
              if (!this.func_174814_R()) {
                 this.field_70170_p.func_175669_a(1023, this.func_233580_cy_(), 0);
-@@ -290,7 +290,7 @@
+@@ -290,7 +_,7 @@
  
           if (this.field_82222_j > 0) {
              --this.field_82222_j;
@@ -18,7 +18,7 @@
                 int i1 = MathHelper.func_76128_c(this.func_226278_cu_());
                 int l1 = MathHelper.func_76128_c(this.func_226277_ct_());
                 int i2 = MathHelper.func_76128_c(this.func_226281_cx_());
-@@ -304,7 +304,7 @@
+@@ -304,7 +_,7 @@
                          int l = i2 + l2;
                          BlockPos blockpos = new BlockPos(i3, k, l);
                          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -27,7 +27,7 @@
                             flag = this.field_70170_p.func_225521_a_(blockpos, true, this) || flag;
                          }
                       }
-@@ -325,6 +325,7 @@
+@@ -325,6 +_,7 @@
        }
     }
  

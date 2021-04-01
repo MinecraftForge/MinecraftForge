@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/text/LanguageMap.java
 +++ b/net/minecraft/util/text/LanguageMap.java
-@@ -40,7 +40,8 @@
+@@ -40,7 +_,8 @@
           field_201045_a.error("Couldn't read strings from /assets/minecraft/lang/en_us.json", (Throwable)ioexception);
        }
  
@@ -10,7 +10,7 @@
        return new LanguageMap() {
           public String func_230503_a_(String p_230503_1_) {
              return map.getOrDefault(p_230503_1_, p_230503_1_);
-@@ -63,6 +64,11 @@
+@@ -63,6 +_,11 @@
                 }, Style.field_240709_b_).isPresent();
              };
           }
@@ -22,7 +22,7 @@
        };
     }
  
-@@ -84,6 +90,9 @@
+@@ -84,6 +_,9 @@
     public static void func_240594_a_(LanguageMap p_240594_0_) {
        field_240592_d_ = p_240594_0_;
     }

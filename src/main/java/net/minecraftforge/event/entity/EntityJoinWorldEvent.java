@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,7 @@ import java.util.Collection;
  * EntityJoinWorldEvent is fired when an Entity joins the world. <br>
  * This event is fired whenever an Entity is added to the world in 
  * {@link World#loadEntities(Collection)}, {@link net.minecraft.world.ServerWorld#loadEntities(Collection)} {@link World#joinEntityInSurroundings(Entity)}, and {@link World#spawnEntity(Entity)}. <br>
+ * <strong>Note:</strong> This event may be called before the underlying {@link net.minecraft.world.chunk.Chunk} is promoted to {@link net.minecraft.world.chunk.ChunkStatus#FULL}. You will cause chunk loading deadlocks if you don't delay your world interactions.<br>
  * <br>
  * {@link #world} contains the world in which the entity is to join.<br>
  * <br>

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/RailBlock.java
 +++ b/net/minecraft/block/RailBlock.java
-@@ -49,6 +49,9 @@
+@@ -49,6 +_,9 @@
              return p_185499_1_.func_206870_a(field_176565_b, RailShape.SOUTH_EAST);
           case NORTH_EAST:
              return p_185499_1_.func_206870_a(field_176565_b, RailShape.SOUTH_WEST);

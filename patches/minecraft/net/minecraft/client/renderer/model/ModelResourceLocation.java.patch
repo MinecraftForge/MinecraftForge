@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/ModelResourceLocation.java
 +++ b/net/minecraft/client/renderer/model/ModelResourceLocation.java
-@@ -5,7 +5,6 @@
+@@ -5,7 +_,6 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,8 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.eventbus.api.Cancelable;
+
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * Event that hooks into GameRenderer, allowing any feature to customize visual attributes

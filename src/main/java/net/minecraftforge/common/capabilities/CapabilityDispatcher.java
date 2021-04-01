@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -173,20 +173,20 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
             Object2ObjectOpenHashMap.Entry<String, INetworkCapability> entry = it.next();
             if (!writeAll && !entry.getValue().requiresSync())
                 continue;
-            out.writeString(entry.getKey(), 0x100);
+            out.writeUtf(entry.getKey(), 0x100);
             PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
             entry.getValue().encode(capabilityData, writeAll);
             out.writeVarInt(capabilityData.readableBytes());
             out.writeBytes(capabilityData);
         }
-        out.writeString(SYNC_END_MARKER, 0x100);
+        out.writeUtf(SYNC_END_MARKER, 0x100);
     }
 
     @Override
     public void decode(PacketBuffer in)
     {
         String name;
-        while (!(name = in.readString(0x100)).equals(SYNC_END_MARKER))
+        while (!(name = in.readUtf(0x100)).equals(SYNC_END_MARKER))
         {
             int dataSize = in.readVarInt();
             INetworkCapability cap = networkCapabilities.get(name);

@@ -25,7 +25,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.network.message.SyncEntityCapabilities;
 import net.minecraftforge.network.message.SyncEquipmentSlotCapabilities;
 import net.minecraftforge.network.message.SyncSlotCapabilities;
-import net.minecraftforge.network.message.SyncTileEntityCapabilities;
+import net.minecraftforge.network.message.SyncBlockEntityCapabilities;
 
 @Mod.EventBusSubscriber
 public class ForgeNetwork {
@@ -57,10 +57,10 @@ public class ForgeNetwork {
             .consumer(SyncEntityCapabilities::handle)
             .add();
 
-        CHANNEL.messageBuilder(SyncTileEntityCapabilities.class, 0x03, NetworkDirection.PLAY_TO_CLIENT)
-            .encoder(SyncTileEntityCapabilities::encode)
-            .decoder(SyncTileEntityCapabilities::decode)
-            .consumer(SyncTileEntityCapabilities::handle)
+        CHANNEL.messageBuilder(SyncBlockEntityCapabilities.class, 0x03, NetworkDirection.PLAY_TO_CLIENT)
+            .encoder(SyncBlockEntityCapabilities::encode)
+            .decoder(SyncBlockEntityCapabilities::decode)
+            .consumer(SyncBlockEntityCapabilities::handle)
             .add();
         
         CHANNEL.messageBuilder(SyncEquipmentSlotCapabilities.class, 0x04, NetworkDirection.PLAY_TO_CLIENT)
@@ -75,7 +75,7 @@ public class ForgeNetwork {
     public static void handleChunkWatch(ChunkWatchEvent.Watch event)
     {
         Chunk chunk = event.getWorld().getChunk(event.getPos().x, event.getPos().z);
-        for (TileEntity tileEntity : chunk.getTileEntityMap().values())
+        for (TileEntity tileEntity : chunk.getBlockEntities().values())
         {
             sendTileEntityCapabilities(tileEntity, PacketDistributor.PLAYER.with(event::getPlayer), true);
         }
@@ -84,9 +84,9 @@ public class ForgeNetwork {
     @SubscribeEvent
     public static void handleTileEntityTick(TickEvent.TileEntityTickEvent event)
     {
-        if (event.phase == TickEvent.Phase.END && event.tileEntity.getWorld() != null)
-            sendTileEntityCapabilities(event.tileEntity, PacketDistributor.TRACKING_CHUNK
-                    .with(() -> event.tileEntity.getWorld().getChunkAt(event.tileEntity.getPos())), false);
+        if (event.phase == TickEvent.Phase.END && event.blockEntity.getLevel() != null)
+            sendTileEntityCapabilities(event.blockEntity, PacketDistributor.TRACKING_CHUNK
+                    .with(() -> event.blockEntity.getLevel().getChunkAt(event.blockEntity.getBlockPos())), false);
     }
 
     @SubscribeEvent
@@ -106,46 +106,46 @@ public class ForgeNetwork {
 
     public static void sendTileEntityCapabilities(TileEntity tileEntity, PacketTarget target, boolean writeAll)
     {
-        if (!tileEntity.getWorld().isRemote() && (writeAll || tileEntity.requiresSync()))
+        if (!tileEntity.getLevel().isClientSide() && (writeAll || tileEntity.requiresSync()))
         {
             PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
             tileEntity.encode(capabilityData, writeAll);
-            CHANNEL.send(target, new SyncTileEntityCapabilities(tileEntity.getPos(), capabilityData));
+            CHANNEL.send(target, new SyncBlockEntityCapabilities(tileEntity.getBlockPos(), capabilityData));
         }
     }
 
     public static void sendEntityCapabilities(LivingEntity livingEntity, PacketTarget target, boolean writeAll)
     {
-        if (!livingEntity.getEntityWorld().isRemote() && (writeAll || livingEntity.requiresSync()))
+        if (!livingEntity.level.isClientSide() && (writeAll || livingEntity.requiresSync()))
         {
             PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
             livingEntity.encode(capabilityData, writeAll);
-            CHANNEL.send(target, new SyncEntityCapabilities(livingEntity.getEntityId(), capabilityData));
+            CHANNEL.send(target, new SyncEntityCapabilities(livingEntity.getId(), capabilityData));
         }
     }
 
     public static void sendSlotCapabilities(Slot slot, ServerPlayerEntity target, boolean writeAll)
     {
-        if (slot.inventory == target.inventory)
+        if (slot.container == target.inventory)
         {
-            for (ItemStack equipmentStack : target.getEquipmentAndArmor())
+            for (ItemStack equipmentStack : target.getAllSlots())
             {
                 // If the item is equipment we don't need to sync it as Minecraft does
                 // that in a separate method (and if we sync it twice the capability wont think
                 // it's dirty anymore on the second call).
-                if (equipmentStack == slot.getStack())
+                if (equipmentStack == slot.getItem())
                 {
                     return;
                 }
             }
         }
 
-        if (writeAll || slot.getStack().requiresSync())
+        if (writeAll || slot.getItem().requiresSync())
         {
             PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
-            slot.getStack().encode(capabilityData, writeAll);
+            slot.getItem().encode(capabilityData, writeAll);
             CHANNEL.send(PacketDistributor.PLAYER.with(() -> target),
-                    new SyncSlotCapabilities(target.getEntityId(), slot.getSlotIndex(), capabilityData));
+                    new SyncSlotCapabilities(target.getId(), slot.getSlotIndex(), capabilityData));
         }
     }
 

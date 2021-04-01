@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/item/crafting/ShapedRecipe.java
-@@ -21,7 +21,20 @@
+@@ -21,7 +_,20 @@
  import net.minecraft.util.registry.Registry;
  import net.minecraft.world.World;
  
@@ -22,7 +22,7 @@
     private final int field_77576_b;
     private final int field_77577_c;
     private final NonNullList<Ingredient> field_77574_d;
-@@ -109,10 +122,20 @@
+@@ -109,10 +_,20 @@
        return this.field_77576_b;
     }
  
@@ -43,7 +43,7 @@
     private static NonNullList<Ingredient> func_192402_a(String[] p_192402_0_, Map<String, Ingredient> p_192402_1_, int p_192402_2_, int p_192402_3_) {
        NonNullList<Ingredient> nonnulllist = NonNullList.func_191197_a(p_192402_2_ * p_192402_3_, Ingredient.field_193370_a);
        Set<String> set = Sets.newHashSet(p_192402_1_.keySet());
-@@ -192,15 +215,15 @@
+@@ -192,15 +_,15 @@
  
     private static String[] func_192407_a(JsonArray p_192407_0_) {
        String[] astring = new String[p_192407_0_.size()];
@@ -63,7 +63,7 @@
              }
  
              if (i > 0 && astring[0].length() != s.length()) {
-@@ -242,11 +265,12 @@
+@@ -242,11 +_,12 @@
           throw new JsonParseException("Disallowed data tag found");
        } else {
           int i = JSONUtils.func_151208_a(p_199798_0_, "count", 1);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/PacketBuffer.java
 +++ b/net/minecraft/network/PacketBuffer.java
-@@ -39,7 +39,7 @@
+@@ -39,7 +_,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -9,7 +9,7 @@
     private final ByteBuf field_150794_a;
  
     public PacketBuffer(ByteBuf p_i45154_1_) {
-@@ -292,6 +292,15 @@
+@@ -292,6 +_,15 @@
     }
  
     public PacketBuffer func_150788_a(ItemStack p_150788_1_) {
@@ -25,7 +25,7 @@
        if (p_150788_1_.func_190926_b()) {
           this.writeBoolean(false);
        } else {
-@@ -300,10 +309,11 @@
+@@ -300,10 +_,11 @@
           this.func_150787_b(Item.func_150891_b(item));
           this.writeByte(p_150788_1_.func_190916_E());
           CompoundNBT compoundnbt = null;
@@ -40,7 +40,7 @@
           this.func_150786_a(compoundnbt);
        }
  
-@@ -317,7 +327,9 @@
+@@ -317,7 +_,9 @@
           int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,13 +41,15 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.item.Item.Properties;
+
 @Mod(CustomElytraTest.MOD_ID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = CustomElytraTest.MOD_ID)
 public class CustomElytraTest
 {
     public static final String MOD_ID = "custom_elytra_test";
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
-    private static final RegistryObject<Item> TEST_ELYTRA = ITEMS.register("test_elytra",() -> new CustomElytra(new Item.Properties().maxDamage(100).group(ItemGroup.MISC)));
+    private static final RegistryObject<Item> TEST_ELYTRA = ITEMS.register("test_elytra",() -> new CustomElytra(new Item.Properties().durability(100).tab(ItemGroup.TAB_MISC)));
 
     public CustomElytraTest()
     {
@@ -64,7 +66,7 @@ public class CustomElytraTest
     @OnlyIn(Dist.CLIENT)
     private void registerElytraLayer()
     {
-        Minecraft.getInstance().getRenderManager().getSkinMap().values().forEach(player -> player.addLayer(new CustomElytraLayer(player)));
+        Minecraft.getInstance().getEntityRenderDispatcher().getSkinMap().values().forEach(player -> player.addLayer(new CustomElytraLayer(player)));
     }
 
     public static class CustomElytra extends Item
@@ -73,7 +75,7 @@ public class CustomElytraTest
         public CustomElytra(Properties properties)
         {
             super(properties);
-            DispenserBlock.registerDispenseBehavior(this, ArmorItem.DISPENSER_BEHAVIOR);
+            DispenserBlock.registerBehavior(this, ArmorItem.DISPENSE_ITEM_BEHAVIOR);
         }
 
         @Nullable
@@ -93,9 +95,9 @@ public class CustomElytraTest
         public boolean elytraFlightTick(ItemStack stack, LivingEntity entity, int flightTicks)
         {
             //Adding 1 to ticksElytraFlying prevents damage on the very first tick.
-            if (!entity.world.isRemote && (flightTicks + 1) % 20 == 0)
+            if (!entity.level.isClientSide && (flightTicks + 1) % 20 == 0)
             {
-                stack.damageItem(1, entity, e -> e.sendBreakAnimation(EquipmentSlotType.CHEST));
+                stack.hurtAndBreak(1, entity, e -> e.broadcastBreakEvent(EquipmentSlotType.CHEST));
             }
             return true;
         }

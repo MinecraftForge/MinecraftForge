@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/FirstPersonRenderer.java
 +++ b/net/minecraft/client/renderer/FirstPersonRenderer.java
-@@ -208,7 +208,7 @@
+@@ -208,7 +_,7 @@
        boolean flag1 = true;
        if (p_228396_4_.func_184587_cr()) {
           ItemStack itemstack = p_228396_4_.func_184607_cu();
@@ -9,7 +9,7 @@
              flag = p_228396_4_.func_184600_cs() == Hand.MAIN_HAND;
              flag1 = !flag;
           }
-@@ -240,12 +240,14 @@
+@@ -240,12 +_,14 @@
        if (flag) {
           float f5 = hand == Hand.MAIN_HAND ? f : 0.0F;
           float f2 = 1.0F - MathHelper.func_219799_g(p_228396_1_, this.field_187470_g, this.field_187469_f);
@@ -24,7 +24,7 @@
           this.func_228405_a_(p_228396_4_, p_228396_1_, f1, Hand.OFF_HAND, f6, this.field_187468_e, f7, p_228396_2_, p_228396_3_, p_228396_5_);
        }
  
-@@ -410,8 +412,16 @@
+@@ -410,8 +_,16 @@
           this.field_187471_h = MathHelper.func_76131_a(this.field_187471_h - 0.4F, 0.0F, 1.0F);
        } else {
           float f = clientplayerentity.func_184825_o(1.0F);

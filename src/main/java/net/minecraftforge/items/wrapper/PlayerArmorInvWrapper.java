@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ public class PlayerArmorInvWrapper extends RangedWrapper
 
     public PlayerArmorInvWrapper(PlayerInventory inv)
     {
-        super(new InvWrapper(inv), inv.mainInventory.size(), inv.mainInventory.size() + inv.armorInventory.size());
+        super(new InvWrapper(inv), inv.items.size(), inv.items.size() + inv.armor.size());
         inventoryPlayer = inv;
     }
 
@@ -42,7 +42,7 @@ public class PlayerArmorInvWrapper extends RangedWrapper
         EquipmentSlotType equ = null;
         for (EquipmentSlotType s : EquipmentSlotType.values())
         {
-            if (s.getSlotType() == EquipmentSlotType.Group.ARMOR && s.getIndex() == slot)
+            if (s.getType() == EquipmentSlotType.Group.ARMOR && s.getIndex() == slot)
             {
                 equ = s;
                 break;

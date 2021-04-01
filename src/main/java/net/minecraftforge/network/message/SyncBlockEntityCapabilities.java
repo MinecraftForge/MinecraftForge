@@ -11,39 +11,39 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-public class SyncTileEntityCapabilities {
+public class SyncBlockEntityCapabilities {
 
     private final BlockPos blockPos;
     private final PacketBuffer capabilityData;
 
-    public SyncTileEntityCapabilities(BlockPos blockPos, PacketBuffer capabilityData)
+    public SyncBlockEntityCapabilities(BlockPos blockPos, PacketBuffer capabilityData)
     {
         this.blockPos = blockPos;
         this.capabilityData = capabilityData;
     }
 
-    public static void encode(SyncTileEntityCapabilities msg, PacketBuffer out)
+    public static void encode(SyncBlockEntityCapabilities msg, PacketBuffer out)
     {
         out.writeBlockPos(msg.blockPos);
         out.writeVarInt(msg.capabilityData.readableBytes());
         out.writeBytes(msg.capabilityData);
     }
 
-    public static SyncTileEntityCapabilities decode(PacketBuffer in)
+    public static SyncBlockEntityCapabilities decode(PacketBuffer in)
     {
         BlockPos blockPos = in.readBlockPos();
         byte[] capabilityData = new byte[in.readVarInt()];
         in.readBytes(capabilityData);
-        SyncTileEntityCapabilities msg = new SyncTileEntityCapabilities(blockPos, new PacketBuffer(Unpooled.wrappedBuffer(capabilityData)));
+        SyncBlockEntityCapabilities msg = new SyncBlockEntityCapabilities(blockPos, new PacketBuffer(Unpooled.wrappedBuffer(capabilityData)));
         return msg;
     }
 
-    public static boolean handle(SyncTileEntityCapabilities msg, Supplier<NetworkEvent.Context> ctx)
+    public static boolean handle(SyncBlockEntityCapabilities msg, Supplier<NetworkEvent.Context> ctx)
     {
         ctx.get().enqueueWork(() ->
         {
-            Optional<World> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
-            TileEntity tileEntity = world.flatMap(w -> Optional.ofNullable(w.getTileEntity(msg.blockPos))).orElse(null);
+            Optional<World> level = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
+            TileEntity tileEntity = level.flatMap(w -> Optional.ofNullable(w.getBlockEntity(msg.blockPos))).orElse(null);
             if (tileEntity == null)
             {
                 return;

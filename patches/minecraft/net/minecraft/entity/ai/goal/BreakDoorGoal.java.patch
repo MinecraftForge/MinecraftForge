@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/goal/BreakDoorGoal.java
 +++ b/net/minecraft/entity/ai/goal/BreakDoorGoal.java
-@@ -29,7 +29,7 @@
+@@ -29,7 +_,7 @@
     public boolean func_75250_a() {
        if (!super.func_75250_a()) {
           return false;

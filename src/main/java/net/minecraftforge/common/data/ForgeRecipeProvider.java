@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -71,7 +71,7 @@ public class ForgeRecipeProvider extends RecipeProvider
     }
 
     @Override
-    protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
+    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer)
     {
         replace(Items.STICK,        Tags.Items.RODS_WOODEN);
         replace(Items.GOLD_INGOT,   Tags.Items.INGOTS_GOLD);
@@ -94,7 +94,7 @@ public class ForgeRecipeProvider extends RecipeProvider
         exclude(Blocks.COBBLESTONE_SLAB);
         exclude(Blocks.COBBLESTONE_WALL);
 
-        super.registerRecipes(vanilla -> {
+        super.buildShapelessRecipes(vanilla -> {
             IFinishedRecipe modified = enhance(vanilla);
             if (modified != null)
                 consumer.accept(modified);
@@ -102,7 +102,7 @@ public class ForgeRecipeProvider extends RecipeProvider
     }
 
     @Override
-    protected void saveRecipeAdvancement(DirectoryCache cache, JsonObject advancementJson, Path pathIn) {
+    protected void saveAdvancement(DirectoryCache cache, JsonObject advancementJson, Path pathIn) {
         //NOOP - We dont replace any of the advancement things yet...
     }
 
@@ -121,7 +121,7 @@ public class ForgeRecipeProvider extends RecipeProvider
         boolean modified = false;
         for (int x = 0; x < ingredients.size(); x++)
         {
-            Ingredient ing = enhance(vanilla.getID(), ingredients.get(x));
+            Ingredient ing = enhance(vanilla.getId(), ingredients.get(x));
             if (ing != null)
             {
                 ingredients.set(x, ing);
@@ -137,7 +137,7 @@ public class ForgeRecipeProvider extends RecipeProvider
         boolean modified = false;
         for (Character x : ingredients.keySet())
         {
-            Ingredient ing = enhance(vanilla.getID(), ingredients.get(x));
+            Ingredient ing = enhance(vanilla.getId(), ingredients.get(x));
             if (ing != null)
             {
                 ingredients.put(x, ing);
@@ -159,7 +159,7 @@ public class ForgeRecipeProvider extends RecipeProvider
         {
             if (entry instanceof SingleItemList)
             {
-                ItemStack stack = entry.getStacks().stream().findFirst().orElse(ItemStack.EMPTY);
+                ItemStack stack = entry.getItems().stream().findFirst().orElse(ItemStack.EMPTY);
                 ITag<Item> replacement = replacements.get(stack.getItem());
                 if (replacement != null)
                 {
@@ -172,7 +172,7 @@ public class ForgeRecipeProvider extends RecipeProvider
             else
                 items.add(entry);
         }
-        return modified ? Ingredient.fromItemListStream(items.stream()) : null;
+        return modified ? Ingredient.fromValues(items.stream()) : null;
     }
 
     @SuppressWarnings("unchecked")

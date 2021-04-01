@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/FoxEntity.java
 +++ b/net/minecraft/entity/passive/FoxEntity.java
-@@ -761,7 +761,7 @@
+@@ -761,7 +_,7 @@
        }
  
        protected void func_220730_m() {
@@ -9,7 +9,7 @@
              BlockState blockstate = FoxEntity.this.field_70170_p.func_180495_p(this.field_179494_b);
              if (blockstate.func_203425_a(Blocks.field_222434_lW)) {
                 int i = blockstate.func_177229_b(SweetBerryBushBlock.field_220125_a);
-@@ -1001,6 +1001,17 @@
+@@ -1001,6 +_,17 @@
        protected void func_75388_i() {
           ServerWorld serverworld = (ServerWorld)this.field_75394_a;
           FoxEntity foxentity = (FoxEntity)this.field_75390_d.func_241840_a(serverworld, this.field_75391_e);

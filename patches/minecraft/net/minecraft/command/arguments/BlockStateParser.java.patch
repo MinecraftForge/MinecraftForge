@@ -1,6 +1,6 @@
 --- a/net/minecraft/command/arguments/BlockStateParser.java
 +++ b/net/minecraft/command/arguments/BlockStateParser.java
-@@ -169,7 +169,7 @@
+@@ -169,7 +_,7 @@
  
     private boolean func_212598_k(ITagCollection<Block> p_212598_1_) {
        if (this.field_197270_l != null) {
@@ -9,7 +9,7 @@
        } else {
           if (this.field_199833_p != null) {
              ITag<Block> itag = p_212598_1_.func_199910_a(this.field_199833_p);
-@@ -283,7 +283,7 @@
+@@ -283,7 +_,7 @@
              p_197255_1_.suggest(String.valueOf('['));
           }
  

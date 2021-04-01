@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ArrowItem.java
 +++ b/net/minecraft/item/ArrowItem.java
-@@ -15,4 +15,9 @@
+@@ -15,4 +_,9 @@
        arrowentity.func_184555_a(p_200887_2_);
        return arrowentity;
     }

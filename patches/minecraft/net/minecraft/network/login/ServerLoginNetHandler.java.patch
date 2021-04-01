@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/login/ServerLoginNetHandler.java
 +++ b/net/minecraft/network/login/ServerLoginNetHandler.java
-@@ -55,7 +55,13 @@
+@@ -55,7 +_,13 @@
     }
  
     public void func_73660_a() {
@@ -15,7 +15,7 @@
           this.func_147326_c();
        } else if (this.field_147328_g == ServerLoginNetHandler.State.DELAY_ACCEPT) {
           ServerPlayerEntity serverplayerentity = this.field_147327_f.func_184103_al().func_177451_a(this.field_147337_i.getId());
-@@ -130,7 +136,7 @@
+@@ -130,7 +_,7 @@
           this.field_147328_g = ServerLoginNetHandler.State.KEY;
           this.field_147333_a.func_179290_a(new SEncryptionRequestPacket("", this.field_147327_f.func_71250_E().getPublic().getEncoded(), this.field_147330_e));
        } else {
@@ -24,7 +24,7 @@
        }
  
     }
-@@ -155,7 +161,7 @@
+@@ -155,7 +_,7 @@
           throw new IllegalStateException("Protocol error", cryptexception);
        }
  
@@ -33,7 +33,7 @@
           public void run() {
              GameProfile gameprofile = ServerLoginNetHandler.this.field_147337_i;
  
-@@ -163,11 +169,11 @@
+@@ -163,11 +_,11 @@
                 ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.field_147327_f.func_147130_as().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.func_191235_a());
                 if (ServerLoginNetHandler.this.field_147337_i != null) {
                    ServerLoginNetHandler.field_147332_c.info("UUID of player {} is {}", ServerLoginNetHandler.this.field_147337_i.getName(), ServerLoginNetHandler.this.field_147337_i.getId());
@@ -47,7 +47,7 @@
                 } else {
                    ServerLoginNetHandler.this.func_194026_b(new TranslationTextComponent("multiplayer.disconnect.unverified_username"));
                    ServerLoginNetHandler.field_147332_c.error("Username '{}' tried to join with an invalid session", (Object)gameprofile.getName());
-@@ -176,7 +182,7 @@
+@@ -176,7 +_,7 @@
                 if (ServerLoginNetHandler.this.field_147327_f.func_71264_H()) {
                    ServerLoginNetHandler.field_147332_c.warn("Authentication servers are down but will let them in anyway!");
                    ServerLoginNetHandler.this.field_147337_i = ServerLoginNetHandler.this.func_152506_a(gameprofile);
@@ -56,7 +56,7 @@
                 } else {
                    ServerLoginNetHandler.this.func_194026_b(new TranslationTextComponent("multiplayer.disconnect.authservers_down"));
                    ServerLoginNetHandler.field_147332_c.error("Couldn't verify username because servers are unavailable");
-@@ -196,6 +202,7 @@
+@@ -196,6 +_,7 @@
     }
  
     public void func_209526_a(CCustomPayloadLoginPacket p_209526_1_) {

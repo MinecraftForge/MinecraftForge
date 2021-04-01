@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/spawner/AbstractSpawner.java
 +++ b/net/minecraft/world/spawner/AbstractSpawner.java
-@@ -131,11 +131,12 @@
+@@ -131,11 +_,12 @@
                       entity.func_70012_b(entity.func_226277_ct_(), entity.func_226278_cu_(), entity.func_226281_cx_(), world.field_73012_v.nextFloat() * 360.0F, 0.0F);
                       if (entity instanceof MobEntity) {
                          MobEntity mobentity = (MobEntity)entity;
@@ -14,13 +14,14 @@
                             ((MobEntity)entity).func_213386_a(serverworld, world.func_175649_E(entity.func_233580_cy_()), SpawnReason.SPAWNER, (ILivingEntityData)null, (CompoundNBT)null);
                          }
                       }
-@@ -283,4 +284,9 @@
+@@ -282,5 +_,10 @@
+    @OnlyIn(Dist.CLIENT)
     public double func_177223_e() {
        return this.field_98284_d;
-    }
++   }
 +
 +   @Nullable
 +   public Entity getSpawnerEntity() {
 +      return null;
-+   }
+    }
  }

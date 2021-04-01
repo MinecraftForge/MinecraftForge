@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/PaintingType.java
 +++ b/net/minecraft/entity/item/PaintingType.java
-@@ -2,7 +2,7 @@
+@@ -2,7 +_,7 @@
  
  import net.minecraft.util.registry.Registry;
  

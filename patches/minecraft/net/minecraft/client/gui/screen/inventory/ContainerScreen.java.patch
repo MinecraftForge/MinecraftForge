@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screen/inventory/ContainerScreen.java
 +++ b/net/minecraft/client/gui/screen/inventory/ContainerScreen.java
-@@ -86,6 +86,7 @@
+@@ -86,6 +_,7 @@
        int i = this.field_147003_i;
        int j = this.field_147009_r;
        this.func_230450_a_(p_230430_1_, p_230430_4_, p_230430_2_, p_230430_3_);
@@ -8,7 +8,7 @@
        RenderSystem.disableRescaleNormal();
        RenderSystem.disableDepthTest();
        super.func_230430_a_(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-@@ -111,13 +112,15 @@
+@@ -111,13 +_,15 @@
              int j1 = slot.field_75223_e;
              int k1 = slot.field_75221_f;
              RenderSystem.colorMask(true, true, true, false);
@@ -25,7 +25,7 @@
        PlayerInventory playerinventory = this.field_230706_i_.field_71439_g.field_71071_by;
        ItemStack itemstack = this.field_147012_x.func_190926_b() ? playerinventory.func_70445_o() : this.field_147012_x;
        if (!itemstack.func_190926_b()) {
-@@ -167,8 +170,10 @@
+@@ -167,8 +_,10 @@
        RenderSystem.translatef(0.0F, 0.0F, 32.0F);
        this.func_230926_e_(200);
        this.field_230707_j_.field_77023_b = 200.0F;
@@ -37,7 +37,7 @@
        this.func_230926_e_(0);
        this.field_230707_j_.field_77023_b = 0.0F;
     }
-@@ -278,7 +283,8 @@
+@@ -278,7 +_,8 @@
        if (super.func_231044_a_(p_231044_1_, p_231044_3_, p_231044_5_)) {
           return true;
        } else {
@@ -47,7 +47,7 @@
           Slot slot = this.func_195360_a(p_231044_1_, p_231044_3_);
           long i = Util.func_211177_b();
           this.field_146993_M = this.field_146998_K == slot && i - this.field_146997_J < 250L && this.field_146992_L == p_231044_5_;
-@@ -289,6 +295,7 @@
+@@ -289,6 +_,7 @@
              int j = this.field_147003_i;
              int k = this.field_147009_r;
              boolean flag1 = this.func_195361_a(p_231044_1_, p_231044_3_, j, k, p_231044_5_);
@@ -55,7 +55,7 @@
              int l = -1;
              if (slot != null) {
                 l = slot.field_75222_d;
-@@ -314,7 +321,7 @@
+@@ -314,7 +_,7 @@
                    }
                 } else if (!this.field_147007_t) {
                    if (this.field_230706_i_.field_71439_g.field_71071_by.func_70445_o().func_190926_b()) {
@@ -64,7 +64,7 @@
                          this.func_184098_a(slot, l, p_231044_5_, ClickType.CLONE);
                       } else {
                          boolean flag2 = l != -999 && (InputMappings.func_216506_a(Minecraft.func_71410_x().func_228018_at_().func_198092_i(), 340) || InputMappings.func_216506_a(Minecraft.func_71410_x().func_228018_at_().func_198092_i(), 344));
-@@ -338,7 +345,7 @@
+@@ -338,7 +_,7 @@
                          this.field_146987_F = 0;
                       } else if (p_231044_5_ == 1) {
                          this.field_146987_F = 1;
@@ -73,7 +73,7 @@
                          this.field_146987_F = 2;
                       }
                    }
-@@ -407,10 +414,13 @@
+@@ -407,10 +_,13 @@
     }
  
     public boolean func_231048_c_(double p_231048_1_, double p_231048_3_, int p_231048_5_) {
@@ -87,7 +87,7 @@
        int k = -1;
        if (slot != null) {
           k = slot.field_75222_d;
-@@ -424,7 +434,7 @@
+@@ -424,7 +_,7 @@
           if (func_231173_s_()) {
              if (!this.field_146994_N.func_190926_b()) {
                 for(Slot slot2 : this.field_147002_h.field_75151_b) {
@@ -96,7 +96,7 @@
                       this.func_184098_a(slot2, slot2.field_75222_d, p_231048_5_, ClickType.QUICK_MOVE);
                    }
                 }
-@@ -488,7 +498,7 @@
+@@ -488,7 +_,7 @@
  
              this.func_184098_a((Slot)null, -999, Container.func_94534_d(2, this.field_146987_F), ClickType.QUICK_CRAFT);
           } else if (!this.field_230706_i_.field_71439_g.field_71071_by.func_70445_o().func_190926_b()) {
@@ -105,7 +105,7 @@
                 this.func_184098_a(slot, k, p_231048_5_, ClickType.CLONE);
              } else {
                 boolean flag1 = k != -999 && (InputMappings.func_216506_a(Minecraft.func_71410_x().func_228018_at_().func_198092_i(), 340) || InputMappings.func_216506_a(Minecraft.func_71410_x().func_228018_at_().func_198092_i(), 344));
-@@ -530,34 +540,39 @@
+@@ -530,34 +_,39 @@
     }
  
     public boolean func_231046_a_(int p_231046_1_, int p_231046_2_, int p_231046_3_) {
@@ -152,10 +152,12 @@
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                 return true;
              }
-@@ -589,6 +604,18 @@
-       return this.field_147002_h;
-    }
+@@ -587,6 +_,18 @@
  
+    public T func_212873_a_() {
+       return this.field_147002_h;
++   }
++
 +   @javax.annotation.Nullable
 +   public Slot getSlotUnderMouse() { return this.field_147006_u; }
 +   public int getGuiLeft() { return field_147003_i; }
@@ -166,8 +168,6 @@
 +   protected int slotColor = -2130706433;
 +   public int getSlotColor(int index) {
 +      return slotColor;
-+   }
-+
+    }
+ 
     public void func_231175_as__() {
-       this.field_230706_i_.field_71439_g.func_71053_j();
-       super.func_231175_as__();

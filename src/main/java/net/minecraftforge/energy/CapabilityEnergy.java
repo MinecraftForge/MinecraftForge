@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,7 @@ public class CapabilityEnergy
             {
                 if (!(instance instanceof EnergyStorage))
                     throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
-                ((EnergyStorage)instance).energy = ((IntNBT)nbt).getInt();
+                ((EnergyStorage)instance).energy = ((IntNBT)nbt).getAsInt();
             }
         },
         () -> new EnergyStorage(1000));

@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/WebBlock.java
 +++ b/net/minecraft/block/WebBlock.java
-@@ -5,7 +5,7 @@
+@@ -5,7 +_,7 @@
  import net.minecraft.util.math.vector.Vector3d;
  import net.minecraft.world.World;
  

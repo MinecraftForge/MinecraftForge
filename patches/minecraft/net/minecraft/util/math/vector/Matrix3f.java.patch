@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/math/vector/Matrix3f.java
 +++ b/net/minecraft/util/math/vector/Matrix3f.java
-@@ -444,4 +444,11 @@
+@@ -444,4 +_,11 @@
     public Matrix3f func_226121_d_() {
        return new Matrix3f(this);
     }

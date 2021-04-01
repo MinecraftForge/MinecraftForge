@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,18 +24,23 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.IArgumentSerializer;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.TranslationTextComponent;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
+    private static final Dynamic2CommandExceptionType INVALID_ENUM = new Dynamic2CommandExceptionType(
+            (found, constants) -> new TranslationTextComponent("commands.forge.arguments.enum.invalid", constants, found));
     private final Class<T> enumClass;
 
     public static <R extends Enum<R>> EnumArgument<R> enumArgument(Class<R> enumClass) {
@@ -47,7 +52,12 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
 
     @Override
     public T parse(final StringReader reader) throws CommandSyntaxException {
-        return Enum.valueOf(enumClass, reader.readUnquotedString());
+        String name = reader.readUnquotedString();
+        try {
+            return Enum.valueOf(enumClass, name);
+        } catch (IllegalArgumentException e) {
+            throw INVALID_ENUM.createWithContext(reader, name, Arrays.toString(enumClass.getEnumConstants()));
+        }
     }
 
     @Override
@@ -63,18 +73,18 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
     public static class Serializer implements IArgumentSerializer<EnumArgument<?>>
     {
         @Override
-        public void write(EnumArgument<?> argument, PacketBuffer buffer)
+        public void serializeToNetwork(EnumArgument<?> argument, PacketBuffer buffer)
         {
-            buffer.writeString(argument.enumClass.getName());
+            buffer.writeUtf(argument.enumClass.getName());
         }
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         @Override
-        public EnumArgument<?> read(PacketBuffer buffer)
+        public EnumArgument<?> deserializeFromNetwork(PacketBuffer buffer)
         {
             try
             {
-                String name = buffer.readString();
+                String name = buffer.readUtf();
                 return new EnumArgument(Class.forName(name));
             }
             catch (ClassNotFoundException e)
@@ -84,7 +94,7 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
         }
 
         @Override
-        public void write(EnumArgument<?> argument, JsonObject json)
+        public void serializeToJson(EnumArgument<?> argument, JsonObject json)
         {
             json.addProperty("enum", argument.enumClass.getName());
         }

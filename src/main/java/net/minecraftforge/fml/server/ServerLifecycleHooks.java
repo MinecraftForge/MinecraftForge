@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -81,7 +81,7 @@ public class ServerLifecycleHooks
 
     private static Path getServerConfigPath(final MinecraftServer server)
     {
-        final Path serverConfig = server.func_240776_a_(SERVERCONFIG);
+        final Path serverConfig = server.getWorldPath(SERVERCONFIG);
         FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
         return serverConfig;
     }
@@ -89,7 +89,7 @@ public class ServerLifecycleHooks
     public static boolean handleServerAboutToStart(final MinecraftServer server)
     {
         currentServer = server;
-        currentServer.getServerStatusResponse().setForgeData(new FMLStatusPing()); //gathers NetworkRegistry data
+        currentServer.getStatus().setForgeData(new FMLStatusPing()); //gathers NetworkRegistry data
         // on the dedi server we need to force the stuff to setup properly
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
@@ -145,13 +145,13 @@ public class ServerLifecycleHooks
         if (!allowLogins.get())
         {
             StringTextComponent text = new StringTextComponent("Server is still starting! Please wait before reconnecting.");
-            LOGGER.info(SERVERHOOKS,"Disconnecting Player (server is still starting): {}", text.getUnformattedComponentText());
-            manager.sendPacket(new SDisconnectLoginPacket(text));
-            manager.closeChannel(text);
+            LOGGER.info(SERVERHOOKS,"Disconnecting Player (server is still starting): {}", text.getContents());
+            manager.send(new SDisconnectLoginPacket(text));
+            manager.disconnect(text);
             return false;
         }
 
-        if (packet.getRequestedState() == ProtocolType.LOGIN) {
+        if (packet.getIntention() == ProtocolType.LOGIN) {
             final ConnectionType connectionType = ConnectionType.forVersionFlag(packet.getFMLVersion());
             final int versionNumber = connectionType.getFMLVersionNumber(packet.getFMLVersion());
 
@@ -166,7 +166,7 @@ public class ServerLifecycleHooks
             }
         }
 
-        if (packet.getRequestedState() == ProtocolType.STATUS) return true;
+        if (packet.getIntention() == ProtocolType.STATUS) return true;
 
         NetworkHooks.registerServerLoginChannel(manager, packet);
         NetworkFilters.injectIfNecessary(manager);
@@ -175,11 +175,11 @@ public class ServerLifecycleHooks
     }
 
     private static void rejectConnection(final NetworkManager manager, ConnectionType type, String message) {
-        manager.setConnectionState(ProtocolType.LOGIN);
+        manager.setProtocol(ProtocolType.LOGIN);
         LOGGER.info(SERVERHOOKS, "Disconnecting {} connection attempt: {}", type, message);
         StringTextComponent text = new StringTextComponent(message);
-        manager.sendPacket(new SDisconnectLoginPacket(text));
-        manager.closeChannel(text);
+        manager.send(new SDisconnectLoginPacket(text));
+        manager.disconnect(text);
     }
 
     public static void handleExit(int retVal)
@@ -199,7 +199,7 @@ public class ServerLifecycleHooks
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
             final String name = "mod:" + mod.getModId();
-            final ResourcePackInfo packInfo = ResourcePackInfo.createResourcePack(name, false, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.PLAIN);
+            final ResourcePackInfo packInfo = ResourcePackInfo.create(name, false, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM, IPackNameDecorator.DEFAULT);
             if (packInfo == null) {
                 // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));

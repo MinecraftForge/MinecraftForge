@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/DeadBushBlock.java
 +++ b/net/minecraft/block/DeadBushBlock.java
-@@ -5,7 +5,7 @@
+@@ -5,7 +_,7 @@
  import net.minecraft.util.math.shapes.VoxelShape;
  import net.minecraft.world.IBlockReader;
  
