@@ -409,7 +409,7 @@ project(':forge') {
         installer 'org.ow2.asm:asm-util:9.0'
         installer 'org.ow2.asm:asm-analysis:9.0'
         installer 'cpw.mods:modlauncher:8.0.9'
-        installer 'cpw.mods:grossjava9hacks:1.3.+'
+        installer 'cpw.mods:grossjava9hacks:1.3.3'
         installer 'net.minecraftforge:accesstransformers:3.0.1'
         installer 'org.antlr:antlr4-runtime:4.9.1' //Dep of AccessTransformer
         installer 'net.minecraftforge:eventbus:4.0.+'
