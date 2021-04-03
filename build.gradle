@@ -583,7 +583,8 @@ project(':forge') {
                 inheritsFrom: MC_VERSION,
                 logging: {},
                 arguments: [
-                    game: ['--launchTarget', 'fmlclient', '--fml.forgeVersion',  "${project.version.substring(MC_VERSION.length() + 1)}", '--fml.mcVersion', "${MC_VERSION}", '--fml.forgeGroup', "${project.group}", '--fml.mcpVersion', "${MCP_VERSION}"]
+                    game: ['--launchTarget', 'fmlclient', '--fml.forgeVersion',  "${project.version.substring(MC_VERSION.length() + 1)}", '--fml.mcVersion', "${MC_VERSION}", '--fml.forgeGroup', "${project.group}", '--fml.mcpVersion', "${MCP_VERSION}"],
+                    jvm: ['-XX:+IgnoreUnrecognizedVMOptions', '--add-exports=java.base/sun.security.util=ALL-UNNAMED', '--add-opens=java.base/java.util.jar=ALL-UNNAMED']
                 ],
                 libraries: [
                     [
@@ -800,6 +801,8 @@ project(':forge') {
             MANIFESTS.each{ pkg, values ->
                 if (pkg == '/') {
                     manifest.attributes(values += [
+                        'Add-Exports': 'java.base/sun.security.util',
+                        'Add-Opens': 'java.base/java.util.jar',
                         'Main-Class': 'net.minecraftforge.server.ServerMain',
                         'Class-Path': classpath.toString(),
                         'ServerLaunchArgs': [
