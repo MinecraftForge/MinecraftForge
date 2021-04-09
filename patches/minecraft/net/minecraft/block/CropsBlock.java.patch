@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/CropsBlock.java
 +++ b/net/minecraft/block/CropsBlock.java
+@@ -33,7 +_,7 @@
+    }
+ 
+    protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+-      return p_200014_1_.func_203425_a(Blocks.field_150458_ak);
++      return p_200014_1_.func_235714_a_(net.minecraftforge.common.Tags.Blocks.GROWABLE_CROP);
+    }
+ 
+    public IntegerProperty func_185524_e() {
 @@ -61,12 +_,14 @@
     }
  

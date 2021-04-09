@@ -56,6 +56,17 @@ public class Tags
         public static final IOptionalNamedTag<Block> FENCES_NETHER_BRICK = tag("fences/nether_brick");
         public static final IOptionalNamedTag<Block> FENCES_WOODEN = tag("fences/wooden");
 
+        public static final IOptionalNamedTag<Block> GROWABLE = tag("growable");
+        public static final IOptionalNamedTag<Block> GROWABLE_BUSH = tag("growable/bush");
+        public static final IOptionalNamedTag<Block> GROWABLE_CROP = tag("growable/crop");
+        public static final IOptionalNamedTag<Block> GROWABLE_DEAD_BUSH = tag("growable/dead_bush");
+        public static final IOptionalNamedTag<Block> GROWABLE_FUNGUS = tag("growable/fungus");
+        public static final IOptionalNamedTag<Block> GROWABLE_NETHER_ROOTS = tag("growable/nether_roots");
+        public static final IOptionalNamedTag<Block> GROWABLE_NETHER_SPROUTS = tag("growable/nether_sprouts");
+        public static final IOptionalNamedTag<Block> GROWABLE_NETHER_WART = tag("growable/nether_wart");
+        public static final IOptionalNamedTag<Block> GROWABLE_STEM = tag("growable/stem");
+        public static final IOptionalNamedTag<Block> GROWABLE_WITHER_ROSE = tag("growable/wither_rose");
+
         public static final IOptionalNamedTag<Block> GLASS = tag("glass");
         public static final IOptionalNamedTag<Block> GLASS_BLACK = tag("glass/black");
         public static final IOptionalNamedTag<Block> GLASS_BLUE = tag("glass/blue");

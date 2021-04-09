@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/NetherWartBlock.java
 +++ b/net/minecraft/block/NetherWartBlock.java
+@@ -26,7 +_,7 @@
+    }
+ 
+    protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+-      return p_200014_1_.func_203425_a(Blocks.field_150425_aM);
++      return p_200014_1_.func_235714_a_(net.minecraftforge.common.Tags.Blocks.GROWABLE_NETHER_WART);
+    }
+ 
+    public boolean func_149653_t(BlockState p_149653_1_) {
 @@ -35,9 +_,10 @@
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {

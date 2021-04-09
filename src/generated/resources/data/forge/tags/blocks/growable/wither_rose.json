@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:growable/bush",
+    "minecraft:netherrack",
+    "minecraft:soul_sand",
+    "minecraft:soul_soil"
+  ]
+}

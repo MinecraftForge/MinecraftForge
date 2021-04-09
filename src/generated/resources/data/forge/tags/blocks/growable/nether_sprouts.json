@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:growable/bush",
+    "#minecraft:nylium",
+    "minecraft:soul_soil"
+  ]
+}

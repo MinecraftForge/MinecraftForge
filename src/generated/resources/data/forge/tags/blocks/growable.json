@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:growable/bush",
+    "#forge:growable/crop",
+    "#forge:growable/dead_bush",
+    "#forge:growable/fungus",
+    "#forge:growable/nether_roots",
+    "#forge:growable/nether_sprouts",
+    "#forge:growable/nether_wart",
+    "#forge:growable/stem",
+    "#forge:growable/wither_rose"
+  ]
+}
