@@ -346,6 +346,28 @@
        return this.m_36218_(mutablecomponent);
     }
  
+@@ -1882,18 +_,18 @@
+          Predicate<ItemStack> predicate = ((ProjectileWeaponItem)p_36349_.m_41720_()).m_6442_();
+          ItemStack itemstack = ProjectileWeaponItem.m_43010_(this, predicate);
+          if (!itemstack.m_41619_()) {
+-            return itemstack;
++            return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_36349_, itemstack);
+          } else {
+             predicate = ((ProjectileWeaponItem)p_36349_.m_41720_()).m_6437_();
+ 
+             for(int i = 0; i < this.f_36093_.m_6643_(); ++i) {
+                ItemStack itemstack1 = this.f_36093_.m_8020_(i);
+                if (predicate.test(itemstack1)) {
+-                  return itemstack1;
++                  return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_36349_, itemstack1);
+                }
+             }
+ 
+-            return this.f_36077_.f_35937_ ? new ItemStack(Items.f_42412_) : ItemStack.f_41583_;
++            return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_36349_, this.f_36077_.f_35937_ ? new ItemStack(Items.f_42412_) : ItemStack.f_41583_);
+          }
+       }
+    }
 @@ -1978,5 +_,63 @@
        public Component m_36423_() {
           return this.f_36413_;
