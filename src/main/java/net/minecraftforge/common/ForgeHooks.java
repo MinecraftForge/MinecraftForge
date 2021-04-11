@@ -90,6 +90,7 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.HoeItem;
+import net.minecraft.item.Items;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.PotionItem;
 import net.minecraft.item.ShovelItem;
@@ -166,6 +167,7 @@ import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.entity.player.PlayerFindProjectileEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -1067,6 +1069,19 @@ public class ForgeHooks
         ItemAttributeModifierEvent event = new ItemAttributeModifierEvent(stack, equipmentSlot, attributes);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getModifiers();
+    }
+    
+    /**
+     * Hook to fire {@link PlayerFindProjectileEvent}. Returns the ammo to be used.
+     */
+    public static ItemStack findProjectile(PlayerEntity player, ItemStack shootable, ItemStack ammo)
+    {
+        PlayerFindProjectileEvent event = new PlayerFindProjectileEvent(player, shootable, ammo);
+        if (MinecraftForge.EVENT_BUS.post(event)) {
+            return player.isCreative() ? new ItemStack(Items.ARROW) : ItemStack.EMPTY;
+        } else {
+            return event.getProjectile();
+        }
     }
 
     /**

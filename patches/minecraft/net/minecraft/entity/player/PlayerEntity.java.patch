@@ -329,6 +329,29 @@
        return this.func_208016_c(iformattabletextcomponent);
     }
  
+@@ -1901,18 +_,19 @@
+          Predicate<ItemStack> predicate = ((ShootableItem)p_213356_1_.func_77973_b()).func_220006_d();
+          ItemStack itemstack = ShootableItem.func_220005_a(this, predicate);
+          if (!itemstack.func_190926_b()) {
+-            return itemstack;
++            return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_213356_1_, itemstack);
+          } else {
+             predicate = ((ShootableItem)p_213356_1_.func_77973_b()).func_220004_b();
+ 
+             for(int i = 0; i < this.field_71071_by.func_70302_i_(); ++i) {
+                ItemStack itemstack1 = this.field_71071_by.func_70301_a(i);
+                if (predicate.test(itemstack1)) {
+-                  return itemstack1;
++                  return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_213356_1_, itemstack1);
+                }
+             }
+ 
+-            return this.field_71075_bZ.field_75098_d ? new ItemStack(Items.field_151032_g) : ItemStack.field_190927_a;
++            return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_213356_1_,
++                    this.field_71075_bZ.field_75098_d ? new ItemStack(Items.field_151032_g) : ItemStack.field_190927_a);
+          }
+       }
+    }
 @@ -1986,5 +_,63 @@
        public ITextComponent func_221259_a() {
           return this.field_221260_g;
