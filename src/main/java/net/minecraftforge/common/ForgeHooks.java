@@ -1444,4 +1444,20 @@ public class ForgeHooks
             FORGE_ATTRIBUTES.put(k, newMutable.build());
         });
     }
+
+    /**  FOR INTERNAL USE ONLY, DO NOT USE DIRECTLY */
+    @Deprecated
+    public static final java.util.List<SpawnEggItem> MOD_EGGS = new java.util.ArrayList<>();
+
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
+    @Deprecated
+    public static void finalizeModEggs()
+    {
+        MOD_EGGS.forEach(egg ->
+        {
+            egg.finalizeModEgg();
+            net.minecraft.block.DispenserBlock.registerBehavior(egg, egg.createDispenseBehaviour());
+        });
+        MOD_EGGS.clear();
+    }
 }

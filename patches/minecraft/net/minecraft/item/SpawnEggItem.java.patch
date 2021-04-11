@@ -1,10 +1,12 @@
 --- a/net/minecraft/item/SpawnEggItem.java
 +++ b/net/minecraft/item/SpawnEggItem.java
-@@ -35,18 +_,31 @@
+@@ -33,20 +_,32 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
  
- public class SpawnEggItem extends Item {
+-public class SpawnEggItem extends Item {
++public class SpawnEggItem extends Item implements net.minecraftforge.common.extensions.IForgeSpawnEggItem {
     private static final Map<EntityType<?>, SpawnEggItem> field_195987_b = Maps.newIdentityHashMap();
-+   private static final java.util.List<SpawnEggItem> MOD_EGGS = new java.util.ArrayList<>();
     private final int field_195988_c;
     private final int field_195989_d;
     private EntityType<?> field_200890_d;
@@ -26,7 +28,7 @@
 +      this.typeSupplier = typeIn;
 +      this.field_195988_c = primaryColorIn;
 +      this.field_195989_d = secondaryColorIn;
-+      MOD_EGGS.add(this);
++      net.minecraftforge.common.ForgeHooks.MOD_EGGS.add(this);
 +   }
 +
     public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
@@ -37,7 +39,7 @@
  
     public static Iterable<SpawnEggItem> func_195985_g() {
 -      return Iterables.unmodifiableIterable(field_195987_b.values());
-+      return Iterables.unmodifiableIterable(Iterables.concat(field_195987_b.values(), MOD_EGGS));
++      return Iterables.unmodifiableIterable(Iterables.concat(field_195987_b.values(), net.minecraftforge.common.ForgeHooks.MOD_EGGS));
     }
  
     public EntityType<?> func_208076_b(@Nullable CompoundNBT p_208076_1_) {
@@ -54,32 +56,17 @@
     }
  
     public Optional<MobEntity> func_234809_a_(PlayerEntity p_234809_1_, MobEntity p_234809_2_, EntityType<? extends MobEntity> p_234809_3_, ServerWorld p_234809_4_, Vector3d p_234809_5_, ItemStack p_234809_6_) {
-@@ -178,4 +_,28 @@
+@@ -178,4 +_,13 @@
           }
        }
     }
 +
 +   /* ======================================== FORGE START ===================================== */
-+   protected net.minecraft.dispenser.IDispenseItemBehavior createDispenseBehaviour() {
-+      return new net.minecraft.dispenser.DefaultDispenseItemBehavior() {
-+         public ItemStack func_82487_b(net.minecraft.dispenser.IBlockSource source, ItemStack stack) {
-+            Direction facing = source.func_189992_e().func_177229_b(net.minecraft.block.DispenserBlock.field_176441_a);
-+            EntityType<?> entitytype = ((SpawnEggItem)stack.func_77973_b()).func_208076_b(stack.func_77978_p());
-+
-+            entitytype.func_220331_a(source.func_197524_h(), stack, null, source.func_180699_d().func_177972_a(facing), SpawnReason.DISPENSER, facing != Direction.UP, false);
-+            stack.func_190918_g(1);
-+            return stack;
-+         }
-+      };
-+   }
-+
-+   public static void finalizeModEggs() {
-+      MOD_EGGS.forEach(egg -> {
-+         egg.field_200890_d = egg.func_208076_b(null);
-+         field_195987_b.put(egg.field_200890_d, egg);
-+         net.minecraft.block.DispenserBlock.func_199774_a(egg, egg.createDispenseBehaviour());
-+      });
-+      MOD_EGGS.clear();
++   /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
++   @Deprecated
++   public void finalizeModEgg() {
++      this.field_200890_d = func_208076_b(null);
++      field_195987_b.put(this.field_200890_d, this);
 +   }
 +   /* ========================================= FORGE END ====================================== */
  }
