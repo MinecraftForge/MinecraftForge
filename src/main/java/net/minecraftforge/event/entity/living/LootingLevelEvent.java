@@ -19,6 +19,8 @@
 
 package net.minecraftforge.event.entity.living;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.DamageSource;
 
@@ -34,6 +36,7 @@ public class LootingLevelEvent extends LivingEvent {
         this.lootingLevel = lootingLevel;
     }
 
+    @Nullable
     public DamageSource getDamageSource() {
         return damageSource;
     }

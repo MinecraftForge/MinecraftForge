@@ -390,7 +390,7 @@ public class ForgeHooks
         int looting = 0;
         if (killer instanceof LivingEntity)
             looting = EnchantmentHelper.getMobLooting((LivingEntity)killer);
-        if (target instanceof LivingEntity)
+        if (target instanceof LivingEntity && killer != null)
             looting = getLootingLevel((LivingEntity)target, cause, looting);
         return looting;
     }
