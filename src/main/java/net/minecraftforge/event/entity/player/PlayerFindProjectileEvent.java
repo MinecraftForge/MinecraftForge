@@ -23,7 +23,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
 
 /**
  * This event is fired when a player attempts to use an item that is an {@link net.minecraft.item.ShootableItem}
@@ -38,25 +37,16 @@ import net.minecraftforge.eventbus.api.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
 @Cancelable
-public class PlayerFindProjectileEvent extends Event
+public class PlayerFindProjectileEvent extends PlayerEvent
 {
-    private final PlayerEntity player;
     private final ItemStack shootable;
     private ItemStack projectile;
 
     public PlayerFindProjectileEvent(PlayerEntity player, ItemStack shootable, ItemStack ammo)
     {
-        this.player = player;
+        super(player);
         this.shootable = shootable;
         this.projectile = ammo;
-    }
-
-    /**
-     * Gets the player that is using the shootable item.
-     */
-    public PlayerEntity getPlayer()
-    {
-        return this.player;
     }
 
     /**
