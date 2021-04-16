@@ -329,7 +329,7 @@
        return this.func_208016_c(iformattabletextcomponent);
     }
  
-@@ -1901,18 +_,19 @@
+@@ -1901,18 +_,18 @@
           Predicate<ItemStack> predicate = ((ShootableItem)p_213356_1_.func_77973_b()).func_220006_d();
           ItemStack itemstack = ShootableItem.func_220005_a(this, predicate);
           if (!itemstack.func_190926_b()) {
@@ -347,8 +347,7 @@
              }
  
 -            return this.field_71075_bZ.field_75098_d ? new ItemStack(Items.field_151032_g) : ItemStack.field_190927_a;
-+            return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_213356_1_,
-+                    this.field_71075_bZ.field_75098_d ? new ItemStack(Items.field_151032_g) : ItemStack.field_190927_a);
++            return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_213356_1_, this.field_71075_bZ.field_75098_d ? new ItemStack(Items.field_151032_g) : ItemStack.field_190927_a);
           }
        }
     }

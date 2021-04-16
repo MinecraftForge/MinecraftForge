@@ -1077,9 +1077,12 @@ public class ForgeHooks
     public static ItemStack findProjectile(PlayerEntity player, ItemStack shootable, ItemStack ammo)
     {
         PlayerFindProjectileEvent event = new PlayerFindProjectileEvent(player, shootable, ammo);
-        if (MinecraftForge.EVENT_BUS.post(event)) {
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
             return player.isCreative() ? new ItemStack(Items.ARROW) : ItemStack.EMPTY;
-        } else {
+        }
+        else
+        {
             return event.getProjectile();
         }
     }
