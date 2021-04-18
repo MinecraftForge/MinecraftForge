@@ -40,7 +40,7 @@ pipeline {
                     sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue setup'
                 }
                 script {
-                    env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "^version:" | cut -d" " -f2"').trim()
+                    env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "^version:" | cut -d" " -f2').trim()
                 }
             }
         }
