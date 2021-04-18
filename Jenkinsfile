@@ -36,9 +36,11 @@ pipeline {
         }
         stage('setup') {
             steps {
-                sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue setup'
+                withGradle {
+                    sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue setup'
+                }
                 script {
-                    env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "version:" | awk \'{print $2}\'').trim()
+                    env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "^version:" | cut -d" " -f2"').trim()
                 }
             }
         }
@@ -59,15 +61,22 @@ pipeline {
                 }
             }
             environment {
-                FORGE_MAVEN = credentials('forge-maven-forge-user')
                 CROWDIN = credentials('forge-crowdin')
                 KEYSTORE = credentials('forge-jenkins-keystore-old')
                 KEYSTORE_KEYPASS = credentials('forge-jenkins-keystore-old-keypass')
                 KEYSTORE_STOREPASS = credentials('forge-jenkins-keystore-old-keypass')
             }
             steps {
-                sh './gradlew ${GRADLE_ARGS} :forge:publish -PforgeMavenUser=${FORGE_MAVEN_USR} -PforgeMavenPassword=${FORGE_MAVEN_PSW} -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
-                sh 'curl --user ${FORGE_MAVEN} http://files.minecraftforge.net/maven/manage/promote/latest/net.minecraftforge.forge/${MYVERSION}'
+                withCredentials([usernamePassword(credentialsId: 'maven-forge-user', usernameVariable: 'MAVEN_USER', passwordVariable: 'MAVEN_PASSWORD')]) {
+                    withGradle {
+                        sh './gradlew ${GRADLE_ARGS} :forge:publish -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
+                    }
+                }
+            }
+            post {
+                success {
+                    build job: 'filegenerator', parameters: [string(name: 'COMMAND', value: "promote net.minecraftforge:forge ${env.MYVERSION} latest")], propagate: false, wait: false
+                }
             }
         }
         stage('test_publish_pr') { //Publish to local repo to test full process, but don't include credentials so it can't sign/publish to maven
@@ -78,7 +87,9 @@ pipeline {
                 CROWDIN = credentials('forge-crowdin')
             }
             steps {
-                sh './gradlew ${GRADLE_ARGS} :forge:publish -PcrowdinKey=${CROWDIN}'
+                withGradle {
+                    sh './gradlew ${GRADLE_ARGS} :forge:publish -PcrowdinKey=${CROWDIN}'
+                }
             }
         }
     }
