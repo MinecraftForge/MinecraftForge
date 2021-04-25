@@ -45,6 +45,7 @@ public class FakePlayer extends ServerPlayerEntity
     public FakePlayer(ServerWorld world, GameProfile name)
     {
         super(world.getServer(), world, name, new PlayerInteractionManager(world));
+        this.connection = new FakePlayerNetHandler(world.getServer(), this);
     }
 
     @Override public Vector3d position(){ return new Vector3d(0, 0, 0); }
