@@ -19,24 +19,17 @@
 
 package net.minecraftforge.debug.misc;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.ArgumentTypes;
-import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.SimpleNamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.tileentity.SignTileEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.server.command.EnumArgument;
 
 @Mod("fake_player_test")
 public class FakePlayerTest
@@ -72,6 +65,5 @@ public class FakePlayerTest
                             return 1;
                         })
                 ));
-
     }
 }

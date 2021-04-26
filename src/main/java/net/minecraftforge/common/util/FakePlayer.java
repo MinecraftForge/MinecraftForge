@@ -19,11 +19,7 @@
 
 package net.minecraftforge.common.util;
 
-import javax.annotation.Nullable;
-
 import com.mojang.authlib.GameProfile;
-
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.play.client.CClientSettingsPacket;
@@ -37,6 +33,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 //Preliminary, simple Fake Player class
