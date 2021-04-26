@@ -22,6 +22,15 @@
        this.field_176227_L = builder.func_235882_a_(Block::func_176223_P, BlockState::new);
        this.func_180632_j(this.field_176227_L.func_177621_b());
     }
+@@ -167,7 +_,7 @@
+    public static boolean func_176225_a(BlockState p_176225_0_, IBlockReader p_176225_1_, BlockPos p_176225_2_, Direction p_176225_3_) {
+       BlockPos blockpos = p_176225_2_.func_177972_a(p_176225_3_);
+       BlockState blockstate = p_176225_1_.func_180495_p(blockpos);
+-      if (p_176225_0_.func_200017_a(blockstate, p_176225_3_)) {
++      if (p_176225_0_.skipRendering(p_176225_1_, p_176225_2_, blockstate, p_176225_3_)) { //FORGE: add additional context
+          return false;
+       } else if (blockstate.func_200132_m()) {
+          Block.RenderSideCacheKey block$rendersidecachekey = new Block.RenderSideCacheKey(p_176225_0_, blockstate, p_176225_3_);
 @@ -261,7 +_,7 @@
     }
  

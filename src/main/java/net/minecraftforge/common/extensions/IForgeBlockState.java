@@ -808,4 +808,18 @@ public interface IForgeBlockState
     {
         return getBlockState().getBlock().isScaffolding(getBlockState(), entity.level, entity.blockPosition(), entity);
     }
+
+    /**
+     * Checks if the side of this block should not be rendered
+     *
+     * @param world The world
+     * @param pos The block position in world
+     * @param neighborState This blocks neighbor on the given side
+     * @param side The side that is being checked
+     * @return True if the given side should not be rendered
+     */
+    default boolean skipRendering(IBlockReader world, BlockPos pos, BlockState neighborState, Direction side)
+    {
+        return getBlockState().getBlock().skipRendering(world, pos, getBlockState(), neighborState, side);
+    }
 }

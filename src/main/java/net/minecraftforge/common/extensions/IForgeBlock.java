@@ -923,4 +923,19 @@ public interface IForgeBlock
     {
         return state.is(Blocks.SCAFFOLDING);
     }
+
+    /**
+     * Checks if the side of this block should not be rendered
+     *
+     * @param world The world
+     * @param pos The block position in world
+     * @param state This blocks state
+     * @param neighborState This blocks neighbor on the given side
+     * @param side The side that is being checked
+     * @return True if the given side should not be rendered
+     */
+    default boolean skipRendering(IBlockReader world, BlockPos pos, BlockState state, BlockState neighborState, Direction side)
+    {
+        return getBlock().skipRendering(state, neighborState, side);
+    }
 }

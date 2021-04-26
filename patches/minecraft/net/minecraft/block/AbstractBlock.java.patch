@@ -19,6 +19,14 @@
     }
  
     @Deprecated
+@@ -112,6 +_,7 @@
+       return p_196271_1_;
+    }
+ 
++   /** Override {@link net.minecraftforge.common.extensions.IForgeBlock#skipRendering(IBlockReader, BlockPos, BlockState, BlockState, Direction)} instead */
+    @Deprecated
+    @OnlyIn(Dist.CLIENT)
+    public boolean func_200122_a(BlockState p_200122_1_, BlockState p_200122_2_, Direction p_200122_3_) {
 @@ -129,7 +_,7 @@
  
     @Deprecated
