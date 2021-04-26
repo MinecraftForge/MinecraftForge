@@ -74,7 +74,7 @@ public abstract class SoundDefinitionsProvider implements IDataProvider
     public abstract void registerSounds();
 
     @Override
-    public void act(DirectoryCache cache) throws IOException
+    public void run(DirectoryCache cache) throws IOException
     {
         this.sounds.clear();
         this.registerSounds();
@@ -93,7 +93,8 @@ public abstract class SoundDefinitionsProvider implements IDataProvider
 
     // Quick helpers
     /**
-     * @see SoundDefinition#definition()
+     * Creates a new {@link SoundDefinition}, which will host a set of
+     * {@link SoundDefinition.Sound}s and the necessary parameters.
      */
     protected static SoundDefinition definition()
     {
@@ -101,7 +102,10 @@ public abstract class SoundDefinitionsProvider implements IDataProvider
     }
 
     /**
-     * @see SoundDefinition.Sound#sound(ResourceLocation, SoundDefinition.SoundType)
+     * Creates a new sound with the given name and type.
+     *
+     * @param name The name of the sound to create.
+     * @param type The type of sound to create.
      */
     protected static SoundDefinition.Sound sound(final ResourceLocation name, final SoundDefinition.SoundType type)
     {
@@ -109,27 +113,36 @@ public abstract class SoundDefinitionsProvider implements IDataProvider
     }
 
     /**
-     * @see SoundDefinition.Sound#sound(ResourceLocation)
+     * Creates a new sound with the given name and {@link SoundDefinition.SoundType#SOUND} as
+     * sound type.
+     *
+     * @param name The name of the sound to create.
      */
     protected static SoundDefinition.Sound sound(final ResourceLocation name)
     {
-        return SoundDefinition.Sound.sound(name);
+        return sound(name, SoundDefinition.SoundType.SOUND);
     }
 
     /**
-     * @see SoundDefinition.Sound#sound(String, SoundDefinition.SoundType)
+     * Creates a new sound with the given name and type.
+     *
+     * @param name The name of the sound to create.
+     * @param type The type of sound to create.
      */
     protected static SoundDefinition.Sound sound(final String name, final SoundDefinition.SoundType type)
     {
-        return SoundDefinition.Sound.sound(name, type);
+        return sound(new ResourceLocation(name), type);
     }
 
     /**
-     * @see SoundDefinition.Sound#sound(String)
+     * Creates a new sound with the given name and {@link SoundDefinition.SoundType#SOUND} as
+     * sound type.
+     *
+     * @param name The name of the sound to create.
      */
     protected static SoundDefinition.Sound sound(final String name)
     {
-        return SoundDefinition.Sound.sound(name);
+        return sound(new ResourceLocation(name));
     }
 
     // Addition methods
@@ -161,7 +174,7 @@ public abstract class SoundDefinitionsProvider implements IDataProvider
      */
     protected void add(final SoundEvent soundEvent, final SoundDefinition definition)
     {
-        this.add(soundEvent.getName(), definition);
+        this.add(soundEvent.getLocation(), definition);
     }
 
     /**

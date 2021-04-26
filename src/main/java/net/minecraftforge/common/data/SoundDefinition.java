@@ -91,39 +91,6 @@ public final class SoundDefinition
         }
 
         /**
-         * Creates a new sound with the given name and {@link SoundType#SOUND} as
-         * sound type.
-         *
-         * @param name The name of the sound to create.
-         */
-        public static Sound sound(final ResourceLocation name)
-        {
-            return sound(name, DEFAULT_TYPE);
-        }
-
-        /**
-         * Creates a new sound with the given name and type.
-         *
-         * @param name The name of the sound to create.
-         * @param type The type of sound to create.
-         */
-        public static Sound sound(final String name, final SoundType type)
-        {
-            return sound(new ResourceLocation(name), type);
-        }
-
-        /**
-         * Creates a new sound with the given name and {@link SoundType#SOUND} as
-         * sound type.
-         *
-         * @param name The name of the sound to create.
-         */
-        public static Sound sound(final String name)
-        {
-            return sound(new ResourceLocation(name));
-        }
-
-        /**
          * Sets the volume of this specific sound.
          *
          * <p>The volume of a sound represents how <strong>loud</strong> the sound is when played.</p>

@@ -1,14 +1,6 @@
 --- a/net/minecraft/data/Main.java
 +++ b/net/minecraft/data/Main.java
-<<<<<<< HEAD
-<<<<<<< HEAD
-@@ -21,8 +_,13 @@
-=======
-@@ -21,8 +21,14 @@
->>>>>>> 37641c733 (Allow the downloadable resource pack to be queried in datagen)
-=======
-@@ -21,8 +21,15 @@
->>>>>>> f8dac26d7 (Add automatic test of generated sounds.json)
+@@ -21,8 +_,15 @@
        OptionSpec<Void> optionspec6 = optionparser.accepts("all", "Include all generators");
        OptionSpec<String> optionspec7 = optionparser.accepts("output", "Output folder").withRequiredArg().defaultsTo("generated");
        OptionSpec<String> optionspec8 = optionparser.accepts("input", "Input folder").withRequiredArg();
@@ -25,15 +17,7 @@
           Path path = Paths.get(optionspec7.value(optionset));
           boolean flag = optionset.has(optionspec6);
           boolean flag1 = flag || optionset.has(optionspec2);
-<<<<<<< HEAD
-<<<<<<< HEAD
 @@ -30,10 +_,14 @@
-=======
-@@ -30,10 +36,13 @@
->>>>>>> 37641c733 (Allow the downloadable resource pack to be queried in datagen)
-=======
-@@ -30,10 +37,14 @@
->>>>>>> f8dac26d7 (Add automatic test of generated sounds.json)
           boolean flag3 = flag || optionset.has(optionspec3);
           boolean flag4 = flag || optionset.has(optionspec4);
           boolean flag5 = flag || optionset.has(optionspec5);

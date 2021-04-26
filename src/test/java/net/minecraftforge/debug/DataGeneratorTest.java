@@ -251,10 +251,10 @@ public class DataGeneratorTest
             ));
 
             //block.lava.ambient
-            this.add(SoundEvents.BLOCK_LAVA_AMBIENT, definition().with(sound("liquid/lava")).subtitle("subtitles.block.lava.ambient"));
+            this.add(SoundEvents.LAVA_AMBIENT, definition().with(sound("liquid/lava")).subtitle("subtitles.block.lava.ambient"));
 
             //entity.dolphin.ambient_water
-            this.add(SoundEvents.ENTITY_DOLPHIN_AMBIENT_WATER, definition().with(
+            this.add(SoundEvents.DOLPHIN_AMBIENT_WATER, definition().with(
                     sound("mob/dolphin/idle_water1").volume(0.8),
                     sound("mob/dolphin/idle_water2"),
                     sound("mob/dolphin/idle_water3"),
@@ -268,12 +268,12 @@ public class DataGeneratorTest
             ).subtitle("subtitles.entity.dolphin.ambient_water"));
 
             //entity.parrot.imitate.drowned
-            this.add(SoundEvents.ENTITY_PARROT_IMITATE_DROWNED, definition().with(
+            this.add(SoundEvents.PARROT_IMITATE_DROWNED, definition().with(
                     sound("entity.drowned.ambient", SoundDefinition.SoundType.EVENT).pitch(1.8).volume(0.6)
             ).subtitle("subtitles.entity.parrot.imitate.drowned"));
 
             //item.trident.return
-            this.add(SoundEvents.ITEM_TRIDENT_RETURN, definition().with(
+            this.add(SoundEvents.TRIDENT_RETURN, definition().with(
                     sound("item/trident/return1").volume(0.8),
                     sound("item/trident/return2").pitch(1.2).volume(0.8),
                     sound("item/trident/return3").pitch(0.8).volume(0.8),
@@ -290,9 +290,9 @@ public class DataGeneratorTest
         }
 
         @Override
-        public void act(DirectoryCache cache) throws IOException
+        public void run(DirectoryCache cache) throws IOException
         {
-            super.act(cache);
+            super.run(cache);
             test();
         }
 
@@ -670,7 +670,7 @@ public class DataGeneratorTest
             ModelFile barrel = models().cubeBottomTop("barrel", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top"));
             ModelFile barrelOpen = models().cubeBottomTop("barrel_open", mcLoc("block/barrel_side"), mcLoc("block/barrel_bottom"), mcLoc("block/barrel_top_open"));
             directionalBlock(Blocks.BARREL, state -> state.getValue(BarrelBlock.OPEN) ? barrelOpen : barrel); // Testing custom state interpreter
-
+            
             logBlock((RotatedPillarBlock) Blocks.ACACIA_LOG);
 
             stairsBlock((StairsBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));

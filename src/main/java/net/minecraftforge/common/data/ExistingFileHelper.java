@@ -104,7 +104,7 @@ public class ExistingFileHelper {
      * <p>
      * Only create a new helper if you intentionally want to ignore the existence of
      * other generated files.
-     *
+     * 
      * @param existingPacks
      * @param existingMods
      * @param enable
@@ -171,7 +171,7 @@ public class ExistingFileHelper {
      * convenience method to avoid repeating type/prefix/suffix and instead use the
      * common definitions in {@link ResourceType}, or a custom {@link IResourceType}
      * definition.
-     *
+     * 
      * @param loc  the base location of the resource, e.g.
      *             {@code "minecraft:block/stone"}
      * @param type a {@link IResourceType} describing how to form the path to the
@@ -185,7 +185,7 @@ public class ExistingFileHelper {
 
     /**
      * Check if a given resource exists in the known resource packs.
-     *
+     * 
      * @param loc        the base location of the resource, e.g.
      *                   {@code "minecraft:block/stone"}
      * @param packType   the type of resources to check
@@ -212,7 +212,7 @@ public class ExistingFileHelper {
      * <p>
      * This represents a <em>promise</em> to generate the file later, since other
      * datagen may rely on this file existing.
-     *
+     * 
      * @param loc  the base location of the resource, e.g.
      *             {@code "minecraft:block/stone"}
      * @param type a {@link IResourceType} describing how to form the path to the
@@ -233,7 +233,7 @@ public class ExistingFileHelper {
      * <p>
      * This represents a <em>promise</em> to generate the file later, since other
      * datagen may rely on this file existing.
-     *
+     * 
      * @param loc        the base location of the resource, e.g.
      *                   {@code "minecraft:block/stone"}
      * @param packType   the type of resources to check
