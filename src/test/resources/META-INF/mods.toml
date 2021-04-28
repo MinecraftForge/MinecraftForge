@@ -121,4 +121,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="enum_argument_test"
 [[mods]]
+    modId="entity_teleport_event_test"
+[[mods]]
     modId="codec_registry_test"
