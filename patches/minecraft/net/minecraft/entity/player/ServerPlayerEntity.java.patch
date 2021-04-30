@@ -155,12 +155,12 @@
     @Nullable
     public ITextComponent func_175396_E() {
 -      return null;
-+      if (!this.hastTablistName)
++      if (!this.hastTabListName)
 +      {
-+         this.tablistDisplayname = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
-+         this.hastTablistName = true;
++         this.tabListDisplayName = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
++         this.hastTabListName = true;
 +      }
-+      return this.tablistDisplayname;
++      return this.tabListDisplayName;
     }
  
     public void func_184609_a(Hand p_184609_1_) {
@@ -223,13 +223,13 @@
 +   }
 +
 +   // We need this as tablistDisplayname may be null even if the the event was fired.
-+   private boolean hastTablistName = false;
-+   private ITextComponent tablistDisplayname = null;
++   private boolean hastTabListName = false;
++   private ITextComponent tabListDisplayName = null;
 +   /**
 +    * Force the name displayed in the tab list to refresh, by firing {@link net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat}.
 +    */
 +   public void refreshTabListName() {
-+      this.tablistDisplayname = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
++      this.tabListDisplayName = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
     }
  
     @Nullable

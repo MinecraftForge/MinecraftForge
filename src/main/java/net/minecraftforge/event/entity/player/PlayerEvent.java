@@ -189,7 +189,7 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(PlayerEntity)}.<br>
      * <br>
-     * {@link #displayname} contains the display name of the player or null if the client should determine the display name itself.
+     * {@link #displayName} contains the display name of the player or null if the client should determine the display name itself.
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
      * <br>
@@ -200,7 +200,7 @@ public class PlayerEvent extends LivingEvent
     public static class TabListNameFormat extends PlayerEvent
     {
         @Nullable
-        private ITextComponent displayname;
+        private ITextComponent displayName;
 
         public TabListNameFormat(PlayerEntity player)
         {
@@ -208,14 +208,14 @@ public class PlayerEvent extends LivingEvent
         }
         
         @Nullable
-        public ITextComponent getDisplayname()
+        public ITextComponent getDisplayName()
         {
-            return displayname;
+            return displayName;
         }
 
-        public void setDisplayname(@Nullable ITextComponent displayname)
+        public void setDisplayName(@Nullable ITextComponent displayName)
         {
-            this.displayname = displayname;
+            this.displayName = displayName;
         }
     }
 

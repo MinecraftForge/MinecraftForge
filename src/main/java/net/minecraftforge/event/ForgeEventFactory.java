@@ -265,7 +265,7 @@ public class ForgeEventFactory
     {
         PlayerEvent.TabListNameFormat event = new PlayerEvent.TabListNameFormat(player);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getDisplayname();
+        return event.getDisplayName();
     }
 
     public static BlockState fireFluidPlaceBlockEvent(IWorld world, BlockPos pos, BlockPos liquidPos, BlockState state)
