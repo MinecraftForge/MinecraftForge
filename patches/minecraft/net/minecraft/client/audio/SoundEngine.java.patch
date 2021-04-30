@@ -4,7 +4,7 @@
        this.field_148622_c = p_i50892_1_;
        this.field_148619_d = p_i50892_2_;
        this.field_217939_i = new AudioStreamManager(p_i50892_3_);
-+      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.sound.SoundLoadEvent(this));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.SoundLoadEvent(this)); //TODO: 1.17 Mod Event Bus
     }
  
     public void func_148596_a() {
