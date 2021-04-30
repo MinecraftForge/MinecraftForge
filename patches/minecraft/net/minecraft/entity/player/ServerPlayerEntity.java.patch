@@ -155,10 +155,10 @@
     @Nullable
     public ITextComponent func_175396_E() {
 -      return null;
-+      if (!this.hastTabListName)
++      if (!this.hasTabListName)
 +      {
 +         this.tabListDisplayName = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
-+         this.hastTabListName = true;
++         this.hasTabListName = true;
 +      }
 +      return this.tabListDisplayName;
     }
@@ -223,7 +223,7 @@
 +   }
 +
 +   // We need this as tablistDisplayname may be null even if the the event was fired.
-+   private boolean hastTabListName = false;
++   private boolean hasTabListName = false;
 +   private ITextComponent tabListDisplayName = null;
 +   /**
 +    * Force the name displayed in the tab list to refresh, by firing {@link net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat}.
