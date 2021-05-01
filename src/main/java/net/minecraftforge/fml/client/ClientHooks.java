@@ -36,7 +36,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.MultiplayerScreen;
 import net.minecraft.client.multiplayer.PlayerController;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -137,45 +137,43 @@ public class ClientHooks
 
     public static void drawForgePingInfo(MultiplayerScreen gui, ServerData target, MatrixStack mStack, int x, int y, int width, int relativeMouseX, int relativeMouseY) {
         int idx;
-        String tooltip;
+        List<ITextComponent> tooltip = new ArrayList<>();
         if (target.forgeData == null)
             return;
         switch (target.forgeData.type) {
             case "FML":
                 if (target.forgeData.isCompatible) {
                     idx = 0;
-                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.compatible", target.forgeData.numberOfMods);
+                    tooltip.addAll(ForgeI18n.parseAsComponentList("fml.menu.multiplayer.compatible", target.forgeData.numberOfMods));
                 } else {
                     idx = 16;
                     if(target.forgeData.extraReason != null) {
                         String extraReason = ForgeI18n.parseMessage(target.forgeData.extraReason);
-                        tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.incompatible.extra", extraReason);
+                        tooltip.addAll(ForgeI18n.parseAsComponentList("fml.menu.multiplayer.incompatible.extra", extraReason));
                     } else {
-                        tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.incompatible");
+                        tooltip.add(ForgeI18n.parseAsComponent("fml.menu.multiplayer.incompatible"));
                     }
                 }
                 break;
             case "VANILLA":
                 if (target.forgeData.isCompatible) {
                     idx = 48;
-                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.vanilla");
+                    tooltip.add(ForgeI18n.parseAsComponent("fml.menu.multiplayer.vanilla"));
                 } else {
                     idx = 80;
-                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.vanilla.incompatible");
+                    tooltip.add(ForgeI18n.parseAsComponent("fml.menu.multiplayer.vanilla.incompatible"));
                 }
                 break;
             default:
                 idx = 64;
-                tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.unknown", target.forgeData.type);
+                tooltip.addAll(ForgeI18n.parseAsComponentList("fml.menu.multiplayer.unknown", target.forgeData.type));
         }
 
         Minecraft.getInstance().getTextureManager().bind(iconSheet);
         AbstractGui.blit(mStack, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
 
         if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26) {
-            //this is not the most proper way to do it,
-            //but works best here and has the least maintenance overhead
-            gui.setToolTip(Arrays.stream(tooltip.split("\n")).map(StringTextComponent::new).collect(Collectors.toList()));
+            gui.setToolTip(tooltip);
         }
     }
 
