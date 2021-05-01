@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/passive/AnimalEntity.java
 +++ b/net/minecraft/entity/passive/AnimalEntity.java
+@@ -98,7 +_,7 @@
+    }
+ 
+    public static boolean func_223316_b(EntityType<? extends AnimalEntity> p_223316_0_, IWorld p_223316_1_, SpawnReason p_223316_2_, BlockPos p_223316_3_, Random p_223316_4_) {
+-      return p_223316_1_.func_180495_p(p_223316_3_.func_177977_b()).func_203425_a(Blocks.field_196658_i) && p_223316_1_.func_226659_b_(p_223316_3_, 0) > 8;
++      return p_223316_1_.func_180495_p(p_223316_3_.func_177977_b()).func_235714_a_(net.minecraftforge.common.Tags.Blocks.CREATURE_SPAWN) && p_223316_1_.func_226659_b_(p_223316_3_, 0) > 8;
+    }
+ 
+    public int func_70627_aG() {
 @@ -199,6 +_,17 @@
  
     public void func_234177_a_(ServerWorld p_234177_1_, AnimalEntity p_234177_2_) {

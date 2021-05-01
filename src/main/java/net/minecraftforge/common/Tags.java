@@ -57,6 +57,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> FENCES = tag("fences");
         public static final IOptionalNamedTag<Block> FENCES_NETHER_BRICK = tag("fences/nether_brick");
         public static final IOptionalNamedTag<Block> FENCES_WOODEN = tag("fences/wooden");
+        public static final IOptionalNamedTag<Block> CREATURE_SPAWN = tag("creatures_can_spawn");
 
         public static final IOptionalNamedTag<Block> GLASS = tag("glass");
         public static final IOptionalNamedTag<Block> GLASS_BLACK = tag("glass/black");
