@@ -107,11 +107,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
-import net.minecraft.util.registry.WorldSettingsImport;
-import net.minecraft.util.registry.WorldGenSettingsExport;
+import net.minecraft.util.registry.*;
 import net.minecraft.util.text.*;
 import net.minecraft.world.*;
 import net.minecraft.world.chunk.IChunk;
@@ -140,11 +136,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
-import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.DifficultyChangeEvent;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.ItemAttributeModifierEvent;
-import net.minecraftforge.event.ServerChatEvent;
+import net.minecraftforge.event.*;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
@@ -192,6 +184,11 @@ public class ForgeHooks
     private static final Logger LOGGER = LogManager.getLogger();
     @SuppressWarnings("unused")
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
+
+    public static <T> WorldSettingsImport<T> dynamicRegistriesPopulated(WorldSettingsImport<T> worldSettingsImport, DynamicRegistries.Impl registries) {
+        MinecraftForge.EVENT_BUS.post(new DynamicRegistriesLoadedEvent(registries));
+        return worldSettingsImport;
+    }
 
     public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to)
     {

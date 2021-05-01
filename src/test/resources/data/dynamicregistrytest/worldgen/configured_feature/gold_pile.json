@@ -1,0 +1,61 @@
+{
+  "config":
+  {
+    "feature":
+    {
+      "config":
+      {
+        "feature":
+        {
+          "config":
+          {
+            "state_provider":
+            {
+              "state":
+              {
+                "Name": "minecraft:gold_block"
+              },
+              "type": "minecraft:simple_state_provider"
+            }
+          },
+          "type": "minecraft:block_pile"
+        },
+        "decorator":
+        {
+          "config":
+          {
+            "outer":
+            {
+              "config":
+              {
+              },
+              "type": "minecraft:square"
+            },
+            "inner":
+            {
+              "config":
+              {
+              },
+              "type": "minecraft:heightmap"
+            }
+          },
+          "type": "minecraft:decorated"
+        }
+      },
+      "type": "minecraft:decorated"
+    },
+    "decorator":
+    {
+      "config":
+      {
+        "count":
+        {
+          "base": 10,
+          "spread": 20
+        }
+      },
+      "type": "minecraft:count"
+    }
+  },
+  "type": "minecraft:decorated"
+}
