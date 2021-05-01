@@ -43,9 +43,9 @@ import java.util.Set;
  * Operations that target entries of the {@link net.minecraft.world.gen.DimensionSettings} registry.
  *
  * Implementation is dependant on the following Codec schemas:
- * - {@link net.minecraft.world.gen.DimensionSettings#field_236097_a_}
- * - {@link net.minecraft.world.gen.settings.DimensionStructuresSettings#field_236190_a_}
- * - {@link net.minecraft.world.gen.settings.StructureSeparationSettings#field_236664_a_}
+ * - {@link net.minecraft.world.gen.DimensionSettings#CODEC}
+ * - {@link net.minecraft.world.gen.settings.DimensionStructuresSettings#CODEC}
+ * - {@link net.minecraft.world.gen.settings.StructureSeparationSettings#CODEC}
  *
  * Resulting Json:
  * {
@@ -62,7 +62,7 @@ import java.util.Set;
  * }
  *
  * The merge and inject operations target the innermost "structures" json-object which corresponds to
- * the field found at {@link net.minecraft.world.gen.settings.DimensionStructuresSettings#field_236193_d_}.
+ * the field found at {@link net.minecraft.world.gen.settings.DimensionStructuresSettings#structureConfig}.
  * This is a map that holds the StructureSeparationSettings keyed by the Structure they apply to.
  * The merge and inject operations in this class add the absent entries to that json-object according to the
  * user-specified {@link MergeStrategy}.
@@ -104,7 +104,7 @@ public final class StructureSeparationSettingsOps
             JsonObject srcSeparationSettings = getStructureSeparations(src);
             for (Map.Entry<String, JsonElement> entry : srcSeparationSettings.entrySet())
             {
-                ResourceLocation registryName = ResourceLocation.tryCreate(entry.getKey());
+                ResourceLocation registryName = ResourceLocation.tryParse(entry.getKey());
                 if (registryName == null) continue;
 
                 if (excludedNamespaces.contains(registryName.getNamespace())) continue;
@@ -138,11 +138,11 @@ public final class StructureSeparationSettingsOps
         @Override
         public void inject(RegistryKey<DimensionSettings> entryKey, JsonElement entryData) throws Exception
         {
-            DimensionSettings dimensionSettings = WorldGenRegistries.NOISE_SETTINGS.getValueForKey(entryKey);
+            DimensionSettings dimensionSettings = WorldGenRegistries.NOISE_GENERATOR_SETTINGS.get(entryKey);
             if (dimensionSettings == null) return;
 
             // Contains the vanilla and mod-provided default separation settings.
-            Map<Structure<?>, StructureSeparationSettings> separationSettings = dimensionSettings.getStructures().func_236195_a_();
+            Map<Structure<?>, StructureSeparationSettings> separationSettings = dimensionSettings.structureSettings().structureConfig();
 
             // The json representation of dimensionSettings.getStructures().func_236195_a_()
             JsonObject separationSettingsData = getStructureSeparations(entryData);
@@ -159,7 +159,7 @@ public final class StructureSeparationSettingsOps
                 if (separationSettingsData.has(registryName.toString())) continue;
 
                 // Encode the settings to json and add to the entry's data.
-                StructureSeparationSettings.field_236664_a_.encodeStart(JsonOps.INSTANCE, entry.getValue()).result().ifPresent(data -> {
+                StructureSeparationSettings.CODEC.encodeStart(JsonOps.INSTANCE, entry.getValue()).result().ifPresent(data -> {
                     separationSettingsData.add(registryName.toString(), data);
                     ForgeResourceAccess.LOGGER.log(LOG_LEVEL, " - Injected separation settings for structure: {} in: {}", registryName, entryKey);
                 });
@@ -198,7 +198,7 @@ public final class StructureSeparationSettingsOps
                 Set<String> namespaces = new HashSet<>();
                 for (Map.Entry<String, ?> entry : data.entrySet())
                 {
-                    ResourceLocation name = ResourceLocation.tryCreate(entry.getKey());
+                    ResourceLocation name = ResourceLocation.tryParse(entry.getKey());
                     if (name != null) namespaces.add(name.getNamespace());
                 }
                 return namespaces;

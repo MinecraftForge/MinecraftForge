@@ -125,7 +125,7 @@ public class RegistryEntryModifier<E>
      */
     private RegistryKey<E> getTypedKey(RegistryKey<?> rawEntryKey) throws IllegalArgumentException
     {
-        RegistryKey<E> typedEntryKey = RegistryKey.getOrCreateKey(registryKey, rawEntryKey.getLocation());
+        RegistryKey<E> typedEntryKey = RegistryKey.create(registryKey, rawEntryKey.location());
 
         // The unbound key should be the same instance as the typed key. If not, the input key was created
         // for a different registry (this shouldn't ever happen in practice but it's cheap to assert).

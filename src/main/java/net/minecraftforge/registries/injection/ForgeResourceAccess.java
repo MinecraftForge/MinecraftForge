@@ -76,20 +76,20 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
     }
 
     @Override
-    public Collection<ResourceLocation> getRegistryObjects(RegistryKey<? extends Registry<?>> registryKey)
+    public Collection<ResourceLocation> listResources(RegistryKey<? extends Registry<?>> registryKey)
     {
-        return resourceManager.getAllResourceLocations(registryKey.getLocation().getPath(), file -> file.equals(".json"));
+        return resourceManager.listResources(registryKey.location().getPath(), file -> file.equals(".json"));
     }
 
     @Override
-    public <E> DataResult<Pair<E, OptionalInt>> decode(DynamicOps<JsonElement> ops, RegistryKey<? extends Registry<E>> registryKey, RegistryKey<E> entryKey, Decoder<E> decoder)
+    public <E> DataResult<Pair<E, OptionalInt>> parseElement(DynamicOps<JsonElement> ops, RegistryKey<? extends Registry<E>> registryKey, RegistryKey<E> entryKey, Decoder<E> decoder)
     {
         final RegistryEntryModifier<?> modifier = modifiers.get(registryKey);
 
         // Delegate to vanilla if there are no modifications to apply to the data.
-        if (modifier == null) return vanillaDelegate.decode(ops, registryKey, entryKey, decoder);
+        if (modifier == null) return vanillaDelegate.parseElement(ops, registryKey, entryKey, decoder);
 
-        final ResourceLocation resourceFile = getFileLocation(registryKey, entryKey.getLocation());
+        final ResourceLocation resourceFile = getFileLocation(registryKey, entryKey.location());
         try
         {
             JsonObject entryDataResult = load(entryKey, resourceFile, modifier);
@@ -100,7 +100,7 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
                 modifier.injectRaw(entryKey, entryDataResult);
             }
 
-            entryDataResult.addProperty("forge:registry_name", entryKey.getLocation().toString());
+            entryDataResult.addProperty("forge:registry_name", entryKey.location().toString());
 
             return decoder.parse(ops, entryDataResult).map(entry -> Pair.of(entry, OptionalInt.empty()));
         }
@@ -167,7 +167,7 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
      */
     private JsonElement loadAndMerge(RegistryKey<?> entryKey, ResourceLocation file, RegistryEntryModifier<?> modifier) throws Exception {
         // Note: The resource manager provides resources in order of priority, low to high.
-        final List<IResource> resources = resourceManager.getAllResources(file);
+        final List<IResource> resources = resourceManager.getResources(file);
 
         if (resources.size() > 1)
         {
@@ -211,7 +211,7 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
 
     private static ResourceLocation getFileLocation(RegistryKey<?> registryKey, ResourceLocation entryName)
     {
-        String filepath = registryKey.getLocation().getPath() + "/" + entryName.getPath() + ".json";
+        String filepath = registryKey.location().getPath() + "/" + entryName.getPath() + ".json";
         return new ResourceLocation(entryName.getNamespace(), filepath);
     }
 
@@ -224,7 +224,7 @@ public class ForgeResourceAccess implements WorldSettingsImport.IResourceAccess
         if (!merge && !inject) return vanillaLoader;
 
         ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, RegistryEntryModifier<?>> builder = ImmutableMap.builder();
-        builder.put(Registry.NOISE_SETTINGS_KEY, RegistryEntryModifier.builder(Registry.NOISE_SETTINGS_KEY)
+        builder.put(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY, RegistryEntryModifier.builder(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY)
                         .add(new StructureSeparationSettingsOps.Inject(strategy))
                         .add(new StructureSeparationSettingsOps.Merge(strategy))
                         .build());
