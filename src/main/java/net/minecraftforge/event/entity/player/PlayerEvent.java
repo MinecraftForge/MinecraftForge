@@ -126,7 +126,7 @@ public class PlayerEvent extends LivingEvent
             this.state = state;
             this.originalSpeed = original;
             this.setNewSpeed(original);
-            this.pos = pos;
+            this.pos = pos != null ? pos : new BlockPos(0, -1, 0);
         }
 
         public BlockState getState() { return state; }
