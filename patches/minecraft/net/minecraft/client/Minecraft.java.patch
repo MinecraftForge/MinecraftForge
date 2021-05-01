@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
-@@ -357,6 +357,7 @@
+@@ -368,6 +_,7 @@
     public Minecraft(GameConfiguration p_i45547_1_) {
        super("Client");
        field_71432_P = this;
@@ -8,15 +8,15 @@
        this.field_71412_D = p_i45547_1_.field_178744_c.field_178760_a;
        File file1 = p_i45547_1_.field_178744_c.field_178759_c;
        this.field_130070_K = p_i45547_1_.field_178744_c.field_178758_b;
-@@ -369,7 +370,6 @@
-       this.field_152355_az = (new YggdrasilAuthenticationService(this.field_110453_aa, UUID.randomUUID().toString())).createMinecraftSessionService();
+@@ -382,7 +_,6 @@
+       this.field_244734_au = this.func_244735_a(yggdrasilauthenticationservice, p_i45547_1_);
        this.field_71449_j = p_i45547_1_.field_178745_a.field_178752_a;
        field_147123_G.info("Setting user: {}", (Object)this.field_71449_j.func_111285_a());
 -      field_147123_G.debug("(Session ID is {})", (Object)this.field_71449_j.func_111286_b());
        this.field_71459_aj = p_i45547_1_.field_178741_d.field_178756_a;
        this.field_238175_ae_ = !p_i45547_1_.field_178741_d.field_239099_d_;
        this.field_238176_af_ = !p_i45547_1_.field_178741_d.field_239100_e_;
-@@ -415,14 +415,15 @@
+@@ -428,13 +_,13 @@
  
        this.field_195558_d.func_216526_a(this.field_71474_y.field_74350_i);
        this.field_71417_B = new MouseHelper(this);
@@ -29,11 +29,9 @@
        this.field_110451_am = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
 +      net.minecraftforge.fml.client.ClientModLoader.begin(this, this.field_110448_aq, this.field_110451_am, this.field_195554_ax);
        this.field_110448_aq.func_198983_a();
-+      DatapackCodec.field_234880_a_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
        this.field_71474_y.func_198017_a(this.field_110448_aq);
        this.field_135017_as = new LanguageManager(this.field_71474_y.field_74363_ab);
-       this.field_110451_am.func_219534_a(this.field_135017_as);
-@@ -462,6 +463,7 @@
+@@ -476,6 +_,7 @@
        this.func_193986_ar();
        this.field_110451_am.func_219534_a(this.field_193995_ae);
        this.field_71452_i = new ParticleManager(this.field_71441_e, this.field_71446_o);
@@ -41,7 +39,7 @@
        this.field_110451_am.func_219534_a(this.field_71452_i);
        this.field_213272_aL = new PaintingSpriteUploader(this.field_71446_o);
        this.field_110451_am.func_219534_a(this.field_213272_aL);
-@@ -469,7 +471,8 @@
+@@ -483,7 +_,8 @@
        this.field_110451_am.func_219534_a(this.field_213273_aM);
        this.field_241557_ar_ = new GPUWarning();
        this.field_110451_am.func_219534_a(this.field_241557_ar_);
@@ -51,7 +49,7 @@
        this.field_184132_p = new DebugRenderer(this);
        RenderSystem.setErrorCallback(this::func_195545_a);
        if (this.field_71474_y.field_74353_u && !this.field_195558_d.func_198113_j()) {
-@@ -481,11 +484,6 @@
+@@ -495,11 +_,6 @@
        this.field_195558_d.func_224798_d(this.field_71474_y.field_225307_E);
        this.field_195558_d.func_227801_c_();
        this.func_213226_a();
@@ -63,7 +61,7 @@
  
        ResourceLoadProgressGui.func_212970_a(this);
        List<IResourcePack> list = this.field_110448_aq.func_232623_f_();
-@@ -494,7 +492,14 @@
+@@ -508,7 +_,14 @@
              if (SharedConstants.field_206244_b) {
                 this.func_213256_aB();
              }
@@ -79,7 +77,7 @@
           });
        }, false));
     }
-@@ -533,7 +538,7 @@
+@@ -556,7 +_,7 @@
     }
  
     private void func_229988_a_(Throwable p_229988_1_) {
@@ -88,7 +86,7 @@
           ITextComponent itextcomponent;
           if (p_229988_1_ instanceof SimpleReloadableResourceManager.FailedPackException) {
              itextcomponent = new StringTextComponent(((SimpleReloadableResourceManager.FailedPackException)p_229988_1_).func_241203_a().func_195762_a());
-@@ -621,7 +626,7 @@
+@@ -644,7 +_,7 @@
           return Stream.of(Registry.field_212630_s.func_177774_c(p_213251_0_.func_77973_b()));
        });
        SearchTreeReloadable<ItemStack> searchtreereloadable = new SearchTreeReloadable<>((p_213235_0_) -> {
@@ -97,7 +95,7 @@
        });
        NonNullList<ItemStack> nonnulllist = NonNullList.func_191196_a();
  
-@@ -691,13 +696,13 @@
+@@ -714,13 +_,13 @@
        Bootstrap.func_179870_a(p_71377_0_.func_71502_e());
        if (p_71377_0_.func_71497_f() != null) {
           Bootstrap.func_179870_a("#@!@# Game crashed! Crash report saved to: #@!@# " + p_71377_0_.func_71497_f());
@@ -114,7 +112,7 @@
        }
  
     }
-@@ -706,6 +711,7 @@
+@@ -729,6 +_,7 @@
        return this.field_71474_y.field_211842_aO;
     }
  
@@ -122,7 +120,7 @@
     public CompletableFuture<Void> func_213237_g() {
        if (this.field_213276_aV != null) {
           return this.field_213276_aV;
-@@ -794,10 +800,6 @@
+@@ -817,10 +_,6 @@
     }
  
     public void func_147108_a(@Nullable Screen p_147108_1_) {
@@ -133,7 +131,7 @@
        if (p_147108_1_ == null && this.field_71441_e == null) {
           p_147108_1_ = new MainMenuScreen();
        } else if (p_147108_1_ == null && this.field_71439_g.func_233643_dh_()) {
-@@ -808,6 +810,14 @@
+@@ -831,6 +_,14 @@
           }
        }
  
@@ -148,7 +146,7 @@
        if (p_147108_1_ instanceof MainMenuScreen || p_147108_1_ instanceof MultiplayerScreen) {
           this.field_71474_y.field_74330_P = false;
           this.field_71456_v.func_146158_b().func_146231_a(true);
-@@ -939,11 +949,13 @@
+@@ -962,11 +_,13 @@
        RenderSystem.enableCull();
        this.field_71424_I.func_76319_b();
        if (!this.field_71454_w) {
@@ -162,7 +160,7 @@
        }
  
        if (this.field_238174_aV_ != null) {
-@@ -1042,6 +1054,7 @@
+@@ -1065,6 +_,7 @@
  
        Framebuffer framebuffer = this.func_147110_a();
        framebuffer.func_216491_a(this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l(), field_142025_a);
@@ -170,7 +168,7 @@
        this.field_71460_t.func_147704_a(this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l());
        this.field_71417_B.func_198021_g();
     }
-@@ -1230,11 +1243,21 @@
+@@ -1253,11 +_,21 @@
           if (p_147115_1_ && this.field_71476_x != null && this.field_71476_x.func_216346_c() == RayTraceResult.Type.BLOCK) {
              BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.field_71476_x;
              BlockPos blockpos = blockraytraceresult.func_216350_a();
@@ -194,7 +192,7 @@
                 }
              }
  
-@@ -1253,6 +1276,8 @@
+@@ -1276,6 +_,8 @@
              }
  
           } else if (!this.field_71439_g.func_184838_M()) {
@@ -203,7 +201,7 @@
              switch(this.field_71476_x.func_216346_c()) {
              case ENTITY:
                 this.field_71442_b.func_78764_a(this.field_71439_g, ((EntityRayTraceResult)this.field_71476_x).func_216348_a());
-@@ -1260,7 +1285,7 @@
+@@ -1283,7 +_,7 @@
              case BLOCK:
                 BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.field_71476_x;
                 BlockPos blockpos = blockraytraceresult.func_216350_a();
@@ -212,7 +210,7 @@
                    this.field_71442_b.func_180511_b(blockpos, blockraytraceresult.func_216354_b());
                    break;
                 }
-@@ -1270,8 +1295,10 @@
+@@ -1293,8 +_,10 @@
                 }
  
                 this.field_71439_g.func_184821_cY();
@@ -223,7 +221,7 @@
              this.field_71439_g.func_184609_a(Hand.MAIN_HAND);
           }
        }
-@@ -1286,6 +1313,11 @@
+@@ -1309,6 +_,11 @@
              }
  
              for(Hand hand : Hand.values()) {
@@ -235,7 +233,7 @@
                 ItemStack itemstack = this.field_71439_g.func_184586_b(hand);
                 if (this.field_71476_x != null) {
                    switch(this.field_71476_x.func_216346_c()) {
-@@ -1299,6 +1331,7 @@
+@@ -1322,6 +_,7 @@
  
                       if (actionresulttype.func_226246_a_()) {
                          if (actionresulttype.func_226247_b_()) {
@@ -243,7 +241,7 @@
                             this.field_71439_g.func_184609_a(hand);
                          }
  
-@@ -1311,6 +1344,7 @@
+@@ -1334,6 +_,7 @@
                       ActionResultType actionresulttype1 = this.field_71442_b.func_217292_a(this.field_71439_g, this.field_71441_e, hand, blockraytraceresult);
                       if (actionresulttype1.func_226246_a_()) {
                          if (actionresulttype1.func_226247_b_()) {
@@ -251,7 +249,7 @@
                             this.field_71439_g.func_184609_a(hand);
                             if (!itemstack.func_190926_b() && (itemstack.func_190916_E() != i || this.field_71442_b.func_78758_h())) {
                                this.field_71460_t.field_78516_c.func_187460_a(hand);
-@@ -1326,6 +1360,9 @@
+@@ -1349,6 +_,9 @@
                    }
                 }
  
@@ -261,7 +259,7 @@
                 if (!itemstack.func_190926_b()) {
                    ActionResultType actionresulttype2 = this.field_71442_b.func_187101_a(this.field_71439_g, this.field_71441_e, hand);
                    if (actionresulttype2.func_226246_a_()) {
-@@ -1352,6 +1389,8 @@
+@@ -1375,6 +_,8 @@
           --this.field_71467_ac;
        }
  
@@ -270,7 +268,7 @@
        this.field_71424_I.func_76320_a("gui");
        if (!this.field_71445_n) {
           this.field_71456_v.func_73831_a();
-@@ -1468,6 +1507,8 @@
+@@ -1500,6 +_,8 @@
        this.field_71424_I.func_219895_b("keyboard");
        this.field_195559_v.func_204870_b();
        this.field_71424_I.func_76319_b();
@@ -278,8 +276,73 @@
 +      net.minecraftforge.fml.hooks.BasicEventHooks.onPostClientTick();
     }
  
-    private void func_184117_aA() {
-@@ -1697,7 +1738,12 @@
+    private boolean func_244600_aM() {
+@@ -1638,11 +_,11 @@
+    }
+ 
+    public void func_238191_a_(String p_238191_1_) {
+-      this.func_238195_a_(p_238191_1_, DynamicRegistries.func_239770_b_(), Minecraft::func_238180_a_, Minecraft::func_238181_a_, false, Minecraft.WorldSelectionType.BACKUP);
++      this.loadWorld(p_238191_1_, DynamicRegistries.func_239770_b_(), Minecraft::func_238180_a_, Minecraft::func_238181_a_, false, Minecraft.WorldSelectionType.BACKUP, false);
+    }
+ 
+    public void func_238192_a_(String p_238192_1_, WorldSettings p_238192_2_, DynamicRegistries.Impl p_238192_3_, DimensionGeneratorSettings p_238192_4_) {
+-      this.func_238195_a_(p_238192_1_, p_238192_3_, (p_238179_1_) -> {
++      this.loadWorld(p_238192_1_, p_238192_3_, (p_238179_1_) -> {
+          return p_238192_2_.func_234958_g_();
+       }, (p_238187_3_, p_238187_4_, p_238187_5_, p_238187_6_) -> {
+          WorldGenSettingsExport<JsonElement> worldgensettingsexport = WorldGenSettingsExport.func_240896_a_(JsonOps.INSTANCE, p_238192_3_);
+@@ -1652,10 +_,10 @@
+          });
+          DimensionGeneratorSettings dimensiongeneratorsettings = dataresult.resultOrPartial(Util.func_240982_a_("Error reading worldgen settings after loading data packs: ", field_147123_G::error)).orElse(p_238192_4_);
+          return new ServerWorldInfo(p_238192_2_, dimensiongeneratorsettings, dataresult.lifecycle());
+-      }, false, Minecraft.WorldSelectionType.CREATE);
++      }, false, Minecraft.WorldSelectionType.CREATE, true);
+    }
+ 
+-   private void func_238195_a_(String p_238195_1_, DynamicRegistries.Impl p_238195_2_, Function<SaveFormat.LevelSave, DatapackCodec> p_238195_3_, Function4<SaveFormat.LevelSave, DynamicRegistries.Impl, IResourceManager, DatapackCodec, IServerConfiguration> p_238195_4_, boolean p_238195_5_, Minecraft.WorldSelectionType p_238195_6_) {
++   private void loadWorld(String p_238195_1_, DynamicRegistries.Impl p_238195_2_, Function<SaveFormat.LevelSave, DatapackCodec> p_238195_3_, Function4<SaveFormat.LevelSave, DynamicRegistries.Impl, IResourceManager, DatapackCodec, IServerConfiguration> p_238195_4_, boolean p_238195_5_, Minecraft.WorldSelectionType p_238195_6_, boolean creating) {
+       SaveFormat.LevelSave saveformat$levelsave;
+       try {
+          saveformat$levelsave = this.field_71469_aa.func_237274_c_(p_238195_1_);
+@@ -1667,12 +_,17 @@
+       }
+ 
+       Minecraft.PackManager minecraft$packmanager;
++      final DynamicRegistries.Impl dyn_f;
+       try {
+-         minecraft$packmanager = this.func_238189_a_(p_238195_2_, p_238195_3_, p_238195_4_, p_238195_5_, saveformat$levelsave);
++         Minecraft.PackManager mgr = this.func_238189_a_(p_238195_2_, p_238195_3_, p_238195_4_, p_238195_5_, saveformat$levelsave);
++         // We need to rebuild this if we're loading world, so that it gets all the information from AFTER we inject our mappings from the save.
++         dyn_f = creating ? p_238195_2_ : DynamicRegistries.func_239770_b_();
++         minecraft$packmanager = creating ? mgr : this.func_238189_a_(dyn_f, p_238195_3_, p_238195_4_, p_238195_5_, saveformat$levelsave); //Note this runs the injection again... which isn't good.. but hey.. we need a better spot to hook in.
++
+       } catch (Exception exception) {
+          field_147123_G.warn("Failed to load datapacks, can't proceed with server load", (Throwable)exception);
+          this.func_147108_a(new DatapackFailureScreen(() -> {
+-            this.func_238195_a_(p_238195_1_, p_238195_2_, p_238195_3_, p_238195_4_, true, p_238195_6_);
++            this.loadWorld(p_238195_1_, p_238195_2_, p_238195_3_, p_238195_4_, true, p_238195_6_, creating);
+          }));
+ 
+          try {
+@@ -1692,7 +_,7 @@
+          this.field_213277_ad.set((TrackingChunkStatusListener)null);
+ 
+          try {
+-            saveformat$levelsave.func_237287_a_(p_238195_2_, iserverconfiguration);
++            saveformat$levelsave.func_237287_a_(dyn_f, iserverconfiguration);
+             minecraft$packmanager.func_238225_b_().func_240971_i_();
+             YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(this.field_110453_aa);
+             MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
+@@ -1702,7 +_,7 @@
+             SkullTileEntity.func_184294_a(minecraftsessionservice);
+             PlayerProfileCache.func_187320_a(false);
+             this.field_71437_Z = MinecraftServer.func_240784_a_((p_238188_8_) -> {
+-               return new IntegratedServer(p_238188_8_, this, p_238195_2_, saveformat$levelsave, minecraft$packmanager.func_238224_a_(), minecraft$packmanager.func_238225_b_(), iserverconfiguration, minecraftsessionservice, gameprofilerepository, playerprofilecache, (p_238211_1_) -> {
++               return new IntegratedServer(p_238188_8_, this, dyn_f, saveformat$levelsave, minecraft$packmanager.func_238224_a_(), minecraft$packmanager.func_238225_b_(), iserverconfiguration, minecraftsessionservice, gameprofilerepository, playerprofilecache, (p_238211_1_) -> {
+                   TrackingChunkStatusListener trackingchunkstatuslistener = new TrackingChunkStatusListener(p_238211_1_ + 0);
+                   trackingchunkstatuslistener.func_219521_a();
+                   this.field_213277_ad.set(trackingchunkstatuslistener);
+@@ -1747,11 +_,16 @@
           networkmanager.func_150719_a(new ClientLoginNetHandler(networkmanager, this, (Screen)null, (p_229998_0_) -> {
           }));
           networkmanager.func_179290_a(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
@@ -293,7 +356,12 @@
           this.field_71453_ak = networkmanager;
        } else {
           this.func_241559_a_(p_238195_6_, p_238195_1_, flag, () -> {
-@@ -1771,6 +1817,7 @@
+-            this.func_238195_a_(p_238195_1_, p_238195_2_, p_238195_3_, p_238195_4_, p_238195_5_, Minecraft.WorldSelectionType.NONE);
++            this.loadWorld(p_238195_1_, dyn_f, p_238195_3_, p_238195_4_, p_238195_5_, Minecraft.WorldSelectionType.NONE, creating);
+          });
+          minecraft$packmanager.close();
+ 
+@@ -1821,6 +_,7 @@
     }
  
     public void func_71403_a(ClientWorld p_71403_1_) {
@@ -301,7 +369,7 @@
        WorkingScreen workingscreen = new WorkingScreen();
        workingscreen.func_200210_a(new TranslationTextComponent("connect.joining"));
        this.func_213241_c(workingscreen);
-@@ -1802,10 +1849,12 @@
+@@ -1852,10 +_,12 @@
        IntegratedServer integratedserver = this.field_71437_Z;
        this.field_71437_Z = null;
        this.field_71460_t.func_190564_k();
@@ -314,7 +382,7 @@
           if (integratedserver != null) {
              this.field_71424_I.func_76320_a("waitForServer");
  
-@@ -1820,6 +1869,7 @@
+@@ -1870,6 +_,7 @@
           this.field_71456_v.func_181029_i();
           this.field_71422_O = null;
           this.field_71455_al = false;
@@ -322,7 +390,7 @@
           this.field_213274_aO.func_216815_b();
        }
  
-@@ -1850,6 +1900,7 @@
+@@ -1900,6 +_,7 @@
        this.field_71452_i.func_78870_a(p_213257_1_);
        TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_213257_1_);
        this.func_230150_b_();
@@ -330,7 +398,7 @@
     }
  
     public boolean func_238216_r_() {
-@@ -1895,112 +1946,9 @@
+@@ -1945,112 +_,9 @@
  
     private void func_147112_ai() {
        if (this.field_71476_x != null && this.field_71476_x.func_216346_c() != RayTraceResult.Type.MISS) {
@@ -446,7 +514,7 @@
        }
     }
  
-@@ -2090,6 +2038,7 @@
+@@ -2140,6 +_,7 @@
        return field_71432_P;
     }
  
@@ -454,7 +522,7 @@
     public CompletableFuture<Void> func_213245_w() {
        return this.func_213169_a(this::func_213237_g).thenCompose((p_229993_0_) -> {
           return p_229993_0_;
-@@ -2397,7 +2346,7 @@
+@@ -2451,7 +_,7 @@
           supplier = func_228022_c_(supplier);
        }
  
@@ -463,18 +531,18 @@
     }
  
     private static Supplier<IResourcePack> func_228021_b_(Supplier<IResourcePack> p_228021_0_) {
-@@ -2416,6 +2365,14 @@
-       this.field_175617_aL.func_229355_a_(p_228020_1_);
-    }
+@@ -2468,6 +_,14 @@
  
+    public void func_228020_b_(int p_228020_1_) {
+       this.field_175617_aL.func_229355_a_(p_228020_1_);
++   }
++
 +   public ItemColors getItemColors() {
 +      return this.field_184128_aI;
 +   }
 +
 +   public SearchTreeManager getSearchTreeManager() {
 +      return this.field_193995_ae;
-+   }
-+
+    }
+ 
     @OnlyIn(Dist.CLIENT)
-    public static final class PackManager implements AutoCloseable {
-       private final ResourcePackList field_238221_a_;

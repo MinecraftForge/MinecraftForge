@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/gen/feature/structure/SwampHutStructure.java
++++ b/net/minecraft/world/gen/feature/structure/SwampHutStructure.java
+@@ -24,11 +_,13 @@
+       return SwampHutStructure.Start::new;
+    }
+ 
+-   public List<MobSpawnInfo.Spawners> func_202279_e() {
++   @Override
++   public List<MobSpawnInfo.Spawners> getDefaultSpawnList() {
+       return field_202384_d;
+    }
+ 
+-   public List<MobSpawnInfo.Spawners> func_214469_f() {
++   @Override
++   public List<MobSpawnInfo.Spawners> getDefaultCreatureSpawnList() {
+       return field_214559_aS;
+    }
+ 

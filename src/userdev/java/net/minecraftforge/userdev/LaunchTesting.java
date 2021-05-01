@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -103,7 +103,7 @@ public class LaunchTesting
         }
 
         Launcher.main(lst.getArguments());
-        Thread.sleep(10000);// Why do we have this? -Lex 03/06/19
+        Thread.sleep(10000);// Why do we have this? -Lex 03/06/19 // because there's daemon threads that should cleanly exit -cpw 04/10/20
     }
 
     private static String getRandomNumbers(int length)

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,8 +37,8 @@ public enum KeyModifier {
         @Override
         public boolean matches(InputMappings.Input key)
         {
-            int keyCode = key.getKeyCode();
-            if (Minecraft.IS_RUNNING_ON_MAC)
+            int keyCode = key.getValue();
+            if (Minecraft.ON_OSX)
             {
                 return keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT;
             }
@@ -51,13 +51,13 @@ public enum KeyModifier {
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return Screen.func_231172_r_();
+            return Screen.hasControlDown();
         }
 
         @Override
         public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
         {
-            String localizationFormatKey = Minecraft.IS_RUNNING_ON_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
+            String localizationFormatKey = Minecraft.ON_OSX ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
             return new TranslationTextComponent(localizationFormatKey, defaultLogic.get());
         }
     },
@@ -65,13 +65,13 @@ public enum KeyModifier {
         @Override
         public boolean matches(InputMappings.Input key)
         {
-            return key.getKeyCode() == GLFW.GLFW_KEY_LEFT_SHIFT || key.getKeyCode() == GLFW.GLFW_KEY_RIGHT_SHIFT;
+            return key.getValue() == GLFW.GLFW_KEY_LEFT_SHIFT || key.getValue() == GLFW.GLFW_KEY_RIGHT_SHIFT;
         }
 
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return Screen.func_231173_s_();
+            return Screen.hasShiftDown();
         }
 
         @Override
@@ -84,13 +84,13 @@ public enum KeyModifier {
         @Override
         public boolean matches(InputMappings.Input key)
         {
-            return key.getKeyCode() == GLFW.GLFW_KEY_LEFT_ALT || key.getKeyCode() == GLFW.GLFW_KEY_RIGHT_ALT;
+            return key.getValue() == GLFW.GLFW_KEY_LEFT_ALT || key.getValue() == GLFW.GLFW_KEY_RIGHT_ALT;
         }
 
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return Screen.func_231174_t_();
+            return Screen.hasAltDown();
         }
 
         @Override

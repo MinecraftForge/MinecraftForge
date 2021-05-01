@@ -1,0 +1,22 @@
+--- a/net/minecraft/network/rcon/ClientThread.java
++++ b/net/minecraft/network/rcon/ClientThread.java
+@@ -116,13 +_,14 @@
+    }
+ 
+    private void func_72655_a(int p_72655_1_, String p_72655_2_) throws IOException {
+-      int i = p_72655_2_.length();
+-
++      byte[] whole = p_72655_2_.getBytes(StandardCharsets.UTF_8);
++      int i = whole.length;
++      int start = 0;
+       do {
+          int j = 4096 <= i ? 4096 : i;
+-         this.func_72654_a(p_72655_1_, 0, p_72655_2_.substring(0, j));
+-         p_72655_2_ = p_72655_2_.substring(j);
+-         i = p_72655_2_.length();
++         this.func_72654_a(p_72655_1_, 0, new String(java.util.Arrays.copyOfRange(whole, start, j+start), StandardCharsets.UTF_8));
++         i -= j;
++         start += j;
+       } while(0 != i);
+ 
+    }

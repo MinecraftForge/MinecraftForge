@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,8 +61,9 @@ public final class AnimationItemOverrideList extends ItemOverrideList
         this.bakedTextureGetter = bakedTextureGetter;
     }
 
+    @SuppressWarnings("resource")
     @Override
-    public IBakedModel func_239290_a_(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
+    public IBakedModel resolve(IBakedModel originalModel, ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity entity)
     {
         return stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
             .map(asm ->
@@ -71,16 +72,16 @@ public final class AnimationItemOverrideList extends ItemOverrideList
                 // TODO caching?
                 if(w == null && entity != null)
                 {
-                    w = entity.world;
+                    w = entity.level;
                 }
                 if(world == null)
                 {
-                    w = Minecraft.getInstance().world;
+                    w = Minecraft.getInstance().level;
                 }
                 return asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
             })
             // TODO where should uvlock data come from?
-            .map(state -> model.bakeModel(bakery, bakedTextureGetter, new ModelTransformComposition(state, this.state), modelLoc))
-            .orElseGet(() -> super.func_239290_a_(originalModel, stack, world, entity));
+            .map(state -> model.bake(bakery, bakedTextureGetter, new ModelTransformComposition(state, this.state), modelLoc))
+            .orElseGet(() -> super.resolve(originalModel, stack, world, entity));
     }
 }

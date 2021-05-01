@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/settings/KeyBinding.java
 +++ b/net/minecraft/client/settings/KeyBinding.java
-@@ -15,9 +15,9 @@
+@@ -15,9 +_,9 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -12,7 +12,7 @@
     private static final Set<String> field_151473_c = Sets.newHashSet();
     private static final Map<String, Integer> field_193627_d = Util.func_200696_a(Maps.newHashMap(), (p_205215_0_) -> {
        p_205215_0_.put("key.categories.movement", 1);
-@@ -36,7 +36,7 @@
+@@ -36,7 +_,7 @@
     private int field_151474_i;
  
     public static void func_197981_a(InputMappings.Input p_197981_0_) {
@@ -21,7 +21,7 @@
        if (keybinding != null) {
           ++keybinding.field_151474_i;
        }
-@@ -44,7 +44,7 @@
+@@ -44,7 +_,7 @@
     }
  
     public static void func_197980_a(InputMappings.Input p_197980_0_, boolean p_197980_1_) {
@@ -30,7 +30,7 @@
        if (keybinding != null) {
           keybinding.func_225593_a_(p_197980_1_);
        }
-@@ -68,10 +68,10 @@
+@@ -68,10 +_,10 @@
     }
  
     public static void func_74508_b() {
@@ -43,7 +43,7 @@
        }
  
     }
-@@ -86,12 +86,12 @@
+@@ -86,12 +_,12 @@
        this.field_151472_e = this.field_74512_d;
        this.field_151471_f = p_i47675_4_;
        field_74516_a.put(p_i47675_1_, this);
@@ -54,11 +54,11 @@
  
     public boolean func_151470_d() {
 -      return this.field_74513_e;
-+      return this.field_74513_e && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
++      return this.field_74513_e && isConflictContextAndModifierActive();
     }
  
     public String func_151466_e() {
-@@ -125,7 +125,13 @@
+@@ -125,7 +_,13 @@
     }
  
     public int compareTo(KeyBinding p_compareTo_1_) {
@@ -73,7 +73,7 @@
     }
  
     public static Supplier<ITextComponent> func_193626_b(String p_193626_0_) {
-@@ -136,6 +142,20 @@
+@@ -136,6 +_,20 @@
     }
  
     public boolean func_197983_b(KeyBinding p_197983_1_) {
@@ -94,7 +94,7 @@
        return this.field_74512_d.equals(p_197983_1_.field_74512_d);
     }
  
-@@ -156,11 +176,13 @@
+@@ -156,11 +_,13 @@
     }
  
     public ITextComponent func_238171_j_() {
@@ -109,7 +109,7 @@
     }
  
     public String func_197982_m() {
-@@ -170,4 +192,84 @@
+@@ -170,4 +_,84 @@
     public void func_225593_a_(boolean p_225593_1_) {
        this.field_74513_e = p_225593_1_;
     }

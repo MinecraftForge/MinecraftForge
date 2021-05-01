@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/PropertyManager.java
 +++ b/net/minecraft/server/dedicated/PropertyManager.java
-@@ -39,7 +39,7 @@
+@@ -39,7 +_,7 @@
  
     public void func_218970_c(Path p_218970_1_) {
        try (OutputStream outputstream = Files.newOutputStream(p_218970_1_)) {

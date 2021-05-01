@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/biome/BiomeRegistry.java
 +++ b/net/minecraft/world/biome/BiomeRegistry.java
-@@ -17,7 +17,7 @@
+@@ -17,7 +_,7 @@
     }
  
     public static RegistryKey<Biome> func_244203_a(int p_244203_0_) {

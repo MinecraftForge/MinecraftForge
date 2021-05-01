@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -63,16 +63,16 @@ public class ResourcePackLoader
 
     public static void loadResourcePacks(ResourcePackList resourcePacks, BiFunction<Map<ModFile, ? extends ModFileResourcePack>, BiConsumer<? super ModFileResourcePack, ResourcePackInfo>, IPackInfoFinder> packFinder) {
         resourcePackList = resourcePacks;
-        modResourcePacks = ModList.get().getModFiles().stream().
-                filter(mf->!Objects.equals(mf.getModLoader(),"minecraft")).
-                map(mf -> new ModFileResourcePack(mf.getFile())).
-                collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity(), (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },  LinkedHashMap::new));
+        modResourcePacks = ModList.get().getModFiles().stream()
+                .filter(mf->!Objects.equals(mf.getModLoader(),"minecraft"))
+                .map(mf -> new ModFileResourcePack(mf.getFile()))
+                .collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity(), (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },  LinkedHashMap::new));
         resourcePacks.addPackFinder(new LambdaFriendlyPackFinder(packFinder.apply(modResourcePacks, ModFileResourcePack::setPackInfo)));
     }
 
     public static List<String> getPackNames()
     {
-        return modResourcePacks.values().stream().map(pack -> pack.getPackInfo().getName()).collect(Collectors.toList());
+        return ModList.get().applyForEachModFile(mf->"mod:"+mf.getModInfos().get(0).getModId()).filter(n->!n.equals("mod:minecraft")).collect(Collectors.toList());
     }
 
     public static <V> Comparator<Map.Entry<String,V>> getSorter() {
@@ -119,7 +119,7 @@ public class ResourcePackLoader
         }
 
         @Override
-        public void func_230230_a_(Consumer<ResourcePackInfo> consumer, IFactory factory)
+        public void loadPacks(Consumer<ResourcePackInfo> consumer, IFactory factory)
         {
             wrapped.addPackInfos(consumer, factory);
         }

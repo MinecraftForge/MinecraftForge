@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -62,9 +62,9 @@ public class TRSRTransformerTest {
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-    private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register("test", () -> new Block(Block.Properties.create(Material.ROCK)));
+    private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register("test", () -> new Block(Block.Properties.of(Material.STONE)));
     @SuppressWarnings("unused")
-    private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties().group(ItemGroup.MISC)));
+    private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties().tab(ItemGroup.TAB_MISC)));
 
     public TRSRTransformerTest() {
         final IEventBus mod = FMLJavaModLoadingContext.get().getModEventBus();
@@ -118,8 +118,8 @@ public class TRSRTransformerTest {
         }
 
         @Override
-        public boolean isAmbientOcclusion() {
-            return base.isAmbientOcclusion();
+        public boolean useAmbientOcclusion() {
+            return base.useAmbientOcclusion();
         }
 
         @Override
@@ -128,18 +128,18 @@ public class TRSRTransformerTest {
         }
 
         @Override
-        public boolean func_230044_c_() {
-            return base.func_230044_c_();
+        public boolean usesBlockLight() {
+            return base.usesBlockLight();
         }
 
         @Override
-        public boolean isBuiltInRenderer() {
-            return base.isBuiltInRenderer();
+        public boolean isCustomRenderer() {
+            return base.isCustomRenderer();
         }
 
         @Override
-        public TextureAtlasSprite getParticleTexture() {
-            return base.getParticleTexture();
+        public TextureAtlasSprite getParticleIcon() {
+            return base.getParticleIcon();
         }
 
         @Override

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,17 +42,26 @@ public class StringUtils
     }
 
     public static URL toURL(final String string) {
-        try
-        {
-            return new URL(string);
-        }
-        catch (MalformedURLException e)
-        {
+        if (string == null || string.trim().isEmpty() || string.contains("myurl.me") || string.contains("example.invalid"))
+            return null;
+
+        try {
+            return new URL(string); }
+        catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
     }
 
     public static String parseStringFormat(final String input, final Map<String, String> properties) {
         return StrSubstitutor.replace(input, properties);
+    }
+
+    public static String binToHex(final byte[] bytes) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < bytes.length; i++) {
+            sb.append(Integer.toHexString((bytes[i]&0xf0) >>4));
+            sb.append(Integer.toHexString(bytes[i]&0x0f));
+        }
+        return sb.toString();
     }
 }

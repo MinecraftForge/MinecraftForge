@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/CompressedStreamTools.java
 +++ b/net/minecraft/nbt/CompressedStreamTools.java
-@@ -106,10 +106,12 @@
+@@ -106,10 +_,12 @@
  
     private static INBT func_152455_a(DataInput p_152455_0_, int p_152455_1_, NBTSizeTracker p_152455_2_) throws IOException {
        byte b0 = p_152455_0_.readByte();

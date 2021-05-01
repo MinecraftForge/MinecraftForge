@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,13 +26,11 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.RenderMaterial;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.entity.Entity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.*;
@@ -50,12 +48,18 @@ import net.minecraftforge.client.model.IModelBuilder;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ItemModelProvider;
+import net.minecraftforge.client.model.generators.loaders.ItemLayersModelBuilder;
+import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
+import net.minecraftforge.client.model.generators.loaders.SeparatePerspectiveModelBuilder;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -74,9 +78,9 @@ public class NewModelLoaderTest
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Block> obj_block = BLOCKS.register("obj_block", () ->
-            new Block(Block.Properties.create(Material.WOOD).hardnessAndResistance(10)) {
+            new Block(Block.Properties.of(Material.WOOD).strength(10)) {
                 @Override
-                protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+                protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
                 {
                     builder.add(BlockStateProperties.HORIZONTAL_FACING);
                 }
@@ -85,21 +89,21 @@ public class NewModelLoaderTest
                 @Override
                 public BlockState getStateForPlacement(BlockItemUseContext context)
                 {
-                    return getDefaultState().with(
-                            BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing()
+                    return defaultBlockState().setValue(
+                            BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection()
                     );
                 }
 
                 @Override
                 public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
                 {
-                    return Block.makeCuboidShape(2,2,2,14,14,14);
+                    return Block.box(2,2,2,14,14,14);
                 }
             }
     );
 
     public static RegistryObject<Item> obj_item = ITEMS.register("obj_block", () ->
-            new BlockItem(obj_block.get(), new Item.Properties().group(ItemGroup.MISC)) {
+            new BlockItem(obj_block.get(), new Item.Properties().tab(ItemGroup.TAB_MISC)) {
                 @Override
                 public boolean canEquip(ItemStack stack, EquipmentSlotType armorType, Entity entity)
                 {
@@ -109,23 +113,23 @@ public class NewModelLoaderTest
     );
 
     public static RegistryObject<Item> custom_transforms = ITEMS.register("custom_transforms", () ->
-            new Item(new Item.Properties().group(ItemGroup.MISC))
+            new Item(new Item.Properties().tab(ItemGroup.TAB_MISC))
     );
 
     public static RegistryObject<Item> custom_vanilla_loader = ITEMS.register("custom_vanilla_loader", () ->
-            new Item(new Item.Properties().group(ItemGroup.MISC))
+            new Item(new Item.Properties().tab(ItemGroup.TAB_MISC))
     );
 
     public static RegistryObject<Item> custom_loader = ITEMS.register("custom_loader", () ->
-            new Item(new Item.Properties().group(ItemGroup.MISC))
+            new Item(new Item.Properties().tab(ItemGroup.TAB_MISC))
     );
 
     public static RegistryObject<Item> item_layers = ITEMS.register("item_layers", () ->
-            new Item(new Item.Properties().group(ItemGroup.MISC))
+            new Item(new Item.Properties().tab(ItemGroup.TAB_MISC))
     );
 
     public static RegistryObject<Item> separate_perspective = ITEMS.register("separate_perspective", () ->
-            new Item(new Item.Properties().group(ItemGroup.MISC))
+            new Item(new Item.Properties().tab(ItemGroup.TAB_MISC))
     );
 
     public NewModelLoaderTest()
@@ -136,6 +140,7 @@ public class NewModelLoaderTest
         ITEMS.register(modEventBus);
 
         modEventBus.addListener(this::modelRegistry);
+        modEventBus.addListener(this::datagen);
     }
 
     public void modelRegistry(ModelRegistryEvent event)
@@ -169,10 +174,10 @@ public class NewModelLoaderTest
             builder.setTexture(texture);
             builder.setQuadOrientation(Direction.UP);
 
-            putVertex(builder, 0,1,0.5f, texture.getInterpolatedU(0), texture.getInterpolatedV(0), 1, 1, 1);
-            putVertex(builder, 0,0,0.5f, texture.getInterpolatedU(0), texture.getInterpolatedV(16), 1, 1, 1);
-            putVertex(builder, 1,0,0.5f, texture.getInterpolatedU(16), texture.getInterpolatedV(16), 1, 1, 1);
-            putVertex(builder, 1,1,0.5f, texture.getInterpolatedU(16), texture.getInterpolatedV(0), 1, 1, 1);
+            putVertex(builder, 0,1,0.5f, texture.getU(0), texture.getV(0), 1, 1, 1);
+            putVertex(builder, 0,0,0.5f, texture.getU(0), texture.getV(16), 1, 1, 1);
+            putVertex(builder, 1,0,0.5f, texture.getU(16), texture.getV(16), 1, 1, 1);
+            putVertex(builder, 1,1,0.5f, texture.getU(16), texture.getV(0), 1, 1, 1);
 
             modelBuilder.addGeneralQuad(builder.build());
         }
@@ -207,6 +212,66 @@ public class NewModelLoaderTest
         public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
         {
             return Collections.singleton(owner.resolveTexture("particle"));
+        }
+    }
+
+    private void datagen(GatherDataEvent event)
+    {
+        DataGenerator gen = event.getGenerator();
+
+        if (event.includeClient())
+        {
+            // Let blockstate provider see generated item models by passing its existing file helper
+            ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
+            gen.addProvider(itemModels);
+            gen.addProvider(new BlockStates(gen, itemModels.existingFileHelper));
+        }
+    }
+
+    public static class ItemModels extends ItemModelProvider
+    {
+        public ItemModels(DataGenerator generator, ExistingFileHelper existingFileHelper)
+        {
+            super(generator, MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void registerModels()
+        {
+            withExistingParent(NewModelLoaderTest.item_layers.getId().getPath(), "forge:item/default")
+                    .texture("layer0", "minecraft:item/coal")
+                    .texture("layer1", "minecraft:item/stick")
+                    .customLoader(ItemLayersModelBuilder::begin)
+                        .fullbright(1)
+                    .end();
+            withExistingParent(NewModelLoaderTest.separate_perspective.getId().getPath(), "forge:item/default")
+                    .customLoader(SeparatePerspectiveModelBuilder::begin)
+                        .base(nested().parent(getExistingFile(mcLoc("minecraft:item/coal"))))
+                        .perspective(ItemCameraTransforms.TransformType.GUI, nested().parent(getExistingFile(mcLoc("minecraft:item/snowball"))))
+                        .perspective(ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, nested().parent(getExistingFile(mcLoc("minecraft:item/bone"))))
+                    .end();
+        }
+    }
+
+    public static class BlockStates extends BlockStateProvider
+    {
+        public BlockStates(DataGenerator gen, ExistingFileHelper exFileHelper)
+        {
+            super(gen, MODID, exFileHelper);
+        }
+
+        @Override
+        protected void registerStatesAndModels()
+        {
+            simpleBlock(NewModelLoaderTest.obj_block.get(), models()
+                    .getBuilder(NewModelLoaderTest.obj_block.getId().getPath())
+                    .customLoader(OBJLoaderBuilder::begin)
+                            .modelLocation(new ResourceLocation("new_model_loader_test:models/item/sugar_glider.obj"))
+                            .flipV(true)
+                    .end()
+                    .texture("qr", "minecraft:block/oak_planks")
+                    .texture("particle", "#qr")
+            );
         }
     }
 }

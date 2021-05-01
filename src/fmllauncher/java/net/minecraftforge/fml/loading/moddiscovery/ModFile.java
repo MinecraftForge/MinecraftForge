@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,6 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
-import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -79,7 +78,7 @@ public class ModFile implements IModFile {
         this.locator = locator;
         this.filePath = file;
         this.parser = parser;
-        manifest = locator.findManifest(file).orElse(DEFAULTMANIFEST);
+        manifest = Optional.ofNullable(locator).flatMap(l->l.findManifest(file)).orElse(DEFAULTMANIFEST);
         if (manifest != DEFAULTMANIFEST) LOGGER.debug(SCAN,"Mod file {} has a manifest", file);
         else LOGGER.debug(SCAN,"Mod file {} is missing a manifest", file);
         final Optional<String> value = Optional.ofNullable(manifest.getMainAttributes().getValue(TYPE));

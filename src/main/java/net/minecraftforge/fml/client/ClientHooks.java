@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.screen.MultiplayerScreen;
-import net.minecraft.client.gui.screen.WorldSelectionScreen;
 import net.minecraft.client.multiplayer.PlayerController;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
@@ -52,7 +51,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 
@@ -75,9 +73,6 @@ public class ClientHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker CLIENTHOOKS = MarkerManager.getMarker("CLIENTHOOKS");
-    // From FontRenderer.renderCharAtPos
-    private static final String ALLOWED_CHARS = "\u00c0\u00c1\u00c2\u00c8\u00ca\u00cb\u00cd\u00d3\u00d4\u00d5\u00da\u00df\u00e3\u00f5\u011f\u0130\u0131\u0152\u0153\u015e\u015f\u0174\u0175\u017e\u0207\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8\u00a3\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1\u00aa\u00ba\u00bf\u00ae\u00ac\u00bd\u00bc\u00a1\u00ab\u00bb\u2591\u2592\u2593\u2502\u2524\u2561\u2562\u2556\u2555\u2563\u2551\u2557\u255d\u255c\u255b\u2510\u2514\u2534\u252c\u251c\u2500\u253c\u255e\u255f\u255a\u2554\u2569\u2566\u2560\u2550\u256c\u2567\u2568\u2564\u2565\u2559\u2558\u2552\u2553\u256b\u256a\u2518\u250c\u2588\u2584\u258c\u2590\u2580\u03b1\u03b2\u0393\u03c0\u03a3\u03c3\u03bc\u03c4\u03a6\u0398\u03a9\u03b4\u221e\u2205\u2208\u2229\u2261\u00b1\u2265\u2264\u2320\u2321\u00f7\u2248\u00b0\u2219\u00b7\u221a\u207f\u00b2\u25a0\u0000";
-    private static final CharMatcher DISALLOWED_CHAR_MATCHER = CharMatcher.anyOf(ALLOWED_CHARS).negate();
 
     private static final ResourceLocation iconSheet = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/icons.png");
     @Nullable
@@ -109,7 +104,7 @@ public class ClientHooks
                     filter(e -> !ModList.get().isLoaded(e.getKey())).
                     collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-            LOGGER.debug(CLIENTHOOKS, "Received FML ping data from server at {}: FMLNETVER={}, mod list is compatible : {}, channel list is compatible: {}, extra server mods: {}", target.serverIP, fmlver, modsMatch, channelsMatch, extraServerMods);
+            LOGGER.debug(CLIENTHOOKS, "Received FML ping data from server at {}: FMLNETVER={}, mod list is compatible : {}, channel list is compatible: {}, extra server mods: {}", target.ip, fmlver, modsMatch, channelsMatch, extraServerMods);
 
             String extraReason = null;
 
@@ -174,13 +169,14 @@ public class ClientHooks
                 tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.unknown", target.forgeData.type);
         }
 
-        Minecraft.getInstance().getTextureManager().bindTexture(iconSheet);
-        AbstractGui.func_238466_a_(mStack, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
+        Minecraft.getInstance().getTextureManager().bind(iconSheet);
+        AbstractGui.blit(mStack, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
 
-        if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26)
-            //TODO using StringTextComponent here is a hack, we should be using TranslationTextComponents.
-            gui.func_238854_b_(Collections.singletonList(new StringTextComponent(tooltip)));
-
+        if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26) {
+            //this is not the most proper way to do it,
+            //but works best here and has the least maintenance overhead
+            gui.setToolTip(Arrays.stream(tooltip.split("\n")).map(StringTextComponent::new).collect(Collectors.toList()));
+        }
     }
 
     public static String fixDescription(String description)
@@ -188,32 +184,27 @@ public class ClientHooks
         return description.endsWith(":NOFML§r") ? description.substring(0, description.length() - 8)+"§r" : description;
     }
 
+    @SuppressWarnings("resource")
     static File getSavesDir()
     {
-        return new File(Minecraft.getInstance().gameDir, "saves");
+        return new File(Minecraft.getInstance().gameDirectory, "saves");
     }
 
     private static NetworkManager getClientToServerNetworkManager()
     {
-        return Minecraft.getInstance().getConnection()!=null ? Minecraft.getInstance().getConnection().getNetworkManager() : null;
+        return Minecraft.getInstance().getConnection()!=null ? Minecraft.getInstance().getConnection().getConnection() : null;
     }
 
     public static void handleClientWorldClosing(ClientWorld world)
     {
         NetworkManager client = getClientToServerNetworkManager();
         // ONLY revert a non-local connection
-        if (client != null && !client.isLocalChannel())
+        if (client != null && !client.isMemoryConnection())
         {
             GameData.revertToFrozen();
         }
     }
 
-
-    public static String stripSpecialChars(String message)
-    {
-        // We can't handle many unicode points in the splash renderer
-        return DISALLOWED_CHAR_MATCHER.removeFrom(net.minecraft.util.StringUtils.stripControlCodes(message));
-    }
 
     private static SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
     private static Set<String> badTextureDomains = Sets.newHashSet();
@@ -261,7 +252,7 @@ public class ClientHooks
             }
             else
             {
-                List<IResourcePack> resPacks = fallbackResourceManager.resourcePacks;
+                List<IResourcePack> resPacks = fallbackResourceManager.fallbacks;
                 logger.error("    domain {} has {} location{}:",resourceDomain, resPacks.size(), resPacks.size() != 1 ? "s" :"");
                 for (IResourcePack resPack : resPacks)
                 {
@@ -316,7 +307,7 @@ public class ClientHooks
     }
 
     public static void firePlayerLogout(PlayerController pc, ClientPlayerEntity player) {
-        MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedOutEvent(pc, player, player != null ? player.connection != null ? player.connection.getNetworkManager() : null : null));
+        MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedOutEvent(pc, player, player != null ? player.connection != null ? player.connection.getConnection() : null : null));
     }
 
     public static void firePlayerRespawn(PlayerController pc, ClientPlayerEntity oldPlayer, ClientPlayerEntity newPlayer, NetworkManager networkManager) {

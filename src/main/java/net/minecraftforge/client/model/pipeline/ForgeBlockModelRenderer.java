@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -60,7 +60,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
 
             VertexLighterFlat lighter = lighterFlat.get();
             lighter.setParent(consumer);
-            lighter.setTransform(matrixStack.getLast());
+            lighter.setTransform(matrixStack.last());
 
             return render(lighter, world, model, state, pos, matrixStack, checkSides, rand, seed, modelData);
         }
@@ -80,7 +80,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
 
             VertexLighterSmoothAo lighter = lighterSmooth.get();
             lighter.setParent(consumer);
-            lighter.setTransform(matrixStack.getLast());
+            lighter.setTransform(matrixStack.last());
 
             return render(lighter, world, model, state, pos, matrixStack, checkSides, rand, seed, modelData);
         }
@@ -113,7 +113,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
             quads = model.getQuads(state, side, rand, modelData);
             if(!quads.isEmpty())
             {
-                if(!checkSides || Block.shouldSideBeRendered(state, world, pos, side))
+                if(!checkSides || Block.shouldRenderFace(state, world, pos, side))
                 {
                     if(empty) lighter.updateBlockInfo();
                     empty = false;

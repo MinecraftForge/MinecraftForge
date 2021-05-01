@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,16 +55,16 @@ public interface IForgeVertexBuilder
 
     // Copy of addQuad with alpha support
     default void addVertexData(MatrixStack.Entry matrixEntry, BakedQuad bakedQuad, float[] baseBrightness, float red, float green, float blue, float alpha, int[] lightmapCoords, int overlayCoords, boolean readExistingColor) {
-        int[] aint = bakedQuad.getVertexData();
-        Vector3i faceNormal = bakedQuad.getFace().getDirectionVec();
+        int[] aint = bakedQuad.getVertices();
+        Vector3i faceNormal = bakedQuad.getDirection().getNormal();
         Vector3f normal = new Vector3f((float)faceNormal.getX(), (float)faceNormal.getY(), (float)faceNormal.getZ());
-        Matrix4f matrix4f = matrixEntry.getMatrix();
-        normal.transform(matrixEntry.getNormal());
+        Matrix4f matrix4f = matrixEntry.pose();
+        normal.transform(matrixEntry.normal());
         int intSize = DefaultVertexFormats.BLOCK.getIntegerSize();
         int vertexCount = aint.length / intSize;
 
         try (MemoryStack memorystack = MemoryStack.stackPush()) {
-            ByteBuffer bytebuffer = memorystack.malloc(DefaultVertexFormats.BLOCK.getSize());
+            ByteBuffer bytebuffer = memorystack.malloc(DefaultVertexFormats.BLOCK.getVertexSize());
             IntBuffer intbuffer = bytebuffer.asIntBuffer();
 
             for(int v = 0; v < vertexCount; ++v) {
@@ -98,8 +98,8 @@ public interface IForgeVertexBuilder
                 float f10 = bytebuffer.getFloat(20);
                 Vector4f pos = new Vector4f(f, f1, f2, 1.0F);
                 pos.transform(matrix4f);
-                applyBakedNormals(normal, bytebuffer, matrixEntry.getNormal());
-                ((IVertexBuilder)this).addVertex(pos.getX(), pos.getY(), pos.getZ(), cr, cg, cb, ca, f9, f10, overlayCoords, lightmapCoord, normal.getX(), normal.getY(), normal.getZ());
+                applyBakedNormals(normal, bytebuffer, matrixEntry.normal());
+                ((IVertexBuilder)this).vertex(pos.x(), pos.y(), pos.z(), cr, cg, cb, ca, f9, f10, overlayCoords, lightmapCoord, normal.x(), normal.y(), normal.z());
             }
         }
     }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -144,7 +144,7 @@ public class CraftingHelper
 
         JsonObject obj = (JsonObject)json;
 
-        String type = JSONUtils.getString(obj, "type", "minecraft:item");
+        String type = JSONUtils.getAsString(obj, "type", "minecraft:item");
         if (type.isEmpty())
             throw new JsonSyntaxException("Ingredient type can not be an empty string");
 
@@ -157,7 +157,7 @@ public class CraftingHelper
 
     public static ItemStack getItemStack(JsonObject json, boolean readNBT)
     {
-        String itemName = JSONUtils.getString(json, "item");
+        String itemName = JSONUtils.getAsString(json, "item");
 
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
 
@@ -172,9 +172,9 @@ public class CraftingHelper
                 JsonElement element = json.get("nbt");
                 CompoundNBT nbt;
                 if(element.isJsonObject())
-                    nbt = JsonToNBT.getTagFromJson(GSON.toJson(element));
+                    nbt = JsonToNBT.parseTag(GSON.toJson(element));
                 else
-                    nbt = JsonToNBT.getTagFromJson(JSONUtils.getString(element, "nbt"));
+                    nbt = JsonToNBT.parseTag(JSONUtils.convertToString(element, "nbt"));
 
                 CompoundNBT tmp = new CompoundNBT();
                 if (nbt.contains("ForgeCaps"))
@@ -185,9 +185,9 @@ public class CraftingHelper
 
                 tmp.put("tag", nbt);
                 tmp.putString("id", itemName);
-                tmp.putInt("Count", JSONUtils.getInt(json, "count", 1));
+                tmp.putInt("Count", JSONUtils.getAsInt(json, "count", 1));
 
-                return ItemStack.read(tmp);
+                return ItemStack.of(tmp);
             }
             catch (CommandSyntaxException e)
             {
@@ -195,12 +195,12 @@ public class CraftingHelper
             }
         }
 
-        return new ItemStack(item, JSONUtils.getInt(json, "count", 1));
+        return new ItemStack(item, JSONUtils.getAsInt(json, "count", 1));
     }
 
     public static boolean processConditions(JsonObject json, String memberName)
     {
-        return !json.has(memberName) || processConditions(JSONUtils.getJsonArray(json, memberName));
+        return !json.has(memberName) || processConditions(JSONUtils.getAsJsonArray(json, memberName));
     }
 
     public static boolean processConditions(JsonArray conditions)
@@ -219,7 +219,7 @@ public class CraftingHelper
 
     public static ICondition getCondition(JsonObject json)
     {
-        ResourceLocation type = new ResourceLocation(JSONUtils.getString(json, "type"));
+        ResourceLocation type = new ResourceLocation(JSONUtils.getAsString(json, "type"));
         IConditionSerializer<?> serializer = conditions.get(type);
         if (serializer == null)
             throw new JsonSyntaxException("Unknown condition type: " + type.toString());

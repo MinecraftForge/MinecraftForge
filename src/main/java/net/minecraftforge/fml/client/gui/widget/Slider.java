@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,8 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.client.gui.GuiUtils;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.client.gui.widget.button.Button.IPressable;
 
 /**
  * This class is blatantly stolen from iChunUtils with permission.
@@ -82,11 +84,11 @@ public class Slider extends ExtendedButton
             precision = 0;
         }
 
-        func_238482_a_(new StringTextComponent("").func_230529_a_(dispString).func_240702_b_(val).func_230529_a_(suffix));
+        setMessage(new StringTextComponent("").append(dispString).append(val).append(suffix));
 
         drawString = drawStr;
         if(!drawString)
-            func_238482_a_(new StringTextComponent(""));
+            setMessage(new StringTextComponent(""));
     }
 
     public Slider(int xPos, int yPos, ITextComponent displayStr, double minVal, double maxVal, double currentVal, IPressable handler, ISlider par)
@@ -99,7 +101,7 @@ public class Slider extends ExtendedButton
      * this button.
      */
     @Override
-    public int func_230989_a_(boolean par1)
+    public int getYImage(boolean par1)
     {
         return 0;
     }
@@ -108,17 +110,17 @@ public class Slider extends ExtendedButton
      * Fired when the mouse button is dragged. Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void func_230441_a_(MatrixStack mStack, Minecraft par1Minecraft, int par2, int par3)
+    protected void renderBg(MatrixStack mStack, Minecraft par1Minecraft, int par2, int par3)
     {
-        if (this.field_230694_p_)
+        if (this.visible)
         {
             if (this.dragging)
             {
-                this.sliderValue = (par2 - (this.field_230690_l_ + 4)) / (float)(this.field_230688_j_ - 8);
+                this.sliderValue = (par2 - (this.x + 4)) / (float)(this.width - 8);
                 updateSlider();
             }
 
-            GuiUtils.drawContinuousTexturedBox(field_230687_i_, this.field_230690_l_ + (int)(this.sliderValue * (float)(this.field_230688_j_ - 8)), this.field_230691_m_, 0, 66, 8, this.field_230689_k_, 200, 20, 2, 3, 2, 2, this.func_230927_p_());
+            GuiUtils.drawContinuousTexturedBox(mStack, WIDGETS_LOCATION, this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 8, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
         }
     }
 
@@ -127,9 +129,9 @@ public class Slider extends ExtendedButton
      * e).
      */
     @Override
-    public void func_230982_a_(double mouseX, double mouseY)
+    public void onClick(double mouseX, double mouseY)
     {
-        this.sliderValue = (mouseX - (this.field_230690_l_ + 4)) / (this.field_230688_j_ - 8);
+        this.sliderValue = (mouseX - (this.x + 4)) / (this.width - 8);
         updateSlider();
         this.dragging = true;
     }
@@ -176,7 +178,7 @@ public class Slider extends ExtendedButton
 
         if(drawString)
         {
-            func_238482_a_(new StringTextComponent("").func_230529_a_(dispString).func_240702_b_(val).func_230529_a_(suffix));
+            setMessage(new StringTextComponent("").append(dispString).append(val).append(suffix));
         }
 
         if (parent != null)
@@ -189,7 +191,7 @@ public class Slider extends ExtendedButton
      * Fired when the mouse button is released. Equivalent of MouseListener.mouseReleased(MouseEvent e).
      */
     @Override
-    public void func_231000_a__(double mouseX, double mouseY)
+    public void onRelease(double mouseX, double mouseY)
     {
         this.dragging = false;
     }

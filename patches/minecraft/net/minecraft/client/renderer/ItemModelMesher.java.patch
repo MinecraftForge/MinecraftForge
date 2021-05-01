@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/ItemModelMesher.java
 +++ b/net/minecraft/client/renderer/ItemModelMesher.java
-@@ -31,7 +31,8 @@
+@@ -31,7 +_,8 @@
  
     public TextureAtlasSprite func_199309_a(ItemStack p_199309_1_) {
        IBakedModel ibakedmodel = this.func_178089_a(p_199309_1_);

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -50,14 +51,14 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
     //    @Override TODO  re-evaluate
     default void deserializeNBT(BlockState state, CompoundNBT nbt)
     {
-        getTileEntity().func_230337_a_(state, nbt);
+        getTileEntity().load(state, nbt);
     }
 
     @Override
     default CompoundNBT serializeNBT()
     {
         CompoundNBT ret = new CompoundNBT();
-        getTileEntity().write(ret);
+        getTileEntity().save(ret);
         return ret;
     }
 
@@ -81,7 +82,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
      */
      default void handleUpdateTag(BlockState state, CompoundNBT tag)
      {
-         getTileEntity().func_230337_a_(state, tag);
+         getTileEntity().load(state, tag);
      }
 
     /**
@@ -121,14 +122,14 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
          AxisAlignedBB bb = INFINITE_EXTENT_AABB;
          BlockState state = getTileEntity().getBlockState();
          Block block = state.getBlock();
-         BlockPos pos = getTileEntity().getPos();
+         BlockPos pos = getTileEntity().getBlockPos();
          if (block == Blocks.ENCHANTING_TABLE)
          {
-             bb = new AxisAlignedBB(pos, pos.add(1, 1, 1));
+             bb = new AxisAlignedBB(pos, pos.offset(1, 1, 1));
          }
          else if (block == Blocks.CHEST || block == Blocks.TRAPPED_CHEST)
          {
-             bb = new AxisAlignedBB(pos.add(-1, 0, -1), pos.add(2, 2, 2));
+             bb = new AxisAlignedBB(pos.offset(-1, 0, -1), pos.offset(2, 2, 2));
          }
          else if (block == Blocks.STRUCTURE_BLOCK)
          {
@@ -139,7 +140,11 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
              AxisAlignedBB cbb = null;
              try
              {
-                 cbb = state.getCollisionShape(getTileEntity().getWorld(), pos).getBoundingBox().offset(pos);
+                 VoxelShape collisionShape = state.getCollisionShape(getTileEntity().getLevel(), pos);
+                 if (!collisionShape.isEmpty())
+                 {
+                     cbb = collisionShape.bounds().move(pos);
+                 }
              }
              catch (Exception e)
              {
@@ -149,7 +154,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
                  // So, once again in the long line of US having to accommodate BUKKIT breaking things,
                  // here it is, assume that the TE is only 1 cubic block. Problem with this is that it may
                  // cause the TileEntity renderer to error further down the line! But alas, nothing we can do.
-                 cbb = new net.minecraft.util.math.AxisAlignedBB(pos.add(-1, 0, -1), pos.add(1, 1, 1));
+                 cbb = new net.minecraft.util.math.AxisAlignedBB(pos.offset(-1, 0, -1), pos.offset(1, 1, 1));
              }
              if (cbb != null) bb = cbb;
          }
@@ -163,8 +168,8 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
      default void requestModelDataUpdate()
      {
          TileEntity te = getTileEntity();
-         World world = te.getWorld();
-         if (world != null && world.isRemote)
+         World world = te.getLevel();
+         if (world != null && world.isClientSide)
          {
              ModelDataManager.requestModelDataRefresh(te);
          }

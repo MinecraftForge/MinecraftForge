@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/spawner/PhantomSpawner.java
++++ b/net/minecraft/world/spawner/PhantomSpawner.java
+@@ -58,6 +_,7 @@
+                                  for(int i1 = 0; i1 < l; ++i1) {
+                                     PhantomEntity phantomentity = EntityType.field_203097_aH.func_200721_a(p_230253_1_);
+                                     phantomentity.func_174828_a(blockpos1, 0.0F, 0.0F);
++                                    if(net.minecraftforge.common.ForgeHooks.canEntitySpawn(phantomentity, p_230253_1_, blockpos1.func_177958_n(), blockpos1.func_177956_o(), blockpos1.func_177952_p(), null, SpawnReason.NATURAL) == -1) return 0;
+                                     ilivingentitydata = phantomentity.func_213386_a(p_230253_1_, difficultyinstance, SpawnReason.NATURAL, ilivingentitydata, (CompoundNBT)null);
+                                     p_230253_1_.func_242417_l(phantomentity);
+                                  }

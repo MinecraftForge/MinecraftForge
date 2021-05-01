@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,71 +17,72 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/* Biomes are completely redone in 1.16.2, reevaluate
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.provider.BiomeProvider;
-import net.minecraft.world.gen.INoiseRandom;
-
-import javax.annotation.Nullable;
 
 public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
-
-    public static List<Biome> oceanBiomes = new ArrayList<Biome>();
-
-    static
-    {
-        oceanBiomes.add(Biomes.OCEAN);
-        oceanBiomes.add(Biomes.DEEP_OCEAN);
-        oceanBiomes.add(Biomes.FROZEN_OCEAN);
-    }
+    private static final List<RegistryKey<Biome>> additionalOverworldBiomes = new ArrayList<>();
+    private static final List<RegistryKey<Biome>> additionalOverworldBiomesView = Collections.unmodifiableList(additionalOverworldBiomes);
 
     private static TrackedList<BiomeEntry>[] setupBiomes()
     {
         @SuppressWarnings("unchecked")
         TrackedList<BiomeEntry>[] currentBiomes = new TrackedList[BiomeType.values().length];
-        List<BiomeEntry> list = new ArrayList<BiomeEntry>();
 
-        list.add(new BiomeEntry(Biomes.FOREST, 10));
-        list.add(new BiomeEntry(Biomes.DARK_FOREST, 10));
-        list.add(new BiomeEntry(Biomes.MOUNTAINS, 10));
-        list.add(new BiomeEntry(Biomes.PLAINS, 10));
-        list.add(new BiomeEntry(Biomes.BIRCH_FOREST, 10));
-        list.add(new BiomeEntry(Biomes.SWAMP, 10));
+        currentBiomes[BiomeType.DESERT_LEGACY.ordinal()] = new TrackedList<>(
+            new BiomeEntry(Biomes.DESERT, 10),
+            new BiomeEntry(Biomes.FOREST, 10),
+            new BiomeEntry(Biomes.MOUNTAINS, 10),
+            new BiomeEntry(Biomes.SWAMP, 10),
+            new BiomeEntry(Biomes.PLAINS, 10),
+            new BiomeEntry(Biomes.TAIGA, 10)
+        );
 
-        currentBiomes[BiomeType.WARM.ordinal()] = new TrackedList<BiomeEntry>(list);
-        list.clear();
+        currentBiomes[BiomeType.DESERT.ordinal()] = new TrackedList<>(
+            new BiomeEntry(Biomes.DESERT, 30),
+            new BiomeEntry(Biomes.SAVANNA, 20),
+            new BiomeEntry(Biomes.PLAINS, 10)
+        );
 
-        list.add(new BiomeEntry(Biomes.FOREST, 10));
-        list.add(new BiomeEntry(Biomes.MOUNTAINS, 10));
-        list.add(new BiomeEntry(Biomes.TAIGA, 10));
-        list.add(new BiomeEntry(Biomes.PLAINS, 10));
+        currentBiomes[BiomeType.WARM.ordinal()] = new TrackedList<>(
+            new BiomeEntry(Biomes.FOREST, 10),
+            new BiomeEntry(Biomes.DARK_FOREST, 10),
+            new BiomeEntry(Biomes.MOUNTAINS, 10),
+            new BiomeEntry(Biomes.PLAINS, 10),
+            new BiomeEntry(Biomes.BIRCH_FOREST, 10),
+            new BiomeEntry(Biomes.SWAMP, 10)
+        );
 
-        currentBiomes[BiomeType.COOL.ordinal()] = new TrackedList<BiomeEntry>(list);
-        list.clear();
+        currentBiomes[BiomeType.COOL.ordinal()] = new TrackedList<>(
+            new BiomeEntry(Biomes.FOREST, 10),
+            new BiomeEntry(Biomes.MOUNTAINS, 10),
+            new BiomeEntry(Biomes.TAIGA, 10),
+            new BiomeEntry(Biomes.PLAINS, 10)
+        );
 
-        list.add(new BiomeEntry(Biomes.SNOWY_TUNDRA, 30));
-        list.add(new BiomeEntry(Biomes.SNOWY_TAIGA, 10));
-
-        currentBiomes[BiomeType.ICY.ordinal()] = new TrackedList<BiomeEntry>(list);
-        list.clear();
-
-        currentBiomes[BiomeType.DESERT.ordinal()] = new TrackedList<BiomeEntry>(list);
+        currentBiomes[BiomeType.ICY.ordinal()] = new TrackedList<>(
+            new BiomeEntry(Biomes.SNOWY_TUNDRA, 30),
+            new BiomeEntry(Biomes.SNOWY_TAIGA, 10)
+        );
 
         return currentBiomes;
     }
 
+    /*
     public static void addSpawnBiome(Biome biome)
     {
         if (!BiomeProvider.BIOMES_TO_SPAWN_IN.contains(biome))
@@ -97,62 +98,78 @@ public class BiomeManager
             BiomeProvider.BIOMES_TO_SPAWN_IN.remove(biome);
         }
     }
+    */
 
-    public static void addBiome(BiomeType type, BiomeEntry entry)
+    /**
+     * Add biomes that you add to the overworld without using {@link BiomeManager#addBiome(BiomeType, BiomeEntry)}
+     */
+    public static void addAdditionalOverworldBiomes(RegistryKey<Biome> biome)
     {
-        int idx = type.ordinal();
-        List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
-        if (list != null) list.add(entry);
-    }
-
-    public static void removeBiome(BiomeType type, BiomeEntry entry)
-    {
-        int idx = type.ordinal();
-        List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
-
-        if (list != null && list.contains(entry))
+        if (!"minecraft".equals(biome.location().getNamespace()) && additionalOverworldBiomes.stream().noneMatch(entry -> entry.location().equals(biome.location())))
         {
-            list.remove(entry);
+            additionalOverworldBiomes.add(biome);
         }
     }
 
-    @Nullable
+    public static boolean addBiome(BiomeType type, BiomeEntry entry)
+    {
+        int idx = type.ordinal();
+        List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
+        if (list != null)
+        {
+            additionalOverworldBiomes.add(entry.key);
+            return list.add(entry);
+        }
+        return false;
+    }
+
+    public static boolean removeBiome(BiomeType type, BiomeEntry entry)
+    {
+        int idx = type.ordinal();
+        List<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
+        return list == null ? false : list.remove(entry);
+    }
+
+    /**
+     * @return list of biomes that might be generated in the overworld in addition to the vanilla biomes
+     */
+    public static List<RegistryKey<Biome>> getAdditionalOverworldBiomes()
+    {
+        return additionalOverworldBiomesView;
+    }
+
     public static ImmutableList<BiomeEntry> getBiomes(BiomeType type)
     {
         int idx = type.ordinal();
         List<BiomeEntry> list = idx >= biomes.length ? null : biomes[idx];
-
-        return list != null ? ImmutableList.copyOf(list) : null;
+        return list != null ? ImmutableList.copyOf(list) : ImmutableList.of();
     }
 
     public static boolean isTypeListModded(BiomeType type)
     {
         int idx = type.ordinal();
         TrackedList<BiomeEntry> list = idx > biomes.length ? null : biomes[idx];
-
-        if (list != null) return list.isModded();
-
-        return false;
+        return list == null ? false : list.isModded();
     }
 
     public static enum BiomeType
     {
-        DESERT, WARM, COOL, ICY;
-
-        public static BiomeType create(String name) {
-            return null;
-        }
+        DESERT, DESERT_LEGACY, WARM, COOL, ICY;
     }
 
     public static class BiomeEntry extends WeightedRandom.Item
     {
-        public final Biome biome;
+        private final RegistryKey<Biome> key;
 
-        public BiomeEntry(Biome biome, int weight)
+        public BiomeEntry(RegistryKey<Biome> key, int weight)
         {
             super(weight);
+            this.key = key;
+        }
 
-            this.biome = biome;
+        public RegistryKey<Biome> getKey()
+        {
+            return this.key;
         }
     }
 
@@ -161,9 +178,10 @@ public class BiomeManager
         private static final long serialVersionUID = 1L;
         private boolean isModded = false;
 
-        public TrackedList(Collection<? extends E> c)
+        @SafeVarargs
+        private <T extends E> TrackedList(T... c)
         {
-            super(c);
+            super(Arrays.asList(c));
         }
 
         @Override
@@ -242,4 +260,3 @@ public class BiomeManager
         }
     }
 }
-*/

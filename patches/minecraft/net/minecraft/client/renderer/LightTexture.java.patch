@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/LightTexture.java
 +++ b/net/minecraft/client/renderer/LightTexture.java
-@@ -169,7 +169,7 @@
+@@ -169,7 +_,7 @@
     }
  
     public static int func_228450_a_(int p_228450_0_) {

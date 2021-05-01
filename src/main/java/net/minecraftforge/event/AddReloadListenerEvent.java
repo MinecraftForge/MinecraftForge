@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,13 +20,20 @@
 package net.minecraftforge.event;
 
 import com.google.common.collect.ImmutableList;
+import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.DataPackRegistries;
 import net.minecraft.resources.IFutureReloadListener;
+import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.ModLoader;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+
+import net.minecraft.resources.IFutureReloadListener.IStage;
 
 /**
  * The main ResourceManager is recreated on each reload, through {@link DataPackRegistries}'s creation.
@@ -49,7 +56,7 @@ public class AddReloadListenerEvent extends Event
     */
    public void addListener(IFutureReloadListener listener)
    {
-      listeners.add(listener);
+      listeners.add(new WrappedStateAwareListener(listener));
    }
 
    public List<IFutureReloadListener> getListeners()
@@ -60,5 +67,20 @@ public class AddReloadListenerEvent extends Event
     public DataPackRegistries getDataPackRegistries()
     {
         return dataPackRegistries;
+    }
+    private static class WrappedStateAwareListener implements IFutureReloadListener {
+        private final IFutureReloadListener wrapped;
+
+        private WrappedStateAwareListener(final IFutureReloadListener wrapped) {
+            this.wrapped = wrapped;
+        }
+
+        @Override
+        public CompletableFuture<Void> reload(final IStage stage, final IResourceManager resourceManager, final IProfiler preparationsProfiler, final IProfiler reloadProfiler, final Executor backgroundExecutor, final Executor gameExecutor) {
+            if (ModLoader.isLoadingStateValid())
+                return wrapped.reload(stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor);
+            else
+                return CompletableFuture.completedFuture(null);
+        }
     }
 }

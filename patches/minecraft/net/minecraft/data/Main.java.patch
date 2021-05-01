@@ -1,10 +1,11 @@
 --- a/net/minecraft/data/Main.java
 +++ b/net/minecraft/data/Main.java
-@@ -21,8 +21,12 @@
+@@ -21,8 +_,13 @@
        OptionSpec<Void> optionspec6 = optionparser.accepts("all", "Include all generators");
        OptionSpec<String> optionspec7 = optionparser.accepts("output", "Output folder").withRequiredArg().defaultsTo("generated");
        OptionSpec<String> optionspec8 = optionparser.accepts("input", "Input folder").withRequiredArg();
 +      OptionSpec<String> existing = optionparser.accepts("existing", "Existing resource packs that generated resources can reference").withRequiredArg();
++      OptionSpec<String> existingMod = optionparser.accepts("existing-mod", "Existing mods that generated resources can reference the resource packs of").withRequiredArg();
 +      OptionSpec<java.io.File> gameDir = optionparser.accepts("gameDir").withRequiredArg().ofType(java.io.File.class).defaultsTo(new java.io.File(".")).required(); //Need by modlauncher, so lets just eat it
 +      OptionSpec<String> mod = optionparser.accepts("mod", "A modid to dump").withRequiredArg().withValuesSeparatedBy(",");
 +      OptionSpec<Void> flat = optionparser.accepts("flat", "Do not append modid prefix to output directory when generating for multiple mods");
@@ -14,7 +15,7 @@
           Path path = Paths.get(optionspec7.value(optionset));
           boolean flag = optionset.has(optionspec6);
           boolean flag1 = flag || optionset.has(optionspec2);
-@@ -30,10 +34,13 @@
+@@ -30,10 +_,14 @@
           boolean flag3 = flag || optionset.has(optionspec3);
           boolean flag4 = flag || optionset.has(optionspec4);
           boolean flag5 = flag || optionset.has(optionspec5);
@@ -24,9 +25,10 @@
 -         datagenerator.func_200392_c();
 +         Collection<Path> inputs = optionset.valuesOf(optionspec8).stream().map(Paths::get).collect(Collectors.toList());
 +         Collection<Path> existingPacks = optionset.valuesOf(existing).stream().map(Paths::get).collect(Collectors.toList());
++         java.util.Set<String> existingMods = new java.util.HashSet<>(optionset.valuesOf(existingMod));
 +         java.util.Set<String> mods = new java.util.HashSet<>(optionset.valuesOf(mod));
 +         boolean isFlat = mods.isEmpty() || optionset.has(flat);
-+         net.minecraftforge.fml.ModLoader.get().runDataGenerator(mods, path, inputs, existingPacks, flag2, flag1, flag3, flag4, flag5, isFlat);
++         net.minecraftforge.fml.DatagenModLoader.begin(mods, path, inputs, existingPacks, existingMods, flag2, flag1, flag3, flag4, flag5, isFlat);
 +         if (mods.contains("minecraft") || mods.isEmpty())
 +            func_200264_a(isFlat ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5).func_200392_c();
        } else {

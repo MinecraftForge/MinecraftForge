@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,8 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.concurrent.ThreadTaskExecutor;
+import net.minecraft.util.concurrent.TickDelayedTask;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -40,6 +42,8 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.server.command.ConfigCommand;
 
@@ -60,7 +64,8 @@ public class ForgeInternalHandler
                 {
                     entity.remove();
                     event.setCanceled(true);
-                    event.getWorld().addEntity(newEntity);
+                    ThreadTaskExecutor<Runnable> executor = LogicalSidedProvider.WORKQUEUE.get(event.getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
+                    executor.tell(new TickDelayedTask(0, () -> event.getWorld().addFreshEntity(newEntity)));
                 }
             }
         }
@@ -90,7 +95,7 @@ public class ForgeInternalHandler
     @SubscribeEvent
     public void onChunkUnload(ChunkEvent.Unload event)
     {
-        if (!event.getWorld().isRemote())
+        if (!event.getWorld().isClientSide())
             FarmlandWaterManager.removeTickets(event.getChunk());
     }
 
@@ -106,11 +111,11 @@ public class ForgeInternalHandler
     @SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        UsernameCache.setUsername(event.getPlayer().getUniqueID(), event.getPlayer().getGameProfile().getName());
+        UsernameCache.setUsername(event.getPlayer().getUUID(), event.getPlayer().getGameProfile().getName());
     }
 
     @SubscribeEvent
-    public synchronized void tagsUpdated(TagsUpdatedEvent event)
+    public synchronized void tagsUpdated(TagsUpdatedEvent.VanillaTagTypes event)
     {
         ForgeHooks.updateBurns();
     }

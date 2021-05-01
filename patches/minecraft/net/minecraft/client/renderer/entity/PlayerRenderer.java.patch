@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/PlayerRenderer.java
 +++ b/net/minecraft/client/renderer/entity/PlayerRenderer.java
-@@ -60,7 +60,9 @@
+@@ -60,7 +_,9 @@
  
     public void func_225623_a_(AbstractClientPlayerEntity p_225623_1_, float p_225623_2_, float p_225623_3_, MatrixStack p_225623_4_, IRenderTypeBuffer p_225623_5_, int p_225623_6_) {
        this.func_177137_d(p_225623_1_);

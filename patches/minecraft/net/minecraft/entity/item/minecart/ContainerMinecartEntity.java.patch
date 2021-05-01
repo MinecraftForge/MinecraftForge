@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/minecart/ContainerMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/ContainerMinecartEntity.java
-@@ -118,17 +118,19 @@
+@@ -118,17 +_,18 @@
     }
  
     @Nullable
@@ -20,11 +20,10 @@
  
 -      super.func_70106_y();
 +      super.remove(keepData);
-+      if (!keepData) itemHandler.invalidate();
     }
  
     protected void func_213281_b(CompoundNBT p_213281_1_) {
-@@ -157,6 +159,8 @@
+@@ -157,6 +_,8 @@
     }
  
     public ActionResultType func_184230_a(PlayerEntity p_184230_1_, Hand p_184230_2_) {
@@ -33,7 +32,7 @@
        p_184230_1_.func_213829_a(this);
        if (!p_184230_1_.field_70170_p.field_72995_K) {
           PiglinTasks.func_234478_a_(p_184230_1_, true);
-@@ -185,6 +189,8 @@
+@@ -185,6 +_,8 @@
  
           this.field_184290_c = null;
           LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_70170_p)).func_216015_a(LootParameters.field_237457_g_, this.func_213303_ch()).func_216016_a(this.field_184291_d);
@@ -42,7 +41,7 @@
           if (p_184288_1_ != null) {
              lootcontext$builder.func_186469_a(p_184288_1_.func_184817_da()).func_216015_a(LootParameters.field_216281_a, p_184288_1_);
           }
-@@ -215,4 +221,17 @@
+@@ -215,4 +_,23 @@
     }
  
     protected abstract Container func_213968_a(int p_213968_1_, PlayerInventory p_213968_2_);
@@ -54,6 +53,12 @@
 +      if (this.func_70089_S() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   protected void invalidateCaps() {
++      super.invalidateCaps();
++      itemHandler.invalidate();
 +   }
 +
 +   public void dropContentsWhenDead(boolean value) {

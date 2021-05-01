@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,6 +46,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
      */
     public static class NewRegistry extends net.minecraftforge.eventbus.api.Event implements IModBusEvent
     {
+        public NewRegistry(ModContainer mc) {}
         @Override
         public String toString() {
             return "RegistryEvent.NewRegistry";
@@ -121,9 +122,20 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             return this.registry;
         }
 
+        /*
+         * This used to be fired on the Mod specific bus, and we could tell which mod was asking for mappings.
+         * It no longer is, so this method is useless and just returns getAllMappings.
+         * TODO: Ask cpw how if he wants to re-enable the ModBus rethrow.
+         */
+        @Deprecated
         public ImmutableList<Mapping<T>> getMappings()
         {
-            return ImmutableList.copyOf(this.mappings.stream().filter(e -> e.key.getNamespace().equals(this.activeMod.getModId())).collect(Collectors.toList()));
+            return this.activeMod == null ? getAllMappings() : getMappings(this.activeMod.getModId());
+        }
+
+        public ImmutableList<Mapping<T>> getMappings(String modid)
+        {
+            return ImmutableList.copyOf(this.mappings.stream().filter(e -> e.key.getNamespace().equals(modid)).collect(Collectors.toList()));
         }
 
         public ImmutableList<Mapping<T>> getAllMappings()
@@ -163,7 +175,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             REMAP
         }
 
-        public static class Mapping<T extends IForgeRegistryEntry<T>>
+        public static class Mapping<T extends IForgeRegistryEntry<T>> implements Comparable<Mapping<T>>
         {
             public final IForgeRegistry<T> registry;
             private final IForgeRegistry<T> pool;
@@ -229,6 +241,14 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             public T getTarget()
             {
                 return target;
+            }
+
+            @Override
+            public int compareTo(Mapping<T> o)
+            {
+                int ret = this.registry.getRegistryName().compareNamespaced(o.registry.getRegistryName());
+                if (ret ==0) ret = this.key.compareNamespaced(o.key);
+                return ret;
             }
         }
     }

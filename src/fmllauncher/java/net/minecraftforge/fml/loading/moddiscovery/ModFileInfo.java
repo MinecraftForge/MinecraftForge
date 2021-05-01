@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,19 +19,30 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
-
-import net.minecraftforge.fml.loading.StringSubstitutor;
+import com.google.common.base.Strings;
+import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import net.minecraftforge.fml.loading.Java9BackportUtils;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.MavenVersionAdapter;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.VersionRange;
 
+import javax.security.auth.x500.X500Principal;
 import java.net.URL;
+import java.security.CodeSigner;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +68,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     // Caches the manifest of the mod jar as parsing the manifest can be expensive for
     // signed jars.
     private final Optional<Manifest> manifest;
+    private final Optional<CodeSigner[]> signers;
 
     ModFileInfo(final ModFile modFile, final IConfigurable config)
     {
@@ -68,7 +80,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 .map(MavenVersionAdapter::createFromVersionSpec)
                 .orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
         this.license = config.<String>getConfigElement("license")
-            .orElseThrow(()->new InvalidModFileException("Missing License, please supply a license.", this));
+            .orElse("");
         this.showAsResourcePack = config.<Boolean>getConfigElement("showAsResourcePack").orElse(false);
         this.properties = config.<Map<String, Object>>getConfigElement("properties").orElse(Collections.emptyMap());
         this.modFile.setFileProperties(this.properties);
@@ -85,7 +97,9 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 this.modFile::getFileName,
                 () -> this.mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
                 () -> this.mods.stream().map(IModInfo::getVersion).map(Objects::toString).collect(Collectors.joining(",", "{", "}")));
-        this.manifest = modFile.getLocator().findManifest(modFile.getFilePath());
+        final Pair<Optional<Manifest>, Optional<CodeSigner[]>> manifestAndSigners = modFile.getLocator().findManifestAndSigners(modFile.getFilePath());
+        this.manifest = manifestAndSigners.getKey();
+        this.signers = manifestAndSigners.getValue();
     }
 
     @Override
@@ -144,5 +158,53 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     public String getLicense()
     {
         return license;
+    }
+
+    public URL getIssueURL()
+    {
+        return issueURL;
+    }
+
+    public boolean missingLicense()
+    {
+        return Strings.isNullOrEmpty(license);
+    }
+
+    public Optional<CodeSigner[]> getCodeSigners() {
+        return this.signers;
+    }
+
+    public Optional<String> getCodeSigningFingerprint() {
+        return Java9BackportUtils.toStream(this.signers)
+                .flatMap(csa->csa[0].getSignerCertPath().getCertificates().stream())
+                .findFirst()
+                .map(LamdbaExceptionUtils.rethrowFunction(Certificate::getEncoded))
+                .map(bytes->LamdbaExceptionUtils.uncheck(()->MessageDigest.getInstance("SHA-256")).digest(bytes))
+                .map(StringUtils::binToHex)
+                .map(str-> String.join(":", str.split("(?<=\\G.{2})")));
+    }
+
+    public Optional<String> getTrustData() {
+        return Java9BackportUtils.toStream(this.signers)
+                .flatMap(csa->csa[0].getSignerCertPath().getCertificates().stream())
+                .findFirst()
+                .map(X509Certificate.class::cast)
+                .map(c->{
+                    StringBuffer sb = new StringBuffer();
+                    sb.append(c.getSubjectX500Principal().getName(X500Principal.RFC2253).split(",")[0]);
+                    boolean selfSigned = false;
+                   try {
+                       c.verify(c.getPublicKey());
+                       selfSigned = true;
+                   } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | SignatureException | NoSuchProviderException e) {
+                       // not self signed
+                   }
+                   if (selfSigned) {
+                    sb.append(" self-signed");
+                   } else {
+                       sb.append(" signed by ").append(c.getIssuerX500Principal().getName(X500Principal.RFC2253).split(",")[0]);
+                   };
+                   return sb.toString();
+                });
     }
 }

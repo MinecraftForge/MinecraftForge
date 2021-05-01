@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/network/play/NetworkPlayerInfo.java
++++ b/net/minecraft/client/network/play/NetworkPlayerInfo.java
+@@ -50,6 +_,7 @@
+    }
+ 
+    protected void func_178839_a(GameType p_178839_1_) {
++      net.minecraftforge.client.ForgeHooksClient.onClientChangeGameMode(this, this.field_178866_b, p_178839_1_);
+       this.field_178866_b = p_178839_1_;
+    }
+ 

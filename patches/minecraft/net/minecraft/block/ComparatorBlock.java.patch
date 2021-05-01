@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/ComparatorBlock.java
 +++ b/net/minecraft/block/ComparatorBlock.java
-@@ -154,4 +154,16 @@
+@@ -154,4 +_,16 @@
     protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
        p_206840_1_.func_206894_a(field_185512_D, field_176463_b, field_196348_c);
     }

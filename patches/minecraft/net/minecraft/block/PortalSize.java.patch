@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/PortalSize.java
 +++ b/net/minecraft/block/PortalSize.java
-@@ -16,7 +16,7 @@
+@@ -16,7 +_,7 @@
  
  public class PortalSize {
     private static final AbstractBlock.IPositionPredicate field_242962_a = (p_242966_0_, p_242966_1_, p_242966_2_) -> {

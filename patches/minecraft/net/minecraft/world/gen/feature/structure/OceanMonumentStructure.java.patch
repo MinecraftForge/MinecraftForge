@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/gen/feature/structure/OceanMonumentStructure.java
++++ b/net/minecraft/world/gen/feature/structure/OceanMonumentStructure.java
+@@ -49,7 +_,8 @@
+       return OceanMonumentStructure.Start::new;
+    }
+ 
+-   public List<MobSpawnInfo.Spawners> func_202279_e() {
++   @Override
++   public List<MobSpawnInfo.Spawners> getDefaultSpawnList() {
+       return field_175803_h;
+    }
+ 

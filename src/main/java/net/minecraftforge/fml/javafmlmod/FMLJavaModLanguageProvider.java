@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,10 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
+import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import net.minecraftforge.fml.ModLoadingException;
+import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -39,7 +43,6 @@ import static net.minecraftforge.fml.Logging.*;
 
 public class FMLJavaModLanguageProvider implements IModLanguageProvider
 {
-
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static class FMLModTarget implements IModLanguageProvider.IModLanguageLoader {
@@ -72,10 +75,24 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
                 final Constructor<?> constructor = fmlContainer.getConstructor(IModInfo.class, String.class, ClassLoader.class, ModFileScanData.class);
                 return (T)constructor.newInstance(info, className, modClassLoader, modFileScanResults);
             }
-            catch (NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e)
+            // ALL exception handling has to be done through the classloader, because we're loaded in the wrong context, so any classes we just blind load will be in the wrong
+            // class loading context. Funky but works.
+            catch (InvocationTargetException e) {
+                LOGGER.fatal(LOADING, "Failed to build mod", e);
+                final Class<RuntimeException> mle = (Class<RuntimeException>)LamdbaExceptionUtils.uncheck(()->Class.forName("net.minecraftforge.fml.ModLoadingException", true, Thread.currentThread().getContextClassLoader()));
+                if (mle.isInstance(e.getTargetException())) {
+                    throw mle.cast(e.getTargetException());
+                } else {
+                    final Class<ModLoadingStage> mls = (Class<ModLoadingStage>) LamdbaExceptionUtils.uncheck(()->Class.forName("net.minecraftforge.fml.ModLoadingStage", true, Thread.currentThread().getContextClassLoader()));
+                    throw LamdbaExceptionUtils.uncheck(()->LamdbaExceptionUtils.uncheck(()->mle.getConstructor(IModInfo.class, mls, String.class, Throwable.class)).newInstance(info, Enum.valueOf(mls, "CONSTRUCT"), "fml.modloading.failedtoloadmodclass", e));
+                }
+            }
+            catch (NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException e)
             {
                 LOGGER.fatal(LOADING,"Unable to load FMLModContainer, wut?", e);
-                throw new RuntimeException(e);
+                final Class<RuntimeException> mle = (Class<RuntimeException>)LamdbaExceptionUtils.uncheck(()->Class.forName("net.minecraftforge.fml.ModLoadingException", true, Thread.currentThread().getContextClassLoader()));
+                final Class<ModLoadingStage> mls = (Class<ModLoadingStage>) LamdbaExceptionUtils.uncheck(()->Class.forName("net.minecraftforge.fml.ModLoadingStage", true, Thread.currentThread().getContextClassLoader()));
+                throw LamdbaExceptionUtils.uncheck(()->LamdbaExceptionUtils.uncheck(()->mle.getConstructor(IModInfo.class, mls, String.class, Throwable.class)).newInstance(info, Enum.valueOf(mls, "CONSTRUCT"), "fml.modloading.failedtoloadmodclass", e));
             }
         }
     }

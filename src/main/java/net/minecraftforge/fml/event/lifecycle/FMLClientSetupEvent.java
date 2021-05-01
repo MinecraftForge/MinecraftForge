@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,14 +38,14 @@ import java.util.function.Supplier;
  *
  * This is a parallel dispatch event.
  */
-public class FMLClientSetupEvent extends ModLifecycleEvent
+public class FMLClientSetupEvent extends ParallelDispatchEvent
 {
     private final Supplier<Minecraft> minecraftSupplier;
 
-    public FMLClientSetupEvent(Supplier<Minecraft> mc, ModContainer container)
+    public FMLClientSetupEvent(ModContainer container)
     {
         super(container);
-        this.minecraftSupplier = mc;
+        minecraftSupplier = Minecraft::getInstance;
     }
 
     public Supplier<Minecraft> getMinecraftSupplier()

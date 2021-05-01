@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
 {
-    private static String stripControlCodes(String value) { return net.minecraft.util.StringUtils.stripControlCodes(value); }
+    private static String stripControlCodes(String value) { return net.minecraft.util.StringUtils.stripColor(value); }
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
     private final int listWidth;
 
@@ -47,33 +47,33 @@ public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
 
     public ModListWidget(ModListScreen parent, int listWidth, int top, int bottom)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.field_230709_l_, top, bottom, parent.getFontRenderer().FONT_HEIGHT * 2 + 8);
+        super(parent.getMinecraftInstance(), listWidth, parent.height, top, bottom, parent.getFontRenderer().lineHeight * 2 + 8);
         this.parent = parent;
         this.listWidth = listWidth;
         this.refreshList();
     }
 
     @Override
-    protected int func_230952_d_()
+    protected int getScrollbarPosition()
     {
         return this.listWidth;
     }
 
     @Override
-    public int func_230949_c_()
+    public int getRowWidth()
     {
         return this.listWidth;
     }
 
     public void refreshList() {
-        this.func_230963_j_();
-        parent.buildModList(this::func_230513_b_, mod->new ModEntry(mod, this.parent));
+        this.clearEntries();
+        parent.buildModList(this::addEntry, mod->new ModEntry(mod, this.parent));
     }
 
     @Override
-    protected void func_230433_a_(MatrixStack mStack)
+    protected void renderBackground(MatrixStack mStack)
     {
-        this.parent.func_230446_a_(mStack);
+        this.parent.renderBackground(mStack);
     }
 
     public class ModEntry extends ExtendedList.AbstractListEntry<ModEntry> {
@@ -86,30 +86,30 @@ public class ModListWidget extends ExtendedList<ModListWidget.ModEntry>
         }
 
         @Override
-        public void func_230432_a_(MatrixStack mStack, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks)
+        public void render(MatrixStack mStack, int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks)
         {
             ITextComponent name = new StringTextComponent(stripControlCodes(modInfo.getDisplayName()));
             ITextComponent version = new StringTextComponent(stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion())));
             VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             FontRenderer font = this.parent.getFontRenderer();
-            font.func_238422_b_(mStack, LanguageMap.getInstance().func_241870_a(ITextProperties.func_240655_a_(font.func_238417_a_(name,    listWidth))), left + 3, top + 2, 0xFFFFFF);
-            font.func_238422_b_(mStack, LanguageMap.getInstance().func_241870_a(ITextProperties.func_240655_a_(font.func_238417_a_(version, listWidth))), left + 3, top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
+            font.draw(mStack, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(name,    listWidth))), left + 3, top + 2, 0xFFFFFF);
+            font.draw(mStack, LanguageMap.getInstance().getVisualOrder(ITextProperties.composite(font.substrByWidth(version, listWidth))), left + 3, top + 2 + font.lineHeight, 0xCCCCCC);
             if (vercheck.status.shouldDraw())
             {
                 //TODO: Consider adding more icons for visualization
-                Minecraft.getInstance().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
+                Minecraft.getInstance().getTextureManager().bind(VERSION_CHECK_ICONS);
                 RenderSystem.color4f(1, 1, 1, 1);
                 RenderSystem.pushMatrix();
-                AbstractGui.func_238463_a_(mStack, getLeft() + field_230670_d_ - 12, top + entryHeight / 4, vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
+                AbstractGui.blit(mStack, getLeft() + width - 12, top + entryHeight / 4, vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
                 RenderSystem.popMatrix();
             }
         }
 
         @Override
-        public boolean func_231044_a_(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_)
+        public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_)
         {
             parent.setSelected(this);
-            ModListWidget.this.func_241215_a_(this);
+            ModListWidget.this.setSelected(this);
             return false;
         }
 

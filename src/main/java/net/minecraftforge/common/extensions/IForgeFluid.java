@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
@@ -57,7 +56,7 @@ public interface IForgeFluid
      */
     default boolean isEntityInside(FluidState state, IWorldReader world, BlockPos pos, Entity entity, double yToTest, Tag<Fluid> tag, boolean testingHead)
     {
-        return state.isTagged(tag) && yToTest < (double)(pos.getY() + state.getActualHeight(world, pos) + 0.11111111F);
+        return state.is(tag) && yToTest < (double)(pos.getY() + state.getHeight(world, pos) + 0.11111111F);
     }
 
     /**
@@ -98,6 +97,7 @@ public interface IForgeFluid
      * @param explosion The explosion
      * @return The amount of the explosion absorbed.
      */
+    @SuppressWarnings("deprecation")
     default float getExplosionResistance(FluidState state, IBlockReader world, BlockPos pos, Explosion explosion)
     {
         return state.getExplosionResistance();

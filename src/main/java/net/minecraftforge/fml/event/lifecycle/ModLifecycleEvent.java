@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,6 +52,10 @@ public class ModLifecycleEvent extends Event implements IModBusEvent
 
     public Stream<InterModComms.IMCMessage> getIMCStream(Predicate<String> methodFilter) {
         return InterModComms.getMessages(this.container.getModId(), methodFilter);
+    }
+
+    ModContainer getContainer() {
+        return this.container;
     }
 
     @Override

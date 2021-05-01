@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,7 +55,7 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
     }
 
     protected static BlockRendererDispatcher blockRenderer;
-    
+
     @Override
     public void render(T te, float partialTick, MatrixStack mat, IRenderTypeBuffer renderer, int light, int otherlight)
     {
@@ -64,15 +64,17 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
         {
             return;
         }
-        if(blockRenderer == null) blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
-        BlockPos pos = te.getPos();
-        IBlockDisplayReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
+        if(blockRenderer == null) blockRenderer = Minecraft.getInstance().getBlockRenderer();
+        BlockPos pos = te.getBlockPos();
+        IBlockDisplayReader world = MinecraftForgeClient.getRegionRenderCacheOptional(te.getLevel(), pos)
+            .map(IBlockDisplayReader.class::cast).orElseGet(() -> te.getLevel());
         BlockState state = world.getBlockState(pos);
-        IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
-        IModelData data = model.getModelData(world, pos, state, ModelDataManager.getModelData(te.getWorld(), pos));
+        IBakedModel model = blockRenderer.getBlockModelShaper().getBlockModel(state);
+        IModelData data = model.getModelData(world, pos, state, ModelDataManager.getModelData(te.getLevel(), pos));
         if (data.hasProperty(Properties.AnimationProperty))
         {
-            float time = Animation.getWorldTime(Minecraft.getInstance().world, partialTick);
+            @SuppressWarnings("resource")
+            float time = Animation.getWorldTime(Minecraft.getInstance().level, partialTick);
             cap
                 .map(asm -> asm.apply(time))
                 .ifPresent(pair -> {
@@ -80,7 +82,7 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
 
                     // TODO: caching?
                     data.setData(Properties.AnimationProperty, pair.getLeft());
-                    blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, mat, renderer.getBuffer(Atlases.getSolidBlockType()), false, new Random(), 42, light, data);
+                    blockRenderer.getModelRenderer().renderModel(world, model, state, pos, mat, renderer.getBuffer(Atlases.solidBlockSheet()), false, new Random(), 42, light, data);
                 });
         }
     }

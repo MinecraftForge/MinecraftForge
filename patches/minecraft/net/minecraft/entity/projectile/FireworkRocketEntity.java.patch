@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/FireworkRocketEntity.java
 +++ b/net/minecraft/entity/projectile/FireworkRocketEntity.java
-@@ -155,6 +155,13 @@
+@@ -156,6 +_,13 @@
  
     }
  

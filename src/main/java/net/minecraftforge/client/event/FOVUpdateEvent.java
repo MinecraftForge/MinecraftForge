@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,7 +34,7 @@ public class FOVUpdateEvent extends Event
     {
         this.entity = entity;
         this.fov = fov;
-        this.setNewfov(MathHelper.lerp(Minecraft.getInstance().gameSettings.field_243227_aN, 1.0F, fov));
+        this.setNewfov(MathHelper.lerp(Minecraft.getInstance().options.fovEffectScale, 1.0F, fov));
     }
 
     public PlayerEntity getEntity()

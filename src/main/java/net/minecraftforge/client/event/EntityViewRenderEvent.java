@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,8 @@ import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.FogRenderer.FogType;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.eventbus.api.Cancelable;
+
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * Event that hooks into GameRenderer, allowing any feature to customize visual attributes
@@ -60,6 +62,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     private static class FogEvent extends EntityViewRenderEvent
     {
         private final FogType type;
+        @SuppressWarnings("resource")
         protected FogEvent(FogType type, ActiveRenderInfo info, double renderPartialTicks)
         {
             super(Minecraft.getInstance().gameRenderer, info, renderPartialTicks);
@@ -125,6 +128,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         private float green;
         private float blue;
 
+        @SuppressWarnings("resource")
         public FogColors(ActiveRenderInfo info, float partialTicks, float red, float green, float blue)
         {
             super(Minecraft.getInstance().gameRenderer, info, partialTicks);

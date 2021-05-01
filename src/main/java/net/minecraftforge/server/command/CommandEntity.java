@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,13 +37,11 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.DimensionArgument;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -67,15 +65,15 @@ class CommandEntity
         static ArgumentBuilder<CommandSource, ?> register()
         {
             return Commands.literal("list")
-                .requires(cs->cs.hasPermissionLevel(2)) //permission
+                .requires(cs->cs.hasPermission(2)) //permission
                 .then(Commands.argument("filter", StringArgumentType.string())
                     .suggests((ctx, builder) -> ISuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(ResourceLocation::toString).map(StringArgumentType::escapeIfRequired), builder))
-                    .then(Commands.argument("dim", DimensionArgument.getDimension())
-                        .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.getDimensionArgument(ctx, "dim").func_234923_W_()))
+                    .then(Commands.argument("dim", DimensionArgument.dimension())
+                        .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.getDimension(ctx, "dim").dimension()))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().getWorld().func_234923_W_()))
+                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().getLevel().dimension()))
                 )
-                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().getWorld().func_234923_W_()));
+                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().getLevel().dimension()));
         }
 
         private static int execute(CommandSource sender, String filter, RegistryKey<World> dim) throws CommandSyntaxException
@@ -87,14 +85,14 @@ class CommandEntity
             if (names.isEmpty())
                 throw INVALID_FILTER.create();
 
-            ServerWorld world = sender.getServer().getWorld(dim); //TODO: DimensionManager so we can hotload? DimensionManager.getWorld(sender.getServer(), dim, false, false);
+            ServerWorld world = sender.getServer().getLevel(dim); //TODO: DimensionManager so we can hotload? DimensionManager.getWorld(sender.getServer(), dim, false, false);
             if (world == null)
                 throw INVALID_DIMENSION.create(dim);
 
             Map<ResourceLocation, MutablePair<Integer, Map<ChunkPos, Integer>>> list = Maps.newHashMap();
             world.getEntities().forEach(e -> {
                 MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(e.getType().getRegistryName(), k -> MutablePair.of(0, Maps.newHashMap()));
-                ChunkPos chunk = new ChunkPos(e.func_233580_cy_());
+                ChunkPos chunk = new ChunkPos(e.blockPosition());
                 info.left++;
                 info.right.put(chunk, info.right.getOrDefault(chunk, 0) + 1);
             });
@@ -106,7 +104,7 @@ class CommandEntity
                 if (info == null)
                     throw NO_ENTITIES.create();
 
-                sender.sendFeedback(new TranslationTextComponent("commands.forge.entity.list.single.header", name, info.getLeft()), false);
+                sender.sendSuccess(new TranslationTextComponent("commands.forge.entity.list.single.header", name, info.getLeft()), false);
                 List<Map.Entry<ChunkPos, Integer>> toSort = new ArrayList<>();
                 toSort.addAll(info.getRight().entrySet());
                 toSort.sort((a, b) -> {
@@ -120,7 +118,7 @@ class CommandEntity
                 for (Map.Entry<ChunkPos, Integer> e : toSort)
                 {
                     if (limit-- == 0) break;
-                    sender.sendFeedback(new StringTextComponent("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), false);
+                    sender.sendSuccess(new StringTextComponent("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), false);
                 }
                 return toSort.size();
             }
@@ -146,8 +144,8 @@ class CommandEntity
                     throw NO_ENTITIES.create();
 
                 int count = info.stream().mapToInt(Pair::getRight).sum();
-                sender.sendFeedback(new TranslationTextComponent("commands.forge.entity.list.multiple.header", count), false);
-                info.forEach(e -> sender.sendFeedback(new StringTextComponent("  " + e.getValue() + ": " + e.getKey()), false));
+                sender.sendSuccess(new TranslationTextComponent("commands.forge.entity.list.multiple.header", count), false);
+                info.forEach(e -> sender.sendSuccess(new StringTextComponent("  " + e.getValue() + ": " + e.getKey()), false));
                 return info.size();
             }
         }

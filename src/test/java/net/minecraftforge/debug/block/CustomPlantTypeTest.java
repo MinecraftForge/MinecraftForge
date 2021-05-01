@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -69,14 +69,14 @@ public class CustomPlantTypeTest
     {
         public CustomBlock()
         {
-            super(Block.Properties.create(Material.ROCK));
+            super(Block.Properties.of(Material.STONE));
             this.setRegistryName(MODID, CUSTOM_SOIL_BLOCK);
         }
 
         @Override
         public boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos pos, Direction facing, IPlantable plantable)
         {
-            PlantType type = plantable.getPlantType(world, pos.offset(facing));
+            PlantType type = plantable.getPlantType(world, pos.relative(facing));
             if (type != null && type == CustomPlantBlock.pt)
             {
                 return true;
@@ -91,7 +91,7 @@ public class CustomPlantTypeTest
 
         public CustomPlantBlock()
         {
-            super(Effects.WEAKNESS, 9, Block.Properties.create(Material.PLANTS).doesNotBlockMovement().sound(SoundType.PLANT));
+            super(Effects.WEAKNESS, 9, Block.Properties.of(Material.PLANT).noCollission().sound(SoundType.GRASS));
             this.setRegistryName(MODID, CUSTOM_PLANT_BLOCK);
         }
 
@@ -104,18 +104,18 @@ public class CustomPlantTypeTest
         @Override
         public BlockState getPlant(IBlockReader world, BlockPos pos)
         {
-            return getDefaultState();
+            return defaultBlockState();
         }
 
         @Override
-        public boolean isValidPosition(BlockState state, IWorldReader world, BlockPos pos)
+        public boolean canSurvive(BlockState state, IWorldReader world, BlockPos pos)
         {
-            BlockState soil = world.getBlockState(pos.down());
+            BlockState soil = world.getBlockState(pos.below());
             return soil.canSustainPlant(world, pos, Direction.UP, this);
         }
 
         @Override
-        public boolean isValidGround(BlockState state, IBlockReader worldIn, BlockPos pos)
+        public boolean mayPlaceOn(BlockState state, IBlockReader worldIn, BlockPos pos)
         {
             Block block = state.getBlock();
             return block == CUSTOM_SOIL;

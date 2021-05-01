@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,8 @@ package net.minecraftforge.client.model.generators;
 
 import com.google.common.base.Preconditions;
 
-import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 public abstract class ModelFile {
 
@@ -77,9 +77,9 @@ public abstract class ModelFile {
         @Override
         protected boolean exists() {
             if (getUncheckedLocation().getPath().contains("."))
-                return existingHelper.exists(getUncheckedLocation(), ResourcePackType.CLIENT_RESOURCES, "", "models");
+                return existingHelper.exists(getUncheckedLocation(), ModelProvider.MODEL_WITH_EXTENSION);
             else
-                return existingHelper.exists(getUncheckedLocation(), ResourcePackType.CLIENT_RESOURCES, ".json", "models");
+                return existingHelper.exists(getUncheckedLocation(), ModelProvider.MODEL);
         }
     }
 }

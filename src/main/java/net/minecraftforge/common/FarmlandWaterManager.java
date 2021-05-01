@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,8 +21,6 @@ package net.minecraftforge.common;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.MapMaker;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -36,15 +34,15 @@ import net.minecraftforge.common.ticket.SimpleTicket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 public class FarmlandWaterManager
 {
-    private static boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugFarmlandWaterManager", "false"));
-    private static final Int2ObjectMap<Map<ChunkPos, ChunkTicketManager<Vector3d>>> customWaterHandler = new Int2ObjectOpenHashMap<>();
+    private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugFarmlandWaterManager", "false"));
+    private static final Map<IWorldReader, Map<ChunkPos, ChunkTicketManager<Vector3d>>> customWaterHandler = new WeakHashMap<>();
     private static final Logger LOGGER = LogManager.getLogger();
 
     /**
@@ -62,8 +60,8 @@ public class FarmlandWaterManager
     @SuppressWarnings("unchecked")
     public static<T extends SimpleTicket<Vector3d>> T addCustomTicket(World world, T ticket, ChunkPos masterChunk, ChunkPos... additionalChunks)
     {
-        Preconditions.checkArgument(!world.isRemote, "Water region is only determined server-side");
-        Map<ChunkPos, ChunkTicketManager<Vector3d>> ticketMap = Collections.emptyMap();// customWaterHandler.computeIfAbsent(world.getDimension().getType().getId(), id -> new MapMaker().weakValues().makeMap()); //TODO Dimensions
+        Preconditions.checkArgument(!world.isClientSide, "Water region is only determined server-side");
+        Map<ChunkPos, ChunkTicketManager<Vector3d>> ticketMap =  customWaterHandler.computeIfAbsent(world, id -> new MapMaker().weakValues().makeMap());
         ChunkTicketManager<Vector3d>[] additionalTickets = new ChunkTicketManager[additionalChunks.length];
         for (int i = 0; i < additionalChunks.length; i++)
             additionalTickets[i] = ticketMap.computeIfAbsent(additionalChunks[i], ChunkTicketManager::new);
@@ -159,8 +157,8 @@ public class FarmlandWaterManager
     }
 
     private static ChunkTicketManager<Vector3d> getTicketManager(ChunkPos pos, IWorldReader world) {
-        Preconditions.checkArgument(!world.isRemote(), "Water region is only determined server-side");
-        Map<ChunkPos, ChunkTicketManager<Vector3d>> ticketMap = Collections.emptyMap();//customWaterHandler.get(world.getDimension().getType().getId()); //TODO Dimensions
+        Preconditions.checkArgument(!world.isClientSide(), "Water region is only determined server-side");
+        Map<ChunkPos, ChunkTicketManager<Vector3d>> ticketMap = customWaterHandler.get(world);
         if (ticketMap == null)
         {
             return null;

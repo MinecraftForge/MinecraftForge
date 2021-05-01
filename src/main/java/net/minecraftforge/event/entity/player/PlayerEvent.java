@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
+import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -360,10 +361,12 @@ public class PlayerEvent extends LivingEvent
     }
 
     /**
+     * TODO 1.17 remove, unused
      * Fired when the world checks if a player is near enough to be attacked by an entity.
      * The resulting visibility modifier is multiplied by the one calculated by Minecraft (based on sneaking and more) and used to calculate the radius a player has to be in (targetDistance*modifier).
      * This can also be used to increase the visibility of a player, if it was decreased by Minecraft or other mods. But the resulting value cannot be higher than the standard target distance.
      */
+    @Deprecated
     public static class Visibility extends PlayerEvent
     {
 
@@ -508,6 +511,42 @@ public class PlayerEvent extends LivingEvent
         public RegistryKey<World> getTo()
         {
             return this.toDim;
+        }
+    }
+
+    /**
+     * Fired when the game type of a server player is changed to a different value than what it was previously. Eg Creative to Survival, not Survival to Survival.
+     * If the event is cancelled the game mode of the player is not changed and the value of <code>newGameMode</code> is ignored.
+     */
+    @Cancelable
+    public static class PlayerChangeGameModeEvent extends PlayerEvent
+    {
+        private final GameType currentGameMode;
+        private GameType newGameMode;
+
+        public PlayerChangeGameModeEvent(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
+        {
+            super(player);
+            this.currentGameMode = currentGameMode;
+            this.newGameMode = newGameMode;
+        }
+
+        public GameType getCurrentGameMode()
+        {
+            return currentGameMode;
+        }
+
+        public GameType getNewGameMode()
+        {
+            return newGameMode;
+        }
+
+        /**
+         * Sets the game mode the player will be changed to if this event is not cancelled.
+         */
+        public void setNewGameMode(GameType newGameMode)
+        {
+            this.newGameMode = newGameMode;
         }
     }
 }

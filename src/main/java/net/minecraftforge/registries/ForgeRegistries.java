@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -57,6 +57,7 @@ import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
+import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
@@ -111,6 +112,7 @@ public class ForgeRegistries
     // Custom forge registries
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
     public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
+    public static final IForgeRegistry<ForgeWorldType> WORLD_TYPES = RegistryManager.ACTIVE.getRegistry(ForgeWorldType.class);
 
     public static final class Keys {
         //Vanilla
@@ -152,10 +154,11 @@ public class ForgeRegistries
         //Forge
         public static final RegistryKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final RegistryKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
+        public static final RegistryKey<Registry<ForgeWorldType>> WORLD_TYPES = key("forge:world_types");
 
         private static <T> RegistryKey<Registry<T>> key(String name)
         {
-            return RegistryKey.func_240904_a_(new ResourceLocation(name));
+            return RegistryKey.createRegistryKey(new ResourceLocation(name));
         }
         private static void init() {}
     }
@@ -167,7 +170,7 @@ public class ForgeRegistries
     {
         Keys.init();
         GameData.init();
-        Bootstrap.register();
+        Bootstrap.bootStrap();
         Tags.init();
     }
 }

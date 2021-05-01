@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,8 @@ public enum ConnectionType
 
     private final Function<String, Integer> versionExtractor;
 
-    ConnectionType(Function<String, Integer> versionExtractor) {
+    ConnectionType(Function<String, Integer> versionExtractor)
+    {
         this.versionExtractor = versionExtractor;
     }
 
@@ -36,7 +37,14 @@ public enum ConnectionType
         return vers.startsWith(FMLNetworkConstants.FMLNETMARKER) ? MODDED : VANILLA;
     }
 
-    public int getFMLVersionNumber(final String fmlVersion) {
+    public int getFMLVersionNumber(final String fmlVersion)
+    {
         return versionExtractor.apply(fmlVersion);
     }
+
+    public boolean isVanilla()
+    {
+        return this == VANILLA;
+    }
+
 }

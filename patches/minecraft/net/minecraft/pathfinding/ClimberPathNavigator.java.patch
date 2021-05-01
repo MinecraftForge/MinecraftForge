@@ -1,6 +1,6 @@
 --- a/net/minecraft/pathfinding/ClimberPathNavigator.java
 +++ b/net/minecraft/pathfinding/ClimberPathNavigator.java
-@@ -38,7 +38,8 @@
+@@ -38,7 +_,8 @@
           super.func_75501_e();
        } else {
           if (this.field_179696_f != null) {

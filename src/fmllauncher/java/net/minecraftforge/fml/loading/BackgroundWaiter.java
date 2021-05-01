@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -35,5 +36,13 @@ public class BackgroundWaiter {
             } catch (InterruptedException ignored) {
             }
         } while (!work.isDone());
+        try {
+            runner.shutdown();
+            work.get();
+        } catch (ExecutionException ee) {
+            throw new RuntimeException(ee.getCause());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

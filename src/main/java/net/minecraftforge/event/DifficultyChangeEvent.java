@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,6 @@ package net.minecraftforge.event;
 import net.minecraft.world.Difficulty;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
@@ -31,13 +30,11 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * <br>
  * This event is fired via the {@link ForgeHooks#onDifficultyChange(EnumDifficulty, EnumDifficulty)}.<br>
  * <br>
- * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
- * <br>
  * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-public class DifficultyChangeEvent extends net.minecraftforge.eventbus.api.Event
+public class DifficultyChangeEvent extends Event
 {
     private final Difficulty difficulty;
     private final Difficulty oldDifficulty;

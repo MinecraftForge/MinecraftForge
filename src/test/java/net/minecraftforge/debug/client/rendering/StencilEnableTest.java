@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,6 +36,6 @@ public class StencilEnableTest {
 
     private void clientSetup(FMLClientSetupEvent event) {
         if (ENABLED)
-            DeferredWorkQueue.runLater(() -> Minecraft.getInstance().getFramebuffer().enableStencil());
+            event.enqueueWork(() -> Minecraft.getInstance().getMainRenderTarget().enableStencil());
     }
 }

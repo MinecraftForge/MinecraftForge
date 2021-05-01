@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,9 +24,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.world.ClientWorld;
 
 /**
- * Call {@link net.minecraft.world.dimension.Dimension#setCloudRenderer} with an implementation of this
- * to override all cloud rendering with your own.
+ * Use {@link ICloudRenderHandler} instead.
+ *
+ * todo: remove in 1.17
  */
+@Deprecated
 public interface CloudRenderHandler extends IRenderHandler {
 	@Override
 	default void render(int ticks, float partialTicks, ClientWorld world, Minecraft mc) {}

@@ -1,10 +1,8 @@
 repositories {
-	//mavenCentral() //TODO: Update Gradle to use HTTPS by default
-	maven {
-		name 'maven_central'
-		url 'https://repo.maven.apache.org/maven2/'
-	}
+	mavenCentral()
 }
 dependencies {
-	implementation 'org.ow2.asm:asm:7.2'
+	implementation 'org.ow2.asm:asm:9.0'
+	implementation 'org.ow2.asm:asm-tree:9.0'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:5.10.0.202012080955-r'
 }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,6 +41,7 @@ import net.minecraftforge.eventbus.api.Event;
  * {@link #renderTypeBuffer} contains the render type buffer instance involved in rendering the name plate/tag.
  * This cannot be changed by mods.<br>
  * {@link #packedLight} contains the sky and block light values used in rendering the name plate/tag.<br>
+ * {@link #partialTicks} contains the partial ticks used in rendering the name plate/tag. This cannot be changed by mods.<br>
  * <br>
  * This event has a result. {@link HasResult}. <br>
  * ALLOW will force-render name plate/tag, DEFAULT will ignore the hook and continue using the vanilla check
@@ -58,8 +59,9 @@ public class RenderNameplateEvent extends EntityEvent
     private final MatrixStack matrixStack;
     private final IRenderTypeBuffer renderTypeBuffer;
     private final int packedLight;
-
-    public RenderNameplateEvent(Entity entity, ITextComponent content, EntityRenderer<?> entityRenderer, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int packedLight)
+    private final float partialTicks;
+    
+    public RenderNameplateEvent(Entity entity, ITextComponent content, EntityRenderer<?> entityRenderer, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int packedLight, float partialTicks)
     {
         super(entity);
         this.originalContent = content;
@@ -68,6 +70,7 @@ public class RenderNameplateEvent extends EntityEvent
         this.matrixStack = matrixStack;
         this.renderTypeBuffer = renderTypeBuffer;
         this.packedLight = packedLight;
+        this.partialTicks = partialTicks;
     }
 
     /**
@@ -124,5 +127,13 @@ public class RenderNameplateEvent extends EntityEvent
     public int getPackedLight()
     {
         return this.packedLight;
+    }
+    
+    /**
+     * The partial ticks used during the rendering of the name plate/tag
+     */
+    public float getPartialTicks()
+    {
+        return this.partialTicks;
     }
 }

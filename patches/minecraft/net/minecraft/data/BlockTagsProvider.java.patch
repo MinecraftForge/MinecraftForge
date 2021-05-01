@@ -1,0 +1,15 @@
+--- a/net/minecraft/data/BlockTagsProvider.java
++++ b/net/minecraft/data/BlockTagsProvider.java
+@@ -8,8 +_,12 @@
+ import net.minecraft.util.registry.Registry;
+ 
+ public class BlockTagsProvider extends TagsProvider<Block> {
++   @Deprecated
+    public BlockTagsProvider(DataGenerator p_i48256_1_) {
+       super(p_i48256_1_, Registry.field_212618_g);
++   }
++   public BlockTagsProvider(DataGenerator p_i48256_1_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_i48256_1_, Registry.field_212618_g, modId, existingFileHelper);
+    }
+ 
+    protected void func_200432_c() {

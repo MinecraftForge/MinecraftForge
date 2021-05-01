@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     
     // TODO 1.16/1.17 possibly refactor out the need for the "unpacked" format entirely. It's creating more headaches than solutions.
     // This mess reverses the conversion to float bits done in LightUtil.unpack
-    private static final int LIGHTMAP_PACKING_FACTOR = ((256 << (8 * (DefaultVertexFormats.TEX_2SB.getType().getSize() - 1))) - 1) >>> 1;
+    private static final int LIGHTMAP_PACKING_FACTOR = ((256 << (8 * (DefaultVertexFormats.ELEMENT_UV2.getType().getSize() - 1))) - 1) >>> 1;
     // Max lightmap value, for rescaling
     private static final int LIGHTMAP_MAX = 0xF0;
     // Inlined factor for rescaling input lightmap values, "rounded" up to the next float value to avoid precision loss when result is truncated to int
@@ -172,9 +172,9 @@ public class VertexLighterFlat extends QuadGatheringTransformer
             v2.normalize();
             for(int v = 0; v < 4; v++)
             {
-                normal[v][0] = v2.getX();
-                normal[v][1] = v2.getY();
-                normal[v][2] = v2.getZ();
+                normal[v][0] = v2.x();
+                normal[v][1] = v2.y();
+                normal[v][2] = v2.z();
                 normal[v][3] = 0;
             }
         }
@@ -190,10 +190,6 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
         for(int v = 0; v < 4; v++)
         {
-            position[v][0] += blockInfo.getShx();
-            position[v][1] += blockInfo.getShy();
-            position[v][2] += blockInfo.getShz();
-
             float x = position[v][0] - .5f;
             float y = position[v][1] - .5f;
             float z = position[v][2] - .5f;
@@ -231,20 +227,20 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                     case POSITION:
                         final Vector4f pos = new Vector4f(
                                 position[v][0], position[v][1], position[v][2], 1);
-                        pos.transform(pose.getMatrix());
+                        pos.transform(pose.pose());
 
-                        position[v][0] = pos.getX();
-                        position[v][1] = pos.getY();
-                        position[v][2] = pos.getZ();
+                        position[v][0] = pos.x();
+                        position[v][1] = pos.y();
+                        position[v][2] = pos.z();
                         parent.put(e, position[v]);
                         break;
                     case NORMAL:
                         final Vector3f norm = new Vector3f(normal[v]);
-                        norm.transform(pose.getNormal());
+                        norm.transform(pose.normal());
 
-                        normal[v][0] = norm.getX();
-                        normal[v][1] = norm.getY();
-                        normal[v][2] = norm.getZ();
+                        normal[v][0] = norm.x();
+                        normal[v][1] = norm.y();
+                        normal[v][2] = norm.z();
                         parent.put(e, normal[v]);
                         break;
                     case COLOR:
@@ -283,8 +279,8 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         int i = side == null ? 0 : side.ordinal() + 1;
         int brightness = blockInfo.getPackedLight()[i];
 
-        lightmap[0] = LightTexture.getLightBlock(brightness) / (float) 0xF;
-        lightmap[1] = LightTexture.getLightSky(brightness) / (float) 0xF;
+        lightmap[0] = LightTexture.block(brightness) / (float) 0xF;
+        lightmap[1] = LightTexture.sky(brightness) / (float) 0xF;
     }
 
     protected void updateColor(float[] normal, float[] color, float x, float y, float z, float tint, int multiplier)
@@ -335,7 +331,6 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     public void updateBlockInfo()
     {
-        blockInfo.updateShift();
         blockInfo.updateFlatLighting();
     }
 }

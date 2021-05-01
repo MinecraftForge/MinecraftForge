@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/network/play/ClientPlayNetHandler.java
 +++ b/net/minecraft/client/network/play/ClientPlayNetHandler.java
-@@ -384,6 +384,7 @@
+@@ -384,6 +_,7 @@
  
        this.field_147299_f.field_184132_p.func_217737_a();
        this.field_147299_f.field_71439_g.func_70065_x();
@@ -8,7 +8,7 @@
        int i = p_147282_1_.func_149197_c();
        this.field_147300_g.func_217408_a(i, this.field_147299_f.field_71439_g);
        this.field_147299_f.field_71439_g.field_71158_b = new MovementInputFromOptions(this.field_147299_f.field_71474_y);
-@@ -395,6 +396,7 @@
+@@ -395,6 +_,7 @@
        this.field_147299_f.field_71439_g.func_228355_a_(p_147282_1_.func_229743_k_());
        this.field_147299_f.field_71442_b.func_78746_a(p_147282_1_.func_149198_e());
        this.field_147299_f.field_71442_b.func_241675_a_(p_147282_1_.func_241786_f_());
@@ -16,7 +16,7 @@
        this.field_147299_f.field_71474_y.func_82879_c();
        this.field_147302_e.func_179290_a(new CCustomPayloadPacket(CCustomPayloadPacket.field_210344_a, (new PacketBuffer(Unpooled.buffer())).func_180714_a(ClientBrandRetriever.getClientModName())));
        this.field_147299_f.func_213229_ar().func_216814_a();
-@@ -734,7 +736,7 @@
+@@ -734,7 +_,7 @@
           BlockPos blockpos = new BlockPos(compoundnbt.func_74762_e("x"), compoundnbt.func_74762_e("y"), compoundnbt.func_74762_e("z"));
           TileEntity tileentity = this.field_147300_g.func_175625_s(blockpos);
           if (tileentity != null) {
@@ -25,7 +25,7 @@
           }
        }
  
-@@ -815,7 +817,9 @@
+@@ -815,7 +_,9 @@
  
     public void func_147251_a(SChatPacket p_147251_1_) {
        PacketThreadUtil.func_218797_a(p_147251_1_, this, this.field_147299_f);
@@ -36,7 +36,18 @@
     }
  
     public void func_147279_a(SAnimateHandPacket p_147279_1_) {
-@@ -1004,8 +1008,10 @@
+@@ -854,8 +_,8 @@
+          livingentity.func_213312_b(d0, d1, d2);
+          livingentity.field_70761_aq = (float)(p_147281_1_.func_149032_n() * 360) / 256.0F;
+          livingentity.field_70759_as = (float)(p_147281_1_.func_149032_n() * 360) / 256.0F;
+-         if (livingentity instanceof EnderDragonEntity) {
+-            EnderDragonPartEntity[] aenderdragonpartentity = ((EnderDragonEntity)livingentity).func_213404_dT();
++         if (livingentity.isMultipartEntity()) {
++            net.minecraftforge.entity.PartEntity<?>[] aenderdragonpartentity = livingentity.getParts();
+ 
+             for(int i = 0; i < aenderdragonpartentity.length; ++i) {
+                aenderdragonpartentity[i].func_145769_d(i + p_147281_1_.func_149024_d());
+@@ -1004,8 +_,10 @@
           clientplayerentity1.func_233645_dx_().func_233784_a_(clientplayerentity.func_233645_dx_());
        }
  
@@ -47,7 +58,7 @@
        this.field_147300_g.func_217408_a(i, clientplayerentity1);
        clientplayerentity1.field_70177_z = -180.0F;
        clientplayerentity1.field_71158_b = new MovementInputFromOptions(this.field_147299_f.field_71474_y);
-@@ -1131,6 +1137,12 @@
+@@ -1131,6 +_,12 @@
  
        if (flag && this.field_147299_f.field_71462_r instanceof CommandBlockScreen) {
           ((CommandBlockScreen)this.field_147299_f.field_71462_r).func_184075_a();
@@ -60,7 +71,7 @@
        }
  
     }
-@@ -1299,6 +1311,7 @@
+@@ -1299,6 +_,7 @@
        clientrecipebook.func_243196_a(this.field_199528_o.func_199510_b());
        clientrecipebook.func_199642_d().forEach(imutablesearchtree::func_217872_a);
        imutablesearchtree.func_194040_a();
@@ -68,7 +79,7 @@
     }
  
     public void func_200232_a(SPlayerLookPacket p_200232_1_) {
-@@ -1376,7 +1389,7 @@
+@@ -1376,7 +_,7 @@
        PacketThreadUtil.func_218797_a(p_147260_1_, this, this.field_147299_f);
        Entity entity = this.field_147300_g.func_73045_a(p_147260_1_.func_149426_d());
        if (entity instanceof LivingEntity) {
@@ -77,7 +88,23 @@
           if (effect != null) {
              EffectInstance effectinstance = new EffectInstance(effect, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              effectinstance.func_100012_b(p_147260_1_.func_149429_c());
-@@ -1883,10 +1896,12 @@
+@@ -1388,11 +_,14 @@
+    public void func_199723_a(STagsListPacket p_199723_1_) {
+       PacketThreadUtil.func_218797_a(p_199723_1_, this, this.field_147299_f);
+       ITagCollectionSupplier itagcollectionsupplier = p_199723_1_.func_199858_a();
+-      Multimap<ResourceLocation, ResourceLocation> multimap = TagRegistryManager.func_242198_b(itagcollectionsupplier);
++      boolean vanillaConnection = net.minecraftforge.fml.network.NetworkHooks.isVanillaConnection(field_147302_e);
++      Multimap<ResourceLocation, ResourceLocation> multimap = vanillaConnection ? TagRegistryManager.func_242198_b(net.minecraftforge.common.ForgeTagHandler.withNoCustom(itagcollectionsupplier)) : TagRegistryManager.validateVanillaTags(itagcollectionsupplier);//Forge: If we are connecting to vanilla validate all tags to properly validate custom tags the client may "require", and if we are connecting to forge only validate the vanilla tag types as the custom tag types get synced in a separate packet so may still arrive
+       if (!multimap.isEmpty()) {
+          field_147301_d.warn("Incomplete server tags, disconnecting. Missing: {}", (Object)multimap);
+          this.field_147302_e.func_150718_a(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
+       } else {
++         net.minecraftforge.common.ForgeTagHandler.resetCachedTagCollections(true, vanillaConnection);
++         itagcollectionsupplier = ITagCollectionSupplier.reinjectOptionalTags(itagcollectionsupplier);
+          this.field_199725_m = itagcollectionsupplier;
+          if (!this.field_147302_e.func_150731_c()) {
+             itagcollectionsupplier.func_242212_e();
+@@ -1885,10 +_,12 @@
              int l5 = packetbuffer.readInt();
              this.field_147299_f.field_184132_p.field_229018_q_.func_229022_a_(blockpos8, l3, s10, l5);
           } else {

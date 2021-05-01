@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -51,8 +51,6 @@ public class BlockInfo
 
     private boolean full;
 
-    private float shx = 0, shy = 0, shz = 0;
-
     private int cachedTint = -1;
     private int cachedMultiplier = -1;
 
@@ -69,12 +67,9 @@ public class BlockInfo
         return cachedMultiplier;
     }
 
+    @Deprecated
     public void updateShift()
     {
-        Vector3d offset = state.getOffset(world, blockPos);
-        shx = (float) offset.x;
-        shy = (float) offset.y;
-        shz = (float) offset.z;
     }
 
     public void setWorld(IBlockDisplayReader world)
@@ -96,7 +91,6 @@ public class BlockInfo
         this.blockPos = blockPos;
         cachedTint = -1;
         cachedMultiplier = -1;
-        shx = shy = shz = 0;
     }
 
     public void reset()
@@ -106,7 +100,6 @@ public class BlockInfo
         this.blockPos = null;
         cachedTint = -1;
         cachedMultiplier = -1;
-        shx = shy = shz = 0;
     }
 
     private float combine(int c, int s1, int s2, int s3, boolean t0, boolean t1, boolean t2, boolean t3)
@@ -126,29 +119,29 @@ public class BlockInfo
             {
                 for(int z = 0; z <= 2; z++)
                 {
-                    BlockPos pos = blockPos.add(x - 1, y - 1, z - 1);
+                    BlockPos pos = blockPos.offset(x - 1, y - 1, z - 1);
                     BlockState state = world.getBlockState(pos);
-                    t[x][y][z] = state.getOpacity(world, pos) < 15;
-                    int brightness = WorldRenderer.getCombinedLight(world, pos);
-                    s[x][y][z] = LightTexture.getLightSky(brightness);
-                    b[x][y][z] = LightTexture.getLightBlock(brightness);
-                    ao[x][y][z] = state.getAmbientOcclusionLightValue(world, pos);
+                    t[x][y][z] = state.getLightBlock(world, pos) < 15;
+                    int brightness = WorldRenderer.getLightColor(world, pos);
+                    s[x][y][z] = LightTexture.sky(brightness);
+                    b[x][y][z] = LightTexture.block(brightness);
+                    ao[x][y][z] = state.getShadeBrightness(world, pos);
                 }
             }
         }
         for(Direction side : SIDES)
         {
-            BlockPos pos = blockPos.offset(side);
+            BlockPos pos = blockPos.relative(side);
             BlockState state = world.getBlockState(pos);
 
-            BlockState thisStateShape = this.state.isSolid() && this.state.isTransparent() ? this.state : Blocks.AIR.getDefaultState();
-            BlockState otherStateShape = state.isSolid() && state.isTransparent() ? state : Blocks.AIR.getDefaultState();
+            BlockState thisStateShape = this.state.canOcclude() && this.state.useShapeForLightOcclusion() ? this.state : Blocks.AIR.defaultBlockState();
+            BlockState otherStateShape = state.canOcclude() && state.useShapeForLightOcclusion() ? state : Blocks.AIR.defaultBlockState();
 
-            if(state.getOpacity(world, pos) == 15 || VoxelShapes.faceShapeCovers(thisStateShape.getFaceOcclusionShape(world, blockPos, side), otherStateShape.getFaceOcclusionShape(world, pos, side.getOpposite())))
+            if(state.getLightBlock(world, pos) == 15 || VoxelShapes.faceShapeOccludes(thisStateShape.getFaceOcclusionShape(world, blockPos, side), otherStateShape.getFaceOcclusionShape(world, pos, side.getOpposite())))
             {
-                int x = side.getXOffset() + 1;
-                int y = side.getYOffset() + 1;
-                int z = side.getZOffset() + 1;
+                int x = side.getStepX() + 1;
+                int y = side.getStepY() + 1;
+                int z = side.getStepZ() + 1;
                 s[x][y][z] = Math.max(s[1][1][1] - 1, s[x][y][z]);
                 b[x][y][z] = Math.max(b[1][1][1] - 1, b[x][y][z]);
             }
@@ -196,13 +189,13 @@ public class BlockInfo
 
     public void updateFlatLighting()
     {
-        full = Block.isOpaque(state.getCollisionShape(world, blockPos));
-        packed[0] = WorldRenderer.getCombinedLight(world, blockPos);
+        full = Block.isShapeFullBlock(state.getCollisionShape(world, blockPos));
+        packed[0] = WorldRenderer.getLightColor(world, blockPos);
 
         for (Direction side : SIDES)
         {
             int i = side.ordinal() + 1;
-            packed[i] = WorldRenderer.getCombinedLight(world, blockPos.offset(side));
+            packed[i] = WorldRenderer.getLightColor(world, blockPos.relative(side));
         }
     }
 
@@ -251,19 +244,22 @@ public class BlockInfo
         return full;
     }
 
+    @Deprecated
     public float getShx()
     {
-        return shx;
+        return 0;
     }
 
+    @Deprecated
     public float getShy()
     {
-        return shy;
+        return 0;
     }
 
+    @Deprecated
     public float getShz()
     {
-        return shz;
+        return 0;
     }
 
     public int getCachedTint()

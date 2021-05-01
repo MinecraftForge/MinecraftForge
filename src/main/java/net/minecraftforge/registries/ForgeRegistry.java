@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ package net.minecraftforge.registries;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +92,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final int max;
     private final boolean allowOverrides;
     private final boolean isModifiable;
+    @Nullable
+    private final String tagFolder;
 
     private V defaultValue = null;
     boolean isFrozen = false;
@@ -102,7 +105,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
         this.name = name;
-        this.key = RegistryKey.func_240904_a_(name);
+        this.key = RegistryKey.createRegistryKey(name);
         this.builder = builder;
         this.stage = stage;
         this.superType = builder.getType();
@@ -120,6 +123,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
         this.allowOverrides = builder.getAllowOverrides();
         this.isModifiable = builder.getAllowModifications();
+        this.tagFolder = builder.getTagFolder();
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
@@ -173,6 +177,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public Class<V> getRegistrySuperType()
     {
         return superType;
+    }
+
+    @Nullable
+    public String getTagFolder()
+    {
+        return tagFolder;
     }
 
     @Override
@@ -364,7 +374,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
 
         this.names.put(key, value);
-        this.keys.put(RegistryKey.func_240903_a_(this.key, key), value);
+        this.keys.put(RegistryKey.create(this.key, key), value);
         this.ids.put(idToUse, value);
         this.availabilityMap.set(idToUse);
         this.owners.put(new OverrideOwner(owner == null ? key.getPath() : owner, key), value);
@@ -831,11 +841,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     public static class Snapshot
     {
-        public final Map<ResourceLocation, Integer> ids = Maps.newTreeMap();
-        public final Map<ResourceLocation, ResourceLocation> aliases = Maps.newTreeMap();
+        private static final Comparator<ResourceLocation> sorter = (a,b) -> a.compareNamespaced(b);
+        public final Map<ResourceLocation, Integer> ids = Maps.newTreeMap(sorter);
+        public final Map<ResourceLocation, ResourceLocation> aliases = Maps.newTreeMap(sorter);
         public final Set<Integer> blocked = Sets.newTreeSet();
-        public final Set<ResourceLocation> dummied = Sets.newTreeSet();
-        public final Map<ResourceLocation, String> overrides = Maps.newTreeMap();
+        public final Set<ResourceLocation> dummied = Sets.newTreeSet(sorter);
+        public final Map<ResourceLocation, String> overrides = Maps.newTreeMap(sorter);
         private PacketBuffer binary = null;
 
         public CompoundNBT write()
@@ -918,7 +929,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             }
 
             list = nbt.getList("dummied", 8);
-            list.forEach(e -> ret.dummied.add(new ResourceLocation(((StringNBT)e).getString())));
+            list.forEach(e -> ret.dummied.add(new ResourceLocation(((StringNBT)e).getAsString())));
 
             return ret;
         }
@@ -943,7 +954,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 pkt.writeVarInt(this.overrides.size());
                 this.overrides.forEach((k, v) -> {
                     pkt.writeResourceLocation(k);
-                    pkt.writeString(v, 0x100);
+                    pkt.writeUtf(v, 0x100);
                 });
 
                 pkt.writeVarInt(this.blocked.size());
@@ -975,7 +986,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
             len = buff.readVarInt();
             for (int x = 0; x < len; x++)
-                ret.overrides.put(buff.readResourceLocation(), buff.readString(0x100));
+                ret.overrides.put(buff.readResourceLocation(), buff.readUtf(0x100));
 
             len = buff.readVarInt();
             for (int x = 0; x < len; x++)

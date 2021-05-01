@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,6 @@ import java.util.function.Consumer;
 
 import javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.block.BlockState;
@@ -54,14 +53,11 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.animation.ITimeValue;
 
 // TODO review most of the methods in this "patch"
 public interface IForgeItem
@@ -78,7 +74,7 @@ public interface IForgeItem
     @SuppressWarnings("deprecation")
     default Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot, ItemStack stack)
     {
-        return getItem().getAttributeModifiers(slot);
+        return getItem().getDefaultAttributeModifiers(slot);
     }
 
     /**
@@ -125,7 +121,7 @@ public interface IForgeItem
      */
     default boolean isPiglinCurrency(ItemStack stack)
     {
-        return stack.getItem() == PiglinTasks.field_234444_a_;
+        return stack.getItem() == PiglinTasks.BARTERING_ITEM;
     }
 
     /**
@@ -138,7 +134,7 @@ public interface IForgeItem
      */
     default boolean makesPiglinsNeutral(ItemStack stack, LivingEntity wearer)
     {
-        return stack.getItem() instanceof ArmorItem && ((ArmorItem) stack.getItem()).getArmorMaterial() == ArmorMaterial.GOLD;
+        return stack.getItem() instanceof ArmorItem && ((ArmorItem) stack.getItem()).getMaterial() == ArmorMaterial.GOLD;
     }
 
     /**
@@ -241,13 +237,14 @@ public interface IForgeItem
      * @param itemStack The current ItemStack
      * @return The resulting ItemStack
      */
+    @SuppressWarnings("deprecation")
     default ItemStack getContainerItem(ItemStack itemStack)
     {
         if (!hasContainerItem(itemStack))
         {
             return ItemStack.EMPTY;
         }
-        return new ItemStack(getItem().getContainerItem());
+        return new ItemStack(getItem().getCraftingRemainingItem());
     }
 
     /**
@@ -259,7 +256,7 @@ public interface IForgeItem
     @SuppressWarnings("deprecation")
     default boolean hasContainerItem(ItemStack stack)
     {
-        return getItem().hasContainerItem();
+        return getItem().hasCraftingRemainingItem();
     }
 
     /**
@@ -329,7 +326,7 @@ public interface IForgeItem
      */
     default java.util.Collection<ItemGroup> getCreativeTabs()
     {
-        return java.util.Collections.singletonList(getItem().getGroup());
+        return java.util.Collections.singletonList(getItem().getItemCategory());
     }
 
     /**
@@ -378,17 +375,17 @@ public interface IForgeItem
      */
     default boolean canEquip(ItemStack stack, EquipmentSlotType armorType, Entity entity)
     {
-        return MobEntity.getSlotForItemStack(stack) == armorType;
+        return MobEntity.getEquipmentSlotForItem(stack) == armorType;
     }
 
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
      * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.entity.EntityLiving#getSlotForItemStack(ItemStack)}.</em>
+     * {@link net.minecraft.entity.LivingEntity#getSlotForItemStack(ItemStack)}.</em>
      *
      * @param stack the ItemStack
      * @return the armor slot of the ItemStack, or {@code null} to let the default
-     *         vanilla logic as per {@code EntityLiving.getSlotForItemStack(stack)}
+     *         vanilla logic as per {@code LivingEntity.getSlotForItemStack(stack)}
      *         decide
      */
     @Nullable
@@ -518,7 +515,7 @@ public interface IForgeItem
      */
     default double getDurabilityForDisplay(ItemStack stack)
     {
-        return (double) stack.getDamage() / (double) stack.getMaxDamage();
+        return (double) stack.getDamageValue() / (double) stack.getMaxDamage();
     }
 
     /**
@@ -531,7 +528,7 @@ public interface IForgeItem
      */
     default int getRGBDurabilityForDisplay(ItemStack stack)
     {
-        return MathHelper.hsvToRGB(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
+        return MathHelper.hsvToRgb(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
     }
 
     /**
@@ -556,7 +553,7 @@ public interface IForgeItem
      */
     default boolean isDamaged(ItemStack stack)
     {
-        return stack.getDamage() > 0;
+        return stack.getDamageValue() > 0;
     }
 
     /**
@@ -580,7 +577,7 @@ public interface IForgeItem
      */
     default boolean canHarvestBlock(ItemStack stack, BlockState state)
     {
-        return getItem().canHarvestBlock(state);
+        return getItem().isCorrectToolForDrops(state);
     }
 
     /**
@@ -618,7 +615,7 @@ public interface IForgeItem
      */
     default int getItemEnchantability(ItemStack stack)
     {
-        return getItem().getItemEnchantability();
+        return getItem().getEnchantmentValue();
     }
 
     /**
@@ -636,7 +633,7 @@ public interface IForgeItem
      */
     default boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.enchantment.Enchantment enchantment)
     {
-        return enchantment.type.canEnchantItem(stack.getItem());
+        return enchantment.category.canEnchant(stack.getItem());
     }
 
     /**
@@ -665,8 +662,8 @@ public interface IForgeItem
      */
     default boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack)
     {
-        return !(newStack.getItem() == oldStack.getItem() && ItemStack.areItemStackTagsEqual(newStack, oldStack)
-                && (newStack.isDamageable() || newStack.getDamage() == oldStack.getDamage()));
+        return !(newStack.getItem() == oldStack.getItem() && ItemStack.tagMatches(newStack, oldStack)
+                && (newStack.isDamageableItem() || newStack.getDamageValue() == oldStack.getDamageValue()));
     }
 
     /**
@@ -680,7 +677,7 @@ public interface IForgeItem
      */
     default boolean canContinueUsing(ItemStack oldStack, ItemStack newStack)
     {
-        return ItemStack.areItemsEqualIgnoreDurability(oldStack, newStack);
+        return ItemStack.isSameIgnoreDurability(oldStack, newStack);
     }
 
     /**
@@ -736,8 +733,8 @@ public interface IForgeItem
      *
      * @param stack    The ItemStack
      * @param shield   The shield in question
-     * @param entity   The EntityLivingBase holding the shield
-     * @param attacker The EntityLivingBase holding the ItemStack
+     * @param entity   The LivingEntity holding the shield
+     * @param attacker The LivingEntity holding the ItemStack
      * @retrun True if this ItemStack can disable the shield in question.
      */
     default boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker)
@@ -857,6 +854,6 @@ public interface IForgeItem
      */
     default boolean isDamageable(ItemStack stack)
     {
-        return this.getItem().isDamageable();
+        return this.getItem().canBeDepleted();
     }
 }

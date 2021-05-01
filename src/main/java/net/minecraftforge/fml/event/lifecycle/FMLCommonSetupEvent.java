@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -40,7 +40,7 @@ import java.util.function.Consumer;
  * @see net.minecraftforge.fml.DeferredWorkQueue to enqueue work to run on the main game thread after this event has
  * completed dispatch
  */
-public class FMLCommonSetupEvent extends ModLifecycleEvent
+public class FMLCommonSetupEvent extends ParallelDispatchEvent
 {
     public FMLCommonSetupEvent(final ModContainer container)
     {

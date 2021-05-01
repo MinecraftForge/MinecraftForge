@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/DataPackRegistries.java
 +++ b/net/minecraft/resources/DataPackRegistries.java
-@@ -32,6 +32,7 @@
+@@ -32,6 +_,7 @@
        this.field_240952_b_.func_219534_a(this.field_240957_g_);
        this.field_240952_b_.func_219534_a(this.field_240959_i_);
        this.field_240952_b_.func_219534_a(this.field_240958_h_);
@@ -8,3 +8,11 @@
     }
  
     public FunctionReloader func_240960_a_() {
+@@ -81,6 +_,7 @@
+ 
+    public void func_240971_i_() {
+       this.field_240955_e_.func_242231_a().func_242212_e();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent.CustomTagTypes(field_240955_e_.func_242231_a()));
+    }
+ 
+    public void close() {

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,18 +24,15 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-
 import java.util.stream.Collectors;
 
 public class CommandModList {
     static ArgumentBuilder<CommandSource, ?> register()
     {
         return Commands.literal("mods")
-                .requires(cs->cs.hasPermissionLevel(0)) //permission
+                .requires(cs->cs.hasPermission(0)) //permission
                 .executes(ctx -> {
-                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.mods.list",
+                            ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.mods.list",
                                     ModList.get().applyForEachModFile(modFile ->
                                             // locator - filename : firstmod (version) - numberofmods\n
                                             String.format("%s %s : %s (%s) - %d",

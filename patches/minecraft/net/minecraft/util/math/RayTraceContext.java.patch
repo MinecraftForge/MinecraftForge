@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/math/RayTraceContext.java
 +++ b/net/minecraft/util/math/RayTraceContext.java
-@@ -18,12 +18,12 @@
+@@ -18,12 +_,12 @@
     private final RayTraceContext.FluidMode field_222257_d;
     private final ISelectionContext field_222258_e;
  

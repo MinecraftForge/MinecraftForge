@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,10 +30,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import net.minecraft.loot.LootSerializers;
 import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.loot.conditions.LootConditionManager;
-import net.minecraft.loot.functions.ILootFunction;
-import net.minecraft.loot.functions.LootFunctionManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +39,6 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -56,7 +53,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class LootModifierManager extends JsonReloadListener {
     public static final Logger LOGGER = LogManager.getLogger();
-    private static final Gson GSON_INSTANCE = (new GsonBuilder()).registerTypeHierarchyAdapter(ILootFunction.class, LootFunctionManager.func_237450_a_()).registerTypeHierarchyAdapter(ILootCondition.class, LootConditionManager.func_237474_a_()).create();
+    private static final Gson GSON_INSTANCE = LootSerializers.createFunctionSerializer().create();
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
@@ -87,7 +84,7 @@ public class LootModifierManager extends JsonReloadListener {
         ResourceLocation resourcelocation = new ResourceLocation("forge","loot_modifiers/global_loot_modifiers.json");
         try {
             //read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
-            for(IResource iresource : resourceManagerIn.getAllResources(resourcelocation)) {
+            for(IResource iresource : resourceManagerIn.getResources(resourcelocation)) {
                 try (   InputStream inputstream = iresource.getInputStream();
                         Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
                         ) {
@@ -104,7 +101,7 @@ public class LootModifierManager extends JsonReloadListener {
                 }
 
                 catch (RuntimeException | IOException ioexception) {
-                    LOGGER.error("Couldn't read global loot modifier list {} in data pack {}", resourcelocation, iresource.getPackName(), ioexception);
+                    LOGGER.error("Couldn't read global loot modifier list {} in data pack {}", resourcelocation, iresource.getSourceName(), ioexception);
                 } finally {
                     IOUtils.closeQuietly((Closeable)iresource);
                 }
@@ -136,7 +133,7 @@ public class LootModifierManager extends JsonReloadListener {
         ResourceLocation serializer = location;
         if (object.has("type"))
         {
-            serializer = new ResourceLocation(JSONUtils.getString(object, "type"));
+            serializer = new ResourceLocation(JSONUtils.getAsString(object, "type"));
         }
 
         return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(serializer).read(location, object, lootConditions);

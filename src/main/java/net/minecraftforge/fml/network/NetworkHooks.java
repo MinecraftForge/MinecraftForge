@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.network;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -26,6 +27,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import net.minecraft.tags.ITagCollection;
+import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import org.apache.logging.log4j.LogManager;
@@ -48,6 +53,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
 
+import javax.annotation.Nullable;
+
 public class NetworkHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -59,7 +66,17 @@ public class NetworkHooks
 
     public static ConnectionType getConnectionType(final Supplier<NetworkManager> connection)
     {
-        return ConnectionType.forVersionFlag(connection.get().channel().attr(FMLNetworkConstants.FML_NETVERSION).get());
+        return getConnectionType(connection.get().channel());
+    }
+
+    public static ConnectionType getConnectionType(ChannelHandlerContext context)
+    {
+        return getConnectionType(context.channel());
+    }
+
+    private static ConnectionType getConnectionType(Channel channel)
+    {
+        return ConnectionType.forVersionFlag(channel.attr(FMLNetworkConstants.FML_NETVERSION).get());
     }
 
     public static IPacket<?> getEntitySpawningPacket(Entity entity)
@@ -75,7 +92,7 @@ public class NetworkHooks
 
     private static boolean validateSideForProcessing(final ICustomPacket<?> packet, final NetworkInstance ni, final NetworkManager manager) {
         if (packet.getDirection().getReceptionSide() != EffectiveSide.get()) {
-            manager.closeChannel(new StringTextComponent("Illegal packet received, terminating connection"));
+            manager.disconnect(new StringTextComponent("Illegal packet received, terminating connection"));
             return false;
         }
         return true;
@@ -83,7 +100,7 @@ public class NetworkHooks
 
     public static void validatePacketDirection(final NetworkDirection packetDirection, final Optional<NetworkDirection> expectedDirection, final NetworkManager connection) {
         if (packetDirection != expectedDirection.orElse(packetDirection)) {
-            connection.closeChannel(new StringTextComponent("Illegal packet received, terminating connection"));
+            connection.disconnect(new StringTextComponent("Illegal packet received, terminating connection"));
             throw new IllegalStateException("Invalid packet received, aborting connection");
         }
     }
@@ -116,9 +133,14 @@ public class NetworkHooks
         FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.DimensionInfoMessage(player.dimension), manager, NetworkDirection.PLAY_TO_CLIENT);
     }*/
 
-    public static void handleClientLoginSuccess(NetworkManager manager) {
+    public static boolean isVanillaConnection(NetworkManager manager)
+    {
         if (manager == null || manager.channel() == null) throw new NullPointerException("ARGH! Network Manager is null (" + manager != null ? "CHANNEL" : "MANAGER"+")" );
-        if (getConnectionType(()->manager) == ConnectionType.VANILLA) {
+        return getConnectionType(() -> manager) == ConnectionType.VANILLA;
+    }
+
+    public static void handleClientLoginSuccess(NetworkManager manager) {
+        if (isVanillaConnection(manager)) {
             LOGGER.info("Connected to a vanilla server. Catching up missing behaviour.");
             ConfigTracker.INSTANCE.loadDefaultServerConfigs();
         } else {
@@ -184,10 +206,10 @@ public class NetworkHooks
      */
     public static void openGui(ServerPlayerEntity player, INamedContainerProvider containerSupplier, Consumer<PacketBuffer> extraDataWriter)
     {
-        if (player.world.isRemote) return;
-        player.closeContainer();
-        player.getNextWindowId();
-        int openContainerId = player.currentWindowId;
+        if (player.level.isClientSide) return;
+        player.doCloseContainer();
+        player.nextContainerCounter();
+        int openContainerId = player.containerCounter;
         PacketBuffer extraData = new PacketBuffer(Unpooled.buffer());
         extraDataWriter.accept(extraData);
         extraData.readerIndex(0); // reset to beginning in case modders read for whatever reason
@@ -202,10 +224,43 @@ public class NetworkHooks
         Container c = containerSupplier.createMenu(openContainerId, player.inventory, player);
         ContainerType<?> type = c.getType();
         FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(type, openContainerId, containerSupplier.getDisplayName(), output);
-        FMLNetworkConstants.playChannel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+        FMLNetworkConstants.playChannel.sendTo(msg, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
 
-        player.openContainer = c;
-        player.openContainer.addListener(player);
+        player.containerMenu = c;
+        player.containerMenu.addSlotListener(player);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
+    }
+
+    /**
+     * Syncs the custom tag types attached to a {@link ITagCollectionSupplier} to all connected players.
+     * @param tagCollectionSupplier The tag collection supplier containing the custom tags
+     */
+    public static void syncCustomTagTypes(ITagCollectionSupplier tagCollectionSupplier)
+    {
+        Map<ResourceLocation, ITagCollection<?>> customTagTypes = tagCollectionSupplier.getCustomTagTypes();
+        if (!customTagTypes.isEmpty())
+        {
+            FMLNetworkConstants.playChannel.send(PacketDistributor.ALL.noArg(), new FMLPlayMessages.SyncCustomTagTypes(customTagTypes));
+        }
+    }
+
+    /**
+     * Syncs the custom tag types attached to a {@link ITagCollectionSupplier} to the given player.
+     * @param player                The player to sync the custom tags to.
+     * @param tagCollectionSupplier The tag collection supplier containing the custom tags
+     */
+    public static void syncCustomTagTypes(ServerPlayerEntity player, ITagCollectionSupplier tagCollectionSupplier)
+    {
+        Map<ResourceLocation, ITagCollection<?>> customTagTypes = tagCollectionSupplier.getCustomTagTypes();
+        if (!customTagTypes.isEmpty())
+        {
+            FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(customTagTypes), player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
+        }
+    }
+
+    @Nullable
+    public static FMLConnectionData getConnectionData(NetworkManager mgr)
+    {
+        return mgr.channel().attr(FMLNetworkConstants.FML_CONNECTION_DATA).get();
     }
 }

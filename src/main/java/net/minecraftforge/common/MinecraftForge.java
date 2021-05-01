@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,9 +53,6 @@ public class MinecraftForge
 
        UsernameCache.load();
        ForgeHooks.initTools();
-
-       //For all the normal CrashReport classes to be defined. We're in MC's classloader so this should all be fine
-       new CrashReport("ThisIsFake", new Exception("Not real"));
    }
 
 

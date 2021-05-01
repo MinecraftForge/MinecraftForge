@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ package net.minecraftforge.event;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +29,6 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.matrix.MatrixStack;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.PortalSize;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -37,11 +37,13 @@ import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.item.EnderPearlEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -69,7 +71,6 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -81,8 +82,6 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraft.world.storage.PlayerData;
@@ -107,6 +106,8 @@ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
+import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
@@ -114,6 +115,7 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
+import net.minecraftforge.event.entity.living.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
@@ -152,14 +154,14 @@ public class ForgeEventFactory
     public static boolean onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, Direction direction)
     {
         BlockSnapshot snap = blockSnapshots.get(0);
-        BlockState placedAgainst = snap.getWorld().getBlockState(snap.getPos().offset(direction.getOpposite()));
+        BlockState placedAgainst = snap.getWorld().getBlockState(snap.getPos().relative(direction.getOpposite()));
         EntityMultiPlaceEvent event = new EntityMultiPlaceEvent(blockSnapshots, placedAgainst, entity);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
     public static boolean onBlockPlace(@Nullable Entity entity, @Nonnull BlockSnapshot blockSnapshot, @Nonnull Direction direction)
     {
-        BlockState placedAgainst = blockSnapshot.getWorld().getBlockState(blockSnapshot.getPos().offset(direction.getOpposite()));
+        BlockState placedAgainst = blockSnapshot.getWorld().getBlockState(blockSnapshot.getPos().relative(direction.getOpposite()));
         EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(blockSnapshot, placedAgainst, entity);
         return MinecraftForge.EVENT_BUS.post(event);
     }
@@ -202,7 +204,7 @@ public class ForgeEventFactory
     {
         Result result = canEntitySpawn(entity, world, x, y, z, spawner, SpawnReason.SPAWNER);
         if (result == Result.DEFAULT)
-            return entity.canSpawn(world, SpawnReason.SPAWNER) && entity.isNotColliding(world); // vanilla logic (inverted)
+            return entity.checkSpawnRules(world, SpawnReason.SPAWNER) && entity.checkSpawnObstruction(world); // vanilla logic (inverted)
         else
             return result == Result.ALLOW;
     }
@@ -249,7 +251,7 @@ public class ForgeEventFactory
     {
         LivingPackSizeEvent maxCanSpawnEvent = new LivingPackSizeEvent(entity);
         MinecraftForge.EVENT_BUS.post(maxCanSpawnEvent);
-        return maxCanSpawnEvent.getResult() == Result.ALLOW ? maxCanSpawnEvent.getMaxPackSize() : entity.getMaxSpawnedInChunk();
+        return maxCanSpawnEvent.getResult() == Result.ALLOW ? maxCanSpawnEvent.getMaxPackSize() : entity.getMaxSpawnClusterSize();
     }
 
     public static ITextComponent getPlayerDisplayName(PlayerEntity player, ITextComponent username)
@@ -356,7 +358,7 @@ public class ForgeEventFactory
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         if (event.getResult() == Result.ALLOW)
         {
-            context.getItem().damageItem(1, context.getPlayer(), player -> player.sendBreakAnimation(context.getHand()));
+            context.getItemInHand().hurtAndBreak(1, context.getPlayer(), player -> player.broadcastBreakEvent(context.getHand()));
             return 1;
         }
         return 0;
@@ -375,7 +377,7 @@ public class ForgeEventFactory
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         if (event.getResult() == Result.ALLOW)
         {
-            if (!world.isRemote)
+            if (!world.isClientSide)
                 stack.shrink(1);
             return 1;
         }
@@ -390,15 +392,15 @@ public class ForgeEventFactory
 
         if (event.getResult() == Result.ALLOW)
         {
-            if (player.abilities.isCreativeMode)
+            if (player.abilities.instabuild)
                 return new ActionResult<ItemStack>(ActionResultType.SUCCESS, stack);
 
             stack.shrink(1);
             if (stack.isEmpty())
                 return new ActionResult<ItemStack>(ActionResultType.SUCCESS, event.getFilledBucket());
 
-            if (!player.inventory.addItemStackToInventory(event.getFilledBucket()))
-                player.dropItem(event.getFilledBucket(), false);
+            if (!player.inventory.add(event.getFilledBucket()))
+                player.drop(event.getFilledBucket(), false);
 
             return new ActionResult<ItemStack>(ActionResultType.SUCCESS, stack);
         }
@@ -422,7 +424,7 @@ public class ForgeEventFactory
     public static int onItemExpire(ItemEntity entity, @Nonnull ItemStack item)
     {
         if (item.isEmpty()) return -1;
-        ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.world)));
+        ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.level)));
         if (!MinecraftForge.EVENT_BUS.post(event)) return -1;
         return event.getExtraLife();
     }
@@ -436,11 +438,11 @@ public class ForgeEventFactory
 
     public static boolean canMountEntity(Entity entityMounting, Entity entityBeingMounted, boolean isMounting)
     {
-        boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.world, isMounting));
+        boolean isCanceled = MinecraftForge.EVENT_BUS.post(new EntityMountEvent(entityMounting, entityBeingMounted, entityMounting.level, isMounting));
 
         if(isCanceled)
         {
-            entityMounting.setPositionAndRotation(entityMounting.getPosX(), entityMounting.getPosY(), entityMounting.getPosZ(), entityMounting.prevRotationYaw, entityMounting.prevRotationPitch);
+            entityMounting.absMoveTo(entityMounting.getX(), entityMounting.getY(), entityMounting.getZ(), entityMounting.yRotO, entityMounting.xRotO);
             return false;
         }
         else
@@ -523,7 +525,7 @@ public class ForgeEventFactory
             boolean changed = false;
             for (int x = 0; x < stacks.size(); x++)
             {
-                changed |= ItemStack.areItemStacksEqual(tmp.get(x), stacks.get(x));
+                changed |= ItemStack.matches(tmp.get(x), stacks.get(x));
                 stacks.set(x, event.getItem(x));
             }
             if (changed)
@@ -546,13 +548,13 @@ public class ForgeEventFactory
     @OnlyIn(Dist.CLIENT)
     public static boolean renderFireOverlay(PlayerEntity player, MatrixStack mat)
     {
-        return renderBlockOverlay(player, mat, OverlayType.FIRE, Blocks.FIRE.getDefaultState(), player.func_233580_cy_());
+        return renderBlockOverlay(player, mat, OverlayType.FIRE, Blocks.FIRE.defaultBlockState(), player.blockPosition());
     }
 
     @OnlyIn(Dist.CLIENT)
     public static boolean renderWaterOverlay(PlayerEntity player, MatrixStack mat)
     {
-        return renderBlockOverlay(player, mat, OverlayType.WATER, Blocks.WATER.getDefaultState(), player.func_233580_cy_());
+        return renderBlockOverlay(player, mat, OverlayType.WATER, Blocks.WATER.defaultBlockState(), player.blockPosition());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -589,9 +591,9 @@ public class ForgeEventFactory
         Result canContinueSleep = evt.getResult();
         if (canContinueSleep == Result.DEFAULT)
         {
-            return player.getBedPosition().map(pos-> {
-                BlockState state = player.world.getBlockState(pos);
-                return state.getBlock().isBed(state, player.world, pos, player);
+            return player.getSleepingPos().map(pos-> {
+                BlockState state = player.level.getBlockState(pos);
+                return state.getBlock().isBed(state, player.level, pos, player);
             }).orElse(false);
         }
         else
@@ -605,7 +607,7 @@ public class ForgeEventFactory
 
         Result canContinueSleep = evt.getResult();
         if (canContinueSleep == Result.DEFAULT)
-            return !player.world.isDaytime();
+            return !player.level.isDay();
         else
             return canContinueSleep == Result.ALLOW;
     }
@@ -655,7 +657,7 @@ public class ForgeEventFactory
     {
         LootTableLoadEvent event = new LootTableLoadEvent(name, table, lootTableManager);
         if (MinecraftForge.EVENT_BUS.post(event))
-            return LootTable.EMPTY_LOOT_TABLE;
+            return LootTable.EMPTY;
         return event.getTable();
     }
 
@@ -692,7 +694,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
 
         Result result = event.getResult();
-        return result == Result.DEFAULT ? world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) : result == Result.ALLOW;
+        return result == Result.DEFAULT ? world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : result == Result.ALLOW;
     }
 
     public static boolean saplingGrowTree(IWorld world, Random rand, BlockPos pos)
@@ -746,10 +748,76 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
     }
 
-    public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity player, Pose pose, EntitySize size, float eyeHeight)
+    public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity entity, Pose pose, EntitySize size, float eyeHeight)
     {
-        EntityEvent.Size evt = new EntityEvent.Size(player, pose, size, eyeHeight);
+        EntityEvent.Size evt = new EntityEvent.Size(entity, pose, size, eyeHeight);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt;
+    }
+
+    public static net.minecraftforge.event.entity.EntityEvent.Size getEntitySizeForge(Entity entity, Pose pose, EntitySize oldSize, EntitySize newSize, float newEyeHeight)
+    {
+        EntityEvent.Size evt = new EntityEvent.Size(entity, pose, oldSize, newSize, entity.getEyeHeight(), newEyeHeight);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static boolean canLivingConvert(LivingEntity entity, EntityType<? extends LivingEntity> outcome, Consumer<Integer> timer)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new LivingConversionEvent.Pre(entity, outcome, timer));
+    }
+
+    public static void onLivingConvert(LivingEntity entity, LivingEntity outcome)
+    {
+        MinecraftForge.EVENT_BUS.post(new LivingConversionEvent.Post(entity, outcome));
+    }
+
+    public static EntityTeleportEvent.TeleportCommand onEntityTeleportCommand(Entity entity, double targetX, double targetY, double targetZ)
+    {
+        EntityTeleportEvent.TeleportCommand event = new EntityTeleportEvent.TeleportCommand(entity, targetX, targetY, targetZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static EntityTeleportEvent.SpreadPlayersCommand onEntityTeleportSpreadPlayersCommand(Entity entity, double targetX, double targetY, double targetZ)
+    {
+        EntityTeleportEvent.SpreadPlayersCommand event = new EntityTeleportEvent.SpreadPlayersCommand(entity, targetX, targetY, targetZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static EntityTeleportEvent.EnderEntity onEnderTeleport(LivingEntity entity, double targetX, double targetY, double targetZ)
+    {
+        EntityTeleportEvent.EnderEntity event = new EntityTeleportEvent.EnderEntity(entity, targetX, targetY, targetZ);
+        onOldEnderTeleport(entity, 0, event); //TODO Forge: Remove this line in 1.17
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static EntityTeleportEvent.EnderPearl onEnderPearlLand(ServerPlayerEntity entity, double targetX, double targetY, double targetZ, EnderPearlEntity pearlEntity, float attackDamage)
+    {
+        EntityTeleportEvent.EnderPearl event = new EntityTeleportEvent.EnderPearl(entity, targetX, targetY, targetZ, pearlEntity, attackDamage);
+        event.setAttackDamage(onOldEnderTeleport(entity, attackDamage, event)); //TODO Forge: Remove this line in 1.17
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    @SuppressWarnings("deprecation") //TODO Forge: Scrap this method/event in 1.17 - it only exists for backwards-compatibility
+    private static float onOldEnderTeleport(LivingEntity entity, float attackDamage, EntityTeleportEvent event)
+    {
+        EnderTeleportEvent enderEvent = new EnderTeleportEvent(entity, event.getTargetX(), event.getTargetY(), event.getTargetZ(), attackDamage);
+        MinecraftForge.EVENT_BUS.post(enderEvent);
+        event.setCanceled(enderEvent.isCanceled());
+        event.setTargetX(enderEvent.getTargetX());
+        event.setTargetY(enderEvent.getTargetY());
+        event.setTargetZ(enderEvent.getTargetZ());
+        return enderEvent.getAttackDamage();
+    }
+
+    public static EntityTeleportEvent.ChorusFruit onChorusFruitTeleport(LivingEntity entity, double targetX, double targetY, double targetZ)
+    {
+        EntityTeleportEvent.ChorusFruit event = new EntityTeleportEvent.ChorusFruit(entity, targetX, targetY, targetZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 }

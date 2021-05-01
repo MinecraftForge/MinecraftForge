@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/goal/RunAroundLikeCrazyGoal.java
 +++ b/net/minecraft/entity/ai/goal/RunAroundLikeCrazyGoal.java
-@@ -54,7 +54,7 @@
+@@ -54,7 +_,7 @@
           if (entity instanceof PlayerEntity) {
              int i = this.field_111180_a.func_110252_cg();
              int j = this.field_111180_a.func_190676_dC();

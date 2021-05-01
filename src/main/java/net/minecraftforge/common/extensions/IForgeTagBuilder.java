@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ package net.minecraftforge.common.extensions;
 
 import net.minecraft.data.TagsProvider;
 import net.minecraft.tags.ITag;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 
 //TODO, Tag removal support.
@@ -35,7 +36,15 @@ public interface IForgeTagBuilder<T>
     default TagsProvider.Builder<T> addTags(ITag.INamedTag<T>... values) {
         TagsProvider.Builder<T> builder = getBuilder();
         for (ITag.INamedTag<T> value : values) {
-            builder.func_240531_a_(value);
+            builder.addTag(value);
+        }
+        return builder;
+    }
+
+    default TagsProvider.Builder<T> add(RegistryKey<T>... keys) {
+        TagsProvider.Builder<T> builder = getBuilder();
+        for (RegistryKey<T> key : keys) {
+            builder.getInternalBuilder().addElement(key.location(), getBuilder().getModID());
         }
         return builder;
     }

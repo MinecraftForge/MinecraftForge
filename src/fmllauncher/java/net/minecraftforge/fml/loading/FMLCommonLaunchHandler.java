@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -75,8 +75,8 @@ public abstract class FMLCommonLaunchHandler
         Arrays.stream(FMLLoader.getMCPaths()).forEach(builder::addTransformationPath);
         additionalLibraries.forEach(builder::addTransformationPath);
         FMLLoader.getLanguageLoadingProvider().getLibraries().forEach(builder::addTransformationPath);
-        builder.setClassBytesLocator(getClassLoaderLocatorFunction());
         builder.setManifestLocator(getClassLoaderManifestLocatorFunction());
+        builder.setResourceEnumeratorLocator(getClassLoaderResourceEnumerationFunction());
     }
 
     public void setup(final IEnvironment environment, final Map<String, ?> arguments)
@@ -128,16 +128,17 @@ public abstract class FMLCommonLaunchHandler
     }
 
 
-    protected Function<String, Optional<URL>> getClassLoaderLocatorFunction() {
-        return input->Optional.ofNullable(FMLLoader.getLoadingModList().findURLForResource(input));
+    protected Function<String, Enumeration<URL>> getClassLoaderResourceEnumerationFunction() {
+        return input->FMLLoader.getLoadingModList().findAllURLsForResource(input);
     }
 
     protected Function<URLConnection, Optional<Manifest>> getClassLoaderManifestLocatorFunction() {
-        return input -> {
-            if (input instanceof ModJarURLHandler.ModJarURLConnection) {
-                return ((ModJarURLHandler.ModJarURLConnection) input).getManifest();
+        return urlConnection -> {
+            if (urlConnection instanceof ModJarURLHandler.ModJarURLConnection) {
+                return ((ModJarURLHandler.ModJarURLConnection) urlConnection).getManifest();
+            } else {
+                return Optional.empty();
             }
-            return Optional.empty();
         };
     }
 

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -36,19 +37,19 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.client.renderer.model.BlockFaceUV;
+import net.minecraft.client.renderer.model.BlockModel.GuiLight;
 import net.minecraft.client.renderer.model.BlockPart;
 import net.minecraft.client.renderer.model.BlockPartFace;
 import net.minecraft.client.renderer.model.BlockPartRotation;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.model.BlockModel.GuiLight;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
-import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 /**
  * General purpose model builder, contains all the commonalities between item
@@ -73,6 +74,8 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     protected GuiLight guiLight = null;
 
     protected final List<ElementBuilder> elements = new ArrayList<>();
+
+    protected CustomLoaderBuilder customLoader = null;
 
     protected ModelBuilder(ResourceLocation outputLocation, ExistingFileHelper existingFileHelper) {
         super(outputLocation);
@@ -146,7 +149,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     public T texture(String key, ResourceLocation texture) {
         Preconditions.checkNotNull(key, "Key must not be null");
         Preconditions.checkNotNull(texture, "Texture must not be null");
-        Preconditions.checkArgument(existingFileHelper.exists(texture, ResourcePackType.CLIENT_RESOURCES, ".png", "textures"),
+        Preconditions.checkArgument(existingFileHelper.exists(texture, ModelProvider.TEXTURE),
                 "Texture %s does not exist in any known resource pack", texture);
         this.textures.put(key, texture.toString());
         return self();
@@ -177,6 +180,7 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     }
 
     public ElementBuilder element() {
+        Preconditions.checkState(customLoader == null, "Cannot use elements and custom loaders at the same time");
         ElementBuilder ret = new ElementBuilder();
         elements.add(ret);
         return ret;
@@ -190,13 +194,29 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
      * @throws IndexOutOfBoundsException if {@code} index is out of bounds
      */
     public ElementBuilder element(int index) {
+        Preconditions.checkState(customLoader == null, "Cannot use elements and custom loaders at the same time");
         Preconditions.checkElementIndex(index, elements.size(), "Element index");
         return elements.get(index);
+    }
+
+    /**
+     * Use a custom loader instead of the vanilla elements.
+     * @param customLoaderFactory
+     * @return the custom loader builder
+     */
+    public <L extends CustomLoaderBuilder<T>> L customLoader(BiFunction<T, ExistingFileHelper, L> customLoaderFactory)
+    {
+        Preconditions.checkState(elements.size() == 0, "Cannot use elements and custom loaders at the same time");
+        Preconditions.checkNotNull(customLoaderFactory, "customLoaderFactory must not be null");
+        L customLoader  = customLoaderFactory.apply(self(), existingFileHelper);
+        this.customLoader = customLoader;
+        return customLoader;
     }
 
     @VisibleForTesting
     public JsonObject toJson() {
         JsonObject root = new JsonObject();
+
         if (this.parent != null) {
             root.addProperty("parent", this.parent.getLocation().toString());
         }
@@ -215,14 +235,14 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             for (Entry<Perspective, ItemTransformVec3f> e : transforms.entrySet()) {
                 JsonObject transform = new JsonObject();
                 ItemTransformVec3f vec = e.getValue();
-                if (vec.equals(ItemTransformVec3f.DEFAULT)) continue;
-                if (!vec.rotation.equals(ItemTransformVec3f.Deserializer.ROTATION_DEFAULT)) {
+                if (vec.equals(ItemTransformVec3f.NO_TRANSFORM)) continue;
+                if (!vec.rotation.equals(ItemTransformVec3f.Deserializer.DEFAULT_ROTATION)) {
                     transform.add("rotation", serializeVector3f(vec.rotation));
                 }
-                if (!vec.translation.equals(ItemTransformVec3f.Deserializer.TRANSLATION_DEFAULT)) {
+                if (!vec.translation.equals(ItemTransformVec3f.Deserializer.DEFAULT_TRANSLATION)) {
                     transform.add("translation", serializeVector3f(e.getValue().translation));
                 }
-                if (!vec.scale.equals(ItemTransformVec3f.Deserializer.SCALE_DEFAULT)) {
+                if (!vec.scale.equals(ItemTransformVec3f.Deserializer.DEFAULT_SCALE)) {
                     transform.add("scale", serializeVector3f(e.getValue().scale));
                 }
                 display.add(e.getKey().name, transform);
@@ -242,16 +262,16 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
             JsonArray elements = new JsonArray();
             this.elements.stream().map(ElementBuilder::build).forEach(part -> {
                 JsonObject partObj = new JsonObject();
-                partObj.add("from", serializeVector3f(part.positionFrom));
-                partObj.add("to", serializeVector3f(part.positionTo));
+                partObj.add("from", serializeVector3f(part.from));
+                partObj.add("to", serializeVector3f(part.to));
 
-                if (part.partRotation != null) {
+                if (part.rotation != null) {
                     JsonObject rotation = new JsonObject();
-                    rotation.add("origin", serializeVector3f(part.partRotation.origin));
-                    rotation.addProperty("axis", part.partRotation.axis.func_176610_l());
-                    rotation.addProperty("angle", part.partRotation.angle);
-                    if (part.partRotation.rescale) {
-                        rotation.addProperty("rescale", part.partRotation.rescale);
+                    rotation.add("origin", serializeVector3f(part.rotation.origin));
+                    rotation.addProperty("axis", part.rotation.axis.getSerializedName());
+                    rotation.addProperty("angle", part.rotation.angle);
+                    if (part.rotation.rescale) {
+                        rotation.addProperty("rescale", part.rotation.rescale);
                     }
                     partObj.add("rotation", rotation);
                 }
@@ -262,32 +282,35 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
                 JsonObject faces = new JsonObject();
                 for (Direction dir : Direction.values()) {
-                    BlockPartFace face = part.mapFaces.get(dir);
+                    BlockPartFace face = part.faces.get(dir);
                     if (face == null) continue;
 
                     JsonObject faceObj = new JsonObject();
                     faceObj.addProperty("texture", serializeLocOrKey(face.texture));
-                    if (!Arrays.equals(face.blockFaceUV.uvs, part.getFaceUvs(dir))) {
-                        faceObj.add("uv", new Gson().toJsonTree(face.blockFaceUV.uvs));
+                    if (!Arrays.equals(face.uv.uvs, part.uvsByFace(dir))) {
+                        faceObj.add("uv", new Gson().toJsonTree(face.uv.uvs));
                     }
-                    if (face.cullFace != null) {
-                        faceObj.addProperty("cullface", face.cullFace.func_176610_l());
+                    if (face.cullForDirection != null) {
+                        faceObj.addProperty("cullface", face.cullForDirection.getSerializedName());
                     }
-                    if (face.blockFaceUV.rotation != 0) {
-                        faceObj.addProperty("rotation", face.blockFaceUV.rotation);
+                    if (face.uv.rotation != 0) {
+                        faceObj.addProperty("rotation", face.uv.rotation);
                     }
                     if (face.tintIndex != -1) {
                         faceObj.addProperty("tintindex", face.tintIndex);
                     }
-                    faces.add(dir.func_176610_l(), faceObj);
+                    faces.add(dir.getSerializedName(), faceObj);
                 }
-                if (!part.mapFaces.isEmpty()) {
+                if (!part.faces.isEmpty()) {
                     partObj.add("faces", faces);
                 }
                 elements.add(partObj);
             });
             root.add("elements", elements);
         }
+
+        if (customLoader != null)
+            return customLoader.toJson(root);
 
         return root;
     }
@@ -301,9 +324,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     private JsonArray serializeVector3f(Vector3f vec) {
         JsonArray ret = new JsonArray();
-        ret.add(serializeFloat(vec.getX()));
-        ret.add(serializeFloat(vec.getY()));
-        ret.add(serializeFloat(vec.getZ()));
+        ret.add(serializeFloat(vec.x()));
+        ret.add(serializeFloat(vec.y()));
+        ret.add(serializeFloat(vec.z()));
         return ret;
     }
 
@@ -327,9 +350,9 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
         }
 
         private void validatePosition(Vector3f pos) {
-            validateCoordinate(pos.getX(), 'x');
-            validateCoordinate(pos.getY(), 'y');
-            validateCoordinate(pos.getZ(), 'z');
+            validateCoordinate(pos.x(), 'x');
+            validateCoordinate(pos.y(), 'y');
+            validateCoordinate(pos.z(), 'z');
         }
 
         /**

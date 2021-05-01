@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,14 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.entity.Entity;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
+
+import javax.annotation.Nullable;
 
 /**
  * LivingEvent is fired whenever an event involving Living entities occurs.<br>
@@ -83,5 +86,44 @@ public class LivingEvent extends EntityEvent
     public static class LivingJumpEvent extends LivingEvent
     {
         public LivingJumpEvent(LivingEntity e){ super(e); }
+    }
+
+    public static class LivingVisibilityEvent extends LivingEvent
+    {
+        private double visibilityModifier;
+        @Nullable
+        private final Entity lookingEntity;
+
+        public LivingVisibilityEvent(LivingEntity livingEntity, @Nullable Entity lookingEntity, double originalMultiplier)
+        {
+            super(livingEntity);
+            this.visibilityModifier = originalMultiplier;
+            this.lookingEntity = lookingEntity;
+        }
+
+        /**
+         * @param mod Is multiplied with the current modifier
+         */
+        public void modifyVisibility(double mod)
+        {
+            visibilityModifier *= mod;
+        }
+
+        /**
+         * @return The current modifier
+         */
+        public double getVisibilityModifier()
+        {
+            return visibilityModifier;
+        }
+
+        /**
+         * @return The entity trying to see this LivingEntity, if available
+         */
+        @Nullable
+        public Entity getLookingEntity()
+        {
+            return lookingEntity;
+        }
     }
 }

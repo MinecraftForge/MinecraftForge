@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -64,7 +64,7 @@ public class ClientChatReceivedEvent extends Event
 
     /**
      * The UUID of the player or entity that sent this message, or null if not known.
-     * This will be equal to {@link net.minecraft.util.Util#field_240973_b_} for system messages.
+     * This will be equal to {@link net.minecraft.util.Util#DUMMY_UUID} for system messages.
      */
     @Nullable
     public UUID getSenderUUID()

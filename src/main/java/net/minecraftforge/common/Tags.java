@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,9 +20,11 @@
 package net.minecraftforge.common;
 
 import net.minecraft.block.Block;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.tags.ITag.INamedTag;
@@ -33,12 +35,15 @@ public class Tags
     {
         Blocks.init();
         Items.init();
+        Fluids.init();
     }
 
     public static class Blocks
     {
         private static void init(){}
 
+        public static final IOptionalNamedTag<Block> BARRELS = tag("barrels");
+        public static final IOptionalNamedTag<Block> BARRELS_WOODEN = tag("barrels/wooden");
         public static final IOptionalNamedTag<Block> CHESTS = tag("chests");
         public static final IOptionalNamedTag<Block> CHESTS_ENDER = tag("chests/ender");
         public static final IOptionalNamedTag<Block> CHESTS_TRAPPED = tag("chests/trapped");
@@ -46,6 +51,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> COBBLESTONE = tag("cobblestone");
         public static final IOptionalNamedTag<Block> DIRT = tag("dirt");
         public static final IOptionalNamedTag<Block> END_STONES = tag("end_stones");
+        public static final IOptionalNamedTag<Block> ENDERMAN_PLACE_ON_BLACKLIST = tag("enderman_place_on_blacklist");
         public static final IOptionalNamedTag<Block> FENCE_GATES = tag("fence_gates");
         public static final IOptionalNamedTag<Block> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
         public static final IOptionalNamedTag<Block> FENCES = tag("fences");
@@ -133,6 +139,8 @@ public class Tags
     {
         private static void init(){}
 
+        public static final IOptionalNamedTag<Item> BARRELS = tag("barrels");
+        public static final IOptionalNamedTag<Item> BARRELS_WOODEN = tag("barrels/wooden");
         public static final IOptionalNamedTag<Item> BONES = tag("bones");
         public static final IOptionalNamedTag<Item> BOOKSHELVES = tag("bookshelves");
         public static final IOptionalNamedTag<Item> CHESTS = tag("chests");
@@ -284,6 +292,18 @@ public class Tags
         private static IOptionalNamedTag<Item> tag(String name)
         {
             return ItemTags.createOptional(new ResourceLocation("forge", name));
+        }
+    }
+
+    public static class Fluids
+    {
+        private static void init() {}
+
+        public static final IOptionalNamedTag<Fluid> MILK = tag("milk");
+
+        private static IOptionalNamedTag<Fluid> tag(String name)
+        {
+            return FluidTags.createOptional(new ResourceLocation("forge", name));
         }
     }
 

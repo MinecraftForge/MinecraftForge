@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -95,13 +95,13 @@ public class BlockModelConfiguration implements IModelConfiguration
     @Override
     public boolean isTexturePresent(String name)
     {
-        return owner.isTexturePresent(name);
+        return owner.hasTexture(name);
     }
 
     @Override
     public RenderMaterial resolveTexture(String name)
     {
-        return owner.resolveTextureName(name);
+        return owner.getMaterial(name);
     }
 
     @Override
@@ -112,19 +112,19 @@ public class BlockModelConfiguration implements IModelConfiguration
     @Override
     public boolean isSideLit()
     {
-        return owner.func_230176_c_().func_230178_a_();
+        return owner.getGuiLight().lightLikeBlock();
     }
 
     @Override
     public boolean useSmoothLighting()
     {
-        return owner.isAmbientOcclusion();
+        return owner.hasAmbientOcclusion();
     }
 
     @Override
     public ItemCameraTransforms getCameraTransforms()
     {
-        return owner.getAllTransforms();
+        return owner.getTransforms();
     }
 
     @Override

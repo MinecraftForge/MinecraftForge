@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/NoiseChunkGenerator.java
 +++ b/net/minecraft/world/gen/NoiseChunkGenerator.java
-@@ -525,8 +525,8 @@
+@@ -525,8 +_,8 @@
                          objectlistiterator1.back(objectlist1.size());
                          BlockState blockstate = this.func_236086_a_(d18, i2);
                          if (blockstate != field_222562_i) {
@@ -11,3 +11,21 @@
                                chunkprimer.func_201637_h(blockpos$mutable);
                             }
  
+@@ -582,6 +_,9 @@
+    }
+ 
+    public List<MobSpawnInfo.Spawners> func_230353_a_(Biome p_230353_1_, StructureManager p_230353_2_, EntityClassification p_230353_3_, BlockPos p_230353_4_) {
++      List<MobSpawnInfo.Spawners> spawns = net.minecraftforge.common.world.StructureSpawnManager.getStructureSpawns(p_230353_2_, p_230353_3_, p_230353_4_);
++      if (spawns != null) return spawns;
++      if (false) {//Forge: We handle these hardcoded cases above in StructureSpawnManager#getStructureSpawns, but allow for insideOnly to be changed and allow for creatures to be spawned in ones other than just the witch hut
+       if (p_230353_2_.func_235010_a_(p_230353_4_, true, Structure.field_236374_j_).func_75069_d()) {
+          if (p_230353_3_ == EntityClassification.MONSTER) {
+             return Structure.field_236374_j_.func_202279_e();
+@@ -604,6 +_,7 @@
+          if (p_230353_2_.func_235010_a_(p_230353_4_, true, Structure.field_236378_n_).func_75069_d()) {
+             return Structure.field_236378_n_.func_202279_e();
+          }
++      }
+       }
+ 
+       return super.func_230353_a_(p_230353_1_, p_230353_2_, p_230353_3_, p_230353_4_);

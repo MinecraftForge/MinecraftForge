@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/main/Main.java
 +++ b/net/minecraft/client/main/Main.java
-@@ -120,7 +120,7 @@
+@@ -120,7 +_,7 @@
        String s7 = func_206236_a(optionset, optionspec);
        Integer integer = func_206236_a(optionset, optionspec1);
        CrashReport.func_230188_h_();

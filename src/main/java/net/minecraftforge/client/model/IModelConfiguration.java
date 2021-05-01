@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -58,7 +58,10 @@ public interface IModelConfiguration {
     RenderMaterial resolveTexture(String name);
 
     /**
-     * @return True if the item uses 3D lighting.
+     * @return True if the item is a 3D model, false if it's a generated item model.
+     * TODO: Rename.
+     * This value has nothing to do with shading anymore, and this name is misleading.
+     * It's actual purpose seems to be relegated to translating the model during rendering, so that it's centered.
      */
     boolean isShadedInGui();
 

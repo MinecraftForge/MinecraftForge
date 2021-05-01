@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ import java.util.List;
  * Canceling the event will cause the player to receive no items at all.
  * The hook will still take the damage specified
  */
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 public class ItemFishedEvent extends PlayerEvent
 {
     private final NonNullList<ItemStack> stacks = NonNullList.create();
@@ -44,7 +44,7 @@ public class ItemFishedEvent extends PlayerEvent
 
     public ItemFishedEvent(List<ItemStack> stacks, int rodDamage, FishingBobberEntity hook)
     {
-        super(hook.func_234606_i_());
+        super(hook.getPlayerOwner());
         this.stacks.addAll(stacks);
         this.rodDamage = rodDamage;
         this.hook = hook;

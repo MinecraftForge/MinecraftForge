@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,6 +37,8 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.registries.ObjectHolder;
+
+import javax.annotation.Nullable;
 
 public class ConditionalRecipe
 {
@@ -79,24 +81,24 @@ public class ConditionalRecipe
 
         @SuppressWarnings("unchecked") // We return a nested one, so we can't know what type it is.
         @Override
-        public T read(ResourceLocation recipeId, JsonObject json)
+        public T fromJson(ResourceLocation recipeId, JsonObject json)
         {
-            JsonArray items = JSONUtils.getJsonArray(json, "recipes");
+            JsonArray items = JSONUtils.getAsJsonArray(json, "recipes");
             int idx = 0;
             for (JsonElement ele : items)
             {
                 if (!ele.isJsonObject())
                     throw new JsonSyntaxException("Invalid recipes entry at index " + idx + " Must be JsonObject");
-                if (CraftingHelper.processConditions(JSONUtils.getJsonArray(ele.getAsJsonObject(), "conditions")))
-                    return (T)RecipeManager.deserializeRecipe(recipeId, JSONUtils.getJsonObject(ele.getAsJsonObject(), "recipe"));
+                if (CraftingHelper.processConditions(JSONUtils.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+                    return (T)RecipeManager.fromJson(recipeId, JSONUtils.getAsJsonObject(ele.getAsJsonObject(), "recipe"));
                 idx++;
             }
             return null;
         }
 
         //Should never get here as we return one of the recipes we wrap.
-        @Override public T read(ResourceLocation recipeId, PacketBuffer buffer) { return null; }
-        @Override public void write(PacketBuffer buffer, T recipe) {}
+        @Override public T fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) { return null; }
+        @Override public void toNetwork(PacketBuffer buffer, T recipe) {}
     }
 
     public static class Builder
@@ -130,14 +132,36 @@ public class ConditionalRecipe
             return this;
         }
 
+        public Builder generateAdvancement()
+        {
+            return generateAdvancement(null);
+        }
+
+        public Builder generateAdvancement(@Nullable ResourceLocation id)
+        {
+            ConditionalAdvancement.Builder builder = ConditionalAdvancement.builder();
+            for(int i=0;i<recipes.size();i++)
+            {
+                for(ICondition cond : conditions.get(i))
+                    builder = builder.addCondition(cond);
+                builder = builder.addAdvancement(recipes.get(i));
+            }
+            return setAdvancement(id, builder);
+        }
+
+        public Builder setAdvancement(ConditionalAdvancement.Builder advancement)
+        {
+            return setAdvancement(null, advancement);
+        }
+
         public Builder setAdvancement(String namespace, String path, ConditionalAdvancement.Builder advancement)
         {
             return setAdvancement(new ResourceLocation(namespace, path), advancement);
         }
 
-        public Builder setAdvancement(ResourceLocation id, ConditionalAdvancement.Builder advancement)
+        public Builder setAdvancement(@Nullable ResourceLocation id, ConditionalAdvancement.Builder advancement)
         {
-            if (this.advId != null)
+            if (this.adv != null)
                 throw new IllegalStateException("Invalid ConditionalRecipeBuilder, Advancement already set");
             this.advId = id;
             this.adv = advancement;
@@ -156,6 +180,11 @@ public class ConditionalRecipe
             if (recipes.isEmpty())
                 throw new IllegalStateException("Invalid ConditionalRecipe builder, No recipes");
 
+            if (advId == null && adv != null)
+            {
+                advId = new ResourceLocation(id.getNamespace(), "recipes/" + id.getPath());
+            }
+
             consumer.accept(new Finished(id, conditions, recipes, advId, adv));
         }
     }
@@ -168,7 +197,7 @@ public class ConditionalRecipe
         private final ResourceLocation advId;
         private final ConditionalAdvancement.Builder adv;
 
-        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<IFinishedRecipe> recipes, ResourceLocation advId, ConditionalAdvancement.Builder adv)
+        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<IFinishedRecipe> recipes, @Nullable ResourceLocation advId, @Nullable ConditionalAdvancement.Builder adv)
         {
             this.id = id;
             this.conditions = conditions;
@@ -178,7 +207,7 @@ public class ConditionalRecipe
         }
 
         @Override
-        public void serialize(JsonObject json) {
+        public void serializeRecipeData(JsonObject json) {
             JsonArray array = new JsonArray();
             json.add("recipes", array);
             for (int x = 0; x < conditions.size(); x++)
@@ -189,30 +218,30 @@ public class ConditionalRecipe
                 for (ICondition c : conditions.get(x))
                     conds.add(CraftingHelper.serialize(c));
                 holder.add("conditions", conds);
-                holder.add("recipe", recipes.get(x).getRecipeJson());
+                holder.add("recipe", recipes.get(x).serializeRecipe());
 
                 array.add(holder);
             }
         }
 
         @Override
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return id;
         }
 
         @Override
-        public IRecipeSerializer<?> getSerializer()
+        public IRecipeSerializer<?> getType()
         {
             return SERIALZIER;
         }
 
         @Override
-        public JsonObject getAdvancementJson() {
+        public JsonObject serializeAdvancement() {
             return adv == null ? null : adv.write();
         }
 
         @Override
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return advId;
         }
     }

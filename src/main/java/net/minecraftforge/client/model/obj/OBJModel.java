@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -39,7 +39,6 @@ import net.minecraftforge.client.model.geometry.IModelGeometryPart;
 import net.minecraftforge.client.model.geometry.IMultipartModelGeometry;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
-import net.minecraftforge.common.model.TransformationHelper;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -288,9 +287,9 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             {
                 Vector4f vec4 = parseVector4(line);
                 return new Vector3f(
-                        vec4.getX() / vec4.getW(),
-                        vec4.getY() / vec4.getW(),
-                        vec4.getZ() / vec4.getW()
+                        vec4.x() / vec4.w(),
+                        vec4.y() / vec4.w(),
+                        vec4.z() / vec4.w()
                 );
             }
         }
@@ -369,7 +368,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         Vector2f uv2 = new Vector2f(0, 0);
         if (ambientToFullbright)
         {
-            int fakeLight = (int) ((ambientColor.getX() + ambientColor.getY() + ambientColor.getZ()) * 15 / 3.0f);
+            int fakeLight = (int) ((ambientColor.x() + ambientColor.y() + ambientColor.z()) * 15 / 3.0f);
             uv2 = new Vector2f((fakeLight << 4) / 32767.0f, (fakeLight << 4) / 32767.0f);
             builder.setApplyDiffuseLighting(fakeLight == 0);
         }
@@ -398,65 +397,65 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                 transformation.transformNormal(normal);
             };
             Vector4f tintedColor = new Vector4f(
-                    color.getX() * colorTint.getX(),
-                    color.getY() * colorTint.getY(),
-                    color.getZ() * colorTint.getZ(),
-                    color.getW() * colorTint.getW());
+                    color.x() * colorTint.x(),
+                    color.y() * colorTint.y(),
+                    color.z() * colorTint.z(),
+                    color.w() * colorTint.w());
             putVertexData(builder, position, texCoord, normal, tintedColor, uv2, texture);
             pos[i] = position;
             norm[i] = normal;
         }
 
-        builder.setQuadOrientation(Direction.getFacingFromVector(norm[0].getX(), norm[0].getY(),norm[0].getZ()));
+        builder.setQuadOrientation(Direction.getNearest(norm[0].x(), norm[0].y(),norm[0].z()));
 
         Direction cull = null;
         if (detectCullableFaces)
         {
-            if (MathHelper.epsilonEquals(pos[0].getX(), 0) && // vertex.position.x
-                    MathHelper.epsilonEquals(pos[1].getX(), 0) &&
-                    MathHelper.epsilonEquals(pos[2].getX(), 0) &&
-                    MathHelper.epsilonEquals(pos[3].getX(), 0) &&
-                    norm[0].getX() < 0) // vertex.normal.x
+            if (MathHelper.equal(pos[0].x(), 0) && // vertex.position.x
+                    MathHelper.equal(pos[1].x(), 0) &&
+                    MathHelper.equal(pos[2].x(), 0) &&
+                    MathHelper.equal(pos[3].x(), 0) &&
+                    norm[0].x() < 0) // vertex.normal.x
             {
                 cull = Direction.WEST;
             }
-            else if (MathHelper.epsilonEquals(pos[0].getX(), 1) && // vertex.position.x
-                    MathHelper.epsilonEquals(pos[1].getX(), 1) &&
-                    MathHelper.epsilonEquals(pos[2].getX(), 1) &&
-                    MathHelper.epsilonEquals(pos[3].getX(), 1) &&
-                    norm[0].getX() > 0) // vertex.normal.x
+            else if (MathHelper.equal(pos[0].x(), 1) && // vertex.position.x
+                    MathHelper.equal(pos[1].x(), 1) &&
+                    MathHelper.equal(pos[2].x(), 1) &&
+                    MathHelper.equal(pos[3].x(), 1) &&
+                    norm[0].x() > 0) // vertex.normal.x
             {
                 cull = Direction.EAST;
             }
-            else if (MathHelper.epsilonEquals(pos[0].getZ(), 0) && // vertex.position.z
-                    MathHelper.epsilonEquals(pos[1].getZ(), 0) &&
-                    MathHelper.epsilonEquals(pos[2].getZ(), 0) &&
-                    MathHelper.epsilonEquals(pos[3].getZ(), 0) &&
-                    norm[0].getZ() < 0) // vertex.normal.z
+            else if (MathHelper.equal(pos[0].z(), 0) && // vertex.position.z
+                    MathHelper.equal(pos[1].z(), 0) &&
+                    MathHelper.equal(pos[2].z(), 0) &&
+                    MathHelper.equal(pos[3].z(), 0) &&
+                    norm[0].z() < 0) // vertex.normal.z
             {
                 cull = Direction.NORTH; // can never remember
             }
-            else if (MathHelper.epsilonEquals(pos[0].getZ(), 1) && // vertex.position.z
-                    MathHelper.epsilonEquals(pos[1].getZ(), 1) &&
-                    MathHelper.epsilonEquals(pos[2].getZ(), 1) &&
-                    MathHelper.epsilonEquals(pos[3].getZ(), 1) &&
-                    norm[0].getZ() > 0) // vertex.normal.z
+            else if (MathHelper.equal(pos[0].z(), 1) && // vertex.position.z
+                    MathHelper.equal(pos[1].z(), 1) &&
+                    MathHelper.equal(pos[2].z(), 1) &&
+                    MathHelper.equal(pos[3].z(), 1) &&
+                    norm[0].z() > 0) // vertex.normal.z
             {
                 cull = Direction.SOUTH;
             }
-            else if (MathHelper.epsilonEquals(pos[0].getY(), 0) && // vertex.position.y
-                    MathHelper.epsilonEquals(pos[1].getY(), 0) &&
-                    MathHelper.epsilonEquals(pos[2].getY(), 0) &&
-                    MathHelper.epsilonEquals(pos[3].getY(), 0) &&
-                    norm[0].getY() < 0) // vertex.normal.z
+            else if (MathHelper.equal(pos[0].y(), 0) && // vertex.position.y
+                    MathHelper.equal(pos[1].y(), 0) &&
+                    MathHelper.equal(pos[2].y(), 0) &&
+                    MathHelper.equal(pos[3].y(), 0) &&
+                    norm[0].y() < 0) // vertex.normal.z
             {
                 cull = Direction.DOWN; // can never remember
             }
-            else if (MathHelper.epsilonEquals(pos[0].getY(), 1) && // vertex.position.y
-                    MathHelper.epsilonEquals(pos[1].getY(), 1) &&
-                    MathHelper.epsilonEquals(pos[2].getY(), 1) &&
-                    MathHelper.epsilonEquals(pos[3].getY(), 1) &&
-                    norm[0].getY() > 0) // vertex.normal.y
+            else if (MathHelper.equal(pos[0].y(), 1) && // vertex.position.y
+                    MathHelper.equal(pos[1].y(), 1) &&
+                    MathHelper.equal(pos[2].y(), 1) &&
+                    MathHelper.equal(pos[3].y(), 1) &&
+                    norm[0].y() > 0) // vertex.normal.y
             {
                 cull = Direction.UP;
             }
@@ -474,18 +473,18 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             switch(e.getUsage())
             {
                 case POSITION:
-                    consumer.put(j, position0.getX(), position0.getY(), position0.getZ(), position0.getW());
+                    consumer.put(j, position0.x(), position0.y(), position0.z(), position0.w());
                     break;
                 case COLOR:
-                    consumer.put(j, color0.getX(), color0.getY(), color0.getZ(), color0.getW());
+                    consumer.put(j, color0.x(), color0.y(), color0.z(), color0.w());
                     break;
                 case UV:
                     switch (e.getIndex())
                     {
                         case 0:
                             consumer.put(j,
-                                    texture.getInterpolatedU(texCoord0.x * 16),
-                                    texture.getInterpolatedV((flipV ? (1 - texCoord0.y) : texCoord0.y) * 16)
+                                    texture.getU(texCoord0.x * 16),
+                                    texture.getV((flipV ? (1 - texCoord0.y) : texCoord0.y) * 16)
                             );
                             break;
                         case 2:
@@ -497,7 +496,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
                     }
                     break;
                 case NORMAL:
-                    consumer.put(j, normal0.getX(), normal0.getY(), normal0.getZ());
+                    consumer.put(j, normal0.x(), normal0.y(), normal0.z());
                     break;
                 default:
                     consumer.put(j);

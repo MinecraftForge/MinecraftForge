@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/surfacebuilders/SurfaceBuilder.java
 +++ b/net/minecraft/world/gen/surfacebuilders/SurfaceBuilder.java
-@@ -8,7 +8,7 @@
+@@ -8,7 +_,7 @@
  import net.minecraft.world.biome.Biome;
  import net.minecraft.world.chunk.IChunk;
  

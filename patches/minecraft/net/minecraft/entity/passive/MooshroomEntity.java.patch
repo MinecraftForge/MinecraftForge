@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/MooshroomEntity.java
 +++ b/net/minecraft/entity/passive/MooshroomEntity.java
-@@ -41,7 +41,7 @@
+@@ -41,7 +_,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  import org.apache.commons.lang3.tuple.Pair;
  
@@ -9,7 +9,7 @@
     private static final DataParameter<String> field_213449_bz = EntityDataManager.func_187226_a(MooshroomEntity.class, DataSerializers.field_187194_d);
     private Effect field_213450_bA;
     private int field_213447_bB;
-@@ -100,7 +100,7 @@
+@@ -100,7 +_,7 @@
  
           this.func_184185_a(soundevent, 1.0F, 1.0F);
           return ActionResultType.func_233537_a_(this.field_70170_p.field_72995_K);
@@ -18,10 +18,11 @@
           this.func_230263_a_(SoundCategory.PLAYERS);
           if (!this.field_70170_p.field_72995_K) {
              itemstack.func_222118_a(1, p_230254_1_, (p_213442_1_) -> {
-@@ -235,6 +235,45 @@
+@@ -234,6 +_,45 @@
+ 
        return mooshroomentity$type2;
     }
- 
++
 +   @Override
 +   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, World world, BlockPos pos) {
 +      return func_230262_K__();
@@ -60,7 +61,6 @@
 +      return java.util.Collections.emptyList();
 +   }
 +
-+
+ 
     public static enum Type {
        RED("red", Blocks.field_150337_Q.func_176223_P()),
-       BROWN("brown", Blocks.field_150338_P.func_176223_P());

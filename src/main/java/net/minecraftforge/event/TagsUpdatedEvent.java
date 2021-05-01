@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,5 +44,27 @@ public class TagsUpdatedEvent extends Event
     public ITagCollectionSupplier getTagManager()
     {
         return manager;
+    }
+
+    /**
+     * Fired after the Vanilla Tag types have been processed
+     */
+    public static class VanillaTagTypes extends TagsUpdatedEvent
+    {
+        public VanillaTagTypes(ITagCollectionSupplier manager)
+        {
+            super(manager);
+        }
+    }
+
+    /**
+     * Fired after any custom tag types have been processed
+     */
+    public static class CustomTagTypes extends TagsUpdatedEvent
+    {
+        public CustomTagTypes(ITagCollectionSupplier manager)
+        {
+            super(manager);
+        }
     }
 }

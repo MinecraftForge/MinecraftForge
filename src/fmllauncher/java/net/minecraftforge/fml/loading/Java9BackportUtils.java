@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -49,5 +49,9 @@ public class Java9BackportUtils
         } else {
             emptyAction.run();
         }
+    }
+
+    public static <T> Stream<T> toStream(final Optional<T> optional) {
+        return optional.map(Stream::of).orElseGet(Stream::empty);
     }
 }

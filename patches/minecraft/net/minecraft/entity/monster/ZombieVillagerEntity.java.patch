@@ -1,0 +1,20 @@
+--- a/net/minecraft/entity/monster/ZombieVillagerEntity.java
++++ b/net/minecraft/entity/monster/ZombieVillagerEntity.java
+@@ -116,7 +_,7 @@
+       if (!this.field_70170_p.field_72995_K && this.func_70089_S() && this.func_82230_o()) {
+          int i = this.func_190735_dq();
+          this.field_82234_d -= i;
+-         if (this.field_82234_d <= 0) {
++         if (this.field_82234_d <= 0 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.field_200756_av, (timer) -> this.field_82234_d = timer)) {
+             this.func_213791_a((ServerWorld)this.field_70170_p);
+          }
+       }
+@@ -218,7 +_,7 @@
+       if (!this.func_174814_R()) {
+          p_213791_1_.func_217378_a((PlayerEntity)null, 1027, this.func_233580_cy_(), 0);
+       }
+-
++      net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, villagerentity);
+    }
+ 
+    private int func_190735_dq() {

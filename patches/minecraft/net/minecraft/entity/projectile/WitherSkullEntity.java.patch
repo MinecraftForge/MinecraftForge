@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/WitherSkullEntity.java
 +++ b/net/minecraft/entity/projectile/WitherSkullEntity.java
-@@ -48,7 +48,7 @@
+@@ -48,7 +_,7 @@
     }
  
     public float func_180428_a(Explosion p_180428_1_, IBlockReader p_180428_2_, BlockPos p_180428_3_, BlockState p_180428_4_, FluidState p_180428_5_, float p_180428_6_) {
@@ -9,7 +9,7 @@
     }
  
     protected void func_213868_a(EntityRayTraceResult p_213868_1_) {
-@@ -90,7 +90,7 @@
+@@ -90,7 +_,7 @@
     protected void func_70227_a(RayTraceResult p_70227_1_) {
        super.func_70227_a(p_70227_1_);
        if (!this.field_70170_p.field_72995_K) {

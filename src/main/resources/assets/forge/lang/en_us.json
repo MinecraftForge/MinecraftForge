@@ -14,6 +14,11 @@
   "fml.menu.mods.info.authors":"Authors: {0}",
   "fml.menu.mods.info.displayurl":"Homepage: {0}",
   "fml.menu.mods.info.license":"License: {0}",
+  "fml.menu.mods.info.securejardisabled": "Secure mod features disabled, update JDK",
+  "fml.menu.mods.info.signature":"Signature: {0}",
+  "fml.menu.mods.info.signature.unsigned":"UNSIGNED",
+  "fml.menu.mods.info.trust": "Trust: {0}",
+  "fml.menu.mods.info.trust.noauthority": "None",
   "fml.menu.mods.info.nochildmods":"No child mods found",
   "fml.menu.mods.info.childmods":"Child mods: {0}",
   "fml.menu.mods.info.updateavailable":"Update available: {0}",
@@ -49,6 +54,7 @@
   "fml.modloading.errorduringevent":"{0,modinfo,name} ({0,modinfo,id}) encountered an error during the {1,lower} event phase\n\u00a77{2,exc,msg}",
   "fml.modloading.failedtoloadforge": "Failed to load Forge",
   "fml.modloading.missingdependency": "Mod \u00a7e{4}\u00a7r requires \u00a76{3}\u00a7r \u00a7o{5,vr}\u00a7r\n\u00a77Currently, \u00a76{3}\u00a7r\u00a77 is \u00a7o{6,i18n,fml.messages.artifactversion.ornotinstalled}",
+  "fml.modloading.missingdependency.optional": "Mod \u00a7e{4}\u00a7r only supports \u00a73{3}\u00a7r \u00a7o{5,vr}\u00a7r\n\u00a77Currently, \u00a73{3}\u00a7r\u00a77 is \u00a7o{6}",
   "fml.modloading.cycle": "Detected a mod dependency cycle: {0}",
   "fml.modloading.failedtoprocesswork":"{0,modinfo,name} ({0,modinfo,id}) encountered an error processing deferred work\n\u00a77{2,exc,msg}",
   "fml.modloading.brokenfile": "File {2} is not a valid mod file",
@@ -56,8 +62,10 @@
   "fml.modloading.brokenfile.liteloader": "File {2} is a LiteLoader mod and cannot be loaded",
   "fml.modloading.brokenfile.fabric": "File {2} is a Fabric mod and cannot be loaded",
   "fml.modloading.brokenfile.optifine": "File {2} is an incompatible version of OptiFine",
+  "fml.modloading.brokenfile.bukkit": "File {2} is a Bukkit or Bukkit-implementor (Spigot, Paper, etc.) plugin and cannot be loaded",
   "fml.modloading.brokenfile.invalidzip": "File {2} is not a jar file",
   "fml.modloading.brokenresources": "File {2} failed to load a valid ResourcePackInfo",
+  "fml.modloading.missinglicense": "Missing License Information in file {3}",
   "fml.resources.modresources": "Resources for {0} mod files",
 
   "fml.messages.artifactversion.ornotinstalled":"{0,ornull,fml.messages.artifactversion.notinstalled}",
@@ -75,6 +83,7 @@
   "fml.messages.version.restriction.bounded.lowerexclusive":"above {0}, and {1} or below",
   "fml.messages.version.restriction.bounded.upperexclusive":"{0} or above, and below {1}",
 
+  "commands.forge.arguments.enum.invalid": "Enum constant must be one of {0}, found {1}",
   "commands.forge.dimensions.list": "Currently registered dimensions by type:",
   "commands.forge.entity.list.invalid": "Invalid filter, does not match any entities. Use /forge entity list for a proper list",
   "commands.forge.entity.list.invalidworld": "Could not load world for dimension {0}. Please select a valid dimension.",
@@ -89,6 +98,7 @@
   "commands.forge.setdim.invalid.entity": "The entity selected ({0}) is not valid.",
   "commands.forge.setdim.invalid.dim": "The dimension ID specified ({0}) is not valid.",
   "commands.forge.setdim.invalid.nochange": "The entity selected ({0}) is already in the dimension specified ({1}).",
+  "commands.forge.setdim.deprecated": "This command is deprecated for removal in 1.17, use %s instead.",
   "commands.forge.tps.invalid": "Invalid dimension {0} Possible values: {1}",
   "commands.forge.tps.summary.all": "Overall: Mean tick time: {0} ms. Mean TPS: {1}",
   "commands.forge.mods.list": "Mod List: {0}",
@@ -155,6 +165,15 @@
   "forge.controlsgui.alt": "ALT + %s",
 
   "forge.container.enchant.limitedEnchantability": "Limited Enchantability",
-  "attribute.name.generic.reachDistance": "Reach Distance",
-  "attribute.name.forge.swimSpeed": "Swim Speed"
+  "attribute.name.forge.swim_speed": "Swim Speed",
+  "attribute.name.forge.nametag_distance": "Nametag Render Distance",
+  "attribute.name.forge.entity_gravity": "Entity Gravity",
+  "attribute.name.generic.reach_distance": "Reach Distance",
+  "forge.swimSpeed": "Swim Speed",
+  "forge.nameTagDistance": "Nametag Render Distance",
+  "forge.entity_gravity": "Entity Gravity",
+  "generic.reachDistance": "Reach Distance",
+
+  "fluid.minecraft.milk": "Milk",
+  "fluid.minecraft.flowing_milk": "Milk"
 }

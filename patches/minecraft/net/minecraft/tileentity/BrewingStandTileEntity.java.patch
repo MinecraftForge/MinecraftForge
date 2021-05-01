@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/BrewingStandTileEntity.java
 +++ b/net/minecraft/tileentity/BrewingStandTileEntity.java
-@@ -146,6 +146,7 @@
+@@ -146,6 +_,7 @@
  
     private boolean func_145934_k() {
        ItemStack itemstack = this.field_145945_j.get(3);
@@ -8,7 +8,7 @@
        if (itemstack.func_190926_b()) {
           return false;
        } else if (!PotionBrewing.func_185205_a(itemstack)) {
-@@ -163,16 +164,16 @@
+@@ -163,22 +_,22 @@
     }
  
     private void func_145940_l() {
@@ -18,19 +18,27 @@
 -      for(int i = 0; i < 3; ++i) {
 -         this.field_145945_j.set(i, PotionBrewing.func_185212_d(itemstack, this.field_145945_j.get(i)));
 -      }
+-
+-      itemstack.func_190918_g(1);
 +      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, itemstack, field_145947_i);
- 
-       itemstack.func_190918_g(1);
 +      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j);
        BlockPos blockpos = this.func_174877_v();
 -      if (itemstack.func_77973_b().func_77634_r()) {
 -         ItemStack itemstack1 = new ItemStack(itemstack.func_77973_b().func_77668_q());
 +      if (itemstack.hasContainerItem()) {
 +         ItemStack itemstack1 = itemstack.getContainerItem();
++         itemstack.func_190918_g(1);
           if (itemstack.func_190926_b()) {
              itemstack = itemstack1;
           } else if (!this.field_145850_b.field_72995_K) {
-@@ -229,13 +230,13 @@
+             InventoryHelper.func_180173_a(this.field_145850_b, (double)blockpos.func_177958_n(), (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p(), itemstack1);
+          }
+       }
++      else itemstack.func_190918_g(1);
+ 
+       this.field_145945_j.set(3, itemstack);
+       this.field_145850_b.func_217379_c(1035, blockpos, 0);
+@@ -229,13 +_,13 @@
  
     public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_) {
        if (p_94041_1_ == 3) {
@@ -46,10 +54,11 @@
           }
        }
     }
-@@ -267,4 +268,27 @@
+@@ -266,5 +_,28 @@
+ 
     protected Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_) {
        return new BrewingStandContainer(p_213906_1_, p_213906_2_, this, this.field_213954_a);
-    }
++   }
 +
 +   net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =
 +           net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
@@ -68,9 +77,9 @@
 +   }
 +
 +   @Override
-+   public void func_145843_s() {
-+      super.func_145843_s();
++   protected void invalidateCaps() {
++      super.invalidateCaps();
 +      for (int x = 0; x < handlers.length; x++)
 +        handlers[x].invalidate();
-+   }
+    }
  }

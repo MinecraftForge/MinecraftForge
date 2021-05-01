@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -92,6 +92,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
     }
 
     private void scanIndividualPath(final Path path, Consumer<Path> pathConsumer) {
+        if (!Files.exists(path)) return;
         LOGGER.debug(SCAN, "Scanning exploded target {}", path.toString());
         try (Stream<Path> files = Files.find(path, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);

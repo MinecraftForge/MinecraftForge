@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/biome/provider/OverworldBiomeProvider.java
++++ b/net/minecraft/world/biome/provider/OverworldBiomeProvider.java
+@@ -35,7 +_,7 @@
+    private final Registry<Biome> field_242636_k;
+ 
+    public OverworldBiomeProvider(long p_i241958_1_, boolean p_i241958_3_, boolean p_i241958_4_, Registry<Biome> p_i241958_5_) {
+-      super(field_226847_e_.stream().map((p_242638_1_) -> {
++      super(java.util.stream.Stream.concat(field_226847_e_.stream(), net.minecraftforge.common.BiomeManager.getAdditionalOverworldBiomes().stream()).map((p_242638_1_) -> {
+          return () -> {
+             return p_i241958_5_.func_243576_d(p_242638_1_);
+          };

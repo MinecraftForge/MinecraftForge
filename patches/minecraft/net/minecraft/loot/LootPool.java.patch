@@ -1,6 +1,6 @@
 --- a/net/minecraft/loot/LootPool.java
 +++ b/net/minecraft/loot/LootPool.java
-@@ -25,17 +25,19 @@
+@@ -25,17 +_,19 @@
  import org.apache.commons.lang3.mutable.MutableInt;
  
  public class LootPool {
@@ -25,7 +25,7 @@
        this.field_216101_c = LootConditionManager.func_216305_a(p_i51268_2_);
        this.field_216102_d = p_i51268_3_;
        this.field_216103_e = LootFunctionManager.func_216241_a(p_i51268_3_);
-@@ -92,19 +94,33 @@
+@@ -92,19 +_,33 @@
     }
  
     public void func_227505_a_(ValidationTracker p_227505_1_) {
@@ -63,7 +63,7 @@
  
     public static LootPool.Builder func_216096_a() {
        return new LootPool.Builder();
-@@ -116,6 +132,7 @@
+@@ -116,6 +_,7 @@
        private final List<ILootFunction> field_216049_c = Lists.newArrayList();
        private IRandomRange field_216050_d = new RandomValueRange(1.0F);
        private RandomValueRange field_216051_e = new RandomValueRange(0.0F, 0.0F);
@@ -71,7 +71,7 @@
  
        public LootPool.Builder func_216046_a(IRandomRange p_216046_1_) {
           this.field_216050_d = p_216046_1_;
-@@ -141,11 +158,21 @@
+@@ -141,11 +_,21 @@
           return this;
        }
  
@@ -94,7 +94,7 @@
           }
        }
     }
-@@ -158,18 +185,20 @@
+@@ -158,18 +_,20 @@
           ILootFunction[] ailootfunction = JSONUtils.func_188177_a(jsonobject, "functions", new ILootFunction[0], p_deserialize_3_, ILootFunction[].class);
           IRandomRange irandomrange = RandomRanges.func_216130_a(jsonobject.get("rolls"), p_deserialize_3_);
           RandomValueRange randomvaluerange = JSONUtils.func_188177_a(jsonobject, "bonus_rolls", new RandomValueRange(0.0F, 0.0F), p_deserialize_3_, RandomValueRange.class);

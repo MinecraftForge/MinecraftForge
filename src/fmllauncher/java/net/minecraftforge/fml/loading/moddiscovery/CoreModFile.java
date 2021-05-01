@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,5 +55,10 @@ public class CoreModFile implements ICoreModFile {
     @Override
     public String getOwnerId() {
         return this.file.getModInfos().get(0).getModId();
+    }
+
+    @Override
+    public String toString() {
+        return "{Name: " + name + ", Owner: " + getOwnerId() + " @ " + getPath() + "}";
     }
 }

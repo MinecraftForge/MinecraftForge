@@ -1,0 +1,15 @@
+--- a/net/minecraft/util/ResourceLocation.java
++++ b/net/minecraft/util/ResourceLocation.java
+@@ -112,6 +_,12 @@
+       return i;
+    }
+ 
++   // Normal compare sorts by path first, this compares namespace first.
++   public int compareNamespaced(ResourceLocation o) {
++      int ret = this.field_110626_a.compareTo(o.field_110626_a);
++      return ret != 0 ? ret : this.field_110625_b.compareTo(o.field_110625_b);
++   }
++
+    public static ResourceLocation func_195826_a(StringReader p_195826_0_) throws CommandSyntaxException {
+       int i = p_195826_0_.getCursor();
+ 

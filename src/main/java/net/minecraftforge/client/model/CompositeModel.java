@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -88,7 +88,7 @@ public class CompositeModel implements IDynamicBakedModel
     }
 
     @Override
-    public boolean isAmbientOcclusion()
+    public boolean useAmbientOcclusion()
     {
         return isAmbientOcclusion;
     }
@@ -100,19 +100,19 @@ public class CompositeModel implements IDynamicBakedModel
     }
 
     @Override
-    public boolean func_230044_c_()
+    public boolean usesBlockLight()
     {
         return isSideLit;
     }
 
     @Override
-    public boolean isBuiltInRenderer()
+    public boolean isCustomRenderer()
     {
         return false;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture()
+    public TextureAtlasSprite getParticleIcon()
     {
         return particle;
     }
@@ -168,14 +168,14 @@ public class CompositeModel implements IDynamicBakedModel
 
         public IBakedModel bakeModel(ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
-            return model.bakeModel(bakery, spriteGetter, new ModelTransformComposition(this.modelTransform, modelTransform,
-                    this.modelTransform.isUvLock() || modelTransform.isUvLock()), modelLocation);
+            return model.bake(bakery, spriteGetter, new ModelTransformComposition(this.modelTransform, modelTransform,
+                    this.modelTransform.isUvLocked() || modelTransform.isUvLocked()), modelLocation);
         }
 
         @Override
         public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
         {
-            return model.getTextures(modelGetter, missingTextureErrors);
+            return model.getMaterials(modelGetter, missingTextureErrors);
         }
     }
 
@@ -214,7 +214,7 @@ public class CompositeModel implements IDynamicBakedModel
                     continue;
                 bakedParts.put(part.getKey(), submodel.bakeModel(bakery, spriteGetter, modelTransform, modelLocation));
             }
-            return new CompositeModel(owner.isShadedInGui(), owner.useSmoothLighting(), owner.isSideLit(), particle, bakedParts.build(), owner.getCombinedTransform(), overrides);
+            return new CompositeModel(owner.isShadedInGui(), owner.isSideLit(), owner.useSmoothLighting(), particle, bakedParts.build(), owner.getCombinedTransform(), overrides);
         }
 
         @Override

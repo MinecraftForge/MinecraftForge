@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,13 +20,16 @@
 package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -78,7 +81,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
         public EntityInteractSpecific(PlayerEntity player, Hand hand, Entity target, Vector3d localPos)
         {
-            super(player, hand, target.func_233580_cy_(), null);
+            super(player, hand, target.blockPosition(), null);
             this.localPos = localPos;
             this.target = target;
         }
@@ -118,7 +121,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
         public EntityInteract(PlayerEntity player, Hand hand, Entity target)
         {
-            super(player, hand, target.func_233580_cy_(), null);
+            super(player, hand, target.blockPosition(), null);
             this.target = target;
         }
 
@@ -129,25 +132,33 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
-     * This event is fired on both sides whenever the player right clicks while targeting a block.
-     * This event controls which of {@link net.minecraft.block.Block#onBlockActivated} and/or {@link net.minecraft.item.Item#onItemUse}
-     * will be called after {@link net.minecraft.item.Item#onItemUseFirst} is called.
-     * Canceling the event will cause none of the above three to be called
-     *
-     * Let result be a return value of the above three methods, or {@link #cancellationResult} if the event is cancelled.
-     * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
-     *
-     * There are various results to this event, see the getters below.
-     * Note that handling things differently on the client vs server may cause desynchronizations!
+     * This event is fired on both sides whenever the player right clicks while targeting a block. <br>
+     * This event controls which of {@link Item#onItemUseFirst}, {@link Block#onBlockActivated}, and {@link Item#onItemUse}
+     * will be called. <br>
+     * Canceling the event will cause none of the above three to be called. <br>
+     * <br>
+     * Let result be the first non-pass return value of the above three methods, or pass, if they all pass. <br>
+     * Or {@link #cancellationResult} if the event is cancelled. <br>
+     * If result equals {@link ActionResultType#PASS}, we proceed to {@link RightClickItem}.  <br>
+     * <br>
+     * There are various results to this event, see the getters below.  <br>
+     * Note that handling things differently on the client vs server may cause desynchronizations! 
      */
     @Cancelable
     public static class RightClickBlock extends PlayerInteractEvent
     {
         private Result useBlock = DEFAULT;
         private Result useItem = DEFAULT;
+        private BlockRayTraceResult hitVec;
 
+        @Deprecated //Use RayTraceResult version.  TODO: Remove 1.17
         public RightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
             super(player, hand, pos, face);
+        }
+
+        public RightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, BlockRayTraceResult hitVec) {
+            super(player, hand, pos, hitVec.getDirection());
+            this.hitVec = hitVec;
         }
 
         /**
@@ -167,9 +178,18 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * DENY: Block will never be used.
-         * DEFAULT: Default behaviour (sneak will not use block, unless all items return true in {@link net.minecraft.item.Item#doesSneakBypassUse}).
-         * ALLOW: Block will always be used, regardless of sneaking and doesSneakBypassUse.
+         * @return The ray trace result targeting the block.
+         */
+        public BlockRayTraceResult getHitVec()
+        {
+            return hitVec;
+        }
+
+        /**
+         * DENY: {@link Block#onBlockActivated} will never be called. <br>
+         * DEFAULT: {@link Block#onBlockActivated} will be called if {@link Item#onItemUseFirst} passes. <br>
+         * Note that default activation can be blocked if the user is sneaking and holding an item that does not return true to {@link Item#doesSneakBypassUse}. <br>
+         * ALLOW: {@link Block#onBlockActivated} will always be called, unless {@link Item#onItemUseFirst} does not pass. <br>
          */
         public void setUseBlock(Result triggerBlock)
         {
@@ -177,9 +197,9 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * DENY: The item will never be used.
-         * DEFAULT: The item will be used if the block fails.
-         * ALLOW: The item will always be used.
+         * DENY: Neither {@link Item#onItemUse} or {@link Item#onItemUseFirst} will be called. <br>
+         * DEFAULT: {@link Item#onItemUseFirst} will always be called, and {@link Item#onItemUse} will be called if the block passes. <br>
+         * ALLOW: {@link Item#onItemUseFirst} will always be called, and {@link Item#onItemUse} will be called if the block passes, regardless of cooldowns or emptiness. <br>
          */
         public void setUseItem(Result triggerItem)
         {
@@ -210,7 +230,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public RightClickItem(PlayerEntity player, Hand hand)
         {
-            super(player, hand, player.func_233580_cy_(), null);
+            super(player, hand, player.blockPosition(), null);
         }
     }
 
@@ -223,7 +243,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public RightClickEmpty(PlayerEntity player, Hand hand)
         {
-            super(player, hand, player.func_233580_cy_(), null);
+            super(player, hand, player.blockPosition(), null);
         }
     }
 
@@ -297,7 +317,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         public LeftClickEmpty(PlayerEntity player)
         {
-            super(player, Hand.MAIN_HAND, player.func_233580_cy_(), null);
+            super(player, Hand.MAIN_HAND, player.blockPosition(), null);
         }
     }
 
@@ -316,7 +336,7 @@ public class PlayerInteractEvent extends PlayerEvent
     @Nonnull
     public ItemStack getItemStack()
     {
-        return getPlayer().getHeldItem(hand);
+        return getPlayer().getItemInHand(hand);
     }
 
     /**
@@ -346,7 +366,7 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public World getWorld()
     {
-        return getPlayer().getEntityWorld();
+        return getPlayer().getCommandSenderWorld();
     }
 
     /**
@@ -354,7 +374,7 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public LogicalSide getSide()
     {
-        return getWorld().isRemote ? LogicalSide.CLIENT : LogicalSide.SERVER;
+        return getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER;
     }
 
     /**

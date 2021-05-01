@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,15 +24,12 @@ import com.google.common.base.CharMatcher;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class StartupMessageManager {
-    private static final EnumMap<MessageType, List<Message>> messages = new EnumMap<>(MessageType.class);
-    static {
-        Arrays.stream(MessageType.values()).forEach(mt->messages.computeIfAbsent(mt, k->new CopyOnWriteArrayList<>()));
-    }
+
+    private static volatile EnumMap<MessageType, List<Message>> messages = new EnumMap<>(MessageType.class);
 
     public static List<Pair<Integer,Message>> getMessages() {
         final long ts = System.nanoTime();
@@ -88,22 +85,42 @@ public class StartupMessageManager {
         }
     }
 
+    private synchronized static void addMessage(MessageType type, String message, int maxSize)
+    {
+        EnumMap<MessageType, List<Message>> newMessages = new EnumMap<>(messages);
+        newMessages.compute(type, (key, existingList) -> {
+            List<Message> newList = new ArrayList<>();
+            if (existingList != null)
+            {
+                if (maxSize < 0)
+                {
+                    newList.addAll(existingList);
+                }
+                else
+                {
+                    newList.addAll(existingList.subList(0, Math.min(existingList.size(), maxSize)));
+                }
+            }
+            newList.add(new Message(message, type));
+            return newList;
+        });
+        messages = newMessages;
+    }
+
     public static void addModMessage(final String message) {
         final String safeMessage = Ascii.truncate(CharMatcher.ascii().retainFrom(message),80,"~");
-        final List<Message> messages = StartupMessageManager.messages.get(MessageType.MOD);
-        messages.subList(0, Math.max(0, messages.size() - 20)).clear();
-        messages.add(new Message(safeMessage, MessageType.MOD));
+        addMessage(MessageType.MOD, safeMessage, 20);
     }
 
     public static Optional<Consumer<String>> modLoaderConsumer() {
-        return Optional.of(s-> messages.get(MessageType.ML).add(new Message(s, MessageType.ML)));
+        return Optional.of(s-> addMessage(MessageType.ML, s, -1));
     }
 
     public static Optional<Consumer<String>> locatorConsumer() {
-        return Optional.of(s -> messages.get(MessageType.LOC).add(new Message(s, MessageType.LOC)));
+        return Optional.of(s -> addMessage(MessageType.LOC, s, -1));
     }
 
     public static Optional<Consumer<String>> mcLoaderConsumer() {
-        return Optional.of(s-> messages.get(MessageType.MC).add(new Message(s, MessageType.MC)));
+        return Optional.of(s-> addMessage(MessageType.MC, s, -1));
     }
 }

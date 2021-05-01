@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -101,12 +101,12 @@ public class SimpleChannel
 
     public <MSG> void sendToServer(MSG message)
     {
-        sendTo(message, Minecraft.getInstance().getConnection().getNetworkManager(), NetworkDirection.PLAY_TO_SERVER);
+        sendTo(message, Minecraft.getInstance().getConnection().getConnection(), NetworkDirection.PLAY_TO_SERVER);
     }
 
     public <MSG> void sendTo(MSG message, NetworkManager manager, NetworkDirection direction)
     {
-        manager.sendPacket(toVanillaPacket(message, direction));
+        manager.send(toVanillaPacket(message, direction));
     }
 
     /**
@@ -132,6 +132,13 @@ public class SimpleChannel
     public <MSG> void reply(MSG msgToReply, NetworkEvent.Context context)
     {
         context.getPacketDispatcher().sendPacket(instance.getChannelName(), toBuffer(msgToReply).getLeft());
+    }
+
+    /**
+     * Returns true if the channel is present in the given connection.
+     */
+    public boolean isRemotePresent(NetworkManager manager) {
+        return instance.isRemotePresent(manager);
     }
 
     /**

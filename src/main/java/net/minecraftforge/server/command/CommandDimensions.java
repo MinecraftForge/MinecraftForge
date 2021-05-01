@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,18 +42,18 @@ public class CommandDimensions
     static ArgumentBuilder<CommandSource, ?> register()
     {
         return Commands.literal("dimensions")
-            .requires(cs->cs.hasPermissionLevel(0)) //permission
+            .requires(cs->cs.hasPermission(0)) //permission
             .executes(ctx -> {
-                ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.dimensions.list"), true);
-                final Registry<DimensionType> reg = ctx.getSource().func_241861_q().func_243612_b(Registry.field_239698_ad_);
+                ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.dimensions.list"), true);
+                final Registry<DimensionType> reg = ctx.getSource().registryAccess().registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
 
                 Map<ResourceLocation, List<ResourceLocation>> types = new HashMap<>();
-                for (ServerWorld dim : ctx.getSource().getServer().getWorlds()) {
-                    types.computeIfAbsent(reg.getKey(dim.func_230315_m_()), k -> new ArrayList<>()).add(dim.func_234923_W_().func_240901_a_());
+                for (ServerWorld dim : ctx.getSource().getServer().getAllLevels()) {
+                    types.computeIfAbsent(reg.getKey(dim.dimensionType()), k -> new ArrayList<>()).add(dim.dimension().location());
                 }
 
                 types.keySet().stream().sorted().forEach(key -> {
-                    ctx.getSource().sendFeedback(new StringTextComponent(key + ": " + types.get(key).stream().map(ResourceLocation::toString).sorted().collect(Collectors.joining(", "))), false);
+                    ctx.getSource().sendSuccess(new StringTextComponent(key + ": " + types.get(key).stream().map(ResourceLocation::toString).sorted().collect(Collectors.joining(", "))), false);
                 });
                 return 0;
             });

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.*;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -34,6 +35,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
+
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 /**
  * Wrapper for vanilla and forge buckets.
@@ -60,7 +63,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
     public boolean canFillFluidType(FluidStack fluid)
     {
-        if (fluid.getFluid() == Fluids.WATER || fluid.getFluid() == Fluids.LAVA || fluid.getFluid().getRegistryName().equals(new ResourceLocation("milk")))
+        if (fluid.getFluid() == Fluids.WATER || fluid.getFluid() == Fluids.LAVA)
         {
             return true;
         }
@@ -74,6 +77,10 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         if (item instanceof BucketItem)
         {
             return new FluidStack(((BucketItem)item).getFluid(), FluidAttributes.BUCKET_VOLUME);
+        }
+        else if (item instanceof MilkBucketItem && ForgeMod.MILK.isPresent())
+        {
+            return new FluidStack(ForgeMod.MILK.get(), FluidAttributes.BUCKET_VOLUME);
         }
         else
         {

@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/gen/settings/DimensionGeneratorSettings.java
++++ b/net/minecraft/world/gen/settings/DimensionGeneratorSettings.java
+@@ -192,7 +_,7 @@
+       String s3 = (String)p_242753_1_.get("level-type");
+       String s4 = Optional.ofNullable(s3).map((p_236217_0_) -> {
+          return p_236217_0_.toLowerCase(Locale.ROOT);
+-      }).orElse("default");
++      }).orElseGet(net.minecraftforge.common.ForgeHooks::getDefaultWorldType);
+       p_242753_1_.put("level-type", s4);
+       long i = (new Random()).nextLong();
+       if (!s1.isEmpty()) {
+@@ -210,6 +_,8 @@
+       Registry<Biome> registry = p_242753_0_.func_243612_b(Registry.field_239720_u_);
+       Registry<DimensionSettings> registry1 = p_242753_0_.func_243612_b(Registry.field_243549_ar);
+       SimpleRegistry<Dimension> simpleregistry = DimensionType.func_242718_a(registry2, registry, registry1, i);
++      net.minecraftforge.common.world.ForgeWorldType type = net.minecraftforge.registries.ForgeRegistries.WORLD_TYPES.getValue(new net.minecraft.util.ResourceLocation(s4));
++      if (type != null) return type.createSettings(p_242753_0_, i, flag, false, s);
+       switch(s4) {
+       case "flat":
+          JsonObject jsonobject = !s.isEmpty() ? JSONUtils.func_212745_a(s) : new JsonObject();

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -102,7 +102,7 @@ public class ModelLoaderRegistry
         synchronized(loaders)
         {
             loaders.put(id, loader);
-            ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(loader);
+            ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener(loader);
         }
     }
 
@@ -133,7 +133,7 @@ public class ModelLoaderRegistry
             return null;
         }
 
-        ResourceLocation loader = new ResourceLocation(JSONUtils.getString(object,"loader"));
+        ResourceLocation loader = new ResourceLocation(JSONUtils.getAsString(object,"loader"));
         return getModel(loader, deserializationContext, object);
     }
 
@@ -175,14 +175,16 @@ public class ModelLoaderRegistry
         return blockMaterial(tex);
     }
 
+    @SuppressWarnings("deprecation")
     public static RenderMaterial blockMaterial(String location)
     {
-        return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, new ResourceLocation(location));
+        return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, new ResourceLocation(location));
     }
 
+    @SuppressWarnings("deprecation")
     public static RenderMaterial blockMaterial(ResourceLocation location)
     {
-        return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS_TEXTURE, location);
+        return new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, location);
     }
 
     @Nullable
@@ -262,15 +264,15 @@ public class ModelLoaderRegistry
         IModelGeometry<?> customModel = blockModel.customData.getCustomGeometry();
         IModelTransform customModelState = blockModel.customData.getCustomModelState();
         if (customModelState != null)
-            modelTransform = new ModelTransformComposition(modelTransform, customModelState, modelTransform.isUvLock());
+            modelTransform = new ModelTransformComposition(modelTransform, customModelState, modelTransform.isUvLocked());
 
         if (customModel != null)
             model = customModel.bake(blockModel.customData, modelBakery, spriteGetter, modelTransform, blockModel.getOverrides(modelBakery, otherModel, spriteGetter), modelLocation);
         else
         {
             // handle vanilla item models here, since vanilla has a shortcut for them
-            if (blockModel.getRootModel() == ModelBakery.MODEL_GENERATED) {
-                model = ITEM_MODEL_GENERATOR.makeItemModel(spriteGetter, blockModel).bakeModel(modelBakery, blockModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
+            if (blockModel.getRootModel() == ModelBakery.GENERATION_MARKER) {
+                model = ITEM_MODEL_GENERATOR.generateBlockModel(spriteGetter, blockModel).bake(modelBakery, blockModel, spriteGetter, modelTransform, modelLocation, guiLight3d);
             }
             else
             {
@@ -297,14 +299,14 @@ public class ModelLoaderRegistry
         public void addQuads(IModelConfiguration owner, IModelBuilder<?> modelBuilder, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ResourceLocation modelLocation)
         {
             for(BlockPart blockpart : elements) {
-                for(Direction direction : blockpart.mapFaces.keySet()) {
-                    BlockPartFace blockpartface = blockpart.mapFaces.get(direction);
+                for(Direction direction : blockpart.faces.keySet()) {
+                    BlockPartFace blockpartface = blockpart.faces.get(direction);
                     TextureAtlasSprite textureatlassprite1 = spriteGetter.apply(owner.resolveTexture(blockpartface.texture));
-                    if (blockpartface.cullFace == null) {
+                    if (blockpartface.cullForDirection == null) {
                         modelBuilder.addGeneralQuad(BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
                     } else {
                         modelBuilder.addFaceQuad(
-                                modelTransform.getRotation().rotateTransform(blockpartface.cullFace),
+                                modelTransform.getRotation().rotateTransform(blockpartface.cullForDirection),
                                 BlockModel.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, modelTransform, modelLocation));
                     }
                 }
@@ -317,7 +319,7 @@ public class ModelLoaderRegistry
             Set<RenderMaterial> textures = Sets.newHashSet();
 
             for(BlockPart part : elements) {
-                for(BlockPartFace face : part.mapFaces.values()) {
+                for(BlockPartFace face : part.faces.values()) {
                     RenderMaterial texture = owner.resolveTexture(face.texture);
                     if (Objects.equals(texture, MissingTextureSprite.getLocation().toString())) {
                         missingTextureErrors.add(Pair.of(face.texture, owner.getModelName()));
@@ -354,7 +356,7 @@ public class ModelLoaderRegistry
             private List<BlockPart> getModelElements(JsonDeserializationContext deserializationContext, JsonObject object) {
                 List<BlockPart> list = Lists.newArrayList();
                 if (object.has("elements")) {
-                    for(JsonElement jsonelement : JSONUtils.getJsonArray(object, "elements")) {
+                    for(JsonElement jsonelement : JSONUtils.getAsJsonArray(object, "elements")) {
                         list.add(deserializationContext.deserialize(jsonelement, BlockPart.class));
                     }
                 }
@@ -396,7 +398,7 @@ public class ModelLoaderRegistry
 
             if (jsonobject.has("visibility"))
             {
-                JsonObject visibility = JSONUtils.getJsonObject(jsonobject, "visibility");
+                JsonObject visibility = JSONUtils.getAsJsonObject(jsonobject, "visibility");
                 for(Map.Entry<String, JsonElement> part : visibility.entrySet())
                 {
                     model.customData.visibilityData.setVisibilityState(part.getKey(), part.getValue().getAsBoolean());

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/IModelTransform.java
 +++ b/net/minecraft/client/renderer/model/IModelTransform.java
-@@ -5,7 +5,7 @@
+@@ -5,7 +_,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/placement/Placement.java
 +++ b/net/minecraft/world/gen/placement/Placement.java
-@@ -8,7 +8,7 @@
+@@ -8,7 +_,7 @@
  import net.minecraft.world.gen.feature.FeatureSpreadConfig;
  import net.minecraft.world.gen.feature.WorldDecoratingHelper;
  

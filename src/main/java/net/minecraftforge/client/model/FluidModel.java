@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -57,8 +57,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 // TODO: Write a model loader and test/fix as needed
 public final class FluidModel implements IModelGeometry<FluidModel>
@@ -322,8 +320,8 @@ public final class FluidModel implements IModelGeometry<FluidModel>
                 // sides
                 for (int i = 0; i < 4; i++)
                 {
-                    Direction side = Direction.byHorizontalIndex((5 - i) % 4); // [W, S, E, N]
-                    boolean useOverlay = overlay.isPresent() && sideOverlays[side.getHorizontalIndex()];
+                    Direction side = Direction.from2DDataValue((5 - i) % 4); // [W, S, E, N]
+                    boolean useOverlay = overlay.isPresent() && sideOverlays[side.get2DDataValue()];
                     int si = i; // local var for lambda capture
 
                     VertexParameter sideX = j -> x[(si + x[j]) % 4];
@@ -379,8 +377,8 @@ public final class FluidModel implements IModelGeometry<FluidModel>
                 putVertex(
                     consumer, side, offset,
                     x.get(vertex), y.get(vertex), z.get(vertex),
-                    texture.getInterpolatedU(u.get(vertex)),
-                    texture.getInterpolatedV(v.get(vertex))
+                    texture.getU(u.get(vertex)),
+                    texture.getV(v.get(vertex))
                 );
             }
 
@@ -396,9 +394,9 @@ public final class FluidModel implements IModelGeometry<FluidModel>
                 switch(elements.get(e).getUsage())
                 {
                 case POSITION:
-                    float dx = offset ? side.getDirectionVec().getX() * eps : 0f;
-                    float dy = offset ? side.getDirectionVec().getY() * eps : 0f;
-                    float dz = offset ? side.getDirectionVec().getZ() * eps : 0f;
+                    float dx = offset ? side.getNormal().getX() * eps : 0f;
+                    float dy = offset ? side.getNormal().getY() * eps : 0f;
+                    float dz = offset ? side.getNormal().getZ() * eps : 0f;
                     consumer.put(e, x - dx, y - dy, z - dz, 1f);
                     break;
                 case COLOR:
@@ -409,9 +407,9 @@ public final class FluidModel implements IModelGeometry<FluidModel>
                     consumer.put(e, r, g, b, a);
                     break;
                 case NORMAL:
-                    float offX = (float) side.getXOffset();
-                    float offY = (float) side.getYOffset();
-                    float offZ = (float) side.getZOffset();
+                    float offX = (float) side.getStepX();
+                    float offY = (float) side.getStepY();
+                    float offZ = (float) side.getStepZ();
                     consumer.put(e, offX, offY, offZ, 0f);
                     break;
                 case UV:
@@ -429,7 +427,7 @@ public final class FluidModel implements IModelGeometry<FluidModel>
         }
 
         @Override
-        public boolean isAmbientOcclusion()
+        public boolean useAmbientOcclusion()
         {
             return true;
         }
@@ -441,19 +439,19 @@ public final class FluidModel implements IModelGeometry<FluidModel>
         }
 
         @Override
-        public boolean func_230044_c_()
+        public boolean usesBlockLight()
         {
             return false;
         }
 
         @Override
-        public boolean isBuiltInRenderer()
+        public boolean isCustomRenderer()
         {
             return false;
         }
 
         @Override
-        public TextureAtlasSprite getParticleTexture()
+        public TextureAtlasSprite getParticleIcon()
         {
             return still;
         }

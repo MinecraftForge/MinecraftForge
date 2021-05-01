@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,14 +52,14 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     }
 
     @Override
-    public <V extends T> V register(int id, RegistryKey<T> key, V value, Lifecycle lifecycle)
+    public <V extends T> V registerMapping(int id, RegistryKey<T> key, V value, Lifecycle lifecycle)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
         Validate.notNull(value);
 
         if (value.getRegistryName() == null)
-            value.setRegistryName(key.func_240901_a_());
+            value.setRegistryName(key.location());
 
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
@@ -71,29 +71,36 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     @Override
     public <V extends T> V register(RegistryKey<T> key, V value, Lifecycle lifecycle)
     {
-        return register(-1, key, value, lifecycle);
+        return registerMapping(-1, key, value, lifecycle);
     }
 
     @Override
-    public <V extends T> V func_241874_a(OptionalInt id, RegistryKey<T> key, V value, Lifecycle lifecycle) {
+    public <V extends T> V registerOrOverride(OptionalInt id, RegistryKey<T> key, V value, Lifecycle lifecycle) {
         int wanted = -1;
-        if (id.isPresent() && getByValue(id.getAsInt()) != null)
+        if (id.isPresent() && byId(id.getAsInt()) != null)
             wanted = id.getAsInt();
-        return register(wanted, key, value, lifecycle);
+        return registerMapping(wanted, key, value, lifecycle);
     }
 
     // Reading Functions
     @Override
-    public Optional<T> func_241873_b(@Nullable ResourceLocation name)
+    public Optional<T> getOptional(@Nullable ResourceLocation name)
     {
         return Optional.ofNullable( this.delegate.getRaw(name)); //get without default
     }
 
     @Override
     @Nullable
-    public T getOrDefault(@Nullable ResourceLocation name)
+    public T get(@Nullable ResourceLocation name)
     {
         return this.delegate.getValue(name); //getOrDefault
+    }
+
+    @Override
+    @Nullable
+    public T get(@Nullable RegistryKey<T> name)
+    {
+        return name == null ? null : this.delegate.getRaw(name.location()); //get without default
     }
 
     @Override
@@ -117,7 +124,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
 
     @Override
     @Nullable
-    public T getByValue(int id)
+    public T byId(int id)
     {
         return this.delegate.getValue(id);
     }
@@ -135,7 +142,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     }
 
     @Override
-    public Set<Map.Entry<RegistryKey<T>, T>> func_239659_c_()
+    public Set<Map.Entry<RegistryKey<T>, T>> entrySet()
     {
         return this.delegate.getEntries();
     }

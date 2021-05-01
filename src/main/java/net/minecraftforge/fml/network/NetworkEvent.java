@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -209,8 +209,8 @@ public class NetworkEvent extends Event
             ThreadTaskExecutor<?> executor = LogicalSidedProvider.WORKQUEUE.get(getDirection().getReceptionSide());
             // Must check ourselves as Minecraft will sometimes delay tasks even when they are received on the client thread
             // Same logic as ThreadTaskExecutor#runImmediately without the join
-            if (!executor.isOnExecutionThread()) {
-                return executor.deferTask(runnable); // Use the internal method so thread check isn't done twice
+            if (!executor.isSameThread()) {
+                return executor.submitAsync(runnable); // Use the internal method so thread check isn't done twice
             } else {
                 runnable.run();
                 return CompletableFuture.completedFuture(null);
@@ -223,7 +223,7 @@ public class NetworkEvent extends Event
         @Nullable
         public ServerPlayerEntity getSender()
         {
-            INetHandler netHandler = networkManager.getNetHandler();
+            INetHandler netHandler = networkManager.getPacketListener();
             if (netHandler instanceof ServerPlayNetHandler)
             {
                 ServerPlayNetHandler netHandlerPlayServer = (ServerPlayNetHandler) netHandler;

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -66,10 +66,10 @@ public class LanguageHook
         try
         {
             JsonElement jsonelement = GSON.fromJson(new InputStreamReader(inputstream, StandardCharsets.UTF_8), JsonElement.class);
-            JsonObject jsonobject = JSONUtils.getJsonObject(jsonelement, "strings");
+            JsonObject jsonobject = JSONUtils.convertToJsonObject(jsonelement, "strings");
 
             jsonobject.entrySet().forEach(entry -> {
-                String s = PATTERN.matcher(JSONUtils.getString(entry.getValue(), entry.getKey())).replaceAll("%$1s");
+                String s = PATTERN.matcher(JSONUtils.convertToString(entry.getValue(), entry.getKey())).replaceAll("%$1s");
                 modTable.put(entry.getKey(), s);
             });
         }
@@ -81,11 +81,11 @@ public class LanguageHook
 
     private static void loadLanguage(String langName, MinecraftServer server) {
         String langFile = String.format("lang/%s.json", langName);
-        IResourceManager resourceManager = server.getDataPackRegistries().func_240970_h_();
-        resourceManager.getResourceNamespaces().forEach(namespace -> {
+        IResourceManager resourceManager = server.getDataPackRegistries().getResourceManager();
+        resourceManager.getNamespaces().forEach(namespace -> {
             try {
                 ResourceLocation langResource = new ResourceLocation(namespace, langFile);
-                loadLocaleData(resourceManager.getAllResources(langResource));
+                loadLocaleData(resourceManager.getResources(langResource));
             } catch (FileNotFoundException fnfe) {
             } catch (Exception exception) {
                 LOGGER.warn("Skipped language file: {}:{}", namespace, langFile, exception);

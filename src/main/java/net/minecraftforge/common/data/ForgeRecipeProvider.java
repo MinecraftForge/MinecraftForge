@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -46,7 +46,6 @@ import net.minecraft.item.crafting.Ingredient.IItemList;
 import net.minecraft.item.crafting.Ingredient.TagList;
 import net.minecraft.item.crafting.Ingredient.SingleItemList;
 import net.minecraft.tags.ITag;
-import net.minecraft.tags.Tag;
 import net.minecraft.util.IItemProvider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
@@ -72,12 +71,12 @@ public class ForgeRecipeProvider extends RecipeProvider
     }
 
     @Override
-    protected void registerRecipes(Consumer<IFinishedRecipe> consumer)
+    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer)
     {
         replace(Items.STICK,        Tags.Items.RODS_WOODEN);
         replace(Items.GOLD_INGOT,   Tags.Items.INGOTS_GOLD);
         replace(Items.IRON_INGOT,   Tags.Items.INGOTS_IRON);
-        replace(Items.field_234759_km_, Tags.Items.INGOTS_NETHERITE);
+        replace(Items.NETHERITE_INGOT, Tags.Items.INGOTS_NETHERITE);
         replace(Items.DIAMOND,      Tags.Items.GEMS_DIAMOND);
         replace(Items.EMERALD,      Tags.Items.GEMS_EMERALD);
         replace(Items.CHEST,        Tags.Items.CHESTS_WOODEN);
@@ -89,13 +88,13 @@ public class ForgeRecipeProvider extends RecipeProvider
         exclude(Items.IRON_NUGGET);
         exclude(Blocks.DIAMOND_BLOCK);
         exclude(Blocks.EMERALD_BLOCK);
-        exclude(Blocks.field_235397_ng_);
-        
+        exclude(Blocks.NETHERITE_BLOCK);
+
         exclude(Blocks.COBBLESTONE_STAIRS);
         exclude(Blocks.COBBLESTONE_SLAB);
         exclude(Blocks.COBBLESTONE_WALL);
 
-        super.registerRecipes(vanilla -> {
+        super.buildShapelessRecipes(vanilla -> {
             IFinishedRecipe modified = enhance(vanilla);
             if (modified != null)
                 consumer.accept(modified);
@@ -103,7 +102,7 @@ public class ForgeRecipeProvider extends RecipeProvider
     }
 
     @Override
-    protected void saveRecipeAdvancement(DirectoryCache cache, JsonObject advancementJson, Path pathIn) {
+    protected void saveAdvancement(DirectoryCache cache, JsonObject advancementJson, Path pathIn) {
         //NOOP - We dont replace any of the advancement things yet...
     }
 
@@ -122,7 +121,7 @@ public class ForgeRecipeProvider extends RecipeProvider
         boolean modified = false;
         for (int x = 0; x < ingredients.size(); x++)
         {
-            Ingredient ing = enhance(vanilla.getID(), ingredients.get(x));
+            Ingredient ing = enhance(vanilla.getId(), ingredients.get(x));
             if (ing != null)
             {
                 ingredients.set(x, ing);
@@ -138,7 +137,7 @@ public class ForgeRecipeProvider extends RecipeProvider
         boolean modified = false;
         for (Character x : ingredients.keySet())
         {
-            Ingredient ing = enhance(vanilla.getID(), ingredients.get(x));
+            Ingredient ing = enhance(vanilla.getId(), ingredients.get(x));
             if (ing != null)
             {
                 ingredients.put(x, ing);
@@ -160,7 +159,7 @@ public class ForgeRecipeProvider extends RecipeProvider
         {
             if (entry instanceof SingleItemList)
             {
-                ItemStack stack = entry.getStacks().stream().findFirst().orElse(ItemStack.EMPTY);
+                ItemStack stack = entry.getItems().stream().findFirst().orElse(ItemStack.EMPTY);
                 ITag<Item> replacement = replacements.get(stack.getItem());
                 if (replacement != null)
                 {
@@ -173,7 +172,7 @@ public class ForgeRecipeProvider extends RecipeProvider
             else
                 items.add(entry);
         }
-        return modified ? Ingredient.fromItemListStream(items.stream()) : null;
+        return modified ? Ingredient.fromValues(items.stream()) : null;
     }
 
     @SuppressWarnings("unchecked")

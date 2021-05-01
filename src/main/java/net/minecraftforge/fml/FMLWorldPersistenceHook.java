@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -71,12 +71,13 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
 
         CompoundNBT registries = new CompoundNBT();
         fmlData.put("Registries", registries);
-        LOGGER.debug(WORLDPERSISTENCE,"Gathering id map for writing to world save {}", serverInfo.getWorldName());
+        LOGGER.debug(WORLDPERSISTENCE,"Gathering id map for writing to world save {}", serverInfo.getLevelName());
 
         for (Map.Entry<ResourceLocation, ForgeRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
         {
             registries.put(e.getKey().toString(), e.getValue().write());
         }
+        LOGGER.debug(WORLDPERSISTENCE,"ID Map collection complete {}", serverInfo.getLevelName());
         return fmlData;
     }
 
@@ -113,7 +114,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
         {
             Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = new HashMap<>();
             CompoundNBT regs = tag.getCompound("Registries");
-            for (String key : regs.keySet())
+            for (String key : regs.getAllKeys())
             {
                 snapshot.put(new ResourceLocation(key), ForgeRegistry.Snapshot.read(regs.getCompound(key)));
             }
