@@ -67,7 +67,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         {
             return true;
         }
-        return fluid.getFluid().getAttributes().getBucket(fluid) != null;
+        return !fluid.getFluid().getAttributes().getBucket(fluid).isEmpty();
     }
 
     @Nonnull
