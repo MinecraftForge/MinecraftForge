@@ -4,8 +4,8 @@
           if (entity instanceof ServerPlayerEntity) {
              ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entity;
              if (serverplayerentity.field_71135_a.func_147298_b().func_150724_d() && serverplayerentity.field_70170_p == this.field_70170_p && !serverplayerentity.func_70608_bn()) {
-+               net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(serverplayerentity, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), 5.0F);
-+               if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) { // Don't indent to lower patch size
++               net.minecraftforge.event.entity.living.EntityTeleportEvent.EnderPearl event = net.minecraftforge.event.ForgeEventFactory.onEnderPearlLand(serverplayerentity, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), this, 5.0F);
++               if (!event.isCanceled()) { // Don't indent to lower patch size
                 if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
                    EndermiteEntity endermiteentity = EntityType.field_200804_r.func_200721_a(this.field_70170_p);
                    endermiteentity.func_175496_a(true);

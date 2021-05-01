@@ -1,10 +1,10 @@
 --- a/net/minecraft/world/spawner/PatrolSpawner.java
 +++ b/net/minecraft/world/spawner/PatrolSpawner.java
-@@ -94,6 +_,7 @@
-          return false;
-       } else {
-          PatrollerEntity patrollerentity = EntityType.field_220350_aJ.func_200721_a(p_222695_1_);
-+         if(net.minecraftforge.common.ForgeHooks.canEntitySpawn(patrollerentity, p_222695_1_, p_222695_2_.func_177958_n(), p_222695_2_.func_177956_o(), p_222695_2_.func_177952_p(), null, SpawnReason.PATROL) == -1) return false;
-          if (patrollerentity != null) {
-             if (p_222695_4_) {
-                patrollerentity.func_213635_r(true);
+@@ -101,6 +_,7 @@
+             }
+ 
+             patrollerentity.func_70107_b((double)p_222695_2_.func_177958_n(), (double)p_222695_2_.func_177956_o(), (double)p_222695_2_.func_177952_p());
++            if(net.minecraftforge.common.ForgeHooks.canEntitySpawn(patrollerentity, p_222695_1_, p_222695_2_.func_177958_n(), p_222695_2_.func_177956_o(), p_222695_2_.func_177952_p(), null, SpawnReason.PATROL) == -1) return false;
+             patrollerentity.func_213386_a(p_222695_1_, p_222695_1_.func_175649_E(p_222695_2_), SpawnReason.PATROL, (ILivingEntityData)null, (CompoundNBT)null);
+             p_222695_1_.func_242417_l(patrollerentity);
+             return true;

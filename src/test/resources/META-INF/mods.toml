@@ -111,6 +111,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="item_modifier_test"
 [[mods]]
+    modId="custom_signs_test"
+[[mods]]
     modId="shader_fix_test"
 [[mods]]
     modId="worldgen_registry_desync_test"
@@ -118,3 +120,7 @@ license="LGPL v2.1"
     modId="add_entity_attribute_test"
 [[mods]]
     modId="dim_lightmap_test"
+[[mods]]
+    modId="enum_argument_test"
+[[mods]]
+    modId="entity_teleport_event_test"

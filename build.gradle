@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.minecraftforge.net/' }
         mavenCentral()
     }
     dependencies {
@@ -25,9 +25,8 @@ import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 plugins {
     id 'org.cadixdev.licenser' version '0.5.0'
-    id 'org.ajoberstar.grgit' version '4.1.0'
     id 'com.github.ben-manes.versions' version '0.36.0'
-	id 'eclipse'
+    id 'eclipse'
 }
 
 Util.init() //Init all our extension methods!
@@ -47,7 +46,7 @@ ext {
     MAPPING_VERSION = '1.16.5'
     MC_VERSION = '1.16.5'
     MCP_VERSION = '20210115.111550'
-	SPI_VERSION = '3.2.0'
+    SPI_VERSION = '3.2.0'
 }
 
 project(':mcp') {
@@ -63,8 +62,8 @@ project(':mcp') {
 
 project(':clean') {
     evaluationDependsOn(':mcp')
-	apply plugin: 'eclipse'
-	apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: 'eclipse'
+    apply plugin: 'net.minecraftforge.gradle.patcher'
     
     java.toolchain.languageVersion = JavaLanguageVersion.of(8)
     
@@ -183,28 +182,20 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '36.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        GIT_INFO = Util.gitInfo(rootProject.file('.'))
+        SPEC_VERSION = GIT_INFO.tag
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config
         SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.9.0'
-        SPECIAL_SOURCE_MCP = 'net.md-5:SpecialSource:1.8.3'
+        SPECIAL_SOURCE_MCP = 'net.md-5:SpecialSource:1.8.5'
         VERSION_JSON = project(':mcp').file('build/mcp/downloadJson/version.json')
         BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
         INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.11'
     }
 
-    def getVersion = {
-        def (tag, offset, hash) = (grgit.describe(longDescr: true, tags:true) ?: '0.0-0-unknown').rsplit('-', 2)
-        SPEC_VERSION = tag
-        def branch = grgit.branch.current().name
-        if (branch in [null, 'master', 'HEAD', MC_VERSION, MC_VERSION + '.0', MC_VERSION.rsplit('.', 1)[0] + '.x'])
-            return "${MC_VERSION}-${tag}.${offset}".toString()
-        return "${MC_VERSION}-${tag}.${offset}-${branch}".toString()
-    }
-
-    version = getVersion()
+    version = Util.getVersion(GIT_INFO, MC_VERSION)
     println('Forge Version: ' + version)
 
     patcher {
@@ -350,8 +341,8 @@ project(':forge') {
         MANIFESTS = [
             '/': [
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'GitCommit': grgit.head().abbreviatedId,
-                'Git-Branch': grgit.branch.current().getName()
+                'GitCommit': GIT_INFO.abbreviatedId,
+                'Git-Branch': GIT_INFO.branch
             ] as LinkedHashMap,
             'net/minecraftforge/versions/forge/': [
                 'Specification-Title':      'Forge',
@@ -418,7 +409,7 @@ project(':forge') {
         installer 'org.ow2.asm:asm-util:9.0'
         installer 'org.ow2.asm:asm-analysis:9.0'
         installer 'cpw.mods:modlauncher:8.0.9'
-        installer 'cpw.mods:grossjava9hacks:1.3.+'
+        installer 'cpw.mods:grossjava9hacks:1.3.3'
         installer 'net.minecraftforge:accesstransformers:3.0.1'
         installer 'org.antlr:antlr4-runtime:4.9.1' //Dep of AccessTransformer
         installer 'net.minecraftforge:eventbus:4.0.+'
@@ -1082,12 +1073,15 @@ project(':forge') {
         }
         repositories {
             maven {
-                if (project.hasProperty('forgeMavenPassword')) {
-                    credentials {
-                        username project.properties.forgeMavenUser
-                        password project.properties.forgeMavenPassword
+                if (System.env.MAVEN_USER) {
+                    url "https://maven.minecraftforge.net/releases/"
+                    authentication {
+                        basic(BasicAuthentication)
                     }
-                    url 'https://files.minecraftforge.net/maven/manage/upload'
+                    credentials {
+                        username = System.env.MAVEN_USER ?: 'not'
+                        password = System.env.MAVEN_PASSWORD ?: 'set'
+                    }
                 } else {
                     url 'file://' + rootProject.file('repo').getAbsolutePath()
                 }

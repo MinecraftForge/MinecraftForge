@@ -4,4 +4,5 @@ repositories {
 dependencies {
 	implementation 'org.ow2.asm:asm:9.0'
 	implementation 'org.ow2.asm:asm-tree:9.0'
+    implementation 'org.eclipse.jgit:org.eclipse.jgit:5.10.0.202012080955-r'
 }
