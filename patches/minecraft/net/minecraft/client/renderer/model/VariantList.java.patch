@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/VariantList.java
 +++ b/net/minecraft/client/renderer/model/VariantList.java
-@@ -64,7 +64,7 @@
+@@ -64,7 +_,7 @@
           WeightedBakedModel.Builder weightedbakedmodel$builder = new WeightedBakedModel.Builder();
  
           for(Variant variant : this.func_188114_a()) {

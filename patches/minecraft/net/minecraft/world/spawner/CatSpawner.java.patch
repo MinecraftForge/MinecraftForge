@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/spawner/CatSpawner.java
++++ b/net/minecraft/world/spawner/CatSpawner.java
+@@ -80,8 +_,9 @@
+       if (catentity == null) {
+          return 0;
+       } else {
++         catentity.func_174828_a(p_221122_1_, 0.0F, 0.0F); // Fix MC-147659: Some witch huts spawn the incorrect cat
++         if(net.minecraftforge.common.ForgeHooks.canEntitySpawn(catentity, p_221122_2_, p_221122_1_.func_177958_n(), p_221122_1_.func_177956_o(), p_221122_1_.func_177952_p(), null, SpawnReason.NATURAL) == -1) return 0;
+          catentity.func_213386_a(p_221122_2_, p_221122_2_.func_175649_E(p_221122_1_), SpawnReason.NATURAL, (ILivingEntityData)null, (CompoundNBT)null);
+-         catentity.func_174828_a(p_221122_1_, 0.0F, 0.0F);
+          p_221122_2_.func_242417_l(catentity);
+          return 1;
+       }

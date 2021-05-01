@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/BushBlock.java
 +++ b/net/minecraft/block/BushBlock.java
-@@ -7,7 +7,7 @@
+@@ -7,7 +_,7 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReader;
  
@@ -9,7 +9,7 @@
     public BushBlock(AbstractBlock.Properties p_i48437_1_) {
        super(p_i48437_1_);
     }
-@@ -22,6 +22,8 @@
+@@ -22,6 +_,8 @@
  
     public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
        BlockPos blockpos = p_196260_3_.func_177977_b();
@@ -18,15 +18,16 @@
        return this.func_200014_a_(p_196260_2_.func_180495_p(blockpos), p_196260_2_, blockpos);
     }
  
-@@ -32,4 +34,11 @@
+@@ -31,5 +_,12 @@
+ 
     public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
        return p_196266_4_ == PathType.AIR && !this.field_235688_at_ ? true : super.func_196266_a(p_196266_1_, p_196266_2_, p_196266_3_, p_196266_4_);
-    }
++   }
 +
 +   @Override
 +   public BlockState getPlant(IBlockReader world, BlockPos pos) {
 +      BlockState state = world.func_180495_p(pos);
 +      if (state.func_177230_c() != this) return func_176223_P();
 +      return state;
-+   }
+    }
  }

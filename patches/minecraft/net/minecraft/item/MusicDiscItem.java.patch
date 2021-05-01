@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/MusicDiscItem.java
 +++ b/net/minecraft/item/MusicDiscItem.java
-@@ -22,17 +22,40 @@
+@@ -22,15 +_,38 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class MusicDiscItem extends Item {
@@ -18,8 +18,8 @@
        this.field_185076_b = p_i48475_2_;
        field_150928_b.put(this.field_185076_b, this);
 +      this.soundSupplier = this.field_185076_b.delegate;
-    }
- 
++   }
++
 +   /**
 +    * For mod use, allows to create a music disc without having to create a new
 +    * SoundEvent before their registry event is fired.
@@ -36,12 +36,10 @@
 +      this.field_195977_c = comparatorValue;
 +      this.field_185076_b = null;
 +      this.soundSupplier = soundSupplier;
-+   }
-+
+    }
+ 
     public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
-       World world = p_195939_1_.func_195991_k();
-       BlockPos blockpos = p_195939_1_.func_195995_a();
-@@ -77,6 +100,6 @@
+@@ -77,6 +_,6 @@
  
     @OnlyIn(Dist.CLIENT)
     public SoundEvent func_185075_h() {

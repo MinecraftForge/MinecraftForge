@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,7 +53,7 @@ public class MultiLayerModelTest
             if (!ENABLED)
                 return;
             event.getRegistry().register(
-                new Block(Block.Properties.create(Material.WOOD).notSolid())
+                new Block(Block.Properties.of(Material.WOOD).noOcclusion())
                 {
                 }.setRegistryName(blockId)
             );
@@ -64,7 +64,7 @@ public class MultiLayerModelTest
         {
             if (!ENABLED)
                 return;
-            event.getRegistry().register(new BlockItem(TEST_BLOCK, new Item.Properties().group(ItemGroup.MISC)).setRegistryName(TEST_BLOCK.getRegistryName()));
+            event.getRegistry().register(new BlockItem(TEST_BLOCK, new Item.Properties().tab(ItemGroup.TAB_MISC)).setRegistryName(TEST_BLOCK.getRegistryName()));
         }
 
         @net.minecraftforge.eventbus.api.SubscribeEvent
@@ -73,7 +73,7 @@ public class MultiLayerModelTest
             if (!ENABLED)
                 return;
             RenderTypeLookup.setRenderLayer(TEST_BLOCK, (layer) -> {
-                return layer == RenderType.getSolid() || layer == RenderType.getTranslucent();
+                return layer == RenderType.solid() || layer == RenderType.translucent();
             });
         }
     }

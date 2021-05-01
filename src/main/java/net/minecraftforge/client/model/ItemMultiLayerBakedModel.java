@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -76,7 +76,7 @@ public class ItemMultiLayerBakedModel implements IDynamicBakedModel
     }
 
     @Override
-    public boolean isAmbientOcclusion()
+    public boolean useAmbientOcclusion()
     {
         return smoothLighting;
     }
@@ -88,19 +88,19 @@ public class ItemMultiLayerBakedModel implements IDynamicBakedModel
     }
 
     @Override
-    public boolean isSideLit()
+    public boolean usesBlockLight()
     {
         return sideLit;
     }
 
     @Override
-    public boolean isBuiltInRenderer()
+    public boolean isCustomRenderer()
     {
         return false;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture()
+    public TextureAtlasSprite getParticleIcon()
     {
         return particle;
     }

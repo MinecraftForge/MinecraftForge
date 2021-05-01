@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,6 +52,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import net.minecraft.item.Item.Properties;
+
 @Mod("gravity_attribute_test")
 public class GravityAttributeTest
 {
@@ -74,18 +76,18 @@ public class GravityAttributeTest
     @SubscribeEvent
     public void worldTick(TickEvent.WorldTickEvent event)
     {
-        if (!event.world.isRemote)
+        if (!event.world.isClientSide)
         {
             if (ticks++ > 60)
             {
                 ticks = 0;
                 World w = event.world;
                 List<LivingEntity> list;
-                if(w.isRemote)
+                if(w.isClientSide)
                 {
                     ClientWorld cw = (ClientWorld)w;
                     list = new ArrayList<>(100);
-                    for(Entity e : cw.getAllEntities())
+                    for(Entity e : cw.entitiesForRendering())
                     {
                         if(e.isAlive() && e instanceof LivingEntity)
                             list.add((LivingEntity)e);
@@ -101,11 +103,11 @@ public class GravityAttributeTest
                 for(LivingEntity liv : list)
                 {
                     ModifiableAttributeInstance grav = liv.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
-                    boolean inPlains = liv.world.getBiome(liv.getPosition()).getCategory() == Category.PLAINS;
+                    boolean inPlains = liv.level.getBiome(liv.blockPosition()).getBiomeCategory() == Category.PLAINS;
                     if (inPlains && !grav.hasModifier(REDUCED_GRAVITY))
                     {
                         logger.info("Granted low gravity to Entity: {}", liv);
-                        grav.applyNonPersistentModifier(REDUCED_GRAVITY);
+                        grav.addTransientModifier(REDUCED_GRAVITY);
                     }
                     else if (!inPlains && grav.hasModifier(REDUCED_GRAVITY))
                     {
@@ -121,7 +123,7 @@ public class GravityAttributeTest
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().register(new ItemGravityStick(new Item.Properties().group(ItemGroup.TOOLS).rarity(Rarity.RARE)).setRegistryName("gravity_attribute_test:gravity_stick"));
+        event.getRegistry().register(new ItemGravityStick(new Item.Properties().tab(ItemGroup.TAB_TOOLS).rarity(Rarity.RARE)).setRegistryName("gravity_attribute_test:gravity_stick"));
     }
 
     public static class ItemGravityStick extends Item
@@ -134,10 +136,10 @@ public class GravityAttributeTest
         }
 
         @Override
-        public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlotType slot)
+        public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlotType slot)
         {
             @SuppressWarnings("deprecation")
-            Multimap<Attribute, AttributeModifier> multimap = super.getAttributeModifiers(slot);
+            Multimap<Attribute, AttributeModifier> multimap = super.getDefaultAttributeModifiers(slot);
             if (slot == EquipmentSlotType.MAINHAND)
                 multimap.put(ForgeMod.ENTITY_GRAVITY.get(), new AttributeModifier(GRAVITY_MODIFIER, "More Gravity", 1.0D, Operation.ADDITION));
 

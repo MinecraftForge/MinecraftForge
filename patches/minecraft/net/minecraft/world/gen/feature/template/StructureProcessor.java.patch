@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/template/StructureProcessor.java
 +++ b/net/minecraft/world/gen/feature/template/StructureProcessor.java
-@@ -6,7 +6,37 @@
+@@ -6,7 +_,37 @@
  
  public abstract class StructureProcessor {
     @Nullable

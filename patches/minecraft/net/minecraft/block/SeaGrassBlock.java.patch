@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/SeaGrassBlock.java
 +++ b/net/minecraft/block/SeaGrassBlock.java
-@@ -17,7 +17,7 @@
+@@ -17,7 +_,7 @@
  import net.minecraft.world.World;
  import net.minecraft.world.server.ServerWorld;
  

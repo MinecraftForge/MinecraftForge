@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -88,12 +88,12 @@ public class LightUtil
     public static void putBakedQuad(IVertexConsumer consumer, BakedQuad quad)
     {
         consumer.setTexture(quad.getSprite());
-        consumer.setQuadOrientation(quad.getFace());
-        if(quad.hasTintIndex())
+        consumer.setQuadOrientation(quad.getDirection());
+        if(quad.isTinted())
         {
             consumer.setQuadTint(quad.getTintIndex());
         }
-        consumer.setApplyDiffuseLighting(quad.applyDiffuseLighting());
+        consumer.setApplyDiffuseLighting(quad.isShade());
         float[] data = new float[4];
         VertexFormat formatFrom = consumer.getVertexFormat();
         VertexFormat formatTo = DefaultVertexFormats.BLOCK;
@@ -106,7 +106,7 @@ public class LightUtil
             {
                 if(eMap[e] != countTo)
                 {
-                    unpack(quad.getVertexData(), data, formatTo, v, eMap[e]);
+                    unpack(quad.getVertices(), data, formatTo, v, eMap[e]);
                     consumer.put(e, data);
                 }
                 else
@@ -156,7 +156,7 @@ public class LightUtil
     {
         int length = 4 < to.length ? 4 : to.length;
         VertexFormatElement element = formatFrom.getElements().get(e);
-        int vertexStart = v * formatFrom.getSize() + formatFrom.getOffset(e);
+        int vertexStart = v * formatFrom.getVertexSize() + formatFrom.getOffset(e);
         int count = element.getElementCount();
         VertexFormatElement.Type type = element.getType();
         VertexFormatElement.Usage usage = element.getUsage();
@@ -211,7 +211,7 @@ public class LightUtil
     public static void pack(float[] from, int[] to, VertexFormat formatTo, int v, int e)
     {
         VertexFormatElement element = formatTo.getElements().get(e);
-        int vertexStart = v * formatTo.getSize() + formatTo.getOffset(e);
+        int vertexStart = v * formatTo.getVertexSize() + formatTo.getOffset(e);
         int count = element.getElementCount();
         VertexFormatElement.Type type = element.getType();
         int size = type.getSize();
@@ -255,7 +255,7 @@ public class LightUtil
 
     public static void setLightData(BakedQuad q, int light)
     {
-        int[] data = q.getVertexData();
+        int[] data = q.getVertices();
         for (int i = 0; i < 4; i++)
         {
             data[getLightOffset(i)] = light;

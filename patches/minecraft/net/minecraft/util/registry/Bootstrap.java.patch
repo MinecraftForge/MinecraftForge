@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/registry/Bootstrap.java
 +++ b/net/minecraft/util/registry/Bootstrap.java
-@@ -48,6 +48,8 @@
+@@ -48,6 +_,8 @@
                 IDispenseItemBehavior.func_218401_c();
                 ArgumentTypes.func_197483_a();
                 TagRegistryManager.func_242197_b();
@@ -9,7 +9,7 @@
                 func_179868_d();
              }
           }
-@@ -103,7 +105,6 @@
+@@ -103,7 +_,6 @@
              Commands.func_242986_b();
           }
  

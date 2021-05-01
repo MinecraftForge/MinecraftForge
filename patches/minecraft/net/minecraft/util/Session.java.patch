@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/Session.java
 +++ b/net/minecraft/util/Session.java
-@@ -18,8 +18,22 @@
+@@ -18,8 +_,22 @@
     private final String field_148257_b;
     private final String field_148258_c;
     private final Session.Type field_152429_d;
@@ -23,7 +23,7 @@
        this.field_74286_b = p_i1098_1_;
        this.field_148257_b = p_i1098_2_;
        this.field_148258_c = p_i1098_3_;
-@@ -45,12 +59,24 @@
+@@ -45,10 +_,22 @@
     public GameProfile func_148256_e() {
        try {
           UUID uuid = UUIDTypeAdapter.fromString(this.func_148255_b());
@@ -34,8 +34,8 @@
        } catch (IllegalArgumentException illegalargumentexception) {
           return new GameProfile((UUID)null, this.func_111285_a());
        }
-    }
- 
++   }
++
 +   //For internal use only. Modders should never need to use this.
 +   public void setProperties(com.mojang.authlib.properties.PropertyMap properties) {
 +       if (this.properties == null)
@@ -44,8 +44,6 @@
 +
 +   public boolean hasCachedProperties() {
 +       return properties != null;
-+   }
-+
+    }
+ 
     @OnlyIn(Dist.CLIENT)
-    public static enum Type {
-       LEGACY("legacy"),

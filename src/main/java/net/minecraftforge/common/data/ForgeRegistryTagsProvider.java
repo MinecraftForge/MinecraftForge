@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -68,7 +68,7 @@ public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>
     }
 
     @Override
-    protected Path makePath(ResourceLocation id)
+    protected Path getPath(ResourceLocation id)
     {
         return generator.getOutputFolder().resolve("data/" + id.getNamespace() + "/tags/" + folder + "/" + id.getPath() + ".json");
     }

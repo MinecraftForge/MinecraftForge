@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,6 +53,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
 
+import javax.annotation.Nullable;
+
 public class NetworkHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -90,7 +92,7 @@ public class NetworkHooks
 
     private static boolean validateSideForProcessing(final ICustomPacket<?> packet, final NetworkInstance ni, final NetworkManager manager) {
         if (packet.getDirection().getReceptionSide() != EffectiveSide.get()) {
-            manager.closeChannel(new StringTextComponent("Illegal packet received, terminating connection"));
+            manager.disconnect(new StringTextComponent("Illegal packet received, terminating connection"));
             return false;
         }
         return true;
@@ -98,7 +100,7 @@ public class NetworkHooks
 
     public static void validatePacketDirection(final NetworkDirection packetDirection, final Optional<NetworkDirection> expectedDirection, final NetworkManager connection) {
         if (packetDirection != expectedDirection.orElse(packetDirection)) {
-            connection.closeChannel(new StringTextComponent("Illegal packet received, terminating connection"));
+            connection.disconnect(new StringTextComponent("Illegal packet received, terminating connection"));
             throw new IllegalStateException("Invalid packet received, aborting connection");
         }
     }
@@ -204,10 +206,10 @@ public class NetworkHooks
      */
     public static void openGui(ServerPlayerEntity player, INamedContainerProvider containerSupplier, Consumer<PacketBuffer> extraDataWriter)
     {
-        if (player.world.isRemote) return;
-        player.closeContainer();
-        player.getNextWindowId();
-        int openContainerId = player.currentWindowId;
+        if (player.level.isClientSide) return;
+        player.doCloseContainer();
+        player.nextContainerCounter();
+        int openContainerId = player.containerCounter;
         PacketBuffer extraData = new PacketBuffer(Unpooled.buffer());
         extraDataWriter.accept(extraData);
         extraData.readerIndex(0); // reset to beginning in case modders read for whatever reason
@@ -222,10 +224,10 @@ public class NetworkHooks
         Container c = containerSupplier.createMenu(openContainerId, player.inventory, player);
         ContainerType<?> type = c.getType();
         FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(type, openContainerId, containerSupplier.getDisplayName(), output);
-        FMLNetworkConstants.playChannel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+        FMLNetworkConstants.playChannel.sendTo(msg, player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
 
-        player.openContainer = c;
-        player.openContainer.addListener(player);
+        player.containerMenu = c;
+        player.containerMenu.addSlotListener(player);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
     }
 
@@ -252,7 +254,13 @@ public class NetworkHooks
         Map<ResourceLocation, ITagCollection<?>> customTagTypes = tagCollectionSupplier.getCustomTagTypes();
         if (!customTagTypes.isEmpty())
         {
-            FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(customTagTypes), player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+            FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(customTagTypes), player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
         }
+    }
+
+    @Nullable
+    public static FMLConnectionData getConnectionData(NetworkManager mgr)
+    {
+        return mgr.channel().attr(FMLNetworkConstants.FML_CONNECTION_DATA).get();
     }
 }

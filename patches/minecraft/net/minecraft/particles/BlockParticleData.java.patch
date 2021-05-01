@@ -1,6 +1,6 @@
 --- a/net/minecraft/particles/BlockParticleData.java
 +++ b/net/minecraft/particles/BlockParticleData.java
-@@ -54,4 +54,15 @@
+@@ -54,4 +_,15 @@
     public BlockState func_197584_c() {
        return this.field_197587_c;
     }

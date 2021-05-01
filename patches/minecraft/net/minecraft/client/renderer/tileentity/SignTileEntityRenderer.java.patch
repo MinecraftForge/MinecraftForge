@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/tileentity/SignTileEntityRenderer.java
++++ b/net/minecraft/client/renderer/tileentity/SignTileEntityRenderer.java
+@@ -89,7 +_,7 @@
+          woodtype = WoodType.field_227038_a_;
+       }
+ 
+-      return Atlases.func_228773_a_(woodtype);
++      return Atlases.field_228750_i_.get(woodtype);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)

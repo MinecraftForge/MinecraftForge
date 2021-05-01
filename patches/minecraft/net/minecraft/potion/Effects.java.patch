@@ -1,6 +1,6 @@
 --- a/net/minecraft/potion/Effects.java
 +++ b/net/minecraft/potion/Effects.java
-@@ -8,6 +8,7 @@
+@@ -8,6 +_,7 @@
  import net.minecraft.world.Difficulty;
  import net.minecraft.world.server.ServerWorld;
  

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ package net.minecraftforge.fml.loading.progress;
 import com.google.common.io.ByteStreams;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
+import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -38,6 +39,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
@@ -75,6 +77,9 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
             LogManager.getLogger().fatal("WARNING : glfwInit took {} seconds to start.", (glfwInitEnd-glfwInitBegin) / 1.0e9);
         }
 
+        // Clear the Last Exception (#7285 - Prevent Vanilla throwing an IllegalStateException due to invalid controller mappings)
+        handleLastGLFWError((error, description) -> LogManager.getLogger().error(String.format("Suppressing Last GLFW error: [0x%X]%s", error, description)));
+
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
         glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
@@ -106,14 +111,20 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
             IntBuffer monPosLeft = stack.mallocInt(1);
             IntBuffer monPosTop = stack.mallocInt(1);
             glfwGetWindowSize(window, pWidth, pHeight);
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-            glfwGetMonitorPos(glfwGetPrimaryMonitor(), monPosLeft, monPosTop);
-            // Center the window
-            glfwSetWindowPos(
-                    window,
-                    (vidmode.width() - pWidth.get(0)) / 2 + monPosLeft.get(0),
-                    (vidmode.height() - pHeight.get(0)) / 2 + monPosTop.get(0)
-            );
+
+            // try to center the window, this is a best-effort as there may not be
+            // a primary monitor and we might not even be on the primary monitor...
+            long primaryMonitor = glfwGetPrimaryMonitor();
+            if (primaryMonitor != NULL)
+            {
+                GLFWVidMode vidmode = glfwGetVideoMode(primaryMonitor);
+                glfwGetMonitorPos(primaryMonitor, monPosLeft, monPosTop);
+                glfwSetWindowPos(
+                        window,
+                        (vidmode.width() - pWidth.get(0)) / 2 + monPosLeft.get(0),
+                        (vidmode.height() - pHeight.get(0)) / 2 + monPosTop.get(0)
+                );
+            }
             IntBuffer iconWidth = stack.mallocInt(1);
             IntBuffer iconHeight = stack.mallocInt(1);
             IntBuffer iconChannels = stack.mallocInt(1);
@@ -239,9 +250,22 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glVertex2f(screenWidth, 0);
         glEnd();
     }
+
     private void fbResize(long window, int width, int height) {
         if (window == this.window && width != 0 && height != 0) {
             fbSize = new int[] {width, height};
+        }
+    }
+
+    private void handleLastGLFWError(BiConsumer<Integer, String> handler) {
+        try (MemoryStack memorystack = MemoryStack.stackPush()) {
+            PointerBuffer pointerbuffer = memorystack.mallocPointer(1);
+            int error = GLFW.glfwGetError(pointerbuffer);
+            if (error != GLFW_NO_ERROR) {
+                long pDescription = pointerbuffer.get();
+                String description = pDescription == 0L ? "" : MemoryUtil.memUTF8(pDescription);
+                handler.accept(error, description);
+            }
         }
     }
 

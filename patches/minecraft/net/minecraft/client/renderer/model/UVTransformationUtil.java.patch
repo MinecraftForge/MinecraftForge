@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/renderer/model/UVTransformationUtil.java
++++ b/net/minecraft/client/renderer/model/UVTransformationUtil.java
+@@ -27,7 +_,7 @@
+    });
+    public static final EnumMap<Direction, TransformationMatrix> field_229377_b_ = Util.func_200696_a(Maps.newEnumMap(Direction.class), (p_229381_0_) -> {
+       for(Direction direction : Direction.values()) {
+-         p_229381_0_.put(direction, field_229376_a_.get(direction).func_227987_b_());
++         p_229381_0_.put(direction, field_229376_a_.get(direction).inverse());
+       }
+ 
+    });
+@@ -41,12 +_,12 @@
+ 
+    public static TransformationMatrix func_229380_a_(TransformationMatrix p_229380_0_, Direction p_229380_1_, Supplier<String> p_229380_2_) {
+       Direction direction = Direction.func_229385_a_(p_229380_0_.func_227988_c_(), p_229380_1_);
+-      TransformationMatrix transformationmatrix = p_229380_0_.func_227987_b_();
++      TransformationMatrix transformationmatrix = p_229380_0_.inverse();
+       if (transformationmatrix == null) {
+          field_229378_c_.warn(p_229380_2_.get());
+          return new TransformationMatrix((Vector3f)null, (Quaternion)null, new Vector3f(0.0F, 0.0F, 0.0F), (Quaternion)null);
+       } else {
+-         TransformationMatrix transformationmatrix1 = field_229377_b_.get(p_229380_1_).func_227985_a_(transformationmatrix).func_227985_a_(field_229376_a_.get(direction));
++         TransformationMatrix transformationmatrix1 = field_229377_b_.get(p_229380_1_).compose(transformationmatrix).compose(field_229376_a_.get(direction));
+          return func_229379_a_(transformationmatrix1);
+       }
+    }

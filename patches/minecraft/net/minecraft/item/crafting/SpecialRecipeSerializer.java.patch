@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/SpecialRecipeSerializer.java
 +++ b/net/minecraft/item/crafting/SpecialRecipeSerializer.java
-@@ -5,7 +5,7 @@
+@@ -5,7 +_,7 @@
  import net.minecraft.network.PacketBuffer;
  import net.minecraft.util.ResourceLocation;
  

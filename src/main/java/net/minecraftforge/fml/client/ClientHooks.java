@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -104,7 +104,7 @@ public class ClientHooks
                     filter(e -> !ModList.get().isLoaded(e.getKey())).
                     collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-            LOGGER.debug(CLIENTHOOKS, "Received FML ping data from server at {}: FMLNETVER={}, mod list is compatible : {}, channel list is compatible: {}, extra server mods: {}", target.serverIP, fmlver, modsMatch, channelsMatch, extraServerMods);
+            LOGGER.debug(CLIENTHOOKS, "Received FML ping data from server at {}: FMLNETVER={}, mod list is compatible : {}, channel list is compatible: {}, extra server mods: {}", target.ip, fmlver, modsMatch, channelsMatch, extraServerMods);
 
             String extraReason = null;
 
@@ -169,13 +169,14 @@ public class ClientHooks
                 tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.unknown", target.forgeData.type);
         }
 
-        Minecraft.getInstance().getTextureManager().bindTexture(iconSheet);
+        Minecraft.getInstance().getTextureManager().bind(iconSheet);
         AbstractGui.blit(mStack, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
 
-        if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26)
-            //TODO using StringTextComponent here is a hack, we should be using TranslationTextComponents.
-            gui.func_238854_b_(Collections.singletonList(new StringTextComponent(tooltip)));
-
+        if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26) {
+            //this is not the most proper way to do it,
+            //but works best here and has the least maintenance overhead
+            gui.setToolTip(Arrays.stream(tooltip.split("\n")).map(StringTextComponent::new).collect(Collectors.toList()));
+        }
     }
 
     public static String fixDescription(String description)
@@ -186,19 +187,19 @@ public class ClientHooks
     @SuppressWarnings("resource")
     static File getSavesDir()
     {
-        return new File(Minecraft.getInstance().gameDir, "saves");
+        return new File(Minecraft.getInstance().gameDirectory, "saves");
     }
 
     private static NetworkManager getClientToServerNetworkManager()
     {
-        return Minecraft.getInstance().getConnection()!=null ? Minecraft.getInstance().getConnection().getNetworkManager() : null;
+        return Minecraft.getInstance().getConnection()!=null ? Minecraft.getInstance().getConnection().getConnection() : null;
     }
 
     public static void handleClientWorldClosing(ClientWorld world)
     {
         NetworkManager client = getClientToServerNetworkManager();
         // ONLY revert a non-local connection
-        if (client != null && !client.isLocalChannel())
+        if (client != null && !client.isMemoryConnection())
         {
             GameData.revertToFrozen();
         }
@@ -251,7 +252,7 @@ public class ClientHooks
             }
             else
             {
-                List<IResourcePack> resPacks = fallbackResourceManager.resourcePacks;
+                List<IResourcePack> resPacks = fallbackResourceManager.fallbacks;
                 logger.error("    domain {} has {} location{}:",resourceDomain, resPacks.size(), resPacks.size() != 1 ? "s" :"");
                 for (IResourcePack resPack : resPacks)
                 {
@@ -306,7 +307,7 @@ public class ClientHooks
     }
 
     public static void firePlayerLogout(PlayerController pc, ClientPlayerEntity player) {
-        MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedOutEvent(pc, player, player != null ? player.connection != null ? player.connection.getNetworkManager() : null : null));
+        MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedOutEvent(pc, player, player != null ? player.connection != null ? player.connection.getConnection() : null : null));
     }
 
     public static void firePlayerRespawn(PlayerController pc, ClientPlayerEntity oldPlayer, ClientPlayerEntity newPlayer, NetworkManager networkManager) {

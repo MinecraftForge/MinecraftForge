@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ElytraItem.java
 +++ b/net/minecraft/item/ElytraItem.java
-@@ -35,4 +35,17 @@
+@@ -35,4 +_,17 @@
           return ActionResult.func_226251_d_(itemstack);
        }
     }

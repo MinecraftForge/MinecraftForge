@@ -1,6 +1,6 @@
 --- a/net/minecraft/pathfinding/PathNavigator.java
 +++ b/net/minecraft/pathfinding/PathNavigator.java
-@@ -208,9 +208,9 @@
+@@ -208,9 +_,9 @@
        Vector3d vector3d = this.func_75502_i();
        this.field_188561_o = this.field_75515_a.func_213311_cf() > 0.75F ? this.field_75515_a.func_213311_cf() / 2.0F : 0.75F - this.field_75515_a.func_213311_cf() / 2.0F;
        Vector3i vector3i = this.field_75514_c.func_242948_g();

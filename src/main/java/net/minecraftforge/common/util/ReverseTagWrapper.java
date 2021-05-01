@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,10 +47,10 @@ public class ReverseTagWrapper<T>
     public Set<ResourceLocation> getTagNames()
     {
         ITagCollection<T> collection = colSupplier.get();
-        if (cache == null || colCache != collection.getIDTagMap()) // Identity equals.
+        if (cache == null || colCache != collection.getAllTags()) // Identity equals.
         {
-            this.cache = Collections.unmodifiableSet(new HashSet<>(collection.getOwningTags(target)));
-            this.colCache = collection.getIDTagMap();
+            this.cache = Collections.unmodifiableSet(new HashSet<>(collection.getMatchingTags(target)));
+            this.colCache = collection.getAllTags();
         }
         return this.cache;
     }

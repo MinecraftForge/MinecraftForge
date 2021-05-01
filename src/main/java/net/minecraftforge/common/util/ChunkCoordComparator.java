@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,8 +30,8 @@ public class ChunkCoordComparator implements java.util.Comparator<ChunkPos>
 
     public ChunkCoordComparator(ServerPlayerEntity entityplayer)
     {
-        x = (int) entityplayer.getPosX() >> 4;
-        z = (int) entityplayer.getPosZ() >> 4;
+        x = (int) entityplayer.getX() >> 4;
+        z = (int) entityplayer.getZ() >> 4;
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -135,7 +135,7 @@ public final class ConfiguredModel {
     }
 
     static void checkRotation(int rotationX, int rotationY) {
-        Preconditions.checkArgument(ModelRotation.getModelRotation(rotationX, rotationY) != null, "Invalid model rotation x=%d, y=%d", rotationX, rotationY);
+        Preconditions.checkArgument(ModelRotation.by(rotationX, rotationY) != null, "Invalid model rotation x=%d, y=%d", rotationX, rotationY);
     }
 
     static void checkWeight(int weight) {

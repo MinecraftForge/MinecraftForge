@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/SheepEntity.java
 +++ b/net/minecraft/entity/passive/SheepEntity.java
-@@ -61,7 +61,7 @@
+@@ -61,7 +_,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -9,7 +9,7 @@
     private static final DataParameter<Byte> field_184774_bv = EntityDataManager.func_187226_a(SheepEntity.class, DataSerializers.field_187191_a);
     private static final Map<DyeColor, IItemProvider> field_200206_bz = Util.func_200696_a(Maps.newEnumMap(DyeColor.class), (p_203402_0_) -> {
        p_203402_0_.put(DyeColor.WHITE, Blocks.field_196556_aL);
-@@ -216,7 +216,7 @@
+@@ -216,7 +_,7 @@
  
     public ActionResultType func_230254_b_(PlayerEntity p_230254_1_, Hand p_230254_2_) {
        ItemStack itemstack = p_230254_1_.func_184586_b(p_230254_2_);
@@ -18,10 +18,11 @@
           if (!this.field_70170_p.field_72995_K && this.func_230262_K__()) {
              this.func_230263_a_(SoundCategory.PLAYERS);
              itemstack.func_222118_a(1, p_230254_1_, (p_213613_1_) -> {
-@@ -361,4 +361,26 @@
+@@ -360,5 +_,27 @@
+ 
     protected float func_213348_b(Pose p_213348_1_, EntitySize p_213348_2_) {
        return 0.95F * p_213348_2_.field_220316_b;
-    }
++   }
 +
 +   @Override
 +   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, World world, BlockPos pos) {
@@ -43,5 +44,5 @@
 +         return items;
 +      }
 +      return java.util.Collections.emptyList();
-+   }
+    }
  }

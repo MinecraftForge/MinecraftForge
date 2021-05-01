@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -78,9 +78,9 @@ public class NewModelLoaderTest
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Block> obj_block = BLOCKS.register("obj_block", () ->
-            new Block(Block.Properties.create(Material.WOOD).hardnessAndResistance(10)) {
+            new Block(Block.Properties.of(Material.WOOD).strength(10)) {
                 @Override
-                protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+                protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
                 {
                     builder.add(BlockStateProperties.HORIZONTAL_FACING);
                 }
@@ -89,21 +89,21 @@ public class NewModelLoaderTest
                 @Override
                 public BlockState getStateForPlacement(BlockItemUseContext context)
                 {
-                    return getDefaultState().with(
-                            BlockStateProperties.HORIZONTAL_FACING, context.getPlacementHorizontalFacing()
+                    return defaultBlockState().setValue(
+                            BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection()
                     );
                 }
 
                 @Override
                 public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
                 {
-                    return Block.makeCuboidShape(2,2,2,14,14,14);
+                    return Block.box(2,2,2,14,14,14);
                 }
             }
     );
 
     public static RegistryObject<Item> obj_item = ITEMS.register("obj_block", () ->
-            new BlockItem(obj_block.get(), new Item.Properties().group(ItemGroup.MISC)) {
+            new BlockItem(obj_block.get(), new Item.Properties().tab(ItemGroup.TAB_MISC)) {
                 @Override
                 public boolean canEquip(ItemStack stack, EquipmentSlotType armorType, Entity entity)
                 {
@@ -113,23 +113,23 @@ public class NewModelLoaderTest
     );
 
     public static RegistryObject<Item> custom_transforms = ITEMS.register("custom_transforms", () ->
-            new Item(new Item.Properties().group(ItemGroup.MISC))
+            new Item(new Item.Properties().tab(ItemGroup.TAB_MISC))
     );
 
     public static RegistryObject<Item> custom_vanilla_loader = ITEMS.register("custom_vanilla_loader", () ->
-            new Item(new Item.Properties().group(ItemGroup.MISC))
+            new Item(new Item.Properties().tab(ItemGroup.TAB_MISC))
     );
 
     public static RegistryObject<Item> custom_loader = ITEMS.register("custom_loader", () ->
-            new Item(new Item.Properties().group(ItemGroup.MISC))
+            new Item(new Item.Properties().tab(ItemGroup.TAB_MISC))
     );
 
     public static RegistryObject<Item> item_layers = ITEMS.register("item_layers", () ->
-            new Item(new Item.Properties().group(ItemGroup.MISC))
+            new Item(new Item.Properties().tab(ItemGroup.TAB_MISC))
     );
 
     public static RegistryObject<Item> separate_perspective = ITEMS.register("separate_perspective", () ->
-            new Item(new Item.Properties().group(ItemGroup.MISC))
+            new Item(new Item.Properties().tab(ItemGroup.TAB_MISC))
     );
 
     public NewModelLoaderTest()
@@ -174,10 +174,10 @@ public class NewModelLoaderTest
             builder.setTexture(texture);
             builder.setQuadOrientation(Direction.UP);
 
-            putVertex(builder, 0,1,0.5f, texture.getInterpolatedU(0), texture.getInterpolatedV(0), 1, 1, 1);
-            putVertex(builder, 0,0,0.5f, texture.getInterpolatedU(0), texture.getInterpolatedV(16), 1, 1, 1);
-            putVertex(builder, 1,0,0.5f, texture.getInterpolatedU(16), texture.getInterpolatedV(16), 1, 1, 1);
-            putVertex(builder, 1,1,0.5f, texture.getInterpolatedU(16), texture.getInterpolatedV(0), 1, 1, 1);
+            putVertex(builder, 0,1,0.5f, texture.getU(0), texture.getV(0), 1, 1, 1);
+            putVertex(builder, 0,0,0.5f, texture.getU(0), texture.getV(16), 1, 1, 1);
+            putVertex(builder, 1,0,0.5f, texture.getU(16), texture.getV(16), 1, 1, 1);
+            putVertex(builder, 1,1,0.5f, texture.getU(16), texture.getV(0), 1, 1, 1);
 
             modelBuilder.addGeneralQuad(builder.build());
         }

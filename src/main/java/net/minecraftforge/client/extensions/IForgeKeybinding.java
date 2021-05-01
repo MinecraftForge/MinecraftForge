@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,12 +37,12 @@ public interface IForgeKeybinding
      */
     default boolean isActiveAndMatches(InputMappings.Input keyCode)
     {
-        return keyCode != InputMappings.INPUT_INVALID && keyCode.equals(getKey()) && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
+        return keyCode != InputMappings.UNKNOWN && keyCode.equals(getKey()) && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
     }
     
     default void setToDefault()
     {
-        setKeyModifierAndCode(getKeyModifierDefault(), getKeyBinding().getDefault());
+        setKeyModifierAndCode(getKeyModifierDefault(), getKeyBinding().getDefaultKey());
     }
 
     void setKeyConflictContext(IKeyConflictContext keyConflictContext);

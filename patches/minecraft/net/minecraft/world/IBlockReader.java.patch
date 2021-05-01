@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/IBlockReader.java
 +++ b/net/minecraft/world/IBlockReader.java
-@@ -26,7 +26,7 @@
+@@ -26,7 +_,7 @@
     FluidState func_204610_c(BlockPos p_204610_1_);
  
     default int func_217298_h(BlockPos p_217298_1_) {

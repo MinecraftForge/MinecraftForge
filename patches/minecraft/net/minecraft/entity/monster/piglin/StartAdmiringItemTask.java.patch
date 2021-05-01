@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/monster/piglin/StartAdmiringItemTask.java
++++ b/net/minecraft/entity/monster/piglin/StartAdmiringItemTask.java
+@@ -13,7 +_,7 @@
+    }
+ 
+    protected boolean func_212832_a_(ServerWorld p_212832_1_, E p_212832_2_) {
+-      return !p_212832_2_.func_184592_cb().func_190926_b() && p_212832_2_.func_184592_cb().func_77973_b() != Items.field_185159_cQ;
++      return !p_212832_2_.func_184592_cb().func_190926_b() && !p_212832_2_.func_184592_cb().isShield(p_212832_2_);
+    }
+ 
+    protected void func_212831_a_(ServerWorld p_212831_1_, E p_212831_2_, long p_212831_3_) {

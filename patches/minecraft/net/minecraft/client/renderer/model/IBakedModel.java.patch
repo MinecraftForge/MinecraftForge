@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/IBakedModel.java
 +++ b/net/minecraft/client/renderer/model/IBakedModel.java
-@@ -10,7 +10,9 @@
+@@ -10,7 +_,9 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -11,7 +11,7 @@
     List<BakedQuad> func_200117_a(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_);
  
     boolean func_177555_b();
-@@ -21,9 +23,13 @@
+@@ -21,9 +_,13 @@
  
     boolean func_188618_c();
  

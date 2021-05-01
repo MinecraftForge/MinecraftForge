@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/SoundEvents.java
 +++ b/net/minecraft/util/SoundEvents.java
-@@ -2,6 +2,7 @@
+@@ -2,6 +_,7 @@
  
  import net.minecraft.util.registry.Registry;
  

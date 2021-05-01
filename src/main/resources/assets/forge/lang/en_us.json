@@ -54,6 +54,7 @@
   "fml.modloading.errorduringevent":"{0,modinfo,name} ({0,modinfo,id}) encountered an error during the {1,lower} event phase\n\u00a77{2,exc,msg}",
   "fml.modloading.failedtoloadforge": "Failed to load Forge",
   "fml.modloading.missingdependency": "Mod \u00a7e{4}\u00a7r requires \u00a76{3}\u00a7r \u00a7o{5,vr}\u00a7r\n\u00a77Currently, \u00a76{3}\u00a7r\u00a77 is \u00a7o{6,i18n,fml.messages.artifactversion.ornotinstalled}",
+  "fml.modloading.missingdependency.optional": "Mod \u00a7e{4}\u00a7r only supports \u00a73{3}\u00a7r \u00a7o{5,vr}\u00a7r\n\u00a77Currently, \u00a73{3}\u00a7r\u00a77 is \u00a7o{6}",
   "fml.modloading.cycle": "Detected a mod dependency cycle: {0}",
   "fml.modloading.failedtoprocesswork":"{0,modinfo,name} ({0,modinfo,id}) encountered an error processing deferred work\n\u00a77{2,exc,msg}",
   "fml.modloading.brokenfile": "File {2} is not a valid mod file",
@@ -82,6 +83,7 @@
   "fml.messages.version.restriction.bounded.lowerexclusive":"above {0}, and {1} or below",
   "fml.messages.version.restriction.bounded.upperexclusive":"{0} or above, and below {1}",
 
+  "commands.forge.arguments.enum.invalid": "Enum constant must be one of {0}, found {1}",
   "commands.forge.dimensions.list": "Currently registered dimensions by type:",
   "commands.forge.entity.list.invalid": "Invalid filter, does not match any entities. Use /forge entity list for a proper list",
   "commands.forge.entity.list.invalidworld": "Could not load world for dimension {0}. Please select a valid dimension.",
@@ -96,6 +98,7 @@
   "commands.forge.setdim.invalid.entity": "The entity selected ({0}) is not valid.",
   "commands.forge.setdim.invalid.dim": "The dimension ID specified ({0}) is not valid.",
   "commands.forge.setdim.invalid.nochange": "The entity selected ({0}) is already in the dimension specified ({1}).",
+  "commands.forge.setdim.deprecated": "This command is deprecated for removal in 1.17, use %s instead.",
   "commands.forge.tps.invalid": "Invalid dimension {0} Possible values: {1}",
   "commands.forge.tps.summary.all": "Overall: Mean tick time: {0} ms. Mean TPS: {1}",
   "commands.forge.mods.list": "Mod List: {0}",

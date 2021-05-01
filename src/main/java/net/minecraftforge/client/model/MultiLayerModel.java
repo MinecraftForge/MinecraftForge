@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -79,7 +79,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         Set<RenderMaterial> materials = Sets.newHashSet();
         materials.add(owner.resolveTexture("particle"));
         for (Pair<RenderType, IUnbakedModel> m : models)
-            materials.addAll(m.getSecond().getTextures(modelGetter, missingTextureErrors));
+            materials.addAll(m.getSecond().getMaterials(modelGetter, missingTextureErrors));
         return materials;
     }
 
@@ -89,7 +89,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         ImmutableList.Builder<Pair<RenderType, IBakedModel>> builder = ImmutableList.builder();
         for(Pair<RenderType, IUnbakedModel> entry : models)
         {
-            builder.add(Pair.of(entry.getFirst(), entry.getSecond().bakeModel(bakery, spriteGetter, modelTransform, modelLocation)));
+            builder.add(Pair.of(entry.getFirst(), entry.getSecond().bake(bakery, spriteGetter, modelTransform, modelLocation)));
         }
         return builder.build();
     }
@@ -102,7 +102,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         return new MultiLayerBakedModel(
                 owner.useSmoothLighting(), owner.isShadedInGui(), owner.isSideLit(),
                 spriteGetter.apply(owner.resolveTexture("particle")), overrides, convertRenderTypes,
-                missing.bakeModel(bakery, spriteGetter, modelTransform, modelLocation),
+                missing.bake(bakery, spriteGetter, modelTransform, modelLocation),
                 buildModels(models, modelTransform, bakery, spriteGetter, modelLocation),
                 PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(owner.getCombinedTransform(), modelTransform))
         );
@@ -156,9 +156,6 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
                 }
                 return builder.build();
             }
-            // fix translucent layer parts in piston-moving rendering as missing model
-            if (layer == RenderType.getTranslucentMovingBlock())
-                layer = RenderType.getTranslucent();
             // support for item layer rendering
             if (state == null && convertRenderTypes)
                 layer = ITEM_RENDER_TYPE_MAPPING.inverse().getOrDefault(layer, layer);
@@ -167,7 +164,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         }
 
         @Override
-        public boolean isAmbientOcclusion()
+        public boolean useAmbientOcclusion()
         {
             return ambientOcclusion;
         }
@@ -185,19 +182,19 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         }
 
         @Override
-        public boolean isSideLit()
+        public boolean usesBlockLight()
         {
             return isSideLit;
         }
 
         @Override
-        public boolean isBuiltInRenderer()
+        public boolean isCustomRenderer()
         {
             return false;
         }
 
         @Override
-        public TextureAtlasSprite getParticleTexture()
+        public TextureAtlasSprite getParticleIcon()
         {
             return particle;
         }
@@ -234,21 +231,21 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
 
         public static BiMap<RenderType, RenderType> ITEM_RENDER_TYPE_MAPPING = HashBiMap.create();
         static {
-            ITEM_RENDER_TYPE_MAPPING.put(RenderType.getSolid(), ForgeRenderTypes.ITEM_LAYERED_SOLID.get());
-            ITEM_RENDER_TYPE_MAPPING.put(RenderType.getCutout(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get());
-            ITEM_RENDER_TYPE_MAPPING.put(RenderType.getCutoutMipped(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT_MIPPED.get());
-            ITEM_RENDER_TYPE_MAPPING.put(RenderType.getTranslucent(), ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get());
+            ITEM_RENDER_TYPE_MAPPING.put(RenderType.solid(), ForgeRenderTypes.ITEM_LAYERED_SOLID.get());
+            ITEM_RENDER_TYPE_MAPPING.put(RenderType.cutout(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get());
+            ITEM_RENDER_TYPE_MAPPING.put(RenderType.cutoutMipped(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT_MIPPED.get());
+            ITEM_RENDER_TYPE_MAPPING.put(RenderType.translucent(), ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get());
         }
     }
 
     public static final class Loader implements IModelLoader<MultiLayerModel>
     {
         public static final ImmutableBiMap<String, RenderType> BLOCK_LAYERS = ImmutableBiMap.<String, RenderType>builder()
-                .put("solid", RenderType.getSolid())
-                .put("cutout", RenderType.getCutout())
-                .put("cutout_mipped", RenderType.getCutoutMipped())
-                .put("translucent", RenderType.getTranslucent())
-                .put("tripwire", RenderType.getTripwire())
+                .put("solid", RenderType.solid())
+                .put("cutout", RenderType.cutout())
+                .put("cutout_mipped", RenderType.cutoutMipped())
+                .put("translucent", RenderType.translucent())
+                .put("tripwire", RenderType.tripwire())
                 .build();
 
         public static final Loader INSTANCE = new Loader();
@@ -265,16 +262,16 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         public MultiLayerModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
         {
             ImmutableList.Builder<Pair<RenderType, IUnbakedModel>> builder = ImmutableList.builder();
-            JsonObject layersObject = JSONUtils.getJsonObject(modelContents, "layers");
+            JsonObject layersObject = JSONUtils.getAsJsonObject(modelContents, "layers");
             for(Map.Entry<String, RenderType> layer : BLOCK_LAYERS.entrySet()) // block layers
             {
                 String layerName = layer.getKey(); // mc overrides toString to return the ID for the layer
                 if(layersObject.has(layerName))
                 {
-                    builder.add(Pair.of(layer.getValue(), deserializationContext.deserialize(JSONUtils.getJsonObject(layersObject, layerName), BlockModel.class)));
+                    builder.add(Pair.of(layer.getValue(), deserializationContext.deserialize(JSONUtils.getAsJsonObject(layersObject, layerName), BlockModel.class)));
                 }
             }
-            boolean convertRenderTypes = JSONUtils.getBoolean(modelContents, "convert_render_types", true);
+            boolean convertRenderTypes = JSONUtils.getAsBoolean(modelContents, "convert_render_types", true);
             return new MultiLayerModel(builder.build(), convertRenderTypes);
         }
     }

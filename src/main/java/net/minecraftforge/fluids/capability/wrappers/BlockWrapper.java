@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,8 @@
 
 package net.minecraftforge.fluids.capability.wrappers;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ILiquidContainer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -28,6 +28,8 @@ import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.templates.VoidFluidHandler;
+
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 /**
  * Wrapper around any block, only accounts for fluid placement, otherwise the block acts a void.
@@ -58,8 +60,41 @@ public class BlockWrapper extends VoidFluidHandler
         if (action.execute())
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, blockPos);
-            world.setBlockState(blockPos, state, Constants.BlockFlags.DEFAULT_AND_RERENDER);
+            world.setBlock(blockPos, state, Constants.BlockFlags.DEFAULT_AND_RERENDER);
         }
         return FluidAttributes.BUCKET_VOLUME;
+    }
+
+    public static class LiquidContainerBlockWrapper extends VoidFluidHandler
+    {
+        protected final ILiquidContainer liquidContainer;
+        protected final World world;
+        protected final BlockPos blockPos;
+
+        public LiquidContainerBlockWrapper(ILiquidContainer liquidContainer, World world, BlockPos blockPos)
+        {
+            this.liquidContainer = liquidContainer;
+            this.world = world;
+            this.blockPos = blockPos;
+        }
+
+        @Override
+        public int fill(FluidStack resource, FluidAction action)
+        {
+            // NOTE: "Filling" means placement in this context!
+            if (resource.getAmount() >= FluidAttributes.BUCKET_VOLUME)
+            {
+                BlockState state = world.getBlockState(blockPos);
+                if (liquidContainer.canPlaceLiquid(world, blockPos, state, resource.getFluid()))
+                {
+                    //If we are executing try to actually fill the container, if it failed return that we failed
+                    if (action.simulate() || liquidContainer.placeLiquid(world, blockPos, state, resource.getFluid().getAttributes().getStateForPlacement(world, blockPos, resource)))
+                    {
+                        return FluidAttributes.BUCKET_VOLUME;
+                    }
+                }
+            }
+            return 0;
+        }
     }
 }
