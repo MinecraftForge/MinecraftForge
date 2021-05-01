@@ -207,10 +207,11 @@
           this.field_70170_p.func_217376_c(itementity);
           ItemStack itemstack = itementity.func_92059_d();
           if (p_146097_3_) {
-@@ -1403,6 +_,25 @@
+@@ -1402,6 +_,29 @@
+          }
  
           return itementity;
-       }
++      }
 +   }
 +
 +   private String language = "en_us";
@@ -229,7 +230,10 @@
 +    * Force the name displayed in the tab list to refresh, by firing {@link net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat}.
 +    */
 +   public void refreshTabListName() {
++      ITextComponent oldName = this.tabListDisplayName;
 +      this.tabListDisplayName = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
++      if (!java.util.Objects.equals(oldName, this.tabListDisplayName)) {
++         this.func_184102_h().func_184103_al().func_148540_a(new net.minecraft.network.play.server.SPlayerListItemPacket(net.minecraft.network.play.server.SPlayerListItemPacket.Action.UPDATE_DISPLAY_NAME, this));
+       }
     }
  
-    @Nullable
