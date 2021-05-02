@@ -25,22 +25,21 @@
  
     protected AbstractMinecartEntity(EntityType<?> p_i48538_1_, World p_i48538_2_) {
        super(p_i48538_1_, p_i48538_2_);
-@@ -104,6 +_,15 @@
+@@ -103,6 +_,14 @@
+       this.field_70167_r = p_i48539_5_;
        this.field_70166_s = p_i48539_7_;
     }
- 
++   
 +   public net.minecraftforge.common.IMinecartCollisionHandler getCollisionHandler() {
 +      return COLLISIONS;
 +   }
 +
-+   // IMinecartCollisionHandler redirects here via comment. We ensure it exists and it works.
 +   public static void registerCollisionHandler(@Nullable net.minecraftforge.common.IMinecartCollisionHandler handler) {
 +      COLLISIONS = handler;
 +   }
-+
+ 
     public static AbstractMinecartEntity func_184263_a(World p_184263_0_, double p_184263_1_, double p_184263_3_, double p_184263_5_, AbstractMinecartEntity.Type p_184263_7_) {
        if (p_184263_7_ == AbstractMinecartEntity.Type.CHEST) {
-          return new ChestMinecartEntity(p_184263_0_, p_184263_1_, p_184263_3_, p_184263_5_);
 @@ -138,7 +_,7 @@
     }
  
