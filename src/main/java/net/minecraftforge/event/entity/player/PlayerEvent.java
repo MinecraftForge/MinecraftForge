@@ -189,7 +189,7 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(PlayerEntity)}.<br>
      * <br>
-     * {@link #displayName} contains the display name of the player or null if the client should determine the display name itself.
+     * {@link #getDisplayName()} contains the display name of the player or null if the client should determine the display name itself.
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
      * <br>

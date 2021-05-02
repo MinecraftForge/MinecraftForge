@@ -150,13 +150,12 @@
     }
  
     public ChatVisibility func_147096_v() {
-@@ -1276,7 +_,12 @@
+@@ -1276,7 +_,11 @@
  
     @Nullable
     public ITextComponent func_175396_E() {
 -      return null;
-+      if (!this.hasTabListName)
-+      {
++      if (!this.hasTabListName) {
 +         this.tabListDisplayName = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
 +         this.hasTabListName = true;
 +      }
