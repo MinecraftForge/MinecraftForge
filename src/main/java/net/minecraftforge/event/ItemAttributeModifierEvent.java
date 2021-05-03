@@ -19,7 +19,7 @@
 
 package net.minecraftforge.event;
 
-import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimaps;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -82,7 +82,7 @@ public class ItemAttributeModifierEvent extends Event
     {
         if (this.modifiableModifiers == null)
         {
-            this.modifiableModifiers = HashMultimap.create(this.originalModifiers);
+            this.modifiableModifiers = LinkedHashMultimap.create(this.originalModifiers);
             this.unmodifiableModifiers = Multimaps.unmodifiableMultimap(this.modifiableModifiers);
         }
         return this.modifiableModifiers;
