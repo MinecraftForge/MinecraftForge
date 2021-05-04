@@ -872,6 +872,7 @@ public class ForgeHooksClient
             component.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, message));
             Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(component).withStyle(TextFormatting.RED), Util.NIL_UUID);
         }
+        Minecraft.getInstance().gui.getChat().addRecentChat(currentParse.getReader().getString());
         return false;
     }
 }
