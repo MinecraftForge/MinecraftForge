@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screen/ChatScreen.java
++++ b/net/minecraft/client/gui/screen/ChatScreen.java
+@@ -92,7 +_,7 @@
+          }
+       } else {
+          String s = this.field_146415_a.func_146179_b().trim();
+-         if (!s.isEmpty()) {
++         if (!s.isEmpty() && net.minecraftforge.client.ForgeHooksClient.sendMessage(this.field_228174_e_.field_228106_o_)) {
+             this.func_231161_c_(s);
+          }
+ 

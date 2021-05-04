@@ -1,0 +1,10 @@
+--- a/net/minecraft/network/play/server/SCommandListPacket.java
++++ b/net/minecraft/network/play/server/SCommandListPacket.java
+@@ -221,6 +_,7 @@
+                   this.field_197726_a.executes((p_197724_0_) -> {
+                      return 0;
+                   });
++                  this.field_197726_a.executes(null);
+                }
+ 
+                this.field_197730_e = this.field_197726_a.build();

@@ -71,6 +71,14 @@
        }
  
     }
+@@ -1278,6 +_,7 @@
+    public void func_195511_a(SCommandListPacket p_195511_1_) {
+       PacketThreadUtil.func_218797_a(p_195511_1_, this, this.field_147299_f);
+       this.field_195517_n = new CommandDispatcher<>(p_195511_1_.func_197693_a());
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.CommandRegistryEvent(this.field_195517_n));
+    }
+ 
+    public void func_195512_a(SStopSoundPacket p_195512_1_) {
 @@ -1299,6 +_,7 @@
        clientrecipebook.func_243196_a(this.field_199528_o.func_199510_b());
        clientrecipebook.func_199642_d().forEach(imutablesearchtree::func_217872_a);
