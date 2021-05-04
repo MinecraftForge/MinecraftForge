@@ -33,6 +33,14 @@
                 this.field_175009_l.add(chunkrenderdispatcher$chunkrender4);
              } else {
                 this.field_72777_q.func_213239_aq().func_76320_a("build near");
+@@ -908,6 +_,7 @@
+          this.func_228419_a_(matrix4f, p_228426_9_, vector3d.field_72450_a, vector3d.field_72448_b, vector3d.field_72449_c, flag ? new ClippingHelper(matrix4f, p_228426_9_) : clippinghelper);
+          this.field_175002_T = false;
+       }
++      net.minecraftforge.client.event.RenderWorldEventHandler.startWorldRenderPhase(this, p_228426_1_, p_228426_2_, clippinghelper, p_228426_6_);
+ 
+       iprofiler.func_219895_b("clear");
+       FogRenderer.func_228371_a_(p_228426_6_, p_228426_2_, this.field_72777_q.field_71441_e, this.field_72777_q.field_71474_y.field_151451_c, p_228426_7_.func_205002_d(p_228426_2_));
 @@ -915,13 +_,13 @@
        float f = p_228426_7_.func_205001_m();
        boolean flag1 = this.field_72777_q.field_71441_e.func_239132_a_().func_230493_a_(MathHelper.func_76128_c(d0), MathHelper.func_76128_c(d1)) || this.field_72777_q.field_71456_v.func_184046_j().func_184056_f();
@@ -49,8 +57,11 @@
        iprofiler.func_219895_b("terrain_setup");
        this.func_228437_a_(p_228426_6_, clippinghelper, flag, this.field_228409_ai_++, this.field_72777_q.field_71439_g.func_175149_v());
        iprofiler.func_219895_b("updatechunks");
-@@ -942,7 +_,9 @@
+@@ -940,9 +_,12 @@
+       long k1 = j1 * 3L / 2L;
+       long l1 = MathHelper.func_226163_a_(k1, l, 33333333L);
        this.func_174967_a(p_228426_3_ + l1);
++      net.minecraftforge.client.event.RenderWorldEventHandler.fireTerrainUpdate(p_228426_3_ + l1);
        iprofiler.func_219895_b("terrain");
        this.func_228441_a_(RenderType.func_228639_c_(), p_228426_1_, d0, d1, d2);
 +      this.field_72777_q.func_209506_al().func_229356_a_(AtlasTexture.field_110575_b).setBlurMipmap(false, this.field_72777_q.field_71474_y.field_151442_I > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
@@ -108,15 +119,25 @@
           RenderState.field_239237_T_.func_228549_b_();
        } else {
           iprofiler.func_219895_b("translucent");
-@@ -1129,7 +_,7 @@
+@@ -1129,8 +_,9 @@
           iprofiler.func_219895_b("string");
           this.func_228441_a_(RenderType.func_241715_r_(), p_228426_1_, d0, d1, d2);
           iprofiler.func_219895_b("particles");
 -         this.field_72777_q.field_71452_i.func_228345_a_(p_228426_1_, irendertypebuffer$impl, p_228426_8_, p_228426_6_, p_228426_2_);
 +         this.field_72777_q.field_71452_i.renderParticles(p_228426_1_, irendertypebuffer$impl, p_228426_8_, p_228426_6_, p_228426_2_, clippinghelper);
        }
++      net.minecraftforge.client.event.RenderWorldEventHandler.endWorldRenderPhase();
  
        RenderSystem.pushMatrix();
+       RenderSystem.multMatrix(p_228426_1_.func_227866_c_().func_227870_a_());
+@@ -1239,6 +_,7 @@
+       }
+ 
+       VertexBuffer.func_177361_b();
++      net.minecraftforge.client.event.RenderWorldEventHandler.fireBlockLayer(p_228441_1_);
+       RenderSystem.clearCurrentColor();
+       this.field_228408_W_.func_227895_d_();
+       this.field_72777_q.func_213239_aq().func_76319_b();
 @@ -1481,6 +_,11 @@
     }
  

@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/IRenderTypeBuffer.java
++++ b/net/minecraft/client/renderer/IRenderTypeBuffer.java
+@@ -79,6 +_,7 @@
+          boolean flag = Objects.equals(this.field_228459_c_, p_228462_1_.func_230169_u_());
+          if (flag || bufferbuilder != this.field_228457_a_) {
+             if (this.field_228460_d_.remove(bufferbuilder)) {
++               net.minecraftforge.client.event.RenderWorldEventHandler.fireRenderTypeFinish(p_228462_1_, bufferbuilder);
+                p_228462_1_.func_228631_a_(bufferbuilder, 0, 0, 0);
+                if (flag) {
+                   this.field_228459_c_ = Optional.empty();
