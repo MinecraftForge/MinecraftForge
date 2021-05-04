@@ -29,7 +29,7 @@ import net.minecraft.command.arguments.ResourceLocationArgument;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.StringTextComponent;
-import net.minecraftforge.client.event.CommandRegistryEvent;
+import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -42,7 +42,7 @@ public class ClientCommandTest
         MinecraftForge.EVENT_BUS.addListener(this::init);
     }
 
-    private void init(CommandRegistryEvent event)
+    private void init(RegisterClientCommandsEvent event)
     {
         LiteralArgumentBuilder<ISuggestionProvider> cmd = LiteralArgumentBuilder.literal("clientcommandtest");
         RequiredArgumentBuilder<ISuggestionProvider, ResourceLocation> arg = RequiredArgumentBuilder.argument("block", ResourceLocationArgument.id());

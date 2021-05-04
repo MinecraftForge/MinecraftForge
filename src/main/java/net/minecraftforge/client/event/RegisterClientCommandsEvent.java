@@ -26,12 +26,12 @@ import net.minecraftforge.eventbus.api.Event;
 /**
  * Fired when client {@link CommandDispatcher} has all of its commands synced from the server
  */
-public class CommandRegistryEvent extends Event
+public class RegisterClientCommandsEvent extends Event
 {
 
     private final CommandDispatcher<ISuggestionProvider> dispatcher;
 
-    public CommandRegistryEvent(CommandDispatcher<ISuggestionProvider> dispatcher)
+    public RegisterClientCommandsEvent(CommandDispatcher<ISuggestionProvider> dispatcher)
     {
         this.dispatcher = dispatcher;
     }
