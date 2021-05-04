@@ -185,15 +185,6 @@
        }
     }
  
-@@ -479,7 +_,7 @@
- 
-    public void func_77982_d(@Nullable CompoundNBT p_77982_1_) {
-       this.field_77990_d = p_77982_1_;
--      if (this.func_77973_b().func_77645_m()) {
-+      if (this.func_77973_b().isDamageable(this)) {
-          this.func_196085_b(this.func_77952_i());
-       }
- 
 @@ -673,6 +_,7 @@
           }
        }
