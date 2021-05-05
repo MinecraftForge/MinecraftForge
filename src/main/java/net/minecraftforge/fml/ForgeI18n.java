@@ -102,7 +102,7 @@ public class ForgeI18n {
 
     /**
      * @param i18nMessage the message to parse.
-     * @param args the object's to replace the placeholder with.
+     * @param args the objects to replace the placeholder with.
      * @return a list of {@link ITextComponent}'s. Each new line represents a new {@link ITextComponent}.
      */
     public static List<ITextComponent> parseAsComponentList(final String i18nMessage, Object... args){
@@ -117,7 +117,7 @@ public class ForgeI18n {
 
     /**
      * @param i18nMessage the message to parse. If your message contains new lines consider using {@link ForgeI18n#parseAsComponentList}
-     * @param args the object's to replace the placeholder with.
+     * @param args the objects to replace the placeholder with.
      * @return a {@link ITextComponent} representing the parsed string.
      */
     public static ITextComponent parseAsComponent(final String i18nMessage, final Object... args){
