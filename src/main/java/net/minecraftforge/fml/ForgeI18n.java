@@ -42,7 +42,7 @@ import java.util.regex.Pattern;
 
 import static net.minecraftforge.fml.Logging.CORE;
 
-//TODO, this should be re-evaluated now that ITextComponents are passed everywhere instaed of strings.
+//TODO, this should be re-evaluated now that ITextComponents are passed everywhere instead of strings.
 public class ForgeI18n {
     private static final Logger LOGGER = LogManager.getLogger();
     // From FontRenderer.renderCharAtPos
