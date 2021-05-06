@@ -56,6 +56,15 @@
                       }
                    }
                 }
+@@ -270,7 +_,7 @@
+ 
+    protected boolean func_214008_b(@Nullable IRecipe<?> p_214008_1_) {
+       if (!this.field_214012_a.get(0).func_190926_b() && p_214008_1_ != null) {
+-         ItemStack itemstack = p_214008_1_.func_77571_b();
++         ItemStack itemstack = ((IRecipe<ISidedInventory>) p_214008_1_).func_77572_b(this);
+          if (itemstack.func_190926_b()) {
+             return false;
+          } else {
 @@ -279,10 +_,10 @@
                 return true;
              } else if (!itemstack1.func_77969_a(itemstack)) {
@@ -69,7 +78,13 @@
              }
           }
        } else {
-@@ -298,7 +_,7 @@
+@@ -293,12 +_,12 @@
+    private void func_214007_c(@Nullable IRecipe<?> p_214007_1_) {
+       if (p_214007_1_ != null && this.func_214008_b(p_214007_1_)) {
+          ItemStack itemstack = this.field_214012_a.get(0);
+-         ItemStack itemstack1 = p_214007_1_.func_77571_b();
++         ItemStack itemstack1 = ((IRecipe<ISidedInventory>) p_214007_1_).func_77572_b(this);
+          ItemStack itemstack2 = this.field_214012_a.get(2);
           if (itemstack2.func_190926_b()) {
              this.field_214012_a.set(2, itemstack1.func_77946_l());
           } else if (itemstack2.func_77973_b() == itemstack1.func_77973_b()) {
