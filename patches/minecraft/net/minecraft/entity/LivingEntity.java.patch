@@ -160,7 +160,7 @@
           boolean flag = false;
           if (p_226298_1_ instanceof WitherEntity) {
 -            if (this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
-+            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this)) {
++            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, p_226298_1_)) {
                 BlockPos blockpos = this.func_233580_cy_();
                 BlockState blockstate = Blocks.field_222388_bz.func_176223_P();
 -               if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
