@@ -66,24 +66,6 @@
        double d1 = p_233562_1_.field_233557_ao_.field_72448_b - this.field_233557_ao_.field_72448_b;
        double d2 = p_233562_1_.field_233557_ao_.field_72449_c - this.field_233557_ao_.field_72449_c;
        return d0 * d0 + d1 * d1 + d2 * d2 < p_233562_2_ * p_233562_2_;
-@@ -560,7 +_,7 @@
- 
-             this.field_70140_Q = (float)((double)this.field_70140_Q + (double)MathHelper.func_76133_a(func_213296_b(vector3d)) * 0.6D);
-             this.field_82151_R = (float)((double)this.field_82151_R + (double)MathHelper.func_76133_a(d0 * d0 + d1 * d1 + d2 * d2) * 0.6D);
--            if (this.field_82151_R > this.field_70150_b && !blockstate.func_196958_f()) {
-+            if (this.field_82151_R > this.field_70150_b && !blockstate.isAir(this.field_70170_p, blockpos)) {
-                this.field_70150_b = this.func_203009_ad();
-                if (this.func_70090_H()) {
-                   Entity entity = this.func_184207_aI() && this.func_184179_bs() != null ? this.func_184179_bs() : this;
-@@ -575,7 +_,7 @@
-                } else {
-                   this.func_180429_a(blockpos, blockstate);
-                }
--            } else if (this.field_82151_R > this.field_191959_ay && this.func_191957_ae() && blockstate.func_196958_f()) {
-+            } else if (this.field_82151_R > this.field_191959_ay && this.func_191957_ae() && blockstate.isAir(this.field_70170_p, blockpos)) {
-                this.field_191959_ay = this.func_191954_d(this.field_82151_R);
-             }
-          }
 @@ -591,8 +_,9 @@
  
           float f2 = this.func_225515_ai_();

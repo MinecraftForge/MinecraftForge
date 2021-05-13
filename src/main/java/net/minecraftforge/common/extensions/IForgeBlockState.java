@@ -225,27 +225,7 @@ public interface IForgeBlockState
     {
         return getBlockState().getBlock().getBedDirection(getBlockState(), world, pos);
     }
-
-    /**
-     * Determines this block should be treated as an air block
-     * by the rest of the code. This method is primarily
-     * useful for creating pure logic-blocks that will be invisible
-     * to the player and otherwise interact as air would.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return True if the block considered air
-     * @deprecated TODO: Remove in 1.17, in favor of state only version. This is a old hook from before
-     *   block states were unlimited and people used TileEntities. If you still use the location
-     *   information in your TileEntity please explain why and how you can't use BlockState only version
-     *   here: https://github.com/MinecraftForge/MinecraftForge/issues/7409
-     */
-    @Deprecated
-    default boolean isAir(IBlockReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().isAir(getBlockState(), world, pos);
-    }
-
+    
     /**
      * Used during tree growth to determine if newly generated leaves can replace this block.
      *

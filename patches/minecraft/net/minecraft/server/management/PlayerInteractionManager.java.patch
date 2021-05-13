@@ -1,23 +1,5 @@
 --- a/net/minecraft/server/management/PlayerInteractionManager.java
 +++ b/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -87,7 +_,7 @@
-       ++this.field_73100_i;
-       if (this.field_73097_j) {
-          BlockState blockstate = this.field_73092_a.func_180495_p(this.field_180241_i);
--         if (blockstate.func_196958_f()) {
-+         if (blockstate.isAir(field_73092_a, field_180241_i)) {
-             this.field_73097_j = false;
-          } else {
-             float f = this.func_229859_a_(blockstate, this.field_180241_i, this.field_73093_n);
-@@ -98,7 +_,7 @@
-          }
-       } else if (this.field_73088_d) {
-          BlockState blockstate1 = this.field_73092_a.func_180495_p(this.field_180240_f);
--         if (blockstate1.func_196958_f()) {
-+         if (blockstate1.isAir(field_73092_a, field_180240_f)) {
-             this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), this.field_180240_f, -1);
-             this.field_73094_o = -1;
-             this.field_73088_d = false;
 @@ -126,7 +_,15 @@
        double d1 = this.field_73090_b.func_226278_cu_() - ((double)p_225416_1_.func_177956_o() + 0.5D) + 1.5D;
        double d2 = this.field_73090_b.func_226281_cx_() - ((double)p_225416_1_.func_177952_p() + 0.5D);
@@ -35,22 +17,14 @@
           this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false, "too far"));
        } else if (p_225416_1_.func_177956_o() >= p_225416_4_) {
           this.field_73090_b.field_71135_a.func_147359_a(new SPlayerDiggingPacket(p_225416_1_, this.field_73092_a.func_180495_p(p_225416_1_), p_225416_2_, false, "too high"));
-@@ -150,12 +_,13 @@
-             this.field_73089_e = this.field_73100_i;
+@@ -151,6 +_,7 @@
              float f = 1.0F;
              BlockState blockstate = this.field_73092_a.func_180495_p(p_225416_1_);
--            if (!blockstate.func_196958_f()) {
-+            if (!blockstate.isAir(field_73092_a, p_225416_1_)) {
+             if (!blockstate.func_196958_f()) {
 +               if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
                 blockstate.func_196942_a(this.field_73092_a, p_225416_1_, this.field_73090_b);
                 f = blockstate.func_185903_a(this.field_73090_b, this.field_73090_b.field_70170_p, p_225416_1_);
              }
- 
--            if (!blockstate.func_196958_f() && f >= 1.0F) {
-+            if (!blockstate.isAir(field_73092_a, p_225416_1_) && f >= 1.0F) {
-                this.func_229860_a_(p_225416_1_, p_225416_2_, "insta mine");
-             } else {
-                if (this.field_73088_d) {
 @@ -218,7 +_,8 @@
  
     public boolean func_180237_b(BlockPos p_180237_1_) {

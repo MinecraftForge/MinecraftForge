@@ -80,7 +80,7 @@
     public abstract static class AbstractBlockState extends StateHolder<Block, BlockState> {
        private final int field_215708_d;
        private final boolean field_215709_e;
-@@ -424,18 +_,24 @@
+@@ -424,18 +_,23 @@
           return this.field_215709_e;
        }
  
@@ -90,7 +90,6 @@
           return this.field_215708_d;
        }
  
-+      /** @deprecated use {@link BlockState#isAir(IBlockReader, BlockPos)} until 1.17, at which point this method will be undreprecated. See https://github.com/MinecraftForge/MinecraftForge/issues/7409 for more details */
 +      @Deprecated
        public boolean func_196958_f() {
 -         return this.field_235702_f_;

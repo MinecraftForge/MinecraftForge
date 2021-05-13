@@ -24,12 +24,8 @@
        Vector3d vector3d = new Vector3d(this.field_77284_b, this.field_77285_c, this.field_77282_d);
  
        for(int k2 = 0; k2 < list.size(); ++k2) {
-@@ -234,11 +_,11 @@
-          for(BlockPos blockpos : this.field_77281_g) {
-             BlockState blockstate = this.field_77287_j.func_180495_p(blockpos);
-             Block block = blockstate.func_177230_c();
--            if (!blockstate.func_196958_f()) {
-+            if (!blockstate.isAir(this.field_77287_j, blockpos)) {
+@@ -237,8 +_,8 @@
+             if (!blockstate.func_196958_f()) {
                 BlockPos blockpos1 = blockpos.func_185334_h();
                 this.field_77287_j.func_217381_Z().func_76320_a("explosion_blocks");
 -               if (block.func_149659_a(this) && this.field_77287_j instanceof ServerWorld) {

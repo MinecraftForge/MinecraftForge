@@ -1,14 +1,5 @@
 --- a/net/minecraft/entity/monster/ShulkerEntity.java
 +++ b/net/minecraft/entity/monster/ShulkerEntity.java
-@@ -166,7 +_,7 @@
-          this.field_184708_bA = 0;
-       } else if (!this.field_70170_p.field_72995_K) {
-          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
--         if (!blockstate.func_196958_f()) {
-+         if (!blockstate.isAir(this.field_70170_p, blockpos)) {
-             if (blockstate.func_203425_a(Blocks.field_196603_bb)) {
-                Direction direction = blockstate.func_177229_b(PistonBlock.field_176387_N);
-                if (this.field_70170_p.func_175623_d(blockpos.func_177972_a(direction))) {
 @@ -219,6 +_,7 @@
           this.func_226286_f_((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p() + 0.5D);
           double d2 = 0.5D - (double)MathHelper.func_76126_a((0.5F + this.field_184706_by) * (float)Math.PI) * 0.5D;

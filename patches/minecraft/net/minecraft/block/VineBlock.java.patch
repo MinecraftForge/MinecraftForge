@@ -9,7 +9,7 @@
     public static final BooleanProperty field_176277_a = SixWayBlock.field_196496_z;
     public static final BooleanProperty field_176273_b = SixWayBlock.field_196488_a;
     public static final BooleanProperty field_176278_M = SixWayBlock.field_196490_b;
-@@ -152,14 +_,14 @@
+@@ -152,7 +_,7 @@
     }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
@@ -18,23 +18,3 @@
           Direction direction = Direction.func_239631_a_(p_225542_4_);
           BlockPos blockpos = p_225542_3_.func_177984_a();
           if (direction.func_176740_k().func_176722_c() && !p_225542_1_.func_177229_b(func_176267_a(direction))) {
-             if (this.func_196539_a(p_225542_2_, p_225542_3_)) {
-                BlockPos blockpos4 = p_225542_3_.func_177972_a(direction);
-                BlockState blockstate4 = p_225542_2_.func_180495_p(blockpos4);
--               if (blockstate4.func_196958_f()) {
-+               if (blockstate4.isAir(p_225542_2_, blockpos4)) {
-                   Direction direction3 = direction.func_176746_e();
-                   Direction direction4 = direction.func_176735_f();
-                   boolean flag = p_225542_1_.func_177229_b(func_176267_a(direction3));
-@@ -216,8 +_,9 @@
-             if (p_225542_3_.func_177956_o() > 0) {
-                BlockPos blockpos1 = p_225542_3_.func_177977_b();
-                BlockState blockstate = p_225542_2_.func_180495_p(blockpos1);
--               if (blockstate.func_196958_f() || blockstate.func_203425_a(this)) {
--                  BlockState blockstate1 = blockstate.func_196958_f() ? this.func_176223_P() : blockstate;
-+               boolean isAir = blockstate.isAir(p_225542_2_, blockpos1);
-+               if (isAir || blockstate.func_203425_a(this)) {
-+                  BlockState blockstate1 = isAir ? this.func_176223_P() : blockstate;
-                   BlockState blockstate2 = this.func_196544_a(p_225542_1_, blockstate1, p_225542_4_);
-                   if (blockstate1 != blockstate2 && this.func_196540_x(blockstate2)) {
-                      p_225542_2_.func_180501_a(blockpos1, blockstate2, 2);

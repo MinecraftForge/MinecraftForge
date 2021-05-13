@@ -277,7 +277,7 @@ public class ForgeHooks
             BlockPos pos = ((BlockRayTraceResult)target).getBlockPos();
             BlockState state = world.getBlockState(pos);
 
-            if (state.isAir(world, pos))
+            if (state.isAir())
                 return false;
 
             if (isCreative && Screen.hasControlDown() && state.hasTileEntity())

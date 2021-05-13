@@ -88,9 +88,8 @@
           iprofiler.func_219895_b("outline");
           BlockPos blockpos = ((BlockRayTraceResult)raytraceresult).func_216350_a();
           BlockState blockstate = this.field_72769_h.func_180495_p(blockpos);
--         if (!blockstate.func_196958_f() && this.field_72769_h.func_175723_af().func_177746_a(blockpos)) {
 +         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_228426_6_, raytraceresult, p_228426_2_, p_228426_1_, irendertypebuffer$impl))
-+         if (!blockstate.isAir(this.field_72769_h, blockpos) && this.field_72769_h.func_175723_af().func_177746_a(blockpos)) {
+          if (!blockstate.func_196958_f() && this.field_72769_h.func_175723_af().func_177746_a(blockpos)) {
              IVertexBuilder ivertexbuilder2 = irendertypebuffer$impl.getBuffer(RenderType.func_228659_m_());
              this.func_228429_a_(p_228426_1_, ivertexbuilder2, p_228426_6_.func_216773_g(), d0, d1, d2, blockpos, blockstate);
           }
@@ -181,13 +180,11 @@
           } else {
              this.func_184377_a((SoundEvent)null, p_180439_3_);
           }
-@@ -2382,8 +_,8 @@
-          break;
+@@ -2383,7 +_,7 @@
        case 2001:
           BlockState blockstate = Block.func_196257_b(p_180439_4_);
--         if (!blockstate.func_196958_f()) {
+          if (!blockstate.func_196958_f()) {
 -            SoundType soundtype = blockstate.func_215695_r();
-+         if (!blockstate.isAir(this.field_72769_h, p_180439_3_)) {
 +            SoundType soundtype = blockstate.getSoundType(this.field_72769_h, p_180439_3_, null);
              this.field_72769_h.func_184156_a(p_180439_3_, soundtype.func_185845_c(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F, false);
           }

@@ -65,7 +65,7 @@
  
        private boolean func_220836_a(World p_220836_1_, BlockPos p_220836_2_, BlockState p_220836_3_, BlockState p_220836_4_, BlockState p_220836_5_, BlockPos p_220836_6_) {
 -         return p_220836_4_.func_196958_f() && !p_220836_5_.func_196958_f() && !p_220836_5_.func_203425_a(Blocks.field_150357_h) && p_220836_5_.func_235785_r_(p_220836_1_, p_220836_6_) && p_220836_3_.func_196955_c(p_220836_1_, p_220836_2_) && p_220836_1_.func_72839_b(this.field_179475_a, AxisAlignedBB.func_241549_a_(Vector3d.func_237491_b_(p_220836_2_))).isEmpty();
-+         return p_220836_4_.isAir(p_220836_1_, p_220836_2_) && !p_220836_5_.isAir(p_220836_1_, p_220836_6_) && !p_220836_5_.func_203425_a(Blocks.field_150357_h) && !p_220836_5_.func_235714_a_(net.minecraftforge.common.Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST) && p_220836_5_.func_235785_r_(p_220836_1_, p_220836_6_) && p_220836_3_.func_196955_c(p_220836_1_, p_220836_2_) && p_220836_1_.func_72839_b(this.field_179475_a, AxisAlignedBB.func_241549_a_(Vector3d.func_237491_b_(p_220836_2_))).isEmpty();
++         return p_220836_4_.func_196958_f() && !p_220836_5_.func_196958_f() && !p_220836_5_.func_203425_a(Blocks.field_150357_h) && !p_220836_5_.func_235714_a_(net.minecraftforge.common.Tags.Blocks.ENDERMAN_PLACE_ON_BLACKLIST) && p_220836_5_.func_235785_r_(p_220836_1_, p_220836_6_) && p_220836_3_.func_196955_c(p_220836_1_, p_220836_2_) && p_220836_1_.func_72839_b(this.field_179475_a, AxisAlignedBB.func_241549_a_(Vector3d.func_237491_b_(p_220836_2_))).isEmpty();
        }
     }
  
