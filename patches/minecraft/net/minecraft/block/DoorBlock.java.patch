@@ -1,0 +1,10 @@
+--- a/net/minecraft/block/DoorBlock.java
++++ b/net/minecraft/block/DoorBlock.java
+@@ -224,6 +_,6 @@
+    }
+ 
+    public static boolean func_235492_h_(BlockState p_235492_0_) {
+-      return p_235492_0_.func_177230_c() instanceof DoorBlock && (p_235492_0_.func_185904_a() == Material.field_151575_d || p_235492_0_.func_185904_a() == Material.field_237214_y_);
++      return p_235492_0_.func_177230_c() instanceof DoorBlock && p_235492_0_.func_177230_c().func_203417_a(net.minecraft.tags.BlockTags.field_200152_g);
+    }
+ }
