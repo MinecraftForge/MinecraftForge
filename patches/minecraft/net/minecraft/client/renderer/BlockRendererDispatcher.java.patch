@@ -69,7 +69,7 @@
           case ENTITYBLOCK_ANIMATED:
 -            ItemStackTileEntityRenderer.field_147719_a.func_239207_a_(new ItemStack(p_228791_1_.func_177230_c()), ItemCameraTransforms.TransformType.NONE, p_228791_2_, p_228791_3_, p_228791_4_, p_228791_5_);
 +            ItemStack stack = new ItemStack(p_228791_1_.func_177230_c());
-+            net.minecraftforge.client.ItemClientProperties.getItemStackTileEntityRenderer(stack).func_239207_a_(stack, ItemCameraTransforms.TransformType.NONE, p_228791_2_, p_228791_3_, p_228791_4_, p_228791_5_);
++            net.minecraftforge.client.ForgeClientProperties.getItemStackTileEntityRenderer(stack).func_239207_a_(stack, ItemCameraTransforms.TransformType.NONE, p_228791_2_, p_228791_3_, p_228791_4_, p_228791_5_);
           }
  
        }

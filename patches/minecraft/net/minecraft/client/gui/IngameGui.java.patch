@@ -42,7 +42,7 @@
              RenderSystem.defaultBlendFunc();
              func_238467_a_(p_238453_1_, j - 2, k - 2, j + i + 2, k + 9 + 2, this.field_73839_d.field_71474_y.func_216839_a(0));
 -            this.func_175179_f().func_243246_a(p_238453_1_, iformattabletextcomponent, (float)j, (float)k, 16777215 + (l << 24));
-+            FontRenderer font = net.minecraftforge.client.ItemClientProperties.getFont(field_92016_l);
++            FontRenderer font = net.minecraftforge.client.ForgeClientProperties.getFont(field_92016_l);
 +            if (font == null) {
 +               this.func_175179_f().func_243246_a(p_238453_1_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
 +            } else {

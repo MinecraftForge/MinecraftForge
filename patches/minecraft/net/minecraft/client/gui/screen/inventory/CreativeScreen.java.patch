@@ -179,7 +179,7 @@
           }
  
 -         this.func_243308_b(p_230457_1_, list1, p_230457_3_, p_230457_4_);
-+         net.minecraft.client.gui.FontRenderer font = net.minecraftforge.client.ItemClientProperties.getFont(p_230457_2_);
++         net.minecraft.client.gui.FontRenderer font = net.minecraftforge.client.ForgeClientProperties.getFont(p_230457_2_);
 +         net.minecraftforge.fml.client.gui.GuiUtils.preItemToolTip(p_230457_2_);
 +         this.renderWrappedToolTip(p_230457_1_, list1, p_230457_3_, p_230457_4_, (font == null ? this.field_230712_o_ : font));
 +         net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();

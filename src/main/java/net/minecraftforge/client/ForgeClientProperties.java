@@ -46,18 +46,55 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import java.util.Map;
 import java.util.function.Function;
 
-public class BlockClientProperties
+public class ForgeClientProperties
 {
-    private BlockClientProperties()
+    private ForgeClientProperties()
     {
         // Not instantiable.
     }
 
-    private static final Map<Block, IHitEffectProvider> hitEffectProviders = Maps.newHashMap();
-    private static final Map<Block, IDestroyEffectProvider> destroyEffectProviders = Maps.newHashMap();
-    private static final Map<Block, IFogColorProvider> fogColorProviders = Maps.newHashMap();
+    private static final Map<Item, Function<ItemStack, FontRenderer>> fontProviders = Maps.newHashMap();
+    private static final Map<Item, IArmorModelProvider> armorModelProviders = Maps.newHashMap();
+    private static final Map<Item, IHelmetOverlayRenderer> helmetOverlayRenderers = Maps.newHashMap();
+    private static final Map<Item, ItemStackTileEntityRenderer> itemStackTileEntityRenderers = Maps.newHashMap();
 
-    public static synchronized void registerHitEffectProvider(Block block, IHitEffectProvider hitEffectProvider)
+    private static final Map<Block, ForgeClientProperties.IHitEffectProvider> hitEffectProviders = Maps.newHashMap();
+    private static final Map<Block, ForgeClientProperties.IDestroyEffectProvider> destroyEffectProviders = Maps.newHashMap();
+    private static final Map<Block, ForgeClientProperties.IFogColorProvider> fogColorProviders = Maps.newHashMap();
+
+    public static synchronized void registerFontProvider(Item item, Function<ItemStack, FontRenderer> fontProvider)
+    {
+        if (fontProviders.containsKey(item))
+            throw new IllegalStateException("A font provider has already been registered for this item.");
+
+        fontProviders.put(item, fontProvider);
+    }
+
+    public static synchronized void registerArmorModelProvider(Item item, IArmorModelProvider armorModelProvider)
+    {
+        if (armorModelProviders.containsKey(item))
+            throw new IllegalStateException("An armor model provider has already been registered for this item.");
+
+        armorModelProviders.put(item, armorModelProvider);
+    }
+
+    public static synchronized void registerFontProvider(Item item, IHelmetOverlayRenderer helmetOverlayRenderer)
+    {
+        if (helmetOverlayRenderers.containsKey(item))
+            throw new IllegalStateException("An armor model provider has already been registered for this item.");
+
+        helmetOverlayRenderers.put(item, helmetOverlayRenderer);
+    }
+
+    public static synchronized void registerFontProvider(Item item, ItemStackTileEntityRenderer itemStackTileEntityRenderer)
+    {
+        if (itemStackTileEntityRenderers.containsKey(item))
+            throw new IllegalStateException("An ItemStackTileEntityRenderer has already been registered for this item.");
+
+        itemStackTileEntityRenderers.put(item, itemStackTileEntityRenderer);
+    }
+
+    public static synchronized void registerHitEffectProvider(Block block, ForgeClientProperties.IHitEffectProvider hitEffectProvider)
     {
         if (hitEffectProviders.containsKey(block))
             throw new IllegalStateException("A hit effect provider has already been registered for this block.");
@@ -65,7 +102,7 @@ public class BlockClientProperties
         hitEffectProviders.put(block, hitEffectProvider);
     }
 
-    public static synchronized void registerDestroyEffectProvider(Block block, IDestroyEffectProvider destroyEffectProvider)
+    public static synchronized void registerDestroyEffectProvider(Block block, ForgeClientProperties.IDestroyEffectProvider destroyEffectProvider)
     {
         if (destroyEffectProviders.containsKey(block))
             throw new IllegalStateException("A destroy effect provider has already been registered for this block.");
@@ -73,12 +110,40 @@ public class BlockClientProperties
         destroyEffectProviders.put(block, destroyEffectProvider);
     }
 
-    public static synchronized void registerFogColorProvider(Block block, IFogColorProvider fogColorProvider)
+    public static synchronized void registerFogColorProvider(Block block, ForgeClientProperties.IFogColorProvider fogColorProvider)
     {
         if (fogColorProviders.containsKey(block))
             throw new IllegalStateException("A destroy effect provider has already been registered for this block.");
 
         fogColorProviders.put(block, fogColorProvider);
+    }
+
+    public static FontRenderer getFont(ItemStack stack)
+    {
+        Function<ItemStack, FontRenderer> provider = fontProviders.get(stack.getItem());
+        if (provider == null)
+            return null;
+        return provider.apply(stack);
+    }
+
+    public static <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A defaultModel)
+    {
+        IArmorModelProvider armorModelProvider = armorModelProviders.get(itemStack.getItem());
+        if (armorModelProvider == null)
+            return null;
+        return armorModelProvider.getArmorModel(entityLiving, itemStack, armorSlot, defaultModel);
+    }
+
+    public static void renderHelmetOverlay(ItemStack stack, PlayerEntity player, int width, int height, float partialTicks)
+    {
+        IHelmetOverlayRenderer helmetOverlayRenderer = helmetOverlayRenderers.get(stack.getItem());
+        if (helmetOverlayRenderer != null)
+            helmetOverlayRenderer.renderHelmetOverlay(stack, player, width, height, partialTicks);
+    }
+
+    public static ItemStackTileEntityRenderer getItemStackTileEntityRenderer(ItemStack stack)
+    {
+        return itemStackTileEntityRenderers.getOrDefault(stack.getItem(), ItemStackTileEntityRenderer.instance);
     }
 
     /**
@@ -160,6 +225,16 @@ public class BlockClientProperties
             return new Vector3d(0.6F, 0.1F, 0.0F);
         }
         return originalColor;
+    }
+    
+    public interface IArmorModelProvider
+    {
+        <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A defaultModel);
+    }
+
+    public interface IHelmetOverlayRenderer
+    {
+        void renderHelmetOverlay(ItemStack stack, PlayerEntity player, int width, int height, float partialTicks);
     }
 
     public interface IHitEffectProvider
