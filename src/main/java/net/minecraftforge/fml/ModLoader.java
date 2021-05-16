@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
@@ -190,6 +191,7 @@ public class ModLoader
         dispatchAndHandleError(ModLoadingStage.CREATE_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
+        ModLoader.get().postEvent(new RegisterCapabilitiesEvent());
         statusConsumer.ifPresent(c->c.accept("Adding custom tag types"));
         GameData.setCustomTagTypesFromRegistries();
         statusConsumer.ifPresent(c->c.accept("Populating registries"));
