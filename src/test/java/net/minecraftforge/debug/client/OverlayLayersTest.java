@@ -28,7 +28,7 @@ public class OverlayLayersTest
         List<OverlayRegistry.OverlayEntry> overlays = OverlayRegistry.orderedEntries();
         for(int i=0;i<overlays.size();i++)
         {
-            OverlayRegistry.OverlayEntry entry = overlays.get(overlayIndex);
+            OverlayRegistry.OverlayEntry entry = overlays.get(i);
             event.getLeft().add(String.format(overlayIndex == i ? "> %s [%s] <" : "  %s [%s]  ", entry.getDisplayName(), entry.isEnabled()));
         }
     }

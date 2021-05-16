@@ -3,6 +3,7 @@ package net.minecraftforge.client.gui;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -11,40 +12,56 @@ import java.util.Map;
 public class OverlayRegistry
 {
     /**
-     * Adds a new overlay entry to the registry, placed at the end of the list.
-     * Call from {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}. No need for enqueueWork.
-     * @param displayName A string for debug purposes, used primarily in exception traces coming from the overlays.
-     * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
-     * @return The same object passed into the {@param overlay} parameter.
-     */
-    public static synchronized IIngameOverlay registerOverlayTop(String displayName, IIngameOverlay overlay)
-    {
-        return registerOverlay(1, null, displayName, overlay);
-    }
-
-    /**
      * Adds a new overlay entry to the registry, placed at the beginning of the list.
      * Call from {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}. No need for enqueueWork.
      * @param displayName A string for debug purposes, used primarily in exception traces coming from the overlays.
      * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
      * @return The same object passed into the {@param overlay} parameter.
      */
-    public static synchronized IIngameOverlay registerOverlayBottom(String displayName, IIngameOverlay overlay)
+    public static synchronized IIngameOverlay registerOverlayBottom(@Nonnull String displayName, @Nonnull IIngameOverlay overlay)
     {
         return registerOverlay(-1, null, displayName, overlay);
     }
 
-    public static synchronized IIngameOverlay registerOverlayAbove(IIngameOverlay other, String displayName, IIngameOverlay overlay)
-    {
-        return registerOverlay(1, other, displayName, overlay);
-    }
-
-    public static synchronized IIngameOverlay registerOverlayBelow(IIngameOverlay other, String displayName, IIngameOverlay overlay)
+    /**
+     * Adds a new overlay entry to the registry, placed at the beginning of the list.
+     * Call from {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}. No need for enqueueWork.
+     * @param other The overlay to insert before. The overlay must be registered.
+     * @param displayName A string for debug purposes, used primarily in exception traces coming from the overlays.
+     * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
+     * @return The same object passed into the {@param overlay} parameter.
+     */
+    public static synchronized IIngameOverlay registerOverlayBelow(@Nonnull IIngameOverlay other, @Nonnull String displayName, @Nonnull IIngameOverlay overlay)
     {
         return registerOverlay(-1, other, displayName, overlay);
     }
 
-    private static IIngameOverlay registerOverlay(int sort, @Nullable IIngameOverlay other, String displayName, IIngameOverlay overlay)
+    /**
+     * Adds a new overlay entry to the registry, placed at the beginning of the list.
+     * Call from {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}. No need for enqueueWork.
+     * @param other The overlay to insert after. The overlay must be registered.
+     * @param displayName A string for debug purposes, used primarily in exception traces coming from the overlays.
+     * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
+     * @return The same object passed into the {@param overlay} parameter.
+     */
+    public static synchronized IIngameOverlay registerOverlayAbove(@Nonnull IIngameOverlay other, @Nonnull String displayName, @Nonnull IIngameOverlay overlay)
+    {
+        return registerOverlay(1, other, displayName, overlay);
+    }
+
+    /**
+     * Adds a new overlay entry to the registry, placed at the end of the list.
+     * Call from {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}. No need for enqueueWork.
+     * @param displayName A string for debug purposes, used primarily in exception traces coming from the overlays.
+     * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
+     * @return The same object passed into the {@param overlay} parameter.
+     */
+    public static synchronized IIngameOverlay registerOverlayTop(@Nonnull String displayName, @Nonnull IIngameOverlay overlay)
+    {
+        return registerOverlay(1, null, displayName, overlay);
+    }
+
+    private static IIngameOverlay registerOverlay(int sort, @Nullable IIngameOverlay other, @Nonnull String displayName, @Nonnull IIngameOverlay overlay)
     {
         OverlayEntry entry = overlays.get(overlay);
 
@@ -53,15 +70,14 @@ public class OverlayRegistry
             overlaysOrdered.remove(entry);
         }
 
-        int insertAt;
+        int insertAt = overlays.size();
         if (other == null)
         {
-            if (sort < 0) insertAt = 0;
-            else insertAt = overlays.size();
+            if (sort < 0)
+                insertAt = 0;
         }
         else
         {
-            insertAt = -1;
             for (int i = 0; i < overlaysOrdered.size(); i++)
             {
                 OverlayEntry ov = overlaysOrdered.get(i);
@@ -71,10 +87,6 @@ public class OverlayRegistry
                     else insertAt = i+1;
                     break;
                 }
-            }
-            if (insertAt < 0)
-            {
-                throw new RuntimeException("Error registering overlay " + displayName + ": dependency overlay not found in the list");
             }
         }
 
@@ -91,7 +103,7 @@ public class OverlayRegistry
      * @param overlay The overlay object to enable or disable
      * @param enable The new state
      */
-    public static synchronized void enableOverlay(IIngameOverlay overlay, boolean enable)
+    public static synchronized void enableOverlay(@Nonnull IIngameOverlay overlay, boolean enable)
     {
         OverlayEntry entry = overlays.get(overlay);
         if (entry != null)
@@ -105,7 +117,8 @@ public class OverlayRegistry
      * @param overlay The overlay to obtain the information for.
      * @return The registration entry for this overlay.
      */
-    public static synchronized OverlayEntry getEntry(IIngameOverlay overlay)
+    @Nullable
+    public static synchronized OverlayEntry getEntry(@Nonnull IIngameOverlay overlay)
     {
         return overlays.get(overlay);
     }
