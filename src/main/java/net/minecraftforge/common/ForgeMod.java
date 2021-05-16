@@ -32,6 +32,7 @@ import net.minecraft.world.storage.IServerConfiguration;
 import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
@@ -143,6 +144,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::loadComplete);
+        modEventBus.addListener(this::registerCapabilities);
         modEventBus.addGenericListener(Fluid.class, this::registerFluids);
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
@@ -162,13 +164,16 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         BiomeDictionary.init();
     }
 
-    public void preInit(FMLCommonSetupEvent evt)
+    public void registerCapabilities(RegisterCapabilitiesEvent evt)
     {
         CapabilityItemHandler.register();
         CapabilityFluidHandler.register();
         CapabilityAnimation.register();
         CapabilityEnergy.register();
+    }
 
+    public void preInit(FMLCommonSetupEvent evt)
+    {
         VersionChecker.startVersionCheck();
 
         registerArgumentTypes();
