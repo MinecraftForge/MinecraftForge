@@ -16,7 +16,7 @@ public class OverlayRegistry
      * Call from {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}. No need for enqueueWork.
      * @param displayName A string for debug purposes, used primarily in exception traces coming from the overlays.
      * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
-     * @return The same object passed into the {@param overlay} parameter.
+     * @return The same object passed into the {@code overlay} parameter.
      */
     public static synchronized IIngameOverlay registerOverlayBottom(@Nonnull String displayName, @Nonnull IIngameOverlay overlay)
     {
@@ -29,7 +29,7 @@ public class OverlayRegistry
      * @param other The overlay to insert before. The overlay must be registered.
      * @param displayName A string for debug purposes, used primarily in exception traces coming from the overlays.
      * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
-     * @return The same object passed into the {@param overlay} parameter.
+     * @return The same object passed into the {@code overlay} parameter.
      */
     public static synchronized IIngameOverlay registerOverlayBelow(@Nonnull IIngameOverlay other, @Nonnull String displayName, @Nonnull IIngameOverlay overlay)
     {
@@ -42,7 +42,7 @@ public class OverlayRegistry
      * @param other The overlay to insert after. The overlay must be registered.
      * @param displayName A string for debug purposes, used primarily in exception traces coming from the overlays.
      * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
-     * @return The same object passed into the {@param overlay} parameter.
+     * @return The same object passed into the {@code overlay} parameter.
      */
     public static synchronized IIngameOverlay registerOverlayAbove(@Nonnull IIngameOverlay other, @Nonnull String displayName, @Nonnull IIngameOverlay overlay)
     {
@@ -54,7 +54,7 @@ public class OverlayRegistry
      * Call from {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}. No need for enqueueWork.
      * @param displayName A string for debug purposes, used primarily in exception traces coming from the overlays.
      * @param overlay An instance, lambda or method reference for the logic used in rendering the overlay.
-     * @return The same object passed into the {@param overlay} parameter.
+     * @return The same object passed into the {@code overlay} parameter.
      */
     public static synchronized IIngameOverlay registerOverlayTop(@Nonnull String displayName, @Nonnull IIngameOverlay overlay)
     {
