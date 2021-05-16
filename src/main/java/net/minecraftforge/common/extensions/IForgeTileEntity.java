@@ -116,7 +116,6 @@ public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
       *
       * @return an appropriately size {@link AxisAlignedBB} for the {@link TileEntity}
       */
-     @OnlyIn(Dist.CLIENT)
      default AxisAlignedBB getRenderBoundingBox()
      {
          AxisAlignedBB bb = INFINITE_EXTENT_AABB;

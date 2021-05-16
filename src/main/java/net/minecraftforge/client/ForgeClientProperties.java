@@ -34,17 +34,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 
 import java.util.Map;
-import java.util.function.Function;
 
 public class ForgeClientProperties
 {
@@ -53,16 +52,18 @@ public class ForgeClientProperties
         // Not instantiable.
     }
 
-    private static final Map<Item, Function<ItemStack, FontRenderer>> fontProviders = Maps.newHashMap();
+    private static final Map<Item, IFontProvider> fontProviders = Maps.newHashMap();
     private static final Map<Item, IArmorModelProvider> armorModelProviders = Maps.newHashMap();
     private static final Map<Item, IHelmetOverlayRenderer> helmetOverlayRenderers = Maps.newHashMap();
     private static final Map<Item, ItemStackTileEntityRenderer> itemStackTileEntityRenderers = Maps.newHashMap();
 
-    private static final Map<Block, ForgeClientProperties.IHitEffectProvider> hitEffectProviders = Maps.newHashMap();
-    private static final Map<Block, ForgeClientProperties.IDestroyEffectProvider> destroyEffectProviders = Maps.newHashMap();
-    private static final Map<Block, ForgeClientProperties.IFogColorProvider> fogColorProviders = Maps.newHashMap();
+    private static final Map<Block, IHitEffectProvider> hitEffectProviders = Maps.newHashMap();
+    private static final Map<Block, IDestroyEffectProvider> destroyEffectProviders = Maps.newHashMap();
+    private static final Map<Block, IFogColorProvider> fogColorProviders = Maps.newHashMap();
 
-    public static synchronized void registerFontProvider(Item item, Function<ItemStack, FontRenderer> fontProvider)
+    private static final Map<Effect, EffectRenderer> effectRenderers = Maps.newHashMap();
+
+    public static synchronized void registerFontProvider(Item item, IFontProvider fontProvider)
     {
         if (fontProviders.containsKey(item))
             throw new IllegalStateException("A font provider has already been registered for this item.");
@@ -94,7 +95,7 @@ public class ForgeClientProperties
         itemStackTileEntityRenderers.put(item, itemStackTileEntityRenderer);
     }
 
-    public static synchronized void registerHitEffectProvider(Block block, ForgeClientProperties.IHitEffectProvider hitEffectProvider)
+    public static synchronized void registerHitEffectProvider(Block block, IHitEffectProvider hitEffectProvider)
     {
         if (hitEffectProviders.containsKey(block))
             throw new IllegalStateException("A hit effect provider has already been registered for this block.");
@@ -102,7 +103,7 @@ public class ForgeClientProperties
         hitEffectProviders.put(block, hitEffectProvider);
     }
 
-    public static synchronized void registerDestroyEffectProvider(Block block, ForgeClientProperties.IDestroyEffectProvider destroyEffectProvider)
+    public static synchronized void registerDestroyEffectProvider(Block block, IDestroyEffectProvider destroyEffectProvider)
     {
         if (destroyEffectProviders.containsKey(block))
             throw new IllegalStateException("A destroy effect provider has already been registered for this block.");
@@ -110,20 +111,28 @@ public class ForgeClientProperties
         destroyEffectProviders.put(block, destroyEffectProvider);
     }
 
-    public static synchronized void registerFogColorProvider(Block block, ForgeClientProperties.IFogColorProvider fogColorProvider)
+    public static synchronized void registerFogColorProvider(Block block, IFogColorProvider fogColorProvider)
     {
         if (fogColorProviders.containsKey(block))
-            throw new IllegalStateException("A destroy effect provider has already been registered for this block.");
+            throw new IllegalStateException("A fog color provider has already been registered for this block.");
 
         fogColorProviders.put(block, fogColorProvider);
     }
 
+    public static synchronized void registerEffectRenderer(Effect effect, EffectRenderer effectRenderer)
+    {
+        if (effectRenderers.containsKey(effect))
+            throw new IllegalStateException("An effect renderer has already been registered for this effect.");
+
+        effectRenderers.put(effect, effectRenderer);
+    }
+
     public static FontRenderer getFont(ItemStack stack)
     {
-        Function<ItemStack, FontRenderer> provider = fontProviders.get(stack.getItem());
+        IFontProvider provider = fontProviders.get(stack.getItem());
         if (provider == null)
             return null;
-        return provider.apply(stack);
+        return provider.getFont(stack);
     }
 
     public static <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A defaultModel)
@@ -226,27 +235,51 @@ public class ForgeClientProperties
         }
         return originalColor;
     }
-    
+
+    public static EffectRenderer getEffectRenderer(EffectInstance effectInstance)
+    {
+        EffectRenderer renderer = effectRenderers.get(effectInstance.getEffect());
+        if (renderer == null)
+            return EffectRenderer.DUMMY;
+        return renderer;
+    }
+
+    public static boolean shouldRender(EffectInstance effectInstance)
+    {
+        return getEffectRenderer(effectInstance).shouldRender(effectInstance);
+    }
+
+    @FunctionalInterface
+    public interface IFontProvider
+    {
+        FontRenderer getFont(ItemStack stack);
+    }
+
+    @FunctionalInterface
     public interface IArmorModelProvider
     {
         <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A defaultModel);
     }
 
+    @FunctionalInterface
     public interface IHelmetOverlayRenderer
     {
         void renderHelmetOverlay(ItemStack stack, PlayerEntity player, int width, int height, float partialTicks);
     }
 
+    @FunctionalInterface
     public interface IHitEffectProvider
     {
         boolean addHitEffects(BlockState state, World world, RayTraceResult target, ParticleManager manager);
     }
 
+    @FunctionalInterface
     public interface IDestroyEffectProvider
     {
         boolean addDestroyEffects(BlockState state, World world, BlockPos pos, ParticleManager manager);
     }
 
+    @FunctionalInterface
     public interface IFogColorProvider
     {
         Vector3d getFogColor(BlockState state, IWorldReader world, BlockPos pos, Entity entity, Vector3d originalColor, float partialTicks);

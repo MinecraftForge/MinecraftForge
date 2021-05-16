@@ -9,11 +9,12 @@
     protected final Random field_73842_c = new Random();
     protected final Minecraft field_73839_d;
     protected final ItemRenderer field_73841_b;
-@@ -415,6 +_,9 @@
+@@ -415,6 +_,10 @@
  
           for(EffectInstance effectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
              Effect effect = effectinstance.func_188419_a();
-+            if (!effectinstance.shouldRenderHUD()) continue;
++            net.minecraftforge.client.EffectRenderer renderer = net.minecraftforge.client.ForgeClientProperties.getEffectRenderer(effectinstance);
++            if (!renderer.shouldRenderHUD(effectinstance)) continue;
 +            // Rebind in case previous renderHUDEffect changed texture
 +            this.field_73839_d.func_110434_K().func_110577_a(ContainerScreen.field_147001_a);
              if (effectinstance.func_205348_f()) {
@@ -23,7 +24,7 @@
                    RenderSystem.color4f(1.0F, 1.0F, 1.0F, f1);
                    func_238470_a_(p_238444_1_, j1 + 3, k1 + 3, this.func_230927_p_(), 18, 18, textureatlassprite);
                 });
-+               effectinstance.renderHUDEffect(this, p_238444_1_, k, l, this.func_230927_p_(), f);
++               renderer.renderHUDEffect(effectinstance,this, p_238444_1_, k, l, this.func_230927_p_(), f);
              }
           }
  

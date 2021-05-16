@@ -38,61 +38,6 @@ public interface IForgeEffectInstance {
         return (EffectInstance)this;
     }
 
-    /**
-     * If the Potion effect should be displayed in the players inventory
-     * @return true to display it (default), false to hide it.
-     */
-    default boolean shouldRender() {
-        return getEffectInstance().getEffect().shouldRender(getEffectInstance());
-    }
-
-    /**
-     * If the standard PotionEffect text (name and duration) should be drawn when this potion is active.
-     * @return true to draw the standard text
-     */
-    default boolean shouldRenderInvText() {
-        return getEffectInstance().getEffect().shouldRenderInvText(getEffectInstance());
-    }
-
-    /**
-     * If the Potion effect should be displayed in the player's ingame HUD
-     * @return true to display it (default), false to hide it.
-     */
-    default boolean shouldRenderHUD() {
-        return getEffectInstance().getEffect().shouldRenderHUD(getEffectInstance());
-    }
-
-    /**
-     * Called to draw the this Potion onto the player's inventory when it's active.
-     * This can be used to e.g. render Potion icons from your own texture.
-     *
-     * @param gui the gui instance
-     * @param mStack The MatrixStack
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z level
-     */
-    @OnlyIn(Dist.CLIENT)
-    default void renderInventoryEffect(DisplayEffectsScreen<?> gui, MatrixStack mStack, int x, int y, float z) {
-        getEffectInstance().getEffect().renderInventoryEffect(getEffectInstance(), gui, mStack, x, y, z);
-    }
-
-    /**
-     * Called to draw the this Potion onto the player's ingame HUD when it's active.
-     * This can be used to e.g. render Potion icons from your own texture.
-     *
-     * @param gui the gui instance
-     * @param mStack The MatrixStack
-     * @param x the x coordinate
-     * @param y the y coordinate
-     * @param z the z level
-     * @param alpha the alpha value, blinks when the potion is about to run out
-     */
-    @OnlyIn(Dist.CLIENT)
-    default void renderHUDEffect(AbstractGui gui, MatrixStack mStack, int x, int y, float z, float alpha) {
-        getEffectInstance().getEffect().renderHUDEffect(getEffectInstance(), gui, mStack, x, y, z, alpha);
-    }
-
     /***
      * Returns a list of curative items for the potion effect
      * By default, this list is initialized using {@link Potion#getCurativeItems}
