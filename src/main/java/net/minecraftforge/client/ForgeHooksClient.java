@@ -193,7 +193,7 @@ public class ForgeHooksClient
 
     public static <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType slot, A _default)
     {
-        A model = itemStack.getItem().getArmorModel(entityLiving, itemStack, slot, _default);
+        A model = ItemClientProperties.getArmorModel(entityLiving, itemStack, slot, _default);
         return model == null ? _default : model;
     }
 

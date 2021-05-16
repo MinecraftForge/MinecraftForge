@@ -55,8 +55,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
 
 // TODO review most of the methods in this "patch"
@@ -426,36 +424,6 @@ public interface IForgeItem
     }
 
     /**
-     * Returns the font renderer used to render tooltips and overlays for this item.
-     * Returning null will use the standard font renderer.
-     *
-     * @param stack The current item stack
-     * @return A instance of FontRenderer or null to use default
-     */
-    @OnlyIn(Dist.CLIENT)
-    @Nullable
-    default net.minecraft.client.gui.FontRenderer getFontRenderer(ItemStack stack)
-    {
-        return null;
-    }
-
-    /**
-     * Override this method to have an item handle its own armor rendering.
-     *
-     * @param entityLiving The entity wearing the armor
-     * @param itemStack    The itemStack to render the model of
-     * @param armorSlot    The slot the armor is in
-     * @param _default     Original armor model. Will have attributes set.
-     * @return A ModelBiped to render instead of the default
-     */
-    @OnlyIn(Dist.CLIENT)
-    @Nullable
-    default <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default)
-    {
-        return null;
-    }
-
-    /**
      * Called when a entity tries to play the 'swing' animation.
      *
      * @param entity The entity swinging the item.
@@ -464,21 +432,6 @@ public interface IForgeItem
     default boolean onEntitySwing(ItemStack stack, LivingEntity entity)
     {
         return false;
-    }
-
-    /**
-     * Called when the client starts rendering the HUD, for whatever item the player
-     * currently has as a helmet. This is where pumpkins would render there overlay.
-     *
-     * @param stack        The ItemStack that is equipped
-     * @param player       Reference to the current client entity
-     * @param resolution   Resolution information about the current viewport and
-     *                     configured GUI Scale
-     * @param partialTicks Partial ticks for the renderer, useful for interpolation
-     */
-    @OnlyIn(Dist.CLIENT)
-    default void renderHelmetOverlay(ItemStack stack, PlayerEntity player, int width, int height, float partialTicks)
-    {
     }
 
     /**
@@ -775,13 +728,6 @@ public interface IForgeItem
     default void onHorseArmorTick(ItemStack stack, World world, MobEntity horse)
     {
     }
-
-    /**
-     * @return This Item's renderer, or the default instance if it does not have
-     *         one.
-     */
-    @OnlyIn(Dist.CLIENT)
-    ItemStackTileEntityRenderer getItemStackTileEntityRenderer();
 
     /**
      * Retrieves a list of tags names this is known to be associated with.

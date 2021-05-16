@@ -11,14 +11,12 @@
     protected static final UUID field_111210_e = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
     protected static final UUID field_185050_h = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
     protected static final Random field_77697_d = new Random();
-@@ -77,6 +_,10 @@
+@@ -77,6 +_,8 @@
        this.field_77777_bU = p_i48487_1_.field_200920_a;
        this.field_219974_q = p_i48487_1_.field_221541_f;
        this.field_234684_d_ = p_i48487_1_.field_234688_g_;
 +      this.canRepair = p_i48487_1_.canRepair;
 +      this.toolClasses.putAll(p_i48487_1_.toolClasses);
-+      Object tmp = p_i48487_1_.ister == null ? null : net.minecraftforge.fml.DistExecutor.callWhenOn(Dist.CLIENT, p_i48487_1_.ister);
-+      this.ister = tmp == null ? null : () -> (net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer) tmp;
     }
  
     public void func_219972_a(World p_219972_1_, LivingEntity p_219972_2_, ItemStack p_219972_3_, int p_219972_4_) {
@@ -76,7 +74,7 @@
        ItemGroup itemgroup = this.func_77640_w();
        return itemgroup != null && (p_194125_1_ == ItemGroup.field_78027_g || p_194125_1_ == itemgroup);
     }
-@@ -284,10 +_,44 @@
+@@ -284,10 +_,35 @@
        return false;
     }
  
@@ -85,8 +83,6 @@
        return ImmutableMultimap.of();
     }
  
-+   @Nullable
-+   private final java.util.function.Supplier<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer> ister;
 +   private final java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
 +   private final net.minecraftforge.common.util.ReverseTagWrapper<Item> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.ItemTags::func_199903_a);
 +   protected final boolean canRepair;
@@ -106,13 +102,6 @@
 +      return toolClasses.getOrDefault(tool, -1);
 +   }
 +
-+   @OnlyIn(Dist.CLIENT)
-+   @Override
-+   public final net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer getItemStackTileEntityRenderer() {
-+      net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer renderer = ister != null ? ister.get() : null;
-+      return renderer != null ? renderer : net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer.field_147719_a;
-+   }
-+
 +   @Override
 +   public java.util.Set<net.minecraft.util.ResourceLocation> getTags() {
 +      return reverseTags.getTagNames();
@@ -121,17 +110,16 @@
     public boolean func_219970_i(ItemStack p_219970_1_) {
        return p_219970_1_.func_77973_b() == Items.field_222114_py;
     }
-@@ -333,6 +_,9 @@
+@@ -333,6 +_,8 @@
        private Rarity field_208104_e = Rarity.COMMON;
        private Food field_221541_f;
        private boolean field_234688_g_;
 +      private boolean canRepair = true;
 +      private java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
-+      private java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer>> ister;
  
        public Item.Properties func_221540_a(Food p_221540_1_) {
           this.field_221541_f = p_221540_1_;
-@@ -375,6 +_,21 @@
+@@ -375,6 +_,16 @@
  
        public Item.Properties func_234689_a_() {
           this.field_234688_g_ = true;
@@ -145,11 +133,6 @@
 +
 +      public Item.Properties addToolType(net.minecraftforge.common.ToolType type, int level) {
 +         toolClasses.put(type, level);
-+         return this;
-+      }
-+
-+      public Item.Properties setISTER(java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer>> ister) {
-+         this.ister = ister;
           return this;
        }
     }
