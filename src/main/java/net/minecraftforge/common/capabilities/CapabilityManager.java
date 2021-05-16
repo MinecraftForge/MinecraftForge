@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,10 +57,11 @@ public enum CapabilityManager
      * @param type The Interface to be registered
      * @param storage A default implementation of the storage handler.
      * @param factory A Factory that will produce new instances of the default implementation.
+     * @deprecated use {@link RegisterCapabilitiesEvent#register(Class, Capability.IStorage, Callable)}
      */
+    @Deprecated
     public <T> void register(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory)
     {
-        // TODO 1.17: verify that we are in RegisterCapabilitiesEvent and throw otherwise
         Objects.requireNonNull(type,"Attempted to register a capability with invalid type");
         Objects.requireNonNull(storage,"Attempted to register a capability with no storage implementation");
         Objects.requireNonNull(factory,"Attempted to register a capability with no default implementation factory");
@@ -93,6 +95,10 @@ public enum CapabilityManager
         final IdentityHashMap<String, List<Function<Capability<?>, Object>>> m = new IdentityHashMap<>();
         capabilities.forEach(entry -> attachCapabilityToMethod(m, entry));
         callbacks = m;
+        RegisterCapabilitiesEvent event = new RegisterCapabilitiesEvent();
+        ModLoader.get().postEvent(event);
+        providers.putAll(event.getCapabilities());
+        event.getCapabilities().forEach((capabilityName, capability) -> callbacks.getOrDefault(capabilityName, Collections.emptyList()).forEach(func -> func.apply(capability)));
     }
 
     private static void attachCapabilityToMethod(Map<String, List<Function<Capability<?>, Object>>> cbs, ModFileScanData.AnnotationData entry)

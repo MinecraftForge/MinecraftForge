@@ -19,15 +19,59 @@
 
 package net.minecraftforge.common.capabilities;
 
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 
 import net.minecraftforge.eventbus.api.Event;
+import static net.minecraftforge.fml.Logging.CAPABILITIES;
 import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
- * This event fires when it is time to register any capabilities with the CapabilityManager
- * using {@link CapabilityManager#register(Class, Capability.IStorage, Callable)}.
+ * This event fires when it is time to register your capabilities.
+ * @see CapabilityManager
+ * @see Capability
  */
-public class RegisterCapabilitiesEvent extends Event implements IModBusEvent
+public final class RegisterCapabilitiesEvent extends Event implements IModBusEvent
 {
+
+    private static final Logger LOGGER = LogManager.getLogger("CapabilityManager");
+
+    private final IdentityHashMap<String, Capability<?>> capabilities = new IdentityHashMap<>();
+
+    /**
+     * Registers a capability to be consumed by others.
+     * APIs who define the capability should call this.
+     * To retrieve the Capability instance, use the @CapabilityInject annotation.
+     *
+     * @param type The Interface to be registered
+     * @param storage A default implementation of the storage handler.
+     * @param factory A Factory that will produce new instances of the default implementation.
+     */
+    public <T> void register(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory)
+    {
+        Objects.requireNonNull(type,"Attempted to register a capability with invalid type");
+        Objects.requireNonNull(storage,"Attempted to register a capability with no storage implementation");
+        Objects.requireNonNull(factory,"Attempted to register a capability with no default implementation factory");
+        String realName = type.getName().intern();
+        Capability<T> cap;
+
+        if (capabilities.containsKey(realName)) {
+            LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
+            throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
+        }
+
+        cap = new Capability<>(realName, storage, factory);
+        capabilities.put(realName, cap);
+    }
+
+    IdentityHashMap<String, Capability<?>> getCapabilities()
+    {
+        return this.capabilities;
+    }
+
 }
