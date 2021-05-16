@@ -26,18 +26,16 @@ import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-
-import java.util.concurrent.Callable;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 
 public class CapabilityItemHandler
 {
     @CapabilityInject(IItemHandler.class)
     public static Capability<IItemHandler> ITEM_HANDLER_CAPABILITY = null;
 
-    public static void register()
+    public static void register(RegisterCapabilitiesEvent event)
     {
-        CapabilityManager.INSTANCE.register(IItemHandler.class, new Capability.IStorage<IItemHandler>()
+        event.register(IItemHandler.class, new Capability.IStorage<IItemHandler>()
         {
             @Override
             public INBT writeNBT(Capability<IItemHandler> capability, IItemHandler instance, Direction side)

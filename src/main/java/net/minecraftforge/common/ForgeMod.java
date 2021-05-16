@@ -166,10 +166,10 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public void registerCapabilities(RegisterCapabilitiesEvent evt)
     {
-        CapabilityItemHandler.register();
-        CapabilityFluidHandler.register();
-        CapabilityAnimation.register();
-        CapabilityEnergy.register();
+        CapabilityItemHandler.register(evt);
+        CapabilityFluidHandler.register(evt);
+        CapabilityAnimation.register(evt);
+        CapabilityEnergy.register(evt);
     }
 
     public void preInit(FMLCommonSetupEvent evt)
