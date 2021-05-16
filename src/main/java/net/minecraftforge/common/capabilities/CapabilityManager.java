@@ -52,7 +52,7 @@ public enum CapabilityManager
      * Registers a capability to be consumed by others.
      * APIs who define the capability should call this.
      * To retrieve the Capability instance, use the @CapabilityInject annotation.
-     * This method should be called during {@link RegisterCapabilitiesEvent}.
+     * This method is safe to call during parallel mod loading.
      *
      * @param type The Interface to be registered
      * @param storage A default implementation of the storage handler.
