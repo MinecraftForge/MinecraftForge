@@ -40,8 +40,6 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.*;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.ToolType;
 
@@ -341,40 +339,6 @@ public interface IForgeBlockState
         return getBlockState().getBlock().addRunningEffects(getBlockState(), world, pos, entity);
     }
 
-    /**
-     * Spawn a digging particle effect in the world, this is a wrapper
-     * around EffectRenderer.addBlockHitEffects to allow the block more
-     * control over the particles. Useful when you have entirely different
-     * texture sheets for different sides/locations in the world.
-     *
-     * @param world The current world
-     * @param target The target the player is looking at {x/y/z/side/sub}
-     * @param manager A reference to the current particle manager.
-     * @return True to prevent vanilla digging particles form spawning.
-     */
-    @OnlyIn(Dist.CLIENT)
-    default boolean addHitEffects(World world, RayTraceResult target, ParticleManager manager)
-    {
-        return getBlockState().getBlock().addHitEffects(getBlockState(), world, target, manager);
-    }
-
-   /**
-    * Spawn particles for when the block is destroyed. Due to the nature
-    * of how this is invoked, the x/y/z locations are not always guaranteed
-    * to host your block. So be sure to do proper sanity checks before assuming
-    * that the location is this block.
-    *
-    * @param world The current world
-    * @param pos Position to spawn the particle
-    * @param manager A reference to the current particle manager.
-    * @return True to prevent vanilla break particles from spawning.
-    */
-    @OnlyIn(Dist.CLIENT)
-    default boolean addDestroyEffects(World world, BlockPos pos, ParticleManager manager)
-    {
-        return getBlockState().getBlock().addDestroyEffects(getBlockState(), world, pos, manager);
-    }
-
    /**
     * Determines if this block can support the passed in plant, allowing it to be planted and grow.
     * Some examples:
@@ -560,22 +524,6 @@ public interface IForgeBlockState
     default float[] getBeaconColorMultiplier(IWorldReader world, BlockPos pos, BlockPos beacon)
     {
         return getBlockState().getBlock().getBeaconColorMultiplier(getBlockState(), world, pos, beacon);
-    }
-
-    /**
-     * Use this to change the fog color used when the entity is "inside" a material.
-     * Vec3d is used here as "r/g/b" 0 - 1 values.
-     *
-     * @param world         The world.
-     * @param pos           The position at the entity viewport.
-     * @param entity        the entity
-     * @param originalColor The current fog color, You are not expected to use this, Return as the default if applicable.
-     * @return The new fog color.
-     */
-    @OnlyIn(Dist.CLIENT)
-    default Vector3d getFogColor(IWorldReader world, BlockPos pos, Entity entity, Vector3d originalColor, float partialTicks)
-    {
-        return getBlockState().getBlock().getFogColor(getBlockState(), world, pos, entity, originalColor, partialTicks);
     }
 
     /**
