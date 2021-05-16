@@ -55,6 +55,8 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.MinecraftForge;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -64,6 +66,8 @@ import javax.annotation.Nullable;
 @SuppressWarnings("deprecation")
 public class ForgeIngameGui extends IngameGui
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     //private static final ResourceLocation VIGNETTE     = new ResourceLocation("textures/misc/vignette.png");
     //private static final ResourceLocation WIDGITS      = new ResourceLocation("textures/gui/widgets.png");
     //private static final ResourceLocation PUMPKIN_BLUR = new ResourceLocation("textures/misc/pumpkinblur.png");
@@ -149,7 +153,7 @@ public class ForgeIngameGui extends IngameGui
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
-    public static final IIngameOverlay VIGNETTE_ELEMENT = OverlayRegistry.registerOverlay(10, "Vignette", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay VIGNETTE_ELEMENT = OverlayRegistry.registerOverlayTop("Vignette", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (renderVignette && Minecraft.useFancyGraphics())
         {
             gui.setupOverlayRenderState(true, false, false);
@@ -157,7 +161,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay HELMET_ELEMENT = OverlayRegistry.registerOverlay(20, "Helmet", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay HELMET_ELEMENT = OverlayRegistry.registerOverlayTop("Helmet", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (renderHelmet)
         {
             gui.setupOverlayRenderState(true, false, false);
@@ -165,7 +169,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay HOTBAR_ELEMENT = OverlayRegistry.registerOverlay(30, "Hotbar", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay HOTBAR_ELEMENT = OverlayRegistry.registerOverlayTop("Hotbar", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (!gui.minecraft.options.hideGui)
         {
             if (gui.minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR)
@@ -187,7 +191,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay PORTAL_ELEMENT = OverlayRegistry.registerOverlay(40, "Portal", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay PORTAL_ELEMENT = OverlayRegistry.registerOverlayTop("Portal", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
 
         if (renderPortal && !gui.minecraft.player.hasEffect(Effects.CONFUSION))
         {
@@ -197,7 +201,7 @@ public class ForgeIngameGui extends IngameGui
 
     });
 
-    public static final IIngameOverlay CROSSHAIR_ELEMENT = OverlayRegistry.registerOverlay(50, "Crosshair", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay CROSSHAIR_ELEMENT = OverlayRegistry.registerOverlayTop("Crosshair", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (renderCrosshairs && !gui.minecraft.options.hideGui)
         {
             gui.setupOverlayRenderState(true, true, false);
@@ -208,7 +212,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay BOSS_HEALTH_ELEMENT = OverlayRegistry.registerOverlay(60, "Boss Health", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay BOSS_HEALTH_ELEMENT = OverlayRegistry.registerOverlayTop("Boss Health", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (renderBossHealth && !gui.minecraft.options.hideGui)
         {
             gui.setupOverlayRenderState(true, false, false);
@@ -219,7 +223,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay PLAYER_HEALTH_ELEMENT = OverlayRegistry.registerOverlay(70, "Player Health", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay PLAYER_HEALTH_ELEMENT = OverlayRegistry.registerOverlayTop("Player Health", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (renderHealth && !gui.minecraft.options.hideGui && gui.shouldDrawSurvivalElements())
         {
             gui.setupOverlayRenderState(true, false, false);
@@ -227,7 +231,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay ARMOR_LEVEL_ELEMENT = OverlayRegistry.registerOverlay(80, "Armor Level",(gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay ARMOR_LEVEL_ELEMENT = OverlayRegistry.registerOverlayTop("Armor Level",(gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (renderArmor && !gui.minecraft.options.hideGui && gui.shouldDrawSurvivalElements())
         {
             gui.setupOverlayRenderState(true, false, false);
@@ -235,7 +239,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay FOOD_LEVEL_ELEMENT = OverlayRegistry.registerOverlay(90, "Food Level", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay FOOD_LEVEL_ELEMENT = OverlayRegistry.registerOverlayTop("Food Level", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (renderFood && !gui.minecraft.options.hideGui && gui.shouldDrawSurvivalElements())
         {
             gui.setupOverlayRenderState(true, false, false);
@@ -243,7 +247,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay MOUNT_HEALTH_ELEMENT = OverlayRegistry.registerOverlay(100, "Mount Health", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay MOUNT_HEALTH_ELEMENT = OverlayRegistry.registerOverlayTop("Mount Health", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (renderHealthMount && !gui.minecraft.options.hideGui && gui.shouldDrawSurvivalElements())
         {
             gui.setupOverlayRenderState(true, false, false);
@@ -251,7 +255,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay AIR_LEVEL_ELEMENT = OverlayRegistry.registerOverlay(110, "Air Level", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay AIR_LEVEL_ELEMENT = OverlayRegistry.registerOverlayTop("Air Level", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (renderAir && !gui.minecraft.options.hideGui && gui.shouldDrawSurvivalElements())
         {
             gui.setupOverlayRenderState(true, false, false);
@@ -259,7 +263,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay JUMP_BAR_ELEMENT = OverlayRegistry.registerOverlay(120, "Jump Bar", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay JUMP_BAR_ELEMENT = OverlayRegistry.registerOverlayTop("Jump Bar", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (renderJumpBar && !gui.minecraft.options.hideGui)
         {
             gui.setupOverlayRenderState(true, false, false);
@@ -267,7 +271,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay EXPERIENCE_BAR_ELEMENT = OverlayRegistry.registerOverlay(130, "Experience Bar", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay EXPERIENCE_BAR_ELEMENT = OverlayRegistry.registerOverlayTop("Experience Bar", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (renderExperiance && !renderJumpBar && !gui.minecraft.options.hideGui)
         {
             gui.setupOverlayRenderState(true, false, false);
@@ -275,7 +279,7 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay ITEM_NAME_ELEMENT = OverlayRegistry.registerOverlay(140, "Item Name", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay ITEM_NAME_ELEMENT = OverlayRegistry.registerOverlayTop("Item Name", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (!gui.minecraft.options.hideGui)
         {
             gui.setupOverlayRenderState(true, false, false);
@@ -287,44 +291,44 @@ public class ForgeIngameGui extends IngameGui
         }
     });
 
-    public static final IIngameOverlay SLEEP_FADE_ELEMENT = OverlayRegistry.registerOverlay(150, "Sleep Fade", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay SLEEP_FADE_ELEMENT = OverlayRegistry.registerOverlayTop("Sleep Fade", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         gui.renderSleepFade(screenWidth, screenHeight, mStack);
     });
 
-    public static final IIngameOverlay HUD_TEXT_ELEMENT = OverlayRegistry.registerOverlay(160, "Text Columns", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay HUD_TEXT_ELEMENT = OverlayRegistry.registerOverlayTop("Text Columns", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         gui.renderHUDText(screenWidth, screenHeight, mStack);
     });
 
-    public static final IIngameOverlay FPS_GRAPH_ELEMENT = OverlayRegistry.registerOverlay(170, "FPS Graph", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay FPS_GRAPH_ELEMENT = OverlayRegistry.registerOverlayTop("FPS Graph", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         gui.renderFPSGraph(mStack);
     });
 
-    public static final IIngameOverlay POTION_ICONS_ELEMENT = OverlayRegistry.registerOverlay(180, "Potion Icons", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay POTION_ICONS_ELEMENT = OverlayRegistry.registerOverlayTop("Potion Icons", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         gui.renderEffects(mStack);
     });
 
-    public static final IIngameOverlay RECORD_OVERLAY_ELEMENT = OverlayRegistry.registerOverlay(190, "Record", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay RECORD_OVERLAY_ELEMENT = OverlayRegistry.registerOverlayTop("Record", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (!gui.minecraft.options.hideGui)
         {
             gui.renderRecordOverlay(screenWidth, screenHeight, partialTicks, mStack);
         }
     });
 
-    public static final IIngameOverlay SUBTITLES_ELEMENT = OverlayRegistry.registerOverlay(200, "Subtitles", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay SUBTITLES_ELEMENT = OverlayRegistry.registerOverlayTop("Subtitles", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (!gui.minecraft.options.hideGui)
         {
             gui.renderSubtitles(mStack);
         }
     });
 
-    public static final IIngameOverlay TITLE_TEXT_ELEMENT = OverlayRegistry.registerOverlay(210, "Title Text", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay TITLE_TEXT_ELEMENT = OverlayRegistry.registerOverlayTop("Title Text", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
         if (!gui.minecraft.options.hideGui)
         {
             gui.renderTitle(screenWidth, screenHeight, partialTicks, mStack);
         }
     });
 
-    public static final IIngameOverlay SCOREBOARD_ELEMENT = OverlayRegistry.registerOverlay(220, "Scoreboard", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay SCOREBOARD_ELEMENT = OverlayRegistry.registerOverlayTop("Scoreboard", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
 
         Scoreboard scoreboard = gui.minecraft.level.getScoreboard();
         ScoreObjective objective = null;
@@ -342,7 +346,7 @@ public class ForgeIngameGui extends IngameGui
 
     });
 
-    public static final IIngameOverlay CHAT_PANEL_ELEMENT = OverlayRegistry.registerOverlay(230, "Chat History", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay CHAT_PANEL_ELEMENT = OverlayRegistry.registerOverlayTop("Chat History", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
 
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
@@ -351,7 +355,7 @@ public class ForgeIngameGui extends IngameGui
         gui.renderChat(screenWidth, screenHeight, mStack);
     });
 
-    public static final IIngameOverlay PLAYER_LIST_ELEMENT = OverlayRegistry.registerOverlay(240, "Player List", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
+    public static final IIngameOverlay PLAYER_LIST_ELEMENT = OverlayRegistry.registerOverlayTop("Player List", (gui, mStack, partialTicks, screenWidth, screenHeight) -> {
 
         RenderSystem.enableBlend();
         RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
@@ -385,12 +389,20 @@ public class ForgeIngameGui extends IngameGui
 
         //mc.entityRenderer.setupOverlayRendering();
 
-        OverlayRegistry.getOrdered().forEach(overlay ->
-                {
-                    if (pre(overlay, mStack)) return;
-                    overlay.render(this, mStack, partialTicks, screenWidth, screenHeight);
-                    post(overlay, mStack);
-                });
+        OverlayRegistry.orderedEntries().forEach(entry -> {
+            try
+            {
+                if (!entry.isEnabled()) return;
+                IIngameOverlay overlay = entry.getOverlay();
+                if (pre(overlay, mStack)) return;
+                overlay.render(this, mStack, partialTicks, screenWidth, screenHeight);
+                post(overlay, mStack);
+            }
+            catch(Exception e)
+            {
+                LOGGER.error("Error rendering overlay '{}'", entry.getDisplayName(), e);
+            }
+        });
 
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableAlphaTest();
