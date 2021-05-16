@@ -59,6 +59,7 @@ public enum CapabilityManager
      */
     public <T> void register(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory)
     {
+        // TODO 1.17: verify that we are in RegisterCapabilitiesEvent and throw otherwise
         Objects.requireNonNull(type,"Attempted to register a capability with invalid type");
         Objects.requireNonNull(storage,"Attempted to register a capability with no storage implementation");
         Objects.requireNonNull(factory,"Attempted to register a capability with no default implementation factory");
