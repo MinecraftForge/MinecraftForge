@@ -2,10 +2,12 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         mavenCentral()
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:4.1.+'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
     }
 }
 
@@ -114,9 +116,14 @@ project(':forge') {
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'org.spongepowered.mixin'
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(8)
     group = 'net.minecraftforge'
+
+    mixin {
+        add sourceSets.main, "forge.refmap.json"
+    }
 
     sourceSets {
         fmllauncher {
@@ -227,6 +234,8 @@ project(':forge') {
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
                 property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
                 property 'eventbus.checkTypesOnDispatch', 'true'
+
+                arg "--mixin=forge.mixins.json"
 
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
@@ -358,7 +367,8 @@ project(':forge') {
                 'Specification-Version':    MC_VERSION,
                 'Implementation-Title':     'MCP',
                 'Implementation-Version':   MCP_VERSION,
-                'Implementation-Vendor':    'Forge'
+                'Implementation-Vendor':    'Forge',
+                'MixinConfigs':             'forge.mixins.json'
             ] as LinkedHashMap,
             'net/minecraftforge/fml/javafmlmod/': [
                 'Specification-Title':      'Mod Language Provider',
@@ -439,6 +449,7 @@ project(':forge') {
         testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
         testImplementation 'org.opentest4j:opentest4j:1.2.0' // needed for junit 5
         testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
+        annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
     }
     
     def extraTxts = [
@@ -1094,4 +1105,16 @@ project(':forge') {
 task setup() {
     dependsOn ':clean:extractMapped'
     dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
+}
+
+////////////////
+// IntelliJ Project Import
+// The Mixin annotation process does not have an obfuscation source when running through the IntelliJ compiler,
+// thus we have to prevent it from being activated as part of importing this Gradle project into IntelliJ.
+if (System.getProperty("idea.sync.active") == "true") {
+    afterEvaluate {
+        tasks.withType(JavaCompile).all {
+            it.options.annotationProcessorPath = files()
+        }
+    }
 }

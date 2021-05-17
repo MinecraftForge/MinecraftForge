@@ -13,7 +13,7 @@
  
           for(EffectInstance effectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
              Effect effect = effectinstance.func_188419_a();
-+            net.minecraftforge.client.EffectRenderer renderer = net.minecraftforge.client.ForgeClientProperties.getEffectRenderer(effectinstance);
++            net.minecraftforge.client.EffectRenderer renderer = net.minecraftforge.client.RenderProperties.getEffectRenderer(effectinstance);
 +            if (!renderer.shouldRenderHUD(effectinstance)) continue;
 +            // Rebind in case previous renderHUDEffect changed texture
 +            this.field_73839_d.func_110434_K().func_110577_a(ContainerScreen.field_147001_a);
@@ -43,7 +43,7 @@
              RenderSystem.defaultBlendFunc();
              func_238467_a_(p_238453_1_, j - 2, k - 2, j + i + 2, k + 9 + 2, this.field_73839_d.field_71474_y.func_216839_a(0));
 -            this.func_175179_f().func_243246_a(p_238453_1_, iformattabletextcomponent, (float)j, (float)k, 16777215 + (l << 24));
-+            FontRenderer font = net.minecraftforge.client.ForgeClientProperties.getFont(field_92016_l);
++            FontRenderer font = net.minecraftforge.client.RenderProperties.get(field_92016_l).getFont(field_92016_l);
 +            if (font == null) {
 +               this.func_175179_f().func_243246_a(p_238453_1_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
 +            } else {

@@ -51,7 +51,7 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameType;
-import net.minecraftforge.client.ForgeClientProperties;
+import net.minecraftforge.client.RenderProperties;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.MinecraftForge;
@@ -293,7 +293,7 @@ public class ForgeIngameGui extends IngameGui
             }
             else
             {
-                ForgeClientProperties.renderHelmetOverlay(itemstack, minecraft.player, this.screenWidth, this.screenHeight, partialTicks);
+                RenderProperties.get(itemstack).renderHelmetOverlay(itemstack, minecraft.player, this.screenWidth, this.screenHeight, partialTicks);
             }
         }
 

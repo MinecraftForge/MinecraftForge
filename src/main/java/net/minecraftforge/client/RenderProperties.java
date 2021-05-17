@@ -37,6 +37,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
+import net.minecraft.util.IItemProvider;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
@@ -46,55 +47,18 @@ import net.minecraftforge.registries.IRegistryDelegate;
 
 import java.util.Map;
 
-public class ForgeClientProperties
+public class RenderProperties
 {
-    private ForgeClientProperties()
+    private RenderProperties()
     {
         // Not instantiable.
     }
-
-    private static final Map<IRegistryDelegate<Item>, IFontProvider> fontProviders = Maps.newHashMap();
-    private static final Map<IRegistryDelegate<Item>, IArmorModelProvider> armorModelProviders = Maps.newHashMap();
-    private static final Map<IRegistryDelegate<Item>, IHelmetOverlayRenderer> helmetOverlayRenderers = Maps.newHashMap();
-    private static final Map<IRegistryDelegate<Item>, ItemStackTileEntityRenderer> itemStackTileEntityRenderers = Maps.newHashMap();
 
     private static final Map<IRegistryDelegate<Block>, IHitEffectProvider> hitEffectProviders = Maps.newHashMap();
     private static final Map<IRegistryDelegate<Block>, IDestroyEffectProvider> destroyEffectProviders = Maps.newHashMap();
     private static final Map<IRegistryDelegate<Block>, IFogColorProvider> fogColorProviders = Maps.newHashMap();
 
     private static final Map<IRegistryDelegate<Effect>, EffectRenderer> effectRenderers = Maps.newHashMap();
-
-    public static synchronized void registerFontProvider(Item item, IFontProvider fontProvider)
-    {
-        if (fontProviders.containsKey(item.delegate))
-            throw new IllegalStateException("A font provider has already been registered for this item.");
-
-        fontProviders.put(item.delegate, fontProvider);
-    }
-
-    public static synchronized void registerArmorModelProvider(Item item, IArmorModelProvider armorModelProvider)
-    {
-        if (armorModelProviders.containsKey(item.delegate))
-            throw new IllegalStateException("An armor model provider has already been registered for this item.");
-
-        armorModelProviders.put(item.delegate, armorModelProvider);
-    }
-
-    public static synchronized void registerFontProvider(Item item, IHelmetOverlayRenderer helmetOverlayRenderer)
-    {
-        if (helmetOverlayRenderers.containsKey(item.delegate))
-            throw new IllegalStateException("An armor model provider has already been registered for this item.");
-
-        helmetOverlayRenderers.put(item.delegate, helmetOverlayRenderer);
-    }
-
-    public static synchronized void registerFontProvider(Item item, ItemStackTileEntityRenderer itemStackTileEntityRenderer)
-    {
-        if (itemStackTileEntityRenderers.containsKey(item.delegate))
-            throw new IllegalStateException("An ItemStackTileEntityRenderer has already been registered for this item.");
-
-        itemStackTileEntityRenderers.put(item.delegate, itemStackTileEntityRenderer);
-    }
 
     public static synchronized void registerHitEffectProvider(Block block, IHitEffectProvider hitEffectProvider)
     {
@@ -126,34 +90,6 @@ public class ForgeClientProperties
             throw new IllegalStateException("An effect renderer has already been registered for this effect.");
 
         effectRenderers.put(effect.delegate, effectRenderer);
-    }
-
-    public static FontRenderer getFont(ItemStack stack)
-    {
-        IFontProvider provider = fontProviders.get(stack.getItem().delegate);
-        if (provider == null)
-            return null;
-        return provider.getFont(stack);
-    }
-
-    public static <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A defaultModel)
-    {
-        IArmorModelProvider armorModelProvider = armorModelProviders.get(itemStack.getItem().delegate);
-        if (armorModelProvider == null)
-            return null;
-        return armorModelProvider.getArmorModel(entityLiving, itemStack, armorSlot, defaultModel);
-    }
-
-    public static void renderHelmetOverlay(ItemStack stack, PlayerEntity player, int width, int height, float partialTicks)
-    {
-        IHelmetOverlayRenderer helmetOverlayRenderer = helmetOverlayRenderers.get(stack.getItem().delegate);
-        if (helmetOverlayRenderer != null)
-            helmetOverlayRenderer.renderHelmetOverlay(stack, player, width, height, partialTicks);
-    }
-
-    public static ItemStackTileEntityRenderer getItemStackTileEntityRenderer(ItemStack stack)
-    {
-        return itemStackTileEntityRenderers.getOrDefault(stack.getItem().delegate, ItemStackTileEntityRenderer.instance);
     }
 
     /**
@@ -250,22 +186,44 @@ public class ForgeClientProperties
         return getEffectRenderer(effectInstance).shouldRender(effectInstance);
     }
 
-    @FunctionalInterface
-    public interface IFontProvider
+    public static IItemRenderProperties get(ItemStack stack)
     {
-        FontRenderer getFont(ItemStack stack);
+        return get(stack.getItem());
     }
 
-    @FunctionalInterface
-    public interface IArmorModelProvider
+    public static IItemRenderProperties get(Item item)
     {
-        <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A defaultModel);
+        return ((IItemRenderPropertiesAccessor)item).getRenderProperties();
     }
 
-    @FunctionalInterface
-    public interface IHelmetOverlayRenderer
+    public interface IItemRenderProperties
     {
-        void renderHelmetOverlay(ItemStack stack, PlayerEntity player, int width, int height, float partialTicks);
+        IItemRenderProperties DUMMY = new IItemRenderProperties() {};
+
+        default FontRenderer getFont(ItemStack stack)
+        {
+            return null;
+        }
+
+        default <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A defaultModel)
+        {
+            return null;
+        }
+
+        default void renderHelmetOverlay(ItemStack stack, PlayerEntity player, int width, int height, float partialTicks)
+        {
+
+        }
+
+        default ItemStackTileEntityRenderer getItemStackTileEntityRenderer()
+        {
+            return ItemStackTileEntityRenderer.instance;
+        }
+    }
+
+    public interface IItemRenderPropertiesAccessor
+    {
+        IItemRenderProperties getRenderProperties();
     }
 
     @FunctionalInterface

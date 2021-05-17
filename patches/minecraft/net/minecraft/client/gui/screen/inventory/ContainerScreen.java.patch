@@ -29,7 +29,7 @@
        RenderSystem.translatef(0.0F, 0.0F, 32.0F);
        this.func_230926_e_(200);
        this.field_230707_j_.field_77023_b = 200.0F;
-+      net.minecraft.client.gui.FontRenderer font = net.minecraftforge.client.ForgeClientProperties.getFont(p_146982_1_);
++      net.minecraft.client.gui.FontRenderer font = net.minecraftforge.client.RenderProperties.get(p_146982_1_).getFont(p_146982_1_);
 +      if (font == null) font = this.field_230712_o_;
        this.field_230707_j_.func_180450_b(p_146982_1_, p_146982_2_, p_146982_3_);
 -      this.field_230707_j_.func_180453_a(this.field_230712_o_, p_146982_1_, p_146982_2_, p_146982_3_ - (this.field_147012_x.func_190926_b() ? 0 : 8), p_146982_4_);

@@ -15,7 +15,7 @@
           }
  
 -         Iterable<EffectInstance> iterable = Ordering.natural().sortedCopy(collection);
-+         Iterable<EffectInstance> iterable = collection.stream().filter(net.minecraftforge.client.ForgeClientProperties::shouldRender).sorted().collect(java.util.stream.Collectors.toList());
++         Iterable<EffectInstance> iterable = collection.stream().filter(net.minecraftforge.client.RenderProperties::shouldRender).sorted().collect(java.util.stream.Collectors.toList());
           this.func_238810_a_(p_238811_1_, i, j, iterable);
           this.func_238812_b_(p_238811_1_, i, j, iterable);
           this.func_238813_c_(p_238811_1_, i, j, iterable);
@@ -23,7 +23,7 @@
        int i = this.field_147009_r;
  
        for(EffectInstance effectinstance : p_238813_4_) {
-+         net.minecraftforge.client.EffectRenderer renderer = net.minecraftforge.client.ForgeClientProperties.getEffectRenderer(effectinstance);
++         net.minecraftforge.client.EffectRenderer renderer = net.minecraftforge.client.RenderProperties.getEffectRenderer(effectinstance);
 +         renderer.renderInventoryEffect(effectinstance, this, p_238813_1_, p_238813_2_, i, this.func_230927_p_());
 +         if (!renderer.shouldRenderInvText(effectinstance)) {
 +            i += p_238813_3_;

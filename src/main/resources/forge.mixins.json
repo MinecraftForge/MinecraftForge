@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.minecraftforge.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "forge.refmap.json",
+  "mixins": [],
+  "client": [
+    "ItemRenderPropertiesMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -110,6 +110,17 @@
     public boolean func_219970_i(ItemStack p_219970_1_) {
        return p_219970_1_.func_77973_b() == Items.field_222114_py;
     }
+@@ -325,6 +_,10 @@
+       return !this.field_234684_d_ || !p_234685_1_.func_76347_k();
+    }
+ 
++   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.RenderProperties.IItemRenderProperties> consumer)
++   {
++   }
++
+    public static class Properties {
+       private int field_200920_a = 64;
+       private int field_200921_b;
 @@ -333,6 +_,8 @@
        private Rarity field_208104_e = Rarity.COMMON;
        private Food field_221541_f;
