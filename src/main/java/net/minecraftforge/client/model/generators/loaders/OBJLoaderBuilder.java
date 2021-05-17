@@ -110,7 +110,7 @@ public class OBJLoaderBuilder<T extends ModelBuilder<T>> extends CustomLoaderBui
             json.addProperty("ambientToFullbright", ambientToFullbright);
 
         if (materialLibraryOverrideLocation != null)
-            json.addProperty("materialLibraryOverrideLocation", materialLibraryOverrideLocation.toString());
+            json.addProperty("materialLibraryOverride", materialLibraryOverrideLocation.toString());
 
         return json;
     }
