@@ -90,7 +90,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -409,6 +_,78 @@
+@@ -409,6 +_,82 @@
     protected Block func_230328_p_() {
        return this;
     }
@@ -152,6 +152,10 @@
 +         return isBeach && hasWater;
 +      }
 +      return false;
++  }
++
++  public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IBlockRenderProperties> consumer)
++  {
 +  }
 +
 +  @Override

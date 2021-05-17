@@ -19,34 +19,33 @@
 
 package net.minecraftforge.mixin;
 
-import net.minecraft.item.Item;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectType;
+import net.minecraftforge.client.EffectRenderer;
 import net.minecraftforge.client.RenderProperties;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Item.class)
-public class ItemRenderPropertiesMixin implements RenderProperties.IItemRenderPropertiesAccessor
+@Mixin(Effect.class)
+public class EffectRendererMixin implements RenderProperties.IEffectRendererAccessor
 {
-    private IItemRenderProperties properties = IItemRenderProperties.DUMMY;
+    private EffectRenderer renderer = EffectRenderer.DUMMY;
 
     @Override
-    public IItemRenderProperties getRenderProperties()
+    public EffectRenderer getEffectRenderer()
     {
-        return properties;
+        return renderer;
     }
 
     @SuppressWarnings("ConstantConditions")
-    @Inject(method="<init>(Lnet/minecraft/item/Item$Properties;)V", at=@At("RETURN"))
-    public void constructorInject(Item.Properties itemProperties, CallbackInfo cb)
+    @Inject(method="<init>(Lnet/minecraft/potion/EffectType;I)V", at=@At("RETURN"))
+    public void constructorInject(EffectType effectType, int color, CallbackInfo cb)
     {
-        Item item = (Item) (Object) this;
-        item.initializeClient(properties -> {
-            if (properties == item)
-                throw new IllegalStateException("Don't extend IItemRenderProperties in your item, use an anonymous class instead.");
-            this.properties = properties;
+        Effect effect = (Effect) (Object) this;
+        effect.initializeClient(properties -> {
+            this.renderer = properties;
         });
     }
 }

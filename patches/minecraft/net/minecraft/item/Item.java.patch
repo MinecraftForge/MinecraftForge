@@ -114,7 +114,7 @@
        return !this.field_234684_d_ || !p_234685_1_.func_76347_k();
     }
  
-+   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.RenderProperties.IItemRenderProperties> consumer)
++   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer)
 +   {
 +   }
 +

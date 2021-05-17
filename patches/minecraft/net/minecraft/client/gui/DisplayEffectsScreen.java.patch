@@ -15,7 +15,7 @@
           }
  
 -         Iterable<EffectInstance> iterable = Ordering.natural().sortedCopy(collection);
-+         Iterable<EffectInstance> iterable = collection.stream().filter(net.minecraftforge.client.RenderProperties::shouldRender).sorted().collect(java.util.stream.Collectors.toList());
++         Iterable<EffectInstance> iterable = collection.stream().filter(net.minecraftforge.client.ForgeHooksClient::shouldRender).sorted().collect(java.util.stream.Collectors.toList());
           this.func_238810_a_(p_238811_1_, i, j, iterable);
           this.func_238812_b_(p_238811_1_, i, j, iterable);
           this.func_238813_c_(p_238811_1_, i, j, iterable);

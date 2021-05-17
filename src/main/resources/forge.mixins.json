@@ -6,7 +6,9 @@
   "refmap": "forge.refmap.json",
   "mixins": [],
   "client": [
-    "ItemRenderPropertiesMixin"
+    "ItemRenderPropertiesMixin",
+    "BlockRenderPropertiesMixin",
+    "EffectRendererMixin"
   ],
   "server": [],
   "injectors": {

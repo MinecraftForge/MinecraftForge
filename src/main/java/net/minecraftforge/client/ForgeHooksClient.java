@@ -61,6 +61,7 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.MovementInput;
@@ -821,5 +822,10 @@ public class ForgeHooksClient
     public static Optional<BiomeGeneratorTypeScreens> getDefaultWorldType()
     {
         return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
+    }
+
+    public static boolean shouldRender(EffectInstance effectInstance)
+    {
+        return RenderProperties.getEffectRenderer(effectInstance).shouldRender(effectInstance);
     }
 }

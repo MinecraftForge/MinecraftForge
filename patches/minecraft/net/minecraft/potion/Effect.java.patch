@@ -9,3 +9,13 @@
     private final Map<Attribute, AttributeModifier> field_111188_I = Maps.newHashMap();
     private final EffectType field_220305_b;
     private final int field_76414_N;
+@@ -178,5 +_,9 @@
+ 
+    public boolean func_188408_i() {
+       return this.field_220305_b == EffectType.BENEFICIAL;
++   }
++
++   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.EffectRenderer> consumer)
++   {
+    }
+ }

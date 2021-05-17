@@ -351,7 +351,8 @@ project(':forge') {
             '/': [
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'GitCommit': GIT_INFO.abbreviatedId,
-                'Git-Branch': GIT_INFO.branch
+                'Git-Branch': GIT_INFO.branch,
+                'MixinConfigs': 'forge.mixins.json'
             ] as LinkedHashMap,
             'net/minecraftforge/versions/forge/': [
                 'Specification-Title':      'Forge',
@@ -367,8 +368,7 @@ project(':forge') {
                 'Specification-Version':    MC_VERSION,
                 'Implementation-Title':     'MCP',
                 'Implementation-Version':   MCP_VERSION,
-                'Implementation-Vendor':    'Forge',
-                'MixinConfigs':             'forge.mixins.json'
+                'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap,
             'net/minecraftforge/fml/javafmlmod/': [
                 'Specification-Title':      'Mod Language Provider',
