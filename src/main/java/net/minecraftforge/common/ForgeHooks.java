@@ -118,6 +118,8 @@ import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
+import net.minecraft.world.gen.settings.DimensionStructuresSettings;
+import net.minecraft.world.gen.settings.StructureSpreadSettings;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -1443,5 +1445,25 @@ public class ForgeHooks
             newMutable.combine(v);
             FORGE_ATTRIBUTES.put(k, newMutable.build());
         });
+    }
+
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
+    public static DimensionStructuresSettings deepCopyDimensionStructuresSettings(DimensionStructuresSettings settings)
+    {
+        // Grab old copy of stronghold spacing settings
+        StructureSpreadSettings oldStrongholdSettings = settings.stronghold();
+
+        // Make a deep copy and wrap it in an optional as DimensionStructuresSettings requires an optional
+        Optional<StructureSpreadSettings> newStrongholdSettings = oldStrongholdSettings == null ?
+                Optional.empty() :
+                Optional.of(new StructureSpreadSettings(
+                        oldStrongholdSettings.distance(),
+                        oldStrongholdSettings.spread(),
+                        oldStrongholdSettings.count()));
+
+        // Create new deep copied DimensionStructuresSettings
+        // We do not need to create a new structure spacing map instance here as our patch into
+        // DimensionStructuresSettings will already create the new map instance for us.
+        return new DimensionStructuresSettings(newStrongholdSettings, settings.structureConfig());
     }
 }
