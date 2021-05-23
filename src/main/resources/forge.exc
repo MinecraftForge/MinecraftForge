@@ -45,8 +45,8 @@ net/minecraft/item/FilledMapItem.getCustomMapData(Lnet/minecraft/item/ItemStack;
 net/minecraft/item/FishBucketItem.<init>(Ljava/util/function/Supplier;Ljava/util/function/Supplier;Lnet/minecraft/item/Item$Properties;)V=|fishTypeIn,p_i49022_2_,builder
 net/minecraft/item/HorseArmorItem.<init>(ILnet/minecraft/util/ResourceLocation;Lnet/minecraft/item/Item$Properties;)V=|p_i50042_1_,texture,p_i50042_3_
 net/minecraft/item/ItemStack.<init>(Lnet/minecraft/util/IItemProvider;ILnet/minecraft/nbt/CompoundNBT;)V=|p_i48204_1_,p_i48204_2_,capNBT
-net/minecraft/item/ItemStack.onItemUseFirst(Lnet/minecraft/item/ItemUseContext;)Lnet/minecraft/util/ActionResultType;=|p_196084_1_
 net/minecraft/item/ItemStack.onItemUse(Lnet/minecraft/item/ItemUseContext;Ljava/util/function/Function;)Lnet/minecraft/util/ActionResultType;=|p_196084_1_,callback
+net/minecraft/item/ItemStack.onItemUseFirst(Lnet/minecraft/item/ItemUseContext;)Lnet/minecraft/util/ActionResultType;=|p_196084_1_
 net/minecraft/network/PacketBuffer.writeItemStack(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/network/PacketBuffer;=|p_150788_1_,limitedTag
 net/minecraft/potion/PotionBrewing$MixPredicate.<init>(Lnet/minecraftforge/registries/ForgeRegistryEntry;Lnet/minecraft/item/crafting/Ingredient;Lnet/minecraftforge/registries/ForgeRegistryEntry;)V=|p_i47570_1_,p_i47570_2_,p_i47570_3_
 net/minecraft/server/dedicated/DedicatedServer.sendMessage(Lnet/minecraft/util/text/ITextComponent;Ljava/util/UUID;)V=|message,p_145747_2_
