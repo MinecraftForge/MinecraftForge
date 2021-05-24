@@ -18,9 +18,10 @@
        boolean flag1 = gamerules.func_223586_b(GameRules.field_223612_o);
 @@ -156,6 +_,7 @@
        serverplaynethandler.func_147359_a(new SHeldItemChangePacket(p_72355_2_.field_71071_by.field_70461_c));
-       serverplaynethandler.func_147359_a(new SUpdateRecipesPacket(this.field_72400_f.func_199529_aN().func_199510_b()));
+-      serverplaynethandler.func_147359_a(new SUpdateRecipesPacket(this.field_72400_f.func_199529_aN().func_199510_b()));
        serverplaynethandler.func_147359_a(new STagsListPacket(this.field_72400_f.func_244266_aF()));
 +      net.minecraftforge.fml.network.NetworkHooks.syncCustomTagTypes(p_72355_2_, this.field_72400_f.func_244266_aF());
++      serverplaynethandler.func_147359_a(new SUpdateRecipesPacket(this.field_72400_f.func_199529_aN().func_199510_b()));
        this.func_187243_f(p_72355_2_);
        p_72355_2_.func_147099_x().func_150877_d();
        p_72355_2_.func_192037_E().func_192826_c(p_72355_2_);
