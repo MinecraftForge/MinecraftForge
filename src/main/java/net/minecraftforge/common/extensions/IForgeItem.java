@@ -380,12 +380,12 @@ public interface IForgeItem
 
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
-     * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.entity.LivingEntity#getSlotForItemStack(ItemStack)}.</em>
+     * not use this to get the armor slot of said stack; for that, use static
+     * {@link net.minecraft.entity.MobEntity#getSlotForItemStack(ItemStack)}.</em>
      *
      * @param stack the ItemStack
      * @return the armor slot of the ItemStack, or {@code null} to let the default
-     *         vanilla logic as per {@code LivingEntity.getSlotForItemStack(stack)}
+     *         vanilla logic as per static {@code MobEntity.getSlotForItemStack(stack)}
      *         decide
      */
     @Nullable
