@@ -29,7 +29,7 @@
                 argumentbuilder.executes((p_197053_0_) -> {
                    return 0;
                 });
-+               argumentbuilder.executes(null);
++               argumentbuilder.executes(null);// FORGE Client Commands support for lan or single-player, strips execution part, see ForgeHooksClient
              }
  
              if (argumentbuilder instanceof RequiredArgumentBuilder) {

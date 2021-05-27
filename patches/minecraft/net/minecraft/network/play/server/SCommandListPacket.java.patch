@@ -4,7 +4,7 @@
                    this.field_197726_a.executes((p_197724_0_) -> {
                       return 0;
                    });
-+                  this.field_197726_a.executes(null);
++                  this.field_197726_a.executes(null);// FORGE Client Commands support for clients joining non-forge servers, strips execution part, see ForgeHooksClient
                 }
  
                 this.field_197730_e = this.field_197726_a.build();

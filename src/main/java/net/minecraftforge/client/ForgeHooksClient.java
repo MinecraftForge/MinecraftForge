@@ -834,7 +834,10 @@ public class ForgeHooksClient
     }
     
     /**
-     * Always try to execute the cached parsing of client message as a command. {@link net.minecraft.command.Commands#handleCommand(net.minecraft.command.CommandSource,String)} for reference
+     * Always try to execute the cached parsing of client message as a command.
+     * Requires execute field for commands received from the server to be null so that they aren't treated as client command's that do nothing.
+     * 
+     * {@link net.minecraft.command.Commands#handleCommand(net.minecraft.command.CommandSource,String)} for reference
      * @param currentParse current state of the parser for the message
      * @return true leaves the message to be sent to the server, false means it should be caught before {@link net.minecraft.client.gui.screen.ChatScreen#func_231161_c_(String)}
      */
