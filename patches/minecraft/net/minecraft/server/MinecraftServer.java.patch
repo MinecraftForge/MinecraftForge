@@ -167,7 +167,7 @@
     }
  
     public static DatapackCodec func_240772_a_(ResourcePackList p_240772_0_, DatapackCodec p_240772_1_, boolean p_240772_2_) {
-+      net.minecraftforge.fml.packs.ResourcePackLoader.loadResourcePacks(p_240772_0_, net.minecraftforge.fml.server.ServerLifecycleHooks::buildPackFinder);
++      net.minecraftforge.fml.packs.ResourcePackLoader.loadServerResourcePacks(p_240772_0_, net.minecraftforge.fml.server.ServerLifecycleHooks::buildPackFinder);
        p_240772_0_.func_198983_a();
 +      DatapackCodec.field_234880_a_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
 +      p_240772_1_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());

@@ -38,7 +38,9 @@ import net.minecraft.resources.IPackFinder;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackInfo.IFactory;
 import net.minecraft.resources.ResourcePackList;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.event.server.FMLServerDatapackDiscoveryEvent;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 
@@ -51,6 +53,12 @@ public class ResourcePackLoader
     {
         return Optional.ofNullable(ModList.get().getModFileById(modId)).
                 map(ModFileInfo::getFile).map(mf->modResourcePacks.get(mf));
+    }
+
+    public static void loadServerResourcePacks(ResourcePackList resourcePacks, BiFunction<Map<ModFile, ? extends ModFileResourcePack>, BiConsumer<? super ModFileResourcePack, ResourcePackInfo>, IPackInfoFinder> packFinder)
+    {
+        loadResourcePacks(resourcePacks, packFinder);
+        MinecraftForge.EVENT_BUS.post(new FMLServerDatapackDiscoveryEvent(resourcePacks::addPackFinder));
     }
 
     public static void loadResourcePacks(ResourcePackList resourcePacks, BiFunction<Map<ModFile, ? extends ModFileResourcePack>, BiConsumer<? super ModFileResourcePack, ResourcePackInfo>, IPackInfoFinder> packFinder) {
