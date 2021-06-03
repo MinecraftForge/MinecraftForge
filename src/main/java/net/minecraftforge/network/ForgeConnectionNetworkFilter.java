@@ -77,7 +77,7 @@ public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
     protected boolean isNecessary(NetworkManager manager)
     {
         // not needed on local connections, because packets are not encoded to bytes there
-        return !manager.isMemoryConnection() && !VanillaPacketSplitter.isRemoteCompatible(manager);
+        return !manager.isMemoryConnection() && VanillaPacketSplitter.isRemoteCompatible(manager);
     }
 
     private static void splitPacket(IPacket<?> packet, List<? super IPacket<?>> out)
