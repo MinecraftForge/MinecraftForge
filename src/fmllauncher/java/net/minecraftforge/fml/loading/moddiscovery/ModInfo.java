@@ -53,6 +53,7 @@ public class ModInfo implements IModInfo, IConfigurable
     private final Optional<String> logoFile;
     private final boolean logoBlur;
     private final URL updateJSONURL;
+    private final URL displayURL;
     private final List<? extends IModInfo.ModVersion> dependencies;
     private final Map<String,Object> properties;
     private final IConfigurable config;
@@ -86,6 +87,9 @@ public class ModInfo implements IModInfo, IConfigurable
                         .orElse(true));
 
         this.updateJSONURL = config.<String>getConfigElement("updateJSONURL")
+                .map(StringUtils::toURL)
+                .orElse(null);
+        this.displayURL = config.<String>getConfigElement("displayURL")
                 .map(StringUtils::toURL)
                 .orElse(null);
 
@@ -146,6 +150,11 @@ public class ModInfo implements IModInfo, IConfigurable
     public URL getUpdateURL() {
         return this.updateJSONURL;
     }
+    
+    @Override
+    public URL getDisplayURL() {
+        return this.displayURL;
+    }
 
     public Optional<String> getLogoFile()
     {
@@ -183,6 +192,7 @@ public class ModInfo implements IModInfo, IConfigurable
         private final boolean mandatory;
         private final Ordering ordering;
         private final DependencySide side;
+        private final URL displayURL;
 
         public ModVersion(final IModInfo owner, final IConfigurable config) {
             this.owner = owner;
@@ -199,6 +209,9 @@ public class ModInfo implements IModInfo, IConfigurable
             this.side = config.<String>getConfigElement("side")
                     .map(DependencySide::valueOf)
                     .orElse(DependencySide.BOTH);
+            this.displayURL = config.<String>getConfigElement("displayURL")
+                    .map(StringUtils::toURL)
+                    .orElse(null);
         }
 
 
@@ -242,6 +255,12 @@ public class ModInfo implements IModInfo, IConfigurable
         public IModInfo getOwner()
         {
             return owner;
+        }
+
+        @Override
+        public URL getDisplayURL()
+        { 
+            return displayURL;
         }
     }
 
