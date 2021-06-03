@@ -52,6 +52,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
+import net.minecraftforge.network.NetworkFilters;
 
 import javax.annotation.Nullable;
 
@@ -117,6 +118,7 @@ public class NetworkHooks
     }
 
     public synchronized static void sendMCRegistryPackets(NetworkManager manager, String direction) {
+        NetworkFilters.injectIfNecessary(manager);
         final Set<ResourceLocation> resourceLocations = NetworkRegistry.buildChannelVersions().keySet().stream().
                 filter(rl -> !Objects.equals(rl.getNamespace(), "minecraft")).
                 collect(Collectors.toSet());

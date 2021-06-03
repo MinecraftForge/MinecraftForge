@@ -32,9 +32,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.play.ClientPlayNetHandler;
 import net.minecraft.network.*;
 import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
-import net.minecraft.network.play.server.STagsListPacket;
-import net.minecraft.network.play.server.SUpdateRecipesPacket;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.FMLConnectionData;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -56,12 +55,13 @@ public class VanillaPacketSplitter
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final ResourceLocation CHANNEL = new ResourceLocation("forge", "split");
+    // TODO 1.17: bump this to version 1.1 and remove dummy channel
+    // Version 1.1 removed client-side whitelist
+    // we don't bump actual channel version because that would prevent old clients from connecting
+    // but we still need to detect new clients, so we add a dummy channel just for that.
+    public static final ResourceLocation V11_DUMMY_CHANNEL = new ResourceLocation("forge", "split_11");
     private static final String VERSION = "1.0";
-
-    private static final Set<Class<? extends IPacket<?>>> ALLOWED_PACKETS = ImmutableSet.of(
-            SUpdateRecipesPacket.class,
-            STagsListPacket.class
-    );
+    private static final String VERSION_11 = "1.1";
 
     private static final int PROTOCOL_MAX = 2097152;
 
@@ -79,6 +79,8 @@ public class VanillaPacketSplitter
         Predicate<String> versionCheck = NetworkRegistry.acceptMissingOr(VERSION);
         channel = NetworkRegistry.newEventChannel(CHANNEL, () -> VERSION, versionCheck, versionCheck);
         channel.addListener(VanillaPacketSplitter::onClientPacket);
+        Predicate<String> version11Check = NetworkRegistry.acceptMissingOr(VERSION_11);
+        NetworkRegistry.newEventChannel(V11_DUMMY_CHANNEL, () -> VERSION_11, version11Check, version11Check);
     }
 
     /**
@@ -184,10 +186,6 @@ public class VanillaPacketSplitter
             {
                 LOGGER.error("Received invalid packet ID {} in forge:split", packetId);
             }
-            else if (!ALLOWED_PACKETS.contains(packet.getClass()))
-            {
-                LOGGER.error("Received not allowed packet type {} in forge:split", packet);
-            }
             else
             {
                 try
@@ -206,8 +204,36 @@ public class VanillaPacketSplitter
         }
     }
 
+    public enum RemoteCompatibility
+    {
+        ABSENT,
+        V10_LEGACY,
+        V11
+    }
+
+    public static RemoteCompatibility getRemoteCompatibility(NetworkManager manager)
+    {
+        FMLConnectionData connectionData = NetworkHooks.getConnectionData(manager);
+        if (connectionData == null)
+        {
+            return RemoteCompatibility.ABSENT;
+        }
+        else if (connectionData.getChannels().containsKey(V11_DUMMY_CHANNEL))
+        {
+            return RemoteCompatibility.V11;
+        }
+        else if (connectionData.getChannels().containsKey(CHANNEL))
+        {
+            return RemoteCompatibility.V10_LEGACY;
+        }
+        else
+        {
+            return RemoteCompatibility.ABSENT;
+        }
+    }
+
     public static boolean isRemoteCompatible(NetworkManager manager)
     {
-        return !NetworkHooks.isVanillaConnection(manager) && channel.isRemotePresent(manager);
+        return getRemoteCompatibility(manager) != RemoteCompatibility.ABSENT;
     }
 }

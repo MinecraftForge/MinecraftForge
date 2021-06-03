@@ -20,15 +20,19 @@
 package net.minecraftforge.network;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+
+import javax.annotation.Nullable;
 
 import io.netty.channel.ChannelHandler;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketDirection;
 import net.minecraft.network.ProtocolType;
+import net.minecraft.network.play.server.SAdvancementInfoPacket;
 import net.minecraft.network.play.server.STagsListPacket;
 import net.minecraft.network.play.server.SUpdateRecipesPacket;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -39,14 +43,34 @@ import com.google.common.collect.ImmutableMap;
 public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
 {
 
+    @Deprecated
     public ForgeConnectionNetworkFilter()
     {
-        super(
-                ImmutableMap.of(
-                        SUpdateRecipesPacket.class, ForgeConnectionNetworkFilter::splitPacket,
-                        STagsListPacket.class, ForgeConnectionNetworkFilter::splitPacket
-                )
-        );
+        this(null);
+    }
+
+    public ForgeConnectionNetworkFilter(@Nullable NetworkManager manager)
+    {
+        super(buildHandlers(manager));
+    }
+
+    private static Map<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>> buildHandlers(@Nullable NetworkManager manager)
+    {
+
+        VanillaPacketSplitter.RemoteCompatibility compatibility = manager == null ? VanillaPacketSplitter.RemoteCompatibility.ABSENT : VanillaPacketSplitter.getRemoteCompatibility(manager);
+        if (compatibility == VanillaPacketSplitter.RemoteCompatibility.ABSENT)
+        {
+            return ImmutableMap.of();
+        }
+        ImmutableMap.Builder<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>> builder = ImmutableMap.<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>>builder()
+                .put(SUpdateRecipesPacket.class, ForgeConnectionNetworkFilter::splitPacket)
+                .put(STagsListPacket.class, ForgeConnectionNetworkFilter::splitPacket);
+
+        if (compatibility == VanillaPacketSplitter.RemoteCompatibility.V11)
+        {
+            builder.put(SAdvancementInfoPacket.class, ForgeConnectionNetworkFilter::splitPacket);
+        }
+        return builder.build();
     }
 
     @Override
