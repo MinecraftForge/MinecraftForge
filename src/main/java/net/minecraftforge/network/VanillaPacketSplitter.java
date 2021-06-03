@@ -59,7 +59,7 @@ public class VanillaPacketSplitter
     // Version 1.1 removed client-side whitelist
     // we don't bump actual channel version because that would prevent old clients from connecting
     // but we still need to detect new clients, so we add a dummy channel just for that.
-    public static final ResourceLocation V11_DUMMY_CHANNEL = new ResourceLocation("forge", "split_11");
+    private static final ResourceLocation V11_DUMMY_CHANNEL = new ResourceLocation("forge", "split_11");
     private static final String VERSION = "1.0";
     private static final String VERSION_11 = "1.1";
 
@@ -72,13 +72,12 @@ public class VanillaPacketSplitter
     private static final byte STATE_FIRST = 1;
     private static final byte STATE_LAST = 2;
 
-    private static EventNetworkChannel channel;
-
     public static void register()
     {
         Predicate<String> versionCheck = NetworkRegistry.acceptMissingOr(VERSION);
-        channel = NetworkRegistry.newEventChannel(CHANNEL, () -> VERSION, versionCheck, versionCheck);
+        EventNetworkChannel channel = NetworkRegistry.newEventChannel(CHANNEL, () -> VERSION, versionCheck, versionCheck);
         channel.addListener(VanillaPacketSplitter::onClientPacket);
+
         Predicate<String> version11Check = NetworkRegistry.acceptMissingOr(VERSION_11);
         NetworkRegistry.newEventChannel(V11_DUMMY_CHANNEL, () -> VERSION_11, version11Check, version11Check);
     }
