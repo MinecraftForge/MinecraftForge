@@ -24,6 +24,7 @@ import net.minecraftforge.client.IItemRenderProperties;
 import net.minecraftforge.client.RenderProperties;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Desc;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -39,7 +40,7 @@ public class ItemRenderPropertiesMixin implements RenderProperties.IItemRenderPr
     }
 
     @SuppressWarnings("ConstantConditions")
-    @Inject(method="<init>(Lnet/minecraft/item/Item$Properties;)V", at=@At("RETURN"))
+    @Inject(target=@Desc(value="<init>", args = {Item.Properties.class}),  at=@At("RETURN"))
     public void constructorInject(Item.Properties itemProperties, CallbackInfo cb)
     {
         Item item = (Item) (Object) this;

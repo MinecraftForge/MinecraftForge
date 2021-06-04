@@ -25,6 +25,7 @@ import net.minecraftforge.client.IBlockRenderProperties;
 import net.minecraftforge.client.RenderProperties;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Desc;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -40,7 +41,7 @@ public class BlockRenderPropertiesMixin implements RenderProperties.IBlockRender
     }
 
     @SuppressWarnings("ConstantConditions")
-    @Inject(method="<init>(Lnet/minecraft/block/AbstractBlock$Properties;)V", at=@At("RETURN"))
+    @Inject(target=@Desc(value="<init>", args = {AbstractBlock.Properties.class}), at=@At("RETURN"))
     public void constructorInject(AbstractBlock.Properties blockProperties, CallbackInfo cb)
     {
         Block block = (Block) (Object) this;

@@ -25,6 +25,7 @@ import net.minecraftforge.client.EffectRenderer;
 import net.minecraftforge.client.RenderProperties;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Desc;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -40,7 +41,7 @@ public class EffectRendererMixin implements RenderProperties.IEffectRendererAcce
     }
 
     @SuppressWarnings("ConstantConditions")
-    @Inject(method="<init>(Lnet/minecraft/potion/EffectType;I)V", at=@At("RETURN"))
+    @Inject(target=@Desc(value="<init>", args = {EffectType.class,int.class}),  at=@At("RETURN"))
     public void constructorInject(EffectType effectType, int color, CallbackInfo cb)
     {
         Effect effect = (Effect) (Object) this;
