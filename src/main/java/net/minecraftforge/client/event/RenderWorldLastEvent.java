@@ -24,6 +24,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.util.math.vector.Matrix4f;
 
+/**
+ * @deprecated Use new {@link RenderWorldEvent events} - check which event suits the best your needs, TODO: remove in 1.17
+ */
+@Deprecated
 public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final WorldRenderer context;
