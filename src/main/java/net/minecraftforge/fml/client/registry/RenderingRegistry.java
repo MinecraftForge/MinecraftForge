@@ -22,7 +22,6 @@ package net.minecraftforge.fml.client.registry;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -47,7 +46,7 @@ public class RenderingRegistry
     public static void loadEntityRenderers(EntityRendererManager manager)
     {
         INSTANCE.entityRenderers.forEach((key, value) -> register(manager, key, value));
-        manager.validateRendererExistence();
+        net.minecraft.client.Minecraft.getInstance().execute(manager::validateRendererExistence);
     }
 
     @SuppressWarnings("unchecked")
