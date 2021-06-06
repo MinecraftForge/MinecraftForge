@@ -23,7 +23,7 @@
  
     public static AttributeModifierMap.MutableAttribute func_234570_el_() {
 -      return LivingEntity.func_233639_cI_().func_233815_a_(Attributes.field_233823_f_, 1.0D).func_233815_a_(Attributes.field_233821_d_, (double)0.1F).func_233814_a_(Attributes.field_233825_h_).func_233814_a_(Attributes.field_233828_k_);
-+      return LivingEntity.func_233639_cI_().func_233815_a_(Attributes.field_233823_f_, 1.0D).func_233815_a_(Attributes.field_233821_d_, (double)0.1F).func_233814_a_(Attributes.field_233825_h_).func_233814_a_(Attributes.field_233828_k_).func_233814_a_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).func_233814_a_(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get());
++      return LivingEntity.func_233639_cI_().func_233815_a_(Attributes.field_233823_f_, 1.0D).func_233815_a_(Attributes.field_233821_d_, (double)0.1F).func_233814_a_(Attributes.field_233825_h_).func_233814_a_(Attributes.field_233828_k_).func_233814_a_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get());
     }
  
     protected void func_70088_a() {
@@ -215,7 +215,7 @@
  
                       for(LivingEntity livingentity : this.field_70170_p.func_217357_a(LivingEntity.class, p_71059_1_.func_174813_aQ().func_72314_b(1.0D, 0.25D, 1.0D))) {
 -                        if (livingentity != this && livingentity != p_71059_1_ && !this.func_184191_r(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity)livingentity).func_181026_s()) && this.func_70068_e(livingentity) < 9.0D) {
-+                        if (livingentity != this && livingentity != p_71059_1_ && !this.func_184191_r(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity)livingentity).func_181026_s()) && this.func_70068_e(livingentity) < this.func_233637_b_(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()) * this.func_233637_b_(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get())) { // Forge: Replace "9.0D" with the player's attack reach squared
++                        if (livingentity != this && livingentity != p_71059_1_ && !this.func_184191_r(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity)livingentity).func_181026_s()) && this.func_70068_e(livingentity) < net.minecraft.util.math.MathHelper.func_233022_k_((float) (this.func_233637_b_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()) - 2.0D))) { // Forge: Replace "9.0D" with the player's reach distance - 2.0D, squared
                             livingentity.func_233627_a_(0.4F, (double)MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F)), (double)(-MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F))));
                             livingentity.func_70097_a(DamageSource.func_76365_a(this), f3);
                          }
