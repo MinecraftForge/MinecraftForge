@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "player_attack_reach_test:item/longsword"
+  }
+}
