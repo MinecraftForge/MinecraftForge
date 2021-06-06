@@ -43,7 +43,16 @@
              this.field_147367_d.func_184103_al().func_232641_a_(itextcomponent, ChatType.CHAT, this.field_147369_b.func_110124_au());
           }
  
-@@ -1187,6 +_,7 @@
+@@ -1180,13 +_,15 @@
+       this.field_147369_b.func_226284_e_(p_147340_1_.func_241792_e_());
+       if (entity != null) {
+          double d0 = 36.0D;
+-         if (this.field_147369_b.func_70068_e(entity) < 36.0D) {
++         double interactDistSqLimit = p_147340_1_.func_149565_c() == CUseEntityPacket.Action.ATTACK ? this.field_147369_b.func_233637_b_(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()) * this.field_147369_b.func_233637_b_(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()) : 36.0D;
++         if (this.field_147369_b.func_70068_e(entity) < interactDistSqLimit) {
+             Hand hand = p_147340_1_.func_186994_b();
+             ItemStack itemstack = hand != null ? this.field_147369_b.func_184586_b(hand).func_77946_l() : ItemStack.field_190927_a;
+             Optional<ActionResultType> optional = Optional.empty();
              if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT) {
                 optional = Optional.of(this.field_147369_b.func_190775_a(entity, hand));
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT_AT) {

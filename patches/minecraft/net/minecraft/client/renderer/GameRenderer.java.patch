@@ -9,6 +9,24 @@
        }
  
     }
+@@ -233,7 +_,7 @@
+                d1 = 6.0D;
+                d0 = d1;
+             } else {
+-               if (d0 > 3.0D) {
++               if (d0 > this.field_78531_r.field_71439_g.func_233637_b_(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get())) { // Forge: Replace "3.0D" with the player's attack reach
+                   flag = true;
+                }
+ 
+@@ -256,7 +_,7 @@
+                Entity entity1 = entityraytraceresult.func_216348_a();
+                Vector3d vector3d3 = entityraytraceresult.func_216347_e();
+                double d2 = vector3d.func_72436_e(vector3d3);
+-               if (flag && d2 > 9.0D) {
++               if (flag && d2 > (this.field_78531_r.field_71439_g.func_233637_b_(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()) * this.field_78531_r.field_71439_g.func_233637_b_(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()))) { // Forge: Replace "9.0D" with the player's attack reach squared
+                   this.field_78531_r.field_71476_x = BlockRayTraceResult.func_216352_a(vector3d3, Direction.func_210769_a(vector3d1.field_72450_a, vector3d1.field_72448_b, vector3d1.field_72449_c), new BlockPos(vector3d3));
+                } else if (d2 < d1 || this.field_78531_r.field_71476_x == null) {
+                   this.field_78531_r.field_71476_x = entityraytraceresult;
 @@ -310,7 +_,7 @@
              d0 = d0 * 60.0D / 70.0D;
           }
