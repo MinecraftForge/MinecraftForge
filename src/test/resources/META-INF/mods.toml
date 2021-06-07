@@ -174,5 +174,9 @@ license="LGPL v2.1"
     modId="part_entity_test"
 [[mods]]
     modId="capabilities_test"
+[[mods]]
+    modId="living_breathe_event_test"
+[[mods]]
+    modId="living_air_event_test"
 
 # ADD ABOVE THIS LINE
