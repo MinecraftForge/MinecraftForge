@@ -16,21 +16,22 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.UUID;
 /**
- * Tests if the various patches made to utilize values associated with Forge.REACH_DISTANCE works
- * The Longsword adds a modifier to the user's reach distance
- * The goal of these patches are to allow modders to more easily add equipment or potion effects that affect the attack reach of players
+ * Tests if the various patches made to utilize values associated with ForgeMod.REACH_DISTANCE && ForgeMod.ATTACK_REACH works
+ * The Longsword adds a modifier to the user's attack reach, which is by default 3.0D
+ * The final attack reach can in fact be made greater than reach distance,
+ * and will work to attack from a distance further than the one you can break blocks from
  */
 @Mod(PlayerAttackReachTest.MODID)
 public class PlayerAttackReachTest {
 
     static final String MODID = "player_attack_reach_test";
 
-    static final float REACH_VALUE = 2.0F; // Change this value for testing, but note that the attribute is capped at 1024.0D
+    static final float ATTACK_REACH = 4.0F; // Change this value for testing - default attack reach attribute value is 3.0D and ranges from 0.0D-1024.0D
 
     static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     static RegistryObject<Item> LONGSWORD = ITEMS.register("longsword", () ->
-            new LongswordItem(ItemTier.IRON, 3, -2.4F, REACH_VALUE, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT))
+            new LongswordItem(ItemTier.IRON, 3, -2.4F, ATTACK_REACH, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT))
     );
 
     public PlayerAttackReachTest()
@@ -55,7 +56,7 @@ public class PlayerAttackReachTest {
                 if(this.defaultModifiers.isEmpty()){
                     Multimap<Attribute, AttributeModifier> oldAttributeModifiers = super.getDefaultAttributeModifiers(equipmentSlotType);
                     this.defaultModifiers.putAll(oldAttributeModifiers);
-                    this.defaultModifiers.put(ForgeMod.REACH_DISTANCE.get(), new AttributeModifier(BASE_REACH_DISTANCE_UUID, "Weapon modifier", (double)this.reach, AttributeModifier.Operation.ADDITION));
+                    this.defaultModifiers.put(ForgeMod.ATTACK_REACH.get(), new AttributeModifier(BASE_REACH_DISTANCE_UUID, "Weapon modifier", (double)this.reach, AttributeModifier.Operation.ADDITION));
                 }
                 return this.defaultModifiers;
             }

@@ -14,23 +14,41 @@
              double d1 = d0;
              if (this.field_78531_r.field_71442_b.func_78749_i()) {
 -               d1 = 6.0D;
-+               d1 = this.field_78531_r.field_71439_g.func_233637_b_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()) + 1.0D; // Forge: Replace "6.0D" with the player's reach distance + 1.0D
++               d1 = this.field_78531_r.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).func_111126_e() + 1.0D;
                 d0 = d1;
              } else {
 -               if (d0 > 3.0D) {
-+               if (d0 > this.field_78531_r.field_71439_g.func_233637_b_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()) - 2.0D) { // Forge: Replace "3.0D" with the player's reach distance - 2.0D
++               if (d0 > this.field_78531_r.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e()) {
                    flag = true;
                 }
  
-@@ -256,7 +_,7 @@
+@@ -246,19 +_,21 @@
+             }
+ 
+             Vector3d vector3d1 = entity.func_70676_i(1.0F);
+-            Vector3d vector3d2 = vector3d.func_72441_c(vector3d1.field_72450_a * d0, vector3d1.field_72448_b * d0, vector3d1.field_72449_c * d0);
++            double reach = java.lang.Math.max(d0, this.field_78531_r.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e());
++            Vector3d vector3d2 = vector3d.func_72441_c(vector3d1.field_72450_a * reach, vector3d1.field_72448_b * reach, vector3d1.field_72449_c * reach);
+             float f = 1.0F;
+-            AxisAlignedBB axisalignedbb = entity.func_174813_aQ().func_216361_a(vector3d1.func_186678_a(d0)).func_72314_b(1.0D, 1.0D, 1.0D);
++            double reachSq = java.lang.Math.max(d1, this.field_78531_r.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e() * this.field_78531_r.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e());
++            AxisAlignedBB axisalignedbb = entity.func_174813_aQ().func_216361_a(vector3d1.func_186678_a(reach)).func_72314_b(1.0D, 1.0D, 1.0D);
+             EntityRayTraceResult entityraytraceresult = ProjectileHelper.func_221273_a(entity, vector3d, vector3d2, axisalignedbb, (p_215312_0_) -> {
+                return !p_215312_0_.func_175149_v() && p_215312_0_.func_70067_L();
+-            }, d1);
++            }, reachSq);
+             if (entityraytraceresult != null) {
                 Entity entity1 = entityraytraceresult.func_216348_a();
                 Vector3d vector3d3 = entityraytraceresult.func_216347_e();
                 double d2 = vector3d.func_72436_e(vector3d3);
 -               if (flag && d2 > 9.0D) {
-+               if (flag && d2 > net.minecraft.util.math.MathHelper.func_233022_k_((float) (this.field_78531_r.field_71439_g.func_233637_b_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()) - 2.0D))) { // Forge: Replace "9.0D" with the player's reach distance - 2.0D, squared
++               if (flag && d2 > this.field_78531_r.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e() * this.field_78531_r.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e()) {
                    this.field_78531_r.field_71476_x = BlockRayTraceResult.func_216352_a(vector3d3, Direction.func_210769_a(vector3d1.field_72450_a, vector3d1.field_72448_b, vector3d1.field_72449_c), new BlockPos(vector3d3));
-                } else if (d2 < d1 || this.field_78531_r.field_71476_x == null) {
+-               } else if (d2 < d1 || this.field_78531_r.field_71476_x == null) {
++               } else if (d2 < reachSq || this.field_78531_r.field_71476_x == null) {
                    this.field_78531_r.field_71476_x = entityraytraceresult;
+                   if (entity1 instanceof LivingEntity || entity1 instanceof ItemFrameEntity) {
+                      this.field_78531_r.field_147125_j = entity1;
 @@ -310,7 +_,7 @@
              d0 = d0 * 60.0D / 70.0D;
           }
