@@ -11,36 +11,37 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(LivingBreatheEventTest.MODID)
-public class LivingBreatheEventTest {
+public class LivingBreatheEventTest
+{
+    static final String MODID = "living_breathe_event_test";
 
-   static final String MODID = "living_breathe_event_test";
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class RegistryEvents
+    {
+        @SubscribeEvent
+        public static void onItemsRegistry(final RegistryEvent.Register<Item> e)
+        {
+            e.getRegistry().register(new WaterbreathingRelicItem().setRegistryName(MODID, "waterbreathing_relic"));
+        }
+    }
 
-   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
-   public static class RegistryEvents {
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class WaterbreathingRelicItem extends Item
+    {
+        public WaterbreathingRelicItem()
+        {
+            super(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS));
+        }
 
-      @SubscribeEvent
-      public static void onItemsRegistry(final RegistryEvent.Register<Item> e) {
-         e.getRegistry().register(new WaterbreathingRelicItem().setRegistryName(MODID, "waterbreathing_relic"));
-      }
-
-   }
-
-   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-   public static class WaterbreathingRelicItem extends Item {
-
-      public WaterbreathingRelicItem() {
-         super(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS));
-      }
-
-      @SubscribeEvent
-      public static void onBreathe(LivingBreatheEvent e) {
-         LivingEntity entity = e.getEntityLiving();
-         ItemStack stack = entity.getMainHandItem();
-         if (entity.isEyeInFluid(FluidTags.WATER) && stack.getItem() instanceof WaterbreathingRelicItem) {
-            e.setCanBreathe(true);
-         }
-      }
-
-   }
-
+        @SubscribeEvent
+        public static void onBreathe(LivingBreatheEvent e)
+        {
+            LivingEntity entity = e.getEntityLiving();
+            ItemStack stack = entity.getMainHandItem();
+            if (entity.isEyeInFluid(FluidTags.WATER) && stack.getItem() instanceof WaterbreathingRelicItem)
+            {
+                e.setCanBreathe(true);
+            }
+        }
+    }
 }
