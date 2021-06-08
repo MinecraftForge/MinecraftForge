@@ -54,8 +54,8 @@ public class LibraryFinder {
         try {
             Path path;
             final URI uri = resource.toURI();
-            if (uri.getScheme().equals("jar") && uri.getRawSchemeSpecificPart().contains("!")) {
-                int lastExcl = uri.getRawSchemeSpecificPart().lastIndexOf('!');
+            if (uri.getScheme().equals("jar") && uri.getRawSchemeSpecificPart().contains("!/")) {
+                int lastExcl = uri.getRawSchemeSpecificPart().lastIndexOf("!/");
                 path = Paths.get(new URI(uri.getRawSchemeSpecificPart().substring(0, lastExcl)));
             } else {
                 path = Paths.get(new URI("file://"+uri.getRawSchemeSpecificPart().substring(0, uri.getRawSchemeSpecificPart().length()-resourceName.length())));
