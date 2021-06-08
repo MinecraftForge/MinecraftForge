@@ -31,8 +31,8 @@
 +            Vector3d vector3d2 = vector3d.func_72441_c(vector3d1.field_72450_a * reach, vector3d1.field_72448_b * reach, vector3d1.field_72449_c * reach);
              float f = 1.0F;
 -            AxisAlignedBB axisalignedbb = entity.func_174813_aQ().func_216361_a(vector3d1.func_186678_a(d0)).func_72314_b(1.0D, 1.0D, 1.0D);
-+            double reachSq = java.lang.Math.max(d1, this.field_78531_r.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e() * this.field_78531_r.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e());
 +            AxisAlignedBB axisalignedbb = entity.func_174813_aQ().func_216361_a(vector3d1.func_186678_a(reach)).func_72314_b(1.0D, 1.0D, 1.0D);
++            double reachSq = java.lang.Math.max(d1, this.field_78531_r.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e() * this.field_78531_r.field_71439_g.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e());
              EntityRayTraceResult entityraytraceresult = ProjectileHelper.func_221273_a(entity, vector3d, vector3d2, axisalignedbb, (p_215312_0_) -> {
                 return !p_215312_0_.func_175149_v() && p_215312_0_.func_70067_L();
 -            }, d1);

@@ -210,13 +210,12 @@
                 }
  
                 f = f + f1;
-@@ -1081,7 +_,8 @@
+@@ -1081,7 +_,7 @@
                       float f3 = 1.0F + EnchantmentHelper.func_191527_a(this) * f;
  
                       for(LivingEntity livingentity : this.field_70170_p.func_217357_a(LivingEntity.class, p_71059_1_.func_174813_aQ().func_72314_b(1.0D, 0.25D, 1.0D))) {
 -                        if (livingentity != this && livingentity != p_71059_1_ && !this.func_184191_r(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity)livingentity).func_181026_s()) && this.func_70068_e(livingentity) < 9.0D) {
-+                        double attackReachSq = this.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e() * this.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e();
-+                        if (livingentity != this && livingentity != p_71059_1_ && !this.func_184191_r(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity)livingentity).func_181026_s()) && this.func_70068_e(livingentity) < attackReachSq) {
++                        if (livingentity != this && livingentity != p_71059_1_ && !this.func_184191_r(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity)livingentity).func_181026_s()) && this.func_70068_e(livingentity) < this.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e() * this.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e()) {
                             livingentity.func_233627_a_(0.4F, (double)MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F)), (double)(-MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F))));
                             livingentity.func_70097_a(DamageSource.func_76365_a(this), f3);
                          }
