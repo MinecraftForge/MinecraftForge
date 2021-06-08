@@ -97,12 +97,9 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
     @Override
     public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
     {
-        IUnbakedModel missing = ModelLoader.instance().getMissingModel();
-
         return new MultiLayerBakedModel(
                 owner.useSmoothLighting(), owner.isShadedInGui(), owner.isSideLit(),
                 spriteGetter.apply(owner.resolveTexture("particle")), overrides, convertRenderTypes,
-                missing.bake(bakery, spriteGetter, modelTransform, modelLocation),
                 buildModels(models, modelTransform, bakery, spriteGetter, modelLocation),
                 PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(owner.getCombinedTransform(), modelTransform))
         );
@@ -117,18 +114,17 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         protected final boolean isSideLit;
         protected final TextureAtlasSprite particle;
         protected final ItemOverrideList overrides;
-        private final IBakedModel missing;
+        private final List<BakedQuad> missing = ImmutableList.of();
         private final boolean convertRenderTypes;
         private final List<Pair<IBakedModel, RenderType>> itemLayers;
 
         public MultiLayerBakedModel(
                 boolean ambientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrideList overrides,
-                boolean convertRenderTypes, IBakedModel missing, List<Pair<RenderType, IBakedModel>> models,
+                boolean convertRenderTypes, List<Pair<RenderType, IBakedModel>> models,
                 ImmutableMap<TransformType, TransformationMatrix> cameraTransforms)
         {
             this.isSideLit = isSideLit;
             this.cameraTransforms = cameraTransforms;
-            this.missing = missing;
             this.ambientOcclusion = ambientOcclusion;
             this.gui3d = isGui3d;
             this.particle = particle;
@@ -159,8 +155,10 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
             // support for item layer rendering
             if (state == null && convertRenderTypes)
                 layer = ITEM_RENDER_TYPE_MAPPING.inverse().getOrDefault(layer, layer);
-            // assumes that child model will handle this state properly. FIXME?
-            return models.getOrDefault(layer, missing).getQuads(state, side, rand, extraData);
+            if (models.containsKey(layer))
+                return models.get(layer).getQuads(state, side, rand, extraData);
+            else
+                return missing;
         }
 
         @Override
