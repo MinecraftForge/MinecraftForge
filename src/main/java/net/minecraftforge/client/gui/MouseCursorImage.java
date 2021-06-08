@@ -204,6 +204,11 @@ public class MouseCursorImage
             if (glfwCursorAddress != 0)
             {
                 RenderSystem.assertThread(RenderSystem::isOnRenderThread);
+                if (isCursorNow())
+                {
+                    MouseCursorImage.resetCursor();
+                }
+
                 GLFW.glfwDestroyCursor(glfwCursorAddress);
                 glfwCursorAddress = 0;
             }
@@ -221,10 +226,10 @@ public class MouseCursorImage
                 {
                     image.width(nativeImage.getWidth());
                     image.height(nativeImage.getHeight());
-                    MemoryUtil.memPutAddress(image.address() + GLFWImage.PIXELS, nativeImage.getPixelsAddress());
+                    MemoryUtil.memPutAddress(image.address() + GLFWImage.PIXELS, nativeImage.pixels);
                     glfwCursorAddress = GLFW.glfwCreateCursor(image, hotspotX, hotspotY);
                 }
-    
+
                 if (glfwCursorAddress == 0)
                 {
                     LOGGER.error("Cannot create textured cursor for resource location: " + resLoc);

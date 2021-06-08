@@ -50,6 +50,10 @@ public class CursorTest
         {
             buttons = event.getWidgetList().stream().filter(w -> w instanceof Button).collect(Collectors.toList());
         }
+        else if (ENABLED)
+        {
+            MouseCursorImage.resetCursor();
+        }
     }
 
     @SubscribeEvent

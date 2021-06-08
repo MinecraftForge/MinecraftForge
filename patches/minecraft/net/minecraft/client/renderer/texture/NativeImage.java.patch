@@ -1,11 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/NativeImage.java
 +++ b/net/minecraft/client/renderer/texture/NativeImage.java
-@@ -177,10 +_,12 @@
-       return this.field_211680_b;
-    }
- 
-+   public long getPixelsAddress() { return this.field_195722_d; }
-+
+@@ -180,7 +_,7 @@
     public int func_195709_a(int p_195709_1_, int p_195709_2_) {
        if (this.field_211680_b != NativeImage.PixelFormat.RGBA) {
           throw new IllegalArgumentException(String.format("getPixelRGBA only works on RGBA images; have %s", this.field_211680_b));
