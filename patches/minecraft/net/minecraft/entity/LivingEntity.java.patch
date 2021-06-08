@@ -33,15 +33,67 @@
           }
        }
  
-@@ -330,7 +_,7 @@
-                }
-             }
+@@ -312,29 +_,38 @@
  
+       boolean flag1 = flag && ((PlayerEntity)this).field_71075_bZ.field_75102_a;
+       if (this.func_70089_S()) {
+-         if (this.func_208600_a(FluidTags.field_206959_a) && !this.field_70170_p.func_180495_p(new BlockPos(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_())).func_203425_a(Blocks.field_203203_C)) {
+-            if (!this.func_70648_aU() && !EffectUtils.func_205133_c(this) && !flag1) {
+-               this.func_70050_g(this.func_70682_h(this.func_70086_ai()));
+-               if (this.func_70086_ai() == -20) {
+-                  this.func_70050_g(0);
+-                  Vector3d vector3d = this.func_213322_ci();
+-
+-                  for(int i = 0; i < 8; ++i) {
+-                     double d2 = this.field_70146_Z.nextDouble() - this.field_70146_Z.nextDouble();
+-                     double d3 = this.field_70146_Z.nextDouble() - this.field_70146_Z.nextDouble();
+-                     double d4 = this.field_70146_Z.nextDouble() - this.field_70146_Z.nextDouble();
+-                     this.field_70170_p.func_195594_a(ParticleTypes.field_197612_e, this.func_226277_ct_() + d2, this.func_226278_cu_() + d3, this.func_226281_cx_() + d4, vector3d.field_72450_a, vector3d.field_72448_b, vector3d.field_72449_c);
+-                  }
+-
+-                  this.func_70097_a(DamageSource.field_76369_e, 2.0F);
++         boolean flag2 = this.func_208600_a(FluidTags.field_206959_a) && !this.field_70170_p.func_180495_p(new BlockPos(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_())).func_203425_a(Blocks.field_203203_C);
++
++         boolean canBreathe = !flag2 || this.func_70648_aU() || EffectUtils.func_205133_c(this) || flag1;
++         net.minecraftforge.event.entity.living.LivingBreatheEvent event = new net.minecraftforge.event.entity.living.LivingBreatheEvent(this, canBreathe);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++
++         if (!event.isCanBreathe()) {
++            net.minecraftforge.event.entity.living.LivingConsumeAirEvent event1 = new net.minecraftforge.event.entity.living.LivingConsumeAirEvent(this, -this.func_70682_h(0));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event1);
++            this.func_70050_g(MathHelper.func_76125_a(this.func_70086_ai() - event1.getAmount(), -20, this.func_205010_bg()));
++
++            if (this.func_70086_ai() == -20) {
++               this.func_70050_g(0);
++               Vector3d vector3d = this.func_213322_ci();
++
++               for (int i = 0; i < 8; ++i) {
++                  double d2 = this.field_70146_Z.nextDouble() - this.field_70146_Z.nextDouble();
++                  double d3 = this.field_70146_Z.nextDouble() - this.field_70146_Z.nextDouble();
++                  double d4 = this.field_70146_Z.nextDouble() - this.field_70146_Z.nextDouble();
++                  this.field_70170_p.func_195594_a(ParticleTypes.field_197612_e, this.func_226277_ct_() + d2, this.func_226278_cu_() + d3, this.func_226281_cx_() + d4, vector3d.field_72450_a, vector3d.field_72448_b, vector3d.field_72449_c);
+                }
+-            }
+-
 -            if (!this.field_70170_p.field_72995_K && this.func_184218_aH() && this.func_184187_bx() != null && !this.func_184187_bx().func_205710_ba()) {
-+            if (!this.field_70170_p.field_72995_K && this.func_184218_aH() && this.func_184187_bx() != null && !this.func_184187_bx().canBeRiddenInWater(this)) {
-                this.func_184210_p();
-             }
-          } else if (this.func_70086_ai() < this.func_205010_bg()) {
+-               this.func_184210_p();
+-            }
+-         } else if (this.func_70086_ai() < this.func_205010_bg()) {
+-            this.func_70050_g(this.func_207300_l(this.func_70086_ai()));
++
++               this.func_70097_a(DamageSource.field_76369_e, 2.0F);
++            }
++         } else {
++            net.minecraftforge.event.entity.living.LivingRefillAirEvent event1 = new net.minecraftforge.event.entity.living.LivingRefillAirEvent(this, this.func_207300_l(0));
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event1);
++            this.func_70050_g(MathHelper.func_76125_a(this.func_70086_ai() + event1.getAmount(), -20, this.func_205010_bg()));
++         }
++
++         if (flag2 && !this.field_70170_p.field_72995_K && this.func_184218_aH() && this.func_184187_bx() != null && !this.func_184187_bx().canBeRiddenInWater(this)) {
++            this.func_184210_p();
+          }
+ 
+          if (!this.field_70170_p.field_72995_K) {
 @@ -475,7 +_,7 @@
     protected void func_70609_aI() {
        ++this.field_70725_aQ;
