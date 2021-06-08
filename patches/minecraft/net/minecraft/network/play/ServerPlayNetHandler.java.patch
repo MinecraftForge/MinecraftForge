@@ -1,13 +1,5 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -21,7 +_,6 @@
- import javax.annotation.Nullable;
- import net.minecraft.advancements.Advancement;
- import net.minecraft.advancements.CriteriaTriggers;
--import net.minecraft.block.AbstractBlock;
- import net.minecraft.block.BlockState;
- import net.minecraft.block.Blocks;
- import net.minecraft.block.CommandBlockBlock;
 @@ -391,9 +_,11 @@
              }
  
