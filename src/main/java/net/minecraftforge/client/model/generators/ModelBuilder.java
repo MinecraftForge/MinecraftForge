@@ -200,6 +200,15 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
     }
 
     /**
+     * Gets the number of elements in this model builder
+     * @return the number of elements in this model builder
+     */
+    public int getElementCount()
+    {
+        return elements.size();
+    }
+
+    /**
      * Use a custom loader instead of the vanilla elements.
      * @param customLoaderFactory
      * @return the custom loader builder
