@@ -93,6 +93,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.Registry;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -129,6 +130,7 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -1203,6 +1205,36 @@ public class ForgeHooks
             chunk.setUnsaved(true);
         }
         chunk.setAllReferences(structureReferences);
+    }
+
+    /**
+     * @return true if breathing was handled by forge
+     */
+    public static boolean onLivingBreathe(LivingEntity entity, int consumeAirAmount, int refillAirAmount)
+    {
+        LivingBreatheEvent event = new LivingBreatheEvent(entity, consumeAirAmount, refillAirAmount);
+        if (!MinecraftForge.EVENT_BUS.post(event))
+        {
+            return false;
+        }
+        int newAirSupply = entity.getAirSupply() + (event.canBreathe() ? event.getRefillAirAmount() : -event.getConsumeAirAmount());
+        entity.setAirSupply(Mth.clamp(newAirSupply, -20, entity.getMaxAirSupply()));
+        if (entity.getAirSupply() == -20)
+        {
+            entity.setAirSupply(0);
+            Vec3 vec3 = entity.getDeltaMovement();
+
+            for (int i = 0; i < 8; ++i)
+            {
+                double d2 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
+                double d3 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
+                double d4 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
+                entity.level.addParticle(ParticleTypes.BUBBLE, entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4, vec3.x, vec3.y, vec3.z);
+            }
+
+            entity.hurt(DamageSource.DROWN, 2.0F);
+        }
+        return true;
     }
 
     private static final Set<String> VANILLA_DIMS = Sets.newHashSet("minecraft:overworld", "minecraft:the_nether", "minecraft:the_end");
