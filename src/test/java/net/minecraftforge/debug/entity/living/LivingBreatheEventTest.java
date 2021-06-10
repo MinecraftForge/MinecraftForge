@@ -19,11 +19,21 @@
 
 package net.minecraftforge.debug.entity.living;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -41,6 +51,7 @@ public class LivingBreatheEventTest
         public static void onItemsRegistry(final RegistryEvent.Register<Item> e)
         {
             e.getRegistry().register(new WaterbreathingRelicItem().setRegistryName(MODID, "waterbreathing_relic"));
+            e.getRegistry().register(new MagicalAirBottleItem().setRegistryName(MODID, "magical_air_bottle"));
         }
     }
 
@@ -59,8 +70,73 @@ public class LivingBreatheEventTest
             ItemStack stack = entity.getMainHandItem();
             if (entity.isEyeInFluid(FluidTags.WATER) && stack.getItem() instanceof WaterbreathingRelicItem)
             {
+                e.setCanceled(true);
                 e.setCanBreathe(true);
             }
+        }
+    }
+
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public static class MagicalAirBottleItem extends Item
+    {
+        public MagicalAirBottleItem()
+        {
+            super(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS));
+        }
+
+        @Override
+        public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag tooltipFlag)
+        {
+            super.appendHoverText(stack, level, tooltip, tooltipFlag);
+            CompoundTag nbt = stack.getTag();
+            if (nbt != null && nbt.contains("air"))
+            {
+                tooltip.add(new TextComponent("Air: " + nbt.getInt("air") / 20));
+            }
+        }
+
+        @SubscribeEvent
+        public static void onBreathe(LivingBreatheEvent e)
+        {
+            LivingEntity entity = e.getEntityLiving();
+            ItemStack stack = entity.getMainHandItem();
+            if (stack.getItem() instanceof MagicalAirBottleItem)
+            {
+                e.setCanceled(true);
+                if (e.canBreathe())
+                {
+                    int i = Math.max(e.getRefillAirAmount() - (entity.getMaxAirSupply() - entity.getAirSupply()), 0);
+                    e.setRefillAirAmount(e.getRefillAirAmount() - receiveAir(stack, i));
+                }
+                else
+                {
+                    e.setConsumeAirAmount(e.getConsumeAirAmount() - extractAir(stack, e.getConsumeAirAmount()));
+                }
+            }
+        }
+
+        public static int extractAir(ItemStack stack, int amount)
+        {
+            CompoundTag nbt = stack.getOrCreateTag();
+            amount = Mth.clamp(amount, 0, nbt.getInt("air"));
+            if (amount == 0)
+            {
+                return 0;
+            }
+            nbt.putInt("air", nbt.getInt("air") - amount);
+            return amount;
+        }
+
+        public static int receiveAir(ItemStack stack, int amount)
+        {
+            CompoundTag nbt = stack.getOrCreateTag();
+            amount = Mth.clamp(amount, 0, 100 - nbt.getInt("air"));
+            if (amount == 0)
+            {
+                return 0;
+            }
+            nbt.putInt("air", nbt.getInt("air") + amount);
+            return amount;
         }
     }
 }
