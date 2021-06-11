@@ -5,6 +5,8 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import java.util.function.Function;
+
 public class FluidResult {
     // FluidResult.EMPTY means that the operation did not successfully happen.
     public static FluidResult EMPTY = FluidResult.of(FluidStack.EMPTY, ItemStack.EMPTY);
@@ -18,15 +20,15 @@ public class FluidResult {
     }
 
     public static FluidResult of(FluidStack fluidStack, ItemStack newStack) {
-        return new FluidResult(fluidStack, newStack);
+        return new FluidResult(fluidStack.copy(), newStack.copy());
     }
 
     public static FluidResult of(ItemStack newStack) {
-        return new FluidResult(FluidStack.EMPTY, newStack);
+        return new FluidResult(FluidStack.EMPTY, newStack.copy());
     }
 
     public static FluidResult of(FluidStack fluidStack) {
-        return new FluidResult(fluidStack, ItemStack.EMPTY);
+        return new FluidResult(fluidStack.copy(), ItemStack.EMPTY);
     }
 
     public boolean hasItemStack() {
@@ -51,5 +53,25 @@ public class FluidResult {
 
     public boolean isEmpty() {
         return FluidResult.EMPTY == this;
+    }
+
+    public void capFluidAmount(int cap) {
+        getFluidStack().setAmount(Math.min(cap, fluidStack.getAmount()));
+    }
+
+    public void updateStack(Function<FluidResult, ItemStack> stackFunction) {
+        this.setItemStack(stackFunction.apply(this));
+    }
+
+    public FluidResult copy() {
+        return FluidResult.of(getFluidStack(), getItemStack());
+    }
+
+    public int getFluidAmount() {
+        return getFluidStack().getAmount();
+    }
+
+    public void setFluidAmount(int amount) {
+        getFluidStack().setAmount(amount);
     }
 }

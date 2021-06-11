@@ -30,6 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.capability.FluidResult;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IRegistryDelegate;
 
@@ -325,6 +326,19 @@ public class FluidStack
     public boolean isFluidEqual(@Nonnull ItemStack other)
     {
         return FluidUtil.getFluidContained(other).map(this::isFluidEqual).orElse(false);
+    }
+
+    /**
+     * Determines if the FluidIDs and NBT Tags are equal compared to a registered container
+     * ItemStack. This does not check amounts.
+     *
+     * @param other
+     *            The ItemStack for comparison
+     * @return true if the Fluids (IDs and NBT Tags) are the same
+     */
+    public boolean isFluidEqual(@Nonnull FluidResult other)
+    {
+        return other.getFluidStack().isFluidEqual(this);
     }
 
     @Override
