@@ -38,7 +38,7 @@ public interface IFluidHandlerItem extends IFluidHandler {
      * @return Amount of resource that was (or would have been, if simulated) filled.
      */
     default int fill(FluidStack resource, FluidAction action) {
-        return fillItem(resource, action).getAmountChanged();
+        return fillItem(resource, action).getFluidStack().getAmount();
     }
 
     /**
@@ -61,7 +61,7 @@ public interface IFluidHandlerItem extends IFluidHandler {
      */
     @Nonnull
     default FluidStack drain(FluidStack resource, FluidAction action) {
-        return drainItem(resource, action).createFluidStack();
+        return drainItem(resource, action).getFluidStack();
     }
 
     /**
@@ -87,7 +87,7 @@ public interface IFluidHandlerItem extends IFluidHandler {
      */
     @Nonnull
     default FluidStack drain(int maxDrain, FluidAction action) {
-        return drainItem(maxDrain, action).createFluidStack();
+        return drainItem(maxDrain, action).getFluidStack();
     }
 
     /**

@@ -135,7 +135,7 @@ public interface IFluidHandler
     @Nonnull
     default FluidResult drainItem(FluidStack resource, FluidAction action) {
         FluidStack stack = drain(resource, action);
-        return FluidResult.of(stack.getFluid(), stack.getAmount(), ItemStack.EMPTY);
+        return FluidResult.of(stack, ItemStack.EMPTY);
     }
 
     /**
@@ -165,45 +165,5 @@ public interface IFluidHandler
     default FluidResult drainItem(int maxDrain, FluidAction action) {
         FluidStack stack = drain(maxDrain, action);
         return FluidResult.of(stack.getFluid(), stack.getAmount(), ItemStack.EMPTY);
-    }
-
-    class FluidResult {
-        Fluid fluid;
-        int amountChanged;
-        ItemStack newStack;
-
-        private FluidResult(Fluid fluid, int amountDrained, ItemStack newStack) {
-            this.fluid = fluid;
-            this.amountChanged = amountDrained;
-            this.newStack = newStack;
-        }
-
-        public static FluidResult of(Fluid fluid, int amountDrained, ItemStack newStack) {
-            return new FluidResult(fluid, amountDrained, newStack);
-        }
-
-        public static FluidResult of(int amountDrained, ItemStack newStack) {
-            return new FluidResult(Fluids.EMPTY, amountDrained, newStack);
-        }
-
-        public boolean hasStack() {
-            return !newStack.isEmpty();
-        }
-
-        public int getAmountChanged() {
-            return amountChanged;
-        }
-
-        public ItemStack getNewStack() {
-            return newStack;
-        }
-
-        public Fluid getFluid() {
-            return fluid;
-        }
-
-        public FluidStack createFluidStack() {
-            return new FluidStack(fluid, amountChanged);
-        }
     }
 }
