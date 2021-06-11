@@ -39,7 +39,6 @@ public class FluidTankItem implements IFluidHandlerItem {
 
     protected Predicate<FluidStack> validator;
     protected Function<FluidResult, ItemStack> stackFunction;
-    @Nonnull
     protected int capacity;
     protected FluidStack fluidStack;
 
