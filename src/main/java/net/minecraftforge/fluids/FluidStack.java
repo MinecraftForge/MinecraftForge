@@ -328,19 +328,6 @@ public class FluidStack
         return FluidUtil.getFluidContained(other).map(this::isFluidEqual).orElse(false);
     }
 
-    /**
-     * Determines if the FluidIDs and NBT Tags are equal compared to a registered container
-     * ItemStack. This does not check amounts.
-     *
-     * @param other
-     *            The ItemStack for comparison
-     * @return true if the Fluids (IDs and NBT Tags) are the same
-     */
-    public boolean isFluidEqual(@Nonnull FluidResult other)
-    {
-        return other.getFluidStack().isFluidEqual(this);
-    }
-
     @Override
     public final int hashCode()
     {

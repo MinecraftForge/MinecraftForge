@@ -38,7 +38,7 @@ public interface IFluidHandlerItem extends IFluidHandler {
      * @return Amount of resource that was (or would have been, if simulated) filled.
      */
     default int fill(FluidStack resource, FluidAction action) {
-        return fillItem(FluidResult.of(resource), action).getFluidStack().getAmount();
+        return fillItem(resource, action).getFluidStack().getAmount();
     }
 
     /**
@@ -49,7 +49,7 @@ public interface IFluidHandlerItem extends IFluidHandler {
      * @return Amount of resource that was (or would have been, if simulated) filled
      * and the resulting ItemStack of the Item that performed the fill action.
      */
-    FluidResult fillItem(FluidResult resource, FluidAction action);
+    FluidResult fillItem(FluidStack resource, FluidAction action);
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.
@@ -61,7 +61,7 @@ public interface IFluidHandlerItem extends IFluidHandler {
      */
     @Nonnull
     default FluidStack drain(FluidStack resource, FluidAction action) {
-        return drainItem(FluidResult.of(resource), action).getFluidStack();
+        return drainItem(resource, action).getFluidStack();
     }
 
     /**
@@ -73,7 +73,7 @@ public interface IFluidHandlerItem extends IFluidHandler {
      * simulated) drained and the resulting ItemStack of the Item that performed the fill action.
      */
     @Nonnull
-    FluidResult drainItem(FluidResult resource, FluidAction action);
+    FluidResult drainItem(FluidStack resource, FluidAction action);
 
     /**
      * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandler.

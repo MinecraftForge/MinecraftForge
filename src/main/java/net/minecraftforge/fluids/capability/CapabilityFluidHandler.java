@@ -31,6 +31,7 @@ import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
+import net.minecraftforge.fluids.capability.templates.FluidTankItem;
 
 public class CapabilityFluidHandler
 {
@@ -43,7 +44,7 @@ public class CapabilityFluidHandler
     {
         CapabilityManager.INSTANCE.register(IFluidHandler.class, new DefaultFluidHandlerStorage<>(), () -> new FluidTank(FluidAttributes.BUCKET_VOLUME));
 
-        CapabilityManager.INSTANCE.register(IFluidHandlerItem.class, new DefaultFluidHandlerStorage<>(), () -> new FluidHandlerItemStack(new ItemStack(Items.BUCKET), FluidAttributes.BUCKET_VOLUME));
+        CapabilityManager.INSTANCE.register(IFluidHandlerItem.class, new DefaultFluidHandlerStorage<>(), () -> new FluidTankItem(new ItemStack(Items.BUCKET), FluidAttributes.BUCKET_VOLUME));
     }
 
     private static class DefaultFluidHandlerStorage<T extends IFluidHandler> implements Capability.IStorage<T> {

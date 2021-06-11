@@ -109,8 +109,8 @@ public interface IFluidHandler
      * @return Amount of resource that was (or would have been, if simulated) filled
      * and the resulting ItemStack of the Item that performed the fill action.
      */
-    default FluidResult fillItem(FluidResult resource, FluidAction action) {
-        return FluidResult.of(new FluidStack(resource.getFluidStack(), fill(resource.getFluidStack(), action)), ItemStack.EMPTY);
+    default FluidResult fillItem(FluidStack resource, FluidAction action) {
+        return FluidResult.of(new FluidStack(resource, fill(resource, action)), ItemStack.EMPTY);
     }
 
     /**
@@ -133,8 +133,8 @@ public interface IFluidHandler
      * simulated) drained and the resulting ItemStack of the Item that performed the fill action.
      */
     @Nonnull
-    default FluidResult drainItem(FluidResult resource, FluidAction action) {
-        FluidStack stack = drain(resource.getFluidStack(), action);
+    default FluidResult drainItem(FluidStack resource, FluidAction action) {
+        FluidStack stack = drain(resource, action);
         return FluidResult.of(stack, ItemStack.EMPTY);
     }
 

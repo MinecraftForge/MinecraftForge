@@ -21,12 +21,17 @@ package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.FluidResult;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -41,16 +46,17 @@ public class FluidTankItem implements IFluidHandlerItem {
     protected Function<FluidResult, ItemStack> stackFunction;
     protected int capacity;
     protected FluidStack fluidStack;
+    protected ItemStack itemStack;
 
-    public FluidTankItem(int capacity) {
-        this(capacity, e -> true, FluidResult::getItemStack);
+    public FluidTankItem(ItemStack item, int capacity) {
+        this(item, capacity, e -> true, FluidResult::getItemStack);
     }
 
-    public FluidTankItem(int capacity, Predicate<FluidStack> validator) {
-        this(capacity, validator, FluidResult::getItemStack);
+    public FluidTankItem(ItemStack item, int capacity, Predicate<FluidStack> validator) {
+        this(item, capacity, validator, FluidResult::getItemStack);
     }
 
-    public FluidTankItem(int capacity, Predicate<FluidStack> validator, Function<FluidResult, ItemStack> stackCheck) {
+    public FluidTankItem(ItemStack item, int capacity, Predicate<FluidStack> validator, Function<FluidResult, ItemStack> stackCheck) {
         this.capacity = capacity;
         this.validator = validator;
         this.stackFunction = stackCheck;
@@ -127,58 +133,58 @@ public class FluidTankItem implements IFluidHandlerItem {
     }
 
     @Override
-    public FluidResult fillItem(FluidResult resource, FluidAction action) {
-        if (resource.isEmpty() || !isFluidValid(resource.getFluidStack())) {
+    public FluidResult fillItem(FluidStack resource, FluidAction action) {
+        if (resource.isEmpty() || !isFluidValid(resource)) {
             return FluidResult.EMPTY;
         }
         if (action.simulate()) {
-            FluidResult returned = resource.copy();
-            if (resource.getFluidStack().isEmpty()) {
-                returned.capFluidAmount(capacity);
-                returned.updateStack(stackFunction);
-                return returned;
+            FluidStack returned = resource.copy();
+            if (resource.isEmpty()) {
+                returned.setAmount(Math.min(capacity, resource.getAmount()));
+                itemStack = stackFunction.apply(FluidResult.of(returned, itemStack));
+                return FluidResult.of(returned, itemStack);
             }
-            if (!fluidStack.isFluidEqual(resource)) {
+            if (!resource.isFluidEqual(fluidStack)) {
                 return FluidResult.EMPTY;
             }
-            returned.capFluidAmount(capacity);
-            returned.updateStack(stackFunction);
-            return returned;
+            returned.setAmount(Math.min(capacity - fluidStack.getAmount(), resource.getAmount()));
+            itemStack = stackFunction.apply(FluidResult.of(returned, itemStack));
+            return FluidResult.of(returned, itemStack);
         }
 
         if (fluidStack.isEmpty()) {
-            resource.capFluidAmount(capacity);
-            resource.updateStack(stackFunction);
-            fluidStack = resource.getFluidStack();
+            resource.setAmount(Math.min(capacity, resource.getAmount()));
+            itemStack = stackFunction.apply(FluidResult.of(resource, itemStack));
             onContentsChanged();
-            return resource;
+            return FluidResult.of(resource, itemStack);
         }
-        if (!fluidStack.isFluidEqual(resource)) {
+        if (!resource.isFluidEqual(fluidStack)) {
             return FluidResult.EMPTY;
         }
 
-        FluidResult returned = resource.copy();
+        FluidStack returned = new FluidStack(resource.getFluid(), capacity - fluidStack.getAmount());
 
-        if (resource.getFluidAmount() < resource.getFluidAmount()) {
-            fluidStack.grow(resource.getFluidAmount());
+        if (resource.getAmount() < returned.getAmount()) {
+            fluidStack.grow(resource.getAmount());
             returned = resource.copy();
         }
         else {
             fluidStack.setAmount(capacity);
         }
-        if (returned.getFluidAmount() > 0) {
+        if (returned.getAmount() > 0) {
             onContentsChanged();
         }
-        return returned;
+        itemStack = stackFunction.apply(FluidResult.of(resource, itemStack));
+        return FluidResult.of(returned, itemStack);
     }
 
     @Nonnull
     @Override
-    public FluidResult drainItem(FluidResult resource, FluidAction action) {
-        if (resource.isEmpty() || !fluidStack.isFluidEqual(resource)) {
+    public FluidResult drainItem(FluidStack resource, FluidAction action) {
+        if (resource.isEmpty() || resource.isFluidEqual(fluidStack)) {
             return FluidResult.EMPTY;
         }
-        return drainItem(resource.getFluidAmount(), action);
+        return drainItem(resource, action);
     }
 
     @Nonnull
@@ -189,13 +195,15 @@ public class FluidTankItem implements IFluidHandlerItem {
         {
             drained = fluidStack.getAmount();
         }
-        FluidResult result = FluidResult.of(fluidStack);
-        result.setFluidAmount(drained);
+        FluidStack stack = fluidStack.copy();
+        fluidStack.setAmount(drained);
+        stack.setAmount(drained);
         if (action.execute() && drained > 0) {
             fluidStack.shrink(drained);
             onContentsChanged();
         }
-        return result;
+        itemStack = stackFunction.apply(FluidResult.of(stack, itemStack));
+        return FluidResult.of(stack, itemStack);
     }
 
     protected void onContentsChanged() {

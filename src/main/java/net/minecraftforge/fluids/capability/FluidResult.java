@@ -5,6 +5,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
+import javax.annotation.Nonnull;
 import java.util.function.Function;
 
 public class FluidResult {
@@ -73,5 +74,10 @@ public class FluidResult {
 
     public void setFluidAmount(int amount) {
         getFluidStack().setAmount(amount);
+    }
+
+    public boolean isFluidEqual(@Nonnull FluidStack other)
+    {
+        return other.isFluidEqual(getFluidStack());
     }
 }
