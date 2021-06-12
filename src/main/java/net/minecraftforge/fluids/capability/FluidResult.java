@@ -8,6 +8,10 @@ import net.minecraftforge.fluids.FluidStack;
 import javax.annotation.Nonnull;
 import java.util.function.Function;
 
+/**
+ * Combines FluidStack and ItemStack along with some utility functions. This is primarily used for
+ * Fluid Handling for items.
+ */
 public class FluidResult {
     // FluidResult.EMPTY means that the operation did not successfully happen.
     public static FluidResult EMPTY = FluidResult.of(FluidStack.EMPTY, ItemStack.EMPTY);
@@ -56,14 +60,6 @@ public class FluidResult {
         return FluidResult.EMPTY == this;
     }
 
-    public void capFluidAmount(int cap) {
-        getFluidStack().setAmount(Math.min(cap, fluidStack.getAmount()));
-    }
-
-    public void updateStack(Function<FluidResult, ItemStack> stackFunction) {
-        this.setItemStack(stackFunction.apply(this));
-    }
-
     public FluidResult copy() {
         return FluidResult.of(getFluidStack(), getItemStack());
     }
@@ -76,6 +72,11 @@ public class FluidResult {
         getFluidStack().setAmount(amount);
     }
 
+    /**
+     * Checks if fluidstack in FluidResult is equal to fluidstack
+     * @param other FluidStack to compare to
+     * @return boolean that states whether fluidstacks are equal.
+     */
     public boolean isFluidEqual(@Nonnull FluidStack other)
     {
         return other.isFluidEqual(getFluidStack());

@@ -109,26 +109,22 @@ public class FluidTankItem implements IFluidHandlerItem {
 
     @Override
     public int getTanks() {
-
         return 1;
     }
 
     @Nonnull
     @Override
     public FluidStack getFluidInTank(int tank) {
-
         return fluidStack;
     }
 
     @Override
     public int getTankCapacity(int tank) {
-
         return getCapacity();
     }
 
     @Override
     public boolean isFluidValid(int tank, @Nonnull FluidStack stack) {
-
         return isFluidValid(stack);
     }
 
@@ -206,9 +202,7 @@ public class FluidTankItem implements IFluidHandlerItem {
         return FluidResult.of(stack, itemStack);
     }
 
-    protected void onContentsChanged() {
-
-    }
+    protected void onContentsChanged() { }
 
     public void setFluid(FluidStack stack) {
         this.fluidStack = stack;
