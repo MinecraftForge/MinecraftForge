@@ -20,46 +20,63 @@
 package net.minecraftforge.fluids.capability;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.*;
 
 /**
- * ItemStacks handled by an {@link IFluidHandlerBlock} may change, so this class allows
- * users of the fluid handler to get the container after it has been used.
+ * Implement this interface as a capability which should handle fluids, generally storing them in
+ * one or more internal {@link IFluidTank} objects.
+ * <p/>
+ * A reference implementation is provided {@link TileFluidHandler}.
  */
-public interface IFluidHandlerItem extends IFluidHandlerBase {
+public interface IFluidHandlerBlock extends IFluidHandlerBase {
+    enum FluidAction {
+        EXECUTE, SIMULATE;
+
+        public boolean execute() {
+            return this == EXECUTE;
+        }
+
+        public boolean simulate() {
+            return this == SIMULATE;
+        }
+    }
+
     /**
-     * Fills fluid into item, distribution is left entirely to the IFluidHandlerBlock.
+     * Fills fluid into internal tanks, distribution is left entirely to the IFluidHandlerBlock.
      *
      * @param resource FluidStack representing the Fluid and maximum amount of fluid to be filled.
      * @param action   If SIMULATE, fill will only be simulated.
-     * @return Amount of resource that was (or would have been, if simulated) filled
-     * and the resulting ItemStack of the Item that performed the fill action.
+     * @return Amount of resource that was (or would have been, if simulated) filled.
      */
-    FluidResult fillItem(FluidStack resource, IFluidHandlerBlock.FluidAction action);
-
+    int fill(FluidStack resource, FluidAction action);
 
     /**
-     * Drains fluid out of item, distribution is left entirely to the IFluidHandlerBlock.
+     * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandlerBlock.
      *
      * @param resource FluidStack representing the Fluid and maximum amount of fluid to be drained.
      * @param action   If SIMULATE, drain will only be simulated.
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
-     * simulated) drained and the resulting ItemStack of the Item that performed the fill action.
+     * simulated) drained.
      */
     @Nonnull
-    FluidResult drainItem(FluidStack resource, IFluidHandlerBlock.FluidAction action);
+    FluidStack drain(FluidStack resource, FluidAction action);
+
 
     /**
-     * Drains fluid out of item, distribution is left entirely to the IFluidHandlerBlock.
+     * Drains fluid out of internal tanks, distribution is left entirely to the IFluidHandlerBlock.
      * <p/>
      * This method is not Fluid-sensitive.
      *
      * @param maxDrain Maximum amount of fluid to drain.
      * @param action   If SIMULATE, drain will only be simulated.
      * @return FluidStack representing the Fluid and amount that was (or would have been, if
-     * simulated) drained and the resulting ItemStack of the Item that performed the fill action.
+     * simulated) drained.
      */
     @Nonnull
-    FluidResult drainItem(int maxDrain, IFluidHandlerBlock.FluidAction action);
+    FluidStack drain(int maxDrain, FluidAction action);
 }

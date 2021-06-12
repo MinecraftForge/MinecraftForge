@@ -25,11 +25,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerBlock;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
-public class FluidBlockWrapper implements IFluidHandler
+public class FluidBlockWrapper implements IFluidHandlerBlock
 {
     protected final IFluidBlock fluidBlock;
     protected final World world;

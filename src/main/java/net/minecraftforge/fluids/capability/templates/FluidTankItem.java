@@ -21,17 +21,12 @@ package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.FluidResult;
+import net.minecraftforge.fluids.capability.IFluidHandlerBlock;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -91,6 +86,7 @@ public class FluidTankItem implements IFluidHandlerItem {
     {
         return fluidStack;
     }
+
     public int getFluidAmount()
     {
         return fluidStack.getAmount();
@@ -99,11 +95,15 @@ public class FluidTankItem implements IFluidHandlerItem {
     public FluidTankItem readFromNBT(CompoundNBT nbt) {
         FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt);
         setFluid(fluid);
+        itemStack.deserializeNBT((CompoundNBT) nbt.get("ItemStack"));
+        capacity = nbt.getInt("Capacity");
         return this;
     }
 
     public CompoundNBT writeToNBT(CompoundNBT nbt) {
         fluidStack.writeToNBT(nbt);
+        nbt.put("ItemStack", itemStack.serializeNBT());
+        nbt.putInt("Capacity", capacity);
         return nbt;
     }
 
@@ -129,7 +129,7 @@ public class FluidTankItem implements IFluidHandlerItem {
     }
 
     @Override
-    public FluidResult fillItem(FluidStack resource, FluidAction action) {
+    public FluidResult fillItem(FluidStack resource, IFluidHandlerBlock.FluidAction action) {
         if (resource.isEmpty() || !isFluidValid(resource)) {
             return FluidResult.EMPTY;
         }
@@ -176,7 +176,7 @@ public class FluidTankItem implements IFluidHandlerItem {
 
     @Nonnull
     @Override
-    public FluidResult drainItem(FluidStack resource, FluidAction action) {
+    public FluidResult drainItem(FluidStack resource, IFluidHandlerBlock.FluidAction action) {
         if (resource.isEmpty() || resource.isFluidEqual(fluidStack)) {
             return FluidResult.EMPTY;
         }
@@ -185,7 +185,7 @@ public class FluidTankItem implements IFluidHandlerItem {
 
     @Nonnull
     @Override
-    public FluidResult drainItem(int maxDrain, FluidAction action) {
+    public FluidResult drainItem(int maxDrain, IFluidHandlerBlock.FluidAction action) {
         int drained = maxDrain;
         if (fluidStack.getAmount() < drained)
         {

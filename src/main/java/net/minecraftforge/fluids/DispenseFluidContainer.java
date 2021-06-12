@@ -30,7 +30,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.FluidResult;
+import net.minecraftforge.fluids.capability.IFluidHandlerBlock;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 /**
@@ -109,10 +110,10 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
             return super.execute(source, stack);
         }
 
-        FluidStack fluidStack = fluidHandler.drain(FluidAttributes.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
+        FluidResult fluidResult = fluidHandler.drainItem(FluidAttributes.BUCKET_VOLUME, IFluidHandlerBlock.FluidAction.EXECUTE);
         Direction dispenserFacing = source.getBlockState().getValue(DispenserBlock.FACING);
         BlockPos blockpos = source.getPos().relative(dispenserFacing);
-        FluidActionResult result = FluidUtil.tryPlaceFluid(null, source.getLevel(), Hand.MAIN_HAND, blockpos, stack, fluidStack);
+        FluidActionResult result = FluidUtil.tryPlaceFluid(null, source.getLevel(), Hand.MAIN_HAND, blockpos, stack, fluidResult.getFluidStack());
 
         if (result.isSuccess())
         {

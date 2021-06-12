@@ -22,11 +22,9 @@ package net.minecraftforge.fluids.capability.templates;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import net.minecraftforge.fluids.capability.IFluidHandlerBlock;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
 /**
@@ -34,31 +32,31 @@ import java.util.function.Predicate;
  *
  * @author King Lemming
  */
-public class FluidTank implements IFluidHandler, IFluidTank {
+public class FluidTankBlock implements IFluidHandlerBlock, IFluidTank {
 
     protected Predicate<FluidStack> validator;
     @Nonnull
     protected FluidStack fluid = FluidStack.EMPTY;
     protected int capacity;
 
-    public FluidTank(int capacity)
+    public FluidTankBlock(int capacity)
     {
         this(capacity, e -> true);
     }
 
-    public FluidTank(int capacity, Predicate<FluidStack> validator)
+    public FluidTankBlock(int capacity, Predicate<FluidStack> validator)
     {
         this.capacity = capacity;
         this.validator = validator;
     }
 
-    public FluidTank setCapacity(int capacity)
+    public FluidTankBlock setCapacity(int capacity)
     {
         this.capacity = capacity;
         return this;
     }
 
-    public FluidTank setValidator(Predicate<FluidStack> validator)
+    public FluidTankBlock setValidator(Predicate<FluidStack> validator)
     {
         if (validator != null) {
             this.validator = validator;
@@ -87,7 +85,7 @@ public class FluidTank implements IFluidHandler, IFluidTank {
         return fluid.getAmount();
     }
 
-    public FluidTank readFromNBT(CompoundNBT nbt) {
+    public FluidTankBlock readFromNBT(CompoundNBT nbt) {
 
         FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt);
         setFluid(fluid);

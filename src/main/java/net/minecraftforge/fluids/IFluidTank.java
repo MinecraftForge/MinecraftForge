@@ -19,10 +19,9 @@
 
 package net.minecraftforge.fluids;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+import net.minecraftforge.fluids.capability.IFluidHandlerBlock.FluidAction;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * This interface represents a Fluid Tank. IT IS NOT REQUIRED but is provided for convenience.
