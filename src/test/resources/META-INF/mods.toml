@@ -122,3 +122,5 @@ license="LGPL v2.1"
     modId="enum_argument_test"
 [[mods]]
     modId="entity_teleport_event_test"
+[[mods]]
+    modId="unique_noise_settings_test"
