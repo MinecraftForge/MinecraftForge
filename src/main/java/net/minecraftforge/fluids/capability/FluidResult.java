@@ -81,4 +81,9 @@ public class FluidResult {
     {
         return other.isFluidEqual(getFluidStack());
     }
+
+    public Fluid getFluid()
+    {
+        return getFluidStack().getFluid();
+    }
 }

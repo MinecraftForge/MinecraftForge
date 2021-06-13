@@ -54,7 +54,7 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
     @Nonnull
     public ItemStack execute(@Nonnull IBlockSource source, @Nonnull ItemStack stack)
     {
-        if (FluidUtil.getFluidContained(stack).isPresent())
+        if (FluidUtil.getFluidContainedInItem(stack).isPresent())
         {
             return dumpContainer(source, stack);
         }
@@ -74,10 +74,10 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
         Direction dispenserFacing = source.getBlockState().getValue(DispenserBlock.FACING);
         BlockPos blockpos = source.getPos().relative(dispenserFacing);
 
-        FluidActionResult actionResult = FluidUtil.tryPickUpFluid(stack, null, world, blockpos, dispenserFacing.getOpposite());
-        ItemStack resultStack = actionResult.getResult();
+        FluidResult actionResult = FluidUtil.tryPickUpFluid(stack, null, world, blockpos, dispenserFacing.getOpposite());
+        ItemStack resultStack = actionResult.getItemStack();
 
-        if (!actionResult.isSuccess() || resultStack.isEmpty())
+        if (actionResult.isEmpty() || resultStack.isEmpty())
         {
             return super.execute(source, stack);
         }
@@ -104,7 +104,7 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
     {
         ItemStack singleStack = stack.copy();
         singleStack.setCount(1);
-        IFluidHandlerItem fluidHandler = FluidUtil.getFluidHandler(singleStack).orElse(null);
+        IFluidHandlerItem fluidHandler = FluidUtil.getItemFluidHandler(singleStack).orElse(null);
         if (fluidHandler == null)
         {
             return super.execute(source, stack);
@@ -113,11 +113,11 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
         FluidResult fluidResult = fluidHandler.drainItem(FluidAttributes.BUCKET_VOLUME, IFluidHandlerBlock.FluidAction.EXECUTE);
         Direction dispenserFacing = source.getBlockState().getValue(DispenserBlock.FACING);
         BlockPos blockpos = source.getPos().relative(dispenserFacing);
-        FluidActionResult result = FluidUtil.tryPlaceFluid(null, source.getLevel(), Hand.MAIN_HAND, blockpos, stack, fluidResult.getFluidStack());
+        FluidResult result = FluidUtil.tryPlaceFluidItem(null, source.getLevel(), Hand.MAIN_HAND, blockpos, stack, fluidResult.getFluidStack());
 
-        if (result.isSuccess())
+        if (!result.isEmpty())
         {
-            ItemStack drainedStack = result.getResult();
+            ItemStack drainedStack = result.getItemStack();
 
             if (drainedStack.getCount() == 1)
             {

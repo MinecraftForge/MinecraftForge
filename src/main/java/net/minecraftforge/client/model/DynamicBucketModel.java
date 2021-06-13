@@ -263,7 +263,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         {
             IBakedModel overriden = nested.resolve(originalModel, stack, world, entity);
             if (overriden != originalModel) return overriden;
-            return FluidUtil.getFluidContained(stack)
+            return FluidUtil.getFluidContainedInItem(stack)
                     .map(fluidStack -> {
                         Fluid fluid = fluidStack.getFluid();
                         String name = fluid.getRegistryName().toString();

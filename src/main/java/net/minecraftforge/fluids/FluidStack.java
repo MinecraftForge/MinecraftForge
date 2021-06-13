@@ -30,12 +30,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fluids.capability.FluidResult;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IRegistryDelegate;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -325,7 +323,7 @@ public class FluidStack
      */
     public boolean isFluidEqual(@Nonnull ItemStack other)
     {
-        return FluidUtil.getFluidContained(other).map(this::isFluidEqual).orElse(false);
+        return FluidUtil.getFluidContainedInItem(other).map(this::isFluidEqual).orElse(false);
     }
 
     @Override
