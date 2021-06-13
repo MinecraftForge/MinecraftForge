@@ -21,21 +21,30 @@ package net.minecraftforge.fluids.capability.templates;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidResult;
 import net.minecraftforge.fluids.capability.IFluidHandlerBlock;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * Flexible implementation of a Fluid Storage object. NOT REQUIRED.
+ * Template capability provider for ItemStacks.
+ * Allows for manipulation of stacks by using a function, where a FluidResult is inputted, and a ItemStack is outputted
  *
- * @author King Lemming
+ * @author OneLemonyBoi
  */
-public class FluidTankItem implements IFluidHandlerItem {
+public class FluidTankItem implements IFluidHandlerItem, ICapabilityProvider
+{
+    private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
 
     protected Predicate<FluidStack> validator;
     protected Function<FluidResult, ItemStack> stackFunction;
@@ -214,5 +223,12 @@ public class FluidTankItem implements IFluidHandlerItem {
 
     public int getSpace() {
         return Math.max(0, capacity - fluidStack.getAmount());
+    }
+
+    @Override
+    @Nonnull
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
+    {
+        return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
     }
 }
