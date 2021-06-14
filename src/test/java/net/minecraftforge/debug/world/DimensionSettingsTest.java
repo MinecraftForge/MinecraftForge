@@ -86,7 +86,7 @@ public class DimensionSettingsTest {
         // Make a new DimensionStructuresSettings with no structures
         DimensionStructuresSettings structures = new DimensionStructuresSettings(Optional.empty(), new HashMap<>());
 
-        // Build a new DimensionSettings copying all the other options from 'settings'
+        // Build a new DimensionSettings copying all the other options from 'overworld'
         return new DimensionSettings(
                 structures,
                 overworld.noiseSettings(),
