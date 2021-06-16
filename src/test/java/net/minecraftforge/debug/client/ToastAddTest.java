@@ -23,7 +23,6 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.toasts.IToast;
 import net.minecraft.client.gui.toasts.RecipeToast;
-import net.minecraft.client.gui.toasts.SystemToast;
 import net.minecraft.client.gui.toasts.ToastGui;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -48,9 +47,13 @@ public class ToastAddTest
             return;
         }
 
-        if (toast instanceof SystemToast && ((SystemToast) toast).getToken().equals(SystemToast.Type.TUTORIAL_HINT))
+        if (toast instanceof CustomToast)
         {
-            event.setToast(new CustomToast("Tutorial hints have been disabled"));
+            CustomToast customToast = (CustomToast) toast;
+            if (!customToast.getText().startsWith("Notice: "))
+            {
+                customToast.setText("Notice: " + customToast.getText());
+            }
         }
     }
 
@@ -59,7 +62,7 @@ public class ToastAddTest
     @ParametersAreNonnullByDefault
     public static class CustomToast implements IToast
     {
-        private final String text;
+        private String text;
 
         public CustomToast(String text)
         {
@@ -71,6 +74,16 @@ public class ToastAddTest
         {
             toastGui.getMinecraft().font.draw(matrixStack, text, 0, 0, -1);
             return ticks >= 5000L ? IToast.Visibility.HIDE : IToast.Visibility.SHOW;
+        }
+
+        public String getText()
+        {
+            return this.text;
+        }
+
+        public void setText(String text)
+        {
+            this.text = text;
         }
     }
 }

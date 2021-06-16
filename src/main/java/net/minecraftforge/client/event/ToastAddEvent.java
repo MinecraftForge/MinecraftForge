@@ -30,11 +30,11 @@ import net.minecraftforge.eventbus.api.Event;
 @Cancelable
 public class ToastAddEvent extends Event
 {
-    private IToast toast;
+    private final IToast toast;
 
     public ToastAddEvent(IToast toast)
     {
-        setToast(toast);
+        this.toast = toast;
     }
 
     /**
@@ -43,13 +43,5 @@ public class ToastAddEvent extends Event
     public IToast getToast()
     {
         return toast;
-    }
-
-    /**
-     * @param toast the replacement toast to show instead of the original
-     */
-    public void setToast(IToast toast)
-    {
-        this.toast = toast;
     }
 }
