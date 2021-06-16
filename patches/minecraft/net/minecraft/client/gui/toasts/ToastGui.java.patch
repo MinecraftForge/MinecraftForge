@@ -1,13 +1,12 @@
 --- a/net/minecraft/client/gui/toasts/ToastGui.java
 +++ b/net/minecraft/client/gui/toasts/ToastGui.java
-@@ -62,7 +_,9 @@
+@@ -62,6 +_,9 @@
     }
  
     public void func_192988_a(IToast p_192988_1_) {
--      this.field_191792_h.add(p_192988_1_);
 +      net.minecraftforge.client.event.ToastAddEvent event = new net.minecraftforge.client.event.ToastAddEvent(p_192988_1_);
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
-+      this.field_191792_h.add(event.getToast());
++      p_192988_1_ = event.getToast();
+       this.field_191792_h.add(p_192988_1_);
     }
  
-    public Minecraft func_192989_b() {
