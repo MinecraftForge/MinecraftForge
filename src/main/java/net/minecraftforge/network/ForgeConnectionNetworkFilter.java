@@ -28,6 +28,7 @@ import net.minecraft.network.PacketDirection;
 import net.minecraft.network.ProtocolType;
 import net.minecraft.network.play.server.STagsListPacket;
 import net.minecraft.network.play.server.SUpdateRecipesPacket;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import com.google.common.collect.ImmutableMap;
 

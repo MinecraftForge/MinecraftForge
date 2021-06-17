@@ -7,8 +7,7 @@
 +            boolean clientStackChanged = !itemstack1.equals(itemstack, true);
              ItemStack itemstack2 = itemstack.func_77946_l();
              this.field_75153_a.set(i, itemstack2);
--
-+            
+ 
 +            if (clientStackChanged)
              for(IContainerListener icontainerlistener : this.field_75149_d) {
                 icontainerlistener.func_71111_a(this, i, itemstack2);
