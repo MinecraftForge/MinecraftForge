@@ -28,8 +28,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import com.google.common.collect.Lists;
 
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -59,7 +58,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
     private INBTSerializable<INBT>[] writers;
     private String[] writerNames;
     private final List<Runnable> listeners;
-    private final Object2ObjectOpenHashMap<String, INetworkCapability> networkCapabilities = new Object2ObjectOpenHashMap<>();
+    private final Map<String, INetworkCapability> networkCapabilities = new Object2ObjectArrayMap<>();
 
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, List<Runnable> listeners)
     {
@@ -167,10 +166,8 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
     @Override
     public void encode(PacketBuffer out, boolean writeAll)
     {
-        ObjectIterator<Object2ObjectOpenHashMap.Entry<String, INetworkCapability>>  it = networkCapabilities.object2ObjectEntrySet().fastIterator();
-        while (it.hasNext())
+        for (Map.Entry<String, INetworkCapability> entry : networkCapabilities.entrySet())
         {
-            Object2ObjectOpenHashMap.Entry<String, INetworkCapability> entry = it.next();
             if (!writeAll && !entry.getValue().requiresSync())
                 continue;
             out.writeUtf(entry.getKey(), 0x100);

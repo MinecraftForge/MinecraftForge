@@ -41,3 +41,17 @@
           EntityType<?> entitytype = p_219210_1_.func_200600_R();
           int i = entitytype.func_233602_m_() * 16;
           int j = entitytype.func_220332_l();
+@@ -1075,6 +_,13 @@
+       return this.field_219257_k.func_222817_e(() -> {
+          p_222973_1_.func_222880_a(this.field_219255_i);
+       });
++   }
++
++   // Forge: expose EntityTracker#seenBy
++   @Nullable
++   public Set<ServerPlayerEntity> getSeenBy(Entity entity) { 
++       ChunkManager.EntityTracker entityTracker = this.field_219272_z.get(entity.func_145782_y());
++       return entityTracker == null ? null : java.util.Collections.unmodifiableSet(entityTracker.field_219406_f);
+    }
+ 
+    class EntityTracker {

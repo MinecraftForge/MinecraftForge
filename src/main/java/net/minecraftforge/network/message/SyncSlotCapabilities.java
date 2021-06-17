@@ -4,10 +4,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSidedProvider;
@@ -26,12 +23,12 @@ public class SyncSlotCapabilities {
         this.capabilityData = capabilityData;
     }
 
-    public static void encode(SyncSlotCapabilities msg, PacketBuffer out)
+    public void encode(PacketBuffer out)
     {
-        out.writeVarInt(msg.entityId);
-        out.writeShort(msg.slotIndex);
-        out.writeVarInt(msg.capabilityData.readableBytes());
-        out.writeBytes(msg.capabilityData);
+        out.writeVarInt(this.entityId);
+        out.writeShort(this.slotIndex);
+        out.writeVarInt(this.capabilityData.readableBytes());
+        out.writeBytes(this.capabilityData);
     }
 
     public static SyncSlotCapabilities decode(PacketBuffer in)
@@ -41,27 +38,20 @@ public class SyncSlotCapabilities {
         byte[] capabilityData = new byte[in.readVarInt()];
         in.readBytes(capabilityData);
         return new SyncSlotCapabilities(entityId, slotIndex,
-                new PacketBuffer(Unpooled.wrappedBuffer(capabilityData)));
+            new PacketBuffer(Unpooled.wrappedBuffer(capabilityData)));
     }
 
-    public static boolean handle(SyncSlotCapabilities msg, Supplier<NetworkEvent.Context> ctx)
+    public boolean handle(Supplier<NetworkEvent.Context> ctx)
     {
-        ctx.get().enqueueWork(() ->
-        {
-            Optional<World> level = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
-            Entity entity = level.map(w -> w.getEntity(msg.entityId)).orElse(null);
-            if (!(entity instanceof PlayerEntity))
-            {
-                return;
-            }
-
-            Container container = ((PlayerEntity) entity).containerMenu;
-            if (msg.slotIndex < container.slots.size())
-            {
-                Slot slot = container.getSlot(msg.slotIndex);
-                slot.getItem().decode(msg.capabilityData);
-            }
-        });
+        ctx.get().enqueueWork(
+            () -> LogicalSidedProvider.CLIENTWORLD.<Optional<World>>get(ctx.get().getDirection().getReceptionSide())
+                .map(level -> level.getEntity(this.entityId))
+                .filter(PlayerEntity.class::isInstance)
+                .map(PlayerEntity.class::cast)
+                .map(player -> player.containerMenu)
+                .filter(menu -> this.slotIndex < menu.slots.size())
+                .map(container -> container.getSlot(this.slotIndex))
+                .ifPresent(slot -> slot.getItem().decode(this.capabilityData)));
         return true;
     }
 }

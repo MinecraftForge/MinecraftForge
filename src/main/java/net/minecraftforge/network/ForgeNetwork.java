@@ -1,41 +1,37 @@
 package net.minecraftforge.network;
 
+import java.util.Set;
+import java.util.stream.Stream;
+
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.server.ServerChunkProvider;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.world.ChunkWatchEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.PacketDistributor.PacketTarget;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.network.message.SyncBlockEntityCapabilities;
 import net.minecraftforge.network.message.SyncEntityCapabilities;
 import net.minecraftforge.network.message.SyncEquipmentSlotCapabilities;
 import net.minecraftforge.network.message.SyncSlotCapabilities;
-import net.minecraftforge.network.message.SyncBlockEntityCapabilities;
 
-@Mod.EventBusSubscriber
 public class ForgeNetwork {
 
     public static final String PROTOCOL_VERSION = "0.0.1";
     public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(ForgeMod.ID, "main");
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(CHANNEL_NAME, () -> PROTOCOL_VERSION,
-            clientVersion -> clientVersion.equals(NetworkRegistry.ACCEPTVANILLA)
-                    || clientVersion.equals(PROTOCOL_VERSION),
-            PROTOCOL_VERSION::equals);
+        NetworkRegistry.acceptMissingOr(PROTOCOL_VERSION), PROTOCOL_VERSION::equals);
 
     private static boolean initialized = false;
 
@@ -44,7 +40,6 @@ public class ForgeNetwork {
         if (initialized)
             throw new IllegalStateException("Forge network already initialized");
 
-        // @formatter:off
         CHANNEL.messageBuilder(SyncSlotCapabilities.class, 0x00, NetworkDirection.PLAY_TO_CLIENT)
             .encoder(SyncSlotCapabilities::encode)
             .decoder(SyncSlotCapabilities::decode)
@@ -62,68 +57,133 @@ public class ForgeNetwork {
             .decoder(SyncBlockEntityCapabilities::decode)
             .consumer(SyncBlockEntityCapabilities::handle)
             .add();
-        
+
         CHANNEL.messageBuilder(SyncEquipmentSlotCapabilities.class, 0x04, NetworkDirection.PLAY_TO_CLIENT)
             .encoder(SyncEquipmentSlotCapabilities::encode)
             .decoder(SyncEquipmentSlotCapabilities::decode)
             .consumer(SyncEquipmentSlotCapabilities::handle)
             .add();
-     // @formatter:on
     }
 
-    @SubscribeEvent
-    public static void handleChunkWatch(ChunkWatchEvent.Watch event)
+    private static void broadcast(Object message, ServerPlayerEntity... players)
     {
-        Chunk chunk = event.getWorld().getChunk(event.getPos().x, event.getPos().z);
-        for (TileEntity tileEntity : chunk.getBlockEntities().values())
+        broadcast(CHANNEL.toVanillaPacket(message, NetworkDirection.PLAY_TO_CLIENT), players);
+    }
+
+    private static void broadcast(IPacket<?> packet, ServerPlayerEntity... players)
+    {
+        for (ServerPlayerEntity player : players)
         {
-            sendTileEntityCapabilities(tileEntity, PacketDistributor.PLAYER.with(event::getPlayer), true);
+            sendIfPresent(packet, player.connection.connection);
         }
     }
 
-    @SubscribeEvent
-    public static void handleTileEntityTick(TickEvent.TileEntityTickEvent event)
+    private static void broadcast(Object message, Stream<NetworkManager> connections)
     {
-        if (event.phase == TickEvent.Phase.END && event.blockEntity.getLevel() != null)
-            sendTileEntityCapabilities(event.blockEntity, PacketDistributor.TRACKING_CHUNK
-                    .with(() -> event.blockEntity.getLevel().getChunkAt(event.blockEntity.getBlockPos())), false);
+        IPacket<?> packet = CHANNEL.toVanillaPacket(message, NetworkDirection.PLAY_TO_CLIENT);
+        connections.forEach(connection -> sendIfPresent(packet, connection));
     }
 
-    @SubscribeEvent
-    public static void handlePlayerStartTracking(PlayerEvent.StartTracking event)
+    private static void sendIfPresent(IPacket<?> packet, NetworkManager connection)
     {
-        if (event.getTarget() instanceof LivingEntity)
-            sendEntityCapabilities((LivingEntity) event.getTarget(),
-                    PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) event.getPlayer()), true);
+        if (CHANNEL.isRemotePresent(connection))
+            connection.send(packet);
     }
 
-    @SubscribeEvent
-    public static void handleLivingUpdate(LivingUpdateEvent event)
+    /**
+     * Sends the specified block entity's caps to a set amount of players.
+     * 
+     * @param blockEntity - the block entity for whom's caps to send
+     * @param writeAll    - <code>true</code> to write all cap data,
+     *                    <code>false</code> to write only dirty data.
+     * @param players     - the players to send the block entity's caps to
+     */
+    public static void sendBlockEntityCapabilities(TileEntity blockEntity, boolean writeAll,
+        ServerPlayerEntity... players)
     {
-        sendEntityCapabilities(event.getEntityLiving(),
-                PacketDistributor.TRACKING_ENTITY_AND_SELF.with(event::getEntityLiving), false);
-    }
-
-    public static void sendTileEntityCapabilities(TileEntity tileEntity, PacketTarget target, boolean writeAll)
-    {
-        if (!tileEntity.getLevel().isClientSide() && (writeAll || tileEntity.requiresSync()))
+        if (blockEntity.hasLevel() && !blockEntity.getLevel().isClientSide()
+            && (writeAll || blockEntity.requiresSync()))
         {
             PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
-            tileEntity.encode(capabilityData, writeAll);
-            CHANNEL.send(target, new SyncBlockEntityCapabilities(tileEntity.getBlockPos(), capabilityData));
+            blockEntity.encode(capabilityData, writeAll);
+            broadcast(new SyncBlockEntityCapabilities(blockEntity.getBlockPos(), capabilityData), players);
         }
     }
 
-    public static void sendEntityCapabilities(LivingEntity livingEntity, PacketTarget target, boolean writeAll)
+    /**
+     * Sends the specified block entity's caps to everyone tracking it.
+     * 
+     * @param blockEntity - the block entity for whom's caps to send
+     * @param writeAll    - <code>true</code> to write all cap data,
+     *                    <code>false</code> to write only dirty data.
+     */
+    public static void sendBlockEntityCapabilities(TileEntity blockEntity, boolean writeAll)
+    {
+        if (blockEntity.hasLevel() && !blockEntity.getLevel().isClientSide()
+            && (writeAll || blockEntity.requiresSync()))
+        {
+            PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
+            blockEntity.encode(capabilityData, false);
+            ServerChunkProvider chunkProvider = ((ServerWorld) blockEntity.getLevel()).getChunkSource();
+            broadcast(new SyncBlockEntityCapabilities(blockEntity.getBlockPos(), capabilityData),
+                chunkProvider.chunkMap.getPlayers(new ChunkPos(blockEntity.getBlockPos()), writeAll)
+                    .map(player -> player.connection.connection));
+        }
+    }
+
+    /**
+     * Sends the specified entity's caps to all tracking entities including itself
+     * in the case of it being a player.
+     * 
+     * @param livingEntity - the entity for whom's caps you'resending
+     * @param writeAll     - <code>true</code> to write all cap data,
+     *                     <code>false</code> to write only dirty data.
+     */
+    public static void sendEntityCapabilities(LivingEntity livingEntity, boolean writeAll)
+    {
+        if (livingEntity.level instanceof ServerWorld)
+        {
+            ServerChunkProvider chunkProvider = ((ServerWorld) livingEntity.level).getChunkSource();
+            Set<ServerPlayerEntity> players = chunkProvider.chunkMap.getSeenBy(livingEntity);
+            sendEntityCapabilities(livingEntity, writeAll, true,
+                players == null ? new ServerPlayerEntity[0] : players.toArray(new ServerPlayerEntity[0]));
+        }
+    }
+
+    /**
+     * Sends the specified entity's caps to a set amount of players.
+     * 
+     * @param livingEntity - the entity for whom's caps you're sending
+     * @param writeAll     - <code>true</code> to write all cap data,
+     *                     <code>false</code> to write only dirty data.
+     * @param sendToSelf   - send to itself (if the entity is a player)
+     * @param players      - the players to send the entity's caps to
+     */
+    public static void sendEntityCapabilities(LivingEntity livingEntity, boolean writeAll, boolean sendToSelf,
+        ServerPlayerEntity... players)
     {
         if (!livingEntity.level.isClientSide() && (writeAll || livingEntity.requiresSync()))
         {
             PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
             livingEntity.encode(capabilityData, writeAll);
-            CHANNEL.send(target, new SyncEntityCapabilities(livingEntity.getId(), capabilityData));
+            IPacket<?> packet = CHANNEL.toVanillaPacket(
+                new SyncEntityCapabilities(livingEntity.getId(), capabilityData), NetworkDirection.PLAY_TO_CLIENT);
+            if (sendToSelf && livingEntity instanceof ServerPlayerEntity)
+            {
+                sendIfPresent(packet, ((ServerPlayerEntity) livingEntity).connection.connection);
+            }
+            broadcast(packet, players);
         }
     }
 
+    /**
+     * Send the capabilities associated with the item in the specified slot.
+     * 
+     * @param slot     - the slot containing the item whom's caps you're sending
+     * @param target   - the player to send them to
+     * @param writeAll - <code>true</code> to write all cap data, <code>false</code>
+     *                 to write only dirty data.
+     */
     public static void sendSlotCapabilities(Slot slot, ServerPlayerEntity target, boolean writeAll)
     {
         if (slot.container == target.inventory)
@@ -144,19 +204,60 @@ public class ForgeNetwork {
         {
             PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
             slot.getItem().encode(capabilityData, writeAll);
-            CHANNEL.send(PacketDistributor.PLAYER.with(() -> target),
-                    new SyncSlotCapabilities(target.getId(), slot.getSlotIndex(), capabilityData));
+            broadcast(new SyncSlotCapabilities(target.getId(), slot.getSlotIndex(), capabilityData), target);
         }
     }
 
-    public static void sendEquipmentSlotCapabilities(int entityId, EquipmentSlotType equipmentSlotType,
-            ItemStack itemStack, PacketTarget target, boolean writeAll)
+    /**
+     * Sends the specified entity's equipment caps to all tracking entities
+     * including itself in the case of it being a player.
+     * 
+     * @param livingEntity      - the entity for whom's equipment caps you're
+     *                          sending
+     * @param equipmentSlotType - the equipment slot
+     * @param itemStack         - the equipment item stack
+     * @param writeAll          - <code>true</code> to write all cap data,
+     *                          <code>false</code> to write only dirty data.
+     */
+    public static void sendEquipmentSlotCapabilities(LivingEntity livingEntity, EquipmentSlotType equipmentSlotType,
+        ItemStack itemStack, boolean writeAll)
     {
-        if (writeAll || itemStack.requiresSync())
+        if (livingEntity.level instanceof ServerWorld)
+        {
+            ServerChunkProvider chunkProvider = ((ServerWorld) livingEntity.level).getChunkSource();
+            Set<ServerPlayerEntity> players = chunkProvider.chunkMap.getSeenBy(livingEntity);
+            sendEquipmentSlotCapabilities(livingEntity, equipmentSlotType, itemStack, writeAll, true,
+                players == null ? new ServerPlayerEntity[0] : players.toArray(new ServerPlayerEntity[0]));
+        }
+    }
+
+    /**
+     * Sends the specified entity's equipment caps to a set amount of players.
+     * 
+     * @param livingEntity      - the entity for whom's equipment caps you're
+     *                          sending
+     * @param equipmentSlotType - the equipment slot
+     * @param itemStack         - the equipment item stack
+     * @param writeAll          - <code>true</code> to write all cap data,
+     *                          <code>false</code> to write only dirty data.
+     * @param sendToSelf        - send to itself (if the entity is a player)
+     * @param players           - the players to send the entity's equipment caps to
+     */
+    public static void sendEquipmentSlotCapabilities(LivingEntity livingEntity, EquipmentSlotType equipmentSlotType,
+        ItemStack itemStack, boolean writeAll, boolean sendToSelf, ServerPlayerEntity... players)
+    {
+        if (!livingEntity.level.isClientSide() && (writeAll || itemStack.requiresSync()))
         {
             PacketBuffer capabilityData = new PacketBuffer(Unpooled.buffer());
             itemStack.encode(capabilityData, writeAll);
-            CHANNEL.send(target, new SyncEquipmentSlotCapabilities(entityId, equipmentSlotType, capabilityData));
+            IPacket<?> packet = CHANNEL.toVanillaPacket(
+                new SyncEquipmentSlotCapabilities(livingEntity.getId(), equipmentSlotType, capabilityData),
+                NetworkDirection.PLAY_TO_CLIENT);
+            if (sendToSelf && livingEntity instanceof ServerPlayerEntity)
+            {
+                sendIfPresent(packet, ((ServerPlayerEntity) livingEntity).connection.connection);
+            }
+            broadcast(packet, players);
         }
     }
 }

@@ -194,9 +194,9 @@
 +                     return String.valueOf(tileentity.func_200662_C().getRegistryName());
                    });
                    if (tileentity.func_200662_C().func_223045_a(this.func_180495_p(blockpos).func_177230_c())) {
-+                     net.minecraftforge.fml.hooks.BasicEventHooks.onPreTileEntityTick(tileentity);
++                     net.minecraftforge.fml.hooks.BasicEventHooks.onPreBlockEntityTick(tileentity);
                       ((ITickableTileEntity)tileentity).func_73660_a();
-+                     net.minecraftforge.fml.hooks.BasicEventHooks.onPostTileEntityTick(tileentity);
++                     net.minecraftforge.fml.hooks.BasicEventHooks.onPostBlockEntityTick(tileentity);
                    } else {
                       tileentity.func_222814_r();
                    }

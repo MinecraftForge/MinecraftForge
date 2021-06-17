@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSidedProvider;
@@ -22,11 +21,11 @@ public class SyncBlockEntityCapabilities {
         this.capabilityData = capabilityData;
     }
 
-    public static void encode(SyncBlockEntityCapabilities msg, PacketBuffer out)
+    public void encode(PacketBuffer out)
     {
-        out.writeBlockPos(msg.blockPos);
-        out.writeVarInt(msg.capabilityData.readableBytes());
-        out.writeBytes(msg.capabilityData);
+        out.writeBlockPos(this.blockPos);
+        out.writeVarInt(this.capabilityData.readableBytes());
+        out.writeBytes(this.capabilityData);
     }
 
     public static SyncBlockEntityCapabilities decode(PacketBuffer in)
@@ -34,22 +33,17 @@ public class SyncBlockEntityCapabilities {
         BlockPos blockPos = in.readBlockPos();
         byte[] capabilityData = new byte[in.readVarInt()];
         in.readBytes(capabilityData);
-        SyncBlockEntityCapabilities msg = new SyncBlockEntityCapabilities(blockPos, new PacketBuffer(Unpooled.wrappedBuffer(capabilityData)));
+        SyncBlockEntityCapabilities msg = new SyncBlockEntityCapabilities(blockPos,
+            new PacketBuffer(Unpooled.wrappedBuffer(capabilityData)));
         return msg;
     }
 
-    public static boolean handle(SyncBlockEntityCapabilities msg, Supplier<NetworkEvent.Context> ctx)
+    public boolean handle(Supplier<NetworkEvent.Context> ctx)
     {
-        ctx.get().enqueueWork(() ->
-        {
-            Optional<World> level = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
-            TileEntity tileEntity = level.flatMap(w -> Optional.ofNullable(w.getBlockEntity(msg.blockPos))).orElse(null);
-            if (tileEntity == null)
-            {
-                return;
-            }
-            tileEntity.decode(msg.capabilityData);
-        });
+        ctx.get().enqueueWork(
+            () -> LogicalSidedProvider.CLIENTWORLD.<Optional<World>>get(ctx.get().getDirection().getReceptionSide())
+                .map(level -> level.getBlockEntity(this.blockPos))
+                .ifPresent(blockEntity -> blockEntity.decode(this.capabilityData)));
         return true;
     }
 }

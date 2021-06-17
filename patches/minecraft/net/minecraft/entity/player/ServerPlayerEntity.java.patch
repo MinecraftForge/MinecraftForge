@@ -73,7 +73,7 @@
  
     private void func_147097_b(TileEntity p_147097_1_) {
        if (p_147097_1_ != null) {
-+         net.minecraftforge.network.ForgeNetwork.sendTileEntityCapabilities(p_147097_1_, net.minecraftforge.fml.network.PacketDistributor.PLAYER.with(() -> this), true);
++         net.minecraftforge.network.ForgeNetwork.sendBlockEntityCapabilities(p_147097_1_, true, this);
           SUpdateTileEntityPacket supdatetileentitypacket = p_147097_1_.func_189518_D_();
           if (supdatetileentitypacket != null) {
              this.field_71135_a.func_147359_a(supdatetileentitypacket);

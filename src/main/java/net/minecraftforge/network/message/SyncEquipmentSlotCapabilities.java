@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.network.PacketBuffer;
@@ -25,12 +24,12 @@ public class SyncEquipmentSlotCapabilities {
         this.capabilityData = capabilityData;
     }
 
-    public static void encode(SyncEquipmentSlotCapabilities msg, PacketBuffer out)
+    public void encode(PacketBuffer out)
     {
-        out.writeVarInt(msg.entityId);
-        out.writeEnum(msg.slotType);
-        out.writeVarInt(msg.capabilityData.readableBytes());
-        out.writeBytes(msg.capabilityData);
+        out.writeVarInt(this.entityId);
+        out.writeEnum(this.slotType);
+        out.writeVarInt(this.capabilityData.readableBytes());
+        out.writeBytes(this.capabilityData);
     }
 
     public static SyncEquipmentSlotCapabilities decode(PacketBuffer in)
@@ -40,22 +39,17 @@ public class SyncEquipmentSlotCapabilities {
         byte[] capabilityData = new byte[in.readVarInt()];
         in.readBytes(capabilityData);
         return new SyncEquipmentSlotCapabilities(entityId, slotType,
-                new PacketBuffer(Unpooled.wrappedBuffer(capabilityData)));
+            new PacketBuffer(Unpooled.wrappedBuffer(capabilityData)));
     }
 
-    public static boolean handle(SyncEquipmentSlotCapabilities msg, Supplier<NetworkEvent.Context> ctx)
+    public boolean handle(Supplier<NetworkEvent.Context> ctx)
     {
-        ctx.get().enqueueWork(() ->
-        {
-            Optional<World> level = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
-            Entity entity = level.map(w -> w.getEntity(msg.entityId)).orElse(null);
-            if (!(entity instanceof LivingEntity))
-            {
-                return;
-            }
-
-            ((LivingEntity) entity).getItemBySlot(msg.slotType).decode(msg.capabilityData);
-        });
+        ctx.get().enqueueWork(
+            () -> LogicalSidedProvider.CLIENTWORLD.<Optional<World>>get(ctx.get().getDirection().getReceptionSide())
+                .map(level -> level.getEntity(this.entityId))
+                .filter(LivingEntity.class::isInstance)
+                .map(LivingEntity.class::cast)
+                .ifPresent(livingEntity -> livingEntity.getItemBySlot(this.slotType).decode(this.capabilityData)));
         return true;
     }
 }

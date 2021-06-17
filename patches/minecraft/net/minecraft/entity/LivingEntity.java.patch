@@ -383,7 +383,7 @@
                 this.func_233645_dx_().func_233793_b_(itemstack1.func_111283_C(equipmentslottype));
              }
 +         } else {
-+             net.minecraftforge.network.ForgeNetwork.sendEquipmentSlotCapabilities(this.func_145782_y(), equipmentslottype, itemstack1, net.minecraftforge.fml.network.PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> this), false);
++             net.minecraftforge.network.ForgeNetwork.sendEquipmentSlotCapabilities(this, equipmentslottype, itemstack1, false);
           }
        }
  

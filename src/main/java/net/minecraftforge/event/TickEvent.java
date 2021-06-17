@@ -87,12 +87,18 @@ public class TickEvent extends Event
         }
     }
     
-    public static class TileEntityTickEvent extends TickEvent {
-        public final TileEntity blockEntity;
-        public TileEntityTickEvent(Phase phase, TileEntity blockEntity)
+    public static class BlockEntityTickEvent extends TickEvent {
+
+        private final TileEntity blockEntity;
+
+        public BlockEntityTickEvent(Phase phase, TileEntity blockEntity)
         {
             super(Type.TILE_ENTITY, blockEntity.getLevel() instanceof ServerWorld ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
             this.blockEntity = blockEntity;
+        }
+
+        public TileEntity getBlockEntity() {
+            return this.blockEntity;
         }
     }
 }

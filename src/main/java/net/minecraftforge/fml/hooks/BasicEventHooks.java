@@ -28,9 +28,10 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.network.ForgeNetwork;
 
 public class BasicEventHooks
 {
@@ -121,13 +122,15 @@ public class BasicEventHooks
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END));
     }
     
-    public static void onPreTileEntityTick(TileEntity tileEntity)
+    public static void onPreBlockEntityTick(TileEntity blockEntity)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.TileEntityTickEvent(TickEvent.Phase.START, tileEntity));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.BlockEntityTickEvent(TickEvent.Phase.START, blockEntity));
     }
 
-    public static void onPostTileEntityTick(TileEntity tileEntity)
+    public static void onPostBlockEntityTick(TileEntity blockEntity)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.TileEntityTickEvent(TickEvent.Phase.END, tileEntity));
+        if (blockEntity.getLevel() != null)
+            ForgeNetwork.sendBlockEntityCapabilities(blockEntity, false);
+        MinecraftForge.EVENT_BUS.post(new TickEvent.BlockEntityTickEvent(TickEvent.Phase.END, blockEntity));
     }
 }

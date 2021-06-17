@@ -20,28 +20,34 @@
 package net.minecraftforge.event;
 
 import java.io.File;
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.block.PortalSize;
+
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.PortalSize;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.Pose;
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntitySize;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.Pose;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.item.EnderPearlEntity;
 import net.minecraft.entity.item.ItemEntity;
@@ -54,14 +60,13 @@ import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
-import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.DataPackRegistries;
-import net.minecraft.world.spawner.AbstractSpawner;
+import net.minecraft.resources.IFutureReloadListener;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
@@ -81,8 +86,10 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.world.storage.IServerWorldInfo;
 import net.minecraft.world.storage.PlayerData;
 import net.minecraftforge.api.distmarker.Dist;
@@ -107,6 +114,7 @@ import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.EnderTeleportEvent;
+import net.minecraftforge.event.entity.living.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -115,7 +123,6 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
-import net.minecraftforge.event.entity.living.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
@@ -147,6 +154,7 @@ import net.minecraftforge.event.world.SleepFinishedTimeEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.network.ForgeNetwork;
 
 public class ForgeEventFactory
 {
@@ -313,6 +321,8 @@ public class ForgeEventFactory
 
     public static void onStartEntityTracking(Entity entity, PlayerEntity player)
     {
+        if (entity instanceof LivingEntity)
+            ForgeNetwork.sendEntityCapabilities((LivingEntity) entity, true, false, (ServerPlayerEntity) player);
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.StartTracking(player, entity));
     }
 
@@ -707,9 +717,18 @@ public class ForgeEventFactory
     public static void fireChunkWatch(boolean watch, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world)
     {
         if (watch)
+        {
+            Chunk chunk = world.getChunk(chunkpos.x, chunkpos.z);
+            for (TileEntity tileEntity : chunk.getBlockEntities().values())
+            {
+                ForgeNetwork.sendBlockEntityCapabilities(tileEntity, true, entity);
+            }
             MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
+        } 
         else
+        {
             MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, world));
+        }
     }
 
     public static void fireChunkWatch(boolean wasLoaded, boolean load, ServerPlayerEntity entity, ChunkPos chunkpos, ServerWorld world)

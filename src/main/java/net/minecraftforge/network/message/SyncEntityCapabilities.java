@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSidedProvider;
@@ -21,11 +20,11 @@ public class SyncEntityCapabilities {
         this.capabilityData = capabilityData;
     }
 
-    public static void encode(SyncEntityCapabilities msg, PacketBuffer out)
+    public void encode(PacketBuffer out)
     {
-        out.writeVarInt(msg.entityId);
-        out.writeVarInt(msg.capabilityData.readableBytes());
-        out.writeBytes(msg.capabilityData);
+        out.writeVarInt(this.entityId);
+        out.writeVarInt(this.capabilityData.readableBytes());
+        out.writeBytes(this.capabilityData);
     }
 
     public static SyncEntityCapabilities decode(PacketBuffer in)
@@ -34,22 +33,16 @@ public class SyncEntityCapabilities {
         byte[] capabilityData = new byte[in.readVarInt()];
         in.readBytes(capabilityData);
         SyncEntityCapabilities msg = new SyncEntityCapabilities(entityId,
-                new PacketBuffer(Unpooled.wrappedBuffer(capabilityData)));
+            new PacketBuffer(Unpooled.wrappedBuffer(capabilityData)));
         return msg;
     }
 
-    public static boolean handle(SyncEntityCapabilities msg, Supplier<NetworkEvent.Context> ctx)
+    public boolean handle(Supplier<NetworkEvent.Context> ctx)
     {
-        ctx.get().enqueueWork(() ->
-        {
-            Optional<World> level = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
-            Entity entity = level.map(w -> w.getEntity(msg.entityId)).orElse(null);
-            if (entity == null)
-            {
-                return;
-            }
-            entity.decode(msg.capabilityData);
-        });
+        ctx.get().enqueueWork(
+            () -> LogicalSidedProvider.CLIENTWORLD.<Optional<World>>get(ctx.get().getDirection().getReceptionSide())
+                .map(level -> level.getEntity(this.entityId))
+                .ifPresent(entity -> entity.decode(this.capabilityData)));
         return true;
     }
 }

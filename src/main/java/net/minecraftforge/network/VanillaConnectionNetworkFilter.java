@@ -31,7 +31,6 @@ import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.client.CCustomPayloadPacket;
 import net.minecraft.network.play.server.SCommandListPacket;
 import net.minecraft.network.play.server.SEntityPropertiesPacket;
 import net.minecraft.util.ResourceLocation;
@@ -51,7 +50,6 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
                 ImmutableMap.<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>>builder()
                 .put(handler(SEntityPropertiesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
                 .put(handler(SCommandListPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
-                .put(handler(CCustomPayloadPacket.class, VanillaConnectionNetworkFilter::filterCustomPayload))
                 .build()
         );
     }
@@ -90,16 +88,5 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
             return id != null && (id.getNamespace().equals("minecraft") || id.getNamespace().equals("brigadier"));
         });
         return new SCommandListPacket(newRoot);
-    }
-
-    /**
-     * Filter for CCustomPayloadPacket. Removes Forge packets for vanilla clients.
-     */
-    private static void filterCustomPayload(IPacket<?> packet, List<? super IPacket<?>> out)
-    {
-       if (!((CCustomPayloadPacket) packet).getName().equals(ForgeNetwork.CHANNEL_NAME))
-       {
-           out.add(packet);
-       }
     }
 }

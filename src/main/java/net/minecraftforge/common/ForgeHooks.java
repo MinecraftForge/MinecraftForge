@@ -35,6 +35,16 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+import org.apache.logging.log4j.util.TriConsumer;
+
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -50,89 +60,111 @@ import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
-import net.minecraft.fluid.*;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTableManager;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.*;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.item.minecart.ContainerMinecartEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.block.Blocks;
-import net.minecraft.inventory.container.RepairContainer;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.fluid.EmptyFluid;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.LavaFluid;
+import net.minecraft.fluid.WaterFluid;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
+import net.minecraft.inventory.container.RepairContainer;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.BucketItem;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.HoeItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.PotionItem;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.item.SpawnEggItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.TippedArrowItem;
-import net.minecraft.item.ItemUseContext;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTableManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
-import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.datasync.IDataSerializer;
+import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.network.play.server.SChangeBlockPacket;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
+import net.minecraft.tags.ITag;
+import net.minecraft.tileentity.FurnaceTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.CachedBlockInfo;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
+import net.minecraft.util.IntIdentityHashBiMap;
+import net.minecraft.util.JSONUtils;
+import net.minecraft.util.LazyValue;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
-import net.minecraft.util.registry.WorldSettingsImport;
 import net.minecraft.util.registry.WorldGenSettingsExport;
-import net.minecraft.util.text.*;
-import net.minecraft.world.*;
+import net.minecraft.util.registry.WorldSettingsImport;
+import net.minecraft.util.text.Color;
+import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.world.Difficulty;
+import net.minecraft.world.Dimension;
+import net.minecraft.world.DimensionType;
+import net.minecraft.world.GameType;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldReader;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeAmbience;
+import net.minecraft.world.biome.BiomeGenerationSettings;
+import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraft.world.spawner.AbstractSpawner;
-import net.minecraft.tileentity.FurnaceTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeAmbience;
-import net.minecraft.world.biome.BiomeGenerationSettings;
-import net.minecraft.world.biome.MobSpawnInfo;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
@@ -175,17 +207,12 @@ import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
+import net.minecraftforge.network.ForgeNetwork;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import org.apache.logging.log4j.util.TriConsumer;
 
 public class ForgeHooks
 {
@@ -336,6 +363,7 @@ public class ForgeHooks
 
     public static boolean onLivingUpdate(LivingEntity entity)
     {
+        ForgeNetwork.sendEntityCapabilities(entity, false);
         return MinecraftForge.EVENT_BUS.post(new LivingUpdateEvent(entity));
     }
 
@@ -615,6 +643,7 @@ public class ForgeHooks
                 {
                     entityPlayer.connection.send(pkt);
                 }
+                ForgeNetwork.sendBlockEntityCapabilities(tileentity, true, entityPlayer);
             }
         }
         return event.isCanceled() ? -1 : event.getExpToDrop();
