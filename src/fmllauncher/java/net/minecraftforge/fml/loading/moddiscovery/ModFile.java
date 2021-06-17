@@ -32,6 +32,7 @@ import net.minecraftforge.forgespi.locating.ModFileFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -178,6 +179,12 @@ public class ModFile implements IModFile {
     public Path findResource(String className)
     {
         return locator.findPath(this, className);
+    }
+
+    @Nullable
+    public Path findResourceIfExists(String resName)
+    {
+        return locator.findPathIfExists(this, resName);
     }
 
     public void identifyLanguage() {

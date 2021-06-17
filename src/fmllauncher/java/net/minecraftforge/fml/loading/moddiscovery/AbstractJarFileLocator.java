@@ -20,16 +20,17 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.CodeSigner;
@@ -47,15 +48,16 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public abstract class AbstractJarFileLocator implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
-    protected final Map<IModFile, FileSystem> modJars;
+    protected final Map<IModFile, FileSystemCache> modJars;
+    private final FMLConfig.FileNameCacheMode fileNameCacheMode = FMLConfig.fileNameCacheMode();
 
     public AbstractJarFileLocator() {
         this.modJars = new HashMap<>();
     }
 
-    protected FileSystem createFileSystem(IModFile modFile) {
+    protected FileSystemCache createFileSystemCache(IModFile modFile) {
         try {
-            return FileSystems.newFileSystem(modFile.getFilePath(), modFile.getClass().getClassLoader());
+            return new FileSystemCache(modFile, fileNameCacheMode);
         } catch (ZipError | IOException e) {
             LOGGER.debug(SCAN,"Invalid JAR file {} - no filesystem created", modFile.getFilePath());
             return null;
@@ -67,13 +69,22 @@ public abstract class AbstractJarFileLocator implements IModLocator {
         if (path.length < 1) {
             throw new IllegalArgumentException("Missing path");
         }
-        return modJars.get(modFile).getPath("",path);
+        return modJars.get(modFile).getPath(path);
+    }
+
+    @Nullable
+    @Override
+    public Path findPathIfExists(IModFile modFile, String... path) {
+        if (path.length < 1) {
+            throw new IllegalArgumentException("Missing path");
+        }
+        return modJars.get(modFile).getPathIfExists(path);
     }
 
     @Override
     public void scanFile(final IModFile file, final Consumer<Path> pathConsumer) {
         LOGGER.debug(SCAN,"Scan started: {}", file);
-        FileSystem fs = modJars.get(file);
+        FileSystem fs = modJars.get(file).getFilesystem();
         fs.getRootDirectories().forEach(path -> {
             try (Stream<Path> files = Files.find(path, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
                 files.forEach(pathConsumer);

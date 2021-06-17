@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.loading;
 
 import com.electronwill.nightconfig.core.ConfigSpec;
+import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.ParsingException;
 import com.electronwill.nightconfig.core.io.WritingMode;
@@ -44,6 +45,7 @@ public class FMLConfig
         configSpec.define("maxThreads", -1);
         configSpec.define("versionCheck", Boolean.TRUE);
         configSpec.define("defaultConfigPath",  "defaultconfigs");
+        configSpec.defineEnum("fileNameCacheMode", FileNameCacheMode.BALANCE, EnumGetMethod.NAME_IGNORECASE);
     }
 
     private CommentedFileConfig configData;
@@ -80,6 +82,7 @@ public class FMLConfig
         LOGGER.trace(CORE, "Max threads for mod loading computed at {}", FMLConfig::loadingThreadCount);
         LOGGER.trace(CORE, "Version check is {}", FMLConfig::runVersionCheck);
         LOGGER.trace(CORE, "Default config paths at {}", FMLConfig::defaultConfigPath);
+        LOGGER.trace(CORE, "File name cache mode is {}", FMLConfig::fileNameCacheMode);
         FMLPaths.getOrCreateGameRelativePath(Paths.get(FMLConfig.defaultConfigPath()), "default config directory");
     }
 
@@ -99,5 +102,13 @@ public class FMLConfig
 
     public static String defaultConfigPath() {
         return INSTANCE.configData.<String>getOptional("defaultConfigPath").orElse("defaultconfigs");
+    }
+
+    public static FileNameCacheMode fileNameCacheMode() {
+        return INSTANCE.configData.getOptionalEnum("fileNameCacheMode", FileNameCacheMode.class).orElse(FileNameCacheMode.BALANCE);
+    }
+
+    public enum FileNameCacheMode {
+        DISABLE, BALANCE, FULL
     }
 }
