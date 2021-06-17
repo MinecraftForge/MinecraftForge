@@ -84,7 +84,7 @@
     @Nullable
     public ItemEntity func_71019_a(ItemStack p_71019_1_, boolean p_71019_2_) {
 -      return this.func_146097_a(p_71019_1_, false, p_71019_2_);
-+      return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, p_71019_1_, false);
++      return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, p_71019_1_, p_71019_2_);
     }
  
     @Nullable
