@@ -93,7 +93,7 @@ public class TickEvent extends Event
 
         public BlockEntityTickEvent(Phase phase, TileEntity blockEntity)
         {
-            super(Type.TILE_ENTITY, blockEntity.getLevel() instanceof ServerWorld ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
+            super(Type.BLOCK_ENTITY, blockEntity.getLevel() instanceof ServerWorld ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
             this.blockEntity = blockEntity;
         }
 
