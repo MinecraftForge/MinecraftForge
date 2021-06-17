@@ -23,11 +23,10 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import net.minecraft.client.Minecraft;
+import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ResourceLocationArgument;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -55,7 +54,14 @@ public class ClientCommandTest
         @Override
         public int run(CommandContext<ISuggestionProvider> commandContext)
         {
-            Minecraft.getInstance().player.sendMessage(new StringTextComponent("Input: " + commandContext.getArgument("block", ResourceLocation.class).toString()), Util.NIL_UUID);
+            CommandContext<CommandSource> context = (CommandContext<CommandSource>) (CommandContext<?>) commandContext;
+            context.getSource().sendSuccess(new StringTextComponent("Input: " + ResourceLocationArgument.getId(context, "block")), false);
+            context.getSource().sendSuccess(new StringTextComponent("Teams: " + context.getSource().getAllTeams()), false);
+            context.getSource().sendSuccess(new StringTextComponent("Players: " + context.getSource().getOnlinePlayerNames()), false);
+            context.getSource().sendSuccess(new StringTextComponent("First recipe: " + context.getSource().getRecipeNames().findFirst().get()), false);
+            context.getSource().sendSuccess(new StringTextComponent("Levels: " + context.getSource().levels()), false);
+            context.getSource().sendSuccess(
+                    new StringTextComponent("Dimension types using Registry Access: " + context.getSource().registryAccess().dimensionTypes().keySet()), false);
             return 0;
         }
     }

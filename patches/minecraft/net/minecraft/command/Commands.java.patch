@@ -25,11 +25,11 @@
           } catch (CommandException commandexception) {
              p_197059_1_.func_197021_a(commandexception.func_197003_a());
              return 0;
-@@ -276,6 +_,7 @@
+@@ -274,6 +_,7 @@
+             });
+             if (argumentbuilder.getCommand() != null) {
                 argumentbuilder.executes((p_197053_0_) -> {
++                  net.minecraft.client.Minecraft.func_71410_x().field_71439_g.func_71165_d(p_197053_0_.getInput());// FORGE Client Commands support for lan or single-player, see ForgeHooksClient
                    return 0;
                 });
-+               argumentbuilder.executes(null);// FORGE Client Commands support for lan or single-player, strips execution part, see ForgeHooksClient
              }
- 
-             if (argumentbuilder instanceof RequiredArgumentBuilder) {

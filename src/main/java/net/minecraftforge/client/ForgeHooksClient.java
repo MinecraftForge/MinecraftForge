@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MainWindow;
@@ -30,6 +31,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundEngine;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.ClientBossInfo;
 import net.minecraft.client.gui.FontRenderer;
@@ -835,29 +837,37 @@ public class ForgeHooksClient
     
     /**
      * Always try to execute the cached parsing of client message as a command.
-     * Requires execute field for commands received from the server to be null so that they aren't treated as client command's that do nothing.
+     * Requires that the execute field of the commands to be set to send to server so that they aren't treated as client command's that do nothing.
      * 
      * {@link net.minecraft.command.Commands#handleCommand(net.minecraft.command.CommandSource,String)} for reference
      * @param currentParse current state of the parser for the message
-     * @return true leaves the message to be sent to the server, false means it should be caught before {@link net.minecraft.client.gui.screen.ChatScreen#func_231161_c_(String)}
+     * @return false leaves the message to be sent to the server, true means it should be caught before {@link net.minecraft.client.gui.screen.ChatScreen#func_231161_c_(String)}
      */
-    public static boolean sendMessage(ParseResults<ISuggestionProvider> currentParse)
+    public static boolean sendMessage(String sendMessage)
     {
-        if (currentParse == null || currentParse.getReader().canRead()) return true;//Return early if parser fails
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        ClientCommandSource source = new ClientCommandSource(player, player.position(), player.getRotationVector(), player.getPermissionLevel(),
+                player.getName().getString(), player.getDisplayName(), player);
+
+        StringReader reader = new StringReader(sendMessage);
+
+        if (!reader.canRead() || reader.read() != '/')
+        {
+            return false;
+        }
+        ParseResults<ISuggestionProvider> currentParse = Minecraft.getInstance().getConnection().getCommands().parse(reader, source);
+
         try
         {
             currentParse.getContext().getDispatcher().execute(currentParse);
         }
         catch (CommandException execution)//Probably thrown by the command
         {
+            execution.printStackTrace();
             Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(execution.getComponent()).withStyle(TextFormatting.RED), Util.NIL_UUID);
         }
         catch (CommandSyntaxException syntax)//Usually thrown by the CommandDispatcher
         {
-            if (syntax.getType() == CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand())//This case for server commands and mistyped client commands alike
-            {
-                return true;//The server will have the final word on the validity of the command
-            }
             Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(TextComponentUtils.fromMessage(syntax.getRawMessage())).withStyle(TextFormatting.RED), Util.NIL_UUID);
             if (syntax.getInput() != null && syntax.getCursor() >= 0)
             {
@@ -884,7 +894,6 @@ public class ForgeHooksClient
             component.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, message));
             Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(component).withStyle(TextFormatting.RED), Util.NIL_UUID);
         }
-        Minecraft.getInstance().gui.getChat().addRecentChat(currentParse.getReader().getString());
-        return false;
+        return true;
     }
 }

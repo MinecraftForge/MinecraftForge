@@ -35,7 +35,7 @@
        if (!p_238654_2_.isEmpty()) {
           int i = 0;
  
-@@ -289,6 +_,8 @@
+@@ -289,9 +_,12 @@
     }
  
     public void func_231159_b_(String p_231159_1_, boolean p_231159_2_) {
@@ -44,6 +44,10 @@
        if (p_231159_2_) {
           this.field_230706_i_.field_71456_v.func_146158_b().func_146239_a(p_231159_1_);
        }
++      if (net.minecraftforge.client.ForgeHooksClient.sendMessage(p_231159_1_)) return;
+ 
+       this.field_230706_i_.field_71439_g.func_71165_d(p_231159_1_);
+    }
 @@ -302,10 +_,17 @@
        this.field_230712_o_ = p_231158_1_.field_71466_p;
        this.field_230708_k_ = p_231158_2_;
