@@ -107,6 +107,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="forge_world_type_test"
 [[mods]]
+    modId="codec_extra_test"
+[[mods]]
     modId="custom_sound_type_test"
 [[mods]]
     modId="item_modifier_test"
