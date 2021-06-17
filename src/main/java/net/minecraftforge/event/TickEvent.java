@@ -30,7 +30,7 @@ import net.minecraftforge.fml.LogicalSide;
 public class TickEvent extends Event
 {
     public enum Type {
-        WORLD, PLAYER, CLIENT, SERVER, RENDER, TILE_ENTITY;
+        WORLD, PLAYER, CLIENT, SERVER, RENDER, BLOCK_ENTITY;
     }
 
     public enum Phase {

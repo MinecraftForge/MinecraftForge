@@ -19,12 +19,12 @@
 
 package net.minecraftforge.network;
 
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-import com.google.common.collect.ImmutableMap;
-import com.mojang.brigadier.tree.RootCommandNode;
+import javax.annotation.Nonnull;
 
 import io.netty.channel.ChannelHandler;
 import net.minecraft.command.ISuggestionProvider;
@@ -37,6 +37,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.collect.ImmutableMap;
+import com.mojang.brigadier.tree.RootCommandNode;
+
 /**
  * A filter for network packets, used to filter/modify parts of vanilla network messages that
  * will cause errors or warnings on vanilla clients, for example entity attributes that are added by Forge or mods.
@@ -44,6 +50,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 @ChannelHandler.Sharable
 public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
 {
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public VanillaConnectionNetworkFilter()
     {
         super(
@@ -64,6 +73,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      * Filter for SEntityPropertiesPacket. Filters out any entity attributes that are not in the "minecraft" namespace.
      * A vanilla client would ignore these with an error log.
      */
+    @Nonnull
     private static SEntityPropertiesPacket filterEntityProperties(SEntityPropertiesPacket msg)
     {
         SEntityPropertiesPacket newPacket = new SEntityPropertiesPacket(msg.getEntityId(), Collections.emptyList());
@@ -80,6 +90,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      * Filter for SCommandListPacket. Uses {@link CommandTreeCleaner} to filter out any ArgumentTypes that are not in the "minecraft" or "brigadier" namespace.
      * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
      */
+    @Nonnull
     private static SCommandListPacket filterCommandList(SCommandListPacket packet)
     {
         RootCommandNode<ISuggestionProvider> root = packet.getRoot();
