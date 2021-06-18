@@ -51,6 +51,7 @@ import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.CORE;
@@ -280,7 +281,16 @@ public class ModLoader
                     modFile.getFilePath(),
                     containers.size(), containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().collect(Collectors.toList()),
                     modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList()));
-            loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
+            List<String> missing = containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted()
+                    .filter(((Predicate<? super String>)modInfoMap.values().stream().map(IModInfo::getModId).sorted().collect(Collectors.toList())::contains).negate())
+                    .collect(Collectors.toList());
+            System.out.println("MISSING CONTAINERS " + missing);
+            missing = modInfoMap.values().stream().map(IModInfo::getModId).sorted()
+                    .filter(((Predicate<? super String>)containers.stream().map(c -> c != null ? c.getModId() : "(null)").sorted().collect(Collectors.toSet())::contains).negate())
+                    .collect(Collectors.toList());
+            System.out.println("MISSING CONTAINERS THE SECOND " + missing);
+
+                        loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
         }
         // remove errored mod containers
         return containers.stream().filter(mc -> mc.modLoadingStage != ModLoadingStage.ERROR).collect(Collectors.toList());
