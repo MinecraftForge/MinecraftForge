@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -45,6 +46,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
 
 public class MinecraftForgeClient
 {
@@ -63,14 +65,15 @@ public class MinecraftForgeClient
     }
 
     private static BitSet stencilBits = new BitSet(8);
+
     static
     {
-        stencilBits.set(0,8);
+        stencilBits.set(0, 8);
     }
 
     /**
      * Reserve a stencil bit for use in rendering
-     *
+     * <p>
      * Note: you must check the Framebuffer you are working with to
      * determine if stencil bits are enabled on it before use.
      *
@@ -100,24 +103,28 @@ public class MinecraftForgeClient
     }
 
     private static final LoadingCache<Pair<World, BlockPos>, Optional<ChunkRenderCache>> regionCache = CacheBuilder.newBuilder()
-        .maximumSize(500)
-        .concurrencyLevel(5)
-        .expireAfterAccess(1, TimeUnit.SECONDS)
-        .build(new CacheLoader<Pair<World, BlockPos>, Optional<ChunkRenderCache>>()
-        {
-            @Override
-            public Optional<ChunkRenderCache> load(Pair<World, BlockPos> key)
+            .maximumSize(500)
+            .concurrencyLevel(5)
+            .expireAfterAccess(1, TimeUnit.SECONDS)
+            .build(new CacheLoader<Pair<World, BlockPos>, Optional<ChunkRenderCache>>()
             {
-                return Optional.ofNullable(ChunkRenderCache.createIfNotEmpty(key.getLeft(), key.getRight().offset(-1, -1, -1), key.getRight().offset(16, 16, 16), 1));
-            }
-        });
+                @Override
+                public Optional<ChunkRenderCache> load(Pair<World, BlockPos> key)
+                {
+                    return Optional.ofNullable(ChunkRenderCache.createIfNotEmpty(key.getLeft(), key.getRight().offset(-1, -1, -1), key.getRight().offset(16, 16, 16), 1));
+                }
+            });
 
     public static void onRebuildChunk(World world, BlockPos position, ChunkRenderCache cache)
     {
         if (cache == null)
+        {
             regionCache.invalidate(Pair.of(world, position));
+        }
         else
+        {
             regionCache.put(Pair.of(world, position), Optional.of(cache));
+        }
     }
 
     @Nullable
@@ -141,6 +148,7 @@ public class MinecraftForgeClient
     }
 
     private static HashMap<ResourceLocation, Supplier<NativeImage>> bufferedImageSuppliers = new HashMap<ResourceLocation, Supplier<NativeImage>>();
+
     public static void registerImageLayerSupplier(ResourceLocation resourceLocation, Supplier<NativeImage> supplier)
     {
         bufferedImageSuppliers.put(resourceLocation, supplier);
@@ -151,9 +159,25 @@ public class MinecraftForgeClient
     {
         Supplier<NativeImage> supplier = bufferedImageSuppliers.get(resourceLocation);
         if (supplier != null)
+        {
             return supplier.get();
+        }
 
         IResource iresource1 = resourceManager.getResource(resourceLocation);
         return NativeImage.read(iresource1.getInputStream());
     }
+
+    private static final Map<ResourceLocation, ITextureAtlasSpriteLoader> textureAtlasSpriteLoaders = new HashMap<>();
+
+    public static void registerTextureAtlasSpriteLoader(ResourceLocation name, ITextureAtlasSpriteLoader loader)
+    {
+        textureAtlasSpriteLoaders.put(name, loader);
+    }
+
+    @Nullable
+    public static ITextureAtlasSpriteLoader getTextureAtlasSpriteLoader(ResourceLocation name)
+    {
+        return textureAtlasSpriteLoaders.get(name);
+    }
+
 }
