@@ -21,6 +21,8 @@ package net.minecraftforge.debug.client;
 
 import java.util.Random;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -67,6 +69,7 @@ public class CustomTASTest
     private static class TasLoader implements ITextureAtlasSpriteLoader
     {
         @Override
+        @Nonnull
         public TextureAtlasSprite load(AtlasTexture atlas, IResourceManager resourceManager, TextureAtlasSprite.Info textureInfo, IResource resource, int atlasWidth, int atlasHeight, int spriteX, int spriteY, int mipmapLevel, NativeImage image)
         {
             return new TextureAtlasSprite(

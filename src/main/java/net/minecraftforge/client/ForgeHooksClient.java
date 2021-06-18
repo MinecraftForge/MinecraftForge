@@ -826,6 +826,7 @@ public class ForgeHooksClient
         return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
     }
 
+    @Nullable
     public static TextureAtlasSprite loadTextureAtlasSprite(
             AtlasTexture atlasTexture,
             IResourceManager resourceManager, TextureAtlasSprite.Info textureInfo,

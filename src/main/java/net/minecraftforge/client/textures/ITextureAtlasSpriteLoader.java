@@ -19,6 +19,8 @@
 
 package net.minecraftforge.client.textures;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -44,6 +46,7 @@ public interface ITextureAtlasSpriteLoader
     /**
      * Load a TextureAtlasSprite for the given resource.
      */
+    @Nonnull
     TextureAtlasSprite load(
             AtlasTexture atlas,
             IResourceManager resourceManager, TextureAtlasSprite.Info textureInfo,
