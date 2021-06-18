@@ -23,15 +23,13 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.network.ForgeNetwork;
+import net.minecraftforge.event.TickEvent;
 
 public class BasicEventHooks
 {
@@ -120,17 +118,5 @@ public class BasicEventHooks
     public static void onPostServerTick()
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END));
-    }
-    
-    public static void onPreBlockEntityTick(TileEntity blockEntity)
-    {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.BlockEntityTickEvent(TickEvent.Phase.START, blockEntity));
-    }
-
-    public static void onPostBlockEntityTick(TileEntity blockEntity)
-    {
-        if (blockEntity.getLevel() != null)
-            ForgeNetwork.sendBlockEntityCapabilities(blockEntity, false);
-        MinecraftForge.EVENT_BUS.post(new TickEvent.BlockEntityTickEvent(TickEvent.Phase.END, blockEntity));
     }
 }
