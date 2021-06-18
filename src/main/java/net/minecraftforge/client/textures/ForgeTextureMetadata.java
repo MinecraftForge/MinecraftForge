@@ -41,17 +41,6 @@ public final class ForgeTextureMetadata
         return loader;
     }
 
-    @Nullable
-    public TextureAtlasSprite loadTextureAtlasSprite(
-            IResourceManager resourceManager, TextureAtlasSprite.Info textureInfo,
-            IResource resource,
-            int atlasWidth, int atlasHeight,
-            int spriteX, int spriteY, int mipmapLevel
-    )
-    {
-        return this.loader == null ? null : loader.load(resourceManager, textureInfo, resource, atlasWidth, atlasHeight, spriteX, spriteY, mipmapLevel);
-    }
-
     private static final class Serializer implements IMetadataSectionSerializer<ForgeTextureMetadata>
     {
 

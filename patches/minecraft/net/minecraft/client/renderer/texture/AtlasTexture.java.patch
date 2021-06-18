@@ -26,20 +26,11 @@
        if (j1 < p_229220_4_) {
           field_147635_d.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.field_229214_j_, p_229220_4_, j1, i1);
           k1 = j1;
-@@ -154,7 +_,7 @@
-                   }
- 
-                   Pair<Integer, Integer> pair = animationmetadatasection.func_225641_a_(pngsizeinfo.field_188533_a, pngsizeinfo.field_188534_b);
--                  textureatlassprite$info = new TextureAtlasSprite.Info(resourcelocation, pair.getFirst(), pair.getSecond(), animationmetadatasection);
-+                  textureatlassprite$info = new TextureAtlasSprite.Info(resourcelocation, pair.getFirst(), pair.getSecond(), animationmetadatasection, net.minecraftforge.client.textures.ForgeTextureMetadata.forResource(iresource));
-                } catch (RuntimeException runtimeexception) {
-                   field_147635_d.error("Unable to parse metadata from {} : {}", resourcelocation1, runtimeexception);
-                   return;
 @@ -199,6 +_,8 @@
        ResourceLocation resourcelocation = this.func_195420_b(p_229218_2_.func_229248_a_());
  
        try (IResource iresource = p_229218_1_.func_199002_a(resourcelocation)) {
-+         TextureAtlasSprite customSprite = p_229218_2_.forgeData().loadTextureAtlasSprite(p_229218_1_, p_229218_2_, iresource, p_229218_3_, p_229218_4_, p_229218_6_, p_229218_7_, p_229218_5_);
++         TextureAtlasSprite customSprite = net.minecraftforge.client.ForgeHooksClient.loadTextureAtlasSprite(p_229218_1_, p_229218_2_, iresource, p_229218_3_, p_229218_4_, p_229218_6_, p_229218_7_, p_229218_5_);
 +         if (customSprite != null) return customSprite;
           NativeImage nativeimage = NativeImage.func_195713_a(iresource.func_199027_b());
           return new TextureAtlasSprite(this, p_229218_2_, p_229218_5_, p_229218_3_, p_229218_4_, p_229218_6_, p_229218_7_, nativeimage);

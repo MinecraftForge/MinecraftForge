@@ -61,6 +61,8 @@ import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.MovementInput;
@@ -84,6 +86,8 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.textures.ForgeTextureMetadata;
+import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.TransformationHelper;
@@ -822,4 +826,17 @@ public class ForgeHooksClient
     {
         return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
     }
+
+    @Nullable
+    public static TextureAtlasSprite loadTextureAtlasSprite(
+            IResourceManager resourceManager, TextureAtlasSprite.Info textureInfo,
+            IResource resource,
+            int atlasWidth, int atlasHeight,
+            int spriteX, int spriteY, int mipmapLevel
+    )
+    {
+        ITextureAtlasSpriteLoader loader = ForgeTextureMetadata.forResource(resource).getLoader();
+        return loader == null ? null : loader.load(resourceManager, textureInfo, resource, atlasWidth, atlasHeight, spriteX, spriteY, mipmapLevel);
+    }
+
 }
