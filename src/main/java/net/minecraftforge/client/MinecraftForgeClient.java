@@ -162,6 +162,9 @@ public class MinecraftForgeClient
 
     private static final Map<ResourceLocation, ITextureAtlasSpriteLoader> textureAtlasSpriteLoaders = new ConcurrentHashMap<>();
 
+    /**
+     * Register a custom ITextureAtlasSprite loader.
+     */
     public static void registerTextureAtlasSpriteLoader(ResourceLocation name, ITextureAtlasSpriteLoader loader)
     {
         textureAtlasSpriteLoaders.put(name, loader);
