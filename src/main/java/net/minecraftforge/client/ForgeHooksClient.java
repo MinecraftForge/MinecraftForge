@@ -863,7 +863,6 @@ public class ForgeHooksClient
         }
         catch (CommandException execution)//Probably thrown by the command
         {
-            execution.printStackTrace();
             Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(execution.getComponent()).withStyle(TextFormatting.RED), Util.NIL_UUID);
         }
         catch (CommandSyntaxException syntax)//Usually thrown by the CommandDispatcher
