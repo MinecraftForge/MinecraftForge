@@ -23,15 +23,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.fluids.capability.templates.FluidTankItem;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * A simple fluid container, to replace the functionality of the old FluidContainerRegistry and IFluidContainerItem.
- * This fluid container may be set so that is can only completely filled or empty. (binary)
- * It may also be set so that it gets consumed when it is drained. (consumable)
+ * A simple fluid container.
  */
 public class ItemFluidContainer extends Item
 {
@@ -49,6 +48,6 @@ public class ItemFluidContainer extends Item
     @Override
     public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable CompoundNBT nbt)
     {
-        return new FluidHandlerItemStack(stack, capacity);
+        return new FluidTankItem(stack, capacity);
     }
 }

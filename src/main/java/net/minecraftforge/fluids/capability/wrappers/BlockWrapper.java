@@ -29,8 +29,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.templates.VoidFluidHandler;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
 /**
  * Wrapper around any block, only accounts for fluid placement, otherwise the block acts a void.
  * If the block in question inherits from the default Vanilla or Forge implementations,

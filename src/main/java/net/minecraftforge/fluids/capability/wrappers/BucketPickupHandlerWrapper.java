@@ -28,13 +28,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.fluids.capability.IFluidHandlerBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
-
-public class BucketPickupHandlerWrapper implements IFluidHandler
+public class BucketPickupHandlerWrapper implements IFluidHandlerBlock
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
