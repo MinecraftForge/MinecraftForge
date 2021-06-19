@@ -124,3 +124,5 @@ license="LGPL v2.1"
     modId="entity_teleport_event_test"
 [[mods]]
     modId="text_linear_filtering_test"
+[[mods]]
+    modId="custom_respawn_test"
