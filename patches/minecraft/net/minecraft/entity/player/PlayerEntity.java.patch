@@ -257,17 +257,15 @@
        super.func_213366_dy();
        if (this.field_70170_p instanceof ServerWorld && p_225652_2_) {
           ((ServerWorld)this.field_70170_p).func_72854_c();
-@@ -1242,8 +_,8 @@
-          }
- 
-          return optional;
--      } else if (block instanceof BedBlock && BedBlock.func_235330_a_(p_242374_0_)) {
--         return BedBlock.func_242652_a(EntityType.field_200729_aH, p_242374_0_, p_242374_1_, p_242374_2_);
-+      } else if (blockstate.isBed(p_242374_0_, p_242374_1_, null) && BedBlock.func_235330_a_(p_242374_0_)) {
-+         return blockstate.getBedSpawnPosition(EntityType.field_200729_aH, p_242374_0_, p_242374_1_, p_242374_2_, null);
+@@ -1245,7 +_,7 @@
+       } else if (block instanceof BedBlock && BedBlock.func_235330_a_(p_242374_0_)) {
+          return BedBlock.func_242652_a(EntityType.field_200729_aH, p_242374_0_, p_242374_1_, p_242374_2_);
        } else if (!p_242374_3_) {
-          return Optional.empty();
+-         return Optional.empty();
++         return blockstate.getRespawnPosition(EntityType.field_200729_aH, p_242374_0_, p_242374_1_, p_242374_2_, null);
        } else {
+          boolean flag = block.func_181623_g();
+          boolean flag1 = p_242374_0_.func_180495_p(p_242374_1_.func_177984_a()).func_177230_c().func_181623_g();
 @@ -1425,6 +_,7 @@
  
     public boolean func_225503_b_(float p_225503_1_, float p_225503_2_) {
