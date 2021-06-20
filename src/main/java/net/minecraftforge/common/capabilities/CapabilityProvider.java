@@ -117,13 +117,4 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         final CapabilityDispatcher disp = getCapabilities();
         return !valid || disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);
     }
-
-    /**
-     * @deprecated internal use only
-     */
-    @Deprecated
-    public final void invalidateCapsAccess() {
-        invalidateCaps();
-    }
-
 }
