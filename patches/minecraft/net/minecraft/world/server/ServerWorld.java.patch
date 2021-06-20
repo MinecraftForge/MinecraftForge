@@ -157,7 +157,7 @@
 +            enderdragonpartentity.remove(keepData);
           }
        }
-+      p_217484_1_.remove(keepData);
++      if (!keepData) p_217484_1_.invalidateCapsAccess();
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
