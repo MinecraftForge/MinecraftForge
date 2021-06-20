@@ -32,7 +32,7 @@
     public boolean func_177556_c() {
        return this.field_177566_c.func_177556_c();
     }
-@@ -47,8 +_,16 @@
+@@ -47,8 +_,21 @@
        return this.field_177566_c.func_177554_e();
     }
  
@@ -46,6 +46,11 @@
 +
 +   public IBakedModel handlePerspective(net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType transformType, com.mojang.blaze3d.matrix.MatrixStack matrixStack) {
 +      return this.field_177566_c.handlePerspective(transformType, matrixStack);
++   }
++
++   @Override
++   public net.minecraftforge.client.model.data.IModelData getModelData(net.minecraft.world.IBlockDisplayReader world, net.minecraft.util.math.BlockPos pos, BlockState state, net.minecraftforge.client.model.data.IModelData tileData) {
++      return this.field_177566_c.getModelData(world, pos, state, tileData);
     }
  
     public ItemOverrideList func_188617_f() {
