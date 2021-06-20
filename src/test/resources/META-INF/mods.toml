@@ -123,8 +123,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="entity_teleport_event_test"
 [[mods]]
-    modId="expanded_elytra_flight_test"
-[[mods]]
     modId="text_linear_filtering_test"
 [[mods]]
     modId="expanded_elytra_flight_test"
