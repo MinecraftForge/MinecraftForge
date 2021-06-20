@@ -467,6 +467,10 @@ public class PlayerEvent extends LivingEvent
         private final IRecipe<?> recipe;
 
         // TODO 1.17 REMOVE
+        /**
+         * Use the constructor that takes an IRecipe, and pass null if it's unavailable for your use case.
+         */
+        @Deprecated
         public ItemCraftedEvent(PlayerEntity player, @Nonnull ItemStack crafting, IInventory craftMatrix)
         {
             this(player, crafting, craftMatrix, null);
@@ -499,11 +503,12 @@ public class PlayerEvent extends LivingEvent
         }
 
         /**
-         * @return Teturns the recipe that was used to craft the item. This can be null in case no
+         * @return Returns the recipe that was used to craft the item. This can be null in case no
          * particular recipe was used, or the recipe is unknown.
          */
         @Nullable
-        public IRecipe<?> getRecipe() {
+        public IRecipe<?> getRecipe()
+        {
             return recipe;
         }
     }
