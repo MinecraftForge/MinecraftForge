@@ -128,7 +128,7 @@ public class ClientHooks
             if (fmlver > FMLNetworkConstants.FMLNETVERSION) {
                 extraReason = "fml.menu.multiplayer.clientoutdated";
             }
-            target.forgeData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason);
+            target.forgeData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason, packet.getForgeData().isTruncated());
         } else {
             target.forgeData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(),0, null);
         }
@@ -153,6 +153,10 @@ public class ClientHooks
                     } else {
                         tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.incompatible");
                     }
+                }
+                if (target.forgeData.truncated)
+                {
+                    tooltip += "\n" + ForgeI18n.parseMessage("fml.menu.multiplayer.truncated");
                 }
                 break;
             case "VANILLA":

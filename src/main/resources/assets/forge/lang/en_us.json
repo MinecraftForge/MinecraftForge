@@ -26,6 +26,7 @@
   "fml.menu.multiplayer.compatible":"Compatible FML modded server\n{0,choice,1#1 mod|1<{0} mods} present",
   "fml.menu.multiplayer.incompatible":"Incompatible FML modded server",
   "fml.menu.multiplayer.incompatible.extra":"Incompatible FML modded server\n{0}",
+  "fml.menu.multiplayer.truncated":"Data may be inaccurate due to protocol size limits.",
   "fml.menu.multiplayer.vanilla":"Vanilla server",
   "fml.menu.multiplayer.vanilla.incompatible":"Incompatible Vanilla server",
   "fml.menu.multiplayer.unknown":"Unknown server {0}",

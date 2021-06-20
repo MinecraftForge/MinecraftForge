@@ -63,10 +63,15 @@ import static net.minecraftforge.fml.network.FMLNetworkConstants.NETWORK;
  */
 public class FMLStatusPing {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final int CHANNEL_TRUNCATE_LIMIT = 150;
+    private static final int MOD_TRUNCATE_LIMIT = 150;
+    private static volatile boolean warnedAboutTruncation = false;
 
     private transient Map<ResourceLocation, Pair<String, Boolean>> channels;
     private transient Map<String, String> mods;
     private transient int fmlNetworkVer;
+    private transient boolean truncated;
+
     public FMLStatusPing() {
         this.channels = NetworkRegistry.buildChannelVersionsForListPing();
         this.mods = new HashMap<>();
@@ -74,12 +79,14 @@ public class FMLStatusPing {
                     mods.put(modid, mc.getCustomExtension(ExtensionPoint.DISPLAYTEST).
                             map(Pair::getLeft).map(Supplier::get).orElse(FMLNetworkConstants.IGNORESERVERONLY)));
         this.fmlNetworkVer = FMLNetworkConstants.FMLNETVERSION;
+        this.truncated = false;
     }
 
-    private FMLStatusPing(Map<ResourceLocation, Pair<String, Boolean>> deserialized, Map<String,String> modMarkers, int fmlNetVer) {
+    private FMLStatusPing(Map<ResourceLocation, Pair<String, Boolean>> deserialized, Map<String,String> modMarkers, int fmlNetVer, boolean truncated) {
         this.channels = ImmutableMap.copyOf(deserialized);
         this.mods = modMarkers;
         this.fmlNetworkVer = fmlNetVer;
+        this.truncated = truncated;
     }
 
     public static class Serializer {
@@ -96,7 +103,8 @@ public class FMLStatusPing {
                         collect(Collectors.toMap(jo -> JSONUtils.getAsString(jo, "modId"), jo->JSONUtils.getAsString(jo, "modmarker")));
 
                 final int remoteFMLVersion = JSONUtils.getAsInt(forgeData, "fmlNetworkVersion");
-                return new FMLStatusPing(channels, mods, remoteFMLVersion);
+                final boolean truncated = JSONUtils.getAsBoolean(forgeData, "truncated", false);
+                return new FMLStatusPing(channels, mods, remoteFMLVersion, truncated);
             } catch (JsonSyntaxException e) {
                 LOGGER.debug(NETWORK, "Encountered an error parsing status ping data", e);
                 return null;
@@ -106,7 +114,17 @@ public class FMLStatusPing {
         public static JsonObject serialize(FMLStatusPing forgeData, JsonSerializationContext ctx) {
             JsonObject obj = new JsonObject();
             JsonArray channels = new JsonArray();
-            forgeData.channels.forEach((namespace, version) -> {
+            boolean truncated = forgeData.channels.size() > CHANNEL_TRUNCATE_LIMIT || forgeData.mods.size() > MOD_TRUNCATE_LIMIT;
+            if (truncated && !warnedAboutTruncation)
+            {
+                warnedAboutTruncation = true;
+                LOGGER.warn("Heuristically truncating mod and/or network channel list in server status ping packet. Compatibility report " +
+                        "in the multiplayer screen may be inaccurate.");
+            }
+
+            forgeData.channels.entrySet().stream().limit(CHANNEL_TRUNCATE_LIMIT).forEach(entry -> {
+                ResourceLocation namespace = entry.getKey();
+                Pair<String, Boolean> version = entry.getValue();
                 JsonObject mi = new JsonObject();
                 mi.addProperty("res", namespace.toString());
                 mi.addProperty("version", version.getLeft());
@@ -117,7 +135,9 @@ public class FMLStatusPing {
             obj.add("channels", channels);
 
             JsonArray modTestValues = new JsonArray();
-            forgeData.mods.forEach((modId, value) -> {
+            forgeData.mods.entrySet().stream().limit(MOD_TRUNCATE_LIMIT).forEach(entry -> {
+                String modId = entry.getKey();
+                String value = entry.getValue();
                 JsonObject mi = new JsonObject();
                 mi.addProperty("modId", modId);
                 mi.addProperty("modmarker", value);
@@ -125,6 +145,7 @@ public class FMLStatusPing {
             });
             obj.add("mods", modTestValues);
             obj.addProperty("fmlNetworkVersion", forgeData.fmlNetworkVer);
+            obj.addProperty("truncated", truncated);
             return obj;
         }
     }
@@ -141,4 +162,8 @@ public class FMLStatusPing {
         return fmlNetworkVer;
     }
 
+    public boolean isTruncated()
+    {
+        return truncated;
+    }
 }
