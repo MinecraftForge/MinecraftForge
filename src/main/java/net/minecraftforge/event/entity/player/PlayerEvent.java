@@ -25,6 +25,7 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
@@ -462,11 +463,28 @@ public class PlayerEvent extends LivingEvent
         @Nonnull
         private final ItemStack crafting;
         private final IInventory craftMatrix;
+        @Nullable
+        private final IRecipe<?> recipe;
+
+        // TODO 1.17 REMOVE
         public ItemCraftedEvent(PlayerEntity player, @Nonnull ItemStack crafting, IInventory craftMatrix)
+        {
+            this(player, crafting, craftMatrix, null);
+        }
+
+        /**
+         * Constructs an event to notify listeners about an item that was crafted by a player.
+         * @param player The player that crafted the item.
+         * @param crafting The item that was crafted.
+         * @param craftMatrix The crafting inventory that resulted in the item being crafted.
+         * @param recipe The registered recipe that was used to craft the given item (optional).
+         */
+        public ItemCraftedEvent(PlayerEntity player, @Nonnull ItemStack crafting, IInventory craftMatrix, @Nullable IRecipe<?> recipe)
         {
             super(player);
             this.crafting = crafting;
             this.craftMatrix = craftMatrix;
+            this.recipe = recipe;
         }
 
         @Nonnull
@@ -478,6 +496,15 @@ public class PlayerEvent extends LivingEvent
         public IInventory getInventory()
         {
             return this.craftMatrix;
+        }
+
+        /**
+         * @return Teturns the recipe that was used to craft the item. This can be null in case no
+         * particular recipe was used, or the recipe is unknown.
+         */
+        @Nullable
+        public IRecipe<?> getRecipe() {
+            return recipe;
         }
     }
 
