@@ -1,0 +1,23 @@
+--- a/net/minecraft/entity/ai/attributes/ModifiableAttributeInstance.java
++++ b/net/minecraft/entity/ai/attributes/ModifiableAttributeInstance.java
+@@ -138,17 +_,17 @@
+       double d0 = this.func_111125_b();
+ 
+       for(AttributeModifier attributemodifier : this.func_220370_b(AttributeModifier.Operation.ADDITION)) {
+-         d0 += attributemodifier.func_111164_d();
++         d0 = this.field_111136_b.calculateAddition(d0, attributemodifier.func_111164_d());
+       }
+ 
+       double d1 = d0;
+ 
+       for(AttributeModifier attributemodifier1 : this.func_220370_b(AttributeModifier.Operation.MULTIPLY_BASE)) {
+-         d1 += d0 * attributemodifier1.func_111164_d();
++         d1 = this.field_111136_b.calculateMultiplyBase(d0, d1, attributemodifier1.func_111164_d());
+       }
+ 
+       for(AttributeModifier attributemodifier2 : this.func_220370_b(AttributeModifier.Operation.MULTIPLY_TOTAL)) {
+-         d1 *= 1.0D + attributemodifier2.func_111164_d();
++         d1 = this.field_111136_b.calculateMultiplyTotal(d0, d1, attributemodifier2.func_111164_d());
+       }
+ 
+       return this.field_111136_b.func_111109_a(d1);
