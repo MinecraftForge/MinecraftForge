@@ -180,5 +180,8 @@
   "generic.fallFlyingSpeed": "Fall Flying Speed",
 
   "fluid.minecraft.milk": "Milk",
-  "fluid.minecraft.flowing_milk": "Milk"
+  "fluid.minecraft.flowing_milk": "Milk",
+
+  "attribute.modifier.enables": "Enables %s",
+  "attribute.modifier.disables": "Disables %s"
 }

@@ -200,6 +200,21 @@
           this.func_196085_b(this.func_77952_i());
        }
  
+@@ -622,10 +_,12 @@
+                   if (flag) {
+                      list.add((new StringTextComponent(" ")).func_230529_a_(new TranslationTextComponent("attribute.modifier.equals." + attributemodifier.func_220375_c().func_220371_a(), field_111284_a.format(d1), new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.DARK_GREEN));
+                   } else if (d0 > 0.0D) {
+-                     list.add((new TranslationTextComponent("attribute.modifier.plus." + attributemodifier.func_220375_c().func_220371_a(), field_111284_a.format(d1), new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.BLUE));
++                     if(entry.getKey() instanceof net.minecraftforge.entity.attributes.BooleanAttribute) list.add((new TranslationTextComponent("attribute.modifier.enables", new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.BLUE));
++                     else list.add((new TranslationTextComponent("attribute.modifier.plus." + attributemodifier.func_220375_c().func_220371_a(), field_111284_a.format(d1), new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.BLUE));
+                   } else if (d0 < 0.0D) {
+                      d1 = d1 * -1.0D;
+-                     list.add((new TranslationTextComponent("attribute.modifier.take." + attributemodifier.func_220375_c().func_220371_a(), field_111284_a.format(d1), new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.RED));
++                     if(entry.getKey() instanceof net.minecraftforge.entity.attributes.BooleanAttribute) list.add((new TranslationTextComponent("attribute.modifier.disables", new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.RED));
++                     else list.add((new TranslationTextComponent("attribute.modifier.take." + attributemodifier.func_220375_c().func_220371_a(), field_111284_a.format(d1), new TranslationTextComponent(entry.getKey().func_233754_c_()))).func_240699_a_(TextFormatting.RED));
+                   }
+                }
+             }
 @@ -673,6 +_,7 @@
           }
        }

@@ -36,6 +36,7 @@ import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootTableIdCondition;
+import net.minecraftforge.entity.attributes.BooleanAttribute;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -109,7 +110,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 5.0D, 0.0D, 1024.0D).setSyncable(true));
 
-    public static final RegistryObject<Attribute> FALL_FLIGHT = ATTRIBUTES.register("fall_flight", () -> new RangedAttribute("generic.fallFlight", 0.0D, 0.0D, 1.0D).setSyncable(true));
+    public static final RegistryObject<Attribute> FALL_FLIGHT = ATTRIBUTES.register("fall_flight", () -> new BooleanAttribute("generic.fallFlight", false).setSyncable(true));
     public static final RegistryObject<Attribute> FALL_FLYING_SPEED = ATTRIBUTES.register("fall_flying_speed", () -> new RangedAttribute("generic.fallFlyingSpeed", 0.0D, 0.0D, 1024.0D).setSyncable(true));
 
     private static boolean enableMilkFluid = false;

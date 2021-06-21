@@ -56,9 +56,11 @@ public class ExpandedElytraFlightTest
     static final double FLIGHT_ARMOR_MODIFIER_VALUE_ADDITION = 1.0D;
     static final double FLIGHT_EFFECT_MODIFIER_VALUE_ADDITION = 1.0D;
     static final double FLIGHT_ENCHANTMENT_MODIFIER_VALUE_ADDITION = 1.0D;
+
     static final double FLIGHT_SPEED_ARMOR_MODIFIER_VALUE_ADDITION = 1.0D;
     static final double FLIGHT_SPEED_EFFECT_MODIFIER_VALUE_ADDITION = 1.0D;
     static final double FLIGHT_SPEED_ENCHANTMENT_MODIFIER_VALUE_ADDITION = 1.0D;
+
     static final int FLIGHT_POTION_EFFECT_DURATION = 180 * 20;
 
     // Deferred Registers
@@ -69,6 +71,7 @@ public class ExpandedElytraFlightTest
 
     // Registry Utilities
     private static final String FLIGHT_EFFECT_MODIFIER_UUID_STRING = "53992b1d-4f7c-4479-a00b-f2fdf57dfcdf";
+    private static final String NO_FLIGHT_EFFECT_MODIFIER_UUID_STRING = "333764b4-2106-49b1-94fd-2362cb6e2d79";
     private static final String FLIGHT_SPEED_EFFECT_MODIFIER_UUID_STRING = "41fddd0b-1ff1-4f24-87a9-b3f23e420187";
     private static final EquipmentSlotType[] ARMOR_SLOTS = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
 
@@ -78,9 +81,18 @@ public class ExpandedElytraFlightTest
                     .addAttributeModifier(ForgeMod.FALL_FLIGHT.get(), FLIGHT_EFFECT_MODIFIER_UUID_STRING, FLIGHT_EFFECT_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.ADDITION)
     );
 
+    private static final RegistryObject<Effect> NO_FLIGHT_EFFECT = EFFECTS.register("no_flight",
+            () -> new FallFlightEffect(EffectType.HARMFUL, 0xFF0000)
+                    .addAttributeModifier(ForgeMod.FALL_FLIGHT.get(), NO_FLIGHT_EFFECT_MODIFIER_UUID_STRING, -FLIGHT_EFFECT_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.ADDITION)
+    );
+
     // Potions
     private static final RegistryObject<Potion> FLIGHT_POTION = POTIONS.register("flight",
             () -> new Potion(new EffectInstance(FLIGHT_EFFECT.get(), FLIGHT_POTION_EFFECT_DURATION))
+    );
+
+    private static final RegistryObject<Potion> NO_FLIGHT_POTION = POTIONS.register("no_flight",
+            () -> new Potion(new EffectInstance(NO_FLIGHT_EFFECT.get(), FLIGHT_POTION_EFFECT_DURATION))
     );
 
     // Enchantments
@@ -94,7 +106,10 @@ public class ExpandedElytraFlightTest
 
     // Items
     private static final RegistryObject<Item> FLIGHT_BOOTS = ITEMS.register("flight_boots",
-            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.FEET, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
+            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.FEET, true, FLIGHT_SPEED_ARMOR_MODIFIER_VALUE_ADDITION, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
+
+    private static final RegistryObject<Item> NO_FLIGHT_LEGGINGS = ITEMS.register("no_flight_leggings",
+            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.LEGS, false, 0, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
 
     public ExpandedElytraFlightTest()
     {
@@ -149,7 +164,7 @@ public class ExpandedElytraFlightTest
         public FallFlightEffect(EffectType effectType, int color)
         {
             super(effectType, color);
-            if(ENABLE_INTRINSIC_BOOST_FOR_EFFECT)
+            if(ENABLE_INTRINSIC_BOOST_FOR_EFFECT && effectType == EffectType.BENEFICIAL)
             {
                 this.addAttributeModifier(ForgeMod.FALL_FLYING_SPEED.get(), FLIGHT_SPEED_EFFECT_MODIFIER_UUID_STRING, FLIGHT_SPEED_EFFECT_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.ADDITION);
             }
@@ -175,11 +190,13 @@ public class ExpandedElytraFlightTest
     static class FlightArmorItem extends ArmorItem
     {
         private static final UUID[] ARMOR_MODIFIER_UUID_PER_SLOT = new UUID[]{UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"), UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150")};
-
         private final Multimap<Attribute, AttributeModifier> defaultModifiers = ArrayListMultimap.create(); // initialize as empty
-
-        public FlightArmorItem(IArmorMaterial armorMaterial, EquipmentSlotType slotType, Properties properties) {
+        private final boolean canFly;
+        private final double flySpeed;
+        public FlightArmorItem(IArmorMaterial armorMaterial, EquipmentSlotType slotType, boolean canFly, double flySpeedIn, Properties properties) {
             super(armorMaterial, slotType, properties);
+            this.canFly = canFly;
+            this.flySpeed = flySpeedIn;
         }
 
         @Override
@@ -190,10 +207,10 @@ public class ExpandedElytraFlightTest
                     Multimap<Attribute, AttributeModifier> oldAttributeModifiers = super.getDefaultAttributeModifiers(equipmentSlotType);
                     this.defaultModifiers.putAll(oldAttributeModifiers);
                     UUID uuid = ARMOR_MODIFIER_UUID_PER_SLOT[equipmentSlotType.getIndex()];
-                    this.defaultModifiers.put(ForgeMod.FALL_FLIGHT.get(), new AttributeModifier(uuid, "Armor fall flight modifier", FLIGHT_ARMOR_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.ADDITION));
-                    if(ENABLE_INTRINSIC_BOOST_FOR_ARMOR)
+                    this.defaultModifiers.put(ForgeMod.FALL_FLIGHT.get(), new AttributeModifier(uuid, "Armor fall flight modifier", this.canFly ? FLIGHT_ARMOR_MODIFIER_VALUE_ADDITION : -FLIGHT_ARMOR_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.ADDITION));
+                    if(ENABLE_INTRINSIC_BOOST_FOR_ARMOR && this.canFly && this.flySpeed > 0)
                     {
-                        this.defaultModifiers.put(ForgeMod.FALL_FLYING_SPEED.get(), new AttributeModifier(uuid, "Armor fall flight speed modifier", FLIGHT_SPEED_ARMOR_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.ADDITION));
+                        this.defaultModifiers.put(ForgeMod.FALL_FLYING_SPEED.get(), new AttributeModifier(uuid, "Armor fall flight speed modifier", this.flySpeed, AttributeModifier.Operation.ADDITION));
                     }
                 }
                 return this.defaultModifiers;
