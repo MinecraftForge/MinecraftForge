@@ -57,19 +57,19 @@ public class BooleanAttribute extends Attribute
         if(operation != AttributeModifier.Operation.MULTIPLY_TOTAL){
             if(operation == AttributeModifier.Operation.ADDITION){
                 if (modifierValue > 0.0D) {
-                    tooltipList.add((new TranslationTextComponent("attribute.modifier.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.forge.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
                 } else if (modifierValue < 0.0D) {
-                    tooltipList.add((new TranslationTextComponent("attribute.modifier.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.forge.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
                 }
             } else if(operation == AttributeModifier.Operation.MULTIPLY_BASE && player != null){
                 if(preMultiplyValue * modifierValue > 0){
-                    tooltipList.add((new TranslationTextComponent("attribute.modifier.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.forge.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
                 } else if(preMultiplyValue * modifierValue < 0){
-                    tooltipList.add((new TranslationTextComponent("attribute.modifier.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.forge.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
                 }
             }
         } else if(1.0D + modifierValue <= 0) {
-            tooltipList.add((new TranslationTextComponent("attribute.modifier.disables", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.DARK_RED));
+            tooltipList.add((new TranslationTextComponent("attribute.modifier.forge.disables", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.DARK_RED));
         }
     }
 
@@ -83,19 +83,19 @@ public class BooleanAttribute extends Attribute
         if(operation != AttributeModifier.Operation.MULTIPLY_TOTAL){
             if(operation == AttributeModifier.Operation.ADDITION){
                 if (modifierValue > 0.0D) {
-                    tooltipList.add((new TranslationTextComponent("attribute.modifier.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.forge.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
                 } else if (modifierValue < 0.0D) {
-                    tooltipList.add((new TranslationTextComponent("attribute.modifier.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.forge.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
                 }
             } else if(operation == AttributeModifier.Operation.MULTIPLY_BASE && player != null){
                 if(preMultiplyValue * modifierValue > 0){
-                    tooltipList.add((new TranslationTextComponent("attribute.modifier.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.forge.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
                 } else if(preMultiplyValue * modifierValue < 0){
-                    tooltipList.add((new TranslationTextComponent("attribute.modifier.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.forge.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
                 }
             }
         } else if(1.0D + modifierValue <= 0) {
-            tooltipList.add((new TranslationTextComponent("attribute.modifier.disables", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.DARK_RED));
+            tooltipList.add((new TranslationTextComponent("attribute.modifier.forge.disables", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.DARK_RED));
         }
     }
 
