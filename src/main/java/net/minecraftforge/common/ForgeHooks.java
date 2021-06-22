@@ -205,7 +205,6 @@ public class ForgeHooks
 
         if(chestplateStack.canElytraFly(living))
         {
-            boolean canFlyByChestplateTick = !doTickCheck || chestplateStack.elytraFlightTick(living, fallFlyingTicks);
             if(fallFlyingAttribute != null)
             {
                 double attributeValue = fallFlyingAttribute.getValue();
@@ -215,11 +214,11 @@ public class ForgeHooks
                 {
                     attributeValue += 1;
                 }
-                return attributeValue > 0 && canFlyByChestplateTick;
+                return attributeValue > 0 && (!doTickCheck || chestplateStack.elytraFlightTick(living, fallFlyingTicks));
             }
             else
             {
-                return canFlyByChestplateTick;
+                return !doTickCheck || chestplateStack.elytraFlightTick(living, fallFlyingTicks);
             }
         }
         else
