@@ -170,18 +170,19 @@
   "attribute.name.forge.nametag_distance": "Nametag Render Distance",
   "attribute.name.forge.entity_gravity": "Entity Gravity",
   "attribute.name.generic.reach_distance": "Reach Distance",
-  "attribute.name.generic.fall_flight": "Fall Flight",
-  "attribute.name.generic.fall_flying_speed": "Fall Flying Speed",
+  "attribute.name.forge.fall_flight": "Fall Flight",
+  "attribute.name.forge.fall_flying_speed": "Fall Flying Speed",
   "forge.swimSpeed": "Swim Speed",
   "forge.nameTagDistance": "Nametag Render Distance",
   "forge.entity_gravity": "Entity Gravity",
   "generic.reachDistance": "Reach Distance",
-  "generic.fallFlight": "Fall Flight",
-  "generic.fallFlyingSpeed": "Fall Flying Speed",
+  "forge.fallFlight": "Fall Flight",
+  "forge.fallFlyingSpeed": "Fall Flying Speed",
 
   "fluid.minecraft.milk": "Milk",
   "fluid.minecraft.flowing_milk": "Milk",
 
-  "attribute.modifier.enables": "Enables %s",
-  "attribute.modifier.disables": "Disables %s"
+  "attribute.modifier.forge.allows": "Allows %s",
+  "attribute.modifier.forge.denies": "Denies %s",
+  "attribute.modifier.forge.disables": "Disables %s"
 }

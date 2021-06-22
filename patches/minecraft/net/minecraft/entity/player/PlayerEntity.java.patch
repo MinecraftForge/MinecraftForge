@@ -281,7 +281,7 @@
        if (!this.field_70122_E && !this.func_184613_cA() && !this.func_70090_H() && !this.func_70644_a(Effects.field_188424_y)) {
           ItemStack itemstack = this.func_184582_a(EquipmentSlotType.CHEST);
 -         if (itemstack.func_77973_b() == Items.field_185160_cR && ElytraItem.func_185069_d(itemstack)) {
-+         if (itemstack.canElytraFly(this) || net.minecraftforge.common.ForgeHooks.canFallFly(this)) {
++         if (net.minecraftforge.common.ForgeHooks.canFallFly(this, itemstack, false, 0)) {
              this.func_226567_ej_();
              return true;
           }

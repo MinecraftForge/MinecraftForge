@@ -1,6 +1,16 @@
 package net.minecraftforge.common.extensions;
 
+import com.google.common.collect.Multimap;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public interface IForgeAttribute
 {
@@ -11,13 +21,42 @@ public interface IForgeAttribute
     }
 
     /**
-     * Determines whether or not this should be considered a boolean attribute
-     * Used by ItemStack#getTooltipLines and PotionUtils#addPotionTooltip to display boolean attribute modifier information to the client
-     * @return Whether or not this attribute is a boolean one
+     * Determines whether or not this should be considered a custom attribute
+     * Used by ItemStack#getTooltipLines and PotionUtils#addPotionTooltip to display custom attribute modifier information to the client
+     * @return Whether or not this attribute is a custom one
      */
-    default boolean isBooleanAttribute()
+    default boolean isCustom()
     {
         return false;
+    }
+
+    /**
+     * Called in ItemStack#getTooltipLines when this Attribute is considered a custom attribute by overriding isCustom to return true.
+     * Override this to handle custom tooltip logic for displaying attribute modifier information to the client for an ItemStack.
+     * @param stack The ItemStack to handle the tooltip for
+     * @param player The Player holding the ItemStack, if not null. Note that this would be the client since this method is called client-side.
+     * @param tooltipList The current List of tooltips. This is what you should be modifying.
+     * @param modifierMultimap The Multimap of Attribute-AttributeModifier for the ItemStack for a given EquipmentSlotType
+     * @param modifier The AttributeModifier to add a tooltip for
+     * @param slotType The EquipmentSlotType used to obtain the Attribute-AttributeModifier Multimap from the ItemStack
+     */
+    default void addCustomTooltipToItemStack(ItemStack stack, @Nullable PlayerEntity player, List<ITextComponent> tooltipList, Multimap<Attribute, AttributeModifier> modifierMultimap, AttributeModifier modifier, EquipmentSlotType slotType)
+    {
+
+    }
+
+    /**
+     * Called in PotionUtils#addPotionTooltip when this Attribute is considered a custom attribute by overriding isCustom to return true.
+     * Override this to handle custom tooltip logic for displaying attribute modifier information to the client for an ItemStack containing a Potion.
+     * @param stack The ItemStack containing a Potion to handle the tooltip for
+     * @param player The Player holding the ItemStack, if not null. Note that this would be the client since this method is called client-side.
+     * @param modifierList The List of Attribute-AttributeModifier pairings for the ItemStack containing a Potion
+     * @param tooltipList The current List of tooltips. This is what you should be modifying.
+     * @param modifier The AttributeModifier to add a tooltip for
+     */
+    default void addCustomTooltipToPotion(ItemStack stack, @Nullable PlayerEntity player, List<ITextComponent> tooltipList, List<Pair<Attribute, AttributeModifier>> modifierList, AttributeModifier modifier)
+    {
+
     }
 
     /**
@@ -28,7 +67,7 @@ public interface IForgeAttribute
      * @param modifierValueIn The value of an AttributeModifier
      * @return The ADDITION value calculated for the Attribute
      */
-    default double calculateAddition(double currentValueIn, double modifierValueIn)
+    default double calculateAdditionAndUpdateCurrent(double currentValueIn, double modifierValueIn)
     {
         return currentValueIn + modifierValueIn;
     }
@@ -42,7 +81,7 @@ public interface IForgeAttribute
      * @param modifierValueIn The value of an AttributeModifier
      * @return The MULTIPLY_BASE value calculated for the Attribute
      */
-    default double calculateMultiplyBase(double preMultiplyValueIn, double currentValueIn, double modifierValueIn)
+    default double calculateMultiplyBaseAndUpdateCurrent(double preMultiplyValueIn, double currentValueIn, double modifierValueIn)
     {
         return currentValueIn + (preMultiplyValueIn * modifierValueIn);
     }
@@ -56,7 +95,7 @@ public interface IForgeAttribute
      * @param modifierValueIn The value of an AttributeModifier
      * @return The MULTIPLY_TOTAL value calculated for the Attribute
      */
-    default double calculateMultiplyTotal(double preMultiplyValueIn, double currentValueIn, double modifierValueIn)
+    default double calculateMultiplyTotalAndUpdateCurrent(double preMultiplyValueIn, double currentValueIn, double modifierValueIn)
     {
         return currentValueIn * (1.0D + modifierValueIn);
     }

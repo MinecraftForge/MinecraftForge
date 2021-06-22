@@ -1,17 +1,12 @@
 --- a/net/minecraft/potion/PotionUtils.java
 +++ b/net/minecraft/potion/PotionUtils.java
-@@ -194,10 +_,12 @@
+@@ -193,7 +_,8 @@
+                d1 = attributemodifier2.func_111164_d() * 100.0D;
              }
  
-             if (d0 > 0.0D) {
--               p_185182_1_.add((new TranslationTextComponent("attribute.modifier.plus." + attributemodifier2.func_220375_c().func_220371_a(), ItemStack.field_111284_a.format(d1), new TranslationTextComponent(pair.getFirst().func_233754_c_()))).func_240699_a_(TextFormatting.BLUE));
-+               if(pair.getFirst().isBooleanAttribute()) p_185182_1_.add((new TranslationTextComponent("attribute.modifier.enables", new TranslationTextComponent(pair.getFirst().func_233754_c_()))).func_240699_a_(TextFormatting.BLUE));
-+               else p_185182_1_.add((new TranslationTextComponent("attribute.modifier.plus." + attributemodifier2.func_220375_c().func_220371_a(), ItemStack.field_111284_a.format(d1), new TranslationTextComponent(pair.getFirst().func_233754_c_()))).func_240699_a_(TextFormatting.BLUE));
+-            if (d0 > 0.0D) {
++            if(pair.getFirst().isCustom()) pair.getFirst().addCustomTooltipToPotion(p_185182_0_, net.minecraft.client.Minecraft.func_71410_x().field_71439_g, p_185182_1_, list1, attributemodifier2);
++            else if (d0 > 0.0D) {
+                p_185182_1_.add((new TranslationTextComponent("attribute.modifier.plus." + attributemodifier2.func_220375_c().func_220371_a(), ItemStack.field_111284_a.format(d1), new TranslationTextComponent(pair.getFirst().func_233754_c_()))).func_240699_a_(TextFormatting.BLUE));
              } else if (d0 < 0.0D) {
                 d1 = d1 * -1.0D;
--               p_185182_1_.add((new TranslationTextComponent("attribute.modifier.take." + attributemodifier2.func_220375_c().func_220371_a(), ItemStack.field_111284_a.format(d1), new TranslationTextComponent(pair.getFirst().func_233754_c_()))).func_240699_a_(TextFormatting.RED));
-+               if(pair.getFirst().isBooleanAttribute()) p_185182_1_.add((new TranslationTextComponent("attribute.modifier.disables", new TranslationTextComponent(pair.getFirst().func_233754_c_()))).func_240699_a_(TextFormatting.RED));
-+               else p_185182_1_.add((new TranslationTextComponent("attribute.modifier.take." + attributemodifier2.func_220375_c().func_220371_a(), ItemStack.field_111284_a.format(d1), new TranslationTextComponent(pair.getFirst().func_233754_c_()))).func_240699_a_(TextFormatting.RED));
-             }
-          }
-       }

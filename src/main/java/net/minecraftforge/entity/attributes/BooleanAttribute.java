@@ -19,53 +19,152 @@
 
 package net.minecraftforge.entity.attributes;
 
-import net.minecraft.entity.ai.attributes.RangedAttribute;
+import com.google.common.collect.Multimap;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
-public class BooleanAttribute extends RangedAttribute
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+
+public class BooleanAttribute extends Attribute
 {
 
     public BooleanAttribute(String descriptionId, boolean enabledByDefault)
     {
-        super(descriptionId, enabledByDefault ? 1 : 0, 0, 1);
+        super(descriptionId, enabledByDefault ? 1 : 0);
     }
 
     @Override
-    public double sanitizeValue(double valueIn)
-    {
-        return valueIn > 0 ? 1 : 0;
-    }
-
-    @Override
-    public boolean isBooleanAttribute() {
+    public boolean isCustom() {
         return true;
     }
 
-    /*
-    To reduce headache, every one of these calculations is treated as addition.
+    @Override
+    public void addCustomTooltipToItemStack(ItemStack stack, @Nullable PlayerEntity player, List<ITextComponent> tooltipList, Multimap<Attribute, AttributeModifier> modifierMultimap, AttributeModifier modifier, EquipmentSlotType slotType)
+    {
+        double preMultiplyValue = this.getPreMultiplyValue(player, modifierMultimap);
 
-    That is:
-        If the modifier has a value greater than 0, a value of 1 is added to the current value of the attribute.
-        If the modifier has a value less than 0, a value of 1 is subtracted from the current value of the attribute.
-        If the modifier has a value of 0, the current value of the attribute is unchanged.
+        double modifierValue = modifier.getAmount();
+        AttributeModifier.Operation operation = modifier.getOperation();
+        if(operation != AttributeModifier.Operation.MULTIPLY_TOTAL){
+            if(operation == AttributeModifier.Operation.ADDITION){
+                if (modifierValue > 0.0D) {
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
+                } else if (modifierValue < 0.0D) {
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
+                }
+            } else if(operation == AttributeModifier.Operation.MULTIPLY_BASE && player != null){
+                if(preMultiplyValue * modifierValue > 0){
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
+                } else if(preMultiplyValue * modifierValue < 0){
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
+                }
+            }
+        } else if(1.0D + modifierValue <= 0) {
+            tooltipList.add((new TranslationTextComponent("attribute.modifier.disables", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.DARK_RED));
+        }
+    }
 
-    This means that any two opposing modifier values cancel each other out.
+    @Override
+    public void addCustomTooltipToPotion(ItemStack stack, @Nullable PlayerEntity player, List<ITextComponent> tooltipList, List<Pair<Attribute, AttributeModifier>> modifierList, AttributeModifier modifier)
+    {
+        double preMultiplyValue = this.getPreMultiplyValue(player, modifierList);
+
+        double modifierValue = modifier.getAmount();
+        AttributeModifier.Operation operation = modifier.getOperation();
+        if(operation != AttributeModifier.Operation.MULTIPLY_TOTAL){
+            if(operation == AttributeModifier.Operation.ADDITION){
+                if (modifierValue > 0.0D) {
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
+                } else if (modifierValue < 0.0D) {
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
+                }
+            } else if(operation == AttributeModifier.Operation.MULTIPLY_BASE && player != null){
+                if(preMultiplyValue * modifierValue > 0){
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.allows", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.BLUE));
+                } else if(preMultiplyValue * modifierValue < 0){
+                    tooltipList.add((new TranslationTextComponent("attribute.modifier.denies", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.RED));
+                }
+            }
+        } else if(1.0D + modifierValue <= 0) {
+            tooltipList.add((new TranslationTextComponent("attribute.modifier.disables", new TranslationTextComponent(this.getDescriptionId()))).withStyle(TextFormatting.DARK_RED));
+        }
+    }
+
+    private double getPreMultiplyValue(@Nullable PlayerEntity player, Multimap<Attribute, AttributeModifier> modifierMultimap) {
+        double preMultiplyValue = 0;
+        if(player != null){
+            preMultiplyValue = player.getAttributeBaseValue(this);
+            if(!modifierMultimap.isEmpty()) {
+                for (Map.Entry<Attribute, AttributeModifier> entry : modifierMultimap.entries()) {
+                    if (entry.getKey() == this && entry.getValue().getOperation() == AttributeModifier.Operation.ADDITION) {
+                        preMultiplyValue = this.calculateAdditionAndUpdateCurrent(preMultiplyValue, entry.getValue().getAmount());
+                    }
+                }
+            }
+        }
+        return preMultiplyValue;
+    }
+
+    private double getPreMultiplyValue(@Nullable PlayerEntity player, List<Pair<Attribute, AttributeModifier>> modifierList) {
+        double preMultiplyValue = 0;
+        if(player != null){
+            preMultiplyValue = player.getAttributeBaseValue(this);
+            if(!modifierList.isEmpty()){
+                for(Pair<Attribute, AttributeModifier> pair : modifierList) {
+                    if (pair.getFirst() == this && pair.getSecond().getOperation() == AttributeModifier.Operation.ADDITION) {
+                        preMultiplyValue = this.calculateAdditionAndUpdateCurrent(preMultiplyValue, pair.getSecond().getAmount());
+                    }
+                }
+            }
+        }
+        return preMultiplyValue;
+    }
+
+    /**
+     * We can only add 1 if modifierValueIn is greater than 0 or subtract 1 if modifierValueIn is less than 0
+     * @param currentValueIn The current, non-sanitized value of the ModifiableAttributeInstance, during ADDITION operations
+     * @param modifierValueIn The value of an AttributeModifier
+     * @return The ADDITION value calculated for the Attribute
      */
-
     @Override
-    public double calculateAddition(double currentValueIn, double modifierValueIn)
+    public double calculateAdditionAndUpdateCurrent(double currentValueIn, double modifierValueIn)
     {
         return currentValueIn + (modifierValueIn > 0 ? 1 : modifierValueIn < 0 ? -1 : 0);
     }
 
+    /**
+     * We can only add 1 if (preMultiplyValueIn * modifierValueIn) is greater than 0 or subtract 1 if (preMultiplyValueIn + modifierValueIn) is less than 0
+     * @param preMultiplyValueIn The value of the ModifiableAttributeInstance, after all ADDITION operations but before any MULTIPLY operations
+     * @param currentValueIn The current, non-sanitized value of the ModifiableAttributeInstance
+     * @param modifierValueIn The value of an AttributeModifier
+     * @return The MULTIPLY_BASE value calculated for the Attribute
+     */
     @Override
-    public double calculateMultiplyBase(double preMultiplyValueIn, double currentValueIn, double modifierValueIn)
+    public double calculateMultiplyBaseAndUpdateCurrent(double preMultiplyValueIn, double currentValueIn, double modifierValueIn)
     {
-        return currentValueIn + (modifierValueIn > 0 ? 1 : modifierValueIn < 0 ? -1 : 0);
+        return currentValueIn + (preMultiplyValueIn * modifierValueIn > 0 ? 1 : preMultiplyValueIn * modifierValueIn < 0 ? -1 : 0);
     }
 
+    /**
+     * The value is only changed if (1.0D + modifierValueIn) is less than 0
+     * This function effectively gets the final say in whether or not this attribute is enabled due to potentially multiplying by 0
+     * @param preMultiplyValueIn The value of the ModifiableAttributeInstance, after all ADDITION operations but before any MULTIPLY operations
+     * @param currentValueIn The current, non-sanitized value of the ModifiableAttributeInstance
+     * @param modifierValueIn The value of an AttributeModifier
+     * @return The MULTIPLY_TOTAL value calculated for the Attribute
+     */
     @Override
-    public double calculateMultiplyTotal(double preMultiplyValueIn, double currentValueIn, double modifierValueIn)
+    public double calculateMultiplyTotalAndUpdateCurrent(double preMultiplyValueIn, double currentValueIn, double modifierValueIn)
     {
-        return currentValueIn + (modifierValueIn > 0 ? 1 : modifierValueIn < 0 ? -1 : 0);
+        return currentValueIn * (1.0D + modifierValueIn > 0 ? 1 : 0);
     }
 }

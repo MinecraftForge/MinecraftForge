@@ -110,8 +110,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 5.0D, 0.0D, 1024.0D).setSyncable(true));
 
-    public static final RegistryObject<Attribute> FALL_FLIGHT = ATTRIBUTES.register("fall_flight", () -> new BooleanAttribute("generic.fallFlight", false).setSyncable(true));
-    public static final RegistryObject<Attribute> FALL_FLYING_SPEED = ATTRIBUTES.register("fall_flying_speed", () -> new RangedAttribute("generic.fallFlyingSpeed", 0.0D, 0.0D, 1024.0D).setSyncable(true));
+    public static final RegistryObject<Attribute> FALL_FLIGHT = ATTRIBUTES.register("fall_flight", () -> new BooleanAttribute("forge.fallFlight", false).setSyncable(true));
+    public static final RegistryObject<Attribute> FALL_FLYING_SPEED = ATTRIBUTES.register("fall_flying_speed", () -> new RangedAttribute("forge.fallFlyingSpeed", 0.0D, 0.0D, 1024.0D).setSyncable(true));
 
     private static boolean enableMilkFluid = false;
     public static final RegistryObject<Fluid> MILK = RegistryObject.of(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);

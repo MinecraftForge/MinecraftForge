@@ -390,7 +390,7 @@
        boolean flag = this.func_70083_f(7);
        if (flag && !this.field_70122_E && !this.func_184218_aH() && !this.func_70644_a(Effects.field_188424_y)) {
           ItemStack itemstack = this.func_184582_a(EquipmentSlotType.CHEST);
-+         flag = (itemstack.canElytraFly(this) && itemstack.elytraFlightTick(this, this.field_184629_bo)) || net.minecraftforge.common.ForgeHooks.canFallFly(this);
++         flag = net.minecraftforge.common.ForgeHooks.canFallFly(this, itemstack, true, this.field_184629_bo);
 +         if (false) //Forge: Moved to ElytraItem
           if (itemstack.func_77973_b() == Items.field_185160_cR && ElytraItem.func_185069_d(itemstack)) {
              flag = true;

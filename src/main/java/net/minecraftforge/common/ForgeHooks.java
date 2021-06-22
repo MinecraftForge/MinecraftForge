@@ -199,17 +199,40 @@ public class ForgeHooks
         return false;
     }
 
-    public static boolean canFallFly(LivingEntity living)
+    public static boolean canFallFly(LivingEntity living, ItemStack chestplateStack, boolean doTickCheck, int fallFlyingTicks)
     {
         ModifiableAttributeInstance fallFlyingAttribute = living.getAttribute(ForgeMod.FALL_FLIGHT.get());
-        return fallFlyingAttribute != null && fallFlyingAttribute.getValue() > 0.0D;
+
+        if(chestplateStack.canElytraFly(living))
+        {
+            boolean canFlyByChestplateTick = !doTickCheck || chestplateStack.elytraFlightTick(living, fallFlyingTicks);
+            if(fallFlyingAttribute != null)
+            {
+                double attributeValue = fallFlyingAttribute.getValue();
+                boolean wasTotalMultiplied = !fallFlyingAttribute.getModifiers(AttributeModifier.Operation.MULTIPLY_TOTAL).isEmpty();
+                boolean wasMultipliedByZero = attributeValue == 0 && wasTotalMultiplied;
+                if(!wasMultipliedByZero)
+                {
+                    attributeValue += 1;
+                }
+                return attributeValue > 0 && canFlyByChestplateTick;
+            }
+            else
+            {
+                return canFlyByChestplateTick;
+            }
+        }
+        else
+        {
+            return fallFlyingAttribute != null && fallFlyingAttribute.getValue() > 0;
+        }
     }
 
     public static void boostFallFlight(LivingEntity living, Vector3d currentDeltaMove, Vector3d currentLookAngle)
     {
 
         ModifiableAttributeInstance fallFlyingSpeedAttribute = living.getAttribute(ForgeMod.FALL_FLYING_SPEED.get());
-        if(fallFlyingSpeedAttribute != null && fallFlyingSpeedAttribute.getValue() > 0.0D)
+        if(fallFlyingSpeedAttribute != null && fallFlyingSpeedAttribute.getValue() > 0)
         {
             double moveBoost = 1.5D * fallFlyingSpeedAttribute.getValue();
             double lookBoost = 0.1D * fallFlyingSpeedAttribute.getValue();

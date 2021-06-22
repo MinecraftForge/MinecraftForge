@@ -72,7 +72,10 @@ public class ExpandedElytraFlightTest
     // Registry Utilities
     private static final String FLIGHT_EFFECT_MODIFIER_UUID_STRING = "53992b1d-4f7c-4479-a00b-f2fdf57dfcdf";
     private static final String NO_FLIGHT_EFFECT_MODIFIER_UUID_STRING = "333764b4-2106-49b1-94fd-2362cb6e2d79";
+    private static final String ABSOLUTELY_NO_FLIGHT_EFFECT_MODIFIER_UUID_STRING = "ee75a567-e301-4aa2-a2cd-dd1eca06094d";
+
     private static final String FLIGHT_SPEED_EFFECT_MODIFIER_UUID_STRING = "41fddd0b-1ff1-4f24-87a9-b3f23e420187";
+
     private static final EquipmentSlotType[] ARMOR_SLOTS = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
 
     // Effects
@@ -86,6 +89,11 @@ public class ExpandedElytraFlightTest
                     .addAttributeModifier(ForgeMod.FALL_FLIGHT.get(), NO_FLIGHT_EFFECT_MODIFIER_UUID_STRING, -FLIGHT_EFFECT_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.ADDITION)
     );
 
+    private static final RegistryObject<Effect> ABSOLUTELY_NO_FLIGHT_EFFECT = EFFECTS.register("absolutely_no_flight",
+            () -> new FallFlightEffect(EffectType.HARMFUL, 0xFF0000)
+                    .addAttributeModifier(ForgeMod.FALL_FLIGHT.get(), ABSOLUTELY_NO_FLIGHT_EFFECT_MODIFIER_UUID_STRING, -FLIGHT_EFFECT_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.MULTIPLY_TOTAL)
+    );
+
     // Potions
     private static final RegistryObject<Potion> FLIGHT_POTION = POTIONS.register("flight",
             () -> new Potion(new EffectInstance(FLIGHT_EFFECT.get(), FLIGHT_POTION_EFFECT_DURATION))
@@ -93,6 +101,10 @@ public class ExpandedElytraFlightTest
 
     private static final RegistryObject<Potion> NO_FLIGHT_POTION = POTIONS.register("no_flight",
             () -> new Potion(new EffectInstance(NO_FLIGHT_EFFECT.get(), FLIGHT_POTION_EFFECT_DURATION))
+    );
+
+    private static final RegistryObject<Potion> ABSOLUTELY_NO_FLIGHT_POTION = POTIONS.register("absolutely_no_flight",
+            () -> new Potion(new EffectInstance(ABSOLUTELY_NO_FLIGHT_EFFECT.get(), FLIGHT_POTION_EFFECT_DURATION))
     );
 
     // Enchantments
@@ -106,10 +118,13 @@ public class ExpandedElytraFlightTest
 
     // Items
     private static final RegistryObject<Item> FLIGHT_BOOTS = ITEMS.register("flight_boots",
-            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.FEET, true, FLIGHT_SPEED_ARMOR_MODIFIER_VALUE_ADDITION, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
+            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.FEET, true, false, FLIGHT_SPEED_ARMOR_MODIFIER_VALUE_ADDITION, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
 
     private static final RegistryObject<Item> NO_FLIGHT_LEGGINGS = ITEMS.register("no_flight_leggings",
-            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.LEGS, false, 0, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
+            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.LEGS, false, false,0, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
+
+    private static final RegistryObject<Item> ABSOLUTELY_NO_FLIGHT_HELMET = ITEMS.register("absolutely_no_flight_helmet",
+            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.HEAD, false, true, 0, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
 
     public ExpandedElytraFlightTest()
     {
@@ -192,10 +207,12 @@ public class ExpandedElytraFlightTest
         private static final UUID[] ARMOR_MODIFIER_UUID_PER_SLOT = new UUID[]{UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"), UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150")};
         private final Multimap<Attribute, AttributeModifier> defaultModifiers = ArrayListMultimap.create(); // initialize as empty
         private final boolean canFly;
+        private final boolean absolute;
         private final double flySpeed;
-        public FlightArmorItem(IArmorMaterial armorMaterial, EquipmentSlotType slotType, boolean canFly, double flySpeedIn, Properties properties) {
+        public FlightArmorItem(IArmorMaterial armorMaterial, EquipmentSlotType slotType, boolean canFly, boolean absolute, double flySpeedIn, Properties properties) {
             super(armorMaterial, slotType, properties);
             this.canFly = canFly;
+            this.absolute = absolute;
             this.flySpeed = flySpeedIn;
         }
 
@@ -207,7 +224,10 @@ public class ExpandedElytraFlightTest
                     Multimap<Attribute, AttributeModifier> oldAttributeModifiers = super.getDefaultAttributeModifiers(equipmentSlotType);
                     this.defaultModifiers.putAll(oldAttributeModifiers);
                     UUID uuid = ARMOR_MODIFIER_UUID_PER_SLOT[equipmentSlotType.getIndex()];
-                    this.defaultModifiers.put(ForgeMod.FALL_FLIGHT.get(), new AttributeModifier(uuid, "Armor fall flight modifier", this.canFly ? FLIGHT_ARMOR_MODIFIER_VALUE_ADDITION : -FLIGHT_ARMOR_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.ADDITION));
+                    this.defaultModifiers.put(ForgeMod.FALL_FLIGHT.get(),
+                            new AttributeModifier(uuid, "Armor fall flight modifier",
+                                    this.canFly ? FLIGHT_ARMOR_MODIFIER_VALUE_ADDITION : -FLIGHT_ARMOR_MODIFIER_VALUE_ADDITION,
+                                    this.absolute ? AttributeModifier.Operation.MULTIPLY_TOTAL : AttributeModifier.Operation.ADDITION));
                     if(ENABLE_INTRINSIC_BOOST_FOR_ARMOR && this.canFly && this.flySpeed > 0)
                     {
                         this.defaultModifiers.put(ForgeMod.FALL_FLYING_SPEED.get(), new AttributeModifier(uuid, "Armor fall flight speed modifier", this.flySpeed, AttributeModifier.Operation.ADDITION));
