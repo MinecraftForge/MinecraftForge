@@ -111,14 +111,20 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
             IntBuffer monPosLeft = stack.mallocInt(1);
             IntBuffer monPosTop = stack.mallocInt(1);
             glfwGetWindowSize(window, pWidth, pHeight);
-            GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-            glfwGetMonitorPos(glfwGetPrimaryMonitor(), monPosLeft, monPosTop);
-            // Center the window
-            glfwSetWindowPos(
-                    window,
-                    (vidmode.width() - pWidth.get(0)) / 2 + monPosLeft.get(0),
-                    (vidmode.height() - pHeight.get(0)) / 2 + monPosTop.get(0)
-            );
+
+            // try to center the window, this is a best-effort as there may not be
+            // a primary monitor and we might not even be on the primary monitor...
+            long primaryMonitor = glfwGetPrimaryMonitor();
+            if (primaryMonitor != NULL)
+            {
+                GLFWVidMode vidmode = glfwGetVideoMode(primaryMonitor);
+                glfwGetMonitorPos(primaryMonitor, monPosLeft, monPosTop);
+                glfwSetWindowPos(
+                        window,
+                        (vidmode.width() - pWidth.get(0)) / 2 + monPosLeft.get(0),
+                        (vidmode.height() - pHeight.get(0)) / 2 + monPosTop.get(0)
+                );
+            }
             IntBuffer iconWidth = stack.mallocInt(1);
             IntBuffer iconHeight = stack.mallocInt(1);
             IntBuffer iconChannels = stack.mallocInt(1);

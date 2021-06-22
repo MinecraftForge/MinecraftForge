@@ -170,10 +170,12 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
         return Strings.isNullOrEmpty(license);
     }
 
+    /* This data can only be trusted for the manifest and signature file itself. We do not validate each entry in the jar. Coremods exists, it would be useless */
     public Optional<CodeSigner[]> getCodeSigners() {
         return this.signers;
     }
 
+    /* This data can only be trusted for the manifest and signature file itself. We do not validate each entry in the jar. Coremods exists, it would be useless */
     public Optional<String> getCodeSigningFingerprint() {
         return Java9BackportUtils.toStream(this.signers)
                 .flatMap(csa->csa[0].getSignerCertPath().getCertificates().stream())
@@ -184,6 +186,7 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 .map(str-> String.join(":", str.split("(?<=\\G.{2})")));
     }
 
+    /* This data can only be trusted for the manifest and signature file itself. We do not validate each entry in the jar. Coremods exists, it would be useless */
     public Optional<String> getTrustData() {
         return Java9BackportUtils.toStream(this.signers)
                 .flatMap(csa->csa[0].getSignerCertPath().getCertificates().stream())
