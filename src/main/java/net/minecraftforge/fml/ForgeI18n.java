@@ -107,7 +107,12 @@ public class ForgeI18n {
     }
 
     public static String parseFormat(final String format, final Object... args) {
-        final ExtendedMessageFormat extendedMessageFormat = new ExtendedMessageFormat(format, customFactories);
+        String replacedFormat = format;
+        if (format.contains("'")) {
+            int count = org.apache.commons.lang3.StringUtils.countMatches(format, "'");
+            if (count % 2 == 0) replacedFormat = replacedFormat.replaceAll("'", "''");
+        }
+        final ExtendedMessageFormat extendedMessageFormat = new ExtendedMessageFormat(replacedFormat, customFactories);
         return extendedMessageFormat.format(args);
     }
 
