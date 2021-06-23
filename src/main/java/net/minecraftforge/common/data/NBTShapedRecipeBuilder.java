@@ -30,39 +30,37 @@ import java.util.function.Consumer;
 
 public class NBTShapedRecipeBuilder
 {
-    private final Item result;
-    private final int count;
-    private final CompoundNBT compound;
+    private final ItemStack result;
     private final List<String> rows = Lists.newArrayList();
     private final Map<Character, Ingredient> key = Maps.newLinkedHashMap();
     private final Advancement.Builder advancement = Advancement.Builder.advancement();
     private String group;
 
-    public NBTShapedRecipeBuilder(IItemProvider result, int count, CompoundNBT compound)
+    public NBTShapedRecipeBuilder(ItemStack result)
     {
-        this.result = result.asItem();
-        this.count = count;
-        this.compound = compound;
+        this.result = result;
     }
 
-    public static NBTShapedRecipeBuilder shaped(ItemStack stack)
+    public static NBTShapedRecipeBuilder shaped(ItemStack result)
     {
-        return new NBTShapedRecipeBuilder(stack.getItem(), stack.getCount(), stack.getTag());
+        return new NBTShapedRecipeBuilder(result);
     }
 
     public static NBTShapedRecipeBuilder shaped(IItemProvider result)
     {
-        return new NBTShapedRecipeBuilder(result, 1, null);
+        return new NBTShapedRecipeBuilder(new ItemStack(result, 1));
     }
 
     public static NBTShapedRecipeBuilder shaped(IItemProvider result, int count)
     {
-        return new NBTShapedRecipeBuilder(result, count, null);
+        return new NBTShapedRecipeBuilder(new ItemStack(result, count));
     }
 
     public static NBTShapedRecipeBuilder shaped(IItemProvider result, int count, CompoundNBT compound)
     {
-        return new NBTShapedRecipeBuilder(result, count, compound);
+        ItemStack stack = new ItemStack(result, count);
+        stack.setTag(compound);
+        return new NBTShapedRecipeBuilder(stack);
     }
 
     public NBTShapedRecipeBuilder define(Character symbol, ITag<Item> tag)
@@ -116,7 +114,7 @@ public class NBTShapedRecipeBuilder
 
     public void save(Consumer<IFinishedRecipe> consumer)
     {
-        this.save(consumer, ForgeRegistries.ITEMS.getKey(this.result));
+        this.save(consumer, ForgeRegistries.ITEMS.getKey(this.result.getItem()));
     }
 
     public void save(Consumer<IFinishedRecipe> consumer, String save)
@@ -135,7 +133,7 @@ public class NBTShapedRecipeBuilder
     {
         this.ensureValid(id);
         this.advancement.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
-        consumer.accept(new Result(id, this.result, this.count, this.compound, this.group == null ? "" : this.group, this.rows, this.key, this.advancement, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
+        consumer.accept(new Result(id, this.result, this.group == null ? "" : this.group, this.rows, this.key, this.advancement, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
     private void ensureValid(ResourceLocation id)
@@ -179,21 +177,17 @@ public class NBTShapedRecipeBuilder
     public class Result implements IFinishedRecipe
     {
         private final ResourceLocation id;
-        private final Item result;
-        private final int count;
-        private final CompoundNBT compound;
+        private final ItemStack result;
         private final String group;
         private final List<String> pattern;
         private final Map<Character, Ingredient> key;
         private final Advancement.Builder advancement;
         private final ResourceLocation advancementId;
 
-        public Result(ResourceLocation id, Item result, int count, CompoundNBT compound, String group, List<String> pattern, Map<Character, Ingredient> key, Advancement.Builder advancement, ResourceLocation advancementId)
+        public Result(ResourceLocation id, ItemStack result, String group, List<String> pattern, Map<Character, Ingredient> key, Advancement.Builder advancement, ResourceLocation advancementId)
         {
             this.id = id;
             this.result = result;
-            this.count = count;
-            this.compound = compound;
             this.group = group;
             this.pattern = pattern;
             this.key = key;
@@ -225,14 +219,14 @@ public class NBTShapedRecipeBuilder
 
             json.add("key", keyJson);
             JsonObject resultJson = new JsonObject();
-            resultJson.addProperty("item", ForgeRegistries.ITEMS.getKey(this.result).toString());
-            if (this.count > 1)
+            resultJson.addProperty("item", ForgeRegistries.ITEMS.getKey(this.result.getItem()).toString());
+            if (this.result.getCount() > 1)
             {
-                resultJson.addProperty("count", this.count);
+                resultJson.addProperty("count", this.result.getCount());
             }
-            if (this.compound != null)
+            if (this.result.getTag() != null)
             {
-                resultJson.addProperty("nbt", NBTDynamicOps.INSTANCE.convertTo(JsonOps.INSTANCE, this.compound).toString());
+                resultJson.addProperty("nbt", NBTDynamicOps.INSTANCE.convertTo(JsonOps.INSTANCE, this.result.getTag()).toString());
             }
 
             json.add("result", resultJson);

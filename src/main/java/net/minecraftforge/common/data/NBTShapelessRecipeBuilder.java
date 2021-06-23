@@ -29,38 +29,36 @@ import net.minecraftforge.registries.ForgeRegistries;
 
 public class NBTShapelessRecipeBuilder
 {
-    private final Item result;
-    private final int count;
-    private final CompoundNBT compound;
+    private final ItemStack result;
     private final List<Ingredient> ingredients = Lists.newArrayList();
     private final Advancement.Builder advancement = Advancement.Builder.advancement();
     private String group;
 
-    private NBTShapelessRecipeBuilder(IItemProvider result, int count, CompoundNBT compound)
+    private NBTShapelessRecipeBuilder(ItemStack result)
     {
-        this.result = result.asItem();
-        this.count = count;
-        this.compound = compound;
+        this.result = result;
     }
 
-    public static NBTShapelessRecipeBuilder shapeless(ItemStack stack)
+    public static NBTShapelessRecipeBuilder shapeless(ItemStack result)
     {
-        return new NBTShapelessRecipeBuilder(stack.getItem(), stack.getCount(), stack.getTag());
+        return new NBTShapelessRecipeBuilder(result);
     }
 
     public static NBTShapelessRecipeBuilder shapeless(IItemProvider result)
     {
-        return new NBTShapelessRecipeBuilder(result, 1, null);
+        return new NBTShapelessRecipeBuilder(new ItemStack(result, 1));
     }
 
     public static NBTShapelessRecipeBuilder shapeless(IItemProvider result, int count)
     {
-        return new NBTShapelessRecipeBuilder(result, count, null);
+        return new NBTShapelessRecipeBuilder(new ItemStack(result, count));
     }
 
     public static NBTShapelessRecipeBuilder shapeless(IItemProvider result, int count, CompoundNBT compound)
     {
-        return new NBTShapelessRecipeBuilder(result, count, compound);
+        ItemStack stack = new ItemStack(result, count);
+        stack.setTag(compound);
+        return new NBTShapelessRecipeBuilder(stack);
     }
 
     public NBTShapelessRecipeBuilder requires(ITag<Item> tag)
