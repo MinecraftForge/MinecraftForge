@@ -129,7 +129,7 @@ public class NBTShapelessRecipeBuilder
     {
         this.ensureValid(id);
         this.advancement.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
-        consumer.accept(new NBTShapelessRecipeBuilder.Result(id, this.result, this.count, this.compound, this.group == null ? "" : this.group, this.ingredients, this.advancement, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
+        consumer.accept(new NBTShapelessRecipeBuilder.Result(id, this.result, this.group == null ? "" : this.group, this.ingredients, this.advancement, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItem().getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
     private void ensureValid(ResourceLocation id)
@@ -143,20 +143,16 @@ public class NBTShapelessRecipeBuilder
     public static class Result implements IFinishedRecipe
     {
         private final ResourceLocation id;
-        private final Item result;
-        private final int count;
-        private final CompoundNBT compound;
+        private final ItemStack result;
         private final String group;
         private final List<Ingredient> ingredients;
         private final Advancement.Builder advancement;
         private final ResourceLocation advancementId;
 
-        public Result(ResourceLocation id, Item result, int count, CompoundNBT compound, String group, List<Ingredient> ingredients, Advancement.Builder advancementBuilder, ResourceLocation advancementId)
+        public Result(ResourceLocation id, ItemStack result, String group, List<Ingredient> ingredients, Advancement.Builder advancementBuilder, ResourceLocation advancementId)
         {
             this.id = id;
             this.result = result;
-            this.count = count;
-            this.compound = compound;
             this.group = group;
             this.ingredients = ingredients;
             this.advancement = advancementBuilder;
@@ -179,14 +175,14 @@ public class NBTShapelessRecipeBuilder
 
             json.add("ingredients", ingredientsJson);
             JsonObject resultJson = new JsonObject();
-            resultJson.addProperty("item", ForgeRegistries.ITEMS.getKey(this.result).toString());
-            if (this.count > 1)
+            resultJson.addProperty("item", ForgeRegistries.ITEMS.getKey(this.result.getItem()).toString());
+            if (this.result.getCount() > 1)
             {
-                resultJson.addProperty("count", this.count);
+                resultJson.addProperty("count", this.result.getCount());
             }
-            if (this.compound != null)
+            if (this.result.getTag() != null)
             {
-                resultJson.addProperty("nbt", NBTDynamicOps.INSTANCE.convertTo(JsonOps.INSTANCE, this.compound).toString());
+                resultJson.addProperty("nbt", NBTDynamicOps.INSTANCE.convertTo(JsonOps.INSTANCE, this.result.getTag()).toString());
             }
 
             json.add("result", resultJson);
