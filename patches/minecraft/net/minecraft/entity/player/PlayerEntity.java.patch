@@ -163,7 +163,7 @@
           float f = p_70665_2_ - f2;
           if (f > 0.0F && f < 3.4028235E37F) {
              this.func_195067_a(Stats.field_212738_J, Math.round(f * 10.0F));
-@@ -859,12 +_,11 @@
+@@ -859,8 +_,8 @@
           if (f2 != 0.0F) {
              this.func_71020_j(p_70665_1_.func_76345_d());
              float f1 = this.func_110143_aJ();
@@ -173,10 +173,6 @@
              if (f2 < 3.4028235E37F) {
                 this.func_195067_a(Stats.field_188112_z, Math.round(f2 * 10.0F));
              }
--
-          }
-       }
-    }
 @@ -909,6 +_,8 @@
  
           return ActionResultType.PASS;
