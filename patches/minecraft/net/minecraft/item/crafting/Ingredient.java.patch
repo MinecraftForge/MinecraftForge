@@ -25,7 +25,29 @@
     }
  
     public ItemStack[] func_193365_a() {
-@@ -91,6 +_,10 @@
+@@ -56,6 +_,10 @@
+    }
+ 
+    public boolean test(@Nullable ItemStack p_test_1_) {
++      return test(p_test_1_, false);
++   }
++
++   public boolean test(@Nullable ItemStack p_test_1_, boolean ignoreNBT) {
+       if (p_test_1_ == null) {
+          return false;
+       } else {
+@@ -64,7 +_,9 @@
+             return p_test_1_.func_190926_b();
+          } else {
+             for(ItemStack itemstack : this.field_193371_b) {
+-               if (itemstack.func_77973_b() == p_test_1_.func_77973_b()) {
++               boolean isNBTSimilar = itemstack.func_77978_p() == p_test_1_.func_77978_p() || itemstack.func_77978_p().equals(p_test_1_.func_77978_p());
++               if (ignoreNBT) isNBTSimilar = true;
++               if (itemstack.func_77973_b() == p_test_1_.func_77973_b() && isNBTSimilar) {
+                   return true;
+                }
+             }
+@@ -91,10 +_,15 @@
  
     public final void func_199564_a(PacketBuffer p_199564_1_) {
        this.func_199806_d();
@@ -35,7 +57,14 @@
 +      }
        p_199564_1_.func_150787_b(this.field_193371_b.length);
  
-       for(int i = 0; i < this.field_193371_b.length; ++i) {
+-      for(int i = 0; i < this.field_193371_b.length; ++i) {
+-         p_199564_1_.func_150788_a(this.field_193371_b[i]);
++      for (ItemStack itemStack : this.field_193371_b)
++      {
++         p_199564_1_.writeItemStack(itemStack, false);
+       }
+ 
+    }
 @@ -117,6 +_,25 @@
        return this.field_199807_b.length == 0 && (this.field_193371_b == null || this.field_193371_b.length == 0) && (this.field_194140_c == null || this.field_194140_c.isEmpty());
     }
@@ -81,19 +110,44 @@
           if (p_199802_0_.isJsonObject()) {
              return func_209357_a(Stream.of(func_199803_a(p_199802_0_.getAsJsonObject())));
           } else if (p_199802_0_.isJsonArray()) {
-@@ -192,6 +_,12 @@
+@@ -174,11 +_,7 @@
+       if (p_199803_0_.has("item") && p_199803_0_.has("tag")) {
+          throw new JsonParseException("An ingredient entry is either a tag or an item, not both");
+       } else if (p_199803_0_.has("item")) {
+-         ResourceLocation resourcelocation1 = new ResourceLocation(JSONUtils.func_151200_h(p_199803_0_, "item"));
+-         Item item = Registry.field_212630_s.func_241873_b(resourcelocation1).orElseThrow(() -> {
+-            return new JsonSyntaxException("Unknown item '" + resourcelocation1 + "'");
+-         });
+-         return new Ingredient.SingleItemList(new ItemStack(item));
++         new Ingredient.SingleItemList(net.minecraftforge.common.crafting.CraftingHelper.getItemStack(p_199803_0_, true));
+       } else if (p_199803_0_.has("tag")) {
+          ResourceLocation resourcelocation = new ResourceLocation(JSONUtils.func_151200_h(p_199803_0_, "tag"));
+          ITag<Item> itag = TagCollectionManager.func_242178_a().func_241836_b().func_199910_a(resourcelocation);
+@@ -187,9 +_,14 @@
+          } else {
+             return new Ingredient.TagList(itag);
+          }
+-      } else {
+-         throw new JsonParseException("An ingredient entry needs either a tag or an item");
        }
-    }
- 
++      throw new JsonParseException("An ingredient entry needs either a tag or an item");
++   }
++
 +   //Merges several vanilla Ingredients together. As a quirk of how the json is structured, we can't tell if its a single Ingredient type or multiple so we split per item and re-merge here.
 +   //Only public for internal use, so we can access a private field in here.
 +   public static Ingredient merge(Collection<Ingredient> parts) {
 +      return func_209357_a(parts.stream().flatMap(i -> Arrays.stream(i.field_199807_b)));
-+   }
-+
-    public interface IItemList {
-       Collection<ItemStack> func_199799_a();
+    }
  
+    public interface IItemList {
+@@ -212,6 +_,7 @@
+       public JsonObject func_200303_b() {
+          JsonObject jsonobject = new JsonObject();
+          jsonobject.addProperty("item", Registry.field_212630_s.func_177774_c(this.field_199801_a.func_77973_b()).toString());
++         jsonobject.addProperty("nbt", net.minecraft.nbt.NBTDynamicOps.field_210820_a.convertTo(com.mojang.serialization.JsonOps.INSTANCE, this.field_199801_a.func_77978_p()).toString());
+          return jsonobject;
+       }
+    }
 @@ -230,6 +_,9 @@
              list.add(new ItemStack(item));
           }
