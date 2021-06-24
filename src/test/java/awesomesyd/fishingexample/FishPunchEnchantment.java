@@ -6,17 +6,20 @@ import net.minecraft.inventory.EquipmentSlotType;
 
 public class FishPunchEnchantment extends Enchantment
 {
-    public FishPunchEnchantment(Rarity rarity, EnchantmentType applicable, EquipmentSlotType... slots) {
+    public FishPunchEnchantment(Rarity rarity, EnchantmentType applicable, EquipmentSlotType... slots)
+    {
         super(rarity, applicable, slots);
     }
 
     @Override
-    public int getMaxLevel() {
+    public int getMaxLevel()
+    {
         return 2;
     }
-    
+
     @Override
-    public int getMinCost(int level) {
-        return 8*level;
+    public int getMinCost(int level)
+    {
+        return 8 * level;
     }
 }

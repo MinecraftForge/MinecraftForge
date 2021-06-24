@@ -17,31 +17,36 @@ public class BlockReelEnchantment extends Enchantment
 {
     public static HashSet<Block> blackList = new HashSet<Block>();
 
-    public BlockReelEnchantment(Rarity rarity, EnchantmentType applicable, EquipmentSlotType... slots){
+    public BlockReelEnchantment(Rarity rarity, EnchantmentType applicable, EquipmentSlotType... slots)
+    {
         super(rarity, applicable, slots);
-        blackList.add(Blocks.PISTON);//example, and also they sometimes have a TE, and I don't want to mess with that
+        blackList.add(Blocks.PISTON);// example, and also they sometimes have a TE, and I don't want to mess with that
     }
 
     @Override
-    public int getMaxLevel(){
+    public int getMaxLevel()
+    {
         return 2;
     }
 
     @Override
-    public int getMinCost(int level){
+    public int getMinCost(int level)
+    {
         return 15;
     }
 
     @Override
-    public int getMaxCost(int level) {
-        return getMinCost(level+1);
+    public int getMaxCost(int level)
+    {
+        return getMinCost(level + 1);
     }
-    
-    protected static boolean canReel(IWorldReader level, BlockPos pos, int enchLevel){
+
+    protected static boolean canReel(IWorldReader level, BlockPos pos, int enchLevel)
+    {
         BlockState state = level.getBlockState(pos);
         if (state.hasTileEntity())
             return false;
-        if (state.getDestroySpeed(level, pos) > 2*enchLevel)
+        if (state.getDestroySpeed(level, pos) > 2 * enchLevel)
             return false;
         if (blackList.contains(state.getBlock()))
             return false;
