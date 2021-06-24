@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/projectile/FishingBobberEntity.java
 +++ b/net/minecraft/entity/projectile/FishingBobberEntity.java
+@@ -245,7 +_,7 @@
+ 
+    private void func_190624_r() {
+       RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
+-      this.func_70227_a(raytraceresult);
++      if (!net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) this.func_70227_a(raytraceresult);
+    }
+ 
+    protected boolean func_230298_a_(Entity p_230298_1_) {
 @@ -300,7 +_,7 @@
              double d1 = (double)((float)MathHelper.func_76128_c(this.func_226278_cu_()) + 1.0F);
              double d2 = this.func_226281_cx_() + (double)(f2 * (float)this.field_146038_az * 0.1F);

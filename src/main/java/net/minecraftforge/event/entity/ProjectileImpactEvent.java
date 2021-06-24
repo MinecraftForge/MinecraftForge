@@ -23,6 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.MinecraftForge;
@@ -123,6 +124,25 @@ public class ProjectileImpactEvent extends EntityEvent
         public FireworkRocketEntity getFireworkRocket()
         {
             return fireworkRocket;
+        }
+    }
+    /**
+     * Event is cancellable,not sure what it does
+     */
+    @Cancelable
+    public static class FishingBobber extends ProjectileImpactEvent//TODO figure out what happens on cancel
+    {
+        private final FishingBobberEntity fishingBobber;
+
+        public FishingBobber(FishingBobberEntity fishingBobber, RayTraceResult ray)
+        {
+            super(fishingBobber, ray);
+            this.fishingBobber = fishingBobber;
+        }
+
+        public FishingBobberEntity getFishingBobber()
+        {
+            return fishingBobber;
         }
     }
 }
