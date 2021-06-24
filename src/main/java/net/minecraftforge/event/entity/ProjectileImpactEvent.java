@@ -126,8 +126,9 @@ public class ProjectileImpactEvent extends EntityEvent
             return fireworkRocket;
         }
     }
+
     /**
-     * Event is cancellable,not sure what it does
+     * Event is cancellable, causes bobber to ignore the current hit and continue on its journey.
      */
     @Cancelable
     public static class FishingBobber extends ProjectileImpactEvent//TODO figure out what happens on cancel
