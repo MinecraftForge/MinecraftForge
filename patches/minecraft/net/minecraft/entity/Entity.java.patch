@@ -153,7 +153,7 @@
  
 +         CompoundNBT caps = serializeCaps();
 +         if (caps != null) p_189511_1_.func_218657_a("ForgeCaps", caps);
-+         if (persistentData != null) p_189511_1_.func_218657_a("ForgeData", persistentData);
++         if (persistentData != null) p_189511_1_.func_218657_a("ForgeData", persistentData.func_74737_b());
 +
           this.func_213281_b(p_189511_1_);
           if (this.func_184207_aI()) {
