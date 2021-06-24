@@ -1,0 +1,18 @@
+--- a/net/minecraft/tags/Tag.java
++++ b/net/minecraft/tags/Tag.java
+@@ -59,4 +_,15 @@
+ 
+       return p_241285_0_;
+    }
++
++   // FORGE: Adds toString method to make debugging easier when tags are involved
++   @Override
++   public String toString()
++   {
++      return "Tag{" +
++              "valuesList=" + field_241282_b_ +
++              ", values=" + field_241283_c_ +
++              ", closestCommonSuperType=" + field_241281_a_ +
++              '}';
++   }
+ }
