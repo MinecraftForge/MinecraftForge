@@ -58,14 +58,6 @@
     }
  
     public void func_213301_b(Pose p_213301_1_) {
-@@ -330,6 +_,7 @@
- 
-    public boolean func_233562_a_(Entity p_233562_1_, double p_233562_2_) {
-       double d0 = p_233562_1_.field_233557_ao_.field_72450_a - this.field_233557_ao_.field_72450_a;
-+      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K && field_70170_p instanceof ServerWorld) ((ServerWorld)this.field_70170_p).func_217464_b(this); // Forge - Process chunk registration after moving.
-       double d1 = p_233562_1_.field_233557_ao_.field_72448_b - this.field_233557_ao_.field_72448_b;
-       double d2 = p_233562_1_.field_233557_ao_.field_72449_c - this.field_233557_ao_.field_72449_c;
-       return d0 * d0 + d1 * d1 + d2 * d2 < p_233562_2_ * p_233562_2_;
 @@ -560,7 +_,7 @@
  
              this.field_70140_Q = (float)((double)this.field_70140_Q + (double)MathHelper.func_76133_a(func_213296_b(vector3d)) * 0.6D);
