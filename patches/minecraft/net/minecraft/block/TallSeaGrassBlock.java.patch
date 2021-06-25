@@ -1,0 +1,13 @@
+--- a/net/minecraft/block/TallSeaGrassBlock.java
++++ b/net/minecraft/block/TallSeaGrassBlock.java
+@@ -29,8 +_,8 @@
+       return field_207799_b;
+    }
+ 
+-   protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+-      return p_200014_1_.func_224755_d(p_200014_2_, p_200014_3_, Direction.UP) && !p_200014_1_.func_203425_a(Blocks.field_196814_hQ);
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.SEA_GRASS;
+    }
+ 
+    public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {

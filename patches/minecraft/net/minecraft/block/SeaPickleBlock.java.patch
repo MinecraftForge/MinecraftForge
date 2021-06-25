@@ -1,0 +1,21 @@
+--- a/net/minecraft/block/SeaPickleBlock.java
++++ b/net/minecraft/block/SeaPickleBlock.java
+@@ -50,13 +_,14 @@
+       return !p_204901_0_.func_177229_b(field_204903_b);
+    }
+ 
+-   protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+-      return !p_200014_1_.func_196952_d(p_200014_2_, p_200014_3_).func_212434_a(Direction.UP).func_197766_b() || p_200014_1_.func_224755_d(p_200014_2_, p_200014_3_, Direction.UP);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos)
++   {
++      return net.minecraftforge.common.PlantType.SEA_PICKLE;
+    }
+ 
+    public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
+-      BlockPos blockpos = p_196260_3_.func_177977_b();
+-      return this.func_200014_a_(p_196260_2_.func_180495_p(blockpos), p_196260_2_, blockpos);
++      return getPlantType(p_196260_2_, p_196260_3_).test(p_196260_2_, p_196260_3_, p_196260_1_, Direction.UP);
+    }
+ 
+    public BlockState func_196271_a(BlockState p_196271_1_, Direction p_196271_2_, BlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {

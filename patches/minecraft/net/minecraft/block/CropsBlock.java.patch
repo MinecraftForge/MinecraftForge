@@ -1,5 +1,16 @@
 --- a/net/minecraft/block/CropsBlock.java
 +++ b/net/minecraft/block/CropsBlock.java
+@@ -32,8 +_,8 @@
+       return field_196393_a[p_220053_1_.func_177229_b(this.func_185524_e())];
+    }
+ 
+-   protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+-      return p_200014_1_.func_203425_a(Blocks.field_150458_ak);
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.CROP;
+    }
+ 
+    public IntegerProperty func_185524_e() {
 @@ -61,12 +_,14 @@
     }
  

@@ -9,3 +9,15 @@
     protected static final VoxelShape field_196397_a = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
  
     public DeadBushBlock(AbstractBlock.Properties p_i48418_1_) {
+@@ -16,8 +_,8 @@
+       return field_196397_a;
+    }
+ 
+-   protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+-      Block block = p_200014_1_.func_177230_c();
+-      return block == Blocks.field_150354_m || block == Blocks.field_196611_F || block == Blocks.field_150405_ch || block == Blocks.field_196777_fo || block == Blocks.field_196778_fp || block == Blocks.field_196780_fq || block == Blocks.field_196782_fr || block == Blocks.field_196783_fs || block == Blocks.field_196785_ft || block == Blocks.field_196787_fu || block == Blocks.field_196789_fv || block == Blocks.field_196791_fw || block == Blocks.field_196793_fx || block == Blocks.field_196795_fy || block == Blocks.field_196797_fz || block == Blocks.field_196719_fA || block == Blocks.field_196720_fB || block == Blocks.field_196721_fC || block == Blocks.field_196722_fD || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l;
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.DEAD_BUSH;
+    }
+ }

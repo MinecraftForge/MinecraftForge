@@ -24,6 +24,9 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.GlazedTerracottaBlock;
 import net.minecraft.block.material.Material;
+import net.minecraft.fluid.FluidState;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -61,6 +64,26 @@ public final class PlantType
     public static final PlantType CROP = get("crop", x -> x.getState().is(Blocks.FARMLAND));
     public static final PlantType CACTUS = get("cactus", x -> x.getState().is(Blocks.CACTUS) || x.getState().is(Blocks.SAND) || x.getState().is(Blocks.RED_SAND));
     public static final PlantType SUGAR_CANE = get("sugar_cane", BEACH.getBlockPredicate().or(x -> x.getState().is(Blocks.SUGAR_CANE)));
+    public static final PlantType NYLIUM_PLANTS = get("nylium_plants", PLAINS.getBlockPredicate().or(x -> x.getState().is(BlockTags.NYLIUM) || x.getState().is(Blocks.SOUL_SOIL)));
+    public static final PlantType SEA_PICKLE = get("sea_pickle", x -> {
+        BlockState below = x.getWorld().getBlockState(x.getPos().below());
+        return !below.getCollisionShape(x.getWorld(), x.getPos()).getFaceShape(Direction.UP).isEmpty() || below.isFaceSturdy(x.getWorld(), x.getPos(), Direction.UP);
+    });
+    public static final PlantType WITHER_ROSE = get("wither_rose", PLAINS.getBlockPredicate().or(x -> x.getState().is(Blocks.NETHERRACK) || x.getState().is(Blocks.SOUL_SAND) || x.getState().is(Blocks.SOUL_SOIL)));
+    public static final PlantType FUNGUS = get("fungus", PLAINS.getBlockPredicate().or(x -> x.getState().is(BlockTags.NYLIUM) || x.getState().is(Blocks.MYCELIUM) || x.getState().is(Blocks.SOUL_SOIL)));
+    public static final PlantType DEAD_BUSH = get("dead_bush", x ->
+    {
+        Block block = x.getState().getBlock();
+        return block == Blocks.SAND || block == Blocks.RED_SAND || block == Blocks.TERRACOTTA || block == Blocks.WHITE_TERRACOTTA || block == Blocks.ORANGE_TERRACOTTA || block == Blocks.MAGENTA_TERRACOTTA || block == Blocks.LIGHT_BLUE_TERRACOTTA || block == Blocks.YELLOW_TERRACOTTA || block == Blocks.LIME_TERRACOTTA || block == Blocks.PINK_TERRACOTTA || block == Blocks.GRAY_TERRACOTTA || block == Blocks.LIGHT_GRAY_TERRACOTTA || block == Blocks.CYAN_TERRACOTTA || block == Blocks.PURPLE_TERRACOTTA || block == Blocks.BLUE_TERRACOTTA || block == Blocks.BROWN_TERRACOTTA || block == Blocks.GREEN_TERRACOTTA || block == Blocks.RED_TERRACOTTA || block == Blocks.BLACK_TERRACOTTA || block == Blocks.DIRT || block == Blocks.COARSE_DIRT || block == Blocks.PODZOL;
+    });
+    public static final PlantType SEA_GRASS = get("tall_sea_grass", x -> x.getState().is(Blocks.FARMLAND));
+    public static final PlantType FARMLAND = get("farmland", x -> x.getState().is(Blocks.FARMLAND));
+    public static final PlantType MUSHROOM = get("mushroom", x -> x.getState().isSolidRender(x.getWorld(), x.getPos()));
+    public static final PlantType LILY_PAD = get("lily_pad", x -> {
+        FluidState fluidstate = x.getWorld().getFluidState(x.getPos());
+        FluidState fluidstate1 = x.getWorld().getFluidState(x.getPos().above());
+        return (fluidstate.getType() == Fluids.WATER || x.getState().getMaterial() == Material.ICE) && fluidstate1.getType() == Fluids.EMPTY;
+    });
 
     /**
      * Getting a custom {@link PlantType}, or an existing one if it has the same name as that one. Your plant should implement {@link IPlantable}

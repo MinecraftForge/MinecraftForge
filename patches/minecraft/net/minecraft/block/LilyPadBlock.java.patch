@@ -1,0 +1,14 @@
+--- a/net/minecraft/block/LilyPadBlock.java
++++ b/net/minecraft/block/LilyPadBlock.java
+@@ -31,9 +_,7 @@
+       return field_185523_a;
+    }
+ 
+-   protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+-      FluidState fluidstate = p_200014_2_.func_204610_c(p_200014_3_);
+-      FluidState fluidstate1 = p_200014_2_.func_204610_c(p_200014_3_.func_177984_a());
+-      return (fluidstate.func_206886_c() == Fluids.field_204546_a || p_200014_1_.func_185904_a() == Material.field_151588_w) && fluidstate1.func_206886_c() == Fluids.field_204541_a;
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.LILY_PAD;
+    }
+ }

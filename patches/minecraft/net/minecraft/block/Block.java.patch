@@ -90,7 +90,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -409,6 +_,43 @@
+@@ -409,6 +_,42 @@
     protected Block func_230328_p_() {
        return this;
     }
@@ -115,8 +115,7 @@
 +   @Override
 +   public boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos pos, Direction facing, net.minecraftforge.common.IPlantable plantable) {
 +      net.minecraftforge.common.PlantType type = plantable.getPlantType(world, pos.func_177972_a(facing));
-+
-+      return type.test(world, pos, state, facing) || (plantable instanceof BushBlock && ((BushBlock)plantable).func_200014_a_(state, world, pos));
++      return type.test(world, pos, state, facing);
 +  }
 +
 +  @Override

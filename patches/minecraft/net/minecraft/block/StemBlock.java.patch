@@ -1,6 +1,13 @@
 --- a/net/minecraft/block/StemBlock.java
 +++ b/net/minecraft/block/StemBlock.java
-@@ -37,22 +_,24 @@
+@@ -32,27 +_,29 @@
+       return field_196388_b[p_220053_1_.func_177229_b(field_176484_a)];
+    }
+ 
+-   protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+-      return p_200014_1_.func_203425_a(Blocks.field_150458_ak);
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.CROP;
     }
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
@@ -29,15 +36,3 @@
           }
  
        }
-@@ -96,5 +_,11 @@
- 
-    public StemGrownBlock func_208486_d() {
-       return this.field_149877_a;
-+   }
-+
-+   //FORGE START
-+   @Override
-+   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
-+      return net.minecraftforge.common.PlantType.CROP;
-    }
- }

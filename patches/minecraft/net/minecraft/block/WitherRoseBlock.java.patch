@@ -1,0 +1,15 @@
+--- a/net/minecraft/block/WitherRoseBlock.java
++++ b/net/minecraft/block/WitherRoseBlock.java
+@@ -23,8 +_,10 @@
+       super(p_i49968_1_, 8, p_i49968_2_);
+    }
+ 
+-   protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+-      return super.func_200014_a_(p_200014_1_, p_200014_2_, p_200014_3_) || p_200014_1_.func_203425_a(Blocks.field_150424_aL) || p_200014_1_.func_203425_a(Blocks.field_150425_aM) || p_200014_1_.func_203425_a(Blocks.field_235336_cN_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos)
++   {
++      return net.minecraftforge.common.PlantType.WITHER_ROSE;
+    }
+ 
+    @OnlyIn(Dist.CLIENT)

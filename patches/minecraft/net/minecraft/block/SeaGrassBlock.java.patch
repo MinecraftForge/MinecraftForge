@@ -9,3 +9,14 @@
     protected static final VoxelShape field_207798_a = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
  
     public SeaGrassBlock(AbstractBlock.Properties p_i48780_1_) {
+@@ -28,8 +_,8 @@
+       return field_207798_a;
+    }
+ 
+-   protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+-      return p_200014_1_.func_224755_d(p_200014_2_, p_200014_3_, Direction.UP) && !p_200014_1_.func_203425_a(Blocks.field_196814_hQ);
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.SEA_GRASS;
+    }
+ 
+    @Nullable

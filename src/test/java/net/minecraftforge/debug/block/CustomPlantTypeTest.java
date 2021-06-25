@@ -19,10 +19,7 @@
 
 package net.minecraftforge.debug.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FlowerBlock;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -87,7 +84,7 @@ public class CustomPlantTypeTest
 
     public static class CustomPlantBlock extends FlowerBlock implements IPlantable
     {
-        public static PlantType pt = PlantType.get("custom_plant_type");
+        public static PlantType pt = PlantType.get("custom_plant_type", x -> x.getState().getBlock() instanceof CryingObsidianBlock);
 
         public CustomPlantBlock()
         {
@@ -112,13 +109,6 @@ public class CustomPlantTypeTest
         {
             BlockState soil = world.getBlockState(pos.below());
             return soil.canSustainPlant(world, pos, Direction.UP, this);
-        }
-
-        @Override
-        public boolean mayPlaceOn(BlockState state, IBlockReader worldIn, BlockPos pos)
-        {
-            Block block = state.getBlock();
-            return block == CUSTOM_SOIL;
         }
     }
 }

@@ -1,0 +1,25 @@
+--- a/net/minecraft/block/FungusBlock.java
++++ b/net/minecraft/block/FungusBlock.java
+@@ -25,10 +_,6 @@
+       return field_235496_a_;
+    }
+ 
+-   protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+-      return p_200014_1_.func_235714_a_(BlockTags.field_232873_an_) || p_200014_1_.func_203425_a(Blocks.field_150391_bh) || p_200014_1_.func_203425_a(Blocks.field_235336_cN_) || super.func_200014_a_(p_200014_1_, p_200014_2_, p_200014_3_);
+-   }
+-
+    public boolean func_176473_a(IBlockReader p_176473_1_, BlockPos p_176473_2_, BlockState p_176473_3_, boolean p_176473_4_) {
+       Block block = ((HugeFungusConfig)(this.field_235497_b_.get()).field_222738_b).field_236303_f_.func_177230_c();
+       Block block1 = p_176473_1_.func_180495_p(p_176473_2_.func_177977_b()).func_177230_c();
+@@ -41,5 +_,11 @@
+ 
+    public void func_225535_a_(ServerWorld p_225535_1_, Random p_225535_2_, BlockPos p_225535_3_, BlockState p_225535_4_) {
+       this.field_235497_b_.get().func_242765_a(p_225535_1_, p_225535_1_.func_72863_F().func_201711_g(), p_225535_2_, p_225535_3_);
++   }
++
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos)
++   {
++      return net.minecraftforge.common.PlantType.FUNGUS;
+    }
+ }
