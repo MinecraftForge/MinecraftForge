@@ -11,6 +11,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="farmland_trample_test"
 [[mods]]
+    modId="jigsaw_event_test"
+[[mods]]
     modId="neighbor_notify_event_test"
 [[mods]]
     modId="block_place_event_test"
