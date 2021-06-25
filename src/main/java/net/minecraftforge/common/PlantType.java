@@ -40,8 +40,8 @@ public final class PlantType
     private static final Pattern INVALID_CHARACTERS = Pattern.compile("[^a-z_]"); //Only a-z and _ are allowed, meaning names must be lower case. And use _ to separate words.
     private static final Map<String, PlantType> VALUES = new ConcurrentHashMap<>();
 
-    public static final PlantType PLAINS = get("plains", x -> x.getState().is(Blocks.SAND) || x.getState().is(Blocks.TERRACOTTA) || x.getState().getBlock() instanceof GlazedTerracottaBlock);
-    public static final PlantType DESERT = get("desert", x -> x.getState().is(Blocks.GRASS_BLOCK) || Tags.Blocks.DIRT.contains(x.getState().getBlock()) || x.getState().is(Blocks.FARMLAND));
+    public static final PlantType PLAINS = get("plains", x -> x.getState().is(Blocks.GRASS_BLOCK) || Tags.Blocks.DIRT.contains(x.getState().getBlock()) || x.getState().is(Blocks.FARMLAND));
+    public static final PlantType DESERT = get("desert", x -> x.getState().is(Blocks.SAND) || x.getState().is(Blocks.TERRACOTTA) || x.getState().getBlock() instanceof GlazedTerracottaBlock);
     public static final PlantType BEACH = get("beach", x -> {
         boolean isBeach = x.getState().is(Blocks.GRASS_BLOCK) || net.minecraftforge.common.Tags.Blocks.DIRT.contains(x.getState().getBlock()) || x.getState().is(Blocks.SAND) || x.getState().is(Blocks.RED_SAND);
         boolean hasWater = false;
@@ -57,10 +57,10 @@ public final class PlantType
     });
     public static final PlantType CAVE = get("cave", x -> x.getState().isFaceSturdy(x.getWorld(), x.getPos(), Direction.UP));
     public static final PlantType WATER = get("water", x -> x.getState().getMaterial() == Material.WATER);
-    public static final PlantType NETHER = get("nether", x -> x.getState().is(Blocks.SOUL_SAND));
+    public static final PlantType NETHER_WART = get("nether_wart", x -> x.getState().is(Blocks.SOUL_SAND));
     public static final PlantType CROP = get("crop", x -> x.getState().is(Blocks.FARMLAND));
     public static final PlantType CACTUS = get("cactus", x -> x.getState().is(Blocks.CACTUS) || x.getState().is(Blocks.SAND) || x.getState().is(Blocks.RED_SAND));
-    public static final PlantType SUGARCANE = get("sugarcane", BEACH.getBlockPredicate().or(x -> x.getState().is(Blocks.SUGAR_CANE)));
+    public static final PlantType SUGAR_CANE = get("sugar_cane", BEACH.getBlockPredicate().or(x -> x.getState().is(Blocks.SUGAR_CANE)));
 
     /**
      * Getting a custom {@link PlantType}, or an existing one if it has the same name as that one. Your plant should implement {@link IPlantable}
