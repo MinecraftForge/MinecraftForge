@@ -1,16 +1,5 @@
 --- a/net/minecraft/block/MushroomBlock.java
 +++ b/net/minecraft/block/MushroomBlock.java
-@@ -54,8 +_,8 @@
- 
-    }
- 
--   protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
--      return p_200014_1_.func_200015_d(p_200014_2_, p_200014_3_);
-+   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
-+      return net.minecraftforge.common.PlantType.MUSHROOM;
-    }
- 
-    public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
 @@ -64,7 +_,7 @@
        if (blockstate.func_235714_a_(BlockTags.field_242171_aD)) {
           return true;

@@ -1,16 +1,5 @@
 --- a/net/minecraft/block/NetherWartBlock.java
 +++ b/net/minecraft/block/NetherWartBlock.java
-@@ -25,8 +_,8 @@
-       return field_196399_b[p_220053_1_.func_177229_b(field_176486_a)];
-    }
- 
--   protected boolean func_200014_a_(BlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
--      return p_200014_1_.func_203425_a(Blocks.field_150425_aM);
-+   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
-+      return net.minecraftforge.common.PlantType.NETHER_WART;
-    }
- 
-    public boolean func_149653_t(BlockState p_149653_1_) {
 @@ -35,9 +_,10 @@
  
     public void func_225542_b_(BlockState p_225542_1_, ServerWorld p_225542_2_, BlockPos p_225542_3_, Random p_225542_4_) {
