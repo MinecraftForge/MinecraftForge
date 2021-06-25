@@ -19,31 +19,12 @@
 
 package net.minecraftforge.server.permission;
 
-import com.mojang.authlib.GameProfile;
-import net.minecraftforge.server.permission.context.IContext;
+import net.minecraft.util.text.ITextComponent;
 
-import java.util.Collection;
-
-public interface IPermissionHandler
+public class PermissionTypes
 {
-
-   /**
-    * @see PermissionAPI#registerNode(PermissionNode)
-    */
-   void registerNode(PermissionNode<?> node);
-
-   /**
-    * @see PermissionAPI#unregisterNode(PermissionNode)
-    */
-   void unregisterNode(PermissionNode<?> node);
-
-   /**
-    * @return Immutable collection of all registeredNodes
-    */
-   Collection<PermissionNode<?>> getRegisteredNodes();
-
-   /**
-    * Use {@link PermissionAPI#getPermission(GameProfile, PermissionNode, IContext)}
-    */
-   <T> T getPermission(GameProfile profile, PermissionNode<T> node, IContext context);
+   public static final PermissionType<Boolean> BOOL = new PermissionType(Boolean.class, "Boolean");
+   public static final PermissionType<Integer> INT = new PermissionType(Integer.class, "Integer");
+   public static final PermissionType<String> STRING = new PermissionType(String.class, "String");
+   public static final PermissionType<ITextComponent> TEXT_COMPONENT = new PermissionType(ITextComponent.class, "Text Component");
 }

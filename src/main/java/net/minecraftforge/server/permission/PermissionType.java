@@ -19,17 +19,29 @@
 
 package net.minecraftforge.server.permission;
 
-/**
- * <table><thead><tr><th>Level</th><th>Player</th><th>OP</th></tr>
- * </thead><tbody>
- * <tr><td>ALL</td><td>true</td><td>true</td></tr>
- * <tr><td>OP</td><td>false</td><td>true</td></tr>
- * <tr><td>NONE</td><td>false</td><td>false</td></tr>
- * </tbody></table>
- */
-public enum DefaultPermissionLevel
+public class PermissionType<T>
 {
-    ALL,
-    OP,
-    NONE
+   private final Class<T> typeToken;
+   private final String typeName;
+
+   public PermissionType(Class<T> typeToken, String typeName)
+   {
+      this.typeToken = typeToken;
+      this.typeName = typeName;
+   }
+
+   public boolean areEqual(PermissionType<?> other)
+   {
+      return other == this || other.typeToken == this.typeToken;
+   }
+
+   public Class<T> getTypeToken()
+   {
+      return typeToken;
+   }
+
+   public String getTypeName()
+   {
+      return typeName;
+   }
 }
