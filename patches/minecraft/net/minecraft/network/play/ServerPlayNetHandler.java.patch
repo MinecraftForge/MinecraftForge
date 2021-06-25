@@ -17,7 +17,7 @@
  
     private boolean func_241162_a_(Entity p_241162_1_) {
 -      return p_241162_1_.field_70170_p.func_234853_a_(p_241162_1_.func_174813_aQ().func_186662_g(0.0625D).func_72321_a(0.0D, -0.55D, 0.0D)).allMatch(AbstractBlock.AbstractBlockState::func_196958_f);
-+      return BlockPos.func_239581_a_(p_241162_1_.func_174813_aQ().func_186662_g(0.0625D).func_72321_a(0.0D, -0.55D, 0.0D)).allMatch(b -> p_241162_1_.field_70170_p.func_180495_p(b).isAir(p_241162_1_.field_70170_p, b));
++      return BlockPos.func_239581_a_(p_241162_1_.func_174813_aQ().func_186662_g(0.0625D).func_72321_a(0.0D, -0.55D, 0.0D)).allMatch(b -> p_241162_1_.field_70170_p.func_180495_p(b).func_196958_f());
     }
  
     public void func_184339_a(CConfirmTeleportPacket p_184339_1_) {

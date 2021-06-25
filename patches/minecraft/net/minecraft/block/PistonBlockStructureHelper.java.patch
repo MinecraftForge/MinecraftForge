@@ -48,7 +48,7 @@
                 blockstate = this.field_177261_a.func_180495_p(blockpos);
 -               block = blockstate.func_177230_c();
 -               if (blockstate.func_196958_f() || !func_227030_a_(block1, block) || !PistonBlock.func_185646_a(blockstate, this.field_177261_a, blockpos, this.field_177257_d, false, this.field_177257_d.func_176734_d()) || blockpos.equals(this.field_177259_b)) {
-+               if (blockstate.isAir(this.field_177261_a, blockpos) || !oldState.canStickTo(blockstate) || !PistonBlock.func_185646_a(blockstate, this.field_177261_a, blockpos, this.field_177257_d, false, this.field_177257_d.func_176734_d()) || blockpos.equals(this.field_177259_b)) {
++               if (blockstate.func_196958_f() || !oldState.canStickTo(blockstate) || !PistonBlock.func_185646_a(blockstate, this.field_177261_a, blockpos, this.field_177257_d, false, this.field_177257_d.func_176734_d()) || blockpos.equals(this.field_177259_b)) {
                    break;
                 }
  
@@ -61,15 +61,6 @@
                          return false;
                       }
                    }
-@@ -128,7 +_,7 @@
-                }
- 
-                blockstate = this.field_177261_a.func_180495_p(blockpos1);
--               if (blockstate.func_196958_f()) {
-+               if (blockstate.isAir(field_177261_a, blockpos1)) {
-                   return true;
-                }
- 
 @@ -173,7 +_,7 @@
           if (direction.func_176740_k() != this.field_177257_d.func_176740_k()) {
              BlockPos blockpos = p_177250_1_.func_177972_a(direction);

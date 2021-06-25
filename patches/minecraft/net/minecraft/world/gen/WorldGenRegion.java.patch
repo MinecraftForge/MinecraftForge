@@ -1,11 +1,6 @@
 --- a/net/minecraft/world/gen/WorldGenRegion.java
 +++ b/net/minecraft/world/gen/WorldGenRegion.java
-@@ -173,11 +_,11 @@
- 
-    public boolean func_241212_a_(BlockPos p_241212_1_, boolean p_241212_2_, @Nullable Entity p_241212_3_, int p_241212_4_) {
-       BlockState blockstate = this.func_180495_p(p_241212_1_);
--      if (blockstate.func_196958_f()) {
-+      if (blockstate.isAir(this, p_241212_1_)) {
+@@ -177,7 +_,7 @@
           return false;
        } else {
           if (p_241212_2_) {

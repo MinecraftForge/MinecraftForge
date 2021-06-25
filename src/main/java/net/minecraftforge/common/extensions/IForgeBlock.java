@@ -832,7 +832,7 @@ public interface IForgeBlock
         else if ((entity instanceof WitherEntity) ||
                  (entity instanceof WitherSkullEntity))
         {
-            return state.isAir(world, pos) || WitherEntity.canDestroy(state);
+            return state.isAir() || WitherEntity.canDestroy(state);
         }
 
         return true;

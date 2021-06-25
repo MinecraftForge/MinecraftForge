@@ -9,12 +9,3 @@
              this.func_230367_a_(p_227210_1_, p_227210_6_, p_227210_4_.field_227273_b_.func_225574_a_(p_227210_2_, p_227210_3_));
           }
        }
-@@ -48,7 +_,7 @@
-                for(int l = -k; l <= k; ++l) {
-                   for(int i1 = -k; i1 <= k; ++i1) {
-                      BlockState blockstate = p_227209_1_.func_180495_p(p_227209_4_.func_239621_a_(p_227209_2_, l, j, i1));
--                     if (!blockstate.func_196958_f() && !blockstate.func_235714_a_(BlockTags.field_206952_E)) {
-+                     if (!blockstate.isAir(p_227209_1_, p_227209_4_.func_239621_a_(p_227209_2_, l, j, i1)) && !blockstate.func_235714_a_(BlockTags.field_206952_E)) {
-                         return false;
-                      }
-                   }

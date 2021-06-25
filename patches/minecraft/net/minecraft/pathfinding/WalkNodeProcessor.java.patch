@@ -1,6 +1,6 @@
 --- a/net/minecraft/pathfinding/WalkNodeProcessor.java
 +++ b/net/minecraft/pathfinding/WalkNodeProcessor.java
-@@ -463,9 +_,11 @@
+@@ -463,6 +_,8 @@
  
     protected static PathNodeType func_237238_b_(IBlockReader p_237238_0_, BlockPos p_237238_1_) {
        BlockState blockstate = p_237238_0_.func_180495_p(p_237238_1_);
@@ -8,8 +8,4 @@
 +      if (type != null) return type;
        Block block = blockstate.func_177230_c();
        Material material = blockstate.func_185904_a();
--      if (blockstate.func_196958_f()) {
-+      if (blockstate.isAir(p_237238_0_, p_237238_1_)) {
-          return PathNodeType.OPEN;
-       } else if (!blockstate.func_235714_a_(BlockTags.field_212185_E) && !blockstate.func_203425_a(Blocks.field_196651_dG)) {
-          if (blockstate.func_203425_a(Blocks.field_150434_aF)) {
+       if (blockstate.func_196958_f()) {

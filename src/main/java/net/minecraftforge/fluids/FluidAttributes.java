@@ -164,12 +164,12 @@ public class FluidAttributes
 
     public final boolean canBePlacedInWorld(IBlockDisplayReader reader, BlockPos pos, FluidState state)
     {
-        return !getBlock(reader, pos, state).isAir(reader, pos);
+        return !getBlock(reader, pos, state).isAir();
     }
 
     public final boolean canBePlacedInWorld(IBlockDisplayReader reader, BlockPos pos, FluidStack state)
     {
-        return !getBlock(reader, pos, getStateForPlacement(reader, pos, state)).isAir(reader, pos);
+        return !getBlock(reader, pos, getStateForPlacement(reader, pos, state)).isAir();
     }
 
     public final boolean isLighterThanAir()
