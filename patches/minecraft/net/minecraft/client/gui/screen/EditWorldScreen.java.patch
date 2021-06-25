@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screen/EditWorldScreen.java
++++ b/net/minecraft/client/gui/screen/EditWorldScreen.java
+@@ -113,7 +_,7 @@
+             });
+          } catch (ExecutionException | InterruptedException interruptedexception) {
+             dataresult = DataResult.error("Could not parse level data!");
+-         }
++         } finally { net.minecraftforge.registries.GameData.revertToFrozen(); }
+ 
+          ITextComponent itextcomponent = new StringTextComponent(dataresult.get().map(Function.identity(), PartialResult::message));
+          ITextComponent itextcomponent1 = new TranslationTextComponent(dataresult.result().isPresent() ? "selectWorld.edit.export_worldgen_settings.success" : "selectWorld.edit.export_worldgen_settings.failure");

@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screen/OptimizeWorldScreen.java
++++ b/net/minecraft/client/gui/screen/OptimizeWorldScreen.java
+@@ -49,7 +_,7 @@
+       } catch (Exception exception) {
+          field_239024_a_.warn("Failed to load datapacks, can't optimize world", (Throwable)exception);
+          return null;
+-      }
++      } finally { net.minecraftforge.registries.GameData.revertToFrozen(); }
+    }
+ 
+    private OptimizeWorldScreen(BooleanConsumer p_i232319_1_, DataFixer p_i232319_2_, SaveFormat.LevelSave p_i232319_3_, WorldSettings p_i232319_4_, boolean p_i232319_5_, ImmutableSet<RegistryKey<World>> p_i232319_6_) {
