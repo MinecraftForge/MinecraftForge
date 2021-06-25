@@ -19,8 +19,8 @@
 
 package net.minecraftforge.fml;
 
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.ITextProperties;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.List;
@@ -28,9 +28,11 @@ import java.util.List;
 public class TextComponentMessageFormatHandler {
     public static int handle(final TranslationTextComponent parent, final List<ITextProperties> children, final Object[] formatArgs, final String format) {
         try {
-            StringTextComponent component = new StringTextComponent(ForgeI18n.parseFormat(format, formatArgs));
-            component.getStyle().applyTo(parent.getStyle());
-            children.add(component);
+            List<ITextComponent> components = ForgeI18n.parseAsComponentList(format, formatArgs);
+            for (ITextComponent component : components) {
+                component.getStyle().applyTo(parent.getStyle());
+                children.add(component);
+            }
             return format.length();
         } catch (IllegalArgumentException ex) {
             return 0;

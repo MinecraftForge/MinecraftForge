@@ -20,6 +20,8 @@
 package net.minecraftforge.fml;
 
 import com.google.common.base.CharMatcher;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.commons.lang3.text.ExtendedMessageFormat;
@@ -30,7 +32,9 @@ import org.apache.logging.log4j.Logger;
 import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
@@ -38,7 +42,7 @@ import java.util.regex.Pattern;
 
 import static net.minecraftforge.fml.Logging.CORE;
 
-//TODO, this should be re-evaluated now that ITextComponents are passed everywhere instaed of strings.
+//TODO, this should be re-evaluated now that ITextComponents are passed everywhere instead of strings.
 public class ForgeI18n {
     private static final Logger LOGGER = LogManager.getLogger();
     // From FontRenderer.renderCharAtPos
@@ -96,7 +100,31 @@ public class ForgeI18n {
         i18n = properties;
     }
 
-    public static String parseMessage(final String i18nMessage, Object... args) {
+    /**
+     * @param i18nMessage the message to parse.
+     * @param args the objects to replace the placeholder with.
+     * @return a list of {@link ITextComponent}'s. Each new line represents a new {@link ITextComponent}.
+     */
+    public static List<ITextComponent> parseAsComponentList(final String i18nMessage, Object... args){
+        String result = parseMessage(i18nMessage, args);
+        List<ITextComponent> textComponents = new ArrayList<>();
+        for (String line : result.split("\n")) { //create a new component for each part of the string
+            textComponents.add(new StringTextComponent(line));
+        }
+        return textComponents;
+    }
+
+
+    /**
+     * @param i18nMessage the message to parse. If your message contains new lines consider using {@link ForgeI18n#parseAsComponentList}
+     * @param args the objects to replace the placeholder with.
+     * @return a {@link ITextComponent} representing the parsed string.
+     */
+    public static ITextComponent parseAsComponent(final String i18nMessage, final Object... args){
+        return new StringTextComponent(parseMessage(i18nMessage, args));
+    }
+
+    public static String parseMessage(final String i18nMessage, final Object... args) {
         final String pattern = getPattern(i18nMessage);
         try {
             return parseFormat(pattern, args);
