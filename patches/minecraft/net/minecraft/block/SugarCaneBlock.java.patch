@@ -41,7 +41,7 @@
 +
 +   @Override
 +   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
-+       return net.minecraftforge.common.PlantType.BEACH;
++       return net.minecraftforge.common.PlantType.SUGARCANE;
 +   }
 +
 +   @Override
