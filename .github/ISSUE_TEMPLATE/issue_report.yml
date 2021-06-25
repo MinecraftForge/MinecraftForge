@@ -6,7 +6,6 @@ body:
   attributes:
   value: |
     Thank you for reporting!
-
     For support with crashes and issues, please create a post on the forum instead:
     https://www.minecraftforge.net/forum/forum/18-support-bug-reports/
 - type: dropdown
