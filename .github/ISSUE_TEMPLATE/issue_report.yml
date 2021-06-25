@@ -2,56 +2,55 @@ name: Issue report
 description: Visit the forum first for issues with crashes.
 labels: [Triage]
 body:
-  - type: markdown
-    attributes:
-    value: |
-      Thank you for reporting!
+- type: markdown
+  attributes:
+  value: |
+   Thank you for reporting!
 
-      For support with crashes and issues, please create a post on the forum instead:
-      https://www.minecraftforge.net/forum/forum/18-support-bug-reports/
- - type: dropdown
-   id: minecraft-version
-   attributes:
-     label: Minecraft Version
-     description: What version of Minecraft are you using? Any version below 1.15 is no longer supported.
-     options:
-       - v1.16.5 (latest)
-       - v1.16.4
-       - v1.16.3
-       - v1.16.2
-       - v1.16.1
-       - v1.16
-       - v1.15.2
-       - v1.15.1
-       - v1.15
-   validations:
-     required: true
- - type: input
-   attributes:
-     label: Forge Version
-     description: What version of Forge are you using? Please enter a version number, not just "Latest" or "RB"
-     placeholder: e.g. v36.1.32
-   validations:
-     required: true
- - type: textarea
-   attributes:
-     label: Logs
-     description: Link(s) to GitHub Gist with full latest.log and/or crash report
-     render: markdown
- - type: textarea
-   attributes:
-     label: Steps To Reproduce
-     description: Steps to reproduce the behavior.
-     placeholder: |
-       1. Do this
-       2. Then do that
-       3. ...
-   validations:
+   For support with crashes and issues, please create a post on the forum instead:
+   https://www.minecraftforge.net/forum/forum/18-support-bug-reports/
+- type: dropdown
+  id: minecraft-version
+  attributes:
+    label: Minecraft Version
+    description: What version of Minecraft are you using? Any version below 1.15 is no longer supported.
+    options:
+      - v1.16.5 (latest)
+      - v1.16.4
+      - v1.16.3
+      - v1.16.2
+      - v1.16.1
+      - v1.16
+      - v1.15.2
+      - v1.15.1
+      - v1.15
+  validations:
     required: true
- - type: textarea
-   attributes:
-     label: Description of issue
-     description: Please describe the issue you're experiencing
-   validations:
+- type: input
+  attributes:
+    label: Forge Version
+    description: What version of Forge are you using? Please enter a version number, not just "Latest" or "RB"
+    placeholder: e.g. v36.1.32
+  validations:
     required: true
-    
+- type: textarea
+  attributes:
+    label: Logs
+    description: Link(s) to GitHub Gist with full latest.log and/or crash report
+    render: markdown
+- type: textarea
+  attributes:
+    label: Steps To Reproduce
+    description: Steps to reproduce the behavior.
+    placeholder: |
+      1. Do this
+      2. Then do that
+      3. ...
+  validations:
+    required: true
+- type: textarea
+  attributes:
+    label: Description of issue
+    description: Please describe the issue you're experiencing
+  validations:
+    required: true
