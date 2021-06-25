@@ -29,6 +29,7 @@ import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.network.ForgeNetwork;
 import net.minecraftforge.event.TickEvent;
 
 public class BasicEventHooks
@@ -41,6 +42,7 @@ public class BasicEventHooks
 
     public static void firePlayerLoggedIn(PlayerEntity player)
     {
+        ForgeNetwork.sendEntityCapabilities(player, true, true);
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(player));
     }
 
