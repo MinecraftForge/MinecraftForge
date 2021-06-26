@@ -47,6 +47,19 @@ public class BooleanAttribute extends Attribute
         return true;
     }
 
+    /**
+     * If the stack has an ADDITION or MULTIPLY_BASE modifier, then the ItemStack's tooltip will either say it "Allows X" or "Denies X", where X is the action associated with the attribute
+     * "Allows" means a provisional "yes" is given to performing the action
+     * "Denies" means a provisional "no" is given to performing the action, which will cancel out a single "Allow"
+     * If the stack has an MULTIPLY_TOTAL modifier with a value less than or equal to -1, then the tooltip will say it "Disables X", where X is the action associated with the attribute
+     * "Disables" means a definitive "no" is given to performing the action, cancelling out any "Allows"
+     * @param stack The ItemStack to handle the tooltip for
+     * @param player The Player holding the ItemStack, if not null. Note that this would be the client since this method is called client-side.
+     * @param tooltipList The current List of tooltips. This is what you should be modifying.
+     * @param modifierMultimap The Multimap of Attribute-AttributeModifier for the ItemStack for a given EquipmentSlotType
+     * @param modifier The AttributeModifier to add a tooltip for
+     * @param slotType The EquipmentSlotType used to obtain the Attribute-AttributeModifier Multimap from the ItemStack
+     */
     @Override
     public void addCustomTooltipToItemStack(ItemStack stack, @Nullable PlayerEntity player, List<ITextComponent> tooltipList, Multimap<Attribute, AttributeModifier> modifierMultimap, AttributeModifier modifier, EquipmentSlotType slotType)
     {
@@ -73,6 +86,18 @@ public class BooleanAttribute extends Attribute
         }
     }
 
+    /**
+     * If the stack has an ADDITION or MULTIPLY_BASE modifier, then the ItemStack's tooltip will either say it "Allows X" or "Denies X", where X is the action associated with the attribute
+     * "Allows" means a provisional "yes" is given to performing the action
+     * "Denies" means a provisional "no" is given to performing the action, which will cancel out a single "Allow"
+     * If the stack has an MULTIPLY_TOTAL modifier with a value less than or equal to -1, then the tooltip will say it "Disables X", where X is the action associated with the attribute
+     * "Disables" means a definitive "no" is given to performing the action, cancelling out any "Allows"
+     * @param stack The ItemStack containing a Potion to handle the tooltip for
+     * @param player The Player holding the ItemStack, if not null. Note that this would be the client since this method is called client-side.
+     * @param tooltipList The current List of tooltips. This is what you should be modifying.
+     * @param modifierList The List of Attribute-AttributeModifier pairings for the ItemStack containing a Potion
+     * @param modifier The AttributeModifier to add a tooltip for
+     */
     @Override
     public void addCustomTooltipToPotion(ItemStack stack, @Nullable PlayerEntity player, List<ITextComponent> tooltipList, List<Pair<Attribute, AttributeModifier>> modifierList, AttributeModifier modifier)
     {

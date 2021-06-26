@@ -208,9 +208,15 @@ public class ForgeHooks
             if(fallFlyingAttribute != null)
             {
                 double attributeValue = fallFlyingAttribute.getValue();
-                boolean wasTotalMultiplied = !fallFlyingAttribute.getModifiers(AttributeModifier.Operation.MULTIPLY_TOTAL).isEmpty();
-                boolean wasMultipliedByZero = attributeValue == 0 && wasTotalMultiplied;
-                if(!wasMultipliedByZero)
+                boolean wasTotalMultipliedByZero = false;
+                for(AttributeModifier multiplier : fallFlyingAttribute.getModifiers(AttributeModifier.Operation.MULTIPLY_TOTAL)){
+                    if(multiplier.getAmount() + 1.0D <= 0){ // See BooleanAttribute#calculateMultiplyTotalAndUpdateCurrent
+                        wasTotalMultipliedByZero = true;
+                        break;
+                    }
+                }
+                boolean doNotAddValue = attributeValue == 0 && wasTotalMultipliedByZero;
+                if(!doNotAddValue)
                 {
                     attributeValue += 1;
                 }
