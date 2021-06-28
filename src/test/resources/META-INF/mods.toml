@@ -125,4 +125,4 @@ license="LGPL v2.1"
 [[mods]]
     modId="text_linear_filtering_test"
 [[mods]]
-    modId="fishing_example"
+    modId="fishing_bobber_event_test"

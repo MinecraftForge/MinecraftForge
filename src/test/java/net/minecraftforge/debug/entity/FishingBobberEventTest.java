@@ -1,3 +1,4 @@
+package net.minecraftforge.debug.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -9,13 +10,18 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod("fishing_example")
-public class FishingExample
+@Mod("fishing_bobber_event_test")
+public class FishingBobberEventTest
 {
-    public FishingExample()
+    public static final boolean ENABLE = true;
+
+    public FishingBobberEventTest()
     {
-        MinecraftForge.EVENT_BUS.register(this);
-        MinecraftForge.EVENT_BUS.addListener(FishingExample::handleImpact);
+        if (ENABLE)
+        {
+            MinecraftForge.EVENT_BUS.register(this);
+            MinecraftForge.EVENT_BUS.addListener(FishingBobberEventTest::handleImpact);
+        }
     }
 
     public static void handleImpact(ProjectileImpactEvent.FishingBobber event)
