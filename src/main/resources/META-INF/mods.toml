@@ -3,6 +3,7 @@ loaderVersion="[24,]"
 issueTrackerURL="http://www.minecraftforge.net/"
 logoFile="forge_logo.png"
 license="LGPL v2.1"
+
 [[mods]]
     modId="forge"
     # We use the global forge version
@@ -14,4 +15,4 @@ license="LGPL v2.1"
     description='''
     Forge, a broad compatibility API.
     '''
-		
+    
