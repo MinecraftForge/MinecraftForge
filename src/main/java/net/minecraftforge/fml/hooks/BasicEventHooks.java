@@ -37,6 +37,7 @@ public class BasicEventHooks
 
     public static void firePlayerChangedDimensionEvent(PlayerEntity player, RegistryKey<World> fromDim, RegistryKey<World> toDim)
     {
+        ForgeNetwork.sendEntityCapabilities(player, true, true);
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
     }
 
