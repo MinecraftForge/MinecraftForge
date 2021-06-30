@@ -197,6 +197,49 @@ public class CraftingHelper
 
         return new ItemStack(item, JSONUtils.getAsInt(json, "count", 1));
     }
+    
+    public static ItemStack getResultItemStack(JsonObject json, boolean readNBT)
+    {
+        String itemName = JSONUtils.getAsString(json, "result");
+
+        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
+
+        if (item == null)
+            throw new JsonSyntaxException("Unknown item '" + itemName + "'");
+
+        if (readNBT && json.has("nbt"))
+        {
+            // Lets hope this works? Needs test
+            try
+            {
+                JsonElement element = json.get("nbt");
+                CompoundNBT nbt;
+                if(element.isJsonObject())
+                    nbt = JsonToNBT.parseTag(GSON.toJson(element));
+                else
+                    nbt = JsonToNBT.parseTag(JSONUtils.convertToString(element, "nbt"));
+
+                CompoundNBT tmp = new CompoundNBT();
+                if (nbt.contains("ForgeCaps"))
+                {
+                    tmp.put("ForgeCaps", nbt.get("ForgeCaps"));
+                    nbt.remove("ForgeCaps");
+                }
+
+                tmp.put("tag", nbt);
+                tmp.putString("id", itemName);
+                tmp.putInt("Count", JSONUtils.getAsInt(json, "count", 1));
+
+                return ItemStack.of(tmp);
+            }
+            catch (CommandSyntaxException e)
+            {
+                throw new JsonSyntaxException("Invalid NBT Entry: " + e.toString());
+            }
+        }
+
+        return new ItemStack(item, JSONUtils.getAsInt(json, "count", 1));
+    }
 
     public static boolean processConditions(JsonObject json, String memberName)
     {
