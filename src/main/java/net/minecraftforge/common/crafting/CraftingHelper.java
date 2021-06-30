@@ -33,6 +33,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
@@ -46,6 +47,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.apache.logging.log4j.LogManager;
@@ -154,53 +156,29 @@ public class CraftingHelper
 
         return serializer.parse(obj);
     }
-
-    public static ItemStack getItemStack(JsonObject json, boolean readNBT)
+    
+    public static ItemStack itemFromJson(JsonObject p_199798_0_, String key)
     {
-        String itemName = JSONUtils.getAsString(json, "item");
-
-        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
-
-        if (item == null)
-            throw new JsonSyntaxException("Unknown item '" + itemName + "'");
-
-        if (readNBT && json.has("nbt"))
-        {
-            // Lets hope this works? Needs test
-            try
-            {
-                JsonElement element = json.get("nbt");
-                CompoundNBT nbt;
-                if(element.isJsonObject())
-                    nbt = JsonToNBT.parseTag(GSON.toJson(element));
-                else
-                    nbt = JsonToNBT.parseTag(JSONUtils.convertToString(element, "nbt"));
-
-                CompoundNBT tmp = new CompoundNBT();
-                if (nbt.contains("ForgeCaps"))
-                {
-                    tmp.put("ForgeCaps", nbt.get("ForgeCaps"));
-                    nbt.remove("ForgeCaps");
-                }
-
-                tmp.put("tag", nbt);
-                tmp.putString("id", itemName);
-                tmp.putInt("Count", JSONUtils.getAsInt(json, "count", 1));
-
-                return ItemStack.of(tmp);
-            }
-            catch (CommandSyntaxException e)
-            {
-                throw new JsonSyntaxException("Invalid NBT Entry: " + e.toString());
-            }
+        String s = JSONUtils.getAsString(p_199798_0_, key);
+        Item item = Registry.ITEM.getOptional(new ResourceLocation(s)).orElseThrow(() -> {
+            return new JsonSyntaxException("Unknown item '" + s + "'");
+        });
+        if (p_199798_0_.has("data")) {
+           throw new JsonParseException("Disallowed data tag found");
+        } else {
+           int i = JSONUtils.getAsInt(p_199798_0_, "count", 1);
+           return CraftingHelper.getItemStack(p_199798_0_, true, key);
         }
-
-        return new ItemStack(item, JSONUtils.getAsInt(json, "count", 1));
     }
     
-    public static ItemStack getResultItemStack(JsonObject json, boolean readNBT)
+    public static ItemStack getItemStack(JsonObject json, boolean readNBT)
     {
-        String itemName = JSONUtils.getAsString(json, "result");
+        return getItemStack(json, readNBT, "item");
+    }
+    
+    public static ItemStack getItemStack(JsonObject json, boolean readNBT, String key)
+    {
+        String itemName = JSONUtils.getAsString(json, key);
 
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
 

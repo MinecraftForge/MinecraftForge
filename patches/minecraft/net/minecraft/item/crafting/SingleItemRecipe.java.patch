@@ -1,22 +1,8 @@
 --- a/net/minecraft/item/crafting/SingleItemRecipe.java
 +++ b/net/minecraft/item/crafting/SingleItemRecipe.java
-@@ -59,8 +_,21 @@
-    public ItemStack func_77572_b(IInventory p_77572_1_) {
+@@ -60,7 +_,7 @@
        return this.field_222132_b.func_77946_l();
     }
-+   
-+   public static ItemStack itemFromJson(JsonObject p_199798_0_) {
-+      String s = JSONUtils.func_151200_h(p_199798_0_, "result");
-+      net.minecraft.item.Item item = Registry.field_212630_s.func_241873_b(new ResourceLocation(s)).orElseThrow(() -> {
-+          return new com.google.gson.JsonSyntaxException("Unknown item '" + s + "'");
-+      });
-+      if (p_199798_0_.has("data")) {
-+         throw new com.google.gson.JsonParseException("Disallowed data tag found");
-+      } else {
-+         int i = JSONUtils.func_151203_m(p_199798_0_, "count");
-+         return net.minecraftforge.common.crafting.CraftingHelper.getResultItemStack(p_199798_0_, true);
-+      }
-+   }
  
 -   public static class Serializer<T extends SingleItemRecipe> implements IRecipeSerializer<T> {
 +   public static class Serializer<T extends SingleItemRecipe> extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<T> {
@@ -30,7 +16,7 @@
 -         String s1 = JSONUtils.func_151200_h(p_199425_2_, "result");
 -         int i = JSONUtils.func_151203_m(p_199425_2_, "count");
 -         ItemStack itemstack = new ItemStack(Registry.field_212630_s.func_82594_a(new ResourceLocation(s1)), i);
-+         ItemStack itemstack = SingleItemRecipe.itemFromJson(p_199425_2_);
++         ItemStack itemstack = net.minecraftforge.common.crafting.CraftingHelper.itemFromJson(p_199425_2_, "result");
           return this.field_222180_t.create(p_199425_1_, s, ingredient, itemstack);
        }
  
