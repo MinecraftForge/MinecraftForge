@@ -33,13 +33,13 @@ import net.minecraft.util.registry.WorldGenRegistries;
  * Dynamic registries load after reloadable data and do not support merging of
  * data from different datapacks, so tags for Dynamic Registry Objects must be
  * loaded in reloadable data (before the dynamic registries load), and can only
- * exist as sets of registry keys (rather than having direct references to the
+ * exist as sets of resource keys (rather than having direct references to the
  * things they are tags of).
  * 
  * Furthermore, they must be resolvable before "normal" tags are currently
  * resolved at in order to be useful during biome loading and modification, so
  * rather than refactor the perfectly-fine-as-is "regular tags", we create a
- * separate set of infrastructure here for managing "key tags"
+ * separate set of infrastructure here for managing resource key tags
  */
 public class ResourceKeyTags implements IFutureReloadListener
 {
@@ -54,7 +54,7 @@ public class ResourceKeyTags implements IFutureReloadListener
      * @param <T> The type of the things the tag's registry keys are for
      * @param registryKey The key used to create the tag's registry keys. This also sets the name of the directory to load tags from.
      * @param tagID The id of the tag, defines the namespace and id of the json to load the tag from (can include subfolders)
-     * @return A tag wrapper for a key tag that will be loaded from data{tagID-namespace}/tags/resource_keys/{registry}/{tagID-path}.json
+     * @return A tag wrapper for a key tag that will be loaded from data/{tagID-namespace}/tags/resource_keys/{registry}/{tagID-path}.json
      * 
      * @apiSpec Can be created at any time. Key tag wrappers become queryable as soon as key tags have been loaded at least once.
      */
