@@ -67,7 +67,7 @@ public class ResourceKeyTags implements IFutureReloadListener
      * Notify the key tag manager that key tags tags should be loaded for a given registry.
      * All actual dynamic registries will automatically have tags loaded, additional registries that are loaded from datapacks
      * but not "actual" dynamic registries can be marked for having key tags loaded via this method.
-     * e.g. Forge adds key tags for Level registrykeys -- these will be loaded from "tags/dimension" 
+     * e.g. Forge adds key tags for Level registrykeys -- these will be loaded from "tags/resource_keys/dimension" 
      * 
      * Static registries should use standard tags or be made to work with standard tags.
      * 
@@ -167,7 +167,7 @@ public class ResourceKeyTags implements IFutureReloadListener
      * Updates the key tag registry
      * @param newTags new tags
      * 
-     * @apiNote internal, call when tags are loaded or when tags are received from the server
+     * @apiNote internal, called when tags are loaded or when tags are received from the server
      */
     public void updateTags(final Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> newTags)
     {
