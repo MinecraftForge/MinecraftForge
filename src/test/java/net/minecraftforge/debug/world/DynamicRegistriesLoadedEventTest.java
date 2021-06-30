@@ -14,6 +14,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourcePackType;
+import net.minecraft.tags.ITag;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -41,6 +42,8 @@ import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilders;
 import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.BiomeManager.BiomeEntry;
 import net.minecraftforge.common.BiomeManager.BiomeType;
+import net.minecraftforge.common.ForgeTagHandler;
+import net.minecraftforge.common.ResourceKeyTags;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.JsonDataProvider;
 import net.minecraftforge.common.world.BiomeAmbienceBuilder;
@@ -178,6 +181,7 @@ public class DynamicRegistriesLoadedEventTest
         }
     }
     
+    public static final ITag.INamedTag<RegistryKey<Biome>> TESTING_BIOMES_TAG = ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "testing_biomes"));
     void onDynamicRegistriesLoaded(DynamicRegistriesLoadedEvent event)
     {
         DynamicRegistries registries = event.getDataRegistries();
@@ -187,8 +191,7 @@ public class DynamicRegistriesLoadedEventTest
         // (i.e. if somebody removes the biome registry for some reason then vanilla will crash first anyway)
         Registry<ConfiguredFeature<?,?>> featureRegistry = registries.registryOrThrow(Registry.CONFIGURED_FEATURE_REGISTRY);
         
-        // we have a Set<RegistryKey<Biome>> defined here -- TODO implement biome tags
-        TESTING_BIOMES.forEach(biomeKey -> {
+        TESTING_BIOMES_TAG.getValues().forEach(biomeKey -> {
             // set biome sky color to green, add wool feature 
             IBiomeParameters biomeParameters = biomeModifiers.get(biomeKey);
             if (biomeParameters == null)

@@ -1,0 +1,8 @@
+{
+	"values":
+	[
+		"minecraft:mountains",
+		"minecraft:snowy_tundra",
+		"#dynamic_registries_loaded_event_test:extra_biomes"
+	]
+}
