@@ -195,14 +195,15 @@
     }
  
     protected void func_213337_cE() {
-@@ -1240,6 +_,7 @@
-       if (!this.field_70170_p.field_72995_K && (this.func_70684_aJ() || this.field_70718_bc > 0 && this.func_146066_aG() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223602_e))) {
-          int i = this.func_70693_a(this.field_70717_bb);
+@@ -1238,7 +_,7 @@
  
-+         i = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.field_70717_bb, i);
+    protected void func_226294_cV_() {
+       if (!this.field_70170_p.field_72995_K && (this.func_70684_aJ() || this.field_70718_bc > 0 && this.func_146066_aG() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223602_e))) {
+-         int i = this.func_70693_a(this.field_70717_bb);
++         int i = this.getTotalExperienceValue(this.field_70717_bb);
+ 
           while(i > 0) {
              int j = ExperienceOrbEntity.func_70527_a(i);
-             i -= j;
 @@ -1260,7 +_,8 @@
        ResourceLocation resourcelocation = this.func_213346_cF();
        LootTable loottable = this.field_70170_p.func_73046_m().func_200249_aQ().func_186521_a(resourcelocation);
@@ -491,12 +492,10 @@
     }
  
     public boolean func_70094_T() {
-@@ -3080,6 +_,58 @@
- 
-    public void func_213334_d(Hand p_213334_1_) {
+@@ -3082,6 +_,58 @@
        this.func_213361_c(p_213334_1_ == Hand.MAIN_HAND ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND);
-+   }
-+
+    }
+ 
 +   /* ==== FORGE START ==== */
 +   /***
 +    * Removes all potion effects that have curativeItem as a curative item for its effect
@@ -547,6 +546,26 @@
 +      super.invalidateCaps();
 +      for (int x = 0; x < handlers.length; x++)
 +         handlers[x].invalidate();
-    }
- 
++   }
++
     @OnlyIn(Dist.CLIENT)
+    public AxisAlignedBB func_184177_bl() {
+       if (this.func_184582_a(EquipmentSlotType.HEAD).func_77973_b() == Items.field_196151_dA) {
+@@ -3090,5 +_,17 @@
+       } else {
+          return super.func_184177_bl();
+       }
++   }
++
++   /**
++    * Exposes the experience value of the entity after the getExperienceDrop event.
++    * @param playerEntity The player involved in obtaining this experience, typically lastHurtByPlayer. May be null.
++    * @return The amount of experience
++    */
++   public final int getTotalExperienceValue(PlayerEntity playerEntity){
++      if(!func_146066_aG())
++         return 0;
++      int i = this.func_70693_a(playerEntity);
++      return net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, playerEntity, i);
+    }
+ }
