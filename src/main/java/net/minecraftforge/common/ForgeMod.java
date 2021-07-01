@@ -63,6 +63,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -93,6 +94,7 @@ import org.apache.logging.log4j.MarkerManager;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
@@ -160,6 +162,29 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.register(this);
         BiomeDictionary.init();
+        registerDefaultResourceKeyTagDirectories();
+    }
+    
+    private static void registerDefaultResourceKeyTagDirectories()
+    {
+        Consumer<RegistryKey<? extends Registry<?>>> registerDirectoryWithDefaultPlural =
+            registryKey -> ResourceKeyTags.registerResourceKeyTagDirectory(registryKey, registryKey.location().getPath() + "s");
+            
+        // resource key tag directories for vanilla dynamic registries -- we register all of these whether we need them or not
+        // this enforces the directory names for these so we don't have mods registering different directory names for them,
+        // e.g. ten mods registering "template_pools" and then three more registering "template_pool"
+        registerDirectoryWithDefaultPlural.accept(Registry.DIMENSION_TYPE_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.BIOME_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.CONFIGURED_SURFACE_BUILDER_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.CONFIGURED_CARVER_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.CONFIGURED_FEATURE_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.PROCESSOR_LIST_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.TEMPLATE_POOL_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
+        
+        // other vanilla data that uses/needs resource keys
+        registerDirectoryWithDefaultPlural.accept(Registry.DIMENSION_REGISTRY);
     }
 
     public void preInit(FMLCommonSetupEvent evt)
@@ -173,7 +198,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         registerArgumentTypes();
         VanillaPacketSplitter.register();
-        ResourceKeyTags.markRegistryForNeedingKeyTagsLoaded(Registry.DIMENSION_REGISTRY);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

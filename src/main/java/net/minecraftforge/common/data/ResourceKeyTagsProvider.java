@@ -27,6 +27,7 @@ import net.minecraft.tags.Tag;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
+import net.minecraftforge.common.ResourceKeyTags;
 
 /**
  * The existing tag providers only work with tags for static registry objects,
@@ -43,13 +44,22 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
     protected final String sourceModid;
     protected final ExistingFileHelper.IResourceType resourceType;
     
+    /**
+     * @param generator Data generator from GatherDataEvent
+     * @param existingFileHelper file helper from GatherDataEvent
+     * @param sourceModid Your modid (used for logging, not tag namespaces)
+     * @param registryKey The registry key to generate resource key tags for (registry keys for mods' custom directories must be registered to {@link ResourceKeyTags})
+     */
     public ResourceKeyTagsProvider(final DataGenerator generator, final ExistingFileHelper existingFileHelper, final String sourceModid, RegistryKey<Registry<T>> registryKey)
     {
+        final String directory = ResourceKeyTags.getTagDirectory(registryKey);
+        if (directory == null)
+            throw new IllegalArgumentException(String.format("No resource key tag directory registered to registry key %s (be sure to register custom directories)", registryKey.location()));
         this.generator = generator;
         this.existingFileHelper = existingFileHelper;
         this.sourceModid = sourceModid;
         this.registryKey = registryKey;
-        this.resourceType = new ExistingFileHelper.ResourceType(ResourcePackType.SERVER_DATA, ".json", "tags/resource_keys/"+registryKey.location().getPath());
+        this.resourceType = new ExistingFileHelper.ResourceType(ResourcePackType.SERVER_DATA, ".json", "tags/resource_keys/"+directory);
     }
     
     public abstract void addTags();
@@ -89,9 +99,9 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
                    missingReferences.stream().map(Objects::toString).collect(Collectors.joining(","))));
            }
            JsonObject tagJson = builder.serializeToJson();
-           Path path = this.generator.getOutputFolder().resolve("data/"+id.getNamespace()+"/tags/resource_keys/"+this.registryKey.location().getPath()+"/"+id.getPath()+".json");
+           Path path = this.generator.getOutputFolder().resolve("data/"+id.getNamespace()+"/"+this.resourceType.getPrefix()+"/"+id.getPath()+this.resourceType.getSuffix());
            if (path == null)
-               return; // run the data provider without writing it so other providers can still refer to the tag
+               return; // run the data provider without writing this tag so other providers can still refer to tags
            try
            {
                String jsonAsString = GSON.toJson(tagJson);
@@ -104,12 +114,11 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
                        writer.write(jsonAsString);
                    }
                }
-               
                cache.putNew(path, hash);
            }
            catch(IOException e)
            {
-               LOGGER.error("{} resource key tag provider couldn't save tags to {}", this.registryKey.location().getPath(), path, e);
+               LOGGER.error("{} resource key tag provider couldn't save tags to {}", this.registryKey.location(), path, e);
            }
         });
     }

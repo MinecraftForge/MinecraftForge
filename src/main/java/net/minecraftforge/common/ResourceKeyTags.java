@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -13,6 +14,9 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
@@ -27,6 +31,7 @@ import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.WorldGenRegistries;
+import net.minecraftforge.fml.ModLoadingContext;
 
 /**
  * Class that handles loading and syncing of tags for Dynamic Registry Keys.
@@ -44,7 +49,8 @@ import net.minecraft.util.registry.WorldGenRegistries;
 public class ResourceKeyTags implements IFutureReloadListener
 {
     public static final ResourceKeyTags INSTANCE = new ResourceKeyTags();
-    private static final Set<RegistryKey<? extends Registry<?>>> EXTRA_REGISTRIES = new HashSet<>();
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Map<RegistryKey<? extends Registry<?>>,String> REGISTRY_DIRECTORIES = new HashMap<>();
     
     private Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> data = new HashMap<>();
     private int generation = -1;
@@ -54,7 +60,9 @@ public class ResourceKeyTags implements IFutureReloadListener
      * @param <T> The type of the things the tag's registry keys are for
      * @param registryKey The key used to create the tag's registry keys. This also sets the name of the directory to load tags from.
      * @param tagID The id of the tag, defines the namespace and id of the json to load the tag from (can include subfolders)
-     * @return A tag wrapper for a key tag that will be loaded from data/{tagID-namespace}/tags/resource_keys/{registry}/{tagID-path}.json
+     * @return A tag wrapper for a key tag that will be loaded from data/{tagID-namespace}/tags/resource_keys/{directory}/{tagID-path}.json
+     * {directory} defaults to the un-namespaced registry name with an "s" tacked onto the end, mods that mark additional directories for loading
+     * via markDirectoryForLoadingKeyTags can specify an alternative directory name if needed.
      * 
      * @apiSpec Can be created at any time. Key tag wrappers become queryable as soon as key tags have been loaded at least once.
      */
@@ -67,18 +75,43 @@ public class ResourceKeyTags implements IFutureReloadListener
      * Notify the key tag manager that key tags tags should be loaded for a given registry.
      * All actual dynamic registries will automatically have tags loaded, additional registries that are loaded from datapacks
      * but not "actual" dynamic registries can be marked for having key tags loaded via this method.
-     * e.g. Forge adds key tags for Level registrykeys -- these will be loaded from "tags/resource_keys/dimension" 
+     * e.g. Forge adds key tags for Level resource keys, using the "dimensions" directory -- these will be loaded from "tags/resource_keys/dimensions"
      * 
-     * Static registries should use standard tags or be made to work with standard tags.
+     * @param registryKey The registry resource key to load resource key tags for
+     * @param directoryName The directory to load resource key tags from. Should be plural.
+     * Mods that add custom dynamic registries specific to their own mod should namespace this directory to avoid collisions
+     * with other mods' directories, e.g. "jimscheesemod/cheeses" instead of just "cheeses"
      * 
-     * @param registryKey The key for the registry that key tags should be loaded for
-     * 
-     * @apiSpec Must be called before the first load of key tags (mod constructor or common setup is fine).
+     * @apiSpec Must be called before the first load of key tags (mod constructor is the best time to call it).
      * Safe to call during parallel modloading.
      */
-    public synchronized static void markRegistryForNeedingKeyTagsLoaded(RegistryKey<? extends Registry<?>> registryKey)
+    public synchronized static void registerResourceKeyTagDirectory(final RegistryKey<? extends Registry<?>> registryKey, final String directoryName)
     {
-        EXTRA_REGISTRIES.add(registryKey);
+        // mods registering tag directories should be logged for debug purposes
+        String modid = ModLoadingContext.get().getActiveContainer().getModId();
+        final String previousDirectory = REGISTRY_DIRECTORIES.put(registryKey, directoryName);
+        if (previousDirectory != null && !Objects.equals(directoryName, previousDirectory))
+        {
+            LOGGER.error("Mod {} registered resource key tag directory {} for registry key {}, overriding previous directory {}. This will probably break resource key tag loading.",
+                modid, directoryName, registryKey.location(), previousDirectory);
+        }
+        else
+        {
+            LOGGER.debug("Mod {} registered resource key tag directory {} for registry key {}",
+                modid, directoryName, registryKey.location());
+        }
+    }
+    
+    /**
+     * Returns the tag directory registered to the given registry key.
+     * @param registryKey The key to get the directory for
+     * @return Returns null if the directory was not or has not been registered to the given registry key, otherwise returns the directory
+     * 
+     * @apiNote May not return valid data if modloading hasn't completed yet
+     */
+    public static @Nullable String getTagDirectory(final RegistryKey<? extends Registry<?>> registryKey)
+    {
+        return REGISTRY_DIRECTORIES.get(registryKey);
     }
 
     @Override
@@ -94,33 +127,25 @@ public class ResourceKeyTags implements IFutureReloadListener
         // when this concludes, the results of each of these futures can be fed back into the tag reader to produce the final tag collection
         final Map<RegistryKey<? extends Registry<?>>, Pair<TagCollectionReader<RegistryKey<?>>, CompletableFuture<Map<ResourceLocation,ITag.Builder>>>> futureTagBuilders = new HashMap<>();
         final List<CompletableFuture<Map<ResourceLocation,ITag.Builder>>> justTheFutures = new ArrayList<>();
-        final Consumer<RegistryKey<? extends Registry<?>>> keyConsumer = registryKey ->
+        for (Map.Entry<RegistryKey<? extends Registry<?>>,String> entry : REGISTRY_DIRECTORIES.entrySet())
         {
-            final Pair<TagCollectionReader<RegistryKey<?>>, CompletableFuture<Map<ResourceLocation, ITag.Builder>>> pair = getFutureTagBuilder(registryKey, manager, workerExecutor);
+            RegistryKey<? extends Registry<?>> registryKey = entry.getKey();
+            String directoryName = entry.getValue();
+            final Pair<TagCollectionReader<RegistryKey<?>>, CompletableFuture<Map<ResourceLocation, ITag.Builder>>> pair = getFutureTagBuilder(registryKey, directoryName, manager, workerExecutor);
             futureTagBuilders.put(registryKey, pair);
             justTheFutures.add(pair.getSecond());
-        };
-        for (Registry<?> registry : WorldGenRegistries.REGISTRY)
-        {
-            keyConsumer.accept(registry.key());
-        }
-        // there are some things registry keys are used for (worlds and dimensions mostly) that aren't in the dynamic registries proper,
-        // we need to load tags for those as well if they're marked as needing tags for
-        for (RegistryKey<? extends Registry<?>> registryKey : EXTRA_REGISTRIES)
-        {
-            keyConsumer.accept(registryKey);
         }
         return CompletableFuture.allOf(justTheFutures.toArray(new CompletableFuture[justTheFutures.size()]))
             .thenCompose(stage::wait) // wait for all jsons to be parsed, then finish building tags on main thread
             .thenAcceptAsync(voidArg -> this.finishLoadingOnMainThread(futureTagBuilders), mainExecutor);
     }
     
-    private static Pair<TagCollectionReader<RegistryKey<?>>, CompletableFuture<Map<ResourceLocation, ITag.Builder>>> getFutureTagBuilder(final RegistryKey<? extends Registry<?>> registryKey, final IResourceManager manager, final Executor workerExecutor)
+    private static Pair<TagCollectionReader<RegistryKey<?>>, CompletableFuture<Map<ResourceLocation, ITag.Builder>>> getFutureTagBuilder(final RegistryKey<? extends Registry<?>> registryKey, final String directoryName, final IResourceManager manager, final Executor workerExecutor)
     {
         final Function<ResourceLocation, Optional<RegistryKey<?>>> tagEntryFactory =
             rl -> Optional.<RegistryKey<?>>of(RegistryKey.create(registryKey, rl));
         final ResourceLocation registryName = registryKey.location();
-        final String directory = "tags/resource_keys/" + registryName.getPath();
+        final String directory = "tags/resource_keys/" + REGISTRY_DIRECTORIES.computeIfAbsent(registryKey, key -> key.location().getPath() + "s");
         final String nameForLogger = registryName.toString();
         final TagCollectionReader<RegistryKey<?>> reader = new TagCollectionReader<>(tagEntryFactory, directory, nameForLogger);
         return Pair.of(reader, reader.prepare(manager, workerExecutor));
