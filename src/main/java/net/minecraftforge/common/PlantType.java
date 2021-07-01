@@ -19,6 +19,9 @@
 
 package net.minecraftforge.common;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+import net.minecraft.advancements.criterion.BlockPredicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -31,7 +34,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 
-import java.util.Map;
+import javax.annotation.Nonnull;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -41,7 +45,7 @@ import java.util.regex.Pattern;
 public final class PlantType
 {
     private static final Pattern INVALID_CHARACTERS = Pattern.compile("[^a-z_]"); //Only a-z and _ are allowed, meaning names must be lower case. And use _ to separate words.
-    private static final Map<String, PlantType> VALUES = new ConcurrentHashMap<>();
+    public static final Map<String, PlantType> VALUES = new ConcurrentHashMap<>();
 
     public static final PlantType PLAINS = get("plains", x -> x.getState().is(Blocks.GRASS_BLOCK) || Tags.Blocks.DIRT.contains(x.getState().getBlock()) || x.getState().is(Blocks.FARMLAND));
     public static final PlantType DESERT = get("desert", x -> x.getState().is(Blocks.SAND) || x.getState().is(Blocks.TERRACOTTA) || x.getState().getBlock() instanceof GlazedTerracottaBlock);
@@ -64,26 +68,30 @@ public final class PlantType
     public static final PlantType CROP = get("crop", x -> x.getState().is(Blocks.FARMLAND));
     public static final PlantType CACTUS = get("cactus", x -> x.getState().is(Blocks.CACTUS) || x.getState().is(Blocks.SAND) || x.getState().is(Blocks.RED_SAND));
     public static final PlantType SUGAR_CANE = get("sugar_cane", BEACH.getBlockPredicate().or(x -> x.getState().is(Blocks.SUGAR_CANE)));
-    public static final PlantType NYLIUM_PLANTS = get("nylium_plants", PLAINS.getBlockPredicate().or(x -> x.getState().is(BlockTags.NYLIUM) || x.getState().is(Blocks.SOUL_SOIL)));
+    public static final PlantType NYLIUM_PLANTS = get("nylium_plants", PLAINS.getBlockPredicate().or(x -> x.getState().is(BlockTags.NYLIUM) || x.getState().is(Blocks.SOUL_SOIL)),
+            Blocks.CRIMSON_NYLIUM, Blocks.WARPED_NYLIUM, Blocks.NETHER_SPROUTS);
     public static final PlantType SEA_PICKLE = get("sea_pickle", x -> {
         BlockState below = x.getWorld().getBlockState(x.getPos().below());
         return !below.getCollisionShape(x.getWorld(), x.getPos()).getFaceShape(Direction.UP).isEmpty() || below.isFaceSturdy(x.getWorld(), x.getPos(), Direction.UP);
-    });
-    public static final PlantType WITHER_ROSE = get("wither_rose", PLAINS.getBlockPredicate().or(x -> x.getState().is(Blocks.NETHERRACK) || x.getState().is(Blocks.SOUL_SAND) || x.getState().is(Blocks.SOUL_SOIL)));
-    public static final PlantType FUNGUS = get("fungus", PLAINS.getBlockPredicate().or(x -> x.getState().is(BlockTags.NYLIUM) || x.getState().is(Blocks.MYCELIUM) || x.getState().is(Blocks.SOUL_SOIL)));
+    }, Blocks.SEA_PICKLE);
+    public static final PlantType WITHER_ROSE = get("wither_rose", PLAINS.getBlockPredicate().or(x -> x.getState().is(Blocks.NETHERRACK) || x.getState().is(Blocks.SOUL_SAND) || x.getState().is(Blocks.SOUL_SOIL)),
+            Blocks.WITHER_ROSE);
+    public static final PlantType FUNGUS = get("fungus",
+            PLAINS.getBlockPredicate().or(x -> x.getState().is(BlockTags.NYLIUM) || x.getState().is(Blocks.MYCELIUM) || x.getState().is(Blocks.SOUL_SOIL))
+            , Blocks.CRIMSON_FUNGUS, Blocks.WARPED_FUNGUS);
     public static final PlantType DEAD_BUSH = get("dead_bush", x ->
     {
         Block block = x.getState().getBlock();
         return block == Blocks.SAND || block == Blocks.RED_SAND || block == Blocks.TERRACOTTA || block == Blocks.WHITE_TERRACOTTA || block == Blocks.ORANGE_TERRACOTTA || block == Blocks.MAGENTA_TERRACOTTA || block == Blocks.LIGHT_BLUE_TERRACOTTA || block == Blocks.YELLOW_TERRACOTTA || block == Blocks.LIME_TERRACOTTA || block == Blocks.PINK_TERRACOTTA || block == Blocks.GRAY_TERRACOTTA || block == Blocks.LIGHT_GRAY_TERRACOTTA || block == Blocks.CYAN_TERRACOTTA || block == Blocks.PURPLE_TERRACOTTA || block == Blocks.BLUE_TERRACOTTA || block == Blocks.BROWN_TERRACOTTA || block == Blocks.GREEN_TERRACOTTA || block == Blocks.RED_TERRACOTTA || block == Blocks.BLACK_TERRACOTTA || block == Blocks.DIRT || block == Blocks.COARSE_DIRT || block == Blocks.PODZOL;
-    });
-    public static final PlantType SEA_GRASS = get("sea_grass", x -> x.getState().is(Blocks.FARMLAND));
+    }, Blocks.DEAD_BUSH);
+    public static final PlantType SEA_GRASS = get("sea_grass", x -> x.getState().is(Blocks.FARMLAND), Blocks.SEAGRASS, Blocks.TALL_SEAGRASS);
     public static final PlantType FARMLAND = get("farmland", x -> x.getState().is(Blocks.FARMLAND));
-    public static final PlantType MUSHROOM = get("mushroom", x -> x.getState().isSolidRender(x.getWorld(), x.getPos()));
+    public static final PlantType MUSHROOM = get("mushroom", x -> x.getState().isSolidRender(x.getWorld(), x.getPos()), Blocks.BROWN_MUSHROOM_BLOCK, Blocks.RED_MUSHROOM_BLOCK);
     public static final PlantType LILY_PAD = get("lily_pad", x -> {
         FluidState fluidstate = x.getWorld().getFluidState(x.getPos());
         FluidState fluidstate1 = x.getWorld().getFluidState(x.getPos().above());
         return (fluidstate.getType() == Fluids.WATER || x.getState().getMaterial() == Material.ICE) && fluidstate1.getType() == Fluids.EMPTY;
-    });
+    }, Blocks.LILY_PAD);
 
     /**
      * Getting a custom {@link PlantType}, or an existing one if it has the same name as that one. Your plant should implement {@link IPlantable}
@@ -98,23 +106,46 @@ public final class PlantType
      * @param name the name of the type of plant, you had better follow the style above
      * @return the acquired {@link PlantType}, a new one if not found.
      */
+    public static PlantType get(String name, Predicate<PlantInfo> blockPredicate, Set<Block> allowedPlants)
+    {
+        return VALUES.computeIfAbsent(name, e ->
+        {
+            if (INVALID_CHARACTERS.matcher(e).find())
+                throw new IllegalArgumentException("PlantType.get() called with invalid name: " + name);
+            return new PlantType(e, blockPredicate, allowedPlants);
+        });
+    }
+
+    public static PlantType get(String name, Predicate<PlantInfo> blockPredicate, Block... allowedPlants)
+    {
+        return VALUES.computeIfAbsent(name, e ->
+        {
+            if (INVALID_CHARACTERS.matcher(e).find())
+                throw new IllegalArgumentException("PlantType.get() called with invalid name: " + name);
+            return new PlantType(e, blockPredicate, Sets.newHashSet(allowedPlants));
+        });
+    }
+
     public static PlantType get(String name, Predicate<PlantInfo> blockPredicate)
     {
         return VALUES.computeIfAbsent(name, e ->
         {
             if (INVALID_CHARACTERS.matcher(e).find())
                 throw new IllegalArgumentException("PlantType.get() called with invalid name: " + name);
-            return new PlantType(e, blockPredicate);
+            return new PlantType(e, blockPredicate, new HashSet<>());
         });
     }
 
     private final String name;
     private Predicate<PlantInfo> blockPredicate;
+    @Nonnull
+    private Set<Block> allowedPlants;
 
-    private PlantType(String name, Predicate<PlantInfo> blockPredicate)
+    private PlantType(String name, Predicate<PlantInfo> blockPredicate, @Nonnull Set<Block> allowedPlants)
     {
         this.name = name;
         this.blockPredicate = blockPredicate;
+        this.allowedPlants = allowedPlants;
     }
 
     public String getName()
@@ -132,16 +163,30 @@ public final class PlantType
         this.blockPredicate = blockPredicate;
     }
 
-    public void and(Predicate<PlantInfo> newBlockPredicate) {
+    public void and(Predicate<PlantInfo> newBlockPredicate)
+    {
         blockPredicate = blockPredicate.and(newBlockPredicate);
     }
 
-    public void or(Predicate<PlantInfo> newBlockPredicate) {
+    public void or(Predicate<PlantInfo> newBlockPredicate)
+    {
         blockPredicate = blockPredicate.or(newBlockPredicate);
     }
 
-    public boolean test(IBlockReader world, BlockPos pos, BlockState state, Direction facing) {
+    public boolean test(IBlockReader world, BlockPos pos, BlockState state, Direction facing)
+    {
         return blockPredicate.test(new PlantInfo(world, pos, state, facing));
+    }
+
+    @Nonnull
+    public Set<Block> getAllowedPlants()
+    {
+        return allowedPlants;
+    }
+
+    public void setAllowedPlants(@Nonnull Set<Block> allowedPlants)
+    {
+        this.allowedPlants = allowedPlants;
     }
 
     public static class PlantInfo {
