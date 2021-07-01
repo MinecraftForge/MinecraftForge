@@ -1,0 +1,9 @@
+{
+  "replace": true,
+  "values": [
+    {
+      "id": "#jumbo_biomes:jumbo_desert",
+      "required": false
+    }
+  ]
+}

@@ -45,7 +45,9 @@ import net.minecraftforge.common.BiomeManager.BiomeType;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.ResourceKeyTags;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.JsonDataProvider;
+import net.minecraftforge.common.data.ResourceKeyTagsProvider;
 import net.minecraftforge.common.world.BiomeAmbienceBuilder;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.IBiomeParameters;
@@ -137,6 +139,7 @@ public class DynamicRegistriesLoadedEventTest
         this.registerToVanillaRegistries();
 
         DataGenerator generator = event.getGenerator();
+        ExistingFileHelper fileHelper = event.getExistingFileHelper();
         Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
 
         // generate our configuredfeature json to retrieve from our biomeloadedevent
@@ -163,6 +166,17 @@ public class DynamicRegistriesLoadedEventTest
                 .generationSettings(new BiomeGenerationSettings.Builder().surfaceBuilder(ConfiguredSurfaceBuilders.GRASS).build()).precipitation(RainType.NONE)
                 .mobSpawnSettings(new MobSpawnInfo.Builder().build()).build());
         generator.addProvider(new JsonDataProvider<>(gson, generator, ResourcePackType.SERVER_DATA, "worldgen/biome", Biome.DIRECT_CODEC, generatedBiomes));
+        
+        generator.addProvider(new ResourceKeyTagsProvider<Biome>(generator, fileHelper, MODID, Registry.BIOME_REGISTRY)
+        {
+            @Override
+            public void addTags()
+            {
+                this.tag(OPTIONAL_BIOMES_TEST_TAG).addOptionalTags(new ResourceLocation("jumbo_biomes:jumbo_desert")).replace();
+                this.tag(EXTRA_BIOMES_TAG).add(TEST_BIOME);
+                this.tag(TESTING_BIOMES_TAG).add(Biomes.MOUNTAINS, Biomes.SNOWY_TUNDRA).addTags(EXTRA_BIOMES_TAG);
+            }
+        });
     }
 
     void onBiomeLoading(BiomeLoadingEvent event)
@@ -181,6 +195,8 @@ public class DynamicRegistriesLoadedEventTest
         }
     }
     
+    public static final ITag.INamedTag<RegistryKey<Biome>> OPTIONAL_BIOMES_TEST_TAG = ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "optional_biomes_test"));
+    public static final ITag.INamedTag<RegistryKey<Biome>> EXTRA_BIOMES_TAG = ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "extra_biomes"));
     public static final ITag.INamedTag<RegistryKey<Biome>> TESTING_BIOMES_TAG = ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "testing_biomes"));
     void onDynamicRegistriesLoaded(DynamicRegistriesLoadedEvent event)
     {
