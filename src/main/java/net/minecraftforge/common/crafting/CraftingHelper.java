@@ -166,16 +166,30 @@ public class CraftingHelper
         if (p_199798_0_.has("data")) {
            throw new JsonParseException("Disallowed data tag found");
         } else {
-           int i = JSONUtils.getAsInt(p_199798_0_, "count", 1);
            return CraftingHelper.getItemStack(p_199798_0_, true, key);
         }
     }
     
+    /**
+     * Use {@link CraftingHelper#getItemStack(JsonObject, boolean, String)} instead.
+     * @param json
+     * @param readNBT
+     * @return ItemStack
+     */
+    @Deprecated
     public static ItemStack getItemStack(JsonObject json, boolean readNBT)
     {
         return getItemStack(json, readNBT, "item");
     }
     
+    /**
+     * Returns an {@link ItemStack} from a {@link JsonObject}. The {@link Item} is located under "key" field.
+     * The amount under "count" and the nbt data under "nbt". 
+     * @param json
+     * @param readNBT
+     * @param key
+     * @return
+     */
     public static ItemStack getItemStack(JsonObject json, boolean readNBT, String key)
     {
         String itemName = JSONUtils.getAsString(json, key);
