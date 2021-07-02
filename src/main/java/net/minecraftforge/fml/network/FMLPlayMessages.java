@@ -40,19 +40,16 @@ import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollection;
 import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.tags.TagRegistryManager;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeTagHandler;
-import net.minecraftforge.common.ResourceKeyTags;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.WorldGenRegistries;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
@@ -433,91 +430,6 @@ public class FMLPlayMessages
                         ctx.get().getNetworkManager().disconnect(new TranslationTextComponent("multiplayer.disconnect.missing_tags"));
                     }
                 }
-            });
-            ctx.get().setPacketHandled(true);
-        }
-    }
-    
-    public static class SyncKeyTags
-    {
-        private static final Logger LOGGER = LogManager.getLogger();
-        private final Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> keyTags;
-        
-        public SyncKeyTags(Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> keyTags)
-        {
-            this.keyTags = keyTags;
-        }
-        
-        public Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> getKeyTags()
-        {
-            return this.keyTags;
-        }
-
-        public static void encode(SyncKeyTags msg, PacketBuffer buf)
-        {
-            buf.writeVarInt(msg.keyTags.size());
-            msg.keyTags.forEach((registryKey, tags) -> writeKeyTag(buf, registryKey, tags.getAllTags()));
-        }
-
-        // key tags have to be synced differently than regular tags because they're sets of registry keys, not registry objects
-        private static void writeKeyTag(PacketBuffer buf, RegistryKey<? extends Registry<?>> registryKey, Map<ResourceLocation, ? extends ITag<? extends RegistryKey<?>>> tags)
-        {
-            ResourceLocation registryName = registryKey.location();
-            buf.writeResourceLocation(registryName);
-            buf.writeVarInt(tags.size());
-            tags.forEach((name, tag) -> {
-                buf.writeResourceLocation(name);
-                List<? extends RegistryKey<?>> elements = tag.getValues();
-                buf.writeVarInt(elements.size());
-                for (RegistryKey<?> element : elements)
-                {
-                    buf.writeResourceLocation(element.location());
-                }
-            });
-        }
-
-        public static SyncKeyTags decode(PacketBuffer buf)
-        {
-            ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> builder = ImmutableMap.builder();
-            int size = buf.readVarInt();
-            for (int i = 0; i < size; i++)
-            {
-                ResourceLocation regName = buf.readResourceLocation();
-                if (WorldGenRegistries.REGISTRY.containsKey(regName))
-                {
-                    RegistryKey<? extends Registry<?>> registryKey = RegistryKey.createRegistryKey(regName);
-                    builder.put(registryKey, readKeyTagCollection(buf, registryKey));
-                }
-            }
-            return new SyncKeyTags(builder.build());
-        }
-
-        private static ITagCollection<? extends RegistryKey<?>> readKeyTagCollection(PacketBuffer buf, RegistryKey<? extends Registry<?>> registryKey)
-        {
-            Map<ResourceLocation, ITag<RegistryKey<?>>> tags = Maps.newHashMap();
-            int totalTags = buf.readVarInt();
-            for (int i = 0; i < totalTags; i++)
-            {
-                ImmutableSet.Builder<RegistryKey<?>> elementBuilder = ImmutableSet.builder();
-                ResourceLocation name = buf.readResourceLocation();
-                int totalElements = buf.readVarInt();
-                for (int j = 0; j < totalElements; j++)
-                {
-                    RegistryKey<?> element = RegistryKey.create(registryKey, buf.readResourceLocation());
-                    if (element != null)
-                    {
-                        elementBuilder.add(element);
-                    }
-                }
-                tags.put(name, ITag.fromSet(elementBuilder.build()));
-            }
-            return ITagCollection.of(tags);
-        }
-        
-        public static void handle(SyncKeyTags msg, Supplier<NetworkEvent.Context> ctx)
-        {
-            ctx.get().enqueueWork(() -> {
-                ResourceKeyTags.INSTANCE.updateTags(msg.getKeyTags());
             });
             ctx.get().setPacketHandled(true);
         }

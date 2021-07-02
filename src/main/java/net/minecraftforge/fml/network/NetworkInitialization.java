@@ -110,12 +110,6 @@ class NetworkInitialization {
               encoder(FMLPlayMessages.SyncCustomTagTypes::encode).
               consumer(FMLPlayMessages.SyncCustomTagTypes::handle).
               add();
-        
-        playChannel.messageBuilder(FMLPlayMessages.SyncKeyTags.class, 4)
-            .decoder(FMLPlayMessages.SyncKeyTags::decode)
-            .encoder(FMLPlayMessages.SyncKeyTags::encode)
-            .consumer(FMLPlayMessages.SyncKeyTags::handle)
-            .add();
 
         return playChannel;
     }
