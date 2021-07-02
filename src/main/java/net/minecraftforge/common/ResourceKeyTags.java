@@ -26,15 +26,16 @@ import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollection;
+import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagCollectionReader;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.WorldGenRegistries;
+import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.fml.ModLoadingContext;
 
 /**
- * Class that handles loading and syncing of tags for Dynamic Registry Keys.
+ * Class that handles loading of tags for resource keys for Dynamic Registries and similar data.
  * Dynamic registries load after reloadable data and do not support merging of
  * data from different datapacks, so tags for Dynamic Registry Objects must be
  * loaded in reloadable data (before the dynamic registries load), and can only
@@ -60,13 +61,20 @@ public class ResourceKeyTags implements IFutureReloadListener
      * @param <T> The type of the things the tag's registry keys are for
      * @param registryKey The key used to create the tag's registry keys. This also sets the name of the directory to load tags from.
      * @param tagID The id of the tag, defines the namespace and id of the json to load the tag from (can include subfolders)
-     * @return A tag wrapper for a key tag that will be loaded from data/{tagID-namespace}/tags/resource_keys/{directory}/{tagID-path}.json
-     * {directory} defaults to the un-namespaced registry name with an "s" tacked onto the end, mods that mark additional directories for loading
-     * via markDirectoryForLoadingKeyTags can specify an alternative directory name if needed.
+     * @return A tag wrapper for a key tag that will be loaded from data/{tagID-namespace}/tags/resource_keys/{directory}/{tagID-path}.json --
+     * {directory} should be be the un-namespaced registry name but pluralized (e.g. the "biome" registry uses the "biomes" directory
      * 
      * @apiSpec Can be created at any time. Key tag wrappers become queryable as soon as key tags have been loaded at least once.
+     * If the specified tag ID is not available when the tag is queried, {@link IOptionalNamedTag#isDefaulted()} will return true,
+     * and the queried tag will evaluate as the client's version of the tag instead.
+     * 
+     * @apiNote This is an optional tag to facilitate future support for tag syncing and having clients load fallback tag data,
+     * these features have not been implemented yet. Currently, only server thread usage of resource key tags is supported.
+     * Querying the tag will only result in a non-empty, non-defaulted tag while a server is running or preparing to start.
+     * It is not intended for mods to specify "default" tag contents from java as these wouldn't be able to catch custom biomes
+     * added by server datapacks.
      */
-    public static <T> ITag.INamedTag<RegistryKey<T>> makeKeyTagWrapper(RegistryKey<Registry<T>> registryKey, ResourceLocation tagID)
+    public static <T> IOptionalNamedTag<RegistryKey<T>> makeKeyTagWrapper(RegistryKey<Registry<T>> registryKey, ResourceLocation tagID)
     {
         return new ResourceKeyTags.KeyTag<>(registryKey, tagID);
     }
@@ -192,7 +200,7 @@ public class ResourceKeyTags implements IFutureReloadListener
      * Updates the key tag registry
      * @param newTags new tags
      * 
-     * @apiNote internal, called when tags are loaded or when tags are received from the server
+     * @apiNote internal, called when tag registry is loaded/reloaded
      */
     public void updateTags(final Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> newTags)
     {
@@ -201,13 +209,14 @@ public class ResourceKeyTags implements IFutureReloadListener
         if (this.generation<0)
             this.generation=0;
     }
-    
-    private static class KeyTag<T> implements ITag.INamedTag<RegistryKey<T>>
+
+    private static class KeyTag<T> implements IOptionalNamedTag<RegistryKey<T>>
     {
         private final RegistryKey<Registry<T>> registryKey;
         private final ResourceLocation name;
         
         private int generation = Integer.MIN_VALUE;
+        private boolean defaulted = true;
         @Nullable private ITag<RegistryKey<T>> proxy = null;
         
         private KeyTag(RegistryKey<Registry<T>> registryKey, ResourceLocation name)
@@ -235,25 +244,23 @@ public class ResourceKeyTags implements IFutureReloadListener
         {
             return this.name;
         }
+
+        @Override
+        public boolean isDefaulted()
+        {
+            this.ensureProxyUpToDate();
+            return this.defaulted;
+        }
         
         private void ensureProxyUpToDate()
         {
             final int keyTagsGeneration = ResourceKeyTags.INSTANCE.generation;
-            if (this.proxy == null || this.generation != keyTagsGeneration)
+            if (this.generation != keyTagsGeneration || this.proxy == null)
             {
-                if (keyTagsGeneration < 0)
-                {
-                    throw new IllegalStateException(String.format("%s resource key tag %s cannot be resolved before key tags load", this.registryKey.location(), this.name));
-                }
-                
                 this.generation = keyTagsGeneration;
                 final ITagCollection<RegistryKey<T>> tags = ResourceKeyTags.INSTANCE.getTagCollection(this.registryKey);
-                if (tags == null)
-                {
-                    throw new IllegalStateException(String.format("Failed to resolve resource key tag %s -- no tag collection found for registry key %s (be sure to include a tag json with your datapack)", this.name, this.registryKey.location()));
-                }
-                
-                this.proxy = tags.getTagOrEmpty(this.name);
+                this.defaulted = tags == null;
+                this.proxy = this.defaulted ? Tag.empty() : tags.getTagOrEmpty(this.name);
             }
         }
         

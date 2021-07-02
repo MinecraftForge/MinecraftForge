@@ -43,6 +43,7 @@ import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -90,6 +91,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import com.google.common.collect.ImmutableMap;
 
 import java.util.Arrays;
 import java.util.List;
@@ -149,6 +152,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
+        MinecraftForge.EVENT_BUS.addListener(this::serverStopped);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
@@ -216,6 +220,13 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public void serverStopping(FMLServerStoppingEvent evt)
     {
         WorldWorkerManager.clear();
+    }
+    
+    public void serverStopped(FMLServerStoppedEvent evt)
+    {
+        // clean up the resource key tag registry when the server stops
+        // otherwise it can end up in an incorrect state if a client leaves a singleplayer world and then joins a vanilla server
+        ResourceKeyTags.INSTANCE.updateTags(ImmutableMap.of());
     }
 
     @Override
