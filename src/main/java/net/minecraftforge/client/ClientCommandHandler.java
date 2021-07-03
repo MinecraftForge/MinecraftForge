@@ -55,6 +55,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 public class ClientCommandHandler
 {
@@ -65,34 +66,34 @@ public class ClientCommandHandler
         commands = new CommandDispatcher<>();
         MinecraftForge.EVENT_BUS.post(new RegisterClientCommandsEvent(commands));
         RootCommandNode<ISuggestionProvider> serverCommandsCopy = new RootCommandNode<>();
-        mergeCommandNode(serverCommands, serverCommandsCopy, new HashMap<>(), null, (suggestions) -> 0, ISuggestionProvider.class, ISuggestionProvider.class);
+        mergeCommandNode(serverCommands, serverCommandsCopy, new HashMap<>(), null, (suggestions) -> 0, (suggestions) -> null);
 
         ClientPlayerEntity player = Minecraft.getInstance().player;
         mergeCommandNode(commands.getRoot(), serverCommands, new HashMap<>(), new ClientCommandSource(player, player.position(), player.getRotationVector(),
-                player.getPermissionLevel(), player.getName().getString(), player.getDisplayName(), player), (suggestions) -> 0, CommandSource.class,
-                ISuggestionProvider.class);
+                player.getPermissionLevel(), player.getName().getString(), player.getDisplayName(), player), (suggestions) -> 0,
+                (client) -> SuggestionProviders.safelySwap((SuggestionProvider<ISuggestionProvider>) (SuggestionProvider<?>) client));
 
         mergeCommandNode(serverCommandsCopy, commands.getRoot(), new HashMap<>(), null, (source) -> {
             Minecraft.getInstance().player.chat(source.getInput());
             return 0;
-        }, ISuggestionProvider.class, CommandSource.class);
+        }, (suggestions) -> null);
     }
 
     private static <S, T> void mergeCommandNode(CommandNode<S> sourceNode, CommandNode<T> resultNode, Map<CommandNode<S>, CommandNode<T>> sourceToResult,
-            S canUse, Command<T> execute, Class<S> sourceType, Class<T> resultType)
+            S canUse, Command<T> execute, Function<SuggestionProvider<S>, SuggestionProvider<T>> sourceToResultSuggestion)
     {
         sourceToResult.put(sourceNode, resultNode);
         for (CommandNode<S> sourceChild : sourceNode.getChildren())
         {
             if (sourceChild.canUse(canUse)) 
             {
-                resultNode.addChild(toResult(sourceChild, sourceToResult, canUse, execute, sourceType, resultType));
+                resultNode.addChild(toResult(sourceChild, sourceToResult, canUse, execute, sourceToResultSuggestion));
             }
         }
     }
 
     private static <S, T> CommandNode<T> toResult(CommandNode<S> sourceNode, Map<CommandNode<S>, CommandNode<T>> sourceToResult, S canUse, Command<T> execute,
-            Class<S> sourceType, Class<T> resultType)
+            Function<SuggestionProvider<S>, SuggestionProvider<T>> sourceToResultSuggestion)
     {
         if (!sourceToResult.containsKey(sourceNode))
         {
@@ -103,11 +104,7 @@ public class ClientCommandHandler
                 RequiredArgumentBuilder<T, ?> resultArgumentBuilder = RequiredArgumentBuilder.argument(sourceArgument.getName(), sourceArgument.getType());
                 if (sourceArgument.getCustomSuggestions() != null)
                 {
-                    if (sourceType == CommandSource.class && resultType == ISuggestionProvider.class)
-                    {
-                        resultArgumentBuilder.suggests((SuggestionProvider<T>) SuggestionProviders
-                                .safelySwap((SuggestionProvider<ISuggestionProvider>) sourceArgument.getCustomSuggestions()));
-                    }
+                    resultArgumentBuilder.suggests(sourceToResultSuggestion.apply(sourceArgument.getCustomSuggestions()));
                 }
                 resultBuilder = resultArgumentBuilder;
             }
@@ -124,11 +121,11 @@ public class ClientCommandHandler
 
             if (sourceNode.getRedirect() != null)
             {
-                resultBuilder.redirect(toResult(sourceNode.getRedirect(), sourceToResult, canUse, execute, sourceType, resultType));
+                resultBuilder.redirect(toResult(sourceNode.getRedirect(), sourceToResult, canUse, execute, sourceToResultSuggestion));
             }
             
             CommandNode<T> resultNode = resultBuilder.build();
-            mergeCommandNode(sourceNode, resultNode, sourceToResult, canUse, execute, sourceType, resultType);
+            mergeCommandNode(sourceNode, resultNode, sourceToResult, canUse, execute, sourceToResultSuggestion);
             return resultNode;
         }
         else
