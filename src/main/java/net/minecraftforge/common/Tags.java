@@ -26,7 +26,10 @@ import net.minecraft.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.tags.ITag.INamedTag;
 
 public class Tags
@@ -36,6 +39,7 @@ public class Tags
         Blocks.init();
         Items.init();
         Fluids.init();
+        Biomes.init();
     }
 
     public static class Blocks
@@ -304,6 +308,55 @@ public class Tags
         private static IOptionalNamedTag<Fluid> tag(String name)
         {
             return FluidTags.createOptional(new ResourceLocation("forge", name));
+        }
+    }
+    
+    public static class Biomes
+    {
+        private static void init() {}
+        
+        // Tags specifying that a biome is a variant of a normal biome
+        public static final IOptionalNamedTag<RegistryKey<Biome>> RARE = tag("rare");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> PLATEAUS = tag("plateaus"); // plateau variants of other biomes
+        public static final IOptionalNamedTag<RegistryKey<Biome>> HILLS = tag("hills"); // hills variants of other biomes
+        public static final IOptionalNamedTag<RegistryKey<Biome>> MODIFIED = tag("modified"); 
+        
+        // Tags specifying aquatic biomes
+        public static final IOptionalNamedTag<RegistryKey<Biome>> OCEANS = tag("water/oceans");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> SHALLOW_OCEANS = tag("water/oceans/shallow");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> DEEP_OCEANS = tag("water/oceans/deep");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> RIVERS = tag("water/rivers");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> WATER = tag("water");
+                
+        // Tags specifying generic types of biomes
+        public static final IOptionalNamedTag<RegistryKey<Biome>> BADLANDS = tag("badlands");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> BEACHES = tag("beaches");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> DESERTS = tag("deserts");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> FORESTS = tag("forests");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> BIRCH_FORESTS = tag("forests/birch");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> DARK_FORESTS = tag("forests/dark");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> JUNGLE_FORESTS = tag("forests/jungles");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> BAMBOO_JUNGLE_FORESTS = tag("forests/jungles/bamboo");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> NETHER_FORESTS = tag("forests/nether");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> OAK_FORESTS = tag("forests/oak");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> TAIGA_FORESTS = tag("forests/taigas");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> GRASSLANDS = tag("grasslands"); // plains and savannas
+        public static final IOptionalNamedTag<RegistryKey<Biome>> MUSHROOM = tag("mushroom");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> MOUNTAINS = tag("mountains");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> PLAINS = tag("plains");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> SAVANNAS = tag("savannas");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> SNOWY = tag("snowy"); // indicates that a biome has snow and/or ice
+        public static final IOptionalNamedTag<RegistryKey<Biome>> SWAMPS = tag("swamps");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> VOIDS = tag("voids");
+        
+        // Tags specifying that a biome generates in a vanilla dimension. Specifying none of these indicates that the biome only generates in a modded dimension
+        public static final IOptionalNamedTag<RegistryKey<Biome>> OVERWORLD = tag("overworld");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> NETHER = tag("nether");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> END = tag("end");
+        
+        private static IOptionalNamedTag<RegistryKey<Biome>> tag(String name)
+        {
+            return ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation("forge", name));
         }
     }
 
