@@ -21,11 +21,14 @@ package net.minecraftforge.client;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
+import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -35,6 +38,7 @@ import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.command.arguments.SuggestionProviders;
 import net.minecraft.util.Util;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
@@ -47,8 +51,10 @@ import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 public class ClientCommandHandler
 {
@@ -59,33 +65,34 @@ public class ClientCommandHandler
         commands = new CommandDispatcher<>();
         MinecraftForge.EVENT_BUS.post(new RegisterClientCommandsEvent(commands));
         RootCommandNode<ISuggestionProvider> serverCommandsCopy = new RootCommandNode<>();
-        mergeCommandNode(serverCommands, serverCommandsCopy, new HashMap<>(), null, (suggestions) -> 0);
+        mergeCommandNode(serverCommands, serverCommandsCopy, new HashMap<>(), null, (suggestions) -> 0, ISuggestionProvider.class, ISuggestionProvider.class);
 
         ClientPlayerEntity player = Minecraft.getInstance().player;
         mergeCommandNode(commands.getRoot(), serverCommands, new HashMap<>(), new ClientCommandSource(player, player.position(), player.getRotationVector(),
-                player.getPermissionLevel(), player.getName().getString(), player.getDisplayName(), player), (suggestions) -> 0);
+                player.getPermissionLevel(), player.getName().getString(), player.getDisplayName(), player), (suggestions) -> 0, CommandSource.class,
+                ISuggestionProvider.class);
 
         mergeCommandNode(serverCommandsCopy, commands.getRoot(), new HashMap<>(), null, (source) -> {
             Minecraft.getInstance().player.chat(source.getInput());
             return 0;
-        });
+        }, ISuggestionProvider.class, CommandSource.class);
     }
 
-    private static <S, T> void mergeCommandNode(CommandNode<S> sourceNode, CommandNode<T> resultNode,
-            Map<CommandNode<S>, CommandNode<T>> sourceToResult, S canUse,
-            Command<T> execute)
+    private static <S, T> void mergeCommandNode(CommandNode<S> sourceNode, CommandNode<T> resultNode, Map<CommandNode<S>, CommandNode<T>> sourceToResult,
+            S canUse, Command<T> execute, Class<S> sourceType, Class<T> resultType)
     {
         sourceToResult.put(sourceNode, resultNode);
         for (CommandNode<S> sourceChild : sourceNode.getChildren())
         {
             if (sourceChild.canUse(canUse)) 
             {
-                resultNode.addChild(toResult(sourceChild, sourceToResult, canUse, execute));
+                resultNode.addChild(toResult(sourceChild, sourceToResult, canUse, execute, sourceType, resultType));
             }
         }
     }
 
-    private static <S, T> CommandNode<T> toResult(CommandNode<S> sourceNode, Map<CommandNode<S>, CommandNode<T>> sourceToResult, S canUse, Command<T> execute)
+    private static <S, T> CommandNode<T> toResult(CommandNode<S> sourceNode, Map<CommandNode<S>, CommandNode<T>> sourceToResult, S canUse, Command<T> execute,
+            Class<S> sourceType, Class<T> resultType)
     {
         if (!sourceToResult.containsKey(sourceNode))
         {
@@ -93,7 +100,16 @@ public class ClientCommandHandler
             if (sourceNode instanceof ArgumentCommandNode<?, ?>)
             {
                 ArgumentCommandNode<S, ?> sourceArgument = (ArgumentCommandNode<S, ?>) sourceNode;
-                resultBuilder = RequiredArgumentBuilder.argument(sourceArgument.getName(), sourceArgument.getType());
+                RequiredArgumentBuilder<T, ?> resultArgumentBuilder = RequiredArgumentBuilder.argument(sourceArgument.getName(), sourceArgument.getType());
+                if (sourceArgument.getCustomSuggestions() != null)
+                {
+                    if (sourceType == CommandSource.class && resultType == ISuggestionProvider.class)
+                    {
+                        resultArgumentBuilder.suggests((SuggestionProvider<T>) SuggestionProviders
+                                .safelySwap((SuggestionProvider<ISuggestionProvider>) sourceArgument.getCustomSuggestions()));
+                    }
+                }
+                resultBuilder = resultArgumentBuilder;
             }
             else if (sourceNode instanceof LiteralCommandNode<?>)
             {
@@ -108,10 +124,11 @@ public class ClientCommandHandler
 
             if (sourceNode.getRedirect() != null)
             {
-                resultBuilder.redirect(toResult(sourceNode.getRedirect(), sourceToResult, canUse, execute));
+                resultBuilder.redirect(toResult(sourceNode.getRedirect(), sourceToResult, canUse, execute, sourceType, resultType));
             }
+            
             CommandNode<T> resultNode = resultBuilder.build();
-            mergeCommandNode(sourceNode, resultNode, sourceToResult, canUse, execute);
+            mergeCommandNode(sourceNode, resultNode, sourceToResult, canUse, execute, sourceType, resultType);
             return resultNode;
         }
         else
@@ -183,5 +200,23 @@ public class ClientCommandHandler
             Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(component).withStyle(TextFormatting.RED), Util.NIL_UUID);
         }
         return true;
+    }
+
+    public static CompletableFuture<Suggestions> getSuggestions(String command, CompletableFuture<Suggestions> serverSuggestions)
+    {
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        ClientCommandSource source = new ClientCommandSource(player, player.position(), player.getRotationVector(), player.getPermissionLevel(),
+                player.getName().getString(), player.getDisplayName(), player);
+
+        StringReader reader = new StringReader(command);
+
+        if (!reader.canRead() || reader.read() != '/')
+        {
+            return Suggestions.empty();
+        }
+
+        ParseResults<CommandSource> parse = commands.parse(reader, source);
+        return commands.getCompletionSuggestions(parse).thenCombine(serverSuggestions,
+                (client, server) -> Suggestions.merge(command, Arrays.asList(client, server)));
     }
 }

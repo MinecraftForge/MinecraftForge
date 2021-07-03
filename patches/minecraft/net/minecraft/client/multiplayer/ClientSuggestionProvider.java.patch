@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/multiplayer/ClientSuggestionProvider.java
++++ b/net/minecraft/client/multiplayer/ClientSuggestionProvider.java
+@@ -80,7 +_,7 @@
+       this.field_197018_c = new CompletableFuture<>();
+       int i = ++this.field_197017_b;
+       this.field_197016_a.func_147297_a(new CTabCompletePacket(i, p_197009_1_.getInput()));
+-      return this.field_197018_c;
++      return net.minecraftforge.client.ClientCommandHandler.getSuggestions(p_197009_1_.getInput(), this.field_197018_c);
+    }
+ 
+    private static String func_209001_a(double p_209001_0_) {

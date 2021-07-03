@@ -19,15 +19,12 @@
 
 package net.minecraftforge.debug.chat;
 import com.mojang.brigadier.Command;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ResourceLocationArgument;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.command.arguments.SuggestionProviders;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -44,10 +41,16 @@ public class ClientCommandTest
 
     private void init(RegisterClientCommandsEvent event)
     {
-        LiteralArgumentBuilder<CommandSource> cmd = Commands.literal("clientcommandtest");
-        RequiredArgumentBuilder<CommandSource, ResourceLocation> arg = RequiredArgumentBuilder.argument("block", ResourceLocationArgument.id());
-        SuggestionProvider<CommandSource> suggestions = (c, b) -> ISuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), b);
-        event.getDispatcher().register(cmd.requires(c->true).then(arg.suggests(suggestions).executes(new TestCommand())));
+        event.getDispatcher().register(
+                Commands.literal("clientcommandtest")
+                        .then(Commands.literal("rawsuggest")
+                                .then(Commands.argument("block", ResourceLocationArgument.id())
+                                        .suggests((c, b) -> ISuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), b))
+                                        .executes(new TestCommand())))
+                        .then(Commands.literal("registeredsuggest").then(
+                                Commands.argument("block", ResourceLocationArgument.id())
+                                        .suggests(SuggestionProviders.AVAILABLE_BIOMES)
+                                        .executes(new TestCommand()))));
     }
 
     private static class TestCommand implements Command<CommandSource>
