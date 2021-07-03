@@ -20,7 +20,7 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.command.CommandSource;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -29,9 +29,9 @@ import net.minecraftforge.eventbus.api.Event;
 public class RegisterClientCommandsEvent extends Event
 {
 
-    private final CommandDispatcher<ISuggestionProvider> dispatcher;
+    private final CommandDispatcher<CommandSource> dispatcher;
 
-    public RegisterClientCommandsEvent(CommandDispatcher<ISuggestionProvider> dispatcher)
+    public RegisterClientCommandsEvent(CommandDispatcher<CommandSource> dispatcher)
     {
         this.dispatcher = dispatcher;
     }
@@ -39,7 +39,7 @@ public class RegisterClientCommandsEvent extends Event
     /**
      * @return The newly-updated command dispatcher that now contains all the commands that were just received.
      */
-    public CommandDispatcher<ISuggestionProvider> getDispatcher()
+    public CommandDispatcher<CommandSource> getDispatcher()
     {
         return dispatcher;
     }

@@ -75,7 +75,7 @@
     public void func_195511_a(SCommandListPacket p_195511_1_) {
        PacketThreadUtil.func_218797_a(p_195511_1_, this, this.field_147299_f);
        this.field_195517_n = new CommandDispatcher<>(p_195511_1_.func_197693_a());
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RegisterClientCommandsEvent(this.field_195517_n));
++      net.minecraftforge.client.ClientCommandHandler.mergeServerCommands(p_195511_1_.func_197693_a());
     }
  
     public void func_195512_a(SStopSoundPacket p_195512_1_) {

@@ -24,6 +24,7 @@ import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ResourceLocationArgument;
 import net.minecraft.util.ResourceLocation;
@@ -43,18 +44,17 @@ public class ClientCommandTest
 
     private void init(RegisterClientCommandsEvent event)
     {
-        LiteralArgumentBuilder<ISuggestionProvider> cmd = LiteralArgumentBuilder.literal("clientcommandtest");
-        RequiredArgumentBuilder<ISuggestionProvider, ResourceLocation> arg = RequiredArgumentBuilder.argument("block", ResourceLocationArgument.id());
-        SuggestionProvider<ISuggestionProvider> suggestions = (c,b)->ISuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), b);
+        LiteralArgumentBuilder<CommandSource> cmd = Commands.literal("clientcommandtest");
+        RequiredArgumentBuilder<CommandSource, ResourceLocation> arg = RequiredArgumentBuilder.argument("block", ResourceLocationArgument.id());
+        SuggestionProvider<CommandSource> suggestions = (c, b) -> ISuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), b);
         event.getDispatcher().register(cmd.requires(c->true).then(arg.suggests(suggestions).executes(new TestCommand())));
     }
 
-    private static class TestCommand implements Command<ISuggestionProvider>
+    private static class TestCommand implements Command<CommandSource>
     {
         @Override
-        public int run(CommandContext<ISuggestionProvider> commandContext)
+        public int run(CommandContext<CommandSource> context)
         {
-            CommandContext<CommandSource> context = (CommandContext<CommandSource>) (CommandContext<?>) commandContext;
             context.getSource().sendSuccess(new StringTextComponent("Input: " + ResourceLocationArgument.getId(context, "block")), false);
             context.getSource().sendSuccess(new StringTextComponent("Teams: " + context.getSource().getAllTeams()), false);
             context.getSource().sendSuccess(new StringTextComponent("Players: " + context.getSource().getOnlinePlayerNames()), false);

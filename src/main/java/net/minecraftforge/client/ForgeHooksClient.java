@@ -22,16 +22,12 @@ package net.minecraftforge.client;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import com.mojang.brigadier.ParseResults;
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHelper;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundEngine;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.ClientBossInfo;
 import net.minecraft.client.gui.FontRenderer;
@@ -56,8 +52,6 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.Usage;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
@@ -71,7 +65,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.EntityRayTraceResult;
@@ -80,14 +73,9 @@ import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.TransformationMatrix;
 import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockDisplayReader;
 import net.minecraft.world.World;
@@ -833,66 +821,5 @@ public class ForgeHooksClient
     public static Optional<BiomeGeneratorTypeScreens> getDefaultWorldType()
     {
         return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
-    }
-    
-    /**
-     * Always try to execute the cached parsing of client message as a command.
-     * Requires that the execute field of the commands to be set to send to server so that they aren't treated as client command's that do nothing.
-     * 
-     * {@link net.minecraft.command.Commands#handleCommand(net.minecraft.command.CommandSource,String)} for reference
-     * @param currentParse current state of the parser for the message
-     * @return false leaves the message to be sent to the server, true means it should be caught before {@link net.minecraft.client.gui.screen.ChatScreen#func_231161_c_(String)}
-     */
-    public static boolean sendMessage(String sendMessage)
-    {
-        ClientPlayerEntity player = Minecraft.getInstance().player;
-        ClientCommandSource source = new ClientCommandSource(player, player.position(), player.getRotationVector(), player.getPermissionLevel(),
-                player.getName().getString(), player.getDisplayName(), player);
-
-        StringReader reader = new StringReader(sendMessage);
-
-        if (!reader.canRead() || reader.read() != '/')
-        {
-            return false;
-        }
-        ParseResults<ISuggestionProvider> currentParse = Minecraft.getInstance().getConnection().getCommands().parse(reader, source);
-
-        try
-        {
-            currentParse.getContext().getDispatcher().execute(currentParse);
-        }
-        catch (CommandException execution)//Probably thrown by the command
-        {
-            Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(execution.getComponent()).withStyle(TextFormatting.RED), Util.NIL_UUID);
-        }
-        catch (CommandSyntaxException syntax)//Usually thrown by the CommandDispatcher
-        {
-            Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(TextComponentUtils.fromMessage(syntax.getRawMessage())).withStyle(TextFormatting.RED), Util.NIL_UUID);
-            if (syntax.getInput() != null && syntax.getCursor() >= 0)
-            {
-                int position = Math.min(syntax.getInput().length(), syntax.getCursor());
-                IFormattableTextComponent details = new StringTextComponent("").withStyle(TextFormatting.GRAY);
-                details.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, currentParse.getReader().getString()));
-                if (position > 10)
-                {
-                    details.append("...");
-                }
-                details.append(syntax.getInput().substring(Math.max(0, position - 10), position));
-                if (position < syntax.getInput().length())
-                {
-                    details.append(new StringTextComponent(syntax.getInput().substring(position)).withStyle(TextFormatting.RED, TextFormatting.UNDERLINE));
-                }
-                details.append(new TranslationTextComponent("command.context.here").withStyle(TextFormatting.RED, TextFormatting.ITALIC));
-                Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(details).withStyle(TextFormatting.RED), Util.NIL_UUID);
-            }
-        }
-        catch (Exception generic)//Probably thrown by the command
-        {
-            StringTextComponent message = new StringTextComponent(generic.getMessage() == null ? generic.getClass().getName() : generic.getMessage());
-            ITextComponent component = new TranslationTextComponent("command.failed");
-            component.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, message));
-            Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(component).withStyle(TextFormatting.RED), Util.NIL_UUID);
-        }
-        return true;
     }
 }
