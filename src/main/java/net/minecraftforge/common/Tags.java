@@ -29,7 +29,10 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.DimensionType;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.tags.ITag.INamedTag;
 
 public class Tags
@@ -357,6 +360,47 @@ public class Tags
         private static IOptionalNamedTag<RegistryKey<Biome>> tag(String name)
         {
             return ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation("forge", name));
+        }
+    }
+    
+    /** Tags for the "noise_settings" data files that include the list of structure placement entries used by dimensions **/
+    public static class NoiseSettings
+    {
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> AMPLIFIED = tag("amplified");
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> CAVES = tag("caves");
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> END = tag("end");
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> FLOATING_ISLANDS = tag("floating_islands");
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> NETHER = tag("nether");
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> OVERWORLD = tag("overworld");
+        
+        private static IOptionalNamedTag<RegistryKey<DimensionSettings>> tag(String name)
+        {
+            return ResourceKeyTags.makeKeyTagWrapper(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY, new ResourceLocation("forge", name));
+        }
+    }
+    
+    public static class DimensionTypes
+    {
+        public static final IOptionalNamedTag<RegistryKey<DimensionType>> END = tag("end");
+        public static final IOptionalNamedTag<RegistryKey<DimensionType>> NETHER = tag("nether");
+        public static final IOptionalNamedTag<RegistryKey<DimensionType>> OVERWORLD = tag("overworld");
+        public static final IOptionalNamedTag<RegistryKey<DimensionType>> OVERWORLD_CAVES = tag("overworld/caves");
+        
+        private static IOptionalNamedTag<RegistryKey<DimensionType>> tag(String name)
+        {
+            return ResourceKeyTags.makeKeyTagWrapper(Registry.DIMENSION_TYPE_REGISTRY, new ResourceLocation("forge", name));
+        }
+    }
+    
+    public static class Dimensions
+    {
+        public static final IOptionalNamedTag<RegistryKey<World>> END = tag("end");
+        public static final IOptionalNamedTag<RegistryKey<World>> NETHER = tag("nether");
+        public static final IOptionalNamedTag<RegistryKey<World>> OVERWORLD = tag("overworld");
+        
+        private static IOptionalNamedTag<RegistryKey<World>> tag(String name)
+        {
+            return ResourceKeyTags.makeKeyTagWrapper(Registry.DIMENSION_REGISTRY, new ResourceLocation("forge", name));
         }
     }
 

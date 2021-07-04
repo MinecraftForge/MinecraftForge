@@ -6,9 +6,11 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DirectoryCache;
 import net.minecraft.data.IDataProvider;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biomes;
+import net.minecraft.world.gen.DimensionSettings;
 import net.minecraftforge.common.Tags;
 
 /** Class specifically for adding forge's builtin resource key tags (mods should just use/extend the ResourceKeyTagsProvider) **/
@@ -134,12 +136,45 @@ public final class ForgeResourceKeyTagsProvider implements IDataProvider
                 
             }
         }.run(cache);
+        
+        // tags for the "noise_settings" that specify structure placement entries for dimensions
+        new ResourceKeyTagsProvider<DimensionSettings>(generator, fileHelper, "forge", Registry.NOISE_GENERATOR_SETTINGS_REGISTRY)
+        {
+            @Override
+            public void addTags()
+            {
+                this.tag(Tags.NoiseSettings.AMPLIFIED).add(DimensionSettings.AMPLIFIED);
+                this.tag(Tags.NoiseSettings.CAVES).add(DimensionSettings.CAVES);
+                this.tag(Tags.NoiseSettings.END).add(DimensionSettings.END);
+                this.tag(Tags.NoiseSettings.FLOATING_ISLANDS).add(DimensionSettings.FLOATING_ISLANDS);
+                this.tag(Tags.NoiseSettings.NETHER).add(DimensionSettings.NETHER);
+                this.tag(Tags.NoiseSettings.OVERWORLD).add(DimensionSettings.OVERWORLD);
+            }
+            
+        };
+
+        new ResourceKeyTagsProvider<DimensionType>(generator, fileHelper, "forge", Registry.DIMENSION_TYPE_REGISTRY)
+        {
+            @Override
+            public void addTags()
+            {
+                this.tag(Tags.DimensionTypes.END).add(DimensionType.END_LOCATION);
+                this.tag(Tags.DimensionTypes.NETHER).add(DimensionType.NETHER_LOCATION);
+                this.tag(Tags.DimensionTypes.OVERWORLD)
+                    .addTags(Tags.DimensionTypes.OVERWORLD_CAVES)
+                    .add(DimensionType.OVERWORLD_LOCATION);
+                this.tag(Tags.DimensionTypes.OVERWORLD_CAVES).add(DimensionType.OVERWORLD_CAVES_LOCATION);
+            }
+        }.run(cache);
 
         new ResourceKeyTagsProvider<World>(generator, fileHelper, "forge", Registry.DIMENSION_REGISTRY)
         {
             @Override
             public void addTags()
             {
+                this.tag(Tags.Dimensions.END).add(World.END);
+                this.tag(Tags.Dimensions.NETHER).add(World.NETHER);
+                this.tag(Tags.Dimensions.OVERWORLD).add(World.OVERWORLD);
             }
         }.run(cache);
     }
