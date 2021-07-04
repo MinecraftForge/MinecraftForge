@@ -57,33 +57,31 @@ public class ResourceKeyTags implements IFutureReloadListener
     private int generation = -1;
 
     /**
-     * Makes a wrapper tag for a registry key tag. The wrapper tag will be sensitive to 
+     * Makes a wrapper tag for a registry key tag. The wrapper tag will be sensitive to server data reloads.
      * @param <T> The type of the things the tag's registry keys are for
      * @param registryKey The key used to create the tag's registry keys. This also sets the name of the directory to load tags from.
      * @param tagID The id of the tag, defines the namespace and id of the json to load the tag from (can include subfolders)
-     * @return A tag wrapper for a key tag that will be loaded from data/{tagID-namespace}/tags/resource_keys/{directory}/{tagID-path}.json --
-     * {directory} should be be the un-namespaced registry name but pluralized (e.g. the "biome" registry uses the "biomes" directory
+     * @return A tag wrapper for a key tag that will be loaded from data/{tagID-namespace}/tags/resource_keys/{directory}/{tagID-path}.json
+     * -- {directory} should be be the registry name but pluralized (e.g. the "biome" registry uses the "biomes" directory
      * 
-     * @apiSpec Can be created at any time. Key tag wrappers become queryable as soon as key tags have been loaded at least once.
-     * If the specified tag ID is not available when the tag is queried, {@link IOptionalNamedTag#isDefaulted()} will return true,
-     * and the queried tag will evaluate as the client's version of the tag instead.
+     * @apiSpec Can be created at any time. Key tag wrappers become queryable once key tags are loaded prior to a server starting;
+     * they continue to be available until the server stops.
+     * If the specified tag ID is not available when the tag is queried, {@link IOptionalNamedTag#isDefaulted()} will return true.
+     * If the tag is defaulted, the tag will be empty when queried.
      * 
-     * @apiNote This is an optional tag to facilitate future support for tag syncing and having clients load fallback tag data,
-     * these features have not been implemented yet. Currently, only server thread usage of resource key tags is supported.
-     * Querying the tag will only result in a non-empty, non-defaulted tag while a server is running or preparing to start.
-     * It is not intended for mods to specify "default" tag contents from java as these wouldn't be able to catch custom biomes
-     * added by server datapacks.
+     * @apiNote Resource Key Tags are server-only resources and will not be queryable (isDefaulted returns true)
+     * while a server is not running. Resource Key Tags are not currently synced to clients and should not be
+     * queried for clientside purposes.
      */
-    public static <T> IOptionalNamedTag<RegistryKey<T>> makeKeyTagWrapper(RegistryKey<Registry<T>> registryKey, ResourceLocation tagID)
+    public static <T> IOptionalNamedTag<RegistryKey<T>> makeKeyTagWrapper(final RegistryKey<Registry<T>> registryKey, final ResourceLocation tagID)
     {
         return new ResourceKeyTags.KeyTag<>(registryKey, tagID);
     }
     
     /**
      * Notify the key tag manager that key tags tags should be loaded for a given registry.
-     * All actual dynamic registries will automatically have tags loaded, additional registries that are loaded from datapacks
-     * but not "actual" dynamic registries can be marked for having key tags loaded via this method.
-     * e.g. Forge adds key tags for Level resource keys, using the "dimensions" directory -- these will be loaded from "tags/resource_keys/dimensions"
+     * e.g. Forge adds key tags for Level resource keys, using the "dimensions" directory;
+     * these will be loaded from "tags/resource_keys/dimensions"
      * 
      * @param registryKey The registry resource key to load resource key tags for
      * @param directoryName The directory to load resource key tags from. Should be plural.
@@ -96,7 +94,7 @@ public class ResourceKeyTags implements IFutureReloadListener
     public synchronized static void registerResourceKeyTagDirectory(final RegistryKey<? extends Registry<?>> registryKey, final String directoryName)
     {
         // mods registering tag directories should be logged for debug purposes
-        String modid = ModLoadingContext.get().getActiveContainer().getModId();
+        final String modid = ModLoadingContext.get().getActiveContainer().getModId();
         final String previousDirectory = REGISTRY_DIRECTORIES.put(registryKey, directoryName);
         if (previousDirectory != null && !Objects.equals(directoryName, previousDirectory))
         {
@@ -123,8 +121,8 @@ public class ResourceKeyTags implements IFutureReloadListener
     }
 
     @Override
-    public CompletableFuture<Void> reload(IStage stage, IResourceManager manager, IProfiler workerProfiler, IProfiler mainProfiler, Executor workerExecutor,
-        Executor mainExecutor)
+    public CompletableFuture<Void> reload(final IStage stage, IResourceManager manager, final IProfiler workerProfiler, final IProfiler mainProfiler, final Executor workerExecutor,
+        final Executor mainExecutor)
     {
         // load tags for each dynamic registry
         // (we do this ensuring we don't classload the dynamic registries too early by getting the worldgen registries,
@@ -189,6 +187,7 @@ public class ResourceKeyTags implements IFutureReloadListener
      * @param registryKey The registry key for the collection of tags being requested
      * @return collection of tags
      * 
+     * @apiSpec Returns null if tags are not currently loaded or if tags are not being loaded for the given registry key.
      * @implNote hides an unchecked cast for convenience (registry keys are safe to cast to whatever as they're just a few strings)
      */
     public @Nullable <T> ITagCollection<RegistryKey<T>> getTagCollection(final RegistryKey<Registry<T>> registryKey)
@@ -200,7 +199,7 @@ public class ResourceKeyTags implements IFutureReloadListener
      * Updates the key tag registry
      * @param newTags new tags
      * 
-     * @apiNote internal, called when tag registry is loaded/reloaded
+     * @apiNote internal, called when tag registry is loaded/reloaded/discarded
      */
     public void updateTags(final Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> newTags)
     {
