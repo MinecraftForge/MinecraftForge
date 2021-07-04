@@ -66,17 +66,12 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
     
     public ResourceKeyTagsProvider.Builder<T> tag(ITag.INamedTag<RegistryKey<T>> tag)
     {
-        ITag.Builder builder = this.getOrCreateRawBuilder(tag);
-        return new ResourceKeyTagsProvider.Builder<>(builder, registryKey, this.sourceModid);
-    }
-    
-    public ITag.Builder getOrCreateRawBuilder(ITag.INamedTag<RegistryKey<T>> tag)
-    {
-        return this.tagBuilders.computeIfAbsent(tag.getName(), tagID ->
+        ITag.Builder builder = this.tagBuilders.computeIfAbsent(tag.getName(), tagID ->
         {
             existingFileHelper.trackGenerated(tagID, this.resourceType);
             return new ITag.Builder();
         });
+        return new ResourceKeyTagsProvider.Builder<>(builder, registryKey, this.sourceModid);
     }
 
     @Override

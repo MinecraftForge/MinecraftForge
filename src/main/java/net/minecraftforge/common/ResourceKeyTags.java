@@ -43,7 +43,7 @@ import net.minecraftforge.fml.ModLoadingContext;
  * things they are tags of).
  * 
  * Furthermore, they must be resolvable before "normal" tags are currently
- * resolved at in order to be useful during biome loading and modification, so
+ * resolved at in order to be useful during biome modification, so
  * rather than refactor the perfectly-fine-as-is "regular tags", we create a
  * separate set of infrastructure here for managing resource key tags
  */
