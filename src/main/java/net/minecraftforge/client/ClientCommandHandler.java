@@ -71,7 +71,24 @@ public class ClientCommandHandler
         ClientPlayerEntity player = Minecraft.getInstance().player;
         mergeCommandNode(commands.getRoot(), serverCommands, new HashMap<>(), new ClientCommandSource(player, player.position(), player.getRotationVector(),
                 player.getPermissionLevel(), player.getName().getString(), player.getDisplayName(), player), (suggestions) -> 0,
-                (client) -> SuggestionProviders.safelySwap((SuggestionProvider<ISuggestionProvider>) (SuggestionProvider<?>) client));
+                (client) -> {
+                    SuggestionProvider<ISuggestionProvider> suggestionProvider = SuggestionProviders
+                            .safelySwap((SuggestionProvider<ISuggestionProvider>) (SuggestionProvider<?>) client);
+                    if (suggestionProvider == SuggestionProviders.ASK_SERVER) {
+                        suggestionProvider = (context, builder) -> {
+                            ClientCommandSource source = getSource();
+                            StringReader reader = new StringReader(context.getInput());
+                            if (reader.canRead() && reader.peek() == '/')
+                            {
+                                reader.skip();
+                            }
+
+                            ParseResults<CommandSource> parse = commands.parse(reader, source);
+                            return commands.getCompletionSuggestions(parse);
+                        };
+                    }
+                    return suggestionProvider;
+                });
 
         mergeCommandNode(serverCommandsCopy, commands.getRoot(), new HashMap<>(), null, (source) -> {
             Minecraft.getInstance().player.chat(source.getInput());
@@ -147,9 +164,7 @@ public class ClientCommandHandler
      */
     public static boolean sendMessage(String sendMessage)
     {
-        ClientPlayerEntity player = Minecraft.getInstance().player;
-        ClientCommandSource source = new ClientCommandSource(player, player.position(), player.getRotationVector(), player.getPermissionLevel(),
-                player.getName().getString(), player.getDisplayName(), player);
+        ClientCommandSource source = getSource();
 
         StringReader reader = new StringReader(sendMessage);
 
@@ -201,10 +216,7 @@ public class ClientCommandHandler
 
     public static CompletableFuture<Suggestions> getSuggestions(String command, CompletableFuture<Suggestions> serverSuggestions)
     {
-        ClientPlayerEntity player = Minecraft.getInstance().player;
-        ClientCommandSource source = new ClientCommandSource(player, player.position(), player.getRotationVector(), player.getPermissionLevel(),
-                player.getName().getString(), player.getDisplayName(), player);
-
+        ClientCommandSource source = getSource();
         StringReader reader = new StringReader(command);
 
         if (!reader.canRead() || reader.read() != '/')
@@ -215,5 +227,12 @@ public class ClientCommandHandler
         ParseResults<CommandSource> parse = commands.parse(reader, source);
         return commands.getCompletionSuggestions(parse).thenCombine(serverSuggestions,
                 (client, server) -> Suggestions.merge(command, Arrays.asList(client, server)));
+    }
+
+    private static ClientCommandSource getSource()
+    {
+        ClientPlayerEntity player = Minecraft.getInstance().player;
+        return new ClientCommandSource(player, player.position(), player.getRotationVector(), player.getPermissionLevel(),
+                player.getName().getString(), player.getDisplayName(), player);
     }
 }
