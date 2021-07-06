@@ -28,7 +28,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -51,10 +50,8 @@ import net.minecraft.util.text.event.HoverEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 public class ClientCommandHandler
@@ -66,12 +63,10 @@ public class ClientCommandHandler
         commands = new CommandDispatcher<>();
         MinecraftForge.EVENT_BUS.post(new RegisterClientCommandsEvent(commands));
         RootCommandNode<ISuggestionProvider> serverCommandsCopy = new RootCommandNode<>();
-        mergeCommandNode(serverCommands, serverCommandsCopy, new HashMap<>(), null, (suggestions) -> 0, (suggestions) -> null);
+        mergeCommandNode(serverCommands, serverCommandsCopy, new HashMap<>(), Minecraft.getInstance().getConnection().getSuggestionsProvider(),
+                (suggestions) -> 0, (suggestions) -> null);
 
-        ClientPlayerEntity player = Minecraft.getInstance().player;
-        mergeCommandNode(commands.getRoot(), serverCommands, new HashMap<>(), new ClientCommandSource(player, player.position(), player.getRotationVector(),
-                player.getPermissionLevel(), player.getName().getString(), player.getDisplayName(), player), (suggestions) -> 0,
-                (client) -> {
+        mergeCommandNode(commands.getRoot(), serverCommands, new HashMap<>(), getSource(), (suggestions) -> 0, (client) -> {
                     SuggestionProvider<ISuggestionProvider> suggestionProvider = SuggestionProviders
                             .safelySwap((SuggestionProvider<ISuggestionProvider>) (SuggestionProvider<?>) client);
                     if (suggestionProvider == SuggestionProviders.ASK_SERVER) {
@@ -90,10 +85,11 @@ public class ClientCommandHandler
                     return suggestionProvider;
                 });
 
-        mergeCommandNode(serverCommandsCopy, commands.getRoot(), new HashMap<>(), null, (source) -> {
-            Minecraft.getInstance().player.chat(source.getInput());
-            return 0;
-        }, (suggestions) -> null);
+        mergeCommandNode(serverCommandsCopy, commands.getRoot(), new HashMap<>(), Minecraft.getInstance().getConnection().getSuggestionsProvider(),
+                (source) -> {
+                    Minecraft.getInstance().player.chat((source.getInput().startsWith("/") ? "" : "/") + source.getInput());
+                    return 0;
+                }, (suggestions) -> null);
     }
 
     private static <S, T> void mergeCommandNode(CommandNode<S> sourceNode, CommandNode<T> resultNode, Map<CommandNode<S>, CommandNode<T>> sourceToResult,
@@ -212,21 +208,6 @@ public class ClientCommandHandler
             Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(component).withStyle(TextFormatting.RED), Util.NIL_UUID);
         }
         return true;
-    }
-
-    public static CompletableFuture<Suggestions> getSuggestions(String command, CompletableFuture<Suggestions> serverSuggestions)
-    {
-        ClientCommandSource source = getSource();
-        StringReader reader = new StringReader(command);
-
-        if (!reader.canRead() || reader.read() != '/')
-        {
-            return Suggestions.empty();
-        }
-
-        ParseResults<CommandSource> parse = commands.parse(reader, source);
-        return commands.getCompletionSuggestions(parse).thenCombine(serverSuggestions,
-                (client, server) -> Suggestions.merge(command, Arrays.asList(client, server)));
     }
 
     private static ClientCommandSource getSource()
