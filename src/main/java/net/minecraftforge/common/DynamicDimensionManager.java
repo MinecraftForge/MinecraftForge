@@ -47,6 +47,7 @@ import net.minecraftforge.fml.network.NetworkHooks;
 @ParametersAreNonnullByDefault
 public class DynamicDimensionManager
 {
+    private static final Set<RegistryKey<World>> VANILLA_WORLDS = ImmutableSet.of(World.OVERWORLD, World.NETHER, World.END); 
     private static Set<RegistryKey<World>> pendingWorldsToUnregister = new HashSet<>();
     
     /**
@@ -99,16 +100,23 @@ public class DynamicDimensionManager
      * Unregistering a world does not delete the region files or other data associated with the world's world folder.
      * If a world is reregistered after unregistering it, the world will retain all prior data (unless manually deleted via server admin)
      * 
-     * @param worldToRemove The key for the world to schedule for unregistration.
+     * @param worldToRemove The key for the world to schedule for unregistration. Vanilla dimensions are not removable as they are
+     * generally assumed to exist (especially the overworld)
      * 
      * @apiNote Not intended for use with vanilla or json dimensions, doing so may cause strange problems.
+     * 
+     * However, if a vanilla or json dimension *is* removed, restarting the server will reconstitute it as
+     * vanilla automatically detects and registers these.
      * 
      * Mods whose dynamic dimensions require the ejection of players to somewhere other than their respawn point
      * should teleport these worlds' players to appropriate locations before unregistering their dimensions.
      */
     public static void markDimensionForUnregistration(final MinecraftServer server, final RegistryKey<World> worldToRemove)
     {
-        DynamicDimensionManager.pendingWorldsToUnregister.add(worldToRemove);
+        if (!VANILLA_WORLDS.contains(worldToRemove))
+        {
+            DynamicDimensionManager.pendingWorldsToUnregister.add(worldToRemove);
+        }
     }
     
     /**
