@@ -23,12 +23,15 @@ import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.common.DynamicDimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.event.TickEvent;
 
 public class BasicEventHooks
@@ -117,6 +120,9 @@ public class BasicEventHooks
 
     public static void onPostServerTick()
     {
+        final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+        if (server != null)
+            DynamicDimensionManager.unregisterScheduledDimensions(server);
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END));
     }
 }

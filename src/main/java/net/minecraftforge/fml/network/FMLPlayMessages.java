@@ -24,9 +24,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import io.netty.buffer.Unpooled;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.gui.screen.Screen;
@@ -40,6 +42,7 @@ import net.minecraft.tags.ITag;
 import net.minecraft.tags.ITagCollection;
 import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.tags.TagRegistryManager;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3d;
@@ -54,6 +57,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -432,6 +436,75 @@ public class FMLPlayMessages
                 }
             });
             ctx.get().setPacketHandled(true);
+        }
+    }
+    
+    public static class SyncDimensionListChanges
+    {
+        private final Set<RegistryKey<World>> newDimensions;
+        private final Set<RegistryKey<World>> removedDimensions;
+        
+        public SyncDimensionListChanges(final Set<RegistryKey<World>> newDimensions, final Set<RegistryKey<World>> removedDimensions)
+        {
+            this.newDimensions = newDimensions;
+            this.removedDimensions = removedDimensions;
+        }
+        
+        public void encode(PacketBuffer buf)
+        {
+            buf.writeVarInt(this.newDimensions.size());
+            for (final RegistryKey<World> key : this.newDimensions)
+            {
+                buf.writeResourceLocation(key.location());
+            }
+            
+            buf.writeVarInt(this.removedDimensions.size());
+            for (final RegistryKey<World> key : this.removedDimensions)
+            {
+                buf.writeResourceLocation(key.location());
+            }
+        }
+        
+        public static SyncDimensionListChanges decode(PacketBuffer buf)
+        {
+            final Set<RegistryKey<World>> newDimensions = new HashSet<>();
+            final Set<RegistryKey<World>> removedDimensions = new HashSet<>();
+            
+            final int newDimensionCount = buf.readVarInt();
+            for (int i=0; i<newDimensionCount; i++)
+            {
+                final ResourceLocation worldID = buf.readResourceLocation();
+                newDimensions.add(RegistryKey.create(Registry.DIMENSION_REGISTRY, worldID));
+            }
+            
+            final int removedDimensionCount = buf.readVarInt();
+            for (int i=0; i<removedDimensionCount; i++)
+            {
+                final ResourceLocation worldID = buf.readResourceLocation();
+                removedDimensions.add(RegistryKey.create(Registry.DIMENSION_REGISTRY, worldID));
+            }
+            
+            return new SyncDimensionListChanges(newDimensions, removedDimensions);
+        }
+        
+        public void handle(Supplier<NetworkEvent.Context> contextGetter)
+        {
+            final NetworkEvent.Context context = contextGetter.get();
+            context.enqueueWork(() -> {
+                final ClientPlayerEntity player = Minecraft.getInstance().player;
+                if (player == null)
+                    return;
+                final Set<RegistryKey<World>> commandSuggesterLevels = player.connection.levels();
+                for (final RegistryKey<World> key : this.newDimensions)
+                {
+                    commandSuggesterLevels.add(key);
+                }
+                for (final RegistryKey<World> key : this.removedDimensions)
+                {
+                    commandSuggesterLevels.remove(key);
+                }
+            });
+            context.setPacketHandled(true);
         }
     }
 }
