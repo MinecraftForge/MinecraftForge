@@ -26,7 +26,7 @@
     }
  
     public Chunk(World p_i49947_1_, ChunkPrimer p_i49947_2_) {
-@@ -264,28 +_,28 @@
+@@ -264,30 +_,27 @@
  
           if (!this.field_76637_e.field_72995_K) {
              blockstate.func_196947_b(this.field_76637_e, p_177436_1_, p_177436_2_, p_177436_3_);
@@ -52,14 +52,17 @@
              }
  
 -            if (block instanceof ITileEntityProvider) {
-+            if (p_177436_2_.hasTileEntity()) {
-                TileEntity tileentity1 = this.func_177424_a(p_177436_1_, Chunk.CreateEntityType.CHECK);
-                if (tileentity1 == null) {
+-               TileEntity tileentity1 = this.func_177424_a(p_177436_1_, Chunk.CreateEntityType.CHECK);
+-               if (tileentity1 == null) {
 -                  tileentity1 = ((ITileEntityProvider)block).func_196283_a_(this.field_76637_e);
-+                  tileentity1 = p_177436_2_.createTileEntity(this.field_76637_e);
-                   this.field_76637_e.func_175690_a(p_177436_1_, tileentity1);
-                } else {
+-                  this.field_76637_e.func_175690_a(p_177436_1_, tileentity1);
+-               } else {
++            if (p_177436_2_.hasTileEntity()) {
++               TileEntity tileentity1 = this.field_76637_e.func_175625_s(p_177436_1_); // Forge - make sure to check for pending BlockEntities when placing a new BlockEntity into the world
++               if (tileentity1 != null) {
                    tileentity1.func_145836_u();
+                }
+             }
 @@ -321,11 +_,13 @@
           k = this.field_76645_j.length - 1;
        }
