@@ -90,18 +90,12 @@ public class DynamicDimensionManagerTest
         return 1;
     }
     
-    private static final Set<RegistryKey<World>> VANILLA_WORLDS = ImmutableSet.of(World.OVERWORLD, World.NETHER, World.END);
     private static int removeDimension(final CommandContext<CommandSource> context) throws CommandSyntaxException
     {
         final CommandSource source = context.getSource();
         final MinecraftServer server = source.getServer();
         final ServerWorld worldToRemove = DimensionArgument.getDimension(context, DIMENSION);
         final RegistryKey<World> key = worldToRemove.dimension();
-        if (VANILLA_WORLDS.contains(key))
-        {
-            source.sendFailure(new StringTextComponent(String.format("Removing vanilla dimension %s seems like a bad idea", key.location())));
-            return 0;
-        }
         source.sendSuccess(new StringTextComponent(String.format("Unregistering dimension %s", key.location())), true);
         DynamicDimensionManager.markDimensionForUnregistration(server, key);
         return 1;
