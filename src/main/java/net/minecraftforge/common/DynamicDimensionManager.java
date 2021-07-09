@@ -1,6 +1,5 @@
 package net.minecraftforge.common;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -92,7 +91,7 @@ public class DynamicDimensionManager
      * Marks a world and its dimension for unregistration. Unregistered worlds will stop ticking,
      * unregistered dimensions will not be loaded on server startup unless and until they are reregistered again.
      * 
-     * Unregistration is delayed until the end of the server tick (just before the post-server-tick-event fires).
+     * Unregistration is delayed until the end of the server tick (just after the post-server-tick-event fires).
      * 
      * Players who are still in the given world at that time will be ejected to their respawn points.
      * Players who have respawn points in worlds being unloaded will have their spawn points reset to the overworld and respawned there.

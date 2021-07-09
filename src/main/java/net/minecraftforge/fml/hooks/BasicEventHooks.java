@@ -120,9 +120,9 @@ public class BasicEventHooks
 
     public static void onPostServerTick()
     {
+        MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END));
         final MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
         if (server != null)
             DynamicDimensionManager.unregisterScheduledDimensions(server);
-        MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END));
     }
 }
