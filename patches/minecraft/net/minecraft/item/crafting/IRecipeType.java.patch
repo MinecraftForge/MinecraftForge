@@ -1,0 +1,10 @@
+--- a/net/minecraft/item/crafting/IRecipeType.java
++++ b/net/minecraft/item/crafting/IRecipeType.java
+@@ -14,6 +_,7 @@
+    IRecipeType<CampfireCookingRecipe> field_222153_e = func_222147_a("campfire_cooking");
+    IRecipeType<StonecuttingRecipe> field_222154_f = func_222147_a("stonecutting");
+    IRecipeType<SmithingRecipe> field_234827_g_ = func_222147_a("smithing");
++   IRecipeType<net.minecraftforge.common.crafting.GrindStoneRecipe> GRINDING = func_222147_a("grinding");
+ 
+    static <T extends IRecipe<?>> IRecipeType<T> func_222147_a(final String p_222147_0_) {
+       return Registry.func_218322_a(Registry.field_218367_H, new ResourceLocation(p_222147_0_), new IRecipeType<T>() {
