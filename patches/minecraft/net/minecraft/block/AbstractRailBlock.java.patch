@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/AbstractRailBlock.java
 +++ b/net/minecraft/block/AbstractRailBlock.java
-@@ -13,7 +_,7 @@
+@@ -13,9 +_,10 @@
  import net.minecraft.world.IWorldReader;
  import net.minecraft.world.World;
  
@@ -8,12 +8,17 @@
 +public abstract class AbstractRailBlock extends Block implements net.minecraftforge.common.extensions.IAbstractRailBlock {
     protected static final VoxelShape field_185590_a = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);
     protected static final VoxelShape field_190959_b = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
++   public static net.minecraft.state.EnumProperty<RailShape> SHAPE = net.minecraft.state.properties.BlockStateProperties.field_208165_R;
     private final boolean field_196277_c;
-@@ -37,6 +_,7 @@
+ 
+    public static boolean func_208488_a(World p_208488_0_, BlockPos p_208488_1_) {
+@@ -36,7 +_,8 @@
+    }
  
     public VoxelShape func_220053_a(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
-       RailShape railshape = p_220053_1_.func_203425_a(this) ? p_220053_1_.func_177229_b(this.func_176560_l()) : null;
-+      RailShape railShape2 = p_220053_1_.func_203425_a(this) ? getRailDirection(p_220053_1_, p_220053_2_, p_220053_3_, null) : null;
+-      RailShape railshape = p_220053_1_.func_203425_a(this) ? p_220053_1_.func_177229_b(this.func_176560_l()) : null;
++      //RailShape railshape = p_220053_1_.is(this) ? p_220053_1_.getValue(this.getShapeProperty()) : null;
++      RailShape railshape = p_220053_1_.func_203425_a(this) ? getRailDirection(p_220053_1_, p_220053_2_, p_220053_3_, null) : null;
        return railshape != null && railshape.func_208092_c() ? field_190959_b : field_185590_a;
     }
  
@@ -26,6 +31,15 @@
           if (func_235328_a_(p_220069_3_, p_220069_2_, railshape)) {
              func_220075_c(p_220069_1_, p_220069_2_, p_220069_3_);
              p_220069_2_.func_217377_a(p_220069_3_, p_220069_6_);
+@@ -98,7 +_,7 @@
+       if (p_208489_1_.field_72995_K) {
+          return p_208489_3_;
+       } else {
+-         RailShape railshape = p_208489_3_.func_177229_b(this.func_176560_l());
++         RailShape railshape = getRailDirection(p_208489_3_, p_208489_1_, p_208489_2_, null);
+          return (new RailState(p_208489_1_, p_208489_2_, p_208489_3_)).func_226941_a_(p_208489_1_.func_175640_z(p_208489_2_), p_208489_4_, railshape).func_196916_c();
+       }
+    }
 @@ -110,7 +_,7 @@
     public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
        if (!p_196243_5_) {
@@ -35,12 +49,16 @@
              p_196243_2_.func_195593_d(p_196243_3_.func_177984_a(), this);
           }
  
-@@ -129,5 +_,20 @@
+@@ -129,5 +_,23 @@
        return blockstate.func_206870_a(this.func_176560_l(), flag ? RailShape.EAST_WEST : RailShape.NORTH_SOUTH);
     }
  
+-   public abstract Property<RailShape> func_176560_l();
 +   @Deprecated //Forge: Use getRailDirection(IBlockAccess, BlockPos, IBlockState, EntityMinecart) for enhanced ability
-    public abstract Property<RailShape> func_176560_l();
++   public Property<RailShape> func_176560_l()
++   {
++       return SHAPE;
++   };
 +
 +   /* ======================================== FORGE START =====================================*/
 +
