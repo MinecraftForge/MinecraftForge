@@ -131,7 +131,7 @@ public class ProjectileImpactEvent extends EntityEvent
      * Event is cancellable, causes bobber to ignore the current hit and continue on its journey.
      */
     @Cancelable
-    public static class FishingBobber extends ProjectileImpactEvent//TODO figure out what happens on cancel
+    public static class FishingBobber extends ProjectileImpactEvent
     {
         private final FishingBobberEntity fishingBobber;
 
