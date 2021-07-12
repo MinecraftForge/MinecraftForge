@@ -35,26 +35,29 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
+/**
+ * A Recipe for the grindstone. It takes 2 ingredients as input and returns an ItemStack.
+ */
 public class GrindstoneRecipe implements IRecipe<IInventory>
 {
     public static final IRecipeSerializer<GrindstoneRecipe> SERIALIZER = new Serializer();
     
     private ResourceLocation id;
-    private Ingredient ingredient;
-    private Ingredient ingredient1;
+    private Ingredient base;
+    private Ingredient addition;
     private ItemStack result;
     
     public GrindstoneRecipe(ResourceLocation id,Ingredient ingredient, Ingredient ingredient1, ItemStack result) 
     {
         this.id = id;
-        this.ingredient = ingredient;
-        this.ingredient1 = ingredient1;
+        this.base = ingredient;
+        this.addition = ingredient1;
         this.result = result;
     }
     @Override
     public boolean matches(IInventory inventory, World level) 
     {
-        return this.ingredient.test(inventory.getItem(0)) && this.ingredient1.test(inventory.getItem(1));
+        return this.base.test(inventory.getItem(0)) && this.addition.test(inventory.getItem(1));
     }
     @Override
     public ItemStack assemble(IInventory inventory) 
@@ -93,10 +96,10 @@ public class GrindstoneRecipe implements IRecipe<IInventory>
         @Override
 	public GrindstoneRecipe fromJson(ResourceLocation id, JsonObject jsonobj) 
         {
-            Ingredient ingredient = Ingredient.fromJson(JSONUtils.getAsJsonObject(jsonobj, "base"));
-            Ingredient ingredient1 = Ingredient.fromJson(JSONUtils.getAsJsonObject(jsonobj, "addition"));
+            Ingredient base = Ingredient.fromJson(JSONUtils.getAsJsonObject(jsonobj, "base"));
+            Ingredient addition = Ingredient.fromJson(JSONUtils.getAsJsonObject(jsonobj, "addition"));
             ItemStack result = ShapedRecipe.itemFromJson(JSONUtils.getAsJsonObject(jsonobj, "result"));
-            return new GrindstoneRecipe(id, ingredient, ingredient1, result);
+            return new GrindstoneRecipe(id, base, addition, result);
         }
         @Override
         public GrindstoneRecipe fromNetwork(ResourceLocation id, PacketBuffer buffer) 
@@ -109,8 +112,8 @@ public class GrindstoneRecipe implements IRecipe<IInventory>
         @Override
         public void toNetwork(PacketBuffer buffer, GrindstoneRecipe recipe) 
         {
-            recipe.ingredient.toNetwork(buffer);
-            recipe.ingredient1.toNetwork(buffer);
+            recipe.base.toNetwork(buffer);
+            recipe.addition.toNetwork(buffer);
             buffer.writeItem(recipe.result);
         }
     }
