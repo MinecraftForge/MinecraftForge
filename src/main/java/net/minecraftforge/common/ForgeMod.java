@@ -68,7 +68,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.GrindstoneRecipe;
+import net.minecraftforge.common.crafting.GrindingRecipe;
 import net.minecraftforge.common.crafting.NBTIngredient;
 import net.minecraftforge.common.crafting.VanillaIngredientSerializer;
 import net.minecraftforge.common.crafting.conditions.AndCondition;
@@ -115,7 +115,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public static final RegistryObject<Fluid> MILK = RegistryObject.of(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.of(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
     
-    public static final IRecipeType<GrindstoneRecipe> GRINDING = new IRecipeType<GrindstoneRecipe>() {};
+    public static final IRecipeType<GrindingRecipe> GRINDING = new IRecipeType<GrindingRecipe>() {};
     
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance()
@@ -296,7 +296,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
 
         event.getRegistry().register(new ConditionalRecipe.Serializer<IRecipe<?>>().setRegistryName(new ResourceLocation("forge", "conditional")));
-        event.getRegistry().register(new GrindstoneRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "grinding")));
+        event.getRegistry().register(new GrindingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "grinding")));
 
     }
 

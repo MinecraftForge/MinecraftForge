@@ -38,16 +38,16 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 /**
  * A Recipe for the grindstone. It takes 2 ingredients as input and returns an ItemStack.
  */
-public class GrindstoneRecipe implements IRecipe<IInventory>
+public class GrindingRecipe implements IRecipe<IInventory>
 {
-    public static final IRecipeSerializer<GrindstoneRecipe> SERIALIZER = new Serializer();
+    public static final IRecipeSerializer<GrindingRecipe> SERIALIZER = new Serializer();
     
     private ResourceLocation id;
     private Ingredient base;
     private Ingredient addition;
     private ItemStack result;
     
-    public GrindstoneRecipe(ResourceLocation id,Ingredient ingredient, Ingredient ingredient1, ItemStack result) 
+    public GrindingRecipe(ResourceLocation id,Ingredient ingredient, Ingredient ingredient1, ItemStack result) 
     {
         this.id = id;
         this.base = ingredient;
@@ -90,27 +90,27 @@ public class GrindstoneRecipe implements IRecipe<IInventory>
         return ForgeMod.GRINDING;
     }
     
-    public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<GrindstoneRecipe> 
+    public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<GrindingRecipe> 
     {
 	
         @Override
-	public GrindstoneRecipe fromJson(ResourceLocation id, JsonObject jsonobj) 
+	public GrindingRecipe fromJson(ResourceLocation id, JsonObject jsonobj) 
         {
             Ingredient base = Ingredient.fromJson(JSONUtils.getAsJsonObject(jsonobj, "base"));
             Ingredient addition = Ingredient.fromJson(JSONUtils.getAsJsonObject(jsonobj, "addition"));
             ItemStack result = ShapedRecipe.itemFromJson(JSONUtils.getAsJsonObject(jsonobj, "result"));
-            return new GrindstoneRecipe(id, base, addition, result);
+            return new GrindingRecipe(id, base, addition, result);
         }
         @Override
-        public GrindstoneRecipe fromNetwork(ResourceLocation id, PacketBuffer buffer) 
+        public GrindingRecipe fromNetwork(ResourceLocation id, PacketBuffer buffer) 
         {
             Ingredient ingredient = Ingredient.fromNetwork(buffer);
             Ingredient ingredient1 = Ingredient.fromNetwork(buffer);
             ItemStack result = buffer.readItem();
-            return new GrindstoneRecipe(id, ingredient, ingredient1, result);
+            return new GrindingRecipe(id, ingredient, ingredient1, result);
         }
         @Override
-        public void toNetwork(PacketBuffer buffer, GrindstoneRecipe recipe) 
+        public void toNetwork(PacketBuffer buffer, GrindingRecipe recipe) 
         {
             recipe.base.toNetwork(buffer);
             recipe.addition.toNetwork(buffer);
