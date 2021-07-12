@@ -94,7 +94,7 @@ public class GrindingRecipe implements IRecipe<IInventory>
     {
 	
         @Override
-	public GrindingRecipe fromJson(ResourceLocation id, JsonObject jsonobj) 
+        public GrindingRecipe fromJson(ResourceLocation id, JsonObject jsonobj) 
         {
             Ingredient base = Ingredient.fromJson(JSONUtils.getAsJsonObject(jsonobj, "base"));
             Ingredient addition = Ingredient.fromJson(JSONUtils.getAsJsonObject(jsonobj, "addition"));
