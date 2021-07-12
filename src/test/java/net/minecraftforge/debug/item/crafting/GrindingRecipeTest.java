@@ -21,12 +21,12 @@ package net.minecraftforge.debug.item.crafting;
 
 import net.minecraftforge.fml.common.Mod;
 
-@Mod(GrindStoneRecipeTest.MOD_ID)
-public class GrindStoneRecipeTest
+@Mod(GrindingRecipeTest.MOD_ID)
+public class GrindingRecipeTest
 {
-    public static final String MOD_ID = "grindstonerecipe_test";
+    public static final String MOD_ID = "grinding_recipe_test";
 
-    public GrindStoneRecipeTest()
+    public GrindingRecipeTest()
     {
         
     }

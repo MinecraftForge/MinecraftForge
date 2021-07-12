@@ -117,7 +117,7 @@ license="LGPL v2.1"
 [[mods]]
     modId="worldgen_registry_desync_test"
 [[mods]]
-    modId="grindstonerecipe_test"
+    modId="grinding_recipe_test"
 [[mods]]
     modId="add_entity_attribute_test"
 [[mods]]
