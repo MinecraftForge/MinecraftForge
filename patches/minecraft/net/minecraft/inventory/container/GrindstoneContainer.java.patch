@@ -1,18 +1,7 @@
 --- a/net/minecraft/inventory/container/GrindstoneContainer.java
 +++ b/net/minecraft/inventory/container/GrindstoneContainer.java
-@@ -27,6 +_,7 @@
-       }
-    };
-    private final IWorldPosCallable field_217015_e;
-+   private final World level;
- 
-    public GrindstoneContainer(int p_i50080_1_, PlayerInventory p_i50080_2_) {
-       this(p_i50080_1_, p_i50080_2_, IWorldPosCallable.field_221489_a);
-@@ -35,14 +_,15 @@
-    public GrindstoneContainer(int p_i50081_1_, PlayerInventory p_i50081_2_, final IWorldPosCallable p_i50081_3_) {
-       super(ContainerType.field_221521_o, p_i50081_1_);
+@@ -37,12 +_,12 @@
        this.field_217015_e = p_i50081_3_;
-+      this.level = p_i50081_2_.field_70458_d.field_70170_p;
        this.func_75146_a(new Slot(this.field_217014_d, 0, 49, 19) {
           public boolean func_75214_a(ItemStack p_75214_1_) {
 -            return p_75214_1_.func_77984_f() || p_75214_1_.func_77973_b() == Items.field_151134_bR || p_75214_1_.func_77948_v();
@@ -26,17 +15,22 @@
           }
        });
        this.func_75146_a(new Slot(this.field_217013_c, 2, 129, 34) {
-@@ -120,6 +_,14 @@
+@@ -120,6 +_,19 @@
        ItemStack itemstack1 = this.field_217014_d.func_70301_a(1);
        boolean flag = !itemstack.func_190926_b() || !itemstack1.func_190926_b();
        boolean flag1 = !itemstack.func_190926_b() && !itemstack1.func_190926_b();
-+      java.util.Optional<net.minecraftforge.common.crafting.GrindStoneRecipe> optional = this.level.func_199532_z().func_215371_a(net.minecraft.item.crafting.IRecipeType.GRINDING, this.field_217014_d, this.level);
-+      if (optional.isPresent()) {
-+        net.minecraftforge.common.crafting.GrindStoneRecipe grindStoneRecipe = optional.get();
-+        ItemStack result = grindStoneRecipe.func_77572_b(this.field_217013_c);
-+        this.field_217013_c.func_70299_a(0, result);
-+        this.func_75142_b();
-+        return;
++      if(flag) {
++          this.field_217015_e.func_221486_a((level, pos) -> {
++              java.util.Optional<net.minecraftforge.common.crafting.GrindstoneRecipe> optional = level.func_199532_z().func_215371_a(net.minecraftforge.common.ForgeMod.GRINDING, this.field_217014_d, level);
++              if (optional.isPresent()) {
++                 net.minecraftforge.common.crafting.GrindstoneRecipe grindstoneRecipe = optional.get();
++                 ItemStack result = grindstoneRecipe.func_77572_b(this.field_217013_c);
++                 this.field_217013_c.func_70299_a(0, result);
++              }
++          });
++          if(!this.field_217013_c.func_70301_a(0).func_190926_b()) {
++              return;
++          }
 +      }
        if (!flag) {
           this.field_217013_c.func_70299_a(0, ItemStack.field_190927_a);
@@ -60,3 +54,11 @@
                 if (!ItemStack.func_77989_b(itemstack, itemstack1)) {
                    this.field_217013_c.func_70299_a(0, ItemStack.field_190927_a);
                    this.func_75142_b();
+@@ -162,6 +_,7 @@
+          }
+ 
+          this.field_217013_c.func_70299_a(0, this.func_217007_a(itemstack2, i, j));
++         
+       }
+ 
+       this.func_75142_b();

@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:grinding",
+  "type": "forge:grinding",
   "base": {
     "item": "minecraft:diamond_axe"
   },

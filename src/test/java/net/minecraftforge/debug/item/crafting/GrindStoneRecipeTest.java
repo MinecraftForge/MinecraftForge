@@ -22,7 +22,6 @@ package net.minecraftforge.debug.item.crafting;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(GrindStoneRecipeTest.MOD_ID)
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = GrindStoneRecipeTest.MOD_ID)
 public class GrindStoneRecipeTest
 {
     public static final String MOD_ID = "grindstonerecipe_test";

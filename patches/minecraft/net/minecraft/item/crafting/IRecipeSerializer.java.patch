@@ -9,12 +9,12 @@
     IRecipeSerializer<ShapedRecipe> field_222157_a = func_222156_a("crafting_shaped", new ShapedRecipe.Serializer());
     IRecipeSerializer<ShapelessRecipe> field_222158_b = func_222156_a("crafting_shapeless", new ShapelessRecipe.Serializer());
     SpecialRecipeSerializer<ArmorDyeRecipe> field_222159_c = func_222156_a("crafting_special_armordye", new SpecialRecipeSerializer<>(ArmorDyeRecipe::new));
-@@ -27,9 +_,11 @@
+@@ -27,9 +_,10 @@
     CookingRecipeSerializer<CampfireCookingRecipe> field_222174_r = func_222156_a("campfire_cooking", new CookingRecipeSerializer<>(CampfireCookingRecipe::new, 100));
     IRecipeSerializer<StonecuttingRecipe> field_222175_s = func_222156_a("stonecutting", new SingleItemRecipe.Serializer<>(StonecuttingRecipe::new));
     IRecipeSerializer<SmithingRecipe> field_234826_u_ = func_222156_a("smithing", new SmithingRecipe.Serializer());
-+   IRecipeSerializer<net.minecraftforge.common.crafting.GrindStoneRecipe> GRINDSTONE = func_222156_a("grinding", new net.minecraftforge.common.crafting.GrindStoneRecipe.Serializer());
- 
+-
++   
     T func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_);
  
 +   @javax.annotation.Nullable
