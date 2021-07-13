@@ -14,7 +14,7 @@
           String s1 = JSONUtils.func_151200_h(p_199425_2_, "result");
           int i = JSONUtils.func_151203_m(p_199425_2_, "count");
 -         ItemStack itemstack = new ItemStack(Registry.field_212630_s.func_82594_a(new ResourceLocation(s1)), i);
-+         ItemStack itemstack = net.minecraftforge.common.crafting.CraftingHelper.itemFromJson(p_199425_2_, "result");
++         ItemStack itemstack = net.minecraftforge.common.crafting.CraftingHelper.itemFromJson(p_199425_2_);
           return this.field_222180_t.create(p_199425_1_, s, ingredient, itemstack);
        }
  

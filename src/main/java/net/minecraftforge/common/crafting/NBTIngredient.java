@@ -83,7 +83,7 @@ public class NBTIngredient extends Ingredient
 
         @Override
         public NBTIngredient parse(JsonObject json) {
-            return new NBTIngredient(CraftingHelper.getItemStack(json, true, "item"));
+            return new NBTIngredient(CraftingHelper.getItemStack(json, true));
         }
 
         @Override

@@ -157,16 +157,22 @@ public class CraftingHelper
         return serializer.parse(obj);
     }
     
-    public static ItemStack itemFromJson(JsonObject p_199798_0_, String key)
+    public static ItemStack itemFromJson(JsonObject jsonObject)
     {
-        String s = JSONUtils.getAsString(p_199798_0_, key);
+        String key = "result";
+        if (jsonObject.get("result").isJsonObject())
+            {
+            key = "item"; 
+            jsonObject = jsonObject.getAsJsonObject("result");
+            }
+        String s = JSONUtils.getAsString(jsonObject, key);
         Item item = Registry.ITEM.getOptional(new ResourceLocation(s)).orElseThrow(() -> {
             return new JsonSyntaxException("Unknown item '" + s + "'");
         });
-        if (p_199798_0_.has("data")) {
+        if (jsonObject.has("data")) {
            throw new JsonParseException("Disallowed data tag found");
         } else {
-           return CraftingHelper.getItemStack(p_199798_0_, true, key);
+           return CraftingHelper.getItemStack(jsonObject, true, key);
         }
     }
     
@@ -179,9 +185,10 @@ public class CraftingHelper
     @Deprecated
     public static ItemStack getItemStack(JsonObject json, boolean readNBT)
     {
+        String itemName = JSONUtils.getAsString(json, "item");
         return getItemStack(json, readNBT, "item");
     }
-    
+
     /**
      * Returns an {@link ItemStack} from a {@link JsonObject}. The {@link Item} is located under "key" field.
      * The amount under "count" and the nbt data under "nbt". 
