@@ -5,7 +5,7 @@
     private void func_190624_r() {
        RayTraceResult raytraceresult = ProjectileHelper.func_234618_a_(this, this::func_230298_a_);
 -      this.func_70227_a(raytraceresult);
-+      if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) this.func_70227_a(raytraceresult);
++      if (raytraceresult.func_216346_c() == RayTraceResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) this.func_70227_a(raytraceresult);
     }
  
     protected boolean func_230298_a_(Entity p_230298_1_) {
