@@ -22,10 +22,11 @@
           Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
           j = j + itemstack.func_82838_A() + (itemstack2.func_190926_b() ? 0 : itemstack2.func_82838_A());
           this.field_82856_l = 0;
+-         if (!itemstack2.func_190926_b()) {
+-            boolean flag = itemstack2.func_77973_b() == Items.field_151134_bR && !EnchantedBookItem.func_92110_g(itemstack2).isEmpty();
 +         boolean flag = false;
 +
-          if (!itemstack2.func_190926_b()) {
--            boolean flag = itemstack2.func_77973_b() == Items.field_151134_bR && !EnchantedBookItem.func_92110_g(itemstack2).isEmpty();
++         if (!itemstack2.func_190926_b() || itemstack2.func_77973_b() == Items.field_190931_a) {
 +            if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_234642_c_, field_82857_m, j, this.field_234645_f_)) return;
 +            flag = itemstack2.func_77973_b() == Items.field_151134_bR && !EnchantedBookItem.func_92110_g(itemstack2).isEmpty();
              if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2)) {
