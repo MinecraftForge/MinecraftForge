@@ -462,6 +462,8 @@ public class ModListScreen extends Screen
         lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.license", selectedMod.getOwningFile().getLicense()));
         lines.add(null);
         lines.add(selectedMod.getDescription());
+
+        /* Removed because people bitched that this information was misleading.
         lines.add(null);
         if (FMLEnvironment.secureJarsEnabled) {
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.signature", selectedMod.getOwningFile().getCodeSigningFingerprint().orElse(ForgeI18n.parseMessage("fml.menu.mods.info.signature.unsigned"))));
@@ -469,6 +471,7 @@ public class ModListScreen extends Screen
         } else {
             lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.securejardisabled"));
         }
+        */
 
         if ((vercheck.status == VersionChecker.Status.OUTDATED || vercheck.status == VersionChecker.Status.BETA_OUTDATED) && vercheck.changes.size() > 0)
         {

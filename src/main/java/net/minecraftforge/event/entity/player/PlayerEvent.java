@@ -22,6 +22,7 @@ package net.minecraftforge.event.entity.player;
 import java.io.File;
 
 import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.RegistryKey;
@@ -39,6 +40,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
@@ -126,7 +128,7 @@ public class PlayerEvent extends LivingEvent
             this.state = state;
             this.originalSpeed = original;
             this.setNewSpeed(original);
-            this.pos = pos;
+            this.pos = pos != null ? pos : new BlockPos(0, -1, 0);
         }
 
         public BlockState getState() { return state; }
@@ -177,6 +179,43 @@ public class PlayerEvent extends LivingEvent
         public void setDisplayname(ITextComponent displayname)
         {
             this.displayname = displayname;
+        }
+    }
+
+    /**
+     * TabListNameFormat is fired when a player's display name for the tablist is retrieved.<br>
+     * This event is fired whenever a player's display name for the tablist is retrieved in
+     * {@link ServerPlayerEntity#getTabListDisplayName()} or {@link ServerPlayerEntity#refreshTabListName()}.<br>
+     * <br>
+     * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(PlayerEntity)}.<br>
+     * <br>
+     * {@link #getDisplayName()} contains the display name of the player or null if the client should determine the display name itself.
+     * <br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
+     * <br>
+     * This event does not have a result. {@link HasResult}
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     **/
+    public static class TabListNameFormat extends PlayerEvent
+    {
+        @Nullable
+        private ITextComponent displayName;
+
+        public TabListNameFormat(PlayerEntity player)
+        {
+            super(player);
+        }
+        
+        @Nullable
+        public ITextComponent getDisplayName()
+        {
+            return displayName;
+        }
+
+        public void setDisplayName(@Nullable ITextComponent displayName)
+        {
+            this.displayName = displayName;
         }
     }
 

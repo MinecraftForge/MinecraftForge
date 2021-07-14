@@ -128,7 +128,7 @@ public class ClientHooks
             if (fmlver > FMLNetworkConstants.FMLNETVERSION) {
                 extraReason = "fml.menu.multiplayer.clientoutdated";
             }
-            target.forgeData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason);
+            target.forgeData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason, packet.getForgeData().isTruncated());
         } else {
             target.forgeData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(),0, null);
         }
@@ -154,6 +154,10 @@ public class ClientHooks
                         tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.incompatible");
                     }
                 }
+                if (target.forgeData.truncated)
+                {
+                    tooltip += "\n" + ForgeI18n.parseMessage("fml.menu.multiplayer.truncated");
+                }
                 break;
             case "VANILLA":
                 if (target.forgeData.isCompatible) {
@@ -172,10 +176,11 @@ public class ClientHooks
         Minecraft.getInstance().getTextureManager().bind(iconSheet);
         AbstractGui.blit(mStack, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
 
-        if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26)
-            //TODO using StringTextComponent here is a hack, we should be using TranslationTextComponents.
-            gui.setToolTip(Collections.singletonList(new StringTextComponent(tooltip)));
-
+        if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26) {
+            //this is not the most proper way to do it,
+            //but works best here and has the least maintenance overhead
+            gui.setToolTip(Arrays.stream(tooltip.split("\n")).map(StringTextComponent::new).collect(Collectors.toList()));
+        }
     }
 
     public static String fixDescription(String description)
