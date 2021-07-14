@@ -57,10 +57,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.entity.ai.attributes.*;
 import net.minecraft.fluid.*;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.loot.LootContext;
@@ -200,6 +197,52 @@ public class ForgeHooks
             return from.getItem().canContinueUsing(from, to);
         }
         return false;
+    }
+
+    public static boolean canFallFly(LivingEntity living, ItemStack chestplateStack, boolean doTickCheck, int fallFlyingTicks)
+    {
+        ModifiableAttributeInstance fallFlyingAttribute = living.getAttribute(ForgeMod.FALL_FLIGHT.get());
+
+        if(chestplateStack.canElytraFly(living))
+        {
+            if(fallFlyingAttribute != null)
+            {
+                double attributeValue = fallFlyingAttribute.getValue();
+                boolean wasTotalMultipliedByZero = false;
+                for(AttributeModifier multiplier : fallFlyingAttribute.getModifiers(AttributeModifier.Operation.MULTIPLY_TOTAL)){
+                    if(multiplier.getAmount() + 1.0D <= 0){ // See BooleanAttribute#calculateMultiplyTotalAndUpdateCurrent
+                        wasTotalMultipliedByZero = true;
+                        break;
+                    }
+                }
+                boolean doNotAddValue = attributeValue == 0 && wasTotalMultipliedByZero;
+                if(!doNotAddValue)
+                {
+                    attributeValue += 1;
+                }
+                return attributeValue > 0 && (!doTickCheck || chestplateStack.elytraFlightTick(living, fallFlyingTicks));
+            }
+            else
+            {
+                return !doTickCheck || chestplateStack.elytraFlightTick(living, fallFlyingTicks);
+            }
+        }
+        else
+        {
+            return fallFlyingAttribute != null && fallFlyingAttribute.getValue() > 0;
+        }
+    }
+
+    public static void boostFallFlight(LivingEntity living, Vector3d currentDeltaMove, Vector3d currentLookAngle)
+    {
+
+        ModifiableAttributeInstance fallFlyingSpeedAttribute = living.getAttribute(ForgeMod.FALL_FLYING_SPEED.get());
+        if(fallFlyingSpeedAttribute != null && fallFlyingSpeedAttribute.getValue() > 0)
+        {
+            double moveBoost = 1.5D * fallFlyingSpeedAttribute.getValue();
+            double lookBoost = 0.1D * fallFlyingSpeedAttribute.getValue();
+            living.setDeltaMovement(currentDeltaMove.add(currentLookAngle.x * lookBoost + (currentLookAngle.x * moveBoost - currentDeltaMove.x) * 0.5D, currentLookAngle.y * lookBoost + (currentLookAngle.y * moveBoost - currentDeltaMove.y) * 0.5D, currentLookAngle.z * lookBoost + (currentLookAngle.z * moveBoost - currentDeltaMove.z) * 0.5D));
+        }
     }
 
     public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader world, @Nonnull BlockPos pos)
