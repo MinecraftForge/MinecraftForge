@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2021.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.world;
 
 import java.util.Map;
@@ -18,7 +37,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
  * dynamicregistries context (allowing e.g. adding features from datapacks to a
  * set of biomes specified by datapacks).
  * 
- * Attempting to *replace* things in the registries at this point or at server
+ * Attempting to *replace* top-level objects in the registries at this point or at server
  * runtime will break everything as value-key lookups are used in many places,
  * so don't do that.
  *
