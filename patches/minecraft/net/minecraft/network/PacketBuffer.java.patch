@@ -32,7 +32,7 @@
 -         if (item.func_77645_m() || item.func_77651_p()) {
 -            compoundnbt = p_150788_1_.func_77978_p();
 +         if (item.isDamageable(p_150788_1_) || item.func_77651_p()) {
-+            compoundnbt = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.func_77978_p();
++            compoundnbt = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.getFullNetworkTag();
           }
  
           this.func_150786_a(compoundnbt);
