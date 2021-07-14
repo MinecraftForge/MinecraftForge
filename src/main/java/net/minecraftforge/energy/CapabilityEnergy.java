@@ -30,9 +30,9 @@ public class CapabilityEnergy
     @CapabilityInject(IEnergyStorage.class)
     public static Capability<IEnergyStorage> ENERGY = null;
 
-    public static void register()
+    public static void register(RegisterCapabilitiesEvent event)
     {
-        CapabilityManager.INSTANCE.register(IEnergyStorage.class, new IStorage<IEnergyStorage>()
+        event.register(IEnergyStorage.class, new IStorage<IEnergyStorage>()
         {
             @Override
             public INBT writeNBT(Capability<IEnergyStorage> capability, IEnergyStorage instance, Direction side)
