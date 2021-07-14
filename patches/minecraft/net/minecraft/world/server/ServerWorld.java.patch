@@ -264,7 +264,7 @@
        }
     }
  
-@@ -985,8 +1015,11 @@
+@@ -985,12 +1015,16 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -304,7 +304,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.func_226277_ct_(), p_217384_2_.func_226278_cu_(), p_217384_2_.func_226281_cx_(), p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.field_73011_w.func_186058_p(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -1049,6 +1092,7 @@
+@@ -1049,6 +1093,7 @@
  
     public Explosion func_217401_a(@Nullable Entity p_217401_1_, @Nullable DamageSource p_217401_2_, double p_217401_3_, double p_217401_5_, double p_217401_7_, float p_217401_9_, boolean p_217401_10_, Explosion.Mode p_217401_11_) {
        Explosion explosion = new Explosion(this, p_217401_1_, p_217401_3_, p_217401_5_, p_217401_7_, p_217401_9_, p_217401_10_, p_217401_11_);
@@ -312,7 +312,7 @@
        if (p_217401_2_ != null) {
           explosion.func_199592_a(p_217401_2_);
        }
-@@ -1377,4 +1421,15 @@
+@@ -1377,4 +1422,15 @@
           return p_229854_1_.func_175898_b(p_229855_1_.func_180328_a());
        });
     }

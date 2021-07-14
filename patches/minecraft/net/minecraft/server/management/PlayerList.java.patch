@@ -157,7 +157,20 @@
        return serverplayerentity;
     }
  
-@@ -739,7 +767,7 @@
+@@ -698,12 +726,6 @@
+       if (serverstatisticsmanager == null) {
+          File file1 = new File(this.field_72400_f.func_71218_a(DimensionType.field_223227_a_).func_217485_w().func_75765_b(), "stats");
+          File file2 = new File(file1, uuid + ".json");
+-         if (!file2.exists()) {
+-            File file3 = new File(file1, p_152602_1_.func_200200_C_().getString() + ".json");
+-            if (file3.exists() && file3.isFile()) {
+-               file3.renameTo(file2);
+-            }
+-         }
+ 
+          serverstatisticsmanager = new ServerStatisticsManager(this.field_72400_f, file2);
+          this.field_148547_k.put(uuid, serverstatisticsmanager);
+@@ -739,7 +761,7 @@
     }
  
     public List<ServerPlayerEntity> func_181057_v() {
@@ -166,7 +179,7 @@
     }
  
     @Nullable
-@@ -769,4 +797,12 @@
+@@ -769,4 +791,12 @@
     public boolean func_206257_x() {
        return this.field_72407_n;
     }
