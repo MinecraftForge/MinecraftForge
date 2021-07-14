@@ -1,0 +1,12 @@
+{
+  "generator": {
+    "type": "minecraft:noise",
+    "biome_source": {
+      "type": "minecraft:fixed",
+      "biome": "minecraft:plains"
+    },
+    "seed": 0,
+    "settings": "minecraft:overworld"
+  },
+  "type": "dim_lightmap_test:custom_dimension_1"
+}
