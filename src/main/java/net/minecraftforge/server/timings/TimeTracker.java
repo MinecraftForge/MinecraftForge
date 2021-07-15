@@ -21,14 +21,18 @@ package net.minecraftforge.server.timings;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.MapMaker;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.NextTickListEntry;
 
 /**
  * A class to assist in the collection of data to measure the update times of ticking objects {currently Tile Entities and Entities}
@@ -46,10 +50,15 @@ public class TimeTracker<T>
      * A tracker for timing entity updates
      */
     public static final TimeTracker<Entity> ENTITY_UPDATE = new TimeTracker<>();
+    /**
+     * A tracker for timing block and fluid tick updates
+     * (or anything else that would be tracked by a `NextTickListEntry`)
+     */
+    public static final TimeTracker<ForgeRegistryObjectHolder<?>> BLOCK_FLUID_UPDATE = new TimeTracker<>();
 
     private boolean enabled;
     private int trackingDuration;
-    private Map<T, int[]> timings = new MapMaker().weakKeys().makeMap();
+    private Map<T, ForgeTimings<T>> timings = new MapMaker().weakKeys().makeMap();
     private WeakReference<T> currentlyTracking;
     private long trackTime;
     private long timing;
@@ -63,9 +72,9 @@ public class TimeTracker<T>
     {
         ImmutableList.Builder<ForgeTimings<T>> builder = ImmutableList.builder();
 
-        for (Map.Entry<T, int[]> entry : timings.entrySet())
+        for (Map.Entry<T, ForgeTimings<T>> entry : timings.entrySet())
         {
-            builder.add(new ForgeTimings<>(entry.getKey(), Arrays.copyOfRange(entry.getValue(), 0, 99)));
+            builder.add(entry.getValue());
         }
         return builder.build();
     }
@@ -122,9 +131,8 @@ public class TimeTracker<T>
             currentlyTracking = null;
             return;
         }
-        int[] timings = this.timings.computeIfAbsent(object, k -> new int[101]);
-        int idx = timings[100] = (timings[100] + 1) % 100;
-        timings[idx] = (int) (nanoTime - timing);
+        ForgeTimings timings = this.timings.computeIfAbsent(object, k -> new ForgeTimings<>(object));
+        timings.processTick(nanoTime - timing);
     }
 
     private void trackStart(T toTrack, long nanoTime)
