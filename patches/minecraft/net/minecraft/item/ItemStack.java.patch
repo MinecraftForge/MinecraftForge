@@ -118,7 +118,7 @@
  
     public boolean func_77984_f() {
 -      if (!this.field_190928_g && this.func_77973_b().func_77612_l() > 0) {
-+      if (!this.field_190928_g && this.func_77973_b().getMaxDamage(this) > 0) {
++      if (!this.field_190928_g && this.func_77973_b().func_77645_m()) {
           CompoundNBT compoundnbt = this.func_77978_p();
           return compoundnbt == null || !compoundnbt.func_74767_n("Unbreakable");
        } else {
