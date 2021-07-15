@@ -22,13 +22,14 @@ package net.minecraftforge.event;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 
 public class TickEvent extends Event
 {
     public enum Type {
-        WORLD, PLAYER, CLIENT, SERVER, RENDER;
+        WORLD, PLAYER, CLIENT, SERVER, RENDER, ENVIRONMENT;
     }
 
     public enum Phase {
@@ -66,6 +67,7 @@ public class TickEvent extends Event
             this.world = world;
         }
     }
+
     public static class PlayerTickEvent extends TickEvent {
         public final PlayerEntity player;
 
@@ -82,6 +84,24 @@ public class TickEvent extends Event
         {
             super(Type.RENDER, LogicalSide.CLIENT, phase);
             this.renderTickTime = renderTickTime;
+        }
+    }
+    
+    /**
+     * Useful for random-tick and weather based actions. 
+     */
+    public static class EnvironmentTickEvent extends TickEvent
+    {
+        public final World world;
+        public final Chunk chunk;
+        public final int randomTickSpeed;
+
+        public EnvironmentTickEvent(LogicalSide side, Phase phase, World world, Chunk chunk, int randomTickSpeed)
+        {
+            super(Type.ENVIRONMENT, side, phase);
+            this.world = world;
+            this.chunk = chunk;
+            this.randomTickSpeed = randomTickSpeed;
         }
     }
 }
