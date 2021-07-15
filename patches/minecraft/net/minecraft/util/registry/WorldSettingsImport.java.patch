@@ -20,22 +20,23 @@
        return worldsettingsimport;
     }
  
-@@ -60,6 +_,15 @@
+@@ -60,7 +_,16 @@
        this.field_240872_d_ = p_i242092_3_;
        this.field_240873_e_ = p_i242092_4_;
        this.field_244333_f = p_i242092_1_ == JsonOps.INSTANCE ? (WorldSettingsImport<JsonElement>)this : new WorldSettingsImport<>(JsonOps.INSTANCE, p_i242092_2_, p_i242092_3_, p_i242092_4_);
-+      this.nbtOps = p_i242092_1_ == net.minecraft.nbt.NBTDynamicOps.field_210820_a ? (WorldSettingsImport<net.minecraft.nbt.INBT>)this : new WorldSettingsImport<>(net.minecraft.nbt.NBTDynamicOps.field_210820_a, p_i242092_2_, p_i242092_3_, p_i242092_4_, this.field_244333_f);
-+   } // forge: all vanilla WSIs either are or have a jsonops delegate, we also need to have an nbtops delegate for the generic create workaround
-+   private WorldSettingsImport(DynamicOps<T> p_i242092_1_, WorldSettingsImport.IResourceAccess p_i242092_2_, DynamicRegistries.Impl p_i242092_3_, IdentityHashMap<RegistryKey<? extends Registry<?>>, WorldSettingsImport.ResultMap<?>> p_i242092_4_, WorldSettingsImport<JsonElement> jsonOps) {
-+      super(p_i242092_1_);
-+      this.field_244332_c = p_i242092_2_;
-+      this.field_240872_d_ = p_i242092_3_;
-+      this.field_240873_e_ = p_i242092_4_;
++      this.nbtOps = p_i242092_1_ == net.minecraft.nbt.NBTDynamicOps.field_210820_a ? (WorldSettingsImport<net.minecraft.nbt.INBT>)this : new WorldSettingsImport<net.minecraft.nbt.INBT>(p_i242092_2_, p_i242092_3_, p_i242092_4_, this.field_244333_f); // forge: all vanilla WSIs either are or have a jsonops delegate, we also need to have an nbtops delegate for the generic create workaround
+    }
++   private WorldSettingsImport(WorldSettingsImport.IResourceAccess resources, DynamicRegistries.Impl registryHolder, IdentityHashMap<RegistryKey<? extends Registry<?>>, WorldSettingsImport.ResultMap<?>> readCache, WorldSettingsImport<JsonElement> jsonOps) {
++      super((DynamicOps<T>) net.minecraft.nbt.NBTDynamicOps.field_210820_a);
++      this.field_244332_c = resources;
++      this.field_240872_d_ = registryHolder;
++      this.field_240873_e_ = readCache;
 +      this.field_244333_f = jsonOps;
 +      this.nbtOps = (WorldSettingsImport<net.minecraft.nbt.INBT>)this;
-    }
++   } // forge: extra constructor is needed to have both a json and nbt ops delegate, otherwise WSI recursively constructs itself in the jsonOps assignment in the other constructor forever
  
     protected <E> DataResult<Pair<Supplier<E>, T>> func_241802_a_(T p_241802_1_, RegistryKey<? extends Registry<E>> p_241802_2_, Codec<E> p_241802_3_, boolean p_241802_4_) {
+       Optional<MutableRegistry<E>> optional = this.field_240872_d_.func_230521_a_(p_241802_2_);
 @@ -190,6 +_,7 @@
                 ) {
                    JsonParser jsonparser = new JsonParser();
