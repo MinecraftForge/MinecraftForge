@@ -48,7 +48,9 @@
        if (entity != null) {
           double d0 = 36.0D;
 -         if (this.field_147369_b.func_70068_e(entity) < 36.0D) {
-+         if (this.field_147369_b.func_70068_e(entity) < (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.ATTACK ? this.field_147369_b.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e() * this.field_147369_b.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e() : (this.field_147369_b.func_110148_a(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).func_111126_e() + 1.0D) * (this.field_147369_b.func_110148_a(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).func_111126_e() + 1.0D))) {
++         if (this.field_147369_b.func_70068_e(entity) < (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.ATTACK ? 
++         this.field_147369_b.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e() * this.field_147369_b.func_110148_a(net.minecraftforge.common.ForgeMod.ATTACK_REACH.get()).func_111126_e() : 
++         (this.field_147369_b.func_110148_a(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).func_111126_e() + 1.0D) * (this.field_147369_b.func_110148_a(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).func_111126_e() + 1.0D))) {
              Hand hand = p_147340_1_.func_186994_b();
              ItemStack itemstack = hand != null ? this.field_147369_b.func_184586_b(hand).func_77946_l() : ItemStack.field_190927_a;
              Optional<ActionResultType> optional = Optional.empty();
