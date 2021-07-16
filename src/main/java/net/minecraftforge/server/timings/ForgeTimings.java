@@ -32,13 +32,37 @@ public class ForgeTimings<T>
 {
 
     private WeakReference<T> object;
+    private long totalNanos;
+    private int totalTicks;
 
-    private int[] rawTimingData;
-
-    public ForgeTimings(T object, int[] rawTimingData)
+    public ForgeTimings(T object)
     {
         this.object = new WeakReference<T>(object);
-        this.rawTimingData = rawTimingData;
+    }
+
+    private ForgeTimings(WeakReference<T> ref, long nanos, int ticks) {
+        this.object = ref;
+        this.totalNanos = nanos;
+        this.totalTicks = ticks;
+    }
+
+    /**
+     * Makes a copy of this timing object
+     *
+     * @return A copy of this timing object
+     */
+    public ForgeTimings<T> copy() {
+        return new ForgeTimings<>(this.object, this.totalNanos, this.totalTicks);
+    }
+
+    /**
+     * Process a tick for the associated object
+     *
+     * @param nanos The duration of the tick (in nanoseconds)
+     */
+    public void processTick(long nanos) {
+        this.totalNanos += nanos;
+        this.totalTicks++;
     }
 
     /**
@@ -59,13 +83,6 @@ public class ForgeTimings<T>
      */
     public double getAverageTimings()
     {
-        double sum = 0.0;
-
-        for (int data : rawTimingData)
-        {
-            sum += data;
-        }
-
-        return sum / rawTimingData.length;
+        return ((double) this.totalNanos) / this.totalTicks;
     }
 }

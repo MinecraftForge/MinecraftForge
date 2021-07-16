@@ -110,6 +110,8 @@
   "commands.forge.tracking.invalid": "Invalid tracking data.",
   "commands.forge.tracking.te.enabled": "Tile Entity tracking enabled for %d seconds.",
   "commands.forge.tracking.te.reset": "Tile entity timings data has been cleared!",
+  "commands.forge.tracking.block_fluid.enabled": "Block/fluid tracking enabled for %d seconds.",
+  "commands.forge.tracking.block_fluid.reset": "Block/fluid timings data has been cleared!",
   "commands.forge.tracking.timing_entry": "{0} - {1} [{2}, {3}, {4}]: {5}",
   "commands.forge.tracking.no_data": "No data has been recorded yet.",
 

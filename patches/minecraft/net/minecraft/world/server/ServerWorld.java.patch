@@ -96,6 +96,33 @@
           if (biome.func_201848_a(this, blockpos3)) {
              this.func_175656_a(blockpos3, Blocks.field_150432_aD.func_176223_P());
           }
+@@ -573,18 +_,24 @@
+ 
+    private void func_205339_a(NextTickListEntry<Fluid> p_205339_1_) {
+       FluidState fluidstate = this.func_204610_c(p_205339_1_.field_180282_a);
++      net.minecraftforge.server.timings.ForgeRegistryObjectHolder<?> obj
++              = new net.minecraftforge.server.timings.ForgeRegistryObjectHolder<>(fluidstate, p_205339_1_.field_180282_a, func_234923_W_());
++      net.minecraftforge.server.timings.TimeTracker.BLOCK_FLUID_UPDATE.trackStart(obj);
+       if (fluidstate.func_206886_c() == p_205339_1_.func_151351_a()) {
+          fluidstate.func_206880_a(this, p_205339_1_.field_180282_a);
+       }
+-
++      net.minecraftforge.server.timings.TimeTracker.BLOCK_FLUID_UPDATE.trackEnd(obj);
+    }
+ 
+    private void func_205338_b(NextTickListEntry<Block> p_205338_1_) {
+       BlockState blockstate = this.func_180495_p(p_205338_1_.field_180282_a);
++      net.minecraftforge.server.timings.ForgeRegistryObjectHolder<?> obj
++              = new net.minecraftforge.server.timings.ForgeRegistryObjectHolder<>(blockstate, p_205338_1_.field_180282_a, func_234923_W_());
++      net.minecraftforge.server.timings.TimeTracker.BLOCK_FLUID_UPDATE.trackStart(obj);
+       if (blockstate.func_203425_a(p_205338_1_.func_151351_a())) {
+          blockstate.func_227033_a_(this, p_205338_1_.field_180282_a, this.field_73012_v);
+       }
+-
++      net.minecraftforge.server.timings.TimeTracker.BLOCK_FLUID_UPDATE.trackEnd(obj);
+    }
+ 
+    public void func_217479_a(Entity p_217479_1_) {
 @@ -598,9 +_,10 @@
              ++p_217479_1_.field_70173_aa;
              IProfiler iprofiler = this.func_217381_Z();

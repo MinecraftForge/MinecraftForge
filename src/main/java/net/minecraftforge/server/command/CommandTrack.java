@@ -28,14 +28,19 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.entity.Entity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.registries.ForgeRegistryEntry;
+import net.minecraftforge.server.timings.ForgeRegistryObjectHolder;
 import net.minecraftforge.server.timings.ForgeTimings;
 import net.minecraftforge.server.timings.TimeTracker;
 
@@ -50,6 +55,7 @@ class CommandTrack
             .then(ResetTrackingCommand.register())
             .then(TrackResultsEntity.register())
             .then(TrackResultsTileEntity.register())
+            .then(TrackResultsBlockFluid.register())
             .then(StartTrackingCommand.register());
     }
 
@@ -59,28 +65,21 @@ class CommandTrack
         {
             return Commands.literal("start")
                 .requires(cs->cs.hasPermission(2)) //permission
-                .then(Commands.literal("te")
+                .then(genCmd("te", TimeTracker.TILE_ENTITY_UPDATE))
+                .then(genCmd("entity", TimeTracker.ENTITY_UPDATE))
+                .then(genCmd("block_fluid", TimeTracker.BLOCK_FLUID_UPDATE));
+        }
+
+        static ArgumentBuilder<CommandSource, ?> genCmd(String descriptor, TimeTracker<?> tracker) {
+            return Commands.literal(descriptor)
                     .then(Commands.argument("duration", IntegerArgumentType.integer(1))
                         .executes(ctx -> {
                             int duration = IntegerArgumentType.getInteger(ctx, "duration");
-                            TimeTracker.TILE_ENTITY_UPDATE.reset();
-                            TimeTracker.TILE_ENTITY_UPDATE.enable(duration);
-                            ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.tracking.te.enabled", duration), true);
+                            tracker.reset();
+                            tracker.enable(duration);
+                            ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.tracking." + descriptor + ".enabled", duration), true);
                             return 0;
-                        })
-                    )
-                )
-                .then(Commands.literal("entity")
-                    .then(Commands.argument("duration", IntegerArgumentType.integer(1))
-                        .executes(ctx -> {
-                            int duration = IntegerArgumentType.getInteger(ctx, "duration");
-                            TimeTracker.ENTITY_UPDATE.reset();
-                            TimeTracker.ENTITY_UPDATE.enable(duration);
-                            ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.tracking.entity.enabled", duration), true);
-                            return 0;
-                        })
-                    )
-                );
+                        }));
         }
     }
 
@@ -90,20 +89,18 @@ class CommandTrack
         {
             return Commands.literal("reset")
                 .requires(cs->cs.hasPermission(2)) //permission
-                .then(Commands.literal("te")
+                .then(genCmd("te", TimeTracker.TILE_ENTITY_UPDATE))
+                .then(genCmd("entity", TimeTracker.ENTITY_UPDATE))
+                .then(genCmd("block_fluid", TimeTracker.BLOCK_FLUID_UPDATE));
+        }
+
+        static ArgumentBuilder<CommandSource, ?> genCmd(String descriptor, TimeTracker<?> tracker) {
+            return Commands.literal(descriptor)
                     .executes(ctx -> {
-                        TimeTracker.TILE_ENTITY_UPDATE.reset();
-                        ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.tracking.te.reset"), true);
+                        tracker.reset();
+                        ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.tracking." + descriptor + ".reset"), true);
                         return 0;
-                    })
-                )
-                .then(Commands.literal("entity")
-                    .executes(ctx -> {
-                        TimeTracker.ENTITY_UPDATE.reset();
-                        ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.tracking.entity.reset"), true);
-                        return 0;
-                    })
-                );
+                    });
         }
     }
 
@@ -179,6 +176,33 @@ class CommandTrack
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "\u03bcs" : "ms");
                     return new TranslationTextComponent("commands.forge.tracking.timing_entry", te.getType().getRegistryName(), te.getLevel().dimension().location().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
+            );
+        }
+    }
+
+    private static class TrackResultsBlockFluid
+    {
+        static ArgumentBuilder<CommandSource, ?> register()
+        {
+            return Commands.literal("block_fluid").executes(ctx -> TrackResults.execute(ctx.getSource(), TimeTracker.BLOCK_FLUID_UPDATE, data ->
+                    {
+                        ForgeRegistryObjectHolder<?> registryObject = data.getObject().get();
+                        ResourceLocation registryEntry = null;
+                        if (registryObject.object instanceof BlockState) {
+                            registryEntry = ((BlockState) registryObject.object).getBlock().getRegistryName();
+                        } else if (registryObject.object instanceof FluidState) {
+                            registryEntry = ((FluidState) registryObject.object).getType().getRegistryName();
+                        }
+                        if (registryObject == null || registryEntry == null)
+                            return new TranslationTextComponent("commands.forge.tracking.invalid");
+
+                        BlockPos pos = registryObject.pos;
+
+                        double averageTimings = data.getAverageTimings();
+                        String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "\u03bcs" : "ms");
+                        return new TranslationTextComponent("commands.forge.tracking.timing_entry",
+                                registryEntry, registryObject.dimension.location().toString(), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    })
             );
         }
     }
