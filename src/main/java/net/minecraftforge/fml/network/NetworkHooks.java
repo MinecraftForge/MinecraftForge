@@ -47,8 +47,11 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.handshake.client.CHandshakePacket;
 import net.minecraft.network.login.ServerLoginNetHandler;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraftforge.common.ResourceKeyTags;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 import net.minecraftforge.fml.config.ConfigTracker;
@@ -244,6 +247,11 @@ public class NetworkHooks
         {
             FMLNetworkConstants.playChannel.send(PacketDistributor.ALL.noArg(), new FMLPlayMessages.SyncCustomTagTypes(customTagTypes));
         }
+        Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> keyTags = ResourceKeyTags.INSTANCE.getTags();
+        if (!keyTags.isEmpty())
+        {
+            FMLNetworkConstants.playChannel.send(PacketDistributor.ALL.noArg(), new FMLPlayMessages.SyncKeyTags(keyTags));
+        }
     }
 
     /**
@@ -257,6 +265,11 @@ public class NetworkHooks
         if (!customTagTypes.isEmpty())
         {
             FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(customTagTypes), player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
+        }
+        Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> keyTags = ResourceKeyTags.INSTANCE.getTags();
+        if (!keyTags.isEmpty())
+        {
+            FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncKeyTags(keyTags), player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
         }
     }
 

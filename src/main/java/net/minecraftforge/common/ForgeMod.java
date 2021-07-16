@@ -173,6 +173,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         registerArgumentTypes();
         VanillaPacketSplitter.register();
+        ResourceKeyTags.markRegistryForNeedingKeyTagsLoaded(Registry.DIMENSION_REGISTRY);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

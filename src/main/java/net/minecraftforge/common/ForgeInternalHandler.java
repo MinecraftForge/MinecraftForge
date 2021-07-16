@@ -134,6 +134,7 @@ public class ForgeInternalHandler
     {
         INSTANCE = new LootModifierManager();
         event.addListener(INSTANCE);
+        event.addListener(ResourceKeyTags.INSTANCE);
     }
 
     static LootModifierManager getLootModifierManager()
