@@ -170,8 +170,9 @@ public class ResourceKeyTags implements IFutureReloadListener
     
     private static Pair<TagCollectionReader<RegistryKey<?>>, CompletableFuture<Map<ResourceLocation, ITag.Builder>>> getFutureTagBuilder(final RegistryKey<? extends Registry<?>> registryKey, final String directoryName, final IResourceManager manager, final Executor workerExecutor)
     {
+        @SuppressWarnings("unchecked") // cast makes javac happy, registrykey generics don't matter at runtime
         final Function<ResourceLocation, Optional<RegistryKey<?>>> tagEntryFactory =
-            rl -> Optional.<RegistryKey<?>>of(RegistryKey.create(registryKey, rl));
+            rl -> Optional.<RegistryKey<?>>of(RegistryKey.create((RegistryKey<? extends Registry<Object>>)registryKey, rl));
         final ResourceLocation registryName = registryKey.location();
         final String directory = "tags/resource_keys/" + REGISTRY_DIRECTORIES.computeIfAbsent(registryKey, key -> key.location().getPath() + "s");
         final String nameForLogger = registryName.toString();
