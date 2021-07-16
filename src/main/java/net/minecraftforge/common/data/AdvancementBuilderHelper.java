@@ -26,7 +26,7 @@ import net.minecraft.resources.ResourcePackType;
 
 public class AdvancementBuilderHelper {
 
-    public static boolean build(ExistingFileHelper fileHelper, Advancement.Builder builder) {
+    public static boolean build (ExistingFileHelper fileHelper, Advancement.Builder builder) {
         return builder.canBuild((advancementId) -> {
             if (fileHelper.exists(advancementId, ResourcePackType.SERVER_DATA, ".json", "advancements")) {
                 return new Advancement(advancementId, null, null, AdvancementRewards.EMPTY, Maps.newHashMap(), null);
