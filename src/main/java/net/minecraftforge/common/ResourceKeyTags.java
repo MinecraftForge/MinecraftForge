@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2021.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
@@ -58,16 +77,19 @@ public class ResourceKeyTags implements IFutureReloadListener
 
     /**
      * Makes a wrapper tag for a registry key tag. The wrapper tag will be sensitive to server data reloads.
+     * Key tag wrappers can be created at any time.
+     * 
+     * Key tag wrappers become queryable once key tags are loaded prior to a server starting;
+     * they continue to be available until the server stops.
+     * 
+     * If the specified tag ID is not available when the tag is queried, {@link IOptionalNamedTag#isDefaulted()} will return true.
+     * If the tag is defaulted, the tag will be empty when queried.
+     * 
      * @param <T> The type of the things the tag's registry keys are for
      * @param registryKey The key used to create the tag's registry keys. This also sets the name of the directory to load tags from.
      * @param tagID The id of the tag, defines the namespace and id of the json to load the tag from (can include subfolders)
      * @return A tag wrapper for a key tag that will be loaded from data/{tagID-namespace}/tags/resource_keys/{directory}/{tagID-path}.json
-     * -- {directory} should be be the registry name but pluralized (e.g. the "biome" registry uses the "biomes" directory
-     * 
-     * @apiSpec Can be created at any time. Key tag wrappers become queryable once key tags are loaded prior to a server starting;
-     * they continue to be available until the server stops.
-     * If the specified tag ID is not available when the tag is queried, {@link IOptionalNamedTag#isDefaulted()} will return true.
-     * If the tag is defaulted, the tag will be empty when queried.
+     * -- {directory} should be be the registry name but pluralized (e.g. the "biome" registry uses the "biomes" directory).* 
      * 
      * @apiNote Resource Key Tags are server-only resources and will not be queryable (isDefaulted returns true)
      * while a server is not running. Resource Key Tags are not currently synced to clients and should not be
@@ -83,13 +105,13 @@ public class ResourceKeyTags implements IFutureReloadListener
      * e.g. Forge adds key tags for Level resource keys, using the "dimensions" directory;
      * these will be loaded from "tags/resource_keys/dimensions"
      * 
+     * Must be called before the first load of key tags (mod constructor is the best time to call it).
+     * Safe to call during parallel modloading.
+     * 
      * @param registryKey The registry resource key to load resource key tags for
      * @param directoryName The directory to load resource key tags from. Should be plural.
      * Mods that add custom dynamic registries specific to their own mod should namespace this directory to avoid collisions
      * with other mods' directories, e.g. "jimscheesemod/cheeses" instead of just "cheeses"
-     * 
-     * @apiSpec Must be called before the first load of key tags (mod constructor is the best time to call it).
-     * Safe to call during parallel modloading.
      */
     public synchronized static void registerResourceKeyTagDirectory(final RegistryKey<? extends Registry<?>> registryKey, final String directoryName)
     {
@@ -185,10 +207,9 @@ public class ResourceKeyTags implements IFutureReloadListener
      * Gets the current collection of tags for a given registry key
      * @param <T> The type of the thing the tags are for
      * @param registryKey The registry key for the collection of tags being requested
-     * @return collection of tags
+     * @return Collection of tags. Returns null if tags are not currently loaded or if tags are not being loaded for the given registry key.
      * 
-     * @apiSpec Returns null if tags are not currently loaded or if tags are not being loaded for the given registry key.
-     * @implNote hides an unchecked cast for convenience (registry keys are safe to cast to whatever as they're just a few strings)
+     * @implNote hides an unchecked cast for convenience (registry keys' generics are safe to cast to whatever as keys are just a few strings)
      */
     public @Nullable <T> ITagCollection<RegistryKey<T>> getTagCollection(final RegistryKey<Registry<T>> registryKey)
     {
