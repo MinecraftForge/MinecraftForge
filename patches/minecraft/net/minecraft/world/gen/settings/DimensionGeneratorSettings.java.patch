@@ -1,5 +1,67 @@
 --- a/net/minecraft/world/gen/settings/DimensionGeneratorSettings.java
 +++ b/net/minecraft/world/gen/settings/DimensionGeneratorSettings.java
+@@ -42,9 +_,9 @@
+ 
+ public class DimensionGeneratorSettings {
+    public static final Codec<DimensionGeneratorSettings> field_236201_a_ = RecordCodecBuilder.<DimensionGeneratorSettings>create((p_236214_0_) -> {
+-      return p_236214_0_.group(Codec.LONG.fieldOf("seed").stable().forGetter(DimensionGeneratorSettings::func_236221_b_), Codec.BOOL.fieldOf("generate_features").orElse(true).stable().forGetter(DimensionGeneratorSettings::func_236222_c_), Codec.BOOL.fieldOf("bonus_chest").orElse(false).stable().forGetter(DimensionGeneratorSettings::func_236223_d_), SimpleRegistry.func_241744_b_(Registry.field_239700_af_, Lifecycle.stable(), Dimension.field_236052_a_).xmap(Dimension::func_236062_a_, Function.identity()).fieldOf("dimensions").forGetter(DimensionGeneratorSettings::func_236224_e_), Codec.STRING.optionalFieldOf("legacy_custom_options").stable().forGetter((p_236213_0_) -> {
++      return p_236214_0_.group(Codec.LONG.fieldOf("seed").stable().forGetter(DimensionGeneratorSettings::func_236221_b_), Codec.BOOL.fieldOf("generate_features").orElse(true).stable().forGetter(DimensionGeneratorSettings::func_236222_c_), Codec.BOOL.fieldOf("bonus_chest").orElse(false).stable().forGetter(DimensionGeneratorSettings::func_236223_d_), net.minecraftforge.common.ForgeHooks.tryAllDimensionsCodec(SimpleRegistry.func_241744_b_(Registry.field_239700_af_, Lifecycle.stable(), Dimension.field_236052_a_).xmap(Dimension::func_236062_a_, Function.identity())).fieldOf("dimensions").forGetter(DimensionGeneratorSettings::func_236224_e_), Codec.STRING.optionalFieldOf("legacy_custom_options").stable().forGetter((p_236213_0_) -> {
+          return p_236213_0_.field_236209_i_;
+-      })).apply(p_236214_0_, p_236214_0_.stable(DimensionGeneratorSettings::new));
++      }), net.minecraftforge.common.ForgeHooks.ALL_DIMENSIONS_CODEC.forGetter(dgs -> dgs.forgeAllDimensionsTag)).apply(p_236214_0_, p_236214_0_.stable(DimensionGeneratorSettings::new));
+    }).comapFlatMap(DimensionGeneratorSettings::func_236233_n_, Function.identity());
+    private static final Logger field_236203_c_ = LogManager.getLogger();
+    private final long field_236205_e_;
+@@ -52,6 +_,7 @@
+    private final boolean field_236207_g_;
+    private final SimpleRegistry<Dimension> field_236208_h_;
+    private final Optional<String> field_236209_i_;
++   private final net.minecraft.nbt.CompoundNBT forgeAllDimensionsTag;
+ 
+    private DataResult<DimensionGeneratorSettings> func_236233_n_() {
+       Dimension dimension = this.field_236208_h_.func_230516_a_(Dimension.field_236053_b_);
+@@ -68,6 +_,9 @@
+ 
+    public DimensionGeneratorSettings(long p_i231914_1_, boolean p_i231914_3_, boolean p_i231914_4_, SimpleRegistry<Dimension> p_i231914_5_) {
+       this(p_i231914_1_, p_i231914_3_, p_i231914_4_, p_i231914_5_, Optional.empty());
++   }
++   public DimensionGeneratorSettings(long p_i231914_1_, boolean p_i231914_3_, boolean p_i231914_4_, SimpleRegistry<Dimension> p_i231914_5_, net.minecraft.nbt.CompoundNBT forgeAllDimensionsTag) {
++      this(p_i231914_1_, p_i231914_3_, p_i231914_4_, p_i231914_5_, Optional.empty(), forgeAllDimensionsTag);
+       Dimension dimension = p_i231914_5_.func_230516_a_(Dimension.field_236053_b_);
+       if (dimension == null) {
+          throw new IllegalStateException("Overworld settings missing");
+@@ -75,6 +_,10 @@
+    }
+ 
+    private DimensionGeneratorSettings(long p_i231915_1_, boolean p_i231915_3_, boolean p_i231915_4_, SimpleRegistry<Dimension> p_i231915_5_, Optional<String> p_i231915_6_) {
++      this(p_i231915_1_, p_i231915_3_, p_i231915_4_, p_i231915_5_, p_i231915_6_, new net.minecraft.nbt.CompoundNBT());
++   }
++   private DimensionGeneratorSettings(long p_i231915_1_, boolean p_i231915_3_, boolean p_i231915_4_, SimpleRegistry<Dimension> p_i231915_5_, Optional<String> p_i231915_6_, net.minecraft.nbt.CompoundNBT forgeAllDimensionsTag) {
++      this.forgeAllDimensionsTag = forgeAllDimensionsTag;
+       this.field_236205_e_ = p_i231915_1_;
+       this.field_236206_f_ = p_i231915_3_;
+       this.field_236207_g_ = p_i231915_4_;
+@@ -168,17 +_,17 @@
+    }
+ 
+    public DimensionGeneratorSettings func_236230_k_() {
+-      return new DimensionGeneratorSettings(this.field_236205_e_, this.field_236206_f_, true, this.field_236208_h_, this.field_236209_i_);
++      return new DimensionGeneratorSettings(this.field_236205_e_, this.field_236206_f_, true, this.field_236208_h_, this.field_236209_i_, this.forgeAllDimensionsTag);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+    public DimensionGeneratorSettings func_236231_l_() {
+-      return new DimensionGeneratorSettings(this.field_236205_e_, !this.field_236206_f_, this.field_236207_g_, this.field_236208_h_);
++      return new DimensionGeneratorSettings(this.field_236205_e_, !this.field_236206_f_, this.field_236207_g_, this.field_236208_h_, this.forgeAllDimensionsTag);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+    public DimensionGeneratorSettings func_236232_m_() {
+-      return new DimensionGeneratorSettings(this.field_236205_e_, this.field_236206_f_, !this.field_236207_g_, this.field_236208_h_);
++      return new DimensionGeneratorSettings(this.field_236205_e_, this.field_236206_f_, !this.field_236207_g_, this.field_236208_h_, this.forgeAllDimensionsTag);
+    }
+ 
+    public static DimensionGeneratorSettings func_242753_a(DynamicRegistries p_242753_0_, Properties p_242753_1_) {
 @@ -192,7 +_,7 @@
        String s3 = (String)p_242753_1_.get("level-type");
        String s4 = Optional.ofNullable(s3).map((p_236217_0_) -> {
@@ -18,3 +80,15 @@
        switch(s4) {
        case "flat":
           JsonObject jsonobject = !s.isEmpty() ? JSONUtils.func_212745_a(s) : new JsonObject();
+@@ -250,9 +_,9 @@
+ 
+       DimensionGeneratorSettings dimensiongeneratorsettings;
+       if (this.func_236227_h_()) {
+-         dimensiongeneratorsettings = new DimensionGeneratorSettings(i, false, false, simpleregistry);
++         dimensiongeneratorsettings = new DimensionGeneratorSettings(i, false, false, simpleregistry, this.forgeAllDimensionsTag);
+       } else {
+-         dimensiongeneratorsettings = new DimensionGeneratorSettings(i, this.func_236222_c_(), this.func_236223_d_() && !p_236220_1_, simpleregistry);
++         dimensiongeneratorsettings = new DimensionGeneratorSettings(i, this.func_236222_c_(), this.func_236223_d_() && !p_236220_1_, simpleregistry, this.forgeAllDimensionsTag);
+       }
+ 
+       return dimensiongeneratorsettings;
