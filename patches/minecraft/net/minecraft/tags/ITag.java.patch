@@ -1,10 +1,15 @@
 --- a/net/minecraft/tags/ITag.java
 +++ b/net/minecraft/tags/ITag.java
-@@ -46,6 +_,7 @@
+@@ -44,8 +_,11 @@
+       return Tag.func_241286_a_(p_232946_0_);
+    }
  
-    public static class Builder {
+-   public static class Builder {
++   public static class Builder implements net.minecraftforge.common.extensions.IForgeRawTagBuilder {
        private final List<ITag.Proxy> field_232953_a_ = Lists.newArrayList();
 +      private boolean replace = false;
++      private final List<ITag.Proxy> removeEntries = Lists.newArrayList();
++      public List<ITag.Proxy> getRemoveEntries() { return this.removeEntries; } // forge -- track additions to the "remove" list during datageneration
  
        public static ITag.Builder func_200047_a() {
           return new ITag.Builder();
@@ -32,15 +37,17 @@
           list.forEach((p_232958_2_) -> {
              this.field_232953_a_.add(new ITag.Proxy(p_232958_2_, p_232956_2_));
           });
-@@ -138,7 +_,7 @@
+@@ -138,8 +_,9 @@
              itag$proxy.func_232968_a_().func_230237_a_(jsonarray);
           }
  
 -         jsonobject.addProperty("replace", false);
 +         jsonobject.addProperty("replace", replace);
           jsonobject.add("values", jsonarray);
++         this.serializeTagAdditions(jsonobject);
           return jsonobject;
        }
+    }
 @@ -178,6 +_,7 @@
        public String toString() {
           return this.field_232969_a_.toString();
