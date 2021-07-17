@@ -22,7 +22,9 @@ package net.minecraftforge.fml.hooks;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.IRecipeHolder;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.animation.Animation;
@@ -30,6 +32,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.event.TickEvent;
+
+import javax.annotation.Nullable;
 
 public class BasicEventHooks
 {
@@ -59,9 +63,24 @@ public class BasicEventHooks
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemPickupEvent(player, item, clone));
     }
 
+    // TODO 1.17 REMOVE
+    // Use the version below, which takes the CraftingResultSlot's inventory
+    @Deprecated
     public static void firePlayerCraftingEvent(PlayerEntity player, ItemStack crafted, IInventory craftMatrix)
     {
-        MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix));
+        firePlayerCraftingEvent(player, crafted, craftMatrix, null);
+    }
+
+    public static void firePlayerCraftingEvent(PlayerEntity player, ItemStack crafted, IInventory craftMatrix, @Nullable IInventory craftResultInventory)
+    {
+        // Attempt to retrieve the recipe that was used to produce the crafted item
+        // This will generally be null client-side, which is fine since this is mostly a hint that is useful server-side
+        IRecipe<?> recipe = null;
+        if (craftResultInventory instanceof IRecipeHolder)
+        {
+            recipe = ((IRecipeHolder)craftResultInventory).getRecipeUsed();
+        }
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix, recipe));
     }
 
     public static void firePlayerSmeltedEvent(PlayerEntity player, ItemStack smelted)
