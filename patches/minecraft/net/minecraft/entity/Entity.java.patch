@@ -201,6 +201,15 @@
     public boolean func_205710_ba() {
        return true;
     }
+@@ -1948,7 +_,7 @@
+          this.func_70015_d(8);
+       }
+ 
+-      this.func_70097_a(DamageSource.field_180137_b, 5.0F);
++      this.func_70097_a(DamageSource.field_180137_b, p_241841_2_.getDamage());
+    }
+ 
+    public void func_203002_i(boolean p_203002_1_) {
 @@ -2032,7 +_,7 @@
     }
  
