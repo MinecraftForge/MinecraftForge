@@ -370,14 +370,25 @@
        super.func_70071_h_();
        this.func_184608_ct();
        this.func_205014_p();
-@@ -2232,6 +_,7 @@
+@@ -2231,7 +_,8 @@
+          }
  
           ItemStack itemstack1 = this.func_184582_a(equipmentslottype);
-          if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
+-         if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
++         if (!itemstack1.equals(itemstack, true)) {
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, equipmentslottype, itemstack, itemstack1));
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlotType.class);
              }
+@@ -2244,6 +_,8 @@
+             if (!itemstack1.func_190926_b()) {
+                this.func_233645_dx_().func_233793_b_(itemstack1.func_111283_C(equipmentslottype));
+             }
++         } else {
++             net.minecraftforge.network.ForgeNetwork.sendEquipmentSlotCapabilities(this, equipmentslottype, itemstack1, false);
+          }
+       }
+ 
 @@ -2436,6 +_,8 @@
        boolean flag = this.func_70083_f(7);
        if (flag && !this.field_70122_E && !this.func_184218_aH() && !this.func_70644_a(Effects.field_188424_y)) {

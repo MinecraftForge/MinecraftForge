@@ -184,7 +184,7 @@
        Iterator<TileEntity> iterator = this.field_175730_i.iterator();
  
        while(iterator.hasNext()) {
-@@ -440,8 +_,9 @@
+@@ -440,11 +_,13 @@
              BlockPos blockpos = tileentity.func_174877_v();
              if (this.func_72863_F().func_222866_a(blockpos) && this.func_175723_af().func_177746_a(blockpos)) {
                 try {
@@ -195,6 +195,10 @@
                    });
                    if (tileentity.func_200662_C().func_223045_a(this.func_180495_p(blockpos).func_177230_c())) {
                       ((ITickableTileEntity)tileentity).func_73660_a();
++                     net.minecraftforge.network.ForgeNetwork.sendBlockEntityCapabilities(tileentity, false);
+                   } else {
+                      tileentity.func_222814_r();
+                   }
 @@ -454,8 +_,16 @@
                    CrashReport crashreport = CrashReport.func_85055_a(throwable, "Ticking block entity");
                    CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block entity being ticked");

@@ -111,6 +111,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="item_modifier_test"
 [[mods]]
+    modId="network_capability_test"
+[[mods]]
     modId="custom_signs_test"
 [[mods]]
     modId="shader_fix_test"

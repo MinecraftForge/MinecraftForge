@@ -22,8 +22,10 @@ package net.minecraftforge.common.capabilities;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -95,6 +97,34 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         {
             disp.deserializeNBT(tag);
         }
+    }
+
+    public void encode(PacketBuffer out, boolean writeAll)
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            disp.encode(out, writeAll);
+        }
+    }
+
+    public void decode(PacketBuffer in)
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            disp.decode(in);
+        }
+    }
+
+    public boolean requiresSync()
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            return disp.requiresSync();
+        }
+        return false;
     }
 
     protected void invalidateCaps()
