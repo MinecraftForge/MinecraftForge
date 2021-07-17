@@ -1,0 +1,125 @@
+{
+  "ambient.underwater.loop.additions": {
+    "sounds": [
+      "ambient/underwater/additions/bubbles1",
+      "ambient/underwater/additions/bubbles2",
+      "ambient/underwater/additions/bubbles3",
+      "ambient/underwater/additions/bubbles4",
+      "ambient/underwater/additions/bubbles5",
+      "ambient/underwater/additions/bubbles6",
+      "ambient/underwater/additions/water1",
+      "ambient/underwater/additions/water2"
+    ]
+  },
+  "ambient.underwater.loop.additions.ultra_rare": {
+    "sounds": [
+      "ambient/underwater/additions/animal2",
+      "ambient/underwater/additions/dark1",
+      {
+        "name": "ambient/underwater/additions/dark2",
+        "volume": 0.7
+      },
+      "ambient/underwater/additions/dark3",
+      "ambient/underwater/additions/dark4"
+    ]
+  },
+  "block.lava.ambient": {
+    "subtitle": "subtitles.block.lava.ambient",
+    "sounds": [
+      "liquid/lava"
+    ]
+  },
+  "entity.dolphin.ambient_water": {
+    "subtitle": "subtitles.entity.dolphin.ambient_water",
+    "sounds": [
+      {
+        "name": "mob/dolphin/idle_water1",
+        "volume": 0.8
+      },
+      "mob/dolphin/idle_water2",
+      "mob/dolphin/idle_water3",
+      "mob/dolphin/idle_water4",
+      "mob/dolphin/idle_water5",
+      "mob/dolphin/idle_water6",
+      {
+        "name": "mob/dolphin/idle_water7",
+        "volume": 0.75
+      },
+      {
+        "name": "mob/dolphin/idle_water8",
+        "volume": 0.75
+      },
+      "mob/dolphin/idle_water9",
+      {
+        "name": "mob/dolphin/idle_water10",
+        "volume": 0.8
+      }
+    ]
+  },
+  "entity.parrot.imitate.drowned": {
+    "subtitle": "subtitles.entity.parrot.imitate.drowned",
+    "sounds": [
+      {
+        "name": "entity.drowned.ambient",
+        "type": "event",
+        "volume": 0.6,
+        "pitch": 1.8
+      }
+    ]
+  },
+  "item.trident.return": {
+    "subtitle": "subtitles.item.trident.return",
+    "sounds": [
+      {
+        "name": "item/trident/return1",
+        "volume": 0.8
+      },
+      {
+        "name": "item/trident/return2",
+        "volume": 0.8,
+        "pitch": 1.2
+      },
+      {
+        "name": "item/trident/return3",
+        "volume": 0.8,
+        "pitch": 0.8
+      },
+      {
+        "name": "item/trident/return2",
+        "volume": 0.8
+      },
+      {
+        "name": "item/trident/return2",
+        "volume": 0.8,
+        "pitch": 1.2
+      },
+      {
+        "name": "item/trident/return2",
+        "volume": 0.8,
+        "pitch": 0.8
+      },
+      {
+        "name": "item/trident/return3",
+        "volume": 0.8
+      },
+      {
+        "name": "item/trident/return3",
+        "volume": 0.8,
+        "pitch": 1.2
+      },
+      {
+        "name": "item/trident/return3",
+        "volume": 0.8,
+        "pitch": 0.8
+      }
+    ]
+  },
+  "music_disc.blocks": {
+    "sounds": [
+      {
+        "name": "records/blocks",
+        "stream": true
+      }
+    ]
+  }
+}
