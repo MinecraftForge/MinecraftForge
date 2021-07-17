@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/Main.java
 +++ b/net/minecraft/data/Main.java
-@@ -21,8 +_,13 @@
+@@ -21,8 +_,15 @@
        OptionSpec<Void> optionspec6 = optionparser.accepts("all", "Include all generators");
        OptionSpec<String> optionspec7 = optionparser.accepts("output", "Output folder").withRequiredArg().defaultsTo("generated");
        OptionSpec<String> optionspec8 = optionparser.accepts("input", "Input folder").withRequiredArg();
@@ -9,6 +9,8 @@
 +      OptionSpec<java.io.File> gameDir = optionparser.accepts("gameDir").withRequiredArg().ofType(java.io.File.class).defaultsTo(new java.io.File(".")).required(); //Need by modlauncher, so lets just eat it
 +      OptionSpec<String> mod = optionparser.accepts("mod", "A modid to dump").withRequiredArg().withValuesSeparatedBy(",");
 +      OptionSpec<Void> flat = optionparser.accepts("flat", "Do not append modid prefix to output directory when generating for multiple mods");
++      OptionSpec<String> assetIndex = optionparser.accepts("assetIndex").withRequiredArg();
++      OptionSpec<java.io.File> assetsDir = optionparser.accepts("assetsDir").withRequiredArg().ofType(java.io.File.class);
        OptionSet optionset = optionparser.parse(p_main_0_);
 -      if (!optionset.has(optionspec) && optionset.hasOptions()) {
 +      if (!optionset.has(optionspec) && optionset.hasOptions() && !(optionset.specs().size() == 1 && optionset.has(gameDir))) {
@@ -28,7 +30,7 @@
 +         java.util.Set<String> existingMods = new java.util.HashSet<>(optionset.valuesOf(existingMod));
 +         java.util.Set<String> mods = new java.util.HashSet<>(optionset.valuesOf(mod));
 +         boolean isFlat = mods.isEmpty() || optionset.has(flat);
-+         net.minecraftforge.fml.DatagenModLoader.begin(mods, path, inputs, existingPacks, existingMods, flag2, flag1, flag3, flag4, flag5, isFlat);
++         net.minecraftforge.fml.DatagenModLoader.begin(mods, path, inputs, existingPacks, existingMods, flag2, flag1, flag3, flag4, flag5, isFlat, optionset.valueOf(assetIndex), optionset.valueOf(assetsDir));
 +         if (mods.contains("minecraft") || mods.isEmpty())
 +            func_200264_a(isFlat ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5).func_200392_c();
        } else {

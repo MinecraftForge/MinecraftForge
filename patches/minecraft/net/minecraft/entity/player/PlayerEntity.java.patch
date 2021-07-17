@@ -23,7 +23,7 @@
  
     public static AttributeModifierMap.MutableAttribute func_234570_el_() {
 -      return LivingEntity.func_233639_cI_().func_233815_a_(Attributes.field_233823_f_, 1.0D).func_233815_a_(Attributes.field_233821_d_, (double)0.1F).func_233814_a_(Attributes.field_233825_h_).func_233814_a_(Attributes.field_233828_k_);
-+      return LivingEntity.func_233639_cI_().func_233815_a_(Attributes.field_233823_f_, 1.0D).func_233815_a_(Attributes.field_233821_d_, (double)0.1F).func_233814_a_(Attributes.field_233825_h_).func_233814_a_(Attributes.field_233828_k_).func_233814_a_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get());
++      return LivingEntity.func_233639_cI_().func_233815_a_(Attributes.field_233823_f_, 1.0D).func_233815_a_(Attributes.field_233821_d_, (double)0.1F).func_233814_a_(Attributes.field_233825_h_).func_233814_a_(Attributes.field_233828_k_).func_233814_a_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).func_233814_a_(Attributes.field_233824_g_);
     }
  
     protected void func_70088_a() {
@@ -163,6 +163,16 @@
           float f = p_70665_2_ - f2;
           if (f > 0.0F && f < 3.4028235E37F) {
              this.func_195067_a(Stats.field_212738_J, Math.round(f * 10.0F));
+@@ -859,8 +_,8 @@
+          if (f2 != 0.0F) {
+             this.func_71020_j(p_70665_1_.func_76345_d());
+             float f1 = this.func_110143_aJ();
+-            this.func_70606_j(this.func_110143_aJ() - f2);
+             this.func_110142_aN().func_94547_a(p_70665_1_, f1, f2);
++            this.func_70606_j(f1 - f2); // Forge: moved to fix MC-121048
+             if (f2 < 3.4028235E37F) {
+                this.func_195067_a(Stats.field_188112_z, Math.round(f2 * 10.0F));
+             }
 @@ -909,6 +_,8 @@
  
           return ActionResultType.PASS;
@@ -198,6 +208,15 @@
        if (p_71059_1_.func_70075_an()) {
           if (!p_71059_1_.func_85031_j(this)) {
              float f = (float)this.func_233637_b_(Attributes.field_233823_f_);
+@@ -1028,7 +_,7 @@
+             if (f > 0.0F || f1 > 0.0F) {
+                boolean flag = f2 > 0.9F;
+                boolean flag1 = false;
+-               int i = 0;
++               float i = (float)this.func_233637_b_(Attributes.field_233824_g_); // Forge: Initialize this value to the attack knockback attribute of the player, which is by default 0
+                i = i + EnchantmentHelper.func_77501_a(this);
+                if (this.func_70051_ag() && flag) {
+                   this.field_70170_p.func_184148_a((PlayerEntity)null, this.func_226277_ct_(), this.func_226278_cu_(), this.func_226281_cx_(), SoundEvents.field_187721_dT, this.func_184176_by(), 1.0F, 1.0F);
 @@ -1038,8 +_,10 @@
  
                 boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(Effects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof LivingEntity;
@@ -257,17 +276,15 @@
        super.func_213366_dy();
        if (this.field_70170_p instanceof ServerWorld && p_225652_2_) {
           ((ServerWorld)this.field_70170_p).func_72854_c();
-@@ -1242,8 +_,8 @@
-          }
- 
-          return optional;
--      } else if (block instanceof BedBlock && BedBlock.func_235330_a_(p_242374_0_)) {
--         return BedBlock.func_242652_a(EntityType.field_200729_aH, p_242374_0_, p_242374_1_, p_242374_2_);
-+      } else if (blockstate.isBed(p_242374_0_, p_242374_1_, null) && BedBlock.func_235330_a_(p_242374_0_)) {
-+         return blockstate.getBedSpawnPosition(EntityType.field_200729_aH, p_242374_0_, p_242374_1_, p_242374_2_, null);
+@@ -1245,7 +_,7 @@
+       } else if (block instanceof BedBlock && BedBlock.func_235330_a_(p_242374_0_)) {
+          return BedBlock.func_242652_a(EntityType.field_200729_aH, p_242374_0_, p_242374_1_, p_242374_2_);
        } else if (!p_242374_3_) {
-          return Optional.empty();
+-         return Optional.empty();
++         return blockstate.getRespawnPosition(EntityType.field_200729_aH, p_242374_0_, p_242374_1_, p_242374_2_, null);
        } else {
+          boolean flag = block.func_181623_g();
+          boolean flag1 = p_242374_0_.func_180495_p(p_242374_1_.func_177984_a()).func_177230_c().func_181623_g();
 @@ -1425,6 +_,7 @@
  
     public boolean func_225503_b_(float p_225503_1_, float p_225503_2_) {

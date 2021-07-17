@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/server/ChunkHolder.java
 +++ b/net/minecraft/world/server/ChunkHolder.java
+@@ -61,6 +_,7 @@
+    private final ChunkHolder.IPlayerProvider field_219328_w;
+    private boolean field_219329_x;
+    private boolean field_244384_x;
++   Chunk currentlyLoading; //Forge - Used to bypass future chain when loading chunks.
+ 
+    public ChunkHolder(ChunkPos p_i50716_1_, int p_i50716_2_, WorldLightManager p_i50716_3_, ChunkHolder.IListener p_i50716_4_, ChunkHolder.IPlayerProvider p_i50716_5_) {
+       this.field_219319_n = p_i50716_1_;
 @@ -204,7 +_,7 @@
     }
  
