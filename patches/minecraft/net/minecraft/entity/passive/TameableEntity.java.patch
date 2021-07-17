@@ -1,0 +1,40 @@
+--- a/net/minecraft/entity/passive/TameableEntity.java
++++ b/net/minecraft/entity/passive/TameableEntity.java
+@@ -203,11 +_,36 @@
+    }
+ 
+    public void func_70645_a(DamageSource p_70645_1_) {
++      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
+       if (!this.field_70170_p.field_72995_K && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223609_l) && this.func_70902_q() instanceof ServerPlayerEntity) {
+          this.func_70902_q().func_145747_a(this.func_110142_aN().func_151521_b(), Util.field_240973_b_);
+       }
+ 
+-      super.func_70645_a(p_70645_1_);
++      if (!this.field_70128_L && !this.field_70729_aU) {
++         Entity entity = p_70645_1_.func_76346_g();
++         LivingEntity livingentity = this.func_94060_bK();
++         if (this.field_70744_aE >= 0 && livingentity != null) {
++            livingentity.func_191956_a(this, this.field_70744_aE, p_70645_1_);
++         }
++
++         if (this.func_70608_bn()) {
++            this.func_213366_dy();
++         }
++
++         this.field_70729_aU = true;
++         this.func_110142_aN().func_94549_h();
++         if (this.field_70170_p instanceof net.minecraft.world.server.ServerWorld) {
++            if (entity != null) {
++               entity.func_241847_a((net.minecraft.world.server.ServerWorld)this.field_70170_p, this);
++            }
++
++            this.func_213345_d(p_70645_1_);
++            this.func_226298_f_(livingentity);
++         }
++
++         this.field_70170_p.func_72960_a(this, (byte)3);
++         this.func_213301_b(net.minecraft.entity.Pose.DYING);
++      }
+    }
+ 
+    public boolean func_233685_eM_() {
