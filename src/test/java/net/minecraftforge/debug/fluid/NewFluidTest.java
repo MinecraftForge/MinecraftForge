@@ -63,7 +63,7 @@ public class NewFluidTest
     private static ForgeFlowingFluid.Properties makeProperties()
     {
         return new ForgeFlowingFluid.Properties(test_fluid, test_fluid_flowing,
-                FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).overlay(FLUID_OVERLAY).color(0x3F1080FF))
+                FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING).overlay(FLUID_OVERLAY).color(0x3F1080FF).density(-1).gaseous())
                 .bucket(test_fluid_bucket).block(test_fluid_block);
     }
 

@@ -24,7 +24,7 @@ import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.*;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -34,11 +34,14 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.TransformationMatrix;
 import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.ItemStack;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import net.minecraftforge.client.model.data.EmptyModelData;
@@ -48,9 +51,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.function.Function;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import java.util.stream.Collectors;
 
 /**
  * A model that can be rendered in multiple {@link RenderType}.
@@ -92,11 +93,12 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         IUnbakedModel missing = ModelLoader.instance().getMissingModel();
 
         return new MultiLayerBakedModel(
-                owner.useSmoothLighting(), owner.isShadedInGui(),
-                owner.isSideLit(), spriteGetter.apply(owner.resolveTexture("particle")), overrides,
-                buildModels(models, modelTransform, bakery, spriteGetter, modelLocation),
+                owner.useSmoothLighting(), owner.isShadedInGui(), owner.isSideLit(),
+                spriteGetter.apply(owner.resolveTexture("particle")), overrides, true,
                 missing.bakeModel(bakery, spriteGetter, modelTransform, modelLocation),
-                PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(owner.getCombinedTransform(), modelTransform)));
+                buildModels(models, modelTransform, bakery, spriteGetter, modelLocation),
+                PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(owner.getCombinedTransform(), modelTransform))
+        );
     }
 
     private static final class MultiLayerBakedModel implements IBakedModel
@@ -109,10 +111,13 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         protected final TextureAtlasSprite particle;
         protected final ItemOverrideList overrides;
         private final IBakedModel missing;
+        private final boolean convertRenderTypes;
+        private final List<Pair<IBakedModel, RenderType>> itemLayers;
 
         public MultiLayerBakedModel(
                 boolean ambientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrideList overrides,
-                ImmutableMap<RenderType, IBakedModel> models, IBakedModel missing, ImmutableMap<TransformType, TransformationMatrix> cameraTransforms)
+                boolean convertRenderTypes, IBakedModel missing, ImmutableMap<RenderType, IBakedModel> models,
+                ImmutableMap<TransformType, TransformationMatrix> cameraTransforms)
         {
             this.isSideLit = isSideLit;
             this.models = models;
@@ -122,6 +127,12 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
             this.gui3d = isGui3d;
             this.particle = particle;
             this.overrides = overrides;
+            this.convertRenderTypes = convertRenderTypes;
+            this.itemLayers = models.entrySet().stream().map(kv -> {
+                RenderType rt = kv.getKey();
+                if (convertRenderTypes) rt = ITEM_RENDER_TYPE_MAPPING.getOrDefault(rt, rt);
+                return Pair.of(kv.getValue(), rt);
+            }).collect(Collectors.toList());
         }
 
         @Override
@@ -144,6 +155,9 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
                 }
                 return builder.build();
             }
+            // support for item layer rendering
+            if (state == null && convertRenderTypes)
+                layer = ITEM_RENDER_TYPE_MAPPING.inverse().getOrDefault(layer, layer);
             // assumes that child model will handle this state properly. FIXME?
             return models.getOrDefault(layer, missing).getQuads(state, side, rand, extraData);
         }
@@ -200,6 +214,26 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         public ItemOverrideList getOverrides()
         {
             return ItemOverrideList.EMPTY;
+        }
+
+        @Override
+        public boolean isLayered()
+        {
+            return true;
+        }
+
+        @Override
+        public List<Pair<IBakedModel, RenderType>> getLayerModels(ItemStack itemStack)
+        {
+            return itemLayers;
+        }
+
+        public static BiMap<RenderType, RenderType> ITEM_RENDER_TYPE_MAPPING = HashBiMap.create();
+        static {
+            ITEM_RENDER_TYPE_MAPPING.put(RenderType.getSolid(), RenderType.getEntitySolid(AtlasTexture.LOCATION_BLOCKS_TEXTURE));
+            ITEM_RENDER_TYPE_MAPPING.put(RenderType.getCutout(), RenderType.getEntityCutout(AtlasTexture.LOCATION_BLOCKS_TEXTURE));
+            ITEM_RENDER_TYPE_MAPPING.put(RenderType.getCutoutMipped(), ForgeRenderTypes.getEntityCutoutMipped(AtlasTexture.LOCATION_BLOCKS_TEXTURE));
+            ITEM_RENDER_TYPE_MAPPING.put(RenderType.getTranslucent(), RenderType.getEntityTranslucent(AtlasTexture.LOCATION_BLOCKS_TEXTURE));
         }
     }
 
