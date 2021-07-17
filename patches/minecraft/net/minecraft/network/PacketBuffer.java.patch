@@ -38,8 +38,6 @@
 +         compoundnbt = compoundnbt == null ? new CompoundNBT() : compoundnbt;
 +         p_150788_1_.encodeNbt(compoundnbt, true);
           this.func_150786_a(compoundnbt);
-       }
-
 @@ -312,7 +_,7 @@
           int i = this.func_150792_a();
           int j = this.readByte();
