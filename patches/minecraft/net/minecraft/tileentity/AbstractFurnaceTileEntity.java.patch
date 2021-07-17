@@ -98,7 +98,7 @@
        } else {
           Item item = p_213997_1_.func_77973_b();
 -         return func_214001_f().getOrDefault(item, 0);
-+         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_213997_1_);
++         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_213997_1_, this.field_214014_c);
        }
     }
  
@@ -107,10 +107,19 @@
  
     public static boolean func_213991_b(ItemStack p_213991_0_) {
 -      return func_214001_f().containsKey(p_213991_0_.func_77973_b());
-+      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_213991_0_) > 0;
++      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_213991_0_, null) > 0;
     }
  
     public int[] func_180463_a(Direction p_180463_1_) {
+@@ -410,7 +_,7 @@
+          return true;
+       } else {
+          ItemStack itemstack = this.field_214012_a.get(1);
+-         return func_213991_b(p_94041_2_) || p_94041_2_.func_77973_b() == Items.field_151133_ar && itemstack.func_77973_b() != Items.field_151133_ar;
++         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_94041_2_, this.field_214014_c) > 0 || p_94041_2_.func_77973_b() == Items.field_151133_ar && itemstack.func_77973_b() != Items.field_151133_ar;
+       }
+    }
+ 
 @@ -473,5 +_,28 @@
           p_194018_1_.func_194112_a(itemstack);
        }
