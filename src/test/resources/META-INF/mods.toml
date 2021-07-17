@@ -125,6 +125,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="text_linear_filtering_test"
 [[mods]]
+    modId="fishing_bobber_event_test"
+[[mods]]
     modId="custom_respawn_test"
 [[mods]]
     modId="custom_tas_test"
@@ -132,4 +134,3 @@ license="LGPL v2.1"
     modId="dimension_settings_test"
 [[mods]]
     modId="player_attack_knockback_test"
-

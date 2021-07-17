@@ -53,6 +53,7 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
@@ -665,6 +666,11 @@ public class ForgeEventFactory
     public static boolean onProjectileImpact(FireworkRocketEntity fireworkRocket, RayTraceResult ray)
     {
         return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.FireworkRocket(fireworkRocket, ray));
+    }
+
+    public static boolean onProjectileImpact(FishingBobberEntity fishingBobber, RayTraceResult ray)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.FishingBobber(fishingBobber, ray));
     }
 
     public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTableManager lootTableManager)
