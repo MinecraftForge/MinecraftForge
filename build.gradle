@@ -949,7 +949,7 @@ project(':forge') {
 
                 environment 'target', 'fmluserdevdata'
                 environment 'assetIndex', '{asset_index}'
-                environment 'assetDirectory', downloadAssets.output
+                environment 'assetDirectory', '{assets_root}'
 
                 environment 'MC_VERSION', "${MC_VERSION}"
                 environment 'FORGE_GROUP', "${project.group}"
