@@ -32,6 +32,7 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.tags.ITagCollection;
 import net.minecraft.tags.ITagCollectionSupplier;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,6 +48,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.handshake.client.CHandshakePacket;
 import net.minecraft.network.login.ServerLoginNetHandler;
+import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
@@ -264,5 +266,21 @@ public class NetworkHooks
     public static FMLConnectionData getConnectionData(NetworkManager mgr)
     {
         return mgr.channel().attr(FMLNetworkConstants.FML_CONNECTION_DATA).get();
+    }
+    
+    /**
+     * Notifies clients that their list of dimension IDs needs to be updated.
+     * This clientside list is normally only used for the command suggester.
+     * 
+     * @param newDimensions keys to add to clients' dimension lists
+     * @param removedDimensions keys to remove from clients' dimension lists
+     * 
+     * @apiNote Internal; this is invoked by {@link DynamicDimensionManager}
+     * when that's used to add or remove dynamic dimensions,
+     * so mods shouldn't need to call this themselves
+     */
+    public static void updateClientDimensionLists(Set<RegistryKey<World>> newDimensions, Set<RegistryKey<World>> removedDimensions)
+    {
+        FMLNetworkConstants.playChannel.send(PacketDistributor.ALL.noArg(), new FMLPlayMessages.SyncDimensionListChanges(newDimensions,removedDimensions));
     }
 }
