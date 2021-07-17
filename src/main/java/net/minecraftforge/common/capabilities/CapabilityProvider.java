@@ -142,7 +142,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     protected final void deserializeCaps(CompoundNBT tag)
     {
-        // Don't call getCapabilities() to bypass the if (!this.caps.initialized) check.
+        // Don't call getCapabilities() to bypass the if (!this.capsInitialized) check.
         final CapabilityDispatcher disp = this.capabilities;
         if (disp != null)
         {
