@@ -63,6 +63,21 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
+
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.fluid.*;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.crafting.IRecipeType;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.LootTableManager;
+import net.minecraft.tags.ITag;
+import net.minecraft.util.*;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.material.Material;
@@ -1273,10 +1288,16 @@ public class ForgeHooks
 
     private static final Map<IRegistryDelegate<Item>, Integer> VANILLA_BURNS = new HashMap<>();
 
+    @Deprecated // use variant with IRecipeType
+    public static int getBurnTime(ItemStack stack)
+    {
+        return getBurnTime(stack, null);
+    }
+
     /**
      * Gets the burn time of this itemstack.
      */
-    public static int getBurnTime(ItemStack stack)
+    public static int getBurnTime(ItemStack stack, @Nullable IRecipeType<?> recipeType)
     {
         if (stack.isEmpty())
         {
@@ -1285,8 +1306,8 @@ public class ForgeHooks
         else
         {
             Item item = stack.getItem();
-            int ret = stack.getBurnTime();
-            return ForgeEventFactory.getItemBurnTime(stack, ret == -1 ? VANILLA_BURNS.getOrDefault(item.delegate, 0) : ret);
+            int ret = stack.getBurnTime(recipeType);
+            return ForgeEventFactory.getItemBurnTime(stack, ret == -1 ? VANILLA_BURNS.getOrDefault(item.delegate, 0) : ret, recipeType);
         }
     }
 

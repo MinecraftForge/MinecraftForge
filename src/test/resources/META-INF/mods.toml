@@ -124,3 +124,17 @@ license="LGPL v2.1"
     modId="enum_argument_test"
 [[mods]]
     modId="entity_teleport_event_test"
+[[mods]]
+    modId="text_linear_filtering_test"
+[[mods]]
+    modId="ranged_mobs_use_modded_weapons_test"
+[[mods]]
+    modId="fishing_bobber_event_test"
+[[mods]]
+    modId="custom_respawn_test"
+[[mods]]
+    modId="custom_tas_test"
+[[mods]]
+    modId="dimension_settings_test"
+[[mods]]
+    modId="player_attack_knockback_test"

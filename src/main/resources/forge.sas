@@ -73,6 +73,10 @@ net/minecraft/item/crafting/IRecipe func_193358_e()Ljava/lang/String; # getGroup
 	net/minecraft/item/crafting/ShapedRecipe func_193358_e()Ljava/lang/String;
 	net/minecraft/item/crafting/ShapelessRecipe func_193358_e()Ljava/lang/String;
 	net/minecraft/item/crafting/SingleItemRecipe func_193358_e()Ljava/lang/String;
+net/minecraft/network/PacketBuffer func_186873_b([J)[J
+net/minecraft/network/PacketBuffer func_189423_a([JI)[J
+net/minecraft/network/PacketBuffer func_218666_n()Ljava/lang/String;
+net/minecraft/network/PacketBuffer func_218667_g()Lnet/minecraft/util/math/SectionPos;
 net/minecraft/nbt/CompressedStreamTools func_74797_a(Ljava/io/File;)Lnet/minecraft/nbt/CompoundNBT; # read
 net/minecraft/nbt/CompressedStreamTools func_74795_b(Lnet/minecraft/nbt/CompoundNBT;Ljava/io/File;)V # write
 net/minecraft/network/play/server/SCommandListPacket func_197693_a()Lcom/mojang/brigadier/tree/RootCommandNode; # getRoot
@@ -112,3 +116,4 @@ net/minecraft/world/biome/BiomeAmbience func_235222_e_()Ljava/util/Optional; # g
 net/minecraft/world/biome/BiomeAmbience func_235224_f_()Ljava/util/Optional; # getMoodSound
 net/minecraft/world/biome/BiomeAmbience func_235226_g_()Ljava/util/Optional; # getAdditionsSound
 net/minecraft/world/biome/BiomeAmbience func_235228_h_()Ljava/util/Optional; # getMusic
+net/minecraft/client/renderer/model/ModelResourceLocation # ModelResourceLocation class

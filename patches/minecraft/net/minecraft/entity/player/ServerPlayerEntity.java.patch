@@ -158,6 +158,19 @@
     }
  
     public ChatVisibility func_147096_v() {
+@@ -1276,7 +_,11 @@
+ 
+    @Nullable
+    public ITextComponent func_175396_E() {
+-      return null;
++      if (!this.hasTabListName) {
++         this.tabListDisplayName = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
++         this.hasTabListName = true;
++      }
++      return this.tabListDisplayName;
+    }
+ 
+    public void func_184609_a(Hand p_184609_1_) {
 @@ -1301,14 +_,14 @@
        this.func_184210_p();
        if (p_200619_1_ == this.field_70170_p) {
@@ -201,10 +214,11 @@
           this.field_70170_p.func_217376_c(itementity);
           ItemStack itemstack = itementity.func_92059_d();
           if (p_146097_3_) {
-@@ -1403,6 +_,15 @@
+@@ -1402,6 +_,29 @@
+          }
  
           return itementity;
-       }
++      }
 +   }
 +
 +   private String language = "en_us";
@@ -214,6 +228,19 @@
 +    */
 +   public String getLanguage() {
 +      return this.language;
++   }
++
++   // We need this as tablistDisplayname may be null even if the the event was fired.
++   private boolean hasTabListName = false;
++   private ITextComponent tabListDisplayName = null;
++   /**
++    * Force the name displayed in the tab list to refresh, by firing {@link net.minecraftforge.event.entity.player.PlayerEvent.TabListNameFormat}.
++    */
++   public void refreshTabListName() {
++      ITextComponent oldName = this.tabListDisplayName;
++      this.tabListDisplayName = net.minecraftforge.event.ForgeEventFactory.getPlayerTabListDisplayName(this);
++      if (!java.util.Objects.equals(oldName, this.tabListDisplayName)) {
++         this.func_184102_h().func_184103_al().func_148540_a(new net.minecraft.network.play.server.SPlayerListItemPacket(net.minecraft.network.play.server.SPlayerListItemPacket.Action.UPDATE_DISPLAY_NAME, this));
+       }
     }
  
-    @Nullable

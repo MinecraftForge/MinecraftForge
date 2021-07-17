@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.minecraftforge.net/' }
         mavenCentral()
     }
     dependencies {
@@ -231,7 +231,10 @@ project(':forge') {
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
                 mods {
-                    forge { source sourceSets.main }
+                    forge {
+                        source sourceSets.main 
+                        source sourceSets.userdev 
+                    }
                 }
             }
 
@@ -293,6 +296,8 @@ project(':forge') {
                 workingDirectory project.file('run')
 
                 environment 'target', 'fmldevdata'
+                environment 'assetIndex', '{asset_index}'
+                environment 'assetDirectory', downloadAssets.output
 
                 environment 'MC_VERSION', MC_VERSION
                 environment 'MCP_VERSION', MCP_VERSION
@@ -409,7 +414,7 @@ project(':forge') {
         installer 'org.ow2.asm:asm-util:9.0'
         installer 'org.ow2.asm:asm-analysis:9.0'
         installer 'cpw.mods:modlauncher:8.0.9'
-        installer 'cpw.mods:grossjava9hacks:1.3.+'
+        installer 'cpw.mods:grossjava9hacks:1.3.3'
         installer 'net.minecraftforge:accesstransformers:3.0.1'
         installer 'org.antlr:antlr4-runtime:4.9.1' //Dep of AccessTransformer
         installer 'net.minecraftforge:eventbus:4.0.+'
@@ -943,6 +948,8 @@ project(':forge') {
                 main 'net.minecraftforge.userdev.LaunchTesting'
 
                 environment 'target', 'fmluserdevdata'
+                environment 'assetIndex', '{asset_index}'
+                environment 'assetDirectory', downloadAssets.output
 
                 environment 'MC_VERSION', "${MC_VERSION}"
                 environment 'FORGE_GROUP', "${project.group}"
@@ -1073,12 +1080,15 @@ project(':forge') {
         }
         repositories {
             maven {
-                if (project.hasProperty('forgeMavenPassword')) {
-                    credentials {
-                        username project.properties.forgeMavenUser
-                        password project.properties.forgeMavenPassword
+                if (System.env.MAVEN_USER) {
+                    url "https://maven.minecraftforge.net/releases/"
+                    authentication {
+                        basic(BasicAuthentication)
                     }
-                    url 'https://files.minecraftforge.net/maven/manage/upload'
+                    credentials {
+                        username = System.env.MAVEN_USER ?: 'not'
+                        password = System.env.MAVEN_PASSWORD ?: 'set'
+                    }
                 } else {
                     url 'file://' + rootProject.file('repo').getAbsolutePath()
                 }

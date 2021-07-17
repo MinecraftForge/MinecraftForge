@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.monster.EndermanEntity;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
@@ -84,9 +85,15 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>, I
      *         it not act as a fuel. Return -1 to let the default vanilla logic
      *         decide.
      */
+    default int getBurnTime(@Nullable IRecipeType<?> recipeType)
+    {
+        return getStack().getItem().getBurnTime(getStack(), recipeType);
+    }
+
+    @Deprecated // use variant with IRecipeType
     default int getBurnTime()
     {
-        return getStack().getItem().getBurnTime(getStack());
+        return getBurnTime(null);
     }
 
     /**

@@ -1,5 +1,17 @@
 --- a/net/minecraft/entity/item/minecart/FurnaceMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/FurnaceMinecartEntity.java
+@@ -72,6 +_,11 @@
+       return 0.2D;
+    }
+ 
++   @Override
++   public float getMaxCartSpeedOnRail() {
++      return 0.2f;
++   }
++
+    public void func_94095_a(DamageSource p_94095_1_) {
+       super.func_94095_a(p_94095_1_);
+       if (!p_94095_1_.func_94541_c() && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223604_g)) {
 @@ -111,6 +_,8 @@
     }
  

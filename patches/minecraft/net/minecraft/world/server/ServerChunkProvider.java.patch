@@ -1,5 +1,17 @@
 --- a/net/minecraft/world/server/ServerChunkProvider.java
 +++ b/net/minecraft/world/server/ServerChunkProvider.java
+@@ -125,6 +_,11 @@
+             }
+          }
+ 
++         ChunkHolder chunkholder = this.func_217213_a(i);
++         if (chunkholder != null && chunkholder.currentlyLoading != null) {
++             return chunkholder.currentlyLoading; //Forge - If the requested chunk is loading, bypass the future chain to prevent a deadlock.
++         }
++
+          iprofiler.func_230035_c_("getChunkCacheMiss");
+          CompletableFuture<Either<IChunk, ChunkHolder.IChunkLoadingError>> completablefuture = this.func_217233_c(p_212849_1_, p_212849_2_, p_212849_3_, p_212849_4_);
+          this.field_217243_i.func_213161_c(completablefuture::isDone);
 @@ -353,7 +_,7 @@
                 if (optional1.isPresent()) {
                    Chunk chunk = optional1.get();
