@@ -80,6 +80,12 @@ public class ChunkDataEvent extends ChunkEvent
             this.status = status;
         }
 
+        public Load(IChunk chunk, IWorld world, CompoundNBT data, ChunkStatus.Type status)
+        {
+            super(chunk, world, data);
+            this.status = status;
+        }
+
         public ChunkStatus.Type getStatus()
         {
             return this.status;
