@@ -162,6 +162,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         BiomeDictionary.init();
     }
 
+    @SuppressWarnings("deprecation")
     public void preInit(FMLCommonSetupEvent evt)
     {
         CapabilityItemHandler.register();
@@ -173,6 +174,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         registerArgumentTypes();
         VanillaPacketSplitter.register();
+
+        ForgeHooks.finalizeModEggs();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

@@ -1,0 +1,72 @@
+--- a/net/minecraft/item/SpawnEggItem.java
++++ b/net/minecraft/item/SpawnEggItem.java
+@@ -33,20 +_,32 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class SpawnEggItem extends Item {
++public class SpawnEggItem extends Item implements net.minecraftforge.common.extensions.IForgeSpawnEggItem {
+    private static final Map<EntityType<?>, SpawnEggItem> field_195987_b = Maps.newIdentityHashMap();
+    private final int field_195988_c;
+    private final int field_195989_d;
+    private EntityType<?> field_200890_d;
++   private final java.util.function.Supplier<? extends EntityType<?>> typeSupplier;
+ 
++   /**@deprecated Use {@link SpawnEggItem#SpawnEggItem(java.util.function.Supplier, int, int, Item.Properties)}*/@Deprecated
+    public SpawnEggItem(EntityType<?> p_i48465_1_, int p_i48465_2_, int p_i48465_3_, Item.Properties p_i48465_4_) {
+       super(p_i48465_4_);
+       this.field_200890_d = p_i48465_1_;
++      this.typeSupplier = p_i48465_1_ == null ? () -> null : p_i48465_1_.delegate; //TODO - 1.17: Remove check for null and enforce it being nonnull
+       this.field_195988_c = p_i48465_2_;
+       this.field_195989_d = p_i48465_3_;
+       field_195987_b.put(p_i48465_1_, this);
+    }
+ 
++   public SpawnEggItem(java.util.function.Supplier<? extends EntityType<?>> typeIn, int primaryColorIn, int secondaryColorIn, Item.Properties builder) {
++      super(builder);
++      this.field_200890_d = null;
++      this.typeSupplier = typeIn;
++      this.field_195988_c = primaryColorIn;
++      this.field_195989_d = secondaryColorIn;
++      net.minecraftforge.common.ForgeHooks.MOD_EGGS.add(this);
++   }
++
+    public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
+       World world = p_195939_1_.func_195991_k();
+       if (!(world instanceof ServerWorld)) {
+@@ -131,18 +_,18 @@
+    }
+ 
+    public static Iterable<SpawnEggItem> func_195985_g() {
+-      return Iterables.unmodifiableIterable(field_195987_b.values());
++      return Iterables.unmodifiableIterable(Iterables.concat(field_195987_b.values(), net.minecraftforge.common.ForgeHooks.MOD_EGGS));
+    }
+ 
+    public EntityType<?> func_208076_b(@Nullable CompoundNBT p_208076_1_) {
+       if (p_208076_1_ != null && p_208076_1_.func_150297_b("EntityTag", 10)) {
+          CompoundNBT compoundnbt = p_208076_1_.func_74775_l("EntityTag");
+          if (compoundnbt.func_150297_b("id", 8)) {
+-            return EntityType.func_220327_a(compoundnbt.func_74779_i("id")).orElse(this.field_200890_d);
++            return EntityType.func_220327_a(compoundnbt.func_74779_i("id")).orElseGet(this.typeSupplier);
+          }
+       }
+ 
+-      return this.field_200890_d;
++      return this.typeSupplier.get();
+    }
+ 
+    public Optional<MobEntity> func_234809_a_(PlayerEntity p_234809_1_, MobEntity p_234809_2_, EntityType<? extends MobEntity> p_234809_3_, ServerWorld p_234809_4_, Vector3d p_234809_5_, ItemStack p_234809_6_) {
+@@ -178,4 +_,13 @@
+          }
+       }
+    }
++
++   /* ======================================== FORGE START ===================================== */
++   /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
++   @Deprecated
++   public void finalizeModEgg() {
++      this.field_200890_d = func_208076_b(null);
++      field_195987_b.put(this.field_200890_d, this);
++   }
++   /* ========================================= FORGE END ====================================== */
+ }
