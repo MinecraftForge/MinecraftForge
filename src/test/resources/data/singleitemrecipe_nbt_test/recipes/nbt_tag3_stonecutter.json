@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:stonecutting",
+  "ingredient": {
+    "item": "minecraft:stone"
+  },
+  "result": "singleitemrecipe_nbt_test:nbt",
+  "count": 16,
+  "nbt": "{testtag:\"third\"}"
+}

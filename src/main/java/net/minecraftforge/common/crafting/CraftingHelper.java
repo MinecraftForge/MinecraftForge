@@ -33,6 +33,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
@@ -46,6 +47,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.apache.logging.log4j.LogManager;
@@ -154,10 +156,50 @@ public class CraftingHelper
 
         return serializer.parse(obj);
     }
-
+    
+    public static ItemStack itemFromJson(JsonObject jsonObject)
+    {
+        String key = "result";
+        if (jsonObject.get("result").isJsonObject())
+            {
+            key = "item"; 
+            jsonObject = jsonObject.getAsJsonObject("result");
+            }
+        String s = JSONUtils.getAsString(jsonObject, key);
+        Item item = Registry.ITEM.getOptional(new ResourceLocation(s)).orElseThrow(() -> {
+            return new JsonSyntaxException("Unknown item '" + s + "'");
+        });
+        if (jsonObject.has("data")) {
+           throw new JsonParseException("Disallowed data tag found");
+        } else {
+           return CraftingHelper.getItemStack(jsonObject, true, key);
+        }
+    }
+    
+    /**
+     * Use {@link CraftingHelper#getItemStack(JsonObject, boolean, String)} instead.
+     * @param json
+     * @param readNBT
+     * @return ItemStack
+     */
+    @Deprecated
     public static ItemStack getItemStack(JsonObject json, boolean readNBT)
     {
         String itemName = JSONUtils.getAsString(json, "item");
+        return getItemStack(json, readNBT, "item");
+    }
+
+    /**
+     * Returns an {@link ItemStack} from a {@link JsonObject}. The {@link Item} is located under "key" field.
+     * The amount under "count" and the nbt data under "nbt". 
+     * @param json
+     * @param readNBT
+     * @param key
+     * @return
+     */
+    public static ItemStack getItemStack(JsonObject json, boolean readNBT, String key)
+    {
+        String itemName = JSONUtils.getAsString(json, key);
 
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
 
