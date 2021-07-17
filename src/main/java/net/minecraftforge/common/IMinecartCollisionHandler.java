@@ -25,7 +25,7 @@ import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 
 /**
  * This class defines a replacement for the default minecart collision code.
- * Only one handler can be registered at a time. It it registered with EntityMinecart.registerCollisionHandler().
+ * Only one handler can be registered at a time. It it registered with AbstractMinecartEntity.registerCollisionHandler().
  * If you use this, make it a configuration option.
  * @author CovertJaguar
  */

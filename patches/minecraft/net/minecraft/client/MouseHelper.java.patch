@@ -26,7 +26,7 @@
                    }, "mouseReleased event handler", this.field_198036_a.field_71462_r.getClass().getCanonicalName());
                 }
              }
-@@ -110,7 +_,7 @@
+@@ -110,18 +_,26 @@
                 }
              }
           }
@@ -35,7 +35,17 @@
        }
     }
  
-@@ -121,7 +_,9 @@
+    private void func_198020_a(long p_198020_1_, double p_198020_3_, double p_198020_5_) {
+       if (p_198020_1_ == Minecraft.func_71410_x().func_228018_at_().func_198092_i()) {
+-         double d0 = (this.field_198036_a.field_71474_y.field_216843_O ? Math.signum(p_198020_5_) : p_198020_5_) * this.field_198036_a.field_71474_y.field_208033_V;
++         // FORGE: Allows for Horizontal Scroll to be recognized as Vertical Scroll - Fixes MC-121772
++         double offset = p_198020_5_;
++         if (Minecraft.field_142025_a && p_198020_5_ == 0) {
++            offset = p_198020_3_;
++         }
++
++         double d0 = (this.field_198036_a.field_71474_y.field_216843_O ? Math.signum(offset) : offset) * this.field_198036_a.field_71474_y.field_208033_V;
+          if (this.field_198036_a.field_213279_p == null) {
              if (this.field_198036_a.field_71462_r != null) {
                 double d1 = this.field_198040_e * (double)this.field_198036_a.func_228018_at_().func_198107_o() / (double)this.field_198036_a.func_228018_at_().func_198105_m();
                 double d2 = this.field_198041_f * (double)this.field_198036_a.func_228018_at_().func_198087_p() / (double)this.field_198036_a.func_228018_at_().func_198083_n();

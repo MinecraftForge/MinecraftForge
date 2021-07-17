@@ -43,6 +43,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.effect.LightningBoltEntity;
+import net.minecraft.entity.item.EnderPearlEntity;
 import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.entity.passive.AnimalEntity;
@@ -52,10 +53,12 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
 import net.minecraft.resources.IFutureReloadListener;
@@ -105,6 +108,7 @@ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
+import net.minecraftforge.event.entity.living.EnderTeleportEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -113,6 +117,7 @@ import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
+import net.minecraftforge.event.entity.living.EntityTeleportEvent;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
@@ -218,9 +223,15 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
+    @Deprecated // use version with IRecipeType
     public static int getItemBurnTime(@Nonnull ItemStack itemStack, int burnTime)
     {
-        FurnaceFuelBurnTimeEvent event = new FurnaceFuelBurnTimeEvent(itemStack, burnTime);
+        return getItemBurnTime(itemStack, burnTime, null);
+    }
+
+    public static int getItemBurnTime(@Nonnull ItemStack itemStack, int burnTime, @Nullable IRecipeType<?> recipeType)
+    {
+        FurnaceFuelBurnTimeEvent event = new FurnaceFuelBurnTimeEvent(itemStack, burnTime, recipeType);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getBurnTime();
     }
@@ -256,6 +267,13 @@ public class ForgeEventFactory
         PlayerEvent.NameFormat event = new PlayerEvent.NameFormat(player, username);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getDisplayname();
+    }
+    
+    public static ITextComponent getPlayerTabListDisplayName(PlayerEntity player)
+    {
+        PlayerEvent.TabListNameFormat event = new PlayerEvent.TabListNameFormat(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getDisplayName();
     }
 
     public static BlockState fireFluidPlaceBlockEvent(IWorld world, BlockPos pos, BlockPos liquidPos, BlockState state)
@@ -650,6 +668,11 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.FireworkRocket(fireworkRocket, ray));
     }
 
+    public static boolean onProjectileImpact(FishingBobberEntity fishingBobber, RayTraceResult ray)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.FishingBobber(fishingBobber, ray));
+    }
+
     public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTableManager lootTableManager)
     {
         LootTableLoadEvent event = new LootTableLoadEvent(name, table, lootTableManager);
@@ -767,5 +790,54 @@ public class ForgeEventFactory
     public static void onLivingConvert(LivingEntity entity, LivingEntity outcome)
     {
         MinecraftForge.EVENT_BUS.post(new LivingConversionEvent.Post(entity, outcome));
+    }
+
+    public static EntityTeleportEvent.TeleportCommand onEntityTeleportCommand(Entity entity, double targetX, double targetY, double targetZ)
+    {
+        EntityTeleportEvent.TeleportCommand event = new EntityTeleportEvent.TeleportCommand(entity, targetX, targetY, targetZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static EntityTeleportEvent.SpreadPlayersCommand onEntityTeleportSpreadPlayersCommand(Entity entity, double targetX, double targetY, double targetZ)
+    {
+        EntityTeleportEvent.SpreadPlayersCommand event = new EntityTeleportEvent.SpreadPlayersCommand(entity, targetX, targetY, targetZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static EntityTeleportEvent.EnderEntity onEnderTeleport(LivingEntity entity, double targetX, double targetY, double targetZ)
+    {
+        EntityTeleportEvent.EnderEntity event = new EntityTeleportEvent.EnderEntity(entity, targetX, targetY, targetZ);
+        onOldEnderTeleport(entity, 0, event); //TODO Forge: Remove this line in 1.17
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static EntityTeleportEvent.EnderPearl onEnderPearlLand(ServerPlayerEntity entity, double targetX, double targetY, double targetZ, EnderPearlEntity pearlEntity, float attackDamage)
+    {
+        EntityTeleportEvent.EnderPearl event = new EntityTeleportEvent.EnderPearl(entity, targetX, targetY, targetZ, pearlEntity, attackDamage);
+        event.setAttackDamage(onOldEnderTeleport(entity, attackDamage, event)); //TODO Forge: Remove this line in 1.17
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    @SuppressWarnings("deprecation") //TODO Forge: Scrap this method/event in 1.17 - it only exists for backwards-compatibility
+    private static float onOldEnderTeleport(LivingEntity entity, float attackDamage, EntityTeleportEvent event)
+    {
+        EnderTeleportEvent enderEvent = new EnderTeleportEvent(entity, event.getTargetX(), event.getTargetY(), event.getTargetZ(), attackDamage);
+        MinecraftForge.EVENT_BUS.post(enderEvent);
+        event.setCanceled(enderEvent.isCanceled());
+        event.setTargetX(enderEvent.getTargetX());
+        event.setTargetY(enderEvent.getTargetY());
+        event.setTargetZ(enderEvent.getTargetZ());
+        return enderEvent.getAttackDamage();
+    }
+
+    public static EntityTeleportEvent.ChorusFruit onChorusFruitTeleport(LivingEntity entity, double targetX, double targetY, double targetZ)
+    {
+        EntityTeleportEvent.ChorusFruit event = new EntityTeleportEvent.ChorusFruit(entity, targetX, targetY, targetZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 }
