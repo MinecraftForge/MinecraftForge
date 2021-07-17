@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/monster/piglin/PiglinEntity.java
 +++ b/net/minecraft/entity/monster/piglin/PiglinEntity.java
+@@ -265,7 +_,7 @@
+       } else if (this.func_234433_eX_()) {
+          return PiglinAction.CROSSBOW_CHARGE;
+       } else {
+-         return this.func_213398_dR() && this.func_233631_a_(Items.field_222114_py) ? PiglinAction.CROSSBOW_HOLD : PiglinAction.DEFAULT;
++         return this.func_213398_dR() && this.func_233634_a_(item -> item instanceof net.minecraft.item.CrossbowItem) ? PiglinAction.CROSSBOW_HOLD : PiglinAction.DEFAULT;
+       }
+    }
+ 
 @@ -307,7 +_,7 @@
     }
  

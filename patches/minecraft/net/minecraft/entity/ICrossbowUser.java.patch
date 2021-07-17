@@ -1,0 +1,14 @@
+--- a/net/minecraft/entity/ICrossbowUser.java
++++ b/net/minecraft/entity/ICrossbowUser.java
+@@ -24,9 +_,9 @@
+    void func_230283_U__();
+ 
+    default void func_234281_b_(LivingEntity p_234281_1_, float p_234281_2_) {
+-      Hand hand = ProjectileHelper.func_221274_a(p_234281_1_, Items.field_222114_py);
++      Hand hand = ProjectileHelper.getWeaponHoldingHand(p_234281_1_, item -> item instanceof CrossbowItem);
+       ItemStack itemstack = p_234281_1_.func_184586_b(hand);
+-      if (p_234281_1_.func_233631_a_(Items.field_222114_py)) {
++      if (p_234281_1_.func_233634_a_(item -> item instanceof CrossbowItem)) {
+          CrossbowItem.func_220014_a(p_234281_1_.field_70170_p, p_234281_1_, hand, itemstack, p_234281_2_, (float)(14 - p_234281_1_.field_70170_p.func_175659_aa().func_151525_a() * 4));
+       }
+ 

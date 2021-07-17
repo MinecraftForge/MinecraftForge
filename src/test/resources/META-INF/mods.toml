@@ -125,6 +125,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="text_linear_filtering_test"
 [[mods]]
+    modId="ranged_mobs_use_modded_weapons_test"
+[[mods]]
     modId="fishing_bobber_event_test"
 [[mods]]
     modId="custom_respawn_test"

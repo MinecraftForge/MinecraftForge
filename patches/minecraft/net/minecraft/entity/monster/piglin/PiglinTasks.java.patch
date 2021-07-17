@@ -36,3 +36,12 @@
              return true;
           }
        }
+@@ -673,7 +_,7 @@
+    }
+ 
+    private static boolean func_234494_c_(LivingEntity p_234494_0_) {
+-      return p_234494_0_.func_233631_a_(Items.field_222114_py);
++      return p_234494_0_.func_233634_a_(item -> item instanceof net.minecraft.item.CrossbowItem);
+    }
+ 
+    private static void func_234501_d_(LivingEntity p_234501_0_) {
