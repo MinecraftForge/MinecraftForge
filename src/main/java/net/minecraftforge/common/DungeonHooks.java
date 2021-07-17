@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.WeightedRandom;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.util.WeighedRandom;
 
 public class DungeonHooks
 {
@@ -93,12 +93,12 @@ public class DungeonHooks
      */
     public static EntityType<?> getRandomDungeonMob(Random rand)
     {
-        DungeonMob mob = WeightedRandom.getRandomItem(rand, dungeonMobs);
+        DungeonMob mob = WeighedRandom.getRandomItem(rand, dungeonMobs).orElseThrow();
         return mob.type;
     }
 
 
-    public static class DungeonMob extends WeightedRandom.Item
+    public static class DungeonMob extends WeighedRandom.WeighedRandomItem
     {
         public final EntityType<?> type;
         public DungeonMob(int weight, EntityType<?> type)

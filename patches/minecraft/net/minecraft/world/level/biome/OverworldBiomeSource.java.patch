@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/biome/OverworldBiomeSource.java
++++ b/net/minecraft/world/level/biome/OverworldBiomeSource.java
+@@ -31,7 +_,7 @@
+    private final Registry<Biome> f_48587_;
+ 
+    public OverworldBiomeSource(long p_48590_, boolean p_48591_, boolean p_48592_, Registry<Biome> p_48593_) {
+-      super(f_48583_.stream().map((p_48603_) -> {
++      super(java.util.stream.Stream.concat(f_48583_.stream(), net.minecraftforge.common.BiomeManager.getAdditionalOverworldBiomes().stream()).map((p_48603_) -> {
+          return () -> {
+             return p_48593_.m_123013_(p_48603_);
+          };

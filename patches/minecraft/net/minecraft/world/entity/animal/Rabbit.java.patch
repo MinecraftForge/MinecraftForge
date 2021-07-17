@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/Rabbit.java
++++ b/net/minecraft/world/entity/animal/Rabbit.java
+@@ -507,7 +_,7 @@
+ 
+       public boolean m_8036_() {
+          if (this.f_25600_ <= 0) {
+-            if (!this.f_29778_.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
++            if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_29778_.f_19853_, this.f_29778_)) {
+                return false;
+             }
+ 

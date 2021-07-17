@@ -1,58 +1,52 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -156,17 +_,28 @@
-          }
+@@ -171,21 +_,40 @@
  
-          float f9 = Math.min(1.0F / field_205093_c, Math.min(1.0F / field_205094_d, 1.0F / field_205095_e));
+       if (f_109010_ != 0.0F && f_109011_ != 0.0F && f_109012_ != 0.0F) {
+          float f8 = Math.min(1.0F / f_109010_, Math.min(1.0F / f_109011_, 1.0F / f_109012_));
 +         // Forge: fix MC-4647 and MC-10480
-+         if (Float.isInfinite(f9)) f9 = Math.nextAfter(f9, 0.0);
-          field_205093_c = field_205093_c * (1.0F - f6) + field_205093_c * f9 * f6;
-          field_205094_d = field_205094_d * (1.0F - f6) + field_205094_d * f9 * f6;
-          field_205095_e = field_205095_e * (1.0F - f6) + field_205095_e * f9 * f6;
-       } else if (p_228371_0_.func_216773_g() instanceof LivingEntity && ((LivingEntity)p_228371_0_.func_216773_g()).func_70644_a(Effects.field_76439_r)) {
-          float f7 = GameRenderer.func_180438_a((LivingEntity)p_228371_0_.func_216773_g(), p_228371_1_);
-          float f10 = Math.min(1.0F / field_205093_c, Math.min(1.0F / field_205094_d, 1.0F / field_205095_e));
-+         // Forge: fix MC-4647 and MC-10480
-+         if (Float.isInfinite(f10)) f10 = Math.nextAfter(f10, 0.0);
-          field_205093_c = field_205093_c * (1.0F - f7) + field_205093_c * f10 * f7;
-          field_205094_d = field_205094_d * (1.0F - f7) + field_205094_d * f10 * f7;
-          field_205095_e = field_205095_e * (1.0F - f7) + field_205095_e * f10 * f7;
++         if (Float.isInfinite(f8)) f8 = Math.nextAfter(f8, 0.0);
+          f_109010_ = f_109010_ * (1.0F - f6) + f_109010_ * f8 * f6;
+          f_109011_ = f_109011_ * (1.0F - f6) + f_109011_ * f8 * f6;
+          f_109012_ = f_109012_ * (1.0F - f6) + f_109012_ * f8 * f6;
        }
  
-+      net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(p_228371_0_, p_228371_1_, field_205093_c, field_205094_d, field_205095_e);
++      net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(p_109019_, p_109020_, f_109010_, f_109011_, f_109012_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +
-+      field_205093_c = event.getRed();
-+      field_205094_d = event.getGreen();
-+      field_205095_e = event.getBlue();
++      f_109010_ = event.getRed();
++      f_109011_ = event.getGreen();
++      f_109012_ = event.getBlue();
 +
-       RenderSystem.clearColor(field_205093_c, field_205094_d, field_205095_e, 0.0F);
+       RenderSystem.m_69424_(f_109010_, f_109011_, f_109012_, 0.0F);
     }
  
-@@ -174,10 +_,17 @@
-       RenderSystem.fogDensity(0.0F);
-       RenderSystem.fogMode(GlStateManager.FogMode.EXP2);
+    public static void m_109017_() {
+       RenderSystem.m_157445_(Float.MAX_VALUE);
     }
 -
 +   @Deprecated // FORGE: Pass in partialTicks
-    public static void func_228372_a_(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_) {
-+      setupFog(p_228372_0_, p_228372_1_, p_228372_2_, p_228372_3_, 0);
+    public static void m_109024_(Camera p_109025_, FogRenderer.FogMode p_109026_, float p_109027_, boolean p_109028_) {
++      setupFog(p_109025_, p_109026_, p_109027_, p_109028_, 0);
 +   }
 +
-+   public static void setupFog(ActiveRenderInfo p_228372_0_, FogRenderer.FogType p_228372_1_, float p_228372_2_, boolean p_228372_3_, float partialTicks) {
-       FluidState fluidstate = p_228372_0_.func_216771_k();
-       Entity entity = p_228372_0_.func_216773_g();
-+      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(p_228372_1_, p_228372_0_, partialTicks, 0.1F);
-+      if (hook >= 0) RenderSystem.fogDensity(hook);
-+      else
-       if (fluidstate.func_206884_a(FluidTags.field_206959_a)) {
-          float f = 1.0F;
-          f = 0.05F;
-@@ -228,6 +_,7 @@
-          RenderSystem.fogEnd(f3);
-          RenderSystem.fogMode(GlStateManager.FogMode.LINEAR);
-          RenderSystem.setupNvFogDistance();
-+         net.minecraftforge.client.ForgeHooksClient.onFogRender(p_228372_1_, p_228372_0_, partialTicks, f3);
++   public static void setupFog(Camera p_109025_, FogRenderer.FogMode p_109026_, float p_109027_, boolean p_109028_, float partialTicks) {
+       FogType fogtype = p_109025_.m_167685_();
+       Entity entity = p_109025_.m_90592_();
++      // TODO
++      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(p_109026_, p_109025_, partialTicks, 0.1F);
++      if (hook >= 0) {
++         RenderSystem.m_157445_(-8.0F);
++         RenderSystem.m_157443_(hook * 0.5F);
++      } else
+       if (fogtype == FogType.WATER) {
+          float f = 192.0F;
+          if (entity instanceof LocalPlayer) {
+@@ -244,6 +_,7 @@
+ 
+          RenderSystem.m_157445_(f2);
+          RenderSystem.m_157443_(f3);
++         net.minecraftforge.client.ForgeHooksClient.onFogRender(p_109026_, p_109025_, partialTicks, f3);
        }
  
     }

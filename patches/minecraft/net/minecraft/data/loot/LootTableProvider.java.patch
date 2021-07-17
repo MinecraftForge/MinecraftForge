@@ -1,0 +1,47 @@
+--- a/net/minecraft/data/loot/LootTableProvider.java
++++ b/net/minecraft/data/loot/LootTableProvider.java
+@@ -40,7 +_,7 @@
+    public void m_6865_(HashCache p_124444_) {
+       Path path = this.f_124433_.m_123916_();
+       Map<ResourceLocation, LootTable> map = Maps.newHashMap();
+-      this.f_124434_.forEach((p_124458_) -> {
++      this.getTables().forEach((p_124458_) -> {
+          p_124458_.getFirst().get().accept((p_176077_, p_176078_) -> {
+             if (map.put(p_176077_, p_176078_.m_79165_(p_124458_.getSecond()).m_79167_()) != null) {
+                throw new IllegalStateException("Duplicate loot table " + p_176077_);
+@@ -51,13 +_,8 @@
+          return null;
+       }, map::get);
+ 
+-      for(ResourceLocation resourcelocation : Sets.difference(BuiltInLootTables.m_78766_(), map.keySet())) {
+-         validationcontext.m_79357_("Missing built-in table: " + resourcelocation);
+-      }
++      validate(map, validationcontext);
+ 
+-      map.forEach((p_124441_, p_124442_) -> {
+-         LootTables.m_79202_(validationcontext, p_124441_, p_124442_);
+-      });
+       Multimap<String, String> multimap = validationcontext.m_79352_();
+       if (!multimap.isEmpty()) {
+          multimap.forEach((p_124446_, p_124447_) -> {
+@@ -76,6 +_,20 @@
+ 
+          });
+       }
++   }
++
++   protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
++      return f_124434_;
++   }
++
++   protected void validate(Map<ResourceLocation, LootTable> map, ValidationContext validationtracker) {
++      for(ResourceLocation resourcelocation : Sets.difference(BuiltInLootTables.m_78766_(), map.keySet())) {
++         validationtracker.m_79357_("Missing built-in table: " + resourcelocation);
++      }
++
++      map.forEach((p_218436_2_, p_218436_3_) -> {
++         LootTables.m_79202_(validationtracker, p_218436_2_, p_218436_3_);
++      });
+    }
+ 
+    private static Path m_124453_(Path p_124454_, ResourceLocation p_124455_) {

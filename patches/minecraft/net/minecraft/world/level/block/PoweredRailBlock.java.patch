@@ -1,0 +1,57 @@
+--- a/net/minecraft/world/level/block/PoweredRailBlock.java
++++ b/net/minecraft/world/level/block/PoweredRailBlock.java
+@@ -14,10 +_,16 @@
+ public class PoweredRailBlock extends BaseRailBlock {
+    public static final EnumProperty<RailShape> f_55214_ = BlockStateProperties.f_61404_;
+    public static final BooleanProperty f_55215_ = BlockStateProperties.f_61448_;
++   private final boolean isActivator;  // TRUE for an Activator Rail, FALSE for Powered Rail
+ 
+    public PoweredRailBlock(BlockBehaviour.Properties p_55218_) {
+-      super(true, p_55218_);
++      this(p_55218_, false);
++   }
++
++   protected PoweredRailBlock(BlockBehaviour.Properties builder, boolean isPoweredRail) {
++      super(true, builder);
+       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_55214_, RailShape.NORTH_SOUTH).m_61124_(f_55215_, Boolean.valueOf(false)).m_61124_(f_152149_, Boolean.valueOf(false)));
++      this.isActivator = !isPoweredRail;
+    }
+ 
+    protected boolean m_55219_(Level p_55220_, BlockPos p_55221_, BlockState p_55222_, boolean p_55223_, int p_55224_) {
+@@ -99,13 +_,13 @@
+ 
+    protected boolean m_55225_(Level p_55226_, BlockPos p_55227_, boolean p_55228_, int p_55229_, RailShape p_55230_) {
+       BlockState blockstate = p_55226_.m_8055_(p_55227_);
+-      if (!blockstate.m_60713_(this)) {
++      if (!(blockstate.m_60734_() instanceof PoweredRailBlock)) {
+          return false;
+       } else {
+-         RailShape railshape = blockstate.m_61143_(f_55214_);
++         RailShape railshape = getRailDirection(blockstate, p_55226_, p_55227_, null);
+          if (p_55230_ != RailShape.EAST_WEST || railshape != RailShape.NORTH_SOUTH && railshape != RailShape.ASCENDING_NORTH && railshape != RailShape.ASCENDING_SOUTH) {
+             if (p_55230_ != RailShape.NORTH_SOUTH || railshape != RailShape.EAST_WEST && railshape != RailShape.ASCENDING_EAST && railshape != RailShape.ASCENDING_WEST) {
+-               if (blockstate.m_61143_(f_55215_)) {
++               if (isActivator == (((PoweredRailBlock) blockstate.m_60734_()).isActivator)) {
+                   return p_55226_.m_46753_(p_55227_) ? true : this.m_55219_(p_55226_, p_55227_, blockstate, p_55228_, p_55229_ + 1);
+                } else {
+                   return false;
+@@ -156,6 +_,9 @@
+             return p_55240_.m_61124_(f_55214_, RailShape.SOUTH_EAST);
+          case NORTH_EAST:
+             return p_55240_.m_61124_(f_55214_, RailShape.SOUTH_WEST);
++         case NORTH_SOUTH: //Forge fix: MC-196102
++         case EAST_WEST:
++            return p_55240_;
+          }
+       case COUNTERCLOCKWISE_90:
+          switch((RailShape)p_55240_.m_61143_(f_55214_)) {
+@@ -254,5 +_,9 @@
+ 
+    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_55243_) {
+       p_55243_.m_61104_(f_55214_, f_55215_, f_152149_);
++   }
++
++   public boolean isActivatorRail() {
++      return isActivator;
+    }
+ }

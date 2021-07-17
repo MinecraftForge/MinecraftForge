@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/Ocelot.java
++++ b/net/minecraft/world/entity/animal/Ocelot.java
+@@ -162,7 +_,7 @@
+       if ((this.f_28984_ == null || this.f_28984_.m_25955_()) && !this.m_29038_() && this.m_6898_(itemstack) && p_29021_.m_20280_(this) < 9.0D) {
+          this.m_142075_(p_29021_, p_29022_, itemstack);
+          if (!this.f_19853_.f_46443_) {
+-            if (this.f_19796_.nextInt(3) == 0) {
++            if (this.f_19796_.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29021_)) {
+                this.m_29045_(true);
+                this.m_29047_(true);
+                this.f_19853_.m_7605_(this, (byte)41);

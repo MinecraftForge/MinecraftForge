@@ -1,0 +1,45 @@
+--- a/net/minecraft/world/entity/monster/Slime.java
++++ b/net/minecraft/world/entity/monster/Slime.java
+@@ -125,6 +_,7 @@
+       if (this.f_19861_ && !this.f_33583_) {
+          int i = this.m_33632_();
+ 
++         if (spawnCustomParticles()) i = 0; // don't spawn particles if it's handled by the implementation itself
+          for(int j = 0; j < i * 8; ++j) {
+             float f = this.f_19796_.nextFloat() * ((float)Math.PI * 2F);
+             float f1 = this.f_19796_.nextFloat() * 0.5F + 0.5F;
+@@ -176,9 +_,10 @@
+       return (EntityType<? extends Slime>)super.m_6095_();
+    }
+ 
+-   public void m_142687_(Entity.RemovalReason p_149847_) {
++   @Override
++   public void remove(boolean keepData) {
+       int i = this.m_33632_();
+-      if (!this.f_19853_.f_46443_ && i > 1 && this.m_21224_()) {
++      if (!this.f_19853_.f_46443_ && i > 1 && this.m_21224_() && !this.m_146910_()) {
+          Component component = this.m_7770_();
+          boolean flag = this.m_21525_();
+          float f = (float)i / 4.0F;
+@@ -202,7 +_,7 @@
+          }
+       }
+ 
+-      super.m_142687_(p_149847_);
++      super.remove(keepData);
+    }
+ 
+    public void m_7334_(Entity p_33636_) {
+@@ -321,6 +_,12 @@
+    public EntityDimensions m_6972_(Pose p_33597_) {
+       return super.m_6972_(p_33597_).m_20388_(0.255F * (float)this.m_33632_());
+    }
++
++   /**
++    * Called when the slime spawns particles on landing, see onUpdate.
++    * Return true to prevent the spawning of the default particles.
++    */
++   protected boolean spawnCustomParticles() { return false; }
+ 
+    static class SlimeAttackGoal extends Goal {
+       private final Slime f_33645_;

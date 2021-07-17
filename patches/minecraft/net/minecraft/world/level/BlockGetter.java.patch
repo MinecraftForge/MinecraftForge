@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/BlockGetter.java
++++ b/net/minecraft/world/level/BlockGetter.java
+@@ -32,7 +_,7 @@
+    FluidState m_6425_(BlockPos p_45569_);
+ 
+    default int m_7146_(BlockPos p_45572_) {
+-      return this.m_8055_(p_45572_).m_60791_();
++      return this.m_8055_(p_45572_).getLightEmission(this, p_45572_);
+    }
+ 
+    default int m_7469_() {

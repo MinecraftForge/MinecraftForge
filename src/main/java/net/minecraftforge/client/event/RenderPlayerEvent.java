@@ -19,22 +19,22 @@
 
 package net.minecraftforge.client.event;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.client.renderer.entity.PlayerRenderer;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
 public abstract class RenderPlayerEvent extends PlayerEvent
 {
     private final PlayerRenderer renderer;
     private final float partialRenderTick;
-    private final MatrixStack stack;
-    private final IRenderTypeBuffer buffers;
+    private final PoseStack stack;
+    private final MultiBufferSource buffers;
     private final int light;
 
-    public RenderPlayerEvent(PlayerEntity player, PlayerRenderer renderer, float partialRenderTick, MatrixStack stack, IRenderTypeBuffer buffers, int light)
+    public RenderPlayerEvent(Player player, PlayerRenderer renderer, float partialRenderTick, PoseStack stack, MultiBufferSource buffers, int light)
     {
         super(player);
         this.renderer = renderer;
@@ -46,21 +46,21 @@ public abstract class RenderPlayerEvent extends PlayerEvent
 
     public PlayerRenderer getRenderer() { return renderer; }
     public float getPartialRenderTick() { return partialRenderTick; }
-    public MatrixStack getMatrixStack() { return stack; }
-    public IRenderTypeBuffer getBuffers() { return buffers; }
+    public PoseStack getMatrixStack() { return stack; }
+    public MultiBufferSource getBuffers() { return buffers; }
     public int getLight() { return light; }
 
     @Cancelable
     public static class Pre extends RenderPlayerEvent
     {
-        public Pre(PlayerEntity player, PlayerRenderer renderer, float tick, MatrixStack stack, IRenderTypeBuffer buffers, int light) {
+        public Pre(Player player, PlayerRenderer renderer, float tick, PoseStack stack, MultiBufferSource buffers, int light) {
             super(player, renderer, tick, stack, buffers, light);
         }
     }
 
     public static class Post extends RenderPlayerEvent
     {
-        public Post(PlayerEntity player, PlayerRenderer renderer, float tick, MatrixStack stack, IRenderTypeBuffer buffers, int light) {
+        public Post(Player player, PlayerRenderer renderer, float tick, PoseStack stack, MultiBufferSource buffers, int light) {
             super(player, renderer, tick, stack, buffers, light);
         }
     }

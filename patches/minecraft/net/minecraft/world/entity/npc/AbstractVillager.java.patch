@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/npc/AbstractVillager.java
++++ b/net/minecraft/world/entity/npc/AbstractVillager.java
+@@ -164,9 +_,9 @@
+    }
+ 
+    @Nullable
+-   public Entity m_5489_(ServerLevel p_35295_) {
++   public Entity changeDimension(ServerLevel p_35295_, net.minecraftforge.common.util.ITeleporter teleporter) {
+       this.m_7996_();
+-      return super.m_5489_(p_35295_);
++      return super.changeDimension(p_35295_, teleporter);
+    }
+ 
+    protected void m_7996_() {

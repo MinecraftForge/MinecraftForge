@@ -1,0 +1,13 @@
+--- a/com/mojang/blaze3d/vertex/VertexFormatElement.java
++++ b/com/mojang/blaze3d/vertex/VertexFormatElement.java
+@@ -90,6 +_,10 @@
+       this.f_86031_.m_166978_(this.f_86032_, p_166964_);
+    }
+ 
++    public int getElementCount() {
++       return f_86033_;
++    }
++
+    @OnlyIn(Dist.CLIENT)
+    public static enum Type {
+       FLOAT(4, "Float", 5126),

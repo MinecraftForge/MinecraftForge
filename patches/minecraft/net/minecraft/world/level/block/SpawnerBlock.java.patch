@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/block/SpawnerBlock.java
++++ b/net/minecraft/world/level/block/SpawnerBlock.java
+@@ -29,8 +_,11 @@
+ 
+    public void m_8101_(BlockState p_56789_, ServerLevel p_56790_, BlockPos p_56791_, ItemStack p_56792_) {
+       super.m_8101_(p_56789_, p_56790_, p_56791_, p_56792_);
+-      int i = 15 + p_56790_.f_46441_.nextInt(15) + p_56790_.f_46441_.nextInt(15);
+-      this.m_49805_(p_56790_, p_56791_, i);
++   }
++
++   @Override
++   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader world, BlockPos pos, int fortune, int silktouch) {
++      return 15 + RANDOM.nextInt(15) + RANDOM.nextInt(15);
+    }
+ 
+    public RenderShape m_7514_(BlockState p_56794_) {

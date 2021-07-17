@@ -19,11 +19,11 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.world.entity.player.Inventory;
 
 public class PlayerInvWrapper extends CombinedInvWrapper
 {
-    public PlayerInvWrapper(PlayerInventory inv)
+    public PlayerInvWrapper(Inventory inv)
     {
         super(new PlayerMainInvWrapper(inv), new PlayerArmorInvWrapper(inv), new PlayerOffhandInvWrapper(inv));
     }

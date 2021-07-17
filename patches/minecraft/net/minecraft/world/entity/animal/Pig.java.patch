@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/entity/animal/Pig.java
++++ b/net/minecraft/world/entity/animal/Pig.java
+@@ -201,7 +_,7 @@
+    }
+ 
+    public void m_8038_(ServerLevel p_29473_, LightningBolt p_29474_) {
+-      if (p_29473_.m_46791_() != Difficulty.PEACEFUL) {
++      if (p_29473_.m_46791_() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20531_, (timer) -> {})) {
+          ZombifiedPiglin zombifiedpiglin = EntityType.f_20531_.m_20615_(p_29473_);
+          zombifiedpiglin.m_8061_(EquipmentSlot.MAINHAND, new ItemStack(Items.f_42430_));
+          zombifiedpiglin.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
+@@ -213,6 +_,7 @@
+          }
+ 
+          zombifiedpiglin.m_21530_();
++         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
+          p_29473_.m_7967_(zombifiedpiglin);
+          this.m_146870_();
+       } else {

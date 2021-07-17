@@ -1,0 +1,279 @@
+--- a/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
++++ b/net/minecraft/client/gui/screens/inventory/CreativeModeInventoryScreen.java
+@@ -74,6 +_,8 @@
+    private Slot f_98512_;
+    private CreativeInventoryListener f_98513_;
+    private boolean f_98514_;
++   private static int tabPage = 0;
++   private int maxPages = 0;
+    private boolean f_98515_;
+    private final Map<ResourceLocation, Tag<Item>> f_98516_ = Maps.newTreeMap();
+ 
+@@ -242,6 +_,12 @@
+    protected void m_7856_() {
+       if (this.f_96541_.f_91072_.m_105290_()) {
+          super.m_7856_();
++         int tabCount = CreativeModeTab.f_40748_.length;
++         if (tabCount > 12) {
++            m_142416_(new net.minecraft.client.gui.components.Button(f_97735_,              f_97736_ - 50, 20, 20, new TextComponent("<"), b -> tabPage = Math.max(tabPage - 1, 0       )));
++            m_142416_(new net.minecraft.client.gui.components.Button(f_97735_ + f_97726_ - 20, f_97736_ - 50, 20, 20, new TextComponent(">"), b -> tabPage = Math.min(tabPage + 1, maxPages)));
++            maxPages = (int) Math.ceil((tabCount - 12) / 10D);
++         }
+          this.f_96541_.f_91068_.m_90926_(true);
+          this.f_98510_ = new EditBox(this.f_96547_, this.f_97735_ + 82, this.f_97736_ + 6, 80, 9, new TranslatableComponent("itemGroup.search"));
+          this.f_98510_.m_94199_(50);
+@@ -283,7 +_,7 @@
+    public boolean m_5534_(char p_98521_, int p_98522_) {
+       if (this.f_98514_) {
+          return false;
+-      } else if (f_98507_ != CreativeModeTab.f_40754_.m_40775_()) {
++      } else if (!CreativeModeTab.f_40748_[f_98507_].hasSearchBar()) {
+          return false;
+       } else {
+          String s = this.f_98510_.m_94155_();
+@@ -301,7 +_,7 @@
+ 
+    public boolean m_7933_(int p_98547_, int p_98548_, int p_98549_) {
+       this.f_98514_ = false;
+-      if (f_98507_ != CreativeModeTab.f_40754_.m_40775_()) {
++      if (!CreativeModeTab.f_40748_[f_98507_].hasSearchBar()) {
+          if (this.f_96541_.f_91066_.f_92098_.m_90832_(p_98547_, p_98548_)) {
+             this.f_98514_ = true;
+             this.m_98560_(CreativeModeTab.f_40754_);
+@@ -338,6 +_,32 @@
+    private void m_98630_() {
+       (this.f_97732_).f_98639_.clear();
+       this.f_98516_.clear();
++
++      CreativeModeTab tab = CreativeModeTab.f_40748_[f_98507_];
++      if (tab.hasSearchBar() && tab != CreativeModeTab.f_40754_) {
++         tab.m_6151_(f_97732_.f_98639_);
++         if (!this.f_98510_.m_94155_().isEmpty()) {
++            //TODO: Make this a SearchTree not a manual search
++            String search = this.f_98510_.m_94155_().toLowerCase(Locale.ROOT);
++            java.util.Iterator<ItemStack> itr = f_97732_.f_98639_.iterator();
++            while (itr.hasNext()) {
++               ItemStack stack = itr.next();
++               boolean matches = false;
++               for (Component line : stack.m_41651_(this.f_96541_.f_91074_, this.f_96541_.f_91066_.f_92125_ ? TooltipFlag.Default.ADVANCED : TooltipFlag.Default.NORMAL)) {
++                  if (ChatFormatting.m_126649_(line.getString()).toLowerCase(Locale.ROOT).contains(search)) {
++                     matches = true;
++                     break;
++                  }
++               }
++               if (!matches)
++                  itr.remove();
++            }
++         }
++         this.f_98508_ = 0.0F;
++         f_97732_.m_98642_(0.0F);
++         return;
++      }
++
+       String s = this.f_98510_.m_94155_();
+       if (s.isEmpty()) {
+          for(Item item : Registry.f_122827_) {
+@@ -383,9 +_,9 @@
+ 
+    protected void m_7027_(PoseStack p_98616_, int p_98617_, int p_98618_) {
+       CreativeModeTab creativemodetab = CreativeModeTab.f_40748_[f_98507_];
+-      if (creativemodetab.m_40789_()) {
++      if (creativemodetab != null && creativemodetab.m_40789_()) {
+          RenderSystem.m_69461_();
+-         this.f_96547_.m_92889_(p_98616_, creativemodetab.m_40786_(), 8.0F, 6.0F, 4210752);
++         this.f_96547_.m_92889_(p_98616_, creativemodetab.m_40786_(), 8.0F, 6.0F, creativemodetab.getLabelColor());
+       }
+ 
+    }
+@@ -396,7 +_,7 @@
+          double d1 = p_98532_ - (double)this.f_97736_;
+ 
+          for(CreativeModeTab creativemodetab : CreativeModeTab.f_40748_) {
+-            if (this.m_98562_(creativemodetab, d0, d1)) {
++            if (creativemodetab != null && this.m_98562_(creativemodetab, d0, d1)) {
+                return true;
+             }
+          }
+@@ -417,7 +_,7 @@
+          this.f_98509_ = false;
+ 
+          for(CreativeModeTab creativemodetab : CreativeModeTab.f_40748_) {
+-            if (this.m_98562_(creativemodetab, d0, d1)) {
++            if (creativemodetab != null && this.m_98562_(creativemodetab, d0, d1)) {
+                this.m_98560_(creativemodetab);
+                return true;
+             }
+@@ -428,12 +_,15 @@
+    }
+ 
+    private boolean m_98631_() {
++      if (CreativeModeTab.f_40748_[f_98507_] == null) return false;
+       return f_98507_ != CreativeModeTab.f_40761_.m_40775_() && CreativeModeTab.f_40748_[f_98507_].m_40791_() && this.f_97732_.m_98654_();
+    }
+ 
+    private void m_98560_(CreativeModeTab p_98561_) {
++      if (p_98561_ == null) return;
+       int i = f_98507_;
+       f_98507_ = p_98561_.m_40775_();
++      slotColor = p_98561_.getSlotColor();
+       this.f_97737_.clear();
+       (this.f_97732_).f_98639_.clear();
+       if (p_98561_ == CreativeModeTab.f_40760_) {
+@@ -510,13 +_,15 @@
+       }
+ 
+       if (this.f_98510_ != null) {
+-         if (p_98561_ == CreativeModeTab.f_40754_) {
++         if (p_98561_.hasSearchBar()) {
+             this.f_98510_.m_94194_(true);
+             this.f_98510_.m_94190_(false);
+             this.f_98510_.m_94178_(true);
+             if (i != p_98561_.m_40775_()) {
+                this.f_98510_.m_94144_("");
+             }
++            this.f_98510_.m_93674_(p_98561_.getSearchbarWidth());
++            this.f_98510_.f_93620_ = this.f_97735_ + (82 /*default left*/ + 89 /*default width*/) - this.f_98510_.m_5711_();
+ 
+             this.m_98630_();
+          } else {
+@@ -576,16 +_,34 @@
+       this.m_7333_(p_98577_);
+       super.m_6305_(p_98577_, p_98578_, p_98579_, p_98580_);
+ 
+-      for(CreativeModeTab creativemodetab : CreativeModeTab.f_40748_) {
+-         if (this.m_98584_(p_98577_, creativemodetab, p_98578_, p_98579_)) {
++      int start = tabPage * 10;
++      int end = Math.min(CreativeModeTab.f_40748_.length, ((tabPage + 1) * 10) + 2);
++      if (tabPage != 0) start += 2;
++      boolean rendered = false;
++
++      for (int x = start; x < end; x++) {
++         CreativeModeTab creativemodetab = CreativeModeTab.f_40748_[x];
++         if (creativemodetab != null && this.m_98584_(p_98577_, creativemodetab, p_98578_, p_98579_)) {
++            rendered = true;
+             break;
+          }
+       }
++      if (!rendered && !this.m_98584_(p_98577_, CreativeModeTab.f_40754_, p_98578_, p_98579_))
++         this.m_98584_(p_98577_, CreativeModeTab.f_40761_, p_98578_, p_98579_);
+ 
+       if (this.f_98512_ != null && f_98507_ == CreativeModeTab.f_40761_.m_40775_() && this.m_6774_(this.f_98512_.f_40220_, this.f_98512_.f_40221_, 16, 16, (double)p_98578_, (double)p_98579_)) {
+          this.m_96602_(p_98577_, f_98506_, p_98578_, p_98579_);
+       }
+ 
++      if (maxPages != 0) {
++          Component page = new TextComponent(String.format("%d / %d", tabPage + 1, maxPages + 1));
++          this.m_93250_(300);
++          this.f_96542_.f_115093_ = 300.0F;
++          f_96547_.m_92744_(p_98577_, page.m_7532_(), f_97735_ + (f_97726_ / 2) - (f_96547_.m_92852_(page) / 2), f_97736_ - 44, -1);
++          this.m_93250_(0);
++          this.f_96542_.f_115093_ = 0.0F;
++      }
++
+       RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
+       this.m_7025_(p_98577_, p_98578_, p_98579_);
+    }
+@@ -620,7 +_,10 @@
+             list1.add(1, creativemodetab.m_40786_().m_6881_().m_130940_(ChatFormatting.BLUE));
+          }
+ 
+-         this.m_169388_(p_98590_, list1, p_98591_.m_150921_(), p_98592_, p_98593_);
++         net.minecraft.client.gui.Font font = net.minecraftforge.client.RenderProperties.get(p_98591_).getFont(p_98591_);
++         net.minecraftforge.fmlclient.gui.GuiUtils.preItemToolTip(p_98591_);
++         this.renderComponentToolTip(p_98590_, list1, p_98592_, p_98593_, (font == null ? this.f_96547_ : font));
++         net.minecraftforge.fmlclient.gui.GuiUtils.postItemToolTip();
+       } else {
+          super.m_6057_(p_98590_, p_98591_, p_98592_, p_98593_);
+       }
+@@ -631,16 +_,32 @@
+       RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
+       CreativeModeTab creativemodetab = CreativeModeTab.f_40748_[f_98507_];
+ 
+-      for(CreativeModeTab creativemodetab1 : CreativeModeTab.f_40748_) {
++      int start = tabPage * 10;
++      int end = Math.min(CreativeModeTab.f_40748_.length, ((tabPage + 1) * 10 + 2));
++      if (tabPage != 0) start += 2;
++
++      for (int idx = start; idx < end; idx++) {
+          RenderSystem.m_157427_(GameRenderer::m_172817_);
+-         RenderSystem.m_157456_(0, f_98504_);
+-         if (creativemodetab1.m_40775_() != f_98507_) {
++         CreativeModeTab creativemodetab1 = CreativeModeTab.f_40748_[idx];
++         if (creativemodetab1 != null && creativemodetab1.m_40775_() != f_98507_) {
++            RenderSystem.m_157456_(0, creativemodetab1.getTabsImage());
+             this.m_98581_(p_98572_, creativemodetab1);
+          }
+       }
+ 
+       RenderSystem.m_157427_(GameRenderer::m_172817_);
+-      RenderSystem.m_157456_(0, new ResourceLocation("textures/gui/container/creative_inventory/tab_" + creativemodetab.m_40788_()));
++      if (tabPage != 0) {
++         if (creativemodetab != CreativeModeTab.f_40754_) {
++            RenderSystem.m_157456_(0, CreativeModeTab.f_40754_.getTabsImage());
++            m_98581_(p_98572_, CreativeModeTab.f_40754_);
++         }
++         if (creativemodetab != CreativeModeTab.f_40761_) {
++            RenderSystem.m_157456_(0, CreativeModeTab.f_40761_.getTabsImage());
++            m_98581_(p_98572_, CreativeModeTab.f_40761_);
++         }
++      }
++
++      RenderSystem.m_157456_(0, creativemodetab.getBackgroundImage());
+       this.m_93228_(p_98572_, this.f_97735_, this.f_97736_, 0, 0, this.f_97726_, this.f_97727_);
+       this.f_98510_.m_6305_(p_98572_, p_98574_, p_98575_, p_98573_);
+       RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
+@@ -648,11 +_,14 @@
+       int j = this.f_97736_ + 18;
+       int k = j + 112;
+       RenderSystem.m_157427_(GameRenderer::m_172817_);
+-      RenderSystem.m_157456_(0, f_98504_);
++      RenderSystem.m_157456_(0, creativemodetab.getTabsImage());
+       if (creativemodetab.m_40791_()) {
+          this.m_93228_(p_98572_, i, j + (int)((float)(k - j - 17) * this.f_98508_), 232 + (this.m_98631_() ? 0 : 12), 0, 12, 15);
+       }
+ 
++      if ((creativemodetab == null || creativemodetab.getTabPage() != tabPage) && (creativemodetab != CreativeModeTab.f_40754_ && creativemodetab != CreativeModeTab.f_40761_))
++         return;
++
+       this.m_98581_(p_98572_, creativemodetab);
+       if (creativemodetab == CreativeModeTab.f_40761_) {
+          InventoryScreen.m_98850_(this.f_97735_ + 88, this.f_97736_ + 45, 20, (float)(this.f_97735_ + 88 - p_98574_), (float)(this.f_97736_ + 45 - 30 - p_98575_), this.f_96541_.f_91074_);
+@@ -661,6 +_,7 @@
+    }
+ 
+    protected boolean m_98562_(CreativeModeTab p_98563_, double p_98564_, double p_98565_) {
++      if (p_98563_.getTabPage() != tabPage && p_98563_ != CreativeModeTab.f_40754_ && p_98563_ != CreativeModeTab.f_40761_) return false;
+       int i = p_98563_.m_40793_();
+       int j = 28 * i;
+       int k = 0;
+@@ -729,6 +_,7 @@
+          i1 = i1 + (this.f_97727_ - 4);
+       }
+ 
++      RenderSystem.m_69478_(); //Forge: Make sure blend is enabled else tabs show a white border.
+       this.m_93228_(p_98582_, l, i1, j, k, 28, 32);
+       this.f_96542_.f_115093_ = 100.0F;
+       l = l + 6;
+@@ -918,6 +_,22 @@
+ 
+       public boolean m_8010_(Player p_98665_) {
+          return this.f_98655_.m_8010_(p_98665_);
++      }
++
++      @Override
++      public int getSlotIndex() {
++         return this.f_98655_.getSlotIndex();
++      }
++
++      @Override
++      public boolean isSameInventory(Slot other) {
++         return this.f_98655_.isSameInventory(other);
++      }
++
++      @Override
++      public Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
++         this.f_98655_.setBackground(atlas, sprite);
++         return this;
+       }
+    }
+ }

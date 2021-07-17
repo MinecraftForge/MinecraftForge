@@ -19,9 +19,8 @@
 
 package net.minecraftforge.event;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.RepairContainer;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -45,16 +44,9 @@ public class AnvilUpdateEvent extends Event
     private ItemStack output;
     private int cost;
     private int materialCost;
-    @Nullable // TODO: Remove 1.17 - Nullable only in the instance that a mod uses the deprecated ctor.
-    private final PlayerEntity player;
+    private final Player player;
 
-    @Deprecated //TODO: Remove 1.17 - Use Player-contextual constructor below.
-    public AnvilUpdateEvent(ItemStack left, ItemStack right, String name, int cost)
-    {
-        this(left, right, name, cost, null);
-    }
-
-    public AnvilUpdateEvent(ItemStack left, ItemStack right, String name, int cost, PlayerEntity player)
+    public AnvilUpdateEvent(ItemStack left, ItemStack right, String name, int cost, Player player)
     {
         this.left = left;
         this.right = right;
@@ -157,11 +149,9 @@ public class AnvilUpdateEvent extends Event
     }
 
     /**
-     * Nullable in the case someone is using the deprecated constructor.
      * @return The player using this anvil container.
      */
-    @Nullable // TODO: Remove 1.17
-    public PlayerEntity getPlayer()
+    public Player getPlayer()
     {
         return this.player;
     }

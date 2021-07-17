@@ -1,0 +1,16 @@
+--- a/net/minecraft/client/gui/components/AbstractSelectionList.java
++++ b/net/minecraft/client/gui/components/AbstractSelectionList.java
+@@ -532,6 +_,13 @@
+ 
+    }
+ 
++   public int getWidth() { return this.f_93388_; }
++   public int getHeight() { return this.f_93389_; }
++   public int getTop() { return this.f_93390_; }
++   public int getBottom() { return this.f_93391_; }
++   public int getLeft() { return this.f_93393_; }
++   public int getRight() { return this.f_93392_; }
++
+    @OnlyIn(Dist.CLIENT)
+    public abstract static class Entry<E extends AbstractSelectionList.Entry<E>> implements GuiEventListener {
+       @Deprecated

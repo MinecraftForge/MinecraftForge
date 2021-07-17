@@ -19,11 +19,11 @@
 
 package net.minecraftforge.client.event;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -38,13 +38,13 @@ public class RenderBlockOverlayEvent extends Event
         FIRE, BLOCK, WATER
     }
     
-    private final PlayerEntity player;
-    private final MatrixStack mat;
+    private final Player player;
+    private final PoseStack mat;
     private final OverlayType overlayType;
     private final BlockState blockForOverlay;
     private final BlockPos blockPos;
     
-    public RenderBlockOverlayEvent(PlayerEntity player, MatrixStack mat, OverlayType type, BlockState block, BlockPos blockPos)
+    public RenderBlockOverlayEvent(Player player, PoseStack mat, OverlayType type, BlockState block, BlockPos blockPos)
     {
         this.player = player;
         this.mat = mat;
@@ -57,8 +57,8 @@ public class RenderBlockOverlayEvent extends Event
     /**
      * The player which the overlay will apply to
      */
-    public PlayerEntity getPlayer() { return player; }
-    public MatrixStack getMatrixStack() { return mat; }
+    public Player getPlayer() { return player; }
+    public PoseStack getMatrixStack() { return mat; }
     /**
      * The type of overlay to occur
      */

@@ -1,0 +1,14 @@
+--- a/com/mojang/blaze3d/vertex/VertexFormat.java
++++ b/com/mojang/blaze3d/vertex/VertexFormat.java
+@@ -195,4 +_,11 @@
+          return i;
+       }
+    }
++
++   public ImmutableMap<String, VertexFormatElement> getElementMapping() { return f_166905_; }
++   public int getOffset(int index) { return f_86013_.getInt(index); }
++   public boolean hasPosition() { return f_86012_.stream().anyMatch(e -> e.m_86048_() == VertexFormatElement.Usage.POSITION); }
++   public boolean hasNormal() { return f_86012_.stream().anyMatch(e -> e.m_86048_() == VertexFormatElement.Usage.NORMAL); }
++   public boolean hasColor() { return f_86012_.stream().anyMatch(e -> e.m_86048_() == VertexFormatElement.Usage.COLOR); }
++   public boolean hasUV(int which) { return f_86012_.stream().anyMatch(e -> e.m_86048_() == VertexFormatElement.Usage.UV && e.m_86049_() == which); }
+ }

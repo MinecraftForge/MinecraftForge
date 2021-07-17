@@ -19,12 +19,13 @@
 
 package net.minecraftforge.debug.world;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.WorldGenRegistries;
-import net.minecraft.world.gen.DimensionSettings;
-import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.settings.DimensionStructuresSettings;
-import net.minecraft.world.gen.settings.StructureSeparationSettings;
+import com.sun.jna.Structure;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.levelgen.StructureSettings;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.StructureFeatureConfiguration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -68,8 +69,8 @@ public class DimensionSettingsTest {
         event.enqueueWork(() ->
         {
             LOGGER.info("Registering custom DimensionSettings for Dimension: {}", TEST_OVERWORLD);
-            DimensionSettings dimensionSettings = createDimensionSettings();
-            WorldGenRegistries.register(WorldGenRegistries.NOISE_GENERATOR_SETTINGS, TEST_OVERWORLD, dimensionSettings);
+            NoiseGeneratorSettings noiseGenSettings = createNoiseGenerationSettings();
+            BuiltinRegistries.register(BuiltinRegistries.NOISE_GENERATOR_SETTINGS, TEST_OVERWORLD, noiseGenSettings);
         });
     }
 
@@ -80,33 +81,33 @@ public class DimensionSettingsTest {
     {
         event.enqueueWork(() ->
         {
-            StructureSeparationSettings settings = new StructureSeparationSettings(2, 1, 0);
+            StructureFeatureConfiguration config = new StructureFeatureConfiguration(2, 1, 0);
 
-            WorldGenRegistries.NOISE_GENERATOR_SETTINGS.entrySet().forEach(entry ->
+            BuiltinRegistries.NOISE_GENERATOR_SETTINGS.entrySet().forEach(entry ->
             {
                 ResourceLocation dimensionName = entry.getKey().location();
 
                 // Example: blacklisting all vanilla dimensions
                 if (dimensionName.getNamespace().equals("minecraft")) return;
 
-                LOGGER.info("Adding Structure: {} to Dimension: {}", Structure.RUINED_PORTAL.getFeatureName(), dimensionName);
-                entry.getValue().structureSettings().structureConfig().put(Structure.RUINED_PORTAL, settings);
+                LOGGER.info("Adding Structure: {} to Dimension: {}", StructureFeature.RUINED_PORTAL.getFeatureName(), dimensionName);
+                entry.getValue().structureSettings().structureConfig().put(StructureFeature.RUINED_PORTAL, config);
             });
         });
     }
 
     /**
-     * Create a DimensionSettings instance copying all but the structure settings from overworld.
+     * Create a NoiseGeneratorSettings instance copying all but the structure settings from overworld.
      */
-    private static DimensionSettings createDimensionSettings()
+    private static NoiseGeneratorSettings createNoiseGenerationSettings()
     {
-        DimensionSettings overworld = WorldGenRegistries.NOISE_GENERATOR_SETTINGS.getOrThrow(DimensionSettings.OVERWORLD);
+        NoiseGeneratorSettings overworld = BuiltinRegistries.NOISE_GENERATOR_SETTINGS.getOrThrow(NoiseGeneratorSettings.OVERWORLD);
 
-        // Make a new DimensionStructuresSettings with no structures
-        DimensionStructuresSettings structures = new DimensionStructuresSettings(Optional.empty(), new HashMap<>());
+        // Make a new StructureSettings with no structures
+        StructureSettings structures = new StructureSettings(Optional.empty(), new HashMap<>());
 
-        // Build a new DimensionSettings copying all the other options from 'overworld'
-        return new DimensionSettings(
+        // Build a new NoiseGeneratorSettings copying all the other options from 'overworld'
+        return new NoiseGeneratorSettings(
                 structures,
                 overworld.noiseSettings(),
                 overworld.getDefaultBlock(),
@@ -114,6 +115,13 @@ public class DimensionSettingsTest {
                 overworld.getBedrockRoofPosition(),
                 overworld.getBedrockFloorPosition(),
                 overworld.seaLevel(),
-                overworld.disableMobGeneration());
+                overworld.getMinSurfaceLevel(),
+                overworld.disableMobGeneration(),
+                overworld.isAquifersEnabled(),
+                overworld.isNoiseCavesEnabled(),
+                overworld.isDeepslateEnabled(),
+                overworld.isOreVeinsEnabled(),
+                overworld.isNoodleCavesEnabled()
+                );
     }
 }

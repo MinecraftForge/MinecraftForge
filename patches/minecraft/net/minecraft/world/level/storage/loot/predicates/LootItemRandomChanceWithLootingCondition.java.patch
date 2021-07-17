@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
++++ b/net/minecraft/world/level/storage/loot/predicates/LootItemRandomChanceWithLootingCondition.java
+@@ -31,12 +_,7 @@
+    }
+ 
+    public boolean test(LootContext p_81967_) {
+-      Entity entity = p_81967_.m_78953_(LootContextParams.f_81458_);
+-      int i = 0;
+-      if (entity instanceof LivingEntity) {
+-         i = EnchantmentHelper.m_44930_((LivingEntity)entity);
+-      }
+-
++      int i = p_81967_.getLootingModifier();
+       return p_81967_.m_78933_().nextFloat() < this.f_81953_ + (float)i * this.f_81954_;
+    }
+ 

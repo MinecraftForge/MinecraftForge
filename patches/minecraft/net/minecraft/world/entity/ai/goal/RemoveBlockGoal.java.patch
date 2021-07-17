@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
++++ b/net/minecraft/world/entity/ai/goal/RemoveBlockGoal.java
+@@ -34,7 +_,7 @@
+    }
+ 
+    public boolean m_8036_() {
+-      if (!this.f_25837_.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
++      if (!net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_25837_.f_19853_, this.f_25602_, this.f_25837_)) {
+          return false;
+       } else if (this.f_25600_ > 0) {
+          --this.f_25600_;

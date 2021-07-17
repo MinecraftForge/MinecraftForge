@@ -40,8 +40,7 @@ import java.util.stream.Stream;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonPrimitive;
-import net.minecraft.block.*;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.common.data.SoundDefinition;
 import net.minecraftforge.common.data.SoundDefinitionsProvider;
 import org.apache.commons.lang3.tuple.Triple;
@@ -63,26 +62,26 @@ import com.google.gson.JsonObject;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.model.Variant;
-import net.minecraft.client.renderer.model.BlockModel.GuiLight;
-import net.minecraft.data.BlockTagsProvider;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
+import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.data.RecipeProvider;
-import net.minecraft.data.ShapedRecipeBuilder;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Items;
-import net.minecraft.potion.Effects;
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.ResourcePackType;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
@@ -100,7 +99,21 @@ import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+
+import net.minecraft.world.level.block.BarrelBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.FurnaceBlock;
+import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.WallBlock;
 
 @SuppressWarnings("deprecation")
 @Mod(MODID)
@@ -116,8 +129,8 @@ public class DataGeneratorTest
     {
         GSON = new GsonBuilder()
                 .registerTypeAdapter(Variant.class, new Variant.Deserializer())
-                .registerTypeAdapter(ItemCameraTransforms.class, new ItemCameraTransforms.Deserializer())
-                .registerTypeAdapter(ItemTransformVec3f.class, new ItemTransformVec3f.Deserializer())
+                .registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer())
+                .registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer())
                 .create();
 
         DataGenerator gen = event.getGenerator();
@@ -145,7 +158,8 @@ public class DataGeneratorTest
             super(gen);
         }
 
-        protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer)
+        @Override
+        protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer)
         {
             ResourceLocation ID = new ResourceLocation("data_gen_test", "conditional");
 
@@ -180,8 +194,8 @@ public class DataGeneratorTest
                     Advancement.Builder.advancement()
                     .parent(new ResourceLocation("minecraft", "root"))
                     .display(Blocks.DIAMOND_BLOCK,
-                        new StringTextComponent("Dirt2Diamonds"),
-                        new StringTextComponent("The BEST crafting recipe in the game!"),
+                        new TextComponent("Dirt2Diamonds"),
+                        new TextComponent("The BEST crafting recipe in the game!"),
                         null, FrameType.TASK, false, false, false
                     )
                     .rewards(AdvancementRewards.Builder.recipe(ID))
@@ -290,7 +304,7 @@ public class DataGeneratorTest
         }
 
         @Override
-        public void run(DirectoryCache cache) throws IOException
+        public void run(HashCache cache) throws IOException
         {
             super.run(cache);
             test();
@@ -308,7 +322,7 @@ public class DataGeneratorTest
                 throw new RuntimeException("Unable to test for errors due to reflection error", e);
             }
             final JsonObject actual = GSON.fromJson(
-                    new InputStreamReader(this.helper.getResource(new ResourceLocation("sounds.json"), ResourcePackType.CLIENT_RESOURCES).getInputStream()),
+                    new InputStreamReader(this.helper.getResource(new ResourceLocation("sounds.json"), PackType.CLIENT_RESOURCES).getInputStream()),
                     JsonObject.class
             );
 
@@ -432,7 +446,6 @@ public class DataGeneratorTest
         }
     }
 
-
     public static class Tags extends BlockTagsProvider
     {
         public Tags(DataGenerator gen, ExistingFileHelper existingFileHelper)
@@ -478,7 +491,7 @@ public class DataGeneratorTest
             add(Blocks.STONE, "Stone");
             add(Items.DIAMOND, "Diamond");
             //add(Biomes.BEACH, "Beach");
-            add(Effects.POISON, "Poison");
+            add(MobEffects.POISON, "Poison");
             add(Enchantments.SHARPNESS, "Sharpness");
             add(EntityType.CAT, "Cat");
             add(MODID + ".test.unicode", "\u0287s\u01DD\u2534 \u01DDpo\u0254\u1D09u\u2229");
@@ -533,7 +546,7 @@ public class DataGeneratorTest
                 );
 
         @Override
-        public void run(DirectoryCache cache) throws IOException
+        public void run(HashCache cache) throws IOException
         {
             super.run(cache);
             List<String> errors = testModelResults(this.generatedModels, existingFileHelper, IGNORED_MODELS.stream().map(s -> new ResourceLocation(MODID, folder + "/" + s)).collect(Collectors.toSet()));
@@ -673,7 +686,7 @@ public class DataGeneratorTest
             
             logBlock((RotatedPillarBlock) Blocks.ACACIA_LOG);
 
-            stairsBlock((StairsBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));
+            stairsBlock((StairBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));
             slabBlock((SlabBlock) Blocks.ACACIA_SLAB, Blocks.ACACIA_PLANKS.getRegistryName(), mcLoc("block/acacia_planks"));
 
             fenceBlock((FenceBlock) Blocks.ACACIA_FENCE, "acacia", mcLoc("block/acacia_planks"));
@@ -681,7 +694,7 @@ public class DataGeneratorTest
 
             wallBlock((WallBlock) Blocks.COBBLESTONE_WALL, "cobblestone", mcLoc("block/cobblestone"));
 
-            paneBlock((PaneBlock) Blocks.GLASS_PANE, "glass", mcLoc("block/glass"), mcLoc("block/glass_pane_top"));
+            paneBlock((IronBarsBlock) Blocks.GLASS_PANE, "glass", mcLoc("block/glass"), mcLoc("block/glass_pane_top"));
 
             doorBlock((DoorBlock) Blocks.ACACIA_DOOR, "acacia", mcLoc("block/acacia_door_bottom"), mcLoc("block/acacia_door_top"));
             trapdoorBlock((TrapDoorBlock) Blocks.ACACIA_TRAPDOOR, "acacia", mcLoc("block/acacia_trapdoor"), true);
@@ -705,7 +718,7 @@ public class DataGeneratorTest
         private List<String> errors = new ArrayList<>();
 
         @Override
-        public void run(DirectoryCache cache) throws IOException
+        public void run(HashCache cache) throws IOException
         {
             super.run(cache);
             this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, Sets.union(IGNORED_MODELS, CUSTOM_MODELS)));
@@ -713,7 +726,7 @@ public class DataGeneratorTest
                 if (IGNORED_BLOCKS.contains(block)) return;
                 JsonObject generated = state.toJson();
                 try {
-                    IResource vanillaResource = models().existingFileHelper.getResource(block.getRegistryName(), ResourcePackType.CLIENT_RESOURCES, ".json", "blockstates");
+                    Resource vanillaResource = models().existingFileHelper.getResource(block.getRegistryName(), PackType.CLIENT_RESOURCES, ".json", "blockstates");
                     JsonObject existing = GSON.fromJson(new InputStreamReader(vanillaResource.getInputStream()), JsonObject.class);
                     if (state instanceof VariantBlockStateBuilder) {
                         compareVariantBlockstates(block, generated, existing);
@@ -891,7 +904,7 @@ public class DataGeneratorTest
                 generated.addProperty("parent", toVanillaModel(generated.get("parent").getAsString()));
             }
             try {
-                IResource vanillaResource = existingFileHelper.getResource(new ResourceLocation(loc.getPath()), ResourcePackType.CLIENT_RESOURCES, ".json", "models");
+                Resource vanillaResource = existingFileHelper.getResource(new ResourceLocation(loc.getPath()), PackType.CLIENT_RESOURCES, ".json", "models");
                 JsonObject existing = GSON.fromJson(new InputStreamReader(vanillaResource.getInputStream()), JsonObject.class);
 
                 JsonElement generatedDisplay = generated.remove("display");
@@ -903,8 +916,8 @@ public class DataGeneratorTest
                     ret.add("Model " + loc + " has transforms when vanilla equivalent does not");
                     return;
                 } else if (generatedDisplay != null) { // Both must be non-null
-                    ItemCameraTransforms generatedTransforms = GSON.fromJson(generatedDisplay, ItemCameraTransforms.class);
-                    ItemCameraTransforms vanillaTransforms = GSON.fromJson(vanillaDisplay, ItemCameraTransforms.class);
+                    ItemTransforms generatedTransforms = GSON.fromJson(generatedDisplay, ItemTransforms.class);
+                    ItemTransforms vanillaTransforms = GSON.fromJson(vanillaDisplay, ItemTransforms.class);
                     for (Perspective type : Perspective.values()) {
                         if (!generatedTransforms.getTransform(type.vanillaType).equals(vanillaTransforms.getTransform(type.vanillaType))) {
                             ret.add("Model " + loc  + " has transforms that differ from vanilla equivalent for perspective " + type.name());

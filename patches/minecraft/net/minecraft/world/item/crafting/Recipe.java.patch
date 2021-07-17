@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/item/crafting/Recipe.java
++++ b/net/minecraft/world/item/crafting/Recipe.java
+@@ -21,9 +_,9 @@
+       NonNullList<ItemStack> nonnulllist = NonNullList.m_122780_(p_44004_.m_6643_(), ItemStack.f_41583_);
+ 
+       for(int i = 0; i < nonnulllist.size(); ++i) {
+-         Item item = p_44004_.m_8020_(i).m_41720_();
+-         if (item.m_41470_()) {
+-            nonnulllist.set(i, new ItemStack(item.m_41469_()));
++         ItemStack item = p_44004_.m_8020_(i);
++         if (item.hasContainerItem()) {
++            nonnulllist.set(i, item.getContainerItem());
+          }
+       }
+ 

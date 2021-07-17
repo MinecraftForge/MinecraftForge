@@ -19,10 +19,10 @@
 
 package net.minecraftforge.common;
 
-import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
+import static net.minecraftforge.fml.Logging.FORGEMOD;
 
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
@@ -34,7 +34,7 @@ public class ForgeConfig
 {
     public static class Server {
         public final BooleanValue removeErroringEntities;
-        public final BooleanValue removeErroringTileEntities;
+        public final BooleanValue removeErroringBlockEntities;
 
         public final BooleanValue fullBoundingBoxLadders;
 
@@ -60,11 +60,11 @@ public class ForgeConfig
                     .worldRestart()
                     .define("removeErroringEntities", false);
 
-            removeErroringTileEntities = builder
-                    .comment("Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
-                    .translation("forge.configgui.removeErroringTileEntities")
+            removeErroringBlockEntities = builder
+                    .comment("Set this to true to remove any BlockEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
+                    .translation("forge.configgui.removeErroringBlockEntities")
                     .worldRestart()
-                    .define("removeErroringTileEntities", false);
+                    .define("removeErroringBlockEntities", false);
 
             fullBoundingBoxLadders = builder
                     .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false.")
@@ -237,12 +237,12 @@ public class ForgeConfig
     }
 
     @SubscribeEvent
-    public static void onLoad(final ModConfig.Loading configEvent) {
+    public static void onLoad(final ModConfigEvent.Loading configEvent) {
         LogManager.getLogger().debug(FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
     }
 
     @SubscribeEvent
-    public static void onFileChange(final ModConfig.Reloading configEvent) {
+    public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
         LogManager.getLogger().debug(FORGEMOD, "Forge config just got changed on the file system!");
     }
 

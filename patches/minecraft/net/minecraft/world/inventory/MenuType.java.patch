@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/inventory/MenuType.java
++++ b/net/minecraft/world/inventory/MenuType.java
+@@ -3,7 +_,7 @@
+ import net.minecraft.core.Registry;
+ import net.minecraft.world.entity.player.Inventory;
+ 
+-public class MenuType<T extends AbstractContainerMenu> {
++public class MenuType<T extends AbstractContainerMenu> extends net.minecraftforge.registries.ForgeRegistryEntry<MenuType<?>> implements net.minecraftforge.common.extensions.IForgeContainerType<T> {
+    public static final MenuType<ChestMenu> f_39957_ = m_39988_("generic_9x1", ChestMenu::m_39234_);
+    public static final MenuType<ChestMenu> f_39958_ = m_39988_("generic_9x2", ChestMenu::m_39243_);
+    public static final MenuType<ChestMenu> f_39959_ = m_39988_("generic_9x3", ChestMenu::m_39255_);
+@@ -42,6 +_,14 @@
+ 
+    public T m_39985_(int p_39986_, Inventory p_39987_) {
+       return this.f_39981_.m_39994_(p_39986_, p_39987_);
++   }
++   
++   @Override
++   public T create(int windowId, Inventory playerInv, net.minecraft.network.FriendlyByteBuf extraData) {
++      if (this.f_39981_ instanceof net.minecraftforge.fmllegacy.network.IContainerFactory) {
++         return ((net.minecraftforge.fmllegacy.network.IContainerFactory<T>) this.f_39981_).create(windowId, playerInv, extraData);
++      }
++      return m_39985_(windowId, playerInv);
+    }
+ 
+    public interface MenuSupplier<T extends AbstractContainerMenu> {

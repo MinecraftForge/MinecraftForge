@@ -19,15 +19,15 @@
 
 package net.minecraftforge.server.command;
 
-import net.minecraft.command.ICommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.ServerPlayNetHandler;
-import net.minecraft.util.text.LanguageMap;
-import net.minecraft.util.text.TextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.fml.network.ConnectionType;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.BaseComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraftforge.fmllegacy.network.ConnectionType;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 public class TextComponentHelper
 {
@@ -37,21 +37,21 @@ public class TextComponentHelper
      * Detects when sending to a vanilla client and falls back to sending english,
      * since they don't have the lang data necessary to translate on the client.
      */
-    public static TextComponent createComponentTranslation(ICommandSource source, final String translation, final Object... args)
+    public static BaseComponent createComponentTranslation(CommandSource source, final String translation, final Object... args)
     {
         if (isVanillaClient(source))
         {
-            return new StringTextComponent(String.format(LanguageMap.getInstance().getOrDefault(translation), args));
+            return new TextComponent(String.format(Language.getInstance().getOrDefault(translation), args));
         }
-        return new TranslationTextComponent(translation, args);
+        return new TranslatableComponent(translation, args);
     }
 
-    private static boolean isVanillaClient(ICommandSource sender)
+    private static boolean isVanillaClient(CommandSource sender)
     {
-        if (sender instanceof ServerPlayerEntity)
+        if (sender instanceof ServerPlayer)
         {
-            ServerPlayerEntity playerMP = (ServerPlayerEntity) sender;
-            ServerPlayNetHandler channel = playerMP.connection;
+            ServerPlayer playerMP = (ServerPlayer) sender;
+            ServerGamePacketListenerImpl channel = playerMP.connection;
             return NetworkHooks.getConnectionType(()->channel.connection) == ConnectionType.VANILLA;
         }
         return false;

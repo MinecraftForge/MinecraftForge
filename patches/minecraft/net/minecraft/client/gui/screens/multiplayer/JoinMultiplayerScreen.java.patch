@@ -1,0 +1,14 @@
+--- a/net/minecraft/client/gui/screens/multiplayer/JoinMultiplayerScreen.java
++++ b/net/minecraft/client/gui/screens/multiplayer/JoinMultiplayerScreen.java
+@@ -247,6 +_,11 @@
+ 
+    }
+ 
++   @Override
++   public void m_7379_() {
++      this.f_96541_.m_91152_(this.f_99676_);
++   }
++
+    public ServerStatusPinger m_99731_() {
+       return this.f_99675_;
+    }

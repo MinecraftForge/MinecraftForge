@@ -1,0 +1,43 @@
+--- a/net/minecraft/world/level/block/StemBlock.java
++++ b/net/minecraft/world/level/block/StemBlock.java
+@@ -43,22 +_,24 @@
+    }
+ 
+    public void m_7455_(BlockState p_57042_, ServerLevel p_57043_, BlockPos p_57044_, Random p_57045_) {
++      if (!p_57043_.isAreaLoaded(p_57044_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
+       if (p_57043_.m_45524_(p_57044_, 0) >= 9) {
+          float f = CropBlock.m_52272_(this, p_57043_, p_57044_);
+-         if (p_57045_.nextInt((int)(25.0F / f) + 1) == 0) {
++         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_57043_, p_57044_, p_57042_, p_57045_.nextInt((int)(25.0F / f) + 1) == 0)) {
+             int i = p_57042_.m_61143_(f_57013_);
+             if (i < 7) {
+-               p_57042_ = p_57042_.m_61124_(f_57013_, Integer.valueOf(i + 1));
+-               p_57043_.m_7731_(p_57044_, p_57042_, 2);
++               p_57043_.m_7731_(p_57044_, p_57042_.m_61124_(f_57013_, Integer.valueOf(i + 1)), 2);
+             } else {
+                Direction direction = Direction.Plane.HORIZONTAL.m_122560_(p_57045_);
+                BlockPos blockpos = p_57044_.m_142300_(direction);
+                BlockState blockstate = p_57043_.m_8055_(blockpos.m_7495_());
+-               if (p_57043_.m_8055_(blockpos).m_60795_() && (blockstate.m_60713_(Blocks.f_50093_) || blockstate.m_60620_(BlockTags.f_144274_))) {
++               Block block = blockstate.m_60734_();
++               if (p_57043_.m_46859_(blockpos) && (blockstate.canSustainPlant(p_57043_, blockpos.m_7495_(), Direction.UP, this) || block == Blocks.f_50093_ || block == Blocks.f_50493_ || block == Blocks.f_50546_ || block == Blocks.f_50599_ || block == Blocks.f_50440_)) {
+                   p_57043_.m_46597_(blockpos, this.f_57015_.m_49966_());
+                   p_57043_.m_46597_(p_57044_, this.f_57015_.m_7810_().m_49966_().m_61124_(HorizontalDirectionalBlock.f_54117_, direction));
+                }
+             }
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_57043_, p_57044_, p_57042_);
+          }
+ 
+       }
+@@ -92,5 +_,11 @@
+ 
+    public StemGrownBlock m_57056_() {
+       return this.f_57015_;
++   }
++
++   //FORGE START
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.CROP;
+    }
+ }

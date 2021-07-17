@@ -1,0 +1,53 @@
+--- a/net/minecraft/CrashReport.java
++++ b/net/minecraft/CrashReport.java
+@@ -55,14 +_,8 @@
+       if (this.f_127506_ != null && this.f_127506_.length > 0) {
+          p_127520_.append("-- Head --\n");
+          p_127520_.append("Thread: ").append(Thread.currentThread().getName()).append("\n");
+-         p_127520_.append("Stacktrace:\n");
+-
+-         for(StackTraceElement stacktraceelement : this.f_127506_) {
+-            p_127520_.append("\t").append("at ").append((Object)stacktraceelement);
+-            p_127520_.append("\n");
+-         }
+-
+-         p_127520_.append("\n");
++         p_127520_.append("Stacktrace:");
++         p_127520_.append(net.minecraftforge.fmllegacy.CrashReportExtender.generateEnhancedStackTrace(this.f_127506_));
+       }
+ 
+       for(CrashReportCategory crashreportcategory : this.f_127503_) {
+@@ -70,6 +_,7 @@
+          p_127520_.append("\n\n");
+       }
+ 
++      net.minecraftforge.fmllegacy.CrashReportExtender.extendSystemReport(f_178624_);
+       this.f_178624_.m_143525_(p_127520_);
+    }
+ 
+@@ -89,23 +_,13 @@
+          throwable.setStackTrace(this.f_127501_.getStackTrace());
+       }
+ 
+-      String s;
+-      try {
+-         stringwriter = new StringWriter();
+-         printwriter = new PrintWriter(stringwriter);
+-         throwable.printStackTrace(printwriter);
+-         s = stringwriter.toString();
+-      } finally {
+-         IOUtils.closeQuietly((Writer)stringwriter);
+-         IOUtils.closeQuietly((Writer)printwriter);
+-      }
+-
+-      return s;
++      return net.minecraftforge.fmllegacy.CrashReportExtender.generateEnhancedStackTrace(throwable);
+    }
+ 
+    public String m_127526_() {
+       StringBuilder stringbuilder = new StringBuilder();
+       stringbuilder.append("---- Minecraft Crash Report ----\n");
++      net.minecraftforge.fmllegacy.CrashReportExtender.addCrashReportHeader(stringbuilder, this);
+       stringbuilder.append("// ");
+       stringbuilder.append(m_127531_());
+       stringbuilder.append("\n\n");

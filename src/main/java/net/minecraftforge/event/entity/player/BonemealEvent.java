@@ -20,11 +20,11 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 
@@ -42,12 +42,12 @@ import javax.annotation.Nonnull;
 public class BonemealEvent extends PlayerEvent
 {
 
-    private final World world;
+    private final Level world;
     private final BlockPos pos;
     private final BlockState block;
     private final ItemStack stack;
 
-    public BonemealEvent(@Nonnull PlayerEntity player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull BlockState block, @Nonnull ItemStack stack)
+    public BonemealEvent(@Nonnull Player player, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull BlockState block, @Nonnull ItemStack stack)
     {
         super(player);
         this.world = world;
@@ -56,7 +56,7 @@ public class BonemealEvent extends PlayerEvent
         this.stack = stack;
     }
 
-    public World getWorld()
+    public Level getWorld()
     {
         return world;
     }

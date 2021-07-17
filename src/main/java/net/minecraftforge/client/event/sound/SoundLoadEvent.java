@@ -19,8 +19,8 @@
 
 package net.minecraftforge.client.event.sound;
 
-import net.minecraft.client.audio.SoundEngine;
-import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
+import net.minecraft.client.sounds.SoundEngine;
+import net.minecraftforge.fml.event.IModBusEvent;
 
 /**
  * Raised by the SoundManager.loadSoundSettings, this would be a good place for

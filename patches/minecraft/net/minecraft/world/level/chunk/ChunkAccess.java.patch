@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/level/chunk/ChunkAccess.java
++++ b/net/minecraft/world/level/chunk/ChunkAccess.java
+@@ -158,4 +_,9 @@
+    boolean m_6332_();
+ 
+    void m_8094_(boolean p_62100_);
++
++   @Nullable
++   default net.minecraft.world.level.LevelAccessor getWorldForge() {
++      return null;
++   }
+ }

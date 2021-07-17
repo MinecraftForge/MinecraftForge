@@ -20,7 +20,7 @@
 package net.minecraftforge.common.crafting.conditions;
 
 import com.google.gson.JsonObject;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public final class FalseCondition implements ICondition
 {

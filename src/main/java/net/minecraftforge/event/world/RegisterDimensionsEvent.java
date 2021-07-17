@@ -19,16 +19,6 @@
 
 /*package net.minecraftforge.event.world;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.DimensionManager.SavedEntry;
-import net.minecraftforge.eventbus.api.Event;
-
 /**
  * Register all of your custom ModDimensons here, fired during server loading when
  * dimension data is read from the world file.

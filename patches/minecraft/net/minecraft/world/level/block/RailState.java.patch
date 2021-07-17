@@ -1,0 +1,57 @@
+--- a/net/minecraft/world/level/block/RailState.java
++++ b/net/minecraft/world/level/block/RailState.java
+@@ -16,14 +_,16 @@
+    private BlockState f_55417_;
+    private final boolean f_55418_;
+    private final List<BlockPos> f_55419_ = Lists.newArrayList();
++   private final boolean canMakeSlopes;
+ 
+    public RailState(Level p_55421_, BlockPos p_55422_, BlockState p_55423_) {
+       this.f_55414_ = p_55421_;
+       this.f_55415_ = p_55422_;
+       this.f_55417_ = p_55423_;
+       this.f_55416_ = (BaseRailBlock)p_55423_.m_60734_();
+-      RailShape railshape = p_55423_.m_61143_(this.f_55416_.m_7978_());
+-      this.f_55418_ = this.f_55416_.m_49413_();
++      RailShape railshape = this.f_55416_.getRailDirection(f_55417_, p_55421_, p_55422_, null);
++      this.f_55418_ = !this.f_55416_.isFlexibleRail(f_55417_, p_55421_, p_55422_);
++      this.canMakeSlopes = this.f_55416_.canMakeSlopes(f_55417_, p_55421_, p_55422_);
+       this.m_55427_(railshape);
+    }
+ 
+@@ -179,7 +_,7 @@
+          }
+       }
+ 
+-      if (railshape == RailShape.NORTH_SOUTH) {
++      if (railshape == RailShape.NORTH_SOUTH && canMakeSlopes) {
+          if (BaseRailBlock.m_49364_(this.f_55414_, blockpos.m_7494_())) {
+             railshape = RailShape.ASCENDING_NORTH;
+          }
+@@ -189,7 +_,7 @@
+          }
+       }
+ 
+-      if (railshape == RailShape.EAST_WEST) {
++      if (railshape == RailShape.EAST_WEST && canMakeSlopes) {
+          if (BaseRailBlock.m_49364_(this.f_55414_, blockpos3.m_7494_())) {
+             railshape = RailShape.ASCENDING_EAST;
+          }
+@@ -305,7 +_,7 @@
+          }
+       }
+ 
+-      if (railshape == RailShape.NORTH_SOUTH) {
++      if (railshape == RailShape.NORTH_SOUTH && canMakeSlopes) {
+          if (BaseRailBlock.m_49364_(this.f_55414_, blockpos.m_7494_())) {
+             railshape = RailShape.ASCENDING_NORTH;
+          }
+@@ -315,7 +_,7 @@
+          }
+       }
+ 
+-      if (railshape == RailShape.EAST_WEST) {
++      if (railshape == RailShape.EAST_WEST && canMakeSlopes) {
+          if (BaseRailBlock.m_49364_(this.f_55414_, blockpos3.m_7494_())) {
+             railshape = RailShape.ASCENDING_EAST;
+          }

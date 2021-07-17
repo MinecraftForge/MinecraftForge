@@ -1,0 +1,38 @@
+--- a/net/minecraft/world/entity/ai/behavior/CrossbowAttack.java
++++ b/net/minecraft/world/entity/ai/behavior/CrossbowAttack.java
+@@ -23,7 +_,7 @@
+ 
+    protected boolean m_6114_(ServerLevel p_22778_, E p_22779_) {
+       LivingEntity livingentity = m_22784_(p_22779_);
+-      return p_22779_.m_21055_(Items.f_42717_) && BehaviorUtils.m_22667_(p_22779_, livingentity) && BehaviorUtils.m_22632_(p_22779_, livingentity, 0);
++      return p_22779_.m_21093_(is -> is.m_41720_() instanceof CrossbowItem) && BehaviorUtils.m_22667_(p_22779_, livingentity) && BehaviorUtils.m_22632_(p_22779_, livingentity, 0);
+    }
+ 
+    protected boolean m_6737_(ServerLevel p_22781_, E p_22782_, long p_22783_) {
+@@ -41,7 +_,7 @@
+          p_22806_.m_5810_();
+       }
+ 
+-      if (p_22806_.m_21055_(Items.f_42717_)) {
++      if (p_22806_.m_21093_(is -> is.m_41720_() instanceof CrossbowItem)) {
+          p_22806_.m_6136_(false);
+          CrossbowItem.m_40884_(p_22806_.m_21211_(), false);
+       }
+@@ -50,7 +_,7 @@
+ 
+    private void m_22786_(E p_22787_, LivingEntity p_22788_) {
+       if (this.f_22772_ == CrossbowAttack.CrossbowState.UNCHARGED) {
+-         p_22787_.m_6672_(ProjectileUtil.m_37297_(p_22787_, Items.f_42717_));
++         p_22787_.m_6672_(ProjectileUtil.getWeaponHoldingHand(p_22787_, item -> item instanceof CrossbowItem));
+          this.f_22772_ = CrossbowAttack.CrossbowState.CHARGING;
+          p_22787_.m_6136_(true);
+       } else if (this.f_22772_ == CrossbowAttack.CrossbowState.CHARGING) {
+@@ -73,7 +_,7 @@
+          }
+       } else if (this.f_22772_ == CrossbowAttack.CrossbowState.READY_TO_ATTACK) {
+          p_22787_.m_6504_(p_22788_, 1.0F);
+-         ItemStack itemstack1 = p_22787_.m_21120_(ProjectileUtil.m_37297_(p_22787_, Items.f_42717_));
++         ItemStack itemstack1 = p_22787_.m_21120_(ProjectileUtil.getWeaponHoldingHand(p_22787_, item -> item instanceof CrossbowItem));
+          CrossbowItem.m_40884_(itemstack1, false);
+          this.f_22772_ = CrossbowAttack.CrossbowState.UNCHARGED;
+       }

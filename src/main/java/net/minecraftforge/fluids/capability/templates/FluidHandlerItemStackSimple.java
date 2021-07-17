@@ -22,9 +22,9 @@ package net.minecraftforge.fluids.capability.templates;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -70,7 +70,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     @Nonnull
     public FluidStack getFluid()
     {
-        CompoundNBT tagCompound = container.getTag();
+        CompoundTag tagCompound = container.getTag();
         if (tagCompound == null || !tagCompound.contains(FLUID_NBT_KEY))
         {
             return FluidStack.EMPTY;
@@ -82,10 +82,10 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     {
         if (!container.hasTag())
         {
-            container.setTag(new CompoundNBT());
+            container.setTag(new CompoundTag());
         }
 
-        CompoundNBT fluidTag = new CompoundNBT();
+        CompoundTag fluidTag = new CompoundTag();
         fluid.writeToNBT(fluidTag);
         container.getTag().put(FLUID_NBT_KEY, fluidTag);
     }

@@ -1,9 +1,10 @@
 package net.minecraftforge.forge.tasks
 
 import net.minecraftforge.srgutils.IMappingFile
-import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
+
+import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Optional

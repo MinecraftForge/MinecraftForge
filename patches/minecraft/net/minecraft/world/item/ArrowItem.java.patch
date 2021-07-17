@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/item/ArrowItem.java
++++ b/net/minecraft/world/item/ArrowItem.java
+@@ -15,4 +_,9 @@
+       arrow.m_36878_(p_40514_);
+       return arrow;
+    }
++
++   public boolean isInfinite(ItemStack stack, ItemStack bow, net.minecraft.world.entity.player.Player player) {
++      int enchant = net.minecraft.world.item.enchantment.EnchantmentHelper.m_44843_(net.minecraft.world.item.enchantment.Enchantments.f_44952_, bow);
++      return enchant <= 0 ? false : this.getClass() == ArrowItem.class;
++   }
+ }

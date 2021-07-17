@@ -29,18 +29,18 @@ import javax.annotation.Nonnull;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.NetworkManager;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.Connection;
 
 /**
  * A filter for vanilla network packets.
  */
-public abstract class VanillaPacketFilter extends MessageToMessageEncoder<IPacket<?>>
+public abstract class VanillaPacketFilter extends MessageToMessageEncoder<Packet<?>>
 {
 
-    protected final Map<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>> handlers;
+    protected final Map<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> handlers;
 
-    protected VanillaPacketFilter(Map<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>> handlers)
+    protected VanillaPacketFilter(Map<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> handlers)
     {
         this.handlers = handlers;
     }
@@ -49,7 +49,7 @@ public abstract class VanillaPacketFilter extends MessageToMessageEncoder<IPacke
      * Helper function for building the handler map.
      */
     @Nonnull
-    protected static <T extends IPacket<?>> Map.Entry<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>> handler(Class<T> cls, Function<T, ? extends IPacket<?>> function)
+    protected static <T extends Packet<?>> Map.Entry<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> handler(Class<T> cls, Function<T, ? extends Packet<?>> function)
     {
         return handler(cls, (pkt, list) -> list.add(function.apply(cls.cast(pkt))));
     }
@@ -58,7 +58,7 @@ public abstract class VanillaPacketFilter extends MessageToMessageEncoder<IPacke
      * Helper function for building the handler map.
      */
     @Nonnull
-    protected static <T extends IPacket<?>> Map.Entry<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>> handler(Class<T> cls, BiConsumer<IPacket<?>, List<? super IPacket<?>>> consumer)
+    protected static <T extends Packet<?>> Map.Entry<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> handler(Class<T> cls, BiConsumer<Packet<?>, List<? super Packet<?>>> consumer)
     {
         return new AbstractMap.SimpleEntry<>(cls, consumer);
     }
@@ -66,12 +66,12 @@ public abstract class VanillaPacketFilter extends MessageToMessageEncoder<IPacke
     /**
      * Whether this filter is necessary on the given connection.
      */
-    protected abstract boolean isNecessary(NetworkManager manager);
+    protected abstract boolean isNecessary(Connection manager);
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, IPacket<?> msg, List<Object> out)
+    protected void encode(ChannelHandlerContext ctx, Packet<?> msg, List<Object> out)
     {
-        BiConsumer<IPacket<?>, List<? super IPacket<?>>> consumer = handlers.getOrDefault(msg.getClass(), (pkt, list) -> list.add(pkt));
+        BiConsumer<Packet<?>, List<? super Packet<?>>> consumer = handlers.getOrDefault(msg.getClass(), (pkt, list) -> list.add(pkt));
         consumer.accept(msg, out);
     }
 

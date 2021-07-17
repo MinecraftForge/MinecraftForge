@@ -26,13 +26,13 @@ import java.util.function.BiConsumer;
 import javax.annotation.Nullable;
 
 import io.netty.channel.ChannelHandler;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketDirection;
-import net.minecraft.network.ProtocolType;
-import net.minecraft.network.play.server.SAdvancementInfoPacket;
-import net.minecraft.network.play.server.STagsListPacket;
-import net.minecraft.network.play.server.SUpdateRecipesPacket;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.PacketFlow;
+import net.minecraft.network.ConnectionProtocol;
+import net.minecraft.network.protocol.game.ClientboundUpdateAdvancementsPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -49,12 +49,12 @@ public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
         this(null);
     }
 
-    public ForgeConnectionNetworkFilter(@Nullable NetworkManager manager)
+    public ForgeConnectionNetworkFilter(@Nullable Connection manager)
     {
         super(buildHandlers(manager));
     }
 
-    private static Map<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>> buildHandlers(@Nullable NetworkManager manager)
+    private static Map<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> buildHandlers(@Nullable Connection manager)
     {
 
         VanillaPacketSplitter.RemoteCompatibility compatibility = manager == null ? VanillaPacketSplitter.RemoteCompatibility.ABSENT : VanillaPacketSplitter.getRemoteCompatibility(manager);
@@ -62,28 +62,25 @@ public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
         {
             return ImmutableMap.of();
         }
-        ImmutableMap.Builder<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>> builder = ImmutableMap.<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>>builder()
-                .put(SUpdateRecipesPacket.class, ForgeConnectionNetworkFilter::splitPacket)
-                .put(STagsListPacket.class, ForgeConnectionNetworkFilter::splitPacket);
+        ImmutableMap.Builder<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> builder = ImmutableMap.<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>>builder()
+                .put(ClientboundUpdateRecipesPacket.class, ForgeConnectionNetworkFilter::splitPacket)
+                .put(ClientboundUpdateTagsPacket.class, ForgeConnectionNetworkFilter::splitPacket)
+                .put(ClientboundUpdateAdvancementsPacket.class, ForgeConnectionNetworkFilter::splitPacket);
 
-        if (compatibility == VanillaPacketSplitter.RemoteCompatibility.V11)
-        {
-            builder.put(SAdvancementInfoPacket.class, ForgeConnectionNetworkFilter::splitPacket);
-        }
         return builder.build();
     }
 
     @Override
-    protected boolean isNecessary(NetworkManager manager)
+    protected boolean isNecessary(Connection manager)
     {
         // not needed on local connections, because packets are not encoded to bytes there
         return !manager.isMemoryConnection() && VanillaPacketSplitter.isRemoteCompatible(manager);
     }
 
-    private static void splitPacket(IPacket<?> packet, List<? super IPacket<?>> out)
+    private static void splitPacket(Packet<?> packet, List<? super Packet<?>> out)
     {
         VanillaPacketSplitter.appendPackets(
-                ProtocolType.PLAY, PacketDirection.CLIENTBOUND, packet, out
+                ConnectionProtocol.PLAY, PacketFlow.CLIENTBOUND, packet, out
         );
     }
 

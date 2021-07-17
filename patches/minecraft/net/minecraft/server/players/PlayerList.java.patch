@@ -1,0 +1,162 @@
+--- a/net/minecraft/server/players/PlayerList.java
++++ b/net/minecraft/server/players/PlayerList.java
+@@ -115,6 +_,7 @@
+    private boolean f_11209_;
+    private static final boolean f_143988_ = false;
+    private int f_11210_;
++   private final List<ServerPlayer> playersView = java.util.Collections.unmodifiableList(f_11196_);
+ 
+    public PlayerList(MinecraftServer p_11213_, RegistryAccess.RegistryHolder p_11214_, PlayerDataStorage p_11215_, int p_11216_) {
+       this.f_11195_ = p_11213_;
+@@ -150,6 +_,7 @@
+       LevelData leveldata = serverlevel1.m_6106_();
+       p_11263_.m_143427_(compoundtag);
+       ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.f_11195_, p_11262_, p_11263_);
++      net.minecraftforge.fmllegacy.network.NetworkHooks.sendMCRegistryPackets(p_11262_, "PLAY_TO_CLIENT");
+       GameRules gamerules = serverlevel1.m_46469_();
+       boolean flag = gamerules.m_46207_(GameRules.f_46156_);
+       boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
+@@ -160,6 +_,7 @@
+       servergamepacketlistenerimpl.m_141995_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
+       servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
+       servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
++      net.minecraftforge.fmllegacy.network.NetworkHooks.syncCustomTagTypes(p_11263_, this.f_11195_.m_129895_());
+       this.m_11289_(p_11263_);
+       p_11263_.m_8951_().m_12850_();
+       p_11263_.m_8952_().m_12789_(p_11263_);
+@@ -174,7 +_,7 @@
+ 
+       this.m_11264_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
+       servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
+-      this.f_11196_.add(p_11263_);
++      this.addPlayer(p_11263_);
+       this.f_11197_.put(p_11263_.m_142081_(), p_11263_);
+       this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
+ 
+@@ -229,6 +_,7 @@
+       }
+ 
+       p_11263_.m_143429_();
++      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerLoggedIn( p_11263_ );
+    }
+ 
+    protected void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
+@@ -289,6 +_,7 @@
+          compoundtag1 = compoundtag;
+          p_11225_.m_20258_(compoundtag);
+          f_11188_.debug("loading single player");
++         net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_11225_, this.f_11204_, p_11225_.m_142081_().toString());
+       } else {
+          compoundtag1 = this.f_11204_.m_78435_(p_11225_);
+       }
+@@ -297,6 +_,7 @@
+    }
+ 
+    protected void m_6765_(ServerPlayer p_11277_) {
++      if (p_11277_.f_8906_ == null) return;
+       this.f_11204_.m_78433_(p_11277_);
+       ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_142081_());
+       if (serverstatscounter != null) {
+@@ -311,6 +_,7 @@
+    }
+ 
+    public void m_11286_(ServerPlayer p_11287_) {
++      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerLoggedOut(p_11287_);
+       ServerLevel serverlevel = p_11287_.m_9236_();
+       p_11287_.m_36220_(Stats.f_12989_);
+       this.m_6765_(p_11287_);
+@@ -328,7 +_,7 @@
+       p_11287_.m_19877_();
+       serverlevel.m_143261_(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+       p_11287_.m_8960_().m_135978_();
+-      this.f_11196_.remove(p_11287_);
++      this.removePlayer(p_11287_);
+       this.f_11195_.m_129901_().m_136305_(p_11287_);
+       UUID uuid = p_11287_.m_142081_();
+       ServerPlayer serverplayer = this.f_11197_.get(uuid);
+@@ -390,8 +_,8 @@
+    }
+ 
+    public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
+-      this.f_11196_.remove(p_11237_);
+-      p_11237_.m_9236_().m_143261_(p_11237_, Entity.RemovalReason.DISCARDED);
++      this.removePlayer(p_11237_);
++      p_11237_.m_9236_().removePlayer(p_11237_, true); // Forge: keep data until copyFrom called
+       BlockPos blockpos = p_11237_.m_8961_();
+       float f = p_11237_.m_8962_();
+       boolean flag = p_11237_.m_8964_();
+@@ -407,6 +_,7 @@
+       ServerPlayer serverplayer = new ServerPlayer(this.f_11195_, serverlevel1, p_11237_.m_36316_());
+       serverplayer.f_8906_ = p_11237_.f_8906_;
+       serverplayer.m_9015_(p_11237_, p_11238_);
++      p_11237_.remove(false); // Forge: clone event had a chance to see old data, now discard it
+       serverplayer.m_20234_(p_11237_.m_142049_());
+       serverplayer.m_36163_(p_11237_.m_5737_());
+ 
+@@ -447,10 +_,11 @@
+       this.m_11229_(serverplayer, serverlevel1);
+       this.m_11289_(serverplayer);
+       serverlevel1.m_8845_(serverplayer);
+-      this.f_11196_.add(serverplayer);
++      this.addPlayer(serverplayer);
+       this.f_11197_.put(serverplayer.m_142081_(), serverplayer);
+       serverplayer.m_143429_();
+       serverplayer.m_21153_(serverplayer.m_21223_());
++      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerRespawnEvent(serverplayer, p_11238_);
+       if (flag2) {
+          serverplayer.f_8906_.m_141995_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F));
+       }
+@@ -726,13 +_,6 @@
+       if (serverstatscounter == null) {
+          File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
+          File file2 = new File(file1, uuid + ".json");
+-         if (!file2.exists()) {
+-            File file3 = new File(file1, p_11240_.m_7755_().getString() + ".json");
+-            Path path = file3.toPath();
+-            if (FileUtil.m_133728_(path) && FileUtil.m_133734_(path) && path.startsWith(file1.getPath()) && file3.isFile()) {
+-               file3.renameTo(file2);
+-            }
+-         }
+ 
+          serverstatscounter = new ServerStatsCounter(this.f_11195_, file2);
+          this.f_11202_.put(uuid, serverstatscounter);
+@@ -751,6 +_,8 @@
+          this.f_11203_.put(uuid, playeradvancements);
+       }
+ 
++      // Forge: don't overwrite active player with a fake one.
++      if (!(p_11297_ instanceof net.minecraftforge.common.util.FakePlayer))
+       playeradvancements.m_135979_(p_11297_);
+       return playeradvancements;
+    }
+@@ -768,7 +_,7 @@
+    }
+ 
+    public List<ServerPlayer> m_11314_() {
+-      return this.f_11196_;
++      return this.playersView; //Unmodifiable view, we don't want people removing things without us knowing.
+    }
+ 
+    @Nullable
+@@ -786,6 +_,7 @@
+       }
+ 
+       this.m_11268_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
++      net.minecraftforge.fmllegacy.network.NetworkHooks.syncCustomTagTypes(this.f_11195_.m_129895_());
+       ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
+ 
+       for(ServerPlayer serverplayer : this.f_11196_) {
+@@ -797,5 +_,13 @@
+ 
+    public boolean m_11316_() {
+       return this.f_11209_;
++   }
++
++   public boolean addPlayer(ServerPlayer player) {
++      return f_11196_.add(player);
++   }
++
++   public boolean removePlayer(ServerPlayer player) {
++       return this.f_11196_.remove(player);
+    }
+ }

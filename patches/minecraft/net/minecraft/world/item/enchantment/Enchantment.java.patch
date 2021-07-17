@@ -1,0 +1,61 @@
+--- a/net/minecraft/world/item/enchantment/Enchantment.java
++++ b/net/minecraft/world/item/enchantment/Enchantment.java
+@@ -16,7 +_,8 @@
+ import net.minecraft.world.entity.MobType;
+ import net.minecraft.world.item.ItemStack;
+ 
+-public abstract class Enchantment {
++public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
++   private final net.minecraftforge.common.util.ReverseTagWrapper<Enchantment> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.SerializationTags.m_13199_().getCustomTypeCollection(net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS));
+    private final EquipmentSlot[] f_44671_;
+    private final Enchantment.Rarity f_44674_;
+    public final EnchantmentCategory f_44672_;
+@@ -34,6 +_,14 @@
+       this.f_44671_ = p_44678_;
+    }
+ 
++   public java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
++      return reverseTags.getTagNames();
++   }
++
++   public boolean is(net.minecraft.tags.Tag<Enchantment> tag) {
++      return tag.m_8110_(this);
++   }
++
+    public Map<EquipmentSlot, ItemStack> m_44684_(LivingEntity p_44685_) {
+       Map<EquipmentSlot, ItemStack> map = Maps.newEnumMap(EquipmentSlot.class);
+ 
+@@ -111,7 +_,7 @@
+    }
+ 
+    public boolean m_6081_(ItemStack p_44689_) {
+-      return this.f_44672_.m_7454_(p_44689_.m_41720_());
++      return canApplyAtEnchantingTable(p_44689_);
+    }
+ 
+    public void m_7677_(LivingEntity p_44686_, Entity p_44687_, int p_44688_) {
+@@ -133,6 +_,24 @@
+    }
+ 
+    public boolean m_6592_() {
++      return true;
++   }
++
++   /**
++    * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
++    * applies for <i>all possible</i> enchantments.
++    * @param stack
++    * @return
++    */
++   public boolean canApplyAtEnchantingTable(ItemStack stack) {
++      return stack.canApplyAtEnchantingTable(this);
++   }
++
++   /**
++    * Is this enchantment allowed to be enchanted on books via Enchantment Table
++    * @return false to disable the vanilla feature
++    */
++   public boolean isAllowedOnBooks() {
+       return true;
+    }
+ 

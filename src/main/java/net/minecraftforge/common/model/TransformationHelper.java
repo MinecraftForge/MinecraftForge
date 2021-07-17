@@ -23,22 +23,27 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 import com.google.gson.*;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 
-import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.util.math.vector.*;
+import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 
 public final class TransformationHelper
 {
     @Deprecated
     @OnlyIn(Dist.CLIENT)
-    public static TransformationMatrix toTransformation(ItemTransformVec3f transform)
+    public static Transformation toTransformation(ItemTransform transform)
     {
-        if (transform.equals(ItemTransformVec3f.NO_TRANSFORM)) return TransformationMatrix.identity();
+        if (transform.equals(ItemTransform.NO_TRANSFORM)) return Transformation.identity();
 
-        return new TransformationMatrix(transform.translation, quatFromXYZ(transform.rotation, true), transform.scale, null);
+        return new Transformation(transform.translation, quatFromXYZ(transform.rotation, true), transform.scale, null);
     }
 
     public static Quaternion quatFromXYZ(Vector3f xyz, boolean degrees)
@@ -83,19 +88,19 @@ public final class TransformationHelper
         // If the inputs are too close for comfort, linearly interpolate
         // and normalize the result.
         if (dot > THRESHOLD) {
-            float x = MathHelper.lerp(t, v0.i(), v1.i());
-            float y = MathHelper.lerp(t, v0.j(), v1.j());
-            float z = MathHelper.lerp(t, v0.k(), v1.k());
-            float w = MathHelper.lerp(t, v0.r(), v1.r());
+            float x = Mth.lerp(t, v0.i(), v1.i());
+            float y = Mth.lerp(t, v0.j(), v1.j());
+            float z = Mth.lerp(t, v0.k(), v1.k());
+            float w = Mth.lerp(t, v0.r(), v1.r());
             return new Quaternion(x,y,z,w);
         }
 
         // Since dot is in range [0, DOT_THRESHOLD], acos is safe
         float angle01 = (float)Math.acos(dot);
         float angle0t = angle01*t;
-        float sin0t = MathHelper.sin(angle0t);
-        float sin01 = MathHelper.sin(angle01);
-        float sin1t = MathHelper.sin(angle01 - angle0t);
+        float sin0t = Mth.sin(angle0t);
+        float sin01 = Mth.sin(angle01);
+        float sin1t = Mth.sin(angle01 - angle0t);
 
         float s1 = sin0t / sin01;
         float s0 = sin1t / sin01;
@@ -108,39 +113,39 @@ public final class TransformationHelper
         );
     }
 
-    public static TransformationMatrix slerp(TransformationMatrix one, TransformationMatrix that, float progress)
+    public static Transformation slerp(Transformation one, Transformation that, float progress)
     {
-        return new TransformationMatrix(
+        return new Transformation(
             lerp(one.getTranslation(), that.getTranslation(), progress),
             slerp(one.getLeftRotation(), that.getLeftRotation(), progress),
             lerp(one.getScale(), that.getScale(), progress),
-            slerp(one.getRightRot(), that.getRightRot(), progress)
+            slerp(one.getRightRotation(), that.getRightRotation(), progress)
         );
     }
 
     public static boolean epsilonEquals(Vector4f v1, Vector4f v2, float epsilon)
     {
-        return MathHelper.abs(v1.x()-v2.x()) < epsilon &&
-               MathHelper.abs(v1.y()-v2.y()) < epsilon &&
-               MathHelper.abs(v1.z()-v2.z()) < epsilon &&
-               MathHelper.abs(v1.w()-v2.w()) < epsilon;
+        return Mth.abs(v1.x()-v2.x()) < epsilon &&
+               Mth.abs(v1.y()-v2.y()) < epsilon &&
+               Mth.abs(v1.z()-v2.z()) < epsilon &&
+               Mth.abs(v1.w()-v2.w()) < epsilon;
     }
 
-    public static class Deserializer implements JsonDeserializer<TransformationMatrix>
+    public static class Deserializer implements JsonDeserializer<Transformation>
     {
         private static final Vector3f ORIGIN_CORNER = new Vector3f();
         private static final Vector3f ORIGIN_OPPOSING_CORNER = new Vector3f(1f, 1f, 1f);
         private static final Vector3f ORIGIN_CENTER = new Vector3f(.5f, .5f, .5f);
 
         @Override
-        public TransformationMatrix deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
+        public Transformation deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException
         {
             if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString())
             {
                 String transform = json.getAsString();
                 if(transform.equals("identity"))
                 {
-                    return TransformationMatrix.identity();
+                    return Transformation.identity();
                 }
                 else
                 {
@@ -150,15 +155,15 @@ public final class TransformationHelper
             if (json.isJsonArray())
             {
                 // direct matrix array
-                return new TransformationMatrix(parseMatrix(json));
+                return new Transformation(parseMatrix(json));
             }
             if (!json.isJsonObject()) throw new JsonParseException("TRSR: expected array or object, got: " + json);
             JsonObject obj = json.getAsJsonObject();
-            TransformationMatrix ret;
+            Transformation ret;
             if (obj.has("matrix"))
             {
                 // matrix as a sole key
-                ret = new TransformationMatrix(parseMatrix(obj.get("matrix")));
+                ret = new Transformation(parseMatrix(obj.get("matrix")));
                 obj.remove("matrix");
                 if (obj.entrySet().size() != 0)
                 {
@@ -214,7 +219,7 @@ public final class TransformationHelper
                 obj.remove("origin");
             }
             if (!obj.entrySet().isEmpty()) throw new JsonParseException("TRSR: can either have single 'matrix' key, or a combination of 'translation', 'rotation', 'scale', 'post-rotation', 'origin'");
-            TransformationMatrix matrix = new TransformationMatrix(translation, leftRot, scale, rightRot);
+            Transformation matrix = new Transformation(translation, leftRot, scale, rightRot);
 
             // Use a different origin if needed.
             if (!ORIGIN_CENTER.equals(origin))

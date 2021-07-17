@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/NetherWartBlock.java
++++ b/net/minecraft/world/level/block/NetherWartBlock.java
+@@ -38,9 +_,10 @@
+ 
+    public void m_7455_(BlockState p_54981_, ServerLevel p_54982_, BlockPos p_54983_, Random p_54984_) {
+       int i = p_54981_.m_61143_(f_54967_);
+-      if (i < 3 && p_54984_.nextInt(10) == 0) {
++      if (i < 3 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_54982_, p_54983_, p_54981_, p_54984_.nextInt(10) == 0)) {
+          p_54981_ = p_54981_.m_61124_(f_54967_, Integer.valueOf(i + 1));
+          p_54982_.m_7731_(p_54983_, p_54981_, 2);
++         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_54982_, p_54983_, p_54981_);
+       }
+ 
+    }

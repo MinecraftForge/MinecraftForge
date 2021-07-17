@@ -1,0 +1,44 @@
+--- a/net/minecraft/data/loot/EntityLoot.java
++++ b/net/minecraft/data/loot/EntityLoot.java
+@@ -50,7 +_,7 @@
+       return LootTable.m_79147_().m_79161_(LootPool.m_79043_().m_165133_(ConstantValue.m_165692_(1.0F)).m_79076_(LootItem.m_79579_(p_124375_))).m_79161_(LootPool.m_79043_().m_165133_(ConstantValue.m_165692_(1.0F)).m_79076_(LootTableReference.m_79776_(EntityType.f_20520_.m_20677_())));
+    }
+ 
+-   public void accept(BiConsumer<ResourceLocation, LootTable.Builder> p_124377_) {
++   protected void addTables() {
+       this.m_124371_(EntityType.f_20529_, LootTable.m_79147_());
+       this.m_124371_(EntityType.f_147039_, LootTable.m_79147_());
+       this.m_124371_(EntityType.f_20549_, LootTable.m_79147_());
+@@ -144,11 +_,15 @@
+       this.m_124371_(EntityType.f_20511_, LootTable.m_79147_());
+       this.m_124371_(EntityType.f_20512_, LootTable.m_79147_());
+       this.m_124371_(EntityType.f_20530_, LootTable.m_79147_().m_79161_(LootPool.m_79043_().m_165133_(ConstantValue.m_165692_(1.0F)).m_79076_(LootItem.m_79579_(Items.f_42583_).m_5577_(SetItemCountFunction.m_165412_(UniformGenerator.m_165780_(0.0F, 2.0F))).m_5577_(LootingEnchantFunction.m_165229_(UniformGenerator.m_165780_(0.0F, 1.0F))))).m_79161_(LootPool.m_79043_().m_165133_(ConstantValue.m_165692_(1.0F)).m_79076_(LootItem.m_79579_(Items.f_42416_)).m_79076_(LootItem.m_79579_(Items.f_42619_)).m_79076_(LootItem.m_79579_(Items.f_42620_).m_5577_(SmeltItemFunction.m_81271_().m_6509_(LootItemEntityPropertyCondition.m_81864_(LootContext.EntityTarget.THIS, f_124366_)))).m_6509_(LootItemKilledByPlayerCondition.m_81901_()).m_6509_(LootItemRandomChanceWithLootingCondition.m_81963_(0.025F, 0.01F))));
++   }
++
++   public void accept(BiConsumer<ResourceLocation, LootTable.Builder> p_124377_) {
++      this.addTables();
+       Set<ResourceLocation> set = Sets.newHashSet();
+ 
+-      for(EntityType<?> entitytype : Registry.f_122826_) {
++      for(EntityType<?> entitytype : getKnownEntities()) {
+          ResourceLocation resourcelocation = entitytype.m_20677_();
+-         if (!f_124367_.contains(entitytype) && entitytype.m_20674_() == MobCategory.MISC) {
++         if (isNonLiving(entitytype)) {
+             if (resourcelocation != BuiltInLootTables.f_78712_ && this.f_124368_.remove(resourcelocation) != null) {
+                throw new IllegalStateException(String.format("Weird loottable '%s' for '%s', not a LivingEntity so should not have loot", resourcelocation, Registry.f_122826_.m_7981_(entitytype)));
+             }
+@@ -163,6 +_,14 @@
+       }
+ 
+       this.f_124368_.forEach(p_124377_::accept);
++   }
++
++   protected Iterable<EntityType<?>> getKnownEntities() {
++      return Registry.f_122826_;
++   }
++
++   protected boolean isNonLiving(EntityType<?> entitytype) {
++      return !f_124367_.contains(entitytype) && entitytype.m_20674_() == MobCategory.MISC;
+    }
+ 
+    protected void m_124371_(EntityType<?> p_124372_, LootTable.Builder p_124373_) {

@@ -19,8 +19,8 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.MovementInput;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.client.player.Input;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
 /**
@@ -29,15 +29,15 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
  */
 public class InputUpdateEvent extends PlayerEvent
 {
-    private final MovementInput movementInput;
+    private final Input movementInput;
 
-    public InputUpdateEvent(PlayerEntity player, MovementInput movementInput)
+    public InputUpdateEvent(Player player, Input movementInput)
     {
         super(player);
         this.movementInput = movementInput;
     }
 
-    public MovementInput getMovementInput()
+    public Input getMovementInput()
     {
         return movementInput;
     }

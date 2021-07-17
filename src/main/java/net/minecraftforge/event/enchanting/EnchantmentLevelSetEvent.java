@@ -19,10 +19,9 @@
 
 package net.minecraftforge.event.enchanting;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 
@@ -36,7 +35,7 @@ import javax.annotation.Nonnull;
  */
 public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Event
 {
-    private final World world;
+    private final Level world;
     private final BlockPos pos;
     private final int enchantRow;
     private final int power;
@@ -45,7 +44,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
     private final int originalLevel;
     private int level;
 
-    public EnchantmentLevelSetEvent(World world, BlockPos pos, int enchantRow, int power, @Nonnull ItemStack itemStack, int level)
+    public EnchantmentLevelSetEvent(Level world, BlockPos pos, int enchantRow, int power, @Nonnull ItemStack itemStack, int level)
     {
         this.world = world;
         this.pos = pos;
@@ -61,7 +60,7 @@ public class EnchantmentLevelSetEvent extends net.minecraftforge.eventbus.api.Ev
      * 
      * @return the world object
      */
-    public World getWorld()
+    public Level getWorld()
     {
         return world;
     }

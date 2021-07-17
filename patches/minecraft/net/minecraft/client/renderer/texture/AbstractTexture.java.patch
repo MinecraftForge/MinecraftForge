@@ -1,0 +1,23 @@
+--- a/net/minecraft/client/renderer/texture/AbstractTexture.java
++++ b/net/minecraft/client/renderer/texture/AbstractTexture.java
+@@ -36,6 +_,20 @@
+       GlStateManager.m_84331_(3553, 10240, j);
+    }
+ 
++   // FORGE: This seems to have been stripped out, but we need it
++   private boolean lastBlur;
++   private boolean lastMipmap;
++
++   public void setBlurMipmap(boolean blur, boolean mipmap) {
++      this.lastBlur = this.f_117951_;
++      this.lastMipmap = this.f_117952_;
++      m_117960_(blur, mipmap);
++   }
++
++   public void restoreLastBlurMipmap() {
++      m_117960_(this.lastBlur, this.lastMipmap);
++   }
++
+    public int m_117963_() {
+       RenderSystem.m_69393_(RenderSystem::m_69587_);
+       if (this.f_117950_ == -1) {

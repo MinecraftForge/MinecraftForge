@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/level/block/BushBlock.java
++++ b/net/minecraft/world/level/block/BushBlock.java
+@@ -10,7 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.pathfinder.PathComputationType;
+ 
+-public class BushBlock extends Block {
++public class BushBlock extends Block implements net.minecraftforge.common.IPlantable {
+    public BushBlock(BlockBehaviour.Properties p_51021_) {
+       super(p_51021_);
+    }
+@@ -25,6 +_,8 @@
+ 
+    public boolean m_7898_(BlockState p_51028_, LevelReader p_51029_, BlockPos p_51030_) {
+       BlockPos blockpos = p_51030_.m_7495_();
++      if (p_51028_.m_60734_() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++         return p_51029_.m_8055_(blockpos).canSustainPlant(p_51029_, blockpos, Direction.UP, this);
+       return this.m_6266_(p_51029_.m_8055_(blockpos), p_51029_, blockpos);
+    }
+ 
+@@ -34,5 +_,12 @@
+ 
+    public boolean m_7357_(BlockState p_51023_, BlockGetter p_51024_, BlockPos p_51025_, PathComputationType p_51026_) {
+       return p_51026_ == PathComputationType.AIR && !this.f_60443_ ? true : super.m_7357_(p_51023_, p_51024_, p_51025_, p_51026_);
++   }
++
++   @Override
++   public BlockState getPlant(BlockGetter world, BlockPos pos) {
++      BlockState state = world.m_8055_(pos);
++      if (state.m_60734_() != this) return m_49966_();
++      return state;
+    }
+ }

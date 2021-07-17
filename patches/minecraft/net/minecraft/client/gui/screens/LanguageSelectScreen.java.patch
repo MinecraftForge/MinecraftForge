@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/LanguageSelectScreen.java
++++ b/net/minecraft/client/gui/screens/LanguageSelectScreen.java
+@@ -36,7 +_,7 @@
+          if (languageselectscreen$languageselectionlist$entry != null && !languageselectscreen$languageselectionlist$entry.f_96116_.getCode().equals(this.f_96080_.m_118983_().getCode())) {
+             this.f_96080_.m_118974_(languageselectscreen$languageselectionlist$entry.f_96116_);
+             this.f_96282_.f_92075_ = languageselectscreen$languageselectionlist$entry.f_96116_.getCode();
+-            this.f_96541_.m_91391_();
++            net.minecraftforge.client.ForgeHooksClient.refreshResources(this.f_96541_, net.minecraftforge.resource.VanillaResourceType.LANGUAGES);
+             this.f_96282_.m_92169_();
+          }
+ 

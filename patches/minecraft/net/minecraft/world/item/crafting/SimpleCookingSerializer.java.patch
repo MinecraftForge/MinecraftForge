@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/item/crafting/SimpleCookingSerializer.java
++++ b/net/minecraft/world/item/crafting/SimpleCookingSerializer.java
+@@ -8,7 +_,7 @@
+ import net.minecraft.util.GsonHelper;
+ import net.minecraft.world.item.ItemStack;
+ 
+-public class SimpleCookingSerializer<T extends AbstractCookingRecipe> implements RecipeSerializer<T> {
++public class SimpleCookingSerializer<T extends AbstractCookingRecipe> extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<T> {
+    private final int f_44327_;
+    private final SimpleCookingSerializer.CookieBaker<T> f_44328_;
+ 
+@@ -21,11 +_,17 @@
+       String s = GsonHelper.m_13851_(p_44348_, "group", "");
+       JsonElement jsonelement = (JsonElement)(GsonHelper.m_13885_(p_44348_, "ingredient") ? GsonHelper.m_13933_(p_44348_, "ingredient") : GsonHelper.m_13930_(p_44348_, "ingredient"));
+       Ingredient ingredient = Ingredient.m_43917_(jsonelement);
++      //Forge: Check if primitive string to keep vanilla or a object which can contain a count field.
++      if (!p_44348_.has("result")) throw new com.google.gson.JsonSyntaxException("Missing result, expected to find a string or object");
++      ItemStack itemstack;
++      if (p_44348_.get("result").isJsonObject()) itemstack = ShapedRecipe.m_151274_(GsonHelper.m_13930_(p_44348_, "result"));
++      else {
+       String s1 = GsonHelper.m_13906_(p_44348_, "result");
+       ResourceLocation resourcelocation = new ResourceLocation(s1);
+-      ItemStack itemstack = new ItemStack(Registry.f_122827_.m_6612_(resourcelocation).orElseThrow(() -> {
++      itemstack = new ItemStack(Registry.f_122827_.m_6612_(resourcelocation).orElseThrow(() -> {
+          return new IllegalStateException("Item: " + s1 + " does not exist");
+       }));
++      }
+       float f = GsonHelper.m_13820_(p_44348_, "experience", 0.0F);
+       int i = GsonHelper.m_13824_(p_44348_, "cookingtime", this.f_44327_);
+       return this.f_44328_.m_44352_(p_44347_, s, ingredient, itemstack, f, i);

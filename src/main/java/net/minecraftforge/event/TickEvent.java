@@ -19,9 +19,9 @@
 
 package net.minecraftforge.event;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSide;
 
@@ -59,19 +59,19 @@ public class TickEvent extends Event
     }
 
     public static class WorldTickEvent extends TickEvent {
-        public final World world;
-        public WorldTickEvent(LogicalSide side, Phase phase, World world)
+        public final Level world;
+        public WorldTickEvent(LogicalSide side, Phase phase, Level world)
         {
             super(Type.WORLD, side, phase);
             this.world = world;
         }
     }
     public static class PlayerTickEvent extends TickEvent {
-        public final PlayerEntity player;
+        public final Player player;
 
-        public PlayerTickEvent(Phase phase, PlayerEntity player)
+        public PlayerTickEvent(Phase phase, Player player)
         {
-            super(Type.PLAYER, player instanceof ServerPlayerEntity ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
+            super(Type.PLAYER, player instanceof ServerPlayer ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
             this.player = player;
         }
     }

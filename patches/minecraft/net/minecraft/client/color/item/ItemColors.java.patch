@@ -1,0 +1,33 @@
+--- a/net/minecraft/client/color/item/ItemColors.java
++++ b/net/minecraft/client/color/item/ItemColors.java
+@@ -24,7 +_,8 @@
+ @OnlyIn(Dist.CLIENT)
+ public class ItemColors {
+    private static final int f_168642_ = -1;
+-   private final IdMapper<ItemColor> f_92674_ = new IdMapper<>(32);
++   // FORGE: Use RegistryDelegates as non-Vanilla item ids are not constant
++   private final java.util.Map<net.minecraftforge.registries.IRegistryDelegate<Item>, ItemColor> f_92674_ = new java.util.HashMap<>();
+ 
+    public static ItemColors m_92683_(BlockColors p_92684_) {
+       ItemColors itemcolors = new ItemColors();
+@@ -84,17 +_,18 @@
+       itemcolors.m_92689_((p_92693_, p_92694_) -> {
+          return p_92694_ == 0 ? -1 : MapItem.m_42918_(p_92693_);
+       }, Items.f_42573_);
++      net.minecraftforge.client.ForgeHooksClient.onItemColorsInit(itemcolors, p_92684_);
+       return itemcolors;
+    }
+ 
+    public int m_92676_(ItemStack p_92677_, int p_92678_) {
+-      ItemColor itemcolor = this.f_92674_.m_7942_(Registry.f_122827_.m_7447_(p_92677_.m_41720_()));
++      ItemColor itemcolor = this.f_92674_.get(p_92677_.m_41720_().delegate);
+       return itemcolor == null ? -1 : itemcolor.m_92671_(p_92677_, p_92678_);
+    }
+ 
+    public void m_92689_(ItemColor p_92690_, ItemLike... p_92691_) {
+       for(ItemLike itemlike : p_92691_) {
+-         this.f_92674_.m_122664_(p_92690_, Item.m_41393_(itemlike.m_5456_()));
++         this.f_92674_.put(itemlike.m_5456_().delegate, p_92690_);
+       }
+ 
+    }

@@ -19,25 +19,20 @@
 
 package net.minecraftforge.client.event;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.IGuiEventListener;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.screens.Screen;
 
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-
-import org.lwjgl.glfw.GLFW;
 
 /**
  * Event classes for GuiScreen events.
@@ -64,12 +59,12 @@ public class GuiScreenEvent extends Event
 
     public static class InitGuiEvent extends GuiScreenEvent
     {
-        private Consumer<Widget> add;
-        private Consumer<Widget> remove;
+        private Consumer<GuiEventListener> add;
+        private Consumer<GuiEventListener> remove;
 
-        private List<Widget> list;
+        private List<GuiEventListener> list;
 
-        public InitGuiEvent(Screen gui, List<Widget> list, Consumer<Widget> add, Consumer<Widget> remove)
+        public InitGuiEvent(Screen gui, List<GuiEventListener> list, Consumer<GuiEventListener> add, Consumer<GuiEventListener> remove)
         {
             super(gui);
             this.list = Collections.unmodifiableList(list);
@@ -80,17 +75,17 @@ public class GuiScreenEvent extends Event
         /**
          * Unmodifiable reference to the list of buttons on the {@link #gui}.
          */
-        public List<Widget> getWidgetList()
+        public List<GuiEventListener> getWidgetList()
         {
             return list;
         }
 
-        public void addWidget(Widget button)
+        public void addWidget(GuiEventListener button)
         {
             add.accept(button);
         }
 
-        public void removeWidget(Widget button)
+        public void removeWidget(GuiEventListener button)
         {
             remove.accept(button);
         }
@@ -107,7 +102,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends InitGuiEvent
         {
-            public Pre(Screen gui, List<Widget> list, Consumer<Widget> add, Consumer<Widget> remove)
+            public Pre(Screen gui, List<GuiEventListener> list, Consumer<GuiEventListener> add, Consumer<GuiEventListener> remove)
             {
                 super(gui, list, add, remove);
             }
@@ -119,7 +114,7 @@ public class GuiScreenEvent extends Event
          */
         public static class Post extends InitGuiEvent
         {
-            public Post(Screen gui, List<Widget> list, Consumer<Widget> add, Consumer<Widget> remove)
+            public Post(Screen gui, List<GuiEventListener> list, Consumer<GuiEventListener> add, Consumer<GuiEventListener> remove)
             {
                 super(gui, list, add, remove);
             }
@@ -128,12 +123,12 @@ public class GuiScreenEvent extends Event
 
     public static class DrawScreenEvent extends GuiScreenEvent
     {
-        private final MatrixStack mStack;
+        private final PoseStack mStack;
         private final int mouseX;
         private final int mouseY;
         private final float renderPartialTicks;
 
-        public DrawScreenEvent(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks)
+        public DrawScreenEvent(Screen gui, PoseStack mStack, int mouseX, int mouseY, float renderPartialTicks)
         {
             super(gui);
             this.mStack = mStack;
@@ -145,7 +140,7 @@ public class GuiScreenEvent extends Event
         /**
          * The MatrixStack to render with.
          */
-        public MatrixStack getMatrixStack()
+        public PoseStack getMatrixStack()
         {
             return mStack;
         }
@@ -181,7 +176,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends DrawScreenEvent
         {
-            public Pre(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks)
+            public Pre(Screen gui, PoseStack mStack, int mouseX, int mouseY, float renderPartialTicks)
             {
                 super(gui, mStack, mouseX, mouseY, renderPartialTicks);
             }
@@ -192,7 +187,7 @@ public class GuiScreenEvent extends Event
          */
         public static class Post extends DrawScreenEvent
         {
-            public Post(Screen gui, MatrixStack mStack, int mouseX, int mouseY, float renderPartialTicks)
+            public Post(Screen gui, PoseStack mStack, int mouseX, int mouseY, float renderPartialTicks)
             {
                 super(gui, mStack, mouseX, mouseY, renderPartialTicks);
             }
@@ -205,9 +200,9 @@ public class GuiScreenEvent extends Event
      */
     public static class BackgroundDrawnEvent extends GuiScreenEvent
     {
-        private final MatrixStack mStack;
+        private final PoseStack mStack;
 
-        public BackgroundDrawnEvent(Screen gui, MatrixStack mStack)
+        public BackgroundDrawnEvent(Screen gui, PoseStack mStack)
         {
             super(gui);
             this.mStack = mStack;
@@ -216,7 +211,7 @@ public class GuiScreenEvent extends Event
         /**
          * The MatrixStack to render with.
          */
-        public MatrixStack getMatrixStack()
+        public PoseStack getMatrixStack()
         {
             return mStack;
         }

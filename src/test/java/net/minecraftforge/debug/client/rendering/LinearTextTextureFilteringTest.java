@@ -19,7 +19,7 @@
 
 package net.minecraftforge.debug.client.rendering;
 
-import net.minecraft.client.gui.screen.MainMenuScreen;
+import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -36,7 +36,7 @@ public class LinearTextTextureFilteringTest
     @SubscribeEvent
     public static void onGuiRenderPre(DrawScreenEvent.Pre event)
     {
-        if (ENABLED && event.getGui() instanceof MainMenuScreen)
+        if (ENABLED && event.getGui() instanceof TitleScreen)
         {
             ForgeRenderTypes.enableTextTextureLinearFiltering = true;
         }
@@ -45,7 +45,7 @@ public class LinearTextTextureFilteringTest
     @SubscribeEvent
     public static void onGuiRenderPost(DrawScreenEvent.Post event)
     {
-        if (ENABLED && event.getGui() instanceof MainMenuScreen)
+        if (ENABLED && event.getGui() instanceof TitleScreen)
         {
             ForgeRenderTypes.enableTextTextureLinearFiltering = false;
         }

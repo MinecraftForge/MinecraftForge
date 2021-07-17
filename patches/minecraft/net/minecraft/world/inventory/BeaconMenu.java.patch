@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/inventory/BeaconMenu.java
++++ b/net/minecraft/world/inventory/BeaconMenu.java
+@@ -89,10 +_,8 @@
+             }
+ 
+             slot.m_40234_(itemstack1, itemstack);
+-         } else if (!this.f_39032_.m_6657_() && this.f_39032_.m_5857_(itemstack1) && itemstack1.m_41613_() == 1) {
+-            if (!this.m_38903_(itemstack1, 0, 1, false)) {
+-               return ItemStack.f_41583_;
+-            }
++         } else if (this.m_38903_(itemstack1, 0, 1, false)) { //Forge Fix Shift Clicking in beacons with stacks larger then 1.
++            return ItemStack.f_41583_;
+          } else if (p_39052_ >= 1 && p_39052_ < 28) {
+             if (!this.m_38903_(itemstack1, 28, 37, false)) {
+                return ItemStack.f_41583_;

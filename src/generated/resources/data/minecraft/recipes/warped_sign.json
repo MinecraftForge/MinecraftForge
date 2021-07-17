@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
-  "group": "sign",
+  "group": "wooden_sign",
   "pattern": [
     "###",
     "###",

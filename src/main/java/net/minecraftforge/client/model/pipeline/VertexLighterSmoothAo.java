@@ -19,8 +19,8 @@
 
 package net.minecraftforge.client.model.pipeline;
 
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.util.Mth;
 
 
 public class VertexLighterSmoothAo extends VertexLighterFlat
@@ -139,7 +139,7 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
         }
 
         l /= s;
-        l = MathHelper.clamp(l, 0, 1);
+        l = Mth.clamp(l, 0, 1);
         return l;
     }
 
@@ -164,7 +164,7 @@ public class VertexLighterSmoothAo extends VertexLighterFlat
         a += ao[sx - 0][sy - 0][sz - 1] * (0 + x) * (0 + y) * (1 - z);
         a += ao[sx - 0][sy - 0][sz - 0] * (0 + x) * (0 + y) * (0 + z);
 
-        a = MathHelper.clamp(a, 0, 1);
+        a = Mth.clamp(a, 0, 1);
         return a;
     }
 

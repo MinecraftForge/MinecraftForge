@@ -21,9 +21,9 @@ package net.minecraftforge.debug.chat;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.ParsedCommandNode;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.commands.CommandRuntimeException;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.event.CommandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,9 +41,9 @@ public class CommandEventTest
     @SubscribeEvent
     public static void onCommand(CommandEvent event)
     {
-        CommandDispatcher<CommandSource> dispatcher = event.getParseResults().getContext().getDispatcher();
-        List<ParsedCommandNode<CommandSource>> nodes = event.getParseResults().getContext().getNodes();
-        CommandSource source = event.getParseResults().getContext().getSource();
+        CommandDispatcher<CommandSourceStack> dispatcher = event.getParseResults().getContext().getDispatcher();
+        List<ParsedCommandNode<CommandSourceStack>> nodes = event.getParseResults().getContext().getNodes();
+        CommandSourceStack source = event.getParseResults().getContext().getSource();
 
         // test: when the /time command is used with no arguments, automatically add default arguments (/time set day)
         if (nodes.size() == 1 && nodes.get(0).getNode() == dispatcher.getRoot().getChild("time"))
@@ -56,17 +56,18 @@ public class CommandEventTest
         if (nodes.size() > 0 && nodes.get(0).getNode() == dispatcher.getRoot().getChild("give"))
         {
             String msg = source.getTextName() + " used the give command: " + event.getParseResults().getReader().getString();
-            source.getServer().getPlayerList().getPlayers().forEach(player -> player.sendMessage(new StringTextComponent(msg), player.getUUID()));
+            source.getServer().getPlayerList().getPlayers().forEach(player -> player.sendMessage(new TextComponent(msg), player.getUUID()));
             return;
         }
 
+        // this is annoying so I disabled it
         // test: when the /kill command is used with no arguments, throw a custom exception
-        if (nodes.size() == 1 && nodes.get(0).getNode() == dispatcher.getRoot().getChild("kill"))
-        {
-            event.setException(new CommandException(new StringTextComponent("You tried to use the /kill command with no arguments")));
-            event.setCanceled(true);
-            return;
-        }
+        // if (nodes.size() == 1 && nodes.get(0).getNode() == dispatcher.getRoot().getChild("kill"))
+        // {
+        //     event.setException(new CommandRuntimeException(new TextComponent("You tried to use the /kill command with no arguments")));
+        //     event.setCanceled(true);
+        //     return;
+        // }
     }
 
 }

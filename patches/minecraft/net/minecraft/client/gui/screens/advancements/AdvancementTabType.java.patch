@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/screens/advancements/AdvancementTabType.java
++++ b/net/minecraft/client/gui/screens/advancements/AdvancementTabType.java
+@@ -14,6 +_,7 @@
+    LEFT(0, 64, 32, 28, 5),
+    RIGHT(96, 64, 32, 28, 5);
+ 
++   public static final int MAX_TABS = java.util.Arrays.stream(values()).mapToInt(e -> e.f_97199_).sum();
+    private final int f_97195_;
+    private final int f_97196_;
+    private final int f_97197_;

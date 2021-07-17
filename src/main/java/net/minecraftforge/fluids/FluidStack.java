@@ -21,20 +21,19 @@ package net.minecraftforge.fluids;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IRegistryDelegate;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,7 +58,7 @@ public class FluidStack
             instance -> instance.group(
                     Registry.FLUID.fieldOf("FluidName").forGetter(FluidStack::getFluid),
                     Codec.INT.fieldOf("Amount").forGetter(FluidStack::getAmount),
-                    CompoundNBT.CODEC.optionalFieldOf("Tag").forGetter(stack -> Optional.ofNullable(stack.getTag()))
+                    CompoundTag.CODEC.optionalFieldOf("Tag").forGetter(stack -> Optional.ofNullable(stack.getTag()))
             ).apply(instance, (fluid, amount, tag) -> {
                 FluidStack stack = new FluidStack(fluid, amount);
                 tag.ifPresent(stack::setTag);
@@ -69,7 +68,7 @@ public class FluidStack
 
     private boolean isEmpty;
     private int amount;
-    private CompoundNBT tag;
+    private CompoundTag tag;
     private IRegistryDelegate<Fluid> fluidDelegate;
 
     public FluidStack(Fluid fluid, int amount)
@@ -90,7 +89,7 @@ public class FluidStack
         updateEmpty();
     }
 
-    public FluidStack(Fluid fluid, int amount, CompoundNBT nbt)
+    public FluidStack(Fluid fluid, int amount, CompoundTag nbt)
     {
         this(fluid, amount);
 
@@ -109,7 +108,7 @@ public class FluidStack
      * This provides a safe method for retrieving a FluidStack - if the Fluid is invalid, the stack
      * will return as null.
      */
-    public static FluidStack loadFluidStackFromNBT(CompoundNBT nbt)
+    public static FluidStack loadFluidStackFromNBT(CompoundTag nbt)
     {
         if (nbt == null)
         {
@@ -135,7 +134,7 @@ public class FluidStack
         return stack;
     }
 
-    public CompoundNBT writeToNBT(CompoundNBT nbt)
+    public CompoundTag writeToNBT(CompoundTag nbt)
     {
         nbt.putString("FluidName", getFluid().getRegistryName().toString());
         nbt.putInt("Amount", amount);
@@ -147,18 +146,18 @@ public class FluidStack
         return nbt;
     }
 
-    public void writeToPacket(PacketBuffer buf)
+    public void writeToPacket(FriendlyByteBuf buf)
     {
         buf.writeRegistryId(getFluid());
         buf.writeVarInt(getAmount());
         buf.writeNbt(tag);
     }
 
-    public static FluidStack readFromPacket(PacketBuffer buf)
+    public static FluidStack readFromPacket(FriendlyByteBuf buf)
     {
         Fluid fluid = buf.readRegistryId();
         int amount = buf.readVarInt();
-        CompoundNBT tag = buf.readNbt();
+        CompoundTag tag = buf.readNbt();
         if (fluid == Fluids.EMPTY) return EMPTY;
         return new FluidStack(fluid, amount, tag);
     }
@@ -206,35 +205,35 @@ public class FluidStack
         return tag != null;
     }
 
-    public CompoundNBT getTag()
+    public CompoundTag getTag()
     {
         return tag;
     }
 
-    public void setTag(CompoundNBT tag)
+    public void setTag(CompoundTag tag)
     {
         if (getRawFluid() == Fluids.EMPTY) throw new IllegalStateException("Can't modify the empty stack.");
         this.tag = tag;
     }
 
-    public CompoundNBT getOrCreateTag()
+    public CompoundTag getOrCreateTag()
     {
         if (tag == null)
-            setTag(new CompoundNBT());
+            setTag(new CompoundTag());
         return tag;
     }
 
-    public CompoundNBT getChildTag(String childName)
+    public CompoundTag getChildTag(String childName)
     {
         if (tag == null)
             return null;
         return tag.getCompound(childName);
     }
 
-    public CompoundNBT getOrCreateChildTag(String childName)
+    public CompoundTag getOrCreateChildTag(String childName)
     {
         getOrCreateTag();
-        CompoundNBT child = tag.getCompound(childName);
+        CompoundTag child = tag.getCompound(childName);
         if (!tag.contains(childName, Constants.NBT.TAG_COMPOUND))
         {
             tag.put(childName, child);
@@ -248,7 +247,7 @@ public class FluidStack
             tag.remove(childName);
     }
 
-    public ITextComponent getDisplayName()
+    public Component getDisplayName()
     {
         return this.getFluid().getAttributes().getDisplayName(this);
     }

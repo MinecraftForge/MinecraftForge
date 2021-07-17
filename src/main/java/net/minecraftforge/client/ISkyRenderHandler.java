@@ -19,9 +19,9 @@
 
 package net.minecraftforge.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.multiplayer.ClientLevel;
 
 /**
  * Call {@link net.minecraft.client.world.DimensionRenderInfo#setSkyRenderHandler(ISkyRenderHandler)}, obtained from a {@link ClientWorld} with an implementation of this to override all sky rendering with your own.
@@ -29,5 +29,5 @@ import net.minecraft.client.world.ClientWorld;
  */
 @FunctionalInterface
 public interface ISkyRenderHandler {
-    void render(int ticks, float partialTicks, MatrixStack matrixStack, ClientWorld world, Minecraft mc);
+    void render(int ticks, float partialTicks, PoseStack matrixStack, ClientLevel world, Minecraft mc);
 }

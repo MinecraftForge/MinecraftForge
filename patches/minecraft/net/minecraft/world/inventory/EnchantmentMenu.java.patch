@@ -1,0 +1,78 @@
+--- a/net/minecraft/world/inventory/EnchantmentMenu.java
++++ b/net/minecraft/world/inventory/EnchantmentMenu.java
+@@ -52,7 +_,7 @@
+       });
+       this.m_38897_(new Slot(this.f_39449_, 1, 35, 47) {
+          public boolean m_5857_(ItemStack p_39517_) {
+-            return p_39517_.m_150930_(Items.f_42534_);
++            return net.minecraftforge.common.Tags.Items.GEMS_LAPIS.m_8110_(p_39517_.m_41720_());
+          }
+       });
+ 
+@@ -78,40 +_,28 @@
+       this.m_38895_(DataSlot.m_39406_(this.f_39448_, 2));
+    }
+ 
++   private float getPower(net.minecraft.world.level.Level world, net.minecraft.core.BlockPos pos) {
++      return world.m_8055_(pos).getEnchantPowerBonus(world, pos);
++   }
++
+    public void m_6199_(Container p_39461_) {
+       if (p_39461_ == this.f_39449_) {
+          ItemStack itemstack = p_39461_.m_8020_(0);
+          if (!itemstack.m_41619_() && itemstack.m_41792_()) {
+             this.f_39450_.m_39292_((p_39485_, p_39486_) -> {
+-               int j = 0;
++               int power = 0;
+ 
+                for(int k = -1; k <= 1; ++k) {
+                   for(int l = -1; l <= 1; ++l) {
+                      if ((k != 0 || l != 0) && p_39485_.m_46859_(p_39486_.m_142082_(l, 0, k)) && p_39485_.m_46859_(p_39486_.m_142082_(l, 1, k))) {
+-                        if (p_39485_.m_8055_(p_39486_.m_142082_(l * 2, 0, k * 2)).m_60713_(Blocks.f_50078_)) {
+-                           ++j;
+-                        }
+-
+-                        if (p_39485_.m_8055_(p_39486_.m_142082_(l * 2, 1, k * 2)).m_60713_(Blocks.f_50078_)) {
+-                           ++j;
+-                        }
++                        power += getPower(p_39485_, p_39486_.m_142082_(l * 2, 0, k * 2));
++                        power += getPower(p_39485_, p_39486_.m_142082_(l * 2, 1, k * 2));
+ 
+                         if (l != 0 && k != 0) {
+-                           if (p_39485_.m_8055_(p_39486_.m_142082_(l * 2, 0, k)).m_60713_(Blocks.f_50078_)) {
+-                              ++j;
+-                           }
+-
+-                           if (p_39485_.m_8055_(p_39486_.m_142082_(l * 2, 1, k)).m_60713_(Blocks.f_50078_)) {
+-                              ++j;
+-                           }
+-
+-                           if (p_39485_.m_8055_(p_39486_.m_142082_(l, 0, k * 2)).m_60713_(Blocks.f_50078_)) {
+-                              ++j;
+-                           }
+-
+-                           if (p_39485_.m_8055_(p_39486_.m_142082_(l, 1, k * 2)).m_60713_(Blocks.f_50078_)) {
+-                              ++j;
+-                           }
++                           power += getPower(p_39485_, p_39486_.m_142082_(l * 2, 0, k));
++                           power += getPower(p_39485_, p_39486_.m_142082_(l * 2, 1, k));
++                           power += getPower(p_39485_, p_39486_.m_142082_(l, 0, k * 2));
++                           power += getPower(p_39485_, p_39486_.m_142082_(l, 1, k * 2));
+                         }
+                      }
+                   }
+@@ -120,12 +_,13 @@
+                this.f_39451_.setSeed((long)this.f_39452_.m_6501_());
+ 
+                for(int i1 = 0; i1 < 3; ++i1) {
+-                  this.f_39446_[i1] = EnchantmentHelper.m_44872_(this.f_39451_, i1, j, itemstack);
++                  this.f_39446_[i1] = EnchantmentHelper.m_44872_(this.f_39451_, i1, (int)power, itemstack);
+                   this.f_39447_[i1] = -1;
+                   this.f_39448_[i1] = -1;
+                   if (this.f_39446_[i1] < i1 + 1) {
+                      this.f_39446_[i1] = 0;
+                   }
++                  this.f_39446_[i1] = net.minecraftforge.event.ForgeEventFactory.onEnchantmentLevelSet(p_39485_, p_39486_, i1, (int)power, itemstack, f_39446_[i1]);
+                }
+ 
+                for(int j1 = 0; j1 < 3; ++j1) {

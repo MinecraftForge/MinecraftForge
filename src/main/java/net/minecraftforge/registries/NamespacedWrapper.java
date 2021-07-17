@@ -28,16 +28,16 @@ import java.util.Random;
 import java.util.Set;
 import javax.annotation.Nullable;
 
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.MappedRegistry;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.mojang.serialization.Lifecycle;
 
-class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry<T> implements ILockableRegistry
+class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends MappedRegistry<T> implements ILockableRegistry
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private boolean locked = false;
@@ -50,7 +50,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public <V extends T> V registerMapping(int id, RegistryKey<T> key, V value, Lifecycle lifecycle)
+    public <V extends T> V registerMapping(int id, ResourceKey<T> key, V value, Lifecycle lifecycle)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
@@ -67,13 +67,13 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public <R extends T> R register(RegistryKey<T> key, R value, Lifecycle lifecycle)
+    public <R extends T> R register(ResourceKey<T> key, R value, Lifecycle lifecycle)
     {
         return registerMapping(-1, key, value, lifecycle);
     }
 
     @Override
-    public <V extends T> V registerOrOverride(OptionalInt id, RegistryKey<T> key, V value, Lifecycle lifecycle) {
+    public <V extends T> V registerOrOverride(OptionalInt id, ResourceKey<T> key, V value, Lifecycle lifecycle) {
         int wanted = -1;
         if (id.isPresent() && byId(id.getAsInt()) != null)
             wanted = id.getAsInt();
@@ -96,7 +96,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
 
     @Override
     @Nullable
-    public T get(@Nullable RegistryKey<T> name)
+    public T get(@Nullable ResourceKey<T> name)
     {
         return name == null ? null : this.delegate.getRaw(name.location()); //get without default
     }
@@ -140,7 +140,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public Set<Map.Entry<RegistryKey<T>, T>> entrySet()
+    public Set<Map.Entry<ResourceKey<T>, T>> entrySet()
     {
         return this.delegate.getEntries();
     }

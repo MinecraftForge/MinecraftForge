@@ -20,8 +20,8 @@
 package net.minecraftforge.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.Camera;
+import net.minecraft.client.multiplayer.ClientLevel;
 
 /**
  * Call {@link net.minecraft.client.world.DimensionRenderInfo#setWeatherParticleRenderHandler(net.minecraftforge.client.IWeatherParticleRenderHandler)}, obtained from a {@link ClientWorld} with an implementation of this to override all weather particle rendering with your own.
@@ -30,5 +30,5 @@ import net.minecraft.client.world.ClientWorld;
  */
 @FunctionalInterface
 public interface IWeatherParticleRenderHandler {
-    void render(int ticks, ClientWorld world, Minecraft mc, ActiveRenderInfo activeRenderInfoIn);
+    void render(int ticks, ClientLevel world, Minecraft mc, Camera activeRenderInfoIn);
 }

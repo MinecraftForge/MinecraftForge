@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/entity/vehicle/MinecartFurnace.java
++++ b/net/minecraft/world/entity/vehicle/MinecartFurnace.java
+@@ -71,6 +_,11 @@
+       return (this.m_20069_() ? 3.0D : 4.0D) / 20.0D;
+    }
+ 
++   @Override
++   public float getMaxCartSpeedOnRail() {
++      return 0.2f;
++   }
++
+    public void m_7617_(DamageSource p_38560_) {
+       super.m_7617_(p_38560_);
+       if (!p_38560_.m_19372_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46137_)) {
+@@ -115,6 +_,8 @@
+    }
+ 
+    public InteractionResult m_6096_(Player p_38562_, InteractionHand p_38563_) {
++      InteractionResult ret = super.m_6096_(p_38562_, p_38563_);
++      if (ret.m_19077_()) return ret;
+       ItemStack itemstack = p_38562_.m_21120_(p_38563_);
+       if (f_38549_.test(itemstack) && this.f_38548_ + 3600 <= 32000) {
+          if (!p_38562_.m_150110_().f_35937_) {

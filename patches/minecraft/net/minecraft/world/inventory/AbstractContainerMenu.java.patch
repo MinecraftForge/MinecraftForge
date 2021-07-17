@@ -1,0 +1,43 @@
+--- a/net/minecraft/world/inventory/AbstractContainerMenu.java
++++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
+@@ -204,9 +_,11 @@
+    private void m_150407_(int p_150408_, ItemStack p_150409_, Supplier<ItemStack> p_150410_) {
+       ItemStack itemstack = this.f_38841_.get(p_150408_);
+       if (!ItemStack.m_41728_(itemstack, p_150409_)) {
++         boolean clientStackChanged = !p_150409_.equals(itemstack, true);
+          ItemStack itemstack1 = p_150410_.get();
+          this.f_38841_.set(p_150408_, itemstack1);
+ 
++         if(clientStackChanged)
+          for(ContainerListener containerlistener : this.f_38848_) {
+             containerlistener.m_7934_(this, p_150408_, itemstack1);
+          }
+@@ -592,14 +_,15 @@
+             ItemStack itemstack = slot.m_7993_();
+             if (!itemstack.m_41619_() && ItemStack.m_150942_(p_38904_, itemstack)) {
+                int j = itemstack.m_41613_() + p_38904_.m_41613_();
+-               if (j <= p_38904_.m_41741_()) {
++               int maxSize = Math.min(slot.m_6641_(), p_38904_.m_41741_());
++               if (j <= maxSize) {
+                   p_38904_.m_41764_(0);
+                   itemstack.m_41764_(j);
+                   slot.m_6654_();
+                   flag = true;
+-               } else if (itemstack.m_41613_() < p_38904_.m_41741_()) {
+-                  p_38904_.m_41774_(p_38904_.m_41741_() - itemstack.m_41613_());
+-                  itemstack.m_41764_(p_38904_.m_41741_());
++               } else if (itemstack.m_41613_() < maxSize) {
++                  p_38904_.m_41774_(maxSize - itemstack.m_41613_());
++                  itemstack.m_41764_(maxSize);
+                   slot.m_6654_();
+                   flag = true;
+                }
+@@ -699,7 +_,7 @@
+          p_38925_.m_41764_(1);
+          break;
+       case 2:
+-         p_38925_.m_41764_(p_38925_.m_41720_().m_41459_());
++         p_38925_.m_41764_(p_38925_.m_41741_());
+       }
+ 
+       p_38925_.m_41769_(p_38926_);

@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/MapRenderer.java
++++ b/net/minecraft/client/gui/MapRenderer.java
+@@ -123,6 +_,7 @@
+ 
+          for(MapDecoration mapdecoration : this.f_93280_.m_164811_()) {
+             if (!p_93294_ || mapdecoration.m_77809_()) {
++               if (mapdecoration.render(k)) { k++; continue; }
+                p_93292_.m_85836_();
+                p_93292_.m_85837_((double)(0.0F + (float)mapdecoration.m_77804_() / 2.0F + 64.0F), (double)(0.0F + (float)mapdecoration.m_77805_() / 2.0F + 64.0F), (double)-0.02F);
+                p_93292_.m_85845_(Vector3f.f_122227_.m_122240_((float)(mapdecoration.m_77806_() * 360) / 16.0F));

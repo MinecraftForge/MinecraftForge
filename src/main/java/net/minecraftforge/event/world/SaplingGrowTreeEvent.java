@@ -21,10 +21,8 @@ package net.minecraftforge.event.world;
 
 import java.util.Random;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
@@ -48,7 +46,7 @@ public class SaplingGrowTreeEvent extends WorldEvent
     private final BlockPos pos;
     private final Random rand;
 
-    public SaplingGrowTreeEvent(IWorld world, Random rand, BlockPos pos)
+    public SaplingGrowTreeEvent(LevelAccessor world, Random rand, BlockPos pos)
     {
         super(world);
         this.rand = rand;

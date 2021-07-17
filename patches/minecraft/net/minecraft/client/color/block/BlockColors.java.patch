@@ -1,0 +1,42 @@
+--- a/net/minecraft/client/color/block/BlockColors.java
++++ b/net/minecraft/client/color/block/BlockColors.java
+@@ -28,7 +_,8 @@
+ @OnlyIn(Dist.CLIENT)
+ public class BlockColors {
+    private static final int f_168640_ = -1;
+-   private final IdMapper<BlockColor> f_92571_ = new IdMapper<>(32);
++   // FORGE: Use RegistryDelegates as non-Vanilla block ids are not constant
++   private final java.util.Map<net.minecraftforge.registries.IRegistryDelegate<Block>, BlockColor> f_92571_ = new java.util.HashMap<>();
+    private final Map<Block, Set<Property<?>>> f_92572_ = Maps.newHashMap();
+ 
+    public static BlockColors m_92574_() {
+@@ -73,11 +_,12 @@
+       blockcolors.m_92589_((p_92596_, p_92597_, p_92598_, p_92599_) -> {
+          return p_92597_ != null && p_92598_ != null ? 2129968 : 7455580;
+       }, Blocks.f_50196_);
++      net.minecraftforge.client.ForgeHooksClient.onBlockColorsInit(blockcolors);
+       return blockcolors;
+    }
+ 
+    public int m_92582_(BlockState p_92583_, Level p_92584_, BlockPos p_92585_) {
+-      BlockColor blockcolor = this.f_92571_.m_7942_(Registry.f_122824_.m_7447_(p_92583_.m_60734_()));
++      BlockColor blockcolor = this.f_92571_.get(p_92583_.m_60734_().delegate);
+       if (blockcolor != null) {
+          return blockcolor.m_92566_(p_92583_, (BlockAndTintGetter)null, (BlockPos)null, 0);
+       } else {
+@@ -87,13 +_,13 @@
+    }
+ 
+    public int m_92577_(BlockState p_92578_, @Nullable BlockAndTintGetter p_92579_, @Nullable BlockPos p_92580_, int p_92581_) {
+-      BlockColor blockcolor = this.f_92571_.m_7942_(Registry.f_122824_.m_7447_(p_92578_.m_60734_()));
++      BlockColor blockcolor = this.f_92571_.get(p_92578_.m_60734_().delegate);
+       return blockcolor == null ? -1 : blockcolor.m_92566_(p_92578_, p_92579_, p_92580_, p_92581_);
+    }
+ 
+    public void m_92589_(BlockColor p_92590_, Block... p_92591_) {
+       for(Block block : p_92591_) {
+-         this.f_92571_.m_122664_(p_92590_, Registry.f_122824_.m_7447_(block));
++         this.f_92571_.put(block.delegate, p_92590_);
+       }
+ 
+    }

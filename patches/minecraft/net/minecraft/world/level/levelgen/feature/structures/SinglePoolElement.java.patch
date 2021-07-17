@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/feature/structures/SinglePoolElement.java
++++ b/net/minecraft/world/level/levelgen/feature/structures/SinglePoolElement.java
+@@ -112,7 +_,7 @@
+       if (!structuretemplate.m_74536_(p_69123_, p_69126_, p_69127_, structureplacesettings, p_69130_, 18)) {
+          return false;
+       } else {
+-         for(StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : StructureTemplate.m_74517_(p_69123_, p_69126_, p_69127_, structureplacesettings, this.m_69141_(p_69122_, p_69126_, p_69128_, false))) {
++         for(StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : StructureTemplate.processBlockInfos(p_69123_, p_69126_, p_69127_, structureplacesettings, this.m_69141_(p_69122_, p_69126_, p_69128_, false), structuretemplate)) {
+             this.m_69157_(p_69123_, structuretemplate$structureblockinfo, p_69126_, p_69128_, p_69130_, p_69129_);
+          }
+ 

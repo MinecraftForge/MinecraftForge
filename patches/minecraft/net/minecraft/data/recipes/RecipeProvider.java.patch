@@ -1,0 +1,28 @@
+--- a/net/minecraft/data/recipes/RecipeProvider.java
++++ b/net/minecraft/data/recipes/RecipeProvider.java
+@@ -106,6 +_,7 @@
+ 
+          }
+       });
++      if (this.getClass() == RecipeProvider.class) //Forge: Subclasses don't need this.
+       m_126013_(p_125982_, Advancement.Builder.m_138353_().m_138386_("impossible", new ImpossibleTrigger.TriggerInstance()).m_138400_(), path.resolve("data/minecraft/advancements/recipes/root.json"));
+    }
+ 
+@@ -143,7 +_,7 @@
+ 
+    }
+ 
+-   protected static void m_126013_(HashCache p_126014_, JsonObject p_126015_, Path p_126016_) {
++   protected void m_126013_(HashCache p_126014_, JsonObject p_126015_, Path p_126016_) {
+       try {
+          String s = f_125969_.toJson((JsonElement)p_126015_);
+          String s1 = f_123918_.hashUnencodedChars(s).toString();
+@@ -177,7 +_,7 @@
+ 
+    }
+ 
+-   protected static void m_176531_(Consumer<FinishedRecipe> p_176532_) {
++   protected void m_176531_(Consumer<FinishedRecipe> p_176532_) {
+       BlockFamilies.m_175934_().filter(BlockFamily::m_175956_).forEach((p_176624_) -> {
+          m_176580_(p_176532_, p_176624_);
+       });

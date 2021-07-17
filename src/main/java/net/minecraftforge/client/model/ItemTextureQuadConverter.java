@@ -21,12 +21,12 @@ package net.minecraftforge.client.model;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.TransformationMatrix;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
+import net.minecraft.core.Direction;
+import com.mojang.math.Transformation;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.TRSRTransformer;
@@ -52,11 +52,11 @@ public final class ItemTextureQuadConverter
      * @param sprite   The texture whose UVs shall be used
      * @return The generated quads.
      */
-    public static List<BakedQuad> convertTexture(TransformationMatrix transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
+    public static List<BakedQuad> convertTexture(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
     {
         return convertTexture(transform, template, sprite, z, facing, color, tint, 0);
     }
-    public static List<BakedQuad> convertTexture(TransformationMatrix transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity)
+    public static List<BakedQuad> convertTexture(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity)
     {
         List<BakedQuad> horizontal = convertTextureHorizontal(transform, template, sprite, z, facing, color, tint, luminosity);
         List<BakedQuad> vertical = convertTextureVertical(transform, template, sprite, z, facing, color, tint, luminosity);
@@ -68,11 +68,11 @@ public final class ItemTextureQuadConverter
      * Scans a texture and converts it into a list of horizontal strips stacked on top of each other.
      * The height of the strips is as big as possible.
      */
-    public static List<BakedQuad> convertTextureHorizontal(TransformationMatrix transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
+    public static List<BakedQuad> convertTextureHorizontal(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
     {
         return convertTextureHorizontal(transform, template, sprite, z, facing, color, tint, 0);
     }
-    public static List<BakedQuad> convertTextureHorizontal(TransformationMatrix transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity)
+    public static List<BakedQuad> convertTextureHorizontal(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity)
     {
         int w = template.getWidth();
         int h = template.getHeight();
@@ -150,11 +150,11 @@ public final class ItemTextureQuadConverter
      * Scans a texture and converts it into a list of vertical strips stacked next to each other from left to right.
      * The width of the strips is as big as possible.
      */
-    public static List<BakedQuad> convertTextureVertical(TransformationMatrix transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
+    public static List<BakedQuad> convertTextureVertical(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
     {
         return convertTextureVertical(transform, template, sprite, z, facing, color, tint, 0);
     }
-    public static List<BakedQuad> convertTextureVertical(TransformationMatrix transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity)
+    public static List<BakedQuad> convertTextureVertical(Transformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint, int luminosity)
     {
         int w = template.getWidth();
         int h = template.getHeight();
@@ -237,11 +237,11 @@ public final class ItemTextureQuadConverter
      * Generates a Front/Back quad for an itemmodel. Therefore only supports facing NORTH and SOUTH.
      * Coordinates are [0,16] to match the usual coordinates used in TextureAtlasSprites
      */
-    public static BakedQuad genQuad(TransformationMatrix transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, Direction facing, int color, int tint)
+    public static BakedQuad genQuad(Transformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, Direction facing, int color, int tint)
     {
         return genQuad(transform, x1, y1, x2, y2, z, sprite, facing, color, tint, 0);
     }
-    public static BakedQuad genQuad(TransformationMatrix transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, Direction facing, int color, int tint, int luminosity)
+    public static BakedQuad genQuad(Transformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, Direction facing, int color, int tint, int luminosity)
     {
         float u1 = sprite.getU(x1);
         float v1 = sprite.getV(y1);
@@ -260,7 +260,7 @@ public final class ItemTextureQuadConverter
         return putQuad(transform, facing, sprite, color, tint, x1, y1, x2, y2, z, u1, v1, u2, v2, luminosity);
     }
 
-    private static BakedQuad putQuad(TransformationMatrix transform, Direction side, TextureAtlasSprite sprite, int color, int tint,
+    private static BakedQuad putQuad(Transformation transform, Direction side, TextureAtlasSprite sprite, int color, int tint,
                                              float x1, float y1, float x2, float y2, float z,
                                              float u1, float v1, float u2, float v2, int luminosity)
     {

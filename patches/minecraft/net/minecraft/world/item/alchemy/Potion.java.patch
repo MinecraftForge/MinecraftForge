@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/item/alchemy/Potion.java
++++ b/net/minecraft/world/item/alchemy/Potion.java
+@@ -7,7 +_,8 @@
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.world.effect.MobEffectInstance;
+ 
+-public class Potion {
++public class Potion extends net.minecraftforge.registries.ForgeRegistryEntry<Potion> {
++   private final net.minecraftforge.common.util.ReverseTagWrapper<Potion> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<Potion>(this, () -> net.minecraft.tags.SerializationTags.m_13199_().m_144452_(Registry.f_122905_));
+    private final String f_43481_;
+    private final ImmutableList<MobEffectInstance> f_43482_;
+ 
+@@ -22,6 +_,14 @@
+    public Potion(@Nullable String p_43484_, MobEffectInstance... p_43485_) {
+       this.f_43481_ = p_43484_;
+       this.f_43482_ = ImmutableList.copyOf(p_43485_);
++   }
++
++   public java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
++      return reverseTags.getTagNames();
++   }
++
++   public boolean is(net.minecraft.tags.Tag<Potion> tag) {
++      return tag.m_8110_(this);
+    }
+ 
+    public String m_43492_(String p_43493_) {

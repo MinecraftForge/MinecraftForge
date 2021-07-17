@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/item/Items.java
++++ b/net/minecraft/world/item/Items.java
+@@ -14,6 +_,7 @@
+ import net.minecraft.world.level.block.entity.BannerPattern;
+ import net.minecraft.world.level.material.Fluids;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class Items {
+    public static final Item f_41852_ = m_42810_(Blocks.f_50016_, new AirItem(Blocks.f_50016_, new Item.Properties()));
+    public static final Item f_41905_ = m_42807_(Blocks.f_50069_, CreativeModeTab.f_40749_);

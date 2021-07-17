@@ -21,7 +21,7 @@ package net.minecraftforge.client.event;
 
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.screens.Screen;
 
 /**
  * This event is called before any Gui will open.

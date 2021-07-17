@@ -36,16 +36,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.common.crafting.conditions.IConditionSerializer;
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.apache.logging.log4j.LogManager;
@@ -85,7 +85,7 @@ public class CraftingHelper
     {
         return ingredients.inverse().get(serializer);
     }
-    public static <T extends Ingredient> void write(PacketBuffer buffer, T ingredient)
+    public static <T extends Ingredient> void write(FriendlyByteBuf buffer, T ingredient)
     {
         @SuppressWarnings("unchecked") //I wonder if there is a better way generic wise...
         IIngredientSerializer<T> serializer = (IIngredientSerializer<T>)ingredient.getSerializer();
@@ -100,7 +100,7 @@ public class CraftingHelper
         serializer.write(buffer, ingredient);
     }
 
-    public static Ingredient getIngredient(ResourceLocation type, PacketBuffer buffer)
+    public static Ingredient getIngredient(ResourceLocation type, FriendlyByteBuf buffer)
     {
         IIngredientSerializer<?> serializer = ingredients.get(type);
         if (serializer == null)
@@ -144,7 +144,7 @@ public class CraftingHelper
 
         JsonObject obj = (JsonObject)json;
 
-        String type = JSONUtils.getAsString(obj, "type", "minecraft:item");
+        String type = GsonHelper.getAsString(obj, "type", "minecraft:item");
         if (type.isEmpty())
             throw new JsonSyntaxException("Ingredient type can not be an empty string");
 
@@ -157,7 +157,7 @@ public class CraftingHelper
 
     public static ItemStack getItemStack(JsonObject json, boolean readNBT)
     {
-        String itemName = JSONUtils.getAsString(json, "item");
+        String itemName = GsonHelper.getAsString(json, "item");
 
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
 
@@ -170,13 +170,13 @@ public class CraftingHelper
             try
             {
                 JsonElement element = json.get("nbt");
-                CompoundNBT nbt;
+                CompoundTag nbt;
                 if(element.isJsonObject())
-                    nbt = JsonToNBT.parseTag(GSON.toJson(element));
+                    nbt = TagParser.parseTag(GSON.toJson(element));
                 else
-                    nbt = JsonToNBT.parseTag(JSONUtils.convertToString(element, "nbt"));
+                    nbt = TagParser.parseTag(GsonHelper.convertToString(element, "nbt"));
 
-                CompoundNBT tmp = new CompoundNBT();
+                CompoundTag tmp = new CompoundTag();
                 if (nbt.contains("ForgeCaps"))
                 {
                     tmp.put("ForgeCaps", nbt.get("ForgeCaps"));
@@ -185,7 +185,7 @@ public class CraftingHelper
 
                 tmp.put("tag", nbt);
                 tmp.putString("id", itemName);
-                tmp.putInt("Count", JSONUtils.getAsInt(json, "count", 1));
+                tmp.putInt("Count", GsonHelper.getAsInt(json, "count", 1));
 
                 return ItemStack.of(tmp);
             }
@@ -195,12 +195,12 @@ public class CraftingHelper
             }
         }
 
-        return new ItemStack(item, JSONUtils.getAsInt(json, "count", 1));
+        return new ItemStack(item, GsonHelper.getAsInt(json, "count", 1));
     }
 
     public static boolean processConditions(JsonObject json, String memberName)
     {
-        return !json.has(memberName) || processConditions(JSONUtils.getAsJsonArray(json, memberName));
+        return !json.has(memberName) || processConditions(GsonHelper.getAsJsonArray(json, memberName));
     }
 
     public static boolean processConditions(JsonArray conditions)
@@ -219,7 +219,7 @@ public class CraftingHelper
 
     public static ICondition getCondition(JsonObject json)
     {
-        ResourceLocation type = new ResourceLocation(JSONUtils.getAsString(json, "type"));
+        ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(json, "type"));
         IConditionSerializer<?> serializer = conditions.get(type);
         if (serializer == null)
             throw new JsonSyntaxException("Unknown condition type: " + type.toString());

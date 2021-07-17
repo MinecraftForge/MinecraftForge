@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/screens/DeathScreen.java
++++ b/net/minecraft/client/gui/screens/DeathScreen.java
+@@ -37,6 +_,7 @@
+       })));
+       this.f_169295_.add(this.m_142416_(new Button(this.f_96543_ / 2 - 100, this.f_96544_ / 4 + 96, 200, 20, new TranslatableComponent("deathScreen.titleScreen"), (p_95925_) -> {
+          if (this.f_95908_) {
++            m_95931_(true);
+             this.m_95934_();
+          } else {
+             ConfirmScreen confirmscreen = new ConfirmScreen(this::m_95931_, new TranslatableComponent("deathScreen.quit.confirm"), TextComponent.f_131282_, new TranslatableComponent("deathScreen.titleScreen"), new TranslatableComponent("deathScreen.respawn"));

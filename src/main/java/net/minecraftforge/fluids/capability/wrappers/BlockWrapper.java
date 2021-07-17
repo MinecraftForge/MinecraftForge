@@ -19,10 +19,10 @@
 
 package net.minecraftforge.fluids.capability.wrappers;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ILiquidContainer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.LiquidBlockContainer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
@@ -39,10 +39,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 public class BlockWrapper extends VoidFluidHandler
 {
     protected final BlockState state;
-    protected final World world;
+    protected final Level world;
     protected final BlockPos blockPos;
 
-    public BlockWrapper(BlockState state, World world, BlockPos blockPos)
+    public BlockWrapper(BlockState state, Level world, BlockPos blockPos)
     {
         this.state = state;
         this.world = world;
@@ -67,11 +67,11 @@ public class BlockWrapper extends VoidFluidHandler
 
     public static class LiquidContainerBlockWrapper extends VoidFluidHandler
     {
-        protected final ILiquidContainer liquidContainer;
-        protected final World world;
+        protected final LiquidBlockContainer liquidContainer;
+        protected final Level world;
         protected final BlockPos blockPos;
 
-        public LiquidContainerBlockWrapper(ILiquidContainer liquidContainer, World world, BlockPos blockPos)
+        public LiquidContainerBlockWrapper(LiquidBlockContainer liquidContainer, Level world, BlockPos blockPos)
         {
             this.liquidContainer = liquidContainer;
             this.world = world;

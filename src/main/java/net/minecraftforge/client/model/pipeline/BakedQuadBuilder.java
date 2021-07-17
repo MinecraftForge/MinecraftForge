@@ -21,12 +21,12 @@ package net.minecraftforge.client.model.pipeline;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.util.Direction;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
+import net.minecraft.core.Direction;
 
 /**
  * Allows easier building of BakedQuad objects. During building, data is stored
@@ -34,7 +34,7 @@ import net.minecraft.util.Direction;
  */
 public class BakedQuadBuilder implements IVertexConsumer
 {
-    private static final int SIZE = DefaultVertexFormats.BLOCK.getElements().size();
+    private static final int SIZE = DefaultVertexFormat.BLOCK.getElements().size();
     
     private final float[][][] unpackedData = new float[4][SIZE][4];
     private int tint = -1;
@@ -62,7 +62,7 @@ public class BakedQuadBuilder implements IVertexConsumer
     @Override
     public VertexFormat getVertexFormat()
     {
-        return DefaultVertexFormats.BLOCK;
+        return DefaultVertexFormat.BLOCK;
     }
 
     @Override
@@ -134,7 +134,7 @@ public class BakedQuadBuilder implements IVertexConsumer
             float tS = tX > tY ? tX : tY;
             float ep = 1f / (tS * 0x100);
             int uve = 0;
-            ImmutableList<VertexFormatElement> elements = DefaultVertexFormats.BLOCK.getElements();
+            ImmutableList<VertexFormatElement> elements = DefaultVertexFormat.BLOCK.getElements();
             while(uve < elements.size())
             {
                 VertexFormatElement e = elements.get(uve);
@@ -182,12 +182,12 @@ public class BakedQuadBuilder implements IVertexConsumer
                 }
             }
         }
-        int[] packed = new int[DefaultVertexFormats.BLOCK.getIntegerSize() * 4];
+        int[] packed = new int[DefaultVertexFormat.BLOCK.getIntegerSize() * 4];
         for (int v = 0; v < 4; v++)
         {
             for (int e = 0; e < SIZE; e++)
             {
-                LightUtil.pack(unpackedData[v][e], packed, DefaultVertexFormats.BLOCK, v, e);
+                LightUtil.pack(unpackedData[v][e], packed, DefaultVertexFormat.BLOCK, v, e);
             }
         }
         return new BakedQuad(packed, tint, orientation, texture, applyDiffuseLighting);

@@ -1,0 +1,18 @@
+--- a/com/mojang/math/Vector4f.java
++++ b/com/mojang/math/Vector4f.java
+@@ -147,4 +_,15 @@
+    public String toString() {
+       return "[" + this.f_123589_ + ", " + this.f_123590_ + ", " + this.f_123591_ + ", " + this.f_123592_ + "]";
+    }
++
++    public void set(float[] values) {
++        this.f_123589_ = values[0];
++        this.f_123590_ = values[1];
++        this.f_123591_ = values[2];
++        this.f_123592_ = values[3];
++    }
++    public void setX(float x) { this.f_123589_ = x; }
++    public void setY(float y) { this.f_123590_ = y; }
++    public void setZ(float z) { this.f_123591_ = z; }
++    public void setW(float w) { this.f_123592_ = w; }
+ }

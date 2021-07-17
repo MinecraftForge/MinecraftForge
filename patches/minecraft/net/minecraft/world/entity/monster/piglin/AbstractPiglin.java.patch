@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
++++ b/net/minecraft/world/entity/monster/piglin/AbstractPiglin.java
+@@ -80,9 +_,10 @@
+          ++this.f_34649_;
+       } else {
+          this.f_34649_ = 0;
++         this.f_34649_ = 0;
+       }
+ 
+-      if (this.f_34649_ > 300) {
++      if (this.f_34649_ > 300 && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20531_, (timer) -> this.f_34649_ = timer)) {
+          this.m_7580_();
+          this.m_8063_((ServerLevel)this.f_19853_);
+       }
+@@ -97,6 +_,7 @@
+       ZombifiedPiglin zombifiedpiglin = this.m_21406_(EntityType.f_20531_, true);
+       if (zombifiedpiglin != null) {
+          zombifiedpiglin.m_7292_(new MobEffectInstance(MobEffects.f_19604_, 200, 0));
++         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, zombifiedpiglin);
+       }
+ 
+    }

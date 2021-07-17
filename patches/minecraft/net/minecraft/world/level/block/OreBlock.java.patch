@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/OreBlock.java
++++ b/net/minecraft/world/level/block/OreBlock.java
+@@ -23,12 +_,10 @@
+ 
+    public void m_8101_(BlockState p_55142_, ServerLevel p_55143_, BlockPos p_55144_, ItemStack p_55145_) {
+       super.m_8101_(p_55142_, p_55143_, p_55144_, p_55145_);
+-      if (EnchantmentHelper.m_44843_(Enchantments.f_44985_, p_55145_) == 0) {
+-         int i = this.f_153990_.m_142270_(p_55143_.f_46441_);
+-         if (i > 0) {
+-            this.m_49805_(p_55143_, p_55144_, i);
+-         }
+-      }
++   }
+ 
++   @Override
++   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader reader, BlockPos pos, int fortune, int silktouch) {
++      return silktouch == 0 ? this.f_153990_.m_142270_(RANDOM) : 0;
+    }
+ }

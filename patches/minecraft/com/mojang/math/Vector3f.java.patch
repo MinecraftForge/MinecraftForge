@@ -1,0 +1,19 @@
+--- a/com/mojang/math/Vector3f.java
++++ b/com/mojang/math/Vector3f.java
+@@ -207,4 +_,16 @@
+    public String toString() {
+       return "[" + this.f_122228_ + ", " + this.f_122229_ + ", " + this.f_122230_ + "]";
+    }
++
++    public Vector3f(float[] values) {
++        set(values);
++    }
++    public void set(float[] values) {
++        this.f_122228_ = values[0];
++        this.f_122229_ = values[1];
++        this.f_122230_ = values[2];
++    }
++    public void setX(float x) { this.f_122228_ = x; }
++    public void setY(float y) { this.f_122229_ = y; }
++    public void setZ(float z) { this.f_122230_ = z; }
+ }

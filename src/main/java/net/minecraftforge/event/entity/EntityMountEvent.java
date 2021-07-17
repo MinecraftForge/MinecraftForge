@@ -19,11 +19,9 @@
 
 package net.minecraftforge.event.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * This event gets fired whenever a entity mounts/dismounts another entity.<br>
@@ -45,11 +43,11 @@ public class EntityMountEvent extends EntityEvent
 
     private final Entity entityMounting;
     private final Entity entityBeingMounted;
-    private final World worldObj;
+    private final Level worldObj;
 
     private final boolean isMounting;
 
-    public EntityMountEvent(Entity entityMounting, Entity entityBeingMounted, World entityWorld, boolean isMounting)
+    public EntityMountEvent(Entity entityMounting, Entity entityBeingMounted, Level entityWorld, boolean isMounting)
     {
         super(entityMounting);
         this.entityMounting = entityMounting;
@@ -78,7 +76,7 @@ public class EntityMountEvent extends EntityEvent
         return entityBeingMounted;
     }
 
-    public World getWorldObj()
+    public Level getWorldObj()
     {
         return worldObj;
     }

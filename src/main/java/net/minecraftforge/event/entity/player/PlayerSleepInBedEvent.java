@@ -19,10 +19,9 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerEntity.SleepResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Player.BedSleepingProblem;
+import net.minecraft.core.BlockPos;
 
 import java.util.Optional;
 
@@ -40,21 +39,21 @@ import java.util.Optional;
  **/
 public class PlayerSleepInBedEvent extends PlayerEvent
 {
-    private SleepResult result = null;
+    private BedSleepingProblem result = null;
     private final Optional<BlockPos> pos;
 
-    public PlayerSleepInBedEvent(PlayerEntity player, Optional<BlockPos> pos)
+    public PlayerSleepInBedEvent(Player player, Optional<BlockPos> pos)
     {
         super(player);
         this.pos = pos;
     }
 
-    public SleepResult getResultStatus()
+    public BedSleepingProblem getResultStatus()
     {
         return result;
     }
 
-    public void setResult(SleepResult result)
+    public void setResult(BedSleepingProblem result)
     {
         this.result = result;
     }

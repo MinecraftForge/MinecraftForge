@@ -19,16 +19,16 @@
 
 package net.minecraftforge.client.model;
 
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.SimpleBakedModel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.resources.model.SimpleBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 public interface IModelBuilder<T extends IModelBuilder<T>>
 {
-    static IModelBuilder<?> of(IModelConfiguration owner, ItemOverrideList overrides, TextureAtlasSprite particle)
+    static IModelBuilder<?> of(IModelConfiguration owner, ItemOverrides overrides, TextureAtlasSprite particle)
     {
         return new Simple(new SimpleBakedModel.Builder(owner, overrides).particle(particle));
     }
@@ -36,7 +36,7 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
     T addFaceQuad(Direction facing, BakedQuad quad);
     T addGeneralQuad(BakedQuad quad);
 
-    IBakedModel build();
+    BakedModel build();
 
     class Simple implements IModelBuilder<Simple> {
         final SimpleBakedModel.Builder builder;
@@ -61,7 +61,7 @@ public interface IModelBuilder<T extends IModelBuilder<T>>
         }
 
         @Override
-        public IBakedModel build()
+        public BakedModel build()
         {
             return builder.build();
         }

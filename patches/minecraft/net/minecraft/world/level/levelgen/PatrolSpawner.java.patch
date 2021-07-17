@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/levelgen/PatrolSpawner.java
++++ b/net/minecraft/world/level/levelgen/PatrolSpawner.java
+@@ -103,6 +_,7 @@
+             }
+ 
+             patrollingmonster.m_6034_((double)p_64566_.m_123341_(), (double)p_64566_.m_123342_(), (double)p_64566_.m_123343_());
++            if(net.minecraftforge.common.ForgeHooks.canEntitySpawn(patrollingmonster, p_64565_, p_64566_.m_123341_(), p_64566_.m_123342_(), p_64566_.m_123343_(), null, MobSpawnType.PATROL) == -1) return false;
+             patrollingmonster.m_6518_(p_64565_, p_64565_.m_6436_(p_64566_), MobSpawnType.PATROL, (SpawnGroupData)null, (CompoundTag)null);
+             p_64565_.m_47205_(patrollingmonster);
+             return true;

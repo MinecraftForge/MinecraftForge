@@ -1,0 +1,70 @@
+--- a/net/minecraft/world/level/block/piston/PistonStructureResolver.java
++++ b/net/minecraft/world/level/block/piston/PistonStructureResolver.java
+@@ -51,7 +_,7 @@
+       } else {
+          for(int i = 0; i < this.f_60414_.size(); ++i) {
+             BlockPos blockpos = this.f_60414_.get(i);
+-            if (m_155937_(this.f_60409_.m_8055_(blockpos)) && !this.m_60431_(blockpos)) {
++            if (this.f_60409_.m_8055_(blockpos).isStickyBlock() && !this.m_60431_(blockpos)) {
+                return false;
+             }
+          }
+@@ -60,23 +_,9 @@
+       }
+    }
+ 
+-   private static boolean m_155937_(BlockState p_155938_) {
+-      return p_155938_.m_60713_(Blocks.f_50374_) || p_155938_.m_60713_(Blocks.f_50719_);
+-   }
+-
+-   private static boolean m_155939_(BlockState p_155940_, BlockState p_155941_) {
+-      if (p_155940_.m_60713_(Blocks.f_50719_) && p_155941_.m_60713_(Blocks.f_50374_)) {
+-         return false;
+-      } else if (p_155940_.m_60713_(Blocks.f_50374_) && p_155941_.m_60713_(Blocks.f_50719_)) {
+-         return false;
+-      } else {
+-         return m_155937_(p_155940_) || m_155937_(p_155941_);
+-      }
+-   }
+-
+    private boolean m_60433_(BlockPos p_60434_, Direction p_60435_) {
+       BlockState blockstate = this.f_60409_.m_8055_(p_60434_);
+-      if (blockstate.m_60795_()) {
++      if (f_60409_.m_46859_(p_60434_)) {
+          return true;
+       } else if (!PistonBaseBlock.m_60204_(blockstate, this.f_60409_, p_60434_, this.f_60413_, false, p_60435_)) {
+          return true;
+@@ -89,11 +_,12 @@
+          if (i + this.f_60414_.size() > 12) {
+             return false;
+          } else {
+-            while(m_155937_(blockstate)) {
++            BlockState oldState;
++            while(blockstate.isStickyBlock()) {
+                BlockPos blockpos = p_60434_.m_5484_(this.f_60413_.m_122424_(), i);
+-               BlockState blockstate1 = blockstate;
++               oldState = blockstate;
+                blockstate = this.f_60409_.m_8055_(blockpos);
+-               if (blockstate.m_60795_() || !m_155939_(blockstate1, blockstate) || !PistonBaseBlock.m_60204_(blockstate, this.f_60409_, blockpos, this.f_60413_, false, this.f_60413_.m_122424_()) || blockpos.equals(this.f_60410_)) {
++               if (blockstate.m_60795_() || !oldState.canStickTo(blockstate) || !PistonBaseBlock.m_60204_(blockstate, this.f_60409_, blockpos, this.f_60413_, false, this.f_60413_.m_122424_()) || blockpos.equals(this.f_60410_)) {
+                   break;
+                }
+ 
+@@ -120,7 +_,7 @@
+ 
+                   for(int k = 0; k <= j + l; ++k) {
+                      BlockPos blockpos2 = this.f_60414_.get(k);
+-                     if (m_155937_(this.f_60409_.m_8055_(blockpos2)) && !this.m_60431_(blockpos2)) {
++                     if (this.f_60409_.m_8055_(blockpos2).isStickyBlock() && !this.m_60431_(blockpos2)) {
+                         return false;
+                      }
+                   }
+@@ -174,7 +_,7 @@
+          if (direction.m_122434_() != this.f_60413_.m_122434_()) {
+             BlockPos blockpos = p_60432_.m_142300_(direction);
+             BlockState blockstate1 = this.f_60409_.m_8055_(blockpos);
+-            if (m_155939_(blockstate1, blockstate) && !this.m_60433_(blockpos, direction)) {
++            if (blockstate1.canStickTo(blockstate) && !this.m_60433_(blockpos, direction)) {
+                return false;
+             }
+          }

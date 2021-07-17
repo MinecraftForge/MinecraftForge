@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/item/crafting/RecipeSerializer.java
++++ b/net/minecraft/world/item/crafting/RecipeSerializer.java
+@@ -5,7 +_,7 @@
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.resources.ResourceLocation;
+ 
+-public interface RecipeSerializer<T extends Recipe<?>> {
++public interface RecipeSerializer<T extends Recipe<?>> extends net.minecraftforge.registries.IForgeRegistryEntry<RecipeSerializer<?>> {
+    RecipeSerializer<ShapedRecipe> f_44076_ = m_44098_("crafting_shaped", new ShapedRecipe.Serializer());
+    RecipeSerializer<ShapelessRecipe> f_44077_ = m_44098_("crafting_shapeless", new ShapelessRecipe.Serializer());
+    SimpleRecipeSerializer<ArmorDyeRecipe> f_44078_ = m_44098_("crafting_special_armordye", new SimpleRecipeSerializer<>(ArmorDyeRecipe::new));
+@@ -30,6 +_,7 @@
+ 
+    T m_6729_(ResourceLocation p_44103_, JsonObject p_44104_);
+ 
++   @javax.annotation.Nullable
+    T m_8005_(ResourceLocation p_44105_, FriendlyByteBuf p_44106_);
+ 
+    void m_6178_(FriendlyByteBuf p_44101_, T p_44102_);

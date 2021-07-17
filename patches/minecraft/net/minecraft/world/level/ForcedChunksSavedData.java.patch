@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/level/ForcedChunksSavedData.java
++++ b/net/minecraft/world/level/ForcedChunksSavedData.java
+@@ -19,15 +_,31 @@
+    }
+ 
+    public static ForcedChunksSavedData m_151483_(CompoundTag p_151484_) {
+-      return new ForcedChunksSavedData(new LongOpenHashSet(p_151484_.m_128467_("Forced")));
++      ForcedChunksSavedData savedData = new ForcedChunksSavedData(new LongOpenHashSet(p_151484_.m_128467_("Forced")));
++      net.minecraftforge.common.world.ForgeChunkManager.readForgeForcedChunks(p_151484_, savedData.blockForcedChunks, savedData.entityForcedChunks);
++      return savedData;
+    }
+ 
+    public CompoundTag m_7176_(CompoundTag p_46120_) {
+       p_46120_.m_128388_("Forced", this.f_46114_.toLongArray());
++      net.minecraftforge.common.world.ForgeChunkManager.writeForgeForcedChunks(p_46120_, this.blockForcedChunks, this.entityForcedChunks);
+       return p_46120_;
+    }
+ 
+    public LongSet m_46116_() {
+       return this.f_46114_;
++   }
++
++   /* ======================================== FORGE START =====================================*/
++   // TODO: not sure if these are being written correctly. load used to refer to these directly.
++   private net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<net.minecraft.core.BlockPos> blockForcedChunks = new net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<>();
++   private net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<java.util.UUID> entityForcedChunks = new net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<>();
++
++   public net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<net.minecraft.core.BlockPos> getBlockForcedChunks() {
++      return this.blockForcedChunks;
++   }
++
++   public net.minecraftforge.common.world.ForgeChunkManager.TicketTracker<java.util.UUID> getEntityForcedChunks() {
++      return this.entityForcedChunks;
+    }
+ }

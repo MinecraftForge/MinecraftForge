@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/projectile/Projectile.java
++++ b/net/minecraft/world/entity/projectile/Projectile.java
+@@ -211,7 +_,7 @@
+       if (entity instanceof Player) {
+          return entity.m_142265_(p_150167_, p_150168_);
+       } else {
+-         return entity == null || p_150167_.m_46469_().m_46207_(GameRules.f_46132_);
++         return entity == null || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_150167_, entity);
+       }
+    }
+ }

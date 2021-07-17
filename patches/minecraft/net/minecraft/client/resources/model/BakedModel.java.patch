@@ -1,0 +1,28 @@
+--- a/net/minecraft/client/resources/model/BakedModel.java
++++ b/net/minecraft/client/resources/model/BakedModel.java
+@@ -13,7 +_,9 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public interface BakedModel {
++public interface BakedModel extends net.minecraftforge.client.extensions.IForgeBakedModel {
++   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getQuads(BlockState, Direction, Random, net.minecraftforge.client.model.data.IModelData)}*/
++   @Deprecated
+    List<BakedQuad> m_6840_(@Nullable BlockState p_119123_, @Nullable Direction p_119124_, Random p_119125_);
+ 
+    boolean m_7541_();
+@@ -24,9 +_,13 @@
+ 
+    boolean m_7521_();
+ 
++   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getParticleIcon(net.minecraftforge.client.model.data.IModelData)}*/
++   @Deprecated
+    TextureAtlasSprite m_6160_();
+ 
+-   ItemTransforms m_7442_();
++   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#handlePerspective(ItemTransforms.TransformType, com.mojang.blaze3d.vertex.PoseStack)} instead */
++   @Deprecated
++   default ItemTransforms m_7442_() { return ItemTransforms.f_111786_; }
+ 
+    ItemOverrides m_7343_();
+ }

@@ -20,12 +20,12 @@
 package net.minecraftforge.common.data;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.FluidTagsProvider;
+import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraftforge.common.ForgeMod;
 
 import static net.minecraftforge.common.Tags.Fluids.MILK;
 
-public class ForgeFluidTagsProvider extends FluidTagsProvider
+public final class ForgeFluidTagsProvider extends FluidTagsProvider
 {
     public ForgeFluidTagsProvider(DataGenerator gen, ExistingFileHelper existingFileHelper)
     {

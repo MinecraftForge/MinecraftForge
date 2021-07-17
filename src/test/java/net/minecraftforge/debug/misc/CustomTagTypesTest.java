@@ -23,23 +23,24 @@ import com.google.common.collect.Sets;
 import java.util.Set;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
+import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.PotionItem;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionUtils;
-import net.minecraft.potion.Potions;
-import net.minecraft.tags.ITag;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.item.alchemy.Potions;
+import net.minecraft.tags.Tag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagCollectionManager;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.SerializationTags;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -47,9 +48,9 @@ import net.minecraftforge.common.data.ForgeRegistryTagsProvider;
 import net.minecraftforge.common.util.ReverseTagWrapper;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -69,11 +70,11 @@ public class CustomTagTypesTest
     private static final RegistryObject<Custom> CUSTOM = CUSTOMS.register("custom", Custom::new);
     private static final Supplier<IForgeRegistry<Custom>> CUSTOM_REG = CUSTOMS.makeRegistry(customRegistryName.getPath(),
           () -> new RegistryBuilder<Custom>().tagFolder(MODID + "/custom_types"));
-    private static final ITag.INamedTag<Custom> TESTS = ForgeTagHandler.createOptionalTag(customRegistryName, new ResourceLocation(MODID, "tests"), Sets.newHashSet(CUSTOM));
-    private static final ITag.INamedTag<Item> OPTIONAL_TEST = ItemTags.createOptional(new ResourceLocation(MODID, "optional_test"), Sets.newHashSet(() -> Items.BONE));
-    private static final ITag.INamedTag<Enchantment> FIRE = ForgeTagHandler.createOptionalTag(ForgeRegistries.ENCHANTMENTS, new ResourceLocation(MODID, "fire"));
-    private static final ITag.INamedTag<Potion> DAMAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.POTION_TYPES, new ResourceLocation(MODID, "damage"));
-    private static final ITag.INamedTag<TileEntityType<?>> STORAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.TILE_ENTITIES, new ResourceLocation(MODID, "storage"));
+    private static final Tag.Named<Custom> TESTS = ForgeTagHandler.createOptionalTag(customRegistryName, new ResourceLocation(MODID, "tests"), Sets.newHashSet(CUSTOM));
+    private static final Tag.Named<Item> OPTIONAL_TEST = ItemTags.createOptional(new ResourceLocation(MODID, "optional_test"), Sets.newHashSet(() -> Items.BONE));
+    private static final Tag.Named<Enchantment> FIRE = ForgeTagHandler.createOptionalTag(ForgeRegistries.ENCHANTMENTS, new ResourceLocation(MODID, "fire"));
+    private static final Tag.Named<Potion> DAMAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.POTION_TYPES, new ResourceLocation(MODID, "damage"));
+    private static final Tag.Named<BlockEntityType<?>> STORAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCK_ENTITIES, new ResourceLocation(MODID, "storage"));
 
     public CustomTagTypesTest()
     {
@@ -92,7 +93,7 @@ public class CustomTagTypesTest
             gen.addProvider(new CustomRegistryTags(gen, existingFileHelper));
             gen.addProvider(new EnchantmentTags(gen, existingFileHelper));
             gen.addProvider(new PotionTags(gen, existingFileHelper));
-            gen.addProvider(new TileEntityTypeTags(gen, existingFileHelper));
+            gen.addProvider(new BlockEntityTypeTags(gen, existingFileHelper));
         }
     }
 
@@ -101,11 +102,11 @@ public class CustomTagTypesTest
         ItemStack itemStack = event.getItemStack();
         if (!itemStack.isEmpty())
         {
-            LOGGER.info("{} {} {}", Items.BONE.getTags(), OPTIONAL_TEST.getValues().size(), TagCollectionManager.getInstance().getItems().getTag(new ResourceLocation(MODID, "optional_test")));
+            LOGGER.info("{} {} {}", Items.BONE.getTags(), OPTIONAL_TEST.getValues().size(), SerializationTags.getInstance().getOrEmpty(Registry.ITEM_REGISTRY).getTag(new ResourceLocation(MODID, "optional_test")));
             EnchantmentHelper.getEnchantments(itemStack).forEach((enchantment, level) -> logTagsIfPresent(enchantment.getTags()));
             if (itemStack.getItem() instanceof PotionItem) logTagsIfPresent(PotionUtils.getPotion(itemStack).getTags());
-            TileEntity tileEntity = event.getWorld().getBlockEntity(event.getPos());
-            if (tileEntity != null) logTagsIfPresent(tileEntity.getType().getTags());
+            BlockEntity blockEntity = event.getWorld().getBlockEntity(event.getPos());
+            if (blockEntity != null) logTagsIfPresent(blockEntity.getType().getTags());
         }
     }
 
@@ -119,14 +120,14 @@ public class CustomTagTypesTest
 
     public static class Custom extends ForgeRegistryEntry<Custom>
     {
-        private final ReverseTagWrapper<Custom> reverseTags = new ReverseTagWrapper<>(this, () -> TagCollectionManager.getInstance().getCustomTypeCollection(CUSTOM_REG.get()));
+        private final ReverseTagWrapper<Custom> reverseTags = new ReverseTagWrapper<>(this, () -> SerializationTags.getInstance().getCustomTypeCollection(CUSTOM_REG.get()));
 
         public Set<ResourceLocation> getTags()
         {
             return reverseTags.getTagNames();
         }
 
-        public boolean isIn(ITag<Custom> tag)
+        public boolean isIn(Tag<Custom> tag)
         {
             return tag.contains(this);
         }
@@ -192,17 +193,17 @@ public class CustomTagTypesTest
         }
     }
 
-    public static class TileEntityTypeTags extends ForgeRegistryTagsProvider<TileEntityType<?>>
+    public static class BlockEntityTypeTags extends ForgeRegistryTagsProvider<BlockEntityType<?>>
     {
-        public TileEntityTypeTags(DataGenerator gen, @Nullable ExistingFileHelper existingFileHelper)
+        public BlockEntityTypeTags(DataGenerator gen, @Nullable ExistingFileHelper existingFileHelper)
         {
-            super(gen, ForgeRegistries.TILE_ENTITIES, MODID, existingFileHelper);
+            super(gen, ForgeRegistries.BLOCK_ENTITIES, MODID, existingFileHelper);
         }
 
         @Override
         protected void addTags()
         {
-            tag(STORAGE).add(TileEntityType.BARREL, TileEntityType.CHEST, TileEntityType.ENDER_CHEST);
+            tag(STORAGE).add(BlockEntityType.BARREL, BlockEntityType.CHEST, BlockEntityType.ENDER_CHEST);
         }
 
         @Override

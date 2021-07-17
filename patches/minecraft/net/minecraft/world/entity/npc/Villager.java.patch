@@ -1,0 +1,38 @@
+--- a/net/minecraft/world/entity/npc/Villager.java
++++ b/net/minecraft/world/entity/npc/Villager.java
+@@ -250,7 +_,7 @@
+ 
+    public InteractionResult m_6071_(Player p_35472_, InteractionHand p_35473_) {
+       ItemStack itemstack = p_35472_.m_21120_(p_35473_);
+-      if (!itemstack.m_150930_(Items.f_42601_) && this.m_6084_() && !this.m_35306_() && !this.m_5803_()) {
++      if (itemstack.m_41720_() != Items.f_42601_ && this.m_6084_() && !this.m_35306_() && !this.m_5803_() && !p_35472_.m_36341_()) {
+          if (this.m_6162_()) {
+             this.m_35518_();
+             return InteractionResult.m_19078_(this.f_19853_.f_46443_);
+@@ -651,7 +_,8 @@
+    }
+ 
+    protected Component m_5677_() {
+-      return new TranslatableComponent(this.m_6095_().m_20675_() + "." + Registry.f_122869_.m_7981_(this.m_7141_().m_35571_()).m_135815_());
++      net.minecraft.resources.ResourceLocation profName = this.m_7141_().m_35571_().getRegistryName();
++      return new TranslatableComponent(this.m_6095_().m_20675_() + '.' + (!"minecraft".equals(profName.m_135827_()) ? profName.m_135827_() + '.' : "") + profName.m_135815_());
+    }
+ 
+    public void m_7822_(byte p_35391_) {
+@@ -703,7 +_,7 @@
+    }
+ 
+    public void m_8038_(ServerLevel p_35409_, LightningBolt p_35410_) {
+-      if (p_35409_.m_46791_() != Difficulty.PEACEFUL) {
++      if (p_35409_.m_46791_() != Difficulty.PEACEFUL && net.minecraftforge.event.ForgeEventFactory.canLivingConvert(this, EntityType.f_20495_, (timer) -> {})) {
+          f_19849_.info("Villager {} was struck by lightning {}.", this, p_35410_);
+          Witch witch = EntityType.f_20495_.m_20615_(p_35409_);
+          witch.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146908_(), this.m_146909_());
+@@ -715,6 +_,7 @@
+          }
+ 
+          witch.m_21530_();
++         net.minecraftforge.event.ForgeEventFactory.onLivingConvert(this, witch);
+          p_35409_.m_47205_(witch);
+          this.m_35524_();
+          this.m_146870_();

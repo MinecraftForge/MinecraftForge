@@ -1,0 +1,66 @@
+--- a/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerLoginPacketListenerImpl.java
+@@ -59,7 +_,13 @@
+    }
+ 
+    public void m_10050_() {
+-      if (this.f_10019_ == ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT) {
++      if (this.f_10019_ == State.NEGOTIATING) {
++         // We force the state into "NEGOTIATING" which is otherwise unused. Once we're completed we move the negotiation onto "READY_TO_ACCEPT"
++         // Might want to promote player object creation to here as well..
++         boolean negotiationComplete = net.minecraftforge.fmllegacy.network.NetworkHooks.tickNegotiation(this, this.f_10013_, this.f_10024_);
++         if (negotiationComplete)
++            this.f_10019_ = State.READY_TO_ACCEPT;
++      } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT) {
+          this.m_10055_();
+       } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.DELAY_ACCEPT) {
+          ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
+@@ -146,7 +_,7 @@
+          this.f_10019_ = ServerLoginPacketListenerImpl.State.KEY;
+          this.f_10013_.m_129512_(new ClientboundHelloPacket("", this.f_10018_.m_129790_().getPublic().getEncoded(), this.f_10017_));
+       } else {
+-         this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
++         this.f_10019_ = ServerLoginPacketListenerImpl.State.NEGOTIATING;
+       }
+ 
+    }
+@@ -171,7 +_,7 @@
+          throw new IllegalStateException("Protocol error", cryptexception);
+       }
+ 
+-      Thread thread = new Thread("User Authenticator #" + f_10014_.incrementAndGet()) {
++      Thread thread = new Thread(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER, "User Authenticator #" + f_10014_.incrementAndGet()) {
+          public void run() {
+             GameProfile gameprofile = ServerLoginPacketListenerImpl.this.f_10021_;
+ 
+@@ -179,11 +_,11 @@
+                ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.f_10018_.m_129925_().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.m_10064_());
+                if (ServerLoginPacketListenerImpl.this.f_10021_ != null) {
+                   ServerLoginPacketListenerImpl.f_10015_.info("UUID of player {} is {}", ServerLoginPacketListenerImpl.this.f_10021_.getName(), ServerLoginPacketListenerImpl.this.f_10021_.getId());
+-                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
++                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.NEGOTIATING;
+                } else if (ServerLoginPacketListenerImpl.this.f_10018_.m_129792_()) {
+                   ServerLoginPacketListenerImpl.f_10015_.warn("Failed to verify username but will let them in anyway!");
+                   ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.m_10038_(gameprofile);
+-                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
++                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.NEGOTIATING;
+                } else {
+                   ServerLoginPacketListenerImpl.this.m_10053_(new TranslatableComponent("multiplayer.disconnect.unverified_username"));
+                   ServerLoginPacketListenerImpl.f_10015_.error("Username '{}' tried to join with an invalid session", (Object)gameprofile.getName());
+@@ -192,7 +_,7 @@
+                if (ServerLoginPacketListenerImpl.this.f_10018_.m_129792_()) {
+                   ServerLoginPacketListenerImpl.f_10015_.warn("Authentication servers are down but will let them in anyway!");
+                   ServerLoginPacketListenerImpl.this.f_10021_ = ServerLoginPacketListenerImpl.this.m_10038_(gameprofile);
+-                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.READY_TO_ACCEPT;
++                  ServerLoginPacketListenerImpl.this.f_10019_ = ServerLoginPacketListenerImpl.State.NEGOTIATING;
+                } else {
+                   ServerLoginPacketListenerImpl.this.m_10053_(new TranslatableComponent("multiplayer.disconnect.authservers_down"));
+                   ServerLoginPacketListenerImpl.f_10015_.error("Couldn't verify username because servers are unavailable");
+@@ -212,6 +_,7 @@
+    }
+ 
+    public void m_7223_(ServerboundCustomQueryPacket p_10045_) {
++      if (!net.minecraftforge.fmllegacy.network.NetworkHooks.onCustomPayload(p_10045_, this.f_10013_))
+       this.m_10053_(new TranslatableComponent("multiplayer.disconnect.unexpected_query_response"));
+    }
+ 

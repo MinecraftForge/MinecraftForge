@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/block/TrapDoorBlock.java
++++ b/net/minecraft/world/level/block/TrapDoorBlock.java
+@@ -152,4 +_,17 @@
+ 
+       return super.m_7417_(p_57554_, p_57555_, p_57556_, p_57557_, p_57558_, p_57559_);
+    }
++
++   //Forge Start
++   @Override
++   public boolean isLadder(BlockState state, net.minecraft.world.level.LevelReader world, BlockPos pos, net.minecraft.world.entity.LivingEntity entity) {
++      if (state.m_61143_(f_57514_)) {
++         BlockPos downPos = pos.m_7495_();
++         BlockState down = world.m_8055_(downPos);
++         return down.m_60734_().makesOpenTrapdoorAboveClimbable(down, world, downPos, state);
++      }
++      return false;
++   }
++   //Forge End
++
+ }

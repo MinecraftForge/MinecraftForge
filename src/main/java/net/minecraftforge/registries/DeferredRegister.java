@@ -19,12 +19,11 @@
 
 package net.minecraftforge.registries;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -34,8 +33,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
-
-import com.google.common.reflect.TypeToken;
 
 /**
  * Utility class to help with managing registry entries.

@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/renderer/block/model/ItemTransforms.java
++++ b/net/minecraft/client/renderer/block/model/ItemTransforms.java
+@@ -25,6 +_,7 @@
+       this(ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_, ItemTransform.f_111754_);
+    }
+ 
++   @Deprecated
+    public ItemTransforms(ItemTransforms p_111807_) {
+       this.f_111787_ = p_111807_.f_111787_;
+       this.f_111788_ = p_111807_.f_111788_;
+@@ -36,6 +_,7 @@
+       this.f_111794_ = p_111807_.f_111794_;
+    }
+ 
++   @Deprecated
+    public ItemTransforms(ItemTransform p_111798_, ItemTransform p_111799_, ItemTransform p_111800_, ItemTransform p_111801_, ItemTransform p_111802_, ItemTransform p_111803_, ItemTransform p_111804_, ItemTransform p_111805_) {
+       this.f_111787_ = p_111798_;
+       this.f_111788_ = p_111799_;
+@@ -47,6 +_,7 @@
+       this.f_111794_ = p_111805_;
+    }
+ 
++   @Deprecated
+    public ItemTransform m_111808_(ItemTransforms.TransformType p_111809_) {
+       switch(p_111809_) {
+       case THIRD_PERSON_LEFT_HAND:

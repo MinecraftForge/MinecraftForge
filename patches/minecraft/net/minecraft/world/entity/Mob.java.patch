@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/entity/Mob.java
++++ b/net/minecraft/world/entity/Mob.java
+@@ -202,6 +_,7 @@
+ 
+    public void m_6710_(@Nullable LivingEntity p_21544_) {
+       this.f_21362_ = p_21544_;
++      net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_21544_);
+    }
+ 
+    public boolean m_6549_(EntityType<?> p_21399_) {
+@@ -489,7 +_,7 @@
+    public void m_8107_() {
+       super.m_8107_();
+       this.f_19853_.m_46473_().m_6180_("looting");
+-      if (!this.f_19853_.f_46443_ && this.m_21531_() && this.m_6084_() && !this.f_20890_ && this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
++      if (!this.f_19853_.f_46443_ && this.m_21531_() && this.m_6084_() && !this.f_20890_ && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this)) {
+          for(ItemEntity itementity : this.f_19853_.m_45976_(ItemEntity.class, this.m_142469_().m_82377_(1.0D, 0.0D, 1.0D))) {
+             if (!itementity.m_146910_() && !itementity.m_32055_().m_41619_() && !itementity.m_32063_() && this.m_7243_(itementity.m_32055_())) {
+                this.m_7581_(itementity);
+@@ -642,6 +_,14 @@
+          this.m_146870_();
+       } else if (!this.m_21532_() && !this.m_8023_()) {
+          Entity entity = this.f_19853_.m_45930_(this, -1.0D);
++         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
++         if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) {
++            f_20891_ = 0;
++            entity = null;
++         } else if (result == net.minecraftforge.eventbus.api.Event.Result.ALLOW) {
++            this.remove(false);
++            entity = null;
++         }
+          if (entity != null) {
+             double d0 = entity.m_20280_(this);
+             int i = this.m_6095_().m_20674_().m_21611_();

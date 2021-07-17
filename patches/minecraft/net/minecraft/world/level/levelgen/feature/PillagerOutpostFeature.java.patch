@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/levelgen/feature/PillagerOutpostFeature.java
++++ b/net/minecraft/world/level/levelgen/feature/PillagerOutpostFeature.java
+@@ -20,8 +_,9 @@
+       super(p_66562_, 0, true, true);
+    }
+ 
+-   public WeightedRandomList<MobSpawnSettings.SpawnerData> m_142494_() {
+-      return f_66559_;
++   @Override
++   public java.util.List<MobSpawnSettings.SpawnerData> getDefaultSpawnList() {
++      return f_66559_.m_146338_();
+    }
+ 
+    protected boolean m_142290_(ChunkGenerator p_160197_, BiomeSource p_160198_, long p_160199_, WorldgenRandom p_160200_, ChunkPos p_160201_, Biome p_160202_, ChunkPos p_160203_, JigsawConfiguration p_160204_, LevelHeightAccessor p_160205_) {

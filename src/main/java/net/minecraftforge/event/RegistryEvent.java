@@ -22,11 +22,11 @@ package net.minecraftforge.event;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
+import net.minecraftforge.fml.event.IModBusEvent;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraftforge.registries.IForgeRegistry;

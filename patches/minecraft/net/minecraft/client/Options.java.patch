@@ -1,0 +1,59 @@
+--- a/net/minecraft/client/Options.java
++++ b/net/minecraft/client/Options.java
+@@ -179,6 +_,7 @@
+    public boolean f_92076_;
+ 
+    public Options(Minecraft p_92138_, File p_92139_) {
++      setForgeKeybindProperties();
+       this.f_92060_ = p_92138_;
+       this.f_92110_ = new File(p_92139_, "options.txt");
+       if (p_92138_.m_91103_() && Runtime.getRuntime().maxMemory() >= 1000000000L) {
+@@ -283,10 +_,14 @@
+       this.f_92076_ = p_168428_.m_142682_("syncChunkWrites", this.f_92076_);
+ 
+       for(KeyMapping keymapping : this.f_92059_) {
+-         String s = keymapping.m_90865_();
++         String s = keymapping.m_90865_() + (keymapping.getKeyModifier() != net.minecraftforge.client.settings.KeyModifier.NONE ? ":" + keymapping.getKeyModifier() : "");
+          String s1 = p_168428_.m_141943_("key_" + keymapping.m_90860_(), s);
+          if (!s.equals(s1)) {
+-            keymapping.m_90848_(InputConstants.m_84851_(s1));
++            if (s1.indexOf(':') != -1) {
++               String[] pts = s1.split(":");
++               keymapping.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.valueFromString(pts[1]), InputConstants.m_84851_(pts[0]));
++            } else
++               keymapping.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.NONE, InputConstants.m_84851_(s1));
+          }
+       }
+ 
+@@ -474,6 +_,7 @@
+    }
+ 
+    public void m_92169_() {
++      if (net.minecraftforge.fmlclient.ClientModLoader.isLoading()) return; //Don't save settings before mods add keybindigns and the like to prevent them from being deleted.
+       try {
+          final PrintWriter printwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(this.f_92110_), StandardCharsets.UTF_8));
+ 
+@@ -622,6 +_,23 @@
+       }
+ 
+       p_92146_.m_10509_(set);
++   }
++
++   private void setForgeKeybindProperties() {
++      net.minecraftforge.client.settings.KeyConflictContext inGame = net.minecraftforge.client.settings.KeyConflictContext.IN_GAME;
++      f_92085_.setKeyConflictContext(inGame);
++      f_92086_.setKeyConflictContext(inGame);
++      f_92087_.setKeyConflictContext(inGame);
++      f_92088_.setKeyConflictContext(inGame);
++      f_92089_.setKeyConflictContext(inGame);
++      f_92090_.setKeyConflictContext(inGame);
++      f_92091_.setKeyConflictContext(inGame);
++      f_92096_.setKeyConflictContext(inGame);
++      f_92098_.setKeyConflictContext(inGame);
++      f_92099_.setKeyConflictContext(inGame);
++      f_92100_.setKeyConflictContext(inGame);
++      f_92103_.setKeyConflictContext(inGame);
++      f_92104_.setKeyConflictContext(inGame);
+    }
+ 
+    public CameraType m_92176_() {

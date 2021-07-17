@@ -19,15 +19,15 @@
 
 package net.minecraftforge.client.model.pipeline;
 
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.math.vector.Vector4f;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 
 public class TRSRTransformer extends VertexTransformer
 {
-    private final TransformationMatrix transform;
+    private final Transformation transform;
 
-    public TRSRTransformer(IVertexConsumer parent, TransformationMatrix transform)
+    public TRSRTransformer(IVertexConsumer parent, Transformation transform)
     {
         super(parent);
         this.transform = transform;

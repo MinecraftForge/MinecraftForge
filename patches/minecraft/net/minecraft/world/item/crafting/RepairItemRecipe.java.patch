@@ -1,0 +1,38 @@
+--- a/net/minecraft/world/item/crafting/RepairItemRecipe.java
++++ b/net/minecraft/world/item/crafting/RepairItemRecipe.java
+@@ -27,7 +_,7 @@
+             list.add(itemstack);
+             if (list.size() > 1) {
+                ItemStack itemstack1 = list.get(0);
+-               if (!itemstack.m_150930_(itemstack1.m_41720_()) || itemstack1.m_41613_() != 1 || itemstack.m_41613_() != 1 || !itemstack1.m_41720_().m_41465_()) {
++               if (itemstack.m_41720_() != itemstack1.m_41720_() || itemstack1.m_41613_() != 1 || itemstack.m_41613_() != 1 || !itemstack1.isRepairable()) {
+                   return false;
+                }
+             }
+@@ -46,7 +_,7 @@
+             list.add(itemstack);
+             if (list.size() > 1) {
+                ItemStack itemstack1 = list.get(0);
+-               if (!itemstack.m_150930_(itemstack1.m_41720_()) || itemstack1.m_41613_() != 1 || itemstack.m_41613_() != 1 || !itemstack1.m_41720_().m_41465_()) {
++               if (itemstack.m_41720_() != itemstack1.m_41720_() || itemstack1.m_41613_() != 1 || itemstack.m_41613_() != 1 || !itemstack1.isRepairable()) {
+                   return ItemStack.f_41583_;
+                }
+             }
+@@ -56,12 +_,12 @@
+       if (list.size() == 2) {
+          ItemStack itemstack3 = list.get(0);
+          ItemStack itemstack4 = list.get(1);
+-         if (itemstack3.m_150930_(itemstack4.m_41720_()) && itemstack3.m_41613_() == 1 && itemstack4.m_41613_() == 1 && itemstack3.m_41720_().m_41465_()) {
++         if (itemstack3.m_41720_() == itemstack4.m_41720_() && itemstack3.m_41613_() == 1 && itemstack4.m_41613_() == 1 && itemstack3.isRepairable()) {
+             Item item = itemstack3.m_41720_();
+-            int j = item.m_41462_() - itemstack3.m_41773_();
+-            int k = item.m_41462_() - itemstack4.m_41773_();
+-            int l = j + k + item.m_41462_() * 5 / 100;
+-            int i1 = item.m_41462_() - l;
++            int j = itemstack3.m_41776_() - itemstack3.m_41773_();
++            int k = itemstack3.m_41776_() - itemstack4.m_41773_();
++            int l = j + k + itemstack3.m_41776_() * 5 / 100;
++            int i1 = itemstack3.m_41776_() - l;
+             if (i1 < 0) {
+                i1 = 0;
+             }

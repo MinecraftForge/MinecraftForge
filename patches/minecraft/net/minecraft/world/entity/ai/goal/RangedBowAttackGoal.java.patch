@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
++++ b/net/minecraft/world/entity/ai/goal/RangedBowAttackGoal.java
+@@ -36,7 +_,7 @@
+    }
+ 
+    protected boolean m_25803_() {
+-      return this.f_25782_.m_21055_(Items.f_42411_);
++      return this.f_25782_.m_21093_(is -> is.m_41720_() instanceof BowItem);
+    }
+ 
+    public boolean m_8045_() {
+@@ -117,7 +_,7 @@
+                }
+             }
+          } else if (--this.f_25786_ <= 0 && this.f_25787_ >= -60) {
+-            this.f_25782_.m_6672_(ProjectileUtil.m_37297_(this.f_25782_, Items.f_42411_));
++            this.f_25782_.m_6672_(ProjectileUtil.getWeaponHoldingHand(this.f_25782_, item -> item instanceof BowItem));
+          }
+ 
+       }

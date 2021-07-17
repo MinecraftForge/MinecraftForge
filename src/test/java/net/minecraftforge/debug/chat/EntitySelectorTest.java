@@ -20,14 +20,14 @@
 package net.minecraftforge.debug.chat;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.advancements.criterion.MinMaxBounds;
-import net.minecraft.command.arguments.EntityOptions;
-import net.minecraft.command.arguments.EntitySelector;
-import net.minecraft.command.arguments.EntitySelectorParser;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.commands.arguments.selector.options.EntitySelectorOptions;
+import net.minecraft.commands.arguments.selector.EntitySelector;
+import net.minecraft.commands.arguments.selector.EntitySelectorParser;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.command.EntitySelectorManager;
 import net.minecraftforge.common.command.IEntitySelectorType;
 import net.minecraftforge.fml.common.Mod;
@@ -44,7 +44,7 @@ public class EntitySelectorTest
 
     public void setup(FMLCommonSetupEvent event)
     {
-        EntityOptions.register("health", this::healthArgument, parser -> true, new StringTextComponent("Selects entities based on their current health."));
+        EntitySelectorOptions.register("health", this::healthArgument, parser -> true, new TextComponent("Selects entities based on their current health."));
         EntitySelectorManager.register("er", new ExampleCustomSelector());
     }
 
@@ -53,7 +53,7 @@ public class EntitySelectorTest
      */
     private void healthArgument(EntitySelectorParser parser) throws CommandSyntaxException
     {
-        MinMaxBounds.FloatBound bound = MinMaxBounds.FloatBound.fromReader(parser.getReader());
+        MinMaxBounds.Doubles bound = MinMaxBounds.Doubles.fromReader(parser.getReader());
         parser.addPredicate(entity -> entity instanceof LivingEntity && bound.matches(((LivingEntity) entity).getHealth()));
     }
 
@@ -76,7 +76,7 @@ public class EntitySelectorTest
                 parser.getReader().skip();
                 parser.setSuggestions((builder, consumer) -> {
                     builder.suggest(String.valueOf(']'));
-                    EntityOptions.suggestNames(parser, builder);
+                    EntitySelectorOptions.suggestNames(parser, builder);
                     return builder.buildFuture();
                 });
 
@@ -88,9 +88,9 @@ public class EntitySelectorTest
         }
 
         @Override
-        public ITextComponent getSuggestionTooltip()
+        public Component getSuggestionTooltip()
         {
-            return new StringTextComponent("Example: Selects a random entity");
+            return new TextComponent("Example: Selects a random entity");
         }
     }
 }

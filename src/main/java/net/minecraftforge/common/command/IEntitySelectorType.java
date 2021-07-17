@@ -20,9 +20,9 @@
 package net.minecraftforge.common.command;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.arguments.EntitySelector;
-import net.minecraft.command.arguments.EntitySelectorParser;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.commands.arguments.selector.EntitySelector;
+import net.minecraft.commands.arguments.selector.EntitySelectorParser;
+import net.minecraft.network.chat.Component;
 
 /**
  * Implementations of this interface can be registered using {@link EntitySelectorManager#register}
@@ -40,5 +40,5 @@ public interface IEntitySelectorType
     /**
      * Returns an {@link ITextComponent} containing a short description for this selector type.
      */
-    ITextComponent getSuggestionTooltip();
+    Component getSuggestionTooltip();
 }

@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/block/ChorusFlowerBlock.java
++++ b/net/minecraft/world/level/block/ChorusFlowerBlock.java
+@@ -43,7 +_,7 @@
+       BlockPos blockpos = p_51704_.m_7494_();
+       if (p_51703_.m_46859_(blockpos) && blockpos.m_123342_() < p_51703_.m_151558_()) {
+          int i = p_51702_.m_61143_(f_51647_);
+-         if (i < 5) {
++         if (i < 5 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_51703_, blockpos, p_51702_, true)) {
+             boolean flag = false;
+             boolean flag1 = false;
+             BlockState blockstate = p_51703_.m_8055_(p_51704_.m_7495_());
+@@ -99,7 +_,7 @@
+             } else {
+                this.m_51658_(p_51703_, p_51704_);
+             }
+-
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_51703_, p_51704_, p_51702_);
+          }
+       }
+    }

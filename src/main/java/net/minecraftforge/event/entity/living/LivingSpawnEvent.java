@@ -20,14 +20,11 @@
 package net.minecraftforge.event.entity.living;
 
 import javax.annotation.Nullable;
-import net.minecraft.world.spawner.AbstractSpawner;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.level.BaseSpawner;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
 
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
@@ -45,12 +42,12 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  **/
 public class LivingSpawnEvent extends LivingEvent
 {
-    private final IWorld world;
+    private final LevelAccessor world;
     private final double x;
     private final double y;
     private final double z;
 
-    public LivingSpawnEvent(MobEntity entity, IWorld world, double x, double y, double z)
+    public LivingSpawnEvent(Mob entity, LevelAccessor world, double x, double y, double z)
     {
         super(entity);
         this.world = world;
@@ -59,7 +56,7 @@ public class LivingSpawnEvent extends LivingEvent
         this.z = z;
     }
 
-    public IWorld getWorld() { return world; }
+    public LevelAccessor getWorld() { return world; }
     public double getX() { return x; }
     public double getY() { return y; }
     public double getZ() { return z; }
@@ -76,8 +73,8 @@ public class LivingSpawnEvent extends LivingEvent
     public static class CheckSpawn extends LivingSpawnEvent
     {
         @Nullable
-        private final AbstractSpawner spawner;
-        private final SpawnReason spawnReason;
+        private final BaseSpawner spawner;
+        private final MobSpawnType spawnReason;
 
         /**
          * CheckSpawn is fired when an Entity is about to be spawned.
@@ -89,7 +86,7 @@ public class LivingSpawnEvent extends LivingEvent
          * @param spawner position of the MobSpawner
          *                  null if it this spawn is coming from a WorldSpawner
          */
-        public CheckSpawn(MobEntity entity, IWorld world, double x, double y, double z, @Nullable AbstractSpawner spawner, SpawnReason spawnReason)
+        public CheckSpawn(Mob entity, LevelAccessor world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
         {
             super(entity, world, x, y, z);
             this.spawner = spawner;
@@ -102,12 +99,12 @@ public class LivingSpawnEvent extends LivingEvent
         }
 
         @Nullable
-        public AbstractSpawner getSpawner()
+        public BaseSpawner getSpawner()
         {
             return spawner;
         }
 
-        public SpawnReason getSpawnReason()
+        public MobSpawnType getSpawnReason()
         {
             return spawnReason;
         }
@@ -130,13 +127,13 @@ public class LivingSpawnEvent extends LivingEvent
     public static class SpecialSpawn extends LivingSpawnEvent
     {
         @Nullable
-        private final AbstractSpawner spawner;
-        private final SpawnReason spawnReason;
+        private final BaseSpawner spawner;
+        private final MobSpawnType spawnReason;
 
         /**
          * @param spawner the position of a tileentity or approximate position of an entity that initiated the spawn if any
          */
-        public SpecialSpawn(MobEntity entity, World world, double x, double y, double z, @Nullable AbstractSpawner spawner, SpawnReason spawnReason)
+        public SpecialSpawn(Mob entity, Level world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
         {
             super(entity, world, x, y, z);
             this.spawner = spawner;
@@ -144,12 +141,12 @@ public class LivingSpawnEvent extends LivingEvent
         }
 
         @Nullable
-        public AbstractSpawner getSpawner()
+        public BaseSpawner getSpawner()
         {
             return spawner;
         }
 
-        public SpawnReason getSpawnReason()
+        public MobSpawnType getSpawnReason()
         {
             return spawnReason;
         }
@@ -171,7 +168,7 @@ public class LivingSpawnEvent extends LivingEvent
     @HasResult
     public static class AllowDespawn extends LivingSpawnEvent
     {
-        public AllowDespawn(MobEntity entity)
+        public AllowDespawn(Mob entity)
         {
             super(entity, entity.level, entity.getX(), entity.getY(), entity.getZ());
         }

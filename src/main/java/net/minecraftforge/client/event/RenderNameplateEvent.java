@@ -19,12 +19,11 @@
 
 package net.minecraftforge.client.event;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -53,15 +52,15 @@ import net.minecraftforge.eventbus.api.Event;
 public class RenderNameplateEvent extends EntityEvent
 {
 
-    private ITextComponent nameplateContent;
-    private final ITextComponent originalContent;
+    private Component nameplateContent;
+    private final Component originalContent;
     private final EntityRenderer<?> entityRenderer;
-    private final MatrixStack matrixStack;
-    private final IRenderTypeBuffer renderTypeBuffer;
+    private final PoseStack matrixStack;
+    private final MultiBufferSource renderTypeBuffer;
     private final int packedLight;
     private final float partialTicks;
     
-    public RenderNameplateEvent(Entity entity, ITextComponent content, EntityRenderer<?> entityRenderer, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int packedLight, float partialTicks)
+    public RenderNameplateEvent(Entity entity, Component content, EntityRenderer<?> entityRenderer, PoseStack matrixStack, MultiBufferSource renderTypeBuffer, int packedLight, float partialTicks)
     {
         super(entity);
         this.originalContent = content;
@@ -76,7 +75,7 @@ public class RenderNameplateEvent extends EntityEvent
     /**
      * Sets the content that is to be rendered on the name plate/tag
      */
-    public void setContent(ITextComponent contents)
+    public void setContent(Component contents)
     {
         this.nameplateContent = contents;
     }
@@ -84,7 +83,7 @@ public class RenderNameplateEvent extends EntityEvent
     /**
      * The content being rendered on the name plate/tag
      */
-    public ITextComponent getContent()
+    public Component getContent()
     {
         return this.nameplateContent;
     }
@@ -92,7 +91,7 @@ public class RenderNameplateEvent extends EntityEvent
     /**
      * The original content being rendered on the name plate/tag
      */
-    public ITextComponent getOriginalContent()
+    public Component getOriginalContent()
     {
         return this.originalContent;
     }
@@ -108,7 +107,7 @@ public class RenderNameplateEvent extends EntityEvent
     /**
      * The matrix stack used during the rendering of the name plate/tag
      */
-    public MatrixStack getMatrixStack()
+    public PoseStack getMatrixStack()
     {
         return this.matrixStack;
     }
@@ -116,7 +115,7 @@ public class RenderNameplateEvent extends EntityEvent
     /**
      * The render type buffer used during the rendering of the name plate/tag
      */
-    public IRenderTypeBuffer getRenderTypeBuffer()
+    public MultiBufferSource getRenderTypeBuffer()
     {
         return this.renderTypeBuffer;
     }

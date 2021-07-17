@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/RedStoneOreBlock.java
++++ b/net/minecraft/world/level/block/RedStoneOreBlock.java
+@@ -71,11 +_,11 @@
+ 
+    public void m_8101_(BlockState p_55462_, ServerLevel p_55463_, BlockPos p_55464_, ItemStack p_55465_) {
+       super.m_8101_(p_55462_, p_55463_, p_55464_, p_55465_);
+-      if (EnchantmentHelper.m_44843_(Enchantments.f_44985_, p_55465_) == 0) {
+-         int i = 1 + p_55463_.f_46441_.nextInt(5);
+-         this.m_49805_(p_55463_, p_55464_, i);
+-      }
++   }
+ 
++   @Override
++   public int getExpDrop(BlockState state, net.minecraft.world.level.LevelReader world, BlockPos pos, int fortune, int silktouch) {
++      return silktouch == 0 ? 1 + RANDOM.nextInt(5) : 0;
+    }
+ 
+    public void m_7100_(BlockState p_55479_, Level p_55480_, BlockPos p_55481_, Random p_55482_) {

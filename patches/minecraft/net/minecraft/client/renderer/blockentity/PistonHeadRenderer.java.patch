@@ -1,0 +1,15 @@
+--- a/net/minecraft/client/renderer/blockentity/PistonHeadRenderer.java
++++ b/net/minecraft/client/renderer/blockentity/PistonHeadRenderer.java
+@@ -60,9 +_,12 @@
+    }
+ 
+    private void m_112458_(BlockPos p_112459_, BlockState p_112460_, PoseStack p_112461_, MultiBufferSource p_112462_, Level p_112463_, boolean p_112464_, int p_112465_) {
++      net.minecraftforge.client.ForgeHooksClient.renderPistonMovedBlocks(p_112459_, p_112460_, p_112461_, p_112462_, p_112463_, p_112464_, p_112465_, f_112441_ == null ? f_112441_ = net.minecraft.client.Minecraft.m_91087_().m_91289_() : f_112441_);
++      if(false) {
+       RenderType rendertype = ItemBlockRenderTypes.m_109293_(p_112460_);
+       VertexConsumer vertexconsumer = p_112462_.m_6299_(rendertype);
+       this.f_112441_.m_110937_().m_111047_(p_112463_, this.f_112441_.m_110910_(p_112460_), p_112460_, p_112459_, p_112461_, vertexconsumer, p_112464_, new Random(), p_112460_.m_60726_(p_112459_), p_112465_);
++      }
+    }
+ 
+    public int m_142163_() {

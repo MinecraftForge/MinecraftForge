@@ -23,37 +23,39 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-import net.minecraft.data.IDataProvider;
-import net.minecraft.client.resources.ResourceIndex;
-import net.minecraft.client.resources.VirtualAssetsPack;
-import net.minecraft.resources.FilePack;
-import net.minecraft.resources.FolderPack;
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.IResourcePack;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.resources.SimpleReloadableResourceManager;
-import net.minecraft.resources.VanillaPack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.ClientPackSource;
+import net.minecraft.client.resources.AssetIndex;
+import net.minecraft.client.resources.DefaultClientPackResources;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.server.packs.FilePackResources;
+import net.minecraft.server.packs.FolderPackResources;
+import net.minecraft.server.packs.repository.ServerPacksSource;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
+import net.minecraft.server.packs.VanillaPackResources;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
-import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
-import net.minecraftforge.fml.packs.ModFileResourcePack;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.fmllegacy.packs.ModFileResourcePack;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 
 import javax.annotation.Nullable;
 
 /**
  * Enables data providers to check if other data files currently exist. The
  * instance provided in the {@link GatherDataEvent} utilizes the standard
- * resources (via {@link VanillaPack}), forge's resources, as well as any
+ * resources (via {@link VanillaPackResources}), forge's resources, as well as any
  * extra resource packs passed in via the {@code --existing} argument,
  * or mod resources via the {@code --existing-mod} argument.
  */
@@ -61,7 +63,7 @@ public class ExistingFileHelper {
 
     public interface IResourceType {
 
-        ResourcePackType getPackType();
+        PackType getPackType();
 
         String getSuffix();
 
@@ -70,16 +72,16 @@ public class ExistingFileHelper {
 
     public static class ResourceType implements IResourceType {
 
-        final ResourcePackType packType;
+        final PackType packType;
         final String suffix, prefix;
-        public ResourceType(ResourcePackType type, String suffix, String prefix) {
+        public ResourceType(PackType type, String suffix, String prefix) {
             this.packType = type;
             this.suffix = suffix;
             this.prefix = prefix;
         }
 
         @Override
-        public ResourcePackType getPackType() { return packType; }
+        public PackType getPackType() { return packType; }
 
         @Override
         public String getSuffix() { return suffix; }
@@ -90,12 +92,7 @@ public class ExistingFileHelper {
 
     private final SimpleReloadableResourceManager clientResources, serverData;
     private final boolean enable;
-    private final Multimap<ResourcePackType, ResourceLocation> generated = HashMultimap.create();
-
-    @Deprecated//TODO: Remove in 1.17
-    public ExistingFileHelper(Collection<Path> existingPacks, boolean enable) {
-        this(existingPacks, Collections.emptySet(), enable);
-    }
+    private final Multimap<PackType, ResourceLocation> generated = HashMultimap.create();
 
     /**
      * Create a new helper. This should probably <em>NOT</em> be used by mods, as
@@ -108,33 +105,29 @@ public class ExistingFileHelper {
      * @param existingPacks
      * @param existingMods
      * @param enable
+     * @param assetIndex
+     * @param assetsDir
      */
-    @Deprecated // TODO: Remove in 1.17
-    public ExistingFileHelper(Collection<Path> existingPacks, Set<String> existingMods, boolean enable) {
-        this(existingPacks, existingMods, enable, null, null);
-    }
-
     public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, boolean enable, @Nullable final String assetIndex, @Nullable final File assetsDir) {
-        this.clientResources = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
-        this.serverData = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
+        this.clientResources = new SimpleReloadableResourceManager(PackType.CLIENT_RESOURCES);
+        this.serverData = new SimpleReloadableResourceManager(PackType.SERVER_DATA);
 
-        this.clientResources.add(new VanillaPack("minecraft", "realms"));
+        this.clientResources.add(new VanillaPackResources(ClientPackSource.BUILT_IN, "minecraft", "realms"));
         if (assetIndex != null && assetsDir != null)
         {
-            this.clientResources.add(new VirtualAssetsPack(new ResourceIndex(assetsDir, assetIndex)));
+            this.clientResources.add(new DefaultClientPackResources(ClientPackSource.BUILT_IN, new AssetIndex(assetsDir, assetIndex)));
         }
-        this.serverData.add(new VanillaPack("minecraft"));
-
+        this.serverData.add(new VanillaPackResources(ServerPacksSource.BUILT_IN_METADATA, "minecraft"));
         for (Path existing : existingPacks) {
             File file = existing.toFile();
-            IResourcePack pack = file.isDirectory() ? new FolderPack(file) : new FilePack(file);
+            PackResources pack = file.isDirectory() ? new FolderPackResources(file) : new FilePackResources(file);
             this.clientResources.add(pack);
             this.serverData.add(pack);
         }
         for (String existingMod : existingMods) {
-            ModFileInfo modFileInfo = ModList.get().getModFileById(existingMod);
+            IModFileInfo modFileInfo = ModList.get().getModFileById(existingMod);
             if (modFileInfo != null) {
-                IResourcePack pack = new ModFileResourcePack(modFileInfo.getFile());
+                PackResources pack = new ModFileResourcePack(modFileInfo.getFile());
                 this.clientResources.add(pack);
                 this.serverData.add(pack);
             }
@@ -142,8 +135,8 @@ public class ExistingFileHelper {
         this.enable = enable;
     }
 
-    private IResourceManager getManager(ResourcePackType packType) {
-        return packType == ResourcePackType.CLIENT_RESOURCES ? clientResources : serverData;
+    private ResourceManager getManager(PackType packType) {
+        return packType == PackType.CLIENT_RESOURCES ? clientResources : serverData;
     }
 
     private ResourceLocation getLocation(ResourceLocation base, String suffix, String prefix) {
@@ -159,7 +152,7 @@ public class ExistingFileHelper {
      * @return {@code true} if the resource exists in any pack, {@code false}
      *         otherwise
      */
-    public boolean exists(ResourceLocation loc, ResourcePackType packType) {
+    public boolean exists(ResourceLocation loc, PackType packType) {
         if (!enable) {
             return true;
         }
@@ -195,7 +188,7 @@ public class ExistingFileHelper {
      * @return {@code true} if the resource exists in any pack, {@code false}
      *         otherwise
      */
-    public boolean exists(ResourceLocation loc, ResourcePackType packType, String pathSuffix, String pathPrefix) {
+    public boolean exists(ResourceLocation loc, PackType packType, String pathSuffix, String pathPrefix) {
         return exists(getLocation(loc, pathSuffix, pathPrefix), packType);
     }
 
@@ -206,7 +199,7 @@ public class ExistingFileHelper {
      * <p>
      * This should be called by data providers immediately when a new data object is
      * created, i.e. not during
-     * {@link IDataProvider#act(net.minecraft.data.DirectoryCache) act} but instead
+     * {@link DataProvider#run(net.minecraft.data.HashCache) run} but instead
      * when the "builder" (or whatever intermediate object) is created, such as a
      * {@link ModelBuilder}.
      * <p>
@@ -227,7 +220,7 @@ public class ExistingFileHelper {
      * <p>
      * This should be called by data providers immediately when a new data object is
      * created, i.e. not during
-     * {@link IDataProvider#act(net.minecraft.data.DirectoryCache) act} but instead
+     * {@link DataProvider#run(HashCache) run} but instead
      * when the "builder" (or whatever intermediate object) is created, such as a
      * {@link ModelBuilder}.
      * <p>
@@ -241,17 +234,17 @@ public class ExistingFileHelper {
      * @param pathPrefix a string to append before the path, before a slash, e.g.
      *                   {@code "models"}
      */
-    public void trackGenerated(ResourceLocation loc, ResourcePackType packType, String pathSuffix, String pathPrefix) {
+    public void trackGenerated(ResourceLocation loc, PackType packType, String pathSuffix, String pathPrefix) {
         this.generated.put(packType, getLocation(loc, pathSuffix, pathPrefix));
     }
 
     @VisibleForTesting
-    public IResource getResource(ResourceLocation loc, ResourcePackType packType, String pathSuffix, String pathPrefix) throws IOException {
+    public Resource getResource(ResourceLocation loc, PackType packType, String pathSuffix, String pathPrefix) throws IOException {
         return getResource(getLocation(loc, pathSuffix, pathPrefix), packType);
     }
 
     @VisibleForTesting
-    public IResource getResource(ResourceLocation loc, ResourcePackType packType) throws IOException {
+    public Resource getResource(ResourceLocation loc, PackType packType) throws IOException {
         return getManager(packType).getResource(loc);
     }
 

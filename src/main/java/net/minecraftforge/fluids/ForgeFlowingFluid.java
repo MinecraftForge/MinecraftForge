@@ -19,23 +19,22 @@
 
 package net.minecraftforge.fluids;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FlowingFluidBlock;
-import net.minecraft.fluid.FlowingFluid;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LiquidBlock;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
@@ -47,7 +46,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     @Nullable
     private final Supplier<? extends Item> bucket;
     @Nullable
-    private final Supplier<? extends FlowingFluidBlock> block;
+    private final Supplier<? extends LiquidBlock> block;
     private final FluidAttributes.Builder builder;
     private final boolean canMultiply;
     private final int slopeFindDistance;
@@ -88,20 +87,20 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    protected void beforeDestroyingBlock(IWorld worldIn, BlockPos pos, BlockState state)
+    protected void beforeDestroyingBlock(LevelAccessor worldIn, BlockPos pos, BlockState state)
     {
-        TileEntity tileentity = state.getBlock().hasTileEntity(state) ? worldIn.getBlockEntity(pos) : null;
-        Block.dropResources(state, worldIn, pos, tileentity);
+        BlockEntity blockEntity = state.hasBlockEntity() ? worldIn.getBlockEntity(pos) : null;
+        Block.dropResources(state, worldIn, pos, blockEntity);
     }
 
     @Override
-    protected int getSlopeFindDistance(IWorldReader worldIn)
+    protected int getSlopeFindDistance(LevelReader worldIn)
     {
         return slopeFindDistance;
     }
 
     @Override
-    protected int getDropOff(IWorldReader worldIn)
+    protected int getDropOff(LevelReader worldIn)
     {
         return levelDecreasePerBlock;
     }
@@ -113,14 +112,14 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    protected boolean canBeReplacedWith(FluidState state, IBlockReader world, BlockPos pos, Fluid fluidIn, Direction direction)
+    protected boolean canBeReplacedWith(FluidState state, BlockGetter world, BlockPos pos, Fluid fluidIn, Direction direction)
     {
         // Based on the water implementation, may need to be overriden for mod fluids that shouldn't behave like water.
         return direction == Direction.DOWN && !isSame(fluidIn);
     }
 
     @Override
-    public int getTickDelay(IWorldReader world)
+    public int getTickDelay(LevelReader world)
     {
         return tickRate;
     }
@@ -135,7 +134,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     protected BlockState createLegacyBlock(FluidState state)
     {
         if (block != null)
-            return block.get().defaultBlockState().setValue(FlowingFluidBlock.LEVEL, getLegacyLevel(state));
+            return block.get().defaultBlockState().setValue(LiquidBlock.LEVEL, getLegacyLevel(state));
         return Blocks.AIR.defaultBlockState();
     }
 
@@ -158,7 +157,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             registerDefaultState(getStateDefinition().any().setValue(LEVEL, 7));
         }
 
-        protected void createFluidStateDefinition(StateContainer.Builder<Fluid, FluidState> builder) {
+        protected void createFluidStateDefinition(StateDefinition.Builder<Fluid, FluidState> builder) {
             super.createFluidStateDefinition(builder);
             builder.add(LEVEL);
         }
@@ -195,7 +194,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         private FluidAttributes.Builder attributes;
         private boolean canMultiply;
         private Supplier<? extends Item> bucket;
-        private Supplier<? extends FlowingFluidBlock> block;
+        private Supplier<? extends LiquidBlock> block;
         private int slopeFindDistance = 4;
         private int levelDecreasePerBlock = 1;
         private float explosionResistance = 1;
@@ -220,7 +219,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             return this;
         }
 
-        public Properties block(Supplier<? extends FlowingFluidBlock> block)
+        public Properties block(Supplier<? extends LiquidBlock> block)
         {
             this.block = block;
             return this;

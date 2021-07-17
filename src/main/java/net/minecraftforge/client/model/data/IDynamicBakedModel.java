@@ -25,15 +25,15 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
 
 /**
  * Convenience interface with default implementation of {@link IBakedModel#getQuads(net.minecraft.block.BlockState, net.minecraft.util.Direction, java.util.Random)}.
  */
-public interface IDynamicBakedModel extends IBakedModel
+public interface IDynamicBakedModel extends BakedModel
 {
     @Override
     default @Nonnull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand)

@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/renderer/ItemModelShaper.java
++++ b/net/minecraft/client/renderer/ItemModelShaper.java
+@@ -31,7 +_,8 @@
+ 
+    public TextureAtlasSprite m_109399_(ItemStack p_109400_) {
+       BakedModel bakedmodel = this.m_109406_(p_109400_);
+-      return bakedmodel == this.f_109390_.m_119409_() && p_109400_.m_41720_() instanceof BlockItem ? this.f_109390_.m_119430_().m_110882_(((BlockItem)p_109400_.m_41720_()).m_40614_().m_49966_()) : bakedmodel.m_6160_();
++      // FORGE: Make sure to call the item overrides
++      return bakedmodel == this.f_109390_.m_119409_() && p_109400_.m_41720_() instanceof BlockItem ? this.f_109390_.m_119430_().m_110882_(((BlockItem)p_109400_.m_41720_()).m_40614_().m_49966_()) : bakedmodel.m_7343_().m_173464_(bakedmodel, p_109400_, null, null, 0).getParticleIcon(net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
+    }
+ 
+    public BakedModel m_109406_(ItemStack p_109407_) {

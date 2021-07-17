@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/renderer/texture/TextureManager.java
 +++ b/net/minecraft/client/renderer/texture/TextureManager.java
-@@ -157,6 +_,7 @@
-    public void func_147645_c(ResourceLocation p_147645_1_) {
-       Texture texture = this.func_229267_b_(p_147645_1_);
-       if (texture != null) {
-+         this.field_110585_a.remove(p_147645_1_); // Forge: fix MC-98707
-          TextureUtil.func_225679_a_(texture.func_110552_b());
+@@ -167,6 +_,7 @@
+    public void m_118513_(ResourceLocation p_118514_) {
+       AbstractTexture abstracttexture = this.m_174786_(p_118514_, MissingTextureAtlasSprite.m_118080_());
+       if (abstracttexture != MissingTextureAtlasSprite.m_118080_()) {
++         this.f_118468_.remove(p_118514_); // Forge: fix MC-98707
+          TextureUtil.m_85281_(abstracttexture.m_117963_());
        }
  

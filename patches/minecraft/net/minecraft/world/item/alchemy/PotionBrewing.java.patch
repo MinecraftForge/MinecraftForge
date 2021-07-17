@@ -1,0 +1,72 @@
+--- a/net/minecraft/world/item/alchemy/PotionBrewing.java
++++ b/net/minecraft/world/item/alchemy/PotionBrewing.java
+@@ -57,7 +_,7 @@
+       int i = 0;
+ 
+       for(int j = f_43494_.size(); i < j; ++i) {
+-         if ((f_43494_.get(i)).f_43534_ == p_43512_) {
++         if ((f_43494_.get(i)).f_43534_.get() == p_43512_) {
+             return true;
+          }
+       }
+@@ -79,7 +_,7 @@
+ 
+       for(int j = f_43495_.size(); i < j; ++i) {
+          PotionBrewing.Mix<Item> mix = f_43495_.get(i);
+-         if (mix.f_43532_ == item && mix.f_43533_.test(p_43521_)) {
++         if (mix.f_43532_.get() == item && mix.f_43533_.test(p_43521_)) {
+             return true;
+          }
+       }
+@@ -93,7 +_,7 @@
+ 
+       for(int j = f_43494_.size(); i < j; ++i) {
+          PotionBrewing.Mix<Potion> mix = f_43494_.get(i);
+-         if (mix.f_43532_ == potion && mix.f_43533_.test(p_43526_)) {
++         if (mix.f_43532_.get() == potion && mix.f_43533_.test(p_43526_)) {
+             return true;
+          }
+       }
+@@ -109,8 +_,8 @@
+ 
+          for(int j = f_43495_.size(); i < j; ++i) {
+             PotionBrewing.Mix<Item> mix = f_43495_.get(i);
+-            if (mix.f_43532_ == item && mix.f_43533_.test(p_43530_)) {
+-               return PotionUtils.m_43549_(new ItemStack(mix.f_43534_), potion);
++            if (mix.f_43532_.get() == item && mix.f_43533_.test(p_43530_)) {
++               return PotionUtils.m_43549_(new ItemStack(mix.f_43534_.get()), potion);
+             }
+          }
+ 
+@@ -118,8 +_,8 @@
+ 
+          for(int k = f_43494_.size(); i < k; ++i) {
+             PotionBrewing.Mix<Potion> mix1 = f_43494_.get(i);
+-            if (mix1.f_43532_ == potion && mix1.f_43533_.test(p_43530_)) {
+-               return PotionUtils.m_43549_(new ItemStack(item), mix1.f_43534_);
++            if (mix1.f_43532_.get() == potion && mix1.f_43533_.test(p_43530_)) {
++               return PotionUtils.m_43549_(new ItemStack(item), mix1.f_43534_.get());
+             }
+          }
+       }
+@@ -212,15 +_,15 @@
+       f_43494_.add(new PotionBrewing.Mix<>(p_43514_, Ingredient.m_43929_(p_43515_), p_43516_));
+    }
+ 
+-   public static class Mix<T> {
+-      final T f_43532_;
++   public static class Mix<T extends net.minecraftforge.registries.ForgeRegistryEntry<T>> {
++      public final net.minecraftforge.registries.IRegistryDelegate<T> f_43532_;
+       public final Ingredient f_43533_;
+-      final T f_43534_;
++      public final net.minecraftforge.registries.IRegistryDelegate<T> f_43534_;
+ 
+       public Mix(T p_43536_, Ingredient p_43537_, T p_43538_) {
+-         this.f_43532_ = p_43536_;
++         this.f_43532_ = p_43536_.delegate;
+          this.f_43533_ = p_43537_;
+-         this.f_43534_ = p_43538_;
++         this.f_43534_ = p_43538_.delegate;
+       }
+    }
+ }

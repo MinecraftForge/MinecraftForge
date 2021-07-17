@@ -28,14 +28,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import net.minecraft.MethodsReturnNonnullByDefault;
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import mcp.MethodsReturnNonnullByDefault;
-import net.minecraftforge.common.capabilities.Capability;
 
 /**
  * This object encapsulates a lazy value, with typical transformation operations

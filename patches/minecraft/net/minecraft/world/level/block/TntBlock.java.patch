@@ -1,0 +1,67 @@
+--- a/net/minecraft/world/level/block/TntBlock.java
++++ b/net/minecraft/world/level/block/TntBlock.java
+@@ -33,10 +_,14 @@
+       this.m_49959_(this.m_49966_().m_61124_(f_57419_, Boolean.valueOf(false)));
+    }
+ 
++   public void catchFire(BlockState state, Level world, BlockPos pos, @Nullable net.minecraft.core.Direction face, @Nullable LivingEntity igniter) {
++      m_57436_(world, pos, igniter);
++   }
++
+    public void m_6807_(BlockState p_57466_, Level p_57467_, BlockPos p_57468_, BlockState p_57469_, boolean p_57470_) {
+       if (!p_57469_.m_60713_(p_57466_.m_60734_())) {
+          if (p_57467_.m_46753_(p_57468_)) {
+-            m_57433_(p_57467_, p_57468_);
++            catchFire(p_57466_, p_57467_, p_57468_, null, null);
+             p_57467_.m_7471_(p_57468_, false);
+          }
+ 
+@@ -45,7 +_,7 @@
+ 
+    public void m_6861_(BlockState p_57457_, Level p_57458_, BlockPos p_57459_, Block p_57460_, BlockPos p_57461_, boolean p_57462_) {
+       if (p_57458_.m_46753_(p_57459_)) {
+-         m_57433_(p_57458_, p_57459_);
++         catchFire(p_57457_, p_57458_, p_57459_, null, null);
+          p_57458_.m_7471_(p_57459_, false);
+       }
+ 
+@@ -53,7 +_,7 @@
+ 
+    public void m_5707_(Level p_57445_, BlockPos p_57446_, BlockState p_57447_, Player p_57448_) {
+       if (!p_57445_.m_5776_() && !p_57448_.m_7500_() && p_57447_.m_61143_(f_57419_)) {
+-         m_57433_(p_57445_, p_57446_);
++         catchFire(p_57447_, p_57445_, p_57446_, null, null);
+       }
+ 
+       super.m_5707_(p_57445_, p_57446_, p_57447_, p_57448_);
+@@ -68,10 +_,12 @@
+       }
+    }
+ 
++   @Deprecated //Forge: Prefer using IForgeBlock#catchFire
+    public static void m_57433_(Level p_57434_, BlockPos p_57435_) {
+       m_57436_(p_57434_, p_57435_, (LivingEntity)null);
+    }
+ 
++   @Deprecated //Forge: Prefer using IForgeBlock#catchFire
+    private static void m_57436_(Level p_57437_, BlockPos p_57438_, @Nullable LivingEntity p_57439_) {
+       if (!p_57437_.f_46443_) {
+          PrimedTnt primedtnt = new PrimedTnt(p_57437_, (double)p_57438_.m_123341_() + 0.5D, (double)p_57438_.m_123342_(), (double)p_57438_.m_123343_() + 0.5D, p_57439_);
+@@ -86,7 +_,7 @@
+       if (!itemstack.m_150930_(Items.f_42409_) && !itemstack.m_150930_(Items.f_42613_)) {
+          return super.m_6227_(p_57450_, p_57451_, p_57452_, p_57453_, p_57454_, p_57455_);
+       } else {
+-         m_57436_(p_57451_, p_57452_, p_57453_);
++         catchFire(p_57450_, p_57451_, p_57452_, p_57455_.m_82434_(), p_57453_);
+          p_57451_.m_7731_(p_57452_, Blocks.f_50016_.m_49966_(), 11);
+          Item item = itemstack.m_41720_();
+          if (!p_57453_.m_7500_()) {
+@@ -109,7 +_,7 @@
+          BlockPos blockpos = p_57431_.m_82425_();
+          Entity entity = p_57432_.m_37282_();
+          if (p_57432_.m_6060_() && p_57432_.m_142265_(p_57429_, blockpos)) {
+-            m_57436_(p_57429_, blockpos, entity instanceof LivingEntity ? (LivingEntity)entity : null);
++            catchFire(p_57430_, p_57429_, blockpos, null, entity instanceof LivingEntity ? (LivingEntity)entity : null);
+             p_57429_.m_7471_(blockpos, false);
+          }
+       }

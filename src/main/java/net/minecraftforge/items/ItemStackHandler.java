@@ -19,16 +19,16 @@
 
 package net.minecraftforge.items;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.NonNullList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.core.NonNullList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import javax.annotation.Nonnull;
 
-public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundNBT>
+public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundTag>
 {
     protected NonNullList<ItemStack> stacks;
 
@@ -178,33 +178,33 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     }
 
     @Override
-    public CompoundNBT serializeNBT()
+    public CompoundTag serializeNBT()
     {
-        ListNBT nbtTagList = new ListNBT();
+        ListTag nbtTagList = new ListTag();
         for (int i = 0; i < stacks.size(); i++)
         {
             if (!stacks.get(i).isEmpty())
             {
-                CompoundNBT itemTag = new CompoundNBT();
+                CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
                 stacks.get(i).save(itemTag);
                 nbtTagList.add(itemTag);
             }
         }
-        CompoundNBT nbt = new CompoundNBT();
+        CompoundTag nbt = new CompoundTag();
         nbt.put("Items", nbtTagList);
         nbt.putInt("Size", stacks.size());
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt)
+    public void deserializeNBT(CompoundTag nbt)
     {
         setSize(nbt.contains("Size", Constants.NBT.TAG_INT) ? nbt.getInt("Size") : stacks.size());
-        ListNBT tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
+        ListTag tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < tagList.size(); i++)
         {
-            CompoundNBT itemTags = tagList.getCompound(i);
+            CompoundTag itemTags = tagList.getCompound(i);
             int slot = itemTags.getInt("Slot");
 
             if (slot >= 0 && slot < stacks.size())

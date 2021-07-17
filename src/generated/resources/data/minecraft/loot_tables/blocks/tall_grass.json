@@ -3,6 +3,7 @@
   "pools": [
     {
       "rolls": 1.0,
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:alternatives",
@@ -20,7 +21,8 @@
               "functions": [
                 {
                   "function": "minecraft:set_count",
-                  "count": 2
+                  "count": 2.0,
+                  "add": false
                 }
               ],
               "name": "minecraft:grass"
@@ -53,7 +55,9 @@
           "condition": "minecraft:location_check",
           "predicate": {
             "block": {
-              "block": "minecraft:tall_grass",
+              "blocks": [
+                "minecraft:tall_grass"
+              ],
               "state": {
                 "half": "upper"
               }
@@ -61,10 +65,12 @@
           },
           "offsetY": 1
         }
-      ]
+      ],
+      "functions": []
     },
     {
       "rolls": 1.0,
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:alternatives",
@@ -82,7 +88,8 @@
               "functions": [
                 {
                   "function": "minecraft:set_count",
-                  "count": 2
+                  "count": 2.0,
+                  "add": false
                 }
               ],
               "name": "minecraft:grass"
@@ -115,7 +122,9 @@
           "condition": "minecraft:location_check",
           "predicate": {
             "block": {
-              "block": "minecraft:tall_grass",
+              "blocks": [
+                "minecraft:tall_grass"
+              ],
               "state": {
                 "half": "lower"
               }
@@ -123,7 +132,8 @@
           },
           "offsetY": -1
         }
-      ]
+      ],
+      "functions": []
     }
   ]
 }

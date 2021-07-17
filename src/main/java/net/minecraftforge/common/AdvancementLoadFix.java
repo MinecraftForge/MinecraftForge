@@ -24,7 +24,7 @@ import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
-import net.minecraft.advancements.PlayerAdvancements;
+import net.minecraft.server.PlayerAdvancements;
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

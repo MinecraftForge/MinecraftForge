@@ -1,11 +1,20 @@
 package net.minecraftforge.forge.tasks
 
 import groovy.transform.EqualsAndHashCode
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.Optional
+
+import java.util.ArrayList
+import java.util.HashMap
+import java.util.TreeMap
+import java.util.TreeSet
+import java.util.function.BiConsumer
+
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.*
+
+import org.objectweb.asm.Opcodes
+import org.objectweb.asm.Type
 import org.objectweb.asm.tree.ClassNode
+import org.objectweb.asm.tree.FieldNode
 import org.objectweb.asm.tree.MethodNode
 
 import static org.objectweb.asm.Opcodes.*

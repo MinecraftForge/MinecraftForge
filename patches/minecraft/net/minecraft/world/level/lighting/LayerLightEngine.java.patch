@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/level/lighting/LayerLightEngine.java
++++ b/net/minecraft/world/level/lighting/LayerLightEngine.java
+@@ -214,4 +_,6 @@
+       long i = SectionPos.m_123240_(SectionPos.m_123209_(p_75700_.f_45578_, 0, p_75700_.f_45579_));
+       this.f_75632_.m_75782_(i, p_75701_);
+    }
++
++   public abstract int queuedUpdateSize();
+ }

@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/entity/animal/horse/SkeletonTrapGoal.java
++++ b/net/minecraft/world/entity/animal/horse/SkeletonTrapGoal.java
+@@ -27,6 +_,10 @@
+ 
+    public void m_8037_() {
+       ServerLevel serverlevel = (ServerLevel)this.f_30925_.f_19853_;
++      // Forge: Trigger the trap in a tick task to avoid crashes when mods add goals to skeleton horses
++      // (MC-206338/Forge PR #7509)
++      serverlevel.m_142572_().m_6937_(new net.minecraft.server.TickTask(serverlevel.m_142572_().m_129921_(), () -> {
++      if (!this.f_30925_.m_6084_()) return;
+       DifficultyInstance difficultyinstance = serverlevel.m_6436_(this.f_30925_.m_142538_());
+       this.f_30925_.m_30923_(false);
+       this.f_30925_.m_30651_(true);
+@@ -46,7 +_,7 @@
+          abstracthorse.m_5997_(this.f_30925_.m_21187_().nextGaussian() * 0.5D, 0.0D, this.f_30925_.m_21187_().nextGaussian() * 0.5D);
+          serverlevel.m_47205_(abstracthorse);
+       }
+-
++      }));
+    }
+ 
+    private AbstractHorse m_30929_(DifficultyInstance p_30930_) {

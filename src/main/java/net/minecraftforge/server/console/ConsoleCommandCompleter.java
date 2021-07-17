@@ -23,7 +23,7 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
-import net.minecraft.command.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.dedicated.DedicatedServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -70,7 +70,7 @@ final class ConsoleCommandCompleter implements Completer
 
         try
         {
-            ParseResults<CommandSource> results = this.server.getCommands().getDispatcher().parse(stringReader, this.server.createCommandSourceStack());
+            ParseResults<CommandSourceStack> results = this.server.getCommands().getDispatcher().parse(stringReader, this.server.createCommandSourceStack());
             Suggestions tabComplete = this.server.getCommands().getDispatcher().getCompletionSuggestions(results).get();
             for (Suggestion suggestion : tabComplete.getList())
             {

@@ -1,0 +1,45 @@
+--- a/net/minecraft/server/level/ServerEntity.java
++++ b/net/minecraft/server/level/ServerEntity.java
+@@ -81,10 +_,9 @@
+       if (this.f_8510_ instanceof ItemFrame && this.f_8521_ % 10 == 0) {
+          ItemFrame itemframe = (ItemFrame)this.f_8510_;
+          ItemStack itemstack = itemframe.m_31822_();
+-         if (itemstack.m_41720_() instanceof MapItem) {
+-            Integer integer = MapItem.m_151131_(itemstack);
+-            MapItemSavedData mapitemsaveddata = MapItem.m_151128_(integer, this.f_8509_);
+-            if (mapitemsaveddata != null) {
++         Integer integer = MapItem.m_151131_(itemstack);
++         MapItemSavedData mapitemsaveddata = MapItem.m_42853_(itemstack, this.f_8509_);
++         if (mapitemsaveddata != null) {
+                for(ServerPlayer serverplayer : this.f_8509_.m_6907_()) {
+                   mapitemsaveddata.m_77918_(serverplayer, itemstack);
+                   Packet<?> packet = mapitemsaveddata.m_164796_(integer, serverplayer);
+@@ -92,12 +_,13 @@
+                      serverplayer.f_8906_.m_141995_(packet);
+                   }
+                }
+-            }
+          }
+ 
+          this.m_8543_();
+       }
+ 
++
++
+       if (this.f_8521_ % this.f_8511_ == 0 || this.f_8510_.f_19812_ || this.f_8510_.m_20088_().m_135352_()) {
+          if (this.f_8510_.m_20159_()) {
+             int i1 = Mth.m_14143_(this.f_8510_.m_146908_() * 256.0F / 360.0F);
+@@ -189,11 +_,13 @@
+    public void m_8534_(ServerPlayer p_8535_) {
+       this.f_8510_.m_6452_(p_8535_);
+       p_8535_.f_8906_.m_141995_(new ClientboundRemoveEntitiesPacket(this.f_8510_.m_142049_()));
++      net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(this.f_8510_, p_8535_);
+    }
+ 
+    public void m_8541_(ServerPlayer p_8542_) {
+       this.m_8536_(p_8542_.f_8906_::m_141995_);
+       this.f_8510_.m_6457_(p_8542_);
++      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.f_8510_, p_8542_);
+    }
+ 
+    public void m_8536_(Consumer<Packet<?>> p_8537_) {

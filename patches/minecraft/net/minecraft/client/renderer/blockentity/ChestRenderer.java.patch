@@ -1,0 +1,21 @@
+--- a/net/minecraft/client/renderer/blockentity/ChestRenderer.java
++++ b/net/minecraft/client/renderer/blockentity/ChestRenderer.java
+@@ -120,7 +_,7 @@
+          f1 = 1.0F - f1;
+          f1 = 1.0F - f1 * f1 * f1;
+          int i = neighborcombineresult.<Int2IntFunction>m_5649_(new BrightnessCombiner<>()).applyAsInt(p_112367_);
+-         Material material = Sheets.m_110767_(p_112363_, chesttype, this.f_112359_);
++         Material material = this.getMaterial(p_112363_, chesttype);
+          VertexConsumer vertexconsumer = material.m_119194_(p_112366_, RenderType::m_110452_);
+          if (flag1) {
+             if (chesttype == ChestType.LEFT) {
+@@ -142,5 +_,9 @@
+       p_112372_.m_104301_(p_112370_, p_112371_, p_112376_, p_112377_);
+       p_112373_.m_104301_(p_112370_, p_112371_, p_112376_, p_112377_);
+       p_112374_.m_104301_(p_112370_, p_112371_, p_112376_, p_112377_);
++   }
++
++   protected Material getMaterial(T blockEntity, ChestType chestType) {
++      return Sheets.m_110767_(blockEntity, chestType, this.f_112359_);
+    }
+ }

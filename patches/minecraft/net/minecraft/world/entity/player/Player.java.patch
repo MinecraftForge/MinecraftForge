@@ -1,0 +1,404 @@
+--- a/net/minecraft/world/entity/player/Player.java
++++ b/net/minecraft/world/entity/player/Player.java
+@@ -111,6 +_,7 @@
+ import net.minecraft.world.scores.Team;
+ 
+ public abstract class Player extends LivingEntity {
++   public static final String PERSISTED_NBT_TAG = "PlayerPersisted";
+    public static final String f_150081_ = "OfflinePlayer:";
+    public static final int f_150082_ = 16;
+    public static final int f_150083_ = 20;
+@@ -161,6 +_,9 @@
+    private final ItemCooldowns f_36087_ = this.m_7478_();
+    @Nullable
+    public FishingHook f_36083_;
++   private final java.util.Collection<MutableComponent> prefixes = new java.util.LinkedList<>();
++   private final java.util.Collection<MutableComponent> suffixes = new java.util.LinkedList<>();
++   @Nullable private Pose forcedPose;
+ 
+    public Player(Level p_36114_, BlockPos p_36115_, float p_36116_, GameProfile p_36117_) {
+       super(EntityType.f_20532_, p_36114_);
+@@ -186,7 +_,7 @@
+    }
+ 
+    public static AttributeSupplier.Builder m_36340_() {
+-      return LivingEntity.m_21183_().m_22268_(Attributes.f_22281_, 1.0D).m_22268_(Attributes.f_22279_, (double)0.1F).m_22266_(Attributes.f_22283_).m_22266_(Attributes.f_22286_);
++       return LivingEntity.m_21183_().m_22268_(Attributes.f_22281_, 1.0D).m_22268_(Attributes.f_22279_, (double) 0.1F).m_22266_(Attributes.f_22283_).m_22266_(Attributes.f_22286_).m_22266_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22266_(Attributes.f_22282_);
+    }
+ 
+    protected void m_8097_() {
+@@ -200,6 +_,7 @@
+    }
+ 
+    public void m_8119_() {
++      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onPlayerPreTick(this);
+       this.f_19794_ = this.m_5833_();
+       if (this.m_5833_()) {
+          this.f_19861_ = false;
+@@ -215,7 +_,7 @@
+             this.f_36110_ = 100;
+          }
+ 
+-         if (!this.f_19853_.f_46443_ && this.f_19853_.m_46461_()) {
++         if (!this.f_19853_.f_46443_ && !net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, m_21257_())) {
+             this.m_6145_(false, true);
+          }
+       } else if (this.f_36110_ > 0) {
+@@ -270,6 +_,7 @@
+       this.m_36372_();
+       this.f_36087_.m_41518_();
+       this.m_7594_();
++      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onPlayerPostTick(this);
+    }
+ 
+    public boolean m_36341_() {
+@@ -345,6 +_,10 @@
+    }
+ 
+    protected void m_7594_() {
++      if(forcedPose != null) {
++         this.m_20124_(forcedPose);
++         return;
++      }
+       if (this.m_20175_(Pose.SWIMMING)) {
+          Pose pose;
+          if (this.m_21255_()) {
+@@ -559,6 +_,7 @@
+    }
+ 
+    public void m_6667_(DamageSource p_36152_) {
++      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_36152_)) return;
+       super.m_6667_(p_36152_);
+       this.m_20090_();
+       if (!this.m_5833_()) {
+@@ -615,7 +_,7 @@
+ 
+    @Nullable
+    public ItemEntity m_36176_(ItemStack p_36177_, boolean p_36178_) {
+-      return this.m_7197_(p_36177_, false, p_36178_);
++      return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, p_36177_, false);
+    }
+ 
+    @Nullable
+@@ -653,7 +_,12 @@
+       }
+    }
+ 
++   @Deprecated //Use location sensitive version below
+    public float m_36281_(BlockState p_36282_) {
++      return getDigSpeed(p_36282_, null);
++   }
++
++   public float getDigSpeed(BlockState p_36282_, @Nullable BlockPos pos) {
+       float f = this.f_36093_.m_36020_(p_36282_);
+       if (f > 1.0F) {
+          int i = EnchantmentHelper.m_44926_(this);
+@@ -695,11 +_,12 @@
+          f /= 5.0F;
+       }
+ 
++      f = net.minecraftforge.event.ForgeEventFactory.getBreakSpeed(this, p_36282_, f, pos);
+       return f;
+    }
+ 
+    public boolean m_36298_(BlockState p_36299_) {
+-      return !p_36299_.m_60834_() || this.f_36093_.m_36056_().m_41735_(p_36299_);
++      return net.minecraftforge.event.ForgeEventFactory.doPlayerHarvestCheck(this, p_36299_, !p_36299_.m_60834_() || this.f_36093_.m_36056_().m_41735_(p_36299_));
+    }
+ 
+    public void m_7378_(CompoundTag p_36215_) {
+@@ -776,6 +_,7 @@
+    }
+ 
+    public boolean m_6469_(DamageSource p_36154_, float p_36155_) {
++      if (!net.minecraftforge.common.ForgeHooks.onPlayerAttack(this, p_36154_, p_36155_)) return false;
+       if (this.m_6673_(p_36154_)) {
+          return false;
+       } else if (this.f_36077_.f_35934_ && !p_36154_.m_19378_()) {
+@@ -807,7 +_,7 @@
+ 
+    protected void m_6728_(LivingEntity p_36295_) {
+       super.m_6728_(p_36295_);
+-      if (p_36295_.m_21205_().m_41720_() instanceof AxeItem) {
++      if (p_36295_.m_21205_().canDisableShield(this.f_20935_, this, p_36295_)) {
+          this.m_36384_(true);
+       }
+ 
+@@ -836,7 +_,7 @@
+    }
+ 
+    protected void m_7909_(float p_36383_) {
+-      if (this.f_20935_.m_150930_(Items.f_42740_)) {
++      if (this.f_20935_.isShield(this)) {
+          if (!this.f_19853_.f_46443_) {
+             this.m_36246_(Stats.f_12982_.m_12902_(this.f_20935_.m_41720_()));
+          }
+@@ -846,6 +_,7 @@
+             InteractionHand interactionhand = this.m_7655_();
+             this.f_20935_.m_41622_(i, this, (p_36149_) -> {
+                p_36149_.m_21190_(interactionhand);
++               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, this.f_20935_, interactionhand);
+             });
+             if (this.f_20935_.m_41619_()) {
+                if (interactionhand == InteractionHand.MAIN_HAND) {
+@@ -864,10 +_,13 @@
+ 
+    protected void m_6475_(DamageSource p_36312_, float p_36313_) {
+       if (!this.m_6673_(p_36312_)) {
++         p_36313_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_36312_, p_36313_);
++         if (p_36313_ <= 0) return;
+          p_36313_ = this.m_21161_(p_36312_, p_36313_);
+          p_36313_ = this.m_6515_(p_36312_, p_36313_);
+          float f2 = Math.max(p_36313_ - this.m_6103_(), 0.0F);
+          this.m_7911_(this.m_6103_() - (p_36313_ - f2));
++         f2 = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_36312_, f2);
+          float f = p_36313_ - f2;
+          if (f > 0.0F && f < 3.4028235E37F) {
+             this.m_36222_(Stats.f_12933_, Math.round(f * 10.0F));
+@@ -876,8 +_,8 @@
+          if (f2 != 0.0F) {
+             this.m_36399_(p_36312_.m_19377_());
+             float f1 = this.m_21223_();
+-            this.m_21153_(this.m_21223_() - f2);
+             this.m_21231_().m_19289_(p_36312_, f1, f2);
++            this.m_21153_(f1 - f2); // Forge: moved to fix MC-121048
+             if (f2 < 3.4028235E37F) {
+                this.m_36222_(Stats.f_12931_, Math.round(f2 * 10.0F));
+             }
+@@ -926,6 +_,8 @@
+ 
+          return InteractionResult.PASS;
+       } else {
++         InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntity(this, p_36158_, p_36159_);
++         if (cancelResult != null) return cancelResult;
+          ItemStack itemstack = this.m_21120_(p_36159_);
+          ItemStack itemstack1 = itemstack.m_41777_();
+          InteractionResult interactionresult = p_36158_.m_6096_(this, p_36159_);
+@@ -934,6 +_,9 @@
+                itemstack.m_41764_(itemstack1.m_41613_());
+             }
+ 
++            if (!this.f_36077_.f_35937_ && itemstack.m_41619_()) {
++               net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, itemstack1, p_36159_);
++            }
+             return interactionresult;
+          } else {
+             if (!itemstack.m_41619_() && p_36158_ instanceof LivingEntity) {
+@@ -944,6 +_,7 @@
+                InteractionResult interactionresult1 = itemstack.m_41647_(this, (LivingEntity)p_36158_, p_36159_);
+                if (interactionresult1.m_19077_()) {
+                   if (itemstack.m_41619_() && !this.f_36077_.f_35937_) {
++                     net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, itemstack1, p_36159_);
+                      this.m_21008_(p_36159_, ItemStack.f_41583_);
+                   }
+ 
+@@ -1028,6 +_,7 @@
+    }
+ 
+    public void m_5706_(Entity p_36347_) {
++      if (!net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget(this, p_36347_)) return;
+       if (p_36347_.m_6097_()) {
+          if (!p_36347_.m_7313_(this)) {
+             float f = (float)this.m_21133_(Attributes.f_22281_);
+@@ -1045,7 +_,7 @@
+             if (f > 0.0F || f1 > 0.0F) {
+                boolean flag = f2 > 0.9F;
+                boolean flag1 = false;
+-               int i = 0;
++               float i = (float)this.m_21133_(Attributes.f_22282_); // Forge: Initialize this value to the attack knockback attribute of the player, which is by default 0
+                i = i + EnchantmentHelper.m_44894_(this);
+                if (this.m_20142_() && flag) {
+                   this.f_19853_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12314_, this.m_5720_(), 1.0F, 1.0F);
+@@ -1055,8 +_,10 @@
+ 
+                boolean flag2 = flag && this.f_19789_ > 0.0F && !this.f_19861_ && !this.m_6147_() && !this.m_20069_() && !this.m_21023_(MobEffects.f_19610_) && !this.m_20159_() && p_36347_ instanceof LivingEntity;
+                flag2 = flag2 && !this.m_20142_();
++               net.minecraftforge.event.entity.player.CriticalHitEvent hitResult = net.minecraftforge.common.ForgeHooks.getCriticalHit(this, p_36347_, flag2, flag2 ? 1.5F : 1.0F);
++               flag2 = hitResult != null;
+                if (flag2) {
+-                  f *= 1.5F;
++                  f *= hitResult.getDamageModifier();
+                }
+ 
+                f = f + f1;
+@@ -1139,13 +_,15 @@
+                   EnchantmentHelper.m_44896_(this, p_36347_);
+                   ItemStack itemstack1 = this.m_21205_();
+                   Entity entity = p_36347_;
+-                  if (p_36347_ instanceof EnderDragonPart) {
+-                     entity = ((EnderDragonPart)p_36347_).f_31010_;
++                  if (p_36347_ instanceof net.minecraftforge.entity.PartEntity) {
++                     entity = ((net.minecraftforge.entity.PartEntity<?>) p_36347_).getParent();
+                   }
+ 
+                   if (!this.f_19853_.f_46443_ && !itemstack1.m_41619_() && entity instanceof LivingEntity) {
++                     ItemStack copy = itemstack1.m_41777_();
+                      itemstack1.m_41640_((LivingEntity)entity, this);
+                      if (itemstack1.m_41619_()) {
++                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this, copy, InteractionHand.MAIN_HAND);
+                         this.m_21008_(InteractionHand.MAIN_HAND, ItemStack.f_41583_);
+                      }
+                   }
+@@ -1187,7 +_,7 @@
+       }
+ 
+       if (this.f_19796_.nextFloat() < f) {
+-         this.m_36335_().m_41524_(Items.f_42740_, 100);
++         this.m_36335_().m_41524_(this.m_21211_().m_41720_(), 100);
+          this.m_5810_();
+          this.f_19853_.m_7605_(this, (byte)30);
+       }
+@@ -1212,8 +_,9 @@
+    public void m_7583_() {
+    }
+ 
+-   public void m_142687_(Entity.RemovalReason p_150097_) {
+-      super.m_142687_(p_150097_);
++   @Override
++   public void remove(boolean keepData) {
++      super.remove(keepData);
+       this.f_36095_.m_6877_(this);
+       if (this.f_36096_ != null) {
+          this.f_36096_.m_6877_(this);
+@@ -1247,6 +_,7 @@
+    }
+ 
+    public void m_6145_(boolean p_36226_, boolean p_36227_) {
++      net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_36226_, p_36227_);
+       super.m_5796_();
+       if (this.f_19853_ instanceof ServerLevel && p_36227_) {
+          ((ServerLevel)this.f_19853_).m_8878_();
+@@ -1272,7 +_,7 @@
+       } else if (block instanceof BedBlock && BedBlock.m_49488_(p_36131_)) {
+          return BedBlock.m_49458_(EntityType.f_20532_, p_36131_, p_36132_, p_36133_);
+       } else if (!p_36134_) {
+-         return Optional.empty();
++         return blockstate.getRespawnPosition(EntityType.f_20532_, p_36131_, p_36132_, p_36133_, null);
+       } else {
+          boolean flag = block.m_5568_();
+          boolean flag1 = p_36131_.m_8055_(p_36132_.m_7494_()).m_60734_().m_5568_();
+@@ -1452,6 +_,7 @@
+ 
+    public boolean m_142535_(float p_150093_, float p_150094_, DamageSource p_150095_) {
+       if (this.f_36077_.f_35936_) {
++         net.minecraftforge.event.ForgeEventFactory.onPlayerFall(this, p_150093_, p_150093_);
+          return false;
+       } else {
+          if (p_150093_ >= 2.0F) {
+@@ -1465,7 +_,7 @@
+    public boolean m_36319_() {
+       if (!this.f_19861_ && !this.m_21255_() && !this.m_20069_() && !this.m_21023_(MobEffects.f_19620_)) {
+          ItemStack itemstack = this.m_6844_(EquipmentSlot.CHEST);
+-         if (itemstack.m_150930_(Items.f_42741_) && ElytraItem.m_41140_(itemstack)) {
++         if (itemstack.canElytraFly(this)) {
+             this.m_36320_();
+             return true;
+          }
+@@ -1506,6 +_,10 @@
+    }
+ 
+    public void m_6756_(int p_36291_) {
++      net.minecraftforge.event.entity.player.PlayerXpEvent.XpChange event = new net.minecraftforge.event.entity.player.PlayerXpEvent.XpChange(this, p_36291_);
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
++      p_36291_ = event.getAmount();
++
+       this.m_36401_(p_36291_);
+       this.f_36080_ += (float)p_36291_ / (float)this.m_36323_();
+       this.f_36079_ = Mth.m_14045_(this.f_36079_ + p_36291_, 0, Integer.MAX_VALUE);
+@@ -1534,7 +_,7 @@
+    }
+ 
+    public void m_7408_(ItemStack p_36172_, int p_36173_) {
+-      this.f_36078_ -= p_36173_;
++      m_6749_(-p_36173_);
+       if (this.f_36078_ < 0) {
+          this.f_36078_ = 0;
+          this.f_36080_ = 0.0F;
+@@ -1545,6 +_,10 @@
+    }
+ 
+    public void m_6749_(int p_36276_) {
++      net.minecraftforge.event.entity.player.PlayerXpEvent.LevelChange event = new net.minecraftforge.event.entity.player.PlayerXpEvent.LevelChange(this, p_36276_);
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
++      p_36276_ = event.getLevels();
++
+       this.f_36078_ += p_36276_;
+       if (this.f_36078_ < 0) {
+          this.f_36078_ = 0;
+@@ -1732,7 +_,11 @@
+    }
+ 
+    public Component m_5446_() {
+-      MutableComponent mutablecomponent = PlayerTeam.m_83348_(this.m_5647_(), this.m_7755_());
++      if (this.displayname == null) this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.m_7755_());
++      MutableComponent mutablecomponent = new TextComponent("");
++      mutablecomponent = prefixes.stream().reduce(mutablecomponent, MutableComponent::m_7220_);
++      mutablecomponent = mutablecomponent.m_7220_(PlayerTeam.m_83348_(this.m_5647_(), this.displayname));
++      mutablecomponent = suffixes.stream().reduce(mutablecomponent, MutableComponent::m_7220_);
+       return this.m_36218_(mutablecomponent);
+    }
+ 
+@@ -1978,5 +_,63 @@
+       public Component m_36423_() {
+          return this.f_36413_;
+       }
++   }
++
++   // =========== FORGE START ==============//
++   public Collection<MutableComponent> getPrefixes() {
++       return this.prefixes;
++   }
++
++   public Collection<MutableComponent> getSuffixes() {
++       return this.suffixes;
++   }
++
++   private Component displayname = null;
++   /**
++    * Force the displayed name to refresh, by firing {@link net.minecraftforge.event.entity.player.PlayerEvent.NameFormat}, using the real player name as event parameter.
++    */
++   public void refreshDisplayName() {
++      this.displayname = net.minecraftforge.event.ForgeEventFactory.getPlayerDisplayName(this, this.m_7755_());
++   }
++
++   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
++         playerMainHandler = net.minecraftforge.common.util.LazyOptional.of(
++               () -> new net.minecraftforge.items.wrapper.PlayerMainInvWrapper(f_36093_));
++
++   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
++         playerEquipmentHandler = net.minecraftforge.common.util.LazyOptional.of(
++               () -> new net.minecraftforge.items.wrapper.CombinedInvWrapper(
++                     new net.minecraftforge.items.wrapper.PlayerArmorInvWrapper(f_36093_),
++                     new net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper(f_36093_)));
++
++   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
++         playerJoinedHandler = net.minecraftforge.common.util.LazyOptional.of(
++               () -> new net.minecraftforge.items.wrapper.PlayerInvWrapper(f_36093_));
++
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
++      if (this.m_6084_() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++         if (facing == null) return playerJoinedHandler.cast();
++         else if (facing.m_122434_().m_122478_()) return playerMainHandler.cast();
++         else if (facing.m_122434_().m_122479_()) return playerEquipmentHandler.cast();
++      }
++      return super.getCapability(capability, facing);
++   }
++
++   /**
++    * Force a pose for the player. If set, the vanilla pose determination and clearance check is skipped. Make sure the pose is clear yourself (e.g. in PlayerTick).
++    * This has to be set just once, do not set it every tick.
++    * Make sure to clear (null) the pose if not required anymore and only use if necessary.
++    */
++   public void setForcedPose(@Nullable Pose pose) {
++      this.forcedPose = pose;
++   }
++
++   /**
++    * @return The forced pose if set, null otherwise
++    */
++   @Nullable
++   public Pose getForcedPose() {
++      return this.forcedPose;
+    }
+ }

@@ -19,9 +19,9 @@
 
 package net.minecraftforge.event.world;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -40,18 +40,18 @@ import net.minecraftforge.eventbus.api.Event;
  **/
 public class ChunkWatchEvent extends Event
 {
-    private final ServerWorld world;
-    private final ServerPlayerEntity player;
+    private final ServerLevel world;
+    private final ServerPlayer player;
     private final ChunkPos pos;
 
-    public ChunkWatchEvent(ServerPlayerEntity player, ChunkPos pos, ServerWorld world)
+    public ChunkWatchEvent(ServerPlayer player, ChunkPos pos, ServerLevel world)
     {
         this.player = player;
         this.pos = pos;
         this.world = world;
     }
 
-    public ServerPlayerEntity getPlayer()
+    public ServerPlayer getPlayer()
     {
         return this.player;
     }
@@ -61,7 +61,7 @@ public class ChunkWatchEvent extends Event
         return this.pos;
     }
 
-    public ServerWorld getWorld()
+    public ServerLevel getWorld()
     {
         return this.world;
     }
@@ -79,7 +79,7 @@ public class ChunkWatchEvent extends Event
      **/
     public static class Watch extends ChunkWatchEvent
     {
-        public Watch(ServerPlayerEntity player, ChunkPos pos, ServerWorld world) {super(player, pos, world);}
+        public Watch(ServerPlayer player, ChunkPos pos, ServerLevel world) {super(player, pos, world);}
     }
 
     /**
@@ -95,6 +95,6 @@ public class ChunkWatchEvent extends Event
      **/
     public static class UnWatch extends ChunkWatchEvent
     {
-        public UnWatch(ServerPlayerEntity player, ChunkPos pos, ServerWorld world) {super(player, pos, world);}
+        public UnWatch(ServerPlayer player, ChunkPos pos, ServerLevel world) {super(player, pos, world);}
     }
 }

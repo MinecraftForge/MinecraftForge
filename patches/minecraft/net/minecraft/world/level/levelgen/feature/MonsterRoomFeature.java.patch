@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/levelgen/feature/MonsterRoomFeature.java
++++ b/net/minecraft/world/level/levelgen/feature/MonsterRoomFeature.java
+@@ -129,6 +_,6 @@
+    }
+ 
+    private EntityType<?> m_66358_(Random p_66359_) {
+-      return Util.m_137545_(f_66341_, p_66359_);
++      return net.minecraftforge.common.DungeonHooks.getRandomDungeonMob(p_66359_);
+    }
+ }

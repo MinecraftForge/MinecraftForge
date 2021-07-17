@@ -19,15 +19,15 @@
 
 package net.minecraftforge.debug.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.BoatEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -50,9 +50,9 @@ public class SlipperinessTest
         e.getRegistry().register((new Block(Block.Properties.of(Material.ICE_SOLID))
         {
             @Override
-            public float getSlipperiness(BlockState state, IWorldReader world, BlockPos pos, Entity entity)
+            public float getFriction(BlockState state, LevelReader world, BlockPos pos, Entity entity)
             {
-                return entity instanceof BoatEntity ? 2 : super.getSlipperiness(state, world, pos, entity);
+                return entity instanceof Boat ? 2 : super.getFriction(state, world, pos, entity);
             }
         }).setRegistryName(MOD_ID, BLOCK_ID));
     }

@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/entity/animal/Bee.java
++++ b/net/minecraft/world/entity/animal/Bee.java
+@@ -212,6 +_,7 @@
+       this.f_27710_ = p_27793_.m_128451_("TicksSincePollination");
+       this.f_27711_ = p_27793_.m_128451_("CannotEnterHiveTicks");
+       this.f_27712_ = p_27793_.m_128451_("CropsGrownSincePollination");
++      if(!f_19853_.f_46443_) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
+       this.m_147285_(this.f_19853_, p_27793_);
+    }
+ 
+@@ -469,7 +_,7 @@
+          return false;
+       } else {
+          BlockEntity blockentity = this.f_19853_.m_7702_(this.f_27698_);
+-         return blockentity != null && blockentity.m_58903_() == BlockEntityType.f_58912_;
++         return blockentity instanceof BeehiveBlockEntity;
+       }
+    }
+ 

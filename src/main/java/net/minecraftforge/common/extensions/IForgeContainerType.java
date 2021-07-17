@@ -19,17 +19,18 @@
 
 package net.minecraftforge.common.extensions;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.fmllegacy.network.IContainerFactory;
 
 public interface IForgeContainerType<T>
 {
-    static <T extends Container> ContainerType<T> create(net.minecraftforge.fml.network.IContainerFactory<T> factory)
+    static <T extends AbstractContainerMenu> MenuType<T> create(IContainerFactory<T> factory)
     {
-        return new ContainerType<>(factory);
+        return new MenuType<>(factory);
     }
     
-    T create(int windowId, PlayerInventory playerInv, PacketBuffer extraData);
+    T create(int windowId, Inventory playerInv, FriendlyByteBuf extraData);
 }

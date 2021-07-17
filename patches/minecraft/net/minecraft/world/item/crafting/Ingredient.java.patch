@@ -1,0 +1,96 @@
+--- a/net/minecraft/world/item/crafting/Ingredient.java
++++ b/net/minecraft/world/item/crafting/Ingredient.java
+@@ -29,15 +_,24 @@
+ import net.minecraft.world.level.ItemLike;
+ 
+ public class Ingredient implements Predicate<ItemStack> {
++   //Because Mojang caches things... we need to invalidate them.. so... here we go..
++   private static final java.util.Set<Ingredient> INSTANCES = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<Ingredient, Boolean>());
++   public static void invalidateAll() {
++      INSTANCES.stream().filter(e -> e != null).forEach(i -> i.invalidate());
++   }
++
+    public static final Ingredient f_43901_ = new Ingredient(Stream.empty());
+    private final Ingredient.Value[] f_43902_;
+    private ItemStack[] f_43903_;
+    private IntList f_43904_;
++   private final boolean isSimple;
+ 
+    protected Ingredient(Stream<? extends Ingredient.Value> p_43907_) {
+       this.f_43902_ = p_43907_.toArray((p_43933_) -> {
+          return new Ingredient.Value[p_43933_];
+       });
++      this.isSimple = !net.minecraftforge.fmllegacy.DatagenModLoader.isRunningDataGen() && !Arrays.stream(f_43902_).anyMatch(list -> list.m_6223_().stream().anyMatch(stack -> stack.m_41720_().isDamageable(stack)));
++      Ingredient.INSTANCES.add(this);
+    }
+ 
+    public ItemStack[] m_43908_() {
+@@ -92,6 +_,10 @@
+ 
+    public final void m_43923_(FriendlyByteBuf p_43924_) {
+       this.m_43948_();
++      if (!this.isVanilla()) {
++         net.minecraftforge.common.crafting.CraftingHelper.write(p_43924_, this);
++         return;
++      }
+       p_43924_.m_178352_(Arrays.asList(this.f_43903_), FriendlyByteBuf::m_130055_);
+    }
+ 
+@@ -113,6 +_,25 @@
+       return this.f_43902_.length == 0 && (this.f_43903_ == null || this.f_43903_.length == 0) && (this.f_43904_ == null || this.f_43904_.isEmpty());
+    }
+ 
++   protected void invalidate() {
++      this.f_43903_ = null;
++      this.f_43904_ = null;
++   }
++
++   public boolean isSimple() {
++      return isSimple || this == f_43901_;
++   }
++
++   private final boolean isVanilla = this.getClass() == Ingredient.class;
++   public final boolean isVanilla() {
++       return isVanilla;
++   }
++
++   public net.minecraftforge.common.crafting.IIngredientSerializer<? extends Ingredient> getSerializer() {
++      if (!isVanilla()) throw new IllegalStateException("Modders must implement Ingredient.getSerializer in their custom Ingredients: " + this);
++      return net.minecraftforge.common.crafting.VanillaIngredientSerializer.INSTANCE;
++   }
++
+    public static Ingredient m_43938_(Stream<? extends Ingredient.Value> p_43939_) {
+       Ingredient ingredient = new Ingredient(p_43939_);
+       return ingredient.f_43902_.length == 0 ? f_43901_ : ingredient;
+@@ -146,6 +_,8 @@
+ 
+    public static Ingredient m_43917_(@Nullable JsonElement p_43918_) {
+       if (p_43918_ != null && !p_43918_.isJsonNull()) {
++         Ingredient ret = net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_43918_);
++         if (ret != null) return ret;
+          if (p_43918_.isJsonObject()) {
+             return m_43938_(Stream.of(m_43919_(p_43918_.getAsJsonObject())));
+          } else if (p_43918_.isJsonArray()) {
+@@ -182,6 +_,12 @@
+       }
+    }
+ 
++   //Merges several vanilla Ingredients together. As a quirk of how the json is structured, we can't tell if its a single Ingredient type or multiple so we split per item and re-merge here.
++   //Only public for internal use, so we can access a private field in here.
++   public static Ingredient merge(Collection<Ingredient> parts) {
++      return m_43938_(parts.stream().flatMap(i -> Arrays.stream(i.f_43902_)));
++   }
++
+    public static class ItemValue implements Ingredient.Value {
+       private final ItemStack f_43951_;
+ 
+@@ -214,6 +_,9 @@
+             list.add(new ItemStack(item));
+          }
+ 
++         if (list.size() == 0 && !net.minecraftforge.common.ForgeConfig.SERVER.treatEmptyTagsAsAir.get()) {
++            list.add(new ItemStack(net.minecraft.world.level.block.Blocks.f_50375_).m_41714_(new net.minecraft.network.chat.TextComponent("Empty Tag: " + SerializationTags.m_13199_().m_144454_(Registry.f_122904_, this.f_43959_, () -> new IllegalStateException("Unrecognized tag")))));
++         }
+          return list;
+       }
+ 

@@ -1,0 +1,142 @@
+--- a/net/minecraft/client/gui/screens/Screen.java
++++ b/net/minecraft/client/gui/screens/Screen.java
+@@ -163,7 +_,10 @@
+    }
+ 
+    protected void m_6057_(PoseStack p_96566_, ItemStack p_96567_, int p_96568_, int p_96569_) {
+-      this.m_169388_(p_96566_, this.m_96555_(p_96567_), p_96567_.m_150921_(), p_96568_, p_96569_);
++      Font font = net.minecraftforge.client.RenderProperties.get(p_96567_).getFont(p_96567_);
++      net.minecraftforge.fmlclient.gui.GuiUtils.preItemToolTip(p_96567_);
++      this.renderComponentToolTip(p_96566_, this.m_96555_(p_96567_), p_96568_, p_96569_, (font == null ? this.f_96547_ : font));
++      net.minecraftforge.fmlclient.gui.GuiUtils.postItemToolTip();
+    }
+ 
+    public void m_169388_(PoseStack p_169389_, List<Component> p_169390_, Optional<TooltipComponent> p_169391_, int p_169392_, int p_169393_) {
+@@ -171,7 +_,7 @@
+       p_169391_.ifPresent((p_169399_) -> {
+          list.add(1, ClientTooltipComponent.m_169950_(p_169399_));
+       });
+-      this.m_169383_(p_169389_, list, p_169392_, p_169393_);
++      this.renderTooltipInternal(p_169389_, list, p_169392_, p_169393_, f_96547_);
+    }
+ 
+    public List<Component> m_96555_(ItemStack p_96556_) {
+@@ -179,24 +_,30 @@
+    }
+ 
+    public void m_96602_(PoseStack p_96603_, Component p_96604_, int p_96605_, int p_96606_) {
+-      this.m_96617_(p_96603_, Arrays.asList(p_96604_.m_7532_()), p_96605_, p_96606_);
++      this.m_96597_(p_96603_, Arrays.asList(p_96604_), p_96605_, p_96606_);
+    }
+ 
+    public void m_96597_(PoseStack p_96598_, List<Component> p_96599_, int p_96600_, int p_96601_) {
+-      this.m_96617_(p_96598_, Lists.transform(p_96599_, Component::m_7532_), p_96600_, p_96601_);
++      this.renderComponentToolTip(p_96598_, p_96599_, p_96600_, p_96601_, f_96547_);
++   }
++   public void renderComponentToolTip(PoseStack matrixStack, List<? extends net.minecraft.network.chat.FormattedText> tooltips, int mouseX, int mouseY, Font font) {
++      net.minecraftforge.fmlclient.gui.GuiUtils.drawHoveringText(matrixStack, tooltips, mouseX, mouseY, f_96543_, f_96544_, -1, font);
+    }
+ 
+    public void m_96617_(PoseStack p_96618_, List<? extends FormattedCharSequence> p_96619_, int p_96620_, int p_96621_) {
+-      this.m_169383_(p_96618_, p_96619_.stream().map(ClientTooltipComponent::m_169948_).collect(Collectors.toList()), p_96620_, p_96621_);
++      this.renderToolTip(p_96618_, p_96619_, p_96620_, p_96621_, f_96547_);
++   }
++   public void renderToolTip(PoseStack p_96618_, List<? extends FormattedCharSequence> p_96619_, int p_96620_, int p_96621_, Font font) {
++      this.renderTooltipInternal(p_96618_, p_96619_.stream().map(ClientTooltipComponent::m_169948_).collect(Collectors.toList()), p_96620_, p_96621_, font);
+    }
+ 
+-   private void m_169383_(PoseStack p_169384_, List<ClientTooltipComponent> p_169385_, int p_169386_, int p_169387_) {
++   private void renderTooltipInternal(PoseStack p_169384_, List<ClientTooltipComponent> p_169385_, int p_169386_, int p_169387_, Font font) {
+       if (!p_169385_.isEmpty()) {
+          int i = 0;
+          int j = p_169385_.size() == 1 ? -2 : 0;
+ 
+          for(ClientTooltipComponent clienttooltipcomponent : p_169385_) {
+-            int k = clienttooltipcomponent.m_142069_(this.f_96547_);
++            int k = clienttooltipcomponent.m_142069_(font);
+             if (k > i) {
+                i = k;
+             }
+@@ -249,7 +_,7 @@
+ 
+          for(int i2 = 0; i2 < p_169385_.size(); ++i2) {
+             ClientTooltipComponent clienttooltipcomponent1 = p_169385_.get(i2);
+-            clienttooltipcomponent1.m_142440_(this.f_96547_, j2, l1, matrix4f, multibuffersource$buffersource);
++            clienttooltipcomponent1.m_142440_(font, j2, l1, matrix4f, multibuffersource$buffersource);
+             l1 += clienttooltipcomponent1.m_142103_() + (i2 == 0 ? 2 : 0);
+          }
+ 
+@@ -259,7 +_,7 @@
+ 
+          for(int l2 = 0; l2 < p_169385_.size(); ++l2) {
+             ClientTooltipComponent clienttooltipcomponent2 = p_169385_.get(l2);
+-            clienttooltipcomponent2.m_142162_(this.f_96547_, j2, l1, p_169384_, this.f_96542_, 400, this.f_96541_.m_91097_());
++            clienttooltipcomponent2.m_142162_(font, j2, l1, p_169384_, this.f_96542_, 400, this.f_96541_.m_91097_());
+             l1 += clienttooltipcomponent2.m_142103_() + (l2 == 0 ? 2 : 0);
+          }
+ 
+@@ -353,9 +_,12 @@
+    }
+ 
+    public void m_96612_(String p_96613_, boolean p_96614_) {
++      p_96613_ = net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(p_96613_);
++      if (p_96613_.isEmpty()) return;
+       if (p_96614_) {
+          this.f_96541_.f_91065_.m_93076_().m_93783_(p_96613_);
+       }
++      //if (net.minecraftforge.client.ClientCommandHandler.instance.executeCommand(mc.player, msg) != 0) return; //Forge: TODO Client command re-write
+ 
+       this.f_96541_.f_91074_.m_108739_(p_96613_);
+    }
+@@ -366,11 +_,24 @@
+       this.f_96547_ = p_96607_.f_91062_;
+       this.f_96543_ = p_96608_;
+       this.f_96544_ = p_96609_;
++      java.util.function.Consumer<GuiEventListener> add = (b) -> {
++         if (b instanceof Widget) {
++            this.f_169369_.add((Widget)b);
++         }
++
++         if (b instanceof NarratableEntry) {
++            this.f_169368_.add((NarratableEntry)b);
++         }
++         f_96540_.remove(b);
++      };
++      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.f_96540_, add, this::m_169411_))) {
+       this.m_169413_();
+       this.m_7522_((GuiEventListener)null);
+       this.m_7856_();
+       this.m_169407_(false);
+       this.m_169378_(f_169370_);
++      }
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post(this, this.f_96540_, add, this::m_169411_));
+    }
+ 
+    public List<? extends GuiEventListener> m_6702_() {
+@@ -393,6 +_,7 @@
+    public void m_96558_(PoseStack p_96559_, int p_96560_) {
+       if (this.f_96541_.f_91073_ != null) {
+          this.m_93179_(p_96559_, 0, 0, this.f_96543_, this.f_96544_, -1072689136, -804253680);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this, p_96559_));
+       } else {
+          this.m_96626_(p_96560_);
+       }
+@@ -412,6 +_,7 @@
+       bufferbuilder.m_5483_((double)this.f_96543_, 0.0D, 0.0D).m_7421_((float)this.f_96543_ / 32.0F, (float)p_96627_).m_6122_(64, 64, 64, 255).m_5752_();
+       bufferbuilder.m_5483_(0.0D, 0.0D, 0.0D).m_7421_(0.0F, (float)p_96627_).m_6122_(64, 64, 64, 255).m_5752_();
+       tesselator.m_85914_();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this, new PoseStack()));
+    }
+ 
+    public boolean m_7043_() {
+@@ -497,6 +_,10 @@
+    }
+ 
+    public void m_7400_(List<Path> p_96591_) {
++   }
++
++   public Minecraft getMinecraft() {
++      return this.f_96541_;
+    }
+ 
+    private void m_169380_(long p_169381_, boolean p_169382_) {

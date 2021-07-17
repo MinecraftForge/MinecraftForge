@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.model.generators;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 /**

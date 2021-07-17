@@ -1,0 +1,28 @@
+--- a/net/minecraft/client/gui/screens/inventory/EnchantmentScreen.java
++++ b/net/minecraft/client/gui/screens/inventory/EnchantmentScreen.java
+@@ -151,7 +_,7 @@
+             int i2 = 86 - this.f_96547_.m_92895_(s);
+             FormattedText formattedtext = EnchantmentNames.m_98734_().m_98737_(this.f_96547_, i2);
+             int j2 = 6839882;
+-            if ((l < i1 + 1 || this.f_96541_.f_91074_.f_36078_ < l1) && !this.f_96541_.f_91074_.m_150110_().f_35937_) {
++            if (((l < i1 + 1 || this.f_96541_.f_91074_.f_36078_ < l1) && !this.f_96541_.f_91074_.m_150110_().f_35937_) || this.f_97732_.f_39447_[i1] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels
+                this.m_93228_(p_98762_, j1, j + 14 + 19 * i1, 0, 185, 108, 19);
+                this.m_93228_(p_98762_, j1 + 1, j + 15 + 19 * i1, 16 * i1, 239, 16, 16);
+                this.f_96547_.m_92857_(formattedtext, k1, j + 16 + 19 * i1, i2, (j2 & 16711422) >> 1);
+@@ -190,10 +_,13 @@
+          Enchantment enchantment = Enchantment.m_44697_((this.f_97732_).f_39447_[j]);
+          int l = (this.f_97732_).f_39448_[j];
+          int i1 = j + 1;
+-         if (this.m_6774_(60, 14 + 19 * j, 108, 17, (double)p_98768_, (double)p_98769_) && k > 0 && l >= 0 && enchantment != null) {
++         if (this.m_6774_(60, 14 + 19 * j, 108, 17, (double)p_98768_, (double)p_98769_) && k > 0) {
+             List<Component> list = Lists.newArrayList();
+-            list.add((new TranslatableComponent("container.enchant.clue", enchantment.m_44700_(l))).m_130940_(ChatFormatting.WHITE));
+-            if (!flag) {
++            list.add((new TranslatableComponent("container.enchant.clue", enchantment == null ? "" : enchantment.m_44700_(l))).m_130940_(ChatFormatting.WHITE));
++            if (enchantment == null) {
++               list.add(new TextComponent(""));
++               list.add(new TranslatableComponent("forge.container.enchant.limitedEnchantability").m_130940_(ChatFormatting.RED));
++            } else if (!flag) {
+                list.add(TextComponent.f_131282_);
+                if (this.f_96541_.f_91074_.f_36078_ < k) {
+                   list.add((new TranslatableComponent("container.enchant.level.requirement", (this.f_97732_).f_39446_[j])).m_130940_(ChatFormatting.RED));

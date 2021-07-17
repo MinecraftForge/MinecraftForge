@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/projectile/SmallFireball.java
++++ b/net/minecraft/world/entity/projectile/SmallFireball.java
+@@ -49,7 +_,7 @@
+       super.m_8060_(p_37384_);
+       if (!this.f_19853_.f_46443_) {
+          Entity entity = this.m_37282_();
+-         if (!(entity instanceof Mob) || this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
++         if (!(entity instanceof Mob) || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this)) {
+             BlockPos blockpos = p_37384_.m_82425_().m_142300_(p_37384_.m_82434_());
+             if (this.f_19853_.m_46859_(blockpos)) {
+                this.f_19853_.m_46597_(blockpos, BaseFireBlock.m_49245_(this.f_19853_, blockpos));

@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/entity/monster/AbstractSkeleton.java
++++ b/net/minecraft/world/entity/monster/AbstractSkeleton.java
+@@ -152,7 +_,7 @@
+       if (this.f_19853_ != null && !this.f_19853_.f_46443_) {
+          this.f_21345_.m_25363_(this.f_32131_);
+          this.f_21345_.m_25363_(this.f_32130_);
+-         ItemStack itemstack = this.m_21120_(ProjectileUtil.m_37297_(this, Items.f_42411_));
++         ItemStack itemstack = this.m_21120_(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem));
+          if (itemstack.m_150930_(Items.f_42411_)) {
+             int i = 20;
+             if (this.f_19853_.m_46791_() != Difficulty.HARD) {
+@@ -169,8 +_,10 @@
+    }
+ 
+    public void m_6504_(LivingEntity p_32141_, float p_32142_) {
+-      ItemStack itemstack = this.m_6298_(this.m_21120_(ProjectileUtil.m_37297_(this, Items.f_42411_)));
++      ItemStack itemstack = this.m_6298_(this.m_21120_(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem)));
+       AbstractArrow abstractarrow = this.m_7932_(itemstack, p_32142_);
++      if (this.m_21205_().m_41720_() instanceof net.minecraft.world.item.BowItem)
++         abstractarrow = ((net.minecraft.world.item.BowItem)this.m_21205_().m_41720_()).customArrow(abstractarrow);
+       double d0 = p_32141_.m_20185_() - this.m_20185_();
+       double d1 = p_32141_.m_20227_(0.3333333333333333D) - abstractarrow.m_20186_();
+       double d2 = p_32141_.m_20189_() - this.m_20189_();

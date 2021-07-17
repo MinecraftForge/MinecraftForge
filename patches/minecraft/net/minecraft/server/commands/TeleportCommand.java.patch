@@ -1,0 +1,12 @@
+--- a/net/minecraft/server/commands/TeleportCommand.java
++++ b/net/minecraft/server/commands/TeleportCommand.java
+@@ -126,6 +_,9 @@
+    }
+ 
+    private static void m_139014_(CommandSourceStack p_139015_, Entity p_139016_, ServerLevel p_139017_, double p_139018_, double p_139019_, double p_139020_, Set<ClientboundPlayerPositionPacket.RelativeArgument> p_139021_, float p_139022_, float p_139023_, @Nullable TeleportCommand.LookAt p_139024_) throws CommandSyntaxException {
++      net.minecraftforge.event.entity.EntityTeleportEvent.TeleportCommand event = net.minecraftforge.event.ForgeEventFactory.onEntityTeleportCommand(p_139016_, p_139018_, p_139019_, p_139020_);
++      if (event.isCanceled()) return;
++      p_139018_ = event.getTargetX(); p_139019_ = event.getTargetY(); p_139020_ = event.getTargetZ();
+       BlockPos blockpos = new BlockPos(p_139018_, p_139019_, p_139020_);
+       if (!Level.m_46741_(blockpos)) {
+          throw f_139006_.create();

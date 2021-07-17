@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/dedicated/Settings.java
++++ b/net/minecraft/server/dedicated/Settings.java
+@@ -60,7 +_,7 @@
+          OutputStream outputstream = Files.newOutputStream(p_139877_);
+ 
+          try {
+-            this.f_139798_.store(outputstream, "Minecraft server properties");
++            net.minecraftforge.common.util.SortedProperties.store(f_139798_, outputstream, "Minecraft server properties");
+          } catch (Throwable throwable1) {
+             if (outputstream != null) {
+                try {

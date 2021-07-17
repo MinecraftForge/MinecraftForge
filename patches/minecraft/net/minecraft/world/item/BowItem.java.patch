@@ -1,0 +1,50 @@
+--- a/net/minecraft/world/item/BowItem.java
++++ b/net/minecraft/world/item/BowItem.java
+@@ -26,18 +_,23 @@
+          Player player = (Player)p_40669_;
+          boolean flag = player.m_150110_().f_35937_ || EnchantmentHelper.m_44843_(Enchantments.f_44952_, p_40667_) > 0;
+          ItemStack itemstack = player.m_6298_(p_40667_);
++
++         int i = this.m_8105_(p_40667_) - p_40670_;
++         i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_40667_, p_40668_, player, i, !itemstack.m_41619_() || flag);
++         if (i < 0) return;
++
+          if (!itemstack.m_41619_() || flag) {
+             if (itemstack.m_41619_()) {
+                itemstack = new ItemStack(Items.f_42412_);
+             }
+ 
+-            int i = this.m_8105_(p_40667_) - p_40670_;
+             float f = m_40661_(i);
+             if (!((double)f < 0.1D)) {
+-               boolean flag1 = flag && itemstack.m_150930_(Items.f_42412_);
++               boolean flag1 = player.m_150110_().f_35937_ || (itemstack.m_41720_() instanceof ArrowItem && ((ArrowItem)itemstack.m_41720_()).isInfinite(itemstack, p_40667_, player));
+                if (!p_40668_.f_46443_) {
+                   ArrowItem arrowitem = (ArrowItem)(itemstack.m_41720_() instanceof ArrowItem ? itemstack.m_41720_() : Items.f_42412_);
+                   AbstractArrow abstractarrow = arrowitem.m_6394_(p_40668_, itemstack, player);
++                  abstractarrow = customArrow(abstractarrow);
+                   abstractarrow.m_37251_(player, player.m_146909_(), player.m_146908_(), 0.0F, f * 3.0F, 1.0F);
+                   if (f == 1.0F) {
+                      abstractarrow.m_36762_(true);
+@@ -102,6 +_,10 @@
+    public InteractionResultHolder<ItemStack> m_7203_(Level p_40672_, Player p_40673_, InteractionHand p_40674_) {
+       ItemStack itemstack = p_40673_.m_21120_(p_40674_);
+       boolean flag = !p_40673_.m_6298_(itemstack).m_41619_();
++
++      InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, p_40672_, p_40673_, p_40674_, flag);
++      if (ret != null) return ret;
++
+       if (!p_40673_.m_150110_().f_35937_ && !flag) {
+          return InteractionResultHolder.m_19100_(itemstack);
+       } else {
+@@ -112,6 +_,10 @@
+ 
+    public Predicate<ItemStack> m_6437_() {
+       return f_43005_;
++   }
++
++   public AbstractArrow customArrow(AbstractArrow arrow) {
++      return arrow;
+    }
+ 
+    public int m_6615_() {

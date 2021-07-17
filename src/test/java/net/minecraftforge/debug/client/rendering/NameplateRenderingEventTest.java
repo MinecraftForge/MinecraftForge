@@ -19,10 +19,10 @@
 
 package net.minecraftforge.debug.client.rendering;
 
-import net.minecraft.entity.passive.CowEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.entity.animal.Cow;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.client.event.RenderNameplateEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -46,15 +46,15 @@ public class NameplateRenderingEventTest
             return;
         }
 
-        if(event.getEntity() instanceof CowEntity)
+        if(event.getEntity() instanceof Cow)
         {
-            event.setContent(new StringTextComponent("Evil Cow").withStyle(TextFormatting.RED));
+            event.setContent(new TextComponent("Evil Cow").withStyle(ChatFormatting.RED));
             event.setResult(Event.Result.ALLOW);
         }
 
-        if(event.getEntity() instanceof PlayerEntity)
+        if(event.getEntity() instanceof Player)
         {
-            event.setContent(event.getEntity().getDisplayName().copy().withStyle(TextFormatting.GOLD));
+            event.setContent(event.getEntity().getDisplayName().copy().withStyle(ChatFormatting.GOLD));
         }
     }
 }

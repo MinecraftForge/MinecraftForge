@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/levelgen/WorldGenSettings.java
++++ b/net/minecraft/world/level/levelgen/WorldGenSettings.java
+@@ -183,7 +_,7 @@
+       String s3 = (String)p_64649_.get("level-type");
+       String s4 = Optional.ofNullable(s3).map((p_64651_) -> {
+          return p_64651_.toLowerCase(Locale.ROOT);
+-      }).orElse("default");
++      }).orElseGet(net.minecraftforge.common.ForgeHooks::getDefaultWorldType);
+       p_64649_.put("level-type", s4);
+       long i = (new Random()).nextLong();
+       if (!s1.isEmpty()) {
+@@ -201,6 +_,8 @@
+       Registry<Biome> registry = p_64648_.m_175515_(Registry.f_122885_);
+       Registry<NoiseGeneratorSettings> registry1 = p_64648_.m_175515_(Registry.f_122878_);
+       MappedRegistry<LevelStem> mappedregistry = DimensionType.m_63921_(registry2, registry, registry1, i);
++      net.minecraftforge.common.world.ForgeWorldType type = net.minecraftforge.registries.ForgeRegistries.WORLD_TYPES.getValue(new net.minecraft.resources.ResourceLocation(s4));
++      if (type != null) return type.createSettings(p_64648_, i, flag, false, s);
+       switch(s4) {
+       case "flat":
+          JsonObject jsonobject = !s.isEmpty() ? GsonHelper.m_13864_(s) : new JsonObject();

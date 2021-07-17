@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.model.b3d;
 
-import net.minecraft.util.math.vector.TransformationMatrix;
+import com.mojang.math.Transformation;
 import net.minecraftforge.client.model.b3d.B3DLoader.NodeJoint;
 import net.minecraftforge.client.model.b3d.B3DModel.Key;
 import net.minecraftforge.client.model.b3d.B3DModel.Node;
@@ -63,25 +63,25 @@ public enum B3DClip implements IClip
         }
 
         @Override
-        public TransformationMatrix apply(float time)
+        public Transformation apply(float time)
         {
-            TransformationMatrix ret = TransformationMatrix.identity();
+            Transformation ret = Transformation.identity();
             if(node.getAnimation() == null)
             {
-                return ret.compose(new TransformationMatrix(node.getPos(), node.getRot(), node.getScale(), null));
+                return ret.compose(new Transformation(node.getPos(), node.getRot(), node.getScale(), null));
             }
             int start = Math.max(1, (int)Math.round(Math.floor(time)));
             int end = Math.min(start + 1, (int)Math.round(Math.ceil(time)));
             float progress = time - (float)Math.floor(time);
             Key keyStart = node.getAnimation().getKeys().get(start, node);
             Key keyEnd = node.getAnimation().getKeys().get(end, node);
-            TransformationMatrix startTr = keyStart == null ? null : new TransformationMatrix(keyStart.getPos(), keyStart.getRot(),keyStart.getScale(), null);
-            TransformationMatrix endTr = keyEnd == null ? null : new TransformationMatrix(keyEnd.getPos(), keyEnd.getRot(),keyEnd.getScale(), null);
+            Transformation startTr = keyStart == null ? null : new Transformation(keyStart.getPos(), keyStart.getRot(),keyStart.getScale(), null);
+            Transformation endTr = keyEnd == null ? null : new Transformation(keyEnd.getPos(), keyEnd.getRot(),keyEnd.getScale(), null);
             if(keyStart == null)
             {
                 if(keyEnd == null)
                 {
-                    ret = ret.compose(new TransformationMatrix(node.getPos(), node.getRot(), node.getScale(), null));
+                    ret = ret.compose(new Transformation(node.getPos(), node.getRot(), node.getScale(), null));
                 }
                 // TODO animated TRSRTransformation for speed?
                 else

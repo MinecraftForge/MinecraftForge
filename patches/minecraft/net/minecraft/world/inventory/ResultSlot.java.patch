@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/inventory/ResultSlot.java
++++ b/net/minecraft/world/inventory/ResultSlot.java
+@@ -41,6 +_,7 @@
+    protected void m_5845_(ItemStack p_40185_) {
+       if (this.f_40164_ > 0) {
+          p_40185_.m_41678_(this.f_40163_.f_19853_, this.f_40163_, this.f_40164_);
++         net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerCraftingEvent(this.f_40163_, p_40185_, this.f_40162_);
+       }
+ 
+       if (this.f_40218_ instanceof RecipeHolder) {
+@@ -52,8 +_,9 @@
+ 
+    public void m_142406_(Player p_150638_, ItemStack p_150639_) {
+       this.m_5845_(p_150639_);
++      net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_150638_);
+       NonNullList<ItemStack> nonnulllist = p_150638_.f_19853_.m_7465_().m_44069_(RecipeType.f_44107_, this.f_40162_, p_150638_.f_19853_);
+-
++      net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
+       for(int i = 0; i < nonnulllist.size(); ++i) {
+          ItemStack itemstack = this.f_40162_.m_8020_(i);
+          ItemStack itemstack1 = nonnulllist.get(i);

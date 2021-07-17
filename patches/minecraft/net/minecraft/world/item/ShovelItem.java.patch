@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/item/ShovelItem.java
++++ b/net/minecraft/world/item/ShovelItem.java
+@@ -21,7 +_,7 @@
+    protected static final Map<Block, BlockState> f_43110_ = Maps.newHashMap((new Builder()).put(Blocks.f_50440_, Blocks.f_152481_.m_49966_()).put(Blocks.f_50493_, Blocks.f_152481_.m_49966_()).put(Blocks.f_50599_, Blocks.f_152481_.m_49966_()).put(Blocks.f_50546_, Blocks.f_152481_.m_49966_()).put(Blocks.f_50195_, Blocks.f_152481_.m_49966_()).put(Blocks.f_152549_, Blocks.f_152481_.m_49966_()).build());
+ 
+    public ShovelItem(Tier p_43114_, float p_43115_, float p_43116_, Item.Properties p_43117_) {
+-      super(p_43115_, p_43116_, p_43114_, BlockTags.f_144283_, p_43117_);
++      super(p_43115_, p_43116_, p_43114_, BlockTags.f_144283_, p_43117_.addToolType(net.minecraftforge.common.ToolType.SHOVEL, p_43114_.m_6604_()));
+    }
+ 
+    public InteractionResult m_6225_(UseOnContext p_43119_) {
+@@ -32,9 +_,9 @@
+          return InteractionResult.PASS;
+       } else {
+          Player player = p_43119_.m_43723_();
+-         BlockState blockstate1 = f_43110_.get(blockstate.m_60734_());
++         BlockState blockstate1 = blockstate.getToolModifiedState(level, blockpos, player, p_43119_.m_43722_(), net.minecraftforge.common.ToolType.SHOVEL);
+          BlockState blockstate2 = null;
+-         if (blockstate1 != null && level.m_8055_(blockpos.m_7494_()).m_60795_()) {
++         if (blockstate1 != null && level.m_46859_(blockpos.m_7494_())) {
+             level.m_5594_(player, blockpos, SoundEvents.f_12406_, SoundSource.BLOCKS, 1.0F, 1.0F);
+             blockstate2 = blockstate1;
+          } else if (blockstate.m_60734_() instanceof CampfireBlock && blockstate.m_61143_(CampfireBlock.f_51227_)) {
+@@ -61,5 +_,10 @@
+             return InteractionResult.PASS;
+          }
+       }
++   }
++
++   @javax.annotation.Nullable
++   public static BlockState getShovelPathingState(BlockState originalState) {
++      return f_43110_.get(originalState.m_60734_());
+    }
+ }

@@ -22,10 +22,10 @@ package net.minecraftforge.common;
 import java.util.Collections;
 import java.util.List;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,7 +49,7 @@ public interface IForgeShearable
      * @param pos Block's position in world.
      * @return If this is shearable, and onSheared should be called.
      */
-    default boolean isShearable(@Nonnull ItemStack item, World world, BlockPos pos)
+    default boolean isShearable(@Nonnull ItemStack item, Level world, BlockPos pos)
     {
         return true;
     }
@@ -73,7 +73,7 @@ public interface IForgeShearable
      * @return A List containing all items from this shearing. May be empty.
      */
     @Nonnull
-    default List<ItemStack> onSheared(@Nullable PlayerEntity player, @Nonnull ItemStack item, World world, BlockPos pos, int fortune)
+    default List<ItemStack> onSheared(@Nullable Player player, @Nonnull ItemStack item, Level world, BlockPos pos, int fortune)
     {
         return Collections.emptyList();
     }

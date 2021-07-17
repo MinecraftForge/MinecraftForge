@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/crafting/SingleItemRecipe.java
++++ b/net/minecraft/world/item/crafting/SingleItemRecipe.java
+@@ -60,7 +_,7 @@
+       return this.f_44410_.m_41777_();
+    }
+ 
+-   public static class Serializer<T extends SingleItemRecipe> implements RecipeSerializer<T> {
++   public static class Serializer<T extends SingleItemRecipe> extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<T> {
+       final SingleItemRecipe.Serializer.SingleItemMaker<T> f_44433_;
+ 
+       protected Serializer(SingleItemRecipe.Serializer.SingleItemMaker<T> p_44435_) {

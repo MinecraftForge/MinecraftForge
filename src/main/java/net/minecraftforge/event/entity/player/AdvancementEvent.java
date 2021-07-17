@@ -20,8 +20,7 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.advancements.Advancement;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * This event is fired when a player gets an advancement.
@@ -36,7 +35,7 @@ public class AdvancementEvent extends PlayerEvent
 {
     private final Advancement advancement;
 
-    public AdvancementEvent(PlayerEntity player, Advancement advancement)
+    public AdvancementEvent(Player player, Advancement advancement)
     {
         super(player);
         this.advancement = advancement;

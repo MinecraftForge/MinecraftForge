@@ -21,13 +21,12 @@ package net.minecraftforge.client.event;
 
 import java.util.Map;
 
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelManager;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
+import net.minecraftforge.fml.event.IModBusEvent;
 
 /**
  * Fired when the ModelManager is notified of the resource manager reloading.
@@ -37,10 +36,10 @@ import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
 public class ModelBakeEvent extends Event implements IModBusEvent
 {
     private final ModelManager modelManager;
-    private final Map<ResourceLocation, IBakedModel> modelRegistry;
+    private final Map<ResourceLocation, BakedModel> modelRegistry;
     private final ModelLoader modelLoader;
 
-    public ModelBakeEvent(ModelManager modelManager, Map<ResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
+    public ModelBakeEvent(ModelManager modelManager, Map<ResourceLocation, BakedModel> modelRegistry, ModelLoader modelLoader)
     {
         this.modelManager = modelManager;
         this.modelRegistry = modelRegistry;
@@ -52,7 +51,7 @@ public class ModelBakeEvent extends Event implements IModBusEvent
         return modelManager;
     }
 
-    public Map<ResourceLocation, IBakedModel> getModelRegistry()
+    public Map<ResourceLocation, BakedModel> getModelRegistry()
     {
         return modelRegistry;
     }

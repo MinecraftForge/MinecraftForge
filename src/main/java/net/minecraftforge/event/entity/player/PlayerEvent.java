@@ -21,23 +21,19 @@ package net.minecraftforge.event.entity.player;
 
 import java.io.File;
 
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.world.GameType;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -51,8 +47,8 @@ import javax.annotation.Nullable;
  **/
 public class PlayerEvent extends LivingEvent
 {
-    private final PlayerEntity entityPlayer;
-    public PlayerEvent(PlayerEntity player)
+    private final Player entityPlayer;
+    public PlayerEvent(Player player)
     {
         super(player);
         entityPlayer = player;
@@ -61,7 +57,7 @@ public class PlayerEvent extends LivingEvent
     /**
      * @return Player
      */
-    public PlayerEntity getPlayer() { return entityPlayer; }
+    public Player getPlayer() { return entityPlayer; }
     /**
      * HarvestCheck is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
@@ -83,7 +79,7 @@ public class PlayerEvent extends LivingEvent
         private final BlockState state;
         private boolean success;
 
-        public HarvestCheck(PlayerEntity player, BlockState state, boolean success)
+        public HarvestCheck(Player player, BlockState state, boolean success)
         {
             super(player);
             this.state = state;
@@ -122,7 +118,7 @@ public class PlayerEvent extends LivingEvent
         private float newSpeed = 0.0f;
         private final BlockPos pos; // Y position of -1 notes unknown location
 
-        public BreakSpeed(PlayerEntity player, BlockState state, float original, BlockPos pos)
+        public BreakSpeed(Player player, BlockState state, float original, BlockPos pos)
         {
             super(player);
             this.state = state;
@@ -156,27 +152,27 @@ public class PlayerEvent extends LivingEvent
      **/
     public static class NameFormat extends PlayerEvent
     {
-        private final ITextComponent username;
-        private ITextComponent displayname;
+        private final Component username;
+        private Component displayname;
 
-        public NameFormat(PlayerEntity player, ITextComponent username) 
+        public NameFormat(Player player, Component username) 
         {
             super(player);
             this.username = username;
             this.setDisplayname(username);
         }
 
-        public ITextComponent getUsername()
+        public Component getUsername()
         {
             return username;
         }
 
-        public ITextComponent getDisplayname()
+        public Component getDisplayname()
         {
             return displayname;
         }
 
-        public void setDisplayname(ITextComponent displayname)
+        public void setDisplayname(Component displayname)
         {
             this.displayname = displayname;
         }
@@ -200,20 +196,20 @@ public class PlayerEvent extends LivingEvent
     public static class TabListNameFormat extends PlayerEvent
     {
         @Nullable
-        private ITextComponent displayName;
+        private Component displayName;
 
-        public TabListNameFormat(PlayerEntity player)
+        public TabListNameFormat(Player player)
         {
             super(player);
         }
         
         @Nullable
-        public ITextComponent getDisplayName()
+        public Component getDisplayName()
         {
             return displayName;
         }
 
-        public void setDisplayName(@Nullable ITextComponent displayName)
+        public void setDisplayName(@Nullable Component displayName)
         {
             this.displayName = displayName;
         }
@@ -225,10 +221,10 @@ public class PlayerEvent extends LivingEvent
      */
     public static class Clone extends PlayerEvent
     {
-        private final PlayerEntity original;
+        private final Player original;
         private final boolean wasDeath;
 
-        public Clone(PlayerEntity _new, PlayerEntity oldPlayer, boolean wasDeath)
+        public Clone(Player _new, Player oldPlayer, boolean wasDeath)
         {
             super(_new);
             this.original = oldPlayer;
@@ -238,7 +234,7 @@ public class PlayerEvent extends LivingEvent
         /**
          * The old EntityPlayer that this new entity is a clone of.
          */
-        public PlayerEntity getOriginal()
+        public Player getOriginal()
         {
             return original;
         }
@@ -261,7 +257,7 @@ public class PlayerEvent extends LivingEvent
 
         private final Entity target;
 
-        public StartTracking(PlayerEntity player, Entity target)
+        public StartTracking(Player player, Entity target)
         {
             super(player);
             this.target = target;
@@ -284,7 +280,7 @@ public class PlayerEvent extends LivingEvent
 
         private final Entity target;
 
-        public StopTracking(PlayerEntity player, Entity target)
+        public StopTracking(Player player, Entity target)
         {
             super(player);
             this.target = target;
@@ -309,7 +305,7 @@ public class PlayerEvent extends LivingEvent
         private final File playerDirectory;
         private final String playerUUID;
 
-        public LoadFromFile(PlayerEntity player, File originDirectory, String playerUUID)
+        public LoadFromFile(Player player, File originDirectory, String playerUUID)
         {
             super(player);
             this.playerDirectory = originDirectory;
@@ -362,7 +358,7 @@ public class PlayerEvent extends LivingEvent
         private final File playerDirectory;
         private final String playerUUID;
 
-        public SaveToFile(PlayerEntity player, File originDirectory, String playerUUID)
+        public SaveToFile(Player player, File originDirectory, String playerUUID)
         {
             super(player);
             this.playerDirectory = originDirectory;
@@ -399,40 +395,6 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
-    /**
-     * TODO 1.17 remove, unused
-     * Fired when the world checks if a player is near enough to be attacked by an entity.
-     * The resulting visibility modifier is multiplied by the one calculated by Minecraft (based on sneaking and more) and used to calculate the radius a player has to be in (targetDistance*modifier).
-     * This can also be used to increase the visibility of a player, if it was decreased by Minecraft or other mods. But the resulting value cannot be higher than the standard target distance.
-     */
-    @Deprecated
-    public static class Visibility extends PlayerEvent
-    {
-
-        private double visibilityModifier = 1D;
-
-        public Visibility(PlayerEntity player)
-        {
-            super(player);
-        }
-
-        /**
-         * @param mod Is multiplied with the current modifier
-         */
-        public void modifyVisibility(double mod)
-        {
-            visibilityModifier *= mod;
-        }
-
-        /**
-         * @return The current modifier
-         */
-        public double getVisibilityModifier()
-        {
-            return visibilityModifier;
-        }
-    }
-
     public static class ItemPickupEvent extends PlayerEvent {
         /**
          * Original EntityItem with current remaining stack size
@@ -442,7 +404,7 @@ public class PlayerEvent extends LivingEvent
          * Clone item stack, containing the item and amount picked up
          */
         private final ItemStack stack;
-        public ItemPickupEvent(PlayerEntity player, ItemEntity entPickedUp, ItemStack stack)
+        public ItemPickupEvent(Player player, ItemEntity entPickedUp, ItemStack stack)
         {
             super(player);
             this.originalEntity = entPickedUp;
@@ -461,8 +423,8 @@ public class PlayerEvent extends LivingEvent
     public static class ItemCraftedEvent extends PlayerEvent {
         @Nonnull
         private final ItemStack crafting;
-        private final IInventory craftMatrix;
-        public ItemCraftedEvent(PlayerEntity player, @Nonnull ItemStack crafting, IInventory craftMatrix)
+        private final Container craftMatrix;
+        public ItemCraftedEvent(Player player, @Nonnull ItemStack crafting, Container craftMatrix)
         {
             super(player);
             this.crafting = crafting;
@@ -475,7 +437,7 @@ public class PlayerEvent extends LivingEvent
             return this.crafting;
         }
 
-        public IInventory getInventory()
+        public Container getInventory()
         {
             return this.craftMatrix;
         }
@@ -484,7 +446,7 @@ public class PlayerEvent extends LivingEvent
     public static class ItemSmeltedEvent extends PlayerEvent {
         @Nonnull
         private final ItemStack smelting;
-        public ItemSmeltedEvent(PlayerEntity player, @Nonnull ItemStack crafting)
+        public ItemSmeltedEvent(Player player, @Nonnull ItemStack crafting)
         {
             super(player);
             this.smelting = crafting;
@@ -498,14 +460,14 @@ public class PlayerEvent extends LivingEvent
     }
 
     public static class PlayerLoggedInEvent extends PlayerEvent {
-        public PlayerLoggedInEvent(PlayerEntity player)
+        public PlayerLoggedInEvent(Player player)
         {
             super(player);
         }
     }
 
     public static class PlayerLoggedOutEvent extends PlayerEvent {
-        public PlayerLoggedOutEvent(PlayerEntity player)
+        public PlayerLoggedOutEvent(Player player)
         {
             super(player);
         }
@@ -514,7 +476,7 @@ public class PlayerEvent extends LivingEvent
     public static class PlayerRespawnEvent extends PlayerEvent {
         private final boolean endConquered;
 
-        public PlayerRespawnEvent(PlayerEntity player, boolean endConquered)
+        public PlayerRespawnEvent(Player player, boolean endConquered)
         {
             super(player);
             this.endConquered = endConquered;
@@ -533,21 +495,21 @@ public class PlayerEvent extends LivingEvent
     }
 
     public static class PlayerChangedDimensionEvent extends PlayerEvent {
-        private final RegistryKey<World> fromDim;
-        private final RegistryKey<World> toDim;
-        public PlayerChangedDimensionEvent(PlayerEntity player, RegistryKey<World> fromDim, RegistryKey<World> toDim)
+        private final ResourceKey<Level> fromDim;
+        private final ResourceKey<Level> toDim;
+        public PlayerChangedDimensionEvent(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim)
         {
             super(player);
             this.fromDim = fromDim;
             this.toDim = toDim;
         }
 
-        public RegistryKey<World> getFrom()
+        public ResourceKey<Level> getFrom()
         {
             return this.fromDim;
         }
 
-        public RegistryKey<World> getTo()
+        public ResourceKey<Level> getTo()
         {
             return this.toDim;
         }
@@ -563,7 +525,7 @@ public class PlayerEvent extends LivingEvent
         private final GameType currentGameMode;
         private GameType newGameMode;
 
-        public PlayerChangeGameModeEvent(PlayerEntity player, GameType currentGameMode, GameType newGameMode)
+        public PlayerChangeGameModeEvent(Player player, GameType currentGameMode, GameType newGameMode)
         {
             super(player);
             this.currentGameMode = currentGameMode;

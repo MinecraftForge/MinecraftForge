@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/level/block/ChestBlock.java
++++ b/net/minecraft/world/level/block/ChestBlock.java
+@@ -336,7 +_,8 @@
+    }
+ 
+    public BlockState m_6943_(BlockState p_51549_, Mirror p_51550_) {
+-      return p_51549_.m_60717_(p_51550_.m_54846_(p_51549_.m_61143_(f_51478_)));
++      BlockState rotated = p_51549_.m_60717_(p_51550_.m_54846_(p_51549_.m_61143_(f_51478_)));
++      return p_51550_ == Mirror.NONE ? rotated : rotated.m_61124_(f_51479_, rotated.m_61143_(f_51479_).m_61486_());  // Forge: Fixed MC-134110 Structure mirroring breaking apart double chests
+    }
+ 
+    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_51562_) {

@@ -21,11 +21,12 @@ package net.minecraftforge.common.crafting.conditions;
 
 import com.google.gson.JsonObject;
 
-import net.minecraft.item.Item;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.TagCollectionManager;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraft.world.item.Item;
+import net.minecraft.tags.Tag;
+import net.minecraft.tags.SerializationTags;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 
 public class TagEmptyCondition implements ICondition
 {
@@ -56,7 +57,7 @@ public class TagEmptyCondition implements ICondition
     @Override
     public boolean test()
     {
-        ITag<Item> tag = TagCollectionManager.getInstance().getItems().getTag(tag_name);
+        Tag<Item> tag = SerializationTags.getInstance().getOrEmpty(Registry.ITEM_REGISTRY).getTag(tag_name);
         return tag == null || tag.getValues().isEmpty();
     }
 
@@ -79,7 +80,7 @@ public class TagEmptyCondition implements ICondition
         @Override
         public TagEmptyCondition read(JsonObject json)
         {
-            return new TagEmptyCondition(new ResourceLocation(JSONUtils.getAsString(json, "tag")));
+            return new TagEmptyCondition(new ResourceLocation(GsonHelper.getAsString(json, "tag")));
         }
 
         @Override

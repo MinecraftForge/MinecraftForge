@@ -21,7 +21,7 @@ package net.minecraftforge.fluids;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Holds the result of a fluid action from {@link FluidUtil}.

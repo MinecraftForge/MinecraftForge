@@ -1,0 +1,24 @@
+--- a/net/minecraft/network/CompressionEncoder.java
++++ b/net/minecraft/network/CompressionEncoder.java
+@@ -9,6 +_,8 @@
+    private final byte[] f_129444_ = new byte[8192];
+    private final Deflater f_129445_;
+    private int f_129446_;
++   private static final boolean DISABLE_PACKET_DEBUG = Boolean.parseBoolean(System.getProperty("forge.disablePacketCompressionDebug", "false"));
++   private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
+ 
+    public CompressionEncoder(int p_129448_) {
+       this.f_129446_ = p_129448_;
+@@ -22,6 +_,12 @@
+          friendlybytebuf.m_130130_(0);
+          friendlybytebuf.writeBytes(p_129453_);
+       } else {
++         if (!DISABLE_PACKET_DEBUG && i > 2097152) {
++             p_129453_.markReaderIndex();
++             LOGGER.error("Attempted to send packet over maximum protocol size: {} > 2097152\nData:\n{}", i,
++                     net.minecraftforge.fmllegacy.common.network.ByteBufUtils.getContentDump(p_129453_));
++             p_129453_.resetReaderIndex();
++         }
+          byte[] abyte = new byte[i];
+          p_129453_.readBytes(abyte);
+          friendlybytebuf.m_130130_(abyte.length);

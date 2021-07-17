@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/level/biome/Biome.java
++++ b/net/minecraft/world/level/biome/Biome.java
+@@ -51,7 +_,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public final class Biome {
++public final class Biome extends net.minecraftforge.registries.ForgeRegistryEntry.UncheckedRegistryEntry<Biome> {
+    public static final Logger f_47428_ = LogManager.getLogger();
+    public static final Codec<Biome> f_47429_ = RecordCodecBuilder.create((p_47527_) -> {
+       return p_47527_.group(Biome.ClimateSettings.f_47679_.forGetter((p_151717_) -> {
+@@ -68,7 +_,9 @@
+          return p_151707_.f_47438_;
+       }), MobSpawnSettings.f_48327_.forGetter((p_151705_) -> {
+          return p_151705_.f_47439_;
+-      })).apply(p_47527_, Biome::new);
++      }), ResourceLocation.f_135803_.optionalFieldOf("forge:registry_name").forGetter(b -> Optional.ofNullable(b.getRegistryName())))
++      .apply(p_47527_, (climate, category, depth, scale, effects, gen, spawns, name) ->
++          net.minecraftforge.common.ForgeHooks.enhanceBiome(name.orElse(null), climate, category, depth, scale, effects, gen, spawns, p_47527_, Biome::new));
+    });
+    public static final Codec<Biome> f_47430_ = RecordCodecBuilder.create((p_47504_) -> {
+       return p_47504_.group(Biome.ClimateSettings.f_47679_.forGetter((p_151703_) -> {

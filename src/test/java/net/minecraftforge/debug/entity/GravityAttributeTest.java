@@ -24,27 +24,28 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraftforge.common.ForgeMod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.Multimap;
 
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.Rarity;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome.Category;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome.BiomeCategory;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.TickEvent;
@@ -52,7 +53,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item.Properties;
 
 @Mod("gravity_attribute_test")
 public class GravityAttributeTest
@@ -81,11 +82,11 @@ public class GravityAttributeTest
             if (ticks++ > 60)
             {
                 ticks = 0;
-                World w = event.world;
+                Level w = event.world;
                 List<LivingEntity> list;
                 if(w.isClientSide)
                 {
-                    ClientWorld cw = (ClientWorld)w;
+                    ClientLevel cw = (ClientLevel)w;
                     list = new ArrayList<>(100);
                     for(Entity e : cw.entitiesForRendering())
                     {
@@ -95,15 +96,18 @@ public class GravityAttributeTest
                 }
                 else
                 {
-                    ServerWorld sw = (ServerWorld)w;
-                    Stream<LivingEntity> s = sw.getEntities().filter(Entity::isAlive).filter(e -> e instanceof LivingEntity).map(e -> (LivingEntity)e);
+                    ServerLevel sw = (ServerLevel)w;
+                    Stream<LivingEntity> s = StreamSupport.stream(sw.getEntities().getAll().spliterator(), false)
+                            .filter(Entity::isAlive)
+                            .filter(e -> e instanceof LivingEntity)
+                            .map(e -> (LivingEntity)e);
                     list = s.collect(Collectors.toList());
                 }
 
                 for(LivingEntity liv : list)
                 {
-                    ModifiableAttributeInstance grav = liv.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
-                    boolean inPlains = liv.level.getBiome(liv.blockPosition()).getBiomeCategory() == Category.PLAINS;
+                    AttributeInstance grav = liv.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
+                    boolean inPlains = liv.level.getBiome(liv.blockPosition()).getBiomeCategory() == BiomeCategory.PLAINS;
                     if (inPlains && !grav.hasModifier(REDUCED_GRAVITY))
                     {
                         logger.info("Granted low gravity to Entity: {}", liv);
@@ -123,7 +127,7 @@ public class GravityAttributeTest
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().register(new ItemGravityStick(new Item.Properties().tab(ItemGroup.TAB_TOOLS).rarity(Rarity.RARE)).setRegistryName("gravity_attribute_test:gravity_stick"));
+        event.getRegistry().register(new ItemGravityStick(new Properties().tab(CreativeModeTab.TAB_TOOLS).rarity(Rarity.RARE)).setRegistryName("gravity_attribute_test:gravity_stick"));
     }
 
     public static class ItemGravityStick extends Item
@@ -136,11 +140,11 @@ public class GravityAttributeTest
         }
 
         @Override
-        public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlotType slot)
+        public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot)
         {
             @SuppressWarnings("deprecation")
             Multimap<Attribute, AttributeModifier> multimap = super.getDefaultAttributeModifiers(slot);
-            if (slot == EquipmentSlotType.MAINHAND)
+            if (slot == EquipmentSlot.MAINHAND)
                 multimap.put(ForgeMod.ENTITY_GRAVITY.get(), new AttributeModifier(GRAVITY_MODIFIER, "More Gravity", 1.0D, Operation.ADDITION));
 
             return multimap;

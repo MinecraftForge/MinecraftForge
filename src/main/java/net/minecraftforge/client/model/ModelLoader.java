@@ -23,15 +23,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.client.renderer.model.*;
-import net.minecraft.client.renderer.texture.MissingTextureSprite;
+import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.logging.ModelLoaderErrorMessage;
 
 import java.util.function.Function;
@@ -44,11 +41,17 @@ import javax.annotation.Nullable;
 
 import static net.minecraftforge.fml.Logging.MODELLOADING;
 
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.resources.model.UnbakedModel;
+
 public final class ModelLoader extends ModelBakery
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
-    private IUnbakedModel missingModel = null;
+    private UnbakedModel missingModel = null;
 
     private boolean isLoading = false;
 
@@ -65,7 +68,7 @@ public final class ModelLoader extends ModelBakery
         return isLoading;
     }
 
-    public ModelLoader(IResourceManager manager, BlockColors colours, IProfiler profiler, int maxMipmapLevel)
+    public ModelLoader(ResourceManager manager, BlockColors colours, ProfilerFiller profiler, int maxMipmapLevel)
     {
         super(manager, colours, false);
         instance = this;
@@ -107,7 +110,7 @@ public final class ModelLoader extends ModelBakery
         return new ResourceLocation(model.getNamespace(), model.getPath() + ".json");
     }
 
-    protected IUnbakedModel getMissingModel()
+    protected UnbakedModel getMissingModel()
     {
         if (missingModel == null)
         {
@@ -126,7 +129,7 @@ public final class ModelLoader extends ModelBakery
     /**
      * Use this if you don't care about the exception and want some model anyway.
      */
-    public IUnbakedModel getModelOrMissing(ResourceLocation location)
+    public UnbakedModel getModelOrMissing(ResourceLocation location)
     {
         try
         {
@@ -141,7 +144,7 @@ public final class ModelLoader extends ModelBakery
     /**
      * Use this if you want the model, but need to log the error.
      */
-    public IUnbakedModel getModelOrLogError(ResourceLocation location, String error)
+    public UnbakedModel getModelOrLogError(ResourceLocation location, String error)
     {
         try
         {
@@ -163,7 +166,7 @@ public final class ModelLoader extends ModelBakery
         {
             if (instance == null)
             {
-                instance = new RenderMaterial(AtlasTexture.LOCATION_BLOCKS, LOCATION).sprite();
+                instance = new Material(TextureAtlas.LOCATION_BLOCKS, LOCATION).sprite();
             }
             return instance;
         }
@@ -228,9 +231,9 @@ public final class ModelLoader extends ModelBakery
     /**
      * Internal, do not use.
      */
-    public void onPostBakeEvent(Map<ResourceLocation, IBakedModel> modelRegistry)
+    public void onPostBakeEvent(Map<ResourceLocation, BakedModel> modelRegistry)
     {
-        IBakedModel missingModel = modelRegistry.get(MISSING_MODEL_LOCATION);
+        BakedModel missingModel = modelRegistry.get(MISSING_MODEL_LOCATION);
         for(Map.Entry<ResourceLocation, Exception> entry : loadingExceptions.entrySet())
         {
             // ignoring pure ResourceLocation arguments, all things we care about pass ModelResourceLocation
@@ -238,7 +241,7 @@ public final class ModelLoader extends ModelBakery
             {
                 LOGGER.debug(MODELLOADING, ()-> new ModelLoaderErrorMessage((ModelResourceLocation)entry.getKey(), entry.getValue()));
                 final ModelResourceLocation location = (ModelResourceLocation)entry.getKey();
-                final IBakedModel model = modelRegistry.get(location);
+                final BakedModel model = modelRegistry.get(location);
                 if(model == null)
                 {
                     modelRegistry.put(location, missingModel);
@@ -258,17 +261,17 @@ public final class ModelLoader extends ModelBakery
     }
 */
 
-    private static final Function<ResourceLocation, IUnbakedModel> DEFAULT_MODEL_GETTER = (rl) -> ModelLoader.instance().getModelOrMissing(rl);
+    private static final Function<ResourceLocation, UnbakedModel> DEFAULT_MODEL_GETTER = (rl) -> ModelLoader.instance().getModelOrMissing(rl);
 
     /**
      * Get the default texture getter the models will be baked with.
      */
-    public static Function<RenderMaterial, TextureAtlasSprite> defaultTextureGetter()
+    public static Function<Material, TextureAtlasSprite> defaultTextureGetter()
     {
-        return RenderMaterial::sprite;
+        return Material::sprite;
     }
 
-    public static Function<ResourceLocation, IUnbakedModel> defaultModelGetter()
+    public static Function<ResourceLocation, UnbakedModel> defaultModelGetter()
     {
         return DEFAULT_MODEL_GETTER;
     }

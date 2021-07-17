@@ -19,11 +19,12 @@
 
 package net.minecraftforge.fluids.capability;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -32,26 +33,26 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileFluidHandler extends TileEntity
+public class TileFluidHandler extends BlockEntity
 {
     protected FluidTank tank = new FluidTank(FluidAttributes.BUCKET_VOLUME);
     
     private final LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> tank);
 
-    public TileFluidHandler(@Nonnull TileEntityType<?> tileEntityTypeIn)
+    public TileFluidHandler(@Nonnull BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state)
     {
-        super(tileEntityTypeIn);
+        super(blockEntityType, pos, state);
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT tag)
+    public void load(CompoundTag tag)
     {
-        super.load(state, tag);
+        super.load(tag);
         tank.readFromNBT(tag);
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT tag)
+    public CompoundTag save(CompoundTag tag)
     {
         tag = super.save(tag);
         tank.writeToNBT(tag);

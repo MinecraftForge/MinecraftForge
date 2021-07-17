@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/material/FluidState.java
++++ b/net/minecraft/world/level/material/FluidState.java
+@@ -18,7 +_,7 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public final class FluidState extends StateHolder<Fluid, FluidState> {
++public final class FluidState extends StateHolder<Fluid, FluidState> implements net.minecraftforge.common.extensions.IForgeFluidState {
+    public static final Codec<FluidState> f_76146_ = m_61127_(Registry.f_122822_, Fluid::m_76145_).stable();
+    public static final int f_164510_ = 9;
+    public static final int f_164511_ = 8;
+@@ -102,6 +_,7 @@
+       return this.m_76152_().m_76108_(p_76154_);
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version
+    public float m_76190_() {
+       return this.m_76152_().m_6752_();
+    }

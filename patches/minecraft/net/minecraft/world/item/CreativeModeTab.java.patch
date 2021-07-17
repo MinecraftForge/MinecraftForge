@@ -1,0 +1,129 @@
+--- a/net/minecraft/world/item/CreativeModeTab.java
++++ b/net/minecraft/world/item/CreativeModeTab.java
+@@ -85,18 +_,23 @@
+    private final String f_40763_;
+    private final Component f_40764_;
+    private String f_40765_;
++   @Deprecated
+    private String f_40766_ = "items.png";
++   private net.minecraft.resources.ResourceLocation backgroundLocation;
+    private boolean f_40767_ = true;
+    private boolean f_40768_ = true;
+    private EnchantmentCategory[] f_40769_ = new EnchantmentCategory[0];
+    private ItemStack f_40770_;
+ 
++   public CreativeModeTab(String label) {
++       this(-1, label);
++   }
++
+    public CreativeModeTab(int p_40773_, String p_40774_) {
+-      this.f_40762_ = p_40773_;
+       this.f_40763_ = p_40774_;
+       this.f_40764_ = new TranslatableComponent("itemGroup." + p_40774_);
+       this.f_40770_ = ItemStack.f_41583_;
+-      f_40748_[p_40773_] = this;
++      this.f_40762_ = addGroupSafe(p_40773_, this);
+    }
+ 
+    public int m_40775_() {
+@@ -121,15 +_,28 @@
+ 
+    public abstract ItemStack m_6976_();
+ 
++   /**
++    * @deprecated Forge use {@link #getBackgroundImage()} instead
++    */
++   @Deprecated
+    public String m_40788_() {
+       return this.f_40766_;
+    }
+ 
++   /**
++    * @deprecated Forge: use {@link #setBackgroundImage(net.minecraft.resources.ResourceLocation)} instead
++    */
++   @Deprecated
+    public CreativeModeTab m_40779_(String p_40780_) {
+       this.f_40766_ = p_40780_;
+       return this;
+    }
+ 
++   public CreativeModeTab setBackgroundImage(net.minecraft.resources.ResourceLocation texture) {
++      this.backgroundLocation = texture;
++      return this;
++   }
++
+    public CreativeModeTab m_40784_(String p_40785_) {
+       this.f_40765_ = p_40785_;
+       return this;
+@@ -154,10 +_,12 @@
+    }
+ 
+    public int m_40793_() {
++      if (f_40762_ > 11) return ((f_40762_ - 12) % 10) % 5;
+       return this.f_40762_ % 6;
+    }
+ 
+    public boolean m_40794_() {
++      if (f_40762_ > 11) return ((f_40762_ - 12) % 10) < 5;
+       return this.f_40762_ < 6;
+    }
+ 
+@@ -191,5 +_,58 @@
+          item.m_6787_(this, p_40778_);
+       }
+ 
++   }
++
++   public int getTabPage() {
++      return f_40762_ < 12 ? 0 : ((f_40762_ - 12) / 10) + 1;
++   }
++
++   public boolean hasSearchBar() {
++      return f_40762_ == f_40754_.f_40762_;
++   }
++
++   /**
++    * Gets the width of the search bar of the creative tab, use this if your
++    * creative tab name overflows together with a custom texture.
++    *
++    * @return The width of the search bar, 89 by default
++    */
++   public int getSearchbarWidth() {
++      return 89;
++   }
++
++   public net.minecraft.resources.ResourceLocation getBackgroundImage() {
++      if (backgroundLocation != null) return backgroundLocation; //FORGE: allow custom namespace
++      return new net.minecraft.resources.ResourceLocation("textures/gui/container/creative_inventory/tab_" + this.m_40788_());
++   }
++
++   private static final net.minecraft.resources.ResourceLocation CREATIVE_INVENTORY_TABS = new net.minecraft.resources.ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
++   public net.minecraft.resources.ResourceLocation getTabsImage() {
++      return CREATIVE_INVENTORY_TABS;
++   }
++
++   public int getLabelColor() {
++      return 4210752;
++   }
++
++   public int getSlotColor() {
++      return -2130706433;
++   }
++
++   public static synchronized int getGroupCountSafe() {
++      return CreativeModeTab.f_40748_.length;
++   }
++
++   private static synchronized int addGroupSafe(int index, CreativeModeTab newGroup) {
++      if(index == -1) {
++         index = f_40748_.length;
++      }
++      if (index >= f_40748_.length) {
++         CreativeModeTab[] tmp = new CreativeModeTab[index + 1];
++         System.arraycopy(f_40748_, 0, tmp, 0, f_40748_.length);
++         f_40748_ = tmp;
++      }
++      f_40748_[index] = newGroup;
++      return index;
+    }
+ }

@@ -19,9 +19,8 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
 
 /**
  * Exposes the hands inventory of an {@link EntityLivingBase} as an {@link IItemHandler} using {@link EntityLivingBase#getItemStackFromSlot} and
@@ -31,6 +30,6 @@ public class EntityHandsInvWrapper extends EntityEquipmentInvWrapper
 {
     public EntityHandsInvWrapper(LivingEntity entity)
     {
-        super(entity, EquipmentSlotType.Group.HAND);
+        super(entity, EquipmentSlot.Type.HAND);
     }
 }

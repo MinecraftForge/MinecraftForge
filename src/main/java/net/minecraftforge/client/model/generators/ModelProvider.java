@@ -32,21 +32,21 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
 
-public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataProvider {
+public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataProvider {
 
     public static final String BLOCK_FOLDER = "block";
     public static final String ITEM_FOLDER = "item";
 
-    protected static final ResourceType TEXTURE = new ResourceType(ResourcePackType.CLIENT_RESOURCES, ".png", "textures");
-    protected static final ResourceType MODEL = new ResourceType(ResourcePackType.CLIENT_RESOURCES, ".json", "models");
-    protected static final ResourceType MODEL_WITH_EXTENSION = new ResourceType(ResourcePackType.CLIENT_RESOURCES, "", "models");
+    protected static final ResourceType TEXTURE = new ResourceType(PackType.CLIENT_RESOURCES, ".png", "textures");
+    protected static final ResourceType MODEL = new ResourceType(PackType.CLIENT_RESOURCES, ".json", "models");
+    protected static final ResourceType MODEL_WITH_EXTENSION = new ResourceType(PackType.CLIENT_RESOURCES, "", "models");
 
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
     protected final DataGenerator generator;
@@ -363,17 +363,17 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements IDataP
     }
 
     @Override
-    public void run(DirectoryCache cache) throws IOException {
+    public void run(HashCache cache) throws IOException {
         clear();
         registerModels();
         generateAll(cache);
     }
 
-    protected void generateAll(DirectoryCache cache) {
+    protected void generateAll(HashCache cache) {
         for (T model : generatedModels.values()) {
             Path target = getPath(model);
             try {
-                IDataProvider.save(GSON, cache, model.toJson(), target);
+                DataProvider.save(GSON, cache, model.toJson(), target);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

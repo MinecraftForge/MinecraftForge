@@ -1,0 +1,109 @@
+--- a/net/minecraft/client/multiplayer/ClientPacketListener.java
++++ b/net/minecraft/client/multiplayer/ClientPacketListener.java
+@@ -360,6 +_,7 @@
+ 
+       this.f_104888_.f_91064_.m_113434_();
+       this.f_104888_.f_91074_.m_172530_();
++      net.minecraftforge.fmlclient.ClientHooks.firePlayerLogin(this.f_104888_.f_91072_, this.f_104888_.f_91074_, this.f_104888_.m_91403_().m_6198_());
+       int i = p_105030_.m_132398_();
+       this.f_104888_.f_91074_.m_20234_(i);
+       this.f_104889_.m_104630_(i, this.f_104888_.f_91074_);
+@@ -370,6 +_,7 @@
+       this.f_104888_.f_91074_.m_36393_(p_105030_.m_132410_());
+       this.f_104888_.f_91074_.m_108711_(p_105030_.m_132411_());
+       this.f_104888_.f_91072_.m_171805_(p_105030_.m_132403_(), p_105030_.m_132404_());
++      net.minecraftforge.fmllegacy.network.NetworkHooks.sendMCRegistryPackets(f_104885_, "PLAY_TO_SERVER");
+       this.f_104888_.f_91066_.m_92172_();
+       this.f_104885_.m_129512_(new ServerboundCustomPayloadPacket(ServerboundCustomPayloadPacket.f_133979_, (new FriendlyByteBuf(Unpooled.buffer())).m_130070_(ClientBrandRetriever.m_129629_())));
+       this.f_104888_.m_91309_().m_90739_();
+@@ -612,7 +_,7 @@
+             BlockPos blockpos = new BlockPos(compoundtag.m_128451_("x"), compoundtag.m_128451_("y"), compoundtag.m_128451_("z"));
+             BlockEntity blockentity = levelchunk.m_5685_(blockpos, LevelChunk.EntityCreationType.IMMEDIATE);
+             if (blockentity != null) {
+-               blockentity.m_142466_(compoundtag);
++               blockentity.handleUpdateTag(compoundtag);
+             }
+          }
+       }
+@@ -694,7 +_,9 @@
+ 
+    public void m_5784_(ClientboundChatPacket p_104986_) {
+       PacketUtils.m_131363_(p_104986_, this, this.f_104888_);
+-      this.f_104888_.f_91065_.m_93051_(p_104986_.m_131840_(), p_104986_.m_131836_(), p_104986_.m_131841_());
++      net.minecraft.network.chat.Component message = net.minecraftforge.event.ForgeEventFactory.onClientChat(p_104986_.m_131840_(), p_104986_.m_131836_(), p_104986_.m_131841_());
++      if (message == null) return;
++      this.f_104888_.f_91065_.m_93051_(p_104986_.m_131840_(), message, p_104986_.m_131841_());
+    }
+ 
+    public void m_7791_(ClientboundAnimatePacket p_104968_) {
+@@ -865,8 +_,10 @@
+          localplayer1.m_21204_().m_22159_(localplayer.m_21204_());
+       }
+ 
++      localplayer1.updateSyncFields(localplayer); // Forge: fix MC-10657
+       localplayer1.m_172530_();
+       localplayer1.m_108748_(s);
++      net.minecraftforge.fmlclient.ClientHooks.firePlayerRespawn(this.f_104888_.f_91072_, localplayer, localplayer1, localplayer1.f_108617_.m_6198_());
+       this.f_104889_.m_104630_(i, localplayer1);
+       localplayer1.m_146922_(-180.0F);
+       localplayer1.f_108618_ = new KeyboardInput(this.f_104888_.f_91066_);
+@@ -977,6 +_,12 @@
+ 
+       if (flag && this.f_104888_.f_91080_ instanceof CommandBlockEditScreen) {
+          ((CommandBlockEditScreen)this.f_104888_.f_91080_).m_98398_();
++      } else {
++         if (blockentity == null) {
++            f_104883_.error("Received invalid update packet for null tile entity at {} with data: {}", p_104976_.m_131704_(), p_104976_.m_131708_());
++            return;
++         }
++         blockentity.onDataPacket(f_104885_, p_104976_);
+       }
+ 
+    }
+@@ -1139,6 +_,7 @@
+       clientrecipebook.m_90625_(this.f_104900_.m_44051_());
+       clientrecipebook.m_90639_().forEach(mutablesearchtree::m_8080_);
+       mutablesearchtree.m_7729_();
++      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated(this.f_104900_);
+    }
+ 
+    public void m_7244_(ClientboundPlayerLookAtPacket p_105054_) {
+@@ -1216,7 +_,7 @@
+       PacketUtils.m_131363_(p_105130_, this, this.f_104888_);
+       Entity entity = this.f_104889_.m_6815_(p_105130_.m_133622_());
+       if (entity instanceof LivingEntity) {
+-         MobEffect mobeffect = MobEffect.m_19453_(p_105130_.m_133623_());
++         MobEffect mobeffect = MobEffect.m_19453_(p_105130_.m_133623_() & 0xFF);
+          if (mobeffect != null) {
+             MobEffectInstance mobeffectinstance = new MobEffectInstance(mobeffect, p_105130_.m_133625_(), p_105130_.m_133624_(), p_105130_.m_133627_(), p_105130_.m_133626_(), p_105130_.m_133628_());
+             mobeffectinstance.m_19562_(p_105130_.m_133619_());
+@@ -1228,11 +_,14 @@
+    public void m_5859_(ClientboundUpdateTagsPacket p_105134_) {
+       PacketUtils.m_131363_(p_105134_, this, this.f_104888_);
+       TagContainer tagcontainer = TagContainer.m_144449_(this.f_104903_, p_105134_.m_179482_());
+-      Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> multimap = StaticTags.m_13283_(tagcontainer);
++      boolean vanillaConnection = net.minecraftforge.fmllegacy.network.NetworkHooks.isVanillaConnection(f_104885_);
++      Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> multimap = vanillaConnection ? StaticTags.m_13283_(net.minecraftforge.common.ForgeTagHandler.withNoCustom(tagcontainer)) : StaticTags.validateVanillaTags(tagcontainer);//Forge: If we are connecting to vanilla validate all tags to properly validate custom tags the client may "require", and if we are connecting to forge only validate the vanilla tag types as the custom tag types get synced in a separate packet so may still arrive
+       if (!multimap.isEmpty()) {
+          f_104883_.warn("Incomplete server tags, disconnecting. Missing: {}", (Object)multimap);
+          this.f_104885_.m_129507_(new TranslatableComponent("multiplayer.disconnect.missing_tags"));
+       } else {
++         net.minecraftforge.common.ForgeTagHandler.resetCachedTagCollections(true, vanillaConnection);
++         tagcontainer = TagContainer.reinjectOptionalTags(tagcontainer);
+          this.f_104895_ = tagcontainer;
+          if (!this.f_104885_.m_129531_()) {
+             tagcontainer.m_13431_();
+@@ -1780,10 +_,12 @@
+             int i5 = friendlybytebuf.m_130242_();
+             this.f_104888_.f_91064_.f_173815_.m_173830_(positionsource, i5);
+          } else {
+-            f_104883_.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
++            if (!net.minecraftforge.fmllegacy.network.NetworkHooks.onCustomPayload(p_105004_, this.f_104885_))
++            f_104883_.warn("Unknown custom packet identifier: {}", (Object)resourcelocation);
+          }
+       } finally {
+          if (friendlybytebuf != null) {
++            if (false) // Forge: let packet handle releasing buffer
+             friendlybytebuf.release();
+          }
+ 

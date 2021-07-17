@@ -19,13 +19,9 @@
 
 package net.minecraftforge.event.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntitySize;
-import net.minecraft.entity.Pose;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.Pose;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -100,43 +96,6 @@ public class EntityEvent extends Event
             this.canUpdate = canUpdate;
         }
     }
-    
-    /**
-     * EnteringChunk is fired when an Entity enters a chunk. <br>
-     * This event is fired whenever vanilla Minecraft determines that an entity <br>
-     * is entering a chunk in {@link Chunk#addEntity(net.minecraft.entity.Entity)} <br>
-     * <br>
-     * This event is not {@link Cancelable}.<br>
-     * <br>
-     * This event does not have a result. {@link HasResult}
-     * <br>
-     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
-     **/
-    public static class EnteringChunk extends EntityEvent
-    {
-        private int newChunkX;
-        private int newChunkZ;
-        private int oldChunkX;
-        private int oldChunkZ;
-
-        public EnteringChunk(Entity entity, int newChunkX, int newChunkZ, int oldChunkX, int oldChunkZ)
-        {
-            super(entity);
-            this.setNewChunkX(newChunkX);
-            this.setNewChunkZ(newChunkZ);
-            this.setOldChunkX(oldChunkX);
-            this.setOldChunkZ(oldChunkZ);
-        }
-
-        public int getNewChunkX() { return newChunkX; }
-        public void setNewChunkX(int newChunkX) { this.newChunkX = newChunkX; }
-        public int getNewChunkZ() { return newChunkZ; }
-        public void setNewChunkZ(int newChunkZ) { this.newChunkZ = newChunkZ; }
-        public int getOldChunkX() { return oldChunkX; }
-        public void setOldChunkX(int oldChunkX) { this.oldChunkX = oldChunkX; }
-        public int getOldChunkZ() { return oldChunkZ; }
-        public void setOldChunkZ(int oldChunkZ) { this.oldChunkZ = oldChunkZ; }
-    }
 
     /**
      * This event is fired whenever the {@link Pose} changes, and in a few other hardcoded scenarios.<br>
@@ -152,17 +111,17 @@ public class EntityEvent extends Event
     public static class Size extends EntityEvent
     {
         private final Pose pose;
-        private final EntitySize oldSize;
-        private EntitySize newSize;
+        private final EntityDimensions oldSize;
+        private EntityDimensions newSize;
         private final float oldEyeHeight;
         private float newEyeHeight;
 
-        public Size(Entity entity, Pose pose, EntitySize size, float defaultEyeHeight)
+        public Size(Entity entity, Pose pose, EntityDimensions size, float defaultEyeHeight)
         {
             this(entity, pose, size, size, defaultEyeHeight, defaultEyeHeight);
         }
 
-        public Size(Entity entity, Pose pose, EntitySize oldSize, EntitySize newSize, float oldEyeHeight, float newEyeHeight)
+        public Size(Entity entity, Pose pose, EntityDimensions oldSize, EntityDimensions newSize, float oldEyeHeight, float newEyeHeight)
         {
             super(entity);
             this.pose = pose;
@@ -174,9 +133,9 @@ public class EntityEvent extends Event
 
 
         public Pose getPose() { return pose; }
-        public EntitySize getOldSize() { return oldSize; }
-        public EntitySize getNewSize() { return newSize; }
-        public void setNewSize(EntitySize size)
+        public EntityDimensions getOldSize() { return oldSize; }
+        public EntityDimensions getNewSize() { return newSize; }
+        public void setNewSize(EntityDimensions size)
         {
             setNewSize(size, false);
         }
@@ -184,7 +143,7 @@ public class EntityEvent extends Event
         /**
          * Set the new size of the entity. Set updateEyeHeight to true to also update the eye height according to the new size.
          */
-        public void setNewSize(EntitySize size, boolean updateEyeHeight)
+        public void setNewSize(EntityDimensions size, boolean updateEyeHeight)
         {
             this.newSize = size;
             if (updateEyeHeight)

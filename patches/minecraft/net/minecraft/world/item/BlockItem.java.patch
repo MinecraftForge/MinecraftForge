@@ -1,0 +1,51 @@
+--- a/net/minecraft/world/item/BlockItem.java
++++ b/net/minecraft/world/item/BlockItem.java
+@@ -78,9 +_,9 @@
+                   }
+                }
+ 
+-               SoundType soundtype = blockstate1.m_60827_();
+-               level.m_5594_(player, blockpos, this.m_40587_(blockstate1), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 2.0F, soundtype.m_56774_() * 0.8F);
+                level.m_142346_(player, GameEvent.f_157797_, blockpos);
++               SoundType soundtype = blockstate1.getSoundType(level, blockpos, p_40577_.m_43723_());
++               level.m_5594_(player, blockpos, this.getPlaceSound(blockstate1, level, blockpos, p_40577_.m_43723_()), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 2.0F, soundtype.m_56774_() * 0.8F);
+                if (player == null || !player.m_150110_().f_35937_) {
+                   itemstack.m_41774_(1);
+                }
+@@ -91,10 +_,16 @@
+       }
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version {@link BlockItem#getPlaceSound(BlockState, IBlockReader, BlockPos, Entity) }
+    protected SoundEvent m_40587_(BlockState p_40588_) {
+       return p_40588_.m_60827_().m_56777_();
+    }
+ 
++   //Forge: Sensitive version of BlockItem#getPlaceSound
++   protected SoundEvent getPlaceSound(BlockState state, Level world, BlockPos pos, Player entity) {
++      return state.getSoundType(world, pos, entity).m_56777_();
++   }
++
+    @Nullable
+    public BlockPlaceContext m_7732_(BlockPlaceContext p_40609_) {
+       return p_40609_;
+@@ -201,11 +_,19 @@
+    }
+ 
+    public Block m_40614_() {
++      return this.getBlockRaw() == null ? null : this.getBlockRaw().delegate.get();
++   }
++
++   private Block getBlockRaw() {
+       return this.f_40563_;
+    }
+ 
+    public void m_6192_(Map<Block, Item> p_40607_, Item p_40608_) {
+       p_40607_.put(this.m_40614_(), p_40608_);
++   }
++
++   public void removeFromBlockToItemMap(Map<Block, Item> blockToItemMap, Item itemIn) {
++      blockToItemMap.remove(this.m_40614_());
+    }
+ 
+    public boolean m_142095_() {

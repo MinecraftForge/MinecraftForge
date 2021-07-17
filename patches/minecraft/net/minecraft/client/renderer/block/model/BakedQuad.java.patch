@@ -1,0 +1,23 @@
+--- a/net/minecraft/client/renderer/block/model/BakedQuad.java
++++ b/net/minecraft/client/renderer/block/model/BakedQuad.java
+@@ -6,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public class BakedQuad {
++public class BakedQuad implements net.minecraftforge.client.model.pipeline.IVertexProducer {
+    protected final int[] f_111292_;
+    protected final int f_111293_;
+    protected final Direction f_111294_;
+@@ -39,6 +_,11 @@
+ 
+    public Direction m_111306_() {
+       return this.f_111294_;
++   }
++
++   @Override
++   public void pipe(net.minecraftforge.client.model.pipeline.IVertexConsumer consumer) {
++      net.minecraftforge.client.model.pipeline.LightUtil.putBakedQuad(consumer, this);
+    }
+ 
+    public boolean m_111307_() {

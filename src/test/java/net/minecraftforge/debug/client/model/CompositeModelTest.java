@@ -19,25 +19,25 @@
 
 package net.minecraftforge.debug.client.model;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -55,14 +55,14 @@ public class CompositeModelTest
     public static RegistryObject<Block> composite_block = BLOCKS.register("composite_block", () ->
             new Block(Block.Properties.of(Material.WOOD).strength(10)) {
                 @Override
-                protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder)
+                protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
                 {
                     builder.add(BlockStateProperties.HORIZONTAL_FACING);
                 }
 
                 @Nullable
                 @Override
-                public BlockState getStateForPlacement(BlockItemUseContext context)
+                public BlockState getStateForPlacement(BlockPlaceContext context)
                 {
                     return defaultBlockState().setValue(
                             BlockStateProperties.HORIZONTAL_FACING, context.getHorizontalDirection()
@@ -70,8 +70,8 @@ public class CompositeModelTest
                 }
 
                 @Override
-                public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
-                    return VoxelShapes.or(
+                public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+                    return Shapes.or(
                             box(5.6, 5.6, 5.6, 10.4, 10.4, 10.4),
                             box(0, 0, 0, 4.8, 4.8, 4.8),
                             box(11.2, 0, 0, 16, 4.8, 4.8),
@@ -87,11 +87,11 @@ public class CompositeModelTest
     );
 
     public static RegistryObject<Item> composite_item = ITEMS.register("composite_block", () ->
-            new BlockItem(composite_block.get(), new Item.Properties().tab(ItemGroup.TAB_MISC)) {
+            new BlockItem(composite_block.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)) {
                 @Override
-                public boolean canEquip(ItemStack stack, EquipmentSlotType armorType, Entity entity)
+                public boolean canEquip(ItemStack stack, EquipmentSlot armorType, Entity entity)
                 {
-                    return armorType == EquipmentSlotType.HEAD;
+                    return armorType == EquipmentSlot.HEAD;
                 }
             }
     );

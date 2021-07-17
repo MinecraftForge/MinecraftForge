@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/LevelSettings.java
++++ b/net/minecraft/world/level/LevelSettings.java
+@@ -62,6 +_,7 @@
+    }
+ 
+    public LevelSettings m_46918_(Difficulty p_46919_) {
++      net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_46919_, this.f_46905_);
+       return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, p_46919_, this.f_46906_, this.f_46907_, this.f_46908_);
+    }
+ 

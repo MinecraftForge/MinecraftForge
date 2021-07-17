@@ -1,0 +1,103 @@
+--- a/net/minecraft/client/renderer/ItemBlockRenderTypes.java
++++ b/net/minecraft/client/renderer/ItemBlockRenderTypes.java
+@@ -19,6 +_,7 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public class ItemBlockRenderTypes {
++   @Deprecated
+    private static final Map<Block, RenderType> f_109275_ = Util.m_137469_(Maps.newHashMap(), (p_109296_) -> {
+       RenderType rendertype = RenderType.m_110503_();
+       p_109296_.put(Blocks.f_50267_, rendertype);
+@@ -286,6 +_,7 @@
+       p_109296_.put(Blocks.f_50628_, rendertype3);
+       p_109296_.put(Blocks.f_152498_, rendertype3);
+    });
++   @Deprecated
+    private static final Map<Fluid, RenderType> f_109276_ = Util.m_137469_(Maps.newHashMap(), (p_109290_) -> {
+       RenderType rendertype = RenderType.m_110466_();
+       p_109290_.put(Fluids.f_76192_, rendertype);
+@@ -293,6 +_,7 @@
+    });
+    private static boolean f_109277_;
+ 
++   @Deprecated // FORGE: Use canRenderInLayer
+    public static RenderType m_109282_(BlockState p_109283_) {
+       Block block = p_109283_.m_60734_();
+       if (block instanceof LeavesBlock) {
+@@ -303,6 +_,7 @@
+       }
+    }
+ 
++   @Deprecated // FORGE: Use canRenderInLayer
+    public static RenderType m_109293_(BlockState p_109294_) {
+       Block block = p_109294_.m_60734_();
+       if (block instanceof LeavesBlock) {
+@@ -318,8 +_,7 @@
+    }
+ 
+    public static RenderType m_109284_(BlockState p_109285_, boolean p_109286_) {
+-      RenderType rendertype = m_109282_(p_109285_);
+-      if (rendertype == RenderType.m_110466_()) {
++      if (canRenderInLayer(p_109285_, RenderType.m_110466_())) {
+          if (!Minecraft.m_91085_()) {
+             return Sheets.m_110792_();
+          } else {
+@@ -340,9 +_,58 @@
+       }
+    }
+ 
++   @Deprecated // FORGE: Use canRenderInLayer
+    public static RenderType m_109287_(FluidState p_109288_) {
+       RenderType rendertype = f_109276_.get(p_109288_.m_76152_());
+       return rendertype != null ? rendertype : RenderType.m_110451_();
++   }
++
++   // FORGE START
++
++   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Block>, java.util.function.Predicate<RenderType>> blockRenderChecks = Maps.newHashMap();
++   private static final Map<net.minecraftforge.registries.IRegistryDelegate<Fluid>, java.util.function.Predicate<RenderType>> fluidRenderChecks = Maps.newHashMap();
++   static {
++      f_109275_.forEach(ItemBlockRenderTypes::setRenderLayer);
++      f_109276_.forEach(ItemBlockRenderTypes::setRenderLayer);
++   }
++
++   public static boolean canRenderInLayer(BlockState state, RenderType type) {
++      Block block = state.m_60734_();
++      if (block instanceof LeavesBlock) {
++         return f_109277_ ? type == RenderType.m_110457_() : type == RenderType.m_110451_();
++      } else {
++         java.util.function.Predicate<RenderType> rendertype;
++         synchronized (ItemBlockRenderTypes.class) {
++            rendertype = blockRenderChecks.get(block.delegate);
++         }
++         return rendertype != null ? rendertype.test(type) : type == RenderType.m_110451_();
++      }
++   }
++
++   public static boolean canRenderInLayer(FluidState fluid, RenderType type) {
++      java.util.function.Predicate<RenderType> rendertype;
++      synchronized (ItemBlockRenderTypes.class) {
++         rendertype = fluidRenderChecks.get(fluid.m_76152_().delegate);
++      }
++      return rendertype != null ? rendertype.test(type) : type == RenderType.m_110451_();
++   }
++
++   public static void setRenderLayer(Block block, RenderType type) {
++      java.util.Objects.requireNonNull(type);
++      setRenderLayer(block, type::equals);
++   }
++
++   public static synchronized void setRenderLayer(Block block, java.util.function.Predicate<RenderType> predicate) {
++      blockRenderChecks.put(block.delegate, predicate);
++   }
++
++   public static void setRenderLayer(Fluid fluid, RenderType type) {
++      java.util.Objects.requireNonNull(type);
++      setRenderLayer(fluid, type::equals);
++   }
++
++   public static synchronized void setRenderLayer(Fluid fluid, java.util.function.Predicate<RenderType> predicate) {
++      fluidRenderChecks.put(fluid.delegate, predicate);
+    }
+ 
+    public static void m_109291_(boolean p_109292_) {
