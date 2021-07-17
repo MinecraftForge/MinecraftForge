@@ -46,6 +46,7 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
     @Override
     public void addTags()
     {
+        tag(CREATURE_SPAWN).add(Blocks.GRASS_BLOCK);
         tag(BARRELS).addTag(BARRELS_WOODEN);
         tag(BARRELS_WOODEN).add(Blocks.BARREL);
         tag(CHESTS).addTags(CHESTS_ENDER, CHESTS_TRAPPED, CHESTS_WOODEN);
