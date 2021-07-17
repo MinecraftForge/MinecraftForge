@@ -35,7 +35,7 @@
           p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
           p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
           p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
-+         if (this.customTileData != null) p_189516_1_.func_218657_a("ForgeData", this.customTileData);
++         if (this.customTileData != null) p_189516_1_.func_218657_a("ForgeData", this.customTileData.func_74737_b());
 +         if (getCapabilities() != null) p_189516_1_.func_218657_a("ForgeCaps", serializeCaps());
           return p_189516_1_;
        }
