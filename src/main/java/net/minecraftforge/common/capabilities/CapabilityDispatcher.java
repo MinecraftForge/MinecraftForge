@@ -148,6 +148,13 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
         return this.serializeNBT().equals(other.serializeNBT());
     }
 
+    public boolean areCompatibleNBT(@Nullable CompoundNBT otherNBT)
+    {
+        if (otherNBT == null) return this.writers.length == 0;
+        if (this.writers.length == 0) return otherNBT == null;
+        return this.serializeNBT().equals(otherNBT);
+    }
+
     public void invalidate()
     {
         this.listeners.forEach(Runnable::run);
