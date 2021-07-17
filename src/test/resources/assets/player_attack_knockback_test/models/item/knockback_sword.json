@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "player_attack_knockback_test:item/knockback_sword"
+  }
+}
