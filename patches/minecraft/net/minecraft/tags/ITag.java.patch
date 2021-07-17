@@ -44,7 +44,7 @@
 -         jsonobject.addProperty("replace", false);
 +         jsonobject.addProperty("replace", replace);
           jsonobject.add("values", jsonarray);
-+         this.serializeTagAdditions(jsonobject);
++         this.serializeTagAdditions(jsonobject); // forge expands the tag json format, add our extra data to the json
           return jsonobject;
        }
     }
