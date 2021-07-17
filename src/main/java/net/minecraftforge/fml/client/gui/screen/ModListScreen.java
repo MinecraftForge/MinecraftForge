@@ -235,7 +235,7 @@ public class ModListScreen extends Screen
             IReorderingProcessor line = lines.get(lineIdx-1);
             if (line != null)
             {
-                return font.getSplitter().componentStyleAtWidth(line, mouseX);
+                return font.getSplitter().componentStyleAtWidth(line, mouseX - left - border);
             }
             return null;
         }

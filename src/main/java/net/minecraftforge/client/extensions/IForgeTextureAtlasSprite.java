@@ -30,34 +30,26 @@ import net.minecraft.util.ResourceLocation;
 
 public interface IForgeTextureAtlasSprite
 {
+
     /**
-     * The result of this function determines is the below 'load' function is called, and the
-     * default vanilla loading code is bypassed completely.
-     * @param manager Main resource manager
-     * @param location File resource location
-     * @return True to use your own custom load code and bypass vanilla loading.
+     * @deprecated See {@link net.minecraftforge.client.textures.ITextureAtlasSpriteLoader}
      */
+    @Deprecated
     default boolean hasCustomLoader(IResourceManager manager, ResourceLocation location)
     {
         return false;
     }
 
     /**
-     * Load the specified resource as this sprite's data.
-     * Returning false from this function will prevent this icon from being stitched onto the master texture.
-     * @param manager Main resource manager
-     * @param location File resource location
-     * @param textureGetter accessor for dependencies. All of them will be loaded before this one
-     * @return False to prevent this Icon from being stitched
+     * @deprecated See {@link net.minecraftforge.client.textures.ITextureAtlasSpriteLoader}
      */
+    @Deprecated
     default boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter)
     {
         return true;
     }
 
-    /**
-     * @return all textures that should be loaded before this texture.
-     */
+    @Deprecated
     default Collection<ResourceLocation> getDependencies() 
     {
         return ImmutableList.of();
