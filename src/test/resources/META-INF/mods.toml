@@ -126,3 +126,10 @@ license="LGPL v2.1"
     modId="text_linear_filtering_test"
 [[mods]]
     modId="custom_respawn_test"
+[[mods]]
+    modId="custom_tas_test"
+[[mods]]
+    modId="dimension_settings_test"
+[[mods]]
+    modId="player_attack_knockback_test"
+

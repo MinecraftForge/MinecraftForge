@@ -117,6 +117,20 @@ public interface IForgeBlock
     }
 
     /**
+     * Checks if this block makes an open trapdoor above it climbable.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param trapdoorState The current state of the open trapdoor above
+     * @return True if the block should act like a ladder
+     */
+    default boolean makesOpenTrapdoorAboveClimbable(BlockState state, IWorldReader world, BlockPos pos, BlockState trapdoorState)
+    {
+        return state.getBlock() instanceof LadderBlock && state.getValue(LadderBlock.FACING) == trapdoorState.getValue(TrapDoorBlock.FACING);
+    }
+
+    /**
      * Determines if this block should set fire and deal fire damage
      * to entities coming into contact with it.
      *
