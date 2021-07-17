@@ -1,5 +1,15 @@
 --- a/net/minecraft/block/BeehiveBlock.java
 +++ b/net/minecraft/block/BeehiveBlock.java
+@@ -65,6 +_,9 @@
+    public int func_180641_l(BlockState p_180641_1_, World p_180641_2_, BlockPos p_180641_3_) {
+       return p_180641_1_.func_177229_b(field_226873_c_);
+    }
++   // Forge: Fixed MC-227255 Beehives and bee nests do not rotate/mirror correctly in structure blocks
++   @Override public BlockState func_185499_a(BlockState blockState, net.minecraft.util.Rotation rotation) { return (BlockState)blockState.func_206870_a(field_226872_b_, rotation.func_185831_a(blockState.func_177229_b(field_226872_b_))); }
++   @Override public BlockState func_185471_a(BlockState blockState, net.minecraft.util.Mirror mirror) { return blockState.func_185907_a(mirror.func_185800_a(blockState.func_177229_b(field_226872_b_))); }
+ 
+    public void func_180657_a(World p_180657_1_, PlayerEntity p_180657_2_, BlockPos p_180657_3_, BlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
+       super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
 @@ -85,6 +_,7 @@
        List<BeeEntity> list = p_226881_1_.func_217357_a(BeeEntity.class, (new AxisAlignedBB(p_226881_2_)).func_72314_b(8.0D, 6.0D, 8.0D));
        if (!list.isEmpty()) {

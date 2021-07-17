@@ -231,7 +231,10 @@ project(':forge') {
                 ideaModule "${rootProject.name}.${project.name}.userdev"
 
                 mods {
-                    forge { source sourceSets.main }
+                    forge {
+                        source sourceSets.main 
+                        source sourceSets.userdev 
+                    }
                 }
             }
 
@@ -293,6 +296,8 @@ project(':forge') {
                 workingDirectory project.file('run')
 
                 environment 'target', 'fmldevdata'
+                environment 'assetIndex', '{asset_index}'
+                environment 'assetDirectory', downloadAssets.output
 
                 environment 'MC_VERSION', MC_VERSION
                 environment 'MCP_VERSION', MCP_VERSION

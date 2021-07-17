@@ -125,4 +125,10 @@ license="LGPL v2.1"
 [[mods]]
     modId="text_linear_filtering_test"
 [[mods]]
+    modId="custom_tas_test"
+[[mods]]
+    modId="dimension_settings_test"
+[[mods]]
+    modId="player_attack_knockback_test"
+[[mods]]
     modId="spawnegg_item_test"

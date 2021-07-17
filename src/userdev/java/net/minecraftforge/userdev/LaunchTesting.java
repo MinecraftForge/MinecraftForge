@@ -62,11 +62,14 @@ public class LaunchTesting
         lst.putLazy("fml.forgeGroup", System.getenv("FORGE_GROUP"));
         lst.putLazy("fml.forgeVersion", System.getenv("FORGE_VERSION"));
 
+        if (target.contains("client") || target.contains("data")) {
+            lst.putLazy("assetIndex", System.getenv("assetIndex"));
+            lst.putLazy("assetsDir", System.getenv().getOrDefault("assetDirectory", "assets"));
+        }
+
         if (target.contains("client")) {
             hackNatives();
             lst.putLazy("version", "MOD_DEV");
-            lst.putLazy("assetIndex", System.getenv("assetIndex"));
-            lst.putLazy("assetsDir", System.getenv().getOrDefault("assetDirectory", "assets"));
 
             String assets = lst.get("assetsDir");
             if (assets == null || !new File(assets).exists()) {

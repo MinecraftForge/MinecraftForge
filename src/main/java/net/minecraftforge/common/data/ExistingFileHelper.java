@@ -31,6 +31,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.data.IDataProvider;
+import net.minecraft.client.resources.ResourceIndex;
+import net.minecraft.client.resources.VirtualAssetsPack;
 import net.minecraft.resources.FilePack;
 import net.minecraft.resources.FolderPack;
 import net.minecraft.resources.IResource;
@@ -45,6 +47,8 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
+
+import javax.annotation.Nullable;
 
 /**
  * Enables data providers to check if other data files currently exist. The
@@ -105,11 +109,22 @@ public class ExistingFileHelper {
      * @param existingMods
      * @param enable
      */
+    @Deprecated // TODO: Remove in 1.17
     public ExistingFileHelper(Collection<Path> existingPacks, Set<String> existingMods, boolean enable) {
+        this(existingPacks, existingMods, enable, null, null);
+    }
+
+    public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, boolean enable, @Nullable final String assetIndex, @Nullable final File assetsDir) {
         this.clientResources = new SimpleReloadableResourceManager(ResourcePackType.CLIENT_RESOURCES);
         this.serverData = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
+
         this.clientResources.add(new VanillaPack("minecraft", "realms"));
+        if (assetIndex != null && assetsDir != null)
+        {
+            this.clientResources.add(new VirtualAssetsPack(new ResourceIndex(assetsDir, assetIndex)));
+        }
         this.serverData.add(new VanillaPack("minecraft"));
+
         for (Path existing : existingPacks) {
             File file = existing.toFile();
             IResourcePack pack = file.isDirectory() ? new FolderPack(file) : new FilePack(file);

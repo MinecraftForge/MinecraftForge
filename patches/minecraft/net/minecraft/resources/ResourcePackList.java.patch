@@ -15,7 +15,7 @@
        return this.field_198988_b.get(p_198981_1_);
 +   }
 +
-+   public void addPackFinder(IPackFinder packFinder) {
++   public synchronized void addPackFinder(IPackFinder packFinder) {
 +      this.field_198987_a.add(packFinder);
     }
  
