@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [],
+  "remove": [
+    "minecraft:dirt",
+    "minecraft:oak_door",
+    "minecraft:dark_oak_door",
+    "minecraft:anvil",
+    "minecraft:basalt",
+    "minecraft:polished_basalt",
+    "#minecraft:beehives",
+    "#minecraft:banners",
+    "#minecraft:beds"
+  ]
+}
