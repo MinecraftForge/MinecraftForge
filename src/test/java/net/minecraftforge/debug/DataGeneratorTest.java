@@ -22,17 +22,29 @@ package net.minecraftforge.debug;
 import static net.minecraftforge.debug.DataGeneratorTest.MODID;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import com.google.gson.JsonNull;
+import com.google.gson.JsonPrimitive;
 import net.minecraft.block.*;
+import net.minecraft.util.SoundEvents;
+import net.minecraftforge.common.data.SoundDefinition;
+import net.minecraftforge.common.data.SoundDefinitionsProvider;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.utils.InputStreamReader;
@@ -117,6 +129,7 @@ public class DataGeneratorTest
             ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
             gen.addProvider(itemModels);
             gen.addProvider(new BlockStates(gen, itemModels.existingFileHelper));
+            gen.addProvider(new SoundDefinitions(gen, event.getExistingFileHelper()));
         }
         if (event.includeServer())
         {
@@ -201,6 +214,224 @@ public class DataGeneratorTest
                     .build(consumer, new ResourceLocation("data_gen_test", "conditional2"));
         }
     }
+
+    public static class SoundDefinitions extends SoundDefinitionsProvider
+    {
+        private static final Logger LOGGER = LogManager.getLogger();
+        private final ExistingFileHelper helper;
+
+        public SoundDefinitions(final DataGenerator generator, final ExistingFileHelper helper)
+        {
+            super(generator, MODID, helper);
+            this.helper = helper;
+        }
+
+        @Override
+        public void registerSounds()
+        {
+            // ambient.underwater.loop.additions
+            this.add(SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS, definition().with(
+                    sound("ambient/underwater/additions/bubbles1"),
+                    sound("ambient/underwater/additions/bubbles2"),
+                    sound("ambient/underwater/additions/bubbles3"),
+                    sound("ambient/underwater/additions/bubbles4"),
+                    sound("ambient/underwater/additions/bubbles5"),
+                    sound("ambient/underwater/additions/bubbles6"),
+                    sound("ambient/underwater/additions/water1"),
+                    sound("ambient/underwater/additions/water2")
+            ));
+
+            //ambient.underwater.loop.additions.ultra_rare
+            this.add(SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, definition().with(
+                    sound("ambient/underwater/additions/animal2"),
+                    sound("ambient/underwater/additions/dark1"),
+                    sound("ambient/underwater/additions/dark2").volume(0.7),
+                    sound("ambient/underwater/additions/dark3"),
+                    sound("ambient/underwater/additions/dark4")
+            ));
+
+            //block.lava.ambient
+            this.add(SoundEvents.LAVA_AMBIENT, definition().with(sound("liquid/lava")).subtitle("subtitles.block.lava.ambient"));
+
+            //entity.dolphin.ambient_water
+            this.add(SoundEvents.DOLPHIN_AMBIENT_WATER, definition().with(
+                    sound("mob/dolphin/idle_water1").volume(0.8),
+                    sound("mob/dolphin/idle_water2"),
+                    sound("mob/dolphin/idle_water3"),
+                    sound("mob/dolphin/idle_water4"),
+                    sound("mob/dolphin/idle_water5"),
+                    sound("mob/dolphin/idle_water6"),
+                    sound("mob/dolphin/idle_water7").volume(0.75),
+                    sound("mob/dolphin/idle_water8").volume(0.75),
+                    sound("mob/dolphin/idle_water9"),
+                    sound("mob/dolphin/idle_water10").volume(0.8)
+            ).subtitle("subtitles.entity.dolphin.ambient_water"));
+
+            //entity.parrot.imitate.drowned
+            this.add(SoundEvents.PARROT_IMITATE_DROWNED, definition().with(
+                    sound("entity.drowned.ambient", SoundDefinition.SoundType.EVENT).pitch(1.8).volume(0.6)
+            ).subtitle("subtitles.entity.parrot.imitate.drowned"));
+
+            //item.trident.return
+            this.add(SoundEvents.TRIDENT_RETURN, definition().with(
+                    sound("item/trident/return1").volume(0.8),
+                    sound("item/trident/return2").pitch(1.2).volume(0.8),
+                    sound("item/trident/return3").pitch(0.8).volume(0.8),
+                    sound("item/trident/return2").volume(0.8),
+                    sound("item/trident/return2").pitch(1.2).volume(0.8),
+                    sound("item/trident/return2").pitch(0.8).volume(0.8),
+                    sound("item/trident/return3").volume(0.8),
+                    sound("item/trident/return3").pitch(1.2).volume(0.8),
+                    sound("item/trident/return3").pitch(0.8).volume(0.8)
+            ).subtitle("subtitles.item.trident.return"));
+
+            //music_disc.blocks
+            this.add(SoundEvents.MUSIC_DISC_BLOCKS, definition().with(sound("records/blocks").stream()));
+        }
+
+        @Override
+        public void run(DirectoryCache cache) throws IOException
+        {
+            super.run(cache);
+            test();
+        }
+
+        private void test() throws IOException
+        {
+            final JsonObject generated;
+            try
+            {
+                generated = reflect();
+            }
+            catch (ReflectiveOperationException e)
+            {
+                throw new RuntimeException("Unable to test for errors due to reflection error", e);
+            }
+            final JsonObject actual = GSON.fromJson(
+                    new InputStreamReader(this.helper.getResource(new ResourceLocation("sounds.json"), ResourcePackType.CLIENT_RESOURCES).getInputStream()),
+                    JsonObject.class
+            );
+
+            final JsonObject filtered = new JsonObject();
+            generated.entrySet().forEach(it -> filtered.add(it.getKey(), Optional.ofNullable(actual.get(it.getKey())).orElseGet(JsonNull::new)));
+
+            final List<String> errors = this.compareObjects(filtered, generated);
+
+            if (!errors.isEmpty()) {
+                LOGGER.error("Found {} discrepancies between generated and vanilla sound definitions: ", errors.size());
+                for (String s : errors) {
+                    LOGGER.error("    {}", s);
+                }
+                throw new RuntimeException("Generated sounds.json differed from vanilla equivalent, check above errors.");
+            }
+        }
+
+        private JsonObject reflect() throws ReflectiveOperationException
+        {
+            // This is not supposed to be done by client code, so we just run with reflection to avoid exposing
+            // something that shouldn't be exposed in the first place
+            final Method mapToJson = this.getClass().getSuperclass().getDeclaredMethod("mapToJson", Map.class);
+            mapToJson.setAccessible(true);
+            final Field map = this.getClass().getSuperclass().getDeclaredField("sounds");
+            map.setAccessible(true);
+            //noinspection JavaReflectionInvocation
+            return (JsonObject) mapToJson.invoke(this, map.get(this));
+        }
+
+        private List<String> compareAndGatherErrors(final Triple<String, JsonElement, JsonElement> triple)
+        {
+            return this.compare(triple.getRight(), triple.getMiddle()).stream().map(it -> triple.getLeft() + ": " + it).collect(Collectors.toList());
+        }
+
+        private List<String> compare(final JsonElement vanilla, final JsonElement generated)
+        {
+            if (vanilla.isJsonPrimitive())
+            {
+                return this.comparePrimitives(vanilla.getAsJsonPrimitive(), generated);
+            }
+            else if (vanilla.isJsonObject())
+            {
+                return this.compareObjects(vanilla.getAsJsonObject(), generated);
+            }
+            else if (vanilla.isJsonArray())
+            {
+                return this.compareArrays(vanilla.getAsJsonArray(), generated);
+            }
+            else if (vanilla.isJsonNull() && !generated.isJsonNull())
+            {
+                return Collections.singletonList("null value in vanilla doesn't match non-null value in generated");
+            }
+            throw new RuntimeException("Unable to match " + vanilla + " to any JSON type");
+        }
+
+        private List<String> comparePrimitives(final JsonPrimitive vanilla, final JsonElement generated)
+        {
+            if (!generated.isJsonPrimitive()) return Collections.singletonList("Primitive in vanilla isn't matched by generated " + generated);
+
+            final JsonPrimitive generatedPrimitive = generated.getAsJsonPrimitive();
+
+            if (vanilla.isBoolean())
+            {
+                if (!generatedPrimitive.isBoolean()) return Collections.singletonList("Boolean in vanilla isn't matched by non-boolean " + generatedPrimitive);
+
+                if (vanilla.getAsBoolean() != generated.getAsBoolean())
+                {
+                    return Collections.singletonList("Boolean '" + vanilla.getAsBoolean() + "' does not match generated '" + generatedPrimitive.getAsBoolean() + "'");
+                }
+            }
+            else if (vanilla.isNumber())
+            {
+                if (!generatedPrimitive.isNumber()) return Collections.singletonList("Number in vanilla isn't matched by non-number " + generatedPrimitive);
+
+                // Handle numbers via big decimal so we are sure there isn't any sort of errors due to float/long
+                final BigDecimal vanillaNumber = vanilla.getAsBigDecimal();
+                final BigDecimal generatedNumber = vanilla.getAsBigDecimal();
+
+                if (vanillaNumber.compareTo(generatedNumber) != 0)
+                {
+                    return Collections.singletonList("Number '" + vanillaNumber + "' does not match generated '" + generatedNumber + "'");
+                }
+            }
+            else if (vanilla.isString())
+            {
+                if (!generatedPrimitive.isString()) return Collections.singletonList("String in vanilla isn't matched by non-string " + generatedPrimitive);
+
+                if (!vanilla.getAsString().equals(generatedPrimitive.getAsString()))
+                {
+                    return Collections.singletonList("String '" + vanilla.getAsString() + "' does not match generated '" + generatedPrimitive.getAsString() + "'");
+                }
+            }
+
+            return new ArrayList<>();
+        }
+
+        private List<String> compareObjects(final JsonObject vanilla, final JsonElement generated)
+        {
+            if (!generated.isJsonObject()) return Collections.singletonList("Object in vanilla isn't matched by generated " + generated);
+
+            final JsonObject generatedObject = generated.getAsJsonObject();
+
+            return vanilla.entrySet().stream()
+                    .map(it -> Triple.of(it.getKey(), it.getValue(), generatedObject.get(it.getKey())))
+                    .map(this::compareAndGatherErrors)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+        }
+
+        private List<String> compareArrays(final JsonArray vanilla, final JsonElement generated)
+        {
+            if (!generated.isJsonArray()) return Collections.singletonList("Array in vanilla isn't matched by generated " + generated);
+
+            final JsonArray generatedArray = generated.getAsJsonArray();
+
+            return IntStream.range(0, vanilla.size())
+                    .mapToObj(it -> Triple.of("[" + it + "]", vanilla.get(it), generatedArray.get(it)))
+                    .map(this::compareAndGatherErrors)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+        }
+    }
+
 
     public static class Tags extends BlockTagsProvider
     {

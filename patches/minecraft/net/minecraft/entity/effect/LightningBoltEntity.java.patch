@@ -1,5 +1,28 @@
 --- a/net/minecraft/entity/effect/LightningBoltEntity.java
 +++ b/net/minecraft/entity/effect/LightningBoltEntity.java
+@@ -30,6 +_,7 @@
+    private boolean field_184529_d;
+    @Nullable
+    private ServerPlayerEntity field_204810_e;
++   private float damage = 5.0F;
+ 
+    public LightningBoltEntity(EntityType<? extends LightningBoltEntity> p_i231491_1_, World p_i231491_2_) {
+       super(p_i231491_1_, p_i231491_2_);
+@@ -51,6 +_,14 @@
+       this.field_204810_e = p_204809_1_;
+    }
+ 
++   public void setDamage(float damage){
++      this.damage = damage;
++   }
++
++   public float getDamage(){
++      return this.damage;
++   }
++
+    public void func_70071_h_() {
+       super.func_70071_h_();
+       if (this.field_70262_b == 2) {
 @@ -83,6 +_,7 @@
              List<Entity> list = this.field_70170_p.func_175674_a(this, new AxisAlignedBB(this.func_226277_ct_() - 3.0D, this.func_226278_cu_() - 3.0D, this.func_226281_cx_() - 3.0D, this.func_226277_ct_() + 3.0D, this.func_226278_cu_() + 6.0D + 3.0D, this.func_226281_cx_() + 3.0D), Entity::func_70089_S);
  

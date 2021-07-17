@@ -106,6 +106,19 @@
        if (flag2) {
           serverplayerentity.field_71135_a.func_147359_a(new SPlaySoundEffectPacket(SoundEvents.field_232818_ms_, SoundCategory.BLOCKS, (double)blockpos.func_177958_n(), (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p(), 1.0F, 1.0F));
        }
+@@ -745,12 +_,6 @@
+       if (serverstatisticsmanager == null) {
+          File file1 = this.field_72400_f.func_240776_a_(FolderName.field_237246_b_).toFile();
+          File file2 = new File(file1, uuid + ".json");
+-         if (!file2.exists()) {
+-            File file3 = new File(file1, p_152602_1_.func_200200_C_().getString() + ".json");
+-            if (file3.exists() && file3.isFile()) {
+-               file3.renameTo(file2);
+-            }
+-         }
+ 
+          serverstatisticsmanager = new ServerStatisticsManager(this.field_72400_f, file2);
+          this.field_148547_k.put(uuid, serverstatisticsmanager);
 @@ -769,6 +_,8 @@
           this.field_192055_p.put(uuid, playeradvancements);
        }
