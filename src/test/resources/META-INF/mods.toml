@@ -136,3 +136,17 @@ license="LGPL v2.1"
     modId="dimension_settings_test"
 [[mods]]
     modId="player_attack_knockback_test"
+[[mods]]
+    modId="edible_block_test"
+[[mods]]
+    modId="exhaustion_event_test"
+[[mods]]
+    modId="food_event_test"
+[[mods]]
+    modId="health_regen_event_test"
+[[mods]]
+    modId="hunger_event_test"
+[[mods]]
+    modId="hunger_regen_event_test"
+[[mods]]
+    modId="starvation_event_test"

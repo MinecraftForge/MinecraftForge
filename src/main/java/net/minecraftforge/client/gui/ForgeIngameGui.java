@@ -54,6 +54,7 @@ import net.minecraft.world.GameType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 
 import org.lwjgl.opengl.GL11;
 
@@ -511,7 +512,24 @@ public class ForgeIngameGui extends IngameGui
         boolean unused = false;// Unused flag in vanilla, seems to be part of a 'fade out' mechanic
 
         FoodStats stats = minecraft.player.getFoodData();
-        int level = stats.getFoodLevel();
+        // Account for changes in max hunger here
+        int realHunger = stats.getFoodLevel();
+        int level;
+        // Only set level to 0 if the real hunger value is 0
+        if (realHunger == 0)
+        {
+            level = 0;
+        }
+        else
+        {
+            // Return a scaled value so that the HUD can still use the same logic as if the max was 20.
+            float scale = 20.0F / ForgeEventFactory.getMaxHunger(minecraft.player);
+            // Floor here so that full hunger is only drawn when it's actually maxed
+            int scaledHunger = MathHelper.floor(realHunger * scale);
+            // Hunger is always some non-zero value here, so set level to at least 1 to make sure we don't draw 0 hunger
+            // when we're not actually starving
+            level = Math.max(scaledHunger, 1);
+        }
 
         for (int i = 0; i < 10; ++i)
         {

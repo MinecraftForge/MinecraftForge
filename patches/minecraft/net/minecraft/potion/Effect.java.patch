@@ -9,3 +9,12 @@
     private final Map<Attribute, AttributeModifier> field_111188_I = Maps.newHashMap();
     private final EffectType field_220305_b;
     private final int field_76414_N;
+@@ -51,7 +_,7 @@
+       } else if (this == Effects.field_82731_v) {
+          p_76394_1_.func_70097_a(DamageSource.field_82727_n, 1.0F);
+       } else if (this == Effects.field_76438_s && p_76394_1_ instanceof PlayerEntity) {
+-         ((PlayerEntity)p_76394_1_).func_71020_j(0.005F * (float)(p_76394_2_ + 1));
++         ((PlayerEntity)p_76394_1_).func_71020_j(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded((PlayerEntity)p_76394_1_, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.EFFECT_HUNGER, 0.005F * (float)(p_76394_2_ + 1)));
+       } else if (this == Effects.field_76443_y && p_76394_1_ instanceof PlayerEntity) {
+          if (!p_76394_1_.field_70170_p.field_72995_K) {
+             ((PlayerEntity)p_76394_1_).func_71024_bL().func_75122_a(p_76394_2_ + 1, 1.0F);
