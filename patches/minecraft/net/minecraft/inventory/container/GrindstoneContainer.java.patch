@@ -1,6 +1,29 @@
 --- a/net/minecraft/inventory/container/GrindstoneContainer.java
 +++ b/net/minecraft/inventory/container/GrindstoneContainer.java
-@@ -141,12 +_,13 @@
+@@ -37,12 +_,12 @@
+       this.field_217015_e = p_i50081_3_;
+       this.func_75146_a(new Slot(this.field_217014_d, 0, 49, 19) {
+          public boolean func_75214_a(ItemStack p_75214_1_) {
+-            return p_75214_1_.func_77984_f() || p_75214_1_.func_77973_b() == Items.field_151134_bR || p_75214_1_.func_77948_v();
++            return true;
+          }
+       });
+       this.func_75146_a(new Slot(this.field_217014_d, 1, 49, 40) {
+          public boolean func_75214_a(ItemStack p_75214_1_) {
+-            return p_75214_1_.func_77984_f() || p_75214_1_.func_77973_b() == Items.field_151134_bR || p_75214_1_.func_77948_v();
++            return true;
+          }
+       });
+       this.func_75146_a(new Slot(this.field_217013_c, 2, 129, 34) {
+@@ -111,6 +_,7 @@
+       super.func_75130_a(p_75130_1_);
+       if (p_75130_1_ == this.field_217014_d) {
+          this.func_217010_e();
++         net.minecraftforge.client.gui.GuiHelper.grindingHelper(this, field_217015_e, this.field_217014_d, this.field_217013_c);
+       }
+ 
+    }
+@@ -141,13 +_,14 @@
              }
  
              Item item = itemstack.func_77973_b();
@@ -14,8 +37,10 @@
 +            i = Math.max(itemstack.func_77958_k() - i1, 0);
              itemstack2 = this.func_217011_b(itemstack, itemstack1);
 -            if (!itemstack2.func_77984_f()) {
+-               if (!ItemStack.func_77989_b(itemstack, itemstack1)) {
 +            if (!itemstack2.isRepairable()) i = itemstack.func_77952_i();
 +            if (!itemstack2.func_77984_f() || !itemstack2.isRepairable()) {
-                if (!ItemStack.func_77989_b(itemstack, itemstack1)) {
++               if (!ItemStack.func_77989_b(itemstack, itemstack1) || !itemstack.func_77984_f()) {
                    this.field_217013_c.func_70299_a(0, ItemStack.field_190927_a);
                    this.func_75142_b();
+                   return;
