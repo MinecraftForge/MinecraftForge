@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.System;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -737,14 +738,21 @@ public class ForgeHooks
     }
 
     private static ThreadLocal<PlayerEntity> craftingPlayer = new ThreadLocal<PlayerEntity>();
+    private static ThreadLocal<Long> craftingPlayerTime = new ThreadLocal<Long>();
     public static void setCraftingPlayer(PlayerEntity player)
     {
         craftingPlayer.set(player);
+        craftingPlayerTime.set(System.currentTimeMillis());
     }
     public static PlayerEntity getCraftingPlayer()
     {
         return craftingPlayer.get();
     }
+    public static Long getCraftingPlayerUpdateTime()
+    {
+        return craftingPlayerTime.get();
+    }
+    
     @Nonnull
     public static ItemStack getContainerItem(@Nonnull ItemStack stack)
     {
