@@ -948,6 +948,8 @@ project(':forge') {
                 main 'net.minecraftforge.userdev.LaunchTesting'
 
                 environment 'target', 'fmluserdevdata'
+                environment 'assetIndex', '{asset_index}'
+                environment 'assetDirectory', downloadAssets.output
 
                 environment 'MC_VERSION', "${MC_VERSION}"
                 environment 'FORGE_GROUP', "${project.group}"
