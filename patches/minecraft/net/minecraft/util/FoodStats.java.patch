@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/FoodStats.java
++++ b/net/minecraft/util/FoodStats.java
+@@ -28,7 +_,7 @@
+ 
+    public void func_221410_a(Item p_221410_1_, ItemStack p_221410_2_) {
+       if (p_221410_1_.func_219971_r()) {
+-         Food food = p_221410_1_.func_219967_s();
++         Food food = p_221410_1_.getFoodProperties(p_221410_2_);
+          this.func_75122_a(food.func_221466_a(), food.func_221469_b());
+       }
+ 
