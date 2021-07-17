@@ -1,0 +1,45 @@
+{
+    "isDamageable": {
+        "cls": "net/minecraftforge/common/extensions/IForgeItem",
+        "name": "func_77645_m",
+        "replacement": "isDamageable",
+        "targets": [
+            {
+                "varIndex": 1,
+                "owner": "net/minecraft/item/Item",
+                "name": "func_77616_k",
+                "desc": "(Lnet/minecraft/item/ItemStack;)Z"
+            },
+            {
+                "varIndex": 0,
+                "owner": "net/minecraft/item/ItemStack",
+                "name": "<init>",
+                "desc": "(Lnet/minecraft/nbt/CompoundNBT;)V"
+            },
+            {
+                "varIndex": 0,
+                "owner": "net/minecraft/item/ItemStack",
+                "name": "<init>",
+                "desc": "(Lnet/minecraft/util/IItemProvider;ILnet/minecraft/nbt/CompoundNBT;)V"
+            },
+            {
+                "varIndex": 0,
+                "owner": "net/minecraft/item/ItemStack",
+                "name": "func_77982_d",
+                "desc": "(Lnet/minecraft/nbt/CompoundNBT;)V"
+            },
+            {
+                "varIndex": 3,
+                "owner": "net/minecraft/item/MerchantOffer",
+                "name": "func_222201_c",
+                "desc": "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z"
+            },
+            {
+                "varIndex": 1,
+                "owner": "net/minecraft/network/PacketBuffer",
+                "name": "writeItemStack",
+                "desc": "(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/network/PacketBuffer;"
+            }
+        ]
+    }
+}
