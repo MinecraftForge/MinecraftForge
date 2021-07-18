@@ -13,7 +13,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 /**
  * Fires after dynamic registries (biomes, configuredfeatures, etc) have loaded
- * from datapacks, but before dimensions/chunkgenerators/biomeproviders load
+ * from datapacks, and after dimensions/chunkgenerators/biomeproviders load
  * from datapacks. Allows modification of biomes in-place using
  * dynamicregistries context (allowing e.g. adding features from datapacks to a
  * set of biomes specified by datapacks).
@@ -27,13 +27,15 @@ import net.minecraftforge.eventbus.api.EventPriority;
  * {@link net.minecraftforge.eventbus.api.EventPriority} as follows:
  *
  * - Additions to any list/map contained in a biome : {@link EventPriority#HIGH}
- * - Removals to any list/map contained in a biome :
- * {@link EventPriority#NORMAL} - Any other modification :
- * {@link EventPriority#LOW}
+ * - Removals to any list/map contained in a biome : {@link EventPriority#NORMAL}
+ * - Any other modification : {@link EventPriority#LOW}
  * 
  * Mods that add worldgen features or spawning mobs and wish to add their
  * features to biomes can do so via this event. Custom biomes should declare any
  * vanilla features in their biome json.
+ * 
+ * This event is guaranteed to provide a unique and unmodified set of dynamic
+ * registry objects each time the event fires.
  */
 public class DynamicRegistriesLoadedEvent extends Event
 {
@@ -51,7 +53,11 @@ public class DynamicRegistriesLoadedEvent extends Event
      * biomes, features, dimensiontypes, etc. These have been fully loaded and
      * pasted over any builtin vanilla objects.
      * 
-     * @return datapack registries
+     * @return The registries containing the builtin WorldGenRegistries objects as
+     *         well as any datapack objects that have been added to the registries
+     *         or have replaced builtin objects in them. No objects in this
+     *         registries instance have been provided to a previous
+     *         DynamicRegistriesLoadedEvent.
      */
     public DynamicRegistries getDataRegistries()
     {
