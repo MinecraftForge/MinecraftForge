@@ -28,6 +28,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Items;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.storage.IServerConfiguration;
 import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.api.distmarker.Dist;
@@ -82,6 +83,8 @@ import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.data.ForgeLootTableProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
+import net.minecraftforge.common.world.CopyNoiseGeneratorSettings;
+import net.minecraftforge.common.world.ForgeNoiseGeneratorType;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -112,6 +115,10 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     private static boolean enableMilkFluid = false;
     public static final RegistryObject<Fluid> MILK = RegistryObject.of(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.of(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
+
+    public static final DeferredRegister<ForgeNoiseGeneratorType<?>> NOISE_GENERATOR_TYPES = DeferredRegister.create(ForgeRegistries.NOISE_SETTING_CODECS, "forge");
+    public static final RegistryObject<ForgeNoiseGeneratorType<DimensionSettings>> VANILLA_NOISE_GENERATOR_TYPE = NOISE_GENERATOR_TYPES.register("vanilla", () -> new ForgeNoiseGeneratorType<>(DimensionSettings.VANILLA_CODEC));
+    public static final RegistryObject<ForgeNoiseGeneratorType<CopyNoiseGeneratorSettings>> COPY_NOISE_GENERATOR_TYPE = NOISE_GENERATOR_TYPES.register("copy", () -> new ForgeNoiseGeneratorType<>(CopyNoiseGeneratorSettings.CODEC));
 
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance()
@@ -146,6 +153,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.addGenericListener(Fluid.class, this::registerFluids);
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
+        NOISE_GENERATOR_TYPES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);

@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/gen/DimensionSettings.java
++++ b/net/minecraft/world/gen/DimensionSettings.java
+@@ -21,8 +_,9 @@
+ import net.minecraft.world.gen.settings.SlideSettings;
+ import net.minecraft.world.gen.settings.StructureSeparationSettings;
+ 
+-public class DimensionSettings {
+-   public static final Codec<DimensionSettings> field_236097_a_ = RecordCodecBuilder.create((p_236112_0_) -> {
++public class DimensionSettings implements net.minecraftforge.common.extensions.IForgeNoiseGeneratorSettings {
++   public static final Codec<DimensionSettings> field_236097_a_ = net.minecraftforge.common.world.ForgeNoiseGeneratorType.DISPATCH_CODEC;
++   public static final Codec<DimensionSettings> VANILLA_CODEC = RecordCodecBuilder.create((p_236112_0_) -> {
+       return p_236112_0_.group(DimensionStructuresSettings.field_236190_a_.fieldOf("structures").forGetter(DimensionSettings::func_236108_a_), NoiseSettings.field_236156_a_.fieldOf("noise").forGetter(DimensionSettings::func_236113_b_), BlockState.field_235877_b_.fieldOf("default_block").forGetter(DimensionSettings::func_236115_c_), BlockState.field_235877_b_.fieldOf("default_fluid").forGetter(DimensionSettings::func_236116_d_), Codec.intRange(-20, 276).fieldOf("bedrock_roof_position").forGetter(DimensionSettings::func_236117_e_), Codec.intRange(-20, 276).fieldOf("bedrock_floor_position").forGetter(DimensionSettings::func_236118_f_), Codec.intRange(0, 255).fieldOf("sea_level").forGetter(DimensionSettings::func_236119_g_), Codec.BOOL.fieldOf("disable_mob_generation").forGetter(DimensionSettings::func_236120_h_)).apply(p_236112_0_, DimensionSettings::new);
+    });
+    public static final Codec<Supplier<DimensionSettings>> field_236098_b_ = RegistryKeyCodec.func_241794_a_(Registry.field_243549_ar, field_236097_a_);
