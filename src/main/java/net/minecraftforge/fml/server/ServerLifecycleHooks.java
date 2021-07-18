@@ -55,6 +55,7 @@ import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
@@ -92,6 +93,7 @@ public class ServerLifecycleHooks
         // on the dedi server we need to force the stuff to setup properly
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
+        ForgeHooks.onDynamicRegistriesLoaded(server.registryAccess());
         return !MinecraftForge.EVENT_BUS.post(new FMLServerAboutToStartEvent(server));
     }
 

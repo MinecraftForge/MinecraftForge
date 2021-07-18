@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -138,8 +139,10 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.world.BiomeBuilder;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldType;
+import net.minecraftforge.common.world.IBiomeParameters;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -169,6 +172,7 @@ import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.event.world.DynamicRegistriesLoadedEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -1449,6 +1453,36 @@ public class ForgeHooks
             AttributeModifierMap.MutableAttribute newMutable = modifiers != null ? new AttributeModifierMap.MutableAttribute(modifiers) : new AttributeModifierMap.MutableAttribute();
             newMutable.combine(v);
             FORGE_ATTRIBUTES.put(k, newMutable.build());
+        });
+    }
+    
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
+    @Deprecated
+    public static void onDynamicRegistriesLoaded(final @Nonnull DynamicRegistries registries)
+    {
+        // make a mutable copy of all biomes and provide these copies via the event
+        final Registry<Biome> biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);
+        final Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers = biomes.entrySet().stream()
+            .collect(Collectors.toMap(Entry::getKey, entry -> (IBiomeParameters)BiomeBuilder.copyFrom(entry.getValue())));
+        
+        MinecraftForge.EVENT_BUS.post(new DynamicRegistriesLoadedEvent(registries, biomeModifiers));
+        
+        // copy the new biome parameters back into the actual registered biome instances
+        biomes.entrySet().forEach(entry ->
+        {
+            final RegistryKey<Biome> key = entry.getKey();
+            final @Nullable IBiomeParameters modifier = biomeModifiers.get(key);
+            if (modifier != null) // if this is null, somebody removed the modifier from the map during the event (can't modify biome)
+            {
+                final Biome biome = entry.getValue();
+                biome.biomeCategory = modifier.getCategory();
+                biome.depth = modifier.getDepth();
+                biome.scale = modifier.getScale();
+                biome.climateSettings = new Biome.Climate(modifier.getPrecipitation(), modifier.getTemperature(), modifier.getTemperatureModifier(), modifier.getDownfall());
+                biome.specialEffects = modifier.getEffectsBuilder().build();
+                biome.generationSettings = modifier.getGenerationBuilder().build();
+                biome.mobSettings = modifier.getSpawnBuilder().build();
+            }
         });
     }
 }
