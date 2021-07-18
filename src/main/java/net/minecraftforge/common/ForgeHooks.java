@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common;
 
+import java.lang.System;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.System;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
