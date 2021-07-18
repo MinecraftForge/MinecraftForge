@@ -1,0 +1,4 @@
+{
+  "parent": "minecraft:overworld",
+  "type": "forge:copy"
+}
