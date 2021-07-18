@@ -9,3 +9,13 @@
        MutableRegistry<E> mutableregistry = p_243607_0_.func_243612_b(registrykey);
  
        for(Entry<RegistryKey<E>, E> entry : registry.func_239659_c_()) {
+@@ -226,4 +_,9 @@
+          });
+       }
+    }
++   @Deprecated /** forge internal use only, used for preventing redundant imports to the registries */
++   public void setDatapackImports(net.minecraft.util.registry.WorldSettingsImport<?> imports) { this.datapackImports = imports;}
++   @Deprecated /** forge internal use only */
++   public @Nullable net.minecraft.util.registry.WorldSettingsImport<?> getDatapackImports() { return this.datapackImports;}
++   private net.minecraft.util.registry.WorldSettingsImport<?> datapackImports = null;
+ }

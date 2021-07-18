@@ -1458,6 +1458,15 @@ public class ForgeHooks
         });
     }
     
+    /** FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
+    @Deprecated
+    public static void onDynamicRegistriesLoaded(final @Nonnull WorldSettingsImport<?> imports, final @Nonnull DynamicRegistries registries)
+    {
+        // mark the registries as having had datapacks imported into them
+        registries.setDatapackImports(imports);
+        onDynamicRegistriesLoaded(registries);
+    }
+    
     /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
     @Deprecated
     public static void onDynamicRegistriesLoaded(final @Nonnull MinecraftServer server, final @Nonnull DynamicRegistries registries)

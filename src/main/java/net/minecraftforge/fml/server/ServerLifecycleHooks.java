@@ -93,7 +93,6 @@ public class ServerLifecycleHooks
         // on the dedi server we need to force the stuff to setup properly
         LogicalSidedProvider.setServer(()->server);
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, getServerConfigPath(server));
-        ForgeHooks.onDynamicRegistriesLoaded(server, server.registryAccess());
         return !MinecraftForge.EVENT_BUS.post(new FMLServerAboutToStartEvent(server));
     }
 
