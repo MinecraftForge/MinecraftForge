@@ -1,0 +1,29 @@
+--- a/net/minecraft/entity/ai/goal/RangedCrossbowAttackGoal.java
++++ b/net/minecraft/entity/ai/goal/RangedCrossbowAttackGoal.java
+@@ -33,7 +_,7 @@
+    }
+ 
+    private boolean func_220745_g() {
+-      return this.field_220748_a.func_233631_a_(Items.field_222114_py);
++      return this.field_220748_a.func_233634_a_(item -> item instanceof CrossbowItem);
+    }
+ 
+    public boolean func_75253_b() {
+@@ -88,7 +_,7 @@
+          this.field_220748_a.func_70671_ap().func_75651_a(livingentity, 30.0F, 30.0F);
+          if (this.field_220749_b == RangedCrossbowAttackGoal.CrossbowState.UNCHARGED) {
+             if (!flag2) {
+-               this.field_220748_a.func_184598_c(ProjectileHelper.func_221274_a(this.field_220748_a, Items.field_222114_py));
++               this.field_220748_a.func_184598_c(ProjectileHelper.getWeaponHoldingHand(this.field_220748_a, item -> item instanceof CrossbowItem));
+                this.field_220749_b = RangedCrossbowAttackGoal.CrossbowState.CHARGING;
+                this.field_220748_a.func_213671_a(true);
+             }
+@@ -112,7 +_,7 @@
+             }
+          } else if (this.field_220749_b == RangedCrossbowAttackGoal.CrossbowState.READY_TO_ATTACK && flag) {
+             this.field_220748_a.func_82196_d(livingentity, 1.0F);
+-            ItemStack itemstack1 = this.field_220748_a.func_184586_b(ProjectileHelper.func_221274_a(this.field_220748_a, Items.field_222114_py));
++            ItemStack itemstack1 = this.field_220748_a.func_184586_b(ProjectileHelper.getWeaponHoldingHand(this.field_220748_a, item -> item instanceof CrossbowItem));
+             CrossbowItem.func_220011_a(itemstack1, false);
+             this.field_220749_b = RangedCrossbowAttackGoal.CrossbowState.UNCHARGED;
+          }
