@@ -32,7 +32,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 
 /**
  * Registrable wrapper around a supplier for a noise generator setting codec (the things that read from the noise_settings folder).
- * Can be registered to {@link ForgeRegistries#NOISE_SETTING_CODECS}.
+ * Can be registered to {@link ForgeRegistries#NOISE_GENERATOR_TYPES}.
  * 
  * Beware! Mods' settings classes *must* override {@link IForgeNoiseGeneratorSettings#getType()} to return their ForgeNoiseGeneratorType instance.
  */
@@ -40,7 +40,7 @@ public class ForgeNoiseGeneratorType<NOISETYPE extends DimensionSettings> extend
 {
     public static final Codec<ForgeNoiseGeneratorType<?>> CODEC = ResourceLocation.CODEC
         .comapFlatMap(id ->{
-                ForgeNoiseGeneratorType<?> type = ForgeRegistries.NOISE_SETTING_CODECS.getValue(id);
+                ForgeNoiseGeneratorType<?> type = ForgeRegistries.NOISE_GENERATOR_TYPES.getValue(id);
                 return type != null ? DataResult.success(type) : DataResult.error(String.format("No noise generator type registered to id %s", id));
             },
             ForgeNoiseGeneratorType::getRegistryName);

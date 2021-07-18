@@ -116,7 +116,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public static final RegistryObject<Fluid> MILK = RegistryObject.of(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.of(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
 
-    public static final DeferredRegister<ForgeNoiseGeneratorType<?>> NOISE_GENERATOR_TYPES = DeferredRegister.create(ForgeRegistries.NOISE_SETTING_CODECS, "forge");
+    public static final DeferredRegister<ForgeNoiseGeneratorType<?>> NOISE_GENERATOR_TYPES = DeferredRegister.create(ForgeRegistries.NOISE_GENERATOR_TYPES, "forge");
     public static final RegistryObject<ForgeNoiseGeneratorType<DimensionSettings>> VANILLA_NOISE_GENERATOR_TYPE = NOISE_GENERATOR_TYPES.register("vanilla", () -> new ForgeNoiseGeneratorType<>(DimensionSettings.VANILLA_CODEC));
     public static final RegistryObject<ForgeNoiseGeneratorType<CopyNoiseGeneratorSettings>> COPY_NOISE_GENERATOR_TYPE = NOISE_GENERATOR_TYPES.register("copy", () -> new ForgeNoiseGeneratorType<>(CopyNoiseGeneratorSettings.CODEC));
 
