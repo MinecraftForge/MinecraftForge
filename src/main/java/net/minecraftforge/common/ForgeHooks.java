@@ -48,6 +48,8 @@ import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -1458,7 +1460,21 @@ public class ForgeHooks
         });
     }
     
-    /** FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
+    /**
+     * Determines and returns the correct RegistryOps to return when returning early from creating a RegistryOps without importing datapacks
+     * @apiNote FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY
+     */
+    @Deprecated
+    public static <T> WorldSettingsImport<T> getCachedRegistryOps(DynamicOps<T> delegateOps, WorldSettingsImport<?> registryOps) 
+    {
+        // if we return early from the ops creator, we need to return a previously-created RegistryOps -- so we need to figure out what ops type needs to be returned
+        if (!(delegateOps instanceof net.minecraft.nbt.NBTDynamicOps) && !(delegateOps instanceof JsonOps)) // vanilla's registry ops are either NBT ops or Json ops
+            throw new IllegalArgumentException("Cannot create world import -- Unsupported ops"); // (if somebody needs to invoke this for their own custom ops we can improve that later)
+        // return the appropriate ops instance for the ops type
+        return delegateOps instanceof JsonOps ? (WorldSettingsImport<T>) registryOps.jsonOps : (WorldSettingsImport<T>) registryOps.nbtOps;
+    }
+    
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
     @Deprecated
     public static void onDynamicRegistriesLoaded(final @Nonnull WorldSettingsImport<?> imports, final @Nonnull DynamicRegistries registries)
     {
