@@ -5,15 +5,15 @@
  
     public static <T> WorldSettingsImport<T> func_244335_a(DynamicOps<T> p_244335_0_, IResourceManager p_244335_1_, DynamicRegistries.Impl p_244335_2_) {
 -      return func_244336_a(p_244335_0_, WorldSettingsImport.IResourceAccess.func_244345_a(p_244335_1_), p_244335_2_);
-+      return create(p_244335_0_, WorldSettingsImport.IResourceAccess.func_244345_a(p_244335_1_), p_244335_2_, true); // forge -- this method is only called by things that are importing datapacks (not DynamicRegistries.builtin())
++      return create(p_244335_0_, WorldSettingsImport.IResourceAccess.func_244345_a(p_244335_1_), p_244335_2_, true); // this method is only called by things that are importing datapacks (not RegistryAccess.builtin()), add extra arg passing this information
     }
  
     public static <T> WorldSettingsImport<T> func_244336_a(DynamicOps<T> p_244336_0_, WorldSettingsImport.IResourceAccess p_244336_1_, DynamicRegistries.Impl p_244336_2_) {
-+      return create(p_244336_0_, p_244336_1_, p_244336_2_, false); // forge -- with these patches, this method is now only called by DynamicRegistries.builtin()
++      return create(p_244336_0_, p_244336_1_, p_244336_2_, false); // with these patches, this method is now only called by RegistryAccess.builtin() (not importing datapacks), add extra arg passing this information
 +   }
-+   public final WorldSettingsImport<net.minecraft.nbt.INBT> nbtOps; // forge -- workaround for the generic ops problem when preventing redundant imports
++   public final WorldSettingsImport<net.minecraft.nbt.INBT> nbtOps; // in order to prevent redundant imports, we need to be able to provide the NBT variant of this if requested
 +   public static <T> WorldSettingsImport<T> create(DynamicOps<T> p_244336_0_, WorldSettingsImport.IResourceAccess p_244336_1_, DynamicRegistries.Impl p_244336_2_, boolean importingDataPacks) { // add extra argument to this constructor so we can tell whether it's being called to import datapacks or to create the builtin registries
-+      if (importingDataPacks && p_244336_2_.getDatapackImports() != null) return net.minecraftforge.common.ForgeHooks.getCachedRegistryOps(p_244336_0_, p_244336_2_.getDatapackImports()); // if this isn't the first time we're importing datapacks into these registries, return a previously-created RegistryOps and don't fire the registries loaded event
++      if (importingDataPacks && p_244336_2_.getDatapackImports() != null) return net.minecraftforge.common.ForgeHooks.getCachedRegistryOps(p_244336_0_, p_244336_2_.getDatapackImports()); // if this isn't the first time we're importing datapacks into these registries, return a previously-created RegistryReadOps and don't fire the registries loaded event
        WorldSettingsImport<T> worldsettingsimport = new WorldSettingsImport<>(p_244336_0_, p_244336_1_, p_244336_2_, Maps.newIdentityHashMap());
        DynamicRegistries.func_243608_a(p_244336_2_, worldsettingsimport);
 +      if (importingDataPacks) { net.minecraftforge.common.ForgeHooks.onDynamicRegistriesLoaded(worldsettingsimport, p_244336_2_);} // if this is the first time we're importing datapacks into these registries, the event should be fired (but not for builtin data)
@@ -24,7 +24,7 @@
        this.field_240872_d_ = p_i242092_3_;
        this.field_240873_e_ = p_i242092_4_;
        this.field_244333_f = p_i242092_1_ == JsonOps.INSTANCE ? (WorldSettingsImport<JsonElement>)this : new WorldSettingsImport<>(JsonOps.INSTANCE, p_i242092_2_, p_i242092_3_, p_i242092_4_);
-+      this.nbtOps = p_i242092_1_ == net.minecraft.nbt.NBTDynamicOps.field_210820_a ? (WorldSettingsImport<net.minecraft.nbt.INBT>)this : new WorldSettingsImport<net.minecraft.nbt.INBT>(p_i242092_2_, p_i242092_3_, p_i242092_4_, this.field_244333_f); // forge: all vanilla WSIs either are or have a jsonops delegate, we also need to have an nbtops delegate for the generic create workaround
++      this.nbtOps = p_i242092_1_ == net.minecraft.nbt.NBTDynamicOps.field_210820_a ? (WorldSettingsImport<net.minecraft.nbt.INBT>)this : new WorldSettingsImport<net.minecraft.nbt.INBT>(p_i242092_2_, p_i242092_3_, p_i242092_4_, this.field_244333_f); // all vanilla RegistryReadOps either are or have a jsonops delegate, we also need to have an nbtops delegate to prevent redundant imports
     }
 +   private WorldSettingsImport(WorldSettingsImport.IResourceAccess resources, DynamicRegistries.Impl registryHolder, IdentityHashMap<RegistryKey<? extends Registry<?>>, WorldSettingsImport.ResultMap<?>> readCache, WorldSettingsImport<JsonElement> jsonOps) {
 +      super((DynamicOps<T>) net.minecraft.nbt.NBTDynamicOps.field_210820_a);
@@ -33,7 +33,7 @@
 +      this.field_240873_e_ = readCache;
 +      this.field_244333_f = jsonOps;
 +      this.nbtOps = (WorldSettingsImport<net.minecraft.nbt.INBT>)this;
-+   } // forge: extra constructor is needed to have both a json and nbt ops delegate, otherwise WSI recursively constructs itself in the jsonOps assignment in the other constructor forever
++   } // extra constructor is needed to have both a json and nbt ops delegate, otherwise this class recursively constructs itself in the jsonOps assignment in the other constructor forever
  
     protected <E> DataResult<Pair<Supplier<E>, T>> func_241802_a_(T p_241802_1_, RegistryKey<? extends Registry<E>> p_241802_2_, Codec<E> p_241802_3_, boolean p_241802_4_) {
        Optional<MutableRegistry<E>> optional = this.field_240872_d_.func_230521_a_(p_241802_2_);
