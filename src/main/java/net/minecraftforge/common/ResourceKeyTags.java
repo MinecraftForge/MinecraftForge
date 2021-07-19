@@ -195,16 +195,6 @@ public class ResourceKeyTags implements IFutureReloadListener
     }
     
     /**
-     * @return an immutable view of the current tag registry
-     * 
-     * @apiNote internal, used for syncing to client
-     */
-    public Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> getTags()
-    {
-        return this.data;
-    }
-    
-    /**
      * Gets the current collection of tags for a given registry key
      * @param <T> The type of the thing the tags are for
      * @param registryKey The registry key for the collection of tags being requested
