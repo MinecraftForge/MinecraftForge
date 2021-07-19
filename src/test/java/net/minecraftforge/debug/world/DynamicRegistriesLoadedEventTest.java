@@ -242,7 +242,7 @@ public class DynamicRegistriesLoadedEventTest
 
     void onBiomeLoading(BiomeLoadingEvent event)
     {
-        // test the BiomeLoadingEvent to ensure it still works
+        // test the BiomeLoadingEvent to ensure it still works when the dynregloaded event is also being used
         if (TESTING_BIOMES.contains(RegistryKey.create(Registry.BIOME_REGISTRY, event.getName())))
         {
             // replace sky, fog, water color, leave everything else as-is, also add the black wool feature we registered to WorldGenRegistries earlier
