@@ -186,7 +186,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         registerDirectoryWithDefaultPlural.accept(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
         registerDirectoryWithDefaultPlural.accept(Registry.PROCESSOR_LIST_REGISTRY);
         registerDirectoryWithDefaultPlural.accept(Registry.TEMPLATE_POOL_REGISTRY);
-        registerDirectoryWithDefaultPlural.accept(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
+        ResourceKeyTags.registerResourceKeyTagDirectory(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY, Registry.NOISE_GENERATOR_SETTINGS_REGISTRY.location().getPath()); // already ends with an "s"
         
         // other vanilla data that uses/needs resource keys
         registerDirectoryWithDefaultPlural.accept(Registry.DIMENSION_REGISTRY);
