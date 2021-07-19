@@ -26,6 +26,10 @@ import javax.annotation.Nonnull;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.gen.DimensionSettings;
+import net.minecraft.world.gen.feature.structure.Structure;
+import net.minecraft.world.gen.settings.DimensionStructuresSettings;
+import net.minecraft.world.gen.settings.StructureSeparationSettings;
 import net.minecraftforge.common.world.IBiomeParameters;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -60,11 +64,13 @@ public class DynamicRegistriesLoadedEvent extends Event
 {
     private final @Nonnull DynamicRegistries dataRegistries;
     private final @Nonnull Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers;
+    private final @Nonnull Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs;
 
-    public DynamicRegistriesLoadedEvent(final @Nonnull DynamicRegistries dataRegistries, final @Nonnull Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers)
+    public DynamicRegistriesLoadedEvent(final @Nonnull DynamicRegistries dataRegistries, final @Nonnull Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers, final @Nonnull Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs)
     {
         this.dataRegistries = dataRegistries;
         this.biomeModifiers = biomeModifiers;
+        this.structureConfigs = structureConfigs;
     }
 
     /**
@@ -99,5 +105,15 @@ public class DynamicRegistriesLoadedEvent extends Event
     public Map<RegistryKey<Biome>, IBiomeParameters> getBiomeModifiers()
     {
         return this.biomeModifiers;
+    }
+    
+    /**
+     * Gets the map of structure configs. The maps of structures-to-seperation-settings are
+     * mutable and can have structure spacings added to them as needed.
+     * @return structure seperation maps by noise setting key
+     */
+    public Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> getStructureSeparations()
+    {
+        return this.structureConfigs;
     }
 }

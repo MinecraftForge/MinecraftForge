@@ -120,6 +120,7 @@ import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.DimensionSettings;
 import net.minecraft.world.gen.feature.structure.Structure;
 import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
+import net.minecraft.world.gen.settings.StructureSeparationSettings;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
@@ -1464,8 +1465,12 @@ public class ForgeHooks
         final Registry<Biome> biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);
         final Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers = biomes.entrySet().stream()
             .collect(Collectors.toMap(Entry::getKey, entry -> (IBiomeParameters)BiomeBuilder.copyFrom(entry.getValue())));
+        // make a mutable copy of each noise settings's structure seperation entries
+        final Registry<DimensionSettings> noiseGenerators = registries.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
+        final Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs = noiseGenerators.entrySet().stream()
+            .collect(Collectors.toMap(Entry::getKey, entry -> new HashMap<>(entry.getValue().structureSettings().structureConfig())));
         
-        MinecraftForge.EVENT_BUS.post(new DynamicRegistriesLoadedEvent(registries, biomeModifiers));
+        MinecraftForge.EVENT_BUS.post(new DynamicRegistriesLoadedEvent(registries, biomeModifiers, structureConfigs));
         
         // copy the new biome parameters back into the actual registered biome instances
         biomes.entrySet().forEach(entry ->
@@ -1482,6 +1487,18 @@ public class ForgeHooks
                 biome.specialEffects = modifier.getEffectsBuilder().build();
                 biome.generationSettings = modifier.getGenerationBuilder().build();
                 biome.mobSettings = modifier.getSpawnBuilder().build();
+            }
+        });
+        
+        // copy the new structure seperations back into the noise settings
+        noiseGenerators.entrySet().forEach(entry ->
+        {
+            final RegistryKey<DimensionSettings> key = entry.getKey();
+            final @Nullable Map<Structure<?>, StructureSeparationSettings> structureMap = structureConfigs.get(key);
+            if (structureMap != null) // if this is null, somebody removed the structure map from this noise setting, just ignore it
+            {
+                final DimensionSettings noiseGenerator = entry.getValue();
+                noiseGenerator.structureSettings().structureConfig = structureMap;
             }
         });
     }
