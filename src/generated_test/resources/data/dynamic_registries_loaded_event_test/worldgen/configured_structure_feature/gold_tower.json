@@ -1,0 +1,7 @@
+{
+  "config": {
+    "start_pool": "dynamic_registries_loaded_event_test:gold_tower",
+    "size": 1
+  },
+  "type": "dynamic_registries_loaded_event_test:gold_tower"
+}
