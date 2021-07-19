@@ -43,6 +43,9 @@ public class Tags
         Items.init();
         Fluids.init();
         Biomes.init();
+        NoiseSettings.init();
+        DimensionTypes.init();
+        Dimensions.init();
     }
 
     public static class Blocks
@@ -366,6 +369,8 @@ public class Tags
     /** Tags for the "noise_settings" data files that include the list of structure placement entries used by dimensions **/
     public static class NoiseSettings
     {
+        private static void init(){}
+        
         public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> AMPLIFIED = tag("amplified");
         public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> CAVES = tag("caves");
         public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> END = tag("end");
@@ -381,6 +386,8 @@ public class Tags
     
     public static class DimensionTypes
     {
+        private static void init(){}
+        
         public static final IOptionalNamedTag<RegistryKey<DimensionType>> END = tag("end");
         public static final IOptionalNamedTag<RegistryKey<DimensionType>> NETHER = tag("nether");
         public static final IOptionalNamedTag<RegistryKey<DimensionType>> OVERWORLD = tag("overworld");
@@ -394,6 +401,8 @@ public class Tags
     
     public static class Dimensions
     {
+        private static void init(){}
+        
         public static final IOptionalNamedTag<RegistryKey<World>> END = tag("end");
         public static final IOptionalNamedTag<RegistryKey<World>> NETHER = tag("nether");
         public static final IOptionalNamedTag<RegistryKey<World>> OVERWORLD = tag("overworld");
