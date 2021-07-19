@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:taiga",
+    "minecraft:taiga_hills",
+    "minecraft:taiga_mountains",
+    "minecraft:giant_spruce_taiga",
+    "minecraft:giant_spruce_taiga_hills",
+    "minecraft:giant_tree_taiga",
+    "minecraft:giant_tree_taiga_hills",
+    "minecraft:snowy_taiga",
+    "minecraft:snowy_taiga_hills",
+    "minecraft:snowy_taiga_mountains"
+  ]
+}

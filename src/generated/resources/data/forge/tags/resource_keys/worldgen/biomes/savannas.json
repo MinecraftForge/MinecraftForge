@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:savanna",
+    "minecraft:savanna_plateau",
+    "minecraft:shattered_savanna",
+    "minecraft:shattered_savanna_plateau"
+  ]
+}

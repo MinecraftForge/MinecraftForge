@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:bamboo_jungle_hills",
+    "minecraft:birch_forest_hills",
+    "minecraft:dark_forest_hills",
+    "minecraft:desert_hills",
+    "minecraft:giant_spruce_taiga_hills",
+    "minecraft:giant_tree_taiga_hills",
+    "minecraft:jungle_hills",
+    "minecraft:snowy_taiga_hills",
+    "minecraft:swamp_hills",
+    "minecraft:taiga_hills",
+    "minecraft:tall_birch_hills",
+    "minecraft:wooded_hills",
+    "minecraft:flower_forest",
+    "minecraft:ice_spikes",
+    "minecraft:modified_jungle_edge",
+    "minecraft:savanna_plateau",
+    "minecraft:snowy_mountains",
+    "minecraft:tall_birch_forest"
+  ]
+}

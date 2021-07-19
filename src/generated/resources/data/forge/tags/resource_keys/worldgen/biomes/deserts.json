@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:desert",
+    "minecraft:desert_hills",
+    "minecraft:desert_lakes"
+  ]
+}

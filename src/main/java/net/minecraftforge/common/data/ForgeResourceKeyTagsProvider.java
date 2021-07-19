@@ -170,7 +170,7 @@ public final class ForgeResourceKeyTagsProvider implements IDataProvider
                 this.tag(Tags.NoiseSettings.OVERWORLD).add(DimensionSettings.OVERWORLD);
             }
             
-        };
+        }.run(cache);
 
         new ResourceKeyTagsProvider<DimensionType>(generator, fileHelper, "forge", Registry.DIMENSION_TYPE_REGISTRY)
         {
