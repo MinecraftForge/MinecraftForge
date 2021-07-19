@@ -107,6 +107,7 @@ import net.minecraft.network.datasync.IDataSerializer;
 import net.minecraft.network.play.server.SChangeBlockPacket;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.registry.DynamicRegistries;
@@ -1459,7 +1460,7 @@ public class ForgeHooks
     
     /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
     @Deprecated
-    public static void onDynamicRegistriesLoaded(final @Nonnull DynamicRegistries registries)
+    public static void onDynamicRegistriesLoaded(final @Nonnull MinecraftServer server, final @Nonnull DynamicRegistries registries)
     {
         // make a mutable copy of all biomes and provide these copies via the event
         final Registry<Biome> biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);
@@ -1470,7 +1471,7 @@ public class ForgeHooks
         final Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs = noiseGenerators.entrySet().stream()
             .collect(Collectors.toMap(Entry::getKey, entry -> new HashMap<>(entry.getValue().structureSettings().structureConfig())));
         
-        MinecraftForge.EVENT_BUS.post(new DynamicRegistriesLoadedEvent(registries, biomeModifiers, structureConfigs));
+        MinecraftForge.EVENT_BUS.post(new DynamicRegistriesLoadedEvent(server, registries, biomeModifiers, structureConfigs));
         
         // copy the new biome parameters back into the actual registered biome instances
         biomes.entrySet().forEach(entry ->

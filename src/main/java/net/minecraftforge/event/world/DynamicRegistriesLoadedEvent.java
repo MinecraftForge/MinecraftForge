@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.RegistryKey;
 import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.world.biome.Biome;
@@ -62,15 +63,22 @@ import net.minecraftforge.eventbus.api.EventPriority;
  */
 public class DynamicRegistriesLoadedEvent extends Event
 {
+    private final @Nonnull MinecraftServer server;
     private final @Nonnull DynamicRegistries dataRegistries;
     private final @Nonnull Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers;
     private final @Nonnull Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs;
 
-    public DynamicRegistriesLoadedEvent(final @Nonnull DynamicRegistries dataRegistries, final @Nonnull Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers, final @Nonnull Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs)
+    public DynamicRegistriesLoadedEvent(final @Nonnull MinecraftServer server, final @Nonnull DynamicRegistries dataRegistries, final @Nonnull Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers, final @Nonnull Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs)
     {
+        this.server = server;
         this.dataRegistries = dataRegistries;
         this.biomeModifiers = biomeModifiers;
         this.structureConfigs = structureConfigs;
+    }
+    
+    public MinecraftServer getServer()
+    {
+        return this.server;
     }
 
     /**
