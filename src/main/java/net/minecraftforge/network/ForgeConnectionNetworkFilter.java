@@ -33,6 +33,7 @@ import net.minecraft.network.ProtocolType;
 import net.minecraft.network.play.server.SAdvancementInfoPacket;
 import net.minecraft.network.play.server.STagsListPacket;
 import net.minecraft.network.play.server.SUpdateRecipesPacket;
+import net.minecraft.network.play.server.SChunkDataPacket;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -69,6 +70,7 @@ public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
         if (compatibility == VanillaPacketSplitter.RemoteCompatibility.V11)
         {
             builder.put(SAdvancementInfoPacket.class, ForgeConnectionNetworkFilter::splitPacket);
+            builder.put(SChunkDataPacket.class, ForgeConnectionNetworkFilter::splitPacket);
         }
         return builder.build();
     }
