@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,6 +49,8 @@ import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -114,6 +117,7 @@ import net.minecraft.util.registry.DynamicRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.util.registry.WorldSettingsImport;
+import net.minecraft.util.registry.WorldSettingsImport.ResultMap;
 import net.minecraft.util.registry.WorldGenSettingsExport;
 import net.minecraft.util.text.*;
 import net.minecraft.world.*;
@@ -1458,10 +1462,28 @@ public class ForgeHooks
         });
     }
     
+    /**
+     * Determines and returns the correct RegistryOps to return when returning early from creating a RegistryOps without importing datapacks
+     * @apiNote FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY
+     */
+    @SuppressWarnings("unchecked")
+    @Deprecated
+    public static <T> WorldSettingsImport<T> getCachedRegistryOps(DynamicOps<T> delegateOps, WorldSettingsImport<?> registryOps, WorldSettingsImport.IResourceAccess resources, DynamicRegistries.Impl registries) 
+    {
+        // if we return early from the ops creator, we need to return a previously-created RegistryReadOps -- so we need to figure out what ops type needs to be returned
+        if (delegateOps == JsonOps.INSTANCE) // same check vanilla uses
+            return (WorldSettingsImport<T>) registryOps.jsonOps;
+        Map<DynamicOps<?>, WorldSettingsImport<?>> extraOps = registryOps.extraOps;
+        return (WorldSettingsImport<T>) extraOps.computeIfAbsent(delegateOps, ops -> new WorldSettingsImport<T>(delegateOps, resources, registries, (IdentityHashMap<RegistryKey<? extends Registry<?>>, ResultMap<?>>) registryOps.readCache, extraOps));
+    }
+    
     /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
     @Deprecated
-    public static void onDynamicRegistriesLoaded(final @Nonnull MinecraftServer server, final @Nonnull DynamicRegistries registries)
+    public static void onDynamicRegistriesLoaded(final @Nonnull WorldSettingsImport<?> imports, final @Nonnull DynamicRegistries registries)
     {
+        // mark the registries as having had datapacks imported into them
+        registries.setDatapackImports(imports);
+        
         // make a mutable copy of all biomes and provide these copies via the event
         final Registry<Biome> biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);
         final Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers = biomes.entrySet().stream()
@@ -1471,7 +1493,7 @@ public class ForgeHooks
         final Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs = noiseGenerators.entrySet().stream()
             .collect(Collectors.toMap(Entry::getKey, entry -> new HashMap<>(entry.getValue().structureSettings().structureConfig())));
         
-        MinecraftForge.EVENT_BUS.post(new DynamicRegistriesLoadedEvent(server, registries, biomeModifiers, structureConfigs));
+        MinecraftForge.EVENT_BUS.post(new DynamicRegistriesLoadedEvent(registries, biomeModifiers, structureConfigs));
         
         // copy the new biome parameters back into the actual registered biome instances
         biomes.entrySet().forEach(entry ->

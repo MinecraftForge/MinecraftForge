@@ -37,7 +37,7 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 /**
  * Fires after dynamic registries (biomes, configuredfeatures, etc) have loaded
- * from datapacks, and after dimensions/chunkgenerators/biomeproviders load
+ * from datapacks, and before dimensions/chunkgenerators/biomeproviders load
  * from datapacks. Allows modification of biomes in-place using
  * dynamicregistries context (allowing e.g. adding features from datapacks to a
  * set of biomes specified by datapacks).
@@ -59,26 +59,20 @@ import net.minecraftforge.eventbus.api.EventPriority;
  * vanilla features in their biome json.
  * 
  * This event is guaranteed to provide a unique and unmodified set of dynamic
- * registry objects each time the event fires.
+ * registry objects each time the event fires, though the event may fire several
+ * times when datapacks are imported multiple times.
  */
 public class DynamicRegistriesLoadedEvent extends Event
 {
-    private final @Nonnull MinecraftServer server;
     private final @Nonnull DynamicRegistries dataRegistries;
     private final @Nonnull Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers;
     private final @Nonnull Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs;
 
-    public DynamicRegistriesLoadedEvent(final @Nonnull MinecraftServer server, final @Nonnull DynamicRegistries dataRegistries, final @Nonnull Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers, final @Nonnull Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs)
+    public DynamicRegistriesLoadedEvent(final @Nonnull DynamicRegistries dataRegistries, final @Nonnull Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers, final @Nonnull Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs)
     {
-        this.server = server;
         this.dataRegistries = dataRegistries;
         this.biomeModifiers = biomeModifiers;
         this.structureConfigs = structureConfigs;
-    }
-    
-    public MinecraftServer getServer()
-    {
-        return this.server;
     }
 
     /**
