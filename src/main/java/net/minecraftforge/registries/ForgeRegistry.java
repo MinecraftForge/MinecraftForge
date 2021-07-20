@@ -685,26 +685,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         // Building a good looking table is not cheap, so only do it if the debug logger is enabled.
         if (LOGGER.isDebugEnabled(REGISTRYDUMP))
         {
-            class Row
-            {
-                int id;
-                String key;
-                String value;
-                boolean dummied;
-
-                private Row(int id)
-                {
-                    this.id = id;
-                    V val = getValue(id);
-                    this.value = val.toString();
-                    this.key = getKey(val).toString();
-                    this.dummied = ForgeRegistry.this.dummies.contains(getKey(val));
-                }
-            }
-
-            TablePrinter<Row> tab = new TablePrinter<Row>()
-                .header("ID",    r -> Integer.toString(r.id))
-                .header("Dummy", r -> Boolean.toString(r.dummied))
+            TablePrinter<DumpRow> tab = new TablePrinter<DumpRow>()
+                .header("ID",    r -> r.id)
+                .header("Dummy", r -> r.dummied)
                 .header("Key",   r -> r.key)
                 .header("Value", r -> r.value);
 
@@ -712,9 +695,30 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             {
                 sb.append("Registry Name: ").append(name).append('\n');
                 tab.clearRows();
-                getKeys().stream().map(this::getID).sorted().map(Row::new).forEach(tab::add);
+                getKeys().stream().map(this::getID).sorted().map(id -> {
+                    V val = getValue(id);
+                    ResourceLocation key = getKey(val);
+                    return new DumpRow(Integer.toString(id), getKey(val).toString(), val.toString(), Boolean.toString(this.dummies.contains(key)));
+                }).forEach(tab::add);
                 tab.build(sb);
             }));
+        }
+    }
+
+    //TODO: Convert to record in 1.17+
+    private static class DumpRow
+    {
+        final String id;
+        final String key;
+        final String value;
+        final String dummied;
+
+        private DumpRow(String id, String key, String value, String dummied)
+        {
+            this.id = id;
+            this.key = key;
+            this.value = value;
+            this.dummied = dummied;
         }
     }
 
