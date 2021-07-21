@@ -43,6 +43,8 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -57,7 +59,13 @@ public class LazyCapabilitiesOnItemsTest
     private static final Logger LOGGER = LogManager.getLogger();
     private static final boolean ENABLED = true;
     private static final int SAMPLE_SIZE = 100000;
-    
+
+    private static final List<ItemStack> WARMUP_RESULTS = new ArrayList<>();
+    private static final List<ItemStack> NO_CAPS_DISABLED_RESULTS = new ArrayList<>();
+    private static final List<ItemStack> WITH_CAPS_DISABLED_RESULTS = new ArrayList<>();
+    private static final List<ItemStack> NO_CAPS_ENABLED_RESULTS = new ArrayList<>();
+    private static final List<ItemStack> WITH_CAPS_ENABLED_RESULTS = new ArrayList<>();
+
     public LazyCapabilitiesOnItemsTest()
     {
         if (!ENABLED)
@@ -84,11 +92,17 @@ public class LazyCapabilitiesOnItemsTest
                 e.addCapability(testCapId, new FluidHandlerItemStackSimple(e.getObject(), SAMPLE_SIZE));
             };
 
+            //Warmup:
+            for (int i = 0; i < (SAMPLE_SIZE * 100); i++)
+            {
+                WARMUP_RESULTS.add(new ItemStack(Items.WATER_BUCKET));
+            }
+
             ///First test: SAMPLE_SIZE itemstacks which do not have a capability attached.
             timer.start();
             for (int i = 0; i < SAMPLE_SIZE; i++)
             {
-                final ItemStack stack = new ItemStack(Items.WATER_BUCKET);
+                NO_CAPS_DISABLED_RESULTS.add(new ItemStack(Items.WATER_BUCKET));
             }
             timer.stop();
 
@@ -100,7 +114,7 @@ public class LazyCapabilitiesOnItemsTest
             timer.start();
             for (int i = 0; i < SAMPLE_SIZE; i++)
             {
-                final ItemStack stack = new ItemStack(Items.WATER_BUCKET);
+                WITH_CAPS_DISABLED_RESULTS.add(new ItemStack(Items.WATER_BUCKET));
             }
             timer.stop();
 
@@ -113,7 +127,7 @@ public class LazyCapabilitiesOnItemsTest
             timer.start();
             for (int i = 0; i < SAMPLE_SIZE; i++)
             {
-                final ItemStack stack = new ItemStack(Items.WATER_BUCKET);
+                NO_CAPS_ENABLED_RESULTS.add(new ItemStack(Items.WATER_BUCKET));
             }
             timer.stop();
 
@@ -125,7 +139,7 @@ public class LazyCapabilitiesOnItemsTest
             timer.start();
             for (int i = 0; i < SAMPLE_SIZE; i++)
             {
-                final ItemStack stack = new ItemStack(Items.WATER_BUCKET);
+                WITH_CAPS_ENABLED_RESULTS.add(new ItemStack(Items.WATER_BUCKET));
             }
             timer.stop();
 
