@@ -22,6 +22,8 @@ package net.minecraftforge.common.capabilities;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+
+import com.google.common.annotations.VisibleForTesting;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
@@ -32,25 +34,54 @@ import net.minecraftforge.event.ForgeEventFactory;
 @ParametersAreNonnullByDefault
 public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implements ICapabilityProvider
 {
+    @VisibleForTesting
+    static boolean SUPPORTS_LAZY_CAPABILITIES = true;
+
     private final @Nonnull Class<B> baseClass;
     private @Nullable CapabilityDispatcher capabilities;
     private boolean valid = true;
 
+    private boolean isLazy = false;
+    private ICapabilityProvider lazyParent = null;
+    private CompoundNBT lazyData = null;
+
     protected CapabilityProvider(Class<B> baseClass)
     {
+        this(baseClass, false);
+    }
+
+    protected CapabilityProvider(final Class<B> baseClass, final boolean isLazy)
+    {
         this.baseClass = baseClass;
+        this.isLazy = SUPPORTS_LAZY_CAPABILITIES && isLazy;
     }
 
     protected final void gatherCapabilities() { gatherCapabilities(null); }
 
     protected final void gatherCapabilities(@Nullable ICapabilityProvider parent)
     {
+        if (isLazy) {
+            lazyParent = parent;
+            return;
+        }
+
+        doGatherCapabilities(parent);
+    }
+
+    private void doGatherCapabilities(@Nullable ICapabilityProvider parent) {
         this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, this, parent);
     }
 
     protected final @Nullable CapabilityDispatcher getCapabilities()
     {
-        return this.capabilities;
+        if(isLazy) {
+            doGatherCapabilities(lazyParent);
+            if (lazyData != null) {
+                deserializeCaps(lazyData);
+            }
+        }
+
+        return capabilities;
     }
 
     public final boolean areCapsCompatible(CapabilityProvider<B> other)
@@ -90,6 +121,11 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     protected final void deserializeCaps(CompoundNBT tag)
     {
+        if (isLazy) {
+            lazyData = tag;
+            return;
+        }
+
         final CapabilityDispatcher disp = getCapabilities();
         if (disp != null)
         {

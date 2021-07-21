@@ -26,7 +26,7 @@
 -   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_) {
 +   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_) { this(p_i48204_1_, p_i48204_2_, (CompoundNBT) null); }
 +   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_, @Nullable CompoundNBT capNBT) {
-+      super(ItemStack.class);
++      super(ItemStack.class, true);
 +      this.capNBT = capNBT;
        this.field_151002_e = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
 +      this.delegate = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j().delegate;
@@ -45,7 +45,7 @@
     }
  
     private ItemStack(CompoundNBT p_i47263_1_) {
-+      super(ItemStack.class);
++      super(ItemStack.class, true);
 +      this.capNBT = p_i47263_1_.func_74764_b("ForgeCaps") ? p_i47263_1_.func_74775_l("ForgeCaps") : null;
 +      Item rawItem =
        this.field_151002_e = Registry.field_212630_s.func_82594_a(new ResourceLocation(p_i47263_1_.func_74779_i("id")));
