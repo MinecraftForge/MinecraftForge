@@ -591,7 +591,9 @@ project(':forge') {
                 inheritsFrom: MC_VERSION,
                 logging: {},
                 arguments: [
-                    game: ['--launchTarget', 'fmlclient', '--fml.forgeVersion',  "${project.version.substring(MC_VERSION.length() + 1)}", '--fml.mcVersion', "${MC_VERSION}", '--fml.forgeGroup', "${project.group}", '--fml.mcpVersion', "${MCP_VERSION}"]
+                    game: ['--launchTarget', 'fmlclient', '--fml.forgeVersion',  "${project.version.substring(MC_VERSION.length() + 1)}", '--fml.mcVersion', "${MC_VERSION}", '--fml.forgeGroup', "${project.group}", '--fml.mcpVersion', "${MCP_VERSION}"],
+                    // Support running with Java 8 and up, including 16
+                    jvm: ['-XX:+IgnoreUnrecognizedVMOptions', '--add-exportscjava.base/sun.security.util=ALL-UNNAMED', '--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming', '--add-opens=java.base/java.util.jar=ALL-UNNAMED']
                 ],
                 libraries: [
                     [
@@ -923,6 +925,12 @@ project(':forge') {
             client {
                 main 'net.minecraftforge.userdev.LaunchTesting'
 
+                // Support mod devs running on Java 8 and up, including 16
+                jvmArgs '-XX:+IgnoreUnrecognizedVMOptions'
+                jvmArgs '--add-exports=java.base/sun.security.util=ALL-UNNAMED'
+                jvmArgs '--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming'
+                jvmArgs '--add-opens=java.base/java.util.jar=ALL-UNNAMED'
+
                 environment 'target', 'fmluserdevclient'
                 environment 'assetIndex', '{asset_index}'
                 environment 'assetDirectory', '{assets_root}'
@@ -939,6 +947,12 @@ project(':forge') {
             server {
                 main 'net.minecraftforge.userdev.LaunchTesting'
 
+                // Support mod devs running on Java 8 and up, including 16
+                jvmArgs '-XX:+IgnoreUnrecognizedVMOptions'
+                jvmArgs '--add-exports=java.base/sun.security.util=ALL-UNNAMED'
+                jvmArgs '--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming'
+                jvmArgs '--add-opens=java.base/java.util.jar=ALL-UNNAMED'
+
                 environment 'target', 'fmluserdevserver'
 
                 environment 'MC_VERSION', "${MC_VERSION}"
@@ -951,6 +965,12 @@ project(':forge') {
 
             data {
                 main 'net.minecraftforge.userdev.LaunchTesting'
+
+                // Support mod devs running on Java 8 and up, including 16
+                jvmArgs '-XX:+IgnoreUnrecognizedVMOptions'
+                jvmArgs '--add-exports=java.base/sun.security.util=ALL-UNNAMED'
+                jvmArgs '--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming'
+                jvmArgs '--add-opens=java.base/java.util.jar=ALL-UNNAMED'
 
                 environment 'target', 'fmluserdevdata'
                 environment 'assetIndex', '{asset_index}'
