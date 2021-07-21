@@ -220,7 +220,7 @@
        return multimap;
     }
  
-@@ -952,6 +_,24 @@
+@@ -952,6 +_,23 @@
  
     public boolean func_222117_E() {
        return this.func_77973_b().func_219971_r();
@@ -238,8 +238,7 @@
 +    */
 +   private void forgeInit() {
 +      if (this.delegate != null) {
-+         net.minecraftforge.common.capabilities.ICapabilityProvider provider = field_151002_e.initCapabilities(this, this.capNBT);
-+         this.gatherCapabilities(provider);
++         this.gatherCapabilities(() -> field_151002_e.initCapabilities(this, this.capNBT));
 +         if (this.capNBT != null) deserializeCaps(this.capNBT);
 +      }
     }

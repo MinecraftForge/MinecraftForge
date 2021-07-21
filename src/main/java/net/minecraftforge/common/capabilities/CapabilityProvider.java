@@ -30,6 +30,8 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
 
+import java.util.function.Supplier;
+
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
 public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implements ICapabilityProvider
@@ -41,9 +43,9 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
     private @Nullable CapabilityDispatcher capabilities;
     private boolean valid = true;
 
-    private boolean isLazy = false;
-    private ICapabilityProvider lazyParent = null;
-    private CompoundNBT lazyData = null;
+    private boolean                       isLazy             = false;
+    private Supplier<ICapabilityProvider> lazyParentSupplier = null;
+    private CompoundNBT                   lazyData           = null;
     private boolean initialized = false;
 
     protected CapabilityProvider(Class<B> baseClass)
@@ -57,16 +59,23 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         this.isLazy = SUPPORTS_LAZY_CAPABILITIES && isLazy;
     }
 
-    protected final void gatherCapabilities() { gatherCapabilities(null); }
+    protected final void gatherCapabilities() {
+        gatherCapabilities(() -> null);
+    }
 
     protected final void gatherCapabilities(@Nullable ICapabilityProvider parent)
     {
+        gatherCapabilities(() -> parent);
+    }
+
+    protected final void gatherCapabilities(@Nullable Supplier<ICapabilityProvider> parent)
+    {
         if (isLazy && !initialized) {
-            lazyParent = parent;
+            lazyParentSupplier = parent == null ? () -> null : parent;
             return;
         }
 
-        doGatherCapabilities(parent);
+        doGatherCapabilities(parent == null ? null : parent.get());
     }
 
     private void doGatherCapabilities(@Nullable ICapabilityProvider parent) {
@@ -77,7 +86,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
     protected final @Nullable CapabilityDispatcher getCapabilities()
     {
         if(isLazy && !initialized) {
-            doGatherCapabilities(lazyParent);
+            doGatherCapabilities(lazyParentSupplier.get());
             if (lazyData != null) {
                 deserializeCaps(lazyData);
             }
