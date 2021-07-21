@@ -22,14 +22,12 @@ package net.minecraftforge.common.capabilities;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-
 import com.google.common.annotations.VisibleForTesting;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
-
 import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
@@ -59,7 +57,8 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         this.isLazy = SUPPORTS_LAZY_CAPABILITIES && isLazy;
     }
 
-    protected final void gatherCapabilities() {
+    protected final void gatherCapabilities()
+    {
         gatherCapabilities(() -> null);
     }
 
@@ -78,16 +77,19 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         doGatherCapabilities(parent == null ? null : parent.get());
     }
 
-    private void doGatherCapabilities(@Nullable ICapabilityProvider parent) {
+    private void doGatherCapabilities(@Nullable ICapabilityProvider parent)
+    {
         this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, this, parent);
         this.initialized = true;
     }
 
     protected final @Nullable CapabilityDispatcher getCapabilities()
     {
-        if(isLazy && !initialized) {
+        if(isLazy && !initialized)
+        {
             doGatherCapabilities(lazyParentSupplier.get());
-            if (lazyData != null) {
+            if (lazyData != null)
+            {
                 deserializeCaps(lazyData);
             }
         }
@@ -132,7 +134,8 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     protected final void deserializeCaps(CompoundNBT tag)
     {
-        if (isLazy && !initialized) {
+        if (isLazy && !initialized)
+        {
             lazyData = tag;
             return;
         }

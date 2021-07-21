@@ -60,11 +60,11 @@ public class LazyCapabilitiesOnItemsTest
     private static final boolean ENABLED = true;
     private static final int SAMPLE_SIZE = 100000;
 
-    private static final List<ItemStack> WARMUP_RESULTS = new ArrayList<>();
-    private static final List<ItemStack> NO_CAPS_DISABLED_RESULTS = new ArrayList<>();
-    private static final List<ItemStack> WITH_CAPS_DISABLED_RESULTS = new ArrayList<>();
-    private static final List<ItemStack> NO_CAPS_ENABLED_RESULTS = new ArrayList<>();
-    private static final List<ItemStack> WITH_CAPS_ENABLED_RESULTS = new ArrayList<>();
+    private static final List<ItemStack> WARMUP_RESULTS = new ArrayList<>(SAMPLE_SIZE * 4);
+    private static final List<ItemStack> NO_CAPS_DISABLED_RESULTS = new ArrayList<>(SAMPLE_SIZE);
+    private static final List<ItemStack> WITH_CAPS_DISABLED_RESULTS = new ArrayList<>(SAMPLE_SIZE);
+    private static final List<ItemStack> NO_CAPS_ENABLED_RESULTS = new ArrayList<>(SAMPLE_SIZE);
+    private static final List<ItemStack> WITH_CAPS_ENABLED_RESULTS = new ArrayList<>(SAMPLE_SIZE);
 
     public LazyCapabilitiesOnItemsTest()
     {
@@ -93,7 +93,7 @@ public class LazyCapabilitiesOnItemsTest
             };
 
             //Warmup:
-            for (int i = 0; i < (SAMPLE_SIZE * 100); i++)
+            for (int i = 0; i < (SAMPLE_SIZE); i++)
             {
                 WARMUP_RESULTS.add(new ItemStack(Items.WATER_BUCKET));
             }
@@ -111,6 +111,12 @@ public class LazyCapabilitiesOnItemsTest
 
             ///Second test: SAMPLE_SIZE itemstacks with a capability attached.
             bus.addGenericListener(ItemStack.class, capAttachmentHandler);
+            //Warmup:
+            for (int i = 0; i < (SAMPLE_SIZE); i++)
+            {
+                WARMUP_RESULTS.add(new ItemStack(Items.WATER_BUCKET));
+            }
+
             timer.start();
             for (int i = 0; i < SAMPLE_SIZE; i++)
             {
@@ -124,6 +130,12 @@ public class LazyCapabilitiesOnItemsTest
 
             ///Third test: SAMPLE_SIZE itemstacks which do not have a capability attached.
             supportsFlagField.set(null, true);
+            //Warmup:
+            for (int i = 0; i < (SAMPLE_SIZE); i++)
+            {
+                WARMUP_RESULTS.add(new ItemStack(Items.WATER_BUCKET));
+            }
+
             timer.start();
             for (int i = 0; i < SAMPLE_SIZE; i++)
             {
@@ -136,6 +148,12 @@ public class LazyCapabilitiesOnItemsTest
 
             ///Fourth test: SAMPLE_SIZE itemstacks with a capability attached.
             bus.addGenericListener(ItemStack.class, capAttachmentHandler);
+            //Warmup:
+            for (int i = 0; i < (SAMPLE_SIZE); i++)
+            {
+                WARMUP_RESULTS.add(new ItemStack(Items.WATER_BUCKET));
+            }
+
             timer.start();
             for (int i = 0; i < SAMPLE_SIZE; i++)
             {
