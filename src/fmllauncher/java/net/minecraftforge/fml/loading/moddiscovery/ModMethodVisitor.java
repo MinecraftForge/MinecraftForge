@@ -35,7 +35,7 @@ public class ModMethodVisitor extends MethodVisitor {
 
     public ModMethodVisitor(String name, String desc, final LinkedList<ModAnnotation> annotations)
     {
-        super(Opcodes.ASM7);
+        super(Opcodes.ASM9);
         this.methodName = name;
         this.methodDescriptor = desc;
         this.annotations = annotations;
