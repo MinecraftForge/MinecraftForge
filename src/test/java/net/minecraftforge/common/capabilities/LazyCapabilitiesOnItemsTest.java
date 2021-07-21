@@ -42,6 +42,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -68,80 +69,90 @@ public class LazyCapabilitiesOnItemsTest
 
     private void onCommonSetup(FMLCommonSetupEvent event)
     {
-        CapabilityProvider.SUPPORTS_LAZY_CAPABILITIES = false;
-
-        final Stopwatch timer = Stopwatch.createUnstarted();
-        final IEventBus bus = MinecraftForge.EVENT_BUS;
-
-        final ResourceLocation testCapId = new ResourceLocation(MOD_ID, "test");
-        final Consumer<AttachCapabilitiesEvent<ItemStack>> capAttachmentHandler = e -> {
-            //Example capability we make everything a bucket :D
-            e.addCapability(testCapId, new FluidHandlerItemStackSimple(e.getObject(), SAMPLE_SIZE));
-        };
-
-        ///First test: SAMPLE_SIZE itemstacks which do not have a capability attached.
-        timer.start();
-        for (int i = 0; i < SAMPLE_SIZE; i++)
+        try
         {
-            final ItemStack stack = new ItemStack(Items.OAK_LOG);
+            final Field supportsFlagField = CapabilityProvider.class.getDeclaredField("SUPPORTS_LAZY_CAPABILITIES");
+            supportsFlagField.setAccessible(true);
+            supportsFlagField.set(null, false);
+
+            final Stopwatch timer = Stopwatch.createUnstarted();
+            final IEventBus bus = MinecraftForge.EVENT_BUS;
+
+            final ResourceLocation testCapId = new ResourceLocation(MOD_ID, "test");
+            final Consumer<AttachCapabilitiesEvent<ItemStack>> capAttachmentHandler = e -> {
+                //Example capability we make everything a bucket :D
+                e.addCapability(testCapId, new FluidHandlerItemStackSimple(e.getObject(), SAMPLE_SIZE));
+            };
+
+            ///First test: SAMPLE_SIZE itemstacks which do not have a capability attached.
+            timer.start();
+            for (int i = 0; i < SAMPLE_SIZE; i++)
+            {
+                final ItemStack stack = new ItemStack(Items.WATER_BUCKET);
+            }
+            timer.stop();
+
+            final long simpleNoCapsLazyDisabledElapsed = timer.elapsed(TimeUnit.MICROSECONDS);
+            timer.reset();
+
+            ///Second test: SAMPLE_SIZE itemstacks with a capability attached.
+            bus.addGenericListener(ItemStack.class, capAttachmentHandler);
+            timer.start();
+            for (int i = 0; i < SAMPLE_SIZE; i++)
+            {
+                final ItemStack stack = new ItemStack(Items.WATER_BUCKET);
+            }
+            timer.stop();
+
+            final long withCapsLazyDisabledElapsed = timer.elapsed(TimeUnit.MICROSECONDS);
+            timer.reset();
+            bus.unregister(capAttachmentHandler);
+
+            ///Third test: SAMPLE_SIZE itemstacks which do not have a capability attached.
+            supportsFlagField.set(null, true);
+            timer.start();
+            for (int i = 0; i < SAMPLE_SIZE; i++)
+            {
+                final ItemStack stack = new ItemStack(Items.WATER_BUCKET);
+            }
+            timer.stop();
+
+            final long simpleNoCapsLazyEnabledElapsed = timer.elapsed(TimeUnit.MICROSECONDS);
+            timer.reset();
+
+            ///Fourth test: SAMPLE_SIZE itemstacks with a capability attached.
+            bus.addGenericListener(ItemStack.class, capAttachmentHandler);
+            timer.start();
+            for (int i = 0; i < SAMPLE_SIZE; i++)
+            {
+                final ItemStack stack = new ItemStack(Items.WATER_BUCKET);
+            }
+            timer.stop();
+
+            final long withCapsLazyEnabledElapsed = timer.elapsed(TimeUnit.MICROSECONDS);
+            timer.reset();
+            bus.unregister(capAttachmentHandler);
+
+            TextTable table = new TextTable(Lists.newArrayList(
+              column("Test type", TextTable.Alignment.LEFT),
+              column("Total time", TextTable.Alignment.CENTER)
+            ));
+
+            table.add("Lazy: Disabled / Caps: None", simpleNoCapsLazyDisabledElapsed + " ms.");
+            table.add("Lazy: Disabled / Caps: One", withCapsLazyDisabledElapsed + " ms.");
+            table.add("Lazy: Enabled  / Caps: None", simpleNoCapsLazyEnabledElapsed + " ms.");
+            table.add("Lazy: Enabled  / Caps: One", withCapsLazyEnabledElapsed + " ms.");
+
+            final String[] resultData = table.build("\n").split("\n");
+            for (final String line : resultData)
+            {
+                LOGGER.warn(line);
+            }
         }
-        timer.stop();
-
-        final long simpleNoCapsLazyDisabledElapsed = timer.elapsed(TimeUnit.MICROSECONDS);
-        timer.reset();
-
-        ///Second test: SAMPLE_SIZE itemstacks with a capability attached.
-        bus.addGenericListener(ItemStack.class, capAttachmentHandler);
-        timer.start();
-        for (int i = 0; i < SAMPLE_SIZE; i++)
+        catch (NoSuchFieldException | IllegalAccessException e)
         {
-            final ItemStack stack = new ItemStack(Items.OAK_LOG);
-        }
-        timer.stop();
-
-        final long withCapsLazyDisabledElapsed = timer.elapsed(TimeUnit.MICROSECONDS);
-        timer.reset();
-        bus.unregister(capAttachmentHandler);
-
-        ///Third test: SAMPLE_SIZE itemstacks which do not have a capability attached.
-        CapabilityProvider.SUPPORTS_LAZY_CAPABILITIES = true;
-        timer.start();
-        for (int i = 0; i < SAMPLE_SIZE; i++)
-        {
-            final ItemStack stack = new ItemStack(Items.OAK_LOG);
-        }
-        timer.stop();
-
-        final long simpleNoCapsLazyEnabledElapsed = timer.elapsed(TimeUnit.MICROSECONDS);
-        timer.reset();
-
-        ///Fourth test: SAMPLE_SIZE itemstacks with a capability attached.
-        bus.addGenericListener(ItemStack.class, capAttachmentHandler);
-        timer.start();
-        for (int i = 0; i < SAMPLE_SIZE; i++)
-        {
-            final ItemStack stack = new ItemStack(Items.OAK_LOG);
-        }
-        timer.stop();
-
-        final long withCapsLazyEnabledElapsed = timer.elapsed(TimeUnit.MICROSECONDS);
-        timer.reset();
-        bus.unregister(capAttachmentHandler);
-
-        TextTable table = new TextTable(Lists.newArrayList(
-          column("Test type", TextTable.Alignment.LEFT),
-          column("Total time", TextTable.Alignment.CENTER)
-        ));
-
-        table.add("Lazy: Disabled / Caps: None", simpleNoCapsLazyDisabledElapsed + " ms.");
-        table.add("Lazy: Disabled / Caps: One", withCapsLazyDisabledElapsed + " ms.");
-        table.add("Lazy: Enabled  / Caps: None", simpleNoCapsLazyEnabledElapsed + " ms.");
-        table.add("Lazy: Enabled  / Caps: One", withCapsLazyEnabledElapsed + " ms.");
-
-        final String[] resultData = table.build("\n").split("\n");
-        for (final String line : resultData)
-        {
-            LOGGER.warn(line);
+            LOGGER.error("Failed to run capabilities on items test!");
+            throw new IllegalStateException(e);
         }
     }
 }
