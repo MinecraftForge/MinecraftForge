@@ -44,6 +44,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
     private boolean isLazy = false;
     private ICapabilityProvider lazyParent = null;
     private CompoundNBT lazyData = null;
+    private boolean initialized = false;
 
     protected CapabilityProvider(Class<B> baseClass)
     {
@@ -60,7 +61,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     protected final void gatherCapabilities(@Nullable ICapabilityProvider parent)
     {
-        if (isLazy) {
+        if (isLazy && !initialized) {
             lazyParent = parent;
             return;
         }
@@ -70,11 +71,12 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     private void doGatherCapabilities(@Nullable ICapabilityProvider parent) {
         this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, this, parent);
+        this.initialized = true;
     }
 
     protected final @Nullable CapabilityDispatcher getCapabilities()
     {
-        if(isLazy) {
+        if(isLazy && !initialized) {
             doGatherCapabilities(lazyParent);
             if (lazyData != null) {
                 deserializeCaps(lazyData);
@@ -121,7 +123,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     protected final void deserializeCaps(CompoundNBT tag)
     {
-        if (isLazy) {
+        if (isLazy && !initialized) {
             lazyData = tag;
             return;
         }
