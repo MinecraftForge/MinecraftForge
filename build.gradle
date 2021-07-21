@@ -593,7 +593,7 @@ project(':forge') {
                 arguments: [
                     game: ['--launchTarget', 'fmlclient', '--fml.forgeVersion',  "${project.version.substring(MC_VERSION.length() + 1)}", '--fml.mcVersion', "${MC_VERSION}", '--fml.forgeGroup', "${project.group}", '--fml.mcpVersion', "${MCP_VERSION}"],
                     // Support running with Java 8 and up, including 16
-                    jvm: ['-XX:+IgnoreUnrecognizedVMOptions', '--add-exportscjava.base/sun.security.util=ALL-UNNAMED', '--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming', '--add-opens=java.base/java.util.jar=ALL-UNNAMED']
+                    jvm: ['-XX:+IgnoreUnrecognizedVMOptions', '--add-exports=java.base/sun.security.util=ALL-UNNAMED', '--add-exports=jdk.naming.dns/com.sun.jndi.dns=java.naming', '--add-opens=java.base/java.util.jar=ALL-UNNAMED']
                 ],
                 libraries: [
                     [
