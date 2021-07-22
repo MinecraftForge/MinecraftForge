@@ -41,7 +41,7 @@
                 return true;
              }
           }
-@@ -375,6 +375,17 @@
+@@ -375,6 +375,22 @@
        return this.field_185364_H;
     }
  
@@ -56,10 +56,15 @@
 +      return null;
 +   }
 +
++   @Nullable
++   public Biome getEdge(net.minecraft.world.gen.INoiseRandom rand, Biome northBiome, Biome westBiome, Biome southBiome, Biome eastBiome) {
++      return null;
++   }
++
     public static class Builder {
        @Nullable
        private ConfiguredSurfaceBuilder<?> field_205422_a;
-@@ -526,6 +537,18 @@
+@@ -526,6 +542,18 @@
        }
     }
  
