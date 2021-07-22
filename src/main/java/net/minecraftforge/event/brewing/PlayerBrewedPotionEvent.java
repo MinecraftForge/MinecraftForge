@@ -19,8 +19,8 @@
 
 package net.minecraftforge.event.brewing;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
 import javax.annotation.Nonnull;
@@ -32,7 +32,7 @@ public class PlayerBrewedPotionEvent extends PlayerEvent
 {
     private final ItemStack stack;
 
-    public PlayerBrewedPotionEvent(PlayerEntity player, @Nonnull ItemStack stack)
+    public PlayerBrewedPotionEvent(Player player, @Nonnull ItemStack stack)
     {
         super(player);
         this.stack = stack;

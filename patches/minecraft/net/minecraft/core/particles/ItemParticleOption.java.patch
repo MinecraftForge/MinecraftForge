@@ -1,0 +1,11 @@
+--- a/net/minecraft/core/particles/ItemParticleOption.java
++++ b/net/minecraft/core/particles/ItemParticleOption.java
+@@ -35,7 +_,7 @@
+ 
+    public ItemParticleOption(ParticleType<ItemParticleOption> p_123705_, ItemStack p_123706_) {
+       this.f_123701_ = p_123705_;
+-      this.f_123702_ = p_123706_;
++      this.f_123702_ = p_123706_.m_41777_(); //Forge: Fix stack updating after the fact causing particle changes.
+    }
+ 
+    public void m_7711_(FriendlyByteBuf p_123716_) {

@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/item/enchantment/EnchantmentCategory.java
++++ b/net/minecraft/world/item/enchantment/EnchantmentCategory.java
+@@ -13,7 +_,7 @@
+ import net.minecraft.world.item.Wearable;
+ import net.minecraft.world.level.block.Block;
+ 
+-public enum EnchantmentCategory {
++public enum EnchantmentCategory implements net.minecraftforge.common.IExtensibleEnum {
+    ARMOR {
+       public boolean m_7454_(Item p_44751_) {
+          return p_44751_ instanceof ArmorItem;
+@@ -85,5 +_,19 @@
+       }
+    };
+ 
+-   public abstract boolean m_7454_(Item p_44743_);
++   private java.util.function.Predicate<Item> delegate;
++
++   private EnchantmentCategory() {}
++
++   private EnchantmentCategory(java.util.function.Predicate<Item> delegate) {
++      this.delegate = delegate;
++   }
++
++   public static EnchantmentCategory create(String name, java.util.function.Predicate<Item> delegate) {
++      throw new IllegalStateException("Enum not extended");
++   }
++
++   public boolean m_7454_(Item p_44743_) {
++      return this.delegate == null ? false : this.delegate.test(p_44743_);
++   }
+ }

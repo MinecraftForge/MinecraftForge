@@ -1,0 +1,20 @@
+--- a/net/minecraft/network/protocol/game/ServerboundCustomPayloadPacket.java
++++ b/net/minecraft/network/protocol/game/ServerboundCustomPayloadPacket.java
+@@ -5,7 +_,7 @@
+ import net.minecraft.network.protocol.Packet;
+ import net.minecraft.resources.ResourceLocation;
+ 
+-public class ServerboundCustomPayloadPacket implements Packet<ServerGamePacketListener> {
++public class ServerboundCustomPayloadPacket implements Packet<ServerGamePacketListener>, net.minecraftforge.fmllegacy.network.ICustomPacket<ServerboundCustomPayloadPacket> {
+    private static final int f_179586_ = 32767;
+    public static final ResourceLocation f_133979_ = new ResourceLocation("brand");
+    private final ResourceLocation f_133980_;
+@@ -28,7 +_,7 @@
+ 
+    public void m_5779_(FriendlyByteBuf p_133994_) {
+       p_133994_.m_130085_(this.f_133980_);
+-      p_133994_.writeBytes((ByteBuf)this.f_133981_);
++      p_133994_.writeBytes((ByteBuf)this.f_133981_.copy()); //This may be access multiple times, from multiple threads, lets be safe like the S->C packet
+    }
+ 
+    public void m_5797_(ServerGamePacketListener p_133992_) {

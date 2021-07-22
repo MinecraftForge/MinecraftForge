@@ -20,16 +20,16 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
 
 public class AreaContext extends PlayerContext
 {
-    private final AxisAlignedBB area;
+    private final AABB area;
 
-    public AreaContext(PlayerEntity ep, AxisAlignedBB aabb)
+    public AreaContext(Player ep, AABB aabb)
     {
         super(ep);
         area = Preconditions.checkNotNull(aabb, "AxisAlignedBB can't be null in AreaContext!");

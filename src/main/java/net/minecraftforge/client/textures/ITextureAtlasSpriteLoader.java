@@ -21,12 +21,12 @@ package net.minecraftforge.client.textures;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
+import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
 
 /**
  * A loader for custom TextureAtlasSprite implementations.<br>
@@ -48,9 +48,9 @@ public interface ITextureAtlasSpriteLoader
      */
     @Nonnull
     TextureAtlasSprite load(
-            AtlasTexture atlas,
-            IResourceManager resourceManager, TextureAtlasSprite.Info textureInfo,
-            IResource resource,
+            TextureAtlas atlas,
+            ResourceManager resourceManager, TextureAtlasSprite.Info textureInfo,
+            Resource resource,
             int atlasWidth, int atlasHeight,
             int spriteX, int spriteY, int mipmapLevel,
             NativeImage image

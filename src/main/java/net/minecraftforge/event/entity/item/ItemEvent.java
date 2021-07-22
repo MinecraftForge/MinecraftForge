@@ -19,7 +19,7 @@
 
 package net.minecraftforge.event.entity.item;
 
-import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraftforge.event.entity.EntityEvent;
 
 /**

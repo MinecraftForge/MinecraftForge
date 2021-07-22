@@ -19,8 +19,8 @@
 
 package net.minecraftforge.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.network.IPacket;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.network.protocol.Packet;
 
 public abstract class PartEntity<T extends Entity> extends Entity {
     private final T parent;
@@ -35,7 +35,7 @@ public abstract class PartEntity<T extends Entity> extends Entity {
     }
 
     @Override
-    public IPacket<?> getAddEntityPacket() {
+    public Packet<?> getAddEntityPacket() {
         throw new UnsupportedOperationException();
     }
 }

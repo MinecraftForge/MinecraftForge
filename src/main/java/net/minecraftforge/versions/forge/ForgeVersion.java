@@ -21,6 +21,7 @@ package net.minecraftforge.versions.forge;
 
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.JarVersionLookupHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,11 +42,11 @@ public class ForgeVersion
 
     static {
         LOGGER.debug(CORE, "Forge Version package {} from {}", ForgeVersion.class.getPackage(), ForgeVersion.class.getClassLoader());
-        String vers = JarVersionLookupHandler.getImplementationVersion(ForgeVersion.class).orElse(System.getenv("FORGE_VERSION"));
+        String vers = JarVersionLookupHandler.getImplementationVersion(ForgeVersion.class).orElse(FMLLoader.versionInfo().forgeVersion());
         if (vers == null) throw new RuntimeException("Missing forge version, cannot continue");
         String spec = JarVersionLookupHandler.getSpecificationVersion(ForgeVersion.class).orElse(System.getenv("FORGE_SPEC"));
         if (spec == null) throw new RuntimeException("Missing forge spec, cannot continue");
-        String group = JarVersionLookupHandler.getImplementationTitle(ForgeVersion.class).orElse(System.getenv("FORGE_GROUP"));
+        String group = JarVersionLookupHandler.getImplementationTitle(ForgeVersion.class).orElse(FMLLoader.versionInfo().forgeGroup());
         if (group == null) {
             group = "net.minecraftforge"; // If all else fails, Our normal group
         }
@@ -64,14 +65,14 @@ public class ForgeVersion
 
     public static VersionChecker.Status getStatus()
     {
-        return VersionChecker.getResult(ModList.get().getModFileById(MOD_ID).getMods().get(0)).status;
+        return VersionChecker.getResult(ModList.get().getModFileById(MOD_ID).getMods().get(0)).status();
     }
 
     @Nullable
     public static String getTarget()
     {
         VersionChecker.CheckResult res = VersionChecker.getResult(ModList.get().getModFileById(MOD_ID).getMods().get(0));
-        return res.target == null ? "" : res.target.toString();
+        return res.target() == null ? "" : res.target().toString();
     }
 
     public static String getSpec() {

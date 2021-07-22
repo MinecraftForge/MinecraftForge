@@ -33,16 +33,16 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import javax.annotation.ParametersAreNonnullByDefault;
-import net.minecraft.entity.Entity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.ForcedChunksSaveData;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.server.TicketType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.ForcedChunksSavedData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.TicketType;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.ModList;
 import org.apache.logging.log4j.LogManager;
@@ -75,9 +75,9 @@ public class ForgeChunkManager
     /**
      * Checks if a world has any forced chunks. Mainly used for seeing if a world should continue ticking with no players in it.
      */
-    public static boolean hasForcedChunks(ServerWorld world)
+    public static boolean hasForcedChunks(ServerLevel world)
     {
-        ForcedChunksSaveData data = world.getDataStorage().get(ForcedChunksSaveData::new, "chunks");
+        ForcedChunksSavedData data = world.getDataStorage().get(ForcedChunksSavedData::load, "chunks");
         if (data == null) return false;
         return !data.getChunks().isEmpty() || !data.getBlockForcedChunks().isEmpty() || !data.getEntityForcedChunks().isEmpty();
     }
@@ -88,9 +88,9 @@ public class ForgeChunkManager
      * @param add     {@code true} to force the chunk, {@code false} to unforce the chunk.
      * @param ticking {@code true} to make the chunk receive full chunk ticks even if there is no player nearby.
      */
-    public static boolean forceChunk(ServerWorld world, String modId, BlockPos owner, int chunkX, int chunkZ, boolean add, boolean ticking)
+    public static boolean forceChunk(ServerLevel world, String modId, BlockPos owner, int chunkX, int chunkZ, boolean add, boolean ticking)
     {
-        return forceChunk(world, modId, owner, chunkX, chunkZ, add, ticking, ticking ? BLOCK_TICKING : BLOCK, ForcedChunksSaveData::getBlockForcedChunks);
+        return forceChunk(world, modId, owner, chunkX, chunkZ, add, ticking, ticking ? BLOCK_TICKING : BLOCK, ForcedChunksSavedData::getBlockForcedChunks);
     }
 
     /**
@@ -99,7 +99,7 @@ public class ForgeChunkManager
      * @param add     {@code true} to force the chunk, {@code false} to unforce the chunk.
      * @param ticking {@code true} to make the chunk receive full chunk ticks even if there is no player nearby.
      */
-    public static boolean forceChunk(ServerWorld world, String modId, Entity owner, int chunkX, int chunkZ, boolean add, boolean ticking)
+    public static boolean forceChunk(ServerLevel world, String modId, Entity owner, int chunkX, int chunkZ, boolean add, boolean ticking)
     {
         return forceChunk(world, modId, owner.getUUID(), chunkX, chunkZ, add, ticking);
     }
@@ -110,9 +110,9 @@ public class ForgeChunkManager
      * @param add     {@code true} to force the chunk, {@code false} to unforce the chunk.
      * @param ticking {@code true} to make the chunk receive full chunk ticks even if there is no player nearby.
      */
-    public static boolean forceChunk(ServerWorld world, String modId, UUID owner, int chunkX, int chunkZ, boolean add, boolean ticking)
+    public static boolean forceChunk(ServerLevel world, String modId, UUID owner, int chunkX, int chunkZ, boolean add, boolean ticking)
     {
-        return forceChunk(world, modId, owner, chunkX, chunkZ, add, ticking, ticking ? ENTITY_TICKING : ENTITY, ForcedChunksSaveData::getEntityForcedChunks);
+        return forceChunk(world, modId, owner, chunkX, chunkZ, add, ticking, ticking ? ENTITY_TICKING : ENTITY, ForcedChunksSavedData::getEntityForcedChunks);
     }
 
     /**
@@ -120,17 +120,17 @@ public class ForgeChunkManager
      *
      * @param add {@code true} to force the chunk, {@code false} to unforce the chunk.
      *
-     * @implNote Based on {@link ServerWorld#forceChunk(int, int, boolean)}
+     * @implNote Based on {@link ServerLevel#setChunkForced(int, int, boolean)}
      */
-    private static <T extends Comparable<? super T>> boolean forceChunk(ServerWorld world, String modId, T owner, int chunkX, int chunkZ, boolean add, boolean ticking,
-          TicketType<TicketOwner<T>> type, Function<ForcedChunksSaveData, TicketTracker<T>> ticketGetter)
+    private static <T extends Comparable<? super T>> boolean forceChunk(ServerLevel world, String modId, T owner, int chunkX, int chunkZ, boolean add, boolean ticking,
+          TicketType<TicketOwner<T>> type, Function<ForcedChunksSavedData, TicketTracker<T>> ticketGetter)
     {
         if (!ModList.get().isLoaded(modId))
         {
             LOGGER.warn("A mod attempted to force a chunk for an unloaded mod of id: {}", modId);
             return false;
         }
-        ForcedChunksSaveData saveData = world.getDataStorage().computeIfAbsent(ForcedChunksSaveData::new, "chunks");
+        ForcedChunksSavedData saveData = world.getDataStorage().computeIfAbsent(ForcedChunksSavedData::load, ForcedChunksSavedData::new, "chunks");
         ChunkPos pos = new ChunkPos(chunkX, chunkZ);
         long chunk = pos.toLong();
         TicketTracker<T> tickets = ticketGetter.apply(saveData);
@@ -163,7 +163,7 @@ public class ForgeChunkManager
      * @implNote We use distance 2 for what we pass, as when using register/releaseTicket the ticket's level is set to 33 - distance and the level that forced chunks use
      * is 31.
      */
-    private static <T extends Comparable<? super T>> void forceChunk(ServerWorld world, ChunkPos pos, TicketType<TicketOwner<T>> type, TicketOwner<T> owner, boolean add,
+    private static <T extends Comparable<? super T>> void forceChunk(ServerLevel world, ChunkPos pos, TicketType<TicketOwner<T>> type, TicketOwner<T> owner, boolean add,
           boolean ticking)
     {
         if (add)
@@ -185,7 +185,7 @@ public class ForgeChunkManager
      *
      * @apiNote Internal
      */
-    public static void reinstatePersistentChunks(ServerWorld world, ForcedChunksSaveData saveData)
+    public static void reinstatePersistentChunks(ServerLevel world, ForcedChunksSavedData saveData)
     {
         if (!callbacks.isEmpty())
         {
@@ -241,7 +241,7 @@ public class ForgeChunkManager
     /**
      * Adds back any persistent forced chunks to the world's chunk provider.
      */
-    private static <T extends Comparable<? super T>> void reinstatePersistentChunks(ServerWorld world, TicketType<TicketOwner<T>> type,
+    private static <T extends Comparable<? super T>> void reinstatePersistentChunks(ServerLevel world, TicketType<TicketOwner<T>> type,
           Map<TicketOwner<T>, LongSet> tickets, boolean ticking)
     {
         for (Map.Entry<TicketOwner<T>, LongSet> entry : tickets.entrySet())
@@ -258,19 +258,19 @@ public class ForgeChunkManager
      *
      * @apiNote Internal
      */
-    public static void writeForgeForcedChunks(CompoundNBT nbt, TicketTracker<BlockPos> blockForcedChunks, TicketTracker<UUID> entityForcedChunks)
+    public static void writeForgeForcedChunks(CompoundTag nbt, TicketTracker<BlockPos> blockForcedChunks, TicketTracker<UUID> entityForcedChunks)
     {
         if (!blockForcedChunks.isEmpty() || !entityForcedChunks.isEmpty())
         {
-            Map<String, Long2ObjectMap<CompoundNBT>> forcedEntries = new HashMap<>();
-            writeForcedChunkOwners(forcedEntries, blockForcedChunks, "Blocks", Constants.NBT.TAG_COMPOUND, (pos, forcedBlocks) -> forcedBlocks.add(NBTUtil.writeBlockPos(pos)));
-            writeForcedChunkOwners(forcedEntries, entityForcedChunks, "Entities", Constants.NBT.TAG_INT_ARRAY, (uuid, forcedEntities) -> forcedEntities.add(NBTUtil.createUUID(uuid)));
-            ListNBT forcedChunks = new ListNBT();
-            for (Map.Entry<String, Long2ObjectMap<CompoundNBT>> entry : forcedEntries.entrySet())
+            Map<String, Long2ObjectMap<CompoundTag>> forcedEntries = new HashMap<>();
+            writeForcedChunkOwners(forcedEntries, blockForcedChunks, "Blocks", Constants.NBT.TAG_COMPOUND, (pos, forcedBlocks) -> forcedBlocks.add(NbtUtils.writeBlockPos(pos)));
+            writeForcedChunkOwners(forcedEntries, entityForcedChunks, "Entities", Constants.NBT.TAG_INT_ARRAY, (uuid, forcedEntities) -> forcedEntities.add(NbtUtils.createUUID(uuid)));
+            ListTag forcedChunks = new ListTag();
+            for (Map.Entry<String, Long2ObjectMap<CompoundTag>> entry : forcedEntries.entrySet())
             {
-                CompoundNBT forcedEntry = new CompoundNBT();
+                CompoundTag forcedEntry = new CompoundTag();
                 forcedEntry.putString("Mod", entry.getKey());
-                ListNBT modForced = new ListNBT();
+                ListTag modForced = new ListTag();
                 modForced.addAll(entry.getValue().values());
                 forcedEntry.put("ModForced", modForced);
                 forcedChunks.add(forcedEntry);
@@ -279,27 +279,27 @@ public class ForgeChunkManager
         }
     }
 
-    private static <T extends Comparable<? super T>> void writeForcedChunkOwners(Map<String, Long2ObjectMap<CompoundNBT>> forcedEntries, TicketTracker<T> tracker,
-          String listKey, int listType, BiConsumer<T, ListNBT> ownerWriter)
+    private static <T extends Comparable<? super T>> void writeForcedChunkOwners(Map<String, Long2ObjectMap<CompoundTag>> forcedEntries, TicketTracker<T> tracker,
+          String listKey, int listType, BiConsumer<T, ListTag> ownerWriter)
     {
         writeForcedChunkOwners(forcedEntries, tracker.chunks, listKey,listType, ownerWriter);
         writeForcedChunkOwners(forcedEntries, tracker.tickingChunks, "Ticking" + listKey, listType, ownerWriter);
     }
 
-    private static <T extends Comparable<? super T>> void writeForcedChunkOwners(Map<String, Long2ObjectMap<CompoundNBT>> forcedEntries,
-          Map<TicketOwner<T>, LongSet> forcedChunks, String listKey, int listType, BiConsumer<T, ListNBT> ownerWriter)
+    private static <T extends Comparable<? super T>> void writeForcedChunkOwners(Map<String, Long2ObjectMap<CompoundTag>> forcedEntries,
+          Map<TicketOwner<T>, LongSet> forcedChunks, String listKey, int listType, BiConsumer<T, ListTag> ownerWriter)
     {
         for (Map.Entry<TicketOwner<T>, LongSet> entry : forcedChunks.entrySet())
         {
-            Long2ObjectMap<CompoundNBT> modForced = forcedEntries.computeIfAbsent(entry.getKey().modId, modId -> new Long2ObjectOpenHashMap<>());
+            Long2ObjectMap<CompoundTag> modForced = forcedEntries.computeIfAbsent(entry.getKey().modId, modId -> new Long2ObjectOpenHashMap<>());
             for (long chunk : entry.getValue())
             {
-                CompoundNBT modEntry = modForced.computeIfAbsent(chunk, chunkPos -> {
-                    CompoundNBT baseEntry = new CompoundNBT();
+                CompoundTag modEntry = modForced.computeIfAbsent(chunk, chunkPos -> {
+                    CompoundTag baseEntry = new CompoundTag();
                     baseEntry.putLong("Chunk", chunkPos);
                     return baseEntry;
                 });
-                ListNBT ownerList = modEntry.getList(listKey, listType);
+                ListTag ownerList = modEntry.getList(listKey, listType);
                 ownerWriter.accept(entry.getKey().owner, ownerList);
                 //Note: As getList returns a new list in the case the data is of the wrong type,
                 // we need to mimic was vanilla does in various places and put our list back in
@@ -314,19 +314,19 @@ public class ForgeChunkManager
      *
      * @apiNote Internal
      */
-    public static void readForgeForcedChunks(CompoundNBT nbt, TicketTracker<BlockPos> blockForcedChunks, TicketTracker<UUID> entityForcedChunks)
+    public static void readForgeForcedChunks(CompoundTag nbt, TicketTracker<BlockPos> blockForcedChunks, TicketTracker<UUID> entityForcedChunks)
     {
-        ListNBT forcedChunks = nbt.getList("ForgeForced", Constants.NBT.TAG_COMPOUND);
+        ListTag forcedChunks = nbt.getList("ForgeForced", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < forcedChunks.size(); i++)
         {
-            CompoundNBT forcedEntry = forcedChunks.getCompound(i);
+            CompoundTag forcedEntry = forcedChunks.getCompound(i);
             String modId = forcedEntry.getString("Mod");
             if (ModList.get().isLoaded(modId))
             {
-                ListNBT modForced = forcedEntry.getList("ModForced", Constants.NBT.TAG_COMPOUND);
+                ListTag modForced = forcedEntry.getList("ModForced", Constants.NBT.TAG_COMPOUND);
                 for (int j = 0; j < modForced.size(); j++)
                 {
-                    CompoundNBT modEntry = modForced.getCompound(j);
+                    CompoundTag modEntry = modForced.getCompound(j);
                     long chunkPos = modEntry.getLong("Chunk");
                     readBlockForcedChunks(modId, chunkPos, modEntry, "Blocks", blockForcedChunks.chunks);
                     readBlockForcedChunks(modId, chunkPos, modEntry, "TickingBlocks", blockForcedChunks.tickingChunks);
@@ -344,24 +344,24 @@ public class ForgeChunkManager
     /**
      * Reads the forge block forced chunks.
      */
-    private static void readBlockForcedChunks(String modId, long chunkPos, CompoundNBT modEntry, String key, Map<TicketOwner<BlockPos>, LongSet> blockForcedChunks)
+    private static void readBlockForcedChunks(String modId, long chunkPos, CompoundTag modEntry, String key, Map<TicketOwner<BlockPos>, LongSet> blockForcedChunks)
     {
-        ListNBT forcedBlocks = modEntry.getList(key, Constants.NBT.TAG_COMPOUND);
+        ListTag forcedBlocks = modEntry.getList(key, Constants.NBT.TAG_COMPOUND);
         for (int k = 0; k < forcedBlocks.size(); k++)
         {
-            blockForcedChunks.computeIfAbsent(new TicketOwner<>(modId, NBTUtil.readBlockPos(forcedBlocks.getCompound(k))), owner -> new LongOpenHashSet()).add(chunkPos);
+            blockForcedChunks.computeIfAbsent(new TicketOwner<>(modId, NbtUtils.readBlockPos(forcedBlocks.getCompound(k))), owner -> new LongOpenHashSet()).add(chunkPos);
         }
     }
 
     /**
      * Reads the forge entity forced chunks.
      */
-    private static void readEntityForcedChunks(String modId, long chunkPos, CompoundNBT modEntry, String key, Map<TicketOwner<UUID>, LongSet> entityForcedChunks)
+    private static void readEntityForcedChunks(String modId, long chunkPos, CompoundTag modEntry, String key, Map<TicketOwner<UUID>, LongSet> entityForcedChunks)
     {
-        ListNBT forcedEntities = modEntry.getList(key, Constants.NBT.TAG_INT_ARRAY);
-        for (INBT uuid : forcedEntities)
+        ListTag forcedEntities = modEntry.getList(key, Constants.NBT.TAG_INT_ARRAY);
+        for (Tag uuid : forcedEntities)
         {
-            entityForcedChunks.computeIfAbsent(new TicketOwner<>(modId, NBTUtil.loadUUID(uuid)), owner -> new LongOpenHashSet()).add(chunkPos);
+            entityForcedChunks.computeIfAbsent(new TicketOwner<>(modId, NbtUtils.loadUUID(uuid)), owner -> new LongOpenHashSet()).add(chunkPos);
         }
     }
 
@@ -373,7 +373,7 @@ public class ForgeChunkManager
          * @param world        The world
          * @param ticketHelper Ticket helper to remove any invalid tickets.
          */
-        void validateTickets(ServerWorld world, TicketHelper ticketHelper);
+        void validateTickets(ServerLevel world, TicketHelper ticketHelper);
     }
 
     /**
@@ -383,10 +383,10 @@ public class ForgeChunkManager
     {
         private final Map<BlockPos, Pair<LongSet, LongSet>> blockTickets;
         private final Map<UUID, Pair<LongSet, LongSet>> entityTickets;
-        private final ForcedChunksSaveData saveData;
+        private final ForcedChunksSavedData saveData;
         private final String modId;
 
-        private TicketHelper(ForcedChunksSaveData saveData, String modId, Map<BlockPos, Pair<LongSet, LongSet>> blockTickets, Map<UUID, Pair<LongSet, LongSet>> entityTickets)
+        private TicketHelper(ForcedChunksSavedData saveData, String modId, Map<BlockPos, Pair<LongSet, LongSet>> blockTickets, Map<UUID, Pair<LongSet, LongSet>> entityTickets)
         {
             this.saveData = saveData;
             this.modId = modId;

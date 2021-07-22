@@ -19,9 +19,8 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.entity.item.ExperienceOrbEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
@@ -34,7 +33,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
 public class PlayerXpEvent extends PlayerEvent
 {
 
-    public PlayerXpEvent(PlayerEntity player)
+    public PlayerXpEvent(Player player)
     {
         super(player);
     }
@@ -47,15 +46,15 @@ public class PlayerXpEvent extends PlayerEvent
     public static class PickupXp extends PlayerXpEvent
     {
 
-        private final ExperienceOrbEntity orb;
+        private final ExperienceOrb orb;
 
-        public PickupXp(PlayerEntity player, ExperienceOrbEntity orb)
+        public PickupXp(Player player, ExperienceOrb orb)
         {
             super(player);
             this.orb = orb;
         }
 
-        public ExperienceOrbEntity getOrb()
+        public ExperienceOrb getOrb()
         {
             return orb;
         }
@@ -72,7 +71,7 @@ public class PlayerXpEvent extends PlayerEvent
 
         private int amount;
 
-        public XpChange(PlayerEntity player, int amount)
+        public XpChange(Player player, int amount)
         {
             super(player);
             this.amount = amount;
@@ -100,7 +99,7 @@ public class PlayerXpEvent extends PlayerEvent
 
         private int levels;
 
-        public LevelChange(PlayerEntity player, int levels)
+        public LevelChange(Player player, int levels)
         {
             super(player);
             this.levels = levels;

@@ -19,14 +19,14 @@
 
 package net.minecraftforge.client.event.sound;
 
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SoundEngine;
-import net.minecraft.client.audio.SoundSource;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.SoundEngine;
+import com.mojang.blaze3d.audio.Channel;
 import net.minecraftforge.client.event.sound.SoundEvent.SoundSourceEvent;
 
 public class PlaySoundSourceEvent extends SoundSourceEvent
 {
-    public PlaySoundSourceEvent(SoundEngine manager, ISound sound, SoundSource source)
+    public PlaySoundSourceEvent(SoundEngine manager, SoundInstance sound, Channel source)
     {
         super(manager, sound, source);
     }

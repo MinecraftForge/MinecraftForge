@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/item/AxeItem.java
++++ b/net/minecraft/world/item/AxeItem.java
+@@ -23,7 +_,7 @@
+    protected static final Map<Block, Block> f_150683_ = (new Builder<Block, Block>()).put(Blocks.f_50011_, Blocks.f_50044_).put(Blocks.f_49999_, Blocks.f_50010_).put(Blocks.f_50043_, Blocks.f_50049_).put(Blocks.f_50004_, Blocks.f_50009_).put(Blocks.f_50015_, Blocks.f_50048_).put(Blocks.f_50003_, Blocks.f_50008_).put(Blocks.f_50013_, Blocks.f_50046_).put(Blocks.f_50001_, Blocks.f_50006_).put(Blocks.f_50014_, Blocks.f_50047_).put(Blocks.f_50002_, Blocks.f_50007_).put(Blocks.f_50012_, Blocks.f_50045_).put(Blocks.f_50000_, Blocks.f_50005_).put(Blocks.f_50686_, Blocks.f_50687_).put(Blocks.f_50688_, Blocks.f_50689_).put(Blocks.f_50695_, Blocks.f_50696_).put(Blocks.f_50697_, Blocks.f_50698_).build();
+ 
+    public AxeItem(Tier p_40521_, float p_40522_, float p_40523_, Item.Properties p_40524_) {
+-      super(p_40522_, p_40523_, p_40521_, BlockTags.f_144280_, p_40524_);
++      super(p_40522_, p_40523_, p_40521_, BlockTags.f_144280_, p_40524_.addToolType(net.minecraftforge.common.ToolType.AXE, p_40521_.m_6604_()));
+    }
+ 
+    public InteractionResult m_6225_(UseOnContext p_40529_) {
+@@ -31,7 +_,7 @@
+       BlockPos blockpos = p_40529_.m_8083_();
+       Player player = p_40529_.m_43723_();
+       BlockState blockstate = level.m_8055_(blockpos);
+-      Optional<BlockState> optional = this.m_150690_(blockstate);
++      Optional<BlockState> optional = Optional.ofNullable(blockstate.getToolModifiedState(level, blockpos, player, p_40529_.m_43722_(),  net.minecraftforge.common.ToolType.AXE));
+       Optional<BlockState> optional1 = WeatheringCopper.m_154899_(blockstate);
+       Optional<BlockState> optional2 = Optional.ofNullable(HoneycombItem.f_150864_.get().get(blockstate.m_60734_())).map((p_150694_) -> {
+          return p_150694_.m_152465_(blockstate);
+@@ -67,6 +_,12 @@
+       } else {
+          return InteractionResult.PASS;
+       }
++   }
++
++   @javax.annotation.Nullable
++   public static BlockState getAxeStrippingState(BlockState originalState) {
++      Block block = f_150683_.get(originalState.m_60734_());
++      return block != null ? block.m_49966_().m_61124_(RotatedPillarBlock.f_55923_, originalState.m_61143_(RotatedPillarBlock.f_55923_)) : null;
+    }
+ 
+    private Optional<BlockState> m_150690_(BlockState p_150691_) {

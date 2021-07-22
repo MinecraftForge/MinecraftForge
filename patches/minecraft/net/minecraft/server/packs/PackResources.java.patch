@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/packs/PackResources.java
++++ b/net/minecraft/server/packs/PackResources.java
+@@ -9,7 +_,7 @@
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
+ 
+-public interface PackResources extends AutoCloseable {
++public interface PackResources extends AutoCloseable, net.minecraftforge.common.extensions.IForgePackResources {
+    String f_143748_ = ".mcmeta";
+    String f_143749_ = "pack.mcmeta";
+ 

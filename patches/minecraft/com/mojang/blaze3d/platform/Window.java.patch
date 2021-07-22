@@ -1,0 +1,19 @@
+--- a/com/mojang/blaze3d/platform/Window.java
++++ b/com/mojang/blaze3d/platform/Window.java
+@@ -81,7 +_,7 @@
+       GLFW.glfwWindowHint(139267, 2);
+       GLFW.glfwWindowHint(139272, 204801);
+       GLFW.glfwWindowHint(139270, 1);
+-      this.f_85349_ = GLFW.glfwCreateWindow(this.f_85359_, this.f_85360_, p_85376_, this.f_85355_ && monitor != null ? monitor.m_84954_() : 0L, 0L);
++      this.f_85349_ = net.minecraftforge.fml.loading.progress.EarlyProgressVisualization.INSTANCE.handOffWindow(()->this.f_85359_, ()->this.f_85360_, ()->p_85376_, ()->this.f_85355_ && monitor != null ? monitor.m_84954_() : 0L);
+       if (monitor != null) {
+          VideoMode videomode = monitor.m_84948_(this.f_85355_ ? this.f_85354_ : Optional.empty());
+          this.f_85350_ = this.f_85357_ = monitor.m_84951_() + videomode.m_85332_() / 2 - this.f_85359_ / 2;
+@@ -299,6 +_,7 @@
+       GLFW.glfwGetFramebufferSize(this.f_85349_, aint, aint1);
+       this.f_85361_ = aint[0] > 0 ? aint[0] : 1;
+       this.f_85362_ = aint1[0] > 0 ? aint1[0] : 1;
++      if (this.f_85362_ == 0 || this.f_85361_==0) net.minecraftforge.fml.loading.progress.EarlyProgressVisualization.INSTANCE.updateFBSize(w->this.f_85361_=w, h->this.f_85362_=h);
+    }
+ 
+    private void m_85427_(long p_85428_, int p_85429_, int p_85430_) {

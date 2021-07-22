@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/monster/piglin/Piglin.java
++++ b/net/minecraft/world/entity/monster/piglin/Piglin.java
+@@ -282,7 +_,7 @@
+       } else if (this.m_34773_()) {
+          return PiglinArmPose.CROSSBOW_CHARGE;
+       } else {
+-         return this.m_5912_() && this.m_21055_(Items.f_42717_) ? PiglinArmPose.CROSSBOW_HOLD : PiglinArmPose.DEFAULT;
++         return this.m_5912_() && this.m_21093_(is -> is.m_41720_() instanceof net.minecraft.world.item.CrossbowItem) ? PiglinArmPose.CROSSBOW_HOLD : PiglinArmPose.DEFAULT;
+       }
+    }
+ 
+@@ -324,7 +_,7 @@
+    }
+ 
+    protected void m_34785_(ItemStack p_34786_) {
+-      if (p_34786_.m_150930_(PiglinAi.f_34794_)) {
++      if (p_34786_.isPiglinCurrency()) {
+          this.m_8061_(EquipmentSlot.OFFHAND, p_34786_);
+          this.m_21508_(EquipmentSlot.OFFHAND);
+       } else {
+@@ -334,7 +_,7 @@
+    }
+ 
+    public boolean m_7243_(ItemStack p_34777_) {
+-      return this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) && this.m_21531_() && PiglinAi.m_34857_(this, p_34777_);
++      return net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this) && this.m_21531_() && PiglinAi.m_34857_(this, p_34777_);
+    }
+ 
+    protected boolean m_34787_(ItemStack p_34788_) {

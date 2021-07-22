@@ -20,7 +20,7 @@
 package net.minecraftforge.debug.entity;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.living.EntityTeleportEvent;
+import net.minecraftforge.event.entity.EntityTeleportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 

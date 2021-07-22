@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/block/CocoaBlock.java
++++ b/net/minecraft/world/level/block/CocoaBlock.java
+@@ -47,10 +_,11 @@
+    }
+ 
+    public void m_7455_(BlockState p_51782_, ServerLevel p_51783_, BlockPos p_51784_, Random p_51785_) {
+-      if (p_51783_.f_46441_.nextInt(5) == 0) {
++      if (true) {
+          int i = p_51782_.m_61143_(f_51736_);
+-         if (i < 2) {
++         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_51783_, p_51784_, p_51782_, p_51783_.f_46441_.nextInt(5) == 0)) {
+             p_51783_.m_7731_(p_51784_, p_51782_.m_61124_(f_51736_, Integer.valueOf(i + 1)), 2);
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_51783_, p_51784_, p_51782_);
+          }
+       }
+ 

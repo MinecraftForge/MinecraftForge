@@ -6,7 +6,7 @@ pipeline {
     }
     agent {
         docker {
-            image 'gradle:jdk8'
+            image 'gradle:7-jdk16'
             args '-v forgegc:/home/gradle/.gradle/'
         }
     }
@@ -69,7 +69,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'maven-forge-user', usernameVariable: 'MAVEN_USER', passwordVariable: 'MAVEN_PASSWORD')]) {
                     withGradle {
-                        sh './gradlew ${GRADLE_ARGS} :forge:publish -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
+                        sh './gradlew ${GRADLE_ARGS} publish -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
                     }
                 }
             }
@@ -88,7 +88,7 @@ pipeline {
             }
             steps {
                 withGradle {
-                    sh './gradlew ${GRADLE_ARGS} :forge:publish -PcrowdinKey=${CROWDIN}'
+                    sh './gradlew ${GRADLE_ARGS} publish -PcrowdinKey=${CROWDIN}'
                 }
             }
         }

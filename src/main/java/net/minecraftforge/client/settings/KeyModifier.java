@@ -24,18 +24,17 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.gui.screens.Screen;
+import com.mojang.blaze3d.platform.InputConstants;
 
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.lwjgl.glfw.GLFW;
 
 public enum KeyModifier {
     CONTROL {
         @Override
-        public boolean matches(InputMappings.Input key)
+        public boolean matches(InputConstants.Key key)
         {
             int keyCode = key.getValue();
             if (Minecraft.ON_OSX)
@@ -55,15 +54,15 @@ public enum KeyModifier {
         }
 
         @Override
-        public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
+        public Component getCombinedName(InputConstants.Key key, Supplier<Component> defaultLogic)
         {
             String localizationFormatKey = Minecraft.ON_OSX ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
-            return new TranslationTextComponent(localizationFormatKey, defaultLogic.get());
+            return new TranslatableComponent(localizationFormatKey, defaultLogic.get());
         }
     },
     SHIFT {
         @Override
-        public boolean matches(InputMappings.Input key)
+        public boolean matches(InputConstants.Key key)
         {
             return key.getValue() == GLFW.GLFW_KEY_LEFT_SHIFT || key.getValue() == GLFW.GLFW_KEY_RIGHT_SHIFT;
         }
@@ -75,14 +74,14 @@ public enum KeyModifier {
         }
 
         @Override
-        public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
+        public Component getCombinedName(InputConstants.Key key, Supplier<Component> defaultLogic)
         {
-            return new TranslationTextComponent("forge.controlsgui.shift", defaultLogic.get());
+            return new TranslatableComponent("forge.controlsgui.shift", defaultLogic.get());
         }
     },
     ALT {
         @Override
-        public boolean matches(InputMappings.Input key)
+        public boolean matches(InputConstants.Key key)
         {
             return key.getValue() == GLFW.GLFW_KEY_LEFT_ALT || key.getValue() == GLFW.GLFW_KEY_RIGHT_ALT;
         }
@@ -94,14 +93,14 @@ public enum KeyModifier {
         }
 
         @Override
-        public ITextComponent getCombinedName(InputMappings.Input keyCode, Supplier<ITextComponent> defaultLogic)
+        public Component getCombinedName(InputConstants.Key keyCode, Supplier<Component> defaultLogic)
         {
-            return new TranslationTextComponent("forge.controlsgui.alt", defaultLogic.get());
+            return new TranslatableComponent("forge.controlsgui.alt", defaultLogic.get());
         }
     },
     NONE {
         @Override
-        public boolean matches(InputMappings.Input key)
+        public boolean matches(InputConstants.Key key)
         {
             return false;
         }
@@ -123,7 +122,7 @@ public enum KeyModifier {
         }
 
         @Override
-        public ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic)
+        public Component getCombinedName(InputConstants.Key key, Supplier<Component> defaultLogic)
         {
             return defaultLogic.get();
         }
@@ -143,7 +142,7 @@ public enum KeyModifier {
         return NONE;
     }
 
-    public static boolean isKeyCodeModifier(InputMappings.Input key)
+    public static boolean isKeyCodeModifier(InputConstants.Key key)
     {
         for (KeyModifier keyModifier : MODIFIER_VALUES)
         {
@@ -167,9 +166,9 @@ public enum KeyModifier {
         }
     }
 
-    public abstract boolean matches(InputMappings.Input key);
+    public abstract boolean matches(InputConstants.Key key);
 
     public abstract boolean isActive(@Nullable IKeyConflictContext conflictContext);
 
-    public abstract ITextComponent getCombinedName(InputMappings.Input key, Supplier<ITextComponent> defaultLogic);
+    public abstract Component getCombinedName(InputConstants.Key key, Supplier<Component> defaultLogic);
 }

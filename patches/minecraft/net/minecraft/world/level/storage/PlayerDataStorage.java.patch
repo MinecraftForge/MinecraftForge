@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/level/storage/PlayerDataStorage.java
++++ b/net/minecraft/world/level/storage/PlayerDataStorage.java
+@@ -31,6 +_,7 @@
+          File file2 = new File(this.f_78427_, p_78434_.m_20149_() + ".dat");
+          File file3 = new File(this.f_78427_, p_78434_.m_20149_() + ".dat_old");
+          Util.m_137462_(file2, file1, file3);
++         net.minecraftforge.event.ForgeEventFactory.firePlayerSavingEvent(p_78434_, f_78427_, p_78434_.m_20149_());
+       } catch (Exception exception) {
+          f_78426_.warn("Failed to save player data for {}", (Object)p_78434_.m_7755_().getString());
+       }
+@@ -54,6 +_,7 @@
+          int i = compoundtag.m_128425_("DataVersion", 3) ? compoundtag.m_128451_("DataVersion") : -1;
+          p_78436_.m_20258_(NbtUtils.m_129213_(this.f_78425_, DataFixTypes.PLAYER, compoundtag, i));
+       }
++      net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_78436_, f_78427_, p_78436_.m_20149_());
+ 
+       return compoundtag;
+    }
+@@ -71,5 +_,9 @@
+       }
+ 
+       return astring;
++   }
++
++   public File getPlayerDataFolder() {
++      return f_78427_;
+    }
+ }

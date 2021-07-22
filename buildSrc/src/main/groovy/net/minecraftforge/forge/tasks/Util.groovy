@@ -2,8 +2,10 @@ package net.minecraftforge.forge.tasks
 
 import groovy.json.JsonSlurper
 
+import java.io.File
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
+import java.util.Date
 
 public class Util {
 	static void init() {
@@ -90,6 +92,17 @@ public class Util {
 		}
 		return ret
 	}
+    
+    public static def getMavenPath(task) {        
+        def classifier = task.archiveClassifier.get()
+        def dep = "${task.project.group}:${task.project.name}:${task.project.version}" + (classifier == '' ? '' : ':' + classifier)
+        return "${task.project.group.replace('.', '/')}/${task.project.name}/${task.project.version}/${task.project.name}-${task.project.version}".toString() + (classifier == '' ? '' : '-' + classifier) + '.jar'
+    }
+    
+    public static def getMavenDep(task) {        
+        def classifier = task.archiveClassifier.get()
+        return "${task.project.group}:${task.project.name}:${task.project.version}" + (classifier == '' ? '' : ':' + classifier)
+    }
 
 	public static def iso8601Now() { new Date().iso8601() }
 

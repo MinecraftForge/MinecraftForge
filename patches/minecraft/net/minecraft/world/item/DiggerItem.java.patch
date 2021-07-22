@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/item/DiggerItem.java
++++ b/net/minecraft/world/item/DiggerItem.java
+@@ -33,6 +_,7 @@
+    }
+ 
+    public float m_8102_(ItemStack p_41004_, BlockState p_41005_) {
++      if (getToolTypes(p_41004_).stream().anyMatch(e -> p_41005_.isToolEffective(e))) return f_40980_;
+       return this.f_40979_.m_8110_(p_41005_.m_60734_()) ? this.f_40980_ : 1.0F;
+    }
+ 

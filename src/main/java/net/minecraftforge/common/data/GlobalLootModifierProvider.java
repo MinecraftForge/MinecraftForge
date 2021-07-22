@@ -24,13 +24,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.common.loot.LootModifier;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -41,11 +40,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Provider for forge's GlobalLootModifier system. See {@link LootModifier} and {@link GlobalLootModifierSerializer}.
+ * Provider for forge's GlobalLootModifier system. See {@link net.minecraftforge.common.loot.LootModifier} and {@link GlobalLootModifierSerializer}.
  *
  * This provider only requires implementing {@link #start()} and calling {@link #add} from it.
  */
-public abstract class GlobalLootModifierProvider implements IDataProvider
+public abstract class GlobalLootModifierProvider implements DataProvider
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private final DataGenerator gen;
@@ -73,7 +72,7 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
     protected abstract void start();
 
     @Override
-    public void run(DirectoryCache cache) throws IOException
+    public void run(HashCache cache) throws IOException
     {
         start();
 
@@ -89,14 +88,14 @@ public abstract class GlobalLootModifierProvider implements IDataProvider
             JsonObject json = pair.getB();
             json.addProperty("type", pair.getA().getRegistryName().toString());
 
-            IDataProvider.save(GSON, cache, json, modifierPath);
+            DataProvider.save(GSON, cache, json, modifierPath);
         }));
 
         JsonObject forgeJson = new JsonObject();
         forgeJson.addProperty("replace", this.replace);
         forgeJson.add("entries", GSON.toJsonTree(entries.stream().map(ResourceLocation::toString).collect(Collectors.toList())));
 
-        IDataProvider.save(GSON, cache, forgeJson, forgePath);
+        DataProvider.save(GSON, cache, forgeJson, forgePath);
     }
 
     /**

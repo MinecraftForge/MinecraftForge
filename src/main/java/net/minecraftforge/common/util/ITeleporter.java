@@ -23,13 +23,12 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.PortalInfo;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.Teleporter;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.portal.PortalInfo;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.portal.PortalForcer;
+import net.minecraft.server.level.ServerLevel;
 
 /**
  * Interface for handling the placement of entities during dimension change.
@@ -60,7 +59,7 @@ public interface ITeleporter
      *
      * @return the entity in the new World. Vanilla creates for most {@link Entity}s a new instance and copy the data. But <b>you are not allowed</b> to create a new instance for {@link PlayerEntity}s! Move the player and update its state, see {@link ServerPlayerEntity#changeDimension(net.minecraft.world.server.ServerWorld, ITeleporter)}
      */
-    default Entity placeEntity(Entity entity, ServerWorld currentWorld, ServerWorld destWorld, float yaw, Function<Boolean, Entity> repositionEntity)
+    default Entity placeEntity(Entity entity, ServerLevel currentWorld, ServerLevel destWorld, float yaw, Function<Boolean, Entity> repositionEntity)
     {
         return repositionEntity.apply(true);
     }
@@ -79,9 +78,9 @@ public interface ITeleporter
      * @return The location, rotation, and motion of the entity in the destWorld after the teleport
      */
     @Nullable
-    default PortalInfo getPortalInfo(Entity entity, ServerWorld destWorld, Function<ServerWorld, PortalInfo> defaultPortalInfo)
+    default PortalInfo getPortalInfo(Entity entity, ServerLevel destWorld, Function<ServerLevel, PortalInfo> defaultPortalInfo)
     {
-        return this.isVanilla() ? defaultPortalInfo.apply(destWorld) : new PortalInfo(entity.position(), Vector3d.ZERO, entity.yRot, entity.xRot);
+        return this.isVanilla() ? defaultPortalInfo.apply(destWorld) : new PortalInfo(entity.position(), Vec3.ZERO, entity.getYRot(), entity.getXRot());
     }
     
     /**
@@ -89,7 +88,7 @@ public interface ITeleporter
      */
     default boolean isVanilla()
     {
-        return this.getClass() == Teleporter.class;
+        return this.getClass() == PortalForcer.class;
     }
 
     /**
@@ -99,7 +98,7 @@ public interface ITeleporter
      * @param destWorld the target world
      * @return true to play the vanilla sound
      */
-    default boolean playTeleportSound(ServerPlayerEntity player, ServerWorld sourceWorld, ServerWorld destWorld)
+    default boolean playTeleportSound(ServerPlayer player, ServerLevel sourceWorld, ServerLevel destWorld)
     {
         return true;
     }

@@ -1,0 +1,31 @@
+--- a/com/mojang/math/Transformation.java
++++ b/com/mojang/math/Transformation.java
+@@ -6,7 +_,7 @@
+ import net.minecraft.Util;
+ import org.apache.commons.lang3.tuple.Triple;
+ 
+-public final class Transformation {
++public final class Transformation implements net.minecraftforge.client.extensions.IForgeTransformation {
+    private final Matrix4f f_121078_;
+    private boolean f_121079_;
+    @Nullable
+@@ -145,6 +_,19 @@
+    public int hashCode() {
+       return Objects.hash(this.f_121078_);
+    }
++
++    private Matrix3f normalTransform = null;
++    public Matrix3f getNormalMatrix() {
++        checkNormalTransform();
++        return normalTransform;
++    }
++    private void checkNormalTransform() {
++        if (normalTransform == null) {
++            normalTransform = new Matrix3f(f_121078_);
++            normalTransform.m_8187_();
++            normalTransform.m_8155_();
++        }
++    }
+ 
+    public Transformation m_175937_(Transformation p_175938_, float p_175939_) {
+       Vector3f vector3f = this.m_175940_();

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/chunk/ChunkStatus.java
++++ b/net/minecraft/world/level/chunk/ChunkStatus.java
+@@ -23,7 +_,7 @@
+ import net.minecraft.world.level.levelgen.Heightmap;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
+ 
+-public class ChunkStatus {
++public class ChunkStatus extends net.minecraftforge.registries.ForgeRegistryEntry<ChunkStatus> {
+    private static final EnumSet<Heightmap.Types> f_62327_ = EnumSet.of(Heightmap.Types.OCEAN_FLOOR_WG, Heightmap.Types.WORLD_SURFACE_WG);
+    private static final EnumSet<Heightmap.Types> f_62328_ = EnumSet.of(Heightmap.Types.OCEAN_FLOOR, Heightmap.Types.WORLD_SURFACE, Heightmap.Types.MOTION_BLOCKING, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES);
+    private static final ChunkStatus.LoadingTask f_62329_ = (p_62461_, p_62462_, p_62463_, p_62464_, p_62465_, p_62466_) -> {

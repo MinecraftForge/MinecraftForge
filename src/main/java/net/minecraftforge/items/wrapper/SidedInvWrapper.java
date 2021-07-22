@@ -19,9 +19,9 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -31,12 +31,12 @@ import javax.annotation.Nullable;
 
 public class SidedInvWrapper implements IItemHandlerModifiable
 {
-    protected final ISidedInventory inv;
+    protected final WorldlyContainer inv;
     @Nullable
     protected final Direction side;
 
     @SuppressWarnings("unchecked")
-    public static LazyOptional<IItemHandlerModifiable>[] create(ISidedInventory inv, Direction... sides) {
+    public static LazyOptional<IItemHandlerModifiable>[] create(WorldlyContainer inv, Direction... sides) {
         LazyOptional<IItemHandlerModifiable>[] ret = new LazyOptional[sides.length];
         for (int x = 0; x < sides.length; x++) {
             final Direction side = sides[x];
@@ -45,13 +45,13 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         return ret;
     }
 
-    public SidedInvWrapper(ISidedInventory inv, @Nullable Direction side)
+    public SidedInvWrapper(WorldlyContainer inv, @Nullable Direction side)
     {
         this.inv = inv;
         this.side = side;
     }
 
-    public static int getSlot(ISidedInventory inv, int slot, @Nullable Direction side)
+    public static int getSlot(WorldlyContainer inv, int slot, @Nullable Direction side)
     {
         int[] slots = inv.getSlotsForFace(side);
         if (slot < slots.length)

@@ -1,0 +1,50 @@
+--- a/net/minecraft/world/inventory/Slot.java
++++ b/net/minecraft/world/inventory/Slot.java
+@@ -74,7 +_,7 @@
+ 
+    @Nullable
+    public Pair<ResourceLocation, ResourceLocation> m_7543_() {
+-      return null;
++      return backgroundPair;
+    }
+ 
+    public ItemStack m_6201_(int p_40227_) {
+@@ -87,6 +_,38 @@
+ 
+    public boolean m_6659_() {
+       return true;
++   }
++
++   /**
++    * Retrieves the index in the inventory for this slot, this value should typically not
++    * be used, but can be useful for some occasions.
++    *
++    * @return Index in associated inventory for this slot.
++    */
++   public int getSlotIndex() {
++      return f_40217_;
++   }
++
++   /**
++    * Checks if the other slot is in the same inventory, by comparing the inventory reference.
++    * @param other
++    * @return true if the other slot is in the same inventory
++    */
++   public boolean isSameInventory(Slot other) {
++      return this.f_40218_ == other.f_40218_;
++   }
++
++   private Pair<ResourceLocation, ResourceLocation> backgroundPair;
++   /**
++    * Sets the background atlas and sprite location.
++    *
++    * @param atlas The atlas name
++    * @param sprite The sprite located on that atlas.
++    * @return this, to allow chaining.
++    */
++   public Slot setBackground(ResourceLocation atlas, ResourceLocation sprite) {
++       this.backgroundPair = Pair.of(atlas, sprite);
++       return this;
+    }
+ 
+    public Optional<ItemStack> m_150641_(int p_150642_, int p_150643_, Player p_150644_) {

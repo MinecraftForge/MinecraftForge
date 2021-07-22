@@ -1,0 +1,42 @@
+--- a/net/minecraft/client/gui/components/AbstractWidget.java
++++ b/net/minecraft/client/gui/components/AbstractWidget.java
+@@ -86,7 +_,7 @@
+       this.m_93228_(p_93676_, this.f_93620_, this.f_93621_, 0, 46 + i * 20, this.f_93618_ / 2, this.f_93619_);
+       this.m_93228_(p_93676_, this.f_93620_ + this.f_93618_ / 2, this.f_93621_, 200 - this.f_93618_ / 2, 46 + i * 20, this.f_93618_ / 2, this.f_93619_);
+       this.m_7906_(p_93676_, minecraft, p_93677_, p_93678_);
+-      int j = this.f_93623_ ? 16777215 : 10526880;
++      int j = getFGColor();
+       m_93215_(p_93676_, font, this.m_6035_(), this.f_93620_ + this.f_93618_ / 2, this.f_93621_ + (this.f_93619_ - 8) / 2, j | Mth.m_14167_(this.f_93625_ * 255.0F) << 24);
+    }
+ 
+@@ -181,6 +_,10 @@
+       this.f_93618_ = p_93675_;
+    }
+ 
++   public void setHeight(int value) {
++      this.f_93619_ = value;
++   }
++
+    public void m_93650_(float p_93651_) {
+       this.f_93625_ = p_93651_;
+    }
+@@ -203,6 +_,19 @@
+ 
+    protected void m_93692_(boolean p_93693_) {
+       this.f_93616_ = p_93693_;
++   }
++
++   public static final int UNSET_FG_COLOR = -1;
++   protected int packedFGColor = UNSET_FG_COLOR;
++   public int getFGColor() {
++      if (packedFGColor != UNSET_FG_COLOR) return packedFGColor;
++      return this.f_93623_ ? 16777215 : 10526880; // White : Light Grey
++   }
++   public void setFGColor(int color) {
++      this.packedFGColor = color;
++   }
++   public void clearFGColor() {
++      this.packedFGColor = UNSET_FG_COLOR;
+    }
+ 
+    public NarratableEntry.NarrationPriority m_142684_() {

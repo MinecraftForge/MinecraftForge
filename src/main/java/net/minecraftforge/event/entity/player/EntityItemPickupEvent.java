@@ -21,8 +21,8 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * This event is called when a player collides with a EntityItem on the ground.
@@ -40,7 +40,7 @@ public class EntityItemPickupEvent extends PlayerEvent
 {
     private final ItemEntity item;
 
-    public EntityItemPickupEvent(PlayerEntity player, ItemEntity item)
+    public EntityItemPickupEvent(Player player, ItemEntity item)
     {
         super(player);
         this.item = item;

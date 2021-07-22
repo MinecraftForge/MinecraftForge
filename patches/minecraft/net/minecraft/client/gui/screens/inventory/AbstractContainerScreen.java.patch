@@ -1,0 +1,185 @@
+--- a/net/minecraft/client/gui/screens/inventory/AbstractContainerScreen.java
++++ b/net/minecraft/client/gui/screens/inventory/AbstractContainerScreen.java
+@@ -91,6 +_,7 @@
+       int i = this.f_97735_;
+       int j = this.f_97736_;
+       this.m_7286_(p_97795_, p_97798_, p_97796_, p_97797_);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawBackground(this, p_97795_, p_97796_, p_97797_));
+       RenderSystem.m_69465_();
+       super.m_6305_(p_97795_, p_97796_, p_97797_, p_97798_);
+       PoseStack posestack = RenderSystem.m_157191_();
+@@ -112,11 +_,12 @@
+             this.f_97734_ = slot;
+             int l = slot.f_40220_;
+             int i1 = slot.f_40221_;
+-            m_169606_(p_97795_, l, i1, this.m_93252_());
++            renderSlotHighlight(p_97795_, l, i1, this.m_93252_(), this.getSlotColor(i1));
+          }
+       }
+ 
+       this.m_7027_(p_97795_, p_97796_, p_97797_);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, p_97795_, p_97796_, p_97797_));
+       ItemStack itemstack = this.f_97711_.m_41619_() ? this.f_97732_.m_142621_() : this.f_97711_;
+       if (!itemstack.m_41619_()) {
+          int l1 = 8;
+@@ -156,9 +_,13 @@
+    }
+ 
+    public static void m_169606_(PoseStack p_169607_, int p_169608_, int p_169609_, int p_169610_) {
++       renderSlotHighlight(p_169607_, p_169608_, p_169609_, p_169610_, -2130706433);
++   }
++
++   public static void renderSlotHighlight(PoseStack p_169607_, int p_169608_, int p_169609_, int p_169610_, int slotColor) {
+       RenderSystem.m_69465_();
+       RenderSystem.m_69444_(true, true, true, false);
+-      m_168740_(p_169607_, p_169608_, p_169609_, p_169608_ + 16, p_169609_ + 16, -2130706433, -2130706433, p_169610_);
++      m_168740_(p_169607_, p_169608_, p_169609_, p_169608_ + 16, p_169609_ + 16, slotColor, slotColor, p_169610_);
+       RenderSystem.m_69444_(true, true, true, true);
+       RenderSystem.m_69482_();
+    }
+@@ -176,8 +_,10 @@
+       RenderSystem.m_157182_();
+       this.m_93250_(200);
+       this.f_96542_.f_115093_ = 200.0F;
++      net.minecraft.client.gui.Font font = net.minecraftforge.client.RenderProperties.get(p_97783_).getFont(p_97783_);
++      if (font == null) font = this.f_96547_;
+       this.f_96542_.m_115203_(p_97783_, p_97784_, p_97785_);
+-      this.f_96542_.m_115174_(this.f_96547_, p_97783_, p_97784_, p_97785_ - (this.f_97711_.m_41619_() ? 0 : 8), p_97786_);
++      this.f_96542_.m_115174_(font, p_97783_, p_97784_, p_97785_ - (this.f_97711_.m_41619_() ? 0 : 8), p_97786_);
+       this.m_93250_(0);
+       this.f_96542_.f_115093_ = 0.0F;
+    }
+@@ -287,7 +_,8 @@
+       if (super.m_6375_(p_97748_, p_97749_, p_97750_)) {
+          return true;
+       } else {
+-         boolean flag = this.f_96541_.f_91066_.f_92097_.m_90830_(p_97750_);
++         InputConstants.Key mouseKey = InputConstants.Type.MOUSE.m_84895_(p_97750_);
++         boolean flag = this.f_96541_.f_91066_.f_92097_.isActiveAndMatches(mouseKey);
+          Slot slot = this.m_97744_(p_97748_, p_97749_);
+          long i = Util.m_137550_();
+          this.f_97723_ = this.f_97709_ == slot && i - this.f_97721_ < 250L && this.f_97722_ == p_97750_;
+@@ -298,6 +_,7 @@
+             int j = this.f_97735_;
+             int k = this.f_97736_;
+             boolean flag1 = this.m_7467_(p_97748_, p_97749_, j, k, p_97750_);
++            if (slot != null) flag1 = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
+             int l = -1;
+             if (slot != null) {
+                l = slot.f_40219_;
+@@ -323,7 +_,7 @@
+                   }
+                } else if (!this.f_97738_) {
+                   if (this.f_97732_.m_142621_().m_41619_()) {
+-                     if (this.f_96541_.f_91066_.f_92097_.m_90830_(p_97750_)) {
++                     if (this.f_96541_.f_91066_.f_92097_.isActiveAndMatches(mouseKey)) {
+                         this.m_6597_(slot, l, p_97750_, ClickType.CLONE);
+                      } else {
+                         boolean flag2 = l != -999 && (InputConstants.m_84830_(Minecraft.m_91087_().m_91268_().m_85439_(), 340) || InputConstants.m_84830_(Minecraft.m_91087_().m_91268_().m_85439_(), 344));
+@@ -347,7 +_,7 @@
+                         this.f_97717_ = 0;
+                      } else if (p_97750_ == 1) {
+                         this.f_97717_ = 1;
+-                     } else if (this.f_96541_.f_91066_.f_92097_.m_90830_(p_97750_)) {
++                     } else if (this.f_96541_.f_91066_.f_92097_.isActiveAndMatches(mouseKey)) {
+                         this.f_97717_ = 2;
+                      }
+                   }
+@@ -416,10 +_,13 @@
+    }
+ 
+    public boolean m_6348_(double p_97812_, double p_97813_, int p_97814_) {
++      super.m_6348_(p_97812_, p_97813_, p_97814_); //Forge, Call parent to release buttons
+       Slot slot = this.m_97744_(p_97812_, p_97813_);
+       int i = this.f_97735_;
+       int j = this.f_97736_;
+       boolean flag = this.m_7467_(p_97812_, p_97813_, i, j, p_97814_);
++      if (slot != null) flag = false; // Forge, prevent dropping of items through slots outside of GUI boundaries
++      InputConstants.Key mouseKey = InputConstants.Type.MOUSE.m_84895_(p_97814_);
+       int k = -1;
+       if (slot != null) {
+          k = slot.f_40219_;
+@@ -433,7 +_,7 @@
+          if (m_96638_()) {
+             if (!this.f_97724_.m_41619_()) {
+                for(Slot slot2 : this.f_97732_.f_38839_) {
+-                  if (slot2 != null && slot2.m_8010_(this.f_96541_.f_91074_) && slot2.m_6657_() && slot2.f_40218_ == slot.f_40218_ && AbstractContainerMenu.m_38899_(slot2, this.f_97724_, true)) {
++                  if (slot2 != null && slot2.m_8010_(this.f_96541_.f_91074_) && slot2.m_6657_() && slot2.isSameInventory(slot) && AbstractContainerMenu.m_38899_(slot2, this.f_97724_, true)) {
+                      this.m_6597_(slot2, slot2.f_40219_, p_97814_, ClickType.QUICK_MOVE);
+                   }
+                }
+@@ -497,7 +_,7 @@
+ 
+             this.m_6597_((Slot)null, -999, AbstractContainerMenu.m_38930_(2, this.f_97717_), ClickType.QUICK_CRAFT);
+          } else if (!this.f_97732_.m_142621_().m_41619_()) {
+-            if (this.f_96541_.f_91066_.f_92097_.m_90830_(p_97814_)) {
++            if (this.f_96541_.f_91066_.f_92097_.isActiveAndMatches(mouseKey)) {
+                this.m_6597_(slot, k, p_97814_, ClickType.CLONE);
+             } else {
+                boolean flag1 = k != -999 && (InputConstants.m_84830_(Minecraft.m_91087_().m_91268_().m_85439_(), 340) || InputConstants.m_84830_(Minecraft.m_91087_().m_91268_().m_85439_(), 344));
+@@ -539,34 +_,39 @@
+    }
+ 
+    public boolean m_7933_(int p_97765_, int p_97766_, int p_97767_) {
++      InputConstants.Key mouseKey = InputConstants.m_84827_(p_97765_, p_97766_);
+       if (super.m_7933_(p_97765_, p_97766_, p_97767_)) {
+          return true;
+-      } else if (this.f_96541_.f_91066_.f_92092_.m_90832_(p_97765_, p_97766_)) {
++      } else if (this.f_96541_.f_91066_.f_92092_.isActiveAndMatches(mouseKey)) {
+          this.m_7379_();
+          return true;
+       } else {
+-         this.m_97805_(p_97765_, p_97766_);
++         boolean handled = this.m_97805_(p_97765_, p_97766_);// Forge MC-146650: Needs to return true when the key is handled
+          if (this.f_97734_ != null && this.f_97734_.m_6657_()) {
+-            if (this.f_96541_.f_91066_.f_92097_.m_90832_(p_97765_, p_97766_)) {
++            if (this.f_96541_.f_91066_.f_92097_.isActiveAndMatches(mouseKey)) {
+                this.m_6597_(this.f_97734_, this.f_97734_.f_40219_, 0, ClickType.CLONE);
+-            } else if (this.f_96541_.f_91066_.f_92094_.m_90832_(p_97765_, p_97766_)) {
++               handled = true;
++            } else if (this.f_96541_.f_91066_.f_92094_.isActiveAndMatches(mouseKey)) {
+                this.m_6597_(this.f_97734_, this.f_97734_.f_40219_, m_96637_() ? 1 : 0, ClickType.THROW);
++               handled = true;
+             }
++         } else if (this.f_96541_.f_91066_.f_92094_.isActiveAndMatches(mouseKey)) {
++             handled = true; // Forge MC-146650: Emulate MC bug, so we don't drop from hotbar when pressing drop without hovering over a item.
+          }
+ 
+-         return true;
++         return handled;
+       }
+    }
+ 
+    protected boolean m_97805_(int p_97806_, int p_97807_) {
+       if (this.f_97732_.m_142621_().m_41619_() && this.f_97734_ != null) {
+-         if (this.f_96541_.f_91066_.f_92093_.m_90832_(p_97806_, p_97807_)) {
++         if (this.f_96541_.f_91066_.f_92093_.isActiveAndMatches(InputConstants.m_84827_(p_97806_, p_97807_))) {
+             this.m_6597_(this.f_97734_, this.f_97734_.f_40219_, 40, ClickType.SWAP);
+             return true;
+          }
+ 
+          for(int i = 0; i < 9; ++i) {
+-            if (this.f_96541_.f_91066_.f_92056_[i].m_90832_(p_97806_, p_97807_)) {
++            if (this.f_96541_.f_91066_.f_92056_[i].isActiveAndMatches(InputConstants.m_84827_(p_97806_, p_97807_))) {
+                this.m_6597_(this.f_97734_, this.f_97734_.f_40219_, i, ClickType.SWAP);
+                return true;
+             }
+@@ -601,6 +_,18 @@
+ 
+    public T m_6262_() {
+       return this.f_97732_;
++   }
++
++   @javax.annotation.Nullable
++   public Slot getSlotUnderMouse() { return this.f_97734_; }
++   public int getGuiLeft() { return f_97735_; }
++   public int getGuiTop() { return f_97736_; }
++   public int getXSize() { return f_97726_; }
++   public int getYSize() { return f_97727_; }
++
++   protected int slotColor = -2130706433;
++   public int getSlotColor(int index) {
++      return slotColor;
+    }
+ 
+    public void m_7379_() {

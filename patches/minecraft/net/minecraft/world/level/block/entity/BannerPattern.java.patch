@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/level/block/entity/BannerPattern.java
++++ b/net/minecraft/world/level/block/entity/BannerPattern.java
+@@ -10,7 +_,7 @@
+ import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.world.item.DyeColor;
+ 
+-public enum BannerPattern {
++public enum BannerPattern implements net.minecraftforge.common.IExtensibleEnum {
+    BASE("base", "b", false),
+    SQUARE_BOTTOM_LEFT("square_bottom_left", "bl"),
+    SQUARE_BOTTOM_RIGHT("square_bottom_right", "br"),
+@@ -106,6 +_,14 @@
+       }
+ 
+       return null;
++   }
++
++   public static BannerPattern create(String enumName, String fileNameIn, String hashNameIn) {
++      throw new IllegalStateException("Enum not extended");
++   }
++
++   public static BannerPattern create(String enumName, String fileNameIn, String hashNameIn, boolean hasPatternItem) {
++      throw new IllegalStateException("Enum not extended");
+    }
+ 
+    public static class Builder {

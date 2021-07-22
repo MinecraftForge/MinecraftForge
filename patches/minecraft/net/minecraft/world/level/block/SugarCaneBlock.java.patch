@@ -1,0 +1,51 @@
+--- a/net/minecraft/world/level/block/SugarCaneBlock.java
++++ b/net/minecraft/world/level/block/SugarCaneBlock.java
+@@ -18,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public class SugarCaneBlock extends Block {
++public class SugarCaneBlock extends Block implements net.minecraftforge.common.IPlantable {
+    public static final IntegerProperty f_57164_ = BlockStateProperties.f_61410_;
+    protected static final float f_154735_ = 6.0F;
+    protected static final VoxelShape f_57165_ = Block.m_49796_(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+@@ -47,12 +_,14 @@
+ 
+          if (i < 3) {
+             int j = p_57188_.m_61143_(f_57164_);
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_57189_, p_57190_, p_57188_, true)) {
+             if (j == 15) {
+                p_57189_.m_46597_(p_57190_.m_7494_(), this.m_49966_());
+                p_57189_.m_7731_(p_57190_, p_57188_.m_61124_(f_57164_, Integer.valueOf(0)), 4);
+             } else {
+                p_57189_.m_7731_(p_57190_, p_57188_.m_61124_(f_57164_, Integer.valueOf(j + 1)), 4);
+             }
++            }
+          }
+       }
+ 
+@@ -67,6 +_,8 @@
+    }
+ 
+    public boolean m_7898_(BlockState p_57175_, LevelReader p_57176_, BlockPos p_57177_) {
++      BlockState soil = p_57176_.m_8055_(p_57177_.m_7495_());
++      if (soil.canSustainPlant(p_57176_, p_57177_.m_7495_(), Direction.UP, this)) return true;
+       BlockState blockstate = p_57176_.m_8055_(p_57177_.m_7495_());
+       if (blockstate.m_60713_(this)) {
+          return true;
+@@ -89,5 +_,15 @@
+ 
+    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_57186_) {
+       p_57186_.m_61104_(f_57164_);
++   }
++
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++       return net.minecraftforge.common.PlantType.BEACH;
++   }
++
++   @Override
++   public BlockState getPlant(BlockGetter world, BlockPos pos) {
++      return m_49966_();
+    }
+ }

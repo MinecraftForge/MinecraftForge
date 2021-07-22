@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/levelgen/PhantomSpawner.java
++++ b/net/minecraft/world/level/levelgen/PhantomSpawner.java
+@@ -60,6 +_,7 @@
+                                  for(int i1 = 0; i1 < l; ++i1) {
+                                     Phantom phantom = EntityType.f_20509_.m_20615_(p_64576_);
+                                     phantom.m_20035_(blockpos1, 0.0F, 0.0F);
++                                    if(net.minecraftforge.common.ForgeHooks.canEntitySpawn(phantom, p_64576_, blockpos1.m_123341_(), blockpos1.m_123342_(), blockpos1.m_123343_(), null, MobSpawnType.NATURAL) == -1) return 0;
+                                     spawngroupdata = phantom.m_6518_(p_64576_, difficultyinstance, MobSpawnType.NATURAL, spawngroupdata, (CompoundTag)null);
+                                     p_64576_.m_47205_(phantom);
+                                  }

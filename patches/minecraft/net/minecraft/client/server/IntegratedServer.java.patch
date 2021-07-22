@@ -1,0 +1,22 @@
+--- a/net/minecraft/client/server/IntegratedServer.java
++++ b/net/minecraft/client/server/IntegratedServer.java
+@@ -61,9 +_,10 @@
+       this.m_129997_(true);
+       this.m_129999_(true);
+       this.m_129793_();
++      if (!net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+       this.m_130006_();
+       this.m_129989_(this.m_129791_() + " - " + this.m_129910_().m_5462_());
+-      return true;
++      return net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerStarting(this);
+    }
+ 
+    public void m_5705_(BooleanSupplier p_120049_) {
+@@ -189,6 +_,7 @@
+    }
+ 
+    public void m_7570_(boolean p_120053_) {
++      if (m_130010_())
+       this.m_18709_(() -> {
+          for(ServerPlayer serverplayer : Lists.newArrayList(this.m_6846_().m_11314_())) {
+             if (!serverplayer.m_142081_().equals(this.f_120019_)) {

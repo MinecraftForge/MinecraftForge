@@ -1,0 +1,18 @@
+--- a/net/minecraft/server/ServerResources.java
++++ b/net/minecraft/server/ServerResources.java
+@@ -41,6 +_,7 @@
+       this.f_136145_.m_7217_(this.f_180000_);
+       this.f_136145_.m_7217_(this.f_136152_);
+       this.f_136145_.m_7217_(this.f_136151_);
++      net.minecraftforge.event.ForgeEventFactory.onResourceReload(this).forEach(f_136145_::m_7217_);
+    }
+ 
+    public ServerFunctionLibrary m_136157_() {
+@@ -94,6 +_,7 @@
+ 
+    public void m_136179_() {
+       this.f_136148_.m_13480_().m_13431_();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent.CustomTagTypes(f_136148_.m_13480_()));
+    }
+ 
+    public void close() {

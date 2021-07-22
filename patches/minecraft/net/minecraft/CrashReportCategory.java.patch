@@ -1,0 +1,38 @@
+--- a/net/minecraft/CrashReportCategory.java
++++ b/net/minecraft/CrashReportCategory.java
+@@ -102,8 +_,10 @@
+       if (astacktraceelement.length <= 0) {
+          return 0;
+       } else {
+-         this.f_128139_ = new StackTraceElement[astacktraceelement.length - 3 - p_128149_];
+-         System.arraycopy(astacktraceelement, 3 + p_128149_, this.f_128139_, 0, this.f_128139_.length);
++         int len = astacktraceelement.length - 3 - p_128149_;
++         if (len <= 0) len = astacktraceelement.length;
++         this.f_128139_ = new StackTraceElement[len];
++         System.arraycopy(astacktraceelement, astacktraceelement.length - len, this.f_128139_, 0, this.f_128139_.length);
+          return this.f_128139_.length;
+       }
+    }
+@@ -147,17 +_,17 @@
+ 
+       if (this.f_128139_ != null && this.f_128139_.length > 0) {
+          p_128169_.append("\nStacktrace:");
+-
+-         for(StackTraceElement stacktraceelement : this.f_128139_) {
+-            p_128169_.append("\n\tat ");
+-            p_128169_.append((Object)stacktraceelement);
+-         }
++         p_128169_.append(net.minecraftforge.fmllegacy.CrashReportExtender.generateEnhancedStackTrace(this.f_128139_));
+       }
+ 
+    }
+ 
+    public StackTraceElement[] m_128143_() {
+       return this.f_128139_;
++   }
++
++   public void applyStackTrace(Throwable t) {
++      this.f_128139_ = t.getStackTrace();
+    }
+ 
+    public static void m_178950_(CrashReportCategory p_178951_, LevelHeightAccessor p_178952_, BlockPos p_178953_, @Nullable BlockState p_178954_) {

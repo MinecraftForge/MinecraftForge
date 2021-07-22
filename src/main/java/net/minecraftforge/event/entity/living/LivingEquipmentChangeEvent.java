@@ -19,11 +19,9 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
@@ -45,11 +43,11 @@ import javax.annotation.Nonnull;
  **/
 public class LivingEquipmentChangeEvent extends LivingEvent
 {
-    private final EquipmentSlotType slot;
+    private final EquipmentSlot slot;
     private final ItemStack from;
     private final ItemStack to;
 
-    public LivingEquipmentChangeEvent(LivingEntity entity, EquipmentSlotType slot, @Nonnull ItemStack from, @Nonnull ItemStack to)
+    public LivingEquipmentChangeEvent(LivingEntity entity, EquipmentSlot slot, @Nonnull ItemStack from, @Nonnull ItemStack to)
     {
         super(entity);
         this.slot = slot;
@@ -57,7 +55,7 @@ public class LivingEquipmentChangeEvent extends LivingEvent
         this.to = to;
     }
 
-    public EquipmentSlotType getSlot() { return this.slot; }
+    public EquipmentSlot getSlot() { return this.slot; }
     @Nonnull
     public ItemStack getFrom() { return this.from; }
     @Nonnull

@@ -1,0 +1,11 @@
+--- a/net/minecraft/nbt/StringTag.java
++++ b/net/minecraft/nbt/StringTag.java
+@@ -11,7 +_,7 @@
+       public StringTag m_7300_(DataInput p_129315_, int p_129316_, NbtAccounter p_129317_) throws IOException {
+          p_129317_.m_6800_(288L);
+          String s = p_129315_.readUTF();
+-         p_129317_.m_6800_((long)(16 * s.length()));
++         p_129317_.readUTF(s);
+          return StringTag.m_129297_(s);
+       }
+ 

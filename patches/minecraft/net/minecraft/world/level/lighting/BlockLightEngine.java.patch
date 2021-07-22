@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/level/lighting/BlockLightEngine.java
++++ b/net/minecraft/world/level/lighting/BlockLightEngine.java
+@@ -117,4 +_,9 @@
+       this.f_75632_.m_75785_();
+       this.m_75576_(Long.MAX_VALUE, p_75502_.m_121878_(), 15 - p_75503_, true);
+    }
++
++   @Override
++   public int queuedUpdateSize() {
++      return f_75632_.queuedUpdateSize();
++   }
+ }

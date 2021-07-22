@@ -19,14 +19,14 @@
 
 package net.minecraftforge.debug.client.model;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -64,7 +64,7 @@ public class MultiLayerModelTest
         {
             if (!ENABLED)
                 return;
-            event.getRegistry().register(new BlockItem(TEST_BLOCK, new Item.Properties().tab(ItemGroup.TAB_MISC)).setRegistryName(TEST_BLOCK.getRegistryName()));
+            event.getRegistry().register(new BlockItem(TEST_BLOCK, new Item.Properties().tab(CreativeModeTab.TAB_MISC)).setRegistryName(TEST_BLOCK.getRegistryName()));
         }
 
         @net.minecraftforge.eventbus.api.SubscribeEvent
@@ -72,7 +72,7 @@ public class MultiLayerModelTest
         {
             if (!ENABLED)
                 return;
-            RenderTypeLookup.setRenderLayer(TEST_BLOCK, (layer) -> {
+            ItemBlockRenderTypes.setRenderLayer(TEST_BLOCK, (layer) -> {
                 return layer == RenderType.solid() || layer == RenderType.translucent();
             });
         }

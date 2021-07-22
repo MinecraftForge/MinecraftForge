@@ -23,17 +23,17 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.merchant.villager.VillagerTrades.ITrade;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.MerchantOffer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.MerchantOffer;
 
 /**
  * A default, exposed implementation of ITrade.  All of the other implementations of ITrade (in VillagerTrades) are not public.
  * This class contains everything needed to make a MerchantOffer, the actual "trade" object shown in trading guis.
  */
-public class BasicTrade implements ITrade
+public class BasicTrade implements ItemListing
 {
 
     protected final ItemStack price;

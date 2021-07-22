@@ -39,7 +39,6 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.util.math.vector.*;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -57,6 +56,13 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Table;
+
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
+import net.minecraft.world.phys.Vec2;
 
 public class B3DModel
 {
@@ -248,8 +254,8 @@ public class B3DModel
                 String path = readString();
                 int flags = buf.getInt();
                 int blend = buf.getInt();
-                Vector2f pos = new Vector2f(buf.getFloat(), buf.getFloat());
-                Vector2f scale = new Vector2f(buf.getFloat(), buf.getFloat());
+                Vec2 pos = new Vec2(buf.getFloat(), buf.getFloat());
+                Vec2 scale = new Vec2(buf.getFloat(), buf.getFloat());
                 float rot = buf.getFloat();
                 ret.add(new Texture(path, flags, blend, pos, scale, rot));
             }
@@ -528,15 +534,15 @@ public class B3DModel
 
     public static class Texture
     {
-        public static final Texture White = new Texture("builtin/white", 0, 0, new Vector2f(0, 0), new Vector2f(1, 1), 0);
+        public static final Texture White = new Texture("builtin/white", 0, 0, new Vec2(0, 0), new Vec2(1, 1), 0);
         private final String path;
         private final int flags;
         private final int blend;
-        private final Vector2f pos;
-        private final Vector2f scale;
+        private final Vec2 pos;
+        private final Vec2 scale;
         private final float rot;
 
-        public Texture(String path, int flags, int blend, Vector2f pos, Vector2f scale, float rot)
+        public Texture(String path, int flags, int blend, Vec2 pos, Vec2 scale, float rot)
         {
             this.path = path;
             this.flags = flags;
@@ -561,12 +567,12 @@ public class B3DModel
             return blend;
         }
 
-        public Vector2f getPos()
+        public Vec2 getPos()
         {
             return pos;
         }
 
-        public Vector2f getScale()
+        public Vec2 getScale()
         {
             return scale;
         }
@@ -677,7 +683,7 @@ public class B3DModel
                 else t.setIdentity();
             }
 
-            TransformationMatrix trsr = new TransformationMatrix(t);
+            Transformation trsr = new Transformation(t);
 
             // pos
             Vector4f pos = new Vector4f(this.pos);

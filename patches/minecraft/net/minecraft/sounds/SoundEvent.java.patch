@@ -1,0 +1,11 @@
+--- a/net/minecraft/sounds/SoundEvent.java
++++ b/net/minecraft/sounds/SoundEvent.java
+@@ -3,7 +_,7 @@
+ import com.mojang.serialization.Codec;
+ import net.minecraft.resources.ResourceLocation;
+ 
+-public class SoundEvent {
++public class SoundEvent extends net.minecraftforge.registries.ForgeRegistryEntry<SoundEvent> {
+    public static final Codec<SoundEvent> f_11655_ = ResourceLocation.f_135803_.xmap(SoundEvent::new, (p_11662_) -> {
+       return p_11662_.f_11656_;
+    });

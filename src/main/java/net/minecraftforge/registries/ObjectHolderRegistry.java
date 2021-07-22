@@ -31,7 +31,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -93,21 +93,21 @@ public class ObjectHolderRegistry
         final List<ModFileScanData.AnnotationData> annotations = ModList.get().getAllScanData().stream()
             .map(ModFileScanData::getAnnotations)
             .flatMap(Collection::stream)
-            .filter(a -> OBJECT_HOLDER.equals(a.getAnnotationType()) || MOD.equals(a.getAnnotationType()))
+            .filter(a -> OBJECT_HOLDER.equals(a.annotationType()) || MOD.equals(a.annotationType()))
             .collect(Collectors.toList());
 
         Map<Type, String> classModIds = Maps.newHashMap();
         Map<Type, Class<?>> classCache = Maps.newHashMap();
 
         // Gather all @Mod classes, so that @ObjectHolder's in those classes don't need to specify the mod id, Modder convince
-        annotations.stream().filter(a -> MOD.equals(a.getAnnotationType())).forEach(data -> classModIds.put(data.getClassType(), (String)data.getAnnotationData().get("value")));
+        annotations.stream().filter(a -> MOD.equals(a.annotationType())).forEach(data -> classModIds.put(data.clazz(), (String)data.annotationData().get("value")));
 
         // double pass - get all the class level annotations first, then the field level annotations
-        annotations.stream().filter(a -> OBJECT_HOLDER.equals(a.getAnnotationType())).filter(a -> a.getTargetType() == ElementType.TYPE)
-        .forEach(data -> scanTarget(classModIds, classCache, data.getClassType(), null, (String)data.getAnnotationData().get("value"), true, data.getClassType().getClassName().startsWith("net.minecraft.")));
+        annotations.stream().filter(a -> OBJECT_HOLDER.equals(a.annotationType())).filter(a -> a.targetType() == ElementType.TYPE)
+        .forEach(data -> scanTarget(classModIds, classCache, data.clazz(), null, (String)data.annotationData().get("value"), true, data.clazz().getClassName().startsWith("net.minecraft.")));
 
-        annotations.stream().filter(a -> OBJECT_HOLDER.equals(a.getAnnotationType())).filter(a -> a.getTargetType() == ElementType.FIELD)
-        .forEach(data -> scanTarget(classModIds, classCache, data.getClassType(), data.getMemberName(), (String)data.getAnnotationData().get("value"), false, false));
+        annotations.stream().filter(a -> OBJECT_HOLDER.equals(a.annotationType())).filter(a -> a.targetType() == ElementType.FIELD)
+        .forEach(data -> scanTarget(classModIds, classCache, data.clazz(), data.memberName(), (String)data.annotationData().get("value"), false, false));
         LOGGER.debug(REGISTRIES,"Found {} ObjectHolder annotations", objectHolders.size());
     }
 

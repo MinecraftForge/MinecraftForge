@@ -25,8 +25,8 @@ import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
 
 public interface IForgeTextureAtlasSprite
 {
@@ -35,7 +35,7 @@ public interface IForgeTextureAtlasSprite
      * @deprecated See {@link net.minecraftforge.client.textures.ITextureAtlasSpriteLoader}
      */
     @Deprecated
-    default boolean hasCustomLoader(IResourceManager manager, ResourceLocation location)
+    default boolean hasCustomLoader(ResourceManager manager, ResourceLocation location)
     {
         return false;
     }
@@ -44,7 +44,7 @@ public interface IForgeTextureAtlasSprite
      * @deprecated See {@link net.minecraftforge.client.textures.ITextureAtlasSpriteLoader}
      */
     @Deprecated
-    default boolean load(IResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter)
+    default boolean load(ResourceManager manager, ResourceLocation location, Function<ResourceLocation, TextureAtlasSprite> textureGetter)
     {
         return true;
     }

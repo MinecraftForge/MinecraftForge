@@ -19,12 +19,12 @@
 
 package net.minecraftforge.debug.misc;
 
-import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.EntityArgument;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.Hand;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -57,8 +57,8 @@ public class FakePlayerTest
                 //Makes sure fake player does not crash when its `connection` is accessed [#7604]
                 .then(Commands.literal("opencontainer")
                         .executes(context -> {
-                            ServerPlayerEntity fakePlayer = FakePlayerFactory.getMinecraft(context.getSource().getLevel());
-                            Hand hand = Hand.MAIN_HAND;
+                            ServerPlayer fakePlayer = FakePlayerFactory.getMinecraft(context.getSource().getLevel());
+                            InteractionHand hand = InteractionHand.MAIN_HAND;
                             ItemStack stack = Items.WRITABLE_BOOK.getDefaultInstance();
                             fakePlayer.setItemInHand(hand, stack);
                             fakePlayer.openItemGui(stack, hand);

@@ -22,20 +22,20 @@ package net.minecraftforge.server.command;
 import java.text.DecimalFormat;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.arguments.DimensionArgument;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.DimensionArgument;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.server.level.ServerLevel;
 
 class CommandTps
 {
     private static final DecimalFormat TIME_FORMATTER = new DecimalFormat("########0.000");
     private static final long[] UNLOADED = new long[] {0};
 
-    static ArgumentBuilder<CommandSource, ?> register()
+    static ArgumentBuilder<CommandSourceStack, ?> register()
     {
         return Commands.literal("tps")
             .requires(cs->cs.hasPermission(0)) //permission
@@ -43,20 +43,20 @@ class CommandTps
                 .executes(ctx -> sendTime(ctx.getSource(), DimensionArgument.getDimension(ctx, "dim")))
             )
             .executes(ctx -> {
-                for (ServerWorld dim : ctx.getSource().getServer().getAllLevels())
+                for (ServerLevel dim : ctx.getSource().getServer().getAllLevels())
                     sendTime(ctx.getSource(), dim);
 
                 @SuppressWarnings("resource")
                 double meanTickTime = mean(ctx.getSource().getServer().tickTimes) * 1.0E-6D;
                 double meanTPS = Math.min(1000.0/meanTickTime, 20);
-                ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), false);
+                ctx.getSource().sendSuccess(new TranslatableComponent("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), false);
 
                 return 0;
             }
         );
     }
 
-    private static int sendTime(CommandSource cs, ServerWorld dim) throws CommandSyntaxException
+    private static int sendTime(CommandSourceStack cs, ServerLevel dim) throws CommandSyntaxException
     {
         long[] times = cs.getServer().getTickTime(dim.dimension());
 
@@ -66,7 +66,7 @@ class CommandTps
         final Registry<DimensionType> reg = cs.registryAccess().registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
-        cs.sendSuccess(new TranslationTextComponent("commands.forge.tps.summary.named", dim.dimension().location().toString(), reg.getKey(dim.dimensionType()), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
+        cs.sendSuccess(new TranslatableComponent("commands.forge.tps.summary.named", dim.dimension().location().toString(), reg.getKey(dim.dimensionType()), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), false);
 
         return 1;
     }

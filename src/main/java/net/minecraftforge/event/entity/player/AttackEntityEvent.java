@@ -19,10 +19,9 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * AttackEntityEvent is fired when a player attacks an Entity.<br>
@@ -42,7 +41,7 @@ import net.minecraft.entity.player.PlayerEntity;
 public class AttackEntityEvent extends PlayerEvent
 {
     private final Entity target;
-    public AttackEntityEvent(PlayerEntity player, Entity target)
+    public AttackEntityEvent(Player player, Entity target)
     {
         super(player);
         this.target = target;

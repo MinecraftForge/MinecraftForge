@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/schedule/Schedule.java
++++ b/net/minecraft/world/entity/schedule/Schedule.java
+@@ -8,7 +_,7 @@
+ import java.util.stream.Collectors;
+ import net.minecraft.core.Registry;
+ 
+-public class Schedule {
++public class Schedule extends net.minecraftforge.registries.ForgeRegistryEntry<Schedule> {
+    public static final int f_150241_ = 2000;
+    public static final int f_150242_ = 7000;
+    public static final Schedule f_38012_ = m_38029_("empty").m_38040_(0, Activity.f_37979_).m_38039_();

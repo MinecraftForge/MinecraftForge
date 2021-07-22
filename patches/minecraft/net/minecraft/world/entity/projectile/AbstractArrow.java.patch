@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/projectile/AbstractArrow.java
++++ b/net/minecraft/world/entity/projectile/AbstractArrow.java
+@@ -184,7 +_,7 @@
+                }
+             }
+ 
+-            if (hitresult != null && !flag) {
++            if (hitresult != null && hitresult.m_6662_() != HitResult.Type.MISS && !flag && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
+                this.m_6532_(hitresult);
+                this.f_19812_ = true;
+             }

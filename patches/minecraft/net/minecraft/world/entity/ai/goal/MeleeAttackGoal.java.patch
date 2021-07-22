@@ -1,0 +1,46 @@
+--- a/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
++++ b/net/minecraft/world/entity/ai/goal/MeleeAttackGoal.java
+@@ -21,6 +_,8 @@
+    private final int f_25549_ = 20;
+    private long f_25550_;
+    private static final long f_148125_ = 20L;
++   private int failedPathFindingPenalty = 0;
++   private boolean canPenalize = false;
+ 
+    public MeleeAttackGoal(PathfinderMob p_25552_, double p_25553_, boolean p_25554_) {
+       this.f_25540_ = p_25552_;
+@@ -41,6 +_,15 @@
+          } else if (!livingentity.m_6084_()) {
+             return false;
+          } else {
++           if (canPenalize) {
++               if (--this.f_25547_ <= 0) {
++                  this.f_25543_ = this.f_25540_.m_21573_().m_6570_(livingentity, 0);
++                  this.f_25547_ = 4 + this.f_25540_.m_21187_().nextInt(7);
++                  return this.f_25543_ != null;
++               } else {
++                  return true;
++               }
++            }
+             this.f_25543_ = this.f_25540_.m_21573_().m_6570_(livingentity, 0);
+             if (this.f_25543_ != null) {
+                return true;
+@@ -93,6 +_,18 @@
+          this.f_25545_ = livingentity.m_20186_();
+          this.f_25546_ = livingentity.m_20189_();
+          this.f_25547_ = 4 + this.f_25540_.m_21187_().nextInt(7);
++         if (this.canPenalize) {
++            this.f_25547_ += failedPathFindingPenalty;
++            if (this.f_25540_.m_21573_().m_26570_() != null) {
++               net.minecraft.world.level.pathfinder.Node finalPathPoint = this.f_25540_.m_21573_().m_26570_().m_77395_();
++               if (finalPathPoint != null && livingentity.m_20275_(finalPathPoint.f_77271_, finalPathPoint.f_77272_, finalPathPoint.f_77273_) < 1)
++                  failedPathFindingPenalty = 0;
++               else
++                  failedPathFindingPenalty += 10;
++            } else {
++               failedPathFindingPenalty += 10;
++            }
++         }
+          if (d0 > 1024.0D) {
+             this.f_25547_ += 10;
+          } else if (d0 > 256.0D) {

@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/saveddata/maps/MapDecoration.java
++++ b/net/minecraft/world/level/saveddata/maps/MapDecoration.java
+@@ -69,6 +_,15 @@
+       return 31 * i + Objects.hashCode(this.f_77795_);
+    }
+ 
++   /**
++    * Renders this decoration, useful for custom sprite sheets.
++    * @param index The index of this icon in the MapData's list. Used by vanilla to offset the Z-coordinate to prevent Z-fighting
++    * @return false to run vanilla logic for this decoration, true to skip it
++    */
++   public boolean render(int index) {
++      return false;
++   }
++
+    public static enum Type {
+       PLAYER(false, true),
+       FRAME(true, true),

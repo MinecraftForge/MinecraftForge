@@ -1,0 +1,49 @@
+--- a/net/minecraft/client/renderer/DimensionSpecialEffects.java
++++ b/net/minecraft/client/renderer/DimensionSpecialEffects.java
+@@ -26,6 +_,10 @@
+    private final DimensionSpecialEffects.SkyType f_108861_;
+    private final boolean f_108862_;
+    private final boolean f_108863_;
++   private net.minecraftforge.client.IWeatherRenderHandler weatherRenderHandler = null;
++   private net.minecraftforge.client.IWeatherParticleRenderHandler weatherParticleRenderHandler = null;
++   private net.minecraftforge.client.ISkyRenderHandler skyRenderHandler = null;
++   private net.minecraftforge.client.ICloudRenderHandler cloudRenderHandler = null;
+ 
+    public DimensionSpecialEffects(float p_108866_, boolean p_108867_, DimensionSpecialEffects.SkyType p_108868_, boolean p_108869_, boolean p_108870_) {
+       this.f_108859_ = p_108866_;
+@@ -80,6 +_,35 @@
+ 
+    public boolean m_108885_() {
+       return this.f_108863_;
++   }
++
++   public void setWeatherRenderHandler(net.minecraftforge.client.IWeatherRenderHandler weatherRenderHandler) {
++      this.weatherRenderHandler = weatherRenderHandler;
++   }
++   public void setWeatherParticleRenderHandler(net.minecraftforge.client.IWeatherParticleRenderHandler weatherParticleRenderHandler) {
++      this.weatherParticleRenderHandler = weatherParticleRenderHandler;
++   }
++   public void setSkyRenderHandler(net.minecraftforge.client.ISkyRenderHandler skyRenderHandler) {
++      this.skyRenderHandler = skyRenderHandler;
++   }
++   public void setCloudRenderHandler(net.minecraftforge.client.ICloudRenderHandler cloudRenderHandler) {
++      this.cloudRenderHandler = cloudRenderHandler;
++   }
++   @Nullable
++   public net.minecraftforge.client.ICloudRenderHandler getCloudRenderHandler() {
++      return cloudRenderHandler;
++   }
++   @Nullable
++   public net.minecraftforge.client.IWeatherRenderHandler getWeatherRenderHandler() {
++      return weatherRenderHandler;
++   }
++   @Nullable
++   public net.minecraftforge.client.IWeatherParticleRenderHandler getWeatherParticleRenderHandler() {
++      return weatherParticleRenderHandler;
++   }
++   @Nullable
++   public net.minecraftforge.client.ISkyRenderHandler getSkyRenderHandler() {
++      return skyRenderHandler;
+    }
+ 
+    @OnlyIn(Dist.CLIENT)

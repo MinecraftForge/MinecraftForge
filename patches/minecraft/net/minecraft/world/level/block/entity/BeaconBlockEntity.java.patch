@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BeaconBlockEntity.java
+@@ -117,8 +_,8 @@
+       for(int i1 = 0; i1 < 10 && blockpos.m_123342_() <= l; ++i1) {
+          BlockState blockstate = p_155108_.m_8055_(blockpos);
+          Block block = blockstate.m_60734_();
+-         if (block instanceof BeaconBeamBlock) {
+-            float[] afloat = ((BeaconBeamBlock)block).m_7988_().m_41068_();
++         float[] afloat = blockstate.getBeaconColorMultiplier(p_155108_, blockpos, p_155109_);
++         if (afloat != null) {
+             if (p_155111_.f_58649_.size() <= 1) {
+                beaconblockentity$beaconbeamsection = new BeaconBlockEntity.BeaconBeamSection(afloat);
+                p_155111_.f_58649_.add(beaconblockentity$beaconbeamsection);

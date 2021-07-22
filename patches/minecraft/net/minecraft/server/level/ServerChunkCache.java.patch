@@ -1,0 +1,34 @@
+--- a/net/minecraft/server/level/ServerChunkCache.java
++++ b/net/minecraft/server/level/ServerChunkCache.java
+@@ -161,6 +_,7 @@
+          if (chunkholder == null) {
+             return null;
+          } else {
++            if (chunkholder.currentlyLoading != null) return chunkholder.currentlyLoading; // Forge: If the requested chunk is loading, bypass the future chain to prevent a deadlock.
+             Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = chunkholder.m_140080_(ChunkStatus.f_62326_).getNow((Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>)null);
+             if (either == null) {
+                return null;
+@@ -337,7 +_,7 @@
+             if (optional.isPresent()) {
+                LevelChunk levelchunk = optional.get();
+                ChunkPos chunkpos = levelchunk.m_7697_();
+-               if (this.f_8329_.m_143275_(chunkpos) && !this.f_8325_.m_140397_(chunkpos)) {
++               if ((this.f_8329_.m_143275_(chunkpos) && !this.f_8325_.m_140397_(chunkpos)) || this.f_8327_.shouldForceTicks(chunkpos.m_45588_())) {
+                   levelchunk.m_6141_(levelchunk.m_6319_() + j);
+                   if (flag1 && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos)) {
+                      NaturalSpawner.m_47029_(this.f_8329_, levelchunk, naturalspawner$spawnstate, this.f_8336_, this.f_8335_, flag2);
+@@ -414,6 +_,14 @@
+ 
+    public <T> void m_8438_(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_) {
+       this.f_8327_.m_140849_(p_8439_, p_8440_, p_8441_, p_8442_);
++   }
++
++   public <T> void registerTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
++      this.f_8327_.registerTicking(type, pos, distance, value);
++   }
++
++   public <T> void releaseTickingTicket(TicketType<T> type, ChunkPos pos, int distance, T value) {
++      this.f_8327_.releaseTicking(type, pos, distance, value);
+    }
+ 
+    public void m_6692_(ChunkPos p_8400_, boolean p_8401_) {

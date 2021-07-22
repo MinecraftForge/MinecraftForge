@@ -19,15 +19,10 @@
 
 package net.minecraftforge.event.world;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkStatus;
-import net.minecraft.world.chunk.IChunk;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.ChunkAccess;
 
 /**
  * ChunkDataEvent is fired when an event involving chunk data occurs.<br>
@@ -40,21 +35,21 @@ import net.minecraftforge.eventbus.api.Event;
  **/
 public class ChunkDataEvent extends ChunkEvent
 {
-    private final CompoundNBT data;
+    private final CompoundTag data;
 
-    public ChunkDataEvent(IChunk chunk, CompoundNBT data)
+    public ChunkDataEvent(ChunkAccess chunk, CompoundTag data)
     {
         super(chunk);
         this.data = data;
     }
 
-    public ChunkDataEvent(IChunk chunk, IWorld world, CompoundNBT data)
+    public ChunkDataEvent(ChunkAccess chunk, LevelAccessor world, CompoundTag data)
     {
         super(chunk, world);
         this.data = data;
     }
 
-    public CompoundNBT getData()
+    public CompoundTag getData()
     {
         return data;
     }
@@ -72,15 +67,15 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Load extends ChunkDataEvent
     {
-        private ChunkStatus.Type status;
+        private ChunkStatus.ChunkType status;
 
-        public Load(IChunk chunk, CompoundNBT data, ChunkStatus.Type status)
+        public Load(ChunkAccess chunk, CompoundTag data, ChunkStatus.ChunkType status)
         {
             super(chunk, data);
             this.status = status;
         }
 
-        public ChunkStatus.Type getStatus()
+        public ChunkStatus.ChunkType getStatus()
         {
             return this.status;
         }
@@ -99,7 +94,7 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Save extends ChunkDataEvent
     {
-        public Save(IChunk chunk, IWorld world, CompoundNBT data)
+        public Save(ChunkAccess chunk, LevelAccessor world, CompoundTag data)
         {
             super(chunk, world, data);
         }

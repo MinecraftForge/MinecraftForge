@@ -1,0 +1,213 @@
+--- a/net/minecraft/core/Registry.java
++++ b/net/minecraft/core/Registry.java
+@@ -105,6 +_,10 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++/*
++ * Attention Modders: This SHOULD NOT be used, you should use ForgeRegistries instead. As it has a cleaner modder facing API.
++ * We will be wrapping all of these in our API as necessary for syncing and management.
++ */
+ public abstract class Registry<T> implements Codec<T>, Keyable, IdMap<T> {
+    protected static final Logger f_122894_ = LogManager.getLogger();
+    private static final Map<ResourceLocation, Supplier<?>> f_122834_ = Maps.newLinkedHashMap();
+@@ -152,43 +_,43 @@
+    public static final DefaultedRegistry<GameEvent> f_175412_ = m_122995_(f_175423_, "step", () -> {
+       return GameEvent.f_157785_;
+    });
+-   public static final Registry<SoundEvent> f_122821_ = m_122999_(f_122898_, () -> {
++   @Deprecated public static final Registry<SoundEvent> f_122821_ = forge(f_122898_, () -> {
+       return SoundEvents.f_12019_;
+    });
+-   public static final DefaultedRegistry<Fluid> f_122822_ = m_122995_(f_122899_, "empty", () -> {
++   @Deprecated public static final DefaultedRegistry<Fluid> f_122822_ = forge(f_122899_, "empty", () -> {
+       return Fluids.f_76191_;
+    });
+-   public static final Registry<MobEffect> f_122823_ = m_122999_(f_122900_, () -> {
++   @Deprecated public static final Registry<MobEffect> f_122823_ = forge(f_122900_, () -> {
+       return MobEffects.f_19621_;
+    });
+-   public static final DefaultedRegistry<Block> f_122824_ = m_122995_(f_122901_, "air", () -> {
++   @Deprecated public static final DefaultedRegistry<Block> f_122824_ = forge(f_122901_, "air", () -> {
+       return Blocks.f_50016_;
+    });
+-   public static final Registry<Enchantment> f_122825_ = m_122999_(f_122902_, () -> {
++   @Deprecated public static final Registry<Enchantment> f_122825_ = forge(f_122902_, () -> {
+       return Enchantments.f_44987_;
+    });
+-   public static final DefaultedRegistry<EntityType<?>> f_122826_ = m_122995_(f_122903_, "pig", () -> {
++   @Deprecated public static final DefaultedRegistry<EntityType<?>> f_122826_ = forge(f_122903_, "pig", () -> {
+       return EntityType.f_20510_;
+    });
+-   public static final DefaultedRegistry<Item> f_122827_ = m_122995_(f_122904_, "air", () -> {
++   @Deprecated public static final DefaultedRegistry<Item> f_122827_ = forge(f_122904_, "air", () -> {
+       return Items.f_41852_;
+    });
+-   public static final DefaultedRegistry<Potion> f_122828_ = m_122995_(f_122905_, "empty", () -> {
++   @Deprecated public static final DefaultedRegistry<Potion> f_122828_ = forge(f_122905_, "empty", () -> {
+       return Potions.f_43598_;
+    });
+-   public static final Registry<ParticleType<?>> f_122829_ = m_122999_(f_122906_, () -> {
++   @Deprecated public static final Registry<ParticleType<?>> f_122829_ = forge(f_122906_, () -> {
+       return ParticleTypes.f_123794_;
+    });
+-   public static final Registry<BlockEntityType<?>> f_122830_ = m_122999_(f_122907_, () -> {
++   @Deprecated public static final Registry<BlockEntityType<?>> f_122830_ = forge(f_122907_, () -> {
+       return BlockEntityType.f_58917_;
+    });
+-   public static final DefaultedRegistry<Motive> f_122831_ = m_122995_(f_122908_, "kebab", () -> {
++   @Deprecated public static final DefaultedRegistry<Motive> f_122831_ = forge(f_122908_, "kebab", () -> {
+       return Motive.f_31866_;
+    });
+    public static final Registry<ResourceLocation> f_122832_ = m_122999_(f_122909_, () -> {
+       return Stats.f_12926_;
+    });
+-   public static final DefaultedRegistry<ChunkStatus> f_122833_ = m_122995_(f_122910_, "empty", () -> {
++   @Deprecated public static final DefaultedRegistry<ChunkStatus> f_122833_ = forge(f_122910_, "empty", () -> {
+       return ChunkStatus.f_62314_;
+    });
+    public static final Registry<RuleTestType<?>> f_122861_ = m_122999_(f_122911_, () -> {
+@@ -197,43 +_,43 @@
+    public static final Registry<PosRuleTestType<?>> f_122862_ = m_122999_(f_122912_, () -> {
+       return PosRuleTestType.f_74205_;
+    });
+-   public static final Registry<MenuType<?>> f_122863_ = m_122999_(f_122913_, () -> {
++   @Deprecated public static final Registry<MenuType<?>> f_122863_ = forge(f_122913_, () -> {
+       return MenuType.f_39964_;
+    });
+    public static final Registry<RecipeType<?>> f_122864_ = m_122999_(f_122914_, () -> {
+       return RecipeType.f_44107_;
+    });
+-   public static final Registry<RecipeSerializer<?>> f_122865_ = m_122999_(f_122915_, () -> {
++   @Deprecated public static final Registry<RecipeSerializer<?>> f_122865_ = forge(f_122915_, () -> {
+       return RecipeSerializer.f_44077_;
+    });
+-   public static final Registry<Attribute> f_122866_ = m_122999_(f_122916_, () -> {
++   @Deprecated public static final Registry<Attribute> f_122866_ = forge(f_122916_, () -> {
+       return Attributes.f_22286_;
+    });
+    public static final Registry<PositionSourceType<?>> f_175420_ = m_122999_(f_175408_, () -> {
+       return PositionSourceType.f_157871_;
+    });
+-   public static final Registry<StatType<?>> f_122867_ = m_122999_(f_122917_, () -> {
++   @Deprecated public static final Registry<StatType<?>> f_122867_ = forge(f_122917_, () -> {
+       return Stats.f_12982_;
+    });
+    public static final DefaultedRegistry<VillagerType> f_122868_ = m_122995_(f_122808_, "plains", () -> {
+       return VillagerType.f_35821_;
+    });
+-   public static final DefaultedRegistry<VillagerProfession> f_122869_ = m_122995_(f_122809_, "none", () -> {
++   @Deprecated public static final DefaultedRegistry<VillagerProfession> f_122869_ = forge(f_122809_, "none", () -> {
+       return VillagerProfession.f_35585_;
+    });
+-   public static final DefaultedRegistry<PoiType> f_122870_ = m_122995_(f_122810_, "unemployed", () -> {
++   @Deprecated public static final DefaultedRegistry<PoiType> f_122870_ = forge(f_122810_, "unemployed", () -> {
+       return PoiType.f_27331_;
+    });
+-   public static final DefaultedRegistry<MemoryModuleType<?>> f_122871_ = m_122995_(f_122811_, "dummy", () -> {
++   @Deprecated public static final DefaultedRegistry<MemoryModuleType<?>> f_122871_ = forge(f_122811_, "dummy", () -> {
+       return MemoryModuleType.f_26349_;
+    });
+-   public static final DefaultedRegistry<SensorType<?>> f_122872_ = m_122995_(f_122812_, "dummy", () -> {
++   @Deprecated public static final DefaultedRegistry<SensorType<?>> f_122872_ = forge(f_122812_, "dummy", () -> {
+       return SensorType.f_26809_;
+    });
+-   public static final Registry<Schedule> f_122873_ = m_122999_(f_122813_, () -> {
++   @Deprecated public static final Registry<Schedule> f_122873_ = forge(f_122813_, () -> {
+       return Schedule.f_38012_;
+    });
+-   public static final Registry<Activity> f_122874_ = m_122999_(f_122814_, () -> {
++   @Deprecated public static final Registry<Activity> f_122874_ = forge(f_122814_, () -> {
+       return Activity.f_37979_;
+    });
+    public static final Registry<LootPoolEntryType> f_122875_ = m_122999_(f_122815_, () -> {
+@@ -275,19 +_,19 @@
+    public static final ResourceKey<Registry<StructureTemplatePool>> f_122884_ = m_122978_("worldgen/template_pool");
+    public static final ResourceKey<Registry<Biome>> f_122885_ = m_122978_("worldgen/biome");
+    public static final ResourceKey<Registry<SurfaceBuilder<?>>> f_122886_ = m_122978_("worldgen/surface_builder");
+-   public static final Registry<SurfaceBuilder<?>> f_122835_ = m_122999_(f_122886_, () -> {
++   @Deprecated public static final Registry<SurfaceBuilder<?>> f_122835_ = forge(f_122886_, () -> {
+       return SurfaceBuilder.f_75214_;
+    });
+    public static final ResourceKey<Registry<WorldCarver<?>>> f_122836_ = m_122978_("worldgen/carver");
+-   public static final Registry<WorldCarver<?>> f_122837_ = m_122999_(f_122836_, () -> {
++   @Deprecated public static final Registry<WorldCarver<?>> f_122837_ = forge(f_122836_, () -> {
+       return WorldCarver.f_64974_;
+    });
+    public static final ResourceKey<Registry<Feature<?>>> f_122838_ = m_122978_("worldgen/feature");
+-   public static final Registry<Feature<?>> f_122839_ = m_122999_(f_122838_, () -> {
++   @Deprecated public static final Registry<Feature<?>> f_122839_ = forge(f_122838_, () -> {
+       return Feature.f_65731_;
+    });
+    public static final ResourceKey<Registry<StructureFeature<?>>> f_122840_ = m_122978_("worldgen/structure_feature");
+-   public static final Registry<StructureFeature<?>> f_122841_ = m_122999_(f_122840_, () -> {
++   @Deprecated public static final Registry<StructureFeature<?>> f_122841_ = forge(f_122840_, () -> {
+       return StructureFeature.f_67014_;
+    });
+    public static final ResourceKey<Registry<StructurePieceType>> f_122842_ = m_122978_("worldgen/structure_piece");
+@@ -295,7 +_,7 @@
+       return StructurePieceType.f_67138_;
+    });
+    public static final ResourceKey<Registry<FeatureDecorator<?>>> f_122844_ = m_122978_("worldgen/decorator");
+-   public static final Registry<FeatureDecorator<?>> f_122845_ = m_122999_(f_122844_, () -> {
++   @Deprecated public static final Registry<FeatureDecorator<?>> f_122845_ = forge(f_122844_, () -> {
+       return FeatureDecorator.f_70681_;
+    });
+    public static final ResourceKey<Registry<BlockStateProviderType<?>>> f_122846_ = m_122978_("worldgen/block_state_provider_type");
+@@ -308,19 +_,19 @@
+    public static final ResourceKey<Registry<Codec<? extends ChunkGenerator>>> f_122853_ = m_122978_("worldgen/chunk_generator");
+    public static final ResourceKey<Registry<StructureProcessorType<?>>> f_122854_ = m_122978_("worldgen/structure_processor");
+    public static final ResourceKey<Registry<StructurePoolElementType<?>>> f_122855_ = m_122978_("worldgen/structure_pool_element");
+-   public static final Registry<BlockStateProviderType<?>> f_122856_ = m_122999_(f_122846_, () -> {
++   @Deprecated public static final Registry<BlockStateProviderType<?>> f_122856_ = forge(f_122846_, () -> {
+       return BlockStateProviderType.f_68752_;
+    });
+-   public static final Registry<BlockPlacerType<?>> f_122857_ = m_122999_(f_122847_, () -> {
++   @Deprecated public static final Registry<BlockPlacerType<?>> f_122857_ = forge(f_122847_, () -> {
+       return BlockPlacerType.f_67487_;
+    });
+-   public static final Registry<FoliagePlacerType<?>> f_122858_ = m_122999_(f_122848_, () -> {
++   @Deprecated public static final Registry<FoliagePlacerType<?>> f_122858_ = forge(f_122848_, () -> {
+       return FoliagePlacerType.f_68591_;
+    });
+    public static final Registry<TrunkPlacerType<?>> f_122859_ = m_122999_(f_122849_, () -> {
+       return TrunkPlacerType.f_70315_;
+    });
+-   public static final Registry<TreeDecoratorType<?>> f_122860_ = m_122999_(f_122850_, () -> {
++   @Deprecated public static final Registry<TreeDecoratorType<?>> f_122860_ = forge(f_122850_, () -> {
+       return TreeDecoratorType.f_70043_;
+    });
+    public static final Registry<FeatureSizeType<?>> f_122888_ = m_122999_(f_122851_, () -> {
+@@ -363,16 +_,32 @@
+       return m_122981_(p_123000_, Lifecycle.experimental(), p_123001_);
+    }
+ 
++   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> Registry<T> forge(ResourceKey<? extends Registry<T>> key, Supplier<T> def) {
++      return forge(key, Lifecycle.experimental(), def);
++   }
++
+    private static <T> DefaultedRegistry<T> m_122995_(ResourceKey<? extends Registry<T>> p_122996_, String p_122997_, Supplier<T> p_122998_) {
+       return m_122990_(p_122996_, p_122997_, Lifecycle.experimental(), p_122998_);
+    }
+ 
++   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> DefaultedRegistry<T> forge(ResourceKey<? extends Registry<T>> key, String defKey, Supplier<T> def) {
++      return forge(key, defKey, Lifecycle.experimental(), def);
++   }
++
+    private static <T> Registry<T> m_122981_(ResourceKey<? extends Registry<T>> p_122982_, Lifecycle p_122983_, Supplier<T> p_122984_) {
+       return m_122985_(p_122982_, new MappedRegistry<>(p_122982_, p_122983_), p_122984_, p_122983_);
+    }
+ 
++   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> Registry<T> forge(ResourceKey<? extends Registry<T>> key, Lifecycle cycle, Supplier<T> def) {
++      return m_122985_(key, net.minecraftforge.registries.GameData.getWrapper(key, cycle), def, cycle);
++   }
++
+    private static <T> DefaultedRegistry<T> m_122990_(ResourceKey<? extends Registry<T>> p_122991_, String p_122992_, Lifecycle p_122993_, Supplier<T> p_122994_) {
+       return m_122985_(p_122991_, new DefaultedRegistry<>(p_122992_, p_122991_, p_122993_), p_122994_, p_122993_);
++   }
++
++   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> DefaultedRegistry<T> forge(ResourceKey<? extends Registry<T>> key, String defKey, Lifecycle cycle, Supplier<T> def) {
++      return m_122985_(key, net.minecraftforge.registries.GameData.getWrapper(key, cycle, defKey), def, cycle);
+    }
+ 
+    private static <T, R extends WritableRegistry<T>> R m_122985_(ResourceKey<? extends Registry<T>> p_122986_, R p_122987_, Supplier<T> p_122988_, Lifecycle p_122989_) {

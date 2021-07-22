@@ -19,13 +19,12 @@
 
 package net.minecraftforge.fluids;
 
-import net.minecraft.fluid.Fluid;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Implement this interface on Block classes which represent world-placeable Fluids.
@@ -52,7 +51,7 @@ public interface IFluidBlock
      * @param action     If SIMULATE, the placement will only be simulated
      * @return the amount of fluid extracted from the provided stack to achieve some fluid level
      */
-    int place(World world, BlockPos pos, @Nonnull FluidStack fluidStack, IFluidHandler.FluidAction action);
+    int place(Level world, BlockPos pos, @Nonnull FluidStack fluidStack, IFluidHandler.FluidAction action);
 
     /**
      * Attempt to drain the block. This method should be called by devices such as pumps.
@@ -64,7 +63,7 @@ public interface IFluidBlock
      * @return
      */
     @Nonnull
-    FluidStack drain(World world, BlockPos pos, IFluidHandler.FluidAction action);
+    FluidStack drain(Level world, BlockPos pos, IFluidHandler.FluidAction action);
 
     /**
      * Check to see if a block can be drained. This method should be called by devices such as
@@ -72,7 +71,7 @@ public interface IFluidBlock
      *
      * @return
      */
-    boolean canDrain(World world, BlockPos pos);
+    boolean canDrain(Level world, BlockPos pos);
 
     /**
      * Returns the amount of a single block is filled. Value between 0 and 1.
@@ -83,5 +82,5 @@ public interface IFluidBlock
      *
      * @return
      */
-    float getFilledPercentage(World world, BlockPos pos);
+    float getFilledPercentage(Level world, BlockPos pos);
 }

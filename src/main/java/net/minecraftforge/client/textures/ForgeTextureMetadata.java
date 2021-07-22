@@ -22,10 +22,10 @@ package net.minecraftforge.client.textures;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.data.IMetadataSectionSerializer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.util.GsonHelper;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import com.google.gson.JsonObject;
@@ -40,9 +40,9 @@ public final class ForgeTextureMetadata
 {
 
     public static final ForgeTextureMetadata EMPTY = new ForgeTextureMetadata(null);
-    public static final IMetadataSectionSerializer<ForgeTextureMetadata> SERIALIZER = new Serializer();
+    public static final MetadataSectionSerializer<ForgeTextureMetadata> SERIALIZER = new Serializer();
 
-    public static ForgeTextureMetadata forResource(IResource resource)
+    public static ForgeTextureMetadata forResource(Resource resource)
     {
         ForgeTextureMetadata metadata = resource.getMetadata(SERIALIZER);
         return metadata == null ? EMPTY : metadata;
@@ -62,7 +62,7 @@ public final class ForgeTextureMetadata
         return loader;
     }
 
-    private static final class Serializer implements IMetadataSectionSerializer<ForgeTextureMetadata>
+    private static final class Serializer implements MetadataSectionSerializer<ForgeTextureMetadata>
     {
 
         @Override
@@ -80,7 +80,7 @@ public final class ForgeTextureMetadata
             ITextureAtlasSpriteLoader loader;
             if (json.has("loader"))
             {
-                ResourceLocation loaderName = new ResourceLocation(JSONUtils.getAsString(json, "loader"));
+                ResourceLocation loaderName = new ResourceLocation(GsonHelper.getAsString(json, "loader"));
                 loader = MinecraftForgeClient.getTextureAtlasSpriteLoader(loaderName);
                 if (loader == null)
                 {

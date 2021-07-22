@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/level/block/StairBlock.java
++++ b/net/minecraft/world/level/block/StairBlock.java
+@@ -81,11 +_,21 @@
+       return voxelshape;
+    }
+ 
++   @Deprecated // Forge: Use the other constructor that takes a Supplier
+    public StairBlock(BlockState p_56862_, BlockBehaviour.Properties p_56863_) {
+       super(p_56863_);
+       this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_56841_, Direction.NORTH).m_61124_(f_56842_, Half.BOTTOM).m_61124_(f_56843_, StairsShape.STRAIGHT).m_61124_(f_56844_, Boolean.valueOf(false)));
+       this.f_56858_ = p_56862_.m_60734_();
+       this.f_56859_ = p_56862_;
++      this.stateSupplier = () -> p_56862_;
++   }
++
++   public StairBlock(java.util.function.Supplier<BlockState> state, BlockBehaviour.Properties properties) {
++      super(properties);
++      this.m_49959_(this.f_49792_.m_61090_().m_61124_(f_56841_, Direction.NORTH).m_61124_(f_56842_, Half.BOTTOM).m_61124_(f_56843_, StairsShape.STRAIGHT).m_61124_(f_56844_, Boolean.valueOf(false)));
++      this.f_56858_ = Blocks.f_50016_; // These are unused, fields are redirected
++      this.f_56859_ = Blocks.f_50016_.m_49966_();
++      this.stateSupplier = state;
+    }
+ 
+    public boolean m_7923_(BlockState p_56967_) {
+@@ -262,4 +_,14 @@
+    public boolean m_7357_(BlockState p_56891_, BlockGetter p_56892_, BlockPos p_56893_, PathComputationType p_56894_) {
+       return false;
+    }
++
++   // Forge Start
++   private final java.util.function.Supplier<BlockState> stateSupplier;
++   private Block getModelBlock() {
++       return getModelState().m_60734_();
++   }
++   private BlockState getModelState() {
++       return stateSupplier.get();
++   }
++   // Forge end
+ }

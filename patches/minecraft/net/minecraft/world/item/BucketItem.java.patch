@@ -1,0 +1,76 @@
+--- a/net/minecraft/world/item/BucketItem.java
++++ b/net/minecraft/world/item/BucketItem.java
+@@ -32,14 +_,28 @@
+ public class BucketItem extends Item implements DispensibleContainerItem {
+    private final Fluid f_40687_;
+ 
++   // Forge: Use the other constructor that takes a Supplier
++   @Deprecated
+    public BucketItem(Fluid p_40689_, Item.Properties p_40690_) {
+       super(p_40690_);
+       this.f_40687_ = p_40689_;
++      this.fluidSupplier = p_40689_.delegate;
++   }
++
++   /**
++    * @param supplier A fluid supplier such as {@link net.minecraftforge.fmllegacy.RegistryObject<Fluid>}
++    */
++   public BucketItem(java.util.function.Supplier<? extends Fluid> supplier, Item.Properties builder) {
++      super(builder);
++      this.f_40687_ = null;
++      this.fluidSupplier = supplier;
+    }
+ 
+    public InteractionResultHolder<ItemStack> m_7203_(Level p_40703_, Player p_40704_, InteractionHand p_40705_) {
+       ItemStack itemstack = p_40704_.m_21120_(p_40705_);
+       BlockHitResult blockhitresult = m_41435_(p_40703_, p_40704_, this.f_40687_ == Fluids.f_76191_ ? ClipContext.Fluid.SOURCE_ONLY : ClipContext.Fluid.NONE);
++      InteractionResultHolder<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(p_40704_, p_40703_, itemstack, blockhitresult);
++      if (ret != null) return ret;
+       if (blockhitresult.m_6662_() == HitResult.Type.MISS) {
+          return InteractionResultHolder.m_19098_(itemstack);
+       } else if (blockhitresult.m_6662_() != HitResult.Type.BLOCK) {
+@@ -72,7 +_,7 @@
+                return InteractionResultHolder.m_19100_(itemstack);
+             } else {
+                BlockState blockstate = p_40703_.m_8055_(blockpos);
+-               BlockPos blockpos2 = blockstate.m_60734_() instanceof LiquidBlockContainer && this.f_40687_ == Fluids.f_76193_ ? blockpos : blockpos1;
++               BlockPos blockpos2 = canBlockContainFluid(p_40703_, blockpos, blockstate) ? blockpos : blockpos1;
+                if (this.m_142073_(p_40704_, p_40703_, blockpos2, blockhitresult)) {
+                   this.m_142131_(p_40704_, p_40703_, itemstack, blockpos2);
+                   if (p_40704_ instanceof ServerPlayer) {
+@@ -120,7 +_,7 @@
+             }
+ 
+             return true;
+-         } else if (block instanceof LiquidBlockContainer && this.f_40687_ == Fluids.f_76193_) {
++         } else if (block instanceof LiquidBlockContainer && ((LiquidBlockContainer)block).m_6044_(p_150717_,p_150718_,blockstate,f_40687_)) {
+             ((LiquidBlockContainer)block).m_7361_(p_150717_, p_150718_, blockstate, ((FlowingFluid)this.f_40687_).m_76068_(false));
+             this.m_7718_(p_150716_, p_150717_, p_150718_);
+             return true;
+@@ -140,8 +_,25 @@
+    }
+ 
+    protected void m_7718_(@Nullable Player p_40696_, LevelAccessor p_40697_, BlockPos p_40698_) {
+-      SoundEvent soundevent = this.f_40687_.m_76108_(FluidTags.f_13132_) ? SoundEvents.f_11780_ : SoundEvents.f_11778_;
++      SoundEvent soundevent = this.f_40687_.getAttributes().getEmptySound();
++      if(soundevent == null) soundevent = this.f_40687_.m_76108_(FluidTags.f_13132_) ? SoundEvents.f_11780_ : SoundEvents.f_11778_;
+       p_40697_.m_5594_(p_40696_, p_40698_, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
+       p_40697_.m_142346_(p_40696_, GameEvent.f_157769_, p_40698_);
++   }
++
++   @Override
++   public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.CompoundTag nbt) {
++      if (this.getClass() == BucketItem.class)
++         return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
++      else
++         return super.initCapabilities(stack, nbt);
++   }
++
++   private final java.util.function.Supplier<? extends Fluid> fluidSupplier;
++   public Fluid getFluid() { return fluidSupplier.get(); }
++
++   private boolean canBlockContainFluid(Level worldIn, BlockPos posIn, BlockState blockstate)
++   {
++      return blockstate.m_60734_() instanceof LiquidBlockContainer && ((LiquidBlockContainer)blockstate.m_60734_()).m_6044_(worldIn, posIn, blockstate, this.f_40687_);
+    }
+ }

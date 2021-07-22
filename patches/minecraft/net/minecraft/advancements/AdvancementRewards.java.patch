@@ -1,11 +1,11 @@
 --- a/net/minecraft/advancements/AdvancementRewards.java
 +++ b/net/minecraft/advancements/AdvancementRewards.java
-@@ -39,7 +_,7 @@
+@@ -43,7 +_,7 @@
  
-    public void func_192113_a(ServerPlayerEntity p_192113_1_) {
-       p_192113_1_.func_195068_e(this.field_192115_b);
--      LootContext lootcontext = (new LootContext.Builder(p_192113_1_.func_71121_q())).func_216015_a(LootParameters.field_216281_a, p_192113_1_).func_216015_a(LootParameters.field_237457_g_, p_192113_1_.func_213303_ch()).func_216023_a(p_192113_1_.func_70681_au()).func_216022_a(LootParameterSets.field_216265_f);
-+      LootContext lootcontext = (new LootContext.Builder(p_192113_1_.func_71121_q())).func_216015_a(LootParameters.field_216281_a, p_192113_1_).func_216015_a(LootParameters.field_237457_g_, p_192113_1_.func_213303_ch()).func_216023_a(p_192113_1_.func_70681_au()).func_186469_a(p_192113_1_.func_184817_da()).func_216022_a(LootParameterSets.field_216265_f); // FORGE: luck to LootContext
+    public void m_9989_(ServerPlayer p_9990_) {
+       p_9990_.m_6756_(this.f_9979_);
+-      LootContext lootcontext = (new LootContext.Builder(p_9990_.m_9236_())).m_78972_(LootContextParams.f_81455_, p_9990_).m_78972_(LootContextParams.f_81460_, p_9990_.m_20182_()).m_78977_(p_9990_.m_21187_()).m_78975_(LootContextParamSets.f_81418_);
++      LootContext lootcontext = (new LootContext.Builder(p_9990_.m_9236_())).m_78972_(LootContextParams.f_81455_, p_9990_).m_78972_(LootContextParams.f_81460_, p_9990_.m_20182_()).m_78977_(p_9990_.m_21187_()).m_78963_(p_9990_.m_36336_()).m_78975_(LootContextParamSets.f_81418_); // FORGE: luck to LootContext
        boolean flag = false;
  
-       for(ResourceLocation resourcelocation : this.field_192116_c) {
+       for(ResourceLocation resourcelocation : this.f_9980_) {

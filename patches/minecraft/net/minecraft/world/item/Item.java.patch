@@ -1,0 +1,176 @@
+--- a/net/minecraft/world/item/Item.java
++++ b/net/minecraft/world/item/Item.java
+@@ -46,9 +_,9 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public class Item implements ItemLike {
++public class Item extends net.minecraftforge.registries.ForgeRegistryEntry<Item> implements ItemLike, net.minecraftforge.common.extensions.IForgeItem {
+    private static final Logger f_150883_ = LogManager.getLogger();
+-   public static final Map<Block, Item> f_41373_ = Maps.newHashMap();
++   public static final Map<Block, Item> f_41373_ = net.minecraftforge.registries.GameData.getBlockItemMap();
+    protected static final UUID f_41374_ = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
+    protected static final UUID f_41375_ = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
+    public static final int f_150884_ = 64;
+@@ -92,7 +_,9 @@
+             f_150883_.error("Item classes should end with Item and {} doesn't.", (Object)s);
+          }
+       }
+-
++      this.canRepair = p_41383_.canRepair;
++      this.toolClasses.putAll(p_41383_.toolClasses);
++      initClient();
+    }
+ 
+    public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
+@@ -138,10 +_,12 @@
+       return this.m_41472_() ? p_41411_.m_5584_(p_41410_, p_41409_) : p_41409_;
+    }
+ 
++   @Deprecated // Use ItemStack sensitive version.
+    public final int m_41459_() {
+       return this.f_41370_;
+    }
+ 
++   @Deprecated // Use ItemStack sensitive version.
+    public final int m_41462_() {
+       return this.f_41371_;
+    }
+@@ -216,10 +_,12 @@
+    }
+ 
+    @Nullable
++   @Deprecated // Use ItemStack sensitive version.
+    public final Item m_41469_() {
+       return this.f_41378_;
+    }
+ 
++   @Deprecated // Use ItemStack sensitive version.
+    public boolean m_41470_() {
+       return this.f_41378_ != null;
+    }
+@@ -282,7 +_,7 @@
+    }
+ 
+    public boolean m_8120_(ItemStack p_41456_) {
+-      return this.m_41459_() == 1 && this.m_41465_();
++      return this.getItemStackLimit(p_41456_) == 1 && this.isDamageable(p_41456_);
+    }
+ 
+    protected static BlockHitResult m_41435_(Level p_41436_, Player p_41437_, ClipContext.Fluid p_41438_) {
+@@ -295,8 +_,8 @@
+       float f5 = Mth.m_14031_(-f * ((float)Math.PI / 180F));
+       float f6 = f3 * f4;
+       float f7 = f2 * f4;
+-      double d0 = 5.0D;
+-      Vec3 vec31 = vec3.m_82520_((double)f6 * 5.0D, (double)f5 * 5.0D, (double)f7 * 5.0D);
++      double d0 = p_41437_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_();;
++      Vec3 vec31 = vec3.m_82520_((double)f6 * d0, (double)f5 * d0, (double)f7 * d0);
+       return p_41436_.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
+    }
+ 
+@@ -312,6 +_,7 @@
+    }
+ 
+    protected boolean m_41389_(CreativeModeTab p_41390_) {
++      if (getCreativeTabs().stream().anyMatch(tab -> tab == p_41390_)) return true;
+       CreativeModeTab creativemodetab = this.m_41471_();
+       return creativemodetab != null && (p_41390_ == CreativeModeTab.f_40754_ || p_41390_ == creativemodetab);
+    }
+@@ -325,12 +_,37 @@
+       return false;
+    }
+ 
++   @Deprecated // Use ItemStack sensitive version.
+    public Multimap<Attribute, AttributeModifier> m_7167_(EquipmentSlot p_41388_) {
+       return ImmutableMultimap.of();
+    }
+ 
++   private final java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
++   private final net.minecraftforge.common.util.ReverseTagWrapper<Item> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.ItemTags::m_13193_);
++   protected final boolean canRepair;
++
++   @Override
++   public boolean isRepairable(ItemStack stack) {
++      return canRepair && isDamageable(stack);
++   }
++
++   @Override
++   public java.util.Set<net.minecraftforge.common.ToolType> getToolTypes(ItemStack stack) {
++      return toolClasses.keySet();
++   }
++
++   @Override
++   public int getHarvestLevel(ItemStack stack, net.minecraftforge.common.ToolType tool, @Nullable Player player, @Nullable BlockState blockState) {
++      return toolClasses.getOrDefault(tool, -1);
++   }
++
++   @Override
++   public java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
++      return reverseTags.getTagNames();
++   }
++
+    public boolean m_41463_(ItemStack p_41464_) {
+-      return false;
++      return p_41464_.m_41720_() == Items.f_42717_;
+    }
+ 
+    public ItemStack m_7968_() {
+@@ -371,6 +_,31 @@
+       return true;
+    }
+ 
++   // FORGE START
++   private Object renderProperties;
++
++   /*
++      DO NOT CALL, IT WILL DISAPPEAR IN THE FUTURE
++      Call RenderProperties.get instead
++    */
++   public Object getRenderPropertiesInternal() {
++      return renderProperties;
++   }
++
++   private void initClient() {
++      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) {
++         initializeClient(properties -> {
++            if (properties == this)
++               throw new IllegalStateException("Don't extend IItemRenderProperties in your item, use an anonymous class instead.");
++            this.renderProperties = properties;
++         });
++      }
++   }
++
++   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer) {
++   }
++   // END FORGE
++
+    public static class Properties {
+       int f_41478_ = 64;
+       int f_41479_;
+@@ -379,6 +_,8 @@
+       Rarity f_41482_ = Rarity.COMMON;
+       FoodProperties f_41483_;
+       boolean f_41484_;
++      private boolean canRepair = true;
++      private java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
+ 
+       public Item.Properties m_41489_(FoodProperties p_41490_) {
+          this.f_41483_ = p_41490_;
+@@ -421,6 +_,16 @@
+ 
+       public Item.Properties m_41486_() {
+          this.f_41484_ = true;
++         return this;
++      }
++
++      public Item.Properties setNoRepair() {
++         canRepair = false;
++         return this;
++      }
++
++      public Item.Properties addToolType(net.minecraftforge.common.ToolType type, int level) {
++         toolClasses.put(type, level);
+          return this;
+       }
+    }

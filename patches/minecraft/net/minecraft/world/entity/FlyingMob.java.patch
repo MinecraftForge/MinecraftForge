@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/entity/FlyingMob.java
++++ b/net/minecraft/world/entity/FlyingMob.java
+@@ -28,15 +_,16 @@
+          this.m_6478_(MoverType.SELF, this.m_20184_());
+          this.m_20256_(this.m_20184_().m_82490_(0.5D));
+       } else {
++         BlockPos ground = new BlockPos(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_());
+          float f = 0.91F;
+          if (this.f_19861_) {
+-            f = this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_())).m_60734_().m_49958_() * 0.91F;
++            f = this.f_19853_.m_8055_(ground).getFriction(this.f_19853_, ground, this) * 0.91F;
+          }
+ 
+          float f1 = 0.16277137F / (f * f * f);
+          f = 0.91F;
+          if (this.f_19861_) {
+-            f = this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20186_() - 1.0D, this.m_20189_())).m_60734_().m_49958_() * 0.91F;
++            f = this.f_19853_.m_8055_(ground).getFriction(this.f_19853_, ground, this) * 0.91F;
+          }
+ 
+          this.m_19920_(this.f_19861_ ? 0.1F * f1 : 0.02F, p_20818_);

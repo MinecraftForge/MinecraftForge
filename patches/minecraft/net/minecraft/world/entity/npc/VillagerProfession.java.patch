@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/npc/VillagerProfession.java
++++ b/net/minecraft/world/entity/npc/VillagerProfession.java
+@@ -12,7 +_,7 @@
+ import net.minecraft.world.level.block.Block;
+ import net.minecraft.world.level.block.Blocks;
+ 
+-public class VillagerProfession {
++public class VillagerProfession extends net.minecraftforge.registries.ForgeRegistryEntry<VillagerProfession> {
+    public static final VillagerProfession f_35585_ = m_35612_("none", PoiType.f_27331_, (SoundEvent)null);
+    public static final VillagerProfession f_35586_ = m_35612_("armorer", PoiType.f_27332_, SoundEvents.f_12510_);
+    public static final VillagerProfession f_35587_ = m_35612_("butcher", PoiType.f_27333_, SoundEvents.f_12564_);

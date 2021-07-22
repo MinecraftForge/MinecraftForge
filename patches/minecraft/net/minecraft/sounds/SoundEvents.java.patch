@@ -1,0 +1,10 @@
+--- a/net/minecraft/sounds/SoundEvents.java
++++ b/net/minecraft/sounds/SoundEvents.java
+@@ -3,6 +_,7 @@
+ import net.minecraft.core.Registry;
+ import net.minecraft.resources.ResourceLocation;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class SoundEvents {
+    public static final SoundEvent f_11689_ = m_12656_("ambient.cave");
+    public static final SoundEvent f_11742_ = m_12656_("ambient.basalt_deltas.additions");

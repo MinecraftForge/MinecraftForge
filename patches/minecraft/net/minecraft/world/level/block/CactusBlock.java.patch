@@ -1,0 +1,62 @@
+--- a/net/minecraft/world/level/block/CactusBlock.java
++++ b/net/minecraft/world/level/block/CactusBlock.java
+@@ -21,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public class CactusBlock extends Block {
++public class CactusBlock extends Block implements net.minecraftforge.common.IPlantable {
+    public static final IntegerProperty f_51131_ = BlockStateProperties.f_61410_;
+    public static final int f_152740_ = 15;
+    protected static final int f_152741_ = 1;
+@@ -34,6 +_,7 @@
+    }
+ 
+    public void m_7458_(BlockState p_51138_, ServerLevel p_51139_, BlockPos p_51140_, Random p_51141_) {
++      if (!p_51139_.isAreaLoaded(p_51140_, 1)) return; // Forge: prevent growing cactus from loading unloaded chunks with block update
+       if (!p_51138_.m_60710_(p_51139_, p_51140_)) {
+          p_51139_.m_46961_(p_51140_, true);
+       }
+@@ -49,6 +_,7 @@
+ 
+          if (i < 3) {
+             int j = p_51166_.m_61143_(f_51131_);
++            if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_51167_, blockpos, p_51166_, true)) {
+             if (j == 15) {
+                p_51167_.m_46597_(blockpos, this.m_49966_());
+                BlockState blockstate = p_51166_.m_61124_(f_51131_, Integer.valueOf(0));
+@@ -57,7 +_,8 @@
+             } else {
+                p_51167_.m_7731_(p_51168_, p_51166_.m_61124_(f_51131_, Integer.valueOf(j + 1)), 4);
+             }
+-
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_51167_, p_51168_, p_51166_);
++            }
+          }
+       }
+    }
+@@ -88,7 +_,7 @@
+       }
+ 
+       BlockState blockstate1 = p_51154_.m_8055_(p_51155_.m_7495_());
+-      return (blockstate1.m_60713_(Blocks.f_50128_) || blockstate1.m_60713_(Blocks.f_49992_) || blockstate1.m_60713_(Blocks.f_49993_)) && !p_51154_.m_8055_(p_51155_.m_7494_()).m_60767_().m_76332_();
++      return blockstate1.canSustainPlant(p_51154_, p_51155_, Direction.UP, this) && !p_51154_.m_8055_(p_51155_.m_7494_()).m_60767_().m_76332_();
+    }
+ 
+    public void m_7892_(BlockState p_51148_, Level p_51149_, BlockPos p_51150_, Entity p_51151_) {
+@@ -101,5 +_,15 @@
+ 
+    public boolean m_7357_(BlockState p_51143_, BlockGetter p_51144_, BlockPos p_51145_, PathComputationType p_51146_) {
+       return false;
++   }
++
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.DESERT;
++   }
++
++   @Override
++   public BlockState getPlant(BlockGetter world, BlockPos pos) {
++      return m_49966_();
+    }
+ }

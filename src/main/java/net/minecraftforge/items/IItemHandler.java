@@ -19,14 +19,9 @@
 
 package net.minecraftforge.items;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraft.world.item.ItemStack;
 import javax.annotation.Nonnull;
 
-
-import javax.annotation.Nonnull;
 
 public interface IItemHandler
 {

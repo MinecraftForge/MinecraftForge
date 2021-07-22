@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/entity/LightningBolt.java
++++ b/net/minecraft/world/entity/LightningBolt.java
+@@ -39,6 +_,7 @@
+    private ServerPlayer f_20863_;
+    private final Set<Entity> f_147134_ = Sets.newHashSet();
+    private int f_147135_;
++   private float damage = 5.0F;
+ 
+    public LightningBolt(EntityType<? extends LightningBolt> p_20865_, Level p_20866_) {
+       super(p_20865_, p_20866_);
+@@ -74,6 +_,14 @@
+ 
+    }
+ 
++   public void setDamage(float damage) {
++      this.damage = damage;
++   }
++
++   public float getDamage() {
++      return this.damage;
++   }
++
+    public void m_8119_() {
+       super.m_8119_();
+       if (this.f_20860_ == 2) {
+@@ -123,6 +_,7 @@
+             List<Entity> list1 = this.f_19853_.m_6249_(this, new AABB(this.m_20185_() - 3.0D, this.m_20186_() - 3.0D, this.m_20189_() - 3.0D, this.m_20185_() + 3.0D, this.m_20186_() + 6.0D + 3.0D, this.m_20189_() + 3.0D), Entity::m_6084_);
+ 
+             for(Entity entity : list1) {
++               if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
+                entity.m_8038_((ServerLevel)this.f_19853_, this);
+             }
+ 

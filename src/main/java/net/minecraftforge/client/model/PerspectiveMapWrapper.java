@@ -24,16 +24,14 @@ import java.util.Random;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.*;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.world.World;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.Direction;
+import com.mojang.math.Transformation;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.model.TransformationHelper;
@@ -41,29 +39,36 @@ import net.minecraftforge.common.model.TransformationHelper;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverride;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelState;
+
 public class PerspectiveMapWrapper implements IDynamicBakedModel
 {
-    private final IBakedModel parent;
-    private final ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms;
+    private final BakedModel parent;
+    private final ImmutableMap<ItemTransforms.TransformType, Transformation> transforms;
     private final OverrideListWrapper overrides = new OverrideListWrapper();
 
-    public PerspectiveMapWrapper(IBakedModel parent, ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms)
+    public PerspectiveMapWrapper(BakedModel parent, ImmutableMap<ItemTransforms.TransformType, Transformation> transforms)
     {
         this.parent = parent;
         this.transforms = transforms;
     }
 
-    public PerspectiveMapWrapper(IBakedModel parent, IModelTransform state)
+    public PerspectiveMapWrapper(BakedModel parent, ModelState state)
     {
         this(parent, getTransforms(state));
     }
 
-    public static ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> getTransforms(IModelTransform state)
+    public static ImmutableMap<ItemTransforms.TransformType, Transformation> getTransforms(ModelState state)
     {
-        EnumMap<ItemCameraTransforms.TransformType, TransformationMatrix> map = new EnumMap<>(ItemCameraTransforms.TransformType.class);
-        for(ItemCameraTransforms.TransformType type : ItemCameraTransforms.TransformType.values())
+        EnumMap<ItemTransforms.TransformType, Transformation> map = new EnumMap<>(ItemTransforms.TransformType.class);
+        for(ItemTransforms.TransformType type : ItemTransforms.TransformType.values())
         {
-            TransformationMatrix tr = state.getPartTransformation(type);
+            Transformation tr = state.getPartTransformation(type);
             if(!tr.isIdentity())
             {
                 map.put(type, tr);
@@ -73,10 +78,10 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
     }
 
     @SuppressWarnings("deprecation")
-    public static ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> getTransforms(ItemCameraTransforms transforms)
+    public static ImmutableMap<ItemTransforms.TransformType, Transformation> getTransforms(ItemTransforms transforms)
     {
-        EnumMap<ItemCameraTransforms.TransformType, TransformationMatrix> map = new EnumMap<>(ItemCameraTransforms.TransformType.class);
-        for(ItemCameraTransforms.TransformType type : ItemCameraTransforms.TransformType.values())
+        EnumMap<ItemTransforms.TransformType, Transformation> map = new EnumMap<>(ItemTransforms.TransformType.class);
+        for(ItemTransforms.TransformType type : ItemTransforms.TransformType.values())
         {
             if (transforms.hasTransform(type))
             {
@@ -87,12 +92,12 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
     }
 
     @SuppressWarnings("deprecation")
-    public static ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> getTransformsWithFallback(IModelTransform state, ItemCameraTransforms transforms)
+    public static ImmutableMap<ItemTransforms.TransformType, Transformation> getTransformsWithFallback(ModelState state, ItemTransforms transforms)
     {
-        EnumMap<ItemCameraTransforms.TransformType, TransformationMatrix> map = new EnumMap<>(ItemCameraTransforms.TransformType.class);
-        for(ItemCameraTransforms.TransformType type : ItemCameraTransforms.TransformType.values())
+        EnumMap<ItemTransforms.TransformType, Transformation> map = new EnumMap<>(ItemTransforms.TransformType.class);
+        for(ItemTransforms.TransformType type : ItemTransforms.TransformType.values())
         {
-            TransformationMatrix tr = state.getPartTransformation(type);
+            Transformation tr = state.getPartTransformation(type);
             if(!tr.isIdentity())
             {
                 map.put(type, tr);
@@ -105,9 +110,9 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
         return ImmutableMap.copyOf(map);
     }
 
-    public static IBakedModel handlePerspective(IBakedModel model, ImmutableMap<ItemCameraTransforms.TransformType, TransformationMatrix> transforms, ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
+    public static BakedModel handlePerspective(BakedModel model, ImmutableMap<ItemTransforms.TransformType, Transformation> transforms, ItemTransforms.TransformType cameraTransformType, PoseStack mat)
     {
-        TransformationMatrix tr = transforms.getOrDefault(cameraTransformType, TransformationMatrix.identity());
+        Transformation tr = transforms.getOrDefault(cameraTransformType, Transformation.identity());
         if (!tr.isIdentity())
         {
             tr.push(mat);
@@ -115,9 +120,9 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
         return model;
     }
 
-    public static IBakedModel handlePerspective(IBakedModel model, IModelTransform state, ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
+    public static BakedModel handlePerspective(BakedModel model, ModelState state, ItemTransforms.TransformType cameraTransformType, PoseStack mat)
     {
-        TransformationMatrix tr = state.getPartTransformation(cameraTransformType);
+        Transformation tr = state.getPartTransformation(cameraTransformType);
         if (!tr.isIdentity())
         {
             tr.push(mat);
@@ -132,14 +137,14 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
     @Override public boolean isCustomRenderer() { return parent.isCustomRenderer(); }
     @Override public TextureAtlasSprite getParticleIcon() { return parent.getParticleIcon(); }
     @SuppressWarnings("deprecation")
-    @Override public ItemCameraTransforms getTransforms() { return parent.getTransforms(); }
+    @Override public ItemTransforms getTransforms() { return parent.getTransforms(); }
     @Override public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData extraData)
     {
         return parent.getQuads(state, side, rand, extraData);
     }
 
     @Override
-    public ItemOverrideList getOverrides()
+    public ItemOverrides getOverrides()
     {
         return overrides;
     }
@@ -151,12 +156,12 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
     }
 
     @Override
-    public IBakedModel handlePerspective(ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
+    public BakedModel handlePerspective(ItemTransforms.TransformType cameraTransformType, PoseStack poseStack)
     {
-        return handlePerspective(this, transforms, cameraTransformType, mat);
+        return handlePerspective(this, transforms, cameraTransformType, poseStack);
     }
 
-    private class OverrideListWrapper extends ItemOverrideList
+    private class OverrideListWrapper extends ItemOverrides
     {
         public OverrideListWrapper()
         {
@@ -165,14 +170,14 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
 
         @Nullable
         @Override
-        public IBakedModel resolve(IBakedModel model, ItemStack stack, @Nullable ClientWorld worldIn, @Nullable LivingEntity entityIn)
+        public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel worldIn, @Nullable LivingEntity entityIn, int seed)
         {
-            model = parent.getOverrides().resolve(parent, stack, worldIn, entityIn);
+            model = parent.getOverrides().resolve(parent, stack, worldIn, entityIn, seed);
             return new PerspectiveMapWrapper(model, transforms);
         }
 
         @Override
-        public ImmutableList<ItemOverride> getOverrides()
+        public ImmutableList<BakedOverride> getOverrides()
         {
             return parent.getOverrides().getOverrides();
         }

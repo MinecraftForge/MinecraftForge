@@ -22,10 +22,10 @@ package net.minecraftforge.event;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimaps;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 import com.google.common.collect.Multimap;
 
 import javax.annotation.Nullable;
@@ -44,13 +44,13 @@ import java.util.Collection;
 public class ItemAttributeModifierEvent extends Event
 {
     private final ItemStack stack;
-    private final EquipmentSlotType slotType;
+    private final EquipmentSlot slotType;
     private final Multimap<Attribute, AttributeModifier> originalModifiers;
     private Multimap<Attribute, AttributeModifier> unmodifiableModifiers;
     @Nullable
     private Multimap<Attribute, AttributeModifier> modifiableModifiers;
 
-    public ItemAttributeModifierEvent(ItemStack stack, EquipmentSlotType slotType, Multimap<Attribute, AttributeModifier> modifiers)
+    public ItemAttributeModifierEvent(ItemStack stack, EquipmentSlot slotType, Multimap<Attribute, AttributeModifier> modifiers)
     {
         this.stack = stack;
         this.slotType = slotType;
@@ -131,7 +131,7 @@ public class ItemAttributeModifierEvent extends Event
     }
 
     /** Gets the slot containing this stack */
-    public EquipmentSlotType getSlotType()
+    public EquipmentSlot getSlotType()
     {
         return this.slotType;
     }

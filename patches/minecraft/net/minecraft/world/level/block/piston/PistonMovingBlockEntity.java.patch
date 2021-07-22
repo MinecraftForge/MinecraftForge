@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
++++ b/net/minecraft/world/level/block/piston/PistonMovingBlockEntity.java
+@@ -106,7 +_,7 @@
+          List<Entity> list = p_155911_.m_45933_((Entity)null, PistonMath.m_60328_(aabb, direction, d0).m_82367_(aabb));
+          if (!list.isEmpty()) {
+             List<AABB> list1 = voxelshape.m_83299_();
+-            boolean flag = p_155914_.f_60334_.m_60713_(Blocks.f_50374_);
++            boolean flag = p_155914_.f_60334_.isSlimeBlock(); //TODO: is this patch really needed the logic of the original seems sound revisit later
+             Iterator iterator = list.iterator();
+ 
+             while(true) {

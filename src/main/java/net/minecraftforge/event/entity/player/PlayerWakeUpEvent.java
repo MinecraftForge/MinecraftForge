@@ -19,7 +19,7 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * This event is fired when the player is waking up.<br/>
@@ -32,7 +32,7 @@ public class PlayerWakeUpEvent extends PlayerEvent
 
     private final boolean updateWorld;
 
-    public PlayerWakeUpEvent(PlayerEntity player, boolean wakeImmediately, boolean updateWorld)
+    public PlayerWakeUpEvent(Player player, boolean wakeImmediately, boolean updateWorld)
     {
         super(player);
         this.wakeImmediately = wakeImmediately;

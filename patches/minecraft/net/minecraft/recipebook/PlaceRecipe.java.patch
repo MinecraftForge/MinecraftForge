@@ -1,0 +1,17 @@
+--- a/net/minecraft/recipebook/PlaceRecipe.java
++++ b/net/minecraft/recipebook/PlaceRecipe.java
+@@ -9,10 +_,10 @@
+    default void m_135408_(int p_135409_, int p_135410_, int p_135411_, Recipe<?> p_135412_, Iterator<T> p_135413_, int p_135414_) {
+       int i = p_135409_;
+       int j = p_135410_;
+-      if (p_135412_ instanceof ShapedRecipe) {
+-         ShapedRecipe shapedrecipe = (ShapedRecipe)p_135412_;
+-         i = shapedrecipe.m_44220_();
+-         j = shapedrecipe.m_44221_();
++      if (p_135412_ instanceof net.minecraftforge.common.crafting.IShapedRecipe) {
++         net.minecraftforge.common.crafting.IShapedRecipe shapedrecipe = (net.minecraftforge.common.crafting.IShapedRecipe)p_135412_;
++         i = shapedrecipe.getRecipeWidth();
++         j = shapedrecipe.getRecipeHeight();
+       }
+ 
+       int k1 = 0;

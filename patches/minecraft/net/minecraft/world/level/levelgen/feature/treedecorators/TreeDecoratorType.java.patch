@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/feature/treedecorators/TreeDecoratorType.java
++++ b/net/minecraft/world/level/levelgen/feature/treedecorators/TreeDecoratorType.java
+@@ -3,7 +_,7 @@
+ import com.mojang.serialization.Codec;
+ import net.minecraft.core.Registry;
+ 
+-public class TreeDecoratorType<P extends TreeDecorator> {
++public class TreeDecoratorType<P extends TreeDecorator> extends net.minecraftforge.registries.ForgeRegistryEntry<TreeDecoratorType<?>> {
+    public static final TreeDecoratorType<TrunkVineDecorator> f_70042_ = m_70052_("trunk_vine", TrunkVineDecorator.f_70055_);
+    public static final TreeDecoratorType<LeaveVineDecorator> f_70043_ = m_70052_("leave_vine", LeaveVineDecorator.f_69996_);
+    public static final TreeDecoratorType<CocoaDecorator> f_70044_ = m_70052_("cocoa", CocoaDecorator.f_69972_);

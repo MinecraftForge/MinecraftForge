@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
++++ b/net/minecraft/world/level/block/GrowingPlantHeadBlock.java
+@@ -35,10 +_,11 @@
+    }
+ 
+    public void m_7455_(BlockState p_53963_, ServerLevel p_53964_, BlockPos p_53965_, Random p_53966_) {
+-      if (p_53963_.m_61143_(f_53924_) < 25 && p_53966_.nextDouble() < this.f_53925_) {
++      if (p_53963_.m_61143_(f_53924_) < 25 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_53964_, p_53965_.m_142300_(this.f_53859_), p_53964_.m_8055_(p_53965_.m_142300_(this.f_53859_)),p_53966_.nextDouble() < this.f_53925_)) {
+          BlockPos blockpos = p_53965_.m_142300_(this.f_53859_);
+          if (this.m_5971_(p_53964_.m_8055_(blockpos))) {
+             p_53964_.m_46597_(blockpos, this.m_142452_(p_53963_, p_53964_.f_46441_));
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_53964_, blockpos, p_53964_.m_8055_(blockpos));
+          }
+       }
+ 

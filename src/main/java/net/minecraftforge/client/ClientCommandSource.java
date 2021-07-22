@@ -19,35 +19,35 @@
 
 package net.minecraftforge.client;
 
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.ICommandSource;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.vector.Vector2f;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ClientCommandSource extends CommandSource
+public class ClientCommandSource extends CommandSourceStack
 {
 
-    public ClientCommandSource(ICommandSource p_i49552_1_, Vector3d p_i49552_2_, Vector2f p_i49552_3_, int p_i49552_5_,
-            String p_i49552_6_, ITextComponent p_i49552_7_, Entity p_i49552_9_)
+    public ClientCommandSource(CommandSource p_i49552_1_, Vec3 p_i49552_2_, Vec2 p_i49552_3_, int p_i49552_5_, String p_i49552_6_, Component p_i49552_7_,
+            Entity p_i49552_9_)
     {
         super(p_i49552_1_, p_i49552_2_, p_i49552_3_, null, p_i49552_5_, p_i49552_6_, p_i49552_7_, null, p_i49552_9_);
     }
 
     @Override
-    public void sendSuccess(ITextComponent p_197030_1_, boolean p_197030_2_)
+    public void sendSuccess(Component p_197030_1_, boolean p_197030_2_)
     {
         Minecraft.getInstance().player.sendMessage(p_197030_1_, Util.NIL_UUID);
     }
@@ -71,13 +71,13 @@ public class ClientCommandSource extends CommandSource
     }
 
     @Override
-    public Set<RegistryKey<World>> levels()
+    public Set<ResourceKey<Level>> levels()
     {
         return Minecraft.getInstance().getConnection().levels();
     }
 
     @Override
-    public DynamicRegistries registryAccess()
+    public RegistryAccess registryAccess()
     {
         return Minecraft.getInstance().getConnection().registryAccess();
     }

@@ -20,19 +20,16 @@
 package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 import javax.annotation.Nonnull;
@@ -50,13 +47,13 @@ import net.minecraftforge.fml.LogicalSide;
  **/
 public class PlayerInteractEvent extends PlayerEvent
 {
-    private final Hand hand;
+    private final InteractionHand hand;
     private final BlockPos pos;
     @Nullable
     private final Direction face;
-    private ActionResultType cancellationResult = ActionResultType.PASS;
+    private InteractionResult cancellationResult = InteractionResult.PASS;
 
-    private PlayerInteractEvent(PlayerEntity player, Hand hand, BlockPos pos, @Nullable Direction face)
+    private PlayerInteractEvent(Player player, InteractionHand hand, BlockPos pos, @Nullable Direction face)
     {
         super(Preconditions.checkNotNull(player, "Null player in PlayerInteractEvent!"));
         this.hand = Preconditions.checkNotNull(hand, "Null hand in PlayerInteractEvent!");
@@ -76,10 +73,10 @@ public class PlayerInteractEvent extends PlayerEvent
     @Cancelable
     public static class EntityInteractSpecific extends PlayerInteractEvent
     {
-        private final Vector3d localPos;
+        private final Vec3 localPos;
         private final Entity target;
 
-        public EntityInteractSpecific(PlayerEntity player, Hand hand, Entity target, Vector3d localPos)
+        public EntityInteractSpecific(Player player, InteractionHand hand, Entity target, Vec3 localPos)
         {
             super(player, hand, target.blockPosition(), null);
             this.localPos = localPos;
@@ -92,7 +89,7 @@ public class PlayerInteractEvent extends PlayerEvent
          * [-width / 2, width / 2] while Y values will be in the range [0, height]
          * @return The local position
          */
-        public Vector3d getLocalPos()
+        public Vec3 getLocalPos()
         {
             return localPos;
         }
@@ -119,7 +116,7 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private final Entity target;
 
-        public EntityInteract(PlayerEntity player, Hand hand, Entity target)
+        public EntityInteract(Player player, InteractionHand hand, Entity target)
         {
             super(player, hand, target.blockPosition(), null);
             this.target = target;
@@ -149,14 +146,9 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private Result useBlock = DEFAULT;
         private Result useItem = DEFAULT;
-        private BlockRayTraceResult hitVec;
+        private BlockHitResult hitVec;
 
-        @Deprecated //Use RayTraceResult version.  TODO: Remove 1.17
-        public RightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, Direction face) {
-            super(player, hand, pos, face);
-        }
-
-        public RightClickBlock(PlayerEntity player, Hand hand, BlockPos pos, BlockRayTraceResult hitVec) {
+        public RightClickBlock(Player player, InteractionHand hand, BlockPos pos, BlockHitResult hitVec) {
             super(player, hand, pos, hitVec.getDirection());
             this.hitVec = hitVec;
         }
@@ -180,7 +172,7 @@ public class PlayerInteractEvent extends PlayerEvent
         /**
          * @return The ray trace result targeting the block.
          */
-        public BlockRayTraceResult getHitVec()
+        public BlockHitResult getHitVec()
         {
             return hitVec;
         }
@@ -228,7 +220,7 @@ public class PlayerInteractEvent extends PlayerEvent
     @Cancelable
     public static class RightClickItem extends PlayerInteractEvent
     {
-        public RightClickItem(PlayerEntity player, Hand hand)
+        public RightClickItem(Player player, InteractionHand hand)
         {
             super(player, hand, player.blockPosition(), null);
         }
@@ -241,7 +233,7 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public static class RightClickEmpty extends PlayerInteractEvent
     {
-        public RightClickEmpty(PlayerEntity player, Hand hand)
+        public RightClickEmpty(Player player, InteractionHand hand)
         {
             super(player, hand, player.blockPosition(), null);
         }
@@ -265,9 +257,9 @@ public class PlayerInteractEvent extends PlayerEvent
         private Result useBlock = DEFAULT;
         private Result useItem = DEFAULT;
 
-        public LeftClickBlock(PlayerEntity player, BlockPos pos, Direction face)
+        public LeftClickBlock(Player player, BlockPos pos, Direction face)
         {
-            super(player, Hand.MAIN_HAND, pos, face);
+            super(player, InteractionHand.MAIN_HAND, pos, face);
         }
 
         /**
@@ -315,9 +307,9 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public static class LeftClickEmpty extends PlayerInteractEvent
     {
-        public LeftClickEmpty(PlayerEntity player)
+        public LeftClickEmpty(Player player)
         {
-            super(player, Hand.MAIN_HAND, player.blockPosition(), null);
+            super(player, InteractionHand.MAIN_HAND, player.blockPosition(), null);
         }
     }
 
@@ -325,7 +317,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * @return The hand involved in this interaction. Will never be null.
      */
     @Nonnull
-    public Hand getHand()
+    public InteractionHand getHand()
     {
         return hand;
     }
@@ -364,7 +356,7 @@ public class PlayerInteractEvent extends PlayerEvent
     /**
      * @return Convenience method to get the world of this interaction.
      */
-    public World getWorld()
+    public Level getWorld()
     {
         return getPlayer().getCommandSenderWorld();
     }
@@ -382,7 +374,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * method of the event. By default, this is {@link EnumActionResult#PASS}, meaning cancelled events will cause
      * the client to keep trying more interactions until something works.
      */
-    public ActionResultType getCancellationResult()
+    public InteractionResult getCancellationResult()
     {
         return cancellationResult;
     }
@@ -392,7 +384,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * method of the event.
      * Note that this only has an effect on {@link RightClickBlock}, {@link RightClickItem}, {@link EntityInteract}, and {@link EntityInteractSpecific}.
      */
-    public void setCancellationResult(ActionResultType result)
+    public void setCancellationResult(InteractionResult result)
     {
         this.cancellationResult = result;
     }

@@ -1,0 +1,80 @@
+plugins {
+    id 'com.github.ben-manes.versions'
+    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
+}
+apply plugin: 'java-library'
+apply plugin: 'jacoco'
+apply plugin: 'org.javamodularity.moduleplugin'
+
+dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
+configurations.forEach{ it.transitive = false }
+
+dependencies {
+    implementation('net.sf.jopt-simple:jopt-simple:5.0.4')
+    compileOnly('org.jetbrains:annotations:21.0.0')
+    api("org.ow2.asm:asm:${ASM_VERSION}")
+    api("org.ow2.asm:asm-tree:${ASM_VERSION}")
+    api("org.ow2.asm:asm-commons:${ASM_VERSION}")
+    api('net.minecraftforge:forgespi:4.0.+')
+    api('org.apache.logging.log4j:log4j-api:2.14.1')
+    api('com.google.guava:guava:21.0')
+    api('com.google.code.gson:gson:2.8.0')
+    api('org.apache.maven:maven-artifact:3.8.1')
+    api('org.apache.commons:commons-lang3:3.8.1')
+    api('com.electronwill.night-config:core:3.6.3')
+    api('com.electronwill.night-config:toml:3.6.3')
+    api('cpw.mods:modlauncher:9.0.+')
+    api('net.minecraftforge:coremods:5.0.+')
+    implementation("cpw.mods:securejarhandler:${SECUREJARHANDLER_VERSION}")
+    implementation('org.apache.logging.log4j:log4j-core:2.14.1')
+    annotationProcessor('org.apache.logging.log4j:log4j-core:2.14.1')
+    implementation('net.minecraftforge:accesstransformers:8.0.4')
+    implementation('net.minecrell:terminalconsoleappender:1.2.0')
+//    implementation('org.jline:jline:3.12.+')
+    testCompileOnly('org.jetbrains:annotations:21.0.0')
+    testRuntimeOnly("cpw.mods:bootstraplauncher:${BOOTSTRAPLAUNCHER_VERSION}")
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+ext {
+    MANIFESTS = [
+        '/': [
+            'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            'Git-Commit': GIT_INFO.abbreviatedId,
+            'Git-Branch': GIT_INFO.branch,
+            'Build-Number': "${System.getenv('BUILD_NUMBER')?:0}",
+        ] as LinkedHashMap,
+        'net/minecraftforge/fml/loading/': [
+            'Specification-Title':      'FMLLoader',
+            'Specification-Vendor':     'Forge Development LLC',
+            'Specification-Version':    '1',
+            'Implementation-Title':     'FML Loader',
+            'Implementation-Version':   '1.0',
+            'Implementation-Vendor':    'Forge'
+        ] as LinkedHashMap
+    ]
+}
+
+jar.doFirst {
+    MANIFESTS.each { pkg, values ->
+        manifest.attributes(values, pkg)
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+publishing.publications.mavenJava(MavenPublication) {
+    from components.java
+    artifact sourcesJar
+}

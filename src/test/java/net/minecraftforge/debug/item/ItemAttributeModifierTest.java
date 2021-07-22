@@ -19,12 +19,12 @@
 
 package net.minecraftforge.debug.item;
 
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.AttributeModifier.Operation;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -40,7 +40,7 @@ public class ItemAttributeModifierTest
     @SubscribeEvent
     public static void onItemAttribute(ItemAttributeModifierEvent event)
     {
-        if (ENABLED && event.getSlotType() == EquipmentSlotType.MAINHAND)
+        if (ENABLED && event.getSlotType() == EquipmentSlot.MAINHAND)
         {
             final Item item = event.getItemStack().getItem();
             if (item == Items.APPLE)

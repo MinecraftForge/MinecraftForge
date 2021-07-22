@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/entity/MobCategory.java
++++ b/net/minecraft/world/entity/MobCategory.java
+@@ -6,7 +_,7 @@
+ import java.util.stream.Collectors;
+ import net.minecraft.util.StringRepresentable;
+ 
+-public enum MobCategory implements StringRepresentable {
++public enum MobCategory implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
+    MONSTER("monster", 70, false, false, 128),
+    CREATURE("creature", 10, true, true, 128),
+    AMBIENT("ambient", 15, true, false, 128),
+@@ -15,7 +_,7 @@
+    WATER_AMBIENT("water_ambient", 20, true, false, 64),
+    MISC("misc", -1, true, true, 128);
+ 
+-   public static final Codec<MobCategory> f_21584_ = StringRepresentable.m_14350_(MobCategory::values, MobCategory::m_21605_);
++   public static final Codec<MobCategory> f_21584_ = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(MobCategory::values, MobCategory::m_21605_);
+    private static final Map<String, MobCategory> f_21585_ = Arrays.stream(values()).collect(Collectors.toMap(MobCategory::m_21607_, (p_21604_) -> {
+       return p_21604_;
+    }));
+@@ -56,6 +_,16 @@
+ 
+    public boolean m_21610_() {
+       return this.f_21588_;
++   }
++
++   public static MobCategory create(String name, String id, int maxNumberOfCreatureIn, boolean isPeacefulCreatureIn, boolean isAnimalIn, int despawnDistance) {
++      throw new IllegalStateException("Enum not extended");
++   }
++
++   @Override
++   @Deprecated
++   public void init() {
++      f_21585_.put(this.m_21607_(), this);
+    }
+ 
+    public int m_21611_() {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/blockentity/BlockEntityRenderers.java
++++ b/net/minecraft/client/renderer/blockentity/BlockEntityRenderers.java
+@@ -12,7 +_,7 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public class BlockEntityRenderers {
+-   private static final Map<BlockEntityType<?>, BlockEntityRendererProvider<?>> f_173587_ = Maps.newHashMap();
++   private static final Map<BlockEntityType<?>, BlockEntityRendererProvider<?>> f_173587_ = new java.util.concurrent.ConcurrentHashMap<>();
+ 
+    public static <T extends BlockEntity> void m_173590_(BlockEntityType<? extends T> p_173591_, BlockEntityRendererProvider<T> p_173592_) {
+       f_173587_.put(p_173591_, p_173592_);

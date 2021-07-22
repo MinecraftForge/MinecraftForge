@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/gui/screens/recipebook/RecipeBookComponent.java
++++ b/net/minecraft/client/gui/screens/recipebook/RecipeBookComponent.java
+@@ -107,7 +_,7 @@
+       this.m_5674_();
+       this.f_100279_.clear();
+ 
+-      for(RecipeBookCategories recipebookcategories : RecipeBookCategories.m_92269_(this.f_100271_.m_5867_())) {
++      for(RecipeBookCategories recipebookcategories : this.f_100271_.getRecipeBookCategories()) {
+          this.f_100279_.add(new RecipeBookTabButton(recipebookcategories));
+       }
+ 
+@@ -462,7 +_,7 @@
+ 
+          languagemanager.m_118974_(languageinfo);
+          this.f_100272_.f_91066_.f_92075_ = languageinfo.getCode();
+-         this.f_100272_.m_91391_();
++         net.minecraftforge.client.ForgeHooksClient.refreshResources(this.f_100272_, net.minecraftforge.resource.VanillaResourceType.LANGUAGES);
+          this.f_100272_.f_91066_.m_92169_();
+       }
+ 

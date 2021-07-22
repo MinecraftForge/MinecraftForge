@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java
++++ b/net/minecraft/world/level/storage/loot/functions/LootingEnchantFunction.java
+@@ -43,7 +_,7 @@
+    public ItemStack m_7372_(ItemStack p_80789_, LootContext p_80790_) {
+       Entity entity = p_80790_.m_78953_(LootContextParams.f_81458_);
+       if (entity instanceof LivingEntity) {
+-         int i = EnchantmentHelper.m_44930_((LivingEntity)entity);
++         int i = p_80790_.getLootingModifier();
+          if (i == 0) {
+             return p_80789_;
+          }

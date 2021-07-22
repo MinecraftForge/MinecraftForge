@@ -23,8 +23,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.loot.LootContext;
 
 /**
  * Implementation that defines what a global loot modifier must implement in order to be functional.

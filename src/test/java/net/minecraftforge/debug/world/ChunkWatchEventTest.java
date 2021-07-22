@@ -21,8 +21,8 @@ package net.minecraftforge.debug.world;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -75,7 +75,7 @@ public class ChunkWatchEventTest
     }
 
     @Nullable
-    private static ResourceLocation getDimensionName(World w)
+    private static ResourceLocation getDimensionName(Level w)
     {
         return w.dimension().location();
     }

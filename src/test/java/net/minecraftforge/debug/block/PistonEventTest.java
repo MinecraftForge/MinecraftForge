@@ -21,22 +21,22 @@ package net.minecraftforge.debug.block;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.PistonBlock;
-import net.minecraft.block.PistonBlockStructureHelper;
-import net.minecraft.block.material.Material;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.piston.PistonBaseBlock;
+import net.minecraft.world.level.block.piston.PistonStructureResolver;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
@@ -46,9 +46,9 @@ import net.minecraftforge.event.world.PistonEvent.PistonMoveType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -70,7 +70,7 @@ public class PistonEventTest
 
     private static RegistryObject<Block> shiftOnMove = BLOCKS.register(blockName, () -> new Block(Block.Properties.of(Material.STONE)));
     static {
-        ITEMS.register(blockName, () -> new BlockItem(shiftOnMove.get(), new Item.Properties().tab(ItemGroup.TAB_BUILDING_BLOCKS)));
+        ITEMS.register(blockName, () -> new BlockItem(shiftOnMove.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
     }
 
     public PistonEventTest()
@@ -86,18 +86,18 @@ public class PistonEventTest
     {
         if (event.getPistonMoveType() == PistonMoveType.EXTEND)
         {
-            World world = (World) event.getWorld();
-            PistonBlockStructureHelper pistonHelper = event.getStructureHelper();
-            PlayerEntity player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
+            Level world = (Level) event.getWorld();
+            PistonStructureResolver pistonHelper = event.getStructureHelper();
+            Player player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
             if (world.isClientSide && player != null)
             {
                 if (pistonHelper.resolve())
                 {
-                    player.sendMessage(new StringTextComponent(String.format("Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getToPush().size(), pistonHelper.getToDestroy().size())), player.getUUID());
+                    player.sendMessage(new TextComponent(String.format("Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getToPush().size(), pistonHelper.getToDestroy().size())), player.getUUID());
                 }
                 else
                 {
-                    player.sendMessage(new StringTextComponent("Piston won't extend"), player.getUUID());
+                    player.sendMessage(new TextComponent("Piston won't extend"), player.getUUID());
                 }
             }
 
@@ -130,19 +130,19 @@ public class PistonEventTest
         {
             boolean isSticky = event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.STICKY_PISTON;
 
-            PlayerEntity player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
+            Player player = DistExecutor.safeCallWhenOn(Dist.CLIENT, () -> () -> Minecraft.getInstance().player);
             if (event.getWorld().isClientSide() && player != null)
             {
                 if (isSticky)
                 {
                     BlockPos targetPos = event.getFaceOffsetPos().relative(event.getDirection());
-                    boolean canPush = PistonBlock.isPushable(event.getWorld().getBlockState(targetPos), (World) event.getWorld(), event.getFaceOffsetPos(), event.getDirection().getOpposite(), false, event.getDirection());
+                    boolean canPush = PistonBaseBlock.isPushable(event.getWorld().getBlockState(targetPos), (Level) event.getWorld(), event.getFaceOffsetPos(), event.getDirection().getOpposite(), false, event.getDirection());
                     boolean isAir = event.getWorld().isEmptyBlock(targetPos);
-                    player.sendMessage(new StringTextComponent(String.format("Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)), player.getUUID());
+                    player.sendMessage(new TextComponent(String.format("Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)), player.getUUID());
                 }
                 else
                 {
-                    player.sendMessage(new StringTextComponent("Piston will retract"), player.getUUID());
+                    player.sendMessage(new TextComponent("Piston will retract"), player.getUUID());
                 }
             }
             // Offset twice to see if retraction will pull cobblestone

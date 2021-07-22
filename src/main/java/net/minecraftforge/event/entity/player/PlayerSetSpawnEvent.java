@@ -19,10 +19,10 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.util.RegistryKey;
-import net.minecraft.world.World;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 import javax.annotation.Nullable;
@@ -34,12 +34,12 @@ import javax.annotation.Nullable;
 @Cancelable
 public class PlayerSetSpawnEvent extends PlayerEvent
 {
-    private final RegistryKey<World> spawnWorld;
+    private final ResourceKey<Level> spawnWorld;
     private final boolean forced;
     @Nullable
     private final BlockPos newSpawn;
     
-    public PlayerSetSpawnEvent(PlayerEntity player, RegistryKey<World> spawnWorld, @Nullable BlockPos newSpawn, boolean forced)
+    public PlayerSetSpawnEvent(Player player, ResourceKey<Level> spawnWorld, @Nullable BlockPos newSpawn, boolean forced)
     {
         super(player);
         this.spawnWorld = spawnWorld;
@@ -61,7 +61,7 @@ public class PlayerSetSpawnEvent extends PlayerEvent
         return newSpawn;
     }
 
-    public RegistryKey<World> getSpawnWorld()
+    public ResourceKey<Level> getSpawnWorld()
     {
         return spawnWorld;
     }

@@ -21,8 +21,8 @@ package net.minecraftforge.common.crafting.conditions;
 
 import com.google.gson.JsonObject;
 
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 
 public class ModLoadedCondition implements ICondition
@@ -66,7 +66,7 @@ public class ModLoadedCondition implements ICondition
         @Override
         public ModLoadedCondition read(JsonObject json)
         {
-            return new ModLoadedCondition(JSONUtils.getAsString(json, "modid"));
+            return new ModLoadedCondition(GsonHelper.getAsString(json, "modid"));
         }
 
         @Override

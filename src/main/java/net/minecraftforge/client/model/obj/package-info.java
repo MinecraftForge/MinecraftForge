@@ -21,5 +21,6 @@
 @MethodsReturnNonnullByDefault
 package net.minecraftforge.client.model.obj;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
+
 import javax.annotation.ParametersAreNonnullByDefault;

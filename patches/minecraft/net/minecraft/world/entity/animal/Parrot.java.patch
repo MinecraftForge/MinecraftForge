@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/Parrot.java
++++ b/net/minecraft/world/entity/animal/Parrot.java
+@@ -235,7 +_,7 @@
+          }
+ 
+          if (!this.f_19853_.f_46443_) {
+-            if (this.f_19796_.nextInt(10) == 0) {
++            if (this.f_19796_.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_29414_)) {
+                this.m_21828_(p_29414_);
+                this.f_19853_.m_7605_(this, (byte)7);
+             } else {

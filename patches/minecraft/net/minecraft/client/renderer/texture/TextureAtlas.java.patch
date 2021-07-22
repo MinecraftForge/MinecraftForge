@@ -1,0 +1,37 @@
+--- a/net/minecraft/client/renderer/texture/TextureAtlas.java
++++ b/net/minecraft/client/renderer/texture/TextureAtlas.java
+@@ -83,6 +_,7 @@
+          }
+       }
+ 
++      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
+    }
+ 
+    public TextureAtlas.Preparations m_118307_(ResourceManager p_118308_, Stream<ResourceLocation> p_118309_, ProfilerFiller p_118310_, int p_118311_) {
+@@ -97,6 +_,7 @@
+       int j = Integer.MAX_VALUE;
+       int k = 1 << p_118311_;
+       p_118310_.m_6182_("extracting_frames");
++      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this, set);
+ 
+       for(TextureAtlasSprite.Info textureatlassprite$info : this.m_118304_(p_118308_, set)) {
+          j = Math.min(j, Math.min(textureatlassprite$info.m_118434_(), textureatlassprite$info.m_118437_()));
+@@ -111,7 +_,8 @@
+ 
+       int i1 = Math.min(j, k);
+       int j1 = Mth.m_14173_(i1);
+-      int k1;
++      int k1 = p_118311_;
++      if (false) // FORGE: do not lower the mipmap level
+       if (j1 < p_118311_) {
+          f_118261_.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.f_118265_, p_118311_, j1, i1);
+          k1 = j1;
+@@ -227,6 +_,8 @@
+          TextureAtlasSprite textureatlassprite;
+          try {
+             NativeImage nativeimage = NativeImage.m_85058_(resource.m_6679_());
++            textureatlassprite = net.minecraftforge.client.ForgeHooksClient.loadTextureAtlasSprite(this, p_118288_, p_118289_, resource, p_118290_, p_118291_, p_118293_, p_118294_, p_118292_, nativeimage);
++            if (textureatlassprite == null)
+             textureatlassprite = new TextureAtlasSprite(this, p_118289_, p_118292_, p_118290_, p_118291_, p_118293_, p_118294_, nativeimage);
+          } catch (Throwable throwable1) {
+             if (resource != null) {

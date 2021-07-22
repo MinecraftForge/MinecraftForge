@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/DetectorRailBlock.java
++++ b/net/minecraft/world/level/block/DetectorRailBlock.java
+@@ -136,6 +_,8 @@
+          }
+ 
+          List<AbstractMinecart> list1 = this.m_52436_(p_52455_, p_52456_, AbstractMinecart.class, EntitySelector.f_20405_);
++         List<AbstractMinecart> carts = this.m_52436_(p_52455_, p_52456_, AbstractMinecart.class, null);
++         if (!carts.isEmpty() && carts.get(0).getComparatorLevel() > -1) return carts.get(0).getComparatorLevel();
+          if (!list1.isEmpty()) {
+             return AbstractContainerMenu.m_38938_((Container)list1.get(0));
+          }

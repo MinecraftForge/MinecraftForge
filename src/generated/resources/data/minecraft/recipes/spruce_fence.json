@@ -6,11 +6,11 @@
     "W#W"
   ],
   "key": {
-    "#": {
-      "tag": "forge:rods/wooden"
-    },
     "W": {
       "item": "minecraft:spruce_planks"
+    },
+    "#": {
+      "tag": "forge:rods/wooden"
     }
   },
   "result": {

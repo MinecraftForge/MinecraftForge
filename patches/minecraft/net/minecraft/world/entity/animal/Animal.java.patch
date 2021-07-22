@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/animal/Animal.java
++++ b/net/minecraft/world/entity/animal/Animal.java
+@@ -201,6 +_,17 @@
+ 
+    public void m_27563_(ServerLevel p_27564_, Animal p_27565_) {
+       AgeableMob ageablemob = this.m_142606_(p_27564_, p_27565_);
++      final net.minecraftforge.event.entity.living.BabyEntitySpawnEvent event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(this, p_27565_, ageablemob);
++      final boolean cancelled = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++      ageablemob = event.getChild();
++      if (cancelled) {
++         //Reset the "inLove" state for the animals
++         this.m_146762_(6000);
++         p_27565_.m_146762_(6000);
++         this.m_27594_();
++         p_27565_.m_27594_();
++         return;
++      }
+       if (ageablemob != null) {
+          ServerPlayer serverplayer = this.m_27592_();
+          if (serverplayer == null && p_27565_.m_27592_() != null) {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/crafting/UpgradeRecipe.java
++++ b/net/minecraft/world/item/crafting/UpgradeRecipe.java
+@@ -72,7 +_,7 @@
+       });
+    }
+ 
+-   public static class Serializer implements RecipeSerializer<UpgradeRecipe> {
++   public static class Serializer extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<UpgradeRecipe> {
+       public UpgradeRecipe m_6729_(ResourceLocation p_44562_, JsonObject p_44563_) {
+          Ingredient ingredient = Ingredient.m_43917_(GsonHelper.m_13930_(p_44563_, "base"));
+          Ingredient ingredient1 = Ingredient.m_43917_(GsonHelper.m_13930_(p_44563_, "addition"));

@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/level/levelgen/feature/Feature.java
++++ b/net/minecraft/world/level/levelgen/feature/Feature.java
+@@ -49,7 +_,7 @@
+ import net.minecraft.world.level.levelgen.feature.configurations.UnderwaterMagmaConfiguration;
+ import net.minecraft.world.level.levelgen.feature.configurations.VegetationPatchConfiguration;
+ 
+-public abstract class Feature<FC extends FeatureConfiguration> {
++public abstract class Feature<FC extends FeatureConfiguration> extends net.minecraftforge.registries.ForgeRegistryEntry<Feature<?>> {
+    public static final Feature<NoneFeatureConfiguration> f_65759_ = m_65807_("no_op", new NoOpFeature(NoneFeatureConfiguration.f_67815_));
+    public static final Feature<TreeConfiguration> f_65760_ = m_65807_("tree", new TreeFeature(TreeConfiguration.f_68184_));
+    public static final AbstractFlowerFeature<RandomPatchConfiguration> f_65761_ = m_65807_("flower", new DefaultFlowerFeature(RandomPatchConfiguration.f_67902_));
+@@ -157,11 +_,11 @@
+    public abstract boolean m_142674_(FeaturePlaceContext<FC> p_159749_);
+ 
+    protected static boolean m_159747_(BlockState p_159748_) {
+-      return p_159748_.m_60620_(BlockTags.f_13061_);
++      return p_159748_.m_60620_(net.minecraftforge.common.Tags.Blocks.STONE);
+    }
+ 
+    public static boolean m_159759_(BlockState p_159760_) {
+-      return p_159760_.m_60620_(BlockTags.f_144274_);
++      return p_159760_.m_60620_(net.minecraftforge.common.Tags.Blocks.DIRT);
+    }
+ 
+    public static boolean m_65788_(LevelSimulatedReader p_65789_, BlockPos p_65790_) {

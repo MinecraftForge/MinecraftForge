@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/level/biome/BiomeGenerationSettings.java
++++ b/net/minecraft/world/level/biome/BiomeGenerationSettings.java
+@@ -48,6 +_,7 @@
+    });
+    private final Supplier<ConfiguredSurfaceBuilder<?>> f_47779_;
+    private final Map<GenerationStep.Carving, List<Supplier<ConfiguredWorldCarver<?>>>> f_47780_;
++   private final java.util.Set<GenerationStep.Carving> carversView;
+    private final List<List<Supplier<ConfiguredFeature<?, ?>>>> f_47781_;
+    private final List<Supplier<ConfiguredStructureFeature<?, ?>>> f_47782_;
+    private final List<ConfiguredFeature<?, ?>> f_47783_;
+@@ -60,10 +_,15 @@
+       this.f_47783_ = p_47788_.stream().flatMap(Collection::stream).map(Supplier::get).flatMap(ConfiguredFeature::m_65398_).filter((p_47802_) -> {
+          return p_47802_.f_65377_ == Feature.f_65761_;
+       }).collect(ImmutableList.toImmutableList());
++      this.carversView = java.util.Collections.unmodifiableSet(f_47780_.keySet());
+    }
+ 
+    public List<Supplier<ConfiguredWorldCarver<?>>> m_47799_(GenerationStep.Carving p_47800_) {
+       return this.f_47780_.getOrDefault(p_47800_, ImmutableList.of());
++   }
++
++   public java.util.Set<GenerationStep.Carving> getCarvingStages() {
++       return this.carversView;
+    }
+ 
+    public boolean m_47808_(StructureFeature<?> p_47809_) {

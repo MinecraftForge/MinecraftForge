@@ -21,24 +21,29 @@ package net.minecraftforge.fluids;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.*;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.BlockAndTintGetter;
 
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.item.Rarity;
-import net.minecraft.world.biome.BiomeColors;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.client.renderer.BiomeColors;
+
+import net.minecraft.Util;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -152,24 +157,24 @@ public class FluidAttributes
         return new ItemStack(stack.getFluid().getBucket());
     }
 
-    public BlockState getBlock(IBlockDisplayReader reader, BlockPos pos, FluidState state)
+    public BlockState getBlock(BlockAndTintGetter reader, BlockPos pos, FluidState state)
     {
         return state.createLegacyBlock();
     }
 
-    public FluidState getStateForPlacement(IBlockDisplayReader reader, BlockPos pos, FluidStack state)
+    public FluidState getStateForPlacement(BlockAndTintGetter reader, BlockPos pos, FluidStack state)
     {
         return state.getFluid().defaultFluidState();
     }
 
-    public final boolean canBePlacedInWorld(IBlockDisplayReader reader, BlockPos pos, FluidState state)
+    public final boolean canBePlacedInWorld(BlockAndTintGetter reader, BlockPos pos, FluidState state)
     {
-        return !getBlock(reader, pos, state).isAir(reader, pos);
+        return !getBlock(reader, pos, state).isAir();
     }
 
-    public final boolean canBePlacedInWorld(IBlockDisplayReader reader, BlockPos pos, FluidStack state)
+    public final boolean canBePlacedInWorld(BlockAndTintGetter reader, BlockPos pos, FluidStack state)
     {
-        return !getBlock(reader, pos, getStateForPlacement(reader, pos, state)).isAir(reader, pos);
+        return !getBlock(reader, pos, getStateForPlacement(reader, pos, state)).isAir();
     }
 
     public final boolean isLighterThanAir()
@@ -186,12 +191,12 @@ public class FluidAttributes
      * @param fluidStack The fluidStack is trying to be placed.
      * @return true if this fluid should vaporize in dimensions where water vaporizes when placed.
      */
-    public boolean doesVaporize(IBlockDisplayReader reader, BlockPos pos, FluidStack fluidStack)
+    public boolean doesVaporize(BlockAndTintGetter reader, BlockPos pos, FluidStack fluidStack)
     {
         BlockState blockstate = getBlock(reader, pos, getStateForPlacement(reader, pos, fluidStack));
         if (blockstate == null)
             return false;
-        return blockstate.getMaterial() == net.minecraft.block.material.Material.WATER;
+        return blockstate.getMaterial() == net.minecraft.world.level.material.Material.WATER;
     }
 
     /**
@@ -204,9 +209,9 @@ public class FluidAttributes
      * @param pos        The position in the world the fluid block was going to be placed.
      * @param fluidStack The fluidStack that was going to be placed.
      */
-    public void vaporize(@Nullable PlayerEntity player, World worldIn, BlockPos pos, FluidStack fluidStack)
+    public void vaporize(@Nullable Player player, Level worldIn, BlockPos pos, FluidStack fluidStack)
     {
-        worldIn.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (worldIn.random.nextFloat() - worldIn.random.nextFloat()) * 0.8F);
+        worldIn.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (worldIn.random.nextFloat() - worldIn.random.nextFloat()) * 0.8F);
 
         for (int l = 0; l < 8; ++l)
         {
@@ -217,9 +222,9 @@ public class FluidAttributes
     /**
      * Returns the localized name of this fluid.
      */
-    public ITextComponent getDisplayName(FluidStack stack)
+    public Component getDisplayName(FluidStack stack)
     {
-        return new TranslationTextComponent(getTranslationKey());
+        return new TranslatableComponent(getTranslationKey());
     }
 
     /**
@@ -314,17 +319,17 @@ public class FluidAttributes
     public SoundEvent getEmptySound(FluidStack stack) { return getEmptySound(); }
 
     /* World-based Accessors */
-    public int getLuminosity(IBlockDisplayReader world, BlockPos pos){ return getLuminosity(); }
-    public int getDensity(IBlockDisplayReader world, BlockPos pos){ return getDensity(); }
-    public int getTemperature(IBlockDisplayReader world, BlockPos pos){ return getTemperature(); }
-    public int getViscosity(IBlockDisplayReader world, BlockPos pos){ return getViscosity(); }
-    public boolean isGaseous(IBlockDisplayReader world, BlockPos pos){ return isGaseous(); }
-    public Rarity getRarity(IBlockDisplayReader world, BlockPos pos){ return getRarity(); }
-    public int getColor(IBlockDisplayReader world, BlockPos pos){ return getColor(); }
-    public ResourceLocation getStillTexture(IBlockDisplayReader world, BlockPos pos) { return getStillTexture(); }
-    public ResourceLocation getFlowingTexture(IBlockDisplayReader world, BlockPos pos) { return getFlowingTexture(); }
-    public SoundEvent getFillSound(IBlockDisplayReader world, BlockPos pos) { return getFillSound(); }
-    public SoundEvent getEmptySound(IBlockDisplayReader world, BlockPos pos) { return getEmptySound(); }
+    public int getLuminosity(BlockAndTintGetter world, BlockPos pos){ return getLuminosity(); }
+    public int getDensity(BlockAndTintGetter world, BlockPos pos){ return getDensity(); }
+    public int getTemperature(BlockAndTintGetter world, BlockPos pos){ return getTemperature(); }
+    public int getViscosity(BlockAndTintGetter world, BlockPos pos){ return getViscosity(); }
+    public boolean isGaseous(BlockAndTintGetter world, BlockPos pos){ return isGaseous(); }
+    public Rarity getRarity(BlockAndTintGetter world, BlockPos pos){ return getRarity(); }
+    public int getColor(BlockAndTintGetter world, BlockPos pos){ return getColor(); }
+    public ResourceLocation getStillTexture(BlockAndTintGetter world, BlockPos pos) { return getStillTexture(); }
+    public ResourceLocation getFlowingTexture(BlockAndTintGetter world, BlockPos pos) { return getFlowingTexture(); }
+    public SoundEvent getFillSound(BlockAndTintGetter world, BlockPos pos) { return getFillSound(); }
+    public SoundEvent getEmptySound(BlockAndTintGetter world, BlockPos pos) { return getEmptySound(); }
 
     public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
         return new Builder(stillTexture, flowingTexture, FluidAttributes::new);
@@ -441,7 +446,7 @@ public class FluidAttributes
         }
 
         @Override
-        public int getColor(IBlockDisplayReader world, BlockPos pos)
+        public int getColor(BlockAndTintGetter world, BlockPos pos)
         {
             return BiomeColors.getAverageWaterColor(world, pos) | 0xFF000000;
         }

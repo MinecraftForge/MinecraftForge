@@ -22,15 +22,15 @@ package net.minecraftforge.common.util;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
 
 import javax.annotation.Nullable;
 
@@ -45,18 +45,18 @@ public class BlockSnapshot
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockSnapshot", "false"));
 
-    private final RegistryKey<World> dim;
+    private final ResourceKey<Level> dim;
     private final BlockPos pos;
     private final int flags;
     private final BlockState block;
     @Nullable
-    private final CompoundNBT nbt;
+    private final CompoundTag nbt;
 
     @Nullable
-    private WeakReference<IWorld> world;
+    private WeakReference<LevelAccessor> world;
     private String toString = null;
 
-    private BlockSnapshot(RegistryKey<World> dim, IWorld world, BlockPos pos, BlockState state, @Nullable CompoundNBT nbt, int flags)
+    private BlockSnapshot(ResourceKey<Level> dim, LevelAccessor world, BlockPos pos, BlockState state, @Nullable CompoundTag nbt, int flags)
     {
         this.dim = dim;
         this.pos = pos.immutable();
@@ -70,36 +70,36 @@ public class BlockSnapshot
             System.out.println("Created " + this.toString());
     }
 
-    public static BlockSnapshot create(RegistryKey<World> dim, IWorld world, BlockPos pos)
+    public static BlockSnapshot create(ResourceKey<Level> dim, LevelAccessor world, BlockPos pos)
     {
         return create(dim, world, pos, 3);
     }
 
-    public static BlockSnapshot create(RegistryKey<World> dim, IWorld world, BlockPos pos, int flag)
+    public static BlockSnapshot create(ResourceKey<Level> dim, LevelAccessor world, BlockPos pos, int flag)
     {
         return new BlockSnapshot(dim, world, pos, world.getBlockState(pos), getTileNBT(world.getBlockEntity(pos)), flag);
     }
 
     @Nullable
-    private static CompoundNBT getTileNBT(@Nullable TileEntity te)
+    private static CompoundTag getTileNBT(@Nullable BlockEntity te)
     {
-        return te == null ? null : te.save(new CompoundNBT());
+        return te == null ? null : te.save(new CompoundTag());
     }
 
     public BlockState getCurrentBlock()
     {
-        IWorld world = getWorld();
+        LevelAccessor world = getWorld();
         return world == null ? Blocks.AIR.defaultBlockState() : world.getBlockState(this.pos);
     }
 
     @Nullable
-    public IWorld getWorld()
+    public LevelAccessor getWorld()
     {
-        IWorld world = this.world != null ? this.world.get() : null;
+        LevelAccessor world = this.world != null ? this.world.get() : null;
         if (world == null)
         {
             world = ServerLifecycleHooks.getCurrentServer().getLevel(this.dim);
-            this.world = new WeakReference<IWorld>(world);
+            this.world = new WeakReference<LevelAccessor>(world);
         }
         return world;
     }
@@ -110,9 +110,9 @@ public class BlockSnapshot
     }
 
     @Nullable
-    public TileEntity getTileEntity()
+    public BlockEntity getBlockEntity()
     {
-        return getNbt() != null ? TileEntity.loadStatic(getReplacedBlock(), getNbt()) : null;
+        return getNbt() != null ? BlockEntity.loadStatic(getPos(), getReplacedBlock(), getNbt()) : null;
     }
 
     public boolean restore()
@@ -130,7 +130,7 @@ public class BlockSnapshot
         return restoreToLocation(getWorld(), getPos(), force, notifyNeighbors);
     }
 
-    public boolean restoreToLocation(IWorld world, BlockPos pos, boolean force, boolean notifyNeighbors)
+    public boolean restoreToLocation(LevelAccessor world, BlockPos pos, boolean force, boolean notifyNeighbors)
     {
         BlockState current = getCurrentBlock();
         BlockState replaced = getReplacedBlock();
@@ -146,16 +146,16 @@ public class BlockSnapshot
         }
 
         world.setBlock(pos, replaced, flags);
-        if (world instanceof World)
-            ((World)world).sendBlockUpdated(pos, current, replaced, flags);
+        if (world instanceof Level)
+            ((Level)world).sendBlockUpdated(pos, current, replaced, flags);
 
-        TileEntity te = null;
+        BlockEntity te = null;
         if (getNbt() != null)
         {
             te = world.getBlockEntity(pos);
             if (te != null)
             {
-                te.load(getReplacedBlock(), getNbt());
+                te.load(getNbt());
                 te.setChanged();
             }
         }
@@ -216,6 +216,6 @@ public class BlockSnapshot
     public int getFlag() { return flags; }
 
     @Nullable
-    public CompoundNBT getNbt() { return nbt; }
+    public CompoundTag getNbt() { return nbt; }
 
 }

@@ -19,12 +19,8 @@
 
 package net.minecraftforge.event.entity;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
-
-import java.util.Collection;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 
 /**
  * EntityJoinWorldEvent is fired when an Entity joins the world. <br>
@@ -45,15 +41,15 @@ import java.util.Collection;
 public class EntityJoinWorldEvent extends EntityEvent
 {
 
-    private final World world;
+    private final Level world;
 
-    public EntityJoinWorldEvent(Entity entity, World world)
+    public EntityJoinWorldEvent(Entity entity, Level world)
     {
         super(entity);
         this.world = world;
     }
 
-    public World getWorld()
+    public Level getWorld()
     {
         return world;
     }

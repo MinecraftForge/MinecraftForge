@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/storage/loot/LootTables.java
++++ b/net/minecraft/world/level/storage/loot/LootTables.java
+@@ -37,8 +_,8 @@
+       }
+ 
+       p_79214_.forEach((p_79198_, p_79199_) -> {
+-         try {
+-            LootTable loottable = f_79189_.fromJson(p_79199_, LootTable.class);
++         try (net.minecraft.server.packs.resources.Resource res = p_79215_.m_142591_(getPreparedPath(p_79198_));){
++            LootTable loottable = net.minecraftforge.common.ForgeHooks.loadLootTable(f_79189_, p_79198_, p_79199_, res == null || !res.m_7816_().equals("Default"), this);
+             builder.put(p_79198_, loottable);
+          } catch (Exception exception) {
+             f_79188_.error("Couldn't parse loot table {}", p_79198_, exception);

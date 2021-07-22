@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/item/MinecartItem.java
++++ b/net/minecraft/world/item/MinecartItem.java
+@@ -28,7 +_,7 @@
+          double d2 = p_42949_.m_7094_() + (double)direction.m_122431_() * 1.125D;
+          BlockPos blockpos = p_42949_.m_7961_().m_142300_(direction);
+          BlockState blockstate = level.m_8055_(blockpos);
+-         RailShape railshape = blockstate.m_60734_() instanceof BaseRailBlock ? blockstate.m_61143_(((BaseRailBlock)blockstate.m_60734_()).m_7978_()) : RailShape.NORTH_SOUTH;
++         RailShape railshape = blockstate.m_60734_() instanceof BaseRailBlock ? ((BaseRailBlock)blockstate.m_60734_()).getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
+          double d3;
+          if (blockstate.m_60620_(BlockTags.f_13034_)) {
+             if (railshape.m_61745_()) {
+@@ -81,7 +_,7 @@
+       } else {
+          ItemStack itemstack = p_42943_.m_43722_();
+          if (!level.f_46443_) {
+-            RailShape railshape = blockstate.m_60734_() instanceof BaseRailBlock ? blockstate.m_61143_(((BaseRailBlock)blockstate.m_60734_()).m_7978_()) : RailShape.NORTH_SOUTH;
++            RailShape railshape = blockstate.m_60734_() instanceof BaseRailBlock ? ((BaseRailBlock)blockstate.m_60734_()).getRailDirection(blockstate, level, blockpos, null) : RailShape.NORTH_SOUTH;
+             double d0 = 0.0D;
+             if (railshape.m_61745_()) {
+                d0 = 0.5D;

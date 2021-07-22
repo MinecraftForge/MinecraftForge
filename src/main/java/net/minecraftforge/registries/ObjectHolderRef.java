@@ -27,8 +27,8 @@ import java.util.Queue;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.ResourceLocationException;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.ResourceLocationException;
 
 import javax.annotation.Nullable;
 

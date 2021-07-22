@@ -9,19 +9,24 @@
 
 #idea
 /.idea
+/*/out
 /classes
 *.iml
 
 #gradle
 /build
 /.gradle
-/mdk/.gradle
-/mdk/build
+/*/build
+/*/.gradle
 
-#occupational hazards
+# Projects repo, either ignore it, or ignore patches.
 /projects/mcp/
 /projects/clean/
 /projects/forge/
+/projects/fmlonly/
+#/patches/
+
+#occupational hazards
 /projects/**/build/
 /projects/**/out/
 /projects/**/run/
@@ -31,16 +36,11 @@ src/generated/resources/.cache/
 
 #Patch rejects
 /patches-/
-*.patch.rej
+#*.patch.rej
+/projects/*/rejects/
 
 # FML changelog
 changelog.txt
 *.py
 *.7z
 /logs/
-
-/projects/forge/rejects/
-
-# Srg2Source causes import bugs on these patches. If you intentionnally change these, remove the ignore.
-/patches/minecraft/net/minecraft/client/renderer/ViewFrustum.java.patch
-/patches/minecraft/net/minecraft/data/BlockModelDefinition.java.patch

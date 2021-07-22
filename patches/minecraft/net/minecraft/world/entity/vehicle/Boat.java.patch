@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/entity/vehicle/Boat.java
++++ b/net/minecraft/world/entity/vehicle/Boat.java
+@@ -475,7 +_,7 @@
+                      blockpos$mutableblockpos.m_122178_(l1, k2, i2);
+                      BlockState blockstate = this.f_19853_.m_8055_(blockpos$mutableblockpos);
+                      if (!(blockstate.m_60734_() instanceof WaterlilyBlock) && Shapes.m_83157_(blockstate.m_60812_(this.f_19853_, blockpos$mutableblockpos).m_83216_((double)l1, (double)k2, (double)i2), voxelshape, BooleanOp.f_82689_)) {
+-                        f += blockstate.m_60734_().m_49958_();
++                        f += blockstate.getFriction(this.f_19853_, blockpos$mutableblockpos, this);
+                         ++k1;
+                      }
+                   }
+@@ -821,6 +_,16 @@
+ 
+    public boolean m_5842_() {
+       return this.f_38279_ == Boat.Status.UNDER_WATER || this.f_38279_ == Boat.Status.UNDER_FLOWING_WATER;
++   }
++
++   // Forge: Fix MC-119811 by instantly completing lerp on board
++   @Override
++   protected void m_20348_(Entity passenger) {
++      super.m_20348_(passenger);
++      if (this.m_6109_() && this.f_38267_ > 0) {
++         this.f_38267_ = 0;
++         this.m_19890_(this.f_38268_, this.f_38269_, this.f_38270_, (float)this.f_38271_, (float)this.f_38272_);
++      }
+    }
+ 
+    public ItemStack m_142340_() {

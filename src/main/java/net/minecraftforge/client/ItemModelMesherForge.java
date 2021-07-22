@@ -26,22 +26,22 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Maps;
 
-import net.minecraft.client.renderer.ItemModelMesher;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.client.renderer.model.ModelManager;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.ItemModelShaper;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.registries.IRegistryDelegate;
 
 /**
  * Wrapper around ItemModeMesher that cleans up the internal maps to respect ID remapping.
  */
-public class ItemModelMesherForge extends ItemModelMesher
+public class ItemModelMesherForge extends ItemModelShaper
 {
     final Map<IRegistryDelegate<Item>, ModelResourceLocation> locations = Maps.newHashMap();
-    final Map<IRegistryDelegate<Item>, IBakedModel> models = Maps.newHashMap();
+    final Map<IRegistryDelegate<Item>, BakedModel> models = Maps.newHashMap();
 
     public ItemModelMesherForge(ModelManager manager)
     {
@@ -50,7 +50,7 @@ public class ItemModelMesherForge extends ItemModelMesher
 
     @Override
     @Nullable
-    public IBakedModel getItemModel(Item item)
+    public BakedModel getItemModel(Item item)
     {
         return models.get(item.delegate);
     }

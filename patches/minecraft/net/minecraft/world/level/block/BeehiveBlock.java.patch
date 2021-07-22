@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/block/BeehiveBlock.java
++++ b/net/minecraft/world/level/block/BeehiveBlock.java
+@@ -71,6 +_,9 @@
+    public int m_6782_(BlockState p_49620_, Level p_49621_, BlockPos p_49622_) {
+       return p_49620_.m_61143_(f_49564_);
+    }
++   // Forge: Fixed MC-227255 Beehives and bee nests do not rotate/mirror correctly in structure blocks
++   @Override public BlockState m_6843_(BlockState blockState, net.minecraft.world.level.block.Rotation rotation) { return blockState.m_61124_(f_49563_, rotation.m_55954_(blockState.m_61143_(f_49563_))); }
++   @Override public BlockState m_6943_(BlockState blockState, net.minecraft.world.level.block.Mirror mirror) { return blockState.m_60717_(mirror.m_54846_(blockState.m_61143_(f_49563_))); }
+ 
+    public void m_6240_(Level p_49584_, Player p_49585_, BlockPos p_49586_, BlockState p_49587_, @Nullable BlockEntity p_49588_, ItemStack p_49589_) {
+       super.m_6240_(p_49584_, p_49585_, p_49586_, p_49587_, p_49588_, p_49589_);
+@@ -91,6 +_,7 @@
+       List<Bee> list = p_49650_.m_45976_(Bee.class, (new AABB(p_49651_)).m_82377_(8.0D, 6.0D, 8.0D));
+       if (!list.isEmpty()) {
+          List<Player> list1 = p_49650_.m_45976_(Player.class, (new AABB(p_49651_)).m_82377_(8.0D, 6.0D, 8.0D));
++         if (list1.isEmpty()) return; //Forge: Prevent Error when no players are around.
+          int i = list1.size();
+ 
+          for(Bee bee : list) {

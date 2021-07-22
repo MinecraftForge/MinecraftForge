@@ -1,0 +1,21 @@
+--- a/net/minecraft/network/chat/Style.java
++++ b/net/minecraft/network/chat/Style.java
+@@ -133,6 +_,18 @@
+       return new Style(this.f_131101_, this.f_131102_, this.f_131103_, this.f_131104_, this.f_131105_, p_178525_, this.f_131107_, this.f_131108_, this.f_131109_, this.f_131110_);
+    }
+ 
++   public Style setUnderlined(@Nullable Boolean underlined) {
++      return new Style(this.f_131101_, this.f_131102_, this.f_131103_, underlined, this.f_131105_, this.f_131106_, this.f_131107_, this.f_131108_, this.f_131109_, this.f_131110_);
++   }
++
++   public Style setStrikethrough(@Nullable Boolean strikethrough) {
++      return new Style(this.f_131101_, this.f_131102_, this.f_131103_, this.f_131104_, strikethrough, this.f_131106_, this.f_131107_, this.f_131108_, this.f_131109_, this.f_131110_);
++   }
++
++   public Style setObfuscated(@Nullable Boolean obfuscated) {
++      return new Style(this.f_131101_, this.f_131102_, this.f_131103_, this.f_131104_, this.f_131105_, obfuscated, this.f_131107_, this.f_131108_, this.f_131109_, this.f_131110_);
++   }
++
+    public Style m_131142_(@Nullable ClickEvent p_131143_) {
+       return new Style(this.f_131101_, this.f_131102_, this.f_131103_, this.f_131104_, this.f_131105_, this.f_131106_, p_131143_, this.f_131108_, this.f_131109_, this.f_131110_);
+    }

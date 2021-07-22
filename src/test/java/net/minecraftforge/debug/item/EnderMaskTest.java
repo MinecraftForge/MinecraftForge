@@ -19,16 +19,21 @@
 
 package net.minecraftforge.debug.item;
 
-import net.minecraft.entity.monster.EndermanEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 @Mod(EnderMaskTest.MODID)
 public class EnderMaskTest
@@ -37,10 +42,10 @@ public class EnderMaskTest
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public static RegistryObject<Item> ender_mask = ITEMS.register("ender_mask", () ->
-            new ArmorItem(ArmorMaterial.LEATHER, EquipmentSlotType.HEAD, (new Item.Properties().tab(ItemGroup.TAB_MISC)))
+            new ArmorItem(ArmorMaterials.LEATHER, EquipmentSlot.HEAD, (new Item.Properties().tab(CreativeModeTab.TAB_MISC)))
             {
                 @Override
-                public boolean isEnderMask(ItemStack stack, PlayerEntity player, EndermanEntity endermanEntity)
+                public boolean isEnderMask(ItemStack stack, Player player, EnderMan endermanEntity)
                 {
                     return player.experienceLevel > 10;
                 }

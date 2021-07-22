@@ -29,7 +29,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
@@ -53,15 +52,11 @@ public enum CapabilityManager
      * To retrieve the Capability instance, use the @CapabilityInject annotation.
      * This method is safe to call during parallel mod loading.
      *
-     * @param type The Interface to be registered
-     * @param storage A default implementation of the storage handler.
-     * @param factory A Factory that will produce new instances of the default implementation.
+     * @param type The class type to be registered
      */
-    public <T> void register(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory)
+    public <T> void register(Class<T> type)
     {
         Objects.requireNonNull(type,"Attempted to register a capability with invalid type");
-        Objects.requireNonNull(storage,"Attempted to register a capability with no storage implementation");
-        Objects.requireNonNull(factory,"Attempted to register a capability with no default implementation factory");
         String realName = type.getName().intern();
         Capability<T> cap;
 
@@ -72,7 +67,7 @@ public enum CapabilityManager
                 throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
             }
 
-            cap = new Capability<>(realName, storage, factory);
+            cap = new Capability<>(realName);
             providers.put(realName, cap);
         }
 
@@ -87,7 +82,7 @@ public enum CapabilityManager
         final List<ModFileScanData.AnnotationData> capabilities = data.stream()
             .map(ModFileScanData::getAnnotations)
             .flatMap(Collection::stream)
-            .filter(a -> CAP_INJECT.equals(a.getAnnotationType()))
+            .filter(a -> CAP_INJECT.equals(a.annotationType()))
             .collect(Collectors.toList());
         final IdentityHashMap<String, List<Function<Capability<?>, Object>>> m = new IdentityHashMap<>();
         capabilities.forEach(entry -> attachCapabilityToMethod(m, entry));
@@ -96,9 +91,9 @@ public enum CapabilityManager
 
     private static void attachCapabilityToMethod(Map<String, List<Function<Capability<?>, Object>>> cbs, ModFileScanData.AnnotationData entry)
     {
-        final String targetClass = entry.getClassType().getClassName();
-        final String targetName = entry.getMemberName();
-        Type type = (Type)entry.getAnnotationData().get("value");
+        final String targetClass = entry.clazz().getClassName();
+        final String targetName = entry.memberName();
+        Type type = (Type)entry.annotationData().get("value");
         if (type == null)
         {
             LOGGER.warn(CAPABILITIES,"Unable to inject capability at {}.{} (Invalid Annotation)", targetClass, targetName);
@@ -108,7 +103,7 @@ public enum CapabilityManager
 
         List<Function<Capability<?>, Object>> list = cbs.computeIfAbsent(capabilityName, k -> new ArrayList<>());
 
-        if (entry.getMemberName().indexOf('(') > 0)
+        if (entry.memberName().indexOf('(') > 0)
         {
             list.add(input -> {
                 try

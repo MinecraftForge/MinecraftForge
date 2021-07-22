@@ -22,7 +22,7 @@ package net.minecraftforge.common.animation;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.StringRepresentable;
 
 import java.util.function.Function;
 import com.google.common.base.Objects;
@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
  */
 public final class TimeValues
 {
-    public static enum IdentityValue implements ITimeValue, IStringSerializable
+    public static enum IdentityValue implements ITimeValue, StringRepresentable
     {
         INSTANCE;
 
@@ -231,7 +231,7 @@ public final class TimeValues
         }
     }
 
-    public static final class ParameterValue implements ITimeValue, IStringSerializable
+    public static final class ParameterValue implements ITimeValue, StringRepresentable
     {
         private final String parameterName;
         private final Function<String, ITimeValue> valueResolver;
@@ -344,9 +344,9 @@ public final class TimeValues
                         write(out, p.f);
                         out.endArray();
                     }
-                    else if(parameter instanceof IStringSerializable)
+                    else if(parameter instanceof StringRepresentable)
                     {
-                        out.value("#" + ((IStringSerializable)parameter).getSerializedName());
+                        out.value("#" + ((StringRepresentable)parameter).getSerializedName());
                     }
                 }
 

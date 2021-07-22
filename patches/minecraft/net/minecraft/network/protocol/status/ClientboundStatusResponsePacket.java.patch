@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/protocol/status/ClientboundStatusResponsePacket.java
++++ b/net/minecraft/network/protocol/status/ClientboundStatusResponsePacket.java
+@@ -22,7 +_,7 @@
+    }
+ 
+    public void m_5779_(FriendlyByteBuf p_134899_) {
+-      p_134899_.m_130070_(f_134885_.toJson(this.f_134886_));
++      p_134899_.m_130070_(this.f_134886_.getJson()); //Forge: Let the response cache the JSON
+    }
+ 
+    public void m_5797_(ClientStatusPacketListener p_134896_) {

@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/item/trading/MerchantOffer.java
++++ b/net/minecraft/world/item/trading/MerchantOffer.java
+@@ -75,7 +_,7 @@
+       int i = this.f_45310_.m_41613_();
+       ItemStack itemstack = this.f_45310_.m_41777_();
+       int j = Math.max(0, Mth.m_14143_((float)(i * this.f_45317_) * this.f_45318_));
+-      itemstack.m_41764_(Mth.m_14045_(i + j + this.f_45316_, 1, this.f_45310_.m_41720_().m_41459_()));
++      itemstack.m_41764_(Mth.m_14045_(i + j + this.f_45316_, 1, this.f_45310_.m_41741_()));
+       return itemstack;
+    }
+ 
+@@ -179,7 +_,7 @@
+          return true;
+       } else {
+          ItemStack itemstack = p_45366_.m_41777_();
+-         if (itemstack.m_41720_().m_41465_()) {
++         if (itemstack.m_41720_().isDamageable(itemstack)) {
+             itemstack.m_41721_(itemstack.m_41773_());
+          }
+ 

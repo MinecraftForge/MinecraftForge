@@ -27,20 +27,18 @@ import javax.annotation.Nullable;
 import com.google.common.collect.*;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.client.renderer.model.*;
-import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
+import com.mojang.math.Transformation;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.item.ItemStack;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.Direction;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.ForgeRenderTypes;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.core.Direction;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
@@ -52,6 +50,15 @@ import org.apache.logging.log4j.Logger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
+
 /**
  * A model that can be rendered in multiple {@link RenderType}.
  */
@@ -59,35 +66,35 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private final ImmutableList<Pair<RenderType, IUnbakedModel>> models;
+    private final ImmutableList<Pair<RenderType, UnbakedModel>> models;
     private final boolean convertRenderTypes;
 
-    public MultiLayerModel(Map<RenderType, IUnbakedModel> models)
+    public MultiLayerModel(Map<RenderType, UnbakedModel> models)
     {
         this(models.entrySet().stream().map(kv -> Pair.of(kv.getKey(), kv.getValue())).collect(ImmutableList.toImmutableList()), true);
     }
 
-    public MultiLayerModel(ImmutableList<Pair<RenderType, IUnbakedModel>> models, boolean convertRenderTypes)
+    public MultiLayerModel(ImmutableList<Pair<RenderType, UnbakedModel>> models, boolean convertRenderTypes)
     {
         this.models = models;
         this.convertRenderTypes = convertRenderTypes;
     }
 
     @Override
-    public Collection<RenderMaterial> getTextures(IModelConfiguration owner, Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+    public Collection<Material> getTextures(IModelConfiguration owner, Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
-        Set<RenderMaterial> materials = Sets.newHashSet();
+        Set<Material> materials = Sets.newHashSet();
         materials.add(owner.resolveTexture("particle"));
-        for (Pair<RenderType, IUnbakedModel> m : models)
+        for (Pair<RenderType, UnbakedModel> m : models)
             materials.addAll(m.getSecond().getMaterials(modelGetter, missingTextureErrors));
         return materials;
     }
 
-    private static ImmutableList<Pair<RenderType, IBakedModel>> buildModels(List<Pair<RenderType, IUnbakedModel>> models, IModelTransform modelTransform,
-                                                                            ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, ResourceLocation modelLocation)
+    private static ImmutableList<Pair<RenderType, BakedModel>> buildModels(List<Pair<RenderType, UnbakedModel>> models, ModelState modelTransform,
+                                                                            ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ResourceLocation modelLocation)
     {
-        ImmutableList.Builder<Pair<RenderType, IBakedModel>> builder = ImmutableList.builder();
-        for(Pair<RenderType, IUnbakedModel> entry : models)
+        ImmutableList.Builder<Pair<RenderType, BakedModel>> builder = ImmutableList.builder();
+        for(Pair<RenderType, UnbakedModel> entry : models)
         {
             builder.add(Pair.of(entry.getFirst(), entry.getSecond().bake(bakery, spriteGetter, modelTransform, modelLocation)));
         }
@@ -95,33 +102,33 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
     }
 
     @Override
-    public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> spriteGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
+    public BakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function<Material, TextureAtlasSprite> spriteGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
     {
         return new MultiLayerBakedModel(
                 owner.useSmoothLighting(), owner.isShadedInGui(), owner.isSideLit(),
                 spriteGetter.apply(owner.resolveTexture("particle")), overrides, convertRenderTypes,
                 buildModels(models, modelTransform, bakery, spriteGetter, modelLocation),
-                PerspectiveMapWrapper.getTransforms(new ModelTransformComposition(owner.getCombinedTransform(), modelTransform))
+                PerspectiveMapWrapper.getTransforms(new CompositeModelState(owner.getCombinedTransform(), modelTransform))
         );
     }
 
     private static final class MultiLayerBakedModel implements IDynamicBakedModel
     {
-        private final ImmutableMap<RenderType, IBakedModel> models;
-        private final ImmutableMap<TransformType, TransformationMatrix> cameraTransforms;
+        private final ImmutableMap<RenderType, BakedModel> models;
+        private final ImmutableMap<TransformType, Transformation> cameraTransforms;
         protected final boolean ambientOcclusion;
         protected final boolean gui3d;
         protected final boolean isSideLit;
         protected final TextureAtlasSprite particle;
-        protected final ItemOverrideList overrides;
+        protected final ItemOverrides overrides;
         private final List<BakedQuad> missing = ImmutableList.of();
         private final boolean convertRenderTypes;
-        private final List<Pair<IBakedModel, RenderType>> itemLayers;
+        private final List<Pair<BakedModel, RenderType>> itemLayers;
 
         public MultiLayerBakedModel(
-                boolean ambientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrideList overrides,
-                boolean convertRenderTypes, List<Pair<RenderType, IBakedModel>> models,
-                ImmutableMap<TransformType, TransformationMatrix> cameraTransforms)
+                boolean ambientOcclusion, boolean isGui3d, boolean isSideLit, TextureAtlasSprite particle, ItemOverrides overrides,
+                boolean convertRenderTypes, List<Pair<RenderType, BakedModel>> models,
+                ImmutableMap<TransformType, Transformation> cameraTransforms)
         {
             this.isSideLit = isSideLit;
             this.cameraTransforms = cameraTransforms;
@@ -146,7 +153,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
             if (layer == null)
             {
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                for (IBakedModel model : models.values())
+                for (BakedModel model : models.values())
                 {
                     builder.addAll(model.getQuads(state, side, rand, extraData));
                 }
@@ -204,15 +211,15 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         }
 
         @Override
-        public IBakedModel handlePerspective(TransformType cameraTransformType, MatrixStack mat)
+        public BakedModel handlePerspective(TransformType cameraTransformType, PoseStack poseStack)
         {
-            return PerspectiveMapWrapper.handlePerspective(this, cameraTransforms, cameraTransformType, mat);
+            return PerspectiveMapWrapper.handlePerspective(this, cameraTransforms, cameraTransformType, poseStack);
         }
 
         @Override
-        public ItemOverrideList getOverrides()
+        public ItemOverrides getOverrides()
         {
-            return ItemOverrideList.EMPTY;
+            return ItemOverrides.EMPTY;
         }
 
         @Override
@@ -222,18 +229,19 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         }
 
         @Override
-        public List<Pair<IBakedModel, RenderType>> getLayerModels(ItemStack itemStack, boolean fabulous)
+        public List<Pair<BakedModel, RenderType>> getLayerModels(ItemStack itemStack, boolean fabulous)
         {
             return itemLayers;
         }
 
         public static BiMap<RenderType, RenderType> ITEM_RENDER_TYPE_MAPPING = HashBiMap.create();
-        static {
+        // TODO ForgeRenderTypes
+/*        static {
             ITEM_RENDER_TYPE_MAPPING.put(RenderType.solid(), ForgeRenderTypes.ITEM_LAYERED_SOLID.get());
             ITEM_RENDER_TYPE_MAPPING.put(RenderType.cutout(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get());
             ITEM_RENDER_TYPE_MAPPING.put(RenderType.cutoutMipped(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT_MIPPED.get());
             ITEM_RENDER_TYPE_MAPPING.put(RenderType.translucent(), ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get());
-        }
+        }*/
     }
 
     public static final class Loader implements IModelLoader<MultiLayerModel>
@@ -251,7 +259,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         private Loader() {}
 
         @Override
-        public void onResourceManagerReload(IResourceManager resourceManager)
+        public void onResourceManagerReload(ResourceManager resourceManager)
         {
 
         }
@@ -259,17 +267,17 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         @Override
         public MultiLayerModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents)
         {
-            ImmutableList.Builder<Pair<RenderType, IUnbakedModel>> builder = ImmutableList.builder();
-            JsonObject layersObject = JSONUtils.getAsJsonObject(modelContents, "layers");
+            ImmutableList.Builder<Pair<RenderType, UnbakedModel>> builder = ImmutableList.builder();
+            JsonObject layersObject = GsonHelper.getAsJsonObject(modelContents, "layers");
             for(Map.Entry<String, RenderType> layer : BLOCK_LAYERS.entrySet()) // block layers
             {
                 String layerName = layer.getKey(); // mc overrides toString to return the ID for the layer
                 if(layersObject.has(layerName))
                 {
-                    builder.add(Pair.of(layer.getValue(), deserializationContext.deserialize(JSONUtils.getAsJsonObject(layersObject, layerName), BlockModel.class)));
+                    builder.add(Pair.of(layer.getValue(), deserializationContext.deserialize(GsonHelper.getAsJsonObject(layersObject, layerName), BlockModel.class)));
                 }
             }
-            boolean convertRenderTypes = JSONUtils.getAsBoolean(modelContents, "convert_render_types", true);
+            boolean convertRenderTypes = GsonHelper.getAsBoolean(modelContents, "convert_render_types", true);
             return new MultiLayerModel(builder.build(), convertRenderTypes);
         }
     }

@@ -20,12 +20,12 @@
 package net.minecraftforge.debug.chat;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.ResourceLocationArgument;
-import net.minecraft.command.arguments.SuggestionProviders;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -45,7 +45,7 @@ public class ClientCommandTest
                 Commands.literal("clientcommandtest")
                         .then(Commands.literal("rawsuggest")
                                 .then(Commands.argument("block", ResourceLocationArgument.id())
-                                        .suggests((c, b) -> ISuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), b))
+                                        .suggests((c, b) -> SharedSuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), b))
                                         .executes(new TestCommand())))
                         .then(Commands.literal("registeredsuggest").then(
                                 Commands.argument("block", ResourceLocationArgument.id())
@@ -53,18 +53,18 @@ public class ClientCommandTest
                                         .executes(new TestCommand()))));
     }
 
-    private static class TestCommand implements Command<CommandSource>
+    private static class TestCommand implements Command<CommandSourceStack>
     {
         @Override
-        public int run(CommandContext<CommandSource> context)
+        public int run(CommandContext<CommandSourceStack> context)
         {
-            context.getSource().sendSuccess(new StringTextComponent("Input: " + ResourceLocationArgument.getId(context, "block")), false);
-            context.getSource().sendSuccess(new StringTextComponent("Teams: " + context.getSource().getAllTeams()), false);
-            context.getSource().sendSuccess(new StringTextComponent("Players: " + context.getSource().getOnlinePlayerNames()), false);
-            context.getSource().sendSuccess(new StringTextComponent("First recipe: " + context.getSource().getRecipeNames().findFirst().get()), false);
-            context.getSource().sendSuccess(new StringTextComponent("Levels: " + context.getSource().levels()), false);
+            context.getSource().sendSuccess(new TextComponent("Input: " + ResourceLocationArgument.getId(context, "block")), false);
+            context.getSource().sendSuccess(new TextComponent("Teams: " + context.getSource().getAllTeams()), false);
+            context.getSource().sendSuccess(new TextComponent("Players: " + context.getSource().getOnlinePlayerNames()), false);
+            context.getSource().sendSuccess(new TextComponent("First recipe: " + context.getSource().getRecipeNames().findFirst().get()), false);
+            context.getSource().sendSuccess(new TextComponent("Levels: " + context.getSource().levels()), false);
             context.getSource().sendSuccess(
-                    new StringTextComponent("Dimension types using Registry Access: " + context.getSource().registryAccess().dimensionTypes().keySet()), false);
+                    new TextComponent("Registry Access: " + context.getSource().registryAccess()), false);
             return 0;
         }
     }

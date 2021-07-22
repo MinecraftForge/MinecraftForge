@@ -1,17 +1,17 @@
 --- a/net/minecraft/tags/EntityTypeTags.java
 +++ b/net/minecraft/tags/EntityTypeTags.java
-@@ -16,6 +_,14 @@
-       return field_219766_c.func_232937_a_(p_232896_0_);
+@@ -23,6 +_,14 @@
+       return f_13119_.m_13244_(p_13128_);
     }
  
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<EntityType<?>> createOptional(ResourceLocation name) {
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<EntityType<?>> createOptional(net.minecraft.resources.ResourceLocation name) {
 +       return createOptional(name, null);
 +   }
 +
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<EntityType<?>> createOptional(ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<EntityType<?>>> defaults) {
-+      return field_219766_c.createOptional(name, defaults);
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<EntityType<?>> createOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<EntityType<?>>> defaults) {
++      return f_13119_.createOptional(name, defaults);
 +   }
 +
-    public static ITagCollection<EntityType<?>> func_219762_a() {
-       return field_219766_c.func_232939_b_();
+    public static TagCollection<EntityType<?>> m_13126_() {
+       return f_13119_.m_13246_();
     }

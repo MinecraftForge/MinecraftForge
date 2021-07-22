@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/levelgen/DebugLevelSource.java
++++ b/net/minecraft/world/level/levelgen/DebugLevelSource.java
+@@ -107,4 +_,10 @@
+ 
+       return blockstate;
+    }
++   
++   public static void initValidStates() {
++      f_64114_ = StreamSupport.stream(Registry.f_122824_.spliterator(), false).flatMap(block -> block.m_49965_().m_61056_().stream()).collect(Collectors.toList());
++      f_64115_ = Mth.m_14167_(Mth.m_14116_(f_64114_.size()));
++      f_64116_ = Mth.m_14167_((float) (f_64114_.size() / f_64115_));
++   }
+ }

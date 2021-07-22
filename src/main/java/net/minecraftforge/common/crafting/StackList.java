@@ -25,10 +25,10 @@ import java.util.Collections;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient.IItemList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient.Value;
 
-public class StackList implements IItemList
+public class StackList implements Value
 {
     private Collection<ItemStack> items;
     public StackList(Collection<ItemStack> items)

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/item/enchantment/Enchantments.java
++++ b/net/minecraft/world/item/enchantment/Enchantments.java
+@@ -3,6 +_,7 @@
+ import net.minecraft.core.Registry;
+ import net.minecraft.world.entity.EquipmentSlot;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class Enchantments {
+    private static final EquipmentSlot[] f_44964_ = new EquipmentSlot[]{EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+    public static final Enchantment f_44965_ = m_44992_("protection", new ProtectionEnchantment(Enchantment.Rarity.COMMON, ProtectionEnchantment.Type.ALL, f_44964_));

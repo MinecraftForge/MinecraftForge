@@ -19,7 +19,7 @@
 
 package net.minecraftforge.debug.block;
 
-import net.minecraft.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

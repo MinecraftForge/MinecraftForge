@@ -19,10 +19,10 @@
 
 package net.minecraftforge.client.model.data;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockAndTintGetter;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nullable;
@@ -35,14 +35,14 @@ public class MultipartModelData implements IModelData
 {
     public static final ModelProperty<MultipartModelData> MULTIPART_DATA = new ModelProperty<>();
 
-    public static IModelData create(List<Pair<Predicate<BlockState>, IBakedModel>> selectors, IBlockDisplayReader world, BlockPos pos, BlockState state, IModelData tileData)
+    public static IModelData create(List<Pair<Predicate<BlockState>, BakedModel>> selectors, BlockAndTintGetter world, BlockPos pos, BlockState state, IModelData tileData)
     {
         MultipartModelData multipartData = new MultipartModelData(tileData);
-        for (Pair<Predicate<BlockState>, IBakedModel> selector : selectors)
+        for (Pair<Predicate<BlockState>, BakedModel> selector : selectors)
         {
             if (selector.getLeft().test(state))
             {
-                IBakedModel part = selector.getRight();
+                BakedModel part = selector.getRight();
                 IModelData partData = part.getModelData(world, pos, state, tileData);
                 multipartData.setPartData(part, partData);
             }
@@ -50,7 +50,7 @@ public class MultipartModelData implements IModelData
         return multipartData;
     }
 
-    public static IModelData resolve(IBakedModel part, IModelData modelData)
+    public static IModelData resolve(BakedModel part, IModelData modelData)
     {
         MultipartModelData multipartData = modelData.getData(MultipartModelData.MULTIPART_DATA);
         if (multipartData != null)
@@ -59,20 +59,20 @@ public class MultipartModelData implements IModelData
     }
 
     private final IModelData tileData;
-    private final Map<IBakedModel, IModelData> partData = new HashMap<>();
+    private final Map<BakedModel, IModelData> partData = new HashMap<>();
 
     public MultipartModelData(IModelData tileData)
     {
         this.tileData = tileData;
     }
 
-    public void setPartData(IBakedModel part, IModelData data)
+    public void setPartData(BakedModel part, IModelData data)
     {
         partData.put(part, data);
     }
 
     @Nullable
-    public IModelData getPartData(IBakedModel part, final IModelData defaultData)
+    public IModelData getPartData(BakedModel part, final IModelData defaultData)
     {
         return partData.getOrDefault(part, defaultData);
     }

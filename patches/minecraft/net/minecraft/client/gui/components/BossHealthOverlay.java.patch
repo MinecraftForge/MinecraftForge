@@ -1,0 +1,23 @@
+--- a/net/minecraft/client/gui/components/BossHealthOverlay.java
++++ b/net/minecraft/client/gui/components/BossHealthOverlay.java
+@@ -34,6 +_,9 @@
+ 
+          for(LerpingBossEvent lerpingbossevent : this.f_93699_.values()) {
+             int k = i / 2 - 91;
++            net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo event =
++               net.minecraftforge.client.ForgeHooksClient.bossBarRenderPre(p_93705_, this.f_93698_.m_91268_(), lerpingbossevent, k, j, 10 + this.f_93698_.f_91062_.f_92710_);
++            if (!event.isCanceled()) {
+             RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
+             RenderSystem.m_157456_(0, f_93697_);
+             this.m_93706_(p_93705_, k, j, lerpingbossevent);
+@@ -42,7 +_,9 @@
+             int i1 = i / 2 - l / 2;
+             int j1 = j - 9;
+             this.f_93698_.f_91062_.m_92763_(p_93705_, component, (float)i1, (float)j1, 16777215);
+-            j += 10 + 9;
++            }
++            j += event.getIncrement();
++            net.minecraftforge.client.ForgeHooksClient.bossBarRenderPost(p_93705_, this.f_93698_.m_91268_());
+             if (j >= this.f_93698_.m_91268_().m_85446_() / 3) {
+                break;
+             }

@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/level/levelgen/feature/structures/StructureTemplatePool.java
++++ b/net/minecraft/world/level/levelgen/feature/structures/StructureTemplatePool.java
+@@ -106,11 +_,11 @@
+       return this.f_69250_.size();
+    }
+ 
+-   public static enum Projection implements StringRepresentable {
++   public static enum Projection implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
+       TERRAIN_MATCHING("terrain_matching", ImmutableList.of(new GravityProcessor(Heightmap.Types.WORLD_SURFACE_WG, -1))),
+       RIGID("rigid", ImmutableList.of());
+ 
+-      public static final Codec<StructureTemplatePool.Projection> f_69281_ = StringRepresentable.m_14350_(StructureTemplatePool.Projection::values, StructureTemplatePool.Projection::m_69295_);
++      public static final Codec<StructureTemplatePool.Projection> f_69281_ = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(StructureTemplatePool.Projection::values, StructureTemplatePool.Projection::m_69295_);
+       private static final Map<String, StructureTemplatePool.Projection> f_69282_ = Arrays.stream(values()).collect(Collectors.toMap(StructureTemplatePool.Projection::m_69297_, (p_69294_) -> {
+          return p_69294_;
+       }));
+@@ -136,6 +_,16 @@
+ 
+       public String m_7912_() {
+          return this.f_69283_;
++      }
++
++      public static Projection create(String enumName, String p_i50487_3_, ImmutableList<StructureProcessor> p_i50487_4_) {
++         throw new IllegalStateException("Enum not extended");
++      }
++
++      @Override
++      @Deprecated
++      public void init() {
++         f_69282_.put(m_69297_(), this);
+       }
+    }
+ }

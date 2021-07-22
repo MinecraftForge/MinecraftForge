@@ -19,9 +19,9 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.multiplayer.PlayerController;
-import net.minecraft.network.NetworkManager;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.network.Connection;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nullable;
@@ -30,15 +30,15 @@ import javax.annotation.Nullable;
  * Client side player connectivity events.
  */
 public class ClientPlayerNetworkEvent extends Event {
-    private final PlayerController controller;
-    private final ClientPlayerEntity player;
-    private final NetworkManager networkManager;
+    private final MultiPlayerGameMode controller;
+    private final LocalPlayer player;
+    private final Connection networkManager;
 
     /**
      * @return the player controller for the client side
      */
     @Nullable
-    public PlayerController getController() {
+    public MultiPlayerGameMode getController() {
         return controller;
     }
 
@@ -46,7 +46,7 @@ public class ClientPlayerNetworkEvent extends Event {
      * @return the player instance (if present - may be null)
      */
     @Nullable
-    public ClientPlayerEntity getPlayer() {
+    public LocalPlayer getPlayer() {
         return player;
     }
 
@@ -54,11 +54,11 @@ public class ClientPlayerNetworkEvent extends Event {
      * @return the network connection (if present - may be null)
      */
     @Nullable
-    public NetworkManager getNetworkManager() {
+    public Connection getNetworkManager() {
         return networkManager;
     }
 
-    ClientPlayerNetworkEvent(final PlayerController controller, final ClientPlayerEntity player, final NetworkManager networkManager) {
+    ClientPlayerNetworkEvent(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager) {
         this.controller = controller;
         this.player = player;
         this.networkManager = networkManager;
@@ -69,7 +69,7 @@ public class ClientPlayerNetworkEvent extends Event {
      */
     public static class LoggedInEvent extends ClientPlayerNetworkEvent {
 
-        public LoggedInEvent(final PlayerController controller, final ClientPlayerEntity player, final NetworkManager networkManager) {
+        public LoggedInEvent(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager) {
             super(controller, player, networkManager);
         }
     }
@@ -79,7 +79,7 @@ public class ClientPlayerNetworkEvent extends Event {
      */
     public static class LoggedOutEvent extends ClientPlayerNetworkEvent {
 
-        public LoggedOutEvent(final PlayerController controller, final ClientPlayerEntity player, final NetworkManager networkManager) {
+        public LoggedOutEvent(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager) {
             super(controller, player, networkManager);
         }
     }
@@ -88,18 +88,18 @@ public class ClientPlayerNetworkEvent extends Event {
      * Fired when the player object respawns, such as dimension changes.
      */
     public static class RespawnEvent extends ClientPlayerNetworkEvent {
-        private final ClientPlayerEntity oldPlayer;
+        private final LocalPlayer oldPlayer;
 
-        public RespawnEvent(final PlayerController pc, final ClientPlayerEntity oldPlayer, final ClientPlayerEntity newPlayer, final NetworkManager networkManager) {
+        public RespawnEvent(final MultiPlayerGameMode pc, final LocalPlayer oldPlayer, final LocalPlayer newPlayer, final Connection networkManager) {
             super(pc, newPlayer, networkManager);
             this.oldPlayer = oldPlayer;
         }
 
-        public ClientPlayerEntity getOldPlayer() {
+        public LocalPlayer getOldPlayer() {
             return oldPlayer;
         }
 
-        public ClientPlayerEntity getNewPlayer() {
+        public LocalPlayer getNewPlayer() {
             return super.getPlayer();
         }
     }

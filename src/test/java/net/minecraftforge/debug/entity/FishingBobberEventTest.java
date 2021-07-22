@@ -19,12 +19,12 @@
 
 package net.minecraftforge.debug.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.FishingHook;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -43,19 +43,19 @@ public class FishingBobberEventTest
         }
     }
 
-    public static void handleImpact(ProjectileImpactEvent.FishingBobber event)
+    public static void handleImpact(ProjectileImpactEvent<FishingHook> event)
     {
-        FishingBobberEntity bob = event.getFishingBobber();
-        RayTraceResult trace = event.getRayTraceResult();
-        if (trace.getType() == RayTraceResult.Type.ENTITY)
+        FishingHook fishingHook = event.getProjectile();
+        HitResult trace = event.getRayTraceResult();
+        if (trace.getType() == HitResult.Type.ENTITY)
         {
-            Vector3d vector3d = bob.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D).normalize().scale(0.6);
+            Vec3 vector3d = fishingHook.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D).normalize().scale(0.6);
             if (vector3d.lengthSqr() > 0.0D)
             {
-                Entity entity = ((EntityRayTraceResult) trace).getEntity();
+                Entity entity = ((EntityHitResult) trace).getEntity();
                 if (entity instanceof LivingEntity)
                 {
-                    ((LivingEntity) entity).push(vector3d.x, 0.3D, vector3d.z);
+                    entity.push(vector3d.x, 0.3D, vector3d.z);
                 }
             }
         }

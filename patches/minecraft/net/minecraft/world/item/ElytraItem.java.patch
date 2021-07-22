@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/item/ElytraItem.java
++++ b/net/minecraft/world/item/ElytraItem.java
+@@ -43,6 +_,19 @@
+       }
+    }
+ 
++   @Override
++   public boolean canElytraFly(ItemStack stack, net.minecraft.world.entity.LivingEntity entity) {
++      return ElytraItem.m_41140_(stack);
++   }
++
++   @Override
++   public boolean elytraFlightTick(ItemStack stack, net.minecraft.world.entity.LivingEntity entity, int flightTicks) {
++      if (!entity.f_19853_.f_46443_ && (flightTicks + 1) % 20 == 0) {
++         stack.m_41622_(1, entity, e -> e.m_21166_(net.minecraft.world.entity.EquipmentSlot.CHEST));
++      }
++      return true;
++   }
++
+    @Nullable
+    public SoundEvent m_142602_() {
+       return SoundEvents.f_11674_;

@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/ComparatorBlock.java
++++ b/net/minecraft/world/level/block/ComparatorBlock.java
+@@ -166,4 +_,16 @@
+    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_51887_) {
+       p_51887_.m_61104_(f_54117_, f_51854_, f_52496_);
+    }
++
++   @Override
++   public boolean getWeakChanges(BlockState state, net.minecraft.world.level.LevelReader world, BlockPos pos) {
++      return state.m_60713_(Blocks.f_50328_);
++   }
++
++   @Override
++   public void onNeighborChange(BlockState state, net.minecraft.world.level.LevelReader world, BlockPos pos, BlockPos neighbor) {
++      if (pos.m_123342_() == neighbor.m_123342_() && world instanceof Level && !((Level)world).m_5776_()) {
++         state.m_60690_((Level)world, pos, world.m_8055_(neighbor).m_60734_(), neighbor, false);
++      }
++   }
+ }

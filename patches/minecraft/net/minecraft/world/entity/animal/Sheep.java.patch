@@ -1,0 +1,48 @@
+--- a/net/minecraft/world/entity/animal/Sheep.java
++++ b/net/minecraft/world/entity/animal/Sheep.java
+@@ -60,7 +_,7 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+ 
+-public class Sheep extends Animal implements Shearable {
++public class Sheep extends Animal implements Shearable, net.minecraftforge.common.IForgeShearable {
+    private static final int f_149039_ = 40;
+    private static final EntityDataAccessor<Byte> f_29799_ = SynchedEntityData.m_135353_(Sheep.class, EntityDataSerializers.f_135027_);
+    private static final Map<DyeColor, ItemLike> f_29800_ = Util.m_137469_(Maps.newEnumMap(DyeColor.class), (p_29841_) -> {
+@@ -212,7 +_,7 @@
+ 
+    public InteractionResult m_6071_(Player p_29853_, InteractionHand p_29854_) {
+       ItemStack itemstack = p_29853_.m_21120_(p_29854_);
+-      if (itemstack.m_150930_(Items.f_42574_)) {
++      if (false && itemstack.m_41720_() == Items.f_42574_) { //Forge: Moved to onSheared
+          if (!this.f_19853_.f_46443_ && this.m_6220_()) {
+             this.m_5851_(SoundSource.PLAYERS);
+             this.m_146852_(GameEvent.f_157781_, p_29853_);
+@@ -357,5 +_,27 @@
+ 
+    protected float m_6431_(Pose p_29850_, EntityDimensions p_29851_) {
+       return 0.95F * p_29851_.f_20378_;
++   }
++
++   @Override
++   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos) {
++      return m_6220_();
++   }
++
++   @javax.annotation.Nonnull
++   @Override
++   public java.util.List<ItemStack> onSheared(@Nullable Player player, @javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
++      world.m_6269_(null, this, SoundEvents.f_12344_, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
++      if (!world.f_46443_) {
++         this.m_29878_(true);
++         int i = 1 + this.f_19796_.nextInt(3);
++
++         java.util.List<ItemStack> items = new java.util.ArrayList<>();
++         for (int j = 0; j < i; ++j) {
++            items.add(new ItemStack(f_29800_.get(this.m_29874_())));
++         }
++         return items;
++      }
++      return java.util.Collections.emptyList();
+    }
+ }

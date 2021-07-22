@@ -19,9 +19,9 @@
 
 package net.minecraftforge.debug.fluid;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -48,7 +48,7 @@ public class MilkFluidTest
     ItemStack stack = event.getItemStack();
     if (stack.getItem() == Items.MILK_BUCKET)
     {
-      FluidUtil.getFluidContained(stack).ifPresent((fluid) -> event.getPlayer().displayClientMessage(new StringTextComponent("Contains ").append(fluid.getDisplayName()), true));
+      FluidUtil.getFluidContained(stack).ifPresent((fluid) -> event.getPlayer().displayClientMessage(new TextComponent("Contains ").append(fluid.getDisplayName()), true));
     }
   }
 }

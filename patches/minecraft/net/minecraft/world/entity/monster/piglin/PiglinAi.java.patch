@@ -1,0 +1,47 @@
+--- a/net/minecraft/world/entity/monster/piglin/PiglinAi.java
++++ b/net/minecraft/world/entity/monster/piglin/PiglinAi.java
+@@ -258,7 +_,7 @@
+       ItemStack itemstack = p_34868_.m_21120_(InteractionHand.OFF_HAND);
+       p_34868_.m_21008_(InteractionHand.OFF_HAND, ItemStack.f_41583_);
+       if (p_34868_.m_34667_()) {
+-         boolean flag = m_149967_(itemstack);
++         boolean flag = itemstack.isPiglinCurrency();
+          if (p_34869_ && flag) {
+             m_34860_(p_34868_, m_34996_(p_34868_));
+          } else if (!flag) {
+@@ -345,7 +_,7 @@
+          return false;
+       } else if (m_35024_(p_34858_) && p_34858_.m_6274_().m_21874_(MemoryModuleType.f_26372_)) {
+          return false;
+-      } else if (m_149967_(p_34859_)) {
++      } else if (p_34859_.isPiglinCurrency()) {
+          return m_35028_(p_34858_);
+       } else {
+          boolean flag = p_34858_.m_34780_(p_34859_);
+@@ -445,7 +_,7 @@
+    }
+ 
+    protected static boolean m_34909_(Piglin p_34910_, ItemStack p_34911_) {
+-      return !m_35024_(p_34910_) && !m_35020_(p_34910_) && p_34910_.m_34667_() && m_149967_(p_34911_);
++      return !m_35024_(p_34910_) && !m_35020_(p_34910_) && p_34910_.m_34667_() && p_34911_.isPiglinCurrency();
+    }
+ 
+    protected static void m_34837_(Piglin p_34838_, LivingEntity p_34839_) {
+@@ -546,7 +_,7 @@
+    public static boolean m_34808_(LivingEntity p_34809_) {
+       for(ItemStack itemstack : p_34809_.m_6168_()) {
+          Item item = itemstack.m_41720_();
+-         if (item instanceof ArmorItem && ((ArmorItem)item).m_40401_() == ArmorMaterials.GOLD) {
++         if (itemstack.makesPiglinsNeutral(p_34809_)) {
+             return true;
+          }
+       }
+@@ -704,7 +_,7 @@
+    }
+ 
+    private static boolean m_34918_(LivingEntity p_34919_) {
+-      return p_34919_.m_21055_(Items.f_42717_);
++      return p_34919_.m_21093_(is -> is.m_41720_() instanceof net.minecraft.world.item.CrossbowItem);
+    }
+ 
+    private static void m_34938_(LivingEntity p_34939_) {

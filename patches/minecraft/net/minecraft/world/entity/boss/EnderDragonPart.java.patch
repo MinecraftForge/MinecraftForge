@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/entity/boss/EnderDragonPart.java
++++ b/net/minecraft/world/entity/boss/EnderDragonPart.java
+@@ -8,13 +_,13 @@
+ import net.minecraft.world.entity.Pose;
+ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+ 
+-public class EnderDragonPart extends Entity {
++public class EnderDragonPart extends net.minecraftforge.entity.PartEntity<EnderDragon> {
+    public final EnderDragon f_31010_;
+    public final String f_31011_;
+    private final EntityDimensions f_31012_;
+ 
+    public EnderDragonPart(EnderDragon p_31014_, String p_31015_, float p_31016_, float p_31017_) {
+-      super(p_31014_.m_6095_(), p_31014_.f_19853_);
++      super(p_31014_);
+       this.f_31012_ = EntityDimensions.m_20395_(p_31016_, p_31017_);
+       this.m_6210_();
+       this.f_31010_ = p_31014_;

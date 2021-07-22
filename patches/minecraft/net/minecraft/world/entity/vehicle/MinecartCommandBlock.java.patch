@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/vehicle/MinecartCommandBlock.java
++++ b/net/minecraft/world/entity/vehicle/MinecartCommandBlock.java
+@@ -72,6 +_,8 @@
+    }
+ 
+    public InteractionResult m_6096_(Player p_38522_, InteractionHand p_38523_) {
++      InteractionResult ret = super.m_6096_(p_38522_, p_38523_);
++      if (ret.m_19077_()) return ret;
+       return this.f_38505_.m_45412_(p_38522_);
+    }
+ 

@@ -1,0 +1,15 @@
+--- a/net/minecraft/data/tags/EntityTypeTagsProvider.java
++++ b/net/minecraft/data/tags/EntityTypeTagsProvider.java
+@@ -8,8 +_,12 @@
+ import net.minecraft.world.entity.EntityType;
+ 
+ public class EntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
++   @Deprecated
+    public EntityTypeTagsProvider(DataGenerator p_126517_) {
+       super(p_126517_, Registry.f_122826_);
++   }
++   public EntityTypeTagsProvider(DataGenerator p_126517_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_126517_, Registry.f_122826_, modId, existingFileHelper);
+    }
+ 
+    protected void m_6577_() {

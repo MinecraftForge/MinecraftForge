@@ -1,0 +1,75 @@
+--- a/net/minecraft/world/entity/projectile/FishingHook.java
++++ b/net/minecraft/world/entity/projectile/FishingHook.java
+@@ -237,7 +_,7 @@
+ 
+    private void m_37171_() {
+       HitResult hitresult = ProjectileUtil.m_37294_(this, this::m_5603_);
+-      this.m_6532_(hitresult);
++      if (hitresult.m_6662_() == HitResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) this.m_6532_(hitresult);
+    }
+ 
+    protected boolean m_5603_(Entity p_37135_) {
+@@ -292,7 +_,7 @@
+             double d1 = (double)((float)Mth.m_14107_(this.m_20186_()) + 1.0F);
+             double d2 = this.m_20189_() + (double)(f2 * (float)this.f_37091_ * 0.1F);
+             BlockState blockstate = serverlevel.m_8055_(new BlockPos(d0, d1 - 1.0D, d2));
+-            if (blockstate.m_60713_(Blocks.f_49990_)) {
++            if (serverlevel.m_8055_(new BlockPos((int)d0, (int)d1 - 1, (int)d2)).m_60767_() == net.minecraft.world.level.material.Material.f_76305_) {
+                if (this.f_19796_.nextFloat() < 0.15F) {
+                   serverlevel.m_8767_(ParticleTypes.f_123795_, d0, d1 - (double)0.1F, d2, 1, (double)f1, 0.1D, (double)f2, 0.0D);
+                }
+@@ -328,7 +_,7 @@
+             double d5 = (double)((float)Mth.m_14107_(this.m_20186_()) + 1.0F);
+             double d6 = this.m_20189_() + (double)(Mth.m_14089_(f6) * f7 * 0.1F);
+             BlockState blockstate1 = serverlevel.m_8055_(new BlockPos(d4, d5 - 1.0D, d6));
+-            if (blockstate1.m_60713_(Blocks.f_49990_)) {
++            if (serverlevel.m_8055_(new BlockPos(d4, d5 - 1.0D, d6)).m_60767_() == net.minecraft.world.level.material.Material.f_76305_) {
+                serverlevel.m_8767_(ParticleTypes.f_123769_, d4, d5, d6, 2 + this.f_19796_.nextInt(2), (double)0.1F, 0.0D, (double)0.1F, 0.0D);
+             }
+          }
+@@ -399,6 +_,7 @@
+       Player player = this.m_37168_();
+       if (!this.f_19853_.f_46443_ && player != null && !this.m_37136_(player)) {
+          int i = 0;
++         net.minecraftforge.event.entity.player.ItemFishedEvent event = null;
+          if (this.f_37094_ != null) {
+             this.m_150155_(this.f_37094_);
+             CriteriaTriggers.f_10553_.m_40416_((ServerPlayer)player, p_37157_, this, Collections.emptyList());
+@@ -406,8 +_,15 @@
+             i = this.f_37094_ instanceof ItemEntity ? 3 : 5;
+          } else if (this.f_37089_ > 0) {
+             LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerLevel)this.f_19853_)).m_78972_(LootContextParams.f_81460_, this.m_20182_()).m_78972_(LootContextParams.f_81463_, p_37157_).m_78972_(LootContextParams.f_81455_, this).m_78977_(this.f_19796_).m_78963_((float)this.f_37096_ + player.m_36336_());
++            lootcontext$builder.m_78972_(LootContextParams.f_81458_, this.m_37282_()).m_78972_(LootContextParams.f_81455_, this);
+             LootTable loottable = this.f_19853_.m_142572_().m_129898_().m_79217_(BuiltInLootTables.f_78720_);
+             List<ItemStack> list = loottable.m_79129_(lootcontext$builder.m_78975_(LootContextParamSets.f_81414_));
++            event = new net.minecraftforge.event.entity.player.ItemFishedEvent(list, this.f_19861_ ? 2 : 1, this);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++            if (event.isCanceled()) {
++               this.remove(false);
++               return event.getRodDamage();
++            }
+             CriteriaTriggers.f_10553_.m_40416_((ServerPlayer)player, p_37157_, this, list);
+ 
+             for(ItemStack itemstack : list) {
+@@ -432,7 +_,7 @@
+          }
+ 
+          this.m_146870_();
+-         return i;
++         return event == null ? i : event.getRodDamage();
+       } else {
+          return 0;
+       }
+@@ -470,6 +_,12 @@
+    public void m_5602_(@Nullable Entity p_150154_) {
+       super.m_5602_(p_150154_);
+       this.m_150147_(this);
++   }
++
++   @Override
++   public void remove(boolean keepData) {
++      super.remove(keepData);
++      m_150147_(null);
+    }
+ 
+    private void m_150147_(@Nullable FishingHook p_150148_) {

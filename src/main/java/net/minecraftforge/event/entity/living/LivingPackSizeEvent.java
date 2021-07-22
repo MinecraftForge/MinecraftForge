@@ -20,14 +20,14 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraftforge.eventbus.api.Event.HasResult;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.world.entity.Mob;
 
 @HasResult
 public class LivingPackSizeEvent extends LivingEvent
 {
     private int maxPackSize;
     
-    public LivingPackSizeEvent(MobEntity entity)
+    public LivingPackSizeEvent(Mob entity)
     {
         super(entity);
     }

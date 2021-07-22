@@ -1,0 +1,30 @@
+--- a/net/minecraft/server/PlayerAdvancements.java
++++ b/net/minecraft/server/PlayerAdvancements.java
+@@ -181,6 +_,10 @@
+       }
+ 
+       this.m_136002_(p_136007_);
++
++      if (net.minecraftforge.common.ForgeConfig.SERVER.fixAdvancementLoading.get())
++         net.minecraftforge.common.AdvancementLoadFix.loadVisibility(this, this.f_135965_, this.f_135966_, this.f_135964_, this.f_135967_, this::m_136012_);
++      else
+       this.m_136001_();
+       this.m_135994_(p_136007_);
+    }
+@@ -239,6 +_,8 @@
+    }
+ 
+    public boolean m_135988_(Advancement p_135989_, String p_135990_) {
++      // Forge: don't grant advancements for fake players
++      if (this.f_135968_ instanceof net.minecraftforge.common.util.FakePlayer) return false;
+       boolean flag = false;
+       AdvancementProgress advancementprogress = this.m_135996_(p_135989_);
+       boolean flag1 = advancementprogress.m_8193_();
+@@ -251,6 +_,7 @@
+             if (p_135989_.m_138320_() != null && p_135989_.m_138320_().m_14996_() && this.f_135968_.f_19853_.m_46469_().m_46207_(GameRules.f_46153_)) {
+                this.f_135962_.m_11264_(new TranslatableComponent("chat.type.advancement." + p_135989_.m_138320_().m_14992_().m_15548_(), this.f_135968_.m_5446_(), p_135989_.m_138330_()), ChatType.SYSTEM, Util.f_137441_);
+             }
++            net.minecraftforge.common.ForgeHooks.onAdvancement(this.f_135968_, p_135989_);
+          }
+       }
+ 

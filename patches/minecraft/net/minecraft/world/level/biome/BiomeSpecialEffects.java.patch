@@ -1,0 +1,49 @@
+--- a/net/minecraft/world/level/biome/BiomeSpecialEffects.java
++++ b/net/minecraft/world/level/biome/BiomeSpecialEffects.java
+@@ -202,7 +_,7 @@
+       }
+    }
+ 
+-   public static enum GrassColorModifier implements StringRepresentable {
++   public static enum GrassColorModifier implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
+       NONE("none") {
+          public int m_6583_(double p_48081_, double p_48082_, int p_48083_) {
+             return p_48083_;
+@@ -221,17 +_,35 @@
+       };
+ 
+       private final String f_48051_;
+-      public static final Codec<BiomeSpecialEffects.GrassColorModifier> f_48050_ = StringRepresentable.m_14350_(BiomeSpecialEffects.GrassColorModifier::values, BiomeSpecialEffects.GrassColorModifier::m_48070_);
++      public static final Codec<BiomeSpecialEffects.GrassColorModifier> f_48050_ = net.minecraftforge.common.IExtensibleEnum.createCodecForExtensibleEnum(BiomeSpecialEffects.GrassColorModifier::values, BiomeSpecialEffects.GrassColorModifier::m_48070_);
+       private static final Map<String, BiomeSpecialEffects.GrassColorModifier> f_48052_ = Arrays.stream(values()).collect(Collectors.toMap(BiomeSpecialEffects.GrassColorModifier::m_48072_, (p_48069_) -> {
+          return p_48069_;
+       }));
+ 
+-      public abstract int m_6583_(double p_48065_, double p_48066_, int p_48067_);
++      public int m_6583_(double p_48065_, double p_48066_, int p_48067_) {
++         return delegate.modifyGrassColor(p_48065_, p_48066_, p_48067_);
++      }
+ 
+       GrassColorModifier(String p_48058_) {
+          this.f_48051_ = p_48058_;
+       }
+ 
++      private ColorModifier delegate;
++      private GrassColorModifier(String name, ColorModifier delegate) {
++         this(name);
++         this.delegate = delegate;
++      }
++      public static GrassColorModifier create(String name, String id, ColorModifier delegate) {
++         throw new IllegalStateException("Enum not extended");
++      }
++      @Override
++      public void init() {
++         f_48052_.put(this.m_48072_(), this);
++      }
++      @FunctionalInterface
++      public interface ColorModifier {
++         int modifyGrassColor(double x, double z, int color);
++      }
+       public String m_48072_() {
+          return this.f_48051_;
+       }

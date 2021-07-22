@@ -22,18 +22,11 @@ package net.minecraftforge.event.world;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.integrated.IntegratedServer;
-import net.minecraft.util.IProgressUpdate;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraft.world.storage.IServerWorldInfo;
-import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -47,14 +40,14 @@ import net.minecraftforge.eventbus.api.Event;
  **/
 public class WorldEvent extends Event
 {
-    private final IWorld world;
+    private final LevelAccessor world;
 
-    public WorldEvent(IWorld world)
+    public WorldEvent(LevelAccessor world)
     {
         this.world = world;
     }
 
-    public IWorld getWorld()
+    public LevelAccessor getWorld()
     {
         return world;
     }
@@ -76,7 +69,7 @@ public class WorldEvent extends Event
      **/
     public static class Load extends WorldEvent
     {
-        public Load(IWorld world) { super(world); }
+        public Load(LevelAccessor world) { super(world); }
     }
 
     /**
@@ -95,7 +88,7 @@ public class WorldEvent extends Event
      **/
     public static class Unload extends WorldEvent
     {
-        public Unload(IWorld world) { super(world); }
+        public Unload(LevelAccessor world) { super(world); }
     }
 
     /**
@@ -112,49 +105,7 @@ public class WorldEvent extends Event
      **/
     public static class Save extends WorldEvent
     {
-        public Save(IWorld world) { super(world); }
-    }
-
-    /**
-     * Called by WorldServer to gather a list of all possible entities that can spawn at the specified location.
-     * If an entry is added to the list, it needs to be a globally unique instance.
-     * The event is called in {@link WorldServer#getSpawnListEntryForTypeAt(EnumCreatureType, BlockPos)} as well as
-     * {@link WorldServer#canCreatureTypeSpawnHere(EnumCreatureType, SpawnListEntry, BlockPos)}
-     * where the latter checks for identity, meaning both events must add the same instance.
-     * Canceling the event will result in a empty list, meaning no entity will be spawned.
-     */
-    @net.minecraftforge.eventbus.api.Cancelable
-    public static class PotentialSpawns extends WorldEvent
-    {
-        private final EntityClassification type;
-        private final BlockPos pos;
-        private final List<MobSpawnInfo.Spawners> list;
-
-        public PotentialSpawns(IWorld world, EntityClassification type, BlockPos pos, List<MobSpawnInfo.Spawners> oldList)
-        {
-            super(world);
-            this.pos = pos;
-            this.type = type;
-            if (oldList != null)
-                this.list = new ArrayList<>(oldList);
-            else
-                this.list = new ArrayList<>();
-        }
-
-        public EntityClassification getType()
-        {
-            return type;
-        }
-
-        public BlockPos getPos()
-        {
-            return pos;
-        }
-
-        public List<MobSpawnInfo.Spawners> getList()
-        {
-            return list;
-        }
+        public Save(LevelAccessor world) { super(world); }
     }
 
     /**
@@ -164,14 +115,14 @@ public class WorldEvent extends Event
     @net.minecraftforge.eventbus.api.Cancelable
     public static class CreateSpawnPosition extends WorldEvent
     {
-        private final IServerWorldInfo settings;
-        public CreateSpawnPosition(IWorld world, IServerWorldInfo settings)
+        private final ServerLevelData settings;
+        public CreateSpawnPosition(LevelAccessor world, ServerLevelData settings)
         {
             super(world);
             this.settings = settings;
         }
 
-        public IServerWorldInfo getSettings()
+        public ServerLevelData getSettings()
         {
             return settings;
         }

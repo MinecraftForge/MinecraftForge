@@ -20,15 +20,23 @@
 package net.minecraftforge.client.model;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.geometry.IModelGeometryPart;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
+
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
 
 public class BlockModelConfiguration implements IModelConfiguration
 {
@@ -37,7 +45,7 @@ public class BlockModelConfiguration implements IModelConfiguration
     @Nullable
     private IModelGeometry<?> customGeometry;
     @Nullable
-    private IModelTransform customModelState;
+    private ModelState customModelState;
 
     public BlockModelConfiguration(BlockModel owner)
     {
@@ -46,7 +54,7 @@ public class BlockModelConfiguration implements IModelConfiguration
 
     @Nullable
     @Override
-    public IUnbakedModel getOwnerModel()
+    public UnbakedModel getOwnerModel()
     {
         return owner;
     }
@@ -74,12 +82,12 @@ public class BlockModelConfiguration implements IModelConfiguration
     }
 
     @Nullable
-    public IModelTransform getCustomModelState()
+    public ModelState getCustomModelState()
     {
         return owner.parent != null && customModelState == null ? owner.parent.customData.getCustomModelState() : customModelState;
     }
 
-    public void setCustomModelState(IModelTransform modelState)
+    public void setCustomModelState(ModelState modelState)
     {
         this.customModelState = modelState;
     }
@@ -99,7 +107,7 @@ public class BlockModelConfiguration implements IModelConfiguration
     }
 
     @Override
-    public RenderMaterial resolveTexture(String name)
+    public Material resolveTexture(String name)
     {
         return owner.getMaterial(name);
     }
@@ -122,19 +130,19 @@ public class BlockModelConfiguration implements IModelConfiguration
     }
 
     @Override
-    public ItemCameraTransforms getCameraTransforms()
+    public ItemTransforms getCameraTransforms()
     {
         return owner.getTransforms();
     }
 
     @Override
-    public IModelTransform getCombinedTransform()
+    public ModelState getCombinedTransform()
     {
-        IModelTransform state = getCustomModelState();
+        ModelState state = getCustomModelState();
 
         return state != null
-                ? new SimpleModelTransform(PerspectiveMapWrapper.getTransformsWithFallback(state, getCameraTransforms()), state.getRotation())
-                : new SimpleModelTransform(PerspectiveMapWrapper.getTransforms(getCameraTransforms()));
+                ? new SimpleModelState(PerspectiveMapWrapper.getTransformsWithFallback(state, getCameraTransforms()), state.getRotation())
+                : new SimpleModelState(PerspectiveMapWrapper.getTransforms(getCameraTransforms()));
     }
 
     public void copyFrom(BlockModelConfiguration other)
@@ -144,14 +152,14 @@ public class BlockModelConfiguration implements IModelConfiguration
         this.visibilityData.copyFrom(other.visibilityData);
     }
 
-    public Collection<RenderMaterial> getTextureDependencies(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
+    public Collection<Material> getTextureDependencies(Function<ResourceLocation, UnbakedModel> modelGetter, Set<Pair<String, String>> missingTextureErrors)
     {
         IModelGeometry<?> geometry = getCustomGeometry();
         return geometry == null ? Collections.emptySet() :
                 geometry.getTextures(this, modelGetter, missingTextureErrors);
     }
 
-    public IBakedModel bake(ModelBakery bakery, Function<RenderMaterial, TextureAtlasSprite> bakedTextureGetter, IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation)
+    public BakedModel bake(ModelBakery bakery, Function<Material, TextureAtlasSprite> bakedTextureGetter, ModelState modelTransform, ItemOverrides overrides, ResourceLocation modelLocation)
     {
         IModelGeometry<?> geometry = getCustomGeometry();
         if (geometry == null)

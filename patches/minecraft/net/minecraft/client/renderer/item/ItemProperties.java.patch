@@ -1,0 +1,115 @@
+--- a/net/minecraft/client/renderer/item/ItemProperties.java
++++ b/net/minecraft/client/renderer/item/ItemProperties.java
+@@ -47,7 +_,7 @@
+    };
+    private static final Map<Item, Map<ResourceLocation, ItemPropertyFunction>> f_117825_ = Maps.newHashMap();
+ 
+-   private static ClampedItemPropertyFunction m_174581_(ResourceLocation p_174582_, ClampedItemPropertyFunction p_174583_) {
++   public static ItemPropertyFunction registerGeneric(ResourceLocation p_174582_, ItemPropertyFunction p_174583_) {
+       f_117820_.put(p_174582_, p_174583_);
+       return p_174583_;
+    }
+@@ -56,7 +_,7 @@
+       f_117820_.put(new ResourceLocation("custom_model_data"), p_174580_);
+    }
+ 
+-   private static void m_174570_(Item p_174571_, ResourceLocation p_174572_, ClampedItemPropertyFunction p_174573_) {
++   public static void register(Item p_174571_, ResourceLocation p_174572_, ItemPropertyFunction p_174573_) {
+       f_117825_.computeIfAbsent(p_174571_, (p_117828_) -> {
+          return Maps.newHashMap();
+       }).put(p_174572_, p_174573_);
+@@ -84,29 +_,29 @@
+    }
+ 
+    static {
+-      m_174581_(new ResourceLocation("lefthanded"), (p_174650_, p_174651_, p_174652_, p_174653_) -> {
++      registerGeneric(new ResourceLocation("lefthanded"), (p_174650_, p_174651_, p_174652_, p_174653_) -> {
+          return p_174652_ != null && p_174652_.m_5737_() != HumanoidArm.RIGHT ? 1.0F : 0.0F;
+       });
+-      m_174581_(new ResourceLocation("cooldown"), (p_174645_, p_174646_, p_174647_, p_174648_) -> {
++      registerGeneric(new ResourceLocation("cooldown"), (p_174645_, p_174646_, p_174647_, p_174648_) -> {
+          return p_174647_ instanceof Player ? ((Player)p_174647_).m_36335_().m_41521_(p_174645_.m_41720_(), 0.0F) : 0.0F;
+       });
+       m_174579_((p_174640_, p_174641_, p_174642_, p_174643_) -> {
+          return p_174640_.m_41782_() ? (float)p_174640_.m_41783_().m_128451_("CustomModelData") : 0.0F;
+       });
+-      m_174570_(Items.f_42411_, new ResourceLocation("pull"), (p_174635_, p_174636_, p_174637_, p_174638_) -> {
++      register(Items.f_42411_, new ResourceLocation("pull"), (p_174635_, p_174636_, p_174637_, p_174638_) -> {
+          if (p_174637_ == null) {
+             return 0.0F;
+          } else {
+             return p_174637_.m_21211_() != p_174635_ ? 0.0F : (float)(p_174635_.m_41779_() - p_174637_.m_21212_()) / 20.0F;
+          }
+       });
+-      m_174570_(Items.f_42411_, new ResourceLocation("pulling"), (p_174630_, p_174631_, p_174632_, p_174633_) -> {
++      register(Items.f_42411_, new ResourceLocation("pulling"), (p_174630_, p_174631_, p_174632_, p_174633_) -> {
+          return p_174632_ != null && p_174632_.m_6117_() && p_174632_.m_21211_() == p_174630_ ? 1.0F : 0.0F;
+       });
+-      m_174570_(Items.f_151058_, new ResourceLocation("filled"), (p_174625_, p_174626_, p_174627_, p_174628_) -> {
++      register(Items.f_151058_, new ResourceLocation("filled"), (p_174625_, p_174626_, p_174627_, p_174628_) -> {
+          return BundleItem.m_150766_(p_174625_);
+       });
+-      m_174570_(Items.f_42524_, new ResourceLocation("time"), new ClampedItemPropertyFunction() {
++      register(Items.f_42524_, new ResourceLocation("time"), new ClampedItemPropertyFunction() {
+          private double f_117899_;
+          private double f_117900_;
+          private long f_117901_;
+@@ -149,7 +_,7 @@
+             return this.f_117899_;
+          }
+       });
+-      m_174570_(Items.f_42522_, new ResourceLocation("angle"), new ClampedItemPropertyFunction() {
++      register(Items.f_42522_, new ResourceLocation("angle"), new ClampedItemPropertyFunction() {
+          private final ItemProperties.CompassWobble f_117910_ = new ItemProperties.CompassWobble();
+          private final ItemProperties.CompassWobble f_117911_ = new ItemProperties.CompassWobble();
+ 
+@@ -235,26 +_,26 @@
+             return Math.atan2(p_117919_.m_7094_() - p_117920_.m_20189_(), p_117919_.m_7096_() - p_117920_.m_20185_());
+          }
+       });
+-      m_174570_(Items.f_42717_, new ResourceLocation("pull"), (p_174620_, p_174621_, p_174622_, p_174623_) -> {
++      register(Items.f_42717_, new ResourceLocation("pull"), (p_174620_, p_174621_, p_174622_, p_174623_) -> {
+          if (p_174622_ == null) {
+             return 0.0F;
+          } else {
+             return CrossbowItem.m_40932_(p_174620_) ? 0.0F : (float)(p_174620_.m_41779_() - p_174622_.m_21212_()) / (float)CrossbowItem.m_40939_(p_174620_);
+          }
+       });
+-      m_174570_(Items.f_42717_, new ResourceLocation("pulling"), (p_174615_, p_174616_, p_174617_, p_174618_) -> {
++      register(Items.f_42717_, new ResourceLocation("pulling"), (p_174615_, p_174616_, p_174617_, p_174618_) -> {
+          return p_174617_ != null && p_174617_.m_6117_() && p_174617_.m_21211_() == p_174615_ && !CrossbowItem.m_40932_(p_174615_) ? 1.0F : 0.0F;
+       });
+-      m_174570_(Items.f_42717_, new ResourceLocation("charged"), (p_174610_, p_174611_, p_174612_, p_174613_) -> {
++      register(Items.f_42717_, new ResourceLocation("charged"), (p_174610_, p_174611_, p_174612_, p_174613_) -> {
+          return p_174612_ != null && CrossbowItem.m_40932_(p_174610_) ? 1.0F : 0.0F;
+       });
+-      m_174570_(Items.f_42717_, new ResourceLocation("firework"), (p_174605_, p_174606_, p_174607_, p_174608_) -> {
++      register(Items.f_42717_, new ResourceLocation("firework"), (p_174605_, p_174606_, p_174607_, p_174608_) -> {
+          return p_174607_ != null && CrossbowItem.m_40932_(p_174605_) && CrossbowItem.m_40871_(p_174605_, Items.f_42688_) ? 1.0F : 0.0F;
+       });
+-      m_174570_(Items.f_42741_, new ResourceLocation("broken"), (p_174600_, p_174601_, p_174602_, p_174603_) -> {
++      register(Items.f_42741_, new ResourceLocation("broken"), (p_174600_, p_174601_, p_174602_, p_174603_) -> {
+          return ElytraItem.m_41140_(p_174600_) ? 0.0F : 1.0F;
+       });
+-      m_174570_(Items.f_42523_, new ResourceLocation("cast"), (p_174595_, p_174596_, p_174597_, p_174598_) -> {
++      register(Items.f_42523_, new ResourceLocation("cast"), (p_174595_, p_174596_, p_174597_, p_174598_) -> {
+          if (p_174597_ == null) {
+             return 0.0F;
+          } else {
+@@ -267,13 +_,13 @@
+             return (flag || flag1) && p_174597_ instanceof Player && ((Player)p_174597_).f_36083_ != null ? 1.0F : 0.0F;
+          }
+       });
+-      m_174570_(Items.f_42740_, new ResourceLocation("blocking"), (p_174590_, p_174591_, p_174592_, p_174593_) -> {
++      register(Items.f_42740_, new ResourceLocation("blocking"), (p_174590_, p_174591_, p_174592_, p_174593_) -> {
+          return p_174592_ != null && p_174592_.m_6117_() && p_174592_.m_21211_() == p_174590_ ? 1.0F : 0.0F;
+       });
+-      m_174570_(Items.f_42713_, new ResourceLocation("throwing"), (p_174585_, p_174586_, p_174587_, p_174588_) -> {
++      register(Items.f_42713_, new ResourceLocation("throwing"), (p_174585_, p_174586_, p_174587_, p_174588_) -> {
+          return p_174587_ != null && p_174587_.m_6117_() && p_174587_.m_21211_() == p_174585_ ? 1.0F : 0.0F;
+       });
+-      m_174570_(Items.f_151033_, new ResourceLocation("level"), (p_174575_, p_174576_, p_174577_, p_174578_) -> {
++      register(Items.f_151033_, new ResourceLocation("level"), (p_174575_, p_174576_, p_174577_, p_174578_) -> {
+          CompoundTag compoundtag = p_174575_.m_41737_("BlockStateTag");
+ 
+          try {

@@ -1,0 +1,61 @@
+--- a/net/minecraft/world/level/Explosion.java
++++ b/net/minecraft/world/level/Explosion.java
+@@ -57,6 +_,7 @@
+    private final ExplosionDamageCalculator f_46019_;
+    private final List<BlockPos> f_46020_ = Lists.newArrayList();
+    private final Map<Player, Vec3> f_46021_ = Maps.newHashMap();
++   private final Vec3 position;
+ 
+    public Explosion(Level p_151471_, @Nullable Entity p_151472_, double p_151473_, double p_151474_, double p_151475_, float p_151476_) {
+       this(p_151471_, p_151472_, p_151473_, p_151474_, p_151475_, p_151476_, false, Explosion.BlockInteraction.DESTROY);
+@@ -86,6 +_,7 @@
+       this.f_46010_ = p_46060_;
+       this.f_46018_ = p_46053_ == null ? DamageSource.m_19358_(this) : p_46053_;
+       this.f_46019_ = p_46054_ == null ? this.m_46062_(p_46052_) : p_46054_;
++      this.position = new Vec3(this.f_46013_, this.f_46014_, this.f_46015_);
+    }
+ 
+    private ExplosionDamageCalculator m_46062_(@Nullable Entity p_46063_) {
+@@ -181,6 +_,7 @@
+       int j2 = Mth.m_14107_(this.f_46015_ - (double)f2 - 1.0D);
+       int j1 = Mth.m_14107_(this.f_46015_ + (double)f2 + 1.0D);
+       List<Entity> list = this.f_46012_.m_45933_(this.f_46016_, new AABB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
++      net.minecraftforge.event.ForgeEventFactory.onExplosionDetonate(this.f_46012_, this, list, f2);
+       Vec3 vec3 = new Vec3(this.f_46013_, this.f_46014_, this.f_46015_);
+ 
+       for(int k2 = 0; k2 < list.size(); ++k2) {
+@@ -242,7 +_,7 @@
+             if (!blockstate.m_60795_()) {
+                BlockPos blockpos1 = blockpos.m_7949_();
+                this.f_46012_.m_46473_().m_6180_("explosion_blocks");
+-               if (block.m_6903_(this) && this.f_46012_ instanceof ServerLevel) {
++               if (blockstate.canDropFromExplosion(this.f_46012_, blockpos, this) && this.f_46012_ instanceof ServerLevel) {
+                   BlockEntity blockentity = blockstate.m_155947_() ? this.f_46012_.m_7702_(blockpos) : null;
+                   LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerLevel)this.f_46012_)).m_78977_(this.f_46012_.f_46441_).m_78972_(LootContextParams.f_81460_, Vec3.m_82512_(blockpos)).m_78972_(LootContextParams.f_81463_, ItemStack.f_41583_).m_78984_(LootContextParams.f_81462_, blockentity).m_78984_(LootContextParams.f_81455_, this.f_46016_);
+                   if (this.f_46010_ == Explosion.BlockInteraction.DESTROY) {
+@@ -254,8 +_,7 @@
+                   });
+                }
+ 
+-               this.f_46012_.m_7731_(blockpos, Blocks.f_50016_.m_49966_(), 3);
+-               block.m_7592_(this.f_46012_, blockpos, this);
++               blockstate.onBlockExploded(this.f_46012_, blockpos, this);
+                this.f_46012_.m_46473_().m_7238_();
+             }
+          }
+@@ -327,6 +_,15 @@
+ 
+    public List<BlockPos> m_46081_() {
+       return this.f_46020_;
++   }
++
++   public Vec3 getPosition() {
++      return this.position;
++   }
++
++   @Nullable
++   public Entity getExploder() {
++      return this.f_46016_;
+    }
+ 
+    public static enum BlockInteraction {

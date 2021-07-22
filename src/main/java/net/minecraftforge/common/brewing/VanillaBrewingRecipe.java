@@ -19,10 +19,10 @@
 
 package net.minecraftforge.common.brewing;
 
-import net.minecraft.item.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionBrewing;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionBrewing;
 
 /**
  * Used in BrewingRecipeRegistry to maintain the vanilla behaviour.

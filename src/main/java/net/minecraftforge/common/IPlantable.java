@@ -19,18 +19,18 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.block.CropsBlock;
-import net.minecraft.block.FlowerBlock;
-import net.minecraft.block.SaplingBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.FlowerBlock;
+import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 
 public interface IPlantable
 {
-    default PlantType getPlantType(IBlockReader world, BlockPos pos) {
-        if (this instanceof CropsBlock) return PlantType.CROP;
+    default PlantType getPlantType(BlockGetter world, BlockPos pos) {
+        if (this instanceof CropBlock) return PlantType.CROP;
         if (this instanceof SaplingBlock) return PlantType.PLAINS;
         if (this instanceof FlowerBlock) return PlantType.PLAINS;
         if (this == Blocks.DEAD_BUSH)      return PlantType.DESERT;
@@ -42,5 +42,5 @@ public interface IPlantable
         return net.minecraftforge.common.PlantType.PLAINS;
     }
 
-    BlockState getPlant(IBlockReader world, BlockPos pos);
+    BlockState getPlant(BlockGetter world, BlockPos pos);
 }

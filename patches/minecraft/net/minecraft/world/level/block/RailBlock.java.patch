@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/level/block/RailBlock.java
++++ b/net/minecraft/world/level/block/RailBlock.java
+@@ -49,6 +_,9 @@
+             return p_55405_.m_61124_(f_55392_, RailShape.SOUTH_EAST);
+          case NORTH_EAST:
+             return p_55405_.m_61124_(f_55392_, RailShape.SOUTH_WEST);
++         case NORTH_SOUTH: //Forge fix: MC-196102
++         case EAST_WEST:
++            return p_55405_;
+          }
+       case COUNTERCLOCKWISE_90:
+          switch((RailShape)p_55405_.m_61143_(f_55392_)) {

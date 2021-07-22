@@ -1,30 +1,30 @@
 --- a/net/minecraft/client/renderer/entity/layers/ElytraLayer.java
 +++ b/net/minecraft/client/renderer/entity/layers/ElytraLayer.java
-@@ -30,7 +_,7 @@
+@@ -33,7 +_,7 @@
  
-    public void func_225628_a_(MatrixStack p_225628_1_, IRenderTypeBuffer p_225628_2_, int p_225628_3_, T p_225628_4_, float p_225628_5_, float p_225628_6_, float p_225628_7_, float p_225628_8_, float p_225628_9_, float p_225628_10_) {
-       ItemStack itemstack = p_225628_4_.func_184582_a(EquipmentSlotType.CHEST);
--      if (itemstack.func_77973_b() == Items.field_185160_cR) {
-+      if (shouldRender(itemstack, p_225628_4_)) {
+    public void m_6494_(PoseStack p_116951_, MultiBufferSource p_116952_, int p_116953_, T p_116954_, float p_116955_, float p_116956_, float p_116957_, float p_116958_, float p_116959_, float p_116960_) {
+       ItemStack itemstack = p_116954_.m_6844_(EquipmentSlot.CHEST);
+-      if (itemstack.m_150930_(Items.f_42741_)) {
++      if (shouldRender(itemstack, p_116954_)) {
           ResourceLocation resourcelocation;
-          if (p_225628_4_ instanceof AbstractClientPlayerEntity) {
-             AbstractClientPlayerEntity abstractclientplayerentity = (AbstractClientPlayerEntity)p_225628_4_;
-@@ -39,10 +_,10 @@
-             } else if (abstractclientplayerentity.func_152122_n() && abstractclientplayerentity.func_110303_q() != null && abstractclientplayerentity.func_175148_a(PlayerModelPart.CAPE)) {
-                resourcelocation = abstractclientplayerentity.func_110303_q();
+          if (p_116954_ instanceof AbstractClientPlayer) {
+             AbstractClientPlayer abstractclientplayer = (AbstractClientPlayer)p_116954_;
+@@ -42,10 +_,10 @@
+             } else if (abstractclientplayer.m_108555_() && abstractclientplayer.m_108561_() != null && abstractclientplayer.m_36170_(PlayerModelPart.CAPE)) {
+                resourcelocation = abstractclientplayer.m_108561_();
              } else {
--               resourcelocation = field_188355_a;
-+               resourcelocation = getElytraTexture(itemstack, p_225628_4_);
+-               resourcelocation = f_116934_;
++               resourcelocation = getElytraTexture(itemstack, p_116954_);
              }
           } else {
--            resourcelocation = field_188355_a;
-+            resourcelocation = getElytraTexture(itemstack, p_225628_4_);
+-            resourcelocation = f_116934_;
++            resourcelocation = getElytraTexture(itemstack, p_116954_);
           }
  
-          p_225628_1_.func_227860_a_();
-@@ -53,5 +_,30 @@
-          this.field_188357_c.func_225598_a_(p_225628_1_, ivertexbuilder, p_225628_3_, OverlayTexture.field_229196_a_, 1.0F, 1.0F, 1.0F, 1.0F);
-          p_225628_1_.func_227865_b_();
+          p_116951_.m_85836_();
+@@ -56,5 +_,30 @@
+          this.f_116935_.m_7695_(p_116951_, vertexconsumer, p_116953_, OverlayTexture.f_118083_, 1.0F, 1.0F, 1.0F, 1.0F);
+          p_116951_.m_85849_();
        }
 +   }
 +
@@ -38,7 +38,7 @@
 +    * @return If the ElytraLayer should render.
 +    */
 +   public boolean shouldRender(ItemStack stack, T entity) {
-+      return stack.func_77973_b() == Items.field_185160_cR;
++      return stack.m_41720_() == Items.f_42741_;
 +   }
 +
 +   /**
@@ -50,6 +50,6 @@
 +    * @return The texture.
 +    */
 +   public ResourceLocation getElytraTexture(ItemStack stack, T entity) {
-+      return field_188355_a;
++      return f_116934_;
     }
  }

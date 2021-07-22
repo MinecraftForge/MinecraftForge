@@ -20,22 +20,22 @@
 package net.minecraftforge.common.data;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.item.DyeColor;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.data.BlockTagsProvider;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.data.tags.BlockTagsProvider;
 
 import static net.minecraftforge.common.Tags.Blocks.*;
 
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class ForgeBlockTagsProvider extends BlockTagsProvider
+public final class ForgeBlockTagsProvider extends BlockTagsProvider
 {
     public ForgeBlockTagsProvider(DataGenerator gen, ExistingFileHelper existingFileHelper)
     {
@@ -97,13 +97,13 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(STORAGE_BLOCKS_NETHERITE).add(Blocks.NETHERITE_BLOCK);
     }
 
-    private void addColored(Consumer<Block> consumer, ITag.INamedTag<Block> group, String pattern)
+    private void addColored(Consumer<Block> consumer, Tag.Named<Block> group, String pattern)
     {
         String prefix = group.getName().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
         {
             ResourceLocation key = new ResourceLocation("minecraft", pattern.replace("{color}",  color.getName()));
-            ITag.INamedTag<Block> tag = getForgeTag(prefix + color.getName());
+            Tag.Named<Block> tag = getForgeTag(prefix + color.getName());
             Block block = ForgeRegistries.BLOCKS.getValue(key);
             if (block == null || block  == Blocks.AIR)
                 throw new IllegalStateException("Unknown vanilla block: " + key.toString());
@@ -113,12 +113,12 @@ public class ForgeBlockTagsProvider extends BlockTagsProvider
     }
 
     @SuppressWarnings("unchecked")
-    private ITag.INamedTag<Block> getForgeTag(String name)
+    private Tag.Named<Block> getForgeTag(String name)
     {
         try
         {
             name = name.toUpperCase(Locale.ENGLISH);
-            return (ITag.INamedTag<Block>)Tags.Blocks.class.getDeclaredField(name).get(null);
+            return (Tag.Named<Block>)Tags.Blocks.class.getDeclaredField(name).get(null);
         }
         catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e)
         {

@@ -44,7 +44,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
-import net.minecraft.util.SharedConstants;
+import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -68,7 +68,7 @@ import com.google.common.collect.ObjectArrays;
  * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to accept comments, language keys,
  * and other things Forge configs would find useful.
  */
-public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig> //TODO: Remove extends and pipe everything through getSpec/getValues?
+public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfig> implements IConfigSpec<ForgeConfigSpec>//TODO: Remove extends and pipe everything through getSpec/getValues?
 {
     private Map<List<String>, String> levelComments = new HashMap<>();
 
@@ -99,6 +99,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             }
         }
         this.afterReload();
+    }
+
+    @Override
+    public void acceptConfig(final CommentedConfig data) {
+        setConfig(data);
     }
 
     public boolean isCorrecting() {
@@ -638,7 +643,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         private boolean worldRestart = false;
         private Class<?> clazz;
 
-        public void setComment(String... value) { this.comment = value == null ? new String[] {""} : value; } // TODO 1.17: this should throw an IllegalStateException in future
+        public void setComment(String... value)
+        {
+            validate(value == null, "Passed in null value for comment");
+            this.comment = value;
+        }
         public boolean hasComment() { return this.comment.length > 0; }
         public String[] getComment() { return this.comment; }
         public String buildComment() { return LINE_JOINER.join(comment); }
@@ -793,8 +802,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
     public static class ConfigValue<T>
     {
-        @VisibleForTesting
-        static boolean USE_CACHES = true;
+        private static boolean USE_CACHES = true;
 
         private final Builder parent;
         private final List<String> path;

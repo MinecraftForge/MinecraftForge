@@ -19,8 +19,8 @@
 
 package net.minecraftforge.server.permission.context;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 
 import javax.annotation.Nullable;
 
@@ -28,7 +28,7 @@ public class TargetContext extends PlayerContext
 {
     private final Entity target;
 
-    public TargetContext(PlayerEntity ep, @Nullable Entity entity)
+    public TargetContext(Player ep, @Nullable Entity entity)
     {
         super(ep);
         target = entity;

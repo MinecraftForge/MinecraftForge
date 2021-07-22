@@ -22,20 +22,18 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
-import net.minecraft.block.NetherPortalBlock;
-import net.minecraft.block.PortalSize;
-import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.Direction;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.portal.PortalShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -53,17 +51,17 @@ public class BlockEvent extends Event
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
 
-    private final IWorld world;
+    private final LevelAccessor world;
     private final BlockPos pos;
     private final BlockState state;
-    public BlockEvent(IWorld world, BlockPos pos, BlockState state)
+    public BlockEvent(LevelAccessor world, BlockPos pos, BlockState state)
     {
         this.pos = pos;
         this.world = world;
         this.state = state;
     }
 
-    public IWorld getWorld()
+    public LevelAccessor getWorld()
     {
         return world;
     }
@@ -86,10 +84,10 @@ public class BlockEvent extends Event
     public static class BreakEvent extends BlockEvent
     {
         /** Reference to the Player who broke the block. If no player is available, use a EntityFakePlayer */
-        private final PlayerEntity player;
+        private final Player player;
         private int exp;
 
-        public BreakEvent(World world, BlockPos pos, BlockState state, PlayerEntity player)
+        public BreakEvent(Level world, BlockPos pos, BlockState state, Player player)
         {
             super(world, pos, state);
             this.player = player;
@@ -106,7 +104,7 @@ public class BlockEvent extends Event
             }
         }
 
-        public PlayerEntity getPlayer()
+        public Player getPlayer()
         {
             return player;
         }
@@ -147,10 +145,10 @@ public class BlockEvent extends Event
 
         public EntityPlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull BlockState placedAgainst, @Nullable Entity entity)
         {
-            super(blockSnapshot.getWorld(), blockSnapshot.getPos(), !(entity instanceof PlayerEntity) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock());
+            super(blockSnapshot.getWorld(), blockSnapshot.getPos(), !(entity instanceof Player) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock());
             this.entity = entity;
             this.blockSnapshot = blockSnapshot;
-            this.placedBlock = !(entity instanceof PlayerEntity) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock();
+            this.placedBlock = !(entity instanceof Player) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock();
             this.placedAgainst = placedAgainst;
 
             if (DEBUG)
@@ -210,7 +208,7 @@ public class BlockEvent extends Event
         private final EnumSet<Direction> notifiedSides;
         private final boolean forceRedstoneUpdate;
 
-        public NeighborNotifyEvent(World world, BlockPos pos, BlockState state, EnumSet<Direction> notifiedSides, boolean forceRedstoneUpdate)
+        public NeighborNotifyEvent(Level world, BlockPos pos, BlockState state, EnumSet<Direction> notifiedSides, boolean forceRedstoneUpdate)
         {
             super(world, pos, state);
             this.notifiedSides = notifiedSides;
@@ -246,18 +244,18 @@ public class BlockEvent extends Event
     @HasResult
     public static class CreateFluidSourceEvent extends Event
     {
-        private final IWorldReader world;
+        private final LevelReader world;
         private final BlockPos pos;
         private final BlockState state;
 
-        public CreateFluidSourceEvent(IWorldReader world, BlockPos pos, BlockState state)
+        public CreateFluidSourceEvent(LevelReader world, BlockPos pos, BlockState state)
         {
             this.world = world;
             this.pos = pos;
             this.state = state;
         }
 
-        public IWorldReader getWorld()
+        public LevelReader getWorld()
         {
             return world;
         }
@@ -288,7 +286,7 @@ public class BlockEvent extends Event
         private BlockState newState;
         private BlockState origState;
 
-        public FluidPlaceBlockEvent(IWorld world, BlockPos pos, BlockPos liquidPos, BlockState state)
+        public FluidPlaceBlockEvent(LevelAccessor world, BlockPos pos, BlockPos liquidPos, BlockState state)
         {
             super(world, pos, state);
             this.liquidPos = liquidPos;
@@ -332,7 +330,7 @@ public class BlockEvent extends Event
      */
     public static class CropGrowEvent extends BlockEvent
     {
-        public CropGrowEvent(World world, BlockPos pos, BlockState state)
+        public CropGrowEvent(Level world, BlockPos pos, BlockState state)
         {
             super(world, pos, state);
         }
@@ -351,7 +349,7 @@ public class BlockEvent extends Event
         @HasResult
         public static class Pre extends CropGrowEvent
         {
-            public Pre(World world, BlockPos pos, BlockState state)
+            public Pre(Level world, BlockPos pos, BlockState state)
             {
                 super(world, pos, state);
             }
@@ -369,7 +367,7 @@ public class BlockEvent extends Event
         public static class Post extends CropGrowEvent
         {
             private final BlockState originalState;
-            public Post(World world, BlockPos pos, BlockState original, BlockState state)
+            public Post(Level world, BlockPos pos, BlockState original, BlockState state)
             {
                 super(world, pos, state);
                 originalState = original;
@@ -393,7 +391,7 @@ public class BlockEvent extends Event
         private final Entity entity;
         private final float fallDistance;
 
-        public FarmlandTrampleEvent(World world, BlockPos pos, BlockState state, float fallDistance, Entity entity)
+        public FarmlandTrampleEvent(Level world, BlockPos pos, BlockState state, float fallDistance, Entity entity)
         {
             super(world, pos, state);
             this.entity = entity;
@@ -418,15 +416,15 @@ public class BlockEvent extends Event
     @Cancelable
     public static class PortalSpawnEvent extends BlockEvent
     {
-        private final PortalSize size;
+        private final PortalShape size;
 
-        public PortalSpawnEvent(IWorld world, BlockPos pos, BlockState state, PortalSize size)
+        public PortalSpawnEvent(LevelAccessor world, BlockPos pos, BlockState state, PortalShape size)
         {
             super(world, pos, state);
             this.size = size;
         }
 
-        public PortalSize getPortalSize()
+        public PortalShape getPortalSize()
         {
             return size;
         }
@@ -434,7 +432,9 @@ public class BlockEvent extends Event
 
     /**
      * Fired when when this block is right clicked by a tool to change its state.
-     * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
+     * For example: Used to determine if an axe can strip or a shovel can path.
+     * For hoes, see {@link net.minecraft.world.item.HoeItem#TILLABLES} and
+     * {@link net.minecraftforge.event.entity.player.UseHoeEvent}.
      *
      * This event is {@link Cancelable}. If canceled, this will prevent the tool
      * from changing the block's state.
@@ -443,12 +443,12 @@ public class BlockEvent extends Event
     public static class BlockToolInteractEvent extends BlockEvent
     {
 
-        private final PlayerEntity player;
+        private final Player player;
         private final ItemStack stack;
         private final ToolType toolType;
         private BlockState state;
 
-        public BlockToolInteractEvent(IWorld world, BlockPos pos, BlockState originalState, PlayerEntity player, ItemStack stack, ToolType toolType)
+        public BlockToolInteractEvent(LevelAccessor world, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolType toolType)
         {
             super(world, pos, originalState);
             this.player = player;
@@ -458,7 +458,7 @@ public class BlockEvent extends Event
         }
 
         /**Gets the player using the tool.*/
-        public PlayerEntity getPlayer()
+        public Player getPlayer()
         {
             return player;
         }

@@ -19,15 +19,15 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.block.Block;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.tags.ITag.INamedTag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag.Named;
 
 public class Tags
 {
@@ -307,7 +307,7 @@ public class Tags
         }
     }
 
-    public interface IOptionalNamedTag<T> extends INamedTag<T>
+    public interface IOptionalNamedTag<T> extends Named<T>
     {
         /**
          * Returns true if the current state is defaulted. This means we have connected to a server that does not contain this tag.

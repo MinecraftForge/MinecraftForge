@@ -19,8 +19,8 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -28,9 +28,9 @@ import javax.annotation.Nonnull;
 
 public class InvWrapper implements IItemHandlerModifiable
 {
-    private final IInventory inv;
+    private final Container inv;
 
-    public InvWrapper(IInventory inv)
+    public InvWrapper(Container inv)
     {
         this.inv = inv;
     }
@@ -210,7 +210,7 @@ public class InvWrapper implements IItemHandlerModifiable
         return getInv().canPlaceItem(slot, stack);
     }
 
-    public IInventory getInv()
+    public Container getInv()
     {
         return inv;
     }

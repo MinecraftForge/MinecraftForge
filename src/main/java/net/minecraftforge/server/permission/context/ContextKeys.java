@@ -19,11 +19,11 @@
 
 package net.minecraftforge.server.permission.context;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
 
 /**
  * Some default context keys, for easier compatibility
@@ -41,6 +41,6 @@ public class ContextKeys
     public static final ContextKey<Entity> TARGET = ContextKey.create("target", Entity.class);
 
     public static final ContextKey<Direction> FACING = ContextKey.create("facing", Direction.class);
-    public static final ContextKey<AxisAlignedBB> AREA = ContextKey.create("area", AxisAlignedBB.class);
+    public static final ContextKey<AABB> AREA = ContextKey.create("area", AABB.class);
     public static final ContextKey<BlockState> BLOCK_STATE = ContextKey.create("blockstate", BlockState.class);
 }

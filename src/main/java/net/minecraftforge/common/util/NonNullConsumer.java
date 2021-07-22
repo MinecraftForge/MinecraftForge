@@ -19,8 +19,6 @@
 
 package net.minecraftforge.common.util;
 
-import java.util.function.Consumer;
-
 import javax.annotation.Nonnull;
 
 /**

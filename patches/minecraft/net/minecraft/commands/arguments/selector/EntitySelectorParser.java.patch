@@ -1,0 +1,20 @@
+--- a/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
++++ b/net/minecraft/commands/arguments/selector/EntitySelectorParser.java
+@@ -461,6 +_,9 @@
+          }
+ 
+          this.f_121201_.skip();
++         EntitySelector forgeSelector = net.minecraftforge.common.command.EntitySelectorManager.parseSelector(this);
++         if (forgeSelector != null)
++            return forgeSelector;
+          this.m_121281_();
+       } else {
+          this.m_121304_();
+@@ -476,6 +_,7 @@
+       p_121248_.suggest("@r", new TranslatableComponent("argument.entity.selector.randomPlayer"));
+       p_121248_.suggest("@s", new TranslatableComponent("argument.entity.selector.self"));
+       p_121248_.suggest("@e", new TranslatableComponent("argument.entity.selector.allEntities"));
++      net.minecraftforge.common.command.EntitySelectorManager.fillSelectorSuggestions(p_121248_);
+    }
+ 
+    private CompletableFuture<Suggestions> m_121286_(SuggestionsBuilder p_121287_, Consumer<SuggestionsBuilder> p_121288_) {

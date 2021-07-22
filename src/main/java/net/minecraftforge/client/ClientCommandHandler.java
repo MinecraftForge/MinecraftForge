@@ -32,21 +32,21 @@ import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.CommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.SuggestionProviders;
-import net.minecraft.util.Util;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TextComponentUtils;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.commands.CommandRuntimeException;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.synchronization.SuggestionProviders;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -56,34 +56,35 @@ import java.util.function.Function;
 
 public class ClientCommandHandler
 {
-    private static CommandDispatcher<CommandSource> commands = null;
+    private static CommandDispatcher<CommandSourceStack> commands = null;
 
-    public static void mergeServerCommands(RootCommandNode<ISuggestionProvider> serverCommands)
+    public static void mergeServerCommands(RootCommandNode<SharedSuggestionProvider> serverCommands)
     {
         commands = new CommandDispatcher<>();
         MinecraftForge.EVENT_BUS.post(new RegisterClientCommandsEvent(commands));
-        RootCommandNode<ISuggestionProvider> serverCommandsCopy = new RootCommandNode<>();
+        RootCommandNode<SharedSuggestionProvider> serverCommandsCopy = new RootCommandNode<>();
         mergeCommandNode(serverCommands, serverCommandsCopy, new HashMap<>(), Minecraft.getInstance().getConnection().getSuggestionsProvider(),
                 (suggestions) -> 0, (suggestions) -> null);
 
         mergeCommandNode(commands.getRoot(), serverCommands, new HashMap<>(), getSource(), (suggestions) -> 0, (client) -> {
-                    SuggestionProvider<ISuggestionProvider> suggestionProvider = SuggestionProviders
-                            .safelySwap((SuggestionProvider<ISuggestionProvider>) (SuggestionProvider<?>) client);
-                    if (suggestionProvider == SuggestionProviders.ASK_SERVER) {
-                        suggestionProvider = (context, builder) -> {
-                            ClientCommandSource source = getSource();
-                            StringReader reader = new StringReader(context.getInput());
-                            if (reader.canRead() && reader.peek() == '/')
-                            {
-                                reader.skip();
-                            }
-
-                            ParseResults<CommandSource> parse = commands.parse(reader, source);
-                            return commands.getCompletionSuggestions(parse);
-                        };
+            SuggestionProvider<SharedSuggestionProvider> suggestionProvider = SuggestionProviders
+                    .safelySwap((SuggestionProvider<SharedSuggestionProvider>) (SuggestionProvider<?>) client);
+            if (suggestionProvider == SuggestionProviders.ASK_SERVER)
+            {
+                suggestionProvider = (context, builder) -> {
+                    ClientCommandSource source = getSource();
+                    StringReader reader = new StringReader(context.getInput());
+                    if (reader.canRead() && reader.peek() == '/')
+                    {
+                        reader.skip();
                     }
-                    return suggestionProvider;
-                });
+
+                    ParseResults<CommandSourceStack> parse = commands.parse(reader, source);
+                    return commands.getCompletionSuggestions(parse);
+                };
+            }
+            return suggestionProvider;
+        });
 
         mergeCommandNode(serverCommandsCopy, commands.getRoot(), new HashMap<>(), Minecraft.getInstance().getConnection().getSuggestionsProvider(),
                 (source) -> {
@@ -173,19 +174,18 @@ public class ClientCommandHandler
         {
             commands.execute(reader, source);
         }
-        catch (CommandException execution)// Probably thrown by the command
+        catch (CommandRuntimeException execution)// Probably thrown by the command
         {
-            Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(execution.getComponent()).withStyle(TextFormatting.RED),
-                    Util.NIL_UUID);
+            Minecraft.getInstance().player.sendMessage(new TextComponent("").append(execution.getComponent()).withStyle(ChatFormatting.RED), Util.NIL_UUID);
         }
         catch (CommandSyntaxException syntax)// Usually thrown by the CommandDispatcher
         {
             Minecraft.getInstance().player.sendMessage(
-                    new StringTextComponent("").append(TextComponentUtils.fromMessage(syntax.getRawMessage())).withStyle(TextFormatting.RED), Util.NIL_UUID);
+                    new TextComponent("").append(ComponentUtils.fromMessage(syntax.getRawMessage())).withStyle(ChatFormatting.RED), Util.NIL_UUID);
             if (syntax.getInput() != null && syntax.getCursor() >= 0)
             {
                 int position = Math.min(syntax.getInput().length(), syntax.getCursor());
-                IFormattableTextComponent details = new StringTextComponent("").withStyle(TextFormatting.GRAY);
+                MutableComponent details = new TextComponent("").withStyle(ChatFormatting.GRAY);
                 details.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, reader.getString()));
                 if (position > 10)
                 {
@@ -194,25 +194,25 @@ public class ClientCommandHandler
                 details.append(syntax.getInput().substring(Math.max(0, position - 10), position));
                 if (position < syntax.getInput().length())
                 {
-                    details.append(new StringTextComponent(syntax.getInput().substring(position)).withStyle(TextFormatting.RED, TextFormatting.UNDERLINE));
+                    details.append(new TextComponent(syntax.getInput().substring(position)).withStyle(ChatFormatting.RED, ChatFormatting.UNDERLINE));
                 }
-                details.append(new TranslationTextComponent("command.context.here").withStyle(TextFormatting.RED, TextFormatting.ITALIC));
-                Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(details).withStyle(TextFormatting.RED), Util.NIL_UUID);
+                details.append(new TranslatableComponent("command.context.here").withStyle(ChatFormatting.RED, ChatFormatting.ITALIC));
+                Minecraft.getInstance().player.sendMessage(new TextComponent("").append(details).withStyle(ChatFormatting.RED), Util.NIL_UUID);
             }
         }
         catch (Exception generic)// Probably thrown by the command
         {
-            StringTextComponent message = new StringTextComponent(generic.getMessage() == null ? generic.getClass().getName() : generic.getMessage());
-            ITextComponent component = new TranslationTextComponent("command.failed");
+            TextComponent message = new TextComponent(generic.getMessage() == null ? generic.getClass().getName() : generic.getMessage());
+            Component component = new TranslatableComponent("command.failed");
             component.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, message));
-            Minecraft.getInstance().player.sendMessage(new StringTextComponent("").append(component).withStyle(TextFormatting.RED), Util.NIL_UUID);
+            Minecraft.getInstance().player.sendMessage(new TextComponent("").append(component).withStyle(ChatFormatting.RED), Util.NIL_UUID);
         }
         return true;
     }
 
     private static ClientCommandSource getSource()
     {
-        ClientPlayerEntity player = Minecraft.getInstance().player;
+        LocalPlayer player = Minecraft.getInstance().player;
         return new ClientCommandSource(player, player.position(), player.getRotationVector(), player.getPermissionLevel(),
                 player.getName().getString(), player.getDisplayName(), player);
     }

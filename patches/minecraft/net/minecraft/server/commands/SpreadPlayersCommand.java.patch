@@ -1,0 +1,12 @@
+--- a/net/minecraft/server/commands/SpreadPlayersCommand.java
++++ b/net/minecraft/server/commands/SpreadPlayersCommand.java
+@@ -163,7 +_,8 @@
+             spreadplayerscommand$position = p_138732_[i++];
+          }
+ 
+-         entity.m_20324_((double)Mth.m_14107_(spreadplayerscommand$position.f_138749_) + 0.5D, (double)spreadplayerscommand$position.m_138758_(p_138731_, p_138733_), (double)Mth.m_14107_(spreadplayerscommand$position.f_138750_) + 0.5D);
++         net.minecraftforge.event.entity.EntityTeleportEvent.SpreadPlayersCommand event = net.minecraftforge.event.ForgeEventFactory.onEntityTeleportSpreadPlayersCommand(entity, (double)Mth.m_14107_(spreadplayerscommand$position.f_138749_) + 0.5D, (double)spreadplayerscommand$position.m_138758_(p_138731_, p_138733_), (double)Mth.m_14107_(spreadplayerscommand$position.f_138750_) + 0.5D);
++         if (!event.isCanceled()) entity.m_20324_(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+          double d2 = Double.MAX_VALUE;
+ 
+          for(SpreadPlayersCommand.Position spreadplayerscommand$position1 : p_138732_) {

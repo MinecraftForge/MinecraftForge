@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/level/lighting/SkyLightEngine.java
++++ b/net/minecraft/world/level/lighting/SkyLightEngine.java
+@@ -174,4 +_,9 @@
+    public String m_6647_(long p_75853_) {
+       return super.m_6647_(p_75853_) + (this.f_75632_.m_75890_(p_75853_) ? "*" : "");
+    }
++
++   @Override
++   public int queuedUpdateSize() {
++      return 0;
++   }
+ }

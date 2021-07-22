@@ -21,10 +21,10 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -44,13 +44,13 @@ public class FillBucketEvent extends PlayerEvent
 {
 
     private final ItemStack current;
-    private final World world;
+    private final Level world;
     @Nullable
-    private final RayTraceResult target;
+    private final HitResult target;
 
     private ItemStack result;
 
-    public FillBucketEvent(PlayerEntity player, @Nonnull ItemStack current, World world, @Nullable RayTraceResult target)
+    public FillBucketEvent(Player player, @Nonnull ItemStack current, Level world, @Nullable HitResult target)
     {
         super(player);
         this.current = current;
@@ -60,9 +60,9 @@ public class FillBucketEvent extends PlayerEvent
 
     @Nonnull
     public ItemStack getEmptyBucket() { return this.current; }
-    public World getWorld(){ return this.world; }
+    public Level getWorld(){ return this.world; }
     @Nullable
-    public RayTraceResult getTarget() { return this.target; }
+    public HitResult getTarget() { return this.target; }
     @Nonnull
     public ItemStack getFilledBucket() { return this.result; }
     public void setFilledBucket(@Nonnull ItemStack bucket) { this.result = bucket; }

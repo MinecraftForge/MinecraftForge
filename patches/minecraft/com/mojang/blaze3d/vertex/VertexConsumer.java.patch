@@ -1,0 +1,25 @@
+--- a/com/mojang/blaze3d/vertex/VertexConsumer.java
++++ b/com/mojang/blaze3d/vertex/VertexConsumer.java
+@@ -15,7 +_,7 @@
+ import org.lwjgl.system.MemoryStack;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public interface VertexConsumer {
++public interface VertexConsumer extends net.minecraftforge.client.extensions.IForgeVertexConsumer {
+    Logger f_85943_ = LogManager.getLogger();
+ 
+    VertexConsumer m_5483_(double p_85945_, double p_85946_, double p_85947_);
+@@ -100,11 +_,12 @@
+                f5 = afloat[k] * p_86001_;
+             }
+ 
+-            int l = aint[k];
++            int l = applyBakedLighting(p_86002_[k], bytebuffer);
+             float f9 = bytebuffer.getFloat(16);
+             float f10 = bytebuffer.getFloat(20);
+             Vector4f vector4f = new Vector4f(f, f1, f2, 1.0F);
+             vector4f.m_123607_(matrix4f);
++            applyBakedNormals(vector3f, bytebuffer, p_85996_.m_85864_());
+             this.m_5954_(vector4f.m_123601_(), vector4f.m_123615_(), vector4f.m_123616_(), f3, f4, f5, 1.0F, f9, f10, p_86003_, l, vector3f.m_122239_(), vector3f.m_122260_(), vector3f.m_122269_());
+          }
+       } catch (Throwable throwable1) {

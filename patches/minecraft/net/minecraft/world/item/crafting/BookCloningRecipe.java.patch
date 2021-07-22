@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/item/crafting/BookCloningRecipe.java
++++ b/net/minecraft/world/item/crafting/BookCloningRecipe.java
+@@ -79,8 +_,8 @@
+ 
+       for(int i = 0; i < nonnulllist.size(); ++i) {
+          ItemStack itemstack = p_43820_.m_8020_(i);
+-         if (itemstack.m_41720_().m_41470_()) {
+-            nonnulllist.set(i, new ItemStack(itemstack.m_41720_().m_41469_()));
++         if (itemstack.hasContainerItem()) {
++            nonnulllist.set(i, itemstack.getContainerItem());
+          } else if (itemstack.m_41720_() instanceof WrittenBookItem) {
+             ItemStack itemstack1 = itemstack.m_41777_();
+             itemstack1.m_41764_(1);

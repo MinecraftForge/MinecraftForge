@@ -19,18 +19,18 @@
 
 package net.minecraftforge.debug.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FlowerBlock;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.potion.Effects;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.FlowerBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.PlantType;
 import net.minecraftforge.event.RegistryEvent;
@@ -69,12 +69,12 @@ public class CustomPlantTypeTest
     {
         public CustomBlock()
         {
-            super(Block.Properties.of(Material.STONE));
+            super(Properties.of(Material.STONE));
             this.setRegistryName(MODID, CUSTOM_SOIL_BLOCK);
         }
 
         @Override
-        public boolean canSustainPlant(BlockState state, IBlockReader world, BlockPos pos, Direction facing, IPlantable plantable)
+        public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable)
         {
             PlantType type = plantable.getPlantType(world, pos.relative(facing));
             if (type != null && type == CustomPlantBlock.pt)
@@ -91,31 +91,31 @@ public class CustomPlantTypeTest
 
         public CustomPlantBlock()
         {
-            super(Effects.WEAKNESS, 9, Block.Properties.of(Material.PLANT).noCollission().sound(SoundType.GRASS));
+            super(MobEffects.WEAKNESS, 9, Properties.of(Material.PLANT).noCollission().sound(SoundType.GRASS));
             this.setRegistryName(MODID, CUSTOM_PLANT_BLOCK);
         }
 
         @Override
-        public PlantType getPlantType(IBlockReader world, BlockPos pos)
+        public PlantType getPlantType(BlockGetter world, BlockPos pos)
         {
             return pt;
         }
 
         @Override
-        public BlockState getPlant(IBlockReader world, BlockPos pos)
+        public BlockState getPlant(BlockGetter world, BlockPos pos)
         {
             return defaultBlockState();
         }
 
         @Override
-        public boolean canSurvive(BlockState state, IWorldReader world, BlockPos pos)
+        public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos)
         {
             BlockState soil = world.getBlockState(pos.below());
             return soil.canSustainPlant(world, pos, Direction.UP, this);
         }
 
         @Override
-        public boolean mayPlaceOn(BlockState state, IBlockReader worldIn, BlockPos pos)
+        public boolean mayPlaceOn(BlockState state, BlockGetter worldIn, BlockPos pos)
         {
             Block block = state.getBlock();
             return block == CUSTOM_SOIL;

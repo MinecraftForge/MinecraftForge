@@ -1,0 +1,68 @@
+--- a/net/minecraft/client/renderer/entity/ItemEntityRenderer.java
++++ b/net/minecraft/client/renderer/entity/ItemEntityRenderer.java
+@@ -62,17 +_,14 @@
+       int j = this.m_115042_(itemstack);
+       float f = 0.25F;
+       float f1 = Mth.m_14031_(((float)p_115036_.m_32059_() + p_115038_) / 10.0F + p_115036_.f_31983_) * 0.1F + 0.1F;
+-      float f2 = bakedmodel.m_7442_().m_111808_(ItemTransforms.TransformType.GROUND).f_111757_.m_122260_();
++      float f2 = shouldBob() ? bakedmodel.m_7442_().m_111808_(ItemTransforms.TransformType.GROUND).f_111757_.m_122260_() : 0;
+       p_115039_.m_85837_(0.0D, (double)(f1 + 0.25F * f2), 0.0D);
+       float f3 = p_115036_.m_32008_(p_115038_);
+       p_115039_.m_85845_(Vector3f.f_122225_.m_122270_(f3));
+-      float f4 = bakedmodel.m_7442_().f_111793_.f_111757_.m_122239_();
+-      float f5 = bakedmodel.m_7442_().f_111793_.f_111757_.m_122260_();
+-      float f6 = bakedmodel.m_7442_().f_111793_.f_111757_.m_122269_();
+       if (!flag) {
+-         float f7 = -0.0F * (float)(j - 1) * 0.5F * f4;
+-         float f8 = -0.0F * (float)(j - 1) * 0.5F * f5;
+-         float f9 = -0.09375F * (float)(j - 1) * 0.5F * f6;
++         float f7 = -0.0F * (float)(j - 1) * 0.5F;
++         float f8 = -0.0F * (float)(j - 1) * 0.5F;
++         float f9 = -0.09375F * (float)(j - 1) * 0.5F;
+          p_115039_.m_85837_((double)f7, (double)f8, (double)f9);
+       }
+ 
+@@ -83,18 +_,18 @@
+                float f11 = (this.f_115020_.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                float f13 = (this.f_115020_.nextFloat() * 2.0F - 1.0F) * 0.15F;
+                float f10 = (this.f_115020_.nextFloat() * 2.0F - 1.0F) * 0.15F;
+-               p_115039_.m_85837_((double)f11, (double)f13, (double)f10);
++               p_115039_.m_85837_(shouldSpreadItems() ? f11 : 0, shouldSpreadItems() ? f13 : 0, shouldSpreadItems() ? f10 : 0);
+             } else {
+                float f12 = (this.f_115020_.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
+                float f14 = (this.f_115020_.nextFloat() * 2.0F - 1.0F) * 0.15F * 0.5F;
+-               p_115039_.m_85837_((double)f12, (double)f14, 0.0D);
++               p_115039_.m_85837_(shouldSpreadItems() ? f12 : 0, shouldSpreadItems() ? f14 : 0, 0.0D);
+             }
+          }
+ 
+          this.f_115019_.m_115143_(itemstack, ItemTransforms.TransformType.GROUND, false, p_115039_, p_115040_, p_115041_, OverlayTexture.f_118083_, bakedmodel);
+          p_115039_.m_85849_();
+          if (!flag) {
+-            p_115039_.m_85837_((double)(0.0F * f4), (double)(0.0F * f5), (double)(0.09375F * f6));
++            p_115039_.m_85837_(0.0, 0.0, 0.09375F);
+          }
+       }
+ 
+@@ -105,4 +_,21 @@
+    public ResourceLocation m_5478_(ItemEntity p_115034_) {
+       return TextureAtlas.f_118259_;
+    }
++
++   /*==================================== FORGE START ===========================================*/
++
++   /**
++    * @return If items should spread out when rendered in 3D
++    */
++   public boolean shouldSpreadItems() {
++      return true;
++   }
++
++   /**
++    * @return If items should have a bob effect
++    */
++   public boolean shouldBob() {
++      return true;
++   }
++   /*==================================== FORGE END =============================================*/
+ }

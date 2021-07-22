@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/levelgen/feature/OceanMonumentFeature.java
++++ b/net/minecraft/world/level/levelgen/feature/OceanMonumentFeature.java
+@@ -55,8 +_,9 @@
+       return OceanMonumentFeature.OceanMonumentStart::new;
+    }
+ 
+-   public WeightedRandomList<MobSpawnSettings.SpawnerData> m_142494_() {
+-      return f_66469_;
++   @Override
++   public java.util.List<MobSpawnSettings.SpawnerData> getDefaultSpawnList() {
++      return f_66469_.m_146338_();
+    }
+ 
+    public static class OceanMonumentStart extends StructureStart<NoneFeatureConfiguration> {

@@ -1,50 +1,51 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -81,6 +_,7 @@
-    public boolean func_71197_b() throws IOException {
+@@ -91,6 +_,7 @@
+    public boolean m_7038_() throws IOException {
        Thread thread = new Thread("Server console handler") {
           public void run() {
 +            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
              BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
              String s1;
-@@ -162,11 +_,13 @@
-          SkullTileEntity.func_184293_a(this.func_152358_ax());
-          SkullTileEntity.func_184294_a(this.func_147130_as());
-          PlayerProfileCache.func_187320_a(this.func_71266_T());
-+         if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-          field_155771_h.info("Preparing level \"{}\"", (Object)this.func_230542_k__());
-          this.func_240800_l__();
-          long j = Util.func_211178_c() - i;
+@@ -171,11 +_,13 @@
+          SkullBlockEntity.m_59771_(this.m_129925_());
+          SkullBlockEntity.m_182462_(this);
+          GameProfileCache.m_11004_(this.m_129797_());
++         if (!net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+          f_139598_.info("Preparing level \"{}\"", (Object)this.m_7123_());
+          this.m_130006_();
+          long j = Util.m_137569_() - i;
           String s = String.format(Locale.ROOT, "%.3fs", (double)j / 1.0E9D);
-          field_155771_h.info("Done ({})! For help, type \"help\"", (Object)s);
-+         this.field_211151_aa = Util.func_211177_b(); //Forge: Update server time to prevent watchdog/spaming during long load.
-          if (serverproperties.field_219027_u != null) {
-             this.func_200252_aR().func_223585_a(GameRules.field_223620_w).func_223570_a(serverproperties.field_219027_u, this);
+          f_139598_.info("Done ({})! For help, type \"help\"", (Object)s);
++         this.f_129726_ = Util.m_137550_(); //Forge: Update server time to prevent watchdog/spaming during long load.
+          if (dedicatedserverproperties.f_139744_ != null) {
+             this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
           }
-@@ -190,11 +_,12 @@
+@@ -199,12 +_,13 @@
           }
  
-          Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
+          Items.f_41852_.m_6787_(CreativeModeTab.f_40754_, NonNullList.m_122779_());
 +         // <3 you Grum for this, saves us ~30 patch files! --^
-          if (serverproperties.field_241079_P_) {
-             ServerInfoMBean.func_233490_a_(this);
+          if (dedicatedserverproperties.f_139721_) {
+             MinecraftServerStatistics.m_18328_(this);
+             f_139598_.info("JMX monitoring enabled");
           }
  
 -         return true;
-+         return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
++         return net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerStarting(this);
        }
     }
  
-@@ -513,6 +_,11 @@
+@@ -556,6 +_,11 @@
  
-    public boolean func_213199_b(GameProfile p_213199_1_) {
+    public boolean m_7779_(GameProfile p_139642_) {
        return false;
 +   }
 +
 +   @Override //Forge: Enable formated text for colors in console.
-+   public void func_145747_a(net.minecraft.util.text.ITextComponent message, java.util.UUID p_145747_2_) {
-+      field_155771_h.info(message.getString());
++   public void m_6352_(net.minecraft.network.chat.Component message, java.util.UUID p_108776_) {
++      f_139598_.info(message.getString());
     }
  
-    public int func_230512_b_(int p_230512_1_) {
+    public int m_7186_(int p_139659_) {

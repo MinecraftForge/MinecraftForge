@@ -1,0 +1,49 @@
+--- a/net/minecraft/server/level/ChunkMap.java
++++ b/net/minecraft/server/level/ChunkMap.java
+@@ -405,6 +_,7 @@
+             if (this.f_140131_.remove(p_140182_, p_140183_) && p_140309_ != null) {
+                if (p_140309_ instanceof LevelChunk) {
+                   ((LevelChunk)p_140309_).m_62913_(false);
++                  net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Unload((LevelChunk)p_140309_));
+                }
+ 
+                this.m_140258_(p_140309_);
+@@ -583,7 +_,13 @@
+             levelchunk.m_62952_();
+             if (this.f_140132_.add(chunkpos.m_45588_())) {
+                levelchunk.m_62913_(true);
++               try {
++               p_140384_.currentlyLoading = levelchunk; // Forge - bypass the future chain when getChunk is called, this prevents deadlocks.
+                levelchunk.m_156369_();
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(levelchunk));
++               } finally {
++                   p_140384_.currentlyLoading = null; // Forge - Stop bypassing the future chain.
++               }
+             }
+ 
+             return levelchunk;
+@@ -659,6 +_,7 @@
+ 
+             this.f_140133_.m_46473_().m_6174_("chunkSave");
+             CompoundTag compoundtag = ChunkSerializer.m_63454_(this.f_140133_, p_140259_);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_140259_, p_140259_.getWorldForge() != null ? p_140259_.getWorldForge() : this.f_140133_, compoundtag));
+             this.m_63502_(chunkpos, compoundtag);
+             this.m_140229_(chunkpos, chunkstatus.m_62494_());
+             return true;
+@@ -715,6 +_,7 @@
+ 
+    protected void m_140186_(ServerPlayer p_140187_, ChunkPos p_140188_, Packet<?>[] p_140189_, boolean p_140190_, boolean p_140191_) {
+       if (p_140187_.f_19853_ == this.f_140133_) {
++         net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_140190_, p_140191_, p_140187_, p_140188_, this.f_140133_);
+          if (p_140191_ && !p_140190_) {
+             ChunkHolder chunkholder = this.m_140327_(p_140188_.m_45588_());
+             if (chunkholder != null) {
+@@ -921,7 +_,7 @@
+    }
+ 
+    protected void m_140199_(Entity p_140200_) {
+-      if (!(p_140200_ instanceof EnderDragonPart)) {
++      if (!(p_140200_ instanceof net.minecraftforge.entity.PartEntity)) {
+          EntityType<?> entitytype = p_140200_.m_6095_();
+          int i = entitytype.m_20681_() * 16;
+          if (i != 0) {

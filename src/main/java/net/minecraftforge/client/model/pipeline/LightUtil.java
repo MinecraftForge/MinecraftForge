@@ -24,11 +24,11 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.util.Direction;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
+import net.minecraft.core.Direction;
 
 public class LightUtil
 {
@@ -96,7 +96,7 @@ public class LightUtil
         consumer.setApplyDiffuseLighting(quad.isShade());
         float[] data = new float[4];
         VertexFormat formatFrom = consumer.getVertexFormat();
-        VertexFormat formatTo = DefaultVertexFormats.BLOCK;
+        VertexFormat formatTo = DefaultVertexFormat.BLOCK;
         int countFrom = formatFrom.getElements().size();
         int countTo = formatTo.getElements().size();
         int[] eMap = mapFormats(formatFrom, formatTo);
@@ -118,8 +118,8 @@ public class LightUtil
     }
 
     // TODO: probably useless now, remove?
-    private static final VertexFormat DEFAULT_FROM = VertexLighterFlat.withNormal(DefaultVertexFormats.BLOCK);
-    private static final VertexFormat DEFAULT_TO = DefaultVertexFormats.BLOCK;
+    private static final VertexFormat DEFAULT_FROM = VertexLighterFlat.withNormal(DefaultVertexFormat.BLOCK);
+    private static final VertexFormat DEFAULT_TO = DefaultVertexFormat.BLOCK;
     private static final int[] DEFAULT_MAPPING = generateMapping(DEFAULT_FROM, DEFAULT_TO);
     public static int[] mapFormats(VertexFormat from, VertexFormat to)
     {

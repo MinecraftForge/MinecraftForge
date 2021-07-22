@@ -1,0 +1,38 @@
+--- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureProcessor.java
++++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureProcessor.java
+@@ -6,7 +_,34 @@
+ 
+ public abstract class StructureProcessor {
+    @Nullable
+-   public abstract StructureTemplate.StructureBlockInfo m_7382_(LevelReader p_74416_, BlockPos p_74417_, BlockPos p_74418_, StructureTemplate.StructureBlockInfo p_74419_, StructureTemplate.StructureBlockInfo p_74420_, StructurePlaceSettings p_74421_);
++   @Deprecated //Forge: Use process below, with the Template context
++   public StructureTemplate.StructureBlockInfo m_7382_(LevelReader p_74416_, BlockPos p_74417_, BlockPos p_74418_, StructureTemplate.StructureBlockInfo p_74419_, StructureTemplate.StructureBlockInfo p_74420_, StructurePlaceSettings p_74421_) {
++      return p_74420_;
++   }
+ 
+    protected abstract StructureProcessorType<?> m_6953_();
++
++   @Nullable
++   public StructureTemplate.StructureBlockInfo process(LevelReader p_74140_, BlockPos p_74141_, BlockPos p_74142_, StructureTemplate.StructureBlockInfo p_74143_, StructureTemplate.StructureBlockInfo p_74144_, StructurePlaceSettings p_74145_, @Nullable StructureTemplate template) {
++      return m_7382_(p_74140_, p_74141_, p_74142_, p_74143_, p_74144_, p_74145_);
++   }
++
++   /**
++    * FORGE: Add entity processing.
++    * <p>
++    * Use this method to process entities from a structure in much the same way as
++    * blocks, parameters are analogous.
++    *
++    * @param world
++    * @param seedPos
++    * @param rawEntityInfo
++    * @param entityInfo
++    * @param placementSettings
++    * @param template
++    *
++    * @see #process(LevelReader, BlockPos, BlockPos, StructureTemplate.StructureBlockInfo, StructureTemplate.StructureBlockInfo, StructurePlaceSettings, StructureTemplate)
++    */
++   public StructureTemplate.StructureEntityInfo processEntity(LevelReader world, BlockPos seedPos, StructureTemplate.StructureEntityInfo rawEntityInfo, StructureTemplate.StructureEntityInfo entityInfo, StructurePlaceSettings placementSettings, StructureTemplate template) {
++      return entityInfo;
++   }
+ }

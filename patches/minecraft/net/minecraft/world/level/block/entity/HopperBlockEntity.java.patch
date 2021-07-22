@@ -1,0 +1,45 @@
+--- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
+@@ -104,7 +_,7 @@
+          if (!p_155582_.m_59407_() && p_155581_.m_61143_(HopperBlock.f_54022_)) {
+             boolean flag = false;
+             if (!p_155582_.m_7983_()) {
+-               flag = m_155562_(p_155579_, p_155580_, p_155581_, p_155582_);
++               flag = ejectItems(p_155579_, p_155580_, p_155581_, p_155582_);
+             }
+ 
+             if (!p_155582_.m_59404_()) {
+@@ -132,7 +_,8 @@
+       return true;
+    }
+ 
+-   private static boolean m_155562_(Level p_155563_, BlockPos p_155564_, BlockState p_155565_, Container p_155566_) {
++   private static boolean ejectItems(Level p_155563_, BlockPos p_155564_, BlockState p_155565_, HopperBlockEntity p_155566_) {
++      if (net.minecraftforge.items.VanillaInventoryCodeHooks.insertHook(p_155566_)) return true;
+       Container container = m_155592_(p_155563_, p_155564_, p_155565_);
+       if (container == null) {
+          return false;
+@@ -177,6 +_,8 @@
+    }
+ 
+    public static boolean m_155552_(Level p_155553_, Hopper p_155554_) {
++      Boolean ret = net.minecraftforge.items.VanillaInventoryCodeHooks.extractHook(p_155553_, p_155554_);
++      if (ret != null) return ret;
+       Container container = m_155596_(p_155553_, p_155554_);
+       if (container != null) {
+          Direction direction = Direction.DOWN;
+@@ -400,5 +_,14 @@
+ 
+    protected AbstractContainerMenu m_6555_(int p_59312_, Inventory p_59313_) {
+       return new HopperMenu(p_59312_, p_59313_, this);
++   }
++
++   @Override
++   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
++      return new net.minecraftforge.items.VanillaHopperItemHandler(this);
++   }
++
++   public long getLastUpdateTime() {
++      return this.f_59303_;
+    }
+ }

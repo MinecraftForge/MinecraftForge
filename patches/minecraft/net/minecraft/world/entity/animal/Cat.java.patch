@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/Cat.java
++++ b/net/minecraft/world/entity/animal/Cat.java
+@@ -415,7 +_,7 @@
+             }
+          } else if (this.m_6898_(itemstack)) {
+             this.m_142075_(p_28153_, p_28154_, itemstack);
+-            if (this.f_19796_.nextInt(3) == 0) {
++            if (this.f_19796_.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_28153_)) {
+                this.m_21828_(p_28153_);
+                this.m_21839_(true);
+                this.f_19853_.m_7605_(this, (byte)7);

@@ -1,0 +1,28 @@
+--- a/net/minecraft/client/gui/components/DebugScreenOverlay.java
++++ b/net/minecraft/client/gui/components/DebugScreenOverlay.java
+@@ -354,7 +_,7 @@
+                list.add(this.m_94071_(entry));
+             }
+ 
+-            for(ResourceLocation resourcelocation : this.f_94030_.m_91403_().m_105148_().m_144452_(Registry.f_122901_).m_13394_(blockstate.m_60734_())) {
++            for(ResourceLocation resourcelocation : blockstate.m_60734_().getTags()) {
+                list.add("#" + resourcelocation);
+             }
+          }
+@@ -370,7 +_,7 @@
+                list.add(this.m_94071_(entry1));
+             }
+ 
+-            for(ResourceLocation resourcelocation1 : this.f_94030_.m_91403_().m_105148_().m_144452_(Registry.f_122899_).m_13394_(fluidstate.m_76152_())) {
++            for(ResourceLocation resourcelocation1 : fluidstate.m_76152_().getTags()) {
+                list.add("#" + resourcelocation1);
+             }
+          }
+@@ -380,6 +_,7 @@
+             list.add("");
+             list.add(ChatFormatting.UNDERLINE + "Targeted Entity");
+             list.add(String.valueOf((Object)Registry.f_122826_.m_7981_(entity.m_6095_())));
++            entity.m_6095_().getTags().forEach(t -> list.add("#" + t));
+          }
+ 
+          return list;

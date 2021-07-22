@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/Ravager.java
++++ b/net/minecraft/world/entity/monster/Ravager.java
+@@ -142,7 +_,7 @@
+             this.m_21051_(Attributes.f_22279_).m_22100_(Mth.m_14139_(0.1D, d1, d0));
+          }
+ 
+-         if (this.f_19862_ && this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
++         if (this.f_19862_ && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this)) {
+             boolean flag = false;
+             AABB aabb = this.m_142469_().m_82400_(0.2D);
+ 

@@ -19,9 +19,9 @@
 
 package net.minecraftforge.debug;
 
-import net.minecraft.fluid.Fluids;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTDynamicOps;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
@@ -49,13 +49,13 @@ public class CodecsTest
         FluidStack withTag = new FluidStack(Fluids.LAVA, 10);
         withTag.getOrCreateChildTag("test").putString("value", "This is a test");
 
-        CompoundNBT noTag_write = noTag.writeToNBT(new CompoundNBT());
-        CompoundNBT withTag_write = withTag.writeToNBT(new CompoundNBT());
+        CompoundTag noTag_write = noTag.writeToNBT(new CompoundTag());
+        CompoundTag withTag_write = withTag.writeToNBT(new CompoundTag());
 
-        CompoundNBT noTag_encode = (CompoundNBT)FluidStack.CODEC.encodeStart(NBTDynamicOps.INSTANCE, noTag).getOrThrow(false, error -> {
+        CompoundTag noTag_encode = (CompoundTag)FluidStack.CODEC.encodeStart(NbtOps.INSTANCE, noTag).getOrThrow(false, error -> {
             LOGGER.error("Error encoding noTag: {}", error);
         });
-        CompoundNBT withTag_encode = (CompoundNBT)FluidStack.CODEC.encodeStart(NBTDynamicOps.INSTANCE, withTag).getOrThrow(false, error -> {
+        CompoundTag withTag_encode = (CompoundTag)FluidStack.CODEC.encodeStart(NbtOps.INSTANCE, withTag).getOrThrow(false, error -> {
             LOGGER.error("Error encoding withTag: {}", error);
         });
 
@@ -64,10 +64,10 @@ public class CodecsTest
         if (!withTag_write.equals(withTag_encode))
             throw new IllegalStateException("Encoded withTag does not match");
 
-        FluidStack noTag_decode = FluidStack.CODEC.decode(NBTDynamicOps.INSTANCE, noTag_encode).getOrThrow(false, error -> {
+        FluidStack noTag_decode = FluidStack.CODEC.decode(NbtOps.INSTANCE, noTag_encode).getOrThrow(false, error -> {
             LOGGER.error("Error decoding noTag: {}", error);
         }).getFirst();
-        FluidStack withTag_decode = FluidStack.CODEC.decode(NBTDynamicOps.INSTANCE, withTag_encode).getOrThrow(false, error -> {
+        FluidStack withTag_decode = FluidStack.CODEC.decode(NbtOps.INSTANCE, withTag_encode).getOrThrow(false, error -> {
             LOGGER.error("Error decoding withTag: {}", error);
         }).getFirst();
 

@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/level/material/LavaFluid.java
++++ b/net/minecraft/world/level/material/LavaFluid.java
+@@ -72,7 +_,7 @@
+                BlockState blockstate = p_76239_.m_8055_(blockpos);
+                if (blockstate.m_60795_()) {
+                   if (this.m_76227_(p_76239_, blockpos)) {
+-                     p_76239_.m_46597_(blockpos, BaseFireBlock.m_49245_(p_76239_, blockpos));
++                     p_76239_.m_46597_(blockpos, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_76239_, blockpos, p_76240_, Blocks.f_50083_.m_49966_()));
+                      return;
+                   }
+                } else if (blockstate.m_60767_().m_76334_()) {
+@@ -87,7 +_,7 @@
+                }
+ 
+                if (p_76239_.m_46859_(blockpos1.m_7494_()) && this.m_76245_(p_76239_, blockpos1)) {
+-                  p_76239_.m_46597_(blockpos1.m_7494_(), BaseFireBlock.m_49245_(p_76239_, blockpos1));
++                  p_76239_.m_46597_(blockpos1.m_7494_(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_76239_, blockpos1.m_7494_(), p_76240_, Blocks.f_50083_.m_49966_()));
+                }
+             }
+          }
+@@ -164,7 +_,7 @@
+          FluidState fluidstate = p_76220_.m_6425_(p_76221_);
+          if (this.m_76108_(FluidTags.f_13132_) && fluidstate.m_76153_(FluidTags.f_13131_)) {
+             if (p_76222_.m_60734_() instanceof LiquidBlock) {
+-               p_76220_.m_7731_(p_76221_, Blocks.f_50069_.m_49966_(), 3);
++               p_76220_.m_7731_(p_76221_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_76220_, p_76221_, p_76221_, Blocks.f_50069_.m_49966_()), 3);
+             }
+ 
+             this.m_76212_(p_76220_, p_76221_);

@@ -21,7 +21,7 @@ package net.minecraftforge.client.model.obj;
 
 import com.google.common.base.Charsets;
 import joptsimple.internal.Strings;
-import net.minecraft.resources.IResource;
+import net.minecraft.server.packs.resources.Resource;
 
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
@@ -36,7 +36,7 @@ public class LineReader implements AutoCloseable
     InputStreamReader lineStream;
     BufferedReader lineReader;
 
-    public LineReader(IResource resource)
+    public LineReader(Resource resource)
     {
         this.lineStream = new InputStreamReader(resource.getInputStream(), Charsets.UTF_8);
         this.lineReader = new BufferedReader(lineStream);

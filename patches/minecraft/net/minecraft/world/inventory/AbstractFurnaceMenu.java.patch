@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/inventory/AbstractFurnaceMenu.java
++++ b/net/minecraft/world/inventory/AbstractFurnaceMenu.java
+@@ -147,7 +_,7 @@
+    }
+ 
+    protected boolean m_38988_(ItemStack p_38989_) {
+-      return AbstractFurnaceBlockEntity.m_58399_(p_38989_);
++      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_38989_, this.f_38957_) > 0;
+    }
+ 
+    public int m_38995_() {

@@ -33,19 +33,18 @@ import org.apache.commons.lang3.text.translate.JavaUnicodeEscaper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Effect;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.effect.MobEffect;
 
 @SuppressWarnings("deprecation")
-public abstract class LanguageProvider implements IDataProvider {
+public abstract class LanguageProvider implements DataProvider {
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private final Map<String, String> data = new TreeMap<>();
     private final DataGenerator gen;
@@ -61,7 +60,7 @@ public abstract class LanguageProvider implements IDataProvider {
     protected abstract void addTranslations();
 
     @Override
-    public void run(DirectoryCache cache) throws IOException {
+    public void run(HashCache cache) throws IOException {
         addTranslations();
         if (!data.isEmpty())
             save(cache, data, this.gen.getOutputFolder().resolve("assets/" + modid + "/lang/" + locale + ".json"));
@@ -72,10 +71,10 @@ public abstract class LanguageProvider implements IDataProvider {
         return "Languages: " + locale;
     }
 
-    private void save(DirectoryCache cache, Object object, Path target) throws IOException {
+    private void save(HashCache cache, Object object, Path target) throws IOException {
         String data = GSON.toJson(object);
         data = JavaUnicodeEscaper.outsideOf(0, 0x7f).translate(data); // Escape unicode after the fact so that it's not double escaped by GSON
-        String hash = IDataProvider.SHA1.hashUnencodedChars(data).toString();
+        String hash = DataProvider.SHA1.hashUnencodedChars(data).toString();
         if (!Objects.equals(cache.getHash(target), hash) || !Files.exists(target)) {
            Files.createDirectories(target.getParent());
 
@@ -129,11 +128,11 @@ public abstract class LanguageProvider implements IDataProvider {
     }
     */
 
-    public void addEffect(Supplier<? extends Effect> key, String name) {
+    public void addEffect(Supplier<? extends MobEffect> key, String name) {
         add(key.get(), name);
     }
 
-    public void add(Effect key, String name) {
+    public void add(MobEffect key, String name) {
         add(key.getDescriptionId(), name);
     }
 

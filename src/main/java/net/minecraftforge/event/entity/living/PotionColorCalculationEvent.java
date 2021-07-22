@@ -21,8 +21,8 @@ package net.minecraftforge.event.entity.living;
 
 import java.util.Collection;
 import java.util.Collections;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.potion.EffectInstance;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.effect.MobEffectInstance;
 
 /**
  * Fires after Potion Color Calculation.
@@ -35,10 +35,10 @@ public class PotionColorCalculationEvent extends LivingEvent
 {
     private int color;
     private boolean hideParticle;
-    private final Collection<EffectInstance> effectList;
+    private final Collection<MobEffectInstance> effectList;
 
     public PotionColorCalculationEvent(LivingEntity entity, int color, boolean hideParticle,
-            Collection<EffectInstance> effectList)
+            Collection<MobEffectInstance> effectList)
     {
         super(entity);
         this.color = color;
@@ -71,7 +71,7 @@ public class PotionColorCalculationEvent extends LivingEvent
      * 
      * @return effects
      */
-    public Collection<EffectInstance> getEffects()
+    public Collection<MobEffectInstance> getEffects()
     {
         return Collections.unmodifiableCollection(effectList);
     }

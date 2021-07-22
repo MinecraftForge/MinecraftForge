@@ -1,0 +1,91 @@
+--- a/net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer.java
++++ b/net/minecraft/client/renderer/entity/layers/HumanoidArmorLayer.java
+@@ -44,19 +_,20 @@
+       if (itemstack.m_41720_() instanceof ArmorItem) {
+          ArmorItem armoritem = (ArmorItem)itemstack.m_41720_();
+          if (armoritem.m_40402_() == p_117122_) {
++            p_117124_ = getArmorModelHook(p_117121_, itemstack, p_117122_, p_117124_);
+             this.m_117386_().m_102872_(p_117124_);
+             this.m_117125_(p_117124_, p_117122_);
+             boolean flag = this.m_117128_(p_117122_);
+             boolean flag1 = itemstack.m_41790_();
+-            if (armoritem instanceof DyeableArmorItem) {
+-               int i = ((DyeableArmorItem)armoritem).m_41121_(itemstack);
++            if (armoritem instanceof net.minecraft.world.item.DyeableLeatherItem) {
++               int i = ((net.minecraft.world.item.DyeableLeatherItem)armoritem).m_41121_(itemstack);
+                float f = (float)(i >> 16 & 255) / 255.0F;
+                float f1 = (float)(i >> 8 & 255) / 255.0F;
+                float f2 = (float)(i & 255) / 255.0F;
+-               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag1, p_117124_, flag, f, f1, f2, (String)null);
+-               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag1, p_117124_, flag, 1.0F, 1.0F, 1.0F, "overlay");
++               this.renderModel(p_117119_, p_117120_, p_117123_, flag1, p_117124_, f, f1, f2, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
++               this.renderModel(p_117119_, p_117120_, p_117123_, flag1, p_117124_, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, "overlay"));
+             } else {
+-               this.m_117106_(p_117119_, p_117120_, p_117123_, armoritem, flag1, p_117124_, flag, 1.0F, 1.0F, 1.0F, (String)null);
++               this.renderModel(p_117119_, p_117120_, p_117123_, flag1, p_117124_, 1.0F, 1.0F, 1.0F, this.getArmorResource(p_117121_, itemstack, p_117122_, null));
+             }
+ 
+          }
+@@ -88,7 +_,10 @@
+    }
+ 
+    private void m_117106_(PoseStack p_117107_, MultiBufferSource p_117108_, int p_117109_, ArmorItem p_117110_, boolean p_117111_, A p_117112_, boolean p_117113_, float p_117114_, float p_117115_, float p_117116_, @Nullable String p_117117_) {
+-      VertexConsumer vertexconsumer = ItemRenderer.m_115184_(p_117108_, RenderType.m_110431_(this.m_117080_(p_117110_, p_117113_, p_117117_)), false, p_117111_);
++       renderModel(p_117107_, p_117108_, p_117109_, p_117111_, p_117112_, p_117114_, p_117115_, p_117116_, this.m_117080_(p_117110_, p_117113_, p_117117_));
++   }
++   private void renderModel(PoseStack p_117107_, MultiBufferSource p_117108_, int p_117109_, boolean p_117111_, A p_117112_, float p_117114_, float p_117115_, float p_117116_, ResourceLocation armorResource) {
++      VertexConsumer vertexconsumer = ItemRenderer.m_115184_(p_117108_, RenderType.m_110431_(armorResource), false, p_117111_);
+       p_117112_.m_7695_(p_117107_, vertexconsumer, p_117109_, OverlayTexture.f_118083_, p_117114_, p_117115_, p_117116_, 1.0F);
+    }
+ 
+@@ -100,8 +_,50 @@
+       return p_117129_ == EquipmentSlot.LEGS;
+    }
+ 
++   @Deprecated //Use the more sensitive version getArmorResource below
+    private ResourceLocation m_117080_(ArmorItem p_117081_, boolean p_117082_, @Nullable String p_117083_) {
+       String s = "textures/models/armor/" + p_117081_.m_40401_().m_6082_() + "_layer_" + (p_117082_ ? 2 : 1) + (p_117083_ == null ? "" : "_" + p_117083_) + ".png";
+       return f_117070_.computeIfAbsent(s, ResourceLocation::new);
+    }
++
++   /*=================================== FORGE START =========================================*/
++
++   /**
++    * Hook to allow item-sensitive armor model. for LayerBipedArmor.
++    */
++   protected A getArmorModelHook(T entity, ItemStack itemStack, EquipmentSlot slot, A model) {
++      return net.minecraftforge.client.ForgeHooksClient.getArmorModel(entity, itemStack, slot, model);
++   }
++
++   /**
++    * More generic ForgeHook version of the above function, it allows for Items to have more control over what texture they provide.
++    *
++    * @param entity Entity wearing the armor
++    * @param stack ItemStack for the armor
++    * @param slot Slot ID that the item is in
++    * @param type Subtype, can be null or "overlay"
++    * @return ResourceLocation pointing at the armor's texture
++    */
++   public ResourceLocation getArmorResource(net.minecraft.world.entity.Entity entity, ItemStack stack, EquipmentSlot slot, @Nullable String type) {
++      ArmorItem item = (ArmorItem)stack.m_41720_();
++      String texture = item.m_40401_().m_6082_();
++      String domain = "minecraft";
++      int idx = texture.indexOf(':');
++      if (idx != -1) {
++         domain = texture.substring(0, idx);
++         texture = texture.substring(idx + 1);
++      }
++      String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture, (m_117128_(slot) ? 2 : 1), type == null ? "" : String.format("_%s", type));
++
++      s1 = net.minecraftforge.client.ForgeHooksClient.getArmorTexture(entity, stack, s1, slot, type);
++      ResourceLocation resourcelocation = f_117070_.get(s1);
++
++      if (resourcelocation == null) {
++         resourcelocation = new ResourceLocation(s1);
++         f_117070_.put(s1, resourcelocation);
++      }
++
++      return resourcelocation;
++   }
++   /*=================================== FORGE END ===========================================*/
+ }

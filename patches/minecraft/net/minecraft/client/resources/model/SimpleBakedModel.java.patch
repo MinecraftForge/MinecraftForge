@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/resources/model/SimpleBakedModel.java
++++ b/net/minecraft/client/resources/model/SimpleBakedModel.java
+@@ -81,6 +_,10 @@
+       private final boolean f_119514_;
+       private final ItemTransforms f_119515_;
+ 
++      public Builder(net.minecraftforge.client.model.IModelConfiguration model, ItemOverrides overrides) {
++         this(model.useSmoothLighting(), model.isSideLit(), model.isShadedInGui(), model.getCameraTransforms(), overrides);
++      }
++
+       public Builder(BlockModel p_119517_, ItemOverrides p_119518_, boolean p_119519_) {
+          this(p_119517_.m_111476_(), p_119517_.m_111479_().m_111526_(), p_119519_, p_119517_.m_111491_(), p_119518_);
+       }

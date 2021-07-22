@@ -21,15 +21,15 @@ package net.minecraftforge.fluids;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.DispenserBlock;
-import net.minecraft.dispenser.DefaultDispenseItemBehavior;
-import net.minecraft.dispenser.IBlockSource;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.DispenserTileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.DispenserBlock;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.core.BlockSource;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
@@ -51,7 +51,7 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
 
     @Override
     @Nonnull
-    public ItemStack execute(@Nonnull IBlockSource source, @Nonnull ItemStack stack)
+    public ItemStack execute(@Nonnull BlockSource source, @Nonnull ItemStack stack)
     {
         if (FluidUtil.getFluidContained(stack).isPresent())
         {
@@ -67,9 +67,9 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
      * Picks up fluid in front of a Dispenser and fills a container with it.
      */
     @Nonnull
-    private ItemStack fillContainer(@Nonnull IBlockSource source, @Nonnull ItemStack stack)
+    private ItemStack fillContainer(@Nonnull BlockSource source, @Nonnull ItemStack stack)
     {
-        World world = source.getLevel();
+        Level world = source.getLevel();
         Direction dispenserFacing = source.getBlockState().getValue(DispenserBlock.FACING);
         BlockPos blockpos = source.getPos().relative(dispenserFacing);
 
@@ -85,7 +85,7 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
         {
             return resultStack;
         }
-        else if (((DispenserTileEntity)source.getEntity()).addItem(resultStack) < 0)
+        else if (((DispenserBlockEntity)source.getEntity()).addItem(resultStack) < 0)
         {
             this.dispenseBehavior.dispense(source, resultStack);
         }
@@ -99,7 +99,7 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
      * Drains a filled container and places the fluid in front of the Dispenser.
      */
     @Nonnull
-    private ItemStack dumpContainer(IBlockSource source, @Nonnull ItemStack stack)
+    private ItemStack dumpContainer(BlockSource source, @Nonnull ItemStack stack)
     {
         ItemStack singleStack = stack.copy();
         singleStack.setCount(1);
@@ -112,7 +112,7 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
         FluidStack fluidStack = fluidHandler.drain(FluidAttributes.BUCKET_VOLUME, IFluidHandler.FluidAction.EXECUTE);
         Direction dispenserFacing = source.getBlockState().getValue(DispenserBlock.FACING);
         BlockPos blockpos = source.getPos().relative(dispenserFacing);
-        FluidActionResult result = FluidUtil.tryPlaceFluid(null, source.getLevel(), Hand.MAIN_HAND, blockpos, stack, fluidStack);
+        FluidActionResult result = FluidUtil.tryPlaceFluid(null, source.getLevel(), InteractionHand.MAIN_HAND, blockpos, stack, fluidStack);
 
         if (result.isSuccess())
         {
@@ -122,7 +122,7 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
             {
                 return drainedStack;
             }
-            else if (!drainedStack.isEmpty() && ((DispenserTileEntity)source.getEntity()).addItem(drainedStack) < 0)
+            else if (!drainedStack.isEmpty() && ((DispenserBlockEntity)source.getEntity()).addItem(drainedStack) < 0)
             {
                 this.dispenseBehavior.dispense(source, drainedStack);
             }

@@ -30,8 +30,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
 import net.minecraft.advancements.Advancement;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.util.JSONUtils;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.util.GsonHelper;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 
 import javax.annotation.Nullable;
@@ -55,7 +55,7 @@ public class ConditionalAdvancement
      */
     @Nullable
     public static JsonObject processConditional(JsonObject json) {
-        JsonArray entries = JSONUtils.getAsJsonArray(json, "advancements", null);
+        JsonArray entries = GsonHelper.getAsJsonArray(json, "advancements", null);
         if (entries == null)
         {
             return CraftingHelper.processConditions(json, "conditions") ? json : null;
@@ -66,8 +66,8 @@ public class ConditionalAdvancement
         {
             if (!ele.isJsonObject())
                 throw new JsonSyntaxException("Invalid advancement entry at index " + idx + " Must be JsonObject");
-            if (CraftingHelper.processConditions(JSONUtils.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
-                return JSONUtils.getAsJsonObject(ele.getAsJsonObject(), "advancement");
+            if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+                return GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "advancement");
             idx++;
         }
         return null;
@@ -102,7 +102,7 @@ public class ConditionalAdvancement
             return addAdvancement(advancement::serializeToJson);
         }
 
-        public Builder addAdvancement(IFinishedRecipe fromRecipe)
+        public Builder addAdvancement(FinishedRecipe fromRecipe)
         {
             return addAdvancement(fromRecipe::serializeAdvancement);
         }

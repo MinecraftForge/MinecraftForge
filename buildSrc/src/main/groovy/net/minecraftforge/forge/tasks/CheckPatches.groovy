@@ -17,8 +17,8 @@ abstract class CheckPatches extends DefaultTask {
     @TaskAction
     protected void exec() {
         def hasS2SArtifact = [
-            Paths.get("patches/minecraft/net/minecraft/client/renderer/ViewFrustum.java.patch"),
-            Paths.get("patches/minecraft/net/minecraft/data/BlockModelDefinition.java.patch")
+                Paths.get("patches/minecraft/net/minecraft/client/renderer/ViewArea.java.patch"),
+                Paths.get("patches/minecraft/net/minecraft/data/models/blockstates/Variant.java.patch")
         ]
 
         def verified = true;

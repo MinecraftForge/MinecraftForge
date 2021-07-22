@@ -1,0 +1,21 @@
+--- a/net/minecraft/client/Camera.java
++++ b/net/minecraft/client/Camera.java
+@@ -211,6 +_,18 @@
+       this.f_90549_ = false;
+    }
+ 
++   public void setAnglesInternal(float yaw, float pitch) {
++      this.f_90558_ = yaw;
++      this.f_90557_ = pitch;
++   }
++
++   public net.minecraft.world.level.block.state.BlockState getBlockAtCamera() {
++      if (!this.f_90549_)
++         return net.minecraft.world.level.block.Blocks.f_50016_.m_49966_();
++      else
++         return this.f_90550_.m_8055_(this.f_90553_).getStateAtViewpoint(this.f_90550_, this.f_90553_, this.f_90552_);
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    public static class NearPlane {
+       final Vec3 f_167687_;

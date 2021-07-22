@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/DiodeBlock.java
++++ b/net/minecraft/world/level/block/DiodeBlock.java
+@@ -165,6 +_,8 @@
+    protected void m_52580_(Level p_52581_, BlockPos p_52582_, BlockState p_52583_) {
+       Direction direction = p_52583_.m_61143_(f_54117_);
+       BlockPos blockpos = p_52582_.m_142300_(direction.m_122424_());
++      if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(p_52581_, p_52582_, p_52581_.m_8055_(p_52582_), java.util.EnumSet.of(direction.m_122424_()), false).isCanceled())
++         return;
+       p_52581_.m_46586_(blockpos, this, p_52582_);
+       p_52581_.m_46590_(blockpos, this, direction);
+    }

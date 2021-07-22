@@ -19,20 +19,20 @@
 
 package net.minecraftforge.client.event;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.client.renderer.LevelRenderer;
+import com.mojang.math.Matrix4f;
 
 public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
 {
-    private final WorldRenderer context;
-    private final MatrixStack mat;
+    private final LevelRenderer context;
+    private final PoseStack mat;
     private final float partialTicks;
     private final Matrix4f projectionMatrix;
     private final long finishTimeNano;
 
-    public RenderWorldLastEvent(WorldRenderer context, MatrixStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
+    public RenderWorldLastEvent(LevelRenderer context, PoseStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
     {
         this.context = context;
         this.mat = mat;
@@ -41,12 +41,12 @@ public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
         this.finishTimeNano = finishTimeNano;
     }
 
-    public WorldRenderer getContext()
+    public LevelRenderer getContext()
     {
         return context;
     }
 
-    public MatrixStack getMatrixStack()
+    public PoseStack getMatrixStack()
     {
         return mat;
     }

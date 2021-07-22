@@ -31,7 +31,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ObjectArrays;
 import com.google.gson.JsonObject;
 
-import net.minecraft.client.renderer.model.ModelRotation;
+import net.minecraft.client.resources.model.BlockModelRotation;
 import net.minecraftforge.client.model.generators.MultiPartBlockStateBuilder.PartBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
 
@@ -135,7 +135,7 @@ public final class ConfiguredModel {
     }
 
     static void checkRotation(int rotationX, int rotationY) {
-        Preconditions.checkArgument(ModelRotation.by(rotationX, rotationY) != null, "Invalid model rotation x=%d, y=%d", rotationX, rotationY);
+        Preconditions.checkArgument(BlockModelRotation.by(rotationX, rotationY) != null, "Invalid model rotation x=%d, y=%d", rotationX, rotationY);
     }
 
     static void checkWeight(int weight) {
@@ -166,7 +166,7 @@ public final class ConfiguredModel {
         return new Builder<>();
     }
 
-    static Builder<VariantBlockStateBuilder> builder(VariantBlockStateBuilder outer, VariantBlockStateBuilder.PartialBlockstate state) {
+    static Builder<VariantBlockStateBuilder> builder(VariantBlockStateBuilder outer, PartialBlockstate state) {
         return new Builder<>(models -> outer.setModels(state, models), ImmutableList.of());
     }
 

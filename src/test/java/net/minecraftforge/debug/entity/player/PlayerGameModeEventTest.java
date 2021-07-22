@@ -19,7 +19,7 @@
 
 package net.minecraftforge.debug.entity.player;
 
-import net.minecraft.world.GameType;
+import net.minecraft.world.level.GameType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerChangeGameModeEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -44,7 +44,7 @@ public class PlayerGameModeEventTest
         if (event.getNewGameMode() == GameType.SURVIVAL)
             event.setCanceled(true);
     }
-    
+
     @Mod.EventBusSubscriber(modid="player_game_mode_event_test", value=Dist.CLIENT, bus=Mod.EventBusSubscriber.Bus.FORGE)
     public static class PlayerGameModeEventTestClientForgeEvents
     {

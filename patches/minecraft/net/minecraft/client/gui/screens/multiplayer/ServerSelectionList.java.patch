@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
++++ b/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
+@@ -333,6 +_,8 @@
+             this.f_99855_.m_99707_(list1);
+          }
+ 
++         net.minecraftforge.fmlclient.ClientHooks.drawForgePingInfo(this.f_99855_, f_99857_, p_99879_, p_99882_, p_99881_, p_99883_, i1, j1);
++
+          if (this.f_99856_.f_91066_.f_92051_ || p_99887_) {
+             RenderSystem.m_157456_(0, ServerSelectionList.f_99759_);
+             GuiComponent.m_93172_(p_99879_, p_99882_, p_99881_, p_99882_ + 32, p_99881_ + 32, -1601138544);

@@ -23,11 +23,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  * Data provider for the {@code sounds.json} file, which identifies sound definitions
  * for the various sound events in Minecraft.
  */
-public abstract class SoundDefinitionsProvider implements IDataProvider
+public abstract class SoundDefinitionsProvider implements DataProvider
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
@@ -74,7 +74,7 @@ public abstract class SoundDefinitionsProvider implements IDataProvider
     public abstract void registerSounds();
 
     @Override
-    public void run(DirectoryCache cache) throws IOException
+    public void run(HashCache cache) throws IOException
     {
         this.sounds.clear();
         this.registerSounds();
@@ -249,7 +249,7 @@ public abstract class SoundDefinitionsProvider implements IDataProvider
 
     private boolean validateSound(final String soundName, final ResourceLocation name)
     {
-        final boolean valid = this.helper.exists(name, ResourcePackType.CLIENT_RESOURCES, ".ogg", "sounds");
+        final boolean valid = this.helper.exists(name, PackType.CLIENT_RESOURCES, ".ogg", "sounds");
         if (!valid)
         {
             final String path = name.getNamespace() + ":sounds/" + name.getPath() + ".ogg";
@@ -268,9 +268,9 @@ public abstract class SoundDefinitionsProvider implements IDataProvider
         return valid;
     }
 
-    private void save(final DirectoryCache cache, final Path targetFile) throws IOException
+    private void save(final HashCache cache, final Path targetFile) throws IOException
     {
-        IDataProvider.save(GSON, cache, this.mapToJson(this.sounds), targetFile);
+        DataProvider.save(GSON, cache, this.mapToJson(this.sounds), targetFile);
     }
 
     private JsonObject mapToJson(final Map<String, SoundDefinition> map)

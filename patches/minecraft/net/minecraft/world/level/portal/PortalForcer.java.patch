@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/portal/PortalForcer.java
++++ b/net/minecraft/world/level/portal/PortalForcer.java
+@@ -19,7 +_,7 @@
+ import net.minecraft.world.level.border.WorldBorder;
+ import net.minecraft.world.level.levelgen.Heightmap;
+ 
+-public class PortalForcer {
++public class PortalForcer implements net.minecraftforge.common.util.ITeleporter {
+    private static final int f_164734_ = 3;
+    private static final int f_164735_ = 128;
+    private static final int f_164736_ = 16;

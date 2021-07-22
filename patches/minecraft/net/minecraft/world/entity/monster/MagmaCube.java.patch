@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/monster/MagmaCube.java
++++ b/net/minecraft/world/entity/monster/MagmaCube.java
+@@ -72,6 +_,7 @@
+       Vec3 vec3 = this.m_20184_();
+       this.m_20334_(vec3.f_82479_, (double)(this.m_6118_() + (float)this.m_33632_() * 0.1F), vec3.f_82481_);
+       this.f_19812_ = true;
++      net.minecraftforge.common.ForgeHooks.onLivingJump(this);
+    }
+ 
+    protected void m_6197_(Tag<Fluid> p_32988_) {

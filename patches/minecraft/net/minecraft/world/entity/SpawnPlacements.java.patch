@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/entity/SpawnPlacements.java
++++ b/net/minecraft/world/entity/SpawnPlacements.java
+@@ -151,10 +_,26 @@
+       boolean m_21780_(EntityType<T> p_21781_, ServerLevelAccessor p_21782_, MobSpawnType p_21783_, BlockPos p_21784_, Random p_21785_);
+    }
+ 
+-   public static enum Type {
++   public static enum Type implements net.minecraftforge.common.IExtensibleEnum {
+       ON_GROUND,
+       IN_WATER,
+       NO_RESTRICTIONS,
+       IN_LAVA;
++
++      public static Type create(String name, net.minecraftforge.common.util.TriPredicate<net.minecraft.world.level.LevelReader, BlockPos, EntityType<? extends Mob>> predicate) {
++          throw new IllegalStateException("Enum not extended");
++      }
++
++      private net.minecraftforge.common.util.TriPredicate<net.minecraft.world.level.LevelReader, BlockPos, EntityType<?>> predicate;
++      private Type() { this(null); }
++      private Type(net.minecraftforge.common.util.TriPredicate<net.minecraft.world.level.LevelReader, BlockPos, EntityType<?>> predicate) {
++          this.predicate = predicate;
++      }
++
++      public boolean canSpawnAt(net.minecraft.world.level.LevelReader world, BlockPos pos, EntityType<?> type) {
++          if (this == NO_RESTRICTIONS) return true;
++          if (predicate == null) return net.minecraft.world.level.NaturalSpawner.canSpawnAtBody(this, world, pos, type);
++          return predicate.test(world, pos, type);
++      }
+    }
+ }
