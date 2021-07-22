@@ -53,10 +53,12 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.entity.projectile.DamagingProjectileEntity;
 import net.minecraft.entity.projectile.FireworkRocketEntity;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTableManager;
 import net.minecraft.resources.IFutureReloadListener;
@@ -221,9 +223,15 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
+    @Deprecated // use version with IRecipeType
     public static int getItemBurnTime(@Nonnull ItemStack itemStack, int burnTime)
     {
-        FurnaceFuelBurnTimeEvent event = new FurnaceFuelBurnTimeEvent(itemStack, burnTime);
+        return getItemBurnTime(itemStack, burnTime, null);
+    }
+
+    public static int getItemBurnTime(@Nonnull ItemStack itemStack, int burnTime, @Nullable IRecipeType<?> recipeType)
+    {
+        FurnaceFuelBurnTimeEvent event = new FurnaceFuelBurnTimeEvent(itemStack, burnTime, recipeType);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getBurnTime();
     }
@@ -259,6 +267,13 @@ public class ForgeEventFactory
         PlayerEvent.NameFormat event = new PlayerEvent.NameFormat(player, username);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getDisplayname();
+    }
+    
+    public static ITextComponent getPlayerTabListDisplayName(PlayerEntity player)
+    {
+        PlayerEvent.TabListNameFormat event = new PlayerEvent.TabListNameFormat(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getDisplayName();
     }
 
     public static BlockState fireFluidPlaceBlockEvent(IWorld world, BlockPos pos, BlockPos liquidPos, BlockState state)
@@ -651,6 +666,11 @@ public class ForgeEventFactory
     public static boolean onProjectileImpact(FireworkRocketEntity fireworkRocket, RayTraceResult ray)
     {
         return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.FireworkRocket(fireworkRocket, ray));
+    }
+
+    public static boolean onProjectileImpact(FishingBobberEntity fishingBobber, RayTraceResult ray)
+    {
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.FishingBobber(fishingBobber, ray));
     }
 
     public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTableManager lootTableManager)

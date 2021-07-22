@@ -194,10 +194,27 @@ public interface IForgeBlockState
      * @param orientation The direction the entity is facing while getting into bed.
      * @param sleeper The sleeper or camera entity, null in some cases.
      * @return The spawn position
+     * @deprecated use {@link #getRespawnPosition(EntityType, IWorldReader, BlockPos, float, LivingEntity)}
      */
+    @Deprecated
     default Optional<Vector3d> getBedSpawnPosition(EntityType<?> type, IWorldReader world, BlockPos pos, float orientation, @Nullable LivingEntity sleeper)
     {
         return getBlockState().getBlock().getBedSpawnPosition(type, getBlockState(), world, pos, orientation, sleeper);
+    }
+
+    /**
+     * Returns the position that the entity is moved to upon
+     * respawning at this block.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param orientation The angle the entity had when setting the respawn point
+     * @param entity The entity respawning, often null
+     * @return The spawn position or the empty optional if respawning here is not possible
+     */
+    default Optional<Vector3d> getRespawnPosition(EntityType<?> type, IWorldReader world, BlockPos pos, float orientation, @Nullable LivingEntity entity)
+    {
+        return getBlockState().getBlock().getRespawnPosition(getBlockState(), type, world, pos, orientation, entity);
     }
 
     /**

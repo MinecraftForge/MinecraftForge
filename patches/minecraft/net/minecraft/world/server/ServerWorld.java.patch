@@ -140,7 +140,7 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -879,12 +_,17 @@
+@@ -879,10 +_,14 @@
  
     }
  
@@ -157,15 +157,13 @@
 +            enderdragonpartentity.remove(keepData);
           }
        }
-+      p_217484_1_.remove(keepData);
  
-       this.field_175741_N.remove(p_217484_1_.func_110124_au());
-       this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -898,6 +_,8 @@
+@@ -898,6 +_,9 @@
           this.field_217495_I.remove(((MobEntity)p_217484_1_).func_70661_as());
        }
  
 +      p_217484_1_.onRemovedFromWorld();
++      p_217484_1_.remove(keepData);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_217484_1_, this));
     }
  

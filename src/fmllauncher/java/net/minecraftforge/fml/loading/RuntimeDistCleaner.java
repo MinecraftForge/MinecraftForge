@@ -196,7 +196,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         private final List<Handle> dynamicLambdaHandles = new ArrayList<>();
 
         public LambdaGatherer() {
-            super(Opcodes.ASM7);
+            super(Opcodes.ASM9);
         }
 
         public void accept(MethodNode method) {
