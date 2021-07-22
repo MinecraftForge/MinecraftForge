@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.event.RegisterSpawnEggsEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
@@ -48,6 +49,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -200,6 +202,8 @@ public class ModLoader
         GameData.setCustomTagTypesFromRegistries();
         statusConsumer.ifPresent(c->c.accept("Populating registries"));
         dispatchAndHandleError(ModLoadingStage.LOAD_REGISTRIES, syncExecutor, parallelExecutor, periodicTask);
+        statusConsumer.ifPresent(c->c.accept("Registering mods' standard spawn eggs"));
+        GameData.registerStandardModSpawnEggs();
         statusConsumer.ifPresent(c->c.accept("Early mod loading complete"));
     }
 

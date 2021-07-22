@@ -1,0 +1,16 @@
+--- a/net/minecraft/item/SpawnEggItem.java
++++ b/net/minecraft/item/SpawnEggItem.java
+@@ -39,11 +_,13 @@
+    private final int field_195989_d;
+    private final EntityType<?> field_200890_d;
+ 
++   /** @deprecated Mods should use {@link net.minecraftforge.common.ForgeSpawnEggItem} and {@link net.minecraftforge.event.RegisterSpawnEggsEvent} **/ @Deprecated
+    public SpawnEggItem(EntityType<?> p_i48465_1_, int p_i48465_2_, int p_i48465_3_, Item.Properties p_i48465_4_) {
+       super(p_i48465_4_);
+       this.field_200890_d = p_i48465_1_;
+       this.field_195988_c = p_i48465_2_;
+       this.field_195989_d = p_i48465_3_;
++      if (p_i48465_1_ != null) // mods' eggs shouldn't add {null->item} entries to map
+       field_195987_b.put(p_i48465_1_, this);
+    }
+ 

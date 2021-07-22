@@ -19,10 +19,76 @@
 
 package net.minecraftforge.registries;
 
-import com.google.common.collect.*;
-import com.mojang.serialization.Lifecycle;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.ACTIVITIES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.ATTRIBUTES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.BIOMES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.BLOCKS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.BLOCK_PLACER_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.BLOCK_STATE_PROVIDER_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.CHUNK_STATUS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.CONTAINER_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.DATA_SERIALIZERS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.DECORATORS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.EFFECTS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.ENCHANTMENTS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.ENTITY_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.FEATURES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.FLUIDS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.FOLIAGE_PLACER_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.ITEMS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.LOOT_MODIFIER_SERIALIZERS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.MEMORY_MODULE_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.PAINTING_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.PARTICLE_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.POI_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.POTIONS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.RECIPE_SERIALIZERS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.SCHEDULES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.SENSOR_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.SOUND_EVENTS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.STAT_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.STRUCTURE_FEATURES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.SURFACE_BUILDERS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.TILE_ENTITY_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.TREE_DECORATOR_TYPES;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.VILLAGER_PROFESSIONS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.WORLD_CARVERS;
+import static net.minecraftforge.registries.ForgeRegistries.Keys.WORLD_TYPES;
+import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
-import java.util.*;
+import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
+import com.mojang.serialization.Lifecycle;
 
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.Block;
@@ -30,9 +96,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
 import net.minecraft.entity.ai.brain.schedule.Activity;
@@ -44,6 +108,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.network.datasync.IDataSerializer;
 import net.minecraft.particles.ParticleType;
@@ -53,7 +118,10 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.stats.StatType;
 import net.minecraft.tags.TagRegistryManager;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.*;
+import net.minecraft.util.ObjectIntIdentityMap;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
@@ -70,16 +138,14 @@ import net.minecraft.world.gen.foliageplacer.FoliagePlacerType;
 import net.minecraft.world.gen.placement.Placement;
 import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.gen.treedecorator.TreeDecoratorType;
-import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldType;
+import net.minecraftforge.event.RegisterSpawnEggsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
-import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.ModLoadingStage;
@@ -87,27 +153,7 @@ import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
-
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
-import org.apache.commons.lang3.Validate;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nullable;
-
-import java.lang.reflect.Field;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
-import static net.minecraftforge.registries.ForgeRegistries.Keys.*;
-
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 
 /**
  * INTERNAL ONLY
@@ -414,6 +460,18 @@ public class GameData
             }
         }
         ForgeTagHandler.setCustomTagTypes(customTagTypes);
+    }
+    
+    public static void registerStandardModSpawnEggs()
+    {
+        Map<ResourceLocation, Supplier<? extends ForgeSpawnEggItem>> eggMap = new HashMap<>();
+        ModLoader.get().postEvent(new RegisterSpawnEggsEvent(eggMap));
+        for (Supplier<? extends ForgeSpawnEggItem> eggGetter : eggMap.values())
+        {
+            ForgeSpawnEggItem egg = eggGetter.get();
+            EntityType<?> type = egg.getTypeSupplier().get();
+            SpawnEggItem.BY_ID.put(type,egg);
+        }
     }
 
     //Lets us clear the map so we can rebuild it.
