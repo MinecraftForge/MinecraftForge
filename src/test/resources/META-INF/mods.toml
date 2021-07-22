@@ -138,3 +138,5 @@ license="LGPL v2.1"
     modId="dimension_settings_test"
 [[mods]]
     modId="player_attack_knockback_test"
+[[mods]]
+    modId="suppliable_spawn_eggs_test"
