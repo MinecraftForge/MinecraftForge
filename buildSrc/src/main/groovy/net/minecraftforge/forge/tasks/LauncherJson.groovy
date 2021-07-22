@@ -48,14 +48,16 @@ abstract class LauncherJson extends DefaultTask {
     protected void exec() {
         if (!json.libraries)
             json.libraries = []
-        getArtifacts(project, project.configurations.installer, false).each { key, lib -> json.libraries.add(lib) }
-        getArtifacts(project, project.configurations.moduleonly, false).each { key, lib -> json.libraries.add(lib) }
+        def libs = [:]
+        getArtifacts(project, project.configurations.installer, false).each { key, lib -> libs[key] = lib }
+        getArtifacts(project, project.configurations.moduleonly, false).each { key, lib -> libs[key] = lib }
 
         packedDependencies.get().collect{ project.rootProject.tasks.findByPath(it) }.forEach {
             def path = Util.getMavenPath(it)
+            def key = Util.getMavenDep(it)
             
-            json.libraries.add([
-                name: Util.getMavenDep(it),
+            libs[key] = [
+                name: key,
                 downloads: [
                     artifact: [
                         path: path,
@@ -64,8 +66,9 @@ abstract class LauncherJson extends DefaultTask {
                         size: it.archiveFile.get().asFile.length()
                     ]
                 ]
-            ])
+            ]
         }
+        libs.each { key, lib -> json.libraries.add(lib) }
         Files.writeString(output.get().asFile.toPath(), new JsonBuilder(json).toPrettyString())
     }
 }
