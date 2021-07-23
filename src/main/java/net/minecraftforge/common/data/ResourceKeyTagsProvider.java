@@ -102,38 +102,36 @@ public abstract class ResourceKeyTagsProvider<T> implements DataProvider
         Function<ResourceLocation, Tag<ResourceKey<T>>> tagFromID = id -> this.tagBuilders.containsKey(id) ? tag : null;
         Function<ResourceLocation, ResourceKey<T>> resourceKeyFromID = ResourceKey.elementKey(this.registryKey);
         this.tagBuilders.forEach((id,builder) ->{
-           List<Tag.BuilderEntry> missingReferences = builder.getUnresolvedEntries(tagFromID, resourceKeyFromID)
-               .filter(this::missing)
-               .collect(Collectors.toList());
-           if (!missingReferences.isEmpty())
-           {
-               throw new IllegalArgumentException(String.format("%s resource key tag generator couldn't define tag %s as it is missing following references: %s",
-                   this.registryKey.location(),
-                   id,
-                   missingReferences.stream().map(Objects::toString).collect(Collectors.joining(","))));
-           }
-           JsonObject tagJson = builder.serializeToJson();
-           Path path = this.generator.getOutputFolder().resolve("data/"+id.getNamespace()+"/"+this.resourceType.getPrefix()+"/"+id.getPath()+this.resourceType.getSuffix());
-           if (path == null)
-               return; // run the data provider without writing this tag so other providers can still refer to tags
-           try
-           {
-               String jsonAsString = GSON.toJson(tagJson);
-               String hash = DataProvider.SHA1.hashUnencodedChars(jsonAsString).toString();
-               if(!hash.equals(cache.getHash(path)) || !Files.exists(path))
-               {
-                   Files.createDirectories(path.getParent());
-                   try (BufferedWriter writer = Files.newBufferedWriter(path))
-                   {
-                       writer.write(jsonAsString);
-                   }
-               }
-               cache.putNew(path, hash);
-           }
-           catch(IOException e)
-           {
-               LOGGER.error("{} resource key tag provider couldn't save tags to {}", this.registryKey.location(), path, e);
-           }
+            List<Tag.BuilderEntry> missingReferences = builder.getEntries()
+                .filter(this::missing)
+                .collect(Collectors.toList());
+            if (!missingReferences.isEmpty())
+            {
+                throw new IllegalArgumentException(String.format("%s resource key tag generator couldn't define tag %s as it is missing following references: %s",
+                    this.registryKey.location(), id, missingReferences.stream().map(Objects::toString).collect(Collectors.joining(","))));
+            }
+            JsonObject tagJson = builder.serializeToJson();
+            Path path = this.generator.getOutputFolder()
+                .resolve("data/" + id.getNamespace() + "/" + this.resourceType.getPrefix() + "/" + id.getPath() + this.resourceType.getSuffix());
+            if (path == null) return; // run the data provider without writing this tag so other providers can still refer to tags
+            try
+            {
+                String jsonAsString = GSON.toJson(tagJson);
+                String hash = DataProvider.SHA1.hashUnencodedChars(jsonAsString).toString();
+                if (!hash.equals(cache.getHash(path)) || !Files.exists(path))
+                {
+                    Files.createDirectories(path.getParent());
+                    try (BufferedWriter writer = Files.newBufferedWriter(path))
+                    {
+                        writer.write(jsonAsString);
+                    }
+                }
+                cache.putNew(path, hash);
+            }
+            catch (IOException e)
+            {
+                LOGGER.error("{} resource key tag provider couldn't save tags to {}", this.registryKey.location(), path, e);
+            }
         });
     }
     

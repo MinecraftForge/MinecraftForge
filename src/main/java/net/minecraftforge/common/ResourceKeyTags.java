@@ -19,17 +19,14 @@
 
 package net.minecraftforge.common;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
@@ -38,7 +35,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
-import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -146,52 +142,31 @@ public class ResourceKeyTags implements PreparableReloadListener
     public CompletableFuture<Void> reload(final PreparationBarrier stage, ResourceManager manager, final ProfilerFiller workerProfiler, final ProfilerFiller mainProfiler, final Executor workerExecutor,
         final Executor mainExecutor)
     {
-        // load tags for each dynamic registry
-        // (we do this ensuring we don't classload the dynamic registries too early by getting the worldgen registries,
-        // each of which the dynamic registries will make a copy of later)
-        
-        // we make a tag reader for each dynamic registry key,
+        // we make a tag reader for each directory we want to load tags from,
         // each tag reader is able to produce a completablefuture that reads and merges tag jsons off-thread
         // when this concludes, the results of each of these futures can be fed back into the tag reader to produce the final tag collection
-        final Map<ResourceKey<? extends Registry<?>>, Pair<TagLoader<ResourceKey<?>>, CompletableFuture<Map<ResourceLocation,Tag.Builder>>>> futureTagBuilders = new HashMap<>();
-        final List<CompletableFuture<Map<ResourceLocation,Tag.Builder>>> justTheFutures = new ArrayList<>();
+        final Map<ResourceKey<? extends Registry<?>>, CompletableFuture<? extends TagCollection<ResourceKey<?>>>> futureTagBuilders = new HashMap<>();
         for (Map.Entry<ResourceKey<? extends Registry<?>>,String> entry : REGISTRY_DIRECTORIES.entrySet())
         {
-            ResourceKey<? extends Registry<?>> registryKey = entry.getKey();
-            String directoryName = entry.getValue();
-            final Pair<TagLoader<ResourceKey<?>>, CompletableFuture<Map<ResourceLocation, Tag.Builder>>> pair = getFutureTagBuilder(registryKey, directoryName, manager, workerExecutor);
-            futureTagBuilders.put(registryKey, pair);
-            justTheFutures.add(pair.getSecond());
+            final ResourceKey<? extends Registry<?>> registryKey = entry.getKey();
+            final String directoryName = entry.getValue();
+            @SuppressWarnings("unchecked") // cast makes javac happy, registrykey generics don't matter at runtime
+            final Function<ResourceLocation, Optional<ResourceKey<?>>> tagEntryFactory =
+                rl -> Optional.<ResourceKey<?>>of(ResourceKey.create((ResourceKey<? extends Registry<Object>>)registryKey, rl));
+            final String directory = "tags/resource_keys/" + directoryName;
+            final TagLoader<ResourceKey<?>> reader = new TagLoader<>(tagEntryFactory, directory);
+            final CompletableFuture<? extends TagCollection<ResourceKey<?>>> future = CompletableFuture.supplyAsync(() ->reader.loadAndBuild(manager), workerExecutor);
+            futureTagBuilders.put(registryKey, future);
         }
+        Collection<CompletableFuture<? extends TagCollection<ResourceKey<?>>>> justTheFutures = futureTagBuilders.values();
         return CompletableFuture.allOf(justTheFutures.toArray(new CompletableFuture[justTheFutures.size()]))
             .thenCompose(stage::wait) // wait for all jsons to be parsed, then finish building tags on main thread
-            .thenAcceptAsync(voidArg -> this.finishLoadingOnMainThread(futureTagBuilders), mainExecutor);
-    }
-    
-    private static Pair<TagLoader<ResourceKey<?>>, CompletableFuture<Map<ResourceLocation, Tag.Builder>>> getFutureTagBuilder(final ResourceKey<? extends Registry<?>> registryKey, final String directoryName, final ResourceManager manager, final Executor workerExecutor)
-    {
-        @SuppressWarnings("unchecked") // cast makes javac happy, registrykey generics don't matter at runtime
-        final Function<ResourceLocation, Optional<ResourceKey<?>>> tagEntryFactory =
-            rl -> Optional.<ResourceKey<?>>of(ResourceKey.create((ResourceKey<? extends Registry<Object>>)registryKey, rl));
-        final ResourceLocation registryName = registryKey.location();
-        final String directory = "tags/resource_keys/" + REGISTRY_DIRECTORIES.computeIfAbsent(registryKey, key -> key.location().getPath() + "s");
-        final String nameForLogger = registryName.toString();
-        final TagLoader<ResourceKey<?>> reader = new TagLoader<>(tagEntryFactory, directory);
-        return Pair.of(reader, reader.load(manager));
-    }
-    
-    private void finishLoadingOnMainThread(final Map<ResourceKey<? extends Registry<?>>, Pair<TagLoader<ResourceKey<?>>, CompletableFuture<Map<ResourceLocation,Tag.Builder>>>> completedTagBuilders)
-    {
-        ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, TagCollection<? extends ResourceKey<?>>> mapBuilder = ImmutableMap.builder();
-        completedTagBuilders.forEach((key,readerAndParsedData) ->
-        {
-            final TagLoader<ResourceKey<?>> reader = readerAndParsedData.getFirst();
-            final CompletableFuture<Map<ResourceLocation,Tag.Builder>> completedParseData = readerAndParsedData.getSecond();
-            mapBuilder.put(key, reader.build(completedParseData.join()));
-        });
-        
-        // update data, mark data as being different to observers
-        this.updateTags(mapBuilder.build());
+            .thenAcceptAsync(voidArg -> 
+            {   // finalize tag registry on main thread after completeable futures complete
+                ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, TagCollection<? extends ResourceKey<?>>> mapBuilder = ImmutableMap.builder();
+                futureTagBuilders.forEach((key,completedParseData) -> mapBuilder.put(key, completedParseData.join()));
+                this.updateTags(mapBuilder.build());
+            }, mainExecutor);
     }
     
     /**
@@ -202,6 +177,7 @@ public class ResourceKeyTags implements PreparableReloadListener
      * 
      * @implNote hides an unchecked cast for convenience (registry keys' generics are safe to cast to whatever as keys are just a few strings)
      */
+    @SuppressWarnings("unchecked")
     public @Nullable <T> TagCollection<ResourceKey<T>> getTagCollection(final ResourceKey<Registry<T>> registryKey)
     {
         return (TagCollection<ResourceKey<T>>) this.data.get(registryKey);
