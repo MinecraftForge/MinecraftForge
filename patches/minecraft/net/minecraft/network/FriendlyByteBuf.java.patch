@@ -25,13 +25,11 @@
        if (p_130056_.m_41619_()) {
           this.writeBoolean(false);
        } else {
-@@ -447,8 +_,8 @@
-          this.m_130130_(Item.m_41393_(item));
+@@ -448,7 +_,7 @@
           this.writeByte(p_130056_.m_41613_());
           CompoundTag compoundtag = null;
--         if (item.m_41465_() || item.m_41468_()) {
+          if (item.m_41465_() || item.m_41468_()) {
 -            compoundtag = p_130056_.m_41783_();
-+         if (item.isDamageable(p_130056_) || item.m_41468_()) {
 +            compoundtag = limitedTag ? p_130056_.getShareTag() : p_130056_.m_41783_();
           }
  

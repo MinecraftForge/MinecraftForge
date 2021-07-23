@@ -9,12 +9,3 @@
        return itemstack;
     }
  
-@@ -179,7 +_,7 @@
-          return true;
-       } else {
-          ItemStack itemstack = p_45366_.m_41777_();
--         if (itemstack.m_41720_().m_41465_()) {
-+         if (itemstack.m_41720_().isDamageable(itemstack)) {
-             itemstack.m_41721_(itemstack.m_41773_());
-          }
- 

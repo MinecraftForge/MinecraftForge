@@ -1,0 +1,45 @@
+{
+    "canBeDepleted": {
+        "cls": "net/minecraftforge/common/extensions/IForgeItem",
+        "name": "m_41465_",
+        "replacement": "isDamageable",
+        "targets": [
+            {
+                "varIndex": 1,
+                "owner": "net/minecraft/network/FriendlyByteBuf",
+                "name": "writeItemStack",
+                "desc": "(Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/network/FriendlyByteBuf;"
+            },
+            {
+                "varIndex": 1,
+                "owner": "net/minecraft/world/item/Item",
+                "name": "m_8120_",
+                "desc": "(Lnet/minecraft/world/item/ItemStack;)Z"
+            },
+            {
+                "varIndex": 0,
+                "owner": "net/minecraft/world/item/ItemStack",
+                "name": "<init>",
+                "desc": "(Lnet/minecraft/nbt/CompoundTag;)V"
+            },
+            {
+                "varIndex": 0,
+                "owner": "net/minecraft/world/item/ItemStack",
+                "name": "<init>",
+                "desc": "(Lnet/minecraft/world/level/ItemLike;ILnet/minecraft/nbt/CompoundTag;)V"
+            },
+            {
+                "varIndex": 0,
+                "owner": "net/minecraft/world/item/ItemStack",
+                "name": "m_41751_",
+                "desc": "(Lnet/minecraft/nbt/CompoundTag;)V"
+            },
+            {
+                "varIndex": 3,
+                "owner": "net/minecraft/world/item/trading/MerchantOffer",
+                "name": "m_45365_",
+                "desc": "(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"
+            }
+        ]
+    }
+}

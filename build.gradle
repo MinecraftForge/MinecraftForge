@@ -1024,6 +1024,19 @@ project(':forge') {
             */
         }
     }
+    
+    task findStackSensitiveChecks(type: StackSensitiveFinder, dependsOn: ['reobfJar']) {
+        jar = tasks.getByName('reobfJar').output
+        output = rootProject.file('src/main/resources/coremods/stack_sensitive.json')
+        methods {
+            canBeDepleted {
+                name = 'm_41465_'
+                cls = 'net/minecraftforge/common/extensions/IForgeItem'
+                replacement = 'isDamageable'
+                blacklist 'net/minecraft/world/item/enchantment/EnchantmentCategory$10' //no stack available
+            }
+        }
+    }
 
     task checkATs(type: CheckATs, dependsOn: [extractInheritance, createSrg2Mcp]) {
         inheritance = extractInheritance.output
@@ -1041,7 +1054,7 @@ project(':forge') {
         excs.from patcher.excs
     }
 
-    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks]){}
+    task checkAll(dependsOn: [checkATs, checkSAS, checkExcs, findFieldInstanceChecks, findStackSensitiveChecks]){}
 
     task checkPatchesAndFix(type: CheckPatches, dependsOn: genPatches) {
         patchDir = file("$rootDir/patches")

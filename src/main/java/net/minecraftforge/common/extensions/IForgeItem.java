@@ -793,6 +793,7 @@ public interface IForgeItem
     /**
      * Used to test if this item can be damaged, but with the ItemStack in question.
      * Please note that in some cases no ItemStack is available, so the stack-less method will be used.
+     * Called from vanilla where {@link Item#isDamageable()} is called and an ItemStack is available using the stack_sensitive coremod transformer
      *
      * @param stack       ItemStack in the Chest slot of the entity.
      */

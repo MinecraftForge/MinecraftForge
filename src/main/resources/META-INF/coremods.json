@@ -1,5 +1,6 @@
 {
   "field_to_method": "coremods/field_to_method.js",
   "field_to_instanceof": "coremods/field_to_instanceof.js",
-  "add_bouncer_method": "coremods/add_bouncer_method.js"
+  "add_bouncer_method": "coremods/add_bouncer_method.js",
+  "stack_sensitive": "coremods/stack_sensitive.js"
 }

@@ -26,7 +26,6 @@
 -   public ItemStack(ItemLike p_41601_, int p_41602_) {
 -      this.f_41589_ = p_41601_ == null ? null : p_41601_.m_5456_();
 -      this.f_41587_ = p_41602_;
--      if (this.f_41589_ != null && this.f_41589_.m_41465_()) {
 +   public ItemStack(ItemLike p_41601_, int p_41602_) { this(p_41601_, p_41602_, (CompoundTag) null); }
 +   public ItemStack(ItemLike p_41604_, int p_41605_, @Nullable CompoundTag p_41606_) {
 +      super(ItemStack.class);
@@ -34,7 +33,7 @@
 +      this.f_41589_ = p_41604_ == null ? null : p_41604_.m_5456_();
 +      this.delegate = p_41604_ == null ? null : p_41604_.m_5456_().delegate;
 +      this.f_41587_ = p_41605_;
-+      if (this.f_41589_ != null && this.f_41589_.isDamageable(this)) {
+       if (this.f_41589_ != null && this.f_41589_.m_41465_()) {
           this.m_41721_(this.m_41773_());
        }
  
@@ -43,7 +42,7 @@
     }
  
     private void m_41617_() {
-@@ -143,18 +_,23 @@
+@@ -143,7 +_,11 @@
     }
  
     private ItemStack(CompoundTag p_41608_) {
@@ -55,12 +54,7 @@
        this.f_41587_ = p_41608_.m_128445_("Count");
        if (p_41608_.m_128425_("tag", 10)) {
           this.f_41590_ = p_41608_.m_128469_("tag");
-          this.m_41720_().m_142312_(this.f_41590_);
-       }
- 
--      if (this.m_41720_().m_41465_()) {
-+      if (this.m_41720_().isDamageable(this)) {
-          this.m_41721_(this.m_41773_());
+@@ -155,6 +_,7 @@
        }
  
        this.m_41617_();
@@ -195,15 +189,6 @@
 +         return (this.f_41590_ == null || this.f_41590_.equals(p_41745_.f_41590_)) && this.areCapsCompatible(p_41745_);
        }
     }
- 
-@@ -529,7 +_,7 @@
- 
-    public void m_41751_(@Nullable CompoundTag p_41752_) {
-       this.f_41590_ = p_41752_;
--      if (this.m_41720_().m_41465_()) {
-+      if (this.m_41720_().isDamageable(this)) {
-          this.m_41721_(this.m_41773_());
-       }
  
 @@ -729,6 +_,7 @@
           }

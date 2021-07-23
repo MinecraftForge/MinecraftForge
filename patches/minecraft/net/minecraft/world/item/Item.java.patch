@@ -23,7 +23,7 @@
     }
  
     public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
-@@ -138,10 +_,12 @@
+@@ -138,14 +_,17 @@
        return this.m_41472_() ? p_41411_.m_5584_(p_41410_, p_41409_) : p_41409_;
     }
  
@@ -35,6 +35,11 @@
 +   @Deprecated // Use ItemStack sensitive version.
     public final int m_41462_() {
        return this.f_41371_;
+    }
+ 
++   @Deprecated // Use ItemStack sensitive version. Calls to this method are redirected to stack sensitive method in vanilla if an ItemStack is available using the the stack_sensitive coremod transformer.
+    public boolean m_41465_() {
+       return this.f_41371_ > 0;
     }
 @@ -216,10 +_,12 @@
     }
@@ -54,7 +59,7 @@
  
     public boolean m_8120_(ItemStack p_41456_) {
 -      return this.m_41459_() == 1 && this.m_41465_();
-+      return this.getItemStackLimit(p_41456_) == 1 && this.isDamageable(p_41456_);
++      return this.getItemStackLimit(p_41456_) == 1 && this.m_41465_();
     }
  
     protected static BlockHitResult m_41435_(Level p_41436_, Player p_41437_, ClipContext.Fluid p_41438_) {
