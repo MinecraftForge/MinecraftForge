@@ -41,11 +41,11 @@ import java.util.concurrent.Executor;
 public class AddReloadListenerEvent extends Event
 {
     private final List<PreparableReloadListener> listeners = new ArrayList<>();
-    private final ServerResources dataPackRegistries;
+    private final ServerResources serverResources;
     
-    public AddReloadListenerEvent(ServerResources dataPackRegistries)
+    public AddReloadListenerEvent(ServerResources serverResources)
     {
-        this.dataPackRegistries = dataPackRegistries;
+        this.serverResources = serverResources;
     }
 
     /**
@@ -61,9 +61,9 @@ public class AddReloadListenerEvent extends Event
         return ImmutableList.copyOf(listeners);
     }
     
-    public ServerResources getDataPackRegistries()
+    public ServerResources getServerResources()
     {
-        return dataPackRegistries;
+        return serverResources;
     }
 
     private static class WrappedStateAwareListener implements PreparableReloadListener

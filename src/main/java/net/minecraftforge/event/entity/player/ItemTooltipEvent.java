@@ -68,7 +68,7 @@ public class ItemTooltipEvent extends PlayerEvent
     /**
      * The {@link ItemStack} tooltip.
      */
-    public List<Component> getToolTip()
+    public List<Component> getTooltip()
     {
         return toolTip;
     }
@@ -78,8 +78,8 @@ public class ItemTooltipEvent extends PlayerEvent
      */
     @Override
     @Nullable
-    public Player getPlayer()
+    public Player getEntity()
     {
-        return super.getPlayer();
+        return super.getEntity();
     }
 }

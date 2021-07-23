@@ -28,7 +28,7 @@ import javax.annotation.Nonnull;
 
 public class PotionBrewEvent extends Event
 {
-    private NonNullList<ItemStack> stacks;
+    private final NonNullList<ItemStack> stacks;
 
     protected PotionBrewEvent(NonNullList<ItemStack> stacks)
     {

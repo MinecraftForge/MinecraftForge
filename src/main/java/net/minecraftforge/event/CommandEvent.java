@@ -28,7 +28,7 @@ import net.minecraftforge.eventbus.api.Event;
  * CommandEvent is fired after a command is parsed, but before it is executed.
  * This event is fired during the invocation of {@link Commands#handleCommand(CommandSource, String)}. <br>
  * <br>
- * {@link #parse} contains the instance of {@link ParseResults} for the parsed command.<br>
+ * {@link #parseResults} contains the instance of {@link ParseResults} for the parsed command.<br>
  * {@link #exception} begins null, but can be populated with an exception to be thrown within the command.<br>
  * <br>
  * This event is {@link Cancelable}. <br>
@@ -41,22 +41,22 @@ import net.minecraftforge.eventbus.api.Event;
 @Cancelable
 public class CommandEvent extends Event
 {
-    private ParseResults<CommandSourceStack> parse;
+    private ParseResults<CommandSourceStack> parseResults;
     private Throwable exception;
 
-    public CommandEvent(ParseResults<CommandSourceStack> parse)
+    public CommandEvent(ParseResults<CommandSourceStack> parseResults)
     {
-        this.parse = parse;
+        this.parseResults = parseResults;
     }
 
     public ParseResults<CommandSourceStack> getParseResults()
     {
-        return parse;
+        return parseResults;
     }
 
     public void setParseResults(ParseResults<CommandSourceStack> parse)
     {
-        this.parse = parse;
+        this.parseResults = parse;
     }
 
     public Throwable getException()

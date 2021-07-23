@@ -37,19 +37,19 @@ import net.minecraftforge.eventbus.api.Cancelable;
 @Cancelable
 public class ProjectileImpactEvent<T extends Projectile> extends EntityEvent
 {
-    private final HitResult ray;
+    private final HitResult hitResult;
     private final T projectile;
 
-    public ProjectileImpactEvent(T projectile, HitResult ray)
+    public ProjectileImpactEvent(T projectile, HitResult hitResult)
     {
         super(projectile);
-        this.ray = ray;
+        this.hitResult = hitResult;
         this.projectile = projectile;
     }
 
-    public HitResult getRayTraceResult()
+    public HitResult getHitResult()
     {
-        return ray;
+        return hitResult;
     }
 
     public T getProjectile()

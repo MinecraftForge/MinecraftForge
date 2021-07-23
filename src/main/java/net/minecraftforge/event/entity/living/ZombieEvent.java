@@ -50,7 +50,7 @@ public class ZombieEvent extends EntityEvent {
      * This event is fired via the {@link ForgeEventFactory#fireZombieSummonAid(EntityZombie, World, int, int, int, EntityLivingBase, double)}.
      * 
      * {@link #customSummonedAid} remains null, but can be populated with a custom EntityZombie which will be spawned.
-     * {@link #world} contains the world that this summoning is occurring in.
+     * {@link #level} contains the world that this summoning is occurring in.
      * {@link #x} contains the x-coordinate at which this summoning event is occurring. 
      * {@link #y} contains the y-coordinate at which this summoning event is occurring. 
      * {@link #z} contains the z-coordinate at which this summoning event is occurring. 
@@ -69,17 +69,17 @@ public class ZombieEvent extends EntityEvent {
     public static class SummonAidEvent extends ZombieEvent {
         private Zombie customSummonedAid;
         
-        private final Level world;
+        private final Level level;
         private final int x;
         private final int y;
         private final int z;
         private final LivingEntity attacker;
         private final double summonChance;
         
-        public SummonAidEvent(Zombie entity, Level world, int x, int y, int z, LivingEntity attacker, double summonChance)
+        public SummonAidEvent(Zombie entity, Level level, int x, int y, int z, LivingEntity attacker, double summonChance)
         {
             super(entity);
-            this.world = world;
+            this.level = level;
             this.x = x;
             this.y = y;
             this.z = z;
@@ -100,9 +100,9 @@ public class ZombieEvent extends EntityEvent {
             this.customSummonedAid = customSummonedAid;
         }
 
-        public Level getWorld()
+        public Level getLevel()
         {
-            return world;
+            return level;
         }
 
         public int getX()

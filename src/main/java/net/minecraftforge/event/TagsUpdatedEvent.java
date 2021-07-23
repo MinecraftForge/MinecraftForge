@@ -31,19 +31,19 @@ import net.minecraftforge.eventbus.api.Event;
  */
 public class TagsUpdatedEvent extends Event
 {
-    private final TagContainer manager;
+    private final TagContainer container;
 
-    public TagsUpdatedEvent(TagContainer manager)
+    public TagsUpdatedEvent(TagContainer container)
     {
-        this.manager = manager;
+        this.container = container;
     }
 
     /**
      * @return The network tag manager that has been updated with newly received tags.
      */
-    public TagContainer getTagManager()
+    public TagContainer getTagContainer()
     {
-        return manager;
+        return container;
     }
 
     /**
@@ -51,9 +51,9 @@ public class TagsUpdatedEvent extends Event
      */
     public static class VanillaTagTypes extends TagsUpdatedEvent
     {
-        public VanillaTagTypes(TagContainer manager)
+        public VanillaTagTypes(TagContainer container)
         {
-            super(manager);
+            super(container);
         }
     }
 
@@ -62,9 +62,9 @@ public class TagsUpdatedEvent extends Event
      */
     public static class CustomTagTypes extends TagsUpdatedEvent
     {
-        public CustomTagTypes(TagContainer manager)
+        public CustomTagTypes(TagContainer container)
         {
-            super(manager);
+            super(container);
         }
     }
 }

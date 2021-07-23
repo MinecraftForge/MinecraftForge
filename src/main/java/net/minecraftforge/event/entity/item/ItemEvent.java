@@ -30,8 +30,6 @@ import net.minecraftforge.event.entity.EntityEvent;
  */
 public class ItemEvent extends EntityEvent
 {
-    private final ItemEntity entityItem;
-
     /**
      * Creates a new event for an EntityItem.
      * 
@@ -40,14 +38,11 @@ public class ItemEvent extends EntityEvent
     public ItemEvent(ItemEntity itemEntity)
     {
         super(itemEntity);
-        this.entityItem = itemEntity;
     }
 
-    /**
-     * The relevant EntityItem for this event, already cast for you.
-     */
-    public ItemEntity getEntityItem()
+    @Override
+    public ItemEntity getEntity()
     {
-        return entityItem;
+        return (ItemEntity) super.getEntity();
     }
 }

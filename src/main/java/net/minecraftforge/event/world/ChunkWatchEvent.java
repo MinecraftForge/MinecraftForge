@@ -30,7 +30,7 @@ import net.minecraftforge.eventbus.api.Event;
  * receive every child event of this class.<br>
  * <br>
  * {@link #pos} contains the ChunkPos of the Chunk this event is affecting.<br>
- * {@link #world} contains the World of the Chunk this event is affecting.<br>
+ * {@link #level} contains the World of the Chunk this event is affecting.<br>
  * {@link #player} contains the EntityPlayer that is involved with this chunk being watched. <br>
  * <br>
  * The {@link #player}'s world may not be the same as the world of the chunk
@@ -40,15 +40,15 @@ import net.minecraftforge.eventbus.api.Event;
  **/
 public class ChunkWatchEvent extends Event
 {
-    private final ServerLevel world;
+    private final ServerLevel level;
     private final ServerPlayer player;
     private final ChunkPos pos;
 
-    public ChunkWatchEvent(ServerPlayer player, ChunkPos pos, ServerLevel world)
+    public ChunkWatchEvent(ServerPlayer player, ChunkPos pos, ServerLevel level)
     {
         this.player = player;
         this.pos = pos;
-        this.world = world;
+        this.level = level;
     }
 
     public ServerPlayer getPlayer()
@@ -61,9 +61,9 @@ public class ChunkWatchEvent extends Event
         return this.pos;
     }
 
-    public ServerLevel getWorld()
+    public ServerLevel getLevel()
     {
-        return this.world;
+        return this.level;
     }
 
     /**
@@ -79,7 +79,10 @@ public class ChunkWatchEvent extends Event
      **/
     public static class Watch extends ChunkWatchEvent
     {
-        public Watch(ServerPlayer player, ChunkPos pos, ServerLevel world) {super(player, pos, world);}
+        public Watch(ServerPlayer player, ChunkPos pos, ServerLevel level)
+        {
+            super(player, pos, level);
+        }
     }
 
     /**
@@ -95,6 +98,9 @@ public class ChunkWatchEvent extends Event
      **/
     public static class UnWatch extends ChunkWatchEvent
     {
-        public UnWatch(ServerPlayer player, ChunkPos pos, ServerLevel world) {super(player, pos, world);}
+        public UnWatch(ServerPlayer player, ChunkPos pos, ServerLevel level)
+        {
+            super(player, pos, level);
+        }
     }
 }

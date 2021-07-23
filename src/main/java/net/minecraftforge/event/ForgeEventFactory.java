@@ -29,7 +29,6 @@ import javax.annotation.Nullable;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.level.portal.PortalShape;
@@ -44,7 +43,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Zombie;
@@ -81,7 +79,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraftforge.api.distmarker.Dist;
@@ -142,7 +139,7 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.SleepFinishedTimeEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.world.LevelEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 
@@ -247,7 +244,7 @@ public class ForgeEventFactory
     {
         PlayerEvent.NameFormat event = new PlayerEvent.NameFormat(player, username);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getDisplayname();
+        return event.getDisplayName();
     }
     
     public static Component getPlayerTabListDisplayName(Player player)
@@ -500,7 +497,7 @@ public class ForgeEventFactory
 
     public static boolean onCreateWorldSpawn(Level world, ServerLevelData settings)
     {
-        return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
+        return MinecraftForge.EVENT_BUS.post(new LevelEvent.CreateSpawnPosition(world, settings));
     }
 
     public static float onLivingHeal(LivingEntity entity, float amount)
@@ -656,7 +653,7 @@ public class ForgeEventFactory
     {
         net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent e = new net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent(world, pos, enchantRow, power, itemStack, level);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e);
-        return e.getLevel();
+        return e.getEnchantLevel();
     }
 
     public static boolean onEntityDestroyBlock(LivingEntity entity, BlockPos pos, BlockState state)

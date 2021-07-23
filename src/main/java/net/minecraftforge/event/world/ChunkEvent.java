@@ -31,7 +31,7 @@ import net.minecraft.world.level.chunk.ChunkAccess;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class ChunkEvent extends WorldEvent
+public class ChunkEvent extends LevelEvent
 {
     private final ChunkAccess chunk;
 
@@ -41,9 +41,9 @@ public class ChunkEvent extends WorldEvent
         this.chunk = chunk;
     }
 
-    public ChunkEvent(ChunkAccess chunk, LevelAccessor world)
+    public ChunkEvent(ChunkAccess chunk, LevelAccessor level)
     {
-        super(world);
+        super(level);
         this.chunk = chunk;
     }
 

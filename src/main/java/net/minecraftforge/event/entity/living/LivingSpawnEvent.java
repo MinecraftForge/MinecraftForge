@@ -32,7 +32,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * {@link #world} contains the world in which this living Entity is being spawned.<br>
+ * {@link #level} contains the world in which this living Entity is being spawned.<br>
  * {@link #x} contains the x-coordinate this entity is being spawned at.<br>
  * {@link #y} contains the y-coordinate this entity is being spawned at.<br>
  * {@link #z} contains the z-coordinate this entity is being spawned at.<br>
@@ -41,23 +41,29 @@ import net.minecraftforge.eventbus.api.Cancelable;
  **/
 public class LivingSpawnEvent extends LivingEvent
 {
-    private final LevelAccessor world;
+    private final LevelAccessor level;
     private final double x;
     private final double y;
     private final double z;
 
-    public LivingSpawnEvent(Mob entity, LevelAccessor world, double x, double y, double z)
+    public LivingSpawnEvent(Mob entity, LevelAccessor level, double x, double y, double z)
     {
         super(entity);
-        this.world = world;
+        this.level = level;
         this.x = x;
         this.y = y;
         this.z = z;
     }
 
-    public LevelAccessor getWorld()
+    @Override
+    public Mob getEntity()
     {
-        return world;
+        return (Mob) super.getEntity();
+    }
+
+    public LevelAccessor getLevel()
+    {
+        return level;
     }
 
     public double getX()
@@ -143,16 +149,16 @@ public class LivingSpawnEvent extends LivingEvent
     {
         @Nullable
         private final BaseSpawner spawner;
-        private final MobSpawnType spawnReason;
+        private final MobSpawnType spawnType;
 
         /**
          * @param spawner the position of a tileentity or approximate position of an entity that initiated the spawn if any
          */
-        public SpecialSpawn(Mob entity, Level world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
+        public SpecialSpawn(Mob entity, Level world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnType)
         {
             super(entity, world, x, y, z);
             this.spawner = spawner;
-            this.spawnReason = spawnReason;
+            this.spawnType = spawnType;
         }
 
         @Nullable
@@ -161,9 +167,9 @@ public class LivingSpawnEvent extends LivingEvent
             return spawner;
         }
 
-        public MobSpawnType getSpawnReason()
+        public MobSpawnType getSpawnType()
         {
-            return spawnReason;
+            return spawnType;
         }
     }
 

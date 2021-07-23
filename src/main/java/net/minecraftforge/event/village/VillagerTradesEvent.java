@@ -39,13 +39,13 @@ import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
  */
 public class VillagerTradesEvent extends Event
 {
-    protected Int2ObjectMap<List<ItemListing>> trades;
-    protected VillagerProfession type;
+    private final Int2ObjectMap<List<ItemListing>> trades;
+    private final VillagerProfession profession;
 
-    public VillagerTradesEvent(Int2ObjectMap<List<ItemListing>> trades, VillagerProfession type)
+    public VillagerTradesEvent(Int2ObjectMap<List<ItemListing>> trades, VillagerProfession profession)
     {
         this.trades = trades;
-        this.type = type;
+        this.profession = profession;
     }
 
     public Int2ObjectMap<List<ItemListing>> getTrades()
@@ -53,8 +53,8 @@ public class VillagerTradesEvent extends Event
         return trades;
     }
 
-    public VillagerProfession getType()
+    public VillagerProfession getProfession()
     {
-        return type;
+        return profession;
     }
 }

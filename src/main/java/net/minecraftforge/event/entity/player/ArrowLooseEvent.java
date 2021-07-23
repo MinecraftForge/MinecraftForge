@@ -45,28 +45,28 @@ import javax.annotation.Nonnull;
 public class ArrowLooseEvent extends PlayerEvent
 {
     private final ItemStack bow;
-    private final Level world;
+    private final Level level;
     private final boolean hasAmmo;
     private int charge;
 
-    public ArrowLooseEvent(Player player, @Nonnull ItemStack bow, Level world, int charge, boolean hasAmmo)
+    public ArrowLooseEvent(Player player, @Nonnull ItemStack bow, Level level, int charge, boolean hasAmmo)
     {
         super(player);
         this.bow = bow;
-        this.world = world;
+        this.level = level;
         this.charge = charge;
         this.hasAmmo = hasAmmo;
     }
 
     @Nonnull
-    public ItemStack getBow()
+    public ItemStack getBowStack()
     {
         return this.bow;
     }
 
-    public Level getWorld()
+    public Level getLevel()
     {
-        return this.world;
+        return this.level;
     }
 
     public boolean hasAmmo()

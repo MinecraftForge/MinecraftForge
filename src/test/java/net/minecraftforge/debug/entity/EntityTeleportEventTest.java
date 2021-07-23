@@ -42,6 +42,6 @@ public class EntityTeleportEventTest
     @SubscribeEvent
     public void entityTeleport(EntityTeleportEvent event)
     {
-        LOGGER.info("{} teleporting from {} to {}", event.getEntity(), event.getPrev(), event.getTarget());
+        LOGGER.info("{} teleporting from {} to {}", event.getEntity(), event.getPreviousLocation(), event.getTargetLocation());
     }
 }

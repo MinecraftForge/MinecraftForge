@@ -21,6 +21,7 @@ package net.minecraftforge.event.entity;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LightningBolt;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * EntityStruckByLightningEvent is fired when an Entity is about to be struck by lightening.<br>
@@ -36,7 +37,7 @@ import net.minecraft.world.entity.LightningBolt;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 public class EntityStruckByLightningEvent extends EntityEvent
 {
     private final LightningBolt lightning;

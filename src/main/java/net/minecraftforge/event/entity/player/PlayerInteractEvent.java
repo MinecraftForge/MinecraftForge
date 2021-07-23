@@ -50,15 +50,15 @@ public class PlayerInteractEvent extends PlayerEvent
     private final InteractionHand hand;
     private final BlockPos pos;
     @Nullable
-    private final Direction face;
+    private final Direction direction;
     private InteractionResult cancellationResult = InteractionResult.PASS;
 
-    private PlayerInteractEvent(Player player, InteractionHand hand, BlockPos pos, @Nullable Direction face)
+    private PlayerInteractEvent(Player player, InteractionHand hand, BlockPos pos, @Nullable Direction direction)
     {
         super(Preconditions.checkNotNull(player, "Null player in PlayerInteractEvent!"));
         this.hand = Preconditions.checkNotNull(hand, "Null hand in PlayerInteractEvent!");
         this.pos = Preconditions.checkNotNull(pos, "Null position in PlayerInteractEvent!");
-        this.face = face;
+        this.direction = direction;
     }
 
     /**
@@ -146,11 +146,11 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         private Result useBlock = DEFAULT;
         private Result useItem = DEFAULT;
-        private BlockHitResult hitVec;
+        private final BlockHitResult hitResult;
 
-        public RightClickBlock(Player player, InteractionHand hand, BlockPos pos, BlockHitResult hitVec) {
-            super(player, hand, pos, hitVec.getDirection());
-            this.hitVec = hitVec;
+        public RightClickBlock(Player player, InteractionHand hand, BlockPos pos, BlockHitResult hitResult) {
+            super(player, hand, pos, hitResult.getDirection());
+            this.hitResult = hitResult;
         }
 
         /**
@@ -172,9 +172,9 @@ public class PlayerInteractEvent extends PlayerEvent
         /**
          * @return The ray trace result targeting the block.
          */
-        public BlockHitResult getHitVec()
+        public BlockHitResult getHitResult()
         {
-            return hitVec;
+            return hitResult;
         }
 
         /**
@@ -328,7 +328,7 @@ public class PlayerInteractEvent extends PlayerEvent
     @Nonnull
     public ItemStack getItemStack()
     {
-        return getPlayer().getItemInHand(hand);
+        return getEntity().getItemInHand(hand);
     }
 
     /**
@@ -348,17 +348,17 @@ public class PlayerInteractEvent extends PlayerEvent
      * @return The face involved in this interaction. For all non-block interactions, this will return null.
      */
     @Nullable
-    public Direction getFace()
+    public Direction getDirection()
     {
-        return face;
+        return direction;
     }
 
     /**
      * @return Convenience method to get the world of this interaction.
      */
-    public Level getWorld()
+    public Level getLevel()
     {
-        return getPlayer().getCommandSenderWorld();
+        return getEntity().getCommandSenderWorld();
     }
 
     /**
@@ -366,7 +366,7 @@ public class PlayerInteractEvent extends PlayerEvent
      */
     public LogicalSide getSide()
     {
-        return getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER;
+        return getLevel().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER;
     }
 
     /**
@@ -388,5 +388,4 @@ public class PlayerInteractEvent extends PlayerEvent
     {
         this.cancellationResult = result;
     }
-
 }

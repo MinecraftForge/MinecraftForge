@@ -31,7 +31,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * {@link BlockSapling#generateTree(World, BlockPos, IBlockState, Random)}.<br>
  * <br>
  * {@link #pos} contains the coordinates of the growing sapling. <br>
- * {@link #rand} contains an instance of Random for use. <br>
+ * {@link #random} contains an instance of Random for use. <br>
  * <br>
  * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
  * <br>
@@ -41,15 +41,15 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
  **/
 @HasResult
-public class SaplingGrowTreeEvent extends WorldEvent
+public class SaplingGrowTreeEvent extends LevelEvent
 {
     private final BlockPos pos;
-    private final Random rand;
+    private final Random random;
 
-    public SaplingGrowTreeEvent(LevelAccessor world, Random rand, BlockPos pos)
+    public SaplingGrowTreeEvent(LevelAccessor level, Random random, BlockPos pos)
     {
-        super(world);
-        this.rand = rand;
+        super(level);
+        this.random = random;
         this.pos = pos;
     }
 
@@ -58,8 +58,8 @@ public class SaplingGrowTreeEvent extends WorldEvent
         return pos;
     }
 
-    public Random getRand()
+    public Random getRandom()
     {
-        return rand;
+        return random;
     }
 }

@@ -29,7 +29,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * {@link World#loadEntities(Collection)}, {@link net.minecraft.world.ServerWorld#loadEntities(Collection)} {@link World#joinEntityInSurroundings(Entity)}, and {@link World#spawnEntity(Entity)}. <br>
  * <strong>Note:</strong> This event may be called before the underlying {@link net.minecraft.world.chunk.Chunk} is promoted to {@link net.minecraft.world.chunk.ChunkStatus#FULL}. You will cause chunk loading deadlocks if you don't delay your world interactions.<br>
  * <br>
- * {@link #world} contains the world in which the entity is to join.<br>
+ * {@link #level} contains the world in which the entity is to join.<br>
  * <br>
  * This event is {@link Cancelable}.<br>
  * If this event is canceled, the Entity is not added to the world.<br>
@@ -39,18 +39,18 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class EntityJoinWorldEvent extends EntityEvent
+public class EntityJoinLevelEvent extends EntityEvent
 {
-    private final Level world;
+    private final Level level;
 
-    public EntityJoinWorldEvent(Entity entity, Level world)
+    public EntityJoinLevelEvent(Entity entity, Level level)
     {
         super(entity);
-        this.world = world;
+        this.level = level;
     }
 
-    public Level getWorld()
+    public Level getLevel()
     {
-        return world;
+        return level;
     }
 }

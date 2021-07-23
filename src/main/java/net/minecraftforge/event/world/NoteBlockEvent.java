@@ -35,9 +35,9 @@ public class NoteBlockEvent extends BlockEvent
 {
     private int noteId;
 
-    protected NoteBlockEvent(Level world, BlockPos pos, BlockState state, int note)
+    protected NoteBlockEvent(Level level, BlockPos pos, BlockState state, int note)
     {
-        super(world, pos, state);
+        super(level, pos, state);
         this.noteId = note;
     }
 
@@ -89,9 +89,9 @@ public class NoteBlockEvent extends BlockEvent
     {
         private NoteBlockInstrument instrument;
 
-        public Play(Level world, BlockPos pos, BlockState state, int note, NoteBlockInstrument instrument)
+        public Play(Level level, BlockPos pos, BlockState state, int note, NoteBlockInstrument instrument)
         {
-            super(world, pos, state, note);
+            super(level, pos, state, note);
             this.instrument = instrument;
         }
 
@@ -116,9 +116,9 @@ public class NoteBlockEvent extends BlockEvent
         private final Note oldNote;
         private final Octave oldOctave;
 
-        public Change(Level world, BlockPos pos, BlockState state, int oldNote, int newNote)
+        public Change(Level level, BlockPos pos, BlockState state, int oldNote, int newNote)
         {
-            super(world, pos, state, newNote);
+            super(level, pos, state, newNote);
             this.oldNote = Note.fromId(oldNote);
             this.oldOctave = Octave.fromId(oldNote);
         }

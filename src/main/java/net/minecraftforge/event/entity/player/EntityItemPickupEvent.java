@@ -38,16 +38,16 @@ import net.minecraft.world.entity.player.Player;
 @Event.HasResult
 public class EntityItemPickupEvent extends PlayerEvent
 {
-    private final ItemEntity item;
+    private final ItemEntity itemEntity;
 
-    public EntityItemPickupEvent(Player player, ItemEntity item)
+    public EntityItemPickupEvent(Player player, ItemEntity itemEntity)
     {
         super(player);
-        this.item = item;
+        this.itemEntity = itemEntity;
     }
 
-    public ItemEntity getItem()
+    public ItemEntity getItemEntity()
     {
-        return item;
+        return itemEntity;
     }
 }

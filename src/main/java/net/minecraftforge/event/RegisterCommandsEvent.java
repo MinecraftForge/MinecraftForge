@@ -35,12 +35,12 @@ import net.minecraft.commands.Commands;
 public class RegisterCommandsEvent extends Event
 {
     private final CommandDispatcher<CommandSourceStack> dispatcher;
-    private final Commands.CommandSelection environment;
+    private final Commands.CommandSelection selection;
     
-    public RegisterCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection environment)
+    public RegisterCommandsEvent(CommandDispatcher<CommandSourceStack> dispatcher, Commands.CommandSelection selection)
     {
         this.dispatcher = dispatcher;
-        this.environment = environment;
+        this.selection = selection;
     }
     
     public CommandDispatcher<CommandSourceStack> getDispatcher()
@@ -48,8 +48,8 @@ public class RegisterCommandsEvent extends Event
         return dispatcher;
     }
     
-    public Commands.CommandSelection getEnvironment()
+    public Commands.CommandSelection getSelection()
     {
-        return environment;
+        return selection;
     }
 }

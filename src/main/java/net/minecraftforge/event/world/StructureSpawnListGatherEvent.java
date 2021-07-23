@@ -85,20 +85,20 @@ public class StructureSpawnListGatherEvent extends Event
 
     /**
      * Gets an unmodifiable view of the the list representing the entity spawns for the given classification.
-     * @param classification Entity Classification
+     * @param category Entity Classification
      * @return The list of spawns for the given classification.
      */
-    public List<MobSpawnSettings.SpawnerData> getEntitySpawns(MobCategory classification)
+    public List<MobSpawnSettings.SpawnerData> getEntitySpawns(MobCategory category)
     {
-        return this.entitySpawnsUnmodifiableLists.getOrDefault(classification, Collections.emptyList());
+        return this.entitySpawnsUnmodifiableLists.getOrDefault(category, Collections.emptyList());
     }
 
     /**
      * Gets the internal spawn list for a given entity classification, or adds one if needed. (This includes adding it to the unmodifiable view)
      */
-    private List<MobSpawnSettings.SpawnerData> getOrCreateEntitySpawns(MobCategory classification)
+    private List<MobSpawnSettings.SpawnerData> getOrCreateEntitySpawns(MobCategory category)
     {
-        return this.entitySpawns.computeIfAbsent(classification, c -> {
+        return this.entitySpawns.computeIfAbsent(category, c -> {
             List<MobSpawnSettings.SpawnerData> spawners = new ArrayList<>();
             //If the classification isn't in entitySpawns yet, also add an unmodifiable view of the list to
             // the unmodifiable list spawn map
@@ -109,33 +109,33 @@ public class StructureSpawnListGatherEvent extends Event
 
     /**
      * Adds a spawn to the list of spawns for the given classification.
-     * @param classification Entity Classification
+     * @param category Entity Classification
      * @param spawner        Spawner
      */
-    public void addEntitySpawn(MobCategory classification, MobSpawnSettings.SpawnerData spawner)
+    public void addEntitySpawn(MobCategory category, MobSpawnSettings.SpawnerData spawner)
     {
-        getOrCreateEntitySpawns(classification).add(spawner);
+        getOrCreateEntitySpawns(category).add(spawner);
     }
 
     /**
      * Adds spawns to the list of spawns for the given classification.
-     * @param classification Entity Classification
+     * @param category Entity Classification
      * @param spawners       Spawners to add
      */
-    public void addEntitySpawns(MobCategory classification, List<MobSpawnSettings.SpawnerData> spawners)
+    public void addEntitySpawns(MobCategory category, List<MobSpawnSettings.SpawnerData> spawners)
     {
-        getOrCreateEntitySpawns(classification).addAll(spawners);
+        getOrCreateEntitySpawns(category).addAll(spawners);
     }
 
     /**
      * Removes a spawn from the list of spawns for the given classification.
-     * @param classification Entity Classification
+     * @param category Entity Classification
      * @param spawner        Spawner
      */
-    public void removeEntitySpawn(MobCategory classification, MobSpawnSettings.SpawnerData spawner)
+    public void removeEntitySpawn(MobCategory category, MobSpawnSettings.SpawnerData spawner)
     {
-        if (this.entitySpawns.containsKey(classification))
-            this.entitySpawns.get(classification).remove(spawner);
+        if (this.entitySpawns.containsKey(category))
+            this.entitySpawns.get(category).remove(spawner);
     }
 
     /**

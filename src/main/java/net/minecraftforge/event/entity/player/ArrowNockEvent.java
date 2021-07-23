@@ -38,28 +38,28 @@ public class ArrowNockEvent extends PlayerEvent
 {
     private final ItemStack bow;
     private final InteractionHand hand;
-    private final Level world;
+    private final Level level;
     private final boolean hasAmmo;
     private InteractionResultHolder<ItemStack> action;
 
-    public ArrowNockEvent(Player player, @Nonnull ItemStack item, InteractionHand hand, Level world, boolean hasAmmo)
+    public ArrowNockEvent(Player player, @Nonnull ItemStack item, InteractionHand hand, Level level, boolean hasAmmo)
     {
         super(player);
         this.bow = item;
         this.hand = hand;
-        this.world = world;
+        this.level = level;
         this.hasAmmo = hasAmmo;
     }
 
     @Nonnull
-    public ItemStack getBow()
+    public ItemStack getBowStack()
     {
         return this.bow;
     }
 
-    public Level getWorld()
+    public Level getLevel()
     {
-        return this.world;
+        return this.level;
     }
 
     public InteractionHand getHand()

@@ -111,9 +111,9 @@ public class ContainerTypeTest
     
     private void onRightClick(PlayerInteractEvent.RightClickBlock event)
     {
-        if (!event.getWorld().isClientSide && event.getHand() == InteractionHand.MAIN_HAND)
+        if (!event.getLevel().isClientSide && event.getHand() == InteractionHand.MAIN_HAND)
         {
-            if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.SPONGE)
+            if (event.getLevel().getBlockState(event.getPos()).getBlock() == Blocks.SPONGE)
             {
                 String text = "Hello World!";
                 NetworkHooks.openGui((ServerPlayer) event.getPlayer(), new MenuProvider()

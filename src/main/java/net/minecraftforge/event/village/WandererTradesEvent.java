@@ -33,8 +33,8 @@ import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
 */
 public class WandererTradesEvent extends Event
 {
-    protected List<ItemListing> generic;
-    protected List<ItemListing> rare;
+    private final List<ItemListing> generic;
+    private final List<ItemListing> rare;
 
     public WandererTradesEvent(List<ItemListing> generic, List<ItemListing> rare)
     {

@@ -38,7 +38,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
     }
 
     @Nonnull
-    public ItemStack getItem()
+    public ItemStack getItemStack()
     {
         return item;
     }

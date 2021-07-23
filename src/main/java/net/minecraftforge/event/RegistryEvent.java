@@ -22,6 +22,7 @@ package net.minecraftforge.event;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import org.apache.commons.lang3.Validate;
 
@@ -37,16 +38,17 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
  */
 public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEvent<T> implements IModBusEvent
 {
-    RegistryEvent(Class<T> clazz) {
+    RegistryEvent(Class<T> clazz)
+    {
         super(clazz);
     }
 
     /**
      * Register new registries when you receive this event, through the {@link RecipeBuilder}
      */
-    public static class NewRegistry extends net.minecraftforge.eventbus.api.Event implements IModBusEvent
+    public static class NewRegistry extends Event implements IModBusEvent
     {
-        public NewRegistry(ModContainer mc)
+        public NewRegistry(ModContainer modContainer)
         {
         }
 
@@ -61,11 +63,12 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
      * Register your objects for the appropriate registry type when you receive this event.
      *
      * <code>event.getRegistry().register(...)</code>
-     *
+     * <p>
      * The registries will be visited in alphabetic order of their name, except blocks and items,
      * which will be visited FIRST and SECOND respectively.
-     *
+     * <p>
      * ObjectHolders will reload between Blocks and Items, and after all registries have been visited.
+     *
      * @param <T> The registry top level type
      */
     public static class Register<T extends IForgeRegistryEntry<T>> extends RegistryEvent<T>
@@ -223,7 +226,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
 
             /**
              * Remap the missing entry to the specified object.
-             *
+             * <p>
              * Use this if you have renamed an entry.
              * Existing references using the old name will point to the new one.
              *
@@ -252,7 +255,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             public int compareTo(Mapping<T> o)
             {
                 int ret = this.registry.getRegistryName().compareNamespaced(o.registry.getRegistryName());
-                if (ret ==0) ret = this.key.compareNamespaced(o.key);
+                if (ret == 0) ret = this.key.compareNamespaced(o.key);
                 return ret;
             }
         }

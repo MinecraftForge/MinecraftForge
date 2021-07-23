@@ -52,7 +52,7 @@ public class PlayerXpEvent extends PlayerEvent
             this.orb = orb;
         }
 
-        public ExperienceOrb getOrb()
+        public ExperienceOrb getOrbEntity()
         {
             return orb;
         }

@@ -49,19 +49,20 @@ public class BlockEvent extends Event
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
 
-    private final LevelAccessor world;
+    private final LevelAccessor level;
     private final BlockPos pos;
     private final BlockState state;
-    public BlockEvent(LevelAccessor world, BlockPos pos, BlockState state)
+
+    public BlockEvent(LevelAccessor level, BlockPos pos, BlockState state)
     {
         this.pos = pos;
-        this.world = world;
+        this.level = level;
         this.state = state;
     }
 
-    public LevelAccessor getWorld()
+    public LevelAccessor getLevel()
     {
-        return world;
+        return level;
     }
 
     public BlockPos getPos()
@@ -85,12 +86,12 @@ public class BlockEvent extends Event
         private final Player player;
         private int exp;
 
-        public BreakEvent(Level world, BlockPos pos, BlockState state, Player player)
+        public BreakEvent(Level level, BlockPos pos, BlockState state, Player player)
         {
-            super(world, pos, state);
+            super(level, pos, state);
             this.player = player;
 
-            if (state == null || !ForgeHooks.canHarvestBlock(state, player, world, pos)) // Handle empty block or player unable to break block scenario
+            if (state == null || !ForgeHooks.canHarvestBlock(state, player, level, pos)) // Handle empty block or player unable to break block scenario
             {
                 this.exp = 0;
             }
@@ -98,7 +99,7 @@ public class BlockEvent extends Event
             {
                 int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
                 int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
-                this.exp = state.getExpDrop(world, pos, bonusLevel, silklevel);
+                this.exp = state.getExpDrop(level, pos, bonusLevel, silklevel);
             }
         }
 
@@ -112,7 +113,7 @@ public class BlockEvent extends Event
          *
          * @return The experience to drop or 0 if the event was canceled
          */
-        public int getExpToDrop()
+        public int getDroppedExperience()
         {
             return this.isCanceled() ? 0 : exp;
         }
@@ -122,7 +123,7 @@ public class BlockEvent extends Event
          *
          * @param exp 1 or higher to drop experience, else nothing will drop
          */
-        public void setExpToDrop(int exp)
+        public void setDroppedExperience(int exp)
         {
             this.exp = exp;
         }
@@ -257,20 +258,20 @@ public class BlockEvent extends Event
     @HasResult
     public static class CreateFluidSourceEvent extends Event
     {
-        private final LevelReader world;
+        private final LevelReader level;
         private final BlockPos pos;
         private final BlockState state;
 
         public CreateFluidSourceEvent(LevelReader world, BlockPos pos, BlockState state)
         {
-            this.world = world;
+            this.level = world;
             this.pos = pos;
             this.state = state;
         }
 
-        public LevelReader getWorld()
+        public LevelReader getLevel()
         {
-            return world;
+            return level;
         }
 
         public BlockPos getPos()
@@ -299,12 +300,12 @@ public class BlockEvent extends Event
         private BlockState newState;
         private BlockState origState;
 
-        public FluidPlaceBlockEvent(LevelAccessor world, BlockPos pos, BlockPos liquidPos, BlockState state)
+        public FluidPlaceBlockEvent(LevelAccessor level, BlockPos pos, BlockPos liquidPos, BlockState state)
         {
-            super(world, pos, state);
+            super(level, pos, state);
             this.liquidPos = liquidPos;
             this.newState = state;
-            this.origState = world.getBlockState(pos);
+            this.origState = level.getBlockState(pos);
         }
 
         /**
@@ -343,9 +344,15 @@ public class BlockEvent extends Event
      */
     public static class CropGrowEvent extends BlockEvent
     {
-        public CropGrowEvent(Level world, BlockPos pos, BlockState state)
+        public CropGrowEvent(Level level, BlockPos pos, BlockState state)
         {
-            super(world, pos, state);
+            super(level, pos, state);
+        }
+
+        @Override
+        public Level getLevel()
+        {
+            return (Level) super.getLevel();
         }
 
         /**
@@ -362,9 +369,9 @@ public class BlockEvent extends Event
         @HasResult
         public static class Pre extends CropGrowEvent
         {
-            public Pre(Level world, BlockPos pos, BlockState state)
+            public Pre(Level level, BlockPos pos, BlockState state)
             {
-                super(world, pos, state);
+                super(level, pos, state);
             }
         }
 
@@ -380,9 +387,10 @@ public class BlockEvent extends Event
         public static class Post extends CropGrowEvent
         {
             private final BlockState originalState;
-            public Post(Level world, BlockPos pos, BlockState original, BlockState state)
+
+            public Post(Level level, BlockPos pos, BlockState original, BlockState state)
             {
-                super(world, pos, state);
+                super(level, pos, state);
                 originalState = original;
             }
 
@@ -400,15 +408,20 @@ public class BlockEvent extends Event
     @Cancelable
     public static class FarmlandTrampleEvent extends BlockEvent
     {
-
         private final Entity entity;
         private final float fallDistance;
 
-        public FarmlandTrampleEvent(Level world, BlockPos pos, BlockState state, float fallDistance, Entity entity)
+        public FarmlandTrampleEvent(Level level, BlockPos pos, BlockState state, float fallDistance, Entity entity)
         {
-            super(world, pos, state);
+            super(level, pos, state);
             this.entity = entity;
             this.fallDistance = fallDistance;
+        }
+
+        @Override
+        public Level getLevel()
+        {
+            return (Level) super.getLevel();
         }
 
         public Entity getEntity() {
@@ -431,9 +444,9 @@ public class BlockEvent extends Event
     {
         private final PortalShape size;
 
-        public PortalSpawnEvent(LevelAccessor world, BlockPos pos, BlockState state, PortalShape size)
+        public PortalSpawnEvent(LevelAccessor level, BlockPos pos, BlockState state, PortalShape size)
         {
-            super(world, pos, state);
+            super(level, pos, state);
             this.size = size;
         }
 
@@ -455,15 +468,14 @@ public class BlockEvent extends Event
     @Cancelable
     public static class BlockToolInteractEvent extends BlockEvent
     {
-
         private final Player player;
         private final ItemStack stack;
         private final ToolType toolType;
         private BlockState state;
 
-        public BlockToolInteractEvent(LevelAccessor world, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolType toolType)
+        public BlockToolInteractEvent(LevelAccessor level, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolType toolType)
         {
-            super(world, pos, originalState);
+            super(level, pos, originalState);
             this.player = player;
             this.stack = stack;
             this.state = originalState;

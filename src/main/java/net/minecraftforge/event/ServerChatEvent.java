@@ -22,6 +22,7 @@ package net.minecraftforge.event;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * ServerChatEvent is fired whenever a C01PacketChatMessage is processed. <br>
@@ -29,9 +30,9 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * which is executed by the {@link NetHandlerPlayServer#processChatMessage(CPacketChatMessage)}<br>
  * <br>
  * {@link #username} contains the username of the player sending the chat message.<br>
- * {@link #message} contains the message being sent.<br>
+ * {@link #rawMessage} contains the message being sent.<br>
  * {@link #player} the instance of EntityPlayerMP for the player sending the chat message.<br>
- * {@link #component} contains the instance of ChatComponentTranslation for the sent message.<br>
+ * {@link #message} contains the instance of ChatComponentTranslation for the sent message.<br>
  * <br>
  * This event is {@link Cancelable}. <br>
  * If this event is canceled, the chat message is never distributed to all clients.<br>
@@ -41,34 +42,34 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
-public class ServerChatEvent extends net.minecraftforge.eventbus.api.Event
+public class ServerChatEvent extends Event
 {
-    private final String message, username;
+    private final String rawMessage;
+    private final String username;
     private final ServerPlayer player;
-    private Component component;
+    private Component message;
 
-    public ServerChatEvent(ServerPlayer player, String message, Component component)
+    public ServerChatEvent(ServerPlayer player, String rawMessage, Component message)
     {
-        super();
-        this.message = message;
+        this.rawMessage = rawMessage;
         this.player = player;
         this.username = player.getGameProfile().getName();
-        this.component = component;
+        this.message = message;
     }
 
-    public void setComponent(Component e)
+    public void setMessage(Component message)
     {
-        this.component = e;
+        this.message = message;
     }
 
-    public Component getComponent()
-    {
-        return this.component;
-    }
-
-    public String getMessage()
+    public Component getMessage()
     {
         return this.message;
+    }
+
+    public String getRawMessage()
+    {
+        return this.rawMessage;
     }
 
     public String getUsername()

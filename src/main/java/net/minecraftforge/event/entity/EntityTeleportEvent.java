@@ -31,8 +31,8 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * {@link #getTarget()} contains the target destination.<br>
- * {@link #getPrev()} contains the entity's current position.<br>
+ * {@link #getTargetLocation()} contains the target destination.<br>
+ * {@link #getPreviousLocation()} contains the entity's current position.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
@@ -80,27 +80,27 @@ public class EntityTeleportEvent extends EntityEvent
         this.targetZ = targetZ;
     }
 
-    public Vec3 getTarget()
+    public Vec3 getTargetLocation()
     {
         return new Vec3(this.targetX, this.targetY, this.targetZ);
     }
 
-    public double getPrevX()
+    public double getPreviousX()
     {
         return getEntity().getX();
     }
 
-    public double getPrevY()
+    public double getPreviousY()
     {
         return getEntity().getY();
     }
 
-    public double getPrevZ()
+    public double getPreviousZ()
     {
         return getEntity().getZ();
     }
 
-    public Vec3 getPrev()
+    public Vec3 getPreviousLocation()
     {
         return getEntity().position();
     }
@@ -170,17 +170,15 @@ public class EntityTeleportEvent extends EntityEvent
     @Cancelable
     public static class EnderEntity extends EntityTeleportEvent
     {
-        private final LivingEntity entityLiving;
-
         public EnderEntity(LivingEntity entity, double targetX, double targetY, double targetZ)
         {
             super(entity, targetX, targetY, targetZ);
-            this.entityLiving = entity;
         }
 
-        public LivingEntity getEntityLiving()
+        @Override
+        public LivingEntity getEntity()
         {
-            return entityLiving;
+            return (LivingEntity) super.getEntity();
         }
     }
 
@@ -201,7 +199,6 @@ public class EntityTeleportEvent extends EntityEvent
     @Cancelable
     public static class EnderPearl extends EntityTeleportEvent
     {
-        private final ServerPlayer player;
         private final ThrownEnderpearl pearlEntity;
         private float attackDamage;
 
@@ -209,7 +206,6 @@ public class EntityTeleportEvent extends EntityEvent
         {
             super(entity, targetX, targetY, targetZ);
             this.pearlEntity = pearlEntity;
-            this.player = entity;
             this.attackDamage = attackDamage;
         }
 
@@ -218,9 +214,10 @@ public class EntityTeleportEvent extends EntityEvent
             return pearlEntity;
         }
 
-        public ServerPlayer getPlayer()
+        @Override
+        public ServerPlayer getEntity()
         {
-            return player;
+            return (ServerPlayer) super.getEntity();
         }
 
         public float getAttackDamage()
@@ -251,17 +248,15 @@ public class EntityTeleportEvent extends EntityEvent
     @Cancelable
     public static class ChorusFruit extends EntityTeleportEvent
     {
-        private final LivingEntity entityLiving;
-
         public ChorusFruit(LivingEntity entity, double targetX, double targetY, double targetZ)
         {
             super(entity, targetX, targetY, targetZ);
-            this.entityLiving = entity;
         }
 
-        public LivingEntity getEntityLiving()
+        @Override
+        public LivingEntity getEntity()
         {
-            return entityLiving;
+            return (LivingEntity) super.getEntity();
         }
     }
 }

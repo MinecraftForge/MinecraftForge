@@ -19,13 +19,7 @@
 
 package net.minecraftforge.event.world;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -35,22 +29,22 @@ import net.minecraftforge.eventbus.api.Event;
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
- * {@link #world} contains the World this event is occurring in.<br>
+ * {@link #level} contains the World this event is occurring in.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class WorldEvent extends Event
+public class LevelEvent extends Event
 {
-    private final LevelAccessor world;
+    private final LevelAccessor level;
 
-    public WorldEvent(LevelAccessor world)
+    public LevelEvent(LevelAccessor level)
     {
-        this.world = world;
+        this.level = level;
     }
 
-    public LevelAccessor getWorld()
+    public LevelAccessor getLevel()
     {
-        return world;
+        return level;
     }
 
     /**
@@ -68,9 +62,12 @@ public class WorldEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Load extends WorldEvent
+    public static class Load extends LevelEvent
     {
-        public Load(LevelAccessor world) { super(world); }
+        public Load(LevelAccessor level)
+        {
+            super(level);
+        }
     }
 
     /**
@@ -87,9 +84,12 @@ public class WorldEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Unload extends WorldEvent
+    public static class Unload extends LevelEvent
     {
-        public Unload(LevelAccessor world) { super(world); }
+        public Unload(LevelAccessor level)
+        {
+            super(level);
+        }
     }
 
     /**
@@ -104,9 +104,12 @@ public class WorldEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      **/
-    public static class Save extends WorldEvent
+    public static class Save extends LevelEvent
     {
-        public Save(LevelAccessor world) { super(world); }
+        public Save(LevelAccessor level)
+        {
+            super(level);
+        }
     }
 
     /**
@@ -114,19 +117,19 @@ public class WorldEvent extends Event
      * Canceling the event will prevent the vanilla code from running.
      */
     @Cancelable
-    public static class CreateSpawnPosition extends WorldEvent
+    public static class CreateSpawnPosition extends LevelEvent
     {
-        private final ServerLevelData settings;
+        private final ServerLevelData levelData;
 
-        public CreateSpawnPosition(LevelAccessor world, ServerLevelData settings)
+        public CreateSpawnPosition(LevelAccessor level, ServerLevelData levelData)
         {
-            super(world);
-            this.settings = settings;
+            super(level);
+            this.levelData = levelData;
         }
 
-        public ServerLevelData getSettings()
+        public ServerLevelData getLevelData()
         {
-            return settings;
+            return levelData;
         }
     }
 }

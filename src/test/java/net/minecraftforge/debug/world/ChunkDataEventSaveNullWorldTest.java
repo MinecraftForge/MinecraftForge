@@ -34,7 +34,7 @@ public class ChunkDataEventSaveNullWorldTest {
   @SubscribeEvent
   public static void onChunkSave(final ChunkDataEvent.Save event)
   {
-    if(event.getWorld() == null)
+    if(event.getLevel() == null)
     {
       LOGGER.info("Chunk at {} had null world", event.getChunk().getPos());
     }

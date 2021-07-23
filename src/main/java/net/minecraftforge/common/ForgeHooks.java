@@ -476,7 +476,7 @@ public class ForgeHooks
         {
             return null;
         }
-        return event.getComponent();
+        return event.getMessage();
     }
 
 
@@ -607,7 +607,7 @@ public class ForgeHooks
                 }
             }
         }
-        return event.isCanceled() ? -1 : event.getExpToDrop();
+        return event.isCanceled() ? -1 : event.getDroppedExperience();
     }
 
     public static InteractionResult onPlaceItemIntoWorld(@Nonnull UseOnContext context)

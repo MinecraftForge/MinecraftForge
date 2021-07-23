@@ -36,14 +36,13 @@ public abstract class PistonEvent extends BlockEvent
     private final PistonMoveType moveType;
 
     /**
-     * @param world
+     * @param level
      * @param pos - The position of the piston
      * @param direction - The direction of the piston
-     * @param direction - The move direction of the piston
      */
-    public PistonEvent(Level world, BlockPos pos, Direction direction, PistonMoveType moveType)
+    public PistonEvent(Level level, BlockPos pos, Direction direction, PistonMoveType moveType)
     {
-        super(world, pos, world.getBlockState(pos));
+        super(level, pos, level.getBlockState(pos));
         this.direction = direction;
         this.moveType = moveType;
     }
@@ -76,10 +75,10 @@ public abstract class PistonEvent extends BlockEvent
      * @return A piston structure helper for this movement. Returns null if the world stored is not a {@link World}
      */
     @Nullable
-    public PistonStructureResolver getStructureHelper()
+    public PistonStructureResolver getStructureResolver()
     {
-        if(this.getWorld() instanceof Level) {
-            return new PistonStructureResolver((Level) this.getWorld(), this.getPos(), this.getDirection(), this.getPistonMoveType().isExtend);
+        if(this.getLevel() instanceof Level) {
+            return new PistonStructureResolver((Level) this.getLevel(), this.getPos(), this.getDirection(), this.getPistonMoveType().isExtend);
         } else {
             return null;
         }
@@ -90,9 +89,9 @@ public abstract class PistonEvent extends BlockEvent
      */
     public static class Post extends PistonEvent
     {
-        public Post(Level world, BlockPos pos, Direction direction, PistonMoveType moveType)
+        public Post(Level level, BlockPos pos, Direction direction, PistonMoveType moveType)
         {
-            super(world, pos, direction, moveType);
+            super(level, pos, direction, moveType);
         }
     }
 
@@ -102,9 +101,9 @@ public abstract class PistonEvent extends BlockEvent
     @Cancelable
     public static class Pre extends PistonEvent
     {
-        public Pre(Level world, BlockPos pos, Direction direction, PistonMoveType moveType)
+        public Pre(Level level, BlockPos pos, Direction direction, PistonMoveType moveType)
         {
-            super(world, pos, direction, moveType);
+            super(level, pos, direction, moveType);
         }
     }
 

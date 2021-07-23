@@ -47,20 +47,15 @@ import javax.annotation.Nullable;
  **/
 public class PlayerEvent extends LivingEvent
 {
-    private final Player entityPlayer;
-
     public PlayerEvent(Player player)
     {
         super(player);
-        entityPlayer = player;
     }
 
-    /**
-     * @return Player
-     */
-    public Player getPlayer()
+    @Override
+    public Player getEntity()
     {
-        return entityPlayer;
+        return (Player) super.getEntity();
     }
 
     /**
@@ -177,7 +172,7 @@ public class PlayerEvent extends LivingEvent
      * This event is fired via the {@link ForgeEventFactory#getPlayerDisplayName(EntityPlayer, String)}.<br>
      * <br>
      * {@link #username} contains the username of the player.
-     * {@link #displayname} contains the display name of the player.
+     * {@link #displayName} contains the display name of the player.
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
      * <br>
@@ -188,13 +183,13 @@ public class PlayerEvent extends LivingEvent
     public static class NameFormat extends PlayerEvent
     {
         private final Component username;
-        private Component displayname;
+        private Component displayName;
 
         public NameFormat(Player player, Component username)
         {
             super(player);
             this.username = username;
-            this.setDisplayname(username);
+            this.setDisplayName(username);
         }
 
         public Component getUsername()
@@ -202,14 +197,14 @@ public class PlayerEvent extends LivingEvent
             return username;
         }
 
-        public Component getDisplayname()
+        public Component getDisplayName()
         {
-            return displayname;
+            return displayName;
         }
 
-        public void setDisplayname(Component displayname)
+        public void setDisplayName(Component displayName)
         {
-            this.displayname = displayname;
+            this.displayName = displayName;
         }
     }
 
@@ -259,9 +254,9 @@ public class PlayerEvent extends LivingEvent
         private final Player original;
         private final boolean wasDeath;
 
-        public Clone(Player _new, Player oldPlayer, boolean wasDeath)
+        public Clone(Player newPlayer, Player oldPlayer, boolean wasDeath)
         {
-            super(_new);
+            super(newPlayer);
             this.original = oldPlayer;
             this.wasDeath = wasDeath;
         }
@@ -278,7 +273,7 @@ public class PlayerEvent extends LivingEvent
          * True if this event was fired because the player died.
          * False if it was fired because the entity switched dimensions.
          */
-        public boolean isWasDeath()
+        public boolean wasDeath()
         {
             return wasDeath;
         }
@@ -289,7 +284,6 @@ public class PlayerEvent extends LivingEvent
      */
     public static class StartTracking extends PlayerEvent
     {
-
         private final Entity target;
 
         public StartTracking(Player player, Entity target)
@@ -312,7 +306,6 @@ public class PlayerEvent extends LivingEvent
      */
     public static class StopTracking extends PlayerEvent
     {
-
         private final Entity target;
 
         public StopTracking(Player player, Entity target)
@@ -453,7 +446,7 @@ public class PlayerEvent extends LivingEvent
             this.stack = stack;
         }
 
-        public ItemStack getStack()
+        public ItemStack getItemStack()
         {
             return stack;
         }
@@ -467,20 +460,20 @@ public class PlayerEvent extends LivingEvent
     public static class ItemCraftedEvent extends PlayerEvent
     {
         @Nonnull
-        private final ItemStack crafting;
+        private final ItemStack craftedStack;
         private final Container craftMatrix;
 
-        public ItemCraftedEvent(Player player, @Nonnull ItemStack crafting, Container craftMatrix)
+        public ItemCraftedEvent(Player player, @Nonnull ItemStack craftedStack, Container craftMatrix)
         {
             super(player);
-            this.crafting = crafting;
+            this.craftedStack = craftedStack;
             this.craftMatrix = craftMatrix;
         }
 
         @Nonnull
-        public ItemStack getCrafting()
+        public ItemStack getCraftedStack()
         {
-            return this.crafting;
+            return this.craftedStack;
         }
 
         public Container getInventory()
@@ -492,18 +485,18 @@ public class PlayerEvent extends LivingEvent
     public static class ItemSmeltedEvent extends PlayerEvent
     {
         @Nonnull
-        private final ItemStack smelting;
+        private final ItemStack smeltedStack;
 
-        public ItemSmeltedEvent(Player player, @Nonnull ItemStack crafting)
+        public ItemSmeltedEvent(Player player, @Nonnull ItemStack smeltedStack)
         {
             super(player);
-            this.smelting = crafting;
+            this.smeltedStack = smeltedStack;
         }
 
         @Nonnull
-        public ItemStack getSmelting()
+        public ItemStack getSmeltedStack()
         {
-            return this.smelting;
+            return this.smeltedStack;
         }
     }
 
@@ -574,32 +567,32 @@ public class PlayerEvent extends LivingEvent
     @Cancelable
     public static class PlayerChangeGameModeEvent extends PlayerEvent
     {
-        private final GameType currentGameMode;
-        private GameType newGameMode;
+        private final GameType currentGameType;
+        private GameType newGameType;
 
-        public PlayerChangeGameModeEvent(Player player, GameType currentGameMode, GameType newGameMode)
+        public PlayerChangeGameModeEvent(Player player, GameType currentGameType, GameType newGameType)
         {
             super(player);
-            this.currentGameMode = currentGameMode;
-            this.newGameMode = newGameMode;
+            this.currentGameType = currentGameType;
+            this.newGameType = newGameType;
         }
 
-        public GameType getCurrentGameMode()
+        public GameType getCurrentGameType()
         {
-            return currentGameMode;
+            return currentGameType;
         }
 
-        public GameType getNewGameMode()
+        public GameType getNewGameType()
         {
-            return newGameMode;
+            return newGameType;
         }
 
         /**
          * Sets the game mode the player will be changed to if this event is not cancelled.
          */
-        public void setNewGameMode(GameType newGameMode)
+        public void setNewGameType(GameType newGameType)
         {
-            this.newGameMode = newGameMode;
+            this.newGameType = newGameType;
         }
     }
 }

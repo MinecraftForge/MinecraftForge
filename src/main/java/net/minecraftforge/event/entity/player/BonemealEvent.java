@@ -42,23 +42,23 @@ import javax.annotation.Nonnull;
 @HasResult
 public class BonemealEvent extends PlayerEvent
 {
-    private final Level world;
+    private final Level level;
     private final BlockPos pos;
     private final BlockState block;
     private final ItemStack stack;
 
-    public BonemealEvent(@Nonnull Player player, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull BlockState block, @Nonnull ItemStack stack)
+    public BonemealEvent(@Nonnull Player player, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState block, @Nonnull ItemStack stack)
     {
         super(player);
-        this.world = world;
+        this.level = level;
         this.pos = pos;
         this.block = block;
         this.stack = stack;
     }
 
-    public Level getWorld()
+    public Level getLevel()
     {
-        return world;
+        return level;
     }
 
     public BlockPos getPos()
@@ -72,7 +72,7 @@ public class BonemealEvent extends PlayerEvent
     }
 
     @Nonnull
-    public ItemStack getStack()
+    public ItemStack getItemStack()
     {
         return stack;
     }

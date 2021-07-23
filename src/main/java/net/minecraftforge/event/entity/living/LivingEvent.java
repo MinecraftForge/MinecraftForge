@@ -35,17 +35,15 @@ import javax.annotation.Nullable;
  **/
 public class LivingEvent extends EntityEvent
 {
-    private final LivingEntity entityLiving;
-
     public LivingEvent(LivingEntity entity)
     {
         super(entity);
-        entityLiving = entity;
     }
 
-    public LivingEntity getEntityLiving()
+    @Override
+    public LivingEntity getEntity()
     {
-        return entityLiving;
+        return (LivingEntity) super.getEntity();
     }
 
     /**
@@ -65,9 +63,9 @@ public class LivingEvent extends EntityEvent
     @Cancelable
     public static class LivingUpdateEvent extends LivingEvent
     {
-        public LivingUpdateEvent(LivingEntity e)
+        public LivingUpdateEvent(LivingEntity entity)
         {
-            super(e);
+            super(entity);
         }
     }
 
@@ -87,9 +85,9 @@ public class LivingEvent extends EntityEvent
      **/
     public static class LivingJumpEvent extends LivingEvent
     {
-        public LivingJumpEvent(LivingEntity e)
+        public LivingJumpEvent(LivingEntity entity)
         {
-            super(e);
+            super(entity);
         }
     }
 

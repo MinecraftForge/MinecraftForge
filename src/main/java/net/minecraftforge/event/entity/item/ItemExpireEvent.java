@@ -36,12 +36,12 @@ public class ItemExpireEvent extends ItemEvent
     /**
      * Creates a new event for an expiring EntityItem.
      * 
-     * @param entityItem The EntityItem being deleted.
+     * @param entity The EntityItem being deleted.
      * @param extraLife The amount of time to be added to this entities lifespan if the event is canceled.
      */
-    public ItemExpireEvent(ItemEntity entityItem, int extraLife)
+    public ItemExpireEvent(ItemEntity entity, int extraLife)
     {
-        super(entityItem);
+        super(entity);
         this.setExtraLife(extraLife);
     }
 

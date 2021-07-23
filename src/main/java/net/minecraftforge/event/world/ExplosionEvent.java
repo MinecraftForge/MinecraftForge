@@ -40,18 +40,18 @@ import net.minecraft.world.level.Level;
  */
 public class ExplosionEvent extends Event
 {
-    private final Level world;
+    private final Level level;
     private final Explosion explosion;
 
-    public ExplosionEvent(Level world, Explosion explosion)
+    public ExplosionEvent(Level level, Explosion explosion)
     {
-        this.world = world;
+        this.level = level;
         this.explosion = explosion;
     }
 
-    public Level getWorld()
+    public Level getLevel()
     {
-        return world;
+        return level;
     }
 
     public Explosion getExplosion()
@@ -68,9 +68,9 @@ public class ExplosionEvent extends Event
     @Cancelable
     public static class Start extends ExplosionEvent
     {
-        public Start(Level world, Explosion explosion)
+        public Start(Level level, Explosion explosion)
         {
-            super(world, explosion);
+            super(level, explosion);
         }
     }
 
@@ -84,9 +84,9 @@ public class ExplosionEvent extends Event
     {
         private final List<Entity> entityList;
 
-        public Detonate(Level world, Explosion explosion, List<Entity> entityList)
+        public Detonate(Level level, Explosion explosion, List<Entity> entityList)
         {
-            super(world, explosion);
+            super(level, explosion);
             this.entityList = entityList;
         }
 

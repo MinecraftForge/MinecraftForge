@@ -30,10 +30,10 @@ import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.world.ChunkEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.world.LevelEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
@@ -48,7 +48,7 @@ import net.minecraftforge.server.command.ConfigCommand;
 public class ForgeInternalHandler
 {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onEntityJoinWorld(EntityJoinWorldEvent event)
+    public void onEntityJoinWorld(EntityJoinLevelEvent event)
     {
         Entity entity = event.getEntity();
         if (entity.getClass().equals(ItemEntity.class))
@@ -57,13 +57,13 @@ public class ForgeInternalHandler
             Item item = stack.getItem();
             if (item.hasCustomEntity(stack))
             {
-                Entity newEntity = item.createEntity(event.getWorld(), entity, stack);
+                Entity newEntity = item.createEntity(event.getLevel(), entity, stack);
                 if (newEntity != null)
                 {
                     entity.remove(false);
                     event.setCanceled(true);
-                    BlockableEventLoop<Runnable> executor = LogicalSidedProvider.WORKQUEUE.get(event.getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
-                    executor.tell(new TickTask(0, () -> event.getWorld().addFreshEntity(newEntity)));
+                    BlockableEventLoop<Runnable> executor = LogicalSidedProvider.WORKQUEUE.get(event.getLevel().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
+                    executor.tell(new TickTask(0, () -> event.getLevel().addFreshEntity(newEntity)));
                 }
             }
         }
@@ -71,16 +71,16 @@ public class ForgeInternalHandler
 
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onDimensionUnload(WorldEvent.Unload event)
+    public void onDimensionUnload(LevelEvent.Unload event)
     {
-        if (event.getWorld() instanceof ServerLevel)
-            FakePlayerFactory.unloadWorld((ServerLevel) event.getWorld());
+        if (event.getLevel() instanceof ServerLevel)
+            FakePlayerFactory.unloadWorld((ServerLevel) event.getLevel());
     }
 
     @SubscribeEvent
     public void onServerTick(ServerTickEvent event)
     {
-        WorldWorkerManager.tick(event.phase == TickEvent.Phase.START);
+        WorldWorkerManager.tick(event.getTickPhase() == TickEvent.Phase.START);
     }
 
     @SubscribeEvent
@@ -93,7 +93,7 @@ public class ForgeInternalHandler
     @SubscribeEvent
     public void onChunkUnload(ChunkEvent.Unload event)
     {
-        if (!event.getWorld().isClientSide())
+        if (!event.getLevel().isClientSide())
             FarmlandWaterManager.removeTickets(event.getChunk());
     }
 

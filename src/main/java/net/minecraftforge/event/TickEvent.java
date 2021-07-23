@@ -29,23 +29,38 @@ public class TickEvent extends Event
 {
     public enum Type
     {
-        WORLD, PLAYER, CLIENT, SERVER, RENDER;
+        WORLD, PLAYER, CLIENT, SERVER, RENDER
     }
 
     public enum Phase
     {
-        START, END;
+        START, END
     }
 
-    public final Type type;
-    public final LogicalSide side;
-    public final Phase phase;
+    private final Type type;
+    private final LogicalSide side;
+    private final Phase phase;
 
     public TickEvent(Type type, LogicalSide side, Phase phase)
     {
         this.type = type;
         this.side = side;
         this.phase = phase;
+    }
+
+    public Type getType()
+    {
+        return type;
+    }
+
+    public LogicalSide getLogicalSide()
+    {
+        return side;
+    }
+
+    public Phase getTickPhase()
+    {
+        return phase;
     }
 
     public static class ServerTickEvent extends TickEvent
@@ -66,34 +81,49 @@ public class TickEvent extends Event
 
     public static class WorldTickEvent extends TickEvent
     {
-        public final Level world;
+        private final Level level;
 
-        public WorldTickEvent(LogicalSide side, Phase phase, Level world)
+        public WorldTickEvent(LogicalSide side, Phase phase, Level level)
         {
             super(Type.WORLD, side, phase);
-            this.world = world;
+            this.level = level;
+        }
+
+        public Level getLevel()
+        {
+            return level;
         }
     }
 
     public static class PlayerTickEvent extends TickEvent
     {
-        public final Player player;
+        private final Player player;
 
         public PlayerTickEvent(Phase phase, Player player)
         {
             super(Type.PLAYER, player instanceof ServerPlayer ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
             this.player = player;
         }
+
+        public Player getPlayer()
+        {
+            return player;
+        }
     }
 
     public static class RenderTickEvent extends TickEvent
     {
-        public final float renderTickTime;
+        private final float partialTick;
 
-        public RenderTickEvent(Phase phase, float renderTickTime)
+        public RenderTickEvent(Phase phase, float partialTick)
         {
             super(Type.RENDER, LogicalSide.CLIENT, phase);
-            this.renderTickTime = renderTickTime;
+            this.partialTick = partialTick;
+        }
+
+        public float getPartialTick()
+        {
+            return partialTick;
         }
     }
 }

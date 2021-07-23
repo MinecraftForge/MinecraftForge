@@ -38,14 +38,14 @@ import net.minecraftforge.eventbus.api.Event;
 public class LootTableLoadEvent extends Event
 {
     private final ResourceLocation name;
+    private final LootTables lootTables;
     private LootTable table;
-    private LootTables lootTableManager;
 
-    public LootTableLoadEvent(ResourceLocation name, LootTable table, LootTables lootTableManager)
+    public LootTableLoadEvent(ResourceLocation name, LootTable table, LootTables lootTables)
     {
         this.name = name;
         this.table = table;
-        this.lootTableManager = lootTableManager;
+        this.lootTables = lootTables;
     }
 
     public ResourceLocation getName()
@@ -58,9 +58,9 @@ public class LootTableLoadEvent extends Event
         return this.table;
     }
 
-    public LootTables getLootTableManager()
+    public LootTables getLootTables()
     {
-        return this.lootTableManager;
+        return this.lootTables;
     }
 
     public void setTable(LootTable table)

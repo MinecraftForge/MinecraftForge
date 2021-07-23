@@ -43,9 +43,9 @@ public class ChunkDataEvent extends ChunkEvent
         this.data = data;
     }
 
-    public ChunkDataEvent(ChunkAccess chunk, LevelAccessor world, CompoundTag data)
+    public ChunkDataEvent(ChunkAccess chunk, LevelAccessor level, CompoundTag data)
     {
-        super(chunk, world);
+        super(chunk, level);
         this.data = data;
     }
 
@@ -67,7 +67,7 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Load extends ChunkDataEvent
     {
-        private ChunkStatus.ChunkType status;
+        private final ChunkStatus.ChunkType status;
 
         public Load(ChunkAccess chunk, CompoundTag data, ChunkStatus.ChunkType status)
         {
@@ -94,9 +94,9 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Save extends ChunkDataEvent
     {
-        public Save(ChunkAccess chunk, LevelAccessor world, CompoundTag data)
+        public Save(ChunkAccess chunk, LevelAccessor level, CompoundTag data)
         {
-            super(chunk, world, data);
+            super(chunk, level, data);
         }
     }
 }

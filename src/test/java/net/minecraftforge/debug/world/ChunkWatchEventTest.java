@@ -59,7 +59,7 @@ public class ChunkWatchEventTest
         --watched;
         watchedByPlayer.put(event.getPlayer().getUUID(), watched);
         logger.info("Unwatching chunk {} in dimension {}. Player's dimension: {}, total chunks watched by player {}",
-                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getCommandSenderWorld()),
+                event.getPos(), getDimensionName(event.getLevel()), getDimensionName(event.getPlayer().getCommandSenderWorld()),
                 watched);
     }
 
@@ -70,7 +70,7 @@ public class ChunkWatchEventTest
         ++watched;
         watchedByPlayer.put(event.getPlayer().getUUID(), watched);
         logger.info("Watching chunk {} in dimension {}. Player's dimension: {}, total chunks watched by player {}",
-                event.getPos(), getDimensionName(event.getWorld()), getDimensionName(event.getPlayer().getCommandSenderWorld()),
+                event.getPos(), getDimensionName(event.getLevel()), getDimensionName(event.getPlayer().getCommandSenderWorld()),
                 watched);
     }
 

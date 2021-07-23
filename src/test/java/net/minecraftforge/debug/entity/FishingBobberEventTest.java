@@ -46,7 +46,7 @@ public class FishingBobberEventTest
     public static void handleImpact(ProjectileImpactEvent<FishingHook> event)
     {
         FishingHook fishingHook = event.getProjectile();
-        HitResult trace = event.getRayTraceResult();
+        HitResult trace = event.getHitResult();
         if (trace.getType() == HitResult.Type.ENTITY)
         {
             Vec3 vector3d = fishingHook.getDeltaMovement().multiply(1.0D, 0.0D, 1.0D).normalize().scale(0.6);

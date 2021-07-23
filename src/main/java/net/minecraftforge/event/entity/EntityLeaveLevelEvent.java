@@ -27,7 +27,7 @@ import net.minecraft.world.level.Level;
  * This event is fired whenever an Entity is removed from the world in
  * {@link ClientWorld#removeEntity(Entity)}, {@link ServerWorld#removeEntityComplete(Entity,Boolean)}. <br>
  * <br>
- * {@link #world} contains the world from which the entity is removed. <br>
+ * {@link #level} contains the world from which the entity is removed. <br>
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
@@ -35,18 +35,18 @@ import net.minecraft.world.level.Level;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}
  */
-public class EntityLeaveWorldEvent extends EntityEvent
+public class EntityLeaveLevelEvent extends EntityEvent
 {
-    private final Level world;
+    private final Level level;
 
-    public EntityLeaveWorldEvent(Entity entity, Level world)
+    public EntityLeaveLevelEvent(Entity entity, Level level)
     {
         super(entity);
-        this.world = world;
+        this.level = level;
     }
 
-    public Level getWorld()
+    public Level getLevel()
     {
-        return world;
+        return level;
     }
 }

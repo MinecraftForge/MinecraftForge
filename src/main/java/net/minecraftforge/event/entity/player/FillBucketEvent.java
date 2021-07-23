@@ -43,17 +43,17 @@ import javax.annotation.Nullable;
 public class FillBucketEvent extends PlayerEvent
 {
     private final ItemStack current;
-    private final Level world;
+    private final Level level;
     @Nullable
     private final HitResult target;
 
     private ItemStack result;
 
-    public FillBucketEvent(Player player, @Nonnull ItemStack current, Level world, @Nullable HitResult target)
+    public FillBucketEvent(Player player, @Nonnull ItemStack current, Level level, @Nullable HitResult target)
     {
         super(player);
         this.current = current;
-        this.world = world;
+        this.level = level;
         this.target = target;
     }
 
@@ -63,9 +63,9 @@ public class FillBucketEvent extends PlayerEvent
         return this.current;
     }
 
-    public Level getWorld()
+    public Level getLevel()
     {
-        return this.world;
+        return this.level;
     }
 
     @Nullable

@@ -32,6 +32,12 @@ public class LivingPackSizeEvent extends LivingEvent
         super(entity);
     }
 
+    @Override
+    public Mob getEntity()
+    {
+        return (Mob) super.getEntity();
+    }
+
     /**
      * This event is fired when the spawning system determines the
      * maximum amount of the selected entity that can spawn at the same
