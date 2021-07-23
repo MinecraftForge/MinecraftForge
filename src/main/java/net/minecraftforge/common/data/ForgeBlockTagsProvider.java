@@ -61,7 +61,7 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(FENCES).addTags(FENCES_NETHER_BRICK, FENCES_WOODEN);
         tag(FENCES_NETHER_BRICK).add(Blocks.NETHER_BRICK_FENCE);
         tag(FENCES_WOODEN).add(Blocks.OAK_FENCE, Blocks.SPRUCE_FENCE, Blocks.BIRCH_FENCE, Blocks.JUNGLE_FENCE, Blocks.ACACIA_FENCE, Blocks.DARK_OAK_FENCE,  Blocks.CRIMSON_FENCE, Blocks.WARPED_FENCE);
-        tag(GLASS).addTags(GLASS_COLORLESS, STAINED_GLASS);
+        tag(GLASS).addTags(GLASS_COLORLESS, STAINED_GLASS, GLASS_TINTED);
         tag(GLASS_COLORLESS).add(Blocks.GLASS);
         addColored(tag(STAINED_GLASS)::add, GLASS, "{color}_stained_glass");
         tag(GLASS_PANES).addTags(GLASS_PANES_COLORLESS, STAINED_GLASS_PANES);

@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "#forge:glass/colorless",
-    "#forge:stained_glass"
+    "#forge:stained_glass",
+    "#forge:tinted_glass"
   ]
 }
