@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:raw_storage_blocks/gold",
+    "#forge:raw_storage_blocks/iron",
+    "#forge:raw_storage_blocks/copper"
+  ]
+}

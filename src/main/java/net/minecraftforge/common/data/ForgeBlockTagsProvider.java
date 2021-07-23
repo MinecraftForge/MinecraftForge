@@ -20,20 +20,20 @@
 package net.minecraftforge.common.data;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.world.item.DyeColor;
+import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.data.tags.BlockTagsProvider;
-
-import static net.minecraftforge.common.Tags.Blocks.*;
+import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.Locale;
 import java.util.function.Consumer;
+
+import static net.minecraftforge.common.Tags.Blocks.*;
 
 public final class ForgeBlockTagsProvider extends BlockTagsProvider
 {
@@ -52,8 +52,8 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(CHESTS_ENDER).add(Blocks.ENDER_CHEST);
         tag(CHESTS_TRAPPED).add(Blocks.TRAPPED_CHEST);
         tag(CHESTS_WOODEN).add(Blocks.CHEST, Blocks.TRAPPED_CHEST);
-        tag(COBBLESTONE).add(Blocks.COBBLESTONE, Blocks.INFESTED_COBBLESTONE, Blocks.MOSSY_COBBLESTONE);
-        tag(DIRT).add(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.COARSE_DIRT, Blocks.PODZOL, Blocks.MYCELIUM);
+        tag(COBBLESTONE).add(Blocks.COBBLESTONE, Blocks.INFESTED_COBBLESTONE, Blocks.MOSSY_COBBLESTONE, Blocks.COBBLED_DEEPSLATE);
+        tag(DIRT).add(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.COARSE_DIRT, Blocks.PODZOL, Blocks.MYCELIUM, Blocks.ROOTED_DIRT);
         tag(END_STONES).add(Blocks.END_STONE);
         tag(ENDERMAN_PLACE_ON_BLACKLIST);
         tag(FENCE_GATES).addTags(FENCE_GATES_WOODEN);
@@ -67,25 +67,27 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(GLASS_PANES).addTags(GLASS_PANES_COLORLESS, STAINED_GLASS_PANES);
         tag(GLASS_PANES_COLORLESS).add(Blocks.GLASS_PANE);
         addColored(tag(STAINED_GLASS_PANES)::add, GLASS_PANES, "{color}_stained_glass_pane");
+        tag(TINTED_GLASS).add(Blocks.TINTED_GLASS);
         tag(GRAVEL).add(Blocks.GRAVEL);
         tag(NETHERRACK).add(Blocks.NETHERRACK);
         tag(OBSIDIAN).add(Blocks.OBSIDIAN);
         tag(ORES).addTags(ORES_COAL, ORES_DIAMOND, ORES_EMERALD, ORES_GOLD, ORES_IRON, ORES_LAPIS, ORES_REDSTONE, ORES_QUARTZ, ORES_NETHERITE_SCRAP);
-        tag(ORES_COAL).add(Blocks.COAL_ORE);
-        tag(ORES_DIAMOND).add(Blocks.DIAMOND_ORE);
-        tag(ORES_EMERALD).add(Blocks.EMERALD_ORE);
+        tag(ORES_COAL).add(Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE);
+        tag(ORES_DIAMOND).add(Blocks.DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE);
+        tag(ORES_EMERALD).add(Blocks.EMERALD_ORE, Blocks.DEEPSLATE_EMERALD_ORE);
         tag(ORES_GOLD).addTag(BlockTags.GOLD_ORES);
-        tag(ORES_IRON).add(Blocks.IRON_ORE);
-        tag(ORES_LAPIS).add(Blocks.LAPIS_ORE);
+        tag(ORES_IRON).add(Blocks.IRON_ORE, Blocks.DEEPSLATE_IRON_ORE);
+        tag(ORES_LAPIS).add(Blocks.LAPIS_ORE, Blocks.DEEPSLATE_LAPIS_ORE);
         tag(ORES_QUARTZ).add(Blocks.NETHER_QUARTZ_ORE);
-        tag(ORES_REDSTONE).add(Blocks.REDSTONE_ORE);
+        tag(ORES_REDSTONE).add(Blocks.REDSTONE_ORE, Blocks.DEEPSLATE_REDSTONE_ORE);
         tag(ORES_NETHERITE_SCRAP).add(Blocks.ANCIENT_DEBRIS);
+        tag(ORES_COPPER).add(Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE);
         tag(SAND).addTags(SAND_COLORLESS, SAND_RED);
         tag(SAND_COLORLESS).add(Blocks.SAND);
         tag(SAND_RED).add(Blocks.RED_SAND);
         tag(SANDSTONE).add(Blocks.SANDSTONE, Blocks.CUT_SANDSTONE, Blocks.CHISELED_SANDSTONE, Blocks.SMOOTH_SANDSTONE, Blocks.RED_SANDSTONE, Blocks.CUT_RED_SANDSTONE, Blocks.CHISELED_RED_SANDSTONE, Blocks.SMOOTH_RED_SANDSTONE);
-        tag(STONE).add(Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE, Blocks.INFESTED_STONE, Blocks.STONE, Blocks.POLISHED_ANDESITE, Blocks.POLISHED_DIORITE, Blocks.POLISHED_GRANITE);
-        tag(STORAGE_BLOCKS).addTags(STORAGE_BLOCKS_COAL, STORAGE_BLOCKS_DIAMOND, STORAGE_BLOCKS_EMERALD, STORAGE_BLOCKS_GOLD, STORAGE_BLOCKS_IRON, STORAGE_BLOCKS_LAPIS, STORAGE_BLOCKS_QUARTZ, STORAGE_BLOCKS_REDSTONE, STORAGE_BLOCKS_NETHERITE);
+        tag(STONE).add(Blocks.ANDESITE, Blocks.DIORITE, Blocks.GRANITE, Blocks.INFESTED_STONE, Blocks.STONE, Blocks.POLISHED_ANDESITE, Blocks.POLISHED_DIORITE, Blocks.POLISHED_GRANITE, Blocks.DEEPSLATE, Blocks.POLISHED_DEEPSLATE, Blocks.INFESTED_DEEPSLATE, Blocks.TUFF);
+        tag(STORAGE_BLOCKS).addTags(STORAGE_BLOCKS_COAL, STORAGE_BLOCKS_DIAMOND, STORAGE_BLOCKS_EMERALD, STORAGE_BLOCKS_GOLD, STORAGE_BLOCKS_IRON, STORAGE_BLOCKS_LAPIS, STORAGE_BLOCKS_QUARTZ, STORAGE_BLOCKS_REDSTONE, STORAGE_BLOCKS_NETHERITE, STORAGE_BLOCKS_COPPER);
         tag(STORAGE_BLOCKS_COAL).add(Blocks.COAL_BLOCK);
         tag(STORAGE_BLOCKS_DIAMOND).add(Blocks.DIAMOND_BLOCK);
         tag(STORAGE_BLOCKS_EMERALD).add(Blocks.EMERALD_BLOCK);
@@ -95,6 +97,12 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(STORAGE_BLOCKS_QUARTZ).add(Blocks.QUARTZ_BLOCK);
         tag(STORAGE_BLOCKS_REDSTONE).add(Blocks.REDSTONE_BLOCK);
         tag(STORAGE_BLOCKS_NETHERITE).add(Blocks.NETHERITE_BLOCK);
+        tag(STORAGE_BLOCKS_COPPER).add(Blocks.COPPER_BLOCK, Blocks.CUT_COPPER);
+        tag(RAW_STORAGE_BLOCKS).addTags(RAW_STORAGE_BLOCKS_GOLD, RAW_STORAGE_BLOCKS_IRON, RAW_STORAGE_BLOCKS_COPPER);
+        tag(RAW_STORAGE_BLOCKS_GOLD).add(Blocks.RAW_GOLD_BLOCK);
+        tag(RAW_STORAGE_BLOCKS_IRON).add(Blocks.RAW_IRON_BLOCK);
+        tag(RAW_STORAGE_BLOCKS_COPPER).add(Blocks.RAW_COPPER_BLOCK);
+        tag(CANDLES).add(Blocks.CANDLE, Blocks.BLACK_CANDLE, Blocks.BLUE_CANDLE, Blocks.BROWN_CANDLE, Blocks.CYAN_CANDLE, Blocks.GRAY_CANDLE, Blocks.GREEN_CANDLE, Blocks.LIGHT_BLUE_CANDLE, Blocks.LIGHT_GRAY_CANDLE, Blocks.LIME_CANDLE, Blocks.MAGENTA_CANDLE, Blocks.ORANGE_CANDLE, Blocks.PINK_CANDLE, Blocks.PURPLE_CANDLE, Blocks.RED_CANDLE, Blocks.WHITE_CANDLE, Blocks.YELLOW_CANDLE);
     }
 
     private void addColored(Consumer<Block> consumer, Tag.Named<Block> group, String pattern)

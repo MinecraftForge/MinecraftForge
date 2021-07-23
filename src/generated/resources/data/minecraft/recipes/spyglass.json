@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " # ",
+    " X ",
+    " X "
+  ],
+  "key": {
+    "#": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "X": {
+      "tag": "forge:ingots/copper"
+    }
+  },
+  "result": {
+    "item": "minecraft:spyglass"
+  }
+}

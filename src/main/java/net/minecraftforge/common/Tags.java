@@ -114,6 +114,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final IOptionalNamedTag<Block> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Block> ORES_REDSTONE = tag("ores/redstone");
+        public static final IOptionalNamedTag<Block> ORES_COPPER = tag("ores/copper");
 
         public static final IOptionalNamedTag<Block> SAND = tag("sand");
         public static final IOptionalNamedTag<Block> SAND_COLORLESS = tag("sand/colorless");
@@ -122,6 +123,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> SANDSTONE = tag("sandstone");
         public static final IOptionalNamedTag<Block> STAINED_GLASS = tag("stained_glass");
         public static final IOptionalNamedTag<Block> STAINED_GLASS_PANES = tag("stained_glass_panes");
+        public static final IOptionalNamedTag<Block> TINTED_GLASS = tag("tinted_glass");
         public static final IOptionalNamedTag<Block> STONE = tag("stone");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS = tag("storage_blocks");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_COAL = tag("storage_blocks/coal");
@@ -133,6 +135,12 @@ public class Tags
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
+        public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_COPPER = tag("storage_blocks/copper");
+        public static final IOptionalNamedTag<Block> RAW_STORAGE_BLOCKS = tag("raw_storage_blocks");
+        public static final IOptionalNamedTag<Block> RAW_STORAGE_BLOCKS_GOLD = tag("raw_storage_blocks/gold");
+        public static final IOptionalNamedTag<Block> RAW_STORAGE_BLOCKS_IRON = tag("raw_storage_blocks/iron");
+        public static final IOptionalNamedTag<Block> RAW_STORAGE_BLOCKS_COPPER = tag("raw_storage_blocks/copper");
+        public static final IOptionalNamedTag<Block> CANDLES = tag("candles");
 
         public static final IOptionalNamedTag<Block> NEEDS_WOOD_TOOL = tag("needs_wood_tool");
         public static final IOptionalNamedTag<Block> NEEDS_GOLD_TOOL = tag("needs_gold_tool");
@@ -202,6 +210,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> GEMS_LAPIS = tag("gems/lapis");
         public static final IOptionalNamedTag<Item> GEMS_PRISMARINE = tag("gems/prismarine");
         public static final IOptionalNamedTag<Item> GEMS_QUARTZ = tag("gems/quartz");
+        public static final IOptionalNamedTag<Item> GEMS_AMETHYST = tag("gems/amethyst");
 
         public static final IOptionalNamedTag<Item> GLASS = tag("glass");
         public static final IOptionalNamedTag<Item> GLASS_BLACK = tag("glass/black");
@@ -250,6 +259,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> INGOTS_IRON = tag("ingots/iron");
         public static final IOptionalNamedTag<Item> INGOTS_NETHERITE = tag("ingots/netherite");
         public static final IOptionalNamedTag<Item> INGOTS_NETHER_BRICK = tag("ingots/nether_brick");
+        public static final IOptionalNamedTag<Item> INGOTS_COPPER = tag("ingots/copper");
         public static final IOptionalNamedTag<Item> LEATHER = tag("leather");
         public static final IOptionalNamedTag<Item> MUSHROOMS = tag("mushrooms");
         public static final IOptionalNamedTag<Item> NETHER_STARS = tag("nether_stars");
@@ -268,9 +278,14 @@ public class Tags
         public static final IOptionalNamedTag<Item> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final IOptionalNamedTag<Item> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Item> ORES_REDSTONE = tag("ores/redstone");
+        public static final IOptionalNamedTag<Item> ORES_COPPER = tag("ores/copper");
         public static final IOptionalNamedTag<Item> RODS = tag("rods");
         public static final IOptionalNamedTag<Item> RODS_BLAZE = tag("rods/blaze");
         public static final IOptionalNamedTag<Item> RODS_WOODEN = tag("rods/wooden");
+        public static final IOptionalNamedTag<Item> RAW_ORES = tag("raw_ores");
+        public static final IOptionalNamedTag<Item> RAW_ORES_GOLD = tag("raw_ores/gold");
+        public static final IOptionalNamedTag<Item> RAW_ORES_IRON = tag("raw_ores/iron");
+        public static final IOptionalNamedTag<Item> RAW_ORES_COPPER = tag("raw_ores/copper");
 
         public static final IOptionalNamedTag<Item> SAND = tag("sand");
         public static final IOptionalNamedTag<Item> SAND_COLORLESS = tag("sand/colorless");
@@ -286,6 +301,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> SLIMEBALLS = tag("slimeballs");
         public static final IOptionalNamedTag<Item> STAINED_GLASS = tag("stained_glass");
         public static final IOptionalNamedTag<Item> STAINED_GLASS_PANES = tag("stained_glass_panes");
+        public static final IOptionalNamedTag<Item> TINTED_GLASS = tag("tinted_glass");
         public static final IOptionalNamedTag<Item> STONE = tag("stone");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS = tag("storage_blocks");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_COAL = tag("storage_blocks/coal");
@@ -297,7 +313,13 @@ public class Tags
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
+        public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_COPPER = tag("storage_blocks/copper");
+        public static final IOptionalNamedTag<Item> RAW_STORAGE_BLOCKS = tag("raw_storage_blocks");
+        public static final IOptionalNamedTag<Item> RAW_STORAGE_BLOCKS_GOLD = tag("raw_storage_blocks/gold");
+        public static final IOptionalNamedTag<Item> RAW_STORAGE_BLOCKS_IRON = tag("raw_storage_blocks/iron");
+        public static final IOptionalNamedTag<Item> RAW_STORAGE_BLOCKS_COPPER = tag("raw_storage_blocks/copper");
         public static final IOptionalNamedTag<Item> STRING = tag("string");
+        public static final IOptionalNamedTag<Item> CANDLES = tag("candles");
 
         private static IOptionalNamedTag<Item> tag(String name, @Nullable Set<Supplier<Item>> defaults)
         {
