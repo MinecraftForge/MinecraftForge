@@ -8,6 +8,7 @@ pluginManagement {
 rootProject.name = 'ForgeRoot'
 
 include 'fmlloader'
+include 'fmlcommon'
 include 'fmlcore'
 include 'mclanguage'
 include 'javafmllanguage'

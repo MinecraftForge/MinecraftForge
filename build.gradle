@@ -478,10 +478,6 @@ def sharedFmlonlyForge = { Project prj ->
     }
 }
 
-def symlink = file("$rootDir/fmlonly/src/fmlcommon")
-def symlinkValid = symlink.exists() && symlink.directory
-
-if (symlinkValid)
 project(':fmlonly') {
     evaluationDependsOn(':mcp')
     apply plugin: 'java-library'
@@ -496,10 +492,10 @@ project(':fmlonly') {
     sourceSets {
         main {
             java {
-                srcDirs = ["$rootDir/fmlonly/src/fmlcommon/java", "$rootDir/fmlonly/src/main/java"]
+                srcDirs = ["$rootDir/fmlonly/src/main/java"]
             }
             resources {
-                srcDirs = ["$rootDir/fmlonly/src/fmlcommon/resources", "$rootDir/fmlonly/src/main/resources"]
+                srcDirs = ["$rootDir/fmlonly/src/main/resources"]
             }
         }
     }
@@ -515,6 +511,7 @@ project(':fmlonly') {
 
     // TODO: Better coordination between project dependencies and the installer.
     dependencies {
+        implementation project(':fmlcommon')
         implementation project(':fmlcore')
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
@@ -771,15 +768,13 @@ project(':forge') {
         main {
             java {
                 srcDirs = [
-                    "$rootDir/src/main/java",
-                    "$rootDir/src/fmlcommon/java"
+                    "$rootDir/src/main/java"
                 ]
             }
             resources {
                 srcDirs = [
                     "$rootDir/src/main/resources",
-                    "$rootDir/src/generated/resources",
-                    "$rootDir/src/fmlcommon/resources"
+                    "$rootDir/src/generated/resources"
                 ]
             }
         }
@@ -824,7 +819,8 @@ project(':forge') {
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
         testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
         testImplementation 'org.opentest4j:opentest4j:1.2.0' // needed for junit 5
-        testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
+        testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order'
+        implementation project(':fmlcommon')
         implementation project(':fmlcore')
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
@@ -1405,7 +1401,6 @@ project(':forge') {
 //evaluationDependsOnChildren()
 task setup() {  //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
     dependsOn ':clean:extractMapped'
-    if (symlinkValid)
-        dependsOn ':fmlonly:extractMapped'
+    dependsOn ':fmlonly:extractMapped'
     dependsOn ':forge:extractMapped'
 }
