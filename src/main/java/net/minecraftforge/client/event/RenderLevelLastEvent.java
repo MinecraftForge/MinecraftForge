@@ -23,37 +23,38 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.renderer.LevelRenderer;
 import com.mojang.math.Matrix4f;
+import net.minecraftforge.eventbus.api.Event;
 
-public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
+public class RenderLevelLastEvent extends Event
 {
-    private final LevelRenderer context;
-    private final PoseStack mat;
-    private final float partialTicks;
+    private final LevelRenderer levelRenderer;
+    private final PoseStack poseStack;
+    private final float partialTick;
     private final Matrix4f projectionMatrix;
-    private final long finishTimeNano;
+    private final long startTimeNanos;
 
-    public RenderWorldLastEvent(LevelRenderer context, PoseStack mat, float partialTicks, Matrix4f projectionMatrix, long finishTimeNano)
+    public RenderLevelLastEvent(LevelRenderer levelRenderer, PoseStack matrixStack, float partialTick, Matrix4f projectionMatrix, long startTimeNanos)
     {
-        this.context = context;
-        this.mat = mat;
-        this.partialTicks = partialTicks;
+        this.levelRenderer = levelRenderer;
+        this.poseStack = matrixStack;
+        this.partialTick = partialTick;
         this.projectionMatrix = projectionMatrix;
-        this.finishTimeNano = finishTimeNano;
+        this.startTimeNanos = startTimeNanos;
     }
 
-    public LevelRenderer getContext()
+    public LevelRenderer getLevelRenderer()
     {
-        return context;
+        return levelRenderer;
     }
 
-    public PoseStack getMatrixStack()
+    public PoseStack getPoseStack()
     {
-        return mat;
+        return poseStack;
     }
 
-    public float getPartialTicks()
+    public float getPartialTick()
     {
-        return partialTicks;
+        return partialTick;
     }
 
     public Matrix4f getProjectionMatrix()
@@ -61,8 +62,8 @@ public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
         return projectionMatrix;
     }
 
-    public long getFinishTimeNano()
+    public long getStartTimeNanos()
     {
-        return finishTimeNano;
+        return startTimeNanos;
     }
 }

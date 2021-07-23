@@ -38,25 +38,25 @@ import net.minecraftforge.eventbus.api.Event;
 public class RenderHandEvent extends Event
 {
     private final InteractionHand hand;
-    private final PoseStack mat;
-    private final MultiBufferSource buffers;
+    private final PoseStack poseStack;
+    private final MultiBufferSource bufferSource;
     private final int light;
-    private final float partialTicks;
+    private final float partialTick;
     private final float interpolatedPitch;
     private final float swingProgress;
     private final float equipProgress;
     @Nonnull
     private final ItemStack stack;
 
-    public RenderHandEvent(InteractionHand hand, PoseStack mat, MultiBufferSource buffers, int light,
-                           float partialTicks, float interpolatedPitch,
+    public RenderHandEvent(InteractionHand hand, PoseStack poseStack, MultiBufferSource bufferSource, int light,
+                           float partialTick, float interpolatedPitch,
                            float swingProgress, float equipProgress, @Nonnull ItemStack stack)
     {
         this.hand = hand;
-        this.mat = mat;
-        this.buffers = buffers;
+        this.poseStack = poseStack;
+        this.bufferSource = bufferSource;
         this.light = light;
-        this.partialTicks = partialTicks;
+        this.partialTick = partialTick;
         this.interpolatedPitch = interpolatedPitch;
         this.swingProgress = swingProgress;
         this.equipProgress = equipProgress;
@@ -68,14 +68,14 @@ public class RenderHandEvent extends Event
         return hand;
     }
 
-    public PoseStack getMatrixStack()
+    public PoseStack getPoseStack()
     {
-        return mat;
+        return poseStack;
     }
 
-    public MultiBufferSource getBuffers()
+    public MultiBufferSource getBufferSource()
     {
-        return buffers;
+        return bufferSource;
     }
 
     public int getLight()
@@ -83,9 +83,9 @@ public class RenderHandEvent extends Event
         return light;
     }
 
-    public float getPartialTicks()
+    public float getPartialTick()
     {
-        return partialTicks;
+        return partialTick;
     }
 
     /**

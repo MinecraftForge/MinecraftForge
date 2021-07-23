@@ -20,14 +20,14 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Camera;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.client.Camera;
-import net.minecraft.client.renderer.LevelRenderer;
 
 /**
  * An event called whenever the selection highlight around a block or entity is about to be rendered.
@@ -36,51 +36,51 @@ import net.minecraft.client.renderer.LevelRenderer;
 @Cancelable
 public class DrawSelectionEvent extends Event
 {
-    private final LevelRenderer context;
-    private final Camera info;
-    private final HitResult target;
-    private final float partialTicks;
-    private final PoseStack matrix;
-    private final MultiBufferSource buffers;
+    private final LevelRenderer levelRenderer;
+    private final Camera camera;
+    private final HitResult hitResult;
+    private final float partialTick;
+    private final PoseStack poseStack;
+    private final MultiBufferSource bufferSource;
 
-    public DrawSelectionEvent(LevelRenderer context, Camera info, HitResult target, float partialTicks, PoseStack matrix, MultiBufferSource buffers)
+    public DrawSelectionEvent(LevelRenderer levelRenderer, Camera camera, HitResult hitResult, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
     {
-        this.context = context;
-        this.info = info;
-        this.target = target;
-        this.partialTicks= partialTicks;
-        this.matrix = matrix;
-        this.buffers = buffers;
+        this.levelRenderer = levelRenderer;
+        this.camera = camera;
+        this.hitResult = hitResult;
+        this.partialTick = partialTick;
+        this.poseStack = poseStack;
+        this.bufferSource = bufferSource;
     }
 
-    public LevelRenderer getContext()
+    public LevelRenderer getLevelRenderer()
     {
-        return context;
+        return levelRenderer;
     }
 
-    public Camera getInfo()
+    public Camera getCamera()
     {
-        return info;
+        return camera;
     }
 
-    public HitResult getTarget()
+    public HitResult getHitResult()
     {
-        return target;
+        return hitResult;
     }
 
-    public float getPartialTicks()
+    public float getPartialTick()
     {
-        return partialTicks;
+        return partialTick;
     }
 
-    public PoseStack getMatrix()
+    public PoseStack getPoseStack()
     {
-        return matrix;
+        return poseStack;
     }
 
-    public MultiBufferSource getBuffers()
+    public MultiBufferSource getBufferSource()
     {
-        return buffers;
+        return bufferSource;
     }
 
     /**
@@ -89,15 +89,15 @@ public class DrawSelectionEvent extends Event
     @Cancelable
     public static class HighlightBlock extends DrawSelectionEvent
     {
-        public HighlightBlock(LevelRenderer context, Camera info, HitResult target, float partialTicks, PoseStack matrix, MultiBufferSource buffers)
+        public HighlightBlock(LevelRenderer levelRenderer, Camera camera, BlockHitResult hitResult, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
         {
-            super(context, info, target, partialTicks, matrix, buffers);
+            super(levelRenderer, camera, hitResult, partialTick, poseStack, bufferSource);
         }
 
         @Override
-        public BlockHitResult getTarget()
+        public BlockHitResult getHitResult()
         {
-            return (BlockHitResult) super.target;
+            return (BlockHitResult) super.hitResult;
         }
     }
 
@@ -108,15 +108,15 @@ public class DrawSelectionEvent extends Event
     @Cancelable
     public static class HighlightEntity extends DrawSelectionEvent
     {
-        public HighlightEntity(LevelRenderer context, Camera info, HitResult target, float partialTicks, PoseStack matrix, MultiBufferSource buffers)
+        public HighlightEntity(LevelRenderer levelRenderer, Camera camera, EntityHitResult hitResult, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource)
         {
-            super(context, info, target, partialTicks, matrix, buffers);
+            super(levelRenderer, camera, hitResult, partialTick, poseStack, bufferSource);
         }
 
         @Override
-        public EntityHitResult getTarget()
+        public EntityHitResult getHitResult()
         {
-            return (EntityHitResult) super.target;
+            return (EntityHitResult) super.hitResult;
         }
     }
 }

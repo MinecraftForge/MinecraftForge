@@ -31,19 +31,19 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
 {
     private final LivingEntity entity;
     private final LivingEntityRenderer<T, M> renderer;
-    private final float partialRenderTick;
-    private final PoseStack matrixStack;
-    private final MultiBufferSource buffers;
+    private final float renderTick;
+    private final PoseStack poseStack;
+    private final MultiBufferSource bufferSource;
     private final int light;
 
-    public RenderLivingEvent(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialRenderTick, PoseStack matrixStack,
-                             MultiBufferSource buffers, int light)
+    public RenderLivingEvent(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float renderTick, PoseStack poseStack,
+                             MultiBufferSource bufferSource, int light)
     {
         this.entity = entity;
         this.renderer = renderer;
-        this.partialRenderTick = partialRenderTick;
-        this.matrixStack = matrixStack;
-        this.buffers = buffers;
+        this.renderTick = renderTick;
+        this.poseStack = poseStack;
+        this.bufferSource = bufferSource;
         this.light = light;
     }
 
@@ -57,19 +57,19 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
         return renderer;
     }
 
-    public float getPartialRenderTick()
+    public float getRenderTick()
     {
-        return partialRenderTick;
+        return renderTick;
     }
 
-    public PoseStack getMatrixStack()
+    public PoseStack getPoseStack()
     {
-        return matrixStack;
+        return poseStack;
     }
 
-    public MultiBufferSource getBuffers()
+    public MultiBufferSource getBufferSource()
     {
-        return buffers;
+        return bufferSource;
     }
 
     public int getLight()
@@ -80,17 +80,17 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
     @Cancelable
     public static class Pre<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
-        public Pre(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialRenderTick, PoseStack matrixStack, MultiBufferSource buffers, int light)
+        public Pre(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int light)
         {
-            super(entity, renderer, partialRenderTick, matrixStack, buffers, light);
+            super(entity, renderer, partialTick, poseStack, bufferSource, light);
         }
     }
 
     public static class Post<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
-        public Post(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialRenderTick, PoseStack matrixStack, MultiBufferSource buffers, int light)
+        public Post(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int light)
         {
-            super(entity, renderer, partialRenderTick, matrixStack, buffers, light);
+            super(entity, renderer, partialTick, poseStack, bufferSource, light);
         }
     }
 }

@@ -34,9 +34,9 @@ public class PlaySoundEvent extends SoundEvent
     private final SoundInstance sound;
     private SoundInstance result;
 
-    public PlaySoundEvent(SoundEngine manager, SoundInstance sound)
+    public PlaySoundEvent(SoundEngine engime, SoundInstance sound)
     {
-        super(manager);
+        super(engime);
         this.sound = sound;
         this.name = sound.getLocation().getPath();
         this.setResultSound(sound);

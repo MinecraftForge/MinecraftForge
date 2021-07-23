@@ -31,16 +31,48 @@ import net.minecraft.client.gui.components.LerpingBossEvent;
 @Cancelable
 public class RenderGameOverlayEvent extends Event
 {
-    public PoseStack getMatrixStack()
+    public enum ElementType
     {
-        return mStack;
+        ALL,
+        LAYER,
+        BOSS_EVENT,    // Individual boss bar
+        TEXT,
+        CHAT,
+        PLAYER_LIST,
+        DEBUG
     }
 
-    public float getPartialTicks()
+    private final PoseStack poseStack;
+    private final float partialTick;
+    private final Window window;
+    private final ElementType type;
+
+    public RenderGameOverlayEvent(PoseStack poseStack, float partialTick, Window window)
     {
-        return partialTicks;
+        this.poseStack = poseStack;
+        this.partialTick = partialTick;
+        this.window = window;
+        this.type = null;
     }
-    
+
+    private RenderGameOverlayEvent(PoseStack poseStack, RenderGameOverlayEvent parent, ElementType type)
+    {
+        this.poseStack = poseStack;
+        this.partialTick = parent.getPartialTick();
+        this.window = parent.getWindow();
+        this.type = type;
+    }
+
+    public PoseStack getPoseStack()
+    {
+        return poseStack;
+    }
+
+    public float getPartialTick()
+    {
+        return partialTick;
+    }
+
     public Window getWindow()
     {
         return window;
@@ -51,51 +83,19 @@ public class RenderGameOverlayEvent extends Event
         return type;
     }
 
-    public enum ElementType
-    {
-        ALL,
-        LAYER,
-        BOSSINFO,    // Individual boss bar
-        TEXT,
-        CHAT,
-        PLAYER_LIST,
-        DEBUG
-    }
-
-    private final PoseStack mStack;
-    private final float partialTicks;
-    private final Window window;
-    private final ElementType type;
-
-    public RenderGameOverlayEvent(PoseStack mStack, float partialTicks, Window window)
-    {
-        this.mStack = mStack;
-        this.partialTicks = partialTicks;
-        this.window = window;
-        this.type = null;
-    }
-
-    private RenderGameOverlayEvent(PoseStack mStack, RenderGameOverlayEvent parent, ElementType type)
-    {
-        this.mStack = mStack;
-        this.partialTicks = parent.getPartialTicks();
-        this.window = parent.getWindow();
-        this.type = type;
-    }
-
     public static class Pre extends RenderGameOverlayEvent
     {
-        public Pre(PoseStack mStack, RenderGameOverlayEvent parent, ElementType type)
+        public Pre(PoseStack poseStack, RenderGameOverlayEvent parent, ElementType type)
         {
-            super(mStack, parent, type);
+            super(poseStack, parent, type);
         }
     }
 
     public static class Post extends RenderGameOverlayEvent
     {
-        public Post(PoseStack mStack, RenderGameOverlayEvent parent, ElementType type)
+        public Post(PoseStack poseStack, RenderGameOverlayEvent parent, ElementType type)
         {
-            super(mStack, parent, type);
+            super(poseStack, parent, type);
         }
         @Override public boolean isCancelable(){ return false; }
     }
@@ -132,16 +132,17 @@ public class RenderGameOverlayEvent extends Event
         }
     }
 
-    public static class BossInfo extends Pre
+    public static class BossEvent extends Pre
     {
-        private final LerpingBossEvent bossInfo;
+        private final LerpingBossEvent bossEvent;
         private final int x;
         private final int y;
         private int increment;
-        public BossInfo(PoseStack mStack, RenderGameOverlayEvent parent, ElementType type, LerpingBossEvent bossInfo, int x, int y, int increment)
+
+        public BossEvent(PoseStack mStack, RenderGameOverlayEvent parent, ElementType type, LerpingBossEvent bossEvent, int x, int y, int increment)
         {
             super(mStack, parent, type);
-            this.bossInfo = bossInfo;
+            this.bossEvent = bossEvent;
             this.x = x;
             this.y = y;
             this.increment = increment;
@@ -150,9 +151,9 @@ public class RenderGameOverlayEvent extends Event
         /**
          * @return The {@link ClientBossInfo} currently being rendered
          */
-        public LerpingBossEvent getBossInfo()
+        public LerpingBossEvent getBossEvent()
         {
-            return bossInfo;
+            return bossEvent;
         }
 
         /**
@@ -193,9 +194,10 @@ public class RenderGameOverlayEvent extends Event
     {
         private final ArrayList<String> left;
         private final ArrayList<String> right;
-        public Text(PoseStack mStack, RenderGameOverlayEvent parent, ArrayList<String> left, ArrayList<String> right)
+
+        public Text(PoseStack poseStack, RenderGameOverlayEvent parent, ArrayList<String> left, ArrayList<String> right)
         {
-            super(mStack, parent, ElementType.TEXT);
+            super(poseStack, parent, ElementType.TEXT);
             this.left = left;
             this.right = right;
         }
@@ -216,9 +218,9 @@ public class RenderGameOverlayEvent extends Event
         private int posX;
         private int posY;
 
-        public Chat(PoseStack mStack, RenderGameOverlayEvent parent, int posX, int posY)
+        public Chat(PoseStack poseStack, RenderGameOverlayEvent parent, int posX, int posY)
         {
-            super(mStack, parent, ElementType.CHAT);
+            super(poseStack, parent, ElementType.CHAT);
             this.setPosX(posX);
             this.setPosY(posY);
         }

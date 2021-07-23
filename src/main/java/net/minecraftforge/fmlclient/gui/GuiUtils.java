@@ -20,7 +20,6 @@
 package net.minecraftforge.fmlclient.gui;
 
 import com.mojang.blaze3d.vertex.VertexFormat;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
@@ -305,7 +304,7 @@ public class GuiUtils
             screenWidth = event.getScreenWidth();
             screenHeight = event.getScreenHeight();
             maxTextWidth = event.getMaxWidth();
-            font = event.getFontRenderer();
+            font = event.getFont();
 
             // RenderSystem.disableRescaleNormal();
             RenderSystem.disableDepthTest();

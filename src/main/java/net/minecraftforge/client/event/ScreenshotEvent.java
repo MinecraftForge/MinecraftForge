@@ -42,7 +42,7 @@ public class ScreenshotEvent extends Event
 {
     public static final Component DEFAULT_CANCEL_REASON = new TextComponent("Screenshot canceled");
 
-    private NativeImage image;
+    private final NativeImage image;
     private File screenshotFile;
 
     private Component resultMessage = null;
@@ -53,7 +53,7 @@ public class ScreenshotEvent extends Event
         this.screenshotFile = screenshotFile;
         try {
             this.screenshotFile = screenshotFile.getCanonicalFile(); // FORGE: Fix errors on Windows with paths that include \.\
-        } catch (IOException e) {
+        } catch (IOException ignored) { // Ignore if we can't get the canonical file
         }
     }
 

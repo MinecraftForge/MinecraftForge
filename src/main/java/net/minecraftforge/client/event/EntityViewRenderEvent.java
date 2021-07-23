@@ -33,46 +33,46 @@ import net.minecraftforge.eventbus.api.Event;
  */
 public abstract class EntityViewRenderEvent extends Event
 {
-    private final GameRenderer renderer;
-    private final Camera info;
-    private final double renderPartialTicks;
+    private final GameRenderer gameRenderer;
+    private final Camera camera;
+    private final double partialTick;
 
-    public EntityViewRenderEvent(GameRenderer renderer, Camera info, double renderPartialTicks)
+    public EntityViewRenderEvent(GameRenderer gameRenderer, Camera camera, double partialTick)
     {
-        this.renderer = renderer;
-        this.info = info;
-        this.renderPartialTicks = renderPartialTicks;
+        this.gameRenderer = gameRenderer;
+        this.camera = camera;
+        this.partialTick = partialTick;
     }
 
-    public GameRenderer getRenderer()
+    public GameRenderer getGameRenderer()
     {
-        return renderer;
+        return gameRenderer;
     }
 
-    public Camera getInfo()
+    public Camera getCamera()
     {
-        return info;
+        return camera;
     }
 
-    public double getRenderPartialTicks()
+    public double getPartialTick()
     {
-        return renderPartialTicks;
+        return partialTick;
     }
 
     private static class FogEvent extends EntityViewRenderEvent
     {
-        private final FogMode type;
+        private final FogMode mode;
 
         @SuppressWarnings("resource")
-        protected FogEvent(FogMode type, Camera info, double renderPartialTicks)
+        protected FogEvent(FogMode mode, Camera info, double renderPartialTicks)
         {
             super(Minecraft.getInstance().gameRenderer, info, renderPartialTicks);
-            this.type = type;
+            this.mode = mode;
         }
 
-        public FogMode getType()
+        public FogMode getMode()
         {
-            return type;
+            return mode;
         }
     }
 
@@ -85,9 +85,9 @@ public abstract class EntityViewRenderEvent extends Event
     {
         private float density;
 
-        public FogDensity(FogMode type, Camera info, float partialTicks, float density)
+        public FogDensity(FogMode mode, Camera camera, float partialTick, float density)
         {
-            super(type, info, partialTicks);
+            super(mode, camera, partialTick);
             this.setDensity(density);
         }
 
@@ -110,9 +110,9 @@ public abstract class EntityViewRenderEvent extends Event
     {
         private final float farPlaneDistance;
 
-        public RenderFogEvent(FogMode type, Camera info, float partialTicks, float distance)
+        public RenderFogEvent(FogMode mode, Camera camera, float partialTick, float distance)
         {
-            super(type, info, partialTicks);
+            super(mode, camera, partialTick);
             this.farPlaneDistance = distance;
         }
 
@@ -133,9 +133,9 @@ public abstract class EntityViewRenderEvent extends Event
         private float blue;
 
         @SuppressWarnings("resource")
-        public FogColors(Camera info, float partialTicks, float red, float green, float blue)
+        public FogColors(Camera camera, float partialTick, float red, float green, float blue)
         {
-            super(Minecraft.getInstance().gameRenderer, info, partialTicks);
+            super(Minecraft.getInstance().gameRenderer, camera, partialTick);
             this.setRed(red);
             this.setGreen(green);
             this.setBlue(blue);
@@ -181,9 +181,9 @@ public abstract class EntityViewRenderEvent extends Event
         private float pitch;
         private float roll;
 
-        public CameraSetup(GameRenderer renderer, Camera info, double renderPartialTicks, float yaw, float pitch, float roll)
+        public CameraSetup(GameRenderer gameRenderer, Camera camera, double partialTick, float yaw, float pitch, float roll)
         {
-            super(renderer, info, renderPartialTicks);
+            super(gameRenderer, camera, partialTick);
             this.setYaw(yaw);
             this.setPitch(pitch);
             this.setRoll(roll);
@@ -228,9 +228,9 @@ public abstract class EntityViewRenderEvent extends Event
     {
         private double fov;
 
-        public FOVModifier(GameRenderer renderer, Camera info, double renderPartialTicks, double fov)
+        public FOVModifier(GameRenderer gameRenderer, Camera camera, double partialTick, double fov)
         {
-            super(renderer, info, renderPartialTicks);
+            super(gameRenderer, camera, partialTick);
             this.setFOV(fov);
         }
 

@@ -30,22 +30,22 @@ import net.minecraft.client.gui.screens.Screen;
  *
  */
 @Cancelable
-public class GuiOpenEvent extends Event
+public class ScreenOpenEvent extends Event
 {
-    private Screen gui;
+    private Screen screen;
 
-    public GuiOpenEvent(Screen gui)
+    public ScreenOpenEvent(Screen screen)
     {
-        this.setGui(gui);
+        this.setScreen(screen);
     }
 
-    public Screen getGui()
+    public Screen getScreen()
     {
-        return gui;
+        return screen;
     }
 
-    public void setGui(Screen gui)
+    public void setScreen(Screen screen)
     {
-        this.gui = gui;
+        this.screen = screen;
     }
 }

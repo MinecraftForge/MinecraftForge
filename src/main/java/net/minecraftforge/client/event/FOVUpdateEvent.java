@@ -28,32 +28,32 @@ public class FOVUpdateEvent extends Event
 {
     private final Player entity;
     private final float fov;
-    private float newfov;
+    private float newFOV;
 
     public FOVUpdateEvent(Player entity, float fov)
     {
         this.entity = entity;
         this.fov = fov;
-        this.setNewfov(Mth.lerp(Minecraft.getInstance().options.fovEffectScale, 1.0F, fov));
+        this.setNewFOV(Mth.lerp(Minecraft.getInstance().options.fovEffectScale, 1.0F, fov));
     }
 
-    public Player getEntity()
+    public Player getPlayer()
     {
         return entity;
     }
 
-    public float getFov()
+    public float getFOV()
     {
         return fov;
     }
 
-    public float getNewfov()
+    public float getNewFOV()
     {
-        return newfov;
+        return newFOV;
     }
 
-    public void setNewfov(float newfov)
+    public void setNewFOV(float newFOV)
     {
-        this.newfov = newfov;
+        this.newFOV = newFOV;
     }
 }

@@ -27,18 +27,18 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
  * This event is fired after player movement inputs are updated.<br>
  * Handlers can freely manipulate {@link MovementInput} to cancel movement.<br>
  */
-public class InputUpdateEvent extends PlayerEvent
+public class PlayerInputUpdateEvent extends PlayerEvent
 {
-    private final Input movementInput;
+    private final Input input;
 
-    public InputUpdateEvent(Player player, Input movementInput)
+    public PlayerInputUpdateEvent(Player player, Input input)
     {
         super(player);
-        this.movementInput = movementInput;
+        this.input = input;
     }
 
-    public Input getMovementInput()
+    public Input getInput()
     {
-        return movementInput;
+        return input;
     }
 }

@@ -26,18 +26,18 @@ import net.minecraftforge.eventbus.api.Event;
 /**
  * Event class for handling GuiContainer specific events.
  */
-public class GuiContainerEvent extends Event
+public class ContainerScreenEvent extends Event
 {
-    private final AbstractContainerScreen guiContainer;
+    private final AbstractContainerScreen<?> containerScreen;
 
-    public GuiContainerEvent(AbstractContainerScreen guiContainer)
+    public ContainerScreenEvent(AbstractContainerScreen<?> containerScreen)
     {
-        this.guiContainer = guiContainer;
+        this.containerScreen = containerScreen;
     }
 
-    public AbstractContainerScreen getGuiContainer()
+    public AbstractContainerScreen<?> getContainerScreen()
     {
-        return guiContainer;
+        return containerScreen;
     }
 
     /**
@@ -46,31 +46,31 @@ public class GuiContainerEvent extends Event
      * This is useful for any slot / item specific overlays.
      * Things that need to be on top of All GUI elements but bellow tooltips and dragged stacks.
      */
-    public static class DrawForeground extends GuiContainerEvent
+    public static class DrawForeground extends ContainerScreenEvent
     {
-        private final PoseStack mStack;
+        private final PoseStack poseStack;
         private final int mouseX;
         private final int mouseY;
 
         /**
          * Called directly after the GuiContainer has drawn any foreground elements.
          *
-         * @param guiContainer The container.
-         * @param mStack       The MatrixStack.
-         * @param mouseX       The current X position of the players mouse.
-         * @param mouseY       The current Y position of the players mouse.
+         * @param containerScreen The container.
+         * @param poseStack       The MatrixStack.
+         * @param mouseX          The current X position of the players mouse.
+         * @param mouseY          The current Y position of the players mouse.
          */
-        public DrawForeground(AbstractContainerScreen guiContainer, PoseStack mStack, int mouseX, int mouseY)
+        public DrawForeground(AbstractContainerScreen<?> containerScreen, PoseStack poseStack, int mouseX, int mouseY)
         {
-            super(guiContainer);
-            this.mStack = mStack;
+            super(containerScreen);
+            this.poseStack = poseStack;
             this.mouseX = mouseX;
             this.mouseY = mouseY;
         }
 
-        public PoseStack getMatrixStack()
+        public PoseStack getPoseStack()
         {
-            return mStack;
+            return poseStack;
         }
 
         public int getMouseX()
@@ -83,36 +83,36 @@ public class GuiContainerEvent extends Event
             return mouseY;
         }
     }
-    
+
     /**
      * This event is fired directly after the GuiContainer has draw any background elements,
      * This is useful for drawing new background elements.
      */
-    public static class DrawBackground extends GuiContainerEvent
+    public static class DrawBackground extends ContainerScreenEvent
     {
-        private final PoseStack mStack;
+        private final PoseStack poseStack;
         private final int mouseX;
         private final int mouseY;
 
         /**
          * Called directly after the GuiContainer has drawn any background elements.
          *
-         * @param guiContainer The container.
-         * @param mStack       The MatrixStack.
-         * @param mouseX       The current X position of the players mouse.
-         * @param mouseY       The current Y position of the players mouse.
+         * @param containerScreen The container.
+         * @param poseStack       The MatrixStack.
+         * @param mouseX          The current X position of the players mouse.
+         * @param mouseY          The current Y position of the players mouse.
          */
-        public DrawBackground(AbstractContainerScreen guiContainer, PoseStack mStack, int mouseX, int mouseY)
+        public DrawBackground(AbstractContainerScreen<?> containerScreen, PoseStack poseStack, int mouseX, int mouseY)
         {
-            super(guiContainer);
-            this.mStack = mStack;
+            super(containerScreen);
+            this.poseStack = poseStack;
             this.mouseX = mouseX;
             this.mouseY = mouseY;
         }
 
-        public PoseStack getMatrixStack()
+        public PoseStack getPoseStack()
         {
-            return mStack;
+            return poseStack;
         }
 
         public int getMouseX()

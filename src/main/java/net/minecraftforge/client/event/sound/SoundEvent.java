@@ -25,29 +25,29 @@ import com.mojang.blaze3d.audio.Channel;
 
 public class SoundEvent extends net.minecraftforge.eventbus.api.Event
 {
-    private final SoundEngine manager;
-    public SoundEvent(SoundEngine manager)
+    private final SoundEngine engine;
+    public SoundEvent(SoundEngine engine)
     {
-        this.manager = manager;
+        this.engine = engine;
     }
 
-    public SoundEngine getManager()
+    public SoundEngine getEngine()
     {
-        return manager;
+        return engine;
     }
 
     public static class SoundSourceEvent extends SoundEvent
     {
         private final SoundInstance sound;
-        private final Channel source;
+        private final Channel channel;
         private final String name;
 
-        public SoundSourceEvent(SoundEngine manager, SoundInstance sound, Channel source)
+        public SoundSourceEvent(SoundEngine engine, SoundInstance sound, Channel channel)
         {
-            super(manager);
+            super(engine);
             this.name = sound.getLocation().getPath();
             this.sound = sound;
-            this.source = source;
+            this.channel = channel;
         }
 
         public SoundInstance getSound()
@@ -55,9 +55,9 @@ public class SoundEvent extends net.minecraftforge.eventbus.api.Event
             return sound;
         }
 
-        public Channel getSource()
+        public Channel getChannel()
         {
-            return source;
+            return channel;
         }
 
         public String getName()

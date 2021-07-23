@@ -39,24 +39,24 @@ public class RenderItemInFrameEvent extends Event
 {
     private final ItemStack item;
     private final ItemFrame entityItemFrame;
-    private final ItemFrameRenderer renderer;
-    private final PoseStack matrix;
-    private final MultiBufferSource buffers;
+    private final ItemFrameRenderer<?> renderer;
+    private final PoseStack poseStack;
+    private final MultiBufferSource bufferSource;
     private final int light;
 
-    public RenderItemInFrameEvent(ItemFrame itemFrame, ItemFrameRenderer renderItemFrame, PoseStack matrix,
-                                  MultiBufferSource buffers, int light)
+    public RenderItemInFrameEvent(ItemFrame itemFrame, ItemFrameRenderer<?> renderItemFrame, PoseStack poseStack,
+                                  MultiBufferSource bufferSource, int light)
     {
-        item = itemFrame.getItem();
-        entityItemFrame = itemFrame;
-        renderer = renderItemFrame;
-        this.matrix = matrix;
-        this.buffers = buffers;
+        this.item = itemFrame.getItem();
+        this.entityItemFrame = itemFrame;
+        this.renderer = renderItemFrame;
+        this.poseStack = poseStack;
+        this.bufferSource = bufferSource;
         this.light = light;
     }
 
     @Nonnull
-    public ItemStack getItem()
+    public ItemStack getItemStack()
     {
         return item;
     }
@@ -66,19 +66,19 @@ public class RenderItemInFrameEvent extends Event
         return entityItemFrame;
     }
 
-    public ItemFrameRenderer getRenderer()
+    public ItemFrameRenderer<?> getRenderer()
     {
         return renderer;
     }
 
-    public PoseStack getMatrix()
+    public PoseStack getPoseStack()
     {
-        return matrix;
+        return poseStack;
     }
 
-    public MultiBufferSource getBuffers()
+    public MultiBufferSource getBufferSource()
     {
-        return buffers;
+        return bufferSource;
     }
 
     public int getLight()

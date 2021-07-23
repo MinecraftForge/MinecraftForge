@@ -26,31 +26,31 @@ import net.minecraftforge.eventbus.api.Event;
 /**
  * Fired before the client player is notified of a change in game mode from the server.
  */
-public class ClientPlayerChangeGameModeEvent extends Event
+public class ClientPlayerChangeGameTypeEvent extends Event
 {
     private final PlayerInfo info;
-    private final GameType currentGameMode;
-    private final GameType newGameMode;
+    private final GameType currentGameType;
+    private final GameType newGameType;
 
-    public ClientPlayerChangeGameModeEvent(PlayerInfo info, GameType currentGameMode, GameType newGameMode)
+    public ClientPlayerChangeGameTypeEvent(PlayerInfo info, GameType currentGameType, GameType newGameType)
     {
         this.info = info;
-        this.currentGameMode = currentGameMode;
-        this.newGameMode = newGameMode;
+        this.currentGameType = currentGameType;
+        this.newGameType = newGameType;
     }
 
-    public PlayerInfo getInfo()
+    public PlayerInfo getPlayerInfo()
     {
         return info;
     }
 
-    public GameType getCurrentGameMode()
+    public GameType getCurrentGameType()
     {
-        return currentGameMode;
+        return currentGameType;
     }
 
-    public GameType getNewGameMode()
+    public GameType getNewGameType()
     {
-        return newGameMode;
+        return newGameType;
     }
 }

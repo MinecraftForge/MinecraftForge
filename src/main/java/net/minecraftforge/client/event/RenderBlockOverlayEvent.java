@@ -33,24 +33,24 @@ import net.minecraftforge.eventbus.api.Event;
 @Cancelable
 public class RenderBlockOverlayEvent extends Event
 {
-    public enum OverlayType {
+    public enum OverlayType
+    {
         FIRE, BLOCK, WATER
     }
     
     private final Player player;
-    private final PoseStack mat;
+    private final PoseStack poseStack;
     private final OverlayType overlayType;
     private final BlockState blockForOverlay;
     private final BlockPos blockPos;
     
-    public RenderBlockOverlayEvent(Player player, PoseStack mat, OverlayType type, BlockState block, BlockPos blockPos)
+    public RenderBlockOverlayEvent(Player player, PoseStack poseStack, OverlayType type, BlockState block, BlockPos blockPos)
     {
         this.player = player;
-        this.mat = mat;
+        this.poseStack = poseStack;
         this.overlayType = type;
         this.blockForOverlay = block;
         this.blockPos = blockPos;
-        
     }
 
     /**
@@ -61,9 +61,9 @@ public class RenderBlockOverlayEvent extends Event
         return player;
     }
 
-    public PoseStack getMatrixStack()
+    public PoseStack getPoseStack()
     {
-        return mat;
+        return poseStack;
     }
 
     /**

@@ -35,12 +35,12 @@ import net.minecraftforge.eventbus.api.Event;
  * changed by mods.<br>
  * {@link #entityRenderer} contains the entity renderer instance that renders the name plate/tag. This cannot be
  * changed by mods.<br>
- * {@link #matrixStack} contains the matrix stack instance involved in rendering the name plate/tag. This cannot
+ * {@link #poseStack} contains the matrix stack instance involved in rendering the name plate/tag. This cannot
  * be changed by mods.<br>
- * {@link #renderTypeBuffer} contains the render type buffer instance involved in rendering the name plate/tag.
+ * {@link #bufferSource} contains the render type buffer instance involved in rendering the name plate/tag.
  * This cannot be changed by mods.<br>
  * {@link #packedLight} contains the sky and block light values used in rendering the name plate/tag.<br>
- * {@link #partialTicks} contains the partial ticks used in rendering the name plate/tag. This cannot be changed by mods.<br>
+ * {@link #partialTick} contains the partial ticks used in rendering the name plate/tag. This cannot be changed by mods.<br>
  * <br>
  * This event has a result. {@link HasResult}. <br>
  * ALLOW will force-render name plate/tag, DEFAULT will ignore the hook and continue using the vanilla check
@@ -54,21 +54,21 @@ public class RenderNameplateEvent extends EntityEvent
     private Component nameplateContent;
     private final Component originalContent;
     private final EntityRenderer<?> entityRenderer;
-    private final PoseStack matrixStack;
-    private final MultiBufferSource renderTypeBuffer;
+    private final PoseStack poseStack;
+    private final MultiBufferSource bufferSource;
     private final int packedLight;
-    private final float partialTicks;
+    private final float partialTick;
     
-    public RenderNameplateEvent(Entity entity, Component content, EntityRenderer<?> entityRenderer, PoseStack matrixStack, MultiBufferSource renderTypeBuffer, int packedLight, float partialTicks)
+    public RenderNameplateEvent(Entity entity, Component content, EntityRenderer<?> entityRenderer, PoseStack poseStack, MultiBufferSource renderTypeBuffer, int packedLight, float partialTicks)
     {
         super(entity);
         this.originalContent = content;
         this.setContent(this.originalContent);
         this.entityRenderer = entityRenderer;
-        this.matrixStack = matrixStack;
-        this.renderTypeBuffer = renderTypeBuffer;
+        this.poseStack = poseStack;
+        this.bufferSource = renderTypeBuffer;
         this.packedLight = packedLight;
-        this.partialTicks = partialTicks;
+        this.partialTick = partialTicks;
     }
 
     /**
@@ -106,17 +106,17 @@ public class RenderNameplateEvent extends EntityEvent
     /**
      * The matrix stack used during the rendering of the name plate/tag
      */
-    public PoseStack getMatrixStack()
+    public PoseStack getPoseStack()
     {
-        return this.matrixStack;
+        return this.poseStack;
     }
 
     /**
      * The render type buffer used during the rendering of the name plate/tag
      */
-    public MultiBufferSource getRenderTypeBuffer()
+    public MultiBufferSource getBufferSource()
     {
-        return this.renderTypeBuffer;
+        return this.bufferSource;
     }
 
     /**
@@ -130,8 +130,8 @@ public class RenderNameplateEvent extends EntityEvent
     /**
      * The partial ticks used during the rendering of the name plate/tag
      */
-    public float getPartialTicks()
+    public float getPartialTick()
     {
-        return this.partialTicks;
+        return this.partialTick;
     }
 }

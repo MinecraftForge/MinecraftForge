@@ -48,26 +48,26 @@ public abstract class RenderTooltipEvent extends Event
     @Nonnull
     protected final ItemStack stack;
     protected final List<? extends FormattedText> lines;
-    protected final PoseStack matrixStack;
+    protected final PoseStack poseStack;
     protected int x;
     protected int y;
-    protected Font fr;
+    protected Font font;
 
-    public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, @Nonnull Font fr)
+    public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack poseStack, int x, int y, @Nonnull Font font)
     {
         this.stack = stack;
         this.lines = Collections.unmodifiableList(lines); // Leave editing to ItemTooltipEvent
-        this.matrixStack = matrixStack;
+        this.poseStack = poseStack;
         this.x = x;
         this.y = y;
-        this.fr = fr;
+        this.font = font;
     }
 
     /**
      * @return The stack which the tooltip is being rendered for. As tooltips can be drawn without itemstacks, this stack may be empty.
      */
     @Nonnull
-    public ItemStack getStack()
+    public ItemStack getItemStack()
     {
         return stack;
     }
@@ -86,9 +86,9 @@ public abstract class RenderTooltipEvent extends Event
     /**
      * @return The MatrixStack of the current rendering context
      */
-    public PoseStack getMatrixStack()
+    public PoseStack getPoseStack()
     {
-        return matrixStack;
+        return poseStack;
     }
 
     /**
@@ -111,9 +111,9 @@ public abstract class RenderTooltipEvent extends Event
      * @return The {@link FontRenderer} instance the current render is using.
      */
     @Nonnull
-    public Font getFontRenderer()
+    public Font getFont()
     {
-        return fr;
+        return font;
     }
 
     /**
@@ -128,9 +128,9 @@ public abstract class RenderTooltipEvent extends Event
         private int screenHeight;
         private int maxWidth;
 
-        public Pre(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull Font fr)
+        public Pre(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack poseStack, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull Font font)
         {
-            super(stack, lines, matrixStack, x, y, fr);
+            super(stack, lines, poseStack, x, y, font);
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
             this.maxWidth = maxWidth;
@@ -177,7 +177,7 @@ public abstract class RenderTooltipEvent extends Event
          */
         public void setFontRenderer(@Nonnull Font fr)
         {
-            this.fr = fr;
+            this.font = fr;
         }
 
         /**
@@ -211,9 +211,9 @@ public abstract class RenderTooltipEvent extends Event
         private final int width;
         private final int height;
         
-        public Post(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack,int x, int y, @Nonnull Font fr, int width, int height)
+        public Post(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack poseStack,int x, int y, @Nonnull Font font, int width, int height)
         {
-            super(stack, textLines, matrixStack, x, y, fr);
+            super(stack, textLines, poseStack, x, y, font);
             this.width = width;
             this.height = height;
         }
@@ -240,9 +240,9 @@ public abstract class RenderTooltipEvent extends Event
      */
     public static class PostBackground extends Post 
     {
-        public PostBackground(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int width, int height)
+        public PostBackground(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack poseStack, int x, int y, @Nonnull Font font, int width, int height)
         {
-            super(stack, textLines, matrixStack, x, y, fr, width, height);
+            super(stack, textLines, poseStack, x, y, font, width, height);
         }
     }
 
@@ -251,9 +251,9 @@ public abstract class RenderTooltipEvent extends Event
      */
     public static class PostText extends Post
     {
-        public PostText(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int width, int height)
+        public PostText(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack poseStack, int x, int y, @Nonnull Font font, int width, int height)
         {
-            super(stack, textLines, matrixStack, x, y, fr, width, height);
+            super(stack, textLines, poseStack, x, y, font, width, height);
         }
     }
     
@@ -269,10 +269,10 @@ public abstract class RenderTooltipEvent extends Event
         private int borderStart;
         private int borderEnd;
 
-        public Color(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int background, int borderStart,
+        public Color(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack poseStack, int x, int y, @Nonnull Font font, int background, int borderStart,
                 int borderEnd)
         {
-            super(stack, textLines, matrixStack, x, y, fr);
+            super(stack, textLines, poseStack, x, y, font);
             this.originalBackground = background;
             this.originalBorderStart = borderStart;
             this.originalBorderEnd = borderEnd;

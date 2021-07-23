@@ -26,8 +26,8 @@ import net.minecraftforge.client.event.sound.SoundEvent.SoundSourceEvent;
 
 public class PlaySoundSourceEvent extends SoundSourceEvent
 {
-    public PlaySoundSourceEvent(SoundEngine manager, SoundInstance sound, Channel source)
+    public PlaySoundSourceEvent(SoundEngine engine, SoundInstance sound, Channel channel)
     {
-        super(manager, sound, source);
+        super(engine, sound, channel);
     }
 }

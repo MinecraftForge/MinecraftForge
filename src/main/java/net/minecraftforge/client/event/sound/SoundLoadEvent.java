@@ -28,8 +28,8 @@ import net.minecraftforge.fml.event.IModBusEvent;
  */
 public class SoundLoadEvent extends SoundEvent implements IModBusEvent
 {
-    public SoundLoadEvent(SoundEngine manager)
+    public SoundLoadEvent(SoundEngine engine)
     {
-        super(manager);
+        super(engine);
     }
 }

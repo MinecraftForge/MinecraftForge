@@ -27,11 +27,11 @@ import net.minecraftforge.eventbus.api.Event;
  */
 public class RecipesUpdatedEvent extends Event
 {
-    private final RecipeManager mgr;
+    private final RecipeManager manager;
     
-    public RecipesUpdatedEvent(RecipeManager mgr)
+    public RecipesUpdatedEvent(RecipeManager manager)
     {
-        this.mgr = mgr;
+        this.manager = manager;
     }
 
     /**
@@ -39,6 +39,6 @@ public class RecipesUpdatedEvent extends Event
      */
     public RecipeManager getRecipeManager()
     {
-        return mgr;
+        return manager;
     }
 }

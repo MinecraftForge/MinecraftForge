@@ -31,42 +31,33 @@ import javax.annotation.Nullable;
  */
 public class ClientPlayerNetworkEvent extends Event
 {
-    private final MultiPlayerGameMode controller;
+    private final MultiPlayerGameMode multiPlayerGameMode;
     private final LocalPlayer player;
-    private final Connection networkManager;
+    private final Connection connection;
 
-    /**
-     * @return the player controller for the client side
-     */
     @Nullable
-    public MultiPlayerGameMode getController()
+    public MultiPlayerGameMode getMultiPlayerGameMode()
     {
-        return controller;
+        return multiPlayerGameMode;
     }
 
-    /**
-     * @return the player instance (if present - may be null)
-     */
     @Nullable
     public LocalPlayer getPlayer()
     {
         return player;
     }
 
-    /**
-     * @return the network connection (if present - may be null)
-     */
     @Nullable
-    public Connection getNetworkManager()
+    public Connection getConnection()
     {
-        return networkManager;
+        return connection;
     }
 
-    ClientPlayerNetworkEvent(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager)
+    ClientPlayerNetworkEvent(final MultiPlayerGameMode multiPlayerGameMode, final LocalPlayer player, final Connection connection)
     {
-        this.controller = controller;
+        this.multiPlayerGameMode = multiPlayerGameMode;
         this.player = player;
-        this.networkManager = networkManager;
+        this.connection = connection;
     }
 
     /**

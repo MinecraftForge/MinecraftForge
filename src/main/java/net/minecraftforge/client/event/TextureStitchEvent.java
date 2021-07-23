@@ -28,16 +28,16 @@ import java.util.Set;
 
 public class TextureStitchEvent extends Event implements IModBusEvent
 {
-    private final TextureAtlas map;
+    private final TextureAtlas atlas;
 
-    public TextureStitchEvent(TextureAtlas map)
+    public TextureStitchEvent(TextureAtlas atlas)
     {
-        this.map = map;
+        this.atlas = atlas;
     }
 
-    public TextureAtlas getMap()
+    public TextureAtlas getAtlas()
     {
-        return map;
+        return atlas;
     }
 
     /**
@@ -48,9 +48,9 @@ public class TextureStitchEvent extends Event implements IModBusEvent
     {
         private final Set<ResourceLocation> sprites;
 
-        public Pre(TextureAtlas map, Set<ResourceLocation> sprites)
+        public Pre(TextureAtlas atlas, Set<ResourceLocation> sprites)
         {
-            super(map);
+            super(atlas);
             this.sprites = sprites;
         }
 
@@ -70,9 +70,9 @@ public class TextureStitchEvent extends Event implements IModBusEvent
      */
     public static class Post extends TextureStitchEvent
     {
-        public Post(TextureAtlas map)
+        public Post(TextureAtlas atlas)
         {
-            super(map);
+            super(atlas);
         }
     }
 }

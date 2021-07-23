@@ -88,6 +88,7 @@ public class InputEvent extends Event
         private final int button;
         private final int action;
         private final int mods;
+
         public MouseInputEvent(int button, int action, int mods)
         {
             this.button = button;
@@ -144,6 +145,7 @@ public class InputEvent extends Event
         private final boolean leftDown;
         private final boolean middleDown;
         private final boolean rightDown;
+
         public MouseScrollEvent(double scrollDelta, boolean leftDown, boolean middleDown, boolean rightDown, double mouseX, double mouseY)
         {
             this.scrollDelta = scrollDelta;
@@ -194,6 +196,7 @@ public class InputEvent extends Event
         private final int scanCode;
         private final int action;
         private final int modifiers;
+
         public KeyInputEvent(int key, int scanCode, int action, int modifiers)
         {
             this.key = key;
@@ -267,6 +270,7 @@ public class InputEvent extends Event
         private final KeyMapping keyBinding;
         private final InteractionHand hand;
         private boolean handSwing = true;
+
         public ClickInputEvent(int button, KeyMapping keyBinding, InteractionHand hand)
         {
             this.button = button;

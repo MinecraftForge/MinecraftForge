@@ -27,8 +27,8 @@ import net.minecraft.client.sounds.SoundEngine;
  */
 public class SoundSetupEvent extends SoundEvent
 {
-    public SoundSetupEvent(SoundEngine manager)
+    public SoundSetupEvent(SoundEngine engine)
     {
-        super(manager);
+        super(engine);
     }
 }
