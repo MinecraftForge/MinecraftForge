@@ -118,7 +118,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         tag(Tags.Items.RODS).addTags(Tags.Items.RODS_BLAZE, Tags.Items.RODS_WOODEN);
         tag(Tags.Items.RODS_BLAZE).add(Items.BLAZE_ROD);
         tag(Tags.Items.RODS_WOODEN).add(Items.STICK);
-        tag(Tags.Items.RAW_ORES).addTags();
+        tag(Tags.Items.RAW_ORES).addTags(Tags.Items.RAW_ORES_GOLD, Tags.Items.RAW_ORES_IRON, Tags.Items.RAW_ORES_COPPER);
         tag(Tags.Items.RAW_ORES_GOLD).add(Items.RAW_GOLD);
         tag(Tags.Items.RAW_ORES_IRON).add(Items.RAW_IRON);
         tag(Tags.Items.RAW_ORES_COPPER).add(Items.RAW_COPPER);
