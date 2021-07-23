@@ -38,7 +38,7 @@ public class LivingConversionEventTest
 
     public void canLivingConversion(LivingConversionEvent.Pre event)
     {
-        if (event.getEntityLiving() instanceof Piglin)
+        if (event.getEntity() instanceof Piglin)
         {
             event.setCanceled(true);
             event.setConversionTimer(0);
@@ -47,7 +47,7 @@ public class LivingConversionEventTest
 
     public void onLivingConversion(LivingConversionEvent.Post event)
     {
-        if (event.getEntityLiving() instanceof Villager)
-            event.getEntityLiving().addEffect(new MobEffectInstance(MobEffects.LUCK, 20));
+        if (event.getEntity() instanceof Villager)
+            event.getEntity().addEffect(new MobEffectInstance(MobEffects.LUCK, 20));
     }
 }

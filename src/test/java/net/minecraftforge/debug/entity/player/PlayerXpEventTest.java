@@ -45,21 +45,21 @@ public class PlayerXpEventTest
     public static void onPlayerPickupXp(PlayerXpEvent.PickupXp event)
     {
         if (!ENABLE) return;
-        logger.info("{} picked up an experience orb worth {}", event.getPlayer().getName().getString(), event.getOrbEntity().getValue());
+        logger.info("{} picked up an experience orb worth {}", event.getEntity().getName().getString(), event.getOrbEntity().getValue());
     }
 
     @SubscribeEvent
     public static void onPlayerXpChange(PlayerXpEvent.XpChange event)
     {
         if (!ENABLE) return;
-        logger.info("{} has been given {} experience", event.getPlayer().getName().getString(), event.getAmount());
+        logger.info("{} has been given {} experience", event.getEntity().getName().getString(), event.getAmount());
     }
 
     @SubscribeEvent
     public static void onPlayerLevelChange(PlayerXpEvent.LevelChange event)
     {
         if (!ENABLE) return;
-        logger.info("{} has changed {} levels", event.getPlayer().getName().getString(), event.getLevels());
+        logger.info("{} has changed {} levels", event.getEntity().getName().getString(), event.getLevels());
     }
 
 }
