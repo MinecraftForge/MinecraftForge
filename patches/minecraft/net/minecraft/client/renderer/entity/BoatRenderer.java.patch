@@ -9,7 +9,7 @@
        ResourceLocation resourcelocation = pair.getFirst();
        BoatModel boatmodel = pair.getSecond();
        p_113932_.m_85841_(-1.0F, -1.0F, 1.0F);
-@@ -69,7 +_,13 @@
+@@ -69,7 +_,10 @@
        super.m_7392_(p_113929_, p_113930_, p_113931_, p_113932_, p_113933_, p_113934_);
     }
  
@@ -17,10 +17,7 @@
     public ResourceLocation m_5478_(Boat p_113927_) {
 -      return this.f_173934_.get(p_113927_.m_38387_()).getFirst();
 +      return getModelWithLocation(p_113927_).getFirst();
-+   }
-+
-+   public Pair<ResourceLocation, BoatModel> getModelWithLocation(Boat boat)
-+   {
-+       return this.f_173934_.get(boat.m_38387_());
     }
++
++   public Pair<ResourceLocation, BoatModel> getModelWithLocation(Boat boat) { return this.f_173934_.get(boat.m_38387_()); }
  }
