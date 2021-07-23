@@ -46,6 +46,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.Tag;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.LevelHeightAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
@@ -59,6 +61,7 @@ import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.BlockStateConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
@@ -69,9 +72,12 @@ import net.minecraft.world.level.levelgen.feature.structures.JigsawPlacement;
 import net.minecraft.world.level.levelgen.feature.structures.JigsawPlacement.PieceFactory;
 import net.minecraft.world.level.levelgen.feature.structures.StructurePoolElement;
 import net.minecraft.world.level.levelgen.feature.structures.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.placement.DecorationContext;
 import net.minecraft.world.level.levelgen.placement.FeatureDecorator;
+import net.minecraft.world.level.levelgen.placement.SquareDecorator;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructurePieceAccessor;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
 import net.minecraftforge.common.BiomeManager;
@@ -222,7 +228,7 @@ public class DynamicRegistriesLoadedEventTest
         Map<ResourceLocation, ConfiguredStructureFeature<?,?>> generatedStructureFeatures = new HashMap<>();
         generatedStructureFeatures.put(GOLD_TOWER.getId(),
             new ConfiguredStructureFeature<>(GOLD_TOWER.get(), new LoadableJigsawConfig(GOLD_TOWER_STRUCTURE_FEATURE.location(), 1, 0, true)));
-        generator.addProvider(new JsonDataProvider<>(gson, generator, PackType.SERVER_DATA, "worldgen/configured_structure_feature", StructureFeature.DIRECT_CODEC, generatedStructureFeatures));
+        generator.addProvider(new JsonDataProvider<>(gson, generator, PackType.SERVER_DATA, "worldgen/configured_structure_feature", ConfiguredStructureFeature.DIRECT_CODEC, generatedStructureFeatures));
         
         // generate biome tags
         generator.addProvider(new ResourceKeyTagsProvider<Biome>(generator, fileHelper, MODID, Registry.BIOME_REGISTRY)
@@ -305,8 +311,12 @@ public class DynamicRegistriesLoadedEventTest
         }
 
         @Override
-        public boolean place(WorldGenLevel world, ChunkGenerator chunkGenerator, Random rand, BlockPos pos, BlockStateConfiguration config)
+        
+        public boolean place(FeaturePlaceContext<BlockStateConfiguration> context)
         {
+            WorldGenLevel world = context.level();
+            BlockPos pos = context.origin();
+            BlockStateConfiguration config = context.config();
             world.setBlock(pos, config.state, 2);
             return true;
         }
@@ -319,7 +329,7 @@ public class DynamicRegistriesLoadedEventTest
      * its chunk) This makes it clear which chunk the feature's in (so we can test
      * to make sure features aren't being added to biomes twice)
      */
-    public static class LimitedSquarePlacement extends SimpleFeatureDecorator<NoneDecoratorConfiguration>
+    public static class LimitedSquarePlacement extends SquareDecorator
     {
         public LimitedSquarePlacement(Codec<NoneDecoratorConfiguration> codec)
         {
@@ -327,7 +337,7 @@ public class DynamicRegistriesLoadedEventTest
         }
 
         @Override
-        protected Stream<BlockPos> place(Random rand, NoneDecoratorConfiguration config, BlockPos pos)
+        public Stream<BlockPos> getPositions(DecorationContext context, Random rand, NoneDecoratorConfiguration config, BlockPos pos)
         {
             int x = pos.getX() + 4 + rand.nextInt(8);
             int y = pos.getY();
@@ -362,20 +372,22 @@ public class DynamicRegistriesLoadedEventTest
         private static class Start extends StructureStart<LoadableJigsawConfig>
         {
 
-            public Start(StructureFeature<LoadableJigsawConfig> structure, int chunkX, int chunkZ, BoundingBox mutabox, int refCount, long seed)
+            public Start(StructureFeature<LoadableJigsawConfig> structure, ChunkPos chunkPos, int refCount, long seed)
             {
-                super(structure, chunkX, chunkZ, mutabox, refCount, seed);
+                super(structure, chunkPos, refCount, seed);
             }
 
             @Override
-            public void generatePieces(RegistryAccess dynreg, ChunkGenerator generator, StructureManager templates, int chunkX, int chunkZ, Biome biome, LoadableJigsawConfig config)
+            public void generatePieces(RegistryAccess dynreg, ChunkGenerator generator, StructureManager templates, ChunkPos chunkPos, Biome biome, LoadableJigsawConfig config, LevelHeightAccessor heightAccess)
             {
+                int chunkX = chunkPos.x;
+                int chunkZ = chunkPos.z;
                 BlockPos startPos = new BlockPos(chunkX*16, config.getStartY(), chunkZ*16);
                 StructureTemplatePool startPool = Objects.requireNonNull(dynreg.registryOrThrow(Registry.TEMPLATE_POOL_REGISTRY).get(config.getStartPool()));
                 JigsawConfiguration jigsawConfig = new JigsawConfiguration(() -> startPool, config.getSize());
                 PieceFactory pieceFactory = PoolElementStructurePiece::new;
-                JigsawPlacement.addPieces(dynreg, jigsawConfig, pieceFactory, generator, templates, startPos, this.pieces, this.random, false, config.snapToHeightMap);
-                this.calculateBoundingBox();
+                JigsawPlacement.addPieces(dynreg, jigsawConfig, pieceFactory, generator, templates, startPos, this, this.random, false, config.snapToHeightMap, heightAccess);
+                this.getBoundingBox();
             }
             
         }
