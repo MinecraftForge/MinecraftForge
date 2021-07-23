@@ -33,6 +33,7 @@ import net.minecraft.client.gui.screens.Screen;
 public class GuiOpenEvent extends Event
 {
     private Screen gui;
+
     public GuiOpenEvent(Screen gui)
     {
         this.setGui(gui);

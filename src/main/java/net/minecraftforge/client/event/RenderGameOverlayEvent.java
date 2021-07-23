@@ -51,7 +51,7 @@ public class RenderGameOverlayEvent extends Event
         return type;
     }
 
-    public static enum ElementType
+    public enum ElementType
     {
         ALL,
         LAYER,

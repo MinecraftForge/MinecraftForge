@@ -49,8 +49,23 @@ public class CommandEvent extends Event
         this.parse = parse;
     }
 
-    public ParseResults<CommandSourceStack> getParseResults() { return parse; }
-    public void setParseResults(ParseResults<CommandSourceStack> parse) { this.parse = parse; }
-    public Throwable getException() { return exception; }
-    public void setException(Throwable exception) { this.exception = exception; }
+    public ParseResults<CommandSourceStack> getParseResults()
+    {
+        return parse;
+    }
+
+    public void setParseResults(ParseResults<CommandSourceStack> parse)
+    {
+        this.parse = parse;
+    }
+
+    public Throwable getException()
+    {
+        return exception;
+    }
+
+    public void setException(Throwable exception)
+    {
+        this.exception = exception;
+    }
 }

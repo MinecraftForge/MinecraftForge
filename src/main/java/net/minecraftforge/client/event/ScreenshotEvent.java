@@ -40,7 +40,6 @@ import java.io.IOException;
 @Cancelable
 public class ScreenshotEvent extends Event
 {
-
     public static final Component DEFAULT_CANCEL_REASON = new TextComponent("Screenshot canceled");
 
     private NativeImage image;
@@ -54,7 +53,8 @@ public class ScreenshotEvent extends Event
         this.screenshotFile = screenshotFile;
         try {
             this.screenshotFile = screenshotFile.getCanonicalFile(); // FORGE: Fix errors on Windows with paths that include \.\
-        } catch (IOException e) {}
+        } catch (IOException e) {
+        }
     }
 
     public NativeImage getImage()
@@ -86,5 +86,4 @@ public class ScreenshotEvent extends Event
     {
         return getResultMessage() != null ? getResultMessage() : DEFAULT_CANCEL_REASON;
     }
-
 }

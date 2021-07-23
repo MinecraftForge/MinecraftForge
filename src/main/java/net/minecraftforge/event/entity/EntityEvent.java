@@ -81,6 +81,7 @@ public class EntityEvent extends Event
     public static class CanUpdate extends EntityEvent
     {
         private boolean canUpdate = false;
+
         public CanUpdate(Entity entity)
         {
             super(entity);
@@ -131,10 +132,21 @@ public class EntityEvent extends Event
             this.newEyeHeight = newEyeHeight;
         }
 
+        public Pose getPose()
+        {
+            return pose;
+        }
 
-        public Pose getPose() { return pose; }
-        public EntityDimensions getOldSize() { return oldSize; }
-        public EntityDimensions getNewSize() { return newSize; }
+        public EntityDimensions getOldSize()
+        {
+            return oldSize;
+        }
+
+        public EntityDimensions getNewSize()
+        {
+            return newSize;
+        }
+
         public void setNewSize(EntityDimensions size)
         {
             setNewSize(size, false);
@@ -151,8 +163,20 @@ public class EntityEvent extends Event
                 this.newEyeHeight = this.getEntity().getEyeHeightAccess(this.getPose(), this.newSize);
             }
         }
-        public float getOldEyeHeight() { return oldEyeHeight; }
-        public float getNewEyeHeight() { return newEyeHeight; }
-        public void setNewEyeHeight(float newHeight) { this.newEyeHeight = newHeight; }
+
+        public float getOldEyeHeight()
+        {
+            return oldEyeHeight;
+        }
+
+        public float getNewEyeHeight()
+        {
+            return newEyeHeight;
+        }
+
+        public void setNewEyeHeight(float newHeight)
+        {
+            this.newEyeHeight = newHeight;
+        }
     }
 }

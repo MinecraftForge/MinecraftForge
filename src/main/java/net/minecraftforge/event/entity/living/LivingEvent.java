@@ -36,6 +36,7 @@ import javax.annotation.Nullable;
 public class LivingEvent extends EntityEvent
 {
     private final LivingEntity entityLiving;
+
     public LivingEvent(LivingEntity entity)
     {
         super(entity);
@@ -64,7 +65,10 @@ public class LivingEvent extends EntityEvent
     @Cancelable
     public static class LivingUpdateEvent extends LivingEvent
     {
-        public LivingUpdateEvent(LivingEntity e){ super(e); }
+        public LivingUpdateEvent(LivingEntity e)
+        {
+            super(e);
+        }
     }
 
     /**
@@ -83,7 +87,10 @@ public class LivingEvent extends EntityEvent
      **/
     public static class LivingJumpEvent extends LivingEvent
     {
-        public LivingJumpEvent(LivingEntity e){ super(e); }
+        public LivingJumpEvent(LivingEntity e)
+        {
+            super(e);
+        }
     }
 
     public static class LivingVisibilityEvent extends LivingEvent

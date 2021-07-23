@@ -55,9 +55,20 @@ public class LivingEquipmentChangeEvent extends LivingEvent
         this.to = to;
     }
 
-    public EquipmentSlot getSlot() { return this.slot; }
+    public EquipmentSlot getSlot()
+    {
+        return this.slot;
+    }
+
     @Nonnull
-    public ItemStack getFrom() { return this.from; }
+    public ItemStack getFrom()
+    {
+        return this.from;
+    }
+
     @Nonnull
-    public ItemStack getTo() { return this.to; }
+    public ItemStack getTo()
+    {
+        return this.to;
+    }
 }

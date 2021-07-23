@@ -33,8 +33,7 @@ import net.minecraftforge.eventbus.api.Event;
 @Cancelable
 public class RenderBlockOverlayEvent extends Event
 {
-
-    public static enum OverlayType {
+    public enum OverlayType {
         FIRE, BLOCK, WATER
     }
     
@@ -57,15 +56,34 @@ public class RenderBlockOverlayEvent extends Event
     /**
      * The player which the overlay will apply to
      */
-    public Player getPlayer() { return player; }
-    public PoseStack getMatrixStack() { return mat; }
+    public Player getPlayer()
+    {
+        return player;
+    }
+
+    public PoseStack getMatrixStack()
+    {
+        return mat;
+    }
+
     /**
      * The type of overlay to occur
      */
-    public OverlayType getOverlayType() { return overlayType; }
+    public OverlayType getOverlayType()
+    {
+        return overlayType;
+    }
+
     /**
      * If the overlay type is BLOCK, then this is the block which the overlay is getting it's icon from
      */
-    public BlockState getBlockForOverlay() { return blockForOverlay; }
-    public BlockPos getBlockPos() { return blockPos; }
+    public BlockState getBlockForOverlay()
+    {
+        return blockForOverlay;
+    }
+
+    public BlockPos getBlockPos()
+    {
+        return blockPos;
+    }
 }

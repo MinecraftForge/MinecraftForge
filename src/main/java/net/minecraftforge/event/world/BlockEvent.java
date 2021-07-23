@@ -45,8 +45,6 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraftforge.eventbus.api.Event.HasResult;
-
 public class BlockEvent extends Event
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
@@ -158,10 +156,25 @@ public class BlockEvent extends Event
         }
 
         @Nullable
-        public Entity getEntity() { return entity; }
-        public BlockSnapshot getBlockSnapshot() { return blockSnapshot; }
-        public BlockState getPlacedBlock() { return placedBlock; }
-        public BlockState getPlacedAgainst() { return placedAgainst; }
+        public Entity getEntity()
+        {
+            return entity;
+        }
+
+        public BlockSnapshot getBlockSnapshot()
+        {
+            return blockSnapshot;
+        }
+
+        public BlockState getPlacedBlock()
+        {
+            return placedBlock;
+        }
+
+        public BlockState getPlacedAgainst()
+        {
+            return placedAgainst;
+        }
     }
 
     /**

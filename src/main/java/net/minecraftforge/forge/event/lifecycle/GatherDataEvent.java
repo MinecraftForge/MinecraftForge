@@ -50,19 +50,48 @@ public class GatherDataEvent extends Event implements IModBusEvent
         this.existingFileHelper = existingFileHelper;
     }
 
-    public ModContainer getModContainer() {
+    public ModContainer getModContainer()
+    {
         return this.modContainer;
     }
 
-    public DataGenerator getGenerator() { return this.dataGenerator; }
-    public ExistingFileHelper getExistingFileHelper() { return existingFileHelper; }
-    public boolean includeServer() { return this.config.server; }
-    public boolean includeClient() { return this.config.client; }
-    public boolean includeDev() { return this.config.dev; }
-    public boolean includeReports() { return this.config.reports; }
-    public boolean validate() { return this.config.validate; }
+    public DataGenerator getGenerator()
+    {
+        return this.dataGenerator;
+    }
 
-    public static class DataGeneratorConfig {
+    public ExistingFileHelper getExistingFileHelper()
+    {
+        return existingFileHelper;
+    }
+
+    public boolean includeServer()
+    {
+        return this.config.server;
+    }
+
+    public boolean includeClient()
+    {
+        return this.config.client;
+    }
+
+    public boolean includeDev()
+    {
+        return this.config.dev;
+    }
+
+    public boolean includeReports()
+    {
+        return this.config.reports;
+    }
+
+    public boolean validate()
+    {
+        return this.config.validate;
+    }
+
+    public static class DataGeneratorConfig
+    {
         private final Set<String> mods;
         private final Path path;
         private final Collection<Path> inputs;
@@ -74,7 +103,8 @@ public class GatherDataEvent extends Event implements IModBusEvent
         private final boolean flat;
         private List<DataGenerator> generators = new ArrayList<>();
 
-        public DataGeneratorConfig(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean server, final boolean client, final boolean dev, final boolean reports, final boolean validate, final boolean flat) {
+        public DataGeneratorConfig(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean server, final boolean client, final boolean dev, final boolean reports, final boolean validate, final boolean flat)
+        {
             this.mods = mods;
             this.path = path;
             this.inputs = inputs;
@@ -87,22 +117,26 @@ public class GatherDataEvent extends Event implements IModBusEvent
 
         }
 
-        public Set<String> getMods() {
+        public Set<String> getMods()
+        {
             return mods;
         }
 
-        public boolean isFlat() {
+        public boolean isFlat()
+        {
             return flat || getMods().size() == 1;
         }
 
-        public DataGenerator makeGenerator(final Function<Path,Path> pathEnhancer, final boolean shouldExecute) {
+        public DataGenerator makeGenerator(final Function<Path, Path> pathEnhancer, final boolean shouldExecute)
+        {
             final DataGenerator generator = new DataGenerator(pathEnhancer.apply(path), inputs);
             if (shouldExecute)
                 generators.add(generator);
             return generator;
         }
 
-        public void runAll() {
+        public void runAll()
+        {
             Map<Path, List<DataGenerator>> paths = generators.stream().collect(Collectors.groupingBy(DataGenerator::getOutputFolder));
 
             paths.values().forEach(LamdbaExceptionUtils.rethrowConsumer(lst -> {

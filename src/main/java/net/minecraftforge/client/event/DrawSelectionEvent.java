@@ -53,12 +53,35 @@ public class DrawSelectionEvent extends Event
         this.buffers = buffers;
     }
 
-    public LevelRenderer getContext() { return context; }
-    public Camera getInfo() { return info; }
-    public HitResult getTarget() { return target; }
-    public float getPartialTicks() { return partialTicks; }
-    public PoseStack getMatrix() { return matrix; }
-    public MultiBufferSource getBuffers() { return buffers; }
+    public LevelRenderer getContext()
+    {
+        return context;
+    }
+
+    public Camera getInfo()
+    {
+        return info;
+    }
+
+    public HitResult getTarget()
+    {
+        return target;
+    }
+
+    public float getPartialTicks()
+    {
+        return partialTicks;
+    }
+
+    public PoseStack getMatrix()
+    {
+        return matrix;
+    }
+
+    public MultiBufferSource getBuffers()
+    {
+        return buffers;
+    }
 
     /**
      * A variant of the DrawSelectionEvent only called when a block is highlighted.

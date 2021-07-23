@@ -44,7 +44,6 @@ import net.minecraftforge.eventbus.api.Event;
  */
 public class StructureSpawnListGatherEvent extends Event
 {
-
     private final StructureFeature<?> structure;
     private final Map<MobCategory, List<MobSpawnSettings.SpawnerData>> entitySpawns = new HashMap<>();
     private final Map<MobCategory, List<MobSpawnSettings.SpawnerData>> entitySpawnsUnmodifiableLists = new HashMap<>();

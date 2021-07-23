@@ -139,7 +139,7 @@ public class NoteBlockEvent extends BlockEvent
      * For altered notes such as G-Sharp / A-Flat the Sharp variant is used here.
      *
      */
-    public static enum Note
+    public enum Note
     {
         F_SHARP,
         G,
@@ -167,7 +167,7 @@ public class NoteBlockEvent extends BlockEvent
      * Together with {@link Note} it fully describes the note.
      *
      */
-    public static enum Octave
+    public enum Octave
     {
         LOW,
         MID,
@@ -178,5 +178,4 @@ public class NoteBlockEvent extends BlockEvent
             return id < 12 ? LOW : id == 24 ? HIGH : MID;
         }
     }
-
 }

@@ -28,6 +28,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * A set of events which are fired at various points during tooltip rendering.
@@ -41,7 +43,7 @@ import net.minecraft.network.chat.FormattedText;
  * <li>{@link RenderTooltipEvent.PostText}</li>
  * </ul>
  */
-public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api.Event
+public abstract class RenderTooltipEvent extends Event
 {
     @Nonnull
     protected final ItemStack stack;
@@ -119,7 +121,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * <p>
      * This event is {@link Cancelable}.
      */
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class Pre extends RenderTooltipEvent
     {
         private int screenWidth;
@@ -239,7 +241,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     public static class PostBackground extends Post 
     {
         public PostBackground(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int width, int height)
-            { super(stack, textLines, matrixStack, x, y, fr, width, height); }
+        {
+            super(stack, textLines, matrixStack, x, y, fr, width, height);
+        }
     }
 
     /**
@@ -248,7 +252,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     public static class PostText extends Post
     {
         public PostText(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int width, int height)
-            { super(stack, textLines, matrixStack, x, y, fr, width, height); }
+        {
+            super(stack, textLines, matrixStack, x, y, fr, width, height);
+        }
     }
     
     /**

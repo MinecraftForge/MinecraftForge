@@ -27,4 +27,6 @@ import net.minecraftforge.fml.event.IModBusEvent;
  * Note that your {@code ParticleType}s should still be registered during the usual registry events, this
  * is only for the factories.
  */
-public class ParticleFactoryRegisterEvent extends Event implements IModBusEvent {}
+public class ParticleFactoryRegisterEvent extends Event implements IModBusEvent
+{
+}

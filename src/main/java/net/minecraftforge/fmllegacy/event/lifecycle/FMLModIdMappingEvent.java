@@ -64,6 +64,7 @@ public class FMLModIdMappingEvent extends ModLifecycleEvent
     private final ImmutableSet<ResourceLocation> keys;
 
     public final boolean isFrozen;
+
     public FMLModIdMappingEvent(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, boolean isFrozen)
     {
         super(null);

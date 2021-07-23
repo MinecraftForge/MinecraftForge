@@ -25,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 import javax.annotation.Nonnull;
 
@@ -38,10 +39,9 @@ import javax.annotation.Nonnull;
  * setResult(ALLOW) is the same as the old setHandled()
  */
 @Cancelable
-@net.minecraftforge.eventbus.api.Event.HasResult
+@HasResult
 public class BonemealEvent extends PlayerEvent
 {
-
     private final Level world;
     private final BlockPos pos;
     private final BlockState block;

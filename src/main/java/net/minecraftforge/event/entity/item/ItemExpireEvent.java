@@ -31,7 +31,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 @Cancelable
 public class ItemExpireEvent extends ItemEvent
 {
-
     private int extraLife;
 
     /**

@@ -42,24 +42,28 @@ public class ModLifecycleEvent extends Event implements IModBusEvent
 
     public final String description()
     {
-       String cn = getClass().getName();
-       return cn.substring(cn.lastIndexOf('.')+1);
+        String cn = getClass().getName();
+        return cn.substring(cn.lastIndexOf('.') + 1);
     }
 
-    public Stream<InterModComms.IMCMessage> getIMCStream() {
+    public Stream<InterModComms.IMCMessage> getIMCStream()
+    {
         return InterModComms.getMessages(this.container.getModId());
     }
 
-    public Stream<InterModComms.IMCMessage> getIMCStream(Predicate<String> methodFilter) {
+    public Stream<InterModComms.IMCMessage> getIMCStream(Predicate<String> methodFilter)
+    {
         return InterModComms.getMessages(this.container.getModId(), methodFilter);
     }
 
-    ModContainer getContainer() {
+    ModContainer getContainer()
+    {
         return this.container;
     }
 
     @Override
-    public String toString() {
+    public String toString()
+    {
         return description();
     }
 }

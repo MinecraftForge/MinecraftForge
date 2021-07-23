@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
-
 /**
  * The main ResourceManager is recreated on each reload, through {@link DataPackRegistries}'s creation.
  *
@@ -49,33 +47,37 @@ public class AddReloadListenerEvent extends Event
     {
         this.dataPackRegistries = dataPackRegistries;
     }
-    
-   /**
-    * @param listener the listener to add to the ResourceManager on reload
-    */
-   public void addListener(PreparableReloadListener listener)
-   {
-      listeners.add(new WrappedStateAwareListener(listener));
-   }
 
-   public List<PreparableReloadListener> getListeners()
-   {
-      return ImmutableList.copyOf(listeners);
-   }
+    /**
+     * @param listener the listener to add to the ResourceManager on reload
+     */
+    public void addListener(PreparableReloadListener listener)
+    {
+        listeners.add(new WrappedStateAwareListener(listener));
+    }
+
+    public List<PreparableReloadListener> getListeners()
+    {
+        return ImmutableList.copyOf(listeners);
+    }
     
     public ServerResources getDataPackRegistries()
     {
         return dataPackRegistries;
     }
-    private static class WrappedStateAwareListener implements PreparableReloadListener {
+
+    private static class WrappedStateAwareListener implements PreparableReloadListener
+    {
         private final PreparableReloadListener wrapped;
 
-        private WrappedStateAwareListener(final PreparableReloadListener wrapped) {
+        private WrappedStateAwareListener(final PreparableReloadListener wrapped)
+        {
             this.wrapped = wrapped;
         }
 
         @Override
-        public CompletableFuture<Void> reload(final PreparationBarrier stage, final ResourceManager resourceManager, final ProfilerFiller preparationsProfiler, final ProfilerFiller reloadProfiler, final Executor backgroundExecutor, final Executor gameExecutor) {
+        public CompletableFuture<Void> reload(final PreparationBarrier stage, final ResourceManager resourceManager, final ProfilerFiller preparationsProfiler, final ProfilerFiller reloadProfiler, final Executor backgroundExecutor, final Executor gameExecutor)
+        {
             if (ModLoader.isLoadingStateValid())
                 return wrapped.reload(stage, resourceManager, preparationsProfiler, reloadProfiler, backgroundExecutor, gameExecutor);
             else

@@ -45,6 +45,7 @@ import net.minecraft.world.entity.LivingEntity;
 public class LivingDeathEvent extends LivingEvent
 {
     private final DamageSource source;
+
     public LivingDeathEvent(LivingEntity entity, DamageSource source)
     {
         super(entity);

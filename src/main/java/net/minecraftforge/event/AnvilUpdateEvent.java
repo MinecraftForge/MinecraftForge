@@ -37,7 +37,6 @@ import javax.annotation.Nullable;
 @Cancelable
 public class AnvilUpdateEvent extends Event
 {
-
     private final ItemStack left;
     private final ItemStack right;
     private final String name;

@@ -37,7 +37,6 @@ import net.minecraft.world.level.Level;
  */
 public class EntityLeaveWorldEvent extends EntityEvent
 {
-
     private final Level world;
 
     public EntityLeaveWorldEvent(Entity entity, Level world)

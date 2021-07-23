@@ -60,21 +60,48 @@ public class LivingKnockBackEvent extends LivingEvent
         this.ratioZ = this.originalRatioZ = ratioZ;
     }
 
-    public float getStrength() {return this.strength;}
+    public float getStrength()
+    {
+        return this.strength;
+    }
 
-    public double getRatioX() {return this.ratioX;}
+    public double getRatioX()
+    {
+        return this.ratioX;
+    }
 
-    public double getRatioZ() {return this.ratioZ;}
+    public double getRatioZ()
+    {
+        return this.ratioZ;
+    }
 
-    public float getOriginalStrength() {return this.originalStrength;}
+    public float getOriginalStrength()
+    {
+        return this.originalStrength;
+    }
 
-    public double getOriginalRatioX() {return this.originalRatioX;}
+    public double getOriginalRatioX()
+    {
+        return this.originalRatioX;
+    }
 
-    public double getOriginalRatioZ() {return this.originalRatioZ;}
+    public double getOriginalRatioZ()
+    {
+        return this.originalRatioZ;
+    }
 
-    public void setStrength(float strength) {this.strength = strength;}
+    public void setStrength(float strength)
+    {
+        this.strength = strength;
+    }
 
-    public void setRatioX(double ratioX) {this.ratioX = ratioX;}
+    public void setRatioX(double ratioX)
+    {
+        this.ratioX = ratioX;
+    }
 
-    public void setRatioZ(double ratioZ) {this.ratioZ = ratioZ;}
+    public void setRatioZ(double ratioZ)
+    {
+        this.ratioZ = ratioZ;
+    }
 }

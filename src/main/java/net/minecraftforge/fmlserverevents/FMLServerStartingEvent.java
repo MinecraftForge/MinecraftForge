@@ -35,5 +35,4 @@ public class FMLServerStartingEvent extends ServerLifecycleEvent
     {
         super(server);
     }
-
 }

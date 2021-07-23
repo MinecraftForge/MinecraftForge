@@ -27,6 +27,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.storage.ServerLevelData;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -112,10 +113,11 @@ public class WorldEvent extends Event
      * Called by WorldServer when it attempts to create a spawnpoint for a dimension.
      * Canceling the event will prevent the vanilla code from running.
      */
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class CreateSpawnPosition extends WorldEvent
     {
         private final ServerLevelData settings;
+
         public CreateSpawnPosition(LevelAccessor world, ServerLevelData settings)
         {
             super(world);

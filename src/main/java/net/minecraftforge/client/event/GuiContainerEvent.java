@@ -28,7 +28,6 @@ import net.minecraftforge.eventbus.api.Event;
  */
 public class GuiContainerEvent extends Event
 {
-
     private final AbstractContainerScreen guiContainer;
 
     public GuiContainerEvent(AbstractContainerScreen guiContainer)

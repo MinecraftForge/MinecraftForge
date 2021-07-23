@@ -124,6 +124,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
     public static class Finish extends LivingEntityUseItemEvent
     {
         private ItemStack result;
+
         public Finish(LivingEntity entity, @Nonnull ItemStack item, int duration, @Nonnull ItemStack result)
         {
             super(entity, item, duration);

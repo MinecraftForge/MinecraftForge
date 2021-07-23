@@ -44,25 +44,45 @@ public abstract class RenderPlayerEvent extends PlayerEvent
         this.light = light;
     }
 
-    public PlayerRenderer getRenderer() { return renderer; }
-    public float getPartialRenderTick() { return partialRenderTick; }
-    public PoseStack getMatrixStack() { return stack; }
-    public MultiBufferSource getBuffers() { return buffers; }
-    public int getLight() { return light; }
+    public PlayerRenderer getRenderer()
+    {
+        return renderer;
+    }
+
+    public float getPartialRenderTick()
+    {
+        return partialRenderTick;
+    }
+
+    public PoseStack getMatrixStack()
+    {
+        return stack;
+    }
+
+    public MultiBufferSource getBuffers()
+    {
+        return buffers;
+    }
+
+    public int getLight()
+    {
+        return light;
+    }
 
     @Cancelable
     public static class Pre extends RenderPlayerEvent
     {
-        public Pre(Player player, PlayerRenderer renderer, float tick, PoseStack stack, MultiBufferSource buffers, int light) {
+        public Pre(Player player, PlayerRenderer renderer, float tick, PoseStack stack, MultiBufferSource buffers, int light)
+        {
             super(player, renderer, tick, stack, buffers, light);
         }
     }
 
     public static class Post extends RenderPlayerEvent
     {
-        public Post(Player player, PlayerRenderer renderer, float tick, PoseStack stack, MultiBufferSource buffers, int light) {
+        public Post(Player player, PlayerRenderer renderer, float tick, PoseStack stack, MultiBufferSource buffers, int light)
+        {
             super(player, renderer, tick, stack, buffers, light);
         }
     }
-
 }

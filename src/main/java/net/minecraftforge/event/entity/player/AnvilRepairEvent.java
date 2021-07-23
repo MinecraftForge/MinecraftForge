@@ -52,25 +52,44 @@ public class AnvilRepairEvent extends PlayerEvent
 
     /**
      * Get the output result from the anvil
+     *
      * @return the output
      */
     @Nonnull
-    public ItemStack getItemResult() { return output; }
+    public ItemStack getItemResult()
+    {
+        return output;
+    }
 
     /**
      * Get the first item input into the anvil
+     *
      * @return the first input slot
      */
     @Nonnull
-    public ItemStack getItemInput() { return left; }
+    public ItemStack getItemInput()
+    {
+        return left;
+    }
 
     /**
      * Get the second item input into the anvil
+     *
      * @return the second input slot
      */
     @Nonnull
-    public ItemStack getIngredientInput() { return right; }
+    public ItemStack getIngredientInput()
+    {
+        return right;
+    }
 
-    public float getBreakChance() { return breakChance; }
-    public void setBreakChance(float breakChance) { this.breakChance = breakChance; }
+    public float getBreakChance()
+    {
+        return breakChance;
+    }
+
+    public void setBreakChance(float breakChance)
+    {
+        this.breakChance = breakChance;
+    }
 }

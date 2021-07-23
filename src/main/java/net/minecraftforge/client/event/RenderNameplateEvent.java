@@ -51,7 +51,6 @@ import net.minecraftforge.eventbus.api.Event;
 @Event.HasResult
 public class RenderNameplateEvent extends EntityEvent
 {
-
     private Component nameplateContent;
     private final Component originalContent;
     private final EntityRenderer<?> entityRenderer;

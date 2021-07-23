@@ -36,7 +36,6 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
 @HasResult
 public class SleepingLocationCheckEvent extends LivingEvent
 {
-
     private final BlockPos sleepingLocation;
 
     public SleepingLocationCheckEvent(LivingEntity player, BlockPos sleepingLocation)

@@ -25,13 +25,13 @@ import net.minecraft.client.renderer.FogRenderer.FogMode;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.eventbus.api.Cancelable;
 
-import net.minecraftforge.eventbus.api.Event.HasResult;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Event that hooks into GameRenderer, allowing any feature to customize visual attributes
- *  the player sees.
+ * the player sees.
  */
-public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.api.Event
+public abstract class EntityViewRenderEvent extends Event
 {
     private final GameRenderer renderer;
     private final Camera info;
@@ -62,6 +62,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     private static class FogEvent extends EntityViewRenderEvent
     {
         private final FogMode type;
+
         @SuppressWarnings("resource")
         protected FogEvent(FogMode type, Camera info, double renderPartialTicks)
         {
@@ -69,7 +70,10 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
             this.type = type;
         }
 
-        public FogMode getType() { return type; }
+        public FogMode getType()
+        {
+            return type;
+        }
     }
 
     /**
@@ -137,12 +141,35 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
             this.setBlue(blue);
         }
 
-        public float getRed() { return red; }
-        public void setRed(float red) { this.red = red; }
-        public float getGreen() { return green; }
-        public void setGreen(float green) { this.green = green; }
-        public float getBlue() { return blue; }
-        public void setBlue(float blue) { this.blue = blue; }
+        public float getRed()
+        {
+            return red;
+        }
+
+        public void setRed(float red)
+        {
+            this.red = red;
+        }
+
+        public float getGreen()
+        {
+            return green;
+        }
+
+        public void setGreen(float green)
+        {
+            this.green = green;
+        }
+
+        public float getBlue()
+        {
+            return blue;
+        }
+
+        public void setBlue(float blue)
+        {
+            this.blue = blue;
+        }
     }
 
     /**
@@ -162,32 +189,58 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
             this.setRoll(roll);
         }
 
-        public float getYaw() { return yaw; }
-        public void setYaw(float yaw) { this.yaw = yaw; }
-        public float getPitch() { return pitch; }
-        public void setPitch(float pitch) { this.pitch = pitch; }
-        public float getRoll() { return roll; }
-        public void setRoll(float roll) { this.roll = roll; }
+        public float getYaw()
+        {
+            return yaw;
+        }
+
+        public void setYaw(float yaw)
+        {
+            this.yaw = yaw;
+        }
+
+        public float getPitch()
+        {
+            return pitch;
+        }
+
+        public void setPitch(float pitch)
+        {
+            this.pitch = pitch;
+        }
+
+        public float getRoll()
+        {
+            return roll;
+        }
+
+        public void setRoll(float roll)
+        {
+            this.roll = roll;
+        }
     }
 
     /**
      * Event that allows mods to alter the raw FOV itself.
      * This directly affects to the FOV without being modified.
-     * */
+     */
     public static class FOVModifier extends EntityViewRenderEvent
     {
         private double fov;
 
-        public FOVModifier(GameRenderer renderer, Camera info, double renderPartialTicks, double fov) {
+        public FOVModifier(GameRenderer renderer, Camera info, double renderPartialTicks, double fov)
+        {
             super(renderer, info, renderPartialTicks);
             this.setFOV(fov);
         }
 
-        public double getFOV() {
+        public double getFOV()
+        {
             return fov;
         }
 
-        public void setFOV(double fov) {
+        public void setFOV(double fov)
+        {
             this.fov = fov;
         }
     }

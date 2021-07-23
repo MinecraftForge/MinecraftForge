@@ -28,8 +28,8 @@ import net.minecraft.server.MinecraftServer;
  * You can obtain a reference to the server with this event.
  * @author cpw
  */
-public class FMLServerAboutToStartEvent extends ServerLifecycleEvent {
-
+public class FMLServerAboutToStartEvent extends ServerLifecycleEvent
+{
     public FMLServerAboutToStartEvent(MinecraftServer server)
     {
         super(server);

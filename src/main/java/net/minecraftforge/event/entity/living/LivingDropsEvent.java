@@ -24,6 +24,7 @@ import java.util.Collection;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * LivingDropsEvent is fired when an Entity's death causes dropped items to appear.<br>
@@ -44,7 +45,7 @@ import net.minecraft.world.entity.LivingEntity;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 public class LivingDropsEvent extends LivingEvent
 {
     private final DamageSource source;

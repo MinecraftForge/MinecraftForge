@@ -25,8 +25,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
-
-import net.minecraftforge.eventbus.api.Event.HasResult;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * LivingSpawnEvent is fired for any events associated with Living Entities spawn status. <br>
@@ -56,10 +55,26 @@ public class LivingSpawnEvent extends LivingEvent
         this.z = z;
     }
 
-    public LevelAccessor getWorld() { return world; }
-    public double getX() { return x; }
-    public double getY() { return y; }
-    public double getZ() { return z; }
+    public LevelAccessor getWorld()
+    {
+        return world;
+    }
+
+    public double getX()
+    {
+        return x;
+    }
+
+    public double getY()
+    {
+        return y;
+    }
+
+    public double getZ()
+    {
+        return z;
+    }
+
     /**
      * Fires before mob spawn events.
      *
@@ -116,14 +131,14 @@ public class LivingSpawnEvent extends LivingEvent
      * <br>
      * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(EntityLiving, World, float, float, float)}.<br>
      * <br>
-     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * This event is {@link Cancelable}.<br>
      * If this event is canceled, the Entity is not spawned.<br>
      * <br>
      * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class SpecialSpawn extends LivingSpawnEvent
     {
         @Nullable
@@ -163,7 +178,6 @@ public class LivingSpawnEvent extends LivingEvent
      * the mob can be allowed to despawn. See {@link EntityLiving#despawnEntity}
      *
      * @author cpw
-     *
      */
     @HasResult
     public static class AllowDespawn extends LivingSpawnEvent
@@ -172,6 +186,5 @@ public class LivingSpawnEvent extends LivingEvent
         {
             super(entity, entity.level, entity.getX(), entity.getY(), entity.getZ());
         }
-
     }
 }

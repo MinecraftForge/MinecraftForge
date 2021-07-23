@@ -79,5 +79,4 @@ public class EntityAttributeModificationEvent extends Event implements IModBusEv
     {
         return entityTypes;
     }
-
 }

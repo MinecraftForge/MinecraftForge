@@ -59,9 +59,28 @@ public class ArrowLooseEvent extends PlayerEvent
     }
 
     @Nonnull
-    public ItemStack getBow() { return this.bow; }
-    public Level getWorld() { return this.world; }
-    public boolean hasAmmo() { return this.hasAmmo; }
-    public int getCharge() { return this.charge; }
-    public void setCharge(int charge) { this.charge = charge; }
+    public ItemStack getBow()
+    {
+        return this.bow;
+    }
+
+    public Level getWorld()
+    {
+        return this.world;
+    }
+
+    public boolean hasAmmo()
+    {
+        return this.hasAmmo;
+    }
+
+    public int getCharge()
+    {
+        return this.charge;
+    }
+
+    public void setCharge(int charge)
+    {
+        this.charge = charge;
+    }
 }

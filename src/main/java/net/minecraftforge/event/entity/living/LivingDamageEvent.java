@@ -47,6 +47,7 @@ public class LivingDamageEvent extends LivingEvent
 {
     private final DamageSource source;
     private float amount;
+
     public LivingDamageEvent(LivingEntity entity, DamageSource source, float amount)
     {
         super(entity);
@@ -54,9 +55,18 @@ public class LivingDamageEvent extends LivingEvent
         this.amount = amount;
     }
 
-    public DamageSource getSource() { return source; }
+    public DamageSource getSource()
+    {
+        return source;
+    }
 
-    public float getAmount() { return amount; }
+    public float getAmount()
+    {
+        return amount;
+    }
 
-    public void setAmount(float amount) { this.amount = amount; }
+    public void setAmount(float amount)
+    {
+        this.amount = amount;
+    }
 }

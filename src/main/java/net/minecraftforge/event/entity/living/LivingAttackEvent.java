@@ -38,7 +38,7 @@ import net.minecraft.world.entity.LivingEntity;
  * If this event is canceled, the Entity does not take attack damage.<br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>
- *<br>
+ * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
@@ -46,6 +46,7 @@ public class LivingAttackEvent extends LivingEvent
 {
     private final DamageSource source;
     private final float amount;
+
     public LivingAttackEvent(LivingEntity entity, DamageSource source, float amount)
     {
         super(entity);
@@ -53,6 +54,13 @@ public class LivingAttackEvent extends LivingEvent
         this.amount = amount;
     }
 
-    public DamageSource getSource() { return source; }
-    public float getAmount() { return amount; }
+    public DamageSource getSource()
+    {
+        return source;
+    }
+
+    public float getAmount()
+    {
+        return amount;
+    }
 }

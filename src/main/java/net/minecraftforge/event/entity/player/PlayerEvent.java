@@ -48,6 +48,7 @@ import javax.annotation.Nullable;
 public class PlayerEvent extends LivingEvent
 {
     private final Player entityPlayer;
+
     public PlayerEvent(Player player)
     {
         super(player);
@@ -57,7 +58,11 @@ public class PlayerEvent extends LivingEvent
     /**
      * @return Player
      */
-    public Player getPlayer() { return entityPlayer; }
+    public Player getPlayer()
+    {
+        return entityPlayer;
+    }
+
     /**
      * HarvestCheck is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
@@ -86,9 +91,20 @@ public class PlayerEvent extends LivingEvent
             this.success = success;
         }
 
-        public BlockState getTargetBlock() { return this.state; }
-        public boolean canHarvest() { return this.success; }
-        public void setCanHarvest(boolean success){ this.success = success; }
+        public BlockState getTargetBlock()
+        {
+            return this.state;
+        }
+
+        public boolean canHarvest()
+        {
+            return this.success;
+        }
+
+        public void setCanHarvest(boolean success)
+        {
+            this.success = success;
+        }
     }
 
     /**
@@ -127,11 +143,30 @@ public class PlayerEvent extends LivingEvent
             this.pos = pos != null ? pos : new BlockPos(0, -1, 0);
         }
 
-        public BlockState getState() { return state; }
-        public float getOriginalSpeed() { return originalSpeed; }
-        public float getNewSpeed() { return newSpeed; }
-        public void setNewSpeed(float newSpeed) { this.newSpeed = newSpeed; }
-        public BlockPos getPos() { return pos; }
+        public BlockState getState()
+        {
+            return state;
+        }
+
+        public float getOriginalSpeed()
+        {
+            return originalSpeed;
+        }
+
+        public float getNewSpeed()
+        {
+            return newSpeed;
+        }
+
+        public void setNewSpeed(float newSpeed)
+        {
+            this.newSpeed = newSpeed;
+        }
+
+        public BlockPos getPos()
+        {
+            return pos;
+        }
     }
 
     /**
@@ -155,7 +190,7 @@ public class PlayerEvent extends LivingEvent
         private final Component username;
         private Component displayname;
 
-        public NameFormat(Player player, Component username) 
+        public NameFormat(Player player, Component username)
         {
             super(player);
             this.username = username;
@@ -202,7 +237,7 @@ public class PlayerEvent extends LivingEvent
         {
             super(player);
         }
-        
+
         @Nullable
         public Component getDisplayName()
         {
@@ -251,9 +286,9 @@ public class PlayerEvent extends LivingEvent
 
     /**
      * Fired when an Entity is started to be "tracked" by this player (the player receives updates about this entity, e.g. motion).
-     *
      */
-    public static class StartTracking extends PlayerEvent {
+    public static class StartTracking extends PlayerEvent
+    {
 
         private final Entity target;
 
@@ -274,9 +309,9 @@ public class PlayerEvent extends LivingEvent
 
     /**
      * Fired when an Entity is stopped to be "tracked" by this player (the player no longer receives updates about this entity, e.g. motion).
-     *
      */
-    public static class StopTracking extends PlayerEvent {
+    public static class StopTracking extends PlayerEvent
+    {
 
         private final Entity target;
 
@@ -301,7 +336,8 @@ public class PlayerEvent extends LivingEvent
      * allow mods to load an additional file from the players directory
      * containing additional mod related player data.
      */
-    public static class LoadFromFile extends PlayerEvent {
+    public static class LoadFromFile extends PlayerEvent
+    {
         private final File playerDirectory;
         private final String playerUUID;
 
@@ -314,13 +350,14 @@ public class PlayerEvent extends LivingEvent
 
         /**
          * Construct and return a recommended file for the supplied suffix
+         *
          * @param suffix The suffix to use.
          * @return
          */
         public File getPlayerFile(String suffix)
         {
             if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
+            return new File(this.getPlayerDirectory(), this.getPlayerUUID() + "." + suffix);
         }
 
         /**
@@ -341,6 +378,7 @@ public class PlayerEvent extends LivingEvent
             return playerUUID;
         }
     }
+
     /**
      * The player is being saved to the world store. Note that the
      * player may be in the process of logging out or otherwise departing
@@ -354,7 +392,8 @@ public class PlayerEvent extends LivingEvent
      * <em>WARNING</em>: Do not overwrite the player's .dat file here. You will
      * corrupt the world state.
      */
-    public static class SaveToFile extends PlayerEvent {
+    public static class SaveToFile extends PlayerEvent
+    {
         private final File playerDirectory;
         private final String playerUUID;
 
@@ -367,13 +406,14 @@ public class PlayerEvent extends LivingEvent
 
         /**
          * Construct and return a recommended file for the supplied suffix
+         *
          * @param suffix The suffix to use.
          * @return
          */
         public File getPlayerFile(String suffix)
         {
             if ("dat".equals(suffix)) throw new IllegalArgumentException("The suffix 'dat' is reserved");
-            return new File(this.getPlayerDirectory(), this.getPlayerUUID() +"."+suffix);
+            return new File(this.getPlayerDirectory(), this.getPlayerUUID() + "." + suffix);
         }
 
         /**
@@ -395,7 +435,8 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
-    public static class ItemPickupEvent extends PlayerEvent {
+    public static class ItemPickupEvent extends PlayerEvent
+    {
         /**
          * Original EntityItem with current remaining stack size
          */
@@ -404,6 +445,7 @@ public class PlayerEvent extends LivingEvent
          * Clone item stack, containing the item and amount picked up
          */
         private final ItemStack stack;
+
         public ItemPickupEvent(Player player, ItemEntity entPickedUp, ItemStack stack)
         {
             super(player);
@@ -411,19 +453,23 @@ public class PlayerEvent extends LivingEvent
             this.stack = stack;
         }
 
-        public ItemStack getStack() {
+        public ItemStack getStack()
+        {
             return stack;
         }
 
-        public ItemEntity getOriginalEntity() {
+        public ItemEntity getOriginalEntity()
+        {
             return originalEntity;
         }
     }
 
-    public static class ItemCraftedEvent extends PlayerEvent {
+    public static class ItemCraftedEvent extends PlayerEvent
+    {
         @Nonnull
         private final ItemStack crafting;
         private final Container craftMatrix;
+
         public ItemCraftedEvent(Player player, @Nonnull ItemStack crafting, Container craftMatrix)
         {
             super(player);
@@ -443,9 +489,11 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
-    public static class ItemSmeltedEvent extends PlayerEvent {
+    public static class ItemSmeltedEvent extends PlayerEvent
+    {
         @Nonnull
         private final ItemStack smelting;
+
         public ItemSmeltedEvent(Player player, @Nonnull ItemStack crafting)
         {
             super(player);
@@ -459,21 +507,24 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
-    public static class PlayerLoggedInEvent extends PlayerEvent {
+    public static class PlayerLoggedInEvent extends PlayerEvent
+    {
         public PlayerLoggedInEvent(Player player)
         {
             super(player);
         }
     }
 
-    public static class PlayerLoggedOutEvent extends PlayerEvent {
+    public static class PlayerLoggedOutEvent extends PlayerEvent
+    {
         public PlayerLoggedOutEvent(Player player)
         {
             super(player);
         }
     }
 
-    public static class PlayerRespawnEvent extends PlayerEvent {
+    public static class PlayerRespawnEvent extends PlayerEvent
+    {
         private final boolean endConquered;
 
         public PlayerRespawnEvent(Player player, boolean endConquered)
@@ -484,19 +535,20 @@ public class PlayerEvent extends LivingEvent
 
         /**
          * Did this respawn event come from the player conquering the end?
+         *
          * @return if this respawn was because the player conquered the end
          */
         public boolean isEndConquered()
         {
             return this.endConquered;
         }
-
-
     }
 
-    public static class PlayerChangedDimensionEvent extends PlayerEvent {
+    public static class PlayerChangedDimensionEvent extends PlayerEvent
+    {
         private final ResourceKey<Level> fromDim;
         private final ResourceKey<Level> toDim;
+
         public PlayerChangedDimensionEvent(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim)
         {
             super(player);

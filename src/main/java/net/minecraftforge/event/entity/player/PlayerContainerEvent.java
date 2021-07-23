@@ -38,6 +38,7 @@ public class PlayerContainerEvent extends PlayerEvent
             super(player, container);
         }
     }
+
     public static class Close extends PlayerContainerEvent
     {
         public Close(Player player, AbstractContainerMenu container)

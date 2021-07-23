@@ -41,5 +41,4 @@ public class InputUpdateEvent extends PlayerEvent
     {
         return movementInput;
     }
-
 }

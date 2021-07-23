@@ -38,8 +38,23 @@ public class PlayerFlyableFallEvent extends PlayerEvent
         this.multiplier = multiplier;
     }
 
-    public float getDistance() { return distance;}
-    public void setDistance(float distance) { this.distance = distance; }
-    public float getMultiplier() { return multiplier; }
-    public void setMultiplier(float multiplier) { this.multiplier = multiplier; }
+    public float getDistance()
+    {
+        return distance;
+    }
+
+    public void setDistance(float distance)
+    {
+        this.distance = distance;
+    }
+
+    public float getMultiplier()
+    {
+        return multiplier;
+    }
+
+    public void setMultiplier(float multiplier)
+    {
+        this.multiplier = multiplier;
+    }
 }

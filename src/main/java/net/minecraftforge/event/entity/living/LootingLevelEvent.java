@@ -22,27 +22,31 @@ package net.minecraftforge.event.entity.living;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.damagesource.DamageSource;
 
-public class LootingLevelEvent extends LivingEvent {
-
+public class LootingLevelEvent extends LivingEvent
+{
     private final DamageSource damageSource;
 
     private int lootingLevel;
 
-    public LootingLevelEvent(LivingEntity entity, DamageSource damageSource, int lootingLevel) {
+    public LootingLevelEvent(LivingEntity entity, DamageSource damageSource, int lootingLevel)
+    {
         super(entity);
         this.damageSource = damageSource;
         this.lootingLevel = lootingLevel;
     }
 
-    public DamageSource getDamageSource() {
+    public DamageSource getDamageSource()
+    {
         return damageSource;
     }
 
-    public int getLootingLevel() {
+    public int getLootingLevel()
+    {
         return lootingLevel;
     }
 
-    public void setLootingLevel(int lootingLevel) {
+    public void setLootingLevel(int lootingLevel)
+    {
         this.lootingLevel = lootingLevel;
     }
 }

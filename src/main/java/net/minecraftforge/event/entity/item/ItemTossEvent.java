@@ -32,7 +32,6 @@ import net.minecraft.world.entity.player.Player;
 @Cancelable
 public class ItemTossEvent extends ItemEvent
 {
-
     private final Player player;
 
     /**

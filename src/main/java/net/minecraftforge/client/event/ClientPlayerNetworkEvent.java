@@ -29,7 +29,8 @@ import javax.annotation.Nullable;
 /**
  * Client side player connectivity events.
  */
-public class ClientPlayerNetworkEvent extends Event {
+public class ClientPlayerNetworkEvent extends Event
+{
     private final MultiPlayerGameMode controller;
     private final LocalPlayer player;
     private final Connection networkManager;
@@ -38,7 +39,8 @@ public class ClientPlayerNetworkEvent extends Event {
      * @return the player controller for the client side
      */
     @Nullable
-    public MultiPlayerGameMode getController() {
+    public MultiPlayerGameMode getController()
+    {
         return controller;
     }
 
@@ -46,7 +48,8 @@ public class ClientPlayerNetworkEvent extends Event {
      * @return the player instance (if present - may be null)
      */
     @Nullable
-    public LocalPlayer getPlayer() {
+    public LocalPlayer getPlayer()
+    {
         return player;
     }
 
@@ -54,11 +57,13 @@ public class ClientPlayerNetworkEvent extends Event {
      * @return the network connection (if present - may be null)
      */
     @Nullable
-    public Connection getNetworkManager() {
+    public Connection getNetworkManager()
+    {
         return networkManager;
     }
 
-    ClientPlayerNetworkEvent(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager) {
+    ClientPlayerNetworkEvent(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager)
+    {
         this.controller = controller;
         this.player = player;
         this.networkManager = networkManager;
@@ -67,9 +72,10 @@ public class ClientPlayerNetworkEvent extends Event {
     /**
      * Fired when the client player logs in to the server. The player should be initialized.
      */
-    public static class LoggedInEvent extends ClientPlayerNetworkEvent {
-
-        public LoggedInEvent(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager) {
+    public static class LoggedInEvent extends ClientPlayerNetworkEvent
+    {
+        public LoggedInEvent(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager)
+        {
             super(controller, player, networkManager);
         }
     }
@@ -77,9 +83,10 @@ public class ClientPlayerNetworkEvent extends Event {
     /**
      * Fired when the player logs out. Note this might also fire when a new integrated server is being created.
      */
-    public static class LoggedOutEvent extends ClientPlayerNetworkEvent {
-
-        public LoggedOutEvent(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager) {
+    public static class LoggedOutEvent extends ClientPlayerNetworkEvent
+    {
+        public LoggedOutEvent(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager)
+        {
             super(controller, player, networkManager);
         }
     }
@@ -87,19 +94,23 @@ public class ClientPlayerNetworkEvent extends Event {
     /**
      * Fired when the player object respawns, such as dimension changes.
      */
-    public static class RespawnEvent extends ClientPlayerNetworkEvent {
+    public static class RespawnEvent extends ClientPlayerNetworkEvent
+    {
         private final LocalPlayer oldPlayer;
 
-        public RespawnEvent(final MultiPlayerGameMode pc, final LocalPlayer oldPlayer, final LocalPlayer newPlayer, final Connection networkManager) {
+        public RespawnEvent(final MultiPlayerGameMode pc, final LocalPlayer oldPlayer, final LocalPlayer newPlayer, final Connection networkManager)
+        {
             super(pc, newPlayer, networkManager);
             this.oldPlayer = oldPlayer;
         }
 
-        public LocalPlayer getOldPlayer() {
+        public LocalPlayer getOldPlayer()
+        {
             return oldPlayer;
         }
 
-        public LocalPlayer getNewPlayer() {
+        public LocalPlayer getNewPlayer()
+        {
             return super.getPlayer();
         }
     }

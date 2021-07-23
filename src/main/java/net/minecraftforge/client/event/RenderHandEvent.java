@@ -73,11 +73,13 @@ public class RenderHandEvent extends Event
         return mat;
     }
 
-    public MultiBufferSource getBuffers() {
+    public MultiBufferSource getBuffers()
+    {
         return buffers;
     }
 
-    public int getLight() {
+    public int getLight()
+    {
         return light;
     }
 

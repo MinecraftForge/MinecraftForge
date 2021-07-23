@@ -32,7 +32,6 @@ import net.minecraftforge.eventbus.api.Cancelable;
  */
 public abstract class PistonEvent extends BlockEvent
 {
-
     private final Direction direction;
     private final PistonMoveType moveType;
 
@@ -91,12 +90,10 @@ public abstract class PistonEvent extends BlockEvent
      */
     public static class Post extends PistonEvent
     {
-
         public Post(Level world, BlockPos pos, Direction direction, PistonMoveType moveType)
         {
             super(world, pos, direction, moveType);
         }
-
     }
 
     /**
@@ -105,15 +102,13 @@ public abstract class PistonEvent extends BlockEvent
     @Cancelable
     public static class Pre extends PistonEvent
     {
-
         public Pre(Level world, BlockPos pos, Direction direction, PistonMoveType moveType)
         {
             super(world, pos, direction, moveType);
         }
-
     }
 
-    public static enum PistonMoveType
+    public enum PistonMoveType
     {
         EXTEND(true), RETRACT(false);
 
@@ -124,5 +119,4 @@ public abstract class PistonEvent extends BlockEvent
             this.isExtend = isExtend;
         }
     }
-
 }

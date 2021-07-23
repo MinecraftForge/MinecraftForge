@@ -39,7 +39,6 @@ import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
  */
 public class VillagerTradesEvent extends Event
 {
-
     protected Int2ObjectMap<List<ItemListing>> trades;
     protected VillagerProfession type;
 
@@ -58,5 +57,4 @@ public class VillagerTradesEvent extends Event
     {
         return type;
     }
-
 }

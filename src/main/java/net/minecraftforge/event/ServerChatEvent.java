@@ -46,6 +46,7 @@ public class ServerChatEvent extends net.minecraftforge.eventbus.api.Event
     private final String message, username;
     private final ServerPlayer player;
     private Component component;
+
     public ServerChatEvent(ServerPlayer player, String message, Component component)
     {
         super();
@@ -65,7 +66,18 @@ public class ServerChatEvent extends net.minecraftforge.eventbus.api.Event
         return this.component;
     }
 
-    public String getMessage() { return this.message; }
-    public String getUsername() { return this.username; }
-    public ServerPlayer getPlayer() { return this.player; }
+    public String getMessage()
+    {
+        return this.message;
+    }
+
+    public String getUsername()
+    {
+        return this.username;
+    }
+
+    public ServerPlayer getPlayer()
+    {
+        return this.player;
+    }
 }

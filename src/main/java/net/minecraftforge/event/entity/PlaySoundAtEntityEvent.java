@@ -22,6 +22,7 @@ package net.minecraftforge.event.entity;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvent;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * PlaySoundAtEntityEvent is fired a sound is to be played at an Entity<br>
@@ -42,7 +43,7 @@ import net.minecraft.sounds.SoundEvent;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 public class PlaySoundAtEntityEvent extends EntityEvent
 {
     private SoundEvent name;
@@ -63,14 +64,53 @@ public class PlaySoundAtEntityEvent extends EntityEvent
         this.newPitch = pitch;
     }
 
-    public SoundEvent getSound() { return this.name; }
-    public SoundSource getCategory() { return this.category; }
-    public float getDefaultVolume() { return this.volume; }
-    public float getDefaultPitch() { return this.pitch; }
-    public float getVolume() { return this.newVolume; }
-    public float getPitch() { return this.newPitch; }
-    public void setSound(SoundEvent value) { this.name = value; }
-    public void setCategory(SoundSource category) { this.category = category; }
-    public void setVolume(float value) { this.newVolume = value; }
-    public void setPitch(float value) { this.newPitch = value; }
+    public SoundEvent getSound()
+    {
+        return this.name;
+    }
+
+    public SoundSource getCategory()
+    {
+        return this.category;
+    }
+
+    public float getDefaultVolume()
+    {
+        return this.volume;
+    }
+
+    public float getDefaultPitch()
+    {
+        return this.pitch;
+    }
+
+    public float getVolume()
+    {
+        return this.newVolume;
+    }
+
+    public float getPitch()
+    {
+        return this.newPitch;
+    }
+
+    public void setSound(SoundEvent value)
+    {
+        this.name = value;
+    }
+
+    public void setCategory(SoundSource category)
+    {
+        this.category = category;
+    }
+
+    public void setVolume(float value)
+    {
+        this.newVolume = value;
+    }
+
+    public void setPitch(float value)
+    {
+        this.newPitch = value;
+    }
 }

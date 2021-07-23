@@ -24,7 +24,6 @@ import net.minecraftforge.eventbus.api.Event;
 
 public class ServerLifecycleEvent extends Event
 {
-
     protected final MinecraftServer server;
 
     public ServerLifecycleEvent(MinecraftServer server)

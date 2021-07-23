@@ -26,7 +26,6 @@ import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
 
-
 public class PotionBrewEvent extends Event
 {
     private NonNullList<ItemStack> stacks;

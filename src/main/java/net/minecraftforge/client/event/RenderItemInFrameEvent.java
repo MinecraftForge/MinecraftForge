@@ -71,15 +71,18 @@ public class RenderItemInFrameEvent extends Event
         return renderer;
     }
 
-    public PoseStack getMatrix() {
+    public PoseStack getMatrix()
+    {
         return matrix;
     }
 
-    public MultiBufferSource getBuffers() {
+    public MultiBufferSource getBuffers()
+    {
         return buffers;
     }
 
-    public int getLight() {
+    public int getLight()
+    {
         return light;
     }
 }

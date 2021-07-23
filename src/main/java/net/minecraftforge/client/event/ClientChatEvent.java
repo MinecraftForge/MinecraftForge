@@ -43,6 +43,7 @@ public class ClientChatEvent extends Event
 {
     private String message;
     private final String originalMessage;
+
     public ClientChatEvent(String message)
     {
         this.setMessage(message);

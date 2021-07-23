@@ -39,8 +39,8 @@ import net.minecraft.world.entity.LivingEntity;
  **/
 public class LivingSetAttackTargetEvent extends LivingEvent
 {
-
     private final LivingEntity target;
+
     public LivingSetAttackTargetEvent(LivingEntity entity, LivingEntity target)
     {
         super(entity);

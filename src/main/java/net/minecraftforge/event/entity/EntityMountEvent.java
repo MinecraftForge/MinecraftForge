@@ -40,7 +40,6 @@ import net.minecraftforge.eventbus.api.Cancelable;
 @Cancelable
 public class EntityMountEvent extends EntityEvent
 {
-
     private final Entity entityMounting;
     private final Entity entityBeingMounted;
     private final Level worldObj;
