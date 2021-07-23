@@ -1,0 +1,32 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:jungle_edge",
+    "minecraft:savanna_plateau",
+    "minecraft:sunflower_plains",
+    "minecraft:desert_lakes",
+    "minecraft:gravelly_mountains",
+    "minecraft:flower_forest",
+    "minecraft:taiga_mountains",
+    "minecraft:swamp_hills",
+    "minecraft:ice_spikes",
+    "minecraft:modified_jungle",
+    "minecraft:modified_jungle_edge",
+    "minecraft:tall_birch_forest",
+    "minecraft:tall_birch_hills",
+    "minecraft:dark_forest_hills",
+    "minecraft:snowy_taiga_mountains",
+    "minecraft:giant_spruce_taiga",
+    "minecraft:giant_spruce_taiga_hills",
+    "minecraft:modified_gravelly_mountains",
+    "minecraft:shattered_savanna",
+    "minecraft:shattered_savanna_plateau",
+    "minecraft:eroded_badlands",
+    "minecraft:modified_wooded_badlands_plateau",
+    "minecraft:modified_badlands_plateau",
+    "minecraft:bamboo_jungle",
+    "minecraft:bamboo_jungle_hills",
+    "minecraft:mushroom_fields",
+    "minecraft:mushroom_field_shore"
+  ]
+}

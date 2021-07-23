@@ -1,0 +1,26 @@
+{
+  "config": {
+    "feature": {
+      "config": {
+        "feature": {
+          "config": {
+            "state": {
+              "Name": "minecraft:red_wool"
+            }
+          },
+          "type": "dynamic_registries_loaded_event_test:single_block"
+        },
+        "decorator": {
+          "config": {},
+          "type": "minecraft:heightmap"
+        }
+      },
+      "type": "minecraft:decorated"
+    },
+    "decorator": {
+      "config": {},
+      "type": "dynamic_registries_loaded_event_test:limited_square"
+    }
+  },
+  "type": "minecraft:decorated"
+}

@@ -36,6 +36,10 @@ public class Tags
         Blocks.init();
         Items.init();
         Fluids.init();
+        Biomes.init();
+        NoiseSettings.init();
+        DimensionTypes.init();
+        Dimensions.init();
     }
 
     public static class Blocks
@@ -304,6 +308,102 @@ public class Tags
         private static IOptionalNamedTag<Fluid> tag(String name)
         {
             return FluidTags.createOptional(new ResourceLocation("forge", name));
+        }
+    }
+    
+    public static class Biomes
+    {
+        private static void init() {}
+        
+        // Tags specifying that a biome is a variant of a normal biome
+        public static final IOptionalNamedTag<RegistryKey<Biome>> RARE = tag("rare");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> PLATEAUS = tag("plateaus"); // plateau variants of other biomes
+        public static final IOptionalNamedTag<RegistryKey<Biome>> HILLS = tag("hills"); // hills variants of other biomes
+        public static final IOptionalNamedTag<RegistryKey<Biome>> MODIFIED = tag("modified"); 
+        
+        // Tags specifying aquatic biomes
+        public static final IOptionalNamedTag<RegistryKey<Biome>> OCEANS = tag("water/oceans");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> SHALLOW_OCEANS = tag("water/oceans/shallow");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> DEEP_OCEANS = tag("water/oceans/deep");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> RIVERS = tag("water/rivers");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> WATER = tag("water");
+                
+        // Tags specifying generic types of biomes
+        public static final IOptionalNamedTag<RegistryKey<Biome>> BADLANDS = tag("badlands");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> BEACHES = tag("beaches");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> DESERTS = tag("deserts");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> FORESTS = tag("forests");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> BIRCH_FORESTS = tag("forests/birch");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> DARK_FORESTS = tag("forests/dark");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> JUNGLE_FORESTS = tag("forests/jungles");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> BAMBOO_JUNGLE_FORESTS = tag("forests/jungles/bamboo");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> NETHER_FORESTS = tag("forests/nether");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> OAK_FORESTS = tag("forests/oak");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> TAIGA_FORESTS = tag("forests/taigas");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> GRASSLANDS = tag("grasslands"); // plains and savannas
+        public static final IOptionalNamedTag<RegistryKey<Biome>> MUSHROOM = tag("mushroom");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> MOUNTAINS = tag("mountains");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> PLAINS = tag("plains");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> SAVANNAS = tag("savannas");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> SNOWY = tag("snowy"); // indicates that a biome has snow and/or ice
+        public static final IOptionalNamedTag<RegistryKey<Biome>> SWAMPS = tag("swamps");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> VOIDS = tag("voids");
+        
+        // Tags specifying that a biome generates in a vanilla dimension. Specifying none of these indicates that the biome only generates in a modded dimension
+        public static final IOptionalNamedTag<RegistryKey<Biome>> OVERWORLD = tag("overworld");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> NETHER = tag("nether");
+        public static final IOptionalNamedTag<RegistryKey<Biome>> END = tag("end");
+        
+        private static IOptionalNamedTag<RegistryKey<Biome>> tag(String name)
+        {
+            return ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation("forge", name));
+        }
+    }
+    
+    /** Tags for the "noise_settings" data files that include the list of structure placement entries used by dimensions **/
+    public static class NoiseSettings
+    {
+        private static void init(){}
+        
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> AMPLIFIED = tag("amplified");
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> CAVES = tag("caves");
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> END = tag("end");
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> FLOATING_ISLANDS = tag("floating_islands");
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> NETHER = tag("nether");
+        public static final IOptionalNamedTag<RegistryKey<DimensionSettings>> OVERWORLD = tag("overworld");
+        
+        private static IOptionalNamedTag<RegistryKey<DimensionSettings>> tag(String name)
+        {
+            return ResourceKeyTags.makeKeyTagWrapper(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY, new ResourceLocation("forge", name));
+        }
+    }
+    
+    public static class DimensionTypes
+    {
+        private static void init(){}
+        
+        public static final IOptionalNamedTag<RegistryKey<DimensionType>> END = tag("end");
+        public static final IOptionalNamedTag<RegistryKey<DimensionType>> NETHER = tag("nether");
+        public static final IOptionalNamedTag<RegistryKey<DimensionType>> OVERWORLD = tag("overworld");
+        public static final IOptionalNamedTag<RegistryKey<DimensionType>> OVERWORLD_CAVES = tag("overworld/caves");
+        
+        private static IOptionalNamedTag<RegistryKey<DimensionType>> tag(String name)
+        {
+            return ResourceKeyTags.makeKeyTagWrapper(Registry.DIMENSION_TYPE_REGISTRY, new ResourceLocation("forge", name));
+        }
+    }
+    
+    public static class Dimensions
+    {
+        private static void init(){}
+        
+        public static final IOptionalNamedTag<RegistryKey<World>> END = tag("end");
+        public static final IOptionalNamedTag<RegistryKey<World>> NETHER = tag("nether");
+        public static final IOptionalNamedTag<RegistryKey<World>> OVERWORLD = tag("overworld");
+        
+        private static IOptionalNamedTag<RegistryKey<World>> tag(String name)
+        {
+            return ResourceKeyTags.makeKeyTagWrapper(Registry.DIMENSION_REGISTRY, new ResourceLocation("forge", name));
         }
     }
 

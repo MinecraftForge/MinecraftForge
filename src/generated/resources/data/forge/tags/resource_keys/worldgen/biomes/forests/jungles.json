@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:forests/jungles/bamboo",
+    "minecraft:jungle",
+    "minecraft:jungle_edge",
+    "minecraft:jungle_hills",
+    "minecraft:modified_jungle",
+    "minecraft:modified_jungle_edge"
+  ]
+}

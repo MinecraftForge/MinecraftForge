@@ -930,6 +930,7 @@ project(':forge') {
                             '--mod', 'scaffolding_test',
                             '--mod', 'custom_tag_types_test',
                             '--mod', 'new_model_loader_test',
+                    '--mod', 'dynamic_registries_loaded_event_test',
                             '--output', rootProject.file('src/generated_test/resources/'),
                             '--existing', sourceSets.main.resources.srcDirs[0],
                             '--existing', sourceSets.test.resources.srcDirs[0]

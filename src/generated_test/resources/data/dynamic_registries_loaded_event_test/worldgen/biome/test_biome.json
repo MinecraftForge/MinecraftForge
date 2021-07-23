@@ -1,0 +1,47 @@
+{
+  "effects": {
+    "sky_color": 16711680,
+    "foliage_color": 16711680,
+    "grass_color": 16711680,
+    "fog_color": 16711680,
+    "water_color": 16711680,
+    "water_fog_color": 16711680
+  },
+  "surface_builder": {
+    "config": {
+      "top_material": {
+        "Properties": {
+          "snowy": "false"
+        },
+        "Name": "minecraft:grass_block"
+      },
+      "under_material": {
+        "Name": "minecraft:dirt"
+      },
+      "underwater_material": {
+        "Name": "minecraft:gravel"
+      }
+    },
+    "type": "minecraft:default"
+  },
+  "carvers": {},
+  "features": [],
+  "starts": [],
+  "spawners": {
+    "monster": [],
+    "creature": [],
+    "ambient": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": [],
+    "test": []
+  },
+  "spawn_costs": {},
+  "player_spawn_friendly": false,
+  "precipitation": "none",
+  "temperature": 0.8,
+  "downfall": 0.4,
+  "category": "plains",
+  "depth": 0.125,
+  "scale": 0.05
+}

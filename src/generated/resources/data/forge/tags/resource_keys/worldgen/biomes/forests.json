@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:forests/birch",
+    "#forge:forests/dark",
+    "#forge:forests/jungles",
+    "#forge:forests/nether",
+    "#forge:forests/oak",
+    "#forge:forests/taigas"
+  ]
+}

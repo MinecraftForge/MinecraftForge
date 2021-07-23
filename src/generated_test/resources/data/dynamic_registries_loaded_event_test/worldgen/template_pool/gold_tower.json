@@ -1,0 +1,17 @@
+{
+  "name": "dynamic_registries_loaded_event_test:gold_tower",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "dynamic_registries_loaded_event_test:gold_tower",
+        "processors": {
+          "processors": []
+        },
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

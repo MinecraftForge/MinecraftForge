@@ -27,8 +27,10 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
@@ -47,6 +49,8 @@ import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -130,8 +134,10 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.world.BiomeBuilder;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldType;
+import net.minecraftforge.common.world.IBiomeParameters;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -161,6 +167,7 @@ import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.event.world.DynamicRegistriesLoadedEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -1404,6 +1411,70 @@ public class ForgeHooks
             AttributeSupplier.Builder newBuilder = supplier != null ? new AttributeSupplier.Builder(supplier) : new AttributeSupplier.Builder();
             newBuilder.combine(v);
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
+        });
+    }
+    
+    /**
+     * Determines and returns the correct RegistryOps to return when returning early from creating a RegistryOps without importing datapacks
+     * @apiNote FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY
+     */
+    @SuppressWarnings("unchecked")
+    @Deprecated
+    public static <T> WorldSettingsImport<T> getCachedRegistryOps(DynamicOps<T> delegateOps, WorldSettingsImport<?> registryOps, WorldSettingsImport.IResourceAccess resources, DynamicRegistries.Impl registries) 
+    {
+        // if we return early from the ops creator, we need to return a previously-created RegistryReadOps -- so we need to figure out what ops type needs to be returned
+        if (delegateOps == JsonOps.INSTANCE) // same check vanilla uses
+            return (WorldSettingsImport<T>) registryOps.jsonOps;
+        Map<DynamicOps<?>, WorldSettingsImport<?>> extraOps = registryOps.extraOps;
+        return (WorldSettingsImport<T>) extraOps.computeIfAbsent(delegateOps, ops -> new WorldSettingsImport<T>(delegateOps, resources, registries, (IdentityHashMap<RegistryKey<? extends Registry<?>>, ResultMap<?>>) registryOps.readCache, extraOps));
+    }
+    
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
+    @Deprecated
+    public static void onDynamicRegistriesLoaded(final @Nonnull WorldSettingsImport<?> imports, final @Nonnull DynamicRegistries registries)
+    {
+        // mark the registries as having had datapacks imported into them
+        registries.setDatapackImports(imports);
+        
+        // make a mutable copy of all biomes and provide these copies via the event
+        final Registry<Biome> biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);
+        final Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers = biomes.entrySet().stream()
+            .collect(Collectors.toMap(Entry::getKey, entry -> (IBiomeParameters)BiomeBuilder.copyFrom(entry.getValue())));
+        // make a mutable copy of each noise settings's structure seperation entries
+        final Registry<DimensionSettings> noiseGenerators = registries.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
+        final Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs = noiseGenerators.entrySet().stream()
+            .collect(Collectors.toMap(Entry::getKey, entry -> new HashMap<>(entry.getValue().structureSettings().structureConfig())));
+        
+        MinecraftForge.EVENT_BUS.post(new DynamicRegistriesLoadedEvent(registries, biomeModifiers, structureConfigs));
+        
+        // copy the new biome parameters back into the actual registered biome instances
+        biomes.entrySet().forEach(entry ->
+        {
+            final RegistryKey<Biome> key = entry.getKey();
+            final @Nullable IBiomeParameters modifier = biomeModifiers.get(key);
+            if (modifier != null) // if this is null, somebody removed the modifier from the map during the event (can't modify biome)
+            {
+                final Biome biome = entry.getValue();
+                biome.biomeCategory = modifier.getCategory();
+                biome.depth = modifier.getDepth();
+                biome.scale = modifier.getScale();
+                biome.climateSettings = new Biome.Climate(modifier.getPrecipitation(), modifier.getTemperature(), modifier.getTemperatureModifier(), modifier.getDownfall());
+                biome.specialEffects = modifier.getEffectsBuilder().build();
+                biome.generationSettings = modifier.getGenerationBuilder().build();
+                biome.mobSettings = modifier.getSpawnBuilder().build();
+            }
+        });
+        
+        // copy the new structure seperations back into the noise settings
+        noiseGenerators.entrySet().forEach(entry ->
+        {
+            final RegistryKey<DimensionSettings> key = entry.getKey();
+            final @Nullable Map<Structure<?>, StructureSeparationSettings> structureMap = structureConfigs.get(key);
+            if (structureMap != null) // if this is null, somebody removed the structure map from this noise setting, just ignore it
+            {
+                final DimensionSettings noiseGenerator = entry.getValue();
+                noiseGenerator.structureSettings().structureConfig = structureMap;
+            }
         });
     }
 }

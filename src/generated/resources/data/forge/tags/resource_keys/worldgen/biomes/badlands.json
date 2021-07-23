@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:badlands",
+    "minecraft:badlands_plateau",
+    "minecraft:eroded_badlands",
+    "minecraft:modified_badlands_plateau",
+    "minecraft:modified_wooded_badlands_plateau",
+    "minecraft:wooded_badlands_plateau"
+  ]
+}

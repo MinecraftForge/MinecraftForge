@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:forests/nether",
+    "minecraft:nether_wastes",
+    "minecraft:soul_sand_valley",
+    "minecraft:basalt_deltas"
+  ]
+}
