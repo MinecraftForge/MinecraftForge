@@ -1459,7 +1459,7 @@ public class ForgeHooks
                 biome.biomeCategory = modifier.getCategory();
                 biome.depth = modifier.getDepth();
                 biome.scale = modifier.getScale();
-                biome.climateSettings = new Biome.Climate(modifier.getPrecipitation(), modifier.getTemperature(), modifier.getTemperatureModifier(), modifier.getDownfall());
+                biome.climateSettings = new Biome.ClimateSettings(modifier.getPrecipitation(), modifier.getTemperature(), modifier.getTemperatureModifier(), modifier.getDownfall());
                 biome.specialEffects = modifier.getEffectsBuilder().build();
                 biome.generationSettings = modifier.getGenerationBuilder().build();
                 biome.mobSettings = modifier.getSpawnBuilder().build();
