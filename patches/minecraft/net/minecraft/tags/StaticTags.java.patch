@@ -52,11 +52,11 @@
     public static void m_144349_(Consumer<StaticTagHelper<?>> p_144350_) {
        f_13264_.forEach(p_144350_);
     }
-@@ -70,6 +_,7 @@
+@@ -67,6 +_,7 @@
+    public static TagContainer m_144354_() {
+       TagContainer.Builder tagcontainer$builder = new TagContainer.Builder();
+       m_144356_();
++      net.minecraftforge.common.ForgeTagHandler.populateTagContainer();
        f_13264_.forEach((p_144344_) -> {
           p_144344_.m_144336_(tagcontainer$builder);
        });
-+      net.minecraftforge.common.ForgeTagHandler.populateTagCollectionManager();
-       return tagcontainer$builder.m_144485_();
-    }
- }

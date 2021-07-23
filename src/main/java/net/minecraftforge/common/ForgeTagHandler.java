@@ -21,9 +21,7 @@ package net.minecraftforge.common;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -34,13 +32,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.*;
 import net.minecraft.tags.Tag.Named;
-import net.minecraft.tags.TagCollection;
-import net.minecraft.tags.TagContainer;
-import net.minecraft.tags.TagLoader;
-import net.minecraft.tags.StaticTagHelper;
-import net.minecraft.tags.StaticTags;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.common.extensions.IForgeTagContainer;
@@ -228,7 +221,7 @@ public class ForgeTagHandler
     /**
      * Creates a map for custom tag type to tag reader
      *
-     * @apiNote Internal: For use by NetworkTagManager
+     * @apiNote Internal: For use by TagManager
      */
     public static Map<ResourceLocation, TagLoader<?>> createCustomTagTypeReaders()
     {
@@ -255,19 +248,19 @@ public class ForgeTagHandler
         ImmutableMap.Builder<ResourceLocation, TagCollection<?>> builder = ImmutableMap.builder();
         for (ResourceLocation registryName : customTagTypeNames)
         {
-            StaticTagHelper<?> tagRegistry = StaticTags.get(registryName);
-            if (tagRegistry != null)
+            StaticTagHelper<?> tagHelper = StaticTags.get(registryName);
+            if (tagHelper != null)
             {
                 if (makeEmpty)
                 {
                     if (withOptional)
-                        builder.put(registryName, tagRegistry.reinjectOptionalTags(TagCollection.of(Collections.emptyMap())));
+                        builder.put(registryName, tagHelper.reinjectOptionalTags(TagCollection.of(Collections.emptyMap())));
                     else
                         builder.put(registryName, TagCollection.of(Collections.emptyMap()));
                 }
                 else
                 {
-                    builder.put(registryName, TagCollection.of(tagRegistry.getWrappers().stream().distinct().collect(Collectors.toMap(Named::getName, namedTag -> namedTag))));
+                    builder.put(registryName, TagCollection.of(tagHelper.getWrappers().stream().distinct().collect(Collectors.toMap(Named::getName, namedTag -> namedTag))));
                 }
             }
         }
@@ -275,11 +268,11 @@ public class ForgeTagHandler
     }
 
     /**
-     * Used to ensure that all custom tag types have a defaulted collection when vanilla is initializing a defaulted TagCollectionManager
+     * Used to ensure that all custom tag types have a defaulted collection when vanilla is initializing a defaulted TagContainer
      *
-     * @apiNote Internal: For use by TagCollectionManager
+     * @apiNote Internal: For use by StaticTags
      */
-    public static void populateTagCollectionManager()
+    public static void populateTagContainer()
     {
         //Default the tag collections
         resetCachedTagCollections(false, false);
@@ -287,21 +280,6 @@ public class ForgeTagHandler
         {
             LOGGER.debug("Populated the TagCollectionManager with {} extra types", customTagTypes.size());
         }
-    }
-
-    /**
-     * Updates the custom tag types' tags from reloading via NetworkTagManager
-     *
-     * @apiNote Internal: For use by NetworkTagManager
-     */
-    public static void updateCustomTagTypes(List<TagCollectionReaderInfo> tagCollectionReaders)
-    {
-        ImmutableMap.Builder<ResourceLocation, TagCollection<?>> builder = ImmutableMap.builder();
-        for (TagCollectionReaderInfo info : tagCollectionReaders)
-        {
-            builder.put(info.tagType, info.reader.build(info.tagBuilders));
-        }
-        customTagTypes = builder.build();
     }
 
     /**
@@ -316,23 +294,15 @@ public class ForgeTagHandler
     }
 
     /**
-     * Gets the completable future containing the reload results for all custom tag types.
+     * Creates the completable future in a wrapper object to be loaded by the TagManager
      *
-     * @apiNote Internal: For use by NetworkTagManager
+     * @apiNote Internal
      */
-    public static CompletableFuture<List<TagCollectionReaderInfo>> getCustomTagTypeReloadResults(ResourceManager resourceManager, Executor backgroundExecutor, Map<ResourceLocation, TagLoader<?>> readers)
-    {
-        CompletableFuture<List<TagCollectionReaderInfo>> customResults = CompletableFuture.completedFuture(new ArrayList<>());
-        for (Entry<ResourceLocation, TagLoader<?>> entry : readers.entrySet())
-        {
-            CompletableFuture<Map<ResourceLocation, Tag.Builder>> collectionFuture =
-                    CompletableFuture.supplyAsync(() -> entry.getValue().load(resourceManager), backgroundExecutor);
-            customResults = customResults.thenCombine(collectionFuture, (results, result) -> {
-                results.add(new TagCollectionReaderInfo(entry.getKey(), entry.getValue(), result));
-                return results;
-            });
-        }
-        return customResults;
+    @SuppressWarnings("unchecked")
+    public static <T> TagManager.LoaderInfo<T> makeCustomTagTypeLoader(StaticTagHelper<T> helper, ResourceManager manager, Executor executor, Map<ResourceLocation, TagLoader<?>> readers) {
+        TagLoader<T> loader = (TagLoader<T>) readers.get(helper.getKey().location());
+        if (loader == null) return null;
+        return new TagManager.LoaderInfo<>(helper, CompletableFuture.supplyAsync(() -> loader.loadAndBuild(manager), executor));
     }
 
     /**
@@ -387,25 +357,5 @@ public class ForgeTagHandler
                 return customTagTypes;
             }
         };
-    }
-
-    /**
-     * Helper storage class for keeping track of various data for all custom tag types in the NetworkTagReader to make the code easier to read.
-     *
-     * @apiNote Internal: For use by NetworkTagManager
-     */
-    public static class TagCollectionReaderInfo
-    {
-
-        private final ResourceLocation tagType;
-        private final TagLoader<?> reader;
-        private final Map<ResourceLocation, Tag.Builder> tagBuilders;
-
-        private TagCollectionReaderInfo(ResourceLocation tagType, TagLoader<?> reader, Map<ResourceLocation, Tag.Builder> tagBuilders)
-        {
-            this.tagType = tagType;
-            this.reader = reader;
-            this.tagBuilders = tagBuilders;
-        }
     }
 }
