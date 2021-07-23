@@ -23,7 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent;
+import net.minecraftforge.event.level.BlockEvent.BlockToolInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("tool_interact_test")

@@ -68,7 +68,7 @@ public interface IForgeStructureFeature
      * Helper method to get the list of entity spawns for this structure for the given classification.
      * @param classification The classification of entities.
      * @apiNote This method is marked as final in {@link Structure} so as to not be overridden by modders and breaking support for
-     * {@link net.minecraftforge.event.world.StructureSpawnListGatherEvent}.
+     * {@link net.minecraftforge.event.level.StructureSpawnListGatherEvent}.
      */
     WeightedRandomList<MobSpawnSettings.SpawnerData> getSpawnList(MobCategory classification);
 }

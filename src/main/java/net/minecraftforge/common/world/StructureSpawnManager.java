@@ -32,7 +32,7 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.StructureFeatureManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.StructureSpawnListGatherEvent;
+import net.minecraftforge.event.level.StructureSpawnListGatherEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
