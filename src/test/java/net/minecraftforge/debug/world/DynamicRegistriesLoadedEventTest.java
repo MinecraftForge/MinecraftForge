@@ -34,49 +34,46 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.block.Blocks;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MutableBoundingBox;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.WorldGenRegistries;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biome.RainType;
-import net.minecraft.world.biome.BiomeAmbience;
-import net.minecraft.world.biome.BiomeGenerationSettings;
-import net.minecraft.world.biome.BiomeMaker;
-import net.minecraft.world.biome.Biomes;
-import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.DimensionSettings;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.GenerationStage.Decoration;
-import net.minecraft.world.gen.feature.BlockStateFeatureConfig;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.Features.Placements;
-import net.minecraft.world.gen.feature.IFeatureConfig;
-import net.minecraft.world.gen.feature.StructureFeature;
-import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
-import net.minecraft.world.gen.feature.jigsaw.JigsawManager.IPieceFactory;
-import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
-import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
-import net.minecraft.world.gen.feature.structure.AbstractVillagePiece;
-import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.feature.structure.StructureStart;
-import net.minecraft.world.gen.feature.structure.VillageConfig;
-import net.minecraft.world.gen.feature.template.TemplateManager;
-import net.minecraft.world.gen.placement.NoPlacementConfig;
-import net.minecraft.world.gen.placement.Placement;
-import net.minecraft.world.gen.placement.SimplePlacement;
-import net.minecraft.world.gen.settings.StructureSeparationSettings;
-import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilders;
+import net.minecraft.data.worldgen.Features;
+import net.minecraft.data.worldgen.SurfaceBuilders;
+import net.minecraft.data.worldgen.biome.VanillaBiomes;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeGenerationSettings;
+import net.minecraft.world.level.biome.BiomeSpecialEffects;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.BlockStateConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.JigsawConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneDecoratorConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.StructureFeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.structures.JigsawPlacement;
+import net.minecraft.world.level.levelgen.feature.structures.JigsawPlacement.PieceFactory;
+import net.minecraft.world.level.levelgen.feature.structures.StructurePoolElement;
+import net.minecraft.world.level.levelgen.feature.structures.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.placement.FeatureDecorator;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
+import net.minecraft.world.level.levelgen.structure.PoolElementStructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
 import net.minecraftforge.common.BiomeManager;
 import net.minecraftforge.common.BiomeManager.BiomeEntry;
 import net.minecraftforge.common.BiomeManager.BiomeType;
@@ -86,17 +83,17 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.JsonDataProvider;
 import net.minecraftforge.common.data.ResourceKeyTagsProvider;
-import net.minecraftforge.common.world.BiomeAmbienceBuilder;
+import net.minecraftforge.common.world.BiomeSpecialEffectsBuilder;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.IBiomeParameters;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.DynamicRegistriesLoadedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -105,32 +102,32 @@ public class DynamicRegistriesLoadedEventTest
 {
     public static final String MODID = "dynamic_registries_loaded_event_test";
 
-    public static final ITag.INamedTag<RegistryKey<Biome>> OPTIONAL_BIOMES_TEST_TAG = ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "optional_biomes_test"));
-    public static final ITag.INamedTag<RegistryKey<Biome>> EXTRA_BIOMES_TAG = ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "extra_biomes"));
-    public static final ITag.INamedTag<RegistryKey<Biome>> TESTING_BIOMES_TAG = ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "testing_biomes"));
+    public static final Tag.Named<ResourceKey<Biome>> OPTIONAL_BIOMES_TEST_TAG = ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "optional_biomes_test"));
+    public static final Tag.Named<ResourceKey<Biome>> EXTRA_BIOMES_TAG = ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "extra_biomes"));
+    public static final Tag.Named<ResourceKey<Biome>> TESTING_BIOMES_TAG = ResourceKeyTags.makeKeyTagWrapper(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "testing_biomes"));
 
-    public static final RegistryKey<Biome> MOUNTAINS = Biomes.MOUNTAINS;
-    public static final RegistryKey<Biome> SNOWY_TUNDRA = Biomes.SNOWY_TUNDRA;
-    public static final RegistryKey<Biome> TEST_BIOME = RegistryKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "test_biome"));
-    public static final Set<RegistryKey<Biome>> TESTING_BIOMES = ImmutableSet.of(MOUNTAINS, SNOWY_TUNDRA, TEST_BIOME);
+    public static final ResourceKey<Biome> MOUNTAINS = Biomes.MOUNTAINS;
+    public static final ResourceKey<Biome> SNOWY_TUNDRA = Biomes.SNOWY_TUNDRA;
+    public static final ResourceKey<Biome> TEST_BIOME = ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(MODID, "test_biome"));
+    public static final Set<ResourceKey<Biome>> TESTING_BIOMES = ImmutableSet.of(MOUNTAINS, SNOWY_TUNDRA, TEST_BIOME);
     
-    public static final RegistryKey<ConfiguredFeature<?,?>> RED_WOOL_CONFIGUREDFEATURE = RegistryKey.create(Registry.CONFIGURED_FEATURE_REGISTRY, new ResourceLocation(MODID, "red_wool"));
-    public static final RegistryKey<ConfiguredFeature<?,?>> BLACK_WOOL_CONFIGUREDFEATURE = RegistryKey.create(Registry.CONFIGURED_FEATURE_REGISTRY, new ResourceLocation(MODID, "block_wool"));
-    public static final RegistryKey<StructureFeature<?,?>> GOLD_TOWER_STRUCTURE_FEATURE = RegistryKey.create(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY, new ResourceLocation(MODID, "gold_tower"));
+    public static final ResourceKey<ConfiguredFeature<?,?>> RED_WOOL_CONFIGUREDFEATURE = ResourceKey.create(Registry.CONFIGURED_FEATURE_REGISTRY, new ResourceLocation(MODID, "red_wool"));
+    public static final ResourceKey<ConfiguredFeature<?,?>> BLACK_WOOL_CONFIGUREDFEATURE = ResourceKey.create(Registry.CONFIGURED_FEATURE_REGISTRY, new ResourceLocation(MODID, "block_wool"));
+    public static final ResourceKey<ConfiguredStructureFeature<?,?>> GOLD_TOWER_STRUCTURE_FEATURE = ResourceKey.create(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY, new ResourceLocation(MODID, "gold_tower"));
 
     public static final DeferredRegister<Feature<?>> FEATURES = DeferredRegister.create(ForgeRegistries.FEATURES, MODID);
-    public static final RegistryObject<SingleBlockFeature> SINGLE_BLOCK = FEATURES.register("single_block", () -> new SingleBlockFeature(BlockStateFeatureConfig.CODEC));
+    public static final RegistryObject<SingleBlockFeature> SINGLE_BLOCK = FEATURES.register("single_block", () -> new SingleBlockFeature(BlockStateConfiguration.CODEC));
 
-    public static final DeferredRegister<Placement<?>> PLACEMENTS = DeferredRegister.create(ForgeRegistries.DECORATORS, MODID);
-    public static final RegistryObject<LimitedSquarePlacement> LIMITED_SQUARE = PLACEMENTS.register("limited_square", () -> new LimitedSquarePlacement(NoPlacementConfig.CODEC));
+    public static final DeferredRegister<FeatureDecorator<?>> PLACEMENTS = DeferredRegister.create(ForgeRegistries.DECORATORS, MODID);
+    public static final RegistryObject<LimitedSquarePlacement> LIMITED_SQUARE = PLACEMENTS.register("limited_square", () -> new LimitedSquarePlacement(NoneDecoratorConfiguration.CODEC));
     
-    public static final DeferredRegister<Structure<?>> STRUCTURES = DeferredRegister.create(ForgeRegistries.STRUCTURE_FEATURES, MODID);
-    public static final RegistryObject<LoadableJigsawStructure> GOLD_TOWER = STRUCTURES.register("gold_tower", () -> new LoadableJigsawStructure(LoadableJigsawConfig.CODEC, new StructureSeparationSettings(4,2,-1757510426)));
+    public static final DeferredRegister<StructureFeature<?>> STRUCTURES = DeferredRegister.create(ForgeRegistries.STRUCTURE_FEATURES, MODID);
+    public static final RegistryObject<LoadableJigsawStructure> GOLD_TOWER = STRUCTURES.register("gold_tower", () -> new LoadableJigsawStructure(LoadableJigsawConfig.CODEC, new StructureFeatureConfiguration(4,2,-1757510426)));
 
     public static final DeferredRegister<Biome> BIOMES = DeferredRegister.create(ForgeRegistries.BIOMES, MODID);
     static
     {
-        BIOMES.register("test_biome", () -> BiomeMaker.theVoidBiome());
+        BIOMES.register("test_biome", () -> VanillaBiomes.theVoidBiome());
     } // register dummy biome, json will override it
 
     // BiomeLoadingEvent configuredfeatures must be created and registered in java -- we'll do one of those to make sure BiomeLoadingEvent still works
@@ -173,13 +170,13 @@ public class DynamicRegistriesLoadedEventTest
     void registerToVanillaRegistries()
     {
         // register a feature the old way to make sure BiomeLoadingEvent still works
-        blackWoolFeature = WorldGenRegistries.register(WorldGenRegistries.CONFIGURED_FEATURE, BLACK_WOOL_CONFIGUREDFEATURE.location(),
-            SINGLE_BLOCK.get().configured(new BlockStateFeatureConfig(Blocks.BLACK_WOOL.defaultBlockState()))
-            .decorated(Placements.HEIGHTMAP)
-            .decorated(LIMITED_SQUARE.get().configured(NoPlacementConfig.INSTANCE)));
+        blackWoolFeature = BuiltinRegistries.register(BuiltinRegistries.CONFIGURED_FEATURE, BLACK_WOOL_CONFIGUREDFEATURE.location(),
+            SINGLE_BLOCK.get().configured(new BlockStateConfiguration(Blocks.BLACK_WOOL.defaultBlockState()))
+            .decorated(Features.Decorators.HEIGHTMAP)
+            .decorated(LIMITED_SQUARE.get().configured(NoneDecoratorConfiguration.INSTANCE)));
         
         // structures need to have names registered to this map
-        Structure.STRUCTURES_REGISTRY.put(GOLD_TOWER.getId().toString(), GOLD_TOWER.get());
+        StructureFeature.STRUCTURES_REGISTRY.put(GOLD_TOWER.getId().toString(), GOLD_TOWER.get());
     }
 
     void onGatherData(GatherDataEvent event)
@@ -193,39 +190,39 @@ public class DynamicRegistriesLoadedEventTest
         // generate our configuredfeature json to retrieve from our dynamic registries loaded event
         Map<ResourceLocation, ConfiguredFeature<?, ?>> generatedFeatures = new HashMap<>();
         generatedFeatures.put(RED_WOOL_CONFIGUREDFEATURE.location(),
-            SINGLE_BLOCK.get().configured(new BlockStateFeatureConfig(Blocks.RED_WOOL.defaultBlockState()))
-            .decorated(Placements.HEIGHTMAP)
-            .decorated(LIMITED_SQUARE.get().configured(NoPlacementConfig.INSTANCE)));
+            SINGLE_BLOCK.get().configured(new BlockStateConfiguration(Blocks.RED_WOOL.defaultBlockState()))
+            .decorated(Features.Decorators.HEIGHTMAP)
+            .decorated(LIMITED_SQUARE.get().configured(NoneDecoratorConfiguration.INSTANCE)));
         generator
-            .addProvider(new JsonDataProvider<>(gson, generator, ResourcePackType.SERVER_DATA, "worldgen/configured_feature", ConfiguredFeature.DIRECT_CODEC, generatedFeatures));
+            .addProvider(new JsonDataProvider<>(gson, generator, PackType.SERVER_DATA, "worldgen/configured_feature", ConfiguredFeature.DIRECT_CODEC, generatedFeatures));
 
         // generate our test biome
         Map<ResourceLocation, Biome> generatedBiomes = new HashMap<>();
         generatedBiomes.put(TEST_BIOME.location(),
-            new Biome.Builder()
-                .specialEffects(new BiomeAmbience.Builder()
+            new Biome.BiomeBuilder()
+                .specialEffects(new BiomeSpecialEffects.Builder()
                     .fogColor(0xFF0000)
                     .skyColor(0xFF0000)
                     .waterColor(0xFF0000)
                     .waterFogColor(0xFF0000)
                     .grassColorOverride(0xFF0000)
                     .foliageColorOverride(0xFF0000).build())
-                .depth(0.125F).scale(0.05F).temperature(0.8F).downfall(0.4F).biomeCategory(Biome.Category.PLAINS)
-                .generationSettings(new BiomeGenerationSettings.Builder().surfaceBuilder(ConfiguredSurfaceBuilders.GRASS).build()).precipitation(RainType.NONE)
-                .mobSpawnSettings(new MobSpawnInfo.Builder().build()).build());
-        generator.addProvider(new JsonDataProvider<>(gson, generator, ResourcePackType.SERVER_DATA, "worldgen/biome", Biome.DIRECT_CODEC, generatedBiomes));
+                .depth(0.125F).scale(0.05F).temperature(0.8F).downfall(0.4F).biomeCategory(Biome.BiomeCategory.PLAINS)
+                .generationSettings(new BiomeGenerationSettings.Builder().surfaceBuilder(SurfaceBuilders.GRASS).build()).precipitation(Biome.Precipitation.NONE)
+                .mobSpawnSettings(new MobSpawnSettings.Builder().build()).build());
+        generator.addProvider(new JsonDataProvider<>(gson, generator, PackType.SERVER_DATA, "worldgen/biome", Biome.DIRECT_CODEC, generatedBiomes));
                 
         // generate template pools
-        Map<ResourceLocation, JigsawPattern> generatedPools = new HashMap<>();
-        generatedPools.put(GOLD_TOWER_STRUCTURE_FEATURE.location(), new JigsawPattern(GOLD_TOWER_STRUCTURE_FEATURE.location(), new ResourceLocation("empty"),
-            ImmutableList.of(Pair.of(JigsawPiece.single(GOLD_TOWER.getId().toString()), 1)), JigsawPattern.PlacementBehaviour.RIGID));
-        generator.addProvider(new JsonDataProvider<>(gson, generator, ResourcePackType.SERVER_DATA, "worldgen/template_pool", JigsawPattern.DIRECT_CODEC, generatedPools));
+        Map<ResourceLocation, StructureTemplatePool> generatedPools = new HashMap<>();
+        generatedPools.put(GOLD_TOWER_STRUCTURE_FEATURE.location(), new StructureTemplatePool(GOLD_TOWER_STRUCTURE_FEATURE.location(), new ResourceLocation("empty"),
+            ImmutableList.of(Pair.of(StructurePoolElement.single(GOLD_TOWER.getId().toString()), 1)), StructureTemplatePool.Projection.RIGID));
+        generator.addProvider(new JsonDataProvider<>(gson, generator, PackType.SERVER_DATA, "worldgen/template_pool", StructureTemplatePool.DIRECT_CODEC, generatedPools));
         
         // generate structure features
-        Map<ResourceLocation, StructureFeature<?,?>> generatedStructureFeatures = new HashMap<>();
+        Map<ResourceLocation, ConfiguredStructureFeature<?,?>> generatedStructureFeatures = new HashMap<>();
         generatedStructureFeatures.put(GOLD_TOWER.getId(),
-            new StructureFeature<>(GOLD_TOWER.get(), new LoadableJigsawConfig(GOLD_TOWER_STRUCTURE_FEATURE.location(), 1, 0, true)));
-        generator.addProvider(new JsonDataProvider<>(gson, generator, ResourcePackType.SERVER_DATA, "worldgen/configured_structure_feature", StructureFeature.DIRECT_CODEC, generatedStructureFeatures));
+            new ConfiguredStructureFeature<>(GOLD_TOWER.get(), new LoadableJigsawConfig(GOLD_TOWER_STRUCTURE_FEATURE.location(), 1, 0, true)));
+        generator.addProvider(new JsonDataProvider<>(gson, generator, PackType.SERVER_DATA, "worldgen/configured_structure_feature", StructureFeature.DIRECT_CODEC, generatedStructureFeatures));
         
         // generate biome tags
         generator.addProvider(new ResourceKeyTagsProvider<Biome>(generator, fileHelper, MODID, Registry.BIOME_REGISTRY)
@@ -243,12 +240,12 @@ public class DynamicRegistriesLoadedEventTest
     void onBiomeLoading(BiomeLoadingEvent event)
     {
         // test the BiomeLoadingEvent to ensure it still works when the dynregloaded event is also being used
-        if (TESTING_BIOMES.contains(RegistryKey.create(Registry.BIOME_REGISTRY, event.getName())))
+        if (TESTING_BIOMES.contains(ResourceKey.create(Registry.BIOME_REGISTRY, event.getName())))
         {
             // replace sky, fog, water color, leave everything else as-is, also add the black wool feature we registered to WorldGenRegistries earlier
-            event.getGeneration().addFeature(Decoration.VEGETAL_DECORATION, blackWoolFeature);
-            BiomeAmbience oldEffects = event.getEffects();
-            BiomeAmbienceBuilder newEffects = BiomeAmbienceBuilder.copyFrom(oldEffects);
+            event.getGeneration().addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, blackWoolFeature);
+            BiomeSpecialEffects oldEffects = event.getEffects();
+            BiomeSpecialEffectsBuilder newEffects = BiomeSpecialEffectsBuilder.copyFrom(oldEffects);
             newEffects.fogColor(0);
             newEffects.skyColor(0);
             newEffects.waterFogColor(0);
@@ -259,13 +256,13 @@ public class DynamicRegistriesLoadedEventTest
     
     void onDynamicRegistriesLoaded(DynamicRegistriesLoadedEvent event)
     {
-        DynamicRegistries registries = event.getDataRegistries();
-        Map<RegistryKey<Biome>,IBiomeParameters> biomeModifiers = event.getBiomeModifiers();
+        RegistryAccess registries = event.getDataRegistries();
+        Map<ResourceKey<Biome>,IBiomeParameters> biomeModifiers = event.getBiomeModifiers();
         
         // registryOrThrow is reasonably safe to call for vanilla's registries as vanilla uses it everywhere too
         // (i.e. if somebody removes the biome registry for some reason then vanilla will crash first anyway)
         Registry<ConfiguredFeature<?,?>> featureRegistry = registries.registryOrThrow(Registry.CONFIGURED_FEATURE_REGISTRY);
-        Registry<StructureFeature<?,?>> structureFeatureRegistry = registries.registryOrThrow(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
+        Registry<ConfiguredStructureFeature<?,?>> structureFeatureRegistry = registries.registryOrThrow(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
         
         // for each biome in this tag we have, modify it and add a json feature to it
         TESTING_BIOMES_TAG.getValues().forEach(biomeKey -> {
@@ -275,16 +272,16 @@ public class DynamicRegistriesLoadedEventTest
                 return;
             biomeParameters.getEffectsBuilder().skyColor(0x00FF00);
             BiomeGenerationSettingsBuilder builder = biomeParameters.getGenerationBuilder();
-            builder.addFeature(Decoration.VEGETAL_DECORATION, featureRegistry.get(RED_WOOL_CONFIGUREDFEATURE));
+            builder.addFeature(GenerationStep.Decoration.VEGETAL_DECORATION, featureRegistry.get(RED_WOOL_CONFIGUREDFEATURE));
             // let's add the gold tower structures too
             builder.addStructureStart(structureFeatureRegistry.get(GOLD_TOWER_STRUCTURE_FEATURE));
         });
         
         // then let's add the gold tower structure to the overworld noise settings
-        Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs = event.getStructureSeparations();
+        Map<ResourceKey<NoiseGeneratorSettings>, Map<StructureFeature<?>, StructureFeatureConfiguration>> structureConfigs = event.getStructureSeparations();
         Tags.NoiseSettings.OVERWORLD.getValues().forEach(noiseKey ->
         {
-            Map<Structure<?>, StructureSeparationSettings> structureConfig = structureConfigs.get(noiseKey);
+            Map<StructureFeature<?>, StructureFeatureConfiguration> structureConfig = structureConfigs.get(noiseKey);
             if (structureConfig == null)
                 return;
             // we previously put the seperation setting in the structure instance
@@ -299,16 +296,16 @@ public class DynamicRegistriesLoadedEventTest
      * block can be placed, which we'd like to ignore so we can be guaranteed to see
      * the block
      */
-    public static class SingleBlockFeature extends Feature<BlockStateFeatureConfig>
+    public static class SingleBlockFeature extends Feature<BlockStateConfiguration>
     {
 
-        public SingleBlockFeature(Codec<BlockStateFeatureConfig> codec)
+        public SingleBlockFeature(Codec<BlockStateConfiguration> codec)
         {
             super(codec);
         }
 
         @Override
-        public boolean place(ISeedReader world, ChunkGenerator chunkGenerator, Random rand, BlockPos pos, BlockStateFeatureConfig config)
+        public boolean place(WorldGenLevel world, ChunkGenerator chunkGenerator, Random rand, BlockPos pos, BlockStateConfiguration config)
         {
             world.setBlock(pos, config.state, 2);
             return true;
@@ -322,15 +319,15 @@ public class DynamicRegistriesLoadedEventTest
      * its chunk) This makes it clear which chunk the feature's in (so we can test
      * to make sure features aren't being added to biomes twice)
      */
-    public static class LimitedSquarePlacement extends SimplePlacement<NoPlacementConfig>
+    public static class LimitedSquarePlacement extends SimpleFeatureDecorator<NoneDecoratorConfiguration>
     {
-        public LimitedSquarePlacement(Codec<NoPlacementConfig> codec)
+        public LimitedSquarePlacement(Codec<NoneDecoratorConfiguration> codec)
         {
             super(codec);
         }
 
         @Override
-        protected Stream<BlockPos> place(Random rand, NoPlacementConfig config, BlockPos pos)
+        protected Stream<BlockPos> place(Random rand, NoneDecoratorConfiguration config, BlockPos pos)
         {
             int x = pos.getX() + 4 + rand.nextInt(8);
             int y = pos.getY();
@@ -339,17 +336,17 @@ public class DynamicRegistriesLoadedEventTest
         }
     }
     
-    private static class LoadableJigsawStructure extends Structure<LoadableJigsawConfig>
+    private static class LoadableJigsawStructure extends StructureFeature<LoadableJigsawConfig>
     {
-        private final StructureSeparationSettings separation; public StructureSeparationSettings getSeparation() { return this.separation;}
-        public LoadableJigsawStructure(Codec<LoadableJigsawConfig> codec, StructureSeparationSettings separation)
+        private final StructureFeatureConfiguration separation; public StructureFeatureConfiguration getSeparation() { return this.separation;}
+        public LoadableJigsawStructure(Codec<LoadableJigsawConfig> codec, StructureFeatureConfiguration separation)
         {
             super(codec);
             this.separation = separation;
         }
 
         @Override
-        public IStartFactory<LoadableJigsawConfig> getStartFactory()
+        public StructureStartFactory<LoadableJigsawConfig> getStartFactory()
         {
             return Start::new;
         }
@@ -357,27 +354,27 @@ public class DynamicRegistriesLoadedEventTest
         // either this needs to be overridden or your structure type instance needs to be added to the generation stage map in Structure
         // if you don't do either then biomes crash when constructed
         @Override
-        public GenerationStage.Decoration step()
+        public GenerationStep.Decoration step()
         {
-            return GenerationStage.Decoration.SURFACE_STRUCTURES;
+            return GenerationStep.Decoration.SURFACE_STRUCTURES;
         }
         
         private static class Start extends StructureStart<LoadableJigsawConfig>
         {
 
-            public Start(Structure<LoadableJigsawConfig> structure, int chunkX, int chunkZ, MutableBoundingBox mutabox, int refCount, long seed)
+            public Start(StructureFeature<LoadableJigsawConfig> structure, int chunkX, int chunkZ, BoundingBox mutabox, int refCount, long seed)
             {
                 super(structure, chunkX, chunkZ, mutabox, refCount, seed);
             }
 
             @Override
-            public void generatePieces(DynamicRegistries dynreg, ChunkGenerator generator, TemplateManager templates, int chunkX, int chunkZ, Biome biome, LoadableJigsawConfig config)
+            public void generatePieces(RegistryAccess dynreg, ChunkGenerator generator, StructureManager templates, int chunkX, int chunkZ, Biome biome, LoadableJigsawConfig config)
             {
                 BlockPos startPos = new BlockPos(chunkX*16, config.getStartY(), chunkZ*16);
-                JigsawPattern startPool = Objects.requireNonNull(dynreg.registryOrThrow(Registry.TEMPLATE_POOL_REGISTRY).get(config.getStartPool()));
-                VillageConfig jigsawConfig = new VillageConfig(() -> startPool, config.getSize());
-                IPieceFactory pieceFactory = AbstractVillagePiece::new;
-                JigsawManager.addPieces(dynreg, jigsawConfig, pieceFactory, generator, templates, startPos, this.pieces, this.random, false, config.snapToHeightMap);
+                StructureTemplatePool startPool = Objects.requireNonNull(dynreg.registryOrThrow(Registry.TEMPLATE_POOL_REGISTRY).get(config.getStartPool()));
+                JigsawConfiguration jigsawConfig = new JigsawConfiguration(() -> startPool, config.getSize());
+                PieceFactory pieceFactory = PoolElementStructurePiece::new;
+                JigsawPlacement.addPieces(dynreg, jigsawConfig, pieceFactory, generator, templates, startPos, this.pieces, this.random, false, config.snapToHeightMap);
                 this.calculateBoundingBox();
             }
             
@@ -385,7 +382,7 @@ public class DynamicRegistriesLoadedEventTest
         
     }
     
-    private static class LoadableJigsawConfig implements IFeatureConfig
+    private static class LoadableJigsawConfig implements FeatureConfiguration
     {
         public static final Codec<LoadableJigsawConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 ResourceLocation.CODEC.fieldOf("start_pool").forGetter(LoadableJigsawConfig::getStartPool),

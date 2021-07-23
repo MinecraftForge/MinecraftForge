@@ -37,29 +37,29 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
+import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.tags.ITag;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.tags.SetTag;
 import net.minecraft.tags.Tag;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
 import net.minecraftforge.common.ResourceKeyTags;
 
 /**
  * The existing tag providers only work with tags for static registry objects,
  * so we need this parallel implementation for key tags
  **/
-public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
+public abstract class ResourceKeyTagsProvider<T> implements DataProvider
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().create();
     protected final DataGenerator generator;
-    protected final Map<ResourceLocation,ITag.Builder> tagBuilders = new HashMap<>();
+    protected final Map<ResourceLocation,Tag.Builder> tagBuilders = new HashMap<>();
     protected final ExistingFileHelper existingFileHelper;
-    protected final RegistryKey<Registry<T>> registryKey;
+    protected final ResourceKey<Registry<T>> registryKey;
     protected final String sourceModid;
     protected final ExistingFileHelper.IResourceType resourceType;
     
@@ -69,7 +69,7 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
      * @param sourceModid Your modid (used for logging, not tag namespaces)
      * @param registryKey The registry key to generate resource key tags for (registry keys for mods' custom directories must be registered to {@link ResourceKeyTags})
      */
-    public ResourceKeyTagsProvider(final DataGenerator generator, final ExistingFileHelper existingFileHelper, final String sourceModid, RegistryKey<Registry<T>> registryKey)
+    public ResourceKeyTagsProvider(final DataGenerator generator, final ExistingFileHelper existingFileHelper, final String sourceModid, ResourceKey<Registry<T>> registryKey)
     {
         final String directory = ResourceKeyTags.getTagDirectory(registryKey);
         if (directory == null)
@@ -78,31 +78,31 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
         this.existingFileHelper = existingFileHelper;
         this.sourceModid = sourceModid;
         this.registryKey = registryKey;
-        this.resourceType = new ExistingFileHelper.ResourceType(ResourcePackType.SERVER_DATA, ".json", "tags/resource_keys/"+directory);
+        this.resourceType = new ExistingFileHelper.ResourceType(PackType.SERVER_DATA, ".json", "tags/resource_keys/"+directory);
     }
     
     public abstract void addTags();
     
-    public ResourceKeyTagsProvider.Builder<T> tag(ITag.INamedTag<RegistryKey<T>> tag)
+    public ResourceKeyTagsProvider.Builder<T> tag(Tag.Named<ResourceKey<T>> tag)
     {
-        ITag.Builder builder = this.tagBuilders.computeIfAbsent(tag.getName(), tagID ->
+        Tag.Builder builder = this.tagBuilders.computeIfAbsent(tag.getName(), tagID ->
         {
             existingFileHelper.trackGenerated(tagID, this.resourceType);
-            return new ITag.Builder();
+            return new Tag.Builder();
         });
         return new ResourceKeyTagsProvider.Builder<>(builder, registryKey, this.sourceModid);
     }
 
     @Override
-    public void run(DirectoryCache cache) throws IOException
+    public void run(HashCache cache) throws IOException
     {
         this.tagBuilders.clear();
         this.addTags();
-        ITag<RegistryKey<T>> tag = Tag.empty();
-        Function<ResourceLocation, ITag<RegistryKey<T>>> tagFromID = id -> this.tagBuilders.containsKey(id) ? tag : null;
-        Function<ResourceLocation, RegistryKey<T>> resourceKeyFromID = RegistryKey.elementKey(this.registryKey);
+        Tag<ResourceKey<T>> tag = SetTag.empty();
+        Function<ResourceLocation, Tag<ResourceKey<T>>> tagFromID = id -> this.tagBuilders.containsKey(id) ? tag : null;
+        Function<ResourceLocation, ResourceKey<T>> resourceKeyFromID = ResourceKey.elementKey(this.registryKey);
         this.tagBuilders.forEach((id,builder) ->{
-           List<ITag.Proxy> missingReferences = builder.getUnresolvedEntries(tagFromID, resourceKeyFromID)
+           List<Tag.BuilderEntry> missingReferences = builder.getUnresolvedEntries(tagFromID, resourceKeyFromID)
                .filter(this::missing)
                .collect(Collectors.toList());
            if (!missingReferences.isEmpty())
@@ -119,7 +119,7 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
            try
            {
                String jsonAsString = GSON.toJson(tagJson);
-               String hash = IDataProvider.SHA1.hashUnencodedChars(jsonAsString).toString();
+               String hash = DataProvider.SHA1.hashUnencodedChars(jsonAsString).toString();
                if(!hash.equals(cache.getHash(path)) || !Files.exists(path))
                {
                    Files.createDirectories(path.getParent());
@@ -137,12 +137,12 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
         });
     }
     
-    private boolean missing(ITag.Proxy reference)
+    private boolean missing(Tag.BuilderEntry reference)
     {
-        ITag.ITagEntry entry = reference.getEntry();
-        if (entry instanceof ITag.TagEntry) // only non-optional tag entries need to be validated
+        Tag.Entry entry = reference.getEntry();
+        if (entry instanceof Tag.TagEntry) // only non-optional tag entries need to be validated
         {
-            return !this.existingFileHelper.exists(((ITag.TagEntry)entry).getId(), this.resourceType);
+            return !this.existingFileHelper.exists(((Tag.TagEntry)entry).getId(), this.resourceType);
         }
         return false;
     }
@@ -161,10 +161,10 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
      */
     public static class Builder<T>
     {
-        private final ITag.Builder tagBuilder;
+        private final Tag.Builder tagBuilder;
         private final String sourceModid;
         
-        protected Builder(ITag.Builder tagBuilder, RegistryKey<Registry<T>> registryKey, String sourceModid)
+        protected Builder(Tag.Builder tagBuilder, ResourceKey<Registry<T>> registryKey, String sourceModid)
         {
             this.tagBuilder = tagBuilder;
             this.sourceModid = sourceModid;
@@ -176,9 +176,9 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
          * @return this
          */
         @SafeVarargs
-        public final Builder<T> add(RegistryKey<T>... entries)
+        public final Builder<T> add(ResourceKey<T>... entries)
         {
-            for (RegistryKey<T> entry : entries)
+            for (ResourceKey<T> entry : entries)
             {
                 this.tagBuilder.addElement(entry.location(), sourceModid);
             }
@@ -191,9 +191,9 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
          * @return this
          */
         @SafeVarargs
-        public final Builder<T> addTags(ITag.INamedTag<RegistryKey<T>>... tagEntries)
+        public final Builder<T> addTags(Tag.Named<ResourceKey<T>>... tagEntries)
         {
-            for (ITag.INamedTag<RegistryKey<T>> tagEntry : tagEntries)
+            for (Tag.Named<ResourceKey<T>> tagEntry : tagEntries)
             {
                 this.tagBuilder.addTag(tagEntry.getName(), sourceModid);
             }
@@ -213,12 +213,12 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
         {
             for (ResourceLocation location : locations)
             {
-                this.add(new ITag.OptionalTagEntry(location));
+                this.add(new Tag.OptionalTagEntry(location));
             }
             return this;
         }
         
-        public Builder<T> add(ITag.ITagEntry tag)
+        public Builder<T> add(Tag.Entry tag)
         {
             this.tagBuilder.add(tag, this.sourceModid);
             return this;
@@ -238,7 +238,7 @@ public abstract class ResourceKeyTagsProvider<T> implements IDataProvider
             return this;
         }
         
-        public ITag.Builder getInternalBuilder()
+        public Tag.Builder getInternalBuilder()
         {
             return this.tagBuilder;
         }

@@ -31,23 +31,23 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
 
 /**
  * Generic data provider that uses DataFixerUpper Codecs to generate jsons from
  * java objects.
  */
-public class JsonDataProvider<T> implements IDataProvider
+public class JsonDataProvider<T> implements DataProvider
 {
 
     protected static final Logger LOGGER = LogManager.getLogger();
 
     protected final Gson gson;
     protected final DataGenerator generator;
-    protected final ResourcePackType resourceType;
+    protected final PackType resourceType;
     protected final String folder;
     protected final Codec<T> codec;
     protected final Map<ResourceLocation, T> objects;
@@ -74,7 +74,7 @@ public class JsonDataProvider<T> implements IDataProvider
      *            An ID-to-object map that defines the objects to generate jsons
      *            from and where the jsons will be generated.
      */
-    public JsonDataProvider(Gson gson, DataGenerator generator, ResourcePackType resourceType, String folder, Codec<T> codec, Map<ResourceLocation, T> objects)
+    public JsonDataProvider(Gson gson, DataGenerator generator, PackType resourceType, String folder, Codec<T> codec, Map<ResourceLocation, T> objects)
     {
         this.gson = gson;
         this.generator = generator;
@@ -91,7 +91,7 @@ public class JsonDataProvider<T> implements IDataProvider
      * invoke this in their own run methods if they choose to do so.
      */
     @Override
-    public void run(DirectoryCache cache) throws IOException
+    public void run(HashCache cache) throws IOException
     {
         Path resourcesFolder = this.generator.getOutputFolder();
         this.objects.forEach((id, object) -> {
@@ -101,7 +101,7 @@ public class JsonDataProvider<T> implements IDataProvider
                 .ifPresent(jsonElement -> {
                     try
                     {
-                        IDataProvider.save(this.gson, cache, jsonElement, jsonLocation);
+                        DataProvider.save(this.gson, cache, jsonElement, jsonLocation);
                     }
                     catch (IOException e)
                     {

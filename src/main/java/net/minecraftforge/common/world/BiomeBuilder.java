@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common.world;
 
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.level.biome.Biome;
 
 /**
  * Helper for building a biome using a deep copy of another biome as a starting point; also provides read access to current parameters.
@@ -28,26 +28,26 @@ import net.minecraft.world.biome.Biome;
  **/
 public class BiomeBuilder implements IBiomeParameters
 {
-    private Biome.Category category = Biome.Category.NONE;
+    private Biome.BiomeCategory category = Biome.BiomeCategory.NONE;
     private float depth;
     private float scale;
-    private Biome.RainType precipitation = Biome.RainType.NONE;
+    private Biome.Precipitation precipitation = Biome.Precipitation.NONE;
     private float temperature;
     private Biome.TemperatureModifier temperatureModifier = Biome.TemperatureModifier.NONE;
     private float downfall;
-    private final BiomeAmbienceBuilder effectsBuilder;
+    private final BiomeSpecialEffectsBuilder effectsBuilder;
     private final BiomeGenerationSettingsBuilder generationBuilder;
     private final MobSpawnInfoBuilder spawnBuilder;
     
     public static BiomeBuilder copyFrom(Biome biome)
     {
-        BiomeAmbienceBuilder effects = BiomeAmbienceBuilder.copyFrom(biome.getSpecialEffects());
+        BiomeSpecialEffectsBuilder effects = BiomeSpecialEffectsBuilder.copyFrom(biome.getSpecialEffects());
         BiomeGenerationSettingsBuilder gen = new BiomeGenerationSettingsBuilder(biome.getGenerationSettings());
         MobSpawnInfoBuilder spawns = new MobSpawnInfoBuilder(biome.getMobSettings());
         return new BiomeBuilder(biome.getBiomeCategory(), biome.getDepth(), biome.getScale(), biome.getPrecipitation(), biome.getBaseTemperature(), biome.climateSettings.temperatureModifier, biome.getDownfall(), effects, gen, spawns);
     }
     
-    protected BiomeBuilder(Biome.Category category, float depth, float scale, Biome.RainType precipitation, float temperature, Biome.TemperatureModifier temperatureModifier, float downfall, BiomeAmbienceBuilder effects, BiomeGenerationSettingsBuilder gen, MobSpawnInfoBuilder spawns)
+    protected BiomeBuilder(Biome.BiomeCategory category, float depth, float scale, Biome.Precipitation precipitation, float temperature, Biome.TemperatureModifier temperatureModifier, float downfall, BiomeSpecialEffectsBuilder effects, BiomeGenerationSettingsBuilder gen, MobSpawnInfoBuilder spawns)
     {
         this.precipitation = precipitation;
         this.temperature = temperature;
@@ -62,13 +62,13 @@ public class BiomeBuilder implements IBiomeParameters
     }
 
     @Override
-    public Biome.Category getCategory()
+    public Biome.BiomeCategory getCategory()
     {
         return this.category;
     }
 
     @Override
-    public void setCategory(Biome.Category category)
+    public void setCategory(Biome.BiomeCategory category)
     {
         this.category = category;
     }
@@ -98,13 +98,13 @@ public class BiomeBuilder implements IBiomeParameters
     }
     
     @Override
-    public Biome.RainType getPrecipitation()
+    public Biome.Precipitation getPrecipitation()
     {
         return this.precipitation;
     }
 
     @Override
-    public void setPrecipitation(Biome.RainType precipitation)
+    public void setPrecipitation(Biome.Precipitation precipitation)
     {
         this.precipitation = precipitation;
     }
@@ -146,7 +146,7 @@ public class BiomeBuilder implements IBiomeParameters
     }
 
     @Override
-    public BiomeAmbienceBuilder getEffectsBuilder()
+    public BiomeSpecialEffectsBuilder getEffectsBuilder()
     {
         return this.effectsBuilder;
     }
@@ -165,7 +165,7 @@ public class BiomeBuilder implements IBiomeParameters
     
     public Biome build()
     {
-        return new Biome.Builder()
+        return new Biome.BiomeBuilder()
             .biomeCategory(this.getCategory())
             .depth(this.getDepth())
             .scale(this.getScale())

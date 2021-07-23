@@ -21,22 +21,22 @@ package net.minecraftforge.common.world;
 
 import java.util.Optional;
 
-import net.minecraft.client.audio.BackgroundMusicSelector;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.world.biome.BiomeAmbience;
-import net.minecraft.world.biome.MoodSoundAmbience;
-import net.minecraft.world.biome.ParticleEffectAmbience;
-import net.minecraft.world.biome.SoundAdditionsAmbience;
+import net.minecraft.sounds.Music;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.biome.AmbientAdditionsSettings;
+import net.minecraft.world.level.biome.AmbientMoodSettings;
+import net.minecraft.world.level.biome.AmbientParticleSettings;
+import net.minecraft.world.level.biome.BiomeSpecialEffects;
 
 /**
  * Extension of the vanilla builder but also provides read access and a copy-from-existing-data helper.
  * Also, the base builder crashes if certain values aren't specified on build, so this enforces the setting of those 
  **/
-public class BiomeAmbienceBuilder extends BiomeAmbience.Builder
+public class BiomeSpecialEffectsBuilder extends BiomeSpecialEffects.Builder
 {
-    public static BiomeAmbienceBuilder copyFrom(BiomeAmbience baseEffects)
+    public static BiomeSpecialEffectsBuilder copyFrom(BiomeSpecialEffects baseEffects)
     {
-        BiomeAmbienceBuilder builder = BiomeAmbienceBuilder.create(baseEffects.getFogColor(), baseEffects.getWaterColor(), baseEffects.getWaterFogColor(), baseEffects.getSkyColor());
+        BiomeSpecialEffectsBuilder builder = BiomeSpecialEffectsBuilder.create(baseEffects.getFogColor(), baseEffects.getWaterColor(), baseEffects.getWaterFogColor(), baseEffects.getSkyColor());
         builder.grassColorModifier = baseEffects.getGrassColorModifier();
         baseEffects.getFoliageColorOverride().ifPresent(builder::foliageColorOverride);
         baseEffects.getGrassColorOverride().ifPresent(builder::grassColorOverride);
@@ -48,12 +48,12 @@ public class BiomeAmbienceBuilder extends BiomeAmbience.Builder
         return builder;
     }
     
-    public static BiomeAmbienceBuilder create(int fogColor, int waterColor, int waterFogColor, int skyColor)
+    public static BiomeSpecialEffectsBuilder create(int fogColor, int waterColor, int waterFogColor, int skyColor)
     {
-        return new BiomeAmbienceBuilder(fogColor, waterColor, waterFogColor, skyColor);
+        return new BiomeSpecialEffectsBuilder(fogColor, waterColor, waterFogColor, skyColor);
     }
     
-    protected BiomeAmbienceBuilder(int fogColor, int waterColor, int waterFogColor, int skyColor)
+    protected BiomeSpecialEffectsBuilder(int fogColor, int waterColor, int waterFogColor, int skyColor)
     {
         super();
         this.fogColor(fogColor);
@@ -82,7 +82,7 @@ public class BiomeAmbienceBuilder extends BiomeAmbience.Builder
         return this.skyColor.getAsInt();
     }
     
-    public BiomeAmbience.GrassColorModifier getGrassColorModifier()
+    public BiomeSpecialEffects.GrassColorModifier getGrassColorModifier()
     {
         return this.grassColorModifier;
     }
@@ -97,7 +97,7 @@ public class BiomeAmbienceBuilder extends BiomeAmbience.Builder
         return this.grassColorOverride;
     }
     
-    public Optional<ParticleEffectAmbience> getAmbientParticle()
+    public Optional<AmbientParticleSettings> getAmbientParticle()
     {
         return this.ambientParticle;
     }
@@ -107,17 +107,17 @@ public class BiomeAmbienceBuilder extends BiomeAmbience.Builder
         return this.ambientLoopSoundEvent;
     }
     
-    public Optional<MoodSoundAmbience> getAmbientMoodSound()
+    public Optional<AmbientMoodSettings> getAmbientMoodSound()
     {
         return this.ambientMoodSettings;
     }
     
-    public Optional<SoundAdditionsAmbience> getAmbientAdditionsSound()
+    public Optional<AmbientAdditionsSettings> getAmbientAdditionsSound()
     {
         return this.ambientAdditionsSettings;
     }
     
-    public Optional<BackgroundMusicSelector> getBackgroundMusic()
+    public Optional<Music> getBackgroundMusic()
     {
         return this.backgroundMusic;
     }

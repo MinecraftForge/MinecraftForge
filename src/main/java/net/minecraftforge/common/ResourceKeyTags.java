@@ -40,16 +40,16 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.datafixers.util.Pair;
 
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IFutureReloadListener;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.tags.ITag;
-import net.minecraft.tags.ITagCollection;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.tags.SetTag;
 import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagCollectionReader;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.tags.TagCollection;
+import net.minecraft.tags.TagLoader;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.fml.ModLoadingContext;
 
@@ -66,13 +66,13 @@ import net.minecraftforge.fml.ModLoadingContext;
  * rather than refactor the perfectly-fine-as-is "regular tags", we create a
  * separate set of infrastructure here for managing resource key tags
  */
-public class ResourceKeyTags implements IFutureReloadListener
+public class ResourceKeyTags implements PreparableReloadListener
 {
     public static final ResourceKeyTags INSTANCE = new ResourceKeyTags();
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Map<RegistryKey<? extends Registry<?>>,String> REGISTRY_DIRECTORIES = new HashMap<>();
+    private static final Map<ResourceKey<? extends Registry<?>>,String> REGISTRY_DIRECTORIES = new HashMap<>();
     
-    private Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> data = new HashMap<>();
+    private Map<ResourceKey<? extends Registry<?>>, TagCollection<? extends ResourceKey<?>>> data = new HashMap<>();
     private int generation = -1;
 
     /**
@@ -95,7 +95,7 @@ public class ResourceKeyTags implements IFutureReloadListener
      * while a server is not running. Resource Key Tags are not currently synced to clients and should not be
      * queried for clientside purposes.
      */
-    public static <T> IOptionalNamedTag<RegistryKey<T>> makeKeyTagWrapper(final RegistryKey<Registry<T>> registryKey, final ResourceLocation tagID)
+    public static <T> IOptionalNamedTag<ResourceKey<T>> makeKeyTagWrapper(final ResourceKey<Registry<T>> registryKey, final ResourceLocation tagID)
     {
         return new ResourceKeyTags.KeyTag<>(registryKey, tagID);
     }
@@ -113,7 +113,7 @@ public class ResourceKeyTags implements IFutureReloadListener
      * Mods that add custom dynamic registries specific to their own mod should namespace this directory to avoid collisions
      * with other mods' directories, e.g. "jimscheesemod/cheeses" instead of just "cheeses"
      */
-    public synchronized static void registerResourceKeyTagDirectory(final RegistryKey<? extends Registry<?>> registryKey, final String directoryName)
+    public synchronized static void registerResourceKeyTagDirectory(final ResourceKey<? extends Registry<?>> registryKey, final String directoryName)
     {
         // mods registering tag directories should be logged for debug purposes
         final String modid = ModLoadingContext.get().getActiveContainer().getModId();
@@ -137,13 +137,13 @@ public class ResourceKeyTags implements IFutureReloadListener
      * 
      * @apiNote May not return valid data if modloading hasn't completed yet
      */
-    public static @Nullable String getTagDirectory(final RegistryKey<? extends Registry<?>> registryKey)
+    public static @Nullable String getTagDirectory(final ResourceKey<? extends Registry<?>> registryKey)
     {
         return REGISTRY_DIRECTORIES.get(registryKey);
     }
 
     @Override
-    public CompletableFuture<Void> reload(final IStage stage, IResourceManager manager, final IProfiler workerProfiler, final IProfiler mainProfiler, final Executor workerExecutor,
+    public CompletableFuture<Void> reload(final PreparationBarrier stage, ResourceManager manager, final ProfilerFiller workerProfiler, final ProfilerFiller mainProfiler, final Executor workerExecutor,
         final Executor mainExecutor)
     {
         // load tags for each dynamic registry
@@ -153,13 +153,13 @@ public class ResourceKeyTags implements IFutureReloadListener
         // we make a tag reader for each dynamic registry key,
         // each tag reader is able to produce a completablefuture that reads and merges tag jsons off-thread
         // when this concludes, the results of each of these futures can be fed back into the tag reader to produce the final tag collection
-        final Map<RegistryKey<? extends Registry<?>>, Pair<TagCollectionReader<RegistryKey<?>>, CompletableFuture<Map<ResourceLocation,ITag.Builder>>>> futureTagBuilders = new HashMap<>();
-        final List<CompletableFuture<Map<ResourceLocation,ITag.Builder>>> justTheFutures = new ArrayList<>();
-        for (Map.Entry<RegistryKey<? extends Registry<?>>,String> entry : REGISTRY_DIRECTORIES.entrySet())
+        final Map<ResourceKey<? extends Registry<?>>, Pair<TagLoader<ResourceKey<?>>, CompletableFuture<Map<ResourceLocation,Tag.Builder>>>> futureTagBuilders = new HashMap<>();
+        final List<CompletableFuture<Map<ResourceLocation,Tag.Builder>>> justTheFutures = new ArrayList<>();
+        for (Map.Entry<ResourceKey<? extends Registry<?>>,String> entry : REGISTRY_DIRECTORIES.entrySet())
         {
-            RegistryKey<? extends Registry<?>> registryKey = entry.getKey();
+            ResourceKey<? extends Registry<?>> registryKey = entry.getKey();
             String directoryName = entry.getValue();
-            final Pair<TagCollectionReader<RegistryKey<?>>, CompletableFuture<Map<ResourceLocation, ITag.Builder>>> pair = getFutureTagBuilder(registryKey, directoryName, manager, workerExecutor);
+            final Pair<TagLoader<ResourceKey<?>>, CompletableFuture<Map<ResourceLocation, Tag.Builder>>> pair = getFutureTagBuilder(registryKey, directoryName, manager, workerExecutor);
             futureTagBuilders.put(registryKey, pair);
             justTheFutures.add(pair.getSecond());
         }
@@ -168,26 +168,26 @@ public class ResourceKeyTags implements IFutureReloadListener
             .thenAcceptAsync(voidArg -> this.finishLoadingOnMainThread(futureTagBuilders), mainExecutor);
     }
     
-    private static Pair<TagCollectionReader<RegistryKey<?>>, CompletableFuture<Map<ResourceLocation, ITag.Builder>>> getFutureTagBuilder(final RegistryKey<? extends Registry<?>> registryKey, final String directoryName, final IResourceManager manager, final Executor workerExecutor)
+    private static Pair<TagLoader<ResourceKey<?>>, CompletableFuture<Map<ResourceLocation, Tag.Builder>>> getFutureTagBuilder(final ResourceKey<? extends Registry<?>> registryKey, final String directoryName, final ResourceManager manager, final Executor workerExecutor)
     {
         @SuppressWarnings("unchecked") // cast makes javac happy, registrykey generics don't matter at runtime
-        final Function<ResourceLocation, Optional<RegistryKey<?>>> tagEntryFactory =
-            rl -> Optional.<RegistryKey<?>>of(RegistryKey.create((RegistryKey<? extends Registry<Object>>)registryKey, rl));
+        final Function<ResourceLocation, Optional<ResourceKey<?>>> tagEntryFactory =
+            rl -> Optional.<ResourceKey<?>>of(ResourceKey.create((ResourceKey<? extends Registry<Object>>)registryKey, rl));
         final ResourceLocation registryName = registryKey.location();
         final String directory = "tags/resource_keys/" + REGISTRY_DIRECTORIES.computeIfAbsent(registryKey, key -> key.location().getPath() + "s");
         final String nameForLogger = registryName.toString();
-        final TagCollectionReader<RegistryKey<?>> reader = new TagCollectionReader<>(tagEntryFactory, directory, nameForLogger);
-        return Pair.of(reader, reader.prepare(manager, workerExecutor));
+        final TagLoader<ResourceKey<?>> reader = new TagLoader<>(tagEntryFactory, directory);
+        return Pair.of(reader, reader.load(manager));
     }
     
-    private void finishLoadingOnMainThread(final Map<RegistryKey<? extends Registry<?>>, Pair<TagCollectionReader<RegistryKey<?>>, CompletableFuture<Map<ResourceLocation,ITag.Builder>>>> completedTagBuilders)
+    private void finishLoadingOnMainThread(final Map<ResourceKey<? extends Registry<?>>, Pair<TagLoader<ResourceKey<?>>, CompletableFuture<Map<ResourceLocation,Tag.Builder>>>> completedTagBuilders)
     {
-        ImmutableMap.Builder<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> mapBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<ResourceKey<? extends Registry<?>>, TagCollection<? extends ResourceKey<?>>> mapBuilder = ImmutableMap.builder();
         completedTagBuilders.forEach((key,readerAndParsedData) ->
         {
-            final TagCollectionReader<RegistryKey<?>> reader = readerAndParsedData.getFirst();
-            final CompletableFuture<Map<ResourceLocation,ITag.Builder>> completedParseData = readerAndParsedData.getSecond();
-            mapBuilder.put(key, reader.load(completedParseData.join()));
+            final TagLoader<ResourceKey<?>> reader = readerAndParsedData.getFirst();
+            final CompletableFuture<Map<ResourceLocation,Tag.Builder>> completedParseData = readerAndParsedData.getSecond();
+            mapBuilder.put(key, reader.build(completedParseData.join()));
         });
         
         // update data, mark data as being different to observers
@@ -202,9 +202,9 @@ public class ResourceKeyTags implements IFutureReloadListener
      * 
      * @implNote hides an unchecked cast for convenience (registry keys' generics are safe to cast to whatever as keys are just a few strings)
      */
-    public @Nullable <T> ITagCollection<RegistryKey<T>> getTagCollection(final RegistryKey<Registry<T>> registryKey)
+    public @Nullable <T> TagCollection<ResourceKey<T>> getTagCollection(final ResourceKey<Registry<T>> registryKey)
     {
-        return (ITagCollection<RegistryKey<T>>) this.data.get(registryKey);
+        return (TagCollection<ResourceKey<T>>) this.data.get(registryKey);
     }
     
     /**
@@ -213,7 +213,7 @@ public class ResourceKeyTags implements IFutureReloadListener
      * 
      * @apiNote internal, called when tag registry is loaded/reloaded/discarded
      */
-    public void updateTags(final Map<RegistryKey<? extends Registry<?>>, ITagCollection<? extends RegistryKey<?>>> newTags)
+    public void updateTags(final Map<ResourceKey<? extends Registry<?>>, TagCollection<? extends ResourceKey<?>>> newTags)
     {
         this.data = newTags;
         this.generation++;
@@ -221,30 +221,30 @@ public class ResourceKeyTags implements IFutureReloadListener
             this.generation=0;
     }
 
-    private static class KeyTag<T> implements IOptionalNamedTag<RegistryKey<T>>
+    private static class KeyTag<T> implements IOptionalNamedTag<ResourceKey<T>>
     {
-        private final RegistryKey<Registry<T>> registryKey;
+        private final ResourceKey<Registry<T>> registryKey;
         private final ResourceLocation name;
         
         private int generation = Integer.MIN_VALUE;
         private boolean defaulted = true;
-        @Nullable private ITag<RegistryKey<T>> proxy = null;
+        @Nullable private Tag<ResourceKey<T>> proxy = null;
         
-        private KeyTag(RegistryKey<Registry<T>> registryKey, ResourceLocation name)
+        private KeyTag(ResourceKey<Registry<T>> registryKey, ResourceLocation name)
         {
             this.registryKey = registryKey;
             this.name = name;
         }
 
         @Override
-        public boolean contains(final RegistryKey<T> key)
+        public boolean contains(final ResourceKey<T> key)
         {
             this.ensureProxyUpToDate();
             return this.proxy.contains(key);
         }
 
         @Override
-        public List<RegistryKey<T>> getValues()
+        public List<ResourceKey<T>> getValues()
         {
             this.ensureProxyUpToDate();
             return this.proxy.getValues();
@@ -269,9 +269,9 @@ public class ResourceKeyTags implements IFutureReloadListener
             if (this.generation != keyTagsGeneration || this.proxy == null)
             {
                 this.generation = keyTagsGeneration;
-                final ITagCollection<RegistryKey<T>> tags = ResourceKeyTags.INSTANCE.getTagCollection(this.registryKey);
+                final TagCollection<ResourceKey<T>> tags = ResourceKeyTags.INSTANCE.getTagCollection(this.registryKey);
                 this.defaulted = tags == null;
-                this.proxy = this.defaulted ? Tag.empty() : tags.getTagOrEmpty(this.name);
+                this.proxy = this.defaulted ? SetTag.empty() : tags.getTagOrEmpty(this.name);
             }
         }
         

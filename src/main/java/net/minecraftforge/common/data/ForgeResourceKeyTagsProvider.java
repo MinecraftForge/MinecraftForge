@@ -21,19 +21,19 @@ package net.minecraftforge.common.data;
 
 import java.io.IOException;
 
+import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.Biomes;
-import net.minecraft.world.gen.DimensionSettings;
+import net.minecraft.data.DataProvider;
+import net.minecraft.data.HashCache;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraftforge.common.Tags;
 
 /** Class specifically for adding forge's builtin resource key tags (mods should just use/extend the ResourceKeyTagsProvider) **/
-public final class ForgeResourceKeyTagsProvider implements IDataProvider
+public final class ForgeResourceKeyTagsProvider implements DataProvider
 {
     private final DataGenerator generator;
     private final ExistingFileHelper fileHelper;
@@ -45,7 +45,7 @@ public final class ForgeResourceKeyTagsProvider implements IDataProvider
     }
 
     @Override
-    public void run(DirectoryCache cache) throws IOException
+    public void run(HashCache cache) throws IOException
     {
         new ResourceKeyTagsProvider<Biome>(generator, fileHelper, "forge", Registry.BIOME_REGISTRY)
         {
@@ -157,17 +157,17 @@ public final class ForgeResourceKeyTagsProvider implements IDataProvider
         }.run(cache);
         
         // tags for the "noise_settings" that specify structure placement entries for dimensions
-        new ResourceKeyTagsProvider<DimensionSettings>(generator, fileHelper, "forge", Registry.NOISE_GENERATOR_SETTINGS_REGISTRY)
+        new ResourceKeyTagsProvider<NoiseGeneratorSettings>(generator, fileHelper, "forge", Registry.NOISE_GENERATOR_SETTINGS_REGISTRY)
         {
             @Override
             public void addTags()
             {
-                this.tag(Tags.NoiseSettings.AMPLIFIED).add(DimensionSettings.AMPLIFIED);
-                this.tag(Tags.NoiseSettings.CAVES).add(DimensionSettings.CAVES);
-                this.tag(Tags.NoiseSettings.END).add(DimensionSettings.END);
-                this.tag(Tags.NoiseSettings.FLOATING_ISLANDS).add(DimensionSettings.FLOATING_ISLANDS);
-                this.tag(Tags.NoiseSettings.NETHER).add(DimensionSettings.NETHER);
-                this.tag(Tags.NoiseSettings.OVERWORLD).add(DimensionSettings.OVERWORLD);
+                this.tag(Tags.NoiseSettings.AMPLIFIED).add(NoiseGeneratorSettings.AMPLIFIED);
+                this.tag(Tags.NoiseSettings.CAVES).add(NoiseGeneratorSettings.CAVES);
+                this.tag(Tags.NoiseSettings.END).add(NoiseGeneratorSettings.END);
+                this.tag(Tags.NoiseSettings.FLOATING_ISLANDS).add(NoiseGeneratorSettings.FLOATING_ISLANDS);
+                this.tag(Tags.NoiseSettings.NETHER).add(NoiseGeneratorSettings.NETHER);
+                this.tag(Tags.NoiseSettings.OVERWORLD).add(NoiseGeneratorSettings.OVERWORLD);
             }
             
         }.run(cache);
@@ -186,14 +186,14 @@ public final class ForgeResourceKeyTagsProvider implements IDataProvider
             }
         }.run(cache);
 
-        new ResourceKeyTagsProvider<World>(generator, fileHelper, "forge", Registry.DIMENSION_REGISTRY)
+        new ResourceKeyTagsProvider<Level>(generator, fileHelper, "forge", Registry.DIMENSION_REGISTRY)
         {
             @Override
             public void addTags()
             {
-                this.tag(Tags.Dimensions.END).add(World.END);
-                this.tag(Tags.Dimensions.NETHER).add(World.NETHER);
-                this.tag(Tags.Dimensions.OVERWORLD).add(World.OVERWORLD);
+                this.tag(Tags.Dimensions.END).add(Level.END);
+                this.tag(Tags.Dimensions.NETHER).add(Level.NETHER);
+                this.tag(Tags.Dimensions.OVERWORLD).add(Level.OVERWORLD);
             }
         }.run(cache);
     }

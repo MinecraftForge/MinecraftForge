@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common.world;
 
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.level.biome.Biome;
 
 /**
  * Interface for reading and writing biome parameters.
@@ -30,13 +30,13 @@ public interface IBiomeParameters
      * Get the primary biome category; this is used by a few vanilla mechanics (e.g. for preventing things from spawning in rivers). Synced to clients.
      * @return biome category
      */
-    public Biome.Category getCategory();
+    public Biome.BiomeCategory getCategory();
 
     /**
      * Set the primary biome category; this is used by a few vanilla mechanics (e.g. for preventing things from spawning in rivers). Synced to clients.
      * @param category
      */
-    public void setCategory(Biome.Category category);
+    public void setCategory(Biome.BiomeCategory category);
 
     /**
      * Get the biome depth. Synced to clients. Used by chunk generators to generate terrain; affects how much of the biome is above sea level (oceans have negative depth)
@@ -66,13 +66,13 @@ public interface IBiomeParameters
      * Gets the biome's weather type. Synced to clients, determines weather effects
      * @return rain type
      */
-    public Biome.RainType getPrecipitation();
+    public Biome.Precipitation getPrecipitation();
 
     /**
      * Sets the biome's weather type. Synced to clients, determines weather effects
      * @param precipitation weather type
      */
-    public void setPrecipitation(Biome.RainType precipitation);
+    public void setPrecipitation(Biome.Precipitation precipitation);
 
     /**
      * Gets the biome's base temperature. Synced to clients, affects foliage color. Also affects freezing and some weather mechanics
@@ -114,7 +114,7 @@ public interface IBiomeParameters
      * Gets the builder for the clientside effects (fog/water/sky color and sound events); these are synced to clients on login
      * @return effects builder
      */
-    public BiomeAmbienceBuilder getEffectsBuilder();
+    public BiomeSpecialEffectsBuilder getEffectsBuilder();
 
     /**
      * Gets the builder for the biome's worldgen features, structures, carvers, surfacebuilders. Not synced to clients.

@@ -23,14 +23,13 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.registry.DynamicRegistries;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.gen.DimensionSettings;
-import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.settings.DimensionStructuresSettings;
-import net.minecraft.world.gen.settings.StructureSeparationSettings;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.StructureFeatureConfiguration;
 import net.minecraftforge.common.world.IBiomeParameters;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -64,11 +63,11 @@ import net.minecraftforge.eventbus.api.EventPriority;
  */
 public class DynamicRegistriesLoadedEvent extends Event
 {
-    private final @Nonnull DynamicRegistries dataRegistries;
-    private final @Nonnull Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers;
-    private final @Nonnull Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs;
+    private final @Nonnull RegistryAccess dataRegistries;
+    private final @Nonnull Map<ResourceKey<Biome>, IBiomeParameters> biomeModifiers;
+    private final @Nonnull Map<ResourceKey<NoiseGeneratorSettings>, Map<StructureFeature<?>, StructureFeatureConfiguration>> structureConfigs;
 
-    public DynamicRegistriesLoadedEvent(final @Nonnull DynamicRegistries dataRegistries, final @Nonnull Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers, final @Nonnull Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs)
+    public DynamicRegistriesLoadedEvent(final @Nonnull RegistryAccess dataRegistries, final @Nonnull Map<ResourceKey<Biome>, IBiomeParameters> biomeModifiers, final @Nonnull Map<ResourceKey<NoiseGeneratorSettings>, Map<StructureFeature<?>, StructureFeatureConfiguration>> structureConfigs)
     {
         this.dataRegistries = dataRegistries;
         this.biomeModifiers = biomeModifiers;
@@ -86,7 +85,7 @@ public class DynamicRegistriesLoadedEvent extends Event
      *         registries instance have been provided to a previous
      *         DynamicRegistriesLoadedEvent.
      */
-    public DynamicRegistries getDataRegistries()
+    public RegistryAccess getDataRegistries()
     {
         return this.dataRegistries;
     }
@@ -104,7 +103,7 @@ public class DynamicRegistriesLoadedEvent extends Event
      * 
      * @return biome modifiers by biome key
      */
-    public Map<RegistryKey<Biome>, IBiomeParameters> getBiomeModifiers()
+    public Map<ResourceKey<Biome>, IBiomeParameters> getBiomeModifiers()
     {
         return this.biomeModifiers;
     }
@@ -114,7 +113,7 @@ public class DynamicRegistriesLoadedEvent extends Event
      * mutable and can have structure spacings added to them as needed.
      * @return structure seperation maps by noise setting key
      */
-    public Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> getStructureSeparations()
+    public Map<ResourceKey<NoiseGeneratorSettings>, Map<StructureFeature<?>, StructureFeatureConfiguration>> getStructureSeparations()
     {
         return this.structureConfigs;
     }

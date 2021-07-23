@@ -48,6 +48,7 @@ import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fmllegacy.WorldPersistenceHooks;
 import net.minecraftforge.fmllegacy.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fmllegacy.network.FMLNetworkConstants;
+import net.minecraftforge.fmlserverevents.FMLServerStoppedEvent;
 import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -67,6 +68,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -179,7 +181,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     
     private static void registerDefaultResourceKeyTagDirectories()
     {
-        Consumer<RegistryKey<? extends Registry<?>>> registerDirectoryWithDefaultPlural =
+        Consumer<ResourceKey<? extends Registry<?>>> registerDirectoryWithDefaultPlural =
             registryKey -> ResourceKeyTags.registerResourceKeyTagDirectory(registryKey, registryKey.location().getPath() + "s");
             
         // resource key tag directories for vanilla dynamic registries -- we register all of these whether we need them or not

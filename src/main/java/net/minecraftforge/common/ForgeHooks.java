@@ -115,6 +115,7 @@ import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.StructureFeatureConfiguration;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -1420,29 +1421,29 @@ public class ForgeHooks
      */
     @SuppressWarnings("unchecked")
     @Deprecated
-    public static <T> WorldSettingsImport<T> getCachedRegistryOps(DynamicOps<T> delegateOps, WorldSettingsImport<?> registryOps, WorldSettingsImport.IResourceAccess resources, DynamicRegistries.Impl registries) 
+    public static <T> RegistryReadOps<T> getCachedRegistryOps(DynamicOps<T> delegateOps, RegistryReadOps<?> registryOps, RegistryReadOps.ResourceAccess resources, RegistryAccess.RegistryHolder registries) 
     {
         // if we return early from the ops creator, we need to return a previously-created RegistryReadOps -- so we need to figure out what ops type needs to be returned
         if (delegateOps == JsonOps.INSTANCE) // same check vanilla uses
-            return (WorldSettingsImport<T>) registryOps.jsonOps;
-        Map<DynamicOps<?>, WorldSettingsImport<?>> extraOps = registryOps.extraOps;
-        return (WorldSettingsImport<T>) extraOps.computeIfAbsent(delegateOps, ops -> new WorldSettingsImport<T>(delegateOps, resources, registries, (IdentityHashMap<RegistryKey<? extends Registry<?>>, ResultMap<?>>) registryOps.readCache, extraOps));
+            return (RegistryReadOps<T>) registryOps.jsonOps;
+        Map<DynamicOps<?>, RegistryReadOps<?>> extraOps = registryOps.extraOps;
+        return (RegistryReadOps<T>) extraOps.computeIfAbsent(delegateOps, ops -> new RegistryReadOps<T>(delegateOps, resources, registries, (IdentityHashMap<RegistryKey<? extends Registry<?>>, ResultMap<?>>) registryOps.readCache, extraOps));
     }
     
     /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
     @Deprecated
-    public static void onDynamicRegistriesLoaded(final @Nonnull WorldSettingsImport<?> imports, final @Nonnull DynamicRegistries registries)
+    public static void onDynamicRegistriesLoaded(final @Nonnull RegistryReadOps<?> imports, final @Nonnull RegistryAccess registries)
     {
         // mark the registries as having had datapacks imported into them
         registries.setDatapackImports(imports);
         
         // make a mutable copy of all biomes and provide these copies via the event
         final Registry<Biome> biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);
-        final Map<RegistryKey<Biome>, IBiomeParameters> biomeModifiers = biomes.entrySet().stream()
+        final Map<ResourceKey<Biome>, IBiomeParameters> biomeModifiers = biomes.entrySet().stream()
             .collect(Collectors.toMap(Entry::getKey, entry -> (IBiomeParameters)BiomeBuilder.copyFrom(entry.getValue())));
         // make a mutable copy of each noise settings's structure seperation entries
-        final Registry<DimensionSettings> noiseGenerators = registries.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
-        final Map<RegistryKey<DimensionSettings>, Map<Structure<?>, StructureSeparationSettings>> structureConfigs = noiseGenerators.entrySet().stream()
+        final Registry<NoiseGeneratorSettings> noiseGenerators = registries.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
+        final Map<ResourceKey<NoiseGeneratorSettings>, Map<StructureFeature<?>, StructureFeatureConfiguration>> structureConfigs = noiseGenerators.entrySet().stream()
             .collect(Collectors.toMap(Entry::getKey, entry -> new HashMap<>(entry.getValue().structureSettings().structureConfig())));
         
         MinecraftForge.EVENT_BUS.post(new DynamicRegistriesLoadedEvent(registries, biomeModifiers, structureConfigs));
@@ -1450,7 +1451,7 @@ public class ForgeHooks
         // copy the new biome parameters back into the actual registered biome instances
         biomes.entrySet().forEach(entry ->
         {
-            final RegistryKey<Biome> key = entry.getKey();
+            final ResourceKey<Biome> key = entry.getKey();
             final @Nullable IBiomeParameters modifier = biomeModifiers.get(key);
             if (modifier != null) // if this is null, somebody removed the modifier from the map during the event (can't modify biome)
             {
@@ -1468,11 +1469,11 @@ public class ForgeHooks
         // copy the new structure seperations back into the noise settings
         noiseGenerators.entrySet().forEach(entry ->
         {
-            final RegistryKey<DimensionSettings> key = entry.getKey();
-            final @Nullable Map<Structure<?>, StructureSeparationSettings> structureMap = structureConfigs.get(key);
+            final ResourceKey<NoiseGeneratorSettings> key = entry.getKey();
+            final @Nullable Map<StructureFeature<?>, StructureFeatureConfiguration> structureMap = structureConfigs.get(key);
             if (structureMap != null) // if this is null, somebody removed the structure map from this noise setting, just ignore it
             {
-                final DimensionSettings noiseGenerator = entry.getValue();
+                final NoiseGeneratorSettings noiseGenerator = entry.getValue();
                 noiseGenerator.structureSettings().structureConfig = structureMap;
             }
         });
