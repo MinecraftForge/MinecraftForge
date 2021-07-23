@@ -819,7 +819,7 @@ project(':forge') {
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
         testImplementation 'org.junit.vintage:junit-vintage-engine:5.+'
         testImplementation 'org.opentest4j:opentest4j:1.2.0' // needed for junit 5
-        testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order'
+        testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
         implementation project(':fmlcommon')
         implementation project(':fmlcore')
         implementation project(':fmlloader')
