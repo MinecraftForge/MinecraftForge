@@ -48,7 +48,7 @@ import net.minecraftforge.server.command.ConfigCommand;
 public class ForgeInternalHandler
 {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onEntityJoinWorld(EntityJoinLevelEvent event)
+    public void onEntityJoinLevel(EntityJoinLevelEvent event)
     {
         Entity entity = event.getEntity();
         if (entity.getClass().equals(ItemEntity.class))
@@ -71,7 +71,7 @@ public class ForgeInternalHandler
 
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onDimensionUnload(LevelEvent.Unload event)
+    public void onLevelUnload(LevelEvent.Unload event)
     {
         if (event.getLevel() instanceof ServerLevel)
             FakePlayerFactory.unloadWorld((ServerLevel) event.getLevel());
@@ -107,13 +107,13 @@ public class ForgeInternalHandler
     */
 
     @SubscribeEvent
-    public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
+    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        UsernameCache.setUsername(event.getPlayer().getUUID(), event.getPlayer().getGameProfile().getName());
+        UsernameCache.setUsername(event.getEntity().getUUID(), event.getEntity().getGameProfile().getName());
     }
 
     @SubscribeEvent
-    public synchronized void tagsUpdated(TagsUpdatedEvent.VanillaTagTypes event)
+    public synchronized void onTagsUpdated(TagsUpdatedEvent.VanillaTagTypes event)
     {
         ForgeHooks.updateBurns();
     }
@@ -128,7 +128,7 @@ public class ForgeInternalHandler
     private static LootModifierManager INSTANCE;
 
     @SubscribeEvent
-    public void onResourceReload(AddReloadListenerEvent event)
+    public void onAddReloadListener(AddReloadListenerEvent event)
     {
         INSTANCE = new LootModifierManager();
         event.addListener(INSTANCE);

@@ -55,6 +55,7 @@ import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -112,7 +113,6 @@ import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
-import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.sounds.SoundEvents;
@@ -189,11 +189,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -269,7 +264,7 @@ public class ForgeHooks
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
     @SuppressWarnings("resource")
-    public static boolean onPickBlock(HitResult target, Player player, Level world)
+    public static boolean onPickBlock(HitResult target, Player player, Level level)
     {
         ItemStack result = ItemStack.EMPTY;
         boolean isCreative = player.getAbilities().instabuild;
@@ -278,15 +273,15 @@ public class ForgeHooks
         if (target.getType() == HitResult.Type.BLOCK)
         {
             BlockPos pos = ((BlockHitResult)target).getBlockPos();
-            BlockState state = world.getBlockState(pos);
+            BlockState state = level.getBlockState(pos);
 
             if (state.isAir())
                 return false;
 
             if (isCreative && Screen.hasControlDown() && state.hasBlockEntity())
-                te = world.getBlockEntity(pos);
+                te = level.getBlockEntity(pos);
 
-            result = state.getPickBlock(target, world, pos, player);
+            result = state.getPickBlock(target, level, pos, player);
 
             if (result.isEmpty())
                 LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), state.getBlock().getRegistryName());
@@ -450,7 +445,7 @@ public class ForgeHooks
     }
 
     @Nullable
-    public static ItemEntity onPlayerTossEvent(@Nonnull Player player, @Nonnull ItemStack item, boolean includeName)
+    public static ItemEntity onPlayerToss(@Nonnull Player player, @Nonnull ItemStack item, boolean includeName)
     {
         player.captureDrops(Lists.newArrayList());
         ItemEntity ret = player.drop(item, false, includeName);
@@ -464,8 +459,8 @@ public class ForgeHooks
             return null;
 
         if (!player.level.isClientSide)
-            player.getCommandSenderWorld().addFreshEntity(event.getEntityItem());
-        return event.getEntityItem();
+            player.getCommandSenderWorld().addFreshEntity(event.getEntity());
+        return event.getEntity();
     }
 
     @Nullable
@@ -556,12 +551,12 @@ public class ForgeHooks
         return ichat;
     }
 
-    public static int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer entityPlayer, BlockPos pos)
+    public static int onBlockBreakEvent(Level level, GameType gameType, ServerPlayer entityPlayer, BlockPos pos)
     {
         // Logic from tryHarvestBlock for pre-canceling the event
         boolean preCancelEvent = false;
         ItemStack itemstack = entityPlayer.getMainHandItem();
-        if (!itemstack.isEmpty() && !itemstack.getItem().canAttackBlock(world.getBlockState(pos), world, pos, entityPlayer))
+        if (!itemstack.isEmpty() && !itemstack.getItem().canAttackBlock(level.getBlockState(pos), level, pos, entityPlayer))
         {
             preCancelEvent = true;
         }
@@ -573,20 +568,20 @@ public class ForgeHooks
 
             if (!entityPlayer.mayBuild())
             {
-                if (itemstack.isEmpty() || !itemstack.hasAdventureModeBreakTagForBlock(world.getTagManager(), new BlockInWorld(world, pos, false)))
+                if (itemstack.isEmpty() || !itemstack.hasAdventureModeBreakTagForBlock(level.getTagManager(), new BlockInWorld(level, pos, false)))
                     preCancelEvent = true;
             }
         }
 
         // Tell client the block is gone immediately then process events
-        if (world.getBlockEntity(pos) == null)
+        if (level.getBlockEntity(pos) == null)
         {
             entityPlayer.connection.send(new ClientboundBlockUpdatePacket(DUMMY_WORLD, pos));
         }
 
         // Post the block break event
-        BlockState state = world.getBlockState(pos);
-        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, entityPlayer);
+        BlockState state = level.getBlockState(pos);
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(level, pos, state, entityPlayer);
         event.setCanceled(preCancelEvent);
         MinecraftForge.EVENT_BUS.post(event);
 
@@ -594,10 +589,10 @@ public class ForgeHooks
         if (event.isCanceled())
         {
             // Let the client know the block still exists
-            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(world, pos));
+            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(level, pos));
 
             // Update any tile entity data for this block
-            BlockEntity blockEntity = world.getBlockEntity(pos);
+            BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity != null)
             {
                 Packet<?> pkt = blockEntity.getUpdatePacket();
@@ -1006,16 +1001,16 @@ public class ForgeHooks
         return ctx.validateEntryName(name);
     }
 
-    public static boolean onCropsGrowPre(Level worldIn, BlockPos pos, BlockState state, boolean def)
+    public static boolean onCropsGrowPre(Level level, BlockPos pos, BlockState state, boolean def)
     {
-        BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(worldIn,pos,state);
+        BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(level,pos,state);
         MinecraftForge.EVENT_BUS.post(ev);
         return (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && def));
     }
 
-    public static void onCropsGrowPost(Level worldIn, BlockPos pos, BlockState state)
+    public static void onCropsGrowPost(Level level, BlockPos pos, BlockState state)
     {
-        MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+        MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(level, pos, state, level.getBlockState(pos)));
     }
 
     @Nullable
@@ -1090,11 +1085,11 @@ public class ForgeHooks
         return modId;
     }
 
-    public static boolean onFarmlandTrample(Level world, BlockPos pos, BlockState state, float fallDistance, Entity entity)
+    public static boolean onFarmlandTrample(Level level, BlockPos pos, BlockState state, float fallDistance, Entity entity)
     {
         if (entity.canTrample(state, pos, fallDistance))
         {
-            BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
+            BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(level, pos, state, fallDistance, entity);
             MinecraftForge.EVENT_BUS.post(event);
             return !event.isCanceled();
         }
@@ -1123,44 +1118,17 @@ public class ForgeHooks
         }
     }
 
-    private static final DummyBlockReader DUMMY_WORLD = new DummyBlockReader();
-    private static class DummyBlockReader implements BlockGetter {
+    private static final BlockGetter DUMMY_WORLD = EmptyBlockGetter.INSTANCE;
 
-        @Override
-        public BlockEntity getBlockEntity(BlockPos pos) {
-            return null;
-        }
-
-        @Override
-        public BlockState getBlockState(BlockPos pos) {
-            return Blocks.AIR.defaultBlockState();
-        }
-
-        @Override
-        public FluidState getFluidState(BlockPos pos) {
-            return Fluids.EMPTY.defaultFluidState();
-        }
-
-        @Override
-        public int getHeight() {
-            return 0;
-        }
-
-        @Override
-        public int getMinBuildHeight() {
-            return 0;
-        }
-    }
-
-    public static int onNoteChange(Level world, BlockPos pos, BlockState state, int old, int _new) {
-        NoteBlockEvent.Change event = new NoteBlockEvent.Change(world, pos, state, old, _new);
+    public static int onNoteChange(Level level, BlockPos pos, BlockState state, int old, int _new) {
+        NoteBlockEvent.Change event = new NoteBlockEvent.Change(level, pos, state, old, _new);
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
         return event.getVanillaNoteId();
     }
 
-    public static int canEntitySpawn(Mob entity, LevelAccessor world, double x, double y, double z, BaseSpawner spawner, MobSpawnType spawnReason) {
-        Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null, spawnReason);
+    public static int canEntitySpawn(Mob entity, LevelAccessor level, double x, double y, double z, BaseSpawner spawner, MobSpawnType spawnReason) {
+        Result res = ForgeEventFactory.canEntitySpawn(entity, level, x, y, z, null, spawnReason);
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 
@@ -1208,10 +1176,10 @@ public class ForgeHooks
         return id;
     }
 
-    public static boolean canEntityDestroy(Level world, BlockPos pos, LivingEntity entity)
+    public static boolean canEntityDestroy(Level level, BlockPos pos, LivingEntity entity)
     {
-        BlockState state = world.getBlockState(pos);
-        return ForgeEventFactory.getMobGriefingEvent(world, entity) && state.canEntityDestroy(world, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
+        BlockState state = level.getBlockState(pos);
+        return ForgeEventFactory.getMobGriefingEvent(level, entity) && state.canEntityDestroy(level, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
     }
 
     private static final Map<IRegistryDelegate<Item>, Integer> VANILLA_BURNS = new HashMap<>();
