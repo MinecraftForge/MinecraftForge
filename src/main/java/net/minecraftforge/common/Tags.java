@@ -136,6 +136,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_COPPER = tag("storage_blocks/copper");
+        public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_AMETHYST = tag("storage_blocks/amethyst");
         public static final IOptionalNamedTag<Block> RAW_STORAGE_BLOCKS = tag("raw_storage_blocks");
         public static final IOptionalNamedTag<Block> RAW_STORAGE_BLOCKS_GOLD = tag("raw_storage_blocks/gold");
         public static final IOptionalNamedTag<Block> RAW_STORAGE_BLOCKS_IRON = tag("raw_storage_blocks/iron");
@@ -314,6 +315,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_COPPER = tag("storage_blocks/copper");
+        public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_AMETHYST = tag("storage_blocks/amethyst");
         public static final IOptionalNamedTag<Item> RAW_STORAGE_BLOCKS = tag("raw_storage_blocks");
         public static final IOptionalNamedTag<Item> RAW_STORAGE_BLOCKS_GOLD = tag("raw_storage_blocks/gold");
         public static final IOptionalNamedTag<Item> RAW_STORAGE_BLOCKS_IRON = tag("raw_storage_blocks/iron");

@@ -148,6 +148,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.STORAGE_BLOCKS_REDSTONE, Tags.Items.STORAGE_BLOCKS_REDSTONE);
         copy(Tags.Blocks.STORAGE_BLOCKS_NETHERITE, Tags.Items.STORAGE_BLOCKS_NETHERITE);
         copy(Tags.Blocks.STORAGE_BLOCKS_COPPER, Tags.Items.STORAGE_BLOCKS_COPPER);
+        copy(Tags.Blocks.STORAGE_BLOCKS_AMETHYST, Tags.Items.STORAGE_BLOCKS_AMETHYST);
         copy(Tags.Blocks.RAW_STORAGE_BLOCKS, Tags.Items.RAW_STORAGE_BLOCKS);
         copy(Tags.Blocks.RAW_STORAGE_BLOCKS_GOLD, Tags.Items.RAW_STORAGE_BLOCKS_GOLD);
         copy(Tags.Blocks.RAW_STORAGE_BLOCKS_IRON, Tags.Items.RAW_STORAGE_BLOCKS_IRON);
