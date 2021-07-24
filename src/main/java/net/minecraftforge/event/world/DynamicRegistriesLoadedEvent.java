@@ -60,6 +60,10 @@ import net.minecraftforge.eventbus.api.EventPriority;
  * This event is guaranteed to provide a unique and unmodified set of dynamic
  * registry objects each time the event fires, though the event may fire several
  * times when datapacks are imported multiple times.
+ * 
+ * Important! Don't use this event to add features-created-in-java to biomes,
+ * configuredfeatures should be defined in json and retrieved from the registries.
+ * This will allow datapacks to modify your configuredfeatures.
  */
 public class DynamicRegistriesLoadedEvent extends Event
 {
