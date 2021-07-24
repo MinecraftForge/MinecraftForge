@@ -62,8 +62,8 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fmlclient.gui.screen.LoadingErrorScreen;
-import net.minecraftforge.fmllegacy.packs.DelegatingPackResources;
-import net.minecraftforge.fmllegacy.packs.ModFilePackResources;
+import net.minecraftforge.fmllegacy.packs.DelegatingResourcePack;
+import net.minecraftforge.fmllegacy.packs.ModFileResourcePack;
 import net.minecraftforge.fmllegacy.packs.ResourcePackLoader;
 import net.minecraftforge.fmllegacy.server.LanguageHook;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -209,13 +209,13 @@ public class ClientModLoader
         return loading;
     }
 
-    private static ResourcePackLoader.IPackInfoFinder buildPackFinder(Map<IModFile, ? extends ModFilePackResources> modResourcePacks, BiConsumer<? super ModFilePackResources, Pack> packSetter) {
+    private static ResourcePackLoader.IPackInfoFinder buildPackFinder(Map<IModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, Pack> packSetter) {
         return (packList, factory) -> clientPackFinder(modResourcePacks, packSetter, packList, factory);
     }
 
-    private static void clientPackFinder(Map<IModFile, ? extends ModFilePackResources> modResourcePacks, BiConsumer<? super ModFilePackResources, Pack> packSetter, Consumer<Pack> consumer, Pack.PackConstructor factory) {
-        List<ModFilePackResources> hiddenPacks = new ArrayList<>();
-        for (Entry<IModFile, ? extends ModFilePackResources> e : modResourcePacks.entrySet())
+    private static void clientPackFinder(Map<IModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, Pack> packSetter, Consumer<Pack> consumer, Pack.PackConstructor factory) {
+        List<ModFileResourcePack> hiddenPacks = new ArrayList<>();
+        for (Entry<IModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
             final String name = "mod:" + mod.getModId();
@@ -233,7 +233,7 @@ public class ClientModLoader
                 hiddenPacks.add(e.getValue());
             }
         }
-        final Pack packInfo = Pack.create("mod_resources", true, () -> new DelegatingPackResources("mod_resources", "Mod Resources",
+        final Pack packInfo = Pack.create("mod_resources", true, () -> new DelegatingResourcePack("mod_resources", "Mod Resources",
                 new PackMetadataSection(new TranslatableComponent("fml.resources.modresources", hiddenPacks.size()), PackType.CLIENT_RESOURCES.getVersion(SharedConstants.getCurrentVersion())),
                 hiddenPacks), factory, Pack.Position.BOTTOM, PackSource.DEFAULT);
         consumer.accept(packInfo);

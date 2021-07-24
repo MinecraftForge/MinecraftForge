@@ -47,7 +47,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.ModelBuilder;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
-import net.minecraftforge.fmllegacy.packs.ModFilePackResources;
+import net.minecraftforge.fmllegacy.packs.ModFileResourcePack;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 
 import javax.annotation.Nullable;
@@ -127,7 +127,7 @@ public class ExistingFileHelper {
         for (String existingMod : existingMods) {
             IModFileInfo modFileInfo = ModList.get().getModFileById(existingMod);
             if (modFileInfo != null) {
-                PackResources pack = new ModFilePackResources(modFileInfo.getFile());
+                PackResources pack = new ModFileResourcePack(modFileInfo.getFile());
                 this.clientResources.add(pack);
                 this.serverData.add(pack);
             }

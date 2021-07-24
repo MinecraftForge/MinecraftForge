@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -42,21 +43,21 @@ import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 
 public class ResourcePackLoader {
-    private static Map<IModFile, ModFilePackResources> modResourcePacks;
+    private static Map<IModFile, ModFileResourcePack> modResourcePacks;
     private static PackRepository resourcePackList;
 
-    public static Optional<ModFilePackResources> getResourcePackFor(String modId) {
+    public static Optional<ModFileResourcePack> getResourcePackFor(String modId) {
         return Optional.ofNullable(ModList.get().getModFileById(modId)).
                 map(IModFileInfo::getFile).map(mf->modResourcePacks.get(mf));
     }
 
-    public static void loadResourcePacks(PackRepository resourcePacks, BiFunction<Map<IModFile, ? extends ModFilePackResources>, BiConsumer<? super ModFilePackResources, Pack>, IPackInfoFinder> packFinder) {
+    public static void loadResourcePacks(PackRepository resourcePacks, BiFunction<Map<IModFile, ? extends ModFileResourcePack>, BiConsumer<? super ModFileResourcePack, Pack>, IPackInfoFinder> packFinder) {
         resourcePackList = resourcePacks;
         modResourcePacks = ModList.get().getModFiles().stream()
                 .filter(mf->mf.requiredLanguageLoaders().stream().noneMatch(ls->ls.languageName().equals("minecraft")))
-                .map(mf -> new ModFilePackResources(mf.getFile()))
-                .collect(Collectors.toMap(ModFilePackResources::getModFile, Function.identity(), (u, v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },  LinkedHashMap::new));
-        resourcePacks.addPackFinder(new LambdaFriendlyPackFinder(packFinder.apply(modResourcePacks, ModFilePackResources::setPackInfo)));
+                .map(mf -> new ModFileResourcePack(mf.getFile()))
+                .collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity(), (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },  LinkedHashMap::new));
+        resourcePacks.addPackFinder(new LambdaFriendlyPackFinder(packFinder.apply(modResourcePacks, ModFileResourcePack::setPackInfo)));
     }
 
     public static List<String> getPackNames() {

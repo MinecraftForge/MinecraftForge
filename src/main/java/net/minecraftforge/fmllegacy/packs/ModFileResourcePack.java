@@ -40,12 +40,12 @@ import java.util.stream.Collectors;
 import com.google.common.base.Joiner;
 import net.minecraftforge.forgespi.locating.IModFile;
 
-public class ModFilePackResources extends AbstractPackResources
+public class ModFileResourcePack extends AbstractPackResources
 {
     private final IModFile modFile;
     private Pack packInfo;
 
-    public ModFilePackResources(final IModFile modFile)
+    public ModFileResourcePack(final IModFile modFile)
     {
         super(new File("dummy"));
         this.modFile = modFile;
