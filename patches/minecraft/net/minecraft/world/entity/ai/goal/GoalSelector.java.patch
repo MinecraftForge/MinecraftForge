@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/entity/ai/goal/GoalSelector.java
++++ b/net/minecraft/world/entity/ai/goal/GoalSelector.java
+@@ -116,4 +_,6 @@
+       }
+ 
+    }
++
++    public void removeGoalIf(java.util.function.Predicate<? super Goal> filter) { this.f_25345_.stream().filter(filter).filter(WrappedGoal::m_7620_).forEach(WrappedGoal::m_8041_); this.f_25345_.removeIf(filter); }
+ }
