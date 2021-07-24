@@ -225,6 +225,7 @@ public class ForgeTagHandler
 
     /**
      * Creates the completable future in a wrapper object to be loaded by the TagManager
+     * Used for tags of non-vanilla registries
      *
      * @apiNote Internal
      */
@@ -237,7 +238,7 @@ public class ForgeTagHandler
     /**
      * Creates a map for serialization, copied from {@link TagCollection#serializeToNetwork} but adapted it since it requires
      * a normal registry.
-     * This handles serializing non-vanilla registries.
+     * Used for tags of non-vanilla registries
      *
      * @apiNote Internal
      */
