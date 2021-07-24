@@ -39,6 +39,11 @@ import com.google.common.collect.ImmutableList;
 
 import net.minecraft.world.level.biome.Biome;
 
+/**
+ * @deprecated Use ResourceKeyTags during the DynamicRegistriesLoadedEvent to decide what biomes to modify
+ * as this allows datapacks to decide which biomes to modify
+ */
+@Deprecated
 public class BiomeDictionary
 {
     private static final boolean DEBUG = false;
