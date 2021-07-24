@@ -220,8 +220,7 @@ public class StartupMessageRenderer {
     private void renderMessage(final String message, final float[] colour, int startingColumn, float row, float size, boolean fromBottom, float alpha) {
         if (bufferLength < message.length() * 270) {
             bufferLength = (int) (message.length() * 1.2 * 270);
-            MemoryUtil.memFree(charBuffer);
-            charBuffer = MemoryUtil.memAlloc(bufferLength);
+            charBuffer = MemoryUtil.memRealloc(charBuffer, bufferLength);
             glBufferData(GL_ARRAY_BUFFER, bufferLength, GL_DYNAMIC_DRAW);
         }
         int quads = STBEasyFont.stb_easy_font_print(0, 0, message, null, charBuffer);
