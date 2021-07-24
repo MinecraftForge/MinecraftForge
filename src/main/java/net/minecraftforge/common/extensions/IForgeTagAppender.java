@@ -72,9 +72,9 @@ public interface IForgeTagAppender<T>
      * @param element The entry to remove
      * @return The builder for chaining
      */
-    default TagsProvider.TagAppender<T> removeRegistryEntry(final IForgeRegistryEntry<T> entry)
+    default TagsProvider.TagAppender<T> removeRegistryEntry(final T entry)
     {
-        return removeElementByID(entry.getRegistryName());
+        return removeElementByID(this.self().registry.getKey(entry));
     }
     
     /**
@@ -83,9 +83,9 @@ public interface IForgeTagAppender<T>
      * @return The builder for chaining
      */
     @SuppressWarnings("unchecked")
-    default TagsProvider.TagAppender<T> removeRegistryEntries(final IForgeRegistryEntry<T>...entries)
+    default TagsProvider.TagAppender<T> removeRegistryEntries(final T...entries)
     {
-        for (IForgeRegistryEntry<T> entry : entries)
+        for (T entry : entries)
         {
             this.removeRegistryEntry(entry);
         }
