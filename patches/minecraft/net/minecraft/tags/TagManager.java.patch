@@ -16,11 +16,12 @@
              SerializationTags.m_13202_(tagcontainer);
              this.f_13478_ = tagcontainer;
           }
-@@ -73,6 +_,7 @@
+@@ -73,6 +_,8 @@
           }, p_144577_);
           return new TagManager.LoaderInfo<>(p_144578_, completablefuture);
        } else {
-+         if (true) return net.minecraftforge.common.ForgeTagHandler.makeCustomTagTypeLoader(p_144578_, p_144576_, p_144577_, customTagTypeReaders);
++         if (net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().contains(p_144578_.m_144338_().m_135782_()))
++            return net.minecraftforge.common.ForgeTagHandler.makeCustomTagTypeLoader(p_144578_, p_144576_, p_144577_, customTagTypeReaders);
           f_144568_.warn("Can't find registry for {}", (Object)p_144578_.m_144338_());
           return null;
        }
