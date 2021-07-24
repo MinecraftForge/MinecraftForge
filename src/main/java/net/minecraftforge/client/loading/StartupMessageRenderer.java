@@ -185,12 +185,12 @@ public class StartupMessageRenderer {
             for (int i = 0; i < messages.size(); i++) {
                 boolean nofade = i == 0;
                 final Pair<Integer, StartupMessageManager.Message> pair = messages.get(i);
-                final float fade = clamp((4000.0f - (float) pair.getLeft() - (i - 4) * 1000.0f) / 5000.0f, 0.0f, 1.0f);
-                if (fade < 0.01f && !nofade) {
+                final float fade = nofade ? 1.0f : clamp((4000.0f - (float) pair.getLeft() - (i - 4) * 1000.0f) / 5000.0f, 0.0f, 1.0f);
+                if (fade < 0.01f) {
                     continue;
                 }
                 StartupMessageManager.Message msg = pair.getRight();
-                renderMessage(msg.getText(), msg.getTypeColor(isDarkMode), 1, i, size, true, nofade ? 1.0f : fade);
+                renderMessage(msg.getText(), msg.getTypeColor(isDarkMode), 1, i, size, true, fade);
             }
             renderMemoryInfo(size);
         }
