@@ -11,7 +11,9 @@
           "type": "dynamic_registries_loaded_event_test:single_block"
         },
         "decorator": {
-          "config": {},
+          "config": {
+            "heightmap": "MOTION_BLOCKING"
+          },
           "type": "minecraft:heightmap"
         }
       },

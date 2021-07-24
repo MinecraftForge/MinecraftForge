@@ -1421,13 +1421,13 @@ public class ForgeHooks
      */
     @SuppressWarnings("unchecked")
     @Deprecated
-    public static <T> RegistryReadOps<T> getCachedRegistryOps(DynamicOps<T> delegateOps, RegistryReadOps<?> registryOps, RegistryReadOps.ResourceAccess resources, RegistryAccess.RegistryHolder registries) 
+    public static <T> RegistryReadOps<T> getCachedRegistryOps(DynamicOps<T> delegateOps, RegistryReadOps<?> registryOps, RegistryReadOps.ResourceAccess resources, RegistryAccess registries) 
     {
         // if we return early from the ops creator, we need to return a previously-created RegistryReadOps -- so we need to figure out what ops type needs to be returned
         if (delegateOps == JsonOps.INSTANCE) // same check vanilla uses
             return (RegistryReadOps<T>) registryOps.jsonOps;
         Map<DynamicOps<?>, RegistryReadOps<?>> extraOps = registryOps.extraOps;
-        return (RegistryReadOps<T>) extraOps.computeIfAbsent(delegateOps, ops -> new RegistryReadOps<T>(delegateOps, resources, registries, (IdentityHashMap<RegistryKey<? extends Registry<?>>, ResultMap<?>>) registryOps.readCache, extraOps));
+        return (RegistryReadOps<T>) extraOps.computeIfAbsent(delegateOps, ops -> new RegistryReadOps<T>(delegateOps, resources, registries, (IdentityHashMap<ResourceKey<? extends Registry<?>>, RegistryReadOps.ReadCache<?>>) registryOps.readCache, extraOps));
     }
     
     /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
@@ -1435,7 +1435,7 @@ public class ForgeHooks
     public static void onDynamicRegistriesLoaded(final @Nonnull RegistryReadOps<?> imports, final @Nonnull RegistryAccess registries)
     {
         // mark the registries as having had datapacks imported into them
-        registries.setDatapackImports(imports);
+        registries.datapackImports = imports;
         
         // make a mutable copy of all biomes and provide these copies via the event
         final Registry<Biome> biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);

@@ -9,3 +9,9 @@
        WritableRegistry<E> writableregistry = p_123072_.m_175512_(resourcekey);
  
        for(Entry<ResourceKey<E>, E> entry : registry.m_6579_()) {
+@@ -227,4 +_,5 @@
+          });
+       }
+    }
++   /** @apiNote forge internal use only */ @Deprecated @Nullable public net.minecraft.resources.RegistryReadOps<?> datapackImports = null;
+ }

@@ -1,6 +1,43 @@
 --- a/net/minecraft/resources/RegistryReadOps.java
 +++ b/net/minecraft/resources/RegistryReadOps.java
-@@ -217,6 +_,7 @@
+@@ -47,12 +_,18 @@
+    public final RegistryReadOps<JsonElement> f_135638_;
+ 
+    public static <T> RegistryReadOps<T> m_179866_(DynamicOps<T> p_179867_, ResourceManager p_179868_, RegistryAccess p_179869_) {
+-      return m_179870_(p_179867_, RegistryReadOps.ResourceAccess.m_135714_(p_179868_), p_179869_);
++      return forgeCreateAndLoad(p_179867_, RegistryReadOps.ResourceAccess.m_135714_(p_179868_), p_179869_, true); // called by vanilla when datapacks are being imported into a RegistryAccess instance
+    }
+ 
+    public static <T> RegistryReadOps<T> m_179870_(DynamicOps<T> p_179871_, RegistryReadOps.ResourceAccess p_179872_, RegistryAccess p_179873_) {
++      return forgeCreateAndLoad(p_179871_, p_179872_, p_179873_, false); // only called via RegistryAccess#builtin, to create the registries in the initial vanilla state (not importing datapacks)
++   }
++   /**@apiNote forge internal field -- ensures we can provide the correct RegistryReadOps instance **/ @Deprecated public final Map<DynamicOps<?>, RegistryReadOps<?>> extraOps;
++   public static <T> RegistryReadOps<T> forgeCreateAndLoad(DynamicOps<T> p_179871_, RegistryReadOps.ResourceAccess p_179872_, RegistryAccess p_179873_, boolean importingDataPacks) {
++      if (importingDataPacks && p_179873_.datapackImports != null) return net.minecraftforge.common.ForgeHooks.getCachedRegistryOps(p_179871_, p_179873_.datapackImports, p_179872_, p_179873_); // if we've already imported datapacks into these registries, return a previously cached registries instance instead of importing again
+       RegistryReadOps<T> registryreadops = new RegistryReadOps<>(p_179871_, p_179872_, p_179873_, Maps.newIdentityHashMap());
+       RegistryAccess.m_175500_(p_179873_, registryreadops);
++      if (importingDataPacks) { net.minecraftforge.common.ForgeHooks.onDynamicRegistriesLoaded(registryreadops, p_179873_); } // forge -- if we've imported datapacks into a fresh registries instance, fire the load event
+       return registryreadops;
+    }
+ 
+@@ -65,11 +_,15 @@
+    }
+ 
+    private RegistryReadOps(DynamicOps<T> p_179862_, RegistryReadOps.ResourceAccess p_179863_, RegistryAccess p_179864_, IdentityHashMap<ResourceKey<? extends Registry<?>>, RegistryReadOps.ReadCache<?>> p_179865_) {
++      this(p_179862_, p_179863_, p_179864_, p_179865_, new java.util.HashMap<>());
++   }
++   private RegistryReadOps(DynamicOps<T> p_179862_, RegistryReadOps.ResourceAccess p_179863_, RegistryAccess p_179864_, IdentityHashMap<ResourceKey<? extends Registry<?>>, RegistryReadOps.ReadCache<?>> p_179865_, final Map<DynamicOps<?>, RegistryReadOps<?>> extraOps) {
+       super(p_179862_);
+       this.f_135635_ = p_179863_;
+       this.f_179860_ = p_179864_;
+       this.f_135637_ = p_179865_;
+-      this.f_135638_ = p_179862_ == JsonOps.INSTANCE ? (RegistryReadOps<JsonElement>)this : new RegistryReadOps<>(JsonOps.INSTANCE, p_179863_, p_179864_, p_179865_);
++      this.f_135638_ = p_179862_ == JsonOps.INSTANCE ? (RegistryReadOps<JsonElement>)this : new RegistryReadOps<>(JsonOps.INSTANCE, p_179863_, p_179864_, p_179865_, extraOps); // forge -- ensure related RegistryReadOps share the same extraOps map
++      this.extraOps = extraOps;
+    }
+ 
+    protected <E> DataResult<Pair<Supplier<E>, T>> m_135677_(T p_135678_, ResourceKey<? extends Registry<E>> p_135679_, Codec<E> p_135680_, boolean p_135681_) {
+@@ -220,6 +_,7 @@
                          try {
                             JsonParser jsonparser = new JsonParser();
                             JsonElement jsonelement = jsonparser.parse(reader);
@@ -8,7 +45,7 @@
                             optional = Optional.of(p_179900_.parse(p_179897_, jsonelement).map((p_135730_) -> {
                                return Pair.of(p_135730_, OptionalInt.empty());
                             }));
-@@ -287,6 +_,7 @@
+@@ -290,6 +_,7 @@
  
           public <E> Optional<DataResult<Pair<E, OptionalInt>>> m_142701_(DynamicOps<JsonElement> p_179902_, ResourceKey<? extends Registry<E>> p_179903_, ResourceKey<E> p_179904_, Decoder<E> p_179905_) {
              JsonElement jsonelement = this.f_135736_.get(p_179904_);
