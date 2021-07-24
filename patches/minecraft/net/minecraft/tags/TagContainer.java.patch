@@ -1,14 +1,5 @@
 --- a/net/minecraft/tags/TagContainer.java
 +++ b/net/minecraft/tags/TagContainer.java
-@@ -15,7 +_,7 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
--public class TagContainer {
-+public class TagContainer implements net.minecraftforge.common.extensions.IForgeTagContainer {
-    static final Logger f_144432_ = LogManager.getLogger();
-    public static final TagContainer f_13420_ = new TagContainer(ImmutableMap.of());
-    public final Map<ResourceKey<? extends Registry<?>>, TagCollection<?>> f_144433_;
 @@ -74,6 +_,7 @@
     public void m_13431_() {
        StaticTags.m_13269_(this);

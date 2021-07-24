@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -68,6 +69,7 @@ public class CustomTagTypesTest
     private static final ResourceLocation customRegistryName = new ResourceLocation(MODID, "custom_type_registry");
     private static final DeferredRegister<Custom> CUSTOMS = DeferredRegister.create(Custom.class, MODID);
     private static final RegistryObject<Custom> CUSTOM = CUSTOMS.register("custom", Custom::new);
+    private static final ResourceKey<? extends Registry<Custom>> CUSTOM_KEY = ResourceKey.createRegistryKey(customRegistryName);
     private static final Supplier<IForgeRegistry<Custom>> CUSTOM_REG = CUSTOMS.makeRegistry(customRegistryName.getPath(),
           () -> new RegistryBuilder<Custom>().tagFolder(MODID + "/custom_types"));
     private static final Tag.Named<Custom> TESTS = ForgeTagHandler.createOptionalTag(customRegistryName, new ResourceLocation(MODID, "tests"), Sets.newHashSet(CUSTOM));
@@ -120,7 +122,7 @@ public class CustomTagTypesTest
 
     public static class Custom extends ForgeRegistryEntry<Custom>
     {
-        private final ReverseTagWrapper<Custom> reverseTags = new ReverseTagWrapper<>(this, () -> SerializationTags.getInstance().getCustomTypeCollection(CUSTOM_REG.get()));
+        private final ReverseTagWrapper<Custom> reverseTags = new ReverseTagWrapper<>(this, () -> SerializationTags.getInstance().getOrEmpty(CUSTOM_KEY));
 
         public Set<ResourceLocation> getTags()
         {

@@ -77,18 +77,17 @@
           if (mobeffect != null) {
              MobEffectInstance mobeffectinstance = new MobEffectInstance(mobeffect, p_105130_.m_133625_(), p_105130_.m_133624_(), p_105130_.m_133627_(), p_105130_.m_133626_(), p_105130_.m_133628_());
              mobeffectinstance.m_19562_(p_105130_.m_133619_());
-@@ -1228,11 +_,14 @@
+@@ -1228,11 +_,13 @@
     public void m_5859_(ClientboundUpdateTagsPacket p_105134_) {
        PacketUtils.m_131363_(p_105134_, this, this.f_104888_);
        TagContainer tagcontainer = TagContainer.m_144449_(this.f_104903_, p_105134_.m_179482_());
 -      Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> multimap = StaticTags.m_13283_(tagcontainer);
 +      boolean vanillaConnection = net.minecraftforge.fmllegacy.network.NetworkHooks.isVanillaConnection(f_104885_);
-+      Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> multimap = vanillaConnection ? StaticTags.m_13283_(net.minecraftforge.common.ForgeTagHandler.withNoCustom(tagcontainer)) : StaticTags.validateVanillaTags(tagcontainer);//Forge: If we are connecting to vanilla validate all tags to properly validate custom tags the client may "require", and if we are connecting to forge only validate the vanilla tag types as the custom tag types get synced in a separate packet so may still arrive
++      Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> multimap = StaticTags.validateTags(tagcontainer, vanillaConnection);//Forge: If we are connecting to vanilla, custom tag types will be skipped over in validation as the server can't have them
        if (!multimap.isEmpty()) {
           f_104883_.warn("Incomplete server tags, disconnecting. Missing: {}", (Object)multimap);
           this.f_104885_.m_129507_(new TranslatableComponent("multiplayer.disconnect.missing_tags"));
        } else {
-+         net.minecraftforge.common.ForgeTagHandler.resetCachedTagCollections(true, vanillaConnection);
 +         tagcontainer = TagContainer.reinjectOptionalTags(tagcontainer);
           this.f_104895_ = tagcontainer;
           if (!this.f_104885_.m_129531_()) {

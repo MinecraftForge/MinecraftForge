@@ -97,19 +97,6 @@ class NetworkInitialization {
                 consumer(FMLPlayMessages.OpenContainer::handle).
                 add();
 
-        //TODO Dimensions..
-//        playChannel.messageBuilder(FMLPlayMessages.DimensionInfoMessage.class, 2)
-//                .decoder(FMLPlayMessages.DimensionInfoMessage::decode)
-//                .encoder(FMLPlayMessages.DimensionInfoMessage::encode)
-//                .consumer(FMLPlayMessages.DimensionInfoMessage::handle)
-//                .add();
-
-        playChannel.messageBuilder(FMLPlayMessages.SyncCustomTagTypes.class, 3).
-              decoder(FMLPlayMessages.SyncCustomTagTypes::decode).
-              encoder(FMLPlayMessages.SyncCustomTagTypes::encode).
-              consumer(FMLPlayMessages.SyncCustomTagTypes::handle).
-              add();
-
         return playChannel;
     }
 

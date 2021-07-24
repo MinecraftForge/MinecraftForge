@@ -16,14 +16,6 @@
        GameRules gamerules = serverlevel1.m_46469_();
        boolean flag = gamerules.m_46207_(GameRules.f_46156_);
        boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
-@@ -160,6 +_,7 @@
-       servergamepacketlistenerimpl.m_141995_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
-       servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
-       servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
-+      net.minecraftforge.fmllegacy.network.NetworkHooks.syncCustomTagTypes(p_11263_, this.f_11195_.m_129895_());
-       this.m_11289_(p_11263_);
-       p_11263_.m_8951_().m_12850_();
-       p_11263_.m_8952_().m_12789_(p_11263_);
 @@ -174,7 +_,7 @@
  
        this.m_11264_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
@@ -138,14 +130,6 @@
     }
  
     @Nullable
-@@ -786,6 +_,7 @@
-       }
- 
-       this.m_11268_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
-+      net.minecraftforge.fmllegacy.network.NetworkHooks.syncCustomTagTypes(this.f_11195_.m_129895_());
-       ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
- 
-       for(ServerPlayer serverplayer : this.f_11196_) {
 @@ -797,5 +_,13 @@
  
     public boolean m_11316_() {

@@ -8,12 +8,11 @@
     private TagContainer f_13478_ = TagContainer.f_13420_;
  
     public TagManager(RegistryAccess p_144572_) {
-@@ -56,6 +_,8 @@
+@@ -56,6 +_,7 @@
                 return p_144596_.getKey() + ":" + p_144596_.getValue();
              }).sorted().collect(Collectors.joining(",")));
           } else {
 +            tagcontainer = TagContainer.reinjectOptionalTags(tagcontainer);
-+            net.minecraftforge.common.ForgeTagHandler.reinjectOptionalTagsCustomTypes();
              SerializationTags.m_13202_(tagcontainer);
              this.f_13478_ = tagcontainer;
           }

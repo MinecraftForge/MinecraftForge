@@ -23,21 +23,17 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.*;
 import net.minecraft.tags.Tag.Named;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
-import net.minecraftforge.common.extensions.IForgeTagContainer;
-import net.minecraftforge.fmllegacy.network.FMLPlayMessages.SyncCustomTagTypes;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
@@ -48,12 +44,11 @@ import org.apache.logging.log4j.Logger;
 public class ForgeTagHandler
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static Map<ResourceLocation, TagCollection<?>> customTagTypes = Collections.emptyMap();
     private static Set<ResourceLocation> customTagTypeNames = Collections.emptySet();
     private static boolean tagTypesSet = false;
 
     @Nullable
-    private static <T extends IForgeRegistryEntry<T>> StaticTagHelper<T> getTagRegistry(IForgeRegistry<T> registry)
+    private static <T extends IForgeRegistryEntry<T>> StaticTagHelper<T> getTagHelper(IForgeRegistry<T> registry)
     {
         return (StaticTagHelper<T>) StaticTags.get(registry.getRegistryName());
     }
@@ -61,7 +56,7 @@ public class ForgeTagHandler
     private static void validateRegistrySupportsTags(IForgeRegistry<?> registry)
     {
         //Note: We also check against getTagRegistry in case someone decides to use the helpers for tag creation for types supported by vanilla
-        if (getTagRegistry(registry) == null && (!(registry instanceof ForgeRegistry) || ((ForgeRegistry<?>) registry).getTagFolder() == null))
+        if (getTagHelper(registry) == null && (!(registry instanceof ForgeRegistry) || ((ForgeRegistry<?>) registry).getTagFolder() == null))
         {
             throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
         }
@@ -81,7 +76,7 @@ public class ForgeTagHandler
         validateRegistrySupportsTags(registry);
         if (tagTypesSet)
         {
-            StaticTagHelper<T> tagRegistry = getTagRegistry(registry);
+            StaticTagHelper<T> tagRegistry = getTagHelper(registry);
             if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
             return tagRegistry.bind(name.toString());
         }
@@ -117,7 +112,7 @@ public class ForgeTagHandler
         validateRegistrySupportsTags(registry);
         if (tagTypesSet)
         {
-            StaticTagHelper<T> tagRegistry = getTagRegistry(registry);
+            StaticTagHelper<T> tagRegistry = getTagHelper(registry);
             if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
             return tagRegistry.createOptional(name, defaults);
         }
@@ -191,26 +186,16 @@ public class ForgeTagHandler
     }
 
     /**
-     * Gets a map of registry name to tag collection for all custom tag types.
-     *
-     * @apiNote Prefer interacting with this via the current {@link IForgeTagContainer} and using one of the forge extension getCustomTypeCollection methods
-     */
-    public static Map<ResourceLocation, TagCollection<?>> getCustomTagTypes()
-    {
-        return customTagTypes;
-    }
-
-    /**
      * Sets the set containing the resource locations representing the registry name of each forge registry that supports custom tag types.
      *
      * @apiNote Internal: Calling this manually <strong>WILL</strong> cause a crash to occur as it can only be called once, and is done so by
      * forge after all registries have been initialized.
      */
-    public static void setCustomTagTypes(Set<ResourceLocation> customTagTypes)
+    public static void setCustomTagTypes(Set<ResourceLocation> customTagTypesNames)
     {
         if (tagTypesSet) throw new RuntimeException("Custom tag types have already been set, this method should only be called by forge, and after registries are initialized");
         tagTypesSet = true;
-        customTagTypeNames = ImmutableSet.copyOf(customTagTypes);
+        customTagTypeNames = ImmutableSet.copyOf(customTagTypesNames);
         //Add the static references for custom tag types to the proper tag registries
         // Note: If this ends up being a hotspot due to lots of mods having lots of statically registered tags
         // that get loaded/registered before the new registry event is fired/processed everywhere then this
@@ -239,123 +224,12 @@ public class ForgeTagHandler
     }
 
     /**
-     * Resets the cached collections for the various custom tag types.
-     *
-     * @apiNote Internal
-     */
-    public static void resetCachedTagCollections(boolean makeEmpty, boolean withOptional)
-    {
-        ImmutableMap.Builder<ResourceLocation, TagCollection<?>> builder = ImmutableMap.builder();
-        for (ResourceLocation registryName : customTagTypeNames)
-        {
-            StaticTagHelper<?> tagHelper = StaticTags.get(registryName);
-            if (tagHelper != null)
-            {
-                if (makeEmpty)
-                {
-                    if (withOptional)
-                        builder.put(registryName, tagHelper.reinjectOptionalTags(TagCollection.of(Collections.emptyMap())));
-                    else
-                        builder.put(registryName, TagCollection.of(Collections.emptyMap()));
-                }
-                else
-                {
-                    builder.put(registryName, TagCollection.of(tagHelper.getWrappers().stream().distinct().collect(Collectors.toMap(Named::getName, namedTag -> namedTag))));
-                }
-            }
-        }
-        customTagTypes = builder.build();
-    }
-
-    /**
-     * Used to ensure that all custom tag types have a defaulted collection when vanilla is initializing a defaulted TagContainer
-     *
-     * @apiNote Internal: For use by StaticTags
-     */
-    public static void populateTagContainer()
-    {
-        //Default the tag collections
-        resetCachedTagCollections(false, false);
-        if (!customTagTypes.isEmpty())
-        {
-            LOGGER.debug("Populated the TagCollectionManager with {} extra types", customTagTypes.size());
-        }
-    }
-
-    /**
-     * Updates the custom tag types' tags from packet
-     *
-     * @apiNote Internal
-     */
-    public static void updateCustomTagTypes(SyncCustomTagTypes packet)
-    {
-        customTagTypes = packet.getCustomTagTypes();
-        reinjectOptionalTagsCustomTypes();
-    }
-
-    /**
      * Creates the completable future in a wrapper object to be loaded by the TagManager
      *
      * @apiNote Internal
      */
     @SuppressWarnings("unchecked")
     public static <T> TagManager.LoaderInfo<T> makeCustomTagTypeLoader(StaticTagHelper<T> helper, ResourceManager manager, Executor executor, Map<ResourceLocation, TagLoader<?>> readers) {
-        TagLoader<T> loader = (TagLoader<T>) readers.get(helper.getKey().location());
-        if (loader == null) return null;
-        return new TagManager.LoaderInfo<>(helper, CompletableFuture.supplyAsync(() -> loader.loadAndBuild(manager), executor));
-    }
-
-    /**
-     * Add all the missing optional tags back into the custom tag types tag collections
-     *
-     * @apiNote Internal
-     */
-    public static void reinjectOptionalTagsCustomTypes()
-    {
-        ImmutableMap.Builder<ResourceLocation, TagCollection<?>> builder = ImmutableMap.builder();
-        for (Entry<ResourceLocation, TagCollection<?>> entry : customTagTypes.entrySet())
-        {
-            ResourceLocation registry = entry.getKey();
-            StaticTagHelper<?> tagRegistry = StaticTags.get(registry);
-            TagCollection<?> tagCollection = entry.getValue();
-            builder.put(registry, tagRegistry == null ? tagCollection : tagRegistry.reinjectOptionalTags((TagCollection) tagCollection));
-        }
-        customTagTypes = builder.build();
-    }
-
-    /**
-     * Gets an {@link IForgeTagContainer} with empty custom tag type collections to allow for checking if the client is requiring any tags of custom tag types.
-     *
-     * @apiNote Internal: For use with validating missing tags when connecting to a vanilla server
-     */
-    public static TagContainer withNoCustom(TagContainer tagCollectionSupplier)
-    {
-        ImmutableMap.Builder<ResourceLocation, TagCollection<?>> builder = ImmutableMap.builder();
-        for (ResourceLocation registryName : customTagTypeNames)
-        {
-            StaticTagHelper<?> tagRegistry = StaticTags.get(registryName);
-            if (tagRegistry != null)
-            {
-                builder.put(registryName, TagCollection.of(Collections.emptyMap()));
-            }
-        }
-        return withSpecificCustom(tagCollectionSupplier, builder.build());
-    }
-
-    /**
-     * Gets an {@link IForgeTagContainer} with specific custom tag types for testing if any tags are missing.
-     *
-     * @apiNote Internal
-     */
-    public static TagContainer withSpecificCustom(TagContainer tagCollectionSupplier, Map<ResourceLocation, TagCollection<?>> customTagTypes)
-    {
-        return new TagContainer(tagCollectionSupplier.collections)
-        {
-            @Override
-            public Map<ResourceLocation, TagCollection<?>> getCustomTagTypes()
-            {
-                return customTagTypes;
-            }
-        };
+        return new TagManager.LoaderInfo<>(helper, CompletableFuture.supplyAsync(() -> ((TagLoader<T>) readers.get(helper.getKey().location())).loadAndBuild(manager), executor));
     }
 }
