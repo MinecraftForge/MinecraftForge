@@ -63,25 +63,31 @@ public class StartupMessageManager {
             return timestamp;
         }
 
-        public float[] getTypeColour() {
-            return type.colour();
+        public float[] getTypeColor(boolean isDarkMode) {
+            return type.color(isDarkMode);
         }
     }
 
     enum MessageType {
-        MC(1.0f, 1.0f, 1.0f),
-        ML(0.0f, 0.0f, 0.5f),
-        LOC(0.0f, 0.5f, 0.0f),
-        MOD(0.5f, 0.0f, 0.0f);
+        MC(1.0f, 1.0f, 1.0f), // Minecraft-related loading
+        ML(0.0f, 0.0f, 0.5f, 0.0f, 0.8f, 1.0f), // Forge and mod-loading
+        LOC(0.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f), // Locator and progress messages
+        MOD(1.0f, 1.0f, 0.0f); // Mod messages
 
-        private final float[] colour;
+        private final float[] lightColor;
+        private final float[] darkColor;
 
-        MessageType(final float r, final float g, final float b) {
-            colour = new float[] {r,g,b};
+        MessageType(float r, float g, float b) {
+            this(r, g, b, r, g, b);
+        }
+        
+        MessageType(float lightR, float lightG, float lightB, float darkR, float darkG, float darkB) {
+            lightColor = new float[] {lightR,lightG,lightB};
+            darkColor = new float[] {darkR,darkG,darkB};
         }
 
-        public float[] colour() {
-            return colour;
+        public float[] color(boolean isDarkMode) {
+            return isDarkMode ? darkColor : lightColor;
         }
     }
 
