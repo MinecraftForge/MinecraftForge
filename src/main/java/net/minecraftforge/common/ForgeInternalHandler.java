@@ -113,7 +113,7 @@ public class ForgeInternalHandler
     }
 
     @SubscribeEvent
-    public synchronized void tagsUpdated(TagsUpdatedEvent.VanillaTagTypes event)
+    public synchronized void tagsUpdated(TagsUpdatedEvent event)
     {
         ForgeHooks.updateBurns();
     }

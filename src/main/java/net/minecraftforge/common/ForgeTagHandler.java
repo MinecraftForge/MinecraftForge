@@ -21,23 +21,23 @@ package net.minecraftforge.common;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
+
+import com.google.common.collect.Maps;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import net.minecraft.core.Registry;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.tags.*;
 import net.minecraft.tags.Tag.Named;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.registries.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -229,7 +229,38 @@ public class ForgeTagHandler
      * @apiNote Internal
      */
     @SuppressWarnings("unchecked")
-    public static <T> TagManager.LoaderInfo<T> makeCustomTagTypeLoader(StaticTagHelper<T> helper, ResourceManager manager, Executor executor, Map<ResourceLocation, TagLoader<?>> readers) {
+    public static <T> TagManager.LoaderInfo<T> makeCustomTagTypeLoader(StaticTagHelper<T> helper, ResourceManager manager, Executor executor, Map<ResourceLocation, TagLoader<?>> readers)
+    {
         return new TagManager.LoaderInfo<>(helper, CompletableFuture.supplyAsync(() -> ((TagLoader<T>) readers.get(helper.getKey().location())).loadAndBuild(manager), executor));
+    }
+
+    /**
+     * Creates a map for serialization, copied from {@link TagCollection#serializeToNetwork} but adapted it since it requires
+     * a normal registry.
+     * This handles serializing non-vanilla registries.
+     *
+     * @apiNote Internal
+     */
+    public static <T> TagCollection.NetworkPayload serializeToNetwork(ResourceLocation location, TagCollection<T> tags)
+    {
+        IForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(location);
+        //This should not throw, as before this method is called the registry name is checked against the custom tag type names
+        //but it gives a better error message then a ClassCastException below. (in case something goes horribly wrong)
+        validateRegistrySupportsTags(reg);
+
+        Map<ResourceLocation, Tag<T>> tagMap = tags.getAllTags();
+        Map<ResourceLocation, IntList> idMap = Maps.newHashMapWithExpectedSize(tagMap.size());
+        tagMap.forEach((name, tag) ->
+        {
+            List<T> values = tag.getValues();
+            IntList idList = new IntArrayList(values.size());
+            for(T t : values)
+            {
+                idList.add(RegistryManager.ACTIVE.getRegistry(location).getID(((IForgeRegistry<?>)t).getRegistryName()));
+            }
+
+            idMap.put(name, idList);
+        });
+        return new TagCollection.NetworkPayload(idMap);
     }
 }

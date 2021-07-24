@@ -4,10 +4,20 @@
     public void m_13431_() {
        StaticTags.m_13269_(this);
        Blocks.m_50758_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent.VanillaTagTypes(this));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this));
     }
  
     public Map<ResourceKey<? extends Registry<?>>, TagCollection.NetworkPayload> m_144442_(final RegistryAccess p_144443_) {
+@@ -84,6 +_,9 @@
+             if (optional.isPresent()) {
+                map.put(p_144481_, p_144482_.m_144411_(optional.get()));
+             } else {
++               if (net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().contains(p_144481_.m_135782_()))
++                  map.put(p_144481_, net.minecraftforge.common.ForgeTagHandler.serializeToNetwork(p_144481_.m_135782_(), p_144482_));
++               else
+                TagContainer.f_144432_.error("Unknown registry {}", (Object)p_144481_);
+             }
+ 
 @@ -108,6 +_,13 @@
           f_144432_.error("Unknown registry {}", (Object)p_144447_);
        }
