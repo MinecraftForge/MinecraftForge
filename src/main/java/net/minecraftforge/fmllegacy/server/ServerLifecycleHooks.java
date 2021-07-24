@@ -42,7 +42,7 @@ import net.minecraftforge.fmllegacy.network.FMLNetworkConstants;
 import net.minecraftforge.fmllegacy.network.FMLStatusPing;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.fmllegacy.network.NetworkRegistry;
-import net.minecraftforge.fmllegacy.packs.ModFileResourcePack;
+import net.minecraftforge.fmllegacy.packs.ModFilePackResources;
 import net.minecraftforge.fmllegacy.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
@@ -187,12 +187,12 @@ public class ServerLifecycleHooks
 
     //INTERNAL MODDERS DO NOT USE
     @Deprecated
-    public static ResourcePackLoader.IPackInfoFinder buildPackFinder(Map<IModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, Pack> packSetter) {
+    public static ResourcePackLoader.IPackInfoFinder buildPackFinder(Map<IModFile, ? extends ModFilePackResources> modResourcePacks, BiConsumer<? super ModFilePackResources, Pack> packSetter) {
         return (packList, factory) -> serverPackFinder(modResourcePacks, packSetter, packList, factory);
     }
 
-    private static void serverPackFinder(Map<IModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, Pack> packSetter, Consumer<Pack> consumer, Pack.PackConstructor factory) {
-        for (Entry<IModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
+    private static void serverPackFinder(Map<IModFile, ? extends ModFilePackResources> modResourcePacks, BiConsumer<? super ModFilePackResources, Pack> packSetter, Consumer<Pack> consumer, Pack.PackConstructor factory) {
+        for (Entry<IModFile, ? extends ModFilePackResources> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"

@@ -65,7 +65,7 @@ import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fmlclient.ConfigGuiHandler;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.fmllegacy.packs.ModFileResourcePack;
+import net.minecraftforge.fmllegacy.packs.ModFilePackResources;
 import net.minecraftforge.fmllegacy.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 
@@ -415,7 +415,7 @@ public class ModListScreen extends Screen
         Pair<ResourceLocation, Size2i> logoData = selectedMod.getLogoFile().map(logoFile->
         {
             TextureManager tm = this.minecraft.getTextureManager();
-            final ModFileResourcePack resourcePack = ResourcePackLoader.getResourcePackFor(selectedMod.getModId())
+            final ModFilePackResources resourcePack = ResourcePackLoader.getResourcePackFor(selectedMod.getModId())
                     .orElse(ResourcePackLoader.getResourcePackFor("forge").
                             orElseThrow(()->new RuntimeException("Can't find forge, WHAT!")));
             try

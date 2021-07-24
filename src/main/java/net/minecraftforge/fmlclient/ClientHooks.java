@@ -67,7 +67,7 @@ import net.minecraft.server.packs.resources.SimpleReloadableResourceManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.fmllegacy.packs.ModFileResourcePack;
+import net.minecraftforge.fmllegacy.packs.ModFilePackResources;
 import net.minecraftforge.registries.GameData;
 
 public class ClientHooks
@@ -261,8 +261,8 @@ public class ClientHooks
                 logger.error("    domain {} has {} location{}:",resourceDomain, resPacks.size(), resPacks.size() != 1 ? "s" :"");
                 for (PackResources resPack : resPacks)
                 {
-                    if (resPack instanceof ModFileResourcePack) {
-                        ModFileResourcePack modRP = (ModFileResourcePack) resPack;
+                    if (resPack instanceof ModFilePackResources) {
+                        ModFilePackResources modRP = (ModFilePackResources) resPack;
                         List<IModInfo> mods = modRP.getModFile().getModInfos();
                         logger.error("      mod(s) {} resources at {}", mods.stream().map(IModInfo::getDisplayName).collect(Collectors.toList()), modRP.getModFile().getFilePath());
                     }
