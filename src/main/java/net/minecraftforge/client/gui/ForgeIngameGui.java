@@ -644,14 +644,14 @@ public class ForgeIngameGui extends Gui
     public void renderJumpMeter(PoseStack mStack, int x)
     {
         bind(GUI_ICONS_LOCATION);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.disableBlend();
 
         super.renderJumpMeter(mStack, x);
 
         RenderSystem.enableBlend();
         minecraft.getProfiler().pop();
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     protected void renderHUDText(int width, int height, PoseStack mStack)
