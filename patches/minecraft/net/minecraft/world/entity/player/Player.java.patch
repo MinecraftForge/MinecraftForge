@@ -76,7 +76,7 @@
     @Nullable
     public ItemEntity m_36176_(ItemStack p_36177_, boolean p_36178_) {
 -      return this.m_7197_(p_36177_, false, p_36178_);
-+      return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, p_36177_, false);
++      return net.minecraftforge.common.ForgeHooks.onPlayerToss(this, p_36177_, false);
     }
  
     @Nullable

@@ -248,6 +248,6 @@
           this.f_36096_.m_150404_(p_182293_, inventory.m_36056_());
        });
 -      return this.m_7197_(itemstack, false, true) != null;
-+      return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, itemstack, true) != null;
++      return net.minecraftforge.common.ForgeHooks.onPlayerToss(this, itemstack, true) != null;
     }
  }

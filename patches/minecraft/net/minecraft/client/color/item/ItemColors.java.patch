@@ -14,7 +14,7 @@
        itemcolors.m_92689_((p_92693_, p_92694_) -> {
           return p_92694_ == 0 ? -1 : MapItem.m_42918_(p_92693_);
        }, Items.f_42573_);
-+      net.minecraftforge.client.ForgeHooksClient.onItemColorsInit(itemcolors, p_92684_);
++      net.minecraftforge.client.ForgeHooksClient.onItemColors(itemcolors, p_92684_);
        return itemcolors;
     }
  

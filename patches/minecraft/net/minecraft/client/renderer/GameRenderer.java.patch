@@ -41,7 +41,7 @@
        this.f_109059_.f_91060_.m_172961_(p_109092_, camera.m_90583_(), this.m_172716_(Math.max(d0, this.f_109059_.f_91066_.f_92068_)));
        this.f_109059_.f_91060_.m_109599_(p_109092_, p_109090_, p_109091_, flag, camera, this, this.f_109074_, matrix4f);
 +      this.f_109059_.m_91307_().m_6182_("forge_render_last");
-+      net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(this.f_109059_.f_91060_, p_109092_, p_109090_, matrix4f, p_109091_);
++      net.minecraftforge.client.ForgeHooksClient.onRenderLast(this.f_109059_.f_91060_, p_109092_, p_109090_, matrix4f, p_109091_);
        this.f_109059_.m_91307_().m_6182_("hand");
        if (this.f_109070_) {
           RenderSystem.m_69421_(256, Minecraft.f_91002_);

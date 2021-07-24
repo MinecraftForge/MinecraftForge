@@ -88,13 +88,13 @@
           profilerfiller.m_6182_("outline");
           BlockPos blockpos = ((BlockHitResult)hitresult).m_82425_();
           BlockState blockstate = this.f_109465_.m_8055_(blockpos);
-+         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_109604_, hitresult, p_109601_, p_109600_, multibuffersource$buffersource))
++         if (!net.minecraftforge.client.ForgeHooksClient.onDrawHighlight(this, p_109604_, hitresult, p_109601_, p_109600_, multibuffersource$buffersource))
           if (!blockstate.m_60795_() && this.f_109465_.m_6857_().m_61937_(blockpos)) {
              VertexConsumer vertexconsumer2 = multibuffersource$buffersource.m_6299_(RenderType.m_110504_());
              this.m_109637_(p_109600_, vertexconsumer2, p_109604_.m_90592_(), d0, d1, d2, blockpos, blockstate);
           }
 +      } else if (hitresult != null && hitresult.m_6662_() == HitResult.Type.ENTITY) {
-+         net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_109604_, hitresult, p_109601_, p_109600_, multibuffersource$buffersource);
++         net.minecraftforge.client.ForgeHooksClient.onDrawHighlight(this, p_109604_, hitresult, p_109601_, p_109600_, multibuffersource$buffersource);
        }
  
        PoseStack posestack = RenderSystem.m_157191_();

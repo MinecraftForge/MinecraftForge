@@ -5,7 +5,7 @@
        this.m_46465_();
        this.m_46466_();
 +      this.gatherCapabilities();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(this));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.LevelEvent.Load(this));
     }
  
     public DimensionSpecialEffects m_104583_() {
@@ -21,7 +21,7 @@
     }
  
     private void m_104739_(int p_104740_, Entity p_104741_) {
-+      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_104741_, this))) return;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinLevelEvent(p_104741_, this))) return;
        this.m_171642_(p_104740_, Entity.RemovalReason.DISCARDED);
        this.f_171631_.m_157653_(p_104741_);
 +      p_104741_.onAddedToWorld();
@@ -66,7 +66,7 @@
           ClientLevel.this.f_104566_.remove(p_171716_);
 +
 +          p_171716_.onRemovedFromWorld();
-+          net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_171716_, ClientLevel.this));
++          net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveLevelEvent(p_171716_, ClientLevel.this));
        }
     }
  

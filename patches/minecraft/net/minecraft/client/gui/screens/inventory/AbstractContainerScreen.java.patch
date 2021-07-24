@@ -4,7 +4,7 @@
        int i = this.f_97735_;
        int j = this.f_97736_;
        this.m_7286_(p_97795_, p_97798_, p_97796_, p_97797_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawBackground(this, p_97795_, p_97796_, p_97797_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ContainerScreenEvent.DrawBackground(this, p_97795_, p_97796_, p_97797_));
        RenderSystem.m_69465_();
        super.m_6305_(p_97795_, p_97796_, p_97797_, p_97798_);
        PoseStack posestack = RenderSystem.m_157191_();
@@ -18,7 +18,7 @@
        }
  
        this.m_7027_(p_97795_, p_97796_, p_97797_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, p_97795_, p_97796_, p_97797_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ContainerScreenEvent.DrawForeground(this, p_97795_, p_97796_, p_97797_));
        ItemStack itemstack = this.f_97711_.m_41619_() ? this.f_97732_.m_142621_() : this.f_97711_;
        if (!itemstack.m_41619_()) {
           int l1 = 8;

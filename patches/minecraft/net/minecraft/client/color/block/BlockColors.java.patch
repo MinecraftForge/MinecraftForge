@@ -14,7 +14,7 @@
        blockcolors.m_92589_((p_92596_, p_92597_, p_92598_, p_92599_) -> {
           return p_92597_ != null && p_92598_ != null ? 2129968 : 7455580;
        }, Blocks.f_50196_);
-+      net.minecraftforge.client.ForgeHooksClient.onBlockColorsInit(blockcolors);
++      net.minecraftforge.client.ForgeHooksClient.onBlockColors(blockcolors);
        return blockcolors;
     }
  

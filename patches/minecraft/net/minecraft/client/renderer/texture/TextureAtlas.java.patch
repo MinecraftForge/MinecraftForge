@@ -12,7 +12,7 @@
        int j = Integer.MAX_VALUE;
        int k = 1 << p_118311_;
        p_118310_.m_6182_("extracting_frames");
-+      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this, set);
++      net.minecraftforge.client.ForgeHooksClient.onTextureStitchPre(this, set);
  
        for(TextureAtlasSprite.Info textureatlassprite$info : this.m_118304_(p_118308_, set)) {
           j = Math.min(j, Math.min(textureatlassprite$info.m_118434_(), textureatlassprite$info.m_118437_()));

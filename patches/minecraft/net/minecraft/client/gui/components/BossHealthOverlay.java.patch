@@ -4,8 +4,8 @@
  
           for(LerpingBossEvent lerpingbossevent : this.f_93699_.values()) {
              int k = i / 2 - 91;
-+            net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo event =
-+               net.minecraftforge.client.ForgeHooksClient.bossBarRenderPre(p_93705_, this.f_93698_.m_91268_(), lerpingbossevent, k, j, 10 + this.f_93698_.f_91062_.f_92710_);
++            net.minecraftforge.client.event.RenderGameOverlayEvent.BossEvent event =
++               net.minecraftforge.client.ForgeHooksClient.onBossEventRenderPre(p_93705_, this.f_93698_.m_91268_(), lerpingbossevent, k, j, 10 + this.f_93698_.f_91062_.f_92710_);
 +            if (!event.isCanceled()) {
              RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
              RenderSystem.m_157456_(0, f_93697_);
@@ -17,7 +17,7 @@
 -            j += 10 + 9;
 +            }
 +            j += event.getIncrement();
-+            net.minecraftforge.client.ForgeHooksClient.bossBarRenderPost(p_93705_, this.f_93698_.m_91268_());
++            net.minecraftforge.client.ForgeHooksClient.onBossEventRenderPost(p_93705_, this.f_93698_.m_91268_());
              if (j >= this.f_93698_.m_91268_().m_85446_() / 3) {
                 break;
              }

@@ -102,14 +102,14 @@
 +         }
 +         f_96540_.remove(b);
 +      };
-+      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.f_96540_, add, this::m_169411_))) {
++      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.InitEvent.Pre(this, this.f_96540_, add, this::m_169411_))) {
        this.m_169413_();
        this.m_7522_((GuiEventListener)null);
        this.m_7856_();
        this.m_169407_(false);
        this.m_169378_(f_169370_);
 +      }
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post(this, this.f_96540_, add, this::m_169411_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.InitEvent.Post(this, this.f_96540_, add, this::m_169411_));
     }
  
     public List<? extends GuiEventListener> m_6702_() {
@@ -117,7 +117,7 @@
     public void m_96558_(PoseStack p_96559_, int p_96560_) {
        if (this.f_96541_.f_91073_ != null) {
           this.m_93179_(p_96559_, 0, 0, this.f_96543_, this.f_96544_, -1072689136, -804253680);
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this, p_96559_));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.BackgroundDrawnEvent(this, p_96559_));
        } else {
           this.m_96626_(p_96560_);
        }
@@ -125,7 +125,7 @@
        bufferbuilder.m_5483_((double)this.f_96543_, 0.0D, 0.0D).m_7421_((float)this.f_96543_ / 32.0F, (float)p_96627_).m_6122_(64, 64, 64, 255).m_5752_();
        bufferbuilder.m_5483_(0.0D, 0.0D, 0.0D).m_7421_(0.0F, (float)p_96627_).m_6122_(64, 64, 64, 255).m_5752_();
        tesselator.m_85914_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this, new PoseStack()));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.BackgroundDrawnEvent(this, new PoseStack()));
     }
  
     public boolean m_7043_() {

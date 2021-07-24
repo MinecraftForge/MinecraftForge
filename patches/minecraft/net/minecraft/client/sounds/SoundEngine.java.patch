@@ -21,7 +21,7 @@
     public void m_120312_(SoundInstance p_120313_) {
        if (this.f_120219_) {
 -         if (p_120313_.m_7767_()) {
-+         p_120313_ = net.minecraftforge.client.ForgeHooksClient.playSound(this, p_120313_);
++         p_120313_ = net.minecraftforge.client.ForgeHooksClient.onPlaySound(this, p_120313_);
 +         if (p_120313_ != null && p_120313_.m_7767_()) {
              WeighedSoundEvents weighedsoundevents = p_120313_.m_6775_(this.f_120217_);
              ResourceLocation resourcelocation = p_120313_.m_7904_();

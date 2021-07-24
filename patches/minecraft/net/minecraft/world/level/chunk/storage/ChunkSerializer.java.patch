@@ -30,7 +30,7 @@
        }
  
        if (chunkstatus$chunktype == ChunkStatus.ChunkType.LEVELCHUNK) {
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(chunkaccess, p_63462_, chunkstatus$chunktype));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Load(chunkaccess, p_63462_, chunkstatus$chunktype));
           return new ImposterProtoChunk((LevelChunk)chunkaccess);
        } else {
           ProtoChunk protochunk1 = (ProtoChunk)chunkaccess;
@@ -38,7 +38,7 @@
              protochunk1.m_63189_(generationstep$carving, BitSet.valueOf(compoundtag5.m_128463_(s1)));
           }
  
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Load(chunkaccess, p_63462_, chunkstatus$chunktype));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.level.ChunkDataEvent.Load(chunkaccess, p_63462_, chunkstatus$chunktype));
           return protochunk1;
        }
     }

@@ -4,7 +4,7 @@
           this.f_97735_ = (this.f_96543_ - this.f_97726_) / 2;
           this.f_98699_ = false;
        } else {
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.PotionShiftEvent(this)))
++         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.PotionShiftEvent(this)))
 +            this.f_97735_ = (this.f_96543_ - this.f_97726_) / 2;
 +         else
           this.f_97735_ = 160 + (this.f_96543_ - this.f_97726_ - 200) / 2;
