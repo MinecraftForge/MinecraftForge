@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.event.enchanting;
+package net.minecraftforge.event;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.BlockPos;
