@@ -25,7 +25,7 @@
 +         int j = mapitemsaveddata != null ? p_115076_.m_31823_() % 4 * 2 : p_115076_.m_31823_();
           p_115079_.m_85845_(Vector3f.f_122227_.m_122240_((float)j * 360.0F / 8.0F));
 -         if (flag1) {
-+         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemInFrameEvent(p_115076_, this, p_115079_, p_115080_, p_115081_))) {
++         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.render.RenderItemInFrameEvent(p_115076_, this, p_115079_, p_115080_, p_115081_))) {
 +         if (mapitemsaveddata != null) {
              p_115079_.m_85845_(Vector3f.f_122227_.m_122240_(180.0F));
              float f = 0.0078125F;

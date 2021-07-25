@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.client.event.render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Camera;

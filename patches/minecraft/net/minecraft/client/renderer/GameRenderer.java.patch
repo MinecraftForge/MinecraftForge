@@ -32,7 +32,7 @@
        this.m_109111_(matrix4f);
        camera.m_90575_(this.f_109059_.f_91073_, (Entity)(this.f_109059_.m_91288_() == null ? this.f_109059_.f_91074_ : this.f_109059_.m_91288_()), !this.f_109059_.f_91066_.m_92176_().m_90612_(), this.f_109059_.f_91066_.m_92176_().m_90613_(), p_109090_);
 +
-+      net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup cameraSetup = net.minecraftforge.client.ForgeHooksClient.onCameraSetup(this, camera, p_109090_);
++      net.minecraftforge.client.event.render.EntityViewRenderEvent.CameraSetup cameraSetup = net.minecraftforge.client.ForgeHooksClient.onCameraSetup(this, camera, p_109090_);
 +      camera.setAnglesInternal(cameraSetup.getYaw(), cameraSetup.getPitch());
 +      p_109092_.m_85845_(Vector3f.f_122227_.m_122240_(cameraSetup.getRoll()));
 +

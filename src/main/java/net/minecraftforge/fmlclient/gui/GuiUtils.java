@@ -33,7 +33,7 @@ import com.mojang.math.Matrix4f;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Style;
-import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.client.event.render.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.opengl.GL11;

@@ -11,7 +11,7 @@
           f_109012_ = f_109012_ * (1.0F - f6) + f_109012_ * f8 * f6;
        }
  
-+      net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(p_109019_, p_109020_, f_109010_, f_109011_, f_109012_);
++      net.minecraftforge.client.event.render.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.render.EntityViewRenderEvent.FogColors(p_109019_, p_109020_, f_109010_, f_109011_, f_109012_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +
 +      f_109010_ = event.getRed();

@@ -9,7 +9,7 @@
 -            m_173296_(p_110719_.m_91289_().m_110907_().m_110882_(blockstate), p_110720_);
 +         org.apache.commons.lang3.tuple.Pair<BlockState, BlockPos> overlay = getOverlayBlock(player);
 +         if (overlay != null) {
-+            if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(player, p_110720_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight()))
++            if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(player, p_110720_, net.minecraftforge.client.event.render.RenderBlockOverlayEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight()))
 +                m_173296_(p_110719_.m_91289_().m_110907_().getTexture(overlay.getLeft(), p_110719_.f_91073_, overlay.getRight()), p_110720_);
           }
        }

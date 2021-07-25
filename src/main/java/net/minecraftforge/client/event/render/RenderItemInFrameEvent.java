@@ -17,41 +17,58 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.client.event.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.entity.ItemFrameRenderer;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.eventbus.api.Event;
 
-public abstract class RenderPlayerEvent extends PlayerEvent
+import javax.annotation.Nonnull;
+
+/**
+ * This event is called when an item is rendered in an item frame.
+ *
+ * You can set canceled to do no further vanilla processing.
+ */
+@Cancelable
+public class RenderItemInFrameEvent extends Event
 {
-    private final PlayerRenderer renderer;
-    private final float partialTick;
+    private final ItemStack item;
+    private final ItemFrame entityItemFrame;
+    private final ItemFrameRenderer<?> renderer;
     private final PoseStack poseStack;
     private final MultiBufferSource bufferSource;
     private final int light;
 
-    public RenderPlayerEvent(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int light)
+    public RenderItemInFrameEvent(ItemFrame itemFrame, ItemFrameRenderer<?> renderItemFrame, PoseStack poseStack,
+                                  MultiBufferSource bufferSource, int light)
     {
-        super(player);
-        this.renderer = renderer;
-        this.partialTick = partialTick;
+        this.item = itemFrame.getItem();
+        this.entityItemFrame = itemFrame;
+        this.renderer = renderItemFrame;
         this.poseStack = poseStack;
         this.bufferSource = bufferSource;
         this.light = light;
     }
 
-    public PlayerRenderer getRenderer()
+    @Nonnull
+    public ItemStack getItemStack()
     {
-        return renderer;
+        return item;
     }
 
-    public float getPartialTick()
+    public ItemFrame getEntityItemFrame()
     {
-        return partialTick;
+        return entityItemFrame;
+    }
+
+    public ItemFrameRenderer<?> getRenderer()
+    {
+        return renderer;
     }
 
     public PoseStack getPoseStack()
@@ -67,22 +84,5 @@ public abstract class RenderPlayerEvent extends PlayerEvent
     public int getLight()
     {
         return light;
-    }
-
-    @Cancelable
-    public static class Pre extends RenderPlayerEvent
-    {
-        public Pre(Player player, PlayerRenderer renderer, float tick, PoseStack poseStack, MultiBufferSource buffers, int light)
-        {
-            super(player, renderer, tick, poseStack, buffers, light);
-        }
-    }
-
-    public static class Post extends RenderPlayerEvent
-    {
-        public Post(Player player, PlayerRenderer renderer, float tick, PoseStack poseStack, MultiBufferSource buffers, int light)
-        {
-            super(player, renderer, tick, poseStack, buffers, light);
-        }
     }
 }
