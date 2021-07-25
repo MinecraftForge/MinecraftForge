@@ -17,34 +17,53 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-/*package net.minecraftforge.event.world;
+package net.minecraftforge.event.world;
+
+import net.minecraft.core.MappedRegistry;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.world.level.dimension.LevelStem;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
- * Register all of your custom ModDimensons here, fired during server loading when
- * dimension data is read from the world file.
- *
- * Contains a list of missing entries. Registering an entry with the DimensionManger
- * will remove the matching entry from the missing list.
- * /
+ * Fires on server start before levels are added to the save. Register custom
+ * dimensions here.
+ */
 public class RegisterDimensionsEvent extends Event
 {
-    private final Map<ResourceLocation, SavedEntry> missing;
-    private final Set<ResourceLocation> keys;
+    private final MappedRegistry<LevelStem> levelStemRegistry;
+    private final long overworldSeed;
+    private final RegistryAccess.RegistryHolder registryHolder;
 
-    public RegisterDimensionsEvent(Map<ResourceLocation, SavedEntry> missing)
+    public RegisterDimensionsEvent(MappedRegistry<LevelStem> levelStemRegistry, long overworldSeed, RegistryAccess.RegistryHolder registryHolder)
     {
-        this.missing = missing;
-        this.keys = Collections.unmodifiableSet(this.missing.keySet());
+        this.levelStemRegistry = levelStemRegistry;
+        this.overworldSeed = overworldSeed;
+        this.registryHolder = registryHolder;
     }
 
-    public Set<ResourceLocation> getMissingNames()
+    /**
+     * @return The level stem (dimension) registry for the current server. Use this
+     *         to register your level stems.
+     */
+    public MappedRegistry<LevelStem> getLevelStemRegistry()
     {
-        return keys;
+        return this.levelStemRegistry;
     }
 
-    @Nullable
-    public SavedEntry getEntry(ResourceLocation key)
+    /**
+     * @return The seed of the overworld.
+     */
+    public long getOverworldSeed()
     {
-        return missing.get(key);
+        return this.overworldSeed;
     }
-}*/
+
+    /**
+     * @return The current server's registry data, primarily useful for biome
+     *         access.
+     */
+    public RegistryAccess.RegistryHolder getRegistryHolder()
+    {
+        return this.registryHolder;
+    }
+}

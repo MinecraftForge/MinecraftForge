@@ -9,6 +9,14 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
+@@ -391,6 +_,7 @@
+          this.m_129901_().m_136295_(this.f_129749_.m_6587_());
+       }
+ 
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.RegisterDimensionsEvent(mappedregistry, worldgensettings.m_64619_(), this.f_129746_));
+       for(Entry<ResourceKey<LevelStem>, LevelStem> entry : mappedregistry.m_6579_()) {
+          ResourceKey<LevelStem> resourcekey = entry.getKey();
+          if (resourcekey != LevelStem.f_63971_) {
 @@ -402,6 +_,7 @@
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
              this.f_129762_.put(resourcekey1, serverlevel1);
