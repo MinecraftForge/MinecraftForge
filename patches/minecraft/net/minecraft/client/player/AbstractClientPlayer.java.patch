@@ -5,6 +5,6 @@
        }
  
 -      return Mth.m_14179_(Minecraft.m_91087_().f_91066_.f_92070_, 1.0F, f);
-+      return net.minecraftforge.client.ForgeHooksClient.getOffsetFOV(this, f);
++      return net.minecraftforge.client.ForgeHooksClient.getFOVModifier(this, f);
     }
  }

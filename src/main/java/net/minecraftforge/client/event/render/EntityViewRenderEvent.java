@@ -224,11 +224,11 @@ public abstract class EntityViewRenderEvent extends Event
      * Event that allows mods to alter the raw FOV itself.
      * This directly affects to the FOV without being modified.
      */
-    public static class FOVModifier extends EntityViewRenderEvent
+    public static class FieldOfView extends EntityViewRenderEvent
     {
         private double fov;
 
-        public FOVModifier(GameRenderer gameRenderer, Camera camera, double partialTick, double fov)
+        public FieldOfView(GameRenderer gameRenderer, Camera camera, double partialTick, double fov)
         {
             super(gameRenderer, camera, partialTick);
             this.setFOV(fov);
