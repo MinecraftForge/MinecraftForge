@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/entity/monster/WitherSkeleton.java
++++ b/net/minecraft/world/entity/monster/WitherSkeleton.java
+@@ -104,6 +_,11 @@
+    }
+ 
+    public boolean m_7301_(MobEffectInstance p_34192_) {
+-      return p_34192_.m_19544_() == MobEffects.f_19615_ ? false : super.m_7301_(p_34192_);
++      if (p_34192_.m_19544_() == MobEffects.f_19615_) {
++         net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(this, p_34192_);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++         return event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
++      }
++      return super.m_7301_(p_34192_);
+    }
+ }
