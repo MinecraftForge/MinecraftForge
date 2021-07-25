@@ -24,6 +24,8 @@ import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityEvent;
 
+import javax.annotation.Nullable;
+
 /**
  * ZombieEvent is fired whenever a zombie is spawned for aid.
  * If a method utilizes this {@link Event} as its parameter, the method will
@@ -67,7 +69,8 @@ public class ZombieEvent extends EntityEvent {
      **/
     @HasResult
     public static class SummonAidEvent extends ZombieEvent {
-        private Zombie customSummonedAid;
+        @Nullable
+        private Zombie customSummonedAid = null;
         
         private final Level level;
         private final int x;
@@ -90,12 +93,13 @@ public class ZombieEvent extends EntityEvent {
         /**
          * Populate this field to have a custom zombie instead of a normal zombie summoned
          */
+        @Nullable
         public Zombie getCustomSummonedAid()
         {
             return customSummonedAid;
         }
 
-        public void setCustomSummonedAid(Zombie customSummonedAid)
+        public void setCustomSummonedAid(@Nullable Zombie customSummonedAid)
         {
             this.customSummonedAid = customSummonedAid;
         }

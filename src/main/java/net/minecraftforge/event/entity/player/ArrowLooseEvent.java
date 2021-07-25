@@ -24,8 +24,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-import javax.annotation.Nonnull;
-
 /**
  * ArrowLooseEvent is fired when a player stops using a bow.<br>
  * This event is fired whenever a player stops using a bow in
@@ -49,7 +47,7 @@ public class ArrowLooseEvent extends PlayerEvent
     private final boolean hasAmmo;
     private int charge;
 
-    public ArrowLooseEvent(Player player, @Nonnull ItemStack bow, Level level, int charge, boolean hasAmmo)
+    public ArrowLooseEvent(Player player, ItemStack bow, Level level, int charge, boolean hasAmmo)
     {
         super(player);
         this.bow = bow;
@@ -58,7 +56,6 @@ public class ArrowLooseEvent extends PlayerEvent
         this.hasAmmo = hasAmmo;
     }
 
-    @Nonnull
     public ItemStack getBowStack()
     {
         return this.bow;

@@ -22,8 +22,6 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
-import javax.annotation.Nonnull;
-
 /**
  * Fired when the player removes a "repaired" item from the Anvil's Output slot.
  *
@@ -33,15 +31,12 @@ import javax.annotation.Nonnull;
  */
 public class AnvilRepairEvent extends PlayerEvent
 {
-    @Nonnull
     private final ItemStack left; // The left side of the input
-    @Nonnull
     private final ItemStack right; // The right side of the input
-    @Nonnull
     private final ItemStack output; // Set this to set the output stack
     private float breakChance; // Anvil's chance to break (reduced by 1 durability) when this is complete. Default is 12% (0.12f)
 
-    public AnvilRepairEvent(Player player, @Nonnull ItemStack left, @Nonnull ItemStack right, @Nonnull ItemStack output)
+    public AnvilRepairEvent(Player player, ItemStack left, ItemStack right, ItemStack output)
     {
         super(player);
         this.output = output;
@@ -55,7 +50,6 @@ public class AnvilRepairEvent extends PlayerEvent
      *
      * @return the output
      */
-    @Nonnull
     public ItemStack getItemResult()
     {
         return output;
@@ -66,7 +60,6 @@ public class AnvilRepairEvent extends PlayerEvent
      *
      * @return the first input slot
      */
-    @Nonnull
     public ItemStack getItemInput()
     {
         return left;
@@ -77,7 +70,6 @@ public class AnvilRepairEvent extends PlayerEvent
      *
      * @return the second input slot
      */
-    @Nonnull
     public ItemStack getIngredientInput()
     {
         return right;

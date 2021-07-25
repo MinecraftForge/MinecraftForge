@@ -26,6 +26,7 @@ import com.mojang.blaze3d.audio.Channel;
 public class SoundEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final SoundEngine engine;
+
     public SoundEvent(SoundEngine engine)
     {
         this.engine = engine;

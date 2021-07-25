@@ -19,7 +19,6 @@
 
 package net.minecraftforge.event;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.item.Item;
@@ -45,13 +44,12 @@ import net.minecraftforge.eventbus.api.Event;
 @Cancelable
 public class FurnaceFuelBurnTimeEvent extends Event
 {
-    @Nonnull
     private final ItemStack itemStack;
     @Nullable
     private final RecipeType<?> recipeType;
     private int burnTime;
 
-    public FurnaceFuelBurnTimeEvent(@Nonnull ItemStack itemStack, int burnTime, @Nullable RecipeType<?> recipeType)
+    public FurnaceFuelBurnTimeEvent(ItemStack itemStack, int burnTime, @Nullable RecipeType<?> recipeType)
     {
         this.itemStack = itemStack;
         this.burnTime = burnTime;
@@ -61,7 +59,6 @@ public class FurnaceFuelBurnTimeEvent extends Event
     /**
      * Get the ItemStack "fuel" in question.
      */
-    @Nonnull
     public ItemStack getItemStack()
     {
         return itemStack;

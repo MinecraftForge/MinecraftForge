@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Player.BedSleepingProblem;
 import net.minecraft.core.BlockPos;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
@@ -39,6 +40,7 @@ import java.util.Optional;
  **/
 public class PlayerSleepInBedEvent extends PlayerEvent
 {
+    @Nullable
     private BedSleepingProblem result = null;
     private final Optional<BlockPos> pos;
 
@@ -48,16 +50,18 @@ public class PlayerSleepInBedEvent extends PlayerEvent
         this.pos = pos;
     }
 
+    @Nullable
     public BedSleepingProblem getResultStatus()
     {
         return result;
     }
 
-    public void setResult(BedSleepingProblem result)
+    public void setResult(@Nullable BedSleepingProblem result)
     {
         this.result = result;
     }
 
+    @Nullable
     public BlockPos getPos()
     {
         return pos.orElse(null);

@@ -271,6 +271,7 @@ public class ForgeHooksClient
         forgeStatusLine = line;
     }
 
+    @Nullable
     public static SoundInstance onPlaySound(SoundEngine manager, SoundInstance sound)
     {
         PlaySoundEvent e = new PlaySoundEvent(manager, sound);

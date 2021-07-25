@@ -33,6 +33,8 @@ import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
+import javax.annotation.Nullable;
+
 /**
  * RegistryEvent supertype.
  */
@@ -105,7 +107,8 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
         private final IForgeRegistry<T> registry;
         private final ResourceLocation name;
         private final ImmutableList<Mapping<T>> mappings;
-        private ModContainer activeMod;
+        @Nullable
+        private ModContainer activeMod = null;
 
         public MissingMappings(ResourceLocation name, IForgeRegistry<T> registry, Collection<Mapping<T>> missed)
         {
@@ -115,7 +118,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             this.mappings = ImmutableList.copyOf(missed);
         }
 
-        public void setModContainer(ModContainer mod)
+        public void setModContainer(@Nullable ModContainer mod)
         {
             this.activeMod = mod;
         }
@@ -190,7 +193,8 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             public final ResourceLocation key;
             public final int id;
             private Action action = Action.DEFAULT;
-            private T target;
+            @Nullable
+            private T target = null;
 
             public Mapping(IForgeRegistry<T> registry, IForgeRegistry<T> pool, ResourceLocation key, int id)
             {
@@ -246,6 +250,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
                 return this.action;
             }
 
+            @Nullable
             public T getTarget()
             {
                 return target;

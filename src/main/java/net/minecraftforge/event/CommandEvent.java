@@ -24,6 +24,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nullable;
+
 /**
  * CommandEvent is fired after a command is parsed, but before it is executed.
  * This event is fired during the invocation of {@link Commands#handleCommand(CommandSource, String)}. <br>
@@ -42,7 +44,8 @@ import net.minecraftforge.eventbus.api.Event;
 public class CommandEvent extends Event
 {
     private ParseResults<CommandSourceStack> parseResults;
-    private Throwable exception;
+    @Nullable
+    private Throwable exception = null;
 
     public CommandEvent(ParseResults<CommandSourceStack> parseResults)
     {
@@ -59,12 +62,13 @@ public class CommandEvent extends Event
         this.parseResults = parse;
     }
 
+    @Nullable
     public Throwable getException()
     {
         return exception;
     }
 
-    public void setException(Throwable exception)
+    public void setException(@Nullable Throwable exception)
     {
         this.exception = exception;
     }

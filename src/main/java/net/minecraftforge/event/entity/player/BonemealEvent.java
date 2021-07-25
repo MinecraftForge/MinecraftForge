@@ -27,8 +27,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
-import javax.annotation.Nonnull;
-
 /**
  * This event is called when a player attempts to use Bonemeal on a block.
  * It can be canceled to completely prevent any further processing.
@@ -47,7 +45,7 @@ public class BonemealEvent extends PlayerEvent
     private final BlockState block;
     private final ItemStack stack;
 
-    public BonemealEvent(@Nonnull Player player, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState block, @Nonnull ItemStack stack)
+    public BonemealEvent(Player player, Level level, BlockPos pos, BlockState block, ItemStack stack)
     {
         super(player);
         this.level = level;
@@ -71,7 +69,6 @@ public class BonemealEvent extends PlayerEvent
         return block;
     }
 
-    @Nonnull
     public ItemStack getItemStack()
     {
         return stack;

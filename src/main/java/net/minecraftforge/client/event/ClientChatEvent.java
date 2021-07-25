@@ -46,8 +46,8 @@ public class ClientChatEvent extends Event
 
     public ClientChatEvent(String message)
     {
-        this.setMessage(message);
         this.originalMessage = Strings.nullToEmpty(message);
+        this.message = this.originalMessage;
     }
 
     public String getMessage()

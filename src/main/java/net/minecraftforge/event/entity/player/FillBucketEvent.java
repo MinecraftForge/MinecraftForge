@@ -26,7 +26,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -47,9 +46,9 @@ public class FillBucketEvent extends PlayerEvent
     @Nullable
     private final HitResult target;
 
-    private ItemStack result;
+    private ItemStack result = ItemStack.EMPTY;
 
-    public FillBucketEvent(Player player, @Nonnull ItemStack current, Level level, @Nullable HitResult target)
+    public FillBucketEvent(Player player, ItemStack current, Level level, @Nullable HitResult target)
     {
         super(player);
         this.current = current;
@@ -57,7 +56,6 @@ public class FillBucketEvent extends PlayerEvent
         this.target = target;
     }
 
-    @Nonnull
     public ItemStack getEmptyBucket()
     {
         return this.current;
@@ -74,13 +72,12 @@ public class FillBucketEvent extends PlayerEvent
         return this.target;
     }
 
-    @Nonnull
     public ItemStack getFilledBucket()
     {
         return this.result;
     }
 
-    public void setFilledBucket(@Nonnull ItemStack bucket)
+    public void setFilledBucket(ItemStack bucket)
     {
         this.result = bucket;
     }

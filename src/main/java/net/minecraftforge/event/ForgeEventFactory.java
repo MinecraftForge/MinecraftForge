@@ -374,7 +374,7 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static InteractionResultHolder<ItemStack> onBucketUse(@Nonnull Player player, @Nonnull Level level, @Nonnull ItemStack stack, @Nullable HitResult target)
+    public static InteractionResultHolder<ItemStack> onBucketUse(Player player, Level level, ItemStack stack, @Nullable HitResult target)
     {
         FillBucketEvent event = new FillBucketEvent(player, stack, level, target);
         if (MinecraftForge.EVENT_BUS.post(event)) return new InteractionResultHolder<>(InteractionResult.FAIL, stack);
@@ -443,6 +443,7 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new AnimalTameEvent(animal, tamer));
     }
 
+    @Nullable
     public static BedSleepingProblem onPlayerSleepInBed(Player player, Optional<BlockPos> pos)
     {
         PlayerSleepInBedEvent event = new PlayerSleepInBedEvent(player, pos);
@@ -601,6 +602,7 @@ public class ForgeEventFactory
             return canContinueSleep == Result.ALLOW;
     }
 
+    @Nullable
     public static InteractionResultHolder<ItemStack> onArrowNock(ItemStack item, Level level, Player player, InteractionHand hand, boolean hasAmmo)
     {
         ArrowNockEvent event = new ArrowNockEvent(player, item, hand, level, hasAmmo);

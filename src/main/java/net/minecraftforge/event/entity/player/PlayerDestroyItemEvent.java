@@ -23,7 +23,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -52,19 +51,17 @@ import javax.annotation.Nullable;
  **/
 public class PlayerDestroyItemEvent extends PlayerEvent
 {
-    @Nonnull
     private final ItemStack original;
     @Nullable
     private final InteractionHand hand; // May be null if this player destroys the item by any use besides holding it.
 
-    public PlayerDestroyItemEvent(Player player, @Nonnull ItemStack original, @Nullable InteractionHand hand)
+    public PlayerDestroyItemEvent(Player player, ItemStack original, @Nullable InteractionHand hand)
     {
         super(player);
         this.original = original;
         this.hand = hand;
     }
 
-    @Nonnull
     public ItemStack getOriginal()
     {
         return this.original;

@@ -22,6 +22,8 @@ package net.minecraftforge.client.event.sound;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundEngine;
 
+import javax.annotation.Nullable;
+
 /***
  * Raised when the SoundManager tries to play a normal sound.
  *
@@ -32,11 +34,12 @@ public class PlaySoundEvent extends SoundEvent
 {
     private final String name;
     private final SoundInstance sound;
+    @Nullable
     private SoundInstance result;
 
-    public PlaySoundEvent(SoundEngine engime, SoundInstance sound)
+    public PlaySoundEvent(SoundEngine engine, SoundInstance sound)
     {
-        super(engime);
+        super(engine);
         this.sound = sound;
         this.name = sound.getLocation().getPath();
         this.setResultSound(sound);
@@ -52,12 +55,13 @@ public class PlaySoundEvent extends SoundEvent
         return sound;
     }
 
+    @Nullable
     public SoundInstance getResultSound()
     {
         return result;
     }
 
-    public void setResultSound(SoundInstance result)
+    public void setResultSound(@Nullable SoundInstance result)
     {
         this.result = result;
     }

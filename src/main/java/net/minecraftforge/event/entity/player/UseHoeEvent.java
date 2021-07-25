@@ -49,7 +49,6 @@ public class UseHoeEvent extends PlayerEvent
         this.context = context;
     }
 
-    @Nonnull
     public UseOnContext getContext()
     {
         return context;

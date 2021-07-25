@@ -35,7 +35,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -459,18 +458,16 @@ public class PlayerEvent extends LivingEvent
 
     public static class ItemCraftedEvent extends PlayerEvent
     {
-        @Nonnull
         private final ItemStack craftedStack;
         private final Container craftMatrix;
 
-        public ItemCraftedEvent(Player player, @Nonnull ItemStack craftedStack, Container craftMatrix)
+        public ItemCraftedEvent(Player player, ItemStack craftedStack, Container craftMatrix)
         {
             super(player);
             this.craftedStack = craftedStack;
             this.craftMatrix = craftMatrix;
         }
 
-        @Nonnull
         public ItemStack getCraftedStack()
         {
             return this.craftedStack;
@@ -484,16 +481,14 @@ public class PlayerEvent extends LivingEvent
 
     public static class ItemSmeltedEvent extends PlayerEvent
     {
-        @Nonnull
         private final ItemStack smeltedStack;
 
-        public ItemSmeltedEvent(Player player, @Nonnull ItemStack smeltedStack)
+        public ItemSmeltedEvent(Player player, ItemStack smeltedStack)
         {
             super(player);
             this.smeltedStack = smeltedStack;
         }
 
-        @Nonnull
         public ItemStack getSmeltedStack()
         {
             return this.smeltedStack;

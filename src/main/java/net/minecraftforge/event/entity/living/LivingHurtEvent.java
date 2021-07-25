@@ -47,6 +47,7 @@ public class LivingHurtEvent extends LivingEvent
 {
     private final DamageSource source;
     private float amount;
+
     public LivingHurtEvent(LivingEntity entity, DamageSource source, float amount)
     {
         super(entity);

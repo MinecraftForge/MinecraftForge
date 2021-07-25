@@ -32,7 +32,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Cancelable;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static net.minecraftforge.eventbus.api.Event.Result.DEFAULT;
@@ -316,7 +315,6 @@ public class PlayerInteractEvent extends PlayerEvent
     /**
      * @return The hand involved in this interaction. Will never be null.
      */
-    @Nonnull
     public InteractionHand getHand()
     {
         return hand;
@@ -325,7 +323,6 @@ public class PlayerInteractEvent extends PlayerEvent
     /**
      * @return The itemstack involved in this interaction, {@code ItemStack.EMPTY} if the hand was empty.
      */
-    @Nonnull
     public ItemStack getItemStack()
     {
         return getEntity().getItemInHand(hand);
@@ -338,7 +335,6 @@ public class PlayerInteractEvent extends PlayerEvent
      * Will never be null.
      * @return The position involved in this interaction.
      */
-    @Nonnull
     public BlockPos getPos()
     {
         return pos;

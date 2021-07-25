@@ -24,8 +24,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Event;
 
-import javax.annotation.Nonnull;
-
 /**
  * Fired when the enchantment level is set for each of the three potential enchantments in the enchanting table.
  * The {@link #enchantLevel} is set to the vanilla value and can be modified by this event handler.
@@ -40,12 +38,11 @@ public class EnchantmentLevelSetEvent extends Event
     private final BlockPos pos;
     private final int enchantRow;
     private final int power;
-    @Nonnull
     private final ItemStack itemStack;
     private final int originalLevel;
     private int enchantLevel;
 
-    public EnchantmentLevelSetEvent(Level level, BlockPos pos, int enchantRow, int power, @Nonnull ItemStack itemStack, int enchantLevel)
+    public EnchantmentLevelSetEvent(Level level, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int enchantLevel)
     {
         this.level = level;
         this.pos = pos;
@@ -101,7 +98,6 @@ public class EnchantmentLevelSetEvent extends Event
      * 
      * @return the item being enchanted
      */
-    @Nonnull
     public ItemStack getItem()
     {
         return itemStack;

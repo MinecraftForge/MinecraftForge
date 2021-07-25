@@ -44,6 +44,7 @@ import javax.annotation.Nullable;
  */
 public class BiomeLoadingEvent extends Event
 {
+    @Nullable
     private final ResourceLocation name;
     private Biome.ClimateSettings climate;
     private Biome.BiomeCategory category;

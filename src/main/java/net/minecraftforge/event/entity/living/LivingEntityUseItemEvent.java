@@ -23,21 +23,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 
-import javax.annotation.Nonnull;
-
 public class LivingEntityUseItemEvent extends LivingEvent
 {
     private final ItemStack item;
     private int duration;
 
-    private LivingEntityUseItemEvent(LivingEntity entity, @Nonnull ItemStack item, int duration)
+    private LivingEntityUseItemEvent(LivingEntity entity, ItemStack item, int duration)
     {
         super(entity);
         this.item = item;
         this.setDuration(duration);
     }
 
-    @Nonnull
     public ItemStack getItemStack()
     {
         return item;
@@ -67,7 +64,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Start extends LivingEntityUseItemEvent
     {
-        public Start(LivingEntity entity, @Nonnull ItemStack item, int duration)
+        public Start(LivingEntity entity, ItemStack item, int duration)
         {
             super(entity, item, duration);
         }
@@ -82,7 +79,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Tick extends LivingEntityUseItemEvent
     {
-        public Tick(LivingEntity entity, @Nonnull ItemStack item, int duration)
+        public Tick(LivingEntity entity, ItemStack item, int duration)
         {
             super(entity, item, duration);
         }
@@ -103,7 +100,7 @@ public class LivingEntityUseItemEvent extends LivingEvent
     @Cancelable
     public static class Stop extends LivingEntityUseItemEvent
     {
-        public Stop(LivingEntity entity, @Nonnull ItemStack item, int duration)
+        public Stop(LivingEntity entity, ItemStack item, int duration)
         {
             super(entity, item, duration);
         }
@@ -125,19 +122,18 @@ public class LivingEntityUseItemEvent extends LivingEvent
     {
         private ItemStack result;
 
-        public Finish(LivingEntity entity, @Nonnull ItemStack item, int duration, @Nonnull ItemStack result)
+        public Finish(LivingEntity entity, ItemStack item, int duration, ItemStack result)
         {
             super(entity, item, duration);
-            this.setResultStack(result);
+            this.result = result;
         }
 
-        @Nonnull
         public ItemStack getResultStack()
         {
             return result;
         }
 
-        public void setResultStack(@Nonnull ItemStack result)
+        public void setResultStack(ItemStack result)
         {
             this.result = result;
         }

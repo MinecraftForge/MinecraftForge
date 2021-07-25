@@ -26,6 +26,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * ArrowNockEvent is fired when a player begins using a bow.<br>
@@ -40,9 +41,10 @@ public class ArrowNockEvent extends PlayerEvent
     private final InteractionHand hand;
     private final Level level;
     private final boolean hasAmmo;
-    private InteractionResultHolder<ItemStack> action;
+    @Nullable
+    private InteractionResultHolder<ItemStack> action = null;
 
-    public ArrowNockEvent(Player player, @Nonnull ItemStack item, InteractionHand hand, Level level, boolean hasAmmo)
+    public ArrowNockEvent(Player player, ItemStack item, InteractionHand hand, Level level, boolean hasAmmo)
     {
         super(player);
         this.bow = item;
@@ -51,7 +53,6 @@ public class ArrowNockEvent extends PlayerEvent
         this.hasAmmo = hasAmmo;
     }
 
-    @Nonnull
     public ItemStack getBowStack()
     {
         return this.bow;
@@ -72,12 +73,13 @@ public class ArrowNockEvent extends PlayerEvent
         return this.hasAmmo;
     }
 
+    @Nullable
     public InteractionResultHolder<ItemStack> getAction()
     {
         return this.action;
     }
 
-    public void setAction(InteractionResultHolder<ItemStack> action)
+    public void setAction(@Nullable InteractionResultHolder<ItemStack> action)
     {
         this.action = action;
     }

@@ -32,7 +32,6 @@ import javax.annotation.Nullable;
 public class ItemTooltipEvent extends PlayerEvent
 {
     private final TooltipFlag flags;
-    @Nonnull
     private final ItemStack itemStack;
     private final List<Component> toolTip;
 
@@ -40,7 +39,7 @@ public class ItemTooltipEvent extends PlayerEvent
      * This event is fired in {@link ItemStack#getTooltip(EntityPlayer, ITooltipFlag)}, which in turn is called from it's respective GUIContainer.
      * Tooltips are also gathered with a null entityPlayer during startup by {@link Minecraft#populateSearchTreeManager()}.
      */
-    public ItemTooltipEvent(@Nonnull ItemStack itemStack, @Nullable Player entityPlayer, List<Component> list, TooltipFlag flags)
+    public ItemTooltipEvent(ItemStack itemStack, @Nullable Player entityPlayer, List<Component> list, TooltipFlag flags)
     {
         super(entityPlayer);
         this.itemStack = itemStack;
@@ -59,7 +58,6 @@ public class ItemTooltipEvent extends PlayerEvent
     /**
      * The {@link ItemStack} with the tooltip.
      */
-    @Nonnull
     public ItemStack getItemStack()
     {
         return itemStack;

@@ -25,6 +25,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 public class PlayerContainerEvent extends PlayerEvent
 {
     private final AbstractContainerMenu container;
+
     public PlayerContainerEvent(Player player, AbstractContainerMenu container)
     {
         super(player);

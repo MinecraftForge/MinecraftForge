@@ -25,6 +25,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 
@@ -45,6 +46,7 @@ public class ScreenshotEvent extends Event
     private final NativeImage image;
     private File screenshotFile;
 
+    @Nullable
     private Component resultMessage = null;
 
     public ScreenshotEvent(NativeImage image, File screenshotFile)
@@ -72,12 +74,13 @@ public class ScreenshotEvent extends Event
         this.screenshotFile = screenshotFile;
     }
 
+    @Nullable
     public Component getResultMessage()
     {
         return resultMessage;
     }
 
-    public void setResultMessage(Component resultMessage)
+    public void setResultMessage(@Nullable Component resultMessage)
     {
         this.resultMessage = resultMessage;
     }

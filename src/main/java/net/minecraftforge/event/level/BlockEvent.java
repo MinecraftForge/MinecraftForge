@@ -42,7 +42,6 @@ import net.minecraftforge.eventbus.api.Event;
 
 import com.google.common.collect.ImmutableList;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class BlockEvent extends Event
@@ -142,7 +141,7 @@ public class BlockEvent extends Event
         private final BlockState placedBlock;
         private final BlockState placedAgainst;
 
-        public EntityPlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull BlockState placedAgainst, @Nullable Entity entity)
+        public EntityPlaceEvent(BlockSnapshot blockSnapshot, BlockState placedAgainst, @Nullable Entity entity)
         {
             super(blockSnapshot.getWorld(), blockSnapshot.getPos(), !(entity instanceof Player) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock());
             this.entity = entity;
@@ -190,7 +189,7 @@ public class BlockEvent extends Event
     {
         private final List<BlockSnapshot> blockSnapshots;
 
-        public EntityMultiPlaceEvent(@Nonnull List<BlockSnapshot> blockSnapshots, @Nonnull BlockState placedAgainst, @Nullable Entity entity) {
+        public EntityMultiPlaceEvent(List<BlockSnapshot> blockSnapshots, BlockState placedAgainst, @Nullable Entity entity) {
             super(blockSnapshots.get(0), placedAgainst, entity);
             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
             if (DEBUG)

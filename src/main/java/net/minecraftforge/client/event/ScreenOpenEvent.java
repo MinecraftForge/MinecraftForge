@@ -36,7 +36,7 @@ public class ScreenOpenEvent extends Event
 
     public ScreenOpenEvent(Screen screen)
     {
-        this.setScreen(screen);
+        this.screen = screen;
     }
 
     public Screen getScreen()

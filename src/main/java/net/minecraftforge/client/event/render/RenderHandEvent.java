@@ -19,8 +19,6 @@
 
 package net.minecraftforge.client.event.render;
 
-import javax.annotation.Nonnull;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -45,12 +43,11 @@ public class RenderHandEvent extends Event
     private final float interpolatedPitch;
     private final float swingProgress;
     private final float equipProgress;
-    @Nonnull
     private final ItemStack stack;
 
     public RenderHandEvent(InteractionHand hand, PoseStack poseStack, MultiBufferSource bufferSource, int light,
                            float partialTick, float interpolatedPitch,
-                           float swingProgress, float equipProgress, @Nonnull ItemStack stack)
+                           float swingProgress, float equipProgress, ItemStack stack)
     {
         this.hand = hand;
         this.poseStack = poseStack;
@@ -115,7 +112,6 @@ public class RenderHandEvent extends Event
     /**
      * @return The ItemStack to be rendered
      */
-    @Nonnull
     public ItemStack getItemStack()
     {
         return stack;

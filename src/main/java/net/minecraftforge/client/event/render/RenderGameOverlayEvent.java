@@ -19,14 +19,14 @@
 
 package net.minecraftforge.client.event.render;
 
-import java.util.ArrayList;
-
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.LerpingBossEvent;
 import net.minecraftforge.client.gui.IIngameOverlay;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import com.mojang.blaze3d.platform.Window;
-import net.minecraft.client.gui.components.LerpingBossEvent;
+
+import java.util.ArrayList;
 
 @Cancelable
 public class RenderGameOverlayEvent extends Event
@@ -97,7 +97,12 @@ public class RenderGameOverlayEvent extends Event
         {
             super(poseStack, parent, type);
         }
-        @Override public boolean isCancelable(){ return false; }
+
+        @Override
+        public boolean isCancelable()
+        {
+            return false;
+        }
     }
 
     public static class PreLayer extends Pre
