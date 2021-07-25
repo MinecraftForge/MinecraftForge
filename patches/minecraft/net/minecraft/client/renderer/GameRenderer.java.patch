@@ -27,7 +27,7 @@
              } catch (Throwable throwable1) {
                 CrashReport crashreport1 = CrashReport.m_127521_(throwable1, "Rendering screen");
                 CrashReportCategory crashreportcategory1 = crashreport1.m_127514_("Screen render details");
-@@ -1036,10 +_,17 @@
+@@ -1036,6 +_,11 @@
        Matrix4f matrix4f = posestack.m_85850_().m_85861_();
        this.m_109111_(matrix4f);
        camera.m_90575_(this.f_109059_.f_91073_, (Entity)(this.f_109059_.m_91288_() == null ? this.f_109059_.f_91074_ : this.f_109059_.m_91288_()), !this.f_109059_.f_91066_.m_92176_().m_90612_(), this.f_109059_.f_91066_.m_92176_().m_90613_(), p_109090_);
@@ -39,12 +39,6 @@
        p_109092_.m_85845_(Vector3f.f_122223_.m_122240_(camera.m_90589_()));
        p_109092_.m_85845_(Vector3f.f_122225_.m_122240_(camera.m_90590_() + 180.0F));
        this.f_109059_.f_91060_.m_172961_(p_109092_, camera.m_90583_(), this.m_172716_(Math.max(d0, this.f_109059_.f_91066_.f_92068_)));
-       this.f_109059_.f_91060_.m_109599_(p_109092_, p_109090_, p_109091_, flag, camera, this, this.f_109074_, matrix4f);
-+      this.f_109059_.m_91307_().m_6182_("forge_render_last");
-+      net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(this.f_109059_.f_91060_, p_109092_, p_109090_, matrix4f, p_109091_);
-       this.f_109059_.m_91307_().m_6182_("hand");
-       if (this.f_109070_) {
-          RenderSystem.m_69421_(256, Minecraft.f_91002_);
 @@ -1151,6 +_,11 @@
  
     public OverlayTexture m_109155_() {

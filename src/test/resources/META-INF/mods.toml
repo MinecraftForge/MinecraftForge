@@ -140,3 +140,5 @@ license="LGPL v2.1"
     modId="player_attack_knockback_test"
 [[mods]]
     modId="overlay_layers_test"
+[[mods]]
+    modId="render_world_event_test"

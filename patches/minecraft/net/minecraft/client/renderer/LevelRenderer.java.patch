@@ -33,8 +33,12 @@
                 this.f_109466_.add(chunkrenderdispatcher$renderchunk1);
              } else {
                 this.f_109461_.m_91307_().m_6180_("build near");
-@@ -980,13 +_,14 @@
+@@ -978,15 +_,18 @@
+       FogRenderer.m_109018_(p_109604_, p_109601_, this.f_109461_.f_91073_, this.f_109461_.f_91066_.f_92106_, p_109605_.m_109131_(p_109601_));
+       FogRenderer.m_109036_();
        RenderSystem.m_69421_(16640, Minecraft.f_91002_);
++      profilerfiller.m_6182_("forge_render_level_begin");
++      net.minecraftforge.client.event.RenderLevelEventHandler.startLevelRenderPhase(this, p_109600_, p_109601_, frustum, p_109604_, p_109602_, p_109607_);
        float f = p_109605_.m_109152_();
        boolean flag1 = this.f_109461_.f_91073_.m_104583_().m_5781_(Mth.m_14107_(d0), Mth.m_14107_(d1)) || this.f_109461_.f_91065_.m_93090_().m_93715_();
 +      FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag1, p_109601_);
@@ -49,8 +53,12 @@
        profilerfiller.m_6182_("terrain_setup");
        this.m_109695_(p_109604_, frustum, flag, this.f_109449_++, this.f_109461_.f_91074_.m_5833_());
        profilerfiller.m_6182_("updatechunks");
-@@ -1007,7 +_,9 @@
+@@ -1005,9 +_,13 @@
+       long k1 = j1 * 3L / 2L;
+       long l1 = Mth.m_14053_(k1, l, 33333333L);
        this.m_109510_(p_109602_ + l1);
++      profilerfiller.m_6182_("forge_render_level_terrain_update");
++      net.minecraftforge.client.event.RenderLevelEventHandler.fireTerrainUpdate(p_109602_ + l1);
        profilerfiller.m_6182_("terrain");
        this.m_172993_(RenderType.m_110451_(), p_109600_, d0, d1, d2, p_109607_);
 +      this.f_109461_.m_91304_().m_119428_(TextureAtlas.f_118259_).setBlurMipmap(false, this.f_109461_.f_91066_.f_92027_ > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
@@ -107,15 +115,45 @@
           RenderStateShard.f_110126_.m_110188_();
        } else {
           profilerfiller.m_6182_("translucent");
-@@ -1204,7 +_,7 @@
+@@ -1204,8 +_,10 @@
           profilerfiller.m_6182_("string");
           this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_109607_);
           profilerfiller.m_6182_("particles");
 -         this.f_109461_.f_91061_.m_107336_(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_);
 +         this.f_109461_.f_91061_.render(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_, frustum);
        }
++      profilerfiller.m_6182_("forge_render_level_terrain_and_entities");
++      net.minecraftforge.client.event.RenderLevelEventHandler.fireTerrainAndEntitiesDone();
  
        posestack.m_85836_();
+       posestack.m_166854_(p_109600_.m_85850_().m_85861_());
+@@ -1239,6 +_,8 @@
+          this.m_173012_(p_109604_);
+          RenderSystem.m_69458_(true);
+       }
++      profilerfiller.m_6182_("forge_render_level_weather");
++      net.minecraftforge.client.event.RenderLevelEventHandler.fireWeatherDone();
+ 
+       this.m_109793_(p_109604_);
+       RenderSystem.m_69458_(true);
+@@ -1246,6 +_,8 @@
+       posestack.m_85849_();
+       RenderSystem.m_157182_();
+       FogRenderer.m_109017_();
++      profilerfiller.m_6182_("forge_render_level_end");
++      net.minecraftforge.client.event.RenderLevelEventHandler.endLevelRenderPhase();
+    }
+ 
+    private void m_109588_(PoseStack p_109589_) {
+@@ -1373,6 +_,8 @@
+ 
+       VertexBuffer.m_85931_();
+       VertexBuffer.m_166875_();
++      this.f_109461_.m_91307_().m_6182_("forge_render_level_block_layer");
++      net.minecraftforge.client.event.RenderLevelEventHandler.fireBlockLayer(p_172994_);
+       this.f_109461_.m_91307_().m_7238_();
+       p_172994_.m_110188_();
+    }
 @@ -1632,6 +_,11 @@
  
     public void m_181409_(PoseStack p_181410_, Matrix4f p_181411_, float p_181412_, Runnable p_181413_) {

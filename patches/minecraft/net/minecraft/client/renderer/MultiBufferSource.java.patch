@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/MultiBufferSource.java
++++ b/net/minecraft/client/renderer/MultiBufferSource.java
+@@ -92,6 +_,7 @@
+          boolean flag = Objects.equals(this.f_109906_, p_109913_.m_110406_());
+          if (flag || bufferbuilder != this.f_109904_) {
+             if (this.f_109907_.remove(bufferbuilder)) {
++               net.minecraftforge.client.event.RenderLevelEventHandler.fireRenderTypeFinish(p_109913_, bufferbuilder);
+                p_109913_.m_110412_(bufferbuilder, 0, 0, 0);
+                if (flag) {
+                   this.f_109906_ = Optional.empty();
