@@ -88,19 +88,16 @@
  
        this.f_96541_.f_91074_.m_108739_(p_96613_);
     }
-@@ -366,11 +_,24 @@
+@@ -366,11 +_,21 @@
        this.f_96547_ = p_96607_.f_91062_;
        this.f_96543_ = p_96608_;
        this.f_96544_ = p_96609_;
 +      java.util.function.Consumer<GuiEventListener> add = (b) -> {
-+         if (b instanceof Widget) {
-+            this.f_169369_.add((Widget)b);
-+         }
-+
-+         if (b instanceof NarratableEntry) {
-+            this.f_169368_.add((NarratableEntry)b);
-+         }
-+         f_96540_.remove(b);
++         if (b instanceof Widget w)
++            this.f_169369_.add(w);
++         if (b instanceof NarratableEntry ne)
++            this.f_169368_.add(ne);
++         f_96540_.add(b);
 +      };
 +      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.InitEvent.Pre(this, this.f_96540_, add, this::m_169411_))) {
        this.m_169413_();

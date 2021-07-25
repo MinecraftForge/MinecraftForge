@@ -1356,16 +1356,6 @@ public class ForgeHooks
         return Collections.unmodifiableMap(FORGE_ATTRIBUTES);
     }
 
-    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY
-     * ONLY EXISTS FOR LEGACY REASONS SHOULD BE REMOVED IN 1.17
-     */
-    @Deprecated /// Internal use only, Remove in 1.17
-    public static AttributeSupplier putAttributesOld(EntityType<? extends LivingEntity> type, AttributeSupplier map)
-    {
-        LOGGER.warn("Called deprecated GlobalEntityTypeAttributes#put for {}, use EntityAttributeCreationEvent instead.", type.getRegistryName());
-        return FORGE_ATTRIBUTES.put(type, map);
-    }
-
     /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
     @Deprecated
     public static void modifyAttributes()
@@ -1376,10 +1366,10 @@ public class ForgeHooks
 
         finalMap.forEach((k, v) ->
         {
-            AttributeSupplier modifiers = DefaultAttributes.getSupplier(k);
-            AttributeSupplier.Builder newMutable = modifiers != null ? new AttributeSupplier.Builder(modifiers) : new AttributeSupplier.Builder();
-            newMutable.combine(v);
-            FORGE_ATTRIBUTES.put(k, newMutable.build());
+            AttributeSupplier supplier = DefaultAttributes.getSupplier(k);
+            AttributeSupplier.Builder newBuilder = supplier != null ? new AttributeSupplier.Builder(supplier) : new AttributeSupplier.Builder();
+            newBuilder.combine(v);
+            FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
     }
 }
