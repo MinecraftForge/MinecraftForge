@@ -110,6 +110,12 @@ class NetworkInitialization {
               consumer(FMLPlayMessages.SyncCustomTagTypes::handle).
               add();
 
+        playChannel.messageBuilder(FMLPlayMessages.SyncDimensionListChanges.class, 4).
+            decoder(FMLPlayMessages.SyncDimensionListChanges::decode).
+            encoder(FMLPlayMessages.SyncDimensionListChanges::encode).
+            consumer(FMLPlayMessages.SyncDimensionListChanges::handle).
+            add();
+
         return playChannel;
     }
 

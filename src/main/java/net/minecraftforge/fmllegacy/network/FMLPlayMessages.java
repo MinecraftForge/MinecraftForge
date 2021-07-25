@@ -24,6 +24,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import io.netty.buffer.Unpooled;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
@@ -31,6 +33,7 @@ import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -55,6 +58,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.fmllegacy.common.registry.IEntityAdditionalSpawnData;
 
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -433,6 +437,75 @@ public class FMLPlayMessages
                 }
             });
             ctx.get().setPacketHandled(true);
+        }
+    }
+    
+    public static class SyncDimensionListChanges
+    {
+        private final Set<ResourceKey<Level>> newDimensions;
+        private final Set<ResourceKey<Level>> removedDimensions;
+        
+        public SyncDimensionListChanges(final Set<ResourceKey<Level>> newDimensions, final Set<ResourceKey<Level>> removedDimensions)
+        {
+            this.newDimensions = newDimensions;
+            this.removedDimensions = removedDimensions;
+        }
+        
+        public void encode(FriendlyByteBuf buf)
+        {
+            buf.writeVarInt(this.newDimensions.size());
+            for (final ResourceKey<Level> key : this.newDimensions)
+            {
+                buf.writeResourceLocation(key.location());
+            }
+            
+            buf.writeVarInt(this.removedDimensions.size());
+            for (final ResourceKey<Level> key : this.removedDimensions)
+            {
+                buf.writeResourceLocation(key.location());
+            }
+        }
+        
+        public static SyncDimensionListChanges decode(FriendlyByteBuf buf)
+        {
+            final Set<ResourceKey<Level>> newDimensions = new HashSet<>();
+            final Set<ResourceKey<Level>> removedDimensions = new HashSet<>();
+            
+            final int newDimensionCount = buf.readVarInt();
+            for (int i=0; i<newDimensionCount; i++)
+            {
+                final ResourceLocation worldID = buf.readResourceLocation();
+                newDimensions.add(ResourceKey.create(Registry.DIMENSION_REGISTRY, worldID));
+            }
+            
+            final int removedDimensionCount = buf.readVarInt();
+            for (int i=0; i<removedDimensionCount; i++)
+            {
+                final ResourceLocation worldID = buf.readResourceLocation();
+                removedDimensions.add(ResourceKey.create(Registry.DIMENSION_REGISTRY, worldID));
+            }
+            
+            return new SyncDimensionListChanges(newDimensions, removedDimensions);
+        }
+        
+        public void handle(Supplier<NetworkEvent.Context> contextGetter)
+        {
+            final NetworkEvent.Context context = contextGetter.get();
+            context.enqueueWork(() -> {
+                final LocalPlayer player = Minecraft.getInstance().player;
+                if (player == null)
+                    return;
+                final Set<ResourceKey<Level>> commandSuggesterLevels = player.connection.levels();
+                for (final ResourceKey<Level> key : this.newDimensions)
+                {
+                    commandSuggesterLevels.add(key);
+                }
+                for (final ResourceKey<Level> key : this.removedDimensions)
+                {
+                    commandSuggesterLevels.remove(key);
+                }
+            });
+            context.setPacketHandled(true);
         }
     }
 }
