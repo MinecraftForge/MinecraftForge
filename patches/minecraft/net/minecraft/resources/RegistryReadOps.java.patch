@@ -26,7 +26,7 @@
     private RegistryReadOps(DynamicOps<T> p_179862_, RegistryReadOps.ResourceAccess p_179863_, RegistryAccess p_179864_, IdentityHashMap<ResourceKey<? extends Registry<?>>, RegistryReadOps.ReadCache<?>> p_179865_) {
 +      this(p_179862_, p_179863_, p_179864_, p_179865_, new java.util.HashMap<>());
 +   }
-+   private RegistryReadOps(DynamicOps<T> p_179862_, RegistryReadOps.ResourceAccess p_179863_, RegistryAccess p_179864_, IdentityHashMap<ResourceKey<? extends Registry<?>>, RegistryReadOps.ReadCache<?>> p_179865_, final Map<DynamicOps<?>, RegistryReadOps<?>> extraOps) {
++   public RegistryReadOps(DynamicOps<T> p_179862_, RegistryReadOps.ResourceAccess p_179863_, RegistryAccess p_179864_, IdentityHashMap<ResourceKey<? extends Registry<?>>, RegistryReadOps.ReadCache<?>> p_179865_, final Map<DynamicOps<?>, RegistryReadOps<?>> extraOps) {
        super(p_179862_);
        this.f_135635_ = p_179863_;
        this.f_179860_ = p_179864_;
