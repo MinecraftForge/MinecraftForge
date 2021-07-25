@@ -664,4 +664,14 @@ public interface IForgeBlockState
     {
         return self().getBlock().isScaffolding(self(), entity.level, entity.blockPosition(), entity);
     }
+
+    /**
+     * Whether redstone dust should visually connect to this block on a side
+     * @param direction The direction of the redstone dust connection. This is the opposite of the direction for this block
+     * @return True if redstone dust should visually connect on the side passed
+     */
+    default boolean canConnectRedstone(@Nullable Direction direction)
+    {
+        return self().getBlock().canConnectRedstone(self(), direction);
+    }
 }

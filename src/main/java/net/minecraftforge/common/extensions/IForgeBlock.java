@@ -752,4 +752,15 @@ public interface IForgeBlock
     {
         return state.is(Blocks.SCAFFOLDING);
     }
+
+    /**
+     * Whether redstone dust should visually connect to this block on a side
+     * @param state The current state
+     * @param direction The direction of the redstone dust connection. This is the opposite of the direction for this block
+     * @return True if redstone dust should visually connect on the side passed
+     */
+    default boolean canConnectRedstone(BlockState state, @Nullable Direction direction)
+    {
+        return state.isSignalSource() && direction != null;
+    }
 }
