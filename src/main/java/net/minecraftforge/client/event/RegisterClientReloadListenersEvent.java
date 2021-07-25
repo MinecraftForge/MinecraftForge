@@ -17,13 +17,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fmlclient.registry;
+package net.minecraftforge.client.event;
 
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.event.IModBusEvent;
 
-public interface IRenderFactory<T extends Entity>
+public class RegisterClientReloadListenersEvent extends Event implements IModBusEvent
 {
-    EntityRenderer<? super T> createRenderFor(EntityRenderDispatcher manager);
+    private final ReloadableResourceManager resourceManager;
+
+    public RegisterClientReloadListenersEvent(ReloadableResourceManager resourceManager)
+    {
+        this.resourceManager = resourceManager;
+    }
+
+    public void registerReloadListener(PreparableReloadListener reloadListener)
+    {
+        resourceManager.registerReloadListener(reloadListener);
+    }
 }
