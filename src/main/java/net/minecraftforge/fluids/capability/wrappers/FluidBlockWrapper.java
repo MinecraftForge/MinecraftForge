@@ -105,7 +105,7 @@ public class FluidBlockWrapper implements IFluidHandler
     @Override
     public FluidStack drain(int maxDrain, FluidAction action)
     {
-        if (maxDrain <= 0 && fluidBlock.canDrain(world, blockPos))
+        if (maxDrain > 0 && fluidBlock.canDrain(world, blockPos))
         {
             FluidStack simulatedDrained = fluidBlock.drain(world, blockPos, FluidAction.SIMULATE);
             if (simulatedDrained.getAmount() <= maxDrain)
