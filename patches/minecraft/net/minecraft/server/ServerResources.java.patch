@@ -8,11 +8,3 @@
     }
  
     public ServerFunctionLibrary m_136157_() {
-@@ -94,6 +_,7 @@
- 
-    public void m_136179_() {
-       this.f_136148_.m_13480_().m_13431_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(f_136148_.m_13480_()));
-    }
- 
-    public void close() {

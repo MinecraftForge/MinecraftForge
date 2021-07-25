@@ -21,7 +21,7 @@
           return new TagManager.LoaderInfo<>(p_144578_, completablefuture);
        } else {
 +         if (net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().contains(p_144578_.m_144338_().m_135782_()))
-+            return net.minecraftforge.common.ForgeTagHandler.makeCustomTagTypeLoader(p_144578_, p_144576_, p_144577_, customTagTypeReaders);
++            return new TagManager.LoaderInfo<>(p_144578_, CompletableFuture.supplyAsync(() -> ((TagLoader<T>) customTagTypeReaders.get(p_144578_.m_144338_().m_135782_())).m_144544_(p_144576_), p_144577_));
           f_144568_.warn("Can't find registry for {}", (Object)p_144578_.m_144338_());
           return null;
        }

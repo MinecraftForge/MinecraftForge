@@ -21,7 +21,7 @@
           return statictaghelper;
        }
     }
-@@ -54,10 +_,26 @@
+@@ -54,10 +_,16 @@
     }
  
     private static void m_144356_() {
@@ -35,16 +35,6 @@
 +   @javax.annotation.Nullable
 +   public static StaticTagHelper<?> get(ResourceLocation rl) {
 +      return HELPER_MAP.get(ResourceKey.m_135788_(rl));
-+   }
-+
-+   public static Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> validateTags(TagContainer tagContainer, boolean isVanilla) {
-+      Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> multimap = HashMultimap.create();
-+      f_13264_.forEach((tagHelper) -> {
-+         if (isVanilla && net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().contains(tagHelper.m_144338_().m_135782_()))
-+            return;
-+         multimap.putAll(tagHelper.m_144338_(), tagHelper.m_13247_(tagContainer));
-+      });
-+      return multimap;
     }
  
     public static void m_144349_(Consumer<StaticTagHelper<?>> p_144350_) {

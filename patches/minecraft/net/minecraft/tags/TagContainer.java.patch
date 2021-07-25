@@ -8,16 +8,14 @@
     }
  
     public Map<ResourceKey<? extends Registry<?>>, TagCollection.NetworkPayload> m_144442_(final RegistryAccess p_144443_) {
-@@ -84,6 +_,9 @@
+@@ -81,6 +_,7 @@
+       this.m_144436_(new TagContainer.CollectionConsumer() {
+          public <T> void m_142574_(ResourceKey<? extends Registry<T>> p_144481_, TagCollection<T> p_144482_) {
+             Optional<? extends Registry<T>> optional = p_144443_.m_6632_(p_144481_);
++            optional = optional.isPresent() ? optional : net.minecraftforge.common.ForgeTagHandler.getWrapperRegistry(p_144481_);
              if (optional.isPresent()) {
                 map.put(p_144481_, p_144482_.m_144411_(optional.get()));
              } else {
-+               if (net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().contains(p_144481_.m_135782_()))
-+                  map.put(p_144481_, net.minecraftforge.common.ForgeTagHandler.serializeToNetwork(p_144481_.m_135782_(), p_144482_));
-+               else
-                TagContainer.f_144432_.error("Unknown registry {}", (Object)p_144481_);
-             }
- 
 @@ -108,6 +_,13 @@
           f_144432_.error("Unknown registry {}", (Object)p_144447_);
        }

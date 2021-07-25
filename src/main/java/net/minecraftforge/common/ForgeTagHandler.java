@@ -21,21 +21,19 @@ package net.minecraftforge.common;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
-
-import com.google.common.collect.Maps;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.core.Registry;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.tags.*;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.StaticTagHelper;
+import net.minecraft.tags.StaticTags;
 import net.minecraft.tags.Tag.Named;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagLoader;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.registries.*;
 import org.apache.logging.log4j.LogManager;
@@ -55,7 +53,7 @@ public class ForgeTagHandler
 
     private static void validateRegistrySupportsTags(IForgeRegistry<?> registry)
     {
-        //Note: We also check against getTagRegistry in case someone decides to use the helpers for tag creation for types supported by vanilla
+        //Note: We also check against getTagHelper in case someone decides to use the helpers for tag creation for types supported by vanilla
         if (getTagHelper(registry) == null && (!(registry instanceof ForgeRegistry) || ((ForgeRegistry<?>) registry).getTagFolder() == null))
         {
             throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
@@ -223,45 +221,14 @@ public class ForgeTagHandler
         return builder.build();
     }
 
-    /**
-     * Creates the completable future in a wrapper object to be loaded by the TagManager
-     * Used for tags of non-vanilla registries
-     *
-     * @apiNote Internal
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> TagManager.LoaderInfo<T> makeCustomTagTypeLoader(StaticTagHelper<T> helper, ResourceManager manager, Executor executor, Map<ResourceLocation, TagLoader<?>> readers)
-    {
-        return new TagManager.LoaderInfo<>(helper, CompletableFuture.supplyAsync(() -> ((TagLoader<T>) readers.get(helper.getKey().location())).loadAndBuild(manager), executor));
-    }
-
-    /**
-     * Creates a map for serialization, copied from {@link TagCollection#serializeToNetwork} but adapted it since it requires
-     * a normal registry.
-     * Used for tags of non-vanilla registries
-     *
-     * @apiNote Internal
-     */
-    public static <T> TagCollection.NetworkPayload serializeToNetwork(ResourceLocation location, TagCollection<T> tags)
-    {
-        IForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(location);
-        //This should not throw, as before this method is called the registry name is checked against the custom tag type names
-        //but it gives a better error message then a ClassCastException below. (in case something goes horribly wrong)
-        validateRegistrySupportsTags(reg);
-
-        Map<ResourceLocation, Tag<T>> tagMap = tags.getAllTags();
-        Map<ResourceLocation, IntList> idMap = Maps.newHashMapWithExpectedSize(tagMap.size());
-        tagMap.forEach((name, tag) ->
-        {
-            List<T> values = tag.getValues();
-            IntList idList = new IntArrayList(values.size());
-            for(T t : values)
-            {
-                idList.add(RegistryManager.ACTIVE.getRegistry(location).getID(((IForgeRegistry<?>)t).getRegistryName()));
-            }
-
-            idMap.put(name, idList);
-        });
-        return new TagCollection.NetworkPayload(idMap);
+    public static <T, A extends IForgeRegistryEntry<A>> Optional<? extends Registry<T>> getWrapperRegistry(ResourceKey<? extends Registry<T>> key) {
+        try {
+            ResourceKey<? extends Registry<A>> cast = (ResourceKey<? extends Registry<A>>) key;
+            if (RegistryManager.ACTIVE.getRegistry(cast).getTagFolder() == null)
+                return Optional.empty();
+            return Optional.of((Registry<T>) GameData.getAnyWrapper(cast));
+        } catch (ClassCastException e) { //if there is an exception that means that the tag was neither from vanilla nor from forge so ignore it
+            return Optional.empty();
+        }
     }
 }

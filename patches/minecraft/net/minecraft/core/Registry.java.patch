@@ -199,7 +199,7 @@
     }
  
 +   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> Registry<T> forge(ResourceKey<? extends Registry<T>> key, Lifecycle cycle, Supplier<T> def) {
-+      return m_122985_(key, net.minecraftforge.registries.GameData.getWrapper(key, cycle), def, cycle);
++      return m_122985_(key, net.minecraftforge.registries.GameData.getWrapper(key), def, cycle);
 +   }
 +
     private static <T> DefaultedRegistry<T> m_122990_(ResourceKey<? extends Registry<T>> p_122991_, String p_122992_, Lifecycle p_122993_, Supplier<T> p_122994_) {
@@ -207,7 +207,7 @@
 +   }
 +
 +   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> DefaultedRegistry<T> forge(ResourceKey<? extends Registry<T>> key, String defKey, Lifecycle cycle, Supplier<T> def) {
-+      return m_122985_(key, net.minecraftforge.registries.GameData.getWrapper(key, cycle, defKey), def, cycle);
++      return m_122985_(key, net.minecraftforge.registries.GameData.getDefaultedWrapper(key), def, cycle);
     }
  
     private static <T, R extends WritableRegistry<T>> R m_122985_(ResourceKey<? extends Registry<T>> p_122986_, R p_122987_, Supplier<T> p_122988_, Lifecycle p_122989_) {

@@ -46,14 +46,11 @@ public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>
 
     private static <T extends IForgeRegistryEntry<T>> Registry<T> wrapRegistry(IForgeRegistry<T> registryIn)
     {
-        if (!(registryIn instanceof ForgeRegistry))
+        if (!(registryIn instanceof ForgeRegistry<T> forgeRegistry))
             throw new IllegalArgumentException("Forge registry " + registryIn.getRegistryName() + " is not an instance of a ForgeRegistry");
-        ForgeRegistry<T> forgeRegistry = (ForgeRegistry<T>) registryIn;
         if (forgeRegistry.getTagFolder() == null && !vanillaTypes.containsKey(registryIn))
             throw new IllegalArgumentException("Forge registry " + registryIn.getRegistryName() + " does not have support for tags");
-        if (forgeRegistry.getDefaultKey() == null)
-            return GameData.getWrapper(forgeRegistry.getRegistryKey(), Lifecycle.experimental());
-        return GameData.getWrapper(forgeRegistry.getRegistryKey(), Lifecycle.experimental(), "default");
+        return GameData.getAnyWrapper(forgeRegistry.getRegistryKey());
     }
 
     private static <T extends IForgeRegistryEntry<T>> String getTagFolder(IForgeRegistry<T> registryIn)

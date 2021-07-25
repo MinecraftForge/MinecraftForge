@@ -77,14 +77,7 @@
           if (mobeffect != null) {
              MobEffectInstance mobeffectinstance = new MobEffectInstance(mobeffect, p_105130_.m_133625_(), p_105130_.m_133624_(), p_105130_.m_133627_(), p_105130_.m_133626_(), p_105130_.m_133628_());
              mobeffectinstance.m_19562_(p_105130_.m_133619_());
-@@ -1228,11 +_,13 @@
-    public void m_5859_(ClientboundUpdateTagsPacket p_105134_) {
-       PacketUtils.m_131363_(p_105134_, this, this.f_104888_);
-       TagContainer tagcontainer = TagContainer.m_144449_(this.f_104903_, p_105134_.m_179482_());
--      Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> multimap = StaticTags.m_13283_(tagcontainer);
-+      boolean vanillaConnection = net.minecraftforge.fmllegacy.network.NetworkHooks.isVanillaConnection(f_104885_);
-+      Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> multimap = StaticTags.validateTags(tagcontainer, vanillaConnection);//Forge: If we are connecting to vanilla, custom tag types will be skipped over in validation as the server can't have them
-       if (!multimap.isEmpty()) {
+@@ -1233,6 +_,7 @@
           f_104883_.warn("Incomplete server tags, disconnecting. Missing: {}", (Object)multimap);
           this.f_104885_.m_129507_(new TranslatableComponent("multiplayer.disconnect.missing_tags"));
        } else {
