@@ -10,7 +10,7 @@
 -      double d2 = Math.abs(this.field_75515_a.func_226281_cx_() - ((double)vector3i.func_177952_p() + 0.5D));
 -      boolean flag = d0 < (double)this.field_188561_o && d2 < (double)this.field_188561_o && d1 < 1.0D;
 +      double d2 = Math.abs(this.field_75515_a.func_226281_cx_() - ((double)vector3i.func_177952_p() + (this.field_75515_a.func_213311_cf() + 1) / 2D)); //Forge: Fix MC-94054
-+      boolean flag = d0 <= (double)this.field_188561_o && d2 <= (double)this.field_188561_o && d1 < 1.0D;
++      boolean flag = d0 <= (double)this.field_188561_o && d2 <= (double)this.field_188561_o && d1 < 1.0D; //Forge: Fix MC-94054
        if (flag || this.field_75515_a.func_233660_b_(this.field_75514_c.func_237225_h_().field_186287_m) && this.func_234112_b_(vector3d)) {
           this.field_75514_c.func_75875_a();
        }
