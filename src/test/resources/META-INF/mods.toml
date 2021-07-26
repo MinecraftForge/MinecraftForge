@@ -141,4 +141,4 @@ license="LGPL v2.1"
 [[mods]]
     modId="overlay_layers_test"
 [[mods]]
-    modId="render_world_event_test"
+    modId="render_level_event_test"
