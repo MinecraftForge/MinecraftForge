@@ -21,18 +21,25 @@ package net.minecraftforge.network;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
 import io.netty.channel.ChannelHandler;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.core.Registry;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagCollection;
+import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -58,6 +65,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
                 ImmutableMap.<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>>builder()
                 .put(handler(ClientboundUpdateAttributesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
                 .put(handler(ClientboundCommandsPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
+                .put(handler(ClientboundUpdateTagsPacket.class, VanillaConnectionNetworkFilter::filterCustomTagTypes))
                 .build()
         );
     }
@@ -98,5 +106,16 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
             return id != null && (id.getNamespace().equals("minecraft") || id.getNamespace().equals("brigadier"));
         });
         return new ClientboundCommandsPacket(newRoot);
+    }
+
+    /**
+     * Filters out custom tag types that the vanilla client won't recognize.
+     * It prevents a rare error logging and reduces the packet size
+     */
+    private static ClientboundUpdateTagsPacket filterCustomTagTypes(ClientboundUpdateTagsPacket packet) {
+        Map<ResourceKey<? extends Registry<?>>, TagCollection.NetworkPayload> tags = packet.getTags()
+                .entrySet().stream().filter(e -> ForgeTagHandler.getCustomTagTypeNames().contains(e.getKey().location()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return new ClientboundUpdateTagsPacket(tags);
     }
 }
