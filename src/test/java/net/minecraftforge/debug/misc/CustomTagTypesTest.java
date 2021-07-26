@@ -72,11 +72,11 @@ public class CustomTagTypesTest
     private static final ResourceKey<? extends Registry<Custom>> CUSTOM_KEY = ResourceKey.createRegistryKey(customRegistryName);
     private static final Supplier<IForgeRegistry<Custom>> CUSTOM_REG = CUSTOMS.makeRegistry(customRegistryName.getPath(),
           () -> new RegistryBuilder<Custom>().tagFolder(MODID + "/custom_types"));
-    private static final Tag.Named<Custom> TESTS = ForgeTagHandler.createOptionalTag(customRegistryName, new ResourceLocation(MODID, "tests"), Sets.newHashSet(CUSTOM));
-    private static final Tag.Named<Item> OPTIONAL_TEST = ItemTags.createOptional(new ResourceLocation(MODID, "optional_test"), Sets.newHashSet(() -> Items.BONE));
-    private static final Tag.Named<Enchantment> FIRE = ForgeTagHandler.createOptionalTag(ForgeRegistries.ENCHANTMENTS, new ResourceLocation(MODID, "fire"));
-    private static final Tag.Named<Potion> DAMAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.POTION_TYPES, new ResourceLocation(MODID, "damage"));
-    private static final Tag.Named<BlockEntityType<?>> STORAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCK_ENTITIES, new ResourceLocation(MODID, "storage"));
+    private static final Tag.Named<Custom> TESTS = ForgeTagHandler.bindOptional(customRegistryName, new ResourceLocation(MODID, "tests"), Sets.newHashSet(CUSTOM));
+    private static final Tag.Named<Item> OPTIONAL_TEST = ItemTags.bindOptional(new ResourceLocation(MODID, "optional_test"), Sets.newHashSet(() -> Items.BONE));
+    private static final Tag.Named<Enchantment> FIRE = ForgeTagHandler.bindOptional(ForgeRegistries.ENCHANTMENTS, new ResourceLocation(MODID, "fire"));
+    private static final Tag.Named<Potion> DAMAGE = ForgeTagHandler.bindOptional(ForgeRegistries.POTION_TYPES, new ResourceLocation(MODID, "damage"));
+    private static final Tag.Named<BlockEntityType<?>> STORAGE = ForgeTagHandler.bindOptional(ForgeRegistries.BLOCK_ENTITIES, new ResourceLocation(MODID, "storage"));
 
     public CustomTagTypesTest()
     {

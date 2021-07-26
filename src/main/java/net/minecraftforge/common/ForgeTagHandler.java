@@ -69,7 +69,7 @@ public class ForgeTagHandler
      * @param <T>      Type of the registry
      * @return A named tag
      */
-    public static <T extends IForgeRegistryEntry<T>> Named<T> makeWrapperTag(IForgeRegistry<T> registry, ResourceLocation name)
+    public static <T extends IForgeRegistryEntry<T>> Named<T> bind(IForgeRegistry<T> registry, ResourceLocation name)
     {
         validateRegistrySupportsTags(registry);
         if (tagTypesSet)
@@ -90,9 +90,9 @@ public class ForgeTagHandler
      * @param <T>      Type of the registry
      * @return An optional tag
      */
-    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name)
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> bindOptional(IForgeRegistry<T> registry, ResourceLocation name)
     {
-        return createOptionalTag(registry, name, null);
+        return bindOptional(registry, name, null);
     }
 
     /**
@@ -105,7 +105,7 @@ public class ForgeTagHandler
      * @param <T>      Type of the registry
      * @return An optional tag
      */
-    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name, @Nullable Set<Supplier<T>> defaults)
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> bindOptional(IForgeRegistry<T> registry, ResourceLocation name, @Nullable Set<Supplier<T>> defaults)
     {
         validateRegistrySupportsTags(registry);
         if (tagTypesSet)
@@ -127,13 +127,13 @@ public class ForgeTagHandler
      * @implNote This method only errors instantly if tag types have already been set, otherwise the error is delayed until after registries finish initializing
      * and we can validate if the custom registry really does support custom tags.
      */
-    public static <T extends IForgeRegistryEntry<T>> Named<T> makeWrapperTag(ResourceLocation registryName, ResourceLocation name)
+    public static <T extends IForgeRegistryEntry<T>> Named<T> bind(ResourceLocation registryName, ResourceLocation name)
     {
         if (tagTypesSet)
         {
             IForgeRegistry<T> registry = RegistryManager.ACTIVE.getRegistry(registryName);
             if (registry == null) throw new IllegalArgumentException("Could not find registry named: " + registryName);
-            return makeWrapperTag(registry, name);
+            return bind(registry, name);
         }
         return StaticTagHelper.createDelayedTag(registryName, name);
     }
@@ -148,9 +148,9 @@ public class ForgeTagHandler
      * @implNote This method only errors instantly if tag types have already been set, otherwise the error is delayed until after registries finish initializing
      * and we can validate if the custom registry really does support custom tags.
      */
-    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(ResourceLocation registryName, ResourceLocation name)
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> bindOptional(ResourceLocation registryName, ResourceLocation name)
     {
-        return createOptionalTag(registryName, name, null);
+        return bindOptional(registryName, name, null);
     }
 
     /**
@@ -164,13 +164,13 @@ public class ForgeTagHandler
      * @implNote This method only errors instantly if tag types have already been set, otherwise the error is delayed until after registries finish initializing
      * and we can validate if the custom registry really does support custom tags.
      */
-    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(ResourceLocation registryName, ResourceLocation name, @Nullable Set<Supplier<T>> defaults)
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> bindOptional(ResourceLocation registryName, ResourceLocation name, @Nullable Set<Supplier<T>> defaults)
     {
         if (tagTypesSet)
         {
             IForgeRegistry<T> registry = RegistryManager.ACTIVE.getRegistry(registryName);
             if (registry == null) throw new IllegalArgumentException("Could not find registry named: " + registryName);
-            return createOptionalTag(registry, name, defaults);
+            return bindOptional(registry, name, defaults);
         }
         return StaticTagHelper.createDelayedOptional(registryName, name, defaults);
     }

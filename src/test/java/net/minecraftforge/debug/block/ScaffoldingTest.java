@@ -55,7 +55,7 @@ public class ScaffoldingTest
 {
     static final String MODID = "scaffolding_test";
     static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    static final IOptionalNamedTag<Block> SCAFFOLDING = BlockTags.createOptional(new ResourceLocation("forge", "scaffolding"));
+    static final IOptionalNamedTag<Block> SCAFFOLDING = BlockTags.bindOptional(new ResourceLocation("forge", "scaffolding"));
 
     static final RegistryObject<Block> SCAFFOLDING_METHOD_TEST = BLOCKS.register("scaffolding_method_test", () -> new ScaffoldingMethodTestBlock(Properties.of(Material.DECORATION, MaterialColor.SAND).noCollission().sound(SoundType.SCAFFOLDING).dynamicShape()));
 
