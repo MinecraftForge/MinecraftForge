@@ -47,7 +47,7 @@ public class EntityAttributeCreationEvent extends Event implements IModBusEvent
     public void put(EntityType<? extends LivingEntity> entity, AttributeSupplier map)
     {
         if (DefaultAttributes.hasSupplier(entity))
-            throw new IllegalStateException("Duplicate GlobalEntityTypeAttributes entry: " + entity);
+            throw new IllegalStateException("Duplicate DefaultAttributes entry: " + entity);
         this.map.put(entity, map);
     }
 }
