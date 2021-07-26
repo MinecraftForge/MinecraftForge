@@ -13,5 +13,5 @@
           });
        }
     }
-+   /** @apiNote forge internal use only */ @Deprecated @Nullable public net.minecraft.resources.RegistryReadOps<?> datapackImports = null;
++   /** @deprecated forge internal use only */ @Deprecated @Nullable public net.minecraft.resources.RegistryReadOps<?> datapackImports = null;
  }

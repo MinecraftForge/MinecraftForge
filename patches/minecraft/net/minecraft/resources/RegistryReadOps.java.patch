@@ -11,7 +11,7 @@
     public static <T> RegistryReadOps<T> m_179870_(DynamicOps<T> p_179871_, RegistryReadOps.ResourceAccess p_179872_, RegistryAccess p_179873_) {
 +      return forgeCreateAndLoad(p_179871_, p_179872_, p_179873_, false); // only called via RegistryAccess#builtin, to create the registries in the initial vanilla state (not importing datapacks)
 +   }
-+   /**@apiNote forge internal field -- ensures we can provide the correct RegistryReadOps instance **/ @Deprecated public final Map<DynamicOps<?>, RegistryReadOps<?>> extraOps;
++   /** @deprecated forge internal field -- ensures we can provide the correct RegistryReadOps instance **/ @Deprecated public final Map<DynamicOps<?>, RegistryReadOps<?>> extraOps;
 +   public static <T> RegistryReadOps<T> forgeCreateAndLoad(DynamicOps<T> p_179871_, RegistryReadOps.ResourceAccess p_179872_, RegistryAccess p_179873_, boolean importingDataPacks) {
 +      if (importingDataPacks && p_179873_.datapackImports != null) return net.minecraftforge.common.ForgeHooks.getCachedRegistryOps(p_179871_, p_179873_.datapackImports, p_179872_, p_179873_); // if we've already imported datapacks into these registries, return a previously cached registries instance instead of importing again
        RegistryReadOps<T> registryreadops = new RegistryReadOps<>(p_179871_, p_179872_, p_179873_, Maps.newIdentityHashMap());

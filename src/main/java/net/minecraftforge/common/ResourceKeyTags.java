@@ -81,15 +81,15 @@ public class ResourceKeyTags implements PreparableReloadListener
      * If the specified tag ID is not available when the tag is queried, {@link IOptionalNamedTag#isDefaulted()} will return true.
      * If the tag is defaulted, the tag will be empty when queried.
      * 
+     * Resource Key Tags are server-only resources and will not be queryable (isDefaulted returns true)
+     * while a server is not running. Resource Key Tags are not currently synced to clients and should not be
+     * queried for clientside purposes.
+     * 
      * @param <T> The type of the things the tag's registry keys are for
      * @param registryKey The key used to create the tag's registry keys. This also sets the name of the directory to load tags from.
      * @param tagID The id of the tag, defines the namespace and id of the json to load the tag from (can include subfolders)
      * @return A tag wrapper for a key tag that will be loaded from data/{tagID-namespace}/tags/resource_keys/{directory}/{tagID-path}.json
-     * -- {directory} should be be the registry name but pluralized (e.g. the "biome" registry uses the "biomes" directory).* 
-     * 
-     * @apiNote Resource Key Tags are server-only resources and will not be queryable (isDefaulted returns true)
-     * while a server is not running. Resource Key Tags are not currently synced to clients and should not be
-     * queried for clientside purposes.
+     * -- {directory} should be be the registry name but pluralized (e.g. the "biome" registry uses the "biomes" directory).
      */
     public static <T> IOptionalNamedTag<ResourceKey<T>> makeKeyTagWrapper(final ResourceKey<Registry<T>> registryKey, final ResourceLocation tagID)
     {
@@ -128,10 +128,9 @@ public class ResourceKeyTags implements PreparableReloadListener
     
     /**
      * Returns the tag directory registered to the given registry key.
+     * May not return valid data if modloading hasn't completed yet/
      * @param registryKey The key to get the directory for
      * @return Returns null if the directory was not or has not been registered to the given registry key, otherwise returns the directory
-     * 
-     * @apiNote May not return valid data if modloading hasn't completed yet
      */
     public static @Nullable String getTagDirectory(final ResourceKey<? extends Registry<?>> registryKey)
     {
@@ -184,11 +183,12 @@ public class ResourceKeyTags implements PreparableReloadListener
     }
     
     /**
-     * Updates the key tag registry
-     * @param newTags new tags
+     * Updates the key tag registry.
      * 
-     * @apiNote internal, called when tag registry is loaded/reloaded/discarded
+     * @deprecated internal, called when tag registry is loaded/reloaded/discarded
+     * @param newTags new tags
      */
+    @Deprecated
     public void updateTags(final Map<ResourceKey<? extends Registry<?>>, TagCollection<? extends ResourceKey<?>>> newTags)
     {
         this.data = newTags;
