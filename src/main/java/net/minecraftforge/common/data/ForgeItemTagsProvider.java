@@ -84,6 +84,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         tag(Tags.Items.GEMS_AMETHYST).add(Items.AMETHYST_SHARD);
         copy(Tags.Blocks.GLASS, Tags.Items.GLASS);
         copyColored(Tags.Blocks.GLASS, Tags.Items.GLASS);
+        copy(Tags.Blocks.GLASS_TINTED, Tags.Items.GLASS_TINTED);
         copy(Tags.Blocks.GLASS_PANES, Tags.Items.GLASS_PANES);
         copyColored(Tags.Blocks.GLASS_PANES, Tags.Items.GLASS_PANES);
         copy(Tags.Blocks.GRAVEL, Tags.Items.GRAVEL);
@@ -135,7 +136,6 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         tag(Tags.Items.SLIMEBALLS).add(Items.SLIME_BALL);
         copy(Tags.Blocks.STAINED_GLASS, Tags.Items.STAINED_GLASS);
         copy(Tags.Blocks.STAINED_GLASS_PANES, Tags.Items.STAINED_GLASS_PANES);
-        copy(Tags.Blocks.TINTED_GLASS, Tags.Items.TINTED_GLASS);
         copy(Tags.Blocks.STONE, Tags.Items.STONE);
         copy(Tags.Blocks.STORAGE_BLOCKS, Tags.Items.STORAGE_BLOCKS);
         copy(Tags.Blocks.STORAGE_BLOCKS_COAL, Tags.Items.STORAGE_BLOCKS_COAL);

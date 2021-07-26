@@ -79,6 +79,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> GLASS_PINK = tag("glass/pink");
         public static final IOptionalNamedTag<Block> GLASS_PURPLE = tag("glass/purple");
         public static final IOptionalNamedTag<Block> GLASS_RED = tag("glass/red");
+        public static final IOptionalNamedTag<Block> GLASS_TINTED = tag("glass/tinted");
         public static final IOptionalNamedTag<Block> GLASS_WHITE = tag("glass/white");
         public static final IOptionalNamedTag<Block> GLASS_YELLOW = tag("glass/yellow");
 
@@ -123,7 +124,6 @@ public class Tags
         public static final IOptionalNamedTag<Block> SANDSTONE = tag("sandstone");
         public static final IOptionalNamedTag<Block> STAINED_GLASS = tag("stained_glass");
         public static final IOptionalNamedTag<Block> STAINED_GLASS_PANES = tag("stained_glass_panes");
-        public static final IOptionalNamedTag<Block> TINTED_GLASS = tag("tinted_glass");
         public static final IOptionalNamedTag<Block> STONE = tag("stone");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS = tag("storage_blocks");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_COAL = tag("storage_blocks/coal");
@@ -229,6 +229,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> GLASS_PINK = tag("glass/pink");
         public static final IOptionalNamedTag<Item> GLASS_PURPLE = tag("glass/purple");
         public static final IOptionalNamedTag<Item> GLASS_RED = tag("glass/red");
+        public static final IOptionalNamedTag<Item> GLASS_TINTED = tag("glass/tinted");
         public static final IOptionalNamedTag<Item> GLASS_WHITE = tag("glass/white");
         public static final IOptionalNamedTag<Item> GLASS_YELLOW = tag("glass/yellow");
 
@@ -302,7 +303,6 @@ public class Tags
         public static final IOptionalNamedTag<Item> SLIMEBALLS = tag("slimeballs");
         public static final IOptionalNamedTag<Item> STAINED_GLASS = tag("stained_glass");
         public static final IOptionalNamedTag<Item> STAINED_GLASS_PANES = tag("stained_glass_panes");
-        public static final IOptionalNamedTag<Item> TINTED_GLASS = tag("tinted_glass");
         public static final IOptionalNamedTag<Item> STONE = tag("stone");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS = tag("storage_blocks");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_COAL = tag("storage_blocks/coal");
