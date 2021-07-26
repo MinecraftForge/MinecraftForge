@@ -5,7 +5,7 @@
           return p_55596_ == p_55595_.m_61143_(ObserverBlock.f_52588_);
        } else {
 -         return p_55595_.m_60803_() && p_55596_ != null;
-+         return p_55595_.canConnectRedstone(p_55596_);
++         return p_55595_.canRedstoneConnectTo(p_55596_);
        }
     }
  

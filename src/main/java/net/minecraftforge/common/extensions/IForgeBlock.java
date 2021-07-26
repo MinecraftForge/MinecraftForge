@@ -759,7 +759,7 @@ public interface IForgeBlock
      * @param direction The direction of the redstone dust connection. This is the opposite of the direction for this block
      * @return True if redstone dust should visually connect on the side passed
      */
-    default boolean canConnectRedstone(BlockState state, @Nullable Direction direction)
+    default boolean canRedstoneConnectTo(BlockState state, @Nullable Direction direction)
     {
         return state.isSignalSource() && direction != null;
     }
