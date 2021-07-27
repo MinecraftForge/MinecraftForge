@@ -1,11 +1,11 @@
 {
   "replace": false,
   "values": [
-    "#forge:ingots/iron",
-    "#forge:ingots/gold",
     "#forge:ingots/brick",
-    "#forge:ingots/nether_brick",
+    "#forge:ingots/copper",
+    "#forge:ingots/gold",
+    "#forge:ingots/iron",
     "#forge:ingots/netherite",
-    "#forge:ingots/copper"
+    "#forge:ingots/nether_brick"
   ]
 }
