@@ -4,7 +4,7 @@
  
     private boolean func_145934_k() {
        ItemStack itemstack = this.field_145945_j.get(3);
-+      if (!itemstack.func_190926_b()) return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(field_145945_j, itemstack, field_145947_i); // divert to VanillaBrewingRegistry
++      if (!itemstack.func_190926_b()) return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(field_145850_b, field_145945_j, itemstack, field_145947_i); // divert to VanillaBrewingRegistry
        if (itemstack.func_190926_b()) {
           return false;
        } else if (!PotionBrewing.func_185205_a(itemstack)) {
@@ -20,7 +20,7 @@
 -      }
 -
 -      itemstack.func_190918_g(1);
-+      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145945_j, itemstack, field_145947_i);
++      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(field_145850_b, field_145945_j, itemstack, field_145947_i);
 +      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(field_145945_j);
        BlockPos blockpos = this.func_174877_v();
 -      if (itemstack.func_77973_b().func_77634_r()) {
@@ -43,14 +43,14 @@
     public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_) {
        if (p_94041_1_ == 3) {
 -         return PotionBrewing.func_185205_a(p_94041_2_);
-+         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_94041_2_);
++         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(field_145850_b, p_94041_2_);
        } else {
           Item item = p_94041_2_.func_77973_b();
           if (p_94041_1_ == 4) {
              return item == Items.field_151065_br;
           } else {
 -            return (item == Items.field_151068_bn || item == Items.field_185155_bH || item == Items.field_185156_bI || item == Items.field_151069_bo) && this.func_70301_a(p_94041_1_).func_190926_b();
-+            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_94041_2_) && this.func_70301_a(p_94041_1_).func_190926_b();
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(field_145850_b, p_94041_2_) && this.func_70301_a(p_94041_1_).func_190926_b();
           }
        }
     }

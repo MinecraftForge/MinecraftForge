@@ -1,0 +1,12 @@
+{
+  "type": "forge:brewing",
+  "input": {
+    "item": "minecraft:bowl"
+  },
+  "ingredient": {
+    "item": "minecraft:brown_mushroom"
+  },
+  "output": {
+    "item": "minecraft:mushroom_stew"
+  }
+}

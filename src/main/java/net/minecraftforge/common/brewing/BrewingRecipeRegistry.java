@@ -25,6 +25,10 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeMod;
+
+import javax.annotation.Nullable;
 
 public class BrewingRecipeRegistry {
 
@@ -48,10 +52,12 @@ public class BrewingRecipeRegistry {
      *            The ItemStack that will replace the input once the brewing is
      *            done.
      * @return true if the recipe was added.
+     * @deprecated use a datapack or the IBrewingRecipe version instead
      */
+    @Deprecated
     public static boolean addRecipe(Ingredient input, Ingredient ingredient, ItemStack output)
     {
-        return addRecipe(new BrewingRecipe(input, ingredient, output));
+        return addRecipe(new LegacyBrewingRecipe(input, ingredient, output));
     }
 
     /**
@@ -67,11 +73,22 @@ public class BrewingRecipeRegistry {
      * Returns the output ItemStack obtained by brewing the passed input and
      * ingredient.
      */
-    public static ItemStack getOutput(ItemStack input, ItemStack ingredient)
+    public static ItemStack getOutput(@Nullable World level, ItemStack input, ItemStack ingredient)
     {
         if (input.isEmpty() || input.getCount() != 1) return ItemStack.EMPTY;
         if (ingredient.isEmpty()) return ItemStack.EMPTY;
 
+        if (level != null)
+        {
+            for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING))
+            {
+                ItemStack output = recipe.getOutput(input, ingredient);
+                if (!output.isEmpty())
+                {
+                    return output;
+                }
+            }
+        }
         for (IBrewingRecipe recipe : recipes)
         {
             ItemStack output = recipe.getOutput(input, ingredient);
@@ -86,9 +103,9 @@ public class BrewingRecipeRegistry {
     /**
      * Returns true if the passed input and ingredient have an output
      */
-    public static boolean hasOutput(ItemStack input, ItemStack ingredient)
+    public static boolean hasOutput(@Nullable World level, ItemStack input, ItemStack ingredient)
     {
-        return !getOutput(input, ingredient).isEmpty();
+        return !getOutput(level, input, ingredient).isEmpty();
     }
 
     /**
@@ -96,13 +113,13 @@ public class BrewingRecipeRegistry {
      * Extra parameters exist to allow modders to create bigger brewing stands
      * without much hassle
      */
-    public static boolean canBrew(NonNullList<ItemStack> inputs, ItemStack ingredient, int[] inputIndexes)
+    public static boolean canBrew(@Nullable World level, NonNullList<ItemStack> inputs, ItemStack ingredient, int[] inputIndexes)
     {
         if (ingredient.isEmpty()) return false;
 
         for (int i : inputIndexes)
         {
-            if (hasOutput(inputs.get(i), ingredient))
+            if (hasOutput(level, inputs.get(i), ingredient))
             {
                 return true;
             }
@@ -115,11 +132,11 @@ public class BrewingRecipeRegistry {
      * Used by the brewing stand to brew its inventory Extra parameters exist to
      * allow modders to create bigger brewing stands without much hassle
      */
-    public static void brewPotions(NonNullList<ItemStack> inputs, ItemStack ingredient, int[] inputIndexes)
+    public static void brewPotions(@Nullable World level, NonNullList<ItemStack> inputs, ItemStack ingredient, int[] inputIndexes)
     {
         for (int i : inputIndexes)
         {
-            ItemStack output = getOutput(inputs.get(i), ingredient);
+            ItemStack output = getOutput(level, inputs.get(i), ingredient);
             if (!output.isEmpty())
             {
                 inputs.set(i, output);
@@ -131,10 +148,20 @@ public class BrewingRecipeRegistry {
      * Returns true if the passed ItemStack is a valid ingredient for any of the
      * recipes in the registry.
      */
-    public static boolean isValidIngredient(ItemStack stack)
+    public static boolean isValidIngredient(@Nullable World level, ItemStack stack)
     {
         if (stack.isEmpty()) return false;
 
+        if (level != null)
+        {
+            for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING))
+            {
+                if (recipe.isIngredient(stack))
+                {
+                    return true;
+                }
+            }
+        }
         for (IBrewingRecipe recipe : recipes)
         {
             if (recipe.isIngredient(stack))
@@ -149,10 +176,20 @@ public class BrewingRecipeRegistry {
      * Returns true if the passed ItemStack is a valid input for any of the
      * recipes in the registry.
      */
-    public static boolean isValidInput(ItemStack stack)
+    public static boolean isValidInput(@Nullable World level, ItemStack stack)
     {
         if (stack.getCount() != 1) return false;
 
+        if (level != null)
+        {
+            for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING))
+            {
+                if (recipe.isInput(stack))
+                {
+                    return true;
+                }
+            }
+        }
         for (IBrewingRecipe recipe : recipes)
         {
             if (recipe.isInput(stack))

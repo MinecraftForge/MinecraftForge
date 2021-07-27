@@ -117,6 +117,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="worldgen_registry_desync_test"
 [[mods]]
+    modId="brewing_recipe_test"
+[[mods]]
     modId="add_entity_attribute_test"
 [[mods]]
     modId="enum_argument_test"

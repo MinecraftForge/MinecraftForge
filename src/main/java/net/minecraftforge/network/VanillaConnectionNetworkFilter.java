@@ -21,6 +21,7 @@ package net.minecraftforge.network;
 
 import java.util.AbstractMap;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -29,10 +30,12 @@ import javax.annotation.Nonnull;
 import io.netty.channel.ChannelHandler;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ArgumentTypes;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SCommandListPacket;
 import net.minecraft.network.play.server.SEntityPropertiesPacket;
+import net.minecraft.network.play.server.SUpdateRecipesPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -59,6 +62,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
                 ImmutableMap.<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>>builder()
                 .put(handler(SEntityPropertiesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
                 .put(handler(SCommandListPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
+                .put(handler(SUpdateRecipesPacket.class, VanillaConnectionNetworkFilter::filterRecipes))
                 .build()
         );
     }
@@ -99,5 +103,22 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
             return id != null && (id.getNamespace().equals("minecraft") || id.getNamespace().equals("brigadier"));
         });
         return new SCommandListPacket(newRoot);
+    }
+
+    /**
+     * Filter for SUpdateRecipesPacket. Filters out any ArgumentTypes that are not in the "minecraft" namespace.
+     * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
+     */
+    @Nonnull
+    private static SUpdateRecipesPacket filterRecipes(SUpdateRecipesPacket packet)
+    {
+        HashSet<IRecipe<?>> recipes = new HashSet<IRecipe<?>>();
+        packet.getRecipes().forEach((recipe) -> {
+            if (recipe.getId().getNamespace().equals("minecraft"))
+            {
+                recipes.add(recipe);
+            };
+        });
+        return new SUpdateRecipesPacket(recipes);
     }
 }

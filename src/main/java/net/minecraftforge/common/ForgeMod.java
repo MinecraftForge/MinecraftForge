@@ -26,12 +26,14 @@ import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Items;
+import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.storage.IServerConfiguration;
 import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.brewing.BrewingRecipe;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
@@ -92,6 +94,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Mod("forge")
@@ -112,6 +115,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     private static boolean enableMilkFluid = false;
     public static final RegistryObject<Fluid> MILK = RegistryObject.of(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.of(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
+
+    public static final IRecipeType<BrewingRecipe> BREWING = new IRecipeType<BrewingRecipe>() {};
 
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance()
@@ -285,11 +290,14 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
         CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
 
+        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("forge", "brewing"), BREWING);
+
         CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
 
         event.getRegistry().register(new ConditionalRecipe.Serializer<IRecipe<?>>().setRegistryName(new ResourceLocation("forge", "conditional")));
+        event.getRegistry().register(new BrewingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "brewing")));
 
     }
 
