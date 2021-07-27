@@ -116,6 +116,9 @@ public class Tags
         public static final IOptionalNamedTag<Block> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Block> ORES_REDSTONE = tag("ores/redstone");
         public static final IOptionalNamedTag<Block> ORES_COPPER = tag("ores/copper");
+        public static final IOptionalNamedTag<Block> ORES_SPARSE = tag("ores/sparse");
+        public static final IOptionalNamedTag<Block> ORES_SINGULAR = tag("ores/singular");
+        public static final IOptionalNamedTag<Block> ORES_DENSE = tag("ores/dense");
 
         public static final IOptionalNamedTag<Block> SAND = tag("sand");
         public static final IOptionalNamedTag<Block> SAND_COLORLESS = tag("sand/colorless");
@@ -281,6 +284,9 @@ public class Tags
         public static final IOptionalNamedTag<Item> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Item> ORES_REDSTONE = tag("ores/redstone");
         public static final IOptionalNamedTag<Item> ORES_COPPER = tag("ores/copper");
+        public static final IOptionalNamedTag<Item> ORES_SPARSE = tag("ores/sparse");
+        public static final IOptionalNamedTag<Item> ORES_SINGULAR = tag("ores/singular");
+        public static final IOptionalNamedTag<Item> ORES_DENSE = tag("ores/dense");
         public static final IOptionalNamedTag<Item> RODS = tag("rods");
         public static final IOptionalNamedTag<Item> RODS_BLAZE = tag("rods/blaze");
         public static final IOptionalNamedTag<Item> RODS_WOODEN = tag("rods/wooden");

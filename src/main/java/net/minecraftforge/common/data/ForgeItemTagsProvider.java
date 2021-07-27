@@ -116,6 +116,9 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.ORES_REDSTONE, Tags.Items.ORES_REDSTONE);
         copy(Tags.Blocks.ORES_NETHERITE_SCRAP, Tags.Items.ORES_NETHERITE_SCRAP);
         copy(Tags.Blocks.ORES_COPPER, Tags.Items.ORES_COPPER);
+        copy(Tags.Blocks.ORES_SPARSE, Tags.Items.ORES_SPARSE);
+        copy(Tags.Blocks.ORES_SINGULAR, Tags.Items.ORES_SINGULAR);
+        copy(Tags.Blocks.ORES_DENSE, Tags.Items.ORES_DENSE);
         tag(Tags.Items.RODS).addTags(Tags.Items.RODS_BLAZE, Tags.Items.RODS_WOODEN);
         tag(Tags.Items.RODS_BLAZE).add(Items.BLAZE_ROD);
         tag(Tags.Items.RODS_WOODEN).add(Items.STICK);

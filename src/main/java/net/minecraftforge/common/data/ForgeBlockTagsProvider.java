@@ -71,7 +71,7 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(GRAVEL).add(Blocks.GRAVEL);
         tag(NETHERRACK).add(Blocks.NETHERRACK);
         tag(OBSIDIAN).add(Blocks.OBSIDIAN);
-        tag(ORES).addTags(ORES_COAL, ORES_DIAMOND, ORES_EMERALD, ORES_GOLD, ORES_IRON, ORES_LAPIS, ORES_REDSTONE, ORES_QUARTZ, ORES_NETHERITE_SCRAP);
+        tag(ORES).addTags(ORES_COAL, ORES_DIAMOND, ORES_EMERALD, ORES_GOLD, ORES_IRON, ORES_LAPIS, ORES_REDSTONE, ORES_QUARTZ, ORES_NETHERITE_SCRAP, ORES_COPPER);
         tag(ORES_COAL).add(Blocks.COAL_ORE, Blocks.DEEPSLATE_COAL_ORE);
         tag(ORES_DIAMOND).add(Blocks.DIAMOND_ORE, Blocks.DEEPSLATE_DIAMOND_ORE);
         tag(ORES_EMERALD).add(Blocks.EMERALD_ORE, Blocks.DEEPSLATE_EMERALD_ORE);
@@ -82,6 +82,9 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(ORES_REDSTONE).add(Blocks.REDSTONE_ORE, Blocks.DEEPSLATE_REDSTONE_ORE);
         tag(ORES_NETHERITE_SCRAP).add(Blocks.ANCIENT_DEBRIS);
         tag(ORES_COPPER).add(Blocks.COPPER_ORE, Blocks.DEEPSLATE_COPPER_ORE);
+        tag(ORES_SPARSE).add(Blocks.NETHER_GOLD_ORE);
+        tag(ORES_SINGULAR).add(Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.GOLD_ORE, Blocks.IRON_ORE, Blocks.NETHER_QUARTZ_ORE, Blocks.ANCIENT_DEBRIS);
+        tag(ORES_DENSE).add(Blocks.COAL_ORE, Blocks.LAPIS_ORE, Blocks.REDSTONE_ORE, Blocks.COPPER_ORE);
         tag(SAND).addTags(SAND_COLORLESS, SAND_RED);
         tag(SAND_COLORLESS).add(Blocks.SAND);
         tag(SAND_RED).add(Blocks.RED_SAND);
