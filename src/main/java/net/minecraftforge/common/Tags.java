@@ -79,6 +79,7 @@ public class Tags
         public static final IOptionalNamedTag<Block> GLASS_PINK = tag("glass/pink");
         public static final IOptionalNamedTag<Block> GLASS_PURPLE = tag("glass/purple");
         public static final IOptionalNamedTag<Block> GLASS_RED = tag("glass/red");
+        public static final IOptionalNamedTag<Block> GLASS_SILICA = tag("glass/silica");
         public static final IOptionalNamedTag<Block> GLASS_TINTED = tag("glass/tinted");
         public static final IOptionalNamedTag<Block> GLASS_WHITE = tag("glass/white");
         public static final IOptionalNamedTag<Block> GLASS_YELLOW = tag("glass/yellow");
@@ -232,6 +233,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> GLASS_PINK = tag("glass/pink");
         public static final IOptionalNamedTag<Item> GLASS_PURPLE = tag("glass/purple");
         public static final IOptionalNamedTag<Item> GLASS_RED = tag("glass/red");
+        public static final IOptionalNamedTag<Item> GLASS_SILICA = tag("glass/silica");
         public static final IOptionalNamedTag<Item> GLASS_TINTED = tag("glass/tinted");
         public static final IOptionalNamedTag<Item> GLASS_WHITE = tag("glass/white");
         public static final IOptionalNamedTag<Item> GLASS_YELLOW = tag("glass/yellow");

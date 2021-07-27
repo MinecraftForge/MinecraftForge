@@ -85,6 +85,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.GLASS, Tags.Items.GLASS);
         copyColored(Tags.Blocks.GLASS, Tags.Items.GLASS);
         copy(Tags.Blocks.GLASS_TINTED, Tags.Items.GLASS_TINTED);
+        copy(Tags.Blocks.GLASS_SILICA, Tags.Items.GLASS_SILICA);
         copy(Tags.Blocks.GLASS_PANES, Tags.Items.GLASS_PANES);
         copyColored(Tags.Blocks.GLASS_PANES, Tags.Items.GLASS_PANES);
         copy(Tags.Blocks.GRAVEL, Tags.Items.GRAVEL);
