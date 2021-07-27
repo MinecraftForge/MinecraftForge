@@ -57,7 +57,7 @@
                 private void m_143678_(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) {
                    ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(p_143679_).m_41777_();
                    InteractionResult interactionresult = p_143680_.m_143694_(ServerGamePacketListenerImpl.this.f_9743_, entity, p_143679_);
-+                  // TODO: if (net.minecraftforge.common.ForgeHooks.onInteractEntityAt(player, entity, entity.position(), p_143679_) != null) return;
++                  if (net.minecraftforge.common.ForgeHooks.onInteractEntityAt(f_9743_, entity, entity.m_20182_(), p_143679_) != null) return;
                    if (interactionresult.m_19077_()) {
                       CriteriaTriggers.f_10565_.m_61494_(ServerGamePacketListenerImpl.this.f_9743_, itemstack, entity);
                       if (interactionresult.m_19080_()) {
