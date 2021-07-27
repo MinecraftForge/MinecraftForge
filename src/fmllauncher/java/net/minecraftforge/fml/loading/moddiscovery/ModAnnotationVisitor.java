@@ -34,7 +34,7 @@ public class ModAnnotationVisitor extends AnnotationVisitor
 
     public ModAnnotationVisitor(LinkedList<ModAnnotation> annotations, ModAnnotation annotation)
     {
-        super(Opcodes.ASM7);
+        super(Opcodes.ASM9);
         this.annotations = annotations;
         this.annotation = annotation;
     }

@@ -55,11 +55,11 @@
  
 -   static class MixPredicate<T> {
 -      private final T field_185198_a;
-+   static class MixPredicate<T extends net.minecraftforge.registries.ForgeRegistryEntry<T>> {
-+      private final net.minecraftforge.registries.IRegistryDelegate<T> field_185198_a;
++   public static class MixPredicate<T extends net.minecraftforge.registries.ForgeRegistryEntry<T>> {
++      public final net.minecraftforge.registries.IRegistryDelegate<T> field_185198_a;
        private final Ingredient field_185199_b;
 -      private final T field_185200_c;
-+      private final net.minecraftforge.registries.IRegistryDelegate<T> field_185200_c;
++      public final net.minecraftforge.registries.IRegistryDelegate<T> field_185200_c;
  
        public MixPredicate(T p_i47570_1_, Ingredient p_i47570_2_, T p_i47570_3_) {
 -         this.field_185198_a = p_i47570_1_;

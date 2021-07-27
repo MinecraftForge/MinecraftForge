@@ -22,7 +22,7 @@ public class ClosureHelper {
         }
     }
     
-    static def apply(def obj, Closure cl) {
+    static <T> T apply(T obj, Closure cl) {
         cl.delegate = obj
         cl.resolveStrategy = Closure.DELEGATE_FIRST
         cl()
