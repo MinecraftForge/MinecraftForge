@@ -50,16 +50,9 @@ public class ExpandedElytraFlightTest
     public static final String MOD_ID = "expanded_elytra_flight_test";
     public static final boolean ENABLE = true;
 
-    static final boolean ENABLE_INTRINSIC_BOOST_FOR_EFFECT = true;
-    static final boolean ENABLE_INTRINSIC_BOOST_FOR_ARMOR = true;
-
     static final double FLIGHT_ARMOR_MODIFIER_VALUE_ADDITION = 1.0D;
     static final double FLIGHT_EFFECT_MODIFIER_VALUE_ADDITION = 1.0D;
     static final double FLIGHT_ENCHANTMENT_MODIFIER_VALUE_ADDITION = 1.0D;
-
-    static final double FLIGHT_SPEED_ARMOR_MODIFIER_VALUE_ADDITION = 1.0D;
-    static final double FLIGHT_SPEED_EFFECT_MODIFIER_VALUE_ADDITION = 1.0D;
-    static final double FLIGHT_SPEED_ENCHANTMENT_MODIFIER_VALUE_ADDITION = 1.0D;
 
     static final int FLIGHT_POTION_EFFECT_DURATION = 180 * 20;
 
@@ -73,9 +66,7 @@ public class ExpandedElytraFlightTest
     private static final String FLIGHT_EFFECT_MODIFIER_UUID_STRING = "53992b1d-4f7c-4479-a00b-f2fdf57dfcdf";
     private static final String NO_FLIGHT_EFFECT_MODIFIER_UUID_STRING = "333764b4-2106-49b1-94fd-2362cb6e2d79";
     private static final String ABSOLUTELY_NO_FLIGHT_EFFECT_MODIFIER_UUID_STRING = "ee75a567-e301-4aa2-a2cd-dd1eca06094d";
-
-    private static final String FLIGHT_SPEED_EFFECT_MODIFIER_UUID_STRING = "41fddd0b-1ff1-4f24-87a9-b3f23e420187";
-
+    
     private static final EquipmentSlotType[] ARMOR_SLOTS = new EquipmentSlotType[]{EquipmentSlotType.HEAD, EquipmentSlotType.CHEST, EquipmentSlotType.LEGS, EquipmentSlotType.FEET};
 
     // Effects
@@ -112,19 +103,15 @@ public class ExpandedElytraFlightTest
             () -> new FlightEnchantment(Enchantment.Rarity.VERY_RARE, EnchantmentType.ARMOR, ARMOR_SLOTS)
     );
 
-    private static final RegistryObject<Enchantment> FLIGHT_SPEED_ENCHANTMENT = ENCHANTMENTS.register("flight_speed",
-            () -> new FlightEnchantment(Enchantment.Rarity.VERY_RARE, EnchantmentType.ARMOR, ARMOR_SLOTS)
-    );
-
     // Items
     private static final RegistryObject<Item> FLIGHT_BOOTS = ITEMS.register("flight_boots",
-            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.FEET, true, false, FLIGHT_SPEED_ARMOR_MODIFIER_VALUE_ADDITION, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
+            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.FEET, true, false, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
 
     private static final RegistryObject<Item> NO_FLIGHT_LEGGINGS = ITEMS.register("no_flight_leggings",
-            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.LEGS, false, false,0, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
+            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.LEGS, false, false, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
 
     private static final RegistryObject<Item> ABSOLUTELY_NO_FLIGHT_HELMET = ITEMS.register("absolutely_no_flight_helmet",
-            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.HEAD, false, true, 0, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
+            () -> new FlightArmorItem(ArmorMaterial.IRON, EquipmentSlotType.HEAD, false, true, (new Item.Properties()).tab(ItemGroup.TAB_COMBAT)));
 
     public ExpandedElytraFlightTest()
     {
@@ -158,20 +145,6 @@ public class ExpandedElytraFlightTest
                 fallFlyingAttribute.addTransientModifier(FlightEnchantment.ELYTRA_ENCHANTMENT_MODIFIER);
             }
         }
-
-        int flightSpeedEnchantmentLevel = EnchantmentHelper.getEnchantmentLevel(FLIGHT_SPEED_ENCHANTMENT.get(), living);
-        ModifiableAttributeInstance fallFlyingSpeedAttribute = living.getAttribute(ForgeMod.FALL_FLYING_SPEED.get());
-        if (fallFlyingSpeedAttribute != null)
-        {
-            if (fallFlyingSpeedAttribute.getModifier(FlightEnchantment.FLIGHT_SPEED_ENCHANTMENT_MODIFIER_UUID) != null)
-            {
-                fallFlyingSpeedAttribute.removeModifier(FlightEnchantment.FLIGHT_SPEED_ENCHANTMENT_MODIFIER_UUID);
-            }
-            if(flightSpeedEnchantmentLevel > 0)
-            {
-                fallFlyingSpeedAttribute.addTransientModifier(FlightEnchantment.ELYTRA_SPEED_ENCHANTMENT_MODIFIER);
-            }
-        }
     }
 
     static class FallFlightEffect extends Effect
@@ -179,10 +152,6 @@ public class ExpandedElytraFlightTest
         public FallFlightEffect(EffectType effectType, int color)
         {
             super(effectType, color);
-            if(ENABLE_INTRINSIC_BOOST_FOR_EFFECT && effectType == EffectType.BENEFICIAL)
-            {
-                this.addAttributeModifier(ForgeMod.FALL_FLYING_SPEED.get(), FLIGHT_SPEED_EFFECT_MODIFIER_UUID_STRING, FLIGHT_SPEED_EFFECT_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.ADDITION);
-            }
         }
 
     }
@@ -191,10 +160,6 @@ public class ExpandedElytraFlightTest
     {
         private static final UUID FLIGHT_ENCHANTMENT_MODIFIER_UUID = UUID.fromString("f0d64484-f532-4786-963f-e9456ba20d41");
         private static final AttributeModifier ELYTRA_ENCHANTMENT_MODIFIER = new AttributeModifier(FLIGHT_ENCHANTMENT_MODIFIER_UUID, "Flight Enchantment", FLIGHT_ENCHANTMENT_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.ADDITION);
-
-
-        private static final UUID FLIGHT_SPEED_ENCHANTMENT_MODIFIER_UUID = UUID.fromString("80135ea1-998a-44ec-a60b-a685adc52b4e");
-        private static final AttributeModifier ELYTRA_SPEED_ENCHANTMENT_MODIFIER = new AttributeModifier(FLIGHT_SPEED_ENCHANTMENT_MODIFIER_UUID, "Flight Speed Enchantment", FLIGHT_SPEED_ENCHANTMENT_MODIFIER_VALUE_ADDITION, AttributeModifier.Operation.ADDITION);
 
         protected FlightEnchantment(Rarity rarity, EnchantmentType enchantmentType, EquipmentSlotType[] slotTypes)
         {
@@ -208,12 +173,10 @@ public class ExpandedElytraFlightTest
         private final Multimap<Attribute, AttributeModifier> defaultModifiers = ArrayListMultimap.create(); // initialize as empty
         private final boolean canFly;
         private final boolean absolute;
-        private final double flySpeed;
-        public FlightArmorItem(IArmorMaterial armorMaterial, EquipmentSlotType slotType, boolean canFly, boolean absolute, double flySpeedIn, Properties properties) {
+        public FlightArmorItem(IArmorMaterial armorMaterial, EquipmentSlotType slotType, boolean canFly, boolean absolute, Properties properties) {
             super(armorMaterial, slotType, properties);
             this.canFly = canFly;
             this.absolute = absolute;
-            this.flySpeed = flySpeedIn;
         }
 
         @Override
@@ -228,10 +191,6 @@ public class ExpandedElytraFlightTest
                             new AttributeModifier(uuid, "Armor fall flight modifier",
                                     this.canFly ? FLIGHT_ARMOR_MODIFIER_VALUE_ADDITION : -FLIGHT_ARMOR_MODIFIER_VALUE_ADDITION,
                                     this.absolute ? AttributeModifier.Operation.MULTIPLY_TOTAL : AttributeModifier.Operation.ADDITION));
-                    if(ENABLE_INTRINSIC_BOOST_FOR_ARMOR && this.canFly && this.flySpeed > 0)
-                    {
-                        this.defaultModifiers.put(ForgeMod.FALL_FLYING_SPEED.get(), new AttributeModifier(uuid, "Armor fall flight speed modifier", this.flySpeed, AttributeModifier.Operation.ADDITION));
-                    }
                 }
                 return this.defaultModifiers;
             }
