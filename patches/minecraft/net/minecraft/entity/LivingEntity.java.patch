@@ -15,7 +15,7 @@
  
     public static AttributeModifierMap.MutableAttribute func_233639_cI_() {
 -      return AttributeModifierMap.func_233803_a_().func_233814_a_(Attributes.field_233818_a_).func_233814_a_(Attributes.field_233820_c_).func_233814_a_(Attributes.field_233821_d_).func_233814_a_(Attributes.field_233826_i_).func_233814_a_(Attributes.field_233827_j_);
-+      return AttributeModifierMap.func_233803_a_().func_233814_a_(Attributes.field_233818_a_).func_233814_a_(Attributes.field_233820_c_).func_233814_a_(Attributes.field_233821_d_).func_233814_a_(Attributes.field_233826_i_).func_233814_a_(Attributes.field_233827_j_).func_233814_a_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).func_233814_a_(net.minecraftforge.common.ForgeMod.NAMETAG_DISTANCE.get()).func_233814_a_(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get()).func_233814_a_(net.minecraftforge.common.ForgeMod.FALL_FLIGHT.get()).func_233814_a_(net.minecraftforge.common.ForgeMod.FALL_FLYING_SPEED.get());
++      return AttributeModifierMap.func_233803_a_().func_233814_a_(Attributes.field_233818_a_).func_233814_a_(Attributes.field_233820_c_).func_233814_a_(Attributes.field_233821_d_).func_233814_a_(Attributes.field_233826_i_).func_233814_a_(Attributes.field_233827_j_).func_233814_a_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).func_233814_a_(net.minecraftforge.common.ForgeMod.NAMETAG_DISTANCE.get()).func_233814_a_(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get()).func_233814_a_(net.minecraftforge.common.ForgeMod.FALL_FLIGHT.get());
     }
  
     protected void func_184231_a(double p_184231_1_, boolean p_184231_3_, BlockState p_184231_4_, BlockPos p_184231_5_) {
@@ -344,14 +344,6 @@
              this.func_213309_a(f6, p_213352_1_);
              this.func_213315_a(MoverType.SELF, this.func_213322_ci());
              Vector3d vector3d6 = this.func_213322_ci();
-@@ -1939,6 +_,7 @@
-             }
- 
-             Vector3d vector3d1 = this.func_70040_Z();
-+            net.minecraftforge.common.ForgeHooks.boostFallFlight(this, vector3d, vector3d1);
-             float f = this.field_70125_A * ((float)Math.PI / 180F);
-             double d1 = Math.sqrt(vector3d1.field_72450_a * vector3d1.field_72450_a + vector3d1.field_72449_c * vector3d1.field_72449_c);
-             double d3 = Math.sqrt(func_213296_b(vector3d));
 @@ -1977,7 +_,7 @@
              }
           } else {
