@@ -171,7 +171,6 @@
   "attribute.name.forge.entity_gravity": "Entity Gravity",
   "attribute.name.generic.reach_distance": "Reach Distance",
   "attribute.name.forge.fall_flight": "Fall Flight",
-  "attribute.name.forge.fall_flying_speed": "Fall Flying Speed",
   "forge.swimSpeed": "Swim Speed",
   "forge.nameTagDistance": "Nametag Render Distance",
   "forge.entity_gravity": "Entity Gravity",
