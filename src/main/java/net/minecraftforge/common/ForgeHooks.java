@@ -234,18 +234,6 @@ public class ForgeHooks
         }
     }
 
-    public static void boostFallFlight(LivingEntity living, Vector3d currentDeltaMove, Vector3d currentLookAngle)
-    {
-
-        ModifiableAttributeInstance fallFlyingSpeedAttribute = living.getAttribute(ForgeMod.FALL_FLYING_SPEED.get());
-        if(fallFlyingSpeedAttribute != null && fallFlyingSpeedAttribute.getValue() > 0)
-        {
-            double moveBoost = 1.5D * fallFlyingSpeedAttribute.getValue();
-            double lookBoost = 0.1D * fallFlyingSpeedAttribute.getValue();
-            living.setDeltaMovement(currentDeltaMove.add(currentLookAngle.x * lookBoost + (currentLookAngle.x * moveBoost - currentDeltaMove.x) * 0.5D, currentLookAngle.y * lookBoost + (currentLookAngle.y * moveBoost - currentDeltaMove.y) * 0.5D, currentLookAngle.z * lookBoost + (currentLookAngle.z * moveBoost - currentDeltaMove.z) * 0.5D));
-        }
-    }
-
     public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader world, @Nonnull BlockPos pos)
     {
         //state = state.getActualState(world, pos);
