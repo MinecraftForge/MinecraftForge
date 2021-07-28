@@ -1,0 +1,8 @@
+{
+  "type": "forge:container_brewing",
+  "input_container": "minecraft:potion",
+  "ingredient": {
+    "item": "minecraft:gunpowder"
+  },
+  "output_container": "minecraft:potion"
+}

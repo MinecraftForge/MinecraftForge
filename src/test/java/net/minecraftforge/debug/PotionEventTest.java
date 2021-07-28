@@ -41,12 +41,6 @@ public class PotionEventTest
 
     public PotionEventTest()
     {
-    	FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onSetup);
-    }
-    
-    private void onSetup(FMLCommonSetupEvent event)
-    {
-    	BrewingRecipeRegistry.addRecipe(Ingredient.of(Items.ICE), Ingredient.of(Items.LAVA_BUCKET), new ItemStack(Items.OBSIDIAN));
     }
     
     @SubscribeEvent

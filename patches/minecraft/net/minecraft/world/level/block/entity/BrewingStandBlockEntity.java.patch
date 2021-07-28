@@ -1,13 +1,14 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -148,6 +_,7 @@
+@@ -97,7 +_,7 @@
+          m_155232_(p_155286_, p_155287_, p_155288_);
+       }
  
-    private static boolean m_155294_(NonNullList<ItemStack> p_155295_) {
-       ItemStack itemstack = p_155295_.get(3);
-+      if (!itemstack.m_41619_()) return net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(p_155295_, itemstack, f_58974_); // divert to VanillaBrewingRegistry
-       if (itemstack.m_41619_()) {
-          return false;
-       } else if (!PotionBrewing.m_43506_(itemstack)) {
+-      boolean flag = m_155294_(p_155289_.f_58975_);
++      boolean flag = net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(p_155286_, p_155289_.f_58975_, p_155289_.f_58975_.get(f_155280_), f_58974_);
+       boolean flag1 = p_155289_.f_58976_ > 0;
+       ItemStack itemstack1 = p_155289_.f_58975_.get(3);
+       if (flag1) {
 @@ -165,21 +_,21 @@
     }
  
@@ -22,7 +23,7 @@
 -      itemstack.m_41774_(1);
 -      if (itemstack.m_41720_().m_41470_()) {
 -         ItemStack itemstack1 = new ItemStack(itemstack.m_41720_().m_41469_());
-+      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(p_155293_, itemstack, f_58974_);
++      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(p_155291_, p_155293_, itemstack, f_58974_);
 +      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(p_155293_);
 +      if (itemstack.hasContainerItem()) {
 +         ItemStack itemstack1 = itemstack.getContainerItem();
@@ -42,12 +43,12 @@
     public boolean m_7013_(int p_59017_, ItemStack p_59018_) {
        if (p_59017_ == 3) {
 -         return PotionBrewing.m_43506_(p_59018_);
-+         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(p_59018_);
++         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(f_58857_, p_59018_);
        } else if (p_59017_ == 4) {
           return p_59018_.m_150930_(Items.f_42593_);
        } else {
 -         return (p_59018_.m_150930_(Items.f_42589_) || p_59018_.m_150930_(Items.f_42736_) || p_59018_.m_150930_(Items.f_42739_) || p_59018_.m_150930_(Items.f_42590_)) && this.m_8020_(p_59017_).m_41619_();
-+            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(p_59018_) && this.m_8020_(p_59017_).m_41619_();
++            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(f_58857_, p_59018_) && this.m_8020_(p_59017_).m_41619_();
        }
     }
  

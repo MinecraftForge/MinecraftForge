@@ -24,6 +24,7 @@ import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.ArgumentSerializer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.item.Items;
@@ -33,6 +34,10 @@ import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.brewing.BrewingRecipe;
+import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
+import net.minecraftforge.common.brewing.ContainerBrewingRecipe;
+import net.minecraftforge.common.brewing.MixingBrewingRecipe;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
@@ -300,11 +305,16 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
         CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
 
+        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("forge", "brewing"), BrewingRecipeRegistry.BREWING);
+
         CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
 
         event.getRegistry().register(new ConditionalRecipe.Serializer<Recipe<?>>().setRegistryName(new ResourceLocation("forge", "conditional")));
+        event.getRegistry().register(new BrewingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "brewing")));
+        event.getRegistry().register(new ContainerBrewingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "container_brewing")));
+        event.getRegistry().register(new MixingBrewingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "mixing_brewing")));
 
     }
 

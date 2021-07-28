@@ -22,34 +22,37 @@ package net.minecraftforge.common.brewing;
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public record BrewingRecipe(@Nonnull ResourceLocation id,
-                            @Nonnull Ingredient input,
-                            @Nonnull Ingredient ingredient,
-                            @Nonnull ItemStack output) implements IBrewingRecipe
+public record ContainerBrewingRecipe(@Nonnull ResourceLocation id,
+                                     @Nonnull Item input,
+                                     @Nonnull Ingredient ingredient,
+                                     @Nonnull Item output) implements IBrewingRecipe
 {
-    @ObjectHolder("forge:brewing")
-    public static final RecipeSerializer<BrewingRecipe> SERIALIZER = null;
+    @ObjectHolder("forge:container_brewing")
+    public static final RecipeSerializer<ContainerBrewingRecipe> SERIALIZER = null;
 
     @Override
     public boolean isInput(@Nonnull ItemStack stack)
     {
-        return this.input.test(stack);
+        return this.input == stack.getItem();
     }
 
     @Override
     public ItemStack getOutput(ItemStack input, ItemStack ingredient)
     {
-        return isInput(input) && isIngredient(ingredient) ? output().copy() : ItemStack.EMPTY;
+        return isInput(input) && isIngredient(ingredient) ? PotionUtils.setPotion(new ItemStack(output()), PotionUtils.getPotion(input)) : ItemStack.EMPTY;
     }
 
     @Override
@@ -61,7 +64,7 @@ public record BrewingRecipe(@Nonnull ResourceLocation id,
     @Override
     public ItemStack getResultItem()
     {
-        return output();
+        return new ItemStack(output());
     }
 
     @Override
@@ -76,34 +79,34 @@ public record BrewingRecipe(@Nonnull ResourceLocation id,
         return SERIALIZER;
     }
 
-    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<BrewingRecipe>
+    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<ContainerBrewingRecipe>
     {
 
         @Override
-        public BrewingRecipe fromJson(final ResourceLocation p_199425_1_, final JsonObject p_199425_2_)
+        public ContainerBrewingRecipe fromJson(final ResourceLocation p_199425_1_, final JsonObject p_199425_2_)
         {
-            Ingredient input = Ingredient.fromJson(p_199425_2_.getAsJsonObject("input"));
+            Item input = ForgeRegistries.ITEMS.getValue(new ResourceLocation(p_199425_2_.get("input_container").getAsString()));
             Ingredient ingredient = Ingredient.fromJson(p_199425_2_.getAsJsonObject("ingredient"));
-            ItemStack output = ShapedRecipe.itemStackFromJson(p_199425_2_.getAsJsonObject("output"));
-            return new BrewingRecipe(p_199425_1_, input, ingredient, output);
+            Item output = ForgeRegistries.ITEMS.getValue(new ResourceLocation(p_199425_2_.get("output_container").getAsString()));
+            return new ContainerBrewingRecipe(p_199425_1_, input, ingredient, output);
         }
 
         @Nullable
         @Override
-        public BrewingRecipe fromNetwork(final ResourceLocation p_199426_1_, final FriendlyByteBuf p_199426_2_)
+        public ContainerBrewingRecipe fromNetwork(final ResourceLocation p_199426_1_, final FriendlyByteBuf p_199426_2_)
         {
-            Ingredient input = Ingredient.fromNetwork(p_199426_2_);
+            Item input = ForgeRegistries.ITEMS.getValue(p_199426_2_.readResourceLocation());
             Ingredient ingredient = Ingredient.fromNetwork(p_199426_2_);
-            ItemStack output = p_199426_2_.readItem();
-            return new BrewingRecipe(p_199426_1_, input, ingredient, output);
+            Item output = ForgeRegistries.ITEMS.getValue(p_199426_2_.readResourceLocation());
+            return new ContainerBrewingRecipe(p_199426_1_, input, ingredient, output);
         }
 
         @Override
-        public void toNetwork(final FriendlyByteBuf p_199427_1_, final BrewingRecipe p_199427_2_)
+        public void toNetwork(final FriendlyByteBuf p_199427_1_, final ContainerBrewingRecipe p_199427_2_)
         {
-            p_199427_2_.input.toNetwork(p_199427_1_);
+            p_199427_1_.writeResourceLocation(ForgeRegistries.ITEMS.getKey(p_199427_2_.input));
             p_199427_2_.ingredient.toNetwork(p_199427_1_);
-            p_199427_1_.writeItem(p_199427_2_.output);
+            p_199427_1_.writeResourceLocation(ForgeRegistries.ITEMS.getKey(p_199427_2_.output));
         }
     }
 }

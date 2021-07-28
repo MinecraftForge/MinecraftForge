@@ -1,0 +1,8 @@
+{
+  "type": "forge:mixing_brewing",
+  "input_potion": "minecraft:long_night_vision",
+  "ingredient": {
+    "item": "minecraft:fermented_spider_eye"
+  },
+  "output_potion": "minecraft:long_invisibility"
+}

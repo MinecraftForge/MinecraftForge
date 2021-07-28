@@ -19,9 +19,15 @@
 
 package net.minecraftforge.common.brewing;
 
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 
-public interface IBrewingRecipe {
+public interface IBrewingRecipe extends Recipe<Container>
+{
 
     /**
      * Returns true is the passed ItemStack is an input for this recipe. "Input"
@@ -42,4 +48,31 @@ public interface IBrewingRecipe {
      * ingredient. Empty if invalid input or ingredient.
      */
     ItemStack getOutput(ItemStack input, ItemStack ingredient);
+
+    @Override
+    default boolean matches(Container container, Level level)
+    {
+        if (container instanceof BrewingStandBlockEntity)
+            return (isInput(container.getItem(0)) || isInput(container.getItem(1)) || isInput(container.getItem(2))) && isIngredient(container.getItem(3));
+        else
+            return isInput(container.getItem(0)) && isInput(container.getItem(1));
+    }
+
+    @Override
+    default ItemStack assemble(Container container)
+    {
+        return getOutput(container.getItem(0), container.getItem(1));
+    }
+
+    @Override
+    default boolean canCraftInDimensions(int p_43999_, int p_44000_)
+    {
+        return true;
+    }
+
+    @Override
+    default RecipeType<?> getType()
+    {
+        return BrewingRecipeRegistry.BREWING;
+    }
 }

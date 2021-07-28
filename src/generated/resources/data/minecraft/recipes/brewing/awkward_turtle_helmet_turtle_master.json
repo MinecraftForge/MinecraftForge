@@ -1,0 +1,8 @@
+{
+  "type": "forge:mixing_brewing",
+  "input_potion": "minecraft:awkward",
+  "ingredient": {
+    "item": "minecraft:turtle_helmet"
+  },
+  "output_potion": "minecraft:turtle_master"
+}

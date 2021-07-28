@@ -20,6 +20,7 @@
 package net.minecraftforge.network;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -32,7 +33,9 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -58,6 +61,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
                 ImmutableMap.<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>>builder()
                 .put(handler(ClientboundUpdateAttributesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
                 .put(handler(ClientboundCommandsPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
+                .put(handler(ClientboundUpdateRecipesPacket.class, VanillaConnectionNetworkFilter::filterRecipes))
                 .build()
         );
     }
@@ -98,5 +102,22 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
             return id != null && (id.getNamespace().equals("minecraft") || id.getNamespace().equals("brigadier"));
         });
         return new ClientboundCommandsPacket(newRoot);
+    }
+
+    /**
+     * Filter for SUpdateRecipesPacket. Filters out any ArgumentTypes that are not in the "minecraft" namespace.
+     * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
+     */
+    @Nonnull
+    private static ClientboundUpdateRecipesPacket filterRecipes(ClientboundUpdateRecipesPacket packet)
+    {
+        HashSet<Recipe<?>> recipes = new HashSet<Recipe<?>>();
+        packet.getRecipes().forEach((recipe) -> {
+            if (recipe.getId().getNamespace().equals("minecraft") && recipe.getSerializer().getRegistryName().getNamespace().equals("minecraft"))
+            {
+                recipes.add(recipe);
+            };
+        });
+        return new ClientboundUpdateRecipesPacket(recipes);
     }
 }
