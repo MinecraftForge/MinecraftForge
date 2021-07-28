@@ -138,9 +138,10 @@ public class FMLLoader
         }
     }
 
-    static void setupLaunchHandler(final IEnvironment environment, final Map<String, ?> arguments)
+    static void setupLaunchHandler(final IEnvironment environment, final Map<String, Object> arguments)
     {
         final String launchTarget = environment.getProperty(IEnvironment.Keys.LAUNCHTARGET.get()).orElse("MISSING");
+        arguments.put("launchTarget", launchTarget);
         final Optional<ILaunchHandlerService> launchHandler = environment.findLaunchHandler(launchTarget);
         LOGGER.debug(CORE, "Using {} as launch service", launchTarget);
         if (launchHandler.isEmpty()) {
