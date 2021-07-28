@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/level/block/entity/SpawnerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SpawnerBlockEntity.java
-@@ -12,7 +_,14 @@
+@@ -12,7 +_,13 @@
  import net.minecraft.world.level.block.state.BlockState;
  
  public class SpawnerBlockEntity extends BlockEntity {
 -   private final BaseSpawner f_59788_ = new BaseSpawner() {
-+
 +   public static class Spawner extends BaseSpawner{
 +      SpawnerBlockEntity spawnerBlockEntity;
 +
