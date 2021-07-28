@@ -22,14 +22,15 @@ public class ModValidator {
     private final Map<IModFile.Type, List<ModFile>> modFiles;
     private final List<ModFile> candidatePlugins;
     private final List<ModFile> candidateMods;
+    private final List<ModFile> candidateLibraries;
     private LoadingModList loadingModList;
     private List<ModFile> brokenFiles;
 
     public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles) {
         this.modFiles = modFiles;
         this.candidateMods = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.MOD, List.of()));
+        this.candidateLibraries = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.LIBRARY, List.of()));
         this.candidatePlugins = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.LANGPROVIDER, List.of()));
-        this.candidatePlugins.addAll(modFiles.getOrDefault(IModFile.Type.LIBRARY, List.of()));
     }
 
     public void stage1Validation() {
@@ -58,7 +59,11 @@ public class ModValidator {
     }
 
     public ITransformationService.Resource getModResources() {
-        return new ITransformationService.Resource(IModuleLayerManager.Layer.GAME, this.candidateMods.stream().map(ModFile::getSecureJar).toList());
+        final List<SecureJar> resources = new ArrayList<>();
+        resources.addAll(this.candidateMods.stream().map(ModFile::getSecureJar).toList());
+        resources.addAll(this.candidateLibraries.stream().map(ModFile::getSecureJar).toList());
+
+        return new ITransformationService.Resource(IModuleLayerManager.Layer.GAME, resources);
     }
 
     private List<EarlyLoadingException.ExceptionData> validateLanguages() {
