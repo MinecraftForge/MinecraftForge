@@ -465,12 +465,31 @@ public interface IForgeBlockState
         return getBlockState().getBlock().getExpDrop(getBlockState(), world, pos, fortune, silktouch);
     }
 
+    /**
+     * Rotation a given blockstate at a given position.
+     * @param world the world it is in.
+     * @param pos the position it is at.
+     * @param direction the rotation to apply.
+     * @return the resulting blockstate.
+     */
     default BlockState rotate(IWorld world, BlockPos pos, Rotation direction)
     {
         return getBlockState().getBlock().rotate(getBlockState(), world, pos, direction);
     }
 
-   /**
+    /**
+     * Mirror a given blockstate at a given position.
+     * @param world the world it is in.
+     * @param pos the position it is at.
+     * @param mirror the mirror to apply.
+     * @return the resulting blockstate.
+     */
+    default BlockState mirror(IWorld world, BlockPos pos, Mirror mirror)
+    {
+        return getBlockState().getBlock().mirror(getBlockState(), world, pos, mirror);
+    }
+
+    /**
     * Determines the amount of enchanting power this block can provide to an enchanting table.
     * @param world The World
     * @param pos Block position in world

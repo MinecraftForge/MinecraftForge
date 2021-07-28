@@ -47,6 +47,7 @@ import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
@@ -569,9 +570,30 @@ public interface IForgeBlock
        return 0;
     }
 
+    /**
+     * Rotation a given blockstate at a given position.
+     * @param state the current state.
+     * @param world the world it is in.
+     * @param pos the position it is at.
+     * @param direction the rotation to apply.
+     * @return the resulting blockstate.
+     */
     default BlockState rotate(BlockState state, IWorld world, BlockPos pos, Rotation direction)
     {
         return state.rotate(direction);
+    }
+
+    /**
+     * Mirror a given blockstate at a given position.
+     * @param state the current state.
+     * @param world the world it is in.
+     * @param pos the position it is at.
+     * @param mirror the mirror to apply.
+     * @return the resulting blockstate.
+     */
+    default BlockState mirror(BlockState state, IWorld world, BlockPos pos, Mirror mirror)
+    {
+        return state.mirror(mirror);
     }
 
    /**
