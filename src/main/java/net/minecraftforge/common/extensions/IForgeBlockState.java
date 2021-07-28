@@ -28,6 +28,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacements.Type;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -334,9 +335,28 @@ public interface IForgeBlockState
         return self().getBlock().getExpDrop(self(), world, pos, fortune, silktouch);
     }
 
+    /**
+     * Rotation a given blockstate at a given position.
+     * @param world the world it is in.
+     * @param pos the position it is at.
+     * @param direction the rotation to apply.
+     * @return the resulting blockstate.
+     */
     default BlockState rotate(LevelAccessor world, BlockPos pos, Rotation direction)
     {
         return self().getBlock().rotate(self(), world, pos, direction);
+    }
+
+    /**
+     * Mirror a given blockstate at a given position.
+     * @param world the world it is in.
+     * @param pos the position it is at.
+     * @param mirror the mirror to apply.
+     * @return the resulting blockstate.
+     */
+    default BlockState mirror(LevelAccessor world, BlockPos pos, Mirror mirror)
+    {
+        return self().getBlock().mirror(self(), world, pos, mirror);
     }
 
    /**

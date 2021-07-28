@@ -32,8 +32,7 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.WitherSkull;
-import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
@@ -42,7 +41,6 @@ import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -58,17 +56,6 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.BeaconBeamBlock;
-import net.minecraft.world.level.block.BedBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FarmBlock;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.FireBlock;
-import net.minecraft.world.level.block.HalfTransparentBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 
 @SuppressWarnings("deprecation")
@@ -411,9 +398,30 @@ public interface IForgeBlock
        return 0;
     }
 
+    /**
+     * Rotation a given blockstate at a given position.
+     * @param state the current state.
+     * @param world the world it is in.
+     * @param pos the position it is at.
+     * @param direction the rotation to apply.
+     * @return the resulting blockstate.
+     */
     default BlockState rotate(BlockState state, LevelAccessor world, BlockPos pos, Rotation direction)
     {
         return state.rotate(direction);
+    }
+
+    /**
+     * Mirror a given blockstate at a given position.
+     * @param state the current state.
+     * @param world the world it is in.
+     * @param pos the position it is at.
+     * @param mirror the mirror to apply.
+     * @return the resulting blockstate.
+     */
+    default BlockState mirror(BlockState state, LevelAccessor world, BlockPos pos, Mirror mirror)
+    {
+        return state.mirror(mirror);
     }
 
    /**
