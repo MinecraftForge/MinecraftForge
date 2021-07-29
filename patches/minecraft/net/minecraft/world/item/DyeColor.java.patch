@@ -12,7 +12,7 @@
        int i = (p_41048_ & 16711680) >> 16;
        int j = (p_41048_ & '\uff00') >> 8;
        int k = (p_41048_ & 255) >> 0;
-+      this.tag = net.minecraft.tags.ItemTags.createOptional(new net.minecraft.resources.ResourceLocation("forge", "dyes/" + p_41047_));
++      this.tag = net.minecraft.tags.ItemTags.bindOptional(new net.minecraft.resources.ResourceLocation("forge", "dyes/" + p_41047_));
        this.f_41039_ = new float[]{(float)i / 255.0F, (float)j / 255.0F, (float)k / 255.0F};
        this.f_41040_ = p_41050_;
     }

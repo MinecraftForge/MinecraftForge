@@ -303,7 +303,7 @@ public class Tags
 
         private static IOptionalNamedTag<Fluid> tag(String name)
         {
-            return FluidTags.bindTags(new ResourceLocation("forge", name));
+            return FluidTags.bindOptional(new ResourceLocation("forge", name));
         }
     }
 

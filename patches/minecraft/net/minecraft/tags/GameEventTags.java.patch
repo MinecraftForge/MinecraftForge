@@ -5,11 +5,11 @@
        return f_144301_.m_13246_();
     }
 +
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<GameEvent> createOptional(net.minecraft.resources.ResourceLocation name) {
-+      return createOptional(name, null);
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<GameEvent> bindOptional(net.minecraft.resources.ResourceLocation name) {
++      return bindOptional(name, null);
 +   }
 +
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<GameEvent> createOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<GameEvent>> defaults) {
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<GameEvent> bindOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<GameEvent>> defaults) {
 +      return f_144301_.createOptional(name, defaults);
 +   }
  }
