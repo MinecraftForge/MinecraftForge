@@ -43,9 +43,9 @@ import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 public class ClasspathLocator extends AbstractJarFileLocator {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String MODS_TOML = "META-INF/mods.toml";
-    private static final String       MANIFEST   = "META-INF/MANIFEST.MF";
-    private final        List<String> ignoreList = Arrays.stream(System.getProperty("ignoreList", "").split(",")).toList();
-    private              boolean      enabled    = false;
+    private static final String MANIFEST = "META-INF/MANIFEST.MF";
+    private final List<String> ignoreList = Arrays.stream(System.getProperty("ignoreList", "").split(",")).toList();
+    private boolean enabled = false;
 
     private static final Predicate<SecureJar> ACCEPT_ALL_FILTER = secureJar -> true;
 
