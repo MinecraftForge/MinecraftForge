@@ -943,8 +943,7 @@ project(':forge') {
             '/': [
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'GitCommit': gradleutils.gitInfo.abbreviatedId,
-                'Git-Branch': gradleutils.gitInfo.branch,
-                'FMLModType': 'MOD',//This is needed. Else it gets loaded in the wrong module layer!
+                'Git-Branch': gradleutils.gitInfo.branch
             ] as LinkedHashMap,
             'net/minecraftforge/versions/forge/': [
                 'Specification-Title':      'Forge',
