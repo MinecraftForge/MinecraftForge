@@ -1,5 +1,6 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.google.common.collect.Lists;
 import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.api.ITransformationService;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
@@ -24,6 +26,7 @@ public class ModValidator {
     private final List<ModFile> candidateLibraries;
     private LoadingModList loadingModList;
     private List<ModFile> brokenFiles;
+    private List<ModFile> duplicates;
 
     public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles) {
         this.modFiles = modFiles;
@@ -34,8 +37,15 @@ public class ModValidator {
 
     public void stage1Validation() {
         brokenFiles = validateFiles(candidateMods);
+        duplicates = detectDuplicates(candidateMods);
         LOGGER.debug(SCAN,"Found {} mod files with {} mods", candidateMods::size, ()-> candidateMods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found "+ candidateMods.size()+" modfiles to load"));
+
+        brokenFiles.addAll(validateFiles(candidateLibraries));
+        duplicates.addAll(detectDuplicates(candidateLibraries));
+        LOGGER.debug(SCAN,"Found {} library files", candidateLibraries::size);
+        StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found "+ candidateLibraries.size()+" libraries to load"));
+
     }
 
     @NotNull
@@ -44,13 +54,39 @@ public class ModValidator {
         for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
         {
             ModFile mod = iterator.next();
-            if (!mod.getLocator().isValid(mod) || !mod.identifyMods()) {
+            if (!mod.getLocator().isValid(mod) || (!mod.identifyMods() && mod.getType() != IModFile.Type.LIBRARY)) {
                 LOGGER.warn(SCAN, "File {} has been ignored - it is invalid", mod.getFilePath());
                 iterator.remove();
                 brokenFiles.add(mod);
             }
         }
         return brokenFiles;
+    }
+
+    private List<ModFile> detectDuplicates(final List<ModFile> mods) {
+        final Map<String, IModFile> packagesToJar = new HashMap<>();
+        final List<ModFile> duplicates = new ArrayList<>();
+        for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
+        {
+            final ModFile mod = iterator.next();
+            for (final String aPackage : mod.getSecureJar().getPackages())
+            {
+                if (packagesToJar.containsKey(aPackage))
+                {
+                    LOGGER.warn("Package: %s is duplicated in: %s and: %s".formatted(aPackage,
+                      packagesToJar.get(aPackage).getSecureJar().getPrimaryPath(),
+                      mod.getSecureJar().getPrimaryPath()));
+
+                    iterator.remove();
+                    duplicates.add(mod);
+                    break;
+                }
+
+                packagesToJar.put(aPackage, mod);
+            }
+        }
+
+        return duplicates;
     }
 
     public ITransformationService.Resource getPluginResources() {

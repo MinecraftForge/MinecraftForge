@@ -60,7 +60,7 @@ public class ModDiscoverer {
 
     public ModValidator discoverMods() {
         LOGGER.debug(SCAN,"Scanning for mods and other resources to load. We know {} ways to find mods", locatorList.size());
-        var loadedFiles = new ArrayList<>();
+        var loadedFiles = new ArrayList<IModFile>();
         for (IModLocator locator : locatorList) {
             LOGGER.debug(SCAN,"Trying locator {}", locator);
             var modFiles = locator.scanMods();
@@ -70,6 +70,7 @@ public class ModDiscoverer {
             }
             loadedFiles.addAll(modFiles);
         }
+
         final var modFilesMap = loadedFiles.stream()
                 .map(ModFile.class::cast)
                 .collect(Collectors.groupingBy(IModFile::getType));

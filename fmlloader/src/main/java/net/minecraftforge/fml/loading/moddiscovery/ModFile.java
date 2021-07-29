@@ -82,7 +82,7 @@ public class ModFile implements IModFile {
 
         manifest = this.jar.getManifest();
         final Optional<String> value = Optional.ofNullable(manifest.getMainAttributes().getValue(TYPE));
-        modFileType = Type.valueOf(value.orElse("MOD"));
+        modFileType = determineModType(value);
         jarVersion = Optional.ofNullable(manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION)).orElse("0.0NONE");
     }
 
@@ -228,5 +228,19 @@ public class ModFile implements IModFile {
     @Override
     public void setSecurityStatus(final SecureJar.Status status) {
         this.securityStatus = status;
+    }
+
+    private Type determineModType(final Optional<String> manifestData) {
+        if (manifestData.isPresent())
+            return Type.valueOf(manifestData.get());
+
+        //If we have a valid modfileinfo (so a valid mods.toml) then we assume we are a mod.
+        //If nothing is found then we consider ourselves to be a library.
+        final var modFileInfo = ModFileParser.readModList(this, this.parser);
+        if (modFileInfo == null) {
+            return Type.LIBRARY;
+        }
+
+        return Type.MOD;
     }
 }

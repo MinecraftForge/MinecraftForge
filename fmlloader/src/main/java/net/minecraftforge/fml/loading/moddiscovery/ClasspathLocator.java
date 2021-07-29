@@ -24,6 +24,8 @@ import net.minecraftforge.fml.loading.LibraryFinder;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -32,6 +34,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -60,12 +64,12 @@ public class ClasspathLocator extends AbstractJarFileLocator {
             return List.of();
         try {
             var modCoords = Stream.<IModFile>builder();
+
             locateMods(modCoords, MODS_TOML, "classpath_mod", path ->  ModJarMetadata.buildFile(this, ACCEPT_ALL_FILTER, path));
-            locateMods(modCoords, MANIFEST, "manifest_jar", path -> Optional.of(path)
-              .map(SecureJar::from)
-              .filter(sj -> isValidManifest(sj) && sj.getManifest().getMainAttributes().getValue(ModFile.TYPE) != null)
-              .map(sj -> ModFile.newFMLInstance(this, sj))
-            );
+            locateMods(modCoords, MANIFEST, "manifest_jar", this.buildModFileCreator(true));
+
+            scanClasspathForDependencies(modCoords, this.buildModFileCreator(false));
+
             return modCoords.build().toList();
         } catch (IOException e) {
             LOGGER.fatal(CORE, "Error trying to find resources", e);
@@ -93,6 +97,31 @@ public class ClasspathLocator extends AbstractJarFileLocator {
         }
     }
 
+    private void scanClasspathForDependencies(Stream.Builder<IModFile> modCoords, Function<Path, Optional<IModFile>> modFileBuilder) throws IOException
+    {
+        final String[] classPaths = System.getProperty("java.class.path").split(File.pathSeparator);
+        final String[] legacyClassPaths = System.getProperty("legacyClassPath").split(File.pathSeparator);
+
+        final Set<String> customClassPathEntries = new HashSet<>(Arrays.asList(classPaths));
+        Arrays.asList(legacyClassPaths).forEach(customClassPathEntries::remove);
+
+        for (final String customClassPathEntry : customClassPathEntries)
+        {
+            final Path path = Path.of(customClassPathEntry);
+            if (ignoreList.stream().anyMatch(path.toString()::contains) || Files.isDirectory(path))
+                continue;
+
+            if (!Files.isRegularFile(path))
+                continue;
+
+            LOGGER.info("Loading custom class path entry: %s as a potential mod candidate.".formatted(customClassPathEntry));
+            modFileBuilder.apply(path).ifPresent(mf -> {
+                LOGGER.debug(CORE, "Found classpath mod: {}", path);
+                modCoords.add(mf);
+            });
+        }
+    }
+
     @Override
     public void initArguments(Map<String, ?> arguments) {
         var launchTarget = (String) arguments.get("launchTarget");
@@ -105,5 +134,13 @@ public class ClasspathLocator extends AbstractJarFileLocator {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    private Function<Path, Optional<IModFile>> buildModFileCreator(boolean requireModFileType)
+    {
+        return path -> Optional.of(path)
+                 .map(SecureJar::from)
+                 .filter(sj -> isValidManifest(sj) && (!requireModFileType || sj.getManifest().getMainAttributes().getValue(ModFile.TYPE) != null))
+                 .map(sj -> ModFile.newFMLInstance(this, sj));
     }
 }
