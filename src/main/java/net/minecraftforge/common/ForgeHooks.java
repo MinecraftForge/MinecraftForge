@@ -33,6 +33,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -1432,7 +1433,7 @@ public class ForgeHooks
     }
     
     /** Called in the LevelStem codec builder to add extra fields to dimension jsons **/
-    public static App<Mu<LevelStem>, LevelStem> expandLevelStemCodec(RecordCodecBuilder.Instance<LevelStem> builder, java.util.function.Supplier<App<Mu<LevelStem>, LevelStem>> vanillaFieldsSupplier)
+    public static App<Mu<LevelStem>, LevelStem> expandLevelStemCodec(RecordCodecBuilder.Instance<LevelStem> builder, Supplier<App<Mu<LevelStem>, LevelStem>> vanillaFieldsSupplier)
     {
             App<Mu<LevelStem>, LevelStem> vanillaFields = vanillaFieldsSupplier.get();
             return builder.group(vanillaFields).and(
