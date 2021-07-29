@@ -1,5 +1,13 @@
 --- a/net/minecraft/core/RegistryAccess.java
 +++ b/net/minecraft/core/RegistryAccess.java
+@@ -93,6 +_,7 @@
+       }
+ 
+       RegistryReadOps.m_179870_(JsonOps.INSTANCE, registryreadops$resourceaccess$memorymap, registryaccess$registryholder);
++      net.minecraftforge.common.world.WorldGenValidator.validateWorldGen(registryaccess$registryholder);
+       return registryaccess$registryholder;
+    }
+ 
 @@ -100,6 +_,8 @@
        ResourceKey<? extends Registry<E>> resourcekey = p_123074_.m_123108_();
        boolean flag = !resourcekey.equals(Registry.f_122878_) && !resourcekey.equals(Registry.f_122818_);
