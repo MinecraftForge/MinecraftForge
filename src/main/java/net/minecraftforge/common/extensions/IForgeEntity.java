@@ -20,20 +20,23 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
+
 import javax.annotation.Nullable;
-import net.minecraft.world.level.block.state.BlockState;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.INetworkCapability;
 import net.minecraftforge.entity.PartEntity;
 
-public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
+public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>, INetworkCapability
 {
     private Entity self() { return (Entity) this; }
 

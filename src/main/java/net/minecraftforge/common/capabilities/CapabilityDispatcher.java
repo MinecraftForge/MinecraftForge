@@ -19,18 +19,21 @@
 
 package net.minecraftforge.common.capabilities;
 
-import javax.annotation.Nullable;
-import javax.annotation.ParametersAreNonnullByDefault;
-
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import com.google.common.collect.Lists;
 
+import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import net.minecraft.MethodsReturnNonnullByDefault;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -47,12 +50,13 @@ import net.minecraftforge.common.util.LazyOptional;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>, ICapabilityProvider
+public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>, ICapabilityProvider, INetworkCapability
 {
     private ICapabilityProvider[] caps;
     private INBTSerializable<Tag>[] writers;
     private String[] names;
     private final List<Runnable> listeners;
+    private final Map<String, INetworkCapability> networkCapabilities = new Object2ObjectArrayMap<>();
 
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, List<Runnable> listeners)
     {
@@ -75,6 +79,10 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
                 lstWriters.add((INBTSerializable<Tag>)parent);
                 lstNames.add("Parent");
             }
+            if (parent instanceof INetworkCapability networkCap)
+            {
+                this.networkCapabilities.put("Parent", networkCap);
+            }
         }
 
         for (Map.Entry<ResourceLocation, ICapabilityProvider> entry : list.entrySet())
@@ -85,6 +93,10 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
             {
                 lstWriters.add((INBTSerializable<Tag>)prov);
                 lstNames.add(entry.getKey().toString());
+            }
+            if (prov instanceof INetworkCapability networkCap)
+            {
+                this.networkCapabilities.put(entry.getKey().toString(), networkCap);
             }
         }
 
@@ -139,6 +151,47 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
                 writers[x].deserializeNBT(nbt.get(names[x]));
             }
         }
+    }
+
+    @Override
+    public void encode(FriendlyByteBuf out, boolean writeAll)
+    {
+        for (Map.Entry<String, INetworkCapability> entry : networkCapabilities.entrySet())
+        {
+            if (!writeAll && !entry.getValue().requiresSync())
+                continue;
+            out.writeBoolean(true);
+            out.writeUtf(entry.getKey(), 0x100);
+            var tempBuf = new FriendlyByteBuf(Unpooled.buffer());
+            entry.getValue().encode(tempBuf, writeAll);
+            out.writeVarInt(tempBuf.readableBytes());
+            out.writeBytes(tempBuf);
+            tempBuf.release();
+        }
+        out.writeBoolean(false);
+    }
+
+    @Override
+    public void decode(FriendlyByteBuf in)
+    {
+        while (in.readBoolean())
+        {
+            String name = in.readUtf(0x100);
+            int dataSize = in.readVarInt();
+            INetworkCapability cap = networkCapabilities.get(name);
+            if (cap == null)
+            {
+                in.readerIndex(in.readerIndex() + dataSize);
+                continue;
+            }
+            cap.decode(in);
+        }
+    }
+
+    @Override
+    public boolean requiresSync()
+    {
+        return networkCapabilities.values().stream().anyMatch(INetworkCapability::requiresSync);
     }
 
     public boolean areCompatible(@Nullable CapabilityDispatcher other) //Called from ItemStack to compare equality.

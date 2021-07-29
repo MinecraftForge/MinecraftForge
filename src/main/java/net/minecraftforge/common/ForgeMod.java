@@ -52,6 +52,7 @@ import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.network.ForgeNetwork;
 import net.minecraftforge.network.VanillaPacketSplitter;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.server.command.EnumArgument;
@@ -98,14 +99,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-@Mod("forge")
+@Mod(ForgeMod.ID)
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 {
+    public static final String ID = "forge";
+
     public static final String VERSION_CHECK_CAT = "version_checking";
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEMOD = MarkerManager.getMarker("FORGEMOD");
 
-    private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Attribute.class, "forge");
+    private static final DeferredRegister<Attribute> ATTRIBUTES = DeferredRegister.create(Attribute.class, ID);
 
     public static final RegistryObject<Attribute> SWIM_SPEED = ATTRIBUTES.register("swim_speed", () -> new RangedAttribute("forge.swimSpeed", 1.0D, 0.0D, 1024.0D).setSyncable(true));
     public static final RegistryObject<Attribute> NAMETAG_DISTANCE = ATTRIBUTES.register("nametag_distance", () -> new RangedAttribute("forge.nameTagDistance", 64.0D, 0.0D, 64.0).setSyncable(true));
@@ -136,6 +139,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         LOGGER.info(FORGEMOD,"Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
         INSTANCE = this;
         MinecraftForge.initialize();
+        ForgeNetwork.init();
         CrashReportCallables.registerCrashCallable("Crash Report UUID", ()-> {
             final UUID uuid = UUID.randomUUID();
             LOGGER.fatal("Preparing crash report with UUID {}", uuid);
@@ -274,7 +278,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         if (enableMilkFluid)
         {
             // set up attributes
-            FluidAttributes.Builder attributesBuilder = FluidAttributes.builder(new ResourceLocation("forge", "block/milk_still"), new ResourceLocation("forge", "block/milk_flowing")).density(1024).viscosity(1024);
+            FluidAttributes.Builder attributesBuilder = FluidAttributes.builder(new ResourceLocation(ID, "block/milk_still"), new ResourceLocation(ID, "block/milk_flowing")).density(1024).viscosity(1024);
             ForgeFlowingFluid.Properties properties = new ForgeFlowingFluid.Properties(MILK, FLOWING_MILK, attributesBuilder).bucket(() -> Items.MILK_BUCKET);
             // register fluids
             event.getRegistry().register(new ForgeFlowingFluid.Source(properties).setRegistryName(MILK.getId()));
@@ -294,11 +298,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
         CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
 
-        CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
-        CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
+        CraftingHelper.register(new ResourceLocation(ID, "compound"), CompoundIngredient.Serializer.INSTANCE);
+        CraftingHelper.register(new ResourceLocation(ID, "nbt"), NBTIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
 
-        event.getRegistry().register(new ConditionalRecipe.Serializer<Recipe<?>>().setRegistryName(new ResourceLocation("forge", "conditional")));
+        event.getRegistry().register(new ConditionalRecipe.Serializer<Recipe<?>>().setRegistryName(new ResourceLocation(ID, "conditional")));
 
     }
 
@@ -307,6 +311,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public void registerLootData(RegistryEvent.Register<GlobalLootModifierSerializer<?>> event)
     {
         // Ignore the event itself: this is done only not to statically initialize our custom LootConditionType
-        Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
+        Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation(ID, "loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
     }
 }

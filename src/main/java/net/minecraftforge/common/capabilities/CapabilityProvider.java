@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -95,6 +96,34 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         {
             disp.deserializeNBT(tag);
         }
+    }
+
+    public final void encode(FriendlyByteBuf out, boolean writeAll)
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            disp.encode(out, writeAll);
+        }
+    }
+
+    public final void decode(FriendlyByteBuf in)
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            disp.decode(in);
+        }
+    }
+
+    public final boolean requiresSync()
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            return disp.requiresSync();
+        }
+        return false;
     }
 
     protected void invalidateCaps()

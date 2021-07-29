@@ -47,3 +47,17 @@
           EntityType<?> entitytype = p_140200_.m_6095_();
           int i = entitytype.m_20681_() * 16;
           if (i != 0) {
+@@ -1064,6 +_,13 @@
+ 
+    void m_143075_(ChunkPos p_143076_, ChunkHolder.FullChunkStatus p_143077_) {
+       this.f_143031_.m_156794_(p_143076_, p_143077_);
++   }
++
++   // Forge: expose TrackedEntity#seenBy
++   @Nullable
++   public Set<ServerPlayerConnection> getSeenBy(Entity entity) { 
++      TrackedEntity trackedEntity = this.f_140150_.get(entity.m_142049_());
++      return trackedEntity == null ? null : java.util.Collections.unmodifiableSet(trackedEntity.f_140475_);
+    }
+ 
+    class DistanceManager extends net.minecraft.server.level.DistanceManager {

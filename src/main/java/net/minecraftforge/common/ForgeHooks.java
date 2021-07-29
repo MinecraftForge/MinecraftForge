@@ -35,6 +35,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
@@ -168,6 +170,7 @@ import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.fmllegacy.packs.ResourcePackLoader;
+import net.minecraftforge.network.ForgeNetwork;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -605,6 +608,7 @@ public class ForgeHooks
                 {
                     entityPlayer.connection.send(pkt);
                 }
+                ForgeNetwork.sendBlockEntityCapabilities(blockEntity, true, Stream.of(entityPlayer.connection.getConnection()));
             }
         }
         return event.isCanceled() ? -1 : event.getExpToDrop();

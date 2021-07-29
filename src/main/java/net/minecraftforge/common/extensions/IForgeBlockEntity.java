@@ -34,8 +34,9 @@ import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.INetworkCapability;
 
-public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
+public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>, INetworkCapability
 {
     private BlockEntity self() { return (BlockEntity) this; }
 

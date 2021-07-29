@@ -25,23 +25,30 @@
        if (p_130056_.m_41619_()) {
           this.writeBoolean(false);
        } else {
-@@ -447,8 +_,8 @@
+@@ -446,11 +_,11 @@
+          Item item = p_130056_.m_41720_();
           this.m_130130_(Item.m_41393_(item));
           this.writeByte(p_130056_.m_41613_());
-          CompoundTag compoundtag = null;
+-         CompoundTag compoundtag = null;
 -         if (item.m_41465_() || item.m_41468_()) {
 -            compoundtag = p_130056_.m_41783_();
++         CompoundTag compoundtag = new CompoundTag();
 +         if (item.isDamageable(p_130056_) || item.m_41468_()) {
 +            compoundtag = limitedTag ? p_130056_.getShareTag() : p_130056_.m_41783_();
           }
- 
+-
++         p_130056_.encode(compoundtag, "__FORGE_CAPABILITIES__", true);
           this.m_130079_(compoundtag);
-@@ -464,7 +_,7 @@
+       }
+ 
+@@ -464,7 +_,9 @@
           int i = this.m_130242_();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.m_41445_(i), j);
 -         itemstack.m_41751_(this.m_130260_());
-+         itemstack.readShareTag(this.m_130260_());
++         CompoundTag compoundTag = this.m_130260_();
++         itemstack.readShareTag(compoundTag);
++         itemstack.decode(compoundTag, "__FORGE_CAPABILITIES__");
           return itemstack;
        }
     }

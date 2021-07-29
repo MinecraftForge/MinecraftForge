@@ -43,3 +43,19 @@
     }
  
     public void m_8536_(Consumer<Packet<?>> p_8537_) {
+@@ -207,6 +_,7 @@
+       if (!this.f_8510_.m_20088_().m_135388_()) {
+          p_8537_.accept(new ClientboundSetEntityDataPacket(this.f_8510_.m_142049_(), this.f_8510_.m_20088_(), true));
+       }
++      net.minecraftforge.network.ForgeNetwork.sendEntityCapabilities(this.f_8510_, true);
+ 
+       boolean flag = this.f_8512_;
+       if (this.f_8510_ instanceof LivingEntity) {
+@@ -280,6 +_,7 @@
+          set.clear();
+       }
+ 
++      net.minecraftforge.network.ForgeNetwork.sendEntityCapabilities(this.f_8510_, false);
+    }
+ 
+    private void m_8544_() {

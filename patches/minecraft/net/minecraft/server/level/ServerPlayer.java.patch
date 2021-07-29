@@ -1,5 +1,17 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
+@@ -200,6 +_,11 @@
+       private void m_143454_(AbstractContainerMenu p_143455_, int p_143456_, int p_143457_) {
+          ServerPlayer.this.f_8906_.m_141995_(new ClientboundContainerSetDataPacket(p_143455_.f_38840_, p_143456_, p_143457_));
+       }
++
++      @Override
++      public void sendDirtySlotCapabilities(AbstractContainerMenu menu, int slotIndex, ItemStack itemStack) {
++          net.minecraftforge.network.ForgeNetwork.sendSlotCapabilities(menu, slotIndex, itemStack, ServerPlayer.this, false);
++      }
+    };
+    private final ContainerListener f_143380_ = new ContainerListener() {
+       public void m_7934_(AbstractContainerMenu p_143466_, int p_143467_, ItemStack p_143468_) {
 @@ -500,6 +_,7 @@
     }
  
@@ -69,6 +81,14 @@
           }
  
           return this;
+@@ -758,6 +_,7 @@
+          if (clientboundblockentitydatapacket != null) {
+             this.f_8906_.m_141995_(clientboundblockentitydatapacket);
+          }
++         net.minecraftforge.network.ForgeNetwork.sendBlockEntityCapabilities(p_9097_, true, java.util.stream.Stream.of(this.f_8906_.m_6198_()));
+       }
+ 
+    }
 @@ -768,6 +_,9 @@
     }
  
