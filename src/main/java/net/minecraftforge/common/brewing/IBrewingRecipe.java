@@ -24,44 +24,42 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
+import net.minecraftforge.common.ForgeMod;
+import org.apache.commons.lang3.NotImplementedException;
 
 public interface IBrewingRecipe extends Recipe<Container>
 {
 
     /**
-     * Returns true is the passed ItemStack is an input for this recipe. "Input"
+     * Returns true is the passed ItemStack is an base for this recipe. "Input"
      * being the item that goes in one of the three bottom slots of the brewing
      * stand (e.g: water bottle)
      */
     boolean isInput(ItemStack input);
 
     /**
-     * Returns true if the passed ItemStack is an ingredient for this recipe.
+     * Returns true if the passed ItemStack is an reagent for this recipe.
      * "Ingredient" being the item that goes in the top slot of the brewing
      * stand (e.g: nether wart)
      */
     boolean isIngredient(ItemStack ingredient);
 
     /**
-     * Returns the output when the passed input is brewed with the passed
-     * ingredient. Empty if invalid input or ingredient.
+     * Returns the result when the passed base is brewed with the passed
+     * reagent. Empty if invalid base or reagent.
      */
     ItemStack getOutput(ItemStack input, ItemStack ingredient);
 
     @Override
     default boolean matches(Container container, Level level)
     {
-        if (container instanceof BrewingStandBlockEntity)
-            return (isInput(container.getItem(0)) || isInput(container.getItem(1)) || isInput(container.getItem(2))) && isIngredient(container.getItem(3));
-        else
-            return isInput(container.getItem(0)) && isInput(container.getItem(1));
+        throw new NotImplementedException("Use the methods of IBrewingRecipe instead");
     }
 
     @Override
     default ItemStack assemble(Container container)
     {
-        return getOutput(container.getItem(0), container.getItem(1));
+        throw new NotImplementedException("Use the methods of IBrewingRecipe instead");
     }
 
     @Override
@@ -73,6 +71,6 @@ public interface IBrewingRecipe extends Recipe<Container>
     @Override
     default RecipeType<?> getType()
     {
-        return BrewingRecipeRegistry.BREWING;
+        return ForgeMod.BREWING;
     }
 }

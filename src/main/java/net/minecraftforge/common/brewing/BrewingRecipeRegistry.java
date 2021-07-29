@@ -21,8 +21,8 @@ package net.minecraftforge.common.brewing;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.ForgeMod;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -30,18 +30,16 @@ import java.util.List;
 
 public class BrewingRecipeRegistry {
 
-    public static final RecipeType<BrewingRecipe> BREWING = new RecipeType<>() {};
-
     /**
-     * Returns the output ItemStack obtained by brewing the passed input and
-     * ingredient.
+     * Returns the result ItemStack obtained by brewing the passed base and
+     * reagent.
      */
     public static ItemStack getOutput(Level level, ItemStack input, ItemStack ingredient)
     {
         if (input.isEmpty() || input.getCount() != 1) return ItemStack.EMPTY;
         if (ingredient.isEmpty()) return ItemStack.EMPTY;
 
-        for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(BREWING))
+        for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING))
         {
             ItemStack output = recipe.getOutput(input, ingredient);
             if (!output.isEmpty())
@@ -53,7 +51,7 @@ public class BrewingRecipeRegistry {
     }
 
     /**
-     * Returns true if the passed input and ingredient have an output
+     * Returns true if the passed base and reagent have an result
      */
     public static boolean hasOutput(Level level, ItemStack input, ItemStack ingredient)
     {
@@ -97,7 +95,7 @@ public class BrewingRecipeRegistry {
     }
 
     /**
-     * Returns true if the passed ItemStack is a valid ingredient for any of the
+     * Returns true if the passed ItemStack is a valid reagent for any of the
      * recipes in the registry.
      */
     public static boolean isValidIngredient(@Nullable Level level, ItemStack stack)
@@ -106,7 +104,7 @@ public class BrewingRecipeRegistry {
 
         if (level != null)
         {
-            for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(BREWING))
+            for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING))
             {
                 if (recipe.isIngredient(stack))
                 {
@@ -118,7 +116,7 @@ public class BrewingRecipeRegistry {
     }
 
     /**
-     * Returns true if the passed ItemStack is a valid input for any of the
+     * Returns true if the passed ItemStack is a valid base for any of the
      * recipes in the registry.
      */
     public static boolean isValidInput(@Nullable Level level, ItemStack stack)
@@ -127,7 +125,7 @@ public class BrewingRecipeRegistry {
 
         if (level != null)
         {
-            for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(BREWING))
+            for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING))
             {
                 if (recipe.isInput(stack))
                 {
@@ -143,6 +141,6 @@ public class BrewingRecipeRegistry {
      */
     public static List<IBrewingRecipe> getRecipes(Level level)
     {
-        return Collections.unmodifiableList(level.getRecipeManager().getAllRecipesFor(BREWING));
+        return Collections.unmodifiableList(level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING));
     }
 }

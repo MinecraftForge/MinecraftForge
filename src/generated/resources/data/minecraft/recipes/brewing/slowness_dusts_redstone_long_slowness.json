@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:slowness",
-  "ingredient": {
+  "base": "minecraft:slowness",
+  "reagent": {
     "tag": "forge:dusts/redstone"
   },
-  "output_potion": "minecraft:long_slowness"
+  "result": "minecraft:long_slowness"
 }

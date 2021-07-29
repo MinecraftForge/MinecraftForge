@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:weakness",
-  "ingredient": {
+  "base": "minecraft:weakness",
+  "reagent": {
     "tag": "forge:dusts/redstone"
   },
-  "output_potion": "minecraft:long_weakness"
+  "result": "minecraft:long_weakness"
 }

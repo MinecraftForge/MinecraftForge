@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:awkward",
-  "ingredient": {
+  "base": "minecraft:awkward",
+  "reagent": {
     "item": "minecraft:golden_carrot"
   },
-  "output_potion": "minecraft:night_vision"
+  "result": "minecraft:night_vision"
 }

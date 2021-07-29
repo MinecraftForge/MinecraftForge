@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:water",
-  "ingredient": {
+  "base": "minecraft:water",
+  "reagent": {
     "item": "minecraft:magma_cream"
   },
-  "output_potion": "minecraft:mundane"
+  "result": "minecraft:mundane"
 }

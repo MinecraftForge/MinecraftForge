@@ -35,7 +35,6 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.brewing.BrewingRecipe;
-import net.minecraftforge.common.brewing.BrewingRecipeRegistry;
 import net.minecraftforge.common.brewing.ContainerBrewingRecipe;
 import net.minecraftforge.common.brewing.MixingBrewingRecipe;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -120,6 +119,14 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 5.0D, 0.0D, 1024.0D).setSyncable(true));
 
+    public static final RecipeType<BrewingRecipe> BREWING = new RecipeType<>() {};
+
+    private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, "forge");
+
+    public static final RegistryObject<RecipeSerializer<?>> BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("brewing", BrewingRecipe.Serializer::new);
+    public static final RegistryObject<RecipeSerializer<?>> CONTAINER_BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("container_brewing", ContainerBrewingRecipe.Serializer::new);
+    public static final RegistryObject<RecipeSerializer<?>> MIXING_BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("mixing_brewing", MixingBrewingRecipe.Serializer::new);
+
     private static boolean enableMilkFluid = false;
     public static final RegistryObject<Fluid> MILK = RegistryObject.of(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.of(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
@@ -163,6 +170,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.addGenericListener(Fluid.class, this::registerFluids);
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
+        RECIPE_SERIALIZERS.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
@@ -305,16 +313,13 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
         CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
 
-        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("forge", "brewing"), BrewingRecipeRegistry.BREWING);
+        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("forge", "brewing"), BREWING);
 
         CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
 
         event.getRegistry().register(new ConditionalRecipe.Serializer<Recipe<?>>().setRegistryName(new ResourceLocation("forge", "conditional")));
-        event.getRegistry().register(new BrewingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "brewing")));
-        event.getRegistry().register(new ContainerBrewingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "container_brewing")));
-        event.getRegistry().register(new MixingBrewingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "mixing_brewing")));
 
     }
 

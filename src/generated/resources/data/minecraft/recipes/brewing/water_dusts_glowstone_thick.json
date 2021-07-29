@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:water",
-  "ingredient": {
+  "base": "minecraft:water",
+  "reagent": {
     "tag": "forge:dusts/glowstone"
   },
-  "output_potion": "minecraft:thick"
+  "result": "minecraft:thick"
 }

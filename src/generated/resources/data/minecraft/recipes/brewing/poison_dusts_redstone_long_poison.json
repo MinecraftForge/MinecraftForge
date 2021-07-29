@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:poison",
-  "ingredient": {
+  "base": "minecraft:poison",
+  "reagent": {
     "tag": "forge:dusts/redstone"
   },
-  "output_potion": "minecraft:long_poison"
+  "result": "minecraft:long_poison"
 }

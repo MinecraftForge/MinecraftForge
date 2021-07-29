@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:leaping",
-  "ingredient": {
+  "base": "minecraft:leaping",
+  "reagent": {
     "tag": "forge:dusts/glowstone"
   },
-  "output_potion": "minecraft:strong_leaping"
+  "result": "minecraft:strong_leaping"
 }

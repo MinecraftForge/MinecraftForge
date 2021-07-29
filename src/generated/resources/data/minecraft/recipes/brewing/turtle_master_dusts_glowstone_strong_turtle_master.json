@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:turtle_master",
-  "ingredient": {
+  "base": "minecraft:turtle_master",
+  "reagent": {
     "tag": "forge:dusts/glowstone"
   },
-  "output_potion": "minecraft:strong_turtle_master"
+  "result": "minecraft:strong_turtle_master"
 }

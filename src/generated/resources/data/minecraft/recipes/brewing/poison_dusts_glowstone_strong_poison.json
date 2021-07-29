@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:poison",
-  "ingredient": {
+  "base": "minecraft:poison",
+  "reagent": {
     "tag": "forge:dusts/glowstone"
   },
-  "output_potion": "minecraft:strong_poison"
+  "result": "minecraft:strong_poison"
 }

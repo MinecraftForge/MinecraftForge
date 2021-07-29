@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:strong_healing",
-  "ingredient": {
+  "base": "minecraft:strong_healing",
+  "reagent": {
     "item": "minecraft:fermented_spider_eye"
   },
-  "output_potion": "minecraft:strong_harming"
+  "result": "minecraft:strong_harming"
 }

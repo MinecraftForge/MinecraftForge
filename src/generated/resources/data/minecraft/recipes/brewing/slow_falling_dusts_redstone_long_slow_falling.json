@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:slow_falling",
-  "ingredient": {
+  "base": "minecraft:slow_falling",
+  "reagent": {
     "tag": "forge:dusts/redstone"
   },
-  "output_potion": "minecraft:long_slow_falling"
+  "result": "minecraft:long_slow_falling"
 }

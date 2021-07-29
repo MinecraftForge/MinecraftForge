@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:strength",
-  "ingredient": {
+  "base": "minecraft:strength",
+  "reagent": {
     "tag": "forge:dusts/glowstone"
   },
-  "output_potion": "minecraft:strong_strength"
+  "result": "minecraft:strong_strength"
 }

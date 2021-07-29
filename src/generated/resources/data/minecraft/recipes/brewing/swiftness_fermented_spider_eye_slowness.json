@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:swiftness",
-  "ingredient": {
+  "base": "minecraft:swiftness",
+  "reagent": {
     "item": "minecraft:fermented_spider_eye"
   },
-  "output_potion": "minecraft:slowness"
+  "result": "minecraft:slowness"
 }

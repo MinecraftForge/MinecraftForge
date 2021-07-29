@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:leaping",
-  "ingredient": {
+  "base": "minecraft:leaping",
+  "reagent": {
     "tag": "forge:dusts/redstone"
   },
-  "output_potion": "minecraft:long_leaping"
+  "result": "minecraft:long_leaping"
 }

@@ -1,8 +1,8 @@
 {
   "type": "forge:mixing_brewing",
-  "input_potion": "minecraft:awkward",
-  "ingredient": {
+  "base": "minecraft:awkward",
+  "reagent": {
     "item": "minecraft:phantom_membrane"
   },
-  "output_potion": "minecraft:slow_falling"
+  "result": "minecraft:slow_falling"
 }

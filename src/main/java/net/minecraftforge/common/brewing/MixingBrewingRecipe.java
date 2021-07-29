@@ -20,6 +20,7 @@
 package net.minecraftforge.common.brewing;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -29,39 +30,35 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public record MixingBrewingRecipe(@Nonnull ResourceLocation id,
-                                  @Nonnull Potion input,
-                                  @Nonnull Ingredient ingredient,
-                                  @Nonnull Potion output) implements IBrewingRecipe
+                                  @Nonnull Potion base,
+                                  @Nonnull Ingredient reagent,
+                                  @Nonnull Potion result) implements IBrewingRecipe
 {
-    @ObjectHolder("forge:mixing_brewing")
-    public static final RecipeSerializer<MixingBrewingRecipe> SERIALIZER = null;
-
     @Override
     public boolean isInput(@Nonnull ItemStack stack)
     {
         final Item item = stack.getItem();
-        return (item == Items.POTION || item == Items.SPLASH_POTION || item == Items.LINGERING_POTION || item == Items.GLASS_BOTTLE) && PotionUtils.getPotion(stack) == input();
+        return (item == Items.POTION || item == Items.SPLASH_POTION || item == Items.LINGERING_POTION || item == Items.GLASS_BOTTLE) && PotionUtils.getPotion(stack) == base();
     }
 
     @Override
     public ItemStack getOutput(ItemStack input, ItemStack ingredient)
     {
-        return isInput(input) && isIngredient(ingredient) ? PotionUtils.setPotion(new ItemStack(input.getItem()), output()) : ItemStack.EMPTY;
+        return isInput(input) && isIngredient(ingredient) ? PotionUtils.setPotion(new ItemStack(input.getItem()), result()) : ItemStack.EMPTY;
     }
 
     @Override
     public boolean isIngredient(ItemStack ingredient)
     {
-        return this.ingredient.test(ingredient);
+        return this.reagent.test(ingredient);
     }
 
     @Override
@@ -79,7 +76,7 @@ public record MixingBrewingRecipe(@Nonnull ResourceLocation id,
     @Override
     public RecipeSerializer<?> getSerializer()
     {
-        return SERIALIZER;
+        return ForgeMod.MIXING_BREWING_SERIALIZER.get();
     }
 
     public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<MixingBrewingRecipe>
@@ -88,9 +85,13 @@ public record MixingBrewingRecipe(@Nonnull ResourceLocation id,
         @Override
         public MixingBrewingRecipe fromJson(final ResourceLocation p_199425_1_, final JsonObject p_199425_2_)
         {
-            Potion input = ForgeRegistries.POTION_TYPES.getValue(new ResourceLocation(p_199425_2_.get("input_potion").getAsString()));
-            Ingredient ingredient = Ingredient.fromJson(p_199425_2_.getAsJsonObject("ingredient"));
-            Potion output = ForgeRegistries.POTION_TYPES.getValue(new ResourceLocation(p_199425_2_.get("output_potion").getAsString()));
+            Potion input = ForgeRegistries.POTION_TYPES.getValue(new ResourceLocation(p_199425_2_.get("base").getAsString()));
+            Ingredient ingredient = Ingredient.fromJson(p_199425_2_.getAsJsonObject("reagent"));
+            Potion output = ForgeRegistries.POTION_TYPES.getValue(new ResourceLocation(p_199425_2_.get("result").getAsString()));
+            if (input == null)
+                throw new JsonParseException("Invalid item supplied for base in " + p_199425_1_);
+            if (output == null)
+                throw new JsonParseException("Invalid item supplied for result in " + p_199425_1_);
             return new MixingBrewingRecipe(p_199425_1_, input, ingredient, output);
         }
 
@@ -107,9 +108,9 @@ public record MixingBrewingRecipe(@Nonnull ResourceLocation id,
         @Override
         public void toNetwork(final FriendlyByteBuf p_199427_1_, final MixingBrewingRecipe p_199427_2_)
         {
-            p_199427_1_.writeResourceLocation(ForgeRegistries.POTION_TYPES.getKey(p_199427_2_.input));
-            p_199427_2_.ingredient.toNetwork(p_199427_1_);
-            p_199427_1_.writeResourceLocation(ForgeRegistries.POTION_TYPES.getKey(p_199427_2_.output));
+            p_199427_1_.writeResourceLocation(ForgeRegistries.POTION_TYPES.getKey(p_199427_2_.base));
+            p_199427_2_.reagent.toNetwork(p_199427_1_);
+            p_199427_1_.writeResourceLocation(ForgeRegistries.POTION_TYPES.getKey(p_199427_2_.result));
         }
     }
 }
