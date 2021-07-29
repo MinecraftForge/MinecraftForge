@@ -24,8 +24,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.SharedConstants;
-import net.minecraft.Util;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
@@ -43,6 +41,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class WorldGenValidator {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     /**
@@ -106,11 +105,9 @@ public class WorldGenValidator {
 
         // Checks to make sure the element can be turned into JSON safely or else Minecraft will explode with vague errors.
         JsonElement worldgenElementJSON = codec.encode(worldgenElement, JsonOps.INSTANCE, JsonOps.INSTANCE.empty())
-                .getOrThrow(true, errorMsg -> {
-                    throw new UnsupportedOperationException(
-                            worldgenElementType + " was unable to be turned into json in " + biomeName + " biome. Please breakpoint this line and look at worldgenElement above to see which worldgen element is broken. " +
-                                    "Check to make sure your codecs are correct or it and that the values you give it does not exceed any limits in the object's codecs. Error: " + errorMsg);
-                });
+                .getOrThrow(false, errorMsg ->
+                        LOGGER.error(worldgenElementType + " was unable to be turned into json in " + biomeName + " biome. Please breakpoint this line and look at worldgenElement above to see which worldgen element is broken. " +
+                                "Check to make sure your codecs are correct or it and that the values you give it does not exceed any limits in the object's codecs. Error: " + errorMsg));
 
         // Checks to make sure the element is registered.
         if (!registry.getResourceKey(worldgenElement).isPresent()) {
