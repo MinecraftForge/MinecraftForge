@@ -17,10 +17,10 @@ import java.util.Map;
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class ModValidator {
-    private static final Logger                            LOGGER = LogManager.getLogger();
-    private final        Map<IModFile.Type, List<ModFile>> modFiles;
-    private final        List<ModFile>                     candidatePlugins;
-    private final List<ModFile>                     candidateMods;
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final Map<IModFile.Type, List<ModFile>> modFiles;
+    private final List<ModFile> candidatePlugins;
+    private final List<ModFile> candidateMods;
     private final List<ModFile> candidateLibraries;
     private LoadingModList loadingModList;
     private List<ModFile> brokenFiles;
