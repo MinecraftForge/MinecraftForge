@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/levelgen/WorldGenSettings.java
 +++ b/net/minecraft/world/level/levelgen/WorldGenSettings.java
+@@ -70,6 +_,7 @@
+ 
+    private WorldGenSettings(long p_64614_, boolean p_64615_, boolean p_64616_, MappedRegistry<LevelStem> p_64617_, Optional<String> p_64618_) {
+       this.f_64602_ = p_64614_;
++      net.minecraftforge.common.world.DefaultWorldSeed.setSeedInternal(f_64602_);
+       this.f_64603_ = p_64615_;
+       this.f_64604_ = p_64616_;
+       this.f_64605_ = p_64617_;
 @@ -183,7 +_,7 @@
        String s3 = (String)p_64649_.get("level-type");
        String s4 = Optional.ofNullable(s3).map((p_64651_) -> {
