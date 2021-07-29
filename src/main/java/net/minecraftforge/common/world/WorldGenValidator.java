@@ -35,6 +35,7 @@ import net.minecraft.world.level.levelgen.GenerationStep;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,6 +51,9 @@ public class WorldGenValidator {
      * Failure to do so may cause unregistered worldgen elements to nuke registered ones from the same biome.
      */
     public static void validateWorldGen(RegistryAccess.RegistryHolder registryHolder) {
+        // Do not run in production in order to not slowdown users with the checks
+        if (FMLEnvironment.production) return;
+
         // Small cache so we can skip already checked out worldgen elements to speedup validating.
         Set<Object> checkedElements = new HashSet<>();
 
@@ -101,21 +105,19 @@ public class WorldGenValidator {
     private static <T> void validate(T worldgenElement, Registry<T> registry, String worldgenElementType, Codec<T> codec, ResourceLocation biomeName) {
 
         // Checks to make sure the element can be turned into JSON safely or else Minecraft will explode with vague errors.
-        JsonElement worldgenElementJSON;
-        try {
-            worldgenElementJSON = codec.encode(worldgenElement, JsonOps.INSTANCE, JsonOps.INSTANCE.empty()).get().left().orElseThrow(UnsupportedOperationException::new);
-        } catch (Throwable e) {
-            throw new UnsupportedOperationException(
-                    worldgenElementType + " was unable to be turned into json in " + biomeName + " biome. Please breakpoint this line and look at worldgenElement above to see which worldgen element is broken. " +
-                            "Check to make sure your codecs are correct or it and that the values you give it does not exceed any limits in the object's codecs.");
-        }
+        JsonElement worldgenElementJSON = codec.encode(worldgenElement, JsonOps.INSTANCE, JsonOps.INSTANCE.empty())
+                .getOrThrow(true, errorMsg -> {
+                    throw new UnsupportedOperationException(
+                            worldgenElementType + " was unable to be turned into json in " + biomeName + " biome. Please breakpoint this line and look at worldgenElement above to see which worldgen element is broken. " +
+                                    "Check to make sure your codecs are correct or it and that the values you give it does not exceed any limits in the object's codecs. Error: " + errorMsg);
+                });
 
         // Checks to make sure the element is registered.
         if (!registry.getResourceKey(worldgenElement).isPresent()) {
             throw new UnsupportedOperationException(
                     "Unregistered " + worldgenElementType + " found in " + biomeName + " biome. " +
                             "Please register your " + worldgenElementType + " using Minecraft's Registry class within FMLCommonSetupEvent's enqueueWork. " +
-                            "Failure to do so may cause unregistered worldgen elements to nuke registered ones from the same biome which is difficult for players to debug." +
+                            "Failure to do so may cause unregistered worldgen elements to nuke registered ones from the same biome which is difficult for players to debug. " +
                             "See this json of the unregistered worldgen element to know which one is unregister: \n" + (worldgenElementJSON != null ? gson.toJson(worldgenElementJSON) : "Unable to be parsed into JSON"));
         }
     }
