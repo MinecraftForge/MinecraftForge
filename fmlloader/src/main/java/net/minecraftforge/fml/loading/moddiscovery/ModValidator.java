@@ -6,22 +6,21 @@ import cpw.mods.modlauncher.api.ITransformationService;
 import net.minecraftforge.fml.loading.*;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.ModFileFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class ModValidator {
-    private static final Logger LOGGER = LogManager.getLogger();
-    private final Map<IModFile.Type, List<ModFile>> modFiles;
-    private final List<ModFile> candidatePlugins;
-    private final List<ModFile> candidateMods;
+    private static final Logger                            LOGGER = LogManager.getLogger();
+    private final        Map<IModFile.Type, List<ModFile>> modFiles;
+    private final        List<ModFile>                     candidatePlugins;
+    private final List<ModFile>                     candidateMods;
     private final List<ModFile> candidateLibraries;
     private LoadingModList loadingModList;
     private List<ModFile> brokenFiles;

@@ -19,34 +19,35 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import com.google.common.collect.Lists;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.LibraryFinder;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.jar.JarInputStream;
 import java.util.stream.Stream;
-import java.util.zip.ZipInputStream;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class ClasspathLocator extends AbstractJarFileLocator {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String MODS_TOML = "META-INF/mods.toml";
-    private static final String MANIFEST = "META-INF/MANIFEST.MF";
-    private final List<String> ignoreList = Arrays.stream(System.getProperty("ignoreList", "").split(",")).toList();
-    private boolean enabled = false;
+    private static final String       MANIFEST   = "META-INF/MANIFEST.MF";
+    private final        List<String> ignoreList = Arrays.stream(System.getProperty("ignoreList", "").split(",")).toList();
+    private              boolean      enabled    = false;
 
-    private static final Predicate<SecureJar> ACCEPT_ALL_FILTER = sj -> true;
+    private static final Predicate<SecureJar> ACCEPT_ALL_FILTER = secureJar -> true;
 
     @Override
     public String name() {
