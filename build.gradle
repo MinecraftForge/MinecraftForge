@@ -52,7 +52,7 @@ ext {
     EVENTBUS_VERSION = '5.0.3'
     MODLAUNCHER_VERSION = '9.0.7'
     SECUREJARHANDLER_VERSION = '0.9.46'
-    BOOTSTRAPLAUNCHER_VERSION = '0.1.15'
+    BOOTSTRAPLAUNCHER_VERSION = '0.1.16'
     ASM_VERSION = '9.1'
     INSTALLER_VERSION = '2.1.4'
 
@@ -391,12 +391,13 @@ def sharedFmlonlyForge = { Project prj ->
         }
 
         // SecureJarHandler bootstrap values.
-        run.property 'legacyClassPath', '{runtime_classpath}'
-        run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name}.join(',') + ",client-extra,fmlcore,javafmllanguage,mclanguage,${prj.name}-${prj.version},${prj.rootProject.ext.MC_VERSION}-${prj.name}${prj.version.substring(prj.rootProject.ext.MC_VERSION.length())}"
+        run.property 'ignoreList', prj.configurations.moduleonly.files.collect {it.name.replaceAll(/([-_]([.\d]*\d+)|\.jar$)/, '') }.join(',') + ",client-extra,fmlcore,javafmllanguage,mclanguage,${prj.name}-"
         run.property 'mergeModules', 'jna-5.8.0.jar,jna-platform-58.0.jar,java-objc-bridge-1.0.0.jar'
         if (userdevRuns.contains(run)) {
+            run.property 'legacyClassPath.file', '{minecraft_classpath_file}'
             run.jvmArgs '-p', '{modules}'
         } else {
+            run.property 'legacyClassPath.file', '{runtime_classpath_file}'
             run.jvmArgs '-p', prj.configurations.moduleonly.files.collect { it.path }.join(File.pathSeparator)
         }
         run.jvmArgs '--add-modules', 'ALL-MODULE-PATH'
@@ -570,8 +571,7 @@ project(':fmlonly') {
                            '--fml.mcVersion', MC_VERSION,
                            '--fml.forgeGroup', project.group,
                            '--fml.mcpVersion', MCP_VERSION],
-                    jvm: ['-DlegacyClassPath=${classpath}',
-                          "-DignoreList=${fmlonly_client.properties.ignoreList}",
+                    jvm: ["-DignoreList=${fmlonly_client.properties.ignoreList},\${version_name}.jar",
                           "-DmergeModules=${fmlonly_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
                           '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{"\${library_directory}/${it.downloads.artifact.path}"}.join('${classpath_separator}'),
@@ -1078,8 +1078,7 @@ project(':forge') {
                            '--fml.mcVersion', MC_VERSION,
                            '--fml.forgeGroup', project.group,
                            '--fml.mcpVersion', MCP_VERSION],
-                    jvm: ['-DlegacyClassPath=${classpath}',
-                          "-DignoreList=${forge_client.properties.ignoreList}",
+                    jvm: ["-DignoreList=${forge_client.properties.ignoreList},\${version_name}.jar",
                           "-DmergeModules=${forge_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
                           '-p', Util.getArtifacts(project, configurations.moduleonly, false).values().collect{'${library_directory}/' + it.downloads.artifact.path}.join('${classpath_separator}'),
