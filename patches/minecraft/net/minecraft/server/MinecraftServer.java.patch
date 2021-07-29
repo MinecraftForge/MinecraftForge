@@ -9,6 +9,14 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
+@@ -340,6 +_,7 @@
+    }
+ 
+    protected void m_129815_(ChunkProgressListener p_129816_) {
++      net.minecraftforge.common.world.WorldGenValidator.validateWorldGen(this.f_129746_);
+       ServerLevelData serverleveldata = this.f_129749_.m_5996_();
+       WorldGenSettings worldgensettings = this.f_129749_.m_5961_();
+       boolean flag = worldgensettings.m_64668_();
 @@ -402,6 +_,7 @@
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
              this.f_129762_.put(resourcekey1, serverlevel1);
