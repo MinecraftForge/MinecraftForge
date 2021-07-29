@@ -23,12 +23,16 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.stream.Stream;
+
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.network.ForgeNetwork;
 import net.minecraftforge.event.TickEvent;
 
 public class BasicEventHooks
@@ -37,6 +41,8 @@ public class BasicEventHooks
     public static void firePlayerChangedDimensionEvent(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
+        // Re-send data to the player's client as its caps will be cleared
+        ForgeNetwork.sendEntityCapabilities(player, true, true, Stream.empty());
     }
 
     public static void firePlayerLoggedIn(Player player)
@@ -52,6 +58,8 @@ public class BasicEventHooks
     public static void firePlayerRespawnEvent(Player player, boolean endConquered)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerRespawnEvent(player, endConquered));
+       // Re-send data to the player's client as its caps will be cleared
+        ForgeNetwork.sendEntityCapabilities(player, true, true, Stream.empty()); 
     }
 
     public static void firePlayerItemPickupEvent(Player player, ItemEntity item, ItemStack clone)
