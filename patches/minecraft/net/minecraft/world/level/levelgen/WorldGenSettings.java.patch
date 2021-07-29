@@ -1,5 +1,13 @@
 --- a/net/minecraft/world/level/levelgen/WorldGenSettings.java
 +++ b/net/minecraft/world/level/levelgen/WorldGenSettings.java
+@@ -39,6 +_,7 @@
+       return p_64626_.group(Codec.LONG.fieldOf("seed").stable().forGetter(WorldGenSettings::m_64619_), Codec.BOOL.fieldOf("generate_features").orElse(true).stable().forGetter(WorldGenSettings::m_64657_), Codec.BOOL.fieldOf("bonus_chest").orElse(false).stable().forGetter(WorldGenSettings::m_64660_), MappedRegistry.m_122747_(Registry.f_122820_, Lifecycle.stable(), LevelStem.f_63970_).xmap(LevelStem::m_63987_, Function.identity()).fieldOf("dimensions").forGetter(WorldGenSettings::m_64663_), Codec.STRING.optionalFieldOf("legacy_custom_options").stable().forGetter((p_158959_) -> {
+          return p_158959_.f_64606_;
+       })).apply(p_64626_, p_64626_.stable(WorldGenSettings::new));
++   }).xmap(wgs -> new WorldGenSettings(wgs.m_64619_(), wgs.m_64657_(), wgs.m_64660_(), net.minecraftforge.common.ForgeHooks.loadDimensionsWithServerSeed(wgs.m_64619_(), wgs.m_64663_()), wgs.f_64606_),wgs -> {return wgs;
+    }).comapFlatMap(WorldGenSettings::m_64674_, Function.identity());
+    private static final Logger f_64601_ = LogManager.getLogger();
+    private final long f_64602_;
 @@ -183,7 +_,7 @@
        String s3 = (String)p_64649_.get("level-type");
        String s4 = Optional.ofNullable(s3).map((p_64651_) -> {

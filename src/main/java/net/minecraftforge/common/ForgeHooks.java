@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,11 +45,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.kinds.App;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.mojang.serialization.codecs.RecordCodecBuilder.Mu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -109,6 +112,7 @@ import net.minecraft.resources.RegistryReadOps;
 import net.minecraft.resources.RegistryWriteOps;
 import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
@@ -1405,5 +1409,34 @@ public class ForgeHooks
             newBuilder.combine(v);
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
+    }
+    
+    /** Called when dimensions are parsed **/
+    public static MappedRegistry<LevelStem> loadDimensionsWithServerSeed(long seed, MappedRegistry<LevelStem> dimensionRegistry)
+    {
+        MappedRegistry<LevelStem> seededRegistry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY, Lifecycle.experimental());
+        for (Entry<ResourceKey<LevelStem>, LevelStem> entry : dimensionRegistry.entrySet())
+        {
+            ResourceKey<LevelStem> key = entry.getKey();
+            LevelStem dimension = entry.getValue();
+            if (dimension.useServerSeed)
+            {
+                seededRegistry.register(key, new LevelStem(dimension.typeSupplier(), dimension.generator().withSeed(seed)), dimensionRegistry.lifecycle(entry.getValue()));
+            }
+            else
+            {
+                seededRegistry.register(key, dimension, dimensionRegistry.lifecycle(dimension));
+            }
+        }
+        return seededRegistry;
+    }
+    
+    /** Called in the LevelStem codec builder to add extra fields to dimension jsons **/
+    public static App<Mu<LevelStem>, LevelStem> expandLevelStemCodec(RecordCodecBuilder.Instance<LevelStem> builder, java.util.function.Supplier<App<Mu<LevelStem>, LevelStem>> vanillaFieldsSupplier)
+    {
+            App<Mu<LevelStem>, LevelStem> vanillaFields = vanillaFieldsSupplier.get();
+            return builder.group(vanillaFields).and(
+                    Codec.BOOL.optionalFieldOf("forge:use_server_seed", false).forGetter(levelStem -> levelStem.useServerSeed))
+                .apply(builder, (stem, useServerSeed) -> new LevelStem(stem.typeSupplier(), stem.generator(), useServerSeed));
     }
 }
