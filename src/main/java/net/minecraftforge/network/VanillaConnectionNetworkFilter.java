@@ -20,19 +20,27 @@
 package net.minecraftforge.network;
 
 import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import javax.annotation.Nonnull;
 
 import io.netty.channel.ChannelHandler;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.network.IPacket;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SAdvancementInfoPacket;
 import net.minecraft.network.play.server.SCommandListPacket;
 import net.minecraft.network.play.server.SEntityPropertiesPacket;
 import net.minecraft.network.play.server.SUpdateRecipesPacket;
@@ -44,6 +52,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.mojang.brigadier.tree.RootCommandNode;
 
 /**
@@ -63,6 +72,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
                 .put(handler(SEntityPropertiesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
                 .put(handler(SCommandListPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
                 .put(handler(SUpdateRecipesPacket.class, VanillaConnectionNetworkFilter::filterRecipes))
+                .put(handler(SAdvancementInfoPacket.class, VanillaConnectionNetworkFilter::filterAdvancements))
                 .build()
         );
     }
@@ -120,5 +130,37 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
                 };
             });
         return new SUpdateRecipesPacket(recipes);
+    }
+    
+    /**
+     * Filter for SAdvancementInfoPacket. Filters out any ArgumentTypes that are not in the "minecraft" namespace.
+     * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
+     */
+    @Nonnull
+    private static SAdvancementInfoPacket filterAdvancements(SAdvancementInfoPacket packet)
+    {
+    	Collection<Advancement> added = new ArrayList<>();
+    	Set<ResourceLocation> removed = new HashSet<>();
+    	Map<ResourceLocation, AdvancementProgress> progress = new HashMap<>();
+        packet.getAdded().forEach((rl, builder) -> {
+            if (rl.getNamespace().equals("minecraft"))
+                {
+            	added.add(builder.build(rl));
+                };
+            });
+        packet.getRemoved().forEach((rl) -> {
+        	if (rl.getNamespace().equals("minecraft"))
+            {
+        	removed.add(rl);
+            };
+        });
+        packet.getProgress().forEach((rl, Advanceprogress) -> {
+        	if (rl.getNamespace().equals("minecraft"))
+            {
+        	progress.put(rl, Advanceprogress);
+            };
+        });
+        
+        return new SAdvancementInfoPacket(packet.shouldReset(), added, removed, progress);
     }
 }

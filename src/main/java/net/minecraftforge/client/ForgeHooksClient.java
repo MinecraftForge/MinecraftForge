@@ -59,10 +59,13 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
+import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -86,6 +89,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.GrindingRecipe;
 import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModLoader;
@@ -821,5 +825,24 @@ public class ForgeHooksClient
     public static Optional<BiomeGeneratorTypeScreens> getDefaultWorldType()
     {
         return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
+    }
+    
+    /**
+     * Adds Grinding recipes to the grinder. Takes the container, the IWorldPosCallable, the input inventory and output inventory.
+     */
+    public static void grindingHelper(GrindstoneContainer container, IWorldPosCallable access, IInventory input, IInventory output)
+    {
+        if (input.getItem(0).isEmpty() && input.getItem(1).isEmpty())
+        {
+            return;
+        }
+        access.execute((level, pos) -> {
+            Optional<GrindingRecipe> optional = level.getRecipeManager().getRecipeFor(ForgeMod.GRINDING, input, level);
+            optional.ifPresent((grindingRecipe) -> {
+            	ItemStack result = grindingRecipe.assemble(input);
+                output.setItem(0, result);
+                container.broadcastChanges();
+            });
+        });
     }
 }

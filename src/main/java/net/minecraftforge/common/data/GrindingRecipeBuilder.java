@@ -32,6 +32,7 @@ import net.minecraft.advancements.IRequirementsStrategy;
 import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
 import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
@@ -45,11 +46,11 @@ public class GrindingRecipeBuilder
 {
     private final Ingredient base;
     private final Ingredient addition;
-    private final Item result;
+    private final ItemStack result;
     private final Advancement.Builder advancement = Advancement.Builder.advancement();
     private final IRecipeSerializer<?> type;
     
-    public GrindingRecipeBuilder(IRecipeSerializer<?> type, Ingredient base, Ingredient addition, Item result)
+    public GrindingRecipeBuilder(IRecipeSerializer<?> type, Ingredient base, Ingredient addition, ItemStack result)
     {
         this.type = type;
         this.base = base;
@@ -57,7 +58,7 @@ public class GrindingRecipeBuilder
         this.result = result;
     }
     
-    public static GrindingRecipeBuilder grinding(Ingredient base, Ingredient addition, Item result)
+    public static GrindingRecipeBuilder grinding(Ingredient base, Ingredient addition, ItemStack result)
     {
         return new GrindingRecipeBuilder(GrindingRecipe.SERIALIZER, base, addition, result);
     }
@@ -77,7 +78,7 @@ public class GrindingRecipeBuilder
     {
         this.ensureValid(location);
         this.advancement.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(location)).rewards(AdvancementRewards.Builder.recipe(location)).requirements(IRequirementsStrategy.OR);
-        recipe.accept(new GrindingRecipeBuilder.Result(location, this.type, this.base, this.addition, this.result, this.advancement, new ResourceLocation(location.getNamespace(), "recipes/" + this.result.getItemCategory().getRecipeFolderName() + "/" + location.getPath())));
+        recipe.accept(new GrindingRecipeBuilder.Result(location, this.type, this.base, this.addition, this.result, this.advancement, new ResourceLocation(location.getNamespace(), "recipes/" + this.result.getItem().getItemCategory().getRecipeFolderName() + "/" + location.getPath())));
      }
 
      private void ensureValid(ResourceLocation location) 
@@ -92,12 +93,12 @@ public class GrindingRecipeBuilder
         private final ResourceLocation id;
         private final Ingredient base;
         private final Ingredient addition;
-        private final Item result;
+        private final ItemStack result;
         private final Advancement.Builder advancement;
         private final ResourceLocation advancementId;
         private final IRecipeSerializer<?> type;
 
-        public Result(ResourceLocation id, IRecipeSerializer<?> type, Ingredient base, Ingredient addition, Item result, Advancement.Builder advancement, ResourceLocation advancementId) {
+        public Result(ResourceLocation id, IRecipeSerializer<?> type, Ingredient base, Ingredient addition, ItemStack result, Advancement.Builder advancement, ResourceLocation advancementId) {
            this.id = id;
            this.type = type;
            this.base = base;
@@ -112,7 +113,8 @@ public class GrindingRecipeBuilder
             tag.add("base", this.base.toJson());
             tag.add("addition", this.addition.toJson());
             JsonObject jsonobject = new JsonObject();
-            jsonobject.addProperty("item", Registry.ITEM.getKey(this.result).toString());
+            jsonobject.addProperty("item", Registry.ITEM.getKey(this.result.getItem()).toString());
+            jsonobject.addProperty("count", this.result.getCount());
             tag.add("result", jsonobject);
         }
 

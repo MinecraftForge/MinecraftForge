@@ -47,11 +47,11 @@ public class GrindingRecipe implements IRecipe<IInventory>
     private Ingredient addition;
     private ItemStack result;
     
-    public GrindingRecipe(ResourceLocation id,Ingredient ingredient, Ingredient ingredient1, ItemStack result) 
+    public GrindingRecipe(ResourceLocation id,Ingredient base, Ingredient addition, ItemStack result) 
     {
         this.id = id;
-        this.base = ingredient;
-        this.addition = ingredient1;
+        this.base = base;
+        this.addition = addition;
         this.result = result;
     }
     @Override

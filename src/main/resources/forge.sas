@@ -113,3 +113,10 @@ net/minecraft/world/biome/BiomeAmbience func_235224_f_()Ljava/util/Optional; # g
 net/minecraft/world/biome/BiomeAmbience func_235226_g_()Ljava/util/Optional; # getAdditionsSound
 net/minecraft/world/biome/BiomeAmbience func_235228_h_()Ljava/util/Optional; # getMusic
 net/minecraft/client/renderer/model/ModelResourceLocation # ModelResourceLocation class
+# SAdvancementInfoPacket needed to filter out non vanilla packets.
+net/minecraft/network/play/server/SAdvancementInfoPacket func_192603_a()Ljava/util/Map; # getAdded
+net/minecraft/network/play/server/SAdvancementInfoPacket func_192600_b()Ljava/util/Set; # getRemoved
+net/minecraft/network/play/server/SAdvancementInfoPacket func_192604_c()Ljava/util/Map; # getProgress
+net/minecraft/network/play/server/SAdvancementInfoPacket func_192602_d()Z # shouldReset
+# SUpdateRecipesPacket needed to filter out non vanilla packets.
+net/minecraft/network/play/server/SUpdateRecipesPacket func_199616_a()Ljava/util/List; # getRecipes

@@ -19,7 +19,7 @@
        super.func_75130_a(p_75130_1_);
        if (p_75130_1_ == this.field_217014_d) {
           this.func_217010_e();
-+         net.minecraftforge.client.gui.GuiHelper.grindingHelper(this, field_217015_e, this.field_217014_d, this.field_217013_c);
++         net.minecraftforge.client.ForgeHooksClient.grindingHelper(this, field_217015_e, this.field_217014_d, this.field_217013_c);
        }
  
     }
