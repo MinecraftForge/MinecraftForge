@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -45,6 +47,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
 
 public class MinecraftForgeClient
 {
@@ -156,4 +159,21 @@ public class MinecraftForgeClient
         IResource iresource1 = resourceManager.getResource(resourceLocation);
         return NativeImage.read(iresource1.getInputStream());
     }
+
+    private static final Map<ResourceLocation, ITextureAtlasSpriteLoader> textureAtlasSpriteLoaders = new ConcurrentHashMap<>();
+
+    /**
+     * Register a custom ITextureAtlasSprite loader. Call this method during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
+     */
+    public static void registerTextureAtlasSpriteLoader(ResourceLocation name, ITextureAtlasSpriteLoader loader)
+    {
+        textureAtlasSpriteLoaders.put(name, loader);
+    }
+
+    @Nullable
+    public static ITextureAtlasSpriteLoader getTextureAtlasSpriteLoader(ResourceLocation name)
+    {
+        return textureAtlasSpriteLoaders.get(name);
+    }
+
 }

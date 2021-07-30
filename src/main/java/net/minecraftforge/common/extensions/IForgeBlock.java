@@ -117,6 +117,20 @@ public interface IForgeBlock
     }
 
     /**
+     * Checks if this block makes an open trapdoor above it climbable.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param trapdoorState The current state of the open trapdoor above
+     * @return True if the block should act like a ladder
+     */
+    default boolean makesOpenTrapdoorAboveClimbable(BlockState state, IWorldReader world, BlockPos pos, BlockState trapdoorState)
+    {
+        return state.getBlock() instanceof LadderBlock && state.getValue(LadderBlock.FACING) == trapdoorState.getValue(TrapDoorBlock.FACING);
+    }
+
+    /**
      * Determines if this block should set fire and deal fire damage
      * to entities coming into contact with it.
      *
@@ -217,6 +231,26 @@ public interface IForgeBlock
     }
 
     /**
+     * Returns the position that the entity is moved to upon
+     * respawning at this block.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param orientation The angle the entity had when setting the respawn point
+     * @param entity The entity respawning, often null
+     * @return The spawn position or the empty optional if respawning here is not possible
+     */
+    default Optional<Vector3d> getRespawnPosition(BlockState state, EntityType<?> type, IWorldReader world, BlockPos pos, float orientation, @Nullable LivingEntity entity)
+    {
+        if (isBed(state, world, pos, entity) && world instanceof World && BedBlock.canSetSpawn((World) world))
+        {
+            return getBedSpawnPosition(type, state, world, pos, orientation, entity);
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Determines if a specified mob type can spawn on this block, returning false will
      * prevent any mob from spawning on the block.
      *
@@ -226,7 +260,7 @@ public interface IForgeBlock
      * @param type The Mob Category Type
      * @return True to allow a mob of the specified category to spawn, false to prevent it.
      */
-    default boolean canCreatureSpawn(BlockState state, IBlockReader world, BlockPos pos, EntitySpawnPlacementRegistry.PlacementType type, @Nullable EntityType<?> entityType)
+    default boolean canCreatureSpawn(BlockState state, IBlockReader world, BlockPos pos, EntitySpawnPlacementRegistry.PlacementType type, EntityType<?> entityType)
     {
         return state.isValidSpawn(world, pos, entityType);
     }
@@ -241,7 +275,9 @@ public interface IForgeBlock
      * @param orientation The direction the entity is facing while getting into bed.
      * @param sleeper The sleeper or camera entity, null in some cases.
      * @return The spawn position
+     * @deprecated use {@link #getRespawnPosition(BlockState, EntityType, IWorldReader, BlockPos, float, LivingEntity)}
      */
+    @Deprecated
     default Optional<Vector3d> getBedSpawnPosition(EntityType<?> entityType, BlockState state, IWorldReader world, BlockPos pos, float orientation, @Nullable LivingEntity sleeper)
     {
         if (world instanceof World)

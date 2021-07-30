@@ -63,6 +63,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeManager;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.IWorldPosCallable;
@@ -87,6 +89,7 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.GrindingRecipe;
@@ -826,7 +829,6 @@ public class ForgeHooksClient
     {
         return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
     }
-    
     /**
      * Adds Grinding recipes to the grinder. Takes the container, the IWorldPosCallable, the input inventory and output inventory.
      */
@@ -844,5 +846,19 @@ public class ForgeHooksClient
                 container.broadcastChanges();
             });
         });
+    }
+
+    @Nullable
+    public static TextureAtlasSprite loadTextureAtlasSprite(
+            AtlasTexture atlasTexture,
+            IResourceManager resourceManager, TextureAtlasSprite.Info textureInfo,
+            IResource resource,
+            int atlasWidth, int atlasHeight,
+            int spriteX, int spriteY, int mipmapLevel,
+            NativeImage image
+    )
+    {
+        ForgeTextureMetadata metadata = ForgeTextureMetadata.forResource(resource);
+        return metadata.getLoader() == null ? null : metadata.getLoader().load(atlasTexture, resourceManager, textureInfo, resource, atlasWidth, atlasHeight, spriteX, spriteY, mipmapLevel, image)
     }
 }
