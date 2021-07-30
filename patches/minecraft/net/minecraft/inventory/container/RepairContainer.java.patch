@@ -1,5 +1,14 @@
 --- a/net/minecraft/inventory/container/RepairContainer.java
 +++ b/net/minecraft/inventory/container/RepairContainer.java
+@@ -40,7 +_,7 @@
+    }
+ 
+    protected boolean func_230303_b_(PlayerEntity p_230303_1_, boolean p_230303_2_) {
+-      return (p_230303_1_.field_71075_bZ.field_75098_d || p_230303_1_.field_71068_ca >= this.field_82854_e.func_221495_b()) && this.field_82854_e.func_221495_b() > 0;
++      return (p_230303_1_.field_71075_bZ.field_75098_d || p_230303_1_.field_71068_ca >= this.field_82854_e.func_221495_b()) && this.field_82854_e.func_221495_b() >= 0;
+    }
+ 
+    protected ItemStack func_230301_a_(PlayerEntity p_230301_1_, ItemStack p_230301_2_) {
 @@ -48,6 +_,8 @@
           p_230301_1_.func_82242_a(-this.field_82854_e.func_221495_b());
        }
