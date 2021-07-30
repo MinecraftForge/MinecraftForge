@@ -1,0 +1,13 @@
+{
+  "type": "forge:blacksmithing",
+  "base": {
+    "item": "minecraft:stone_axe"
+  },
+  "addition": {
+    "item": "minecraft:iron_ingot"
+  },
+  "result": {
+    "item": "minecraft:iron_axe"
+  },
+  "cost": "0"
+}

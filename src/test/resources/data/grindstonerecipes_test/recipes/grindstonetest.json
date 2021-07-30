@@ -1,0 +1,12 @@
+{
+  "type": "forge:grinding",
+  "base": {
+    "item": "minecraft:netherite_axe"
+  },
+  "addition": {
+    "item": "minecraft:flint"
+  },
+  "result": {
+    "item": "minecraft:diamond_axe"
+  }
+}

@@ -25,9 +25,13 @@ import net.minecraft.command.arguments.IArgumentSerializer;
 import net.minecraft.entity.ai.attributes.Attribute;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.fluid.Fluid;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.storage.IServerConfiguration;
 import net.minecraft.world.storage.SaveFormat;
 import net.minecraftforge.api.distmarker.Dist;
@@ -55,6 +59,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,6 +70,7 @@ import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeType;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.crafting.BlacksmithingRecipe;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
 import net.minecraftforge.common.crafting.CraftingHelper;
@@ -85,15 +91,21 @@ import net.minecraftforge.common.data.ForgeLootTableProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import com.ibm.icu.util.BytesTrie.Result;
+
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Mod("forge")
@@ -116,6 +128,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public static final RegistryObject<Fluid> FLOWING_MILK = RegistryObject.of(new ResourceLocation("flowing_milk"), ForgeRegistries.FLUIDS);
     
     public static final IRecipeType<GrindingRecipe> GRINDING = new IRecipeType<GrindingRecipe>() {};
+    public static final IRecipeType<BlacksmithingRecipe> BLACKSMITHING = new IRecipeType<BlacksmithingRecipe>() {};
     
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance()
@@ -151,6 +164,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
+        MinecraftForge.EVENT_BUS.addListener(this::anvil);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
@@ -290,6 +304,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
         
         Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("forge", "grinding"), GRINDING);
+        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("forge", "blacksmithing"), BLACKSMITHING);
         
         CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
@@ -297,6 +312,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         event.getRegistry().register(new ConditionalRecipe.Serializer<IRecipe<?>>().setRegistryName(new ResourceLocation("forge", "conditional")));
         event.getRegistry().register(new GrindingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "grinding")));
+        event.getRegistry().register(new BlacksmithingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "blacksmithing")));
 
     }
 
@@ -306,5 +322,28 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         // Ignore the event itself: this is done only not to statically initialize our custom LootConditionType
         Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
+    }
+    
+    public void anvil(AnvilUpdateEvent event)
+    {
+    	IInventory inv = new Inventory(event.getLeft(), event.getRight());
+    	Optional<BlacksmithingRecipe> optional = event.getPlayer().level.getRecipeManager().getRecipeFor(BLACKSMITHING, inv, event.getPlayer().level);
+    	optional.ifPresent((recipe) -> {
+    		if (recipe.getCost() >= event.getCost())
+    		{
+    			event.setCost(recipe.getCost());
+    			ItemStack result = recipe.assemble(inv);
+        		if (StringUtils.isBlank(event.getName()))
+        		{
+        			result.resetHoverName();
+        		}
+        		else if (event.getName() != null)
+        		{
+        			result.setHoverName(new StringTextComponent(event.getName()));
+        			event.setCost(recipe.getCost()+1);
+        		}
+        		event.setOutput(result);
+    		}
+    	});
     }
 }
