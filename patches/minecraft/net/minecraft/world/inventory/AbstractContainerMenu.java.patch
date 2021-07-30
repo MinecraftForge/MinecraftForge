@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -217,13 +_,15 @@
+@@ -217,13 +_,14 @@
     private void m_150435_(int p_150436_, ItemStack p_150437_, Supplier<ItemStack> p_150438_) {
        if (!this.f_150398_) {
           ItemStack itemstack = this.f_150394_.get(p_150436_);
@@ -11,10 +11,8 @@
              if (this.f_150397_ != null) {
                 this.f_150397_.m_142074_(this, p_150436_, itemstack1);
              }
--         }
-+         } else
-+             if (this.f_150397_ != null)
-+                 this.f_150397_.sendDirtySlotCapabilities(this, p_150436_, itemstack);
+          }
++         else if (this.f_150397_ != null) this.f_150397_.sendDirtySlotCapabilities(this, p_150436_, itemstack);
  
        }
     }

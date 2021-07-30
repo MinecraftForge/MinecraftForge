@@ -161,7 +161,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
             if (!writeAll && !entry.getValue().requiresSync())
                 continue;
             out.writeBoolean(true);
-            out.writeUtf(entry.getKey(), 0x100);
+            out.writeUtf(entry.getKey());
             var tempBuf = new FriendlyByteBuf(Unpooled.buffer());
             entry.getValue().encode(tempBuf, writeAll);
             out.writeVarInt(tempBuf.readableBytes());
@@ -176,7 +176,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
     {
         while (in.readBoolean())
         {
-            String name = in.readUtf(0x100);
+            String name = in.readUtf();
             int dataSize = in.readVarInt();
             INetworkCapability cap = networkCapabilities.get(name);
             if (cap == null)

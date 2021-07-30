@@ -394,13 +394,11 @@
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlot.class);
              }
-@@ -2327,7 +_,8 @@
-             if (!itemstack1.m_41619_()) {
+@@ -2328,6 +_,7 @@
                 this.m_21204_().m_22178_(itemstack1.m_41638_(equipmentslot));
              }
--         }
-+         } else
-+             net.minecraftforge.network.ForgeNetwork.sendEquipmentSlotCapabilities(this, equipmentslot, itemstack1, false);
+          }
++         else net.minecraftforge.network.ForgeNetwork.sendEquipmentSlotCapabilities(this, equipmentslot, itemstack1, false);
        }
  
        return map;

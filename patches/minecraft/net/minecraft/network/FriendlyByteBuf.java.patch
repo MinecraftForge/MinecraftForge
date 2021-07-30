@@ -25,7 +25,7 @@
        if (p_130056_.m_41619_()) {
           this.writeBoolean(false);
        } else {
-@@ -446,11 +_,11 @@
+@@ -446,10 +_,11 @@
           Item item = p_130056_.m_41720_();
           this.m_130130_(Item.m_41393_(item));
           this.writeByte(p_130056_.m_41613_());
@@ -36,11 +36,10 @@
 +         if (item.isDamageable(p_130056_) || item.m_41468_()) {
 +            compoundtag = limitedTag ? p_130056_.getShareTag() : p_130056_.m_41783_();
           }
--
 +         p_130056_.encode(compoundtag, "__FORGE_CAPABILITIES__", true);
+ 
           this.m_130079_(compoundtag);
        }
- 
 @@ -464,7 +_,9 @@
           int i = this.m_130242_();
           int j = this.readByte();
