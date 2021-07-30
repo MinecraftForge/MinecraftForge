@@ -42,20 +42,7 @@ public record BrewingRecipe(@Nonnull ResourceLocation id,
     @Override
     public boolean matches(final BrewingContainerWrapper container, final Level level)
     {
-        final ItemStack reagent = container.getItem(container.ingredientSlot());
-        if (reagent.isEmpty() || !this.reagent.test(reagent))
-        {
-            return false;
-        }
-        for (int slot : container.potionSlots())
-        {
-            final ItemStack base = container.getItem(slot);
-            if (!base.isEmpty() && this.base.test(base))
-            {
-                return true;
-            }
-        }
-        return false;
+        return base().test(container.base()) && reagent().test(container.reagent());
     }
 
     @Override
@@ -67,7 +54,7 @@ public record BrewingRecipe(@Nonnull ResourceLocation id,
     @Override
     public ItemStack getResultItem()
     {
-        return result();
+        return result().copy();
     }
 
     @Override
@@ -83,15 +70,15 @@ public record BrewingRecipe(@Nonnull ResourceLocation id,
     }
 
     @Override
-    public Ingredient getReagent()
-    {
-        return reagent();
-    }
-
-    @Override
     public Ingredient getBase()
     {
         return base();
+    }
+
+    @Override
+    public Ingredient getReagent()
+    {
+        return reagent();
     }
 
     public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<BrewingRecipe>

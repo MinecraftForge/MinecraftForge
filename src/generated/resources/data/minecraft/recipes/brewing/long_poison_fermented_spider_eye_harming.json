@@ -1,0 +1,8 @@
+{
+  "type": "forge:mixing_brewing",
+  "base": "minecraft:long_poison",
+  "reagent": {
+    "item": "minecraft:fermented_spider_eye"
+  },
+  "result": "minecraft:harming"
+}

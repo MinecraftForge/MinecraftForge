@@ -1,0 +1,8 @@
+{
+  "type": "forge:mixing_brewing",
+  "base": "minecraft:awkward",
+  "reagent": {
+    "item": "minecraft:glistering_melon_slice"
+  },
+  "result": "minecraft:healing"
+}

@@ -35,7 +35,9 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.brewing.BrewingRecipe;
+import net.minecraftforge.common.brewing.ContainerBrewingRecipe;
 import net.minecraftforge.common.brewing.IBrewingRecipe;
+import net.minecraftforge.common.brewing.MixingBrewingRecipe;
 import net.minecraftforge.common.brewing.ContainerBrewingRecipe;
 import net.minecraftforge.common.brewing.MixingBrewingRecipe;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -125,6 +127,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, "forge");
 
     public static final RegistryObject<RecipeSerializer<?>> BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("brewing", BrewingRecipe.Serializer::new);
+    public static final RegistryObject<RecipeSerializer<?>> CONTAINER_BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("container_brewing", ContainerBrewingRecipe.Serializer::new);
+    public static final RegistryObject<RecipeSerializer<?>> MIXING_BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("mixing_brewing", MixingBrewingRecipe.Serializer::new);
 
     private static boolean enableMilkFluid = false;
     public static final RegistryObject<Fluid> MILK = RegistryObject.of(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);

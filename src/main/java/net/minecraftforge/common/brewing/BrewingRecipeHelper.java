@@ -19,11 +19,13 @@
 
 package net.minecraftforge.common.brewing;
 
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 
-import java.util.List;
+import java.util.Optional;
 
 public class BrewingRecipeHelper
 {
@@ -33,29 +35,34 @@ public class BrewingRecipeHelper
      * Extra parameters exist to allow modders to create bigger brewing stands
      * without much hassle
      */
-    public static boolean canBrew(Level level, BrewingContainerWrapper container)
+    public static boolean canBrew(Level level, Container container, int reagentSlot, int[] baseSlots)
     {
-        if (container.getItem(container.ingredientSlot()).isEmpty()) return false;
-        return !level.getRecipeManager().getRecipesFor(ForgeMod.BREWING, container, level).isEmpty();
+        final ItemStack reagent = container.getItem(reagentSlot);
+        if (reagent.isEmpty()) return false;
+        final RecipeManager recipeManager = level.getRecipeManager();
+        for (int baseSlot : baseSlots) {
+            ItemStack base = container.getItem(baseSlot);
+            final BrewingContainerWrapper wrapper = new BrewingContainerWrapper(base, reagent);
+            Optional<IBrewingRecipe> recipeFor = recipeManager.getRecipeFor(ForgeMod.BREWING, wrapper, level);
+            if (recipeFor.isPresent()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
      * Used by the brewing stand to brew its inventory Extra parameters exist to
      * allow modders to create bigger brewing stands without much hassle
      */
-    public static void brewPotions(Level level, BrewingContainerWrapper container)
+    public static void brewPotions(Level level, Container container, int reagentSlot, int[] baseSlots)
     {
-        final List<IBrewingRecipe> recipes = level.getRecipeManager().getRecipesFor(ForgeMod.BREWING, container, level);
-        for (int slot : container.potionSlots())
-        {
-            for (IBrewingRecipe recipe : recipes)
-            {
-                if (recipe.getBase().test(container.getItem(slot)))
-                {
-                    container.setItem(slot, recipe.assemble(container));
-                    break;
-                }
-            }
+        final ItemStack reagent = container.getItem(reagentSlot);
+        final RecipeManager recipeManager = level.getRecipeManager();
+        for (int baseSlot : baseSlots) {
+            final BrewingContainerWrapper wrapper = new BrewingContainerWrapper(container.getItem(baseSlot), reagent);
+            recipeManager.getRecipeFor(ForgeMod.BREWING, wrapper, level)
+                    .ifPresent(recipe -> container.setItem(baseSlot, recipe.assemble(wrapper)));
         }
     }
 

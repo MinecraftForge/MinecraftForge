@@ -19,10 +19,12 @@
 
 package net.minecraftforge.common.brewing;
 
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.common.ForgeMod;
+
+import java.util.function.Predicate;
 
 public interface IBrewingRecipe extends Recipe<BrewingContainerWrapper>
 {
@@ -38,7 +40,7 @@ public interface IBrewingRecipe extends Recipe<BrewingContainerWrapper>
         return ForgeMod.BREWING;
     }
 
-    Ingredient getReagent();
+    Predicate<ItemStack> getReagent();
 
-    Ingredient getBase();
+    Predicate<ItemStack> getBase();
 }

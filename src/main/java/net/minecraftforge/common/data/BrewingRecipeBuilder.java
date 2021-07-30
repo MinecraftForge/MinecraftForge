@@ -22,8 +22,11 @@ package net.minecraftforge.common.data;
 import com.google.gson.JsonObject;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.common.ForgeMod;
@@ -55,6 +58,84 @@ public abstract class BrewingRecipeBuilder
     public static BrewingRecipeBuilder brewing(Ingredient base, Ingredient reagent, ItemStack result)
     {
         return new NormalBrewingRecipeBuilder(base, reagent, result);
+    }
+
+    /**
+     * Create a {@link BrewingRecipeBuilder} for a container brewing recipe
+     *
+     * @param base    the {@link Item} used as a container in the bottom slots
+     * @param reagent the {@link Tag <Item>} used as a brewing reagent (top slot)
+     * @param result  the {@link Item} result of the brewing recipe (replaces base after brewing, potions will be copied)
+     * @return the builder for a container brewing recipe
+     */
+    public static BrewingRecipeBuilder container(Item base, Tag<Item> reagent, Item result)
+    {
+        return container(base, Ingredient.of(reagent), result);
+    }
+
+    /**
+     * Create a {@link BrewingRecipeBuilder} for a container brewing recipe
+     *
+     * @param base    the {@link Item} used as a container in the bottom slots
+     * @param reagent the {@link Item} used as a brewing reagent (top slot)
+     * @param result  the {@link Item} result of the brewing recipe (replaces base after brewing, potions will be copied)
+     * @return the builder for a container brewing recipe
+     */
+    public static BrewingRecipeBuilder container(Item base, Item reagent, Item result)
+    {
+        return container(base, Ingredient.of(reagent), result);
+    }
+
+    /**
+     * Create a {@link BrewingRecipeBuilder} for a container brewing recipe
+     *
+     * @param base    the {@link Item} used as a container in the bottom slots
+     * @param reagent the {@link Ingredient} used as a brewing reagent (top slot)
+     * @param result  the {@link Item} result of the brewing recipe (replaces base after brewing, potions will be copied)
+     * @return the builder for a container brewing recipe
+     */
+    public static BrewingRecipeBuilder container(Item base, Ingredient reagent, Item result)
+    {
+        return new ContainerBrewingRecipeBuilder(base, reagent, result);
+    }
+
+    /**
+     * Create a {@link BrewingRecipeBuilder} for a mixing brewing recipe
+     *
+     * @param base    the {@link Potion} used as a base (bottom slots)
+     * @param reagent the {@link Tag<Item>} used as a brewing reagent (top slot)
+     * @param result  the {@link Potion} result of the brewing recipe (replaces base after brewing)
+     * @return the builder for a mixing brewing recipe
+     */
+    public static BrewingRecipeBuilder mixing(Potion base, Tag<Item> reagent, Potion result)
+    {
+        return mixing(base, Ingredient.of(reagent), result);
+    }
+
+    /**
+     * Create a {@link BrewingRecipeBuilder} for a mixing brewing recipe
+     *
+     * @param base    the {@link Potion} used as a base (bottom slots)
+     * @param reagent the {@link Item} used as a brewing reagent (top slot)
+     * @param result  the {@link Potion} result of the brewing recipe (replaces base after brewing)
+     * @return the builder for a mixing brewing recipe
+     */
+    public static BrewingRecipeBuilder mixing(Potion base, Item reagent, Potion result)
+    {
+        return mixing(base, Ingredient.of(reagent), result);
+    }
+
+    /**
+     * Create a {@link BrewingRecipeBuilder} for a mixing brewing recipe
+     *
+     * @param base    the {@link Potion} used as a base (bottom slots)
+     * @param reagent the {@link Ingredient} used as a brewing reagent (top slot)
+     * @param result  the {@link Potion} result of the brewing recipe (replaces base after brewing)
+     * @return the builder for a mixing brewing recipe
+     */
+    public static BrewingRecipeBuilder mixing(Potion base, Ingredient reagent, Potion result)
+    {
+        return new MixingBrewingRecipeBuilder(base, reagent, result);
     }
 
     /**
@@ -136,6 +217,156 @@ public abstract class BrewingRecipeBuilder
                     o.add("nbt", GsonHelper.parse(this.result.getTag().toString()));
                 }
                 tag.add("result", o);
+            }
+
+            @Override
+            public ResourceLocation getId()
+            {
+                return this.id;
+            }
+
+            @Override
+            public RecipeSerializer<?> getType()
+            {
+                return this.type;
+            }
+
+            @Override
+            public JsonObject serializeAdvancement()
+            {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public ResourceLocation getAdvancementId()
+            {
+                return null;
+            }
+        }
+    }
+
+    public static class MixingBrewingRecipeBuilder extends BrewingRecipeBuilder
+    {
+        private final Potion base;
+        private final Ingredient reagent;
+        private final Potion result;
+
+        public MixingBrewingRecipeBuilder(Potion base, Ingredient reagent, Potion result)
+        {
+            super(ForgeMod.MIXING_BREWING_SERIALIZER.get());
+            this.base = base;
+            this.reagent = reagent;
+            this.result = result;
+        }
+
+        @Override
+        protected void validate(final ResourceLocation id)
+        {
+            final ResourceLocation base = ForgeRegistries.POTION_TYPES.getKey(this.base);
+            final ResourceLocation result = ForgeRegistries.POTION_TYPES.getKey(this.result);
+            if (base == null)
+                throw new IllegalArgumentException("Tried to use not registered potion as base for "+id);
+            if (result == null)
+                throw new IllegalArgumentException("Tried to use not registered potion as result for "+id);
+        }
+
+        @Override
+        protected FinishedRecipe build(ResourceLocation location)
+        {
+            return new Result(location, this.type, this.base, this.reagent, this.result);
+        }
+
+        public record Result(ResourceLocation id,
+                             RecipeSerializer<?> type,
+                             Potion base,
+                             Ingredient reagent,
+                             Potion result) implements FinishedRecipe
+        {
+
+            @Override
+            public void serializeRecipeData(JsonObject tag)
+            {
+                final ResourceLocation base = ForgeRegistries.POTION_TYPES.getKey(this.base);
+                final ResourceLocation result = ForgeRegistries.POTION_TYPES.getKey(this.result);
+                tag.addProperty("base", base.toString());
+                tag.add("reagent", this.reagent.toJson());
+                tag.addProperty("result", result.toString());
+            }
+
+            @Override
+            public ResourceLocation getId()
+            {
+                return this.id;
+            }
+
+            @Override
+            public RecipeSerializer<?> getType()
+            {
+                return this.type;
+            }
+
+            @Override
+            public JsonObject serializeAdvancement()
+            {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public ResourceLocation getAdvancementId()
+            {
+                return null;
+            }
+        }
+    }
+
+    public static class ContainerBrewingRecipeBuilder extends BrewingRecipeBuilder
+    {
+        private final Item base;
+        private final Ingredient reagent;
+        private final Item result;
+
+        public ContainerBrewingRecipeBuilder(Item base, Ingredient reagent, Item result)
+        {
+            super(ForgeMod.CONTAINER_BREWING_SERIALIZER.get());
+            this.base = base;
+            this.reagent = reagent;
+            this.result = result;
+        }
+
+        @Override
+        protected void validate(final ResourceLocation id)
+        {
+            final ResourceLocation base = ForgeRegistries.ITEMS.getKey(this.base);
+            final ResourceLocation result = ForgeRegistries.ITEMS.getKey(this.result);
+            if (base == null)
+                throw new IllegalArgumentException("Tried to use not registered item as base for "+id);
+            if (result == null)
+                throw new IllegalArgumentException("Tried to use not registered item as result for "+id);
+        }
+
+        @Override
+        protected FinishedRecipe build(ResourceLocation location)
+        {
+            return new Result(location, this.type, this.base, this.reagent, this.result);
+        }
+
+        public record Result(ResourceLocation id,
+                             RecipeSerializer<?> type,
+                             Item base,
+                             Ingredient reagent,
+                             Item result) implements FinishedRecipe
+        {
+
+            @Override
+            public void serializeRecipeData(JsonObject tag)
+            {
+                final ResourceLocation base = ForgeRegistries.ITEMS.getKey(this.base);
+                final ResourceLocation result = ForgeRegistries.ITEMS.getKey(this.result);
+                tag.addProperty("base", base.toString());
+                tag.add("reagent", this.reagent.toJson());
+                tag.addProperty("result", result.toString());
             }
 
             @Override
