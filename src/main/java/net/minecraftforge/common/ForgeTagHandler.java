@@ -221,7 +221,10 @@ public class ForgeTagHandler
         return builder.build();
     }
 
-    public static <T, A extends IForgeRegistryEntry<A>> Optional<? extends Registry<T>> getWrapperRegistry(ResourceKey<? extends Registry<T>> key) {
+    @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unchecked"})
+    public static <T, A extends IForgeRegistryEntry<A>> Optional<? extends Registry<T>> getWrapperRegistry(ResourceKey<? extends Registry<T>> key, Optional<? extends Registry<T>> vanillaReg) {
+        if (vanillaReg.isPresent())
+            return vanillaReg;
         try {
             ResourceKey<? extends Registry<A>> cast = (ResourceKey<? extends Registry<A>>) key;
             if (RegistryManager.ACTIVE.getRegistry(cast).getTagFolder() == null)
