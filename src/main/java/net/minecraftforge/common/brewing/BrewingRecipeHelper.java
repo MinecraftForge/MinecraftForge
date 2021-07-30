@@ -47,7 +47,10 @@ public class BrewingRecipeHelper
         final RecipeManager recipeManager = level.getRecipeManager();
         for (int slot : container.potionSlots())
         {
-            recipeManager.getRecipeFor(ForgeMod.BREWING, container, level)
+            recipeManager.getRecipesFor(ForgeMod.BREWING, container, level)
+                    .stream()
+                    .filter(brewingRecipe -> brewingRecipe.getBase().test(container.getItem(slot)))
+                    .findFirst()
                     .map(brewingRecipe -> brewingRecipe.assemble(container))
                     .ifPresent(stack -> container.setItem(slot, stack));
         }

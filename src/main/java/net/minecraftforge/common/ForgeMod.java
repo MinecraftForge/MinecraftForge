@@ -35,6 +35,7 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.common.brewing.BrewingRecipe;
+import net.minecraftforge.common.brewing.IBrewingRecipe;
 import net.minecraftforge.common.brewing.ContainerBrewingRecipe;
 import net.minecraftforge.common.brewing.MixingBrewingRecipe;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
@@ -119,7 +120,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 5.0D, 0.0D, 1024.0D).setSyncable(true));
 
-    public static final RecipeType<BrewingRecipe> BREWING = new RecipeType<>() {};
+    public static final RecipeType<IBrewingRecipe> BREWING = new RecipeType<>() {};
 
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, "forge");
 
