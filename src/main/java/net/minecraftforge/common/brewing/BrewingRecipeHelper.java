@@ -29,7 +29,6 @@ import java.util.Optional;
 
 public class BrewingRecipeHelper
 {
-
     /**
      * Used by the brewing stand to determine if its contents can be brewed.
      * Extra parameters exist to allow modders to create bigger brewing stands
@@ -42,8 +41,8 @@ public class BrewingRecipeHelper
         final RecipeManager recipeManager = level.getRecipeManager();
         for (int baseSlot : baseSlots) {
             ItemStack base = container.getItem(baseSlot);
-            final BrewingContainerWrapper wrapper = new BrewingContainerWrapper(base, reagent);
-            Optional<IBrewingRecipe> recipeFor = recipeManager.getRecipeFor(ForgeMod.BREWING, wrapper, level);
+            final IBrewingContainer c = new IBrewingContainer.Impl(base, reagent);
+            Optional<IBrewingRecipe> recipeFor = recipeManager.getRecipeFor(ForgeMod.BREWING, c, level);
             if (recipeFor.isPresent()) {
                 return true;
             }
@@ -60,7 +59,7 @@ public class BrewingRecipeHelper
         final ItemStack reagent = container.getItem(reagentSlot);
         final RecipeManager recipeManager = level.getRecipeManager();
         for (int baseSlot : baseSlots) {
-            final BrewingContainerWrapper wrapper = new BrewingContainerWrapper(container.getItem(baseSlot), reagent);
+            final IBrewingContainer wrapper = new IBrewingContainer.Impl(container.getItem(baseSlot), reagent);
             recipeManager.getRecipeFor(ForgeMod.BREWING, wrapper, level)
                     .ifPresent(recipe -> container.setItem(baseSlot, recipe.assemble(wrapper)));
         }
@@ -76,7 +75,7 @@ public class BrewingRecipeHelper
 
         for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING))
         {
-            if (recipe.getReagent().test(stack))
+            if (recipe.isReagent(stack))
             {
                 return true;
             }
@@ -94,7 +93,7 @@ public class BrewingRecipeHelper
 
         for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING))
         {
-            if (recipe.getBase().test(stack))
+            if (recipe.isBase(stack))
             {
                 return true;
             }

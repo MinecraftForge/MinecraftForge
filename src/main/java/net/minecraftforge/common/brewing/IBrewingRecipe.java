@@ -22,12 +22,17 @@ package net.minecraftforge.common.brewing;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 
-import java.util.function.Predicate;
-
-public interface IBrewingRecipe extends Recipe<BrewingContainerWrapper>
+public interface IBrewingRecipe extends Recipe<IBrewingContainer>
 {
+    @Override
+    default boolean matches(final IBrewingContainer container, final Level level)
+    {
+        return isBase(container.base()) && isReagent(container.reagent());
+    }
+
     @Override
     default boolean canCraftInDimensions(int p_43999_, int p_44000_)
     {
@@ -40,7 +45,7 @@ public interface IBrewingRecipe extends Recipe<BrewingContainerWrapper>
         return ForgeMod.BREWING;
     }
 
-    Predicate<ItemStack> getReagent();
+    boolean isReagent(final ItemStack reagent);
 
-    Predicate<ItemStack> getBase();
+    boolean isBase(final ItemStack base);
 }

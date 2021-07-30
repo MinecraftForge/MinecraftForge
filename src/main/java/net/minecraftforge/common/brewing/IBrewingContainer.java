@@ -24,29 +24,29 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * Wraps a container representing a brewing stand
+ * Wraps the ingredients for a brewing recipe in a container for use in the recipe implementation
  */
-public record BrewingContainerWrapper(ItemStack base, ItemStack reagent) implements Container
+public interface IBrewingContainer extends Container
 {
     @Override
-    public void clearContent()
+    default void clearContent()
     {
     }
 
     @Override
-    public int getContainerSize()
+    default int getContainerSize()
     {
         return 2;
     }
 
     @Override
-    public boolean isEmpty()
+    default boolean isEmpty()
     {
         return base().isEmpty() && reagent().isEmpty();
     }
 
     @Override
-    public ItemStack getItem(final int slot)
+    default ItemStack getItem(final int slot)
     {
         return switch (slot) {
             case 0 -> base();
@@ -56,30 +56,38 @@ public record BrewingContainerWrapper(ItemStack base, ItemStack reagent) impleme
     }
 
     @Override
-    public ItemStack removeItem(final int slot, final int amount)
+    default ItemStack removeItem(final int slot, final int amount)
     {
         return getItem(slot).split(amount);
     }
 
     @Override
-    public ItemStack removeItemNoUpdate(final int slot)
+    default ItemStack removeItemNoUpdate(final int slot)
     {
         return getItem(slot);
     }
 
     @Override
-    public void setItem(final int p_18944_, final ItemStack p_18945_)
+    default void setItem(final int p_18944_, final ItemStack p_18945_)
     {
     }
 
     @Override
-    public void setChanged()
+    default void setChanged()
     {
     }
 
     @Override
-    public boolean stillValid(final Player p_18946_)
+    default boolean stillValid(final Player p_18946_)
     {
         return true;
+    }
+
+    ItemStack base();
+
+    ItemStack reagent();
+
+    record Impl(ItemStack base, ItemStack reagent) implements IBrewingContainer
+    {
     }
 }
