@@ -4,6 +4,7 @@ import cpw.mods.jarhandling.JarMetadata;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftforge.forgespi.locating.IModProvider;
 
 import java.lang.module.ModuleDescriptor;
 import java.nio.file.Path;
@@ -17,16 +18,16 @@ public final class ModJarMetadata implements JarMetadata {
     private IModFile modFile;
     private ModuleDescriptor descriptor;
 
-    static Optional<IModFile> buildFile(IModLocator locator, Predicate<SecureJar> jarTest, Path... files) {
-        return buildFile(locator, jarTest, (a,b) -> true, files);
+    static Optional<IModFile> buildFile(IModProvider provider, Predicate<SecureJar> jarTest, Path... files) {
+        return buildFile(provider, jarTest, (a,b) -> true, files);
     }
 
-    static Optional<IModFile> buildFile(IModLocator locator, Predicate<SecureJar> jarTest, BiPredicate<String, String> filter, Path... files) {
-        return buildFile(j->ModFile.newFMLInstance(locator, j), jarTest, filter, files);
+    static Optional<IModFile> buildFile(IModProvider provider, Predicate<SecureJar> jarTest, BiPredicate<String, String> filter, Path... files) {
+        return buildFile(j->ModFile.newFMLInstance(provider, j), jarTest, filter, files);
     }
 
-    static IModFile buildFile(IModLocator locator, Path... files) {
-        return buildFile(locator, j->true, files).orElseThrow(()->new IllegalArgumentException("Failed to find valid JAR file"));
+    static IModFile buildFile(IModProvider provider, Path... files) {
+        return buildFile(provider, j->true, files).orElseThrow(()->new IllegalArgumentException("Failed to find valid JAR file"));
     }
 
     static Optional<IModFile> buildFile(Function<SecureJar, IModFile> mfConstructor, Predicate<SecureJar> jarTest, BiPredicate<String, String> filter, Path... files) {

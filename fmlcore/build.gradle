@@ -23,7 +23,7 @@ task sourcesJar(type: Jar) {
 ext {
     MANIFESTS = [
         '': [
-            'FMLModType': 'LIBRARY',
+            'FMLModType': 'LANGPROVIDER',
             'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
             'Git-Commit': GIT_INFO.abbreviatedId,
             'Git-Branch': GIT_INFO.branch,

@@ -29,10 +29,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.jar.JarInputStream;
 import java.util.stream.Stream;
@@ -58,8 +56,12 @@ public class ClasspathLocator extends AbstractJarFileLocator {
             return List.of();
         try {
             var modCoords = Stream.<IModFile>builder();
-            locateMods(modCoords, MODS_TOML, "classpath_mod", sj -> true);
-            locateMods(modCoords, MANIFEST, "manifest_jar", sj -> isValidManifest(sj) && sj.getManifest().getMainAttributes().getValue(ModFile.TYPE) != null);
+            locateMods(modCoords, MODS_TOML, "classpath_mod", path ->  ModJarMetadata.buildFile(this, sj -> true, path));
+            locateMods(modCoords, MANIFEST, "manifest_jar", path -> Optional.of(path)
+                                                                      .map(SecureJar::from)
+                                                                      .filter(sj -> isValidManifest(sj) && sj.getManifest().getMainAttributes().getValue(ModFile.TYPE) != null)
+                                                                      .map(sj -> ModFile.newFMLInstance(this, sj))
+            );
             return modCoords.build().toList();
         } catch (IOException e) {
             LOGGER.fatal(CORE, "Error trying to find resources", e);
@@ -72,7 +74,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
         return Stream.of();
     }
 
-    private void locateMods(Stream.Builder<IModFile> modCoords, String resource, String name, Predicate<SecureJar> filter) throws IOException {
+    private void locateMods(Stream.Builder<IModFile> modCoords, String resource, String name, Function<Path, Optional<IModFile>> modFileBuilder) throws IOException {
         final Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources(resource);
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
@@ -80,7 +82,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
             if (ignoreList.stream().anyMatch(path.toString()::contains) || Files.isDirectory(path))
                 continue;
 
-            ModJarMetadata.buildFile(this, filter, path).ifPresent(mf -> {
+            modFileBuilder.apply(path).ifPresent(mf -> {
                 LOGGER.debug(CORE, "Found classpath mod: {}", path);
                 modCoords.add(mf);
             });

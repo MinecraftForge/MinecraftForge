@@ -29,6 +29,7 @@ import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftforge.forgespi.locating.IModProvider;
 import net.minecraftforge.forgespi.locating.ModFileFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,9 +65,9 @@ public class ModFile implements IModFile {
     private Throwable scanError;
     private final SecureJar jar;
     private final Type modFileType;
-    private final Manifest manifest;
-    private final IModLocator locator;
-    private IModFileInfo modFileInfo;
+    private final Manifest     manifest;
+    private final IModProvider provider;
+    private IModFileInfo       modFileInfo;
     private ModFileScanData fileModFileScanData;
     private CompletableFuture<ModFileScanData> futureScanResult;
     private List<CoreModFile> coreMods;
@@ -75,8 +76,8 @@ public class ModFile implements IModFile {
     public static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
     private SecureJar.Status securityStatus;
 
-    public ModFile(final SecureJar jar, final IModLocator locator, final ModFileFactory.ModFileInfoParser parser) {
-        this.locator = locator;
+    public ModFile(final SecureJar jar, final IModProvider provider, final ModFileFactory.ModFileInfoParser parser) {
+        this.provider = provider;
         this.jar = jar;
         this.parser = parser;
 
@@ -136,7 +137,7 @@ public class ModFile implements IModFile {
     }
 
     public void scanFile(Consumer<Path> pathConsumer) {
-        locator.scanFile(this, pathConsumer);
+        provider.scanFile(this, pathConsumer);
     }
 
     public void setFutureScanResult(CompletableFuture<ModFileScanData> future)
@@ -205,8 +206,8 @@ public class ModFile implements IModFile {
     }
 
     @Override
-    public IModLocator getLocator() {
-        return locator;
+    public IModProvider getProvider() {
+        return provider;
     }
 
     @Override
@@ -218,12 +219,12 @@ public class ModFile implements IModFile {
         return ModFile::new;
     }
 
-    public static ModFile newFMLInstance(final IModLocator locator, final SecureJar jar) {
-        return (ModFile) ModFileFactory.FACTORY.build(jar, locator, ModFileParser::modsTomlParser);
+    public static ModFile newFMLInstance(final IModProvider provider, final SecureJar jar) {
+        return (ModFile) ModFileFactory.FACTORY.build(jar, provider, ModFileParser::modsTomlParser);
     }
 
-    public static ModFile newFMLInstance(final IModLocator locator, final Path... paths) {
-        return (ModFile) ModJarMetadata.buildFile(locator, paths);
+    public static ModFile newFMLInstance(final IModProvider provider, final Path... paths) {
+        return (ModFile) ModJarMetadata.buildFile(provider, paths);
     }
     @Override
     public void setSecurityStatus(final SecureJar.Status status) {

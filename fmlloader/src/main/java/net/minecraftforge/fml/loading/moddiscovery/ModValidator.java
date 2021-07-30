@@ -1,5 +1,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.api.ITransformationService;
@@ -22,20 +24,38 @@ public class ModValidator {
     private final Map<IModFile.Type, List<ModFile>> modFiles;
     private final List<ModFile> candidatePlugins;
     private final List<ModFile> candidateMods;
+    private final List<ModFile> candidateLibraries;
     private LoadingModList loadingModList;
     private List<ModFile> brokenFiles;
 
     public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles) {
         this.modFiles = modFiles;
         this.candidateMods = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.MOD, List.of()));
+        this.candidateLibraries = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.LIBRARY, List.of()));
         this.candidatePlugins = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.LANGPROVIDER, List.of()));
-        this.candidatePlugins.addAll(modFiles.getOrDefault(IModFile.Type.LIBRARY, List.of()));
     }
 
     public void stage1Validation() {
         brokenFiles = validateFiles(candidateMods);
         LOGGER.debug(SCAN,"Found {} mod files with {} mods", candidateMods::size, ()-> candidateMods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found "+ candidateMods.size()+" modfiles to load"));
+
+        brokenFiles.addAll(validateFiles(candidateLibraries));
+        LOGGER.debug(SCAN,"Found {} library files", candidateLibraries::size);
+        StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found "+ candidateLibraries.size()+" libraries to load"));
+
+    }
+
+    public List<IModFile> getInitialValidModFiles() {
+        stage1Validation();
+
+        return ImmutableList.<IModFile>builder().addAll(
+          candidateMods
+        ).addAll(
+          candidateLibraries
+        ).addAll(
+          candidatePlugins
+        ).build();
     }
 
     @NotNull
@@ -44,7 +64,7 @@ public class ModValidator {
         for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
         {
             ModFile mod = iterator.next();
-            if (!mod.getLocator().isValid(mod) || !mod.identifyMods()) {
+            if (!mod.getProvider().isValid(mod) || (!mod.identifyMods() && mod.getType() != IModFile.Type.LIBRARY)) {
                 LOGGER.warn(SCAN, "File {} has been ignored - it is invalid", mod.getFilePath());
                 iterator.remove();
                 brokenFiles.add(mod);
@@ -58,7 +78,11 @@ public class ModValidator {
     }
 
     public ITransformationService.Resource getModResources() {
-        return new ITransformationService.Resource(IModuleLayerManager.Layer.GAME, this.candidateMods.stream().map(ModFile::getSecureJar).toList());
+        final List<SecureJar> resources = new ArrayList<>();
+        resources.addAll(this.candidateMods.stream().map(ModFile::getSecureJar).toList());
+        resources.addAll(this.candidateLibraries.stream().map(ModFile::getSecureJar).toList());
+
+        return new ITransformationService.Resource(IModuleLayerManager.Layer.GAME, resources);
     }
 
     private List<EarlyLoadingException.ExceptionData> validateLanguages() {

@@ -152,7 +152,7 @@ public class LanguageLoadingProvider
     }
 
     public IModLanguageProvider findLanguage(ModFile mf, String modLoader, VersionRange modLoaderVersion) {
-        final String languageFileName = mf.getLocator() instanceof ExplodedDirectoryLocator ? "in-development" : mf.getFileName();
+        final String languageFileName = mf.getProvider() instanceof ExplodedDirectoryLocator ? "in-development" : mf.getFileName();
         final ModLanguageWrapper mlw = languageProviderMap.get(modLoader);
         if (mlw == null) {
             LOGGER.error(LOADING,"Missing language {} version {} wanted by {}", modLoader, modLoaderVersion, languageFileName);
