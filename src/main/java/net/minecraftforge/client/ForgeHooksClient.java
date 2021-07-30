@@ -859,6 +859,6 @@ public class ForgeHooksClient
     )
     {
         ForgeTextureMetadata metadata = ForgeTextureMetadata.forResource(resource);
-        return metadata.getLoader() == null ? null : metadata.getLoader().load(atlasTexture, resourceManager, textureInfo, resource, atlasWidth, atlasHeight, spriteX, spriteY, mipmapLevel, image)
+        return metadata.getLoader() == null ? null : metadata.getLoader().load(atlasTexture, resourceManager, textureInfo, resource, atlasWidth, atlasHeight, spriteX, spriteY, mipmapLevel, image);
     }
 }
