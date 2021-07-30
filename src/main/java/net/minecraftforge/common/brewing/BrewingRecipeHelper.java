@@ -20,9 +20,10 @@
 package net.minecraftforge.common.brewing;
 
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
+
+import java.util.List;
 
 public class BrewingRecipeHelper
 {
@@ -44,15 +45,17 @@ public class BrewingRecipeHelper
      */
     public static void brewPotions(Level level, BrewingContainerWrapper container)
     {
-        final RecipeManager recipeManager = level.getRecipeManager();
+        final List<IBrewingRecipe> recipes = level.getRecipeManager().getRecipesFor(ForgeMod.BREWING, container, level);
         for (int slot : container.potionSlots())
         {
-            recipeManager.getRecipesFor(ForgeMod.BREWING, container, level)
-                    .stream()
-                    .filter(brewingRecipe -> brewingRecipe.getBase().test(container.getItem(slot)))
-                    .findFirst()
-                    .map(brewingRecipe -> brewingRecipe.assemble(container))
-                    .ifPresent(stack -> container.setItem(slot, stack));
+            for (IBrewingRecipe recipe : recipes)
+            {
+                if (recipe.getBase().test(container.getItem(slot)))
+                {
+                    container.setItem(slot, recipe.assemble(container));
+                    break;
+                }
+            }
         }
     }
 
