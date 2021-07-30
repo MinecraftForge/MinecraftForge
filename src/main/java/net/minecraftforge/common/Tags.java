@@ -49,7 +49,6 @@ public class Tags
 
         public static final IOptionalNamedTag<Block> BARRELS = tag("barrels");
         public static final IOptionalNamedTag<Block> BARRELS_WOODEN = tag("barrels/wooden");
-        public static final IOptionalNamedTag<Block> CANDLES = tag("candles");
         public static final IOptionalNamedTag<Block> CHESTS = tag("chests");
         public static final IOptionalNamedTag<Block> CHESTS_ENDER = tag("chests/ender");
         public static final IOptionalNamedTag<Block> CHESTS_TRAPPED = tag("chests/trapped");
@@ -177,7 +176,6 @@ public class Tags
         public static final IOptionalNamedTag<Item> BARRELS_WOODEN = tag("barrels/wooden");
         public static final IOptionalNamedTag<Item> BONES = tag("bones");
         public static final IOptionalNamedTag<Item> BOOKSHELVES = tag("bookshelves");
-        public static final IOptionalNamedTag<Item> CANDLES = tag("candles");
         public static final IOptionalNamedTag<Item> CHESTS = tag("chests");
         public static final IOptionalNamedTag<Item> CHESTS_ENDER = tag("chests/ender");
         public static final IOptionalNamedTag<Item> CHESTS_TRAPPED = tag("chests/trapped");
