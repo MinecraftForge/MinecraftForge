@@ -839,7 +839,7 @@ public class ForgeHooksClient
         access.execute((level, pos) -> {
             Optional<GrindingRecipe> optional = level.getRecipeManager().getRecipeFor(ForgeMod.GRINDING, input, level);
             optional.ifPresent((grindingRecipe) -> {
-            	ItemStack result = grindingRecipe.assemble(input);
+                ItemStack result = grindingRecipe.assemble(input);
                 output.setItem(0, result);
                 container.broadcastChanges();
             });
