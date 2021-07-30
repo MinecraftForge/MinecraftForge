@@ -1,21 +1,29 @@
 --- a/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BrewingStandBlockEntity.java
-@@ -97,7 +_,7 @@
+@@ -97,14 +_,14 @@
           m_155232_(p_155286_, p_155287_, p_155288_);
        }
  
 -      boolean flag = m_155294_(p_155289_.f_58975_);
-+      boolean flag = net.minecraftforge.common.brewing.BrewingRecipeRegistry.canBrew(p_155286_, p_155289_.f_58975_, p_155289_.f_58975_.get(f_155280_), f_58974_);
++      boolean flag = net.minecraftforge.common.brewing.BrewingRecipeHelper.canBrew(p_155286_, new net.minecraftforge.common.brewing.BrewingContainerWrapper(p_155289_, f_155280_, new int[]{0, 1, 2}));
        boolean flag1 = p_155289_.f_58976_ > 0;
        ItemStack itemstack1 = p_155289_.f_58975_.get(3);
        if (flag1) {
-@@ -165,21 +_,21 @@
+          --p_155289_.f_58976_;
+          boolean flag2 = p_155289_.f_58976_ == 0;
+          if (flag2 && flag) {
+-            m_155290_(p_155286_, p_155287_, p_155289_.f_58975_);
++            doBrew(p_155286_, p_155287_, p_155289_);
+             m_155232_(p_155286_, p_155287_, p_155288_);
+          } else if (!flag || !itemstack1.m_150930_(p_155289_.f_58978_)) {
+             p_155289_.f_58976_ = 0;
+@@ -164,24 +_,24 @@
+       }
     }
  
-    private static void m_155290_(Level p_155291_, BlockPos p_155292_, NonNullList<ItemStack> p_155293_) {
-+      if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(p_155293_)) return;
-       ItemStack itemstack = p_155293_.get(3);
- 
+-   private static void m_155290_(Level p_155291_, BlockPos p_155292_, NonNullList<ItemStack> p_155293_) {
+-      ItemStack itemstack = p_155293_.get(3);
+-
 -      for(int i = 0; i < 3; ++i) {
 -         p_155293_.set(i, PotionBrewing.m_43529_(itemstack, p_155293_.get(i)));
 -      }
@@ -23,8 +31,12 @@
 -      itemstack.m_41774_(1);
 -      if (itemstack.m_41720_().m_41470_()) {
 -         ItemStack itemstack1 = new ItemStack(itemstack.m_41720_().m_41469_());
-+      net.minecraftforge.common.brewing.BrewingRecipeRegistry.brewPotions(p_155291_, p_155293_, itemstack, f_58974_);
-+      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(p_155293_);
++   private static void doBrew(Level p_155291_, BlockPos p_155292_, BrewingStandBlockEntity p_155293_) {
++      if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(p_155293_.f_58975_)) return;
++      ItemStack itemstack = p_155293_.f_58975_.get(3);
++
++      net.minecraftforge.common.brewing.BrewingRecipeHelper.brewPotions(p_155291_, new net.minecraftforge.common.brewing.BrewingContainerWrapper(p_155293_, f_155280_, new int[]{0, 1, 2}));
++      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(p_155293_.f_58975_);
 +      if (itemstack.hasContainerItem()) {
 +         ItemStack itemstack1 = itemstack.getContainerItem();
 +         itemstack.m_41774_(1);
@@ -36,19 +48,22 @@
        }
 +      else itemstack.m_41774_(1);
  
-       p_155293_.set(3, itemstack);
+-      p_155293_.set(3, itemstack);
++      p_155293_.f_58975_.set(3, itemstack);
        p_155291_.m_46796_(1035, p_155292_, 0);
+    }
+ 
 @@ -230,11 +_,11 @@
  
     public boolean m_7013_(int p_59017_, ItemStack p_59018_) {
        if (p_59017_ == 3) {
 -         return PotionBrewing.m_43506_(p_59018_);
-+         return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidIngredient(f_58857_, p_59018_);
++         return net.minecraftforge.common.brewing.BrewingRecipeHelper.isValidIngredient(f_58857_, p_59018_);
        } else if (p_59017_ == 4) {
           return p_59018_.m_150930_(Items.f_42593_);
        } else {
 -         return (p_59018_.m_150930_(Items.f_42589_) || p_59018_.m_150930_(Items.f_42736_) || p_59018_.m_150930_(Items.f_42739_) || p_59018_.m_150930_(Items.f_42590_)) && this.m_8020_(p_59017_).m_41619_();
-+            return net.minecraftforge.common.brewing.BrewingRecipeRegistry.isValidInput(f_58857_, p_59018_) && this.m_8020_(p_59017_).m_41619_();
++            return net.minecraftforge.common.brewing.BrewingRecipeHelper.isValidInput(f_58857_, p_59018_) && this.m_8020_(p_59017_).m_41619_();
        }
     }
  

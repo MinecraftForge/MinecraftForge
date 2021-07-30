@@ -1,8 +1,0 @@
-{
-  "type": "forge:mixing_brewing",
-  "base": "minecraft:night_vision",
-  "reagent": {
-    "tag": "forge:dusts/redstone"
-  },
-  "result": "minecraft:long_night_vision"
-}

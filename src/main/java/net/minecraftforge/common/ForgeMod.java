@@ -124,8 +124,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, "forge");
 
     public static final RegistryObject<RecipeSerializer<?>> BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("brewing", BrewingRecipe.Serializer::new);
-    public static final RegistryObject<RecipeSerializer<?>> CONTAINER_BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("container_brewing", ContainerBrewingRecipe.Serializer::new);
-    public static final RegistryObject<RecipeSerializer<?>> MIXING_BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("mixing_brewing", MixingBrewingRecipe.Serializer::new);
 
     private static boolean enableMilkFluid = false;
     public static final RegistryObject<Fluid> MILK = RegistryObject.of(new ResourceLocation("milk"), ForgeRegistries.FLUIDS);

@@ -19,49 +19,13 @@
 
 package net.minecraftforge.common.brewing;
 
-import net.minecraft.world.Container;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
-import org.apache.commons.lang3.NotImplementedException;
 
-public interface IBrewingRecipe extends Recipe<Container>
+public interface IBrewingRecipe extends Recipe<BrewingContainerWrapper>
 {
-
-    /**
-     * Returns true is the passed ItemStack is an base for this recipe. "Input"
-     * being the item that goes in one of the three bottom slots of the brewing
-     * stand (e.g: water bottle)
-     */
-    boolean isInput(ItemStack input);
-
-    /**
-     * Returns true if the passed ItemStack is an reagent for this recipe.
-     * "Ingredient" being the item that goes in the top slot of the brewing
-     * stand (e.g: nether wart)
-     */
-    boolean isIngredient(ItemStack ingredient);
-
-    /**
-     * Returns the result when the passed base is brewed with the passed
-     * reagent. Empty if invalid base or reagent.
-     */
-    ItemStack getOutput(ItemStack input, ItemStack ingredient);
-
-    @Override
-    default boolean matches(Container container, Level level)
-    {
-        throw new NotImplementedException("Use the methods of IBrewingRecipe instead");
-    }
-
-    @Override
-    default ItemStack assemble(Container container)
-    {
-        throw new NotImplementedException("Use the methods of IBrewingRecipe instead");
-    }
-
     @Override
     default boolean canCraftInDimensions(int p_43999_, int p_44000_)
     {
@@ -73,4 +37,8 @@ public interface IBrewingRecipe extends Recipe<Container>
     {
         return ForgeMod.BREWING;
     }
+
+    Ingredient getReagent();
+
+    Ingredient getBase();
 }

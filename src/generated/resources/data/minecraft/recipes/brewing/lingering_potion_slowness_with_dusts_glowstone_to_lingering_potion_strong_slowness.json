@@ -1,0 +1,14 @@
+{
+  "type": "forge:brewing",
+  "base": {
+    "item": "minecraft:lingering_potion"
+  },
+  "reagent": {
+    "tag": "forge:dusts/glowstone"
+  },
+  "result": {
+    "item": "minecraft:lingering_potion",
+    "count": 1,
+    "nbt": "{Potion:\"minecraft:strong_slowness\"}"
+  }
+}

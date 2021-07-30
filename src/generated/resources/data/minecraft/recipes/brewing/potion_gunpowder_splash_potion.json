@@ -1,8 +1,0 @@
-{
-  "type": "forge:container_brewing",
-  "base": "minecraft:potion",
-  "reagent": {
-    "item": "minecraft:gunpowder"
-  },
-  "result": "minecraft:splash_potion"
-}

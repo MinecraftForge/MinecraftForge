@@ -27,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
@@ -39,21 +40,28 @@ public record BrewingRecipe(@Nonnull ResourceLocation id,
                             @Nonnull ItemStack result) implements IBrewingRecipe
 {
     @Override
-    public boolean isInput(@Nonnull ItemStack stack)
+    public boolean matches(final BrewingContainerWrapper container, final Level level)
     {
-        return this.base.test(stack);
+        final ItemStack reagent = container.getItem(container.ingredientSlot());
+        if (reagent.isEmpty() || !this.reagent.test(reagent))
+        {
+            return false;
+        }
+        for (int slot : container.potionSlots())
+        {
+            final ItemStack base = container.getItem(slot);
+            if (!base.isEmpty() && this.base.test(base))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public ItemStack getOutput(ItemStack input, ItemStack ingredient)
+    public ItemStack assemble(final BrewingContainerWrapper p_44001_)
     {
-        return isInput(input) && isIngredient(ingredient) ? result().copy() : ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean isIngredient(ItemStack ingredient)
-    {
-        return this.reagent.test(ingredient);
+        return result().copy();
     }
 
     @Override
@@ -65,13 +73,25 @@ public record BrewingRecipe(@Nonnull ResourceLocation id,
     @Override
     public ResourceLocation getId()
     {
-        return id;
+        return id();
     }
 
     @Override
     public RecipeSerializer<?> getSerializer()
     {
         return ForgeMod.BREWING_SERIALIZER.get();
+    }
+
+    @Override
+    public Ingredient getReagent()
+    {
+        return reagent();
+    }
+
+    @Override
+    public Ingredient getBase()
+    {
+        return base();
     }
 
     public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<BrewingRecipe>

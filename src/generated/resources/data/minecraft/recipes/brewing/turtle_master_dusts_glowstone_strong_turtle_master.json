@@ -1,8 +1,0 @@
-{
-  "type": "forge:mixing_brewing",
-  "base": "minecraft:turtle_master",
-  "reagent": {
-    "tag": "forge:dusts/glowstone"
-  },
-  "result": "minecraft:strong_turtle_master"
-}

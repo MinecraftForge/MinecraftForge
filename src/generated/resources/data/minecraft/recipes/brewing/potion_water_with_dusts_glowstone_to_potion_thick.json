@@ -1,0 +1,14 @@
+{
+  "type": "forge:brewing",
+  "base": {
+    "item": "minecraft:potion"
+  },
+  "reagent": {
+    "tag": "forge:dusts/glowstone"
+  },
+  "result": {
+    "item": "minecraft:potion",
+    "count": 1,
+    "nbt": "{Potion:\"minecraft:thick\"}"
+  }
+}

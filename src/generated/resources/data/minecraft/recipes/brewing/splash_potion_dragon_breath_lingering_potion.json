@@ -1,8 +1,0 @@
-{
-  "type": "forge:container_brewing",
-  "base": "minecraft:splash_potion",
-  "reagent": {
-    "item": "minecraft:dragon_breath"
-  },
-  "result": "minecraft:lingering_potion"
-}

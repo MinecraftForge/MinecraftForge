@@ -1,0 +1,14 @@
+{
+  "type": "forge:brewing",
+  "base": {
+    "item": "minecraft:splash_potion"
+  },
+  "reagent": {
+    "item": "minecraft:spider_eye"
+  },
+  "result": {
+    "item": "minecraft:splash_potion",
+    "count": 1,
+    "nbt": "{Potion:\"minecraft:mundane\"}"
+  }
+}

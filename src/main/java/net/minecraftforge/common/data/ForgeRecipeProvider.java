@@ -20,7 +20,7 @@
 package net.minecraftforge.common.data;
 
 import com.google.gson.JsonObject;
-import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.HashCache;
 import net.minecraft.data.recipes.FinishedRecipe;
@@ -33,6 +33,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Ingredient.ItemValue;
@@ -41,6 +42,8 @@ import net.minecraft.world.item.crafting.Ingredient.Value;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import org.apache.commons.lang3.tuple.Triple;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -100,101 +103,142 @@ public final class ForgeRecipeProvider extends RecipeProvider
         buildVanillaBrewingRecipes(consumer);
     }
 
-    private void buildVanillaBrewingRecipes(final Consumer<FinishedRecipe> consumer)
+    private final List<Triple<Item, Either<Item, Tag.Named<Item>>, Item>> containerRecipes = new ArrayList<>();
+    private final List<Triple<Potion, Either<Item, Tag.Named<Item>>, Potion>> mixingRecipes = new ArrayList<>();
+    private final Set<Item> containers = new HashSet<>();
+    private final Set<Potion> potions = new HashSet<>();
+    private void buildVanillaBrewingRecipes(Consumer<FinishedRecipe> consumer)
     {
-        addContainerRecipe(consumer, Items.POTION, Items.GUNPOWDER, Items.SPLASH_POTION);
-        addContainerRecipe(consumer, Items.SPLASH_POTION, Items.DRAGON_BREATH, Items.LINGERING_POTION);
-        addMixingRecipe(consumer, Potions.WATER, Items.GLISTERING_MELON_SLICE, Potions.MUNDANE);
-        addMixingRecipe(consumer, Potions.WATER, Items.GHAST_TEAR, Potions.MUNDANE);
-        addMixingRecipe(consumer, Potions.WATER, Items.RABBIT_FOOT, Potions.MUNDANE);
-        addMixingRecipe(consumer, Potions.WATER, Items.BLAZE_POWDER, Potions.MUNDANE);
-        addMixingRecipe(consumer, Potions.WATER, Items.SPIDER_EYE, Potions.MUNDANE);
-        addMixingRecipe(consumer, Potions.WATER, Items.SUGAR, Potions.MUNDANE);
-        addMixingRecipe(consumer, Potions.WATER, Items.MAGMA_CREAM, Potions.MUNDANE);
-        addMixingRecipe(consumer, Potions.WATER, Tags.Items.DUSTS_GLOWSTONE, Potions.THICK);
-        addMixingRecipe(consumer, Potions.WATER, Tags.Items.DUSTS_REDSTONE, Potions.MUNDANE);
-        addMixingRecipe(consumer, Potions.WATER, Items.NETHER_WART, Potions.AWKWARD);
-        addMixingRecipe(consumer, Potions.AWKWARD, Items.GOLDEN_CARROT, Potions.NIGHT_VISION);
-        addMixingRecipe(consumer, Potions.NIGHT_VISION, Tags.Items.DUSTS_REDSTONE, Potions.LONG_NIGHT_VISION);
-        addMixingRecipe(consumer, Potions.NIGHT_VISION, Items.FERMENTED_SPIDER_EYE, Potions.INVISIBILITY);
-        addMixingRecipe(consumer, Potions.LONG_NIGHT_VISION, Items.FERMENTED_SPIDER_EYE, Potions.LONG_INVISIBILITY);
-        addMixingRecipe(consumer, Potions.INVISIBILITY, Tags.Items.DUSTS_REDSTONE, Potions.LONG_INVISIBILITY);
-        addMixingRecipe(consumer, Potions.AWKWARD, Items.MAGMA_CREAM, Potions.FIRE_RESISTANCE);
-        addMixingRecipe(consumer, Potions.FIRE_RESISTANCE, Tags.Items.DUSTS_REDSTONE, Potions.LONG_FIRE_RESISTANCE);
-        addMixingRecipe(consumer, Potions.AWKWARD, Items.RABBIT_FOOT, Potions.LEAPING);
-        addMixingRecipe(consumer, Potions.LEAPING, Tags.Items.DUSTS_REDSTONE, Potions.LONG_LEAPING);
-        addMixingRecipe(consumer, Potions.LEAPING, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_LEAPING);
-        addMixingRecipe(consumer, Potions.LEAPING, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
-        addMixingRecipe(consumer, Potions.LONG_LEAPING, Items.FERMENTED_SPIDER_EYE, Potions.LONG_SLOWNESS);
-        addMixingRecipe(consumer, Potions.SLOWNESS, Tags.Items.DUSTS_REDSTONE, Potions.LONG_SLOWNESS);
-        addMixingRecipe(consumer, Potions.SLOWNESS, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_SLOWNESS);
-        addMixingRecipe(consumer, Potions.AWKWARD, Items.TURTLE_HELMET, Potions.TURTLE_MASTER);
-        addMixingRecipe(consumer, Potions.TURTLE_MASTER, Tags.Items.DUSTS_REDSTONE, Potions.LONG_TURTLE_MASTER);
-        addMixingRecipe(consumer, Potions.TURTLE_MASTER, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_TURTLE_MASTER);
-        addMixingRecipe(consumer, Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
-        addMixingRecipe(consumer, Potions.LONG_SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.LONG_SLOWNESS);
-        addMixingRecipe(consumer, Potions.AWKWARD, Items.SUGAR, Potions.SWIFTNESS);
-        addMixingRecipe(consumer, Potions.SWIFTNESS, Tags.Items.DUSTS_REDSTONE, Potions.LONG_SWIFTNESS);
-        addMixingRecipe(consumer, Potions.SWIFTNESS, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_SWIFTNESS);
-        addMixingRecipe(consumer, Potions.AWKWARD, Items.PUFFERFISH, Potions.WATER_BREATHING);
-        addMixingRecipe(consumer, Potions.WATER_BREATHING, Tags.Items.DUSTS_REDSTONE, Potions.LONG_WATER_BREATHING);
-        addMixingRecipe(consumer, Potions.AWKWARD, Items.GLISTERING_MELON_SLICE, Potions.HEALING);
-        addMixingRecipe(consumer, Potions.HEALING, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_HEALING);
-        addMixingRecipe(consumer, Potions.HEALING, Items.FERMENTED_SPIDER_EYE, Potions.HARMING);
-        addMixingRecipe(consumer, Potions.STRONG_HEALING, Items.FERMENTED_SPIDER_EYE, Potions.STRONG_HARMING);
-        addMixingRecipe(consumer, Potions.HARMING, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_HARMING);
-        addMixingRecipe(consumer, Potions.POISON, Items.FERMENTED_SPIDER_EYE, Potions.HARMING);
-        addMixingRecipe(consumer, Potions.LONG_POISON, Items.FERMENTED_SPIDER_EYE, Potions.HARMING);
-        addMixingRecipe(consumer, Potions.STRONG_POISON, Items.FERMENTED_SPIDER_EYE, Potions.STRONG_HARMING);
-        addMixingRecipe(consumer, Potions.AWKWARD, Items.SPIDER_EYE, Potions.POISON);
-        addMixingRecipe(consumer, Potions.POISON, Tags.Items.DUSTS_REDSTONE, Potions.LONG_POISON);
-        addMixingRecipe(consumer, Potions.POISON, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_POISON);
-        addMixingRecipe(consumer, Potions.AWKWARD, Items.GHAST_TEAR, Potions.REGENERATION);
-        addMixingRecipe(consumer, Potions.REGENERATION, Tags.Items.DUSTS_REDSTONE, Potions.LONG_REGENERATION);
-        addMixingRecipe(consumer, Potions.REGENERATION, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_REGENERATION);
-        addMixingRecipe(consumer, Potions.AWKWARD, Items.BLAZE_POWDER, Potions.STRENGTH);
-        addMixingRecipe(consumer, Potions.STRENGTH, Tags.Items.DUSTS_REDSTONE, Potions.LONG_STRENGTH);
-        addMixingRecipe(consumer, Potions.STRENGTH, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_STRENGTH);
-        addMixingRecipe(consumer, Potions.WATER, Items.FERMENTED_SPIDER_EYE, Potions.WEAKNESS);
-        addMixingRecipe(consumer, Potions.WEAKNESS, Tags.Items.DUSTS_REDSTONE, Potions.LONG_WEAKNESS);
-        addMixingRecipe(consumer, Potions.AWKWARD, Items.PHANTOM_MEMBRANE, Potions.SLOW_FALLING);
-        addMixingRecipe(consumer, Potions.SLOW_FALLING, Tags.Items.DUSTS_REDSTONE, Potions.LONG_SLOW_FALLING);
+        containers.add(Items.POTION);
+        containers.add(Items.SPLASH_POTION);
+        containers.add(Items.LINGERING_POTION);
+        addContainerRecipe(Items.POTION, Items.GUNPOWDER, Items.SPLASH_POTION);
+        addContainerRecipe(Items.SPLASH_POTION, Items.DRAGON_BREATH, Items.LINGERING_POTION);
+        addMixingRecipe(Potions.WATER, Items.GLISTERING_MELON_SLICE, Potions.MUNDANE);
+        addMixingRecipe(Potions.WATER, Items.GHAST_TEAR, Potions.MUNDANE);
+        addMixingRecipe(Potions.WATER, Items.RABBIT_FOOT, Potions.MUNDANE);
+        addMixingRecipe(Potions.WATER, Items.BLAZE_POWDER, Potions.MUNDANE);
+        addMixingRecipe(Potions.WATER, Items.SPIDER_EYE, Potions.MUNDANE);
+        addMixingRecipe(Potions.WATER, Items.SUGAR, Potions.MUNDANE);
+        addMixingRecipe(Potions.WATER, Items.MAGMA_CREAM, Potions.MUNDANE);
+        addMixingRecipe(Potions.WATER, Tags.Items.DUSTS_GLOWSTONE, Potions.THICK);
+        addMixingRecipe(Potions.WATER, Tags.Items.DUSTS_REDSTONE, Potions.MUNDANE);
+        addMixingRecipe(Potions.WATER, Items.NETHER_WART, Potions.AWKWARD);
+        addMixingRecipe(Potions.AWKWARD, Items.GOLDEN_CARROT, Potions.NIGHT_VISION);
+        addMixingRecipe(Potions.NIGHT_VISION, Tags.Items.DUSTS_REDSTONE, Potions.LONG_NIGHT_VISION);
+        addMixingRecipe(Potions.NIGHT_VISION, Items.FERMENTED_SPIDER_EYE, Potions.INVISIBILITY);
+        addMixingRecipe(Potions.LONG_NIGHT_VISION, Items.FERMENTED_SPIDER_EYE, Potions.LONG_INVISIBILITY);
+        addMixingRecipe(Potions.INVISIBILITY, Tags.Items.DUSTS_REDSTONE, Potions.LONG_INVISIBILITY);
+        addMixingRecipe(Potions.AWKWARD, Items.MAGMA_CREAM, Potions.FIRE_RESISTANCE);
+        addMixingRecipe(Potions.FIRE_RESISTANCE, Tags.Items.DUSTS_REDSTONE, Potions.LONG_FIRE_RESISTANCE);
+        addMixingRecipe(Potions.AWKWARD, Items.RABBIT_FOOT, Potions.LEAPING);
+        addMixingRecipe(Potions.LEAPING, Tags.Items.DUSTS_REDSTONE, Potions.LONG_LEAPING);
+        addMixingRecipe(Potions.LEAPING, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_LEAPING);
+        addMixingRecipe(Potions.LEAPING, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
+        addMixingRecipe(Potions.LONG_LEAPING, Items.FERMENTED_SPIDER_EYE, Potions.LONG_SLOWNESS);
+        addMixingRecipe(Potions.SLOWNESS, Tags.Items.DUSTS_REDSTONE, Potions.LONG_SLOWNESS);
+        addMixingRecipe(Potions.SLOWNESS, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_SLOWNESS);
+        addMixingRecipe(Potions.AWKWARD, Items.TURTLE_HELMET, Potions.TURTLE_MASTER);
+        addMixingRecipe(Potions.TURTLE_MASTER, Tags.Items.DUSTS_REDSTONE, Potions.LONG_TURTLE_MASTER);
+        addMixingRecipe(Potions.TURTLE_MASTER, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_TURTLE_MASTER);
+        addMixingRecipe(Potions.SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.SLOWNESS);
+        addMixingRecipe(Potions.LONG_SWIFTNESS, Items.FERMENTED_SPIDER_EYE, Potions.LONG_SLOWNESS);
+        addMixingRecipe(Potions.AWKWARD, Items.SUGAR, Potions.SWIFTNESS);
+        addMixingRecipe(Potions.SWIFTNESS, Tags.Items.DUSTS_REDSTONE, Potions.LONG_SWIFTNESS);
+        addMixingRecipe(Potions.SWIFTNESS, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_SWIFTNESS);
+        addMixingRecipe(Potions.AWKWARD, Items.PUFFERFISH, Potions.WATER_BREATHING);
+        addMixingRecipe(Potions.WATER_BREATHING, Tags.Items.DUSTS_REDSTONE, Potions.LONG_WATER_BREATHING);
+        addMixingRecipe(Potions.AWKWARD, Items.GLISTERING_MELON_SLICE, Potions.HEALING);
+        addMixingRecipe(Potions.HEALING, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_HEALING);
+        addMixingRecipe(Potions.HEALING, Items.FERMENTED_SPIDER_EYE, Potions.HARMING);
+        addMixingRecipe(Potions.STRONG_HEALING, Items.FERMENTED_SPIDER_EYE, Potions.STRONG_HARMING);
+        addMixingRecipe(Potions.HARMING, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_HARMING);
+        addMixingRecipe(Potions.POISON, Items.FERMENTED_SPIDER_EYE, Potions.HARMING);
+        addMixingRecipe(Potions.LONG_POISON, Items.FERMENTED_SPIDER_EYE, Potions.HARMING);
+        addMixingRecipe(Potions.STRONG_POISON, Items.FERMENTED_SPIDER_EYE, Potions.STRONG_HARMING);
+        addMixingRecipe(Potions.AWKWARD, Items.SPIDER_EYE, Potions.POISON);
+        addMixingRecipe(Potions.POISON, Tags.Items.DUSTS_REDSTONE, Potions.LONG_POISON);
+        addMixingRecipe(Potions.POISON, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_POISON);
+        addMixingRecipe(Potions.AWKWARD, Items.GHAST_TEAR, Potions.REGENERATION);
+        addMixingRecipe(Potions.REGENERATION, Tags.Items.DUSTS_REDSTONE, Potions.LONG_REGENERATION);
+        addMixingRecipe(Potions.REGENERATION, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_REGENERATION);
+        addMixingRecipe(Potions.AWKWARD, Items.BLAZE_POWDER, Potions.STRENGTH);
+        addMixingRecipe(Potions.STRENGTH, Tags.Items.DUSTS_REDSTONE, Potions.LONG_STRENGTH);
+        addMixingRecipe(Potions.STRENGTH, Tags.Items.DUSTS_GLOWSTONE, Potions.STRONG_STRENGTH);
+        addMixingRecipe(Potions.WATER, Items.FERMENTED_SPIDER_EYE, Potions.WEAKNESS);
+        addMixingRecipe(Potions.WEAKNESS, Tags.Items.DUSTS_REDSTONE, Potions.LONG_WEAKNESS);
+        addMixingRecipe(Potions.AWKWARD, Items.PHANTOM_MEMBRANE, Potions.SLOW_FALLING);
+        addMixingRecipe(Potions.SLOW_FALLING, Tags.Items.DUSTS_REDSTONE, Potions.LONG_SLOW_FALLING);
 
+        for (Triple<Potion, Either<Item, Tag.Named<Item>>, Potion> mixingRecipe : mixingRecipes) {
+            potions.add(mixingRecipe.getLeft());
+            potions.add(mixingRecipe.getRight());
+            for (Item container : containers) {
+                BrewingRecipeBuilder.brewing(
+                        Ingredient.of(PotionUtils.setPotion(new ItemStack(container), mixingRecipe.getLeft())),
+                        mixingRecipe.getMiddle().map(Ingredient::of, Ingredient::of),
+                        PotionUtils.setPotion(new ItemStack(container), mixingRecipe.getRight())
+                ).save(consumer, createRecipeName(
+                        container.getRegistryName(),
+                        mixingRecipe.getLeft().getRegistryName(),
+                        mixingRecipe.getMiddle().map(IForgeRegistryEntry::getRegistryName, Tag.Named::getName),
+                        container.getRegistryName(),
+                        mixingRecipe.getRight().getRegistryName()
+                ));
+            }
+        }
+        for (Triple<Item, Either<Item, Tag.Named<Item>>, Item> containerRecipe : containerRecipes) {
+            for (Potion potion : potions) {
+                BrewingRecipeBuilder.brewing(
+                        Ingredient.of(PotionUtils.setPotion(new ItemStack(containerRecipe.getLeft()), potion)),
+                        containerRecipe.getMiddle().map(Ingredient::of, Ingredient::of),
+                        PotionUtils.setPotion(new ItemStack(containerRecipe.getRight()), potion)
+                ).save(consumer, createRecipeName(
+                        containerRecipe.getLeft().getRegistryName(),
+                        potion.getRegistryName(),
+                        containerRecipe.getMiddle().map(IForgeRegistryEntry::getRegistryName, Tag.Named::getName),
+                        containerRecipe.getRight().getRegistryName(),
+                        potion.getRegistryName()
+                ));
+            }
+        }
     }
 
-    private void addMixingRecipe(final Consumer<FinishedRecipe> consumer, final Potion input, final Item ingredient, final Potion output)
+    private ResourceLocation createRecipeName(final ResourceLocation baseContainer, final ResourceLocation basePotion, final ResourceLocation reagent, final ResourceLocation resultContainer, final ResourceLocation resultPotion)
     {
-        String name = "brewing/" + input.getRegistryName().getPath() + "_" +
-                ingredient.getRegistryName().getPath() + "_" +
-                output.getRegistryName().getPath();
-        BrewingRecipeBuilder.mixing(input, ingredient, output)
-                .unlocks("hasBrewingStand", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.BREWING_STAND))
-                .save(consumer, new ResourceLocation(output.getRegistryName().getNamespace(), name));
+        final String name = String.join("_",
+                baseContainer.getPath(),
+                basePotion.getPath(),
+                "with",
+                reagent.getPath().replace('/', '_'),
+                "to",
+                resultContainer.getPath(),
+                resultPotion.getPath()
+        );
+        return new ResourceLocation(resultPotion.getNamespace(), "brewing/"+name);
     }
 
-    private void addMixingRecipe(final Consumer<FinishedRecipe> consumer, final Potion input, final Tag.Named<Item> ingredient, final Potion output)
+    private void addMixingRecipe(final Potion base, final Item reagent, final Potion result)
     {
-        String name = "brewing/" + input.getRegistryName().getPath() + "_" +
-                ingredient.getName().getPath().replace('/', '_') + "_" +
-                output.getRegistryName().getPath();
-        BrewingRecipeBuilder.mixing(input, ingredient, output)
-                .unlocks("hasBrewingStand", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.BREWING_STAND))
-                .save(consumer, new ResourceLocation(output.getRegistryName().getNamespace(), name));
+        mixingRecipes.add(Triple.of(base, Either.left(reagent), result));
     }
 
-    private void addContainerRecipe(final Consumer<FinishedRecipe> consumer, final Item input, final Item ingredient, final Item output)
+    private void addMixingRecipe(final Potion base, final Tag.Named<Item> reagent, final Potion result)
     {
-        String name = "brewing/" + input.getRegistryName().getPath() + "_" +
-                ingredient.getRegistryName().getPath() + "_" +
-                output.getRegistryName().getPath();
-        BrewingRecipeBuilder.container(input, ingredient, output)
-                .unlocks("hasBrewingStand", InventoryChangeTrigger.TriggerInstance.hasItems(Blocks.BREWING_STAND))
-                .save(consumer, new ResourceLocation(output.getRegistryName().getNamespace(), name));
+        mixingRecipes.add(Triple.of(base, Either.right(reagent), result));
+    }
+
+    private void addContainerRecipe(final Item base, final Item reagent, final Item result)
+    {
+        containerRecipes.add(Triple.of(base, Either.left(reagent), result));
     }
 
     @Override
     protected void saveAdvancement(HashCache cache, JsonObject advancementJson, Path pathIn) {
-        //NOOP - We dont replace any of the advancement things yet...
+        if (pathIn.toString().contains("brewing"))
+        {
+            super.saveAdvancement(cache, advancementJson, pathIn);
+        }
     }
 
     private FinishedRecipe enhance(FinishedRecipe vanilla)

@@ -1,8 +1,0 @@
-{
-  "type": "forge:mixing_brewing",
-  "base": "minecraft:water",
-  "reagent": {
-    "tag": "forge:dusts/redstone"
-  },
-  "result": "minecraft:mundane"
-}

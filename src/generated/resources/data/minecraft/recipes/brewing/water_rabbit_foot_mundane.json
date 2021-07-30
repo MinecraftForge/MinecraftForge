@@ -1,8 +1,0 @@
-{
-  "type": "forge:mixing_brewing",
-  "base": "minecraft:water",
-  "reagent": {
-    "item": "minecraft:rabbit_foot"
-  },
-  "result": "minecraft:mundane"
-}
