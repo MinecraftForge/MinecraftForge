@@ -5,7 +5,7 @@
        }
  
 -      boolean flag = m_155294_(p_155289_.f_58975_);
-+      boolean flag = net.minecraftforge.common.brewing.BrewingRecipeHelper.canBrew(p_155286_, new net.minecraftforge.common.brewing.BrewingContainerWrapper(p_155289_, f_155280_, new int[]{0, 1, 2}));
++      boolean flag = net.minecraftforge.common.brewing.BrewingRecipeHelper.canBrew(p_155286_, p_155289_, f_155280_, new int[]{0, 1, 2});
        boolean flag1 = p_155289_.f_58976_ > 0;
        ItemStack itemstack1 = p_155289_.f_58975_.get(3);
        if (flag1) {
@@ -35,7 +35,7 @@
 +      if (net.minecraftforge.event.ForgeEventFactory.onPotionAttemptBrew(p_155293_.f_58975_)) return;
 +      ItemStack itemstack = p_155293_.f_58975_.get(3);
 +
-+      net.minecraftforge.common.brewing.BrewingRecipeHelper.brewPotions(p_155291_, new net.minecraftforge.common.brewing.BrewingContainerWrapper(p_155293_, f_155280_, new int[]{0, 1, 2}));
++      net.minecraftforge.common.brewing.BrewingRecipeHelper.brewPotions(p_155291_, p_155293_, f_155280_, new int[]{0, 1, 2});
 +      net.minecraftforge.event.ForgeEventFactory.onPotionBrewed(p_155293_.f_58975_);
 +      if (itemstack.hasContainerItem()) {
 +         ItemStack itemstack1 = itemstack.getContainerItem();
