@@ -167,9 +167,9 @@ public class ForgeNetwork {
             }
             Packet<?> packet = CHANNEL.toVanillaPacket(
                 new EntityCapabilitiesMessage(entity.getId(), capabilityData), NetworkDirection.PLAY_TO_CLIENT);
-            if (sendToSelf && entity instanceof ServerPlayer)
+            if (sendToSelf && entity instanceof ServerPlayer player)
             {
-                sendIfPresent(packet, ((ServerPlayer) entity).connection.connection);
+                sendIfPresent(packet, player.connection.getConnection());
             }
             broadcast(packet, connections);
         }
@@ -257,9 +257,9 @@ public class ForgeNetwork {
             Packet<?> packet = CHANNEL.toVanillaPacket(
                 new EquipmentSlotCapabilitiesMessage(livingEntity.getId(), equipmentSlotType, capabilityData),
                 NetworkDirection.PLAY_TO_CLIENT);
-            if (sendToSelf && livingEntity instanceof ServerPlayer)
+            if (sendToSelf && livingEntity instanceof ServerPlayer player)
             {
-                sendIfPresent(packet, ((ServerPlayer) livingEntity).connection.connection);
+                sendIfPresent(packet, player.connection.getConnection());
             }
             broadcast(packet, players);
         }
@@ -273,7 +273,7 @@ public class ForgeNetwork {
             Set<ServerPlayerConnection> players = chunkSource.chunkMap.getSeenBy(entity);
             if (players != null)
             {
-                return chunkSource.chunkMap.getSeenBy(entity).stream()
+                return players.stream()
                     .map(ServerPlayerConnection::getPlayer)
                     .map(player -> player.connection.getConnection());
             }
