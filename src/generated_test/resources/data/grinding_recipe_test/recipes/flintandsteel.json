@@ -1,0 +1,14 @@
+{
+  "type": "forge:blacksmithing",
+  "base": {
+    "item": "minecraft:iron_ingot"
+  },
+  "addition": {
+    "item": "minecraft:flint"
+  },
+  "result": {
+    "item": "minecraft:flint_and_steel",
+    "count": 1
+  },
+  "cost": 0
+}

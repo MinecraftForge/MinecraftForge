@@ -40,7 +40,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraftforge.common.crafting.GrindingRecipe;
 
 /**
- * Class for building a grinding recipe. Takes 2 ingredients as crafting materials and a item as result.
+ * Class for building a grinding recipe. Takes 2 ingredients as crafting materials and a itemstack as result.
  */
 public class GrindingRecipeBuilder
 {
@@ -67,11 +67,11 @@ public class GrindingRecipeBuilder
     {
         this.advancement.addCriterion(key, criterion);
         return this;
-     }
+    }
     
-    public void save(Consumer<IFinishedRecipe> recipe, String key) 
+    public void save(Consumer<IFinishedRecipe> recipe, String modid, String key) 
     {
-        this.save(recipe, new ResourceLocation(key));
+        this.save(recipe, new ResourceLocation(modid, key));
     }
 
     public void save(Consumer<IFinishedRecipe> recipe, ResourceLocation location) 
@@ -79,65 +79,65 @@ public class GrindingRecipeBuilder
         this.ensureValid(location);
         this.advancement.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(location)).rewards(AdvancementRewards.Builder.recipe(location)).requirements(IRequirementsStrategy.OR);
         recipe.accept(new GrindingRecipeBuilder.Result(location, this.type, this.base, this.addition, this.result, this.advancement, new ResourceLocation(location.getNamespace(), "recipes/" + this.result.getItem().getItemCategory().getRecipeFolderName() + "/" + location.getPath())));
-     }
+    }
 
-     private void ensureValid(ResourceLocation location) 
-     {
-         if (this.advancement.getCriteria().isEmpty()) {
-             throw new IllegalStateException("No way of obtaining recipe " + location);
-         }
-     }
-
-     public static class Result implements IFinishedRecipe 
-     {
-        private final ResourceLocation id;
-        private final Ingredient base;
-        private final Ingredient addition;
-        private final ItemStack result;
-        private final Advancement.Builder advancement;
-        private final ResourceLocation advancementId;
-        private final IRecipeSerializer<?> type;
-
-        public Result(ResourceLocation id, IRecipeSerializer<?> type, Ingredient base, Ingredient addition, ItemStack result, Advancement.Builder advancement, ResourceLocation advancementId) {
-           this.id = id;
-           this.type = type;
-           this.base = base;
-           this.addition = addition;
-           this.result = result;
-           this.advancement = advancement;
-           this.advancementId = advancementId;
+    private void ensureValid(ResourceLocation location) 
+    {
+        if (this.advancement.getCriteria().isEmpty()) {
+            throw new IllegalStateException("No way of obtaining recipe " + location);
         }
+    }
 
-        public void serializeRecipeData(JsonObject tag) 
-        {
-            tag.add("base", this.base.toJson());
-            tag.add("addition", this.addition.toJson());
-            JsonObject jsonobject = new JsonObject();
-            jsonobject.addProperty("item", Registry.ITEM.getKey(this.result.getItem()).toString());
-            jsonobject.addProperty("count", this.result.getCount());
-            tag.add("result", jsonobject);
-        }
-
-        public ResourceLocation getId() 
-        {
-            return this.id;
-        }
-
-        public IRecipeSerializer<?> getType() 
-        {
-            return this.type;
-        }
-
-        @Nullable
-        public JsonObject serializeAdvancement() 
-        {
-            return this.advancement.serializeToJson();
-        }
-
-        @Nullable
-        public ResourceLocation getAdvancementId() 
-        {
-            return this.advancementId;
-        }
-     }
+    public static class Result implements IFinishedRecipe 
+    {
+    	private final ResourceLocation id;
+    	private final Ingredient base;
+    	private final Ingredient addition;
+    	private final ItemStack result;
+    	private final Advancement.Builder advancement;
+    	private final ResourceLocation advancementId;
+    	private final IRecipeSerializer<?> type;
+    	
+    	public Result(ResourceLocation id, IRecipeSerializer<?> type, Ingredient base, Ingredient addition, ItemStack result, Advancement.Builder advancement, ResourceLocation advancementId) {
+    		this.id = id;
+    		this.type = type;
+    		this.base = base;
+    		this.addition = addition;
+    		this.result = result;
+    		this.advancement = advancement;
+    		this.advancementId = advancementId;
+    	}
+    	
+    	public void serializeRecipeData(JsonObject tag) 
+    	{
+    		tag.add("base", this.base.toJson());
+    		tag.add("addition", this.addition.toJson());
+    		JsonObject jsonobject = new JsonObject();
+    		jsonobject.addProperty("item", Registry.ITEM.getKey(this.result.getItem()).toString());
+    		jsonobject.addProperty("count", this.result.getCount());
+    		tag.add("result", jsonobject);
+    	}
+    	
+    	public ResourceLocation getId() 
+    	{
+    		return this.id;
+    	}
+    	
+    	public IRecipeSerializer<?> getType() 
+    	{
+    		return this.type;
+    	}
+    	
+    	@Nullable
+    	public JsonObject serializeAdvancement() 
+    	{
+    		return this.advancement.serializeToJson();
+    	}
+    	
+    	@Nullable
+    	public ResourceLocation getAdvancementId() 
+    	{
+    		return this.advancementId;
+    	}
+    }
 }

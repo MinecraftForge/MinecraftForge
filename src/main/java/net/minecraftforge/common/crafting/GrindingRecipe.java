@@ -21,6 +21,7 @@ package net.minecraftforge.common.crafting;
 
 import com.google.gson.JsonObject;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -90,9 +91,14 @@ public class GrindingRecipe implements IRecipe<IInventory>
         return ForgeMod.GRINDING;
     }
     
+    public ItemStack getToastSymbol() 
+    {
+        return new ItemStack(Blocks.GRINDSTONE);
+    }
+    
     public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<GrindingRecipe> 
     {
-	
+        
         @Override
         public GrindingRecipe fromJson(ResourceLocation id, JsonObject jsonobj) 
         {

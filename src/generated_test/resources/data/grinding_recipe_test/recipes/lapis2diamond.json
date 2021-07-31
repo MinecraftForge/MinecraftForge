@@ -1,0 +1,13 @@
+{
+  "type": "forge:grinding",
+  "base": {
+    "item": "minecraft:lapis_lazuli"
+  },
+  "addition": {
+    "item": "minecraft:netherite_ingot"
+  },
+  "result": {
+    "item": "minecraft:diamond",
+    "count": 1
+  }
+}

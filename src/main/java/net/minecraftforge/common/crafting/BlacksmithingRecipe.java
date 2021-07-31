@@ -22,6 +22,7 @@ package net.minecraftforge.common.crafting;
 import com.google.gson.JsonObject;
 import com.mojang.realmsclient.util.JsonUtils;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -95,6 +96,11 @@ public class BlacksmithingRecipe implements IRecipe<IInventory>
     
     public int getCost() {
     	return this.cost;
+    }
+    
+    public ItemStack getToastSymbol() 
+    {
+	    return new ItemStack(Blocks.ANVIL);
     }
     
     public static class Serializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<BlacksmithingRecipe> 

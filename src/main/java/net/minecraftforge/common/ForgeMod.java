@@ -164,7 +164,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
-        MinecraftForge.EVENT_BUS.addListener(this::anvil);
+        MinecraftForge.EVENT_BUS.addListener(this::anvilCrafting);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
@@ -311,8 +311,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
 
         event.getRegistry().register(new ConditionalRecipe.Serializer<IRecipe<?>>().setRegistryName(new ResourceLocation("forge", "conditional")));
-        event.getRegistry().register(new GrindingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "grinding")));
-        event.getRegistry().register(new BlacksmithingRecipe.Serializer().setRegistryName(new ResourceLocation("forge", "blacksmithing")));
+        event.getRegistry().register(GrindingRecipe.SERIALIZER.setRegistryName(new ResourceLocation("forge", "grinding")));
+        event.getRegistry().register(BlacksmithingRecipe.SERIALIZER.setRegistryName(new ResourceLocation("forge", "blacksmithing")));
 
     }
 
@@ -324,7 +324,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
     }
     
-    public void anvil(AnvilUpdateEvent event)
+    public void anvilCrafting(AnvilUpdateEvent event)
     {
     	IInventory inv = new Inventory(event.getLeft(), event.getRight());
     	Optional<BlacksmithingRecipe> optional = event.getPlayer().level.getRecipeManager().getRecipeFor(BLACKSMITHING, inv, event.getPlayer().level);

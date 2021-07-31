@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "grinding_recipe_test:flintandsteel"
+    ]
+  },
+  "criteria": {
+    "grinding_recipe_test": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:iron_ingot"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "grinding_recipe_test:flintandsteel"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "grinding_recipe_test",
+      "has_the_recipe"
+    ]
+  ]
+}
