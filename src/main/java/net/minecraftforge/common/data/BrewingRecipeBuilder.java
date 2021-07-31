@@ -187,7 +187,7 @@ public abstract class BrewingRecipeBuilder
         @Override
         protected void validate(ResourceLocation id)
         {
-            if (ForgeRegistries.ITEMS.getKey(this.result.getItem()) == null)
+            if (!ForgeRegistries.ITEMS.containsValue(this.result.getItem()))
                 throw new IllegalArgumentException("Tried to use not registered item as result for "+id);
         }
 
@@ -263,11 +263,9 @@ public abstract class BrewingRecipeBuilder
         @Override
         protected void validate(final ResourceLocation id)
         {
-            final ResourceLocation base = ForgeRegistries.POTION_TYPES.getKey(this.base);
-            final ResourceLocation result = ForgeRegistries.POTION_TYPES.getKey(this.result);
-            if (base == null)
+            if (!ForgeRegistries.POTION_TYPES.containsValue(this.base))
                 throw new IllegalArgumentException("Tried to use not registered potion as base for "+id);
-            if (result == null)
+            if (!ForgeRegistries.POTION_TYPES.containsValue(this.result))
                 throw new IllegalArgumentException("Tried to use not registered potion as result for "+id);
         }
 
@@ -338,11 +336,9 @@ public abstract class BrewingRecipeBuilder
         @Override
         protected void validate(final ResourceLocation id)
         {
-            final ResourceLocation base = ForgeRegistries.ITEMS.getKey(this.base);
-            final ResourceLocation result = ForgeRegistries.ITEMS.getKey(this.result);
-            if (base == null)
+            if (!ForgeRegistries.ITEMS.containsValue(this.base))
                 throw new IllegalArgumentException("Tried to use not registered item as base for "+id);
-            if (result == null)
+            if (!ForgeRegistries.ITEMS.containsValue(this.result))
                 throw new IllegalArgumentException("Tried to use not registered item as result for "+id);
         }
 
