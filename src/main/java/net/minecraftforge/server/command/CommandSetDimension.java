@@ -70,27 +70,26 @@ public class CommandSetDimension
             throw NO_ENTITIES.create();
 
         String cmdTarget = "@s";
-        String posTarget = "";
+        String posTarget = "~ ~ ~";
         for (ParsedCommandNode<CommandSource> parsed : ctx.getNodes())
         {
-            final CommandNode<CommandSource> node = parsed.getNode();
             if (parsed.getNode() instanceof ArgumentCommandNode)
             {
-                if ("target".equals(parsed.getNode().getName()))
+                if ("targets".equals(parsed.getNode().getName()))
                 {
                     cmdTarget = parsed.getRange().get(ctx.getInput());
                 }
                 else if ("pos".equals(parsed.getNode().getName()))
                 {
-                    posTarget = " " + parsed.getRange().get(ctx.getInput());
+                    posTarget = parsed.getRange().get(ctx.getInput());
                 }
             }
         }
         final String dimName = dim.dimension().location().toString();
         final String finalCmdTarget = cmdTarget;
         final String finalPosTarget = posTarget;
-        ITextComponent suggestion = new TranslationTextComponent("/execute in %s run tp %s%s", dimName, cmdTarget, finalPosTarget)
-                .withStyle((style) -> style.withColor(TextFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/execute in " + dimName + " run tp " + finalCmdTarget + finalPosTarget)));
+        ITextComponent suggestion = new TranslationTextComponent("/execute in %s run tp %s %s", dimName, cmdTarget, finalPosTarget)
+                .withStyle((style) -> style.withColor(TextFormatting.GREEN).withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/execute in " + dimName + " run tp " + finalCmdTarget + " " + finalPosTarget)));
         ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.setdim.deprecated", suggestion), true);
 
         return 0;
