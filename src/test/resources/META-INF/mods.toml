@@ -142,5 +142,6 @@ license="LGPL v2.1"
     modId="overlay_layers_test"
 [[mods]]
     modId="entity_renderer_events_test"
-
+[[mods]]
+    modId="check_spawn_event_test"
 # ADD ABOVE THIS LINE
