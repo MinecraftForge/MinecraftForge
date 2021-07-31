@@ -13,15 +13,6 @@
     private static final LoadingCache<VoxelShape, Boolean> f_49785_ = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_49972_) {
           return !Shapes.m_83157_(Shapes.m_83144_(), p_49972_, BooleanOp.f_82687_);
-@@ -169,6 +_,8 @@
-       super(p_49795_);
-       StateDefinition.Builder<Block, BlockState> builder = new StateDefinition.Builder<>(this);
-       this.m_7926_(builder);
-+      this.harvestLevel = p_49795_.getHarvestLevel();
-+      this.harvestTool = p_49795_.getHarvestTool();
-       this.f_49792_ = builder.m_61101_(Block::m_49966_, BlockState::new);
-       this.m_49959_(this.f_49792_.m_61090_());
-       if (SharedConstants.f_136183_) {
 @@ -177,7 +_,7 @@
              f_49790_.error("Block classes should end with Block and {} doesn't.", (Object)s);
           }
@@ -100,15 +91,13 @@
     }
  
     public void m_5871_(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> p_49818_, TooltipFlag p_49819_) {
-@@ -486,6 +_,100 @@
+@@ -486,6 +_,81 @@
     protected ImmutableMap<BlockState, VoxelShape> m_152458_(Function<BlockState, VoxelShape> p_152459_) {
        return this.f_49792_.m_61056_().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }
 +
 +   /* ======================================== FORGE START =====================================*/
 +   protected Random RANDOM = new Random();
-+   private net.minecraftforge.common.ToolType harvestTool;
-+   private int harvestLevel;
 +   private final net.minecraftforge.common.util.ReverseTagWrapper<Block> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, BlockTags::m_13115_);
 +   private Object renderProperties;
 +
@@ -131,17 +120,6 @@
 +   }
 +
 +   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IBlockRenderProperties> consumer) {
-+   }
-+
-+   @Nullable
-+   @Override
-+   public net.minecraftforge.common.ToolType getHarvestTool(BlockState state) {
-+      return harvestTool; //TODO: RE-Evaluate
-+   }
-+
-+   @Override
-+   public int getHarvestLevel(BlockState state) {
-+     return harvestLevel; //TODO: RE-Evaluate
 +   }
 +
 +   @Override
@@ -191,12 +169,6 @@
 +      return reverseTags.getTagNames();
 +   }
 +
-+   static {
-+      net.minecraftforge.common.ForgeHooks.setBlockToolSetter((block, tool, level) -> {
-+         block.harvestTool = tool;
-+         block.harvestLevel = level;
-+      });
-+   }
 +   /* ========================================= FORGE END ======================================*/
  
     public static final class BlockStatePairKey {

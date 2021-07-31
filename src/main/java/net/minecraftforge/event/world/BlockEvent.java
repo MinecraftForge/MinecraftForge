@@ -35,7 +35,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -44,8 +44,6 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.minecraftforge.eventbus.api.Event.HasResult;
 
 public class BlockEvent extends Event
 {
@@ -92,7 +90,7 @@ public class BlockEvent extends Event
             super(world, pos, state);
             this.player = player;
 
-            if (state == null || !ForgeHooks.canHarvestBlock(state, player, world, pos)) // Handle empty block or player unable to break block scenario
+            if (state == null || !ForgeHooks.isCorrectToolForDrops(state, player)) // Handle empty block or player unable to break block scenario
             {
                 this.exp = 0;
             }
@@ -445,16 +443,16 @@ public class BlockEvent extends Event
 
         private final Player player;
         private final ItemStack stack;
-        private final ToolType toolType;
+        private final ToolAction toolAction;
         private BlockState state;
 
-        public BlockToolInteractEvent(LevelAccessor world, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolType toolType)
+        public BlockToolInteractEvent(LevelAccessor world, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolAction toolAction)
         {
             super(world, pos, originalState);
             this.player = player;
             this.stack = stack;
             this.state = originalState;
-            this.toolType = toolType;
+            this.toolAction = toolAction;
         }
 
         /**Gets the player using the tool.*/
@@ -469,10 +467,10 @@ public class BlockEvent extends Event
             return stack;
         }
 
-        /**Gets the current type of the tool being compared against.*/
-        public ToolType getToolType()
+        /**Gets the action being performed.*/
+        public ToolAction getToolAction()
         {
-            return toolType;
+            return toolAction;
         }
 
         /**

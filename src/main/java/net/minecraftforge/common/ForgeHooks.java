@@ -56,13 +56,15 @@ import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -84,13 +86,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.SpawnEggItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TippedArrowItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -178,7 +173,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.apache.logging.log4j.util.TriConsumer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -193,7 +187,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
@@ -219,50 +212,12 @@ public class ForgeHooks
         return false;
     }
 
-    public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull Player player, @Nonnull BlockGetter world, @Nonnull BlockPos pos)
+    public static boolean isCorrectToolForDrops(@Nonnull BlockState state, @Nonnull Player player)
     {
-        //state = state.getActualState(world, pos);
         if (!state.requiresCorrectToolForDrops())
             return ForgeEventFactory.doPlayerHarvestCheck(player, state, true);
 
-        ItemStack stack = player.getMainHandItem();
-        ToolType tool = state.getHarvestTool();
-        if (stack.isEmpty() || tool == null)
-            return player.hasCorrectToolForDrops(state);
-
-        int toolLevel = stack.getHarvestLevel(tool, player, state);
-        if (toolLevel < 0)
-            return player.hasCorrectToolForDrops(state);
-
-        return ForgeEventFactory.doPlayerHarvestCheck(player, state, toolLevel >= state.getHarvestLevel());
-    }
-
-    public static boolean isToolEffective(LevelReader world, BlockPos pos, @Nonnull ItemStack stack)
-    {
-        BlockState state = world.getBlockState(pos);
-        //state = state.getActualState(world, pos);
-        for (ToolType type : stack.getToolTypes())
-        {
-            if (state.isToolEffective(type))
-                return true;
-        }
-        return false;
-    }
-
-    private static boolean toolInit = false;
-    static void initTools()
-    {
-        if (toolInit)
-            return;
-        toolInit = true;
-
-        //This is taken from PickaxeItem, if that changes update here.
-        for (Block block : new Block[]{Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN, Blocks.NETHERITE_BLOCK, Blocks.RESPAWN_ANCHOR, Blocks.ANCIENT_DEBRIS})
-            blockToolSetter.accept(block, ToolType.PICKAXE, 3);
-        for (Block block : new Block[]{Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE})
-            blockToolSetter.accept(block, ToolType.PICKAXE, 2);
-        for (Block block : new Block[]{Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE})
-            blockToolSetter.accept(block, ToolType.PICKAXE, 1);
+        return player.hasCorrectToolForDrops(state);
     }
 
     /**
@@ -898,6 +853,19 @@ public class ForgeHooks
         return "default";
     }
 
+    public static Tag<Block> getTagFromVanillaTier(Tiers tier)
+    {
+        return switch(tier)
+                {
+                    case WOOD -> Tags.Blocks.NEEDS_WOOD_TOOL;
+                    case GOLD -> Tags.Blocks.NEEDS_GOLD_TOOL;
+                    case STONE -> BlockTags.NEEDS_STONE_TOOL;
+                    case IRON -> BlockTags.NEEDS_IRON_TOOL;
+                    case DIAMOND -> BlockTags.NEEDS_DIAMOND_TOOL;
+                    case NETHERITE -> Tags.Blocks.NEEDS_NETHERITE_TOOL;
+                };
+    }
+
     @FunctionalInterface
     public interface BiomeCallbackFunction
     {
@@ -1093,12 +1061,6 @@ public class ForgeHooks
         return false;
     }
 
-    private static TriConsumer<Block, ToolType, Integer> blockToolSetter;
-    //Internal use only Modders, this is specifically hidden from you, as you shouldn't be editing other people's blocks.
-    public static void setBlockToolSetter(TriConsumer<Block, ToolType, Integer> setter)
-    {
-        blockToolSetter = setter;
-    }
 
     private static final DummyBlockReader DUMMY_WORLD = new DummyBlockReader();
     private static class DummyBlockReader implements BlockGetter {
