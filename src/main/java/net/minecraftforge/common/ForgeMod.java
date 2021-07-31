@@ -24,6 +24,7 @@ import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.ArgumentSerializer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.item.Items;
 import net.minecraft.sounds.SoundEvent;
@@ -225,6 +226,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public void mappingChanged(FMLModIdMappingEvent evt)
     {
+        Ingredient.invalidateAll();
     }
 
     @Override
