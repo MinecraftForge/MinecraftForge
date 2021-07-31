@@ -72,3 +72,5 @@ loaderVersion="[28,)"
     modId="player_name_event_test"
 [[mods]]
     modId="custom_elytra_test"
+[[mods]]
+    modId="base_crafting_book_test"
