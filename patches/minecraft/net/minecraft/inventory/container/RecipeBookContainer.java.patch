@@ -1,13 +1,74 @@
 --- a/net/minecraft/inventory/container/RecipeBookContainer.java
 +++ b/net/minecraft/inventory/container/RecipeBookContainer.java
-@@ -33,6 +_,10 @@
-    @OnlyIn(Dist.CLIENT)
-    public abstract int func_203721_h();
+@@ -35,4 +_,71 @@
  
-+   public java.util.List<net.minecraft.client.util.RecipeBookCategories> getRecipeBookCategories() {
-+      return net.minecraft.client.util.RecipeBookCategories.func_243236_a(this.func_241850_m());
-+   }
-+
     @OnlyIn(Dist.CLIENT)
     public abstract RecipeBookCategory func_241850_m();
++   
++   /*================================ FORGE START ================================================*/
++   public net.minecraft.item.crafting.IRecipeType<?> getRecipeType() {
++      if (this instanceof FurnaceContainer) {
++         return net.minecraft.item.crafting.IRecipeType.field_222150_b;
++      } else if (this instanceof SmokerContainer) {
++         return net.minecraft.item.crafting.IRecipeType.field_222152_d;
++      } else if (this instanceof BlastFurnaceContainer) {
++         return net.minecraft.item.crafting.IRecipeType.field_222151_c;
++      } else if (this instanceof PlayerContainer || this instanceof WorkbenchContainer) {
++         return net.minecraft.item.crafting.IRecipeType.field_222149_a;
++      } else {
++         throw new IllegalStateException("Unexpected RecipeBookContainer override, please override this method in your own class!");
++      }
++   }
++
++   public java.util.List<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>> getRecipeBookCategories() {
++      return net.minecraftforge.registries.ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues().stream().filter(category -> {
++         return category.getRecipeType().equals(this.getRecipeType());
++      }).sorted(RecipeBookContainer::compareTo).collect(java.util.stream.Collectors.toList());
++   }
++
++   private static final java.util.Map<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, Integer> VANILLA_LIST  = new java.util.HashMap<>();
++
++   private static int compareTo(net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> from, net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> to) {
++      if (from.equals(to)) {
++         return 0;
++      }
++
++      Integer thisValue = VANILLA_LIST.get(from);
++      Integer toValue = VANILLA_LIST.get(to);
++
++      if (thisValue == null && toValue == null) {
++         if (from.getRegistryName() != null) {
++            return from.getRegistryName().compareTo(to.getRegistryName());
++         } else {
++            return (from.hashCode() > to.hashCode()) ? 1 : -1;
++         }
++      } else if (thisValue == null) {
++         return 1;
++      } else if (toValue == null){
++         return -1;
++      }
++
++      return Integer.compare(thisValue, toValue);
++   }
++
++   static {
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.CRAFTING_SEARCH, 10);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.CRAFTING_BUILDING_BLOCKS, 20);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.CRAFTING_REDSTONE, 30);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.CRAFTING_EQUIPMENT, 40);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.CRAFTING_MISC, 50);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.FURNACE_SEARCH, 10);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.FURNACE_FOOD, 20);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.FURNACE_BLOCKS, 30);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.FURNACE_MISC, 40);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.BLAST_FURNACE_SEARCH, 10);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.BLAST_FURNACE_BLOCKS, 20);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.BLAST_FURNACE_MISC, 30);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.SMOKER_SEARCH, 10);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.SMOKER_FOOD, 20);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.STONECUTTER, 30);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.CAMPFIRE, 40);
++      VANILLA_LIST.put(net.minecraft.client.util.RecipeBookCategories.SMITHING, 50);
++   }
++   /*================================ FORGE END ================================================*/
  }

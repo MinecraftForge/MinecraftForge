@@ -1,14 +1,115 @@
 --- a/net/minecraft/client/gui/recipebook/RecipeBookGui.java
 +++ b/net/minecraft/client/gui/recipebook/RecipeBookGui.java
-@@ -95,7 +_,7 @@
+@@ -95,13 +_,13 @@
        this.func_205702_a();
        this.field_193018_j.clear();
  
 -      for(RecipeBookCategories recipebookcategories : RecipeBookCategories.func_243236_a(this.field_201522_g.func_241850_m())) {
-+      for(RecipeBookCategories recipebookcategories : this.field_201522_g.getRecipeBookCategories()) {
++      for(net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> recipebookcategories : this.field_201522_g.getRecipeBookCategories()) {
           this.field_193018_j.add(new RecipeTabToggleWidget(recipebookcategories));
        }
  
+       if (this.field_191913_x != null) {
+          this.field_191913_x = this.field_193018_j.stream().filter((p_209505_1_) -> {
+-            return p_209505_1_.func_201503_d().equals(this.field_191913_x.func_201503_d());
++            return p_209505_1_.getRecipeBookCategory().equals(this.field_191913_x.getRecipeBookCategory());
+          }).findFirst().orElse((RecipeTabToggleWidget)null);
+       }
+ 
+@@ -111,7 +_,17 @@
+ 
+       this.field_191913_x.func_191753_b(true);
+       this.func_193003_g(false);
++      this.field_193018_j.removeIf(tabToggleWidget -> this.field_193964_s.getRecipes(tabToggleWidget.getRecipeBookCategory()).stream().noneMatch(recipeList -> recipeList.func_194209_a() && recipeList.func_194212_c()));
+       this.func_193949_f();
++      this.up = new net.minecraftforge.client.UpDownButton(i - 23, j + 1, 17, 11, false, p_onPress_1_ -> {
++         this.offset = Math.max(0, this.offset - 1);
++         this.updateButtons();
++      });
++      this.down = new net.minecraftforge.client.UpDownButton(i - 23, j + 154, 17, 11, true, p_onPress_1_ -> {
++         this.offset = Math.min(this.field_193018_j.size() - 5, this.offset + 1);
++         this.updateButtons();
++      });
++      this.updateButtons();
+    }
+ 
+    public boolean func_231049_c__(boolean p_231049_1_) {
+@@ -126,6 +_,8 @@
+       this.field_193962_q = null;
+       this.field_191913_x = null;
+       this.field_191888_F.field_195559_v.func_197967_a(false);
++      this.up = null;
++      this.down = null;
+    }
+ 
+    public int func_193011_a(boolean p_193011_1_, int p_193011_2_, int p_193011_3_) {
+@@ -167,10 +_,13 @@
+    }
+ 
+    private void func_193003_g(boolean p_193003_1_) {
+-      List<RecipeList> list = this.field_193964_s.func_202891_a(this.field_191913_x.func_201503_d());
+-      list.forEach((p_193944_1_) -> {
+-         p_193944_1_.func_194210_a(this.field_193965_u, this.field_201522_g.func_201770_g(), this.field_201522_g.func_201772_h(), this.field_193964_s);
+-      });
++      for (net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> category : net.minecraftforge.registries.ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues()) {
++         List<RecipeList> list = this.field_193964_s.getRecipes(category);
++         list.forEach((p_193944_1_) -> {
++            p_193944_1_.func_194210_a(this.field_193965_u, this.field_201522_g.func_201770_g(), this.field_201522_g.func_201772_h(), this.field_193964_s);
++         });
++      }
++      List<RecipeList> list = this.field_193964_s.getRecipes(this.field_191913_x.getRecipeBookCategory());
+       List<RecipeList> list1 = Lists.newArrayList(list);
+       list1.removeIf((p_193952_0_) -> {
+          return !p_193952_0_.func_194209_a();
+@@ -197,13 +_,15 @@
+ 
+    private void func_193949_f() {
+       int i = (this.field_191904_o - 147) / 2 - this.field_191903_n - 30;
+-      int j = (this.field_191905_p - 166) / 2 + 3;
++      int j = (this.field_191905_p - 166) / 2 + (this.field_193018_j.size() > 5 ? 16 : 3);
+       int k = 27;
+       int l = 0;
+ 
++      int x = 0;
+       for(RecipeTabToggleWidget recipetabtogglewidget : this.field_193018_j) {
+-         RecipeBookCategories recipebookcategories = recipetabtogglewidget.func_201503_d();
+-         if (recipebookcategories != RecipeBookCategories.CRAFTING_SEARCH && recipebookcategories != RecipeBookCategories.FURNACE_SEARCH) {
++         if (x >= this.offset && x < Math.min(this.field_193018_j.size(), this.offset + 5)) {
++            net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> recipebookcategories = recipetabtogglewidget.getRecipeBookCategory();
++         if (!recipebookcategories.isUnfiltered()) {
+             if (recipetabtogglewidget.func_199500_a(this.field_193964_s)) {
+                recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
+                recipetabtogglewidget.func_193918_a(this.field_191888_F);
+@@ -212,6 +_,10 @@
+             recipetabtogglewidget.field_230694_p_ = true;
+             recipetabtogglewidget.func_191752_c(i, j + 27 * l++);
+          }
++         } else {
++            recipetabtogglewidget.field_230694_p_ = false;
++         }
++         x++;
+       }
+ 
+    }
+@@ -255,6 +_,8 @@
+ 
+          this.field_193960_m.func_230430_a_(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+          this.field_193022_s.func_238927_a_(p_230430_1_, i, j, p_230430_2_, p_230430_3_, p_230430_4_);
++         this.up.func_230430_a_(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
++         this.down.func_230430_a_(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+          RenderSystem.popMatrix();
+       }
+    }
+@@ -323,6 +_,9 @@
+             return true;
+          } else if (this.field_193962_q.func_231044_a_(p_231044_1_, p_231044_3_, p_231044_5_)) {
+             return true;
++         } else if (this.up.func_231044_a_(p_231044_1_, p_231044_3_, p_231044_5_) || this.down.func_231044_a_(p_231044_1_, p_231044_3_, p_231044_5_)) {
++            this.func_193949_f();
++            return true;
+          } else if (this.field_193960_m.func_231044_a_(p_231044_1_, p_231044_3_, p_231044_5_)) {
+             boolean flag = this.func_201521_f();
+             this.field_193960_m.func_191753_b(flag);
 @@ -434,7 +_,7 @@
  
           languagemanager.func_135045_a(language);
@@ -18,3 +119,28 @@
           this.field_191888_F.field_71474_y.func_74303_b();
        }
  
+@@ -449,7 +_,7 @@
+       if (this.func_191878_b()) {
+          this.func_193003_g(false);
+       }
+-
++      this.updateButtons();
+    }
+ 
+    public void func_193001_a(List<IRecipe<?>> p_193001_1_) {
+@@ -484,4 +_,15 @@
+       }
+ 
+    }
++
++   /*================================ FORGE START ================================================*/
++   private net.minecraftforge.client.UpDownButton up;
++   private net.minecraftforge.client.UpDownButton down;
++   private int offset;
++
++   private void updateButtons() {
++      this.up.field_230694_p_ = this.offset > 0 && this.field_193018_j.size() > 5;
++      this.down.field_230694_p_ = this.field_193018_j.size() > 5 && this.offset < this.field_193018_j.size() - 5;
++   }
++   /*================================ FORGE END ================================================*/
+ }

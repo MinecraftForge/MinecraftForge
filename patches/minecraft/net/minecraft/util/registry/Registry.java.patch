@@ -11,11 +11,12 @@
  public abstract class Registry<T> implements Codec<T>, Keyable, IObjectIntIterable<T> {
     protected static final Logger field_212616_e = LogManager.getLogger();
     private static final Map<ResourceLocation, Supplier<?>> field_218376_a = Maps.newLinkedHashMap();
-@@ -133,43 +_,43 @@
+@@ -133,43 +_,44 @@
     public static final RegistryKey<Registry<DimensionType>> field_239698_ad_ = func_239741_a_("dimension_type");
     public static final RegistryKey<Registry<World>> field_239699_ae_ = func_239741_a_("dimension");
     public static final RegistryKey<Registry<Dimension>> field_239700_af_ = func_239741_a_("dimension");
 -   public static final Registry<SoundEvent> field_212633_v = func_239746_a_(field_239708_i_, () -> {
++   public static final RegistryKey<Registry<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>>> RECIPE_BOOK_CATEGORIES_REGISTRY = func_239741_a_("recipe_book_categories");
 +   @Deprecated public static final Registry<SoundEvent> field_212633_v = forge(field_239708_i_, () -> {
        return SoundEvents.field_187638_cR;
     });

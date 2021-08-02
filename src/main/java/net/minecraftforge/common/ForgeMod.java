@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.client.util.RecipeBookCategories;
 import net.minecraft.command.arguments.ArgumentSerializer;
 import net.minecraft.command.arguments.ArgumentTypes;
 import net.minecraft.command.arguments.IArgumentSerializer;
@@ -160,6 +161,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.register(this);
         BiomeDictionary.init();
+        RecipeBookCategories.registerCategories();
     }
 
     public void preInit(FMLCommonSetupEvent evt)

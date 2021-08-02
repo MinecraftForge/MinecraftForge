@@ -48,6 +48,7 @@ public class UpDownButton extends Button {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.disableCull();
         matrixStack.pushPose();
         matrixStack.translate(x, y, 0);
         matrixStack.scale(-1, 1, 1);
@@ -62,6 +63,7 @@ public class UpDownButton extends Button {
         }
         matrixStack.popPose();
         matrixStack.popPose();
+        RenderSystem.enableCull();
         this.renderBg(matrixStack, minecraft, mouseX, mouseY);
     }
 }

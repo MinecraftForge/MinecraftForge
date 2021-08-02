@@ -1,0 +1,104 @@
+--- a/net/minecraft/client/util/ClientRecipeBook.java
++++ b/net/minecraft/client/util/ClientRecipeBook.java
+@@ -26,48 +_,51 @@
+ @OnlyIn(Dist.CLIENT)
+ public class ClientRecipeBook extends RecipeBook {
+    private static final Logger field_241555_k_ = LogManager.getLogger();
+-   private Map<RecipeBookCategories, List<RecipeList>> field_197931_e = ImmutableMap.of();
++   @Deprecated private Map<RecipeBookCategories, List<RecipeList>> field_197931_e = ImmutableMap.of(); // use forgeRecipeBookCategories instead
+    private List<RecipeList> field_197932_f = ImmutableList.of();
+ 
+    public void func_243196_a(Iterable<IRecipe<?>> p_243196_1_) {
+-      Map<RecipeBookCategories, List<List<IRecipe<?>>>> map = func_243201_b(p_243196_1_);
+-      Map<RecipeBookCategories, List<RecipeList>> map1 = Maps.newHashMap();
++      Map<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, List<List<IRecipe<?>>>> map = func_243201_b(p_243196_1_);
++      Map<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, List<RecipeList>> map1 = Maps.newHashMap();
+       Builder<RecipeList> builder = ImmutableList.builder();
+       map.forEach((p_243197_2_, p_243197_3_) -> {
+          List list = map1.put(p_243197_2_, p_243197_3_.stream().map(RecipeList::new).peek(builder::add).collect(ImmutableList.toImmutableList()));
+       });
+-      RecipeBookCategories.field_243235_w.forEach((p_243199_1_, p_243199_2_) -> {
++      /*RecipeBookCategories.AGGREGATE_CATEGORIES.forEach((p_243199_1_, p_243199_2_) -> {
+          List list = map1.put(p_243199_1_, p_243199_2_.stream().flatMap((p_243198_1_) -> {
+             return map1.getOrDefault(p_243198_1_, ImmutableList.of()).stream();
+          }).collect(ImmutableList.toImmutableList()));
+-      });
+-      this.field_197931_e = ImmutableMap.copyOf(map1);
++      });*/
++      this.forgeRecipeBookCategories = ImmutableMap.copyOf(map1);
+       this.field_197932_f = builder.build();
+    }
+ 
+-   private static Map<RecipeBookCategories, List<List<IRecipe<?>>>> func_243201_b(Iterable<IRecipe<?>> p_243201_0_) {
+-      Map<RecipeBookCategories, List<List<IRecipe<?>>>> map = Maps.newHashMap();
+-      Table<RecipeBookCategories, String, List<IRecipe<?>>> table = HashBasedTable.create();
++   private static Map<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, List<List<IRecipe<?>>>> func_243201_b(Iterable<IRecipe<?>> p_243201_0_) {
++      Map<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, List<List<IRecipe<?>>>> map = Maps.newHashMap();
++      Table<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, String, List<IRecipe<?>>> table = HashBasedTable.create();
+ 
+       for(IRecipe<?> irecipe : p_243201_0_) {
+          if (!irecipe.func_192399_d()) {
+-            RecipeBookCategories recipebookcategories = func_202887_g(irecipe);
+-            String s = irecipe.func_193358_e();
+-            if (s.isEmpty()) {
+-               map.computeIfAbsent(recipebookcategories, (p_243202_0_) -> {
+-                  return Lists.newArrayList();
+-               }).add(ImmutableList.of(irecipe));
+-            } else {
+-               List<IRecipe<?>> list = table.get(recipebookcategories, s);
+-               if (list == null) {
+-                  list = Lists.newArrayList();
+-                  table.put(recipebookcategories, s, list);
+-                  map.computeIfAbsent(recipebookcategories, (p_202890_0_) -> {
+-                     return Lists.newArrayList();
+-                  }).add(list);
++            for (net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> recipebookcategories : net.minecraftforge.registries.ForgeRegistries.RECIPE_BOOK_CATEGORIES.getValues()) {
++               if (recipebookcategories.getRecipeType() == irecipe.func_222127_g() && (recipebookcategories.isUnfiltered() || !recipebookcategories.isUnfiltered() && recipebookcategories.getPredicate().test(irecipe))) {
++                  String s = irecipe.func_193358_e();
++                  if (s.isEmpty()) {
++                     map.computeIfAbsent(recipebookcategories, (p_243202_0_) -> {
++                        return Lists.newArrayList();
++                     }).add(ImmutableList.of(irecipe));
++                  } else {
++                     List<IRecipe<?>> list = table.get(recipebookcategories, s);
++                     if (list == null) {
++                        list = Lists.newArrayList();
++                        table.put(recipebookcategories, s, list);
++                        map.computeIfAbsent(recipebookcategories, (p_202890_0_) -> {
++                           return Lists.newArrayList();
++                        }).add(list);
++                     }
++
++                     list.add(irecipe);
++                  }
+                }
+-
+-               list.add(irecipe);
+             }
+          }
+       }
+@@ -75,6 +_,7 @@
+       return map;
+    }
+ 
++   @Deprecated
+    private static RecipeBookCategories func_202887_g(IRecipe<?> p_202887_0_) {
+       IRecipeType<?> irecipetype = p_202887_0_.func_222127_g();
+       if (irecipetype == IRecipeType.field_222149_a) {
+@@ -116,6 +_,14 @@
+    }
+ 
+    public List<RecipeList> func_202891_a(RecipeBookCategories p_202891_1_) {
+-      return this.field_197931_e.getOrDefault(p_202891_1_, Collections.emptyList());
+-   }
++      return this.forgeRecipeBookCategories.getOrDefault(p_202891_1_, Collections.emptyList());
++   }
++   
++   /*================================ FORGE START ================================================*/
++   private Map<net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?>, List<RecipeList>> forgeRecipeBookCategories = Maps.newHashMap();
++
++   public List<RecipeList> getRecipes(net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> forgeRecipeBookCategory) {
++      return this.forgeRecipeBookCategories.getOrDefault(forgeRecipeBookCategory, Collections.emptyList());
++   }
++   /*================================ FORGE END ================================================*/
+ }

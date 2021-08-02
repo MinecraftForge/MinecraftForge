@@ -1,0 +1,68 @@
+--- a/net/minecraft/client/gui/recipebook/RecipeTabToggleWidget.java
++++ b/net/minecraft/client/gui/recipebook/RecipeTabToggleWidget.java
+@@ -16,18 +_,19 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public class RecipeTabToggleWidget extends ToggleWidget {
+-   private RecipeBookCategories field_193921_u;
++   @Deprecated private RecipeBookCategories field_193921_u; // use recipeBookCategory instead
+    private float field_193922_v;
+ 
++   @Deprecated // use RecipeTabToggleWidget(IForgeRecipeBookCategory) instead
+    public RecipeTabToggleWidget(RecipeBookCategories p_i51075_1_) {
+       super(0, 0, 35, 27, false);
+-      this.field_193921_u = p_i51075_1_;
++      this.recipeBookCategory = p_i51075_1_;
+       this.func_191751_a(153, 2, 35, 0, RecipeBookGui.field_191894_a);
+    }
+ 
+    public void func_193918_a(Minecraft p_193918_1_) {
+       ClientRecipeBook clientrecipebook = p_193918_1_.field_71439_g.func_199507_B();
+-      List<RecipeList> list = clientrecipebook.func_202891_a(this.field_193921_u);
++      List<RecipeList> list = clientrecipebook.getRecipes(this.recipeBookCategory);
+       if (p_193918_1_.field_71439_g.field_71070_bA instanceof RecipeBookContainer) {
+          for(RecipeList recipelist : list) {
+             for(IRecipe<?> irecipe : recipelist.func_194208_a(clientrecipebook.func_242141_a((RecipeBookContainer)p_193918_1_.field_71439_g.field_71070_bA))) {
+@@ -80,7 +_,7 @@
+    }
+ 
+    private void func_193920_a(ItemRenderer p_193920_1_) {
+-      List<ItemStack> list = this.field_193921_u.func_202903_a();
++      List<ItemStack> list = this.recipeBookCategory.getIcon();
+       int i = this.field_191755_p ? -2 : 0;
+       if (list.size() == 1) {
+          p_193920_1_.func_239390_c_(list.get(0), this.field_230690_l_ + 9 + i, this.field_230691_m_ + 5);
+@@ -91,12 +_,13 @@
+ 
+    }
+ 
++   @Deprecated // use getRecipeBookCategory() instead
+    public RecipeBookCategories func_201503_d() {
+       return this.field_193921_u;
+    }
+ 
+    public boolean func_199500_a(ClientRecipeBook p_199500_1_) {
+-      List<RecipeList> list = p_199500_1_.func_202891_a(this.field_193921_u);
++      List<RecipeList> list = p_199500_1_.getRecipes(this.recipeBookCategory);
+       this.field_230694_p_ = false;
+       if (list != null) {
+          for(RecipeList recipelist : list) {
+@@ -109,4 +_,18 @@
+ 
+       return this.field_230694_p_;
+    }
++   
++   /*================================ FORGE START ================================================*/
++   private final net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> recipeBookCategory;
++
++   public RecipeTabToggleWidget(net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> p_i51075_1_) {
++      super(0, 0, 35, 27, false);
++      this.recipeBookCategory = p_i51075_1_;
++      this.func_191751_a(153, 2, 35, 0, RecipeBookGui.field_191894_a);
++   }
++
++   public net.minecraftforge.common.extensions.IForgeRecipeBookCategory<?> getRecipeBookCategory() {
++      return this.recipeBookCategory;
++   }
++   /*================================ FORGE END ================================================*/
+ }
