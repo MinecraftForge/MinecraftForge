@@ -36,6 +36,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>> extends TagsProvider<T>
 {
+    //TODO add game event tags here when they become a forge registry
     //Special handling for vanilla tag types in case someone decides to use the ForgeRegistryTagsProvider instead of one of the vanilla subtypes
     private static final Map<IForgeRegistry<?>, String> vanillaTypes = ImmutableMap.<IForgeRegistry<?>, String>builder()
           .put(ForgeRegistries.BLOCKS, "blocks")
@@ -50,7 +51,9 @@ public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>
             throw new IllegalArgumentException("Forge registry " + registryIn.getRegistryName() + " is not an instance of a ForgeRegistry");
         if (forgeRegistry.getTagFolder() == null && !vanillaTypes.containsKey(registryIn))
             throw new IllegalArgumentException("Forge registry " + registryIn.getRegistryName() + " does not have support for tags");
-        return GameData.getAnyWrapper(forgeRegistry.getRegistryKey());
+        if (forgeRegistry.getDefaultKey() == null)
+            return GameData.getWrapper(forgeRegistry.getRegistryKey());
+        return GameData.getDefaultedWrapper(forgeRegistry.getRegistryKey());
     }
 
     private static <T extends IForgeRegistryEntry<T>> String getTagFolder(IForgeRegistry<T> registryIn)

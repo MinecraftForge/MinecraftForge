@@ -35,7 +35,11 @@ import net.minecraft.tags.Tag.Named;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagLoader;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
-import net.minecraftforge.registries.*;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -78,7 +82,7 @@ public class ForgeTagHandler
             if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
             return tagRegistry.bind(name.toString());
         }
-        return StaticTagHelper.createDelayedTag(registry.getRegistryName(), name);
+        return StaticTagHelper.bindDelayed(registry.getRegistryName(), name);
     }
 
     /**
@@ -112,9 +116,9 @@ public class ForgeTagHandler
         {
             StaticTagHelper<T> tagRegistry = getTagHelper(registry);
             if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
-            return tagRegistry.createOptional(name, defaults);
+            return tagRegistry.bindOptional(name, defaults);
         }
-        return StaticTagHelper.createDelayedOptional(registry.getRegistryName(), name, defaults);
+        return StaticTagHelper.bindDelayedOptional(registry.getRegistryName(), name, defaults);
     }
 
     /**
@@ -135,7 +139,7 @@ public class ForgeTagHandler
             if (registry == null) throw new IllegalArgumentException("Could not find registry named: " + registryName);
             return bind(registry, name);
         }
-        return StaticTagHelper.createDelayedTag(registryName, name);
+        return StaticTagHelper.bindDelayed(registryName, name);
     }
 
     /**
@@ -172,7 +176,7 @@ public class ForgeTagHandler
             if (registry == null) throw new IllegalArgumentException("Could not find registry named: " + registryName);
             return bindOptional(registry, name, defaults);
         }
-        return StaticTagHelper.createDelayedOptional(registryName, name, defaults);
+        return StaticTagHelper.bindDelayedOptional(registryName, name, defaults);
     }
 
     /**
@@ -222,16 +226,19 @@ public class ForgeTagHandler
     }
 
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unchecked"})
-    public static <T, A extends IForgeRegistryEntry<A>> Optional<? extends Registry<T>> getWrapperRegistry(ResourceKey<? extends Registry<T>> key, Optional<? extends Registry<T>> vanillaReg) {
+    public static <T, A extends IForgeRegistryEntry<A>> Optional<? extends Registry<T>> getWrapperRegistry(ResourceKey<? extends Registry<T>> key, Optional<? extends Registry<T>> vanillaReg)
+    {
         if (vanillaReg.isPresent())
             return vanillaReg;
-        try {
-            ResourceKey<? extends Registry<A>> cast = (ResourceKey<? extends Registry<A>>) key;
-            if (RegistryManager.ACTIVE.getRegistry(cast).getTagFolder() == null)
-                return Optional.empty();
-            return Optional.of((Registry<T>) GameData.getAnyWrapper(cast));
-        } catch (ClassCastException e) { //if there is an exception that means that the tag was neither from vanilla nor from forge so ignore it
+
+        ForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(key.location());
+        if (reg == null || reg.getTagFolder() == null)
             return Optional.empty();
-        }
+
+        ResourceKey<? extends Registry<A>> cast = (ResourceKey<? extends Registry<A>>) key;
+
+        if (reg.getDefaultKey() == null)
+            return Optional.of((Registry<T>) GameData.getWrapper(cast));
+        return Optional.of((Registry<T>) GameData.getDefaultedWrapper(cast));
     }
 }

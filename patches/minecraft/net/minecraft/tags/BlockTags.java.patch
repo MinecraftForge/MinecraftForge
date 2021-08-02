@@ -9,7 +9,7 @@
 +   }
 +
 +   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Block> bindOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<Block>> defaults) {
-+      return f_13053_.createOptional(name, defaults);
++      return f_13053_.bindOptional(name, defaults);
 +   }
 +
     public static TagCollection<Block> m_13115_() {

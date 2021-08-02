@@ -10,6 +10,6 @@
 +   }
 +
 +   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Fluid> bindOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<Fluid>> defaults) {
-+      return f_13130_.createOptional(name, defaults);
++      return f_13130_.bindOptional(name, defaults);
 +   }
  }

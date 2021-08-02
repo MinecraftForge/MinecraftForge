@@ -110,7 +110,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
 
     /**
      * Filters out custom tag types that the vanilla client won't recognize.
-     * It prevents a rare error logging and reduces the packet size
+     * It prevents a rare error from logging and reduces the packet size
      */
     private static ClientboundUpdateTagsPacket filterCustomTagTypes(ClientboundUpdateTagsPacket packet) {
         Map<ResourceKey<? extends Registry<?>>, TagCollection.NetworkPayload> tags = packet.getTags()

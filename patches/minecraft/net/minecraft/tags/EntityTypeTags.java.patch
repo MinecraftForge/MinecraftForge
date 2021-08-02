@@ -9,7 +9,7 @@
 +   }
 +
 +   public static net.minecraftforge.common.Tags.IOptionalNamedTag<EntityType<?>> bindOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<EntityType<?>>> defaults) {
-+      return f_13119_.createOptional(name, defaults);
++      return f_13119_.bindOptional(name, defaults);
 +   }
 +
     public static TagCollection<EntityType<?>> m_13126_() {
