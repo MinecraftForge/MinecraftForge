@@ -35,12 +35,12 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * Killing or other handling of the entity after event cancellation is up to the modder.
  */
 @Cancelable
-public class ProjectileImpactEvent<T extends Projectile> extends EntityEvent
+public class ProjectileImpactEvent extends EntityEvent
 {
     private final HitResult ray;
-    private final T projectile;
+    private final Projectile projectile;
 
-    public ProjectileImpactEvent(T projectile, HitResult ray)
+    public ProjectileImpactEvent(Projectile projectile, HitResult ray)
     {
         super(projectile);
         this.ray = ray;
@@ -52,7 +52,7 @@ public class ProjectileImpactEvent<T extends Projectile> extends EntityEvent
         return ray;
     }
 
-    public T getProjectile()
+    public Projectile getProjectile()
     {
         return projectile;
     }

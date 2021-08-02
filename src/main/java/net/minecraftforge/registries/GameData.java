@@ -141,7 +141,7 @@ public class GameData
         makeRegistry(BLOCKS, Block.class, "air").addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").create();
         makeRegistry(FLUIDS, Fluid.class, "empty").create();
         makeRegistry(ITEMS, Item.class, "air").addCallback(ItemCallbacks.INSTANCE).legacyName("items").create();
-        makeRegistry(EFFECTS, MobEffect.class ).legacyName("potions").create();
+        makeRegistry(MOB_EFFECTS, MobEffect.class).legacyName("potions").create();
         //makeRegistry(BIOMES, Biome.class).legacyName("biomes").create();
         makeRegistry(SOUND_EVENTS, SoundEvent.class).legacyName("soundevents").create();
         makeRegistry(POTIONS, Potion.class, "empty").legacyName("potiontypes").tagFolder("potions").create();

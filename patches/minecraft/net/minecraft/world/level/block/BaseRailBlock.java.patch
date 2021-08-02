@@ -5,7 +5,7 @@
  import net.minecraft.world.phys.shapes.VoxelShape;
  
 -public abstract class BaseRailBlock extends Block implements SimpleWaterloggedBlock {
-+public abstract class BaseRailBlock extends Block implements net.minecraftforge.common.extensions.IForgeBaseRailBlock {
++public abstract class BaseRailBlock extends Block implements SimpleWaterloggedBlock, net.minecraftforge.common.extensions.IForgeBaseRailBlock {
     protected static final VoxelShape f_49355_ = Block.m_49796_(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D);
     protected static final VoxelShape f_49356_ = Block.m_49796_(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
     public static final BooleanProperty f_152149_ = BlockStateProperties.f_61362_;
