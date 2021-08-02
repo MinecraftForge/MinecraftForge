@@ -263,9 +263,9 @@ public abstract class BrewingRecipeBuilder
         @Override
         protected void validate(final ResourceLocation id)
         {
-            if (!ForgeRegistries.POTION_TYPES.containsValue(this.base))
+            if (!ForgeRegistries.POTIONS.containsValue(this.base))
                 throw new IllegalArgumentException("Tried to use not registered potion as base for "+id);
-            if (!ForgeRegistries.POTION_TYPES.containsValue(this.result))
+            if (!ForgeRegistries.POTIONS.containsValue(this.result))
                 throw new IllegalArgumentException("Tried to use not registered potion as result for "+id);
         }
 
@@ -285,8 +285,8 @@ public abstract class BrewingRecipeBuilder
             @Override
             public void serializeRecipeData(JsonObject tag)
             {
-                final ResourceLocation base = ForgeRegistries.POTION_TYPES.getKey(this.base);
-                final ResourceLocation result = ForgeRegistries.POTION_TYPES.getKey(this.result);
+                final ResourceLocation base = ForgeRegistries.POTIONS.getKey(this.base);
+                final ResourceLocation result = ForgeRegistries.POTIONS.getKey(this.result);
                 tag.addProperty("base", base.toString());
                 tag.add("reagent", this.reagent.toJson());
                 tag.addProperty("result", result.toString());

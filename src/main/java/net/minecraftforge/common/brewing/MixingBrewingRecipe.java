@@ -83,11 +83,11 @@ public record MixingBrewingRecipe(@Nonnull ResourceLocation id,
         @Override
         public MixingBrewingRecipe fromJson(final ResourceLocation p_199425_1_, final JsonObject p_199425_2_)
         {
-            Potion base = ForgeRegistries.POTION_TYPES.getValue(new ResourceLocation(p_199425_2_.get("base").getAsString()));
+            Potion base = ForgeRegistries.POTIONS.getValue(new ResourceLocation(p_199425_2_.get("base").getAsString()));
             if (base == null)
                 throw new JsonParseException("Invalid item supplied for base in " + p_199425_1_);
             Ingredient reagent = Ingredient.fromJson(p_199425_2_.getAsJsonObject("reagent"));
-            Potion result = ForgeRegistries.POTION_TYPES.getValue(new ResourceLocation(p_199425_2_.get("result").getAsString()));
+            Potion result = ForgeRegistries.POTIONS.getValue(new ResourceLocation(p_199425_2_.get("result").getAsString()));
             if (result == null)
                 throw new JsonParseException("Invalid item supplied for result in " + p_199425_1_);
             return new MixingBrewingRecipe(p_199425_1_, base, reagent, result);
@@ -97,18 +97,18 @@ public record MixingBrewingRecipe(@Nonnull ResourceLocation id,
         @Override
         public MixingBrewingRecipe fromNetwork(final ResourceLocation p_199426_1_, final FriendlyByteBuf p_199426_2_)
         {
-            Potion base = ForgeRegistries.POTION_TYPES.getValue(p_199426_2_.readResourceLocation());
+            Potion base = ForgeRegistries.POTIONS.getValue(p_199426_2_.readResourceLocation());
             Ingredient reagent = Ingredient.fromNetwork(p_199426_2_);
-            Potion result = ForgeRegistries.POTION_TYPES.getValue(p_199426_2_.readResourceLocation());
+            Potion result = ForgeRegistries.POTIONS.getValue(p_199426_2_.readResourceLocation());
             return new MixingBrewingRecipe(p_199426_1_, base, reagent, result);
         }
 
         @Override
         public void toNetwork(final FriendlyByteBuf p_199427_1_, final MixingBrewingRecipe p_199427_2_)
         {
-            p_199427_1_.writeResourceLocation(ForgeRegistries.POTION_TYPES.getKey(p_199427_2_.base()));
+            p_199427_1_.writeResourceLocation(ForgeRegistries.POTIONS.getKey(p_199427_2_.base()));
             p_199427_2_.reagent().toNetwork(p_199427_1_);
-            p_199427_1_.writeResourceLocation(ForgeRegistries.POTION_TYPES.getKey(p_199427_2_.result()));
+            p_199427_1_.writeResourceLocation(ForgeRegistries.POTIONS.getKey(p_199427_2_.result()));
         }
     }
 }
