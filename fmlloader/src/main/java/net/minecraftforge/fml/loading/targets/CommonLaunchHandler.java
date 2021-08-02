@@ -29,6 +29,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -71,6 +72,12 @@ public abstract class CommonLaunchHandler implements ILaunchHandlerService {
                 .map(inp -> inp.split("%%", 2))
                 .map(splitString -> new ExplodedModPath(splitString.length == 1 ? "defaultmodid" : splitString[0], Paths.get(splitString[splitString.length - 1])))
                 .collect(Collectors.groupingBy(ExplodedModPath::modid, Collectors.mapping(ExplodedModPath::path, Collectors.toList())));
+
+        // We need to REVERSE the passed in mod classes so that SJH takes it properly.
+        // The last path passed into SecureJar#from is the "main" path used to grab the manifest.
+        // ForgeGradle always passed in resources,classes with the expectation in 1.16 or lower that the resources would be checked first.
+        // So in 1.17+ FML/SJH, we need to reverse it.
+        modClassPaths.forEach((k, v) -> Collections.reverse(v));
 
         LOGGER.debug(CORE, "Found supplied mod coordinates [{}]", modClassPaths);
 

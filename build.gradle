@@ -344,7 +344,6 @@ def sharedFmlonlyForge = { Project prj ->
         inject = '' // We don't have a userdev sourceset anymore. Empty as a gradle workaround...
         runs {
             client {
-                environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
                 property 'nativesDirectory', '{natives}'
@@ -356,14 +355,12 @@ def sharedFmlonlyForge = { Project prj ->
             }
 
             server {
-                environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
                 args '--launchTarget', "${launchPrefix}serveruserdev"
             }
 
             data {
-                environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
                 args '--launchTarget', "${launchPrefix}datauserdev"
@@ -378,6 +375,8 @@ def sharedFmlonlyForge = { Project prj ->
         if (run.parents) continue // We already added this to the parent run config
         //run.property 'bsl.debug', 'true'
         run.main 'cpw.mods.bootstraplauncher.BootstrapLauncher'
+
+        run.environment 'MOD_CLASSES', '{source_roots}'
 
         run.args '--gameDir', '.'
         run.args '--fml.forgeVersion', FORGE_VERSION
@@ -413,7 +412,7 @@ def sharedFmlonlyForge = { Project prj ->
         if (run.name.contains('client') || run.name.contains('data')) {
             run.property 'nativesDirectory', prj.extractNatives.output.get().asFile
             run.args '--assetsDir', prj.downloadAssets.output
-            run.args '--assetIndex', "{asset_index}"
+            run.args '--assetIndex', '{asset_index}'
         }
 
         if (run.name.contains('client')) {
@@ -856,8 +855,6 @@ project(':forge') {
                 parent runs.forge_client
                 taskName 'forge_test_client'
 
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
                 ideaModule "${rootProject.name}.${project.name}.test"
 
                 mods {
@@ -878,8 +875,6 @@ project(':forge') {
                 parent runs.forge_server
                 taskName 'forge_test_server'
 
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
-
                 ideaModule "${rootProject.name}.${project.name}.test"
 
                 mods {
@@ -887,13 +882,6 @@ project(':forge') {
                 }
             }
 
-            def forgeDataArgs = [
-                    '--mod', 'forge',
-                    '--all',
-                    '--output', rootProject.file('src/generated/resources/'),
-                    '--validate',
-                    '--existing', sourceSets.main.resources.srcDirs[0]
-                    ]
             forge_data {
                 taskName 'forge_data'
                 args '--launchTarget', 'forgedatadev'
@@ -903,14 +891,17 @@ project(':forge') {
                     minecraft { source sourceSets.main }
                 }
 
-                args forgeDataArgs
+                args '--mod', 'forge',
+                        '--all',
+                        '--output', rootProject.file('src/generated/resources/'),
+                        '--validate',
+                        '--existing', sourceSets.main.resources.srcDirs[0]
             }
 
             forge_test_data {
                 parent runs.forge_data
                 taskName 'forge_test_data'
-
-                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+                inheritArgs false
 
                 ideaModule "${rootProject.name}.${project.name}.test"
 
@@ -918,24 +909,17 @@ project(':forge') {
                     tests { sources sourceSets.test }
                 }
 
-                afterEvaluate {
-                    // Clear forge's main datagen args
-                    args.removeAll {
-                        forgeDataArgs.contains(it instanceof File ? (it as File).absolutePath : it.toString())
-                    }
-
-                    args '--flat', '--all', '--validate',
-                            '--mod', 'data_gen_test',
-                            '--mod', 'piston_event_test',
-                            '--mod', 'global_loot_test',
-                            '--mod', 'scaffolding_test',
-                            '--mod', 'custom_tag_types_test',
-                            '--mod', 'new_model_loader_test',
-                            '--mod', 'remove_tag_datagen_test',
-                            '--output', rootProject.file('src/generated_test/resources/'),
-                            '--existing', sourceSets.main.resources.srcDirs[0],
-                            '--existing', sourceSets.test.resources.srcDirs[0]
-                }
+                args '--flat', '--all', '--validate',
+                        '--mod', 'data_gen_test',
+                        '--mod', 'piston_event_test',
+                        '--mod', 'global_loot_test',
+                        '--mod', 'scaffolding_test',
+                        '--mod', 'custom_tag_types_test',
+                        '--mod', 'new_model_loader_test',
+                        '--mod', 'remove_tag_datagen_test',
+                        '--output', rootProject.file('src/generated_test/resources/'),
+                        '--existing', sourceSets.main.resources.srcDirs[0],
+                        '--existing', sourceSets.test.resources.srcDirs[0]
             }
         }
     }

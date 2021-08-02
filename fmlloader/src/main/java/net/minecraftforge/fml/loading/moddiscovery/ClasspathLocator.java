@@ -94,7 +94,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
     }
 
     private static boolean isValidManifest(SecureJar sj) {
-        try (var jis = new JarInputStream(Files.newInputStream(sj.getRootPath()))) {
+        try (var jis = new JarInputStream(Files.newInputStream(sj.getPrimaryPath()))) {
             return jis.getManifest() != null;
         } catch (IOException e) {
             return false;
