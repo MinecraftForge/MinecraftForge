@@ -226,7 +226,7 @@ public class ForgeTagHandler
     }
 
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unchecked"})
-    public static <T, A extends IForgeRegistryEntry<A>> Optional<? extends Registry<T>> getWrapperRegistry(ResourceKey<? extends Registry<T>> key, Optional<? extends Registry<T>> vanillaReg)
+    public static <T> Optional<? extends Registry<T>> getWrapperRegistry(ResourceKey<? extends Registry<T>> key, Optional<? extends Registry<T>> vanillaReg)
     {
         if (vanillaReg.isPresent())
             return vanillaReg;
@@ -235,10 +235,8 @@ public class ForgeTagHandler
         if (reg == null || reg.getTagFolder() == null)
             return Optional.empty();
 
-        ResourceKey<? extends Registry<A>> cast = (ResourceKey<? extends Registry<A>>) key;
-
         if (reg.getDefaultKey() == null)
-            return Optional.of((Registry<T>) GameData.getWrapper(cast));
-        return Optional.of((Registry<T>) GameData.getDefaultedWrapper(cast));
+            return Optional.of((Registry<T>) GameData.getWrapper(reg.getRegistryKey()));
+        return Optional.of((Registry<T>) GameData.getDefaultedWrapper(reg.getRegistryKey()));
     }
 }
