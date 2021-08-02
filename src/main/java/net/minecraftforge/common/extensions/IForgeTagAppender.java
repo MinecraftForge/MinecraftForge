@@ -100,7 +100,7 @@ public interface IForgeTagAppender<T>
     default TagsProvider.TagAppender<T> removeElementByID(final ResourceLocation location)
     {
         TagsProvider.TagAppender<T> builder = self();
-        builder.getInternalBuilder().removeElementByID(location, builder.getModID());
+        builder.getInternalBuilder().removeElement(location, builder.getModID());
         return builder;
     }
     
@@ -126,7 +126,7 @@ public interface IForgeTagAppender<T>
     default TagsProvider.TagAppender<T> removeTag(Tag.Named<T> tag)
     {
         TagsProvider.TagAppender<T> builder = self();
-        builder.getInternalBuilder().removeTagByID(tag.getName(), builder.getModID());
+        builder.getInternalBuilder().removeTag(tag.getName(), builder.getModID());
         return builder;
     }
     

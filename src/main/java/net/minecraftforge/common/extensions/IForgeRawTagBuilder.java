@@ -35,7 +35,7 @@ public interface IForgeRawTagBuilder
     }
     
     /**
-     * @apiNote internal, called when a raw builder is written to json to add forge additions (e.g. the remove list)
+     * internal, called when a raw builder is written to json to add forge additions (e.g. the remove list)
      */
     default void serializeTagAdditions(final JsonObject tagJson)
     {
@@ -53,12 +53,12 @@ public interface IForgeRawTagBuilder
     }
     
     /**
-     * Adds a tag proxy to the remove list to generate a json with
+     * Adds a tag proxy to the remove list to generate a json with.
+     * Internal method; the other methods are preferable to call
      * @param proxy Tag proxy (either an item or another tag, usually)
      * @return builder for chaining
-     * @apiNote internal; the other methods are preferable to call
      */
-    default Tag.Builder removeProxy(final Tag.BuilderEntry proxy)
+    default Tag.Builder remove(final Tag.BuilderEntry proxy)
     {
         Tag.Builder rawBuilder = this.getRawBuilder();
         rawBuilder.getRemoveEntries().add(proxy);
@@ -71,9 +71,9 @@ public interface IForgeRawTagBuilder
      * @param source The source of the caller for logging purposes (generally a modid)
      * @return The builder for chaining purposes
      */
-    default Tag.Builder removeTagEntry(final Tag.Entry tagEntry, final String source)
+    default Tag.Builder remove(final Tag.Entry tagEntry, final String source)
     {
-        return this.removeProxy(new Tag.BuilderEntry(tagEntry,source));
+        return this.remove(new Tag.BuilderEntry(tagEntry,source));
     }
     
     /**
@@ -82,9 +82,9 @@ public interface IForgeRawTagBuilder
      * @param source The source of the caller for logging purposes (generally a modid)
      * @return The builder for chaining purposes
      */
-    default Tag.Builder removeElementByID(final ResourceLocation elementID, final String source)
+    default Tag.Builder removeElement(final ResourceLocation elementID, final String source)
     {
-        return this.removeTagEntry(new Tag.ElementEntry(elementID), source);
+        return this.remove(new Tag.ElementEntry(elementID), source);
     }
 
     
@@ -94,8 +94,8 @@ public interface IForgeRawTagBuilder
      * @param source The source of the caller for logging purposes (generally a modid)
      * @return The builder for chaining purposes
      */
-    default Tag.Builder removeTagByID(final ResourceLocation tagID, final String source)
+    default Tag.Builder removeTag(final ResourceLocation tagID, final String source)
     {
-        return this.removeTagEntry(new Tag.TagEntry(tagID), source);
+        return this.remove(new Tag.TagEntry(tagID), source);
     }
 }
