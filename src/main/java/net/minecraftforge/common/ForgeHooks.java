@@ -1072,7 +1072,7 @@ public class ForgeHooks
             else if (item instanceof PotionItem || item instanceof TippedArrowItem)
             {
                 Potion potionType = PotionUtils.getPotion(itemStack);
-                ResourceLocation resourceLocation = ForgeRegistries.POTION_TYPES.getKey(potionType);
+                ResourceLocation resourceLocation = ForgeRegistries.POTIONS.getKey(potionType);
                 if (resourceLocation != null)
                 {
                     return resourceLocation.getNamespace();
