@@ -4,12 +4,12 @@
        return f_13163_.m_13244_(p_13195_);
     }
  
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Item> bindOptional(net.minecraft.resources.ResourceLocation name) {
-+       return bindOptional(name, null);
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Item> createOptional(net.minecraft.resources.ResourceLocation name) {
++       return createOptional(name, null);
 +   }
 +
-+   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Item> bindOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<Item>> defaults) {
-+      return f_13163_.bindOptional(name, defaults);
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Item> createOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<Item>> defaults) {
++      return f_13163_.createOptional(name, defaults);
 +   }
 +
     public static TagCollection<Item> m_13193_() {

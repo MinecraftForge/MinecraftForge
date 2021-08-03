@@ -199,7 +199,7 @@ public class GameData
         return new RegistryBuilder<T>().setName(key.location()).setType(type).setMaxID(MAX_VARINT).hasWrapper().setDefaultKey(new ResourceLocation(_default));
     }
 
-    public static <T extends IForgeRegistryEntry<T>> MappedRegistry<T> getWrapper(ResourceKey<? extends Registry<T>> key)
+    public static <T extends IForgeRegistryEntry<T>> MappedRegistry<T> getWrapper(ResourceKey<? extends Registry<T>> key, Lifecycle lifecycle)
     {
         IForgeRegistry<T> reg = RegistryManager.ACTIVE.getRegistry(key);
         Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + key.toString());
@@ -209,7 +209,7 @@ public class GameData
         return ret;
     }
 
-    public static <T extends IForgeRegistryEntry<T>> DefaultedRegistry<T> getDefaultedWrapper(ResourceKey<? extends Registry<T>> key)
+    public static <T extends IForgeRegistryEntry<T>> DefaultedRegistry<T> getWrapper(ResourceKey<? extends Registry<T>> key, Lifecycle lifecycle, String defKey)
     {
         IForgeRegistry<T> reg = RegistryManager.ACTIVE.getRegistry(key);
         Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + key.toString());

@@ -131,7 +131,7 @@ public class Tags
 
         private static IOptionalNamedTag<Block> tag(String name)
         {
-            return BlockTags.bindOptional(new ResourceLocation("forge", name));
+            return BlockTags.createOptional(new ResourceLocation("forge", name));
         }
     }
 
@@ -291,7 +291,7 @@ public class Tags
 
         private static IOptionalNamedTag<Item> tag(String name)
         {
-            return ItemTags.bindOptional(new ResourceLocation("forge", name));
+            return ItemTags.createOptional(new ResourceLocation("forge", name));
         }
     }
 
@@ -303,7 +303,7 @@ public class Tags
 
         private static IOptionalNamedTag<Fluid> tag(String name)
         {
-            return FluidTags.bindOptional(new ResourceLocation("forge", name));
+            return FluidTags.createOptional(new ResourceLocation("forge", name));
         }
     }
 

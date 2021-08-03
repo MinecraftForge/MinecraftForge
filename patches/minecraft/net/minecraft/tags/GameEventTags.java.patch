@@ -9,7 +9,7 @@
 +   }
 +
 +   public static net.minecraftforge.common.Tags.IOptionalNamedTag<GameEvent> bindOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<GameEvent>> defaults) {
-+      return f_144301_.bindOptional(name, defaults);
++      return f_144301_.createOptional(name, defaults);
 +   }
 +
     public static TagCollection<GameEvent> m_144306_() {

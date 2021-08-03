@@ -27,6 +27,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
+
+import com.mojang.serialization.Lifecycle;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.StaticTagHelper;
@@ -74,7 +76,7 @@ public class ForgeTagHandler
      * @param <T>      Type of the registry
      * @return A named tag
      */
-    public static <T extends IForgeRegistryEntry<T>> Named<T> bind(IForgeRegistry<T> registry, ResourceLocation name)
+    public static <T extends IForgeRegistryEntry<T>> Named<T> makeWrapperTag(IForgeRegistry<T> registry, ResourceLocation name)
     {
         validateRegistrySupportsTags(registry);
         if (tagTypesSet)
@@ -83,7 +85,7 @@ public class ForgeTagHandler
             if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
             return tagRegistry.bind(name.toString());
         }
-        return StaticTagHelper.bindDelayed(registry.getRegistryName(), name);
+        return StaticTagHelper.createDelayedTag(registry.getRegistryName(), name);
     }
 
     /**
@@ -95,9 +97,9 @@ public class ForgeTagHandler
      * @param <T>      Type of the registry
      * @return An optional tag
      */
-    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> bindOptional(IForgeRegistry<T> registry, ResourceLocation name)
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name)
     {
-        return bindOptional(registry, name, null);
+        return createOptionalTag(registry, name, null);
     }
 
     /**
@@ -110,16 +112,16 @@ public class ForgeTagHandler
      * @param <T>      Type of the registry
      * @return An optional tag
      */
-    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> bindOptional(IForgeRegistry<T> registry, ResourceLocation name, @Nullable Set<Supplier<T>> defaults)
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(IForgeRegistry<T> registry, ResourceLocation name, @Nullable Set<Supplier<T>> defaults)
     {
         validateRegistrySupportsTags(registry);
         if (tagTypesSet)
         {
             StaticTagHelper<T> tagRegistry = getTagHelper(registry);
             if (tagRegistry == null) throw new IllegalArgumentException("Registry " + registry.getRegistryName() + " does not support tag types.");
-            return tagRegistry.bindOptional(name, defaults);
+            return tagRegistry.createOptional(name, defaults);
         }
-        return StaticTagHelper.bindDelayedOptional(registry.getRegistryName(), name, defaults);
+        return StaticTagHelper.createDelayedOptional(registry.getRegistryName(), name, defaults);
     }
 
     /**
@@ -132,15 +134,15 @@ public class ForgeTagHandler
      * @implNote This method only errors instantly if tag types have already been set, otherwise the error is delayed until after registries finish initializing
      * and we can validate if the custom registry really does support custom tags.
      */
-    public static <T extends IForgeRegistryEntry<T>> Named<T> bind(ResourceLocation registryName, ResourceLocation name)
+    public static <T extends IForgeRegistryEntry<T>> Named<T> makeWrapperTag(ResourceLocation registryName, ResourceLocation name)
     {
         if (tagTypesSet)
         {
             IForgeRegistry<T> registry = RegistryManager.ACTIVE.getRegistry(registryName);
             if (registry == null) throw new IllegalArgumentException("Could not find registry named: " + registryName);
-            return bind(registry, name);
+            return makeWrapperTag(registry, name);
         }
-        return StaticTagHelper.bindDelayed(registryName, name);
+        return StaticTagHelper.createDelayedTag(registryName, name);
     }
 
     /**
@@ -153,9 +155,9 @@ public class ForgeTagHandler
      * @implNote This method only errors instantly if tag types have already been set, otherwise the error is delayed until after registries finish initializing
      * and we can validate if the custom registry really does support custom tags.
      */
-    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> bindOptional(ResourceLocation registryName, ResourceLocation name)
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(ResourceLocation registryName, ResourceLocation name)
     {
-        return bindOptional(registryName, name, null);
+        return createOptionalTag(registryName, name, null);
     }
 
     /**
@@ -169,15 +171,15 @@ public class ForgeTagHandler
      * @implNote This method only errors instantly if tag types have already been set, otherwise the error is delayed until after registries finish initializing
      * and we can validate if the custom registry really does support custom tags.
      */
-    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> bindOptional(ResourceLocation registryName, ResourceLocation name, @Nullable Set<Supplier<T>> defaults)
+    public static <T extends IForgeRegistryEntry<T>> IOptionalNamedTag<T> createOptionalTag(ResourceLocation registryName, ResourceLocation name, @Nullable Set<Supplier<T>> defaults)
     {
         if (tagTypesSet)
         {
             IForgeRegistry<T> registry = RegistryManager.ACTIVE.getRegistry(registryName);
             if (registry == null) throw new IllegalArgumentException("Could not find registry named: " + registryName);
-            return bindOptional(registry, name, defaults);
+            return createOptionalTag(registry, name, defaults);
         }
-        return StaticTagHelper.bindDelayedOptional(registryName, name, defaults);
+        return StaticTagHelper.createDelayedOptional(registryName, name, defaults);
     }
 
     /**
@@ -242,8 +244,8 @@ public class ForgeTagHandler
             return Optional.empty();
 
         if (reg.getDefaultKey() == null)
-            return Optional.of((Registry<T>) GameData.getWrapper(reg.getRegistryKey()));
-        return Optional.of((Registry<T>) GameData.getDefaultedWrapper(reg.getRegistryKey()));
+            return Optional.of((Registry<T>) GameData.getWrapper(reg.getRegistryKey(), Lifecycle.stable()));
+        return Optional.of((Registry<T>) GameData.getWrapper(reg.getRegistryKey(), Lifecycle.stable(), "ignored"));
     }
 
     /**

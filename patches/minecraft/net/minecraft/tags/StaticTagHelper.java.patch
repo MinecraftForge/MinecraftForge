@@ -18,17 +18,17 @@
 +      return add(new StaticTagHelper.Wrapper<>(new ResourceLocation(p_13245_)));
 +   }
 +
-+   public net.minecraftforge.common.Tags.IOptionalNamedTag<T> bindOptional(ResourceLocation key, @Nullable Set<java.util.function.Supplier<T>> defaults) {
++   public net.minecraftforge.common.Tags.IOptionalNamedTag<T> createOptional(ResourceLocation key, @Nullable Set<java.util.function.Supplier<T>> defaults) {
 +      return add(new StaticTagHelper.OptionalNamedTag<>(key, defaults));
 +   }
 +
 +   /** Call via ForgeTagHandler#makeWrapperTag to avoid any exceptions due to calling this after it is safe to call {@link #bind(String)} */
-+   public static <T> Tag.Named<T> bindDelayed(ResourceLocation tagRegistry, ResourceLocation name) {
++   public static <T> Tag.Named<T> createDelayedTag(ResourceLocation tagRegistry, ResourceLocation name) {
 +      return delayedAdd(tagRegistry, new StaticTagHelper.Wrapper<>(name));
 +   }
 +
-+   /** Call via ForgeTagHandler#createOptionalTag to avoid any exceptions due to calling this after it is safe to call {@link #bindOptional(ResourceLocation, Set)} */
-+   public static <T> net.minecraftforge.common.Tags.IOptionalNamedTag<T> bindDelayedOptional(ResourceLocation tagRegistry, ResourceLocation key, @Nullable Set<java.util.function.Supplier<T>> defaults) {
++   /** Call via ForgeTagHandler#createOptionalTag to avoid any exceptions due to calling this after it is safe to call {@link #createOptional(ResourceLocation, Set)} */
++   public static <T> net.minecraftforge.common.Tags.IOptionalNamedTag<T> createDelayedOptional(ResourceLocation tagRegistry, ResourceLocation key, @Nullable Set<java.util.function.Supplier<T>> defaults) {
 +      return delayedAdd(tagRegistry, new StaticTagHelper.OptionalNamedTag<>(key, defaults));
 +   }
 +

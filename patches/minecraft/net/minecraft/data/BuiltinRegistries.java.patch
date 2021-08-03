@@ -15,7 +15,7 @@
 +   }
 +
 +   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> Registry<T> forge(ResourceKey<? extends Registry<T>> key, Supplier<T> def) {
-+      return m_123888_(key, net.minecraftforge.registries.GameData.getWrapper(key), def, Lifecycle.stable());
++      return m_123888_(key, net.minecraftforge.registries.GameData.getWrapper(key, Lifecycle.stable()), def, Lifecycle.stable());
     }
  
     private static <T> Registry<T> m_123884_(ResourceKey<? extends Registry<T>> p_123885_, Lifecycle p_123886_, Supplier<T> p_123887_) {
