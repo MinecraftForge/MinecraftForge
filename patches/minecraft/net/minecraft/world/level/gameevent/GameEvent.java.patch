@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/gameevent/GameEvent.java
++++ b/net/minecraft/world/level/gameevent/GameEvent.java
+@@ -51,10 +_,15 @@
+    public static final int f_157788_ = 16;
+    private final String f_157789_;
+    private final int f_157790_;
++   private final net.minecraftforge.common.util.ReverseTagWrapper<GameEvent> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.GameEventTags::m_144306_);
+ 
+    public GameEvent(String p_157819_, int p_157820_) {
+       this.f_157789_ = p_157819_;
+       this.f_157790_ = p_157820_;
++   }
++
++   public java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
++      return reverseTags.getTagNames();
+    }
+ 
+    public String m_157821_() {
