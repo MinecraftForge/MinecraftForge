@@ -1,5 +1,29 @@
 --- a/com/mojang/blaze3d/pipeline/RenderTarget.java
 +++ b/com/mojang/blaze3d/pipeline/RenderTarget.java
+@@ -18,6 +_,7 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public abstract class RenderTarget {
++   private static final java.util.Set<RenderTarget> ACTIVE_TARGETS = new java.util.HashSet<>();
+    private static final int f_166194_ = 0;
+    private static final int f_166195_ = 1;
+    private static final int f_166196_ = 2;
+@@ -66,6 +_,7 @@
+ 
+    public void m_83930_() {
+       RenderSystem.m_69393_(RenderSystem::m_69587_);
++      ACTIVE_TARGETS.remove(this);
+       this.m_83963_();
+       this.m_83970_();
+       if (this.f_83924_ > -1) {
+@@ -96,6 +_,7 @@
+ 
+    public void m_83950_(int p_83951_, int p_83952_, boolean p_83953_) {
+       RenderSystem.m_69393_(RenderSystem::m_69587_);
++      ACTIVE_TARGETS.add(this);
+       int i = RenderSystem.m_69839_();
+       if (p_83951_ > 0 && p_83951_ <= i && p_83952_ > 0 && p_83952_ <= i) {
+          this.f_83917_ = p_83951_;
 @@ -112,7 +_,10 @@
              GlStateManager.m_84331_(3553, 34892, 0);
              GlStateManager.m_84331_(3553, 10242, 33071);
@@ -32,25 +56,25 @@
     }
 +
 +   /*================================ FORGE START ================================================*/
-+   private boolean stencilEnabled = false;
++   private static boolean stencilEnabled = false;
 +   /**
 +    * Attempts to enable 8 bits of stencil buffer on this FrameBuffer.
 +    * Modders must call this directly to set things up.
 +    * This is to prevent the default cause where graphics cards do not support stencil bits.
 +    * <b>Make sure to call this on the main render thread!</b>
 +    */
-+   public void enableStencil() {
++   public static void enableStencil() {
 +      if(stencilEnabled) return;
 +      stencilEnabled = true;
-+      this.m_83941_(f_83917_, f_83918_, net.minecraft.client.Minecraft.f_91002_);
++      ACTIVE_TARGETS.forEach(target -> target.m_83941_(target.f_83917_, target.f_83918_, net.minecraft.client.Minecraft.f_91002_));
 +   }
 +
 +   /**
 +    * Returns wither or not this FBO has been successfully initialized with stencil bits.
 +    * If not, and a modder wishes it to be, they must call enableStencil.
 +    */
-+   public boolean isStencilEnabled() {
-+      return this.stencilEnabled;
++   public static boolean isStencilEnabled() {
++      return stencilEnabled;
 +   }
 +   /*================================ FORGE END   ================================================*/
  }
