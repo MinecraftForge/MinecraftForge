@@ -12,7 +12,7 @@
                 return p_144596_.getKey() + ":" + p_144596_.getValue();
              }).sorted().collect(Collectors.joining(",")));
           } else {
-+            tagcontainer = TagContainer.reinjectOptionalTags(tagcontainer);
++            tagcontainer = net.minecraftforge.common.ForgeTagHandler.reinjectOptionalTags(tagcontainer);
              SerializationTags.m_13202_(tagcontainer);
              this.f_13478_ = tagcontainer;
           }

@@ -33,6 +33,7 @@ import net.minecraft.tags.StaticTagHelper;
 import net.minecraft.tags.StaticTags;
 import net.minecraft.tags.Tag.Named;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagContainer;
 import net.minecraft.tags.TagLoader;
 import net.minecraftforge.common.Tags.IOptionalNamedTag;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -225,6 +226,11 @@ public class ForgeTagHandler
         return builder.build();
     }
 
+    /**
+     * Wraps the forge registry if it supports tags into the internal registry for use in serialization
+     *
+     * @apiNote Internal: For use in TagContainer
+     */
     @SuppressWarnings({"OptionalUsedAsFieldOrParameterType", "unchecked"})
     public static <T> Optional<? extends Registry<T>> getWrapperRegistry(ResourceKey<? extends Registry<T>> key, Optional<? extends Registry<T>> vanillaReg)
     {
@@ -238,5 +244,18 @@ public class ForgeTagHandler
         if (reg.getDefaultKey() == null)
             return Optional.of((Registry<T>) GameData.getWrapper(reg.getRegistryKey()));
         return Optional.of((Registry<T>) GameData.getDefaultedWrapper(reg.getRegistryKey()));
+    }
+
+    /**
+     * Helper to reinject missing optional tags.
+     *
+     * @apiNote Internal
+     */
+    public static TagContainer reinjectOptionalTags(TagContainer tagCollectionSupplier)
+    {
+        TagContainer.Builder builder = new TagContainer.Builder();
+        //noinspection unchecked,rawtypes
+        StaticTags.visitHelpers(h -> builder.add(h.getKey(), h.reinjectOptionalTags(tagCollectionSupplier.getOrEmpty((ResourceKey) h.getKey()))));
+        return builder.build();
     }
 }

@@ -114,7 +114,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      */
     private static ClientboundUpdateTagsPacket filterCustomTagTypes(ClientboundUpdateTagsPacket packet) {
         Map<ResourceKey<? extends Registry<?>>, TagCollection.NetworkPayload> tags = packet.getTags()
-                .entrySet().stream().filter(e -> ForgeTagHandler.getCustomTagTypeNames().contains(e.getKey().location()))
+                .entrySet().stream().filter(e -> !ForgeTagHandler.getCustomTagTypeNames().contains(e.getKey().location()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         return new ClientboundUpdateTagsPacket(tags);
     }

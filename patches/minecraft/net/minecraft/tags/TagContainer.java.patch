@@ -16,17 +16,3 @@
              if (optional.isPresent()) {
                 map.put(p_144481_, p_144482_.m_144411_(optional.get()));
              } else {
-@@ -108,6 +_,13 @@
-          f_144432_.error("Unknown registry {}", (Object)p_144447_);
-       }
- 
-+   }
-+
-+   public static TagContainer reinjectOptionalTags(TagContainer tagCollectionSupplier) {
-+      TagContainer.Builder builder = new TagContainer.Builder();
-+      //noinspection unchecked,rawtypes
-+      StaticTags.m_144349_(h -> builder.m_144486_(h.m_144338_(), h.reinjectOptionalTags(tagCollectionSupplier.m_144452_((ResourceKey) h.m_144338_()))));
-+      return builder.m_144485_();
-    }
- 
-    public static class Builder {

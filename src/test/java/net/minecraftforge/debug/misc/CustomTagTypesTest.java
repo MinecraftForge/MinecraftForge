@@ -19,7 +19,6 @@
 
 package net.minecraftforge.debug.misc;
 
-import com.google.common.collect.Sets;
 import java.util.Set;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
@@ -72,8 +71,8 @@ public class CustomTagTypesTest
     private static final ResourceKey<? extends Registry<Custom>> CUSTOM_KEY = ResourceKey.createRegistryKey(customRegistryName);
     private static final Supplier<IForgeRegistry<Custom>> CUSTOM_REG = CUSTOMS.makeRegistry(customRegistryName.getPath(),
           () -> new RegistryBuilder<Custom>().tagFolder(MODID + "/custom_types"));
-    private static final Tag.Named<Custom> TESTS = ForgeTagHandler.bindOptional(customRegistryName, new ResourceLocation(MODID, "tests"), Sets.newHashSet(CUSTOM));
-    private static final Tag.Named<Item> OPTIONAL_TEST = ItemTags.bindOptional(new ResourceLocation(MODID, "optional_test"), Sets.newHashSet(() -> Items.BONE));
+    private static final Tag.Named<Custom> TESTS = ForgeTagHandler.bindOptional(customRegistryName, new ResourceLocation(MODID, "tests"), Set.of(CUSTOM));
+    private static final Tag.Named<Item> OPTIONAL_TEST = ItemTags.bindOptional(new ResourceLocation(MODID, "optional_test"), Set.of(() -> Items.BONE));
     private static final Tag.Named<Enchantment> FIRE = ForgeTagHandler.bindOptional(ForgeRegistries.ENCHANTMENTS, new ResourceLocation(MODID, "fire"));
     private static final Tag.Named<Potion> DAMAGE = ForgeTagHandler.bindOptional(ForgeRegistries.POTIONS, new ResourceLocation(MODID, "damage"));
     private static final Tag.Named<BlockEntityType<?>> STORAGE = ForgeTagHandler.bindOptional(ForgeRegistries.BLOCK_ENTITIES, new ResourceLocation(MODID, "storage"));
@@ -105,6 +104,7 @@ public class CustomTagTypesTest
         if (!itemStack.isEmpty())
         {
             LOGGER.info("{} {} {}", Items.BONE.getTags(), OPTIONAL_TEST.getValues().size(), SerializationTags.getInstance().getOrEmpty(Registry.ITEM_REGISTRY).getTag(new ResourceLocation(MODID, "optional_test")));
+            LOGGER.info("{} {}", CUSTOM.get().getTags(), TESTS.getValues().size());
             EnchantmentHelper.getEnchantments(itemStack).forEach((enchantment, level) -> logTagsIfPresent(enchantment.getTags()));
             if (itemStack.getItem() instanceof PotionItem) logTagsIfPresent(PotionUtils.getPotion(itemStack).getTags());
             BlockEntity blockEntity = event.getWorld().getBlockEntity(event.getPos());
@@ -127,11 +127,6 @@ public class CustomTagTypesTest
         public Set<ResourceLocation> getTags()
         {
             return reverseTags.getTagNames();
-        }
-
-        public boolean isIn(Tag<Custom> tag)
-        {
-            return tag.contains(this);
         }
     }
 
@@ -205,13 +200,13 @@ public class CustomTagTypesTest
         @Override
         protected void addTags()
         {
-            tag(STORAGE).add(BlockEntityType.BARREL, BlockEntityType.CHEST, BlockEntityType.ENDER_CHEST);
+            tag(STORAGE).add(BlockEntityType.BARREL, BlockEntityType.CHEST, BlockEntityType.ENDER_CHEST, BlockEntityType.TRAPPED_CHEST);
         }
 
         @Override
         public String getName()
         {
-            return "Tile Entity Type Tags";
+            return "Block Entity Type Tags";
         }
     }
 }
