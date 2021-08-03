@@ -17,7 +17,7 @@
  
     @Nullable
     public static ResourceLocation m_58954_(BlockEntityType<?> p_58955_) {
-@@ -75,6 +_,14 @@
+@@ -75,6 +_,10 @@
        this.f_58914_ = p_155259_;
        this.f_58915_ = p_155260_;
        this.f_58916_ = p_155261_;
@@ -25,10 +25,6 @@
 +
 +   public java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
 +      return reverseTags.getTagNames();
-+   }
-+
-+   public boolean isIn(net.minecraft.tags.Tag<BlockEntityType<?>> tag) {
-+      return tag.m_8110_(this);
     }
  
     @Nullable

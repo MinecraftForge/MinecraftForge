@@ -10,16 +10,12 @@
     private final EquipmentSlot[] f_44671_;
     private final Enchantment.Rarity f_44674_;
     public final EnchantmentCategory f_44672_;
-@@ -34,6 +_,14 @@
+@@ -34,6 +_,10 @@
        this.f_44671_ = p_44678_;
     }
  
 +   public java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
 +      return reverseTags.getTagNames();
-+   }
-+
-+   public boolean is(net.minecraft.tags.Tag<Enchantment> tag) {
-+      return tag.m_8110_(this);
 +   }
 +
     public Map<EquipmentSlot, ItemStack> m_44684_(LivingEntity p_44685_) {
