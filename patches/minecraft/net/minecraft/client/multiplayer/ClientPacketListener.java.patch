@@ -81,7 +81,7 @@
           f_104883_.warn("Incomplete server tags, disconnecting. Missing: {}", (Object)multimap);
           this.f_104885_.m_129507_(new TranslatableComponent("multiplayer.disconnect.missing_tags"));
        } else {
-+         tagcontainer = TagContainer.reinjectOptionalTags(tagcontainer);
++         tagcontainer = net.minecraftforge.common.ForgeTagHandler.reinjectOptionalTags(tagcontainer);
           this.f_104895_ = tagcontainer;
           if (!this.f_104885_.m_129531_()) {
              tagcontainer.m_13431_();
