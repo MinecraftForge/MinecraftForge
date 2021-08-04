@@ -20,7 +20,7 @@
        servergamepacketlistenerimpl.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
        servergamepacketlistenerimpl.m_141995_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
        servergamepacketlistenerimpl.m_141995_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.SendDatapacksToClientEvent(p_11263_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, p_11263_));
        servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
        servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
 +      net.minecraftforge.fmllegacy.network.NetworkHooks.syncCustomTagTypes(p_11263_, this.f_11195_.m_129895_());
@@ -113,18 +113,16 @@
     }
  
     @Nullable
-@@ -786,9 +_,11 @@
+@@ -785,7 +_,9 @@
+          playeradvancements.m_135981_(this.f_11195_.m_129889_());
        }
  
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, null));
        this.m_11268_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
 +      net.minecraftforge.fmllegacy.network.NetworkHooks.syncCustomTagTypes(this.f_11195_.m_129895_());
        ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
  
        for(ServerPlayer serverplayer : this.f_11196_) {
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.SendDatapacksToClientEvent(serverplayer));
-          serverplayer.f_8906_.m_141995_(clientboundupdaterecipespacket);
-          serverplayer.m_8952_().m_12789_(serverplayer);
-       }
 @@ -797,5 +_,13 @@
  
     public boolean m_11316_() {
