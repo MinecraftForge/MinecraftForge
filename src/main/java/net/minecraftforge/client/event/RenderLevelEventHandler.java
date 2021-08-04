@@ -26,6 +26,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.common.MinecraftForge;
 
 public final class RenderLevelEventHandler {
@@ -49,7 +50,9 @@ public final class RenderLevelEventHandler {
                                              final Frustum frustumIn,
                                              final Camera cameraIn,
                                              final long startTimeNanoIn,
-                                             final Matrix4f projectionMatrixIn) {
+                                             final Matrix4f projectionMatrixIn,
+                                             ProfilerFiller profilerfiller) {
+        profilerfiller.popPush("forge_render_level_begin");
     
         levelRenderer = levelRendererIn;
         poseStack = poseStackIn;
@@ -64,26 +67,32 @@ public final class RenderLevelEventHandler {
         isRenderLevelPhase = true;
     }
     
-    public static void endLevelRenderPhase() {
+    public static void endLevelRenderPhase(ProfilerFiller profilerfiller) {
+        profilerfiller.popPush("forge_render_level_end");
+    
         isRenderLevelPhase = false;
         MinecraftForge.EVENT_BUS.post(new RenderLevelEvent.EndEvent(levelRenderer, poseStack, partialTicks, frustum, camera, startTimeNano, projectionMatrix));
     }
     
-    public static void fireTerrainUpdate(long finishTimeNano) {
+    public static void fireTerrainUpdate(long finishTimeNano, ProfilerFiller profilerfiller) {
         if (!isRenderLevelPhase) {
             return;
         }
-        
+    
+        profilerfiller.popPush("forge_render_level_terrain_update");
+    
         isRenderLevelPhase = false;
         MinecraftForge.EVENT_BUS.post(new RenderLevelEvent.TerrainUpdateEvent(levelRenderer, poseStack, partialTicks, frustum, camera, startTimeNano, projectionMatrix, finishTimeNano));
         isRenderLevelPhase = true;
     }
     
-    public static void fireBlockLayer(final RenderType renderType) {
+    public static void fireBlockLayer(final RenderType renderType, ProfilerFiller profilerfiller) {
         if (!isRenderLevelPhase) {
             return;
         }
-        
+    
+        profilerfiller.popPush("forge_render_level_block_layer");
+    
         isRenderLevelPhase = false;
         MinecraftForge.EVENT_BUS.post(new RenderLevelEvent.BlockLayerEvent(levelRenderer, poseStack, partialTicks, frustum, camera, startTimeNano, projectionMatrix, renderType));
         isRenderLevelPhase = true;
@@ -99,20 +108,24 @@ public final class RenderLevelEventHandler {
         isRenderLevelPhase = true;
     }
     
-    public static void fireTerrainAndEntitiesDone() {
+    public static void fireTerrainAndEntitiesDone(ProfilerFiller profilerfiller) {
         if (!isRenderLevelPhase) {
             return;
         }
+    
+        profilerfiller.popPush("forge_render_level_terrain_and_entities");
     
         isRenderLevelPhase = false;
         MinecraftForge.EVENT_BUS.post(new RenderLevelEvent.TerrainAndEntitiesDoneEvent(levelRenderer, poseStack, partialTicks, frustum, camera, startTimeNano, projectionMatrix));
         isRenderLevelPhase = true;
     }
     
-    public static void fireWeatherDone() {
+    public static void fireWeatherDone(ProfilerFiller profilerfiller) {
         if (!isRenderLevelPhase) {
             return;
         }
+    
+        profilerfiller.popPush("forge_render_level_weather");
     
         isRenderLevelPhase = false;
         MinecraftForge.EVENT_BUS.post(new RenderLevelEvent.WeatherDoneEvent(levelRenderer, poseStack, partialTicks, frustum, camera, startTimeNano, projectionMatrix));
