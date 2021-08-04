@@ -45,7 +45,7 @@
 +            event = new net.minecraftforge.event.entity.player.ItemFishedEvent(list, this.f_19861_ ? 2 : 1, this);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +            if (event.isCanceled()) {
-+               this.remove(false);
++               this.m_146870_();
 +               return event.getRodDamage();
 +            }
              CriteriaTriggers.f_10553_.m_40416_((ServerPlayer)player, p_37157_, this, list);
@@ -60,16 +60,3 @@
        } else {
           return 0;
        }
-@@ -470,6 +_,12 @@
-    public void m_5602_(@Nullable Entity p_150154_) {
-       super.m_5602_(p_150154_);
-       this.m_150147_(this);
-+   }
-+
-+   @Override
-+   public void remove(boolean keepData) {
-+      super.remove(keepData);
-+      m_150147_(null);
-    }
- 
-    private void m_150147_(@Nullable FishingHook p_150148_) {

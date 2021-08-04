@@ -18,49 +18,47 @@
           this.m_5851_(SoundSource.PLAYERS);
           this.m_146852_(GameEvent.f_157781_, p_28941_);
           if (!this.f_19853_.f_46443_) {
-@@ -235,6 +_,45 @@
+@@ -141,7 +_,16 @@
+       }
+    }
+ 
++   @Override
++   public java.util.List<ItemStack> onSheared(@javax.annotation.Nullable Player player, @javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
++      return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
++   }
++
+    public void m_5851_(SoundSource p_28924_) {
++      shearInternal(p_28924_).forEach(s -> this.f_19853_.m_7967_(new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), s)));
++   }
++
++   private java.util.List<ItemStack> shearInternal(SoundSource p_28924_) {
+       this.f_19853_.m_6269_((Player)null, this, SoundEvents.f_12075_, p_28924_, 1.0F, 1.0F);
+       if (!this.f_19853_.m_5776_()) {
+          ((ServerLevel)this.f_19853_).m_8767_(ParticleTypes.f_123813_, this.m_20185_(), this.m_20227_(0.5D), this.m_20189_(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+@@ -162,10 +_,13 @@
+          cow.m_20331_(this.m_20147_());
+          this.f_19853_.m_7967_(cow);
+ 
++         java.util.List<ItemStack> items = new java.util.ArrayList<>();
+          for(int i = 0; i < 5; ++i) {
+-            this.f_19853_.m_7967_(new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), new ItemStack(this.m_28955_().f_28961_.m_60734_())));
++            items.add(new ItemStack(this.m_28955_().f_28961_.m_60734_()));
+          }
++         return items;
+       }
++      return java.util.Collections.emptyList();
+ 
+    }
+ 
+@@ -234,6 +_,11 @@
+       }
  
        return mushroomcow$mushroomtype2;
-    }
++   }
 +
 +   @Override
 +   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos) {
 +      return m_6220_();
-+   }
-+
-+   @javax.annotation.Nonnull
-+   @Override
-+   public java.util.List<ItemStack> onSheared(@javax.annotation.Nullable Player player, @javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
-+      world.m_6269_(null, this, SoundEvents.f_12075_, player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS, 1.0F, 1.0F);
-+      if (!world.m_5776_()) {
-+         ((ServerLevel)this.f_19853_).m_8767_(ParticleTypes.f_123813_, this.m_20185_(), this.m_20227_(0.5D), this.m_20189_(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
-+         this.remove(false);
-+         Cow cow = EntityType.f_20557_.m_20615_(this.f_19853_);
-+         cow.m_7678_(this.m_20185_(), this.m_20186_(), this.m_20189_(), this.m_146909_(), this.m_146908_());
-+         cow.m_21153_(this.m_21223_());
-+         cow.f_20883_ = this.f_20883_;
-+         if (this.m_8077_()) {
-+            cow.m_6593_(this.m_7770_());
-+            cow.m_20340_(this.m_20151_());
-+         }
-+
-+         if (this.m_21532_()) {
-+            cow.m_21530_();
-+         }
-+
-+         cow.m_20331_(this.m_20147_());
-+         this.f_19853_.m_7967_(cow);
-+
-+         java.util.List<ItemStack> items = new java.util.ArrayList<>();
-+         for (int i = 0; i < 5; ++i) {
-+            items.add(new ItemStack(this.m_28955_().f_28961_.m_60734_()));
-+         }
-+
-+         return items;
-+      }
-+      return java.util.Collections.emptyList();
-+   }
-+
+    }
  
     public static enum MushroomType {
-       RED("red", Blocks.f_50073_.m_49966_()),

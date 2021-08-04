@@ -44,7 +44,7 @@
 +   }
 +
 +   @Override
-+   protected void invalidateCaps() {
++   public void invalidateCaps() {
 +      super.invalidateCaps();
 +      if (itemHandler != null) {
 +         net.minecraftforge.common.util.LazyOptional<?> oldHandler = itemHandler;

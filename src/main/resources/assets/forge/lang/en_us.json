@@ -141,6 +141,8 @@
   "forge.configgui.clumpingThreshold": "Packet Clumping Threshold",
   "forge.configgui.treatEmptyTagsAsAir.tooltip": "Vanilla will treat crafting recipes using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.",
   "forge.configgui.treatEmptyTagsAsAir": "Treat empty tags as air",
+  "forge.configgui.forceSystemNanoTime.tooltip": "Force the use of System.nanoTime instead of glfwGetTime as the main client Time provider.",
+  "forge.configgui.forceSystemNanoTime": "Force System.nanoTime",
 
   "forge.configgui.zoomInMissingModelTextInGui.tooltip": "Toggle off to make missing model text in the gui fit inside the slot.",
   "forge.configgui.zoomInMissingModelTextInGui": "Zoom in Missing model text in the GUI",
