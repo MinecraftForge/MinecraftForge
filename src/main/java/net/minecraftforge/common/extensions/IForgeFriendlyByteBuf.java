@@ -19,14 +19,6 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.IntFunction;
-
-import javax.annotation.Nonnull;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
@@ -37,6 +29,13 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
+
+import javax.annotation.Nonnull;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 
 /**
  * Extension-Interface providing methods for writing registry-id's instead of their registry-names.
