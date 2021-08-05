@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.tags.Tag;
@@ -28,6 +29,7 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -494,5 +496,18 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default boolean elytraFlightTick(LivingEntity entity, int flightTicks)
     {
         return self().getItem().elytraFlightTick(self(), entity, flightTicks);
+    }
+    
+    /**
+     * Get a bounding box ({@link AABB}) of a sweep attack.
+     * 
+     * @param player the performing the attack the attack.
+     * @param target the entity targeted by the attack.
+     * @return the bounding box or null if this item has no sweep attack.
+     */
+    @Nullable
+    default AABB getSweepHitBox(@Nonnull Player player, @Nonnull Entity target)
+    {
+        return self().getItem().getSweepHitBox(self(), player, target);
     }
 }

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
@@ -31,6 +32,7 @@ import net.minecraft.tags.Tag;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -41,6 +43,8 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -795,5 +799,22 @@ public interface IForgeItem
     default boolean isDamageable(ItemStack stack)
     {
         return self().canBeDepleted();
+    }
+    
+    /**
+     * Get a bounding box ({@link AABB}) of a sweep attack.
+     * 
+     * @param statck the stack held by the player.
+     * @param player the performing the attack the attack.
+     * @param target the entity targeted by the attack.
+     * @return the bounding box or null if this item has no sweep attack.
+     */
+    @Nullable
+    default AABB getSweepHitBox(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull Entity target)
+    {
+        if (this instanceof SwordItem) {
+            return target.getBoundingBox().inflate(1.0D, 0.25D, 1.0D);
+        }
+        return null;
     }
 }
