@@ -19,7 +19,17 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+
+import javax.annotation.Nonnull;
+
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
@@ -27,9 +37,6 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
-
-import javax.annotation.Nonnull;
-import java.util.Objects;
 
 /**
  * Extension-Interface providing methods for writing registry-id's instead of their registry-names.
@@ -151,5 +158,26 @@ public interface IForgeFriendlyByteBuf
     default FluidStack readFluidStack()
     {
         return !self().readBoolean() ? FluidStack.EMPTY : FluidStack.readFromPacket(self());
+    }
+    
+    /**
+     * Read a Collection from this buffer with set size.
+     */
+    default <T, C extends Collection<T>> C readCollectionWithSize(int size, IntFunction<C> ctor, Function<FriendlyByteBuf, T> builder)
+    {
+        C c = ctor.apply(size);
+
+        for (int j = 0; j < size; ++j) {
+            c.add(builder.apply(self()));
+        }
+        return c;
+    }
+
+    /**
+     * Read a List from this buffer with set size.
+     */
+    default <T> List<T> readListWithSize(int size, Function<FriendlyByteBuf, T> builder)
+    {
+        return this.readCollectionWithSize(size, Lists::newArrayListWithCapacity, builder);
     }
 }
