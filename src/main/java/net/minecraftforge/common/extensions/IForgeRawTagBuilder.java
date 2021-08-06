@@ -41,12 +41,13 @@ public interface IForgeRawTagBuilder
     {
         Tag.Builder rawBuilder = this.getRawBuilder();
         Stream<Tag.BuilderEntry> removeEntries = rawBuilder.getRemoveEntries();
-        if (removeEntries.count() > 0)
+        JsonArray removeEntriesAsJsonArray = new JsonArray();
+        removeEntries.forEach(proxy ->proxy.getEntry().serializeTo(removeEntriesAsJsonArray));
+        if (removeEntriesAsJsonArray.size() > 0)
         {
-            JsonArray removeEntriesAsJsonArray = new JsonArray();
-            removeEntries.forEach(proxy -> proxy.getEntry().serializeTo(removeEntriesAsJsonArray));
             tagJson.add("remove", removeEntriesAsJsonArray);
         }
+        
     }
     
     /**
