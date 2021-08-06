@@ -20,10 +20,11 @@
 package net.minecraftforge.common.data;
 
 import com.google.gson.JsonObject;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
-import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
@@ -214,7 +215,7 @@ public abstract class BrewingRecipeBuilder
                 o.addProperty("item", result.toString());
                 o.addProperty("count", this.result.getCount());
                 if (this.result.hasTag()) {
-                    o.add("nbt", GsonHelper.parse(this.result.getTag().toString()));
+                    o.add("nbt", NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, this.result.getTag()));
                 }
                 tag.add("result", o);
             }
