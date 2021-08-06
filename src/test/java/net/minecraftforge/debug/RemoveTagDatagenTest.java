@@ -55,12 +55,12 @@ public class RemoveTagDatagenTest
             protected void addTags()
             {
                 this.tag(TEST_TAG)
-                    .removeElementByID(Blocks.DIRT.getRegistryName())
-                    .removeElementsByID(Blocks.OAK_DOOR.getRegistryName(), Blocks.DARK_OAK_DOOR.getRegistryName())
-                    .removeRegistryEntry(Blocks.ANVIL)
-                    .removeRegistryEntries(Blocks.BASALT, Blocks.POLISHED_BASALT)
-                    .removeTag(BlockTags.BEEHIVES)
-                    .removeTags(BlockTags.BANNERS, BlockTags.BEDS);
+                    .remove(Blocks.DIRT.getRegistryName())
+                    .remove(Blocks.OAK_DOOR.getRegistryName(), Blocks.DARK_OAK_DOOR.getRegistryName())
+                    .remove(Blocks.ANVIL)
+                    .remove(Blocks.BASALT, Blocks.POLISHED_BASALT)
+                    .remove(BlockTags.BEEHIVES)
+                    .remove(BlockTags.BANNERS, BlockTags.BEDS);
             }
         });
     }

@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -40,29 +40,13 @@ public interface IForgeRawTagBuilder
     default void serializeTagAdditions(final JsonObject tagJson)
     {
         Tag.Builder rawBuilder = this.getRawBuilder();
-        List<Tag.BuilderEntry> removeEntries = rawBuilder.getRemoveEntries();
-        if (!removeEntries.isEmpty())
+        Stream<Tag.BuilderEntry> removeEntries = rawBuilder.getRemoveEntries();
+        if (removeEntries.count() > 0)
         {
             JsonArray removeEntriesAsJsonArray = new JsonArray();
-            for (Tag.BuilderEntry proxy : removeEntries)
-            {
-                proxy.getEntry().serializeTo(removeEntriesAsJsonArray);
-            }
+            removeEntries.forEach(proxy -> proxy.getEntry().serializeTo(removeEntriesAsJsonArray));
             tagJson.add("remove", removeEntriesAsJsonArray);
         }
-    }
-    
-    /**
-     * Adds a tag proxy to the remove list to generate a json with.
-     * Internal method; the other methods are preferable to call
-     * @param proxy Tag proxy (either an item or another tag, usually)
-     * @return builder for chaining
-     */
-    default Tag.Builder remove(final Tag.BuilderEntry proxy)
-    {
-        Tag.Builder rawBuilder = this.getRawBuilder();
-        rawBuilder.getRemoveEntries().add(proxy);
-        return rawBuilder;
     }
     
     /**
@@ -73,7 +57,7 @@ public interface IForgeRawTagBuilder
      */
     default Tag.Builder remove(final Tag.Entry tagEntry, final String source)
     {
-        return this.remove(new Tag.BuilderEntry(tagEntry,source));
+        return this.getRawBuilder().remove(new Tag.BuilderEntry(tagEntry,source));
     }
     
     /**

@@ -21,7 +21,6 @@ package net.minecraftforge.common.extensions;
 
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.Tag;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 
@@ -72,9 +71,9 @@ public interface IForgeTagAppender<T>
      * @param element The entry to remove
      * @return The builder for chaining
      */
-    default TagsProvider.TagAppender<T> removeRegistryEntry(final T entry)
+    default TagsProvider.TagAppender<T> remove(final T entry)
     {
-        return removeElementByID(this.self().registry.getKey(entry));
+        return remove(this.self().registry.getKey(entry));
     }
     
     /**
@@ -83,11 +82,12 @@ public interface IForgeTagAppender<T>
      * @return The builder for chaining
      */
     @SuppressWarnings("unchecked")
-    default TagsProvider.TagAppender<T> removeRegistryEntries(final T...entries)
+    default TagsProvider.TagAppender<T> remove(final T first, final T...entries)
     {
+        this.remove(first);
         for (T entry : entries)
         {
-            this.removeRegistryEntry(entry);
+            this.remove(entry);
         }
         return self();
     }
@@ -97,7 +97,7 @@ public interface IForgeTagAppender<T>
      * @param location The ID of the element to remove
      * @return The builder for chaining
      */
-    default TagsProvider.TagAppender<T> removeElementByID(final ResourceLocation location)
+    default TagsProvider.TagAppender<T> remove(final ResourceLocation location)
     {
         TagsProvider.TagAppender<T> builder = self();
         builder.getInternalBuilder().removeElement(location, builder.getModID());
@@ -109,11 +109,12 @@ public interface IForgeTagAppender<T>
      * @param locations The IDs of the elements to remove
      * @return The builder for chaining
      */
-    default TagsProvider.TagAppender<T> removeElementsByID(final ResourceLocation... locations)
+    default TagsProvider.TagAppender<T> remove(final ResourceLocation first, final ResourceLocation... locations)
     {
+        this.remove(first);
         for (ResourceLocation location : locations)
         {
-            this.removeElementByID(location);
+            this.remove(location);
         }
         return self();
     }
@@ -123,7 +124,7 @@ public interface IForgeTagAppender<T>
      * @param tag The ID of the tag to remove
      * @return The builder for chaining
      */
-    default TagsProvider.TagAppender<T> removeTag(Tag.Named<T> tag)
+    default TagsProvider.TagAppender<T> remove(Tag.Named<T> tag)
     {
         TagsProvider.TagAppender<T> builder = self();
         builder.getInternalBuilder().removeTag(tag.getName(), builder.getModID());
@@ -136,11 +137,12 @@ public interface IForgeTagAppender<T>
      * @return The builder for chaining
      */
     @SuppressWarnings("unchecked")
-    default TagsProvider.TagAppender<T> removeTags(Tag.Named<T>...tags)
+    default TagsProvider.TagAppender<T> remove(Tag.Named<T> first, Tag.Named<T>...tags)
     {
+        this.remove(first);
         for (Tag.Named<T> tag : tags)
         {
-            this.removeTag(tag);
+            this.remove(tag);
         }
         return self();
     }
