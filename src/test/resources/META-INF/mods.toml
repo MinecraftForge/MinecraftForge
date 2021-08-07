@@ -143,5 +143,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="entity_renderer_events_test"
 [[mods]]
+    modId="send_datapacks_to_client"
+[[mods]]
     modId="check_spawn_event_test"
+
 # ADD ABOVE THIS LINE
