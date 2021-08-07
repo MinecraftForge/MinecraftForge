@@ -126,7 +126,15 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         return false;
     }
 
-    protected void invalidateCaps()
+    /*
+     * Invalidates all the contained caps, and prevents getCapability from returning a value.
+     * This is usually called when the object in question is removed from the world.
+     * However there may be cases where modders want to copy these 'invalid' caps.
+     * They should call reviveCaps while they are doing their work, and then call invalidateCaps again
+     * when they are finished.
+     * Be sure to make your invalidate callbaks recursion safe.
+     */
+    public void invalidateCaps()
     {
         this.valid = false;
         final CapabilityDispatcher disp = getCapabilities();
@@ -134,7 +142,12 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
             disp.invalidate();
     }
 
-    protected void reviveCaps()
+    /*
+     * This function will allow getCability to return values again.
+     * Modders can use this if they need to copy caps from one removed provider to a new one.
+     * It is expected the modders who call this function, then call invalidateCaps() to invalidate the provider again.
+     */
+    public void reviveCaps()
     {
         this.valid = true; //Stupid players don't copy the entity when transporting across worlds.
     }

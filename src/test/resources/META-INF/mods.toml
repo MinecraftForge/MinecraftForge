@@ -144,4 +144,7 @@ license="LGPL v2.1"
     modId="entity_renderer_events_test"
 [[mods]]
     modId="network_capability_test"
+[[mods]]
+    modId="send_datapacks_to_client"
+
 # ADD ABOVE THIS LINE
