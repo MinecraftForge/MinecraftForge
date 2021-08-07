@@ -1,5 +1,6 @@
 package net.minecraftforge.debug.entity;
 
+import net.minecraft.world.entity.vehicle.MinecartSpawner;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -24,11 +25,19 @@ public class CheckSpawnEventTest
     @SubscribeEvent
     public void checkSpawn(LivingSpawnEvent.CheckSpawn event)
     {
-        if (event.isSpawner() && event.getSpawner() instanceof SpawnerBlockEntity.Spawner spawner)
+        if (event.isSpawner())
         {
-            SpawnerBlockEntity spawnerBlockEntity = spawner.getSpawnerBlockEntity();
-            event.setResult(Event.Result.DENY);
-            LOGGER.info("Stopped {} from spawning",event.getEntity());
+            if (event.getSpawner() instanceof SpawnerBlockEntity.Spawner spawner)
+            {
+                SpawnerBlockEntity spawnerBlockEntity = spawner.getSpawnerBlockEntity();
+                LOGGER.info("Stopped {} from spawning from Spawner Block Entity : {}", event.getEntity(), spawnerBlockEntity);
+                event.setResult(Event.Result.DENY);
+            }
+            if (event.getSpawner().getSpawnerEntity() instanceof MinecartSpawner spawner)
+            {
+                LOGGER.info("Stopped {} from spawning from Minecart Spawner : {}", event.getEntity(), spawner);
+                event.setResult(Event.Result.DENY);
+            }
         }
     }
 }
