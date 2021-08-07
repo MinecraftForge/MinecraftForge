@@ -69,7 +69,7 @@
 -      return m_43938_(p_43941_.m_178366_(FriendlyByteBuf::m_130267_).stream().map(Ingredient.ItemValue::new));
 +      var size = p_43941_.m_130242_();
 +      if (size == -1) return net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_43941_.m_130281_(), p_43941_);
-+      return m_43938_(p_43941_.readListWithSize(size, FriendlyByteBuf::m_130267_).stream().map(Ingredient.ItemValue::new));
++      return m_43938_(Stream.generate(() -> new Ingredient.ItemValue(p_43941_.m_130267_())).limit(size));
     }
  
     public static Ingredient m_43917_(@Nullable JsonElement p_43918_) {
