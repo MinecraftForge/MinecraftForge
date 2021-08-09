@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/material/FlowingFluid.java
 +++ b/net/minecraft/world/level/material/FlowingFluid.java
+@@ -29,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public abstract class FlowingFluid extends Fluid {
++public abstract class FlowingFluid extends Fluid implements net.minecraftforge.common.extensions.IForgeFlowingFluid {
+    public static final BooleanProperty f_75947_ = BlockStateProperties.f_61434_;
+    public static final IntegerProperty f_75948_ = BlockStateProperties.f_61420_;
+    private static final int f_164507_ = 200;
 @@ -159,7 +_,7 @@
           BlockState blockstate = p_76036_.m_8055_(blockpos);
           FluidState fluidstate = blockstate.m_60819_();

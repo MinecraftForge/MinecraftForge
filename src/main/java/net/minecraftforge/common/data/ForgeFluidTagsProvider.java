@@ -22,8 +22,7 @@ package net.minecraftforge.common.data;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraftforge.common.ForgeMod;
-
-import static net.minecraftforge.common.Tags.Fluids.MILK;
+import net.minecraftforge.common.Tags.*;
 
 public final class ForgeFluidTagsProvider extends FluidTagsProvider
 {
@@ -35,7 +34,8 @@ public final class ForgeFluidTagsProvider extends FluidTagsProvider
     @Override
     public void addTags()
     {
-        tag(MILK).addOptional(ForgeMod.MILK.getId()).addOptional(ForgeMod.FLOWING_MILK.getId());
+        tag(Fluids.MILK).addOptional(ForgeMod.MILK.getId()).addOptional(ForgeMod.FLOWING_MILK.getId());
+        tag(Fluids.GASEOUS);
     }
 
     @Override

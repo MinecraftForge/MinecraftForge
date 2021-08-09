@@ -27,3 +27,12 @@
              BlockState blockstate = Fox.this.f_19853_.m_8055_(this.f_25602_);
              if (blockstate.m_60713_(Blocks.f_50685_)) {
                 this.m_148928_(blockstate);
+@@ -922,7 +_,7 @@
+       }
+ 
+       public boolean m_8036_() {
+-         return Fox.this.m_20069_() && Fox.this.m_20120_(FluidTags.f_13131_) > 0.25D || Fox.this.m_20077_();
++         return Fox.this.m_20069_() && Fox.this.m_20120_(FluidTags.f_13131_) > 0.25D || Fox.this.m_20077_() || Fox.this.isInFluid() && Fox.this.getFluidHeight(Fox.this.getTouchingFluid()) > 0.25D;
+       }
+    }
+ 

@@ -20,7 +20,10 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
+
 import javax.annotation.Nullable;
+
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MobCategory;
@@ -29,6 +32,7 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
@@ -59,7 +63,6 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     @Nullable
     Collection<ItemEntity> captureDrops();
     Collection<ItemEntity> captureDrops(@Nullable Collection<ItemEntity> captureDrops);
-
 
     /**
      * Returns a NBTTagCompound that can be used to store custom data for this entity.
@@ -168,7 +171,6 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      */
     void revive();
 
-
     /**
      * This is used to specify that your entity has multiple individual parts, such as the Vanilla Ender Dragon.
      *
@@ -197,4 +199,79 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     {
         return null;
     }
+
+    /**
+     * Determines whether the entity is able to be pushed by a fluid.
+     * 
+     * @param state The fluid pushing the entity
+     * @return If the entity can be pushed, defaults to vanilla behavior for water
+     */
+    default boolean isPushedByFluid(FluidState state)
+    {
+        return !(self() instanceof Player) || !((Player) self()).getAbilities().flying;
+    }
+
+    /**
+     * Used to check if the entity is inside of a fluid of any kind outside of "EMPTY" fluid.
+     *
+     * @return If the entity is inside of any non-EMPTY fluid
+     */
+    default boolean isInFluid()
+    {
+        return self().getTouchingFluid() != net.minecraft.world.level.material.Fluids.EMPTY.defaultFluidState() && self().getFluidHeight(self().getTouchingFluid()) > 0.0D;
+    }
+
+    /**
+     * Used to check if the entities eyes are inside of a "custom" fluid, aka a fluid that isn't added by vanilla.
+     *
+     * @return If the entities eyes are in a non-vanilla fluid.
+     */
+    default boolean areEyesInFluid()
+    {
+        double eyePos = self().getEyeY() - 0.11111111F;
+        BlockPos pos = new BlockPos(self().getX(), eyePos, self().getZ());
+        FluidState state = self().level.getFluidState(pos);
+        return this.isInFluid() && state.is(self().getTouchingFluid()) && (pos.getY() + state.getHeight(self().level, pos)) > eyePos;
+    }
+
+    /**
+     * Used to check if the swimming state can be entered.
+     *
+     * @return If the entity can enter a swimming state.
+     */
+    default boolean canTriggerSwimming()
+    {
+        return self().areEyesInFluid() && self().getTouchingFluid().canSwim();
+    }
+
+    /**
+     * Sets the currently touching {@link FluidState} for the entity.
+     *
+     * @param state The {@link FluidState} the entity is currently inside of
+     */
+    void setInFluid(FluidState state);
+
+    /**
+     * Gets the currently touching {@link FluidState} for the entity.
+     *
+     * @return The {@link FluidState} the entity is currently inside of
+     */
+    FluidState getTouchingFluid();
+
+    /**
+     * Adds the FluidState -> Height value to a map for caching.
+     * This value is used elsewhere to calculate if an entity is submerged in the fluid.
+     *
+     * @param state The {@link FluidState} the entity is inside of
+     * @param fluidHeight The height of the {@link FluidState} represented as a double
+     */
+    void addFluidHeight(FluidState state, double fluidHeight);
+
+    /**
+     * Gets the cached height of a FluidState.
+     *
+     * @param state The queried {@link FluidState}
+     * @return The cached height of the FluidState
+     */
+    double getFluidHeight(FluidState state);
 }

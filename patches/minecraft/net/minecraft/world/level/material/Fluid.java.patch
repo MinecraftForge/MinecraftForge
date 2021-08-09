@@ -9,11 +9,18 @@
     public static final IdMapper<FluidState> f_76104_ = new IdMapper<>();
     protected final StateDefinition<Fluid, FluidState> f_76105_;
     private FluidState f_76103_;
-@@ -96,6 +_,28 @@
+@@ -28,6 +_,7 @@
+       this.m_7180_(builder);
+       this.f_76105_ = builder.m_61101_(Fluid::m_76145_, FluidState::new);
+       this.m_76142_(this.f_76105_.m_61090_());
++      initClient();
     }
  
+    protected void m_7180_(StateDefinition.Builder<Fluid, FluidState> p_76121_) {
+@@ -97,7 +_,52 @@
+ 
     public abstract VoxelShape m_7999_(FluidState p_76137_, BlockGetter p_76138_, BlockPos p_76139_);
-+
+ 
 +   private final net.minecraftforge.common.util.ReverseTagWrapper<Fluid> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.FluidTags::m_144299_);
 +   @Override
 +   public java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
@@ -35,6 +42,31 @@
 +         forgeFluidAttributes = createAttributes();
 +      return forgeFluidAttributes;
 +   }
- 
++
     public Optional<SoundEvent> m_142520_() {
        return Optional.empty();
++   }
++
++   private Object renderProperties;
++
++   /*
++      DO NOT CALL, IT WILL DISAPPEAR IN THE FUTURE
++      Call RenderProperties.get instead
++    */
++   public Object getRenderPropertiesInternal() {
++      return renderProperties;
++   }
++
++   private void initClient() {
++      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) {
++         initializeClient(properties -> {
++            if (properties == this)
++               throw new IllegalStateException("Don't extend IFluidRenderProperties in your block, use an anonymous class instead.");
++            this.renderProperties = properties;
++         });
++      }
++   }
++
++   public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IFluidRenderProperties> consumer) {
+    }
+ }

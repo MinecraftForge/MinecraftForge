@@ -560,7 +560,7 @@ public class FluidUtil
         }
 
         Fluid fluid = resource.getFluid();
-        if (fluid == Fluids.EMPTY || !fluid.getAttributes().canBePlacedInWorld(world, pos, resource))
+        if (fluid == Fluids.EMPTY || !fluid.getAttributes().canBePlacedInLevel(world, pos, resource))
         {
             return false;
         }

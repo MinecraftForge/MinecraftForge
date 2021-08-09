@@ -1,10 +1,16 @@
 --- a/net/minecraft/world/level/block/LiquidBlock.java
 +++ b/net/minecraft/world/level/block/LiquidBlock.java
-@@ -35,6 +_,7 @@
+@@ -30,11 +_,12 @@
+ 
+ public class LiquidBlock extends Block implements BucketPickup {
+    public static final IntegerProperty f_54688_ = BlockStateProperties.f_61422_;
+-   protected final FlowingFluid f_54689_;
++   private final FlowingFluid f_54689_; // FORGE: Reduced visibility to support the Supplier constructor. Needs to be private for the field-to-method transformer.
+    private final List<FluidState> f_54691_;
     public static final VoxelShape f_54690_ = Block.m_49796_(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
     public static final ImmutableList<Direction> f_181233_ = ImmutableList.of(Direction.DOWN, Direction.SOUTH, Direction.NORTH, Direction.EAST, Direction.WEST);
  
-+   @Deprecated  // Forge: Use the constructor that takes a supplier
++   @Deprecated  // FORGE: Use the constructor that takes a supplier
     public LiquidBlock(FlowingFluid p_54694_, BlockBehaviour.Properties p_54695_) {
        super(p_54695_);
        this.f_54689_ = p_54694_;
@@ -17,7 +23,7 @@
 +   }
 +
 +   /**
-+    * @param supplier A fluid supplier such as {@link net.minecraftforge.fmllegacy.RegistryObject<Fluid>}
++    * @param supplier A fluid supplier such as {@link net.minecraftforge.fmllegacy.RegistryObject<net.minecraft.world.level.material.Fluid>}
 +    */
 +   public LiquidBlock(java.util.function.Supplier<? extends FlowingFluid> p_54694_, BlockBehaviour.Properties p_54695_) {
 +      super(p_54695_);
@@ -36,7 +42,7 @@
        return this.f_54691_.get(Math.min(i, 8));
     }
  
-@@ -120,13 +_,13 @@
+@@ -120,18 +_,19 @@
              BlockPos blockpos = p_54698_.m_142300_(direction.m_122424_());
              if (p_54697_.m_6425_(blockpos).m_76153_(FluidTags.f_13131_)) {
                 Block block = p_54697_.m_6425_(p_54698_).m_76170_() ? Blocks.f_50080_ : Blocks.f_50652_;
@@ -52,6 +58,12 @@
                 this.m_54700_(p_54697_, p_54698_);
                 return false;
              }
+          }
+       }
++      else if (!this.f_54689_.m_76108_(FluidTags.f_13131_)) return p_54699_.m_60819_().handleFluidInteraction(p_54697_, p_54698_);
+ 
+       return true;
+    }
 @@ -150,6 +_,25 @@
           return new ItemStack(this.f_54689_.m_6859_());
        } else {

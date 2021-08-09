@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/level/block/ConcretePowderBlock.java
++++ b/net/minecraft/world/level/block/ConcretePowderBlock.java
+@@ -30,20 +_,25 @@
+       BlockGetter blockgetter = p_52063_.m_43725_();
+       BlockPos blockpos = p_52063_.m_8083_();
+       BlockState blockstate = blockgetter.m_8055_(blockpos);
+-      return m_52080_(blockgetter, blockpos, blockstate) ? this.f_52058_ : super.m_5573_(p_52063_);
++      return m_52080_(blockgetter, blockpos, blockstate) || touchesLiquid(blockgetter, blockpos, this.m_49966_()) ? this.f_52058_ : super.m_5573_(p_52063_);
+    }
+ 
+    private static boolean m_52080_(BlockGetter p_52081_, BlockPos p_52082_, BlockState p_52083_) {
+       return m_52088_(p_52083_) || m_52064_(p_52081_, p_52082_);
+    }
+ 
++   @Deprecated // FORGE: Use BlockState overload
+    private static boolean m_52064_(BlockGetter p_52065_, BlockPos p_52066_) {
++      return touchesLiquid(p_52065_, p_52066_, p_52065_.m_8055_(p_52066_));
++   }
++
++   private static boolean touchesLiquid(BlockGetter p_52065_, BlockPos p_52066_, BlockState currentState) {
+       boolean flag = false;
+       BlockPos.MutableBlockPos blockpos$mutableblockpos = p_52066_.m_122032_();
+ 
+       for(Direction direction : Direction.values()) {
+          BlockState blockstate = p_52065_.m_8055_(blockpos$mutableblockpos);
+-         if (direction != Direction.DOWN || m_52088_(blockstate)) {
++         if (direction != Direction.DOWN || m_52088_(blockstate) || blockstate.m_60819_().canHydrate(currentState)) {
+             blockpos$mutableblockpos.m_122159_(p_52066_, direction);
+             blockstate = p_52065_.m_8055_(blockpos$mutableblockpos);
+             if (m_52088_(blockstate) && !blockstate.m_60783_(p_52065_, p_52066_, direction.m_122424_())) {
+@@ -57,7 +_,7 @@
+    }
+ 
+    private static boolean m_52088_(BlockState p_52089_) {
+-      return p_52089_.m_60819_().m_76153_(FluidTags.f_13131_);
++      return p_52089_.m_60819_().canHydrate(p_52089_);
+    }
+ 
+    public BlockState m_7417_(BlockState p_52074_, Direction p_52075_, BlockState p_52076_, LevelAccessor p_52077_, BlockPos p_52078_, BlockPos p_52079_) {

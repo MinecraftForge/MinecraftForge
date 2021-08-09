@@ -19,31 +19,44 @@
 
 package net.minecraftforge.fluids;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.Util;
+import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.world.level.BlockAndTintGetter;
-
-import java.util.function.BiFunction;
-import java.util.stream.Stream;
-
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.client.renderer.BiomeColors;
-
-import net.minecraft.Util;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.WaterWalkerEnchantment;
+import net.minecraft.world.level.BlockAndTintGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+import java.util.function.ToDoubleBiFunction;
+import java.util.stream.Stream;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -72,6 +85,8 @@ public class FluidAttributes
 
     @Nullable
     private final ResourceLocation overlayTexture;
+    @Nullable
+    private final ResourceLocation viewOverlayTexture;
 
     private final SoundEvent fillSound;
     private final SoundEvent emptySound;
@@ -112,13 +127,6 @@ public class FluidAttributes
     private final int viscosity;
 
     /**
-     * This indicates if the fluid is gaseous.
-     *
-     * Generally this is associated with negative density fluids.
-     */
-    private final boolean isGaseous;
-
-    /**
      * The rarity of the fluid.
      *
      * Used primarily in tool tips.
@@ -135,12 +143,69 @@ public class FluidAttributes
      */
     private final int color;
 
+    /**
+     * The scaled motion {@link ToDoubleBiFunction} of the fluid when "pushing" entities.
+     */
+    private final ToDoubleBiFunction<FluidState, Entity> motionScale;
+    
+    /**
+     * The fall distance multiplier {@link ToDoubleBiFunction} while within a fluid.
+     * For example used if it should increase/dampen fall damage.
+     */
+    private final ToDoubleBiFunction<FluidState, Entity> fallDistanceModifier;
+    
+    /**
+     * The {@link Predicate} used to check if a player can swim in the {@link Fluid}.
+     */
+    private final Predicate<FluidState> canSwim;
+
+    /**
+     * The {@link BiPredicate} used to determine if a {@link LivingEntity} can drown in the {@link Fluid}.
+     */
+    private final BiPredicate<FluidState, LivingEntity> canDrown;
+    
+    /**
+     * The {@link BiPredicate} used to determine if the {@link Fluid} should extinguish a burning entity.
+     */
+    private final BiPredicate<FluidState, Entity> canExtinguish;
+    
+    /**
+     * The {@link Predicate} used to determine if the {@link Fluid} can hydrate a specific {@link BlockState}.
+     * Used for example with {@link net.minecraft.world.level.block.ConcretePowderBlock#canSolidify(BlockState)} (BlockState)}, {@link net.minecraft.world.level.block.SpongeBlock#tryAbsorbWater(Level, BlockPos)} and {@link net.minecraft.world.level.block.FarmBlock#isNearWater(LevelReader, BlockPos)}.
+     */
+    private final BiPredicate<FluidState, BlockState> canHydrate;
+
+    /**
+     * The {@link BiFunction} used to determine the {@link Fluid}s horizontal motion modifier.
+     * Used inside of {@link net.minecraftforge.common.extensions.IForgeFluid#handleMotion(FluidState, LivingEntity, Vec3, double)} to modify the horizontal movement speed while inside of the {@link Fluid}.
+     */
+    private final BiFunction<FluidState, LivingEntity, Float> horizontalMotionModifier;
+
+    /**
+     * Used to determine motion modifiers based off an {@link Enchantment} and an {@link LivingEntity}.
+     * Used inside of {@link net.minecraftforge.common.extensions.IForgeFluid#handleMotion(FluidState, LivingEntity, Vec3, double)} to modify the final motion vectors.
+     */
+    private final BiFunction<Enchantment, LivingEntity, Float> enchantmentModifier;
+
+    /**
+     * Used to alters the motion of the entity based off an {@link MobEffect}, an {@link LivingEntity}, an original horizontal motion modifier represented as a {@link Float} and finally a boolean dictating is the motion is horizontal.
+     * Used inside of {@link net.minecraftforge.common.extensions.IForgeFluid#handleMotion(FluidState, LivingEntity, Vec3, double)} to modify the final motion vectors.
+     */
+    private final IFluidEffectModifier effectModifier;
+
+
+    /**
+     * Used to decide if a {@link Boat} should have intended interaction behaviour with a fluid.
+     */
+    private final BiPredicate<FluidState, Boat> canBoat;
+
     protected FluidAttributes(Builder builder, Fluid fluid)
     {
         this.translationKey = builder.translationKey != null ? builder.translationKey :  Util.makeDescriptionId("fluid", fluid.getRegistryName());
         this.stillTexture = builder.stillTexture;
         this.flowingTexture = builder.flowingTexture;
         this.overlayTexture = builder.overlayTexture;
+        this.viewOverlayTexture = builder.viewOverlayTexture;
         this.color = builder.color;
         this.fillSound = builder.fillSound;
         this.emptySound = builder.emptySound;
@@ -148,8 +213,17 @@ public class FluidAttributes
         this.temperature = builder.temperature;
         this.viscosity = builder.viscosity;
         this.density = builder.density;
-        this.isGaseous = builder.isGaseous;
         this.rarity = builder.rarity;
+        this.motionScale = builder.motionScale;
+        this.fallDistanceModifier = builder.fallDistanceModifier;
+        this.canSwim = builder.canSwim;
+        this.canDrown = builder.canDrown;
+        this.canExtinguish = builder.canExtinguish;
+        this.canHydrate = builder.canHydrate;
+        this.horizontalMotionModifier = builder.horizontalMotionModifier;
+        this.enchantmentModifier = builder.enchantmentModifier;
+        this.effectModifier = builder.effectModifier;
+        this.canBoat = builder.canBoat;
     }
 
     public ItemStack getBucket(FluidStack stack)
@@ -167,26 +241,32 @@ public class FluidAttributes
         return state.getFluid().defaultFluidState();
     }
 
-    public final boolean canBePlacedInWorld(BlockAndTintGetter reader, BlockPos pos, FluidState state)
+    public final boolean canBePlacedInLevel(BlockAndTintGetter reader, BlockPos pos, FluidState state)
     {
         return !getBlock(reader, pos, state).isAir();
     }
 
-    public final boolean canBePlacedInWorld(BlockAndTintGetter reader, BlockPos pos, FluidStack state)
+    public final boolean canBePlacedInLevel(BlockAndTintGetter reader, BlockPos pos, FluidStack state)
     {
         return !getBlock(reader, pos, getStateForPlacement(reader, pos, state)).isAir();
     }
 
+    /**
+     * Determines if the fluid is lighter than "air" based of the fluids density value.
+     * If the density value is lower than or equal to 0 where 0 is the "canonical" density of air.
+     * Then the fluid will be using the upside-down bucket texture/model, as well as the upward-flowing fluid block model.
+     * @return Returns whether the fluid is lighter than air, making it use the upside down bucket texture and fluid block model.
+     */
     public final boolean isLighterThanAir()
     {
-        return this.density <= 0;
+        return this.getDensity() <= 0;
     }
 
     /**
      * Determines if this fluid should vaporize in dimensions where water vaporizes when placed.
      * To preserve the intentions of vanilla, fluids that can turn lava into obsidian should vaporize.
      * This prevents players from making the nether safe with a single bucket.
-     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Based on {@link net.minecraft.world.item.BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult)}
      *
      * @param fluidStack The fluidStack is trying to be placed.
      * @return true if this fluid should vaporize in dimensions where water vaporizes when placed.
@@ -200,27 +280,29 @@ public class FluidAttributes
     }
 
     /**
-     * Called instead of placing the fluid block if {@link net.minecraft.world.dimension.Dimension#doesWaterVaporize()} and {@link #doesVaporize(FluidStack)} are true.
+     * Called instead of placing the fluid block if {@link net.minecraft.world.level.dimension.DimensionType#ultrawarm()} and {@link #doesVaporize(BlockAndTintGetter, BlockPos, FluidStack)} are true.
      * Override this to make your explosive liquid blow up instead of the default smoke, etc.
-     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Based on {@link net.minecraft.world.item.BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult)}
      *
      * @param player     Player who tried to place the fluid. May be null for blocks like dispensers.
-     * @param worldIn    World to vaporize the fluid in.
-     * @param pos        The position in the world the fluid block was going to be placed.
+     * @param level      Level to vaporize the fluid in.
+     * @param pos        The position in the level the fluid block was going to be placed.
      * @param fluidStack The fluidStack that was going to be placed.
      */
-    public void vaporize(@Nullable Player player, Level worldIn, BlockPos pos, FluidStack fluidStack)
+    public void vaporize(@Nullable Player player, Level level, BlockPos pos, FluidStack fluidStack)
     {
-        worldIn.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (worldIn.random.nextFloat() - worldIn.random.nextFloat()) * 0.8F);
+        level.playSound(player, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
 
         for (int l = 0; l < 8; ++l)
         {
-            worldIn.addAlwaysVisibleParticle(ParticleTypes.LARGE_SMOKE, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
+            level.addAlwaysVisibleParticle(ParticleTypes.LARGE_SMOKE, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
         }
     }
 
     /**
-     * Returns the localized name of this fluid.
+     * Returns the localized name of the provided {@code FluidStack}.
+     * @param stack the provided {@code FluidStack} to get the display name of.
+     * @return Returns the display name of the provided {@code FluidStack} as a {@code Component}.
      */
     public Component getDisplayName(FluidStack stack)
     {
@@ -229,6 +311,8 @@ public class FluidAttributes
 
     /**
      * A FluidStack sensitive version of getTranslationKey
+     * @param stack the provided {@code FluidStack} to get the display name of.
+     * @return Returns the translation key of the provided {@code FluidStack} as a string.
      */
     public String getTranslationKey(FluidStack stack)
     {
@@ -236,13 +320,18 @@ public class FluidAttributes
     }
 
     /**
-     * Returns the translation key of this fluid.
+     * @return Returns the translation key of this fluid.
      */
     public String getTranslationKey()
     {
         return this.translationKey;
     }
 
+    /**
+     * Luminosity is currently only used as part of {@link net.minecraftforge.client.model.DynamicBucketModel#bake(IModelConfiguration, ModelBakery, Function<Material, TextureAtlasSprite>, ModelState, ItemOverrides, ResourceLocation)} to determine if the fluid should render fullbright in the bucket texture or not.
+     * The luminosity check for fullbright on the DynamicBucketModel is calculated as 'luminosity > 0' and requires the "applyFluidLuminosity" model attribute to be present and enabled in the fluid model file.
+     * @return Returns the luminosity value for the fluid.
+     */
     /* Default Accessors */
     public final int getLuminosity()
     {
@@ -264,11 +353,6 @@ public class FluidAttributes
         return this.viscosity;
     }
 
-    public final boolean isGaseous()
-    {
-        return this.isGaseous;
-    }
-
     public Rarity getRarity()
     {
         return rarity;
@@ -277,6 +361,56 @@ public class FluidAttributes
     public int getColor()
     {
         return color;
+    }
+
+    public double getMotionScale(FluidState state, Entity entity)
+    {
+        return motionScale.applyAsDouble(state, entity);
+    }
+
+    public double getFallDistanceModifier(FluidState state, Entity entity)
+    {
+        return fallDistanceModifier.applyAsDouble(state, entity);
+    }
+
+    public boolean canSwim(FluidState state)
+    {
+        return canSwim.test(state);
+    }
+
+    public boolean canDrown(FluidState state, LivingEntity entity)
+    {
+        return canDrown.test(state, entity);
+    }
+
+    public boolean canExtinguish(FluidState state, Entity entity)
+    {
+        return canExtinguish.test(state, entity);
+    }
+
+    public boolean canHydrate(FluidState fluidState, BlockState blockState)
+    {
+        return canHydrate.test(fluidState, blockState);
+    }
+
+    public float getHorizontalMotionModifier(FluidState state, LivingEntity entity)
+    {
+        return this.horizontalMotionModifier.apply(state, entity);
+    }
+
+    public float getEnchantmentMotionModifier(Enchantment enchantment, LivingEntity entity)
+    {
+        return this.enchantmentModifier.apply(enchantment, entity);
+    }
+
+    public boolean canBoat(FluidState state, Boat boat)
+    {
+        return this.canBoat.test(state, boat);
+    }
+
+    public void modifyMotionByEffect(MobEffect effect, LivingEntity entity, Float originalMovement, Boolean isHorizontal)
+    {
+        this.effectModifier.modify(effect, entity, originalMovement, isHorizontal);
     }
 
     public ResourceLocation getStillTexture()
@@ -295,6 +429,12 @@ public class FluidAttributes
         return overlayTexture;
     }
 
+    @Nullable
+    public ResourceLocation getViewOverlayTexture()
+    {
+        return viewOverlayTexture;
+    }
+
     public SoundEvent getFillSound()
     {
         return fillSound;
@@ -310,7 +450,6 @@ public class FluidAttributes
     public int getDensity(FluidStack stack){ return getDensity(); }
     public int getTemperature(FluidStack stack){ return getTemperature(); }
     public int getViscosity(FluidStack stack){ return getViscosity(); }
-    public boolean isGaseous(FluidStack stack){ return isGaseous(); }
     public Rarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
     public ResourceLocation getStillTexture(FluidStack stack) { return getStillTexture(); }
@@ -318,18 +457,19 @@ public class FluidAttributes
     public SoundEvent getFillSound(FluidStack stack) { return getFillSound(); }
     public SoundEvent getEmptySound(FluidStack stack) { return getEmptySound(); }
 
-    /* World-based Accessors */
-    public int getLuminosity(BlockAndTintGetter world, BlockPos pos){ return getLuminosity(); }
-    public int getDensity(BlockAndTintGetter world, BlockPos pos){ return getDensity(); }
-    public int getTemperature(BlockAndTintGetter world, BlockPos pos){ return getTemperature(); }
-    public int getViscosity(BlockAndTintGetter world, BlockPos pos){ return getViscosity(); }
-    public boolean isGaseous(BlockAndTintGetter world, BlockPos pos){ return isGaseous(); }
-    public Rarity getRarity(BlockAndTintGetter world, BlockPos pos){ return getRarity(); }
-    public int getColor(BlockAndTintGetter world, BlockPos pos){ return getColor(); }
-    public ResourceLocation getStillTexture(BlockAndTintGetter world, BlockPos pos) { return getStillTexture(); }
-    public ResourceLocation getFlowingTexture(BlockAndTintGetter world, BlockPos pos) { return getFlowingTexture(); }
-    public SoundEvent getFillSound(BlockAndTintGetter world, BlockPos pos) { return getFillSound(); }
-    public SoundEvent getEmptySound(BlockAndTintGetter world, BlockPos pos) { return getEmptySound(); }
+    /* Level-based Accessors */
+    public int getLuminosity(BlockAndTintGetter level, BlockPos pos){ return getLuminosity(); }
+    public int getDensity(BlockAndTintGetter level, BlockPos pos){ return getDensity(); }
+    public int getTemperature(BlockAndTintGetter level, BlockPos pos){ return getTemperature(); }
+    public int getViscosity(BlockAndTintGetter level, BlockPos pos){ return getViscosity(); }
+    public Rarity getRarity(BlockAndTintGetter level, BlockPos pos){ return getRarity(); }
+    public int getColor(BlockAndTintGetter level, BlockPos pos){ return getColor(); }
+    public ResourceLocation getStillTexture(BlockAndTintGetter level, BlockPos pos) { return getStillTexture(); }
+    public ResourceLocation getFlowingTexture(BlockAndTintGetter level, BlockPos pos) { return getFlowingTexture(); }
+    public SoundEvent getFillSound(BlockAndTintGetter level, BlockPos pos) { return getFillSound(); }
+    public SoundEvent getEmptySound(BlockAndTintGetter level, BlockPos pos) { return getEmptySound(); }
+    public boolean canSwim(BlockAndTintGetter level, BlockPos pos) { return canSwim(level.getFluidState(pos)); }
+    public boolean canHydrate(BlockAndTintGetter level, BlockPos pos) { return canHydrate(level.getFluidState(pos), level.getBlockState(pos)); }
 
     public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
         return new Builder(stillTexture, flowingTexture, FluidAttributes::new);
@@ -347,6 +487,7 @@ public class FluidAttributes
         private final ResourceLocation stillTexture;
         private final ResourceLocation flowingTexture;
         private ResourceLocation overlayTexture;
+        private ResourceLocation viewOverlayTexture;
         private int color = 0xFFFFFFFF;
         private String translationKey;
         private SoundEvent fillSound;
@@ -355,8 +496,17 @@ public class FluidAttributes
         private int density = 1000;
         private int temperature = 300;
         private int viscosity = 1000;
-        private boolean isGaseous;
         private Rarity rarity = Rarity.COMMON;
+        private ToDoubleBiFunction<FluidState, Entity> motionScale = (state, entity) -> 0.014D;
+        private ToDoubleBiFunction<FluidState, Entity> fallDistanceModifier = (state, entity) -> 0.0D;
+        private Predicate<FluidState> canSwim = state -> state.is(FluidTags.WATER);
+        private BiPredicate<FluidState, LivingEntity> canDrown = (state, entity) -> state.is(FluidTags.WATER);
+        private BiPredicate<FluidState, Entity> canExtinguish = (state, entity) -> state.is(FluidTags.WATER);
+        private BiPredicate<FluidState, BlockState> canHydrate = (fluidState, blockState) -> fluidState.is(FluidTags.WATER);
+        private BiFunction<FluidState, LivingEntity, Float> horizontalMotionModifier = (state, entity) -> entity.isSprinting() ? 0.9F : 0.8F;
+        private BiFunction<Enchantment, LivingEntity, Float> enchantmentModifier = (enchantment, entity) -> enchantment instanceof WaterWalkerEnchantment ? EnchantmentHelper.getDepthStrider(entity) : 0F;
+        private IFluidEffectModifier effectModifier = (effect, entity, originalModifier, isHorizontal) -> { if (isHorizontal && effect.equals(MobEffects.DOLPHINS_GRACE) && entity.hasEffect(effect)) { originalModifier = 0.97f; } };
+        private BiPredicate<FluidState, Boat> canBoat = (state, boat) -> state.is(FluidTags.WATER);
         private BiFunction<Builder,Fluid,FluidAttributes> factory;
 
         protected Builder(ResourceLocation stillTexture, ResourceLocation flowingTexture, BiFunction<Builder,Fluid,FluidAttributes> factory) {
@@ -380,6 +530,12 @@ public class FluidAttributes
         public final Builder overlay(ResourceLocation texture)
         {
             overlayTexture = texture;
+            return viewOverlay(texture);
+        }
+
+        public final Builder viewOverlay(ResourceLocation texture)
+        {
+            viewOverlayTexture = new ResourceLocation(texture.getNamespace(), "textures/" + texture.getPath() + ".png");
             return this;
         }
 
@@ -407,12 +563,6 @@ public class FluidAttributes
             return this;
         }
 
-        public final Builder gaseous()
-        {
-            isGaseous = true;
-            return this;
-        }
-
         public final Builder rarity(Rarity rarity)
         {
             this.rarity = rarity;
@@ -432,6 +582,66 @@ public class FluidAttributes
             return this;
         }
 
+        public final Builder motionScale(ToDoubleBiFunction<FluidState, Entity> motionScale)
+        {
+            this.motionScale = motionScale;
+            return this;
+        }
+
+        public final Builder fallDistanceModifier(ToDoubleBiFunction<FluidState, Entity> fallDistanceModifier)
+        {
+            this.fallDistanceModifier = fallDistanceModifier;
+            return this;
+        }
+
+        public final Builder canSwim(Predicate<FluidState> canSwim)
+        {
+            this.canSwim = canSwim;
+            return this;
+        }
+
+        public final Builder canDrown(BiPredicate<FluidState, LivingEntity> canDrown)
+        {
+            this.canDrown = canDrown;
+            return this;
+        }
+
+        public final Builder canExtinguish(BiPredicate<FluidState, Entity> canExtinguish)
+        {
+            this.canExtinguish = canExtinguish;
+            return this;
+        }
+
+        public final Builder canHydrate(BiPredicate<FluidState, BlockState> canHydrate)
+        {
+            this.canHydrate = canHydrate;
+            return this;
+        }
+
+        public final Builder horizontalMotionModifier(BiFunction<FluidState, LivingEntity, Float> horizontalMotionModifier)
+        {
+            this.horizontalMotionModifier = horizontalMotionModifier;
+            return this;
+        }
+
+        public final Builder enchantmentModifier(BiFunction<Enchantment, LivingEntity, Float> enchantmentModifier)
+        {
+            this.enchantmentModifier = enchantmentModifier;
+            return this;
+        }
+
+        public final Builder effectModifier(IFluidEffectModifier effectModifier)
+        {
+            this.effectModifier = effectModifier;
+            return this;
+        }
+
+        public final Builder canBoat(BiPredicate<FluidState, Boat> canBoat)
+        {
+            this.canBoat = canBoat;
+            return this;
+        }
+
         public FluidAttributes build(Fluid fluid)
         {
             return factory.apply(this, fluid);
@@ -446,13 +656,17 @@ public class FluidAttributes
         }
 
         @Override
-        public int getColor(BlockAndTintGetter world, BlockPos pos)
+        public int getColor(BlockAndTintGetter level, BlockPos pos)
         {
-            return BiomeColors.getAverageWaterColor(world, pos) | 0xFF000000;
+            return BiomeColors.getAverageWaterColor(level, pos) | 0xFF000000;
         }
 
         public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
-            return new Builder(stillTexture, flowingTexture, Water::new);
+            return new Builder(stillTexture, flowingTexture, Water::new).canExtinguish((state, entity) -> true);
         }
+    }
+
+    public interface IFluidEffectModifier {
+        void modify(MobEffect effect, LivingEntity entity, float motion, boolean isHorizontal);
     }
 }

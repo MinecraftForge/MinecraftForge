@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "fluid_test:block/test_fluid" }
+  }
+}
