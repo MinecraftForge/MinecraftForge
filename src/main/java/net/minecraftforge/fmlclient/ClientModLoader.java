@@ -39,7 +39,6 @@ import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.DataPackConfig;
 import net.minecraftforge.fml.*;
-import net.minecraftforge.fmlclient.registry.RenderingRegistry;
 import net.minecraftforge.fmllegacy.BrandingControl;
 import net.minecraftforge.fmllegacy.CrashReportExtender;
 import net.minecraftforge.fmllegacy.LogicalSidedProvider;
@@ -135,15 +134,6 @@ public class ClientModLoader
     private static void startModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor) {
         earlyLoaderGUI.handleElsewhere();
         createRunnableWithCatch(() -> ModLoader.get().loadMods(syncExecutor, parallelExecutor, new SpacedRunnable(earlyLoaderGUI::renderTick))).run();
-    }
-
-    private static void postSidedRunnable() {
-        LOGGER.debug(LOADING, "Running post client event work");
-        RenderingRegistry.loadEntityRenderers();
-    }
-
-    private static void preSidedRunnable() {
-        LOGGER.debug(LOADING, "Running pre client event work");
     }
 
     private static void finishModLoading(ModWorkManager.DrivenExecutor syncExecutor, Executor parallelExecutor)

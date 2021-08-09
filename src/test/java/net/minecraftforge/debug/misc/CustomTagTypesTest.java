@@ -73,7 +73,7 @@ public class CustomTagTypesTest
     private static final Tag.Named<Custom> TESTS = ForgeTagHandler.createOptionalTag(customRegistryName, new ResourceLocation(MODID, "tests"), Sets.newHashSet(CUSTOM));
     private static final Tag.Named<Item> OPTIONAL_TEST = ItemTags.createOptional(new ResourceLocation(MODID, "optional_test"), Sets.newHashSet(() -> Items.BONE));
     private static final Tag.Named<Enchantment> FIRE = ForgeTagHandler.createOptionalTag(ForgeRegistries.ENCHANTMENTS, new ResourceLocation(MODID, "fire"));
-    private static final Tag.Named<Potion> DAMAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.POTION_TYPES, new ResourceLocation(MODID, "damage"));
+    private static final Tag.Named<Potion> DAMAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.POTIONS, new ResourceLocation(MODID, "damage"));
     private static final Tag.Named<BlockEntityType<?>> STORAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCK_ENTITIES, new ResourceLocation(MODID, "storage"));
 
     public CustomTagTypesTest()
@@ -177,7 +177,7 @@ public class CustomTagTypesTest
     {
         public PotionTags(DataGenerator gen, @Nullable ExistingFileHelper existingFileHelper)
         {
-            super(gen, ForgeRegistries.POTION_TYPES, MODID, existingFileHelper);
+            super(gen, ForgeRegistries.POTIONS, MODID, existingFileHelper);
         }
 
         @Override

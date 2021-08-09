@@ -93,7 +93,4 @@ public class LibraryFinder {
     public static Path findPathForMaven(final String maven) {
         return findLibsPath().resolve(MavenCoordinateResolver.get(maven));
     }
-    public static Path getFMLCorePath() {
-        return findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraftforge:fmlcore:1.0"));
-    }
 }

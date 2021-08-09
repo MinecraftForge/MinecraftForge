@@ -248,18 +248,6 @@
           this.m_5810_();
           this.f_19853_.m_7605_(this, (byte)30);
        }
-@@ -1212,8 +_,9 @@
-    public void m_7583_() {
-    }
- 
--   public void m_142687_(Entity.RemovalReason p_150097_) {
--      super.m_142687_(p_150097_);
-+   @Override
-+   public void remove(boolean keepData) {
-+      super.remove(keepData);
-       this.f_36095_.m_6877_(this);
-       if (this.f_36096_ != null) {
-          this.f_36096_.m_6877_(this);
 @@ -1247,6 +_,7 @@
     }
  

@@ -38,20 +38,14 @@
     }
  
     public boolean m_20039_(BlockPos p_20040_, BlockState p_20041_) {
-@@ -339,6 +_,13 @@
+@@ -335,6 +_,7 @@
+       if (p_146834_ == Entity.RemovalReason.KILLED) {
+          this.m_146850_(GameEvent.f_157809_);
+       }
++      this.invalidateCaps();
+ 
     }
  
-    public void m_142036_() {
-+      this.remove(false);
-+   }
-+
-+   public void remove(boolean keepData) {
-+      this.m_146870_();
-+      if (!keepData)
-+         this.invalidateCaps();
-    }
- 
-    public void m_20124_(Pose p_20125_) {
 @@ -599,13 +_,13 @@
                 double d0 = vec3.f_82479_;
                 double d1 = vec3.f_82480_;

@@ -604,9 +604,9 @@ public class ForgeEventFactory
         return event.getCharge();
     }
 
-    public static <T extends Projectile> boolean onProjectileImpact(T projectile, HitResult ray)
+    public static boolean onProjectileImpact(Projectile projectile, HitResult ray)
     {
-        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent<>(projectile, ray));
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent(projectile, ray));
     }
 
     public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTables lootTableManager)

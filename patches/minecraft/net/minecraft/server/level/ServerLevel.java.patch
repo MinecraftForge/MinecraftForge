@@ -102,14 +102,14 @@
     }
  
 +   public void removePlayer(ServerPlayer p_8850_, boolean keepData) {
-+      p_8850_.remove(keepData);
++      p_8850_.m_146870_();
 +      this.removeEntity(p_8850_, keepData);
 +   }
 +
 +   public void removeEntityComplete(Entity p_8865_, boolean keepData) {
 +      if(p_8865_.isMultipartEntity()) {
 +         for(net.minecraftforge.entity.PartEntity<?> parts : p_8865_.getParts()) {
-+            parts.remove(keepData);
++            parts.m_146870_();
 +         }
 +      }
 +
@@ -125,7 +125,7 @@
 +      }
 +
 +      p_8865_.onRemovedFromWorld();
-+      p_8865_.remove(keepData);
++      p_8865_.m_146870_();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveLevelEvent(p_8865_, this));
 +   }
 +
