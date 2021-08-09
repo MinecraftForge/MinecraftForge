@@ -22,8 +22,27 @@ package net.minecraftforge.client.event;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.util.Mth;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
+import static net.minecraftforge.client.event.render.EntityViewRenderEvent.*;
+
+/**
+ * Fired after the field of vision (FOV) modifier for the player is calculated.
+ * This can be used to modify the FOV before the FOV settings are applied.
+ *
+ * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
+ *
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ *
+ * @see ForgeHooksClient#getFOVModifier(Player, float)
+ * @see FieldOfView
+ * @author MachineMuse (Claire Semple)
+ */
 public class FOVModifierEvent extends Event
 {
     private final Player entity;
@@ -37,21 +56,35 @@ public class FOVModifierEvent extends Event
         this.setNewFOV(Mth.lerp(Minecraft.getInstance().options.fovEffectScale, 1.0F, fov));
     }
 
+    /**
+     * {@return the player affected by this event}
+     */
     public Player getPlayer()
     {
         return entity;
     }
 
+    /**
+     * {@return the original field of vision (FOV) of the player, before any modifications or interpolation}
+     */
     public float getFOV()
     {
         return fov;
     }
 
+    /**
+     * {@return the current field of vision (FOV) of the player}
+     */
     public float getNewFOV()
     {
         return newFOV;
     }
 
+    /**
+     * Sets the new field of vision (FOV) of the player.
+     *
+     * @param newFOV the new field of vision (FOV)
+     */
     public void setNewFOV(float newFOV)
     {
         this.newFOV = newFOV;

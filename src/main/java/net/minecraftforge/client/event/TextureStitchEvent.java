@@ -20,12 +20,24 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.Set;
 
+/**
+ * Fired before and after a texture atlas stitched together.
+ * See the two subclasses to listen for before and after stitching.
+ *
+ * @see TextureStitchEvent.Pre
+ * @see TextureStitchEvent.Post
+ * @see TextureAtlas
+ */
 public class TextureStitchEvent extends Event implements IModBusEvent
 {
     private final TextureAtlas atlas;
@@ -35,14 +47,24 @@ public class TextureStitchEvent extends Event implements IModBusEvent
         this.atlas = atlas;
     }
 
+    /**
+     * {@return the texture atlas}
+     */
     public TextureAtlas getAtlas()
     {
         return atlas;
     }
 
     /**
-     * Fired when the TextureMap is told to refresh it's stitched texture.
-     * Called before the {@link net.minecraft.client.renderer.texture.TextureAtlasSprite} are loaded.
+     * <p>Fired <b>before</b> a texture atlas is stitched together. <br/>
+     * This can be used to add custom sprites to be stitched into the atlas. </p>
+     *
+     * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
+     *
+     * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus()} mod-specific event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     *
+     * @see ForgeHooksClient#onTextureStitchPre(TextureAtlas, Set)
      */
     public static class Pre extends TextureStitchEvent
     {
@@ -55,7 +77,9 @@ public class TextureStitchEvent extends Event implements IModBusEvent
         }
 
         /**
-         * Add a sprite to be stitched into the Texture Atlas.
+         * Adds a sprite to be stitched into the texture atlas.
+         *
+         * @param sprite the location of the sprite
          */
         public boolean addSprite(ResourceLocation sprite)
         {
@@ -64,9 +88,14 @@ public class TextureStitchEvent extends Event implements IModBusEvent
     }
 
     /**
-     * This event is fired once the texture map has loaded all textures and
-     * stitched them together. All Icons should have there locations defined
-     * by the time this is fired.
+     * Fired <b>after</b> a texture atlas is stitched together.
+     *
+     * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
+     *
+     * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus()} mod-specific event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     *
+     * @see ForgeHooksClient#onTextureStitchedPost(TextureAtlas)
      */
     public static class Post extends TextureStitchEvent
     {

@@ -20,23 +20,29 @@
 package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.client.Screenshot;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 
 /**
- * This event is fired before and after a screenshot is taken
- * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
- * This event is {@link Cancelable}
+ * Fired when a screenshot is taken, but before it is written to disk.
  *
- * {@link #screenshotFile} contains the file the screenshot will be/was saved to
- * {@link #image} contains the {@link NativeImage} that will be saved
- * {@link #resultMessage} contains the {@link ITextComponent} to be returned. If {@code null}, the default vanilla message will be used instead
+ * <p>This event is {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}.
+ * If this event is cancelled, then the screenshot is not written to disk, and the message in the event will be posted
+ * to the player's chat.</p>
+ *
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ *
+ * @see Screenshot
  */
 @Cancelable
 public class ScreenshotEvent extends Event
@@ -59,32 +65,60 @@ public class ScreenshotEvent extends Event
         }
     }
 
+    /**
+     * {@return the in-memory image of the screenshot}
+     */
     public NativeImage getImage()
     {
         return image;
     }
 
+    /**
+     * @return the filepath where the screenshot will be saved to
+     */
     public File getScreenshotFile()
     {
         return screenshotFile;
     }
 
+    /**
+     * Sets the new filepath where the screenshot will be saved to.
+     *
+     * @param screenshotFile the new filepath
+     */
     public void setScreenshotFile(File screenshotFile)
     {
         this.screenshotFile = screenshotFile;
     }
 
+    /**
+     * {@return the custom cancellation message, or {@code null} if no custom message is set}
+     */
     @Nullable
     public Component getResultMessage()
     {
         return resultMessage;
     }
 
+    /**
+     * Sets the new custom cancellation message used to inform the player.
+     * It may be {@code null}, in which case the {@link #DEFAULT_CANCEL_REASON default cancel reason} will be used.
+     *
+     * @param resultMessage the new result message
+     */
     public void setResultMessage(@Nullable Component resultMessage)
     {
         this.resultMessage = resultMessage;
     }
 
+    /**
+     * Returns the cancellation message to be used in informing the player.
+     *
+     * <p>If there is no custom message given ({@link #getResultMessage()} returns {@code null}), then
+     * the message will be the {@link #DEFAULT_CANCEL_REASON default cancel reason message}</p>
+     *
+     * @return the cancel message for the player
+     */
     public Component getCancelMessage()
     {
         return getResultMessage() != null ? getResultMessage() : DEFAULT_CANCEL_REASON;

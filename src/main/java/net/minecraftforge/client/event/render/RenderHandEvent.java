@@ -21,16 +21,25 @@ package net.minecraftforge.client.event.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionHand;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
- * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
- * whenever a hand is rendered in first person.
- * Canceling the event causes the hand to not render.
+ * Fired before a hand is rendered in the first person view.
+ *
+ * <p>This event is {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}.
+ * If this event is cancelled, then the hand will not be rendered. </p>
+ *
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ *
+ * @see net.minecraftforge.client.ForgeHooksClient#renderSpecificFirstPersonHand(InteractionHand, PoseStack, MultiBufferSource, int, float, float, float, float, ItemStack)
  */
 @Cancelable
 public class RenderHandEvent extends Event
@@ -60,33 +69,50 @@ public class RenderHandEvent extends Event
         this.stack = stack;
     }
 
+    /**
+     * {@return the hand being rendered}
+     */
     public InteractionHand getHand()
     {
         return hand;
     }
 
+    /**
+     * {@return the pose stack used for rendering}
+     */
     public PoseStack getPoseStack()
     {
         return poseStack;
     }
 
+    /**
+     * {@return the source of rendering buffers}
+     */
     public MultiBufferSource getBufferSource()
     {
         return bufferSource;
     }
 
+    /**
+     * {@return the amount of packed (sky and block) light for rendering}
+     *
+     * @see LightTexture
+     */
     public int getLight()
     {
         return light;
     }
 
+    /**
+     * {@return the partial tick}
+     */
     public float getPartialTick()
     {
         return partialTick;
     }
 
     /**
-     * @return The interpolated pitch of the player entity
+     * {@return the interpolated pitch of the player entity}
      */
     public float getInterpolatedPitch()
     {
@@ -94,7 +120,7 @@ public class RenderHandEvent extends Event
     }
 
     /**
-     * @return The swing progress of the hand being rendered
+     * {@return the swing progress of the hand being rendered}
      */
     public float getSwingProgress()
     {
@@ -102,7 +128,7 @@ public class RenderHandEvent extends Event
     }
 
     /**
-     * @return The progress of the equip animation. 1.0 is fully equipped.
+     * {@return the progress of the equip animation, from {@code 0.0} to {@code 1.0}}
      */
     public float getEquipProgress()
     {
@@ -110,7 +136,7 @@ public class RenderHandEvent extends Event
     }
 
     /**
-     * @return The ItemStack to be rendered
+     * {@return the item stack to be rendered}
      */
     public ItemStack getItemStack()
     {

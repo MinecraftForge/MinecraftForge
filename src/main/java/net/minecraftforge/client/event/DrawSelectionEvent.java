@@ -26,12 +26,18 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
- * An event called whenever the selection highlight around a block or entity is about to be rendered.
- * Canceling this event stops the selection highlight from being rendered.
+ * Fired before a selection highlight is rendered.
+ * See the two subclasses to listen for blocks or entities.
+ *
+ * @see DrawSelectionEvent.HighlightBlock
+ * @see DrawSelectionEvent.HighlightEntity
+ * @see net.minecraftforge.client.ForgeHooksClient#onDrawHighlight(LevelRenderer, Camera, HitResult, float, PoseStack, MultiBufferSource)
  */
 @Cancelable
 public class DrawSelectionEvent extends Event
@@ -53,38 +59,62 @@ public class DrawSelectionEvent extends Event
         this.bufferSource = bufferSource;
     }
 
+    /**
+     * {@return the level renderer}
+     */
     public LevelRenderer getLevelRenderer()
     {
         return levelRenderer;
     }
 
+    /**
+     * {@return the camera information}
+     */
     public Camera getCamera()
     {
         return camera;
     }
 
+    /**
+     * {@return the hit result which triggered the selection highlight}
+     */
     public HitResult getHitResult()
     {
         return hitResult;
     }
 
+    /**
+     * {@return the partial tick}
+     */
     public float getPartialTick()
     {
         return partialTick;
     }
 
+    /**
+     * {@return the pose stack used for rendering}
+     */
     public PoseStack getPoseStack()
     {
         return poseStack;
     }
 
+    /**
+     * {@return the source of rendering buffers}
+     */
     public MultiBufferSource getBufferSource()
     {
         return bufferSource;
     }
 
     /**
-     * A variant of the DrawSelectionEvent only called when a block is highlighted.
+     * Fired before a block's selection highlight is rendered.
+     *
+     * <p>This event is {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. <br/>
+     * If the event is cancelled, then the selection highlight will not be rendered. </p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
     @Cancelable
     public static class HighlightBlock extends DrawSelectionEvent
@@ -94,6 +124,9 @@ public class DrawSelectionEvent extends Event
             super(levelRenderer, camera, hitResult, partialTick, poseStack, bufferSource);
         }
 
+        /**
+         * {@return the block hit result}
+         */
         @Override
         public BlockHitResult getHitResult()
         {
@@ -102,8 +135,15 @@ public class DrawSelectionEvent extends Event
     }
 
     /**
-     * A variant of the DrawSelectionEvent only called when an entity is highlighted.
-     * Canceling this event has no effect.
+     * Fired before a block's selection highlight is rendered.
+     *
+     * <p>This event is {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. <br/>
+     * Cancelling this event has no effect. </p>
+     *
+     * TODO: this event cannot be fired because of where the hook is called; remove this event or move the hook
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
     @Cancelable
     public static class HighlightEntity extends DrawSelectionEvent
@@ -113,6 +153,9 @@ public class DrawSelectionEvent extends Event
             super(levelRenderer, camera, hitResult, partialTick, poseStack, bufferSource);
         }
 
+        /**
+         * {@return the entity hit result}
+         */
         @Override
         public EntityHitResult getHitResult()
         {

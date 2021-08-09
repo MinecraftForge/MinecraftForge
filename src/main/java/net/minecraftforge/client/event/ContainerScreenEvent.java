@@ -21,10 +21,20 @@ package net.minecraftforge.client.event;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
- * Event class for handling GuiContainer specific events.
+ * Fired for hooking into {@link AbstractContainerScreen} rendering.
+ * See the two subclasses to listen for foreground or background rendering.
+ *
+ * <p>These events are fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ *
+ * @see ContainerScreenEvent.DrawForeground
+ * @see ContainerScreenEvent.DrawBackground
  */
 public class ContainerScreenEvent extends Event
 {
@@ -35,16 +45,25 @@ public class ContainerScreenEvent extends Event
         this.containerScreen = containerScreen;
     }
 
+    /**
+     * {@return the container screen}
+     */
     public AbstractContainerScreen<?> getContainerScreen()
     {
         return containerScreen;
     }
 
     /**
-     * This event is fired directly after the GuiContainer has draw any foreground elements,
-     * But before the "dragged" stack, and before any tooltips.
-     * This is useful for any slot / item specific overlays.
-     * Things that need to be on top of All GUI elements but bellow tooltips and dragged stacks.
+     * Fired after the container screen's foreground layer and elements are drawn, but
+     * before rendering the tooltips and the item stack being dragged by the player.
+     *
+     * <p>This can be used for rendering elements that must be above other screen elements, but
+     * below tooltips and the dragged stack, such as slot or item stack specific overlays. </p>
+     *
+     * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
     public static class DrawForeground extends ContainerScreenEvent
     {
@@ -52,14 +71,6 @@ public class ContainerScreenEvent extends Event
         private final int mouseX;
         private final int mouseY;
 
-        /**
-         * Called directly after the GuiContainer has drawn any foreground elements.
-         *
-         * @param containerScreen The container.
-         * @param poseStack       The MatrixStack.
-         * @param mouseX          The current X position of the players mouse.
-         * @param mouseY          The current Y position of the players mouse.
-         */
         public DrawForeground(AbstractContainerScreen<?> containerScreen, PoseStack poseStack, int mouseX, int mouseY)
         {
             super(containerScreen);
@@ -68,16 +79,25 @@ public class ContainerScreenEvent extends Event
             this.mouseY = mouseY;
         }
 
+        /**
+         * {@return the pose stack used for rendering}
+         */
         public PoseStack getPoseStack()
         {
             return poseStack;
         }
 
+        /**
+         * {@return the x coordinate of the mouse pointer}
+         */
         public int getMouseX()
         {
             return mouseX;
         }
 
+        /**
+         * {@return the y coordinate of the mouse pointer}
+         */
         public int getMouseY()
         {
             return mouseY;
@@ -85,8 +105,13 @@ public class ContainerScreenEvent extends Event
     }
 
     /**
-     * This event is fired directly after the GuiContainer has draw any background elements,
-     * This is useful for drawing new background elements.
+     * Fired after the container screen's background layer and elements are drawn.
+     * This can be used for rendering new background elements.
+     *
+     * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
+     *
+     * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
      */
     public static class DrawBackground extends ContainerScreenEvent
     {
@@ -94,14 +119,6 @@ public class ContainerScreenEvent extends Event
         private final int mouseX;
         private final int mouseY;
 
-        /**
-         * Called directly after the GuiContainer has drawn any background elements.
-         *
-         * @param containerScreen The container.
-         * @param poseStack       The MatrixStack.
-         * @param mouseX          The current X position of the players mouse.
-         * @param mouseY          The current Y position of the players mouse.
-         */
         public DrawBackground(AbstractContainerScreen<?> containerScreen, PoseStack poseStack, int mouseX, int mouseY)
         {
             super(containerScreen);
@@ -110,16 +127,25 @@ public class ContainerScreenEvent extends Event
             this.mouseY = mouseY;
         }
 
+        /**
+         * {@return the pose stack used for rendering}
+         */
         public PoseStack getPoseStack()
         {
             return poseStack;
         }
 
+        /**
+         * {@return the x coordinate of the mouse pointer}
+         */
         public int getMouseX()
         {
             return mouseX;
         }
 
+        /**
+         * {@return the y coordinate of the mouse pointer}
+         */
         public int getMouseY()
         {
             return mouseY;

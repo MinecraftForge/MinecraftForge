@@ -19,17 +19,40 @@
 
 package net.minecraftforge.client.event;
 
+import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.client.color.item.ItemColor;
 import net.minecraft.client.color.item.ItemColors;
+import net.minecraft.world.level.ItemLike;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
- * Use these events to register block/item
- * color handlers at the appropriate time.
+ * Fired for registering block and item color handlers at the appropriate time.
+ * See the two subclasses for registering blocks or items color handlers.
+ *
+ * <p>These events are fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
+ * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ *
+ * @see ColorHandlerEvent.Block
+ * @see ColorHandlerEvent.Item
  */
 public abstract class ColorHandlerEvent extends Event implements IModBusEvent
 {
+    /**
+     * Fired for registering block colors handlers.
+     *
+     * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
+     *
+     * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     *
+     * @see ForgeHooksClient#onBlockColors(BlockColors)
+     */
     public static class Block extends ColorHandlerEvent
     {
         private final BlockColors blockColors;
@@ -39,12 +62,29 @@ public abstract class ColorHandlerEvent extends Event implements IModBusEvent
             this.blockColors = blockColors;
         }
 
+        /**
+         * {@return the block colors registry}
+         * @see BlockColors#register(BlockColor, net.minecraft.world.level.block.Block...)
+         */
         public BlockColors getBlockColors()
         {
             return blockColors;
         }
     }
 
+    /**
+     * Fired for registering item colors handlers.
+     *
+     * <p>The block colors should only be used for referencing or delegating item colors to their respective block
+     * colors. Use {@link ColorHandlerEvent.Block} for registering your block color handlers. </p>
+     *
+     * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
+     *
+     * <p>This event is fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
+     * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+     *
+     * @see ForgeHooksClient#onItemColors(ItemColors, BlockColors)
+     */
     public static class Item extends ColorHandlerEvent
     {
         private final ItemColors itemColors;
@@ -56,11 +96,19 @@ public abstract class ColorHandlerEvent extends Event implements IModBusEvent
             this.blockColors = blockColors;
         }
 
+        /**
+         * {@return the item colors registry}
+         * @see ItemColors#register(ItemColor, ItemLike...)
+         */
         public ItemColors getItemColors()
         {
             return itemColors;
         }
 
+        /**
+         * {@return the block colors registry}
+         * This should only be used for referencing or delegating item colors to their respective block colors.
+         */
         public BlockColors getBlockColors()
         {
             return blockColors;

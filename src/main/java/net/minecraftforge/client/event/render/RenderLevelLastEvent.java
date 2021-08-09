@@ -21,10 +21,28 @@ package net.minecraftforge.client.event.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import com.mojang.math.Matrix4f;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
+/**
+ * Fired after all world rendering.
+ * This can be used for custom rendering outside of e.g. a tile entity or entity renderer.
+ *
+ * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
+ *
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ *
+ * @see ForgeHooksClient#onRenderLast(LevelRenderer, PoseStack, float, Matrix4f, long)
+ * @see GameRenderer
+ * @see LevelRenderer
+ */
 public class RenderLevelLastEvent extends Event
 {
     private final LevelRenderer levelRenderer;
@@ -42,26 +60,41 @@ public class RenderLevelLastEvent extends Event
         this.startTimeNanos = startTimeNanos;
     }
 
+    /**
+     * {@return the level renderer}
+     */
     public LevelRenderer getLevelRenderer()
     {
         return levelRenderer;
     }
 
+    /**
+     * {@return the pose stack used for rendering}
+     */
     public PoseStack getPoseStack()
     {
         return poseStack;
     }
 
+    /**
+     * {@return the amount of partial ticks}
+     */
     public float getPartialTick()
     {
         return partialTick;
     }
 
+    /**
+     * {@return the projection matrix}
+     */
     public Matrix4f getProjectionMatrix()
     {
         return projectionMatrix;
     }
 
+    /**
+     * {@return the time when rendering started, in nanoseconds}
+     */
     public long getStartTimeNanos()
     {
         return startTimeNanos;

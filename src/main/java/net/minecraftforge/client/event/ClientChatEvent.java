@@ -20,23 +20,23 @@
 package net.minecraftforge.client.event;
 
 import com.google.common.base.Strings;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
- * ClientChatEvent is fired whenever the client is about to send a chat message or command to the server. <br>
- * This event is fired via {@link ForgeEventFactory#onClientSendMessage(String)},
- * which is executed by {@link GuiScreen#sendChatMessage(String, boolean)}<br>
- * <br>
- * {@link #message} contains the message that will be sent to the server. This can be changed by mods.<br>
- * {@link #originalMessage} contains the original message that was going to be sent to the server. This cannot be changed by mods.<br>
- * <br>
- * This event is {@link Cancelable}. <br>
- * If this event is canceled, the chat message or command is never sent to the server.<br>
- * <br>
- * This event does not have a result. {@link HasResult}<br>
- * <br>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * Fired when the client is about to send a chat message or command to the server.
+ * This can be used to implement client-only commands as chat messages, or intercepting messages for modification.
+ *
+ * <p>This event is {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}.
+ * If the event is cancelled, the chat message or command will not be sent to the server. </p>
+ *
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ *
+ * @see ForgeEventFactory#onClientSendMessage(String)
  **/
 @Cancelable
 public class ClientChatEvent extends Event
@@ -50,16 +50,27 @@ public class ClientChatEvent extends Event
         this.message = this.originalMessage;
     }
 
+    /**
+     * {@return the message that will be sent to the server, if the event is not cancelled}
+     */
     public String getMessage()
     {
         return message;
     }
 
+    /**
+     * Sets the new message to be sent to the server, if the event is not cancelled.
+     *
+     * @param message the new message to be sent
+     */
     public void setMessage(String message)
     {
         this.message = Strings.nullToEmpty(message);
     }
 
+    /**
+     * {@return the original message that was to be sent to the server}
+     */
     public String getOriginalMessage()
     {
         return originalMessage;
