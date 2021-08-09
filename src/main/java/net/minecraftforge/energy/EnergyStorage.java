@@ -19,7 +19,7 @@
 
 package net.minecraftforge.energy;
 
-import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.Tag;
 import net.minecraftforge.common.util.INBTSerializable;
 
@@ -31,27 +31,27 @@ import net.minecraftforge.common.util.INBTSerializable;
  */
 public class EnergyStorage implements IEnergyStorage, INBTSerializable<Tag>
 {
-    protected int energy;
-    protected int capacity;
-    protected int maxReceive;
-    protected int maxExtract;
+    protected long energy;
+    protected long capacity;
+    protected long maxReceive;
+    protected long maxExtract;
 
-    public EnergyStorage(int capacity)
+    public EnergyStorage(long capacity)
     {
         this(capacity, capacity, capacity, 0);
     }
 
-    public EnergyStorage(int capacity, int maxTransfer)
+    public EnergyStorage(long capacity, long maxTransfer)
     {
         this(capacity, maxTransfer, maxTransfer, 0);
     }
 
-    public EnergyStorage(int capacity, int maxReceive, int maxExtract)
+    public EnergyStorage(long capacity, long maxReceive, long maxExtract)
     {
         this(capacity, maxReceive, maxExtract, 0);
     }
 
-    public EnergyStorage(int capacity, int maxReceive, int maxExtract, int energy)
+    public EnergyStorage(long capacity, long maxReceive, long maxExtract, long energy)
     {
         this.capacity = capacity;
         this.maxReceive = maxReceive;
@@ -60,37 +60,37 @@ public class EnergyStorage implements IEnergyStorage, INBTSerializable<Tag>
     }
 
     @Override
-    public int receiveEnergy(int maxReceive, boolean simulate)
+    public long receiveEnergy(long maxReceive, boolean simulate)
     {
         if (!canReceive())
             return 0;
 
-        int energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
+        long energyReceived = Math.min(capacity - energy, Math.min(this.maxReceive, maxReceive));
         if (!simulate)
             energy += energyReceived;
         return energyReceived;
     }
 
     @Override
-    public int extractEnergy(int maxExtract, boolean simulate)
+    public long extractEnergy(long maxExtract, boolean simulate)
     {
         if (!canExtract())
             return 0;
 
-        int energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
+        long energyExtracted = Math.min(energy, Math.min(this.maxExtract, maxExtract));
         if (!simulate)
             energy -= energyExtracted;
         return energyExtracted;
     }
 
     @Override
-    public int getEnergyStored()
+    public long getEnergyStored()
     {
         return energy;
     }
 
     @Override
-    public int getMaxEnergyStored()
+    public long getMaxEnergyStored()
     {
         return capacity;
     }
@@ -110,14 +110,14 @@ public class EnergyStorage implements IEnergyStorage, INBTSerializable<Tag>
     @Override
     public Tag serializeNBT()
     {
-        return IntTag.valueOf(this.getEnergyStored());
+        return LongTag.valueOf(this.getEnergyStored());
     }
 
     @Override
     public void deserializeNBT(Tag nbt)
     {
-        if (!(nbt instanceof IntTag intNbt))
+        if (!(nbt instanceof LongTag longNbt))
             throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
-        this.energy = intNbt.getAsInt();
+        this.energy = longNbt.getAsLong();
     }
 }
