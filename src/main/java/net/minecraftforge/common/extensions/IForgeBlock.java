@@ -21,6 +21,7 @@ package net.minecraftforge.common.extensions;
 
 import java.util.Optional;
 import java.util.Set;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.Entity;
@@ -491,14 +492,34 @@ public interface IForgeBlock
     }
 
     /**
-     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
+     * Get the {@link BlockPathTypes} for this block. Return {@code null} for vanilla behavior.
      *
-     * @return the PathNodeType
+     * @return the {@link BlockPathTypes}
      */
     @Nullable
-    default BlockPathTypes getAiPathNodeType(BlockState state, BlockGetter world, BlockPos pos, @Nullable Mob entity)
+    default BlockPathTypes getBlockPathType(BlockState state, BlockGetter world, BlockPos pos, @Nullable Mob entity)
     {
         return state.getBlock() == Blocks.LAVA ? BlockPathTypes.LAVA : state.isBurning(world, pos) ? BlockPathTypes.DAMAGE_FIRE : null;
+    }
+
+    /**
+     * Gets the {@link BlockPathTypes} of the block when adjacent to some pathfinding entity.
+     * <ul>
+     * <li>Negative Values = Untraversable</li>
+     * <li>0 = Best</li>
+     * <li>Highest = Worst</li>
+     * </ul>
+     * @param state The current block state
+     * @param level The level's block getter
+     * @param pos The current pos
+     * @param entity The pathing entity, can be null
+     * @param originalType The {@link BlockPathTypes} obtained from {@link #getBlockPathType(BlockState, BlockGetter, BlockPos, Mob)}
+     * @return null for default behavior; otherwise, returns the block's adjacent {@link BlockPathTypes}
+     */
+    @Nullable
+    default BlockPathTypes getAdjacentBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob entity, BlockPathTypes originalType)
+    {
+        return null;
     }
 
     /**

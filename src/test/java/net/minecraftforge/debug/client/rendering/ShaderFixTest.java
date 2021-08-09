@@ -31,9 +31,13 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ShaderFixTest
 {
+    private static final boolean ENABLED = false;
+
     @SubscribeEvent
     public static void clientSetup(final FMLClientSetupEvent event)
     {
-        ClientRegistry.registerEntityShader(LocalPlayer.class, new ResourceLocation("shaders/post/desaturate.json"));
+        if (ENABLED) {
+            ClientRegistry.registerEntityShader(LocalPlayer.class, new ResourceLocation("shaders/post/desaturate.json"));
+        }
     }
 }

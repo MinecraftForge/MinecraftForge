@@ -1,11 +1,36 @@
 --- a/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
 +++ b/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
+@@ -459,9 +_,14 @@
+                      return BlockPathTypes.DANGER_FIRE;
+                   }
+ 
+-                  if (p_77608_.m_6425_(p_77609_).m_76153_(FluidTags.f_13131_)) {
++                  BlockPathTypes blockType = blockstate.getAdjacentNodeType(p_77608_, p_77609_, p_77610_);
++                  if (blockType != null) return blockType;
++                  FluidState fluidState = p_77608_.m_6425_(p_77609_);
++                  if (fluidState.m_76153_(FluidTags.f_13131_)) {
+                      return BlockPathTypes.WATER_BORDER;
+                   }
++                  BlockPathTypes fluidType = fluidState.getAdjacentBlockPathType(p_77608_, p_77609_, p_77610_);
++                  if (fluidType != null) return fluidType;
+                }
+             }
+          }
 @@ -472,6 +_,8 @@
  
     protected static BlockPathTypes m_77643_(BlockGetter p_77644_, BlockPos p_77645_) {
        BlockState blockstate = p_77644_.m_8055_(p_77645_);
-+      BlockPathTypes type = blockstate.getAiPathNodeType(p_77644_, p_77645_);
++      BlockPathTypes type = blockstate.getBlockPathType(p_77644_, p_77645_);
 +      if (type != null) return type;
        Block block = blockstate.m_60734_();
        Material material = blockstate.m_60767_();
        if (blockstate.m_60795_()) {
+@@ -489,6 +_,8 @@
+             return BlockPathTypes.COCOA;
+          } else {
+             FluidState fluidstate = p_77644_.m_6425_(p_77645_);
++            BlockPathTypes fluidType = fluidstate.getBlockPathType(p_77644_, p_77645_);
++            if (fluidType != null) return fluidType;
+             if (fluidstate.m_76153_(FluidTags.f_13132_)) {
+                return BlockPathTypes.LAVA;
+             } else if (m_77622_(blockstate)) {

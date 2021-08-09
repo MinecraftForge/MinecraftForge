@@ -1,0 +1,27 @@
+--- a/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
++++ b/net/minecraft/core/dispenser/BoatDispenseItemBehavior.java
+@@ -24,19 +_,20 @@
+       double d1 = p_123375_.m_7098_() + (double)((float)direction.m_122430_() * 1.125F);
+       double d2 = p_123375_.m_7094_() + (double)((float)direction.m_122431_() * 1.125F);
+       BlockPos blockpos = p_123375_.m_7961_().m_142300_(direction);
++      Boat boat = new Boat(level, d0, d1, d2);
++      boat.m_38332_(this.f_123369_);
+       double d3;
+-      if (level.m_6425_(blockpos).m_76153_(FluidTags.f_13131_)) {
++      if (level.m_6425_(blockpos).canBoat(boat)) {
+          d3 = 1.0D;
+       } else {
+-         if (!level.m_8055_(blockpos).m_60795_() || !level.m_6425_(blockpos.m_7495_()).m_76153_(FluidTags.f_13131_)) {
++         if (!level.m_8055_(blockpos).m_60795_() || !level.m_6425_(blockpos.m_7495_()).canBoat(boat)) {
+             return this.f_123368_.m_6115_(p_123375_, p_123376_);
+          }
+ 
+          d3 = 0.0D;
+       }
+ 
+-      Boat boat = new Boat(level, d0, d1 + d3, d2);
+-      boat.m_38332_(this.f_123369_);
++      boat.m_6034_(boat.f_19854_, boat.f_19855_ + d3, boat.f_19856_);
+       boat.m_146922_(direction.m_122435_());
+       level.m_7967_(boat);
+       p_123376_.m_41774_(1);

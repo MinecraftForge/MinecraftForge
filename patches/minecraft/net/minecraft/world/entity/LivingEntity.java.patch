@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -118,7 +_,9 @@
+@@ -114,11 +_,13 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.scores.PlayerTeam;
+ 
+-public abstract class LivingEntity extends Entity {
++public abstract class LivingEntity extends Entity implements net.minecraftforge.common.extensions.IForgeLivingEntity {
     private static final UUID f_20929_ = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final UUID f_20959_ = UUID.fromString("87f46a96-686f-4796-b035-22e16ee9e038");
     private static final UUID f_147184_ = UUID.fromString("1eaf83ff-7207-4596-b37a-d7a07b3ec4ce");
@@ -29,6 +34,17 @@
           }
        }
  
+@@ -334,8 +_,8 @@
+ 
+       boolean flag1 = flag && ((Player)this).m_150110_().f_35934_;
+       if (this.m_6084_()) {
+-         if (this.m_19941_(FluidTags.f_13131_) && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
+-            if (!this.m_6040_() && !MobEffectUtil.m_19588_(this) && !flag1) {
++         if ((this.m_19941_(FluidTags.f_13131_) || this.areEyesInFluid()) && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
++            if ((this.m_19941_(FluidTags.f_13131_) && !this.m_6040_() || this.areEyesInFluid() && !this.canBreatheInFluid(this.getTouchingFluid()) && this.getTouchingFluid().canDrown(this)) && !MobEffectUtil.m_19588_(this) && !flag1) {
+                this.m_20301_(this.m_7302_(this.m_20146_()));
+                if (this.m_20146_() == -20) {
+                   this.m_20301_(0);
 @@ -352,7 +_,7 @@
                 }
              }
@@ -358,6 +374,15 @@
              this.m_19920_(f6, p_21280_);
              this.m_6478_(MoverType.SELF, this.m_20184_());
              Vec3 vec36 = this.m_20184_();
+@@ -2018,6 +_,8 @@
+             if (this.f_19862_ && this.m_20229_(vec34.f_82479_, vec34.f_82480_ + (double)0.6F - this.m_20186_() + d7, vec34.f_82481_)) {
+                this.m_20334_(vec34.f_82479_, (double)0.3F, vec34.f_82481_);
+             }
++         } else if (this.isInFluid() && this.m_6129_() && !this.m_7479_(fluidstate.m_76152_())) {
++             this.getTouchingFluid().handleMotion(this, p_21280_, d0);
+          } else if (this.m_21255_()) {
+             Vec3 vec3 = this.m_20184_();
+             if (vec3.f_82480_ > -0.5D) {
 @@ -2063,7 +_,7 @@
              }
           } else {
@@ -391,6 +416,28 @@
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, equipmentslot, itemstack, itemstack1));
              if (map == null) {
                 map = Maps.newEnumMap(EquipmentSlot.class);
+             }
+@@ -2467,6 +_,8 @@
+          double d7;
+          if (this.m_20077_()) {
+             d7 = this.m_20120_(FluidTags.f_13132_);
++         } else if (this.isInFluid()) {
++            d7 = this.getFluidHeight(this.getTouchingFluid());
+          } else {
+             d7 = this.m_20120_(FluidTags.f_13131_);
+          }
+@@ -2475,10 +_,12 @@
+          double d8 = this.m_20204_();
+          if (!flag1 || this.f_19861_ && !(d7 > d8)) {
+             if (!this.m_20077_() || this.f_19861_ && !(d7 > d8)) {
++               if (!this.isInFluid() || this.f_19861_ && !(d7 > d8)) {
+                if ((this.f_19861_ || flag1 && d7 <= d8) && this.f_20954_ == 0) {
+                   this.m_6135_();
+                   this.f_20954_ = 10;
+                }
++               } else this.getTouchingFluid().jump(this);
+             } else {
+                this.m_6197_(FluidTags.f_13132_);
              }
 @@ -2538,6 +_,8 @@
        boolean flag = this.m_20291_(7);

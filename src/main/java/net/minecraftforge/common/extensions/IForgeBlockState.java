@@ -547,25 +547,66 @@ public interface IForgeBlockState
     }
 
     /**
+     * TODO: Rename to {@code getPathNodeType} 1.17
+     * <br>
      * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
      *
      * @return the PathNodeType
      */
     @Nullable
-    default BlockPathTypes getAiPathNodeType(BlockGetter world, BlockPos pos)
+    default BlockPathTypes getBlockPathType(BlockGetter world, BlockPos pos)
     {
-        return getAiPathNodeType(world, pos, null);
+        return getBlockPathType(world, pos, null);
     }
 
     /**
+     * TODO: Rename to {@code getPathNodeType} 1.17
+     * <br>
      * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
      *
      * @return the PathNodeType
      */
     @Nullable
-    default BlockPathTypes getAiPathNodeType(BlockGetter world, BlockPos pos, @Nullable Mob entity)
+    default BlockPathTypes getBlockPathType(BlockGetter world, BlockPos pos, @Nullable Mob entity)
     {
-        return self().getBlock().getAiPathNodeType(self(), world, pos, entity);
+        return self().getBlock().getBlockPathType(self(), world, pos, entity);
+    }
+
+    /**
+     * Gets the {@link BlockPathTypes} of the block when adjacent to some pathfinding entity.
+     * <ul>
+     * <li>Negative Values = Untraversable</li>
+     * <li>0 = Best</li>
+     * <li>Highest = Worst</li>
+     * </ul>
+     * @param level The level's block getter
+     * @param pos The current pos
+     * @param originalType The {@link BlockPathTypes} obtained from {@link #getBlockPathType(BlockGetter, BlockPos, Mob)}
+     * @return null for default behavior; otherwise, returns the block's adjacent {@link BlockPathTypes}
+     */
+    @Nullable
+    default BlockPathTypes getAdjacentNodeType(BlockGetter level, BlockPos pos, BlockPathTypes originalType)
+    {
+        return getAdjacentNodeType(level, pos, null, originalType);
+    }
+    
+    /**
+     * Gets the {@link BlockPathTypes} of the block when adjacent to some pathfinding entity.
+     * <ul>
+     * <li>Negative Values = Untraversable</li>
+     * <li>0 = Best</li>
+     * <li>Highest = Worst</li>
+     * </ul>
+     * @param level The level's block getter
+     * @param pos The current pos
+     * @param entity The pathing entity, can be null
+     * @param originalType The {@link BlockPathTypes} obtained from {@link #getBlockPathType(BlockGetter, BlockPos, Mob)}
+     * @return null for default behavior; otherwise, returns the block's adjacent {@link BlockPathTypes}
+     */
+    @Nullable
+    default BlockPathTypes getAdjacentNodeType(BlockGetter level, BlockPos pos, @Nullable Mob entity, BlockPathTypes originalType)
+    {
+        return self().getBlock().getAdjacentBlockPathType(self(), level, pos, entity, originalType);
     }
 
     /**

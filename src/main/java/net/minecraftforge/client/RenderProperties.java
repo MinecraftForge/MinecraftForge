@@ -25,6 +25,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
 
 public class RenderProperties
 {
@@ -56,6 +58,16 @@ public class RenderProperties
     public static IBlockRenderProperties get(Block block)
     {
         return block.getRenderPropertiesInternal() instanceof IBlockRenderProperties props ? props : IBlockRenderProperties.DUMMY;
+    }
+
+    public static IFluidRenderProperties get(FluidState state)
+    {
+        return get(state.getType());
+    }
+
+    public static IFluidRenderProperties get(Fluid fluid)
+    {
+        return fluid.getRenderPropertiesInternal() instanceof IFluidRenderProperties props ? props : IFluidRenderProperties.DUMMY;
     }
 
     private RenderProperties()

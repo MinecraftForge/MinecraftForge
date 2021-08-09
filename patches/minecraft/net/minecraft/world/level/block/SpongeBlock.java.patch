@@ -1,0 +1,19 @@
+--- a/net/minecraft/world/level/block/SpongeBlock.java
++++ b/net/minecraft/world/level/block/SpongeBlock.java
+@@ -44,6 +_,7 @@
+       Queue<Tuple<BlockPos, Integer>> queue = Lists.newLinkedList();
+       queue.add(new Tuple<>(p_56809_, 0));
+       int i = 0;
++      BlockState currentState = p_56808_.m_8055_(p_56809_);
+ 
+       while(!queue.isEmpty()) {
+          Tuple<BlockPos, Integer> tuple = queue.poll();
+@@ -55,7 +_,7 @@
+             BlockState blockstate = p_56808_.m_8055_(blockpos1);
+             FluidState fluidstate = p_56808_.m_6425_(blockpos1);
+             Material material = blockstate.m_60767_();
+-            if (fluidstate.m_76153_(FluidTags.f_13131_)) {
++            if (fluidstate.canHydrate(currentState)) {
+                if (blockstate.m_60734_() instanceof BucketPickup && !((BucketPickup)blockstate.m_60734_()).m_142598_(p_56808_, blockpos1, blockstate).m_41619_()) {
+                   ++i;
+                   if (j < 6) {

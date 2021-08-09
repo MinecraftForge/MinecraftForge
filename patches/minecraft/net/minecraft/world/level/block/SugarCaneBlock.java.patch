@@ -33,6 +33,15 @@
        BlockState blockstate = p_57176_.m_8055_(p_57177_.m_7495_());
        if (blockstate.m_60713_(this)) {
           return true;
+@@ -77,7 +_,7 @@
+             for(Direction direction : Direction.Plane.HORIZONTAL) {
+                BlockState blockstate1 = p_57176_.m_8055_(blockpos.m_142300_(direction));
+                FluidState fluidstate = p_57176_.m_6425_(blockpos.m_142300_(direction));
+-               if (fluidstate.m_76153_(FluidTags.f_13131_) || blockstate1.m_60713_(Blocks.f_50449_)) {
++               if (fluidstate.canHydrate(p_57175_) || blockstate1.m_60713_(Blocks.f_50449_)) {
+                   return true;
+                }
+             }
 @@ -89,5 +_,15 @@
  
     protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_57186_) {

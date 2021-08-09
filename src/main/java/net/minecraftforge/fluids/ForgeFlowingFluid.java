@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids;
 
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -35,6 +36,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraftforge.common.util.TriPredicate;
 
 import javax.annotation.Nullable;
 import java.util.function.Supplier;
@@ -48,11 +50,15 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     @Nullable
     private final Supplier<? extends LiquidBlock> block;
     private final FluidAttributes.Builder builder;
-    private final boolean canMultiply;
     private final int slopeFindDistance;
     private final int levelDecreasePerBlock;
     private final float explosionResistance;
     private final int tickRate;
+
+    /**
+     * The {@link TriPredicate} used to determine if the {@link Fluid} can multiply and create new source blocks.
+     */
+    private final TriPredicate<FluidState, LevelReader, BlockPos> canMultiply;
 
     protected ForgeFlowingFluid(Properties properties)
     {
@@ -83,24 +89,24 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     @Override
     protected boolean canConvertToSource()
     {
-        return canMultiply;
+        return false;
     }
 
     @Override
-    protected void beforeDestroyingBlock(LevelAccessor worldIn, BlockPos pos, BlockState state)
+    protected void beforeDestroyingBlock(LevelAccessor level, BlockPos pos, BlockState state)
     {
-        BlockEntity blockEntity = state.hasBlockEntity() ? worldIn.getBlockEntity(pos) : null;
-        Block.dropResources(state, worldIn, pos, blockEntity);
+        BlockEntity blockEntity = state.hasBlockEntity() ? level.getBlockEntity(pos) : null;
+        Block.dropResources(state, level, pos, blockEntity);
     }
 
     @Override
-    protected int getSlopeFindDistance(LevelReader worldIn)
+    protected int getSlopeFindDistance(LevelReader level)
     {
         return slopeFindDistance;
     }
 
     @Override
-    protected int getDropOff(LevelReader worldIn)
+    protected int getDropOff(LevelReader level)
     {
         return levelDecreasePerBlock;
     }
@@ -112,14 +118,14 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    protected boolean canBeReplacedWith(FluidState state, BlockGetter world, BlockPos pos, Fluid fluidIn, Direction direction)
+    protected boolean canBeReplacedWith(FluidState state, BlockGetter level, BlockPos pos, Fluid fluid, Direction direction)
     {
         // Based on the water implementation, may need to be overriden for mod fluids that shouldn't behave like water.
-        return direction == Direction.DOWN && !isSame(fluidIn);
+        return direction == Direction.DOWN && !isSame(fluid);
     }
 
     @Override
-    public int getTickDelay(LevelReader world)
+    public int getTickDelay(LevelReader level)
     {
         return tickRate;
     }
@@ -139,8 +145,8 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    public boolean isSame(Fluid fluidIn) {
-        return fluidIn == still.get() || fluidIn == flowing.get();
+    public boolean isSame(Fluid fluid) {
+        return fluid == still.get() || fluid == flowing.get();
     }
 
     @Override
@@ -192,13 +198,13 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         private Supplier<? extends Fluid> still;
         private Supplier<? extends Fluid> flowing;
         private FluidAttributes.Builder attributes;
-        private boolean canMultiply;
         private Supplier<? extends Item> bucket;
         private Supplier<? extends LiquidBlock> block;
         private int slopeFindDistance = 4;
         private int levelDecreasePerBlock = 1;
         private float explosionResistance = 1;
         private int tickRate = 5;
+        private TriPredicate<FluidState, LevelReader, BlockPos> canMultiply = (fluidState, levelReader, blockPos) -> false;
 
         public Properties(Supplier<? extends Fluid> still, Supplier<? extends Fluid> flowing, FluidAttributes.Builder attributes)
         {
@@ -207,9 +213,9 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             this.attributes = attributes;
         }
 
-        public Properties canMultiply()
+        public Properties canMultiply(TriPredicate<FluidState, LevelReader, BlockPos> canMultiply)
         {
-            canMultiply = true;
+            this.canMultiply = canMultiply;
             return this;
         }
 

@@ -28,7 +28,35 @@
        this.f_108619_.m_91301_().m_120586_(this.f_108618_);
        if (this.m_6117_() && !this.m_20159_()) {
           this.f_108618_.f_108566_ *= 0.2F;
-@@ -689,7 +_,7 @@
+@@ -643,7 +_,7 @@
+       }
+ 
+       boolean flag4 = (float)this.m_36324_().m_38702_() > 6.0F || this.m_150110_().f_35936_;
+-      if ((this.f_19861_ || this.m_5842_()) && !flag1 && !flag2 && this.m_108733_() && !this.m_20142_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_)) {
++      if ((this.f_19861_ || this.m_5842_() || this.canTriggerSwimming()) && !flag1 && !flag2 && this.m_108733_() && !this.m_20142_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_)) {
+          if (this.f_108583_ <= 0 && !this.f_108619_.f_91066_.f_92091_.m_90857_()) {
+             this.f_108583_ = 7;
+          } else {
+@@ -651,15 +_,15 @@
+          }
+       }
+ 
+-      if (!this.m_20142_() && (!this.m_20069_() || this.m_5842_()) && this.m_108733_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_) && this.f_108619_.f_91066_.f_92091_.m_90857_()) {
++      if (!this.m_20142_() && (!(this.m_20069_() || this.isInFluid()) || this.m_5842_() || this.canTriggerSwimming()) && this.m_108733_() && flag4 && !this.m_6117_() && !this.m_21023_(MobEffects.f_19610_) && this.f_108619_.f_91066_.f_92091_.m_90857_()) {
+          this.m_6858_(true);
+       }
+ 
+       if (this.m_20142_()) {
+          boolean flag5 = !this.f_108618_.m_108577_() || !flag4;
+-         boolean flag6 = flag5 || this.f_19862_ || this.m_20069_() && !this.m_5842_();
++         boolean flag6 = flag5 || this.f_19862_ || this.m_20069_() && !this.m_5842_() || this.isInFluid() && !this.canTriggerSwimming();
+          if (this.m_6069_()) {
+-            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag5 || !this.m_20069_()) {
++            if (!this.f_19861_ && !this.f_108618_.f_108573_ && flag5 || !(this.m_20069_() || this.isInFluid())) {
+                this.m_6858_(false);
+             }
+          } else if (flag6) {
+@@ -689,14 +_,14 @@
  
        if (this.f_108618_.f_108572_ && !flag7 && !flag && !this.m_150110_().f_35935_ && !this.m_20159_() && !this.m_6147_()) {
           ItemStack itemstack = this.m_6844_(EquipmentSlot.CHEST);
@@ -37,6 +65,15 @@
              this.f_108617_.m_104955_(new ServerboundPlayerCommandPacket(this, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
           }
        }
+ 
+       this.f_108614_ = this.m_21255_();
+-      if (this.m_20069_() && this.f_108618_.f_108573_ && this.m_6129_()) {
+-         this.m_21208_();
++      if ((this.m_20069_() || this.isInFluid()) && this.f_108618_.f_108573_ && this.m_6129_()) {
++         this.getTouchingFluid().sink(this);
+       }
+ 
+       if (this.m_19941_(FluidTags.f_13131_)) {
 @@ -1004,6 +_,18 @@
        } else {
           return super.m_7398_(p_108758_);

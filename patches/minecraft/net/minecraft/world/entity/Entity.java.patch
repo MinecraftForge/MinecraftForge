@@ -125,6 +125,41 @@
           this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
        }
     }
+@@ -1054,19 +_,22 @@
+ 
+    public void m_5844_() {
+       if (this.m_6069_()) {
+-         this.m_20282_(this.m_20142_() && this.m_20069_() && !this.m_20159_());
++         this.m_20282_(this.m_20142_() && (this.m_20069_() || this.isInFluid()) && !this.m_20159_());
+       } else {
+-         this.m_20282_(this.m_20142_() && this.m_5842_() && !this.m_20159_() && this.f_19853_.m_6425_(this.f_19826_).m_76153_(FluidTags.f_13131_));
++         this.m_20282_(this.m_20142_() && (this.m_5842_() || this.canTriggerSwimming()) && !this.m_20159_());
+       }
+ 
+    }
+ 
+    protected boolean m_20073_() {
+       this.f_19799_.clear();
++      this.customFluidHeight.clear();
++      this.setInFluid(net.minecraft.world.level.material.Fluids.f_76191_.m_76145_());
+       this.m_20074_();
+       double d0 = this.f_19853_.m_6042_().m_63951_() ? 0.007D : 0.0023333333333333335D;
+       boolean flag = this.m_19943_(FluidTags.f_13132_, d0);
+-      return this.m_20069_() || flag;
++      FluidState state = this.f_19853_.m_6425_(this.m_142538_());
++      return this.m_20069_() || flag || state != this.getTouchingFluid() && state.updateFluidHeightAndDoFluidPushing(this);
+    }
+ 
+    void m_20074_() {
+@@ -1147,7 +_,7 @@
+    }
+ 
+    public boolean m_5843_() {
+-      return this.m_20142_() && !this.m_20069_() && !this.m_5833_() && !this.m_6047_() && !this.m_20077_() && this.m_6084_();
++      return this.m_20142_() && !this.m_20069_() && !this.m_5833_() && !this.m_6047_() && !this.m_20077_() && this.m_6084_() && !this.isInFluid();
+    }
+ 
+    protected void m_20076_() {
 @@ -1156,9 +_,10 @@
        int k = Mth.m_14107_(this.m_20189_());
        BlockPos blockpos = new BlockPos(i, j, k);
@@ -207,6 +242,15 @@
     public boolean m_6146_() {
        return true;
     }
+@@ -1985,7 +_,7 @@
+    }
+ 
+    public boolean m_20143_() {
+-      return this.m_6067_() && !this.m_20069_();
++      return this.m_6067_() && !(this.isInFluid() && this.getTouchingFluid().canSwim());
+    }
+ 
+    public void m_20282_(boolean p_20283_) {
 @@ -2093,7 +_,7 @@
           this.m_20254_(8);
        }
@@ -299,7 +343,7 @@
  
     }
  
-@@ -3048,6 +_,76 @@
+@@ -3048,6 +_,95 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
     }
@@ -369,6 +413,25 @@
 +    */
 +   public float getEyeHeightAccess(Pose pose, EntityDimensions size) {
 +      return this.m_6380_(pose, size);
++   }
++
++   protected FluidState touchingFluid = net.minecraft.world.level.material.Fluids.f_76191_.m_76145_();
++   protected Object2DoubleMap<FluidState> customFluidHeight = new it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap<>();
++   @Override
++   public void setInFluid(FluidState touchingFluid) {
++       this.touchingFluid = touchingFluid;
++   }
++   @Override
++   public FluidState getTouchingFluid() {
++       return this.touchingFluid;
++   }
++   @Override
++   public void addFluidHeight(FluidState state, double fluidHeight) {
++       this.customFluidHeight.put(state, fluidHeight);
++   }
++   @Override
++   public double getFluidHeight(FluidState state) {
++       return this.customFluidHeight.getDouble(state);
 +   }
 +
 +   /* ================================== Forge End =====================================*/

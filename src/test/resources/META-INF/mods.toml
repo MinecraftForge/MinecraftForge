@@ -146,5 +146,7 @@ license="LGPL v2.1"
     modId="tag_based_tool_types"
 [[mods]]    
     modId="check_spawn_event_test"
+[[mods]]
+    modId="core_fluid_test"
 
 # ADD ABOVE THIS LINE

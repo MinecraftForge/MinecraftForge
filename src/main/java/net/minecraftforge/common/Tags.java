@@ -304,6 +304,7 @@ public class Tags
         private static void init() {}
 
         public static final IOptionalNamedTag<Fluid> MILK = tag("milk");
+        public static final IOptionalNamedTag<Fluid> GASEOUS = tag("gaseous");
 
         private static IOptionalNamedTag<Fluid> tag(String name)
         {

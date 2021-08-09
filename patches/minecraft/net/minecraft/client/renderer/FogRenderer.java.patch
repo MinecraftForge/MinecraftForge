@@ -1,6 +1,41 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -171,21 +_,40 @@
+@@ -33,6 +_,8 @@
+    public static void m_109018_(Camera p_109019_, float p_109020_, ClientLevel p_109021_, int p_109022_, float p_109023_) {
+       FogType fogtype = p_109019_.m_167685_();
+       Entity entity = p_109019_.m_90592_();
++      net.minecraft.world.level.material.FluidState fluidState = entity.f_19853_.m_6425_(p_109019_.m_90588_());
++      boolean cameraInCustomFluid = p_109019_.m_90593_() && !fluidState.m_76152_().getRegistryName().m_135827_().equals("minecraft") && p_109019_.m_90583_().f_82480_ < (double)((float)p_109019_.m_90588_().m_123342_() + fluidState.m_76155_(entity.f_19853_, p_109019_.m_90588_()));
+       if (fogtype == FogType.WATER) {
+          long i = Util.m_137550_();
+          int j = p_109021_.m_46857_(new BlockPos(p_109019_.m_90583_())).m_47561_();
+@@ -71,6 +_,12 @@
+          f_109012_ = 0.785F;
+          f_109015_ = -1L;
+          RenderSystem.m_69424_(f_109010_, f_109011_, f_109012_, 0.0F);
++      } else if (cameraInCustomFluid) {
++         Vector3f color = net.minecraftforge.client.RenderProperties.get(fluidState).setFogColor(p_109019_, p_109020_, p_109021_);
++         f_109010_ = color.m_122239_();
++         f_109011_ = color.m_122260_();
++         f_109012_ = color.m_122269_();
++         f_109015_ = -1L;
+       } else {
+          float f4 = 0.25F + 0.75F * (float)p_109022_ / 32.0F;
+          f4 = 1.0F - (float)Math.pow((double)f4, 0.25D);
+@@ -163,6 +_,12 @@
+          } else {
+             f6 = 1.0F;
+          }
++      } else if (cameraInCustomFluid) {
++          Vector3f color = net.minecraftforge.client.RenderProperties.get(fluidState).modifyFogColor(p_109019_, p_109020_, p_109021_, f_109010_, f_109011_, f_109012_);
++          f_109010_ = color.m_122239_();
++          f_109011_ = color.m_122260_();
++          f_109012_ = color.m_122269_();
++          f6 = 0.0F;
+       } else if (entity instanceof LivingEntity && ((LivingEntity)entity).m_21023_(MobEffects.f_19611_)) {
+          f6 = GameRenderer.m_109108_((LivingEntity)entity, p_109020_);
+       } else {
+@@ -171,11 +_,20 @@
  
        if (f_109010_ != 0.0F && f_109011_ != 0.0F && f_109012_ != 0.0F) {
           float f8 = Math.min(1.0F / f_109010_, Math.min(1.0F / f_109011_, 1.0F / f_109012_));
@@ -21,10 +56,10 @@
        RenderSystem.m_69424_(f_109010_, f_109011_, f_109012_, 0.0F);
     }
  
-    public static void m_109017_() {
+@@ -183,9 +_,21 @@
        RenderSystem.m_157445_(Float.MAX_VALUE);
     }
--
+ 
 +   @Deprecated // FORGE: Pass in partialTicks
     public static void m_109024_(Camera p_109025_, FogRenderer.FogMode p_109026_, float p_109027_, boolean p_109028_) {
 +      setupFog(p_109025_, p_109026_, p_109027_, p_109028_, 0);
@@ -33,6 +68,7 @@
 +   public static void setupFog(Camera p_109025_, FogRenderer.FogMode p_109026_, float p_109027_, boolean p_109028_, float partialTicks) {
        FogType fogtype = p_109025_.m_167685_();
        Entity entity = p_109025_.m_90592_();
++      net.minecraft.world.level.material.FluidState fluidState = entity.f_19853_.m_6425_(p_109025_.m_90588_());
 +      // TODO
 +      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(p_109026_, p_109025_, partialTicks, 0.1F);
 +      if (hook >= 0) {
@@ -42,6 +78,15 @@
        if (fogtype == FogType.WATER) {
           float f = 192.0F;
           if (entity instanceof LocalPlayer) {
+@@ -199,6 +_,8 @@
+ 
+          RenderSystem.m_157445_(-8.0F);
+          RenderSystem.m_157443_(f * 0.5F);
++      } else if (p_109025_.m_90593_() && !fluidState.m_76152_().getRegistryName().m_135827_().equals("minecraft") && p_109025_.m_90583_().f_82480_ < (double)((float)p_109025_.m_90588_().m_123342_() + fluidState.m_76155_(entity.f_19853_, p_109025_.m_90588_()))) {
++         net.minecraftforge.client.RenderProperties.get(fluidState).setupFog(p_109025_, p_109026_, p_109027_);
+       } else {
+          float f2;
+          float f3;
 @@ -244,6 +_,7 @@
  
           RenderSystem.m_157445_(f2);
