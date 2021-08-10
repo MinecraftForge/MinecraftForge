@@ -21,10 +21,21 @@ package net.minecraftforge.client.event;
 
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.world.level.GameType;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
- * Fired before the client player is notified of a change in game mode from the server.
+ * Fired when the client player is notified of a change of {@link GameType} from the server.
+ *
+ * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
+ *
+ * <p>This event is fired on the {@linkplain MinecraftForge#EVENT_BUS main Forge event bus},
+ * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
+ *
+ * @see ForgeHooksClient#onClientChangeGameMode(PlayerInfo, GameType, GameType)
  */
 public class ClientPlayerChangeGameTypeEvent extends Event
 {
@@ -39,16 +50,25 @@ public class ClientPlayerChangeGameTypeEvent extends Event
         this.newGameType = newGameType;
     }
 
+    /**
+     * {@return the client player information}
+     */
     public PlayerInfo getPlayerInfo()
     {
         return info;
     }
 
+    /**
+     * {@return the current game type of the player}
+     */
     public GameType getCurrentGameType()
     {
         return currentGameType;
     }
 
+    /**
+     * {@return the new game type of the player}
+     */
     public GameType getNewGameType()
     {
         return newGameType;
