@@ -101,9 +101,9 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
     public static class RegisterRenderers extends EntityRenderersEvent
     {
         /**
-         * Registers an entity renderer for the given block entity type.
+         * Registers an entity renderer for the given entity type.
          *
-         * @param entityType the entity type to register a renderer for
+         * @param entityType             the entity type to register a renderer for
          * @param entityRendererProvider the renderer provider
          */
         public <T extends Entity> void registerEntityRenderer(EntityType<? extends T> entityType, EntityRendererProvider<T> entityRendererProvider)
@@ -114,8 +114,8 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
         /**
          * Registers a block entity renderer for the given block entity type.
          *
-         * @param blockEntityType The block entity type to register a renderer for
-         * @param blockEntityRendererProvider The renderer provider
+         * @param blockEntityType             the block entity type to register a renderer for
+         * @param blockEntityRendererProvider the renderer provider
          */
         public <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<? extends T> blockEntityType, BlockEntityRendererProvider<T> blockEntityRendererProvider)
         {
@@ -175,8 +175,8 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
          * Returns an entity renderer for the given entity type.
          *
          * @param entityType the entity type to return a renderer for
-         * @param <T> the type of entity the renderer is for
-         * @param <R> the type of the renderer
+         * @param <T>        the type of entity the renderer is for
+         * @param <R>        the type of the renderer
          * @return the renderer, or {@code null} if no renderer is registered for that entity type
          */
         @Nullable
