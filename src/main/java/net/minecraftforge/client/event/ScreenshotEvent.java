@@ -74,7 +74,7 @@ public class ScreenshotEvent extends Event
     }
 
     /**
-     * @return the filepath where the screenshot will be saved to
+     * {@return the filepath where the screenshot will be saved to}
      */
     public File getScreenshotFile()
     {
