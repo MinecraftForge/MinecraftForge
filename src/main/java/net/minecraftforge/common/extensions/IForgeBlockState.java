@@ -547,11 +547,16 @@ public interface IForgeBlockState
     }
 
     /**
-     * TODO: Rename to {@code getPathNodeType} 1.17
-     * <br>
-     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
+     * Get the {@code BlockPathTypes} for this block. Return {@code null} for vanilla behavior.
+     * The {@link BlockPathTypes} dictates the "danger" level for an entity to pathfind through/over a specific block.
+     * This is what is used to dictate that for example "Lava should not be pathed through" when an entity pathfinder is trying to decide on a path.
+     * <ul>
+     * <li>Negative Values = Untraversable</li>
+     * <li>0 = Best</li>
+     * <li>Highest = Worst</li>
+     * </ul>
      *
-     * @return the PathNodeType
+     * @return the BlockPathTypes
      */
     @Nullable
     default BlockPathTypes getBlockPathType(BlockGetter world, BlockPos pos)
@@ -560,11 +565,16 @@ public interface IForgeBlockState
     }
 
     /**
-     * TODO: Rename to {@code getPathNodeType} 1.17
-     * <br>
-     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
+     * Get the {@link BlockPathTypes} for this block. Return {@code null} for vanilla behavior.
+     * The {@link BlockPathTypes} dictates the "danger" level for an entity to pathfind through/over a specific block.
+     * This is what is used to dictate that for example "Lava should not be pathed through" when an entity pathfinder is trying to decide on a path.
+     * <ul>
+     * <li>Negative Values = Untraversable</li>
+     * <li>0 = Best</li>
+     * <li>Highest = Worst</li>
+     * </ul>
      *
-     * @return the PathNodeType
+     * @return the {@link BlockPathTypes}
      */
     @Nullable
     default BlockPathTypes getBlockPathType(BlockGetter world, BlockPos pos, @Nullable Mob entity)
@@ -574,6 +584,8 @@ public interface IForgeBlockState
 
     /**
      * Gets the {@link BlockPathTypes} of the block when adjacent to some pathfinding entity.
+     * The {@link BlockPathTypes} dictates the "danger" level for an entity to pathfind through/over a specific block.
+     * This is what is used to dictate that for example "Lava should not be pathed through" when an entity pathfinder is trying to decide on a path.
      * <ul>
      * <li>Negative Values = Untraversable</li>
      * <li>0 = Best</li>
@@ -592,6 +604,8 @@ public interface IForgeBlockState
     
     /**
      * Gets the {@link BlockPathTypes} of the block when adjacent to some pathfinding entity.
+     * The {@link BlockPathTypes} dictates the "danger" level for an entity to pathfind through/over a specific block.
+     * This is what is used to dictate that for example "Lava should not be pathed through" when an entity pathfinder is trying to decide on a path.
      * <ul>
      * <li>Negative Values = Untraversable</li>
      * <li>0 = Best</li>

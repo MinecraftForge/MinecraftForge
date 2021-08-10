@@ -176,25 +176,6 @@ public class FluidAttributes
     private final BiPredicate<FluidState, BlockState> canHydrate;
 
     /**
-     * The {@link BiFunction} used to determine the {@link Fluid}s horizontal motion modifier.
-     * Used inside of {@link net.minecraftforge.common.extensions.IForgeFluid#handleMotion(FluidState, LivingEntity, Vec3, double)} to modify the horizontal movement speed while inside of the {@link Fluid}.
-     */
-    private final BiFunction<FluidState, LivingEntity, Float> horizontalMotionModifier;
-
-    /**
-     * Used to determine motion modifiers based off an {@link Enchantment} and an {@link LivingEntity}.
-     * Used inside of {@link net.minecraftforge.common.extensions.IForgeFluid#handleMotion(FluidState, LivingEntity, Vec3, double)} to modify the final motion vectors.
-     */
-    private final BiFunction<Enchantment, LivingEntity, Float> enchantmentModifier;
-
-    /**
-     * Used to alters the motion of the entity based off an {@link MobEffect}, an {@link LivingEntity}, an original horizontal motion modifier represented as a {@link Float} and finally a boolean dictating is the motion is horizontal.
-     * Used inside of {@link net.minecraftforge.common.extensions.IForgeFluid#handleMotion(FluidState, LivingEntity, Vec3, double)} to modify the final motion vectors.
-     */
-    private final IFluidEffectModifier effectModifier;
-
-
-    /**
      * Used to decide if a {@link Boat} should have intended interaction behaviour with a fluid.
      */
     private final BiPredicate<FluidState, Boat> canBoat;
@@ -220,9 +201,6 @@ public class FluidAttributes
         this.canDrown = builder.canDrown;
         this.canExtinguish = builder.canExtinguish;
         this.canHydrate = builder.canHydrate;
-        this.horizontalMotionModifier = builder.horizontalMotionModifier;
-        this.enchantmentModifier = builder.enchantmentModifier;
-        this.effectModifier = builder.effectModifier;
         this.canBoat = builder.canBoat;
     }
 
@@ -393,24 +371,9 @@ public class FluidAttributes
         return canHydrate.test(fluidState, blockState);
     }
 
-    public float getHorizontalMotionModifier(FluidState state, LivingEntity entity)
-    {
-        return this.horizontalMotionModifier.apply(state, entity);
-    }
-
-    public float getEnchantmentMotionModifier(Enchantment enchantment, LivingEntity entity)
-    {
-        return this.enchantmentModifier.apply(enchantment, entity);
-    }
-
     public boolean canBoat(FluidState state, Boat boat)
     {
         return this.canBoat.test(state, boat);
-    }
-
-    public void modifyMotionByEffect(MobEffect effect, LivingEntity entity, Float originalMovement, Boolean isHorizontal)
-    {
-        this.effectModifier.modify(effect, entity, originalMovement, isHorizontal);
     }
 
     public ResourceLocation getStillTexture()
@@ -503,9 +466,6 @@ public class FluidAttributes
         private BiPredicate<FluidState, LivingEntity> canDrown = (state, entity) -> state.is(FluidTags.WATER);
         private BiPredicate<FluidState, Entity> canExtinguish = (state, entity) -> state.is(FluidTags.WATER);
         private BiPredicate<FluidState, BlockState> canHydrate = (fluidState, blockState) -> fluidState.is(FluidTags.WATER);
-        private BiFunction<FluidState, LivingEntity, Float> horizontalMotionModifier = (state, entity) -> entity.isSprinting() ? 0.9F : 0.8F;
-        private BiFunction<Enchantment, LivingEntity, Float> enchantmentModifier = (enchantment, entity) -> enchantment instanceof WaterWalkerEnchantment ? EnchantmentHelper.getDepthStrider(entity) : 0F;
-        private IFluidEffectModifier effectModifier = (effect, entity, originalModifier, isHorizontal) -> { if (isHorizontal && effect.equals(MobEffects.DOLPHINS_GRACE) && entity.hasEffect(effect)) { originalModifier = 0.97f; } };
         private BiPredicate<FluidState, Boat> canBoat = (state, boat) -> state.is(FluidTags.WATER);
         private BiFunction<Builder,Fluid,FluidAttributes> factory;
 
@@ -618,24 +578,6 @@ public class FluidAttributes
             return this;
         }
 
-        public final Builder horizontalMotionModifier(BiFunction<FluidState, LivingEntity, Float> horizontalMotionModifier)
-        {
-            this.horizontalMotionModifier = horizontalMotionModifier;
-            return this;
-        }
-
-        public final Builder enchantmentModifier(BiFunction<Enchantment, LivingEntity, Float> enchantmentModifier)
-        {
-            this.enchantmentModifier = enchantmentModifier;
-            return this;
-        }
-
-        public final Builder effectModifier(IFluidEffectModifier effectModifier)
-        {
-            this.effectModifier = effectModifier;
-            return this;
-        }
-
         public final Builder canBoat(BiPredicate<FluidState, Boat> canBoat)
         {
             this.canBoat = canBoat;
@@ -666,7 +608,4 @@ public class FluidAttributes
         }
     }
 
-    public interface IFluidEffectModifier {
-        void modify(MobEffect effect, LivingEntity entity, float motion, boolean isHorizontal);
-    }
 }
