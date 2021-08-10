@@ -29,6 +29,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
@@ -76,7 +77,8 @@ public interface IForgeFluid
 
     /**
      * Queried for the Fluids Base {@link BlockPathTypes}.
-     * Used to determine what the path node priority value is for the fluid.
+     * The {@link BlockPathTypes} dictates the "danger" level for an entity to pathfind through/over a specific block.
+     * This is what is used to dictate that for example "Lava should not be pathed through" when an entity pathfinder is trying to decide on a path.
      * <ul>
      * <li>Negative Values = Untraversable</li>
      * <li>0 = Best</li>
@@ -96,6 +98,8 @@ public interface IForgeFluid
 
     /**
      * Gets the {@link BlockPathTypes} of the fluid when adjacent to some pathfinding entity.
+     * The {@link BlockPathTypes} dictates the "danger" level for an entity to pathfind through/over a specific block.
+     * This is what is used to dictate that for example "Lava should not be pathed through" when an entity pathfinder is trying to decide on a path.
      * <ul>
      * <li>Negative Values = Untraversable</li>
      * <li>0 = Best</li>
@@ -125,70 +129,68 @@ public interface IForgeFluid
     default boolean updateFluidHeightAndDoFluidPushing(FluidState state, Entity entity)
     {
         if (entity.touchingUnloadedChunk()) return false;
-        else
-        {
-            AABB box = entity.getBoundingBox().deflate(0.001D);
-            int minX = Mth.floor(box.minX);
-            int maxX = Mth.ceil(box.maxX);
-            int minY = Mth.floor(box.minY);
-            int maxY = Mth.ceil(box.maxY);
-            int minZ = Mth.floor(box.minZ);
-            int maxZ = Mth.ceil(box.maxZ);
-            double eyeLevel = 0.0D;
-            boolean isInFluid = false;
-            Vec3 motion = Vec3.ZERO;
-            int withinFluidBlocks = 0;
-            BlockPos.MutableBlockPos fluidPos = new BlockPos.MutableBlockPos();
 
-            for (int x = minX; x < maxX; ++x)
+        AABB box = entity.getBoundingBox().deflate(0.001D);
+        int minX = Mth.floor(box.minX);
+        int maxX = Mth.ceil(box.maxX);
+        int minY = Mth.floor(box.minY);
+        int maxY = Mth.ceil(box.maxY);
+        int minZ = Mth.floor(box.minZ);
+        int maxZ = Mth.ceil(box.maxZ);
+        double eyeLevel = 0.0D;
+        boolean isInFluid = false;
+        Vec3 motion = Vec3.ZERO;
+        int withinFluidBlocks = 0;
+        BlockPos.MutableBlockPos fluidPos = new BlockPos.MutableBlockPos();
+
+        for (int x = minX; x < maxX; ++x)
+        {
+            for (int y = minY; y < maxY; ++y)
             {
-                for (int y = minY; y < maxY; ++y)
+                for (int z = minZ; z < maxZ; ++z)
                 {
-                    for (int z = minZ; z < maxZ; ++z)
+                    fluidPos.set(x, y, z);
+                    FluidState currentState = entity.level.getFluidState(fluidPos);
+                    if (currentState == state)
                     {
-                        fluidPos.set(x, y, z);
-                        FluidState currentState = entity.level.getFluidState(fluidPos);
-                        if (currentState == state)
+                        double fluidHeight = y + currentState.getHeight(entity.level, fluidPos);
+                        if (fluidHeight >= box.minY)
                         {
-                            double fluidHeight = y + currentState.getHeight(entity.level, fluidPos);
-                            if (fluidHeight >= box.minY)
+                            isInFluid = true;
+                            eyeLevel = Math.max(fluidHeight - box.minY, eyeLevel);
+                            if (entity.isPushedByFluid(currentState))
                             {
-                                isInFluid = true;
-                                eyeLevel = Math.max(fluidHeight - box.minY, eyeLevel);
-                                if (entity.isPushedByFluid(currentState))
-                                {
-                                    Vec3 fluidFlow = currentState.getFlow(entity.level, fluidPos);
-                                    if (eyeLevel < 0.4D) fluidFlow = fluidFlow.scale(eyeLevel);
-                                    motion = motion.add(fluidFlow);
-                                    ++withinFluidBlocks;
-                                }
+                                Vec3 fluidFlow = currentState.getFlow(entity.level, fluidPos);
+                                if (eyeLevel < 0.4D) fluidFlow = fluidFlow.scale(eyeLevel);
+                                motion = motion.add(fluidFlow);
+                                ++withinFluidBlocks;
                             }
                         }
                     }
                 }
             }
-            
-            if (motion.length() > 0.0D)
-            {
-                if (withinFluidBlocks > 0) motion = motion.scale(1.0D / (double) withinFluidBlocks);
-                if (!(this instanceof Player)) motion = motion.normalize();
-                Vec3 entityMotion = entity.getDeltaMovement();
-                motion = motion.scale(getAttributes().getMotionScale(state, entity));
-                if (Math.abs(entityMotion.x) < 0.003D && Math.abs(entityMotion.z) < 0.003D && motion.length() < 0.0045D)
-                    motion = motion.normalize().scale(0.0045D);
-                entity.setDeltaMovement(entityMotion.add(motion));
-            }
-            
-            entity.setInFluid(state);
-            entity.addFluidHeight(state, eyeLevel);
-            if (isInFluid)
-            {
-                FluidAttributes attr = state.getType().getAttributes();
-                entity.fallDistance *= attr.getFallDistanceModifier(state, entity);
-                if (canExtinguish(state, entity)) entity.clearFire();
-            }
-            return isInFluid;
         }
+            
+        if (motion.length() > 0.0D)
+        {
+            if (withinFluidBlocks > 0) motion = motion.scale(1.0D / (double) withinFluidBlocks);
+            if (!(this instanceof Player)) motion = motion.normalize();
+            Vec3 entityMotion = entity.getDeltaMovement();
+            motion = motion.scale(getAttributes().getMotionScale(state, entity));
+            if (Math.abs(entityMotion.x) < 0.003D && Math.abs(entityMotion.z) < 0.003D && motion.length() < 0.0045D)
+                motion = motion.normalize().scale(0.0045D);
+            entity.setDeltaMovement(entityMotion.add(motion));
+        }
+            
+        entity.setInFluid(state);
+        entity.addFluidHeight(state, eyeLevel);
+        if (isInFluid)
+        {
+            FluidAttributes attr = state.getType().getAttributes();
+            entity.fallDistance *= attr.getFallDistanceModifier(state, entity);
+            if (canExtinguish(state, entity)) entity.clearFire();
+        }
+        return isInFluid;
     }
 
     /**
@@ -202,12 +204,11 @@ public interface IForgeFluid
      */
     default void handleMotion(FluidState state, LivingEntity entity, Vec3 travelVector, double gravity)
     {
-        FluidAttributes attributes = state.getType().getAttributes();
         boolean hasNegativeYMotion = entity.getDeltaMovement().y <= 0.0D;
         double originalY = entity.getY();
-        float horizontalModifier = attributes.getHorizontalMotionModifier(state, entity);
+        float horizontalModifier = entity.isSprinting() ? 0.9F : 0.8F;
         float movementAmount = 0.02F;
-        float depthStriderModifier = attributes.getEnchantmentMotionModifier(Enchantments.DEPTH_STRIDER, entity);
+        float depthStriderModifier = EnchantmentHelper.getDepthStrider(entity);
 
         if (depthStriderModifier > 3.0F) depthStriderModifier = 3.0F;
         if (!entity.isOnGround()) depthStriderModifier *= 0.5F;
@@ -216,7 +217,7 @@ public interface IForgeFluid
             horizontalModifier += (0.546 - horizontalModifier) * depthStriderModifier / 3.0F;
             movementAmount += (entity.getSpeed() - movementAmount) * depthStriderModifier / 3.0F;
         }
-        if (entity.hasEffect(MobEffects.DOLPHINS_GRACE)) attributes.modifyMotionByEffect(MobEffects.DOLPHINS_GRACE, entity, horizontalModifier, true);
+        if (entity.hasEffect(MobEffects.DOLPHINS_GRACE)) horizontalModifier *= 0.97f;
 
         movementAmount *= entity.getAttribute(ForgeMod.SWIM_SPEED.get()).getValue();
         entity.moveRelative(movementAmount, travelVector);

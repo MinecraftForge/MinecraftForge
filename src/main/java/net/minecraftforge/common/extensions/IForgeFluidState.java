@@ -77,7 +77,8 @@ public interface IForgeFluidState
     
     /**
      * Queried for the Fluids Base {@link BlockPathTypes}.
-     * Used to determine what the path node priority value is for the fluid.
+     * The {@link BlockPathTypes} dictates the "danger" level for an entity to pathfind through/over a specific block.
+     * This is what is used to dictate that for example "Lava should not be pathed through" when an entity pathfinder is trying to decide on a path.
      * <ul>
      * <li>Negative Values = Untraversable</li>
      * <li>0 = Best</li>
@@ -96,6 +97,8 @@ public interface IForgeFluidState
 
     /**
      * Gets the {@link BlockPathTypes} of the fluid when adjacent to some pathfinding entity.
+     * The {@link BlockPathTypes} dictates the "danger" level for an entity to pathfind through/over a specific block.
+     * This is what is used to dictate that for example "Lava should not be pathed through" when an entity pathfinder is trying to decide on a path.
      * <ul>
      * <li>Negative Values = Untraversable</li>
      * <li>0 = Best</li>
