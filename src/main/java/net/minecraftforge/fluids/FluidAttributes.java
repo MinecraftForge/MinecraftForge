@@ -83,8 +83,19 @@ public class FluidAttributes
     private final ResourceLocation stillTexture;
     private final ResourceLocation flowingTexture;
 
+    /**
+     * A texture grabbed directly from the Texture Atlas.
+     * Used to render as an overlay when a fluid is touching another "non-solid" or "transparent" block.
+     * This is what renders for example the "Water Texture" when you place a piece of glass next to water.
+     */
     @Nullable
     private final ResourceLocation overlayTexture;
+
+    /**
+     * A texture grabbed through the TextureManager.
+     * Used to render as an overlay on all blocks on the screen when a player is submerged in an fluid in first-person.
+     * This is what applies the "water" texture-esq shadow when submerged in water.
+     */
     @Nullable
     private final ResourceLocation viewOverlayTexture;
 

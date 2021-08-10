@@ -5,6 +5,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -34,6 +36,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.Validate;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Mod(CoreFluidTest.MODID)
@@ -54,7 +57,7 @@ public class CoreFluidTest {
             new TestOverrideFluid.Source(makeProperties())
     );
 
-    public static RegistryObject<FlowingFluid> testOverRideFluidFlowing = FLUIDS.register("test_override_fluid_flowing", () ->
+    public static RegistryObject<FlowingFluid> testOverrideFluidFlowing = FLUIDS.register("test_override_fluid_flowing", () ->
             new TestOverrideFluid.Flowing(makeProperties())
     );
 
@@ -68,7 +71,7 @@ public class CoreFluidTest {
 
     private static ForgeFlowingFluid.Properties makeProperties()
     {
-        return new ForgeFlowingFluid.Properties(testOverrideFluid, testOverRideFluidFlowing,
+        return new ForgeFlowingFluid.Properties(testOverrideFluid, testOverrideFluidFlowing,
                 FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING)
                         .overlay(FLUID_OVERLAY)
                         .color(0xAF1080FF)
@@ -131,7 +134,7 @@ public class CoreFluidTest {
 
     private void clientSetup(FMLClientSetupEvent event)
     {
-        Stream.of(testOverrideFluid, testOverRideFluidFlowing, testAttributeFluid, testAttributeFluidFlowing).forEach(f ->
+        Stream.of(testOverrideFluid, testOverrideFluidFlowing, testAttributeFluid, testAttributeFluidFlowing).forEach(f ->
                 ItemBlockRenderTypes.setRenderLayer(f.get(), RenderType.translucent()));
     }
 
@@ -292,7 +295,7 @@ public class CoreFluidTest {
         }
     }
 
-    private static class FluidloggableBlock extends Block implements SimpleWaterloggedBlock
+    private static class FluidloggableBlock extends Block implements BucketPickup, LiquidBlockContainer
     {
         public static final BooleanProperty FLUIDLOGGED = BooleanProperty.create("fluidlogged");
 
@@ -325,10 +328,7 @@ public class CoreFluidTest {
                 }
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
 
         @Override
@@ -339,10 +339,12 @@ public class CoreFluidTest {
                 world.setBlock(pos, blockState.setValue(FLUIDLOGGED, false), 3);
                 return new ItemStack(blockState.getFluidState().getType().getBucket());
             }
-            else
-            {
-                return ItemStack.EMPTY;
-            }
+            return ItemStack.EMPTY;
+        }
+
+        @Override
+        public Optional<SoundEvent> getPickupSound() {
+            return Optional.of(SoundEvents.BUCKET_FILL);
         }
 
         @Override
