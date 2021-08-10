@@ -19,7 +19,6 @@
 
 package net.minecraftforge.common;
 
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -32,10 +31,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import com.google.common.base.Throwables;
+
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
@@ -77,7 +78,6 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
@@ -166,13 +166,13 @@ import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.fmllegacy.packs.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
+import net.minecraftforge.versions.mcp.MCPVersion;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1099,21 +1099,6 @@ public class ForgeHooks
     {
         blockToolSetter = setter;
     }
-    @SuppressWarnings("unchecked")
-    private static <T, E> T getPrivateValue(Class <? super E > classToAccess, @Nullable E instance, int fieldIndex)
-    {
-        try
-        {
-            Field f = classToAccess.getDeclaredFields()[fieldIndex];
-            f.setAccessible(true);
-            return (T) f.get(instance);
-        }
-        catch (Exception e)
-        {
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
-        }
-    }
 
     private static final DummyBlockReader DUMMY_WORLD = new DummyBlockReader();
     private static class DummyBlockReader implements BlockGetter {
@@ -1306,14 +1291,18 @@ public class ForgeHooks
     private static final String DIMENSIONS_KEY = "dimensions";
     private static final String SEED_KEY = "seed";
     //No to static init!
-    private static final LazyLoadedValue<Codec<MappedRegistry<LevelStem>>> CODEC = new LazyLoadedValue<>(() -> MappedRegistry.dataPackCodec(Registry.LEVEL_STEM_REGISTRY, Lifecycle.stable(), LevelStem.CODEC).xmap(LevelStem::sortMap, Function.identity()));
+    private static final Supplier<Codec<MappedRegistry<LevelStem>>> CODEC = Suppliers.memoize(() -> MappedRegistry.dataPackCodec(Registry.LEVEL_STEM_REGISTRY, Lifecycle.stable(), LevelStem.CODEC).xmap(LevelStem::sortMap, Function.identity()));
 
     /**
      * Restores previously "deleted" dimensions to the world.
      * The {@link LenientUnboundedMapCodec} prevents this from happening, this is to fix any world from before the fix.
+     * TODO: Remove in 1.18
      */
     public static <T> Dynamic<T> fixUpDimensionsData(Dynamic<T> data)
     {
+        if (!"1.17.1".equals(MCPVersion.getMCVersion()))
+            throw new IllegalStateException("Calling deprecated code that was scheduled for removal after 1.17.1 in version: " + MCPVersion.getMCVersion());
+
         if(!(data.getOps() instanceof RegistryReadOps))
             return data;
 
@@ -1328,7 +1317,7 @@ public class ForgeHooks
             if (!currentDimNames.containsAll(VANILLA_DIMS))
             {
                 LOGGER.warn("Detected missing vanilla dimensions from the world!");
-                RegistryAccess regs = ObfuscationReflectionHelper.getPrivateValue(RegistryReadOps.class, ops, "f_13563" + "6_");
+                RegistryAccess regs = ops.registryAccess;
                 if (regs == null) // should not happen, but it could after a MC version update.
                     throw new RuntimeException("Could not access dynamic registries using reflection. " +
                             "The world was detected to have missing vanilla dimensions and the attempted fix did not work.");
