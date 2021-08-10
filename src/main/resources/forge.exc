@@ -34,7 +34,6 @@ net/minecraft/world/entity/item/ItemEntity.changeDimension(Lnet/minecraft/server
 net/minecraft/world/entity/npc/AbstractVillager.changeDimension(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/world/entity/Entity;=|p_35295_,teleporter
 net/minecraft/world/entity/player/Player.getDigSpeed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)F=|p_36282_,pos
 net/minecraft/world/entity/projectile/ThrownEnderpearl.changeDimension(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/world/entity/Entity;=|p_37506_,teleporter
-net/minecraft/world/entity/vehicle/AbstractMinecartContainer.changeDimension(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/world/entity/Entity;=|p_38246_,teleporter
 net/minecraft/world/item/BoneMealItem.applyBonemeal(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z=|p_40628_,p_40629_,p_40630_,player
 net/minecraft/world/item/DyeableHorseArmorItem.<init>(ILnet/minecraft/resources/ResourceLocation;Lnet/minecraft/world/item/Item$Properties;)V=|p_41110_,p_41111_,p_41112_
 net/minecraft/world/item/HorseArmorItem.<init>(ILnet/minecraft/resources/ResourceLocation;Lnet/minecraft/world/item/Item$Properties;)V=|p_41364_,p_41111_,p_41366_
