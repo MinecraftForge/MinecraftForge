@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -26,6 +27,9 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
 
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
@@ -37,14 +41,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.nbt.CompoundTag;
@@ -54,7 +51,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ToolAction;
 
 // TODO review most of the methods in this "patch"
 public interface IForgeItem
@@ -520,13 +518,25 @@ public interface IForgeItem
     }
 
     /**
+     * Queries if an item can perform the given action.
+     * See {@link net.minecraftforge.common.ToolActions} for a description of each stock action
+     * @param stack The stack being used
+     * @param toolAction The action being queried
+     * @return True if the stack can perform the action
+     */
+    default boolean canPerformAction(ItemStack stack, ToolAction toolAction)
+    {
+        return false;
+    }
+
+    /**
      * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}
      *
      * @param stack The itemstack used to harvest the block
      * @param state The block trying to harvest
-     * @return true if can harvest the block
+     * @return true if the stack can harvest the block
      */
-    default boolean canHarvestBlock(ItemStack stack, BlockState state)
+    default boolean isCorrectToolForDrops(ItemStack stack, BlockState state)
     {
         return self().isCorrectToolForDrops(state);
     }
@@ -543,20 +553,6 @@ public interface IForgeItem
     {
         return self().getMaxStackSize();
     }
-
-    Set<ToolType> getToolTypes(ItemStack stack);
-
-    /**
-     * Queries the harvest level of this item stack for the specified tool class,
-     * Returns -1 if this tool is not of the specified type
-     *
-     * @param stack      This item stack instance
-     * @param toolClass  Tool Class
-     * @param player     The player trying to harvest the given blockstate
-     * @param blockState The block to harvest
-     * @return Harvest level, or -1 if not the specified tool type.
-     */
-    int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable Player player, @Nullable BlockState blockState);
 
     /**
      * ItemStack sensitive version of getItemEnchantability
