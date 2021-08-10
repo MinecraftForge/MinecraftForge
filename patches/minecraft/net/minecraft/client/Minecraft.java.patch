@@ -52,7 +52,7 @@
        this.m_91271_();
        this.f_91036_.m_7217_(this.f_90997_);
        this.f_91061_ = new ParticleEngine(this.f_91073_, this.f_90987_);
-+      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.ParticleFactoryRegisterEvent());
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.ParticleProviderRegisterEvent());
        this.f_91036_.m_7217_(this.f_91061_);
        this.f_91053_ = new PaintingTextureManager(this.f_90987_);
        this.f_91036_.m_7217_(this.f_91053_);
