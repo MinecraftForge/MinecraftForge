@@ -1,27 +1,12 @@
 --- a/net/minecraft/world/level/block/entity/SpawnerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/SpawnerBlockEntity.java
-@@ -12,7 +_,11 @@
- import net.minecraft.world.level.block.state.BlockState;
- 
- public class SpawnerBlockEntity extends BlockEntity {
--   private final BaseSpawner f_59788_ = new BaseSpawner() {
-+   public static class Spawner extends BaseSpawner{
-+      SpawnerBlockEntity spawnerBlockEntity;
-+      public Spawner(SpawnerBlockEntity spawnerBlockEntity) {
-+         this.spawnerBlockEntity = spawnerBlockEntity;
-+      }
-       public void m_142523_(Level p_155767_, BlockPos p_155768_, int p_155769_) {
-          p_155767_.m_7696_(p_155768_, Blocks.f_50085_, p_155769_, 0);
-       }
-@@ -25,8 +_,10 @@
+@@ -25,6 +_,9 @@
           }
  
        }
--   };
++
++      @javax.annotation.Nullable
++       public net.minecraft.world.level.block.entity.BlockEntity getSpawnerBlockEntity(){ return SpawnerBlockEntity.this; }
+    };
  
-+      public SpawnerBlockEntity getSpawnerBlockEntity(){return spawnerBlockEntity;}
-+   }
-+   private final BaseSpawner f_59788_= new Spawner(this);
     public SpawnerBlockEntity(BlockPos p_155752_, BlockState p_155753_) {
-       super(BlockEntityType.f_58925_, p_155752_, p_155753_);
-    }

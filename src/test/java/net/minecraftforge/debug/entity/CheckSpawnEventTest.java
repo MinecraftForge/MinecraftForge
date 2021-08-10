@@ -27,15 +27,14 @@ public class CheckSpawnEventTest
     {
         if (event.isSpawner())
         {
-            if (event.getSpawner() instanceof SpawnerBlockEntity.Spawner spawner)
+            if (event.getSpawner().getSpawnerBlockEntity() instanceof SpawnerBlockEntity)
             {
-                SpawnerBlockEntity spawnerBlockEntity = spawner.getSpawnerBlockEntity();
-                LOGGER.info("Stopped {} from spawning from Spawner Block Entity : {}", event.getEntity(), spawnerBlockEntity);
+                LOGGER.info("Stopped {} from spawning from Spawner Block Entity : {}", event.getEntity(), event.getSpawner().getSpawnerBlockEntity());
                 event.setResult(Event.Result.DENY);
             }
-            if (event.getSpawner().getSpawnerEntity() instanceof MinecartSpawner spawner)
+            if (event.getSpawner().getSpawnerEntity() instanceof MinecartSpawner)
             {
-                LOGGER.info("Stopped {} from spawning from Minecart Spawner : {}", event.getEntity(), spawner);
+                LOGGER.info("Stopped {} from spawning from Minecart Spawner : {}", event.getEntity(), event.getSpawner().getSpawnerEntity());
                 event.setResult(Event.Result.DENY);
             }
         }
