@@ -51,7 +51,7 @@
        }
     }
  
-@@ -260,5 +_,33 @@
+@@ -260,5 +_,34 @@
  
     protected AbstractContainerMenu m_6555_(int p_58990_, Inventory p_58991_) {
        return new BrewingStandMenu(p_58990_, p_58991_, this, this.f_58971_);
@@ -82,6 +82,7 @@
 +
 +   @Override
 +   public void reviveCaps() {
++      super.reviveCaps();
 +      this.handlers = net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
     }
  }
