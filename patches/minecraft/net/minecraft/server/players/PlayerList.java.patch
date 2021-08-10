@@ -16,6 +16,17 @@
        GameRules gamerules = serverlevel1.m_46469_();
        boolean flag = gamerules.m_46207_(GameRules.f_46156_);
        boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
+@@ -158,8 +_,10 @@
+       servergamepacketlistenerimpl.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
+       servergamepacketlistenerimpl.m_141995_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
+       servergamepacketlistenerimpl.m_141995_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, p_11263_));
+       servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
+       servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
++      net.minecraftforge.fmllegacy.network.NetworkHooks.syncCustomTagTypes(p_11263_, this.f_11195_.m_129895_());
+       this.m_11289_(p_11263_);
+       p_11263_.m_8951_().m_12850_();
+       p_11263_.m_8952_().m_12789_(p_11263_);
 @@ -174,7 +_,7 @@
  
        this.m_11264_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
@@ -57,34 +68,6 @@
        ServerLevel serverlevel = p_11287_.m_9236_();
        p_11287_.m_36220_(Stats.f_12989_);
        this.m_6765_(p_11287_);
-@@ -328,7 +_,7 @@
-       p_11287_.m_19877_();
-       serverlevel.m_143261_(p_11287_, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
-       p_11287_.m_8960_().m_135978_();
--      this.f_11196_.remove(p_11287_);
-+      this.removePlayer(p_11287_);
-       this.f_11195_.m_129901_().m_136305_(p_11287_);
-       UUID uuid = p_11287_.m_142081_();
-       ServerPlayer serverplayer = this.f_11197_.get(uuid);
-@@ -390,8 +_,8 @@
-    }
- 
-    public ServerPlayer m_11236_(ServerPlayer p_11237_, boolean p_11238_) {
--      this.f_11196_.remove(p_11237_);
--      p_11237_.m_9236_().m_143261_(p_11237_, Entity.RemovalReason.DISCARDED);
-+      this.removePlayer(p_11237_);
-+      p_11237_.m_9236_().removePlayer(p_11237_, true); // Forge: keep data until copyFrom called
-       BlockPos blockpos = p_11237_.m_8961_();
-       float f = p_11237_.m_8962_();
-       boolean flag = p_11237_.m_8964_();
-@@ -407,6 +_,7 @@
-       ServerPlayer serverplayer = new ServerPlayer(this.f_11195_, serverlevel1, p_11237_.m_36316_());
-       serverplayer.f_8906_ = p_11237_.f_8906_;
-       serverplayer.m_9015_(p_11237_, p_11238_);
-+      p_11237_.remove(false); // Forge: clone event had a chance to see old data, now discard it
-       serverplayer.m_20234_(p_11237_.m_142049_());
-       serverplayer.m_36163_(p_11237_.m_5737_());
- 
 @@ -447,10 +_,11 @@
        this.m_11229_(serverplayer, serverlevel1);
        this.m_11289_(serverplayer);
@@ -130,6 +113,16 @@
     }
  
     @Nullable
+@@ -785,7 +_,9 @@
+          playeradvancements.m_135981_(this.f_11195_.m_129889_());
+       }
+ 
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.OnDatapackSyncEvent(this, null));
+       this.m_11268_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
++      net.minecraftforge.fmllegacy.network.NetworkHooks.syncCustomTagTypes(this.f_11195_.m_129895_());
+       ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
+ 
+       for(ServerPlayer serverplayer : this.f_11196_) {
 @@ -797,5 +_,13 @@
  
     public boolean m_11316_() {

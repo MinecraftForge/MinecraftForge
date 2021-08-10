@@ -755,14 +755,6 @@ public class ForgeHooks
     {
         EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimension);
         MinecraftForge.EVENT_BUS.post(event);
-        if (event.isCanceled())
-        {
-            // Revert variable back to true as it would have been set to false
-            if (entity instanceof AbstractMinecartContainer)
-            {
-               ((AbstractMinecartContainer) entity).dropContentsWhenDead(true);
-            }
-        }
         return !event.isCanceled();
     }
 
