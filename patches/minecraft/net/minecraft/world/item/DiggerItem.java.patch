@@ -1,10 +1,26 @@
 --- a/net/minecraft/world/item/DiggerItem.java
 +++ b/net/minecraft/world/item/DiggerItem.java
-@@ -33,6 +_,7 @@
+@@ -61,7 +_,11 @@
+       return this.f_40981_;
     }
  
-    public float m_8102_(ItemStack p_41004_, BlockState p_41005_) {
-+      if (getToolTypes(p_41004_).stream().anyMatch(e -> p_41005_.isToolEffective(e))) return f_40980_;
-       return this.f_40979_.m_8110_(p_41005_.m_60734_()) ? this.f_40980_ : 1.0F;
++   @Deprecated // FORGE: Use stack sensitive variant below
+    public boolean m_8096_(BlockState p_150816_) {
++      if (net.minecraftforge.common.TierSortingRegistry.isTierSorted(m_43314_())) {
++         return net.minecraftforge.common.TierSortingRegistry.isCorrectTierForDrops(m_43314_(), p_150816_) && p_150816_.m_60620_(this.f_40979_);
++      }
+       int i = this.m_43314_().m_6604_();
+       if (i < 3 && p_150816_.m_60620_(BlockTags.f_144284_)) {
+          return false;
+@@ -70,5 +_,11 @@
+       } else {
+          return i < 1 && p_150816_.m_60620_(BlockTags.f_144286_) ? false : p_150816_.m_60620_(this.f_40979_);
+       }
++   }
++
++   // FORGE START
++   @Override
++   public boolean isCorrectToolForDrops(ItemStack stack, BlockState state) {
++      return state.m_60620_(f_40979_) && net.minecraftforge.common.TierSortingRegistry.isCorrectTierForDrops(m_43314_(), state);
     }
- 
+ }

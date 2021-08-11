@@ -19,8 +19,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="custom_slime_block_test"
 [[mods]]
-    modId="block_harvest_tool_test"
-[[mods]]
     modId="client_chat_event_test"
 [[mods]]
     modId="command_event_test"
@@ -145,6 +143,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="send_datapacks_to_client"
 [[mods]]
+    modId="tag_based_tool_types"
+[[mods]]    
     modId="check_spawn_event_test"
 
 # ADD ABOVE THIS LINE
