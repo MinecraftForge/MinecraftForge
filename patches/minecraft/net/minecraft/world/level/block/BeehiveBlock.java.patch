@@ -18,3 +18,12 @@
           int i = list1.size();
  
           for(Bee bee : list) {
+@@ -112,7 +_,7 @@
+       boolean flag = false;
+       if (i >= 5) {
+          Item item = itemstack.m_41720_();
+-         if (itemstack.m_150930_(Items.f_42574_)) {
++         if (itemstack.m_41720_() instanceof net.minecraft.world.item.ShearsItem) {
+             p_49625_.m_6263_(p_49627_, p_49627_.m_20185_(), p_49627_.m_20186_(), p_49627_.m_20189_(), SoundEvents.f_11697_, SoundSource.NEUTRAL, 1.0F, 1.0F);
+             m_49600_(p_49625_, p_49626_);
+             itemstack.m_41622_(1, p_49627_, (p_49571_) -> {
