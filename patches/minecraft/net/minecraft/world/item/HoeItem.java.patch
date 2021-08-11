@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/item/HoeItem.java
 +++ b/net/minecraft/world/item/HoeItem.java
-@@ -26,13 +_,16 @@
-    }, m_150849_(Blocks.f_50493_.m_49966_(), Items.f_151017_))));
- 
-    public HoeItem(Tier p_41336_, int p_41337_, float p_41338_, Item.Properties p_41339_) {
--      super((float)p_41337_, p_41338_, p_41336_, BlockTags.f_144281_, p_41339_);
-+      super((float)p_41337_, p_41338_, p_41336_, BlockTags.f_144281_, p_41339_.addToolType(net.minecraftforge.common.ToolType.HOE, p_41336_.m_6604_()));
-    }
- 
-    public InteractionResult m_6225_(UseOnContext p_41341_) {
+@@ -33,6 +_,9 @@
        Level level = p_41341_.m_43725_();
        BlockPos blockpos = p_41341_.m_8083_();
        Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair = f_41332_.get(level.m_8055_(blockpos).m_60734_());
@@ -28,3 +20,14 @@
     }
  
     public static Consumer<UseOnContext> m_150858_(BlockState p_150859_) {
+@@ -72,5 +_,10 @@
+ 
+    public static boolean m_150856_(UseOnContext p_150857_) {
+       return p_150857_.m_43719_() != Direction.DOWN && p_150857_.m_43725_().m_8055_(p_150857_.m_8083_().m_7494_()).m_60795_();
++   }
++
++   @Override
++   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++      return net.minecraftforge.common.ToolActions.DEFAULT_HOE_ACTIONS.contains(toolAction);
+    }
+ }

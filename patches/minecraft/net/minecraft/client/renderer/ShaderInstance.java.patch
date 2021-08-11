@@ -1,0 +1,31 @@
+--- a/net/minecraft/client/renderer/ShaderInstance.java
++++ b/net/minecraft/client/renderer/ShaderInstance.java
+@@ -91,10 +_,14 @@
+    @Nullable
+    public final Uniform f_173320_;
+ 
++   @Deprecated // FORGE: Use the ResourceLocation variant below
+    public ShaderInstance(ResourceProvider p_173336_, String p_173337_, VertexFormat p_173338_) throws IOException {
+-      this.f_173300_ = p_173337_;
++      this(p_173336_, new ResourceLocation(p_173337_), p_173338_);
++   }
++   public ShaderInstance(ResourceProvider p_173336_, ResourceLocation shaderLocation, VertexFormat p_173338_) throws IOException {
++      this.f_173300_ = shaderLocation.m_135827_().equals("minecraft") ? shaderLocation.m_135815_() : shaderLocation.toString();
+       this.f_173307_ = p_173338_;
+-      ResourceLocation resourcelocation = new ResourceLocation("shaders/core/" + p_173337_ + ".json");
++      ResourceLocation resourcelocation = new ResourceLocation(shaderLocation.m_135827_(), "shaders/core/" + shaderLocation.m_135815_() + ".json");
+       Resource resource = null;
+ 
+       try {
+@@ -202,8 +_,9 @@
+       Program program1 = p_173342_.m_85570_().get(p_173343_);
+       Program program;
+       if (program1 == null) {
+-         String s = "shaders/core/" + p_173343_ + p_173342_.m_85569_();
+-         ResourceLocation resourcelocation = new ResourceLocation(s);
++         ResourceLocation loc = new ResourceLocation(p_173343_);
++         String s = "shaders/core/" + loc.m_135815_() + p_173342_.m_85569_();
++         ResourceLocation resourcelocation = new ResourceLocation(loc.m_135827_(), s);
+          Resource resource = p_173341_.m_142591_(resourcelocation);
+          final String s1 = FileUtil.m_179922_(s);
+ 

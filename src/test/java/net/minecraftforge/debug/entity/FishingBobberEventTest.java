@@ -43,9 +43,9 @@ public class FishingBobberEventTest
         }
     }
 
-    public static void handleImpact(ProjectileImpactEvent<FishingHook> event)
+    public static void handleImpact(ProjectileImpactEvent event)
     {
-        FishingHook fishingHook = event.getProjectile();
+        if(!(event.getProjectile() instanceof FishingHook fishingHook)) return;
         HitResult trace = event.getRayTraceResult();
         if (trace.getType() == HitResult.Type.ENTITY)
         {

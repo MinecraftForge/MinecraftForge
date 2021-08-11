@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/item/Tier.java
++++ b/net/minecraft/world/item/Tier.java
+@@ -9,9 +_,12 @@
+ 
+    float m_6631_();
+ 
++   @Deprecated // FORGE: Use TierSortingRegistry to define which tiers are better than others
+    int m_6604_();
+ 
+    int m_6601_();
+ 
+    Ingredient m_6282_();
++
++   @javax.annotation.Nullable default net.minecraft.tags.Tag<net.minecraft.world.level.block.Block> getTag() { return null; }
+ }

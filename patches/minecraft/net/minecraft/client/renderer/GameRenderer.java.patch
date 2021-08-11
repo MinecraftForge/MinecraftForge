@@ -9,6 +9,14 @@
        }
  
     }
+@@ -541,6 +_,7 @@
+          list1.add(Pair.of(new ShaderInstance(p_172768_, "rendertype_crumbling", DefaultVertexFormat.f_85811_), (p_172733_) -> {
+             f_172607_ = p_172733_;
+          }));
++         net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.RegisterShadersEvent(p_172768_, list1));
+       } catch (IOException ioexception) {
+          list1.forEach((p_172772_) -> {
+             p_172772_.getFirst().close();
 @@ -703,7 +_,7 @@
              d0 *= (double)Mth.m_14179_(this.f_109059_.f_91066_.f_92070_, 1.0F, 0.85714287F);
           }

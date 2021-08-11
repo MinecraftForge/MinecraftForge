@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/item/SwordItem.java
++++ b/net/minecraft/world/item/SwordItem.java
+@@ -70,4 +_,9 @@
+    public Multimap<Attribute, AttributeModifier> m_7167_(EquipmentSlot p_43274_) {
+       return p_43274_ == EquipmentSlot.MAINHAND ? this.f_43267_ : super.m_7167_(p_43274_);
+    }
++
++   @Override
++   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++      return net.minecraftforge.common.ToolActions.DEFAULT_SWORD_ACTIONS.contains(toolAction);
++   }
+ }

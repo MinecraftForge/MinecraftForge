@@ -52,9 +52,9 @@ ext {
     EVENTBUS_VERSION = '5.0.3'
     MODLAUNCHER_VERSION = '9.0.7'
     SECUREJARHANDLER_VERSION = '0.9.46'
-    BOOTSTRAPLAUNCHER_VERSION = '0.1.16'
+    BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
     ASM_VERSION = '9.1'
-    INSTALLER_VERSION = '2.1.4'
+    INSTALLER_VERSION = '2.1.5'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
