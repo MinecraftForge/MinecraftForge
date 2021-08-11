@@ -139,6 +139,10 @@ public class Tags
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
 
+        public static final IOptionalNamedTag<Block> NEEDS_WOOD_TOOL = tag("needs_wood_tool");
+        public static final IOptionalNamedTag<Block> NEEDS_GOLD_TOOL = tag("needs_gold_tool");
+        public static final IOptionalNamedTag<Block> NEEDS_NETHERITE_TOOL = tag("needs_netherite_tool");
+
         private static IOptionalNamedTag<Block> tag(String name)
         {
             return BlockTags.createOptional(new ResourceLocation("forge", name));

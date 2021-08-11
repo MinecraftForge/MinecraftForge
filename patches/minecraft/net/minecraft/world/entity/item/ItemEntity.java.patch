@@ -44,7 +44,7 @@
 +         ItemStack item = this.m_32055_();
 +         if (!this.f_19853_.f_46443_ && this.f_31985_ >= lifespan) {
 +             int hook = net.minecraftforge.event.ForgeEventFactory.onItemExpire(this, item);
-+             if (hook < 0) this.remove(false);
++             if (hook < 0) this.m_146870_();
 +             else          this.lifespan += hook;
 +         }
 +

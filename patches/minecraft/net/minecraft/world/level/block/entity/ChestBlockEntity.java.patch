@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-@@ -162,6 +_,43 @@
+@@ -162,6 +_,45 @@
        return ChestMenu.m_39237_(p_59082_, p_59083_, this);
     }
  
@@ -35,10 +35,12 @@
 +   }
 +
 +   @Override
-+   protected void invalidateCaps() {
++   public void invalidateCaps() {
 +      super.invalidateCaps();
-+      if (chestHandler != null)
-+        chestHandler.invalidate();
++      if (chestHandler != null) {
++         chestHandler.invalidate();
++         chestHandler = null;
++      }
 +   }
 +
     public void m_155350_() {

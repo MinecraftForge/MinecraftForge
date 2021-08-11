@@ -19,14 +19,15 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Set;
-
 import javax.annotation.Nullable;
 
+import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -43,8 +44,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+
+import java.util.List;
 
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
@@ -88,24 +91,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
         return self().getItem().getBurnTime(self(), recipeType);
     }
 
-    /**
-     * Queries the harvest level of this item stack for the specified tool class,
-     * Returns -1 if this tool is not of the specified type
-     *
-     * @param tool   the tool type of the item
-     * @param player The player trying to harvest the given blockstate
-     * @param state  The block to harvest
-     * @return Harvest level, or -1 if not the specified tool type.
-     */
-    default int getHarvestLevel(ToolType tool, @Nullable Player player, @Nullable BlockState state)
-    {
-        return self().getItem().getHarvestLevel(self(), tool, player, state);
-    }
-
-    default Set<ToolType> getToolTypes() {
-        return self().getItem().getToolTypes(self());
-    }
-
     default InteractionResult onItemUseFirst(UseOnContext context)
     {
        Player entityplayer = context.getPlayer();
@@ -130,6 +115,19 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
         self().save(ret);
         return ret;
     }
+
+    /**
+     * Queries if an item can perform the given action.
+     * See {@link net.minecraftforge.common.ToolActions} for a description of each stock action
+     * @param stack The stack being used
+     * @param toolAction The action being queried
+     * @return True if the stack can perform the action
+     */
+    default boolean canPerformAction(ToolAction toolAction)
+    {
+        return self().getItem().canPerformAction(self(), toolAction);
+    }
+
     /**
      * Called before a block is broken. Return true to prevent default block
      * harvesting.

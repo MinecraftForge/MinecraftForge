@@ -51,11 +51,8 @@ public class MinecraftForge
        LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
 
        UsernameCache.load();
-       ForgeHooks.initTools();
+       TierSortingRegistry.init();
    }
-
-
-
 
 /*
    public static void preloadCrashClasses(ASMDataTable table, String modID, Set<String> classes)

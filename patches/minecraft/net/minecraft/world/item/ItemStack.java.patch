@@ -165,7 +165,7 @@
  
     public boolean m_41735_(BlockState p_41736_) {
 -      return this.m_41720_().m_8096_(p_41736_);
-+      return this.m_41720_().canHarvestBlock(this, p_41736_);
++      return this.m_41720_().isCorrectToolForDrops(this, p_41736_);
     }
  
     public InteractionResult m_41647_(Player p_41648_, LivingEntity p_41649_, InteractionHand p_41650_) {
