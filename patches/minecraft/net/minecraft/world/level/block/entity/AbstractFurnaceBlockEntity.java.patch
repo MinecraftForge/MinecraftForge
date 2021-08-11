@@ -145,7 +145,7 @@
        }
     }
  
-@@ -483,5 +_,28 @@
+@@ -483,5 +_,34 @@
           p_58342_.m_36491_(itemstack);
        }
  
@@ -168,9 +168,15 @@
 +   }
 +
 +   @Override
-+   protected void invalidateCaps() {
++   public void invalidateCaps() {
 +      super.invalidateCaps();
 +      for (int x = 0; x < handlers.length; x++)
 +        handlers[x].invalidate();
++   }
++
++   @Override
++   public void reviveCaps() {
++      super.reviveCaps();
++      this.handlers = net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
     }
  }

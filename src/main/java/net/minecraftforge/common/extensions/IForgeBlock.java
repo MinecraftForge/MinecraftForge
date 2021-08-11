@@ -32,25 +32,19 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.WitherSkull;
-import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.ToolType;
 
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
@@ -58,18 +52,9 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.BeaconBeamBlock;
-import net.minecraft.world.level.block.BedBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FarmBlock;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.FireBlock;
-import net.minecraft.world.level.block.HalfTransparentBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 
 @SuppressWarnings("deprecation")
 public interface IForgeBlock
@@ -163,7 +148,7 @@ public interface IForgeBlock
      */
     default public boolean canHarvestBlock(BlockState state, BlockGetter world, BlockPos pos, Player player)
     {
-        return ForgeHooks.canHarvestBlock(state, player, world, pos);
+        return ForgeHooks.isCorrectToolForDrops(state, player);
     }
 
     /**
@@ -462,31 +447,6 @@ public interface IForgeBlock
     }
 
     /**
-     * Queries the class of tool required to harvest this block, if null is returned
-     * we assume that anything can harvest this block.
-     */
-    ToolType getHarvestTool(BlockState state);
-
-    /**
-     * Queries the harvest level of this item stack for the specified tool class,
-     * Returns -1 if this tool is not of the specified type
-     *
-     * @return Harvest level, or -1 if not the specified tool type.
-     */
-    int getHarvestLevel(BlockState state);
-
-    /**
-     * Checks if the specified tool type is efficient on this block,
-     * meaning that it digs at full speed.
-     */
-    default boolean isToolEffective(BlockState state, ToolType tool)
-    {
-        if (tool == ToolType.PICKAXE && (self() == Blocks.REDSTONE_ORE || self() == Blocks.REDSTONE_LAMP || self() == Blocks.OBSIDIAN))
-            return false;
-        return tool == getHarvestTool(state);
-    }
-
-    /**
      * Sensitive version of getSoundType
      * @param state The state
      * @param world The world
@@ -729,14 +689,21 @@ public interface IForgeBlock
      * @param pos The block position in world
      * @param player The player clicking the block
      * @param stack The stack being used by the player
+     * @param toolAction The action being performed by the tool
      * @return The resulting state after the action has been performed
      */
     @Nullable
-    default BlockState getToolModifiedState(BlockState state, Level world, BlockPos pos, Player player, ItemStack stack, ToolType toolType)
+    default BlockState getToolModifiedState(BlockState state, Level world, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
-        if (toolType == ToolType.AXE) return AxeItem.getAxeStrippingState(state);
-//        else if(toolType == ToolType.HOE) return HoeItem.getHoeTillingState(state); //TODO HoeItem bork
-        else return toolType == ToolType.SHOVEL ? ShovelItem.getShovelPathingState(state) : null;
+        if (!stack.canPerformAction(toolAction)) return null;
+        if (ToolActions.AXE_STRIP.equals(toolAction)) return AxeItem.getAxeStrippingState(state);
+        else if(ToolActions.AXE_SCRAPE.equals(toolAction)) return WeatheringCopper.getPrevious(state).orElse(null);
+        else if(ToolActions.AXE_WAX_OFF.equals(toolAction)) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map((p_150694_) -> {
+            return p_150694_.withPropertiesOf(state);
+        }).orElse(null);
+        //else if(ToolActions.HOE_TILL.equals(toolAction)) return HoeItem.getHoeTillingState(state); //TODO HoeItem bork
+        else if (ToolActions.SHOVEL_FLATTEN.equals(toolAction)) return ShovelItem.getShovelPathingState(state);
+        return null;
     }
 
     /**

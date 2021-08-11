@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/BambooSaplingBlock.java
++++ b/net/minecraft/world/level/block/BambooSaplingBlock.java
+@@ -77,7 +_,7 @@
+    }
+ 
+    public float m_5880_(BlockState p_48981_, Player p_48982_, BlockGetter p_48983_, BlockPos p_48984_) {
+-      return p_48982_.m_21205_().m_41720_() instanceof SwordItem ? 1.0F : super.m_5880_(p_48981_, p_48982_, p_48983_, p_48984_);
++      return p_48982_.m_21205_().canPerformAction(net.minecraftforge.common.ToolActions.SWORD_DIG) ? 1.0F : super.m_5880_(p_48981_, p_48982_, p_48983_, p_48984_);
+    }
+ 
+    protected void m_48972_(Level p_48973_, BlockPos p_48974_) {
