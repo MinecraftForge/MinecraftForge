@@ -87,7 +87,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ResourceKeyTags;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.JsonDataProvider;
 import net.minecraftforge.common.data.ResourceKeyTagsProvider;
 import net.minecraftforge.common.world.BiomeSpecialEffectsBuilder;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
@@ -191,44 +190,6 @@ public class DynamicRegistriesLoadedEventTest
 
         DataGenerator generator = event.getGenerator();
         ExistingFileHelper fileHelper = event.getExistingFileHelper();
-        Gson gson = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
-
-        // generate our configuredfeature json to retrieve from our dynamic registries loaded event
-        Map<ResourceLocation, ConfiguredFeature<?, ?>> generatedFeatures = new HashMap<>();
-        generatedFeatures.put(RED_WOOL_CONFIGUREDFEATURE.location(),
-            SINGLE_BLOCK.get().configured(new BlockStateConfiguration(Blocks.RED_WOOL.defaultBlockState()))
-            .decorated(Features.Decorators.HEIGHTMAP)
-            .decorated(LIMITED_SQUARE.get().configured(NoneDecoratorConfiguration.INSTANCE)));
-        generator
-            .addProvider(new JsonDataProvider<>(gson, generator, PackType.SERVER_DATA, "worldgen/configured_feature", ConfiguredFeature.DIRECT_CODEC, generatedFeatures));
-
-        // generate our test biome
-        Map<ResourceLocation, Biome> generatedBiomes = new HashMap<>();
-        generatedBiomes.put(TEST_BIOME.location(),
-            new Biome.BiomeBuilder()
-                .specialEffects(new BiomeSpecialEffects.Builder()
-                    .fogColor(0xFF0000)
-                    .skyColor(0xFF0000)
-                    .waterColor(0xFF0000)
-                    .waterFogColor(0xFF0000)
-                    .grassColorOverride(0xFF0000)
-                    .foliageColorOverride(0xFF0000).build())
-                .depth(0.125F).scale(0.05F).temperature(0.8F).downfall(0.4F).biomeCategory(Biome.BiomeCategory.PLAINS)
-                .generationSettings(new BiomeGenerationSettings.Builder().surfaceBuilder(SurfaceBuilders.GRASS).build()).precipitation(Biome.Precipitation.NONE)
-                .mobSpawnSettings(new MobSpawnSettings.Builder().build()).build());
-        generator.addProvider(new JsonDataProvider<>(gson, generator, PackType.SERVER_DATA, "worldgen/biome", Biome.DIRECT_CODEC, generatedBiomes));
-                
-        // generate template pools
-        Map<ResourceLocation, StructureTemplatePool> generatedPools = new HashMap<>();
-        generatedPools.put(GOLD_TOWER_STRUCTURE_FEATURE.location(), new StructureTemplatePool(GOLD_TOWER_STRUCTURE_FEATURE.location(), new ResourceLocation("empty"),
-            ImmutableList.of(Pair.of(StructurePoolElement.single(GOLD_TOWER.getId().toString()), 1)), StructureTemplatePool.Projection.RIGID));
-        generator.addProvider(new JsonDataProvider<>(gson, generator, PackType.SERVER_DATA, "worldgen/template_pool", StructureTemplatePool.DIRECT_CODEC, generatedPools));
-        
-        // generate structure features
-        Map<ResourceLocation, ConfiguredStructureFeature<?,?>> generatedStructureFeatures = new HashMap<>();
-        generatedStructureFeatures.put(GOLD_TOWER.getId(),
-            new ConfiguredStructureFeature<>(GOLD_TOWER.get(), new LoadableJigsawConfig(GOLD_TOWER_STRUCTURE_FEATURE.location(), 1, 0, true)));
-        generator.addProvider(new JsonDataProvider<>(gson, generator, PackType.SERVER_DATA, "worldgen/configured_structure_feature", ConfiguredStructureFeature.DIRECT_CODEC, generatedStructureFeatures));
         
         // generate biome tags
         generator.addProvider(new ResourceKeyTagsProvider<Biome>(generator, fileHelper, MODID, Registry.BIOME_REGISTRY)
