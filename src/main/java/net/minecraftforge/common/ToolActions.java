@@ -54,7 +54,7 @@ public class ToolActions
     public static final ToolAction SWORD_DIG = ToolAction.get("sword_dig");
 
     /**
-     *  Exposed by swords to allow querying tool behaviours
+     *  Exposed by shears to allow querying tool behaviours
      */
     public static final ToolAction SHEARS_DIG = ToolAction.get("shears_dig");
 
