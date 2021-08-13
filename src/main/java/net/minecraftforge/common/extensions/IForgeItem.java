@@ -801,7 +801,7 @@ public interface IForgeItem
      * @param statck the stack held by the player.
      * @param player the performing the attack the attack.
      * @param target the entity targeted by the attack.
-     * @return the bounding box or null if this item has no sweep attack.
+     * @return the bounding box.
      */
     @Nonnull
     default AABB getSweepHitBox(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull Entity target)
