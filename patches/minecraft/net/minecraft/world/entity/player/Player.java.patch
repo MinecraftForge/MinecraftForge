@@ -209,7 +209,7 @@
                 i = i + EnchantmentHelper.m_44894_(this);
                 if (this.m_20142_() && flag) {
                    this.f_19853_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12314_, this.m_5720_(), 1.0F, 1.0F);
-@@ -1055,18 +_,20 @@
+@@ -1055,8 +_,10 @@
  
                 boolean flag2 = flag && this.f_19789_ > 0.0F && !this.f_19861_ && !this.m_6147_() && !this.m_20069_() && !this.m_21023_(MobEffects.f_19610_) && !this.m_20159_() && p_36347_ instanceof LivingEntity;
                 flag2 = flag2 && !this.m_20142_();
@@ -221,16 +221,14 @@
                 }
  
                 f = f + f1;
-                boolean flag3 = false;
-+               AABB sweepAABB = null;
+@@ -1064,9 +_,7 @@
                 double d0 = (double)(this.f_19787_ - this.f_19867_);
                 if (flag && !flag2 && !flag1 && this.f_19861_ && d0 < (double)this.m_6113_()) {
                    ItemStack itemstack = this.m_21120_(InteractionHand.MAIN_HAND);
 -                  if (itemstack.m_41720_() instanceof SwordItem) {
 -                     flag3 = true;
 -                  }
-+                  sweepAABB = itemstack.getSweepHitBox(this, p_36347_);
-+                  flag3 = sweepAABB != null;
++                  flag3 = itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SWORD_SWEEP);
                 }
  
                 float f4 = 0.0F;
@@ -239,7 +237,7 @@
                       float f3 = 1.0F + EnchantmentHelper.m_44821_(this) * f;
  
 -                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, p_36347_.m_142469_().m_82377_(1.0D, 0.25D, 1.0D))) {
-+                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, sweepAABB)) {
++                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, this.m_21120_(InteractionHand.MAIN_HAND).getSweepHitBox(this, p_36347_))) {
                          if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < 9.0D) {
                             livingentity.m_147240_((double)0.4F, (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)), (double)(-Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F))));
                             livingentity.m_6469_(DamageSource.m_19344_(this), f3);
