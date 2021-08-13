@@ -1,0 +1,37 @@
+--- a/net/minecraft/client/renderer/block/model/Variant.java
++++ b/net/minecraft/client/renderer/block/model/Variant.java
+@@ -78,6 +_,8 @@
+       static final int f_173497_ = 0;
+       @VisibleForTesting
+       static final int f_173498_ = 0;
++      @VisibleForTesting
++      static final int DEFAULT_Z_ROTATION = 0;
+ 
+       public Variant deserialize(JsonElement p_111893_, Type p_111894_, JsonDeserializationContext p_111895_) throws JsonParseException {
+          JsonObject jsonobject = p_111893_.getAsJsonObject();
+@@ -93,15 +_,16 @@
+       }
+ 
+       protected BlockModelRotation m_111896_(JsonObject p_111897_) {
+-         int i = GsonHelper.m_13824_(p_111897_, "x", 0);
+-         int j = GsonHelper.m_13824_(p_111897_, "y", 0);
+-         BlockModelRotation blockmodelrotation = BlockModelRotation.m_119153_(i, j);
+-         if (blockmodelrotation == null) {
+-            throw new JsonParseException("Invalid BlockModelRotation x: " + i + ", y: " + j);
+-         } else {
+-            return blockmodelrotation;
+-         }
+-      }
++          int i = GsonHelper.m_13824_(p_111897_, "x", 0);
++          int j = GsonHelper.m_13824_(p_111897_, "y", 0);
++          int k = GsonHelper.m_13824_(p_111897_, "z", 0);
++          BlockModelRotation blockmodelrotation = BlockModelRotation.by(i, j, k);
++          if (blockmodelrotation == null) {
++             throw new JsonParseException("Invalid BlockModelRotation x: " + i + ", y: " + j + ", z: " + k);
++          } else {
++             return blockmodelrotation;
++          }
++       }
+ 
+       protected ResourceLocation m_111898_(JsonObject p_111899_) {
+          return new ResourceLocation(GsonHelper.m_13906_(p_111899_, "model"));

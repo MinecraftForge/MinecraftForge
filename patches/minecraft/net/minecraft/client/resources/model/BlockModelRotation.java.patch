@@ -1,0 +1,60 @@
+--- a/net/minecraft/client/resources/model/BlockModelRotation.java
++++ b/net/minecraft/client/resources/model/BlockModelRotation.java
+@@ -28,7 +_,8 @@
+    X270_Y0(270, 0),
+    X270_Y90(270, 90),
+    X270_Y180(270, 180),
+-   X270_Y270(270, 270);
++   X270_Y270(270, 270),
++   X0_Y0_Z90(0, 0, 90), X0_Y90_Z90(0, 90, 90), X0_Y180_Z90(0, 180, 90), X0_Y270_Z90(0, 270, 90), X90_Y0_Z90(90, 0, 90), X90_Y90_Z90(90, 90, 90), X90_Y180_Z90(90, 180, 90), X90_Y270_Z90(90, 270, 90), X180_Y0_Z90(180, 0, 90), X180_Y90_Z90(180, 90, 90), X180_Y180_Z90(180, 180, 90), X180_Y270_Z90(180, 270, 90), X270_Y0_Z90(270, 0, 90), X270_Y90_Z90(270, 90, 90), X270_Y180_Z90(270, 180, 90), X270_Y270_Z90(270, 270, 90), X0_Y0_Z180(0, 0, 180), X0_Y90_Z180(0, 90, 180), X0_Y180_Z180(0, 180, 180), X0_Y270_Z180(0, 270, 180), X90_Y0_Z180(90, 0, 180), X90_Y90_Z180(90, 90, 180), X90_Y180_Z180(90, 180, 180), X90_Y270_Z180(90, 270, 180), X180_Y0_Z180(180, 0, 180), X180_Y90_Z180(180, 90, 180), X180_Y180_Z180(180, 180, 180), X180_Y270_Z180(180, 270, 180), X270_Y0_Z180(270, 0, 180), X270_Y90_Z180(270, 90, 180), X270_Y180_Z180(270, 180, 180), X270_Y270_Z180(270, 270, 180), X0_Y0_Z270(0, 0, 270), X0_Y90_Z270(0, 90, 270), X0_Y180_Z270(0, 180, 270), X0_Y270_Z270(0, 270, 270), X90_Y0_Z270(90, 0, 270), X90_Y90_Z270(90, 90, 270), X90_Y180_Z270(90, 180, 270), X90_Y270_Z270(90, 270, 270), X180_Y0_Z270(180, 0, 270), X180_Y90_Z270(180, 90, 270), X180_Y180_Z270(180, 180, 270), X180_Y270_Z270(180, 270, 270), X270_Y0_Z270(270, 0, 270), X270_Y90_Z270(270, 90, 270), X270_Y180_Z270(270, 180, 270), X270_Y270_Z270(270, 270, 270);
+ 
+    private static final int f_174872_ = 360;
+    private static final Map<Integer, BlockModelRotation> f_119142_ = Arrays.stream(values()).collect(Collectors.toMap((p_119163_) -> {
+@@ -44,19 +_,28 @@
+       return p_119160_ * 360 + p_119161_;
+    }
+ 
+-   private BlockModelRotation(int p_119151_, int p_119152_) {
+-      this.f_119145_ = m_119159_(p_119151_, p_119152_);
+-      Quaternion quaternion = Vector3f.f_122225_.m_122240_((float)(-p_119152_));
+-      quaternion.m_80148_(Vector3f.f_122223_.m_122240_((float)(-p_119151_)));
++   private BlockModelRotation(int p_119151_, int p_119152_) { this(p_119151_, p_119152_, 0); }
++   
++   private static int combineXYZ(int x, int y, int z) { return x * 360 * 360 + y * 360 + z; }
++   
++   private BlockModelRotation(int x, int y, int z) {
++      this.f_119145_ = combineXYZ(x, y, z);
++      Quaternion quaternion = Vector3f.f_122225_.m_122240_((float)(-y));
++      quaternion.m_80148_(Vector3f.f_122223_.m_122240_((float)(-x)));
++      quaternion.m_80148_(Vector3f.f_122227_.m_122240_((float)(-z)));
+       OctahedralGroup octahedralgroup = OctahedralGroup.IDENTITY;
+ 
+-      for(int i = 0; i < p_119152_; i += 90) {
++      for(int i = 0; i < y; i += 90) {
+          octahedralgroup = octahedralgroup.m_56521_(OctahedralGroup.ROT_90_Y_NEG);
+       }
+ 
+-      for(int j = 0; j < p_119151_; j += 90) {
++      for(int j = 0; j < x; j += 90) {
+          octahedralgroup = octahedralgroup.m_56521_(OctahedralGroup.ROT_90_X_NEG);
+       }
++      
++      for(int k = 0; k < z; k += 90) {
++          octahedralgroup = octahedralgroup.m_56521_(OctahedralGroup.ROT_90_Z_NEG);
++       }
+ 
+       this.f_119143_ = new Transformation((Vector3f)null, quaternion, (Vector3f)null, (Quaternion)null);
+       this.f_119144_ = octahedralgroup;
+@@ -67,7 +_,11 @@
+    }
+ 
+    public static BlockModelRotation m_119153_(int p_119154_, int p_119155_) {
+-      return f_119142_.get(m_119159_(Mth.m_14100_(p_119154_, 360), Mth.m_14100_(p_119155_, 360)));
++      return by(p_119154_, p_119155_, 0);
++   }
++   
++   public static BlockModelRotation by(int p_119154_, int p_119155_, int z) {
++      return f_119142_.get(combineXYZ(Mth.m_14100_(p_119154_, 360), Mth.m_14100_(p_119155_, 360), Mth.m_14100_(z, 360)));
+    }
+ 
+    public OctahedralGroup m_174873_() {
