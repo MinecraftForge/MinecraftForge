@@ -19,7 +19,6 @@
 
 package net.minecraftforge.debug.client.rendering;
 
-import com.mojang.blaze3d.pipeline.RenderTarget;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.DeferredWorkQueue;
@@ -37,6 +36,6 @@ public class StencilEnableTest {
 
     private void clientSetup(FMLClientSetupEvent event) {
         if (ENABLED)
-            event.enqueueWork(RenderTarget::enableStencil);
+            event.enqueueWork(() -> Minecraft.getInstance().getMainRenderTarget().enableStencil());
     }
 }
