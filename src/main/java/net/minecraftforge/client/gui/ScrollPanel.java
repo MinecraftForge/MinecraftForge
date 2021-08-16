@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.GameRenderer;
 import org.lwjgl.opengl.GL11;
 
@@ -35,7 +36,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraftforge.fmlclient.gui.GuiUtils;
 
-public abstract class ScrollPanel extends AbstractContainerEventHandler implements Widget
+public abstract class ScrollPanel extends AbstractContainerEventHandler implements Widget, NarratableEntry
 {
     private final Minecraft client;
     protected final int width;

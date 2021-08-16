@@ -31,6 +31,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.fmlclient.gui.GuiUtils;
 import net.minecraftforge.fmlclient.gui.widget.ModListWidget;
@@ -255,6 +256,15 @@ public class ModListScreen extends Screen
         @Override
         protected void drawBackground() {
         }
+
+        @Override
+        public NarrationPriority narrationPriority() {
+            return NarrationPriority.NONE;
+        }
+
+        @Override
+        public void updateNarration(NarrationElementOutput p_169152_) {
+        }
     }
 
     @Override
@@ -285,7 +295,7 @@ public class ModListScreen extends Screen
         this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height - PADDING - fullButtonHeight, PADDING);
 
         this.addRenderableWidget(modList);
-        this.addRenderableOnly(modInfo);
+        this.addRenderableWidget(modInfo);
         this.addRenderableWidget(search);
         this.addRenderableWidget(doneButton);
         this.addRenderableWidget(configButton);
