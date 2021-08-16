@@ -224,6 +224,9 @@ public class ModListScreen extends Screen
         }
 
         private Style findTextLine(final int mouseX, final int mouseY) {
+            if (!isMouseOver(mouseX, mouseY))
+                return null;
+
             double offset = (mouseY - top) + border + scrollDistance + 1;
             if (logoPath != null) {
                 offset -= 50;
