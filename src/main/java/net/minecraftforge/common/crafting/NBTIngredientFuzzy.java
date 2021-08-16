@@ -35,11 +35,11 @@ public class NBTIngredientFuzzy extends Ingredient
 {
     private final ItemStack stack;
     private final NbtPredicate predicate;
-    protected NBTIngredientFuzzy(ItemStack stack)
+    public NBTIngredientFuzzy(ItemStack stack)
     {
         super(Stream.of(new ItemValue(stack)));
         this.stack = stack;
-        this.predicate = stack.hasTag() ? NbtPredicate.ANY : new NbtPredicate(stack.getShareTag());
+        this.predicate = stack.hasTag() ? new NbtPredicate(stack.getShareTag()) : NbtPredicate.ANY;
     }
 
     @Override
@@ -47,7 +47,6 @@ public class NBTIngredientFuzzy extends Ingredient
     {
         if (input == null)
             return false;
-        //Can't use areItemStacksEqualUsingNBTShareTag because it compares stack size as well
         return this.stack.getItem() == input.getItem() && this.stack.getDamageValue() == input.getDamageValue() && this.predicate.matches(input);
     }
 

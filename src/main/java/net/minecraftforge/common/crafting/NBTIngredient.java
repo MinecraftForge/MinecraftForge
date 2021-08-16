@@ -33,7 +33,7 @@ import net.minecraft.network.FriendlyByteBuf;
 public class NBTIngredient extends Ingredient
 {
     private final ItemStack stack;
-    protected NBTIngredient(ItemStack stack)
+    public NBTIngredient(ItemStack stack)
     {
         super(Stream.of(new Ingredient.ItemValue(stack)));
         this.stack = stack;
