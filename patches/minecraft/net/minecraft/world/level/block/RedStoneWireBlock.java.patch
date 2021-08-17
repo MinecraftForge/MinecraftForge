@@ -1,11 +1,41 @@
 --- a/net/minecraft/world/level/block/RedStoneWireBlock.java
 +++ b/net/minecraft/world/level/block/RedStoneWireBlock.java
-@@ -363,7 +_,7 @@
-       } else if (p_55595_.m_60713_(Blocks.f_50455_)) {
-          return p_55596_ == p_55595_.m_61143_(ObserverBlock.f_52588_);
-       } else {
--         return p_55595_.m_60803_() && p_55596_ != null;
-+         return p_55595_.canRedstoneConnectTo(p_55596_);
+@@ -199,7 +_,8 @@
+       BlockState blockstate = p_55523_.m_8055_(blockpos);
+       if (p_55526_) {
+          boolean flag = this.m_55612_(p_55523_, blockpos, blockstate);
+-         if (flag && m_55640_(p_55523_.m_8055_(blockpos.m_7494_()))) {
++         flag &= p_55523_.m_8055_(blockpos.m_7494_()).canRedstoneConnectTo(p_55523_, blockpos.m_7494_(), null);
++         if (flag) {
+             if (blockstate.m_60783_(p_55523_, blockpos, p_55525_.m_122424_())) {
+                return RedstoneSide.UP;
+             }
+@@ -207,8 +_,9 @@
+             return RedstoneSide.SIDE;
+          }
+       }
+-
+-      return !m_55594_(blockstate, p_55525_) && (blockstate.m_60796_(p_55523_, blockpos) || !m_55640_(p_55523_.m_8055_(blockpos.m_7495_()))) ? RedstoneSide.NONE : RedstoneSide.SIDE;
++      boolean flag1 = blockstate.canRedstoneConnectTo(p_55523_, blockpos, p_55525_);
++      boolean flag2 = p_55523_.m_8055_(blockpos.m_7495_()).canRedstoneConnectTo(p_55523_, blockpos.m_7495_(), null);
++      return !flag1 && (blockstate.m_60796_(p_55523_, blockpos) || !flag2) ? RedstoneSide.NONE : RedstoneSide.SIDE;
+    }
+ 
+    public boolean m_7898_(BlockState p_55585_, LevelReader p_55586_, BlockPos p_55587_) {
+@@ -350,11 +_,15 @@
        }
     }
  
++   //Forge: Do not use, use IForgeBlockState::canRedstoneConnectTo
++   @Deprecated
+    protected static boolean m_55640_(BlockState p_55641_) {
+       return m_55594_(p_55641_, (Direction)null);
+    }
+ 
+-   protected static boolean m_55594_(BlockState p_55595_, @Nullable Direction p_55596_) {
++   //Forge: Do not use, use IForgeBlockState::canRedstoneConnectTo
++   @Deprecated
++   public static boolean m_55594_(BlockState p_55595_, @Nullable Direction p_55596_) {
+       if (p_55595_.m_60713_(Blocks.f_50088_)) {
+          return true;
+       } else if (p_55595_.m_60713_(Blocks.f_50146_)) {

@@ -723,11 +723,13 @@ public interface IForgeBlock
     /**
      * Whether redstone dust should visually connect to this block on a side
      * @param state The current state
-     * @param direction The direction of the redstone dust connection. This is the opposite of the direction for this block
+     * @param world The world
+     * @param pos The block position in world
+     * @param direction The coming direction of the redstone dust connection (with respect to the block at pos)
      * @return True if redstone dust should visually connect on the side passed
      */
-    default boolean canRedstoneConnectTo(BlockState state, @Nullable Direction direction)
+    default boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction direction)
     {
-        return state.isSignalSource() && direction != null;
+        return RedStoneWireBlock.shouldConnectTo(state, direction);
     }
 }

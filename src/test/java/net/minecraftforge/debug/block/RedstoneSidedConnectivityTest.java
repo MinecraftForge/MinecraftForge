@@ -19,11 +19,14 @@
 
 package net.minecraftforge.debug.block;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -61,6 +64,7 @@ public class RedstoneSidedConnectivityTest
     private static class EastRedstoneBlock extends Block{
 
         //This block visually connect to redstone dust only on the east side
+        //if a furnace block is placed on top of it
 
         public EastRedstoneBlock()
         {
@@ -68,11 +72,12 @@ public class RedstoneSidedConnectivityTest
         }
 
         @Override
-        public boolean canRedstoneConnectTo(BlockState state, @Nullable Direction direction)
+        public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction direction)
         {
             //The passed direction is relative to the redstone dust
             //This block connects on the east side relative to this block, which is west for the dust
-            return direction == Direction.WEST;
+            return direction == Direction.WEST &&
+                    world.getBlockEntity(pos.relative(Direction.UP)) instanceof FurnaceBlockEntity;
         }
     }
 }
