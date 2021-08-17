@@ -76,6 +76,15 @@
              this.m_115152_(bufferbuilder, p_115177_ + 2, p_115178_ + 13, 13, 2, 0, 0, 0, 255);
              this.m_115152_(bufferbuilder, p_115177_ + 2, p_115178_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
              RenderSystem.m_69478_();
+@@ -348,7 +_,7 @@
+          }
+ 
+          LocalPlayer localplayer = Minecraft.m_91087_().f_91074_;
+-         float f = localplayer == null ? 0.0F : localplayer.m_36335_().m_41521_(p_115176_.m_41720_(), Minecraft.m_91087_().m_91296_());
++         float f = localplayer == null ? 0.0F : p_115176_.getCooldownPercent(localplayer, Minecraft.m_91087_().m_91296_());
+          if (f > 0.0F) {
+             RenderSystem.m_69465_();
+             RenderSystem.m_69472_();
 @@ -377,5 +_,14 @@
  
     public void m_6213_(ResourceManager p_115105_) {

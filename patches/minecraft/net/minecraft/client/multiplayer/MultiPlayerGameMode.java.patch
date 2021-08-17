@@ -124,12 +124,16 @@
 -            if (!itemstack.m_41619_() && !p_105263_.m_36335_().m_41519_(itemstack.m_41720_())) {
 -               UseOnContext useoncontext = new UseOnContext(p_105263_, p_105265_, p_105266_);
 +            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return InteractionResult.PASS;
-+            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!itemstack.m_41619_() && !p_105263_.m_36335_().m_41519_(itemstack.m_41720_()))) {
++            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!itemstack.m_41619_() && !itemstack.isOnCooldown(p_105263_))) {
                 InteractionResult interactionresult1;
                 if (this.f_105197_.m_46408_()) {
                    int i = itemstack.m_41613_();
-@@ -311,10 +_,13 @@
-          if (p_105236_.m_36335_().m_41519_(itemstack.m_41720_())) {
+@@ -308,13 +_,16 @@
+          this.f_105190_.m_104955_(new ServerboundMovePlayerPacket.PosRot(p_105236_.m_20185_(), p_105236_.m_20186_(), p_105236_.m_20189_(), p_105236_.m_146908_(), p_105236_.m_146909_(), p_105236_.m_20096_()));
+          this.f_105190_.m_104955_(new ServerboundUseItemPacket(p_105238_));
+          ItemStack itemstack = p_105236_.m_21120_(p_105238_);
+-         if (p_105236_.m_36335_().m_41519_(itemstack.m_41720_())) {
++         if (itemstack.isOnCooldown(p_105236_)) {
              return InteractionResult.PASS;
           } else {
 +            InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_105236_, p_105238_);

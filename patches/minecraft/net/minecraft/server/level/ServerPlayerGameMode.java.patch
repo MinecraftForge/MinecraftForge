@@ -35,7 +35,7 @@
           return false;
        } else {
           BlockEntity blockentity = this.f_9244_.m_7702_(p_9281_);
-@@ -223,30 +_,42 @@
+@@ -223,38 +_,52 @@
           if (block instanceof GameMasterBlock && !this.f_9245_.m_36337_()) {
              this.f_9244_.m_7260_(p_9281_, blockstate, blockstate, 3);
              return false;
@@ -85,8 +85,10 @@
     }
  
     public InteractionResult m_6261_(ServerPlayer p_9262_, Level p_9263_, ItemStack p_9264_, InteractionHand p_9265_) {
-@@ -255,6 +_,8 @@
-       } else if (p_9262_.m_36335_().m_41519_(p_9264_.m_41720_())) {
+       if (this.f_9247_ == GameType.SPECTATOR) {
+          return InteractionResult.PASS;
+-      } else if (p_9262_.m_36335_().m_41519_(p_9264_.m_41720_())) {
++      } else if (p_9264_.isOnCooldown(p_9262_)) {
           return InteractionResult.PASS;
        } else {
 +         InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_9262_, p_9265_);
@@ -127,7 +129,7 @@
  
 -         if (!p_9268_.m_41619_() && !p_9266_.m_36335_().m_41519_(p_9268_.m_41720_())) {
 -            UseOnContext useoncontext = new UseOnContext(p_9266_, p_9269_, p_9270_);
-+         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.m_41619_() && !p_9266_.m_36335_().m_41519_(p_9268_.m_41720_()))) {
++         if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!p_9268_.m_41619_() && !p_9268_.isOnCooldown(p_9266_))) {
 +            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return InteractionResult.PASS;
              InteractionResult interactionresult1;
              if (this.m_9295_()) {

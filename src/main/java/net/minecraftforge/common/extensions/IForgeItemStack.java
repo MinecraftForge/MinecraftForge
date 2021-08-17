@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.tags.Tag;
@@ -494,5 +495,28 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default boolean elytraFlightTick(LivingEntity entity, int flightTicks)
     {
         return self().getItem().elytraFlightTick(self(), entity, flightTicks);
+    }
+    
+    /**
+     * Check if this item stack is on cooldown for an entity
+     * 
+     * @param entity the entity holding the item stack
+     * @return if this item stack is on cooldow
+     */
+    default boolean isOnCooldown(@Nonnull Entity entity)
+    {
+        return self().getItem().isOnCooldown(entity, self());
+    }
+
+    /**
+     * get this item stack cooldown for an entity
+     * 
+     * @param entity      the entity holding the item stack
+     * @param partialTick the partial render tick
+     * @return this item stack cooldow percent
+     */
+    default float getCooldownPercent(@Nonnull Entity entity, float partialTick)
+    {
+        return self().getItem().getCooldownPercent(entity, self(), partialTick);
     }
 }

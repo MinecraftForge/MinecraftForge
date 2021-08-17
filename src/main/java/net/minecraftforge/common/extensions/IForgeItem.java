@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
@@ -795,5 +796,30 @@ public interface IForgeItem
     default boolean isDamageable(ItemStack stack)
     {
         return self().canBeDepleted();
+    }
+    
+    /**
+     * Check if this item is on cooldown for an entity
+     * 
+     * @param entity the entity holding the item 
+     * @param stack the ItemStack
+     * @return if this item is on cooldow
+     */
+    default boolean isOnCooldown(@Nonnull Entity entity, @Nonnull ItemStack stack)
+    {
+        return this.getCooldownPercent(entity, stack, 0) > 0;
+    }
+
+    /**
+     * get this item cooldown for an entity
+     * 
+     * @param entity the entity holding the item 
+     * @param stack the ItemStack
+     * @param partialTick the partial render tick
+     * @return this item cooldow  percent
+     */
+    default float getCooldownPercent(@Nonnull Entity entity, @Nonnull ItemStack stack, float partialTick)
+    {
+        return entity instanceof Player player ? player.getCooldowns().getCooldownPercent(self(), partialTick) : 0;
     }
 }

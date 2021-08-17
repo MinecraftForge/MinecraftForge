@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/item/ItemCooldowns.java
++++ b/net/minecraft/world/item/ItemCooldowns.java
+@@ -10,10 +_,12 @@
+    private final Map<Item, ItemCooldowns.CooldownInstance> f_41515_ = Maps.newHashMap();
+    private int f_41516_;
+ 
++   @Deprecated // Forge: use IForgeItemStack#isOnCooldown instead
+    public boolean m_41519_(Item p_41520_) {
+       return this.m_41521_(p_41520_, 0.0F) > 0.0F;
+    }
+ 
++   @Deprecated // Forge: use IForgeItemStack#getCooldownPercent instead
+    public float m_41521_(Item p_41522_, float p_41523_) {
+       ItemCooldowns.CooldownInstance itemcooldowns$cooldowninstance = this.f_41515_.get(p_41522_);
+       if (itemcooldowns$cooldowninstance != null) {

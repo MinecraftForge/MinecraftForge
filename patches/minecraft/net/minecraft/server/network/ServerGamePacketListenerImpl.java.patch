@@ -21,6 +21,15 @@
     }
  
     public void m_7376_(ServerboundAcceptTeleportationPacket p_9835_) {
+@@ -948,7 +_,7 @@
+          return false;
+       } else {
+          Item item = p_9792_.m_41720_();
+-         return (item instanceof BlockItem || item instanceof BucketItem) && !p_9791_.m_36335_().m_41519_(item);
++         return (item instanceof BlockItem || item instanceof BucketItem) && !p_9792_.isOnCooldown(p_9791_);
+       }
+    }
+ 
 @@ -963,7 +_,9 @@
        this.f_9743_.m_9243_();
        int i = this.f_9743_.f_19853_.m_151558_();
