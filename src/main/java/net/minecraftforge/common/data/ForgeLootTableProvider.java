@@ -25,13 +25,14 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.tags.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.predicates.AlternativeLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
-import net.minecraftforge.common.Tags;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 
 import java.util.List;
@@ -73,13 +74,13 @@ public final class ForgeLootTableProvider extends LootTableProvider {
 
     private Consumer<BiConsumer<ResourceLocation, LootTable.Builder>> replaceAndFilterChangesOnly(Consumer<BiConsumer<ResourceLocation, LootTable.Builder>> consumer) {
         return (newConsumer) -> consumer.accept((resourceLocation, builder) -> {
-            if (findAndReplaceInLootTableBuilder(builder, Items.SHEARS, Tags.Items.SHEARS)) {
+            if (findAndReplaceInLootTableBuilder(builder, Items.SHEARS, ToolActions.SHEARS_DIG)) {
                 newConsumer.accept(resourceLocation, builder);
             }
         });
     }
 
-    private boolean findAndReplaceInLootTableBuilder(LootTable.Builder builder, Item from, Tag.Named<Item> to) {
+    private boolean findAndReplaceInLootTableBuilder(LootTable.Builder builder, Item from, ToolAction toolAction) {
         List<LootPool> lootPools = ObfuscationReflectionHelper.getPrivateValue(LootTable.Builder.class, builder, "f_7915" + "6_");
         boolean found = false;
 
@@ -88,7 +89,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         }
 
         for (LootPool lootPool : lootPools) {
-            if (findAndReplaceInLootPool(lootPool, from, to)) {
+            if (findAndReplaceInLootPool(lootPool, from, toolAction)) {
                 found = true;
             }
         }
@@ -96,7 +97,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         return found;
     }
 
-    private boolean findAndReplaceInLootPool(LootPool lootPool, Item from, Tag.Named<Item> to) {
+    private boolean findAndReplaceInLootPool(LootPool lootPool, Item from, ToolAction toolAction) {
         List<LootPoolEntryContainer> lootEntries = ObfuscationReflectionHelper.getPrivateValue(LootPool.class, lootPool, "f_7902" +"3_");
         List<LootItemCondition> lootConditions = ObfuscationReflectionHelper.getPrivateValue(LootPool.class, lootPool, "f_7902" + "4_");
         boolean found = false;
@@ -107,7 +108,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
 
         for (LootPoolEntryContainer lootEntry : lootEntries) {
             if (lootEntry instanceof CompositeEntryBase) {
-                if (findAndReplaceInParentedLootEntry((CompositeEntryBase) lootEntry, from, to)) {
+                if (findAndReplaceInParentedLootEntry((CompositeEntryBase) lootEntry, from, toolAction)) {
                     found = true;
                 }
             }
@@ -120,15 +121,15 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         for (int i = 0; i < lootConditions.size(); i++) {
             LootItemCondition lootCondition = lootConditions.get(i);
             if (lootCondition instanceof MatchTool && checkMatchTool((MatchTool) lootCondition, from)) {
-                lootConditions.set(i, MatchTool.toolMatches(ItemPredicate.Builder.item().of(to)).build());
+                lootConditions.set(i, CanToolPerformAction.canToolPerformAction(toolAction).build());
                 found = true;
             } else if (lootCondition instanceof InvertedLootItemCondition) {
                 LootItemCondition invLootCondition = ObfuscationReflectionHelper.getPrivateValue(InvertedLootItemCondition.class, (InvertedLootItemCondition) lootCondition, "f_8168" + "1_");
 
                 if (invLootCondition instanceof MatchTool && checkMatchTool((MatchTool) invLootCondition, from)) {
-                    lootConditions.set(i, InvertedLootItemCondition.invert(MatchTool.toolMatches(ItemPredicate.Builder.item().of(to))).build());
+                    lootConditions.set(i, InvertedLootItemCondition.invert(CanToolPerformAction.canToolPerformAction(toolAction)).build());
                     found = true;
-                } else if (invLootCondition instanceof AlternativeLootItemCondition && findAndReplaceInAlternative((AlternativeLootItemCondition) invLootCondition, from, to)) {
+                } else if (invLootCondition instanceof AlternativeLootItemCondition && findAndReplaceInAlternative((AlternativeLootItemCondition) invLootCondition, from, toolAction)) {
                     found = true;
                 }
             }
@@ -137,7 +138,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         return found;
     }
 
-    private boolean findAndReplaceInParentedLootEntry(CompositeEntryBase entry, Item from, Tag.Named<Item> to) {
+    private boolean findAndReplaceInParentedLootEntry(CompositeEntryBase entry, Item from, ToolAction toolAction) {
         LootPoolEntryContainer[] lootEntries = ObfuscationReflectionHelper.getPrivateValue(CompositeEntryBase.class, entry, "f_7942" + "8_");
         boolean found = false;
 
@@ -146,7 +147,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         }
 
         for (LootPoolEntryContainer lootEntry : lootEntries) {
-            if (findAndReplaceInLootEntry(lootEntry, from, to)) {
+            if (findAndReplaceInLootEntry(lootEntry, from, toolAction)) {
                 found = true;
             }
         }
@@ -154,7 +155,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         return found;
     }
 
-    private boolean findAndReplaceInLootEntry(LootPoolEntryContainer entry, Item from, Tag.Named<Item> to) {
+    private boolean findAndReplaceInLootEntry(LootPoolEntryContainer entry, Item from, ToolAction toolAction) {
         LootItemCondition[] lootConditions = ObfuscationReflectionHelper.getPrivateValue(LootPoolEntryContainer.class, entry, "f_7963" + "6_");
         boolean found = false;
 
@@ -163,10 +164,10 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         }
 
         for (int i = 0; i < lootConditions.length; i++) {
-            if (lootConditions[i] instanceof AlternativeLootItemCondition && findAndReplaceInAlternative((AlternativeLootItemCondition) lootConditions[i], from, to)) {
+            if (lootConditions[i] instanceof AlternativeLootItemCondition && findAndReplaceInAlternative((AlternativeLootItemCondition) lootConditions[i], from, toolAction)) {
                 found = true;
             } else if (lootConditions[i] instanceof MatchTool && checkMatchTool((MatchTool) lootConditions[i], from)) {
-                lootConditions[i] = MatchTool.toolMatches(ItemPredicate.Builder.item().of(to)).build();
+                lootConditions[i] = CanToolPerformAction.canToolPerformAction(toolAction).build();
                 found = true;
             }
         }
@@ -174,7 +175,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         return found;
     }
 
-    private boolean findAndReplaceInAlternative(AlternativeLootItemCondition alternative, Item from, Tag.Named<Item> to) {
+    private boolean findAndReplaceInAlternative(AlternativeLootItemCondition alternative, Item from, ToolAction toolAction) {
         LootItemCondition[] lootConditions = ObfuscationReflectionHelper.getPrivateValue(AlternativeLootItemCondition.class, alternative, "f_8146" + "8_");
         boolean found = false;
 
@@ -184,7 +185,7 @@ public final class ForgeLootTableProvider extends LootTableProvider {
 
         for (int i = 0; i < lootConditions.length; i++) {
             if (lootConditions[i] instanceof MatchTool && checkMatchTool((MatchTool) lootConditions[i], from)) {
-                lootConditions[i] = MatchTool.toolMatches(ItemPredicate.Builder.item().of(to)).build();
+                lootConditions[i] = CanToolPerformAction.canToolPerformAction(toolAction).build();
                 found = true;
             }
         }
