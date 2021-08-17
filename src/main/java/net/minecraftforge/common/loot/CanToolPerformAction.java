@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 import java.util.Set;
 
 /**
- * This LootItemCondition "forge:can" can be used to check if a tool can perform a given ToolAction.
+ * This LootItemCondition "forge:can_tool_perform_action" can be used to check if a tool can perform a given ToolAction.
  */
 public class CanToolPerformAction implements LootItemCondition {
 
