@@ -34,8 +34,6 @@ import com.google.common.base.Stopwatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraftforge.forgespi.language.IModInfo;
-
 /**
  * Utility for running code on the main launch thread at the next available
  * opportunity. There is no guaranteed order that work from various mods will be
@@ -78,7 +76,12 @@ public class DeferredWorkQueue
     private static void makeRunnable(TaskInfo ti, Executor executor) {
         executor.execute(() -> {
             Stopwatch timer = Stopwatch.createStarted();
-            ti.task.run();
+            ModLoadingContext.get().setActiveContainer(ti.owner);
+            try {
+                ti.task.run();
+            } finally {
+                ModLoadingContext.get().setActiveContainer(null);
+            }
             timer.stop();
             if (timer.elapsed(TimeUnit.SECONDS) >= 1) {
                 LOGGER.warn(LOADING, "Mod '{}' took {} to run a deferred task.", ti.owner.getModId(), timer);
@@ -86,13 +89,13 @@ public class DeferredWorkQueue
         });
     }
 
-    public CompletableFuture<Void> enqueueWork(final IModInfo modInfo, final Runnable work) {
+    public CompletableFuture<Void> enqueueWork(final ModContainer modInfo, final Runnable work) {
         return CompletableFuture.runAsync(work, r->tasks.add(new TaskInfo(modInfo, r)));
     }
 
-    public <T> CompletableFuture<T> enqueueWork(final IModInfo modInfo, final Supplier<T> work) {
+    public <T> CompletableFuture<T> enqueueWork(final ModContainer modInfo, final Supplier<T> work) {
         return CompletableFuture.supplyAsync(work, r->tasks.add(new TaskInfo(modInfo, r)));
     }
 
-    record TaskInfo(IModInfo owner, Runnable task) {}
+    record TaskInfo(ModContainer owner, Runnable task) {}
 }

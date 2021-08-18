@@ -12,13 +12,12 @@
     protected static final UUID f_41374_ = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
     protected static final UUID f_41375_ = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
     public static final int f_150884_ = 64;
-@@ -92,7 +_,9 @@
+@@ -92,7 +_,8 @@
              f_150883_.error("Item classes should end with Item and {} doesn't.", (Object)s);
           }
        }
 -
 +      this.canRepair = p_41383_.canRepair;
-+      this.toolClasses.putAll(p_41383_.toolClasses);
 +      initClient();
     }
  
@@ -77,7 +76,7 @@
        CreativeModeTab creativemodetab = this.m_41471_();
        return creativemodetab != null && (p_41390_ == CreativeModeTab.f_40754_ || p_41390_ == creativemodetab);
     }
-@@ -325,12 +_,37 @@
+@@ -325,12 +_,26 @@
        return false;
     }
  
@@ -86,23 +85,12 @@
        return ImmutableMultimap.of();
     }
  
-+   private final java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
 +   private final net.minecraftforge.common.util.ReverseTagWrapper<Item> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.ItemTags::m_13193_);
 +   protected final boolean canRepair;
 +
 +   @Override
 +   public boolean isRepairable(ItemStack stack) {
 +      return canRepair && isDamageable(stack);
-+   }
-+
-+   @Override
-+   public java.util.Set<net.minecraftforge.common.ToolType> getToolTypes(ItemStack stack) {
-+      return toolClasses.keySet();
-+   }
-+
-+   @Override
-+   public int getHarvestLevel(ItemStack stack, net.minecraftforge.common.ToolType tool, @Nullable Player player, @Nullable BlockState blockState) {
-+      return toolClasses.getOrDefault(tool, -1);
 +   }
 +
 +   @Override
@@ -148,16 +136,15 @@
     public static class Properties {
        int f_41478_ = 64;
        int f_41479_;
-@@ -379,6 +_,8 @@
+@@ -379,6 +_,7 @@
        Rarity f_41482_ = Rarity.COMMON;
        FoodProperties f_41483_;
        boolean f_41484_;
 +      private boolean canRepair = true;
-+      private java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
  
        public Item.Properties m_41489_(FoodProperties p_41490_) {
           this.f_41483_ = p_41490_;
-@@ -421,6 +_,16 @@
+@@ -421,6 +_,11 @@
  
        public Item.Properties m_41486_() {
           this.f_41484_ = true;
@@ -166,11 +153,6 @@
 +
 +      public Item.Properties setNoRepair() {
 +         canRepair = false;
-+         return this;
-+      }
-+
-+      public Item.Properties addToolType(net.minecraftforge.common.ToolType type, int level) {
-+         toolClasses.put(type, level);
           return this;
        }
     }

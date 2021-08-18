@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/item/PickaxeItem.java
++++ b/net/minecraft/world/item/PickaxeItem.java
+@@ -6,4 +_,9 @@
+    public PickaxeItem(Tier p_42961_, int p_42962_, float p_42963_, Item.Properties p_42964_) {
+       super((float)p_42962_, p_42963_, p_42961_, BlockTags.f_144282_, p_42964_);
+    }
++
++   @Override
++   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++      return net.minecraftforge.common.ToolActions.DEFAULT_PICKAXE_ACTIONS.contains(toolAction);
++   }
+ }

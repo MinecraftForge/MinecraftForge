@@ -36,7 +36,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.ToolType;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -48,6 +47,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ToolAction;
 
 public interface IForgeBlockState
 {
@@ -388,29 +388,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * Queries the class of tool required to harvest this block, if null is returned
-     * we assume that anything can harvest this block.
-     */
-    default ToolType getHarvestTool()
-    {
-        return self().getBlock().getHarvestTool(self());
-    }
-
-    default int getHarvestLevel()
-    {
-        return self().getBlock().getHarvestLevel(self());
-    }
-
-    /**
-     * Checks if the specified tool type is efficient on this block,
-     * meaning that it digs at full speed.
-     */
-    default boolean isToolEffective(ToolType tool)
-    {
-        return self().getBlock().isToolEffective(self(), tool);
-    }
-
-    /**
      * Sensitive version of getSoundType
      * @param world The world
      * @param pos The position. Note that the world may not necessarily have {@code state} here!
@@ -648,10 +625,10 @@ public interface IForgeBlockState
      * @return The resulting state after the action has been performed
      */
     @Nullable
-    default BlockState getToolModifiedState(Level world, BlockPos pos, Player player, ItemStack stack, ToolType toolType)
+    default BlockState getToolModifiedState(Level world, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
-        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), world, pos, player, stack, toolType);
-        return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), world, pos, player, stack, toolType);
+        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), world, pos, player, stack, toolAction);
+        return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), world, pos, player, stack, toolAction);
     }
 
     /**

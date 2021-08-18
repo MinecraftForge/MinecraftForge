@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
-@@ -82,4 +_,26 @@
+@@ -82,4 +_,27 @@
     }
  
     protected abstract AbstractContainerMenu m_6555_(int p_58627_, Inventory p_58628_);
@@ -24,6 +24,7 @@
 +
 +   @Override
 +   public void reviveCaps() {
++      super.reviveCaps();
 +      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
 +   }
  }
