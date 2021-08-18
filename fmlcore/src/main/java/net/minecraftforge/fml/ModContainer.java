@@ -116,13 +116,13 @@ public abstract class ModContainer
             final Executor executor) {
         return CompletableFuture
                 .runAsync(() -> {
-                    ModLoadingContext.get().setActiveContainer(target, target.contextExtension.get());
+                    ModLoadingContext.get().setActiveContainer(target);
                     target.activityMap.getOrDefault(target.modLoadingStage, ()->{}).run();
                     target.acceptEvent(eventGenerator.apply(target));
                 }, executor)
                 .whenComplete((mc, exception) -> {
                     target.modLoadingStage = stateChangeHandler.apply(target.modLoadingStage, exception);
-                    ModLoadingContext.get().setActiveContainer(null, null);
+                    ModLoadingContext.get().setActiveContainer(null);
                 });
     }
 

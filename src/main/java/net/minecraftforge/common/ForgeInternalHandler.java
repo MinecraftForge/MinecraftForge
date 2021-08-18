@@ -140,5 +140,11 @@ public class ForgeInternalHandler
             throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
         return INSTANCE;
     }
+
+    @SubscribeEvent
+    public void resourceReloadListeners(AddReloadListenerEvent event)
+    {
+        event.addListener(TierSortingRegistry.getReloadListener());
+    }
 }
 

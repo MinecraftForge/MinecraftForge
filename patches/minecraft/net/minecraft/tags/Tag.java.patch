@@ -1,8 +1,18 @@
 --- a/net/minecraft/tags/Tag.java
 +++ b/net/minecraft/tags/Tag.java
-@@ -49,6 +_,7 @@
+@@ -47,8 +_,16 @@
+       return SetTag.m_13222_(p_13301_);
+    }
  
-    public static class Builder {
+-   public static class Builder {
++   public static class Builder implements net.minecraftforge.common.extensions.IForgeRawTagBuilder {
++      private final List<Tag.BuilderEntry> removeEntries = Lists.newArrayList(); // FORGE: internal field for tracking "remove" entries
++      /** FORGE: Gets a view of this builder's "remove" entries (only used during datagen) **/
++      public Stream<Tag.BuilderEntry> getRemoveEntries() { return this.removeEntries.stream(); }
++      public Tag.Builder remove(final Tag.BuilderEntry proxy) { // internal forge method for adding remove entries
++         this.removeEntries.add(proxy);
++         return this;
++      }
        private final List<Tag.BuilderEntry> f_13302_ = Lists.newArrayList();
 +      private boolean replace = false;
  
@@ -32,15 +42,17 @@
           list.forEach((p_13319_) -> {
              this.f_13302_.add(new Tag.BuilderEntry(p_13319_, p_13314_));
           });
-@@ -155,7 +_,7 @@
+@@ -155,8 +_,9 @@
              tag$builderentry.m_13347_().m_6383_(jsonarray);
           }
  
 -         jsonobject.addProperty("replace", false);
 +         jsonobject.addProperty("replace", replace);
           jsonobject.add("values", jsonarray);
++         this.serializeTagAdditions(jsonobject);
           return jsonobject;
        }
+    }
 @@ -211,6 +_,7 @@
        public String toString() {
           return this.f_13349_.toString();
