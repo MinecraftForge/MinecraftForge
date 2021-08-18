@@ -14,14 +14,16 @@
                          ((Mob)entity).m_6518_(p_151312_, p_151312_.m_6436_(entity.m_142538_()), MobSpawnType.SPAWNER, (SpawnGroupData)null, (CompoundTag)null);
                       }
                    }
-@@ -271,5 +_,10 @@
- 
+@@ -272,4 +_,12 @@
     public double m_45474_() {
        return this.f_45446_;
-+   }
+    }
 +
 +   @Nullable
 +   public Entity getSpawnerEntity() {
 +      return null;
-    }
++   }
++
++   @Nullable
++   public net.minecraft.world.level.block.entity.BlockEntity getSpawnerBlockEntity(){ return null; }
  }
