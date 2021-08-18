@@ -10,15 +10,15 @@
  
     private static final int f_174872_ = 360;
     private static final Map<Integer, BlockModelRotation> f_119142_ = Arrays.stream(values()).collect(Collectors.toMap((p_119163_) -> {
-@@ -44,19 +_,28 @@
-       return p_119160_ * 360 + p_119161_;
+@@ -45,18 +_,29 @@
     }
  
--   private BlockModelRotation(int p_119151_, int p_119152_) {
+    private BlockModelRotation(int p_119151_, int p_119152_) {
 -      this.f_119145_ = m_119159_(p_119151_, p_119152_);
 -      Quaternion quaternion = Vector3f.f_122225_.m_122240_((float)(-p_119152_));
 -      quaternion.m_80148_(Vector3f.f_122223_.m_122240_((float)(-p_119151_)));
-+   private BlockModelRotation(int p_119151_, int p_119152_) { this(p_119151_, p_119152_, 0); }
++      this(p_119151_, p_119152_, 0);
++   }
 +   
 +   private static int combineXYZ(int x, int y, int z) { return x * 360 * 360 + y * 360 + z; }
 +   
@@ -40,8 +40,8 @@
        }
 +      
 +      for(int k = 0; k < z; k += 90) {
-+          octahedralgroup = octahedralgroup.m_56521_(OctahedralGroup.ROT_90_Z_NEG);
-+       }
++         octahedralgroup = octahedralgroup.m_56521_(OctahedralGroup.ROT_90_Z_NEG);
++      }
  
        this.f_119143_ = new Transformation((Vector3f)null, quaternion, (Vector3f)null, (Quaternion)null);
        this.f_119144_ = octahedralgroup;
