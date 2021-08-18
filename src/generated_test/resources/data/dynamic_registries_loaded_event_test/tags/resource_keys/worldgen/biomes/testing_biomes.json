@@ -4,5 +4,10 @@
     "minecraft:mountains",
     "minecraft:snowy_tundra",
     "#dynamic_registries_loaded_event_test:extra_biomes"
+  ],
+  "remove": [
+    "minecraft:desert",
+    "minecraft:taiga",
+    "#forge:water/oceans"
   ]
 }

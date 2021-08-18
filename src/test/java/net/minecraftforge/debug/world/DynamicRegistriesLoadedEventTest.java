@@ -199,7 +199,12 @@ public class DynamicRegistriesLoadedEventTest
             {
                 this.tag(OPTIONAL_BIOMES_TEST_TAG).addOptionalTags(new ResourceLocation("jumbo_biomes:jumbo_desert")).replace();
                 this.tag(EXTRA_BIOMES_TAG).add(TEST_BIOME);
-                this.tag(TESTING_BIOMES_TAG).add(Biomes.MOUNTAINS, Biomes.SNOWY_TUNDRA).addTags(EXTRA_BIOMES_TAG);
+                this.tag(TESTING_BIOMES_TAG)
+                    .add(Biomes.MOUNTAINS, Biomes.SNOWY_TUNDRA)
+                    .addTags(EXTRA_BIOMES_TAG)
+                    .remove(Biomes.DESERT)
+                    .remove(Biomes.TAIGA.location())
+                    .remove(Tags.Biomes.OCEANS);
             }
         });
     }

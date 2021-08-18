@@ -153,9 +153,8 @@ public abstract class ResourceKeyTagsProvider<T> implements DataProvider
     
     /**
      * Wrapper around raw tag builders so that resource keys and tags thereof can be added directly.
-     * {@link net.minecraftforge.common.extensions.IForgeTagBuilder} is no good here either as its
+     * {@link net.minecraftforge.common.extensions.IForgeTagAppender} is no good here either as its
      * default methods don't work with a tag-of-resource-keys
-     * TODO add support for forge's "remove" list (needs a patch or extension of the raw tag builder)
      */
     public static class Builder<T>
     {
@@ -219,6 +218,48 @@ public abstract class ResourceKeyTagsProvider<T> implements DataProvider
         public Builder<T> add(Tag.Entry tag)
         {
             this.tagBuilder.add(tag, this.sourceModid);
+            return this;
+        }
+        
+        /**
+         * Adds the specified resource keys to the tag builder's "remove" list
+         * @param resourceKeys the keys to be removed
+         * @return this
+         */
+        public Builder<T> remove(final ResourceKey<T>... resourceKeys)
+        {
+            for (ResourceKey<T> key : resourceKeys)
+            {
+                this.tagBuilder.removeElement(key.location(), this.sourceModid);
+            }
+            return this;
+        }
+        
+        /**
+         * Adds the specified element IDs to the tag builder's "remove" list
+         * @param locations The elements to be removed
+         * @return this
+         */
+        public Builder<T> remove(final ResourceLocation... locations)
+        {
+            for (ResourceLocation location : locations)
+            {
+                this.tagBuilder.removeElement(location, this.sourceModid);
+            }
+            return this;
+        }
+        
+        /**
+         * Adds the specified resource key tags to the tag builder's "remove" list
+         * @param tags The tags to be removed
+         * @return this
+         */
+        public Builder<T> remove(final Tag.Named<ResourceKey<T>>... tags)
+        {
+            for (Tag.Named<ResourceKey<T>> tag : tags)
+            {
+                this.tagBuilder.removeTag(tag.getName(), sourceModid);
+            }
             return this;
         }
         
