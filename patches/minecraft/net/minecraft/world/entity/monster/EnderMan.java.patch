@@ -16,13 +16,7 @@
     }
  
     protected void m_8097_() {
-@@ -181,12 +_,13 @@
-       }
- 
-       this.m_32521_(blockstate);
-+      if(!f_19853_.f_46443_) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
-       this.m_147285_(this.f_19853_, p_32511_);
-    }
+@@ -186,7 +_,7 @@
  
     boolean m_32534_(Player p_32535_) {
        ItemStack itemstack = p_32535_.m_150109_().f_35975_.get(3);

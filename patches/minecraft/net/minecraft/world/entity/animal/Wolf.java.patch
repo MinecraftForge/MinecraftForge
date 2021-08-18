@@ -1,13 +1,5 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
-@@ -136,6 +_,7 @@
-          this.m_30397_(DyeColor.m_41053_(p_30402_.m_128451_("CollarColor")));
-       }
- 
-+      if(!f_19853_.f_46443_) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
-       this.m_147285_(this.f_19853_, p_30402_);
-    }
- 
 @@ -348,7 +_,7 @@
                 itemstack.m_41774_(1);
              }
