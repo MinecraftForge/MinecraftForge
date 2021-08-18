@@ -13,11 +13,3 @@
           }
        }
  
-@@ -148,6 +_,7 @@
-    public void m_7378_(CompoundTag p_28857_) {
-       super.m_7378_(p_28857_);
-       this.m_28887_(p_28857_.m_128471_("PlayerCreated"));
-+      if(!f_19853_.f_46443_) //FORGE: allow this entity to be read from nbt on client. (Fixes MC-189565)
-       this.m_147285_(this.f_19853_, p_28857_);
-    }
- 
