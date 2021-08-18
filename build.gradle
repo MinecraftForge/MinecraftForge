@@ -2,10 +2,12 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://maven.parchmentmc.org' }
         mavenCentral()
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
+        classpath 'org.parchmentmc:librarian:1.+'
     }
 }
 
@@ -42,8 +44,10 @@ ext {
             keystore: project.properties.keystore
         ]
     }
-    MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.17.1'
+    MAPPING_CHANNEL = 'parchment'
+    MAPPING_VERSION = '2021.08.15-1.17.1'
+    MDK_MAPPING_CHANNEL = 'official'
+    MDK_MAPPING_VERSION = '1.17.1'
     MC_VERSION = '1.17.1'
     MCP_VERSION = '20210706.113038'
     SPI_VERSION = '4.0.9'
@@ -174,6 +178,7 @@ project(':mcp') {
 project(':clean') {
     evaluationDependsOn(':mcp')
     apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: 'org.parchmentmc.librarian.forgegradle'
     tasks.withType(AbstractPublishToMaven.class).forEach{tsk -> tsk.enabled = false } // We don't want to publish anything
 
     dependencies {
@@ -487,6 +492,7 @@ project(':fmlonly') {
     evaluationDependsOn(':mcp')
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
     ext {
         MCP_ARTIFACT = project(':mcp').mcp.config.get()
@@ -765,6 +771,7 @@ project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: 'org.parchmentmc.librarian.forgegradle'
     apply plugin: 'org.cadixdev.licenser'
 
     sourceSets {
@@ -1328,8 +1335,8 @@ project(':forge') {
                 FORGE_GROUP: project.group,
                 FORGE_NAME: project.name,
                 MC_VERSION: MC_VERSION,
-                MAPPING_CHANNEL: MAPPING_CHANNEL,
-                MAPPING_VERSION: MAPPING_VERSION,
+                MAPPING_CHANNEL: MDK_MAPPING_CHANNEL,
+                MAPPING_VERSION: MDK_MAPPING_VERSION,
                 FORGE_SPEC_VERSION: SPEC_VERSION.split("\\.")[0],
                 MC_NEXT_VERSION: "1."+((MC_VERSION.split("\\.")[1] as int)+1)
             ])
