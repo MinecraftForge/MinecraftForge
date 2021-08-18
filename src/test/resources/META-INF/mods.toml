@@ -143,8 +143,10 @@ license="LGPL v2.1"
 [[mods]]
     modId="send_datapacks_to_client"
 [[mods]]
+    modId="remove_tag_datagen_test"
+[[mods]]
     modId="tag_based_tool_types"
-[[mods]]    
+[[mods]]
     modId="check_spawn_event_test"
 
 # ADD ABOVE THIS LINE
