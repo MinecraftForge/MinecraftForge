@@ -25,6 +25,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -78,6 +79,17 @@ public class RedstoneSidedConnectivityTest
             //This block connects on the east side relative to this block, which is west for the dust
             return direction == Direction.WEST &&
                     world.getBlockEntity(pos.relative(Direction.UP)) instanceof FurnaceBlockEntity;
+        }
+
+        @SuppressWarnings("deprecation")
+        @Override
+        public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+            if (pos.relative(Direction.UP).equals(fromPos)) {
+                //Notify neighbors if the redstone connection may change
+                state.updateNeighbourShapes(world, pos, UPDATE_ALL);
+            }
+
+            super.neighborChanged(state, world, pos, block, fromPos, isMoving);
         }
     }
 }

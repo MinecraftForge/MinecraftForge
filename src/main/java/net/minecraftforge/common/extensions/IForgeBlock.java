@@ -722,11 +722,20 @@ public interface IForgeBlock
 
     /**
      * Whether redstone dust should visually connect to this block on a side
+     *
+     * <p> {@link net.minecraft.world.level.block.RedStoneWireBlock} updates its visual connection when
+     *  "BlockState::updateShape" is called, this callback is used during the evaluation of its new shape.
+     *
      * @param state The current state
      * @param world The world
      * @param pos The block position in world
      * @param direction The coming direction of the redstone dust connection (with respect to the block at pos)
      * @return True if redstone dust should visually connect on the side passed
+     * <p> If the return value is evaluated based on world and pos (e.g. from BlockEntity), then the implementation of
+     *  this block should notify the its neighbors to update their shapes when necessary. Consider using
+     *  "yourBlockState.updateNeighbourShapes(world, yourBlockPos, UPDATE_ALL);" or
+     *  "neighborState.updateShape(fromDirection, stateOfYourBlock, world, neighborBlockPos, yourBlockPos)",
+     *  fromDirection is defined from the neighbor block's point of view.
      */
     default boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction direction)
     {
