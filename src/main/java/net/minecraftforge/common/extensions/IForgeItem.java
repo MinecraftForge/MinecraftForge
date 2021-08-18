@@ -19,18 +19,17 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
 
-import net.minecraft.tags.Tag;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -51,7 +50,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolAction;
 
 // TODO review most of the methods in this "patch"
@@ -795,5 +793,19 @@ public interface IForgeItem
     default boolean isDamageable(ItemStack stack)
     {
         return self().canBeDepleted();
+    }
+    
+    /**
+     * Get a bounding box ({@link AABB}) of a sweep attack.
+     * 
+     * @param statck the stack held by the player.
+     * @param player the performing the attack the attack.
+     * @param target the entity targeted by the attack.
+     * @return the bounding box.
+     */
+    @Nonnull
+    default AABB getSweepHitBox(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull Entity target)
+    {
+        return target.getBoundingBox().inflate(1.0D, 0.25D, 1.0D);
     }
 }
