@@ -40,10 +40,10 @@ public class ParallelDispatchEvent extends ModLifecycleEvent {
     }
 
     public CompletableFuture<Void> enqueueWork(Runnable work) {
-        return getQueue().map(q->q.enqueueWork(getContainer().getModInfo(), work)).orElseThrow(()->new RuntimeException("No work queue found!"));
+        return getQueue().map(q->q.enqueueWork(getContainer(), work)).orElseThrow(()->new RuntimeException("No work queue found!"));
     }
 
     public <T> CompletableFuture<T> enqueueWork(Supplier<T> work) {
-        return getQueue().map(q->q.enqueueWork(getContainer().getModInfo(), work)).orElseThrow(()->new RuntimeException("No work queue found!"));
+        return getQueue().map(q->q.enqueueWork(getContainer(), work)).orElseThrow(()->new RuntimeException("No work queue found!"));
     }
 }
