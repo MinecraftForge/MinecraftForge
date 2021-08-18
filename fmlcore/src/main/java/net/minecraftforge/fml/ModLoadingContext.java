@@ -36,9 +36,9 @@ public class ModLoadingContext
 
     private ModContainer activeContainer;
 
-    public void setActiveContainer(final ModContainer container, final Object languageExtension) {
+    public void setActiveContainer(final ModContainer container) {
         this.activeContainer = container;
-        this.languageExtension = languageExtension;
+        this.languageExtension = container == null ? null : container.contextExtension.get();
     }
 
     public ModContainer getActiveContainer() {
