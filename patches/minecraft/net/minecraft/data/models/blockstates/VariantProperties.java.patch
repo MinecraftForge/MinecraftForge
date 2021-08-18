@@ -1,0 +1,12 @@
+--- a/net/minecraft/data/models/blockstates/VariantProperties.java
++++ b/net/minecraft/data/models/blockstates/VariantProperties.java
+@@ -10,6 +_,9 @@
+    public static final VariantProperty<VariantProperties.Rotation> f_125519_ = new VariantProperty<>("y", (p_125525_) -> {
+       return new JsonPrimitive(p_125525_.f_125534_);
+    });
++   public static final VariantProperty<VariantProperties.Rotation> Z_ROT = new VariantProperty<>("z", (p_125525_) -> {
++      return new JsonPrimitive(p_125525_.f_125534_);
++   });
+    public static final VariantProperty<ResourceLocation> f_125520_ = new VariantProperty<>("model", (p_125527_) -> {
+       return new JsonPrimitive(p_125527_.toString());
+    });
