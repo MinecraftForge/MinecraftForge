@@ -27,7 +27,7 @@
  
        public AttributeSupplier m_22265_() {
           this.f_22263_ = true;
-+         others.forEach(p_70141_ -> p_70141_.f_22263_ = true);
++         others.forEach(b -> b.f_22263_ = true);
           return new AttributeSupplier(this.f_22262_);
        }
     }
