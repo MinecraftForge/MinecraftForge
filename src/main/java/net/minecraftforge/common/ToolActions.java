@@ -100,7 +100,7 @@ public class ToolActions
      *  Exposed by shears to allow disarming tool behaviours (example: disarming trip wire)
      */
     public static final ToolAction SHEARS_DISARM = ToolAction.get("shears_disarm");
-    
+
     ///**
     // *  Passed onto {@link IForgeBlock#getToolModifiedState} when a hoe wants to turn dirt into soil
     // */

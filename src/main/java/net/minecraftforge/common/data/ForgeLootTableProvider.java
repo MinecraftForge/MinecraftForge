@@ -51,7 +51,7 @@ import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 
 /**
- * Currently used only for replacing shears item to shears tag
+ * Currently used only for replacing shears item to shears_dig tool action
  */
 public final class ForgeLootTableProvider extends LootTableProvider {
 
