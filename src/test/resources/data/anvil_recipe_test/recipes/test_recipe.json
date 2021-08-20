@@ -1,0 +1,14 @@
+{
+  "type": "forge:anvil",
+  "base": {
+    "tag": "forge:ingots/iron"
+  },
+  "baseCount": 2,
+  "additional": {
+    "tag": "forge:ingots/gold"
+  },
+  "additionalCount": 4,
+  "result": {
+    "item": "minecraft:diamond"
+  }
+}

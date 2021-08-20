@@ -62,6 +62,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
@@ -121,6 +122,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraftforge.common.crafting.IAnvilRecipe;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
@@ -776,6 +778,7 @@ public class ForgeHooks
     }
 
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
+
     private static LootTableContext getLootTableContext()
     {
         LootTableContext ctx = lootContext.get().peek();
@@ -1348,5 +1351,18 @@ public class ForgeHooks
             newBuilder.combine(v);
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
+    }
+
+    public static IAnvilRecipe.AnvilResult getAnvilResult(AnvilMenu menu, Container inputSlots, Container resultSlots, Player player, String itemName, ContainerLevelAccess access)
+    {
+        return access.evaluate((level, blockPos) -> {
+            var wrapper = new IAnvilRecipe.ContainerWrapper(menu, inputSlots, resultSlots, player, itemName);
+            return level.getRecipeManager()
+                    .getRecipeFor(ForgeMod.ANVIL, wrapper, level)
+                    .map(iAnvilRecipe -> iAnvilRecipe.assemble(wrapper))
+                    .filter(stack -> !stack.isEmpty())
+                    .map(stack -> new IAnvilRecipe.AnvilResult(stack, wrapper.getXpCost(), wrapper.getItemCost(0), wrapper.getItemCost(1)))
+                    .orElse(IAnvilRecipe.AnvilResult.EMPTY);
+        }, IAnvilRecipe.AnvilResult.EMPTY);
     }
 }

@@ -1,0 +1,12 @@
+{
+  "type": "forge:anvil",
+  "base": {
+    "item": "minecraft:glass_bottle"
+  },
+  "baseCount": 16,
+  "result": {
+    "item": "minecraft:experience_bottle",
+    "count": 16
+  },
+  "xpCost": 20
+}

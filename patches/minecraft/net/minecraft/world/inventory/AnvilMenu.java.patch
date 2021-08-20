@@ -1,14 +1,43 @@
 --- a/net/minecraft/world/inventory/AnvilMenu.java
 +++ b/net/minecraft/world/inventory/AnvilMenu.java
-@@ -53,6 +_,8 @@
+@@ -21,6 +_,7 @@
+    private static final boolean f_150469_ = false;
+    public static final int f_150468_ = 50;
+    public int f_39000_;
++   public int baseItemCountCost;
+    private String f_39001_;
+    private final DataSlot f_39002_ = DataSlot.m_39401_();
+    private static final int f_150470_ = 0;
+@@ -45,7 +_,7 @@
+    }
+ 
+    protected boolean m_6560_(Player p_39023_, boolean p_39024_) {
+-      return (p_39023_.m_150110_().f_35937_ || p_39023_.f_36078_ >= this.f_39002_.m_6501_()) && this.f_39002_.m_6501_() > 0;
++      return (p_39023_.m_150110_().f_35937_ || p_39023_.f_36078_ >= this.f_39002_.m_6501_());
+    }
+ 
+    protected void m_142365_(Player p_150474_, ItemStack p_150475_) {
+@@ -53,7 +_,19 @@
           p_150474_.m_6749_(-this.f_39002_.m_6501_());
        }
  
+-      this.f_39769_.m_6836_(0, ItemStack.f_41583_);
 +      float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_150474_, p_150475_, AnvilMenu.this.f_39769_.m_8020_(0), AnvilMenu.this.f_39769_.m_8020_(1));
 +
-       this.f_39769_.m_6836_(0, ItemStack.f_41583_);
++      if (this.baseItemCountCost > 0) {
++         ItemStack itemstack = this.f_39769_.m_8020_(0);
++         if (!itemstack.m_41619_() && itemstack.m_41613_() > this.baseItemCountCost) {
++            itemstack.m_41774_(this.baseItemCountCost);
++            this.f_39769_.m_6836_(0, itemstack);
++         } else {
++            this.f_39769_.m_6836_(0, ItemStack.f_41583_);
++         }
++      } else {
++         this.f_39769_.m_6836_(0, ItemStack.f_41583_);
++      }
        if (this.f_39000_ > 0) {
           ItemStack itemstack = this.f_39769_.m_8020_(1);
+          if (!itemstack.m_41619_() && itemstack.m_41613_() > this.f_39000_) {
 @@ -69,7 +_,7 @@
        this.f_39002_.m_6422_(0);
        this.f_39770_.m_39292_((p_150479_, p_150480_) -> {
@@ -18,6 +47,19 @@
              BlockState blockstate1 = AnvilBlock.m_48824_(blockstate);
              if (blockstate1 == null) {
                 p_150479_.m_7471_(p_150480_, false);
+@@ -86,6 +_,12 @@
+    }
+ 
+    public void m_6640_() {
++      var result = net.minecraftforge.common.ForgeHooks.getAnvilResult(this, f_39769_, f_39768_, f_39771_, f_39001_, f_39770_);
++      this.f_39768_.m_6836_(0, result.result());
++      this.f_39002_.m_6422_(result.xpCost());
++      this.baseItemCountCost = result.baseItemCountCost();
++      this.f_39000_ = result.repairItemCountCost();
++      if (true) return;
+       ItemStack itemstack = this.f_39769_.m_8020_(0);
+       this.f_39002_.m_6422_(1);
+       int i = 0;
 @@ -100,8 +_,11 @@
           Map<Enchantment, Integer> map = EnchantmentHelper.m_44831_(itemstack1);
           j = j + itemstack.m_41610_() + (itemstack2.m_41619_() ? 0 : itemstack2.m_41610_());
