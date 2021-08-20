@@ -76,7 +76,7 @@ public class StructureSpawnManager
         ImmutableMap.Builder<net.minecraft.world.entity.MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> builder = ImmutableMap.builder();
         event.getEntitySpawns().forEach((classification, spawns) -> {
             if (!spawns.isEmpty())
-                builder.put(classification, WeightedRandomList.create());
+                builder.put(classification, WeightedRandomList.create(spawns));
         });
         ImmutableMap<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> entitySpawns = builder.build();
         if (!entitySpawns.isEmpty())

@@ -68,6 +68,7 @@ import java.util.stream.Collectors;
 public class TierSortingRegistry
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final ResourceLocation ITEM_TIER_ORDERING_JSON = new ResourceLocation("forge", "item_tier_ordering.json");
 
     /**
      * Registers a tier into the tier sorting registry.
@@ -258,8 +259,6 @@ public class TierSortingRegistry
     {
         return new SimplePreparableReloadListener<JsonObject>()
         {
-            static final ResourceLocation ITEM_TIER_ORDERING_JSON = new ResourceLocation("forge", "item_tier_ordering.json");
-
             final Gson gson = (new GsonBuilder()).create();
 
             @Nonnull

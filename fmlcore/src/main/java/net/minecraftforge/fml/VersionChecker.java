@@ -22,7 +22,7 @@ package net.minecraftforge.fml;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import net.minecraftforge.fml.loading.FMLConfig;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +33,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -180,8 +179,7 @@ public class VersionChecker
                     Map<String, String> promos = (Map<String, String>)json.get("promos");
                     display_url = (String)json.get("homepage");
 
-//                    String mcVersion = MCPVersion.getMCVersion();
-                    var mcVersion = "1.17";
+                    var mcVersion = FMLLoader.versionInfo().mcVersion();
                     String rec = promos.get(mcVersion + "-recommended");
                     String lat = promos.get(mcVersion + "-latest");
                     ComparableVersion current = new ComparableVersion(mod.getVersion().toString());
