@@ -28,7 +28,6 @@ import static net.minecraftforge.fml.Logging.CAPABILITIES;
 
 /**
  * This event fires when it is time to register your capabilities.
- * @see CapabilityManager
  * @see Capability
  */
 public final class RegisterCapabilitiesEvent extends Event implements IModBusEvent
