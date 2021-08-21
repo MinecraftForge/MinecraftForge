@@ -38,7 +38,10 @@ import org.apache.commons.lang3.StringUtils;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-public record VanillaAnvilRecipe(ResourceLocation id) implements IAnvilRecipe
+/**
+ * Represents the vanilla anvil behavior
+ */
+public record VanillaBlacksmithingRecipe(ResourceLocation id) implements IBlacksmithingRecipe
 {
     @Override
     public boolean matches(final ContainerWrapper container, final Level p_44003_)
@@ -370,26 +373,26 @@ public record VanillaAnvilRecipe(ResourceLocation id) implements IAnvilRecipe
     @Override
     public RecipeSerializer<?> getSerializer()
     {
-        return ForgeMod.VANILLA_ANVIL_SERIALIZER.get();
+        return ForgeMod.VANILLA_BLACKSMITHING_SERIALIZER.get();
     }
 
-    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<VanillaAnvilRecipe>
+    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<VanillaBlacksmithingRecipe>
     {
         @Override
-        public VanillaAnvilRecipe fromJson(final ResourceLocation rl, final JsonObject json)
+        public VanillaBlacksmithingRecipe fromJson(final ResourceLocation rl, final JsonObject json)
         {
-            return new VanillaAnvilRecipe(rl);
+            return new VanillaBlacksmithingRecipe(rl);
         }
 
         @Nullable
         @Override
-        public VanillaAnvilRecipe fromNetwork(final ResourceLocation rl, final FriendlyByteBuf buf)
+        public VanillaBlacksmithingRecipe fromNetwork(final ResourceLocation rl, final FriendlyByteBuf buf)
         {
-            return new VanillaAnvilRecipe(rl);
+            return new VanillaBlacksmithingRecipe(rl);
         }
 
         @Override
-        public void toNetwork(final FriendlyByteBuf buf, final VanillaAnvilRecipe recipe)
+        public void toNetwork(final FriendlyByteBuf buf, final VanillaBlacksmithingRecipe recipe)
         {
         }
     }

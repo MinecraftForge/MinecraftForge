@@ -32,13 +32,16 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 
-public record AnvilRecipe(ResourceLocation id,
-                          Ingredient base,
-                          int baseCount,
-                          Ingredient additional,
-                          int additionalCount,
-                          ItemStack result,
-                          int xpCost) implements IAnvilRecipe
+/**
+ * A generic anvil recipe with 1 or 2 inputs and an output (can have an amount specified for each ingredient and also an experience cost)
+ */
+public record BlacksmithingRecipe(ResourceLocation id,
+                                  Ingredient base,
+                                  int baseCount,
+                                  Ingredient additional,
+                                  int additionalCount,
+                                  ItemStack result,
+                                  int xpCost) implements IBlacksmithingRecipe
 {
     @Override
     public boolean matches(final ContainerWrapper container, final Level level)
@@ -66,15 +69,15 @@ public record AnvilRecipe(ResourceLocation id,
     @Override
     public RecipeSerializer<?> getSerializer()
     {
-        return ForgeMod.ANVIL_SERIALIZER.get();
+        return ForgeMod.BLACKSMITHING_SERIALIZER.get();
     }
 
-    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<AnvilRecipe>
+    public static class Serializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<BlacksmithingRecipe>
     {
         @Override
-        public AnvilRecipe fromJson(final ResourceLocation id, final JsonObject json)
+        public BlacksmithingRecipe fromJson(final ResourceLocation id, final JsonObject json)
         {
-            return new AnvilRecipe(id,
+            return new BlacksmithingRecipe(id,
                     CraftingHelper.getIngredient(json.get("base")),
                     GsonHelper.getAsInt(json, "baseCount", 1),
                     json.has("additional") ? CraftingHelper.getIngredient(json.get("additional")) : Ingredient.of(),
@@ -85,9 +88,9 @@ public record AnvilRecipe(ResourceLocation id,
 
         @Nullable
         @Override
-        public AnvilRecipe fromNetwork(final ResourceLocation id, final FriendlyByteBuf buf)
+        public BlacksmithingRecipe fromNetwork(final ResourceLocation id, final FriendlyByteBuf buf)
         {
-            return new AnvilRecipe(id,
+            return new BlacksmithingRecipe(id,
                     Ingredient.fromNetwork(buf),
                     buf.readInt(),
                     Ingredient.fromNetwork(buf),
@@ -97,7 +100,7 @@ public record AnvilRecipe(ResourceLocation id,
         }
 
         @Override
-        public void toNetwork(final FriendlyByteBuf buf, final AnvilRecipe recipe)
+        public void toNetwork(final FriendlyByteBuf buf, final BlacksmithingRecipe recipe)
         {
             recipe.base().toNetwork(buf);
             buf.writeInt(recipe.baseCount());

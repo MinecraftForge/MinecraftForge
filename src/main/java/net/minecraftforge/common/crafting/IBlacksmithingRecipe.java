@@ -30,7 +30,10 @@ import net.minecraftforge.common.ForgeMod;
 
 import javax.annotation.Nullable;
 
-public interface IAnvilRecipe extends Recipe<IAnvilRecipe.ContainerWrapper>
+/**
+ * Interface representing a recipe for the anvil
+ */
+public interface IBlacksmithingRecipe extends Recipe<IBlacksmithingRecipe.ContainerWrapper>
 {
     @Override
     default boolean canCraftInDimensions(final int p_43999_, final int p_44000_)
@@ -55,7 +58,7 @@ public interface IAnvilRecipe extends Recipe<IAnvilRecipe.ContainerWrapper>
     @Override
     default RecipeType<?> getType()
     {
-        return ForgeMod.ANVIL;
+        return ForgeMod.BLACKSMITHING;
     }
 
     record AnvilResult(ItemStack result, int xpCost, int baseItemCountCost, int repairItemCountCost)
