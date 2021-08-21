@@ -48,6 +48,7 @@ public record VanillaAnvilRecipe(ResourceLocation id) implements IAnvilRecipe
         Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(itemstack);
         int i = 0;
         int j = itemstack.getBaseRepairCost() + (itemstack2.isEmpty() ? 0 : itemstack2.getBaseRepairCost());
+        int k = 0;
         boolean flag = false;
 
         if (!itemstack2.isEmpty()) {
@@ -126,11 +127,25 @@ public record VanillaAnvilRecipe(ResourceLocation id) implements IAnvilRecipe
             }
         }
 
+        if (StringUtils.isBlank(container.getItemName())) {
+            if (itemstack.hasCustomHoverName()) {
+                k = 1;
+                i += k;
+            }
+        } else if (!container.getItemName().equals(itemstack.getHoverName().getString())) {
+            k = 1;
+            i += k;
+        }
         if (flag && !itemstack.isBookEnchantable(itemstack2)) return false;
 
+        int cost = j + i;
         if (i <= 0) return false;
 
-        return container.getXpCost() < 40 || container.getPlayer().getAbilities().instabuild;
+        if (k == i && cost >= 40) {
+            cost = 39;
+        }
+
+        return cost < 40 || container.getPlayer().getAbilities().instabuild;
     }
 
     @Override
