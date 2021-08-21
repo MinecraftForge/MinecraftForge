@@ -81,6 +81,14 @@
        if (flag2) {
           serverplayer.f_8906_.m_141995_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F));
        }
+@@ -563,6 +_,7 @@
+             b0 = (byte)(24 + p_11228_);
+          }
+ 
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerPermissionChangedEvent(p_11227_, p_11228_));
+          p_11227_.f_8906_.m_141995_(new ClientboundEntityEventPacket(p_11227_, b0));
+       }
+ 
 @@ -726,13 +_,6 @@
        if (serverstatscounter == null) {
           File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
