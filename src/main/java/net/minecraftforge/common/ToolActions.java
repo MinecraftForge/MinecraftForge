@@ -21,6 +21,7 @@ package net.minecraftforge.common;
 
 import com.google.common.collect.Sets;
 import net.minecraftforge.common.extensions.IForgeBlock;
+import net.minecraftforge.common.extensions.IForgeItem;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -73,6 +74,13 @@ public class ToolActions
      */
     public static final ToolAction SHOVEL_FLATTEN = ToolAction.get("shovel_flatten");
 
+    /**
+     *  Used during player attack to figure out if a sweep attack should be performed
+     *  
+     *  @see {@link IForgeItem#getSweepHitBox}
+     */
+    public static final ToolAction SWORD_SWEEP = ToolAction.get("sword_sweep");
+    
     ///**
     // *  Passed onto {@link IForgeBlock#getToolModifiedState} when a hoe wants to turn dirt into soil
     // */
@@ -84,5 +92,5 @@ public class ToolActions
     public static final Set<ToolAction> DEFAULT_HOE_ACTIONS = Stream.of(HOE_DIG /* TODO: , HOE_TILL */).collect(Collectors.toCollection(Sets::newIdentityHashSet));
     public static final Set<ToolAction> DEFAULT_SHOVEL_ACTIONS = Stream.of(SHOVEL_DIG, SHOVEL_FLATTEN).collect(Collectors.toCollection(Sets::newIdentityHashSet));
     public static final Set<ToolAction> DEFAULT_PICKAXE_ACTIONS = Stream.of(PICKAXE_DIG).collect(Collectors.toCollection(Sets::newIdentityHashSet));
-    public static final Set<ToolAction> DEFAULT_SWORD_ACTIONS = Stream.of(SWORD_DIG).collect(Collectors.toCollection(Sets::newIdentityHashSet));
+    public static final Set<ToolAction> DEFAULT_SWORD_ACTIONS = Stream.of(SWORD_DIG, SWORD_SWEEP).collect(Collectors.toCollection(Sets::newIdentityHashSet));
 }
