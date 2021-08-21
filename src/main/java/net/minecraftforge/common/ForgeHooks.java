@@ -1352,17 +1352,4 @@ public class ForgeHooks
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
     }
-
-    public static IAnvilRecipe.AnvilResult getAnvilResult(AnvilMenu menu, Container inputSlots, Container resultSlots, Player player, String itemName, ContainerLevelAccess access)
-    {
-        return access.evaluate((level, blockPos) -> {
-            var wrapper = new IAnvilRecipe.ContainerWrapper(menu, inputSlots, resultSlots, player, itemName);
-            return level.getRecipeManager()
-                    .getRecipeFor(ForgeMod.ANVIL, wrapper, level)
-                    .map(iAnvilRecipe -> iAnvilRecipe.assemble(wrapper))
-                    .filter(stack -> !stack.isEmpty())
-                    .map(stack -> new IAnvilRecipe.AnvilResult(stack, wrapper.getXpCost(), wrapper.getItemCost(0), wrapper.getItemCost(1)))
-                    .orElse(IAnvilRecipe.AnvilResult.EMPTY);
-        }, IAnvilRecipe.AnvilResult.EMPTY);
-    }
 }

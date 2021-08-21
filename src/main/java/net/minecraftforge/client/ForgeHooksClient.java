@@ -25,7 +25,10 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.world.Container;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
@@ -92,6 +95,7 @@ import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.crafting.IAnvilRecipe;
 import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -878,5 +882,18 @@ public class ForgeHooksClient
                 rendertypeEntityTranslucentUnlitShader = p_172645_;
             });
         }
+    }
+
+    public static IAnvilRecipe.AnvilResult getAnvilResult(AnvilMenu menu, Container inputSlots, Container resultSlots, Player player, String itemName, ContainerLevelAccess access)
+    {
+        return access.evaluate((level, blockPos) -> {
+            var wrapper = new IAnvilRecipe.ContainerWrapper(menu, inputSlots, resultSlots, player, itemName);
+            return level.getRecipeManager()
+                    .getRecipeFor(ForgeMod.ANVIL, wrapper, level)
+                    .map(iAnvilRecipe -> iAnvilRecipe.assemble(wrapper))
+                    .filter(stack -> !stack.isEmpty())
+                    .map(stack -> new IAnvilRecipe.AnvilResult(stack, wrapper.getXpCost(), wrapper.getItemCost(0), wrapper.getItemCost(1)))
+                    .orElse(IAnvilRecipe.AnvilResult.EMPTY);
+        }, IAnvilRecipe.AnvilResult.EMPTY);
     }
 }
