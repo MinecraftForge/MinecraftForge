@@ -38,6 +38,7 @@ import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryReadOps;
+import net.minecraft.resources.RegistryWriteOps;
 import net.minecraft.server.Bootstrap;
 import net.minecraft.server.Eula;
 import net.minecraft.server.MinecraftServer;
@@ -153,8 +154,10 @@ public class GameTestMain {
 
                 // Forge: Deserialize the DimensionGeneratorSettings to ensure modded dims are loaded on first server load (see SimpleRegistryCodec#decode). Vanilla behaviour only loads from the
                 // server.properties and deserializes only after the 2nd server load.
-                worldgensettings =
-                        WorldGenSettings.CODEC.encodeStart(net.minecraft.resources.RegistryWriteOps.create(NbtOps.INSTANCE, registryHolder), worldgensettings).flatMap(nbt -> WorldGenSettings.CODEC.parse(registryOps, nbt)).getOrThrow(false, errorMsg -> {});
+                worldgensettings = WorldGenSettings.CODEC
+                        .encodeStart(RegistryWriteOps.create(NbtOps.INSTANCE, registryHolder), worldgensettings)
+                        .flatMap(nbt -> WorldGenSettings.CODEC.parse(registryOps, nbt))
+                        .getOrThrow(false, errorMsg -> {});
                 worldData = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
             }
 
