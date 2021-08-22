@@ -85,7 +85,7 @@
              b0 = (byte)(24 + p_11228_);
           }
  
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerPermissionChangedEvent(p_11227_, p_11228_));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new SendPlayerPermissionLevelEvent(p_11227_, p_11228_));
           p_11227_.f_8906_.m_141995_(new ClientboundEntityEventPacket(p_11227_, b0));
        }
  

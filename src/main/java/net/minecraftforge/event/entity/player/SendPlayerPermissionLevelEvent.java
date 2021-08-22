@@ -22,13 +22,16 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
- * This event is fired when a player's permission is changed on the server.<br>
+ * This event is fired on the server when a player's permission level is sent to the client.
+ *
+ * This event will fire on resource reload, when the player's dimension changes, when the player teleports, on respawn,
+ * when the new player is placed in world, and when the player is opped or deopped.
  */
-public class PlayerPermissionChangedEvent extends PlayerEvent
+public class SendPlayerPermissionLevelEvent extends PlayerEvent
 {
     private final int level;
 
-    public PlayerPermissionChangedEvent(ServerPlayer player, int level)
+    public SendPlayerPermissionLevelEvent(ServerPlayer player, int level)
     {
         super(player);
         this.level = level;
