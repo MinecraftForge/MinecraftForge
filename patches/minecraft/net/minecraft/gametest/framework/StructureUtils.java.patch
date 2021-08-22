@@ -1,0 +1,17 @@
+--- a/net/minecraft/gametest/framework/StructureUtils.java
++++ b/net/minecraft/gametest/framework/StructureUtils.java
+@@ -234,11 +_,12 @@
+ 
+    private static StructureTemplate m_127880_(String p_127881_, ServerLevel p_127882_) {
+       StructureManager structuremanager = p_127882_.m_8875_();
+-      Optional<StructureTemplate> optional = structuremanager.m_163774_(new ResourceLocation(p_127881_));
++      ResourceLocation location = new ResourceLocation(p_127881_);
++      Optional<StructureTemplate> optional = structuremanager.m_163774_(location);
+       if (optional.isPresent()) {
+          return optional.get();
+       } else {
+-         String s = p_127881_ + ".snbt";
++         String s = location.m_135815_() + ".snbt";
+          Path path = Paths.get(f_127833_, s);
+          CompoundTag compoundtag = m_127902_(path);
+          if (compoundtag == null) {

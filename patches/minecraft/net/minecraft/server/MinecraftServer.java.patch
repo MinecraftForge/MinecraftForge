@@ -126,7 +126,7 @@
  
           try {
              serverlevel.m_8793_(p_129954_);
-@@ -869,9 +_,11 @@
+@@ -869,16 +_,18 @@
              serverlevel.m_6026_(crashreport);
              throw new ReportedException(crashreport);
           }
@@ -138,6 +138,14 @@
        }
  
        this.f_129754_.m_6182_("connection");
+       this.m_129919_().m_9721_();
+       this.f_129754_.m_6182_("players");
+       this.f_129763_.m_11288_();
+-      if (SharedConstants.f_136183_) {
++      if (SharedConstants.ENABLE_GAMETEST.getAsBoolean()) {
+          GameTestTicker.f_177648_.m_127790_();
+       }
+ 
 @@ -946,7 +_,7 @@
  
     @DontObfuscate
