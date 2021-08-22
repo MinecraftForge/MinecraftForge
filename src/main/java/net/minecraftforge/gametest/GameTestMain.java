@@ -79,6 +79,7 @@ public class GameTestMain {
         OptionSpec<String> savesDirOpt = optionParser.accepts("universe").withRequiredArg().defaultsTo(".");
         OptionSpec<String> saveNameOpt = optionParser.accepts("world").withRequiredArg();
         OptionSpec<BlockPos> spawnPosOpt = optionParser.accepts("spawnPos").withRequiredArg().withValuesConvertedBy(new BlockPosValueConverter()).defaultsTo(new BlockPos(0, 60, 0));
+        OptionSpec<Void> acceptEulaOpt = optionParser.accepts("acceptEula");
         optionParser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
         optionParser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
 
@@ -90,7 +91,7 @@ public class GameTestMain {
             }
             Eula eula = new Eula(Paths.get("eula.txt"));
 
-            if (!eula.hasAgreedToEULA()) {
+            if (!optionSet.has(acceptEulaOpt) && !eula.hasAgreedToEULA()) {
                 LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
                 return;
             }
