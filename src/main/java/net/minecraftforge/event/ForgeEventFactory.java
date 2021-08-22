@@ -129,7 +129,6 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
-import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent;
@@ -344,20 +343,6 @@ public class ForgeEventFactory
     {
         ClientChatEvent event = new ClientChatEvent(message);
         return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
-    }
-
-    //TODO: 1.17 Remove
-    @Deprecated
-    public static int onHoeUse(UseOnContext context)
-    {
-        UseHoeEvent event = new UseHoeEvent(context);
-        if (MinecraftForge.EVENT_BUS.post(event)) return -1;
-        if (event.getResult() == Result.ALLOW)
-        {
-            context.getItemInHand().hurtAndBreak(1, context.getPlayer(), player -> player.broadcastBreakEvent(context.getHand()));
-            return 1;
-        }
-        return 0;
     }
 
     @Nullable
