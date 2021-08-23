@@ -20,12 +20,12 @@
 package net.minecraftforge.fmllegacy.packs;
 
 import net.minecraft.server.packs.AbstractPackResources;
-import net.minecraft.server.packs.ResourcePackFileNotFoundException;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.resources.ResourceLocation;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -66,7 +66,7 @@ public class ModFileResourcePack extends AbstractPackResources
     {
         final Path path = modFile.findResource(name);
         if(!Files.exists(path))
-            throw new ResourcePackFileNotFoundException(modFile.getFilePath().toFile(), name);
+            throw new FileNotFoundException("Can't find resource " + name + " at " + modFile.getFilePath().toString());
         return Files.newInputStream(path, StandardOpenOption.READ);
     }
 
