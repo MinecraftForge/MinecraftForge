@@ -1,13 +1,5 @@
 --- a/net/minecraft/SharedConstants.java
 +++ b/net/minecraft/SharedConstants.java
-@@ -102,6 +_,7 @@
-    public static final long f_136181_ = Duration.ofMillis(300L).toNanos();
-    public static boolean f_136182_ = true;
-    public static boolean f_136183_;
-+   public static final java.util.function.BooleanSupplier ENABLE_GAMETEST = () -> f_136183_ || Boolean.getBoolean("forge.enablegametest");
-    public static final int f_142916_ = 16;
-    public static final int f_142917_ = 256;
-    public static final int f_142918_ = 32500;
 @@ -160,6 +_,7 @@
     }
  

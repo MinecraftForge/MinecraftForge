@@ -5,7 +5,7 @@
        WeatherCommand.m_139166_(this.f_82090_);
        WorldBorderCommand.m_139246_(this.f_82090_);
 -      if (SharedConstants.f_136183_) {
-+      if (SharedConstants.ENABLE_GAMETEST.getAsBoolean()) {
++      if (net.minecraftforge.common.ForgeHooks.isGametestEnabled()) {
           TestCommand.m_127946_(this.f_82090_);
        }
  
@@ -39,7 +39,7 @@
                 return p_82137_.m_131144_(new HoverEvent(HoverEvent.Action.f_130831_, mutablecomponent));
              }));
 -            if (SharedConstants.f_136183_) {
-+            if (SharedConstants.ENABLE_GAMETEST.getAsBoolean()) {
++            if (net.minecraftforge.common.ForgeHooks.isGametestEnabled()) {
                 p_82118_.m_81352_(new TextComponent(Util.m_137575_(exception)));
                 f_82089_.error("'{}' threw an exception", p_82119_, exception);
              }

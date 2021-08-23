@@ -55,6 +55,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.SharedConstants;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -1348,5 +1349,10 @@ public class ForgeHooks
             newBuilder.combine(v);
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
+    }
+
+    public static boolean isGametestEnabled()
+    {
+        return SharedConstants.IS_RUNNING_IN_IDE || Boolean.getBoolean("forge.enablegametest");
     }
 }

@@ -5,7 +5,7 @@
        m_121601_("time", TimeArgument.class, new EmptyArgumentSerializer<>(TimeArgument::m_113037_));
        m_121601_("uuid", UuidArgument.class, new EmptyArgumentSerializer<>(UuidArgument::m_113850_));
 -      if (SharedConstants.f_136183_) {
-+      if (SharedConstants.ENABLE_GAMETEST.getAsBoolean()) {
++      if (net.minecraftforge.common.ForgeHooks.isGametestEnabled()) {
           m_121601_("test_argument", TestFunctionArgument.class, new EmptyArgumentSerializer<>(TestFunctionArgument::m_128088_));
           m_121601_("test_class", TestClassNameArgument.class, new EmptyArgumentSerializer<>(TestClassNameArgument::m_127917_));
        }
