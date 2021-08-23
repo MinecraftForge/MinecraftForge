@@ -1466,8 +1466,6 @@ public class ForgeHooks
             optional.ifPresent((grindingRecipe) -> {
                 ItemStack result = grindingRecipe.assemble(input);
                 output.setItem(0, result);
-                input.getItem(0).shrink(1);
-                input.getItem(1).shrink(1);
             });
         });
     }

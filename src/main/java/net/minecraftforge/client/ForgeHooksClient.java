@@ -59,15 +59,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.GrindstoneContainer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.IWorldPosCallable;
 import net.minecraft.util.MovementInput;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -92,7 +89,6 @@ import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.crafting.GrindingRecipe;
 import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModLoader;
@@ -828,8 +824,7 @@ public class ForgeHooksClient
     public static Optional<BiomeGeneratorTypeScreens> getDefaultWorldType()
     {
         return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
-    }
-    
+    }    
 
     @Nullable
     public static TextureAtlasSprite loadTextureAtlasSprite(

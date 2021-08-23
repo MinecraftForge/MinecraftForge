@@ -44,6 +44,7 @@ import net.minecraft.network.play.server.SCommandListPacket;
 import net.minecraft.network.play.server.SEntityPropertiesPacket;
 import net.minecraft.network.play.server.SUpdateRecipesPacket;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -114,7 +115,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
     }
     
     /**
-     * Filter for SUpdateRecipesPacket. Filters out any ArgumentTypes that are not in the "minecraft" namespace.
+     * Filter for SUpdateRecipesPacket. Filters out any RecipesTypes that are not in the "minecraft" namespace.
      * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
      */
     @Nonnull
@@ -122,7 +123,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
     {
         HashSet<IRecipe<?>> recipes = new HashSet<IRecipe<?>>();
         packet.getRecipes().forEach((recipe) -> {
-            if (recipe.getId().getNamespace().equals("minecraft"))
+            if (Registry.RECIPE_TYPE.getKey(recipe.getType()).getNamespace().equals("minecraft"))
                 {
                 recipes.add(recipe);
                 };
@@ -131,7 +132,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
     }
     
     /**
-     * Filter for SAdvancementInfoPacket. Filters out any ArgumentTypes that are not in the "minecraft" namespace.
+     * Filter for SAdvancementInfoPacket. Filters out any Advancements that are not in the "minecraft" namespace.
      * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
      */
     @Nonnull
