@@ -13,8 +13,7 @@
     CookingRecipeSerializer<CampfireCookingRecipe> field_222174_r = func_222156_a("campfire_cooking", new CookingRecipeSerializer<>(CampfireCookingRecipe::new, 100));
     IRecipeSerializer<StonecuttingRecipe> field_222175_s = func_222156_a("stonecutting", new SingleItemRecipe.Serializer<>(StonecuttingRecipe::new));
     IRecipeSerializer<SmithingRecipe> field_234826_u_ = func_222156_a("smithing", new SmithingRecipe.Serializer());
--
-+   
+
     T func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_);
  
 +   @javax.annotation.Nullable
