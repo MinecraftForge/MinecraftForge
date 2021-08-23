@@ -19,31 +19,30 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Set;
-
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.pattern.BlockInWorld;
-import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.capabilities.INetworkCapability;
 
@@ -89,24 +88,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>, I
         return self().getItem().getBurnTime(self(), recipeType);
     }
 
-    /**
-     * Queries the harvest level of this item stack for the specified tool class,
-     * Returns -1 if this tool is not of the specified type
-     *
-     * @param tool   the tool type of the item
-     * @param player The player trying to harvest the given blockstate
-     * @param state  The block to harvest
-     * @return Harvest level, or -1 if not the specified tool type.
-     */
-    default int getHarvestLevel(ToolType tool, @Nullable Player player, @Nullable BlockState state)
-    {
-        return self().getItem().getHarvestLevel(self(), tool, player, state);
-    }
-
-    default Set<ToolType> getToolTypes() {
-        return self().getItem().getToolTypes(self());
-    }
-
     default InteractionResult onItemUseFirst(UseOnContext context)
     {
        Player entityplayer = context.getPlayer();
@@ -131,6 +112,19 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>, I
         self().save(ret);
         return ret;
     }
+
+    /**
+     * Queries if an item can perform the given action.
+     * See {@link net.minecraftforge.common.ToolActions} for a description of each stock action
+     * @param stack The stack being used
+     * @param toolAction The action being queried
+     * @return True if the stack can perform the action
+     */
+    default boolean canPerformAction(ToolAction toolAction)
+    {
+        return self().getItem().canPerformAction(self(), toolAction);
+    }
+
     /**
      * Called before a block is broken. Return true to prevent default block
      * harvesting.
@@ -497,5 +491,18 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>, I
     default boolean elytraFlightTick(LivingEntity entity, int flightTicks)
     {
         return self().getItem().elytraFlightTick(self(), entity, flightTicks);
+    }
+    
+    /**
+     * Get a bounding box ({@link AABB}) of a sweep attack.
+     * 
+     * @param player the performing the attack the attack.
+     * @param target the entity targeted by the attack.
+     * @return the bounding box.
+     */
+    @Nonnull
+    default AABB getSweepHitBox(@Nonnull Player player, @Nonnull Entity target)
+    {
+        return self().getItem().getSweepHitBox(self(), player, target);
     }
 }

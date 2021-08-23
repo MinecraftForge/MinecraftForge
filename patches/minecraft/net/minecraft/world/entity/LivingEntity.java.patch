@@ -515,7 +515,7 @@
     }
  
     public boolean m_5830_() {
-@@ -3198,6 +_,63 @@
+@@ -3198,6 +_,64 @@
  
     public void m_21190_(InteractionHand p_21191_) {
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
@@ -575,6 +575,7 @@
 +
 +   @Override
 +   public void reviveCaps() {
++      super.reviveCaps();
 +      handlers = net.minecraftforge.items.wrapper.EntityEquipmentInvWrapper.create(this);
     }
  

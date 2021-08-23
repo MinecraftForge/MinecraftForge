@@ -52,7 +52,7 @@ ext {
     EVENTBUS_VERSION = '5.0.3'
     MODLAUNCHER_VERSION = '9.0.7'
     SECUREJARHANDLER_VERSION = '0.9.46'
-    BOOTSTRAPLAUNCHER_VERSION = '0.1.16'
+    BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
     ASM_VERSION = '9.1'
     INSTALLER_VERSION = '2.1.5'
 
@@ -930,6 +930,7 @@ project(':forge') {
                             '--mod', 'scaffolding_test',
                             '--mod', 'custom_tag_types_test',
                             '--mod', 'new_model_loader_test',
+                            '--mod', 'remove_tag_datagen_test',
                             '--output', rootProject.file('src/generated_test/resources/'),
                             '--existing', sourceSets.main.resources.srcDirs[0],
                             '--existing', sourceSets.test.resources.srcDirs[0]

@@ -33,6 +33,7 @@ import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
@@ -154,6 +155,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         WorldPersistenceHooks.addHook(this);
         WorldPersistenceHooks.addHook(new FMLWorldPersistenceHook());
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(this::registerCapabilities);
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::loadComplete);
@@ -172,17 +174,19 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
-        MinecraftForge.EVENT_BUS.register(this);
         BiomeDictionary.init();
+    }
+
+    public void registerCapabilities(RegisterCapabilitiesEvent event)
+    {
+        CapabilityItemHandler.register(event);
+        CapabilityFluidHandler.register(event);
+        CapabilityAnimation.register(event);
+        CapabilityEnergy.register(event);
     }
 
     public void preInit(FMLCommonSetupEvent evt)
     {
-        CapabilityItemHandler.register();
-        CapabilityFluidHandler.register();
-        CapabilityAnimation.register();
-        CapabilityEnergy.register();
-
         VersionChecker.startVersionCheck();
 
         registerArgumentTypes();

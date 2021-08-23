@@ -18,7 +18,7 @@
           if (p_38255_ != null) {
              lootcontext$builder.m_78963_(p_38255_.m_36336_()).m_78972_(LootContextParams.f_81455_, p_38255_);
           }
-@@ -219,4 +_,25 @@
+@@ -219,4 +_,26 @@
     }
  
     protected abstract AbstractContainerMenu m_7402_(int p_38222_, Inventory p_38223_);
@@ -41,6 +41,7 @@
 +
 +   @Override
 +   public void reviveCaps() {
++      super.reviveCaps();
 +      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
 +   }
  }
