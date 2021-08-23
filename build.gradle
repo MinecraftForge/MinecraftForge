@@ -45,7 +45,7 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'parchment'
-    MAPPING_VERSION = '2021.08.15-1.17.1'
+    MAPPING_VERSION = '2021.08.22-1.17.1'
     MDK_MAPPING_CHANNEL = 'official'
     MDK_MAPPING_VERSION = '1.17.1'
     MC_VERSION = '1.17.1'
