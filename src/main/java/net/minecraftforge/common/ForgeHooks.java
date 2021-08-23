@@ -224,26 +224,24 @@ public class ForgeHooks
 
     public static Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> getHoeTillable(UseOnContext context, Pair<Predicate<UseOnContext>, Consumer<UseOnContext>> pair)
     {
-        Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
-        BlockState state = level.getBlockState(pos);
+        BlockState state = context.getLevel().getBlockState(context.getClickedPos());
         // IForgeBlockState#getToolModifiedState has two meanings for null.
         // One means the event was canceled and another means IForgeBlock's corresponding method returned null.
         // Since we have a pair variable to default back to, we need to know whether the event was canceled or not.
         // To do this, we directly call ForgeEventFactory#onToolUse and IForgeBlock#getToolModifiedState.
         // This is so we can make sure to return null if the event was canceled.
-        BlockState eventState = ForgeEventFactory.onToolUse(state, level, pos, context.getPlayer(), context.getItemInHand(), ToolActions.HOE_DIG);
+        BlockState eventState = ForgeEventFactory.onToolUse(context, state, ToolActions.HOE_TILL);
         if (eventState == null) // It was canceled
             return null;
         BlockState modified;
         // If the eventState is equal to state, then the event did not change the state, and we should get the tool modified state from the block
         if (eventState == state) {
-            modified = state.getBlock().getToolModifiedState(state, level, pos, context.getPlayer(), context.getItemInHand(), ToolActions.HOE_DIG);
+            modified = state.getBlock().getToolModifiedState(state, context, ToolActions.HOE_TILL);
         } else {
             // Otherwise, use the event state
             modified = eventState;
         }
-        return modified == null ? pair : Pair.of(ctx -> true, ctx -> level.setBlockAndUpdate(pos, modified));
+        return modified == null ? pair : Pair.of(ctx -> true, ctx -> ctx.getLevel().setBlockAndUpdate(ctx.getClickedPos(), modified));
     }
 
     /**

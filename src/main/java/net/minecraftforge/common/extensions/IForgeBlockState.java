@@ -28,6 +28,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacements.Type;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -48,6 +49,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.event.ForgeEventFactory;
 
 public interface IForgeBlockState
 {
@@ -617,18 +619,15 @@ public interface IForgeBlockState
      * For example: Used to determine if an axe can strip, a shovel can path, or a hoe can till.
      * Return null if vanilla behavior should be disabled.
      *
-     * @param world The world
-     * @param pos The block position in world
-     * @param player The player clicking the block
-     * @param stack The stack being used by the player
-     * @param toolType The tool type to be considered when performing the action
+     * @param context The current use on context initiated by the player
+     * @param toolAction The tool action to be considered
      * @return The resulting state after the action has been performed
      */
     @Nullable
-    default BlockState getToolModifiedState(Level world, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
+    default BlockState getToolModifiedState(UseOnContext context, ToolAction toolAction)
     {
-        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), world, pos, player, stack, toolAction);
-        return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), world, pos, player, stack, toolAction);
+        BlockState eventState = ForgeEventFactory.onToolUse(context, self(), toolAction);
+        return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), context, toolAction);
     }
 
     /**

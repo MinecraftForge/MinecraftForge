@@ -33,6 +33,7 @@ import net.minecraft.world.entity.boss.wither.WitherBoss;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -685,22 +686,19 @@ public interface IForgeBlock
      * Return null if vanilla behavior should be disabled.
      *
      * @param state The current state
-     * @param world The world
-     * @param pos The block position in world
-     * @param player The player clicking the block
-     * @param stack The stack being used by the player
+     * @param context The current use on context initiated by the player
      * @param toolAction The action being performed by the tool
      * @return The resulting state after the action has been performed
      */
     @Nullable
-    default BlockState getToolModifiedState(BlockState state, Level world, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
+    default BlockState getToolModifiedState(BlockState state, UseOnContext context, ToolAction toolAction)
     {
-        if (!stack.canPerformAction(toolAction)) return null;
+        if (!context.getItemInHand().canPerformAction(toolAction)) return null;
         if (ToolActions.AXE_STRIP.equals(toolAction)) return AxeItem.getAxeStrippingState(state);
         else if(ToolActions.AXE_SCRAPE.equals(toolAction)) return WeatheringCopper.getPrevious(state).orElse(null);
-        else if(ToolActions.AXE_WAX_OFF.equals(toolAction)) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map((p_150694_) -> {
-            return p_150694_.withPropertiesOf(state);
-        }).orElse(null);
+        else if(ToolActions.AXE_WAX_OFF.equals(toolAction)) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock()))
+                .map(b -> b.withPropertiesOf(state))
+                .orElse(null);
         else if (ToolActions.SHOVEL_FLATTEN.equals(toolAction)) return ShovelItem.getShovelPathingState(state);
         return null;
     }

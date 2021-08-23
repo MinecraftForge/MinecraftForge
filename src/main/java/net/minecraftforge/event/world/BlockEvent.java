@@ -22,6 +22,7 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -439,30 +440,28 @@ public class BlockEvent extends Event
     public static class BlockToolInteractEvent extends BlockEvent
     {
 
-        private final Player player;
-        private final ItemStack stack;
+        private final UseOnContext context;
         private final ToolAction toolAction;
         private BlockState state;
 
-        public BlockToolInteractEvent(LevelAccessor world, BlockPos pos, BlockState originalState, Player player, ItemStack stack, ToolAction toolAction)
+        public BlockToolInteractEvent(UseOnContext context, BlockState originalState, ToolAction toolAction)
         {
-            super(world, pos, originalState);
-            this.player = player;
-            this.stack = stack;
-            this.state = originalState;
+            super(context.getLevel(), context.getClickedPos(), originalState);
+            this.context = context;
             this.toolAction = toolAction;
+            this.state = originalState;
         }
 
         /**Gets the player using the tool.*/
         public Player getPlayer()
         {
-            return player;
+            return context.getPlayer();
         }
 
         /**Gets the tool being used.*/
         public ItemStack getHeldItemStack()
         {
-            return stack;
+            return context.getItemInHand();
         }
 
         /**Gets the action being performed.*/
@@ -489,6 +488,14 @@ public class BlockEvent extends Event
         public BlockState getFinalState()
         {
             return state;
+        }
+
+        /**
+         * Gets the context of the tool use initiated by the player.
+         */
+        public UseOnContext getContext()
+        {
+            return context;
         }
     }
 }

@@ -45,9 +45,14 @@ public class ToolActions
     public static final ToolAction SHOVEL_DIG = ToolAction.get("shovel_dig");
 
     /**
-     *  Exposed by shovels to allow querying tool behaviours
+     *  Exposed by hoes to allow querying tool behaviours
      */
     public static final ToolAction HOE_DIG = ToolAction.get("hoe_dig");
+
+    /**
+     *  Passed onto {@link IForgeBlock#getToolModifiedState} when a hoe wants to till a block
+     */
+    public static final ToolAction HOE_TILL = ToolAction.get("hoe_till");
 
     /**
      *  Exposed by swords to allow querying tool behaviours
@@ -80,16 +85,11 @@ public class ToolActions
      *  @see {@link IForgeItem#getSweepHitBox}
      */
     public static final ToolAction SWORD_SWEEP = ToolAction.get("sword_sweep");
-    
-    ///**
-    // *  Passed onto {@link IForgeBlock#getToolModifiedState} when a hoe wants to turn dirt into soil
-    // */
-    // TODO: public static final ToolAction HOE_TILL = ToolAction.get("till");
 
 
     // Default actions supported by each tool type
     public static final Set<ToolAction> DEFAULT_AXE_ACTIONS =  Stream.of(AXE_DIG, AXE_STRIP, AXE_SCRAPE, AXE_WAX_OFF).collect(Collectors.toCollection(Sets::newIdentityHashSet));
-    public static final Set<ToolAction> DEFAULT_HOE_ACTIONS = Stream.of(HOE_DIG /* TODO: , HOE_TILL */).collect(Collectors.toCollection(Sets::newIdentityHashSet));
+    public static final Set<ToolAction> DEFAULT_HOE_ACTIONS = Stream.of(HOE_DIG, HOE_TILL).collect(Collectors.toCollection(Sets::newIdentityHashSet));
     public static final Set<ToolAction> DEFAULT_SHOVEL_ACTIONS = Stream.of(SHOVEL_DIG, SHOVEL_FLATTEN).collect(Collectors.toCollection(Sets::newIdentityHashSet));
     public static final Set<ToolAction> DEFAULT_PICKAXE_ACTIONS = Stream.of(PICKAXE_DIG).collect(Collectors.toCollection(Sets::newIdentityHashSet));
     public static final Set<ToolAction> DEFAULT_SWORD_ACTIONS = Stream.of(SWORD_DIG, SWORD_SWEEP).collect(Collectors.toCollection(Sets::newIdentityHashSet));
