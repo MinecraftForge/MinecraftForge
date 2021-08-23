@@ -47,7 +47,7 @@ public class SlotCapabilitiesMessage {
                 .map(player -> player.containerMenu)
                 .filter(menu -> this.slotIndex < menu.slots.size())
                 .map(container -> container.getSlot(this.slotIndex))
-                .ifPresent(slot -> slot.getItem().decode(this.capabilityData)))
+                .ifPresent(slot -> slot.getItem().read(this.capabilityData)))
             .thenRun(this.capabilityData::release);
         return true;
     }

@@ -38,7 +38,7 @@ public class EntityCapabilitiesMessage {
         ctx.get().enqueueWork(
             () -> LogicalSidedProvider.CLIENTWORLD.<Optional<Level>>get(ctx.get().getDirection().getReceptionSide())
                 .map(level -> level.getEntity(this.entityId))
-                .ifPresent(entity -> entity.decode(this.capabilityData)))
+                .ifPresent(entity -> entity.read(this.capabilityData)))
             .thenRun(this.capabilityData::release);
         return true;
     }

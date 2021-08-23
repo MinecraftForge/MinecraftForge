@@ -98,21 +98,21 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         }
     }
 
-    public final void encode(FriendlyByteBuf out, boolean writeAll)
+    public final void write(FriendlyByteBuf out, boolean writeAll)
     {
         final CapabilityDispatcher disp = getCapabilities();
         if (disp != null)
         {
-            disp.encode(out, writeAll);
+            disp.write(out, writeAll);
         }
     }
 
-    public final void decode(FriendlyByteBuf in)
+    public final void read(FriendlyByteBuf in)
     {
         final CapabilityDispatcher disp = getCapabilities();
         if (disp != null)
         {
-            disp.decode(in);
+            disp.read(in);
         }
     }
 

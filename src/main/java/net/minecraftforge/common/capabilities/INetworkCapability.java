@@ -1,8 +1,6 @@
 package net.minecraftforge.common.capabilities;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.nbt.ByteArrayTag;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 
 /**
@@ -11,29 +9,36 @@ import net.minecraft.network.FriendlyByteBuf;
  */
 public interface INetworkCapability {
 
-    void encode(FriendlyByteBuf out, boolean writeAll);
+    /**
+     * Write capabilities to the specified {@link FriendlyByteBuf}.
+     * 
+     * @param out      - the {@link FriendlyByteBuf} to write to
+     * @param writeAll - {@code true} if all data should be written, {@code false}
+     *                 if only dirty data should be written
+     */
+    void write(FriendlyByteBuf out, boolean writeAll);
 
-    void decode(FriendlyByteBuf in);
+    void read(FriendlyByteBuf in);
 
     /**
      * Whether this capability's data is 'dirty' and needs to be sent to the client.
      */
     boolean requiresSync();
 
-    default void encode(CompoundTag nbt, String key, boolean writeAll)
+    default byte[] write(boolean writeAll)
     {
         var buf = new FriendlyByteBuf(Unpooled.buffer());
-        this.encode(buf, writeAll);
+        this.write(buf, writeAll);
         var bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
         buf.release();
-        nbt.put(key, new ByteArrayTag(bytes));
+        return bytes;
     }
 
-    default void decode(CompoundTag nbt, String key)
+    default void readTag(byte[] bytes)
     {
-        var buf = new FriendlyByteBuf(Unpooled.wrappedBuffer(nbt.getByteArray(key)));
-        this.decode(buf);
+        var buf = new FriendlyByteBuf(Unpooled.wrappedBuffer(bytes));
+        this.read(buf);
         buf.release();
     }
 }

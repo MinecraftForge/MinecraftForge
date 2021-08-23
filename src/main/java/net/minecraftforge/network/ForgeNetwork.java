@@ -98,7 +98,7 @@ public class ForgeNetwork {
             && (writeAll || blockEntity.requiresSync()))
         {
             FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            blockEntity.encode(capabilityData, writeAll);
+            blockEntity.write(capabilityData, writeAll);
             if (!capabilityData.isReadable())
             {
                 return;
@@ -120,7 +120,7 @@ public class ForgeNetwork {
             && (writeAll || blockEntity.requiresSync()))
         {
             FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            blockEntity.encode(capabilityData, writeAll);
+            blockEntity.write(capabilityData, writeAll);
             if (!capabilityData.isReadable())
             {
                 return;
@@ -160,7 +160,7 @@ public class ForgeNetwork {
         if (!entity.level.isClientSide() && (writeAll || entity.requiresSync()))
         {
             FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            entity.encode(capabilityData, writeAll);
+            entity.write(capabilityData, writeAll);
             if (!capabilityData.isReadable())
             {
                 return;
@@ -203,7 +203,7 @@ public class ForgeNetwork {
         if (writeAll || itemStack.requiresSync())
         {
             FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            itemStack.encode(capabilityData, writeAll);
+            itemStack.write(capabilityData, writeAll);
             if (!capabilityData.isReadable())
             {
                 return;
@@ -249,7 +249,7 @@ public class ForgeNetwork {
         if (!livingEntity.level.isClientSide() && (writeAll || itemStack.requiresSync()))
         {
             FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            itemStack.encode(capabilityData, writeAll);
+            itemStack.write(capabilityData, writeAll);
             if (!capabilityData.isReadable())
             {
                 return;

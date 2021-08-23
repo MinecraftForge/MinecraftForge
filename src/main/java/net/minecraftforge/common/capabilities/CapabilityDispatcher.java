@@ -154,7 +154,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
     }
 
     @Override
-    public void encode(FriendlyByteBuf out, boolean writeAll)
+    public void write(FriendlyByteBuf out, boolean writeAll)
     {
         for (Map.Entry<String, INetworkCapability> entry : networkCapabilities.entrySet())
         {
@@ -163,7 +163,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
             out.writeBoolean(true);
             out.writeUtf(entry.getKey());
             var tempBuf = new FriendlyByteBuf(Unpooled.buffer());
-            entry.getValue().encode(tempBuf, writeAll);
+            entry.getValue().write(tempBuf, writeAll);
             out.writeVarInt(tempBuf.readableBytes());
             out.writeBytes(tempBuf);
             tempBuf.release();
@@ -172,7 +172,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
     }
 
     @Override
-    public void decode(FriendlyByteBuf in)
+    public void read(FriendlyByteBuf in)
     {
         while (in.readBoolean())
         {
@@ -184,7 +184,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
                 in.readerIndex(in.readerIndex() + dataSize);
                 continue;
             }
-            cap.decode(in);
+            cap.read(in);
         }
     }
 
