@@ -15,11 +15,12 @@
           }
        });
        this.func_75146_a(new Slot(this.field_217013_c, 2, 129, 34) {
-@@ -111,6 +_,7 @@
+@@ -111,6 +_,8 @@
        super.func_75130_a(p_75130_1_);
        if (p_75130_1_ == this.field_217014_d) {
           this.func_217010_e();
-+         net.minecraftforge.client.ForgeHooksClient.grindingHelper(this, field_217015_e, this.field_217014_d, this.field_217013_c);
++         net.minecraftforge.common.ForgeHooks.grindingHelper(field_217015_e, this.field_217014_d, this.field_217013_c);
++         this.func_75142_b();
        }
  
     }

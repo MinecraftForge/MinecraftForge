@@ -829,24 +829,7 @@ public class ForgeHooksClient
     {
         return Optional.of(ForgeWorldTypeScreens.getDefaultGenerator());
     }
-    /**
-     * Adds Grinding recipes to the grinder. Takes the container, the IWorldPosCallable, the input inventory and output inventory.
-     */
-    public static void grindingHelper(GrindstoneContainer container, IWorldPosCallable access, IInventory input, IInventory output)
-    {
-        if (input.getItem(0).isEmpty() && input.getItem(1).isEmpty())
-        {
-            return;
-        }
-        access.execute((level, pos) -> {
-            Optional<GrindingRecipe> optional = level.getRecipeManager().getRecipeFor(ForgeMod.GRINDING, input, level);
-            optional.ifPresent((grindingRecipe) -> {
-                ItemStack result = grindingRecipe.assemble(input);
-                output.setItem(0, result);
-                container.broadcastChanges();
-            });
-        });
-    }
+    
 
     @Nullable
     public static TextureAtlasSprite loadTextureAtlasSprite(

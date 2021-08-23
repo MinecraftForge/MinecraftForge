@@ -30,16 +30,13 @@ import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.ICriterionInstance;
 import net.minecraft.advancements.IRequirementsStrategy;
 import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
-import net.minecraft.block.Blocks;
 import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.Registry;
 import net.minecraftforge.common.crafting.BlacksmithingRecipe;
-import net.minecraftforge.common.crafting.GrindingRecipe;
 
 /**
  * Class for building a blacksmithing recipe. Takes 2 ingredients and the experience cost as crafting materials and an itemstack as result.

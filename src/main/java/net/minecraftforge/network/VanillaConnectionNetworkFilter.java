@@ -19,9 +19,7 @@
 
 package net.minecraftforge.network;
 
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -34,6 +32,7 @@ import javax.annotation.Nonnull;
 
 import io.netty.channel.ChannelHandler;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementList;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.ArgumentTypes;
@@ -52,7 +51,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.mojang.brigadier.tree.RootCommandNode;
 
 /**
@@ -139,15 +137,17 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
     @Nonnull
     private static SAdvancementInfoPacket filterAdvancements(SAdvancementInfoPacket packet)
     {
-    	Collection<Advancement> added = new ArrayList<>();
+    	AdvancementList advancments = new AdvancementList();
+    	Map<ResourceLocation, Advancement.Builder> buildermap = new HashMap<>();
     	Set<ResourceLocation> removed = new HashSet<>();
     	Map<ResourceLocation, AdvancementProgress> progress = new HashMap<>();
         packet.getAdded().forEach((rl, builder) -> {
             if (rl.getNamespace().equals("minecraft"))
                 {
-            	added.add(builder.build(rl));
+                buildermap.put(rl, builder);
                 };
             });
+        advancments.add(buildermap);
         packet.getRemoved().forEach((rl) -> {
         	if (rl.getNamespace().equals("minecraft"))
             {
@@ -161,6 +161,6 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
             };
         });
         
-        return new SAdvancementInfoPacket(packet.shouldReset(), added, removed, progress);
+        return new SAdvancementInfoPacket(packet.shouldReset(), advancments.getAllAdvancements(), removed, progress);
     }
 }

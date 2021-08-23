@@ -20,7 +20,6 @@
 package net.minecraftforge.common.crafting;
 
 import com.google.gson.JsonObject;
-import com.mojang.realmsclient.util.JsonUtils;
 
 import net.minecraft.block.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -112,7 +111,7 @@ public class BlacksmithingRecipe implements IRecipe<IInventory>
             Ingredient base = Ingredient.fromJson(JSONUtils.getAsJsonObject(jsonobj, "base"));
             Ingredient addition = Ingredient.fromJson(JSONUtils.getAsJsonObject(jsonobj, "addition"));
             ItemStack result = ShapedRecipe.itemFromJson(JSONUtils.getAsJsonObject(jsonobj, "result"));
-            int cost = JsonUtils.getIntOr("cost", jsonobj, 0);
+            int cost = JSONUtils.getAsInt(jsonobj, "cost", 0);
             return new BlacksmithingRecipe(id, base, addition, result, cost);
         }
         @Override

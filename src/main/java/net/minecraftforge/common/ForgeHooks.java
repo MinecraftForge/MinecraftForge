@@ -122,7 +122,6 @@ import net.minecraft.world.gen.settings.DimensionGeneratorSettings;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.tileentity.FurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -134,6 +133,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.BiomeAmbience;
 import net.minecraft.world.biome.BiomeGenerationSettings;
 import net.minecraft.world.biome.MobSpawnInfo;
+import net.minecraftforge.common.crafting.GrindingRecipe;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
@@ -1449,6 +1449,26 @@ public class ForgeHooks
             AttributeModifierMap.MutableAttribute newMutable = modifiers != null ? new AttributeModifierMap.MutableAttribute(modifiers) : new AttributeModifierMap.MutableAttribute();
             newMutable.combine(v);
             FORGE_ATTRIBUTES.put(k, newMutable.build());
+        });
+    }
+    
+    /**
+     * Adds Grinding recipes to the grinder. Takes the container, the IWorldPosCallable, the input inventory and output inventory.
+     */
+    public static void grindingHelper(IWorldPosCallable access, IInventory input, IInventory output)
+    {
+        if (input.getItem(0).isEmpty() && input.getItem(1).isEmpty())
+        {
+            return;
+        }
+        access.execute((level, pos) -> {
+            Optional<GrindingRecipe> optional = level.getRecipeManager().getRecipeFor(ForgeMod.GRINDING, input, level);
+            optional.ifPresent((grindingRecipe) -> {
+                ItemStack result = grindingRecipe.assemble(input);
+                output.setItem(0, result);
+                input.getItem(0).shrink(1);
+                input.getItem(1).shrink(1);
+            });
         });
     }
 }
