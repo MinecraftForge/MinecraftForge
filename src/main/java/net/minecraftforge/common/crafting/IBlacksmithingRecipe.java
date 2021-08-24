@@ -78,7 +78,7 @@ public interface IBlacksmithingRecipe extends Recipe<IBlacksmithingRecipe.AnvilC
 
     int getAdditionalItemCost(Level level, AnvilContainerWrapper wrapper);
 
-    record AnvilContainerWrapper(Container inputSlots, Container resultSlots, String itemName, Player player, AnvilMenu menu) implements Container
+    record AnvilContainerWrapper(Container inputSlots, String itemName) implements Container
     {
         @Override
         public void clearContent()
