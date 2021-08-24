@@ -26,6 +26,7 @@ import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 
 import javax.annotation.Nullable;
@@ -33,7 +34,7 @@ import javax.annotation.Nullable;
 /**
  * Interface representing a recipe for the anvil
  */
-public interface IBlacksmithingRecipe extends Recipe<IBlacksmithingRecipe.ContainerWrapper>
+public interface IBlacksmithingRecipe extends Recipe<IBlacksmithingRecipe.AnvilContainerWrapper>
 {
     @Override
     default boolean canCraftInDimensions(final int p_43999_, final int p_44000_)
@@ -55,70 +56,34 @@ public interface IBlacksmithingRecipe extends Recipe<IBlacksmithingRecipe.Contai
 
     ResourceLocation id();
 
+    default boolean canCraft(Level level, Player player, AnvilContainerWrapper container)
+    {
+        return this.matches(container, level) && player.getAbilities().instabuild || player.experienceLevel >= getXpCost(container);
+    }
+
+    int getXpCost(AnvilContainerWrapper wrapper);
+
+    default float getBreakChance(Player player, AnvilContainerWrapper wrapper, ItemStack result)
+    {
+        return 0.12F;
+    }
+
     @Override
     default RecipeType<?> getType()
     {
         return ForgeMod.BLACKSMITHING;
     }
 
-    record AnvilResult(ItemStack result, int xpCost, int baseItemCountCost, int repairItemCountCost)
+    int getBaseItemCost(Level level, AnvilContainerWrapper wrapper);
+
+    int getAdditionalItemCost(Level level, AnvilContainerWrapper wrapper);
+
+    record AnvilContainerWrapper(Container inputSlots, Container resultSlots, String itemName, Player player, AnvilMenu menu) implements Container
     {
-        public static AnvilResult EMPTY = new AnvilResult(ItemStack.EMPTY, 0, 0, 0);
-    }
-
-    class ContainerWrapper implements Container
-    {
-        private final Container inputSlots;
-        private final Container resultSlots;
-        private final Player player;
-        private final AnvilMenu menu;
-        private final int[] itemCost;
-        private String itemName;
-        private int xpCost;
-
-        public ContainerWrapper(AnvilMenu menu, Container inputSlots, Container resultSlots, Player player, String itemName)
-        {
-            this.menu = menu;
-            this.inputSlots = inputSlots;
-            this.resultSlots = resultSlots;
-            this.player = player;
-            this.itemName = itemName;
-            this.itemCost = new int[inputSlots.getContainerSize()];
-        }
-
-        public void setItemName(String itemName)
-        {
-            this.itemName = itemName;
-        }
-
-        public String getItemName()
-        {
-            return itemName;
-        }
-
-        public void setXpCost(int cost)
-        {
-            this.xpCost = cost;
-        }
-
-        public int getXpCost()
-        {
-            return xpCost;
-        }
-
-        public void setItemCost(int slot, int cost)
-        {
-            this.itemCost[slot] = cost;
-        }
-
-        public int getItemCost(int slot)
-        {
-            return this.itemCost[slot];
-        }
-
         @Override
         public void clearContent()
         {
+            throw new UnsupportedOperationException();
         }
 
         @Override
@@ -142,45 +107,31 @@ public interface IBlacksmithingRecipe extends Recipe<IBlacksmithingRecipe.Contai
         @Override
         public ItemStack removeItem(final int p_18942_, final int p_18943_)
         {
-            return ItemStack.EMPTY;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public ItemStack removeItemNoUpdate(final int p_18951_)
         {
-            return ItemStack.EMPTY;
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public void setItem(final int p_18944_, final ItemStack p_18945_)
         {
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public void setChanged()
         {
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public boolean stillValid(final Player p_18946_)
         {
             return inputSlots.stillValid(p_18946_);
-        }
-
-        public Container getResultSlots()
-        {
-            return resultSlots;
-        }
-
-        @Nullable
-        public Player getPlayer()
-        {
-            return player;
-        }
-
-        public AnvilMenu getMenu()
-        {
-            return menu;
         }
     }
 }

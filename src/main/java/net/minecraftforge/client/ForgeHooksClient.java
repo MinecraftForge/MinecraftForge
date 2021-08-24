@@ -119,12 +119,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -880,18 +875,5 @@ public class ForgeHooksClient
                 rendertypeEntityTranslucentUnlitShader = p_172645_;
             });
         }
-    }
-
-    public static IBlacksmithingRecipe.AnvilResult getAnvilResult(AnvilMenu menu, Container inputSlots, Container resultSlots, Player player, String itemName, ContainerLevelAccess access)
-    {
-        return access.evaluate((level, blockPos) -> {
-            var wrapper = new IBlacksmithingRecipe.ContainerWrapper(menu, inputSlots, resultSlots, player, itemName);
-            return level.getRecipeManager()
-                    .getRecipeFor(ForgeMod.BLACKSMITHING, wrapper, level)
-                    .map(iAnvilRecipe -> iAnvilRecipe.assemble(wrapper))
-                    .filter(stack -> !stack.isEmpty())
-                    .map(stack -> new IBlacksmithingRecipe.AnvilResult(stack, wrapper.getXpCost(), wrapper.getItemCost(0), wrapper.getItemCost(1)))
-                    .orElse(IBlacksmithingRecipe.AnvilResult.EMPTY);
-        }, IBlacksmithingRecipe.AnvilResult.EMPTY);
     }
 }

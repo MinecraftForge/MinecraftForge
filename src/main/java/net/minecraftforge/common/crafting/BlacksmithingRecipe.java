@@ -44,7 +44,7 @@ public record BlacksmithingRecipe(ResourceLocation id,
                                   int xpCost) implements IBlacksmithingRecipe
 {
     @Override
-    public boolean matches(final ContainerWrapper container, final Level level)
+    public boolean matches(final IBlacksmithingRecipe.AnvilContainerWrapper container, final Level level)
     {
         var base = container.getItem(0);
         var additional = container.getItem(1);
@@ -52,18 +52,33 @@ public record BlacksmithingRecipe(ResourceLocation id,
     }
 
     @Override
-    public ItemStack assemble(final ContainerWrapper container)
+    public ItemStack assemble(final IBlacksmithingRecipe.AnvilContainerWrapper container)
     {
-        container.setXpCost(xpCost());
-        container.setItemCost(0, baseCount());
-        container.setItemCost(1, additionalCount());
-        return result().copy();
+        return getResultItem();
     }
 
     @Override
     public ItemStack getResultItem()
     {
         return result().copy();
+    }
+
+    @Override
+    public int getXpCost(final AnvilContainerWrapper wrapper)
+    {
+        return xpCost;
+    }
+
+    @Override
+    public int getBaseItemCost(final Level level, final AnvilContainerWrapper wrapper)
+    {
+        return baseCount;
+    }
+
+    @Override
+    public int getAdditionalItemCost(final Level level, final AnvilContainerWrapper wrapper)
+    {
+        return additionalCount;
     }
 
     @Override
