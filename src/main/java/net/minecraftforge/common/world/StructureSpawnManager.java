@@ -111,8 +111,9 @@ public class StructureSpawnManager
      */
     public static WeightedRandomList<MobSpawnSettings.SpawnerData> getSpawnList(StructureFeature<?> structure, MobCategory classification)
     {
-        if (structuresWithSpawns.containsKey(structure))
-            return structuresWithSpawns.get(structure).spawns.getOrDefault(classification, WeightedRandomList.create());
+        StructureSpawnInfo info = structuresWithSpawns.get(structure);
+        if (info != null)
+            return info.spawns.getOrDefault(classification, WeightedRandomList.create());
         return WeightedRandomList.create();
     }
 
