@@ -126,6 +126,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, "forge");
 
+    public static final RegistryObject<RecipeSerializer<?>> CONDITIONAL_SERIALIZER = RECIPE_SERIALIZERS.register("conditional", ConditionalRecipe.Serializer::new);
+
     public static final RegistryObject<RecipeSerializer<?>> BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("brewing", BrewingRecipe.Serializer::new);
     public static final RegistryObject<RecipeSerializer<?>> CONTAINER_BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("container_brewing", ContainerBrewingRecipe.Serializer::new);
     public static final RegistryObject<RecipeSerializer<?>> MIXING_BREWING_SERIALIZER = RECIPE_SERIALIZERS.register("mixing_brewing", MixingBrewingRecipe.Serializer::new);
@@ -316,14 +318,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CraftingHelper.register(TrueCondition.Serializer.INSTANCE);
         CraftingHelper.register(TagEmptyCondition.Serializer.INSTANCE);
 
-        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("forge", "brewing"), BREWING);
-
         CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
 
-        event.getRegistry().register(new ConditionalRecipe.Serializer<Recipe<?>>().setRegistryName(new ResourceLocation("forge", "conditional")));
-
+        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("forge", "brewing"), BREWING);
     }
 
     @SubscribeEvent //ModBus
