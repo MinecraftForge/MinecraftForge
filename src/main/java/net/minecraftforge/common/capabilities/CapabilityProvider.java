@@ -124,6 +124,11 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     protected final @Nullable CompoundNBT serializeCaps()
     {
+        if(isLazy && !initialized)
+        {
+            return lazyData;
+        }
+
         final CapabilityDispatcher disp = getCapabilities();
         if (disp != null)
         {
