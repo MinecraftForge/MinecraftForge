@@ -15,6 +15,18 @@
           }
        });
        this.func_75146_a(new Slot(this.field_217013_c, 2, 129, 34) {
+@@ -62,8 +_,9 @@
+ 
+                p_216944_1_.func_217379_c(1042, p_216944_2_, 0);
+             });
+-            GrindstoneContainer.this.field_217014_d.func_70299_a(0, ItemStack.field_190927_a);
+-            GrindstoneContainer.this.field_217014_d.func_70299_a(1, ItemStack.field_190927_a);
++            GrindstoneContainer.this.field_217014_d.func_70301_a(0).func_190918_g(1);
++            GrindstoneContainer.this.field_217014_d.func_70301_a(1).func_190918_g(1);
++            func_75130_a(GrindstoneContainer.this.field_217014_d);
+             return p_190901_2_;
+          }
+ 
 @@ -111,6 +_,8 @@
        super.func_75130_a(p_75130_1_);
        if (p_75130_1_ == this.field_217014_d) {

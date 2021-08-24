@@ -71,7 +71,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
                 .put(handler(SEntityPropertiesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
                 .put(handler(SCommandListPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
                 .put(handler(SUpdateRecipesPacket.class, VanillaConnectionNetworkFilter::filterRecipes))
-                .put(handler(SAdvancementInfoPacket.class, VanillaConnectionNetworkFilter::filterAdvancements))
+                //.put(handler(SAdvancementInfoPacket.class, VanillaConnectionNetworkFilter::filterAdvancements))
                 .build()
         );
     }

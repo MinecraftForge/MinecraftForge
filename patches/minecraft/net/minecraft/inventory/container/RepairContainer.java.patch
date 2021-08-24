@@ -9,16 +9,25 @@
     }
  
     protected ItemStack func_230301_a_(PlayerEntity p_230301_1_, ItemStack p_230301_2_) {
-@@ -48,6 +_,8 @@
+@@ -48,7 +_,9 @@
           p_230301_1_.func_82242_a(-this.field_82854_e.func_221495_b());
        }
  
+-      this.field_234643_d_.func_70299_a(0, ItemStack.field_190927_a);
 +      float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_230301_1_, p_230301_2_, RepairContainer.this.field_234643_d_.func_70301_a(0), RepairContainer.this.field_234643_d_.func_70301_a(1));
 +
-       this.field_234643_d_.func_70299_a(0, ItemStack.field_190927_a);
++      this.field_234643_d_.func_70301_a(0).func_190918_g(1);
        if (this.field_82856_l > 0) {
           ItemStack itemstack = this.field_234643_d_.func_70301_a(1);
-@@ -64,7 +_,7 @@
+          if (!itemstack.func_190926_b() && itemstack.func_190916_E() > this.field_82856_l) {
+@@ -58,13 +_,13 @@
+             this.field_234643_d_.func_70299_a(1, ItemStack.field_190927_a);
+          }
+       } else {
+-         this.field_234643_d_.func_70299_a(1, ItemStack.field_190927_a);
++         this.field_234643_d_.func_70301_a(1).func_190918_g(1);
+       }
+ 
        this.field_82854_e.func_221494_a(0);
        this.field_234644_e_.func_221486_a((p_234633_1_, p_234633_2_) -> {
           BlockState blockstate = p_234633_1_.func_180495_p(p_234633_2_);
@@ -27,6 +36,14 @@
              BlockState blockstate1 = AnvilBlock.func_196433_f(blockstate);
              if (blockstate1 == null) {
                 p_234633_1_.func_217377_a(p_234633_2_, false);
+@@ -78,6 +_,7 @@
+          }
+ 
+       });
++      func_75130_a(field_234643_d_);
+       return p_230301_2_;
+    }
+ 
 @@ -96,8 +_,11 @@
           Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
           j = j + itemstack.func_82838_A() + (itemstack2.func_190926_b() ? 0 : itemstack2.func_82838_A());
