@@ -776,7 +776,6 @@ public class ForgeHooks
     }
 
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
-
     private static LootTableContext getLootTableContext()
     {
         LootTableContext ctx = lootContext.get().peek();
