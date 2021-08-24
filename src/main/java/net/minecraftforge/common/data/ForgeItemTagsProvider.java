@@ -123,6 +123,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         tag(Tags.Items.SEEDS_MELON).add(Items.MELON_SEEDS);
         tag(Tags.Items.SEEDS_PUMPKIN).add(Items.PUMPKIN_SEEDS);
         tag(Tags.Items.SEEDS_WHEAT).add(Items.WHEAT_SEEDS);
+        tag(Tags.Items.SHEARS).add(Items.SHEARS);
         tag(Tags.Items.SLIMEBALLS).add(Items.SLIME_BALL);
         copy(Tags.Blocks.STAINED_GLASS, Tags.Items.STAINED_GLASS);
         copy(Tags.Blocks.STAINED_GLASS_PANES, Tags.Items.STAINED_GLASS_PANES);

@@ -87,17 +87,20 @@ public class ToolActions
     public static final ToolAction SWORD_SWEEP = ToolAction.get("sword_sweep");
 
     /**
-     *  Exposed by shears to allow harvesting tool behaviours (example: harvesting beehives)
+     *  This action is exposed by shears and corresponds to a harvest action that is triggered with a right click on a block that supports such behaviour.
+     *  Example: Right click with shears on a beehive with honey level 5 to harvest it
      */
     public static final ToolAction SHEARS_HARVEST = ToolAction.get("shears_harvest");
 
     /**
-     *  Exposed by shears to allow carving tool behaviours (example: carving pumpkins)
+     *  This action is exposed by shears and corresponds to a carve action that is triggered with a right click on a block that supports such behaviour.
+     *  Example: Right click with shears o a pumpkin to carve it
      */
     public static final ToolAction SHEARS_CARVE = ToolAction.get("shears_carve");
 
     /**
-     *  Exposed by shears to allow disarming tool behaviours (example: disarming trip wire)
+     *  This action is exposed by shears and corresponds to a disarm action that is triggered by breaking a block that supports such behaviour.
+     *  Example: Breaking a trip wire with shears to disarm it.
      */
     public static final ToolAction SHEARS_DISARM = ToolAction.get("shears_disarm");
 
@@ -108,10 +111,14 @@ public class ToolActions
 
 
     // Default actions supported by each tool type
-    public static final Set<ToolAction> DEFAULT_AXE_ACTIONS =  Stream.of(AXE_DIG, AXE_STRIP, AXE_SCRAPE, AXE_WAX_OFF).collect(Collectors.toCollection(Sets::newIdentityHashSet));
-    public static final Set<ToolAction> DEFAULT_HOE_ACTIONS = Stream.of(HOE_DIG /* TODO: , HOE_TILL */).collect(Collectors.toCollection(Sets::newIdentityHashSet));
-    public static final Set<ToolAction> DEFAULT_SHOVEL_ACTIONS = Stream.of(SHOVEL_DIG, SHOVEL_FLATTEN).collect(Collectors.toCollection(Sets::newIdentityHashSet));
-    public static final Set<ToolAction> DEFAULT_PICKAXE_ACTIONS = Stream.of(PICKAXE_DIG).collect(Collectors.toCollection(Sets::newIdentityHashSet));
-    public static final Set<ToolAction> DEFAULT_SWORD_ACTIONS = Stream.of(SWORD_DIG, SWORD_SWEEP).collect(Collectors.toCollection(Sets::newIdentityHashSet));
-    public static final Set<ToolAction> DEFAULT_SHEARS_ACTIONS = Stream.of(SHEARS_DIG, SHEARS_HARVEST, SHEARS_CARVE, SHEARS_DISARM).collect(Collectors.toCollection(Sets::newIdentityHashSet));
+    public static final Set<ToolAction> DEFAULT_AXE_ACTIONS = of(AXE_DIG, AXE_STRIP, AXE_SCRAPE, AXE_WAX_OFF);
+    public static final Set<ToolAction> DEFAULT_HOE_ACTIONS = of(HOE_DIG /* TODO: , HOE_TILL */);
+    public static final Set<ToolAction> DEFAULT_SHOVEL_ACTIONS = of(SHOVEL_DIG, SHOVEL_FLATTEN);
+    public static final Set<ToolAction> DEFAULT_PICKAXE_ACTIONS = of(PICKAXE_DIG);
+    public static final Set<ToolAction> DEFAULT_SWORD_ACTIONS = of(SWORD_DIG, SWORD_SWEEP);
+    public static final Set<ToolAction> DEFAULT_SHEARS_ACTIONS = of(SHEARS_DIG, SHEARS_HARVEST, SHEARS_CARVE, SHEARS_DISARM);
+
+    private static Set<ToolAction> of(ToolAction... actions) {
+        return Stream.of(actions).collect(Collectors.toCollection(Sets::newIdentityHashSet));
+    }
 }
