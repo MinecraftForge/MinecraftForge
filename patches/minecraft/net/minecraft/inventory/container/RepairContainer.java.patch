@@ -16,7 +16,7 @@
 -      this.field_234643_d_.func_70299_a(0, ItemStack.field_190927_a);
 +      float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_230301_1_, p_230301_2_, RepairContainer.this.field_234643_d_.func_70301_a(0), RepairContainer.this.field_234643_d_.func_70301_a(1));
 +
-+      this.field_234643_d_.func_70301_a(0).func_190918_g(1);
++      this.field_234643_d_.func_70298_a(0,1);
        if (this.field_82856_l > 0) {
           ItemStack itemstack = this.field_234643_d_.func_70301_a(1);
           if (!itemstack.func_190926_b() && itemstack.func_190916_E() > this.field_82856_l) {
@@ -25,7 +25,7 @@
           }
        } else {
 -         this.field_234643_d_.func_70299_a(1, ItemStack.field_190927_a);
-+         this.field_234643_d_.func_70301_a(1).func_190918_g(1);
++         this.field_234643_d_.func_70298_a(1, 1);
        }
  
        this.field_82854_e.func_221494_a(0);
@@ -36,14 +36,6 @@
              BlockState blockstate1 = AnvilBlock.func_196433_f(blockstate);
              if (blockstate1 == null) {
                 p_234633_1_.func_217377_a(p_234633_2_, false);
-@@ -78,6 +_,7 @@
-          }
- 
-       });
-+      func_75130_a(field_234643_d_);
-       return p_230301_2_;
-    }
- 
 @@ -96,8 +_,11 @@
           Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
           j = j + itemstack.func_82838_A() + (itemstack2.func_190926_b() ? 0 : itemstack2.func_82838_A());
