@@ -309,7 +309,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
 
-        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("forge", "anvil"), BLACKSMITHING);
+        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("forge", "blacksmithing"), BLACKSMITHING);
 
     }
 
