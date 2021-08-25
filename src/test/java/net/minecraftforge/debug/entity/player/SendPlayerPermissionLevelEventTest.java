@@ -25,7 +25,7 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod("send_player_permission_level_test")
+@Mod("send_player_permission_level_event_test")
 @Mod.EventBusSubscriber
 public class SendPlayerPermissionLevelEventTest
 {
