@@ -586,7 +586,7 @@ project(':fmlonly') {
         }
     }
 
-    task installerJson(type: InstallerJson) {
+    task installerJson(type: InstallerJson, dependsOn: 'signUniversalJar') {
         icon = rootProject.file('icon.ico')
         packedDependencies = PACKED_DEPS
 
@@ -1094,7 +1094,7 @@ project(':forge') {
         }
     }
 
-    task installerJson(type: InstallerJson, dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches]) {
+    task installerJson(type: InstallerJson, dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches, 'signUniversalJar']) {
         ext {
             // remove :fatjar
             BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())
