@@ -1,16 +1,14 @@
 --- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
 +++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
-@@ -72,7 +_,17 @@
+@@ -72,7 +_,16 @@
        return this.m_157538_(p_157534_, false);
     }
  
--   private boolean m_157538_(T p_157539_, boolean p_157540_) {
 +   public boolean addNewEntityWithoutEvent(T p_157534_) {
 +      return this.addEntityWithoutEvent(p_157534_, false);
 +   }
 +
-+   private boolean m_157538_(T p_157539_, boolean p_157540_)
-+   {
+    private boolean m_157538_(T p_157539_, boolean p_157540_) {
 +      if (p_157539_ instanceof Entity entity && net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(entity, entity.f_19853_, p_157540_))) return false;
 +      return addEntityWithoutEvent(p_157539_, p_157540_);
 +   }
