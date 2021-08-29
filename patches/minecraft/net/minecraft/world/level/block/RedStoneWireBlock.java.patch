@@ -22,7 +22,7 @@
     }
  
     public boolean m_7898_(BlockState p_55585_, LevelReader p_55586_, BlockPos p_55587_) {
-@@ -350,11 +_,15 @@
+@@ -350,10 +_,14 @@
        }
     }
  
@@ -32,10 +32,8 @@
        return m_55594_(p_55641_, (Direction)null);
     }
  
--   protected static boolean m_55594_(BlockState p_55595_, @Nullable Direction p_55596_) {
 +   //Forge: Do not use, use IForgeBlockState::canRedstoneConnectTo
 +   @Deprecated
-+   public static boolean m_55594_(BlockState p_55595_, @Nullable Direction p_55596_) {
+    public static boolean m_55594_(BlockState p_55595_, @Nullable Direction p_55596_) {
        if (p_55595_.m_60713_(Blocks.f_50088_)) {
           return true;
-       } else if (p_55595_.m_60713_(Blocks.f_50146_)) {
