@@ -185,6 +185,26 @@ public class MinecraftForgeClient
         return textureAtlasSpriteLoaders.get(name);
     }
 
+    private static final Map<Class<? extends TooltipComponent>, Function<TooltipComponent, ClientTooltipComponent>> tooltipComponentFactories = new ConcurrentHashMap<>();
+
+    /**
+     * Register a factory for ClientTooltipComponents.
+     * @param cls the class for the component
+     * @param factory the factory for the ClientTooltipComponent
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends TooltipComponent> void registerTooltipComponentFactory(Class<T> cls, Function<? super T, ? extends ClientTooltipComponent> factory)
+    {
+        tooltipComponentFactories.put(cls, (Function<TooltipComponent, ClientTooltipComponent>) factory);
+    }
+
+    @Nullable
+    public static ClientTooltipComponent getClientTooltipComponent(TooltipComponent component)
+    {
+        var factory = tooltipComponentFactories.get(component.getClass());
+        return factory == null ? null : factory.apply(component);
+    }
+
     public static List<ClientTooltipComponent> gatherTooltipComponents(List<? extends FormattedText> textElements, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font)
     {
         return gatherTooltipComponents(textElements, Optional.empty(), mouseX, mouseY, screenWidth, screenHeight, font);
