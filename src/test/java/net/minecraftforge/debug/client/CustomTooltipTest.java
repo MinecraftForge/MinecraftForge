@@ -9,7 +9,9 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,7 +32,7 @@ public class CustomTooltipTest
     static final String ID = "custom_tooltip_test";
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ID);
-    static final RegistryObject<Item> CUSTOM_ITEM = ITEMS.register("test_item", () -> new CustomItem(new Item.Properties()));
+    static final RegistryObject<Item> CUSTOM_ITEM = ITEMS.register("test_item", () -> new CustomItemWithTooltip(new Item.Properties()));
 
     public CustomTooltipTest()
     {
@@ -44,7 +46,7 @@ public class CustomTooltipTest
         }
     }
 
-    static record CustomTooltip(String text) implements TooltipComponent
+    static record CustomTooltip(int color) implements TooltipComponent
     {
     }
 
@@ -63,19 +65,19 @@ public class CustomTooltipTest
 
         @Override
         public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_, int zIndex, TextureManager textureManager) {
-            GuiComponent.fill(poseStack, x, y,  x + 10, y+ 10, 0xFFFF0000);
+            GuiComponent.fill(poseStack, x, y,  x + 10, y+ 10, tooltip.color);
         }
     }
 
-    static class CustomItem extends Item
+    static class CustomItemWithTooltip extends Item
     {
-        public CustomItem(Properties properties) {
+        public CustomItemWithTooltip(Properties properties) {
             super(properties);
         }
 
         @Override
         public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
-            return Optional.of(new CustomTooltip("Cool text"));
+            return Optional.of(new CustomTooltip(0xFFFF0000));
         }
     }
 
@@ -93,6 +95,27 @@ public class CustomTooltipTest
 
     private static class ClientEventHandler
     {
+
+        @SubscribeEvent
+        public static void gatherTooltips(RenderTooltipEvent.GatherComponents event)
+        {
+            if (event.getStack().getItem() == Items.STICK)
+            {
+                event.getComponents().add(new CustomClientTooltip(new CustomTooltip(0xFF0000FF)));
+            }
+        }
+
+        @SubscribeEvent
+        public static void preTooltip(RenderTooltipEvent.Color event)
+        {
+            if (event.getStack().getItem() == Items.APPLE)
+            {
+                event.setBackground(0xFF0000FF);
+                event.setBorderStart(0xFFFF0000);
+                event.setBorderEnd(0xFFFFFF00);
+            }
+        }
+
     }
 
 
