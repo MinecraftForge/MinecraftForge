@@ -132,10 +132,6 @@ public class Tags
          * Ores which on average result in less than one resource worth of materials
          */
         public static final IOptionalNamedTag<Block> ORES_SPARSE = tag("ores/sparse");
-        public static final IOptionalNamedTag<Block> RAW_STORAGE_BLOCKS = tag("raw_storage_blocks");
-        public static final IOptionalNamedTag<Block> RAW_STORAGE_BLOCKS_COPPER = tag("raw_storage_blocks/copper");
-        public static final IOptionalNamedTag<Block> RAW_STORAGE_BLOCKS_GOLD = tag("raw_storage_blocks/gold");
-        public static final IOptionalNamedTag<Block> RAW_STORAGE_BLOCKS_IRON = tag("raw_storage_blocks/iron");
 
         public static final IOptionalNamedTag<Block> SAND = tag("sand");
         public static final IOptionalNamedTag<Block> SAND_COLORLESS = tag("sand/colorless");
@@ -156,6 +152,9 @@ public class Tags
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
+        public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_RAW_COPPER = tag("storage_blocks/raw_copper");
+        public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_RAW_GOLD = tag("storage_blocks/raw_gold");
+        public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_RAW_IRON = tag("storage_blocks/raw_iron");
         public static final IOptionalNamedTag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
 
         public static final IOptionalNamedTag<Block> NEEDS_WOOD_TOOL = tag("needs_wood_tool");
@@ -316,10 +315,6 @@ public class Tags
         public static final IOptionalNamedTag<Item> RAW_ORES_COPPER = tag("raw_ores/copper");
         public static final IOptionalNamedTag<Item> RAW_ORES_GOLD = tag("raw_ores/gold");
         public static final IOptionalNamedTag<Item> RAW_ORES_IRON = tag("raw_ores/iron");
-        public static final IOptionalNamedTag<Item> RAW_STORAGE_BLOCKS = tag("raw_storage_blocks");
-        public static final IOptionalNamedTag<Item> RAW_STORAGE_BLOCKS_COPPER = tag("raw_storage_blocks/copper");
-        public static final IOptionalNamedTag<Item> RAW_STORAGE_BLOCKS_GOLD = tag("raw_storage_blocks/gold");
-        public static final IOptionalNamedTag<Item> RAW_STORAGE_BLOCKS_IRON = tag("raw_storage_blocks/iron");
         public static final IOptionalNamedTag<Item> RODS = tag("rods");
         public static final IOptionalNamedTag<Item> RODS_BLAZE = tag("rods/blaze");
         public static final IOptionalNamedTag<Item> RODS_WOODEN = tag("rods/wooden");
@@ -350,6 +345,9 @@ public class Tags
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_NETHERITE = tag("storage_blocks/netherite");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
+        public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_RAW_COPPER = tag("storage_blocks/raw_copper");
+        public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_RAW_GOLD = tag("storage_blocks/raw_gold");
+        public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_RAW_IRON = tag("storage_blocks/raw_iron");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final IOptionalNamedTag<Item> STRING = tag("string");
 

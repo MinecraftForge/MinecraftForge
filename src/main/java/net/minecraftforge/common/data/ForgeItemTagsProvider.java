@@ -124,10 +124,6 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         tag(Tags.Items.RAW_ORES_COPPER).add(Items.RAW_COPPER);
         tag(Tags.Items.RAW_ORES_GOLD).add(Items.RAW_GOLD);
         tag(Tags.Items.RAW_ORES_IRON).add(Items.RAW_IRON);
-        copy(Tags.Blocks.RAW_STORAGE_BLOCKS, Tags.Items.RAW_STORAGE_BLOCKS);
-        copy(Tags.Blocks.RAW_STORAGE_BLOCKS_COPPER, Tags.Items.RAW_STORAGE_BLOCKS_COPPER);
-        copy(Tags.Blocks.RAW_STORAGE_BLOCKS_GOLD, Tags.Items.RAW_STORAGE_BLOCKS_GOLD);
-        copy(Tags.Blocks.RAW_STORAGE_BLOCKS_IRON, Tags.Items.RAW_STORAGE_BLOCKS_IRON);
         tag(Tags.Items.RODS).addTags(Tags.Items.RODS_BLAZE, Tags.Items.RODS_WOODEN);
         tag(Tags.Items.RODS_BLAZE).add(Items.BLAZE_ROD);
         tag(Tags.Items.RODS_WOODEN).add(Items.STICK);
@@ -156,6 +152,9 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.STORAGE_BLOCKS_LAPIS, Tags.Items.STORAGE_BLOCKS_LAPIS);
         copy(Tags.Blocks.STORAGE_BLOCKS_QUARTZ, Tags.Items.STORAGE_BLOCKS_QUARTZ);
         copy(Tags.Blocks.STORAGE_BLOCKS_REDSTONE, Tags.Items.STORAGE_BLOCKS_REDSTONE);
+        copy(Tags.Blocks.STORAGE_BLOCKS_RAW_COPPER, Tags.Items.STORAGE_BLOCKS_RAW_COPPER);
+        copy(Tags.Blocks.STORAGE_BLOCKS_RAW_GOLD, Tags.Items.STORAGE_BLOCKS_RAW_GOLD);
+        copy(Tags.Blocks.STORAGE_BLOCKS_RAW_IRON, Tags.Items.STORAGE_BLOCKS_RAW_IRON);
         copy(Tags.Blocks.STORAGE_BLOCKS_NETHERITE, Tags.Items.STORAGE_BLOCKS_NETHERITE);
         tag(Tags.Items.STRING).add(Items.STRING);
     }
