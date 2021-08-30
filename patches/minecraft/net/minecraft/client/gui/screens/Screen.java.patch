@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/Screen.java
 +++ b/net/minecraft/client/gui/screens/Screen.java
-@@ -162,15 +_,18 @@
+@@ -162,15 +_,23 @@
        this.f_169368_.clear();
     }
  
@@ -14,6 +14,11 @@
 +      tooltipStack = ItemStack.f_41583_;
     }
  
++   public void renderTooltip(PoseStack p_169389_, List<Component> p_169390_, Optional<TooltipComponent> p_169391_, int p_169392_, int p_169393_, Font font) {
++      this.tooltipFont = font;
++      this.m_169388_(p_169389_, p_169390_, p_169391_, p_169392_, p_169393_);
++      this.tooltipFont = null;
++   }
     public void m_169388_(PoseStack p_169389_, List<Component> p_169390_, Optional<TooltipComponent> p_169391_, int p_169392_, int p_169393_) {
 -      List<ClientTooltipComponent> list = p_169390_.stream().map(Component::m_7532_).map(ClientTooltipComponent::m_169948_).collect(Collectors.toList());
 -      p_169391_.ifPresent((p_169399_) -> {
