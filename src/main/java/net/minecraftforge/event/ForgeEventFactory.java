@@ -252,7 +252,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.getDisplayname();
     }
-
+    
     public static Component getPlayerTabListDisplayName(Player player)
     {
         PlayerEvent.TabListNameFormat event = new PlayerEvent.TabListNameFormat(player);
