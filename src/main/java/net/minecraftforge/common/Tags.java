@@ -311,10 +311,10 @@ public class Tags
         public static final IOptionalNamedTag<Item> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final IOptionalNamedTag<Item> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Item> ORES_REDSTONE = tag("ores/redstone");
-        public static final IOptionalNamedTag<Item> RAW_ORES = tag("raw_ores");
-        public static final IOptionalNamedTag<Item> RAW_ORES_COPPER = tag("raw_ores/copper");
-        public static final IOptionalNamedTag<Item> RAW_ORES_GOLD = tag("raw_ores/gold");
-        public static final IOptionalNamedTag<Item> RAW_ORES_IRON = tag("raw_ores/iron");
+        public static final IOptionalNamedTag<Item> RAW_MATERIALS = tag("raw_materials");
+        public static final IOptionalNamedTag<Item> RAW_MATERIALS_COPPER = tag("raw_materials/copper");
+        public static final IOptionalNamedTag<Item> RAW_MATERIALS_GOLD = tag("raw_materials/gold");
+        public static final IOptionalNamedTag<Item> RAW_MATERIALS_IRON = tag("raw_materials/iron");
         public static final IOptionalNamedTag<Item> RODS = tag("rods");
         public static final IOptionalNamedTag<Item> RODS_BLAZE = tag("rods/blaze");
         public static final IOptionalNamedTag<Item> RODS_WOODEN = tag("rods/wooden");
