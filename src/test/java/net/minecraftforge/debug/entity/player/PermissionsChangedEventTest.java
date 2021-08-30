@@ -19,28 +19,24 @@
 
 package net.minecraftforge.debug.entity.player;
 
-import net.minecraftforge.event.entity.player.SendPlayerPermissionLevelEvent;
+import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod("send_player_permission_level_event_test")
+@Mod("permissions_changed_event_test")
 @Mod.EventBusSubscriber
-public class SendPlayerPermissionLevelEventTest
+public class PermissionsChangedEventTest
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @SubscribeEvent
-    public static void sendPlayerPermissionEvent(SendPlayerPermissionLevelEvent event)
+    public static void onPermissionChanged(PermissionsChangedEvent event)
     {
-        if (event.getLevel() == 0)
-        {
-            LOGGER.info("Updating no-op features for player {}", event.getPlayer().getName().getString());
-        }
-        else if (event.getLevel() > 0)
-        {
-            LOGGER.info("Updating op features for player {}", event.getPlayer().getName().getString());
-        }
+        LOGGER.info("{} permission level changed to {} from {}",
+                event.getPlayer().getName().getString(),
+                event.getNewLevel(),
+                event.getOldLevel());
     }
 }

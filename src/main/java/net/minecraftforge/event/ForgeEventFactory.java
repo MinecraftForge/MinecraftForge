@@ -26,9 +26,11 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
@@ -121,6 +123,7 @@ import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
@@ -249,7 +252,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.getDisplayname();
     }
-    
+
     public static Component getPlayerTabListDisplayName(Player player)
     {
         PlayerEvent.TabListNameFormat event = new PlayerEvent.TabListNameFormat(player);
@@ -781,5 +784,21 @@ public class ForgeEventFactory
         EntityTeleportEvent.ChorusFruit event = new EntityTeleportEvent.ChorusFruit(entity, targetX, targetY, targetZ);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
+    }
+
+    public static boolean onPermissionChanged(GameProfile gameProfile, boolean op, PlayerList playerList)
+    {
+        int newLevel = 0;
+        int oldLevel = playerList.getServer().getProfilePermissions(gameProfile);
+        ServerPlayer player = playerList.getPlayer(gameProfile.getId());
+        if(op)
+        {
+            newLevel = playerList.getServer().getOperatorUserPermissionLevel();
+        }
+        if(newLevel != oldLevel && player != null)
+        {
+            return MinecraftForge.EVENT_BUS.post(new PermissionsChangedEvent(player, newLevel, oldLevel));
+        }
+        return true;
     }
 }

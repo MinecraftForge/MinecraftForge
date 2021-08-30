@@ -149,6 +149,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="check_spawn_event_test"
 [[mods]]
-    modId="send_player_permission_level_event_test"
+    modId="permissions_changed_event_test"
 
 # ADD ABOVE THIS LINE

@@ -20,25 +20,37 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
- * This event will fire on the server when the player's permission level changes, but will also fire at other times when the game syncs the permission level to the client.
+ * This event will fire when the player is opped or deopped.
+ * This event is cancelable.
  */
-public class SendPlayerPermissionLevelEvent extends PlayerEvent
+@Cancelable
+public class PermissionsChangedEvent extends PlayerEvent
 {
-    private final int level;
+    private final int newLevel;
+    private final int oldLevel;
 
-    public SendPlayerPermissionLevelEvent(ServerPlayer player, int level)
+    public PermissionsChangedEvent(ServerPlayer player, int newLevel, int oldLevel)
     {
         super(player);
-        this.level = level;
+        this.oldLevel = oldLevel;
+        this.newLevel = newLevel;
     }
 
     /**
-     * @return The permission level.
+     * @return The new permission level.
      */
-    public int getLevel()
+    public int getNewLevel()
     {
-        return level;
+        return newLevel;
+    }
+    /**
+     * @return The old permission level.
+     */
+    public int getOldLevel()
+    {
+        return oldLevel;
     }
 }
