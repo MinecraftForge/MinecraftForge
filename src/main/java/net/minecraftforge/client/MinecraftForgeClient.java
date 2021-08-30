@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -206,10 +207,25 @@ public class MinecraftForgeClient
         return factory == null ? null : factory.apply(component);
     }
 
+    public static RenderTooltipEvent.Pre preTooltipEvent(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
+    {
+        var preEvent = new RenderTooltipEvent.Pre(stack, matrixStack, x, y, screenWidth, screenHeight, font, components);
+        MinecraftForge.EVENT_BUS.post(preEvent);
+        return preEvent;
+    }
+
+    public static RenderTooltipEvent.Color colorTooltipEvent(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
+    {
+        var colorEvent = new RenderTooltipEvent.Color(stack, matrixStack, x, y, font, 0xf0100010, 0x505000FF, 0x5028007f, components);
+        MinecraftForge.EVENT_BUS.post(colorEvent);
+        return colorEvent;
+    }
+
     public static List<ClientTooltipComponent> gatherTooltipComponents(ItemStack stack, List<? extends FormattedText> textElements, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font)
     {
         return gatherTooltipComponents(stack, textElements, Optional.empty(), mouseX, mouseY, screenWidth, screenHeight, font);
     }
+
     public static List<ClientTooltipComponent> gatherTooltipComponents(ItemStack stack, List<? extends FormattedText> textElements, Optional<TooltipComponent> itemComponent, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font)
     {
         List<Either<FormattedText, TooltipComponent>> elements = textElements.stream()

@@ -24,7 +24,7 @@
        this.m_169383_(p_169389_, list, p_169392_, p_169393_);
     }
  
-@@ -183,20 +_,33 @@
+@@ -183,20 +_,34 @@
     }
  
     public void m_96597_(PoseStack p_96598_, List<Component> p_96599_, int p_96600_, int p_96601_) {
@@ -49,23 +49,52 @@
 +   }
  
     private void m_169383_(PoseStack p_169384_, List<ClientTooltipComponent> p_169385_, int p_169386_, int p_169387_) {
-+      Font font = this.tooltipFont == null ? this.f_96547_ : this.tooltipFont;
        if (!p_169385_.isEmpty()) {
++         net.minecraftforge.client.event.RenderTooltipEvent.Pre preEvent = net.minecraftforge.client.MinecraftForgeClient.preTooltipEvent(this.tooltipStack, p_169384_, p_169386_, p_169387_, f_96543_, f_96544_, this.tooltipFont == null ? this.f_96547_ : this.tooltipFont, p_169385_);
++         if (preEvent.isCanceled()) return;
           int i = 0;
           int j = p_169385_.size() == 1 ? -2 : 0;
  
           for(ClientTooltipComponent clienttooltipcomponent : p_169385_) {
 -            int k = clienttooltipcomponent.m_142069_(this.f_96547_);
-+            int k = clienttooltipcomponent.m_142069_(font);
++            int k = clienttooltipcomponent.m_142069_(f_96547_);
              if (k > i) {
                 i = k;
              }
+@@ -226,15 +_,18 @@
+          RenderSystem.m_157427_(GameRenderer::m_172811_);
+          bufferbuilder.m_166779_(VertexFormat.Mode.QUADS, DefaultVertexFormat.f_85815_);
+          Matrix4f matrix4f = p_169384_.m_85850_().m_85861_();
+-         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 4, j2 + i + 3, k2 - 3, 400, -267386864, -267386864);
+-         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 + j + 3, j2 + i + 3, k2 + j + 4, 400, -267386864, -267386864);
+-         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 3, j2 + i + 3, k2 + j + 3, 400, -267386864, -267386864);
+-         m_93123_(matrix4f, bufferbuilder, j2 - 4, k2 - 3, j2 - 3, k2 + j + 3, 400, -267386864, -267386864);
+-         m_93123_(matrix4f, bufferbuilder, j2 + i + 3, k2 - 3, j2 + i + 4, k2 + j + 3, 400, -267386864, -267386864);
+-         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 3 + 1, j2 - 3 + 1, k2 + j + 3 - 1, 400, 1347420415, 1344798847);
+-         m_93123_(matrix4f, bufferbuilder, j2 + i + 2, k2 - 3 + 1, j2 + i + 3, k2 + j + 3 - 1, 400, 1347420415, 1344798847);
+-         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 3, j2 + i + 3, k2 - 3 + 1, 400, 1347420415, 1347420415);
+-         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 + j + 2, j2 + i + 3, k2 + j + 3, 400, 1344798847, 1344798847);
++         net.minecraftforge.client.event.RenderTooltipEvent.Color colorEvent = net.minecraftforge.client.MinecraftForgeClient.colorTooltipEvent(this.tooltipStack, p_169384_, p_169386_, p_169387_, preEvent.getFontRenderer(), p_169385_);
++         j2 = preEvent.getX();
++         k2 = preEvent.getY();
++         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 4, j2 + i + 3, k2 - 3, 400, colorEvent.getBackground(), colorEvent.getBackground());
++         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 + j + 3, j2 + i + 3, k2 + j + 4, 400, colorEvent.getBackground(), colorEvent.getBackground());
++         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 3, j2 + i + 3, k2 + j + 3, 400, colorEvent.getBackground(), colorEvent.getBackground());
++         m_93123_(matrix4f, bufferbuilder, j2 - 4, k2 - 3, j2 - 3, k2 + j + 3, 400, colorEvent.getBackground(), colorEvent.getBackground());
++         m_93123_(matrix4f, bufferbuilder, j2 + i + 3, k2 - 3, j2 + i + 4, k2 + j + 3, 400, colorEvent.getBackground(), colorEvent.getBackground());
++         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 3 + 1, j2 - 3 + 1, k2 + j + 3 - 1, 400, colorEvent.getBorderStart(), colorEvent.getBorderStart());
++         m_93123_(matrix4f, bufferbuilder, j2 + i + 2, k2 - 3 + 1, j2 + i + 3, k2 + j + 3 - 1, 400, colorEvent.getBorderStart(), colorEvent.getBorderStart());
++         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 3, j2 + i + 3, k2 - 3 + 1, 400, colorEvent.getBorderStart(), colorEvent.getBorderStart());
++         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 + j + 2, j2 + i + 3, k2 + j + 3, 400, colorEvent.getBorderStart(), colorEvent.getBorderStart());
+          RenderSystem.m_69482_();
+          RenderSystem.m_69472_();
+          RenderSystem.m_69478_();
 @@ -249,7 +_,7 @@
  
           for(int i2 = 0; i2 < p_169385_.size(); ++i2) {
              ClientTooltipComponent clienttooltipcomponent1 = p_169385_.get(i2);
 -            clienttooltipcomponent1.m_142440_(this.f_96547_, j2, l1, matrix4f, multibuffersource$buffersource);
-+            clienttooltipcomponent1.m_142440_(font, j2, l1, matrix4f, multibuffersource$buffersource);
++            clienttooltipcomponent1.m_142440_(preEvent.getFontRenderer(), j2, l1, matrix4f, multibuffersource$buffersource);
              l1 += clienttooltipcomponent1.m_142103_() + (i2 == 0 ? 2 : 0);
           }
  
@@ -74,7 +103,7 @@
           for(int l2 = 0; l2 < p_169385_.size(); ++l2) {
              ClientTooltipComponent clienttooltipcomponent2 = p_169385_.get(l2);
 -            clienttooltipcomponent2.m_142162_(this.f_96547_, j2, l1, p_169384_, this.f_96542_, 400, this.f_96541_.m_91097_());
-+            clienttooltipcomponent2.m_142162_(font, j2, l1, p_169384_, this.f_96542_, 400, this.f_96541_.m_91097_());
++            clienttooltipcomponent2.m_142162_(preEvent.getFontRenderer(), j2, l1, p_169384_, this.f_96542_, 400, this.f_96541_.m_91097_());
              l1 += clienttooltipcomponent2.m_142103_() + (l2 == 0 ? 2 : 0);
           }
  

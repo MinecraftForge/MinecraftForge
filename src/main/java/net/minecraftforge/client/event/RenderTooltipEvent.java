@@ -27,6 +27,7 @@ import javax.annotation.Nonnull;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.FormattedText;
@@ -49,20 +50,29 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
 {
     @Nonnull
     protected final ItemStack stack;
+    @Deprecated
     protected final List<? extends FormattedText> lines;
     protected final PoseStack matrixStack;
     protected int x;
     protected int y;
     protected Font fr;
+    protected final List<ClientTooltipComponent> components;
 
+    @Deprecated
     public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, @Nonnull Font fr)
     {
+        this(stack, matrixStack, x, y, fr, List.of());
+    }
+
+    public RenderTooltipEvent(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
+    {
         this.stack = stack;
-        this.lines = Collections.unmodifiableList(lines); // Leave editing to ItemTooltipEvent
+        this.lines = List.of();
+        this.components = Collections.unmodifiableList(components);
         this.matrixStack = matrixStack;
         this.x = x;
         this.y = y;
-        this.fr = fr;
+        this.fr = font;
     }
 
     /**
@@ -77,12 +87,19 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     /**
      * The lines to be drawn. May change between {@link RenderTooltipEvent.Pre} and {@link RenderTooltipEvent.Post}.
      * 
-     * @return An <i>unmodifiable</i> list of strings. Use {@link ItemTooltipEvent} to modify tooltip text.
+     * @return An <i>unmodifiable</i> list of strings. Use {@link net.minecraftforge.event.entity.player.ItemTooltipEvent} to modify tooltip text.
+     * @deprecated
      */
     @Nonnull
     public List<? extends FormattedText> getLines()
     {
         return lines;
+    }
+
+    @Nonnull
+    public List<ClientTooltipComponent> getComponents()
+    {
+        return components;
     }
 
     /**
@@ -179,12 +196,17 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int screenHeight;
         private int maxWidth;
 
+        @Deprecated
         public Pre(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull Font fr)
         {
-            super(stack, lines, matrixStack, x, y, fr);
+            this(stack, matrixStack, x, y, screenWidth, screenHeight, fr, List.of());
+        }
+        public Pre(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
+        {
+            super(stack, matrixStack, x, y, font, components);
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
-            this.maxWidth = maxWidth;
+            this.maxWidth = -1;
         }
 
         public int getScreenWidth()
@@ -192,6 +214,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             return screenWidth;
         }
 
+        @Deprecated
         public void setScreenWidth(int screenWidth)
         {
             this.screenWidth = screenWidth;
@@ -202,6 +225,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             return screenHeight;
         }
 
+        @Deprecated
         public void setScreenHeight(int screenHeight)
         {
             this.screenHeight = screenHeight;
@@ -209,7 +233,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
 
         /**
          * @return The max width the tooltip can be. Defaults to -1 (unlimited).
+         * @deprecated use {@link GatherComponents}
          */
+        @Deprecated
         public int getMaxWidth()
         {
             return maxWidth;
@@ -217,14 +243,16 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
 
         /**
          * Sets the max width of the tooltip. Use -1 for unlimited.
+         * @deprecated use {@link GatherComponents}
          */
+        @Deprecated
         public void setMaxWidth(int maxWidth)
         {
             this.maxWidth = maxWidth;
         }
         
         /**
-         * Sets the {@link FontRenderer} to be used to render text.
+         * Sets the {@link Font} to be used to render text.
          */
         public void setFontRenderer(@Nonnull Font fr)
         {
@@ -316,10 +344,14 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int borderStart;
         private int borderEnd;
 
-        public Color(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int background, int borderStart,
-                int borderEnd)
+        public Color(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int background, int borderStart, int borderEnd)
         {
-            super(stack, textLines, matrixStack, x, y, fr);
+            this(stack, matrixStack, x, y, fr, background, borderStart, borderEnd, List.of());
+        }
+
+        public Color(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int background, int borderStart, int borderEnd, @Nonnull List<ClientTooltipComponent> components)
+        {
+            super(stack, matrixStack, x, y, fr, components);
             this.originalBackground = background;
             this.originalBorderStart = borderStart;
             this.originalBorderEnd = borderEnd;
