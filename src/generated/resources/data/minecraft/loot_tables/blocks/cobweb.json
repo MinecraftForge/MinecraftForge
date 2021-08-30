@@ -15,10 +15,8 @@
                   "condition": "minecraft:alternative",
                   "terms": [
                     {
-                      "condition": "minecraft:match_tool",
-                      "predicate": {
-                        "tag": "forge:shears"
-                      }
+                      "condition": "forge:can_tool_perform_action",
+                      "action": "shears_dig"
                     },
                     {
                       "condition": "minecraft:match_tool",
