@@ -109,13 +109,21 @@ public class Tags
         public static final IOptionalNamedTag<Block> GRAVEL = tag("gravel");
         public static final IOptionalNamedTag<Block> NETHERRACK = tag("netherrack");
         public static final IOptionalNamedTag<Block> OBSIDIAN = tag("obsidian");
-        public static final IOptionalNamedTag<Block> ORES = tag("ores");
-        public static final IOptionalNamedTag<Block> ORES_COAL = tag("ores/coal");
-        public static final IOptionalNamedTag<Block> ORES_COPPER = tag("ores/copper");
         /**
          * Ores which on average result in more than one resource worth of materials
          */
-        public static final IOptionalNamedTag<Block> ORES_DENSE = tag("ores/dense");
+        public static final IOptionalNamedTag<Block> ORE_RATES_DENSE = tag("ore_rates/dense");
+        /**
+         * Ores which on average result in one resource worth of materials
+         */
+        public static final IOptionalNamedTag<Block> ORE_RATES_SINGULAR = tag("ore_rates/singular");
+        /**
+         * Ores which on average result in less than one resource worth of materials
+         */
+        public static final IOptionalNamedTag<Block> ORE_RATES_SPARSE = tag("ore_rates/sparse");
+        public static final IOptionalNamedTag<Block> ORES = tag("ores");
+        public static final IOptionalNamedTag<Block> ORES_COAL = tag("ores/coal");
+        public static final IOptionalNamedTag<Block> ORES_COPPER = tag("ores/copper");
         public static final IOptionalNamedTag<Block> ORES_DIAMOND = tag("ores/diamond");
         public static final IOptionalNamedTag<Block> ORES_EMERALD = tag("ores/emerald");
         public static final IOptionalNamedTag<Block> ORES_GOLD = tag("ores/gold");
@@ -124,14 +132,6 @@ public class Tags
         public static final IOptionalNamedTag<Block> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final IOptionalNamedTag<Block> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Block> ORES_REDSTONE = tag("ores/redstone");
-        /**
-         * Ores which on average result in one resource worth of materials
-         */
-        public static final IOptionalNamedTag<Block> ORES_SINGULAR = tag("ores/singular");
-        /**
-         * Ores which on average result in less than one resource worth of materials
-         */
-        public static final IOptionalNamedTag<Block> ORES_SPARSE = tag("ores/sparse");
 
         public static final IOptionalNamedTag<Block> SAND = tag("sand");
         public static final IOptionalNamedTag<Block> SAND_COLORLESS = tag("sand/colorless");
@@ -288,13 +288,21 @@ public class Tags
         public static final IOptionalNamedTag<Item> NUGGETS_GOLD = tag("nuggets/gold");
         public static final IOptionalNamedTag<Item> NUGGETS_IRON = tag("nuggets/iron");
         public static final IOptionalNamedTag<Item> OBSIDIAN = tag("obsidian");
-        public static final IOptionalNamedTag<Item> ORES = tag("ores");
-        public static final IOptionalNamedTag<Item> ORES_COAL = tag("ores/coal");
-        public static final IOptionalNamedTag<Item> ORES_COPPER = tag("ores/copper");
         /**
          * Ores which on average result in more than one resource worth of materials
          */
-        public static final IOptionalNamedTag<Item> ORES_DENSE = tag("ores/dense");
+        public static final IOptionalNamedTag<Item> ORE_RATES_DENSE = tag("ore_rates/dense");
+        /**
+         * Ores which on average result in one resource worth of materials
+         */
+        public static final IOptionalNamedTag<Item> ORE_RATES_SINGULAR = tag("ore_rates/singular");
+        /**
+         * Ores which on average result in less than one resource worth of materials
+         */
+        public static final IOptionalNamedTag<Item> ORE_RATES_SPARSE = tag("ore_rates/sparse");
+        public static final IOptionalNamedTag<Item> ORES = tag("ores");
+        public static final IOptionalNamedTag<Item> ORES_COAL = tag("ores/coal");
+        public static final IOptionalNamedTag<Item> ORES_COPPER = tag("ores/copper");
         public static final IOptionalNamedTag<Item> ORES_DIAMOND = tag("ores/diamond");
         public static final IOptionalNamedTag<Item> ORES_EMERALD = tag("ores/emerald");
         public static final IOptionalNamedTag<Item> ORES_GOLD = tag("ores/gold");
@@ -303,14 +311,6 @@ public class Tags
         public static final IOptionalNamedTag<Item> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final IOptionalNamedTag<Item> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Item> ORES_REDSTONE = tag("ores/redstone");
-        /**
-         * Ores which on average result in one resource worth of materials
-         */
-        public static final IOptionalNamedTag<Item> ORES_SINGULAR = tag("ores/singular");
-        /**
-         * Ores which on average result in less than one resource worth of materials
-         */
-        public static final IOptionalNamedTag<Item> ORES_SPARSE = tag("ores/sparse");
         public static final IOptionalNamedTag<Item> RAW_ORES = tag("raw_ores");
         public static final IOptionalNamedTag<Item> RAW_ORES_COPPER = tag("raw_ores/copper");
         public static final IOptionalNamedTag<Item> RAW_ORES_GOLD = tag("raw_ores/gold");
