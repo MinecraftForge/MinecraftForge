@@ -20,7 +20,13 @@
 package net.minecraftforge.client;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -39,7 +45,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RenderTooltipEvent;
@@ -245,7 +250,6 @@ public class MinecraftForgeClient
 
         boolean needsWrap = false;
 
-        int titleLinesCount = 1;
         int tooltipX = mouseX + 12;
         if (tooltipX + tooltipTextWidth + 4 > screenWidth)
         {
@@ -269,7 +273,7 @@ public class MinecraftForgeClient
         int tooltipTextWidthF = tooltipTextWidth;
         if (needsWrap)
         {
-            return elements.stream()
+            return event.getTooltipElements().stream()
                     .flatMap(either -> either.map(
                             text -> font.split(text, tooltipTextWidthF).stream().map(ClientTooltipComponent::create),
                             component -> Stream.of(ClientTooltipComponent.create(component))
@@ -278,7 +282,7 @@ public class MinecraftForgeClient
         }
         else
         {
-            return elements.stream()
+            return event.getTooltipElements().stream()
                     .map(either -> either.map(
                             text -> ClientTooltipComponent.create(text instanceof Component ? ((Component) text).getVisualOrderText() : Language.getInstance().getVisualOrder(text)),
                             ClientTooltipComponent::create

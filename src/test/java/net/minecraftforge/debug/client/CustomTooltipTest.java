@@ -62,35 +62,41 @@ public class CustomTooltipTest
     {
 
         @Override
-        public int getHeight() {
+        public int getHeight()
+        {
             return 10;
         }
 
         @Override
-        public int getWidth(Font font) {
+        public int getWidth(Font font)
+        {
             return 10;
         }
 
         @Override
-        public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_, int zIndex, TextureManager textureManager) {
+        public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_, int zIndex, TextureManager textureManager)
+        {
             GuiComponent.fill(poseStack, x, y,  x + 10, y+ 10, tooltip.color);
         }
     }
 
     static class CustomItemWithTooltip extends Item
     {
-        public CustomItemWithTooltip(Properties properties) {
+        public CustomItemWithTooltip(Properties properties)
+        {
             super(properties);
         }
 
         @Override
-        public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag) {
+        public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag)
+        {
             super.appendHoverText(stack, level, components, flag);
             components.add(new TextComponent("This is a very very very very very very long hover text that should really really be split across multiple lines.").withStyle(ChatFormatting.YELLOW));
         }
 
         @Override
-        public Optional<TooltipComponent> getTooltipImage(ItemStack stack) {
+        public Optional<TooltipComponent> getTooltipImage(ItemStack stack)
+        {
             return Optional.of(new CustomTooltip(0xFFFF0000));
         }
     }
