@@ -10,7 +10,7 @@
     private final String f_43481_;
     private final ImmutableList<MobEffectInstance> f_43482_;
  
-@@ -22,6 +_,10 @@
+@@ -22,6 +_,14 @@
     public Potion(@Nullable String p_43484_, MobEffectInstance... p_43485_) {
        this.f_43481_ = p_43484_;
        this.f_43482_ = ImmutableList.copyOf(p_43485_);
@@ -18,6 +18,10 @@
 +
 +   public java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
 +      return reverseTags.getTagNames();
++   }
++
++   public boolean is(net.minecraft.tags.Tag<Potion> tag) {
++      return tag.m_8110_(this);
     }
  
     public String m_43492_(String p_43493_) {
