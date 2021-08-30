@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#forge:raw_ores/copper",
-    "#forge:raw_ores/gold",
-    "#forge:raw_ores/iron"
-  ]
-}
