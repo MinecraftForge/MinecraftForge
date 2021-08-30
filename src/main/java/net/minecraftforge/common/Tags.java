@@ -110,6 +110,18 @@ public class Tags
         public static final IOptionalNamedTag<Block> NETHERRACK = tag("netherrack");
         public static final IOptionalNamedTag<Block> OBSIDIAN = tag("obsidian");
         /**
+         * Blocks which the ores in the tag {@link #ORES_IN_GROUND_DEEPSLATE} are stored in
+         */
+        public static final IOptionalNamedTag<Block> ORE_BEARING_GROUND_DEEPSLATE = tag("ore_bearing_ground/deepslate");
+        /**
+         * Blocks which the ores in the tag {@link #ORES_IN_GROUND_NETHERRACK} are stored in
+         */
+        public static final IOptionalNamedTag<Block> ORE_BEARING_GROUND_NETHERRACK = tag("ore_bearing_ground/netherrack");
+        /**
+         * Blocks which the ores in the tag {@link #ORES_IN_GROUND_STONE} are stored in
+         */
+        public static final IOptionalNamedTag<Block> ORE_BEARING_GROUND_STONE = tag("ore_bearing_ground/stone");
+        /**
          * Ores which on average result in more than one resource worth of materials
          */
         public static final IOptionalNamedTag<Block> ORE_RATES_DENSE = tag("ore_rates/dense");
@@ -132,6 +144,18 @@ public class Tags
         public static final IOptionalNamedTag<Block> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final IOptionalNamedTag<Block> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Block> ORES_REDSTONE = tag("ores/redstone");
+        /**
+         * Ores in deepslate which could logically result in deepslate as recipe output
+         */
+        public static final IOptionalNamedTag<Block> ORES_IN_GROUND_DEEPSLATE = tag("ores_in_ground/deepslate");
+        /**
+         * Ores in netherrack which could logically result in netherrack as recipe output
+         */
+        public static final IOptionalNamedTag<Block> ORES_IN_GROUND_NETHERRACK = tag("ores_in_ground/netherrack");
+        /**
+         * Ores in stone which could logically result in stone as recipe output
+         */
+        public static final IOptionalNamedTag<Block> ORES_IN_GROUND_STONE = tag("ores_in_ground/stone");
 
         public static final IOptionalNamedTag<Block> SAND = tag("sand");
         public static final IOptionalNamedTag<Block> SAND_COLORLESS = tag("sand/colorless");
@@ -289,6 +313,18 @@ public class Tags
         public static final IOptionalNamedTag<Item> NUGGETS_IRON = tag("nuggets/iron");
         public static final IOptionalNamedTag<Item> OBSIDIAN = tag("obsidian");
         /**
+         * Blocks which the ores in the tag {@link #ORES_IN_GROUND_DEEPSLATE} are stored in
+         */
+        public static final IOptionalNamedTag<Item> ORE_BEARING_GROUND_DEEPSLATE = tag("ore_bearing_ground/deepslate");
+        /**
+         * Blocks which the ores in the tag {@link #ORES_IN_GROUND_NETHERRACK} are stored in
+         */
+        public static final IOptionalNamedTag<Item> ORE_BEARING_GROUND_NETHERRACK = tag("ore_bearing_ground/netherrack");
+        /**
+         * Blocks which the ores in the tag {@link #ORES_IN_GROUND_STONE} are stored in
+         */
+        public static final IOptionalNamedTag<Item> ORE_BEARING_GROUND_STONE = tag("ore_bearing_ground/stone");
+        /**
          * Ores which on average result in more than one resource worth of materials
          */
         public static final IOptionalNamedTag<Item> ORE_RATES_DENSE = tag("ore_rates/dense");
@@ -311,6 +347,18 @@ public class Tags
         public static final IOptionalNamedTag<Item> ORES_NETHERITE_SCRAP = tag("ores/netherite_scrap");
         public static final IOptionalNamedTag<Item> ORES_QUARTZ = tag("ores/quartz");
         public static final IOptionalNamedTag<Item> ORES_REDSTONE = tag("ores/redstone");
+        /**
+         * Ores in deepslate which could logically result in deepslate as recipe output
+         */
+        public static final IOptionalNamedTag<Item> ORES_IN_GROUND_DEEPSLATE = tag("ores_in_ground/deepslate");
+        /**
+         * Ores in netherrack which could logically result in netherrack as recipe output
+         */
+        public static final IOptionalNamedTag<Item> ORES_IN_GROUND_NETHERRACK = tag("ores_in_ground/netherrack");
+        /**
+         * Ores in stone which could logically result in stone as recipe output
+         */
+        public static final IOptionalNamedTag<Item> ORES_IN_GROUND_STONE = tag("ores_in_ground/stone");
         public static final IOptionalNamedTag<Item> RAW_MATERIALS = tag("raw_materials");
         public static final IOptionalNamedTag<Item> RAW_MATERIALS_COPPER = tag("raw_materials/copper");
         public static final IOptionalNamedTag<Item> RAW_MATERIALS_GOLD = tag("raw_materials/gold");
