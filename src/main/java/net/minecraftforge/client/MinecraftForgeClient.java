@@ -20,19 +20,28 @@
 package net.minecraftforge.client;
 
 import java.io.IOException;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mojang.datafixers.util.Either;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.locale.Language;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraftforge.client.event.RenderTooltipEvent;
+import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.cache.CacheBuilder;
@@ -174,6 +183,70 @@ public class MinecraftForgeClient
     public static ITextureAtlasSpriteLoader getTextureAtlasSpriteLoader(ResourceLocation name)
     {
         return textureAtlasSpriteLoaders.get(name);
+    }
+
+    public static List<ClientTooltipComponent> gatherTooltipComponents(List<? extends FormattedText> textElements, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font)
+    {
+        return gatherTooltipComponents(textElements, Optional.empty(), mouseX, mouseY, screenWidth, screenHeight, font);
+    }
+    public static List<ClientTooltipComponent> gatherTooltipComponents(List<? extends FormattedText> textElements, Optional<TooltipComponent> itemComponent, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font)
+    {
+        List<Either<FormattedText, TooltipComponent>> elements = textElements.stream()
+                .map((Function<FormattedText, Either<FormattedText, TooltipComponent>>) Either::left)
+                .collect(Collectors.toCollection(ArrayList::new));
+        itemComponent.ifPresent(c -> elements.add(Either.right(c)));
+
+        var event = new RenderTooltipEvent.GatherComponents(screenWidth, screenHeight, elements, -1);
+        MinecraftForge.EVENT_BUS.post(event);
+
+        // text wrapping
+        int tooltipTextWidth = event.getTooltipElements().stream()
+                .mapToInt(either -> either.map(font::width, component -> 0))
+                .max()
+                .orElse(0);
+
+        boolean needsWrap = false;
+
+        int titleLinesCount = 1;
+        int tooltipX = mouseX + 12;
+        if (tooltipX + tooltipTextWidth + 4 > screenWidth)
+        {
+            tooltipX = mouseX - 16 - tooltipTextWidth;
+            if (tooltipX < 4) // if the tooltip doesn't fit on the screen
+            {
+                if (mouseX > screenWidth / 2)
+                    tooltipTextWidth = mouseX - 12 - 8;
+                else
+                    tooltipTextWidth = screenWidth - 16 - mouseX;
+                needsWrap = true;
+            }
+        }
+
+        if (event.getMaxWidth() > 0 && tooltipTextWidth > event.getMaxWidth())
+        {
+            tooltipTextWidth = event.getMaxWidth();
+            needsWrap = true;
+        }
+
+        int tooltipTextWidthF = tooltipTextWidth;
+        if (needsWrap)
+        {
+            return elements.stream()
+                    .flatMap(either -> either.map(
+                            text -> font.split(text, tooltipTextWidthF).stream().map(ClientTooltipComponent::create),
+                            component -> Stream.of(ClientTooltipComponent.create(component))
+                    ))
+                    .toList();
+        }
+        else
+        {
+            return elements.stream()
+                    .map(either -> either.map(
+                            text -> ClientTooltipComponent.create(text instanceof Component ? ((Component) text).getVisualOrderText() : Language.getInstance().getVisualOrder(text)),
+                            ClientTooltipComponent::create
+                    ))
+                    .toList();
+        }
     }
 
 }

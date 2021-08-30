@@ -25,9 +25,13 @@ import java.util.List;
 import javax.annotation.Nonnull;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.Font;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * A set of events which are fired at various points during tooltip rendering.
@@ -112,6 +116,48 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     public Font getFontRenderer()
     {
         return fr;
+    }
+
+    @Cancelable
+    public static class GatherComponents extends Event
+    {
+        private final int screenWidth;
+        private final int screenHeight;
+        private final List<Either<FormattedText, TooltipComponent>> tooltipElements;
+        private int maxWidth;
+
+        public GatherComponents(int screenWidth, int screenHeight, List<Either<FormattedText, TooltipComponent>> tooltipElements, int maxWidth)
+        {
+            this.screenWidth = screenWidth;
+            this.screenHeight = screenHeight;
+            this.tooltipElements = tooltipElements;
+            this.maxWidth = maxWidth;
+        }
+
+        public int getScreenWidth()
+        {
+            return screenWidth;
+        }
+
+        public int getScreenHeight()
+        {
+            return screenHeight;
+        }
+
+        public List<Either<FormattedText, TooltipComponent>> getTooltipElements()
+        {
+            return tooltipElements;
+        }
+
+        public int getMaxWidth()
+        {
+            return maxWidth;
+        }
+
+        public void setMaxWidth(int maxWidth)
+        {
+            this.maxWidth = maxWidth;
+        }
     }
 
     /**

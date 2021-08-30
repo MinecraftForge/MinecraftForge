@@ -1,52 +1,55 @@
 --- a/net/minecraft/client/gui/screens/Screen.java
 +++ b/net/minecraft/client/gui/screens/Screen.java
-@@ -163,7 +_,10 @@
+@@ -162,15 +_,19 @@
+       this.f_169368_.clear();
     }
  
++   private Font tooltipFont = null;
++   private ItemStack tooltipStack = ItemStack.f_41583_;
++
     protected void m_6057_(PoseStack p_96566_, ItemStack p_96567_, int p_96568_, int p_96569_) {
--      this.m_169388_(p_96566_, this.m_96555_(p_96567_), p_96567_.m_150921_(), p_96568_, p_96569_);
-+      Font font = net.minecraftforge.client.RenderProperties.get(p_96567_).getFont(p_96567_);
-+      net.minecraftforge.fmlclient.gui.GuiUtils.preItemToolTip(p_96567_);
-+      this.renderComponentToolTip(p_96566_, this.m_96555_(p_96567_), p_96568_, p_96569_, (font == null ? this.f_96547_ : font));
-+      net.minecraftforge.fmlclient.gui.GuiUtils.postItemToolTip();
++      tooltipFont = net.minecraftforge.client.RenderProperties.get(p_96567_).getFont(p_96567_);
++      tooltipStack = p_96567_;
+       this.m_169388_(p_96566_, this.m_96555_(p_96567_), p_96567_.m_150921_(), p_96568_, p_96569_);
++      tooltipFont = null;
++      tooltipStack = ItemStack.f_41583_;
     }
  
     public void m_169388_(PoseStack p_169389_, List<Component> p_169390_, Optional<TooltipComponent> p_169391_, int p_169392_, int p_169393_) {
-@@ -171,7 +_,7 @@
-       p_169391_.ifPresent((p_169399_) -> {
-          list.add(1, ClientTooltipComponent.m_169950_(p_169399_));
-       });
--      this.m_169383_(p_169389_, list, p_169392_, p_169393_);
-+      this.renderTooltipInternal(p_169389_, list, p_169392_, p_169393_, f_96547_);
+-      List<ClientTooltipComponent> list = p_169390_.stream().map(Component::m_7532_).map(ClientTooltipComponent::m_169948_).collect(Collectors.toList());
+-      p_169391_.ifPresent((p_169399_) -> {
+-         list.add(1, ClientTooltipComponent.m_169950_(p_169399_));
+-      });
++      List<ClientTooltipComponent> list = net.minecraftforge.client.MinecraftForgeClient.gatherTooltipComponents(p_169390_, p_169391_, p_169392_, p_169393_, f_96543_, f_96544_, this.tooltipFont == null ? this.f_96547_ : this.tooltipFont);
+       this.m_169383_(p_169389_, list, p_169392_, p_169393_);
     }
  
-    public List<Component> m_96555_(ItemStack p_96556_) {
-@@ -179,24 +_,30 @@
-    }
- 
-    public void m_96602_(PoseStack p_96603_, Component p_96604_, int p_96605_, int p_96606_) {
--      this.m_96617_(p_96603_, Arrays.asList(p_96604_.m_7532_()), p_96605_, p_96606_);
-+      this.m_96597_(p_96603_, Arrays.asList(p_96604_), p_96605_, p_96606_);
+@@ -183,20 +_,33 @@
     }
  
     public void m_96597_(PoseStack p_96598_, List<Component> p_96599_, int p_96600_, int p_96601_) {
 -      this.m_96617_(p_96598_, Lists.transform(p_96599_, Component::m_7532_), p_96600_, p_96601_);
-+      this.renderComponentToolTip(p_96598_, p_96599_, p_96600_, p_96601_, f_96547_);
++      List<ClientTooltipComponent> components = net.minecraftforge.client.MinecraftForgeClient.gatherTooltipComponents(p_96599_, p_96600_, p_96601_, f_96543_, f_96544_, this.tooltipFont == null ? this.f_96547_ : this.tooltipFont);
++      this.m_169383_(p_96598_, components, p_96600_, p_96601_);
 +   }
-+   public void renderComponentToolTip(PoseStack matrixStack, List<? extends net.minecraft.network.chat.FormattedText> tooltips, int mouseX, int mouseY, Font font) {
-+      net.minecraftforge.fmlclient.gui.GuiUtils.drawHoveringText(matrixStack, tooltips, mouseX, mouseY, f_96543_, f_96544_, -1, font);
++   public void renderComponentToolTip(PoseStack poseStack, List<? extends net.minecraft.network.chat.FormattedText> tooltips, int mouseX, int mouseY, Font font) {
++      this.tooltipFont = font;
++      List<ClientTooltipComponent> components = net.minecraftforge.client.MinecraftForgeClient.gatherTooltipComponents(tooltips, mouseX, mouseY, f_96543_, f_96544_, font);
++      this.m_169383_(poseStack, components, mouseX, mouseY);
++      this.tooltipFont = null;
     }
  
     public void m_96617_(PoseStack p_96618_, List<? extends FormattedCharSequence> p_96619_, int p_96620_, int p_96621_) {
--      this.m_169383_(p_96618_, p_96619_.stream().map(ClientTooltipComponent::m_169948_).collect(Collectors.toList()), p_96620_, p_96621_);
-+      this.renderToolTip(p_96618_, p_96619_, p_96620_, p_96621_, f_96547_);
-+   }
-+   public void renderToolTip(PoseStack p_96618_, List<? extends FormattedCharSequence> p_96619_, int p_96620_, int p_96621_, Font font) {
-+      this.renderTooltipInternal(p_96618_, p_96619_.stream().map(ClientTooltipComponent::m_169948_).collect(Collectors.toList()), p_96620_, p_96621_, font);
+       this.m_169383_(p_96618_, p_96619_.stream().map(ClientTooltipComponent::m_169948_).collect(Collectors.toList()), p_96620_, p_96621_);
     }
++   public void renderToolTip(PoseStack p_96618_, List<? extends FormattedCharSequence> p_96619_, int p_96620_, int p_96621_, Font font) {
++      this.tooltipFont = font;
++      this.m_96617_(p_96618_, p_96619_, p_96620_, p_96621_);
++      this.tooltipFont = null;
++   }
  
--   private void m_169383_(PoseStack p_169384_, List<ClientTooltipComponent> p_169385_, int p_169386_, int p_169387_) {
-+   private void renderTooltipInternal(PoseStack p_169384_, List<ClientTooltipComponent> p_169385_, int p_169386_, int p_169387_, Font font) {
+    private void m_169383_(PoseStack p_169384_, List<ClientTooltipComponent> p_169385_, int p_169386_, int p_169387_) {
++      Font font = this.tooltipFont == null ? this.f_96547_ : this.tooltipFont;
        if (!p_169385_.isEmpty()) {
           int i = 0;
           int j = p_169385_.size() == 1 ? -2 : 0;
