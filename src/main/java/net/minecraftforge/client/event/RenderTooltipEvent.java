@@ -88,7 +88,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * The lines to be drawn. May change between {@link RenderTooltipEvent.Pre} and {@link RenderTooltipEvent.Post}.
      * 
      * @return An <i>unmodifiable</i> list of strings. Use {@link net.minecraftforge.event.entity.player.ItemTooltipEvent} to modify tooltip text.
-     * @deprecated
+     * @deprecated use {@link #getComponents()}
      */
     @Nonnull
     public List<? extends FormattedText> getLines()
@@ -127,7 +127,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     }
     
     /**
-     * @return The {@link FontRenderer} instance the current render is using.
+     * @return The {@link Font} instance the current render is using.
      */
     @Nonnull
     public Font getFontRenderer()
@@ -135,6 +135,12 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         return fr;
     }
 
+    /**
+     * Fires when a tooltip gathers the {@link TooltipComponent}s to render. This event fires before any text wrapping
+     * or text processing.
+     * This event allows modifying the components to be rendered as well as specifying a maximum width for the tooltip.
+     * The maximum width will cause any text components to be wrapped.
+     */
     @Cancelable
     public static class GatherComponents extends Event
     {
@@ -168,6 +174,10 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             return screenHeight;
         }
 
+        /**
+         * The elements to be rendered. These can be either formatted text or custom tooltip components.
+         * This list is modifiable.
+         */
         public List<Either<FormattedText, TooltipComponent>> getTooltipElements()
         {
             return tooltipElements;
@@ -178,6 +188,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             return maxWidth;
         }
 
+        /**
+         * Set the maximum width for the tooltip (or -1 for no maximum width). This only affects text components.
+         */
         public void setMaxWidth(int maxWidth)
         {
             this.maxWidth = maxWidth;
@@ -189,7 +202,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * <p>
      * This event is {@link Cancelable}.
      */
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class Pre extends RenderTooltipEvent
     {
         private int screenWidth;
@@ -201,6 +214,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         {
             this(stack, matrixStack, x, y, screenWidth, screenHeight, fr, List.of());
         }
+
         public Pre(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
         {
             super(stack, matrixStack, x, y, font, components);
@@ -285,6 +299,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * <li>{@link RenderTooltipEvent.PostText}</li>
      * </ul>
      */
+    @Deprecated
     protected static abstract class Post extends RenderTooltipEvent
     {
         private final int width;
@@ -317,6 +332,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     /**
      * This event is fired directly after the tooltip background is drawn, but before any text is drawn.
      */
+    @Deprecated
     public static class PostBackground extends Post 
     {
         public PostBackground(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int width, int height)
@@ -326,6 +342,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     /**
      * This event is fired directly after the tooltip text is drawn, but before the GL state is reset.
      */
+    @Deprecated
     public static class PostText extends Post
     {
         public PostText(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int width, int height)

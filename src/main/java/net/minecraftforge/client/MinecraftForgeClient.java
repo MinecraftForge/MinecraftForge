@@ -235,6 +235,7 @@ public class MinecraftForgeClient
 
         var event = new RenderTooltipEvent.GatherComponents(stack, screenWidth, screenHeight, elements, -1);
         MinecraftForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) return List.of();
 
         // text wrapping
         int tooltipTextWidth = event.getTooltipElements().stream()

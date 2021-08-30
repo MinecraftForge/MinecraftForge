@@ -1,12 +1,11 @@
 --- a/net/minecraft/client/gui/screens/Screen.java
 +++ b/net/minecraft/client/gui/screens/Screen.java
-@@ -162,15 +_,19 @@
+@@ -162,15 +_,18 @@
        this.f_169368_.clear();
     }
  
 +   private Font tooltipFont = null;
 +   private ItemStack tooltipStack = ItemStack.f_41583_;
-+
     protected void m_6057_(PoseStack p_96566_, ItemStack p_96567_, int p_96568_, int p_96569_) {
 +      tooltipFont = net.minecraftforge.client.RenderProperties.get(p_96567_).getFont(p_96567_);
 +      tooltipStack = p_96567_;
