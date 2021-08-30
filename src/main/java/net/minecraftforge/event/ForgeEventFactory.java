@@ -791,11 +791,11 @@ public class ForgeEventFactory
         int newLevel = 0;
         int oldLevel = playerList.getServer().getProfilePermissions(gameProfile);
         ServerPlayer player = playerList.getPlayer(gameProfile.getId());
-        if(op)
+        if (op)
         {
             newLevel = playerList.getServer().getOperatorUserPermissionLevel();
         }
-        if(newLevel != oldLevel && player != null)
+        if (newLevel != oldLevel && player != null)
         {
             return MinecraftForge.EVENT_BUS.post(new PermissionsChangedEvent(player, newLevel, oldLevel));
         }
