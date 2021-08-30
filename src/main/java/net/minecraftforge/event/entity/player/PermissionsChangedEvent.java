@@ -24,7 +24,8 @@ import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * This event will fire when the player is opped or deopped.
- * This event is cancelable.
+ * <p>
+ * This event is cancelable which will stop the op or deop from happening.
  */
 @Cancelable
 public class PermissionsChangedEvent extends PlayerEvent
