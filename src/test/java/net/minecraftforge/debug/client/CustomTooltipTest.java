@@ -105,6 +105,10 @@ public class CustomTooltipTest
             {
                 event.getTooltipElements().add(Either.right(new CustomTooltip(0xFF0000FF)));
             }
+            if (event.getStack().getItem() == Items.CLOCK)
+            {
+                event.setMaxWidth(30);
+            }
         }
 
         @SubscribeEvent
