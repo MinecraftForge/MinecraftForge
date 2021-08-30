@@ -40,6 +40,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.lang3.tuple.Pair;
@@ -205,18 +206,18 @@ public class MinecraftForgeClient
         return factory == null ? null : factory.apply(component);
     }
 
-    public static List<ClientTooltipComponent> gatherTooltipComponents(List<? extends FormattedText> textElements, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font)
+    public static List<ClientTooltipComponent> gatherTooltipComponents(ItemStack stack, List<? extends FormattedText> textElements, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font)
     {
-        return gatherTooltipComponents(textElements, Optional.empty(), mouseX, mouseY, screenWidth, screenHeight, font);
+        return gatherTooltipComponents(stack, textElements, Optional.empty(), mouseX, mouseY, screenWidth, screenHeight, font);
     }
-    public static List<ClientTooltipComponent> gatherTooltipComponents(List<? extends FormattedText> textElements, Optional<TooltipComponent> itemComponent, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font)
+    public static List<ClientTooltipComponent> gatherTooltipComponents(ItemStack stack, List<? extends FormattedText> textElements, Optional<TooltipComponent> itemComponent, int mouseX, int mouseY, int screenWidth, int screenHeight, Font font)
     {
         List<Either<FormattedText, TooltipComponent>> elements = textElements.stream()
                 .map((Function<FormattedText, Either<FormattedText, TooltipComponent>>) Either::left)
                 .collect(Collectors.toCollection(ArrayList::new));
         itemComponent.ifPresent(c -> elements.add(Either.right(c)));
 
-        var event = new RenderTooltipEvent.GatherComponents(screenWidth, screenHeight, elements, -1);
+        var event = new RenderTooltipEvent.GatherComponents(stack, screenWidth, screenHeight, elements, -1);
         MinecraftForge.EVENT_BUS.post(event);
 
         // text wrapping

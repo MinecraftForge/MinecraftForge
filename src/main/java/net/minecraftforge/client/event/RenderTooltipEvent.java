@@ -121,17 +121,24 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     @Cancelable
     public static class GatherComponents extends Event
     {
+        private final ItemStack stack;
         private final int screenWidth;
         private final int screenHeight;
         private final List<Either<FormattedText, TooltipComponent>> tooltipElements;
         private int maxWidth;
 
-        public GatherComponents(int screenWidth, int screenHeight, List<Either<FormattedText, TooltipComponent>> tooltipElements, int maxWidth)
+        public GatherComponents(ItemStack stack, int screenWidth, int screenHeight, List<Either<FormattedText, TooltipComponent>> tooltipElements, int maxWidth)
         {
+            this.stack = stack;
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
             this.tooltipElements = tooltipElements;
             this.maxWidth = maxWidth;
+        }
+
+        public ItemStack getStack()
+        {
+            return stack;
         }
 
         public int getScreenWidth()

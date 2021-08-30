@@ -1,11 +1,13 @@
 package net.minecraftforge.debug.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -101,7 +103,7 @@ public class CustomTooltipTest
         {
             if (event.getStack().getItem() == Items.STICK)
             {
-                event.getComponents().add(new CustomClientTooltip(new CustomTooltip(0xFF0000FF)));
+                event.getTooltipElements().add(Either.right(new CustomTooltip(0xFF0000FF)));
             }
         }
 
