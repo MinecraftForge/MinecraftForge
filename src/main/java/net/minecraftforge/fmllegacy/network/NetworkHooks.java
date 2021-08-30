@@ -32,7 +32,6 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.tags.TagCollection;
 import net.minecraft.tags.TagContainer;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.common.extensions.IForgeTagContainer;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -232,33 +231,6 @@ public class NetworkHooks
         player.containerMenu = c;
         player.initMenu(player.containerMenu);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
-    }
-
-    /**
-     * Syncs the custom tag types attached to a {@link IForgeTagContainer} to all connected players.
-     * @param tagCollectionSupplier The tag collection supplier containing the custom tags
-     */
-    public static void syncCustomTagTypes(TagContainer tagCollectionSupplier)
-    {
-        Map<ResourceLocation, TagCollection<?>> customTagTypes = tagCollectionSupplier.getCustomTagTypes();
-        if (!customTagTypes.isEmpty())
-        {
-            FMLNetworkConstants.playChannel.send(PacketDistributor.ALL.noArg(), new FMLPlayMessages.SyncCustomTagTypes(customTagTypes));
-        }
-    }
-
-    /**
-     * Syncs the custom tag types attached to a {@link IForgeTagContainer} to the given player.
-     * @param player                The player to sync the custom tags to.
-     * @param tagCollectionSupplier The tag collection supplier containing the custom tags
-     */
-    public static void syncCustomTagTypes(ServerPlayer player, TagContainer tagCollectionSupplier)
-    {
-        Map<ResourceLocation, TagCollection<?>> customTagTypes = tagCollectionSupplier.getCustomTagTypes();
-        if (!customTagTypes.isEmpty())
-        {
-            FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(customTagTypes), player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
-        }
     }
 
     @Nullable

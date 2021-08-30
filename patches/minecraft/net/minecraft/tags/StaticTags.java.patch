@@ -21,42 +21,20 @@
           return statictaghelper;
        }
     }
-@@ -55,11 +_,29 @@
- 
-    private static void m_144356_() {
-       Set<ResourceKey<?>> set = m_144355_().stream().map(StaticTagHelper::m_144338_).collect(Collectors.toSet());
--      if (!Sets.difference(f_144340_, set).isEmpty()) {
-+      if (!Sets.difference(set, f_144340_).isEmpty()) { // Forge: Fix bug with extra tag collections crashing
-          throw new IllegalStateException("Missing helper registrations");
-       }
+@@ -54,10 +_,16 @@
     }
  
+    private static void m_144356_() {
++      if (true) { m_144355_(); return; } //FORGE this check is unnecessary as the 2 collections are patched back into a map above. Still need to 'clinit' them though.
+       Set<ResourceKey<?>> set = m_144355_().stream().map(StaticTagHelper::m_144338_).collect(Collectors.toSet());
+       if (!Sets.difference(f_144340_, set).isEmpty()) {
+          throw new IllegalStateException("Missing helper registrations");
+       }
++   }
++
 +   @javax.annotation.Nullable
 +   public static StaticTagHelper<?> get(ResourceLocation rl) {
 +      return HELPER_MAP.get(ResourceKey.m_135788_(rl));
-+   }
-+
-+   public static Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> validateVanillaTags(TagContainer tagCollectionSupplier) {
-+      Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> multimap = HashMultimap.create();
-+      f_13264_.forEach((tagHelper) -> {
-+         if (!net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().contains(tagHelper.m_144338_().m_135782_()))
-+            multimap.putAll(tagHelper.m_144338_(), tagHelper.m_13247_(tagCollectionSupplier));
-+      });
-+      return multimap;
-+   }
-+
-+   public static void fetchCustomTagTypes(TagContainer tagCollectionSupplier) {
-+      net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().forEach(tagRegistry -> HELPER_MAP.get(ResourceKey.m_135788_(tagRegistry)).m_13242_(tagCollectionSupplier));
-+   }
-+
+    }
+ 
     public static void m_144349_(Consumer<StaticTagHelper<?>> p_144350_) {
-       f_13264_.forEach(p_144350_);
-    }
-@@ -70,6 +_,7 @@
-       f_13264_.forEach((p_144344_) -> {
-          p_144344_.m_144336_(tagcontainer$builder);
-       });
-+      net.minecraftforge.common.ForgeTagHandler.populateTagCollectionManager();
-       return tagcontainer$builder.m_144485_();
-    }
- }

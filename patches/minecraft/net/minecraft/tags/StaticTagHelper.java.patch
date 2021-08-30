@@ -4,11 +4,11 @@
     private final String f_144327_;
     private TagCollection<T> f_13227_ = TagCollection.m_13410_();
     private final List<StaticTagHelper.Wrapper<T>> f_13228_ = Lists.newArrayList();
-+   private static java.util.Map<ResourceLocation, List<StaticTagHelper.Wrapper<?>>> toAdd = com.google.common.collect.Maps.newHashMap();
++   @Nullable private static java.util.Map<ResourceLocation, List<StaticTagHelper.Wrapper<?>>> toAdd = com.google.common.collect.Maps.newHashMap();
  
     public StaticTagHelper(ResourceKey<? extends Registry<T>> p_144329_, String p_144330_) {
        this.f_144326_ = p_144329_;
-@@ -24,9 +_,46 @@
+@@ -24,9 +_,60 @@
     }
  
     public Tag.Named<T> m_13244_(String p_13245_) {
@@ -55,13 +55,8 @@
 +      namedtag.m_13260_(f_13227_::m_13404_);
 +      this.f_13228_.add(namedtag);
 +      return namedtag;
-    }
- 
-    public void m_13232_() {
-@@ -47,13 +_,31 @@
-       });
-    }
- 
++   }
++
 +   public TagCollection<T> reinjectOptionalTags(TagCollection<T> tagCollection) {
 +      java.util.Map<ResourceLocation, Tag<T>> currentTags = tagCollection.m_5643_();
 +      java.util.Map<ResourceLocation, Tag<T>> missingOptionals = this.f_13228_.stream().filter(e -> e instanceof OptionalNamedTag && !currentTags.containsKey(e.m_6979_())).collect(Collectors.toMap(Wrapper::m_6979_, namedTag -> {
@@ -74,16 +69,11 @@
 +         return TagCollection.m_13396_(missingOptionals);
 +      }
 +      return tagCollection;
-+   }
-+
-    public TagCollection<T> m_13246_() {
-       return this.f_13227_;
     }
  
-+   public List<? extends Tag.Named<T>> getWrappers() {
-+      return this.f_13228_;
-+   }
-+
+    public void m_13232_() {
+@@ -53,7 +_,7 @@
+ 
     public Set<ResourceLocation> m_13247_(TagContainer p_13248_) {
        TagCollection<T> tagcollection = p_13248_.m_144452_(this.f_144326_);
 -      Set<ResourceLocation> set = this.f_13228_.stream().map(StaticTagHelper.Wrapper::m_6979_).collect(Collectors.toSet());
@@ -108,7 +98,7 @@
 +
 +      @Override
 +      public String toString() {
-+          return "NamedTag[" + m_6979_().toString() + ']';
++          return "NamedTag[" + m_6979_() + ']';
 +      }
 +      @Override public boolean equals(Object o) { return (o == this) || (o instanceof Tag.Named && java.util.Objects.equals(this.m_6979_(), ((Tag.Named<T>)o).m_6979_())); }
 +      @Override public int hashCode() { return m_6979_().hashCode(); }
@@ -138,7 +128,7 @@
 +
 +      @Override
 +      public String toString() {
-+          return "OptionalNamedTag[" + m_6979_().toString() + ']';
++          return "OptionalNamedTag[" + m_6979_() + ']';
        }
     }
  }
