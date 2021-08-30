@@ -4,8 +4,8 @@
        return this.m_157538_(p_157534_, false);
     }
  
-+   public boolean addNewEntityWithoutEvent(T p_157534_) {
-+      return this.addEntityWithoutEvent(p_157534_, false);
++   public boolean addNewEntityWithoutEvent(T entity) {
++      return this.addEntityWithoutEvent(entity, false);
 +   }
 +
     private boolean m_157538_(T p_157539_, boolean p_157540_) {
