@@ -6,7 +6,7 @@
  
 -public abstract class Enchantment {
 +public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
-+   private final net.minecraftforge.common.util.ReverseTagWrapper<Enchantment> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.SerializationTags.m_13199_().getCustomTypeCollection(net.minecraftforge.registries.ForgeRegistries.ENCHANTMENTS));
++   private final net.minecraftforge.common.util.ReverseTagWrapper<Enchantment> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.SerializationTags.m_13199_().m_144452_(net.minecraftforge.registries.ForgeRegistries.Keys.ENCHANTMENTS));
     private final EquipmentSlot[] f_44671_;
     private final Enchantment.Rarity f_44674_;
     public final EnchantmentCategory f_44672_;

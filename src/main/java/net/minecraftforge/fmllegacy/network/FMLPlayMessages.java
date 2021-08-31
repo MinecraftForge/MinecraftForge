@@ -19,49 +19,27 @@
 
 package net.minecraftforge.fmllegacy.network;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
 import io.netty.buffer.Unpooled;
-import java.util.List;
-import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.MenuAccess;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagCollection;
-import net.minecraft.tags.TagContainer;
-import net.minecraft.tags.StaticTags;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeTagHandler;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.fmllegacy.LogicalSidedProvider;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.fmllegacy.common.registry.IEntityAdditionalSpawnData;
-
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.RegistryManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class FMLPlayMessages
 {
@@ -324,115 +302,6 @@ public class FMLPlayMessages
 
         public FriendlyByteBuf getAdditionalData() {
             return additionalData;
-        }
-    }
-
-    public static class SyncCustomTagTypes
-    {
-        private static final Logger LOGGER = LogManager.getLogger();
-        private final Map<ResourceLocation, TagCollection<?>> customTagTypeCollections;
-
-        SyncCustomTagTypes(Map<ResourceLocation, TagCollection<?>> customTagTypeCollections)
-        {
-            this.customTagTypeCollections = customTagTypeCollections;
-        }
-
-        public Map<ResourceLocation, TagCollection<?>> getCustomTagTypes()
-        {
-            return customTagTypeCollections;
-        }
-
-        public static void encode(SyncCustomTagTypes msg, FriendlyByteBuf buf)
-        {
-            buf.writeVarInt(msg.customTagTypeCollections.size());
-            msg.customTagTypeCollections.forEach((registryName, modded) -> forgeTagCollectionWrite(buf, registryName, modded.getAllTags()));
-        }
-
-        private static <T> void forgeTagCollectionWrite(FriendlyByteBuf buf, ResourceLocation registryName, Map<ResourceLocation, Tag<T>> tags)
-        {
-            buf.writeResourceLocation(registryName);
-            buf.writeVarInt(tags.size());
-            tags.forEach((name, tag) -> {
-                buf.writeResourceLocation(name);
-                List<T> elements = tag.getValues();
-                buf.writeVarInt(elements.size());
-                for (T element : elements)
-                {
-                    buf.writeResourceLocation(((IForgeRegistryEntry<?>) element).getRegistryName());
-                }
-            });
-        }
-
-        public static SyncCustomTagTypes decode(FriendlyByteBuf buf)
-        {
-            ImmutableMap.Builder<ResourceLocation, TagCollection<?>> builder = ImmutableMap.builder();
-            int size = buf.readVarInt();
-            for (int i = 0; i < size; i++)
-            {
-                ResourceLocation regName = buf.readResourceLocation();
-                IForgeRegistry<?> registry = RegistryManager.ACTIVE.getRegistry(regName);
-                if (registry != null)
-                {
-                    builder.put(regName, readTagCollection(buf, registry));
-                }
-            }
-            return new SyncCustomTagTypes(builder.build());
-        }
-
-        private static <T extends IForgeRegistryEntry<T>> TagCollection<T> readTagCollection(FriendlyByteBuf buf, IForgeRegistry<T> registry)
-        {
-            Map<ResourceLocation, Tag<T>> tags = Maps.newHashMap();
-            int totalTags = buf.readVarInt();
-            for (int i = 0; i < totalTags; i++)
-            {
-                ImmutableSet.Builder<T> elementBuilder = ImmutableSet.builder();
-                ResourceLocation name = buf.readResourceLocation();
-                int totalElements = buf.readVarInt();
-                for (int j = 0; j < totalElements; j++)
-                {
-                    T element = registry.getValue(buf.readResourceLocation());
-                    if (element != null)
-                    {
-                        elementBuilder.add(element);
-                    }
-                }
-                tags.put(name, Tag.fromSet(elementBuilder.build()));
-            }
-            return TagCollection.of(tags);
-        }
-
-        public static void handle(SyncCustomTagTypes msg, Supplier<NetworkEvent.Context> ctx)
-        {
-            ctx.get().enqueueWork(() -> {
-                if (Minecraft.getInstance().level != null)
-                {
-                    TagContainer tagCollectionSupplier = Minecraft.getInstance().level.getTagManager();
-                    //Validate that all the tags exist using the tag type collections from the packet
-                    // We mimic vanilla in that we validate before updating the actual stored tags so that it can gracefully fallback
-                    // to the last working set of tags
-                    //Note: We gracefully ignore any tag types the server may have that we don't as they won't be in our tag registry
-                    // so they won't be validated
-                    //Override and use the tags from the packet to test for validation before we actually set them
-                    Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> missingTags = StaticTags.getAllMissingTags(ForgeTagHandler.withSpecificCustom(tagCollectionSupplier, msg.customTagTypeCollections));
-                    if (missingTags.isEmpty())
-                    {
-                        //If we have no missing tags, update the custom tag types
-                        ForgeTagHandler.updateCustomTagTypes(msg);
-                        if (!ctx.get().getNetworkManager().isMemoryConnection())
-                        {
-                            //And if everything hasn't already been set due to being in single player
-                            // Fetch and update the custom tag types. We skip vanilla tag types as they have already been fetched
-                            // And fire an event that the custom tag types have been updated
-                            StaticTags.fetchCustomTagTypes(tagCollectionSupplier);
-                            MinecraftForge.EVENT_BUS.post(new TagsUpdatedEvent.CustomTagTypes(tagCollectionSupplier));
-                        }
-                    } else {
-                        LOGGER.warn("Incomplete server tags, disconnecting. Missing: {}", missingTags);
-                        ctx.get().getNetworkManager().disconnect(new TranslatableComponent("multiplayer.disconnect.missing_tags"));
-                    }
-                }
-            });
-            ctx.get().setPacketHandled(true);
         }
     }
 }

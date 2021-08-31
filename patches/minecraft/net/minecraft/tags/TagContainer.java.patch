@@ -1,33 +1,18 @@
 --- a/net/minecraft/tags/TagContainer.java
 +++ b/net/minecraft/tags/TagContainer.java
-@@ -15,7 +_,7 @@
- import org.apache.logging.log4j.LogManager;
- import org.apache.logging.log4j.Logger;
- 
--public class TagContainer {
-+public class TagContainer implements net.minecraftforge.common.extensions.IForgeTagContainer {
-    static final Logger f_144432_ = LogManager.getLogger();
-    public static final TagContainer f_13420_ = new TagContainer(ImmutableMap.of());
-    public final Map<ResourceKey<? extends Registry<?>>, TagCollection<?>> f_144433_;
 @@ -74,6 +_,7 @@
     public void m_13431_() {
        StaticTags.m_13269_(this);
        Blocks.m_50758_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent.VanillaTagTypes(this));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.TagsUpdatedEvent(this));
     }
  
     public Map<ResourceKey<? extends Registry<?>>, TagCollection.NetworkPayload> m_144442_(final RegistryAccess p_144443_) {
-@@ -108,6 +_,13 @@
-          f_144432_.error("Unknown registry {}", (Object)p_144447_);
-       }
- 
-+   }
-+
-+   public static TagContainer reinjectOptionalTags(TagContainer tagCollectionSupplier) {
-+      TagContainer.Builder builder = new TagContainer.Builder();
-+      //noinspection unchecked,rawtypes
-+      StaticTags.m_144349_(h -> builder.m_144486_(h.m_144338_(), h.reinjectOptionalTags(tagCollectionSupplier.m_144452_((ResourceKey) h.m_144338_()))));
-+      return builder.m_144485_();
-    }
- 
-    public static class Builder {
+@@ -81,6 +_,7 @@
+       this.m_144436_(new TagContainer.CollectionConsumer() {
+          public <T> void m_142574_(ResourceKey<? extends Registry<T>> p_144481_, TagCollection<T> p_144482_) {
+             Optional<? extends Registry<T>> optional = p_144443_.m_6632_(p_144481_);
++            optional = net.minecraftforge.common.ForgeTagHandler.getWrapperRegistry(p_144481_, optional);
+             if (optional.isPresent()) {
+                map.put(p_144481_, p_144482_.m_144411_(optional.get()));
+             } else {
