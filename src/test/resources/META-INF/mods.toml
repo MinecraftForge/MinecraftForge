@@ -158,5 +158,7 @@ license="LGPL v2.1"
     modId="lazy_capabilities_on_items"
 [[mods]]
     modId="add_pack_finders_test"
+[[mods]]
+    modId="forge_spawnegg_test"
 
 # ADD ABOVE THIS LINE

@@ -1,0 +1,17 @@
+--- a/net/minecraft/world/item/SpawnEggItem.java
++++ b/net/minecraft/world/item/SpawnEggItem.java
+@@ -39,11 +_,14 @@
+    private final int f_151201_;
+    private final EntityType<?> f_43204_;
+ 
++   /** Forge: Use {@link net.minecraftforge.common.ForgeSpawnEggItem} instead for suppliers */
++   @Deprecated
+    public SpawnEggItem(EntityType<? extends Mob> p_43207_, int p_43208_, int p_43209_, Item.Properties p_43210_) {
+       super(p_43210_);
+       this.f_43204_ = p_43207_;
+       this.f_151200_ = p_43208_;
+       this.f_151201_ = p_43209_;
++      if (p_43207_ != null)
+       f_43201_.put(p_43207_, this);
+    }
+ 

@@ -10,6 +10,15 @@
  
     public static ItemColors m_92683_(BlockColors p_92684_) {
        ItemColors itemcolors = new ItemColors();
+@@ -68,7 +_,7 @@
+          return p_92700_ > 0 ? -1 : PotionUtils.m_43575_(p_92699_);
+       }, Items.f_42589_, Items.f_42736_, Items.f_42739_);
+ 
+-      for(SpawnEggItem spawneggitem : SpawnEggItem.m_43233_()) {
++      for(SpawnEggItem spawneggitem : net.minecraftforge.common.ForgeSpawnEggItem.eggs()) {
+          itemcolors.m_92689_((p_92681_, p_92682_) -> {
+             return spawneggitem.m_43211_(p_92682_);
+          }, spawneggitem);
 @@ -84,17 +_,18 @@
        itemcolors.m_92689_((p_92693_, p_92694_) -> {
           return p_92694_ == 0 ? -1 : MapItem.m_42918_(p_92693_);
