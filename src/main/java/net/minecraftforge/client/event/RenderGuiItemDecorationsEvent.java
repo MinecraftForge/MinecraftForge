@@ -1,6 +1,26 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2021.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.event;
 
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -17,13 +37,15 @@ public class RenderGuiItemDecorationsEvent extends Event {
     private final int xOffset;
     private final int yOffset;
     private final String itemCountLabel;
+    private final TextureManager textureManager;
 
-    public RenderGuiItemDecorationsEvent(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel) {
+    public RenderGuiItemDecorationsEvent(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel, TextureManager textureManager) {
         this.font = font;
         this.stack = stack;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.itemCountLabel = itemCountLabel;
+        this.textureManager = textureManager;
     }
 
     /**
@@ -32,8 +54,8 @@ public class RenderGuiItemDecorationsEvent extends Event {
     @Cancelable
     public static class Pre extends RenderGuiItemDecorationsEvent
     {
-        public Pre(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel) {
-            super(font, stack, xOffset, yOffset, itemCountLabel);
+        public Pre(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel, TextureManager textureManager) {
+            super(font, stack, xOffset, yOffset, itemCountLabel, textureManager);
         }
     }
 
@@ -42,8 +64,8 @@ public class RenderGuiItemDecorationsEvent extends Event {
      */
     public static class Post extends RenderGuiItemDecorationsEvent
     {
-        public Post(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel) {
-            super(font, stack, xOffset, yOffset, itemCountLabel);
+        public Post(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel, TextureManager textureManager) {
+            super(font, stack, xOffset, yOffset, itemCountLabel, textureManager);
         }
     }
 
