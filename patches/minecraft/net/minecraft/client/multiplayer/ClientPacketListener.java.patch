@@ -85,7 +85,7 @@
           this.f_104895_ = tagcontainer;
           if (!this.f_104885_.m_129531_()) {
              tagcontainer.m_13431_();
-@@ -1780,10 +_,12 @@
+@@ -1780,7 +_,8 @@
              int i5 = friendlybytebuf.m_130242_();
              this.f_104888_.f_91064_.f_173815_.m_173830_(positionsource, i5);
           } else {
@@ -95,7 +95,3 @@
           }
        } finally {
           if (friendlybytebuf != null) {
-+            if (false) // Forge: let packet handle releasing buffer
-             friendlybytebuf.release();
-          }
- 
