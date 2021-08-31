@@ -37,15 +37,13 @@ public class RenderGuiItemDecorationsEvent extends Event {
     private final int xOffset;
     private final int yOffset;
     private final String itemCountLabel;
-    private final TextureManager textureManager;
 
-    public RenderGuiItemDecorationsEvent(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel, TextureManager textureManager) {
+    public RenderGuiItemDecorationsEvent(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel) {
         this.font = font;
         this.stack = stack;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.itemCountLabel = itemCountLabel;
-        this.textureManager = textureManager;
     }
 
     /**
@@ -54,8 +52,8 @@ public class RenderGuiItemDecorationsEvent extends Event {
     @Cancelable
     public static class Pre extends RenderGuiItemDecorationsEvent
     {
-        public Pre(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel, TextureManager textureManager) {
-            super(font, stack, xOffset, yOffset, itemCountLabel, textureManager);
+        public Pre(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel) {
+            super(font, stack, xOffset, yOffset, itemCountLabel);
         }
     }
 
@@ -64,8 +62,8 @@ public class RenderGuiItemDecorationsEvent extends Event {
      */
     public static class Post extends RenderGuiItemDecorationsEvent
     {
-        public Post(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel, TextureManager textureManager) {
-            super(font, stack, xOffset, yOffset, itemCountLabel, textureManager);
+        public Post(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel) {
+            super(font, stack, xOffset, yOffset, itemCountLabel);
         }
     }
 
