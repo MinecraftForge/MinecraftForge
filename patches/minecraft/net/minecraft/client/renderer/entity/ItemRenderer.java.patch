@@ -61,7 +61,7 @@
  
     public void m_115174_(Font p_115175_, ItemStack p_115176_, int p_115177_, int p_115178_, @Nullable String p_115179_) {
        if (!p_115176_.m_41619_()) {
-+         if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderGuiItemDecorationsEvent.Pre(p_115175_, p_115176_, p_115177_, p_115178_, p_115179_))) return;
++         if(net.minecraftforge.client.ForgeHooksClient.onRenderGuiItemDecorationsPre(p_115175_, p_115176_, p_115177_, p_115178_, p_115179_)) return;
           PoseStack posestack = new PoseStack();
           if (p_115176_.m_41613_() != 1 || p_115179_ != null) {
              String s = p_115179_ == null ? String.valueOf(p_115176_.m_41613_()) : p_115179_;
@@ -84,12 +84,11 @@
              this.m_115152_(bufferbuilder, p_115177_ + 2, p_115178_ + 13, 13, 2, 0, 0, 0, 255);
              this.m_115152_(bufferbuilder, p_115177_ + 2, p_115178_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
              RenderSystem.m_69478_();
-@@ -360,7 +_,7 @@
-             RenderSystem.m_69493_();
+@@ -361,6 +_,7 @@
              RenderSystem.m_69482_();
           }
--
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderGuiItemDecorationsEvent.Post(p_115175_, p_115176_, p_115177_, p_115178_, p_115179_));
+ 
++         net.minecraftforge.client.ForgeHooksClient.onRenderGuiItemDecorationsPost(p_115175_, p_115176_, p_115177_, p_115178_, p_115179_);
        }
     }
  
