@@ -36,7 +36,6 @@ public class TextComponentMessageFormatHandler {
                         .filter(ch -> formattedString.indexOf((char) ch) == -1)
                         .allMatch(ch -> ch == '\'');
                 if (onlyMissingQuotes) {
-                    System.out.println("only misses quote char: " + formattedString + " ; original: " + format);
                     return 0;
                 }
             }
