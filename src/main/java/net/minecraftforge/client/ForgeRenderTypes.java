@@ -376,8 +376,8 @@ public enum ForgeRenderTypes
                 this.mipmap = mipmap.get();
                 RenderSystem.enableTexture();
                 TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
-                texturemanager.bindForSetup(resLoc);
                 texturemanager.getTexture(resLoc).setFilter(this.blur, this.mipmap);
+                RenderSystem.setShaderTexture(0, resLoc);
             };
         }
     }
