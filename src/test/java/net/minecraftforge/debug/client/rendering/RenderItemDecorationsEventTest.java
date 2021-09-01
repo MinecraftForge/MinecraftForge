@@ -36,7 +36,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(RenderItemDecorationsEventTest.MODID)
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
 public class RenderItemDecorationsEventTest {
-    public static final boolean IS_ENABLED = true;
+    public static final boolean IS_ENABLED = false;
     public static final String MODID = "render_item_decorations_event_test";
     public static final ResourceLocation smiley = new ResourceLocation(MODID + ":textures/smiley.png");
     @SubscribeEvent
