@@ -342,7 +342,7 @@ public enum ForgeRenderTypes
         public static Function<ResourceLocation, RenderType> TEXT_SEETHROUGH = Util.memoize(Internal::getTextSeeThrough);
         private static RenderType getTextSeeThrough(ResourceLocation locationIn) {
             RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()
-                    .setShaderState(RENDERTYPE_TEXT_SHADER)
+                    .setShaderState(RENDERTYPE_TEXT_SEE_THROUGH_SHADER)
                     .setTextureState(new CustomizableTextureState(locationIn, () -> ForgeRenderTypes.enableTextTextureLinearFiltering, () -> false))
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
                     .setLightmapState(LIGHTMAP)
