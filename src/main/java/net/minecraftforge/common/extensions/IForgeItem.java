@@ -695,7 +695,7 @@ public interface IForgeItem
      * @param stack  the item stack
      * @param entity the entity holding the item stack
      * @deprecated To be removed in 1.18. Override {@link #canPerformAction(ItemStack, ToolAction)} and return
-     * {@code true} if the passed in tool action is contained in {@link ToolActions#DEFAULT_SHOVEL_ACTIONS} or is
+     * {@code true} if the passed in tool action is contained in {@link ToolActions#DEFAULT_SHIELD_ACTIONS} or is
      * equals to {@link ToolActions#SHIELD_BLOCK}.
      */
     @Deprecated(since = "1.17.1", forRemoval = true)
