@@ -526,7 +526,7 @@ public interface IForgeItem
     default boolean canPerformAction(ItemStack stack, ToolAction toolAction)
     {
         // Temporary patch to keep #isShield working until its removed; change to `return false` once removed
-        return ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction) && isShield(stack, null);
+        return isShield(stack, null) && ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction);
     }
 
     /**
