@@ -688,18 +688,6 @@ public interface IForgeItem
     }
 
     /**
-     * Is this Item a shield
-     *
-     * @param stack  The ItemStack
-     * @param entity The Entity holding the ItemStack
-     * @return True if the ItemStack is considered a shield
-     */
-    default boolean isShield(ItemStack stack, @Nullable LivingEntity entity)
-    {
-        return stack.getItem() == Items.SHIELD;
-    }
-
-    /**
      * @return the fuel burn time for this itemStack in a furnace. Return 0 to make
      *         it not act as a fuel. Return -1 to let the default vanilla logic
      *         decide.

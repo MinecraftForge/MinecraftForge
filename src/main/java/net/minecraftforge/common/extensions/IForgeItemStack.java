@@ -207,17 +207,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * Is this Item a shield
-     *
-     * @param entity The Entity holding the ItemStack
-     * @return True if the ItemStack is considered a shield
-     */
-    default boolean isShield(@Nullable LivingEntity entity)
-    {
-        return self().getItem().isShield(self(), entity);
-    }
-
-    /**
      * Called when a entity tries to play the 'swing' animation.
      *
      * @param entity The entity swinging the item.

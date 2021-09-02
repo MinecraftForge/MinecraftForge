@@ -575,7 +575,7 @@
              return EquipmentSlot.CHEST;
           } else {
 -            return p_147234_.m_150930_(Items.f_42740_) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
-+            return p_147234_.isShield(null) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
++            return p_147234_.canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
           }
        } else {
           return EquipmentSlot.HEAD;
