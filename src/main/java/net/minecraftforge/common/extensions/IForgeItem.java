@@ -51,6 +51,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 
 // TODO review most of the methods in this "patch"
 public interface IForgeItem
@@ -524,7 +525,8 @@ public interface IForgeItem
      */
     default boolean canPerformAction(ItemStack stack, ToolAction toolAction)
     {
-        return false;
+        // Temporary patch to keep #isShield working until its removed; change to `return false` once removed
+        return ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction) && isShield(stack, null);
     }
 
     /**
@@ -685,6 +687,21 @@ public interface IForgeItem
     default boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker)
     {
         return this instanceof AxeItem;
+    }
+
+    /**
+     * {@return {@code true} if this item is considered a shield}
+     *
+     * @param stack  the item stack
+     * @param entity the entity holding the item stack
+     * @deprecated To be removed in 1.18. Override {@link #canPerformAction(ItemStack, ToolAction)} and return
+     * {@code true} if the passed in tool action is contained in {@link ToolActions#DEFAULT_SHOVEL_ACTIONS} or is
+     * equals to {@link ToolActions#SHIELD_BLOCK}.
+     */
+    @Deprecated(since = "1.17.1", forRemoval = true)
+    default boolean isShield(ItemStack stack, @Nullable LivingEntity entity)
+    {
+        return stack.getItem() == Items.SHIELD;
     }
 
     /**

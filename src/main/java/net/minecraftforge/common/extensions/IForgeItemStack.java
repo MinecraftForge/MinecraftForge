@@ -43,6 +43,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 /*
@@ -204,6 +205,20 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default boolean canDisableShield(ItemStack shield, LivingEntity entity, LivingEntity attacker)
     {
         return self().getItem().canDisableShield(self(), shield, entity, attacker);
+    }
+
+    /**
+     * {@return {@code true} if this item is considered a shield}
+     *
+     * @param entity the entity holding the item stack
+     * @deprecated To be removed in 1.18. Call {@link #canPerformAction(ToolAction)} with
+     * {@link ToolActions#SHIELD_BLOCK} instead.
+     */
+    @SuppressWarnings("removal")
+    @Deprecated(since = "1.17.1", forRemoval = true)
+    default boolean isShield(@Nullable LivingEntity entity)
+    {
+        return self().getItem().isShield(self(), entity);
     }
 
     /**
