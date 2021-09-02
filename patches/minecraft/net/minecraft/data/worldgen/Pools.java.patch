@@ -1,0 +1,20 @@
+--- a/net/minecraft/data/worldgen/Pools.java
++++ b/net/minecraft/data/worldgen/Pools.java
+@@ -15,14 +_,13 @@
+       return BuiltinRegistries.m_123880_(BuiltinRegistries.f_123864_, p_127191_.m_69275_(), p_127191_);
+    }
+ 
+-   public static StructureTemplatePool m_127189_() {
++   public static void bootstrap() {
+       BastionPieces.m_126675_();
+       PillagerOutpostPools.m_127182_();
+       VillagePools.m_127306_();
+-      return f_127187_;
+    }
+ 
+-   static {
+-      m_127189_();
++   public static StructureTemplatePool getBuiltinEmpty() {
++      return f_127187_;
+    }
+ }

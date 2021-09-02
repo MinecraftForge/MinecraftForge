@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/level/levelgen/feature/structures/StructureTemplatePool.java
 +++ b/net/minecraft/world/level/levelgen/feature/structures/StructureTemplatePool.java
+@@ -71,6 +_,8 @@
+          }
+       }
+ 
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.StructurePoolCreatedEvent(this.f_69248_, this.f_69249_, this.f_69250_, p_69262_));
++
+       this.f_69251_ = p_69260_;
+    }
+ 
 @@ -106,11 +_,11 @@
        return this.f_69250_.size();
     }
