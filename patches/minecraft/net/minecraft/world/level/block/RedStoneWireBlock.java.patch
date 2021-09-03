@@ -5,20 +5,24 @@
        if (p_55526_) {
           boolean flag = this.m_55612_(p_55523_, blockpos, blockstate);
 -         if (flag && m_55640_(p_55523_.m_8055_(blockpos.m_7494_()))) {
-+         flag &= p_55523_.m_8055_(blockpos.m_7494_()).canRedstoneConnectTo(p_55523_, blockpos.m_7494_(), null);
++         flag = flag && p_55523_.m_8055_(blockpos.m_7494_()).canRedstoneConnectTo(p_55523_, blockpos.m_7494_(), null);
 +         if (flag) {
              if (blockstate.m_60783_(p_55523_, blockpos, p_55525_.m_122424_())) {
                 return RedstoneSide.UP;
              }
-@@ -207,8 +_,9 @@
-             return RedstoneSide.SIDE;
+@@ -208,7 +_,14 @@
           }
        }
--
+ 
 -      return !m_55594_(blockstate, p_55525_) && (blockstate.m_60796_(p_55523_, blockpos) || !m_55640_(p_55523_.m_8055_(blockpos.m_7495_()))) ? RedstoneSide.NONE : RedstoneSide.SIDE;
-+      boolean flag1 = blockstate.canRedstoneConnectTo(p_55523_, blockpos, p_55525_);
-+      boolean flag2 = p_55523_.m_8055_(blockpos.m_7495_()).canRedstoneConnectTo(p_55523_, blockpos.m_7495_(), null);
-+      return !flag1 && (blockstate.m_60796_(p_55523_, blockpos) || !flag2) ? RedstoneSide.NONE : RedstoneSide.SIDE;
++      if (blockstate.canRedstoneConnectTo(p_55523_, blockpos, p_55525_)) {
++          return RedstoneSide.SIDE;
++      } else if (blockstate.m_60796_(p_55523_, blockpos)) {
++          return RedstoneSide.NONE;
++      } else {
++          BlockPos blockPosBelow = blockpos.m_7495_();
++          return p_55523_.m_8055_(blockPosBelow).canRedstoneConnectTo(p_55523_, blockPosBelow, null) ? RedstoneSide.SIDE : RedstoneSide.NONE;
++      }
     }
  
     public boolean m_7898_(BlockState p_55585_, LevelReader p_55586_, BlockPos p_55587_) {

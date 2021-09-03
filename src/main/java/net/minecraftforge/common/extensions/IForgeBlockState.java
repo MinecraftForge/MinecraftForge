@@ -644,7 +644,9 @@ public interface IForgeBlockState
 
     /**
      * Whether redstone dust should visually connect to this block on a side.
-     * <p> Modded redstone wire blocks should call this function to determine visual connections.
+     * <p>
+     * Modded redstone wire blocks should call this function to determine visual connections.
+     *
      * @param world The world
      * @param pos The block position in world
      * @param direction The coming direction of the redstone dust connection (with respect to the block at pos)
