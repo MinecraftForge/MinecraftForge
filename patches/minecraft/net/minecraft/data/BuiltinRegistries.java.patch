@@ -1,12 +1,10 @@
 --- a/net/minecraft/data/BuiltinRegistries.java
 +++ b/net/minecraft/data/BuiltinRegistries.java
-@@ -47,14 +_,18 @@
-    public static final Registry<StructureProcessorList> f_123863_ = m_123893_(Registry.f_122883_, () -> {
+@@ -48,13 +_,17 @@
        return ProcessorLists.f_127199_;
     });
--   public static final Registry<StructureTemplatePool> f_123864_ = m_123893_(Registry.f_122884_, Pools::m_127189_);
+    public static final Registry<StructureTemplatePool> f_123864_ = m_123893_(Registry.f_122884_, Pools::m_127189_);
 -   public static final Registry<Biome> f_123865_ = m_123893_(Registry.f_122885_, () -> {
-+   public static final Registry<StructureTemplatePool> f_123864_ = m_123893_(Registry.f_122884_, Pools::getBuiltinEmpty);
 +   @Deprecated public static final Registry<Biome> f_123865_ = forge(Registry.f_122885_, () -> {
        return Biomes.f_127321_;
     });
