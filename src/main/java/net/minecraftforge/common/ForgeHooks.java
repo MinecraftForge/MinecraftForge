@@ -65,6 +65,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.levelgen.feature.structures.StructurePoolElement;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -128,6 +129,8 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldType;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
+import net.minecraftforge.common.world.StructurePoolModifierManager;
+import net.minecraftforge.common.world.IStructurePoolModifier;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -1189,6 +1192,13 @@ public class ForgeHooks
             generatedLoot = mod.apply(generatedLoot, context);
         }
         return generatedLoot;
+    }
+
+    public static void modifyStructurePool(ResourceLocation structurePoolId, List<StructurePoolElement> elements) {
+        StructurePoolModifierManager manager = ForgeInternalHandler.getStructurePoolModifierManager();
+        for (IStructurePoolModifier mod : manager.getAllStructurePoolModifiers()) {
+            mod.apply(structurePoolId, elements);
+        }
     }
 
     public static List<String> getModPacks()

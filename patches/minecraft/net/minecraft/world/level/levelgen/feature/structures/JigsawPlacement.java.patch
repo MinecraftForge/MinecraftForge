@@ -1,0 +1,15 @@
+--- a/net/minecraft/world/level/levelgen/feature/structures/JigsawPlacement.java
++++ b/net/minecraft/world/level/levelgen/feature/structures/JigsawPlacement.java
+@@ -143,10 +_,10 @@
+             int k = -1;
+             ResourceLocation resourcelocation = new ResourceLocation(structuretemplate$structureblockinfo.f_74677_.m_128461_("pool"));
+             Optional<StructureTemplatePool> optional = this.f_68994_.m_6612_(resourcelocation);
+-            if (optional.isPresent() && (optional.get().m_69278_() != 0 || Objects.equals(resourcelocation, Pools.f_127186_.m_135782_()))) {
++            if (optional.isPresent() && (optional.get().isNotEmpty() || Objects.equals(resourcelocation, Pools.f_127186_.m_135782_()))) {
+                ResourceLocation resourcelocation1 = optional.get().m_69263_();
+                Optional<StructureTemplatePool> optional1 = this.f_68994_.m_6612_(resourcelocation1);
+-               if (optional1.isPresent() && (optional1.get().m_69278_() != 0 || Objects.equals(resourcelocation1, Pools.f_127186_.m_135782_()))) {
++               if (optional1.isPresent() && (optional1.get().isNotEmpty() || Objects.equals(resourcelocation1, Pools.f_127186_.m_135782_()))) {
+                   boolean flag1 = boundingbox.m_71051_(blockpos2);
+                   MutableObject<VoxelShape> mutableobject1;
+                   int l;

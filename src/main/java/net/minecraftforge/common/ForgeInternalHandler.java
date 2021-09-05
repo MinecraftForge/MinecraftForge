@@ -28,6 +28,7 @@ import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.common.world.StructurePoolModifierManager;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -125,20 +126,30 @@ public class ForgeInternalHandler
         ConfigCommand.register(event.getDispatcher());
     }
 
-    private static LootModifierManager INSTANCE;
+    private static LootModifierManager LOOT_MANAGER_INSTANCE;
+    private static StructurePoolModifierManager POOL_MANAGER_INSTANCE;
 
     @SubscribeEvent
     public void onResourceReload(AddReloadListenerEvent event)
     {
-        INSTANCE = new LootModifierManager();
-        event.addListener(INSTANCE);
+        LOOT_MANAGER_INSTANCE = new LootModifierManager();
+        POOL_MANAGER_INSTANCE = new StructurePoolModifierManager();
+        event.addListener(LOOT_MANAGER_INSTANCE);
+        event.addListener(POOL_MANAGER_INSTANCE);
     }
 
     static LootModifierManager getLootModifierManager()
     {
-        if(INSTANCE == null)
+        if(LOOT_MANAGER_INSTANCE == null)
             throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
-        return INSTANCE;
+        return LOOT_MANAGER_INSTANCE;
+    }
+
+    static StructurePoolModifierManager getStructurePoolModifierManager()
+    {
+        if(POOL_MANAGER_INSTANCE == null)
+            throw new IllegalStateException("Can not retrieve StructurePoolModifierManager until resources have loaded once.");
+        return POOL_MANAGER_INSTANCE;
     }
 
     @SubscribeEvent
