@@ -1,13 +1,5 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
-@@ -390,6 +_,7 @@
-    public Minecraft(GameConfig p_91084_) {
-       super("Client");
-       f_90981_ = this;
-+      net.minecraftforge.client.ForgeHooksClient.invalidateLog4jThreadCache();
-       this.f_91069_ = p_91084_.f_101907_.f_101916_;
-       File file1 = p_91084_.f_101907_.f_101918_;
-       this.f_90985_ = p_91084_.f_101907_.f_101917_;
 @@ -397,14 +_,13 @@
        this.f_91029_ = p_91084_.f_101908_.f_101928_;
        this.f_90986_ = p_91084_.f_101905_.f_101944_;
