@@ -188,16 +188,6 @@ public class ForgeHooksClient
         ModLoader.get().postEvent(new TextureStitchEvent.Post(map));
     }
 
-    public static boolean onRenderGuiItemDecorationsPre(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel)
-    {
-        return MinecraftForge.EVENT_BUS.post(new RenderGuiItemDecorationsEvent.Pre(font, stack, xOffset, yOffset, itemCountLabel));
-    }
-
-    public static void onRenderGuiItemDecorationsPost(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel)
-    {
-        MinecraftForge.EVENT_BUS.post(new RenderGuiItemDecorationsEvent.Post(font, stack, xOffset, yOffset, itemCountLabel));
-    }
-
     public static void onBlockColorsInit(BlockColors blockColors)
     {
         ModLoader.get().postEvent(new ColorHandlerEvent.Block(blockColors));

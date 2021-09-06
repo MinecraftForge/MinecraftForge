@@ -25,19 +25,17 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.PickaxeItem;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGuiItemDecorationsEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistryEntry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-@Mod(RenderItemDecorationsEventTest.MODID)
+@Mod(CustomItemDecorationsTest.MODID)
 @Mod.EventBusSubscriber(value = Dist.CLIENT)
-public class RenderItemDecorationsEventTest {
-    public static final boolean IS_ENABLED = false;
+public class CustomItemDecorationsTest
+{
     public static final String MODID = "render_item_decorations_event_test";
+    /*
+    public static final boolean IS_ENABLED = false;
     public static final ResourceLocation smiley = new ResourceLocation(MODID + ":textures/smiley.png");
     @SubscribeEvent
     public static void on_pre_render_items_decorations(final RenderGuiItemDecorationsEvent.Pre event)
@@ -73,5 +71,5 @@ public class RenderItemDecorationsEventTest {
     public static void register_textures(final TextureStitchEvent.Pre event)
     {
         event.addSprite(smiley);
-    }
+    }*/
 }

@@ -32,7 +32,13 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.CapabilityCustomItemDecoration;
+import net.minecraftforge.items.ICustomItemDecoration;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.cache.CacheBuilder;
@@ -121,6 +127,22 @@ public class MinecraftForgeClient
             regionCache.invalidate(Pair.of(world, position));
         else
             regionCache.put(Pair.of(world, position), Optional.of(cache));
+    }
+
+    private static final Map<ItemStack, LazyOptional<ICustomItemDecoration>> CustomItemDecorationCache = new HashMap<>();
+
+    public static void onItemDecorations(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String stackSizeLabel)
+    {
+        LazyOptional<ICustomItemDecoration> targetCapability = CustomItemDecorationCache.get(stack);
+
+        if (targetCapability == null) {
+            ICapabilityProvider provider = stack;
+            targetCapability = provider.getCapability(CapabilityCustomItemDecoration.CUSTOM_ITEM_DECÒRATION_CAPABILITY, null);
+            CustomItemDecorationCache.put(stack, targetCapability);
+            targetCapability.addListener(self -> CustomItemDecorationCache.put(stack, null));
+        }
+
+        targetCapability.ifPresent(decoration -> decoration.render(font, stack, xOffset, yOffset, stackSizeLabel));
     }
 
     @Nullable

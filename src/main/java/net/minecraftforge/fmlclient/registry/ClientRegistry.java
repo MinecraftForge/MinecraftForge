@@ -21,6 +21,7 @@ package net.minecraftforge.fmlclient.registry;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.CustomItemDecorator;
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.client.Minecraft;
@@ -32,6 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientRegistry
 {
     private static Map<Class<? extends Entity>, ResourceLocation> entityShaderMap = new ConcurrentHashMap<>();
+    private static Map<String, CustomItemDecorator> customDecorationsRendererMap = new ConcurrentHashMap<>();
 
     /**
      * Registers a KeyBinding.
@@ -57,5 +59,19 @@ public class ClientRegistry
     public static ResourceLocation getEntityShader(Class<? extends Entity> entityClass)
     {
         return entityShaderMap.get(entityClass);
+    }
+
+    /**
+     * Register a decoration for to be used with ItemStacks, such as vanillas durability bar or stack size counter.
+     * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
+     * This method is safe to call during parallel mod loading.
+     */
+    public static void register(CustomItemDecorator renderer) throws Exception {
+        customDecorationsRendererMap.put(renderer.key, renderer);
+    }
+
+    public static CustomItemDecorator getCustomDecorationsRenderer(String key)
+    {
+        return customDecorationsRendererMap.get(key);
     }
 }
