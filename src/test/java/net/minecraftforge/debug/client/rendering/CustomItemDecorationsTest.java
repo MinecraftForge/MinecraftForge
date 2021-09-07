@@ -49,7 +49,7 @@ import javax.annotation.Nullable;
 @Mod(CustomItemDecorationsTest.MODID)
 public class CustomItemDecorationsTest {
     public static final String MODID = "render_item_decorations_test";
-    private static final boolean IS_ENABLED = true;
+    private static final boolean IS_ENABLED = false;
     private static final ResourceLocation smiley = new ResourceLocation(MODID + ":textures/smiley.png");
     
     public CustomItemDecorationsTest()
@@ -59,27 +59,27 @@ public class CustomItemDecorationsTest {
     
     public void onClientRegistries(final FMLClientSetupEvent event)
     {
-        CustomItemDecorator decorator = new CustomItemDecorator(new ResourceLocation(MODID, "test"))
-        {
-            @Override
-            public void render(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String stackSizeLabel)
-            {
-                RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
-                Tesselator tessellator = Tesselator.getInstance();
-                BufferBuilder bufferbuilder = tessellator.getBuilder();
-                int x = xOffset;
-                int y = yOffset;
-                RenderSystem.setShaderTexture(0, smiley);
-                bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-                bufferbuilder.vertex(x + 0, y + 0, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(0, 0).endVertex();
-                bufferbuilder.vertex(x + 0, y + 5, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(0, 1).endVertex();
-                bufferbuilder.vertex(x + 5, y + 5, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(1, 1).endVertex();
-                bufferbuilder.vertex(x + 5, y + 0, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(1, 0).endVertex();
-                bufferbuilder.end();
-                BufferUploader.end(bufferbuilder);
-            }
-        };
-        ClientRegistry.registerCustomItemDecorator(decorator);
+        if(IS_ENABLED) {
+            CustomItemDecorator decorator = new CustomItemDecorator(new ResourceLocation(MODID, "test")) {
+                @Override
+                public void render(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String stackSizeLabel) {
+                    RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+                    Tesselator tessellator = Tesselator.getInstance();
+                    BufferBuilder bufferbuilder = tessellator.getBuilder();
+                    int x = xOffset;
+                    int y = yOffset;
+                    RenderSystem.setShaderTexture(0, smiley);
+                    bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+                    bufferbuilder.vertex(x + 0, y + 0, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(0, 0).endVertex();
+                    bufferbuilder.vertex(x + 0, y + 5, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(0, 1).endVertex();
+                    bufferbuilder.vertex(x + 5, y + 5, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(1, 1).endVertex();
+                    bufferbuilder.vertex(x + 5, y + 0, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(1, 0).endVertex();
+                    bufferbuilder.end();
+                    BufferUploader.end(bufferbuilder);
+                }
+            };
+            ClientRegistry.registerCustomItemDecorator(decorator);
+        }
     }
     
     /*
@@ -92,37 +92,35 @@ public class CustomItemDecorationsTest {
     public static class Capabilities
     {
         @SubscribeEvent
-        public static void onAttachCapabilities(final AttachCapabilitiesEvent<ItemStack> event)
-        {
-            if (!(event.getObject().getItem() instanceof DiggerItem)) return;
-            CustomItemDecorationHandler handler = new CustomItemDecorationHandler();
-            handler.addDecoration(new ResourceLocation(MODID, "test"), event.getObject());
-            LazyOptional<ICustomItemDecoration> optional = LazyOptional.of(() -> handler);
-            ICapabilityProvider provider = new ICapabilitySerializable<CompoundTag>() {
-                @Override
-                public CompoundTag serializeNBT() {
-                    return handler.serializeNBT();
-                }
-                
-                @Override
-                public void deserializeNBT(CompoundTag nbt)
-                {
-                    handler.deserializeNBT(nbt);
-                }
-                
-                @Nonnull
-                @Override
-                public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side)
-                {
-                    if (cap == CapabilityCustomItemDecoration.CUSTOM_ITEM_DECORATION_CAPABILITY)
-                    {
-                        return optional.cast();
+        public static void onAttachCapabilities(final AttachCapabilitiesEvent<ItemStack> event) {
+            if (IS_ENABLED) {
+                if (!(event.getObject().getItem() instanceof DiggerItem)) return;
+                CustomItemDecorationHandler handler = new CustomItemDecorationHandler();
+                handler.addDecoration(new ResourceLocation(MODID, "test"), event.getObject());
+                LazyOptional<ICustomItemDecoration> optional = LazyOptional.of(() -> handler);
+                ICapabilityProvider provider = new ICapabilitySerializable<CompoundTag>() {
+                    @Override
+                    public CompoundTag serializeNBT() {
+                        return handler.serializeNBT();
                     }
-                    return LazyOptional.empty();
-                }
-            };
-            event.addCapability(new ResourceLocation(MODID, "item_decoration_renderer_test"), provider);
-            event.addListener(optional::invalidate);
+        
+                    @Override
+                    public void deserializeNBT(CompoundTag nbt) {
+                        handler.deserializeNBT(nbt);
+                    }
+        
+                    @Nonnull
+                    @Override
+                    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+                        if (cap == CapabilityCustomItemDecoration.CUSTOM_ITEM_DECORATION_CAPABILITY) {
+                            return optional.cast();
+                        }
+                        return LazyOptional.empty();
+                    }
+                };
+                event.addCapability(new ResourceLocation(MODID, "item_decoration_renderer_test"), provider);
+                event.addListener(optional::invalidate);
+            }
         }
     }
 }
