@@ -48,7 +48,7 @@ public class CustomItemDecorationHandler implements ICustomItemDecoration
     }
   
     /**
-     * Removes the required NBT for a Decoration from the Items NBT.
+     * Adds the required NBT for a Decoration to the Items NBT.
      * Should be called server side, since the data should persist.
      * It is potentially required to synchronize the Item with the client afterwards.
      * @param key The Decorations key
@@ -80,7 +80,7 @@ public class CustomItemDecorationHandler implements ICustomItemDecoration
     }
     
     /**
-     * Adds the required NBT for a Decoration to the Items NBT.
+     * Removes the required NBT for a Decoration from the Items NBT.
      * Should be called server side, since the data should persist.
      * It is potentially required to synchronize the Item with the client afterwards.
      * @param key The Decorations key
