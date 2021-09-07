@@ -52,11 +52,18 @@ import javax.annotation.Nullable;
 public class CustomItemDecorationsTest
 {
     public static final String MODID = "render_item_decorations_test";
+<<<<<<< HEAD
+    private static final boolean IS_ENABLED = false;
+    private static final ResourceLocation smiley = new ResourceLocation(MODID + ":textures/smiley.png");
+    
+    public CustomItemDecorationsTest()
+=======
     public static final boolean IS_ENABLED = true;
     public static final ResourceLocation smiley = new ResourceLocation(MODID + ":textures/smiley.png");
     /*
     @SubscribeEvent
     public static void register_textures(final TextureStitchEvent.Pre event)
+>>>>>>> parent of 2004e6f93... Got the test mod working
     {
         event.addSprite(smiley);
     }*/
@@ -64,6 +71,29 @@ public class CustomItemDecorationsTest
     @SubscribeEvent
     public static void onAttachCapabilities(final AttachCapabilitiesEvent<ItemStack> event)
     {
+<<<<<<< HEAD
+        if(IS_ENABLED) {
+            CustomItemDecorator decorator = new CustomItemDecorator(new ResourceLocation(MODID, "test")) {
+                @Override
+                public void render(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String stackSizeLabel) {
+                    RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+                    Tesselator tessellator = Tesselator.getInstance();
+                    BufferBuilder bufferbuilder = tessellator.getBuilder();
+                    int x = xOffset;
+                    int y = yOffset;
+                    RenderSystem.setShaderTexture(0, smiley);
+                    bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+                    bufferbuilder.vertex(x + 0, y + 0, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(0, 0).endVertex();
+                    bufferbuilder.vertex(x + 0, y + 5, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(0, 1).endVertex();
+                    bufferbuilder.vertex(x + 5, y + 5, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(1, 1).endVertex();
+                    bufferbuilder.vertex(x + 5, y + 0, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(1, 0).endVertex();
+                    bufferbuilder.end();
+                    BufferUploader.end(bufferbuilder);
+                }
+            };
+            ClientRegistry.registerCustomItemDecorator(decorator);
+        }
+=======
         if(!(event.getObject().getItem() instanceof DiggerItem)) return;
         CustomItemDecorationHandler handler = new CustomItemDecorationHandler();
         handler.addDecoration(new ResourceLocation(MODID, "test"), event.getObject());
@@ -90,12 +120,44 @@ public class CustomItemDecorationsTest
         };
         event.addCapability(new ResourceLocation(MODID, "item_renderer_test"), provider);
         event.addListener(optional::invalidate);
+>>>>>>> parent of 2004e6f93... Got the test mod working
     }
     
     @Mod.EventBusSubscriber(value= Dist.CLIENT, bus= Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientOnly
     {
         @SubscribeEvent
+<<<<<<< HEAD
+        public static void onAttachCapabilities(final AttachCapabilitiesEvent<ItemStack> event) {
+            if (IS_ENABLED) {
+                if (!(event.getObject().getItem() instanceof DiggerItem)) return;
+                CustomItemDecorationHandler handler = new CustomItemDecorationHandler();
+                handler.addDecoration(new ResourceLocation(MODID, "test"), event.getObject());
+                LazyOptional<ICustomItemDecoration> optional = LazyOptional.of(() -> handler);
+                ICapabilityProvider provider = new ICapabilitySerializable<CompoundTag>() {
+                    @Override
+                    public CompoundTag serializeNBT() {
+                        return handler.serializeNBT();
+                    }
+        
+                    @Override
+                    public void deserializeNBT(CompoundTag nbt) {
+                        handler.deserializeNBT(nbt);
+                    }
+        
+                    @Nonnull
+                    @Override
+                    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
+                        if (cap == CapabilityCustomItemDecoration.CUSTOM_ITEM_DECORATION_CAPABILITY) {
+                            return optional.cast();
+                        }
+                        return LazyOptional.empty();
+                    }
+                };
+                event.addCapability(new ResourceLocation(MODID, "item_decoration_renderer_test"), provider);
+                event.addListener(optional::invalidate);
+            }
+=======
         public void onClientRegistries(final FMLClientSetupEvent event)
         {
             CustomItemDecorator decorator = new CustomItemDecorator(new ResourceLocation(MODID, "test")) {
@@ -116,6 +178,7 @@ public class CustomItemDecorationsTest
                     BufferUploader.end(bufferbuilder);
                 }
             };
+>>>>>>> parent of 2004e6f93... Got the test mod working
         }
     }
 }
