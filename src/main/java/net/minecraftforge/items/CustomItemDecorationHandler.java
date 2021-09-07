@@ -48,11 +48,11 @@ public class CustomItemDecorationHandler implements ICustomItemDecoration
     }
   
     /**
-     * Adds the required NBT for a Decoration to the Items NBT.
+     * Removes the required NBT for a Decoration from the Items NBT.
      * Should be called server side, since the data should persist.
      * It is potentially required to synchronize the Item with the client afterwards.
-     * @param key The Decoration
-     * @param stack
+     * @param key The Decorations key
+     * @param stack The ItemStack with the Capability
      */
     @Override
     public void addDecoration(ResourceLocation key, ItemStack stack)
@@ -78,7 +78,14 @@ public class CustomItemDecorationHandler implements ICustomItemDecoration
             tag.getList(CUSTOM_DECORATIONS, Constants.NBT.TAG_COMPOUND).add(newTag);
         }
     }
-
+    
+    /**
+     * Adds the required NBT for a Decoration to the Items NBT.
+     * Should be called server side, since the data should persist.
+     * It is potentially required to synchronize the Item with the client afterwards.
+     * @param key The Decorations key
+     * @param stack The ItemStack with the Capability
+     */
     @Override
     public void removeDecoration(ResourceLocation key, ItemStack stack)
     {
