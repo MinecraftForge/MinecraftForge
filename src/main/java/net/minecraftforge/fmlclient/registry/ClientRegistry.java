@@ -36,7 +36,6 @@ public class ClientRegistry
 {
     private static Map<Class<? extends Entity>, ResourceLocation> entityShaderMap = new ConcurrentHashMap<>();
     private static Map<String, CustomItemDecorator> customDecorationsRendererMap = new ConcurrentHashMap<>();
-    private static final Logger LOGGER = LogManager.getLogger();
     
     /**
      * Registers a KeyBinding.
@@ -70,13 +69,11 @@ public class ClientRegistry
      * This method is safe to call during parallel mod loading.
      */
     public static void registerCustomItemDecorator(CustomItemDecorator renderer) {
-        LOGGER.info("registered custom item decorator: " + renderer.key);
         customDecorationsRendererMap.put(renderer.key, renderer);
     }
 
     public static CustomItemDecorator getCustomDecorationsRenderer(String key)
     {
-        LOGGER.info(customDecorationsRendererMap.keySet().toString());
         return customDecorationsRendererMap.get(key);
     }
 }
