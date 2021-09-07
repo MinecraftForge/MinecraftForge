@@ -65,6 +65,15 @@ public class CustomItemDecorationHandler implements ICustomItemDecoration
         CompoundTag tag = stack.getOrCreateTag();
         if(tag.contains(CUSTOM_DECORATIONS))
         {
+            ListTag nbtTagList = stack.getTag().getList(CUSTOM_DECORATIONS, Constants.NBT.TAG_COMPOUND);
+            int size = nbtTagList.size();
+            for(int i = 0; i < size; i++)
+            {
+                if(nbtTagList.getCompound(i).getString("key").equals(key.toString()))
+                {
+                   return;
+                }
+            }
             CompoundTag newTag = new CompoundTag();
             newTag.putString("key", key.toString());
             tag.getList(CUSTOM_DECORATIONS, Constants.NBT.TAG_COMPOUND).add(newTag);
@@ -124,7 +133,7 @@ public class CustomItemDecorationHandler implements ICustomItemDecoration
                 if (!customItemDecoratorCache.containsKey(key)) {
                     customItemDecoratorCache.put(key, ClientRegistry.getCustomDecorationsRenderer(key));
                 }
-                if(customItemDecoratorCache.containsKey(key)) {
+                if(customItemDecoratorCache.get(key) != null) {
                     customItemDecoratorCache.get(key).render(font, stack, xOffset, yOffset, itemCountLabel);
                 }
             }
