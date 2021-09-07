@@ -1,13 +1,5 @@
 --- a/net/minecraft/client/renderer/entity/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/entity/ItemRenderer.java
-@@ -58,6 +_,7 @@
- import net.minecraft.world.level.block.state.BlockState;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import net.minecraftforge.client.MinecraftForgeClient;
- 
- @OnlyIn(Dist.CLIENT)
- public class ItemRenderer implements ResourceManagerReloadListener {
 @@ -76,8 +_,8 @@
  
     public ItemRenderer(TextureManager p_174225_, ModelManager p_174226_, ItemColors p_174227_, BlockEntityWithoutLevelRenderer p_174228_) {
@@ -88,7 +80,7 @@
              RenderSystem.m_69482_();
           }
  
-+         MinecraftForgeClient.onItemDecorations(p_115175_, p_115176_, p_115177_, p_115178_, p_115179_);
++         net.minecraftforge.client.MinecraftForgeClient.onItemDecorations(p_115175_, p_115176_, p_115177_, p_115178_, p_115179_);
        }
     }
  
