@@ -129,19 +129,17 @@ public class MinecraftForgeClient
             regionCache.put(Pair.of(world, position), Optional.of(cache));
     }
 
-    private static final Map<ItemStack, LazyOptional<ICustomItemDecoration>> CustomItemDecorationCache = new HashMap<>();
-
+    private static final Map<ItemStack, LazyOptional<ICustomItemDecoration>> customItemDecorationCache = new HashMap<>();
     public static void onItemDecorations(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String stackSizeLabel)
     {
-        LazyOptional<ICustomItemDecoration> targetCapability = CustomItemDecorationCache.get(stack);
-
-        if (targetCapability == null) {
+        LazyOptional<ICustomItemDecoration> targetCapability = customItemDecorationCache.get(stack);
+        if (targetCapability == null)
+        {
             ICapabilityProvider provider = stack;
-            targetCapability = provider.getCapability(CapabilityCustomItemDecoration.CUSTOM_ITEM_DECÒRATION_CAPABILITY, null);
-            CustomItemDecorationCache.put(stack, targetCapability);
-            targetCapability.addListener(self -> CustomItemDecorationCache.put(stack, null));
+            targetCapability = provider.getCapability(CapabilityCustomItemDecoration.CUSTOM_ITEM_DECORATION_CAPABILITY, null);
+            customItemDecorationCache.put(stack, targetCapability);
+            targetCapability.addListener(self -> customItemDecorationCache.put(stack, null));
         }
-
         targetCapability.ifPresent(decoration -> decoration.render(font, stack, xOffset, yOffset, stackSizeLabel));
     }
 

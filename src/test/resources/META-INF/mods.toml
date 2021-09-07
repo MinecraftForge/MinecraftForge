@@ -149,5 +149,5 @@ license="LGPL v2.1"
 [[mods]]
     modId="check_spawn_event_test"
 [[mods]]
-    modId="render_item_decorations_event_test"
+    modId="render_item_decorations_test"
 # ADD ABOVE THIS LINE
