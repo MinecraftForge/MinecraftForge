@@ -10,8 +10,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.CustomItemDecorator;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fmlclient.registry.ClientRegistry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -20,18 +18,17 @@ public class CustomItemDecorationHandler implements ICustomItemDecoration
 {
     private Map<String, CustomItemDecorator> customItemDecoratorCache = new HashMap<>();
     private static final String CUSTOM_DECORATIONS = "CapabilityCustomItemDecorators";
-   
+
     @Override
     public CompoundTag serializeNBT()
     {
         ListTag nbtTagList = new ListTag();
-        //Not needed since the NBT is saved on the Item directly
-        /*for(int i = 0; i < customItemDecoratorCache.size(); i++)
+        for(int i = 0; i < customItemDecoratorCache.size(); i++)
         {
             CompoundTag tag = new CompoundTag();
             tag.putString("key", customItemDecoratorCache.get(i).key);
             nbtTagList.add(i, tag);
-        }*/
+        }
         CompoundTag decorators = new CompoundTag();
         decorators.put(CUSTOM_DECORATIONS, nbtTagList);
         return decorators;
@@ -46,7 +43,7 @@ public class CustomItemDecorationHandler implements ICustomItemDecoration
             CompoundTag tag = nbtTagList.getCompound(i);
         }
     }
-  
+
     /**
      * Removes the required NBT for a Decoration from the Items NBT.
      * Should be called server side, since the data should persist.
@@ -120,13 +117,10 @@ public class CustomItemDecorationHandler implements ICustomItemDecoration
             for(int i = 0; i < size; i++)
             {
                 String key = nbtTagList.getCompound(i).getString("key");
-                
                 if (!customItemDecoratorCache.containsKey(key)) {
                     customItemDecoratorCache.put(key, ClientRegistry.getCustomDecorationsRenderer(key));
                 }
-                if(customItemDecoratorCache.containsKey(key)) {
-                    customItemDecoratorCache.get(key).render(font, stack, xOffset, yOffset, itemCountLabel);
-                }
+                customItemDecoratorCache.get(key).render(font, stack, xOffset, yOffset, itemCountLabel);
             }
         }
     }

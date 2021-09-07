@@ -26,8 +26,6 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,8 +34,7 @@ public class ClientRegistry
 {
     private static Map<Class<? extends Entity>, ResourceLocation> entityShaderMap = new ConcurrentHashMap<>();
     private static Map<String, CustomItemDecorator> customDecorationsRendererMap = new ConcurrentHashMap<>();
-    private static final Logger LOGGER = LogManager.getLogger();
-    
+
     /**
      * Registers a KeyBinding.
      * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
@@ -69,14 +66,12 @@ public class ClientRegistry
      * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
      * This method is safe to call during parallel mod loading.
      */
-    public static void registerCustomItemDecorator(CustomItemDecorator renderer) {
-        LOGGER.info("registered custom item decorator: " + renderer.key);
+    public static void register(CustomItemDecorator renderer) throws Exception {
         customDecorationsRendererMap.put(renderer.key, renderer);
     }
 
     public static CustomItemDecorator getCustomDecorationsRenderer(String key)
     {
-        LOGGER.info(customDecorationsRendererMap.keySet().toString());
         return customDecorationsRendererMap.get(key);
     }
 }
