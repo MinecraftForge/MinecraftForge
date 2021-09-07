@@ -13,7 +13,7 @@
              int l = slot.f_40220_;
              int i1 = slot.f_40221_;
 -            m_169606_(p_97795_, l, i1, this.m_93252_());
-+            renderSlotHighlight(p_97795_, l, i1, this.m_93252_(), this.getSlotColor(k));
++            renderSlotHighlight(p_97795_, l, i1, this.m_93252_(), this.getSlotColor(i1));
           }
        }
  
