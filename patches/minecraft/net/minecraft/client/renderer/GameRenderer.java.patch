@@ -53,15 +53,3 @@
        this.f_109059_.m_91307_().m_6182_("hand");
        if (this.f_109070_) {
           RenderSystem.m_69421_(256, Minecraft.f_91002_);
-@@ -1151,6 +_,11 @@
- 
-    public OverlayTexture m_109155_() {
-       return this.f_109075_;
-+   }
-+
-+   @Override
-+   public net.minecraftforge.resource.IResourceType getResourceType() {
-+      return net.minecraftforge.resource.VanillaResourceType.SHADERS;
-    }
- 
-    @Nullable
