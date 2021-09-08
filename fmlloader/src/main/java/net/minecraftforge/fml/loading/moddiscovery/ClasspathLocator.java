@@ -77,7 +77,8 @@ public class ClasspathLocator extends AbstractJarFileLocator {
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
             Path path = LibraryFinder.findJarPathFor(resource, name, url);
-            if (ignoreList.stream().anyMatch(path.toString()::startsWith) || Files.isDirectory(path))
+            String filename = path.getFileName().toString();
+            if (ignoreList.stream().anyMatch(filename::startsWith) || Files.isDirectory(path))
                 continue;
 
             ModJarMetadata.buildFile(this, filter, path).ifPresent(mf -> {
