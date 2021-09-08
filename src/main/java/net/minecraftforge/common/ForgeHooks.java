@@ -1412,24 +1412,39 @@ public class ForgeHooks
         });
     }
     
-    /** Called when dimensions are parsed **/
-    public static MappedRegistry<LevelStem> loadDimensionsWithServerSeed(long seed, MappedRegistry<LevelStem> dimensionRegistry)
+    /**
+     * Called when dimension jsons are parsed.
+     * Creates a copy of the worldgen settings and its dimension registry,
+     * where dimensions that specify that they should use the server seed will use the server seed
+     * instead of the seed that mojang requires be specified in the json.
+     **/
+    public static WorldGenSettings loadDimensionsWithServerSeed(WorldGenSettings wgs)
     {
+        // get the original worldgen settings' settings
+        long seed = wgs.seed();
+        boolean generateFeatures = wgs.generateFeatures();
+        boolean generateBonusChest = wgs.generateBonusChest();
+        MappedRegistry<LevelStem> originalRegistry = wgs.dimensions();
+        Optional<String> legacyCustomOptions = wgs.legacyCustomOptions;
+        
+        // make a copy of the dimension registry; for dimensions that specify that they should use the server seed instead
+        // of the hardcoded json seed, recreate them with the correct seed
         MappedRegistry<LevelStem> seededRegistry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY, Lifecycle.experimental());
-        for (Entry<ResourceKey<LevelStem>, LevelStem> entry : dimensionRegistry.entrySet())
+        for (Entry<ResourceKey<LevelStem>, LevelStem> entry : originalRegistry.entrySet())
         {
             ResourceKey<LevelStem> key = entry.getKey();
             LevelStem dimension = entry.getValue();
             if (dimension.useServerSeed)
             {
-                seededRegistry.register(key, new LevelStem(dimension.typeSupplier(), dimension.generator().withSeed(seed)), dimensionRegistry.lifecycle(entry.getValue()));
+                seededRegistry.register(key, new LevelStem(dimension.typeSupplier(), dimension.generator().withSeed(seed)), originalRegistry.lifecycle(entry.getValue()));
             }
             else
             {
-                seededRegistry.register(key, dimension, dimensionRegistry.lifecycle(dimension));
+                seededRegistry.register(key, dimension, originalRegistry.lifecycle(dimension));
             }
         }
-        return seededRegistry;
+        
+        return new WorldGenSettings(seed, generateFeatures, generateBonusChest, seededRegistry, legacyCustomOptions);
     }
     
     /** Called in the LevelStem codec builder to add extra fields to dimension jsons **/
