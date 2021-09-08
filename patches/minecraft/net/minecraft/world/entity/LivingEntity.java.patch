@@ -579,3 +579,12 @@
        Item item = p_147234_.m_41720_();
        if (!p_147234_.m_150930_(Items.f_42047_) && (!(item instanceof BlockItem) || !(((BlockItem)item).m_40614_() instanceof AbstractSkullBlock))) {
           if (item instanceof ArmorItem) {
+@@ -3217,7 +_,7 @@
+          } else if (p_147234_.m_150930_(Items.f_42741_)) {
+             return EquipmentSlot.CHEST;
+          } else {
+-            return p_147234_.m_150930_(Items.f_42740_) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
++            return p_147234_.canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK) ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
+          }
+       } else {
+          return EquipmentSlot.HEAD;

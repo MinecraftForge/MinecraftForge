@@ -150,5 +150,7 @@ license="LGPL v2.1"
     modId="check_spawn_event_test"
 [[mods]]
     modId="permissions_changed_event_test"
+[[mods]]
+    modId="custom_shield_test"
 
 # ADD ABOVE THIS LINE
