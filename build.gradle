@@ -2,10 +2,12 @@ buildscript {
     repositories {
         mavenLocal()
         maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         mavenCentral()
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
 
@@ -428,6 +430,8 @@ def sharedFmlonlyForge = { Project prj ->
 
         if (prj.name == 'forge') {
             run.environment 'FORGE_SPEC', prj.SPEC_VERSION
+            run.property 'mixin.debug.export', 'true'
+            run.args '-mixin.config=forge.mixins.json'
         }
     }
 
@@ -766,6 +770,7 @@ project(':forge') {
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
     apply plugin: 'net.minecraftforge.gradle.patcher'
+    apply plugin: 'org.spongepowered.mixin'
     apply plugin: 'org.cadixdev.licenser'
 
     sourceSets {
@@ -830,6 +835,7 @@ project(':forge') {
         implementation project(':fmlloader')
         implementation project(':javafmllanguage')
         implementation project(':mclanguage')
+        annotationProcessor "org.spongepowered:mixin:${MIXIN_VERSION}:processor"
     }
     dependencies sharedDeps
 
@@ -945,7 +951,8 @@ project(':forge') {
             '/': [
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'GitCommit': gradleutils.gitInfo.abbreviatedId,
-                'Git-Branch': gradleutils.gitInfo.branch
+                'Git-Branch': gradleutils.gitInfo.branch,
+                'MixinConfigs': 'forge.mixins.json'
             ] as LinkedHashMap,
             'net/minecraftforge/versions/forge/': [
                 'Specification-Title':      'Forge',
@@ -988,6 +995,10 @@ project(':forge') {
                 'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap
         ]
+    }
+
+    mixin {
+        add sourceSets.main, 'forge.refmap.json'
     }
 
     task crowdin(type: Crowdin) {

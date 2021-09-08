@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "net.minecraftforge.mixin",
+  "compatibilityLevel": "JAVA_16",
+  "refmap": "forge.refmap.json",
+  "mixins": [],
+  "client": [],
+  "minVersion": "0.8.4"
+}
