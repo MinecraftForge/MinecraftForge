@@ -143,14 +143,6 @@
        }
  
     }
-@@ -779,6 +_,7 @@
-       return this.m_168019_(false);
-    }
- 
-+   @Deprecated // Forge: Use selective refreshResources method in FMLClientHandler
-    private CompletableFuture<Void> m_168019_(boolean p_168020_) {
-       if (this.f_91024_ != null) {
-          return this.f_91024_;
 @@ -876,10 +_,6 @@
           f_90982_.error("setScreen called from non-game thread");
        }
@@ -499,14 +491,6 @@
        }
     }
  
-@@ -2318,6 +_,7 @@
-       return f_90981_;
-    }
- 
-+   @Deprecated // Forge: Use selective scheduleResourceRefresh method in FMLClientHandler
-    public CompletableFuture<Void> m_91088_() {
-       return this.m_18691_(() -> this.m_91391_()).thenCompose((p_167945_) -> {
-          return p_167945_;
 @@ -2768,7 +_,7 @@
        return this.f_90993_;
     }
