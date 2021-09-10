@@ -1,0 +1,17 @@
+--- a/net/minecraft/tags/GameEventTags.java
++++ b/net/minecraft/tags/GameEventTags.java
+@@ -12,6 +_,14 @@
+       return f_144301_.m_13244_(p_144308_);
+    }
+ 
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<GameEvent> createOptional(net.minecraft.resources.ResourceLocation name) {
++      return createOptional(name, null);
++   }
++
++   public static net.minecraftforge.common.Tags.IOptionalNamedTag<GameEvent> createOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<GameEvent>> defaults) {
++      return f_144301_.createOptional(name, defaults);
++   }
++
+    public static TagCollection<GameEvent> m_144306_() {
+       return f_144301_.m_13246_();
+    }
