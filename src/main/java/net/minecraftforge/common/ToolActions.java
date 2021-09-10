@@ -109,6 +109,10 @@ public class ToolActions
     // */
     // TODO: public static final ToolAction HOE_TILL = ToolAction.get("till");
 
+    /**
+     * A tool action corresponding to the 'block' action of shields.
+     */
+    public static final ToolAction SHIELD_BLOCK = ToolAction.get("shield_block");
 
     // Default actions supported by each tool type
     public static final Set<ToolAction> DEFAULT_AXE_ACTIONS = of(AXE_DIG, AXE_STRIP, AXE_SCRAPE, AXE_WAX_OFF);
@@ -117,6 +121,7 @@ public class ToolActions
     public static final Set<ToolAction> DEFAULT_PICKAXE_ACTIONS = of(PICKAXE_DIG);
     public static final Set<ToolAction> DEFAULT_SWORD_ACTIONS = of(SWORD_DIG, SWORD_SWEEP);
     public static final Set<ToolAction> DEFAULT_SHEARS_ACTIONS = of(SHEARS_DIG, SHEARS_HARVEST, SHEARS_CARVE, SHEARS_DISARM);
+    public static final Set<ToolAction> DEFAULT_SHIELD_ACTIONS = of(SHIELD_BLOCK);
 
     private static Set<ToolAction> of(ToolAction... actions) {
         return Stream.of(actions).collect(Collectors.toCollection(Sets::newIdentityHashSet));
