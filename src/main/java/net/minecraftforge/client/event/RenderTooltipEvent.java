@@ -50,9 +50,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
 {
     @Nonnull
     protected final ItemStack stack;
-    @Deprecated
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     protected final List<? extends FormattedText> lines;
-    protected final PoseStack matrixStack;
+    protected final PoseStack matrixStack; // TODO: rename in 1.18
     protected int x;
     protected int y;
     protected Font fr;
@@ -91,11 +91,17 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * @deprecated use {@link #getComponents()}
      */
     @Nonnull
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     public List<? extends FormattedText> getLines()
     {
         return lines;
     }
 
+    /**
+     * The components to be drawn.
+     * To modify this list use {@link GatherComponents}.
+     * @return an unmodifiable list of tooltip components to be drawn.
+     */
     @Nonnull
     public List<ClientTooltipComponent> getComponents()
     {
@@ -159,16 +165,25 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             this.maxWidth = maxWidth;
         }
 
+        /**
+         * @return the ItemStack whose tooltip is being rendered or an empty stack if this tooltip is not for a stack
+         */
         public ItemStack getStack()
         {
             return stack;
         }
 
+        /**
+         * @return the width of the screen
+         */
         public int getScreenWidth()
         {
             return screenWidth;
         }
 
+        /**
+         * @return the height of the screen
+         */
         public int getScreenHeight()
         {
             return screenHeight;

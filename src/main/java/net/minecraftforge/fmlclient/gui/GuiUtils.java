@@ -237,7 +237,7 @@ public class GuiUtils
      *
      * @param stack The stack for which a tooltip is about to be drawn.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     public static void preItemToolTip(@Nonnull ItemStack stack)
     {
         cachedTooltipStack = stack;
@@ -246,13 +246,13 @@ public class GuiUtils
     /**
      * Must be called from {@code GuiScreen.renderToolTip} after {@code GuiScreen.drawHoveringText} is called.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     public static void postItemToolTip()
     {
         cachedTooltipStack = ItemStack.EMPTY;
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     public static void drawHoveringText(PoseStack mStack, List<? extends FormattedText> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, Font font)
     {
         drawHoveringText(mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
@@ -277,14 +277,14 @@ public class GuiUtils
      *                       between the start and end values.
      * @param font the font for drawing the text in the tooltip box
      */
-    @Deprecated
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     public static void drawHoveringText(PoseStack mStack, List<? extends FormattedText> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
                                         int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, Font font)
     {
         drawHoveringText(cachedTooltipStack, mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, backgroundColor, borderColorStart, borderColorEnd, font);
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     public static void drawHoveringText(@Nonnull final ItemStack stack, PoseStack mStack, List<? extends FormattedText> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, Font font)
     {
         drawHoveringText(stack, mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
@@ -295,7 +295,7 @@ public class GuiUtils
      *
      * @see #drawHoveringText(MatrixStack, List, int, int, int, int, int, int, int, int, FontRenderer)
      */
-    @Deprecated
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     public static void drawHoveringText(@Nonnull final ItemStack stack, PoseStack pStack, List<? extends FormattedText> textLines, int mouseX, int mouseY,
                                         int screenWidth, int screenHeight, int maxTextWidth,
                                         int backgroundColor, int borderColorStart, int borderColorEnd, Font font)
