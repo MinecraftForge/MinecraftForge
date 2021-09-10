@@ -46,9 +46,9 @@
     public void m_96617_(PoseStack p_96618_, List<? extends FormattedCharSequence> p_96619_, int p_96620_, int p_96621_) {
        this.m_169383_(p_96618_, p_96619_.stream().map(ClientTooltipComponent::m_169948_).collect(Collectors.toList()), p_96620_, p_96621_);
     }
-+   public void renderToolTip(PoseStack p_96618_, List<? extends FormattedCharSequence> p_96619_, int p_96620_, int p_96621_, Font font) {
++   public void renderTooltip(PoseStack poseStack, List<? extends FormattedCharSequence> lines, int x, int y, Font font) {
 +      this.tooltipFont = font;
-+      this.m_96617_(p_96618_, p_96619_, p_96620_, p_96621_);
++      this.m_96617_(poseStack, lines, x, y);
 +      this.tooltipFont = null;
 +   }
  
