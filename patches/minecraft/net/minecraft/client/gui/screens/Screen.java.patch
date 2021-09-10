@@ -61,7 +61,7 @@
  
           for(ClientTooltipComponent clienttooltipcomponent : p_169385_) {
 -            int k = clienttooltipcomponent.m_142069_(this.f_96547_);
-+            int k = clienttooltipcomponent.m_142069_(f_96547_);
++            int k = clienttooltipcomponent.m_142069_(preEvent.getFontRenderer());
              if (k > i) {
                 i = k;
              }
