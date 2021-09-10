@@ -24,7 +24,7 @@
 -      p_169391_.ifPresent((p_169399_) -> {
 -         list.add(1, ClientTooltipComponent.m_169950_(p_169399_));
 -      });
-+      List<ClientTooltipComponent> list = net.minecraftforge.client.MinecraftForgeClient.gatherTooltipComponents(this.tooltipStack, p_169390_, p_169391_, p_169392_, p_169393_, f_96543_, f_96544_, this.tooltipFont == null ? this.f_96547_ : this.tooltipFont);
++      List<ClientTooltipComponent> list = net.minecraftforge.client.MinecraftForgeClient.gatherTooltipComponents(this.tooltipStack, p_169390_, p_169391_, p_169392_, f_96543_, f_96544_, this.tooltipFont == null ? this.f_96547_ : this.tooltipFont);
        this.m_169383_(p_169389_, list, p_169392_, p_169393_);
     }
  
@@ -33,12 +33,12 @@
  
     public void m_96597_(PoseStack p_96598_, List<Component> p_96599_, int p_96600_, int p_96601_) {
 -      this.m_96617_(p_96598_, Lists.transform(p_96599_, Component::m_7532_), p_96600_, p_96601_);
-+      List<ClientTooltipComponent> components = net.minecraftforge.client.MinecraftForgeClient.gatherTooltipComponents(this.tooltipStack, p_96599_, p_96600_, p_96601_, f_96543_, f_96544_, this.tooltipFont == null ? this.f_96547_ : this.tooltipFont);
++      List<ClientTooltipComponent> components = net.minecraftforge.client.MinecraftForgeClient.gatherTooltipComponents(this.tooltipStack, p_96599_, p_96600_, f_96543_, f_96544_, this.tooltipFont == null ? this.f_96547_ : this.tooltipFont);
 +      this.m_169383_(p_96598_, components, p_96600_, p_96601_);
 +   }
 +   public void renderComponentToolTip(PoseStack poseStack, List<? extends net.minecraft.network.chat.FormattedText> tooltips, int mouseX, int mouseY, Font font) {
 +      this.tooltipFont = font;
-+      List<ClientTooltipComponent> components = net.minecraftforge.client.MinecraftForgeClient.gatherTooltipComponents(this.tooltipStack, tooltips, mouseX, mouseY, f_96543_, f_96544_, font);
++      List<ClientTooltipComponent> components = net.minecraftforge.client.MinecraftForgeClient.gatherTooltipComponents(this.tooltipStack, tooltips, mouseX, f_96543_, f_96544_, font);
 +      this.m_169383_(poseStack, components, mouseX, mouseY);
 +      this.tooltipFont = null;
     }
