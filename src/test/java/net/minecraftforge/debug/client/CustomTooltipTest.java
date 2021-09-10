@@ -134,9 +134,10 @@ public class CustomTooltipTest
         {
             if (event.getStack().getItem() == Items.APPLE)
             {
-                event.setBackground(0xFF0000FF);
+                event.setBackgroundStart(0xFF0000FF);
+                event.setBackgroundEnd(0xFFFFFF00);
                 event.setBorderStart(0xFFFF0000);
-                event.setBorderEnd(0xFFFFFF00);
+                event.setBorderEnd(0xFFFF0011);
             }
         }
 

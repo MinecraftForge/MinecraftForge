@@ -357,7 +357,8 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private final int originalBackground;
         private final int originalBorderStart;
         private final int originalBorderEnd;
-        private int background;
+        private int backgroundStart;
+        private int backgroundEnd;
         private int borderStart;
         private int borderEnd;
 
@@ -372,19 +373,45 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             this.originalBackground = background;
             this.originalBorderStart = borderStart;
             this.originalBorderEnd = borderEnd;
-            this.background = background;
+            this.backgroundStart = background;
+            this.backgroundEnd = background;
             this.borderStart = borderStart;
             this.borderEnd = borderEnd;
         }
 
+        /**
+         * @deprecated use {@link #getBackgroundStart()} and {@link #getBackgroundEnd}
+         */
+        @Deprecated
         public int getBackground()
         {
-            return background;
+            return backgroundStart;
+        }
+
+        public int getBackgroundStart()
+        {
+            return backgroundStart;
+        }
+
+        public int getBackgroundEnd()
+        {
+            return backgroundEnd;
         }
 
         public void setBackground(int background)
         {
-            this.background = background;
+            this.backgroundStart = background;
+            this.backgroundEnd = background;
+        }
+
+        public void setBackgroundStart(int backgroundStart)
+        {
+            this.backgroundStart = backgroundStart;
+        }
+
+        public void setBackgroundEnd(int backgroundEnd)
+        {
+            this.backgroundEnd = backgroundEnd;
         }
 
         public int getBorderStart()
