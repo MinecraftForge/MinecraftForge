@@ -14,9 +14,9 @@
 +      tooltipStack = ItemStack.f_41583_;
     }
  
-+   public void renderTooltip(PoseStack p_169389_, List<Component> p_169390_, Optional<TooltipComponent> p_169391_, int p_169392_, int p_169393_, Font font) {
++   public void renderTooltip(PoseStack poseStack, List<Component> textComponents, Optional<TooltipComponent> tooltipComponent, int x, int y, Font font) {
 +      this.tooltipFont = font;
-+      this.m_169388_(p_169389_, p_169390_, p_169391_, p_169392_, p_169393_);
++      this.m_169388_(poseStack, textComponents, tooltipComponent, x, y);
 +      this.tooltipFont = null;
 +   }
     public void m_169388_(PoseStack p_169389_, List<Component> p_169390_, Optional<TooltipComponent> p_169391_, int p_169392_, int p_169393_) {
