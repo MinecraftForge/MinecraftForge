@@ -280,15 +280,12 @@ public class MinecraftForgeClient
                     ))
                     .toList();
         }
-        else
-        {
-            return event.getTooltipElements().stream()
-                    .map(either -> either.map(
-                            text -> ClientTooltipComponent.create(text instanceof Component ? ((Component) text).getVisualOrderText() : Language.getInstance().getVisualOrder(text)),
-                            ClientTooltipComponent::create
-                    ))
-                    .toList();
-        }
+        return event.getTooltipElements().stream()
+                .map(either -> either.map(
+                        text -> ClientTooltipComponent.create(text instanceof Component ? ((Component) text).getVisualOrderText() : Language.getInstance().getVisualOrder(text)),
+                        ClientTooltipComponent::create
+                ))
+                .toList();
     }
 
 }
