@@ -78,9 +78,9 @@
 -         m_93123_(matrix4f, bufferbuilder, j2 + i + 2, k2 - 3 + 1, j2 + i + 3, k2 + j + 3 - 1, 400, 1347420415, 1344798847);
 -         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 3, j2 + i + 3, k2 - 3 + 1, 400, 1347420415, 1347420415);
 -         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 + j + 2, j2 + i + 3, k2 + j + 3, 400, 1344798847, 1344798847);
-+         net.minecraftforge.client.event.RenderTooltipEvent.Color colorEvent = net.minecraftforge.client.MinecraftForgeClient.colorTooltipEvent(this.tooltipStack, p_169384_, p_169386_, p_169387_, preEvent.getFontRenderer(), p_169385_);
 +         j2 = preEvent.getX();
 +         k2 = preEvent.getY();
++         net.minecraftforge.client.event.RenderTooltipEvent.Color colorEvent = net.minecraftforge.client.MinecraftForgeClient.colorTooltipEvent(this.tooltipStack, p_169384_, j2, k2, preEvent.getFontRenderer(), p_169385_);
 +         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 4, j2 + i + 3, k2 - 3, 400, colorEvent.getBackground(), colorEvent.getBackground());
 +         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 + j + 3, j2 + i + 3, k2 + j + 4, 400, colorEvent.getBackground(), colorEvent.getBackground());
 +         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 3, j2 + i + 3, k2 + j + 3, 400, colorEvent.getBackground(), colorEvent.getBackground());
