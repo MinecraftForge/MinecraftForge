@@ -143,10 +143,16 @@ license="LGPL v2.1"
 [[mods]]
     modId="send_datapacks_to_client"
 [[mods]]
+    modId="remove_tag_datagen_test"
+[[mods]]
     modId="tag_based_tool_types"
-[[mods]]    
+[[mods]]
     modId="check_spawn_event_test"
 [[mods]]
     modId="redstone_sided_connectivity_test"
+[[mods]]
+    modId="permissions_changed_event_test"
+[[mods]]
+    modId="custom_shield_test"
 
 # ADD ABOVE THIS LINE
