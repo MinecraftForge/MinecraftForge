@@ -181,7 +181,7 @@ public abstract class RenderTooltipEvent extends Event
         /**
          * {@return the maximum width of the tooltip when being rendered}
          *
-         * <p>A value of {@code -1} means an unlimited maximum width. However, an unlimited maxiumum width will still
+         * <p>A value of {@code -1} means an unlimited maximum width. However, an unlimited maximum width will still
          * be wrapped to be within the screen bounds.</p>
          */
         public int getMaxWidth()
