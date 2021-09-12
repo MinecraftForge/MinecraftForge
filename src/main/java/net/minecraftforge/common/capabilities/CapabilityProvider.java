@@ -88,7 +88,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     protected final @Nullable CapabilityDispatcher getCapabilities()
     {
-        if(isLazy && !initialized)
+        if (isLazy && !initialized)
         {
             doGatherCapabilities(lazyParentSupplier.get());
             if (lazyData != null)
