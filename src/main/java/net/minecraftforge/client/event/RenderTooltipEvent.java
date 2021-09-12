@@ -58,7 +58,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     protected Font fr;
     protected final List<ClientTooltipComponent> components;
 
-    @Deprecated
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, @Nonnull Font fr)
     {
         this(stack, matrixStack, x, y, fr, List.of());
@@ -227,7 +227,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int screenHeight;
         private int maxWidth;
 
-        @Deprecated
+        @Deprecated(forRemoval = true) // TODO: remove in 1.18
         public Pre(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull Font fr)
         {
             this(stack, matrixStack, x, y, screenWidth, screenHeight, fr, List.of());
@@ -246,7 +246,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             return screenWidth;
         }
 
-        @Deprecated
+        @Deprecated(forRemoval = true) // TODO: remove in 1.18
         public void setScreenWidth(int screenWidth)
         {
             this.screenWidth = screenWidth;
@@ -257,7 +257,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             return screenHeight;
         }
 
-        @Deprecated
+        @Deprecated(forRemoval = true) // TODO: remove in 1.18
         public void setScreenHeight(int screenHeight)
         {
             this.screenHeight = screenHeight;
@@ -267,7 +267,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
          * @return The max width the tooltip can be. Defaults to -1 (unlimited).
          * @deprecated use {@link GatherComponents}
          */
-        @Deprecated
+        @Deprecated(forRemoval = true) // TODO: remove in 1.18
         public int getMaxWidth()
         {
             return maxWidth;
@@ -277,7 +277,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
          * Sets the max width of the tooltip. Use -1 for unlimited.
          * @deprecated use {@link GatherComponents}
          */
-        @Deprecated
+        @Deprecated(forRemoval = true) // TODO: remove in 1.18
         public void setMaxWidth(int maxWidth)
         {
             this.maxWidth = maxWidth;
@@ -317,7 +317,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * <li>{@link RenderTooltipEvent.PostText}</li>
      * </ul>
      */
-    @Deprecated
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     protected static abstract class Post extends RenderTooltipEvent
     {
         private final int width;
@@ -350,7 +350,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     /**
      * This event is fired directly after the tooltip background is drawn, but before any text is drawn.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     public static class PostBackground extends Post 
     {
         public PostBackground(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int width, int height)
@@ -360,7 +360,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     /**
      * This event is fired directly after the tooltip text is drawn, but before the GL state is reset.
      */
-    @Deprecated
+    @Deprecated(forRemoval = true) // TODO: remove in 1.18
     public static class PostText extends Post
     {
         public PostText(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int width, int height)
@@ -400,7 +400,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         /**
          * @deprecated use {@link #getBackgroundStart()} and {@link #getBackgroundEnd}
          */
-        @Deprecated
+        @Deprecated(forRemoval = true) // TODO: remove in 1.18
         public int getBackground()
         {
             return backgroundStart;
