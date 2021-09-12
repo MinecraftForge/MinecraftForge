@@ -62,7 +62,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, @Nonnull Font fr)
     {
         this.stack = stack;
-        this.lines = lines;
+        this.lines = Collections.unmodifiableList(lines);
         this.matrixStack = matrixStack;
         this.x = x;
         this.y = y;
@@ -70,12 +70,12 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         this.components = List.of();
     }
 
-    public RenderTooltipEvent(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
+    public RenderTooltipEvent(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
     {
         this.stack = stack;
         this.lines = List.of();
         this.components = Collections.unmodifiableList(components);
-        this.matrixStack = matrixStack;
+        this.matrixStack = poseStack;
         this.x = x;
         this.y = y;
         this.fr = font;
