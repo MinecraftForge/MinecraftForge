@@ -78,9 +78,8 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
 
     /**
      * {@return the partial tick}
-     * TODO: rename to getPartialTick()
      */
-    public float getRenderTick()
+    public float getPartialTick()
     {
         return renderTick;
     }
