@@ -61,7 +61,13 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     @Deprecated(forRemoval = true) // TODO: remove in 1.18
     public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, @Nonnull Font fr)
     {
-        this(stack, matrixStack, x, y, fr, List.of());
+        this.stack = stack;
+        this.lines = lines;
+        this.matrixStack = matrixStack;
+        this.x = x;
+        this.y = y;
+        this.fr = fr;
+        this.components = List.of();
     }
 
     public RenderTooltipEvent(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
@@ -230,7 +236,10 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         @Deprecated(forRemoval = true) // TODO: remove in 1.18
         public Pre(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull Font fr)
         {
-            this(stack, matrixStack, x, y, screenWidth, screenHeight, fr, List.of());
+            super(stack, lines, matrixStack, x, y, fr);
+            this.screenWidth = screenWidth;
+            this.screenHeight = screenHeight;
+            this.maxWidth = maxWidth;
         }
 
         public Pre(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
@@ -380,9 +389,17 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int borderStart;
         private int borderEnd;
 
+        @Deprecated(forRemoval = true) // TODO: remove in 1.18
         public Color(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int background, int borderStart, int borderEnd)
         {
-            this(stack, matrixStack, x, y, fr, background, borderStart, borderEnd, List.of());
+            super(stack, textLines, matrixStack, x, y, fr);
+            this.originalBackground = background;
+            this.originalBorderStart = borderStart;
+            this.originalBorderEnd = borderEnd;
+            this.backgroundStart = background;
+            this.backgroundEnd = background;
+            this.borderStart = borderStart;
+            this.borderEnd = borderEnd;
         }
 
         public Color(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int background, int borderStart, int borderEnd, @Nonnull List<ClientTooltipComponent> components)
