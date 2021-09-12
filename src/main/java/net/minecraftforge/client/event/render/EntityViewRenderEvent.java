@@ -348,7 +348,7 @@ public abstract class EntityViewRenderEvent extends Event
     }
 
     /**
-     * Fired for altering the raw field of vision (FOV).
+     * Fired for altering the raw field of view (FOV).
      * This is after the FOV settings are applied, and before modifiers such as the Nausea effect.
      *
      * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
@@ -370,7 +370,7 @@ public abstract class EntityViewRenderEvent extends Event
         }
 
         /**
-         * {@return the raw field of vision (FOV) value}
+         * {@return the raw field of view (FOV) value}
          */
         public double getFOV()
         {
@@ -378,7 +378,7 @@ public abstract class EntityViewRenderEvent extends Event
         }
 
         /**
-         * Sets the field of vision (FOV) value.
+         * Sets the field of view (FOV) value.
          *
          * @param fov the new FOV value
          */

@@ -26,7 +26,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraftforge.fml.LogicalSide;
 
 /**
- * Fired before any {@link Screen} will be opened, to allow changing or preventing it from being opened.
+ * Fired before any {@link Screen} will be opened, to allow changing it or preventing it from being opened.
  *
  * <p>This event is {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}.
  * If this event is cancelled, then the {@code Screen} shall be prevented from opening</p>

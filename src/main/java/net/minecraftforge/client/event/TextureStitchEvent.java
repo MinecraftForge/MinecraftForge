@@ -31,7 +31,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import java.util.Set;
 
 /**
- * Fired before and after a texture atlas stitched together.
+ * Fired before and after a texture atlas is stitched together.
  * See the two subclasses to listen for before and after stitching.
  *
  * @see TextureStitchEvent.Pre

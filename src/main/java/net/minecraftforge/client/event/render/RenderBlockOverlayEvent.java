@@ -105,7 +105,7 @@ public class RenderBlockOverlayEvent extends Event
     }
 
     /**
-     * {@return the block from which the overlay is gotten from}
+     * {@return the block which the overlay is gotten from}
      */
     public BlockState getBlockForOverlay()
     {
@@ -113,7 +113,7 @@ public class RenderBlockOverlayEvent extends Event
     }
 
     /**
-     * {@return the position of the block from which the overlay is gotten from}
+     * {@return the position of the block which the overlay is gotten from}
      */
     public BlockPos getBlockPos()
     {

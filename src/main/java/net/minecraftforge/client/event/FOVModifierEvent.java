@@ -31,7 +31,7 @@ import net.minecraftforge.fml.LogicalSide;
 import static net.minecraftforge.client.event.render.EntityViewRenderEvent.*;
 
 /**
- * Fired after the field of vision (FOV) modifier for the player is calculated.
+ * Fired after the field of view (FOV) modifier for the player is calculated.
  * This can be used to modify the FOV before the FOV settings are applied.
  *
  * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
@@ -65,7 +65,7 @@ public class FOVModifierEvent extends Event
     }
 
     /**
-     * {@return the original field of vision (FOV) of the player, before any modifications or interpolation}
+     * {@return the original field of view (FOV) of the player, before any modifications or interpolation}
      */
     public float getFOV()
     {
@@ -73,7 +73,7 @@ public class FOVModifierEvent extends Event
     }
 
     /**
-     * {@return the current field of vision (FOV) of the player}
+     * {@return the current field of view (FOV) of the player}
      */
     public float getNewFOV()
     {
@@ -81,9 +81,9 @@ public class FOVModifierEvent extends Event
     }
 
     /**
-     * Sets the new field of vision (FOV) of the player.
+     * Sets the new field of view (FOV) of the player.
      *
-     * @param newFOV the new field of vision (FOV)
+     * @param newFOV the new field of view (FOV)
      */
     public void setNewFOV(float newFOV)
     {

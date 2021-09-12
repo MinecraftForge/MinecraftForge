@@ -51,7 +51,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 /**
- * Fired for on different events/actions relating to {@linkplain EntityRenderer entity renderers}.
+ * Fired for different events/actions relating to {@linkplain EntityRenderer entity renderers}.
  * See the various subclasses for listening to different events.
  *
  * <p>These events are fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},

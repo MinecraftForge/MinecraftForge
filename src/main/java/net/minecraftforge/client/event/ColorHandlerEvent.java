@@ -33,7 +33,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 /**
  * Fired for registering block and item color handlers at the appropriate time.
- * See the two subclasses for registering blocks or items color handlers.
+ * See the two subclasses for registering block or item color handlers.
  *
  * <p>These events are fired on the {@linkplain FMLJavaModLoadingContext#getModEventBus() mod-specific event bus},
  * only on the {@linkplain LogicalSide#CLIENT logical client}. </p>
@@ -44,7 +44,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 public abstract class ColorHandlerEvent extends Event implements IModBusEvent
 {
     /**
-     * Fired for registering block colors handlers.
+     * Fired for registering block color handlers.
      *
      * <p>This event is not {@linkplain Cancelable cancelable}, and does not {@linkplain HasResult have a result}. </p>
      *
@@ -73,7 +73,7 @@ public abstract class ColorHandlerEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Fired for registering item colors handlers.
+     * Fired for registering item color handlers.
      *
      * <p>The block colors should only be used for referencing or delegating item colors to their respective block
      * colors. Use {@link ColorHandlerEvent.Block} for registering your block color handlers. </p>
