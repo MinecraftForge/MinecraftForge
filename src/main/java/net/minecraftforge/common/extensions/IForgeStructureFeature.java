@@ -34,9 +34,27 @@ public interface IForgeStructureFeature
     }
 
     /**
+     * Gets the default list of spawns for this structure, of the specified category.
+     *
+     * @apiNote Implement this over any of the type specific getSpecial functions in StructureFeature.
+     */
+    @SuppressWarnings("incomplete-switch")
+    default List<MobSpawnSettings.SpawnerData> getDefaultSpawnList(MobCategory category)
+    {
+        if (category == MobCategory.MONSTER)
+            return getDefaultSpawnList();
+        else if (category == MobCategory.CREATURE)
+            return getDefaultCreatureSpawnList();
+        return Collections.emptyList();
+    }
+
+    /**
      * Gets the default list of {@link EntityClassification#MONSTER} spawns for this structure.
      *
      * @apiNote Implement this over {@link Structure#getSpawnList()}
+     *
+     * @Deprecated Use {@link IForgeStructureFeature#getDefaultSpawnList(MobCategory)}
+     * TODO: Remove in 1.18
      */
     default List<MobSpawnSettings.SpawnerData> getDefaultSpawnList()
     {
@@ -47,6 +65,9 @@ public interface IForgeStructureFeature
      * Gets the default list of {@link EntityClassification#CREATURE} spawns for this structure.
      *
      * @apiNote Implement this over {@link Structure#getCreatureSpawnList()}
+     *
+     * @Deprecated Use {@link IForgeStructureFeature#getDefaultSpawnList(MobCategory)}
+     * TODO: Remove in 1.18
      */
     default List<MobSpawnSettings.SpawnerData> getDefaultCreatureSpawnList()
     {

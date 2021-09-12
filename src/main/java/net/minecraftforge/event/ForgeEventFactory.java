@@ -26,9 +26,12 @@ import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.level.portal.PortalShape;
@@ -88,7 +91,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.render.RenderBlockOverlayEvent;
 import net.minecraftforge.client.event.render.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -116,6 +119,7 @@ import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
@@ -339,9 +343,9 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static BlockState onToolUse(BlockState originalState, Level level, BlockPos pos, Player player, ItemStack stack, ToolType toolType)
+    public static BlockState onToolUse(BlockState originalState, Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
-        BlockToolInteractEvent event = new BlockToolInteractEvent(level, pos, originalState, player, stack, toolType);
+        BlockToolInteractEvent event = new BlockToolInteractEvent(level, pos, originalState, player, stack, toolAction);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getFinalState();
     }
 
@@ -761,5 +765,16 @@ public class ForgeEventFactory
         EntityTeleportEvent.ChorusFruit event = new EntityTeleportEvent.ChorusFruit(entity, targetX, targetY, targetZ);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
+    }
+
+    public static boolean onPermissionChanged(GameProfile gameProfile, int newLevel, PlayerList playerList)
+    {
+        int oldLevel = playerList.getServer().getProfilePermissions(gameProfile);
+        ServerPlayer player = playerList.getPlayer(gameProfile.getId());
+        if (newLevel != oldLevel && player != null)
+        {
+            return MinecraftForge.EVENT_BUS.post(new PermissionsChangedEvent(player, newLevel, oldLevel));
+        }
+        return true;
     }
 }

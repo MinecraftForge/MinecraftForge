@@ -17,30 +17,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug.block;
+package net.minecraftforge.debug.entity.player;
 
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-@Mod("block_harvest_tool_test")
+@Mod("permissions_changed_event_test")
 @Mod.EventBusSubscriber
-public class HarvestToolTest
+public class PermissionsChangedEventTest
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent event)
+    public static void onPermissionChanged(PermissionsChangedEvent event)
     {
-        Player player = event.getPlayer();
-        BlockState state = event.getState();
-        for (ToolType toolType : player.getMainHandItem().getToolTypes()) {
-            if (state.isToolEffective(toolType)) {
-                player.sendMessage(new TextComponent(String.format("Tool was effective. tool type: %s | harvest level: %d", toolType.getName(), state.getHarvestLevel())), player.getUUID());
-                break;
-            }
-        }
+        LOGGER.info("{} permission level changed to {} from {}",
+                event.getEntity().getName().getString(),
+                event.getNewLevel(),
+                event.getOldLevel());
     }
 }

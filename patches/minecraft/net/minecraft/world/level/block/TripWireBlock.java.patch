@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/TripWireBlock.java
++++ b/net/minecraft/world/level/block/TripWireBlock.java
+@@ -69,7 +_,7 @@
+    }
+ 
+    public void m_5707_(Level p_57615_, BlockPos p_57616_, BlockState p_57617_, Player p_57618_) {
+-      if (!p_57615_.f_46443_ && !p_57618_.m_21205_().m_41619_() && p_57618_.m_21205_().m_150930_(Items.f_42574_)) {
++      if (!p_57615_.f_46443_ && !p_57618_.m_21205_().m_41619_() && p_57618_.m_21205_().canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_DISARM)) {
+          p_57615_.m_7731_(p_57616_, p_57617_.m_61124_(f_57592_, Boolean.valueOf(true)), 4);
+          p_57615_.m_142346_(p_57618_, GameEvent.f_157781_, p_57616_);
+       }

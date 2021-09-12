@@ -8,34 +8,20 @@
     private TagContainer f_13478_ = TagContainer.f_13420_;
  
     public TagManager(RegistryAccess p_144572_) {
-@@ -40,15 +_,16 @@
-          }
- 
-       });
--      return CompletableFuture.allOf(list.stream().map((p_144591_) -> {
--         return p_144591_.f_144598_;
--      }).toArray((p_144574_) -> {
--         return new CompletableFuture[p_144574_];
--      })).thenCompose(p_13482_::m_6769_).thenAcceptAsync((p_144594_) -> {
-+      CompletableFuture<java.util.List<net.minecraftforge.common.ForgeTagHandler.TagCollectionReaderInfo>> customTagTypeResults = net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeReloadResults(p_13483_, p_13486_, customTagTypeReaders);
-+      List<CompletableFuture<?>> futures = Lists.newArrayList();
-+      list.stream().map(li -> li.f_144598_).forEach(futures::add);
-+      futures.add(customTagTypeResults);
-+      return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).thenCompose(p_13482_::m_6769_).thenAcceptAsync((p_144594_) -> {
-          TagContainer.Builder tagcontainer$builder = new TagContainer.Builder();
-          list.forEach((p_144586_) -> {
-             p_144586_.m_144602_(tagcontainer$builder);
-          });
-+         net.minecraftforge.common.ForgeTagHandler.updateCustomTagTypes(customTagTypeResults.join());
-          TagContainer tagcontainer = tagcontainer$builder.m_144485_();
-          Multimap<ResourceKey<? extends Registry<?>>, ResourceLocation> multimap = StaticTags.m_13283_(tagcontainer);
-          if (!multimap.isEmpty()) {
-@@ -56,6 +_,8 @@
+@@ -56,6 +_,7 @@
                 return p_144596_.getKey() + ":" + p_144596_.getValue();
              }).sorted().collect(Collectors.joining(",")));
           } else {
-+            tagcontainer = TagContainer.reinjectOptionalTags(tagcontainer);
-+            net.minecraftforge.common.ForgeTagHandler.reinjectOptionalTagsCustomTypes();
++            tagcontainer = net.minecraftforge.common.ForgeTagHandler.reinjectOptionalTags(tagcontainer);
              SerializationTags.m_13202_(tagcontainer);
              this.f_13478_ = tagcontainer;
           }
+@@ -73,6 +_,8 @@
+          }, p_144577_);
+          return new TagManager.LoaderInfo<>(p_144578_, completablefuture);
+       } else {
++         if (net.minecraftforge.common.ForgeTagHandler.getCustomTagTypeNames().contains(p_144578_.m_144338_().m_135782_()))
++            return new TagManager.LoaderInfo<>(p_144578_, CompletableFuture.supplyAsync(() -> ((TagLoader<T>) customTagTypeReaders.get(p_144578_.m_144338_().m_135782_())).m_144544_(p_144576_), p_144577_));
+          f_144568_.warn("Can't find registry for {}", (Object)p_144578_.m_144338_());
+          return null;
+       }

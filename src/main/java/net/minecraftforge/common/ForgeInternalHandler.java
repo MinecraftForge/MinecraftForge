@@ -113,7 +113,7 @@ public class ForgeInternalHandler
     }
 
     @SubscribeEvent
-    public synchronized void onTagsUpdated(TagsUpdatedEvent.VanillaTagTypes event)
+    public synchronized void tagsUpdated(TagsUpdatedEvent event)
     {
         ForgeHooks.updateBurns();
     }
@@ -139,6 +139,12 @@ public class ForgeInternalHandler
         if(INSTANCE == null)
             throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
         return INSTANCE;
+    }
+
+    @SubscribeEvent
+    public void resourceReloadListeners(AddReloadListenerEvent event)
+    {
+        event.addListener(TierSortingRegistry.getReloadListener());
     }
 }
 

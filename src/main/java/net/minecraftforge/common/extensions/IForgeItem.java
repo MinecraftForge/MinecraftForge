@@ -22,11 +22,14 @@ package net.minecraftforge.common.extensions;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
 
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -37,14 +40,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.nbt.CompoundTag;
@@ -54,7 +50,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 
 // TODO review most of the methods in this "patch"
 public interface IForgeItem
@@ -377,7 +374,7 @@ public interface IForgeItem
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
      * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.entity.LivingEntity#getSlotForItemStack(ItemStack)}.</em>
+     * {@link net.minecraft.world.entity.LivingEntity#getEquipmentSlotForItem(ItemStack)}..</em>
      *
      * @param stack the ItemStack
      * @return the armor slot of the ItemStack, or {@code null} to let the default
@@ -520,13 +517,26 @@ public interface IForgeItem
     }
 
     /**
+     * Queries if an item can perform the given action.
+     * See {@link net.minecraftforge.common.ToolActions} for a description of each stock action
+     * @param stack The stack being used
+     * @param toolAction The action being queried
+     * @return True if the stack can perform the action
+     */
+    default boolean canPerformAction(ItemStack stack, ToolAction toolAction)
+    {
+        // Temporary patch to keep #isShield working until its removed; change to `return false` once removed
+        return isShield(stack, null) && ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction);
+    }
+
+    /**
      * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}
      *
      * @param stack The itemstack used to harvest the block
      * @param state The block trying to harvest
-     * @return true if can harvest the block
+     * @return true if the stack can harvest the block
      */
-    default boolean canHarvestBlock(ItemStack stack, BlockState state)
+    default boolean isCorrectToolForDrops(ItemStack stack, BlockState state)
     {
         return self().isCorrectToolForDrops(state);
     }
@@ -543,20 +553,6 @@ public interface IForgeItem
     {
         return self().getMaxStackSize();
     }
-
-    Set<ToolType> getToolTypes(ItemStack stack);
-
-    /**
-     * Queries the harvest level of this item stack for the specified tool class,
-     * Returns -1 if this tool is not of the specified type
-     *
-     * @param stack      This item stack instance
-     * @param toolClass  Tool Class
-     * @param player     The player trying to harvest the given blockstate
-     * @param blockState The block to harvest
-     * @return Harvest level, or -1 if not the specified tool type.
-     */
-    int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable Player player, @Nullable BlockState blockState);
 
     /**
      * ItemStack sensitive version of getItemEnchantability
@@ -694,12 +690,15 @@ public interface IForgeItem
     }
 
     /**
-     * Is this Item a shield
+     * {@return {@code true} if this item is considered a shield}
      *
-     * @param stack  The ItemStack
-     * @param entity The Entity holding the ItemStack
-     * @return True if the ItemStack is considered a shield
+     * @param stack  the item stack
+     * @param entity the entity holding the item stack
+     * @deprecated To be removed in 1.18. Override {@link #canPerformAction(ItemStack, ToolAction)} and return
+     * {@code true} if the passed in tool action is contained in {@link ToolActions#DEFAULT_SHIELD_ACTIONS} or is
+     * equals to {@link ToolActions#SHIELD_BLOCK}.
      */
+    @Deprecated(since = "1.17.1", forRemoval = true)
     default boolean isShield(ItemStack stack, @Nullable LivingEntity entity)
     {
         return stack.getItem() == Items.SHIELD;
@@ -799,5 +798,19 @@ public interface IForgeItem
     default boolean isDamageable(ItemStack stack)
     {
         return self().canBeDepleted();
+    }
+    
+    /**
+     * Get a bounding box ({@link AABB}) of a sweep attack.
+     * 
+     * @param statck the stack held by the player.
+     * @param player the performing the attack the attack.
+     * @param target the entity targeted by the attack.
+     * @return the bounding box.
+     */
+    @Nonnull
+    default AABB getSweepHitBox(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull Entity target)
+    {
+        return target.getBoundingBox().inflate(1.0D, 0.25D, 1.0D);
     }
 }

@@ -19,7 +19,6 @@
 
 package net.minecraftforge.common;
 
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
@@ -32,10 +31,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import com.google.common.base.Throwables;
+
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
@@ -55,14 +56,16 @@ import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.world.level.*;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.*;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -78,20 +81,12 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.vehicle.AbstractMinecartContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.Container;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.BucketItem;
-import net.minecraft.world.item.EnchantedBookItem;
-import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.SpawnEggItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TippedArrowItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -166,19 +161,18 @@ import net.minecraftforge.event.level.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import net.minecraftforge.fmllegacy.packs.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
+import net.minecraftforge.versions.mcp.MCPVersion;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-import org.apache.logging.log4j.util.TriConsumer;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -212,50 +206,12 @@ public class ForgeHooks
         return false;
     }
 
-    public static boolean canHarvestBlock(@Nonnull BlockState state, @Nonnull Player player, @Nonnull BlockGetter world, @Nonnull BlockPos pos)
+    public static boolean isCorrectToolForDrops(@Nonnull BlockState state, @Nonnull Player player)
     {
-        //state = state.getActualState(world, pos);
         if (!state.requiresCorrectToolForDrops())
             return ForgeEventFactory.doPlayerHarvestCheck(player, state, true);
 
-        ItemStack stack = player.getMainHandItem();
-        ToolType tool = state.getHarvestTool();
-        if (stack.isEmpty() || tool == null)
-            return player.hasCorrectToolForDrops(state);
-
-        int toolLevel = stack.getHarvestLevel(tool, player, state);
-        if (toolLevel < 0)
-            return player.hasCorrectToolForDrops(state);
-
-        return ForgeEventFactory.doPlayerHarvestCheck(player, state, toolLevel >= state.getHarvestLevel());
-    }
-
-    public static boolean isToolEffective(LevelReader world, BlockPos pos, @Nonnull ItemStack stack)
-    {
-        BlockState state = world.getBlockState(pos);
-        //state = state.getActualState(world, pos);
-        for (ToolType type : stack.getToolTypes())
-        {
-            if (state.isToolEffective(type))
-                return true;
-        }
-        return false;
-    }
-
-    private static boolean toolInit = false;
-    static void initTools()
-    {
-        if (toolInit)
-            return;
-        toolInit = true;
-
-        //This is taken from PickaxeItem, if that changes update here.
-        for (Block block : new Block[]{Blocks.OBSIDIAN, Blocks.CRYING_OBSIDIAN, Blocks.NETHERITE_BLOCK, Blocks.RESPAWN_ANCHOR, Blocks.ANCIENT_DEBRIS})
-            blockToolSetter.accept(block, ToolType.PICKAXE, 3);
-        for (Block block : new Block[]{Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE})
-            blockToolSetter.accept(block, ToolType.PICKAXE, 2);
-        for (Block block : new Block[]{Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE})
-            blockToolSetter.accept(block, ToolType.PICKAXE, 1);
+        return player.hasCorrectToolForDrops(state);
     }
 
     /**
@@ -891,6 +847,19 @@ public class ForgeHooks
         return "default";
     }
 
+    public static Tag<Block> getTagFromVanillaTier(Tiers tier)
+    {
+        return switch(tier)
+                {
+                    case WOOD -> Tags.Blocks.NEEDS_WOOD_TOOL;
+                    case GOLD -> Tags.Blocks.NEEDS_GOLD_TOOL;
+                    case STONE -> BlockTags.NEEDS_STONE_TOOL;
+                    case IRON -> BlockTags.NEEDS_IRON_TOOL;
+                    case DIAMOND -> BlockTags.NEEDS_DIAMOND_TOOL;
+                    case NETHERITE -> Tags.Blocks.NEEDS_NETHERITE_TOOL;
+                };
+    }
+
     @FunctionalInterface
     public interface BiomeCallbackFunction
     {
@@ -1086,27 +1055,6 @@ public class ForgeHooks
         return false;
     }
 
-    private static TriConsumer<Block, ToolType, Integer> blockToolSetter;
-    //Internal use only Modders, this is specifically hidden from you, as you shouldn't be editing other people's blocks.
-    public static void setBlockToolSetter(TriConsumer<Block, ToolType, Integer> setter)
-    {
-        blockToolSetter = setter;
-    }
-    @SuppressWarnings("unchecked")
-    private static <T, E> T getPrivateValue(Class <? super E > classToAccess, @Nullable E instance, int fieldIndex)
-    {
-        try
-        {
-            Field f = classToAccess.getDeclaredFields()[fieldIndex];
-            f.setAccessible(true);
-            return (T) f.get(instance);
-        }
-        catch (Exception e)
-        {
-            Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
-        }
-    }
 
     private static final BlockGetter DUMMY_WORLD = EmptyBlockGetter.INSTANCE;
 
@@ -1272,14 +1220,18 @@ public class ForgeHooks
     private static final String DIMENSIONS_KEY = "dimensions";
     private static final String SEED_KEY = "seed";
     //No to static init!
-    private static final LazyLoadedValue<Codec<MappedRegistry<LevelStem>>> CODEC = new LazyLoadedValue<>(() -> MappedRegistry.dataPackCodec(Registry.LEVEL_STEM_REGISTRY, Lifecycle.stable(), LevelStem.CODEC).xmap(LevelStem::sortMap, Function.identity()));
+    private static final Supplier<Codec<MappedRegistry<LevelStem>>> CODEC = Suppliers.memoize(() -> MappedRegistry.dataPackCodec(Registry.LEVEL_STEM_REGISTRY, Lifecycle.stable(), LevelStem.CODEC).xmap(LevelStem::sortMap, Function.identity()));
 
     /**
      * Restores previously "deleted" dimensions to the world.
      * The {@link LenientUnboundedMapCodec} prevents this from happening, this is to fix any world from before the fix.
+     * TODO: Remove in 1.18
      */
     public static <T> Dynamic<T> fixUpDimensionsData(Dynamic<T> data)
     {
+        if (!"1.17.1".equals(MCPVersion.getMCVersion()))
+            throw new IllegalStateException("Calling deprecated code that was scheduled for removal after 1.17.1 in version: " + MCPVersion.getMCVersion());
+
         if(!(data.getOps() instanceof RegistryReadOps))
             return data;
 
@@ -1294,7 +1246,7 @@ public class ForgeHooks
             if (!currentDimNames.containsAll(VANILLA_DIMS))
             {
                 LOGGER.warn("Detected missing vanilla dimensions from the world!");
-                RegistryAccess regs = ObfuscationReflectionHelper.getPrivateValue(RegistryReadOps.class, ops, "f_13563" + "6_");
+                RegistryAccess regs = ops.registryAccess;
                 if (regs == null) // should not happen, but it could after a MC version update.
                     throw new RuntimeException("Could not access dynamic registries using reflection. " +
                             "The world was detected to have missing vanilla dimensions and the attempted fix did not work.");

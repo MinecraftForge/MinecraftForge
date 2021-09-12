@@ -4,7 +4,7 @@
        if (iteminhandrenderer$handrenderselection.f_172921_) {
           float f4 = interactionhand == InteractionHand.MAIN_HAND ? f : 0.0F;
           float f5 = 1.0F - Mth.m_14179_(p_109315_, this.f_109303_, this.f_109302_);
-+         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(InteractionHand.MAIN_HAND, p_109316_, p_109317_, p_109319_, p_109315_, f1, f5, f2, this.f_109300_))
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(InteractionHand.MAIN_HAND, p_109316_, p_109317_, p_109319_, p_109315_, f1, f4, f5, this.f_109300_))
           this.m_109371_(p_109318_, p_109315_, f1, InteractionHand.MAIN_HAND, f4, this.f_109300_, f5, p_109316_, p_109317_, p_109319_);
        }
  

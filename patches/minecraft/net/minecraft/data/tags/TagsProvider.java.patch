@@ -77,7 +77,7 @@
 -   protected static class TagAppender<T> {
 +   public static class TagAppender<T> implements net.minecraftforge.common.extensions.IForgeTagAppender<T> {
        private final Tag.Builder f_126568_;
-       private final Registry<T> f_126569_;
+       public final Registry<T> f_126569_;
        private final String f_126570_;
 @@ -114,7 +_,7 @@
           return this;

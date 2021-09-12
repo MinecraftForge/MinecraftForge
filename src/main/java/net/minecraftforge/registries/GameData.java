@@ -404,7 +404,7 @@ public class GameData
             {
                 LOGGER.debug(REGISTRIES, "Registering custom tag type for: {}", registryName);
                 customTagTypes.add(registryName);
-                StaticTags.create(ResourceKey.createRegistryKey(registryName), entry.getValue().getTagFolder());
+                StaticTags.create(ResourceKey.createRegistryKey(registryName), "tags/" + entry.getValue().getTagFolder());
             }
         }
         ForgeTagHandler.setCustomTagTypes(customTagTypes);
