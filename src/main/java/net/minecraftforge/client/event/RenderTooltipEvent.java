@@ -198,13 +198,16 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             return tooltipElements;
         }
 
+        /**
+         * @return the current maximum width for the text components of the tooltip (or -1 for no maximum width)
+         */
         public int getMaxWidth()
         {
             return maxWidth;
         }
 
         /**
-         * Set the maximum width for the tooltip (or -1 for no maximum width). This only affects text components.
+         * Set the maximum width for the text components of the tooltip (or -1 for no maximum width)
          */
         public void setMaxWidth(int maxWidth)
         {
