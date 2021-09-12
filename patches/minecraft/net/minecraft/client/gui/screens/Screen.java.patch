@@ -54,7 +54,7 @@
  
     private void m_169383_(PoseStack p_169384_, List<ClientTooltipComponent> p_169385_, int p_169386_, int p_169387_) {
        if (!p_169385_.isEmpty()) {
-+         net.minecraftforge.client.event.RenderTooltipEvent.Pre preEvent = net.minecraftforge.client.MinecraftForgeClient.preTooltipEvent(this.tooltipStack, p_169384_, p_169386_, p_169387_, f_96543_, f_96544_, this.tooltipFont == null ? this.f_96547_ : this.tooltipFont, p_169385_);
++         net.minecraftforge.client.event.RenderTooltipEvent.Pre preEvent = net.minecraftforge.client.MinecraftForgeClient.preTooltipEvent(this.tooltipStack, p_169384_, p_169386_ + 12, p_169387_ - 12, f_96543_, f_96544_, this.tooltipFont == null ? this.f_96547_ : this.tooltipFont, p_169385_);
 +         if (preEvent.isCanceled()) return;
           int i = 0;
           int j = p_169385_.size() == 1 ? -2 : 0;
