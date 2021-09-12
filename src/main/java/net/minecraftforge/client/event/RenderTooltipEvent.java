@@ -452,7 +452,18 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             this.borderEnd = borderEnd;
         }
 
+        @Deprecated(forRemoval = true) // TODO: remove in 1.18
         public int getOriginalBackground()
+        {
+            return originalBackground;
+        }
+
+        public int getOriginalBackgroundStart()
+        {
+            return originalBackground;
+        }
+
+        public int getOriginalBackgroundEnd()
         {
             return originalBackground;
         }
