@@ -59,6 +59,7 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.LevelSummary;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.WorldData;
+import net.minecraftforge.fmllegacy.server.ServerModLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -68,6 +69,10 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * A copy of {@link net.minecraft.server.Main server main} with parts removed that are not relevant to {@link GameTestServer}.
+ * Care should be taken to make sure this stays relatively close to server main during updating.
+ */
 public class GameTestMain {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -80,6 +85,7 @@ public class GameTestMain {
         OptionSpec<String> savesDirOpt = optionParser.accepts("universe").withRequiredArg().defaultsTo(".");
         OptionSpec<String> saveNameOpt = optionParser.accepts("world").withRequiredArg();
         OptionSpec<BlockPos> spawnPosOpt = optionParser.accepts("spawnPos").withRequiredArg().withValuesConvertedBy(new BlockPosValueConverter()).defaultsTo(new BlockPos(0, 60, 0));
+        // Allows CI to accept EULA with an argument. If not present, eula.txt will be required and will need to have eula=true
         OptionSpec<Void> acceptEulaOpt = optionParser.accepts("acceptEula");
         optionParser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
         optionParser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
@@ -101,7 +107,7 @@ public class GameTestMain {
             Bootstrap.bootStrap();
             Bootstrap.validate();
             Util.startTimerHackThread();
-            net.minecraftforge.fmllegacy.server.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now.
+            ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now.
             RegistryAccess.RegistryHolder registryHolder = RegistryAccess.builtin();
             DedicatedServerSettings serverSettings = new DedicatedServerSettings(Paths.get("server.properties"));
             serverSettings.forceSave();
@@ -175,7 +181,7 @@ public class GameTestMain {
             thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LOGGER));
             Runtime.getRuntime().addShutdownHook(thread);
         } catch (Exception e) {
-            LOGGER.fatal("Failed to start the minecraft server", e);
+            LOGGER.fatal("Failed to start the gametest server", e);
         }
     }
 
@@ -187,9 +193,13 @@ public class GameTestMain {
         }
 
         @Override
-        public Class<BlockPos> valueType() {return BlockPos.class;}
+        public Class<BlockPos> valueType() {
+            return BlockPos.class;
+        }
 
         @Override
-        public String valuePattern() {return null;}
+        public String valuePattern() {
+            return null;
+        }
     }
 }
