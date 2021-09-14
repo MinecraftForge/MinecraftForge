@@ -158,6 +158,16 @@ public class EntityEvent extends Event
         {
             return SectionPos.of(packedNewPos);
         }
+
+        /**
+         * Whether the chunk has changed as part of this event. If this method returns false, only the Y position of the
+         * section has changed.
+         */
+        public boolean didChunkChange()
+        {
+            return SectionPos.x(packedOldPos) != SectionPos.x(packedNewPos) || SectionPos.z(packedOldPos) != SectionPos.z(packedNewPos);
+        }
+
     }
 
     /**
