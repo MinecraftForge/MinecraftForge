@@ -9,7 +9,10 @@ import net.minecraft.gametest.framework.TestFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraftforge.event.RegisterGameTestsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.List;
 
@@ -23,9 +26,15 @@ public class GameTestTest
     {
         if (ENABLE)
         {
-            // Registers all methods annotated with @GameTest or @GameTestGenerator to the GameTestRegistry
-            GameTestRegistry.register(this.getClass());
+            FMLJavaModLoadingContext.get().getModEventBus().register(this);
         }
+    }
+
+    @SubscribeEvent
+    public void onRegisterGameTests(RegisterGameTestsEvent event)
+    {
+        // Registers all methods in this class annotated with @GameTest or @GameTestGenerator to the GameTestRegistry
+        event.register(this.getClass());
     }
 
     /**
@@ -37,7 +46,7 @@ public class GameTestTest
      * WARNING: If made non-static, then it will create an instance of the class every time it is run.</li>
      * </ul>
      * The default template name converts the containing class's name to all lowercase, and the method name to all lowercase.
-     * In this example, the structure name would be "gametesttest.testwood"
+     * In this example, the structure name would be "gametesttest.testwood" under the "gametest_test" namespace.
      */
     @GameTest(templateNamespace = MODID)
     public static void testWood(GameTestHelper helper)
@@ -69,7 +78,7 @@ public class GameTestTest
     @GameTestGenerator
     public static List<TestFunction> generateTests()
     {
-        // An example test function, run in the default batch, with the test name "teststone", and the structure name "gametesttest.teststone"
+        // An example test function, run in the default batch, with the test name "teststone", and the structure name "gametesttest.teststone" under the "gametest_test" namespace.
         // No rotation, 100 ticks until the test times out if it does not fail or succeed, 0 ticks for setup time, and the actual code to run.
         TestFunction testStone = new TestFunction("defaultBatch", "teststone", new ResourceLocation(MODID, "gametesttest.teststone").toString(), Rotation.NONE, 100, 0, true,
                 helper -> {

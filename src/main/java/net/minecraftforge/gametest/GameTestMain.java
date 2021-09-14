@@ -59,6 +59,7 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.LevelSummary;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import net.minecraft.world.level.storage.WorldData;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fmllegacy.server.ServerModLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,6 +68,7 @@ import java.io.File;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 /**
@@ -86,7 +88,9 @@ public class GameTestMain {
         OptionSpec<String> saveNameOpt = optionParser.accepts("world").withRequiredArg();
         OptionSpec<BlockPos> spawnPosOpt = optionParser.accepts("spawnPos").withRequiredArg().withValuesConvertedBy(new BlockPosValueConverter()).defaultsTo(new BlockPos(0, 60, 0));
         // Allows CI to accept EULA with an argument. If not present, eula.txt will be required and will need to have eula=true
-        OptionSpec<Void> acceptEulaOpt = optionParser.accepts("acceptEula");
+        OptionSpec<Void> acceptEulaOpt = optionParser.accepts("acceptEula", "Accepts the EULA through the command line instead of a file, useful for CI");
+        OptionSpec<String> enableNamespaceOpt = optionParser.accepts("enableNamespace", "Adds an enabled namespace. Only gametests with templates using an enabled namespace will be loaded. " +
+                        "If none are added, all gametests are enabled.").withRequiredArg().withValuesSeparatedBy(",");
         optionParser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
         optionParser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
 
@@ -168,6 +172,7 @@ public class GameTestMain {
             }
 
             storageAccess.saveDataTag(registryHolder, worldData);
+            ForgeHooks.registerGametests(Set.copyOf(optionSet.valuesOf(enableNamespaceOpt)));
             Collection<GameTestBatch> testBatches = GameTestRunner.groupTestsIntoBatches(GameTestRegistry.getAllTestFunctions());
             BlockPos spawnPos = optionSet.valueOf(spawnPosOpt);
             var server = MinecraftServer.spin(serverThread -> new GameTestServer(serverThread, storageAccess, packRepository, resources, testBatches, spawnPos, registryHolder));

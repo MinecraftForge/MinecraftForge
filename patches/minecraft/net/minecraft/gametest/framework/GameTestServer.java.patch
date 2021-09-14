@@ -1,0 +1,17 @@
+--- a/net/minecraft/gametest/framework/GameTestServer.java
++++ b/net/minecraft/gametest/framework/GameTestServer.java
+@@ -70,12 +_,13 @@
+    public boolean m_7038_() {
+       this.m_129823_(new PlayerList(this, this.f_129746_, this.f_129745_, 1) {
+       });
++      if (!net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+       this.m_130006_();
+       ServerLevel serverlevel = this.m_129783_();
+       serverlevel.m_8733_(this.f_177588_, 0.0F);
+       serverlevel.m_6106_().m_5565_(false);
+       serverlevel.m_6106_().m_5565_(false);
+-      return true;
++      return net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerStarting(this);
+    }
+ 
+    public void m_5705_(BooleanSupplier p_177619_) {

@@ -1,5 +1,56 @@
 --- a/net/minecraft/gametest/framework/GameTestRegistry.java
 +++ b/net/minecraft/gametest/framework/GameTestRegistry.java
+@@ -15,6 +_,8 @@
+ import java.util.function.Function;
+ import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
++
++import net.minecraft.resources.ResourceLocation;
+ import net.minecraft.server.level.ServerLevel;
+ import net.minecraft.world.level.block.Rotation;
+ 
+@@ -25,21 +_,38 @@
+    private static final Map<String, Consumer<ServerLevel>> f_177498_ = Maps.newHashMap();
+    private static final Collection<TestFunction> f_177499_ = Sets.newHashSet();
+ 
++   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
++   @Deprecated
+    public static void m_177501_(Class<?> p_177502_) {
+-      Arrays.stream(p_177502_.getDeclaredMethods()).forEach(GameTestRegistry::m_177503_);
++      register(p_177502_, java.util.Set.of());
++   }
++   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
++   @Deprecated
++   public static void register(Class<?> p_177502_, java.util.Set<String> allowedNamespaces) {
++      Arrays.stream(p_177502_.getDeclaredMethods()).forEach(m -> GameTestRegistry.register(m, allowedNamespaces));
+    }
+ 
++   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
++   @Deprecated
+    public static void m_177503_(Method p_177504_) {
++      register(p_177504_, java.util.Set.of());
++   }
++   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
++   @Deprecated
++   public static void register(Method p_177504_, java.util.Set<String> allowedNamespaces) {
+       String s = p_177504_.getDeclaringClass().getSimpleName();
+       GameTest gametest = p_177504_.getAnnotation(GameTest.class);
+-      if (gametest != null) {
++      if (gametest != null && (allowedNamespaces.isEmpty() || allowedNamespaces.contains(gametest.templateNamespace()))) {
+          f_177495_.add(m_177515_(p_177504_));
+          f_177496_.add(s);
+       }
+ 
+       GameTestGenerator gametestgenerator = p_177504_.getAnnotation(GameTestGenerator.class);
+       if (gametestgenerator != null) {
+-         f_177495_.addAll(m_177513_(p_177504_));
++         Collection<TestFunction> testFunctions = new java.util.ArrayList<>(m_177513_(p_177504_));
++         if (!allowedNamespaces.isEmpty())
++            testFunctions.removeIf(t -> !allowedNamespaces.contains(new ResourceLocation(t.m_128078_()).m_135827_()));
++         f_177495_.addAll(testFunctions);
+          f_177496_.add(s);
+       }
+ 
 @@ -104,7 +_,9 @@
  
     private static Collection<TestFunction> m_177513_(Method p_177514_) {

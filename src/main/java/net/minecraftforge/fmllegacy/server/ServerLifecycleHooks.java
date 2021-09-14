@@ -25,13 +25,16 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.world.level.storage.LevelResource;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fmllegacy.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
@@ -97,7 +100,11 @@ public class ServerLifecycleHooks
 
     public static boolean handleServerStarting(final MinecraftServer server)
     {
-        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->LanguageHook.loadLanguagesOnServer(server));
+        DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->{
+            LanguageHook.loadLanguagesOnServer(server);
+            if (!(server instanceof GameTestServer))
+                ForgeHooks.registerGametests(Set.of());
+        });
         return !MinecraftForge.EVENT_BUS.post(new FMLServerStartingEvent(server));
     }
 

@@ -133,6 +133,7 @@ import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
+import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
@@ -1354,5 +1355,13 @@ public class ForgeHooks
     public static boolean isGametestEnabled()
     {
         return SharedConstants.IS_RUNNING_IN_IDE || Boolean.getBoolean("forge.enablegametest");
+    }
+
+    public static void registerGametests(Set<String> enabledNamespaces)
+    {
+        if (isGametestEnabled())
+        {
+            ModLoader.get().postEvent(new RegisterGameTestsEvent(enabledNamespaces));
+        }
     }
 }
