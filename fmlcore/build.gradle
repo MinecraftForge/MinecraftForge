@@ -5,6 +5,7 @@ plugins {
 apply plugin: 'java-library'
 apply plugin: 'jacoco'
 apply plugin: 'org.javamodularity.moduleplugin'
+apply plugin: 'org.cadixdev.licenser'
 
 dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 
@@ -38,6 +39,16 @@ ext {
             'Implementation-Vendor':    'Forge'
         ] as LinkedHashMap
     ]
+}
+
+license {
+    header = file("$rootDir/LICENSE-header.txt")
+
+    ext {
+        year = new Date().format("yyyy")
+    }
+
+    exclude 'net/minecraftforge/fml/ICrashCallable.java' // empty file
 }
 
 jar.doFirst {
