@@ -68,10 +68,9 @@ public class RegisterGameTestsEvent extends Event implements IModBusEvent
      *
      * @param testClass the test class to register to the game test registry
      */
-    @SuppressWarnings("deprecation")
     public void register(Class<?> testClass)
     {
-        Arrays.stream(testClass.getDeclaredMethods()).forEach(m -> GameTestRegistry.register(m, this.getEnabledNamespaces()));
+        Arrays.stream(testClass.getDeclaredMethods()).forEach(this::register);
     }
 
     /**
