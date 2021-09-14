@@ -73,7 +73,9 @@ public class GameTestTest
         // The woodPos is in the bottom center of the 3x3x3 structure
         BlockPos woodPos = new BlockPos(1, 1, 1);
 
-        // assertBlockState will convert the relative woodPos into a real world block position and check it with the predicate
+        // assertBlockState will convert the relative woodPos into a real world block position and check it with the predicate.
+        // Relative positions are made absolute by adding their value to the block position of the structure tile entity,
+        // which is always the lowest northwest corner inside the structure.
         // If the predicate fails, the String supplier will be used to construct an exception message, which is thrown
         helper.assertBlockState(woodPos, b -> b.is(Blocks.OAK_LOG), () -> "Block was not an oak log");
 
