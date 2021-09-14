@@ -55,6 +55,7 @@ import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.items.CapabilityItemDecoratorHandler;
 import net.minecraftforge.network.VanillaPacketSplitter;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.server.command.EnumArgument;
@@ -180,6 +181,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CapabilityFluidHandler.register(event);
         CapabilityAnimation.register(event);
         CapabilityEnergy.register(event);
+        CapabilityItemDecoratorHandler.register(event);
     }
 
     public void preInit(FMLCommonSetupEvent evt)

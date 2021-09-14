@@ -152,5 +152,7 @@ license="LGPL v2.1"
     modId="permissions_changed_event_test"
 [[mods]]
     modId="custom_shield_test"
+[[mods]]
+    modId="render_item_decorations_test"
 
 # ADD ABOVE THIS LINE

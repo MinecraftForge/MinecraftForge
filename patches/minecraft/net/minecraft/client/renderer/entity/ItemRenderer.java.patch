@@ -76,6 +76,14 @@
              this.m_115152_(bufferbuilder, p_115177_ + 2, p_115178_ + 13, 13, 2, 0, 0, 0, 255);
              this.m_115152_(bufferbuilder, p_115177_ + 2, p_115178_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
              RenderSystem.m_69478_();
+@@ -361,6 +_,7 @@
+             RenderSystem.m_69482_();
+          }
+ 
++         net.minecraftforge.client.MinecraftForgeClient.onItemDecorations(p_115175_, p_115176_, p_115177_, p_115178_, p_115179_);
+       }
+    }
+ 
 @@ -377,5 +_,14 @@
  
     public void m_6213_(ResourceManager p_115105_) {
