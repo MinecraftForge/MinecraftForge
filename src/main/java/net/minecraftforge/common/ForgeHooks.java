@@ -56,6 +56,7 @@ import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.core.*;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -65,6 +66,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.entity.EntityAccess;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -97,9 +99,6 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.Registry;
-import net.minecraft.core.MappedRegistry;
 import net.minecraft.resources.RegistryReadOps;
 import net.minecraft.resources.RegistryWriteOps;
 import net.minecraft.world.*;
@@ -112,7 +111,6 @@ import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -135,6 +133,7 @@ import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -175,7 +174,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
@@ -1349,4 +1347,13 @@ public class ForgeHooks
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
     }
+
+    public static void onEntityEnterSection(EntityAccess entityAccess, long packedOldPos, long packedNewPos)
+    {
+        if (entityAccess instanceof Entity entity)
+        {
+            MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
+        }
+    }
+
 }

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
++++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
+@@ -363,6 +_,7 @@
+          BlockPos blockpos = this.f_157609_.m_142538_();
+          long i = SectionPos.m_175568_(blockpos);
+          if (i != this.f_157610_) {
++            net.minecraftforge.common.ForgeHooks.onEntityEnterSection(f_157609_, this.f_157610_, i);
+             Visibility visibility = this.f_157611_.m_156848_();
+             if (!this.f_157611_.m_156846_(this.f_157609_)) {
+                PersistentEntitySectionManager.f_157490_.warn("Entity {} wasn't found in section {} (moving to {})", this.f_157609_, SectionPos.m_123184_(this.f_157610_), i);

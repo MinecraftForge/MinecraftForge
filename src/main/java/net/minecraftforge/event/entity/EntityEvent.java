@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event.entity;
 
+import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
@@ -94,6 +95,68 @@ public class EntityEvent extends Event
         public void setCanUpdate(boolean canUpdate)
         {
             this.canUpdate = canUpdate;
+        }
+    }
+
+    /**
+     * This event is fired on server and client when an Entity enters a Section. <br>
+     * Sections are 16x16x16 block grids of the world.<br>
+     * This event does not fire when a new entity is spawned, only when an entity moves from one section to another one.
+     * Use {@link EntityJoinWorldEvent} to detect new entities joining the world.
+     * <br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}
+     * <br>
+     * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
+     **/
+    public static class EnteringSection extends EntityEvent
+    {
+
+        private final long packedOldPos;
+        private final long packedNewPos;
+
+        public EnteringSection(Entity entity, long packedOldPos, long packedNewPos)
+        {
+            super(entity);
+            this.packedOldPos = packedOldPos;
+            this.packedNewPos = packedNewPos;
+        }
+
+        /**
+         * A packed version of the old section's position. This is to be used with the various methods in {@link SectionPos},
+         * such as {@link SectionPos#of(long)} or {@link SectionPos#x(long)} to avoid allocation.
+         * @return the packed position of the old section
+         */
+        public long getPackedOldPos()
+        {
+            return packedOldPos;
+        }
+
+        /**
+         * A packed version of the new section's position. This is to be used with the various methods in {@link SectionPos},
+         * such as {@link SectionPos#of(long)} or {@link SectionPos#x(long)} to avoid allocation.
+         * @return the packed position of the new section
+         */
+        public long getPackedNewPos()
+        {
+            return packedNewPos;
+        }
+
+        /**
+         * @return the position of the old section
+         */
+        public SectionPos getOldPos()
+        {
+            return SectionPos.of(packedOldPos);
+        }
+
+        /**
+         * @return the position of the new section
+         */
+        public SectionPos getNewPos()
+        {
+            return SectionPos.of(packedNewPos);
         }
     }
 
