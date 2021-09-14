@@ -1,19 +1,13 @@
 --- a/net/minecraft/gametest/framework/GameTestRegistry.java
 +++ b/net/minecraft/gametest/framework/GameTestRegistry.java
-@@ -25,21 +_,38 @@
+@@ -25,21 +_,33 @@
     private static final Map<String, Consumer<ServerLevel>> f_177498_ = Maps.newHashMap();
     private static final Collection<TestFunction> f_177499_ = Sets.newHashSet();
  
 +   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
 +   @Deprecated
     public static void m_177501_(Class<?> p_177502_) {
--      Arrays.stream(p_177502_.getDeclaredMethods()).forEach(GameTestRegistry::m_177503_);
-+      register(p_177502_, java.util.Set.of());
-+   }
-+   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */
-+   @Deprecated
-+   public static void register(Class<?> p_177502_, java.util.Set<String> allowedNamespaces) {
-+      Arrays.stream(p_177502_.getDeclaredMethods()).forEach(m -> GameTestRegistry.register(m, allowedNamespaces));
+       Arrays.stream(p_177502_.getDeclaredMethods()).forEach(GameTestRegistry::m_177503_);
     }
  
 +   /** @deprecated Forge: Use {@link net.minecraftforge.event.RegisterGameTestsEvent RegisterGameTestsEvent} to register game tests */

@@ -102,6 +102,7 @@ public class ServerLifecycleHooks
     {
         DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->{
             LanguageHook.loadLanguagesOnServer(server);
+            // GameTestServer requires the gametests to be registered earlier, so it is done in GameTestMain and should not be done twice.
             if (!(server instanceof GameTestServer))
                 ForgeHooks.registerGametests(Set.of());
         });

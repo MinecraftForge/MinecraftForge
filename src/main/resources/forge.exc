@@ -20,6 +20,7 @@ net/minecraft/data/tags/GameEventTagsProvider.<init>(Lnet/minecraft/data/DataGen
 net/minecraft/data/tags/ItemTagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lnet/minecraft/data/tags/BlockTagsProvider;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_126530_,p_126531_,modId,existingFileHelper
 net/minecraft/data/tags/TagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lnet/minecraft/core/Registry;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;)V=|p_126546_,p_126547_,modId,existingFileHelper
 net/minecraft/data/tags/TagsProvider.<init>(Lnet/minecraft/data/DataGenerator;Lnet/minecraft/core/Registry;Ljava/lang/String;Lnet/minecraftforge/common/data/ExistingFileHelper;Ljava/lang/String;)V=|p_126546_,p_126547_,modId,existingFileHelper,folder
+net/minecraft/gametest/framework/GameTestRegistry.register(Ljava/lang/reflect/Method;)V=|p_177504_,allowedNamespaces
 net/minecraft/network/FriendlyByteBuf.writeItemStack(Lnet/minecraft/world/item/ItemStack;Z)Lnet/minecraft/network/FriendlyByteBuf;=|p_130056_,limitedTag
 net/minecraft/server/dedicated/DedicatedServer.sendMessage(Lnet/minecraft/network/chat/Component;Ljava/util/UUID;)V=|message,p_108776_
 net/minecraft/server/level/ServerLevel.removeEntity(Lnet/minecraft/world/entity/Entity;Z)V=|p_8868_,keepData

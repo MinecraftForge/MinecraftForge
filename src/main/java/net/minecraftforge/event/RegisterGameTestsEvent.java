@@ -28,6 +28,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Set;
 
 /**
@@ -47,12 +48,12 @@ public class RegisterGameTestsEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Returns the set of enabled namespaces.
+     * Returns the mutable set of enabled namespaces.
      * If a game test's template does not have a namespace inside this set, it will not be registered.
      * An empty set means all namespaces are enabled.
      * This can only be non-empty when running through {@link GameTestServer}.
      *
-     * @return the set of enabled namespaces
+     * @return the mutable set of enabled namespaces
      */
     public Set<String> getEnabledNamespaces()
     {
@@ -70,7 +71,7 @@ public class RegisterGameTestsEvent extends Event implements IModBusEvent
     @SuppressWarnings("deprecation")
     public void register(Class<?> testClass)
     {
-        GameTestRegistry.register(testClass, this.getEnabledNamespaces());
+        Arrays.stream(testClass.getDeclaredMethods()).forEach(m -> GameTestRegistry.register(m, this.getEnabledNamespaces()));
     }
 
     /**
