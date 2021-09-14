@@ -103,7 +103,7 @@ public class GameTestMain {
             Eula eula = new Eula(Paths.get("eula.txt"));
 
             if (!optionSet.has(acceptEulaOpt) && !eula.hasAgreedToEULA()) {
-                LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
+                LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info or use --acceptEula.");
                 return;
             }
 
