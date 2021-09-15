@@ -26,9 +26,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -38,7 +35,6 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -98,7 +94,7 @@ public class CustomItemDecorationsTest {
             if (IS_ENABLED) {
                 if (!(event.getObject().getItem() instanceof DiggerItem)) return;
                 ItemDecoratorHandler handler = new ItemDecoratorHandler();
-                handler.addDecoration(test_decorator.get(), event.getObject());
+                handler.addDecorator(test_decorator.get(), event.getObject());
                 LazyOptional<IItemDecoratorHandler> optional = LazyOptional.of(() -> handler);
                 ICapabilityProvider provider = new ICapabilitySerializable<CompoundTag>() {
                     @Override
@@ -131,7 +127,7 @@ public class CustomItemDecorationsTest {
             if(IS_ENABLED) {
                 ItemStack stack = event.getEntityItem().getItem();
                 LazyOptional<IItemDecoratorHandler> lazyOptional = stack.getCapability(CapabilityItemDecoratorHandler.ITEM_DECORATOR_HANDLER_CAPABILITY);
-                lazyOptional.ifPresent(decoration -> decoration.removeDecoration(test_decorator.get(), stack));
+                lazyOptional.ifPresent(decoration -> decoration.removeDecorator(test_decorator.get(), stack));
             }
         }
     }

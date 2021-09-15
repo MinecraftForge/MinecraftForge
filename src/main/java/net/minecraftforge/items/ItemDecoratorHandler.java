@@ -38,7 +38,7 @@ public class ItemDecoratorHandler implements IItemDecoratorHandler
      * @param stack The ItemStack with the Capability
      */
     @Override
-    public void addDecoration(ItemDecorator decorator, ItemStack stack)
+    public void addDecorator(ItemDecorator decorator, ItemStack stack)
     {
         CompoundTag tag = stack.getOrCreateTag();
         if(tag.contains(DECORATORS))
@@ -74,7 +74,7 @@ public class ItemDecoratorHandler implements IItemDecoratorHandler
      * @param stack The ItemStack with the Capability
      */
     @Override
-    public void removeDecoration(ItemDecorator decorator, ItemStack stack)
+    public void removeDecorator(ItemDecorator decorator, ItemStack stack)
     {
         if(stack.hasTag() && stack.getTag().contains(DECORATORS))
         {

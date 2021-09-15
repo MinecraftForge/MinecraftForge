@@ -13,8 +13,8 @@ import javax.annotation.Nullable;
 
 public interface IItemDecoratorHandler extends INBTSerializable<CompoundTag>
 {
-    void addDecoration(ItemDecorator decorator, ItemStack stack);
-    void removeDecoration(ItemDecorator decorator, ItemStack stack);
+    void addDecorator(ItemDecorator decorator, ItemStack stack);
+    void removeDecorator(ItemDecorator decorator, ItemStack stack);
     @OnlyIn(Dist.CLIENT)
     void render(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel);
 }
