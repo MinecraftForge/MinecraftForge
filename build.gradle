@@ -250,7 +250,7 @@ def sharedDeps = {
     installer 'org.jline:jline-terminal:3.12.+' //Dep of TerminaalConsoleeAppender
     installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
-    installer 'org.openjdk.nashorn:nashorn-core:15.1.1'
+    installer 'org.openjdk.nashorn:nashorn-core:15.3'
     installer 'com.google.guava:guava:21.0'
     installer 'com.google.code.gson:gson:2.8.0'
 
