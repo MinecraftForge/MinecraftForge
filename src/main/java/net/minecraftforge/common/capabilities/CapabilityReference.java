@@ -173,7 +173,7 @@ public class CapabilityReference<T> implements Supplier<Capability<T>>
         for (CapabilityReference<?> capObject : ALL_REFERENCES)
         {
             final Class<?> capType = capObject.getCapabilityType();
-            final String capName = capType.getTypeName();
+            final String capName = capType.getTypeName().intern(); // Since the map passed in is IdentityHashMap
             callbacks.computeIfAbsent(capName, k -> new ArrayList<>()).add(capObject::setCapability);
         }
     }
