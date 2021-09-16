@@ -35,7 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
-import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.CAPABILITIES;
@@ -78,7 +78,7 @@ public enum CapabilityManager
 
     // INTERNAL
     private final IdentityHashMap<String, Capability<?>> providers = new IdentityHashMap<>();
-    private volatile IdentityHashMap<String, List<Function<Capability<?>, Object>>> callbacks;
+    private volatile IdentityHashMap<String, List<Consumer<Capability<?>>>> callbacks;
     public void injectCapabilities(List<ModFileScanData> data)
     {
         final List<ModFileScanData.AnnotationData> elementsToInject = data.stream()
@@ -86,7 +86,7 @@ public enum CapabilityManager
             .flatMap(Collection::stream)
             .filter(a -> CAP_INJECT.equals(a.annotationType()))
             .collect(Collectors.toList());
-        final IdentityHashMap<String, List<Function<Capability<?>, Object>>> callbacks = new IdentityHashMap<>();
+        final IdentityHashMap<String, List<Consumer<Capability<?>>>> callbacks = new IdentityHashMap<>();
         elementsToInject.forEach(entry -> gatherCallbacks(callbacks, entry));
         CapabilityReference.addCallbacks(callbacks);
 
@@ -100,15 +100,15 @@ public enum CapabilityManager
         this.callbacks = callbacks;
     }
 
-    private static void fireCallbacks(Map<String, List<Function<Capability<?>, Object>>> callbacks, Iterable<Capability<?>> caps)
+    private static void fireCallbacks(Map<String, List<Consumer<Capability<?>>>> callbacks, Iterable<Capability<?>> caps)
     {
         for (var cap : caps)
         {
-            callbacks.getOrDefault(cap.getName(), List.of()).forEach(f -> f.apply(cap));
+            callbacks.getOrDefault(cap.getName(), List.of()).forEach(f -> f.accept(cap));
         }
     }
 
-    private static void gatherCallbacks(Map<String, List<Function<Capability<?>, Object>>> callbacks, ModFileScanData.AnnotationData annotationData)
+    private static void gatherCallbacks(Map<String, List<Consumer<Capability<?>>>> callbacks, ModFileScanData.AnnotationData annotationData)
     {
         final String targetClass = annotationData.clazz().getClassName();
         final String targetName = annotationData.memberName();
@@ -120,7 +120,7 @@ public enum CapabilityManager
         }
         final String capabilityName = type.getInternalName().replace('/', '.').intern();
 
-        List<Function<Capability<?>, Object>> list = callbacks.computeIfAbsent(capabilityName, k -> new ArrayList<>());
+        List<Consumer<Capability<?>>> list = callbacks.computeIfAbsent(capabilityName, k -> new ArrayList<>());
 
         if (annotationData.memberName().indexOf('(') > 0)
         {
@@ -134,12 +134,12 @@ public enum CapabilityManager
                             if ((mtd.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
                             {
                                 LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{} (Non-Static)", capabilityName, targetClass, targetName);
-                                return null;
+                                return;
                             }
 
                             mtd.setAccessible(true);
                             mtd.invoke(null, input);
-                            return null;
+                            return;
                         }
                     }
                     LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{} (Method Not Found)", capabilityName, targetClass, targetName);
@@ -148,7 +148,6 @@ public enum CapabilityManager
                 {
                     LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName, e);
                 }
-                return null;
             });
         }
         else
@@ -160,7 +159,7 @@ public enum CapabilityManager
                     if ((field.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
                     {
                         LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{} (Non-Static)", capabilityName, targetClass, targetName);
-                        return null;
+                        return;
                     }
                     field.setAccessible(true);
                     field.set(null, input);
@@ -169,7 +168,6 @@ public enum CapabilityManager
                 {
                     LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName, e);
                 }
-                return null;
             });
         }
     }

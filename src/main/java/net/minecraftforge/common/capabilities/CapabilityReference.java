@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.WeakHashMap;
-import java.util.function.Function;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -168,17 +168,13 @@ public class CapabilityReference<T> implements Supplier<Capability<T>>
     // Used to log a warning whenever a CapabilityReference is created after capabilities have been injected
     static boolean hasPreviouslyInjected = false;
 
-    static void addCallbacks(Map<String, List<Function<Capability<?>, Object>>> callbacks)
+    static void addCallbacks(Map<String, List<Consumer<Capability<?>>>> callbacks)
     {
         for (CapabilityReference<?> capObject : ALL_REFERENCES)
         {
             final Class<?> capType = capObject.getCapabilityType();
             final String capName = capType.getTypeName();
-            callbacks.computeIfAbsent(capName, k -> new ArrayList<>())
-                    .add(capInst -> {
-                        capObject.setCapability(capInst);
-                        return null;
-                    });
+            callbacks.computeIfAbsent(capName, k -> new ArrayList<>()).add(capObject::setCapability);
         }
     }
 
