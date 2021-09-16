@@ -1,20 +1,17 @@
 package net.minecraftforge.items;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ItemDecorator;
-import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.client.ItemDecorator;
 
 import javax.annotation.Nullable;
 
-public interface IItemDecoratorHandler extends INBTSerializable<CompoundTag>
+public interface IItemDecoratorHandler
 {
-    void addDecorator(ItemDecorator decorator, ItemStack stack);
-    void removeDecorator(ItemDecorator decorator, ItemStack stack);
+    void addDecorator(ItemDecorator decorator);
+    void removeDecorator(ItemDecorator decorator);
     @OnlyIn(Dist.CLIENT)
     void render(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String itemCountLabel);
 }

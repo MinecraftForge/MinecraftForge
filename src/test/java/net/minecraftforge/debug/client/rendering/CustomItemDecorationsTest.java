@@ -24,28 +24,18 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.ItemDecorator;
+import net.minecraftforge.client.ItemDecorator;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.items.CapabilityItemDecoratorHandler;
 import net.minecraftforge.items.ItemDecoratorHandler;
 import net.minecraftforge.items.IItemDecoratorHandler;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,37 +45,25 @@ public class CustomItemDecorationsTest {
     public static final String MODID = "render_item_decorations_test";
     private static final boolean IS_ENABLED = true;
     private static final ResourceLocation smiley = new ResourceLocation(MODID + ":textures/smiley.png");
-    public static final DeferredRegister<ItemDecorator> ITEM_DECORATORS = DeferredRegister.create(ForgeRegistries.ITEM_DECORATORS, MODID);
-    
-    public static RegistryObject<ItemDecorator> test_decorator = ITEM_DECORATORS.register("test_decorator", () ->
-            new ItemDecorator()
-            {
-                @Override
-                @OnlyIn(Dist.CLIENT)
-                public void render(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String stackSizeLabel) {
-                    RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
-                    Tesselator tessellator = Tesselator.getInstance();
-                    BufferBuilder bufferbuilder = tessellator.getBuilder();
-                    int x = xOffset;
-                    int y = yOffset;
-                    RenderSystem.setShaderTexture(0, smiley);
-                    bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
-                    bufferbuilder.vertex(x + 0, y + 0, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(0, 0).endVertex();
-                    bufferbuilder.vertex(x + 0, y + 5, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(0, 1).endVertex();
-                    bufferbuilder.vertex(x + 5, y + 5, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(1, 1).endVertex();
-                    bufferbuilder.vertex(x + 5, y + 0, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(1, 0).endVertex();
-                    bufferbuilder.end();
-                    BufferUploader.end(bufferbuilder);
-                }
-            }
-    );
-    
-    public CustomItemDecorationsTest()
-    {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ITEM_DECORATORS.register(modEventBus);
-    }
-    
+    private static ItemDecorator decorator = new ItemDecorator() {
+        @Override
+        public void render(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String stackSizeLabel) {
+            RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
+            Tesselator tessellator = Tesselator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuilder();
+            int x = xOffset;
+            int y = yOffset;
+            RenderSystem.setShaderTexture(0, smiley);
+            bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX);
+            bufferbuilder.vertex(x + 0, y + 0, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(0, 0).endVertex();
+            bufferbuilder.vertex(x + 0, y + 5, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(0, 1).endVertex();
+            bufferbuilder.vertex(x + 5, y + 5, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(1, 1).endVertex();
+            bufferbuilder.vertex(x + 5, y + 0, 0.0D).color(1.0f, 1.0f, 1.0f, 1.0f).uv(1, 0).endVertex();
+            bufferbuilder.end();
+            BufferUploader.end(bufferbuilder);
+        }
+    };
+
     @Mod.EventBusSubscriber(modid = MODID)
     public static class Capabilities
     {
@@ -94,19 +72,9 @@ public class CustomItemDecorationsTest {
             if (IS_ENABLED) {
                 if (!(event.getObject().getItem() instanceof DiggerItem)) return;
                 ItemDecoratorHandler handler = new ItemDecoratorHandler();
-                handler.addDecorator(test_decorator.get(), event.getObject());
+                handler.addDecorator(decorator);
                 LazyOptional<IItemDecoratorHandler> optional = LazyOptional.of(() -> handler);
-                ICapabilityProvider provider = new ICapabilitySerializable<CompoundTag>() {
-                    @Override
-                    public CompoundTag serializeNBT() {
-                        return handler.serializeNBT();
-                    }
-        
-                    @Override
-                    public void deserializeNBT(CompoundTag nbt) {
-                        handler.deserializeNBT(nbt);
-                    }
-        
+                ICapabilityProvider provider = new ICapabilityProvider() {
                     @Nonnull
                     @Override
                     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
@@ -118,16 +86,6 @@ public class CustomItemDecorationsTest {
                 };
                 event.addCapability(new ResourceLocation(MODID, "item_decorator_test"), provider);
                 event.addListener(optional::invalidate);
-            }
-        }
-        
-        @SubscribeEvent
-        public static void onEvent(final ItemTossEvent event)
-        {
-            if(IS_ENABLED) {
-                ItemStack stack = event.getEntityItem().getItem();
-                LazyOptional<IItemDecoratorHandler> lazyOptional = stack.getCapability(CapabilityItemDecoratorHandler.ITEM_DECORATOR_HANDLER_CAPABILITY);
-                lazyOptional.ifPresent(decoration -> decoration.removeDecorator(test_decorator.get(), stack));
             }
         }
     }
