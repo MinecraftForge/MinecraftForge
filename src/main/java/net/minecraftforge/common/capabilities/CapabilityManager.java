@@ -88,10 +88,12 @@ public enum CapabilityManager
             .collect(Collectors.toList());
         final IdentityHashMap<String, List<Function<Capability<?>, Object>>> callbacks = new IdentityHashMap<>();
         elementsToInject.forEach(entry -> gatherCallbacks(callbacks, entry));
+        CapabilityReference.addCallbacks(callbacks);
 
         var event = new RegisterCapabilitiesEvent();
         ModLoader.get().postEvent(event);
         fireCallbacks(callbacks, event.getCapabilities().values());
+        CapabilityReference.hasPreviouslyInjected = true;
 
         // TODO 1.18: remove these fields
         this.providers.putAll(event.getCapabilities());
