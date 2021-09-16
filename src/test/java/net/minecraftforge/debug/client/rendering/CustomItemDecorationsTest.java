@@ -45,7 +45,7 @@ public class CustomItemDecorationsTest {
     public static final String MODID = "render_item_decorations_test";
     private static final boolean IS_ENABLED = true;
     private static final ResourceLocation smiley = new ResourceLocation(MODID + ":textures/smiley.png");
-    private static ItemDecorator decorator = new ItemDecorator() {
+    private static ItemDecorator decorator = new ItemDecorator(new ResourceLocation(MODID, "test_decorator")) {
         @Override
         public void render(Font font, ItemStack stack, int xOffset, int yOffset, @Nullable String stackSizeLabel) {
             RenderSystem.setShader(GameRenderer::getPositionColorTexShader);
