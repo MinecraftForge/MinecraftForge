@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/entity/raid/Raids.java
++++ b/net/minecraft/world/entity/raid/Raids.java
+@@ -135,8 +_,9 @@
+    }
+ 
+    private Raid m_37960_(ServerLevel p_37961_, BlockPos p_37962_) {
+-      Raid raid = p_37961_.m_8832_(p_37962_);
+-      return raid != null ? raid : new Raid(this.m_37977_(), p_37961_, p_37962_);
++      net.minecraftforge.event.world.RaidEvent.GetOrCreate event = net.minecraftforge.event.ForgeEventFactory.getOrCreateRaid(p_37961_.m_8832_(p_37962_), p_37961_, p_37962_);
++      // Custom Raid -> Existing Raid -> New Vanilla Raid
++      return event.getCustomRaid() != null ? event.getCustomRaid().apply(m_37977_()) : event.getRaid() != null ? event.getRaid() : new Raid(m_37977_(), p_37961_, p_37962_);
+    }
+ 
+    public static Raids m_150235_(ServerLevel p_150236_, CompoundTag p_150237_) {
+@@ -147,7 +_,8 @@
+ 
+       for(int i = 0; i < listtag.size(); ++i) {
+          CompoundTag compoundtag = listtag.m_128728_(i);
+-         Raid raid = new Raid(p_150236_, compoundtag);
++         Raid customRaid = net.minecraftforge.event.ForgeEventFactory.onRaidLoad().apply(p_150236_, p_150237_);
++         Raid raid = customRaid != null ? customRaid : new Raid(p_150236_, compoundtag);
+          raids.f_37951_.put(raid.m_37781_(), raid);
+       }
+ 

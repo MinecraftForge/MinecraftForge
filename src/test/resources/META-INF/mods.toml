@@ -151,6 +151,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="permissions_changed_event_test"
 [[mods]]
-    modId="custom_shield_test"
+modId="custom_shield_test"
+[[mods]]
+    modId="raid_event_test"
 
 # ADD ABOVE THIS LINE

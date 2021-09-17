@@ -1,5 +1,113 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
+@@ -236,6 +_,7 @@
+    }
+ 
+    public void m_37774_() {
++      if (!net.minecraftforge.event.ForgeEventFactory.shouldRaidStop(this)) return;
+       this.f_37680_ = false;
+       this.f_37682_.m_7706_();
+       this.f_37687_ = Raid.RaidStatus.STOPPED;
+@@ -493,37 +_,53 @@
+       this.f_37678_ = 0.0F;
+       DifficultyInstance difficultyinstance = this.f_37675_.m_6436_(p_37756_);
+       boolean flag1 = this.m_37702_();
+-
+-      for(Raid.RaiderType raid$raidertype : Raid.RaiderType.f_37813_) {
+-         int j = this.m_37730_(raid$raidertype, i, flag1) + this.m_37734_(raid$raidertype, this.f_37685_, i, difficultyinstance, flag1);
+-         int k = 0;
+-
+-         for(int l = 0; l < j; ++l) {
+-            Raider raider = raid$raidertype.f_37814_.m_20615_(this.f_37675_);
+-            if (!flag && raider.m_7490_()) {
+-               raider.m_33075_(true);
+-               this.m_37710_(i, raider);
+-               flag = true;
+-            }
+-
+-            this.m_37713_(i, raider, p_37756_, false);
+-            if (raid$raidertype.f_37814_ == EntityType.f_20518_) {
+-               Raider raider1 = null;
+-               if (i == this.m_37724_(Difficulty.NORMAL)) {
+-                  raider1 = EntityType.f_20513_.m_20615_(this.f_37675_);
+-               } else if (i >= this.m_37724_(Difficulty.HARD)) {
+-                  if (k == 0) {
+-                     raider1 = EntityType.f_20568_.m_20615_(this.f_37675_);
+-                  } else {
+-                     raider1 = EntityType.f_20493_.m_20615_(this.f_37675_);
+-                  }
++      net.minecraftforge.event.world.RaidEvent.SpawnGroup event = net.minecraftforge.event.ForgeEventFactory.spawnGroupForRaid(this, p_37756_, flag1);
++      if (!event.isCanceled())
++      {
++         p_37756_ = event.getPos();
++         flag1 = event.shouldSpawnBonusGroup();
++         for (Raid.RaiderType raid$raidertype : Raid.RaiderType.f_37813_)
++         {
++            int j = this.m_37730_(raid$raidertype, i, flag1) + this.m_37734_(raid$raidertype, this.f_37685_, i, difficultyinstance, flag1);
++            int k = 0;
++
++            for (int l = 0; l < j; ++l)
++            {
++               Raider raider = raid$raidertype.f_37814_.m_20615_(this.f_37675_);
++               if (!flag && raider.m_7490_())
++               {
++                  raider.m_33075_(true);
++                  this.m_37710_(i, raider);
++                  flag = true;
+                }
+ 
+-               ++k;
+-               if (raider1 != null) {
+-                  this.m_37713_(i, raider1, p_37756_, false);
+-                  raider1.m_20035_(p_37756_, 0.0F, 0.0F);
+-                  raider1.m_20329_(raider);
++               this.m_37713_(i, raider, p_37756_, false);
++               if (raid$raidertype.f_37814_ == EntityType.f_20518_)
++               {
++                  Raider raider1 = null;
++                  if (i == this.m_37724_(Difficulty.NORMAL))
++                  {
++                     raider1 = EntityType.f_20513_.m_20615_(this.f_37675_);
++                  }
++                  else if (i >= this.m_37724_(Difficulty.HARD))
++                  {
++                     if (k == 0)
++                     {
++                        raider1 = EntityType.f_20568_.m_20615_(this.f_37675_);
++                     }
++                     else
++                     {
++                        raider1 = EntityType.f_20493_.m_20615_(this.f_37675_);
++                     }
++                  }
++
++                  ++k;
++                  if (raider1 != null)
++                  {
++                     this.m_37713_(i, raider1, p_37756_, false);
++                     raider1.m_20035_(p_37756_, 0.0F, 0.0F);
++                     raider1.m_20329_(raider);
++                  }
+                }
+             }
+          }
+@@ -786,6 +_,16 @@
+       this.f_37672_.add(p_37727_.m_142081_());
+    }
+ 
++   public ServerBossEvent getRaidEvent()
++   {
++      return f_37682_;
++   }
++
++   public Map<Integer, Set<Raider>> getGroupRaiderMap()
++   {
++      return new java.util.HashMap<>(f_37671_);
++   }
++
+    static enum RaidStatus {
+       ONGOING,
+       VICTORY,
 @@ -809,7 +_,7 @@
        }
     }

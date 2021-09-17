@@ -21,6 +21,7 @@ package net.minecraftforge.event;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 
 import javax.annotation.Nonnull;
@@ -30,10 +31,11 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.players.PlayerList;
-import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.entity.raid.Raid;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
@@ -46,7 +48,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Zombie;
@@ -83,7 +84,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraftforge.api.distmarker.Dist;
@@ -134,18 +134,12 @@ import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.*;
 import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.CreateFluidSourceEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityMultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
-import net.minecraftforge.event.world.ChunkWatchEvent;
-import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.event.world.PistonEvent;
-import net.minecraftforge.event.world.SaplingGrowTreeEvent;
-import net.minecraftforge.event.world.SleepFinishedTimeEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 
@@ -795,5 +789,31 @@ public class ForgeEventFactory
             return MinecraftForge.EVENT_BUS.post(new PermissionsChangedEvent(player, newLevel, oldLevel));
         }
         return true;
+    }
+
+    public static RaidEvent.GetOrCreate getOrCreateRaid(@Nullable Raid raid, ServerLevel level, BlockPos pos)
+    {
+        RaidEvent.GetOrCreate event = new RaidEvent.GetOrCreate(raid, level, pos);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static BiFunction<ServerLevel, CompoundTag, Raid> onRaidLoad()
+    {
+        RaidEvent.Load event = new RaidEvent.Load();
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getRaidConstructor();
+    }
+
+    public static RaidEvent.SpawnGroup spawnGroupForRaid(Raid raid, BlockPos pos, boolean shouldSpawnBonusGroup)
+    {
+        RaidEvent.SpawnGroup event = new RaidEvent.SpawnGroup(raid, pos, shouldSpawnBonusGroup);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static boolean shouldRaidStop(Raid raid)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new RaidEvent.Stop(raid));
     }
 }
