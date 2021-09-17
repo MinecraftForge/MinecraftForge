@@ -29,7 +29,7 @@
 -      if (this.f_41589_ != null && this.f_41589_.m_41465_()) {
 +   public ItemStack(ItemLike p_41601_, int p_41602_) { this(p_41601_, p_41602_, (CompoundTag) null); }
 +   public ItemStack(ItemLike p_41604_, int p_41605_, @Nullable CompoundTag p_41606_) {
-+      super(ItemStack.class);
++      super(ItemStack.class, true);
 +      this.capNBT = p_41606_;
 +      this.f_41589_ = p_41604_ == null ? null : p_41604_.m_5456_();
 +      this.delegate = p_41604_ == null ? null : p_41604_.m_5456_().delegate;
@@ -47,7 +47,7 @@
     }
  
     private ItemStack(CompoundTag p_41608_) {
-+      super(ItemStack.class);
++      super(ItemStack.class, true);
 +      this.capNBT = p_41608_.m_128441_("ForgeCaps") ? p_41608_.m_128469_("ForgeCaps") : null;
 +      Item rawItem =
        this.f_41589_ = Registry.f_122827_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
@@ -225,7 +225,7 @@
        return multimap;
     }
  
-@@ -1005,6 +_,24 @@
+@@ -1005,6 +_,23 @@
  
     public boolean m_41614_() {
        return this.m_41720_().m_41472_();
@@ -243,8 +243,7 @@
 +    */
 +   private void forgeInit() {
 +      if (this.delegate != null) {
-+         net.minecraftforge.common.capabilities.ICapabilityProvider provider = f_41589_.initCapabilities(this, this.capNBT);
-+         this.gatherCapabilities(provider);
++         this.gatherCapabilities(() -> f_41589_.initCapabilities(this, this.capNBT));
 +         if (this.capNBT != null) deserializeCaps(this.capNBT);
 +      }
     }
