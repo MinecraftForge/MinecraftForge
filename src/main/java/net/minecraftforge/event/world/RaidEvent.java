@@ -45,7 +45,8 @@ public class RaidEvent extends Event
 
     /**
      * RaidEvent.GetOrCreate is triggered when
-     * a raid is requested in the given position
+     * a raid is requested in the given position,
+     * users are allowed to assign custom ones
      */
     public static class GetOrCreate extends RaidEvent
     {
@@ -110,7 +111,8 @@ public class RaidEvent extends Event
     /**
      * RaidEvent.Load is triggered when
      * {@link net.minecraft.world.entity.raid.Raids#load(ServerLevel, CompoundTag)}
-     * trying to load raids
+     * trying to load, users are able
+     * to retrieve custom raids here
      */
     public static class Load extends RaidEvent
     {
@@ -139,6 +141,9 @@ public class RaidEvent extends Event
     /**
      * RaidEvent.SpawnGroup is triggered when
      * a raid is trying to spawn a new wave
+     *
+     * Users are allowed to change the spawn position,
+     * and force spawn a bonus group
      *
      * This event is {@link Cancelable}
      * If cancelled, the group will be counted spawned
@@ -196,6 +201,9 @@ public class RaidEvent extends Event
     /**
      * RaidEvent.Stop is triggered when the raid
      * attempts to end
+     *
+     * Users are allowed to prevent the raid
+     * for being cancelled
      *
      * This event is {@link Cancelable}
      * If cancelled, the raid is not stopped
