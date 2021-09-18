@@ -18,22 +18,31 @@ public class ModValidator {
     private static final Logger LOGGER = LogManager.getLogger();
     private final Map<IModFile.Type, List<ModFile>> modFiles;
     private final List<ModFile> candidatePlugins;
-    private final List<ModFile> candidateMods;
     private final List<ModFile> candidateLibraries;
+    private final List<ModFile> candidateMods;
+    private final List<ModFile> candidateGameLibraries;
     private LoadingModList loadingModList;
     private List<ModFile> brokenFiles;
+    private List<ModFile> duplicates;
 
     public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles) {
         this.modFiles = modFiles;
-        this.candidateMods = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.MOD, List.of()));
-        this.candidateLibraries = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.LIBRARY, List.of()));
         this.candidatePlugins = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.LANGPROVIDER, List.of()));
+        this.candidateLibraries = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.LIBRARY, List.of()));
+        this.candidateMods = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.MOD, List.of()));
+        this.candidateGameLibraries = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.GAMELIBRARY, List.of()));
     }
 
     public void stage1Validation() {
         brokenFiles = validateFiles(candidateMods);
+        duplicates = detectDuplicates(candidateMods);
         LOGGER.debug(SCAN,"Found {} mod files with {} mods", candidateMods::size, ()-> candidateMods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found "+ candidateMods.size()+" modfiles to load"));
+
+        brokenFiles.addAll(validateFiles(candidateGameLibraries));
+        duplicates.addAll(detectDuplicates(candidateGameLibraries));
+        LOGGER.debug(SCAN,"Found {} game library files", candidateGameLibraries::size);
+        StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found " + candidateGameLibraries.size() + " game libraries to load"));
     }
 
     @NotNull
@@ -51,14 +60,44 @@ public class ModValidator {
         return brokenFiles;
     }
 
+    private List<ModFile> detectDuplicates(final List<ModFile> mods) {
+        final Map<String, IModFile> packagesToJar = new HashMap<>();
+        final List<ModFile> duplicates = new ArrayList<>();
+        for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
+        {
+            final ModFile mod = iterator.next();
+            for (final String aPackage : mod.getSecureJar().getPackages())
+            {
+                if (packagesToJar.containsKey(aPackage))
+                {
+                    LOGGER.warn("Package: %s is duplicated in: %s and: %s".formatted(aPackage,
+                            packagesToJar.get(aPackage).getSecureJar().getPrimaryPath(),
+                            mod.getSecureJar().getPrimaryPath()));
+
+                    iterator.remove();
+                    duplicates.add(mod);
+                    break;
+                }
+
+                packagesToJar.put(aPackage, mod);
+            }
+        }
+
+        return duplicates;
+    }
+
     public ITransformationService.Resource getPluginResources() {
-        return new ITransformationService.Resource(IModuleLayerManager.Layer.PLUGIN, this.candidatePlugins.stream().map(ModFile::getSecureJar).toList());
+        final List<SecureJar> resources = new ArrayList<>();
+        resources.addAll(this.candidatePlugins.stream().map(ModFile::getSecureJar).toList());
+        resources.addAll(this.candidateLibraries.stream().map(ModFile::getSecureJar).toList());
+
+        return new ITransformationService.Resource(IModuleLayerManager.Layer.PLUGIN, resources);
     }
 
     public ITransformationService.Resource getModResources() {
         final List<SecureJar> resources = new ArrayList<>();
         resources.addAll(this.candidateMods.stream().map(ModFile::getSecureJar).toList());
-        resources.addAll(this.candidateLibraries.stream().map(ModFile::getSecureJar).toList());
+        resources.addAll(this.candidateGameLibraries.stream().map(ModFile::getSecureJar).toList());
 
         return new ITransformationService.Resource(IModuleLayerManager.Layer.GAME, resources);
     }

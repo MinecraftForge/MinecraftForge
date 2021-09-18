@@ -35,7 +35,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.jar.JarInputStream;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
@@ -96,10 +95,6 @@ public class ClasspathLocator extends AbstractJarFileLocator {
     }
 
     private static boolean isValidManifest(SecureJar sj) {
-        try (var jis = new JarInputStream(Files.newInputStream(sj.getPrimaryPath()))) {
-            return jis.getManifest() != null;
-        } catch (IOException e) {
-            return false;
-        }
+        return sj.getManifest() != ModFile.DEFAULTMANIFEST;
     }
 }

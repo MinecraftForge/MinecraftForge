@@ -11,7 +11,7 @@ dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
 dependencies {
     compileOnly('org.jetbrains:annotations:21.0.1')
     implementation(project(':fmlloader'))
-    api('net.minecraftforge:eventbus:5.0.+')
+    api("net.minecraftforge:eventbus:${EVENTBUS_VERSION}")
     implementation('commons-io:commons-io:2.5')
 }
 
@@ -23,7 +23,7 @@ task sourcesJar(type: Jar) {
 ext {
     MANIFESTS = [
         '': [
-            'FMLModType': 'LANGPROVIDER',
+            'FMLModType': 'LIBRARY',
             'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
             'Git-Commit': GIT_INFO.abbreviatedId,
             'Git-Branch': GIT_INFO.branch,
