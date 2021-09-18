@@ -794,6 +794,6 @@ public class ForgeEventFactory
         {
             return MinecraftForge.EVENT_BUS.post(new PermissionsChangedEvent(player, newLevel, oldLevel));
         }
-        return true;
+        return false;
     }
 }
