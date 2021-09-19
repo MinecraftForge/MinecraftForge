@@ -19,7 +19,7 @@
     private static final Logger f_41585_ = LogManager.getLogger();
     public static final ItemStack f_41583_ = new ItemStack((Item)null);
     public static final DecimalFormat f_41584_ = Util.m_137469_(new DecimalFormat("#.##"), (p_41704_) -> {
-@@ -127,14 +_,19 @@
+@@ -127,10 +_,15 @@
        p_41606_.ifPresent(this::m_41751_);
     }
  
@@ -33,17 +33,13 @@
 +      this.capNBT = p_41606_;
 +      this.f_41589_ = p_41604_ == null ? null : p_41604_.m_5456_();
 +      this.delegate = p_41604_ == null ? null : p_41604_.m_5456_().delegate;
++      this.forgeInit();
 +      this.f_41587_ = p_41605_;
 +      if (this.f_41589_ != null && this.f_41589_.isDamageable(this)) {
           this.m_41721_(this.m_41773_());
        }
  
-       this.m_41617_();
-+      this.forgeInit();
-    }
- 
-    private void m_41617_() {
-@@ -143,18 +_,23 @@
+@@ -143,14 +_,19 @@
     }
  
     private ItemStack(CompoundTag p_41608_) {
@@ -52,6 +48,7 @@
 +      Item rawItem =
        this.f_41589_ = Registry.f_122827_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
 +      this.delegate = rawItem.delegate;
++      this.forgeInit();
        this.f_41587_ = p_41608_.m_128445_("Count");
        if (p_41608_.m_128425_("tag", 10)) {
           this.f_41590_ = p_41608_.m_128469_("tag");
@@ -63,11 +60,6 @@
           this.m_41721_(this.m_41773_());
        }
  
-       this.m_41617_();
-+      this.forgeInit();
-    }
- 
-    public static ItemStack m_41712_(CompoundTag p_41713_) {
 @@ -185,7 +_,7 @@
     }
  
