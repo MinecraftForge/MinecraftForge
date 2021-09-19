@@ -31,7 +31,7 @@ public final class ModJarMetadata implements JarMetadata {
 
     static Optional<IModFile> buildFile(Function<SecureJar, IModFile> mfConstructor, Predicate<SecureJar> jarTest, BiPredicate<String, String> filter, Path... files) {
         var mjm = new ModJarMetadata();
-        var sj = SecureJar.from(()->ModFile.DEFAULTMANIFEST, j->mjm, filter, files);
+        var sj = SecureJar.from(()->ModFile.DEFAULTMANIFEST, j->ModFile.getFmlModType(j.getManifest()) == IModFile.Type.MOD ? mjm : JarMetadata.from(j, files), filter, files);
         if (jarTest.test(sj)) {
             var mf = mfConstructor.apply(sj);
             mjm.setModFile(mf);

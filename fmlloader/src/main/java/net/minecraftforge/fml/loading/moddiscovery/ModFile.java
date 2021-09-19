@@ -81,9 +81,13 @@ public class ModFile implements IModFile {
         this.parser = parser;
 
         manifest = this.jar.getManifest();
-        final Optional<String> value = Optional.ofNullable(manifest.getMainAttributes().getValue(TYPE));
-        modFileType = Type.valueOf(value.orElse("MOD"));
+        modFileType = getFmlModType(manifest);
         jarVersion = Optional.ofNullable(manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION)).orElse("0.0NONE");
+    }
+
+    public static Type getFmlModType(Manifest manifest) {
+        final Optional<String> value = Optional.ofNullable(manifest.getMainAttributes().getValue(TYPE));
+        return Type.valueOf(value.orElse("MOD"));
     }
 
     @Override
@@ -116,7 +120,10 @@ public class ModFile implements IModFile {
 
     public boolean identifyMods() {
         this.modFileInfo = ModFileParser.readModList(this, this.parser);
-        if (this.modFileInfo == null) return false;
+        if (this.modFileInfo == null) {
+            // Returns false if this is a MOD type, which means invalid. Otherwise, true because other mod types don't have a mods.toml
+            return this.getType() != Type.MOD;
+        }
         LOGGER.debug(LOADING,"Loading mod file {} with languages {}", this.getFilePath(), this.modFileInfo.requiredLanguageLoaders());
         this.coreMods = ModFileParser.getCoreMods(this);
         this.coreMods.forEach(mi-> LOGGER.debug(LOADING,"Found coremod {}", mi.getPath()));
