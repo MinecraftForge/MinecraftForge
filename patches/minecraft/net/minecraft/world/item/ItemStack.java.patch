@@ -33,8 +33,8 @@
 +      this.capNBT = p_41606_;
 +      this.f_41589_ = p_41604_ == null ? null : p_41604_.m_5456_();
 +      this.delegate = p_41604_ == null ? null : p_41604_.m_5456_().delegate;
-+      this.forgeInit();
 +      this.f_41587_ = p_41605_;
++      this.forgeInit();
 +      if (this.f_41589_ != null && this.f_41589_.isDamageable(this)) {
           this.m_41721_(this.m_41773_());
        }
@@ -48,12 +48,12 @@
 +      Item rawItem =
        this.f_41589_ = Registry.f_122827_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
 +      this.delegate = rawItem.delegate;
-+      this.forgeInit();
        this.f_41587_ = p_41608_.m_128445_("Count");
        if (p_41608_.m_128425_("tag", 10)) {
           this.f_41590_ = p_41608_.m_128469_("tag");
           this.m_41720_().m_142312_(this.f_41590_);
        }
++      this.forgeInit();
  
 -      if (this.m_41720_().m_41465_()) {
 +      if (this.m_41720_().isDamageable(this)) {
