@@ -90,7 +90,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
     {
         if (isLazy && !initialized)
         {
-            doGatherCapabilities(lazyParentSupplier.get());
+            doGatherCapabilities(lazyParentSupplier == null ? null : lazyParentSupplier.get());
             if (lazyData != null)
             {
                 deserializeCaps(lazyData);
