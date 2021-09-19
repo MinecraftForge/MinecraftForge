@@ -722,8 +722,12 @@ public interface IForgeBlock
 
     /**
      * Whether redstone dust should visually connect to this block on a given side
+     * <p>
+     * The default implementation is identical to
+     * {@link RedStoneWireBlock#shouldConnectTo(BlockState, Direction)}
      *
-     * <p> {@link RedStoneWireBlock} updates its visual connection when
+     * <p>
+     * {@link RedStoneWireBlock} updates its visual connection when
      * {@link BlockState#updateShape(Direction, BlockState, LevelAccessor, BlockPos, BlockPos)}
      * is called, this callback is used during the evaluation of its new shape.
      *
@@ -747,6 +751,22 @@ public interface IForgeBlock
      */
     default boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction direction)
     {
-        return RedStoneWireBlock.shouldConnectTo(state, direction);
+        if (state.is(Blocks.REDSTONE_WIRE))
+        {
+            return true;
+        }
+        else if (state.is(Blocks.REPEATER))
+        {
+            Direction facing = state.getValue(RepeaterBlock.FACING);
+            return facing == direction || facing.getOpposite() == direction;
+        }
+        else if (state.is(Blocks.OBSERVER))
+        {
+            return direction == state.getValue(ObserverBlock.FACING);
+        }
+        else
+        {
+            return state.isSignalSource() && direction != null;
+        }
     }
 }

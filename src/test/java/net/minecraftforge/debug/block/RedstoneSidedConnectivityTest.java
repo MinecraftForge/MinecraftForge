@@ -50,11 +50,7 @@ public class RedstoneSidedConnectivityTest
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     private static final RegistryObject<Block> TEST_REDSTONE_BLOCK = BLOCKS.register(BLOCK_ID, EastRedstoneBlock::new);
-
-    static
-    {
-        ITEMS.register(BLOCK_ID, () -> new BlockItem(TEST_REDSTONE_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
-    }
+    private static final RegistryObject<Item> TEST_REDSTONE_BLOCKITEM = ITEMS.register(BLOCK_ID,  () -> new BlockItem(TEST_REDSTONE_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_BUILDING_BLOCKS)));
 
     public RedstoneSidedConnectivityTest()
     {
