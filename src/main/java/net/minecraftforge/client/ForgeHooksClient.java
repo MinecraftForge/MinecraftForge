@@ -101,6 +101,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fmlclient.registry.ClientRegistry;
 import net.minecraftforge.fml.StartupMessageManager;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.resource.ReloadRequirements;
+import net.minecraftforge.resource.VanillaResourceType;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -610,6 +612,14 @@ public class ForgeHooksClient
     public static void onInputUpdate(Player player, Input movementInput)
     {
         MinecraftForge.EVENT_BUS.post(new InputUpdateEvent(player, movementInput));
+    }
+
+    /**
+     * @deprecated use {@link Minecraft#reloadResourcePacks()} instead
+     */
+    @Deprecated(forRemoval = true)
+    public static void refreshResources(Minecraft mc, VanillaResourceType... types) {
+        mc.reloadResourcePacks();
     }
 
     public static boolean onGuiMouseClickedPre(Screen guiScreen, double mouseX, double mouseY, int button)

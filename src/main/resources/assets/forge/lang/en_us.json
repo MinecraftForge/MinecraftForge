@@ -154,6 +154,8 @@
   "forge.configgui.alwaysSetupTerrainOffThread": "Force threaded chunk rendering",
   "forge.configgui.forgeLightPipelineEnabled.tooltip": "Enable the Forge block rendering pipeline - fixes the lighting of custom models.",
   "forge.configgui.forgeLightPipelineEnabled": "Forge Light Pipeline Enabled",
+  "forge.configgui.selectiveResourceReloadEnabled.tooltip": "When enabled, makes specific reload tasks such as language changing quicker to run.",
+  "forge.configgui.selectiveResourceReloadEnabled": "Enable Selective Resource Loading",
   "forge.configgui.showLoadWarnings.tooltip": "When enabled, Forge will show any warnings that occurred during loading.",
   "forge.configgui.showLoadWarnings": "Show Load Warnings",
 
