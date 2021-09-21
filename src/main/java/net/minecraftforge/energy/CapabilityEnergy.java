@@ -26,8 +26,8 @@ public class CapabilityEnergy
     @CapabilityInject(IEnergyStorage.class)
     public static Capability<IEnergyStorage> ENERGY = null;
 
-    public static void register()
+    public static void register(RegisterCapabilitiesEvent event)
     {
-        CapabilityManager.INSTANCE.register(IEnergyStorage.class);
+        event.register(IEnergyStorage.class);
     }
 }

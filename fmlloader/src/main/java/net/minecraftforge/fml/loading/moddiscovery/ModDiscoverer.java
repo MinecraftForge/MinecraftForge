@@ -29,9 +29,8 @@ import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
@@ -61,16 +60,21 @@ public class ModDiscoverer {
 
     public ModValidator discoverMods() {
         LOGGER.debug(SCAN,"Scanning for mods and other resources to load. We know {} ways to find mods", locatorList.size());
-        final var modFiles = locatorList.stream()
-                .peek(loc -> LOGGER.debug(SCAN,"Trying locator {}", loc))
-                .map(IModLocator::scanMods)
-                .<IModFile>mapMulti(Iterable::forEach)
-                .peek(mf -> LOGGER.info(SCAN,"Found mod file {} of type {} with locator {}", mf.getFileName(), mf.getType(), mf.getLocator()))
-                .peek(mf -> StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found mod file "+mf.getFileName()+" of type "+mf.getType())))
+        var loadedFiles = new ArrayList<>();
+        for (IModLocator locator : locatorList) {
+            LOGGER.debug(SCAN,"Trying locator {}", locator);
+            var modFiles = locator.scanMods();
+            for (IModFile mf : modFiles) {
+                LOGGER.info(SCAN, "Found mod file {} of type {} with locator {}", mf.getFileName(), mf.getType(), mf.getLocator());
+                StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found mod file "+mf.getFileName()+" of type "+mf.getType()));
+            }
+            loadedFiles.addAll(modFiles);
+        }
+        final var modFilesMap = loadedFiles.stream()
                 .map(ModFile.class::cast)
                 .collect(Collectors.groupingBy(IModFile::getType));
 
-        var validator = new ModValidator(modFiles);
+        var validator = new ModValidator(modFilesMap);
         validator.stage1Validation();
         return validator;
     }

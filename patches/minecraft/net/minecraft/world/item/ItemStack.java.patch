@@ -19,7 +19,7 @@
     private static final Logger f_41585_ = LogManager.getLogger();
     public static final ItemStack f_41583_ = new ItemStack((Item)null);
     public static final DecimalFormat f_41584_ = Util.m_137469_(new DecimalFormat("#.##"), (p_41704_) -> {
-@@ -127,14 +_,19 @@
+@@ -127,10 +_,15 @@
        p_41606_.ifPresent(this::m_41751_);
     }
  
@@ -29,25 +29,21 @@
 -      if (this.f_41589_ != null && this.f_41589_.m_41465_()) {
 +   public ItemStack(ItemLike p_41601_, int p_41602_) { this(p_41601_, p_41602_, (CompoundTag) null); }
 +   public ItemStack(ItemLike p_41604_, int p_41605_, @Nullable CompoundTag p_41606_) {
-+      super(ItemStack.class);
++      super(ItemStack.class, true);
 +      this.capNBT = p_41606_;
 +      this.f_41589_ = p_41604_ == null ? null : p_41604_.m_5456_();
 +      this.delegate = p_41604_ == null ? null : p_41604_.m_5456_().delegate;
 +      this.f_41587_ = p_41605_;
++      this.forgeInit();
 +      if (this.f_41589_ != null && this.f_41589_.isDamageable(this)) {
           this.m_41721_(this.m_41773_());
        }
  
-       this.m_41617_();
-+      this.forgeInit();
-    }
- 
-    private void m_41617_() {
-@@ -143,18 +_,23 @@
+@@ -143,14 +_,19 @@
     }
  
     private ItemStack(CompoundTag p_41608_) {
-+      super(ItemStack.class);
++      super(ItemStack.class, true);
 +      this.capNBT = p_41608_.m_128441_("ForgeCaps") ? p_41608_.m_128469_("ForgeCaps") : null;
 +      Item rawItem =
        this.f_41589_ = Registry.f_122827_.m_7745_(new ResourceLocation(p_41608_.m_128461_("id")));
@@ -57,17 +53,13 @@
           this.f_41590_ = p_41608_.m_128469_("tag");
           this.m_41720_().m_142312_(this.f_41590_);
        }
++      this.forgeInit();
  
 -      if (this.m_41720_().m_41465_()) {
 +      if (this.m_41720_().isDamageable(this)) {
           this.m_41721_(this.m_41773_());
        }
  
-       this.m_41617_();
-+      this.forgeInit();
-    }
- 
-    public static ItemStack m_41712_(CompoundTag p_41713_) {
 @@ -185,7 +_,7 @@
     }
  
@@ -165,7 +157,7 @@
  
     public boolean m_41735_(BlockState p_41736_) {
 -      return this.m_41720_().m_8096_(p_41736_);
-+      return this.m_41720_().canHarvestBlock(this, p_41736_);
++      return this.m_41720_().isCorrectToolForDrops(this, p_41736_);
     }
  
     public InteractionResult m_41647_(Player p_41648_, LivingEntity p_41649_, InteractionHand p_41650_) {
@@ -225,7 +217,7 @@
        return multimap;
     }
  
-@@ -1005,6 +_,24 @@
+@@ -1005,6 +_,23 @@
  
     public boolean m_41614_() {
        return this.m_41720_().m_41472_();
@@ -243,8 +235,7 @@
 +    */
 +   private void forgeInit() {
 +      if (this.delegate != null) {
-+         net.minecraftforge.common.capabilities.ICapabilityProvider provider = f_41589_.initCapabilities(this, this.capNBT);
-+         this.gatherCapabilities(provider);
++         this.gatherCapabilities(() -> f_41589_.initCapabilities(this, this.capNBT));
 +         if (this.capNBT != null) deserializeCaps(this.capNBT);
 +      }
     }

@@ -25,7 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.level.SpawnData;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -55,8 +57,12 @@ public class StructureSpawnListGatherEvent extends Event
     {
         this.structure = structure;
         this.insideOnly = this.structure.getDefaultRestrictsSpawnsToInside();
-        addEntitySpawns(MobCategory.MONSTER, this.structure.getDefaultSpawnList());
-        addEntitySpawns(MobCategory.CREATURE, this.structure.getDefaultCreatureSpawnList());
+
+        for (MobCategory cat : MobCategory.values()) {
+            List<SpawnerData> lst = this.structure.getDefaultSpawnList(cat);
+            if (!lst.isEmpty())
+                addEntitySpawns(cat, lst);
+        }
     }
 
     /**

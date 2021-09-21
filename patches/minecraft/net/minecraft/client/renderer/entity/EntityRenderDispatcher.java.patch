@@ -15,14 +15,18 @@
              p_114442_.m_85836_();
              double d3 = d0 + Mth.m_14139_((double)p_114445_, enderdragonpart.f_19790_, enderdragonpart.m_20185_());
              double d4 = d1 + Mth.m_14139_((double)p_114445_, enderdragonpart.f_19791_, enderdragonpart.m_20186_());
-@@ -322,6 +_,10 @@
- 
-    public Quaternion m_114470_() {
+@@ -324,9 +_,14 @@
        return this.f_114367_;
-+   }
-+
-+   public Map<String, EntityRenderer<? extends Player>> getSkinMap() {
-+      return java.util.Collections.unmodifiableMap(f_114363_);
     }
  
++   public Map<String, EntityRenderer<? extends Player>> getSkinMap() {
++      return java.util.Collections.unmodifiableMap(f_114363_);
++   }
++
     public void m_6213_(ResourceManager p_174004_) {
+       EntityRendererProvider.Context entityrendererprovider$context = new EntityRendererProvider.Context(this, this.f_173995_, p_174004_, this.f_173996_, this.f_114365_);
+       this.f_114362_ = EntityRenderers.m_174049_(entityrendererprovider$context);
+       this.f_114363_ = EntityRenderers.m_174051_(entityrendererprovider$context);
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.AddLayers(f_114362_, f_114363_));
+    }
+ }

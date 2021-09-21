@@ -21,7 +21,7 @@ package net.minecraftforge.fluids.capability;
 
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 
 public class CapabilityFluidHandler
 {
@@ -30,10 +30,10 @@ public class CapabilityFluidHandler
     @CapabilityInject(IFluidHandlerItem.class)
     public static Capability<IFluidHandlerItem> FLUID_HANDLER_ITEM_CAPABILITY = null;
 
-    public static void register()
+    public static void register(RegisterCapabilitiesEvent event)
     {
-        CapabilityManager.INSTANCE.register(IFluidHandler.class);
+        event.register(IFluidHandler.class);
 
-        CapabilityManager.INSTANCE.register(IFluidHandlerItem.class);
+        event.register(IFluidHandlerItem.class);
     }
 }

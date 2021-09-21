@@ -13,7 +13,7 @@
     private final BlockEntityType.BlockEntitySupplier<? extends T> f_58914_;
     private final Set<Block> f_58915_;
     private final Type<?> f_58916_;
-+   private final net.minecraftforge.common.util.ReverseTagWrapper<BlockEntityType<?>> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.SerializationTags.m_13199_().getCustomTypeCollection(net.minecraftforge.registries.ForgeRegistries.BLOCK_ENTITIES));
++   private final net.minecraftforge.common.util.ReverseTagWrapper<BlockEntityType<?>> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.SerializationTags.m_13199_().m_144452_(net.minecraftforge.registries.ForgeRegistries.Keys.BLOCK_ENTITY_TYPES));
  
     @Nullable
     public static ResourceLocation m_58954_(BlockEntityType<?> p_58955_) {

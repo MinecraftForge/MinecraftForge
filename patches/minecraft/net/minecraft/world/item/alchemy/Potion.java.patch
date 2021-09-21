@@ -6,7 +6,7 @@
  
 -public class Potion {
 +public class Potion extends net.minecraftforge.registries.ForgeRegistryEntry<Potion> {
-+   private final net.minecraftforge.common.util.ReverseTagWrapper<Potion> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<Potion>(this, () -> net.minecraft.tags.SerializationTags.m_13199_().m_144452_(Registry.f_122905_));
++   private final net.minecraftforge.common.util.ReverseTagWrapper<Potion> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.SerializationTags.m_13199_().m_144452_(Registry.f_122905_));
     private final String f_43481_;
     private final ImmutableList<MobEffectInstance> f_43482_;
  

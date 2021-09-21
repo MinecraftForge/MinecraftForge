@@ -161,6 +161,10 @@ public class ModSorter
             forgeAndMC.add((ModFile) mc.get(0));
         else
             throw new IllegalStateException("Failed to find minecraft somehow?");
+        // TODO: remove this hardcoding and make it more flexible
+        var forge = modFilesByFirstId.get("forge");
+        if (forge != null && !forge.isEmpty())
+            forgeAndMC.add((ModFile) forge.get(0)); // Silently ignore if Forge isn't present
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         this.modFiles = modFilesByFirstId.entrySet().stream()
@@ -242,6 +246,6 @@ public class ModSorter
     private boolean modVersionNotContained(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)
     {
         return !(VersionSupportMatrix.testVersionSupportMatrix(mv.getVersionRange(), mv.getModId(), "mod", (modId, range) -> modVersions.containsKey(modId) &&
-                (range.containsVersion(modVersions.get(modId)) || modVersions.get(modId).toString().equals("NONE"))));
+                (range.containsVersion(modVersions.get(modId)) || modVersions.get(modId).toString().equals("0.0NONE"))));
     }
 }

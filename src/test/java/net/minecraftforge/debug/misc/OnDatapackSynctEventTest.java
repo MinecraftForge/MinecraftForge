@@ -17,30 +17,35 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug.block;
+package net.minecraftforge.debug.misc;
 
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.event.world.BlockEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.event.OnDatapackSyncEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod("block_harvest_tool_test")
+@Mod("send_datapacks_to_client")
 @Mod.EventBusSubscriber
-public class HarvestToolTest
+public class OnDatapackSynctEventTest
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent event)
+    protected static void onSendDataToClient(final OnDatapackSyncEvent event)
     {
-        Player player = event.getPlayer();
-        BlockState state = event.getState();
-        for (ToolType toolType : player.getMainHandItem().getToolTypes()) {
-            if (state.isToolEffective(toolType)) {
-                player.sendMessage(new TextComponent(String.format("Tool was effective. tool type: %s | harvest level: %d", toolType.getName(), state.getHarvestLevel())), player.getUUID());
-                break;
-            }
-        }
+        // Fire for a specific player on login
+        if (event.getPlayer() != null)
+            syncData(event.getPlayer());
+        // Fire for all players on /reload
+        else
+            event.getPlayerList().getPlayers().forEach(OnDatapackSynctEventTest::syncData);
+    }
+
+    private static void syncData(ServerPlayer player)
+    {
+        LOGGER.info("Sending modded datapack data to {}", player.getName().getString());
     }
 }

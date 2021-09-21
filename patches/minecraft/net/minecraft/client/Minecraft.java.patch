@@ -1,13 +1,5 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
-@@ -390,6 +_,7 @@
-    public Minecraft(GameConfig p_91084_) {
-       super("Client");
-       f_90981_ = this;
-+      net.minecraftforge.client.ForgeHooksClient.invalidateLog4jThreadCache();
-       this.f_91069_ = p_91084_.f_101907_.f_101916_;
-       File file1 = p_91084_.f_101907_.f_101918_;
-       this.f_90985_ = p_91084_.f_101907_.f_101917_;
 @@ -397,14 +_,13 @@
        this.f_91029_ = p_91084_.f_101908_.f_101928_;
        this.f_90986_ = p_91084_.f_101905_.f_101944_;
@@ -24,6 +16,14 @@
        this.f_91033_ = p_91084_.f_101908_.f_101926_;
        this.f_91034_ = !p_91084_.f_101908_.f_101929_;
        this.f_91035_ = !p_91084_.f_101908_.f_101930_;
+@@ -436,6 +_,7 @@
+       }
+ 
+       Util.f_137440_ = RenderSystem.m_69576_();
++      if (net.minecraftforge.common.ForgeConfig.CLIENT.forceSystemNanoTime.get()) Util.f_137440_ = System::nanoTime;
+       this.f_90989_ = new VirtualScreen(this);
+       this.f_90990_ = this.f_90989_.m_110872_(displaydata, this.f_91066_.f_92123_, this.m_91270_());
+       this.m_7440_(true);
 @@ -450,7 +_,6 @@
  
        this.f_90990_.m_85380_(this.f_91066_.f_92113_);
@@ -58,6 +58,17 @@
        this.f_91064_ = new DebugRenderer(this);
        RenderSystem.m_69900_(this::m_91113_);
        if (this.f_91042_.f_83915_ == this.f_90990_.m_85441_() && this.f_91042_.f_83916_ == this.f_90990_.m_85442_()) {
+@@ -531,6 +_,10 @@
+          TinyFileDialogs.tinyfd_messageBox("Minecraft", stringbuilder.toString(), "ok", "error", false);
+       }
+ 
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.RegisterClientReloadListenersEvent(this.f_91036_));
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions());
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers());
++
+       this.f_90990_.m_85409_(this.f_91066_.f_92041_);
+       this.f_90990_.m_85424_(this.f_91066_.f_92034_);
+       this.f_90990_.m_85426_();
 @@ -546,13 +_,16 @@
              }
  

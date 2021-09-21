@@ -1,0 +1,23 @@
+--- a/net/minecraft/client/renderer/entity/BoatRenderer.java
++++ b/net/minecraft/client/renderer/entity/BoatRenderer.java
+@@ -52,7 +_,7 @@
+          p_113932_.m_85845_(new Quaternion(new Vector3f(1.0F, 0.0F, 1.0F), p_113929_.m_38352_(p_113931_), true));
+       }
+ 
+-      Pair<ResourceLocation, BoatModel> pair = this.f_173934_.get(p_113929_.m_38387_());
++      Pair<ResourceLocation, BoatModel> pair = getModelWithLocation(p_113929_);
+       ResourceLocation resourcelocation = pair.getFirst();
+       BoatModel boatmodel = pair.getSecond();
+       p_113932_.m_85841_(-1.0F, -1.0F, 1.0F);
+@@ -69,7 +_,10 @@
+       super.m_7392_(p_113929_, p_113930_, p_113931_, p_113932_, p_113933_, p_113934_);
+    }
+ 
++   @Deprecated // forge: override getModelWithLocation to change the texture / model
+    public ResourceLocation m_5478_(Boat p_113927_) {
+-      return this.f_173934_.get(p_113927_.m_38387_()).getFirst();
++      return getModelWithLocation(p_113927_).getFirst();
+    }
++
++   public Pair<ResourceLocation, BoatModel> getModelWithLocation(Boat boat) { return this.f_173934_.get(boat.m_38387_()); }
+ }

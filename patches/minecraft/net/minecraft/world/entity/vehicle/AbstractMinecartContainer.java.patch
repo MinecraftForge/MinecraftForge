@@ -1,27 +1,5 @@
 --- a/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
 +++ b/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
-@@ -122,12 +_,18 @@
-       }
-    }
- 
--   public void m_142687_(Entity.RemovalReason p_150255_) {
--      if (!this.f_19853_.f_46443_ && p_150255_.m_146965_()) {
-+   public Entity changeDimension(ServerLevel p_38246_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      this.dropContentsWhenDead(false);
-+      return super.changeDimension(p_38246_, teleporter);
-+   }
-+
-+   @Override
-+   public void remove(boolean keepData) {
-+      if (!this.f_19853_.f_46443_ && this.dropContents) {
-          Containers.m_18998_(this.f_19853_, this, this);
-       }
- 
--      super.m_142687_(p_150255_);
-+      super.remove(keepData);
-    }
- 
-    protected void m_7380_(CompoundTag p_38248_) {
 @@ -156,6 +_,8 @@
     }
  
@@ -40,15 +18,12 @@
           if (p_38255_ != null) {
              lootcontext$builder.m_78963_(p_38255_.m_36336_()).m_78972_(LootContextParams.f_81455_, p_38255_);
           }
-@@ -219,4 +_,27 @@
+@@ -219,4 +_,26 @@
     }
  
     protected abstract AbstractContainerMenu m_7402_(int p_38222_, Inventory p_38223_);
 +
 +   // Forge Start
-+
-+   private boolean dropContents = this.f_19853_.m_46469_().m_46207_(GameRules.f_46137_);
-+
 +   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
 +
 +   @Override
@@ -59,12 +34,14 @@
 +   }
 +
 +   @Override
-+   protected void invalidateCaps() {
++   public void invalidateCaps() {
 +      super.invalidateCaps();
 +      itemHandler.invalidate();
 +   }
 +
-+   public void dropContentsWhenDead(boolean value) {
-+      this.dropContents = value;
++   @Override
++   public void reviveCaps() {
++      super.reviveCaps();
++      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
 +   }
  }

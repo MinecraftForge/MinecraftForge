@@ -75,10 +75,6 @@ net/minecraft/world/item/crafting/Recipe m_6076_()Ljava/lang/String; # getGroup
 	net/minecraft/world/item/crafting/ShapedRecipe m_6076_()Ljava/lang/String;
 	net/minecraft/world/item/crafting/ShapelessRecipe m_6076_()Ljava/lang/String;
 	net/minecraft/world/item/crafting/SingleItemRecipe m_6076_()Ljava/lang/String;
-net/minecraft/network/PacketBuffer m_130105_([J)[J
-net/minecraft/network/PacketBuffer m_130093_([JI)[J
-net/minecraft/network/PacketBuffer m_130277_()Ljava/lang/String;
-net/minecraft/network/PacketBuffer m_130157_()Lnet/minecraft/util/math/SectionPos;
 net/minecraft/nbt/NbtIo m_128953_(Ljava/io/File;)Lnet/minecraft/nbt/CompoundTag; # read
 net/minecraft/nbt/NbtIo m_128955_(Lnet/minecraft/nbt/CompoundTag;Ljava/io/File;)V # write
 net/minecraft/network/protocol/game/ClientboundCommandsPacket m_131884_()Lcom/mojang/brigadier/tree/RootCommandNode; # getRoot

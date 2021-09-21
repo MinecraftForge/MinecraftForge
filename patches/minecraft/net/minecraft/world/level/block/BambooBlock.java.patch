@@ -14,3 +14,12 @@
              }
           }
  
+@@ -171,7 +_,7 @@
+    }
+ 
+    public float m_5880_(BlockState p_48901_, Player p_48902_, BlockGetter p_48903_, BlockPos p_48904_) {
+-      return p_48902_.m_21205_().m_41720_() instanceof SwordItem ? 1.0F : super.m_5880_(p_48901_, p_48902_, p_48903_, p_48904_);
++      return p_48902_.m_21205_().canPerformAction(net.minecraftforge.common.ToolActions.SWORD_DIG) ? 1.0F : super.m_5880_(p_48901_, p_48902_, p_48903_, p_48904_);
+    }
+ 
+    protected void m_48910_(BlockState p_48911_, Level p_48912_, BlockPos p_48913_, Random p_48914_, int p_48915_) {

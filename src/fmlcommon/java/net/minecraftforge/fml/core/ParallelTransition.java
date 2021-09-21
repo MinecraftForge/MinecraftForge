@@ -50,7 +50,7 @@ record ParallelTransition(ModLoadingStage stage, Class<? extends ParallelDispatc
         return (e, prev) -> prev.thenApplyAsync(t -> {
             stage.getDeferredWorkQueue().runTasks();
             return t;
-        });
+        }, e);
     }
 
     @Override
