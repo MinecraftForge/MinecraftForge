@@ -1,7 +1,5 @@
 package net.minecraftforge.common.capabilities;
 
-import org.objectweb.asm.Type;
-
 import java.util.Optional;
 
 public final class CapabilityReference<T>
