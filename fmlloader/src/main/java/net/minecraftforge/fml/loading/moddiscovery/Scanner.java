@@ -61,7 +61,7 @@ public class Scanner {
             ModClassVisitor mcv = new ModClassVisitor();
             ClassReader cr = new ClassReader(in);
             cr.accept(mcv, 0);
-            mcv.buildData(result.getClasses(), result.getAnnotations());
+            mcv.buildData(result.getClasses(), result.getAnnotations(), result.getGenericFields());
         } catch (IOException | IllegalArgumentException e) {
             // mark path bad
         }

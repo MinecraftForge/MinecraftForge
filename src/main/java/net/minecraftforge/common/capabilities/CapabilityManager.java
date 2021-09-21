@@ -34,9 +34,9 @@ import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.signature.SignatureReader;
 
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.CAPABILITIES;
 
@@ -44,6 +44,7 @@ public enum CapabilityManager
 {
     INSTANCE;
     static final Logger LOGGER = LogManager.getLogger();
+    private static final Type CAP_REFERENCE = Type.getType(CapabilityReference.class);
     private static final Type CAP_INJECT = Type.getType(CapabilityInject.class);
 
     /**
@@ -81,13 +82,19 @@ public enum CapabilityManager
     private volatile IdentityHashMap<String, List<Function<Capability<?>, Object>>> callbacks;
     public void injectCapabilities(List<ModFileScanData> data)
     {
-        final List<ModFileScanData.AnnotationData> elementsToInject = data.stream()
+        final IdentityHashMap<String, List<Function<Capability<?>, Object>>> callbacks = new IdentityHashMap<>();
+
+        data.stream()
             .map(ModFileScanData::getAnnotations)
             .flatMap(Collection::stream)
             .filter(a -> CAP_INJECT.equals(a.annotationType()))
-            .collect(Collectors.toList());
-        final IdentityHashMap<String, List<Function<Capability<?>, Object>>> callbacks = new IdentityHashMap<>();
-        elementsToInject.forEach(entry -> gatherCallbacks(callbacks, entry));
+            .forEachOrdered(a -> gatherCallbacks(callbacks, a));
+
+        data.stream()
+                .map(ModFileScanData::getGenericFields)
+                .flatMap(Collection::stream)
+                .filter(f -> CAP_REFERENCE.equals(f.fieldType()))
+                .forEachOrdered(f -> gatherCallbacks(callbacks, f));
 
         var event = new RegisterCapabilitiesEvent();
         ModLoader.get().postEvent(event);
@@ -103,6 +110,44 @@ public enum CapabilityManager
         for (var cap : caps)
         {
             callbacks.getOrDefault(cap.getName(), List.of()).forEach(f -> f.apply(cap));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void gatherCallbacks(Map<String, List<Function<Capability<?>, Object>>> callbacks, ModFileScanData.GenericFieldData fieldData)
+    {
+        final String targetClass = fieldData.clazz().getClassName();
+        var extractor = new SimpleGenericTypeExtractor();
+        new SignatureReader(fieldData.fieldSignature()).accept(extractor);
+        if (extractor.typeArgumentClass != null)
+        {
+            final String capabilityName = extractor.typeArgumentClass.replace('/', '.').intern();
+            callbacks.computeIfAbsent(capabilityName, k -> new ArrayList<>())
+                    .add(input -> {
+                        try
+                        {
+                            var field = Class.forName(targetClass).getDeclaredField(fieldData.fieldName());
+                            if ((field.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
+                            {
+                                LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{} (Non-Static)", capabilityName, targetClass, fieldData.fieldName());
+                                return null;
+                            }
+
+                            field.setAccessible(true);
+                            var value = ((CapabilityReference<Object>) field.get(null));
+                            if (value == null)
+                            {
+                                LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{} (field is null)", capabilityName, targetClass, fieldData.fieldName());
+                                return null;
+                            }
+                            value.inject(((Capability<Object>) input));
+                        }
+                        catch (Exception e)
+                        {
+                            LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{}", capabilityName, targetClass, fieldData.fieldName(), e);
+                        }
+                        return null;
+                    });
         }
     }
 

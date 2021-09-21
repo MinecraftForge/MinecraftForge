@@ -28,6 +28,8 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import java.lang.annotation.ElementType;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -36,10 +38,15 @@ import java.util.stream.Stream;
 
 public class ModClassVisitor extends ClassVisitor
 {
+
+    private static final Set<String> INTERESTING_GENERIC_FIELDS = Set.of("Lnet/minecraftforge/common/capabilities/CapabilityReference;");
+
     private Type asmType;
     private Type asmSuperType;
     private Set<Type> interfaces;
     private final LinkedList<ModAnnotation> annotations = new LinkedList<>();
+    private final List<ModFileScanData.GenericFieldData> genericFields = new ArrayList<>();
+
     public ModClassVisitor()
     {
         super(Opcodes.ASM9);
@@ -66,6 +73,10 @@ public class ModClassVisitor extends ClassVisitor
     @Override
     public FieldVisitor visitField(int access, String name, String desc, String signature, Object value)
     {
+        if (signature != null && INTERESTING_GENERIC_FIELDS.contains(desc))
+        {
+            genericFields.add(new ModFileScanData.GenericFieldData(this.asmType, name, Type.getType(desc), signature));
+        }
         return new ModFieldVisitor(name, annotations);
     }
 
@@ -75,12 +86,19 @@ public class ModClassVisitor extends ClassVisitor
         return new ModMethodVisitor(name, desc, annotations);
     }
 
-    public void buildData(final Set<ModFileScanData.ClassData> classes, final Set<ModFileScanData.AnnotationData> annotations) {
+    @Deprecated(forRemoval = true)
+    public void buildData(final Set<ModFileScanData.ClassData> classes, final Set<ModFileScanData.AnnotationData> annotations)
+    {
+        buildData(classes, annotations, new HashSet<>());
+    }
+
+    public void buildData(final Set<ModFileScanData.ClassData> classes, final Set<ModFileScanData.AnnotationData> annotations, final Set<ModFileScanData.GenericFieldData> genericFields) {
         classes.add(new ModFileScanData.ClassData(this.asmType, this.asmSuperType, this.interfaces));
         final List<ModFileScanData.AnnotationData> collect = this.annotations.stream().
                 filter(ma->ModFileScanData.interestingAnnotations().test(ma.getASMType())).
                 map(a -> ModAnnotation.fromModAnnotation(this.asmType, a)).collect(Collectors.toList());
         annotations.addAll(collect);
+        genericFields.addAll(this.genericFields);
     }
 
 }
