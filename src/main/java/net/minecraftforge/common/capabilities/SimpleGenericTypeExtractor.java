@@ -24,19 +24,12 @@ class SimpleGenericTypeExtractor extends SignatureVisitor
     }
 
     @Override
-    public SignatureVisitor visitTypeArgument(char wildcard) {
-        if (seenTypeArgument) {
-            throw new IllegalStateException("Unexpected multiple arguments for generic signature");
+    public SignatureVisitor visitTypeArgument(char wildcard)
+    {
+        if (wildcard == '=')
+        {
+            seenTypeArgument = true;
         }
-        if (wildcard != '=') {
-            throw new IllegalStateException("Unexpected non-invariant type parameter for generic signature");
-        }
-        seenTypeArgument = true;
         return this;
-    }
-
-    @Override
-    public void visitEnd() {
-        super.visitEnd();
     }
 }
