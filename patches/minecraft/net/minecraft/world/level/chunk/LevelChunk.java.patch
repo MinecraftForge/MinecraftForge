@@ -87,6 +87,14 @@
        });
     }
  
+@@ -759,6 +_,7 @@
+    }
+ 
+    public void m_156368_() {
++      this.f_62779_.values().forEach(BlockEntity::onChunkUnloaded);
+       this.f_62779_.values().forEach(this::m_156400_);
+    }
+ 
 @@ -826,6 +_,7 @@
              if (LevelChunk.this.m_156410_(blockpos)) {
                 try {
