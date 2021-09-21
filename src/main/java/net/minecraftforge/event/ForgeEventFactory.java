@@ -124,6 +124,7 @@ import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PermissionsChangedEvent;
+import net.minecraftforge.event.entity.player.PlayerDamageItemEvent;
 import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
@@ -795,5 +796,11 @@ public class ForgeEventFactory
             return MinecraftForge.EVENT_BUS.post(new PermissionsChangedEvent(player, newLevel, oldLevel));
         }
         return false;
+    }
+
+    public static boolean onPlayerDamageItem(@Nullable ServerPlayer player, ItemStack itemStack, int durability, int newDurability)
+    {
+        PlayerDamageItemEvent event = new PlayerDamageItemEvent(player, itemStack, durability, newDurability);
+        return MinecraftForge.EVENT_BUS.post(event);
     }
 }

@@ -120,7 +120,7 @@
           CompoundTag compoundtag = this.m_41783_();
           return compoundtag == null || !compoundtag.m_128471_("Unbreakable");
        } else {
-@@ -254,19 +_,19 @@
+@@ -254,22 +_,23 @@
     }
  
     public boolean m_41768_() {
@@ -144,6 +144,10 @@
     }
  
     public boolean m_41629_(int p_41630_, Random p_41631_, @Nullable ServerPlayer p_41632_) {
++      if (net.minecraftforge.event.ForgeEventFactory.onPlayerDamageItem(p_41632_, this, this.m_41776_() - this.m_41773_(), this.m_41776_() - this.m_41773_() - p_41630_)) return false;
+       if (!this.m_41763_()) {
+          return false;
+       } else {
 @@ -302,6 +_,7 @@
     public <T extends LivingEntity> void m_41622_(int p_41623_, T p_41624_, Consumer<T> p_41625_) {
        if (!p_41624_.f_19853_.f_46443_ && (!(p_41624_ instanceof Player) || !((Player)p_41624_).m_150110_().f_35937_)) {
