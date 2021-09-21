@@ -798,9 +798,9 @@ public class ForgeEventFactory
         return false;
     }
 
-    public static boolean onPlayerDamageItem(@Nullable ServerPlayer player, ItemStack itemStack, int durability, int newDurability)
+    public static boolean onPlayerDamageItem(@Nullable ServerPlayer player, ItemStack itemStack, int damageValue, int newDamageValue)
     {
-        PlayerDamageItemEvent event = new PlayerDamageItemEvent(player, itemStack, durability, newDurability);
+        PlayerDamageItemEvent event = new PlayerDamageItemEvent(player, itemStack, damageValue, newDamageValue);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 }

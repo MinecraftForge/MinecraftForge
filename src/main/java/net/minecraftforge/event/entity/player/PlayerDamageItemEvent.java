@@ -24,63 +24,65 @@ import javax.annotation.Nullable;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
- * PlayerDamageItemEvent is fired when a player damage an item.<br>
- * This event is fired whenever a player damage an item in
+ * PlayerDamageItemEvent is fired when a player damages an item.<br>
+ * This event is fired whenever a player damages an item in
  * {@link ItemStack#hurt(int, java.util.Random, ServerPlayer)}.<br>
- * <br>
- * {@link #player} contains the player which is damage the item. <br>
- * {@link #itemStack} contains the ItemStack which is damaged.<br>
- * {@link #durability} contains the durability of the ItemStack before it will damaged. <br>
- * {@link #newDurability} contains the durability of the ItemStack after it was damaged.<br>
  * <br>
  * This event is {@link Cancelable}.<br>
  * <br>
- * This event does not have a result. {@link HasResult}<br>
- * <br>
- * This event is fired from {@link ForgeEventFactory#onPlayerDamageItem(ServerPlayer, ItemStack, int, int)}.<br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 @Cancelable
 public class PlayerDamageItemEvent extends Event
 {
-	@Nullable // copy vanilla logic
+	@Nullable
     private final ServerPlayer player;
     private final ItemStack itemStack;
-    private final int durability;
-    private final int newDurability;
+    private final int damageValue;
+    private final int newDamageValue;
 
-    public PlayerDamageItemEvent(@Nullable ServerPlayer player, ItemStack itemStack, int durability, int newDurability)
+    public PlayerDamageItemEvent(@Nullable ServerPlayer player, ItemStack itemStack, int damageValue, int newDamageValue)
     {
         this.player = player;
         this.itemStack = itemStack;
-        this.durability = durability;
-        this.newDurability = newDurability;
+        this.damageValue = damageValue;
+        this.newDamageValue = newDamageValue;
     }
-
+    
+    /**
+     * @return the player which is damage the item
+     **/
     @Nullable
     public ServerPlayer getPlayer() 
     {
         return this.player;
     }
 
+    /**
+     * @return the ItemStack which is damaged
+     **/
     public ItemStack getStack() 
     {
         return this.itemStack;
     }
 
-    public int getDurability() 
+    /**
+     * @return the damageValue of the ItemStack before it will damaged
+     **/
+    public int getDamageValue() 
     {
-        return this.durability;
+        return this.damageValue;
     }
 
-    public int getNewDurability() 
+    /**
+     * @return the damageValue of the ItemStack after it was damaged
+     **/
+    public int getNewDamageValue() 
     {
-        return this.newDurability;
+        return this.newDamageValue;
     } 
 }

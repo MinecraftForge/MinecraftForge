@@ -13,14 +13,14 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber()
 public class PlayerDamageItemEventTest 
 {
-    private static final boolean ENABLE = true;
+    private static final boolean ENABLE = false;
     private static final Logger LOGGER = LogManager.getLogger(PlayerDamageItemEventTest.class);
 
     @SubscribeEvent
     public static void onPlayerDamageItemEvent(PlayerDamageItemEvent event) 
     {
         if (!ENABLE) return;
-        LOGGER.info("{} damaged item {}, it has now {} durability", event.getPlayer().getDisplayName().getString(), event.getStack().getDisplayName().getString(), event.getNewDurability());
+        LOGGER.info("{} damaged item {}, it has now a damage value of {}", event.getPlayer().getDisplayName().getString(), event.getStack().getDisplayName().getString(), event.getNewDamageValue());
         if (event.getPlayer().hasEffect(MobEffects.DIG_SPEED)) 
         {
             if (event.getStack().getItem() instanceof PickaxeItem) 
