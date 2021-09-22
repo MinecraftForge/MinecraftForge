@@ -1,0 +1,12 @@
+--- a/net/minecraft/tags/SetTag.java
++++ b/net/minecraft/tags/SetTag.java
+@@ -59,4 +_,9 @@
+ 
+       return p_13218_;
+    }
++
++   @Override
++   public String toString() {
++      return "SetTag{" + "valuesList=" + f_13211_ + ", values=" + f_13212_ + ", closestCommonSuperType=" + f_13210_ + '}';
++   }
+ }
