@@ -1,10 +1,8 @@
 --- a/net/minecraft/world/entity/TamableAnimal.java
 +++ b/net/minecraft/world/entity/TamableAnimal.java
-@@ -196,12 +_,13 @@
-       return super.m_7307_(p_21833_);
+@@ -197,11 +_,11 @@
     }
  
-+   @Override
     public void m_6667_(DamageSource p_21809_) {
 -      if (!this.f_19853_.f_46443_ && this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_) && this.m_142480_() instanceof ServerPlayer) {
 +      super.m_6667_(p_21809_);
