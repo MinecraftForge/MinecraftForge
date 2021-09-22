@@ -7,17 +7,20 @@ import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod("safe_referent_test")
-public class SafeReferentTest {
+public class SafeReferentTest
+{
 
     private static final boolean ENABLED = true;
 
-    public SafeReferentTest() {
-        if (ENABLED)
-            DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientOnlyClass::new);
+    public SafeReferentTest()
+    {
+        if (ENABLED) DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientOnlyClass::new);
     }
 
-    public static class ClientOnlyClass {
-        public Level getClientLevel() {
+    public static class ClientOnlyClass
+    {
+        public Level getClientLevel()
+        {
             return Minecraft.getInstance().level;
         }
     }
