@@ -42,15 +42,30 @@ public class EntityJoinWorldEvent extends EntityEvent
 {
 
     private final Level world;
+    private final boolean loadedFromDisk;
 
     public EntityJoinWorldEvent(Entity entity, Level world)
     {
+        this(entity, world, false);
+    }
+
+    public EntityJoinWorldEvent(Entity entity, Level world, boolean loadedFromDisk)
+    {
         super(entity);
         this.world = world;
+        this.loadedFromDisk = loadedFromDisk;
     }
 
     public Level getWorld()
     {
         return world;
+    }
+
+    /**
+     * @return {@code true} if the entity was loaded from disk. On client entities, the info isn't available and this will always return {@code false}.
+     */
+    public boolean loadedFromDisk()
+    {
+        return loadedFromDisk;
     }
 }

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.GameRenderer;
 import org.lwjgl.opengl.GL11;
 
@@ -35,7 +36,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraftforge.fmlclient.gui.GuiUtils;
 
-public abstract class ScrollPanel extends AbstractContainerEventHandler implements Widget
+public abstract class ScrollPanel extends AbstractContainerEventHandler implements Widget, NarratableEntry
 {
     private final Minecraft client;
     protected final int width;
@@ -227,25 +228,25 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
                 barTop = this.top;
             }
 
-            RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+            RenderSystem.setShader(GameRenderer::getPositionColorShader);
             RenderSystem.disableTexture();
-            worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-            worldr.vertex(barLeft,            this.bottom, 0.0D).uv(0.0F, 1.0F).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth, this.bottom, 0.0D).uv(1.0F, 1.0F).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth, this.top,    0.0D).uv(1.0F, 0.0F).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-            worldr.vertex(barLeft,            this.top,    0.0D).uv(0.0F, 0.0F).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            worldr.vertex(barLeft,            this.bottom, 0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.vertex(barLeft + barWidth, this.bottom, 0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.vertex(barLeft + barWidth, this.top,    0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.vertex(barLeft,            this.top,    0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
             tess.end();
-            worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-            worldr.vertex(barLeft,            barTop + barHeight, 0.0D).uv(0.0F, 1.0F).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth, barTop + barHeight, 0.0D).uv(1.0F, 1.0F).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth, barTop,             0.0D).uv(1.0F, 0.0F).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-            worldr.vertex(barLeft,            barTop,             0.0D).uv(0.0F, 0.0F).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            worldr.vertex(barLeft,            barTop + barHeight, 0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.vertex(barLeft + barWidth, barTop + barHeight, 0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.vertex(barLeft + barWidth, barTop,             0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.vertex(barLeft,            barTop,             0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
             tess.end();
-            worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-            worldr.vertex(barLeft,                barTop + barHeight - 1, 0.0D).uv(0.0F, 1.0F).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth - 1, barTop + barHeight - 1, 0.0D).uv(1.0F, 1.0F).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth - 1, barTop,                 0.0D).uv(1.0F, 0.0F).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
-            worldr.vertex(barLeft,                barTop,                 0.0D).uv(0.0F, 0.0F).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+            worldr.vertex(barLeft,                barTop + barHeight - 1, 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.vertex(barLeft + barWidth - 1, barTop + barHeight - 1, 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.vertex(barLeft + barWidth - 1, barTop,                 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.vertex(barLeft,                barTop,                 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
             tess.end();
         }
 
