@@ -159,11 +159,14 @@ public class CraftingHelper
     public static ItemStack getItemStack(JsonObject json, boolean readNBT)
     {
         String itemName = GsonHelper.getAsString(json, "item");
+        ResourceLocation itemKey = new ResourceLocation(itemName);
 
-        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
-
-        if (item == Items.AIR)
+        if (!ForgeRegistries.ITEMS.containsKey(itemKey))
+            throw new JsonSyntaxException("Unknown item '" + itemName + "'");
+        else if (ForgeRegistries.ITEMS.getDefaultKey().equals(itemKey))
             throw new JsonSyntaxException("Invalid item: " + itemName);
+
+        Item item = ForgeRegistries.ITEMS.getValue(itemKey);
 
         if (readNBT && json.has("nbt"))
         {
