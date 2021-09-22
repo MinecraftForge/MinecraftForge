@@ -64,22 +64,22 @@ public enum CapabilityManager
 
     public static <T> Capability<T> get(CapabilityToken<T> type)
     {
-    	return INSTANCE.get(type.getType(), false);
+        return INSTANCE.get(type.getType(), false);
     }
 
     @SuppressWarnings("unchecked")
-	<T> Capability<T> get(String realName, boolean registering)
+    <T> Capability<T> get(String realName, boolean registering)
     {
         Capability<T> cap;
 
         synchronized (providers)
         {
             realName = realName.intern();
-        	cap = (Capability<T>)providers.get(realName);
+            cap = (Capability<T>)providers.get(realName);
             if (cap == null)
             {
-            	cap = new Capability<>(realName);
-            	providers.put(realName, cap);
+                cap = new Capability<>(realName);
+                providers.put(realName, cap);
             }
 
             if (cap.isRegistered() && registering)
@@ -92,11 +92,11 @@ public enum CapabilityManager
 
         if (!cap.isRegistered() && registering)
         {
-	        synchronized (cap)
-	        {
-		        if (!cap.isRegistered())
-		        	cap.onRegister();
-	        }
+            synchronized (cap)
+            {
+                if (!cap.isRegistered())
+                    cap.onRegister();
+            }
         }
 
         return cap;

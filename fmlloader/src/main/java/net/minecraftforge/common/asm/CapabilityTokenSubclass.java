@@ -37,8 +37,8 @@ import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
  */
 public class CapabilityTokenSubclass implements ILaunchPluginService {
 
-	private final String FUNC_NAME = "getType";
-	private final String FUNC_DESC = "()Ljava/lang/String;";
+    private final String FUNC_NAME = "getType";
+    private final String FUNC_DESC = "()Ljava/lang/String;";
     private final String CAP_INJECT = "net/minecraftforge/common/capabilities/CapabilityToken"; //Don't directly reference this to prevent class loading.
 
     @Override
@@ -58,64 +58,64 @@ public class CapabilityTokenSubclass implements ILaunchPluginService {
     @Override
     public int processClassWithFlags(final Phase phase, final ClassNode classNode, final Type classType, final String reason)
     {
-    	if (CAP_INJECT.equals(classNode.name))
-    	{
-    		for (MethodNode mtd : classNode.methods)
-    		{
-    			if (FUNC_NAME.equals(mtd.name) && FUNC_DESC.equals(mtd.desc))
-    			{
-    				mtd.access &= ~Opcodes.ACC_FINAL; // We have it final in code so people don't override it, cuz that'd be stupid, and make our transformer more complicated.
-    			}
-    		}
-    		return ComputeFlags.SIMPLE_REWRITE;
-    	}
-    	else if (CAP_INJECT.equals(classNode.superName))
-    	{
-    		Holder cls = new Holder();
+        if (CAP_INJECT.equals(classNode.name))
+        {
+            for (MethodNode mtd : classNode.methods)
+            {
+                if (FUNC_NAME.equals(mtd.name) && FUNC_DESC.equals(mtd.desc))
+                {
+                    mtd.access &= ~Opcodes.ACC_FINAL; // We have it final in code so people don't override it, cuz that'd be stupid, and make our transformer more complicated.
+                }
+            }
+            return ComputeFlags.SIMPLE_REWRITE;
+        }
+        else if (CAP_INJECT.equals(classNode.superName))
+        {
+            Holder cls = new Holder();
 
-    		SignatureReader reader = new SignatureReader(classNode.signature); // Having a node version of this would probably be useful.
-    		reader.accept(new SignatureVisitor(Opcodes.ASM9)
-    		{
-    			Deque<String> stack = new ArrayDeque<>();
+            SignatureReader reader = new SignatureReader(classNode.signature); // Having a node version of this would probably be useful.
+            reader.accept(new SignatureVisitor(Opcodes.ASM9)
+            {
+                Deque<String> stack = new ArrayDeque<>();
 
-    			@Override
-    			public void visitClassType(final String name)
-    			{
-    				stack.push(name);
-    			}
+                @Override
+                public void visitClassType(final String name)
+                {
+                    stack.push(name);
+                }
 
-    			@Override
-    			public void visitInnerClassType(final String name)
-    			{
-    				stack.push(stack.pop() + '$' + name);
-    			}
+                @Override
+                public void visitInnerClassType(final String name)
+                {
+                    stack.push(stack.pop() + '$' + name);
+                }
 
-    			@Override
-    			public void visitEnd()
-    			{
-    				var val = stack.pop();
-    				if (!stack.isEmpty() && CAP_INJECT.equals(stack.peek()))
-    					cls.value = val;
-    			}
-    		});
+                @Override
+                public void visitEnd()
+                {
+                    var val = stack.pop();
+                    if (!stack.isEmpty() && CAP_INJECT.equals(stack.peek()))
+                        cls.value = val;
+                }
+            });
 
-    		if (cls.value == null)
-    			throw new IllegalStateException("Could not find signature for CapabilityToken on " + classNode.name + " from " + classNode.signature);
+            if (cls.value == null)
+                throw new IllegalStateException("Could not find signature for CapabilityToken on " + classNode.name + " from " + classNode.signature);
 
-    		var mtd = classNode.visitMethod(Opcodes.ACC_PUBLIC, FUNC_NAME, FUNC_DESC, null, new String[0]);
-    		mtd.visitLdcInsn(cls.value);
-    		mtd.visitInsn(Opcodes.ARETURN);
-    		mtd.visitEnd();
-    		return ComputeFlags.COMPUTE_MAXS;
-    	}
-    	else
-    	{
-    		return ComputeFlags.NO_REWRITE;
-    	}
+            var mtd = classNode.visitMethod(Opcodes.ACC_PUBLIC, FUNC_NAME, FUNC_DESC, null, new String[0]);
+            mtd.visitLdcInsn(cls.value);
+            mtd.visitInsn(Opcodes.ARETURN);
+            mtd.visitEnd();
+            return ComputeFlags.COMPUTE_MAXS;
+        }
+        else
+        {
+            return ComputeFlags.NO_REWRITE;
+        }
     }
 
     private static class Holder {
-    	String value;
+        String value;
     }
 
 }

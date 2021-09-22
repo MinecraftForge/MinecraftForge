@@ -53,7 +53,7 @@ public class Capability<T>
      */
     public boolean isRegistered()
     {
-    	return this.listeners == null;
+        return this.listeners == null;
     }
 
     // INTERNAL
@@ -67,16 +67,16 @@ public class Capability<T>
 
     public synchronized Capability<T> addListener(Consumer<Capability<T>> listener)
     {
-    	if (this.isRegistered())
-    		listener.accept(this);
-    	else
-    		this.listeners.add(listener);
-    	return this;
+        if (this.isRegistered())
+            listener.accept(this);
+        else
+            this.listeners.add(listener);
+        return this;
     }
 
     void onRegister() {
-    	var listeners = this.listeners;
-    	this.listeners = null;
-    	listeners.forEach(l -> l.accept(this));
+        var listeners = this.listeners;
+        this.listeners = null;
+        listeners.forEach(l -> l.accept(this));
     }
 }
