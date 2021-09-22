@@ -162,8 +162,6 @@ public class CraftingHelper
 
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
 
-        if (item == null)
-            throw new JsonSyntaxException("Unknown item '" + itemName + "'");
         if (item == Items.AIR)
             throw new JsonSyntaxException("Invalid item: " + itemName);
 
