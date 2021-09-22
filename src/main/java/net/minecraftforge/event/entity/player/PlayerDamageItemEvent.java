@@ -33,6 +33,7 @@ import net.minecraftforge.eventbus.api.Event;
  * {@link ItemStack#hurt(int, java.util.Random, ServerPlayer)}.<br>
  * <br>
  * This event is {@link Cancelable}.<br>
+ * If the event is canceled, it will prevent the item from being damaged.<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
@@ -71,7 +72,7 @@ public class PlayerDamageItemEvent extends Event
     }
 
     /**
-     * @return the damageValue of the ItemStack before it will damaged
+     * @return the damage value of the ItemStack before it will damaged
      **/
     public int getDamageValue() 
     {
@@ -79,7 +80,7 @@ public class PlayerDamageItemEvent extends Event
     }
 
     /**
-     * @return the damageValue of the ItemStack after it was damaged
+     * @return the damage value of the ItemStack after it was damaged
      **/
     public int getNewDamageValue() 
     {
