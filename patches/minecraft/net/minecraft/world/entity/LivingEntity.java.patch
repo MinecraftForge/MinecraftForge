@@ -165,6 +165,17 @@
        if (!this.m_146910_() && !this.f_20890_) {
           Entity entity = p_21014_.m_7639_();
           LivingEntity livingentity = this.m_21232_();
+@@ -1242,6 +_,10 @@
+             this.m_5796_();
+          }
+ 
++         if (!this.f_19853_.f_46443_ && this instanceof TamableAnimal tamableAnimal) {
++            tamableAnimal.sendDeathMessage();
++         }
++
+          if (!this.f_19853_.f_46443_ && this.m_8077_()) {
+             f_19849_.info("Named entity {} died: {}", this, this.m_21231_().m_19293_().getString());
+          }
 @@ -1266,10 +_,10 @@
        if (!this.f_19853_.f_46443_) {
           boolean flag = false;
