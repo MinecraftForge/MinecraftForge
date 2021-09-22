@@ -1,7 +1,6 @@
 {
     "pack": {
         "description": "examplemod resources",
-        "pack_format": 6,
-        "_comment": "A pack_format of 6 requires json lang files and some texture changes from 1.16.2. Note: we require v6 pack meta for all mods."
+        "pack_format": 7
     }
 }

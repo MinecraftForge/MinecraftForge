@@ -43,6 +43,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 /*
@@ -181,7 +182,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
      * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.entity.LivingEntity#getSlotForItemStack(ItemStack)}.</em>
+     * {@link net.minecraft.world.entity.LivingEntity#getEquipmentSlotForItem(ItemStack)}.</em>
      *
      * @return the armor slot of the ItemStack, or {@code null} to let the default
      *         vanilla logic as per {@code LivingEntity.getSlotForItemStack(stack)}
@@ -207,11 +208,14 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * Is this Item a shield
+     * {@return {@code true} if this item is considered a shield}
      *
-     * @param entity The Entity holding the ItemStack
-     * @return True if the ItemStack is considered a shield
+     * @param entity the entity holding the item stack
+     * @deprecated To be removed in 1.18. Call {@link #canPerformAction(ToolAction)} with
+     * {@link ToolActions#SHIELD_BLOCK} instead.
      */
+    @SuppressWarnings("removal")
+    @Deprecated(since = "1.17.1", forRemoval = true)
     default boolean isShield(@Nullable LivingEntity entity)
     {
         return self().getItem().isShield(self(), entity);

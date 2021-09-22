@@ -9,17 +9,22 @@
     public static final BiMap<String, StructureFeature<?>> f_67012_ = HashBiMap.create();
     private static final Map<StructureFeature<?>, GenerationStep.Decoration> f_67032_ = Maps.newHashMap();
     private static final Logger f_67033_ = LogManager.getLogger();
-@@ -254,11 +_,16 @@
+@@ -250,15 +_,20 @@
     }
  
-    public WeightedRandomList<MobSpawnSettings.SpawnerData> m_142498_() {
+    public WeightedRandomList<MobSpawnSettings.SpawnerData> m_142494_() {
 -      return MobSpawnSettings.f_151796_;
 +      return getSpawnList(net.minecraft.world.entity.MobCategory.MONSTER);
     }
  
-    public WeightedRandomList<MobSpawnSettings.SpawnerData> m_160477_() {
+    public WeightedRandomList<MobSpawnSettings.SpawnerData> m_142498_() {
 -      return MobSpawnSettings.f_151796_;
 +      return getSpawnList(net.minecraft.world.entity.MobCategory.CREATURE);
+    }
+ 
+    public WeightedRandomList<MobSpawnSettings.SpawnerData> m_160477_() {
+-      return MobSpawnSettings.f_151796_;
++      return getSpawnList(net.minecraft.world.entity.MobCategory.UNDERGROUND_WATER_CREATURE);
 +   }
 +
 +   @Override

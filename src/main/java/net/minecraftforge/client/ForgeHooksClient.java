@@ -106,15 +106,12 @@ import net.minecraftforge.resource.VanillaResourceType;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
-import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.lwjgl.opengl.GL13;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -712,26 +709,6 @@ public class ForgeHooksClient
     {
         Event event = new RecipesUpdatedEvent(mgr);
         MinecraftForge.EVENT_BUS.post(event);
-    }
-
-    // Resets cached thread fields in ThreadNameCachingStrategy and ReusableLogEventFactory to be repopulated during their next access.
-    // This serves a workaround for no built-in method of triggering this type of refresh as brought up by LOG4J2-2178.
-    public static void invalidateLog4jThreadCache()
-    {
-        if (System.getProperty("java.version").compareTo("1.8.0_102") >= 0) return; // skip for later JDKs, because it's not CACHED see LOG4J2-2052
-        try
-        {
-            Field nameField = ThreadNameCachingStrategy.class.getDeclaredField("THREADLOCAL_NAME");
-            Field logEventField = ReusableLogEventFactory.class.getDeclaredField("mutableLogEventThreadLocal");
-            nameField.setAccessible(true);
-            logEventField.setAccessible(true);
-            ((ThreadLocal<?>) nameField.get(null)).set(null);
-            ((ThreadLocal<?>) logEventField.get(null)).set(null);
-        }
-        catch (ReflectiveOperationException | NoClassDefFoundError e)
-        {
-            LOGGER.error("Unable to invalidate log4j thread cache, thread fields in logs may be inaccurate", e);
-        }
     }
 
     public static void fireMouseInput(int button, int action, int mods)

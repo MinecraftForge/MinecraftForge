@@ -112,8 +112,9 @@ public final class ItemLayerModel implements IModelGeometry<ItemLayerModel>
         for(int i = 0; i < textures.size(); i++)
         {
             TextureAtlasSprite tas = spriteGetter.apply(textures.get(i));
-            RenderType rt = getLayerRenderType(fullbrightLayers.contains(i));
-            builder.addQuads(rt, getQuadsForSprite(i, tas, transform, true));
+            boolean fullbright = fullbrightLayers.contains(i);
+            RenderType rt = getLayerRenderType(fullbright);
+            builder.addQuads(rt, getQuadsForSprite(i, tas, transform, fullbright));
         }
 
         return builder.build();
