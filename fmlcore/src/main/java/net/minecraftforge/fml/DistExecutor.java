@@ -250,8 +250,9 @@ public final class DistExecutor
         final SafeReferent setter;
         try {
             setter = safeReferentSupplier.get();
-        } catch (Exception e) {
+        } catch (Exception | BootstrapMethodError e) {
             // Typically a class cast exception, just return out, expected.
+            // If invokedynamic instruction is called, will return BootstrapMethodError wrapped exception.
             return;
         }
 
