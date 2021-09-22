@@ -19,7 +19,6 @@
 
 package net.minecraftforge.common.asm;
 
-import java.nio.file.Path;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,6 +32,7 @@ import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 /**
  * Removes the final modifier from fields with the @CapabilityInject annotation, prevents the JITer from in lining them so our runtime replacements can work.
  */
+@Deprecated(since = "1.18", forRemoval = true)
 public class CapabilityInjectDefinalize implements ILaunchPluginService {
 
     private final String CAP        = "Lnet/minecraftforge/common/capabilities/Capability;";       //Don't directly reference this to prevent class loading.
