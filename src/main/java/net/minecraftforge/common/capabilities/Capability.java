@@ -56,15 +56,13 @@ public class Capability<T>
         return this.listeners == null;
     }
 
-    // INTERNAL
-    private final String name;
-    List<Consumer<Capability<T>>> listeners = new ArrayList<>();
-
-    Capability(String name)
-    {
-        this.name = name;
-    }
-
+    /**
+     * Adds a listener to be called when someone registers this capability.
+     * May be called instantly if this is already registered.
+     *
+     * @param listener Function to fire when capability is registered.
+     * @return self, in case people want to use builder pattern.
+     */
     public synchronized Capability<T> addListener(Consumer<Capability<T>> listener)
     {
         if (this.isRegistered())
@@ -74,7 +72,17 @@ public class Capability<T>
         return this;
     }
 
-    void onRegister() {
+    // INTERNAL
+    private final String name;
+    List<Consumer<Capability<T>>> listeners = new ArrayList<>();
+
+    Capability(String name)
+    {
+        this.name = name;
+    }
+
+    void onRegister()
+    {
         var listeners = this.listeners;
         this.listeners = null;
         listeners.forEach(l -> l.accept(this));
