@@ -33,11 +33,15 @@ public class SafeReferentTest
 
     public SafeReferentTest()
     {
-        if (ENABLED) DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientOnlyClass::new);
+        if (ENABLED) DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ClientOnlyClass::test);
     }
 
     public static class ClientOnlyClass
     {
+        public static void test()
+        {
+        }
+
         public Level getClientLevel()
         {
             return Minecraft.getInstance().level;
