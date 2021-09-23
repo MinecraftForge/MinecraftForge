@@ -21,6 +21,8 @@ package net.minecraftforge.common.capabilities;
 
 import java.util.Objects;
 
+import org.objectweb.asm.Type;
+
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 
@@ -40,6 +42,6 @@ public final class RegisterCapabilitiesEvent extends Event implements IModBusEve
     public <T> void register(Class<T> type)
     {
         Objects.requireNonNull(type,"Attempted to register a capability with invalid type");
-        CapabilityManager.INSTANCE.get(type.getName(), true);
+        CapabilityManager.INSTANCE.get(Type.getInternalName(type), true);
     }
 }

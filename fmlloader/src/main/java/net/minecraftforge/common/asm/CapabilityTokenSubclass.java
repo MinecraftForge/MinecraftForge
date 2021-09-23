@@ -33,7 +33,20 @@ import org.objectweb.asm.tree.MethodNode;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 
 /**
- * Removes the final modifier from fields with the @CapabilityInject annotation, prevents the JITer from in lining them so our runtime replacements can work.
+ * Implements getType() in CapabilityTokeen subclasses.
+ *
+ * Using the class's signature to determine the generic type of TypeToken, and then implements getType() using that value.
+ * <pre>
+ * Example:
+ *
+ *  <code>new CapabilityToken&lt;String>(){}</code>
+ *  Has the signature <code>"CapabilityToken&lt;Ljava/lang/String;>"</code>
+ *
+ *  Implements the method:
+ *  <code>public String getType() {
+ *    return "java/lang/String";
+ *  }</code>
+ * </pre>
  */
 public class CapabilityTokenSubclass implements ILaunchPluginService {
 

@@ -58,7 +58,7 @@ public enum CapabilityManager
     public <T> void register(Class<T> type)
     {
         Objects.requireNonNull(type,"Attempted to register a capability with invalid type");
-        get(Type.getType(type).toString(), true);
+        get(Type.getInternalName(type), true);
     }
 
 
@@ -75,27 +75,24 @@ public enum CapabilityManager
         synchronized (providers)
         {
             realName = realName.intern();
-            cap = (Capability<T>)providers.get(realName);
-            if (cap == null)
-            {
-                cap = new Capability<>(realName);
-                providers.put(realName, cap);
-            }
+            cap = (Capability<T>)providers.computeIfAbsent(realName, Capability::new);
 
-            if (cap.isRegistered() && registering)
-            {
-                LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
-                throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
-            }
         }
 
 
-        if (!cap.isRegistered() && registering)
+        if (registering)
         {
             synchronized (cap)
             {
-                if (!cap.isRegistered())
+                if (cap.isRegistered())
+                {
+                    LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
+                    throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
+                }
+                else
+                {
                     cap.onRegister();
+                }
             }
         }
 
