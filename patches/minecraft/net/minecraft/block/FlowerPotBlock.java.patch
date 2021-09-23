@@ -84,7 +84,7 @@
 +   }
 +
 +   public Map<net.minecraft.util.ResourceLocation, java.util.function.Supplier<? extends Block>> getFullPotsView() {
-+      if (fullPots == null) {
++      if (getEmptyPot() != this) {
 +         throw new IllegalStateException("Cannot get fullPots from a non-empty pot: " + this);
 +      }
 +      return java.util.Collections.unmodifiableMap(fullPots);
