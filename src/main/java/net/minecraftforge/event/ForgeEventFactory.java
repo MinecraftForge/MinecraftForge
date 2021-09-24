@@ -134,6 +134,7 @@ import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
+import net.minecraftforge.event.world.SpawnerActivationEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.BlockToolInteractEvent;
 import net.minecraftforge.event.world.BlockEvent.CreateFluidSourceEvent;
@@ -795,5 +796,12 @@ public class ForgeEventFactory
             return MinecraftForge.EVENT_BUS.post(new PermissionsChangedEvent(player, newLevel, oldLevel));
         }
         return false;
+    }
+
+    public static Result canSpawnerActivate(BaseSpawner spawner, Level level, BlockPos pos, int playerRange)
+    {
+        SpawnerActivationEvent event = new SpawnerActivationEvent(level, spawner, pos);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult();
     }
 }

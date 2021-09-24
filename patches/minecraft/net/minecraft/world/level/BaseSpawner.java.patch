@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/level/BaseSpawner.java
 +++ b/net/minecraft/world/level/BaseSpawner.java
+@@ -62,7 +_,9 @@
+    }
+ 
+    private boolean m_151343_(Level p_151344_, BlockPos p_151345_) {
+-      return p_151344_.m_45914_((double)p_151345_.m_123341_() + 0.5D, (double)p_151345_.m_123342_() + 0.5D, (double)p_151345_.m_123343_() + 0.5D, (double)this.f_45452_);
++      net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.canSpawnerActivate(this, p_151344_, p_151345_, this.f_45452_);
++      if (result == net.minecraftforge.eventbus.api.Event.Result.DENY) return false;
++      return result == net.minecraftforge.eventbus.api.Event.Result.ALLOW || p_151344_.m_45914_(p_151345_.m_123341_() + 0.5D, p_151345_.m_123342_() + 0.5D, p_151345_.m_123343_() + 0.5D, this.f_45452_);
+    }
+ 
+    public void m_151319_(Level p_151320_, BlockPos p_151321_) {
 @@ -127,11 +_,12 @@
                    entity.m_7678_(entity.m_20185_(), entity.m_20186_(), entity.m_20189_(), p_151312_.f_46441_.nextFloat() * 360.0F, 0.0F);
                    if (entity instanceof Mob) {

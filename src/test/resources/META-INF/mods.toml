@@ -156,5 +156,7 @@ license="LGPL v2.1"
     modId="custom_shield_test"
 [[mods]]
     modId="lazy_capabilities_on_items"
+[[mods]]
+    modId="spawner_activation_event_test"
 
 # ADD ABOVE THIS LINE
