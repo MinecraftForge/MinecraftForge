@@ -17,7 +17,7 @@
     }
  
     public void m_6742_(LivingEntity p_19467_, int p_19468_) {
-@@ -179,4 +_,28 @@
+@@ -179,4 +_,29 @@
     public boolean m_19486_() {
        return this.f_19447_ == MobEffectCategory.BENEFICIAL;
     }
@@ -34,7 +34,8 @@
 +   }
 +
 +   private void initClient() {
-+      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) {
++      // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
++      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData()) {
 +         initializeClient(properties -> {
 +            this.effectRenderer = properties;
 +         });
