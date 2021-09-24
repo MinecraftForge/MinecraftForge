@@ -123,6 +123,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="entity_teleport_event_test"
 [[mods]]
+    modId="fake_player_test"
+[[mods]]
     modId="text_linear_filtering_test"
 [[mods]]
     modId="ranged_mobs_use_modded_weapons_test"
@@ -136,5 +138,7 @@ license="LGPL v2.1"
     modId="dimension_settings_test"
 [[mods]]
     modId="player_attack_knockback_test"
+[[mods]]
+    modId="send_datapacks_to_client"
 [[mods]]
     modId="codec_registry_test"

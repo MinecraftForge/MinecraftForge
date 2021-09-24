@@ -2,14 +2,8 @@ package net.minecraftforge.forge.tasks
 
 import groovy.json.JsonSlurper
 
-import java.io.File
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.util.Date
-
-import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.lib.AbbreviatedObjectId
-import org.eclipse.jgit.lib.ObjectId
 
 public class Util {
 	static void init() {
@@ -131,42 +125,4 @@ public class Util {
 			throw e
 		}
 	}
-    
-    public static def gitInfo(dir) {
-        init()
-        def git = null
-        try {
-            git = Git.open(dir)
-        } catch (org.eclipse.jgit.errors.RepositoryNotFoundException e) {
-            return [
-                tag: '0.0',
-                offset: '0',
-                hash: '00000000',
-                branch: 'master',
-                commit: '0000000000000000000000',
-                abbreviatedId: '00000000'
-            ]
-        }
-        def desc = git.describe().setLong(true).setTags(true).call().rsplit('-', 2)
-        def head = git.repository.resolve('HEAD')
-        
-        def ret = [:]
-        ret.tag = desc[0]
-        ret.offset = desc[1]
-        ret.hash = desc[2]
-        ret.branch = git.repository.branch
-        ret.commit = ObjectId.toString(head)
-        ret.abbreviatedId = head.abbreviate(8).name()
-        
-        return ret
-    }
-    
-    public static String getVersion(info, mc_version) {
-        def branch = info.branch
-        if (branch != null && branch.startsWith('pulls/'))
-            branch = 'pr' + branch.rsplit('/', 1)[1]
-        if (branch in [null, 'master', 'HEAD', mc_version, mc_version + '.0', mc_version.rsplit('.', 1)[0] + '.x'])
-            return "${mc_version}-${info.tag}.${info.offset}".toString()
-        return "${mc_version}-${info.tag}.${info.offset}-${branch}".toString()
-    }
 }
