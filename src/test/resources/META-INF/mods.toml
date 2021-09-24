@@ -154,5 +154,7 @@ license="LGPL v2.1"
     modId="custom_shield_test"
 [[mods]]
     modId="lazy_capabilities_on_items"
+[[mods]]
+    modId="codec_registry_test"
 
 # ADD ABOVE THIS LINE
