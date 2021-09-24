@@ -40,7 +40,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod("codec_registry_test")
-public class CodecRegistryTest {
+public class CodecRegistryTest
+{
 
     private static final Logger LOGGER = LogManager.getLogger("Codec Registry Test");
 
@@ -57,11 +58,13 @@ public class CodecRegistryTest {
         ForgeRegistries.ITEMS.getCodec().fieldOf("item").forGetter(Pair::getSecond)
     ).apply(codecInstance, Pair::of));
 
-    public CodecRegistryTest() {
+    public CodecRegistryTest()
+    {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
     }
 
-    public void commonSetup(final FMLCommonSetupEvent event) {
+    public void commonSetup(final FMLCommonSetupEvent event)
+    {
         //Create our Json to decode
         JsonObject json = new JsonObject();
         json.addProperty("block", "minecraft:diamond_block");

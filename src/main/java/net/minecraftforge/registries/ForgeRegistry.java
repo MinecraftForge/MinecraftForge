@@ -192,7 +192,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     @Override
-    public Codec<V> getCodec() {
+    public Codec<V> getCodec()
+    {
         return this.codec;
     }
 
@@ -850,9 +851,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return ret;
     }
 
-    private class RegistryCodec implements Codec<V> {
+    private class RegistryCodec implements Codec<V>
+    {
         @Override
-        public <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input) {
+        public <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input)
+        {
             if(ops.compressMaps())
             {
                 return ops.getNumberValue(input).flatMap(n ->
@@ -864,7 +867,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                     }
                     V val = ForgeRegistry.this.getValue(id);
                     return DataResult.success(val);
-                }).map(v -> Pair.of(v, input));
+                }).map(v -> Pair.of(v, ops.empty()));
             }
             else
             {
@@ -875,7 +878,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
 
         @Override
-        public <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix) {
+        public <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix)
+        {
             ResourceLocation key = getKey(input);
             if(key == null)
             {
