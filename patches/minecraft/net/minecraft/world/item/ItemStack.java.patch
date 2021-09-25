@@ -144,7 +144,7 @@
     }
  
     public boolean m_41629_(int p_41630_, Random p_41631_, @Nullable ServerPlayer p_41632_) {
-+      if (net.minecraftforge.event.ForgeEventFactory.onPlayerDamageItem(p_41632_, this, this.m_41773_(), this.m_41773_() + p_41630_)) return false;
++      p_41630_ = net.minecraftforge.event.ForgeEventFactory.onPlayerDamageItem(p_41632_, this, this.m_41773_(), this.m_41773_() + p_41630_);
        if (!this.m_41763_()) {
           return false;
        } else {

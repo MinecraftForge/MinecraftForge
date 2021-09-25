@@ -40,41 +40,44 @@ import net.minecraftforge.eventbus.api.Event;
 @Cancelable
 public class PlayerDamageItemEvent extends Event
 {
-	@Nullable
+    @Nullable
     private final ServerPlayer player;
     private final ItemStack itemStack;
     private final int damageValue;
-    private final int newDamageValue;
+    private final int orignalNewDamageValue;
+    private int newDamageValue;
 
     public PlayerDamageItemEvent(@Nullable ServerPlayer player, ItemStack itemStack, int damageValue, int newDamageValue)
     {
         this.player = player;
         this.itemStack = itemStack;
         this.damageValue = damageValue;
+        this.orignalNewDamageValue = newDamageValue;
         this.newDamageValue = newDamageValue;
     }
     
     /**
-     * @return the player which is damage the item
+     * @return the player damaging the item<br>
+     * Note: can be null if the LivingEntity in {@link ItemStack#hurtAndBreak} is not a ServerPlayer
      **/
     @Nullable
-    public ServerPlayer getPlayer() 
+    public ServerPlayer getPlayer()
     {
         return this.player;
     }
 
     /**
-     * @return the ItemStack which is damaged
+     * @return the ItemStack being damaged
      **/
-    public ItemStack getStack() 
+    public ItemStack getStack()
     {
         return this.itemStack;
     }
 
     /**
-     * @return the damage value of the ItemStack before it will damaged
+     * @return the damage value of the ItemStack before it will be damaged
      **/
-    public int getDamageValue() 
+    public int getDamage()
     {
         return this.damageValue;
     }
@@ -82,8 +85,24 @@ public class PlayerDamageItemEvent extends Event
     /**
      * @return the damage value of the ItemStack after it was damaged
      **/
-    public int getNewDamageValue() 
+    public int getOrignalNewDamage()
+    {
+        return this.orignalNewDamageValue;
+    }
+
+    /**
+     * @return the current damage value of the ItemStack, can be modify via {@link #setNewDamage}
+     **/
+    public int getNewDamage()
     {
         return this.newDamageValue;
-    } 
+    }
+
+    /**
+     * @param newDamageValue contains the new damage value of the ItemStack
+     **/
+    public void setNewDamage(int newDamageValue)
+    {
+        this.newDamageValue = newDamageValue;
+    }
 }
