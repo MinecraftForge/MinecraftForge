@@ -33,7 +33,7 @@ import org.objectweb.asm.tree.MethodNode;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 
 /**
- * Implements getType() in CapabilityTokeen subclasses.
+ * Implements getType() in CapabilityToken subclasses.
  *
  * Using the class's signature to determine the generic type of TypeToken, and then implements getType() using that value.
  * <pre>
