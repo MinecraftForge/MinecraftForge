@@ -22,20 +22,27 @@ package net.minecraftforge.network;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
 import io.netty.channel.ChannelHandler;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.core.Registry;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
 import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagCollection;
+import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -61,6 +68,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
                 ImmutableMap.<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>>builder()
                 .put(handler(ClientboundUpdateAttributesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
                 .put(handler(ClientboundCommandsPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
+                .put(handler(ClientboundUpdateTagsPacket.class, VanillaConnectionNetworkFilter::filterCustomTagTypes))
                 .put(handler(ClientboundUpdateRecipesPacket.class, VanillaConnectionNetworkFilter::filterRecipes))
                 .build()
         );
@@ -119,5 +127,17 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
             };
         });
         return new ClientboundUpdateRecipesPacket(recipes);
+    }
+
+    /**
+     * Filters out custom tag types that the vanilla client won't recognize.
+     * It prevents a rare error from logging and reduces the packet size
+     */
+    @Nonnull
+    private static ClientboundUpdateTagsPacket filterCustomTagTypes(ClientboundUpdateTagsPacket packet) {
+        Map<ResourceKey<? extends Registry<?>>, TagCollection.NetworkPayload> tags = packet.getTags()
+                .entrySet().stream().filter(e -> !ForgeTagHandler.getCustomTagTypeNames().contains(e.getKey().location()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return new ClientboundUpdateTagsPacket(tags);
     }
 }

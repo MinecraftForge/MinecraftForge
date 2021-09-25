@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/PumpkinBlock.java
++++ b/net/minecraft/world/level/block/PumpkinBlock.java
+@@ -24,7 +_,7 @@
+ 
+    public InteractionResult m_6227_(BlockState p_55289_, Level p_55290_, BlockPos p_55291_, Player p_55292_, InteractionHand p_55293_, BlockHitResult p_55294_) {
+       ItemStack itemstack = p_55292_.m_21120_(p_55293_);
+-      if (itemstack.m_150930_(Items.f_42574_)) {
++      if (itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SHEARS_CARVE)) {
+          if (!p_55290_.f_46443_) {
+             Direction direction = p_55294_.m_82434_();
+             Direction direction1 = direction.m_122434_() == Direction.Axis.Y ? p_55292_.m_6350_().m_122424_() : direction;

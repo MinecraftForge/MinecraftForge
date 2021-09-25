@@ -51,23 +51,19 @@ public class ExtendedButton extends Button
     @Override
     public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial)
     {
-        if (this.visible)
-        {
-            Minecraft mc = Minecraft.getInstance();
-            this.isHovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-            int k = this.getYImage(this.isHovered());
-            GuiUtils.drawContinuousTexturedBox(mStack, WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
-            this.renderBg(mStack, mc, mouseX, mouseY);
+        Minecraft mc = Minecraft.getInstance();
+        int k = this.getYImage(this.isHovered());
+        GuiUtils.drawContinuousTexturedBox(mStack, WIDGETS_LOCATION, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
+        this.renderBg(mStack, mc, mouseX, mouseY);
 
-            Component buttonText = this.getMessage();
-            int strWidth = mc.font.width(buttonText);
-            int ellipsisWidth = mc.font.width("...");
+        Component buttonText = this.getMessage();
+        int strWidth = mc.font.width(buttonText);
+        int ellipsisWidth = mc.font.width("...");
 
-            if (strWidth > width - 6 && strWidth > ellipsisWidth)
-                //TODO, srg names make it hard to figure out how to append to an ITextProperties from this trim operation, wraping this in StringTextComponent is kinda dirty.
-                buttonText = new TextComponent(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
+        if (strWidth > width - 6 && strWidth > ellipsisWidth)
+            //TODO, srg names make it hard to figure out how to append to an ITextProperties from this trim operation, wraping this in StringTextComponent is kinda dirty.
+            buttonText = new TextComponent(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
 
-            drawCenteredString(mStack, mc.font, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
-        }
+        drawCenteredString(mStack, mc.font, buttonText, this.x + this.width / 2, this.y + (this.height - 8) / 2, getFGColor());
     }
 }

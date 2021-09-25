@@ -1,0 +1,15 @@
+--- a/net/minecraft/data/tags/GameEventTagsProvider.java
++++ b/net/minecraft/data/tags/GameEventTagsProvider.java
+@@ -8,8 +_,12 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ 
+ public class GameEventTagsProvider extends TagsProvider<GameEvent> {
++   @Deprecated
+    public GameEventTagsProvider(DataGenerator p_176826_) {
+       super(p_176826_, Registry.f_175412_);
++   }
++   public GameEventTagsProvider(DataGenerator p_126517_, String modId, @javax.annotation.Nullable net.minecraftforge.common.data.ExistingFileHelper existingFileHelper) {
++      super(p_126517_, Registry.f_175412_, modId, existingFileHelper);
+    }
+ 
+    protected void m_6577_() {

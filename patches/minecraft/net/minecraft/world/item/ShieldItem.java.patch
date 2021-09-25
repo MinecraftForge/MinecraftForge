@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/item/ShieldItem.java
++++ b/net/minecraft/world/item/ShieldItem.java
+@@ -49,4 +_,11 @@
+    public static DyeColor m_43102_(ItemStack p_43103_) {
+       return DyeColor.m_41053_(p_43103_.m_41698_("BlockEntityTag").m_128451_("Base"));
+    }
++
++   /* ******************** FORGE START ******************** */
++
++   @Override
++   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++      return net.minecraftforge.common.ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction);
++   }
+ }

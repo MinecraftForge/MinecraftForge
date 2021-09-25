@@ -129,7 +129,7 @@
  
     protected void m_7909_(float p_36383_) {
 -      if (this.f_20935_.m_150930_(Items.f_42740_)) {
-+      if (this.f_20935_.isShield(this)) {
++      if (this.f_20935_.canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK)) {
           if (!this.f_19853_.f_46443_) {
              this.m_36246_(Stats.f_12982_.m_12902_(this.f_20935_.m_41720_()));
           }
