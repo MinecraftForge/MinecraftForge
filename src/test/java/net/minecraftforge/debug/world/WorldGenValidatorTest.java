@@ -45,7 +45,7 @@ public class WorldGenValidatorTest
 {
     static final String MODID = "worldgen_validator_test";
     private static final Logger LOGGER = LogManager.getLogger(MODID);
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     public WorldGenValidatorTest()
     {
