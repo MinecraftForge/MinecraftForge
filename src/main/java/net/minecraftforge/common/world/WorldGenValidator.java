@@ -63,7 +63,8 @@ public class WorldGenValidator {
         Registry<ConfiguredStructureFeature<?, ?>> configuredStructureRegistry = registryHolder.registryOrThrow(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
 
         // Checks every biome for unregistered or broken worldgen elements.
-        for (Biome biome : biomeRegistry) {
+        for (Biome biome : biomeRegistry)
+        {
             BiomeGenerationSettings biomeGenerationSettings = biome.getGenerationSettings();
             ResourceLocation biomeName = biome.getRegistryName();
 
@@ -76,11 +77,12 @@ public class WorldGenValidator {
                         }
                     }));
 
-            for (GenerationStep.Carving carvingStage : GenerationStep.Carving.values()) {
+            for (GenerationStep.Carving carvingStage : GenerationStep.Carving.values())
+            {
                 biomeGenerationSettings.getCarvers(carvingStage).forEach(configuredWorldCarverSupplier -> {
                     ConfiguredWorldCarver<?> carver = configuredWorldCarverSupplier.get();
                     if (!checkedElements.contains(carver)) {
-                        validate(carver, configuredCarverRegistry, "ConfiguredCarver", ConfiguredWorldCarver.DIRECT_CODEC, biomeName);
+                        validate(carver, configuredCarverRegistry, "ConfiguredWorldCarver", ConfiguredWorldCarver.DIRECT_CODEC, biomeName);
                         checkedElements.add(carver);
                     }
                 });
@@ -88,9 +90,9 @@ public class WorldGenValidator {
 
             biomeGenerationSettings.structures().forEach(structureFeatureSupplier -> {
                 ConfiguredStructureFeature<?, ?> structureFeature = structureFeatureSupplier.get();
-                if (!checkedElements.contains(structureFeature)) {
-                    validate(structureFeature, configuredStructureRegistry, "ConfiguredStructure", ConfiguredStructureFeature.DIRECT_CODEC, biomeName);
-                    checkedElements.add(structureFeature);
+                if (checkedElements.add(structureFeature))
+                {
+                    validate(structureFeature, configuredStructureRegistry, "ConfiguredStructureFeature", ConfiguredStructureFeature.DIRECT_CODEC, biomeName);
                 }
             });
         }
@@ -106,16 +108,34 @@ public class WorldGenValidator {
         // Checks to make sure the element can be turned into JSON safely or else Minecraft will explode with vague errors.
         JsonElement worldgenElementJSON = codec.encode(worldgenElement, JsonOps.INSTANCE, JsonOps.INSTANCE.empty())
                 .getOrThrow(false, errorMsg ->
-                        LOGGER.error(worldgenElementType + " was unable to be turned into json in " + biomeName + " biome. Please breakpoint this line and look at worldgenElement above to see which worldgen element is broken. " +
-                                "Check to make sure your codecs are correct or it and that the values you give it does not exceed any limits in the object's codecs. Error: " + errorMsg));
+                        LOGGER.error(String.format("""
+                            
+                             %s was unable to be turned into json in %s biome.
+                             Please breakpoint this line and look at worldgenElement above to see which worldgen element is broken.
+                             Check to make sure your codecs are correct and that the values you give the worldgen element does not exceed any limits in the object's codecs.
+                             Error: %s
+                            """,
+                            worldgenElementType,
+                            biomeName,
+                            errorMsg)));
 
         // Checks to make sure the element is registered.
-        if (!registry.getResourceKey(worldgenElement).isPresent()) {
+        // If not, print out that it is unregistered.
+        if (registry.getResourceKey(worldgenElement).isEmpty())
+        {
             throw new UnsupportedOperationException(
-                    "Unregistered " + worldgenElementType + " found in " + biomeName + " biome. " +
-                            "Please register your " + worldgenElementType + " using Minecraft's Registry class within FMLCommonSetupEvent's enqueueWork. " +
-                            "Failure to do so may cause unregistered worldgen elements to nuke registered ones from the same biome which is difficult for players to debug. " +
-                            "See this json of the unregistered worldgen element to know which one is unregister: \n" + (worldgenElementJSON != null ? gson.toJson(worldgenElementJSON) : "Unable to be parsed into JSON"));
+                    String.format("""
+                            
+                             Unregistered %s found in %s biome.
+                             Please register your %s using Minecraft's Registry class within FMLCommonSetupEvent's enqueueWork.
+                             Failure to do so may cause unregistered worldgen elements to nuke registered ones from the same biome which is difficult for players to debug.
+                             See this json of the unregistered worldgen element to know which one is unregister:
+                             %s
+                            """,
+                            worldgenElementType,
+                            biomeName,
+                            worldgenElementType,
+                            worldgenElementJSON != null ? gson.toJson(worldgenElementJSON) : "Unable to be parsed into JSON"));
         }
     }
 }
