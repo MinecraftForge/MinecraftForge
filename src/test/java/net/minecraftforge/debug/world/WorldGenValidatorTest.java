@@ -41,12 +41,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Mod(WorldGenValidatorTest.MODID)
-public class WorldGenValidatorTest {
+public class WorldGenValidatorTest
+{
     static final String MODID = "worldgen_validator_test";
     private static final Logger LOGGER = LogManager.getLogger(MODID);
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
 
-    public WorldGenValidatorTest() {
+    public WorldGenValidatorTest()
+    {
         if (ENABLED)
         {
             LOGGER.warn("WorldGenValidatorTest is now active. Crash with worldgen info will occur.");
@@ -54,10 +56,10 @@ public class WorldGenValidatorTest {
         }
     }
 
-    public void onBiomeLoading(BiomeLoadingEvent event) {
+    public void onBiomeLoading(BiomeLoadingEvent event)
+    {
         if (event.getName().equals(Biomes.SUNFLOWER_PLAINS.location()))
         {
-
             // broken and unregistered configured feature
             event.getGeneration().getFeatures(GenerationStep.Decoration.RAW_GENERATION)
                     .add(() -> Feature.TREE.configured((new TreeConfiguration.TreeConfigurationBuilder(
