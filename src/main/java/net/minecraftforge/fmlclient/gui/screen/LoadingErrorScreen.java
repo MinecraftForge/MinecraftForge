@@ -91,7 +91,7 @@ public class LoadingErrorScreen extends ErrorScreen {
         }
 
         this.entryList = new LoadingEntryList(this, this.modLoadErrors, this.modLoadWarnings);
-        this.addRenderableWidget(this.entryList);
+        this.addWidget(this.entryList);
         this.setFocused(this.entryList);
     }
 

@@ -41,6 +41,7 @@ pipeline {
                 }
                 script {
                     env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "^version:" | cut -d" " -f2').trim()
+                    env.FMLONLY_VERSION = sh(returnStdout: true, script: './gradlew :fmlonly:properties -q | grep "^version:" | cut -d" " -f2').trim()
                 }
             }
         }
@@ -76,6 +77,7 @@ pipeline {
             post {
                 success {
                     build job: 'filegenerator', parameters: [string(name: 'COMMAND', value: "promote net.minecraftforge:forge ${env.MYVERSION} latest")], propagate: false, wait: false
+                    build job: 'filegenerator', parameters: [string(name: 'COMMAND', value: "promote net.minecraftforge:fmlonly ${env.FMLONLY_VERSION} latest")], propagate: false, wait: false
                 }
             }
         }

@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/level/block/entity/SpawnerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/SpawnerBlockEntity.java
+@@ -25,6 +_,9 @@
+          }
+ 
+       }
++
++      @javax.annotation.Nullable
++       public net.minecraft.world.level.block.entity.BlockEntity getSpawnerBlockEntity(){ return SpawnerBlockEntity.this; }
+    };
+ 
+    public SpawnerBlockEntity(BlockPos p_155752_, BlockState p_155753_) {

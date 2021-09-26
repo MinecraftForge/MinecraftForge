@@ -19,15 +19,13 @@
 
 package net.minecraftforge.common.extensions;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
@@ -45,9 +43,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-
-import java.util.List;
 
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
@@ -185,7 +182,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
      * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.entity.LivingEntity#getSlotForItemStack(ItemStack)}.</em>
+     * {@link net.minecraft.world.entity.LivingEntity#getEquipmentSlotForItem(ItemStack)}.</em>
      *
      * @return the armor slot of the ItemStack, or {@code null} to let the default
      *         vanilla logic as per {@code LivingEntity.getSlotForItemStack(stack)}
@@ -211,11 +208,14 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * Is this Item a shield
+     * {@return {@code true} if this item is considered a shield}
      *
-     * @param entity The Entity holding the ItemStack
-     * @return True if the ItemStack is considered a shield
+     * @param entity the entity holding the item stack
+     * @deprecated To be removed in 1.18. Call {@link #canPerformAction(ToolAction)} with
+     * {@link ToolActions#SHIELD_BLOCK} instead.
      */
+    @SuppressWarnings("removal")
+    @Deprecated(since = "1.17.1", forRemoval = true)
     default boolean isShield(@Nullable LivingEntity entity)
     {
         return self().getItem().isShield(self(), entity);
@@ -494,5 +494,18 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default boolean elytraFlightTick(LivingEntity entity, int flightTicks)
     {
         return self().getItem().elytraFlightTick(self(), entity, flightTicks);
+    }
+    
+    /**
+     * Get a bounding box ({@link AABB}) of a sweep attack.
+     * 
+     * @param player the performing the attack the attack.
+     * @param target the entity targeted by the attack.
+     * @return the bounding box.
+     */
+    @Nonnull
+    default AABB getSweepHitBox(@Nonnull Player player, @Nonnull Entity target)
+    {
+        return self().getItem().getSweepHitBox(self(), player, target);
     }
 }

@@ -61,7 +61,7 @@ public class ResourcePackLoader {
     }
 
     public static List<String> getPackNames() {
-        return ModList.get().applyForEachModFile(mf->"mod:"+mf.getModInfos().get(0).getModId()).collect(Collectors.toList());
+        return ModList.get().applyForEachModFile(mf->"mod:"+mf.getModInfos().get(0).getModId()).filter(n->!n.equals("mod:minecraft")).collect(Collectors.toList());
     }
 
     public static <V> Comparator<Map.Entry<String,V>> getSorter() {
