@@ -47,14 +47,16 @@ public class WorldGenValidatorTest {
     private static final boolean ENABLED = false;
 
     public WorldGenValidatorTest() {
-        if (ENABLED) {
+        if (ENABLED)
+        {
             LOGGER.warn("WorldGenValidatorTest is now active. Crash with worldgen info will occur.");
             MinecraftForge.EVENT_BUS.addListener(this::onBiomeLoading);
         }
     }
 
     public void onBiomeLoading(BiomeLoadingEvent event) {
-        if (event.getName().equals(Biomes.SUNFLOWER_PLAINS.location())) {
+        if (event.getName().equals(Biomes.SUNFLOWER_PLAINS.location()))
+        {
 
             // broken and unregistered configured feature
             event.getGeneration().getFeatures(GenerationStep.Decoration.RAW_GENERATION)
