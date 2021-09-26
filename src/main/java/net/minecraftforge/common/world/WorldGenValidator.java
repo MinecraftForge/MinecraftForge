@@ -73,9 +73,9 @@ public class WorldGenValidator
             biomeGenerationSettings.features().forEach(generationStageFeatureList ->
                     generationStageFeatureList.forEach(configuredFeatureSupplier -> {
                         ConfiguredFeature<?, ?> feature = configuredFeatureSupplier.get();
-                        if (!checkedElements.contains(feature)) {
+                        if (checkedElements.add(feature))
+                        {
                             validate(feature, configuredFeatureRegistry, "ConfiguredFeature", ConfiguredFeature.DIRECT_CODEC, biomeName);
-                            checkedElements.add(feature);
                         }
                     }));
 
@@ -83,9 +83,9 @@ public class WorldGenValidator
             {
                 biomeGenerationSettings.getCarvers(carvingStage).forEach(configuredWorldCarverSupplier -> {
                     ConfiguredWorldCarver<?> carver = configuredWorldCarverSupplier.get();
-                    if (!checkedElements.contains(carver)) {
+                    if (checkedElements.add(carver))
+                    {
                         validate(carver, configuredCarverRegistry, "ConfiguredWorldCarver", ConfiguredWorldCarver.DIRECT_CODEC, biomeName);
-                        checkedElements.add(carver);
                     }
                 });
             }
