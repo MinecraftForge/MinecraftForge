@@ -27,16 +27,20 @@ import net.minecraft.util.ResourceLocation;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class AdvancementBuilderHelper {
+public class AdvancementBuilderHelper
+{
 
-    public static Advancement build(ResourceLocation id, Consumer<Advancement> consumer, ExistingFileHelper fileHelper, Advancement.Builder builder) {
-        boolean canBuild = builder.canBuild((advancementId) -> {
+    public static Advancement build(ResourceLocation id, Consumer<Advancement> consumer, ExistingFileHelper fileHelper, Advancement.Builder builder)
+    {
+        boolean canBuild = builder.canBuild((advancementId) ->
+        {
             if (fileHelper.exists(advancementId, ResourcePackType.SERVER_DATA, ".json", "advancements")) {
                 return new Advancement(advancementId, null, null, AdvancementRewards.EMPTY, Maps.newHashMap(), null);
             }
             return null;
         });
-        if (!canBuild) {
+        if (!canBuild)
+        {
             throw new IllegalStateException("Tried to build Advancement without valid Parent!");
         }
 
