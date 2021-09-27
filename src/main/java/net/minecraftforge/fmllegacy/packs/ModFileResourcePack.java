@@ -21,17 +21,19 @@ package net.minecraftforge.fmllegacy.packs;
 
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.resource.PathResourcePack;
 
+import javax.annotation.Nonnull;
 import java.nio.file.Path;
 
-public class ModFileResourcePack extends BasePathResourcePack
+public class ModFileResourcePack extends PathResourcePack
 {
     private final IModFile modFile;
     private Pack packInfo;
 
     public ModFileResourcePack(final IModFile modFile)
     {
-        super();
+        super(modFile.getFileName(), modFile.getFilePath());
         this.modFile = modFile;
     }
 
@@ -39,20 +41,9 @@ public class ModFileResourcePack extends BasePathResourcePack
         return this.modFile;
     }
 
+    @Nonnull
     @Override
-    public Path getSource()
-    {
-        return modFile.getFilePath();
-    }
-
-    @Override
-    public String getName()
-    {
-        return modFile.getFileName();
-    }
-
-    @Override
-    protected Path resolve(String... paths)
+    protected Path resolve(@Nonnull String... paths)
     {
         return modFile.findResource(paths);
     }

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fmllegacy.packs;
+package net.minecraftforge.resource;
 
 import com.google.common.base.Joiner;
 import net.minecraft.resources.ResourceLocation;
@@ -38,40 +38,64 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * Base class for implementing NIO-based resource packs.
+ * Defines a resource pack from an arbitrary Path.
+ *
+ * This is primarily intended to support including optional resource packs inside a mod,
+ * such as to have alternative textures to use along with Programmer Art, or optional
+ * alternative recipes for compatibility ot to replace vanilla recipes.
  */
-public abstract class BasePathResourcePack extends AbstractPackResources
+public class PathResourcePack extends AbstractPackResources
 {
-    public BasePathResourcePack()
+    private final Path source;
+    private final String packName;
+
+    /**
+     * Constructs a java.nio.Path-based resource pack.
+     *
+     * @param packName the identifying name of the pack.
+     *                 This name should be unique within the pack finder, preferably the name of the file or folder containing the resources.
+     * @param source the root path of the pack. This needs to point to the folder that contains "assets" and/or "data", not the asset folder itself!
+     */
+    public PathResourcePack(String packName, final Path source)
     {
         super(new File("dummy"));
+        this.source = source;
+        this.packName = packName;
     }
 
     /**
-     * Implement to return the source path containing the resource pack.
+     * Returns the source path containing the resource pack.
      * This is used for error display.
      *
      * @return the root path of the resources.
      */
-    public abstract Path getSource();
+    public Path getSource() {
+        return this.source;
+    }
 
     /**
-     * Implement to return an identifying name for the pack.
-     * This name should be unique within the pack finder, preferably the name of the file or folder containing the resources.
-     * The {@link net.minecraft.server.packs.repository.RepositorySource} pack finder is responsible for decorating the name
-     * if it's loading from an alternative location, to avoid conflicts with resource packs in the main vanilla folders.
+     * Returns the identifying name for the pack.
      *
      * @return the identifier of the pack.
      */
     @Override
-    public abstract String getName();
+    public String getName()
+    {
+        return packName;
+    }
 
     /**
      * Implement to return a file or folder path for the given set of path components.
      * @param paths One or more path strings to resolve. Can include slash-separated paths.
      * @return the resulting path, which may not exist.
      */
-    protected abstract Path resolve(String... paths);
+    protected Path resolve(String... paths)
+    {
+        Path path = getSource();
+        for(String name : paths)
+            path = path.resolve(name);
+        return path;
+    }
 
     @Override
     protected InputStream getResource(String name) throws IOException
@@ -137,6 +161,7 @@ public abstract class BasePathResourcePack extends AbstractPackResources
         }
     }
 
+    @Override
     public InputStream getResource(PackType type, ResourceLocation location) throws IOException {
         if (location.getPath().startsWith("lang/")) {
             return super.getResource(PackType.CLIENT_RESOURCES, location);
@@ -145,6 +170,7 @@ public abstract class BasePathResourcePack extends AbstractPackResources
         }
     }
 
+    @Override
     public boolean hasResource(PackType type, ResourceLocation location) {
         if (location.getPath().startsWith("lang/")) {
             return super.hasResource(PackType.CLIENT_RESOURCES, location);

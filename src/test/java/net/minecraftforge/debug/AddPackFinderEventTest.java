@@ -28,7 +28,7 @@ import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fmllegacy.packs.PathResourcePack;
+import net.minecraftforge.resource.PathResourcePack;
 
 import java.io.IOException;
 
@@ -46,7 +46,7 @@ public class AddPackFinderEventTest
             if (event.getPackType() == PackType.CLIENT_RESOURCES)
             {
                 var resourcePath = ModList.get().getModFileById(MODID).getFile().findResource("test_nested_resource_pack");
-                var pack = new PathResourcePack(resourcePath);
+                var pack = new PathResourcePack(ModList.get().getModFileById(MODID).getFile().getFileName() + ":" + resourcePath, resourcePath);
                 var metadataSection = pack.getMetadataSection(PackMetadataSection.SERIALIZER);
                 if (metadataSection != null)
                 {
