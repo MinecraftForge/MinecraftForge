@@ -21,10 +21,22 @@ package net.minecraftforge.fmllegacy.packs;
 
 import java.nio.file.Path;
 
+/**
+ * Defines a resource pack from an arbitrary Path.
+ *
+ * This is primarily intended to support including optional resource packs inside a mod,
+ * such as to have alternative textures to use along with Programmer Art, or optional
+ * alternative recipes for compatibility ot to replace vanilla recipes.
+ */
 public class PathResourcePack extends BasePathResourcePack
 {
     private final Path source;
 
+    /**
+     * Constructs a java.nio.Path-based resource pack.
+     *
+     * @param source the root path of the pack. This needs to point to the folder that contains "assets" and/or "data", not the asset folder itself!
+     */
     public PathResourcePack(final Path source)
     {
         super();

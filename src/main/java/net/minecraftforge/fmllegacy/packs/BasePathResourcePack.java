@@ -37,6 +37,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+/**
+ * Base class for implementing NIO-based resource packs.
+ */
 public abstract class BasePathResourcePack extends AbstractPackResources
 {
     public BasePathResourcePack()
@@ -44,11 +47,30 @@ public abstract class BasePathResourcePack extends AbstractPackResources
         super(new File("dummy"));
     }
 
+    /**
+     * Implement to return the source path containing the resource pack.
+     * This is used for error display.
+     *
+     * @return the root path of the resources.
+     */
     public abstract Path getSource();
 
+    /**
+     * Implement to return an identifying name for the pack.
+     * This name should be unique within the pack finder, preferably the name of the file or folder containing the resources.
+     * The {@link net.minecraft.server.packs.repository.RepositorySource} pack finder is responsible for decorating the name
+     * if it's loading from an alternative location, to avoid conflicts with resource packs in the main vanilla folders.
+     *
+     * @return the identifier of the pack.
+     */
     @Override
     public abstract String getName();
 
+    /**
+     * Implement to return a file or folder path for the given set of path components.
+     * @param paths One or more path strings to resolve. Can include slash-separated paths.
+     * @return the resulting path, which may not exist.
+     */
     protected abstract Path resolve(String... paths);
 
     @Override
