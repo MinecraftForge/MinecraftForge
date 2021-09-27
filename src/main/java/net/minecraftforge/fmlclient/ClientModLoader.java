@@ -44,6 +44,7 @@ import net.minecraftforge.fmllegacy.BrandingControl;
 import net.minecraftforge.fmllegacy.CrashReportExtender;
 import net.minecraftforge.fmllegacy.LogicalSidedProvider;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.resource.PathResourcePack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,7 +64,6 @@ import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fmlclient.gui.screen.LoadingErrorScreen;
 import net.minecraftforge.fmllegacy.packs.DelegatingResourcePack;
-import net.minecraftforge.fmllegacy.packs.ModFileResourcePack;
 import net.minecraftforge.fmllegacy.packs.ResourcePackLoader;
 import net.minecraftforge.fmllegacy.server.LanguageHook;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -201,13 +201,13 @@ public class ClientModLoader
         return loading;
     }
 
-    private static ResourcePackLoader.IPackInfoFinder buildPackFinder(Map<IModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, Pack> packSetter) {
-        return (packList, factory) -> clientPackFinder(modResourcePacks, packSetter, packList, factory);
+    private static RepositorySource buildPackFinder(Map<IModFile, ? extends PathResourcePack> modResourcePacks) {
+        return (packList, factory) -> clientPackFinder(modResourcePacks, packList, factory);
     }
 
-    private static void clientPackFinder(Map<IModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, Pack> packSetter, Consumer<Pack> consumer, Pack.PackConstructor factory) {
-        List<ModFileResourcePack> hiddenPacks = new ArrayList<>();
-        for (Entry<IModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
+    private static void clientPackFinder(Map<IModFile, ? extends PathResourcePack> modResourcePacks, Consumer<Pack> consumer, Pack.PackConstructor factory) {
+        List<PathResourcePack> hiddenPacks = new ArrayList<>();
+        for (Entry<IModFile, ? extends PathResourcePack> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
             final String name = "mod:" + mod.getModId();
@@ -217,7 +217,6 @@ public class ClientModLoader
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
                 continue;
             }
-            packSetter.accept(e.getValue(), packInfo);
             LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
             if (mod.getOwningFile().showAsResourcePack()) {
                 consumer.accept(packInfo);

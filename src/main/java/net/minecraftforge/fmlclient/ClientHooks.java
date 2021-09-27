@@ -45,6 +45,7 @@ import net.minecraftforge.fmllegacy.ForgeI18n;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fmllegacy.network.FMLNetworkConstants;
 import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.resource.PathResourcePack;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -265,6 +266,10 @@ public class ClientHooks
                         ModFileResourcePack modRP = (ModFileResourcePack) resPack;
                         List<IModInfo> mods = modRP.getModFile().getModInfos();
                         logger.error("      mod(s) {} resources at {}", mods.stream().map(IModInfo::getDisplayName).collect(Collectors.toList()), modRP.getModFile().getFilePath());
+                    }
+                    else if (resPack instanceof PathResourcePack)
+                    {
+                        logger.error("      resource pack at path {}", ((PathResourcePack)resPack).getSource());
                     }
                     else if (resPack instanceof AbstractPackResources)
                     {

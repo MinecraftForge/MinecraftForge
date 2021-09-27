@@ -26,6 +26,7 @@ import net.minecraftforge.resource.PathResourcePack;
 import javax.annotation.Nonnull;
 import java.nio.file.Path;
 
+@Deprecated(since="1.18", forRemoval = true) // Replace usages with PathResourcePack
 public class ModFileResourcePack extends PathResourcePack
 {
     private final IModFile modFile;
@@ -46,13 +47,5 @@ public class ModFileResourcePack extends PathResourcePack
     protected Path resolve(@Nonnull String... paths)
     {
         return modFile.findResource(paths);
-    }
-
-    <T extends Pack> void setPackInfo(final T packInfo) {
-        this.packInfo = packInfo;
-    }
-
-    <T extends Pack> T getPackInfo() {
-        return (T)this.packInfo;
     }
 }
