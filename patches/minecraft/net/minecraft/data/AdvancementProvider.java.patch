@@ -19,7 +19,7 @@
     public void func_200398_a(DirectoryCache p_200398_1_) throws IOException {
        Path path = this.field_204025_c.func_200391_b();
        Set<ResourceLocation> set = Sets.newHashSet();
-@@ -47,6 +_,16 @@
+@@ -47,6 +_,17 @@
           }
        };
  
@@ -27,7 +27,8 @@
 +   }
 +
 +   /**
-+    * Override this method for registering and generating custom {@link Advancement}s. <br>
++    * Override this method for registering and generating custom {@link Advancement}s.
++    * <p>
 +    * Just use {@link Advancement.Builder} to build your Advancements, you don't need an extra consumer like the vanilla classes.
 +    * @param consumer used for the register function from {@link Advancement.Builder}
 +    * @param fileHelper used for the register function from {@link Advancement.Builder}

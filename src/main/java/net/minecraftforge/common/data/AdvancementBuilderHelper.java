@@ -20,18 +20,28 @@
 package net.minecraftforge.common.data;
 
 import com.google.common.collect.Maps;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.*;
 import net.minecraft.resources.ResourcePackType;
+import net.minecraft.util.ResourceLocation;
+
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class AdvancementBuilderHelper {
 
-    public static boolean build (ExistingFileHelper fileHelper, Advancement.Builder builder) {
-        return builder.canBuild((advancementId) -> {
+    public static Advancement build(ResourceLocation id, Consumer<Advancement> consumer, ExistingFileHelper fileHelper, Advancement.Builder builder) {
+        boolean canBuild = builder.canBuild((advancementId) -> {
             if (fileHelper.exists(advancementId, ResourcePackType.SERVER_DATA, ".json", "advancements")) {
                 return new Advancement(advancementId, null, null, AdvancementRewards.EMPTY, Maps.newHashMap(), null);
             }
             return null;
         });
+        if (!canBuild) {
+            throw new IllegalStateException("Tried to build Advancement without valid Parent!");
+        }
+
+        Advancement advancement = builder.build(id);
+        consumer.accept(advancement);
+        return advancement;
     }
 }
