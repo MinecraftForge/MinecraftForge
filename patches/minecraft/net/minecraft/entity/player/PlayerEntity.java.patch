@@ -229,6 +229,24 @@
                 }
  
                 f = f + f1;
+@@ -1068,7 +_,7 @@
+                if (flag5) {
+                   if (i > 0) {
+                      if (p_71059_1_ instanceof LivingEntity) {
+-                        ((LivingEntity)p_71059_1_).func_233627_a_((float)i * 0.5F, (double)MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F)), (double)(-MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F))));
++                        ((LivingEntity)p_71059_1_).knockback(this,(float)i * 0.5F, (double)MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F)), (double)(-MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F))));
+                      } else {
+                         p_71059_1_.func_70024_g((double)(-MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F)) * (float)i * 0.5F), 0.1D, (double)(MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F)) * (float)i * 0.5F));
+                      }
+@@ -1082,7 +_,7 @@
+ 
+                      for(LivingEntity livingentity : this.field_70170_p.func_217357_a(LivingEntity.class, p_71059_1_.func_174813_aQ().func_72314_b(1.0D, 0.25D, 1.0D))) {
+                         if (livingentity != this && livingentity != p_71059_1_ && !this.func_184191_r(livingentity) && (!(livingentity instanceof ArmorStandEntity) || !((ArmorStandEntity)livingentity).func_181026_s()) && this.func_70068_e(livingentity) < 9.0D) {
+-                           livingentity.func_233627_a_(0.4F, (double)MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F)), (double)(-MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F))));
++                           livingentity.knockback(this,0.4F, (double)MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F)), (double)(-MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F))));
+                            livingentity.func_70097_a(DamageSource.func_76365_a(this), f3);
+                         }
+                      }
 @@ -1122,13 +_,15 @@
                    EnchantmentHelper.func_151385_b(this, p_71059_1_);
                    ItemStack itemstack1 = this.func_184614_ca();

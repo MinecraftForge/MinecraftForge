@@ -147,6 +147,24 @@
                 if (wolfentity.func_70909_n()) {
                    this.field_70718_bc = 100;
                    LivingEntity livingentity = wolfentity.func_70902_q();
+@@ -1028,7 +_,7 @@
+                }
+ 
+                this.field_70739_aP = (float)(MathHelper.func_181159_b(d0, d1) * (double)(180F / (float)Math.PI) - (double)this.field_70177_z);
+-               this.func_233627_a_(0.4F, d1, d0);
++               this.knockback(p_70097_1_.func_76364_f(), 0.4F, d1, d0);
+             } else {
+                this.field_70739_aP = (float)((int)(Math.random() * 2.0D) * 180);
+             }
+@@ -1073,7 +_,7 @@
+    }
+ 
+    protected void func_213371_e(LivingEntity p_213371_1_) {
+-      p_213371_1_.func_233627_a_(0.5F, p_213371_1_.func_226277_ct_() - this.func_226277_ct_(), p_213371_1_.func_226281_cx_() - this.func_226281_cx_());
++      p_213371_1_.knockback(this,0.5F, p_213371_1_.func_226277_ct_() - this.func_226277_ct_(), p_213371_1_.func_226281_cx_() - this.func_226281_cx_());
+    }
+ 
+    private boolean func_190628_d(DamageSource p_190628_1_) {
 @@ -1165,6 +_,7 @@
     }
  
@@ -213,11 +231,13 @@
     }
  
     protected LootContext.Builder func_213363_a(boolean p_213363_1_, DamageSource p_213363_2_) {
-@@ -1273,6 +_,11 @@
+@@ -1272,7 +_,12 @@
+       return lootcontext$builder;
     }
  
-    public void func_233627_a_(float p_233627_1_, double p_233627_2_, double p_233627_4_) {
-+      net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(this, p_233627_1_, p_233627_2_, p_233627_4_);
+-   public void func_233627_a_(float p_233627_1_, double p_233627_2_, double p_233627_4_) {
++   public void knockback(@Nullable Entity attacker, float p_233627_1_, double p_233627_2_, double p_233627_4_) {
++      net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(attacker,this, p_233627_1_, p_233627_2_, p_233627_4_);
 +      if(event.isCanceled()) return;
 +      p_233627_1_ = event.getStrength();
 +      p_233627_2_ = event.getRatioX();

@@ -50,3 +50,12 @@
           }
        } else {
           return EquipmentSlotType.HEAD;
+@@ -1353,7 +_,7 @@
+       boolean flag = p_70652_1_.func_70097_a(DamageSource.func_76358_a(this), f);
+       if (flag) {
+          if (f1 > 0.0F && p_70652_1_ instanceof LivingEntity) {
+-            ((LivingEntity)p_70652_1_).func_233627_a_(f1 * 0.5F, (double)MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F)), (double)(-MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F))));
++            ((LivingEntity)p_70652_1_).knockback(this,f1 * 0.5F, (double)MathHelper.func_76126_a(this.field_70177_z * ((float)Math.PI / 180F)), (double)(-MathHelper.func_76134_b(this.field_70177_z * ((float)Math.PI / 180F))));
+             this.func_213317_d(this.func_213322_ci().func_216372_d(0.6D, 1.0D, 0.6D));
+          }
+ 

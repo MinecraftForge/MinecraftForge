@@ -350,9 +350,9 @@ public class ForgeHooks
         return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
 
-    public static LivingKnockBackEvent onLivingKnockBack(LivingEntity target, float strength, double ratioX, double ratioZ)
+    public static LivingKnockBackEvent onLivingKnockBack(@Nullable Entity attacker, LivingEntity target, float strength, double ratioX, double ratioZ)
     {
-        LivingKnockBackEvent event = new LivingKnockBackEvent(target, strength, ratioX, ratioZ);
+        LivingKnockBackEvent event = new LivingKnockBackEvent(attacker, target, strength, ratioX, ratioZ);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
