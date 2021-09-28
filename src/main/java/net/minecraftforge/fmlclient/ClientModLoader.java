@@ -188,7 +188,6 @@ public class ClientModLoader
             mc.setScreen(new LoadingErrorScreen(error, warnings, dumpedLocation));
             return true;
         } else {
-            ClientHooks.logMissingTextureErrors();
             return false;
         }
     }

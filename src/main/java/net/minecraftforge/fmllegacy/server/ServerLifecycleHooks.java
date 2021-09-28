@@ -193,7 +193,7 @@ public class ServerLifecycleHooks
     }
 
     //INTERNAL MODDERS DO NOT USE
-    // TODO: Rename in 1.18 (if this doesn't get 
+    // TODO: Rename in 1.18 (if this doesn't get
     @Deprecated
     public static RepositorySource buildPackFinderNew(Map<IModFile, ? extends PathResourcePack> modResourcePacks) {
         return (packList, factory) -> serverPackFinder(modResourcePacks, packList, factory);

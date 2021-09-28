@@ -184,4 +184,10 @@ public class PathResourcePack extends AbstractPackResources
     {
 
     }
+
+    @Override
+    public String toString()
+    {
+        return String.format("%s: %s", getClass().getName(), getSource());
+    }
 }
