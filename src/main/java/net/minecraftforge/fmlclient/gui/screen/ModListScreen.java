@@ -428,8 +428,8 @@ public class ModListScreen extends Screen
         Pair<ResourceLocation, Size2i> logoData = selectedMod.getLogoFile().map(logoFile->
         {
             TextureManager tm = this.minecraft.getTextureManager();
-            final PathResourcePack resourcePack = ResourcePackLoader.getResourcePackFor(selectedMod.getModId())
-                    .orElse(ResourcePackLoader.getResourcePackFor("forge").
+            final PathResourcePack resourcePack = ResourcePackLoader.getPackFor(selectedMod.getModId())
+                    .orElse(ResourcePackLoader.getPackFor("forge").
                             orElseThrow(()->new RuntimeException("Can't find forge, WHAT!")));
             try
             {
