@@ -1352,12 +1352,9 @@ public class ForgeHooks
         });
     }
 
-    public static void onEntityEnterSection(EntityAccess entityAccess, long packedOldPos, long packedNewPos)
+    public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)
     {
-        if (entityAccess instanceof Entity entity)
-        {
-            MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
-        }
+        MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 
 }
