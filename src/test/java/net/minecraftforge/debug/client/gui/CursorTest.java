@@ -19,10 +19,9 @@
 
 package net.minecraftforge.debug.client.gui;
 
-import net.minecraft.client.gui.screen.MainMenuScreen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
@@ -32,7 +31,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Mod(CursorTest.MODID)
 @Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -41,14 +39,14 @@ public class CursorTest
     public static final String MODID = "cursor_test";
     private static final boolean ENABLED = false;
 
-    private static List<Widget> buttons;
+    private static List<Button> buttons;
 
     @SubscribeEvent
     public static void onGuiInitPost(final InitGuiEvent.Post event)
     {
-        if (ENABLED && event.getGui() instanceof MainMenuScreen)
+        if (ENABLED && event.getGui() instanceof TitleScreen)
         {
-            buttons = event.getWidgetList().stream().filter(w -> w instanceof Button).collect(Collectors.toList());
+            buttons = event.getWidgetList().stream().filter(w -> w instanceof Button).map(Button.class::cast).toList();
         }
         else if (ENABLED)
         {
@@ -59,7 +57,7 @@ public class CursorTest
     @SubscribeEvent
     public static void onGuiRenderPost(final DrawScreenEvent.Post event)
     {
-        if (ENABLED && event.getGui() instanceof MainMenuScreen && buttons != null)
+        if (ENABLED && event.getGui() instanceof TitleScreen && buttons != null)
         {
             if (buttons.size() > 0 && buttons.get(0).isHovered())
             {

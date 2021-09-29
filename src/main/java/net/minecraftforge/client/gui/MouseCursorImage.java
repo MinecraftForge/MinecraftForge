@@ -19,14 +19,14 @@
 
 package net.minecraftforge.client.gui;
 
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.platform.NativeImage.Format;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.renderer.texture.NativeImage.PixelFormat;
-import net.minecraft.client.renderer.texture.SimpleTexture.TextureData;
-import net.minecraft.client.renderer.texture.Texture;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.glfw.GLFW;
@@ -48,21 +48,15 @@ public class MouseCursorImage
      * Sets cursor image using given resource location.
      *
      * @param rl image resource location
-     * @return cursor texture reference, null if errored
+     * @return cursor texture reference
      */
     public static CursorTexture setCursorImage(final ResourceLocation rl)
     {
-        Texture texture = Minecraft.getInstance().getTextureManager().getTexture(rl);
-        if (texture == null)
+        AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(rl);
+        if (texture == null || !(texture instanceof CursorTexture))
         {
             texture = new CursorTexture(rl);
             Minecraft.getInstance().getTextureManager().register(rl, texture);
-        }
-
-        if (!(texture instanceof CursorTexture))
-        {
-            LOGGER.error("Invalid class for cursor texture, was: " + texture.getClass());
-            return null;
         }
 
         final CursorTexture cursorTexture = (CursorTexture) texture;
@@ -142,9 +136,8 @@ public class MouseCursorImage
      *
      * @see MouseCursorImage#setCursorImage(ResourceLocation, int, int)
      */
-    public static class CursorTexture extends Texture
+    public static class CursorTexture extends SimpleTexture
     {
-        private final ResourceLocation resLoc;
         private int hotspotX = 0;
         private int hotspotY = 0;
         private NativeImage nativeImage = null;
@@ -152,7 +145,7 @@ public class MouseCursorImage
 
         private CursorTexture(final ResourceLocation resLoc)
         {
-            this.resLoc = resLoc;
+            super(resLoc);
         }
 
         /**
@@ -232,7 +225,7 @@ public class MouseCursorImage
 
                 if (glfwCursorAddress == 0)
                 {
-                    LOGGER.error("Cannot create textured cursor for resource location: " + resLoc);
+                    LOGGER.error("Cannot create textured cursor for resource location: " + location);
                 }
             }
 
@@ -247,18 +240,18 @@ public class MouseCursorImage
         }
 
         @Override
-        public void load(final IResourceManager resourceManager) throws IOException
+        public void load(final ResourceManager resourceManager) throws IOException
         {
             if (nativeImage != null)
             {
-                nativeImage.close();
+                close();
             }
 
-            nativeImage = TextureData.load(resourceManager, resLoc).getImage();
-            if (nativeImage.format() != PixelFormat.RGBA)
+            nativeImage = getTextureImage(resourceManager).getImage();
+            if (nativeImage.format() != Format.RGBA)
             {
-                LOGGER.error("Cannot load texture for cursor as it is not in RGBA format, resource location: " + resLoc);
-                nativeImage = null;
+                LOGGER.error("Cannot load texture for cursor as it is not in RGBA format, resource location: " + location);
+                close();
             }
             onDataChange();
         }
@@ -266,11 +259,12 @@ public class MouseCursorImage
         @Override
         public void close()
         {
+            destroyCursorHandle();
             if (nativeImage != null)
             {
                 nativeImage.close();
+                nativeImage = null;
             }
-            destroyCursorHandle();
         }
     }
 }
