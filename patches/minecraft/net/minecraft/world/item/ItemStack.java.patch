@@ -144,14 +144,15 @@
     }
  
     public boolean m_41629_(int p_41630_, Random p_41631_, @Nullable ServerPlayer p_41632_) {
-@@ -274,6 +_,7 @@
-          return false;
-       } else {
-          if (p_41630_ > 0) {
-+            p_41630_ = net.minecraftforge.event.ForgeEventFactory.onPlayerDamageItem(p_41632_, this, this.m_41773_(), this.m_41773_() + p_41630_);
-             int i = EnchantmentHelper.m_44843_(Enchantments.f_44986_, this);
-             int j = 0;
- 
+@@ -282,7 +_,7 @@
+                   ++j;
+                }
+             }
+-
++            p_41630_ = net.minecraftforge.event.ForgeEventFactory.onPlayerDamageItem(p_41632_, this, this.m_41773_(), this.m_41773_() + p_41630_, i, j);
+             p_41630_ -= j;
+             if (p_41630_ <= 0) {
+                return false;
 @@ -302,6 +_,7 @@
     public <T extends LivingEntity> void m_41622_(int p_41623_, T p_41624_, Consumer<T> p_41625_) {
        if (!p_41624_.f_19853_.f_46443_ && (!(p_41624_ instanceof Player) || !((Player)p_41624_).m_150110_().f_35937_)) {

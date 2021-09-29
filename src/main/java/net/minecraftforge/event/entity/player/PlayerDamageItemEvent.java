@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -46,14 +47,18 @@ public class PlayerDamageItemEvent extends Event
     private final int damageValue;
     private final int orignalNewDamageValue;
     private int newDamageValue;
+    private final int unbreakingLevel;
+    private final int ignoreDamage;
 
-    public PlayerDamageItemEvent(@Nullable ServerPlayer player, ItemStack itemStack, int damageValue, int newDamageValue)
+    public PlayerDamageItemEvent(@Nullable ServerPlayer player, ItemStack itemStack, int damageValue, int newDamageValue, int unbreakingLevel, int ignoreDamage)
     {
         this.player = player;
         this.itemStack = itemStack;
         this.damageValue = damageValue;
         this.orignalNewDamageValue = newDamageValue;
         this.newDamageValue = newDamageValue;
+        this.unbreakingLevel = unbreakingLevel;
+        this.ignoreDamage = ignoreDamage;
     }
     
     /**
@@ -104,5 +109,22 @@ public class PlayerDamageItemEvent extends Event
     public void setNewDamage(int newDamageValue)
     {
         this.newDamageValue = newDamageValue;
+    }
+
+    /**
+     * @return the unbreaking level of the {@link #getStack()}
+     **/
+    public int getUnbreakingLevel()
+    {
+        return this.unbreakingLevel;
+    }
+
+    /**
+     * @return the damage which will be ignored by the {@link Enchantments#UNBREAKING}
+     * Note: the ignored damage has not yet been removed from {@link #getOrignalNewDamage()}
+     **/
+    public int getIgnoreDamage()
+    {
+    	return this.ignoreDamage;
     }
 }
