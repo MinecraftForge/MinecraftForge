@@ -25,9 +25,9 @@ import java.nio.file.Path;
 import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.TagsProvider;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
@@ -36,6 +36,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>> extends TagsProvider<T>
 {
+    //TODO add game event tags here when they become a forge registry
     //Special handling for vanilla tag types in case someone decides to use the ForgeRegistryTagsProvider instead of one of the vanilla subtypes
     private static final Map<IForgeRegistry<?>, String> vanillaTypes = ImmutableMap.<IForgeRegistry<?>, String>builder()
           .put(ForgeRegistries.BLOCKS, "blocks")

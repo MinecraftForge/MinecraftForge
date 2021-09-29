@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/block/SweetBerryBushBlock.java
++++ b/net/minecraft/world/level/block/SweetBerryBushBlock.java
+@@ -56,8 +_,9 @@
+ 
+    public void m_7455_(BlockState p_57286_, ServerLevel p_57287_, BlockPos p_57288_, Random p_57289_) {
+       int i = p_57286_.m_61143_(f_57244_);
+-      if (i < 3 && p_57289_.nextInt(5) == 0 && p_57287_.m_45524_(p_57288_.m_7494_(), 0) >= 9) {
++      if (i < 3 && p_57287_.m_45524_(p_57288_.m_7494_(), 0) >= 9 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_57287_, p_57288_, p_57286_,p_57289_.nextInt(5) == 0)) {
+          p_57287_.m_7731_(p_57288_, p_57286_.m_61124_(f_57244_, Integer.valueOf(i + 1)), 2);
++         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_57287_, p_57288_, p_57286_);
+       }
+ 
+    }

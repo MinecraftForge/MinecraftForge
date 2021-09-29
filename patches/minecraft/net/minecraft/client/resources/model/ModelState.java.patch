@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/resources/model/ModelState.java
++++ b/net/minecraft/client/resources/model/ModelState.java
+@@ -5,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public interface ModelState {
++public interface ModelState extends net.minecraftforge.client.extensions.IForgeModelState {
+    default Transformation m_6189_() {
+       return Transformation.m_121093_();
+    }

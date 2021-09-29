@@ -1,0 +1,39 @@
+--- a/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
++++ b/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
+@@ -49,14 +_,17 @@
+    }
+ 
+    public void m_7392_(T p_115308_, float p_115309_, float p_115310_, PoseStack p_115311_, MultiBufferSource p_115312_, int p_115313_) {
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Pre<T, M>(p_115308_, this, p_115310_, p_115311_, p_115312_, p_115313_))) return;
+       p_115311_.m_85836_();
+       this.f_115290_.f_102608_ = this.m_115342_(p_115308_, p_115310_);
+-      this.f_115290_.f_102609_ = p_115308_.m_20159_();
++
++      boolean shouldSit = p_115308_.m_20159_() && (p_115308_.m_20202_() != null && p_115308_.m_20202_().shouldRiderSit());
++      this.f_115290_.f_102609_ = shouldSit;
+       this.f_115290_.f_102610_ = p_115308_.m_6162_();
+       float f = Mth.m_14189_(p_115310_, p_115308_.f_20884_, p_115308_.f_20883_);
+       float f1 = Mth.m_14189_(p_115310_, p_115308_.f_20886_, p_115308_.f_20885_);
+       float f2 = f1 - f;
+-      if (p_115308_.m_20159_() && p_115308_.m_20202_() instanceof LivingEntity) {
++      if (shouldSit && p_115308_.m_20202_() instanceof LivingEntity) {
+          LivingEntity livingentity = (LivingEntity)p_115308_.m_20202_();
+          f = Mth.m_14189_(p_115310_, livingentity.f_20884_, livingentity.f_20883_);
+          f2 = f1 - f;
+@@ -93,7 +_,7 @@
+       p_115311_.m_85837_(0.0D, (double)-1.501F, 0.0D);
+       float f8 = 0.0F;
+       float f5 = 0.0F;
+-      if (!p_115308_.m_20159_() && p_115308_.m_6084_()) {
++      if (!shouldSit && p_115308_.m_6084_()) {
+          f8 = Mth.m_14179_(p_115310_, p_115308_.f_20923_, p_115308_.f_20924_);
+          f5 = p_115308_.f_20925_ - p_115308_.f_20924_ * (1.0F - p_115310_);
+          if (p_115308_.m_6162_()) {
+@@ -126,6 +_,7 @@
+ 
+       p_115311_.m_85849_();
+       super.m_7392_(p_115308_, p_115309_, p_115310_, p_115311_, p_115312_, p_115313_);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderLivingEvent.Post<T, M>(p_115308_, this, p_115310_, p_115311_, p_115312_, p_115313_));
+    }
+ 
+    @Nullable

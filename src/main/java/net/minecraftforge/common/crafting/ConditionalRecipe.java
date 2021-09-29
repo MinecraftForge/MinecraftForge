@@ -28,13 +28,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.conditions.ICondition;
 import net.minecraftforge.registries.ObjectHolder;
 
@@ -43,19 +43,19 @@ import javax.annotation.Nullable;
 public class ConditionalRecipe
 {
     @ObjectHolder("forge:conditional")
-    public static final IRecipeSerializer<IRecipe<?>> SERIALZIER = null;
+    public static final RecipeSerializer<Recipe<?>> SERIALZIER = null;
 
     public static Builder builder()
     {
         return new Builder();
     }
 
-    public static class Serializer<T extends IRecipe<?>> implements IRecipeSerializer<T>
+    public static class Serializer<T extends Recipe<?>> implements RecipeSerializer<T>
     {
         private ResourceLocation name;
 
         @Override
-        public IRecipeSerializer<?> setRegistryName(ResourceLocation name)
+        public RecipeSerializer<?> setRegistryName(ResourceLocation name)
         {
             this.name = name;
             return this;
@@ -68,9 +68,9 @@ public class ConditionalRecipe
         }
 
         @Override
-        public Class<IRecipeSerializer<?>> getRegistryType()
+        public Class<RecipeSerializer<?>> getRegistryType()
         {
-            return Serializer.<IRecipeSerializer<?>>castClass(IRecipeSerializer.class);
+            return Serializer.<RecipeSerializer<?>>castClass(RecipeSerializer.class);
         }
 
         @SuppressWarnings("unchecked") // Need this wrapper, because generics
@@ -83,28 +83,28 @@ public class ConditionalRecipe
         @Override
         public T fromJson(ResourceLocation recipeId, JsonObject json)
         {
-            JsonArray items = JSONUtils.getAsJsonArray(json, "recipes");
+            JsonArray items = GsonHelper.getAsJsonArray(json, "recipes");
             int idx = 0;
             for (JsonElement ele : items)
             {
                 if (!ele.isJsonObject())
                     throw new JsonSyntaxException("Invalid recipes entry at index " + idx + " Must be JsonObject");
-                if (CraftingHelper.processConditions(JSONUtils.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
-                    return (T)RecipeManager.fromJson(recipeId, JSONUtils.getAsJsonObject(ele.getAsJsonObject(), "recipe"));
+                if (CraftingHelper.processConditions(GsonHelper.getAsJsonArray(ele.getAsJsonObject(), "conditions")))
+                    return (T)RecipeManager.fromJson(recipeId, GsonHelper.getAsJsonObject(ele.getAsJsonObject(), "recipe"));
                 idx++;
             }
             return null;
         }
 
         //Should never get here as we return one of the recipes we wrap.
-        @Override public T fromNetwork(ResourceLocation recipeId, PacketBuffer buffer) { return null; }
-        @Override public void toNetwork(PacketBuffer buffer, T recipe) {}
+        @Override public T fromNetwork(ResourceLocation recipeId, FriendlyByteBuf buffer) { return null; }
+        @Override public void toNetwork(FriendlyByteBuf buffer, T recipe) {}
     }
 
     public static class Builder
     {
         private List<ICondition[]> conditions = new ArrayList<>();
-        private List<IFinishedRecipe> recipes = new ArrayList<>();
+        private List<FinishedRecipe> recipes = new ArrayList<>();
         private ResourceLocation advId;
         private ConditionalAdvancement.Builder adv;
 
@@ -116,13 +116,13 @@ public class ConditionalRecipe
             return this;
         }
 
-        public Builder addRecipe(Consumer<Consumer<IFinishedRecipe>> callable)
+        public Builder addRecipe(Consumer<Consumer<FinishedRecipe>> callable)
         {
             callable.accept(this::addRecipe);
             return this;
         }
 
-        public Builder addRecipe(IFinishedRecipe recipe)
+        public Builder addRecipe(FinishedRecipe recipe)
         {
             if (currentConditions.isEmpty())
                 throw new IllegalStateException("Can not add a recipe with no conditions.");
@@ -168,12 +168,12 @@ public class ConditionalRecipe
             return this;
         }
 
-        public void build(Consumer<IFinishedRecipe> consumer, String namespace, String path)
+        public void build(Consumer<FinishedRecipe> consumer, String namespace, String path)
         {
             build(consumer, new ResourceLocation(namespace, path));
         }
 
-        public void build(Consumer<IFinishedRecipe> consumer, ResourceLocation id)
+        public void build(Consumer<FinishedRecipe> consumer, ResourceLocation id)
         {
             if (!currentConditions.isEmpty())
                 throw new IllegalStateException("Invalid ConditionalRecipe builder, Orphaned conditions");
@@ -189,15 +189,15 @@ public class ConditionalRecipe
         }
     }
 
-    private static class Finished implements IFinishedRecipe
+    private static class Finished implements FinishedRecipe
     {
         private final ResourceLocation id;
         private final List<ICondition[]> conditions;
-        private final List<IFinishedRecipe> recipes;
+        private final List<FinishedRecipe> recipes;
         private final ResourceLocation advId;
         private final ConditionalAdvancement.Builder adv;
 
-        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<IFinishedRecipe> recipes, @Nullable ResourceLocation advId, @Nullable ConditionalAdvancement.Builder adv)
+        private Finished(ResourceLocation id, List<ICondition[]> conditions, List<FinishedRecipe> recipes, @Nullable ResourceLocation advId, @Nullable ConditionalAdvancement.Builder adv)
         {
             this.id = id;
             this.conditions = conditions;
@@ -230,7 +230,7 @@ public class ConditionalRecipe
         }
 
         @Override
-        public IRecipeSerializer<?> getType()
+        public RecipeSerializer<?> getType()
         {
             return SERIALZIER;
         }

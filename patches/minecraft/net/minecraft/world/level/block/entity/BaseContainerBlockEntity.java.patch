@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/BaseContainerBlockEntity.java
+@@ -82,4 +_,27 @@
+    }
+ 
+    protected abstract AbstractContainerMenu m_6555_(int p_58627_, Inventory p_58628_);
++
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
++   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
++      return new net.minecraftforge.items.wrapper.InvWrapper(this);
++   }
++
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.core.Direction side) {
++      if (!this.f_58859_ && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY )
++         return itemHandler.cast();
++      return super.getCapability(cap, side);
++   }
++
++   @Override
++   public void invalidateCaps() {
++      super.invalidateCaps();
++      itemHandler.invalidate();
++   }
++
++   @Override
++   public void reviveCaps() {
++      super.reviveCaps();
++      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
++   }
+ }

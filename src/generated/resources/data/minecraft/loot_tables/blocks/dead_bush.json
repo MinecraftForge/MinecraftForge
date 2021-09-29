@@ -2,7 +2,8 @@
   "type": "minecraft:block",
   "pools": [
     {
-      "rolls": 1,
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
       "entries": [
         {
           "type": "minecraft:alternatives",
@@ -11,10 +12,8 @@
               "type": "minecraft:item",
               "conditions": [
                 {
-                  "condition": "minecraft:match_tool",
-                  "predicate": {
-                    "tag": "forge:shears"
-                  }
+                  "condition": "forge:can_tool_perform_action",
+                  "action": "shears_dig"
                 }
               ],
               "name": "minecraft:dead_bush"
@@ -25,10 +24,11 @@
                 {
                   "function": "minecraft:set_count",
                   "count": {
+                    "type": "minecraft:uniform",
                     "min": 0.0,
-                    "max": 2.0,
-                    "type": "minecraft:uniform"
-                  }
+                    "max": 2.0
+                  },
+                  "add": false
                 },
                 {
                   "function": "minecraft:explosion_decay"

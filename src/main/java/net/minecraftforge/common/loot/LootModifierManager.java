@@ -30,8 +30,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import net.minecraft.loot.LootSerializers;
-import net.minecraft.loot.conditions.ILootCondition;
+import net.minecraft.world.level.storage.loot.Deserializers;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,17 +43,17 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.minecraft.client.resources.JsonReloadListener;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class LootModifierManager extends JsonReloadListener {
+public class LootModifierManager extends SimpleJsonResourceReloadListener {
     public static final Logger LOGGER = LogManager.getLogger();
-    private static final Gson GSON_INSTANCE = LootSerializers.createFunctionSerializer().create();
+    private static final Gson GSON_INSTANCE = Deserializers.createFunctionSerializer().create();
 
     private Map<ResourceLocation, IGlobalLootModifier> registeredLootModifiers = ImmutableMap.of();
     private static final String folder = "loot_modifiers";
@@ -63,7 +63,7 @@ public class LootModifierManager extends JsonReloadListener {
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, JsonElement> resourceList, IResourceManager resourceManagerIn, IProfiler profilerIn) {
+    protected void apply(Map<ResourceLocation, JsonElement> resourceList, ResourceManager resourceManagerIn, ProfilerFiller profilerIn) {
         Builder<ResourceLocation, IGlobalLootModifier> builder = ImmutableMap.builder();
         //old way (for reference)
         /*Map<IGlobalLootModifier, ResourceLocation> toLocation = new HashMap<IGlobalLootModifier, ResourceLocation>();
@@ -84,11 +84,11 @@ public class LootModifierManager extends JsonReloadListener {
         ResourceLocation resourcelocation = new ResourceLocation("forge","loot_modifiers/global_loot_modifiers.json");
         try {
             //read in all data files from forge:loot_modifiers/global_loot_modifiers in order to do layering
-            for(IResource iresource : resourceManagerIn.getResources(resourcelocation)) {
+            for(Resource iresource : resourceManagerIn.getResources(resourcelocation)) {
                 try (   InputStream inputstream = iresource.getInputStream();
                         Reader reader = new BufferedReader(new InputStreamReader(inputstream, StandardCharsets.UTF_8));
                         ) {
-                    JsonObject jsonobject = JSONUtils.fromJson(GSON_INSTANCE, reader, JsonObject.class);
+                    JsonObject jsonobject = GsonHelper.fromJson(GSON_INSTANCE, reader, JsonObject.class);
                     boolean replace = jsonobject.get("replace").getAsBoolean();
                     if(replace) finalLocations.clear();
                     JsonArray entryList = jsonobject.get("entries").getAsJsonArray();
@@ -126,14 +126,14 @@ public class LootModifierManager extends JsonReloadListener {
     private IGlobalLootModifier deserializeModifier(ResourceLocation location, JsonElement element) {
         if (!element.isJsonObject()) return null;
         JsonObject object = element.getAsJsonObject();
-        ILootCondition[] lootConditions = GSON_INSTANCE.fromJson(object.get("conditions"), ILootCondition[].class);
+        LootItemCondition[] lootConditions = GSON_INSTANCE.fromJson(object.get("conditions"), LootItemCondition[].class);
 
         // For backward compatibility with the initial implementation, fall back to using the location as the type.
         // TODO: Remove fallback in 1.16
         ResourceLocation serializer = location;
         if (object.has("type"))
         {
-            serializer = new ResourceLocation(JSONUtils.getAsString(object, "type"));
+            serializer = new ResourceLocation(GsonHelper.getAsString(object, "type"));
         }
 
         return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(serializer).read(location, object, lootConditions);

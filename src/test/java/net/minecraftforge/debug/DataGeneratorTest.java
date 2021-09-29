@@ -22,17 +22,28 @@ package net.minecraftforge.debug;
 import static net.minecraftforge.debug.DataGeneratorTest.MODID;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import net.minecraft.block.*;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonPrimitive;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraftforge.common.data.SoundDefinition;
+import net.minecraftforge.common.data.SoundDefinitionsProvider;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.utils.InputStreamReader;
@@ -51,26 +62,26 @@ import com.google.gson.JsonObject;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.FrameType;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.model.Variant;
-import net.minecraft.client.renderer.model.BlockModel.GuiLight;
-import net.minecraft.data.BlockTagsProvider;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransform;
+import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
+import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.data.RecipeProvider;
-import net.minecraft.data.ShapedRecipeBuilder;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Items;
-import net.minecraft.potion.Effects;
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.ResourcePackType;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
@@ -88,7 +99,21 @@ import net.minecraftforge.common.data.LanguageProvider;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
+
+import net.minecraft.world.level.block.BarrelBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.FurnaceBlock;
+import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.WallBlock;
 
 @SuppressWarnings("deprecation")
 @Mod(MODID)
@@ -104,8 +129,8 @@ public class DataGeneratorTest
     {
         GSON = new GsonBuilder()
                 .registerTypeAdapter(Variant.class, new Variant.Deserializer())
-                .registerTypeAdapter(ItemCameraTransforms.class, new ItemCameraTransforms.Deserializer())
-                .registerTypeAdapter(ItemTransformVec3f.class, new ItemTransformVec3f.Deserializer())
+                .registerTypeAdapter(ItemTransforms.class, new ItemTransforms.Deserializer())
+                .registerTypeAdapter(ItemTransform.class, new ItemTransform.Deserializer())
                 .create();
 
         DataGenerator gen = event.getGenerator();
@@ -117,6 +142,7 @@ public class DataGeneratorTest
             ItemModelProvider itemModels = new ItemModels(gen, event.getExistingFileHelper());
             gen.addProvider(itemModels);
             gen.addProvider(new BlockStates(gen, itemModels.existingFileHelper));
+            gen.addProvider(new SoundDefinitions(gen, event.getExistingFileHelper()));
         }
         if (event.includeServer())
         {
@@ -132,7 +158,8 @@ public class DataGeneratorTest
             super(gen);
         }
 
-        protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer)
+        @Override
+        protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer)
         {
             ResourceLocation ID = new ResourceLocation("data_gen_test", "conditional");
 
@@ -167,8 +194,8 @@ public class DataGeneratorTest
                     Advancement.Builder.advancement()
                     .parent(new ResourceLocation("minecraft", "root"))
                     .display(Blocks.DIAMOND_BLOCK,
-                        new StringTextComponent("Dirt2Diamonds"),
-                        new StringTextComponent("The BEST crafting recipe in the game!"),
+                        new TextComponent("Dirt2Diamonds"),
+                        new TextComponent("The BEST crafting recipe in the game!"),
                         null, FrameType.TASK, false, false, false
                     )
                     .rewards(AdvancementRewards.Builder.recipe(ID))
@@ -199,6 +226,223 @@ public class DataGeneratorTest
                     )
                     .generateAdvancement()
                     .build(consumer, new ResourceLocation("data_gen_test", "conditional2"));
+        }
+    }
+
+    public static class SoundDefinitions extends SoundDefinitionsProvider
+    {
+        private static final Logger LOGGER = LogManager.getLogger();
+        private final ExistingFileHelper helper;
+
+        public SoundDefinitions(final DataGenerator generator, final ExistingFileHelper helper)
+        {
+            super(generator, MODID, helper);
+            this.helper = helper;
+        }
+
+        @Override
+        public void registerSounds()
+        {
+            // ambient.underwater.loop.additions
+            this.add(SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS, definition().with(
+                    sound("ambient/underwater/additions/bubbles1"),
+                    sound("ambient/underwater/additions/bubbles2"),
+                    sound("ambient/underwater/additions/bubbles3"),
+                    sound("ambient/underwater/additions/bubbles4"),
+                    sound("ambient/underwater/additions/bubbles5"),
+                    sound("ambient/underwater/additions/bubbles6"),
+                    sound("ambient/underwater/additions/water1"),
+                    sound("ambient/underwater/additions/water2")
+            ));
+
+            //ambient.underwater.loop.additions.ultra_rare
+            this.add(SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, definition().with(
+                    sound("ambient/underwater/additions/animal2"),
+                    sound("ambient/underwater/additions/dark1"),
+                    sound("ambient/underwater/additions/dark2").volume(0.7),
+                    sound("ambient/underwater/additions/dark3"),
+                    sound("ambient/underwater/additions/dark4")
+            ));
+
+            //block.lava.ambient
+            this.add(SoundEvents.LAVA_AMBIENT, definition().with(sound("liquid/lava")).subtitle("subtitles.block.lava.ambient"));
+
+            //entity.dolphin.ambient_water
+            this.add(SoundEvents.DOLPHIN_AMBIENT_WATER, definition().with(
+                    sound("mob/dolphin/idle_water1").volume(0.8),
+                    sound("mob/dolphin/idle_water2"),
+                    sound("mob/dolphin/idle_water3"),
+                    sound("mob/dolphin/idle_water4"),
+                    sound("mob/dolphin/idle_water5"),
+                    sound("mob/dolphin/idle_water6"),
+                    sound("mob/dolphin/idle_water7").volume(0.75),
+                    sound("mob/dolphin/idle_water8").volume(0.75),
+                    sound("mob/dolphin/idle_water9"),
+                    sound("mob/dolphin/idle_water10").volume(0.8)
+            ).subtitle("subtitles.entity.dolphin.ambient_water"));
+
+            //entity.parrot.imitate.drowned
+            this.add(SoundEvents.PARROT_IMITATE_DROWNED, definition().with(
+                    sound("entity.drowned.ambient", SoundDefinition.SoundType.EVENT).pitch(1.8).volume(0.6)
+            ).subtitle("subtitles.entity.parrot.imitate.drowned"));
+
+            //item.trident.return
+            this.add(SoundEvents.TRIDENT_RETURN, definition().with(
+                    sound("item/trident/return1").volume(0.8),
+                    sound("item/trident/return2").pitch(1.2).volume(0.8),
+                    sound("item/trident/return3").pitch(0.8).volume(0.8),
+                    sound("item/trident/return2").volume(0.8),
+                    sound("item/trident/return2").pitch(1.2).volume(0.8),
+                    sound("item/trident/return2").pitch(0.8).volume(0.8),
+                    sound("item/trident/return3").volume(0.8),
+                    sound("item/trident/return3").pitch(1.2).volume(0.8),
+                    sound("item/trident/return3").pitch(0.8).volume(0.8)
+            ).subtitle("subtitles.item.trident.return"));
+
+            //music_disc.blocks
+            this.add(SoundEvents.MUSIC_DISC_BLOCKS, definition().with(sound("records/blocks").stream()));
+        }
+
+        @Override
+        public void run(HashCache cache) throws IOException
+        {
+            super.run(cache);
+            test();
+        }
+
+        private void test() throws IOException
+        {
+            final JsonObject generated;
+            try
+            {
+                generated = reflect();
+            }
+            catch (ReflectiveOperationException e)
+            {
+                throw new RuntimeException("Unable to test for errors due to reflection error", e);
+            }
+            final JsonObject actual = GSON.fromJson(
+                    new InputStreamReader(this.helper.getResource(new ResourceLocation("sounds.json"), PackType.CLIENT_RESOURCES).getInputStream()),
+                    JsonObject.class
+            );
+
+            final JsonObject filtered = new JsonObject();
+            generated.entrySet().forEach(it -> filtered.add(it.getKey(), Optional.ofNullable(actual.get(it.getKey())).orElseGet(JsonNull::new)));
+
+            final List<String> errors = this.compareObjects(filtered, generated);
+
+            if (!errors.isEmpty()) {
+                LOGGER.error("Found {} discrepancies between generated and vanilla sound definitions: ", errors.size());
+                for (String s : errors) {
+                    LOGGER.error("    {}", s);
+                }
+                throw new RuntimeException("Generated sounds.json differed from vanilla equivalent, check above errors.");
+            }
+        }
+
+        private JsonObject reflect() throws ReflectiveOperationException
+        {
+            // This is not supposed to be done by client code, so we just run with reflection to avoid exposing
+            // something that shouldn't be exposed in the first place
+            final Method mapToJson = this.getClass().getSuperclass().getDeclaredMethod("mapToJson", Map.class);
+            mapToJson.setAccessible(true);
+            final Field map = this.getClass().getSuperclass().getDeclaredField("sounds");
+            map.setAccessible(true);
+            //noinspection JavaReflectionInvocation
+            return (JsonObject) mapToJson.invoke(this, map.get(this));
+        }
+
+        private List<String> compareAndGatherErrors(final Triple<String, JsonElement, JsonElement> triple)
+        {
+            return this.compare(triple.getRight(), triple.getMiddle()).stream().map(it -> triple.getLeft() + ": " + it).collect(Collectors.toList());
+        }
+
+        private List<String> compare(final JsonElement vanilla, final JsonElement generated)
+        {
+            if (vanilla.isJsonPrimitive())
+            {
+                return this.comparePrimitives(vanilla.getAsJsonPrimitive(), generated);
+            }
+            else if (vanilla.isJsonObject())
+            {
+                return this.compareObjects(vanilla.getAsJsonObject(), generated);
+            }
+            else if (vanilla.isJsonArray())
+            {
+                return this.compareArrays(vanilla.getAsJsonArray(), generated);
+            }
+            else if (vanilla.isJsonNull() && !generated.isJsonNull())
+            {
+                return Collections.singletonList("null value in vanilla doesn't match non-null value in generated");
+            }
+            throw new RuntimeException("Unable to match " + vanilla + " to any JSON type");
+        }
+
+        private List<String> comparePrimitives(final JsonPrimitive vanilla, final JsonElement generated)
+        {
+            if (!generated.isJsonPrimitive()) return Collections.singletonList("Primitive in vanilla isn't matched by generated " + generated);
+
+            final JsonPrimitive generatedPrimitive = generated.getAsJsonPrimitive();
+
+            if (vanilla.isBoolean())
+            {
+                if (!generatedPrimitive.isBoolean()) return Collections.singletonList("Boolean in vanilla isn't matched by non-boolean " + generatedPrimitive);
+
+                if (vanilla.getAsBoolean() != generated.getAsBoolean())
+                {
+                    return Collections.singletonList("Boolean '" + vanilla.getAsBoolean() + "' does not match generated '" + generatedPrimitive.getAsBoolean() + "'");
+                }
+            }
+            else if (vanilla.isNumber())
+            {
+                if (!generatedPrimitive.isNumber()) return Collections.singletonList("Number in vanilla isn't matched by non-number " + generatedPrimitive);
+
+                // Handle numbers via big decimal so we are sure there isn't any sort of errors due to float/long
+                final BigDecimal vanillaNumber = vanilla.getAsBigDecimal();
+                final BigDecimal generatedNumber = vanilla.getAsBigDecimal();
+
+                if (vanillaNumber.compareTo(generatedNumber) != 0)
+                {
+                    return Collections.singletonList("Number '" + vanillaNumber + "' does not match generated '" + generatedNumber + "'");
+                }
+            }
+            else if (vanilla.isString())
+            {
+                if (!generatedPrimitive.isString()) return Collections.singletonList("String in vanilla isn't matched by non-string " + generatedPrimitive);
+
+                if (!vanilla.getAsString().equals(generatedPrimitive.getAsString()))
+                {
+                    return Collections.singletonList("String '" + vanilla.getAsString() + "' does not match generated '" + generatedPrimitive.getAsString() + "'");
+                }
+            }
+
+            return new ArrayList<>();
+        }
+
+        private List<String> compareObjects(final JsonObject vanilla, final JsonElement generated)
+        {
+            if (!generated.isJsonObject()) return Collections.singletonList("Object in vanilla isn't matched by generated " + generated);
+
+            final JsonObject generatedObject = generated.getAsJsonObject();
+
+            return vanilla.entrySet().stream()
+                    .map(it -> Triple.of(it.getKey(), it.getValue(), generatedObject.get(it.getKey())))
+                    .map(this::compareAndGatherErrors)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+        }
+
+        private List<String> compareArrays(final JsonArray vanilla, final JsonElement generated)
+        {
+            if (!generated.isJsonArray()) return Collections.singletonList("Array in vanilla isn't matched by generated " + generated);
+
+            final JsonArray generatedArray = generated.getAsJsonArray();
+
+            return IntStream.range(0, vanilla.size())
+                    .mapToObj(it -> Triple.of("[" + it + "]", vanilla.get(it), generatedArray.get(it)))
+                    .map(this::compareAndGatherErrors)
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
         }
     }
 
@@ -247,7 +491,7 @@ public class DataGeneratorTest
             add(Blocks.STONE, "Stone");
             add(Items.DIAMOND, "Diamond");
             //add(Biomes.BEACH, "Beach");
-            add(Effects.POISON, "Poison");
+            add(MobEffects.POISON, "Poison");
             add(Enchantments.SHARPNESS, "Sharpness");
             add(EntityType.CAT, "Cat");
             add(MODID + ".test.unicode", "\u0287s\u01DD\u2534 \u01DDpo\u0254\u1D09u\u2229");
@@ -302,7 +546,7 @@ public class DataGeneratorTest
                 );
 
         @Override
-        public void run(DirectoryCache cache) throws IOException
+        public void run(HashCache cache) throws IOException
         {
             super.run(cache);
             List<String> errors = testModelResults(this.generatedModels, existingFileHelper, IGNORED_MODELS.stream().map(s -> new ResourceLocation(MODID, folder + "/" + s)).collect(Collectors.toSet()));
@@ -442,7 +686,7 @@ public class DataGeneratorTest
             
             logBlock((RotatedPillarBlock) Blocks.ACACIA_LOG);
 
-            stairsBlock((StairsBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));
+            stairsBlock((StairBlock) Blocks.ACACIA_STAIRS, "acacia", mcLoc("block/acacia_planks"));
             slabBlock((SlabBlock) Blocks.ACACIA_SLAB, Blocks.ACACIA_PLANKS.getRegistryName(), mcLoc("block/acacia_planks"));
 
             fenceBlock((FenceBlock) Blocks.ACACIA_FENCE, "acacia", mcLoc("block/acacia_planks"));
@@ -450,7 +694,7 @@ public class DataGeneratorTest
 
             wallBlock((WallBlock) Blocks.COBBLESTONE_WALL, "cobblestone", mcLoc("block/cobblestone"));
 
-            paneBlock((PaneBlock) Blocks.GLASS_PANE, "glass", mcLoc("block/glass"), mcLoc("block/glass_pane_top"));
+            paneBlock((IronBarsBlock) Blocks.GLASS_PANE, "glass", mcLoc("block/glass"), mcLoc("block/glass_pane_top"));
 
             doorBlock((DoorBlock) Blocks.ACACIA_DOOR, "acacia", mcLoc("block/acacia_door_bottom"), mcLoc("block/acacia_door_top"));
             trapdoorBlock((TrapDoorBlock) Blocks.ACACIA_TRAPDOOR, "acacia", mcLoc("block/acacia_trapdoor"), true);
@@ -474,7 +718,7 @@ public class DataGeneratorTest
         private List<String> errors = new ArrayList<>();
 
         @Override
-        public void run(DirectoryCache cache) throws IOException
+        public void run(HashCache cache) throws IOException
         {
             super.run(cache);
             this.errors.addAll(testModelResults(models().generatedModels, models().existingFileHelper, Sets.union(IGNORED_MODELS, CUSTOM_MODELS)));
@@ -482,7 +726,7 @@ public class DataGeneratorTest
                 if (IGNORED_BLOCKS.contains(block)) return;
                 JsonObject generated = state.toJson();
                 try {
-                    IResource vanillaResource = models().existingFileHelper.getResource(block.getRegistryName(), ResourcePackType.CLIENT_RESOURCES, ".json", "blockstates");
+                    Resource vanillaResource = models().existingFileHelper.getResource(block.getRegistryName(), PackType.CLIENT_RESOURCES, ".json", "blockstates");
                     JsonObject existing = GSON.fromJson(new InputStreamReader(vanillaResource.getInputStream()), JsonObject.class);
                     if (state instanceof VariantBlockStateBuilder) {
                         compareVariantBlockstates(block, generated, existing);
@@ -660,7 +904,7 @@ public class DataGeneratorTest
                 generated.addProperty("parent", toVanillaModel(generated.get("parent").getAsString()));
             }
             try {
-                IResource vanillaResource = existingFileHelper.getResource(new ResourceLocation(loc.getPath()), ResourcePackType.CLIENT_RESOURCES, ".json", "models");
+                Resource vanillaResource = existingFileHelper.getResource(new ResourceLocation(loc.getPath()), PackType.CLIENT_RESOURCES, ".json", "models");
                 JsonObject existing = GSON.fromJson(new InputStreamReader(vanillaResource.getInputStream()), JsonObject.class);
 
                 JsonElement generatedDisplay = generated.remove("display");
@@ -672,8 +916,8 @@ public class DataGeneratorTest
                     ret.add("Model " + loc + " has transforms when vanilla equivalent does not");
                     return;
                 } else if (generatedDisplay != null) { // Both must be non-null
-                    ItemCameraTransforms generatedTransforms = GSON.fromJson(generatedDisplay, ItemCameraTransforms.class);
-                    ItemCameraTransforms vanillaTransforms = GSON.fromJson(vanillaDisplay, ItemCameraTransforms.class);
+                    ItemTransforms generatedTransforms = GSON.fromJson(generatedDisplay, ItemTransforms.class);
+                    ItemTransforms vanillaTransforms = GSON.fromJson(vanillaDisplay, ItemTransforms.class);
                     for (Perspective type : Perspective.values()) {
                         if (!generatedTransforms.getTransform(type.vanillaType).equals(vanillaTransforms.getTransform(type.vanillaType))) {
                             ret.add("Model " + loc  + " has transforms that differ from vanilla equivalent for perspective " + type.name());

@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common.ticket;
 
-import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.level.ChunkPos;
 
 import java.util.Collection;
 import java.util.Collections;

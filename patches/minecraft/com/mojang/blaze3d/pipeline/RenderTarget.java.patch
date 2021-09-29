@@ -1,0 +1,56 @@
+--- a/com/mojang/blaze3d/pipeline/RenderTarget.java
++++ b/com/mojang/blaze3d/pipeline/RenderTarget.java
+@@ -112,7 +_,10 @@
+             GlStateManager.m_84331_(3553, 34892, 0);
+             GlStateManager.m_84331_(3553, 10242, 33071);
+             GlStateManager.m_84331_(3553, 10243, 33071);
++         if (!stencilEnabled)
+             GlStateManager.m_84209_(3553, 0, 6402, this.f_83915_, this.f_83916_, 0, 6402, 5126, (IntBuffer)null);
++         else
++            GlStateManager.m_84209_(3553, 0, org.lwjgl.opengl.GL30.GL_DEPTH32F_STENCIL8, this.f_83915_, this.f_83916_, 0, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL, org.lwjgl.opengl.GL30.GL_FLOAT_32_UNSIGNED_INT_24_8_REV, null);
+          }
+ 
+          this.m_83936_(9728);
+@@ -123,7 +_,14 @@
+          GlStateManager.m_84486_(36160, this.f_83920_);
+          GlStateManager.m_84173_(36160, 36064, 3553, this.f_83923_, 0);
+          if (this.f_83919_) {
++         if(!stencilEnabled)
+             GlStateManager.m_84173_(36160, 36096, 3553, this.f_83924_, 0);
++         else if(net.minecraftforge.common.ForgeConfig.CLIENT.useCombinedDepthStencilAttachment.get()) {
++            GlStateManager.m_84173_(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_STENCIL_ATTACHMENT, 3553, this.f_83924_, 0);
++         } else {
++            GlStateManager.m_84173_(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_DEPTH_ATTACHMENT, 3553, this.f_83924_, 0);
++            GlStateManager.m_84173_(org.lwjgl.opengl.GL30.GL_FRAMEBUFFER, org.lwjgl.opengl.GL30.GL_STENCIL_ATTACHMENT, 3553, this.f_83924_, 0);
++         }
+          }
+ 
+          this.m_83949_();
+@@ -292,4 +_,27 @@
+    public int m_83980_() {
+       return this.f_83924_;
+    }
++
++   /*================================ FORGE START ================================================*/
++   private boolean stencilEnabled = false;
++   /**
++    * Attempts to enable 8 bits of stencil buffer on this FrameBuffer.
++    * Modders must call this directly to set things up.
++    * This is to prevent the default cause where graphics cards do not support stencil bits.
++    * <b>Make sure to call this on the main render thread!</b>
++    */
++   public void enableStencil() {
++      if(stencilEnabled) return;
++      stencilEnabled = true;
++      this.m_83941_(f_83917_, f_83918_, net.minecraft.client.Minecraft.f_91002_);
++   }
++
++   /**
++    * Returns wither or not this FBO has been successfully initialized with stencil bits.
++    * If not, and a modder wishes it to be, they must call enableStencil.
++    */
++   public boolean isStencilEnabled() {
++      return this.stencilEnabled;
++   }
++   /*================================ FORGE END   ================================================*/
+ }

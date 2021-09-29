@@ -19,13 +19,13 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.Container;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 
 public class PlayerContainerEvent extends PlayerEvent
 {
-    private final Container container;
-    public PlayerContainerEvent(PlayerEntity player, Container container)
+    private final AbstractContainerMenu container;
+    public PlayerContainerEvent(Player player, AbstractContainerMenu container)
     {
         super(player);
         this.container = container;
@@ -33,20 +33,20 @@ public class PlayerContainerEvent extends PlayerEvent
 
     public static class Open extends PlayerContainerEvent
     {
-        public Open(PlayerEntity player, Container container)
+        public Open(Player player, AbstractContainerMenu container)
         {
             super(player, container);
         }
     }
     public static class Close extends PlayerContainerEvent
     {
-        public Close(PlayerEntity player, Container container)
+        public Close(Player player, AbstractContainerMenu container)
         {
             super(player, container);
         }
     }
 
-    public Container getContainer()
+    public AbstractContainerMenu getContainer()
     {
         return container;
     }

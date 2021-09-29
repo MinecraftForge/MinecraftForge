@@ -19,11 +19,11 @@
 
 package net.minecraftforge.client.event;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemFrameRenderer;
-import net.minecraft.entity.item.ItemFrameEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -38,14 +38,14 @@ import javax.annotation.Nonnull;
 public class RenderItemInFrameEvent extends Event
 {
     private final ItemStack item;
-    private final ItemFrameEntity entityItemFrame;
+    private final ItemFrame entityItemFrame;
     private final ItemFrameRenderer renderer;
-    private final MatrixStack matrix;
-    private final IRenderTypeBuffer buffers;
+    private final PoseStack matrix;
+    private final MultiBufferSource buffers;
     private final int light;
 
-    public RenderItemInFrameEvent(ItemFrameEntity itemFrame, ItemFrameRenderer renderItemFrame, MatrixStack matrix,
-                                  IRenderTypeBuffer buffers, int light)
+    public RenderItemInFrameEvent(ItemFrame itemFrame, ItemFrameRenderer renderItemFrame, PoseStack matrix,
+                                  MultiBufferSource buffers, int light)
     {
         item = itemFrame.getItem();
         entityItemFrame = itemFrame;
@@ -61,7 +61,7 @@ public class RenderItemInFrameEvent extends Event
         return item;
     }
 
-    public ItemFrameEntity getEntityItemFrame()
+    public ItemFrame getEntityItemFrame()
     {
         return entityItemFrame;
     }
@@ -71,11 +71,11 @@ public class RenderItemInFrameEvent extends Event
         return renderer;
     }
 
-    public MatrixStack getMatrix() {
+    public PoseStack getMatrix() {
         return matrix;
     }
 
-    public IRenderTypeBuffer getBuffers() {
+    public MultiBufferSource getBuffers() {
         return buffers;
     }
 

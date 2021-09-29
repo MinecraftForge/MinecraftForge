@@ -21,9 +21,8 @@ package net.minecraftforge.client.model.generators.loaders;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.MultiLayerModel;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.SeparatePerspectiveModel;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
@@ -54,7 +53,7 @@ public class SeparatePerspectiveModelBuilder<T extends ModelBuilder<T>> extends 
         return this;
     }
 
-    public SeparatePerspectiveModelBuilder<T> perspective(ItemCameraTransforms.TransformType perspective, T modelBuilder)
+    public SeparatePerspectiveModelBuilder<T> perspective(ItemTransforms.TransformType perspective, T modelBuilder)
     {
         Preconditions.checkNotNull(perspective, "layer must not be null");
         Preconditions.checkArgument(SeparatePerspectiveModel.Loader.PERSPECTIVES.containsValue(perspective), "perspective is not included in SeparatePerspectiveModel. New mc version?");

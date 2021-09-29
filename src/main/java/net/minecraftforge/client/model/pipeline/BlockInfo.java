@@ -19,24 +19,23 @@
 
 package net.minecraftforge.client.model.pipeline;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.color.block.BlockColors;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockAndTintGetter;
 
 public class BlockInfo
 {
     private static final Direction[] SIDES = Direction.values();
 
     private final BlockColors colors;
-    private IBlockDisplayReader world;
+    private BlockAndTintGetter world;
     private BlockState state;
     private BlockPos blockPos;
 
@@ -72,7 +71,7 @@ public class BlockInfo
     {
     }
 
-    public void setWorld(IBlockDisplayReader world)
+    public void setWorld(BlockAndTintGetter world)
     {
         this.world = world;
         cachedTint = -1;
@@ -122,7 +121,7 @@ public class BlockInfo
                     BlockPos pos = blockPos.offset(x - 1, y - 1, z - 1);
                     BlockState state = world.getBlockState(pos);
                     t[x][y][z] = state.getLightBlock(world, pos) < 15;
-                    int brightness = WorldRenderer.getLightColor(world, pos);
+                    int brightness = LevelRenderer.getLightColor(world, pos);
                     s[x][y][z] = LightTexture.sky(brightness);
                     b[x][y][z] = LightTexture.block(brightness);
                     ao[x][y][z] = state.getShadeBrightness(world, pos);
@@ -137,7 +136,7 @@ public class BlockInfo
             BlockState thisStateShape = this.state.canOcclude() && this.state.useShapeForLightOcclusion() ? this.state : Blocks.AIR.defaultBlockState();
             BlockState otherStateShape = state.canOcclude() && state.useShapeForLightOcclusion() ? state : Blocks.AIR.defaultBlockState();
 
-            if(state.getLightBlock(world, pos) == 15 || VoxelShapes.faceShapeOccludes(thisStateShape.getFaceOcclusionShape(world, blockPos, side), otherStateShape.getFaceOcclusionShape(world, pos, side.getOpposite())))
+            if(state.getLightBlock(world, pos) == 15 || Shapes.faceShapeOccludes(thisStateShape.getFaceOcclusionShape(world, blockPos, side), otherStateShape.getFaceOcclusionShape(world, pos, side.getOpposite())))
             {
                 int x = side.getStepX() + 1;
                 int y = side.getStepY() + 1;
@@ -190,16 +189,16 @@ public class BlockInfo
     public void updateFlatLighting()
     {
         full = Block.isShapeFullBlock(state.getCollisionShape(world, blockPos));
-        packed[0] = WorldRenderer.getLightColor(world, blockPos);
+        packed[0] = LevelRenderer.getLightColor(world, blockPos);
 
         for (Direction side : SIDES)
         {
             int i = side.ordinal() + 1;
-            packed[i] = WorldRenderer.getLightColor(world, blockPos.relative(side));
+            packed[i] = LevelRenderer.getLightColor(world, blockPos.relative(side));
         }
     }
 
-    public IBlockDisplayReader getWorld()
+    public BlockAndTintGetter getWorld()
     {
         return world;
     }

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/effect/MobEffects.java
++++ b/net/minecraft/world/effect/MobEffects.java
+@@ -8,6 +_,7 @@
+ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+ import net.minecraft.world.entity.ai.attributes.Attributes;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class MobEffects {
+    public static final MobEffect f_19596_ = m_19623_(1, "speed", (new MobEffect(MobEffectCategory.BENEFICIAL, 8171462)).m_19472_(Attributes.f_22279_, "91AEAA56-376B-4498-935B-2F7F68070635", (double)0.2F, AttributeModifier.Operation.MULTIPLY_TOTAL));
+    public static final MobEffect f_19597_ = m_19623_(2, "slowness", (new MobEffect(MobEffectCategory.HARMFUL, 5926017)).m_19472_(Attributes.f_22279_, "7107DE5E-7CE8-4030-940E-514C1F160890", (double)-0.15F, AttributeModifier.Operation.MULTIPLY_TOTAL));

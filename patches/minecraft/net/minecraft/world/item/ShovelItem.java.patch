@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/item/ShovelItem.java
++++ b/net/minecraft/world/item/ShovelItem.java
+@@ -32,9 +_,9 @@
+          return InteractionResult.PASS;
+       } else {
+          Player player = p_43119_.m_43723_();
+-         BlockState blockstate1 = f_43110_.get(blockstate.m_60734_());
++         BlockState blockstate1 = blockstate.getToolModifiedState(level, blockpos, player, p_43119_.m_43722_(), net.minecraftforge.common.ToolActions.SHOVEL_FLATTEN);
+          BlockState blockstate2 = null;
+-         if (blockstate1 != null && level.m_8055_(blockpos.m_7494_()).m_60795_()) {
++         if (blockstate1 != null && level.m_46859_(blockpos.m_7494_())) {
+             level.m_5594_(player, blockpos, SoundEvents.f_12406_, SoundSource.BLOCKS, 1.0F, 1.0F);
+             blockstate2 = blockstate1;
+          } else if (blockstate.m_60734_() instanceof CampfireBlock && blockstate.m_61143_(CampfireBlock.f_51227_)) {
+@@ -61,5 +_,15 @@
+             return InteractionResult.PASS;
+          }
+       }
++   }
++
++   @javax.annotation.Nullable
++   public static BlockState getShovelPathingState(BlockState originalState) {
++      return f_43110_.get(originalState.m_60734_());
++   }
++
++   @Override
++   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++      return net.minecraftforge.common.ToolActions.DEFAULT_SHOVEL_ACTIONS.contains(toolAction);
+    }
+ }

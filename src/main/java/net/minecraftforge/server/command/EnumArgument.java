@@ -27,10 +27,10 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.Dynamic2CommandExceptionType;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.IArgumentSerializer;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.synchronization.ArgumentSerializer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,7 +40,7 @@ import java.util.stream.Stream;
 
 public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
     private static final Dynamic2CommandExceptionType INVALID_ENUM = new Dynamic2CommandExceptionType(
-            (found, constants) -> new TranslationTextComponent("commands.forge.arguments.enum.invalid", constants, found));
+            (found, constants) -> new TranslatableComponent("commands.forge.arguments.enum.invalid", constants, found));
     private final Class<T> enumClass;
 
     public static <R extends Enum<R>> EnumArgument<R> enumArgument(Class<R> enumClass) {
@@ -62,7 +62,7 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
 
     @Override
     public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
-        return ISuggestionProvider.suggest(Stream.of(enumClass.getEnumConstants()).map(Object::toString), builder);
+        return SharedSuggestionProvider.suggest(Stream.of(enumClass.getEnumConstants()).map(Object::toString), builder);
     }
 
     @Override
@@ -70,17 +70,17 @@ public class EnumArgument<T extends Enum<T>> implements ArgumentType<T> {
         return Stream.of(enumClass.getEnumConstants()).map(Object::toString).collect(Collectors.toList());
     }
 
-    public static class Serializer implements IArgumentSerializer<EnumArgument<?>>
+    public static class Serializer implements ArgumentSerializer<EnumArgument<?>>
     {
         @Override
-        public void serializeToNetwork(EnumArgument<?> argument, PacketBuffer buffer)
+        public void serializeToNetwork(EnumArgument<?> argument, FriendlyByteBuf buffer)
         {
             buffer.writeUtf(argument.enumClass.getName());
         }
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         @Override
-        public EnumArgument<?> deserializeFromNetwork(PacketBuffer buffer)
+        public EnumArgument<?> deserializeFromNetwork(FriendlyByteBuf buffer)
         {
             try
             {

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/SoundType.java
++++ b/net/minecraft/world/level/block/SoundType.java
+@@ -88,6 +_,7 @@
+    private final SoundEvent f_56737_;
+    private final SoundEvent f_56738_;
+ 
++   @Deprecated // Forge: Use {@link net.minecraftforge.common.util.ForgeSoundType} instead for suppliers
+    public SoundType(float p_56766_, float p_56767_, SoundEvent p_56768_, SoundEvent p_56769_, SoundEvent p_56770_, SoundEvent p_56771_, SoundEvent p_56772_) {
+       this.f_56731_ = p_56766_;
+       this.f_56732_ = p_56767_;

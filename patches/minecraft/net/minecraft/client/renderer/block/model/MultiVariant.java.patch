@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/block/model/MultiVariant.java
++++ b/net/minecraft/client/renderer/block/model/MultiVariant.java
+@@ -70,7 +_,7 @@
+          WeightedBakedModel.Builder weightedbakedmodel$builder = new WeightedBakedModel.Builder();
+ 
+          for(Variant variant : this.m_111848_()) {
+-            BakedModel bakedmodel = p_111850_.m_119349_(variant.m_111883_(), variant);
++            BakedModel bakedmodel = p_111850_.bake(variant.m_111883_(), variant, p_111851_);
+             weightedbakedmodel$builder.m_119559_(bakedmodel, variant.m_111886_());
+          }
+ 

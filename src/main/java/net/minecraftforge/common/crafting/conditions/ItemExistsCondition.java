@@ -21,8 +21,8 @@ package net.minecraftforge.common.crafting.conditions;
 
 import com.google.gson.JsonObject;
 
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class ItemExistsCondition implements ICondition
@@ -76,7 +76,7 @@ public class ItemExistsCondition implements ICondition
         @Override
         public ItemExistsCondition read(JsonObject json)
         {
-            return new ItemExistsCondition(new ResourceLocation(JSONUtils.getAsString(json, "item")));
+            return new ItemExistsCondition(new ResourceLocation(GsonHelper.getAsString(json, "item")));
         }
 
         @Override

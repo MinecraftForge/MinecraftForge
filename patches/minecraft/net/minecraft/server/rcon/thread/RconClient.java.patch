@@ -1,0 +1,22 @@
+--- a/net/minecraft/server/rcon/thread/RconClient.java
++++ b/net/minecraft/server/rcon/thread/RconClient.java
+@@ -125,13 +_,14 @@
+    }
+ 
+    private void m_11594_(int p_11595_, String p_11596_) throws IOException {
+-      int i = p_11596_.length();
+-
++      byte[] whole = p_11596_.getBytes(StandardCharsets.UTF_8);
++      int i = whole.length;
++      int start = 0;
+       do {
+          int j = 4096 <= i ? 4096 : i;
+-         this.m_11590_(p_11595_, 0, p_11596_.substring(0, j));
+-         p_11596_ = p_11596_.substring(j);
+-         i = p_11596_.length();
++         this.m_11590_(p_11595_, 0, new String(java.util.Arrays.copyOfRange(whole, start, j+start), StandardCharsets.UTF_8));
++         i -= j;
++         start += j;
+       } while(0 != i);
+ 
+    }

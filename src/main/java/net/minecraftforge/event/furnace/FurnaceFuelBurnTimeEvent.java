@@ -20,9 +20,11 @@
 package net.minecraftforge.event.furnace;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -46,12 +48,15 @@ public class FurnaceFuelBurnTimeEvent extends Event
 {
     @Nonnull
     private final ItemStack itemStack;
+    @Nullable
+    private final RecipeType<?> recipeType;
     private int burnTime;
 
-    public FurnaceFuelBurnTimeEvent(@Nonnull ItemStack itemStack, int burnTime)
+    public FurnaceFuelBurnTimeEvent(@Nonnull ItemStack itemStack, int burnTime, @Nullable RecipeType<?> recipeType)
     {
         this.itemStack = itemStack;
         this.burnTime = burnTime;
+        this.recipeType = recipeType;
     }
 
     /**
@@ -61,6 +66,16 @@ public class FurnaceFuelBurnTimeEvent extends Event
     public ItemStack getItemStack()
     {
         return itemStack;
+    }
+
+    /**
+     *
+     * Get the recipe type for which to obtain the burn time, if known.
+     */
+    @Nullable
+    public RecipeType<?> getRecipeType()
+    {
+        return recipeType;
     }
 
     /**

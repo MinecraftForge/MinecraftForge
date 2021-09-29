@@ -1,23 +1,23 @@
 --- a/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
 +++ b/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
-@@ -17,7 +_,7 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
+@@ -24,7 +_,7 @@
+ import org.apache.logging.log4j.Logger;
  
  @OnlyIn(Dist.CLIENT)
 -public class TextureAtlasSprite implements AutoCloseable {
 +public class TextureAtlasSprite implements AutoCloseable, net.minecraftforge.client.extensions.IForgeTextureAtlasSprite {
-    private final AtlasTexture field_229225_b_;
-    private final TextureAtlasSprite.Info field_229226_c_;
-    private final AnimationMetadataSection field_110982_k;
-@@ -135,6 +_,7 @@
+    private static final Logger f_174721_ = LogManager.getLogger();
+    private final TextureAtlas f_118343_;
+    private final ResourceLocation f_174722_;
+@@ -145,6 +_,7 @@
  
-    private void func_195667_a(int p_195667_1_, int p_195667_2_, NativeImage[] p_195667_3_) {
-       for(int i = 0; i < this.field_195670_c.length; ++i) {
-+         if ((this.field_229226_c_.field_229245_b_ >> i <= 0) || (this.field_229226_c_.field_229246_c_ >> i <= 0)) break;
-          p_195667_3_[i].func_227788_a_(i, this.field_110975_c >> i, this.field_110974_d >> i, p_195667_1_ >> i, p_195667_2_ >> i, this.field_229226_c_.field_229245_b_ >> i, this.field_229226_c_.field_229246_c_ >> i, this.field_195670_c.length > 1, false);
+    void m_118375_(int p_118376_, int p_118377_, NativeImage[] p_118378_) {
+       for(int i = 0; i < this.f_118342_.length; ++i) {
++         if ((this.f_174723_ >> i <= 0) || (this.f_174724_ >> i <= 0)) break;
+          p_118378_[i].m_85003_(i, this.f_118349_ >> i, this.f_118350_ >> i, p_118376_ >> i, p_118377_ >> i, this.f_174723_ >> i, this.f_174724_ >> i, this.f_118342_.length > 1, false);
        }
  
-@@ -340,5 +_,10 @@
+@@ -438,5 +_,15 @@
           }
  
        }
@@ -25,6 +25,11 @@
 +
 +   // Forge Start
 +   public int getPixelRGBA(int frameIndex, int x, int y) {
-+      return this.field_195670_c[0].func_195709_a(x + this.field_195671_d[frameIndex] * func_94211_a(), y + this.field_195672_e[frameIndex] * func_94216_b());
++       if (this.f_174725_ != null) {
++           x += this.f_174725_.m_174759_(frameIndex) * this.f_174723_;
++           y += this.f_174725_.m_174764_(frameIndex) * this.f_174724_;
++       }
++
++       return this.f_118342_[0].m_84985_(x, y);
     }
  }

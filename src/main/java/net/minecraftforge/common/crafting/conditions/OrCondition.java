@@ -28,8 +28,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 
 public class OrCondition implements ICondition
@@ -92,7 +92,7 @@ public class OrCondition implements ICondition
         public OrCondition read(JsonObject json)
         {
             List<ICondition> children = new ArrayList<>();
-            for (JsonElement j : JSONUtils.getAsJsonArray(json, "values"))
+            for (JsonElement j : GsonHelper.getAsJsonArray(json, "values"))
             {
                 if (!j.isJsonObject())
                     throw new JsonSyntaxException("Or condition values must be an array of JsonObjects");

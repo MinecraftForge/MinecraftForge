@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common.model.animation;
 
-import net.minecraft.client.renderer.model.IModelTransform;
+import net.minecraft.client.resources.model.ModelState;
 import net.minecraftforge.common.animation.Event;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,7 +34,7 @@ public interface IAnimationStateMachine
      * Event iterable will contain all events that happened from the last invocation of this method, from most to least recent.
      * Event offset is relative to the previous event, and for the first event it's relative to the current time. 
      */
-    Pair<IModelTransform, Iterable<Event>> apply(float time);
+    Pair<ModelState, Iterable<Event>> apply(float time);
 
     /**
      * Transition to a new state.

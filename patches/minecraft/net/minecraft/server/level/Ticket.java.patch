@@ -1,0 +1,50 @@
+--- a/net/minecraft/server/level/Ticket.java
++++ b/net/minecraft/server/level/Ticket.java
+@@ -9,9 +_,14 @@
+    private long f_9423_;
+ 
+    protected Ticket(TicketType<T> p_9425_, int p_9426_, T p_9427_) {
++      this(p_9425_, p_9426_, p_9427_, false);
++   }
++
++   public Ticket(TicketType<T> p_9425_, int p_9426_, T p_9427_, boolean forceTicks) {
+       this.f_9420_ = p_9425_;
+       this.f_9421_ = p_9426_;
+       this.f_9422_ = p_9427_;
++      this.forceTicks = forceTicks;
+    }
+ 
+    public int compareTo(Ticket<?> p_9432_) {
+@@ -31,16 +_,16 @@
+          return false;
+       } else {
+          Ticket<?> ticket = (Ticket)p_9439_;
+-         return this.f_9421_ == ticket.f_9421_ && Objects.equals(this.f_9420_, ticket.f_9420_) && Objects.equals(this.f_9422_, ticket.f_9422_);
++         return this.f_9421_ == ticket.f_9421_ && Objects.equals(this.f_9420_, ticket.f_9420_) && Objects.equals(this.f_9422_, ticket.f_9422_) && this.forceTicks == ticket.forceTicks;
+       }
+    }
+ 
+    public int hashCode() {
+-      return Objects.hash(this.f_9420_, this.f_9421_, this.f_9422_);
++      return Objects.hash(this.f_9420_, this.f_9421_, this.f_9422_, forceTicks);
+    }
+ 
+    public String toString() {
+-      return "Ticket[" + this.f_9420_ + " " + this.f_9421_ + " (" + this.f_9422_ + ")] at " + this.f_9423_;
++      return "Ticket[" + this.f_9420_ + " " + this.f_9421_ + " (" + this.f_9422_ + ")] at " + this.f_9423_ + " force ticks " + forceTicks;
+    }
+ 
+    public TicketType<T> m_9428_() {
+@@ -58,5 +_,12 @@
+    protected boolean m_9434_(long p_9435_) {
+       long i = this.f_9420_.m_9469_();
+       return i != 0L && p_9435_ - this.f_9423_ > i;
++   }
++
++   /* ======================================== FORGE START =====================================*/
++   private final boolean forceTicks;
++
++   public boolean isForceTicks() {
++      return forceTicks;
+    }
+ }

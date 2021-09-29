@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/monster/Illusioner.java
++++ b/net/minecraft/world/entity/monster/Illusioner.java
+@@ -178,8 +_,10 @@
+    }
+ 
+    public void m_6504_(LivingEntity p_32918_, float p_32919_) {
+-      ItemStack itemstack = this.m_6298_(this.m_21120_(ProjectileUtil.m_37297_(this, Items.f_42411_)));
++      ItemStack itemstack = this.m_6298_(this.m_21120_(ProjectileUtil.getWeaponHoldingHand(this, item -> item instanceof net.minecraft.world.item.BowItem)));
+       AbstractArrow abstractarrow = ProjectileUtil.m_37300_(this, itemstack, p_32919_);
++      if (this.m_21205_().m_41720_() instanceof net.minecraft.world.item.BowItem)
++         abstractarrow = ((net.minecraft.world.item.BowItem)this.m_21205_().m_41720_()).customArrow(abstractarrow);
+       double d0 = p_32918_.m_20185_() - this.m_20185_();
+       double d1 = p_32918_.m_20227_(0.3333333333333333D) - abstractarrow.m_20186_();
+       double d2 = p_32918_.m_20189_() - this.m_20189_();

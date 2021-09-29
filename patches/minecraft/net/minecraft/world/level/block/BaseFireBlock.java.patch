@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/BaseFireBlock.java
++++ b/net/minecraft/world/level/block/BaseFireBlock.java
+@@ -126,6 +_,7 @@
+       if (!p_49282_.m_60713_(p_49279_.m_60734_())) {
+          if (m_49248_(p_49280_)) {
+             Optional<PortalShape> optional = PortalShape.m_77708_(p_49280_, p_49281_, Direction.Axis.X);
++            optional = net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(p_49280_, p_49281_, optional);
+             if (optional.isPresent()) {
+                optional.get().m_77743_();
+                return;

@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/level/block/CropBlock.java
++++ b/net/minecraft/world/level/block/CropBlock.java
+@@ -64,12 +_,14 @@
+    }
+ 
+    public void m_7455_(BlockState p_52292_, ServerLevel p_52293_, BlockPos p_52294_, Random p_52295_) {
++      if (!p_52293_.isAreaLoaded(p_52294_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
+       if (p_52293_.m_45524_(p_52294_, 0) >= 9) {
+          int i = this.m_52305_(p_52292_);
+          if (i < this.m_7419_()) {
+             float f = m_52272_(this, p_52293_, p_52294_);
+-            if (p_52295_.nextInt((int)(25.0F / f) + 1) == 0) {
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_52293_, p_52294_, p_52292_, p_52295_.nextInt((int)(25.0F / f) + 1) == 0)) {
+                p_52293_.m_7731_(p_52294_, this.m_52289_(i + 1), 2);
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_52293_, p_52294_, p_52292_);
+             }
+          }
+       }
+@@ -98,9 +_,9 @@
+          for(int j = -1; j <= 1; ++j) {
+             float f1 = 0.0F;
+             BlockState blockstate = p_52274_.m_8055_(blockpos.m_142082_(i, 0, j));
+-            if (blockstate.m_60713_(Blocks.f_50093_)) {
++            if (blockstate.canSustainPlant(p_52274_, blockpos.m_142082_(i, 0, j), net.minecraft.core.Direction.UP, (net.minecraftforge.common.IPlantable) p_52273_)) {
+                f1 = 1.0F;
+-               if (blockstate.m_61143_(FarmBlock.f_53243_) > 0) {
++               if (blockstate.isFertile(p_52274_, p_52275_.m_142082_(i, 0, j))) {
+                   f1 = 3.0F;
+                }
+             }
+@@ -136,7 +_,7 @@
+    }
+ 
+    public void m_7892_(BlockState p_52277_, Level p_52278_, BlockPos p_52279_, Entity p_52280_) {
+-      if (p_52280_ instanceof Ravager && p_52278_.m_46469_().m_46207_(GameRules.f_46132_)) {
++      if (p_52280_ instanceof Ravager && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_52278_, p_52280_)) {
+          p_52278_.m_46953_(p_52279_, true, p_52280_);
+       }
+ 

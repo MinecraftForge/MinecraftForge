@@ -26,6 +26,7 @@
   "fml.menu.multiplayer.compatible":"Compatible FML modded server\n{0,choice,1#1 mod|1<{0} mods} present",
   "fml.menu.multiplayer.incompatible":"Incompatible FML modded server",
   "fml.menu.multiplayer.incompatible.extra":"Incompatible FML modded server\n{0}",
+  "fml.menu.multiplayer.truncated":"Data may be inaccurate due to protocol size limits.",
   "fml.menu.multiplayer.vanilla":"Vanilla server",
   "fml.menu.multiplayer.vanilla.incompatible":"Incompatible Vanilla server",
   "fml.menu.multiplayer.unknown":"Unknown server {0}",
@@ -107,8 +108,8 @@
   "commands.forge.tracking.entity.enabled": "Entity tracking enabled for %d seconds.",
   "commands.forge.tracking.entity.reset": "Entity timings data has been cleared!",
   "commands.forge.tracking.invalid": "Invalid tracking data.",
-  "commands.forge.tracking.te.enabled": "Tile Entity tracking enabled for %d seconds.",
-  "commands.forge.tracking.te.reset": "Tile entity timings data has been cleared!",
+  "commands.forge.tracking.be.enabled": "Block Entity tracking enabled for %d seconds.",
+  "commands.forge.tracking.be.reset": "Block entity timings data has been cleared!",
   "commands.forge.tracking.timing_entry": "{0} - {1} [{2}, {3}, {4}]: {5}",
   "commands.forge.tracking.no_data": "No data has been recorded yet.",
 
@@ -122,8 +123,8 @@
 
   "forge.configgui.removeErroringEntities.tooltip": "Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.",
   "forge.configgui.removeErroringEntities": "Remove Erroring Entities",
-  "forge.configgui.removeErroringTileEntities.tooltip": "Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.",
-  "forge.configgui.removeErroringTileEntities": "Remove Erroring Tile Entities",
+  "forge.configgui.removeErroringBlockEntities.tooltip": "Set this to true to remove any BlockEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.",
+  "forge.configgui.removeErroringBlockEntities": "Remove Erroring Block Entities",
   "forge.configgui.fullBoundingBoxLadders.tooltip": "Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false.",
   "forge.configgui.fullBoundingBoxLadders": "Full Bounding Box Ladders",
   "forge.configgui.zombieBaseSummonChance.tooltip": "Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.",
@@ -140,6 +141,8 @@
   "forge.configgui.clumpingThreshold": "Packet Clumping Threshold",
   "forge.configgui.treatEmptyTagsAsAir.tooltip": "Vanilla will treat crafting recipes using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.",
   "forge.configgui.treatEmptyTagsAsAir": "Treat empty tags as air",
+  "forge.configgui.forceSystemNanoTime.tooltip": "Force the use of System.nanoTime instead of glfwGetTime as the main client Time provider.",
+  "forge.configgui.forceSystemNanoTime": "Force System.nanoTime",
 
   "forge.configgui.zoomInMissingModelTextInGui.tooltip": "Toggle off to make missing model text in the gui fit inside the slot.",
   "forge.configgui.zoomInMissingModelTextInGui": "Zoom in Missing model text in the GUI",

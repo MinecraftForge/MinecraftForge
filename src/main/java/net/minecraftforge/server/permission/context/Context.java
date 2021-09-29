@@ -19,8 +19,8 @@
 
 package net.minecraftforge.server.permission.context;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -32,14 +32,14 @@ public class Context implements IContext
 
     @Override
     @Nullable
-    public World getWorld()
+    public Level getWorld()
     {
         return null;
     }
 
     @Override
     @Nullable
-    public PlayerEntity getPlayer()
+    public Player getPlayer()
     {
         return null;
     }

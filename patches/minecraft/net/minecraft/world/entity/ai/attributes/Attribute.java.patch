@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/entity/ai/attributes/Attribute.java
++++ b/net/minecraft/world/entity/ai/attributes/Attribute.java
+@@ -1,6 +_,6 @@
+ package net.minecraft.world.entity.ai.attributes;
+ 
+-public class Attribute {
++public class Attribute extends net.minecraftforge.registries.ForgeRegistryEntry<Attribute> {
+    public static final int f_147357_ = 64;
+    private final double f_22076_;
+    private boolean f_22077_;

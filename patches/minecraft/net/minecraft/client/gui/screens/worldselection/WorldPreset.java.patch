@@ -1,0 +1,21 @@
+--- a/net/minecraft/client/gui/screens/worldselection/WorldPreset.java
++++ b/net/minecraft/client/gui/screens/worldselection/WorldPreset.java
+@@ -116,6 +_,9 @@
+    WorldPreset(String p_101519_) {
+       this.f_101516_ = new TranslatableComponent("generator." + p_101519_);
+    }
++   public WorldPreset(Component displayName) {
++      this.f_101516_ = displayName;
++   }
+ 
+    private static WorldGenSettings m_101549_(RegistryAccess p_101550_, WorldGenSettings p_101551_, WorldPreset p_101552_, Biome p_101553_) {
+       BiomeSource biomesource = new FixedBiomeSource(p_101553_);
+@@ -173,4 +_,8 @@
+    public interface PresetEditor {
+       Screen m_101642_(CreateWorldScreen p_101643_, WorldGenSettings p_101644_);
+    }
++
++   // Forge start
++   // For internal use only, automatically called for all ForgeWorldTypes. Register your ForgeWorldType in the forge registry!
++   public static void registerGenerator(WorldPreset gen) { f_101508_.add(gen); }
+ }

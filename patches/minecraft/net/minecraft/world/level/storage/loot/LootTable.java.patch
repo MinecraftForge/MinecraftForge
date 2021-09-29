@@ -1,0 +1,103 @@
+--- a/net/minecraft/world/level/storage/loot/LootTable.java
++++ b/net/minecraft/world/level/storage/loot/LootTable.java
+@@ -34,13 +_,13 @@
+    public static final LootTable f_79105_ = new LootTable(LootContextParamSets.f_81410_, new LootPool[0], new LootItemFunction[0]);
+    public static final LootContextParamSet f_79106_ = LootContextParamSets.f_81420_;
+    final LootContextParamSet f_79108_;
+-   final LootPool[] f_79109_;
++   private final List<LootPool> f_79109_;
+    final LootItemFunction[] f_79110_;
+    private final BiFunction<ItemStack, LootContext, ItemStack> f_79111_;
+ 
+    LootTable(LootContextParamSet p_79114_, LootPool[] p_79115_, LootItemFunction[] p_79116_) {
+       this.f_79108_ = p_79114_;
+-      this.f_79109_ = p_79115_;
++      this.f_79109_ = Lists.newArrayList(p_79115_);
+       this.f_79110_ = p_79116_;
+       this.f_79111_ = LootItemFunctions.m_80770_(p_79116_);
+    }
+@@ -78,6 +_,7 @@
+ 
+    }
+ 
++   @Deprecated //Use other method or manually call ForgeHooks.modifyLoot
+    public void m_79148_(LootContext p_79149_, Consumer<ItemStack> p_79150_) {
+       this.m_79131_(p_79149_, m_79142_(p_79150_));
+    }
+@@ -85,6 +_,7 @@
+    public List<ItemStack> m_79129_(LootContext p_79130_) {
+       List<ItemStack> list = Lists.newArrayList();
+       this.m_79148_(p_79130_, list::add);
++      list = net.minecraftforge.common.ForgeHooks.modifyLoot(this.getLootTableId(), list, p_79130_);
+       return list;
+    }
+ 
+@@ -93,8 +_,8 @@
+    }
+ 
+    public void m_79136_(ValidationContext p_79137_) {
+-      for(int i = 0; i < this.f_79109_.length; ++i) {
+-         this.f_79109_[i].m_79051_(p_79137_.m_79365_(".pools[" + i + "]"));
++      for(int i = 0; i < this.f_79109_.size(); ++i) {
++         this.f_79109_.get(i).m_79051_(p_79137_.m_79365_(".pools[" + i + "]"));
+       }
+ 
+       for(int j = 0; j < this.f_79110_.length; ++j) {
+@@ -176,6 +_,48 @@
+       return new LootTable.Builder();
+    }
+ 
++   //======================== FORGE START =============================================
++   private boolean isFrozen = false;
++   public void freeze() {
++      this.isFrozen = true;
++      this.f_79109_.forEach(LootPool::freeze);
++   }
++   public boolean isFrozen(){ return this.isFrozen; }
++   private void checkFrozen() {
++      if (this.isFrozen())
++         throw new RuntimeException("Attempted to modify LootTable after being finalized!");
++   }
++
++   private ResourceLocation lootTableId;
++   public void setLootTableId(final ResourceLocation id) {
++      if (this.lootTableId != null) throw new IllegalStateException("Attempted to rename loot table from '" + this.lootTableId + "' to '" + id + "': this is not supported");
++      this.lootTableId = java.util.Objects.requireNonNull(id);
++   }
++   public ResourceLocation getLootTableId() { return this.lootTableId; }
++
++   public LootPool getPool(String name) {
++      return f_79109_.stream().filter(e -> name.equals(e.getName())).findFirst().orElse(null);
++   }
++
++   public LootPool removePool(String name) {
++      checkFrozen();
++      for (LootPool pool : this.f_79109_) {
++         if (name.equals(pool.getName())) {
++            this.f_79109_.remove(pool);
++            return pool;
++         }
++      }
++      return null;
++   }
++
++   public void addPool(LootPool pool) {
++      checkFrozen();
++      if (f_79109_.stream().anyMatch(e -> e == pool || e.getName() != null && e.getName().equals(pool.getName())))
++         throw new RuntimeException("Attempted to add a duplicate pool to loot table: " + pool.getName());
++      this.f_79109_.add(pool);
++   }
++   //======================== FORGE END ===============================================
++
+    public static class Builder implements FunctionUserBuilder<LootTable.Builder> {
+       private final List<LootPool> f_79156_ = Lists.newArrayList();
+       private final List<LootItemFunction> f_79157_ = Lists.newArrayList();
+@@ -230,7 +_,7 @@
+             }
+          }
+ 
+-         if (p_79177_.f_79109_.length > 0) {
++         if (!p_79177_.f_79109_.isEmpty()) {
+             jsonobject.add("pools", p_79179_.serialize(p_79177_.f_79109_));
+          }
+ 

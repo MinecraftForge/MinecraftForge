@@ -1,0 +1,75 @@
+--- a/net/minecraft/world/level/NaturalSpawner.java
++++ b/net/minecraft/world/level/NaturalSpawner.java
+@@ -45,6 +_,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++// TODO: ForgeEventFactory.getPotentialSpawns, ForgeHooks.canEntitySpawn
+ public final class NaturalSpawner {
+    private static final Logger f_46977_ = LogManager.getLogger();
+    private static final int f_151589_ = 24;
+@@ -81,7 +_,7 @@
+             mob = (Mob)entity;
+          } while(mob.m_21532_() || mob.m_8023_());
+ 
+-         MobCategory mobcategory = entity.m_6095_().m_20674_();
++         MobCategory mobcategory = entity.getClassification(true);
+          if (mobcategory != MobCategory.MISC) {
+             Entity finalEntity = entity;
+             BlockPos blockpos = entity.m_142538_();
+@@ -174,13 +_,15 @@
+                         }
+ 
+                         mob.m_7678_(d0, (double)i, d1, p_47040_.f_46441_.nextFloat() * 360.0F, 0.0F);
+-                        if (m_46991_(p_47040_, mob, d2)) {
++                        int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mob, p_47040_, d0, i, d1, null, MobSpawnType.NATURAL);
++                        if (canSpawn != -1 && (canSpawn == 1 || m_46991_(p_47040_, mob, d2))) {
++                           if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mob, p_47040_, (float)d0, (float)i, (float)d1, null, MobSpawnType.NATURAL))
+                            spawngroupdata = mob.m_6518_(p_47040_, p_47040_.m_6436_(mob.m_142538_()), MobSpawnType.NATURAL, spawngroupdata, (CompoundTag)null);
+                            ++j;
+                            ++l1;
+                            p_47040_.m_47205_(mob);
+                            p_47044_.m_47100_(mob, p_47041_);
+-                           if (j >= mob.m_5792_()) {
++                           if (j >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(mob)) {
+                               return;
+                            }
+ 
+@@ -290,6 +_,13 @@
+       if (p_47052_ == SpawnPlacements.Type.NO_RESTRICTIONS) {
+          return true;
+       } else if (p_47055_ != null && p_47053_.m_6857_().m_61937_(p_47054_)) {
++         return p_47052_.canSpawnAt(p_47053_, p_47054_, p_47055_);
++      }
++      return false;
++   }
++
++   public static boolean canSpawnAtBody(SpawnPlacements.Type p_47052_, LevelReader p_47053_, BlockPos p_47054_, @Nullable EntityType<?> p_47055_) {
++      {
+          BlockState blockstate = p_47053_.m_8055_(p_47054_);
+          FluidState fluidstate = p_47053_.m_6425_(p_47054_);
+          BlockPos blockpos = p_47054_.m_7494_();
+@@ -302,14 +_,12 @@
+          case ON_GROUND:
+          default:
+             BlockState blockstate1 = p_47053_.m_8055_(blockpos1);
+-            if (!blockstate1.m_60643_(p_47053_, blockpos1, p_47055_)) {
++            if (!blockstate1.canCreatureSpawn(p_47053_, blockpos1, p_47052_, p_47055_)) {
+                return false;
+             } else {
+                return m_47056_(p_47053_, p_47054_, blockstate, fluidstate, p_47055_) && m_47056_(p_47053_, blockpos, p_47053_.m_8055_(blockpos), p_47053_.m_6425_(blockpos), p_47055_);
+             }
+          }
+-      } else {
+-         return false;
+       }
+    }
+ 
+@@ -355,6 +_,7 @@
+                         entity.m_7678_(d0, (double)blockpos.m_123342_(), d1, p_151620_.nextFloat() * 360.0F, 0.0F);
+                         if (entity instanceof Mob) {
+                            Mob mob = (Mob)entity;
++                           if (net.minecraftforge.common.ForgeHooks.canEntitySpawn(mob, p_151617_, d0, blockpos.m_123342_(), d1, null, MobSpawnType.CHUNK_GENERATION) == -1) continue;
+                            if (mob.m_5545_(p_151617_, MobSpawnType.CHUNK_GENERATION) && mob.m_6914_(p_151617_)) {
+                               spawngroupdata = mob.m_6518_(p_151617_, p_151617_.m_6436_(mob.m_142538_()), MobSpawnType.CHUNK_GENERATION, spawngroupdata, (CompoundTag)null);
+                               p_151617_.m_47205_(mob);

@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/PacketEncoder.java
++++ b/net/minecraft/network/PacketEncoder.java
+@@ -44,7 +_,7 @@
+                   throw new IllegalArgumentException("Packet too big (is " + j + ", should be less than 8388608): " + p_130546_);
+                }
+             } catch (Throwable throwable) {
+-               f_130538_.error(throwable);
++               f_130538_.error("Error encoding packet", throwable); // Forge: Get Minecraft to spit out more information about the Throwable we got.
+                if (p_130546_.m_6588_()) {
+                   throw new SkipPacketException(throwable);
+                } else {

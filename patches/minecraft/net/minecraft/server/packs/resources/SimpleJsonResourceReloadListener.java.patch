@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
++++ b/net/minecraft/server/packs/resources/SimpleJsonResourceReloadListener.java
+@@ -106,4 +_,8 @@
+ 
+       return map;
+    }
++
++   protected ResourceLocation getPreparedPath(ResourceLocation rl) {
++      return new ResourceLocation(rl.m_135827_(), this.f_10765_ + "/" + rl.m_135815_() + ".json");
++   }
+ }

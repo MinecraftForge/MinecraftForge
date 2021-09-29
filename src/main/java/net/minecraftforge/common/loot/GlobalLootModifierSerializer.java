@@ -21,9 +21,9 @@ package net.minecraftforge.common.loot;
 
 import com.google.gson.JsonObject;
 
-import net.minecraft.loot.ConditionArraySerializer;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.critereon.SerializationContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -63,7 +63,7 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
      * @param json The full json object (including ILootConditions)
      * @param conditionsIn An already deserialized list of ILootConditions
      */
-    public abstract T read(ResourceLocation location, JsonObject object, ILootCondition[] ailootcondition);
+    public abstract T read(ResourceLocation location, JsonObject object, LootItemCondition[] ailootcondition);
 
     /**
      * Write the serializer to json.
@@ -77,9 +77,9 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
      * Helper to create the json object from the conditions.
      * Add any extra properties to the returned json.
      */
-    public JsonObject makeConditions(ILootCondition[] conditions) {
+    public JsonObject makeConditions(LootItemCondition[] conditions) {
         JsonObject json = new JsonObject();
-        json.add("conditions", ConditionArraySerializer.INSTANCE.serializeConditions(conditions));
+        json.add("conditions", SerializationContext.INSTANCE.serializeConditions(conditions));
         return json;
     }
 

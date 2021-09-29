@@ -1,0 +1,22 @@
+--- a/net/minecraft/network/syncher/EntityDataSerializers.java
++++ b/net/minecraft/network/syncher/EntityDataSerializers.java
+@@ -301,16 +_,16 @@
+    };
+ 
+    public static void m_135050_(EntityDataSerializer<?> p_135051_) {
+-      f_135046_.m_13569_(p_135051_);
++      if (f_135046_.m_13569_(p_135051_) >= 256) throw new RuntimeException("Vanilla DataSerializer ID limit exceeded");
+    }
+ 
+    @Nullable
+    public static EntityDataSerializer<?> m_135048_(int p_135049_) {
+-      return f_135046_.m_7942_(p_135049_);
++      return net.minecraftforge.common.ForgeHooks.getSerializer(p_135049_, f_135046_);
+    }
+ 
+    public static int m_135052_(EntityDataSerializer<?> p_135053_) {
+-      return f_135046_.m_7447_(p_135053_);
++      return net.minecraftforge.common.ForgeHooks.getSerializerId(p_135053_, f_135046_);
+    }
+ 
+    private EntityDataSerializers() {

@@ -20,7 +20,7 @@
 package net.minecraftforge.client.event;
 
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
+import net.minecraftforge.fml.event.IModBusEvent;
 
 /**
  * Fired when the {@link net.minecraftforge.client.model.ModelLoader} is ready to register model loaders

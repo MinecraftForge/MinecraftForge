@@ -19,15 +19,10 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.ZombieEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
 
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
@@ -40,14 +35,14 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  **/
 public class ZombieEvent extends EntityEvent {
 
-    public ZombieEvent(ZombieEntity entity)
+    public ZombieEvent(Zombie entity)
     {
         super(entity);
     }
 
-    public ZombieEntity getSummoner()
+    public Zombie getSummoner()
     {
-        return (ZombieEntity) getEntity();
+        return (Zombie) getEntity();
     }
     
     /**
@@ -75,16 +70,16 @@ public class ZombieEvent extends EntityEvent {
      **/
     @HasResult
     public static class SummonAidEvent extends ZombieEvent {
-        private ZombieEntity customSummonedAid;
+        private Zombie customSummonedAid;
         
-        private final World world;
+        private final Level world;
         private final int x;
         private final int y;
         private final int z;
         private final LivingEntity attacker;
         private final double summonChance;
         
-        public SummonAidEvent(ZombieEntity entity, World world, int x, int y, int z, LivingEntity attacker, double summonChance)
+        public SummonAidEvent(Zombie entity, Level world, int x, int y, int z, LivingEntity attacker, double summonChance)
         {
             super(entity);
             this.world = world;
@@ -98,9 +93,9 @@ public class ZombieEvent extends EntityEvent {
         /**
          * Populate this field to have a custom zombie instead of a normal zombie summoned
          */
-        public ZombieEntity getCustomSummonedAid() { return customSummonedAid; }
-        public void setCustomSummonedAid(ZombieEntity customSummonedAid) { this.customSummonedAid = customSummonedAid; }
-        public World getWorld() { return world; }
+        public Zombie getCustomSummonedAid() { return customSummonedAid; }
+        public void setCustomSummonedAid(Zombie customSummonedAid) { this.customSummonedAid = customSummonedAid; }
+        public Level getWorld() { return world; }
         public int getX() { return x; }
         public int getY() { return y; }
         public int getZ() { return z; }

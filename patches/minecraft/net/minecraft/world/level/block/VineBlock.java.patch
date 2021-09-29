@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/level/block/VineBlock.java
++++ b/net/minecraft/world/level/block/VineBlock.java
+@@ -22,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.Shapes;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public class VineBlock extends Block {
++public class VineBlock extends Block implements net.minecraftforge.common.IForgeShearable {
+    public static final BooleanProperty f_57833_ = PipeBlock.f_55152_;
+    public static final BooleanProperty f_57834_ = PipeBlock.f_55148_;
+    public static final BooleanProperty f_57835_ = PipeBlock.f_55149_;
+@@ -157,7 +_,7 @@
+    }
+ 
+    public void m_7455_(BlockState p_57892_, ServerLevel p_57893_, BlockPos p_57894_, Random p_57895_) {
+-      if (p_57895_.nextInt(4) == 0) {
++      if (p_57893_.f_46441_.nextInt(4) == 0 && p_57893_.isAreaLoaded(p_57894_, 4)) { // Forge: check area to prevent loading unloaded chunks
+          Direction direction = Direction.m_122404_(p_57895_);
+          BlockPos blockpos = p_57894_.m_7494_();
+          if (direction.m_122434_().m_122479_() && !p_57892_.m_61143_(m_57883_(direction))) {

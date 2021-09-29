@@ -1,0 +1,32 @@
+--- a/net/minecraft/world/item/MilkBucketItem.java
++++ b/net/minecraft/world/item/MilkBucketItem.java
+@@ -17,6 +_,7 @@
+    }
+ 
+    public ItemStack m_5922_(ItemStack p_42923_, Level p_42924_, LivingEntity p_42925_) {
++      if (!p_42924_.f_46443_) p_42925_.curePotionEffects(p_42923_); // FORGE - move up so stack.shrink does not turn stack into air
+       if (p_42925_ instanceof ServerPlayer) {
+          ServerPlayer serverplayer = (ServerPlayer)p_42925_;
+          CriteriaTriggers.f_10592_.m_23682_(serverplayer, p_42923_);
+@@ -27,10 +_,6 @@
+          p_42923_.m_41774_(1);
+       }
+ 
+-      if (!p_42924_.f_46443_) {
+-         p_42925_.m_21219_();
+-      }
+-
+       return p_42923_.m_41619_() ? new ItemStack(Items.f_42446_) : p_42923_;
+    }
+ 
+@@ -44,5 +_,10 @@
+ 
+    public InteractionResultHolder<ItemStack> m_7203_(Level p_42927_, Player p_42928_, InteractionHand p_42929_) {
+       return ItemUtils.m_150959_(p_42927_, p_42928_, p_42929_);
++   }
++
++   @Override
++   public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @javax.annotation.Nullable net.minecraft.nbt.CompoundTag nbt) {
++      return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
+    }
+ }

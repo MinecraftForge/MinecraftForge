@@ -1,0 +1,29 @@
+--- a/net/minecraft/server/packs/repository/PackRepository.java
++++ b/net/minecraft/server/packs/repository/PackRepository.java
+@@ -24,12 +_,12 @@
+ 
+    public PackRepository(Pack.PackConstructor p_10502_, RepositorySource... p_10503_) {
+       this.f_10500_ = p_10502_;
+-      this.f_10497_ = ImmutableSet.copyOf(p_10503_);
++      this.f_10497_ = new java.util.HashSet<>(java.util.Arrays.asList(p_10503_));
+    }
+ 
+    public PackRepository(PackType p_143890_, RepositorySource... p_143891_) {
+-      this((p_143894_, p_143895_, p_143896_, p_143897_, p_143898_, p_143899_, p_143900_) -> {
+-         return new Pack(p_143894_, p_143895_, p_143896_, p_143897_, p_143898_, p_143890_, p_143899_, p_143900_);
++      this((p_143894_, p_143895_, p_143896_, p_143897_, p_143898_, p_143899_, p_143900_, hidden) -> {
++         return new Pack(p_143894_, p_143895_, p_143896_, p_143897_, p_143898_, p_143890_, p_143899_, p_143900_, hidden);
+       }, p_143891_);
+    }
+ 
+@@ -91,6 +_,10 @@
+    @Nullable
+    public Pack m_10507_(String p_10508_) {
+       return this.f_10498_.get(p_10508_);
++   }
++
++   public synchronized void addPackFinder(RepositorySource packFinder) {
++      this.f_10497_.add(packFinder);
+    }
+ 
+    public void close() {

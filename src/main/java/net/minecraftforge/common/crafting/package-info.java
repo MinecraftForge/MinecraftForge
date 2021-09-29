@@ -22,5 +22,6 @@
 @MethodsReturnNonnullByDefault
 package net.minecraftforge.common.crafting;
 
-import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.MethodsReturnNonnullByDefault;
+
 import javax.annotation.ParametersAreNonnullByDefault;

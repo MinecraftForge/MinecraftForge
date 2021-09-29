@@ -31,9 +31,9 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.Validate;
 
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.DefaultedRegistry;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.DefaultedRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -52,7 +52,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     }
 
     @Override
-    public <V extends T> V registerMapping(int id, RegistryKey<T> key, V value, Lifecycle lifecycle)
+    public <V extends T> V registerMapping(int id, ResourceKey<T> key, V value, Lifecycle lifecycle)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
@@ -69,13 +69,13 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     }
 
     @Override
-    public <V extends T> V register(RegistryKey<T> key, V value, Lifecycle lifecycle)
+    public <V extends T> V register(ResourceKey<T> key, V value, Lifecycle lifecycle)
     {
         return registerMapping(-1, key, value, lifecycle);
     }
 
     @Override
-    public <V extends T> V registerOrOverride(OptionalInt id, RegistryKey<T> key, V value, Lifecycle lifecycle) {
+    public <V extends T> V registerOrOverride(OptionalInt id, ResourceKey<T> key, V value, Lifecycle lifecycle) {
         int wanted = -1;
         if (id.isPresent() && byId(id.getAsInt()) != null)
             wanted = id.getAsInt();
@@ -98,7 +98,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
 
     @Override
     @Nullable
-    public T get(@Nullable RegistryKey<T> name)
+    public T get(@Nullable ResourceKey<T> name)
     {
         return name == null ? null : this.delegate.getRaw(name.location()); //get without default
     }
@@ -142,7 +142,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     }
 
     @Override
-    public Set<Map.Entry<RegistryKey<T>, T>> entrySet()
+    public Set<Map.Entry<ResourceKey<T>, T>> entrySet()
     {
         return this.delegate.getEntries();
     }

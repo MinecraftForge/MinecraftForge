@@ -20,19 +20,19 @@
 package net.minecraftforge.server.command;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.fml.ModList;
 import java.util.stream.Collectors;
 
 public class CommandModList {
-    static ArgumentBuilder<CommandSource, ?> register()
+    static ArgumentBuilder<CommandSourceStack, ?> register()
     {
         return Commands.literal("mods")
                 .requires(cs->cs.hasPermission(0)) //permission
                 .executes(ctx -> {
-                            ctx.getSource().sendSuccess(new TranslationTextComponent("commands.forge.mods.list",
+                            ctx.getSource().sendSuccess(new TranslatableComponent("commands.forge.mods.list",
                                     ModList.get().applyForEachModFile(modFile ->
                                             // locator - filename : firstmod (version) - numberofmods\n
                                             String.format("%s %s : %s (%s) - %d",

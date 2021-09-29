@@ -1,9 +1,23 @@
-rootProject.name = 'Forge'
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url = 'https://maven.minecraftforge.net/' }
+    }
+}
+
+rootProject.name = 'ForgeRoot'
+
+include 'fmlloader'
+include 'fmlcore'
+include 'mclanguage'
+include 'javafmllanguage'
 
 include ':mcp'
 include ':clean'
+include ':fmlonly'
 include ':forge'
 
 project(":mcp").projectDir = file("projects/mcp")
 project(":clean").projectDir = file("projects/clean")
+project(":fmlonly").projectDir = file("projects/fmlonly")
 project(":forge").projectDir = file("projects/forge")

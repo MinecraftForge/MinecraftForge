@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/block/DoublePlantBlock.java
++++ b/net/minecraft/world/level/block/DoublePlantBlock.java
+@@ -53,6 +_,7 @@
+          return super.m_7898_(p_52887_, p_52888_, p_52889_);
+       } else {
+          BlockState blockstate = p_52888_.m_8055_(p_52889_.m_7495_());
++         if (p_52887_.m_60734_() != this) return super.m_7898_(p_52887_, p_52888_, p_52889_); //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
+          return blockstate.m_60713_(this) && blockstate.m_61143_(f_52858_) == DoubleBlockHalf.LOWER;
+       }
+    }

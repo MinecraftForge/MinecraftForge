@@ -19,17 +19,17 @@
 
 package net.minecraftforge.items;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.HopperTileEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
 
 public class VanillaHopperItemHandler extends InvWrapper
 {
-    private final HopperTileEntity hopper;
+    private final HopperBlockEntity hopper;
 
-    public VanillaHopperItemHandler(HopperTileEntity hopper)
+    public VanillaHopperItemHandler(HopperBlockEntity hopper)
     {
         super(hopper);
         this.hopper = hopper;

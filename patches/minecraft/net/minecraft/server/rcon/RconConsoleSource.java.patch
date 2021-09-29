@@ -1,0 +1,11 @@
+--- a/net/minecraft/server/rcon/RconConsoleSource.java
++++ b/net/minecraft/server/rcon/RconConsoleSource.java
+@@ -35,7 +_,7 @@
+    }
+ 
+    public void m_6352_(Component p_11509_, UUID p_11510_) {
+-      this.f_11501_.append(p_11509_.getString());
++      this.f_11501_.append(p_11509_.getString()).append("\n"); // FIX MC-7569 - RCON has no newlines in multiline output
+    }
+ 
+    public boolean m_6999_() {

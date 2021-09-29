@@ -21,12 +21,12 @@ package net.minecraftforge.event.entity;
 
 import java.util.Map;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
+import net.minecraftforge.fml.event.IModBusEvent;
 
 /**
  * EntityAttributeCreationEvent.<br>
@@ -37,17 +37,17 @@ import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
  **/
 public class EntityAttributeCreationEvent extends Event implements IModBusEvent
 {
-    private final Map<EntityType<? extends LivingEntity>, AttributeModifierMap> map;
+    private final Map<EntityType<? extends LivingEntity>, AttributeSupplier> map;
 
-    public EntityAttributeCreationEvent(Map<EntityType<? extends LivingEntity>, AttributeModifierMap> map)
+    public EntityAttributeCreationEvent(Map<EntityType<? extends LivingEntity>, AttributeSupplier> map)
     {
         this.map = map;
     }
 
-    public void put(EntityType<? extends LivingEntity> entity, AttributeModifierMap map)
+    public void put(EntityType<? extends LivingEntity> entity, AttributeSupplier map)
     {
-        if (GlobalEntityTypeAttributes.hasSupplier(entity))
-            throw new IllegalStateException("Duplicate GlobalEntityTypeAttributes entry: " + entity);
+        if (DefaultAttributes.hasSupplier(entity))
+            throw new IllegalStateException("Duplicate DefaultAttributes entry: " + entity);
         this.map.put(entity, map);
     }
 }

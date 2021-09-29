@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
++++ b/net/minecraft/world/entity/projectile/FireworkRocketEntity.java
+@@ -147,6 +_,13 @@
+ 
+    }
+ 
++   @Override
++   protected void m_6532_(HitResult result) {
++      if (result.m_6662_() == HitResult.Type.MISS || !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, result)) {
++         super.m_6532_(result);
++      }
++   }
++
+    private void m_37080_() {
+       this.f_19853_.m_7605_(this, (byte)17);
+       this.m_146852_(GameEvent.f_157812_, this.m_37282_());

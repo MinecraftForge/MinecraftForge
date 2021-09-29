@@ -6,7 +6,7 @@ pipeline {
     }
     agent {
         docker {
-            image 'gradle:jdk8'
+            image 'gradle:7-jdk16'
             args '-v forgegc:/home/gradle/.gradle/'
         }
     }
@@ -41,6 +41,7 @@ pipeline {
                 }
                 script {
                     env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "^version:" | cut -d" " -f2').trim()
+                    env.FMLONLY_VERSION = sh(returnStdout: true, script: './gradlew :fmlonly:properties -q | grep "^version:" | cut -d" " -f2').trim()
                 }
             }
         }
@@ -69,13 +70,14 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'maven-forge-user', usernameVariable: 'MAVEN_USER', passwordVariable: 'MAVEN_PASSWORD')]) {
                     withGradle {
-                        sh './gradlew ${GRADLE_ARGS} :forge:publish -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
+                        sh './gradlew ${GRADLE_ARGS} publish -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
                     }
                 }
             }
             post {
                 success {
                     build job: 'filegenerator', parameters: [string(name: 'COMMAND', value: "promote net.minecraftforge:forge ${env.MYVERSION} latest")], propagate: false, wait: false
+                    build job: 'filegenerator', parameters: [string(name: 'COMMAND', value: "promote net.minecraftforge:fmlonly ${env.FMLONLY_VERSION} latest")], propagate: false, wait: false
                 }
             }
         }
@@ -88,7 +90,7 @@ pipeline {
             }
             steps {
                 withGradle {
-                    sh './gradlew ${GRADLE_ARGS} :forge:publish -PcrowdinKey=${CROWDIN}'
+                    sh './gradlew ${GRADLE_ARGS} publish -PcrowdinKey=${CROWDIN}'
                 }
             }
         }

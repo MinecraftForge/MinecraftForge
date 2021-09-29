@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/crafting/SimpleRecipeSerializer.java
++++ b/net/minecraft/world/item/crafting/SimpleRecipeSerializer.java
+@@ -5,7 +_,7 @@
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.resources.ResourceLocation;
+ 
+-public class SimpleRecipeSerializer<T extends Recipe<?>> implements RecipeSerializer<T> {
++public class SimpleRecipeSerializer<T extends Recipe<?>> extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>>  implements RecipeSerializer<T> {
+    private final Function<ResourceLocation, T> f_44397_;
+ 
+    public SimpleRecipeSerializer(Function<ResourceLocation, T> p_44399_) {

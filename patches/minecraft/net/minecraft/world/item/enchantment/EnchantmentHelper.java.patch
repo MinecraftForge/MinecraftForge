@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
++++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+@@ -298,7 +_,7 @@
+ 
+    public static int m_44872_(Random p_44873_, int p_44874_, int p_44875_, ItemStack p_44876_) {
+       Item item = p_44876_.m_41720_();
+-      int i = item.m_6473_();
++      int i = p_44876_.getItemEnchantability();
+       if (i <= 0) {
+          return 0;
+       } else {
+@@ -336,7 +_,7 @@
+    public static List<EnchantmentInstance> m_44909_(Random p_44910_, ItemStack p_44911_, int p_44912_, boolean p_44913_) {
+       List<EnchantmentInstance> list = Lists.newArrayList();
+       Item item = p_44911_.m_41720_();
+-      int i = item.m_6473_();
++      int i = p_44911_.getItemEnchantability();
+       if (i <= 0) {
+          return list;
+       } else {
+@@ -392,7 +_,7 @@
+       boolean flag = p_44819_.m_150930_(Items.f_42517_);
+ 
+       for(Enchantment enchantment : Registry.f_122825_) {
+-         if ((!enchantment.m_6591_() || p_44820_) && enchantment.m_6592_() && (enchantment.f_44672_.m_7454_(item) || flag)) {
++         if ((!enchantment.m_6591_() || p_44820_) && enchantment.m_6592_() && (enchantment.canApplyAtEnchantingTable(p_44819_) || (flag && enchantment.isAllowedOnBooks()))) {
+             for(int i = enchantment.m_6586_(); i > enchantment.m_44702_() - 1; --i) {
+                if (p_44818_ >= enchantment.m_6183_(i) && p_44818_ <= enchantment.m_6175_(i)) {
+                   list.add(new EnchantmentInstance(enchantment, i));

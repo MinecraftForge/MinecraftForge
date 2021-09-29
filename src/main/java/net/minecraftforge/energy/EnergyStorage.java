@@ -19,13 +19,17 @@
 
 package net.minecraftforge.energy;
 
+import net.minecraft.nbt.IntTag;
+import net.minecraft.nbt.Tag;
+import net.minecraftforge.common.util.INBTSerializable;
+
 /**
  * Reference implementation of {@link IEnergyStorage}. Use/extend this or implement your own.
  *
  * Derived from the Redstone Flux power system designed by King Lemming and originally utilized in Thermal Expansion and related mods.
  * Created with consent and permission of King Lemming and Team CoFH. Released with permission under LGPL 2.1 when bundled with Forge.
  */
-public class EnergyStorage implements IEnergyStorage
+public class EnergyStorage implements IEnergyStorage, INBTSerializable<Tag>
 {
     protected int energy;
     protected int capacity;
@@ -101,5 +105,19 @@ public class EnergyStorage implements IEnergyStorage
     public boolean canReceive()
     {
         return this.maxReceive > 0;
+    }
+
+    @Override
+    public Tag serializeNBT()
+    {
+        return IntTag.valueOf(this.getEnergyStored());
+    }
+
+    @Override
+    public void deserializeNBT(Tag nbt)
+    {
+        if (!(nbt instanceof IntTag intNbt))
+            throw new IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation");
+        this.energy = intNbt.getAsInt();
     }
 }

@@ -19,12 +19,11 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 
@@ -38,12 +37,12 @@ import javax.annotation.Nonnull;
 public class ArrowNockEvent extends PlayerEvent
 {
     private final ItemStack bow;
-    private final Hand hand;
-    private final World world;
+    private final InteractionHand hand;
+    private final Level world;
     private final boolean hasAmmo;
-    private ActionResult<ItemStack> action;
+    private InteractionResultHolder<ItemStack> action;
 
-    public ArrowNockEvent(PlayerEntity player, @Nonnull ItemStack item, Hand hand, World world, boolean hasAmmo)
+    public ArrowNockEvent(Player player, @Nonnull ItemStack item, InteractionHand hand, Level world, boolean hasAmmo)
     {
         super(player);
         this.bow = item;
@@ -54,15 +53,15 @@ public class ArrowNockEvent extends PlayerEvent
 
     @Nonnull
     public ItemStack getBow() { return this.bow; }
-    public World getWorld() { return this.world; }
-    public Hand getHand() { return this.hand; }
+    public Level getWorld() { return this.world; }
+    public InteractionHand getHand() { return this.hand; }
     public boolean hasAmmo() { return this.hasAmmo; }
-    public ActionResult<ItemStack> getAction()
+    public InteractionResultHolder<ItemStack> getAction()
     {
         return this.action;
     }
 
-    public void setAction(ActionResult<ItemStack> action)
+    public void setAction(InteractionResultHolder<ItemStack> action)
     {
         this.action = action;
     }

@@ -19,9 +19,9 @@
 
 package net.minecraftforge.event;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.LootTableManager;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.LootTables;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -39,9 +39,9 @@ public class LootTableLoadEvent extends Event
 {
     private final ResourceLocation name;
     private LootTable table;
-    private LootTableManager lootTableManager;
+    private LootTables lootTableManager;
 
-    public LootTableLoadEvent(ResourceLocation name, LootTable table, LootTableManager lootTableManager)
+    public LootTableLoadEvent(ResourceLocation name, LootTable table, LootTables lootTableManager)
     {
         this.name = name;
         this.table = table;
@@ -58,7 +58,7 @@ public class LootTableLoadEvent extends Event
         return this.table;
     }
 
-    public LootTableManager getLootTableManager()
+    public LootTables getLootTableManager()
     {
         return this.lootTableManager;
     }

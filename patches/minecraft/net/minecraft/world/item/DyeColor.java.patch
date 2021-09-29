@@ -1,0 +1,41 @@
+--- a/net/minecraft/world/item/DyeColor.java
++++ b/net/minecraft/world/item/DyeColor.java
+@@ -39,6 +_,7 @@
+    private final MaterialColor f_41036_;
+    private final float[] f_41039_;
+    private final int f_41040_;
++   private final net.minecraftforge.common.Tags.IOptionalNamedTag<Item> tag;
+    private final int f_41041_;
+ 
+    private DyeColor(int p_41046_, String p_41047_, int p_41048_, MaterialColor p_41049_, int p_41050_, int p_41051_) {
+@@ -49,6 +_,7 @@
+       int i = (p_41048_ & 16711680) >> 16;
+       int j = (p_41048_ & '\uff00') >> 8;
+       int k = (p_41048_ & 255) >> 0;
++      this.tag = net.minecraft.tags.ItemTags.createOptional(new net.minecraft.resources.ResourceLocation("forge", "dyes/" + p_41047_));
+       this.f_41039_ = new float[]{(float)i / 255.0F, (float)j / 255.0F, (float)k / 255.0F};
+       this.f_41040_ = p_41050_;
+    }
+@@ -106,5 +_,22 @@
+ 
+    public String m_7912_() {
+       return this.f_41035_;
++   }
++
++   public net.minecraftforge.common.Tags.IOptionalNamedTag<Item> getTag() {
++      return tag;
++   }
++
++   @Nullable
++   public static DyeColor getColor(ItemStack stack) {
++      if (stack.m_41720_() instanceof DyeItem)
++         return ((DyeItem)stack.m_41720_()).m_41089_();
++
++      for (DyeColor color : f_41032_) {
++         if (stack.m_150922_(color.getTag()))
++             return color;
++      }
++
++      return null;
+    }
+ }

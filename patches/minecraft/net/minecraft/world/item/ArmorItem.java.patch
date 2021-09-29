@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/item/ArmorItem.java
++++ b/net/minecraft/world/item/ArmorItem.java
+@@ -71,7 +_,7 @@
+       UUID uuid = f_40380_[p_40387_.m_20749_()];
+       builder.put(Attributes.f_22284_, new AttributeModifier(uuid, "Armor modifier", (double)this.f_40381_, AttributeModifier.Operation.ADDITION));
+       builder.put(Attributes.f_22285_, new AttributeModifier(uuid, "Armor toughness", (double)this.f_40382_, AttributeModifier.Operation.ADDITION));
+-      if (p_40386_ == ArmorMaterials.NETHERITE) {
++      if (this.f_40378_ > 0) {
+          builder.put(Attributes.f_22278_, new AttributeModifier(uuid, "Armor knockback resistance", (double)this.f_40378_, AttributeModifier.Operation.ADDITION));
+       }
+ 

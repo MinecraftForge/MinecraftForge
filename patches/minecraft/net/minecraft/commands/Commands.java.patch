@@ -1,0 +1,27 @@
+--- a/net/minecraft/commands/Commands.java
++++ b/net/minecraft/commands/Commands.java
+@@ -193,6 +_,7 @@
+       if (p_82093_.f_82144_) {
+          PublishCommand.m_138184_(this.f_82090_);
+       }
++      net.minecraftforge.event.ForgeEventFactory.onCommandRegister(this.f_82090_, p_82093_);
+ 
+       this.f_82090_.findAmbiguities((p_82108_, p_82109_, p_82110_, p_82111_) -> {
+          f_82089_.warn("Ambiguity between arguments {} and {} with inputs: {}", this.f_82090_.getPath(p_82109_), this.f_82090_.getPath(p_82110_), p_82111_);
+@@ -212,7 +_,15 @@
+ 
+       try {
+          try {
+-            return this.f_82090_.execute(stringreader, p_82118_);
++            ParseResults<CommandSourceStack> parse = this.f_82090_.parse(stringreader, p_82118_);
++            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
++            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
++               if (event.getException() != null) {
++                  com.google.common.base.Throwables.throwIfUnchecked(event.getException());
++               }
++               return 1;
++            }
++            return this.f_82090_.execute(event.getParseResults());
+          } catch (CommandRuntimeException commandruntimeexception) {
+             p_82118_.m_81352_(commandruntimeexception.m_79226_());
+             return 0;

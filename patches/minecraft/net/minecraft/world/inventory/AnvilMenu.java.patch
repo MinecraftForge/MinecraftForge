@@ -1,0 +1,51 @@
+--- a/net/minecraft/world/inventory/AnvilMenu.java
++++ b/net/minecraft/world/inventory/AnvilMenu.java
+@@ -53,6 +_,8 @@
+          p_150474_.m_6749_(-this.f_39002_.m_6501_());
+       }
+ 
++      float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_150474_, p_150475_, AnvilMenu.this.f_39769_.m_8020_(0), AnvilMenu.this.f_39769_.m_8020_(1));
++
+       this.f_39769_.m_6836_(0, ItemStack.f_41583_);
+       if (this.f_39000_ > 0) {
+          ItemStack itemstack = this.f_39769_.m_8020_(1);
+@@ -69,7 +_,7 @@
+       this.f_39002_.m_6422_(0);
+       this.f_39770_.m_39292_((p_150479_, p_150480_) -> {
+          BlockState blockstate = p_150479_.m_8055_(p_150480_);
+-         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_60620_(BlockTags.f_13033_) && p_150474_.m_21187_().nextFloat() < 0.12F) {
++         if (!p_150474_.m_150110_().f_35937_ && blockstate.m_60620_(BlockTags.f_13033_) && p_150474_.m_21187_().nextFloat() < breakChance) {
+             BlockState blockstate1 = AnvilBlock.m_48824_(blockstate);
+             if (blockstate1 == null) {
+                p_150479_.m_7471_(p_150480_, false);
+@@ -100,8 +_,11 @@
+          Map<Enchantment, Integer> map = EnchantmentHelper.m_44831_(itemstack1);
+          j = j + itemstack.m_41610_() + (itemstack2.m_41619_() ? 0 : itemstack2.m_41610_());
+          this.f_39000_ = 0;
++         boolean flag = false;
++
+          if (!itemstack2.m_41619_()) {
+-            boolean flag = itemstack2.m_150930_(Items.f_42690_) && !EnchantedBookItem.m_41163_(itemstack2).isEmpty();
++            if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, f_39768_, f_39001_, j, this.f_39771_)) return;
++            flag = itemstack2.m_41720_() == Items.f_42690_ && !EnchantedBookItem.m_41163_(itemstack2).isEmpty();
+             if (itemstack1.m_41763_() && itemstack1.m_41720_().m_6832_(itemstack, itemstack2)) {
+                int l2 = Math.min(itemstack1.m_41773_(), itemstack1.m_41776_() / 4);
+                if (l2 <= 0) {
+@@ -218,6 +_,7 @@
+             i += k;
+             itemstack1.m_41714_(new TextComponent(this.f_39001_));
+          }
++         if (flag && !itemstack1.isBookEnchantable(itemstack2)) itemstack1 = ItemStack.f_41583_;
+ 
+          this.f_39002_.m_6422_(j + i);
+          if (i <= 0) {
+@@ -271,5 +_,9 @@
+ 
+    public int m_39028_() {
+       return this.f_39002_.m_6501_();
++   }
++
++   public void setMaximumCost(int value) {
++      this.f_39002_.m_6422_(value);
+    }
+ }

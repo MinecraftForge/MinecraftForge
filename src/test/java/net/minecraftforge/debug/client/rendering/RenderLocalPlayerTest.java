@@ -20,8 +20,8 @@
 package net.minecraftforge.debug.client.rendering;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.Items;
-import net.minecraft.util.ActionResultType;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.InteractionResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -44,7 +44,7 @@ public class RenderLocalPlayerTest
             {
                 mc.setCameraEntity(event.getTarget());
 
-                event.setCancellationResult(ActionResultType.SUCCESS);
+                event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
             }
         }
@@ -60,7 +60,7 @@ public class RenderLocalPlayerTest
             {
                 mc.setCameraEntity(mc.player);
 
-                event.setCancellationResult(ActionResultType.SUCCESS);
+                event.setCancellationResult(InteractionResult.SUCCESS);
                 event.setCanceled(true);
             }
         }

@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/item/MapItem.java
++++ b/net/minecraft/world/item/MapItem.java
+@@ -55,8 +_,18 @@
+ 
+    @Nullable
+    public static MapItemSavedData m_42853_(ItemStack p_42854_, Level p_42855_) {
+-      Integer integer = m_151131_(p_42854_);
+-      return m_151128_(integer, p_42855_);
++      // Forge: Add instance method so that mods can override
++      Item map = p_42854_.m_41720_();
++      if(map instanceof MapItem) {
++         return ((MapItem)map).getCustomMapData(p_42854_, p_42855_);
++      }
++      return null;
++   }
++
++   @Nullable
++   protected MapItemSavedData getCustomMapData(ItemStack p_42910_, Level p_42911_) {
++      Integer integer = m_151131_(p_42910_);
++      return m_151128_(integer, p_42911_);
+    }
+ 
+    @Nullable

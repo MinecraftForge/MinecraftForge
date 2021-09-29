@@ -25,28 +25,28 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.math.vector.Vector4f;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
 
 public class QuadTransformer
 {
-    private static final int POSITION = findPositionOffset(DefaultVertexFormats.BLOCK);
-    private static final int NORMAL = findNormalOffset(DefaultVertexFormats.BLOCK);
-    private final TransformationMatrix transform;
+    private static final int POSITION = findPositionOffset(DefaultVertexFormat.BLOCK);
+    private static final int NORMAL = findNormalOffset(DefaultVertexFormat.BLOCK);
+    private final Transformation transform;
 
-    public QuadTransformer(TransformationMatrix transform)
+    public QuadTransformer(Transformation transform)
     {
         this.transform = transform;
     }
 
     private void processVertices(int[] inData, int[] outData)
     {
-        int stride = DefaultVertexFormats.BLOCK.getVertexSize();
+        int stride = DefaultVertexFormat.BLOCK.getVertexSize();
         int count = (inData.length * 4) / stride;
         for (int i=0;i<count;i++)
         {

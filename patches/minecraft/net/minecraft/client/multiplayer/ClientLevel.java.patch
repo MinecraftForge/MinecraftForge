@@ -1,0 +1,72 @@
+--- a/net/minecraft/client/multiplayer/ClientLevel.java
++++ b/net/minecraft/client/multiplayer/ClientLevel.java
+@@ -112,6 +_,8 @@
+       this.m_104752_(new BlockPos(8, 64, 8), 0.0F);
+       this.m_46465_();
+       this.m_46466_();
++      this.gatherCapabilities();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(this));
+    }
+ 
+    public DimensionSpecialEffects m_104583_() {
+@@ -171,6 +_,7 @@
+       this.m_46473_().m_6521_(() -> {
+          return Registry.f_122826_.m_7981_(p_104640_.m_6095_()).toString();
+       });
++      if (p_104640_.canUpdate())
+       p_104640_.m_8119_();
+       this.m_46473_().m_7238_();
+ 
+@@ -233,8 +_,10 @@
+    }
+ 
+    private void m_104739_(int p_104740_, Entity p_104741_) {
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_104741_, this))) return;
+       this.m_171642_(p_104740_, Entity.RemovalReason.DISCARDED);
+       this.f_171631_.m_157653_(p_104741_);
++      p_104741_.onAddedToWorld();
+    }
+ 
+    public void m_171642_(int p_171643_, Entity.RemovalReason p_171644_) {
+@@ -367,6 +_,11 @@
+    }
+ 
+    public void m_6263_(@Nullable Player p_104645_, double p_104646_, double p_104647_, double p_104648_, SoundEvent p_104649_, SoundSource p_104650_, float p_104651_, float p_104652_) {
++      net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_104645_, p_104649_, p_104650_, p_104651_, p_104652_);
++      if (event.isCanceled() || event.getSound() == null) return;
++      p_104649_ = event.getSound();
++      p_104650_ = event.getCategory();
++      p_104651_ = event.getVolume();
+       if (p_104645_ == this.f_104565_.f_91074_) {
+          this.m_7785_(p_104646_, p_104647_, p_104648_, p_104649_, p_104650_, p_104651_, p_104652_, false);
+       }
+@@ -374,6 +_,11 @@
+    }
+ 
+    public void m_6269_(@Nullable Player p_104659_, Entity p_104660_, SoundEvent p_104661_, SoundSource p_104662_, float p_104663_, float p_104664_) {
++      net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_104659_, p_104661_, p_104662_, p_104663_, p_104664_);
++      if (event.isCanceled() || event.getSound() == null) return;
++      p_104661_ = event.getSound();
++      p_104662_ = event.getCategory();
++      p_104663_ = event.getVolume();
+       if (p_104659_ == this.f_104565_.f_91074_) {
+          this.f_104565_.m_91106_().m_120367_(new EntityBoundSoundInstance(p_104661_, p_104662_, p_104663_, p_104664_, p_104660_));
+       }
+@@ -818,6 +_,7 @@
+       }
+ 
+       public void m_104851_(Difficulty p_104852_) {
++         net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_104852_, this.f_104840_);
+          this.f_104840_ = p_104852_;
+       }
+ 
+@@ -860,6 +_,9 @@
+       public void m_141981_(Entity p_171716_) {
+          p_171716_.m_19877_();
+          ClientLevel.this.f_104566_.remove(p_171716_);
++
++          p_171716_.onRemovedFromWorld();
++          net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_171716_, ClientLevel.this));
+       }
+    }
+ 

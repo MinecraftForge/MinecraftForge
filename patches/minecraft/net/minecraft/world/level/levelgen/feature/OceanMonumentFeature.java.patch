@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/levelgen/feature/OceanMonumentFeature.java
++++ b/net/minecraft/world/level/levelgen/feature/OceanMonumentFeature.java
+@@ -55,8 +_,11 @@
+       return OceanMonumentFeature.OceanMonumentStart::new;
+    }
+ 
+-   public WeightedRandomList<MobSpawnSettings.SpawnerData> m_142494_() {
+-      return f_66469_;
++   @Override
++   public java.util.List<MobSpawnSettings.SpawnerData> getDefaultSpawnList(net.minecraft.world.entity.MobCategory category) {
++      if (category == net.minecraft.world.entity.MobCategory.MONSTER)
++         return f_66469_.m_146338_();
++      return java.util.Collections.emptyList();
+    }
+ 
+    public static class OceanMonumentStart extends StructureStart<NoneFeatureConfiguration> {

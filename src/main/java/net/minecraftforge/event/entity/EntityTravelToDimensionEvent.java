@@ -19,12 +19,10 @@
 
 package net.minecraftforge.event.entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * EntityTravelToDimensionEvent is fired before an Entity travels to a dimension.<br>
@@ -41,15 +39,15 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
 @Cancelable
 public class EntityTravelToDimensionEvent extends EntityEvent
 {
-    private final RegistryKey<World> dimension;
+    private final ResourceKey<Level> dimension;
 
-    public EntityTravelToDimensionEvent(Entity entity, RegistryKey<World> dimension)
+    public EntityTravelToDimensionEvent(Entity entity, ResourceKey<Level> dimension)
     {
         super(entity);
         this.dimension = dimension;
     }
 
-    public RegistryKey<World> getDimension()
+    public ResourceKey<Level> getDimension()
     {
         return dimension;
     }

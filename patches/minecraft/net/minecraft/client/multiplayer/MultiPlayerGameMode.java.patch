@@ -1,0 +1,164 @@
+--- a/net/minecraft/client/multiplayer/MultiPlayerGameMode.java
++++ b/net/minecraft/client/multiplayer/MultiPlayerGameMode.java
+@@ -102,6 +_,7 @@
+    }
+ 
+    public boolean m_105267_(BlockPos p_105268_) {
++      if (f_105189_.f_91074_.m_21205_().onBlockStartBreak(p_105268_, f_105189_.f_91074_)) return false;
+       if (this.f_105189_.f_91074_.m_36187_(this.f_105189_.f_91073_, p_105268_, this.f_105197_)) {
+          return false;
+       } else {
+@@ -116,9 +_,8 @@
+             } else if (blockstate.m_60795_()) {
+                return false;
+             } else {
+-               block.m_5707_(level, p_105268_, blockstate, this.f_105189_.f_91074_);
+                FluidState fluidstate = level.m_6425_(p_105268_);
+-               boolean flag = level.m_7731_(p_105268_, fluidstate.m_76188_(), 11);
++               boolean flag = blockstate.removedByPlayer(level, p_105268_, f_105189_.f_91074_, false, fluidstate);
+                if (flag) {
+                   block.m_6786_(level, p_105268_, blockstate);
+                }
+@@ -139,21 +_,25 @@
+             BlockState blockstate = this.f_105189_.f_91073_.m_8055_(p_105270_);
+             this.f_105189_.m_91301_().m_120581_(this.f_105189_.f_91073_, p_105270_, blockstate, 1.0F);
+             this.m_105272_(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_);
++            if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.f_105189_.f_91074_, p_105270_, p_105271_).isCanceled())
+             this.m_105267_(p_105270_);
+             this.f_105195_ = 5;
+          } else if (!this.f_105196_ || !this.m_105281_(p_105270_)) {
+             if (this.f_105196_) {
+                this.m_105272_(ServerboundPlayerActionPacket.Action.ABORT_DESTROY_BLOCK, this.f_105191_, p_105271_);
+             }
++            net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.f_105189_.f_91074_, p_105270_, p_105271_);
+ 
+             BlockState blockstate1 = this.f_105189_.f_91073_.m_8055_(p_105270_);
+             this.f_105189_.m_91301_().m_120581_(this.f_105189_.f_91073_, p_105270_, blockstate1, 0.0F);
+             this.m_105272_(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105270_, p_105271_);
+             boolean flag = !blockstate1.m_60795_();
+             if (flag && this.f_105193_ == 0.0F) {
++               if (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY)
+                blockstate1.m_60686_(this.f_105189_.f_91073_, p_105270_, this.f_105189_.f_91074_);
+             }
+ 
++            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
+             if (flag && blockstate1.m_60625_(this.f_105189_.f_91074_, this.f_105189_.f_91074_.f_19853_, p_105270_) >= 1.0F) {
+                this.m_105267_(p_105270_);
+             } else {
+@@ -193,6 +_,7 @@
+          BlockState blockstate1 = this.f_105189_.f_91073_.m_8055_(p_105284_);
+          this.f_105189_.m_91301_().m_120581_(this.f_105189_.f_91073_, p_105284_, blockstate1, 1.0F);
+          this.m_105272_(ServerboundPlayerActionPacket.Action.START_DESTROY_BLOCK, p_105284_, p_105285_);
++         if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.f_105189_.f_91074_, p_105284_, p_105285_).isCanceled())
+          this.m_105267_(p_105284_);
+          return true;
+       } else if (this.m_105281_(p_105284_)) {
+@@ -203,12 +_,13 @@
+          } else {
+             this.f_105193_ += blockstate.m_60625_(this.f_105189_.f_91074_, this.f_105189_.f_91074_.f_19853_, p_105284_);
+             if (this.f_105194_ % 4.0F == 0.0F) {
+-               SoundType soundtype = blockstate.m_60827_();
++               SoundType soundtype = blockstate.getSoundType(this.f_105189_.f_91073_, p_105284_, this.f_105189_.f_91074_);
+                this.f_105189_.m_91106_().m_120367_(new SimpleSoundInstance(soundtype.m_56778_(), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 8.0F, soundtype.m_56774_() * 0.5F, p_105284_));
+             }
+ 
+             ++this.f_105194_;
+             this.f_105189_.m_91301_().m_120581_(this.f_105189_.f_91073_, p_105284_, blockstate, Mth.m_14036_(this.f_105193_, 0.0F, 1.0F));
++            if (net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.f_105189_.f_91074_, p_105284_, p_105285_).getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
+             if (this.f_105193_ >= 1.0F) {
+                this.f_105196_ = false;
+                this.m_105272_(ServerboundPlayerActionPacket.Action.STOP_DESTROY_BLOCK, p_105284_, p_105285_);
+@@ -227,7 +_,8 @@
+    }
+ 
+    public float m_105286_() {
+-      return this.f_105197_.m_46408_() ? 5.0F : 4.5F;
++      float attrib = (float)f_105189_.f_91074_.m_21051_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22135_();
++      return this.f_105197_.m_46408_() ? attrib : attrib - 0.5F;
+    }
+ 
+    public void m_105287_() {
+@@ -244,7 +_,7 @@
+       ItemStack itemstack = this.f_105189_.f_91074_.m_21205_();
+       boolean flag = this.f_105192_.m_41619_() && itemstack.m_41619_();
+       if (!this.f_105192_.m_41619_() && !itemstack.m_41619_()) {
+-         flag = itemstack.m_150930_(this.f_105192_.m_41720_()) && ItemStack.m_41658_(itemstack, this.f_105192_) && (itemstack.m_41763_() || itemstack.m_41773_() == this.f_105192_.m_41773_());
++         flag = !this.f_105192_.shouldCauseBlockBreakReset(itemstack);
+       }
+ 
+       return p_105282_.equals(this.f_105191_) && flag;
+@@ -266,13 +_,27 @@
+          return InteractionResult.FAIL;
+       } else {
+          ItemStack itemstack = p_105263_.m_21120_(p_105265_);
++         net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks
++                 .onRightClickBlock(p_105263_, p_105265_, blockpos, p_105266_);
++         if (event.isCanceled()) {
++            this.f_105190_.m_104955_(new ServerboundUseItemOnPacket(p_105265_, p_105266_));
++            return event.getCancellationResult();
++         }
+          if (this.f_105197_ == GameType.SPECTATOR) {
+             this.f_105190_.m_104955_(new ServerboundUseItemOnPacket(p_105265_, p_105266_));
+             return InteractionResult.SUCCESS;
+          } else {
+-            boolean flag = !p_105263_.m_21205_().m_41619_() || !p_105263_.m_21206_().m_41619_();
++            UseOnContext useoncontext = new UseOnContext(p_105263_, p_105265_, p_105266_);
++            if (event.getUseItem() != net.minecraftforge.eventbus.api.Event.Result.DENY) {
++               InteractionResult result = itemstack.onItemUseFirst(useoncontext);
++               if (result != InteractionResult.PASS) {
++                  this.f_105190_.m_104955_(new ServerboundUseItemOnPacket(p_105265_, p_105266_));
++                  return result;
++               }
++            }
++            boolean flag = !p_105263_.m_21205_().doesSneakBypassUse(p_105264_,blockpos,p_105263_) || !p_105263_.m_21206_().doesSneakBypassUse(p_105264_,blockpos,p_105263_);
+             boolean flag1 = p_105263_.m_36341_() && flag;
+-            if (!flag1) {
++            if (event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY && !flag1)) {
+                InteractionResult interactionresult = p_105264_.m_8055_(blockpos).m_60664_(p_105264_, p_105263_, p_105265_, p_105266_);
+                if (interactionresult.m_19077_()) {
+                   this.f_105190_.m_104955_(new ServerboundUseItemOnPacket(p_105265_, p_105266_));
+@@ -281,8 +_,8 @@
+             }
+ 
+             this.f_105190_.m_104955_(new ServerboundUseItemOnPacket(p_105265_, p_105266_));
+-            if (!itemstack.m_41619_() && !p_105263_.m_36335_().m_41519_(itemstack.m_41720_())) {
+-               UseOnContext useoncontext = new UseOnContext(p_105263_, p_105265_, p_105266_);
++            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.DENY) return InteractionResult.PASS;
++            if (event.getUseItem() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (!itemstack.m_41619_() && !p_105263_.m_36335_().m_41519_(itemstack.m_41720_()))) {
+                InteractionResult interactionresult1;
+                if (this.f_105197_.m_46408_()) {
+                   int i = itemstack.m_41613_();
+@@ -311,10 +_,13 @@
+          if (p_105236_.m_36335_().m_41519_(itemstack.m_41720_())) {
+             return InteractionResult.PASS;
+          } else {
++            InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_105236_, p_105238_);
++            if (cancelResult != null) return cancelResult;
+             InteractionResultHolder<ItemStack> interactionresultholder = itemstack.m_41682_(p_105237_, p_105236_, p_105238_);
+             ItemStack itemstack1 = interactionresultholder.m_19095_();
+             if (itemstack1 != itemstack) {
+                p_105236_.m_21008_(p_105238_, itemstack1);
++               if (itemstack1.m_41619_()) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_105236_, itemstack, p_105238_);
+             }
+ 
+             return interactionresultholder.m_19089_();
+@@ -343,6 +_,9 @@
+    public InteractionResult m_105226_(Player p_105227_, Entity p_105228_, InteractionHand p_105229_) {
+       this.m_105297_();
+       this.f_105190_.m_104955_(ServerboundInteractPacket.m_179608_(p_105228_, p_105227_.m_6144_(), p_105229_));
++      if (this.f_105197_ == GameType.SPECTATOR) return InteractionResult.PASS; // don't fire for spectators to match non-specific EntityInteract
++      InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntity(p_105227_, p_105228_, p_105229_);
++      if(cancelResult != null) return cancelResult;
+       return this.f_105197_ == GameType.SPECTATOR ? InteractionResult.PASS : p_105227_.m_36157_(p_105228_, p_105229_);
+    }
+ 
+@@ -350,6 +_,9 @@
+       this.m_105297_();
+       Vec3 vec3 = p_105233_.m_82450_().m_82492_(p_105232_.m_20185_(), p_105232_.m_20186_(), p_105232_.m_20189_());
+       this.f_105190_.m_104955_(ServerboundInteractPacket.m_179612_(p_105232_, p_105231_.m_6144_(), p_105234_, vec3));
++      if (this.f_105197_ == GameType.SPECTATOR) return InteractionResult.PASS; // don't fire for spectators to match non-specific EntityInteract
++      InteractionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAt(p_105231_, p_105232_, p_105233_, p_105234_);
++      if(cancelResult != null) return cancelResult;
+       return this.f_105197_ == GameType.SPECTATOR ? InteractionResult.PASS : p_105232_.m_7111_(p_105231_, vec3, p_105234_);
+    }
+ 

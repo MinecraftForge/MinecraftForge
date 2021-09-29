@@ -33,19 +33,19 @@ import java.util.TreeMap;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.resources.model.ModelState;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.client.renderer.model.BlockPart;
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.renderer.block.model.BlockElement;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Interpolation;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Type;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Variable;
@@ -326,7 +326,7 @@ public class ModelBlockAnimation
             }
 
             @Override
-            public TransformationMatrix apply(float time)
+            public Transformation apply(float time)
             {
                 time -= Math.floor(time);
                 Vector3f translation = new Vector3f(0, 0, 0);
@@ -338,7 +338,7 @@ public class ModelBlockAnimation
                 {
                     int length = loop ? var.samples.length : (var.samples.length - 1);
                     float timeScaled = time * length;
-                    int s1 = MathHelper.clamp((int)Math.round(Math.floor(timeScaled)), 0, length - 1);
+                    int s1 = Mth.clamp((int)Math.round(Math.floor(timeScaled)), 0, length - 1);
                     float progress = timeScaled - s1;
                     int s2 = s1 + 1;
                     if(s2 == length && loop) s2 = 0;
@@ -409,10 +409,10 @@ public class ModelBlockAnimation
                     }
                 }
                 Quaternion rot = new Quaternion(rotation_axis, rotation_angle, false);
-                TransformationMatrix base = new TransformationMatrix(translation, rot, scale, null);
+                Transformation base = new Transformation(translation, rot, scale, null);
                 Vector3f negOrigin = origin.copy();
                 negOrigin.mul(-1,-1,-1);
-                base = new TransformationMatrix(origin, null, null, null).compose(base).compose(new TransformationMatrix(negOrigin, null, null, null));
+                base = new Transformation(origin, null, null, null).compose(base).compose(new Transformation(negOrigin, null, null, null));
                 return base.blockCenterToCorner();
             }
         }
@@ -428,9 +428,9 @@ public class ModelBlockAnimation
         }
 
         @Override
-        public TransformationMatrix getInvBindPose()
+        public Transformation getInvBindPose()
         {
-            return TransformationMatrix.identity();
+            return Transformation.identity();
         }
 
         @Override
@@ -517,13 +517,13 @@ public class ModelBlockAnimation
     }
 
     @Nullable
-    public TransformationMatrix getPartTransform(IModelTransform state, BlockPart part, int i)
+    public Transformation getPartTransform(ModelState state, BlockElement part, int i)
     {
         return getPartTransform(state, i);
     }
 
     @Nullable
-    public TransformationMatrix getPartTransform(IModelTransform state, int i)
+    public Transformation getPartTransform(ModelState state, int i)
     {
         ImmutableCollection<MBJointWeight> infos = getJoint(i);
         if(!infos.isEmpty())
@@ -535,7 +535,7 @@ public class ModelBlockAnimation
                 if(info.getWeights().containsKey(i))
                 {
                     ModelBlockAnimation.MBJoint joint = new ModelBlockAnimation.MBJoint(info.getName());
-                    TransformationMatrix trOp = state.getPartTransformation(joint);
+                    Transformation trOp = state.getPartTransformation(joint);
                     if(!trOp.isIdentity())
                     {
                         float w = info.getWeights().get(i)[0];
@@ -549,7 +549,7 @@ public class ModelBlockAnimation
             if(weight > 1e-5)
             {
                 m.multiply(1f / weight);
-                return new TransformationMatrix(m);
+                return new Transformation(m);
             }
         }
         return null;
@@ -558,11 +558,11 @@ public class ModelBlockAnimation
     /**
      * Load armature associated with a vanilla model.
      */
-    public static ModelBlockAnimation loadVanillaAnimation(IResourceManager manager, ResourceLocation armatureLocation)
+    public static ModelBlockAnimation loadVanillaAnimation(ResourceManager manager, ResourceLocation armatureLocation)
     {
         try
         {
-            try (IResource resource = manager.getResource(armatureLocation))
+            try (Resource resource = manager.getResource(armatureLocation))
             {
                 ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8), ModelBlockAnimation.class);
                 //String json = mbaGson.toJson(mba);

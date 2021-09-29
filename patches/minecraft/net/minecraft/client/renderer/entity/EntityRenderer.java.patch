@@ -1,24 +1,24 @@
 --- a/net/minecraft/client/renderer/entity/EntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/EntityRenderer.java
-@@ -60,8 +_,10 @@
+@@ -63,8 +_,10 @@
     }
  
-    public void func_225623_a_(T p_225623_1_, float p_225623_2_, float p_225623_3_, MatrixStack p_225623_4_, IRenderTypeBuffer p_225623_5_, int p_225623_6_) {
--      if (this.func_177070_b(p_225623_1_)) {
--         this.func_225629_a_(p_225623_1_, p_225623_1_.func_145748_c_(), p_225623_4_, p_225623_5_, p_225623_6_);
-+      net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(p_225623_1_, p_225623_1_.func_145748_c_(), this, p_225623_4_, p_225623_5_, p_225623_6_, p_225623_3_);
+    public void m_7392_(T p_114485_, float p_114486_, float p_114487_, PoseStack p_114488_, MultiBufferSource p_114489_, int p_114490_) {
+-      if (this.m_6512_(p_114485_)) {
+-         this.m_7649_(p_114485_, p_114485_.m_5446_(), p_114488_, p_114489_, p_114490_);
++      net.minecraftforge.client.event.RenderNameplateEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameplateEvent(p_114485_, p_114485_.m_5446_(), this, p_114488_, p_114489_, p_114490_, p_114487_);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
-+      if (renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || this.func_177070_b(p_225623_1_))) {
-+         this.func_225629_a_(p_225623_1_, renderNameplateEvent.getContent(), p_225623_4_, p_225623_5_, p_225623_6_);
++      if (renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || this.m_6512_(p_114485_))) {
++         this.m_7649_(p_114485_, renderNameplateEvent.getContent(), p_114488_, p_114489_, p_114490_);
        }
     }
  
-@@ -77,7 +_,7 @@
+@@ -80,7 +_,7 @@
  
-    protected void func_225629_a_(T p_225629_1_, ITextComponent p_225629_2_, MatrixStack p_225629_3_, IRenderTypeBuffer p_225629_4_, int p_225629_5_) {
-       double d0 = this.field_76990_c.func_229099_b_(p_225629_1_);
+    protected void m_7649_(T p_114498_, Component p_114499_, PoseStack p_114500_, MultiBufferSource p_114501_, int p_114502_) {
+       double d0 = this.f_114476_.m_114471_(p_114498_);
 -      if (!(d0 > 4096.0D)) {
-+      if (net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance(p_225629_1_, d0)) {
-          boolean flag = !p_225629_1_.func_226273_bm_();
-          float f = p_225629_1_.func_213302_cg() + 0.5F;
-          int i = "deadmau5".equals(p_225629_2_.getString()) ? -10 : 0;
++      if (net.minecraftforge.client.ForgeHooksClient.isNameplateInRenderDistance(p_114498_, d0)) {
+          boolean flag = !p_114498_.m_20163_();
+          float f = p_114498_.m_20206_() + 0.5F;
+          int i = "deadmau5".equals(p_114499_.getString()) ? -10 : 0;

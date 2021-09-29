@@ -27,16 +27,16 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.world.biome.Biomes;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.WeightedRandom;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.util.WeighedRandom;
+import net.minecraft.world.level.biome.Biome;
 
 public class BiomeManager
 {
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
-    private static final List<RegistryKey<Biome>> additionalOverworldBiomes = new ArrayList<>();
-    private static final List<RegistryKey<Biome>> additionalOverworldBiomesView = Collections.unmodifiableList(additionalOverworldBiomes);
+    private static final List<ResourceKey<Biome>> additionalOverworldBiomes = new ArrayList<>();
+    private static final List<ResourceKey<Biome>> additionalOverworldBiomesView = Collections.unmodifiableList(additionalOverworldBiomes);
 
     private static TrackedList<BiomeEntry>[] setupBiomes()
     {
@@ -103,7 +103,7 @@ public class BiomeManager
     /**
      * Add biomes that you add to the overworld without using {@link BiomeManager#addBiome(BiomeType, BiomeEntry)}
      */
-    public static void addAdditionalOverworldBiomes(RegistryKey<Biome> biome)
+    public static void addAdditionalOverworldBiomes(ResourceKey<Biome> biome)
     {
         if (!"minecraft".equals(biome.location().getNamespace()) && additionalOverworldBiomes.stream().noneMatch(entry -> entry.location().equals(biome.location())))
         {
@@ -133,7 +133,7 @@ public class BiomeManager
     /**
      * @return list of biomes that might be generated in the overworld in addition to the vanilla biomes
      */
-    public static List<RegistryKey<Biome>> getAdditionalOverworldBiomes()
+    public static List<ResourceKey<Biome>> getAdditionalOverworldBiomes()
     {
         return additionalOverworldBiomesView;
     }
@@ -157,17 +157,17 @@ public class BiomeManager
         DESERT, DESERT_LEGACY, WARM, COOL, ICY;
     }
 
-    public static class BiomeEntry extends WeightedRandom.Item
+    public static class BiomeEntry extends WeighedRandom.WeighedRandomItem
     {
-        private final RegistryKey<Biome> key;
+        private final ResourceKey<Biome> key;
 
-        public BiomeEntry(RegistryKey<Biome> key, int weight)
+        public BiomeEntry(ResourceKey<Biome> key, int weight)
         {
             super(weight);
             this.key = key;
         }
 
-        public RegistryKey<Biome> getKey()
+        public ResourceKey<Biome> getKey()
         {
             return this.key;
         }

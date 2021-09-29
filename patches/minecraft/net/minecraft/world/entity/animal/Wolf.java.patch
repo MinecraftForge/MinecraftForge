@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/animal/Wolf.java
++++ b/net/minecraft/world/entity/animal/Wolf.java
+@@ -348,7 +_,7 @@
+                itemstack.m_41774_(1);
+             }
+ 
+-            if (this.f_19796_.nextInt(3) == 0) {
++            if (this.f_19796_.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_30412_)) {
+                this.m_21828_(p_30412_);
+                this.f_21344_.m_26573_();
+                this.m_6710_((LivingEntity)null);

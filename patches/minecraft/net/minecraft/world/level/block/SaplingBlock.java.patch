@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/block/SaplingBlock.java
++++ b/net/minecraft/world/level/block/SaplingBlock.java
+@@ -32,6 +_,7 @@
+ 
+    public void m_7455_(BlockState p_56003_, ServerLevel p_56004_, BlockPos p_56005_, Random p_56006_) {
+       if (p_56004_.m_46803_(p_56005_.m_7494_()) >= 9 && p_56006_.nextInt(7) == 0) {
++      if (!p_56004_.isAreaLoaded(p_56005_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
+          this.m_55980_(p_56004_, p_56005_, p_56003_, p_56006_);
+       }
+ 
+@@ -41,6 +_,7 @@
+       if (p_55983_.m_61143_(f_55973_) == 0) {
+          p_55981_.m_7731_(p_55982_, p_55983_.m_61122_(f_55973_), 4);
+       } else {
++         if (!net.minecraftforge.event.ForgeEventFactory.saplingGrowTree(p_55981_, p_55984_, p_55982_)) return;
+          this.f_55975_.m_6334_(p_55981_, p_55981_.m_7726_().m_8481_(), p_55982_, p_55983_, p_55984_);
+       }
+ 

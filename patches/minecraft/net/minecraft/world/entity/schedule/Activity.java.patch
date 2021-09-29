@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/schedule/Activity.java
++++ b/net/minecraft/world/entity/schedule/Activity.java
+@@ -2,7 +_,7 @@
+ 
+ import net.minecraft.core.Registry;
+ 
+-public class Activity {
++public class Activity extends net.minecraftforge.registries.ForgeRegistryEntry<Activity> {
+    public static final Activity f_37978_ = m_37999_("core");
+    public static final Activity f_37979_ = m_37999_("idle");
+    public static final Activity f_37980_ = m_37999_("work");

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/monster/piglin/StopHoldingItemIfNoLongerAdmiring.java
++++ b/net/minecraft/world/entity/monster/piglin/StopHoldingItemIfNoLongerAdmiring.java
+@@ -13,7 +_,7 @@
+    }
+ 
+    protected boolean m_6114_(ServerLevel p_35255_, E p_35256_) {
+-      return !p_35256_.m_21206_().m_41619_() && !p_35256_.m_21206_().m_150930_(Items.f_42740_);
++      return !p_35256_.m_21206_().m_41619_() && !p_35256_.m_21206_().canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK);
+    }
+ 
+    protected void m_6735_(ServerLevel p_35258_, E p_35259_, long p_35260_) {

@@ -1,0 +1,13 @@
+-p @MODULE_PATH@
+--add-modules @MODULES@
+--add-opens java.base/java.util.jar=cpw.mods.securejarhandler
+--add-exports java.base/sun.security.util=cpw.mods.securejarhandler
+-DignoreList=@IGNORE_LIST@
+-DlibraryDirectory=libraries
+-DlegacyClassPath=@CLASS_PATH@
+cpw.mods.bootstraplauncher.BootstrapLauncher
+--launchTarget @TASK@
+--fml.forgeVersion @FORGE_VERSION@
+--fml.mcVersion @MC_VERSION@
+--fml.forgeGroup @FORGE_GROUP@
+--fml.mcpVersion @MCP_VERSION@

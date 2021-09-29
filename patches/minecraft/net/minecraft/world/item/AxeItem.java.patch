@@ -1,0 +1,38 @@
+--- a/net/minecraft/world/item/AxeItem.java
++++ b/net/minecraft/world/item/AxeItem.java
+@@ -31,11 +_,9 @@
+       BlockPos blockpos = p_40529_.m_8083_();
+       Player player = p_40529_.m_43723_();
+       BlockState blockstate = level.m_8055_(blockpos);
+-      Optional<BlockState> optional = this.m_150690_(blockstate);
+-      Optional<BlockState> optional1 = WeatheringCopper.m_154899_(blockstate);
+-      Optional<BlockState> optional2 = Optional.ofNullable(HoneycombItem.f_150864_.get().get(blockstate.m_60734_())).map((p_150694_) -> {
+-         return p_150694_.m_152465_(blockstate);
+-      });
++      Optional<BlockState> optional = Optional.ofNullable(blockstate.getToolModifiedState(level, blockpos, player, p_40529_.m_43722_(), net.minecraftforge.common.ToolActions.AXE_STRIP));
++      Optional<BlockState> optional1 = Optional.ofNullable(blockstate.getToolModifiedState(level, blockpos, player, p_40529_.m_43722_(), net.minecraftforge.common.ToolActions.AXE_SCRAPE));
++      Optional<BlockState> optional2 = Optional.ofNullable(blockstate.getToolModifiedState(level, blockpos, player, p_40529_.m_43722_(), net.minecraftforge.common.ToolActions.AXE_WAX_OFF));
+       ItemStack itemstack = p_40529_.m_43722_();
+       Optional<BlockState> optional3 = Optional.empty();
+       if (optional.isPresent()) {
+@@ -69,9 +_,20 @@
+       }
+    }
+ 
++   @javax.annotation.Nullable
++   public static BlockState getAxeStrippingState(BlockState originalState) {
++      Block block = f_150683_.get(originalState.m_60734_());
++      return block != null ? block.m_49966_().m_61124_(RotatedPillarBlock.f_55923_, originalState.m_61143_(RotatedPillarBlock.f_55923_)) : null;
++   }
++
+    private Optional<BlockState> m_150690_(BlockState p_150691_) {
+       return Optional.ofNullable(f_150683_.get(p_150691_.m_60734_())).map((p_150689_) -> {
+          return p_150689_.m_49966_().m_61124_(RotatedPillarBlock.f_55923_, p_150691_.m_61143_(RotatedPillarBlock.f_55923_));
+       });
++   }
++
++   @Override
++   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++      return net.minecraftforge.common.ToolActions.DEFAULT_AXE_ACTIONS.contains(toolAction);
+    }
+ }

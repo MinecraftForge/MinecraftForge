@@ -1,0 +1,13 @@
+--- a/net/minecraft/network/chat/TranslatableComponent.java
++++ b/net/minecraft/network/chat/TranslatableComponent.java
+@@ -87,6 +_,10 @@
+             }
+          }
+ 
++         if (j == 0) {
++            // if we failed to match above, lets try the messageformat handler instead.
++            j = net.minecraftforge.fmllegacy.TextComponentMessageFormatHandler.handle(this, this.f_131301_, this.f_131299_, p_131322_);
++         }
+          if (j < p_131322_.length()) {
+             String s3 = p_131322_.substring(j);
+             if (s3.indexOf(37) != -1) {

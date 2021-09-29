@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.model.animation;
 
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 
 import java.lang.ref.WeakReference;
 
@@ -30,12 +30,12 @@ public enum Animation
     private float clientPartialTickTime;
 
     private static long epochTime;
-    private static WeakReference<World> worldRef;
+    private static WeakReference<Level> worldRef;
 
     /**
      * Get the global world time for the current tick, in seconds.
      */
-    public static float getWorldTime(World world)
+    public static float getWorldTime(Level world)
     {
         return getWorldTime(world, 0);
     }
@@ -43,7 +43,7 @@ public enum Animation
     /**
      * Get the global world time for the current tick + partial tick progress, in seconds.
      */
-    public static float getWorldTime(World world, float tickProgress)
+    public static float getWorldTime(Level world, float tickProgress)
     {
         if (worldRef == null || worldRef.get() != world)
         {

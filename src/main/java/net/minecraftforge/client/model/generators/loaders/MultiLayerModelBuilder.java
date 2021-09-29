@@ -22,7 +22,7 @@ package net.minecraftforge.client.model.generators.loaders;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.MultiLayerModel;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;

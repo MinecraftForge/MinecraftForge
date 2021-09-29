@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/inventory/InventoryMenu.java
++++ b/net/minecraft/world/inventory/InventoryMenu.java
+@@ -57,7 +_,7 @@
+             }
+ 
+             public boolean m_5857_(ItemStack p_39746_) {
+-               return equipmentslot == Mob.m_147233_(p_39746_);
++               return p_39746_.canEquip(equipmentslot, f_39703_);
+             }
+ 
+             public boolean m_8010_(Player p_39744_) {

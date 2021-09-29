@@ -19,9 +19,8 @@
 
 package net.minecraftforge.event.world;
 
-import net.minecraft.world.IWorld;
-import net.minecraft.world.chunk.IChunk;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.chunk.ChunkAccess;
 
 /**
  * ChunkEvent is fired when an event involving a chunk occurs.<br>
@@ -34,21 +33,21 @@ import net.minecraftforge.common.MinecraftForge;
  **/
 public class ChunkEvent extends WorldEvent
 {
-    private final IChunk chunk;
+    private final ChunkAccess chunk;
 
-    public ChunkEvent(IChunk chunk)
+    public ChunkEvent(ChunkAccess chunk)
     {
         super(chunk.getWorldForge());
         this.chunk = chunk;
     }
 
-    public ChunkEvent(IChunk chunk, IWorld world)
+    public ChunkEvent(ChunkAccess chunk, LevelAccessor world)
     {
         super(world);
         this.chunk = chunk;
     }
 
-    public IChunk getChunk()
+    public ChunkAccess getChunk()
     {
         return chunk;
     }
@@ -68,7 +67,7 @@ public class ChunkEvent extends WorldEvent
      **/
     public static class Load extends ChunkEvent
     {
-        public Load(IChunk chunk)
+        public Load(ChunkAccess chunk)
         {
             super(chunk);
         }
@@ -87,7 +86,7 @@ public class ChunkEvent extends WorldEvent
      **/
     public static class Unload extends ChunkEvent
     {
-        public Unload(IChunk chunk)
+        public Unload(ChunkAccess chunk)
         {
             super(chunk);
         }

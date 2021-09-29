@@ -31,10 +31,10 @@ import javax.annotation.Nullable;
 import com.google.common.base.Preconditions;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -45,13 +45,13 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @EventBusSubscriber(modid = "forge", bus = Bus.FORGE, value = Dist.CLIENT)
 public class ModelDataManager
 {
-    private static WeakReference<World> currentWorld = new WeakReference<>(null);
+    private static WeakReference<Level> currentWorld = new WeakReference<>(null);
     
     private static final Map<ChunkPos, Set<BlockPos>> needModelDataRefresh = new ConcurrentHashMap<>();
     
     private static final Map<ChunkPos, Map<BlockPos, IModelData>> modelDataCache = new ConcurrentHashMap<>();
 
-    private static void cleanCaches(World world)
+    private static void cleanCaches(Level world)
     {
         Preconditions.checkNotNull(world, "World must not be null");
         Preconditions.checkArgument(world == Minecraft.getInstance().level, "Cannot use model data for a world other than the current client world");
@@ -63,17 +63,17 @@ public class ModelDataManager
         }
     }
     
-    public static void requestModelDataRefresh(TileEntity te)
+    public static void requestModelDataRefresh(BlockEntity te)
     {
         Preconditions.checkNotNull(te, "Tile entity must not be null");
-        World world = te.getLevel();
+        Level world = te.getLevel();
 
         cleanCaches(world);
         needModelDataRefresh.computeIfAbsent(new ChunkPos(te.getBlockPos()), $ -> Collections.synchronizedSet(new HashSet<>()))
                             .add(te.getBlockPos());
     }
     
-    private static void refreshModelData(World world, ChunkPos chunk)
+    private static void refreshModelData(Level world, ChunkPos chunk)
     {        
         cleanCaches(world);
         Set<BlockPos> needUpdate = needModelDataRefresh.remove(chunk);
@@ -83,7 +83,7 @@ public class ModelDataManager
             Map<BlockPos, IModelData> data = modelDataCache.computeIfAbsent(chunk, $ -> new ConcurrentHashMap<>());
             for (BlockPos pos : needUpdate)
             {
-                TileEntity toUpdate = world.getBlockEntity(pos);
+                BlockEntity toUpdate = world.getBlockEntity(pos);
                 if (toUpdate != null && !toUpdate.isRemoved())
                 {
                     data.put(pos, toUpdate.getModelData());
@@ -106,12 +106,12 @@ public class ModelDataManager
         modelDataCache.remove(chunk);
     }
     
-    public static @Nullable IModelData getModelData(World world, BlockPos pos)
+    public static @Nullable IModelData getModelData(Level world, BlockPos pos)
     {
         return getModelData(world, new ChunkPos(pos)).get(pos);
     }
     
-    public static Map<BlockPos, IModelData> getModelData(World world, ChunkPos pos)
+    public static Map<BlockPos, IModelData> getModelData(Level world, ChunkPos pos)
     {
         Preconditions.checkArgument(world.isClientSide, "Cannot request model data for server world");
         refreshModelData(world, pos);

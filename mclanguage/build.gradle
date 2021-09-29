@@ -1,0 +1,63 @@
+plugins {
+    id 'com.github.ben-manes.versions'
+    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
+}
+apply plugin: 'java-library'
+apply plugin: 'jacoco'
+apply plugin: 'org.javamodularity.moduleplugin'
+
+dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
+
+dependencies {
+    compileOnly('org.jetbrains:annotations:21.0.1')
+    implementation(project(':fmlloader'))
+    implementation(project(':fmlcore'))
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+ext {
+    MANIFESTS = [
+        '': [
+            'FMLModType': 'LANGPROVIDER',
+            'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            'Git-Commit': GIT_INFO.abbreviatedId,
+            'Git-Branch': GIT_INFO.branch,
+            'Build-Number': "${System.getenv('BUILD_NUMBER')?:0}",
+        ] as LinkedHashMap,
+        'net/minecraftforge/fml/mclanguageprovider/': [
+            'Specification-Title':      'FMLLoader',
+            'Specification-Vendor':     'Forge Development LLC',
+            'Specification-Version':    '1',
+            'Implementation-Title':     'FML Loader',
+            'Implementation-Version':   '1.0',
+            'Implementation-Vendor':    'Forge'
+        ] as LinkedHashMap
+    ]
+}
+
+jar.doFirst {
+    MANIFESTS.each { pkg, values ->
+        if (pkg == '')
+            manifest.attributes(values)
+        else
+            manifest.attributes(values, pkg)
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+publishing.publications.mavenJava(MavenPublication) {
+    from components.java
+    artifact sourcesJar
+}

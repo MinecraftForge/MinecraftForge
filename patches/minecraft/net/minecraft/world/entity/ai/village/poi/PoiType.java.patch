@@ -1,0 +1,41 @@
+--- a/net/minecraft/world/entity/ai/village/poi/PoiType.java
++++ b/net/minecraft/world/entity/ai/village/poi/PoiType.java
+@@ -21,7 +_,7 @@
+ import net.minecraft.world.level.block.state.BlockState;
+ import net.minecraft.world.level.block.state.properties.BedPart;
+ 
+-public class PoiType {
++public class PoiType extends net.minecraftforge.registries.ForgeRegistryEntry<PoiType> {
+    private static final Supplier<Set<PoiType>> f_27353_ = Suppliers.memoize(() -> {
+       return Registry.f_122869_.m_123024_().map(VillagerProfession::m_35622_).collect(Collectors.toSet());
+    });
+@@ -39,7 +_,7 @@
+    private static final Set<BlockState> f_148686_ = ImmutableList.of(Blocks.f_50256_, Blocks.f_152477_, Blocks.f_152476_, Blocks.f_152478_).stream().flatMap((p_148697_) -> {
+       return p_148697_.m_49965_().m_61056_().stream();
+    }).collect(ImmutableSet.toImmutableSet());
+-   private static final Map<BlockState, PoiType> f_27323_ = Maps.newHashMap();
++   private static final Map<BlockState, PoiType> f_27323_ = net.minecraftforge.registries.GameData.getBlockStatePointOfInterestTypeMap();
+    public static final PoiType f_27331_ = m_27379_("unemployed", ImmutableSet.of(), 1, f_27329_, 1);
+    public static final PoiType f_27332_ = m_27374_("armorer", m_27372_(Blocks.f_50620_), 1, 1);
+    public static final PoiType f_27333_ = m_27374_("butcher", m_27372_(Blocks.f_50619_), 1, 1);
+@@ -124,16 +_,14 @@
+    }
+ 
+    private static PoiType m_27367_(PoiType p_27368_) {
+-      p_27368_.f_27325_.forEach((p_148691_) -> {
+-         PoiType poitype = f_27323_.put(p_148691_, p_27368_);
+-         if (poitype != null) {
+-            throw (IllegalStateException)Util.m_137570_(new IllegalStateException(String.format("%s is defined in too many tags", p_148691_)));
+-         }
+-      });
+       return p_27368_;
+    }
+ 
+    public static Optional<PoiType> m_27390_(BlockState p_27391_) {
+       return Optional.ofNullable(f_27323_.get(p_27391_));
++   }
++   
++   public ImmutableSet<BlockState> getBlockStates() {
++      return ImmutableSet.copyOf(this.f_27325_);
+    }
+ }

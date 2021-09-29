@@ -1,0 +1,68 @@
+--- a/net/minecraft/world/level/storage/loot/LootContext.java
++++ b/net/minecraft/world/level/storage/loot/LootContext.java
+@@ -107,17 +_,47 @@
+       return this.f_78909_;
+    }
+ 
++   // ============================== FORGE START ==============================
++   public int getLootingModifier() {
++      return net.minecraftforge.common.ForgeHooks.getLootingLevel(m_78953_(LootContextParams.f_81455_), m_78953_(LootContextParams.f_81458_), m_78953_(LootContextParams.f_81457_));
++   }
++
++   private ResourceLocation queriedLootTableId;
++
++   private LootContext(Random rand, float luckIn, ServerLevel worldIn, Function<ResourceLocation, LootTable> lootTableManagerIn, Function<ResourceLocation, LootItemCondition> p_i225885_5_, Map<LootContextParam<?>, Object> parametersIn, Map<ResourceLocation, LootContext.DynamicDrop> conditionsIn, ResourceLocation queriedLootTableId) {
++      this(rand, luckIn, worldIn, lootTableManagerIn, p_i225885_5_, parametersIn, conditionsIn);
++      if (queriedLootTableId != null) this.queriedLootTableId = queriedLootTableId;
++   }
++
++   public void setQueriedLootTableId(ResourceLocation queriedLootTableId) {
++      if (this.queriedLootTableId == null && queriedLootTableId != null) this.queriedLootTableId = queriedLootTableId;
++   }
++   public ResourceLocation getQueriedLootTableId() {
++      return this.queriedLootTableId == null? net.minecraftforge.common.loot.LootTableIdCondition.UNKNOWN_LOOT_TABLE : this.queriedLootTableId;
++   }
++   // =============================== FORGE END ===============================
++
+    public static class Builder {
+       private final ServerLevel f_78955_;
+       private final Map<LootContextParam<?>, Object> f_78956_ = Maps.newIdentityHashMap();
+       private final Map<ResourceLocation, LootContext.DynamicDrop> f_78957_ = Maps.newHashMap();
+       private Random f_78958_;
+       private float f_78959_;
++      private ResourceLocation queriedLootTableId; // Forge: correctly pass around loot table ID with copy constructor
+ 
+       public Builder(ServerLevel p_78961_) {
+          this.f_78955_ = p_78961_;
+       }
+ 
++      public Builder(LootContext context) {
++         this.f_78955_ = context.f_78909_;
++         this.f_78956_.putAll(context.f_78914_);
++         this.f_78957_.putAll(context.f_78915_);
++         this.f_78958_ = context.f_78907_;
++         this.f_78959_ = context.f_78908_;
++         this.queriedLootTableId = context.queriedLootTableId;
++      }
++
+       public LootContext.Builder m_78977_(Random p_78978_) {
+          this.f_78958_ = p_78978_;
+          return this;
+@@ -190,7 +_,7 @@
+ 
+       public LootContext m_78975_(LootContextParamSet p_78976_) {
+          Set<LootContextParam<?>> set = Sets.difference(this.f_78956_.keySet(), p_78976_.m_81398_());
+-         if (!set.isEmpty()) {
++         if (false && !set.isEmpty()) { // Forge: Allow mods to pass custom loot parameters (not part of the vanilla loot table) to the loot context.
+             throw new IllegalArgumentException("Parameters not allowed in this parameter set: " + set);
+          } else {
+             Set<LootContextParam<?>> set1 = Sets.difference(p_78976_.m_81394_(), this.f_78956_.keySet());
+@@ -203,7 +_,7 @@
+                }
+ 
+                MinecraftServer minecraftserver = this.f_78955_.m_142572_();
+-               return new LootContext(random, this.f_78959_, this.f_78955_, minecraftserver.m_129898_()::m_79217_, minecraftserver.m_129899_()::m_79252_, this.f_78956_, this.f_78957_);
++               return new LootContext(random, this.f_78959_, this.f_78955_, minecraftserver.m_129898_()::m_79217_, minecraftserver.m_129899_()::m_79252_, this.f_78956_, this.f_78957_, this.queriedLootTableId);
+             }
+          }
+       }

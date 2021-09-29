@@ -19,12 +19,8 @@
 
 package net.minecraftforge.event.entity;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 
 /**
  * EntityLeaveWorldEvent is fired when an Entity leaves the world. <br>
@@ -42,15 +38,15 @@ import net.minecraft.world.World;
 public class EntityLeaveWorldEvent extends EntityEvent
 {
 
-    private final World world;
+    private final Level world;
 
-    public EntityLeaveWorldEvent(Entity entity, World world)
+    public EntityLeaveWorldEvent(Entity entity, Level world)
     {
         super(entity);
         this.world = world;
     }
 
-    public World getWorld()
+    public Level getWorld()
     {
         return world;
     }

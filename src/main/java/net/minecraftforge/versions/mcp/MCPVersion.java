@@ -22,6 +22,9 @@ package net.minecraftforge.versions.mcp;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.JarVersionLookupHandler;
+
 import static net.minecraftforge.fml.Logging.CORE;
 
 public class MCPVersion {
@@ -29,19 +32,13 @@ public class MCPVersion {
     private static final String mcVersion;
     private static final String mcpVersion;
     static {
-        String vers = MCPVersion.class.getPackage().getSpecificationVersion();
-        if (vers == null) {
-            vers = System.getenv("MC_VERSION");
-        }
-        if (vers == null) throw new RuntimeException("Missing MC version, cannot continue");
-        mcVersion = vers;
+        LOGGER.debug(CORE, "MCP Version package {} from {}", MCPVersion.class.getPackage(), MCPVersion.class.getClassLoader());
+        mcVersion = JarVersionLookupHandler.getSpecificationVersion(MCPVersion.class).orElse(FMLLoader.versionInfo().mcVersion());
+        if (mcVersion == null) throw new RuntimeException("Missing MC version, cannot continue");
 
-        vers = MCPVersion.class.getPackage().getImplementationVersion();
-        if (vers == null) {
-            vers = System.getenv("MCP_VERSION");
-        }
-        if (vers == null) throw new RuntimeException("Missing MCP version, cannot continue");
-        mcpVersion = vers;
+        mcpVersion = JarVersionLookupHandler.getImplementationVersion(MCPVersion.class).orElse(FMLLoader.versionInfo().mcpVersion());
+        if (mcpVersion == null) throw new RuntimeException("Missing MCP version, cannot continue");
+
         LOGGER.debug(CORE, "Found MC version information {}", mcVersion);
         LOGGER.debug(CORE, "Found MCP version information {}", mcpVersion);
     }

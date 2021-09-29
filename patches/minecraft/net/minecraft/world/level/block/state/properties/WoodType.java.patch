@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/state/properties/WoodType.java
++++ b/net/minecraft/world/level/block/state/properties/WoodType.java
+@@ -32,4 +_,11 @@
+    public String m_61846_() {
+       return this.f_61839_;
+    }
++
++   /**
++    * Use this to create a new {@link WoodType}. Make sure to register its rendering by enqueuing Atlases.addWoodType(...) during client setup..
++    */
++   public static WoodType create(String name) {
++      return new WoodType(name);
++   }
+ }

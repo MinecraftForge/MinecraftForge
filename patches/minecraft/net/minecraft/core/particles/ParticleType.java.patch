@@ -1,0 +1,11 @@
+--- a/net/minecraft/core/particles/ParticleType.java
++++ b/net/minecraft/core/particles/ParticleType.java
+@@ -2,7 +_,7 @@
+ 
+ import com.mojang.serialization.Codec;
+ 
+-public abstract class ParticleType<T extends ParticleOptions> {
++public abstract class ParticleType<T extends ParticleOptions>  extends net.minecraftforge.registries.ForgeRegistryEntry<ParticleType<?>> {
+    private final boolean f_123737_;
+    private final ParticleOptions.Deserializer<T> f_123738_;
+ 

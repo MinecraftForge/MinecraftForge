@@ -19,40 +19,40 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Set;
-
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.monster.EndermanEntity;
-import net.minecraft.util.CachedBlockInfo;
-import net.minecraft.block.BlockState;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.entity.monster.EnderMan;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.state.pattern.BlockInWorld;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
  */
-public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
+public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
 {
     // Helpers for accessing Item data
-    default ItemStack getStack()
+    private ItemStack self()
     {
         return (ItemStack)this;
     }
@@ -65,7 +65,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default ItemStack getContainerItem()
     {
-        return getStack().getItem().getContainerItem(getStack());
+        return self().getItem().getContainerItem(self());
     }
 
     /**
@@ -75,7 +75,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean hasContainerItem()
     {
-        return getStack().getItem().hasContainerItem(getStack());
+        return self().getItem().hasContainerItem(self());
     }
 
     /**
@@ -83,40 +83,22 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      *         it not act as a fuel. Return -1 to let the default vanilla logic
      *         decide.
      */
-    default int getBurnTime()
+    default int getBurnTime(@Nullable RecipeType<?> recipeType)
     {
-        return getStack().getItem().getBurnTime(getStack());
+        return self().getItem().getBurnTime(self(), recipeType);
     }
 
-    /**
-     * Queries the harvest level of this item stack for the specified tool class,
-     * Returns -1 if this tool is not of the specified type
-     *
-     * @param tool   the tool type of the item
-     * @param player The player trying to harvest the given blockstate
-     * @param state  The block to harvest
-     * @return Harvest level, or -1 if not the specified tool type.
-     */
-    default int getHarvestLevel(ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState state)
+    default InteractionResult onItemUseFirst(UseOnContext context)
     {
-        return getStack().getItem().getHarvestLevel(getStack(), tool, player, state);
-    }
-
-    default Set<ToolType> getToolTypes() {
-        return getStack().getItem().getToolTypes(getStack());
-    }
-
-    default ActionResultType onItemUseFirst(ItemUseContext context)
-    {
-       PlayerEntity entityplayer = context.getPlayer();
+       Player entityplayer = context.getPlayer();
        BlockPos blockpos = context.getClickedPos();
-       CachedBlockInfo blockworldstate = new CachedBlockInfo(context.getLevel(), blockpos, false);
-       if (entityplayer != null && !entityplayer.abilities.mayBuild && !getStack().hasAdventureModePlaceTagForBlock(context.getLevel().getTagManager(), blockworldstate)) {
-          return ActionResultType.PASS;
+       BlockInWorld blockworldstate = new BlockInWorld(context.getLevel(), blockpos, false);
+       if (entityplayer != null && !entityplayer.getAbilities().mayBuild && !self().hasAdventureModePlaceTagForBlock(context.getLevel().getTagManager(), blockworldstate)) {
+          return InteractionResult.PASS;
        } else {
-          Item item = getStack().getItem();
-          ActionResultType enumactionresult = item.onItemUseFirst(getStack(), context);
-          if (entityplayer != null && enumactionresult == ActionResultType.SUCCESS) {
+          Item item = self().getItem();
+          InteractionResult enumactionresult = item.onItemUseFirst(self(), context);
+          if (entityplayer != null && enumactionresult == InteractionResult.SUCCESS) {
              entityplayer.awardStat(Stats.ITEM_USED.get(item));
           }
 
@@ -124,12 +106,25 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
        }
     }
 
-    default CompoundNBT serializeNBT()
+    default CompoundTag serializeNBT()
     {
-        CompoundNBT ret = new CompoundNBT();
-        getStack().save(ret);
+        CompoundTag ret = new CompoundTag();
+        self().save(ret);
         return ret;
     }
+
+    /**
+     * Queries if an item can perform the given action.
+     * See {@link net.minecraftforge.common.ToolActions} for a description of each stock action
+     * @param stack The stack being used
+     * @param toolAction The action being queried
+     * @return True if the stack can perform the action
+     */
+    default boolean canPerformAction(ToolAction toolAction)
+    {
+        return self().getItem().canPerformAction(self(), toolAction);
+    }
+
     /**
      * Called before a block is broken. Return true to prevent default block
      * harvesting.
@@ -140,9 +135,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @param player    The Player that is wielding the item
      * @return True to prevent harvesting, false to continue as normal
      */
-    default boolean onBlockStartBreak(BlockPos pos, PlayerEntity player)
+    default boolean onBlockStartBreak(BlockPos pos, Player player)
     {
-        return !getStack().isEmpty() && getStack().getItem().onBlockStartBreak(getStack(), pos, player);
+        return !self().isEmpty() && self().getItem().onBlockStartBreak(self(), pos, player);
     }
 
     /**
@@ -154,7 +149,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean shouldCauseBlockBreakReset(ItemStack newStack)
     {
-        return getStack().getItem().shouldCauseBlockBreakReset(getStack(), newStack);
+        return self().getItem().shouldCauseBlockBreakReset(self(), newStack);
     }
 
     /**
@@ -171,7 +166,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean canApplyAtEnchantingTable(Enchantment enchantment)
     {
-        return getStack().getItem().canApplyAtEnchantingTable(getStack(), enchantment);
+        return self().getItem().canApplyAtEnchantingTable(self(), enchantment);
     }
 
     /**
@@ -181,22 +176,22 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default int getItemEnchantability()
     {
-        return getStack().getItem().getItemEnchantability(getStack());
+        return self().getItem().getItemEnchantability(self());
     }
 
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
      * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.entity.LivingEntity#getSlotForItemStack(ItemStack)}.</em>
+     * {@link net.minecraft.world.entity.LivingEntity#getEquipmentSlotForItem(ItemStack)}.</em>
      *
      * @return the armor slot of the ItemStack, or {@code null} to let the default
      *         vanilla logic as per {@code LivingEntity.getSlotForItemStack(stack)}
      *         decide
      */
     @Nullable
-    default EquipmentSlotType getEquipmentSlot()
+    default EquipmentSlot getEquipmentSlot()
     {
-        return getStack().getItem().getEquipmentSlot(getStack());
+        return self().getItem().getEquipmentSlot(self());
     }
 
     /**
@@ -209,18 +204,21 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean canDisableShield(ItemStack shield, LivingEntity entity, LivingEntity attacker)
     {
-        return getStack().getItem().canDisableShield(getStack(), shield, entity, attacker);
+        return self().getItem().canDisableShield(self(), shield, entity, attacker);
     }
 
     /**
-     * Is this Item a shield
+     * {@return {@code true} if this item is considered a shield}
      *
-     * @param entity The Entity holding the ItemStack
-     * @return True if the ItemStack is considered a shield
+     * @param entity the entity holding the item stack
+     * @deprecated To be removed in 1.18. Call {@link #canPerformAction(ToolAction)} with
+     * {@link ToolActions#SHIELD_BLOCK} instead.
      */
+    @SuppressWarnings("removal")
+    @Deprecated(since = "1.17.1", forRemoval = true)
     default boolean isShield(@Nullable LivingEntity entity)
     {
-        return getStack().getItem().isShield(getStack(), entity);
+        return self().getItem().isShield(self(), entity);
     }
 
     /**
@@ -231,7 +229,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean onEntitySwing(LivingEntity entity)
     {
-        return getStack().getItem().onEntitySwing(getStack(), entity);
+        return self().getItem().onEntitySwing(self(), entity);
     }
 
     /**
@@ -243,7 +241,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default void onUsingTick(LivingEntity player, int count)
     {
-        getStack().getItem().onUsingTick(getStack(), player, count);
+        self().getItem().onUsingTick(self(), player, count);
     }
 
     /**
@@ -253,9 +251,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @param world     The world the entity is in
      * @return The normal lifespan in ticks.
      */
-    default int getEntityLifespan(World world)
+    default int getEntityLifespan(Level world)
     {
-        return getStack().getItem().getEntityLifespan(getStack(), world);
+        return self().getItem().getEntityLifespan(self(), world);
     }
 
     /**
@@ -268,7 +266,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean onEntityItemUpdate(ItemEntity entity)
     {
-        return getStack().getItem().onEntityItemUpdate(getStack(), entity);
+        return self().getItem().onEntityItemUpdate(self(), entity);
     }
 
     /**
@@ -277,15 +275,15 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
     */
     default float getXpRepairRatio()
     {
-        return getStack().getItem().getXpRepairRatio(getStack());
+        return self().getItem().getXpRepairRatio(self());
     }
 
     /**
      * Called to tick armor in the armor slot. Override to do something
      */
-    default void onArmorTick(World world, PlayerEntity player)
+    default void onArmorTick(Level world, Player player)
     {
-        getStack().getItem().onArmorTick(getStack(), world, player);
+        self().getItem().onArmorTick(self(), world, player);
     }
 
     /**
@@ -295,9 +293,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @param world the world the horse is in
      * @param horse the horse wearing this armor
      */
-    default void onHorseArmorTick(World world, MobEntity horse)
+    default void onHorseArmorTick(Level world, Mob horse)
     {
-        getStack().getItem().onHorseArmorTick(getStack(), world, horse);
+        self().getItem().onHorseArmorTick(self(), world, horse);
     }
 
     /**
@@ -308,9 +306,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @param entity    The entity trying to equip the armor
      * @return True if the given ItemStack can be inserted in the slot
      */
-    default boolean canEquip(EquipmentSlotType armorType, Entity entity)
+    default boolean canEquip(EquipmentSlot armorType, Entity entity)
     {
-        return getStack().getItem().canEquip(getStack(), armorType, entity);
+        return self().getItem().canEquip(self(), armorType, entity);
     }
 
     /**
@@ -321,7 +319,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean isBookEnchantable(ItemStack book)
     {
-        return getStack().getItem().isBookEnchantable(getStack(), book);
+        return self().getItem().isBookEnchantable(self(), book);
     }
 
 
@@ -332,9 +330,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      *
      * @param player The player that dropped the item
      */
-    default boolean onDroppedByPlayer(PlayerEntity player)
+    default boolean onDroppedByPlayer(Player player)
     {
-        return getStack().getItem().onDroppedByPlayer(getStack(), player);
+        return self().getItem().onDroppedByPlayer(self(), player);
     }
 
     /**
@@ -345,9 +343,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @param displayName the name that will be displayed unless it is changed in
      *                    this method.
      */
-    default ITextComponent getHighlightTip(ITextComponent displayName)
+    default Component getHighlightTip(Component displayName)
     {
-        return getStack().getItem().getHighlightTip(getStack(), displayName);
+        return self().getItem().getHighlightTip(self(), displayName);
     }
 
     /**
@@ -364,9 +362,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @return The NBT tag
      */
     @Nullable
-    default CompoundNBT getShareTag()
+    default CompoundTag getShareTag()
     {
-        return getStack().getItem().getShareTag(getStack());
+        return self().getItem().getShareTag(self());
     }
 
     /**
@@ -375,9 +373,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      *
      * @param nbt   Received NBT, can be null
      */
-    default void readShareTag(@Nullable CompoundNBT nbt)
+    default void readShareTag(@Nullable CompoundTag nbt)
     {
-        getStack().getItem().readShareTag(getStack(), nbt);
+        self().getItem().readShareTag(self(), nbt);
     }
 
     /**
@@ -389,9 +387,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @param player The Player that is wielding the item
      * @return
      */
-    default boolean doesSneakBypassUse(net.minecraft.world.IWorldReader world, BlockPos pos, PlayerEntity player)
+    default boolean doesSneakBypassUse(net.minecraft.world.level.LevelReader world, BlockPos pos, Player player)
     {
-        return getStack().isEmpty() || getStack().getItem().doesSneakBypassUse(getStack(), world, pos, player);
+        return self().isEmpty() || self().getItem().doesSneakBypassUse(self(), world, pos, player);
     }
 
     /**
@@ -401,8 +399,8 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean areShareTagsEqual(ItemStack other)
     {
-        CompoundNBT shareTagA = getStack().getShareTag();
-        CompoundNBT shareTagB = other.getShareTag();
+        CompoundTag shareTagA = self().getShareTag();
+        CompoundTag shareTagB = other.getShareTag();
         if (shareTagA == null)
             return shareTagB == null;
         else
@@ -418,11 +416,11 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean equals(ItemStack other, boolean limitTags)
     {
-        if (getStack().isEmpty())
+        if (self().isEmpty())
             return other.isEmpty();
         else
-            return !other.isEmpty() && getStack().getCount() == other.getCount() && getStack().getItem() == other.getItem() &&
-            (limitTags ? getStack().areShareTagsEqual(other) : ItemStack.tagMatches(getStack(), other));
+            return !other.isEmpty() && self().getCount() == other.getCount() && self().getItem() == other.getItem() &&
+            (limitTags ? self().areShareTagsEqual(other) : ItemStack.tagMatches(self(), other));
     }
 
     /**
@@ -432,7 +430,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean isRepairable()
     {
-        return getStack().getItem().isRepairable(getStack());
+        return self().getItem().isRepairable(self());
     }
 
     /**
@@ -442,7 +440,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean isPiglinCurrency()
     {
-        return getStack().getItem().isPiglinCurrency(getStack());
+        return self().getItem().isPiglinCurrency(self());
     }
 
     /**
@@ -455,7 +453,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean makesPiglinsNeutral(LivingEntity wearer)
     {
-        return getStack().getItem().makesPiglinsNeutral(getStack(), wearer);
+        return self().getItem().makesPiglinsNeutral(self(), wearer);
     }
 
     /**
@@ -465,9 +463,9 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      * @param endermanEntity The enderman that the player look
      * @return true if this Item can be used.
      */
-    default boolean isEnderMask(PlayerEntity player, EndermanEntity endermanEntity)
+    default boolean isEnderMask(Player player, EnderMan endermanEntity)
     {
-        return getStack().getItem().isEnderMask(getStack(), player, endermanEntity);
+        return self().getItem().isEnderMask(self(), player, endermanEntity);
     }
 
     /**
@@ -479,7 +477,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean canElytraFly(LivingEntity entity)
     {
-        return getStack().getItem().canElytraFly(getStack(), entity);
+        return self().getItem().canElytraFly(self(), entity);
     }
 
     /**
@@ -495,6 +493,19 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
      */
     default boolean elytraFlightTick(LivingEntity entity, int flightTicks)
     {
-        return getStack().getItem().elytraFlightTick(getStack(), entity, flightTicks);
+        return self().getItem().elytraFlightTick(self(), entity, flightTicks);
+    }
+    
+    /**
+     * Get a bounding box ({@link AABB}) of a sweep attack.
+     * 
+     * @param player the performing the attack the attack.
+     * @param target the entity targeted by the attack.
+     * @return the bounding box.
+     */
+    @Nonnull
+    default AABB getSweepHitBox(@Nonnull Player player, @Nonnull Entity target)
+    {
+        return self().getItem().getSweepHitBox(self(), player, target);
     }
 }

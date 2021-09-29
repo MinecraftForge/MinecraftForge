@@ -1,0 +1,200 @@
+--- a/net/minecraft/server/level/ServerLevel.java
++++ b/net/minecraft/server/level/ServerLevel.java
+@@ -173,6 +_,7 @@
+    final Int2ObjectMap<EnderDragonPart> f_143247_ = new Int2ObjectOpenHashMap<>();
+    private final StructureFeatureManager f_8560_;
+    private final boolean f_8561_;
++   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
+ 
+    public ServerLevel(MinecraftServer p_8571_, Executor p_8572_, LevelStorageSource.LevelStorageAccess p_8573_, ServerLevelData p_8574_, ResourceKey<Level> p_8575_, DimensionType p_8576_, ChunkProgressListener p_8577_, ChunkGenerator p_8578_, boolean p_8579_, long p_8580_, List<CustomSpawner> p_8581_, boolean p_8582_) {
+       super(p_8574_, p_8575_, p_8576_, p_8571_::m_129905_, false, p_8579_, p_8580_);
+@@ -208,6 +_,7 @@
+       }
+ 
+       this.f_143245_ = new SleepStatus();
++      this.initCapabilities();
+    }
+ 
+    public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {
+@@ -303,22 +_,26 @@
+          this.f_8548_.m_6846_().m_11270_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, this.f_46440_), this.m_46472_());
+       }
+ 
++      /* The function in use here has been replaced in order to only send the weather info to players in the correct dimension,
++       * rather than to all players on the server. This is what causes the client-side rain, as the
++       * client believes that it has started raining locally, rather than in another dimension.
++       */
+       if (flag != this.m_46471_()) {
+          if (flag) {
+-            this.f_8548_.m_6846_().m_11268_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132155_, 0.0F));
++            this.f_8548_.m_6846_().m_11270_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132155_, 0.0F), this.m_46472_());
+          } else {
+-            this.f_8548_.m_6846_().m_11268_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132154_, 0.0F));
++            this.f_8548_.m_6846_().m_11270_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132154_, 0.0F), this.m_46472_());
+          }
+ 
+-         this.f_8548_.m_6846_().m_11268_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132160_, this.f_46438_));
+-         this.f_8548_.m_6846_().m_11268_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, this.f_46440_));
++         this.f_8548_.m_6846_().m_11270_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132160_, this.f_46438_), this.m_46472_());
++         this.f_8548_.m_6846_().m_11270_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, this.f_46440_), this.m_46472_());
+       }
+ 
+       int l = this.m_46469_().m_46215_(GameRules.f_151486_);
+       if (this.f_143245_.m_144002_(l) && this.f_143245_.m_144004_(l, this.f_8546_)) {
+          if (this.m_46469_().m_46207_(GameRules.f_46140_)) {
+-            long i1 = this.f_46442_.m_6792_() + 24000L;
+-            this.m_8615_(i1 - i1 % 24000L);
++            long k = this.m_46468_() + 24000L;
++            this.m_8615_(net.minecraftforge.event.ForgeEventFactory.onSleepFinished(this, k - k % 24000L, this.m_46468_()));
+          }
+ 
+          this.m_8804_();
+@@ -343,7 +_,7 @@
+       this.m_8807_();
+       this.f_8557_ = false;
+       profilerfiller.m_7238_();
+-      boolean flag3 = !this.f_8546_.isEmpty() || !this.m_8902_().isEmpty();
++      boolean flag3 = !this.f_8546_.isEmpty() || net.minecraftforge.common.world.ForgeChunkManager.hasForcedChunks(this); //Forge: Replace vanilla's has forced chunk check with forge's that checks both the vanilla and forge added ones
+       if (flag3) {
+          this.m_8886_();
+       }
+@@ -374,7 +_,9 @@
+                   }
+ 
+                   profilerfiller.m_6180_("tick");
+-                  this.m_46653_(this::m_8647_, p_143266_);
++                  if (!p_143266_.m_146910_() && !(p_143266_ instanceof net.minecraftforge.entity.PartEntity)) {
++                     this.m_46653_(this::m_8647_, p_143266_);
++                  }
+                   profilerfiller.m_7238_();
+                }
+             }
+@@ -458,6 +_,7 @@
+          BlockPos blockpos2 = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, this.m_46496_(i, 0, j, 15));
+          BlockPos blockpos3 = blockpos2.m_7495_();
+          Biome biome = this.m_46857_(blockpos2);
++         if (this.isAreaLoaded(blockpos2, 1)) // Forge: check area to avoid loading neighbors in unloaded chunks
+          if (biome.m_47477_(this, blockpos3)) {
+             this.m_46597_(blockpos3, Blocks.f_50126_.m_49966_());
+          }
+@@ -627,9 +_,10 @@
+             ++p_8664_.f_19797_;
+             ProfilerFiller profilerfiller = this.m_46473_();
+             profilerfiller.m_6521_(() -> {
+-               return Registry.f_122826_.m_7981_(p_8664_.m_6095_()).toString();
++               return p_8664_.m_6095_().getRegistryName() == null ? p_8664_.m_6095_().toString() : p_8664_.m_6095_().getRegistryName().toString();
+             });
+             profilerfiller.m_6174_("tickPassenger");
++            if (p_8664_.canUpdate())
+             p_8664_.m_6083_();
+             profilerfiller.m_7238_();
+ 
+@@ -666,6 +_,7 @@
+             this.f_143244_.m_157554_();
+          }
+ 
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Save(this));
+       }
+    }
+ 
+@@ -738,7 +_,48 @@
+       this.m_8853_(p_8846_);
+    }
+ 
++   public void removePlayer(ServerPlayer p_8850_, boolean keepData) {
++      p_8850_.m_146870_();
++      this.removeEntity(p_8850_, keepData);
++   }
++
++   public void removeEntityComplete(Entity p_8865_, boolean keepData) {
++      if(p_8865_.isMultipartEntity()) {
++         for(net.minecraftforge.entity.PartEntity<?> parts : p_8865_.getParts()) {
++            parts.m_146870_();
++         }
++      }
++
++      this.m_7726_().m_8443_(p_8865_);
++      if (p_8865_ instanceof ServerPlayer) {
++         ServerPlayer serverplayerentity = (ServerPlayer)p_8865_;
++         this.f_8546_.remove(serverplayerentity);
++      }
++
++      this.m_6188_().m_83420_(p_8865_);
++      if (p_8865_ instanceof Mob) {
++         this.f_143246_.remove(((Mob)p_8865_).m_21573_());
++      }
++
++      p_8865_.onRemovedFromWorld();
++      p_8865_.m_146870_();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_8865_, this));
++   }
++
++   public void removeEntity(Entity entity) {
++      removeEntity(entity, false);
++   }
++
++   public void removeEntity(Entity p_8868_, boolean keepData) {
++      if (this.f_8557_) {
++         throw (IllegalStateException) net.minecraft.Util.m_137570_(new IllegalStateException("Removing entity while ticking!"));
++      } else {
++         removeEntityComplete(p_8868_, keepData);
++      }
++   }
++
+    private void m_8853_(ServerPlayer p_8854_) {
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_8854_, this))) return;
+       Entity entity = this.m_142646_().m_142694_(p_8854_.m_142081_());
+       if (entity != null) {
+          f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_142081_().toString());
+@@ -746,7 +_,8 @@
+          this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
+       }
+ 
+-      this.f_143244_.m_157533_(p_8854_);
++      this.f_143244_.addNewEntityWithoutEvent(p_8854_);
++      p_8854_.onAddedToWorld();
+    }
+ 
+    private boolean m_8872_(Entity p_8873_) {
+@@ -790,10 +_,20 @@
+    }
+ 
+    public void m_6263_(@Nullable Player p_8675_, double p_8676_, double p_8677_, double p_8678_, SoundEvent p_8679_, SoundSource p_8680_, float p_8681_, float p_8682_) {
++      net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_8675_, p_8679_, p_8680_, p_8681_, p_8682_);
++      if (event.isCanceled() || event.getSound() == null) return;
++      p_8679_ = event.getSound();
++      p_8680_ = event.getCategory();
++      p_8681_ = event.getVolume();
+       this.f_8548_.m_6846_().m_11241_(p_8675_, p_8676_, p_8677_, p_8678_, p_8681_ > 1.0F ? (double)(16.0F * p_8681_) : 16.0D, this.m_46472_(), new ClientboundSoundPacket(p_8679_, p_8680_, p_8676_, p_8677_, p_8678_, p_8681_, p_8682_));
+    }
+ 
+    public void m_6269_(@Nullable Player p_8689_, Entity p_8690_, SoundEvent p_8691_, SoundSource p_8692_, float p_8693_, float p_8694_) {
++      net.minecraftforge.event.entity.PlaySoundAtEntityEvent event = net.minecraftforge.event.ForgeEventFactory.onPlaySoundAtEntity(p_8689_, p_8691_, p_8692_, p_8693_, p_8694_);
++      if (event.isCanceled() || event.getSound() == null) return;
++      p_8691_ = event.getSound();
++      p_8692_ = event.getCategory();
++      p_8693_ = event.getVolume();
+       this.f_8548_.m_6846_().m_11241_(p_8689_, p_8690_.m_20185_(), p_8690_.m_20186_(), p_8690_.m_20189_(), p_8693_ > 1.0F ? (double)(16.0F * p_8693_) : 16.0D, this.m_46472_(), new ClientboundSoundEntityPacket(p_8691_, p_8692_, p_8690_, p_8693_, p_8694_));
+    }
+ 
+@@ -838,6 +_,7 @@
+ 
+    public Explosion m_7703_(@Nullable Entity p_8653_, @Nullable DamageSource p_8654_, @Nullable ExplosionDamageCalculator p_8655_, double p_8656_, double p_8657_, double p_8658_, float p_8659_, boolean p_8660_, Explosion.BlockInteraction p_8661_) {
+       Explosion explosion = new Explosion(this, p_8653_, p_8654_, p_8655_, p_8656_, p_8657_, p_8658_, p_8659_, p_8660_, p_8661_);
++      if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
+       explosion.m_46061_();
+       explosion.m_46075_(false);
+       if (p_8661_ == Explosion.BlockInteraction.NONE) {
+@@ -1355,6 +_,12 @@
+       BlockPos.m_121976_(i - 2, j, k - 2, i + 2, j, k + 2).forEach((p_143260_) -> {
+          p_8618_.m_46597_(p_143260_, Blocks.f_50080_.m_49966_());
+       });
++   }
++
++   protected void initCapabilities() {
++      this.gatherCapabilities();
++      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.WorldCapabilityData.load(e, getCapabilities()), () -> new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities()), net.minecraftforge.common.util.WorldCapabilityData.ID);
++      capabilityData.setCapabilities(getCapabilities());
+    }
+ 
+    public LevelEntityGetter<Entity> m_142646_() {

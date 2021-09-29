@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/lighting/DynamicGraphMinFixedPoint.java
++++ b/net/minecraft/world/level/lighting/DynamicGraphMinFixedPoint.java
+@@ -229,4 +_,8 @@
+    protected abstract void m_7351_(long p_75552_, int p_75553_);
+ 
+    protected abstract int m_6359_(long p_75590_, long p_75591_, int p_75592_);
++
++   protected int queuedUpdateSize() {
++      return f_75539_.size();
++   }
+ }

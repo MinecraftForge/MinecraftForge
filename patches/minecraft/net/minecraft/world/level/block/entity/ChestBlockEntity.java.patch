@@ -1,0 +1,48 @@
+--- a/net/minecraft/world/level/block/entity/ChestBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/ChestBlockEntity.java
+@@ -162,6 +_,45 @@
+       return ChestMenu.m_39237_(p_59082_, p_59083_, this);
+    }
+ 
++   private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
++   @Override
++   public void m_155250_(BlockState p_155251_) {
++      super.m_155250_(p_155251_);
++      if (this.chestHandler != null) {
++         net.minecraftforge.common.util.LazyOptional<?> oldHandler = this.chestHandler;
++         this.chestHandler = null;
++         oldHandler.invalidate();
++      }
++   }
++
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, Direction side) {
++       if (!this.f_58859_ && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++          if (this.chestHandler == null)
++             this.chestHandler = net.minecraftforge.common.util.LazyOptional.of(this::createHandler);
++          return this.chestHandler.cast();
++       }
++       return super.getCapability(cap, side);
++   }
++
++   private net.minecraftforge.items.IItemHandlerModifiable createHandler() {
++      BlockState state = this.m_58900_();
++      if (!(state.m_60734_() instanceof ChestBlock)) {
++         return new net.minecraftforge.items.wrapper.InvWrapper(this);
++      }
++      Container inv = ChestBlock.m_51511_((ChestBlock) state.m_60734_(), state, m_58904_(), m_58899_(), true);
++      return new net.minecraftforge.items.wrapper.InvWrapper(inv == null ? this : inv);
++   }
++
++   @Override
++   public void invalidateCaps() {
++      super.invalidateCaps();
++      if (chestHandler != null) {
++         chestHandler.invalidate();
++         chestHandler = null;
++      }
++   }
++
+    public void m_155350_() {
+       if (!this.f_58859_) {
+          this.f_155324_.m_155476_(this.m_58904_(), this.m_58899_(), this.m_58900_());

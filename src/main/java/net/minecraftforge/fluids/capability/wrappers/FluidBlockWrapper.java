@@ -20,8 +20,8 @@
 package net.minecraftforge.fluids.capability.wrappers;
 
 import javax.annotation.Nonnull;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -32,10 +32,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 public class FluidBlockWrapper implements IFluidHandler
 {
     protected final IFluidBlock fluidBlock;
-    protected final World world;
+    protected final Level world;
     protected final BlockPos blockPos;
 
-    public FluidBlockWrapper(IFluidBlock fluidBlock, World world, BlockPos blockPos)
+    public FluidBlockWrapper(IFluidBlock fluidBlock, Level world, BlockPos blockPos)
     {
         this.fluidBlock = fluidBlock;
         this.world = world;
@@ -105,7 +105,7 @@ public class FluidBlockWrapper implements IFluidHandler
     @Override
     public FluidStack drain(int maxDrain, FluidAction action)
     {
-        if (maxDrain <= 0 && fluidBlock.canDrain(world, blockPos))
+        if (maxDrain > 0 && fluidBlock.canDrain(world, blockPos))
         {
             FluidStack simulatedDrained = fluidBlock.drain(world, blockPos, FluidAction.SIMULATE);
             if (simulatedDrained.getAmount() <= maxDrain)

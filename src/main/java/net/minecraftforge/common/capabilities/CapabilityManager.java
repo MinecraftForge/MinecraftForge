@@ -24,13 +24,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,7 +43,7 @@ import static net.minecraftforge.fml.Logging.CAPABILITIES;
 public enum CapabilityManager
 {
     INSTANCE;
-    private static final Logger LOGGER = LogManager.getLogger();
+    static final Logger LOGGER = LogManager.getLogger();
     private static final Type CAP_INJECT = Type.getType(CapabilityInject.class);
 
     /**
@@ -53,15 +52,13 @@ public enum CapabilityManager
      * To retrieve the Capability instance, use the @CapabilityInject annotation.
      * This method is safe to call during parallel mod loading.
      *
-     * @param type The Interface to be registered
-     * @param storage A default implementation of the storage handler.
-     * @param factory A Factory that will produce new instances of the default implementation.
+     * @param type The class type to be registered
+     * @deprecated use {@link RegisterCapabilitiesEvent}
      */
-    public <T> void register(Class<T> type, Capability.IStorage<T> storage, Callable<? extends T> factory)
+    @Deprecated(forRemoval = true)
+    public <T> void register(Class<T> type)
     {
         Objects.requireNonNull(type,"Attempted to register a capability with invalid type");
-        Objects.requireNonNull(storage,"Attempted to register a capability with no storage implementation");
-        Objects.requireNonNull(factory,"Attempted to register a capability with no default implementation factory");
         String realName = type.getName().intern();
         Capability<T> cap;
 
@@ -72,11 +69,11 @@ public enum CapabilityManager
                 throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
             }
 
-            cap = new Capability<>(realName, storage, factory);
+            cap = new Capability<>(realName);
             providers.put(realName, cap);
         }
 
-        callbacks.getOrDefault(realName, Collections.emptyList()).forEach(func -> func.apply(cap));
+        fireCallbacks(this.callbacks, List.of(cap));
     }
 
     // INTERNAL
@@ -84,21 +81,36 @@ public enum CapabilityManager
     private volatile IdentityHashMap<String, List<Function<Capability<?>, Object>>> callbacks;
     public void injectCapabilities(List<ModFileScanData> data)
     {
-        final List<ModFileScanData.AnnotationData> capabilities = data.stream()
+        final List<ModFileScanData.AnnotationData> elementsToInject = data.stream()
             .map(ModFileScanData::getAnnotations)
             .flatMap(Collection::stream)
-            .filter(a -> CAP_INJECT.equals(a.getAnnotationType()))
+            .filter(a -> CAP_INJECT.equals(a.annotationType()))
             .collect(Collectors.toList());
-        final IdentityHashMap<String, List<Function<Capability<?>, Object>>> m = new IdentityHashMap<>();
-        capabilities.forEach(entry -> attachCapabilityToMethod(m, entry));
-        callbacks = m;
+        final IdentityHashMap<String, List<Function<Capability<?>, Object>>> callbacks = new IdentityHashMap<>();
+        elementsToInject.forEach(entry -> gatherCallbacks(callbacks, entry));
+
+        var event = new RegisterCapabilitiesEvent();
+        ModLoader.get().postEvent(event);
+        fireCallbacks(callbacks, event.getCapabilities().values());
+
+        // TODO 1.18: remove these fields
+        this.providers.putAll(event.getCapabilities());
+        this.callbacks = callbacks;
     }
 
-    private static void attachCapabilityToMethod(Map<String, List<Function<Capability<?>, Object>>> cbs, ModFileScanData.AnnotationData entry)
+    private static void fireCallbacks(Map<String, List<Function<Capability<?>, Object>>> callbacks, Iterable<Capability<?>> caps)
     {
-        final String targetClass = entry.getClassType().getClassName();
-        final String targetName = entry.getMemberName();
-        Type type = (Type)entry.getAnnotationData().get("value");
+        for (var cap : caps)
+        {
+            callbacks.getOrDefault(cap.getName(), List.of()).forEach(f -> f.apply(cap));
+        }
+    }
+
+    private static void gatherCallbacks(Map<String, List<Function<Capability<?>, Object>>> callbacks, ModFileScanData.AnnotationData annotationData)
+    {
+        final String targetClass = annotationData.clazz().getClassName();
+        final String targetName = annotationData.memberName();
+        Type type = (Type)annotationData.annotationData().get("value");
         if (type == null)
         {
             LOGGER.warn(CAPABILITIES,"Unable to inject capability at {}.{} (Invalid Annotation)", targetClass, targetName);
@@ -106,9 +118,9 @@ public enum CapabilityManager
         }
         final String capabilityName = type.getInternalName().replace('/', '.').intern();
 
-        List<Function<Capability<?>, Object>> list = cbs.computeIfAbsent(capabilityName, k -> new ArrayList<>());
+        List<Function<Capability<?>, Object>> list = callbacks.computeIfAbsent(capabilityName, k -> new ArrayList<>());
 
-        if (entry.getMemberName().indexOf('(') > 0)
+        if (annotationData.memberName().indexOf('(') > 0)
         {
             list.add(input -> {
                 try

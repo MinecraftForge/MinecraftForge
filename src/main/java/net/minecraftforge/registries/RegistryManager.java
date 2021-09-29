@@ -32,10 +32,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
-import net.minecraftforge.fml.network.FMLHandshakeMessages;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
+import net.minecraftforge.fmllegacy.network.FMLHandshakeMessages;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -77,7 +77,7 @@ public class RegistryManager
         return (ForgeRegistry<V>)this.registries.get(key);
     }
 
-    public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(RegistryKey<? extends Registry<V>> key)
+    public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(ResourceKey<? extends Registry<V>> key)
     {
         return getRegistry(key.location());
     }

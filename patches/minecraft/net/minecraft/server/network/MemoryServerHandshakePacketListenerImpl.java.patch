@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/network/MemoryServerHandshakePacketListenerImpl.java
++++ b/net/minecraft/server/network/MemoryServerHandshakePacketListenerImpl.java
+@@ -16,6 +_,7 @@
+    }
+ 
+    public void m_7322_(ClientIntentionPacket p_9697_) {
++      if (!net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerLogin(p_9697_, this.f_9689_)) return;
+       this.f_9689_.m_129498_(p_9697_.m_134735_());
+       this.f_9689_.m_129505_(new ServerLoginPacketListenerImpl(this.f_9688_, this.f_9689_));
+    }

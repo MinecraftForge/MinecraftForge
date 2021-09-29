@@ -42,41 +42,41 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.FenceBlock;
-import net.minecraft.block.FenceGateBlock;
-import net.minecraft.block.FourWayBlock;
-import net.minecraft.block.PaneBlock;
-import net.minecraft.block.RotatedPillarBlock;
-import net.minecraft.block.SixWayBlock;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.block.TrapDoorBlock;
-import net.minecraft.block.WallBlock;
-import net.minecraft.block.WallHeight;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.CrossCollisionBlock;
+import net.minecraft.world.level.block.IronBarsBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.PipeBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.WallBlock;
+import net.minecraft.world.level.block.state.properties.WallSide;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.state.Property;
-import net.minecraft.state.properties.AttachFace;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.state.properties.DoorHingeSide;
-import net.minecraft.state.properties.DoubleBlockHalf;
-import net.minecraft.state.properties.Half;
-import net.minecraft.state.properties.SlabType;
-import net.minecraft.state.properties.StairsShape;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Direction.Axis;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoorHingeSide;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.block.state.properties.Half;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.block.state.properties.StairsShape;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Direction.Axis;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * Data provider for blockstate files. Extends {@link BlockModelProvider} so that
  * blockstates and their referenced models can be provided in tandem.
  */
-public abstract class BlockStateProvider implements IDataProvider {
+public abstract class BlockStateProvider implements DataProvider {
 
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
@@ -101,7 +101,7 @@ public abstract class BlockStateProvider implements IDataProvider {
     }
 
     @Override
-    public void run(DirectoryCache cache) throws IOException {
+    public void run(HashCache cache) throws IOException {
         models().clear();
         itemModels().clear();
         registeredBlocks.clear();
@@ -292,35 +292,35 @@ public abstract class BlockStateProvider implements IDataProvider {
             });
     }
 
-    public void stairsBlock(StairsBlock block, ResourceLocation texture) {
+    public void stairsBlock(StairBlock block, ResourceLocation texture) {
         stairsBlock(block, texture, texture, texture);
     }
 
-    public void stairsBlock(StairsBlock block, String name, ResourceLocation texture) {
+    public void stairsBlock(StairBlock block, String name, ResourceLocation texture) {
         stairsBlock(block, name, texture, texture, texture);
     }
 
-    public void stairsBlock(StairsBlock block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
+    public void stairsBlock(StairBlock block, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         stairsBlockInternal(block, block.getRegistryName().toString(), side, bottom, top);
     }
 
-    public void stairsBlock(StairsBlock block, String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
+    public void stairsBlock(StairBlock block, String name, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         stairsBlockInternal(block, name + "_stairs", side, bottom, top);
     }
 
-    private void stairsBlockInternal(StairsBlock block, String baseName, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
+    private void stairsBlockInternal(StairBlock block, String baseName, ResourceLocation side, ResourceLocation bottom, ResourceLocation top) {
         ModelFile stairs = models().stairs(baseName, side, bottom, top);
         ModelFile stairsInner = models().stairsInner(baseName + "_inner", side, bottom, top);
         ModelFile stairsOuter = models().stairsOuter(baseName + "_outer", side, bottom, top);
         stairsBlock(block, stairs, stairsInner, stairsOuter);
     }
 
-    public void stairsBlock(StairsBlock block, ModelFile stairs, ModelFile stairsInner, ModelFile stairsOuter) {
+    public void stairsBlock(StairBlock block, ModelFile stairs, ModelFile stairsInner, ModelFile stairsOuter) {
         getVariantBuilder(block)
             .forAllStatesExcept(state -> {
-               Direction facing = state.getValue(StairsBlock.FACING);
-               Half half = state.getValue(StairsBlock.HALF);
-               StairsShape shape = state.getValue(StairsBlock.SHAPE);
+               Direction facing = state.getValue(StairBlock.FACING);
+               Half half = state.getValue(StairBlock.HALF);
+               StairsShape shape = state.getValue(StairBlock.SHAPE);
                int yRot = (int) facing.getClockWise().toYRot(); // Stairs model is rotated 90 degrees clockwise for some reason
                if (shape == StairsShape.INNER_LEFT || shape == StairsShape.OUTER_LEFT) {
                    yRot += 270; // Left facing stairs are rotated 90 degrees clockwise
@@ -336,7 +336,7 @@ public abstract class BlockStateProvider implements IDataProvider {
                        .rotationY(yRot)
                        .uvLock(uvlock)
                        .build();
-            }, StairsBlock.WATERLOGGED);
+            }, StairBlock.WATERLOGGED);
     }
 
     public void slabBlock(SlabBlock block, ResourceLocation doubleslab, ResourceLocation texture) {
@@ -354,14 +354,14 @@ public abstract class BlockStateProvider implements IDataProvider {
             .partialState().with(SlabBlock.TYPE, SlabType.DOUBLE).addModels(new ConfiguredModel(doubleslab));
     }
 
-    public void fourWayBlock(FourWayBlock block, ModelFile post, ModelFile side) {
+    public void fourWayBlock(CrossCollisionBlock block, ModelFile post, ModelFile side) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel().end();
         fourWayMultipart(builder, side);
     }
 
     public void fourWayMultipart(MultiPartBlockStateBuilder builder, ModelFile side) {
-        SixWayBlock.PROPERTY_BY_DIRECTION.entrySet().forEach(e -> {
+        PipeBlock.PROPERTY_BY_DIRECTION.entrySet().forEach(e -> {
             Direction dir = e.getKey();
             if (dir.getAxis().isHorizontal()) {
                 builder.part().modelFile(side).rotationY((((int) dir.toYRot()) + 180) % 360).uvLock(true).addModel()
@@ -424,7 +424,7 @@ public abstract class BlockStateProvider implements IDataProvider {
         wallBlock(block, models().wallPost(baseName + "_post", texture), models().wallSide(baseName + "_side", texture), models().wallSideTall(baseName + "_side_tall", texture));
     }
     
-    public static final ImmutableMap<Direction, Property<WallHeight>> WALL_PROPS = ImmutableMap.<Direction, Property<WallHeight>>builder()
+    public static final ImmutableMap<Direction, Property<WallSide>> WALL_PROPS = ImmutableMap.<Direction, Property<WallSide>>builder()
     		.put(Direction.EAST,  BlockStateProperties.EAST_WALL)
     		.put(Direction.NORTH, BlockStateProperties.NORTH_WALL)
     		.put(Direction.SOUTH, BlockStateProperties.SOUTH_WALL)
@@ -438,12 +438,12 @@ public abstract class BlockStateProvider implements IDataProvider {
         WALL_PROPS.entrySet().stream()
         	.filter(e -> e.getKey().getAxis().isHorizontal())
         	.forEach(e -> {
-        		wallSidePart(builder, side, e, WallHeight.LOW);
-        		wallSidePart(builder, sideTall, e, WallHeight.TALL);
+        		wallSidePart(builder, side, e, WallSide.LOW);
+        		wallSidePart(builder, sideTall, e, WallSide.TALL);
         	});
     }
     
-    private void wallSidePart(MultiPartBlockStateBuilder builder, ModelFile model, Map.Entry<Direction, Property<WallHeight>> entry, WallHeight height) {
+    private void wallSidePart(MultiPartBlockStateBuilder builder, ModelFile model, Map.Entry<Direction, Property<WallSide>> entry, WallSide height) {
         builder.part()
         	.modelFile(model)
         		.rotationY((((int) entry.getKey().toYRot()) + 180) % 360)
@@ -452,15 +452,15 @@ public abstract class BlockStateProvider implements IDataProvider {
     		.condition(entry.getValue(), height);
     }
 
-    public void paneBlock(PaneBlock block, ResourceLocation pane, ResourceLocation edge) {
+    public void paneBlock(IronBarsBlock block, ResourceLocation pane, ResourceLocation edge) {
         paneBlockInternal(block, block.getRegistryName().toString(), pane, edge);
     }
 
-    public void paneBlock(PaneBlock block, String name, ResourceLocation pane, ResourceLocation edge) {
+    public void paneBlock(IronBarsBlock block, String name, ResourceLocation pane, ResourceLocation edge) {
         paneBlockInternal(block, name + "_pane", pane, edge);
     }
 
-    private void paneBlockInternal(PaneBlock block, String baseName, ResourceLocation pane, ResourceLocation edge) {
+    private void paneBlockInternal(IronBarsBlock block, String baseName, ResourceLocation pane, ResourceLocation edge) {
         ModelFile post = models().panePost(baseName + "_post", pane, edge);
         ModelFile side = models().paneSide(baseName + "_side", pane, edge);
         ModelFile sideAlt = models().paneSideAlt(baseName + "_side_alt", pane, edge);
@@ -469,10 +469,10 @@ public abstract class BlockStateProvider implements IDataProvider {
         paneBlock(block, post, side, sideAlt, noSide, noSideAlt);
     }
 
-    public void paneBlock(PaneBlock block, ModelFile post, ModelFile side, ModelFile sideAlt, ModelFile noSide, ModelFile noSideAlt) {
+    public void paneBlock(IronBarsBlock block, ModelFile post, ModelFile side, ModelFile sideAlt, ModelFile noSide, ModelFile noSideAlt) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel().end();
-        SixWayBlock.PROPERTY_BY_DIRECTION.entrySet().forEach(e -> {
+        PipeBlock.PROPERTY_BY_DIRECTION.entrySet().forEach(e -> {
             Direction dir = e.getKey();
             if (dir.getAxis().isHorizontal()) {
                 boolean alt = dir == Direction.SOUTH;
@@ -554,13 +554,13 @@ public abstract class BlockStateProvider implements IDataProvider {
         }, TrapDoorBlock.POWERED, TrapDoorBlock.WATERLOGGED);
     }
 
-    private void saveBlockState(DirectoryCache cache, JsonObject stateJson, Block owner) {
+    private void saveBlockState(HashCache cache, JsonObject stateJson, Block owner) {
         ResourceLocation blockName = Preconditions.checkNotNull(owner.getRegistryName());
         Path mainOutput = generator.getOutputFolder();
         String pathSuffix = "assets/" + blockName.getNamespace() + "/blockstates/" + blockName.getPath() + ".json";
         Path outputPath = mainOutput.resolve(pathSuffix);
         try {
-            IDataProvider.save(GSON, cache, stateJson, outputPath);
+            DataProvider.save(GSON, cache, stateJson, outputPath);
         } catch (IOException e) {
             LOGGER.error("Couldn't save blockstate to {}", outputPath, e);
         }

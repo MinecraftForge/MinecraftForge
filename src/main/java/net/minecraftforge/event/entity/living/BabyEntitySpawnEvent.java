@@ -19,11 +19,10 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.eventbus.api.Cancelable;
 import javax.annotation.Nullable;
 
@@ -49,22 +48,22 @@ import javax.annotation.Nullable;
 @Cancelable
 public class BabyEntitySpawnEvent extends net.minecraftforge.eventbus.api.Event
 {
-    private final MobEntity parentA;
-    private final MobEntity parentB;
-    private final PlayerEntity causedByPlayer;
-    private AgeableEntity child;
+    private final Mob parentA;
+    private final Mob parentB;
+    private final Player causedByPlayer;
+    private AgeableMob child;
 
-    public BabyEntitySpawnEvent(MobEntity parentA, MobEntity parentB, @Nullable AgeableEntity proposedChild)
+    public BabyEntitySpawnEvent(Mob parentA, Mob parentB, @Nullable AgeableMob proposedChild)
     {
         //causedByPlayer calculated here to simplify the patch.
-        PlayerEntity causedByPlayer = null;
-        if (parentA instanceof AnimalEntity) {
-            causedByPlayer = ((AnimalEntity)parentA).getLoveCause();
+        Player causedByPlayer = null;
+        if (parentA instanceof Animal) {
+            causedByPlayer = ((Animal)parentA).getLoveCause();
         }
 
-        if (causedByPlayer == null && parentB instanceof AnimalEntity)
+        if (causedByPlayer == null && parentB instanceof Animal)
         {
-            causedByPlayer = ((AnimalEntity)parentB).getLoveCause();
+            causedByPlayer = ((Animal)parentB).getLoveCause();
         }
 
         this.parentA = parentA;
@@ -73,29 +72,29 @@ public class BabyEntitySpawnEvent extends net.minecraftforge.eventbus.api.Event
         this.child = proposedChild;
     }
 
-    public MobEntity getParentA()
+    public Mob getParentA()
     {
         return parentA;
     }
 
-    public MobEntity getParentB()
+    public Mob getParentB()
     {
         return parentB;
     }
 
     @Nullable
-    public PlayerEntity getCausedByPlayer()
+    public Player getCausedByPlayer()
     {
         return causedByPlayer;
     }
 
     @Nullable
-    public AgeableEntity getChild()
+    public AgeableMob getChild()
     {
         return child;
     }
 
-    public void setChild(AgeableEntity proposedChild)
+    public void setChild(AgeableMob proposedChild)
     {
         child = proposedChild;
     }

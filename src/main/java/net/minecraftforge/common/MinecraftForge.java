@@ -21,7 +21,6 @@ package net.minecraftforge.common;
 
 import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraft.crash.CrashReport;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,11 +51,8 @@ public class MinecraftForge
        LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
 
        UsernameCache.load();
-       ForgeHooks.initTools();
+       TierSortingRegistry.init();
    }
-
-
-
 
 /*
    public static void preloadCrashClasses(ASMDataTable table, String modID, Set<String> classes)

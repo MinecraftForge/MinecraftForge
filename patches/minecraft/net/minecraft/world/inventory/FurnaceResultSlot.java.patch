@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/inventory/FurnaceResultSlot.java
++++ b/net/minecraft/world/inventory/FurnaceResultSlot.java
+@@ -44,5 +_,6 @@
+       }
+ 
+       this.f_39540_ = 0;
++      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerSmeltedEvent(this.f_39539_, p_39558_);
+    }
+ }

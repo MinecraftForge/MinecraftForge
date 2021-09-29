@@ -1,0 +1,32 @@
+--- a/net/minecraft/client/renderer/entity/EntityRenderDispatcher.java
++++ b/net/minecraft/client/renderer/entity/EntityRenderDispatcher.java
+@@ -161,12 +_,12 @@
+    private static void m_114441_(PoseStack p_114442_, VertexConsumer p_114443_, Entity p_114444_, float p_114445_) {
+       AABB aabb = p_114444_.m_142469_().m_82386_(-p_114444_.m_20185_(), -p_114444_.m_20186_(), -p_114444_.m_20189_());
+       LevelRenderer.m_109646_(p_114442_, p_114443_, aabb, 1.0F, 1.0F, 1.0F, 1.0F);
+-      if (p_114444_ instanceof EnderDragon) {
++      if (p_114444_.isMultipartEntity()) {
+          double d0 = -Mth.m_14139_((double)p_114445_, p_114444_.f_19790_, p_114444_.m_20185_());
+          double d1 = -Mth.m_14139_((double)p_114445_, p_114444_.f_19791_, p_114444_.m_20186_());
+          double d2 = -Mth.m_14139_((double)p_114445_, p_114444_.f_19792_, p_114444_.m_20189_());
+ 
+-         for(EnderDragonPart enderdragonpart : ((EnderDragon)p_114444_).m_31156_()) {
++         for(net.minecraftforge.entity.PartEntity<?> enderdragonpart : p_114444_.getParts()) {
+             p_114442_.m_85836_();
+             double d3 = d0 + Mth.m_14139_((double)p_114445_, enderdragonpart.f_19790_, enderdragonpart.m_20185_());
+             double d4 = d1 + Mth.m_14139_((double)p_114445_, enderdragonpart.f_19791_, enderdragonpart.m_20186_());
+@@ -324,9 +_,14 @@
+       return this.f_114367_;
+    }
+ 
++   public Map<String, EntityRenderer<? extends Player>> getSkinMap() {
++      return java.util.Collections.unmodifiableMap(f_114363_);
++   }
++
+    public void m_6213_(ResourceManager p_174004_) {
+       EntityRendererProvider.Context entityrendererprovider$context = new EntityRendererProvider.Context(this, this.f_173995_, p_174004_, this.f_173996_, this.f_114365_);
+       this.f_114362_ = EntityRenderers.m_174049_(entityrendererprovider$context);
+       this.f_114363_ = EntityRenderers.m_174051_(entityrendererprovider$context);
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.AddLayers(f_114362_, f_114363_));
+    }
+ }

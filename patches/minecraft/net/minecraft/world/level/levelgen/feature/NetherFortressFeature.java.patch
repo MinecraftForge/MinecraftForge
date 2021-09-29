@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/level/levelgen/feature/NetherFortressFeature.java
++++ b/net/minecraft/world/level/levelgen/feature/NetherFortressFeature.java
+@@ -33,8 +_,11 @@
+       return NetherFortressFeature.NetherBridgeStart::new;
+    }
+ 
+-   public WeightedRandomList<MobSpawnSettings.SpawnerData> m_142494_() {
+-      return f_66381_;
++   @Override
++   public List<MobSpawnSettings.SpawnerData> getDefaultSpawnList(net.minecraft.world.entity.MobCategory category) {
++      if (category == net.minecraft.world.entity.MobCategory.MONSTER)
++         return f_66381_.m_146338_();
++      return java.util.Collections.emptyList();
+    }
+ 
+    public static class NetherBridgeStart extends StructureStart<NoneFeatureConfiguration> {

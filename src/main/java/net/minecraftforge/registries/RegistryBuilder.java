@@ -25,7 +25,7 @@ import java.util.Set;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry.*;
 
 import javax.annotation.Nullable;

@@ -19,24 +19,24 @@
 
 package net.minecraftforge.debug.misc;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.Blocks;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
@@ -44,24 +44,24 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod("containertypetest")
 public class ContainerTypeTest
 {
     @ObjectHolder("containertypetest:container")
-    public static final ContainerType<TestContainer> TYPE = null;
-    public class TestContainer extends Container
+    public static final MenuType<TestContainer> TYPE = null;
+    public class TestContainer extends AbstractContainerMenu
     {
         private final String text;
         
-        protected TestContainer(int windowId, PlayerInventory playerInv, PacketBuffer extraData)
+        protected TestContainer(int windowId, Inventory playerInv, FriendlyByteBuf extraData)
         {
-            this(windowId, new Inventory(9), extraData.readUtf(128));
+            this(windowId, new SimpleContainer(9), extraData.readUtf(128));
         }
         
-        public TestContainer(int windowId, Inventory inv, String text)
+        public TestContainer(int windowId, SimpleContainer inv, String text)
         {
             super(TYPE, windowId);
             this.text = text;
@@ -72,21 +72,21 @@ public class ContainerTypeTest
         }
 
         @Override
-        public boolean stillValid(PlayerEntity playerIn)
+        public boolean stillValid(Player playerIn)
         {
             return true;
         }
     }
     
-    public class TestGui extends ContainerScreen<TestContainer>
+    public class TestGui extends AbstractContainerScreen<TestContainer>
     {
-        public TestGui(TestContainer container, PlayerInventory inv, ITextComponent name)
+        public TestGui(TestContainer container, Inventory inv, Component name)
         {
             super(container, inv, name);
         }
 
         @Override
-        protected void renderBg(MatrixStack mStack, float partialTicks, int mouseX, int mouseY)
+        protected void renderBg(PoseStack mStack, float partialTicks, int mouseX, int mouseY)
         {
             drawString(mStack, this.font, getMenu().text, mouseX, mouseY, -1);
         }
@@ -94,34 +94,34 @@ public class ContainerTypeTest
 
     public ContainerTypeTest()
     {
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ContainerType.class, this::registerContainers);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(MenuType.class, this::registerContainers);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
         MinecraftForge.EVENT_BUS.addListener(this::onRightClick);
     }
 
-    private void registerContainers(final RegistryEvent.Register<ContainerType<?>> event)
+    private void registerContainers(final RegistryEvent.Register<MenuType<?>> event)
     {
         event.getRegistry().register(IForgeContainerType.create(TestContainer::new).setRegistryName("container"));
     }
     
     private void setup(FMLClientSetupEvent event)
     {
-        ScreenManager.register(TYPE, TestGui::new);
+        MenuScreens.register(TYPE, TestGui::new);
     }
     
     private void onRightClick(PlayerInteractEvent.RightClickBlock event)
     {
-        if (!event.getWorld().isClientSide && event.getHand() == Hand.MAIN_HAND)
+        if (!event.getWorld().isClientSide && event.getHand() == InteractionHand.MAIN_HAND)
         {
             if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.SPONGE)
             {
                 String text = "Hello World!";
-                NetworkHooks.openGui((ServerPlayerEntity) event.getPlayer(), new INamedContainerProvider()
+                NetworkHooks.openGui((ServerPlayer) event.getPlayer(), new MenuProvider()
                 {
                     @Override
-                    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_)
+                    public AbstractContainerMenu createMenu(int p_createMenu_1_, Inventory p_createMenu_2_, Player p_createMenu_3_)
                     {
-                        Inventory inv = new Inventory(9);
+                        SimpleContainer inv = new SimpleContainer(9);
                         for (int i = 0; i < inv.getContainerSize(); i++)
                         {
                             inv.setItem(i, new ItemStack(Items.DIAMOND));
@@ -130,9 +130,9 @@ public class ContainerTypeTest
                     }
                     
                     @Override
-                    public ITextComponent getDisplayName()
+                    public Component getDisplayName()
                     {
-                        return new StringTextComponent("Test");
+                        return new TextComponent("Test");
                     }
                 }, extraData -> {
                     extraData.writeUtf(text);

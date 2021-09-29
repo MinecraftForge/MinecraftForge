@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/CampfireBlock.java
++++ b/net/minecraft/world/level/block/CampfireBlock.java
+@@ -205,7 +_,7 @@
+             return true;
+          }
+ 
+-         boolean flag = Shapes.m_83157_(f_51231_, blockstate.m_60742_(p_51249_, p_51250_, CollisionContext.m_82749_()), BooleanOp.f_82689_);
++         boolean flag = Shapes.m_83157_(f_51231_, blockstate.m_60742_(p_51249_, blockpos, CollisionContext.m_82749_()), BooleanOp.f_82689_);//Forge fix: MC-201374
+          if (flag) {
+             BlockState blockstate1 = p_51249_.m_8055_(blockpos.m_7495_());
+             return m_51319_(blockstate1);

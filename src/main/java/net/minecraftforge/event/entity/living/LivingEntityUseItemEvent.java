@@ -19,8 +19,8 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 import javax.annotation.Nonnull;

@@ -1,0 +1,86 @@
+--- a/net/minecraft/world/level/block/FlowerPotBlock.java
++++ b/net/minecraft/world/level/block/FlowerPotBlock.java
+@@ -28,10 +_,33 @@
+    protected static final VoxelShape f_53523_ = Block.m_49796_(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
+    private final Block f_53525_;
+ 
++   @Deprecated // Mods should use the constructor below
+    public FlowerPotBlock(Block p_53528_, BlockBehaviour.Properties p_53529_) {
+-      super(p_53529_);
+-      this.f_53525_ = p_53528_;
+-      f_53524_.put(p_53528_, this);
++       this(Blocks.f_50276_ == null ? null : () -> (FlowerPotBlock) Blocks.f_50276_.delegate.get(), () -> p_53528_.delegate.get(), p_53529_);
++       if (Blocks.f_50276_ != null) {
++           ((FlowerPotBlock)Blocks.f_50276_).addPlant(p_53528_.getRegistryName(), () -> this);
++       }
++   }
++
++   /**
++    * For mod use, eliminates the need to extend this class, and prevents modded
++    * flower pots from altering vanilla behavior.
++    *
++    * @param emptyPot    The empty pot for this pot, or null for self.
++    * @param block The flower block.
++    * @param properties
++    */
++   public FlowerPotBlock(@javax.annotation.Nullable java.util.function.Supplier<FlowerPotBlock> emptyPot, java.util.function.Supplier<? extends Block> p_53528_, BlockBehaviour.Properties properties) {
++      super(properties);
++      this.f_53525_ = null; // Unused, redirected by coremod
++      this.flowerDelegate = p_53528_;
++      if (emptyPot == null) {
++         this.fullPots = Maps.newHashMap();
++         this.emptyPot = null;
++      } else {
++         this.fullPots = java.util.Collections.emptyMap();
++         this.emptyPot = emptyPot;
++      }
+    }
+ 
+    public VoxelShape m_5940_(BlockState p_53556_, BlockGetter p_53557_, BlockPos p_53558_, CollisionContext p_53559_) {
+@@ -45,7 +_,7 @@
+    public InteractionResult m_6227_(BlockState p_53540_, Level p_53541_, BlockPos p_53542_, Player p_53543_, InteractionHand p_53544_, BlockHitResult p_53545_) {
+       ItemStack itemstack = p_53543_.m_21120_(p_53544_);
+       Item item = itemstack.m_41720_();
+-      BlockState blockstate = (item instanceof BlockItem ? f_53524_.getOrDefault(((BlockItem)item).m_40614_(), Blocks.f_50016_) : Blocks.f_50016_).m_49966_();
++      BlockState blockstate = (item instanceof BlockItem ? getEmptyPot().fullPots.getOrDefault(((BlockItem)item).m_40614_().getRegistryName(), Blocks.f_50016_.delegate).get() : Blocks.f_50016_).m_49966_();
+       boolean flag = blockstate.m_60713_(Blocks.f_50016_);
+       boolean flag1 = this.m_153267_();
+       if (flag != flag1) {
+@@ -63,7 +_,7 @@
+                p_53543_.m_36176_(itemstack1, false);
+             }
+ 
+-            p_53541_.m_7731_(p_53542_, Blocks.f_50276_.m_49966_(), 3);
++            p_53541_.m_7731_(p_53542_, getEmptyPot().m_49966_(), 3);
+          }
+ 
+          p_53541_.m_142346_(p_53543_, GameEvent.f_157792_, p_53542_);
+@@ -86,10 +_,27 @@
+    }
+ 
+    public Block m_53560_() {
+-      return this.f_53525_;
++      return flowerDelegate.get();
+    }
+ 
+    public boolean m_7357_(BlockState p_53535_, BlockGetter p_53536_, BlockPos p_53537_, PathComputationType p_53538_) {
+       return false;
+    }
++
++   //Forge Start
++   private final Map<net.minecraft.resources.ResourceLocation, java.util.function.Supplier<? extends Block>> fullPots;
++   private final java.util.function.Supplier<FlowerPotBlock> emptyPot;
++   private final java.util.function.Supplier<? extends Block> flowerDelegate;
++
++   public FlowerPotBlock getEmptyPot() {
++       return emptyPot == null ? this : emptyPot.get();
++   }
++
++   public void addPlant(net.minecraft.resources.ResourceLocation flower, java.util.function.Supplier<? extends Block> fullPot) {
++       if (getEmptyPot() != this) {
++           throw new IllegalArgumentException("Cannot add plant to non-empty pot: " + this);
++       }
++       fullPots.put(flower, fullPot);
++   }
++   //Forge End
+ }

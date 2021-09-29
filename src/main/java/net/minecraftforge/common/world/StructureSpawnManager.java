@@ -19,19 +19,18 @@
 
 package net.minecraftforge.common.world;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.Nullable;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.MobSpawnInfo;
-import net.minecraft.world.gen.feature.structure.Structure;
-import net.minecraft.world.gen.feature.structure.StructureManager;
+import net.minecraft.util.random.WeightedRandomList;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.StructureFeatureManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.StructureSpawnListGatherEvent;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -41,7 +40,7 @@ import net.minecraftforge.registries.ForgeRegistries;
  */
 public class StructureSpawnManager
 {
-    private static Map<Structure<?>, StructureSpawnInfo> structuresWithSpawns = Collections.emptyMap();
+    private static Map<StructureFeature<?>, StructureSpawnInfo> structuresWithSpawns = Collections.emptyMap();
 
     /**
      * Gathers potential entity spawns for all the different registered structures.
@@ -52,15 +51,15 @@ public class StructureSpawnManager
         //We use a linked hash map to ensure that we check the structures in an order that if there are multiple structures a position satisfies
         // then we have the same behavior as vanilla as vanilla checks, swamp huts, pillager outposts, ocean monuments, and nether fortresses in
         // that order.
-        Map<Structure<?>, StructureSpawnInfo> structuresWithSpawns = new LinkedHashMap<>();
-        gatherEntitySpawns(structuresWithSpawns, Structure.SWAMP_HUT);
-        gatherEntitySpawns(structuresWithSpawns, Structure.PILLAGER_OUTPOST);
-        gatherEntitySpawns(structuresWithSpawns, Structure.OCEAN_MONUMENT);
-        gatherEntitySpawns(structuresWithSpawns, Structure.NETHER_BRIDGE);
-        for (Structure<?> structure : ForgeRegistries.STRUCTURE_FEATURES.getValues())
+        Map<StructureFeature<?>, StructureSpawnInfo> structuresWithSpawns = new LinkedHashMap<>();
+        gatherEntitySpawns(structuresWithSpawns, StructureFeature.SWAMP_HUT);
+        gatherEntitySpawns(structuresWithSpawns, StructureFeature.PILLAGER_OUTPOST);
+        gatherEntitySpawns(structuresWithSpawns, StructureFeature.OCEAN_MONUMENT);
+        gatherEntitySpawns(structuresWithSpawns, StructureFeature.NETHER_BRIDGE);
+        for (StructureFeature<?> structure : ForgeRegistries.STRUCTURE_FEATURES.getValues())
         {
-            if (structure != Structure.SWAMP_HUT && structure != Structure.PILLAGER_OUTPOST && structure != Structure.OCEAN_MONUMENT &&
-                structure != Structure.NETHER_BRIDGE)
+            if (structure != StructureFeature.SWAMP_HUT && structure != StructureFeature.PILLAGER_OUTPOST && structure != StructureFeature.OCEAN_MONUMENT &&
+                structure != StructureFeature.NETHER_BRIDGE)
             {
                 //If we didn't already gather the spawns already to ensure we do vanilla ones already
                 // gather the spawns for this structure
@@ -70,16 +69,16 @@ public class StructureSpawnManager
         StructureSpawnManager.structuresWithSpawns = structuresWithSpawns;
     }
 
-    private static void gatherEntitySpawns(Map<Structure<?>, StructureSpawnInfo> structuresWithSpawns, Structure<?> structure)
+    private static void gatherEntitySpawns(Map<StructureFeature<?>, StructureSpawnInfo> structuresWithSpawns, StructureFeature<?> structure)
     {
         StructureSpawnListGatherEvent event = new StructureSpawnListGatherEvent(structure);
         MinecraftForge.EVENT_BUS.post(event);
-        ImmutableMap.Builder<net.minecraft.entity.EntityClassification, List<MobSpawnInfo.Spawners>> builder = ImmutableMap.builder();
+        ImmutableMap.Builder<net.minecraft.world.entity.MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> builder = ImmutableMap.builder();
         event.getEntitySpawns().forEach((classification, spawns) -> {
             if (!spawns.isEmpty())
-                builder.put(classification, ImmutableList.copyOf(spawns));
+                builder.put(classification, WeightedRandomList.create(spawns));
         });
-        Map<EntityClassification, List<MobSpawnInfo.Spawners>> entitySpawns = builder.build();
+        ImmutableMap<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> entitySpawns = builder.build();
         if (!entitySpawns.isEmpty())
             structuresWithSpawns.put(structure, new StructureSpawnInfo(entitySpawns, event.isInsideOnly()));
     }
@@ -92,11 +91,11 @@ public class StructureSpawnManager
      * @param pos              Position to get entity spawns of
      */
     @Nullable
-    public static List<MobSpawnInfo.Spawners> getStructureSpawns(StructureManager structureManager, EntityClassification classification, BlockPos pos)
+    public static WeightedRandomList<MobSpawnSettings.SpawnerData> getStructureSpawns(StructureFeatureManager structureManager, MobCategory classification, BlockPos pos)
     {
-        for (Entry<Structure<?>, StructureSpawnInfo> entry : structuresWithSpawns.entrySet())
+        for (Entry<StructureFeature<?>, StructureSpawnInfo> entry : structuresWithSpawns.entrySet())
         {
-            Structure<?> structure = entry.getKey();
+            StructureFeature<?> structure = entry.getKey();
             StructureSpawnInfo spawnInfo = entry.getValue();
             //Note: We check if the structure has spawns for a type first before looking at the world as it should be a cheaper check
             if (spawnInfo.spawns.containsKey(classification) && structureManager.getStructureAt(pos, spawnInfo.insideOnly, structure).isValid())
@@ -110,11 +109,12 @@ public class StructureSpawnManager
      * @param structure      The Structure
      * @param classification The classification to lookup
      */
-    public static List<MobSpawnInfo.Spawners> getSpawnList(Structure<?> structure, EntityClassification classification)
+    public static WeightedRandomList<MobSpawnSettings.SpawnerData> getSpawnList(StructureFeature<?> structure, MobCategory classification)
     {
-        if (structuresWithSpawns.containsKey(structure))
-            return structuresWithSpawns.get(structure).spawns.getOrDefault(classification, Collections.emptyList());
-        return Collections.emptyList();
+        StructureSpawnInfo info = structuresWithSpawns.get(structure);
+        if (info != null)
+            return info.spawns.getOrDefault(classification, WeightedRandomList.create());
+        return WeightedRandomList.create();
     }
 
     /**
@@ -122,10 +122,10 @@ public class StructureSpawnManager
      */
     private static class StructureSpawnInfo
     {
-        private final Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawns;
+        private final Map<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> spawns;
         private final boolean insideOnly;
 
-        private StructureSpawnInfo(Map<EntityClassification, List<MobSpawnInfo.Spawners>> spawns, boolean insideOnly)
+        private StructureSpawnInfo(ImmutableMap<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> spawns, boolean insideOnly)
         {
             this.spawns = spawns;
             this.insideOnly = insideOnly;

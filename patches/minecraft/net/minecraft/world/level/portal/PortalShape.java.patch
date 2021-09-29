@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/portal/PortalShape.java
++++ b/net/minecraft/world/level/portal/PortalShape.java
+@@ -24,7 +_,7 @@
+    private static final int f_164753_ = 3;
+    public static final int f_164751_ = 21;
+    private static final BlockBehaviour.StatePredicate f_77685_ = (p_77720_, p_77721_, p_77722_) -> {
+-      return p_77720_.m_60713_(Blocks.f_50080_);
++      return p_77720_.isPortalFrame(p_77721_, p_77722_);
+    };
+    private final LevelAccessor f_77686_;
+    private final Direction.Axis f_77687_;

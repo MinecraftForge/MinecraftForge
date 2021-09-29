@@ -19,9 +19,9 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
@@ -31,9 +31,9 @@ import javax.annotation.Nonnull;
  */
 public class PlayerMainInvWrapper extends RangedWrapper
 {
-    private final PlayerInventory inventoryPlayer;
+    private final Inventory inventoryPlayer;
 
-    public PlayerMainInvWrapper(PlayerInventory inv)
+    public PlayerMainInvWrapper(Inventory inv)
     {
         super(new InvWrapper(inv), 0, inv.items.size());
         inventoryPlayer = inv;
@@ -54,7 +54,7 @@ public class PlayerMainInvWrapper extends RangedWrapper
                 {
                     inSlot.setPopTime(5);
                 }
-                else if(getInventoryPlayer().player instanceof ServerPlayerEntity) {
+                else if(getInventoryPlayer().player instanceof ServerPlayer) {
                     getInventoryPlayer().player.containerMenu.broadcastChanges();
                 }
             }
@@ -62,7 +62,7 @@ public class PlayerMainInvWrapper extends RangedWrapper
         return rest;
     }
 
-    public PlayerInventory getInventoryPlayer()
+    public Inventory getInventoryPlayer()
     {
         return inventoryPlayer;
     }

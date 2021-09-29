@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/item/Tiers.java
++++ b/net/minecraft/world/item/Tiers.java
+@@ -64,4 +_,6 @@
+    public Ingredient m_6282_() {
+       return this.f_43326_.m_13971_();
+    }
++
++   @javax.annotation.Nullable public net.minecraft.tags.Tag<net.minecraft.world.level.block.Block> getTag() { return net.minecraftforge.common.ForgeHooks.getTagFromVanillaTier(this); }
+ }

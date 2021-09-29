@@ -1,0 +1,15 @@
+--- a/net/minecraft/resources/ResourceLocation.java
++++ b/net/minecraft/resources/ResourceLocation.java
+@@ -116,6 +_,12 @@
+       return i;
+    }
+ 
++   // Normal compare sorts by path first, this compares namespace first.
++   public int compareNamespaced(ResourceLocation o) {
++      int ret = this.f_135804_.compareTo(o.f_135804_);
++      return ret != 0 ? ret : this.f_135805_.compareTo(o.f_135805_);
++   }
++
+    public String m_179910_() {
+       return this.toString().replace('/', '_').replace(':', '_');
+    }

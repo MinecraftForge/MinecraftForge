@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common.model.animation;
 
-import net.minecraft.util.math.vector.TransformationMatrix;
+import com.mojang.math.Transformation;
 
 import java.util.Optional;
 
@@ -28,7 +28,7 @@ import java.util.Optional;
  */
 public interface IJoint
 {
-    TransformationMatrix getInvBindPose();
+    Transformation getInvBindPose();
 
     Optional<? extends IJoint> getParent();
 }

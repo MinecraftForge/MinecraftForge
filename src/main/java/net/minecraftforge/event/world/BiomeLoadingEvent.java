@@ -19,13 +19,12 @@
 
 package net.minecraftforge.event.world;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeAmbience;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.MobSpawnInfoBuilder;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nullable;
 
@@ -46,15 +45,15 @@ import javax.annotation.Nullable;
 public class BiomeLoadingEvent extends Event
 {
     private final ResourceLocation name;
-    private Biome.Climate climate;
-    private Biome.Category category;
+    private Biome.ClimateSettings climate;
+    private Biome.BiomeCategory category;
     private float depth;
     private float scale;
-    private BiomeAmbience effects;
+    private BiomeSpecialEffects effects;
     private final BiomeGenerationSettingsBuilder gen;
     private final MobSpawnInfoBuilder spawns;
 
-    public BiomeLoadingEvent(@Nullable final ResourceLocation name, final Biome.Climate climate, final Biome.Category category, final float depth, final float scale, final BiomeAmbience effects, final BiomeGenerationSettingsBuilder gen, final MobSpawnInfoBuilder spawns)
+    public BiomeLoadingEvent(@Nullable final ResourceLocation name, final Biome.ClimateSettings climate, final Biome.BiomeCategory category, final float depth, final float scale, final BiomeSpecialEffects effects, final BiomeGenerationSettingsBuilder gen, final MobSpawnInfoBuilder spawns)
     {
         this.name = name;
         this.climate = climate;
@@ -77,22 +76,22 @@ public class BiomeLoadingEvent extends Event
         return name;
     }
 
-    public Biome.Climate getClimate()
+    public Biome.ClimateSettings getClimate()
     {
         return climate;
     }
 
-    public void setClimate(final Biome.Climate value)
+    public void setClimate(final Biome.ClimateSettings value)
     {
         this.climate = value;
     }
 
-    public Biome.Category getCategory()
+    public Biome.BiomeCategory getCategory()
     {
         return category;
     }
 
-    public void setCategory(final Biome.Category value)
+    public void setCategory(final Biome.BiomeCategory value)
     {
         this.category = value;
     }
@@ -117,12 +116,12 @@ public class BiomeLoadingEvent extends Event
         this.scale = value;
     }
 
-    public BiomeAmbience getEffects()
+    public BiomeSpecialEffects getEffects()
     {
         return effects;
     }
 
-    public void setEffects(final BiomeAmbience value)
+    public void setEffects(final BiomeSpecialEffects value)
     {
         this.effects = value;
     }

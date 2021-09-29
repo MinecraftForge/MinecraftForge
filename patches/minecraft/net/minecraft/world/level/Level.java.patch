@@ -1,0 +1,221 @@
+--- a/net/minecraft/world/level/Level.java
++++ b/net/minecraft/world/level/Level.java
+@@ -65,7 +_,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public abstract class Level implements LevelAccessor, AutoCloseable {
++public abstract class Level extends net.minecraftforge.common.capabilities.CapabilityProvider<Level> implements LevelAccessor, AutoCloseable, net.minecraftforge.common.extensions.IForgeLevel {
+    protected static final Logger f_46426_ = LogManager.getLogger();
+    public static final Codec<ResourceKey<Level>> f_46427_ = ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(Registry.f_122819_), ResourceKey::m_135782_);
+    public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
+@@ -82,6 +_,7 @@
+    protected final List<TickingBlockEntity> f_151512_ = Lists.newArrayList();
+    private final List<TickingBlockEntity> f_151503_ = Lists.newArrayList();
+    private boolean f_151504_;
++   protected final java.util.Set<BlockEntity> f_46434_ = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>()); // Forge: faster "contains" makes removal much more efficient
+    private final Thread f_46423_;
+    private final boolean f_46424_;
+    private int f_46425_;
+@@ -99,8 +_,12 @@
+    private final WorldBorder f_46447_;
+    private final BiomeManager f_46420_;
+    private final ResourceKey<Level> f_46421_;
++   public boolean restoringBlockSnapshots = false;
++   public boolean captureBlockSnapshots = false;
++   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
+ 
+    protected Level(WritableLevelData p_46450_, ResourceKey<Level> p_46451_, final DimensionType p_46452_, Supplier<ProfilerFiller> p_46453_, boolean p_46454_, boolean p_46455_, long p_46456_) {
++      super(Level.class);
+       this.f_46446_ = p_46453_;
+       this.f_46442_ = p_46450_;
+       this.f_46445_ = p_46452_;
+@@ -180,17 +_,45 @@
+       } else {
+          LevelChunk levelchunk = this.m_46745_(p_46605_);
+          Block block = p_46606_.m_60734_();
++
++         p_46605_ = p_46605_.m_7949_(); // Forge - prevent mutable BlockPos leaks
++         net.minecraftforge.common.util.BlockSnapshot blockSnapshot = null;
++         if (this.captureBlockSnapshots && !this.f_46443_) {
++             blockSnapshot = net.minecraftforge.common.util.BlockSnapshot.create(this.f_46421_, this, p_46605_, p_46607_);
++             this.capturedBlockSnapshots.add(blockSnapshot);
++         }
++
++         BlockState old = m_8055_(p_46605_);
++         int oldLight = old.getLightEmission(this, p_46605_);
++         int oldOpacity = old.m_60739_(this, p_46605_);
++
+          BlockState blockstate = levelchunk.m_6978_(p_46605_, p_46606_, (p_46607_ & 64) != 0);
+          if (blockstate == null) {
++            if (blockSnapshot != null) this.capturedBlockSnapshots.remove(blockSnapshot);
+             return false;
+          } else {
+             BlockState blockstate1 = this.m_8055_(p_46605_);
+-            if ((p_46607_ & 128) == 0 && blockstate1 != blockstate && (blockstate1.m_60739_(this, p_46605_) != blockstate.m_60739_(this, p_46605_) || blockstate1.m_60791_() != blockstate.m_60791_() || blockstate1.m_60787_() || blockstate.m_60787_())) {
++            if ((p_46607_ & 128) == 0 && blockstate1 != blockstate && (blockstate1.m_60739_(this, p_46605_) != oldOpacity || blockstate1.getLightEmission(this, p_46605_) != oldLight || blockstate1.m_60787_() || blockstate.m_60787_())) {
+                this.m_46473_().m_6180_("queueCheckLight");
+                this.m_7726_().m_7827_().m_142202_(p_46605_);
+                this.m_46473_().m_7238_();
+             }
+ 
++            if (blockSnapshot == null) { // Don't notify clients or update physics while capturing blockstates
++               this.markAndNotifyBlock(p_46605_, levelchunk, blockstate, p_46606_, p_46607_, p_46608_);
++            }
++
++            return true;
++         }
++      }
++   }
++
++   // Split off from original setBlockState(BlockPos, BlockState, int, int) method in order to directly send client and physic updates
++   public void markAndNotifyBlock(BlockPos p_46605_, @Nullable LevelChunk levelchunk, BlockState blockstate, BlockState p_46606_, int p_46607_, int p_46608_) {
++      Block block = p_46606_.m_60734_();
++      BlockState blockstate1 = m_8055_(p_46605_);
++      {
++         {
+             if (blockstate1 == p_46606_) {
+                if (blockstate != blockstate1) {
+                   this.m_6550_(p_46605_, blockstate, blockstate1);
+@@ -216,8 +_,6 @@
+ 
+                this.m_6559_(p_46605_, blockstate, blockstate1);
+             }
+-
+-            return true;
+          }
+       }
+    }
+@@ -267,6 +_,8 @@
+    }
+ 
+    public void m_46672_(BlockPos p_46673_, Block p_46674_) {
++      if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, p_46673_, this.m_8055_(p_46673_), java.util.EnumSet.allOf(Direction.class), false).isCanceled())
++         return;
+       this.m_46586_(p_46673_.m_142125_(), p_46674_, p_46673_);
+       this.m_46586_(p_46673_.m_142126_(), p_46674_, p_46673_);
+       this.m_46586_(p_46673_.m_7495_(), p_46674_, p_46673_);
+@@ -276,6 +_,11 @@
+    }
+ 
+    public void m_46590_(BlockPos p_46591_, Block p_46592_, Direction p_46593_) {
++      java.util.EnumSet<Direction> directions = java.util.EnumSet.allOf(Direction.class);
++      directions.remove(p_46593_);
++      if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(this, p_46591_, this.m_8055_(p_46591_), directions, false).isCanceled())
++         return;
++
+       if (p_46593_ != Direction.WEST) {
+          this.m_46586_(p_46591_.m_142125_(), p_46592_, p_46591_);
+       }
+@@ -313,9 +_,9 @@
+             CrashReportCategory crashreportcategory = crashreport.m_127514_("Block being updated");
+             crashreportcategory.m_128165_("Source block type", () -> {
+                try {
+-                  return String.format("ID #%s (%s // %s)", Registry.f_122824_.m_7981_(p_46588_), p_46588_.m_7705_(), p_46588_.getClass().getCanonicalName());
++                  return String.format("ID #%s (%s // %s)", p_46588_.getRegistryName(), p_46588_.m_7705_(), p_46588_.getClass().getCanonicalName());
+                } catch (Throwable throwable1) {
+-                  return "ID #" + Registry.f_122824_.m_7981_(p_46588_);
++                  return "ID #" + p_46588_.getRegistryName();
+                }
+             });
+             CrashReportCategory.m_178950_(crashreportcategory, this, p_46587_, blockstate);
+@@ -404,8 +_,9 @@
+    protected void m_46463_() {
+       ProfilerFiller profilerfiller = this.m_46473_();
+       profilerfiller.m_6180_("blockEntities");
+-      this.f_151504_ = true;
++      this.f_151504_ = true;// Forge: Move above remove to prevent CMEs
+       if (!this.f_151503_.isEmpty()) {
++         this.f_46434_.forEach(e -> e.onChunkUnloaded());
+          this.f_151512_.addAll(this.f_151503_);
+          this.f_151503_.clear();
+       }
+@@ -427,12 +_,15 @@
+ 
+    public <T extends Entity> void m_46653_(Consumer<T> p_46654_, T p_46655_) {
+       try {
++         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackStart(p_46655_);
+          p_46654_.accept(p_46655_);
+       } catch (Throwable throwable) {
+          CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking entity");
+          CrashReportCategory crashreportcategory = crashreport.m_127514_("Entity being ticked");
+          p_46655_.m_7976_(crashreportcategory);
+          throw new ReportedException(crashreport);
++      } finally {
++         net.minecraftforge.server.timings.TimeTracker.ENTITY_UPDATE.trackEnd(p_46655_);
+       }
+    }
+ 
+@@ -446,6 +_,7 @@
+ 
+    public Explosion m_7703_(@Nullable Entity p_46526_, @Nullable DamageSource p_46527_, @Nullable ExplosionDamageCalculator p_46528_, double p_46529_, double p_46530_, double p_46531_, float p_46532_, boolean p_46533_, Explosion.BlockInteraction p_46534_) {
+       Explosion explosion = new Explosion(this, p_46526_, p_46527_, p_46528_, p_46529_, p_46530_, p_46531_, p_46532_, p_46533_, p_46534_);
++      if (net.minecraftforge.event.ForgeEventFactory.onExplosionStart(this, explosion)) return explosion;
+       explosion.m_46061_();
+       explosion.m_46075_(true);
+       return explosion;
+@@ -473,6 +_,7 @@
+       if (!this.m_151570_(p_46748_)) {
+          this.m_46745_(p_46748_).m_8114_(p_46748_);
+       }
++      this.m_46717_(p_46748_, m_8055_(p_46748_).m_60734_()); //Notify neighbors of changes
+    }
+ 
+    public boolean m_46749_(BlockPos p_46750_) {
+@@ -571,6 +_,7 @@
+          this.m_46745_(p_151544_).m_6427_();
+       }
+ 
++      this.m_46717_(p_151544_, m_8055_(p_151544_).m_60734_()); //Notify neighbors of changes
+    }
+ 
+    public int m_5736_() {
+@@ -615,7 +_,7 @@
+    public int m_46681_(BlockPos p_46682_, Direction p_46683_) {
+       BlockState blockstate = this.m_8055_(p_46682_);
+       int i = blockstate.m_60746_(this, p_46682_, p_46683_);
+-      return blockstate.m_60796_(this, p_46682_) ? Math.max(i, this.m_46751_(p_46682_)) : i;
++      return blockstate.shouldCheckWeakPower(this, p_46682_, p_46683_) ? Math.max(i, this.m_46751_(p_46682_)) : i;
+    }
+ 
+    public boolean m_46753_(BlockPos p_46754_) {
+@@ -768,16 +_,15 @@
+    public abstract Scoreboard m_6188_();
+ 
+    public void m_46717_(BlockPos p_46718_, Block p_46719_) {
+-      for(Direction direction : Direction.Plane.HORIZONTAL) {
++      for(Direction direction : Direction.values()) {
+          BlockPos blockpos = p_46718_.m_142300_(direction);
+          if (this.m_46805_(blockpos)) {
+             BlockState blockstate = this.m_8055_(blockpos);
+-            if (blockstate.m_60713_(Blocks.f_50328_)) {
+-               blockstate.m_60690_(this, blockpos, p_46719_, p_46718_, false);
+-            } else if (blockstate.m_60796_(this, blockpos)) {
++            blockstate.onNeighborChange(this, blockpos, p_46718_);
++            if (blockstate.m_60796_(this, blockpos)) {
+                blockpos = blockpos.m_142300_(direction);
+                blockstate = this.m_8055_(blockpos);
+-               if (blockstate.m_60713_(Blocks.f_50328_)) {
++               if (blockstate.getWeakChanges(this, blockpos)) {
+                   blockstate.m_60690_(this, blockpos, p_46719_, p_46718_, false);
+                }
+             }
+@@ -856,6 +_,18 @@
+ 
+    public BiomeManager m_7062_() {
+       return this.f_46420_;
++   }
++
++   private double maxEntityRadius = 2.0D;
++   @Override
++   public double getMaxEntityRadius() {
++      return maxEntityRadius;
++   }
++   @Override
++   public double increaseMaxEntityRadius(double value) {
++      if (value > maxEntityRadius)
++         maxEntityRadius = value;
++      return maxEntityRadius;
+    }
+ 
+    public final boolean m_46659_() {

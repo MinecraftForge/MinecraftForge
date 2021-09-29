@@ -23,20 +23,20 @@ import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -45,7 +45,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 @Mod(ForgeChunkManagerTest.MODID)
 public class ForgeChunkManagerTest
@@ -54,8 +54,8 @@ public class ForgeChunkManagerTest
     private static final Logger LOGGER = LogManager.getLogger(MODID);
     private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
-    private static final RegistryObject<Block> CHUNK_LOADER_BLOCK = BLOCKS.register("chunk_loader", () -> new ChunkLoaderBlock(AbstractBlock.Properties.of(Material.STONE)));
-    private static final RegistryObject<Item> CHUNK_LOADER_ITEM = ITEMS.register("chunk_loader", () -> new BlockItem(CHUNK_LOADER_BLOCK.get(), new Item.Properties().tab(ItemGroup.TAB_MISC)));
+    private static final RegistryObject<Block> CHUNK_LOADER_BLOCK = BLOCKS.register("chunk_loader", () -> new ChunkLoaderBlock(Properties.of(Material.STONE)));
+    private static final RegistryObject<Item> CHUNK_LOADER_ITEM = ITEMS.register("chunk_loader", () -> new BlockItem(CHUNK_LOADER_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
     public ForgeChunkManagerTest()
     {
@@ -100,24 +100,24 @@ public class ForgeChunkManagerTest
         }
 
         @Override
-        public void onPlace(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving)
+        public void onPlace(BlockState state, Level worldIn, BlockPos pos, BlockState oldState, boolean isMoving)
         {
             super.onPlace(state, worldIn, pos, oldState, isMoving);
-            if (worldIn instanceof ServerWorld)
+            if (worldIn instanceof ServerLevel)
             {
                 ChunkPos chunkPos = new ChunkPos(pos);
-                ForgeChunkManager.forceChunk((ServerWorld) worldIn, MODID, pos, chunkPos.x, chunkPos.z, true, false);
+                ForgeChunkManager.forceChunk((ServerLevel) worldIn, MODID, pos, chunkPos.x, chunkPos.z, true, false);
             }
         }
 
         @Deprecated
-        public void onRemove(BlockState state, World worldIn, BlockPos pos, BlockState newState, boolean isMoving)
+        public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving)
         {
             super.onRemove(state, worldIn, pos, newState, isMoving);
-            if (worldIn instanceof ServerWorld && !state.is(newState.getBlock()))
+            if (worldIn instanceof ServerLevel && !state.is(newState.getBlock()))
             {
                 ChunkPos chunkPos = new ChunkPos(pos);
-                ForgeChunkManager.forceChunk((ServerWorld) worldIn, MODID, pos, chunkPos.x, chunkPos.z, false, false);
+                ForgeChunkManager.forceChunk((ServerLevel) worldIn, MODID, pos, chunkPos.x, chunkPos.z, false, false);
             }
         }
     }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/EnchantmentTableBlock.java
++++ b/net/minecraft/world/level/block/EnchantmentTableBlock.java
+@@ -55,7 +_,7 @@
+             if (p_52984_.nextInt(16) == 0) {
+                for(int k = 0; k <= 1; ++k) {
+                   BlockPos blockpos = p_52983_.m_142082_(i, k, j);
+-                  if (p_52982_.m_8055_(blockpos).m_60713_(Blocks.f_50078_)) {
++                  if (p_52982_.m_8055_(blockpos).getEnchantPowerBonus(p_52982_, blockpos) > 0) {
+                      if (!p_52982_.m_46859_(p_52983_.m_142082_(i / 2, 0, j / 2))) {
+                         break;
+                      }

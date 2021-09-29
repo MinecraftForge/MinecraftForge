@@ -20,24 +20,27 @@
 package net.minecraftforge.client.model.pipeline;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.google.common.collect.Maps;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.util.math.vector.Vector4f;
-import net.minecraft.world.IBlockDisplayReader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
+import net.minecraft.world.level.BlockAndTintGetter;
 
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
@@ -45,7 +48,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     
     // TODO 1.16/1.17 possibly refactor out the need for the "unpacked" format entirely. It's creating more headaches than solutions.
     // This mess reverses the conversion to float bits done in LightUtil.unpack
-    private static final int LIGHTMAP_PACKING_FACTOR = ((256 << (8 * (DefaultVertexFormats.ELEMENT_UV2.getType().getSize() - 1))) - 1) >>> 1;
+    private static final int LIGHTMAP_PACKING_FACTOR = ((256 << (8 * (DefaultVertexFormat.ELEMENT_UV2.getType().getSize() - 1))) - 1) >>> 1;
     // Max lightmap value, for rescaling
     private static final int LIGHTMAP_MAX = 0xF0;
     // Inlined factor for rescaling input lightmap values, "rounded" up to the next float value to avoid precision loss when result is truncated to int
@@ -61,7 +64,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     protected int lightmapIndex = -1;
 
     protected VertexFormat baseFormat;
-    protected MatrixStack.Entry pose;
+    protected PoseStack.Pose pose;
     
     public VertexLighterFlat(BlockColors colors)
     {
@@ -75,7 +78,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         setVertexFormat(parent.getVertexFormat());
     }
     
-    public void setTransform(final MatrixStack.Entry pose)
+    public void setTransform(final PoseStack.Pose pose)
     {
         this.pose = pose;
     }
@@ -130,8 +133,8 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     static VertexFormat withNormal(VertexFormat format)
     {
         //This is the case in 99.99%. Cache the value, so we don't have to redo it every time, and the speed up the equals check in LightUtil
-        if (format == DefaultVertexFormats.BLOCK)
-            return DefaultVertexFormats.BLOCK;
+        if (format == DefaultVertexFormat.BLOCK)
+            return DefaultVertexFormat.BLOCK;
         return withNormalUncached(format);
     }
 
@@ -139,9 +142,9 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     {
         if (format == null || format.hasNormal())
             return format;
-        List<VertexFormatElement> l = Lists.newArrayList(format.getElements());
-        l.add(NORMAL_4F);
-        return new VertexFormat(ImmutableList.copyOf(l));
+        Map<String, VertexFormatElement> m = Maps.newHashMap(format.getElementMapping());
+        m.put("Normal", NORMAL_4F);
+        return new VertexFormat(ImmutableMap.copyOf(m));
     }
 
     @Override
@@ -309,7 +312,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         this.diffuse = diffuse;
     }
 
-    public void setWorld(IBlockDisplayReader world)
+    public void setWorld(BlockAndTintGetter world)
     {
         blockInfo.setWorld(world);
     }

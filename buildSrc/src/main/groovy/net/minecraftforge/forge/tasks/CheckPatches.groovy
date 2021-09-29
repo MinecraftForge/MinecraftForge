@@ -1,6 +1,7 @@
 package net.minecraftforge.forge.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.TaskAction
@@ -9,19 +10,19 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.regex.Pattern
 
-public class CheckPatches extends DefaultTask {
-    @InputDirectory File patchDir
+abstract class CheckPatches extends DefaultTask {
+    @InputDirectory abstract DirectoryProperty getPatchDir()
     @Input boolean autoFix = false
 
     @TaskAction
     protected void exec() {
         def hasS2SArtifact = [
-            Paths.get("patches/minecraft/net/minecraft/client/renderer/ViewFrustum.java.patch"),
-            Paths.get("patches/minecraft/net/minecraft/data/BlockModelDefinition.java.patch")
+                Paths.get("patches/minecraft/net/minecraft/client/renderer/ViewArea.java.patch"),
+                Paths.get("patches/minecraft/net/minecraft/data/models/blockstates/Variant.java.patch")
         ]
 
         def verified = true;
-        project.fileTree(patchDir).each { patch ->
+        patchDir.get().asFileTree.each { patch ->
             def patchPath = project.rootDir.toPath().relativize(patch.toPath())
             verified &= verifyPatch(patch, autoFix, patchPath.toString(), hasS2SArtifact.contains(patchPath))
         }
@@ -31,7 +32,7 @@ public class CheckPatches extends DefaultTask {
     }
 
     def verifyPatch(patch, fix, patchPath, hasS2SArtifact) {
-        def hunk_start_pattern = Pattern.compile('^@@ -[0-9,]* \\+[0-9,]* @@$')
+        def hunk_start_pattern = Pattern.compile('^@@ -[0-9,]* \\+[0-9,_]* @@$')
         def white_space_pattern = Pattern.compile('^[+\\-]\\s*$')
         def import_pattern = Pattern.compile('^[+\\-]\\s*import.*')
         def field_pattern = Pattern.compile('^[+\\-][\\s]*((public|protected|private)[\\s]*)?(static[\\s]*)?(final)?([^=;]*)(=.*)?;\\s*$')

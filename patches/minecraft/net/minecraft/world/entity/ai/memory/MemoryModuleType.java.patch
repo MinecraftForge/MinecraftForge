@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/ai/memory/MemoryModuleType.java
++++ b/net/minecraft/world/entity/ai/memory/MemoryModuleType.java
+@@ -23,7 +_,7 @@
+ import net.minecraft.world.level.pathfinder.Path;
+ import net.minecraft.world.phys.Vec3;
+ 
+-public class MemoryModuleType<U> {
++public class MemoryModuleType<U> extends net.minecraftforge.registries.ForgeRegistryEntry<MemoryModuleType<?>> {
+    public static final MemoryModuleType<Void> f_26349_ = m_26388_("dummy");
+    public static final MemoryModuleType<GlobalPos> f_26359_ = m_26390_("home", GlobalPos.f_122633_);
+    public static final MemoryModuleType<GlobalPos> f_26360_ = m_26390_("job_site", GlobalPos.f_122633_);

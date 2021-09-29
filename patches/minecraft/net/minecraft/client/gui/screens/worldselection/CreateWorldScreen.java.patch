@@ -1,0 +1,19 @@
+--- a/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
++++ b/net/minecraft/client/gui/screens/worldselection/CreateWorldScreen.java
+@@ -117,7 +_,7 @@
+ 
+    public static CreateWorldScreen m_100898_(@Nullable Screen p_100899_) {
+       RegistryAccess.RegistryHolder registryaccess$registryholder = RegistryAccess.m_123086_();
+-      return new CreateWorldScreen(p_100899_, DataPackConfig.f_45842_, new WorldGenSettingsComponent(registryaccess$registryholder, WorldGenSettings.m_64641_(registryaccess$registryholder.m_175515_(Registry.f_122818_), registryaccess$registryholder.m_175515_(Registry.f_122885_), registryaccess$registryholder.m_175515_(Registry.f_122878_)), Optional.of(WorldPreset.f_101506_), OptionalLong.empty()));
++      return new CreateWorldScreen(p_100899_, DataPackConfig.f_45842_, new WorldGenSettingsComponent(registryaccess$registryholder, net.minecraftforge.client.ForgeHooksClient.getDefaultWorldType().map(type -> type.m_7012_(registryaccess$registryholder, new java.util.Random().nextLong(), true, false)).orElseGet(() -> WorldGenSettings.m_64641_(registryaccess$registryholder.m_175512_(Registry.f_122818_), registryaccess$registryholder.m_175512_(Registry.f_122885_), registryaccess$registryholder.m_175512_(Registry.f_122878_))), net.minecraftforge.client.ForgeHooksClient.getDefaultWorldType(), OptionalLong.empty()));
+    }
+ 
+    private CreateWorldScreen(@Nullable Screen p_100861_, DataPackConfig p_100862_, WorldGenSettingsComponent p_100863_) {
+@@ -596,6 +_,7 @@
+          File file1 = path.toFile();
+          if (this.f_100832_ == null) {
+             this.f_100832_ = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource(), new FolderRepositorySource(file1, PackSource.f_10527_));
++            net.minecraftforge.fmllegacy.packs.ResourcePackLoader.loadResourcePacks(this.f_100832_, net.minecraftforge.fmllegacy.server.ServerLifecycleHooks::buildPackFinder);
+             this.f_100832_.m_10506_();
+          }
+ 

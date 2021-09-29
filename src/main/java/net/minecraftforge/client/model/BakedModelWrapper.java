@@ -24,19 +24,19 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemOverrideList;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraftforge.client.model.data.IModelData;
 
-public abstract class BakedModelWrapper<T extends IBakedModel> implements IBakedModel
+public abstract class BakedModelWrapper<T extends BakedModel> implements BakedModel
 {
     protected final T originalModel;
 
@@ -88,13 +88,13 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
     }
 
     @Override
-    public ItemCameraTransforms getTransforms()
+    public ItemTransforms getTransforms()
     {
         return originalModel.getTransforms();
     }
 
     @Override
-    public ItemOverrideList getOverrides()
+    public ItemOverrides getOverrides()
     {
         return originalModel.getOverrides();
     }
@@ -106,15 +106,15 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
     }
 
     @Override
-    public IBakedModel handlePerspective(ItemCameraTransforms.TransformType cameraTransformType, MatrixStack mat)
+    public BakedModel handlePerspective(ItemTransforms.TransformType cameraTransformType, PoseStack poseStack)
     {
-        return originalModel.handlePerspective(cameraTransformType, mat);
+        return originalModel.handlePerspective(cameraTransformType, poseStack);
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture(@Nonnull IModelData data)
+    public TextureAtlasSprite getParticleIcon(@Nonnull IModelData data)
     {
-        return originalModel.getParticleTexture(data);
+        return originalModel.getParticleIcon(data);
     }
 
     @Nonnull
@@ -126,7 +126,7 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull IBlockDisplayReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData)
+    public IModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData)
     {
         return originalModel.getModelData(world, pos, state, tileData);
     }

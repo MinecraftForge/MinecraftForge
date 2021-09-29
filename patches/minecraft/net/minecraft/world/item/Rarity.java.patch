@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/item/Rarity.java
++++ b/net/minecraft/world/item/Rarity.java
+@@ -2,7 +_,7 @@
+ 
+ import net.minecraft.ChatFormatting;
+ 
+-public enum Rarity {
++public enum Rarity implements net.minecraftforge.common.IExtensibleEnum {
+    COMMON(ChatFormatting.WHITE),
+    UNCOMMON(ChatFormatting.YELLOW),
+    RARE(ChatFormatting.AQUA),
+@@ -12,5 +_,9 @@
+ 
+    private Rarity(ChatFormatting p_43028_) {
+       this.f_43022_ = p_43028_;
++   }
++
++   public static Rarity create(String name, ChatFormatting p_43028_) {
++      throw new IllegalStateException("Enum not extended");
+    }
+ }

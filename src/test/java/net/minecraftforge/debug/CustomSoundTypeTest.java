@@ -19,18 +19,18 @@
 
 package net.minecraftforge.debug;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.common.util.ForgeSoundType;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -50,10 +50,10 @@ public class CustomSoundTypeTest
     private static final SoundType TEST_SOUND_TYPE = new ForgeSoundType(1.0F, 1.0F, TEST_STEP_EVENT, TEST_STEP_EVENT, TEST_STEP_EVENT, TEST_STEP_EVENT, TEST_STEP_EVENT);
 
     private static final RegistryObject<Block> TEST_STEP_BLOCK = BLOCKS.register("test_block",
-            () -> new Block(AbstractBlock.Properties.of(Material.WOOD).sound(TEST_SOUND_TYPE)));
+            () -> new Block(BlockBehaviour.Properties.of(Material.WOOD).sound(TEST_SOUND_TYPE)));
 
     private static final RegistryObject<Item> TEST_STEP_BLOCK_ITEM = ITEMS.register("test_block",
-            () -> new BlockItem(TEST_STEP_BLOCK.get(), new Item.Properties().tab(ItemGroup.TAB_MISC)));
+            () -> new BlockItem(TEST_STEP_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
     public CustomSoundTypeTest()
     {

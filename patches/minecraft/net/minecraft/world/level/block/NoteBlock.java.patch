@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/level/block/NoteBlock.java
++++ b/net/minecraft/world/level/block/NoteBlock.java
+@@ -62,7 +_,9 @@
+       if (p_55035_.f_46443_) {
+          return InteractionResult.SUCCESS;
+       } else {
+-         p_55034_ = p_55034_.m_61122_(f_55013_);
++         int _new = net.minecraftforge.common.ForgeHooks.onNoteChange(p_55035_, p_55036_, p_55034_, p_55034_.m_61143_(f_55013_), p_55034_.m_61122_(f_55013_).m_61143_(f_55013_));
++         if (_new == -1) return InteractionResult.FAIL;
++         p_55034_ = p_55034_.m_61124_(f_55013_, _new);
+          p_55035_.m_7731_(p_55036_, p_55034_, 3);
+          this.m_55019_(p_55035_, p_55036_);
+          p_55037_.m_36220_(Stats.f_12960_);
+@@ -78,6 +_,9 @@
+    }
+ 
+    public boolean m_8133_(BlockState p_55023_, Level p_55024_, BlockPos p_55025_, int p_55026_, int p_55027_) {
++      net.minecraftforge.event.world.NoteBlockEvent.Play e = new net.minecraftforge.event.world.NoteBlockEvent.Play(p_55024_, p_55025_, p_55023_, p_55023_.m_61143_(f_55013_), p_55023_.m_61143_(f_55011_));
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) return false;
++      p_55023_ = p_55023_.m_61124_(f_55013_, e.getVanillaNoteId()).m_61124_(f_55011_, e.getInstrument());
+       int i = p_55023_.m_61143_(f_55013_);
+       float f = (float)Math.pow(2.0D, (double)(i - 12) / 12.0D);
+       p_55024_.m_5594_((Player)null, p_55025_, p_55023_.m_61143_(f_55011_).m_61668_(), SoundSource.RECORDS, 3.0F, f);

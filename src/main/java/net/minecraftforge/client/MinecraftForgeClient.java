@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
@@ -38,13 +40,14 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.chunk.ChunkRenderCache;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.resources.IResource;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.client.renderer.chunk.RenderChunkRegion;
+import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
 
 public class MinecraftForgeClient
 {
@@ -99,20 +102,20 @@ public class MinecraftForgeClient
         }
     }
 
-    private static final LoadingCache<Pair<World, BlockPos>, Optional<ChunkRenderCache>> regionCache = CacheBuilder.newBuilder()
+    private static final LoadingCache<Pair<Level, BlockPos>, Optional<RenderChunkRegion>> regionCache = CacheBuilder.newBuilder()
         .maximumSize(500)
         .concurrencyLevel(5)
         .expireAfterAccess(1, TimeUnit.SECONDS)
-        .build(new CacheLoader<Pair<World, BlockPos>, Optional<ChunkRenderCache>>()
+        .build(new CacheLoader<Pair<Level, BlockPos>, Optional<RenderChunkRegion>>()
         {
             @Override
-            public Optional<ChunkRenderCache> load(Pair<World, BlockPos> key)
+            public Optional<RenderChunkRegion> load(Pair<Level, BlockPos> key)
             {
-                return Optional.ofNullable(ChunkRenderCache.createIfNotEmpty(key.getLeft(), key.getRight().offset(-1, -1, -1), key.getRight().offset(16, 16, 16), 1));
+                return Optional.ofNullable(RenderChunkRegion.createIfNotEmpty(key.getLeft(), key.getRight().offset(-1, -1, -1), key.getRight().offset(16, 16, 16), 1));
             }
         });
 
-    public static void onRebuildChunk(World world, BlockPos position, ChunkRenderCache cache)
+    public static void onRebuildChunk(Level world, BlockPos position, RenderChunkRegion cache)
     {
         if (cache == null)
             regionCache.invalidate(Pair.of(world, position));
@@ -121,12 +124,12 @@ public class MinecraftForgeClient
     }
 
     @Nullable
-    public static ChunkRenderCache getRegionRenderCache(World world, BlockPos pos)
+    public static RenderChunkRegion getRegionRenderCache(Level world, BlockPos pos)
     {
         return getRegionRenderCacheOptional(world, pos).orElse(null);
     }
 
-    public static Optional<ChunkRenderCache> getRegionRenderCacheOptional(World world, BlockPos pos)
+    public static Optional<RenderChunkRegion> getRegionRenderCacheOptional(Level world, BlockPos pos)
     {
         int x = pos.getX() & ~0xF;
         int y = pos.getY() & ~0xF;
@@ -147,13 +150,30 @@ public class MinecraftForgeClient
     }
 
     @Nonnull
-    public static NativeImage getImageLayer(ResourceLocation resourceLocation, IResourceManager resourceManager) throws IOException
+    public static NativeImage getImageLayer(ResourceLocation resourceLocation, ResourceManager resourceManager) throws IOException
     {
         Supplier<NativeImage> supplier = bufferedImageSuppliers.get(resourceLocation);
         if (supplier != null)
             return supplier.get();
 
-        IResource iresource1 = resourceManager.getResource(resourceLocation);
+        Resource iresource1 = resourceManager.getResource(resourceLocation);
         return NativeImage.read(iresource1.getInputStream());
     }
+
+    private static final Map<ResourceLocation, ITextureAtlasSpriteLoader> textureAtlasSpriteLoaders = new ConcurrentHashMap<>();
+
+    /**
+     * Register a custom ITextureAtlasSprite loader. Call this method during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
+     */
+    public static void registerTextureAtlasSpriteLoader(ResourceLocation name, ITextureAtlasSpriteLoader loader)
+    {
+        textureAtlasSpriteLoaders.put(name, loader);
+    }
+
+    @Nullable
+    public static ITextureAtlasSpriteLoader getTextureAtlasSpriteLoader(ResourceLocation name)
+    {
+        return textureAtlasSpriteLoaders.get(name);
+    }
+
 }

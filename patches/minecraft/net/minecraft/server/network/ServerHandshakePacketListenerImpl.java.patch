@@ -1,0 +1,10 @@
+--- a/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
++++ b/net/minecraft/server/network/ServerHandshakePacketListenerImpl.java
+@@ -22,6 +_,7 @@
+    }
+ 
+    public void m_7322_(ClientIntentionPacket p_9975_) {
++      if (!net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.f_9966_)) return;
+       switch(p_9975_.m_134735_()) {
+       case LOGIN:
+          this.f_9966_.m_129498_(ConnectionProtocol.LOGIN);

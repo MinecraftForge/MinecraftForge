@@ -1,0 +1,60 @@
+--- a/net/minecraft/network/Connection.java
++++ b/net/minecraft/network/Connection.java
+@@ -77,6 +_,7 @@
+    private float f_129477_;
+    private int f_129478_;
+    private boolean f_129479_;
++   private java.util.function.Consumer<Connection> activationHandler;
+ 
+    public Connection(PacketFlow p_129482_) {
+       this.f_129466_ = p_129482_;
+@@ -86,6 +_,7 @@
+       super.channelActive(p_129525_);
+       this.f_129468_ = p_129525_.channel();
+       this.f_129469_ = this.f_129468_.remoteAddress();
++      if (activationHandler != null) activationHandler.accept(this);
+ 
+       try {
+          this.m_129498_(ConnectionProtocol.HANDSHAKING);
+@@ -179,7 +_,7 @@
+       ++this.f_129475_;
+       if (connectionprotocol1 != connectionprotocol) {
+          f_129465_.debug("Disabled auto read");
+-         this.f_129468_.config().setAutoRead(false);
++         this.f_129468_.eventLoop().execute(()->this.f_129468_.config().setAutoRead(false));
+       }
+ 
+       if (this.f_129468_.eventLoop().inEventLoop()) {
+@@ -277,7 +_,9 @@
+    }
+ 
+    public static Connection m_178300_(InetSocketAddress p_178301_, boolean p_178302_) {
++      if (p_178301_.getAddress() instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
+       final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
++      connection.activationHandler = net.minecraftforge.fmllegacy.network.NetworkHooks::registerClientLoginChannel;
+       Class<? extends SocketChannel> oclass;
+       LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;
+       if (Epoll.isAvailable() && p_178302_) {
+@@ -303,6 +_,7 @@
+ 
+    public static Connection m_129493_(SocketAddress p_129494_) {
+       final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
++      connection.activationHandler = net.minecraftforge.fmllegacy.network.NetworkHooks::registerClientLoginChannel;
+       (new Bootstrap()).group(f_129464_.m_13971_()).handler(new ChannelInitializer<Channel>() {
+          protected void initChannel(Channel p_129557_) {
+             p_129557_.pipeline().addLast("packet_handler", connection);
+@@ -389,6 +_,14 @@
+ 
+    public float m_129543_() {
+       return this.f_129477_;
++   }
++
++   public Channel channel() {
++      return f_129468_;
++   }
++
++   public PacketFlow getDirection() {
++      return this.f_129466_;
+    }
+ 
+    static class PacketHolder {

@@ -1,28 +1,28 @@
 --- a/net/minecraft/client/renderer/texture/Stitcher.java
 +++ b/net/minecraft/client/renderer/texture/Stitcher.java
-@@ -14,6 +_,8 @@
+@@ -13,6 +_,8 @@
  
  @OnlyIn(Dist.CLIENT)
  public class Stitcher {
 +   private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
 +
-    private static final Comparator<Stitcher.Holder> field_217797_a = Comparator.<Stitcher.Holder, Integer>comparing((p_217793_0_) -> {
-       return -p_217793_0_.field_94201_d;
-    }).thenComparing((p_217795_0_) -> {
-@@ -54,6 +_,12 @@
+    private static final Comparator<Stitcher.Holder> f_118161_ = Comparator.<Stitcher.Holder, Integer>comparing((p_118201_) -> {
+       return -p_118201_.f_118204_;
+    }).thenComparing((p_118199_) -> {
+@@ -53,6 +_,12 @@
  
        for(Stitcher.Holder stitcher$holder : list) {
-          if (!this.func_94310_b(stitcher$holder)) {
+          if (!this.m_118178_(stitcher$holder)) {
 +            LOGGER.info(new net.minecraftforge.fml.loading.AdvancedLogMessageAdapter(sb->{
-+               sb.append("Unable to fit: ").append(stitcher$holder.field_229213_a_.func_229248_a_());
-+               sb.append(" - size: ").append(stitcher$holder.field_229213_a_.func_229250_b_()).append("x").append(stitcher$holder.field_229213_a_.func_229252_c_());
++               sb.append("Unable to fit: ").append(stitcher$holder.f_118202_.m_118431_());
++               sb.append(" - size: ").append(stitcher$holder.f_118202_.m_118434_()).append("x").append(stitcher$holder.f_118202_.m_118437_());
 +               sb.append(" - Maybe try a lower resolution resourcepack?\n");
 +               list.forEach(h-> sb.append("\t").append(h).append("\n"));
 +            }));
-             throw new StitcherException(stitcher$holder.field_229213_a_, list.stream().map((p_229212_0_) -> {
-                return p_229212_0_.field_229213_a_;
+             throw new StitcherException(stitcher$holder.f_118202_, list.stream().map((p_118195_) -> {
+                return p_118195_.f_118202_;
              }).collect(ImmutableList.toImmutableList()));
-@@ -103,7 +_,7 @@
+@@ -102,7 +_,7 @@
           boolean flag4 = flag2 && j != l;
           boolean flag;
           if (flag3 ^ flag4) {
@@ -31,12 +31,12 @@
           } else {
              flag = flag1 && i <= j;
           }
-@@ -140,7 +_,7 @@
+@@ -139,7 +_,7 @@
        }
  
        public String toString() {
--         return "Holder{width=" + this.field_94204_c + ", height=" + this.field_94201_d + '}';
-+         return "Holder{width=" + this.field_94204_c + ", height=" + this.field_94201_d + ", name=" + this.field_229213_a_.func_229248_a_() + '}';
+-         return "Holder{width=" + this.f_118203_ + ", height=" + this.f_118204_ + "}";
++         return "Holder{width=" + this.f_118203_ + ", height=" + this.f_118204_ + ", name=" + this.f_118202_.m_118431_() + '}';
        }
     }
  

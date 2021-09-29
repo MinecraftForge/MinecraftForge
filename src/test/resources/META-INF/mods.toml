@@ -19,8 +19,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="custom_slime_block_test"
 [[mods]]
-    modId="block_harvest_tool_test"
-[[mods]]
     modId="client_chat_event_test"
 [[mods]]
     modId="command_event_test"
@@ -124,3 +122,41 @@ license="LGPL v2.1"
     modId="entity_teleport_event_test"
 [[mods]]
     modId="cursor_test"
+[[mods]]
+    modId="fake_player_test"
+[[mods]]
+    modId="text_linear_filtering_test"
+[[mods]]
+    modId="ranged_mobs_use_modded_weapons_test"
+[[mods]]
+    modId="fishing_bobber_event_test"
+[[mods]]
+    modId="custom_respawn_test"
+[[mods]]
+    modId="custom_tas_test"
+[[mods]]
+    modId="dimension_settings_test"
+[[mods]]
+    modId="player_attack_knockback_test"
+[[mods]]
+    modId="overlay_layers_test"
+[[mods]]
+    modId="entity_renderer_events_test"
+[[mods]]
+    modId="send_datapacks_to_client"
+[[mods]]
+    modId="remove_tag_datagen_test"
+[[mods]]
+    modId="tag_based_tool_types"
+[[mods]]
+    modId="check_spawn_event_test"
+[[mods]]
+    modId="redstone_sided_connectivity_test"
+[[mods]]
+    modId="permissions_changed_event_test"
+[[mods]]
+    modId="custom_shield_test"
+[[mods]]
+    modId="lazy_capabilities_on_items"
+
+# ADD ABOVE THIS LINE

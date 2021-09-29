@@ -19,11 +19,10 @@
 
 package net.minecraftforge.event.village;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.village.VillageSiege;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.ai.village.VillageSiege;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -41,11 +40,11 @@ import net.minecraftforge.eventbus.api.Event;
 public class VillageSiegeEvent extends Event
 {
     private final VillageSiege siege;
-    private final World world;
-    private final PlayerEntity player;
-    private final Vector3d attemptedSpawnPos;
+    private final Level world;
+    private final Player player;
+    private final Vec3 attemptedSpawnPos;
 
-    public VillageSiegeEvent(VillageSiege siege, World world, PlayerEntity player, Vector3d attemptedSpawnPos)
+    public VillageSiegeEvent(VillageSiege siege, Level world, Player player, Vec3 attemptedSpawnPos)
     {
        this.siege = siege;
        this.world = world;
@@ -58,17 +57,17 @@ public class VillageSiegeEvent extends Event
         return siege;
     }
 
-    public World getWorld()
+    public Level getWorld()
     {
         return world;
     }
 
-    public PlayerEntity getPlayer()
+    public Player getPlayer()
     {
         return player;
     }
 
-    public Vector3d getAttemptedSpawnPos()
+    public Vec3 getAttemptedSpawnPos()
     {
         return attemptedSpawnPos;
     }

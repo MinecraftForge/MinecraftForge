@@ -19,8 +19,8 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
@@ -41,7 +41,7 @@ public class AnvilRepairEvent extends PlayerEvent
     private final ItemStack output; // Set this to set the output stack
     private float breakChance; // Anvil's chance to break (reduced by 1 durability) when this is complete. Default is 12% (0.12f)
 
-    public AnvilRepairEvent(PlayerEntity player, @Nonnull ItemStack left, @Nonnull ItemStack right, @Nonnull ItemStack output)
+    public AnvilRepairEvent(Player player, @Nonnull ItemStack left, @Nonnull ItemStack right, @Nonnull ItemStack output)
     {
         super(player);
         this.output = output;

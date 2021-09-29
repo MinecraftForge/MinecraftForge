@@ -1,0 +1,182 @@
+--- a/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
++++ b/net/minecraft/world/level/block/entity/AbstractFurnaceBlockEntity.java
+@@ -105,6 +_,7 @@
+       this.f_58312_ = p_154994_;
+    }
+ 
++   /**@deprecated Forge: get burn times by calling ForgeHooks#getBurnTime(ItemStack)*/ @Deprecated
+    public static Map<Item, Integer> m_58423_() {
+       Map<Item, Integer> map = Maps.newLinkedHashMap();
+       m_58374_(map, Items.f_42448_, 20000);
+@@ -204,9 +_,9 @@
+       super.m_142466_(p_155025_);
+       this.f_58310_ = NonNullList.m_122780_(this.m_6643_(), ItemStack.f_41583_);
+       ContainerHelper.m_18980_(p_155025_, this.f_58310_);
+-      this.f_58316_ = p_155025_.m_128448_("BurnTime");
+-      this.f_58318_ = p_155025_.m_128448_("CookTime");
+-      this.f_58319_ = p_155025_.m_128448_("CookTimeTotal");
++      this.f_58316_ = p_155025_.m_128451_("BurnTime");
++      this.f_58318_ = p_155025_.m_128451_("CookTime");
++      this.f_58319_ = p_155025_.m_128451_("CookTimeTotal");
+       this.f_58317_ = this.m_7743_(this.f_58310_.get(1));
+       CompoundTag compoundtag = p_155025_.m_128469_("RecipesUsed");
+ 
+@@ -218,9 +_,9 @@
+ 
+    public CompoundTag m_6945_(CompoundTag p_58379_) {
+       super.m_6945_(p_58379_);
+-      p_58379_.m_128376_("BurnTime", (short)this.f_58316_);
+-      p_58379_.m_128376_("CookTime", (short)this.f_58318_);
+-      p_58379_.m_128376_("CookTimeTotal", (short)this.f_58319_);
++      p_58379_.m_128405_("BurnTime", this.f_58316_);
++      p_58379_.m_128405_("CookTime", this.f_58318_);
++      p_58379_.m_128405_("CookTimeTotal", this.f_58319_);
+       ContainerHelper.m_18973_(p_58379_, this.f_58310_);
+       CompoundTag compoundtag = new CompoundTag();
+       this.f_58320_.forEach((p_58382_, p_58383_) -> {
+@@ -239,30 +_,32 @@
+ 
+       ItemStack itemstack = p_155017_.f_58310_.get(1);
+       if (p_155017_.m_58425_() || !itemstack.m_41619_() && !p_155017_.f_58310_.get(0).m_41619_()) {
+-         Recipe<?> recipe = p_155014_.m_7465_().m_44015_((RecipeType<AbstractCookingRecipe>)p_155017_.f_58312_, p_155017_, p_155014_).orElse((AbstractCookingRecipe)null);
++         Recipe<?> recipe = p_155014_.m_7465_().m_44015_((RecipeType<AbstractCookingRecipe>)p_155017_.f_58312_, p_155017_, p_155014_).orElse(null);
+          int i = p_155017_.m_6893_();
+-         if (!p_155017_.m_58425_() && m_155005_(recipe, p_155017_.f_58310_, i)) {
++         if (!p_155017_.m_58425_() && p_155017_.m_155005_(recipe, p_155017_.f_58310_, i)) {
+             p_155017_.f_58316_ = p_155017_.m_7743_(itemstack);
+             p_155017_.f_58317_ = p_155017_.f_58316_;
+             if (p_155017_.m_58425_()) {
+                flag1 = true;
++               if (itemstack.hasContainerItem())
++                  p_155017_.f_58310_.set(1, itemstack.getContainerItem());
++               else
+                if (!itemstack.m_41619_()) {
+                   Item item = itemstack.m_41720_();
+                   itemstack.m_41774_(1);
+                   if (itemstack.m_41619_()) {
+-                     Item item1 = item.m_41469_();
+-                     p_155017_.f_58310_.set(1, item1 == null ? ItemStack.f_41583_ : new ItemStack(item1));
++                     p_155017_.f_58310_.set(1, itemstack.getContainerItem());
+                   }
+                }
+             }
+          }
+ 
+-         if (p_155017_.m_58425_() && m_155005_(recipe, p_155017_.f_58310_, i)) {
++         if (p_155017_.m_58425_() && p_155017_.m_155005_(recipe, p_155017_.f_58310_, i)) {
+             ++p_155017_.f_58318_;
+             if (p_155017_.f_58318_ == p_155017_.f_58319_) {
+                p_155017_.f_58318_ = 0;
+                p_155017_.f_58319_ = m_155009_(p_155014_, p_155017_.f_58312_, p_155017_);
+-               if (m_155026_(recipe, p_155017_.f_58310_, i)) {
++               if (p_155017_.m_155026_(recipe, p_155017_.f_58310_, i)) {
+                   p_155017_.m_6029_(recipe);
+                }
+ 
+@@ -287,9 +_,9 @@
+ 
+    }
+ 
+-   private static boolean m_155005_(@Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
++   private boolean m_155005_(@Nullable Recipe<?> p_155006_, NonNullList<ItemStack> p_155007_, int p_155008_) {
+       if (!p_155007_.get(0).m_41619_() && p_155006_ != null) {
+-         ItemStack itemstack = p_155006_.m_8043_();
++         ItemStack itemstack = ((Recipe<WorldlyContainer>) p_155006_).m_5874_(this);
+          if (itemstack.m_41619_()) {
+             return false;
+          } else {
+@@ -298,10 +_,10 @@
+                return true;
+             } else if (!itemstack1.m_41656_(itemstack)) {
+                return false;
+-            } else if (itemstack1.m_41613_() < p_155008_ && itemstack1.m_41613_() < itemstack1.m_41741_()) {
++            } else if (itemstack1.m_41613_() + itemstack.m_41613_() <= p_155008_ && itemstack1.m_41613_() + itemstack.m_41613_() <= itemstack1.m_41741_()) { // Forge fix: make furnace respect stack sizes in furnace recipes
+                return true;
+             } else {
+-               return itemstack1.m_41613_() < itemstack.m_41741_();
++               return itemstack1.m_41613_() + itemstack.m_41613_() <= itemstack.m_41741_(); // Forge fix: make furnace respect stack sizes in furnace recipes
+             }
+          }
+       } else {
+@@ -309,15 +_,15 @@
+       }
+    }
+ 
+-   private static boolean m_155026_(@Nullable Recipe<?> p_155027_, NonNullList<ItemStack> p_155028_, int p_155029_) {
+-      if (p_155027_ != null && m_155005_(p_155027_, p_155028_, p_155029_)) {
++   private boolean m_155026_(@Nullable Recipe<?> p_155027_, NonNullList<ItemStack> p_155028_, int p_155029_) {
++      if (p_155027_ != null && this.m_155005_(p_155027_, p_155028_, p_155029_)) {
+          ItemStack itemstack = p_155028_.get(0);
+-         ItemStack itemstack1 = p_155027_.m_8043_();
++         ItemStack itemstack1 = ((Recipe<WorldlyContainer>) p_155027_).m_5874_(this);
+          ItemStack itemstack2 = p_155028_.get(2);
+          if (itemstack2.m_41619_()) {
+             p_155028_.set(2, itemstack1.m_41777_());
+          } else if (itemstack2.m_150930_(itemstack1.m_41720_())) {
+-            itemstack2.m_41769_(1);
++            itemstack2.m_41769_(itemstack1.m_41613_());
+          }
+ 
+          if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_155028_.get(1).m_41619_() && p_155028_.get(1).m_150930_(Items.f_42446_)) {
+@@ -336,7 +_,7 @@
+          return 0;
+       } else {
+          Item item = p_58343_.m_41720_();
+-         return m_58423_().getOrDefault(item, 0);
++         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58343_, this.f_58312_);
+       }
+    }
+ 
+@@ -345,7 +_,7 @@
+    }
+ 
+    public static boolean m_58399_(ItemStack p_58400_) {
+-      return m_58423_().containsKey(p_58400_.m_41720_());
++      return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58400_, null) > 0;
+    }
+ 
+    public int[] m_7071_(Direction p_58363_) {
+@@ -425,7 +_,7 @@
+          return true;
+       } else {
+          ItemStack itemstack = this.f_58310_.get(1);
+-         return m_58399_(p_58390_) || p_58390_.m_150930_(Items.f_42446_) && !itemstack.m_150930_(Items.f_42446_);
++         return net.minecraftforge.common.ForgeHooks.getBurnTime(p_58390_, this.f_58312_) > 0 || p_58390_.m_150930_(Items.f_42446_) && !itemstack.m_150930_(Items.f_42446_);
+       }
+    }
+ 
+@@ -483,5 +_,34 @@
+          p_58342_.m_36491_(itemstack);
+       }
+ 
++   }
++
++   net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =
++           net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
++
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Direction facing) {
++      if (!this.f_58859_ && facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++         if (facing == Direction.UP)
++            return handlers[0].cast();
++         else if (facing == Direction.DOWN)
++            return handlers[1].cast();
++         else
++            return handlers[2].cast();
++      }
++      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   public void invalidateCaps() {
++      super.invalidateCaps();
++      for (int x = 0; x < handlers.length; x++)
++        handlers[x].invalidate();
++   }
++
++   @Override
++   public void reviveCaps() {
++      super.reviveCaps();
++      this.handlers = net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, Direction.UP, Direction.DOWN, Direction.NORTH);
+    }
+ }

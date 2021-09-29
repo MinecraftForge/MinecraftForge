@@ -20,8 +20,8 @@
 package net.minecraftforge.common.crafting.conditions;
 
 import com.google.gson.JsonObject;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 
 public class NotCondition implements ICondition
@@ -65,7 +65,7 @@ public class NotCondition implements ICondition
         @Override
         public NotCondition read(JsonObject json)
         {
-            return new NotCondition(CraftingHelper.getCondition(JSONUtils.getAsJsonObject(json, "value")));
+            return new NotCondition(CraftingHelper.getCondition(GsonHelper.getAsJsonObject(json, "value")));
         }
 
         @Override

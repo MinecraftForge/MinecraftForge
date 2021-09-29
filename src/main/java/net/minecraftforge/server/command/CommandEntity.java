@@ -33,17 +33,17 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.DimensionArgument;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.DimensionArgument;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ChunkPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.apache.commons.lang3.tuple.MutablePair;
@@ -51,7 +51,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 class CommandEntity
 {
-    static ArgumentBuilder<CommandSource, ?> register()
+    static ArgumentBuilder<CommandSourceStack, ?> register()
     {
         return Commands.literal("entity")
                 .then(EntityListCommand.register()); //TODO: //Kill, spawn, etc..
@@ -59,15 +59,15 @@ class CommandEntity
 
     private static class EntityListCommand
     {
-        private static final SimpleCommandExceptionType INVALID_FILTER = new SimpleCommandExceptionType(new TranslationTextComponent("commands.forge.entity.list.invalid"));
-        private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TranslationTextComponent("commands.forge.entity.list.invalidworld", dim));
-        private static final SimpleCommandExceptionType NO_ENTITIES = new SimpleCommandExceptionType(new TranslationTextComponent("commands.forge.entity.list.none"));
-        static ArgumentBuilder<CommandSource, ?> register()
+        private static final SimpleCommandExceptionType INVALID_FILTER = new SimpleCommandExceptionType(new TranslatableComponent("commands.forge.entity.list.invalid"));
+        private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TranslatableComponent("commands.forge.entity.list.invalidworld", dim));
+        private static final SimpleCommandExceptionType NO_ENTITIES = new SimpleCommandExceptionType(new TranslatableComponent("commands.forge.entity.list.none"));
+        static ArgumentBuilder<CommandSourceStack, ?> register()
         {
             return Commands.literal("list")
                 .requires(cs->cs.hasPermission(2)) //permission
                 .then(Commands.argument("filter", StringArgumentType.string())
-                    .suggests((ctx, builder) -> ISuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(ResourceLocation::toString).map(StringArgumentType::escapeIfRequired), builder))
+                    .suggests((ctx, builder) -> SharedSuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(ResourceLocation::toString).map(StringArgumentType::escapeIfRequired), builder))
                     .then(Commands.argument("dim", DimensionArgument.dimension())
                         .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.getDimension(ctx, "dim").dimension()))
                     )
@@ -76,7 +76,7 @@ class CommandEntity
                 .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().getLevel().dimension()));
         }
 
-        private static int execute(CommandSource sender, String filter, RegistryKey<World> dim) throws CommandSyntaxException
+        private static int execute(CommandSourceStack sender, String filter, ResourceKey<Level> dim) throws CommandSyntaxException
         {
             final String cleanFilter = filter.replace("?", ".?").replace("*", ".*?");
 
@@ -85,12 +85,12 @@ class CommandEntity
             if (names.isEmpty())
                 throw INVALID_FILTER.create();
 
-            ServerWorld world = sender.getServer().getLevel(dim); //TODO: DimensionManager so we can hotload? DimensionManager.getWorld(sender.getServer(), dim, false, false);
+            ServerLevel world = sender.getServer().getLevel(dim); //TODO: DimensionManager so we can hotload? DimensionManager.getWorld(sender.getServer(), dim, false, false);
             if (world == null)
                 throw INVALID_DIMENSION.create(dim);
 
             Map<ResourceLocation, MutablePair<Integer, Map<ChunkPos, Integer>>> list = Maps.newHashMap();
-            world.getEntities().forEach(e -> {
+            world.getEntities().getAll().forEach(e -> {
                 MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(e.getType().getRegistryName(), k -> MutablePair.of(0, Maps.newHashMap()));
                 ChunkPos chunk = new ChunkPos(e.blockPosition());
                 info.left++;
@@ -104,7 +104,7 @@ class CommandEntity
                 if (info == null)
                     throw NO_ENTITIES.create();
 
-                sender.sendSuccess(new TranslationTextComponent("commands.forge.entity.list.single.header", name, info.getLeft()), false);
+                sender.sendSuccess(new TranslatableComponent("commands.forge.entity.list.single.header", name, info.getLeft()), false);
                 List<Map.Entry<ChunkPos, Integer>> toSort = new ArrayList<>();
                 toSort.addAll(info.getRight().entrySet());
                 toSort.sort((a, b) -> {
@@ -118,7 +118,7 @@ class CommandEntity
                 for (Map.Entry<ChunkPos, Integer> e : toSort)
                 {
                     if (limit-- == 0) break;
-                    sender.sendSuccess(new StringTextComponent("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), false);
+                    sender.sendSuccess(new TextComponent("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), false);
                 }
                 return toSort.size();
             }
@@ -144,8 +144,8 @@ class CommandEntity
                     throw NO_ENTITIES.create();
 
                 int count = info.stream().mapToInt(Pair::getRight).sum();
-                sender.sendSuccess(new TranslationTextComponent("commands.forge.entity.list.multiple.header", count), false);
-                info.forEach(e -> sender.sendSuccess(new StringTextComponent("  " + e.getValue() + ": " + e.getKey()), false));
+                sender.sendSuccess(new TranslatableComponent("commands.forge.entity.list.multiple.header", count), false);
+                info.forEach(e -> sender.sendSuccess(new TextComponent("  " + e.getValue() + ": " + e.getKey()), false));
                 return info.size();
             }
         }

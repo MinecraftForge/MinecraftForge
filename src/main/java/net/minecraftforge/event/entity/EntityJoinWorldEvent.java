@@ -19,12 +19,8 @@
 
 package net.minecraftforge.event.entity;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
-
-import java.util.Collection;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.Level;
 
 /**
  * EntityJoinWorldEvent is fired when an Entity joins the world. <br>
@@ -45,16 +41,31 @@ import java.util.Collection;
 public class EntityJoinWorldEvent extends EntityEvent
 {
 
-    private final World world;
+    private final Level world;
+    private final boolean loadedFromDisk;
 
-    public EntityJoinWorldEvent(Entity entity, World world)
+    public EntityJoinWorldEvent(Entity entity, Level world)
+    {
+        this(entity, world, false);
+    }
+
+    public EntityJoinWorldEvent(Entity entity, Level world, boolean loadedFromDisk)
     {
         super(entity);
         this.world = world;
+        this.loadedFromDisk = loadedFromDisk;
     }
 
-    public World getWorld()
+    public Level getWorld()
     {
         return world;
+    }
+
+    /**
+     * @return {@code true} if the entity was loaded from disk. On client entities, the info isn't available and this will always return {@code false}.
+     */
+    public boolean loadedFromDisk()
+    {
+        return loadedFromDisk;
     }
 }

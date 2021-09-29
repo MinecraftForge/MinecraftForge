@@ -1,0 +1,47 @@
+--- a/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
++++ b/net/minecraft/world/entity/vehicle/AbstractMinecartContainer.java
+@@ -156,6 +_,8 @@
+    }
+ 
+    public InteractionResult m_6096_(Player p_38232_, InteractionHand p_38233_) {
++      InteractionResult ret = super.m_6096_(p_38232_, p_38233_);
++      if (ret.m_19077_()) return ret;
+       p_38232_.m_5893_(this);
+       if (!p_38232_.f_19853_.f_46443_) {
+          this.m_146852_(GameEvent.f_157803_, p_38232_);
+@@ -189,6 +_,8 @@
+ 
+          this.f_38204_ = null;
+          LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerLevel)this.f_19853_)).m_78972_(LootContextParams.f_81460_, this.m_20182_()).m_78965_(this.f_38205_);
++         // Forge: add this entity to loot context, however, currently Vanilla uses 'this' for the player creating the chests. So we take over 'killer_entity' for this.
++         lootcontext$builder.m_78972_(LootContextParams.f_81458_, this);
+          if (p_38255_ != null) {
+             lootcontext$builder.m_78963_(p_38255_.m_36336_()).m_78972_(LootContextParams.f_81455_, p_38255_);
+          }
+@@ -219,4 +_,26 @@
+    }
+ 
+    protected abstract AbstractContainerMenu m_7402_(int p_38222_, Inventory p_38223_);
++
++   // Forge Start
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.core.Direction facing) {
++      if (this.m_6084_() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++         return itemHandler.cast();
++      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   public void invalidateCaps() {
++      super.invalidateCaps();
++      itemHandler.invalidate();
++   }
++
++   @Override
++   public void reviveCaps() {
++      super.reviveCaps();
++      itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++   }
+ }

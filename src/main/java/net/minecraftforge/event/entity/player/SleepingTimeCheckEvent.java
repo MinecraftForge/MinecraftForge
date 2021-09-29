@@ -19,9 +19,8 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
 import java.util.Optional;
@@ -40,7 +39,7 @@ public class SleepingTimeCheckEvent extends PlayerEvent
 {
     private final Optional<BlockPos> sleepingLocation;
 
-    public SleepingTimeCheckEvent(PlayerEntity player, Optional<BlockPos> sleepingLocation)
+    public SleepingTimeCheckEvent(Player player, Optional<BlockPos> sleepingLocation)
     {
         super(player);
         this.sleepingLocation = sleepingLocation;

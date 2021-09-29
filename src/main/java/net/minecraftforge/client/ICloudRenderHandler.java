@@ -19,9 +19,9 @@
 
 package net.minecraftforge.client;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.client.multiplayer.ClientLevel;
 
 /**
  * Call {@link net.minecraft.client.world.DimensionRenderInfo#setCloudRenderHandler(ICloudRenderHandler)}, obtained from a {@link ClientWorld} with an implementation of this to override all cloud rendering with your own.
@@ -29,5 +29,5 @@ import net.minecraft.client.world.ClientWorld;
  */
 @FunctionalInterface
 public interface ICloudRenderHandler {
-    void render(int ticks, float partialTicks, MatrixStack matrixStack, ClientWorld world, Minecraft mc, double viewEntityX, double viewEntityY, double viewEntityZ);
+    void render(int ticks, float partialTicks, PoseStack matrixStack, ClientLevel world, Minecraft mc, double viewEntityX, double viewEntityY, double viewEntityZ);
 }

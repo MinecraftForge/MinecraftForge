@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/inventory/GrindstoneMenu.java
++++ b/net/minecraft/world/inventory/GrindstoneMenu.java
+@@ -144,12 +_,13 @@
+             }
+ 
+             Item item = itemstack.m_41720_();
+-            int k = item.m_41462_() - itemstack.m_41773_();
+-            int l = item.m_41462_() - itemstack1.m_41773_();
+-            int i1 = k + l + item.m_41462_() * 5 / 100;
+-            i = Math.max(item.m_41462_() - i1, 0);
++            int k = itemstack.m_41776_() - itemstack.m_41773_();
++            int l = itemstack.m_41776_() - itemstack1.m_41773_();
++            int i1 = k + l + itemstack.m_41776_() * 5 / 100;
++            i = Math.max(itemstack.m_41776_() - i1, 0);
+             itemstack2 = this.m_39590_(itemstack, itemstack1);
+-            if (!itemstack2.m_41763_()) {
++            if (!itemstack2.isRepairable()) i = itemstack.m_41773_();
++            if (!itemstack2.m_41763_() || !itemstack2.isRepairable()) {
+                if (!ItemStack.m_41728_(itemstack, itemstack1)) {
+                   this.f_39559_.m_6836_(0, ItemStack.f_41583_);
+                   this.m_38946_();

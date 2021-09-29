@@ -1,0 +1,29 @@
+--- a/net/minecraft/world/entity/animal/Fox.java
++++ b/net/minecraft/world/entity/animal/Fox.java
+@@ -796,6 +_,17 @@
+       protected void m_8026_() {
+          ServerLevel serverlevel = (ServerLevel)this.f_25114_;
+          Fox fox = (Fox)this.f_25113_.m_142606_(serverlevel, this.f_25115_);
++         final net.minecraftforge.event.entity.living.BabyEntitySpawnEvent event = new net.minecraftforge.event.entity.living.BabyEntitySpawnEvent(f_25113_, f_25115_, fox);
++         final boolean cancelled = net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++         fox = (Fox) event.getChild();
++         if (cancelled) {
++            //Reset the "inLove" state for the animals
++            this.f_25113_.m_146762_(6000);
++            this.f_25115_.m_146762_(6000);
++            this.f_25113_.m_27594_();
++            this.f_25115_.m_27594_();
++            return;
++         }
+          if (fox != null) {
+             ServerPlayer serverplayer = this.f_25113_.m_27592_();
+             ServerPlayer serverplayer1 = this.f_25115_.m_27592_();
+@@ -867,7 +_,7 @@
+       }
+ 
+       protected void m_28686_() {
+-         if (Fox.this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
++         if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(Fox.this.f_19853_, Fox.this)) {
+             BlockState blockstate = Fox.this.f_19853_.m_8055_(this.f_25602_);
+             if (blockstate.m_60713_(Blocks.f_50685_)) {
+                this.m_148928_(blockstate);

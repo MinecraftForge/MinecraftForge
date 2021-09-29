@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/level/DataPackConfig.java
++++ b/net/minecraft/world/level/DataPackConfig.java
+@@ -18,7 +_,7 @@
+    private final List<String> f_45845_;
+ 
+    public DataPackConfig(List<String> p_45848_, List<String> p_45849_) {
+-      this.f_45844_ = ImmutableList.copyOf(p_45848_);
++      this.f_45844_ = com.google.common.collect.Lists.newArrayList(p_45848_);
+       this.f_45845_ = ImmutableList.copyOf(p_45849_);
+    }
+ 
+@@ -28,5 +_,9 @@
+ 
+    public List<String> m_45855_() {
+       return this.f_45845_;
++   }
++
++   public void addModPacks(List<String> modPacks) {
++      f_45844_.addAll(modPacks.stream().filter(p->!f_45844_.contains(p)).collect(java.util.stream.Collectors.toList()));
+    }
+ }

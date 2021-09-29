@@ -1,0 +1,25 @@
+--- a/net/minecraft/client/gui/screens/MenuScreens.java
++++ b/net/minecraft/client/gui/screens/MenuScreens.java
+@@ -40,6 +_,10 @@
+    private static final Map<MenuType<?>, MenuScreens.ScreenConstructor<?, ?>> f_96196_ = Maps.newHashMap();
+ 
+    public static <T extends AbstractContainerMenu> void m_96201_(@Nullable MenuType<T> p_96202_, Minecraft p_96203_, int p_96204_, Component p_96205_) {
++      getScreenFactory(p_96202_, p_96203_, p_96204_, p_96205_).ifPresent(f -> f.m_96209_(p_96205_, p_96202_, p_96203_, p_96204_));
++   }
++
++   public static <T extends AbstractContainerMenu> java.util.Optional<ScreenConstructor<T, ?>> getScreenFactory(@Nullable MenuType<T> p_96202_, Minecraft p_96203_, int p_96204_, Component p_96205_) {
+       if (p_96202_ == null) {
+          f_96195_.warn("Trying to open invalid screen with name: {}", (Object)p_96205_.getString());
+       } else {
+@@ -47,9 +_,10 @@
+          if (screenconstructor == null) {
+             f_96195_.warn("Failed to create screen for menu type: {}", (Object)Registry.f_122863_.m_7981_(p_96202_));
+          } else {
+-            screenconstructor.m_96209_(p_96205_, p_96202_, p_96203_, p_96204_);
++            return java.util.Optional.of(screenconstructor);
+          }
+       }
++      return java.util.Optional.empty();
+    }
+ 
+    @Nullable

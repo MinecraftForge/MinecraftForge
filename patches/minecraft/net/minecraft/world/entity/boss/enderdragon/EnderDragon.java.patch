@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
++++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
+@@ -420,7 +_,7 @@
+                BlockPos blockpos = new BlockPos(k1, l1, i2);
+                BlockState blockstate = this.f_19853_.m_8055_(blockpos);
+                if (!blockstate.m_60795_() && blockstate.m_60767_() != Material.f_76309_) {
+-                  if (this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) && !blockstate.m_60620_(BlockTags.f_13069_)) {
++                  if (net.minecraftforge.common.ForgeHooks.canEntityDestroy(this.f_19853_, blockpos, this) && !BlockTags.f_13069_.m_8110_(blockstate.m_60734_())) {
+                      flag1 = this.f_19853_.m_7471_(blockpos, false) || flag1;
+                   } else {
+                      flag = true;
+@@ -847,6 +_,16 @@
+ 
+    public boolean m_6072_() {
+       return false;
++   }
++
++   @Override
++   public boolean isMultipartEntity() {
++      return true;
++   }
++
++   @Override
++   public net.minecraftforge.entity.PartEntity<?>[] getParts() {
++      return this.f_31089_;
+    }
+ 
+    public void m_142223_(ClientboundAddMobPacket p_149572_) {

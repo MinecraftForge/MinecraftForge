@@ -1,0 +1,48 @@
+--- a/net/minecraft/client/renderer/ScreenEffectRenderer.java
++++ b/net/minecraft/client/renderer/ScreenEffectRenderer.java
+@@ -30,18 +_,21 @@
+    public static void m_110718_(Minecraft p_110719_, PoseStack p_110720_) {
+       Player player = p_110719_.f_91074_;
+       if (!player.f_19794_) {
+-         BlockState blockstate = m_110716_(player);
+-         if (blockstate != null) {
+-            m_173296_(p_110719_.m_91289_().m_110907_().m_110882_(blockstate), p_110720_);
++         org.apache.commons.lang3.tuple.Pair<BlockState, BlockPos> overlay = getOverlayBlock(player);
++         if (overlay != null) {
++            if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(player, p_110720_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, overlay.getLeft(), overlay.getRight()))
++                m_173296_(p_110719_.m_91289_().m_110907_().getTexture(overlay.getLeft(), p_110719_.f_91073_, overlay.getRight()), p_110720_);
+          }
+       }
+ 
+       if (!p_110719_.f_91074_.m_5833_()) {
+          if (p_110719_.f_91074_.m_19941_(FluidTags.f_13131_)) {
++            if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(player, p_110720_))
+             m_110725_(p_110719_, p_110720_);
+          }
+ 
+          if (p_110719_.f_91074_.m_6060_()) {
++            if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(player, p_110720_))
+             m_110728_(p_110719_, p_110720_);
+          }
+       }
+@@ -50,6 +_,11 @@
+ 
+    @Nullable
+    private static BlockState m_110716_(Player p_110717_) {
++      return getOverlayBlock(p_110717_).getLeft();
++   }
++
++   @Nullable
++   private static org.apache.commons.lang3.tuple.Pair<BlockState, BlockPos> getOverlayBlock(Player p_110717_) {
+       BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+ 
+       for(int i = 0; i < 8; ++i) {
+@@ -59,7 +_,7 @@
+          blockpos$mutableblockpos.m_122169_(d0, d1, d2);
+          BlockState blockstate = p_110717_.f_19853_.m_8055_(blockpos$mutableblockpos);
+          if (blockstate.m_60799_() != RenderShape.INVISIBLE && blockstate.m_60831_(p_110717_.f_19853_, blockpos$mutableblockpos)) {
+-            return blockstate;
++            return org.apache.commons.lang3.tuple.Pair.of(blockstate, blockpos$mutableblockpos.m_7949_());
+          }
+       }
+ 

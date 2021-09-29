@@ -1,0 +1,94 @@
+--- a/net/minecraft/world/item/crafting/ShapedRecipe.java
++++ b/net/minecraft/world/item/crafting/ShapedRecipe.java
+@@ -22,7 +_,20 @@
+ import net.minecraft.world.item.Items;
+ import net.minecraft.world.level.Level;
+ 
+-public class ShapedRecipe implements CraftingRecipe {
++public class ShapedRecipe implements CraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingContainer> {
++   static int MAX_WIDTH = 3;
++   static int MAX_HEIGHT = 3;
++   /**
++    * Expand the max width and height allowed in the deserializer.
++    * This should be called by modders who add custom crafting tables that are larger than the vanilla 3x3.
++    * @param width your max recipe width
++    * @param height your max recipe height
++    */
++   public static void setCraftingSize(int width, int height) {
++      if (MAX_WIDTH < width) MAX_WIDTH = width;
++      if (MAX_HEIGHT < height) MAX_HEIGHT = height;
++   }
++
+    final int f_44146_;
+    final int f_44147_;
+    final NonNullList<Ingredient> f_44148_;
+@@ -110,10 +_,20 @@
+       return this.f_44146_;
+    }
+ 
++   @Override
++   public int getRecipeWidth() {
++      return m_44220_();
++   }
++
+    public int m_44221_() {
+       return this.f_44147_;
+    }
+ 
++   @Override
++   public int getRecipeHeight() {
++      return m_44221_();
++   }
++
+    static NonNullList<Ingredient> m_44202_(String[] p_44203_, Map<String, Ingredient> p_44204_, int p_44205_, int p_44206_) {
+       NonNullList<Ingredient> nonnulllist = NonNullList.m_122780_(p_44205_ * p_44206_, Ingredient.f_43901_);
+       Set<String> set = Sets.newHashSet(p_44204_.keySet());
+@@ -202,15 +_,15 @@
+ 
+    static String[] m_44196_(JsonArray p_44197_) {
+       String[] astring = new String[p_44197_.size()];
+-      if (astring.length > 3) {
+-         throw new JsonSyntaxException("Invalid pattern: too many rows, 3 is maximum");
++      if (astring.length > MAX_HEIGHT) {
++         throw new JsonSyntaxException("Invalid pattern: too many rows, " + MAX_HEIGHT + " is maximum");
+       } else if (astring.length == 0) {
+          throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
+       } else {
+          for(int i = 0; i < astring.length; ++i) {
+             String s = GsonHelper.m_13805_(p_44197_.get(i), "pattern[" + i + "]");
+-            if (s.length() > 3) {
+-               throw new JsonSyntaxException("Invalid pattern: too many columns, 3 is maximum");
++            if (s.length() > MAX_WIDTH) {
++               throw new JsonSyntaxException("Invalid pattern: too many columns, " + MAX_WIDTH + " is maximum");
+             }
+ 
+             if (i > 0 && astring[0].length() != s.length()) {
+@@ -244,17 +_,7 @@
+    }
+ 
+    public static ItemStack m_151274_(JsonObject p_151275_) {
+-      Item item = m_151278_(p_151275_);
+-      if (p_151275_.has("data")) {
+-         throw new JsonParseException("Disallowed data tag found");
+-      } else {
+-         int i = GsonHelper.m_13824_(p_151275_, "count", 1);
+-         if (i < 1) {
+-            throw new JsonSyntaxException("Invalid output count: " + i);
+-         } else {
+-            return new ItemStack(item, i);
+-         }
+-      }
++      return net.minecraftforge.common.crafting.CraftingHelper.getItemStack(p_151275_, true);
+    }
+ 
+    public static Item m_151278_(JsonObject p_151279_) {
+@@ -269,7 +_,8 @@
+       }
+    }
+ 
+-   public static class Serializer implements RecipeSerializer<ShapedRecipe> {
++   public static class Serializer extends net.minecraftforge.registries.ForgeRegistryEntry<RecipeSerializer<?>>  implements RecipeSerializer<ShapedRecipe> {
++      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shaped");
+       public ShapedRecipe m_6729_(ResourceLocation p_44236_, JsonObject p_44237_) {
+          String s = GsonHelper.m_13851_(p_44237_, "group", "");
+          Map<String, Ingredient> map = ShapedRecipe.m_44210_(GsonHelper.m_13930_(p_44237_, "key"));

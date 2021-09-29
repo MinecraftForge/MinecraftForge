@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/entity/ai/behavior/HarvestFarmland.java
++++ b/net/minecraft/world/entity/ai/behavior/HarvestFarmland.java
+@@ -38,7 +_,7 @@
+    }
+ 
+    protected boolean m_6114_(ServerLevel p_23174_, Villager p_23175_) {
+-      if (!p_23174_.m_46469_().m_46207_(GameRules.f_46132_)) {
++      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_23174_, p_23175_)) {
+          return false;
+       } else if (p_23175_.m_7141_().m_35571_() != VillagerProfession.f_35590_) {
+          return false;
+@@ -118,6 +_,11 @@
+                      } else if (itemstack.m_150930_(Items.f_42733_)) {
+                         p_23196_.m_7731_(this.f_23159_, Blocks.f_50444_.m_49966_(), 3);
+                         flag = true;
++                     } else if (itemstack.m_41720_() instanceof net.minecraftforge.common.IPlantable) {
++                        if (((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlantType(p_23196_, f_23159_) == net.minecraftforge.common.PlantType.CROP) {
++                           p_23196_.m_7731_(f_23159_, ((net.minecraftforge.common.IPlantable)itemstack.m_41720_()).getPlant(p_23196_, f_23159_), 3);
++                           flag = true;
++                        }
+                      }
+                   }
+ 

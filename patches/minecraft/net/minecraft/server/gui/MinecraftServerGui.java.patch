@@ -1,23 +1,23 @@
 --- a/net/minecraft/server/gui/MinecraftServerGui.java
 +++ b/net/minecraft/server/gui/MinecraftServerGui.java
-@@ -137,8 +_,10 @@
+@@ -139,8 +_,10 @@
        return jpanel;
     }
  
 +   private java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
-    public void func_206931_a() {
-       this.field_206932_d.start();
+    public void m_139908_() {
+       this.f_139902_.start();
 +      latch.countDown();
     }
  
-    public void func_219050_b() {
-@@ -153,6 +_,9 @@
+    public void m_139925_() {
+@@ -155,6 +_,9 @@
     }
  
-    public void func_164247_a(JTextArea p_164247_1_, JScrollPane p_164247_2_, String p_164247_3_) {
+    public void m_139914_(JTextArea p_139915_, JScrollPane p_139916_, String p_139917_) {
 +      try {
 +         latch.await();
 +      } catch (InterruptedException e){} //Prevent logging until after constructor has ended.
        if (!SwingUtilities.isEventDispatchThread()) {
           SwingUtilities.invokeLater(() -> {
-             this.func_164247_a(p_164247_1_, p_164247_2_, p_164247_3_);
+             this.m_139914_(p_139915_, p_139916_, p_139917_);

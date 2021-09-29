@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/resources/language/LanguageManager.java
++++ b/net/minecraft/client/resources/language/LanguageManager.java
+@@ -80,4 +_,9 @@
+    public LanguageInfo m_118976_(String p_118977_) {
+       return this.f_118966_.get(p_118977_);
+    }
++
++   @Override
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.LANGUAGES;
++   }
+ }

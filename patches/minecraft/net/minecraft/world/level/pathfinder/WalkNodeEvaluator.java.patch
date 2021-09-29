@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
++++ b/net/minecraft/world/level/pathfinder/WalkNodeEvaluator.java
+@@ -472,6 +_,8 @@
+ 
+    protected static BlockPathTypes m_77643_(BlockGetter p_77644_, BlockPos p_77645_) {
+       BlockState blockstate = p_77644_.m_8055_(p_77645_);
++      BlockPathTypes type = blockstate.getAiPathNodeType(p_77644_, p_77645_);
++      if (type != null) return type;
+       Block block = blockstate.m_60734_();
+       Material material = blockstate.m_60767_();
+       if (blockstate.m_60795_()) {

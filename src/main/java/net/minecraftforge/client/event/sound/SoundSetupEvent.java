@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.event.sound;
 
-import net.minecraft.client.audio.SoundEngine;
+import net.minecraft.client.sounds.SoundEngine;
 
 /**
  * This event is raised by the SoundManager when it does its first setup of the

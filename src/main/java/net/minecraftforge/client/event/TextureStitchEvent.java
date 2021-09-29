@@ -19,24 +19,24 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.client.renderer.texture.AtlasTexture;
-import net.minecraftforge.fml.event.lifecycle.IModBusEvent;
+import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraftforge.fml.event.IModBusEvent;
 
 import java.util.Set;
 
 
 public class TextureStitchEvent extends Event implements IModBusEvent
 {
-    private final AtlasTexture map;
+    private final TextureAtlas map;
 
-    public TextureStitchEvent(AtlasTexture map)
+    public TextureStitchEvent(TextureAtlas map)
     {
         this.map = map;
     }
 
-    public AtlasTexture getMap()
+    public TextureAtlas getMap()
     {
         return map;
     }
@@ -49,7 +49,7 @@ public class TextureStitchEvent extends Event implements IModBusEvent
     {
         private final Set<ResourceLocation> sprites;
 
-        public Pre(AtlasTexture map, Set<ResourceLocation> sprites)
+        public Pre(TextureAtlas map, Set<ResourceLocation> sprites)
         {
             super(map);
             this.sprites = sprites;
@@ -70,6 +70,6 @@ public class TextureStitchEvent extends Event implements IModBusEvent
      */
     public static class Post extends TextureStitchEvent
     {
-        public Post(AtlasTexture map){ super(map); }
+        public Post(TextureAtlas map){ super(map); }
     }
 }

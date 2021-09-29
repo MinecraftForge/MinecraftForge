@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/resources/model/UnbakedModel.java
++++ b/net/minecraft/client/resources/model/UnbakedModel.java
+@@ -11,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public interface UnbakedModel {
++public interface UnbakedModel extends net.minecraftforge.client.extensions.IForgeUnbakedModel {
+    Collection<ResourceLocation> m_7970_();
+ 
+    Collection<Material> m_5500_(Function<ResourceLocation, UnbakedModel> p_119538_, Set<Pair<String, String>> p_119539_);

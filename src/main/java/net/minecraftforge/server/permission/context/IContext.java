@@ -19,8 +19,8 @@
 
 package net.minecraftforge.server.permission.context;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
@@ -33,13 +33,13 @@ public interface IContext
      * World from where permission is requested. Can be null
      */
     @Nullable
-    World getWorld();
+    Level getWorld();
 
     /**
      * @return Player requesting permission. Can be null
      */
     @Nullable
-    PlayerEntity getPlayer();
+    Player getPlayer();
 
     /**
      * @param key Context key

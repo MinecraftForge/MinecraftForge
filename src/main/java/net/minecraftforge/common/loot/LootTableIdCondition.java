@@ -22,17 +22,17 @@ package net.minecraftforge.common.loot;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import net.minecraft.loot.ILootSerializer;
-import net.minecraft.loot.LootConditionType;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.storage.loot.Serializer;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 
-public class LootTableIdCondition implements ILootCondition
+public class LootTableIdCondition implements LootItemCondition
 {
     // TODO Forge Registry at some point?
-    public static final LootConditionType LOOT_TABLE_ID = new LootConditionType(new LootTableIdCondition.Serializer());
+    public static final LootItemConditionType LOOT_TABLE_ID = new LootItemConditionType(new LootTableIdCondition.Serializer());
     public static final ResourceLocation UNKNOWN_LOOT_TABLE = new ResourceLocation("forge", "unknown_loot_table");
 
     private final ResourceLocation targetLootTableId;
@@ -43,7 +43,7 @@ public class LootTableIdCondition implements ILootCondition
     }
 
     @Override
-    public LootConditionType getType()
+    public LootItemConditionType getType()
     {
         return LOOT_TABLE_ID;
     }
@@ -59,7 +59,7 @@ public class LootTableIdCondition implements ILootCondition
         return new Builder(targetLootTableId);
     }
 
-    public static class Builder implements ILootCondition.IBuilder
+    public static class Builder implements LootItemCondition.Builder
     {
         private final ResourceLocation targetLootTableId;
 
@@ -70,13 +70,13 @@ public class LootTableIdCondition implements ILootCondition
         }
 
         @Override
-        public ILootCondition build()
+        public LootItemCondition build()
         {
             return new LootTableIdCondition(this.targetLootTableId);
         }
     }
 
-    public static class Serializer implements ILootSerializer<LootTableIdCondition>
+    public static class Serializer implements net.minecraft.world.level.storage.loot.Serializer<LootTableIdCondition>
     {
         @Override
         public void serialize(JsonObject object, LootTableIdCondition instance, JsonSerializationContext ctx)
@@ -87,7 +87,7 @@ public class LootTableIdCondition implements ILootCondition
         @Override
         public LootTableIdCondition deserialize(JsonObject object, JsonDeserializationContext ctx)
         {
-            return new LootTableIdCondition(new ResourceLocation(JSONUtils.getAsString(object, "loot_table_id")));
+            return new LootTableIdCondition(new ResourceLocation(GsonHelper.getAsString(object, "loot_table_id")));
         }
     }
 }

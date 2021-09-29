@@ -19,19 +19,17 @@
 
 package net.minecraftforge.items;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.DropperBlock;
-import net.minecraft.block.HopperBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.IHopper;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.DispenserTileEntity;
-import net.minecraft.tileentity.HopperTileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.LazyOptional;
+import net.minecraft.world.level.block.DropperBlock;
+import net.minecraft.world.level.block.HopperBlock;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.Hopper;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.block.entity.HopperBlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,9 +45,9 @@ public class VanillaInventoryCodeHooks
      * @return Null if we did nothing {no IItemHandler}, True if we moved an item, False if we moved no items
      */
     @Nullable
-    public static Boolean extractHook(IHopper dest)
+    public static Boolean extractHook(Level level, Hopper dest)
     {
-        return getItemHandler(dest, Direction.UP)
+        return getItemHandler(level, dest, Direction.UP)
                 .map(itemHandlerResult -> {
                     IItemHandler handler = itemHandlerResult.getKey();
 
@@ -86,7 +84,7 @@ public class VanillaInventoryCodeHooks
     /**
      * Copied from BlockDropper#dispense and added capability support
      */
-    public static boolean dropperInsertHook(World world, BlockPos pos, DispenserTileEntity dropper, int slot, @Nonnull ItemStack stack)
+    public static boolean dropperInsertHook(Level world, BlockPos pos, DispenserBlockEntity dropper, int slot, @Nonnull ItemStack stack)
     {
         Direction enumfacing = world.getBlockState(pos).getValue(DropperBlock.FACING);
         BlockPos blockpos = pos.relative(enumfacing);
@@ -116,10 +114,10 @@ public class VanillaInventoryCodeHooks
     /**
      * Copied from TileEntityHopper#transferItemsOut and added capability support
      */
-    public static boolean insertHook(HopperTileEntity hopper)
+    public static boolean insertHook(HopperBlockEntity hopper)
     {
         Direction hopperFacing = hopper.getBlockState().getValue(HopperBlock.FACING);
-        return getItemHandler(hopper, hopperFacing)
+        return getItemHandler(hopper.getLevel(), hopper, hopperFacing)
                 .map(destinationResult -> {
                     IItemHandler itemHandler = destinationResult.getKey();
                     Object destination = destinationResult.getValue();
@@ -152,7 +150,7 @@ public class VanillaInventoryCodeHooks
                 .orElse(false);
     }
 
-    private static ItemStack putStackInInventoryAllSlots(TileEntity source, Object destination, IItemHandler destInventory, ItemStack stack)
+    private static ItemStack putStackInInventoryAllSlots(BlockEntity source, Object destination, IItemHandler destInventory, ItemStack stack)
     {
         for (int slot = 0; slot < destInventory.getSlots() && !stack.isEmpty(); slot++)
         {
@@ -164,7 +162,7 @@ public class VanillaInventoryCodeHooks
     /**
      * Copied from TileEntityHopper#insertStack and added capability support
      */
-    private static ItemStack insertStack(TileEntity source, Object destination, IItemHandler destInventory, ItemStack stack, int slot)
+    private static ItemStack insertStack(BlockEntity source, Object destination, IItemHandler destInventory, ItemStack stack, int slot)
     {
         ItemStack itemstack = destInventory.getStackInSlot(slot);
 
@@ -188,16 +186,16 @@ public class VanillaInventoryCodeHooks
 
             if (insertedItem)
             {
-                if (inventoryWasEmpty && destination instanceof HopperTileEntity)
+                if (inventoryWasEmpty && destination instanceof HopperBlockEntity)
                 {
-                    HopperTileEntity destinationHopper = (HopperTileEntity)destination;
+                    HopperBlockEntity destinationHopper = (HopperBlockEntity)destination;
 
                     if (!destinationHopper.isOnCustomCooldown())
                     {
                         int k = 0;
-                        if (source instanceof HopperTileEntity)
+                        if (source instanceof HopperBlockEntity)
                         {
-                            if (destinationHopper.getLastUpdateTime() >= ((HopperTileEntity) source).getLastUpdateTime())
+                            if (destinationHopper.getLastUpdateTime() >= ((HopperBlockEntity) source).getLastUpdateTime())
                             {
                                 k = 1;
                             }
@@ -211,12 +209,12 @@ public class VanillaInventoryCodeHooks
         return stack;
     }
 
-    private static Optional<Pair<IItemHandler, Object>> getItemHandler(IHopper hopper, Direction hopperFacing)
+    private static Optional<Pair<IItemHandler, Object>> getItemHandler(Level level, Hopper hopper, Direction hopperFacing)
     {
         double x = hopper.getLevelX() + (double) hopperFacing.getStepX();
         double y = hopper.getLevelY() + (double) hopperFacing.getStepY();
         double z = hopper.getLevelZ() + (double) hopperFacing.getStepZ();
-        return getItemHandler(hopper.getLevel(), x, y, z, hopperFacing.getOpposite());
+        return getItemHandler(level, x, y, z, hopperFacing.getOpposite());
     }
 
     private static boolean isFull(IItemHandler itemHandler)
@@ -245,21 +243,21 @@ public class VanillaInventoryCodeHooks
         return true;
     }
 
-    public static Optional<Pair<IItemHandler, Object>> getItemHandler(World worldIn, double x, double y, double z, final Direction side)
+    public static Optional<Pair<IItemHandler, Object>> getItemHandler(Level worldIn, double x, double y, double z, final Direction side)
     {
-        int i = MathHelper.floor(x);
-        int j = MathHelper.floor(y);
-        int k = MathHelper.floor(z);
+        int i = Mth.floor(x);
+        int j = Mth.floor(y);
+        int k = Mth.floor(z);
         BlockPos blockpos = new BlockPos(i, j, k);
-        net.minecraft.block.BlockState state = worldIn.getBlockState(blockpos);
+        net.minecraft.world.level.block.state.BlockState state = worldIn.getBlockState(blockpos);
 
-        if (state.hasTileEntity())
+        if (state.hasBlockEntity())
         {
-            TileEntity tileentity = worldIn.getBlockEntity(blockpos);
-            if (tileentity != null)
+            BlockEntity blockEntity = worldIn.getBlockEntity(blockpos);
+            if (blockEntity != null)
             {
-                return tileentity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)
-                    .map(capability -> ImmutablePair.<IItemHandler, Object>of(capability, tileentity));
+                return blockEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, side)
+                    .map(capability -> ImmutablePair.<IItemHandler, Object>of(capability, blockEntity));
             }
         }
 

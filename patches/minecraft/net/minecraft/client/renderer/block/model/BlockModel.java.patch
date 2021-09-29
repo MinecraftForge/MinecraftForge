@@ -1,0 +1,89 @@
+--- a/net/minecraft/client/renderer/block/model/BlockModel.java
++++ b/net/minecraft/client/renderer/block/model/BlockModel.java
+@@ -66,9 +_,10 @@
+    public BlockModel f_111418_;
+    @Nullable
+    protected ResourceLocation f_111419_;
++   public final net.minecraftforge.client.model.BlockModelConfiguration customData = new net.minecraftforge.client.model.BlockModelConfiguration(this);
+ 
+    public static BlockModel m_111461_(Reader p_111462_) {
+-      return GsonHelper.m_13776_(f_111415_, p_111462_, BlockModel.class);
++      return GsonHelper.m_13776_(net.minecraftforge.client.model.ModelLoaderRegistry.ExpandedBlockModelDeserializer.INSTANCE, p_111462_, BlockModel.class);
+    }
+ 
+    public static BlockModel m_111463_(String p_111464_) {
+@@ -85,10 +_,15 @@
+       this.f_111426_ = p_111435_;
+    }
+ 
++   @Deprecated
+    public List<BlockElement> m_111436_() {
++      if (customData.hasCustomGeometry()) return java.util.Collections.emptyList();
+       return this.f_111422_.isEmpty() && this.f_111418_ != null ? this.f_111418_.m_111436_() : this.f_111422_;
+    }
+ 
++   @Nullable
++   public ResourceLocation getParentLocation() { return f_111419_; }
++
+    public boolean m_111476_() {
+       return this.f_111418_ != null ? this.f_111418_.m_111476_() : this.f_111424_;
+    }
+@@ -113,6 +_,10 @@
+       return this.f_111426_.isEmpty() ? ItemOverrides.f_111734_ : new ItemOverrides(p_111447_, p_111448_, p_111447_::m_119341_, this.f_111426_);
+    }
+ 
++   public ItemOverrides getOverrides(ModelBakery p_111447_, BlockModel p_111448_, Function<Material, TextureAtlasSprite> textureGetter) {
++      return this.f_111426_.isEmpty() ? ItemOverrides.f_111734_ : new ItemOverrides(p_111447_, p_111448_, p_111447_::m_119341_, textureGetter, this.f_111426_);
++   }
++
+    public Collection<ResourceLocation> m_7970_() {
+       Set<ResourceLocation> set = Sets.newHashSet();
+ 
+@@ -156,6 +_,9 @@
+ 
+       Set<Material> set1 = Sets.newHashSet(this.m_111480_("particle"));
+ 
++      if (customData.hasCustomGeometry())
++         set1.addAll(customData.getTextureDependencies(p_111469_, p_111470_));
++      else
+       for(BlockElement blockelement : this.m_111436_()) {
+          for(BlockElementFace blockelementface : blockelement.f_111310_.values()) {
+             Material material = this.m_111480_(blockelementface.f_111356_);
+@@ -182,11 +_,17 @@
+       return set1;
+    }
+ 
++   @Deprecated //Forge: Use Boolean variant
+    public BakedModel m_7611_(ModelBakery p_111457_, Function<Material, TextureAtlasSprite> p_111458_, ModelState p_111459_, ResourceLocation p_111460_) {
+       return this.m_111449_(p_111457_, this, p_111458_, p_111459_, p_111460_, true);
+    }
+ 
+    public BakedModel m_111449_(ModelBakery p_111450_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, ResourceLocation p_111454_, boolean p_111455_) {
++      return net.minecraftforge.client.model.ModelLoaderRegistry.bakeHelper(this, p_111450_, p_111451_, p_111452_, p_111453_, p_111454_, p_111455_);
++   }
++
++   @Deprecated //Forge: exposed for our callbacks only. Use the above function.
++   public BakedModel bakeVanilla(ModelBakery p_111450_, BlockModel p_111451_, Function<Material, TextureAtlasSprite> p_111452_, ModelState p_111453_, ResourceLocation p_111454_, boolean p_111455_) {
+       TextureAtlasSprite textureatlassprite = p_111452_.apply(this.m_111480_("particle"));
+       if (this.m_111490_() == ModelBakery.f_119233_) {
+          return new BuiltInModel(this.m_111491_(), this.m_111446_(p_111450_, p_111451_), textureatlassprite, this.m_111479_().m_111526_());
+@@ -213,6 +_,10 @@
+       return f_111421_.m_111600_(p_111438_.f_111308_, p_111438_.f_111309_, p_111439_, p_111440_, p_111441_, p_111442_, p_111438_.f_111311_, p_111438_.f_111312_, p_111443_);
+    }
+ 
++   public static BakedQuad makeBakedQuad(BlockElement p_111438_, BlockElementFace p_111439_, TextureAtlasSprite p_111440_, Direction p_111441_, ModelState p_111442_, ResourceLocation p_111443_) {
++      return m_111437_(p_111438_, p_111439_, p_111440_, p_111441_, p_111442_, p_111443_);
++   }
++
+    public boolean m_111477_(String p_111478_) {
+       return !MissingTextureAtlasSprite.m_118071_().equals(this.m_111480_(p_111478_).m_119203_());
+    }
+@@ -388,6 +_,8 @@
+       public boolean m_111526_() {
+          return this == SIDE;
+       }
++
++      public String getSerializedName() { return f_111519_; }
+    }
+ 
+    @OnlyIn(Dist.CLIENT)

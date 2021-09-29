@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/block/MushroomBlock.java
++++ b/net/minecraft/world/level/block/MushroomBlock.java
+@@ -69,7 +_,7 @@
+       if (blockstate.m_60620_(BlockTags.f_13057_)) {
+          return true;
+       } else {
+-         return p_54881_.m_45524_(p_54882_, 0) < 13 && this.m_6266_(blockstate, p_54881_, blockpos);
++         return p_54881_.m_45524_(p_54882_, 0) < 13 && blockstate.canSustainPlant(p_54881_, blockpos, net.minecraft.core.Direction.UP, this);
+       }
+    }
+ 

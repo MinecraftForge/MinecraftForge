@@ -21,11 +21,11 @@ package net.minecraftforge.client.event;
 
 import javax.annotation.Nonnull;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -37,9 +37,9 @@ import net.minecraftforge.eventbus.api.Event;
 @Cancelable
 public class RenderHandEvent extends Event
 {
-    private final Hand hand;
-    private final MatrixStack mat;
-    private final IRenderTypeBuffer buffers;
+    private final InteractionHand hand;
+    private final PoseStack mat;
+    private final MultiBufferSource buffers;
     private final int light;
     private final float partialTicks;
     private final float interpolatedPitch;
@@ -48,7 +48,7 @@ public class RenderHandEvent extends Event
     @Nonnull
     private final ItemStack stack;
 
-    public RenderHandEvent(Hand hand, MatrixStack mat, IRenderTypeBuffer buffers, int light,
+    public RenderHandEvent(InteractionHand hand, PoseStack mat, MultiBufferSource buffers, int light,
                            float partialTicks, float interpolatedPitch,
                            float swingProgress, float equipProgress, @Nonnull ItemStack stack)
     {
@@ -63,17 +63,17 @@ public class RenderHandEvent extends Event
         this.stack = stack;
     }
 
-    public Hand getHand()
+    public InteractionHand getHand()
     {
         return hand;
     }
 
-    public MatrixStack getMatrixStack()
+    public PoseStack getMatrixStack()
     {
         return mat;
     }
 
-    public IRenderTypeBuffer getBuffers() {
+    public MultiBufferSource getBuffers() {
         return buffers;
     }
 

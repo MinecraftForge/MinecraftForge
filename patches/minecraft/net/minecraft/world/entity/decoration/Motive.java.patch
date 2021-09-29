@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/entity/decoration/Motive.java
++++ b/net/minecraft/world/entity/decoration/Motive.java
+@@ -2,7 +_,7 @@
+ 
+ import net.minecraft.core.Registry;
+ 
+-public class Motive {
++public class Motive extends net.minecraftforge.registries.ForgeRegistryEntry<Motive> {
+    public static final Motive f_31866_ = m_31897_("kebab", 16, 16);
+    public static final Motive f_31867_ = m_31897_("aztec", 16, 16);
+    public static final Motive f_31868_ = m_31897_("alban", 16, 16);

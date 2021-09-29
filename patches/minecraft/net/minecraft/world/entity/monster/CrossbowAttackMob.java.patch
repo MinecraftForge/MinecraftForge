@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/entity/monster/CrossbowAttackMob.java
++++ b/net/minecraft/world/entity/monster/CrossbowAttackMob.java
+@@ -24,9 +_,9 @@
+    void m_5847_();
+ 
+    default void m_32336_(LivingEntity p_32337_, float p_32338_) {
+-      InteractionHand interactionhand = ProjectileUtil.m_37297_(p_32337_, Items.f_42717_);
++      InteractionHand interactionhand = ProjectileUtil.getWeaponHoldingHand(p_32337_, item -> item instanceof CrossbowItem);
+       ItemStack itemstack = p_32337_.m_21120_(interactionhand);
+-      if (p_32337_.m_21055_(Items.f_42717_)) {
++      if (p_32337_.m_21093_(is -> is.m_41720_() instanceof CrossbowItem)) {
+          CrossbowItem.m_40887_(p_32337_.f_19853_, p_32337_, interactionhand, itemstack, p_32338_, (float)(14 - p_32337_.f_19853_.m_46791_().m_19028_() * 4));
+       }
+ 

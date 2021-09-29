@@ -1,0 +1,34 @@
+--- a/net/minecraft/server/network/ServerConnectionListener.java
++++ b/net/minecraft/server/network/ServerConnectionListener.java
+@@ -50,11 +_,12 @@
+ 
+ public class ServerConnectionListener {
+    private static final Logger f_9701_ = LogManager.getLogger();
++   private static final int READ_TIMEOUT = Integer.parseInt(System.getProperty("forge.readTimeout", "30"));
+    public static final LazyLoadedValue<NioEventLoopGroup> f_9698_ = new LazyLoadedValue<>(() -> {
+-      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).build());
++      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build());
+    });
+    public static final LazyLoadedValue<EpollEventLoopGroup> f_9699_ = new LazyLoadedValue<>(() -> {
+-      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).build());
++      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.util.thread.SidedThreadGroups.SERVER).build());
+    });
+    final MinecraftServer f_9702_;
+    public volatile boolean f_9700_;
+@@ -67,6 +_,7 @@
+    }
+ 
+    public void m_9711_(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
++      if (p_9712_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
+       synchronized(this.f_9703_) {
+          Class<? extends ServerSocketChannel> oclass;
+          LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;
+@@ -87,7 +_,7 @@
+                } catch (ChannelException channelexception) {
+                }
+ 
+-               p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this)).addLast("splitter", new Varint21FrameDecoder()).addLast("decoder", new PacketDecoder(PacketFlow.SERVERBOUND)).addLast("prepender", new Varint21LengthFieldPrepender()).addLast("encoder", new PacketEncoder(PacketFlow.CLIENTBOUND));
++               p_9729_.pipeline().addLast("timeout", new ReadTimeoutHandler(READ_TIMEOUT)).addLast("legacy_query", new LegacyQueryHandler(ServerConnectionListener.this)).addLast("splitter", new Varint21FrameDecoder()).addLast("decoder", new PacketDecoder(PacketFlow.SERVERBOUND)).addLast("prepender", new Varint21LengthFieldPrepender()).addLast("encoder", new PacketEncoder(PacketFlow.CLIENTBOUND));
+                int i = ServerConnectionListener.this.f_9702_.m_7032_();
+                Connection connection = (Connection)(i > 0 ? new RateKickingConnection(i) : new Connection(PacketFlow.SERVERBOUND));
+                ServerConnectionListener.this.f_9704_.add(connection);

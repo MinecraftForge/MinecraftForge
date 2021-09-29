@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/entity/projectile/WitherSkull.java
++++ b/net/minecraft/world/entity/projectile/WitherSkull.java
+@@ -41,7 +_,7 @@
+    }
+ 
+    public float m_7077_(Explosion p_37619_, BlockGetter p_37620_, BlockPos p_37621_, BlockState p_37622_, FluidState p_37623_, float p_37624_) {
+-      return this.m_37635_() && WitherBoss.m_31491_(p_37622_) ? Math.min(0.8F, p_37624_) : p_37624_;
++      return this.m_37635_() && p_37622_.canEntityDestroy(p_37620_, p_37621_, this) ? Math.min(0.8F, p_37624_) : p_37624_;
+    }
+ 
+    protected void m_5790_(EntityHitResult p_37626_) {
+@@ -83,7 +_,7 @@
+    protected void m_6532_(HitResult p_37628_) {
+       super.m_6532_(p_37628_);
+       if (!this.f_19853_.f_46443_) {
+-         Explosion.BlockInteraction explosion$blockinteraction = this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
++         Explosion.BlockInteraction explosion$blockinteraction = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this.m_37282_()) ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
+          this.f_19853_.m_46518_(this, this.m_20185_(), this.m_20186_(), this.m_20189_(), 1.0F, false, explosion$blockinteraction);
+          this.m_146870_();
+       }

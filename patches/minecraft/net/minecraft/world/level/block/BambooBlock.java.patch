@@ -1,0 +1,25 @@
+--- a/net/minecraft/world/level/block/BambooBlock.java
++++ b/net/minecraft/world/level/block/BambooBlock.java
+@@ -114,10 +_,11 @@
+ 
+    public void m_7455_(BlockState p_48936_, ServerLevel p_48937_, BlockPos p_48938_, Random p_48939_) {
+       if (p_48936_.m_61143_(f_48871_) == 0) {
+-         if (p_48939_.nextInt(3) == 0 && p_48937_.m_46859_(p_48938_.m_7494_()) && p_48937_.m_45524_(p_48938_.m_7494_(), 0) >= 9) {
++         if (p_48937_.m_46859_(p_48938_.m_7494_()) && p_48937_.m_45524_(p_48938_.m_7494_(), 0) >= 9) {
+             int i = this.m_48932_(p_48937_, p_48938_) + 1;
+-            if (i < 16) {
++            if (i < 16 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_48937_, p_48938_, p_48936_, p_48939_.nextInt(3) == 0)) {
+                this.m_48910_(p_48936_, p_48937_, p_48938_, p_48939_, i);
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_48937_, p_48938_, p_48936_);
+             }
+          }
+ 
+@@ -171,7 +_,7 @@
+    }
+ 
+    public float m_5880_(BlockState p_48901_, Player p_48902_, BlockGetter p_48903_, BlockPos p_48904_) {
+-      return p_48902_.m_21205_().m_41720_() instanceof SwordItem ? 1.0F : super.m_5880_(p_48901_, p_48902_, p_48903_, p_48904_);
++      return p_48902_.m_21205_().canPerformAction(net.minecraftforge.common.ToolActions.SWORD_DIG) ? 1.0F : super.m_5880_(p_48901_, p_48902_, p_48903_, p_48904_);
+    }
+ 
+    protected void m_48910_(BlockState p_48911_, Level p_48912_, BlockPos p_48913_, Random p_48914_, int p_48915_) {

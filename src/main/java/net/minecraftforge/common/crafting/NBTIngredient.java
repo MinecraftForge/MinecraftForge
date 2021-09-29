@@ -26,16 +26,16 @@ import javax.annotation.Nullable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class NBTIngredient extends Ingredient
 {
     private final ItemStack stack;
     protected NBTIngredient(ItemStack stack)
     {
-        super(Stream.of(new Ingredient.SingleItemList(stack)));
+        super(Stream.of(new Ingredient.ItemValue(stack)));
         this.stack = stack;
     }
 
@@ -77,7 +77,7 @@ public class NBTIngredient extends Ingredient
         public static final Serializer INSTANCE = new Serializer();
 
         @Override
-        public NBTIngredient parse(PacketBuffer buffer) {
+        public NBTIngredient parse(FriendlyByteBuf buffer) {
             return new NBTIngredient(buffer.readItem());
         }
 
@@ -87,7 +87,7 @@ public class NBTIngredient extends Ingredient
         }
 
         @Override
-        public void write(PacketBuffer buffer, NBTIngredient ingredient) {
+        public void write(FriendlyByteBuf buffer, NBTIngredient ingredient) {
             buffer.writeItem(ingredient.stack);
         }
     }

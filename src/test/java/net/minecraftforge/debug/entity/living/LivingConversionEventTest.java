@@ -19,10 +19,10 @@
 
 package net.minecraftforge.debug.entity.living;
 
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.monster.piglin.PiglinEntity;
-import net.minecraft.potion.EffectInstance;
-import net.minecraft.potion.Effects;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.monster.piglin.Piglin;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -38,7 +38,7 @@ public class LivingConversionEventTest
 
     public void canLivingConversion(LivingConversionEvent.Pre event)
     {
-        if (event.getEntityLiving() instanceof PiglinEntity)
+        if (event.getEntityLiving() instanceof Piglin)
         {
             event.setCanceled(true);
             event.setConversionTimer(0);
@@ -47,7 +47,7 @@ public class LivingConversionEventTest
 
     public void onLivingConversion(LivingConversionEvent.Post event)
     {
-        if (event.getEntityLiving() instanceof VillagerEntity)
-            event.getEntityLiving().addEffect(new EffectInstance(Effects.LUCK, 20));
+        if (event.getEntityLiving() instanceof Villager)
+            event.getEntityLiving().addEffect(new MobEffectInstance(MobEffects.LUCK, 20));
     }
 }

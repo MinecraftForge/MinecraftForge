@@ -1,0 +1,43 @@
+--- a/net/minecraft/world/item/MobBucketItem.java
++++ b/net/minecraft/world/item/MobBucketItem.java
+@@ -25,11 +_,24 @@
+ public class MobBucketItem extends BucketItem {
+    private final EntityType<?> f_151134_;
+    private final SoundEvent f_151135_;
++   private final java.util.function.Supplier<? extends EntityType<?>> fishTypeSupplier;
++   private final java.util.function.Supplier<? extends SoundEvent> emptySoundSupplier;
+ 
++   @Deprecated
+    public MobBucketItem(EntityType<?> p_151137_, Fluid p_151138_, SoundEvent p_151139_, Item.Properties p_151140_) {
+       super(p_151138_, p_151140_);
+       this.f_151134_ = p_151137_;
+       this.f_151135_ = p_151139_;
++      this.emptySoundSupplier = null;
++      this.fishTypeSupplier = () -> p_151137_;
++   }
++
++   public MobBucketItem(java.util.function.Supplier<? extends EntityType<?>> entitySupplier, java.util.function.Supplier<? extends Fluid> fluidSupplier, java.util.function.Supplier<? extends SoundEvent> soundSupplier, Item.Properties properties) {
++      super(fluidSupplier, properties);
++      this.f_151134_ = null;
++      this.f_151135_ = null;
++      this.emptySoundSupplier = soundSupplier;
++      this.fishTypeSupplier = entitySupplier;
+    }
+ 
+    public void m_142131_(@Nullable Player p_151146_, Level p_151147_, ItemStack p_151148_, BlockPos p_151149_) {
+@@ -80,6 +_,14 @@
+             p_151157_.add(mutablecomponent);
+          }
+       }
+-
++   }
++
++   // Forge Start
++   protected EntityType<?> getFishType() {
++      return fishTypeSupplier.get();
++   }
++
++   protected SoundEvent getEmptySound() {
++      return emptySoundSupplier.get();
+    }
+ }

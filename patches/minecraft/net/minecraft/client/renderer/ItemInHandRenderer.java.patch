@@ -1,0 +1,36 @@
+--- a/net/minecraft/client/renderer/ItemInHandRenderer.java
++++ b/net/minecraft/client/renderer/ItemInHandRenderer.java
+@@ -286,12 +_,14 @@
+       if (iteminhandrenderer$handrenderselection.f_172921_) {
+          float f4 = interactionhand == InteractionHand.MAIN_HAND ? f : 0.0F;
+          float f5 = 1.0F - Mth.m_14179_(p_109315_, this.f_109303_, this.f_109302_);
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(InteractionHand.MAIN_HAND, p_109316_, p_109317_, p_109319_, p_109315_, f1, f4, f5, this.f_109300_))
+          this.m_109371_(p_109318_, p_109315_, f1, InteractionHand.MAIN_HAND, f4, this.f_109300_, f5, p_109316_, p_109317_, p_109319_);
+       }
+ 
+       if (iteminhandrenderer$handrenderselection.f_172922_) {
+          float f6 = interactionhand == InteractionHand.OFF_HAND ? f : 0.0F;
+          float f7 = 1.0F - Mth.m_14179_(p_109315_, this.f_109305_, this.f_109304_);
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(InteractionHand.OFF_HAND, p_109316_, p_109317_, p_109319_, p_109315_, f1, f6, f7, this.f_109301_))
+          this.m_109371_(p_109318_, p_109315_, f1, InteractionHand.OFF_HAND, f6, this.f_109301_, f7, p_109316_, p_109317_, p_109319_);
+       }
+ 
+@@ -487,8 +_,16 @@
+          this.f_109304_ = Mth.m_14036_(this.f_109304_ - 0.4F, 0.0F, 1.0F);
+       } else {
+          float f = localplayer.m_36403_(1.0F);
+-         this.f_109302_ += Mth.m_14036_((this.f_109300_ == itemstack ? f * f * f : 0.0F) - this.f_109302_, -0.4F, 0.4F);
+-         this.f_109304_ += Mth.m_14036_((float)(this.f_109301_ == itemstack1 ? 1 : 0) - this.f_109304_, -0.4F, 0.4F);
++         boolean requipM = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.f_109300_, itemstack, localplayer.m_150109_().f_35977_);
++         boolean requipO = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.f_109301_, itemstack1, -1);
++
++         if (!requipM && this.f_109300_ != itemstack)
++            this.f_109300_ = itemstack;
++         if (!requipO && this.f_109301_ != itemstack1)
++            this.f_109301_ = itemstack1;
++
++         this.f_109302_ += Mth.m_14036_((!requipM ? f * f * f : 0.0F) - this.f_109302_, -0.4F, 0.4F);
++         this.f_109304_ += Mth.m_14036_((float)(!requipO ? 1 : 0) - this.f_109304_, -0.4F, 0.4F);
+       }
+ 
+       if (this.f_109302_ < 0.1F) {

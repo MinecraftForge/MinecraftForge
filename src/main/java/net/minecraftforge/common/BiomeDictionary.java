@@ -29,14 +29,15 @@ import javax.annotation.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.world.biome.Biomes;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.world.biome.*;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.core.Registry;
 import static net.minecraftforge.common.BiomeDictionary.Type.*;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import com.google.common.collect.ImmutableList;
+
+import net.minecraft.world.level.biome.Biome;
 
 public class BiomeDictionary
 {
@@ -103,8 +104,8 @@ public class BiomeDictionary
 
         private final String name;
         private final List<Type> subTypes;
-        private final Set<RegistryKey<Biome>> biomes = new HashSet<>();
-        private final Set<RegistryKey<Biome>> biomesUn = Collections.unmodifiableSet(biomes);
+        private final Set<ResourceKey<Biome>> biomes = new HashSet<>();
+        private final Set<ResourceKey<Biome>> biomesUn = Collections.unmodifiableSet(biomes);
 
         private Type(String name, Type... subTypes)
         {
@@ -164,17 +165,17 @@ public class BiomeDictionary
         }
 
         @Nullable
-        public static Type fromVanilla(Biome.Category category)
+        public static Type fromVanilla(Biome.BiomeCategory category)
         {
-            if (category == Biome.Category.NONE)
+            if (category == Biome.BiomeCategory.NONE)
                 return null;
-            if (category == Biome.Category.THEEND)
+            if (category == Biome.BiomeCategory.THEEND)
                 return VOID;
             return getType(category.name());
         }
     }
 
-    private static final Map<RegistryKey<Biome>, BiomeInfo> biomeInfoMap = new HashMap<>();
+    private static final Map<ResourceKey<Biome>, BiomeInfo> biomeInfoMap = new HashMap<>();
 
     private static class BiomeInfo
     {
@@ -192,7 +193,7 @@ public class BiomeDictionary
      * Adds the given types to the biome.
      *
      */
-    public static void addTypes(RegistryKey<Biome> biome, Type... types)
+    public static void addTypes(ResourceKey<Biome> biome, Type... types)
     {
         Collection<Type> supertypes = listSupertypes(types);
         Collections.addAll(supertypes, types);
@@ -212,7 +213,7 @@ public class BiomeDictionary
      *
      */
     @Nonnull
-    public static Set<RegistryKey<Biome>> getBiomes(Type type)
+    public static Set<ResourceKey<Biome>> getBiomes(Type type)
     {
         return type.biomesUn;
     }
@@ -222,7 +223,7 @@ public class BiomeDictionary
      *
      */
     @Nonnull
-    public static Set<Type> getTypes(RegistryKey<Biome> biome)
+    public static Set<Type> getTypes(ResourceKey<Biome> biome)
     {
         return getBiomeInfo(biome).typesUn;
     }
@@ -232,7 +233,7 @@ public class BiomeDictionary
      *
      * @return returns true if a common type is found, false otherwise
      */
-    public static boolean areSimilar(RegistryKey<Biome> biomeA, RegistryKey<Biome> biomeB)
+    public static boolean areSimilar(ResourceKey<Biome> biomeA, ResourceKey<Biome> biomeB)
     {
         Set<Type> typesA = getTypes(biomeA);
         Set<Type> typesB = getTypes(biomeB);
@@ -243,7 +244,7 @@ public class BiomeDictionary
      * Checks if the given type has been added to the given biome.
      *
      */
-    public static boolean hasType(RegistryKey<Biome> biome, Type type)
+    public static boolean hasType(ResourceKey<Biome> biome, Type type)
     {
         return getTypes(biome).contains(type);
     }
@@ -252,13 +253,13 @@ public class BiomeDictionary
      * Checks if any type has been added to the given biome.
      *
      */
-    public static boolean hasAnyType(RegistryKey<Biome> biome)
+    public static boolean hasAnyType(ResourceKey<Biome> biome)
     {
         return !getBiomeInfo(biome).types.isEmpty();
     }
 
     //Internal implementation
-    private static BiomeInfo getBiomeInfo(RegistryKey<Biome> biome)
+    private static BiomeInfo getBiomeInfo(ResourceKey<Biome> biome)
     {
         return biomeInfoMap.computeIfAbsent(biome, k -> new BiomeInfo());
     }
@@ -372,7 +373,7 @@ public class BiomeDictionary
             Type.byName.forEach((name, type) ->
                 buf.append("    ").append(type.name).append(": ")
                 .append(type.biomes.stream()
-                    .map(RegistryKey::location)
+                    .map(ResourceKey::location)
                     .sorted((a,b) -> a.compareNamespaced(b))
                     .map(Object::toString)
                     .collect(Collectors.joining(", "))
@@ -381,11 +382,11 @@ public class BiomeDictionary
             );
 
             boolean missing = false;
-            List<RegistryKey<Biome>> all = StreamSupport.stream(ForgeRegistries.BIOMES.spliterator(), false)
-                .map(b -> RegistryKey.create(Registry.BIOME_REGISTRY, b.getRegistryName()))
+            List<ResourceKey<Biome>> all = StreamSupport.stream(ForgeRegistries.BIOMES.spliterator(), false)
+                .map(b -> ResourceKey.create(Registry.BIOME_REGISTRY, b.getRegistryName()))
                 .sorted().collect(Collectors.toList());
 
-            for (RegistryKey<Biome> key : all) {
+            for (ResourceKey<Biome> key : all) {
                 if (!biomeInfoMap.containsKey(key)) {
                     if (!missing) {
                         buf.append("Missing:\n");

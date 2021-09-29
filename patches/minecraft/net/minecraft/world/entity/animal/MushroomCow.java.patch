@@ -1,0 +1,64 @@
+--- a/net/minecraft/world/entity/animal/MushroomCow.java
++++ b/net/minecraft/world/entity/animal/MushroomCow.java
+@@ -40,7 +_,7 @@
+ import net.minecraft.world.level.gameevent.GameEvent;
+ import org.apache.commons.lang3.tuple.Pair;
+ 
+-public class MushroomCow extends Cow implements Shearable {
++public class MushroomCow extends Cow implements Shearable, net.minecraftforge.common.IForgeShearable {
+    private static final EntityDataAccessor<String> f_28908_ = SynchedEntityData.m_135353_(MushroomCow.class, EntityDataSerializers.f_135030_);
+    private static final int f_148934_ = 1024;
+    private MobEffect f_28909_;
+@@ -100,7 +_,7 @@
+ 
+          this.m_5496_(soundevent, 1.0F, 1.0F);
+          return InteractionResult.m_19078_(this.f_19853_.f_46443_);
+-      } else if (itemstack.m_150930_(Items.f_42574_) && this.m_6220_()) {
++      } else if (false && itemstack.m_41720_() == Items.f_42574_ && this.m_6220_()) { //Forge: Moved to onSheared
+          this.m_5851_(SoundSource.PLAYERS);
+          this.m_146852_(GameEvent.f_157781_, p_28941_);
+          if (!this.f_19853_.f_46443_) {
+@@ -141,7 +_,16 @@
+       }
+    }
+ 
++   @Override
++   public java.util.List<ItemStack> onSheared(@javax.annotation.Nullable Player player, @javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos, int fortune) {
++      return shearInternal(player == null ? SoundSource.BLOCKS : SoundSource.PLAYERS);
++   }
++
+    public void m_5851_(SoundSource p_28924_) {
++      shearInternal(p_28924_).forEach(s -> this.f_19853_.m_7967_(new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), s)));
++   }
++
++   private java.util.List<ItemStack> shearInternal(SoundSource p_28924_) {
+       this.f_19853_.m_6269_((Player)null, this, SoundEvents.f_12075_, p_28924_, 1.0F, 1.0F);
+       if (!this.f_19853_.m_5776_()) {
+          ((ServerLevel)this.f_19853_).m_8767_(ParticleTypes.f_123813_, this.m_20185_(), this.m_20227_(0.5D), this.m_20189_(), 1, 0.0D, 0.0D, 0.0D, 0.0D);
+@@ -162,10 +_,13 @@
+          cow.m_20331_(this.m_20147_());
+          this.f_19853_.m_7967_(cow);
+ 
++         java.util.List<ItemStack> items = new java.util.ArrayList<>();
+          for(int i = 0; i < 5; ++i) {
+-            this.f_19853_.m_7967_(new ItemEntity(this.f_19853_, this.m_20185_(), this.m_20227_(1.0D), this.m_20189_(), new ItemStack(this.m_28955_().f_28961_.m_60734_())));
++            items.add(new ItemStack(this.m_28955_().f_28961_.m_60734_()));
+          }
++         return items;
+       }
++      return java.util.Collections.emptyList();
+ 
+    }
+ 
+@@ -234,6 +_,11 @@
+       }
+ 
+       return mushroomcow$mushroomtype2;
++   }
++
++   @Override
++   public boolean isShearable(@javax.annotation.Nonnull ItemStack item, Level world, BlockPos pos) {
++      return m_6220_();
+    }
+ 
+    public static enum MushroomType {

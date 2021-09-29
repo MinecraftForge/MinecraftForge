@@ -19,18 +19,16 @@
 
 package net.minecraftforge.common.world;
 
-import net.minecraft.world.biome.BiomeGenerationSettings;
-import net.minecraft.world.gen.GenerationStage;
-import net.minecraft.world.gen.carver.ConfiguredCarver;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.StructureFeature;
-import net.minecraft.world.gen.surfacebuilders.ConfiguredSurfaceBuilder;
+import net.minecraft.world.level.biome.BiomeGenerationSettings;
+import net.minecraft.world.level.levelgen.GenerationStep;
+import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.ConfiguredStructureFeature;
+import net.minecraft.world.level.levelgen.surfacebuilders.ConfiguredSurfaceBuilder;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class BiomeGenerationSettingsBuilder extends BiomeGenerationSettings.Builder
@@ -43,7 +41,7 @@ public class BiomeGenerationSettingsBuilder extends BiomeGenerationSettings.Buil
         structureStarts.addAll(orig.structures());
     }
 
-    public List<Supplier<ConfiguredFeature<?, ?>>> getFeatures(GenerationStage.Decoration stage) {
+    public List<Supplier<ConfiguredFeature<?, ?>>> getFeatures(GenerationStep.Decoration stage) {
         addFeatureStepsUpTo(stage.ordinal());
         return features.get(stage.ordinal());
     }
@@ -52,11 +50,11 @@ public class BiomeGenerationSettingsBuilder extends BiomeGenerationSettings.Buil
         return surfaceBuilder;
     }
 
-    public List<Supplier<ConfiguredCarver<?>>> getCarvers(GenerationStage.Carving stage) {
+    public List<Supplier<ConfiguredWorldCarver<?>>> getCarvers(GenerationStep.Carving stage) {
         return carvers.computeIfAbsent(stage, key -> new ArrayList<>());
     }
 
-    public List<Supplier<StructureFeature<?, ?>>> getStructures() {
+    public List<Supplier<ConfiguredStructureFeature<?, ?>>> getStructures() {
         return structureStarts;
     }
 }

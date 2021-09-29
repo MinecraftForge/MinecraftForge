@@ -19,8 +19,8 @@
 
 package net.minecraftforge.client.event;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -29,14 +29,14 @@ import net.minecraftforge.eventbus.api.Event;
 public class GuiContainerEvent extends Event
 {
 
-    private final ContainerScreen guiContainer;
+    private final AbstractContainerScreen guiContainer;
 
-    public GuiContainerEvent(ContainerScreen guiContainer)
+    public GuiContainerEvent(AbstractContainerScreen guiContainer)
     {
         this.guiContainer = guiContainer;
     }
 
-    public ContainerScreen getGuiContainer()
+    public AbstractContainerScreen getGuiContainer()
     {
         return guiContainer;
     }
@@ -49,7 +49,7 @@ public class GuiContainerEvent extends Event
      */
     public static class DrawForeground extends GuiContainerEvent
     {
-        private final MatrixStack mStack;
+        private final PoseStack mStack;
         private final int mouseX;
         private final int mouseY;
 
@@ -61,7 +61,7 @@ public class GuiContainerEvent extends Event
          * @param mouseX       The current X position of the players mouse.
          * @param mouseY       The current Y position of the players mouse.
          */
-        public DrawForeground(ContainerScreen guiContainer, MatrixStack mStack, int mouseX, int mouseY)
+        public DrawForeground(AbstractContainerScreen guiContainer, PoseStack mStack, int mouseX, int mouseY)
         {
             super(guiContainer);
             this.mStack = mStack;
@@ -69,7 +69,7 @@ public class GuiContainerEvent extends Event
             this.mouseY = mouseY;
         }
 
-        public MatrixStack getMatrixStack()
+        public PoseStack getMatrixStack()
         {
             return mStack;
         }
@@ -91,7 +91,7 @@ public class GuiContainerEvent extends Event
      */
     public static class DrawBackground extends GuiContainerEvent
     {
-        private final MatrixStack mStack;
+        private final PoseStack mStack;
         private final int mouseX;
         private final int mouseY;
 
@@ -103,7 +103,7 @@ public class GuiContainerEvent extends Event
          * @param mouseX       The current X position of the players mouse.
          * @param mouseY       The current Y position of the players mouse.
          */
-        public DrawBackground(ContainerScreen guiContainer, MatrixStack mStack, int mouseX, int mouseY)
+        public DrawBackground(AbstractContainerScreen guiContainer, PoseStack mStack, int mouseX, int mouseY)
         {
             super(guiContainer);
             this.mStack = mStack;
@@ -111,7 +111,7 @@ public class GuiContainerEvent extends Event
             this.mouseY = mouseY;
         }
 
-        public MatrixStack getMatrixStack()
+        public PoseStack getMatrixStack()
         {
             return mStack;
         }

@@ -21,33 +21,15 @@ package net.minecraftforge.client.model;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import net.minecraft.resources.IResourceManager;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.resource.IResourceType;
-import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.resource.VanillaResourceType;
 
 import java.util.function.Predicate;
 
-public interface IModelLoader<T extends IModelGeometry<T>> extends ISelectiveResourceReloadListener
+public interface IModelLoader<T extends IModelGeometry<T>> extends ResourceManagerReloadListener
 {
-    @Override
-    default IResourceType getResourceType()
-    {
-        return VanillaResourceType.MODELS;
-    }
-
-    @Override
-    void onResourceManagerReload(IResourceManager resourceManager);
-
-    @Override
-    default void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate)
-    {
-        if (resourcePredicate.test(getResourceType()))
-        {
-            onResourceManagerReload(resourceManager);
-        }
-    }
-
     T read(JsonDeserializationContext deserializationContext, JsonObject modelContents);
 }

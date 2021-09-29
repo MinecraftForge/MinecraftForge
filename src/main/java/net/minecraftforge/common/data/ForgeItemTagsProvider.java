@@ -22,19 +22,19 @@ package net.minecraftforge.common.data;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-import net.minecraft.block.Block;
-import net.minecraft.data.BlockTagsProvider;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.ItemTagsProvider;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.tags.ItemTagsProvider;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.tags.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.registries.ForgeRegistries;
 
-public class ForgeItemTagsProvider extends ItemTagsProvider
+public final class ForgeItemTagsProvider extends ItemTagsProvider
 {
     public ForgeItemTagsProvider(DataGenerator gen, BlockTagsProvider blockTagProvider, ExistingFileHelper existingFileHelper)
     {
@@ -141,13 +141,13 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         tag(Tags.Items.STRING).add(Items.STRING);
     }
 
-    private void addColored(Consumer<ITag.INamedTag<Item>> consumer, ITag.INamedTag<Item> group, String pattern)
+    private void addColored(Consumer<Tag.Named<Item>> consumer, Tag.Named<Item> group, String pattern)
     {
         String prefix = group.getName().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
         {
             ResourceLocation key = new ResourceLocation("minecraft", pattern.replace("{color}",  color.getName()));
-            ITag.INamedTag<Item> tag = getForgeItemTag(prefix + color.getName());
+            Tag.Named<Item> tag = getForgeItemTag(prefix + color.getName());
             Item item = ForgeRegistries.ITEMS.getValue(key);
             if (item == null || item  == Items.AIR)
                 throw new IllegalStateException("Unknown vanilla item: " + key.toString());
@@ -156,26 +156,26 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         }
     }
 
-    private void func_240521_a_Colored(ITag.INamedTag<Block> blockGroup, ITag.INamedTag<Item> itemGroup)
+    private void func_240521_a_Colored(Tag.Named<Block> blockGroup, Tag.Named<Item> itemGroup)
     {
         String blockPre = blockGroup.getName().getPath().toUpperCase(Locale.ENGLISH) + '_';
         String itemPre = itemGroup.getName().getPath().toUpperCase(Locale.ENGLISH) + '_';
         for (DyeColor color  : DyeColor.values())
         {
-            ITag.INamedTag<Block> from = getForgeBlockTag(blockPre + color.getName());
-            ITag.INamedTag<Item> to = getForgeItemTag(itemPre + color.getName());
+            Tag.Named<Block> from = getForgeBlockTag(blockPre + color.getName());
+            Tag.Named<Item> to = getForgeItemTag(itemPre + color.getName());
             copy(from, to);
         }
         copy(getForgeBlockTag(blockPre + "colorless"), getForgeItemTag(itemPre + "colorless"));
     }
 
     @SuppressWarnings("unchecked")
-    private ITag.INamedTag<Block> getForgeBlockTag(String name)
+    private Tag.Named<Block> getForgeBlockTag(String name)
     {
         try
         {
             name = name.toUpperCase(Locale.ENGLISH);
-            return (ITag.INamedTag<Block>)Tags.Blocks.class.getDeclaredField(name).get(null);
+            return (Tag.Named<Block>)Tags.Blocks.class.getDeclaredField(name).get(null);
         }
         catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e)
         {
@@ -184,12 +184,12 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
     }
 
     @SuppressWarnings("unchecked")
-    private ITag.INamedTag<Item> getForgeItemTag(String name)
+    private Tag.Named<Item> getForgeItemTag(String name)
     {
         try
         {
             name = name.toUpperCase(Locale.ENGLISH);
-            return (ITag.INamedTag<Item>)Tags.Items.class.getDeclaredField(name).get(null);
+            return (Tag.Named<Item>)Tags.Items.class.getDeclaredField(name).get(null);
         }
         catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e)
         {

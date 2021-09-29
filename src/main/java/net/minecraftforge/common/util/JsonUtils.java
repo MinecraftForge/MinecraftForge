@@ -38,8 +38,8 @@ import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
-import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.nbt.CompoundTag;
 
 import javax.annotation.Nullable;
 
@@ -97,13 +97,13 @@ public class JsonUtils
     }
 
     @Nullable
-    public static CompoundNBT readNBT(JsonObject json, String key)
+    public static CompoundTag readNBT(JsonObject json, String key)
     {
-        if (net.minecraft.util.JSONUtils.isValidNode(json, key))
+        if (net.minecraft.util.GsonHelper.isValidNode(json, key))
         {
             try
             {
-                return JsonToNBT.parseTag(net.minecraft.util.JSONUtils.getAsString(json, key));
+                return TagParser.parseTag(net.minecraft.util.GsonHelper.getAsString(json, key));
             } catch (CommandSyntaxException e)
             {
                 throw new JsonSyntaxException("Malformed NBT tag", e);

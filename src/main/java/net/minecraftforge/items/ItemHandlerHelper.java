@@ -19,13 +19,13 @@
 
 package net.minecraftforge.items;
 
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
 import javax.annotation.Nonnull;
@@ -149,7 +149,7 @@ public class ItemHandlerHelper
     }
 
     /** giveItemToPlayer without preferred slot */
-    public static void giveItemToPlayer(PlayerEntity player, @Nonnull ItemStack stack) {
+    public static void giveItemToPlayer(Player player, @Nonnull ItemStack stack) {
         giveItemToPlayer(player, stack, -1);
     }
 
@@ -160,12 +160,12 @@ public class ItemHandlerHelper
      * @param player The player to give the item to
      * @param stack  The itemstack to insert
      */
-    public static void giveItemToPlayer(PlayerEntity player, @Nonnull ItemStack stack, int preferredSlot)
+    public static void giveItemToPlayer(Player player, @Nonnull ItemStack stack, int preferredSlot)
     {
         if (stack.isEmpty()) return;
 
-        IItemHandler inventory = new PlayerMainInvWrapper(player.inventory);
-        World world = player.level;
+        IItemHandler inventory = new PlayerMainInvWrapper(player.getInventory());
+        Level world = player.level;
 
         // try adding it into the inventory
         ItemStack remainder = stack;
@@ -184,7 +184,7 @@ public class ItemHandlerHelper
         if (remainder.isEmpty() || remainder.getCount() != stack.getCount())
         {
             world.playSound(null, player.getX(), player.getY() + 0.5, player.getZ(),
-                    SoundEvents.ITEM_PICKUP, SoundCategory.PLAYERS, 0.2F, ((world.random.nextFloat() - world.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+                    SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, ((world.random.nextFloat() - world.random.nextFloat()) * 0.7F + 1.0F) * 2.0F);
         }
 
         // drop remaining itemstack into the world
@@ -227,7 +227,7 @@ public class ItemHandlerHelper
             }
 
             proportion = proportion / (float)inv.getSlots();
-            return MathHelper.floor(proportion * 14.0F) + (itemsFound > 0 ? 1 : 0);
+            return Mth.floor(proportion * 14.0F) + (itemsFound > 0 ? 1 : 0);
         }
     }
 }

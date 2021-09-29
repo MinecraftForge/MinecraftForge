@@ -19,14 +19,13 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.ItemEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.concurrent.ThreadTaskExecutor;
-import net.minecraft.util.concurrent.TickDelayedTask;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.util.thread.BlockableEventLoop;
+import net.minecraft.server.TickTask;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.AddReloadListenerEvent;
@@ -40,10 +39,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.LogicalSidedProvider;
+import net.minecraftforge.fmllegacy.LogicalSidedProvider;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.server.command.ConfigCommand;
 
@@ -62,10 +60,10 @@ public class ForgeInternalHandler
                 Entity newEntity = item.createEntity(event.getWorld(), entity, stack);
                 if (newEntity != null)
                 {
-                    entity.remove();
+                    entity.discard();
                     event.setCanceled(true);
-                    ThreadTaskExecutor<Runnable> executor = LogicalSidedProvider.WORKQUEUE.get(event.getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
-                    executor.tell(new TickDelayedTask(0, () -> event.getWorld().addFreshEntity(newEntity)));
+                    BlockableEventLoop<Runnable> executor = LogicalSidedProvider.WORKQUEUE.get(event.getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
+                    executor.tell(new TickTask(0, () -> event.getWorld().addFreshEntity(newEntity)));
                 }
             }
         }
@@ -75,8 +73,8 @@ public class ForgeInternalHandler
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionUnload(WorldEvent.Unload event)
     {
-        if (event.getWorld() instanceof ServerWorld)
-            FakePlayerFactory.unloadWorld((ServerWorld) event.getWorld());
+        if (event.getWorld() instanceof ServerLevel)
+            FakePlayerFactory.unloadWorld((ServerLevel) event.getWorld());
     }
 
     @SubscribeEvent
@@ -115,7 +113,7 @@ public class ForgeInternalHandler
     }
 
     @SubscribeEvent
-    public synchronized void tagsUpdated(TagsUpdatedEvent.VanillaTagTypes event)
+    public synchronized void tagsUpdated(TagsUpdatedEvent event)
     {
         ForgeHooks.updateBurns();
     }
@@ -126,7 +124,7 @@ public class ForgeInternalHandler
         new ForgeCommand(event.getDispatcher());
         ConfigCommand.register(event.getDispatcher());
     }
-    
+
     private static LootModifierManager INSTANCE;
 
     @SubscribeEvent
@@ -141,6 +139,12 @@ public class ForgeInternalHandler
         if(INSTANCE == null)
             throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
         return INSTANCE;
+    }
+
+    @SubscribeEvent
+    public void resourceReloadListeners(AddReloadListenerEvent event)
+    {
+        event.addListener(TierSortingRegistry.getReloadListener());
     }
 }
 

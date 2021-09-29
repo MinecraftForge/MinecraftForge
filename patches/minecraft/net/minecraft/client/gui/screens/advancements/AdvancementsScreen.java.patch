@@ -1,0 +1,70 @@
+--- a/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
++++ b/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
+@@ -42,6 +_,7 @@
+    private final Map<Advancement, AdvancementTab> f_97335_ = Maps.newLinkedHashMap();
+    private AdvancementTab f_97336_;
+    private boolean f_97337_;
++   private static int tabPage, maxPages;
+ 
+    public AdvancementsScreen(ClientAdvancements p_97340_) {
+       super(NarratorChatListener.f_93310_);
+@@ -57,7 +_,13 @@
+       } else {
+          this.f_97334_.m_104401_(this.f_97336_ == null ? null : this.f_97336_.m_97182_(), true);
+       }
+-
++      if (this.f_97335_.size() > AdvancementTabType.MAX_TABS) {
++          int guiLeft = (this.f_96543_ - 252) / 2;
++          int guiTop = (this.f_96544_ - 140) / 2;
++          m_142416_(new net.minecraft.client.gui.components.Button(guiLeft,            guiTop - 50, 20, 20, new net.minecraft.network.chat.TextComponent("<"), b -> tabPage = Math.max(tabPage - 1, 0       )));
++          m_142416_(new net.minecraft.client.gui.components.Button(guiLeft + 252 - 20, guiTop - 50, 20, 20, new net.minecraft.network.chat.TextComponent(">"), b -> tabPage = Math.min(tabPage + 1, maxPages)));
++          maxPages = this.f_97335_.size() / AdvancementTabType.MAX_TABS;
++      }
+    }
+ 
+    public void m_7861_() {
+@@ -75,7 +_,7 @@
+          int j = (this.f_96544_ - 140) / 2;
+ 
+          for(AdvancementTab advancementtab : this.f_97335_.values()) {
+-            if (advancementtab.m_97154_(i, j, p_97343_, p_97344_)) {
++            if (advancementtab.getPage() == tabPage && advancementtab.m_97154_(i, j, p_97343_, p_97344_)) {
+                this.f_97334_.m_104401_(advancementtab.m_97182_(), true);
+                break;
+             }
+@@ -99,6 +_,11 @@
+       int i = (this.f_96543_ - 252) / 2;
+       int j = (this.f_96544_ - 140) / 2;
+       this.m_7333_(p_97361_);
++      if (maxPages != 0) {
++         net.minecraft.network.chat.Component page = new net.minecraft.network.chat.TextComponent(String.format("%d / %d", tabPage + 1, maxPages + 1));
++         int width = this.f_96547_.m_92852_(page);
++         this.f_96547_.m_92744_(p_97361_, page.m_7532_(), i + (252 / 2) - (width / 2), j - 44, -1);
++      }
+       this.m_97373_(p_97361_, p_97362_, p_97363_, i, j);
+       this.m_97356_(p_97361_, i, j);
+       this.m_97381_(p_97361_, p_97362_, p_97363_, i, j);
+@@ -149,12 +_,14 @@
+          RenderSystem.m_157456_(0, f_97330_);
+ 
+          for(AdvancementTab advancementtab : this.f_97335_.values()) {
++            if (advancementtab.getPage() == tabPage)
+             advancementtab.m_97165_(p_97357_, p_97358_, p_97359_, advancementtab == this.f_97336_);
+          }
+ 
+          RenderSystem.m_69453_();
+ 
+          for(AdvancementTab advancementtab1 : this.f_97335_.values()) {
++            if (advancementtab1.getPage() == tabPage)
+             advancementtab1.m_97159_(p_97358_, p_97359_, this.f_96542_);
+          }
+ 
+@@ -180,7 +_,7 @@
+ 
+       if (this.f_97335_.size() > 1) {
+          for(AdvancementTab advancementtab : this.f_97335_.values()) {
+-            if (advancementtab.m_97154_(p_97385_, p_97386_, (double)p_97383_, (double)p_97384_)) {
++            if (advancementtab.getPage() == tabPage && advancementtab.m_97154_(p_97385_, p_97386_, (double)p_97383_, (double)p_97384_)) {
+                this.m_96602_(p_97382_, advancementtab.m_97189_(), p_97383_, p_97384_);
+             }
+          }

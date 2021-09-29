@@ -1,0 +1,5 @@
+net.minecraftforge.fml.loading.moddiscovery.ModsFolderLocator
+net.minecraftforge.fml.loading.moddiscovery.MavenDirectoryLocator
+net.minecraftforge.fml.loading.moddiscovery.ExplodedDirectoryLocator
+net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator
+net.minecraftforge.fml.loading.moddiscovery.ClasspathLocator

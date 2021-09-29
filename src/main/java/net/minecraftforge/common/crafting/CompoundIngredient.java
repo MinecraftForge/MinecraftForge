@@ -37,9 +37,9 @@ import com.google.gson.JsonSyntaxException;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntComparators;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class CompoundIngredient extends Ingredient
 {
@@ -147,7 +147,7 @@ public class CompoundIngredient extends Ingredient
         public static final Serializer INSTANCE = new Serializer();
 
         @Override
-        public CompoundIngredient parse(PacketBuffer buffer)
+        public CompoundIngredient parse(FriendlyByteBuf buffer)
         {
             return new CompoundIngredient(Stream.generate(() -> Ingredient.fromNetwork(buffer)).limit(buffer.readVarInt()).collect(Collectors.toList()));
         }
@@ -159,7 +159,7 @@ public class CompoundIngredient extends Ingredient
         }
 
         @Override
-        public void write(PacketBuffer buffer, CompoundIngredient ingredient)
+        public void write(FriendlyByteBuf buffer, CompoundIngredient ingredient)
         {
             buffer.writeVarInt(ingredient.children.size());
             ingredient.children.forEach(c -> c.toNetwork(buffer));

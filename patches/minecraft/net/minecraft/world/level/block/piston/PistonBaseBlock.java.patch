@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/level/block/piston/PistonBaseBlock.java
++++ b/net/minecraft/world/level/block/piston/PistonBaseBlock.java
+@@ -168,6 +_,7 @@
+       }
+ 
+       if (p_60195_ == 0) {
++         if (net.minecraftforge.event.ForgeEventFactory.onPistonMovePre(p_60193_, p_60194_, direction, true)) return false;
+          if (!this.m_60181_(p_60193_, p_60194_, direction, true)) {
+             return false;
+          }
+@@ -176,6 +_,7 @@
+          p_60193_.m_5594_((Player)null, p_60194_, SoundEvents.f_12312_, SoundSource.BLOCKS, 0.5F, p_60193_.f_46441_.nextFloat() * 0.25F + 0.6F);
+          p_60193_.m_151555_(GameEvent.f_157775_, p_60194_);
+       } else if (p_60195_ == 1 || p_60195_ == 2) {
++         if (net.minecraftforge.event.ForgeEventFactory.onPistonMovePre(p_60193_, p_60194_, direction, false)) return false;
+          BlockEntity blockentity1 = p_60193_.m_7702_(p_60194_.m_142300_(direction));
+          if (blockentity1 instanceof PistonMovingBlockEntity) {
+             ((PistonMovingBlockEntity)blockentity1).m_60401_();
+@@ -216,6 +_,7 @@
+          p_60193_.m_151555_(GameEvent.f_157774_, p_60194_);
+       }
+ 
++      net.minecraftforge.event.ForgeEventFactory.onPistonMovePost(p_60193_, p_60194_, direction, (p_60195_ == 0));
+       return true;
+    }
+ 
+@@ -352,6 +_,10 @@
+ 
+    public BlockState m_6843_(BlockState p_60215_, Rotation p_60216_) {
+       return p_60215_.m_61124_(f_52588_, p_60216_.m_55954_(p_60215_.m_61143_(f_52588_)));
++   }
++
++   public BlockState rotate(BlockState state, net.minecraft.world.level.LevelAccessor world, BlockPos pos, Rotation direction) {
++       return state.m_61143_(f_60153_) ? state : super.rotate(state, world, pos, direction);
+    }
+ 
+    public BlockState m_6943_(BlockState p_60212_, Mirror p_60213_) {

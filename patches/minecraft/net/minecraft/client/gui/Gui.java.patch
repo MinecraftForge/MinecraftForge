@@ -1,0 +1,55 @@
+--- a/net/minecraft/client/gui/Gui.java
++++ b/net/minecraft/client/gui/Gui.java
+@@ -446,6 +_,10 @@
+ 
+          for(MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
+             MobEffect mobeffect = mobeffectinstance.m_19544_();
++            net.minecraftforge.client.EffectRenderer renderer = net.minecraftforge.client.RenderProperties.getEffectRenderer(mobeffectinstance);
++            if (!renderer.shouldRenderHUD(mobeffectinstance)) continue;
++            // Rebind in case previous renderHUDEffect changed texture
++            RenderSystem.m_157456_(0, AbstractContainerScreen.f_97725_);
+             if (mobeffectinstance.m_19575_()) {
+                int k = this.f_92977_;
+                int l = 1;
+@@ -483,6 +_,7 @@
+                   RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, f1);
+                   m_93200_(p_93029_, j1 + 3, k1 + 3, this.m_93252_(), 18, 18, textureatlassprite);
+                });
++               renderer.renderHUDEffect(mobeffectinstance,this, p_93029_, k, l, this.m_93252_(), f);
+             }
+          }
+ 
+@@ -608,7 +_,8 @@
+             mutablecomponent.m_130940_(ChatFormatting.ITALIC);
+          }
+ 
+-         int i = this.m_93082_().m_92852_(mutablecomponent);
++         Component highlightTip = this.f_92994_.getHighlightTip(mutablecomponent);
++         int i = this.m_93082_().m_92852_(highlightTip);
+          int j = (this.f_92977_ - i) / 2;
+          int k = this.f_92978_ - 59;
+          if (!this.f_92986_.f_91072_.m_105205_()) {
+@@ -624,7 +_,13 @@
+             RenderSystem.m_69478_();
+             RenderSystem.m_69453_();
+             m_93172_(p_93070_, j - 2, k - 2, j + i + 2, k + 9 + 2, this.f_92986_.f_91066_.m_92143_(0));
+-            this.m_93082_().m_92763_(p_93070_, mutablecomponent, (float)j, (float)k, 16777215 + (l << 24));
++            Font font = net.minecraftforge.client.RenderProperties.get(f_92994_).getFont(f_92994_);
++            if (font == null) {
++               this.m_93082_().m_92763_(p_93070_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
++            } else {
++               j = (this.f_92977_ - font.m_92852_(highlightTip)) / 2;
++               font.m_92763_(p_93070_, highlightTip, (float)j, (float)k, 16777215 + (l << 24));
++            }
+             RenderSystem.m_69461_();
+          }
+       }
+@@ -1128,7 +_,7 @@
+          ItemStack itemstack = this.f_92986_.f_91074_.m_150109_().m_36056_();
+          if (itemstack.m_41619_()) {
+             this.f_92993_ = 0;
+-         } else if (!this.f_92994_.m_41619_() && itemstack.m_150930_(this.f_92994_.m_41720_()) && itemstack.m_41786_().equals(this.f_92994_.m_41786_())) {
++         } else if (!this.f_92994_.m_41619_() && itemstack.m_41720_() == this.f_92994_.m_41720_() && (itemstack.m_41786_().equals(this.f_92994_.m_41786_()) && itemstack.getHighlightTip(itemstack.m_41786_()).equals(f_92994_.getHighlightTip(f_92994_.m_41786_())))) {
+             if (this.f_92993_ > 0) {
+                --this.f_92993_;
+             }

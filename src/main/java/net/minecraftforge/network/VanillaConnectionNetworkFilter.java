@@ -19,22 +19,28 @@
 
 package net.minecraftforge.network;
 
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
 import io.netty.channel.ChannelHandler;
-import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.ArgumentTypes;
-import net.minecraft.network.IPacket;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SCommandListPacket;
-import net.minecraft.network.play.server.SEntityPropertiesPacket;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.synchronization.ArgumentTypes;
+import net.minecraft.core.Registry;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundCommandsPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateAttributesPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagCollection;
+import net.minecraftforge.common.ForgeTagHandler;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.apache.logging.log4j.LogManager;
@@ -56,15 +62,16 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
     public VanillaConnectionNetworkFilter()
     {
         super(
-                ImmutableMap.<Class<? extends IPacket<?>>, BiConsumer<IPacket<?>, List<? super IPacket<?>>>>builder()
-                .put(handler(SEntityPropertiesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
-                .put(handler(SCommandListPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
+                ImmutableMap.<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>>builder()
+                .put(handler(ClientboundUpdateAttributesPacket.class, VanillaConnectionNetworkFilter::filterEntityProperties))
+                .put(handler(ClientboundCommandsPacket.class, VanillaConnectionNetworkFilter::filterCommandList))
+                .put(handler(ClientboundUpdateTagsPacket.class, VanillaConnectionNetworkFilter::filterCustomTagTypes))
                 .build()
         );
     }
 
     @Override
-    protected boolean isNecessary(NetworkManager manager)
+    protected boolean isNecessary(Connection manager)
     {
         return NetworkHooks.isVanillaConnection(manager);
     }
@@ -74,9 +81,9 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      * A vanilla client would ignore these with an error log.
      */
     @Nonnull
-    private static SEntityPropertiesPacket filterEntityProperties(SEntityPropertiesPacket msg)
+    private static ClientboundUpdateAttributesPacket filterEntityProperties(ClientboundUpdateAttributesPacket msg)
     {
-        SEntityPropertiesPacket newPacket = new SEntityPropertiesPacket(msg.getEntityId(), Collections.emptyList());
+        ClientboundUpdateAttributesPacket newPacket = new ClientboundUpdateAttributesPacket(msg.getEntityId(), Collections.emptyList());
         msg.getValues().stream()
                 .filter(snapshot -> {
                     ResourceLocation key = ForgeRegistries.ATTRIBUTES.getKey(snapshot.getAttribute());
@@ -91,13 +98,24 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
      * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
      */
     @Nonnull
-    private static SCommandListPacket filterCommandList(SCommandListPacket packet)
+    private static ClientboundCommandsPacket filterCommandList(ClientboundCommandsPacket packet)
     {
-        RootCommandNode<ISuggestionProvider> root = packet.getRoot();
-        RootCommandNode<ISuggestionProvider> newRoot = CommandTreeCleaner.cleanArgumentTypes(root, argType -> {
+        RootCommandNode<SharedSuggestionProvider> root = packet.getRoot();
+        RootCommandNode<SharedSuggestionProvider> newRoot = CommandTreeCleaner.cleanArgumentTypes(root, argType -> {
             ResourceLocation id = ArgumentTypes.getId(argType);
             return id != null && (id.getNamespace().equals("minecraft") || id.getNamespace().equals("brigadier"));
         });
-        return new SCommandListPacket(newRoot);
+        return new ClientboundCommandsPacket(newRoot);
+    }
+
+    /**
+     * Filters out custom tag types that the vanilla client won't recognize.
+     * It prevents a rare error from logging and reduces the packet size
+     */
+    private static ClientboundUpdateTagsPacket filterCustomTagTypes(ClientboundUpdateTagsPacket packet) {
+        Map<ResourceKey<? extends Registry<?>>, TagCollection.NetworkPayload> tags = packet.getTags()
+                .entrySet().stream().filter(e -> !ForgeTagHandler.getCustomTagTypeNames().contains(e.getKey().location()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return new ClientboundUpdateTagsPacket(tags);
     }
 }

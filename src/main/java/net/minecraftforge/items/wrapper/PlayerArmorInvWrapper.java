@@ -19,17 +19,17 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
 public class PlayerArmorInvWrapper extends RangedWrapper
 {
-    private final PlayerInventory inventoryPlayer;
+    private final Inventory inventoryPlayer;
 
-    public PlayerArmorInvWrapper(PlayerInventory inv)
+    public PlayerArmorInvWrapper(Inventory inv)
     {
         super(new InvWrapper(inv), inv.items.size(), inv.items.size() + inv.armor.size());
         inventoryPlayer = inv;
@@ -39,10 +39,10 @@ public class PlayerArmorInvWrapper extends RangedWrapper
     @Nonnull
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate)
     {
-        EquipmentSlotType equ = null;
-        for (EquipmentSlotType s : EquipmentSlotType.values())
+        EquipmentSlot equ = null;
+        for (EquipmentSlot s : EquipmentSlot.values())
         {
-            if (s.getType() == EquipmentSlotType.Group.ARMOR && s.getIndex() == slot)
+            if (s.getType() == EquipmentSlot.Type.ARMOR && s.getIndex() == slot)
             {
                 equ = s;
                 break;
@@ -56,7 +56,7 @@ public class PlayerArmorInvWrapper extends RangedWrapper
         return stack;
     }
 
-    public PlayerInventory getInventoryPlayer()
+    public Inventory getInventoryPlayer()
     {
         return inventoryPlayer;
     }

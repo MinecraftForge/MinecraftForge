@@ -23,17 +23,17 @@ import java.util.stream.Stream;
 
 import com.google.gson.JsonObject;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
 
 public class VanillaIngredientSerializer implements IIngredientSerializer<Ingredient>
 {
     public static final VanillaIngredientSerializer INSTANCE  = new VanillaIngredientSerializer();
 
-    public Ingredient parse(PacketBuffer buffer)
+    public Ingredient parse(FriendlyByteBuf buffer)
     {
-        return Ingredient.fromValues(Stream.generate(() -> new Ingredient.SingleItemList(buffer.readItem())).limit(buffer.readVarInt()));
+        return Ingredient.fromValues(Stream.generate(() -> new Ingredient.ItemValue(buffer.readItem())).limit(buffer.readVarInt()));
     }
 
     public Ingredient parse(JsonObject json)
@@ -41,7 +41,7 @@ public class VanillaIngredientSerializer implements IIngredientSerializer<Ingred
        return Ingredient.fromValues(Stream.of(Ingredient.valueFromJson(json)));
     }
 
-    public void write(PacketBuffer buffer, Ingredient ingredient)
+    public void write(FriendlyByteBuf buffer, Ingredient ingredient)
     {
         ItemStack[] items = ingredient.getItems();
         buffer.writeVarInt(items.length);

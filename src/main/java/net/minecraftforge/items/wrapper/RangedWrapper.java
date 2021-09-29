@@ -20,7 +20,7 @@
 package net.minecraftforge.items.wrapper;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nonnull;

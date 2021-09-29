@@ -19,9 +19,8 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
 
 /**
  * Exposes the armor inventory of an {@link EntityLivingBase} as an {@link IItemHandler} using {@link EntityLivingBase#getItemStackFromSlot} and
@@ -31,6 +30,6 @@ public class EntityArmorInvWrapper extends EntityEquipmentInvWrapper
 {
     public EntityArmorInvWrapper(final LivingEntity entity)
     {
-        super(entity, EquipmentSlotType.Group.ARMOR);
+        super(entity, EquipmentSlot.Type.ARMOR);
     }
 }

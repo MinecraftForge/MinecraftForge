@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/entity/boss/wither/WitherBoss.java
++++ b/net/minecraft/world/entity/boss/wither/WitherBoss.java
+@@ -209,7 +_,7 @@
+          int k1 = this.m_31502_() - 1;
+          this.f_31430_.m_142711_(1.0F - (float)k1 / 220.0F);
+          if (k1 <= 0) {
+-            Explosion.BlockInteraction explosion$blockinteraction = this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_) ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
++            Explosion.BlockInteraction explosion$blockinteraction = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this) ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE;
+             this.f_19853_.m_46518_(this, this.m_20185_(), this.m_20188_(), this.m_20189_(), 7.0F, false, explosion$blockinteraction);
+             if (!this.m_20067_()) {
+                this.f_19853_.m_6798_(1023, this.m_142538_(), 0);
+@@ -270,7 +_,7 @@
+ 
+          if (this.f_31429_ > 0) {
+             --this.f_31429_;
+-            if (this.f_31429_ == 0 && this.f_19853_.m_46469_().m_46207_(GameRules.f_46132_)) {
++            if (this.f_31429_ == 0 && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_19853_, this)) {
+                int j1 = Mth.m_14107_(this.m_20186_());
+                int i2 = Mth.m_14107_(this.m_20185_());
+                int j2 = Mth.m_14107_(this.m_20189_());
+@@ -284,7 +_,7 @@
+                         int i1 = j2 + k2;
+                         BlockPos blockpos = new BlockPos(l2, l, i1);
+                         BlockState blockstate = this.f_19853_.m_8055_(blockpos);
+-                        if (m_31491_(blockstate)) {
++                        if (blockstate.canEntityDestroy(this.f_19853_, blockpos, this) && net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this, blockpos, blockstate)) {
+                            flag = this.f_19853_.m_46953_(blockpos, true, this) || flag;
+                         }
+                      }
+@@ -305,6 +_,7 @@
+       }
+    }
+ 
++   @Deprecated //Forge: DO NOT USE use BlockState.canEntityDestroy
+    public static boolean m_31491_(BlockState p_31492_) {
+       return !p_31492_.m_60795_() && !p_31492_.m_60620_(BlockTags.f_13070_);
+    }

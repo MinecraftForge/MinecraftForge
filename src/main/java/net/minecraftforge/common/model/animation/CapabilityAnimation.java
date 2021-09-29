@@ -19,11 +19,10 @@
 
 package net.minecraftforge.common.model.animation;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -35,19 +34,9 @@ public class CapabilityAnimation
     @CapabilityInject(IAnimationStateMachine.class)
     public static Capability<IAnimationStateMachine> ANIMATION_CAPABILITY = null;
 
-    public static void register()
+    public static void register(RegisterCapabilitiesEvent event)
     {
-        CapabilityManager.INSTANCE.register(IAnimationStateMachine.class, new Capability.IStorage<IAnimationStateMachine>()
-        {
-            @Override
-            public INBT writeNBT(Capability<IAnimationStateMachine> capability, IAnimationStateMachine instance, Direction side)
-            {
-                return null;
-            }
-
-            @Override
-            public void readNBT(Capability<IAnimationStateMachine> capability, IAnimationStateMachine instance, Direction side, INBT nbt) {}
-        }, AnimationStateMachine::getMissing);
+        event.register(IAnimationStateMachine.class);
     }
 
     public static class DefaultItemAnimationCapabilityProvider implements ICapabilityProvider

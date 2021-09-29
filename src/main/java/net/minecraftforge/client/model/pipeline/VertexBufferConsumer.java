@@ -19,23 +19,23 @@
 
 package net.minecraftforge.client.model.pipeline;
 
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.Direction;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.core.Direction;
 
 /**
  * Assumes VertexFormatElement is present in the BufferBuilder's vertex format.
  */
 public class VertexBufferConsumer implements IVertexConsumer
 {
-    private IVertexBuilder renderer;
+    private VertexConsumer renderer;
 
     public VertexBufferConsumer() {}
 
-    public VertexBufferConsumer(IVertexBuilder buffer)
+    public VertexBufferConsumer(VertexConsumer buffer)
     {
         setBuffer(buffer);
     }
@@ -43,7 +43,7 @@ public class VertexBufferConsumer implements IVertexConsumer
     @Override
     public final VertexFormat getVertexFormat()
     {
-        return DefaultVertexFormats.BLOCK;
+        return DefaultVertexFormat.BLOCK;
     }
 
     @Override
@@ -82,7 +82,7 @@ public class VertexBufferConsumer implements IVertexConsumer
         }
     }
 
-    public void setBuffer(IVertexBuilder buffer)
+    public void setBuffer(VertexConsumer buffer)
     {
         this.renderer = buffer;
     }

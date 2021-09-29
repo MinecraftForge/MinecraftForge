@@ -19,32 +19,24 @@
 
 package net.minecraftforge.common;
 
-import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
+import static net.minecraftforge.fml.Logging.FORGEMOD;
 
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 
-public class ForgeConfig
-{
+public class ForgeConfig {
     public static class Server {
-        public final BooleanValue removeErroringEntities;
-        public final BooleanValue removeErroringTileEntities;
+        public final BooleanValue removeErroringBlockEntities;
 
         public final BooleanValue fullBoundingBoxLadders;
 
         public final DoubleValue zombieBaseSummonChance;
         public final DoubleValue zombieBabyChance;
-
-        public final BooleanValue logCascadingWorldGeneration;
-        public final BooleanValue fixVanillaCascading;
-
-        public final IntValue dimensionUnloadQueueDelay;
 
         public final BooleanValue treatEmptyTagsAsAir;
 
@@ -54,17 +46,11 @@ public class ForgeConfig
             builder.comment("Server configuration settings")
                    .push("server");
 
-            removeErroringEntities = builder
-                    .comment("Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
-                    .translation("forge.configgui.removeErroringEntities")
+            removeErroringBlockEntities = builder
+                    .comment("Set this to true to remove any BlockEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
+                    .translation("forge.configgui.removeErroringBlockEntities")
                     .worldRestart()
-                    .define("removeErroringEntities", false);
-
-            removeErroringTileEntities = builder
-                    .comment("Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
-                    .translation("forge.configgui.removeErroringTileEntities")
-                    .worldRestart()
-                    .define("removeErroringTileEntities", false);
+                    .define("removeErroringBlockEntities", false);
 
             fullBoundingBoxLadders = builder
                     .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false.")
@@ -83,21 +69,6 @@ public class ForgeConfig
                     .translation("forge.configgui.zombieBabyChance")
                     .worldRestart()
                     .defineInRange("zombieBabyChance", 0.05D, 0.0D, 1.0D);
-
-            logCascadingWorldGeneration = builder
-                    .comment("Log cascading chunk generation issues during terrain population.")
-                    .translation("forge.configgui.logCascadingWorldGeneration")
-                    .define("logCascadingWorldGeneration", true);
-
-            fixVanillaCascading = builder
-                    .comment("Fix vanilla issues that cause worldgen cascading. This DOES change vanilla worldgen so DO NOT report bugs related to world differences if this flag is on.")
-                    .translation("forge.configgui.fixVanillaCascading")
-                    .define("fixVanillaCascading", false);
-
-            dimensionUnloadQueueDelay = builder
-                    .comment("The time in ticks the server will wait when a dimension was queued to unload. This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.")
-                    .translation("forge.configgui.dimensionUnloadQueueDelay")
-                    .defineInRange("dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE);
 
             treatEmptyTagsAsAir = builder
                     .comment("Vanilla will treat crafting recipes using empty tags as air, and allow you to craft with nothing in that slot. This changes empty tags to use BARRIER as the item. To prevent crafting with air.")
@@ -119,8 +90,7 @@ public class ForgeConfig
     public static class Common {
         public final ForgeConfigSpec.ConfigValue<? extends String> defaultWorldType;
 
-        Common(ForgeConfigSpec.Builder builder)
-        {
+        Common(ForgeConfigSpec.Builder builder) {
             builder.comment("General configuration settings")
                     .push("general");
 
@@ -139,15 +109,8 @@ public class ForgeConfig
      * Client specific configuration - only loaded clientside from forge-client.toml
      */
     public static class Client {
-        public final BooleanValue zoomInMissingModelTextInGui;
-
-        public final BooleanValue forgeCloudsEnabled;
-
-        public final BooleanValue disableStairSlabCulling;
-
         public final BooleanValue alwaysSetupTerrainOffThread;
 
-        public final BooleanValue forgeLightPipelineEnabled;
         public final BooleanValue experimentalForgeLightPipelineEnabled;
 
         public final BooleanValue selectiveResourceReloadEnabled;
@@ -156,24 +119,11 @@ public class ForgeConfig
 
         public final BooleanValue useCombinedDepthStencilAttachment;
 
+        public final BooleanValue forceSystemNanoTime;
+
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
-
-            zoomInMissingModelTextInGui = builder
-                .comment("Toggle off to make missing model text in the gui fit inside the slot.")
-                .translation("forge.configgui.zoomInMissingModelTextInGui")
-                .define("zoomInMissingModelTextInGui", false);
-
-            forgeCloudsEnabled = builder
-                .comment("Enable uploading cloud geometry to the GPU for faster rendering.")
-                .translation("forge.configgui.forgeCloudsEnabled")
-                .define("forgeCloudsEnabled", true);
-
-            disableStairSlabCulling = builder
-                .comment("Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.")
-                .translation("forge.configgui.disableStairSlabCulling")
-                .define("disableStairSlabCulling", false);
 
             alwaysSetupTerrainOffThread = builder
                 .comment("Enable Forge to queue all chunk updates to the Chunk Update thread.",
@@ -182,10 +132,6 @@ public class ForgeConfig
                 .translation("forge.configgui.alwaysSetupTerrainOffThread")
                 .define("alwaysSetupTerrainOffThread", false);
 
-            forgeLightPipelineEnabled = builder
-                .comment("Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
-                .translation("forge.configgui.forgeLightPipelineEnabled")
-                .define("forgeLightPipelineEnabled", true);
             experimentalForgeLightPipelineEnabled = builder
                 .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
                 .translation("forge.configgui.forgeLightPipelineEnabled")
@@ -205,6 +151,11 @@ public class ForgeConfig
                     .comment("Set to true to use a combined DEPTH_STENCIL attachment instead of two separate ones.")
                     .translation("forge.configgui.useCombinedDepthStencilAttachment")
                     .define("useCombinedDepthStencilAttachment", false);
+
+            forceSystemNanoTime = builder
+                    .comment("Forces the use of System.nanoTime instead of glfwGetTime, as the main Util time provider")
+                    .translation("forge.configgui.forceSystemNanoTime")
+                    .define("forceSystemNanoTime", false);
 
             builder.pop();
         }
@@ -237,12 +188,12 @@ public class ForgeConfig
     }
 
     @SubscribeEvent
-    public static void onLoad(final ModConfig.Loading configEvent) {
+    public static void onLoad(final ModConfigEvent.Loading configEvent) {
         LogManager.getLogger().debug(FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
     }
 
     @SubscribeEvent
-    public static void onFileChange(final ModConfig.Reloading configEvent) {
+    public static void onFileChange(final ModConfigEvent.Reloading configEvent) {
         LogManager.getLogger().debug(FORGEMOD, "Forge config just got changed on the file system!");
     }
 

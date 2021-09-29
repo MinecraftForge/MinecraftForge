@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/level/storage/loot/parameters/LootContextParamSets.java
++++ b/net/minecraft/world/level/storage/loot/parameters/LootContextParamSets.java
+@@ -12,6 +_,7 @@
+    });
+    public static final LootContextParamSet f_81411_ = m_81428_("chest", (p_81452_) -> {
+       p_81452_.m_81406_(LootContextParams.f_81460_).m_81408_(LootContextParams.f_81455_);
++      p_81452_.m_81408_(LootContextParams.f_81458_); //Forge: Chest Minecarts can have killers.
+    });
+    public static final LootContextParamSet f_81412_ = m_81428_("command", (p_81450_) -> {
+       p_81450_.m_81406_(LootContextParams.f_81460_).m_81408_(LootContextParams.f_81455_);
+@@ -21,6 +_,7 @@
+    });
+    public static final LootContextParamSet f_81414_ = m_81428_("fishing", (p_81446_) -> {
+       p_81446_.m_81406_(LootContextParams.f_81460_).m_81406_(LootContextParams.f_81463_).m_81408_(LootContextParams.f_81455_);
++      p_81446_.m_81408_(LootContextParams.f_81458_).m_81408_(LootContextParams.f_81455_); //Forge: Allow fisher, and bobber
+    });
+    public static final LootContextParamSet f_81415_ = m_81428_("entity", (p_81444_) -> {
+       p_81444_.m_81406_(LootContextParams.f_81455_).m_81406_(LootContextParams.f_81460_).m_81406_(LootContextParams.f_81457_).m_81408_(LootContextParams.f_81458_).m_81408_(LootContextParams.f_81459_).m_81408_(LootContextParams.f_81456_);

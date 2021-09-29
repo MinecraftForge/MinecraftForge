@@ -9,9 +9,7 @@ import java.util.TreeSet
 import java.util.function.BiConsumer
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.*
 
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.Type
@@ -21,10 +19,12 @@ import org.objectweb.asm.tree.MethodNode
 
 import static org.objectweb.asm.Opcodes.*
 
-public class FieldCompareFinder extends BytecodeFinder {
+abstract class FieldCompareFinder extends BytecodeFinder {
     @Nested
     Map<String, Search> fields = [:] as HashMap
+    @Internal
     Map<Search, String> fieldsReverse = [:] as HashMap
+    @Internal
     Map<String, Set<ObjectTarget>> targets = [:] as TreeMap
     
     @Override
@@ -53,6 +53,7 @@ public class FieldCompareFinder extends BytecodeFinder {
         }
     }
     
+    @Internal
     @Override
     protected Object getData() {
 		def ret = [:] as HashMap

@@ -19,7 +19,7 @@
 
 package net.minecraftforge.event.world;
 
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
 
 /**
  * This event is fired when all players are asleep and the time should be set to day.<br>
@@ -31,7 +31,7 @@ public class SleepFinishedTimeEvent extends WorldEvent
     private long newTime;
     private final long minTime;
 
-    public SleepFinishedTimeEvent(ServerWorld worldIn, long newTimeIn, long minTimeIn)
+    public SleepFinishedTimeEvent(ServerLevel worldIn, long newTimeIn, long minTimeIn)
     {
         super(worldIn);
         this.newTime = newTimeIn;

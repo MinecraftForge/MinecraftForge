@@ -1,0 +1,103 @@
+--- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
++++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
+@@ -204,6 +_,10 @@
+       return m_74593_(p_74565_, p_74564_.m_74401_(), p_74564_.m_74404_(), p_74564_.m_74407_());
+    }
+ 
++   public static Vec3 transformedVec3d(StructurePlaceSettings placementIn, Vec3 pos) {
++      return m_74578_(pos, placementIn.m_74401_(), placementIn.m_74404_(), placementIn.m_74407_());
++   }
++
+    public boolean m_74536_(ServerLevelAccessor p_74537_, BlockPos p_74538_, BlockPos p_74539_, StructurePlaceSettings p_74540_, Random p_74541_, int p_74542_) {
+       if (this.f_74482_.isEmpty()) {
+          return false;
+@@ -221,7 +_,7 @@
+             int i1 = Integer.MIN_VALUE;
+             int j1 = Integer.MIN_VALUE;
+ 
+-            for(StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : m_74517_(p_74537_, p_74538_, p_74539_, p_74540_, list)) {
++            for(StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : processBlockInfos(p_74537_, p_74538_, p_74539_, p_74540_, list, this)) {
+                BlockPos blockpos = structuretemplate$structureblockinfo.f_74675_;
+                if (boundingbox == null || boundingbox.m_71051_(blockpos)) {
+                   FluidState fluidstate = p_74540_.m_74413_() ? p_74537_.m_6425_(blockpos) : null;
+@@ -336,7 +_,7 @@
+             }
+ 
+             if (!p_74540_.m_74408_()) {
+-               this.m_74523_(p_74537_, p_74538_, p_74540_.m_74401_(), p_74540_.m_74404_(), p_74540_.m_74407_(), boundingbox, p_74540_.m_74414_());
++               this.addEntitiesToWorld(p_74537_, p_74538_, p_74540_);
+             }
+ 
+             return true;
+@@ -365,14 +_,19 @@
+       });
+    }
+ 
++   @Deprecated //Use Forge version
+    public static List<StructureTemplate.StructureBlockInfo> m_74517_(LevelAccessor p_74518_, BlockPos p_74519_, BlockPos p_74520_, StructurePlaceSettings p_74521_, List<StructureTemplate.StructureBlockInfo> p_74522_) {
++      return processBlockInfos(p_74518_, p_74519_, p_74520_, p_74521_, p_74522_, null);
++   }
++
++   public static List<StructureTemplate.StructureBlockInfo> processBlockInfos(LevelAccessor p_74518_, BlockPos p_74519_, BlockPos p_74520_, StructurePlaceSettings p_74521_, List<StructureTemplate.StructureBlockInfo> p_74522_, @Nullable StructureTemplate template) {
+       List<StructureTemplate.StructureBlockInfo> list = Lists.newArrayList();
+ 
+       for(StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo : p_74522_) {
+          BlockPos blockpos = m_74563_(p_74521_, structuretemplate$structureblockinfo.f_74675_).m_141952_(p_74519_);
+          StructureTemplate.StructureBlockInfo structuretemplate$structureblockinfo1 = new StructureTemplate.StructureBlockInfo(blockpos, structuretemplate$structureblockinfo.f_74676_, structuretemplate$structureblockinfo.f_74677_ != null ? structuretemplate$structureblockinfo.f_74677_.m_6426_() : null);
+ 
+-         for(Iterator<StructureProcessor> iterator = p_74521_.m_74411_().iterator(); structuretemplate$structureblockinfo1 != null && iterator.hasNext(); structuretemplate$structureblockinfo1 = iterator.next().m_7382_(p_74518_, p_74519_, p_74520_, structuretemplate$structureblockinfo, structuretemplate$structureblockinfo1, p_74521_)) {
++         for(Iterator<StructureProcessor> iterator = p_74521_.m_74411_().iterator(); structuretemplate$structureblockinfo1 != null && iterator.hasNext(); structuretemplate$structureblockinfo1 = iterator.next().process(p_74518_, p_74519_, p_74520_, structuretemplate$structureblockinfo, structuretemplate$structureblockinfo1, p_74521_, template)) {
+          }
+ 
+          if (structuretemplate$structureblockinfo1 != null) {
+@@ -383,13 +_,30 @@
+       return list;
+    }
+ 
+-   private void m_74523_(ServerLevelAccessor p_74524_, BlockPos p_74525_, Mirror p_74526_, Rotation p_74527_, BlockPos p_74528_, @Nullable BoundingBox p_74529_, boolean p_74530_) {
+-      for(StructureTemplate.StructureEntityInfo structuretemplate$structureentityinfo : this.f_74483_) {
+-         BlockPos blockpos = m_74593_(structuretemplate$structureentityinfo.f_74684_, p_74526_, p_74527_, p_74528_).m_141952_(p_74525_);
+-         if (p_74529_ == null || p_74529_.m_71051_(blockpos)) {
++   public static List<StructureTemplate.StructureEntityInfo> processEntityInfos(@Nullable StructureTemplate template, LevelAccessor p_215387_0_, BlockPos p_215387_1_, StructurePlaceSettings p_215387_2_, List<StructureTemplate.StructureEntityInfo> p_215387_3_) {
++      List<StructureTemplate.StructureEntityInfo> list = Lists.newArrayList();
++      for(StructureTemplate.StructureEntityInfo entityInfo : p_215387_3_) {
++         Vec3 pos = transformedVec3d(p_215387_2_, entityInfo.f_74683_).m_82549_(Vec3.m_82528_(p_215387_1_));
++         BlockPos blockpos = m_74563_(p_215387_2_, entityInfo.f_74684_).m_141952_(p_215387_1_);
++         StructureTemplate.StructureEntityInfo info = new StructureTemplate.StructureEntityInfo(pos, blockpos, entityInfo.f_74685_);
++         for (StructureProcessor proc : p_215387_2_.m_74411_()) {
++            info = proc.processEntity(p_215387_0_, p_215387_1_, entityInfo, info, p_215387_2_, template);
++            if (info == null)
++               break;
++         }
++         if (info != null)
++            list.add(info);
++      }
++      return list;
++   }
++
++   private void addEntitiesToWorld(ServerLevelAccessor p_74524_, BlockPos p_74525_, StructurePlaceSettings placementIn) {
++      for(StructureTemplate.StructureEntityInfo structuretemplate$structureentityinfo : processEntityInfos(this, p_74524_, p_74525_, placementIn, this.f_74483_)) {
++         BlockPos blockpos = m_74593_(structuretemplate$structureentityinfo.f_74684_, placementIn.m_74401_(), placementIn.m_74404_(), placementIn.m_74407_()).m_141952_(p_74525_);
++         blockpos = structuretemplate$structureentityinfo.f_74684_; // FORGE: Position will have already been transformed by processEntityInfos
++         if (placementIn.m_74409_() == null || placementIn.m_74409_().m_71051_(blockpos)) {
+             CompoundTag compoundtag = structuretemplate$structureentityinfo.f_74685_.m_6426_();
+-            Vec3 vec3 = m_74578_(structuretemplate$structureentityinfo.f_74683_, p_74526_, p_74527_, p_74528_);
+-            Vec3 vec31 = vec3.m_82520_((double)p_74525_.m_123341_(), (double)p_74525_.m_123342_(), (double)p_74525_.m_123343_());
++            Vec3 vec31 = structuretemplate$structureentityinfo.f_74683_; // FORGE: Position will have already been transformed by processEntityInfos
+             ListTag listtag = new ListTag();
+             listtag.add(DoubleTag.m_128500_(vec31.f_82479_));
+             listtag.add(DoubleTag.m_128500_(vec31.f_82480_));
+@@ -397,10 +_,10 @@
+             compoundtag.m_128365_("Pos", listtag);
+             compoundtag.m_128473_("UUID");
+             m_74543_(p_74524_, compoundtag).ifPresent((p_74553_) -> {
+-               float f = p_74553_.m_6961_(p_74526_);
+-               f = f + (p_74553_.m_146908_() - p_74553_.m_7890_(p_74527_));
++               float f = p_74553_.m_6961_(placementIn.m_74401_());
++               f = f + (p_74553_.m_146908_() - p_74553_.m_7890_(placementIn.m_74404_()));
+                p_74553_.m_7678_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, f, p_74553_.m_146909_());
+-               if (p_74530_ && p_74553_ instanceof Mob) {
++               if (placementIn.m_74414_() && p_74553_ instanceof Mob) {
+                   ((Mob)p_74553_).m_6518_(p_74524_, p_74524_.m_6436_(new BlockPos(vec31)), MobSpawnType.STRUCTURE, (SpawnGroupData)null, compoundtag);
+                }
+ 

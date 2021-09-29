@@ -26,21 +26,21 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.TransformationMatrix;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
@@ -50,7 +50,7 @@ import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -64,7 +64,7 @@ public class TRSRTransformerTest {
 
     private static final RegistryObject<Block> TEST_BLOCK = BLOCKS.register("test", () -> new Block(Block.Properties.of(Material.STONE)));
     @SuppressWarnings("unused")
-    private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties().tab(ItemGroup.TAB_MISC)));
+    private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test", () -> new BlockItem(TEST_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
 
     public TRSRTransformerTest() {
         final IEventBus mod = FMLJavaModLoadingContext.get().getModEventBus();
@@ -82,9 +82,9 @@ public class TRSRTransformerTest {
     }
 
     public class MyBakedModel implements IDynamicBakedModel {
-        private final IBakedModel base;
+        private final BakedModel base;
 
-        public MyBakedModel(IBakedModel base) {
+        public MyBakedModel(BakedModel base) {
             this.base = base;
         }
 
@@ -95,7 +95,7 @@ public class TRSRTransformerTest {
             Quaternion rot = TransformationHelper.quatFromXYZ(new Vector3f(0, 45, 0), true);
             Vector3f translation = new Vector3f(0, 0.33f, 0);
 
-            TransformationMatrix trans = new TransformationMatrix(translation, rot, null, null).blockCenterToCorner();
+            Transformation trans = new Transformation(translation, rot, null, null).blockCenterToCorner();
 
             for (BakedQuad quad : base.getQuads(state, side, rand, data)) {
 
@@ -143,7 +143,7 @@ public class TRSRTransformerTest {
         }
 
         @Override
-        public ItemOverrideList getOverrides() {
+        public ItemOverrides getOverrides() {
             return base.getOverrides();
         }
     }

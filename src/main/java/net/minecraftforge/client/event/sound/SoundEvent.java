@@ -19,10 +19,9 @@
 
 package net.minecraftforge.client.event.sound;
 
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SoundEngine;
-import net.minecraft.client.audio.SoundSource;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.SoundEngine;
+import com.mojang.blaze3d.audio.Channel;
 
 public class SoundEvent extends net.minecraftforge.eventbus.api.Event
 {
@@ -39,11 +38,11 @@ public class SoundEvent extends net.minecraftforge.eventbus.api.Event
 
     public static class SoundSourceEvent extends SoundEvent
     {
-        private final ISound sound;
-        private final SoundSource source;
+        private final SoundInstance sound;
+        private final Channel source;
         private final String name;
 
-        public SoundSourceEvent(SoundEngine manager, ISound sound, SoundSource source)
+        public SoundSourceEvent(SoundEngine manager, SoundInstance sound, Channel source)
         {
             super(manager);
             this.name = sound.getLocation().getPath();
@@ -51,12 +50,12 @@ public class SoundEvent extends net.minecraftforge.eventbus.api.Event
             this.source = source;
         }
 
-        public ISound getSound()
+        public SoundInstance getSound()
         {
             return sound;
         }
 
-        public SoundSource getSource()
+        public Channel getSource()
         {
             return source;
         }

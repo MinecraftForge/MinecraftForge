@@ -1,20 +1,24 @@
 package net.minecraftforge.forge.tasks
 
-import java.util.ArrayList
-import java.util.TreeMap
+import net.minecraftforge.srgutils.IMappingFile
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFileProperty
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.objectweb.asm.Opcodes
 
-public class CheckATs extends DefaultTask {
-	@InputFile File inheritance
-	@InputFiles File[] ats
+abstract class CheckATs extends DefaultTask {
+	@InputFile abstract RegularFileProperty getInheritance()
+	@InputFiles abstract ConfigurableFileCollection getAts()
+    @InputFile @Optional abstract RegularFileProperty getMappings()
 	
     @TaskAction
     protected void exec() {
+        def mappings = mappings.map { IMappingFile.load(it.asFile) }.getOrNull()
 		Util.init()
 		def parse = { line ->
 			def idx = line.indexOf('#')
@@ -41,7 +45,7 @@ public class CheckATs extends DefaultTask {
 				default:          return -1
 			}
 		}
-		def json = inheritance.json()
+		def json = inheritance.get().asFile.json()
 		
 		ats.each { f -> 
 			TreeMap lines = [:]
@@ -51,12 +55,12 @@ public class CheckATs extends DefaultTask {
 				if (line.startsWith('#group ')) {
 					def (modifier, cls, desc, comment, key) = parse.call(line.substring(7))
 					
-					if (!desc.equals('*') && !desc.equals('*()') && !desc.equals('<init>'))
+					if (desc != '*' && desc != '*()' && desc != '<init>')
 						throw new IllegalStateException('Invalid group: ' + line)
 					
 					group = [modifier: modifier, cls: cls, desc: desc, comment: comment, 
-						'existing': [] as Set, 
-						'children': [] as TreeSet,
+						existing: [] as Set,
+						children: [] as TreeSet,
 						group: true
 					]
 					if (lines.containsKey(key))
@@ -93,7 +97,7 @@ public class CheckATs extends DefaultTask {
 					if (jcls == null) {
 						lines.remove(key)
 						println('Invalid Group: ' + key)
-					} else if ('*'.equals(entry['desc'])) {
+					} else if ('*' == entry['desc']) {
 						if (!jcls.containsKey('fields')) {
 							lines.remove(key)
 							println('Invalid Group, Class has no fields: ' + key)
@@ -114,13 +118,13 @@ public class CheckATs extends DefaultTask {
 							}
 							entry['existing'].stream().findAll{ !entry['children'].contains(it) }.each{ println('Removed: ' + it) }
 						}
-					} else if ('*()'.equals(entry['desc'])) {
+					} else if ('*()' == entry['desc']) {
 						if (!jcls.containsKey('methods')) {
 							lines.remove(key)
 							println('Invalid Group, Class has no methods: ' + key)
 						} else {
 							jcls['methods'].each{ mtd, value ->
-								if (mtd.startsWith('<clinit>'))
+								if (mtd.startsWith('<clinit>') || mtd.startsWith('lambda$'))
 									return
 								key = cls + ' ' + mtd.replace(' ', '')
 								if (accessLevel.call(value['access']) < accessStr.call(entry['modifier'])) {
@@ -137,7 +141,7 @@ public class CheckATs extends DefaultTask {
 							}
 							entry['existing'].stream().findAll{ !entry['children'].contains(it) }.each{ println('Removed: ' + it) }
 						}
-					} else if ('<init>'.equals(entry['desc'])) { //Make all public non-abstract subclasses 
+					} else if ('<init>' == entry['desc']) { //Make all public non-abstract subclasses
 						json.each{ tcls,value -> 
 							if (!value.containsKey('methods') || ((value['access'] & Opcodes.ACC_ABSTRACT) != 0))
 								return
@@ -182,7 +186,7 @@ public class CheckATs extends DefaultTask {
 						lines.remove(key)
 						println('Invalid: ' + key)
 					} else if (entry['desc'] == '') {
-						if (accessLevel.call(jcls['access']) >= accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
+						if (accessLevel.call(jcls['access']) > accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
 							lines.remove(key)
 							println('Invalid Narrowing: ' + key)
 						}
@@ -192,7 +196,7 @@ public class CheckATs extends DefaultTask {
 							println('Invalid: ' + key)
 						} else {
 							def value = jcls['fields'][entry['desc']]
-							if (accessLevel.call(value['access']) >= accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
+							if (accessLevel.call(value['access']) > accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
 								lines.remove(key)
 								println('Invalid Narrowing: ' + key)
 								println(entry.comment)
@@ -205,7 +209,7 @@ public class CheckATs extends DefaultTask {
 							println('Invalid: ' + key)
 						} else {
 							def value = jcls['methods'][jdesc]
-							if (accessLevel.call(value['access']) >= accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
+							if (accessLevel.call(value['access']) > accessStr.call(entry['modifier']) && (entry.comment == null || !entry.comment.startsWith('#force '))) {
 								lines.remove(key)
 								println('Invalid Narrowing: ' + key)
 							}
@@ -216,12 +220,44 @@ public class CheckATs extends DefaultTask {
 
 			
 			def data = []
+            def remapComment = { entry ->
+                if (!mappings || !entry || !entry.desc) return null
+                def comment = entry.comment?.substring(1)?.trim()
+                def jsonCls = json.get(entry.cls.replaceAll('\\.', '/'))
+                def mappingsClass = mappings?.getClass(jsonCls.name)
+                if (!mappingsClass) return entry.comment
+                def idx = entry.desc.indexOf('(')
+                def mappedName = idx == -1
+                        ? mappingsClass.remapField(entry.desc)
+                        : mappingsClass.remapMethod(entry.desc.substring(0, idx), entry.desc.substring(idx))
+                if (!mappedName) return entry.comment
+                if (mappedName == '<init>')
+                    mappedName = 'constructor'
+
+                if (comment?.startsWith(mappedName))
+                    return '# ' + comment
+                if (comment && comment.indexOf(' ') != -1) {
+                    def split = comment.split(" - ").toList()
+                    if (split[0].indexOf(' ') != -1)
+                        // The first string is more than one word, so append before it
+                        return "# ${mappedName} - ${comment}"
+                    split.remove(0)
+                    return "# ${mappedName} - ${String.join(' - ', split)}"
+                }
+                return '# ' + mappedName
+            }
 			lines.each { key,value -> 
 				if (!value.group) {
-					data.add(value.modifier + ' ' + key + (value.comment == null ? '' : ' ' + value.comment))
+                    def comment = remapComment.call(value)
+					data.add(value.modifier + ' ' + key + (comment ? ' ' + comment : ''))
 				} else {
 					data.add('#group ' + value.modifier + ' ' + key + (value.comment == null ? '' : ' ' + value.comment))
-					value.children.each{ data.add(value.modifier + ' ' + it) }
+					value.children.each {
+                        def line = value.modifier + ' ' + it
+                        def (modifier, cls, desc, comment) = parse.call(line)
+                        comment = remapComment.call([modifier: modifier, cls: cls, desc: desc, comment: comment])
+                        data.add(line + (comment ? ' ' + comment : ''))
+                    }
 					data.add('#endgroup')
 				}
 			}

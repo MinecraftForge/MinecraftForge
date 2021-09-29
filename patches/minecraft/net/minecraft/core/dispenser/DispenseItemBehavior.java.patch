@@ -1,0 +1,16 @@
+--- a/net/minecraft/core/dispenser/DispenseItemBehavior.java
++++ b/net/minecraft/core/dispenser/DispenseItemBehavior.java
+@@ -393,9 +_,10 @@
+                level.m_46597_(blockpos, BaseFireBlock.m_49245_(level, blockpos));
+                level.m_142346_((Entity)null, GameEvent.f_157797_, blockpos);
+             } else if (!CampfireBlock.m_51321_(blockstate) && !CandleBlock.m_152845_(blockstate) && !CandleCakeBlock.m_152910_(blockstate)) {
+-               if (blockstate.m_60734_() instanceof TntBlock) {
+-                  TntBlock.m_57433_(level, blockpos);
+-                  level.m_7471_(blockpos, false);
++               if (blockstate.isFlammable(level, blockpos, p_123412_.m_6414_().m_61143_(DispenserBlock.f_52659_).m_122424_())) {
++                  blockstate.catchFire(level, blockpos, p_123412_.m_6414_().m_61143_(DispenserBlock.f_52659_).m_122424_(), null);
++                  if (blockstate.m_60734_() instanceof TntBlock)
++                     level.m_7471_(blockpos, false);
+                } else {
+                   this.m_123573_(false);
+                }

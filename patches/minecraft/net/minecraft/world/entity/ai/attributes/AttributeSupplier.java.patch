@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/entity/ai/attributes/AttributeSupplier.java
++++ b/net/minecraft/world/entity/ai/attributes/AttributeSupplier.java
+@@ -69,6 +_,22 @@
+    public static class Builder {
+       private final Map<Attribute, AttributeInstance> f_22262_ = Maps.newHashMap();
+       private boolean f_22263_;
++      private final java.util.List<AttributeSupplier.Builder> others = new java.util.ArrayList<>();
++
++      public Builder() { }
++
++      public Builder(AttributeSupplier attributeMap) {
++         this.f_22262_.putAll(attributeMap.f_22241_);
++      }
++
++      public void combine(Builder other) {
++         this.f_22262_.putAll(other.f_22262_);
++         others.add(other);
++      }
++
++      public boolean hasAttribute(Attribute attribute) {
++         return this.f_22262_.containsKey(attribute);
++      }
+ 
+       private AttributeInstance m_22274_(Attribute p_22275_) {
+          AttributeInstance attributeinstance = new AttributeInstance(p_22275_, (p_22273_) -> {
+@@ -93,6 +_,7 @@
+ 
+       public AttributeSupplier m_22265_() {
+          this.f_22263_ = true;
++         others.forEach(p_70141_ -> p_70141_.f_22263_ = true);
+          return new AttributeSupplier(this.f_22262_);
+       }
+    }
