@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber()
 public class PlayerDamageItemEventTest 
 {
-    private static final boolean ENABLE = true;
+    private static final boolean ENABLE = false;
     private static final Logger LOGGER = LogManager.getLogger(PlayerDamageItemEventTest.class);
 
     @SubscribeEvent
