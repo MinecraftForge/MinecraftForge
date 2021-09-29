@@ -58,6 +58,12 @@ public class ClientCommandHandler
 {
     private static CommandDispatcher<CommandSourceStack> commands = null;
 
+    /*
+     * For internal use
+     * 
+     * Merges command dispatcher use for suggestions to the command dispatcher used for client commands so they can be sent to the server, and vice versa so client commands appear
+     * with server commands in suggestions
+     */
     public static void mergeServerCommands(RootCommandNode<SharedSuggestionProvider> serverCommands)
     {
         commands = new CommandDispatcher<>();

@@ -27,6 +27,8 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec2;
@@ -40,16 +42,16 @@ import java.util.stream.Stream;
 public class ClientCommandSource extends CommandSourceStack
 {
 
-    public ClientCommandSource(CommandSource p_i49552_1_, Vec3 p_i49552_2_, Vec2 p_i49552_3_, int p_i49552_5_, String p_i49552_6_, Component p_i49552_7_,
-            Entity p_i49552_9_)
+    public ClientCommandSource(CommandSource source, Vec3 position, Vec2 rotation, int permission, String plainTextName, Component displayName,
+            Entity executing)
     {
-        super(p_i49552_1_, p_i49552_2_, p_i49552_3_, null, p_i49552_5_, p_i49552_6_, p_i49552_7_, null, p_i49552_9_);
+        super(source, position, rotation, null, permission, plainTextName, displayName, null, executing);
     }
 
     @Override
-    public void sendSuccess(Component p_197030_1_, boolean p_197030_2_)
+    public void sendSuccess(Component message, boolean sendToAdmins)
     {
-        Minecraft.getInstance().player.sendMessage(p_197030_1_, Util.NIL_UUID);
+        Minecraft.getInstance().player.sendMessage(message, Util.NIL_UUID);
     }
 
     @Override

@@ -24,7 +24,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
- * Fired when client {@link CommandDispatcher} has all of its commands synced from the server
+ * Register commands to be executed on the client using this event.
  */
 public class RegisterClientCommandsEvent extends Event
 {
@@ -37,7 +37,7 @@ public class RegisterClientCommandsEvent extends Event
     }
 
     /**
-     * @return The newly-updated command dispatcher that now contains all the commands that were just received.
+     * @return The command dispatcher for registering commands to be executed on the client
      */
     public CommandDispatcher<CommandSourceStack> getDispatcher()
     {
