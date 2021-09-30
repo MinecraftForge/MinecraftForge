@@ -46,6 +46,7 @@ import net.minecraftforge.common.data.ForgeFluidTagsProvider;
 import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootTableIdCondition;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -107,6 +108,7 @@ import org.apache.logging.log4j.MarkerManager;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
@@ -123,7 +125,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public static final RegistryObject<Attribute> REACH_DISTANCE = ATTRIBUTES.register("reach_distance", () -> new RangedAttribute("generic.reachDistance", 5.0D, 0.0D, 1024.0D).setSyncable(true));
 
-    public static final RecipeType<IBrewingRecipe> BREWING = new RecipeType<>() {};
+    public static final Supplier<RecipeType<IBrewingRecipe>> BREWING = Lazy.of(() -> RecipeType.register("forge:brewing"));
 
     private static final DeferredRegister<RecipeSerializer<?>> RECIPE_SERIALIZERS = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, "forge");
 
@@ -322,8 +324,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CraftingHelper.register(new ResourceLocation("forge", "compound"), CompoundIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("forge", "nbt"), NBTIngredient.Serializer.INSTANCE);
         CraftingHelper.register(new ResourceLocation("minecraft", "item"), VanillaIngredientSerializer.INSTANCE);
-
-        Registry.register(Registry.RECIPE_TYPE, new ResourceLocation("forge", "brewing"), BREWING);
     }
 
     @SubscribeEvent //ModBus

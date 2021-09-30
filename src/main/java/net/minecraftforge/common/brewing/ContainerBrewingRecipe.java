@@ -81,34 +81,34 @@ public record ContainerBrewingRecipe(@Nonnull ResourceLocation id,
     {
 
         @Override
-        public ContainerBrewingRecipe fromJson(final ResourceLocation p_199425_1_, final JsonObject p_199425_2_)
+        public ContainerBrewingRecipe fromJson(final ResourceLocation recipeId, final JsonObject serializedRecipe)
         {
-            Item base = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(p_199425_2_, "base")));
+            Item base = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(serializedRecipe, "base")));
             if (base == null)
-                throw new JsonParseException("Invalid item supplied for base in " + p_199425_1_);
-            Ingredient reagent = Ingredient.fromJson(GsonHelper.getAsJsonObject(p_199425_2_, "reagent"));
-            Item result = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(p_199425_2_, "result")));
+                throw new JsonParseException("Invalid item supplied for base in " + recipeId);
+            Ingredient reagent = Ingredient.fromJson(GsonHelper.getAsJsonObject(serializedRecipe, "reagent"));
+            Item result = ForgeRegistries.ITEMS.getValue(new ResourceLocation(GsonHelper.getAsString(serializedRecipe, "result")));
             if (result == null)
-                throw new JsonParseException("Invalid item supplied for result in " + p_199425_1_);
-            return new ContainerBrewingRecipe(p_199425_1_, base, reagent, result);
+                throw new JsonParseException("Invalid item supplied for result in " + recipeId);
+            return new ContainerBrewingRecipe(recipeId, base, reagent, result);
         }
 
         @Nullable
         @Override
-        public ContainerBrewingRecipe fromNetwork(final ResourceLocation p_199426_1_, final FriendlyByteBuf p_199426_2_)
+        public ContainerBrewingRecipe fromNetwork(final ResourceLocation recipeId, final FriendlyByteBuf buffer)
         {
-            Item base = ForgeRegistries.ITEMS.getValue(p_199426_2_.readResourceLocation());
-            Ingredient reagent = Ingredient.fromNetwork(p_199426_2_);
-            Item result = ForgeRegistries.ITEMS.getValue(p_199426_2_.readResourceLocation());
-            return new ContainerBrewingRecipe(p_199426_1_, base, reagent, result);
+            Item base = ForgeRegistries.ITEMS.getValue(buffer.readResourceLocation());
+            Ingredient reagent = Ingredient.fromNetwork(buffer);
+            Item result = ForgeRegistries.ITEMS.getValue(buffer.readResourceLocation());
+            return new ContainerBrewingRecipe(recipeId, base, reagent, result);
         }
 
         @Override
-        public void toNetwork(final FriendlyByteBuf p_199427_1_, final ContainerBrewingRecipe p_199427_2_)
+        public void toNetwork(final FriendlyByteBuf buffer, final ContainerBrewingRecipe recipe)
         {
-            p_199427_1_.writeResourceLocation(ForgeRegistries.ITEMS.getKey(p_199427_2_.base()));
-            p_199427_2_.reagent().toNetwork(p_199427_1_);
-            p_199427_1_.writeResourceLocation(ForgeRegistries.ITEMS.getKey(p_199427_2_.result()));
+            buffer.writeResourceLocation(ForgeRegistries.ITEMS.getKey(recipe.base()));
+            recipe.reagent().toNetwork(buffer);
+            buffer.writeResourceLocation(ForgeRegistries.ITEMS.getKey(recipe.result()));
         }
     }
 }

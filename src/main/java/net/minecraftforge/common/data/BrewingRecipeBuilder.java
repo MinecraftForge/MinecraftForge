@@ -214,7 +214,8 @@ public abstract class BrewingRecipeBuilder
                 final ResourceLocation result = ForgeRegistries.ITEMS.getKey(this.result.getItem());
                 o.addProperty("item", result.toString());
                 o.addProperty("count", this.result.getCount());
-                if (this.result.hasTag()) {
+                if (this.result.hasTag())
+                {
                     o.add("nbt", NbtOps.INSTANCE.convertTo(JsonOps.INSTANCE, this.result.getTag()));
                 }
                 tag.add("result", o);

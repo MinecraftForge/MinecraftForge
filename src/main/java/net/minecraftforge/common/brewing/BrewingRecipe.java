@@ -39,7 +39,7 @@ public record BrewingRecipe(@Nonnull ResourceLocation id,
                             @Nonnull ItemStack result) implements IBrewingRecipe
 {
     @Override
-    public ItemStack assemble(final IBrewingContainer p_44001_)
+    public ItemStack assemble(final IBrewingContainer container)
     {
         return result().copy();
     }
@@ -78,30 +78,30 @@ public record BrewingRecipe(@Nonnull ResourceLocation id,
     {
 
         @Override
-        public BrewingRecipe fromJson(final ResourceLocation p_199425_1_, final JsonObject p_199425_2_)
+        public BrewingRecipe fromJson(final ResourceLocation recipeId, final JsonObject serializedRecipe)
         {
-            Ingredient base = Ingredient.fromJson(GsonHelper.getAsJsonObject(p_199425_2_, "base"));
-            Ingredient reagent = Ingredient.fromJson(GsonHelper.getAsJsonObject(p_199425_2_, "reagent"));
-            ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(p_199425_2_, "result"));
-            return new BrewingRecipe(p_199425_1_, base, reagent, result);
+            Ingredient base = Ingredient.fromJson(GsonHelper.getAsJsonObject(serializedRecipe, "base"));
+            Ingredient reagent = Ingredient.fromJson(GsonHelper.getAsJsonObject(serializedRecipe, "reagent"));
+            ItemStack result = ShapedRecipe.itemStackFromJson(GsonHelper.getAsJsonObject(serializedRecipe, "result"));
+            return new BrewingRecipe(recipeId, base, reagent, result);
         }
 
         @Nullable
         @Override
-        public BrewingRecipe fromNetwork(final ResourceLocation p_199426_1_, final FriendlyByteBuf p_199426_2_)
+        public BrewingRecipe fromNetwork(final ResourceLocation recipeId, final FriendlyByteBuf buffer)
         {
-            Ingredient base = Ingredient.fromNetwork(p_199426_2_);
-            Ingredient reagent = Ingredient.fromNetwork(p_199426_2_);
-            ItemStack result = p_199426_2_.readItem();
-            return new BrewingRecipe(p_199426_1_, base, reagent, result);
+            Ingredient base = Ingredient.fromNetwork(buffer);
+            Ingredient reagent = Ingredient.fromNetwork(buffer);
+            ItemStack result = buffer.readItem();
+            return new BrewingRecipe(recipeId, base, reagent, result);
         }
 
         @Override
-        public void toNetwork(final FriendlyByteBuf p_199427_1_, final BrewingRecipe p_199427_2_)
+        public void toNetwork(final FriendlyByteBuf buffer, final BrewingRecipe recipe)
         {
-            p_199427_2_.base().toNetwork(p_199427_1_);
-            p_199427_2_.reagent().toNetwork(p_199427_1_);
-            p_199427_1_.writeItem(p_199427_2_.result());
+            recipe.base().toNetwork(buffer);
+            recipe.reagent().toNetwork(buffer);
+            buffer.writeItem(recipe.result());
         }
     }
 }

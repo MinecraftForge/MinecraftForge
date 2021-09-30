@@ -81,34 +81,34 @@ public record MixingBrewingRecipe(@Nonnull ResourceLocation id,
     {
 
         @Override
-        public MixingBrewingRecipe fromJson(final ResourceLocation p_199425_1_, final JsonObject p_199425_2_)
+        public MixingBrewingRecipe fromJson(final ResourceLocation recipeId, final JsonObject serializedRecipe)
         {
-            Potion base = ForgeRegistries.POTIONS.getValue(new ResourceLocation(p_199425_2_.get("base").getAsString()));
+            Potion base = ForgeRegistries.POTIONS.getValue(new ResourceLocation(serializedRecipe.get("base").getAsString()));
             if (base == null)
-                throw new JsonParseException("Invalid item supplied for base in " + p_199425_1_);
-            Ingredient reagent = Ingredient.fromJson(p_199425_2_.getAsJsonObject("reagent"));
-            Potion result = ForgeRegistries.POTIONS.getValue(new ResourceLocation(p_199425_2_.get("result").getAsString()));
+                throw new JsonParseException("Invalid item supplied for base in " + recipeId);
+            Ingredient reagent = Ingredient.fromJson(serializedRecipe.getAsJsonObject("reagent"));
+            Potion result = ForgeRegistries.POTIONS.getValue(new ResourceLocation(serializedRecipe.get("result").getAsString()));
             if (result == null)
-                throw new JsonParseException("Invalid item supplied for result in " + p_199425_1_);
-            return new MixingBrewingRecipe(p_199425_1_, base, reagent, result);
+                throw new JsonParseException("Invalid item supplied for result in " + recipeId);
+            return new MixingBrewingRecipe(recipeId, base, reagent, result);
         }
 
         @Nullable
         @Override
-        public MixingBrewingRecipe fromNetwork(final ResourceLocation p_199426_1_, final FriendlyByteBuf p_199426_2_)
+        public MixingBrewingRecipe fromNetwork(final ResourceLocation recipeId, final FriendlyByteBuf buffer)
         {
-            Potion base = ForgeRegistries.POTIONS.getValue(p_199426_2_.readResourceLocation());
-            Ingredient reagent = Ingredient.fromNetwork(p_199426_2_);
-            Potion result = ForgeRegistries.POTIONS.getValue(p_199426_2_.readResourceLocation());
-            return new MixingBrewingRecipe(p_199426_1_, base, reagent, result);
+            Potion base = ForgeRegistries.POTIONS.getValue(buffer.readResourceLocation());
+            Ingredient reagent = Ingredient.fromNetwork(buffer);
+            Potion result = ForgeRegistries.POTIONS.getValue(buffer.readResourceLocation());
+            return new MixingBrewingRecipe(recipeId, base, reagent, result);
         }
 
         @Override
-        public void toNetwork(final FriendlyByteBuf p_199427_1_, final MixingBrewingRecipe p_199427_2_)
+        public void toNetwork(final FriendlyByteBuf buf, final MixingBrewingRecipe recipe)
         {
-            p_199427_1_.writeResourceLocation(ForgeRegistries.POTIONS.getKey(p_199427_2_.base()));
-            p_199427_2_.reagent().toNetwork(p_199427_1_);
-            p_199427_1_.writeResourceLocation(ForgeRegistries.POTIONS.getKey(p_199427_2_.result()));
+            buf.writeResourceLocation(ForgeRegistries.POTIONS.getKey(recipe.base()));
+            recipe.reagent().toNetwork(buf);
+            buf.writeResourceLocation(ForgeRegistries.POTIONS.getKey(recipe.result()));
         }
     }
 }

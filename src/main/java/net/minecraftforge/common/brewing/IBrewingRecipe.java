@@ -34,7 +34,7 @@ public interface IBrewingRecipe extends Recipe<IBrewingContainer>
     }
 
     @Override
-    default boolean canCraftInDimensions(int p_43999_, int p_44000_)
+    default boolean canCraftInDimensions(int width, int height)
     {
         return true;
     }
@@ -42,7 +42,7 @@ public interface IBrewingRecipe extends Recipe<IBrewingContainer>
     @Override
     default RecipeType<?> getType()
     {
-        return ForgeMod.BREWING;
+        return ForgeMod.BREWING.get();
     }
 
     boolean isReagent(final ItemStack reagent);

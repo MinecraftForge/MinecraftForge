@@ -19,11 +19,15 @@
 
 package net.minecraftforge.common.brewing;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.ForgeEventFactory;
 
 import java.util.Optional;
 
@@ -39,13 +43,12 @@ public class BrewingRecipeHelper
         final ItemStack reagent = container.getItem(reagentSlot);
         if (reagent.isEmpty()) return false;
         final RecipeManager recipeManager = level.getRecipeManager();
-        for (int baseSlot : baseSlots) {
+        for (int baseSlot : baseSlots)
+        {
             ItemStack base = container.getItem(baseSlot);
-            final IBrewingContainer c = new IBrewingContainer.Impl(base, reagent);
-            Optional<IBrewingRecipe> recipeFor = recipeManager.getRecipeFor(ForgeMod.BREWING, c, level);
-            if (recipeFor.isPresent()) {
-                return true;
-            }
+            final IBrewingContainer wrapper = new IBrewingContainer.Impl(base, reagent);
+            Optional<IBrewingRecipe> recipeFor = recipeManager.getRecipeFor(ForgeMod.BREWING.get(), wrapper, level);
+            if (recipeFor.isPresent()) return true;
         }
         return false;
     }
@@ -54,14 +57,15 @@ public class BrewingRecipeHelper
      * Used by the brewing stand to brew its inventory Extra parameters exist to
      * allow modders to create bigger brewing stands without much hassle
      */
-    public static void brewPotions(Level level, Container container, int reagentSlot, int[] baseSlots)
+    public static void brewPotions(Level level, NonNullList<ItemStack> container, int reagentSlot, int[] baseSlots)
     {
-        final ItemStack reagent = container.getItem(reagentSlot);
+        final ItemStack reagent = container.get(reagentSlot);
         final RecipeManager recipeManager = level.getRecipeManager();
-        for (int baseSlot : baseSlots) {
-            final IBrewingContainer wrapper = new IBrewingContainer.Impl(container.getItem(baseSlot), reagent);
-            recipeManager.getRecipeFor(ForgeMod.BREWING, wrapper, level)
-                    .ifPresent(recipe -> container.setItem(baseSlot, recipe.assemble(wrapper)));
+        for (int baseSlot : baseSlots)
+        {
+            final IBrewingContainer wrapper = new IBrewingContainer.Impl(container.get(baseSlot), reagent);
+            recipeManager.getRecipeFor(ForgeMod.BREWING.get(), wrapper, level)
+                    .ifPresent(recipe -> container.set(baseSlot, recipe.assemble(wrapper)));
         }
     }
 
@@ -73,7 +77,7 @@ public class BrewingRecipeHelper
     {
         if (stack.isEmpty()) return false;
 
-        for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING))
+        for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING.get()))
         {
             if (recipe.isReagent(stack))
             {
@@ -91,7 +95,7 @@ public class BrewingRecipeHelper
     {
         if (stack.getCount() != 1) return false;
 
-        for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING))
+        for (IBrewingRecipe recipe : level.getRecipeManager().getAllRecipesFor(ForgeMod.BREWING.get()))
         {
             if (recipe.isBase(stack))
             {
@@ -99,5 +103,28 @@ public class BrewingRecipeHelper
             }
         }
         return false;
+    }
+
+    /**
+     * Proxy method to reduce patch size in {@link net.minecraft.world.level.block.entity.BrewingStandBlockEntity}.
+     */
+    public static void doBrew(Level level, BlockPos pos, NonNullList<ItemStack> items)
+    {
+        if (ForgeEventFactory.onPotionAttemptBrew(items)) return;
+        ItemStack itemstack = items.get(3);
+
+        brewPotions(level, items, 3, new int[]{0, 1, 2});
+        ForgeEventFactory.onPotionBrewed(items);
+        if (itemstack.hasContainerItem())
+        {
+            ItemStack itemstack1 = itemstack.getContainerItem();
+            itemstack.shrink(1);
+            if (itemstack.isEmpty()) itemstack = itemstack1;
+            else Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), itemstack1);
+        }
+        else itemstack.shrink(1);
+
+        items.set(3, itemstack);
+        level.levelEvent(1035, pos, 0);
     }
 }
