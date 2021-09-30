@@ -352,7 +352,8 @@ public class ForgeHooksClient
     {
         mStack.pushPose();
         guiLayers.forEach(layer -> {
-            drawScreenInternal(layer, mStack, -1, -1, partialTicks);
+            // Prevent the background layers from thinking the mouse is over their controls and showing them as highlighted.
+            drawScreenInternal(layer, mStack, Integer.MAX_VALUE, Integer.MAX_VALUE, partialTicks);
             mStack.translate(0,0,2000);
         });
         drawScreenInternal(screen, mStack, mouseX, mouseY, partialTicks);

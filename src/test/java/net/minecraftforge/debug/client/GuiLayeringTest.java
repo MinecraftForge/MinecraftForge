@@ -67,7 +67,7 @@ public class GuiLayeringTest
             public void render(MatrixStack mStack, int mouseX, int mouseY, float partialTicks)
             {
                 this.renderBackground(mStack);
-                drawString(mStack, this.font, this.title, this.width / 2, 15, 16777215);
+                drawString(mStack, this.font, this.title, this.width / 2, 15, 0xFFFFFF);
                 super.render(mStack, mouseX, mouseY, partialTicks);
             }
 
