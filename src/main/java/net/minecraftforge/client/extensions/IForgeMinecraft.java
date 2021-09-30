@@ -27,11 +27,13 @@ public interface IForgeMinecraft
 {
     private Minecraft self() { return (Minecraft)this; }
 
-    default void pushGuiLayer(Screen screen) {
+    default void pushGuiLayer(Screen screen)
+    {
         ForgeHooksClient.pushGuiLayer(self(), screen);
     }
 
-    default void popGuiLayer() {
+    default void popGuiLayer()
+    {
         ForgeHooksClient.popGuiLayer(self());
     }
 }
