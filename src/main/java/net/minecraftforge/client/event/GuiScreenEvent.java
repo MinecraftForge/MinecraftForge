@@ -300,7 +300,8 @@ public class GuiScreenEvent extends Event
             /**
              * @return {@code true} if the mouse click was already handled by its screen
              */
-            public boolean wasHandled() {
+            public boolean wasHandled()
+            {
                 return handled;
             }
         }
@@ -352,7 +353,8 @@ public class GuiScreenEvent extends Event
             /**
              * @return {@code true} if the mouse release was already handled by its screen
              */
-            public boolean wasHandled() {
+            public boolean wasHandled()
+            {
                 return handled;
             }
         }
