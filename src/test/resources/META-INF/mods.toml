@@ -3,7 +3,7 @@ loaderVersion="[28,)"
 license="LGPL v2.1"
 
 [[mods]]
-	modId="containertypetest"
+    modId="containertypetest"
 [[mods]]
     modId="potion_event_test"
 [[mods]]
