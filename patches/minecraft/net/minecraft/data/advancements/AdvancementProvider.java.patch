@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/advancements/AdvancementProvider.java
 +++ b/net/minecraft/data/advancements/AdvancementProvider.java
-@@ -22,11 +_,19 @@
+@@ -22,11 +_,18 @@
     private static final Gson f_123961_ = (new GsonBuilder()).setPrettyPrinting().create();
     private final DataGenerator f_123962_;
     private final List<Consumer<Consumer<Advancement>>> f_123963_ = ImmutableList.of(new TheEndAdvancements(), new HusbandryAdvancements(), new AdventureAdvancements(), new NetherAdvancements(), new StoryAdvancements());
@@ -15,7 +15,6 @@
 +      this.f_123962_ = generatorIn;
 +      this.fileHelper = fileHelperIn;
 +   }
-+
 +
     public void m_6865_(HashCache p_123969_) {
        Path path = this.f_123962_.m_123916_();
