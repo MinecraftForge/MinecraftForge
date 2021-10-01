@@ -621,9 +621,9 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
-    public static boolean onGuiMouseClickedPost(Screen guiScreen, double mouseX, double mouseY, int button)
+    public static boolean onGuiMouseClickedPost(Screen guiScreen, double mouseX, double mouseY, int button, boolean handled)
     {
-        Event event = new GuiScreenEvent.MouseClickedEvent.Post(guiScreen, mouseX, mouseY, button);
+        Event event = new GuiScreenEvent.MouseClickedEvent.Post(guiScreen, mouseX, mouseY, button, handled);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
@@ -633,9 +633,9 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
-    public static boolean onGuiMouseReleasedPost(Screen guiScreen, double mouseX, double mouseY, int button)
+    public static boolean onGuiMouseReleasedPost(Screen guiScreen, double mouseX, double mouseY, int button, boolean handled)
     {
-        Event event = new GuiScreenEvent.MouseReleasedEvent.Post(guiScreen, mouseX, mouseY, button);
+        Event event = new GuiScreenEvent.MouseReleasedEvent.Post(guiScreen, mouseX, mouseY, button, handled);
         return MinecraftForge.EVENT_BUS.post(event);
     }
 

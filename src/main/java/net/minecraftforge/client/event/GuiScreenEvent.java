@@ -283,15 +283,25 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link IGuiEventListener#mouseClicked(double, double, int)} if the click was not already handled.
+         * This event fires after {@link GuiEventListener#mouseClicked(double, double, int)}.
          * Cancel this event when you successfully use the mouse click, to prevent other handlers from using the same input.
          */
         @Cancelable
         public static class Post extends MouseClickedEvent
         {
-            public Post(Screen gui, double mouseX, double mouseY, int button)
+            private final boolean handled;
+
+            public Post(Screen gui, double mouseX, double mouseY, int button, boolean handled)
             {
                 super(gui, mouseX, mouseY, button);
+                this.handled = handled;
+            }
+
+            /**
+             * @return {@code true} if the mouse click was already handled by its screen
+             */
+            public boolean wasHandled() {
+                return handled;
             }
         }
     }
@@ -325,15 +335,25 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link IGuiEventListener#mouseReleased(double, double, int)} if the release was not already handled.
+         * This event fires after {@link GuiEventListener#mouseReleased(double, double, int)}.
          * Cancel this event when you successfully use the mouse release, to prevent other handlers from using the same input.
          */
         @Cancelable
         public static class Post extends MouseReleasedEvent
         {
-            public Post(Screen gui, double mouseX, double mouseY, int button)
+            private final boolean handled;
+
+            public Post(Screen gui, double mouseX, double mouseY, int button, boolean handled)
             {
                 super(gui, mouseX, mouseY, button);
+                this.handled = handled;
+            }
+
+            /**
+             * @return {@code true} if the mouse release was already handled by its screen
+             */
+            public boolean wasHandled() {
+                return handled;
             }
         }
     }
