@@ -148,7 +148,7 @@ public class ForgeHooksClient
     private static void popGuiLayerInternal(Minecraft minecraft)
     {
         if (minecraft.screen != null)
-            minecraft.screen.removed(); // onClose
+            minecraft.screen.removed();
         minecraft.screen = guiLayers.pop();
     }
 
