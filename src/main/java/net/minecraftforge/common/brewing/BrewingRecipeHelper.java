@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.brewing;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
@@ -26,6 +27,7 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -126,5 +128,27 @@ public class BrewingRecipeHelper
 
         items.set(3, itemstack);
         level.levelEvent(1035, pos, 0);
+    }
+
+    /**
+     * Proxy method for BrewingStandMenu.IngredientSlot#mayPlace
+     */
+    public static boolean mayPlaceIngredient(Container container, ItemStack stack)
+    {
+        if (container instanceof BrewingStandBlockEntity stand)
+            return isValidIngredient(stand.getLevel(), stack);
+        else
+            return isValidIngredient(Minecraft.getInstance().level, stack);
+    }
+
+    /**
+     * Proxy method for BrewingStandMenu.PotionSlot#mayPlaceItem
+     */
+    public static boolean mayPlacePotion(Container container, ItemStack stack)
+    {
+        if (container instanceof BrewingStandBlockEntity stand)
+            return isValidInput(stand.getLevel(), stack);
+        else
+            return isValidInput(Minecraft.getInstance().level, stack);
     }
 }

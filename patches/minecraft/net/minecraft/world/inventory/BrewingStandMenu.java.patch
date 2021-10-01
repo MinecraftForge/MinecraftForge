@@ -1,11 +1,29 @@
 --- a/net/minecraft/world/inventory/BrewingStandMenu.java
 +++ b/net/minecraft/world/inventory/BrewingStandMenu.java
+@@ -75,7 +_,7 @@
+                if (!this.m_38903_(itemstack1, 3, 4, false)) {
+                   return ItemStack.f_41583_;
+                }
+-            } else if (BrewingStandMenu.PotionSlot.m_39133_(itemstack) && itemstack.m_41613_() == 1) {
++            } else if (net.minecraftforge.common.brewing.BrewingRecipeHelper.mayPlacePotion(f_39086_, itemstack) && itemstack.m_41613_() == 1) {
+                if (!this.m_38903_(itemstack1, 0, 3, false)) {
+                   return ItemStack.f_41583_;
+                }
 @@ -146,7 +_,7 @@
        }
  
        public boolean m_5857_(ItemStack p_39121_) {
 -         return PotionBrewing.m_43506_(p_39121_);
-+         return true;
++         return net.minecraftforge.common.brewing.BrewingRecipeHelper.mayPlaceIngredient(this.f_40218_, p_39121_);
+       }
+ 
+       public int m_6641_() {
+@@ -160,7 +_,7 @@
+       }
+ 
+       public boolean m_5857_(ItemStack p_39132_) {
+-         return m_39133_(p_39132_);
++         return net.minecraftforge.common.brewing.BrewingRecipeHelper.mayPlacePotion(f_40218_, p_39132_);
        }
  
        public int m_6641_() {
@@ -17,12 +35,3 @@
              CriteriaTriggers.f_10577_.m_19120_((ServerPlayer)p_150499_, potion);
           }
  
-@@ -177,7 +_,7 @@
-       }
- 
-       public static boolean m_39133_(ItemStack p_39134_) {
--         return p_39134_.m_150930_(Items.f_42589_) || p_39134_.m_150930_(Items.f_42736_) || p_39134_.m_150930_(Items.f_42739_) || p_39134_.m_150930_(Items.f_42590_);
-+         return true;
-       }
-    }
- }
