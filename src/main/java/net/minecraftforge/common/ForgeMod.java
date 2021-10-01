@@ -312,6 +312,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     @SubscribeEvent //ModBus, can't use addListener due to nested genetics.
     public void registerRecipeSerialziers(RegistryEvent.Register<RecipeSerializer<?>> event)
     {
+        BREWING.get(); // Resolve brewing RecipeType
+
         CraftingHelper.register(AndCondition.Serializer.INSTANCE);
         CraftingHelper.register(FalseCondition.Serializer.INSTANCE);
         CraftingHelper.register(ItemExistsCondition.Serializer.INSTANCE);
