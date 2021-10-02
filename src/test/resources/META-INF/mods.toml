@@ -21,8 +21,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="client_chat_event_test"
 [[mods]]
-    modId="client_command_test"
-[[mods]]
     modId="command_event_test"
 [[mods]]
     modId="entity_selector_test"
@@ -156,5 +154,7 @@ license="LGPL v2.1"
     modId="custom_shield_test"
 [[mods]]
     modId="lazy_capabilities_on_items"
+[[mods]]
+    modId="client_command_test"
 
 # ADD ABOVE THIS LINE

@@ -1,0 +1,11 @@
+--- a/net/minecraft/commands/CommandSourceStack.java
++++ b/net/minecraft/commands/CommandSourceStack.java
+@@ -34,7 +_,7 @@
+ import net.minecraft.world.phys.Vec2;
+ import net.minecraft.world.phys.Vec3;
+ 
+-public class CommandSourceStack implements SharedSuggestionProvider {
++public class CommandSourceStack implements SharedSuggestionProvider, net.minecraftforge.common.extensions.IForgeCommandSourceStack {
+    public static final SimpleCommandExceptionType f_81286_ = new SimpleCommandExceptionType(new TranslatableComponent("permissions.requires.player"));
+    public static final SimpleCommandExceptionType f_81287_ = new SimpleCommandExceptionType(new TranslatableComponent("permissions.requires.entity"));
+    private final CommandSource f_81288_;

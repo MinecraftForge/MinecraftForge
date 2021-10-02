@@ -23,7 +23,10 @@ import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
+import net.minecraft.commands.arguments.ObjectiveArgument;
 import net.minecraft.commands.arguments.ResourceLocationArgument;
+import net.minecraft.commands.arguments.TeamArgument;
+import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
@@ -50,7 +53,53 @@ public class ClientCommandTest
                         .then(Commands.literal("registeredsuggest").then(
                                 Commands.argument("block", ResourceLocationArgument.id())
                                         .suggests(SuggestionProviders.AVAILABLE_BIOMES)
-                                        .executes(new TestCommand()))));
+                                        .executes(new TestCommand())))
+                        .then(Commands.literal("server")
+                                .executes((context) -> {
+                                    context.getSource().getServer();
+                                    context.getSource().sendSuccess(new TextComponent("Successfully called getServer should have errored"), false);
+                                    return 1;
+                                }))
+                        .then(Commands.literal("level")
+                                .executes((context) -> {
+                                    context.getSource().getLevel();
+                                    context.getSource().sendSuccess(new TextComponent("Successfully called getLevel should have errored"), false);
+                                    return 1;
+                                }))
+                        .then(Commands.literal("get_objective")
+                                .then(Commands.argument("objective", ObjectiveArgument.objective())
+                                        .executes((context) -> {
+                                            context.getSource().sendSuccess(new TextComponent("Regular: ")
+                                                    .append(ObjectiveArgument.getObjective(context, "objective").getFormattedDisplayName()), false);
+                                            return 1;
+                                        })))
+                        .then(Commands.literal("get_advancement")
+                                .then(Commands.argument("advancement", ResourceLocationArgument.id())
+                                        .executes((context) -> {
+                                            context.getSource().sendSuccess(ResourceLocationArgument.getAdvancement(context, "advancement").getChatComponent(),
+                                                    false);
+                                            return 1;
+                                        })))
+                        .then(Commands.literal("get_recipe")
+                                .then(Commands.argument("recipe", ResourceLocationArgument.id())
+                                        .executes((context) -> {
+                                            context.getSource()
+                                                    .sendSuccess(ResourceLocationArgument.getRecipe(context, "recipe").getResultItem().getDisplayName(), false);
+                                            return 1;
+                                        })))
+                        .then(Commands.literal("get_team")
+                                .then(Commands.argument("team", TeamArgument.team())
+                                        .executes((context) -> {
+                                            context.getSource().sendSuccess(TeamArgument.getTeam(context, "team").getFormattedDisplayName(), false);
+                                            return 1;
+                                        })))
+                        .then(Commands.literal("get_loaded_blockpos")
+                                .then(Commands.argument("blockpos", BlockPosArgument.blockPos())
+                                        .executes((context) -> {
+                                            context.getSource()
+                                                    .sendSuccess(new TextComponent(BlockPosArgument.getLoadedBlockPos(context, "blockpos").toString()), false);
+                                            return 1;
+                                        }))));
     }
 
     private static class TestCommand implements Command<CommandSourceStack>

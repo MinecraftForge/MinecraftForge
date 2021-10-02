@@ -212,6 +212,7 @@ public class ClientCommandHandler
             Component component = new TranslatableComponent("command.failed");
             component.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, message));
             Minecraft.getInstance().player.sendMessage(new TextComponent("").append(component).withStyle(ChatFormatting.RED), Util.NIL_UUID);
+            generic.printStackTrace();
         }
         return true;
     }

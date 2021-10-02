@@ -20,6 +20,7 @@
 package net.minecraftforge.client;
 
 import net.minecraft.Util;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
@@ -30,9 +31,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Scoreboard;
 
 import java.util.Collection;
 import java.util.Set;
@@ -82,6 +85,42 @@ public class ClientCommandSource extends CommandSourceStack
     public RegistryAccess registryAccess()
     {
         return Minecraft.getInstance().getConnection().registryAccess();
+    }
+
+    @Override
+    public Scoreboard getScoreboard()
+    {
+        return Minecraft.getInstance().level.getScoreboard();
+    }
+
+    @Override
+    public Advancement getAdvancement(ResourceLocation id)
+    {
+        return Minecraft.getInstance().getConnection().getAdvancements().getAdvancements().get(id);
+    }
+
+    @Override
+    public RecipeManager getRecipeManager()
+    {
+        return Minecraft.getInstance().getConnection().getRecipeManager();
+    }
+
+    @Override
+    public Level getUnsidedLevel()
+    {
+        return Minecraft.getInstance().level;
+    }
+
+    @Override
+    public MinecraftServer getServer()
+    {
+        throw new UnsupportedOperationException("Attempted to get server in client command");
+    }
+
+    @Override
+    public ServerLevel getLevel()
+    {
+        throw new UnsupportedOperationException("Attempted to get server level in client command");
     }
 
 }
