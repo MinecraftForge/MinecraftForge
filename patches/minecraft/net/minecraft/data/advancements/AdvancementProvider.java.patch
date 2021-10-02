@@ -11,7 +11,7 @@
        this.f_123962_ = p_123966_;
     }
  
-+   public AdvancementProvider (DataGenerator generatorIn, net.minecraftforge.common.data.ExistingFileHelper fileHelperIn) {
++   public AdvancementProvider(DataGenerator generatorIn, net.minecraftforge.common.data.ExistingFileHelper fileHelperIn) {
 +      this.f_123962_ = generatorIn;
 +      this.fileHelper = fileHelperIn;
 +   }
@@ -32,7 +32,7 @@
 +    * @param consumer used for the register function from {@link Advancement.Builder}
 +    * @param fileHelper used for the register function from {@link Advancement.Builder}
 +   */
-+   protected void registerAdvancements (Consumer<Advancement> consumer, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
++   protected void registerAdvancements(Consumer<Advancement> consumer, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
        for(Consumer<Consumer<Advancement>> consumer1 : this.f_123963_) {
           consumer1.accept(consumer);
        }
