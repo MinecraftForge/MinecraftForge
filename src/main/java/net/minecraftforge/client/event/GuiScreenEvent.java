@@ -284,9 +284,17 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires after {@link GuiEventListener#mouseClicked(double, double, int)}.
-         * Cancel this event when you successfully use the mouse click, to prevent other handlers from using the same input.
+         *
+         * <p>This event {@linkplain HasResult has a result}.<br>
+         * <ul>
+         *   <li><b>{@link Result#ALLOW}</b> - to force set the mouse click as handled</li>
+         *   <li><b>{@link Result#DEFAULT}</b> - to use the default value of {@link #handled}</li>
+         *   <li><b>{@link Result#DENY}</b> - to force set the mouse click as not handled</li>
+         * </ul>
+         * </p>
          */
-        @Cancelable
+        @Cancelable // TODO: Make non-cancellable in 1.18.
+        @HasResult
         public static class Post extends MouseClickedEvent
         {
             private final boolean handled;
@@ -295,6 +303,16 @@ public class GuiScreenEvent extends Event
             {
                 super(gui, mouseX, mouseY, button);
                 this.handled = handled;
+            }
+
+            /**
+             * @deprecated event now has a result instead and will no longer be cancellable in 1.18; use {@link #setResult(Result)}
+             */
+            @Override
+            @Deprecated
+            public void setCanceled(boolean cancel)
+            {
+                this.setResult(cancel ? Result.ALLOW : Result.DEFAULT);
             }
 
             /**
@@ -337,9 +355,17 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires after {@link GuiEventListener#mouseReleased(double, double, int)}.
-         * Cancel this event when you successfully use the mouse release, to prevent other handlers from using the same input.
+         *
+         * <p>This event {@linkplain HasResult has a result}.<br>
+         * <ul>
+         *   <li><b>{@link Result#ALLOW}</b> - to force set the mouse release as handled</li>
+         *   <li><b>{@link Result#DEFAULT}</b> - to use the default value of {@link #handled}</li>
+         *   <li><b>{@link Result#DENY}</b> - to force set the mouse release as not handled</li>
+         * </ul>
+         * </p>
          */
-        @Cancelable
+        @Cancelable // TODO: Make non-cancellable in 1.18.
+        @HasResult
         public static class Post extends MouseReleasedEvent
         {
             private final boolean handled;
@@ -348,6 +374,16 @@ public class GuiScreenEvent extends Event
             {
                 super(gui, mouseX, mouseY, button);
                 this.handled = handled;
+            }
+
+            /**
+             * @deprecated event now has a result instead and will no longer be cancellable in 1.18; use {@link #setResult(Result)}
+             */
+            @Override
+            @Deprecated
+            public void setCanceled(boolean cancel)
+            {
+                this.setResult(cancel ? Result.ALLOW : Result.DEFAULT);
             }
 
             /**
