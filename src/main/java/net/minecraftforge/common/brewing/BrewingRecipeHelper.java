@@ -19,7 +19,6 @@
 
 package net.minecraftforge.common.brewing;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
@@ -30,6 +29,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BrewingStandBlockEntity;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftforge.fmllegacy.LogicalSidedProvider;
 
 import java.util.Optional;
 
@@ -138,7 +139,7 @@ public class BrewingRecipeHelper
         if (container instanceof BrewingStandBlockEntity stand)
             return isValidIngredient(stand.getLevel(), stack);
         else
-            return isValidIngredient(Minecraft.getInstance().level, stack);
+            return LogicalSidedProvider.CLIENTWORLD.<Optional<Level>>get(EffectiveSide.get()).map(level -> isValidIngredient(level, stack)).orElse(false);
     }
 
     /**
@@ -149,6 +150,6 @@ public class BrewingRecipeHelper
         if (container instanceof BrewingStandBlockEntity stand)
             return isValidInput(stand.getLevel(), stack);
         else
-            return isValidInput(Minecraft.getInstance().level, stack);
+            return LogicalSidedProvider.CLIENTWORLD.<Optional<Level>>get(EffectiveSide.get()).map(level -> isValidInput(level, stack)).orElse(false);
     }
 }
