@@ -170,5 +170,7 @@ license="LGPL v2.1"
     modId="full_pots_accessor_demo"
 [[mods]]
     modId="part_entity_test"
+[[mods]]
+    modId="biome_variant_test"
 
 # ADD ABOVE THIS LINE

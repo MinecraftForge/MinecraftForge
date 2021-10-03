@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 
@@ -257,6 +258,56 @@ public class BiomeManager
         public boolean isModded()
         {
             return isModded;
+        }
+    }
+
+    private static final List<IBiomeLayerModifier> biomeLayerModifiers = new ArrayList<>();
+
+    public static void addBiomeLayerModifier(IBiomeLayerModifier modifier)
+    {
+        biomeLayerModifiers.add(modifier);
+    }
+
+    public static Optional<ResourceKey<Biome>> getHillsBiome(ResourceKey<Biome> biome)
+    {
+        return biomeLayerModifiers.stream().map( mod -> mod.getHillsBiome(biome)).filter(Optional::isPresent).map(Optional::get).findFirst();
+    }
+
+    public static Optional<ResourceKey<Biome>> getRiverBiome(ResourceKey<Biome> biome)
+    {
+        return biomeLayerModifiers.stream().map( mod -> mod.getRiverBiome(biome)).filter(Optional::isPresent).map(Optional::get).findFirst();
+    }
+
+    public static Optional<ResourceKey<Biome>> getEdgeBiome(ResourceKey<Biome> biome, ResourceKey<Biome> north, ResourceKey<Biome> west, ResourceKey<Biome> south, ResourceKey<Biome> east)
+    {
+        return biomeLayerModifiers.stream().map( mod -> mod.getEdgeBiome(biome, north, west, south, east)).filter(Optional::isPresent).map(Optional::get).findFirst();
+    }
+
+    public static Optional<ResourceKey<Biome>> getShoreBiome(ResourceKey<Biome> biome, ResourceKey<Biome> north, ResourceKey<Biome> west, ResourceKey<Biome> south, ResourceKey<Biome> east)
+    {
+        return biomeLayerModifiers.stream().map( mod -> mod.getShoreBiome(biome, north, west, south, east)).filter(Optional::isPresent).map(Optional::get).findFirst();
+    }
+
+    public interface IBiomeLayerModifier
+    {
+        default Optional<ResourceKey<Biome>> getHillsBiome(ResourceKey<Biome> biome)
+        {
+            return Optional.empty();
+        }
+
+        default Optional<ResourceKey<Biome>> getRiverBiome(ResourceKey<Biome> biome)
+        {
+            return Optional.empty();
+        }
+
+        default Optional<ResourceKey<Biome>> getShoreBiome(ResourceKey<Biome> biome, ResourceKey<Biome> north, ResourceKey<Biome> west, ResourceKey<Biome> south, ResourceKey<Biome> east)
+        {
+            return Optional.empty();
+        }
+
+        default Optional<ResourceKey<Biome>> getEdgeBiome(ResourceKey<Biome> biome, ResourceKey<Biome> north, ResourceKey<Biome> west, ResourceKey<Biome> south, ResourceKey<Biome> east)
+        {
+            return Optional.empty();
         }
     }
 }

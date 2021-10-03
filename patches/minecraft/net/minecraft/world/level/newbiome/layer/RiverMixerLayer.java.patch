@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/level/newbiome/layer/RiverMixerLayer.java
++++ b/net/minecraft/world/level/newbiome/layer/RiverMixerLayer.java
+@@ -14,6 +_,10 @@
+       if (Layers.m_76721_(i)) {
+          return i;
+       } else if (j == 7) {
++         java.util.Optional<net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome>> river = net.minecraftforge.common.BiomeManager.getRiverBiome(((net.minecraftforge.registries.ForgeRegistry<net.minecraft.world.level.biome.Biome>)net.minecraftforge.registries.ForgeRegistries.BIOMES).getKey(i));
++         if(river.isPresent()) {
++            return net.minecraft.data.BuiltinRegistries.f_123865_.m_7447_(net.minecraft.data.BuiltinRegistries.f_123865_.m_6246_(river.get()));
++         }
+          if (i == 12) {
+             return 11;
+          } else {
