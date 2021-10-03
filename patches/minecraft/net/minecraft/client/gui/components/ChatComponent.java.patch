@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/gui/components/ChatComponent.java
++++ b/net/minecraft/client/gui/components/ChatComponent.java
+@@ -146,6 +_,10 @@
+    }
+ 
+    private void m_93787_(Component p_93788_, int p_93789_) {
++      net.minecraftforge.client.event.ClientChatReceivedBothSidesEvent event = net.minecraftforge.event.ForgeEventFactory.onClientChatReceiveBothSides(p_93788_, p_93789_);
++      if (event.isCanceled()) return;
++      p_93788_ = event.getMessage();
++      p_93789_ = event.getId();
+       this.m_93790_(p_93788_, p_93789_, this.f_93758_.f_91065_.m_93079_(), false);
+       f_93757_.info("[CHAT] {}", (Object)p_93788_.getString().replaceAll("\r", "\\\\r").replaceAll("\n", "\\\\n"));
+    }
