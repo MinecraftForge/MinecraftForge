@@ -21,16 +21,13 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.base.Strings;
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
-import cpw.mods.util.LambdaExceptionUtils;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.MavenVersionAdapter;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.maven.artifact.versioning.VersionRange;
 
 import javax.security.auth.x500.X500Principal;
 import java.net.URL;
@@ -44,6 +41,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.*;
+import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -62,6 +60,40 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
     private final Map<String,Object> properties;
     private final String license;
     private final List<String> usesServices;
+    private final String moduleName;
+    private final String versionString;
+
+    ModFileInfo(final ModFile modFile, final Manifest manifest)
+    {
+        this.modFile = modFile;
+        var attributes = manifest.getMainAttributes();
+        this.config = new IConfigurable()
+        {
+            @SuppressWarnings("unchecked")
+            @Override
+            public <T> Optional<T> getConfigElement(final String... key)
+            {
+                return Optional.ofNullable((T)attributes.getValue(String.join("-", key)));
+            }
+
+            @Override
+            public List<? extends IConfigurable> getConfigList(final String... key)
+            {
+                return List.of();
+            }
+        };
+        var modLoader = this.config.<String>getConfigElement("FMLModLoader").orElseThrow(() -> new InvalidModFileException("Missing ModLoader in file", this));
+        var modLoaderVersion = this.config.<String>getConfigElement("FMLLoaderVersion").map(MavenVersionAdapter::createFromVersionSpec).orElseThrow(() -> new InvalidModFileException("Missing ModLoader version in file", this));
+        this.languageSpecs = new ArrayList<>(List.of(new LanguageSpec(modLoader, modLoaderVersion)));
+        this.license = this.config.<String>getConfigElement("LICENSE").orElse("");
+        this.issueURL = this.config.<String>getConfigElement("ISSUES-URL").map(StringUtils::toURL).orElse(null);
+        this.moduleName = this.config.<String>getConfigElement(Attributes.Name.IMPLEMENTATION_TITLE.toString()).orElseThrow(() -> new InvalidModFileException("Missing title in file", this));
+        this.versionString = this.config.<String>getConfigElement(Attributes.Name.IMPLEMENTATION_VERSION.toString()).orElseThrow(() -> new InvalidModFileException("Missing version in file", this));
+        this.showAsResourcePack = false;
+        this.usesServices = List.of();
+        this.mods = List.of();
+        this.properties = Collections.emptyMap();
+    }
 
     ModFileInfo(final ModFile modFile, final IConfigurable config)
     {
@@ -92,6 +124,8 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
                 this.modFile::getFileName,
                 () -> this.mods.stream().map(IModInfo::getModId).collect(Collectors.joining(",", "{", "}")),
                 () -> this.mods.stream().map(IModInfo::getVersion).map(Objects::toString).collect(Collectors.joining(",", "{", "}")));
+        this.versionString = null;
+        this.moduleName = null;
     }
 
     public ModFileInfo(final ModFile file, final IConfigurable config, final List<LanguageSpec> languageSpecs) {
@@ -197,11 +231,15 @@ public class ModFileInfo implements IModFileInfo, IConfigurable
 
     @Override
     public String moduleName() {
+        if (this.moduleName != null)
+            return this.moduleName;
         return getMods().get(0).getModId();
     }
 
     @Override
     public String versionString()  {
+        if (this.versionString != null)
+            return this.versionString;
         return getMods().get(0).getVersion().toString();
     }
 

@@ -70,7 +70,11 @@ public class ModList
 
     private ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
-        this.modFiles = modFiles.stream().map(ModFile::getModFileInfo).map(ModFileInfo.class::cast).collect(Collectors.toList());
+        this.modFiles = modFiles.stream().
+                filter(modFile -> modFile.getType() == IModFile.Type.MOD).
+                map(ModFile::getModFileInfo).
+                map(ModFileInfo.class::cast).
+                collect(Collectors.toList());
         this.sortedList = sortedList.stream().
                 map(ModInfo.class::cast).
                 collect(Collectors.toList());

@@ -48,7 +48,10 @@ public class ModFileParser {
 
     public static IModFileInfo modsTomlParser(final IModFile imodFile) {
         ModFile modFile = (ModFile) imodFile;
-        LOGGER.debug(LOADING,"Considering mod file candidate {}", modFile.getFilePath());
+        LOGGER.debug(LOADING,"Considering mod file candidate {} of type {}", modFile.getFilePath(), modFile.getType());
+        if (modFile.getType() == IModFile.Type.GAMELIBRARY) {
+            return new ModFileInfo(modFile, modFile.getSecureJar().getManifest());
+        }
         final Path modsjson = modFile.findResource("META-INF", "mods.toml");
         if (!Files.exists(modsjson)) {
             LOGGER.warn(LOADING, "Mod file {} is missing mods.toml file", modFile.getFilePath());
