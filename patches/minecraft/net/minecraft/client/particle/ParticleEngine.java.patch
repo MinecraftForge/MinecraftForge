@@ -75,7 +75,23 @@
           VoxelShape voxelshape = p_107357_.m_60808_(this.f_107287_, p_107356_);
           double d0 = 0.25D;
           voxelshape.m_83286_((p_172273_, p_172274_, p_172275_, p_172276_, p_172277_, p_172278_) -> {
-@@ -500,6 +_,12 @@
+@@ -450,7 +_,7 @@
+                      double d7 = d4 * d1 + p_172273_;
+                      double d8 = d5 * d2 + p_172274_;
+                      double d9 = d6 * d3 + p_172275_;
+-                     this.m_107344_(new TerrainParticle(this.f_107287_, (double)p_107356_.m_123341_() + d7, (double)p_107356_.m_123342_() + d8, (double)p_107356_.m_123343_() + d9, d4 - 0.5D, d5 - 0.5D, d6 - 0.5D, p_107357_, p_107356_));
++                     this.m_107344_(new TerrainParticle(this.f_107287_, (double)p_107356_.m_123341_() + d7, (double)p_107356_.m_123342_() + d8, (double)p_107356_.m_123343_() + d9, d4 - 0.5D, d5 - 0.5D, d6 - 0.5D, p_107357_, p_107356_).updateSprite(p_107357_, p_107356_));
+                   }
+                }
+             }
+@@ -494,12 +_,18 @@
+             d0 = (double)i + aabb.f_82291_ + (double)0.1F;
+          }
+ 
+-         this.m_107344_((new TerrainParticle(this.f_107287_, d0, d1, d2, 0.0D, 0.0D, 0.0D, blockstate, p_107368_)).m_107268_(0.2F).m_6569_(0.6F));
++         this.m_107344_((new TerrainParticle(this.f_107287_, d0, d1, d2, 0.0D, 0.0D, 0.0D, blockstate, p_107368_).updateSprite(blockstate, p_107368_)).m_107268_(0.2F).m_6569_(0.6F));
+       }
+    }
  
     public String m_107403_() {
        return String.valueOf(this.f_107289_.values().stream().mapToInt(Collection::size).sum());
