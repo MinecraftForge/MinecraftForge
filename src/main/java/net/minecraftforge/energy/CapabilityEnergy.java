@@ -23,8 +23,7 @@ import net.minecraftforge.common.capabilities.*;
 
 public class CapabilityEnergy
 {
-    @CapabilityInject(IEnergyStorage.class)
-    public static Capability<IEnergyStorage> ENERGY = null;
+    public static final Capability<IEnergyStorage> ENERGY = CapabilityManager.get(new CapabilityToken<>(){});;
 
     public static void register(RegisterCapabilitiesEvent event)
     {

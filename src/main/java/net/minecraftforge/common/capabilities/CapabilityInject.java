@@ -45,9 +45,12 @@ import java.lang.annotation.*;
  *
  * <b>Warning</b>: Capability injections are run in the thread that the capablity is registered.
  * Due to parallel mod loading, this can potentially be off of the main thread.
+ *
+ * @deprecated Use  {@link CapabilityManager#get(CapabilityToken)}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
+@Deprecated(since = "1.18", forRemoval = true)
 public @interface CapabilityInject
 {
     /**
