@@ -29,6 +29,7 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.world.level.block.ButtonBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -354,6 +355,27 @@ public abstract class BlockStateProvider implements DataProvider {
             .partialState().with(SlabBlock.TYPE, SlabType.DOUBLE).addModels(new ConfiguredModel(doubleslab));
     }
 
+    public void buttonBlock(ButtonBlock block, ResourceLocation texture) {
+        ModelFile button = models().button(name(block), texture);
+        ModelFile buttonPressed = models().buttonPressed(name(block) + "_pressed", texture);
+        buttonBlock(block, button, buttonPressed);
+    }
+
+    public void buttonBlock(ButtonBlock block, ModelFile button, ModelFile buttonPressed) {
+        getVariantBuilder(block).forAllStates(state -> {
+            Direction facing = state.getValue(ButtonBlock.FACING);
+            AttachFace face = state.getValue(ButtonBlock.FACE);
+            boolean powered = state.getValue(ButtonBlock.POWERED);
+
+            return ConfiguredModel.builder()
+                    .modelFile(powered ? buttonPressed : button)
+                    .rotationX(face == AttachFace.FLOOR ? 0 : (face == AttachFace.WALL ? 90 : 180))
+                    .rotationY((int) (face == AttachFace.CEILING ? facing : facing.getOpposite()).toYRot())
+                    .uvLock(face == AttachFace.WALL)
+                    .build();
+        });
+    }
+
     public void fourWayBlock(CrossCollisionBlock block, ModelFile post, ModelFile side) {
         MultiPartBlockStateBuilder builder = getMultipartBuilder(block)
                 .part().modelFile(post).addModel().end();
@@ -423,7 +445,7 @@ public abstract class BlockStateProvider implements DataProvider {
     private void wallBlockInternal(WallBlock block, String baseName, ResourceLocation texture) {
         wallBlock(block, models().wallPost(baseName + "_post", texture), models().wallSide(baseName + "_side", texture), models().wallSideTall(baseName + "_side_tall", texture));
     }
-    
+
     public static final ImmutableMap<Direction, Property<WallSide>> WALL_PROPS = ImmutableMap.<Direction, Property<WallSide>>builder()
     		.put(Direction.EAST,  BlockStateProperties.EAST_WALL)
     		.put(Direction.NORTH, BlockStateProperties.NORTH_WALL)
@@ -442,7 +464,7 @@ public abstract class BlockStateProvider implements DataProvider {
         		wallSidePart(builder, sideTall, e, WallSide.TALL);
         	});
     }
-    
+
     private void wallSidePart(MultiPartBlockStateBuilder builder, ModelFile model, Map.Entry<Direction, Property<WallSide>> entry, WallSide height) {
         builder.part()
         	.modelFile(model)
