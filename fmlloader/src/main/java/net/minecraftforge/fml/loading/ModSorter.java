@@ -150,9 +150,9 @@ public class ModSorter
 
     private void buildUniqueList()
     {
-        // Collect mod files by first modid in the file. This will be used for deduping purposes
+        // Collect mod files by module name. This will be used for deduping purposes
         final Map<String, List<IModFile>> modFilesByFirstId = modFiles.stream()
-                .collect(groupingBy(mf -> mf.getModInfos().get(0).getModId()));
+                .collect(groupingBy(mf -> mf.getModFileInfo().moduleName()));
 
         // Capture forge and MC here, so we can keep them for later
         forgeAndMC = new ArrayList<>();
