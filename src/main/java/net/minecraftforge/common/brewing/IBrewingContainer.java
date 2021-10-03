@@ -83,10 +83,23 @@ public interface IBrewingContainer extends Container
         return true;
     }
 
+    /**
+     * Get the {@link ItemStack} in the base slot.
+     *
+     * @return the {@link ItemStack} in the base slot
+     */
     ItemStack base();
 
+    /**
+     * Get the {@link ItemStack} in the reagent slot.
+     *
+     * @return the {@link ItemStack} in the reagent slot
+     */
     ItemStack reagent();
 
+    /**
+     * Default implementation of {@link IBrewingContainer}
+     */
     record Impl(ItemStack base, ItemStack reagent) implements IBrewingContainer
     {
     }

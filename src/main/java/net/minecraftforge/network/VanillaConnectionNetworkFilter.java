@@ -113,7 +113,7 @@ public class VanillaConnectionNetworkFilter extends VanillaPacketFilter
     }
 
     /**
-     * Filter for SUpdateRecipesPacket. Filters out any ArgumentTypes that are not in the "minecraft" namespace.
+     * Filter for ClientboundUpdateRecipesPacket. Filters out any ArgumentTypes that are not in the "minecraft" namespace.
      * A vanilla client would fail to deserialize the packet and disconnect with an error message if these were sent.
      */
     @Nonnull

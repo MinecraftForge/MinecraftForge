@@ -38,8 +38,14 @@ public class BrewingRecipeHelper
 {
     /**
      * Used by the brewing stand to determine if its contents can be brewed.
-     * Extra parameters exist to allow modders to create bigger brewing stands
-     * without much hassle
+     * <p>Extra parameters (reagentSlot and baseSlots) exist to allow
+     * modders to create bigger brewing stands without much hassle.</p>
+     *
+     * @param level the level of the brewing stand
+     * @param container the container of the brewing stand
+     * @param reagentSlot the index of the reagent slot in the container
+     * @param baseSlots the indices of the base slots in the container
+     * @return true if the contents of the container can be brewed, false otherwise
      */
     public static boolean canBrew(Level level, Container container, int reagentSlot, int[] baseSlots)
     {
@@ -57,8 +63,14 @@ public class BrewingRecipeHelper
     }
 
     /**
-     * Used by the brewing stand to brew its inventory Extra parameters exist to
-     * allow modders to create bigger brewing stands without much hassle
+     * Used by the brewing stand to brew its inventory.
+     * <p>Extra parameters (reagentSlot and baseSlots) exist to allow
+     * modders to create bigger brewing stands without much hassle.</p>
+     *
+     * @param level the level of the brewing stand
+     * @param container the non-null list representing the container of the brewing stand
+     * @param reagentSlot the index of the reagent slot in the container
+     * @param baseSlots the indices of the base slots in the container
      */
     public static void brewPotions(Level level, NonNullList<ItemStack> container, int reagentSlot, int[] baseSlots)
     {
@@ -73,8 +85,9 @@ public class BrewingRecipeHelper
     }
 
     /**
-     * Returns true if the passed ItemStack is a valid reagent for any of the
-     * recipes in the registry.
+     * Returns whether the passed ItemStack is a valid reagent for a recipe.
+     *
+     * @return true if the passed ItemStack is a valid reagent for any recipe, false otherwise
      */
     public static boolean isValidIngredient(Level level, ItemStack stack)
     {
@@ -91,8 +104,9 @@ public class BrewingRecipeHelper
     }
 
     /**
-     * Returns true if the passed ItemStack is a valid base for any of the
-     * recipes in the registry.
+     * Returns whether the passed ItemStack is a valid base for a recipe.
+     *
+     * @return true if the passed ItemStack is a valid base for any recipe, false otherwise
      */
     public static boolean isValidInput(Level level, ItemStack stack)
     {

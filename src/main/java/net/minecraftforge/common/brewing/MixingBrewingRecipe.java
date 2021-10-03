@@ -36,6 +36,9 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Brewing recipe representing a mix (i.e. any potion + redstone -> long version of potion, water bottle + netherwart -> awkward potion)
+ */
 public record MixingBrewingRecipe(@Nonnull ResourceLocation id,
                                   @Nonnull Potion base,
                                   @Nonnull Ingredient reagent,

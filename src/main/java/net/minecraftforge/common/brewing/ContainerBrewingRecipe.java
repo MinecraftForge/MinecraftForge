@@ -36,6 +36,9 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Brewing recipe representing a container upgrade (i.e. potion + gunpowder -> splash potion, splash potion + dragon breath -> lingering potion)
+ */
 public record ContainerBrewingRecipe(@Nonnull ResourceLocation id,
                                      @Nonnull Item base,
                                      @Nonnull Ingredient reagent,

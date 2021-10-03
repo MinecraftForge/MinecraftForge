@@ -33,6 +33,9 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+/**
+ * Generic brewing recipe (base + reagent -> result)
+ */
 public record BrewingRecipe(@Nonnull ResourceLocation id,
                             @Nonnull Ingredient base,
                             @Nonnull Ingredient reagent,

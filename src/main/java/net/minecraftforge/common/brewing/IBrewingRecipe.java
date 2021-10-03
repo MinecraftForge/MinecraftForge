@@ -25,6 +25,9 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 
+/**
+ * Interface representing a brewing recipe. For reference look at the basic forge implementation {@link BrewingRecipe}, {@link MixingBrewingRecipe} or {@link ContainerBrewingRecipe}.
+ */
 public interface IBrewingRecipe extends Recipe<IBrewingContainer>
 {
     @Override
