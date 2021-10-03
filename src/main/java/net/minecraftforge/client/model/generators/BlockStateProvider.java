@@ -445,7 +445,7 @@ public abstract class BlockStateProvider implements DataProvider {
     private void wallBlockInternal(WallBlock block, String baseName, ResourceLocation texture) {
         wallBlock(block, models().wallPost(baseName + "_post", texture), models().wallSide(baseName + "_side", texture), models().wallSideTall(baseName + "_side_tall", texture));
     }
-
+    
     public static final ImmutableMap<Direction, Property<WallSide>> WALL_PROPS = ImmutableMap.<Direction, Property<WallSide>>builder()
     		.put(Direction.EAST,  BlockStateProperties.EAST_WALL)
     		.put(Direction.NORTH, BlockStateProperties.NORTH_WALL)
@@ -464,7 +464,7 @@ public abstract class BlockStateProvider implements DataProvider {
         		wallSidePart(builder, sideTall, e, WallSide.TALL);
         	});
     }
-
+    
     private void wallSidePart(MultiPartBlockStateBuilder builder, ModelFile model, Map.Entry<Direction, Property<WallSide>> entry, WallSide height) {
         builder.part()
         	.modelFile(model)
