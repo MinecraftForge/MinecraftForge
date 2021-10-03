@@ -216,6 +216,18 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
         return sideBottomTop(name, BLOCK_FOLDER + "/slab_top", side, bottom, top);
     }
 
+    public T button(String name, ResourceLocation texture) {
+        return singleTexture(name, BLOCK_FOLDER + "/button", texture);
+    }
+
+    public T buttonPressed(String name, ResourceLocation texture) {
+        return singleTexture(name, BLOCK_FOLDER + "/button_pressed", texture);
+    }
+
+    public T buttonInventory(String name, ResourceLocation texture) {
+        return singleTexture(name, BLOCK_FOLDER + "/button_inventory", texture);
+    }
+
     public T fencePost(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/fence_post", texture);
     }
