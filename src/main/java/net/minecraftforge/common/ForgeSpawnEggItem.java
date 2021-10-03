@@ -59,28 +59,7 @@ public class ForgeSpawnEggItem extends SpawnEggItem
     @Nullable
     protected DispenseItemBehavior createDispenseBehavior()
     {
-        return new DefaultDispenseItemBehavior()
-        {
-            public ItemStack execute(BlockSource source, ItemStack stack)
-            {
-                Direction face = source.getBlockState().getValue(DispenserBlock.FACING);
-                EntityType<?> type = ((SpawnEggItem)stack.getItem()).getType(stack.getTag());
-
-                try
-                {
-                    type.spawn(source.getLevel(), stack, null, source.getPos().relative(face), MobSpawnType.DISPENSER, face != Direction.UP, false);
-                }
-                catch (Exception exception)
-                {
-                    LOGGER.error("Error while dispensing spawn egg from dispenser at {}", source.getPos(), exception);
-                    return ItemStack.EMPTY;
-                }
-
-                stack.shrink(1);
-                source.getLevel().gameEvent(GameEvent.ENTITY_PLACE, source.getPos());
-                return stack;
-            }
-        };
+        return DEFAULT_DISPENSE_BEHAVIOR;
     }
 
     public static Iterable<SpawnEggItem> eggs()
@@ -101,4 +80,27 @@ public class ForgeSpawnEggItem extends SpawnEggItem
             BY_ID.put(egg.typeSupplier.get(), egg);
         });
     }
+
+
+
+    private static final DispenseItemBehavior DEFAULT_DISPENSE_BEHAVIOR = (source, stack) ->
+    {
+        Direction face = source.getBlockState().getValue(DispenserBlock.FACING);
+        EntityType<?> type = ((SpawnEggItem)stack.getItem()).getType(stack.getTag());
+
+        try
+        {
+            type.spawn(source.getLevel(), stack, null, source.getPos().relative(face), MobSpawnType.DISPENSER, face != Direction.UP, false);
+        }
+        catch (Exception exception)
+        {
+            DispenseItemBehavior.LOGGER.error("Error while dispensing spawn egg from dispenser at {}", source.getPos(), exception);
+            return ItemStack.EMPTY;
+        }
+
+        stack.shrink(1);
+        source.getLevel().gameEvent(GameEvent.ENTITY_PLACE, source.getPos());
+        return stack;
+    };
+
 }
