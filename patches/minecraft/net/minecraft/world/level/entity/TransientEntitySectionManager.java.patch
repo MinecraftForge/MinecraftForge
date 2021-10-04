@@ -14,11 +14,19 @@
           this.f_157669_ = p_157674_;
           this.f_157670_ = p_157675_;
        }
-@@ -105,6 +_,7 @@
-          BlockPos blockpos = this.f_157668_.m_142538_();
-          long i = SectionPos.m_175568_(blockpos);
-          if (i != this.f_157669_) {
-+            if (this.realEntity != null) net.minecraftforge.common.ForgeHooks.onEntityEnterSection(this.realEntity, this.f_157669_, i);
-             Visibility visibility = this.f_157670_.m_156848_();
-             if (!this.f_157670_.m_156846_(this.f_157668_)) {
-                TransientEntitySectionManager.f_157635_.warn("Entity {} wasn't found in section {} (moving to {})", this.f_157668_, SectionPos.m_123184_(this.f_157669_), i);
+@@ -113,6 +_,7 @@
+             TransientEntitySectionManager.this.m_157648_(this.f_157669_, this.f_157670_);
+             EntitySection<T> entitysection = TransientEntitySectionManager.this.f_157638_.m_156893_(i);
+             entitysection.m_156840_(this.f_157668_);
++            long oldSectionKey = f_157669_;
+             this.f_157670_ = entitysection;
+             this.f_157669_ = i;
+             if (!this.f_157668_.m_142389_()) {
+@@ -124,6 +_,7 @@
+                   TransientEntitySectionManager.this.f_157636_.m_141987_(this.f_157668_);
+                }
+             }
++            if (this.realEntity != null) net.minecraftforge.common.ForgeHooks.onEntityEnterSection(this.realEntity, oldSectionKey, i);
+          }
+ 
+       }
