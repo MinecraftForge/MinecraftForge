@@ -99,7 +99,7 @@ public class EntityEvent extends Event
     }
 
     /**
-     * This event is fired on server and client when an Entity enters a Section. <br>
+     * This event is fired on server and client after an Entity has entered a different section. <br>
      * Sections are 16x16x16 block grids of the world.<br>
      * This event does not fire when a new entity is spawned, only when an entity moves from one section to another one.
      * Use {@link EntityJoinWorldEvent} to detect new entities joining the world.
