@@ -167,7 +167,7 @@
     }
  
     public static DataPackConfig m_129819_(PackRepository p_129820_, DataPackConfig p_129821_, boolean p_129822_) {
-+      net.minecraftforge.fmllegacy.packs.ResourcePackLoader.loadResourcePacks(p_129820_, net.minecraftforge.fmllegacy.server.ServerLifecycleHooks::buildPackFinder);
++      net.minecraftforge.fmllegacy.packs.ResourcePackLoader.loadResourcePacks(p_129820_, net.minecraftforge.fmllegacy.server.ServerLifecycleHooks::buildPackFinderNew);
        p_129820_.m_10506_();
 +      DataPackConfig.f_45842_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
 +      p_129821_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());

@@ -406,7 +406,7 @@
        IntegratedServer integratedserver = this.f_91007_;
        this.f_91007_ = null;
        this.f_91063_.m_109150_();
-+      net.minecraftforge.fmlclient.ClientHooks.firePlayerLogout(this.f_91072_, this.f_91074_);
++      net.minecraftforge.client.ForgeHooksClient.firePlayerLogout(this.f_91072_, this.f_91074_);
        this.f_91072_ = null;
        NarratorChatListener.f_93311_.m_93328_();
        this.m_91362_(p_91321_);
@@ -419,7 +419,7 @@
           this.f_91065_.m_93089_();
           this.f_91008_ = null;
           this.f_91010_ = false;
-+         net.minecraftforge.fmlclient.ClientHooks.handleClientWorldClosing(f_91073_);
++         net.minecraftforge.client.ForgeHooksClient.handleClientWorldClosing(f_91073_);
           this.f_91004_.m_90740_();
        }
  
