@@ -1,15 +1,13 @@
 --- a/net/minecraft/world/level/newbiome/layer/RegionHillsLayer.java
 +++ b/net/minecraft/world/level/newbiome/layer/RegionHillsLayer.java
-@@ -51,7 +_,11 @@
+@@ -51,6 +_,10 @@
        } else {
           if (p_76838_.m_5826_(3) == 0 || k == 0) {
              int l = i;
--            if (i == 2) {
 +            java.util.Optional<net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome>> hills = net.minecraftforge.common.BiomeManager.getHillsBiome(((net.minecraftforge.registries.ForgeRegistry<net.minecraft.world.level.biome.Biome>)net.minecraftforge.registries.ForgeRegistries.BIOMES).getKey(i));
 +            if(hills.isPresent()) {
 +               l = net.minecraft.data.BuiltinRegistries.f_123865_.m_7447_(net.minecraft.data.BuiltinRegistries.f_123865_.m_6246_(hills.get()));
-+            }
-+            else if (i == 2) {
++            } else
+             if (i == 2) {
                 l = 17;
              } else if (i == 4) {
-                l = 18;

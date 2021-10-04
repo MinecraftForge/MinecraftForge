@@ -4,7 +4,7 @@
     private static final IntSet f_76911_ = new IntOpenHashSet(new int[]{168, 169, 21, 22, 23, 149, 151});
  
     public int m_6949_(Context p_76918_, int p_76919_, int p_76920_, int p_76921_, int p_76922_, int p_76923_) {
-+      net.minecraftforge.registries.ForgeRegistry<net.minecraft.world.level.biome.Biome> registry = (net.minecraftforge.registries.ForgeRegistry<net.minecraft.world.level.biome.Biome>)net.minecraftforge.registries.ForgeRegistries.BIOMES;
++      net.minecraftforge.registries.ForgeRegistry<net.minecraft.world.level.biome.Biome> registry = (net.minecraftforge.registries.ForgeRegistry<net.minecraft.world.level.biome.Biome>) net.minecraftforge.registries.ForgeRegistries.BIOMES;
 +      java.util.Optional<net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.Biome>> shore = net.minecraftforge.common.BiomeManager.getShoreBiome(registry.getKey(p_76923_), registry.getKey(p_76919_), registry.getKey(p_76920_), registry.getKey(p_76921_), registry.getKey(p_76922_));
 +      if(shore.isPresent()) {
 +         return net.minecraft.data.BuiltinRegistries.f_123865_.m_7447_(net.minecraft.data.BuiltinRegistries.f_123865_.m_6246_(shore.get()));
