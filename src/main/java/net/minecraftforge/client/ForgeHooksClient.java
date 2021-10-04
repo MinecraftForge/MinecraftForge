@@ -100,9 +100,11 @@ import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.textures.ForgeTextureMetadata;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fmlclient.ExtendedServerListData;
@@ -1000,6 +1002,14 @@ public class ForgeHooksClient
             event.registerShader(new ShaderInstance(event.getResourceManager(), new ResourceLocation("forge","rendertype_entity_unlit_translucent"), DefaultVertexFormat.NEW_ENTITY), (p_172645_) -> {
                 rendertypeEntityTranslucentUnlitShader = p_172645_;
             });
+        }
+
+        @SubscribeEvent(priority = EventPriority.HIGHEST)
+        public static void registerSpawnEggColors(ColorHandlerEvent.Item event)
+        {
+            ForgeSpawnEggItem.getModEggs().forEach(egg ->
+                    event.getItemColors().register((stack, layer) -> egg.getColor(layer), egg)
+            );
         }
     }
 }

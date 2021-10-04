@@ -19,13 +19,12 @@
 
 package net.minecraftforge.common;
 
-import com.google.common.collect.Iterables;
-import net.minecraft.core.BlockSource;
 import net.minecraft.core.Direction;
-import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -62,9 +61,9 @@ public class ForgeSpawnEggItem extends SpawnEggItem
         return DEFAULT_DISPENSE_BEHAVIOR;
     }
 
-    public static Iterable<SpawnEggItem> eggs()
+    public static Iterable<ForgeSpawnEggItem> getModEggs()
     {
-        return Iterables.concat(SpawnEggItem.eggs(), MOD_EGGS);
+        return MOD_EGGS;
     }
 
     public static void finalizeModEggs()
@@ -102,5 +101,4 @@ public class ForgeSpawnEggItem extends SpawnEggItem
         source.getLevel().gameEvent(GameEvent.ENTITY_PLACE, source.getPos());
         return stack;
     };
-
 }
