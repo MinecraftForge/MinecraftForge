@@ -4,7 +4,7 @@
                       p_105461_.run();
                    }
  
-+                  net.minecraftforge.fmlclient.ClientHooks.processForgeListPingData(serverstatus, p_105460_);
++                  net.minecraftforge.client.ForgeHooksClient.processForgeListPingData(serverstatus, p_105460_);
                    this.f_105477_ = Util.m_137550_();
                    connection.m_129512_(new ServerboundPingRequestPacket(this.f_105477_));
                    this.f_105475_ = true;
