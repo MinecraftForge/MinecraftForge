@@ -26,7 +26,10 @@ import net.minecraft.world.level.block.LevelEvent;
 /**
  * A class containing constants for magic numbers used in the minecraft codebase.
  * Everything here should be checked each update, and have a comment relating to where to check it.
+ *
+ * @deprecated No longer needed. See inner classes for replacements
  */
+@Deprecated(since = "1.18", forRemoval = true)
 public class Constants
 {
     /**
@@ -35,7 +38,9 @@ public class Constants
      *
      * Main use is checking tag type in {@link net.minecraft.nbt.CompoundNBT#contains(String, int)}
      *
+     * @deprecated Replaced by the constants in {@link net.minecraft.nbt.Tag}
      */
+    @Deprecated(since = "1.18", forRemoval = true)
     public static class NBT
     {
         public static final int TAG_END         = Tag.TAG_END;
@@ -58,7 +63,10 @@ public class Constants
      * The world event IDS, used when calling {@link IWorld#playEvent(int, BlockPos, int)}. <br>
      * Can be found from {@link net.minecraft.client.renderer.WorldRenderer#playEvent}<br>
      * Some of the events use the {@code data} parameter. If this is the case, an explanation of what {@code data} does is also provided
+     *
+     * @deprecated Replaced by the constants in {@link net.minecraft.world.level.block.LevelEvent}
      */
+    @Deprecated(since = "1.18", forRemoval = true)
     public static class WorldEvents {
         public static final int DISPENSER_DISPENSE_SOUND        = LevelEvent.SOUND_DISPENSER_DISPENSE;
         public static final int DISPENSER_FAIL_SOUND            = LevelEvent.SOUND_DISPENSER_FAIL;
@@ -155,7 +163,10 @@ public class Constants
      * {@link World#markAndNotifyBlock}, and
      * {@link WorldRenderer#notifyBlockUpdate}<br>
      * Flags can be combined with bitwise OR
+     *
+     * @deprecated Replaced by the constants in {@link net.minecraft.world.level.block.Block}
      */
+    @Deprecated(since = "1.18", forRemoval = true)
     public static class BlockFlags {
         /**
          * Calls
