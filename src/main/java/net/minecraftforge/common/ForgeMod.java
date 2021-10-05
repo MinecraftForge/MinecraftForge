@@ -188,7 +188,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         registerArgumentTypes();
         VanillaPacketSplitter.register();
-        evt.enqueueWork(ForgeSpawnEggItem::finalizeModEggs);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

@@ -29,6 +29,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ColorHandlerEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -65,28 +71,10 @@ public class ForgeSpawnEggItem extends SpawnEggItem
     }
 
     @Nullable
-    public static ForgeSpawnEggItem fromEntityType(@Nullable EntityType<?> type)
+    public static SpawnEggItem fromEntityType(@Nullable EntityType<?> type)
     {
-        return TYPE_MAP.get(type);
-    }
-
-    public static Iterable<ForgeSpawnEggItem> getModEggs()
-    {
-        return MOD_EGGS;
-    }
-
-    public static void finalizeModEggs()
-    {
-        MOD_EGGS.forEach(egg ->
-        {
-            DispenseItemBehavior dispenseBehavior = egg.createDispenseBehavior();
-            if (dispenseBehavior != null)
-            {
-                DispenserBlock.registerBehavior(egg, dispenseBehavior);
-            }
-
-            TYPE_MAP.put(egg.typeSupplier.get(), egg);
-        });
+        SpawnEggItem ret = TYPE_MAP.get(type);
+        return ret != null ? ret : SpawnEggItem.byId(type);
     }
 
 
@@ -110,4 +98,35 @@ public class ForgeSpawnEggItem extends SpawnEggItem
         source.getLevel().gameEvent(GameEvent.ENTITY_PLACE, source.getPos());
         return stack;
     };
+
+    @Mod.EventBusSubscriber(modid = "forge", bus = Mod.EventBusSubscriber.Bus.MOD)
+    private static class CommonHandler
+    {
+        @SubscribeEvent
+        public static void onCommonSetup(FMLCommonSetupEvent event)
+        {
+            MOD_EGGS.forEach(egg ->
+            {
+                DispenseItemBehavior dispenseBehavior = egg.createDispenseBehavior();
+                if (dispenseBehavior != null)
+                {
+                    DispenserBlock.registerBehavior(egg, dispenseBehavior);
+                }
+
+                TYPE_MAP.put(egg.typeSupplier.get(), egg);
+            });
+        }
+    }
+
+    @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = "forge", bus = Mod.EventBusSubscriber.Bus.MOD)
+    private static class ColorRegisterHandler
+    {
+        @SubscribeEvent(priority = EventPriority.HIGHEST)
+        public static void registerSpawnEggColors(ColorHandlerEvent.Item event)
+        {
+            MOD_EGGS.forEach(egg ->
+                    event.getItemColors().register((stack, layer) -> egg.getColor(layer), egg)
+            );
+        }
+    }
 }

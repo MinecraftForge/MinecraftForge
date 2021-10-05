@@ -88,10 +88,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     {
         ItemStack result = self().getPickResult();
         if (result == null) {
-            SpawnEggItem egg = SpawnEggItem.byId(self().getType());
-            if (egg == null) {
-                egg = ForgeSpawnEggItem.fromEntityType(self().getType());
-            }
+            SpawnEggItem egg = ForgeSpawnEggItem.fromEntityType(self().getType());
             if (egg != null)
                 result = new ItemStack(egg);
             else

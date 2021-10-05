@@ -4,7 +4,7 @@
     private final int f_151201_;
     private final EntityType<?> f_43204_;
  
-+   /** Forge: Use {@link net.minecraftforge.common.ForgeSpawnEggItem} instead for suppliers */
++   /** @deprecated Forge: Use {@link net.minecraftforge.common.ForgeSpawnEggItem} instead for suppliers */
 +   @Deprecated
     public SpawnEggItem(EntityType<? extends Mob> p_43207_, int p_43208_, int p_43209_, Item.Properties p_43210_) {
        super(p_43210_);
@@ -15,3 +15,12 @@
        f_43201_.put(p_43207_, this);
     }
  
+@@ -125,6 +_,8 @@
+       return p_43212_ == 0 ? this.f_151200_ : this.f_151201_;
+    }
+ 
++   /** @deprecated Forge: call {@link net.minecraftforge.common.ForgeSpawnEggItem#fromEntityType(EntityType)} instead */
++   @Deprecated
+    @Nullable
+    public static SpawnEggItem m_43213_(@Nullable EntityType<?> p_43214_) {
+       return f_43201_.get(p_43214_);
