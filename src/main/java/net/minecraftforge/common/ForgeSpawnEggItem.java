@@ -32,12 +32,15 @@ import net.minecraft.world.level.gameevent.GameEvent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class ForgeSpawnEggItem extends SpawnEggItem
 {
     private static final List<ForgeSpawnEggItem> MOD_EGGS = new ArrayList<>();
+    private static final Map<EntityType<? extends Mob>, ForgeSpawnEggItem> TYPE_MAP = new IdentityHashMap<>();
     private final Supplier<? extends EntityType<? extends Mob>> typeSupplier;
 
     public ForgeSpawnEggItem(Supplier<? extends EntityType<? extends Mob>> type, int backgroundColor, int highlightColor, Properties props)
@@ -61,6 +64,12 @@ public class ForgeSpawnEggItem extends SpawnEggItem
         return DEFAULT_DISPENSE_BEHAVIOR;
     }
 
+    @Nullable
+    public static ForgeSpawnEggItem fromEntityType(@Nullable EntityType<?> type)
+    {
+        return TYPE_MAP.get(type);
+    }
+
     public static Iterable<ForgeSpawnEggItem> getModEggs()
     {
         return MOD_EGGS;
@@ -76,7 +85,7 @@ public class ForgeSpawnEggItem extends SpawnEggItem
                 DispenserBlock.registerBehavior(egg, dispenseBehavior);
             }
 
-            BY_ID.put(egg.typeSupplier.get(), egg);
+            TYPE_MAP.put(egg.typeSupplier.get(), egg);
         });
     }
 
