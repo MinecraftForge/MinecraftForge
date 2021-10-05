@@ -27,10 +27,10 @@ import net.minecraft.server.packs.PackType;
 
 import java.util.function.Consumer;
 
-public class AdvancementBuilderHelper
+public interface AdvancementBuilderHelper
 {
 
-    public static Advancement build(ResourceLocation id, Consumer<Advancement> consumer, ExistingFileHelper fileHelper, Advancement.Builder builder)
+    default Advancement save(ResourceLocation id, Consumer<Advancement> consumer, ExistingFileHelper fileHelper, Advancement.Builder builder)
     {
         boolean canBuild = builder.canBuild((advancementId) ->
         {

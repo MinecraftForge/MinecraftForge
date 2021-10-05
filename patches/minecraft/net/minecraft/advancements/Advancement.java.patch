@@ -1,16 +1,14 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
-@@ -238,6 +_,10 @@
-          return advancement;
-       }
+@@ -127,7 +_,7 @@
+       return this.f_138305_;
+    }
  
-+      public Advancement save(Consumer<Advancement> consumer, ResourceLocation id, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
-+         return net.minecraftforge.common.data.AdvancementBuilderHelper.build(id, consumer, fileHelper, this);
-+      }
-+
-       public JsonObject m_138400_() {
-          if (this.f_138337_ == null) {
-             this.f_138337_ = this.f_138338_.m_15985_(this.f_138336_.keySet());
+-   public static class Builder {
++   public static class Builder implements net.minecraftforge.common.data.AdvancementBuilderHelper {
+       private ResourceLocation f_138332_;
+       private Advancement f_138333_;
+       private DisplayInfo f_138334_;
 @@ -311,6 +_,7 @@
        }
  
