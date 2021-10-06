@@ -30,6 +30,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -374,6 +375,18 @@ public abstract class BlockStateProvider implements DataProvider {
                     .uvLock(face == AttachFace.WALL)
                     .build();
         });
+    }
+
+    public void pressurePlateBlock(PressurePlateBlock block, ResourceLocation texture) {
+        ModelFile pressurePlate = models().pressurePlate(name(block), texture);
+        ModelFile pressurePlateDown = models().pressurePlateDown(name(block) + "_down", texture);
+        pressurePlateBlock(block, pressurePlate, pressurePlateDown);
+    }
+
+    public void pressurePlateBlock(PressurePlateBlock block, ModelFile pressurePlate, ModelFile pressurePlateDown) {
+        getVariantBuilder(block)
+                .partialState().with(PressurePlateBlock.POWERED, true).addModels(new ConfiguredModel(pressurePlateDown))
+                .partialState().with(PressurePlateBlock.POWERED, false).addModels(new ConfiguredModel(pressurePlate));
     }
 
     public void fourWayBlock(CrossCollisionBlock block, ModelFile post, ModelFile side) {
