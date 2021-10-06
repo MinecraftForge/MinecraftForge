@@ -38,6 +38,10 @@ public class Tags
         Fluids.init();
     }
 
+    public String toString() {
+        return getClass().getName()+"@"+Integer.toHexString(hashCode());
+    }
+
     public static class Blocks
     {
         private static void init(){}
