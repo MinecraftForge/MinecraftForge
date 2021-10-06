@@ -36,6 +36,14 @@ public interface IForgeAdvancementBuilder
         return (Advancement.Builder) this;
     }
 
+    /**
+     * save function for the Advancement builder which uses the file helper to check if the parent is already known
+     * @param consumer comes from the provider
+     * @param id the ResourceLocation for the new Advancement
+     * @param fileHelper from the provider
+     * @return the build Advancements
+     * @throws IllegalStateException when an Advancement is build with an invalid parent
+     */
     default Advancement save(Consumer<Advancement> consumer ,ResourceLocation id, ExistingFileHelper fileHelper)
     {
         boolean canBuild = self().canBuild((advancementId) ->
