@@ -17,22 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftforge.common.extensions;
 
 import com.google.common.collect.Maps;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.function.Consumer;
 
-public interface AdvancementBuilderHelper
+public interface IForgeAdvancementBuilder
 {
 
-    default Advancement save(ResourceLocation id, Consumer<Advancement> consumer, ExistingFileHelper fileHelper, Advancement.Builder builder)
+    private Advancement.Builder self()
     {
-        boolean canBuild = builder.canBuild((advancementId) ->
+        return (Advancement.Builder) this;
+    }
+
+    default Advancement save(Consumer<Advancement> consumer ,ResourceLocation id, ExistingFileHelper fileHelper)
+    {
+        boolean canBuild = self().canBuild((advancementId) ->
         {
             if (fileHelper.exists(advancementId, PackType.SERVER_DATA, ".json", "advancements"))
             {
@@ -45,7 +51,7 @@ public interface AdvancementBuilderHelper
             throw new IllegalStateException("Tried to build Advancement without valid Parent!");
         }
 
-        Advancement advancement = builder.build(id);
+        Advancement advancement = self().build(id);
         consumer.accept(advancement);
         return advancement;
     }
