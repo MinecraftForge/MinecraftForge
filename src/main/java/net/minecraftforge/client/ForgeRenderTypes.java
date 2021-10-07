@@ -136,11 +136,43 @@ public enum ForgeRenderTypes
     }
 
     /**
+     * @return Replacement of {@link RenderType#textIntensity(ResourceLocation)}, but with optional linear texture filtering.
+     */
+    public static RenderType getTextIntensity(ResourceLocation locationIn)
+    {
+        return Internal.TEXT_INTENSITY.apply(locationIn);
+    }
+
+    /**
+     * @return Replacement of {@link RenderType#textPolygonOffset(ResourceLocation)}, but with optional linear texture filtering.
+     */
+    public static RenderType getTextPolygonOffset(ResourceLocation locationIn)
+    {
+        return Internal.TEXT_POLYGON_OFFSET.apply(locationIn);
+    }
+
+    /**
+     * @return Replacement of {@link RenderType#textIntensityPolygonOffset(ResourceLocation)}, but with optional linear texture filtering.
+     */
+    public static RenderType getTextIntensityPolygonOffset(ResourceLocation locationIn)
+    {
+        return Internal.TEXT_INTENSITY_POLYGON_OFFSET.apply(locationIn);
+    }
+
+    /**
      * @return Replacement of {@link RenderType#textSeeThrough(ResourceLocation)}, but with optional linear texture filtering.
      */
     public static RenderType getTextSeeThrough(ResourceLocation locationIn)
     {
         return Internal.TEXT_SEETHROUGH.apply(locationIn);
+    }
+
+    /**
+     * @return Replacement of {@link RenderType#textIntensitySeeThrough(ResourceLocation)}, but with optional linear texture filtering.
+     */
+    public static RenderType getTextIntensitySeeThrough(ResourceLocation locationIn)
+    {
+        return Internal.TEXT_INTENSITY_SEETHROUGH.apply(locationIn);
     }
 
     // ----------------------------------------
@@ -272,10 +304,58 @@ public enum ForgeRenderTypes
             return create("forge_text", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true, rendertype$state);
         }
 
+        public static Function<ResourceLocation, RenderType> TEXT_INTENSITY = Util.memoize(Internal::getTextIntensity);
+        private static RenderType getTextIntensity(ResourceLocation locationIn) {
+            RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_TEXT_INTENSITY_SHADER)
+                    .setTextureState(new CustomizableTextureState(locationIn, () -> ForgeRenderTypes.enableTextTextureLinearFiltering, () -> false))
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setLightmapState(LIGHTMAP)
+                    .createCompositeState(false);
+            return create("text_intensity", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true, rendertype$state);
+        }
+
+        public static Function<ResourceLocation, RenderType> TEXT_POLYGON_OFFSET = Util.memoize(Internal::getTextPolygonOffset);
+        private static RenderType getTextPolygonOffset(ResourceLocation locationIn) {
+            RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_TEXT_SHADER)
+                    .setTextureState(new CustomizableTextureState(locationIn, () -> ForgeRenderTypes.enableTextTextureLinearFiltering, () -> false))
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setLightmapState(LIGHTMAP)
+                    .setLayeringState(POLYGON_OFFSET_LAYERING)
+                    .createCompositeState(false);
+            return create("text_intensity", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true, rendertype$state);
+        }
+
+        public static Function<ResourceLocation, RenderType> TEXT_INTENSITY_POLYGON_OFFSET = Util.memoize(Internal::getTextIntensityPolygonOffset);
+        private static RenderType getTextIntensityPolygonOffset(ResourceLocation locationIn) {
+            RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_TEXT_INTENSITY_SHADER)
+                    .setTextureState(new CustomizableTextureState(locationIn, () -> ForgeRenderTypes.enableTextTextureLinearFiltering, () -> false))
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setLightmapState(LIGHTMAP)
+                    .setLayeringState(POLYGON_OFFSET_LAYERING)
+                    .createCompositeState(false);
+            return create("text_intensity", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true, rendertype$state);
+        }
+
         public static Function<ResourceLocation, RenderType> TEXT_SEETHROUGH = Util.memoize(Internal::getTextSeeThrough);
         private static RenderType getTextSeeThrough(ResourceLocation locationIn) {
             RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()
-                    .setShaderState(RENDERTYPE_TEXT_SHADER)
+                    .setShaderState(RENDERTYPE_TEXT_SEE_THROUGH_SHADER)
+                    .setTextureState(new CustomizableTextureState(locationIn, () -> ForgeRenderTypes.enableTextTextureLinearFiltering, () -> false))
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setLightmapState(LIGHTMAP)
+                    .setDepthTestState(NO_DEPTH_TEST)
+                    .setWriteMaskState(COLOR_WRITE)
+                    .createCompositeState(false);
+            return create("forge_text_see_through", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, VertexFormat.Mode.QUADS, 256, false, true, rendertype$state);
+        }
+
+        public static Function<ResourceLocation, RenderType> TEXT_INTENSITY_SEETHROUGH = Util.memoize(Internal::getTextIntensitySeeThrough);
+        private static RenderType getTextIntensitySeeThrough(ResourceLocation locationIn) {
+            RenderType.CompositeState rendertype$state = RenderType.CompositeState.builder()
+                    .setShaderState(RENDERTYPE_TEXT_INTENSITY_SEE_THROUGH_SHADER)
                     .setTextureState(new CustomizableTextureState(locationIn, () -> ForgeRenderTypes.enableTextTextureLinearFiltering, () -> false))
                     .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
                     .setLightmapState(LIGHTMAP)
@@ -296,8 +376,8 @@ public enum ForgeRenderTypes
                 this.mipmap = mipmap.get();
                 RenderSystem.enableTexture();
                 TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
-                texturemanager.bindForSetup(resLoc);
                 texturemanager.getTexture(resLoc).setFilter(this.blur, this.mipmap);
+                RenderSystem.setShaderTexture(0, resLoc);
             };
         }
     }

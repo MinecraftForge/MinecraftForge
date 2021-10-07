@@ -25,12 +25,11 @@ import static net.minecraftforge.fml.Logging.LOADING;
 import java.io.File;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
@@ -38,11 +37,14 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.DataPackConfig;
+import net.minecraftforge.event.AddPackFindersEvent;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fmllegacy.BrandingControl;
 import net.minecraftforge.fmllegacy.CrashReportExtender;
 import net.minecraftforge.fmllegacy.LogicalSidedProvider;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.resource.PathResourcePack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -62,7 +64,6 @@ import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fmlclient.gui.screen.LoadingErrorScreen;
 import net.minecraftforge.fmllegacy.packs.DelegatingResourcePack;
-import net.minecraftforge.fmllegacy.packs.ModFileResourcePack;
 import net.minecraftforge.fmllegacy.packs.ResourcePackLoader;
 import net.minecraftforge.fmllegacy.server.LanguageHook;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -107,6 +108,7 @@ public class ClientModLoader
         createRunnableWithCatch(()->ModLoader.get().gatherAndInitializeMods(ModWorkManager.syncExecutor(), ModWorkManager.parallelExecutor(), new SpacedRunnable(earlyLoaderGUI::renderTick))).run();
         if (error == null) {
             ResourcePackLoader.loadResourcePacks(defaultResourcePacks, net.minecraftforge.fmlclient.ClientModLoader::buildPackFinder);
+            ModLoader.get().postEvent(new AddPackFindersEvent(PackType.CLIENT_RESOURCES, defaultResourcePacks::addPackFinder));
             DataPackConfig.DEFAULT.addModPacks(ResourcePackLoader.getPackNames());
             mcResourceManager.registerReloadListener(net.minecraftforge.fmlclient.ClientModLoader::onResourceReload);
             mcResourceManager.registerReloadListener(BrandingControl.resourceManagerReloadListener());
@@ -186,7 +188,6 @@ public class ClientModLoader
             mc.setScreen(new LoadingErrorScreen(error, warnings, dumpedLocation));
             return true;
         } else {
-            ClientHooks.logMissingTextureErrors();
             return false;
         }
     }
@@ -199,13 +200,13 @@ public class ClientModLoader
         return loading;
     }
 
-    private static ResourcePackLoader.IPackInfoFinder buildPackFinder(Map<IModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, Pack> packSetter) {
-        return (packList, factory) -> clientPackFinder(modResourcePacks, packSetter, packList, factory);
+    private static RepositorySource buildPackFinder(Map<IModFile, ? extends PathResourcePack> modResourcePacks) {
+        return (packList, factory) -> clientPackFinder(modResourcePacks, packList, factory);
     }
 
-    private static void clientPackFinder(Map<IModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, Pack> packSetter, Consumer<Pack> consumer, Pack.PackConstructor factory) {
-        List<ModFileResourcePack> hiddenPacks = new ArrayList<>();
-        for (Entry<IModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
+    private static void clientPackFinder(Map<IModFile, ? extends PathResourcePack> modResourcePacks, Consumer<Pack> consumer, Pack.PackConstructor factory) {
+        List<PathResourcePack> hiddenPacks = new ArrayList<>();
+        for (Entry<IModFile, ? extends PathResourcePack> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
             final String name = "mod:" + mod.getModId();
@@ -215,7 +216,6 @@ public class ClientModLoader
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
                 continue;
             }
-            packSetter.accept(e.getValue(), packInfo);
             LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
             if (mod.getOwningFile().showAsResourcePack()) {
                 consumer.accept(packInfo);

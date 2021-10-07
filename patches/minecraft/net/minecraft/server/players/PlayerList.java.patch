@@ -82,7 +82,7 @@
     }
  
     public void m_5749_(GameProfile p_11254_) {
-+      if (!net.minecraftforge.event.ForgeEventFactory.onPermissionChanged(p_11254_, this.f_11195_.m_7022_(), this)) return;
++      if (net.minecraftforge.event.ForgeEventFactory.onPermissionChanged(p_11254_, this.f_11195_.m_7022_(), this)) return;
        this.f_11200_.m_11381_(new ServerOpListEntry(p_11254_, this.f_11195_.m_7022_(), this.f_11200_.m_11351_(p_11254_)));
        ServerPlayer serverplayer = this.m_11259_(p_11254_.getId());
        if (serverplayer != null) {
@@ -90,7 +90,7 @@
     }
  
     public void m_5750_(GameProfile p_11281_) {
-+      if (!net.minecraftforge.event.ForgeEventFactory.onPermissionChanged(p_11281_, 0, this)) return;
++      if (net.minecraftforge.event.ForgeEventFactory.onPermissionChanged(p_11281_, 0, this)) return;
        this.f_11200_.m_11393_(p_11281_);
        ServerPlayer serverplayer = this.m_11259_(p_11281_.getId());
        if (serverplayer != null) {

@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/gui/screens/Screen.java
 +++ b/net/minecraft/client/gui/screens/Screen.java
+@@ -125,7 +_,7 @@
+    }
+ 
+    public void m_7379_() {
+-      this.f_96541_.m_91152_((Screen)null);
++      this.f_96541_.popGuiLayer();
+    }
+ 
+    protected <T extends GuiEventListener & Widget & NarratableEntry> T m_142416_(T p_169406_) {
 @@ -162,15 +_,23 @@
        this.f_169368_.clear();
     }

@@ -19,12 +19,12 @@
 
 package net.minecraftforge.common.capabilities;
 
+import java.util.Objects;
+
+import org.objectweb.asm.Type;
+
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
-
-import java.util.*;
-
-import static net.minecraftforge.fml.Logging.CAPABILITIES;
 
 /**
  * This event fires when it is time to register your capabilities.
@@ -32,9 +32,6 @@ import static net.minecraftforge.fml.Logging.CAPABILITIES;
  */
 public final class RegisterCapabilitiesEvent extends Event implements IModBusEvent
 {
-
-    private final IdentityHashMap<String, Capability<?>> capabilities = new IdentityHashMap<>();
-
     /**
      * Registers a capability to be consumed by others.
      * APIs who define the capability should call this.
@@ -45,16 +42,6 @@ public final class RegisterCapabilitiesEvent extends Event implements IModBusEve
     public <T> void register(Class<T> type)
     {
         Objects.requireNonNull(type,"Attempted to register a capability with invalid type");
-        String realName = type.getName().intern();
-        if (capabilities.putIfAbsent(realName, new Capability<>(realName)) != null) {
-            CapabilityManager.LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
-            throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
-        }
+        CapabilityManager.INSTANCE.get(Type.getInternalName(type), true);
     }
-
-    IdentityHashMap<String, Capability<?>> getCapabilities()
-    {
-        return this.capabilities;
-    }
-
 }
