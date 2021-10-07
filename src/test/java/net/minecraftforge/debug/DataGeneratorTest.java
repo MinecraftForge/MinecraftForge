@@ -43,6 +43,8 @@ import com.google.gson.JsonPrimitive;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.ButtonBlock;
 import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.StandingSignBlock;
+import net.minecraft.world.level.block.WallSignBlock;
 import net.minecraftforge.common.data.SoundDefinition;
 import net.minecraftforge.common.data.SoundDefinitionsProvider;
 import org.apache.commons.lang3.tuple.Triple;
@@ -706,6 +708,8 @@ public class DataGeneratorTest
             itemModels().buttonInventory("acacia_button_inventory", blockTexture(Blocks.ACACIA_PLANKS));
 
             pressurePlateBlock((PressurePlateBlock) Blocks.ACACIA_PRESSURE_PLATE, blockTexture(Blocks.ACACIA_PLANKS));
+
+            signBlock((StandingSignBlock) Blocks.ACACIA_SIGN, (WallSignBlock) Blocks.ACACIA_WALL_SIGN, blockTexture(Blocks.ACACIA_PLANKS));
 
             simpleBlock(Blocks.TORCH, models().torch("torch", mcLoc("block/torch")));
             horizontalBlock(Blocks.WALL_TORCH, models().torchWall("wall_torch", mcLoc("block/torch")), 90);
