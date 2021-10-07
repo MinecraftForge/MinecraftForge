@@ -1,0 +1,13 @@
+--- a/net/minecraft/server/packs/AbstractPackResources.java
++++ b/net/minecraft/server/packs/AbstractPackResources.java
+@@ -120,4 +_,10 @@
+    public String m_8017_() {
+       return this.f_10203_.getName();
+    }
++
++   @Override
++   public String toString()
++   {
++      return String.format("%s: %s", getClass().getName(), f_10203_.getPath());
++   }
+ }

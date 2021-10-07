@@ -25,6 +25,7 @@ import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -34,17 +35,14 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.jar.JarInputStream;
 import java.util.stream.Stream;
-import java.util.zip.ZipInputStream;
-
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class ClasspathLocator extends AbstractJarFileLocator {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String MODS_TOML = "META-INF/mods.toml";
     private static final String MANIFEST = "META-INF/MANIFEST.MF";
-    private final List<String> ignoreList = Arrays.stream(System.getProperty("ignoreList", "").split(",")).toList();
+    private final List<Path> legacyClasspath = Arrays.stream(System.getProperty("legacyClassPath", "").split(File.pathSeparator)).map(Path::of).toList();
     private boolean enabled = false;
 
     @Override
@@ -59,7 +57,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
         try {
             var modCoords = Stream.<IModFile>builder();
             locateMods(modCoords, MODS_TOML, "classpath_mod", sj -> true);
-            locateMods(modCoords, MANIFEST, "manifest_jar", sj -> isValidManifest(sj) && sj.getManifest().getMainAttributes().getValue(ModFile.TYPE) != null);
+            locateMods(modCoords, MANIFEST, "manifest_jar", sj -> sj.getManifest() != ModFile.DEFAULTMANIFEST && sj.getManifest().getMainAttributes().getValue(ModFile.TYPE) != null);
             return modCoords.build().toList();
         } catch (IOException e) {
             LOGGER.fatal(CORE, "Error trying to find resources", e);
@@ -77,7 +75,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
             Path path = LibraryFinder.findJarPathFor(resource, name, url);
-            if (ignoreList.stream().anyMatch(path.toString()::contains) || Files.isDirectory(path))
+            if (legacyClasspath.stream().anyMatch(path::equals) || Files.isDirectory(path))
                 continue;
 
             ModJarMetadata.buildFile(this, filter, path).ifPresent(mf -> {
@@ -91,13 +89,5 @@ public class ClasspathLocator extends AbstractJarFileLocator {
     public void initArguments(Map<String, ?> arguments) {
         var launchTarget = (String) arguments.get("launchTarget");
         enabled = launchTarget != null && launchTarget.contains("dev");
-    }
-
-    private static boolean isValidManifest(SecureJar sj) {
-        try (var jis = new JarInputStream(Files.newInputStream(sj.getRootPath()))) {
-            return jis.getManifest() != null;
-        } catch (IOException e) {
-            return false;
-        }
     }
 }

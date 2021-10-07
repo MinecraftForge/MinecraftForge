@@ -104,7 +104,7 @@
     }
  
     public ItemStack m_7968_() {
-@@ -371,6 +_,31 @@
+@@ -371,6 +_,32 @@
        return true;
     }
  
@@ -120,7 +120,8 @@
 +   }
 +
 +   private void initClient() {
-+      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) {
++      // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
++      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData()) {
 +         initializeClient(properties -> {
 +            if (properties == this)
 +               throw new IllegalStateException("Don't extend IItemRenderProperties in your item, use an anonymous class instead.");

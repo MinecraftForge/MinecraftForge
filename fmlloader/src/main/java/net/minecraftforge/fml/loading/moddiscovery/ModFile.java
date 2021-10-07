@@ -116,7 +116,7 @@ public class ModFile implements IModFile {
 
     public boolean identifyMods() {
         this.modFileInfo = ModFileParser.readModList(this, this.parser);
-        if (this.modFileInfo == null) return false;
+        if (this.modFileInfo == null) return this.getType() != Type.MOD;
         LOGGER.debug(LOADING,"Loading mod file {} with languages {}", this.getFilePath(), this.modFileInfo.requiredLanguageLoaders());
         this.coreMods = ModFileParser.getCoreMods(this);
         this.coreMods.forEach(mi-> LOGGER.debug(LOADING,"Found coremod {}", mi.getPath()));
