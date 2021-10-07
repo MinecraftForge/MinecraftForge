@@ -8,10 +8,10 @@ MinecraftForge
 
 Forge is a free, open-source modding API all of your favourite mods use!
 
-| Version  | Support |
+|    Version    |    Support    |
 | ------------- | ------------- |
-| 1.16.x  | Active  |
-| 1.15.x  | LTS  |
+|    1.17.x     |    Active     |
+|    1.16.x     |    LTS        |
 
 * [Download]
 * [Forum]
