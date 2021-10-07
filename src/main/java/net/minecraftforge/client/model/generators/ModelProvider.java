@@ -236,6 +236,10 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
         return singleTexture(name, BLOCK_FOLDER + "/pressure_plate_down", texture);
     }
 
+    public T sign(String name, ResourceLocation texture) {
+        return getBuilder(name).texture("particle", texture);
+    }
+
     public T fencePost(String name, ResourceLocation texture) {
         return singleTexture(name, BLOCK_FOLDER + "/fence_post", texture);
     }
