@@ -43,6 +43,7 @@ import net.minecraft.world.level.material.*;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.DispenseFluidContainer;
@@ -121,16 +122,18 @@ public class CoreFluidTest {
     {
         return new ForgeFlowingFluid.Properties(TEST_ATTRIBUTE_FLUID, TEST_ATTRIBUTE_FLUID_FLOWING,
                 FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING)
+                        .viewOverlay(FLUID_OVERLAY)
                         .overlay(FLUID_OVERLAY)
                         .color(0xAF1080FF)
                         .motionScale((state, entity) -> entity instanceof Player ? 0.014D : -0.014D) // Will push away the entity if it's a player, but will pull it towards the source block if it's not.
                         .fallDistanceModifier((state, entity) -> entity instanceof Player ? 0.0D : 2.0D) // Will double the falling distance if an entity falls through it if it's not a player, otherwise it resets the value.
-                        .canSwim(state -> true) // Allows the player swimming animation and speed boost while inside of this fluid
+                        .canSwim(state -> true) // Allows the player swimming animation and speed boost while inside this fluid
                         .canDrown((state, entity) -> entity instanceof Player) // Only players can drown in this fluid
                         .canExtinguish((state, entity) -> entity instanceof Player) // Only players can be extinguished if on fire in this fluid
                         .canHydrate((fluidState, blockState) -> true) // Can hydrate ConcretePowder -> Concrete, Farmland, and Coral.
-                        .canBoat((state, boat) -> true) // You can not boat in this fluid
-        ).bucket(TEST_ATTRIBUTE_FLUID_BUCKET).block(TEST_ATTRIBUTE_FLUID_BLOCK);
+                        .canBoat((state, boat) -> true) // You can boat in this fluid
+        ).bucket(TEST_ATTRIBUTE_FLUID_BUCKET).block(TEST_ATTRIBUTE_FLUID_BLOCK)
+                .canMultiply(((fluidState, reader, blockPos) -> true)); // This fluid can multiply and create new source blocks
     }
 
     // Fluid-Loggable Block
@@ -232,7 +235,7 @@ public class CoreFluidTest {
             @Override
             public void sink(FluidState state, LivingEntity entity)
             {
-                entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)-0.1F * entity.getAttribute(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).getValue(), 0.0D));
+                entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)-0.1F * entity.getAttribute(ForgeMod.SWIM_SPEED.get()).getValue(), 0.0D));
             }
 
             // If the custom fluid is trying to place a flowing block, and it touches a Lava source block.
@@ -295,7 +298,7 @@ public class CoreFluidTest {
             @Override
             public void sink(FluidState state, LivingEntity entity)
             {
-                entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)-0.1F * entity.getAttribute(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).getValue(), 0.0D));
+                entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)-0.1F * entity.getAttribute(ForgeMod.SWIM_SPEED.get()).getValue(), 0.0D));
             }
 
             // If the custom fluid is trying to place a flowing block, and it touches a Lava source block.

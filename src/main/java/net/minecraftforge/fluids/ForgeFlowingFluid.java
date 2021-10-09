@@ -58,7 +58,6 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     /**
      * The {@link TriPredicate} used to determine if the {@link Fluid} can multiply and create new source blocks.
      */
-    // TODO: Think this was removed between 1.16 -> 1.17 update, need to look into adding back
     private final TriPredicate<FluidState, LevelReader, BlockPos> canMultiply;
 
     protected ForgeFlowingFluid(Properties properties)
@@ -91,6 +90,11 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     protected boolean canConvertToSource()
     {
         return false;
+    }
+
+    @Override
+    public boolean canMultiply(FluidState state, LevelReader reader, BlockPos pos) {
+        return this.canMultiply.test(state, reader, pos);
     }
 
     @Override

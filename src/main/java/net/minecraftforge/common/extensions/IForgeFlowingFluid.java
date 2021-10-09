@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common.extensions;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
@@ -31,14 +33,30 @@ public interface IForgeFlowingFluid extends IForgeFluid
     }
 
     /**
-     * @param state      The {@link FluidState} of this fluid.
-     * @param otherState The secondary {@link FluidState} to check
-     * @return Whether the fluid type of the other fluid matches either the flowing or source type of the first fluidstate.
+     * Gets whether the fluid type of the other fluid matches either the
+     * flowing or source type of the current fluid.
+     *
+     * @param state      the {@link FluidState} of this fluid
+     * @param otherState the secondary {@link FluidState} to check
+     * @return {@code true} if the fluid matches, {@code false} otherwise
      */
     @Override
     default boolean is(FluidState state, FluidState otherState)
     {
         Fluid otherFluid = otherState.getType();
         return otherFluid == self().getFlowing() || otherFluid == self().getSource();
+    }
+
+    /**
+     * Gets whether a fluid can multiply and create new source blocks.
+     *
+     * @param state the fluid trying to multiply
+     * @param reader the current level the fluid is in
+     * @param pos the position of the fluid
+     * @return {@code true} if the fluid can multiply, {@code false} otherwise
+     */
+    default boolean canMultiply(FluidState state, LevelReader reader, BlockPos pos)
+    {
+        return false;
     }
 }
