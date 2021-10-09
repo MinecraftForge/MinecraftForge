@@ -33,6 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
@@ -208,23 +209,23 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      */
     default boolean isPushedByFluid(FluidState state)
     {
-        return !(self() instanceof Player) || !((Player) self()).getAbilities().flying;
+        return !(self() instanceof Player player) || !player.getAbilities().flying;
     }
 
     /**
-     * Used to check if the entity is inside of a fluid of any kind outside of "EMPTY" fluid.
+     * Used to check if the entity is inside a fluid of any kind except for {@link Fluids#EMPTY}.
      *
-     * @return If the entity is inside of any non-EMPTY fluid
+     * @return If the entity is inside any non-EMPTY fluid
      */
     default boolean isInFluid()
     {
-        return self().getTouchingFluid() != net.minecraft.world.level.material.Fluids.EMPTY.defaultFluidState() && self().getFluidHeight(self().getTouchingFluid()) > 0.0D;
+        return self().getTouchingFluid() != Fluids.EMPTY.defaultFluidState() && self().getFluidHeight(self().getTouchingFluid()) > 0.0D;
     }
 
     /**
-     * Used to check if the entities eyes are inside of a "custom" fluid, aka a fluid that isn't added by vanilla.
+     * Used to check if the entity's eyes are inside a "custom" fluid, aka a fluid that isn't added by vanilla.
      *
-     * @return If the entities eyes are in a non-vanilla fluid.
+     * @return If the entity's eyes are in a non-vanilla fluid.
      */
     default boolean areEyesInFluid()
     {

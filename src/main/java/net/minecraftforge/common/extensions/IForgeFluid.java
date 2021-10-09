@@ -252,7 +252,7 @@ public interface IForgeFluid
      */
     default void sink(FluidState state, LivingEntity entity)
     {
-        entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)-0.04F * entity.getAttribute(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).getValue(), 0.0D));
+        entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)-0.04F * entity.getAttribute(ForgeMod.SWIM_SPEED.get()).getValue(), 0.0D));
     }
 
     /**
@@ -286,11 +286,11 @@ public interface IForgeFluid
     }
 
     /**
-     * Dictates whether a player can swim in this fluid or not.
-     * Swimming in this case refers the the "sneak" behavior swimming and swimming animation in custom fluids.
+     * Dictates whether an entity can swim in this fluid.
+     * Swimming in this case refers to the "sneak" behavior swimming and swimming animation in custom fluids.
      *
-     * @param state The current {@link FluidState} the player is in
-     * @return Whether a player can "swim" in this fluid
+     * @param state The current {@link FluidState} the entity is in
+     * @return Whether an entity can "swim" in this fluid
      */
     default boolean canSwim(FluidState state)
     {

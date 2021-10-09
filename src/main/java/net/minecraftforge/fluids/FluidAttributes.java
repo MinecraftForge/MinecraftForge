@@ -21,6 +21,9 @@ package net.minecraftforge.fluids;
 
 import net.minecraft.Util;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -50,12 +53,10 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.model.IModelConfiguration;
 
 import javax.annotation.Nullable;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
-import java.util.function.Predicate;
-import java.util.function.ToDoubleBiFunction;
+import java.util.function.*;
 import java.util.stream.Stream;
 
 /**
@@ -78,7 +79,7 @@ public class FluidAttributes
 {
     public static final int BUCKET_VOLUME = 1000;
 
-    private String translationKey;
+    private final String translationKey;
 
     private final ResourceLocation stillTexture;
     private final ResourceLocation flowingTexture;
@@ -93,7 +94,7 @@ public class FluidAttributes
 
     /**
      * A texture grabbed through the TextureManager.
-     * Used to render as an overlay on all blocks on the screen when a player is submerged in an fluid in first-person.
+     * Used to render as an overlay on all blocks on the screen when a player is submerged in a fluid in first-person.
      * This is what applies the "water" texture-esq shadow when submerged in water.
      */
     @Nullable
@@ -166,7 +167,7 @@ public class FluidAttributes
     private final ToDoubleBiFunction<FluidState, Entity> fallDistanceModifier;
     
     /**
-     * The {@link Predicate} used to check if a player can swim in the {@link Fluid}.
+     * The {@link Predicate} used to check if an entity can swim in the {@link Fluid}.
      */
     private final Predicate<FluidState> canSwim;
 
@@ -269,7 +270,7 @@ public class FluidAttributes
     }
 
     /**
-     * Called instead of placing the fluid block if {@link net.minecraft.world.level.dimension.DimensionType#ultrawarm()} and {@link #doesVaporize(BlockAndTintGetter, BlockPos, FluidStack)} are true.
+     * Called instead of placing the fluid block if {@link net.minecraft.world.level.dimension.DimensionType#ultraWarm()} and {@link #doesVaporize(BlockAndTintGetter, BlockPos, FluidStack)} are true.
      * Override this to make your explosive liquid blow up instead of the default smoke, etc.
      * Based on {@link net.minecraft.world.item.BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult)}
      *
@@ -295,12 +296,12 @@ public class FluidAttributes
      */
     public Component getDisplayName(FluidStack stack)
     {
-        return new TranslatableComponent(getTranslationKey());
+        return new TranslatableComponent(getTranslationKey(stack));
     }
 
     /**
      * A FluidStack sensitive version of getTranslationKey
-     * @param stack the provided {@code FluidStack} to get the display name of.
+     * @param stack the provided {@code FluidStack} to get the translation key of.
      * @return Returns the translation key of the provided {@code FluidStack} as a string.
      */
     public String getTranslationKey(FluidStack stack)
@@ -311,17 +312,19 @@ public class FluidAttributes
     /**
      * @return Returns the translation key of this fluid.
      */
+    @Deprecated(forRemoval = true, since = "1.18")
     public String getTranslationKey()
     {
         return this.translationKey;
     }
 
+    /* Default Accessors */
+
     /**
-     * Luminosity is currently only used as part of {@link net.minecraftforge.client.model.DynamicBucketModel#bake(IModelConfiguration, ModelBakery, Function<Material, TextureAtlasSprite>, ModelState, ItemOverrides, ResourceLocation)} to determine if the fluid should render fullbright in the bucket texture or not.
+     * Luminosity is currently only used as part of {@link net.minecraftforge.client.model.DynamicBucketModel#bake(IModelConfiguration, ModelBakery, Function, ModelState, ItemOverrides, ResourceLocation)} to determine if the fluid should render fullbright in the bucket texture or not.
      * The luminosity check for fullbright on the DynamicBucketModel is calculated as 'luminosity > 0' and requires the "applyFluidLuminosity" model attribute to be present and enabled in the fluid model file.
      * @return Returns the luminosity value for the fluid.
      */
-    /* Default Accessors */
     public final int getLuminosity()
     {
         return this.luminosity;
@@ -352,36 +355,85 @@ public class FluidAttributes
         return color;
     }
 
+    /**
+     * Gets the scaled motion of a fluid when "pushing" entities.
+     *
+     * @param state the fluid pushing the entity
+     * @param entity the entity being pushed
+     * @return the scaled motion of the fluid when "pushing" entities
+     */
     public double getMotionScale(FluidState state, Entity entity)
     {
         return motionScale.applyAsDouble(state, entity);
     }
 
+    /**
+     * Gets how much the fall distance should be scaled per tick while an entity
+     * falls within a fluid.
+     *
+     * @param state the fluid the entity is falling through
+     * @param entity the falling entity
+     * @return the fall distance multiplier
+     */
     public double getFallDistanceModifier(FluidState state, Entity entity)
     {
         return fallDistanceModifier.applyAsDouble(state, entity);
     }
 
+    /**
+     * Gets whether an entity can swim within a fluid.
+     *
+     * @param state the fluid the entity is swimming through
+     * @return {@code true} if the entity can swim, {@code false} otherwise
+     */
     public boolean canSwim(FluidState state)
     {
         return canSwim.test(state);
     }
 
+    /**
+     * Gets whether an entity can drown within a fluid.
+     *
+     * @param state the fluid the entity is in
+     * @param entity the potentially drowning entity
+     * @return {@code true} if the entity can drown, {@code false} otherwise
+     */
     public boolean canDrown(FluidState state, LivingEntity entity)
     {
         return canDrown.test(state, entity);
     }
 
+    /**
+     * Gets whether a fluid can extinguish a burning entity.
+     *
+     * @param state the fluid the entity is in
+     * @param entity the burning entity
+     * @return {@code true} if the entity can be extinguished, {@code false} otherwise
+     */
     public boolean canExtinguish(FluidState state, Entity entity)
     {
         return canExtinguish.test(state, entity);
     }
 
+    /**
+     * Gets whether a fluid can hydrate a specific block.
+     *
+     * @param fluidState the fluid hydrating the block
+     * @param blockState the potentially hydrated block
+     * @return {@code true} if the fluid can hydrate a block, {@code false} otherwise
+     */
     public boolean canHydrate(FluidState fluidState, BlockState blockState)
     {
         return canHydrate.test(fluidState, blockState);
     }
 
+    /**
+     * Gets whether a boat can interact as intended with a fluid.
+     *
+     * @param state the fluid that the boat is interacting with
+     * @param boat the boat interacting with the fluid
+     * @return {@code true} if the boat can interact with the fluid, {@code false} otherwise
+     */
     public boolean canBoat(FluidState state, Boat boat)
     {
         return this.canBoat.test(state, boat);
@@ -460,6 +512,7 @@ public class FluidAttributes
     {
         private final ResourceLocation stillTexture;
         private final ResourceLocation flowingTexture;
+        private final BiFunction<Builder,Fluid,FluidAttributes> factory;
         private ResourceLocation overlayTexture;
         private ResourceLocation viewOverlayTexture;
         private int color = 0xFFFFFFFF;
@@ -478,7 +531,6 @@ public class FluidAttributes
         private BiPredicate<FluidState, Entity> canExtinguish = (state, entity) -> state.is(FluidTags.WATER);
         private BiPredicate<FluidState, BlockState> canHydrate = (fluidState, blockState) -> fluidState.is(FluidTags.WATER);
         private BiPredicate<FluidState, Boat> canBoat = (state, boat) -> state.is(FluidTags.WATER);
-        private BiFunction<Builder,Fluid,FluidAttributes> factory;
 
         protected Builder(ResourceLocation stillTexture, ResourceLocation flowingTexture, BiFunction<Builder,Fluid,FluidAttributes> factory) {
             this.factory = factory;
@@ -553,42 +605,85 @@ public class FluidAttributes
             return this;
         }
 
+        /**
+         * Sets the scaled motion of the fluid when "pushing" entities.
+         *
+         * @param motionScale a function representing the scaled motion of the fluid
+         * @return the builder instance
+         */
         public final Builder motionScale(ToDoubleBiFunction<FluidState, Entity> motionScale)
         {
             this.motionScale = motionScale;
             return this;
         }
 
+        /**
+         * Sets how much the fall distance should be scaled per tick while an entity
+         * falls within the fluid.
+         *
+         * @param fallDistanceModifier a function representing the scaled fall distance
+         * @return the builder instance
+         */
         public final Builder fallDistanceModifier(ToDoubleBiFunction<FluidState, Entity> fallDistanceModifier)
         {
             this.fallDistanceModifier = fallDistanceModifier;
             return this;
         }
 
+        /**
+         * Sets whether an entity can swim within the fluid.
+         *
+         * @param canSwim a predicate representing whether an entity can swim in the fluid
+         * @return the builder instance
+         */
         public final Builder canSwim(Predicate<FluidState> canSwim)
         {
             this.canSwim = canSwim;
             return this;
         }
 
+        /**
+         * Sets whether an entity can drown within the fluid.
+         *
+         * @param canDrown a predicate representing whether an entity can drown in the fluid
+         * @return the builder instance
+         */
         public final Builder canDrown(BiPredicate<FluidState, LivingEntity> canDrown)
         {
             this.canDrown = canDrown;
             return this;
         }
 
+        /**
+         * Sets whether the fluid can extinguish a burning entity.
+         *
+         * @param canExtinguish a predicate representing whether an entity can be extinguished by the fluid
+         * @return the builder instance
+         */
         public final Builder canExtinguish(BiPredicate<FluidState, Entity> canExtinguish)
         {
             this.canExtinguish = canExtinguish;
             return this;
         }
 
+        /**
+         * Sets whether the fluid can hydrate a specific block.
+         *
+         * @param canHydrate a predicate representing if a block can be hydrated by the fluid
+         * @return the builder instance
+         */
         public final Builder canHydrate(BiPredicate<FluidState, BlockState> canHydrate)
         {
             this.canHydrate = canHydrate;
             return this;
         }
 
+        /**
+         * Sets whether a boat can interact as intended with the fluid.
+         *
+         * @param canBoat a predicate representing if a boat can interact with the fluid
+         * @return the builder instance
+         */
         public final Builder canBoat(BiPredicate<FluidState, Boat> canBoat)
         {
             this.canBoat = canBoat;
@@ -615,7 +710,7 @@ public class FluidAttributes
         }
 
         public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
-            return new Builder(stillTexture, flowingTexture, Water::new).canExtinguish((state, entity) -> true);
+            return new Builder(stillTexture, flowingTexture, Water::new);
         }
     }
 

@@ -180,10 +180,10 @@ public interface IForgeFluidState
     }
 
     /**
-     * Dictates whether a player can swim in this fluid or not.
-     * Swimming in this case refers the the "sneak" behavior swimming and swimming animation in custom fluids.
+     * Dictates whether an entity can swim in this fluid or not.
+     * Swimming in this case refers to the "sneak" behavior swimming and swimming animation in custom fluids.
      *
-     * @return Whether a player can "swim" in this fluid
+     * @return Whether an entity can "swim" in this fluid
      */
     default boolean canSwim()
     {

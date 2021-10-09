@@ -36,7 +36,8 @@ public class ShaderFixTest
     @SubscribeEvent
     public static void clientSetup(final FMLClientSetupEvent event)
     {
-        if (ENABLED) {
+        if (ENABLED)
+        {
             ClientRegistry.registerEntityShader(LocalPlayer.class, new ResourceLocation("shaders/post/desaturate.json"));
         }
     }

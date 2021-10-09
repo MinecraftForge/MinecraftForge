@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2021.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.debug.fluid;
 
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -21,6 +40,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.*;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fluids.DispenseFluidContainer;
@@ -53,51 +75,51 @@ public class CoreFluidTest {
     public static final DeferredRegister<Fluid> FLUIDS = DeferredRegister.create(ForgeRegistries.FLUIDS, MODID);
 
     // Override Fluid
-    public static RegistryObject<FlowingFluid> testOverrideFluid = FLUIDS.register("test_override_fluid", () ->
+    public static final RegistryObject<FlowingFluid> TEST_OVERRIDE_FLUID = FLUIDS.register("test_override_fluid", () ->
             new TestOverrideFluid.Source(makeProperties())
     );
 
-    public static RegistryObject<FlowingFluid> testOverrideFluidFlowing = FLUIDS.register("test_override_fluid_flowing", () ->
+    public static final RegistryObject<FlowingFluid> TEST_OVERRIDE_FLUID_FLOWING = FLUIDS.register("test_override_fluid_flowing", () ->
             new TestOverrideFluid.Flowing(makeProperties())
     );
 
-    public static RegistryObject<LiquidBlock> testOverrideFluidBlock = BLOCKS.register("test_override_fluid_block", () ->
-            new LiquidBlock(testOverrideFluid, BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops())
+    public static final RegistryObject<LiquidBlock> TEST_OVERRIDE_FLUID_BLOCK = BLOCKS.register("test_override_fluid_block", () ->
+            new LiquidBlock(TEST_OVERRIDE_FLUID, BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops())
     );
 
-    public static RegistryObject<Item> testOverrideFluidBucket = ITEMS.register("test_override_fluid_bucket", () ->
-            new BucketItem(testOverrideFluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC))
+    public static final RegistryObject<Item> TEST_OVERRIDE_FLUID_BUCKET = ITEMS.register("test_override_fluid_bucket", () ->
+            new BucketItem(TEST_OVERRIDE_FLUID, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC))
     );
 
     private static ForgeFlowingFluid.Properties makeProperties()
     {
-        return new ForgeFlowingFluid.Properties(testOverrideFluid, testOverrideFluidFlowing,
+        return new ForgeFlowingFluid.Properties(TEST_OVERRIDE_FLUID, TEST_OVERRIDE_FLUID_FLOWING,
                 FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING)
                         .overlay(FLUID_OVERLAY)
                         .color(0xAF1080FF)
-        ).bucket(testOverrideFluidBucket).block(testOverrideFluidBlock);
+        ).bucket(TEST_OVERRIDE_FLUID_BUCKET).block(TEST_OVERRIDE_FLUID_BLOCK);
     }
 
     // Attribute Fluid
-    public static RegistryObject<FlowingFluid> testAttributeFluid = FLUIDS.register("test_attribute_fluid", () ->
+    public static final RegistryObject<FlowingFluid> TEST_ATTRIBUTE_FLUID = FLUIDS.register("test_attribute_fluid", () ->
             new ForgeFlowingFluid.Source(makePropertiesForAttributeExample())
     );
 
-    public static RegistryObject<FlowingFluid> testAttributeFluidFlowing = FLUIDS.register("test_attribute_fluid_flowing", () ->
+    public static final RegistryObject<FlowingFluid> TEST_ATTRIBUTE_FLUID_FLOWING = FLUIDS.register("test_attribute_fluid_flowing", () ->
             new ForgeFlowingFluid.Flowing(makePropertiesForAttributeExample())
     );
 
-    public static RegistryObject<LiquidBlock> testAttributeFluidBlock = BLOCKS.register("test_attribute_fluid_block", () ->
-            new LiquidBlock(testAttributeFluid, BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops())
+    public static final RegistryObject<LiquidBlock> TEST_ATTRIBUTE_FLUID_BLOCK = BLOCKS.register("test_attribute_fluid_block", () ->
+            new LiquidBlock(TEST_ATTRIBUTE_FLUID, BlockBehaviour.Properties.of(Material.WATER).noCollission().strength(100.0F).noDrops())
     );
 
-    public static RegistryObject<Item> testAttributeFluidBucket = ITEMS.register("test_attribute_fluid_bucket", () ->
-            new BucketItem(testAttributeFluid, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC))
+    public static final RegistryObject<Item> TEST_ATTRIBUTE_FLUID_BUCKET = ITEMS.register("test_attribute_fluid_bucket", () ->
+            new BucketItem(TEST_ATTRIBUTE_FLUID, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1).tab(CreativeModeTab.TAB_MISC))
     );
 
     private static ForgeFlowingFluid.Properties makePropertiesForAttributeExample()
     {
-        return new ForgeFlowingFluid.Properties(testAttributeFluid, testAttributeFluidFlowing,
+        return new ForgeFlowingFluid.Properties(TEST_ATTRIBUTE_FLUID, TEST_ATTRIBUTE_FLUID_FLOWING,
                 FluidAttributes.builder(FLUID_STILL, FLUID_FLOWING)
                         .overlay(FLUID_OVERLAY)
                         .color(0xAF1080FF)
@@ -108,21 +130,22 @@ public class CoreFluidTest {
                         .canExtinguish((state, entity) -> entity instanceof Player) // Only players can be extinguished if on fire in this fluid
                         .canHydrate((fluidState, blockState) -> true) // Can hydrate ConcretePowder -> Concrete, Farmland, and Coral.
                         .canBoat((state, boat) -> true) // You can not boat in this fluid
-        ).bucket(testAttributeFluidBucket).block(testAttributeFluidBlock);
+        ).bucket(TEST_ATTRIBUTE_FLUID_BUCKET).block(TEST_ATTRIBUTE_FLUID_BLOCK);
     }
 
     // Fluid-Loggable Block
-    public static RegistryObject<Block> fluidloggableBlock = BLOCKS.register("fluidloggable_block", () ->
+    public static final RegistryObject<Block> FLUIDLOGGABLE_BLOCK = BLOCKS.register("fluidloggable_block", () ->
             new FluidloggableBlock(BlockBehaviour.Properties.of(Material.WOOD).noCollission().strength(100.0F).noDrops())
     );
 
-    public static RegistryObject<Item> fluidloggableBlockItem = ITEMS.register("fluidloggable_block", () ->
-            new BlockItem(fluidloggableBlock.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC))
+    public static final RegistryObject<Item> FLUIDLOGGABLE_BLOCK_ITEM = ITEMS.register("fluidloggable_block", () ->
+            new BlockItem(FLUIDLOGGABLE_BLOCK.get(), new Item.Properties().tab(CreativeModeTab.TAB_MISC))
     );
 
     public CoreFluidTest()
     {
-        if (ENABLE) {
+        if (ENABLE)
+        {
             IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
             BLOCKS.register(modEventBus);
             ITEMS.register(modEventBus);
@@ -134,7 +157,7 @@ public class CoreFluidTest {
 
     private void clientSetup(FMLClientSetupEvent event)
     {
-        Stream.of(testOverrideFluid, testOverrideFluidFlowing, testAttributeFluid, testAttributeFluidFlowing).forEach(f ->
+        Stream.of(TEST_OVERRIDE_FLUID, TEST_OVERRIDE_FLUID_FLOWING, TEST_ATTRIBUTE_FLUID, TEST_ATTRIBUTE_FLUID_FLOWING).forEach(f ->
                 ItemBlockRenderTypes.setRenderLayer(f.get(), RenderType.translucent()));
     }
 
@@ -142,30 +165,29 @@ public class CoreFluidTest {
     {
         BlockState waterState = Fluids.WATER.defaultFluidState().createLegacyBlock();
         BlockState lavaState = Fluids.LAVA.defaultFluidState().createLegacyBlock();
-        BlockState overrideState = testOverrideFluid.get().defaultFluidState().createLegacyBlock();
-        BlockState attributeState = testAttributeFluid.get().defaultFluidState().createLegacyBlock();
+        BlockState overrideState = TEST_OVERRIDE_FLUID.get().defaultFluidState().createLegacyBlock();
+        BlockState attributeState = TEST_ATTRIBUTE_FLUID.get().defaultFluidState().createLegacyBlock();
 
         Validate.isTrue(waterState.getBlock() == Blocks.WATER);
         Validate.isTrue(lavaState.getBlock() == Blocks.LAVA);
-        Validate.isTrue(overrideState.getBlock() == testOverrideFluidBlock.get());
-        Validate.isTrue(attributeState.getBlock() == testAttributeFluidBlock.get());
+        Validate.isTrue(overrideState.getBlock() == TEST_OVERRIDE_FLUID_BLOCK.get());
+        Validate.isTrue(attributeState.getBlock() == TEST_ATTRIBUTE_FLUID_BLOCK.get());
 
         ItemStack waterBucket = Fluids.WATER.getAttributes().getBucket(new FluidStack(Fluids.WATER, 1));
         ItemStack lavaBucket = Fluids.LAVA.getAttributes().getBucket(new FluidStack(Fluids.LAVA, 1));
-        ItemStack overrideBucket = testOverrideFluid.get().getAttributes().getBucket(new FluidStack(testOverrideFluid.get(), 1));
-        ItemStack attributeBucket = testAttributeFluid.get().getAttributes().getBucket(new FluidStack(testAttributeFluid.get(), 1));
+        ItemStack overrideBucket = TEST_OVERRIDE_FLUID.get().getAttributes().getBucket(new FluidStack(TEST_OVERRIDE_FLUID.get(), 1));
+        ItemStack attributeBucket = TEST_ATTRIBUTE_FLUID.get().getAttributes().getBucket(new FluidStack(TEST_ATTRIBUTE_FLUID.get(), 1));
 
         Validate.isTrue(waterBucket.getItem() == Fluids.WATER.getBucket());
         Validate.isTrue(lavaBucket.getItem() == Fluids.LAVA.getBucket());
-        Validate.isTrue(overrideBucket.getItem() == testOverrideFluid.get().getBucket());
-        Validate.isTrue(attributeBucket.getItem() == testAttributeFluid.get().getBucket());
+        Validate.isTrue(overrideBucket.getItem() == TEST_OVERRIDE_FLUID.get().getBucket());
+        Validate.isTrue(attributeBucket.getItem() == TEST_ATTRIBUTE_FLUID.get().getBucket());
 
         event.enqueueWork(() -> {
-            DispenserBlock.registerBehavior(testOverrideFluidBucket.get(), DispenseFluidContainer.getInstance());
-            DispenserBlock.registerBehavior(testAttributeFluidBucket.get(), DispenseFluidContainer.getInstance());
+            DispenserBlock.registerBehavior(TEST_OVERRIDE_FLUID_BUCKET.get(), DispenseFluidContainer.getInstance());
+            DispenserBlock.registerBehavior(TEST_ATTRIBUTE_FLUID_BUCKET.get(), DispenseFluidContainer.getInstance());
         });
     }
-
 
     // Test Override Fluid Class
     public static class TestOverrideFluid
@@ -208,11 +230,12 @@ public class CoreFluidTest {
             }
 
             @Override
-            public void sink(FluidState state, LivingEntity entity) {
+            public void sink(FluidState state, LivingEntity entity)
+            {
                 entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)-0.1F * entity.getAttribute(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).getValue(), 0.0D));
             }
 
-            // If the custom fluid is trying to place a flowing block, and it touches a Lava block.
+            // If the custom fluid is trying to place a flowing block, and it touches a Lava source block.
             // Then it will generate a copy of the BlockState below said position.
             @Override
             public boolean handleFluidInteraction(FluidState state, Level level, BlockPos pos)
@@ -270,11 +293,12 @@ public class CoreFluidTest {
             }
 
             @Override
-            public void sink(FluidState state, LivingEntity entity) {
+            public void sink(FluidState state, LivingEntity entity)
+            {
                 entity.setDeltaMovement(entity.getDeltaMovement().add(0.0D, (double)-0.1F * entity.getAttribute(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).getValue(), 0.0D));
             }
 
-            // If the custom fluid is trying to place a flowing block, and it touches a Lava block.
+            // If the custom fluid is trying to place a flowing block, and it touches a Lava source block.
             // Then it will generate a copy of the BlockState below said position.
             @Override
             public boolean handleFluidInteraction(FluidState state, Level level, BlockPos pos)
@@ -306,6 +330,11 @@ public class CoreFluidTest {
         }
 
         @Override
+        public VoxelShape getShape(BlockState p_60555_, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
+            return Shapes.empty();
+        }
+
+        @Override
         protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
         {
             builder.add(FLUIDLOGGED);
@@ -314,7 +343,7 @@ public class CoreFluidTest {
         @Override
         public boolean canPlaceLiquid(BlockGetter world, BlockPos pos, BlockState state, Fluid fluid)
         {
-            return !state.getValue(FLUIDLOGGED) && (state.getFluidState().isEmpty() || state.getFluidState().getType() == fluid);
+            return !state.getValue(FLUIDLOGGED) && !fluid.defaultFluidState().isEmpty() && fluid == TEST_ATTRIBUTE_FLUID.get();
         }
 
         @Override
@@ -343,14 +372,15 @@ public class CoreFluidTest {
         }
 
         @Override
-        public Optional<SoundEvent> getPickupSound() {
+        public Optional<SoundEvent> getPickupSound()
+        {
             return Optional.of(SoundEvents.BUCKET_FILL);
         }
 
         @Override
         public FluidState getFluidState(BlockState state)
         {
-            return state.getValue(FLUIDLOGGED) ? testAttributeFluid.get().defaultFluidState() : Fluids.EMPTY.defaultFluidState();
+            return state.getValue(FLUIDLOGGED) ? TEST_ATTRIBUTE_FLUID.get().defaultFluidState() : Fluids.EMPTY.defaultFluidState();
         }
     }
 

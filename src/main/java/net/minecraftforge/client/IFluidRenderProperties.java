@@ -124,7 +124,8 @@ public interface IFluidRenderProperties
     default void setupFog(Camera camera, FogRenderer.FogMode fogMode, float renderDistance)
     {
         float constant = 180.0F;
-        if (camera.getEntity() instanceof LocalPlayer player) {
+        if (camera.getEntity() instanceof LocalPlayer player)
+        {
             constant *= player.areEyesInFluid() ? 1.0 : 0.25;
         }
         RenderSystem.setShaderFogStart(-8F);
