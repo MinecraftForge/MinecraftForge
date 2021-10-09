@@ -247,7 +247,7 @@
  
     public boolean m_20143_() {
 -      return this.m_6067_() && !this.m_20069_();
-+      return this.m_6067_() && !(this.isInFluid() && this.getTouchingFluid().canSwim());
++      return this.m_6067_() && !this.m_20069_() && !(this.isInFluid() && this.getTouchingFluid().canSwim());
     }
  
     public void m_20282_(boolean p_20283_) {
