@@ -22,6 +22,7 @@ package net.minecraftforge.event.entity.living;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -127,11 +128,19 @@ public class PotionEvent extends LivingEvent
     public static class PotionAddedEvent extends PotionEvent
     {
         private final MobEffectInstance oldEffect;
-        
+        private final Entity source;
+
+        @Deprecated(forRemoval = true, since = "1.18")
         public PotionAddedEvent(LivingEntity living, MobEffectInstance oldEffect, MobEffectInstance newEffect)
+        {
+            this(living, oldEffect, newEffect, null);
+        }
+
+        public PotionAddedEvent(LivingEntity living, MobEffectInstance oldEffect, MobEffectInstance newEffect, Entity source)
         {
             super(living, newEffect);
             this.oldEffect = oldEffect;
+            this.source = source;
         }
         
         /**
@@ -151,6 +160,17 @@ public class PotionEvent extends LivingEvent
         public MobEffectInstance getOldPotionEffect()
         {
             return oldEffect;
+        }
+
+        /**
+         * Returns the entity source of the effect, or {@code null} if none exists.
+         *
+         * @return the entity source of the effect, or {@code null}
+         */
+        @Nullable
+        public Entity getPotionSource()
+        {
+            return source;
         }
     }
     
