@@ -1,6 +1,15 @@
 --- a/net/minecraft/world/level/block/ConcretePowderBlock.java
 +++ b/net/minecraft/world/level/block/ConcretePowderBlock.java
-@@ -30,20 +_,25 @@
+@@ -20,7 +_,7 @@
+    }
+ 
+    public void m_142216_(Level p_52068_, BlockPos p_52069_, BlockState p_52070_, BlockState p_52071_, FallingBlockEntity p_52072_) {
+-      if (m_52080_(p_52068_, p_52069_, p_52071_)) {
++      if (m_52080_(p_52068_, p_52069_, p_52071_) || p_52071_.m_60819_().canHydrate(p_52070_)) {
+          p_52068_.m_7731_(p_52069_, this.f_52058_, 3);
+       }
+ 
+@@ -30,23 +_,28 @@
        BlockGetter blockgetter = p_52063_.m_43725_();
        BlockPos blockpos = p_52063_.m_8083_();
        BlockState blockstate = blockgetter.m_8055_(blockpos);
@@ -27,7 +36,11 @@
 +         if (direction != Direction.DOWN || m_52088_(blockstate) || blockstate.m_60819_().canHydrate(currentState)) {
              blockpos$mutableblockpos.m_122159_(p_52066_, direction);
              blockstate = p_52065_.m_8055_(blockpos$mutableblockpos);
-             if (m_52088_(blockstate) && !blockstate.m_60783_(p_52065_, p_52066_, direction.m_122424_())) {
+-            if (m_52088_(blockstate) && !blockstate.m_60783_(p_52065_, p_52066_, direction.m_122424_())) {
++            if ((m_52088_(blockstate) || blockstate.m_60819_().canHydrate(currentState)) && !blockstate.m_60783_(p_52065_, p_52066_, direction.m_122424_())) {
+                flag = true;
+                break;
+             }
 @@ -57,7 +_,7 @@
     }
  
