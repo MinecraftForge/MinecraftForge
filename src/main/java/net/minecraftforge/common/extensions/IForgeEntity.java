@@ -35,6 +35,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.HitResult;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
 
@@ -91,7 +92,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
     {
         ItemStack result = self().getPickResult();
         if (result == null) {
-            SpawnEggItem egg = SpawnEggItem.byId(self().getType());
+            SpawnEggItem egg = ForgeSpawnEggItem.fromEntityType(self().getType());
             if (egg != null)
                 result = new ItemStack(egg);
             else

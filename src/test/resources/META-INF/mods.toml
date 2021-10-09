@@ -157,6 +157,14 @@ license="LGPL v2.1"
 [[mods]]
     modId="lazy_capabilities_on_items"
 [[mods]]
+    modId="gui_layer_test"
+[[mods]]
+    modId="add_pack_finders_test"
+[[mods]]
+    modId="be_onload_test"
+[[mods]]
+    modId="forge_spawnegg_test"
+[[mods]]
     modId="core_fluid_test"
 
 # ADD ABOVE THIS LINE

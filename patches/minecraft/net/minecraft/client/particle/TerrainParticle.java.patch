@@ -9,7 +9,7 @@
        }
 +   }
 +
-+   private Particle updateSprite(BlockState state, BlockPos pos) { //FORGE: we cannot assume that the x y z of the particles match the block pos of the block.
++   public Particle updateSprite(BlockState state, BlockPos pos) { //FORGE: we cannot assume that the x y z of the particles match the block pos of the block.
 +      if (pos != null) // There are cases where we are not able to obtain the correct source pos, and need to fallback to the non-model data version
 +         this.m_108337_(Minecraft.m_91087_().m_91289_().m_110907_().getTexture(state, f_107208_, pos));
 +      return this;

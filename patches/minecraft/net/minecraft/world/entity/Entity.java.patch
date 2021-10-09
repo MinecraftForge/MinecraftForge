@@ -186,7 +186,7 @@
  
 +         CompoundTag caps = serializeCaps();
 +         if (caps != null) p_20241_.m_128365_("ForgeCaps", caps);
-+         if (persistentData != null) p_20241_.m_128365_("ForgeData", persistentData);
++         if (persistentData != null) p_20241_.m_128365_("ForgeData", persistentData.m_6426_());
 +
           this.m_7380_(p_20241_);
           if (this.m_20160_()) {

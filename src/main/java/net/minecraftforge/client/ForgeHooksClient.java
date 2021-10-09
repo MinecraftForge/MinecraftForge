@@ -21,10 +21,19 @@ package net.minecraftforge.client;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
+import net.minecraft.client.gui.chat.NarratorChatListener;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.Connection;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.blaze3d.platform.Window;
@@ -95,17 +104,22 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fmlclient.ExtendedServerListData;
 import net.minecraftforge.fmlclient.registry.ClientRegistry;
-import net.minecraftforge.fml.StartupMessageManager;
+import net.minecraftforge.fmllegacy.ForgeI18n;
+import net.minecraftforge.fmllegacy.network.FMLNetworkConstants;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.resource.ReloadRequirements;
+import net.minecraftforge.registries.GameData;
 import net.minecraftforge.resource.VanillaResourceType;
 import net.minecraftforge.versions.forge.ForgeVersion;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 import org.lwjgl.opengl.GL13;
 
 import javax.annotation.Nonnull;
@@ -114,13 +128,19 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
@@ -136,8 +156,58 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 public class ForgeHooksClient
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Marker CLIENTHOOKS = MarkerManager.getMarker("CLIENTHOOKS");
 
     //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+
+    /**
+     * Contains the *extra* GUI layers.
+     * The current top layer stays in Minecraft#currentScreen, and the rest serve as a background for it.
+     */
+    private static final Stack<Screen> guiLayers = new Stack<>();
+
+    public static void clearGuiLayers(Minecraft minecraft)
+    {
+        while(guiLayers.size() > 0)
+            popGuiLayerInternal(minecraft);
+    }
+
+    private static void popGuiLayerInternal(Minecraft minecraft)
+    {
+        if (minecraft.screen != null)
+            minecraft.screen.removed();
+        minecraft.screen = guiLayers.pop();
+    }
+
+    public static void pushGuiLayer(Minecraft minecraft, Screen screen)
+    {
+        if (minecraft.screen != null)
+            guiLayers.push(minecraft.screen);
+        minecraft.screen = Objects.requireNonNull(screen);
+        screen.init(minecraft, minecraft.getWindow().getGuiScaledWidth(), minecraft.getWindow().getGuiScaledHeight());
+        NarratorChatListener.INSTANCE.sayNow(screen.getNarrationMessage());
+    }
+
+    public static void popGuiLayer(Minecraft minecraft)
+    {
+        if (guiLayers.size() == 0)
+        {
+            minecraft.setScreen(null);
+            return;
+        }
+
+        popGuiLayerInternal(minecraft);
+        if (minecraft.screen != null)
+            NarratorChatListener.INSTANCE.sayNow(minecraft.screen.getNarrationMessage());
+    }
+
+    public static float getGuiFarPlane()
+    {
+        // 1000 units for the overlay background,
+        // and 2000 units for each layered Screen,
+
+        return 1000.0F + 2000.0F * (1 + guiLayers.size());
+    }
 
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EquipmentSlot slot, String type)
     {
@@ -299,6 +369,18 @@ public class ForgeHooksClient
     }
 
     public static void drawScreen(Screen screen, PoseStack mStack, int mouseX, int mouseY, float partialTicks)
+    {
+        mStack.pushPose();
+        guiLayers.forEach(layer -> {
+            // Prevent the background layers from thinking the mouse is over their controls and showing them as highlighted.
+            drawScreenInternal(layer, mStack, Integer.MAX_VALUE, Integer.MAX_VALUE, partialTicks);
+            mStack.translate(0,0,2000);
+        });
+        drawScreenInternal(screen, mStack, mouseX, mouseY, partialTicks);
+        mStack.popPose();
+    }
+
+    private static void drawScreenInternal(Screen screen, PoseStack mStack, int mouseX, int mouseY, float partialTicks)
     {
         if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mStack, mouseX, mouseY, partialTicks)))
             screen.render(mStack, mouseX, mouseY, partialTicks);
@@ -836,6 +918,141 @@ public class ForgeHooksClient
     public static void loadLayerDefinitions(ImmutableMap.Builder<ModelLayerLocation, LayerDefinition> builder) {
         layerDefinitions.forEach((k, v) -> builder.put(k, v.get()));
     }
+
+    public static void processForgeListPingData(ServerStatus packet, ServerData target)
+    {
+        if (packet.getForgeData() != null) {
+            final Map<String, String> mods = packet.getForgeData().getRemoteModData();
+            final Map<ResourceLocation, Pair<String, Boolean>> remoteChannels = packet.getForgeData().getRemoteChannels();
+            final int fmlver = packet.getForgeData().getFMLNetworkVersion();
+
+            boolean fmlNetMatches = fmlver == FMLNetworkConstants.FMLNETVERSION;
+            boolean channelsMatch = NetworkRegistry.checkListPingCompatibilityForClient(remoteChannels);
+            AtomicBoolean result = new AtomicBoolean(true);
+            final List<String> extraClientMods = new ArrayList<>();
+            ModList.get().forEachModContainer((modid, mc) ->
+                    mc.getCustomExtension(IExtensionPoint.DisplayTest.class).ifPresent(ext-> {
+                        boolean foundModOnServer = ext.remoteVersionTest().test(mods.get(modid), true);
+                        result.compareAndSet(true, foundModOnServer);
+                        if (!foundModOnServer) {
+                            extraClientMods.add(modid);
+                        }
+                    })
+            );
+            boolean modsMatch = result.get();
+
+            final Map<String, String> extraServerMods = mods.entrySet().stream().
+                    filter(e -> !Objects.equals(FMLNetworkConstants.IGNORESERVERONLY, e.getValue())).
+                    filter(e -> !ModList.get().isLoaded(e.getKey())).
+                    collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            LOGGER.debug(CLIENTHOOKS, "Received FML ping data from server at {}: FMLNETVER={}, mod list is compatible : {}, channel list is compatible: {}, extra server mods: {}", target.ip, fmlver, modsMatch, channelsMatch, extraServerMods);
+
+            String extraReason = null;
+
+            if (!extraServerMods.isEmpty()) {
+                extraReason = "fml.menu.multiplayer.extraservermods";
+                LOGGER.info(CLIENTHOOKS, ForgeI18n.parseMessage(extraReason) + ": {}", extraServerMods.entrySet().stream()
+                        .map(e -> e.getKey() + "@" + e.getValue())
+                        .collect(Collectors.joining(", ")));
+            }
+            if (!modsMatch) {
+                extraReason = "fml.menu.multiplayer.modsincompatible";
+                LOGGER.info(CLIENTHOOKS, "Client has mods that are missing on server: {}", extraClientMods);
+            }
+            if (!channelsMatch) {
+                extraReason = "fml.menu.multiplayer.networkincompatible";
+            }
+
+            if (fmlver < FMLNetworkConstants.FMLNETVERSION) {
+                extraReason = "fml.menu.multiplayer.serveroutdated";
+            }
+            if (fmlver > FMLNetworkConstants.FMLNETVERSION) {
+                extraReason = "fml.menu.multiplayer.clientoutdated";
+            }
+            target.forgeData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason, packet.getForgeData().isTruncated());
+        } else {
+            target.forgeData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(),0, null);
+        }
+
+    }
+
+    private static final ResourceLocation ICON_SHEET = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/icons.png");
+    public static void drawForgePingInfo(JoinMultiplayerScreen gui, ServerData target, PoseStack mStack, int x, int y, int width, int relativeMouseX, int relativeMouseY) {
+        int idx;
+        String tooltip;
+        if (target.forgeData == null)
+            return;
+        switch (target.forgeData.type) {
+            case "FML":
+                if (target.forgeData.isCompatible) {
+                    idx = 0;
+                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.compatible", target.forgeData.numberOfMods);
+                } else {
+                    idx = 16;
+                    if(target.forgeData.extraReason != null) {
+                        String extraReason = ForgeI18n.parseMessage(target.forgeData.extraReason);
+                        tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.incompatible.extra", extraReason);
+                    } else {
+                        tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.incompatible");
+                    }
+                }
+                if (target.forgeData.truncated)
+                {
+                    tooltip += "\n" + ForgeI18n.parseMessage("fml.menu.multiplayer.truncated");
+                }
+                break;
+            case "VANILLA":
+                if (target.forgeData.isCompatible) {
+                    idx = 48;
+                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.vanilla");
+                } else {
+                    idx = 80;
+                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.vanilla.incompatible");
+                }
+                break;
+            default:
+                idx = 64;
+                tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.unknown", target.forgeData.type);
+        }
+
+        RenderSystem.setShaderTexture(0, ICON_SHEET);
+        GuiComponent.blit(mStack, x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
+
+        if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26) {
+            //this is not the most proper way to do it,
+            //but works best here and has the least maintenance overhead
+            gui.setToolTip(Arrays.stream(tooltip.split("\n")).map(TextComponent::new).collect(Collectors.toList()));
+        }
+    }
+
+    private static Connection getClientToServerNetworkManager()
+    {
+        return Minecraft.getInstance().getConnection()!=null ? Minecraft.getInstance().getConnection().getConnection() : null;
+    }
+
+    public static void handleClientWorldClosing(ClientLevel world)
+    {
+        Connection client = getClientToServerNetworkManager();
+        // ONLY revert a non-local connection
+        if (client != null && !client.isMemoryConnection())
+        {
+            GameData.revertToFrozen();
+        }
+    }
+
+    public static void firePlayerLogin(MultiPlayerGameMode pc, LocalPlayer player, Connection networkManager) {
+        MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedInEvent(pc, player, networkManager));
+    }
+
+    public static void firePlayerLogout(MultiPlayerGameMode pc, LocalPlayer player) {
+        MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggedOutEvent(pc, player, player != null ? player.connection != null ? player.connection.getConnection() : null : null));
+    }
+
+    public static void firePlayerRespawn(MultiPlayerGameMode pc, LocalPlayer oldPlayer, LocalPlayer newPlayer, Connection networkManager) {
+        MinecraftForge.EVENT_BUS.post(new ClientPlayerNetworkEvent.RespawnEvent(pc, oldPlayer, newPlayer, networkManager));
+    }
+
 
     @Mod.EventBusSubscriber(value = Dist.CLIENT, modid="forge", bus= Mod.EventBusSubscriber.Bus.MOD)
     public static class ClientEvents
