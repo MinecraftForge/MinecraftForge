@@ -33,6 +33,7 @@ import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -47,6 +48,7 @@ public class VersionChecker
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final int MAX_HTTP_REDIRECTS = Integer.getInteger("http.maxRedirects", 20);
+    private static final int HTTP_TIMEOUT_SECS = Integer.getInteger("http.timeoutSecs", 15);
 
     public enum Status
     {
@@ -117,7 +119,7 @@ public class VersionChecker
                     return;
                 }
 
-                client = HttpClient.newHttpClient();
+                client = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(HTTP_TIMEOUT_SECS)).build();
                 gatherMods().forEach(this::process);
             }
 
@@ -130,6 +132,7 @@ public class VersionChecker
                 {
                     var request = HttpRequest.newBuilder()
                             .uri(currentUrl.toURI())
+                            .timeout(Duration.ofSeconds(HTTP_TIMEOUT_SECS))
                             .GET()
                             .build();
 
@@ -146,7 +149,7 @@ public class VersionChecker
                         }
                         catch (NullPointerException e)
                         {
-                            throw new IOException("Got a 3xx response code but Location header was null when trying to fetch " + url);
+                            throw new IOException("Got a 3xx response code but Location header was null while trying to fetch " + url);
                         }
                     }
 
