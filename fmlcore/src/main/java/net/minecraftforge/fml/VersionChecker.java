@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml;
 
-import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -29,11 +28,11 @@ import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -107,6 +106,8 @@ public class VersionChecker
     {
         new Thread("Forge Version Check")
         {
+            private HttpClient client;
+
             @Override
             public void run()
             {
@@ -116,46 +117,46 @@ public class VersionChecker
                     return;
                 }
 
+                client = HttpClient.newHttpClient();
                 gatherMods().forEach(this::process);
             }
 
             /**
-             * Opens stream for given URL while following redirects
+             * Returns the response body as a String for the given URL while following redirects
              */
-            private InputStream openUrlStream(URL url) throws IOException
-            {
+            private String openUrlString(URL url) throws IOException, URISyntaxException, InterruptedException {
                 URL currentUrl = url;
                 for (int redirects = 0; redirects < MAX_HTTP_REDIRECTS; redirects++)
                 {
-                    URLConnection c = currentUrl.openConnection();
-                    if (c instanceof HttpURLConnection)
+                    var request = HttpRequest.newBuilder()
+                            .uri(currentUrl.toURI())
+                            .GET()
+                            .build();
+
+                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                    int responseCode = response.statusCode();
+                    if (responseCode >= 300 && responseCode <= 399)
                     {
-                        HttpURLConnection huc = (HttpURLConnection) c;
-                        huc.setInstanceFollowRedirects(false);
-                        int responseCode = huc.getResponseCode();
-                        if (responseCode >= 300 && responseCode <= 399)
+                        try
                         {
-                            try
-                            {
-                                String loc = huc.getHeaderField("Location");
-                                currentUrl = new URL(currentUrl, loc);
-                                continue;
-                            }
-                            finally
-                            {
-                                huc.disconnect();
-                            }
+                            String newLocation = response.headers().map().get("Location").get(0);
+                            currentUrl = new URL(currentUrl, newLocation);
+                            continue;
+                        }
+                        catch (NullPointerException e)
+                        {
+                            throw new IOException("Got a 3xx response code but Location header was null when trying to fetch " + url);
                         }
                     }
 
-                    return c.getInputStream();
+                    return response.body();
                 }
                 throw new IOException("Too many redirects while trying to fetch " + url);
             }
 
             private void process(IModInfo mod)
             {
-//                HttpClient.newBuilder().build();
                 Status status = PENDING;
                 ComparableVersion target = null;
                 Map<ComparableVersion, String> changes = null;
@@ -166,9 +167,7 @@ public class VersionChecker
                     URL url = mod.getUpdateURL().get();
                     LOGGER.info("[{}] Starting version check at {}", mod.getModId(), url.toString());
 
-                    InputStream con = openUrlStream(url);
-                    String data = new String(ByteStreams.toByteArray(con), StandardCharsets.UTF_8);
-                    con.close();
+                    String data = openUrlString(url);
 
                     LOGGER.debug("[{}] Received version check data:\n{}", mod.getModId(), data);
 
