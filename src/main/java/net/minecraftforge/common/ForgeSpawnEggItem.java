@@ -24,13 +24,11 @@ import net.minecraft.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SpawnEggItem;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -69,7 +67,6 @@ public class ForgeSpawnEggItem extends SpawnEggItem
     }
 
     @Nullable
-    @OnlyIn(Dist.CLIENT)
     public static SpawnEggItem fromEntityType(@Nullable EntityType<?> type)
     {
         SpawnEggItem ret = TYPE_MAP.get(type);
