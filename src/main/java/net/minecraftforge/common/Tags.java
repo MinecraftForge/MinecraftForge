@@ -182,6 +182,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> DYES_WHITE = DyeColor.WHITE.getTag();
 
         public static final IOptionalNamedTag<Item> EGGS = tag("eggs");
+        public static final IOptionalNamedTag<Item> ENCHANTING_MATERIALS = tag("enchanting_materials");
         public static final IOptionalNamedTag<Item> END_STONES = tag("end_stones");
         public static final IOptionalNamedTag<Item> ENDER_PEARLS = tag("ender_pearls");
         public static final IOptionalNamedTag<Item> FEATHERS = tag("feathers");
