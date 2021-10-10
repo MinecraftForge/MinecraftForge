@@ -5,7 +5,7 @@
        this.m_38897_(new Slot(this.f_39449_, 1, 35, 47) {
           public boolean m_5857_(ItemStack p_39517_) {
 -            return p_39517_.m_150930_(Items.f_42534_);
-+            return net.minecraftforge.common.Tags.Items.ENCHANTING_MATERIALS.m_8110_(p_39517_.m_41720_());
++            return p_39517_.m_150922_(net.minecraftforge.common.Tags.Items.ENCHANTING_MATERIALS);
           }
        });
  
