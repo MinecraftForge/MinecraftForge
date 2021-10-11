@@ -164,5 +164,7 @@ license="LGPL v2.1"
     modId="be_onload_test"
 [[mods]]
     modId="forge_spawnegg_test"
+[[mods]]
+    modId="custom_tooltip_test"
 
 # ADD ABOVE THIS LINE
