@@ -9,15 +9,37 @@
                       return;
                    }
                 } else if (blockstate.m_60767_().m_76334_()) {
-@@ -87,7 +_,7 @@
+@@ -86,8 +_,8 @@
+                   return;
                 }
  
-                if (p_76239_.m_46859_(blockpos1.m_7494_()) && this.m_76245_(p_76239_, blockpos1)) {
+-               if (p_76239_.m_46859_(blockpos1.m_7494_()) && this.m_76245_(p_76239_, blockpos1)) {
 -                  p_76239_.m_46597_(blockpos1.m_7494_(), BaseFireBlock.m_49245_(p_76239_, blockpos1));
++               if (p_76239_.m_46859_(blockpos1.m_7494_()) && this.isFlammable(p_76239_, blockpos1, Direction.UP)) {
 +                  p_76239_.m_46597_(blockpos1.m_7494_(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_76239_, blockpos1.m_7494_(), p_76240_, Blocks.f_50083_.m_49966_()));
                 }
              }
           }
+@@ -97,7 +_,7 @@
+ 
+    private boolean m_76227_(LevelReader p_76228_, BlockPos p_76229_) {
+       for(Direction direction : Direction.values()) {
+-         if (this.m_76245_(p_76228_, p_76229_.m_142300_(direction))) {
++         if (this.isFlammable(p_76228_, p_76229_.m_142300_(direction), direction)) {
+             return true;
+          }
+       }
+@@ -105,8 +_,8 @@
+       return false;
+    }
+ 
+-   private boolean m_76245_(LevelReader p_76246_, BlockPos p_76247_) {
+-      return p_76247_.m_123342_() >= p_76246_.m_141937_() && p_76247_.m_123342_() < p_76246_.m_151558_() && !p_76246_.m_46805_(p_76247_) ? false : p_76246_.m_8055_(p_76247_).m_60767_().m_76335_();
++   private boolean isFlammable(LevelReader p_76246_, BlockPos p_76247_, Direction face) {
++      return p_76247_.m_123342_() >= p_76246_.m_141937_() && p_76247_.m_123342_() < p_76246_.m_151558_() && !p_76246_.m_46805_(p_76247_) ? false : p_76246_.m_8055_(p_76247_).isFlammable(p_76246_, p_76247_, face);
+    }
+ 
+    @Nullable
 @@ -164,7 +_,7 @@
           FluidState fluidstate = p_76220_.m_6425_(p_76221_);
           if (this.m_76108_(FluidTags.f_13132_) && fluidstate.m_76153_(FluidTags.f_13131_)) {
