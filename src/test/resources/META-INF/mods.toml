@@ -140,3 +140,7 @@ license="LGPL v2.1"
     modId="player_attack_knockback_test"
 [[mods]]
     modId="lazy_capabilities_on_items"
+[[mods]]
+    modId="send_datapacks_to_client"
+
+# ADD ABOVE THIS LINE
