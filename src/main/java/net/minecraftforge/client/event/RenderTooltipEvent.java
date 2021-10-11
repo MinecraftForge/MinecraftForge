@@ -50,7 +50,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
 {
     @Nonnull
     protected final ItemStack stack;
-    @Deprecated(forRemoval = true) // TODO: remove in 1.18
+    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
     protected final List<? extends FormattedText> lines;
     protected final PoseStack matrixStack; // TODO: rename in 1.18
     protected int x;
@@ -58,7 +58,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     protected Font fr;
     protected final List<ClientTooltipComponent> components;
 
-    @Deprecated(forRemoval = true) // TODO: remove in 1.18
+    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
     public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, @Nonnull Font fr)
     {
         this.stack = stack;
@@ -97,7 +97,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * @deprecated use {@link #getComponents()}
      */
     @Nonnull
-    @Deprecated(forRemoval = true) // TODO: remove in 1.18
+    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
     public List<? extends FormattedText> getLines()
     {
         return lines;
@@ -233,7 +233,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int screenHeight;
         private int maxWidth;
 
-        @Deprecated(forRemoval = true) // TODO: remove in 1.18
+        @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
         public Pre(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull Font fr)
         {
             super(stack, lines, matrixStack, x, y, fr);
