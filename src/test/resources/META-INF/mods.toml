@@ -161,6 +161,10 @@ license="LGPL v2.1"
 [[mods]]
     modId="add_pack_finders_test"
 [[mods]]
+    modId="be_onload_test"
+[[mods]]
+    modId="forge_spawnegg_test"
+[[mods]]
     modId="custom_tooltip_test"
 
 # ADD ABOVE THIS LINE
