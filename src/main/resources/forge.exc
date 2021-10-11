@@ -39,6 +39,7 @@ net/minecraft/entity/item/minecart/ContainerMinecartEntity.changeDimension(Lnet/
 net/minecraft/entity/merchant/villager/AbstractVillagerEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
 net/minecraft/entity/player/PlayerEntity.getDigSpeed(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)F=|p_184813_1_,pos
 net/minecraft/entity/player/ServerPlayerEntity.changeDimension(Lnet/minecraft/world/server/ServerWorld;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_241206_1_,teleporter
+net/minecraft/fluid/LavaFluid.isFlammable(Lnet/minecraft/world/IWorldReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/Direction;)Z=|p_176368_1_,p_176368_2_,face
 net/minecraft/item/BoneMealItem.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;)Z=|p_195966_0_,p_195966_1_,p_195966_2_,player
 net/minecraft/item/DyeableHorseArmorItem.<init>(ILnet/minecraft/util/ResourceLocation;Lnet/minecraft/item/Item$Properties;)V=|p_i50047_1_,texture,p_i50047_3_
 net/minecraft/item/FilledMapItem.getCustomMapData(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;)Lnet/minecraft/world/storage/MapData;=|p_195950_0_,p_195950_1_
