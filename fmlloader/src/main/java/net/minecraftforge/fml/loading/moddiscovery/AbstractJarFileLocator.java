@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -78,7 +79,8 @@ public abstract class AbstractJarFileLocator implements IModLocator {
 
     private Optional<IModFile> createMod(Path path) {
         var mjm = new ModJarMetadata();
-        var sj = SecureJar.from(() -> ModFile.DEFAULTMANIFEST,
+        var sj = SecureJar.from(
+            Manifest::new,
             jar -> jar.findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
             (root, p) -> true,
             path
