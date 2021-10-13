@@ -7,7 +7,7 @@ pipeline {
     agent {
         docker {
             image 'gradle:7-jdk16'
-            args '-v forgegc:/home/gradle/.gradle/'
+            args '-v forgegc:/home/gradle/.gradle_cache/'
         }
     }
     environment {
@@ -32,6 +32,13 @@ pipeline {
                     thumbnail: JENKINS_HEAD,
                     webhookURL: DISCORD_WEBHOOK
                 )
+            }
+        }
+        stage('pull_cache') {
+            steps {
+                sh 'cp -rv /home/gradle/.gradle_cache/jdks/ /home/gradle/.gradle/jdks/'
+                sh 'cp -rv /home/gradle/.gradle_cache/wrapper/ /home/gradle/.gradle/wrapper/'
+                sh 'cp -rv /home/gradle/.gradle_cache/caches/ /home/gradle/.gradle/caches/'
             }
         }
         stage('setup') {
