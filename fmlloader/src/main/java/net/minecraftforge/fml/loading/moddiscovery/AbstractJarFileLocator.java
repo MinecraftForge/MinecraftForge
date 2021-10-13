@@ -79,7 +79,7 @@ public abstract class AbstractJarFileLocator implements IModLocator {
     private Optional<IModFile> createMod(Path path) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(() -> ModFile.DEFAULTMANIFEST,
-            jar -> jar.getManifest() == ModFile.DEFAULTMANIFEST ? mjm : JarMetadata.from(jar, path),
+            jar -> jar.findFile(MODS_TOML).isPresent() ? mjm : JarMetadata.from(jar, path),
             (root, p) -> true,
             path
         );

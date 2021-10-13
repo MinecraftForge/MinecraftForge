@@ -36,9 +36,9 @@ pipeline {
         }
         stage('pull_cache') {
             steps {
-                sh 'cp -rv /home/gradle/.gradle_cache/jdks/ /home/gradle/.gradle/jdks/'
-                sh 'cp -rv /home/gradle/.gradle_cache/wrapper/ /home/gradle/.gradle/wrapper/'
-                sh 'cp -rv /home/gradle/.gradle_cache/caches/ /home/gradle/.gradle/caches/'
+                sh 'cp -r /home/gradle/.gradle_cache/jdks/ /home/gradle/.gradle/jdks/'
+                sh 'cp -r /home/gradle/.gradle_cache/wrapper/ /home/gradle/.gradle/wrapper/'
+                sh 'cp -r /home/gradle/.gradle_cache/caches/ /home/gradle/.gradle/caches/'
             }
         }
         stage('setup') {
