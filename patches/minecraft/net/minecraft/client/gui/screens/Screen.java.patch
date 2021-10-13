@@ -60,7 +60,7 @@
 +   public void renderComponentToolTip(PoseStack poseStack, List<? extends net.minecraft.network.chat.FormattedText> tooltips, int mouseX, int mouseY, @Nullable Font font, ItemStack stack) {
 +      this.tooltipFont = font;
 +      this.tooltipStack = stack;
-+      List<ClientTooltipComponent> components = net.minecraftforge.client.ForgeHooksClient.gatherTooltipComponents(stack, tooltips, mouseX, f_96543_, f_96544_, this.tooltipFont, font);
++      List<ClientTooltipComponent> components = net.minecraftforge.client.ForgeHooksClient.gatherTooltipComponents(stack, tooltips, mouseX, f_96543_, f_96544_, this.tooltipFont, this.f_96547_);
 +      this.m_169383_(poseStack, components, mouseX, mouseY);
 +      this.tooltipFont = null;
 +      this.tooltipStack = null;
