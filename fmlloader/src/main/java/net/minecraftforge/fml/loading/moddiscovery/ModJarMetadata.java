@@ -41,7 +41,7 @@ public final class ModJarMetadata implements JarMetadata {
         }
     }
 
-    private ModJarMetadata() {
+    ModJarMetadata() {
     }
 
     public void setModFile(IModFile file) {
