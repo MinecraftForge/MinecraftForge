@@ -66,7 +66,7 @@
 +      List<ClientTooltipComponent> components = net.minecraftforge.client.ForgeHooksClient.gatherTooltipComponents(stack, tooltips, mouseX, f_96543_, f_96544_, this.tooltipFont, this.f_96547_);
 +      this.m_169383_(poseStack, components, mouseX, mouseY);
 +      this.tooltipFont = null;
-+      this.tooltipStack = null;
++      this.tooltipStack = ItemStack.f_41583_;
     }
  
     public void m_96617_(PoseStack p_96618_, List<? extends FormattedCharSequence> p_96619_, int p_96620_, int p_96621_) {
