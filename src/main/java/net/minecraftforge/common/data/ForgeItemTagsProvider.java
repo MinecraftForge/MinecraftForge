@@ -66,7 +66,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         tag(Tags.Items.DUSTS_REDSTONE).add(Items.REDSTONE);
         addColored(tag(Tags.Items.DYES)::addTags, Tags.Items.DYES, "{color}_dye");
         tag(Tags.Items.EGGS).add(Items.EGG);
-        tag(Tags.Items.ENCHANTING_MATERIALS).addTag(Tags.Items.GEMS_LAPIS);
+        tag(Tags.Items.ENCHANTING_FUELS).addTag(Tags.Items.GEMS_LAPIS);
         copy(Tags.Blocks.END_STONES, Tags.Items.END_STONES);
         tag(Tags.Items.ENDER_PEARLS).add(Items.ENDER_PEARL);
         tag(Tags.Items.FEATHERS).add(Items.FEATHER);
