@@ -5,7 +5,7 @@
                    }
  
 -                  if (p_77608_.m_6425_(p_77609_).m_76153_(FluidTags.f_13131_)) {
-+                  BlockPathTypes blockType = blockstate.getAdjacentNodeType(p_77608_, p_77609_, p_77610_);
++                  BlockPathTypes blockType = blockstate.getAdjacentBlockPathType(p_77608_, p_77609_, p_77610_);
 +                  if (blockType != null) return blockType;
 +                  FluidState fluidState = p_77608_.m_6425_(p_77609_);
 +                  if (fluidState.m_76153_(FluidTags.f_13131_)) {
@@ -20,7 +20,7 @@
  
     protected static BlockPathTypes m_77643_(BlockGetter p_77644_, BlockPos p_77645_) {
        BlockState blockstate = p_77644_.m_8055_(p_77645_);
-+      BlockPathTypes type = blockstate.getBlockPathType(p_77644_, p_77645_);
++      BlockPathTypes type = blockstate.getAiPathNodeType(p_77644_, p_77645_);
 +      if (type != null) return type;
        Block block = blockstate.m_60734_();
        Material material = blockstate.m_60767_();

@@ -30,7 +30,6 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
@@ -109,7 +108,7 @@ public interface IForgeFluid
      * @param level the current {@link Level}'s block reader
      * @param pos the position of the fluid
      * @param entity the pathing entity, can be null
-     * @param originalType the {@link BlockPathTypes} obtained from {@link IForgeBlock#getBlockPathType(BlockState, BlockGetter, BlockPos, Mob)}
+     * @param originalType the {@link BlockPathTypes} obtained from {@link IForgeBlock#getAiPathNodeType(BlockState, BlockGetter, BlockPos, Mob)}
      * @return {@code null} for default behavior; otherwise, returns the fluid's adjacent {@link BlockPathTypes}
      */
     @Nullable

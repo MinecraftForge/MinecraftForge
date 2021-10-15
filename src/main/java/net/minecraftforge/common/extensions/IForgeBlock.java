@@ -496,8 +496,8 @@ public interface IForgeBlock
      *
      * @return the {@link BlockPathTypes}
      */
-    @Nullable
-    default BlockPathTypes getBlockPathType(BlockState state, BlockGetter world, BlockPos pos, @Nullable Mob entity)
+    @Nullable // TODO: Rename to `getBlockPathType` in 1.18
+    default BlockPathTypes getAiPathNodeType(BlockState state, BlockGetter world, BlockPos pos, @Nullable Mob entity)
     {
         return state.getBlock() == Blocks.LAVA ? BlockPathTypes.LAVA : state.isBurning(world, pos) ? BlockPathTypes.DAMAGE_FIRE : null;
     }
@@ -513,7 +513,7 @@ public interface IForgeBlock
      * @param level The level's block getter
      * @param pos The current pos
      * @param entity The pathing entity, can be null
-     * @param originalType The {@link BlockPathTypes} obtained from {@link #getBlockPathType(BlockState, BlockGetter, BlockPos, Mob)}
+     * @param originalType The {@link BlockPathTypes} obtained from {@link #getAiPathNodeType(BlockState, BlockGetter, BlockPos, Mob)}
      * @return null for default behavior; otherwise, returns the block's adjacent {@link BlockPathTypes}
      */
     @Nullable

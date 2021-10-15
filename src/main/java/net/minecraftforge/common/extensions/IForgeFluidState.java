@@ -106,7 +106,7 @@ public interface IForgeFluidState
      * </ul>
      * @param level The current level's block getter
      * @param pos The position of the fluid
-     * @param originalType The {@link BlockPathTypes} obtained from {@link IForgeBlock#getBlockPathType(BlockState, BlockGetter, BlockPos, Mob)}
+     * @param originalType The {@link BlockPathTypes} obtained from {@link IForgeBlock#getAiPathNodeType(BlockState, BlockGetter, BlockPos, Mob)}
      * @return {@code null} for default behavior; otherwise, returns the fluid's adjacent {@link BlockPathTypes}
      */
     @Nullable
@@ -125,7 +125,7 @@ public interface IForgeFluidState
      * @param level The current level's block getter
      * @param pos The position of the fluid
      * @param entity The pathing entity, can be null
-     * @param originalType The {@link BlockPathTypes} obtained from {@link IForgeBlock#getBlockPathType(BlockState, BlockGetter, BlockPos, Mob)}
+     * @param originalType The {@link BlockPathTypes} obtained from {@link IForgeBlock#getAiPathNodeType(BlockState, BlockGetter, BlockPos, Mob)}
      * @return {@code null} for default behavior; otherwise, returns the fluid's adjacent {@link BlockPathTypes}
      */
     @Nullable

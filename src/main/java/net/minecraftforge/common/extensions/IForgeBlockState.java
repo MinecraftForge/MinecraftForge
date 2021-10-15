@@ -558,10 +558,10 @@ public interface IForgeBlockState
      *
      * @return the BlockPathTypes
      */
-    @Nullable
-    default BlockPathTypes getBlockPathType(BlockGetter world, BlockPos pos)
+    @Nullable // TODO: Rename to `getBlockPathType` in 1.18
+    default BlockPathTypes getAiPathNodeType(BlockGetter world, BlockPos pos)
     {
-        return getBlockPathType(world, pos, null);
+        return getAiPathNodeType(world, pos, null);
     }
 
     /**
@@ -576,10 +576,10 @@ public interface IForgeBlockState
      *
      * @return the {@link BlockPathTypes}
      */
-    @Nullable
-    default BlockPathTypes getBlockPathType(BlockGetter world, BlockPos pos, @Nullable Mob entity)
+    @Nullable // TODO: Rename to `getBlockPathType` in 1.18
+    default BlockPathTypes getAiPathNodeType(BlockGetter world, BlockPos pos, @Nullable Mob entity)
     {
-        return self().getBlock().getBlockPathType(self(), world, pos, entity);
+        return self().getBlock().getAiPathNodeType(self(), world, pos, entity);
     }
 
     /**
@@ -593,13 +593,13 @@ public interface IForgeBlockState
      * </ul>
      * @param level The level's block getter
      * @param pos The current pos
-     * @param originalType The {@link BlockPathTypes} obtained from {@link #getBlockPathType(BlockGetter, BlockPos, Mob)}
+     * @param originalType The {@link BlockPathTypes} obtained from {@link #getAiPathNodeType(BlockGetter, BlockPos, Mob)}
      * @return null for default behavior; otherwise, returns the block's adjacent {@link BlockPathTypes}
      */
     @Nullable
-    default BlockPathTypes getAdjacentNodeType(BlockGetter level, BlockPos pos, BlockPathTypes originalType)
+    default BlockPathTypes getAdjacentBlockPathType(BlockGetter level, BlockPos pos, BlockPathTypes originalType)
     {
-        return getAdjacentNodeType(level, pos, null, originalType);
+        return getAdjacentBlockPathType(level, pos, null, originalType);
     }
     
     /**
@@ -614,11 +614,11 @@ public interface IForgeBlockState
      * @param level The level's block getter
      * @param pos The current pos
      * @param entity The pathing entity, can be null
-     * @param originalType The {@link BlockPathTypes} obtained from {@link #getBlockPathType(BlockGetter, BlockPos, Mob)}
+     * @param originalType The {@link BlockPathTypes} obtained from {@link #getAiPathNodeType(BlockGetter, BlockPos, Mob)}
      * @return null for default behavior; otherwise, returns the block's adjacent {@link BlockPathTypes}
      */
     @Nullable
-    default BlockPathTypes getAdjacentNodeType(BlockGetter level, BlockPos pos, @Nullable Mob entity, BlockPathTypes originalType)
+    default BlockPathTypes getAdjacentBlockPathType(BlockGetter level, BlockPos pos, @Nullable Mob entity, BlockPathTypes originalType)
     {
         return self().getBlock().getAdjacentBlockPathType(self(), level, pos, entity, originalType);
     }
