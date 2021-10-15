@@ -33,30 +33,28 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.WaterWalkerEnchantment;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.model.IModelConfiguration;
+import net.minecraftforge.common.Tags;
 
 import javax.annotation.Nullable;
-import java.util.function.*;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.ToDoubleBiFunction;
 import java.util.stream.Stream;
 
 /**
@@ -139,6 +137,15 @@ public class FluidAttributes
     private final int viscosity;
 
     /**
+     * This indicates if the fluid is gaseous.
+     *
+     * Generally this is associated with negative density fluids.
+     */
+    // Check against {@link net.minecraftforge.common.Tags.Fluids#GASEOUS} instead.
+    @Deprecated(forRemoval = true, since = "1.18")
+    private final boolean isGaseous;
+
+    /**
      * The rarity of the fluid.
      *
      * Used primarily in tool tips.
@@ -206,6 +213,7 @@ public class FluidAttributes
         this.temperature = builder.temperature;
         this.viscosity = builder.viscosity;
         this.density = builder.density;
+        this.isGaseous = builder.isGaseous;
         this.rarity = builder.rarity;
         this.motionScale = builder.motionScale;
         this.fallDistanceModifier = builder.fallDistanceModifier;
@@ -345,6 +353,13 @@ public class FluidAttributes
         return this.viscosity;
     }
 
+    // Check against {@link net.minecraftforge.common.Tags.Fluids#GASEOUS} instead.
+    @Deprecated(forRemoval = true, since = "1.18")
+    public final boolean isGaseous()
+    {
+        return this.isGaseous;
+    }
+
     public Rarity getRarity()
     {
         return rarity;
@@ -476,6 +491,9 @@ public class FluidAttributes
     public int getDensity(FluidStack stack){ return getDensity(); }
     public int getTemperature(FluidStack stack){ return getTemperature(); }
     public int getViscosity(FluidStack stack){ return getViscosity(); }
+    // Check against {@link net.minecraftforge.common.Tags.Fluids#GASEOUS} instead.
+    @Deprecated(forRemoval = true, since = "1.18")
+    public boolean isGaseous(FluidStack stack){ return isGaseous() || stack.getFluid().is(Tags.Fluids.GASEOUS); }
     public Rarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
     public ResourceLocation getStillTexture(FluidStack stack) { return getStillTexture(); }
@@ -488,6 +506,9 @@ public class FluidAttributes
     public int getDensity(BlockAndTintGetter level, BlockPos pos){ return getDensity(); }
     public int getTemperature(BlockAndTintGetter level, BlockPos pos){ return getTemperature(); }
     public int getViscosity(BlockAndTintGetter level, BlockPos pos){ return getViscosity(); }
+    // Check against {@link net.minecraftforge.common.Tags.Fluids#GASEOUS} instead.
+    @Deprecated(forRemoval = true, since = "1.18")
+    public boolean isGaseous(BlockAndTintGetter world, BlockPos pos){ return isGaseous() || world.getFluidState(pos).is(Tags.Fluids.GASEOUS); }
     public Rarity getRarity(BlockAndTintGetter level, BlockPos pos){ return getRarity(); }
     public int getColor(BlockAndTintGetter level, BlockPos pos){ return getColor(); }
     public ResourceLocation getStillTexture(BlockAndTintGetter level, BlockPos pos) { return getStillTexture(); }
@@ -523,6 +544,8 @@ public class FluidAttributes
         private int density = 1000;
         private int temperature = 300;
         private int viscosity = 1000;
+        @Deprecated(forRemoval = true, since = "1.18")
+        private boolean isGaseous;
         private Rarity rarity = Rarity.COMMON;
         private ToDoubleBiFunction<FluidState, Entity> motionScale = (state, entity) -> 0.014D;
         private ToDoubleBiFunction<FluidState, Entity> fallDistanceModifier = (state, entity) -> 0.0D;
@@ -583,6 +606,14 @@ public class FluidAttributes
         public final Builder viscosity(int viscosity)
         {
             this.viscosity = viscosity;
+            return this;
+        }
+
+        // Check against {@link net.minecraftforge.common.Tags.Fluids#GASEOUS} instead.
+        @Deprecated(forRemoval = true, since = "1.18")
+        public final Builder gaseous()
+        {
+            isGaseous = true;
             return this;
         }
 

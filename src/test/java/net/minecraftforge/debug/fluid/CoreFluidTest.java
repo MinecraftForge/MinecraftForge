@@ -79,7 +79,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @Mod(CoreFluidTest.MODID)
-public class CoreFluidTest {
+public class CoreFluidTest
+{
     public static final boolean ENABLE = true;
     public static final String MODID = "core_fluid_test";
 
