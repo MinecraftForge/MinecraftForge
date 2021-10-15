@@ -196,7 +196,8 @@ public class CustomTooltipTest
         }
 
         @Override
-        public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+        public void render(PoseStack poseStack, int mouseX, int mouseY, float partialTicks)
+        {
             super.render(poseStack, mouseX, mouseY, partialTicks);
             this.font.draw(poseStack, "* must have Stack, # must have custom font", 0, 0, 0xFFFFFF);
         }
