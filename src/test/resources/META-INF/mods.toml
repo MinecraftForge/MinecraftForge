@@ -165,6 +165,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="forge_spawnegg_test"
 [[mods]]
+    modId="custom_tooltip_test"
+[[mods]]
     modId="core_fluid_test"
 
 # ADD ABOVE THIS LINE
