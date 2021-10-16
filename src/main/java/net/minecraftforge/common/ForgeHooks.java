@@ -675,6 +675,14 @@ public class ForgeHooks
         return e.getBreakChance();
     }
 
+    public static boolean isEnchantingFuel(ItemStack stack)
+    {
+        System.out.println("Is defaulted: " + Tags.Items.ENCHANTING_FUELS.isDefaulted());
+        if (!Tags.Items.ENCHANTING_FUELS.isDefaulted())
+            return stack.is(Tags.Items.ENCHANTING_FUELS);
+        return stack.is(Items.LAPIS_LAZULI);
+    }
+    
     private static ThreadLocal<Player> craftingPlayer = new ThreadLocal<Player>();
     public static void setCraftingPlayer(Player player)
     {
