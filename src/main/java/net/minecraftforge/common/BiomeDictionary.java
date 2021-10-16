@@ -162,7 +162,7 @@ public class BiomeDictionary
          * @param name The name.
          * @return {@code true} if a type exists with this name.
          *
-         * @see #getType(String, Type...) for type naming conventions.
+         * @see #getType(String, Type...) #getType for type naming conventions.
          */
         public static boolean hasType(String name)
         {
