@@ -78,7 +78,7 @@
 -            return new ItemStack(item, i);
 -         }
 -      }
-+      return net.minecraftforge.common.crafting.CraftingHelper.getItemStack(p_151275_, true, true);
++      return net.minecraftforge.common.crafting.CraftingHelper.getItemStack(p_151275_, true, false); // TODO: Swap false to true in 1.18 to mimic vanilla behavior
     }
  
     public static Item m_151278_(JsonObject p_151279_) {
