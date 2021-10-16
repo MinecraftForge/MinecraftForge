@@ -17,22 +17,37 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.data;
+package net.minecraftforge.common.extensions;
 
 import com.google.common.collect.Maps;
-import net.minecraft.advancements.*;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.data.ExistingFileHelper;
 
-import java.util.Map;
+
 import java.util.function.Consumer;
 
-public class AdvancementBuilderHelper
+public interface IForgeAdvancementBuilder
 {
 
-    public static Advancement build(ResourceLocation id, Consumer<Advancement> consumer, ExistingFileHelper fileHelper, Advancement.Builder builder)
+    default Advancement.Builder self()
     {
-        boolean canBuild = builder.canBuild((advancementId) ->
+        return (Advancement.Builder) this;
+    }
+
+    /**
+     * save function for the {@link Advancement.Builder} which uses the {@link ExistingFileHelper} to check if the parent is already known
+     * @param consumer A {@link Consumer} which the build {@link Advancement} is passed to
+     * @param id The {@link ResourceLocation} for the new {@link Advancement}
+     * @param fileHelper The {@link ExistingFileHelper} where all known {@link Advancement}s are registered
+     * @return The build {@link Advancement}
+     * @throws IllegalStateException is thrown if the parent of the {@link Advancement} is not known
+     */
+    default Advancement save(Consumer<Advancement> consumer , ResourceLocation id, ExistingFileHelper fileHelper)
+    {
+        boolean canBuild = self().canBuild((advancementId) ->
         {
             if (fileHelper.exists(advancementId, ResourcePackType.SERVER_DATA, ".json", "advancements"))
             {
@@ -45,7 +60,7 @@ public class AdvancementBuilderHelper
             throw new IllegalStateException("Tried to build Advancement without valid Parent!");
         }
 
-        Advancement advancement = builder.build(id);
+        Advancement advancement = self().build(id);
         consumer.accept(advancement);
         return advancement;
     }
