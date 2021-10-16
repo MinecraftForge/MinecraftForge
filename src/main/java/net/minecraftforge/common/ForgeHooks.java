@@ -677,7 +677,6 @@ public class ForgeHooks
 
     public static boolean isEnchantingFuel(ItemStack stack)
     {
-        System.out.println("Is defaulted: " + Tags.Items.ENCHANTING_FUELS.isDefaulted());
         if (!Tags.Items.ENCHANTING_FUELS.isDefaulted())
             return stack.is(Tags.Items.ENCHANTING_FUELS);
         return stack.is(Items.LAPIS_LAZULI);
