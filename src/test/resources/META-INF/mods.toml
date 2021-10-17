@@ -149,7 +149,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="check_spawn_event_test"
 [[mods]]
-<<<<<<< HEAD
     modId="redstone_sided_connectivity_test"
 [[mods]]
     modId="permissions_changed_event_test"
@@ -169,8 +168,6 @@ license="LGPL v2.1"
     modId="custom_tooltip_test"
 [[mods]]
     modId="full_pots_accessor_demo"
-[[mods]]
-    modId="structure_pool_created_event_test"
 [[mods]]
     modId="structure_pool_modifier_test"
 
