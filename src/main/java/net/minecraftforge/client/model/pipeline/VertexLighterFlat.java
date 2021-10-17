@@ -172,7 +172,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
             t.set(position[0]);
             v2.sub(t);
             v2.cross(v1);
-            v2.normalize();
+            v2.normalize(true);
             for(int v = 0; v < 4; v++)
             {
                 normal[v][0] = v2.x();
