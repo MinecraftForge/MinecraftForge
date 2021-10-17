@@ -1,16 +1,11 @@
 --- a/com/mojang/math/Vector3f.java
 +++ b/com/mojang/math/Vector3f.java
-@@ -137,8 +_,12 @@
-    }
+@@ -138,7 +_,7 @@
  
     public boolean m_122278_() {
-+      return normalize(false);
-+   }
-+
-+   public boolean normalize(boolean force) {
        float f = this.f_122228_ * this.f_122228_ + this.f_122229_ * this.f_122229_ + this.f_122230_ * this.f_122230_;
 -      if ((double)f < 1.0E-5D) {
-+      if (!force && (double)f < 1.0E-5D) {
++      if ((double)f == 0) {
           return false;
        } else {
           float f1 = Mth.m_14195_(f);
