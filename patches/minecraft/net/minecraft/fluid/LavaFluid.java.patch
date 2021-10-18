@@ -25,7 +25,7 @@
     private boolean func_176369_e(IWorldReader p_176369_1_, BlockPos p_176369_2_) {
        for(Direction direction : Direction.values()) {
 -         if (this.func_176368_m(p_176369_1_, p_176369_2_.func_177972_a(direction))) {
-+         if (this.isFlammable(p_176369_1_, p_176369_2_.func_177972_a(direction), direction)) {
++         if (this.isFlammable(p_176369_1_, p_176369_2_.func_177972_a(direction), direction.func_176734_d())) {
              return true;
           }
        }
