@@ -147,6 +147,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<BlockStateProviderType<?>>> BLOCK_STATE_PROVIDER_TYPES = key("worldgen/block_state_provider_type");
         public static final ResourceKey<Registry<BlockPlacerType<?>>> BLOCK_PLACER_TYPES = key("worldgen/block_placer_type");
         public static final ResourceKey<Registry<FoliagePlacerType<?>>> FOLIAGE_PLACER_TYPES = key("worldgen/foliage_placer_type");
+        public static final ResourceKey<Registry<TrunkPlacerType<?>>> TRUNK_PLACER_TYPES = key("worldgen/trunk_placer_type");
         public static final ResourceKey<Registry<TreeDecoratorType<?>>> TREE_DECORATOR_TYPES = key("worldgen/tree_decorator_type");
 
         // Vanilla Dynamic
