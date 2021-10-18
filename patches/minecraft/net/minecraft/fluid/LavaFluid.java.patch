@@ -29,17 +29,22 @@
              return true;
           }
        }
-@@ -104,8 +_,8 @@
+@@ -104,10 +_,15 @@
        return false;
     }
  
--   private boolean func_176368_m(IWorldReader p_176368_1_, BlockPos p_176368_2_) {
--      return p_176368_2_.func_177956_o() >= 0 && p_176368_2_.func_177956_o() < 256 && !p_176368_1_.func_175667_e(p_176368_2_) ? false : p_176368_1_.func_180495_p(p_176368_2_).func_185904_a().func_76217_h();
-+   private boolean isFlammable(IWorldReader p_176368_1_, BlockPos p_176368_2_, Direction face) {
-+      return p_176368_2_.func_177956_o() >= 0 && p_176368_2_.func_177956_o() < 256 && !p_176368_1_.func_175667_e(p_176368_2_) ? false : p_176368_1_.func_180495_p(p_176368_2_).isFlammable(p_176368_1_, p_176368_2_, face);
++   /** @deprecated Forge: use {@link LavaFluid#isFlammable(IWorldReader,BlockPos,Direction)} instead */
+    private boolean func_176368_m(IWorldReader p_176368_1_, BlockPos p_176368_2_) {
+       return p_176368_2_.func_177956_o() >= 0 && p_176368_2_.func_177956_o() < 256 && !p_176368_1_.func_175667_e(p_176368_2_) ? false : p_176368_1_.func_180495_p(p_176368_2_).func_185904_a().func_76217_h();
     }
  
++   private boolean isFlammable(IWorldReader p_176368_1_, BlockPos p_176368_2_, Direction face) {
++      return p_176368_2_.func_177956_o() >= 0 && p_176368_2_.func_177956_o() < 256 && !p_176368_1_.func_175667_e(p_176368_2_) ? false : p_176368_1_.func_180495_p(p_176368_2_).isFlammable(p_176368_1_, p_176368_2_, face);
++   }
++
     @Nullable
+    @OnlyIn(Dist.CLIENT)
+    public IParticleData func_204521_c() {
 @@ -164,7 +_,7 @@
           FluidState fluidstate = p_205574_1_.func_204610_c(p_205574_2_);
           if (this.func_207185_a(FluidTags.field_206960_b) && fluidstate.func_206884_a(FluidTags.field_206959_a)) {
