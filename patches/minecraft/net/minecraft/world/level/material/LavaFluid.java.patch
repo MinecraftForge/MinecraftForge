@@ -25,7 +25,7 @@
     private boolean m_76227_(LevelReader p_76228_, BlockPos p_76229_) {
        for(Direction direction : Direction.values()) {
 -         if (this.m_76245_(p_76228_, p_76229_.m_142300_(direction))) {
-+         if (this.isFlammable(p_76228_, p_76229_.m_142300_(direction), direction)) {
++         if (this.isFlammable(p_76228_, p_76229_.m_142300_(direction), direction.m_122424_())) {
              return true;
           }
        }
