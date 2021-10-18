@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/levelgen/feature/featuresize/FeatureSizeType.java
++++ b/net/minecraft/world/level/levelgen/feature/featuresize/FeatureSizeType.java
+@@ -3,7 +_,7 @@
+ import com.mojang.serialization.Codec;
+ import net.minecraft.core.Registry;
+ 
+-public class FeatureSizeType<P extends FeatureSize> {
++public class FeatureSizeType<P extends FeatureSize> extends net.minecraftforge.registries.ForgeRegistryEntry<FeatureSizeType<?>> {
+    public static final FeatureSizeType<TwoLayersFeatureSize> f_68296_ = m_68303_("two_layers_feature_size", TwoLayersFeatureSize.f_68336_);
+    public static final FeatureSizeType<ThreeLayersFeatureSize> f_68297_ = m_68303_("three_layers_feature_size", ThreeLayersFeatureSize.f_68306_);
+    private final Codec<P> f_68298_;

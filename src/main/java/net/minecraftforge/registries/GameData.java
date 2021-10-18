@@ -27,6 +27,7 @@ import java.util.*;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.featuresize.FeatureSizeType;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -174,6 +175,7 @@ public class GameData
         makeRegistry(BLOCK_STATE_PROVIDER_TYPES, c(BlockStateProviderType.class)).disableSaving().disableSync().create();
         makeRegistry(BLOCK_PLACER_TYPES, c(BlockPlacerType.class)).disableSaving().disableSync().create();
         makeRegistry(FOLIAGE_PLACER_TYPES, c(FoliagePlacerType.class)).disableSaving().disableSync().create();
+        makeRegistry(FEATURE_SIZE_TYPES, c(FeatureSizeType.class)).disableSaving().disableSync().create();
         makeRegistry(TRUNK_PLACER_TYPES, c(TrunkPlacerType.class)).disableSaving().disableSync().create();
         makeRegistry(TREE_DECORATOR_TYPES, c(TreeDecoratorType.class)).disableSaving().disableSync().create();
 

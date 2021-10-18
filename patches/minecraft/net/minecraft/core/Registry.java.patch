@@ -154,7 +154,7 @@
        return FeatureDecorator.f_70681_;
     });
     public static final ResourceKey<Registry<BlockStateProviderType<?>>> f_122846_ = m_122978_("worldgen/block_state_provider_type");
-@@ -308,19 +_,19 @@
+@@ -308,22 +_,22 @@
     public static final ResourceKey<Registry<Codec<? extends ChunkGenerator>>> f_122853_ = m_122978_("worldgen/chunk_generator");
     public static final ResourceKey<Registry<StructureProcessorType<?>>> f_122854_ = m_122978_("worldgen/structure_processor");
     public static final ResourceKey<Registry<StructurePoolElementType<?>>> f_122855_ = m_122978_("worldgen/structure_pool_element");
@@ -178,7 +178,11 @@
 +   @Deprecated public static final Registry<TreeDecoratorType<?>> f_122860_ = forge(f_122850_, () -> {
        return TreeDecoratorType.f_70043_;
     });
-    public static final Registry<FeatureSizeType<?>> f_122888_ = m_122999_(f_122851_, () -> {
+-   public static final Registry<FeatureSizeType<?>> f_122888_ = m_122999_(f_122851_, () -> {
++   @Deprecated public static final Registry<FeatureSizeType<?>> f_122888_ = forge(f_122851_, () -> {
+       return FeatureSizeType.f_68296_;
+    });
+    public static final Registry<Codec<? extends BiomeSource>> f_122889_ = m_122981_(f_122852_, Lifecycle.stable(), () -> {
 @@ -363,16 +_,32 @@
        return m_122981_(p_123000_, Lifecycle.experimental(), p_123001_);
     }
