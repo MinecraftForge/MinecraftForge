@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "XX"
+  ],
+  "key": {
+    "X": {
+      "item": "minecraft:apple"
+    }
+  },
+  "result": {
+    "item": "custom_tooltip_test:test_item"
+  }
+}

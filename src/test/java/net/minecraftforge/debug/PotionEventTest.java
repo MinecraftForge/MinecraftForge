@@ -53,7 +53,7 @@ public class PotionEventTest
     public static void onPotionAdded(PotionEvent.PotionAddedEvent event)
     {
         if (!event.getEntity().getCommandSenderWorld().isClientSide)
-            LOGGER.info("{} has a new PotionEffect {}, the old one was {}", event.getEntityLiving(), event.getPotionEffect(), event.getOldPotionEffect());
+            LOGGER.info("{} has a new PotionEffect {} from {}, the old one was {}", event.getEntityLiving(), event.getPotionEffect(), event.getPotionSource(), event.getOldPotionEffect());
     }
 
     @SubscribeEvent

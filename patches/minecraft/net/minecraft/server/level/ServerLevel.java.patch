@@ -156,6 +156,20 @@
     }
  
     private boolean m_8872_(Entity p_8873_) {
+@@ -754,7 +_,12 @@
+          f_8566_.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.m_20613_(p_8873_.m_6095_()));
+          return false;
+       } else {
+-         return this.f_143244_.m_157533_(p_8873_);
++         if (this.f_143244_.m_157533_(p_8873_)) {
++            p_8873_.onAddedToWorld();
++            return true;
++         } else {
++            return false;
++         }
+       }
+    }
+ 
 @@ -790,10 +_,20 @@
     }
  
