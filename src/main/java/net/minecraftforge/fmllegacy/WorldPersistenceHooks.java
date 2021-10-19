@@ -25,6 +25,7 @@ import net.minecraft.world.level.storage.LevelStorageSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nullable;
 
 public class WorldPersistenceHooks
 {
@@ -39,7 +40,7 @@ public class WorldPersistenceHooks
         worldPersistenceHooks.forEach(wac->tagCompound.put(wac.getModId(), wac.getDataForWriting(levelSave, serverInfo)));
     }
 
-    public static void handleWorldDataLoad(LevelStorageSource.LevelStorageAccess levelSave, WorldData serverInfo, CompoundTag tagCompound)
+    public static void handleWorldDataLoad(LevelStorageSource.LevelStorageAccess levelSave, @Nullable WorldData serverInfo, CompoundTag tagCompound)
     {
         worldPersistenceHooks.forEach(wac->wac.readData(levelSave, serverInfo, tagCompound.getCompound(wac.getModId())));
     }
@@ -47,7 +48,12 @@ public class WorldPersistenceHooks
     public interface WorldPersistenceHook
     {
         String getModId();
+
         CompoundTag getDataForWriting(LevelStorageSource.LevelStorageAccess levelSave, WorldData serverInfo);
-        void readData(LevelStorageSource.LevelStorageAccess levelSave, WorldData serverInfo, CompoundTag tag);
+
+        /**
+         * todo: 1.18: Either remove the WorldData parameter, as it has a dependency on doing an entire pointless resource reload, or refactor this into a better location.
+         */
+        void readData(LevelStorageSource.LevelStorageAccess levelSave, @Nullable WorldData serverInfo, CompoundTag tag);
     }
 }

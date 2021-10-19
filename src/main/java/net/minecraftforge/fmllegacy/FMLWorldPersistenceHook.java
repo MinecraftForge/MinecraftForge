@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Multimap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -84,7 +87,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
     }
 
     @Override
-    public void readData(LevelStorageSource.LevelStorageAccess levelSave, WorldData serverInfo, CompoundTag tag)
+    public void readData(LevelStorageSource.LevelStorageAccess levelSave, @Nullable WorldData serverInfo, CompoundTag tag)
     {
         if (tag.contains("LoadingModList"))
         {

@@ -32,12 +32,25 @@
           } catch (Exception exception) {
              f_78191_.error("Exception reading {}", p_78214_, exception);
              return null;
-@@ -319,7 +_,7 @@
+@@ -319,7 +_,20 @@
        @Nullable
        public WorldData m_78280_(DynamicOps<Tag> p_78281_, DataPackConfig p_78282_) {
           this.m_78313_();
 -         return LevelStorageSource.this.m_78229_(this.f_78271_.toFile(), LevelStorageSource.m_78247_(p_78281_, p_78282_));
 +         return LevelStorageSource.this.m_78229_(this.f_78271_.toFile(), LevelStorageSource.getReader(p_78281_, p_78282_, this));
++      }
++
++      public void runWorldPersistenceHooks() {
++         this.m_78313_();
++         LevelStorageSource.this.m_78229_(this.f_78271_.toFile(), (file, dataFixer) -> {
++            try {
++               CompoundTag compoundTag = NbtIo.m_128937_(file);
++               net.minecraftforge.fmllegacy.WorldPersistenceHooks.handleWorldDataLoad(this, null, compoundTag);
++            } catch (Exception e) {
++               f_78191_.error("Exception reading {}", file, e);
++            }
++            return null;
++         });
        }
  
        @Nullable

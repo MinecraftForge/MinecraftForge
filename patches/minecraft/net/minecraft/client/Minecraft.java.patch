@@ -310,12 +310,13 @@
     }
  
     private boolean m_91278_() {
-@@ -1814,11 +_,11 @@
+@@ -1814,11 +_,12 @@
     }
  
     public void m_91200_(String p_91201_) {
 -      this.m_91219_(p_91201_, RegistryAccess.m_123086_(), Minecraft::m_91133_, Minecraft::m_91135_, false, Minecraft.ExperimentalDialogType.BACKUP);
-+      this.doLoadLevel(p_91201_, RegistryAccess.m_123086_(), Minecraft::m_91133_, Minecraft::m_91135_, false, Minecraft.ExperimentalDialogType.BACKUP, false);
++      // We need to delay the call to RegistryAccess.builtin() as long as possible, in order to allow our world persistence hooks to run. So we pass in null here, and fix it later, only in the case where creating = false
++      this.doLoadLevel(p_91201_, null, Minecraft::m_91133_, Minecraft::m_91135_, false, Minecraft.ExperimentalDialogType.BACKUP, false);
     }
  
     public void m_91202_(String p_91203_, LevelSettings p_91204_, RegistryAccess.RegistryHolder p_91205_, WorldGenSettings p_91206_) {
@@ -337,17 +338,16 @@
        LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess;
        try {
           levelstoragesource$levelstorageaccess = this.f_91031_.m_78260_(p_91220_);
-@@ -1843,12 +_,17 @@
+@@ -1843,12 +_,16 @@
        }
  
        Minecraft.ServerStem minecraft$serverstem;
-+      final RegistryAccess.RegistryHolder dyn_f;
++      final RegistryAccess.RegistryHolder importedRegistries;
        try {
 -         minecraft$serverstem = this.m_91190_(p_91221_, p_91222_, p_91223_, p_91224_, levelstoragesource$levelstorageaccess);
-+         Minecraft.ServerStem mgr = this.m_91190_(p_91221_, p_91222_, p_91223_, p_91224_, levelstoragesource$levelstorageaccess);
-+         // We need to rebuild this if we're loading world, so that it gets all the information from AFTER we inject our mappings from the save.
-+         dyn_f = creating ? p_91221_ : RegistryAccess.m_123086_();
-+         minecraft$serverstem = creating ? mgr : this.m_91190_(dyn_f, p_91222_, p_91223_, p_91224_, levelstoragesource$levelstorageaccess); //Note this runs the injection again... which isn't good.. but hey.. we need a better spot to hook in.
++         if (!creating) levelstoragesource$levelstorageaccess.runWorldPersistenceHooks();
++         importedRegistries = creating ? p_91221_ : RegistryAccess.m_123086_();
++         minecraft$serverstem = this.m_91190_(importedRegistries, p_91222_, p_91223_, p_91224_, levelstoragesource$levelstorageaccess);
 +
        } catch (Exception exception) {
           f_90982_.warn("Failed to load datapacks, can't proceed with server load", (Throwable)exception);
@@ -362,7 +362,7 @@
  
           try {
 -            levelstoragesource$levelstorageaccess.m_78287_(p_91221_, worlddata);
-+            levelstoragesource$levelstorageaccess.m_78287_(dyn_f, worlddata);
++            levelstoragesource$levelstorageaccess.m_78287_(importedRegistries, worlddata);
              minecraft$serverstem.m_91433_().m_136179_();
              YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(this.f_91030_);
              MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
@@ -371,7 +371,7 @@
              GameProfileCache.m_11004_(false);
              this.f_91007_ = MinecraftServer.m_129872_((p_167898_) -> {
 -               return new IntegratedServer(p_167898_, this, p_91221_, levelstoragesource$levelstorageaccess, minecraft$serverstem.m_91432_(), minecraft$serverstem.m_91433_(), worlddata, minecraftsessionservice, gameprofilerepository, gameprofilecache, (p_168000_) -> {
-+               return new IntegratedServer(p_167898_, this, dyn_f, levelstoragesource$levelstorageaccess, minecraft$serverstem.m_91432_(), minecraft$serverstem.m_91433_(), worlddata, minecraftsessionservice, gameprofilerepository, gameprofilecache, (p_168000_) -> {
++               return new IntegratedServer(p_167898_, this, importedRegistries, levelstoragesource$levelstorageaccess, minecraft$serverstem.m_91432_(), minecraft$serverstem.m_91433_(), worlddata, minecraftsessionservice, gameprofilerepository, gameprofilecache, (p_168000_) -> {
                    StoringChunkProgressListener storingchunkprogresslistener = new StoringChunkProgressListener(p_168000_ + 0);
                    this.f_90999_.set(storingchunkprogresslistener);
                    return ProcessorChunkProgressListener.m_143583_(storingchunkprogresslistener, this.f_91023_::add);
@@ -390,7 +390,7 @@
        } else {
           this.m_91143_(p_91225_, p_91220_, flag, () -> {
 -            this.m_91219_(p_91220_, p_91221_, p_91222_, p_91223_, p_91224_, Minecraft.ExperimentalDialogType.NONE);
-+            this.doLoadLevel(p_91220_, dyn_f, p_91222_, p_91223_, p_91224_, Minecraft.ExperimentalDialogType.NONE, creating);
++            this.doLoadLevel(p_91220_, importedRegistries, p_91222_, p_91223_, p_91224_, Minecraft.ExperimentalDialogType.NONE, creating);
           });
           minecraft$serverstem.close();
  

@@ -101,6 +101,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * todo: 1.18, remove WorldPersistenceHooks.WorldPersistenceHook. It is unnecessary
+ */
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 {
@@ -149,7 +152,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CrashReportCallables.registerCrashCallable("FML", ForgeVersion::getSpec);
         CrashReportCallables.registerCrashCallable("Forge", ()->ForgeVersion.getGroup()+":"+ForgeVersion.getVersion());
 
-        WorldPersistenceHooks.addHook(this);
         WorldPersistenceHooks.addHook(new FMLWorldPersistenceHook());
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::registerCapabilities);
@@ -208,25 +210,20 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         WorldWorkerManager.clear();
     }
 
+    /**
+     * todo 1.18: remove
+     */
+    @Deprecated(since = "1.17.1", forRemoval = true)
     @Override
     public CompoundTag getDataForWriting(LevelStorageSource.LevelStorageAccess levelSave, WorldData serverInfo)
     {
-        CompoundTag forgeData = new CompoundTag();
-        CompoundTag dims = new CompoundTag();
-        //TODO Dimensions
-//        DimensionManager.writeRegistry(dims);
-        if (!dims.isEmpty())
-            forgeData.put("dims", dims);
-        return forgeData;
+        return new CompoundTag();
     }
 
     @Override
+    @Deprecated(since = "1.17.1", forRemoval = true)
     public void readData(LevelStorageSource.LevelStorageAccess levelSave, WorldData serverInfo, CompoundTag tag)
     {
-        //TODO Dimensions
-//        if (tag.contains("dims", 10))
-//            DimensionManager.readRegistry(tag.getCompound("dims"));
-//        DimensionManager.processScheduledDeletions(levelSave);
     }
 
     public void mappingChanged(FMLModIdMappingEvent evt)
@@ -235,6 +232,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 
     @Override
+    @Deprecated(since = "1.17.1", forRemoval = true)
     public String getModId()
     {
         return ForgeVersion.MOD_ID;
