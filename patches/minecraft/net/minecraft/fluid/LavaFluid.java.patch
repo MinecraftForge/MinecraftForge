@@ -38,8 +38,8 @@
        return p_176368_2_.func_177956_o() >= 0 && p_176368_2_.func_177956_o() < 256 && !p_176368_1_.func_175667_e(p_176368_2_) ? false : p_176368_1_.func_180495_p(p_176368_2_).func_185904_a().func_76217_h();
     }
  
-+   private boolean isFlammable(IWorldReader p_176368_1_, BlockPos p_176368_2_, Direction face) {
-+      return p_176368_2_.func_177956_o() >= 0 && p_176368_2_.func_177956_o() < 256 && !p_176368_1_.func_175667_e(p_176368_2_) ? false : p_176368_1_.func_180495_p(p_176368_2_).isFlammable(p_176368_1_, p_176368_2_, face);
++   private boolean isFlammable(IWorldReader world, BlockPos pos, Direction face) {
++      return pos.func_177956_o() >= 0 && pos.func_177956_o() < 256 && !world.func_175667_e(pos) ? false : world.func_180495_p(pos).isFlammable(world, pos, face);
 +   }
 +
     @Nullable
