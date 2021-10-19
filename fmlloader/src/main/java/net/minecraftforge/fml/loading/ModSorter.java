@@ -92,6 +92,7 @@ public class ModSorter
         AtomicInteger counter = new AtomicInteger();
         Map<IModFileInfo, Integer> infos = modFiles.stream()
                 .map(ModFile::getModFileInfo)
+                .filter(ModFileInfo.class::isInstance)
                 .collect(toMap(Function.identity(), e -> counter.incrementAndGet()));
         infos.keySet().forEach(i -> graph.addNode((ModFileInfo) i));
         modFiles.stream()
