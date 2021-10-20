@@ -140,5 +140,7 @@ license="LGPL v2.1"
     modId="player_attack_knockback_test"
 [[mods]]
     modId="send_datapacks_to_client"
+[[mods]]
+    modId="full_pots_accessor_demo"
 
 # ADD ABOVE THIS LINE
