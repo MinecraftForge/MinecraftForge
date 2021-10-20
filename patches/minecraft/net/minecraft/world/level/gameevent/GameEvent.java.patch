@@ -1,5 +1,15 @@
 --- a/net/minecraft/world/level/gameevent/GameEvent.java
 +++ b/net/minecraft/world/level/gameevent/GameEvent.java
+@@ -2,7 +_,8 @@
+ 
+ import net.minecraft.core.Registry;
+ 
+-public class GameEvent {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
++public class GameEvent extends net.minecraftforge.registries.ForgeRegistryEntry<GameEvent> {
+    public static final GameEvent f_157791_ = m_157822_("block_attach");
+    public static final GameEvent f_157792_ = m_157822_("block_change");
+    public static final GameEvent f_157793_ = m_157822_("block_close");
 @@ -51,10 +_,15 @@
     public static final int f_157788_ = 16;
     private final String f_157789_;

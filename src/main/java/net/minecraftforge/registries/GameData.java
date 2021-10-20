@@ -27,6 +27,7 @@ import java.util.*;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.feature.featuresize.FeatureSizeType;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 import net.minecraft.world.level.material.Material;
@@ -181,6 +182,9 @@ public class GameData
 
         // Dynamic Worldgen
         makeRegistry(BIOMES, Biome.class).disableSync().create();
+
+        // Other
+        makeRegistry(GAME_EVENT, c(GameEvent.class)).disableSaving().disableSync().create();
 
         // Custom forge registries
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();

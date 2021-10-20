@@ -11,8 +11,12 @@
  public abstract class Registry<T> implements Codec<T>, Keyable, IdMap<T> {
     protected static final Logger f_122894_ = LogManager.getLogger();
     private static final Map<ResourceLocation, Supplier<?>> f_122834_ = Maps.newLinkedHashMap();
-@@ -152,43 +_,43 @@
-    public static final DefaultedRegistry<GameEvent> f_175412_ = m_122995_(f_175423_, "step", () -> {
+@@ -149,46 +_,46 @@
+    public static final ResourceKey<Registry<DimensionType>> f_122818_ = m_122978_("dimension_type");
+    public static final ResourceKey<Registry<Level>> f_122819_ = m_122978_("dimension");
+    public static final ResourceKey<Registry<LevelStem>> f_122820_ = m_122978_("dimension");
+-   public static final DefaultedRegistry<GameEvent> f_175412_ = m_122995_(f_175423_, "step", () -> {
++   @Deprecated public static final DefaultedRegistry<GameEvent> f_175412_ = forge(f_175423_, "step", () -> {
        return GameEvent.f_157785_;
     });
 -   public static final Registry<SoundEvent> f_122821_ = m_122999_(f_122898_, () -> {

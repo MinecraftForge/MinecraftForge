@@ -29,6 +29,7 @@ import net.minecraft.world.entity.schedule.Schedule;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.decoration.Motive;
 import net.minecraft.world.entity.npc.VillagerProfession;
+import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.feature.featuresize.FeatureSizeType;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 import net.minecraft.world.level.material.Fluid;
@@ -145,6 +146,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<Feature<?>>> FEATURES = key("worldgen/feature");
         public static final ResourceKey<Registry<FeatureDecorator<?>>> DECORATORS = key("worldgen/decorator");
         public static final ResourceKey<Registry<ChunkStatus>> CHUNK_STATUS = key("chunk_status");
+        public static final ResourceKey<Registry<GameEvent>> GAME_EVENT = key("game_event");
         public static final ResourceKey<Registry<StructureFeature<?>>> STRUCTURE_FEATURES = key("worldgen/structure_feature");
         public static final ResourceKey<Registry<BlockStateProviderType<?>>> BLOCK_STATE_PROVIDER_TYPES = key("worldgen/block_state_provider_type");
         public static final ResourceKey<Registry<BlockPlacerType<?>>> BLOCK_PLACER_TYPES = key("worldgen/block_placer_type");
