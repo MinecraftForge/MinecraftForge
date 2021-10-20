@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacerType.java
 +++ b/net/minecraft/world/level/levelgen/feature/trunkplacers/TrunkPlacerType.java
-@@ -3,7 +_,7 @@
+@@ -3,7 +_,8 @@
  import com.mojang.serialization.Codec;
  import net.minecraft.core.Registry;
  
 -public class TrunkPlacerType<P extends TrunkPlacer> {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public class TrunkPlacerType<P extends TrunkPlacer> extends net.minecraftforge.registries.ForgeRegistryEntry<TrunkPlacerType<?>> {
     public static final TrunkPlacerType<StraightTrunkPlacer> f_70315_ = m_70326_("straight_trunk_placer", StraightTrunkPlacer.f_70245_);
     public static final TrunkPlacerType<ForkingTrunkPlacer> f_70316_ = m_70326_("forking_trunk_placer", ForkingTrunkPlacer.f_70145_);

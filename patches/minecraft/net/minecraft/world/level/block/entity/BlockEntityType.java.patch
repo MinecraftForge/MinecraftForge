@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntityType.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntityType.java
-@@ -17,7 +_,7 @@
+@@ -17,7 +_,8 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 -public class BlockEntityType<T extends BlockEntity> {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public class BlockEntityType<T extends BlockEntity> extends net.minecraftforge.registries.ForgeRegistryEntry<BlockEntityType<?>> {
     private static final Logger f_58913_ = LogManager.getLogger();
     public static final BlockEntityType<FurnaceBlockEntity> f_58917_ = m_58956_("furnace", BlockEntityType.Builder.m_155273_(FurnaceBlockEntity::new, Blocks.f_50094_));

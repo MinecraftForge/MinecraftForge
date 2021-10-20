@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/entity/EntityType.java
 +++ b/net/minecraft/world/entity/EntityType.java
-@@ -146,7 +_,7 @@
+@@ -146,7 +_,8 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 -public class EntityType<T extends Entity> implements EntityTypeTest<Entity, T> {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public class EntityType<T extends Entity> extends net.minecraftforge.registries.ForgeRegistryEntry<EntityType<?>> implements EntityTypeTest<Entity, T> {
     private static final Logger f_20534_ = LogManager.getLogger();
     public static final String f_147037_ = "EntityTag";
