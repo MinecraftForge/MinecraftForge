@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/entity/ai/sensing/SensorType.java
 +++ b/net/minecraft/world/entity/ai/sensing/SensorType.java
-@@ -6,7 +_,7 @@
+@@ -6,7 +_,8 @@
  import net.minecraft.world.entity.animal.axolotl.AxolotlAi;
  import net.minecraft.world.entity.animal.goat.GoatAi;
  
 -public class SensorType<U extends Sensor<?>> {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public class SensorType<U extends Sensor<?>> extends net.minecraftforge.registries.ForgeRegistryEntry<SensorType<?>> {
     public static final SensorType<DummySensor> f_26809_ = m_26828_("dummy", DummySensor::new);
     public static final SensorType<NearestItemSensor> f_26810_ = m_26828_("nearest_items", NearestItemSensor::new);

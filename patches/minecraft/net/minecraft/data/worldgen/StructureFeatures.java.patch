@@ -1,0 +1,10 @@
+--- a/net/minecraft/data/worldgen/StructureFeatures.java
++++ b/net/minecraft/data/worldgen/StructureFeatures.java
+@@ -18,6 +_,7 @@
+ import net.minecraft.world.level.levelgen.heightproviders.UniformHeight;
+ import net.minecraft.world.level.levelgen.structure.OceanRuinFeature;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class StructureFeatures {
+    public static final ConfiguredStructureFeature<JigsawConfiguration, ? extends StructureFeature<JigsawConfiguration>> f_127239_ = m_127267_("pillager_outpost", StructureFeature.f_67013_.m_67065_(new JigsawConfiguration(() -> {
+       return PillagerOutpostPools.f_127180_;

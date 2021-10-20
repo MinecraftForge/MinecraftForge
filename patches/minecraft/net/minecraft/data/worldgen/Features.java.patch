@@ -1,0 +1,10 @@
+--- a/net/minecraft/data/worldgen/Features.java
++++ b/net/minecraft/data/worldgen/Features.java
+@@ -121,6 +_,7 @@
+ import net.minecraft.world.level.material.FluidState;
+ import net.minecraft.world.level.material.Fluids;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class Features {
+    public static final ConfiguredFeature<?, ?> f_126887_ = m_127055_("end_spike", Feature.f_65732_.m_65815_(new SpikeConfiguration(false, ImmutableList.of(), (BlockPos)null)));
+    public static final ConfiguredFeature<?, ?> f_126940_ = m_127055_("end_gateway", Feature.f_65734_.m_65815_(EndGatewayConfiguration.m_67650_(ServerLevel.f_8562_, true)).m_7679_(FeatureDecorator.f_70704_.m_70720_(DecoratorConfiguration.f_67591_)).m_7679_(Features.Decorators.f_127084_).m_64152_().m_158241_(700));

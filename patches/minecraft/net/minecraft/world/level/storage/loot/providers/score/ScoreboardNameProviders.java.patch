@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/storage/loot/providers/score/ScoreboardNameProviders.java
++++ b/net/minecraft/world/level/storage/loot/providers/score/ScoreboardNameProviders.java
+@@ -5,6 +_,7 @@
+ import net.minecraft.world.level.storage.loot.GsonAdapterFactory;
+ import net.minecraft.world.level.storage.loot.Serializer;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class ScoreboardNameProviders {
+    public static final LootScoreProviderType f_165868_ = m_165873_("fixed", new FixedScoreboardNameProvider.Serializer());
+    public static final LootScoreProviderType f_165869_ = m_165873_("context", new ContextScoreboardNameProvider.Serializer());

@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/feature/blockplacers/BlockPlacerType.java
 +++ b/net/minecraft/world/level/levelgen/feature/blockplacers/BlockPlacerType.java
-@@ -3,7 +_,7 @@
+@@ -3,7 +_,8 @@
  import com.mojang.serialization.Codec;
  import net.minecraft.core.Registry;
  
 -public class BlockPlacerType<P extends BlockPlacer> {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public class BlockPlacerType<P extends BlockPlacer> extends net.minecraftforge.registries.ForgeRegistryEntry<BlockPlacerType<?>> {
     public static final BlockPlacerType<SimpleBlockPlacer> f_67487_ = m_67495_("simple_block_placer", SimpleBlockPlacer.f_67528_);
     public static final BlockPlacerType<DoublePlantPlacer> f_67488_ = m_67495_("double_plant_placer", DoublePlantPlacer.f_67517_);

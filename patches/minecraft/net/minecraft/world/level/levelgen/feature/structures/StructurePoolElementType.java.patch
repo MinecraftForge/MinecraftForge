@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/levelgen/feature/structures/StructurePoolElementType.java
++++ b/net/minecraft/world/level/levelgen/feature/structures/StructurePoolElementType.java
+@@ -3,6 +_,7 @@
+ import com.mojang.serialization.Codec;
+ import net.minecraft.core.Registry;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public interface StructurePoolElementType<P extends StructurePoolElement> {
+    StructurePoolElementType<SinglePoolElement> f_69233_ = m_69241_("single_pool_element", SinglePoolElement.f_69097_);
+    StructurePoolElementType<ListPoolElement> f_69234_ = m_69241_("list_pool_element", ListPoolElement.f_69057_);

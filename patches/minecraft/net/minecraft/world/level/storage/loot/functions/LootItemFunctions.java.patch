@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/storage/loot/functions/LootItemFunctions.java
++++ b/net/minecraft/world/level/storage/loot/functions/LootItemFunctions.java
+@@ -8,6 +_,7 @@
+ import net.minecraft.world.level.storage.loot.LootContext;
+ import net.minecraft.world.level.storage.loot.Serializer;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class LootItemFunctions {
+    public static final BiFunction<ItemStack, LootContext, ItemStack> f_80735_ = (p_80760_, p_80761_) -> {
+       return p_80760_;

@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/storage/loot/entries/LootPoolEntries.java
++++ b/net/minecraft/world/level/storage/loot/entries/LootPoolEntries.java
+@@ -5,6 +_,7 @@
+ import net.minecraft.world.level.storage.loot.GsonAdapterFactory;
+ import net.minecraft.world.level.storage.loot.Serializer;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class LootPoolEntries {
+    public static final LootPoolEntryType f_79619_ = m_79629_("empty", new EmptyLootItem.Serializer());
+    public static final LootPoolEntryType f_79620_ = m_79629_("item", new LootItem.Serializer());

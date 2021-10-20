@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/gameevent/PositionSourceType.java
++++ b/net/minecraft/world/level/gameevent/PositionSourceType.java
+@@ -5,6 +_,7 @@
+ import net.minecraft.network.FriendlyByteBuf;
+ import net.minecraft.resources.ResourceLocation;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public interface PositionSourceType<T extends PositionSource> {
+    PositionSourceType<BlockPositionSource> f_157871_ = m_157877_("block", new BlockPositionSource.Type());
+    PositionSourceType<EntityPositionSource> f_157872_ = m_157877_("entity", new EntityPositionSource.Type());

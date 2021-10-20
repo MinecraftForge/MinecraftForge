@@ -1,0 +1,10 @@
+--- a/net/minecraft/data/worldgen/ProcessorLists.java
++++ b/net/minecraft/data/worldgen/ProcessorLists.java
+@@ -21,6 +_,7 @@
+ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
+ import net.minecraft.world.level.levelgen.structure.templatesystem.TagMatchTest;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class ProcessorLists {
+    private static final ProcessorRule f_127196_ = new ProcessorRule(new RandomBlockMatchTest(Blocks.f_50730_, 0.01F), AlwaysTrueTest.f_73954_, Blocks.f_50706_.m_49966_());
+    private static final ProcessorRule f_127197_ = new ProcessorRule(new RandomBlockMatchTest(Blocks.f_50706_, 0.5F), AlwaysTrueTest.f_73954_, Blocks.f_50730_.m_49966_());

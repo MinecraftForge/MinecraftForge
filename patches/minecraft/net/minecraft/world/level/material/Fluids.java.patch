@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/level/material/Fluids.java
++++ b/net/minecraft/world/level/material/Fluids.java
+@@ -2,6 +_,7 @@
+ 
+ import net.minecraft.core.Registry;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class Fluids {
+    public static final Fluid f_76191_ = m_76197_("empty", new EmptyFluid());
+    public static final FlowingFluid f_76192_ = m_76197_("flowing_water", new WaterFluid.Flowing());
