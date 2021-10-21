@@ -29,17 +29,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MavenDirectoryLocator extends AbstractJarFileLocator {
+public class MavenDirectoryLocator extends AbstractModLocator
+{
+    public static final String MAVEN_LIBS = "maven libs";
     private List<Path> modCoords;
+
+    public MavenDirectoryLocator() {
+        super(MAVEN_LIBS);
+    }
 
     @Override
     public Stream<Path> scanCandidates() {
         return modCoords.stream();
-    }
-
-    @Override
-    public String name() {
-        return "maven libs";
     }
 
     public String toString() {

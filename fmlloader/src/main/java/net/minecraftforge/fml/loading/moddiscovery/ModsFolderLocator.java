@@ -37,7 +37,8 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 /**
  * Support loading mods located in JAR files in the mods folder
  */
-public class ModsFolderLocator extends AbstractJarFileLocator {
+public class ModsFolderLocator extends AbstractModLocator
+{
     private static final String SUFFIX = ".jar";
     private static final Logger LOGGER = LogManager.getLogger();
     private final Path modFolder;
@@ -52,6 +53,7 @@ public class ModsFolderLocator extends AbstractJarFileLocator {
     }
 
     ModsFolderLocator(Path modFolder, String name) {
+        super(name);
         this.modFolder = modFolder;
         this.customName = name;
     }
@@ -64,11 +66,6 @@ public class ModsFolderLocator extends AbstractJarFileLocator {
         return uncheck(()-> Files.list(this.modFolder))
                 .filter(p-> !excluded.contains(p) && StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX))
                 .sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString())));
-    }
-
-    @Override
-    public String name() {
-        return customName;
     }
 
     @Override
