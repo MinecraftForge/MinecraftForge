@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/carver/WorldCarver.java
 +++ b/net/minecraft/world/level/levelgen/carver/WorldCarver.java
-@@ -27,7 +_,7 @@
+@@ -27,7 +_,8 @@
  import net.minecraft.world.level.material.Fluids;
  import org.apache.commons.lang3.mutable.MutableBoolean;
  
 -public abstract class WorldCarver<C extends CarverConfiguration> {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public abstract class WorldCarver<C extends CarverConfiguration> extends net.minecraftforge.registries.ForgeRegistryEntry<WorldCarver<?>> {
     public static final WorldCarver<CaveCarverConfiguration> f_64974_ = m_65065_("cave", new CaveWorldCarver(CaveCarverConfiguration.f_159154_));
     public static final WorldCarver<CaveCarverConfiguration> f_64975_ = m_65065_("nether_cave", new NetherWorldCarver(CaveCarverConfiguration.f_159154_));

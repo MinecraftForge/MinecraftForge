@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/item/alchemy/Potions.java
++++ b/net/minecraft/world/item/alchemy/Potions.java
+@@ -4,6 +_,7 @@
+ import net.minecraft.world.effect.MobEffectInstance;
+ import net.minecraft.world.effect.MobEffects;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class Potions {
+    public static final Potion f_43598_ = m_43625_("empty", new Potion());
+    public static final Potion f_43599_ = m_43625_("water", new Potion());

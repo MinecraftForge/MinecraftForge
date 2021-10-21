@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/placement/FeatureDecorator.java
 +++ b/net/minecraft/world/level/levelgen/placement/FeatureDecorator.java
-@@ -13,7 +_,7 @@
+@@ -13,7 +_,8 @@
  import net.minecraft.world.level.levelgen.feature.configurations.RangeDecoratorConfiguration;
  import net.minecraft.world.level.levelgen.placement.nether.CountMultiLayerDecorator;
  
 -public abstract class FeatureDecorator<DC extends DecoratorConfiguration> {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public abstract class FeatureDecorator<DC extends DecoratorConfiguration> extends net.minecraftforge.registries.ForgeRegistryEntry<FeatureDecorator<?>> {
     public static final FeatureDecorator<NoneDecoratorConfiguration> f_70681_ = m_70717_("nope", new NopePlacementDecorator(NoneDecoratorConfiguration.f_67810_));
     public static final FeatureDecorator<DecoratedDecoratorConfiguration> f_70678_ = m_70717_("decorated", new DecoratedDecorator(DecoratedDecoratorConfiguration.f_70570_));

@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/feature/Feature.java
 +++ b/net/minecraft/world/level/levelgen/feature/Feature.java
-@@ -49,7 +_,7 @@
+@@ -49,7 +_,8 @@
  import net.minecraft.world.level.levelgen.feature.configurations.UnderwaterMagmaConfiguration;
  import net.minecraft.world.level.levelgen.feature.configurations.VegetationPatchConfiguration;
  
 -public abstract class Feature<FC extends FeatureConfiguration> {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public abstract class Feature<FC extends FeatureConfiguration> extends net.minecraftforge.registries.ForgeRegistryEntry<Feature<?>> {
     public static final Feature<NoneFeatureConfiguration> f_65759_ = m_65807_("no_op", new NoOpFeature(NoneFeatureConfiguration.f_67815_));
     public static final Feature<TreeConfiguration> f_65760_ = m_65807_("tree", new TreeFeature(TreeConfiguration.f_68184_));

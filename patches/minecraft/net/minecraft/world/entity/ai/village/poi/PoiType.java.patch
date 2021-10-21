@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/entity/ai/village/poi/PoiType.java
 +++ b/net/minecraft/world/entity/ai/village/poi/PoiType.java
-@@ -21,7 +_,7 @@
+@@ -21,7 +_,8 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.block.state.properties.BedPart;
  
 -public class PoiType {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public class PoiType extends net.minecraftforge.registries.ForgeRegistryEntry<PoiType> {
     private static final Supplier<Set<PoiType>> f_27353_ = Suppliers.memoize(() -> {
        return Registry.f_122869_.m_123024_().map(VillagerProfession::m_35622_).collect(Collectors.toSet());

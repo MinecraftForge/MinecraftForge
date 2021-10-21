@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/feature/StructureFeature.java
 +++ b/net/minecraft/world/level/levelgen/feature/StructureFeature.java
-@@ -49,7 +_,7 @@
+@@ -49,7 +_,8 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 -public abstract class StructureFeature<C extends FeatureConfiguration> {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public abstract class StructureFeature<C extends FeatureConfiguration> extends net.minecraftforge.registries.ForgeRegistryEntry<StructureFeature<?>> implements net.minecraftforge.common.extensions.IForgeStructureFeature {
     public static final BiMap<String, StructureFeature<?>> f_67012_ = HashBiMap.create();
     private static final Map<StructureFeature<?>, GenerationStep.Decoration> f_67032_ = Maps.newHashMap();

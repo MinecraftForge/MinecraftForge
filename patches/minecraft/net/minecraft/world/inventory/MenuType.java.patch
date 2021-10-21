@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/inventory/MenuType.java
 +++ b/net/minecraft/world/inventory/MenuType.java
-@@ -3,7 +_,7 @@
+@@ -3,7 +_,8 @@
  import net.minecraft.core.Registry;
  import net.minecraft.world.entity.player.Inventory;
  
 -public class MenuType<T extends AbstractContainerMenu> {
++@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public class MenuType<T extends AbstractContainerMenu> extends net.minecraftforge.registries.ForgeRegistryEntry<MenuType<?>> implements net.minecraftforge.common.extensions.IForgeContainerType<T> {
     public static final MenuType<ChestMenu> f_39957_ = m_39988_("generic_9x1", ChestMenu::m_39234_);
     public static final MenuType<ChestMenu> f_39958_ = m_39988_("generic_9x2", ChestMenu::m_39243_);
