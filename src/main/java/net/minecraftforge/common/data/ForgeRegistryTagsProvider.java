@@ -36,13 +36,13 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 public abstract class ForgeRegistryTagsProvider<T extends IForgeRegistryEntry<T>> extends TagsProvider<T>
 {
-    //TODO add game event tags here when they become a forge registry
     //Special handling for vanilla tag types in case someone decides to use the ForgeRegistryTagsProvider instead of one of the vanilla subtypes
     private static final Map<IForgeRegistry<?>, String> vanillaTypes = ImmutableMap.<IForgeRegistry<?>, String>builder()
           .put(ForgeRegistries.BLOCKS, "blocks")
           .put(ForgeRegistries.ENTITIES, "entity_types")
           .put(ForgeRegistries.FLUIDS, "fluids")
           .put(ForgeRegistries.ITEMS, "items")
+          .put(ForgeRegistries.GAME_EVENTS, "game_events")
           .build();
 
     private static <T extends IForgeRegistryEntry<T>> Registry<T> wrapRegistry(IForgeRegistry<T> registryIn)

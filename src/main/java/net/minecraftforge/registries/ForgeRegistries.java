@@ -113,6 +113,9 @@ public class ForgeRegistries
     // Dynamic/Data driven.
     public static final IForgeRegistry<Biome> BIOMES = RegistryManager.ACTIVE.getRegistry(Keys.BIOMES);
 
+    // Other
+    public static final IForgeRegistry<GameEvent> GAME_EVENTS = RegistryManager.ACTIVE.getRegistry(GameEvent.class);
+
     // Custom forge registries
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
     public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
@@ -146,7 +149,6 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<Feature<?>>> FEATURES = key("worldgen/feature");
         public static final ResourceKey<Registry<FeatureDecorator<?>>> DECORATORS = key("worldgen/decorator");
         public static final ResourceKey<Registry<ChunkStatus>> CHUNK_STATUS = key("chunk_status");
-        public static final ResourceKey<Registry<GameEvent>> GAME_EVENT = key("game_event");
         public static final ResourceKey<Registry<StructureFeature<?>>> STRUCTURE_FEATURES = key("worldgen/structure_feature");
         public static final ResourceKey<Registry<BlockStateProviderType<?>>> BLOCK_STATE_PROVIDER_TYPES = key("worldgen/block_state_provider_type");
         public static final ResourceKey<Registry<BlockPlacerType<?>>> BLOCK_PLACER_TYPES = key("worldgen/block_placer_type");
@@ -157,6 +159,9 @@ public class ForgeRegistries
 
         // Vanilla Dynamic
         public static final ResourceKey<Registry<Biome>> BIOMES = key("worldgen/biome");
+
+        // Other
+        public static final ResourceKey<Registry<GameEvent>> GAME_EVENT = key("game_event");
 
         //Forge
         public static final ResourceKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
