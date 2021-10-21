@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/gameevent/BlockPositionSource.java
++++ b/net/minecraft/world/level/gameevent/BlockPositionSource.java
+@@ -31,7 +_,7 @@
+       return PositionSourceType.f_157871_;
+    }
+ 
+-   public static class Type implements PositionSourceType<BlockPositionSource> {
++   public static class Type extends net.minecraftforge.registries.ForgeRegistryEntry<PositionSourceType<?>> implements PositionSourceType<BlockPositionSource> {
+       public BlockPositionSource m_142281_(FriendlyByteBuf p_157716_) {
+          return new BlockPositionSource(Optional.of(p_157716_.m_130135_()));
+       }

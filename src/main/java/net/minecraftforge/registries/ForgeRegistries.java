@@ -30,6 +30,7 @@ import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.decoration.Motive;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.gameevent.PositionSourceType;
 import net.minecraft.world.level.levelgen.feature.featuresize.FeatureSizeType;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 import net.minecraft.world.level.material.Fluid;
@@ -58,6 +59,12 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerTy
 import net.minecraft.world.level.levelgen.placement.FeatureDecorator;
 import net.minecraft.world.level.levelgen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import net.minecraft.world.level.storage.loot.providers.nbt.LootNbtProviderType;
+import net.minecraft.world.level.storage.loot.providers.number.LootNumberProviderType;
+import net.minecraft.world.level.storage.loot.providers.score.LootScoreProviderType;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldType;
@@ -115,6 +122,13 @@ public class ForgeRegistries
 
     // Other
     public static final IForgeRegistry<GameEvent> GAME_EVENTS = RegistryManager.ACTIVE.getRegistry(GameEvent.class);
+    public static final IForgeRegistry<LootPoolEntryType> LOOT_ENTRY_REGISTRY = RegistryManager.ACTIVE.getRegistry(LootPoolEntryType.class);
+    public static final IForgeRegistry<LootItemFunctionType> LOOT_FUNCTION_REGISTRY = RegistryManager.ACTIVE.getRegistry(LootItemFunctionType.class);
+    public static final IForgeRegistry<LootItemConditionType> LOOT_ITEM_REGISTRY = RegistryManager.ACTIVE.getRegistry(LootItemConditionType.class);
+    public static final IForgeRegistry<LootNumberProviderType> LOOT_NUMBER_PROVIDER_REGISTRY = RegistryManager.ACTIVE.getRegistry(LootNumberProviderType.class);
+    public static final IForgeRegistry<LootNbtProviderType> LOOT_NBT_PROVIDER_REGISTRY = RegistryManager.ACTIVE.getRegistry(LootNbtProviderType.class);
+    public static final IForgeRegistry<LootScoreProviderType> LOOT_SCORE_PROVIDER_REGISTRY = RegistryManager.ACTIVE.getRegistry(LootScoreProviderType.class);
+    public static final IForgeRegistry<PositionSourceType<?>> POSITION_SOURCE_TYPE_REGISTRY = RegistryManager.ACTIVE.getRegistry(PositionSourceType.class);
 
     // Custom forge registries
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
@@ -162,6 +176,13 @@ public class ForgeRegistries
 
         // Other
         public static final ResourceKey<Registry<GameEvent>> GAME_EVENT = key("game_event");
+        public static final ResourceKey<Registry<LootPoolEntryType>> LOOT_ENTRY_REGISTRY = key("loot_pool_entry_type");
+        public static final ResourceKey<Registry<LootItemFunctionType>> LOOT_FUNCTION_REGISTRY = key("loot_function_type");
+        public static final ResourceKey<Registry<LootItemConditionType>> LOOT_ITEM_REGISTRY = key("loot_condition_type");
+        public static final ResourceKey<Registry<LootNumberProviderType>> LOOT_NUMBER_PROVIDER_REGISTRY = key("loot_number_provider_type");
+        public static final ResourceKey<Registry<LootNbtProviderType>> LOOT_NBT_PROVIDER_REGISTRY = key("loot_nbt_provider_type");
+        public static final ResourceKey<Registry<LootScoreProviderType>> LOOT_SCORE_PROVIDER_REGISTRY = key("loot_score_provider_type");
+        public static final ResourceKey<Registry<PositionSourceType<?>>> POSITION_SOURCE_TYPE_REGISTRY = key("position_source_type");
 
         //Forge
         public static final ResourceKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");

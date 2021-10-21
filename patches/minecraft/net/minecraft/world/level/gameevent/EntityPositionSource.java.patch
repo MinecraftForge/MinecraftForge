@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/gameevent/EntityPositionSource.java
++++ b/net/minecraft/world/level/gameevent/EntityPositionSource.java
+@@ -33,7 +_,7 @@
+       return PositionSourceType.f_157872_;
+    }
+ 
+-   public static class Type implements PositionSourceType<EntityPositionSource> {
++   public static class Type extends net.minecraftforge.registries.ForgeRegistryEntry<PositionSourceType<?>>  implements PositionSourceType<EntityPositionSource> {
+       public EntityPositionSource m_142281_(FriendlyByteBuf p_157741_) {
+          return new EntityPositionSource(p_157741_.m_130242_());
+       }

@@ -28,6 +28,7 @@ import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.gameevent.PositionSourceType;
 import net.minecraft.world.level.levelgen.feature.featuresize.FeatureSizeType;
 import net.minecraft.world.level.levelgen.feature.trunkplacers.TrunkPlacerType;
 import net.minecraft.world.level.material.Material;
@@ -70,6 +71,12 @@ import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerTy
 import net.minecraft.world.level.levelgen.placement.FeatureDecorator;
 import net.minecraft.world.level.levelgen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryType;
+import net.minecraft.world.level.storage.loot.functions.LootItemFunctionType;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import net.minecraft.world.level.storage.loot.providers.nbt.LootNbtProviderType;
+import net.minecraft.world.level.storage.loot.providers.number.LootNumberProviderType;
+import net.minecraft.world.level.storage.loot.providers.score.LootScoreProviderType;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
@@ -184,7 +191,14 @@ public class GameData
         makeRegistry(BIOMES, Biome.class).disableSync().create();
 
         // Other
-        makeRegistry(GAME_EVENT, c(GameEvent.class)).disableSaving().disableSync().create();
+        makeRegistry(GAME_EVENT, c(GameEvent.class)).create();
+        makeRegistry(LOOT_ENTRY_REGISTRY, c(LootPoolEntryType.class)).create();
+        makeRegistry(LOOT_FUNCTION_REGISTRY, c(LootItemFunctionType.class)).create();
+        makeRegistry(LOOT_ITEM_REGISTRY, c(LootItemConditionType.class)).create();
+        makeRegistry(LOOT_NUMBER_PROVIDER_REGISTRY, c(LootNumberProviderType.class)).create();
+        makeRegistry(LOOT_NBT_PROVIDER_REGISTRY, c(LootNbtProviderType.class)).create();
+        makeRegistry(LOOT_SCORE_PROVIDER_REGISTRY, c(LootScoreProviderType.class)).create();
+        makeRegistry(POSITION_SOURCE_TYPE_REGISTRY, c(PositionSourceType.class)).create();
 
         // Custom forge registries
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();

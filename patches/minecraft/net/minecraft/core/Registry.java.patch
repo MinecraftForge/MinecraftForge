@@ -71,7 +71,7 @@
        return ChunkStatus.f_62314_;
     });
     public static final Registry<RuleTestType<?>> f_122861_ = m_122999_(f_122911_, () -> {
-@@ -197,43 +_,43 @@
+@@ -197,61 +_,61 @@
     public static final Registry<PosRuleTestType<?>> f_122862_ = m_122999_(f_122912_, () -> {
        return PosRuleTestType.f_74205_;
     });
@@ -90,7 +90,8 @@
 +   @Deprecated public static final Registry<Attribute> f_122866_ = forge(f_122916_, () -> {
        return Attributes.f_22286_;
     });
-    public static final Registry<PositionSourceType<?>> f_175420_ = m_122999_(f_175408_, () -> {
+-   public static final Registry<PositionSourceType<?>> f_175420_ = m_122999_(f_175408_, () -> {
++   @Deprecated public static final Registry<PositionSourceType<?>> f_175420_ = forge(f_175408_, () -> {
        return PositionSourceType.f_157871_;
     });
 -   public static final Registry<StatType<?>> f_122867_ = m_122999_(f_122917_, () -> {
@@ -124,7 +125,31 @@
 +   @Deprecated public static final Registry<Activity> f_122874_ = forge(f_122814_, () -> {
        return Activity.f_37979_;
     });
-    public static final Registry<LootPoolEntryType> f_122875_ = m_122999_(f_122815_, () -> {
+-   public static final Registry<LootPoolEntryType> f_122875_ = m_122999_(f_122815_, () -> {
++   @Deprecated public static final Registry<LootPoolEntryType> f_122875_ = forge(f_122815_, () -> {
+       return LootPoolEntries.f_79619_;
+    });
+-   public static final Registry<LootItemFunctionType> f_122876_ = m_122999_(f_122816_, () -> {
++   @Deprecated public static final Registry<LootItemFunctionType> f_122876_ = forge(f_122816_, () -> {
+       return LootItemFunctions.f_80736_;
+    });
+-   public static final Registry<LootItemConditionType> f_122877_ = m_122999_(f_122817_, () -> {
++   @Deprecated public static final Registry<LootItemConditionType> f_122877_ = forge(f_122817_, () -> {
+       return LootItemConditions.f_81811_;
+    });
+-   public static final Registry<LootNumberProviderType> f_175421_ = m_122999_(f_175409_, () -> {
++   @Deprecated public static final Registry<LootNumberProviderType> f_175421_ = forge(f_175409_, () -> {
+       return NumberProviders.f_165731_;
+    });
+-   public static final Registry<LootNbtProviderType> f_175422_ = m_122999_(f_175410_, () -> {
++   @Deprecated public static final Registry<LootNbtProviderType> f_175422_ = forge(f_175410_, () -> {
+       return NbtProviders.f_165624_;
+    });
+-   public static final Registry<LootScoreProviderType> f_175413_ = m_122999_(f_175411_, () -> {
++   @Deprecated public static final Registry<LootScoreProviderType> f_175413_ = forge(f_175411_, () -> {
+       return ScoreboardNameProviders.f_165869_;
+    });
+    public static final ResourceKey<Registry<FloatProviderType<?>>> f_175414_ = m_122978_("float_provider_type");
 @@ -275,19 +_,19 @@
     public static final ResourceKey<Registry<StructureTemplatePool>> f_122884_ = m_122978_("worldgen/template_pool");
     public static final ResourceKey<Registry<Biome>> f_122885_ = m_122978_("worldgen/biome");

@@ -1,0 +1,37 @@
+--- a/net/minecraft/world/level/storage/loot/predicates/LootItemConditionType.java
++++ b/net/minecraft/world/level/storage/loot/predicates/LootItemConditionType.java
+@@ -3,8 +_,33 @@
+ import net.minecraft.world.level.storage.loot.Serializer;
+ import net.minecraft.world.level.storage.loot.SerializerType;
+ 
+-public class LootItemConditionType extends SerializerType<LootItemCondition> {
++public class LootItemConditionType extends SerializerType<LootItemCondition> implements net.minecraftforge.registries.IForgeRegistryEntry<LootItemConditionType> {
+    public LootItemConditionType(Serializer<? extends LootItemCondition> p_81810_) {
+       super(p_81810_);
+    }
++
++   private net.minecraft.resources.ResourceLocation registryName = null;
++
++   public final LootItemConditionType setRegistryName(String name) {
++      if (getRegistryName() != null)
++         throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
++
++      this.registryName = checkRegistryName(name);
++      return this;
++   }
++
++   //Helper functions
++   public final LootItemConditionType setRegistryName(net.minecraft.resources.ResourceLocation name){ return setRegistryName(name.toString()); }
++
++   public final LootItemConditionType setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
++
++   public final net.minecraft.resources.ResourceLocation getRegistryName()
++   {
++      return registryName;
++   }
++
++   public final Class<LootItemConditionType> getRegistryType() { return LootItemConditionType.class; }
++
++   net.minecraft.resources.ResourceLocation checkRegistryName(String name) { return net.minecraftforge.registries.GameData.checkPrefix(name, true); }
++
+ }
