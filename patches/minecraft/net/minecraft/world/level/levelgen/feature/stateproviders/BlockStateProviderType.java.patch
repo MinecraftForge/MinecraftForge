@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/level/levelgen/feature/stateproviders/BlockStateProviderType.java
 +++ b/net/minecraft/world/level/levelgen/feature/stateproviders/BlockStateProviderType.java
-@@ -3,7 +_,8 @@
+@@ -3,7 +_,7 @@
  import com.mojang.serialization.Codec;
  import net.minecraft.core.Registry;
  
 -public class BlockStateProviderType<P extends BlockStateProvider> {
-+@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public class BlockStateProviderType<P extends BlockStateProvider> extends net.minecraftforge.registries.ForgeRegistryEntry<BlockStateProviderType<?>> {
     public static final BlockStateProviderType<SimpleStateProvider> f_68752_ = m_68762_("simple_state_provider", SimpleStateProvider.f_68797_);
     public static final BlockStateProviderType<WeightedStateProvider> f_68753_ = m_68762_("weighted_state_provider", WeightedStateProvider.f_68808_);

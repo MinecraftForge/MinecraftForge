@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/entity/schedule/Schedule.java
 +++ b/net/minecraft/world/entity/schedule/Schedule.java
-@@ -8,7 +_,8 @@
+@@ -8,7 +_,7 @@
  import java.util.stream.Collectors;
  import net.minecraft.core.Registry;
  
 -public class Schedule {
-+@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public class Schedule extends net.minecraftforge.registries.ForgeRegistryEntry<Schedule> {
     public static final int f_150241_ = 2000;
     public static final int f_150242_ = 7000;

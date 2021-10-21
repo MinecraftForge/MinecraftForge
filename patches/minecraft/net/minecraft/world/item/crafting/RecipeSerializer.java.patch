@@ -1,11 +1,10 @@
 --- a/net/minecraft/world/item/crafting/RecipeSerializer.java
 +++ b/net/minecraft/world/item/crafting/RecipeSerializer.java
-@@ -5,7 +_,8 @@
+@@ -5,7 +_,7 @@
  import net.minecraft.network.FriendlyByteBuf;
  import net.minecraft.resources.ResourceLocation;
  
 -public interface RecipeSerializer<T extends Recipe<?>> {
-+@net.minecraftforge.registries.ObjectHolder("minecraft")
 +public interface RecipeSerializer<T extends Recipe<?>> extends net.minecraftforge.registries.IForgeRegistryEntry<RecipeSerializer<?>> {
     RecipeSerializer<ShapedRecipe> f_44076_ = m_44098_("crafting_shaped", new ShapedRecipe.Serializer());
     RecipeSerializer<ShapelessRecipe> f_44077_ = m_44098_("crafting_shapeless", new ShapelessRecipe.Serializer());
