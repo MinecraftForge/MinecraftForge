@@ -349,7 +349,7 @@
     }
  
     protected float m_6108_() {
-@@ -1956,18 +_,23 @@
+@@ -1956,14 +_,19 @@
     public void m_7023_(Vec3 p_21280_) {
        if (this.m_6142_() || this.m_6109_()) {
           double d0 = 0.08D;
@@ -371,35 +371,22 @@
              double d8 = this.m_20186_();
              float f5 = this.m_20142_() ? 0.9F : this.m_6108_();
              float f6 = 0.02F;
--            float f7 = (float)EnchantmentHelper.m_44922_(this);
-+            float f7 = (float) EnchantmentHelper.m_44922_(this);
-             if (f7 > 3.0F) {
-                f7 = 3.0F;
-             }
 @@ -1985,6 +_,7 @@
                 f5 = 0.96F;
              }
  
-+            f6 *= (float) this.m_21051_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22135_();
++            f6 *= (float)this.m_21051_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22135_();
              this.m_19920_(f6, p_21280_);
              this.m_6478_(MoverType.SELF, this.m_20184_());
              Vec3 vec36 = this.m_20184_();
-@@ -1992,11 +_,12 @@
-                vec36 = new Vec3(vec36.f_82479_, 0.2D, vec36.f_82481_);
+@@ -1998,6 +_,7 @@
+             if (this.f_19862_ && this.m_20229_(vec32.f_82479_, vec32.f_82480_ + (double)0.6F - this.m_20186_() + d8, vec32.f_82481_)) {
+                this.m_20334_(vec32.f_82479_, (double)0.3F, vec32.f_82481_);
              }
- 
--            this.m_20256_(vec36.m_82542_((double)f5, (double)0.8F, (double)f5));
-+            this.m_20256_(vec36.m_82542_((double) f5, (double) 0.8F, (double) f5));
-             Vec3 vec32 = this.m_20994_(d0, flag, this.m_20184_());
-             this.m_20256_(vec32);
--            if (this.f_19862_ && this.m_20229_(vec32.f_82479_, vec32.f_82480_ + (double)0.6F - this.m_20186_() + d8, vec32.f_82481_)) {
--               this.m_20334_(vec32.f_82479_, (double)0.3F, vec32.f_82481_);
-+            if (this.f_19862_ && this.m_20229_(vec32.f_82479_, vec32.f_82480_ + (double) 0.6F - this.m_20186_() + d8, vec32.f_82481_)) {
-+               this.m_20334_(vec32.f_82479_, (double) 0.3F, vec32.f_82481_);
 +            }
-             }
           } else if (this.m_20077_() && this.m_6129_() && !this.m_7479_(fluidstate.m_76152_())) {
              double d7 = this.m_20186_();
+             this.m_19920_(0.02F, p_21280_);
 @@ -2063,7 +_,7 @@
              }
           } else {
