@@ -5,7 +5,7 @@
        this.m_38897_(new Slot(this.f_39449_, 1, 35, 47) {
           public boolean m_5857_(ItemStack p_39517_) {
 -            return p_39517_.m_150930_(Items.f_42534_);
-+            return net.minecraftforge.common.Tags.Items.GEMS_LAPIS.m_8110_(p_39517_.m_41720_());
++            return p_39517_.m_150922_(net.minecraftforge.common.Tags.Items.ENCHANTING_FUELS);
           }
        });
  
@@ -76,3 +76,12 @@
                 }
  
                 for(int j1 = 0; j1 < 3; ++j1) {
+@@ -253,7 +_,7 @@
+             if (!this.m_38903_(itemstack1, 2, 38, true)) {
+                return ItemStack.f_41583_;
+             }
+-         } else if (itemstack1.m_150930_(Items.f_42534_)) {
++         } else if (itemstack1.m_150922_(net.minecraftforge.common.Tags.Items.ENCHANTING_FUELS)) {
+             if (!this.m_38903_(itemstack1, 1, 2, true)) {
+                return ItemStack.f_41583_;
+             }
