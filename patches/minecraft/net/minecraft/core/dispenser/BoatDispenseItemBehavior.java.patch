@@ -8,11 +8,11 @@
 +      boat.m_38332_(this.f_123369_);
        double d3;
 -      if (level.m_6425_(blockpos).m_76153_(FluidTags.f_13131_)) {
-+      if (level.m_6425_(blockpos).canBoat(boat)) {
++      if (level.m_6425_(blockpos).supportsBoating(boat)) {
           d3 = 1.0D;
        } else {
 -         if (!level.m_8055_(blockpos).m_60795_() || !level.m_6425_(blockpos.m_7495_()).m_76153_(FluidTags.f_13131_)) {
-+         if (!level.m_8055_(blockpos).m_60795_() || !level.m_6425_(blockpos.m_7495_()).canBoat(boat)) {
++         if (!level.m_8055_(blockpos).m_60795_() || !level.m_6425_(blockpos.m_7495_()).supportsBoating(boat)) {
              return this.f_123368_.m_6115_(p_123375_, p_123376_);
           }
  

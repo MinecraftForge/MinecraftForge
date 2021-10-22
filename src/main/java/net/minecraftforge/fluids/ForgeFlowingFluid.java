@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fluids;
 
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -58,14 +57,14 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     /**
      * The {@link TriPredicate} used to determine if the {@link Fluid} can multiply and create new source blocks.
      */
-    private final TriPredicate<FluidState, LevelReader, BlockPos> canMultiply;
+    private final TriPredicate<FluidState, LevelReader, BlockPos> canConvertToSource;
 
     protected ForgeFlowingFluid(Properties properties)
     {
         this.flowing = properties.flowing;
         this.still = properties.still;
         this.builder = properties.attributes;
-        this.canMultiply = properties.canMultiply;
+        this.canConvertToSource = properties.canConvertToSource;
         this.bucket = properties.bucket;
         this.block = properties.block;
         this.slopeFindDistance = properties.slopeFindDistance;
@@ -93,8 +92,8 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     }
 
     @Override
-    public boolean canMultiply(FluidState state, LevelReader reader, BlockPos pos) {
-        return this.canMultiply.test(state, reader, pos);
+    public boolean canConvertToSource(FluidState state, LevelReader reader, BlockPos pos) {
+        return this.canConvertToSource.test(state, reader, pos);
     }
 
     @Override
@@ -209,7 +208,7 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
         private int levelDecreasePerBlock = 1;
         private float explosionResistance = 1;
         private int tickRate = 5;
-        private TriPredicate<FluidState, LevelReader, BlockPos> canMultiply = (fluidState, levelReader, blockPos) -> false;
+        private TriPredicate<FluidState, LevelReader, BlockPos> canConvertToSource = (fluidState, levelReader, blockPos) -> false;
 
         public Properties(Supplier<? extends Fluid> still, Supplier<? extends Fluid> flowing, FluidAttributes.Builder attributes)
         {
@@ -218,9 +217,9 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
             this.attributes = attributes;
         }
 
-        public Properties canMultiply(TriPredicate<FluidState, LevelReader, BlockPos> canMultiply)
+        public Properties canConvertToSource(TriPredicate<FluidState, LevelReader, BlockPos> canConvertToSource)
         {
-            this.canMultiply = canMultiply;
+            this.canConvertToSource = canConvertToSource;
             return this;
         }
 

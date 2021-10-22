@@ -46,7 +46,7 @@
  
     private static boolean m_52088_(BlockState p_52089_) {
 -      return p_52089_.m_60819_().m_76153_(FluidTags.f_13131_);
-+      return p_52089_.m_60819_().canHydrate(p_52089_);
++      return p_52089_.m_60819_().canHydrate(p_52089_); // Checks if the fluidlogged block can be hydrated by the fluid
     }
  
     public BlockState m_7417_(BlockState p_52074_, Direction p_52075_, BlockState p_52076_, LevelAccessor p_52077_, BlockPos p_52078_, BlockPos p_52079_) {

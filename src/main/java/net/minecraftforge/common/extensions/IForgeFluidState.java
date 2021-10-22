@@ -24,6 +24,7 @@ import net.minecraft.tags.Tag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
@@ -56,24 +57,6 @@ public interface IForgeFluidState
     {
         return self().getType().getExplosionResistance(self(), level, pos, explosion);
     }
-
-    /**
-     * Queried for the Fluids Base {@link BlockPathTypes}.
-     * Used to determine what the path node priority value is for the fluid.
-     * <ul>
-     * <li>Negative Values = Untraversable</li>
-     * <li>0 = Best</li>
-     * <li>Highest = Worst</li>
-     * </ul>
-     * @param level The current level's block reader
-     * @param pos The position of the fluid
-     * @return {@code null} for default behavior; otherwise, returns the fluid's PathNodeType for pathfinding purposes
-     */
-    @Nullable
-    default BlockPathTypes getBlockPathType(BlockGetter level, BlockPos pos)
-    {
-        return getBlockPathType(level, pos, null);
-    }
     
     /**
      * Queried for the Fluids Base {@link BlockPathTypes}.
@@ -93,26 +76,6 @@ public interface IForgeFluidState
     default BlockPathTypes getBlockPathType(BlockGetter level, BlockPos pos, @Nullable Mob entity)
     {
         return self().getType().getBlockPathType(self(), level, pos, entity);
-    }
-
-    /**
-     * Gets the {@link BlockPathTypes} of the fluid when adjacent to some pathfinding entity.
-     * The {@link BlockPathTypes} dictates the "danger" level for an entity to pathfind through/over a specific block.
-     * This is what is used to dictate that for example "Lava should not be pathed through" when an entity pathfinder is trying to decide on a path.
-     * <ul>
-     * <li>Negative Values = Untraversable</li>
-     * <li>0 = Best</li>
-     * <li>Highest = Worst</li>
-     * </ul>
-     * @param level The current level's block getter
-     * @param pos The position of the fluid
-     * @param originalType The {@link BlockPathTypes} obtained from {@link IForgeBlock#getAiPathNodeType(BlockState, BlockGetter, BlockPos, Mob)}
-     * @return {@code null} for default behavior; otherwise, returns the fluid's adjacent {@link BlockPathTypes}
-     */
-    @Nullable
-    default BlockPathTypes getAdjacentBlockPathType(BlockGetter level, BlockPos pos, BlockPathTypes originalType)
-    {
-        return getAdjacentBlockPathType(level, pos, null, originalType);
     }
 
     /**
@@ -153,10 +116,12 @@ public interface IForgeFluidState
      * @param entity The {@link LivingEntity} whose motion is being handled
      * @param travelVector The current travel {@link Vec3}
      * @param gravity The current gravity being applied to the {@link LivingEntity}
+     * @return {@code true} if the fluid should be handled the same as water,
+     *         {@code false} for custom handling in this method
      */
-    default void handleMotion(LivingEntity entity, Vec3 travelVector, double gravity)
+    default boolean handleMotion(LivingEntity entity, Vec3 travelVector, double gravity)
     {
-        self().getType().handleMotion(self(), entity, travelVector, gravity);
+        return self().getType().handleMotion(self(), entity, travelVector, gravity);
     }
 
     /**
@@ -177,6 +142,16 @@ public interface IForgeFluidState
     default void sink(LivingEntity entity)
     {
         self().getType().sink(self(), entity);
+    }
+
+    /**
+     * Handles the motion of an item while in a fluid.
+     *
+     * @param item the item in the fluid
+     */
+    default void handleItemMovement(ItemEntity item)
+    {
+        self().getType().handleItemMovement(self(), item);
     }
 
     /**
@@ -241,9 +216,9 @@ public interface IForgeFluidState
      * @param otherState The secondary state to check
      * @return Whether the two provided {@link FluidState}s {@link Fluid}s match.
      */
-    default boolean is(FluidState otherState)
+    default boolean sameType(FluidState otherState)
     {
-        return self().getType().is(self(), otherState);
+        return self().getType().sameType(self(), otherState);
     }
 
     /**
@@ -252,8 +227,19 @@ public interface IForgeFluidState
      * @param boat The supplied {@link Boat} entity
      * @return Whether the fluid supports boats being used with it.
      */
-    default boolean canBoat(Boat boat)
+    default boolean supportsBoating(Boat boat)
     {
-        return self().getType().canBoat(self(), boat);
+        return self().getType().supportsBoating(self(), boat);
+    }
+
+    /**
+     * Checks whether the fluid is not implemented by vanilla. The empty fluid is excluded
+     * as it is a placeholder for no fluid.
+     *
+     * @return {@code true} if the fluid was not implemented by vanilla, {@code false} otherwise
+     */
+    default boolean isCustomFluid()
+    {
+        return self().getType().isCustomFluid(self());
     }
 }

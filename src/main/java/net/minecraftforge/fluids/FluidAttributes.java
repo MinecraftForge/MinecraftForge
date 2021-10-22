@@ -142,7 +142,7 @@ public class FluidAttributes
      * Generally this is associated with negative density fluids.
      */
     // Check against {@link net.minecraftforge.common.Tags.Fluids#GASEOUS} instead.
-    @Deprecated(forRemoval = true, since = "1.18")
+    @Deprecated(forRemoval = true, since = "1.17.1")
     private final boolean isGaseous;
 
     /**
@@ -197,7 +197,7 @@ public class FluidAttributes
     /**
      * Used to decide if a {@link Boat} should have intended interaction behaviour with a fluid.
      */
-    private final BiPredicate<FluidState, Boat> canBoat;
+    private final BiPredicate<FluidState, Boat> supportsBoating;
 
     protected FluidAttributes(Builder builder, Fluid fluid)
     {
@@ -221,7 +221,7 @@ public class FluidAttributes
         this.canDrown = builder.canDrown;
         this.canExtinguish = builder.canExtinguish;
         this.canHydrate = builder.canHydrate;
-        this.canBoat = builder.canBoat;
+        this.supportsBoating = builder.supportsBoating;
     }
 
     public ItemStack getBucket(FluidStack stack)
@@ -320,7 +320,7 @@ public class FluidAttributes
     /**
      * @return Returns the translation key of this fluid.
      */
-    @Deprecated(forRemoval = true, since = "1.18")
+    @Deprecated(forRemoval = true, since = "1.17.1")
     public String getTranslationKey()
     {
         return this.translationKey;
@@ -354,7 +354,7 @@ public class FluidAttributes
     }
 
     // Check against {@link net.minecraftforge.common.Tags.Fluids#GASEOUS} instead.
-    @Deprecated(forRemoval = true, since = "1.18")
+    @Deprecated(forRemoval = true, since = "1.17.1")
     public final boolean isGaseous()
     {
         return this.isGaseous;
@@ -449,9 +449,9 @@ public class FluidAttributes
      * @param boat the boat interacting with the fluid
      * @return {@code true} if the boat can interact with the fluid, {@code false} otherwise
      */
-    public boolean canBoat(FluidState state, Boat boat)
+    public boolean supportsBoating(FluidState state, Boat boat)
     {
-        return this.canBoat.test(state, boat);
+        return this.supportsBoating.test(state, boat);
     }
 
     public ResourceLocation getStillTexture()
@@ -492,7 +492,7 @@ public class FluidAttributes
     public int getTemperature(FluidStack stack){ return getTemperature(); }
     public int getViscosity(FluidStack stack){ return getViscosity(); }
     // Check against {@link net.minecraftforge.common.Tags.Fluids#GASEOUS} instead.
-    @Deprecated(forRemoval = true, since = "1.18")
+    @Deprecated(forRemoval = true, since = "1.17.1")
     public boolean isGaseous(FluidStack stack){ return isGaseous() || stack.getFluid().is(Tags.Fluids.GASEOUS); }
     public Rarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
@@ -507,7 +507,7 @@ public class FluidAttributes
     public int getTemperature(BlockAndTintGetter level, BlockPos pos){ return getTemperature(); }
     public int getViscosity(BlockAndTintGetter level, BlockPos pos){ return getViscosity(); }
     // Check against {@link net.minecraftforge.common.Tags.Fluids#GASEOUS} instead.
-    @Deprecated(forRemoval = true, since = "1.18")
+    @Deprecated(forRemoval = true, since = "1.17.1")
     public boolean isGaseous(BlockAndTintGetter world, BlockPos pos){ return isGaseous() || world.getFluidState(pos).is(Tags.Fluids.GASEOUS); }
     public Rarity getRarity(BlockAndTintGetter level, BlockPos pos){ return getRarity(); }
     public int getColor(BlockAndTintGetter level, BlockPos pos){ return getColor(); }
@@ -544,7 +544,7 @@ public class FluidAttributes
         private int density = 1000;
         private int temperature = 300;
         private int viscosity = 1000;
-        @Deprecated(forRemoval = true, since = "1.18")
+        @Deprecated(forRemoval = true, since = "1.17.1")
         private boolean isGaseous;
         private Rarity rarity = Rarity.COMMON;
         private ToDoubleBiFunction<FluidState, Entity> motionScale = (state, entity) -> 0.014D;
@@ -553,7 +553,7 @@ public class FluidAttributes
         private BiPredicate<FluidState, LivingEntity> canDrown = (state, entity) -> state.is(FluidTags.WATER);
         private BiPredicate<FluidState, Entity> canExtinguish = (state, entity) -> state.is(FluidTags.WATER);
         private BiPredicate<FluidState, BlockState> canHydrate = (fluidState, blockState) -> fluidState.is(FluidTags.WATER);
-        private BiPredicate<FluidState, Boat> canBoat = (state, boat) -> state.is(FluidTags.WATER);
+        private BiPredicate<FluidState, Boat> supportsBoating = (state, boat) -> state.is(FluidTags.WATER);
 
         protected Builder(ResourceLocation stillTexture, ResourceLocation flowingTexture, BiFunction<Builder,Fluid,FluidAttributes> factory) {
             this.factory = factory;
@@ -610,7 +610,7 @@ public class FluidAttributes
         }
 
         // Check against {@link net.minecraftforge.common.Tags.Fluids#GASEOUS} instead.
-        @Deprecated(forRemoval = true, since = "1.18")
+        @Deprecated(forRemoval = true, since = "1.17.1")
         public final Builder gaseous()
         {
             isGaseous = true;
@@ -712,12 +712,12 @@ public class FluidAttributes
         /**
          * Sets whether a boat can interact as intended with the fluid.
          *
-         * @param canBoat a predicate representing if a boat can interact with the fluid
+         * @param supportsBoating a predicate representing if a boat can interact with the fluid
          * @return the builder instance
          */
-        public final Builder canBoat(BiPredicate<FluidState, Boat> canBoat)
+        public final Builder supportsBoating(BiPredicate<FluidState, Boat> supportsBoating)
         {
-            this.canBoat = canBoat;
+            this.supportsBoating = supportsBoating;
             return this;
         }
 

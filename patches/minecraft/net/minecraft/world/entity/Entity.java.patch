@@ -130,10 +130,10 @@
     public void m_5844_() {
        if (this.m_6069_()) {
 -         this.m_20282_(this.m_20142_() && this.m_20069_() && !this.m_20159_());
-+         this.m_20282_(this.m_20142_() && (this.m_20069_() || this.isInFluid()) && !this.m_20159_());
++         this.m_20282_(this.m_20142_() && (this.m_20069_() || this.isInCustomFluid()) && !this.m_20159_());
        } else {
 -         this.m_20282_(this.m_20142_() && this.m_5842_() && !this.m_20159_() && this.f_19853_.m_6425_(this.f_19826_).m_76153_(FluidTags.f_13131_));
-+         this.m_20282_(this.m_20142_() && (this.m_5842_() || this.canTriggerSwimming()) && !this.m_20159_());
++         this.m_20282_(this.m_20142_() && (this.m_5842_() || this.canTriggerSwimmingInCustomFluid()) && !this.m_20159_());
        }
  
     }
@@ -141,13 +141,13 @@
     protected boolean m_20073_() {
        this.f_19799_.clear();
 +      this.customFluidHeight.clear();
-+      this.setInFluid(net.minecraft.world.level.material.Fluids.f_76191_.m_76145_());
++      this.setInCustomFluid(net.minecraft.world.level.material.Fluids.f_76191_.m_76145_());
        this.m_20074_();
        double d0 = this.f_19853_.m_6042_().m_63951_() ? 0.007D : 0.0023333333333333335D;
        boolean flag = this.m_19943_(FluidTags.f_13132_, d0);
 -      return this.m_20069_() || flag;
 +      FluidState state = this.f_19853_.m_6425_(this.m_142538_());
-+      return this.m_20069_() || flag || state != this.getTouchingFluid() && state.updateFluidHeightAndDoFluidPushing(this);
++      return this.m_20069_() || flag || state != this.getTouchingCustomFluid() && state.updateFluidHeightAndDoFluidPushing(this);
     }
  
     void m_20074_() {
@@ -156,7 +156,7 @@
  
     public boolean m_5843_() {
 -      return this.m_20142_() && !this.m_20069_() && !this.m_5833_() && !this.m_6047_() && !this.m_20077_() && this.m_6084_();
-+      return this.m_20142_() && !this.m_20069_() && !this.m_5833_() && !this.m_6047_() && !this.m_20077_() && this.m_6084_() && !this.isInFluid();
++      return this.m_20142_() && !this.m_20069_() && !this.m_5833_() && !this.m_6047_() && !this.m_20077_() && this.m_6084_() && !this.isInCustomFluid();
     }
  
     protected void m_20076_() {
@@ -247,7 +247,7 @@
  
     public boolean m_20143_() {
 -      return this.m_6067_() && !this.m_20069_();
-+      return this.m_6067_() && !this.m_20069_() && !(this.isInFluid() && this.getTouchingFluid().canSwim());
++      return this.m_6067_() && !this.m_20069_() && !(this.isInCustomFluid() && this.getTouchingCustomFluid().canSwim());
     }
  
     public void m_20282_(boolean p_20283_) {
@@ -343,7 +343,7 @@
  
     }
  
-@@ -3048,6 +_,95 @@
+@@ -3048,6 +_,97 @@
     public boolean m_142265_(Level p_146843_, BlockPos p_146844_) {
        return true;
     }
@@ -418,20 +418,22 @@
 +   protected FluidState touchingFluid = net.minecraft.world.level.material.Fluids.f_76191_.m_76145_();
 +   protected Object2DoubleMap<FluidState> customFluidHeight = new it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap<>();
 +   @Override
-+   public void setInFluid(FluidState touchingFluid) {
-+       this.touchingFluid = touchingFluid;
++   public void setInCustomFluid(FluidState touchingFluid) {
++      if (!touchingFluid.isCustomFluid()) return;
++      this.touchingFluid = touchingFluid;
 +   }
 +   @Override
-+   public FluidState getTouchingFluid() {
-+       return this.touchingFluid;
++   public FluidState getTouchingCustomFluid() {
++      return this.touchingFluid;
 +   }
 +   @Override
-+   public void addFluidHeight(FluidState state, double fluidHeight) {
-+       this.customFluidHeight.put(state, fluidHeight);
++   public void addCustomFluidHeight(FluidState state, double fluidHeight) {
++      if (!touchingFluid.isCustomFluid()) return;
++      this.customFluidHeight.put(state, fluidHeight);
 +   }
 +   @Override
-+   public double getFluidHeight(FluidState state) {
-+       return this.customFluidHeight.getDouble(state);
++   public double getCustomFluidHeight(FluidState state) {
++      return this.customFluidHeight.getDouble(state);
 +   }
 +
 +   /* ================================== Forge End =====================================*/

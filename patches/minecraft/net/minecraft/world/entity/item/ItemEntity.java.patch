@@ -27,12 +27,13 @@
        if (this.m_32055_().m_41619_()) {
           this.m_146870_();
        } else {
-@@ -93,7 +_,7 @@
+@@ -93,7 +_,8 @@
           this.f_19856_ = this.m_20189_();
           Vec3 vec3 = this.m_20184_();
           float f = this.m_20192_() - 0.11111111F;
 -         if (this.m_20069_() && this.m_20120_(FluidTags.f_13131_) > (double)f) {
-+         if (this.m_20069_() && this.m_20120_(FluidTags.f_13131_) > (double)f || this.isInFluid() && this.getFluidHeight(this.getTouchingFluid()) > f) {
++         if (this.isInCustomFluid() && this.getCustomFluidHeight(this.getTouchingCustomFluid()) > f) this.getTouchingCustomFluid().handleItemMovement(this);
++         else if (this.m_20069_() && this.m_20120_(FluidTags.f_13131_) > (double)f) {
              this.m_32067_();
           } else if (this.m_20077_() && this.m_20120_(FluidTags.f_13132_) > (double)f) {
              this.m_32068_();

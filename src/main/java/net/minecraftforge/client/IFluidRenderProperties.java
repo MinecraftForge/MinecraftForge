@@ -53,7 +53,7 @@ public interface IFluidRenderProperties
     default void renderOverlay(Minecraft mc, PoseStack stack)
     {
         Player player = mc.player;
-        FluidAttributes attr = player.getTouchingFluid().getType().getAttributes();
+        FluidAttributes attr = player.getTouchingCustomFluid().getType().getAttributes();
         @Nullable ResourceLocation overlayTexture = attr.getViewOverlayTexture();
         if (overlayTexture != null)
         {
@@ -93,7 +93,7 @@ public interface IFluidRenderProperties
      */
     default Vector3f setFogColor(Camera camera, float partialTicks, ClientLevel level)
     {
-        long color = Integer.toUnsignedLong(camera.getEntity().getTouchingFluid().getType().getAttributes().getColor());
+        long color = Integer.toUnsignedLong(camera.getEntity().getTouchingCustomFluid().getType().getAttributes().getColor());
         return new Vector3f(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F);
     }
 
@@ -126,7 +126,7 @@ public interface IFluidRenderProperties
         float constant = 180.0F;
         if (camera.getEntity() instanceof LocalPlayer player)
         {
-            constant *= player.areEyesInFluid() ? 1.0 : 0.25;
+            constant *= player.areEyesInCustomFluid() ? 1.0 : 0.25;
         }
         RenderSystem.setShaderFogStart(-8F);
         RenderSystem.setShaderFogEnd(constant * 0.5F);

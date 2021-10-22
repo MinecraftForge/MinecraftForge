@@ -32,7 +32,7 @@
  
        public boolean m_8036_() {
 -         return Fox.this.m_20069_() && Fox.this.m_20120_(FluidTags.f_13131_) > 0.25D || Fox.this.m_20077_();
-+         return Fox.this.m_20069_() && Fox.this.m_20120_(FluidTags.f_13131_) > 0.25D || Fox.this.m_20077_() || Fox.this.isInFluid() && Fox.this.getFluidHeight(Fox.this.getTouchingFluid()) > 0.25D;
++         return Fox.this.m_20069_() && Fox.this.m_20120_(FluidTags.f_13131_) > 0.25D || Fox.this.m_20077_() || Fox.this.isInCustomFluid() && Fox.this.getCustomFluidHeight(Fox.this.getTouchingCustomFluid()) > 0.25D;
        }
     }
  

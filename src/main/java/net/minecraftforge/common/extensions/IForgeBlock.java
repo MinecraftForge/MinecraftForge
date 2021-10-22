@@ -41,6 +41,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
@@ -519,6 +520,10 @@ public interface IForgeBlock
     @Nullable
     default BlockPathTypes getAdjacentBlockPathType(BlockState state, BlockGetter level, BlockPos pos, @Nullable Mob entity, BlockPathTypes originalType)
     {
+        if (state.is(Blocks.CACTUS)) return BlockPathTypes.DANGER_CACTUS;
+        else if (state.is(Blocks.SWEET_BERRY_BUSH)) return BlockPathTypes.DANGER_OTHER;
+        else if (WalkNodeEvaluator.isBurningBlock(state)) return BlockPathTypes.DANGER_FIRE;
+
         return null;
     }
 

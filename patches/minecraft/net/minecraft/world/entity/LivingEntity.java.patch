@@ -40,8 +40,8 @@
        if (this.m_6084_()) {
 -         if (this.m_19941_(FluidTags.f_13131_) && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
 -            if (!this.m_6040_() && !MobEffectUtil.m_19588_(this) && !flag1) {
-+         if ((this.m_19941_(FluidTags.f_13131_) || this.areEyesInFluid()) && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
-+            if ((this.m_19941_(FluidTags.f_13131_) && !this.m_6040_() || this.areEyesInFluid() && !this.canBreatheInFluid(this.getTouchingFluid()) && this.getTouchingFluid().canDrown(this)) && !MobEffectUtil.m_19588_(this) && !flag1) {
++         if ((this.m_19941_(FluidTags.f_13131_) || this.areEyesInCustomFluid()) && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
++            if ((this.m_19941_(FluidTags.f_13131_) && !this.m_6040_() || this.areEyesInCustomFluid() && !this.canBreatheInFluid(this.getTouchingCustomFluid()) && this.getTouchingCustomFluid().canDrown(this)) && !MobEffectUtil.m_19588_(this) && !flag1) {
                 this.m_20301_(this.m_7302_(this.m_20146_()));
                 if (this.m_20146_() == -20) {
                    this.m_20301_(0);
@@ -349,7 +349,7 @@
     }
  
     protected float m_6108_() {
-@@ -1956,11 +_,15 @@
+@@ -1956,18 +_,23 @@
     public void m_7023_(Vec3 p_21280_) {
        if (this.m_6142_() || this.m_6109_()) {
           double d0 = 0.08D;
@@ -365,24 +365,41 @@
 +         d0 = gravity.m_22135_();
  
           FluidState fluidstate = this.f_19853_.m_6425_(this.m_142538_());
-          if (this.m_20069_() && this.m_6129_() && !this.m_7479_(fluidstate.m_76152_())) {
+-         if (this.m_20069_() && this.m_6129_() && !this.m_7479_(fluidstate.m_76152_())) {
++         if ((this.m_20069_() || this.isInCustomFluid()) && this.m_6129_() && !this.m_7479_(fluidstate.m_76152_())) {
++            if (this.m_20069_() || this.isInCustomFluid() && this.getTouchingCustomFluid().handleMotion(this, p_21280_, d0)) {
+             double d8 = this.m_20186_();
+             float f5 = this.m_20142_() ? 0.9F : this.m_6108_();
+             float f6 = 0.02F;
+-            float f7 = (float)EnchantmentHelper.m_44922_(this);
++            float f7 = (float) EnchantmentHelper.m_44922_(this);
+             if (f7 > 3.0F) {
+                f7 = 3.0F;
+             }
 @@ -1985,6 +_,7 @@
                 f5 = 0.96F;
              }
  
-+            f6 *= (float)this.m_21051_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22135_();
++            f6 *= (float) this.m_21051_(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).m_22135_();
              this.m_19920_(f6, p_21280_);
              this.m_6478_(MoverType.SELF, this.m_20184_());
              Vec3 vec36 = this.m_20184_();
-@@ -2018,6 +_,8 @@
-             if (this.f_19862_ && this.m_20229_(vec34.f_82479_, vec34.f_82480_ + (double)0.6F - this.m_20186_() + d7, vec34.f_82481_)) {
-                this.m_20334_(vec34.f_82479_, (double)0.3F, vec34.f_82481_);
+@@ -1992,11 +_,12 @@
+                vec36 = new Vec3(vec36.f_82479_, 0.2D, vec36.f_82481_);
              }
-+         } else if (this.isInFluid() && this.m_6129_() && !this.m_7479_(fluidstate.m_76152_())) {
-+             this.getTouchingFluid().handleMotion(this, p_21280_, d0);
-          } else if (this.m_21255_()) {
-             Vec3 vec3 = this.m_20184_();
-             if (vec3.f_82480_ > -0.5D) {
+ 
+-            this.m_20256_(vec36.m_82542_((double)f5, (double)0.8F, (double)f5));
++            this.m_20256_(vec36.m_82542_((double) f5, (double) 0.8F, (double) f5));
+             Vec3 vec32 = this.m_20994_(d0, flag, this.m_20184_());
+             this.m_20256_(vec32);
+-            if (this.f_19862_ && this.m_20229_(vec32.f_82479_, vec32.f_82480_ + (double)0.6F - this.m_20186_() + d8, vec32.f_82481_)) {
+-               this.m_20334_(vec32.f_82479_, (double)0.3F, vec32.f_82481_);
++            if (this.f_19862_ && this.m_20229_(vec32.f_82479_, vec32.f_82480_ + (double) 0.6F - this.m_20186_() + d8, vec32.f_82481_)) {
++               this.m_20334_(vec32.f_82479_, (double) 0.3F, vec32.f_82481_);
++            }
+             }
+          } else if (this.m_20077_() && this.m_6129_() && !this.m_7479_(fluidstate.m_76152_())) {
+             double d7 = this.m_20186_();
 @@ -2063,7 +_,7 @@
              }
           } else {
@@ -421,8 +438,8 @@
           double d7;
           if (this.m_20077_()) {
              d7 = this.m_20120_(FluidTags.f_13132_);
-+         } else if (this.isInFluid()) {
-+            d7 = this.getFluidHeight(this.getTouchingFluid());
++         } else if (this.isInCustomFluid()) {
++            d7 = this.getCustomFluidHeight(this.getTouchingCustomFluid());
           } else {
              d7 = this.m_20120_(FluidTags.f_13131_);
           }
@@ -430,12 +447,12 @@
           double d8 = this.m_20204_();
           if (!flag1 || this.f_19861_ && !(d7 > d8)) {
              if (!this.m_20077_() || this.f_19861_ && !(d7 > d8)) {
-+               if (!this.isInFluid() || this.f_19861_ && !(d7 > d8)) {
++               if (!this.isInCustomFluid() || this.f_19861_ && !(d7 > d8)) {
                 if ((this.f_19861_ || flag1 && d7 <= d8) && this.f_20954_ == 0) {
                    this.m_6135_();
                    this.f_20954_ = 10;
                 }
-+               } else this.getTouchingFluid().jump(this);
++               } else this.getTouchingCustomFluid().jump(this);
              } else {
                 this.m_6197_(FluidTags.f_13132_);
              }

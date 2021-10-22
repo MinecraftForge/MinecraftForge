@@ -556,9 +556,11 @@ public interface IForgeBlockState
      * <li>Highest = Worst</li>
      * </ul>
      *
+     * @deprecated Use {@link #getAiPathNodeType(BlockGetter, BlockPos, Mob)} instead
      * @return the BlockPathTypes
      */
-    @Nullable // TODO: Rename to `getBlockPathType` in 1.18
+    @Deprecated(forRemoval = true, since = "1.17.1")
+    @Nullable
     default BlockPathTypes getAiPathNodeType(BlockGetter world, BlockPos pos)
     {
         return getAiPathNodeType(world, pos, null);
@@ -580,26 +582,6 @@ public interface IForgeBlockState
     default BlockPathTypes getAiPathNodeType(BlockGetter world, BlockPos pos, @Nullable Mob entity)
     {
         return self().getBlock().getAiPathNodeType(self(), world, pos, entity);
-    }
-
-    /**
-     * Gets the {@link BlockPathTypes} of the block when adjacent to some pathfinding entity.
-     * The {@link BlockPathTypes} dictates the "danger" level for an entity to pathfind through/over a specific block.
-     * This is what is used to dictate that for example "Lava should not be pathed through" when an entity pathfinder is trying to decide on a path.
-     * <ul>
-     * <li>Negative Values = Untraversable</li>
-     * <li>0 = Best</li>
-     * <li>Highest = Worst</li>
-     * </ul>
-     * @param level The level's block getter
-     * @param pos The current pos
-     * @param originalType The {@link BlockPathTypes} obtained from {@link #getAiPathNodeType(BlockGetter, BlockPos, Mob)}
-     * @return null for default behavior; otherwise, returns the block's adjacent {@link BlockPathTypes}
-     */
-    @Nullable
-    default BlockPathTypes getAdjacentBlockPathType(BlockGetter level, BlockPos pos, BlockPathTypes originalType)
-    {
-        return getAdjacentBlockPathType(level, pos, null, originalType);
     }
     
     /**

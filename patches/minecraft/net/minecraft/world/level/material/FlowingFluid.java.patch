@@ -14,7 +14,7 @@
           FluidState fluidstate = blockstate.m_60819_();
           if (fluidstate.m_76152_().m_6212_(this) && this.m_76061_(direction, p_76036_, p_76037_, p_76038_, blockpos, blockstate)) {
 -            if (fluidstate.m_76170_()) {
-+            if (fluidstate.m_76170_() && net.minecraftforge.event.ForgeEventFactory.canCreateFluidSource(p_76036_, blockpos, blockstate, this.canMultiply(fluidstate, p_76036_, blockpos))) {
++            if (fluidstate.m_76170_() && net.minecraftforge.event.ForgeEventFactory.canCreateFluidSource(p_76036_, blockpos, blockstate, this.canConvertToSource(fluidstate, p_76036_, blockpos))) {
                 ++j;
              }
  
@@ -27,22 +27,16 @@
           BlockState blockstate1 = p_76036_.m_8055_(p_76037_.m_7495_());
           FluidState fluidstate1 = blockstate1.m_60819_();
           if (blockstate1.m_60767_().m_76333_() || this.m_76096_(fluidstate1)) {
-@@ -231,6 +_,7 @@
+@@ -231,6 +_,12 @@
        return this.m_5613_().m_76145_().m_61124_(f_75947_, Boolean.valueOf(p_76069_));
     }
  
-+   @Deprecated // FORGE: Use IForgeFlowingFluid#canMultiply instead
++   @Override
++   public boolean canConvertToSource(FluidState state, LevelReader reader, BlockPos pos) {
++      return this.m_6760_();
++   }
++
++   @Deprecated // FORGE: Use state and level sensitive version instead
     protected abstract boolean m_6760_();
  
     protected void m_6364_(LevelAccessor p_76005_, BlockPos p_76006_, BlockState p_76007_, Direction p_76008_, FluidState p_76009_) {
-@@ -432,5 +_,10 @@
-       return p_76084_.m_76186_() == 9 && m_76088_(p_76084_, p_76085_, p_76086_) ? Shapes.m_83144_() : this.f_75950_.computeIfAbsent(p_76084_, (p_76073_) -> {
-          return Shapes.m_83048_(0.0D, 0.0D, 0.0D, 1.0D, (double)p_76073_.m_76155_(p_76085_, p_76086_), 1.0D);
-       });
-+   }
-+
-+   @Override
-+   public boolean canMultiply(FluidState state, LevelReader reader, BlockPos pos) {
-+      return this.m_6760_();
-    }
- }

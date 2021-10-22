@@ -5,7 +5,7 @@
  
     public boolean m_8036_() {
 -      return this.f_25228_.m_20069_() && this.f_25228_.m_20120_(FluidTags.f_13131_) > this.f_25228_.m_20204_() || this.f_25228_.m_20077_();
-+      return this.f_25228_.m_20069_() && this.f_25228_.m_20120_(FluidTags.f_13131_) > this.f_25228_.m_20204_() || this.f_25228_.m_20077_() || this.f_25228_.isInFluid() && this.f_25228_.getFluidHeight(this.f_25228_.getTouchingFluid()) > this.f_25228_.m_20204_();
++      return this.f_25228_.m_20069_() && this.f_25228_.m_20120_(FluidTags.f_13131_) > this.f_25228_.m_20204_() || this.f_25228_.m_20077_() || this.f_25228_.isInCustomFluid() && this.f_25228_.getCustomFluidHeight(this.f_25228_.getTouchingCustomFluid()) > this.f_25228_.m_20204_();
     }
  
     public void m_8037_() {

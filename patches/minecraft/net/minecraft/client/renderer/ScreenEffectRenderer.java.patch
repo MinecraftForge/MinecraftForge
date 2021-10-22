@@ -19,7 +19,7 @@
 +            if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(player, p_110720_))
              m_110725_(p_110719_, p_110720_);
           }
-+         else if (p_110719_.f_91074_.areEyesInFluid()) net.minecraftforge.client.RenderProperties.get(p_110719_.f_91074_.getTouchingFluid()).renderOverlay(p_110719_, p_110720_);
++         else if (p_110719_.f_91074_.areEyesInCustomFluid()) net.minecraftforge.client.RenderProperties.get(p_110719_.f_91074_.getTouchingCustomFluid()).renderOverlay(p_110719_, p_110720_);
  
           if (p_110719_.f_91074_.m_6060_()) {
 +            if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(player, p_110720_))

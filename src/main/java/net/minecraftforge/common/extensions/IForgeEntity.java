@@ -208,7 +208,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      * @param state The fluid pushing the entity
      * @return If the entity can be pushed, defaults to vanilla behavior for water
      */
-    default boolean isPushedByFluid(FluidState state)
+    default boolean isPushedByCustomFluid(FluidState state)
     {
         return !(self() instanceof Player player) || !player.getAbilities().flying;
     }
@@ -218,9 +218,9 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      *
      * @return If the entity is inside any non-EMPTY fluid
      */
-    default boolean isInFluid()
+    default boolean isInCustomFluid()
     {
-        return self().getTouchingFluid() != Fluids.EMPTY.defaultFluidState() && self().getFluidHeight(self().getTouchingFluid()) > 0.0D;
+        return self().getTouchingCustomFluid() != Fluids.EMPTY.defaultFluidState() && self().getCustomFluidHeight(self().getTouchingCustomFluid()) > 0.0D;
     }
 
     /**
@@ -228,12 +228,12 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      *
      * @return If the entity's eyes are in a non-vanilla fluid.
      */
-    default boolean areEyesInFluid()
+    default boolean areEyesInCustomFluid()
     {
         double eyePos = self().getEyeY() - 0.11111111F;
         BlockPos pos = new BlockPos(self().getX(), eyePos, self().getZ());
         FluidState state = self().level.getFluidState(pos);
-        return this.isInFluid() && state.is(self().getTouchingFluid()) && (pos.getY() + state.getHeight(self().level, pos)) > eyePos;
+        return this.isInCustomFluid() && state.sameType(self().getTouchingCustomFluid()) && (pos.getY() + state.getHeight(self().level, pos)) > eyePos;
     }
 
     /**
@@ -241,9 +241,9 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      *
      * @return If the entity can enter a swimming state.
      */
-    default boolean canTriggerSwimming()
+    default boolean canTriggerSwimmingInCustomFluid()
     {
-        return self().areEyesInFluid() && self().getTouchingFluid().canSwim();
+        return self().areEyesInCustomFluid() && self().getTouchingCustomFluid().canSwim();
     }
 
     /**
@@ -251,14 +251,14 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      *
      * @param state The {@link FluidState} the entity is currently inside of
      */
-    void setInFluid(FluidState state);
+    void setInCustomFluid(FluidState state);
 
     /**
      * Gets the currently touching {@link FluidState} for the entity.
      *
      * @return The {@link FluidState} the entity is currently inside of
      */
-    FluidState getTouchingFluid();
+    FluidState getTouchingCustomFluid();
 
     /**
      * Adds the FluidState -> Height value to a map for caching.
@@ -267,7 +267,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      * @param state The {@link FluidState} the entity is inside of
      * @param fluidHeight The height of the {@link FluidState} represented as a double
      */
-    void addFluidHeight(FluidState state, double fluidHeight);
+    void addCustomFluidHeight(FluidState state, double fluidHeight);
 
     /**
      * Gets the cached height of a FluidState.
@@ -275,5 +275,5 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      * @param state The queried {@link FluidState}
      * @return The cached height of the FluidState
      */
-    double getFluidHeight(FluidState state);
+    double getCustomFluidHeight(FluidState state);
 }

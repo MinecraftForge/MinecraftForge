@@ -5,7 +5,7 @@
  
     protected boolean m_6114_(ServerLevel p_24388_, Mob p_24389_) {
 -      return p_24389_.m_20069_() && p_24389_.m_20120_(FluidTags.f_13131_) > p_24389_.m_20204_() || p_24389_.m_20077_();
-+      return p_24389_.m_20069_() && p_24389_.m_20120_(FluidTags.f_13131_) > p_24389_.m_20204_() || p_24389_.m_20077_() || p_24389_.isInFluid() && p_24389_.getFluidHeight(p_24389_.getTouchingFluid()) > p_24389_.m_20204_();
++      return p_24389_.m_20069_() && p_24389_.m_20120_(FluidTags.f_13131_) > p_24389_.m_20204_() || p_24389_.m_20077_() || p_24389_.isInCustomFluid() && p_24389_.getCustomFluidHeight(p_24389_.getTouchingCustomFluid()) > p_24389_.m_20204_();
     }
  
     protected boolean m_6737_(ServerLevel p_24391_, Mob p_24392_, long p_24393_) {

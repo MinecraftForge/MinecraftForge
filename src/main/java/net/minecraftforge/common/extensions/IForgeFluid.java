@@ -21,12 +21,14 @@ package net.minecraftforge.common.extensions;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -37,6 +39,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -92,7 +95,7 @@ public interface IForgeFluid
     @Nullable
     default BlockPathTypes getBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob entity)
     {
-        return null;
+        return state.is(FluidTags.LAVA) ? BlockPathTypes.LAVA : null;
     }
 
     /**
@@ -114,7 +117,7 @@ public interface IForgeFluid
     @Nullable
     default BlockPathTypes getAdjacentBlockPathType(FluidState state, BlockGetter level, BlockPos pos, @Nullable Mob entity, BlockPathTypes originalType)
     {
-        return null;
+        return state.is(FluidTags.WATER) ? BlockPathTypes.WATER_BORDER : null;
     }
 
     /**
@@ -157,7 +160,7 @@ public interface IForgeFluid
                         {
                             isInFluid = true;
                             eyeLevel = Math.max(fluidHeight - box.minY, eyeLevel);
-                            if (entity.isPushedByFluid(currentState))
+                            if (entity.isPushedByCustomFluid(currentState))
                             {
                                 Vec3 fluidFlow = currentState.getFlow(entity.level, fluidPos);
                                 if (eyeLevel < 0.4D) fluidFlow = fluidFlow.scale(eyeLevel);
@@ -181,8 +184,8 @@ public interface IForgeFluid
             entity.setDeltaMovement(entityMotion.add(motion));
         }
             
-        entity.setInFluid(state);
-        entity.addFluidHeight(state, eyeLevel);
+        entity.setInCustomFluid(state);
+        entity.addCustomFluidHeight(state, eyeLevel);
         if (isInFluid)
         {
             FluidAttributes attr = state.getType().getAttributes();
@@ -200,40 +203,16 @@ public interface IForgeFluid
      * @param entity The {@link LivingEntity} whose motion is being handled
      * @param travelVector The current travel {@link Vec3}
      * @param gravity The current gravity being applied to the {@link LivingEntity}
+     * @return {@code true} if the fluid should be handled the same as water,
+     *         {@code false} for custom handling in this method
      */
-    default void handleMotion(FluidState state, LivingEntity entity, Vec3 travelVector, double gravity)
+    default boolean handleMotion(FluidState state, LivingEntity entity, Vec3 travelVector, double gravity)
     {
-        boolean hasNegativeYMotion = entity.getDeltaMovement().y <= 0.0D;
-        double originalY = entity.getY();
-        float horizontalModifier = entity.isSprinting() ? 0.9F : 0.8F;
-        float movementAmount = 0.02F;
-        float depthStriderModifier = EnchantmentHelper.getDepthStrider(entity);
-
-        if (depthStriderModifier > 3.0F) depthStriderModifier = 3.0F;
-        if (!entity.isOnGround()) depthStriderModifier *= 0.5F;
-        if (depthStriderModifier > 0.0F)
-        {
-            horizontalModifier += (0.546 - horizontalModifier) * depthStriderModifier / 3.0F;
-            movementAmount += (entity.getSpeed() - movementAmount) * depthStriderModifier / 3.0F;
-        }
-        if (entity.hasEffect(MobEffects.DOLPHINS_GRACE)) horizontalModifier *= 0.97f;
-
-        movementAmount *= entity.getAttribute(ForgeMod.SWIM_SPEED.get()).getValue();
-        entity.moveRelative(movementAmount, travelVector);
-        entity.move(MoverType.SELF, entity.getDeltaMovement());
-
-        Vec3 entityMotion = entity.getDeltaMovement();
-        if (entity.horizontalCollision && entity.onClimbable())
-            entityMotion = new Vec3(entityMotion.x, 0.2D, entityMotion.z);
-        entity.setDeltaMovement(entityMotion.multiply(horizontalModifier, 0.8F, horizontalModifier));
-        Vec3 finalMotion = entity.getFluidFallingAdjustedMovement(gravity, hasNegativeYMotion, entity.getDeltaMovement());
-        entity.setDeltaMovement(finalMotion);
-        if (entity.horizontalCollision && entity.isFree(finalMotion.x, finalMotion.y + 0.6D - entity.getY() + originalY, finalMotion.z))
-            entity.setDeltaMovement(finalMotion.x, 0.3F, finalMotion.z);
+        return true;
     }
 
     /**
-     * Handles modification of jumps inside of a fluid.
+     * Handles modification of jumps inside a fluid.
      *
      * @param state The current {@link FluidState} the {@link LivingEntity} is in
      * @param entity The {@link LivingEntity} whose jump is being modified
@@ -244,7 +223,7 @@ public interface IForgeFluid
     }
 
     /**
-     * Handles modifications of 'sinking' inside of a fluid
+     * Handles modifications of 'sinking' inside a fluid
      *
      * @param state The current {@link FluidState} the {@link LivingEntity} is in
      * @param entity The {@link LivingEntity} whose jump is being modified
@@ -255,6 +234,18 @@ public interface IForgeFluid
     }
 
     /**
+     * Handles the motion of an item while in a fluid.
+     *
+     * @param state the current {@link FluidState}
+     * @param item the item in the fluid
+     */
+    default void handleItemMovement(FluidState state, ItemEntity item)
+    {
+        Vec3 vec3 = item.getDeltaMovement();
+        item.setDeltaMovement(vec3.x * (double)0.99F, vec3.y + (double)(vec3.y < (double)0.06F ? 5.0E-4F : 0.0F), vec3.z * (double)0.99F);
+    }
+
+    /**
      * This method is used to handle fluid interactions.
      * The current position of the fluid is the one that should be replaced during the interaction.
      * 
@@ -262,10 +253,10 @@ public interface IForgeFluid
      * Lava(Source/Flowing) + Water = Obsidian/Cobblestone.
      * Lava(Source/Flowing) + Blue Ice = Basalt.
      *
-     * @param state The current {@link FluidState}
-     * @param level The {@link Level} containing the interaction
-     * @param pos The {@link BlockPos} the interaction is being applied at
-     * @return Whether a fluid tick needs to be scheduled. Should return true only if no reaction has occurred or the Result is another fluid.
+     * @param state the current {@link FluidState}
+     * @param level the {@link Level} containing the interaction
+     * @param pos the {@link BlockPos} the interaction is being applied at
+     * @return whether a fluid tick needs to be scheduled. Should return true only if no reaction has occurred or the Result is another fluid.
      */
     default boolean handleFluidInteraction(FluidState state, Level level, BlockPos pos)
     {
@@ -279,7 +270,7 @@ public interface IForgeFluid
      * @param otherState The secondary state to check
      * @return Whether the two provided {@link FluidState}s {@link Fluid}s match.
      */
-    default boolean is(FluidState state, FluidState otherState)
+    default boolean sameType(FluidState state, FluidState otherState)
     {
         return state.getType() == otherState.getType();
     }
@@ -340,12 +331,24 @@ public interface IForgeFluid
     /**
      * This method dictates whether this fluid supports boats being "usable" with it.
      *
-     * @param state The supplied {@link FluidState}
-     * @param boat The supplied {@link Boat} entity
+     * @param state the supplied {@link FluidState}
+     * @param boat the supplied {@link Boat} entity
      * @return Whether the fluid supports boats being used with it.
      */
-    default boolean canBoat(FluidState state, Boat boat)
+    default boolean supportsBoating(FluidState state, Boat boat)
     {
-        return state.getType().getAttributes().canBoat(state, boat);
+        return state.getType().getAttributes().supportsBoating(state, boat);
+    }
+
+    /**
+     * Checks whether the fluid is not implemented by vanilla. The empty fluid is excluded
+     * as it is a placeholder for no fluid.
+     *
+     * @param state the current {@link FluidState}
+     * @return {@code true} if the fluid was not implemented by vanilla, {@code false} otherwise
+     */
+    default boolean isCustomFluid(FluidState state)
+    {
+        return state.getType() != Fluids.WATER && state.getType() != Fluids.FLOWING_WATER && state.getType() != Fluids.LAVA && state.getType() != Fluids.FLOWING_LAVA;
     }
 }

@@ -148,9 +148,9 @@ public class CoreFluidTest
                         .canDrown((state, entity) -> entity instanceof Player) // Only players can drown in this fluid
                         .canExtinguish((state, entity) -> entity instanceof Player) // Only players can be extinguished if on fire in this fluid
                         .canHydrate((fluidState, blockState) -> true) // Can hydrate ConcretePowder -> Concrete, Farmland, and Coral.
-                        .canBoat((state, boat) -> true) // You can boat in this fluid
+                        .supportsBoating((state, boat) -> true) // You can boat in this fluid
         ).bucket(TEST_ATTRIBUTE_FLUID_BUCKET).block(TEST_ATTRIBUTE_FLUID_BLOCK)
-                .canMultiply(((fluidState, reader, blockPos) -> true)); // This fluid can multiply and create new source blocks
+                .canConvertToSource(((fluidState, reader, blockPos) -> true)); // This fluid can multiply and create new source blocks
     }
 
     // Fluid-Loggable Block
@@ -244,7 +244,7 @@ public class CoreFluidTest
             }
 
             @Override
-            public boolean canBoat(FluidState state, Boat boat)
+            public boolean supportsBoating(FluidState state, Boat boat)
             {
                 return false;
             }
@@ -307,7 +307,7 @@ public class CoreFluidTest
             }
 
             @Override
-            public boolean canBoat(FluidState state, Boat boat)
+            public boolean supportsBoating(FluidState state, Boat boat)
             {
                 return false;
             }

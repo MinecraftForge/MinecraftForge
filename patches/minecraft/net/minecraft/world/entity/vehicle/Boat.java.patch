@@ -5,7 +5,7 @@
                 blockpos$mutableblockpos.m_122178_(l1, k1, i2);
                 FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
 -               if (fluidstate.m_76153_(FluidTags.f_13131_)) {
-+               if (fluidstate.canBoat(this)) {
++               if (fluidstate.supportsBoating(this)) {
                    f = Math.max(f, fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos));
                 }
  
@@ -23,7 +23,7 @@
                 blockpos$mutableblockpos.m_122178_(k1, l1, i2);
                 FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
 -               if (fluidstate.m_76153_(FluidTags.f_13131_)) {
-+               if (fluidstate.canBoat(this)) {
++               if (fluidstate.supportsBoating(this)) {
                    float f = (float)l1 + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos);
                    this.f_38277_ = Math.max((double)f, this.f_38277_);
                    flag |= aabb.f_82289_ < (double)f;
@@ -32,7 +32,7 @@
                 blockpos$mutableblockpos.m_122178_(k1, l1, i2);
                 FluidState fluidstate = this.f_19853_.m_6425_(blockpos$mutableblockpos);
 -               if (fluidstate.m_76153_(FluidTags.f_13131_) && d0 < (double)((float)blockpos$mutableblockpos.m_123342_() + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos))) {
-+               if ((fluidstate.canBoat(this)) && d0 < (double)((float)blockpos$mutableblockpos.m_123342_() + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos))) {
++               if ((fluidstate.supportsBoating(this)) && d0 < (double)((float)blockpos$mutableblockpos.m_123342_() + fluidstate.m_76155_(this.f_19853_, blockpos$mutableblockpos))) {
                    if (!fluidstate.m_76170_()) {
                       return Boat.Status.UNDER_FLOWING_WATER;
                    }
@@ -41,7 +41,7 @@
        BlockPos blockpos = new BlockPos(d0, this.m_142469_().f_82292_, d1);
        BlockPos blockpos1 = blockpos.m_7495_();
 -      if (!this.f_19853_.m_46801_(blockpos1)) {
-+      if (!this.f_19853_.m_6425_(blockpos1).canBoat(this)) {
++      if (!this.f_19853_.m_6425_(blockpos1).supportsBoating(this)) {
           List<Vec3> list = Lists.newArrayList();
           double d2 = this.f_19853_.m_45573_(blockpos);
           if (DismountHelper.m_38439_(d2)) {
@@ -50,7 +50,7 @@
  
              this.f_19789_ = 0.0F;
 -         } else if (!this.f_19853_.m_6425_(this.m_142538_().m_7495_()).m_76153_(FluidTags.f_13131_) && p_38307_ < 0.0D) {
-+         } else if (!this.f_19853_.m_6425_(this.m_142538_().m_7495_()).canBoat(this) && p_38307_ < 0.0D) {
++         } else if (!this.f_19853_.m_6425_(this.m_142538_().m_7495_()).supportsBoating(this) && p_38307_ < 0.0D) {
              this.f_19789_ = (float)((double)this.f_19789_ - p_38307_);
           }
  
@@ -59,7 +59,7 @@
  
     protected boolean m_7310_(Entity p_38390_) {
 -      return this.m_20197_().size() < 2 && !this.m_19941_(FluidTags.f_13131_);
-+      return this.m_20197_().size() < 2 && !(this.areEyesInFluid() && this.getTouchingFluid().canBoat(this));
++      return this.m_20197_().size() < 2 && !(this.areEyesInCustomFluid() && this.getTouchingCustomFluid().supportsBoating(this));
     }
  
     @Nullable

@@ -41,7 +41,7 @@ public interface IForgeFlowingFluid extends IForgeFluid
      * @return {@code true} if the fluid matches, {@code false} otherwise
      */
     @Override
-    default boolean is(FluidState state, FluidState otherState)
+    default boolean sameType(FluidState state, FluidState otherState)
     {
         Fluid otherFluid = otherState.getType();
         return otherFluid == self().getFlowing() || otherFluid == self().getSource();
@@ -55,7 +55,7 @@ public interface IForgeFlowingFluid extends IForgeFluid
      * @param pos the position of the fluid
      * @return {@code true} if the fluid can multiply, {@code false} otherwise
      */
-    default boolean canMultiply(FluidState state, LevelReader reader, BlockPos pos)
+    default boolean canConvertToSource(FluidState state, LevelReader reader, BlockPos pos)
     {
         return false;
     }
