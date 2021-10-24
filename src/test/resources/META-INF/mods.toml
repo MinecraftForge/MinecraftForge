@@ -168,5 +168,7 @@ license="LGPL v2.1"
     modId="custom_tooltip_test"
 [[mods]]
     modId="full_pots_accessor_demo"
+[[mods]]
+    modId="custom_fishing_rod_test"
 
 # ADD ABOVE THIS LINE

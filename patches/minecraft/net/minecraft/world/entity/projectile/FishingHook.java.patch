@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/entity/projectile/FishingHook.java
 +++ b/net/minecraft/world/entity/projectile/FishingHook.java
+@@ -225,8 +_,8 @@
+    private boolean m_37136_(Player p_37137_) {
+       ItemStack itemstack = p_37137_.m_21205_();
+       ItemStack itemstack1 = p_37137_.m_21206_();
+-      boolean flag = itemstack.m_150930_(Items.f_42523_);
+-      boolean flag1 = itemstack1.m_150930_(Items.f_42523_);
++      boolean flag = itemstack.m_41720_() instanceof net.minecraft.world.item.FishingRodItem;
++      boolean flag1 = itemstack1.m_41720_() instanceof net.minecraft.world.item.FishingRodItem;
+       if (!p_37137_.m_146910_() && p_37137_.m_6084_() && (flag || flag1) && !(this.m_20280_(p_37137_) > 1024.0D)) {
+          return false;
+       } else {
 @@ -237,7 +_,7 @@
  
     private void m_37171_() {
