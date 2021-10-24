@@ -140,6 +140,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.STORAGE_BLOCKS_REDSTONE, Tags.Items.STORAGE_BLOCKS_REDSTONE);
         copy(Tags.Blocks.STORAGE_BLOCKS_NETHERITE, Tags.Items.STORAGE_BLOCKS_NETHERITE);
         tag(Tags.Items.STRING).add(Items.STRING);
+        tag(Tags.Items.FISHING_ROD).add(Items.FISHING_ROD);
     }
 
     private void addColored(Consumer<Tag.Named<Item>> consumer, Tag.Named<Item> group, String pattern)

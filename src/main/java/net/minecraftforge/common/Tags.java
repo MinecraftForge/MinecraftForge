@@ -298,6 +298,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final IOptionalNamedTag<Item> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
         public static final IOptionalNamedTag<Item> STRING = tag("string");
+        public static final IOptionalNamedTag<Item> FISHING_ROD = tag("fishing_rod");
 
         private static IOptionalNamedTag<Item> tag(String name, @Nullable Set<Supplier<Item>> defaults)
         {

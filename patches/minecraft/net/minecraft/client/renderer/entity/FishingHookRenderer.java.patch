@@ -5,7 +5,7 @@
           int i = player.m_5737_() == HumanoidArm.RIGHT ? 1 : -1;
           ItemStack itemstack = player.m_21205_();
 -         if (!itemstack.m_150930_(Items.f_42523_)) {
-+         if (!(itemstack.m_41720_() instanceof net.minecraft.world.item.FishingRodItem)) {
++         if (!(itemstack.m_150922_(net.minecraftforge.common.Tags.Items.FISHING_ROD))) {
              i = -i;
           }
  
