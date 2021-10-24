@@ -26,6 +26,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSyntaxException;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.IExtensionPoint;
@@ -34,6 +38,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -149,6 +156,23 @@ public class FMLStatusPing {
             obj.addProperty("truncated", truncated);
             return obj;
         }
+
+        public static JsonObject serializeOptimized(FMLStatusPing forgeData, JsonSerializationContext ctx)
+        {
+            var buf = new FriendlyByteBuf(Unpooled.buffer());
+
+
+            // what counts here is UTF-16 code-point count, because of how writeUtf counts characters
+            var sb = new StringBuilder();
+            sb.append(((char) forgeData.mods.size())); // this is good for up to 0xd7ff == 55295 mods and only takes 1 codepoint
+
+
+
+            var obj = new JsonObject();
+            obj.addProperty("fmlNetworkVersion", forgeData.fmlNetworkVer);
+            obj.addProperty("d", sb.toString());
+            return obj;
+        }
     }
 
     public Map<ResourceLocation, Pair<String, Boolean>> getRemoteChannels() {
@@ -167,4 +191,93 @@ public class FMLStatusPing {
     {
         return truncated;
     }
+
+    /**
+     * Encode given ByteBuf to a String. This is optimized for UTF-16 Code-Point count.
+     * Supports at most 2^15 bytes in length
+     */
+    private static String encodeOptimized(ByteBuf buf)
+    {
+        var byteLength = buf.readableBytes();
+        var sb = new StringBuilder();
+        sb.append((char) byteLength);
+
+        var buffer = 0; // we will need at most 8 + 14 = 22 bits of buffer
+        int bitsInBuf = 0;
+        while (buf.isReadable()) {
+            if (bitsInBuf >= 15)
+            {
+                char c = (char) (buffer & 0x7FFF);
+                sb.append(c);
+                buffer >>>= 15;
+                bitsInBuf -= 15;
+            }
+            var b = buf.readByte();
+            buffer |= (int) b << bitsInBuf;
+            bitsInBuf += 8;
+        }
+
+        if (bitsInBuf > 0)
+        {
+            char c = (char) (buffer & 0x7FFF);
+            sb.append(c);
+        }
+
+
+        return sb.toString();
+    }
+
+    /**
+     * Decode binary data encoded by {@link #encodeOptimized}
+     */
+    private static ByteBuf decodeOptimized(String s)
+    {
+        var size = ((int) s.charAt(0));
+        var buf = Unpooled.buffer(size);
+
+        int stringIndex = 1;
+        var buffer = 0; // we will need at most 8 + 14 = 22 bits of buffer
+        int bitsInBuf = 0;
+        while (stringIndex < s.length()) {
+            while (bitsInBuf >= 8)
+            {
+                buf.writeByte(buffer);
+                buffer >>>= 8;
+                bitsInBuf -= 8;
+            }
+
+            var c = s.charAt(stringIndex);
+            buffer |= (((int) c) & 0x7FFF) << bitsInBuf;
+            bitsInBuf += 15;
+            stringIndex++;
+        }
+
+        while (buf.readableBytes() < size) {
+            buf.writeByte(buffer);
+            buffer >>>= 8;
+            bitsInBuf -= 8;
+
+        }
+
+        return buf;
+    }
+
+    public static void main(String[] args) {
+        var bytes = new byte[256];
+        for (int i = 0; i < 256; i++) {
+            bytes[i] = (byte) i;
+        }
+        var encoded = encodeOptimized(Unpooled.wrappedBuffer(bytes));
+        var decoded = decodeOptimized(encoded);
+
+        System.out.println("bytes: " + bytes.length);
+        System.out.println("encod: " + encoded.length());
+        System.out.println("decod: " + decoded.readableBytes());
+        System.out.println("encod: " + encoded.codePoints().mapToObj(Integer::toHexString).collect(Collectors.joining(", ")));
+        System.out.println("encod: " + encoded);
+
+        System.out.println(ByteBufUtil.hexDump(Unpooled.wrappedBuffer(bytes)));
+        System.out.println(ByteBufUtil.hexDump(decoded));
+    }
+
 }
