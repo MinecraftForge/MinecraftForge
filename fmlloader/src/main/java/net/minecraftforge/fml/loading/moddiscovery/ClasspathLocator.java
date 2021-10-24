@@ -19,32 +19,28 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import cpw.mods.jarhandling.SecureJar;
-import net.minecraftforge.fml.loading.LibraryFinder;
-import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.jar.JarInputStream;
 import java.util.stream.Stream;
-import java.util.zip.ZipInputStream;
-
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
+import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class ClasspathLocator extends AbstractJarFileLocator {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final String MODS_TOML = "META-INF/mods.toml";
-    private static final String MANIFEST = "META-INF/MANIFEST.MF";
-    private final List<String> ignoreList = Arrays.stream(System.getProperty("ignoreList", "").split(",")).toList();
+    private final List<Path> legacyClasspath = Arrays.stream(System.getProperty("legacyClassPath", "").split(File.pathSeparator)).map(Path::of).toList();
     private boolean enabled = false;
 
     @Override
@@ -53,38 +49,35 @@ public class ClasspathLocator extends AbstractJarFileLocator {
     }
 
     @Override
-    public List<IModFile> scanMods() {
+    public Stream<Path> scanCandidates() {
         if (!enabled)
-            return List.of();
+            return Stream.of();
+
         try {
-            var modCoords = Stream.<IModFile>builder();
-            locateMods(modCoords, MODS_TOML, "classpath_mod", sj -> true);
-            locateMods(modCoords, MANIFEST, "manifest_jar", sj -> isValidManifest(sj) && sj.getManifest().getMainAttributes().getValue(ModFile.TYPE) != null);
-            return modCoords.build().toList();
+            var claimed = new ArrayList<>(legacyClasspath);
+            var paths = Stream.<Path>builder();
+
+            findPaths(claimed, MODS_TOML).forEach(paths::add);
+            findPaths(claimed, MANIFEST).forEach(paths::add);
+
+            return paths.build();
         } catch (IOException e) {
-            LOGGER.fatal(CORE, "Error trying to find resources", e);
+            LOGGER.fatal(SCAN, "Error trying to find resources", e);
             throw new RuntimeException(e);
         }
     }
 
-    @Override
-    public Stream<Path> scanCandidates() {
-        return Stream.of();
-    }
-
-    private void locateMods(Stream.Builder<IModFile> modCoords, String resource, String name, Predicate<SecureJar> filter) throws IOException {
+    private List<Path> findPaths(List<Path> claimed, String resource) throws IOException {
+        var ret = new ArrayList<Path>();
         final Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources(resource);
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            Path path = LibraryFinder.findJarPathFor(resource, name, url);
-            if (ignoreList.stream().anyMatch(path.toString()::contains) || Files.isDirectory(path))
+            Path path = findJarPathFor(resource, resource, url);
+            if (claimed.stream().anyMatch(path::equals) || !Files.exists(path) || Files.isDirectory(path))
                 continue;
-
-            ModJarMetadata.buildFile(this, filter, path).ifPresent(mf -> {
-                LOGGER.debug(CORE, "Found classpath mod: {}", path);
-                modCoords.add(mf);
-            });
+            ret.add(path);
         }
+        return ret;
     }
 
     @Override
@@ -93,11 +86,21 @@ public class ClasspathLocator extends AbstractJarFileLocator {
         enabled = launchTarget != null && launchTarget.contains("dev");
     }
 
-    private static boolean isValidManifest(SecureJar sj) {
-        try (var jis = new JarInputStream(Files.newInputStream(sj.getRootPath()))) {
-            return jis.getManifest() != null;
-        } catch (IOException e) {
-            return false;
+    private Path findJarPathFor(final String resourceName, final String jarName, final URL resource) {
+        try {
+            Path path;
+            final URI uri = resource.toURI();
+            if (uri.getScheme().equals("jar") && uri.getRawSchemeSpecificPart().contains("!/")) {
+                int lastExcl = uri.getRawSchemeSpecificPart().lastIndexOf("!/");
+                path = Paths.get(new URI(uri.getRawSchemeSpecificPart().substring(0, lastExcl)));
+            } else {
+                path = Paths.get(new URI("file://"+uri.getRawSchemeSpecificPart().substring(0, uri.getRawSchemeSpecificPart().length()-resourceName.length())));
+            }
+            //LOGGER.debug(CORE, "Found JAR {} at path {}", jarName, path.toString());
+            return path;
+        } catch (NullPointerException | URISyntaxException e) {
+            LOGGER.fatal(SCAN, "Failed to find JAR for class {} - {}", resourceName, jarName);
+            throw new RuntimeException("Unable to locate "+resourceName+" - "+jarName, e);
         }
     }
 }

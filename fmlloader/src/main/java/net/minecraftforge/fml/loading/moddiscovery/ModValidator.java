@@ -1,20 +1,15 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.api.ITransformationService;
 import net.minecraftforge.fml.loading.*;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.ModFileFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class ModValidator {
@@ -27,9 +22,14 @@ public class ModValidator {
 
     public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles) {
         this.modFiles = modFiles;
-        this.candidateMods = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.MOD, List.of()));
-        this.candidatePlugins = new ArrayList<>(modFiles.getOrDefault(IModFile.Type.LANGPROVIDER, List.of()));
-        this.candidatePlugins.addAll(modFiles.getOrDefault(IModFile.Type.LIBRARY, List.of()));
+        this.candidateMods = lst(modFiles.get(IModFile.Type.MOD));
+        this.candidateMods.addAll(lst(modFiles.get(IModFile.Type.GAMELIBRARY)));
+        this.candidatePlugins = lst(modFiles.get(IModFile.Type.LANGPROVIDER));
+        this.candidatePlugins.addAll(lst(modFiles.get(IModFile.Type.LIBRARY)));
+    }
+
+    private static List<ModFile> lst(List<ModFile> files) {
+        return files == null ? new ArrayList<>() : new ArrayList<>(files);
     }
 
     public void stage1Validation() {
