@@ -91,7 +91,7 @@
     }
  
     public void m_5871_(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> p_49818_, TooltipFlag p_49819_) {
-@@ -486,6 +_,81 @@
+@@ -486,6 +_,82 @@
     protected ImmutableMap<BlockState, VoxelShape> m_152458_(Function<BlockState, VoxelShape> p_152459_) {
        return this.f_49792_.m_61056_().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }
@@ -110,7 +110,8 @@
 +   }
 +
 +   private void initClient() {
-+      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) {
++      // Minecraft instance isn't available in datagen, so don't call initializeClient if in datagen
++      if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT && !net.minecraftforge.fml.loading.FMLLoader.getLaunchHandler().isData()) {
 +         initializeClient(properties -> {
 +            if (properties == this)
 +               throw new IllegalStateException("Don't extend IBlockRenderProperties in your block, use an anonymous class instead.");

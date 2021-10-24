@@ -49,6 +49,8 @@ import java.util.jar.Manifest;
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 public class ModFile implements IModFile {
+    // Mods either must have a mods.toml or a manifest. We can no longer just put any jar on the classpath.
+    @Deprecated(forRemoval = true, since = "1.17.1")
     public static final Manifest DEFAULTMANIFEST;
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -72,6 +74,7 @@ public class ModFile implements IModFile {
     private List<CoreModFile> coreMods;
     private Path accessTransformer;
 
+    //TODO: Make package private in 1.18+
     public static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
     private SecureJar.Status securityStatus;
 
@@ -116,7 +119,7 @@ public class ModFile implements IModFile {
 
     public boolean identifyMods() {
         this.modFileInfo = ModFileParser.readModList(this, this.parser);
-        if (this.modFileInfo == null) return false;
+        if (this.modFileInfo == null) return this.getType() != Type.MOD;
         LOGGER.debug(LOADING,"Loading mod file {} with languages {}", this.getFilePath(), this.modFileInfo.requiredLanguageLoaders());
         this.coreMods = ModFileParser.getCoreMods(this);
         this.coreMods.forEach(mi-> LOGGER.debug(LOADING,"Found coremod {}", mi.getPath()));
@@ -139,8 +142,7 @@ public class ModFile implements IModFile {
         locator.scanFile(this, pathConsumer);
     }
 
-    public void setFutureScanResult(CompletableFuture<ModFileScanData> future)
-    {
+    public void setFutureScanResult(CompletableFuture<ModFileScanData> future) {
         this.futureScanResult = future;
     }
 
@@ -168,20 +170,17 @@ public class ModFile implements IModFile {
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Completed deep scan of "+this.getFileName()));
     }
 
-    public void setFileProperties(Map<String, Object> fileProperties)
-    {
+    public void setFileProperties(Map<String, Object> fileProperties) {
         this.fileProperties = fileProperties;
     }
 
     @Override
-    public List<IModLanguageProvider> getLoaders()
-    {
+    public List<IModLanguageProvider> getLoaders() {
         return loaders;
     }
 
     @Override
-    public Path findResource(String... path)
-    {
+    public Path findResource(String... path) {
         if (path.length < 1) {
             throw new IllegalArgumentException("Missing path");
         }
@@ -214,17 +213,24 @@ public class ModFile implements IModFile {
         return modFileInfo;
     }
 
+    // TODO: Remove concept of factory from forgeapi.. Why expose this?
+    @Deprecated(forRemoval = true, since="1.17.1")
     public static ModFileFactory buildFactory() {
         return ModFile::new;
     }
 
+    // TODO: Remove helper functions to cleanup api
+    @Deprecated(forRemoval = true, since="1.17.1")
     public static ModFile newFMLInstance(final IModLocator locator, final SecureJar jar) {
         return (ModFile) ModFileFactory.FACTORY.build(jar, locator, ModFileParser::modsTomlParser);
     }
 
+    // TODO: Remove helper functions to cleanup api
+    @Deprecated(forRemoval = true, since="1.17.1")
     public static ModFile newFMLInstance(final IModLocator locator, final Path... paths) {
         return (ModFile) ModJarMetadata.buildFile(locator, paths);
     }
+
     @Override
     public void setSecurityStatus(final SecureJar.Status status) {
         this.securityStatus = status;

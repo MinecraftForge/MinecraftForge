@@ -4,7 +4,7 @@
  
        this.f_104888_.f_91064_.m_113434_();
        this.f_104888_.f_91074_.m_172530_();
-+      net.minecraftforge.fmlclient.ClientHooks.firePlayerLogin(this.f_104888_.f_91072_, this.f_104888_.f_91074_, this.f_104888_.m_91403_().m_6198_());
++      net.minecraftforge.client.ForgeHooksClient.firePlayerLogin(this.f_104888_.f_91072_, this.f_104888_.f_91074_, this.f_104888_.m_91403_().m_6198_());
        int i = p_105030_.m_132398_();
        this.f_104888_.f_91074_.m_20234_(i);
        this.f_104889_.m_104630_(i, this.f_104888_.f_91074_);
@@ -43,7 +43,7 @@
 +      localplayer1.updateSyncFields(localplayer); // Forge: fix MC-10657
        localplayer1.m_172530_();
        localplayer1.m_108748_(s);
-+      net.minecraftforge.fmlclient.ClientHooks.firePlayerRespawn(this.f_104888_.f_91072_, localplayer, localplayer1, localplayer1.f_108617_.m_6198_());
++      net.minecraftforge.client.ForgeHooksClient.firePlayerRespawn(this.f_104888_.f_91072_, localplayer, localplayer1, localplayer1.f_108617_.m_6198_());
        this.f_104889_.m_104630_(i, localplayer1);
        localplayer1.m_146922_(-180.0F);
        localplayer1.f_108618_ = new KeyboardInput(this.f_104888_.f_91066_);

@@ -135,6 +135,7 @@ import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -536,7 +537,7 @@ public class ForgeHooks
         // Tell client the block is gone immediately then process events
         if (world.getBlockEntity(pos) == null)
         {
-            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(DUMMY_WORLD, pos));
+            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(pos, world.getFluidState(pos).createLegacyBlock()));
         }
 
         // Post the block break event
@@ -1061,36 +1062,6 @@ public class ForgeHooks
         return false;
     }
 
-
-    private static final DummyBlockReader DUMMY_WORLD = new DummyBlockReader();
-    private static class DummyBlockReader implements BlockGetter {
-
-        @Override
-        public BlockEntity getBlockEntity(BlockPos pos) {
-            return null;
-        }
-
-        @Override
-        public BlockState getBlockState(BlockPos pos) {
-            return Blocks.AIR.defaultBlockState();
-        }
-
-        @Override
-        public FluidState getFluidState(BlockPos pos) {
-            return Fluids.EMPTY.defaultFluidState();
-        }
-
-        @Override
-        public int getHeight() {
-            return 0;
-        }
-
-        @Override
-        public int getMinBuildHeight() {
-            return 0;
-        }
-    }
-
     public static int onNoteChange(Level world, BlockPos pos, BlockState state, int old, int _new) {
         NoteBlockEvent.Change event = new NoteBlockEvent.Change(world, pos, state, old, _new);
         if (MinecraftForge.EVENT_BUS.post(event))
@@ -1349,4 +1320,10 @@ public class ForgeHooks
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
     }
+
+    public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)
+    {
+        MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
+    }
+
 }
