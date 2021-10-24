@@ -25,11 +25,10 @@
  
     protected AbstractMinecart(EntityType<?> p_38087_, Level p_38088_) {
        super(p_38087_, p_38088_);
-@@ -98,6 +_,14 @@
-       this.f_19855_ = p_38093_;
+@@ -99,6 +_,14 @@
        this.f_19856_ = p_38094_;
     }
-+   
+ 
 +   public net.minecraftforge.common.IMinecartCollisionHandler getCollisionHandler() {
 +      return COLLISIONS;
 +   }
@@ -37,9 +36,10 @@
 +   public static void registerCollisionHandler(@Nullable net.minecraftforge.common.IMinecartCollisionHandler handler) {
 +      COLLISIONS = handler;
 +   }
- 
++
     public static AbstractMinecart m_38119_(Level p_38120_, double p_38121_, double p_38122_, double p_38123_, AbstractMinecart.Type p_38124_) {
        if (p_38124_ == AbstractMinecart.Type.CHEST) {
+          return new MinecartChest(p_38120_, p_38121_, p_38122_, p_38123_);
 @@ -133,7 +_,7 @@
     }
  
@@ -120,35 +120,56 @@
           flag = p_38157_.m_61143_(PoweredRailBlock.f_55215_);
           flag1 = !flag;
        }
-@@ -399,22 +_,22 @@
+@@ -399,26 +_,35 @@
        }
  
        Vec3 vec31 = this.m_20184_();
 -      RailShape railshape = p_38157_.m_61143_(((BaseRailBlock)p_38157_.m_60734_()).m_7978_());
 +      RailShape railshape = ((BaseRailBlock)p_38157_.m_60734_()).getRailDirection(p_38157_, this.f_19853_, p_38156_, this);
++      double slopeX = 0;
++      double slopeZ = 0;
        switch(railshape) {
        case ASCENDING_EAST:
 -         this.m_20256_(vec31.m_82520_(-d3, 0.0D, 0.0D));
-+         this.m_20256_(vec31.m_82520_(-1 * getSlopeAdjustment(), 0.0D, 0.0D));
++         slopeX = -1 * getSlopeAdjustment();
++         slopeZ = 0.0D;
           ++d1;
           break;
        case ASCENDING_WEST:
 -         this.m_20256_(vec31.m_82520_(d3, 0.0D, 0.0D));
-+         this.m_20256_(vec31.m_82520_(getSlopeAdjustment(), 0.0D, 0.0D));
++         slopeX = getSlopeAdjustment();
++         slopeZ = 0.0D;
           ++d1;
           break;
        case ASCENDING_NORTH:
 -         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, d3));
-+         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, getSlopeAdjustment()));
++         slopeX = 0.0D;
++         slopeZ = getSlopeAdjustment();
           ++d1;
           break;
        case ASCENDING_SOUTH:
 -         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, -d3));
-+         this.m_20256_(vec31.m_82520_(0.0D, 0.0D, -1 * getSlopeAdjustment()));
++         slopeX = 0.0D;
++         slopeZ = -1 * getSlopeAdjustment();
           ++d1;
        }
++      Vec3 slopeResults = net.minecraftforge.common.ForgeHooks.getMinecartSlopeSpeed(this, slopeX, slopeZ);
++      this.m_20256_(vec31.m_82549_(slopeResults));
  
-@@ -445,7 +_,7 @@
+       vec31 = this.m_20184_();
++      // determine rail direction and align movement to rail
+       Pair<Vec3i, Vec3i> pair = m_38125_(railshape);
+       Vec3i vec3i = pair.getFirst();
+       Vec3i vec3i1 = pair.getSecond();
+@@ -440,12 +_,14 @@
+          double d9 = vec32.m_165925_();
+          double d11 = this.m_20184_().m_165925_();
+          if (d9 > 1.0E-4D && d11 < 0.01D) {
+-            this.m_20256_(this.m_20184_().m_82520_(vec32.f_82479_ * 0.1D, 0.0D, vec32.f_82481_ * 0.1D));
++            Vec3 movement = new Vec3(vec32.f_82479_ * 0.1D, 0.0D, vec32.f_82481_ * 0.1D);
++            movement = net.minecraftforge.common.ForgeHooks.onMinecartSteered(this, (Player) entity, movement);
++            this.m_20256_(this.m_20184_().m_82549_(movement));
+             flag1 = false;
           }
        }
  
@@ -181,6 +202,20 @@
           Vec3 vec36 = this.m_20184_();
           double d27 = vec36.m_165924_();
           if (d27 > 0.01D) {
+@@ -544,11 +_,11 @@
+    }
+ 
+    protected void m_7114_() {
+-      double d0 = this.m_20160_() ? 0.997D : 0.96D;
++      double d0 = net.minecraftforge.common.ForgeHooks.getMinecartRollingResistance(this, this.m_20160_() ? 0.997D : 0.96D);
+       Vec3 vec3 = this.m_20184_();
+       vec3 = vec3.m_82542_(d0, 0.0D, d0);
+       if (this.m_20069_()) {
+-         vec3 = vec3.m_82490_((double)0.95F);
++         vec3 = vec3.m_82490_((double) 0.95F);
+       }
+ 
+       this.m_20256_(vec3);
 @@ -565,7 +_,7 @@
  
        BlockState blockstate = this.f_19853_.m_8055_(new BlockPos(i, j, k));
@@ -210,20 +245,77 @@
        if (!this.f_19853_.f_46443_) {
           if (!p_38165_.f_19794_ && !this.f_19794_) {
              if (!this.m_20363_(p_38165_)) {
-@@ -699,11 +_,11 @@
+@@ -687,37 +_,42 @@
+                   d1 = d1 * (double)0.1F;
+                   d0 = d0 * 0.5D;
+                   d1 = d1 * 0.5D;
+-                  if (p_38165_ instanceof AbstractMinecart) {
+-                     double d4 = p_38165_.m_20185_() - this.m_20185_();
+-                     double d5 = p_38165_.m_20189_() - this.m_20189_();
+-                     Vec3 vec3 = (new Vec3(d4, 0.0D, d5)).m_82541_();
+-                     Vec3 vec31 = (new Vec3((double)Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F)), 0.0D, (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)))).m_82541_();
+-                     double d6 = Math.abs(vec3.m_82526_(vec31));
+-                     if (d6 < (double)0.8F) {
+-                        return;
+-                     }
++                  if (p_38165_ instanceof AbstractMinecart otherCart) {
++                     if(net.minecraftforge.common.ForgeHooks.onMinecartPushedByMinecart(this, otherCart, d0, d1)) {
++                        double d4 = p_38165_.m_20185_() - this.m_20185_();
++                        double d5 = p_38165_.m_20189_() - this.m_20189_();
++                        Vec3 vec3 = (new Vec3(d4, 0.0D, d5)).m_82541_();
++                        Vec3 vec31 = (new Vec3((double)Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F)), 0.0D, (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)))).m_82541_();
++                        double d6 = Math.abs(vec3.m_82526_(vec31));
++                        if (d6 < (double)0.8F) {
++                           return;
++                        }
  
-                      Vec3 vec32 = this.m_20184_();
-                      Vec3 vec33 = p_38165_.m_20184_();
+-                     Vec3 vec32 = this.m_20184_();
+-                     Vec3 vec33 = p_38165_.m_20184_();
 -                     if (((AbstractMinecart)p_38165_).m_6064_() == AbstractMinecart.Type.FURNACE && this.m_6064_() != AbstractMinecart.Type.FURNACE) {
-+                     if (((AbstractMinecart)p_38165_).isPoweredCart() && !this.isPoweredCart()) {
-                         this.m_20256_(vec32.m_82542_(0.2D, 1.0D, 0.2D));
-                         this.m_5997_(vec33.f_82479_ - d0, 0.0D, vec33.f_82481_ - d1);
-                         p_38165_.m_20256_(vec33.m_82542_(0.95D, 1.0D, 0.95D));
+-                        this.m_20256_(vec32.m_82542_(0.2D, 1.0D, 0.2D));
+-                        this.m_5997_(vec33.f_82479_ - d0, 0.0D, vec33.f_82481_ - d1);
+-                        p_38165_.m_20256_(vec33.m_82542_(0.95D, 1.0D, 0.95D));
 -                     } else if (((AbstractMinecart)p_38165_).m_6064_() != AbstractMinecart.Type.FURNACE && this.m_6064_() == AbstractMinecart.Type.FURNACE) {
-+                     } else if (!((AbstractMinecart)p_38165_).isPoweredCart() && this.isPoweredCart()) {
-                         p_38165_.m_20256_(vec33.m_82542_(0.2D, 1.0D, 0.2D));
-                         p_38165_.m_5997_(vec32.f_82479_ + d0, 0.0D, vec32.f_82481_ + d1);
-                         this.m_20256_(vec32.m_82542_(0.95D, 1.0D, 0.95D));
+-                        p_38165_.m_20256_(vec33.m_82542_(0.2D, 1.0D, 0.2D));
+-                        p_38165_.m_5997_(vec32.f_82479_ + d0, 0.0D, vec32.f_82481_ + d1);
+-                        this.m_20256_(vec32.m_82542_(0.95D, 1.0D, 0.95D));
+-                     } else {
+-                        double d7 = (vec33.f_82479_ + vec32.f_82479_) / 2.0D;
+-                        double d8 = (vec33.f_82481_ + vec32.f_82481_) / 2.0D;
+-                        this.m_20256_(vec32.m_82542_(0.2D, 1.0D, 0.2D));
+-                        this.m_5997_(d7 - d0, 0.0D, d8 - d1);
+-                        p_38165_.m_20256_(vec33.m_82542_(0.2D, 1.0D, 0.2D));
+-                        p_38165_.m_5997_(d7 + d0, 0.0D, d8 + d1);
++                        Vec3 vec32 = this.m_20184_();
++                        Vec3 vec33 = p_38165_.m_20184_();
++                        if (((AbstractMinecart)p_38165_).isPoweredCart() && !this.isPoweredCart()) {
++                           this.m_20256_(vec32.m_82542_(0.2D, 1.0D, 0.2D));
++                           this.m_5997_(vec33.f_82479_ - d0, 0.0D, vec33.f_82481_ - d1);
++                           p_38165_.m_20256_(vec33.m_82542_(0.95D, 1.0D, 0.95D));
++                        } else if (!((AbstractMinecart)p_38165_).isPoweredCart() && this.isPoweredCart()) {
++                           p_38165_.m_20256_(vec33.m_82542_(0.2D, 1.0D, 0.2D));
++                           p_38165_.m_5997_(vec32.f_82479_ + d0, 0.0D, vec32.f_82481_ + d1);
++                           this.m_20256_(vec32.m_82542_(0.95D, 1.0D, 0.95D));
++                        } else {
++                           double d7 = (vec33.f_82479_ + vec32.f_82479_) / 2.0D;
++                           double d8 = (vec33.f_82481_ + vec32.f_82481_) / 2.0D;
++                           this.m_20256_(vec32.m_82542_(0.2D, 1.0D, 0.2D));
++                           this.m_5997_(d7 - d0, 0.0D, d8 - d1);
++                           p_38165_.m_20256_(vec33.m_82542_(0.2D, 1.0D, 0.2D));
++                           p_38165_.m_5997_(d7 + d0, 0.0D, d8 + d1);
++                        }
+                      }
+                   } else {
+-                     this.m_5997_(-d0, 0.0D, -d1);
+-                     p_38165_.m_5997_(d0 / 4.0D, 0.0D, d1 / 4.0D);
++                     double[] pushResult = net.minecraftforge.common.ForgeHooks.onMinecartPushedByEntity(this, p_38165_, d0, d1);
++                     double pushX = pushResult[0];
++                     double pushZ = pushResult[1];
++                     this.m_5997_(-pushX, 0.0D, -pushZ);
++                     p_38165_.m_5997_(pushX / 4.0D, 0.0D, pushZ / 4.0D);
+                   }
+                }
+ 
 @@ -807,6 +_,42 @@
        return new ClientboundAddEntityPacket(this);
     }
