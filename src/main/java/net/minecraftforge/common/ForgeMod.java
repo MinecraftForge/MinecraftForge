@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common;
 
+import com.google.gson.Gson;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.ArgumentSerializer;
@@ -51,6 +52,7 @@ import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.fmllegacy.WorldPersistenceHooks;
 import net.minecraftforge.fmllegacy.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fmllegacy.network.FMLNetworkConstants;
+import net.minecraftforge.fmllegacy.network.FMLStatusPing;
 import net.minecraftforge.fmlserverevents.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -201,6 +203,31 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         if (FMLEnvironment.dist == Dist.CLIENT)
             ForgeHooksClient.registerForgeWorldTypeScreens();
+
+
+        var ping = new FMLStatusPing();
+        var serialized = FMLStatusPing.Serializer.serializeOptimized(ping);
+        System.out.println("data length: " + serialized.get("d").getAsString().length());
+        System.out.println("JSON length: " + new Gson().toJson(serialized).length());
+        var unoptimized = FMLStatusPing.Serializer.serialize(ping);
+        System.out.println("UNOP length: " + new Gson().toJson(unoptimized).length());
+        System.out.println();
+        System.out.println("ORIGINAL: ");
+        System.out.println(ping);
+        System.out.println();
+        System.out.println("OPT DESERIALIZED: ");
+        var deserializedPing = FMLStatusPing.Serializer.deserializeOptimized(serialized);
+        System.out.println(deserializedPing);
+
+        System.out.println();
+        System.out.println("IS EQUAL? " + (deserializedPing.equals(ping)));
+
+        System.out.println();
+        System.out.println();
+        System.out.println(new Gson().toJson(serialized));
+        System.out.println();
+        System.out.println();
+        System.out.println(new Gson().toJson(unoptimized));
     }
 
     public void serverStopping(FMLServerStoppingEvent evt)

@@ -38,11 +38,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Supplier;
 
 import java.util.stream.Collectors;
@@ -97,6 +93,43 @@ public class FMLStatusPing {
         this.truncated = truncated;
     }
 
+    @Override
+    public String toString() {
+        return "FMLStatusPing{" +
+                "channels=" + channels +
+                ", mods=" + mods +
+                ", fmlNetworkVer=" + fmlNetworkVer +
+                ", truncated=" + truncated +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof FMLStatusPing)) return false;
+        FMLStatusPing that = (FMLStatusPing) o;
+        return fmlNetworkVer == that.fmlNetworkVer && channels.equals(that.channels) && mods.equals(that.mods);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(channels, mods, fmlNetworkVer);
+    }
+
+    private List<Map.Entry<ResourceLocation, Pair<String, Boolean>>> getChannelsForMod(String modId)
+    {
+        return channels.entrySet().stream()
+                .filter(c -> c.getKey().getNamespace().equals(modId))
+                .toList();
+    }
+
+    private List<Map.Entry<ResourceLocation, Pair<String, Boolean>>> getNonModChannels()
+    {
+        return channels.entrySet().stream()
+                .filter(c -> !mods.containsKey(c.getKey().getNamespace()))
+                .toList();
+    }
+
     public static class Serializer {
         public static FMLStatusPing deserialize(JsonObject forgeData, JsonDeserializationContext ctx) {
             try {
@@ -120,6 +153,9 @@ public class FMLStatusPing {
         }
 
         public static JsonObject serialize(FMLStatusPing forgeData, JsonSerializationContext ctx) {
+            return serialize(forgeData);
+        }
+        public static JsonObject serialize(FMLStatusPing forgeData) {
             JsonObject obj = new JsonObject();
             JsonArray channels = new JsonArray();
             boolean truncated = forgeData.channels.size() > CHANNEL_TRUNCATE_LIMIT || forgeData.mods.size() > MOD_TRUNCATE_LIMIT;
@@ -157,21 +193,100 @@ public class FMLStatusPing {
             return obj;
         }
 
-        public static JsonObject serializeOptimized(FMLStatusPing forgeData, JsonSerializationContext ctx)
+        private static final int VERSION_FLAG_IGNORESERVERONLY = 0b1;
+
+        private static void writeChannelsNoNamespace(FriendlyByteBuf buf, Iterable<Map.Entry<ResourceLocation, Pair<String, Boolean>>> channels)
+        {
+            for (var entry : channels)
+            {
+                buf.writeUtf(entry.getKey().getPath());
+                buf.writeUtf(entry.getValue().getLeft());
+                buf.writeBoolean(entry.getValue().getRight());
+            }
+        }
+
+        private static void readChannelsNoNamespace(FriendlyByteBuf buf, int size, String namespace, Map<ResourceLocation, Pair<String, Boolean>> target)
+        {
+            for (var i = 0; i < size; i++)
+            {
+                var channel = buf.readUtf();
+                var version = buf.readUtf();
+                var requiredOnClient = buf.readBoolean();
+                target.put(
+                        new ResourceLocation(namespace, channel),
+                        Pair.of(version, requiredOnClient)
+                );
+            }
+        }
+
+        public static JsonObject serializeOptimized(FMLStatusPing forgeData)
         {
             var buf = new FriendlyByteBuf(Unpooled.buffer());
+            buf.writeVarInt(forgeData.mods.size());
+            for (var modEntry : forgeData.mods.entrySet()) {
+                var isIgnoreServerOnly = modEntry.getValue().equals(FMLNetworkConstants.IGNORESERVERONLY);
 
+                var channelsForMod = forgeData.getChannelsForMod(modEntry.getKey());
+                var channelSizeAndVersionFlag = channelsForMod.size() << 1;
+                if (isIgnoreServerOnly)
+                {
+                    channelSizeAndVersionFlag |= VERSION_FLAG_IGNORESERVERONLY;
+                }
+                buf.writeVarInt(channelSizeAndVersionFlag);
 
-            // what counts here is UTF-16 code-point count, because of how writeUtf counts characters
-            var sb = new StringBuilder();
-            sb.append(((char) forgeData.mods.size())); // this is good for up to 0xd7ff == 55295 mods and only takes 1 codepoint
+                buf.writeUtf(modEntry.getKey());
+                if (!isIgnoreServerOnly)
+                {
+                    buf.writeUtf(modEntry.getValue());
+                }
+                writeChannelsNoNamespace(buf, channelsForMod);
+            }
 
-
+            var nonModChannels = forgeData.getNonModChannels();
+            buf.writeVarInt(nonModChannels.size());
+            for (var entry : nonModChannels)
+            {
+                buf.writeResourceLocation(entry.getKey());
+                buf.writeUtf(entry.getValue().getLeft());
+                buf.writeBoolean(entry.getValue().getRight());
+            }
 
             var obj = new JsonObject();
             obj.addProperty("fmlNetworkVersion", forgeData.fmlNetworkVer);
-            obj.addProperty("d", sb.toString());
+            obj.addProperty("d", encodeOptimized(buf));
             return obj;
+        }
+
+        public static FMLStatusPing deserializeOptimized(JsonObject forgeData)
+        {
+            int remoteFMLVersion = GsonHelper.getAsInt(forgeData, "fmlNetworkVersion");
+            var buf = new FriendlyByteBuf(decodeOptimized(GsonHelper.getAsString(forgeData, "d")));
+
+            var modsSize = buf.readVarInt();
+            var mods = new HashMap<String, String>();
+            var channels = new HashMap<ResourceLocation, Pair<String, Boolean>>();
+            for (var i = 0; i < modsSize; i++)
+            {
+                var channelSizeAndVersionFlag = buf.readVarInt();
+                var channelSize = channelSizeAndVersionFlag >>> 1;
+                var isIgnoreServerOnly = (channelSizeAndVersionFlag & VERSION_FLAG_IGNORESERVERONLY) != 0;
+                var modId = buf.readUtf();
+                var modVersion = isIgnoreServerOnly ? FMLNetworkConstants.IGNORESERVERONLY : buf.readUtf();
+                readChannelsNoNamespace(buf, channelSize, modId, channels);
+
+                mods.put(modId, modVersion);
+            }
+
+            var nonModChannelCount = buf.readVarInt();
+            for (var i = 0; i < nonModChannelCount; i++)
+            {
+                channels.put(
+                        buf.readResourceLocation(),
+                        Pair.of(buf.readUtf(), buf.readBoolean())
+                );
+            }
+
+            return new FMLStatusPing(channels, mods, remoteFMLVersion, false);
         }
     }
 
@@ -262,22 +377,27 @@ public class FMLStatusPing {
         return buf;
     }
 
-    public static void main(String[] args) {
-        var bytes = new byte[256];
-        for (int i = 0; i < 256; i++) {
-            bytes[i] = (byte) i;
-        }
-        var encoded = encodeOptimized(Unpooled.wrappedBuffer(bytes));
-        var decoded = decodeOptimized(encoded);
-
-        System.out.println("bytes: " + bytes.length);
-        System.out.println("encod: " + encoded.length());
-        System.out.println("decod: " + decoded.readableBytes());
-        System.out.println("encod: " + encoded.codePoints().mapToObj(Integer::toHexString).collect(Collectors.joining(", ")));
-        System.out.println("encod: " + encoded);
-
-        System.out.println(ByteBufUtil.hexDump(Unpooled.wrappedBuffer(bytes)));
-        System.out.println(ByteBufUtil.hexDump(decoded));
-    }
+//    public static void main(String[] args) {
+//
+//
+//
+//        var bytes = new byte[256];
+//        for (int i = 0; i < 256; i++) {
+//            bytes[i] = (byte) i;
+//        }
+//        var encoded = encodeOptimized(Unpooled.wrappedBuffer(bytes));
+//        var decoded = decodeOptimized(encoded);
+//
+//
+//
+//        System.out.println("bytes: " + bytes.length);
+//        System.out.println("encod: " + encoded.length());
+//        System.out.println("decod: " + decoded.readableBytes());
+//        System.out.println("encod: " + encoded.codePoints().mapToObj(Integer::toHexString).collect(Collectors.joining(", ")));
+//        System.out.println("encod: " + encoded);
+//
+//        System.out.println(ByteBufUtil.hexDump(Unpooled.wrappedBuffer(bytes)));
+//        System.out.println(ByteBufUtil.hexDump(decoded));
+//    }
 
 }
