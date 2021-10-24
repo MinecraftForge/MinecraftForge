@@ -65,8 +65,8 @@ import java.util.stream.StreamSupport;
  */
 public class FMLStatusPing {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final int CHANNEL_TRUNCATE_LIMIT = 150;
-    private static final int MOD_TRUNCATE_LIMIT = 150;
+    private static final int CHANNEL_TRUNCATE_LIMIT = Integer.MAX_VALUE;
+    private static final int MOD_TRUNCATE_LIMIT = Integer.MAX_VALUE;
     private static volatile boolean warnedAboutTruncation = false;
 
     private transient Map<ResourceLocation, Pair<String, Boolean>> channels;
@@ -251,6 +251,9 @@ public class FMLStatusPing {
                 buf.writeBoolean(entry.getValue().getRight());
             }
 
+            System.out.println("BUF FOR SERIALIZE");
+            System.out.println(ByteBufUtil.hexDump(buf));
+
             var obj = new JsonObject();
             obj.addProperty("fmlNetworkVersion", forgeData.fmlNetworkVer);
             obj.addProperty("d", encodeOptimized(buf));
@@ -261,6 +264,8 @@ public class FMLStatusPing {
         {
             int remoteFMLVersion = GsonHelper.getAsInt(forgeData, "fmlNetworkVersion");
             var buf = new FriendlyByteBuf(decodeOptimized(GsonHelper.getAsString(forgeData, "d")));
+            System.out.println("BUF FOR DESERIALIZE");
+            System.out.println(ByteBufUtil.hexDump(buf));
 
             var modsSize = buf.readVarInt();
             var mods = new HashMap<String, String>();
@@ -327,7 +332,7 @@ public class FMLStatusPing {
                 buffer >>>= 15;
                 bitsInBuf -= 15;
             }
-            var b = buf.readByte();
+            var b = buf.readUnsignedByte();
             buffer |= (int) b << bitsInBuf;
             bitsInBuf += 8;
         }
@@ -377,27 +382,24 @@ public class FMLStatusPing {
         return buf;
     }
 
-//    public static void main(String[] args) {
-//
-//
-//
-//        var bytes = new byte[256];
-//        for (int i = 0; i < 256; i++) {
-//            bytes[i] = (byte) i;
-//        }
-//        var encoded = encodeOptimized(Unpooled.wrappedBuffer(bytes));
-//        var decoded = decodeOptimized(encoded);
-//
-//
-//
-//        System.out.println("bytes: " + bytes.length);
-//        System.out.println("encod: " + encoded.length());
-//        System.out.println("decod: " + decoded.readableBytes());
-//        System.out.println("encod: " + encoded.codePoints().mapToObj(Integer::toHexString).collect(Collectors.joining(", ")));
-//        System.out.println("encod: " + encoded);
-//
-//        System.out.println(ByteBufUtil.hexDump(Unpooled.wrappedBuffer(bytes)));
-//        System.out.println(ByteBufUtil.hexDump(decoded));
-//    }
+    public static void main(String[] args) {
+        var bytes = new byte[256];
+        for (int i = 0; i < 256; i++) {
+            bytes[i] = (byte) i;
+        }
+        var encoded = encodeOptimized(Unpooled.wrappedBuffer(bytes));
+        var decoded = decodeOptimized(encoded);
+
+
+
+        System.out.println("bytes: " + bytes.length);
+        System.out.println("encod: " + encoded.length());
+        System.out.println("decod: " + decoded.readableBytes());
+        System.out.println("encod: " + encoded.codePoints().mapToObj(Integer::toHexString).collect(Collectors.joining(", ")));
+        System.out.println("encod: " + encoded);
+
+        System.out.println(ByteBufUtil.hexDump(Unpooled.wrappedBuffer(bytes)));
+        System.out.println(ByteBufUtil.hexDump(decoded));
+    }
 
 }
