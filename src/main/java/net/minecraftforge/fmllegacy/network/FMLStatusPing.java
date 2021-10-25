@@ -94,7 +94,6 @@ import java.util.stream.StreamSupport;
  *     "fmlNetworkVersion": FMLNETVERSION,
  *     "channels": [],
  *     "mods": [],
- *     "truncated": true,
  *     "d": "&lt;binary data&gt;"
  * }
  * </pre>
@@ -266,7 +265,6 @@ public class FMLStatusPing
             // add dummy properties, so only versions do not crash when deserializing
             obj.add("channels", new JsonArray());
             obj.add("mods", new JsonArray());
-            obj.addProperty("truncated", true); // set to true so that old versions show the truncation message
             return obj;
         }
 
