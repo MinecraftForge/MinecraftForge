@@ -37,7 +37,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import java.util.stream.Collectors;
@@ -144,8 +147,7 @@ public class FMLStatusPing
     public boolean equals(Object o)
     {
         if (this == o) return true;
-        if (!(o instanceof FMLStatusPing)) return false;
-        FMLStatusPing that = (FMLStatusPing) o;
+        if (!(o instanceof FMLStatusPing that)) return false;
         return fmlNetworkVer == that.fmlNetworkVer && channels.equals(that.channels) && mods.equals(that.mods);
     }
 
