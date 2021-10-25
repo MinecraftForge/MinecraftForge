@@ -20,3 +20,41 @@
     });
     public static final Codec<Biome> f_47430_ = RecordCodecBuilder.create((p_47504_) -> {
        return p_47504_.group(Biome.ClimateSettings.f_47679_.forGetter((p_151703_) -> {
+@@ -607,7 +_,7 @@
+       }
+    }
+ 
+-   public static enum TemperatureModifier implements StringRepresentable {
++   public static enum TemperatureModifier implements StringRepresentable, net.minecraftforge.common.IExtensibleEnum {
+       NONE("none") {
+          public float m_8117_(BlockPos p_47767_, float p_47768_) {
+             return p_47768_;
+@@ -635,10 +_,27 @@
+          return p_47753_;
+       }));
+ 
+-      public abstract float m_8117_(BlockPos p_47754_, float p_47755_);
++      public float m_8117_(BlockPos p_47754_, float p_47755_) { return this.temperatureModifier.modifyTemperature(p_47754_, p_47755_); }
+ 
+       TemperatureModifier(String p_47745_) {
+          this.f_47738_ = p_47745_;
++      }
++
++      private BiomeTemperatureModifier temperatureModifier;
++      private TemperatureModifier(String modifierName, BiomeTemperatureModifier temperatureModifier) {
++         this(modifierName);
++         this.temperatureModifier = temperatureModifier;
++      }
++      public static TemperatureModifier create(String name, String modifierName, BiomeTemperatureModifier temperatureModifier) {
++    	  throw new IllegalStateException("Enum not extended");
++      }
++      @java.lang.Override
++      public void init() {
++         f_47739_.put(this.m_47758_(), this);
++      }
++      @java.lang.FunctionalInterface
++      public interface BiomeTemperatureModifier {
++         float modifyTemperature(BlockPos pos, float noise);
+       }
+ 
+       public String m_47758_() {
