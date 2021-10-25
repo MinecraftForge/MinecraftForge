@@ -346,6 +346,15 @@
        return this.m_36218_(mutablecomponent);
     }
  
+@@ -1948,7 +_,7 @@
+    }
+ 
+    public boolean m_150108_() {
+-      return this.m_6117_() && this.m_21211_().m_150930_(Items.f_151059_);
++      return this.m_6117_() && this.m_21211_().m_150930_(Items.f_151059_) || net.minecraftforge.common.ForgeHooks.isPlayerScoping(this);
+    }
+ 
+    public boolean m_142391_() {
 @@ -1978,5 +_,63 @@
        public Component m_36423_() {
           return this.f_36413_;

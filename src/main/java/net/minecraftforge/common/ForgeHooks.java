@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1234,6 +1235,22 @@ public class ForgeHooks
             newBuilder.combine(v);
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
+    }
+
+    private static final List<Predicate<Player>> SPYGLASS_PREDICATES = new ArrayList<>();
+
+    /**
+     * Registers a predicate which will be checked for whether the player is considered to be 'scoping' with a spyglass on the client
+     * Only one registered predicate needs to be true for scoping to occur
+     * @param spyglassCondition A predicate which will be checked on the client side. Might be tested very frequently
+     */
+    public static void registerSpyglassCondition(Predicate<Player> spyglassCondition)
+    {
+        SPYGLASS_PREDICATES.add(spyglassCondition);
+    }
+
+    public static boolean isPlayerScoping(Player player){
+        return SPYGLASS_PREDICATES.stream().anyMatch(pred -> pred.test(player));
     }
 
     public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)
