@@ -62,7 +62,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.DefaultAttributes;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
@@ -148,7 +147,6 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
-import net.minecraftforge.event.entity.minecart.MinecartEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -864,36 +862,6 @@ public class ForgeHooks
                     case DIAMOND -> BlockTags.NEEDS_DIAMOND_TOOL;
                     case NETHERITE -> Tags.Blocks.NEEDS_NETHERITE_TOOL;
                 };
-    }
-
-    public static Vec3 onMinecartSteered(AbstractMinecart minecart, Player player, Vec3 movement) {
-        MinecartEvent.Steered event = new MinecartEvent.Steered(minecart, player, movement);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getMovement();
-    }
-
-    public static double[] onMinecartPushedByEntity(AbstractMinecart minecart, Entity pusher, double pushX, double pushZ) {
-        MinecartEvent.PushedByEntity event = new MinecartEvent.PushedByEntity(minecart, pusher, pushX, pushZ);
-        MinecraftForge.EVENT_BUS.post(event);
-        return new double[]{event.getPushX(), event.getPushZ()};
-    }
-
-    public static boolean onMinecartPushedByMinecart(AbstractMinecart thisCart, AbstractMinecart otherCart, double xPushForce, double zPushForce) {
-        MinecartEvent.PushedByMinecart event = new MinecartEvent.PushedByMinecart(thisCart, otherCart, xPushForce, zPushForce);
-        MinecraftForge.EVENT_BUS.post(event);
-        return !event.isCanceled();
-    }
-
-    public static double getMinecartRollingResistance(AbstractMinecart minecart, double resistance) {
-        MinecartEvent.RollingResistance event = new MinecartEvent.RollingResistance(minecart, resistance);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getResistance();
-    }
-
-    public static Vec3 getMinecartSlopeSpeed(AbstractMinecart minecart, double slopeX, double slopeZ) {
-        MinecartEvent.SlopeSpeed event = new MinecartEvent.SlopeSpeed(minecart, slopeX, slopeZ);
-        MinecraftForge.EVENT_BUS.post(event);
-        return new Vec3(event.getSlopeX(), 0, event.getSlopeZ());
     }
 
     @FunctionalInterface

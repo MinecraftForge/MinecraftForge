@@ -11,15 +11,18 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.MinecartChest;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.MinecartEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -44,7 +47,29 @@ public class MinecartLinkTest {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterCapability);
         MinecraftForge.EVENT_BUS.addListener(this::onEntityInteract);
+        MinecraftForge.EVENT_BUS.addListener(this::onMinecartPushed);
+        MinecraftForge.EVENT_BUS.addListener(this::onMinecartPostMove);
+        MinecraftForge.EVENT_BUS.addListener(this::onMinecartPreMove);
+        MinecraftForge.EVENT_BUS.addListener(this::onMinecartSteered);
         MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, this::onAttachCapability);
+    }
+
+    private void onMinecartPostMove(MinecartEvent.PostMove event) {
+        LinkageHandler.adjustCart(event.getMinecart());
+    }
+
+    private void onMinecartPreMove(MinecartEvent.PreMove event) {
+        if (event.getMinecart() instanceof MinecartChest) event.setCanceled(true);
+    }
+
+    private void onMinecartPushed(MinecartEvent.Pushed event) {
+        event.setPushX(0);
+        event.setPushZ(0);
+    }
+
+    private void onMinecartSteered(MinecartEvent.Steered event) {
+        event.setX(event.getX() * 10);
+        event.setZ(event.getZ() * 10);
     }
 
     public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
@@ -67,7 +92,7 @@ public class MinecartLinkTest {
         }
     }
 
-    private interface IMinecartLink extends INBTSerializable<CompoundTag> {
+    public interface IMinecartLink extends INBTSerializable<CompoundTag> {
 
         UUID getLinkA();
 
@@ -159,7 +184,7 @@ public class MinecartLinkTest {
                 }
                 return LinkState.LINK_CREATED_A;
             }
-            if(linkResultA == LinkState.LINK_EXISTS || linkResultB == LinkState.LINK_EXISTS)  {
+            if (linkResultA == LinkState.LINK_EXISTS || linkResultB == LinkState.LINK_EXISTS) {
                 return LinkState.LINK_EXISTS;
             }
             return LinkState.LINK_OCCUPIED;
@@ -225,7 +250,7 @@ public class MinecartLinkTest {
         }
     }
 
-    private static class CapabilityMinecartLink {
+    public static class CapabilityMinecartLink {
 
         public static final Capability<IMinecartLink> MINECART_LINK_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
         });
@@ -323,4 +348,80 @@ public class MinecartLinkTest {
 
     }
 
+    public static class LinkageHandler {
+
+        public static void adjustCart(AbstractMinecart cart) {
+            adjustLinkedCart(cart);
+        }
+
+        private static void adjustLinkedCart(AbstractMinecart cart) {
+            Optional<IMinecartLink> linkOpt = cart.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).resolve();
+            if (linkOpt.isPresent()) {
+                IMinecartLink link = linkOpt.get();
+                AbstractMinecart cartA = (AbstractMinecart) ((ServerLevel) cart.level).getEntity(link.getLinkA());
+                if (cartA != null) {
+                    adjustVelocity(cartA, cart);
+                }
+                AbstractMinecart cartB = (AbstractMinecart) ((ServerLevel) cart.level).getEntity(link.getLinkB());
+                if (cartB != null) {
+                    adjustVelocity(cart, cartB);
+                }
+            }
+        }
+
+        protected static void adjustVelocity(AbstractMinecart cart1, AbstractMinecart cart2) {
+            double dist = cart1.position().distanceTo(cart2.position());
+            if (dist > 8F) {
+                // BREAK LINK
+                return;
+            }
+
+            Vec3 cart1Pos = cart1.position();
+            Vec3 cart2Pos = cart2.position();
+
+            Vec3 unit = cart2Pos.subtract(cart1Pos).normalize();// Vec2.unit(cart2Pos, cart1Pos);
+
+            float optDist = 0.78f * 2f;
+            double stretch = dist - optDist;
+
+            double stiffness = 0.7F;
+            double springX = stiffness * stretch * unit.x;
+            double springZ = stiffness * stretch * unit.z;
+
+            springX = limitForce(springX);
+            springZ = limitForce(springZ);
+
+            Vec3 cartMotion1 = cart1.getDeltaMovement();
+            Vec3 cartMotion2 = cart2.getDeltaMovement();
+
+            cartMotion1 = cartMotion1.add(springX, 0, springZ);
+            cartMotion2 = cartMotion2.subtract(springX, 0, springZ);
+            cart1.setDeltaMovement(cartMotion1);
+            cart2.setDeltaMovement(cartMotion2);
+
+            // Damping
+
+            Vec3 cart1Vel = cart1.getDeltaMovement();
+            Vec3 cart2Vel = cart2.getDeltaMovement();
+
+            double dot = cart2Vel.subtract(cart1Vel).dot(unit);//Vec3.subtract(cart2Vel, cart1Vel).dotProduct(unit);
+
+            double damping = 0.4F;
+            double dampX = damping * dot * unit.x;
+            double dampZ = damping * dot * unit.z;
+
+            dampX = limitForce(dampX);
+            dampZ = limitForce(dampZ);
+
+            cart1Vel = cart1Vel.add(dampX, 0, dampZ);
+            cart2Vel = cart2Vel.subtract(dampX, 0, dampZ);
+            cart1.setDeltaMovement(cart1Vel);
+            cart2.setDeltaMovement(cart2Vel);
+        }
+
+        private static double limitForce(double force) {
+            return Math.copySign(Math.min(Math.abs(force), /*FORCE_LIMITER*/ 6F), force);
+        }
+
+    }
 }
