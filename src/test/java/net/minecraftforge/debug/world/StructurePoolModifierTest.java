@@ -57,8 +57,8 @@ public class StructurePoolModifierTest {
 
         @Override
         protected void start() {
-            this.add("add_test_to_pillage", POOL_ADDER.get(), new PoolAdder(ImmutableMap.of(
-                    new ResourceLocation("pillager_outpost/towers"),
+            this.add("add_test_to_village", POOL_ADDER.get(), new PoolAdder(ImmutableMap.of(
+                    new ResourceLocation("village/desert/houses"),
                     ImmutableList.of(Pair.of(
                             new ResourceLocation("structure_pool_modifier_test", "test"),
                             10

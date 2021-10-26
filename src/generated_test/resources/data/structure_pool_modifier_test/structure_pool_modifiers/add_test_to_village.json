@@ -1,7 +1,7 @@
 {
   "type": "structure_pool_modifier_test:pool_adder",
   "additions": {
-    "minecraft:pillager_outpost/towers": [
+    "minecraft:village/desert/houses": [
       {
         "template": "structure_pool_modifier_test:test",
         "weight": 10
