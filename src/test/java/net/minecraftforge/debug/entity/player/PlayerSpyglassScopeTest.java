@@ -32,11 +32,11 @@ public class PlayerSpyglassScopeTest
 {
 
     static final String MODID = "player_spyglass_scope_test";
-    static final boolean ENABLE = false;
+    static final boolean ENABLED = false;
 
     public PlayerSpyglassScopeTest()
     {
-        if(ENABLE)
+        if (ENABLED)
         {
             SpyglassHooks.registerSpyglassCondition(Entity::isShiftKeyDown);
         }
