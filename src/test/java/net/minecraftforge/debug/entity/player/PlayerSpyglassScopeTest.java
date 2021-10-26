@@ -20,7 +20,7 @@
 package net.minecraftforge.debug.entity.player;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.SpyglassHooks;
 import net.minecraftforge.fml.common.Mod;
 
 /**
@@ -36,8 +36,9 @@ public class PlayerSpyglassScopeTest
 
     public PlayerSpyglassScopeTest()
     {
-        if(ENABLE){
-            ForgeHooks.registerSpyglassCondition(Entity::isShiftKeyDown);
+        if(ENABLE)
+        {
+            SpyglassHooks.registerSpyglassCondition(Entity::isShiftKeyDown);
         }
     }
 }

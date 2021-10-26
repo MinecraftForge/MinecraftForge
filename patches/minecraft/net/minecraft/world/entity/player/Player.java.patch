@@ -351,7 +351,7 @@
  
     public boolean m_150108_() {
 -      return this.m_6117_() && this.m_21211_().m_150930_(Items.f_151059_);
-+      return this.m_6117_() && this.m_21211_().m_150930_(Items.f_151059_) || net.minecraftforge.common.ForgeHooks.isPlayerScoping(this);
++      return this.m_6117_() && this.m_21211_().m_150930_(Items.f_151059_) || net.minecraftforge.common.SpyglassHooks.isPlayerScoping(this);
     }
  
     public boolean m_142391_() {
