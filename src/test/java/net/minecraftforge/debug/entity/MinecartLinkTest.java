@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2021.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.debug.entity;
 
 import net.minecraft.core.Direction;
@@ -18,7 +37,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.*;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityProvider;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -38,12 +62,14 @@ import java.util.Set;
 import java.util.UUID;
 
 @Mod("minecart_link_test")
-public class MinecartLinkTest {
+public class MinecartLinkTest
+{
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, "minecart_link_test");
     private static final RegistryObject<Item> LINKER = ITEMS.register("linker", () -> new LinkerItem(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS)));
 
-    public MinecartLinkTest() {
+    public MinecartLinkTest()
+    {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterCapability);
         MinecraftForge.EVENT_BUS.addListener(this::onEntityInteract);
@@ -54,35 +80,42 @@ public class MinecartLinkTest {
         MinecraftForge.EVENT_BUS.addGenericListener(Entity.class, this::onAttachCapability);
     }
 
-    private void onMinecartPostMove(MinecartEvent.PostMove event) {
+    private void onMinecartPostMove(MinecartEvent.PostMove event)
+    {
         LinkageHandler.adjustCart(event.getMinecart());
     }
 
-    private void onMinecartPreMove(MinecartEvent.PreMove event) {
+    private void onMinecartPreMove(MinecartEvent.PreMove event)
+    {
         if (event.getMinecart() instanceof MinecartChest) event.setCanceled(true);
     }
 
-    private void onMinecartPushed(MinecartEvent.Pushed event) {
+    private void onMinecartPushed(MinecartEvent.Pushed event)
+    {
         event.setPushX(0);
         event.setPushZ(0);
     }
 
-    private void onMinecartSteered(MinecartEvent.Steered event) {
+    private void onMinecartSteered(MinecartEvent.Steered event)
+    {
         event.setX(event.getX() * 10);
         event.setZ(event.getZ() * 10);
     }
 
-    public void onAttachCapability(AttachCapabilitiesEvent<Entity> event) {
+    public void onAttachCapability(AttachCapabilitiesEvent<Entity> event)
+    {
         if (event.getObject() instanceof AbstractMinecart) {
             event.addCapability(CapabilityMinecartLink.KEY, new MinecartLinkProvider());
         }
     }
 
-    public void onRegisterCapability(RegisterCapabilitiesEvent event) {
+    public void onRegisterCapability(RegisterCapabilitiesEvent event)
+    {
         CapabilityMinecartLink.register(event);
     }
 
-    public void onEntityInteract(PlayerInteractEvent.EntityInteract event) {
+    public void onEntityInteract(PlayerInteractEvent.EntityInteract event)
+    {
         if (event.getItemStack().getItem() instanceof LinkerItem linkerItem) {
             if (event.getTarget() instanceof AbstractMinecart cart) {
                 InteractionResult result = linkerItem.linkMinecart(event.getWorld(), event.getItemStack(), event.getPlayer(), cart);
@@ -92,7 +125,8 @@ public class MinecartLinkTest {
         }
     }
 
-    public interface IMinecartLink extends INBTSerializable<CompoundTag> {
+    public interface IMinecartLink extends INBTSerializable<CompoundTag>
+    {
 
         UUID getLinkA();
 
@@ -108,20 +142,24 @@ public class MinecartLinkTest {
 
     }
 
-    private static class LinkerItem extends Item {
+    private static class LinkerItem extends Item
+    {
 
-        public LinkerItem(Properties properties) {
+        public LinkerItem(Properties properties)
+        {
             super(properties);
         }
 
         @Override
-        public Component getName(ItemStack stack) {
+        public Component getName(ItemStack stack)
+        {
             CompoundTag tag = stack.getOrCreateTag();
             boolean isLinking = tag.contains("FirstCartID") && tag.getInt("FirstCartID") != 0;
             return isLinking ? new TranslatableComponent("item.minecart_link_test.linker.linking") : super.getName(stack);
         }
 
-        public InteractionResult linkMinecart(Level world, ItemStack itemStack, Player player, AbstractMinecart cart) {
+        public InteractionResult linkMinecart(Level world, ItemStack itemStack, Player player, AbstractMinecart cart)
+        {
             if (!world.isClientSide()) {
                 CompoundTag tag = itemStack.getOrCreateTag();
                 if (tag.contains("FirstCartID")) {
@@ -155,7 +193,8 @@ public class MinecartLinkTest {
             return InteractionResult.CONSUME;
         }
 
-        private LinkageManager.LinkState linkMinecarts(Level level, AbstractMinecart cartA, AbstractMinecart cartB) {
+        private LinkageManager.LinkState linkMinecarts(Level level, AbstractMinecart cartA, AbstractMinecart cartB)
+        {
             if (cartA == cartB) return LinkageManager.LinkState.LINK_FAILED;
             Optional<IMinecartLink> cartLinkOptA = cartA.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).resolve();
             Optional<IMinecartLink> cartLinkOptB = cartB.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).resolve();
@@ -167,10 +206,12 @@ public class MinecartLinkTest {
 
     }
 
-    private static class LinkageManager {
+    private static class LinkageManager
+    {
         public static final LinkageManager INSTANCE = new LinkageManager();
 
-        public LinkState linkCarts(Level level, AbstractMinecart cartA, IMinecartLink linkA, AbstractMinecart cartB, IMinecartLink linkB) {
+        public LinkState linkCarts(Level level, AbstractMinecart cartA, IMinecartLink linkA, AbstractMinecart cartB, IMinecartLink linkB)
+        {
             LinkState linkResultA = tryLinkTo(cartA, level, linkA, cartB);
             LinkState linkResultB = tryLinkTo(cartB, level, linkB, cartA);
             if (linkResultA.isCreated() && linkResultB.isCreated()) {
@@ -190,7 +231,8 @@ public class MinecartLinkTest {
             return LinkState.LINK_OCCUPIED;
         }
 
-        private LinkState tryLinkTo(AbstractMinecart thisCart, Level level, IMinecartLink link, AbstractMinecart otherCart) {
+        private LinkState tryLinkTo(AbstractMinecart thisCart, Level level, IMinecartLink link, AbstractMinecart otherCart)
+        {
             boolean alreadyLinked = isLinkedTo(thisCart, level, link, otherCart);
             if (alreadyLinked) return LinkState.LINK_EXISTS;
             if (!link.isLinkedA()) {
@@ -202,19 +244,22 @@ public class MinecartLinkTest {
             return LinkState.LINK_OCCUPIED;
         }
 
-        private boolean isLinkedTo(AbstractMinecart thisCart, Level level, IMinecartLink link, AbstractMinecart otherCart) {
+        private boolean isLinkedTo(AbstractMinecart thisCart, Level level, IMinecartLink link, AbstractMinecart otherCart)
+        {
             Set<AbstractMinecart> linkedCarts = getLinkedCarts(thisCart, level);
             return linkedCarts.contains(otherCart);
         }
 
-        private Set<AbstractMinecart> getLinkedCarts(AbstractMinecart cart, Level level) {
+        private Set<AbstractMinecart> getLinkedCarts(AbstractMinecart cart, Level level)
+        {
             Set<AbstractMinecart> minecarts = new HashSet<>();
             minecarts.add(cart);
             getLinkedCarts(cart, level, minecarts);
             return minecarts;
         }
 
-        private void getLinkedCarts(AbstractMinecart cart, Level level, Set<AbstractMinecart> minecarts) {
+        private void getLinkedCarts(AbstractMinecart cart, Level level, Set<AbstractMinecart> minecarts)
+        {
             cart.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).ifPresent(link -> {
                 if (link.isLinkedA()) {
                     UUID cartIdA = link.getLinkA();
@@ -237,43 +282,51 @@ public class MinecartLinkTest {
             });
         }
 
-        private enum LinkState {
+        private enum LinkState
+        {
             LINK_EXISTS,
             LINK_CREATED_A,
             LINK_CREATED_B,
             LINK_FAILED,
             LINK_OCCUPIED;
 
-            public boolean isCreated() {
+            public boolean isCreated()
+            {
                 return this == LINK_CREATED_A || this == LINK_CREATED_B;
             }
         }
     }
 
-    public static class CapabilityMinecartLink {
+    public static class CapabilityMinecartLink
+    {
 
-        public static final Capability<IMinecartLink> MINECART_LINK_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {
+        public static final Capability<IMinecartLink> MINECART_LINK_CAPABILITY = CapabilityManager.get(new CapabilityToken<>()
+        {
         });
         public static final ResourceLocation KEY = new ResourceLocation("minecart_link_test:minecart_link");
 
-        public static void register(RegisterCapabilitiesEvent event) {
+        public static void register(RegisterCapabilitiesEvent event)
+        {
             event.register(IMinecartLink.class);
         }
 
     }
 
-    private static class MinecartLink implements IMinecartLink {
+    private static class MinecartLink implements IMinecartLink
+    {
 
         private UUID linkA;
         private UUID linkB;
 
-        public MinecartLink() {
+        public MinecartLink()
+        {
             linkA = new UUID(0, 0);
             linkB = new UUID(0, 0);
         }
 
         @Override
-        public CompoundTag serializeNBT() {
+        public CompoundTag serializeNBT()
+        {
             CompoundTag tag = new CompoundTag();
             tag.putUUID("LinkA", linkA);
             tag.putUUID("LinkB", linkB);
@@ -281,54 +334,64 @@ public class MinecartLinkTest {
         }
 
         @Override
-        public void deserializeNBT(CompoundTag nbt) {
+        public void deserializeNBT(CompoundTag nbt)
+        {
             this.linkA = nbt.getUUID("LinkA");
             this.linkB = nbt.getUUID("LinkB");
         }
 
         @Override
-        public UUID getLinkA() {
+        public UUID getLinkA()
+        {
             return this.linkA;
         }
 
         @Override
-        public void setLinkA(UUID linkId) {
+        public void setLinkA(UUID linkId)
+        {
             this.linkA = linkId;
         }
 
         @Override
-        public UUID getLinkB() {
+        public UUID getLinkB()
+        {
             return this.linkB;
         }
 
         @Override
-        public void setLinkB(UUID linkId) {
+        public void setLinkB(UUID linkId)
+        {
             this.linkB = linkId;
         }
 
         @Override
-        public boolean isLinkedA() {
+        public boolean isLinkedA()
+        {
             return !(this.linkA.getLeastSignificantBits() == 0 && this.linkA.getMostSignificantBits() == 0);
         }
 
         @Override
-        public boolean isLinkedB() {
+        public boolean isLinkedB()
+        {
             return !(this.linkB.getLeastSignificantBits() == 0 && this.linkB.getMostSignificantBits() == 0);
         }
 
     }
 
-    private static class MinecartLinkProvider extends CapabilityProvider<MinecartLinkProvider> implements ICapabilitySerializable<CompoundTag> {
+    private static class MinecartLinkProvider extends CapabilityProvider<MinecartLinkProvider> implements ICapabilitySerializable<CompoundTag>
+    {
         private final LazyOptional<IMinecartLink> minecartLink;
 
-        protected MinecartLinkProvider() {
+        protected MinecartLinkProvider()
+        {
             super(MinecartLinkProvider.class);
             minecartLink = LazyOptional.of(MinecartLink::new);
         }
 
         @Nonnull
         @Override
-        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction dir) {
+        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction dir)
+        {
             if (cap == CapabilityMinecartLink.MINECART_LINK_CAPABILITY) {
                 return minecartLink.cast();
             }
@@ -337,24 +400,29 @@ public class MinecartLinkTest {
         }
 
         @Override
-        public CompoundTag serializeNBT() {
+        public CompoundTag serializeNBT()
+        {
             return minecartLink.map(INBTSerializable::serializeNBT).orElseThrow();
         }
 
         @Override
-        public void deserializeNBT(CompoundTag nbt) {
+        public void deserializeNBT(CompoundTag nbt)
+        {
             minecartLink.ifPresent(link -> link.deserializeNBT(nbt));
         }
 
     }
 
-    public static class LinkageHandler {
+    public static class LinkageHandler
+    {
 
-        public static void adjustCart(AbstractMinecart cart) {
+        public static void adjustCart(AbstractMinecart cart)
+        {
             adjustLinkedCart(cart);
         }
 
-        private static void adjustLinkedCart(AbstractMinecart cart) {
+        private static void adjustLinkedCart(AbstractMinecart cart)
+        {
             Optional<IMinecartLink> linkOpt = cart.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).resolve();
             if (linkOpt.isPresent()) {
                 IMinecartLink link = linkOpt.get();
@@ -369,7 +437,8 @@ public class MinecartLinkTest {
             }
         }
 
-        protected static void adjustVelocity(AbstractMinecart cart1, AbstractMinecart cart2) {
+        protected static void adjustVelocity(AbstractMinecart cart1, AbstractMinecart cart2)
+        {
             double dist = cart1.position().distanceTo(cart2.position());
             if (dist > 8F) {
                 // BREAK LINK
@@ -419,7 +488,8 @@ public class MinecartLinkTest {
             cart2.setDeltaMovement(cart2Vel);
         }
 
-        private static double limitForce(double force) {
+        private static double limitForce(double force)
+        {
             return Math.copySign(Math.min(Math.abs(force), /*FORCE_LIMITER*/ 6F), force);
         }
 

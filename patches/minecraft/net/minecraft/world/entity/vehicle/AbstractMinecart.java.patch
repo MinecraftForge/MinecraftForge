@@ -163,7 +163,7 @@
 -            this.m_20256_(this.m_20184_().m_82520_(vec32.f_82479_ * 0.1D, 0.0D, vec32.f_82481_ * 0.1D));
 +            net.minecraftforge.event.entity.MinecartEvent.Steered event = new net.minecraftforge.event.entity.MinecartEvent.Steered(this, (Player) entity, vec32.f_82479_ * 0.1D, vec32.f_82481_ * 0.1D);
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+            this.m_20256_(this.m_20184_().m_82520_(event.getX(), 0.0D, event.getX()));
++            this.m_20256_(this.m_20184_().m_82520_(event.getX(), 0.0D, event.getZ()));
              flag1 = false;
           }
        }
@@ -197,12 +197,11 @@
           Vec3 vec36 = this.m_20184_();
           double d27 = vec36.m_165924_();
           if (d27 > 0.01D) {
-@@ -537,6 +_,8 @@
+@@ -537,6 +_,7 @@
           }
        }
  
-+      net.minecraftforge.event.entity.MinecartEvent.PostMove postMoveEvent = new net.minecraftforge.event.entity.MinecartEvent.PostMove(this, p_38156_, p_38157_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(postMoveEvent);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.MinecartEvent.PostMove(this, p_38156_, p_38157_));
     }
  
     private boolean m_38129_(BlockPos p_38130_) {
