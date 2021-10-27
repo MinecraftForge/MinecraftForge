@@ -173,15 +173,12 @@
        RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
        this.m_7025_(p_98577_, p_98578_, p_98579_);
     }
-@@ -620,7 +_,10 @@
+@@ -620,7 +_,7 @@
              list1.add(1, creativemodetab.m_40786_().m_6881_().m_130940_(ChatFormatting.BLUE));
           }
  
 -         this.m_169388_(p_98590_, list1, p_98591_.m_150921_(), p_98592_, p_98593_);
-+         net.minecraft.client.gui.Font font = net.minecraftforge.client.RenderProperties.get(p_98591_).getFont(p_98591_);
-+         net.minecraftforge.fmlclient.gui.GuiUtils.preItemToolTip(p_98591_);
-+         this.renderComponentToolTip(p_98590_, list1, p_98592_, p_98593_, (font == null ? this.f_96547_ : font));
-+         net.minecraftforge.fmlclient.gui.GuiUtils.postItemToolTip();
++         this.renderTooltip(p_98590_, list1, p_98591_.m_150921_(), p_98592_, p_98593_, p_98591_);
        } else {
           super.m_6057_(p_98590_, p_98591_, p_98592_, p_98593_);
        }

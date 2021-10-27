@@ -146,30 +146,30 @@
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_142081_());
        if (entity != null) {
           f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_142081_().toString());
-@@ -747,6 +_,7 @@
+@@ -746,7 +_,8 @@
+          this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
-       this.f_143244_.m_157533_(p_8854_);
+-      this.f_143244_.m_157533_(p_8854_);
++      this.f_143244_.addNewEntityWithoutEvent(p_8854_);
 +      p_8854_.onAddedToWorld();
     }
  
     private boolean m_8872_(Entity p_8873_) {
-@@ -754,6 +_,7 @@
+@@ -754,7 +_,12 @@
           f_8566_.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.m_20613_(p_8873_.m_6095_()));
           return false;
        } else {
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_8873_, this))) return false;
-          return this.f_143244_.m_157533_(p_8873_);
+-         return this.f_143244_.m_157533_(p_8873_);
++         if (this.f_143244_.m_157533_(p_8873_)) {
++            p_8873_.onAddedToWorld();
++            return true;
++         } else {
++            return false;
++         }
        }
     }
-@@ -762,6 +_,7 @@
-       if (p_8861_.m_142428_().map(Entity::m_142081_).anyMatch(this.f_143244_::m_157550_)) {
-          return false;
-       } else {
-+         if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_8861_, this))) return false;
-          this.m_47205_(p_8861_);
-          return true;
-       }
+ 
 @@ -790,10 +_,20 @@
     }
  

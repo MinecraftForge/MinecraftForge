@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/packs/repository/PackRepository.java
 +++ b/net/minecraft/server/packs/repository/PackRepository.java
-@@ -24,12 +_,12 @@
+@@ -24,13 +_,14 @@
  
     public PackRepository(Pack.PackConstructor p_10502_, RepositorySource... p_10503_) {
        this.f_10500_ = p_10502_;
@@ -14,8 +14,10 @@
 +      this((p_143894_, p_143895_, p_143896_, p_143897_, p_143898_, p_143899_, p_143900_, hidden) -> {
 +         return new Pack(p_143894_, p_143895_, p_143896_, p_143897_, p_143898_, p_143890_, p_143899_, p_143900_, hidden);
        }, p_143891_);
++      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.event.AddPackFindersEvent(p_143890_, f_10497_::add));
     }
  
+    public void m_10506_() {
 @@ -91,6 +_,10 @@
     @Nullable
     public Pack m_10507_(String p_10508_) {

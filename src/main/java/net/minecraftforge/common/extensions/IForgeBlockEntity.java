@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -87,7 +88,8 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      default void onChunkUnloaded(){}
 
     /**
-     * Called when this is first added to the world (by {@link World#addTileEntity(TileEntity)}).
+     * Called when this is first added to the world (by {@link LevelChunk#addAndRegisterBlockEntity(BlockEntity)})
+     * or right before the first tick when the chunk is generated or loaded from disk.
      * Override instead of adding {@code if (firstTick)} stuff in update.
      */
      default void onLoad()
