@@ -22,7 +22,6 @@ package net.minecraftforge.common.capabilities;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -55,30 +54,53 @@ public enum CapabilityManager
      * @param type The class type to be registered
      * @deprecated use {@link RegisterCapabilitiesEvent}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(since = "1.18", forRemoval = true)
     public <T> void register(Class<T> type)
     {
         Objects.requireNonNull(type,"Attempted to register a capability with invalid type");
-        String realName = type.getName().intern();
+        get(Type.getInternalName(type), true);
+    }
+
+
+    public static <T> Capability<T> get(CapabilityToken<T> type)
+    {
+        return INSTANCE.get(type.getType(), false);
+    }
+
+    @SuppressWarnings("unchecked")
+    <T> Capability<T> get(String realName, boolean registering)
+    {
         Capability<T> cap;
 
         synchronized (providers)
         {
-            if (providers.containsKey(realName)) {
-                LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
-                throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
-            }
+            realName = realName.intern();
+            cap = (Capability<T>)providers.computeIfAbsent(realName, Capability::new);
 
-            cap = new Capability<>(realName);
-            providers.put(realName, cap);
         }
 
-        fireCallbacks(this.callbacks, List.of(cap));
+
+        if (registering)
+        {
+            synchronized (cap)
+            {
+                if (cap.isRegistered())
+                {
+                    LOGGER.error(CAPABILITIES, "Cannot register capability implementation multiple times : {}", realName);
+                    throw new IllegalArgumentException("Cannot register a capability implementation multiple times : "+ realName);
+                }
+                else
+                {
+                    cap.onRegister();
+                }
+            }
+        }
+
+        return cap;
     }
 
     // INTERNAL
     private final IdentityHashMap<String, Capability<?>> providers = new IdentityHashMap<>();
-    private volatile IdentityHashMap<String, List<Function<Capability<?>, Object>>> callbacks;
     public void injectCapabilities(List<ModFileScanData> data)
     {
         final List<ModFileScanData.AnnotationData> elementsToInject = data.stream()
@@ -91,22 +113,9 @@ public enum CapabilityManager
 
         var event = new RegisterCapabilitiesEvent();
         ModLoader.get().postEvent(event);
-        fireCallbacks(callbacks, event.getCapabilities().values());
-
-        // TODO 1.18: remove these fields
-        this.providers.putAll(event.getCapabilities());
-        this.callbacks = callbacks;
     }
 
-    private static void fireCallbacks(Map<String, List<Function<Capability<?>, Object>>> callbacks, Iterable<Capability<?>> caps)
-    {
-        for (var cap : caps)
-        {
-            callbacks.getOrDefault(cap.getName(), List.of()).forEach(f -> f.apply(cap));
-        }
-    }
-
-    private static void gatherCallbacks(Map<String, List<Function<Capability<?>, Object>>> callbacks, ModFileScanData.AnnotationData annotationData)
+    private void gatherCallbacks(Map<String, List<Function<Capability<?>, Object>>> callbacks, ModFileScanData.AnnotationData annotationData)
     {
         final String targetClass = annotationData.clazz().getClassName();
         final String targetName = annotationData.memberName();
@@ -116,13 +125,14 @@ public enum CapabilityManager
             LOGGER.warn(CAPABILITIES,"Unable to inject capability at {}.{} (Invalid Annotation)", targetClass, targetName);
             return;
         }
-        final String capabilityName = type.getInternalName().replace('/', '.').intern();
+        final String capabilityName = type.getInternalName();
 
-        List<Function<Capability<?>, Object>> list = callbacks.computeIfAbsent(capabilityName, k -> new ArrayList<>());
+        final Capability<?> cap = get(capabilityName, false);
 
         if (annotationData.memberName().indexOf('(') > 0)
         {
-            list.add(input -> {
+            cap.addListener(input ->
+            {
                 try
                 {
                     for (Method mtd : Class.forName(targetClass).getDeclaredMethods())
@@ -132,12 +142,12 @@ public enum CapabilityManager
                             if ((mtd.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
                             {
                                 LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{} (Non-Static)", capabilityName, targetClass, targetName);
-                                return null;
+                                return;
                             }
 
                             mtd.setAccessible(true);
                             mtd.invoke(null, input);
-                            return null;
+                            return;
                         }
                     }
                     LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{} (Method Not Found)", capabilityName, targetClass, targetName);
@@ -146,19 +156,19 @@ public enum CapabilityManager
                 {
                     LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName, e);
                 }
-                return null;
             });
         }
         else
         {
-            list.add(input -> {
+            cap.addListener(input ->
+            {
                 try
                 {
                     Field field = Class.forName(targetClass).getDeclaredField(targetName);
                     if ((field.getModifiers() & Modifier.STATIC) != Modifier.STATIC)
                     {
                         LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{} (Non-Static)", capabilityName, targetClass, targetName);
-                        return null;
+                        return;
                     }
                     field.setAccessible(true);
                     field.set(null, input);
@@ -167,7 +177,6 @@ public enum CapabilityManager
                 {
                     LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{}", capabilityName, targetClass, targetName, e);
                 }
-                return null;
             });
         }
     }

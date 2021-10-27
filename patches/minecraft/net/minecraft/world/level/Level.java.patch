@@ -9,13 +9,23 @@
     protected static final Logger f_46426_ = LogManager.getLogger();
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(Registry.f_122819_), ResourceKey::m_135782_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
-@@ -99,8 +_,12 @@
+@@ -82,6 +_,7 @@
+    protected final List<TickingBlockEntity> f_151512_ = Lists.newArrayList();
+    private final List<TickingBlockEntity> f_151503_ = Lists.newArrayList();
+    private boolean f_151504_;
++   protected final java.util.Set<BlockEntity> f_46434_ = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>()); // Forge: faster "contains" makes removal much more efficient
+    private final Thread f_46423_;
+    private final boolean f_46424_;
+    private int f_46425_;
+@@ -99,8 +_,14 @@
     private final WorldBorder f_46447_;
     private final BiomeManager f_46420_;
     private final ResourceKey<Level> f_46421_;
 +   public boolean restoringBlockSnapshots = false;
 +   public boolean captureBlockSnapshots = false;
 +   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
++   private final java.util.ArrayList<BlockEntity> freshBlockEntities = new java.util.ArrayList<>();
++   private final java.util.ArrayList<BlockEntity> pendingFreshBlockEntities = new java.util.ArrayList<>();
  
     protected Level(WritableLevelData p_46450_, ResourceKey<Level> p_46451_, final DimensionType p_46452_, Supplier<ProfilerFiller> p_46453_, boolean p_46454_, boolean p_46455_, long p_46456_) {
 +      super(Level.class);
@@ -111,6 +121,35 @@
                 }
              });
              CrashReportCategory.m_178950_(crashreportcategory, this, p_46587_, blockstate);
+@@ -401,11 +_,28 @@
+       (this.f_151504_ ? this.f_151503_ : this.f_151512_).add(p_151526_);
+    }
+ 
++   public void addFreshBlockEntities(java.util.Collection<BlockEntity> beList) {
++      if (this.f_151504_) {
++         this.pendingFreshBlockEntities.addAll(beList);
++      } else {
++         this.freshBlockEntities.addAll(beList);
++      }
++   }
++
+    protected void m_46463_() {
+       ProfilerFiller profilerfiller = this.m_46473_();
+       profilerfiller.m_6180_("blockEntities");
++      if (!this.pendingFreshBlockEntities.isEmpty()) {
++         this.freshBlockEntities.addAll(this.pendingFreshBlockEntities);
++         this.pendingFreshBlockEntities.clear();
++      }
+       this.f_151504_ = true;
++      if (!this.freshBlockEntities.isEmpty()) {
++         this.freshBlockEntities.forEach(BlockEntity::onLoad);
++         this.freshBlockEntities.clear();
++      }
+       if (!this.f_151503_.isEmpty()) {
++         this.f_46434_.forEach(e -> e.onChunkUnloaded());
+          this.f_151512_.addAll(this.f_151503_);
+          this.f_151503_.clear();
+       }
 @@ -427,12 +_,15 @@
  
     public <T extends Entity> void m_46653_(Consumer<T> p_46654_, T p_46655_) {

@@ -641,4 +641,19 @@ public interface IForgeBlockState
     {
         return self().getBlock().isScaffolding(self(), entity.level, entity.blockPosition(), entity);
     }
+
+    /**
+     * Whether redstone dust should visually connect to this block on a side.
+     * <p>
+     * Modded redstone wire blocks should call this function to determine visual connections.
+     *
+     * @param world The world
+     * @param pos The block position in world
+     * @param direction The coming direction of the redstone dust connection (with respect to the block at pos)
+     * @return True if redstone dust should visually connect on the side passed
+     */
+    default boolean canRedstoneConnectTo(BlockGetter world, BlockPos pos, @Nullable Direction direction)
+    {
+        return self().getBlock().canConnectRedstone(self(), world, pos, direction);
+    }
 }

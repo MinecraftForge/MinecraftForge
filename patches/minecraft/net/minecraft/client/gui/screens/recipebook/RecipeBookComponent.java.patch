@@ -9,6 +9,15 @@
           this.f_100279_.add(new RecipeBookTabButton(recipebookcategories));
        }
  
+@@ -319,7 +_,7 @@
+       }
+ 
+       if (itemstack != null && this.f_100272_.f_91080_ != null) {
+-         this.f_100272_.f_91080_.m_96597_(p_100375_, this.f_100272_.f_91080_.m_96555_(itemstack), p_100378_, p_100379_);
++         this.f_100272_.f_91080_.renderComponentTooltip(p_100375_, this.f_100272_.f_91080_.m_96555_(itemstack), p_100378_, p_100379_, itemstack);
+       }
+ 
+    }
 @@ -462,7 +_,7 @@
  
           languagemanager.m_118974_(languageinfo);

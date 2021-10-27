@@ -17,18 +17,26 @@ public final class ModJarMetadata implements JarMetadata {
     private IModFile modFile;
     private ModuleDescriptor descriptor;
 
+    // TODO: Remove helper functions to cleanup api
+    @Deprecated(forRemoval = true, since="1.17.1")
     static Optional<IModFile> buildFile(IModLocator locator, Predicate<SecureJar> jarTest, Path... files) {
         return buildFile(locator, jarTest, (a,b) -> true, files);
     }
 
+    // TODO: Remove helper functions to cleanup api
+    @Deprecated(forRemoval = true, since="1.17.1")
     static Optional<IModFile> buildFile(IModLocator locator, Predicate<SecureJar> jarTest, BiPredicate<String, String> filter, Path... files) {
         return buildFile(j->ModFile.newFMLInstance(locator, j), jarTest, filter, files);
     }
 
+    // TODO: Remove helper functions to cleanup api
+    @Deprecated(forRemoval = true, since="1.17.1")
     static IModFile buildFile(IModLocator locator, Path... files) {
         return buildFile(locator, j->true, files).orElseThrow(()->new IllegalArgumentException("Failed to find valid JAR file"));
     }
 
+    // TODO: Remove helper functions to cleanup api
+    @Deprecated(forRemoval = true, since="1.17.1")
     static Optional<IModFile> buildFile(Function<SecureJar, IModFile> mfConstructor, Predicate<SecureJar> jarTest, BiPredicate<String, String> filter, Path... files) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(()->ModFile.DEFAULTMANIFEST, j->mjm, filter, files);
@@ -41,7 +49,7 @@ public final class ModJarMetadata implements JarMetadata {
         }
     }
 
-    private ModJarMetadata() {
+    ModJarMetadata() {
     }
 
     public void setModFile(IModFile file) {

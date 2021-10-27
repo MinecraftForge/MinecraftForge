@@ -31,6 +31,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import net.minecraft.server.packs.repository.PackSource;
+import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fmllegacy.LogicalSidedProvider;
@@ -42,9 +43,9 @@ import net.minecraftforge.fmllegacy.network.FMLNetworkConstants;
 import net.minecraftforge.fmllegacy.network.FMLStatusPing;
 import net.minecraftforge.fmllegacy.network.NetworkHooks;
 import net.minecraftforge.fmllegacy.network.NetworkRegistry;
-import net.minecraftforge.fmllegacy.packs.ModFileResourcePack;
 import net.minecraftforge.fmllegacy.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.resource.PathResourcePack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -186,13 +187,20 @@ public class ServerLifecycleHooks
     }
 
     //INTERNAL MODDERS DO NOT USE
-    @Deprecated
-    public static ResourcePackLoader.IPackInfoFinder buildPackFinder(Map<IModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, Pack> packSetter) {
-        return (packList, factory) -> serverPackFinder(modResourcePacks, packSetter, packList, factory);
+    @Deprecated(since="1.18", forRemoval = true)
+    public static RepositorySource buildPackFinder(Map<IModFile, ? extends PathResourcePack> modResourcePacks, BiConsumer<? super PathResourcePack, Pack> packSetter) {
+        return (packList, factory) -> serverPackFinder(modResourcePacks, packList, factory);
     }
 
-    private static void serverPackFinder(Map<IModFile, ? extends ModFileResourcePack> modResourcePacks, BiConsumer<? super ModFileResourcePack, Pack> packSetter, Consumer<Pack> consumer, Pack.PackConstructor factory) {
-        for (Entry<IModFile, ? extends ModFileResourcePack> e : modResourcePacks.entrySet())
+    //INTERNAL MODDERS DO NOT USE
+    // TODO: Rename in 1.18 (if this doesn't get
+    @Deprecated
+    public static RepositorySource buildPackFinderNew(Map<IModFile, ? extends PathResourcePack> modResourcePacks) {
+        return (packList, factory) -> serverPackFinder(modResourcePacks, packList, factory);
+    }
+
+    private static void serverPackFinder(Map<IModFile, ? extends PathResourcePack> modResourcePacks, Consumer<Pack> consumer, Pack.PackConstructor factory) {
+        for (Entry<IModFile, ? extends PathResourcePack> e : modResourcePacks.entrySet())
         {
             IModInfo mod = e.getKey().getModInfos().get(0);
             if (Objects.equals(mod.getModId(), "minecraft")) continue; // skip the minecraft "mod"
@@ -203,7 +211,6 @@ public class ServerLifecycleHooks
                 ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));
                 continue;
             }
-            packSetter.accept(e.getValue(), packInfo);
             LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
             consumer.accept(packInfo);
         }

@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/model/geom/ModelLayers.java
++++ b/net/minecraft/client/model/geom/ModelLayers.java
+@@ -199,7 +_,8 @@
+    }
+ 
+    public static ModelLayerLocation m_171291_(WoodType p_171292_) {
+-      return m_171300_("sign/" + p_171292_.m_61846_(), "main");
++      ResourceLocation location = new ResourceLocation(p_171292_.m_61846_());
++      return new ModelLayerLocation(new ResourceLocation(location.m_135827_(), "sign/" + location.m_135815_()), "main");
+    }
+ 
+    public static Stream<ModelLayerLocation> m_171288_() {
