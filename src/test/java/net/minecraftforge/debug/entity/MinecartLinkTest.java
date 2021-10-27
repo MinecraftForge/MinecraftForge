@@ -104,7 +104,8 @@ public class MinecartLinkTest
 
     public void onAttachCapability(AttachCapabilitiesEvent<Entity> event)
     {
-        if (event.getObject() instanceof AbstractMinecart) {
+        if (event.getObject() instanceof AbstractMinecart)
+        {
             event.addCapability(CapabilityMinecartLink.KEY, new MinecartLinkProvider());
         }
     }
@@ -116,8 +117,10 @@ public class MinecartLinkTest
 
     public void onEntityInteract(PlayerInteractEvent.EntityInteract event)
     {
-        if (event.getItemStack().getItem() instanceof LinkerItem linkerItem) {
-            if (event.getTarget() instanceof AbstractMinecart cart) {
+        if (event.getItemStack().getItem() instanceof LinkerItem linkerItem)
+        {
+            if (event.getTarget() instanceof AbstractMinecart cart)
+            {
                 InteractionResult result = linkerItem.linkMinecart(event.getWorld(), event.getItemStack(), event.getPlayer(), cart);
                 event.setCanceled(true);
                 event.setCancellationResult(result);
@@ -160,14 +163,19 @@ public class MinecartLinkTest
 
         public InteractionResult linkMinecart(Level world, ItemStack itemStack, Player player, AbstractMinecart cart)
         {
-            if (!world.isClientSide()) {
+            if (!world.isClientSide())
+            {
                 CompoundTag tag = itemStack.getOrCreateTag();
-                if (tag.contains("FirstCartID")) {
+                if (tag.contains("FirstCartID"))
+                {
                     int firstCartId = tag.getInt("FirstCartID");
-                    if (firstCartId != 0) {
+                    if (firstCartId != 0)
+                    {
                         AbstractMinecart firstCart = (AbstractMinecart) world.getEntity(firstCartId);
-                        if (firstCart != null) {
-                            switch (linkMinecarts(world, firstCart, cart)) {
+                        if (firstCart != null)
+                        {
+                            switch (linkMinecarts(world, firstCart, cart))
+                            {
                                 case LINK_EXISTS -> {
                                     player.displayClientMessage(new TextComponent("These carts are already linked!"), true);
                                 }
@@ -181,7 +189,8 @@ public class MinecartLinkTest
                                     player.displayClientMessage(new TextComponent("These carts' links are occupied!"), true);
                                 }
                             }
-                        } else {
+                        } else
+                        {
                             player.displayClientMessage(new TextComponent("Failed to create link!"), true);
                         }
                         tag.putInt("FirstCartID", 0);
@@ -198,7 +207,8 @@ public class MinecartLinkTest
             if (cartA == cartB) return LinkageManager.LinkState.LINK_FAILED;
             Optional<IMinecartLink> cartLinkOptA = cartA.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).resolve();
             Optional<IMinecartLink> cartLinkOptB = cartB.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).resolve();
-            if (cartLinkOptA.isPresent() && cartLinkOptB.isPresent()) {
+            if (cartLinkOptA.isPresent() && cartLinkOptB.isPresent())
+            {
                 return LinkageManager.INSTANCE.linkCarts(level, cartA, cartLinkOptA.get(), cartB, cartLinkOptB.get());
             }
             return LinkageManager.LinkState.LINK_FAILED;
@@ -214,18 +224,22 @@ public class MinecartLinkTest
         {
             LinkState linkResultA = tryLinkTo(cartA, level, linkA, cartB);
             LinkState linkResultB = tryLinkTo(cartB, level, linkB, cartA);
-            if (linkResultA.isCreated() && linkResultB.isCreated()) {
-                switch (linkResultA) {
+            if (linkResultA.isCreated() && linkResultB.isCreated())
+            {
+                switch (linkResultA)
+                {
                     case LINK_CREATED_A -> linkA.setLinkA(cartB.getUUID());
                     case LINK_CREATED_B -> linkA.setLinkB(cartB.getUUID());
                 }
-                switch (linkResultB) {
+                switch (linkResultB)
+                {
                     case LINK_CREATED_A -> linkB.setLinkA(cartA.getUUID());
                     case LINK_CREATED_B -> linkB.setLinkB(cartA.getUUID());
                 }
                 return LinkState.LINK_CREATED_A;
             }
-            if (linkResultA == LinkState.LINK_EXISTS || linkResultB == LinkState.LINK_EXISTS) {
+            if (linkResultA == LinkState.LINK_EXISTS || linkResultB == LinkState.LINK_EXISTS)
+            {
                 return LinkState.LINK_EXISTS;
             }
             return LinkState.LINK_OCCUPIED;
@@ -235,10 +249,12 @@ public class MinecartLinkTest
         {
             boolean alreadyLinked = isLinkedTo(thisCart, level, link, otherCart);
             if (alreadyLinked) return LinkState.LINK_EXISTS;
-            if (!link.isLinkedA()) {
+            if (!link.isLinkedA())
+            {
                 return LinkState.LINK_CREATED_A;
             }
-            if (!link.isLinkedB()) {
+            if (!link.isLinkedB())
+            {
                 return LinkState.LINK_CREATED_B;
             }
             return LinkState.LINK_OCCUPIED;
@@ -261,20 +277,24 @@ public class MinecartLinkTest
         private void getLinkedCarts(AbstractMinecart cart, Level level, Set<AbstractMinecart> minecarts)
         {
             cart.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).ifPresent(link -> {
-                if (link.isLinkedA()) {
+                if (link.isLinkedA())
+                {
                     UUID cartIdA = link.getLinkA();
                     AbstractMinecart linkedCartA = (AbstractMinecart) ((ServerLevel) level).getEntity(cartIdA);
                     assert linkedCartA != null;
-                    if (!minecarts.contains(linkedCartA)) {
+                    if (!minecarts.contains(linkedCartA))
+                    {
                         minecarts.add(linkedCartA);
                         getLinkedCarts(linkedCartA, level, minecarts);
                     }
                 }
-                if (link.isLinkedB()) {
+                if (link.isLinkedB())
+                {
                     UUID cartIdB = link.getLinkB();
                     AbstractMinecart linkedCartB = (AbstractMinecart) ((ServerLevel) level).getEntity(cartIdB);
                     assert linkedCartB != null;
-                    if (!minecarts.contains(linkedCartB)) {
+                    if (!minecarts.contains(linkedCartB))
+                    {
                         minecarts.add(linkedCartB);
                         getLinkedCarts(linkedCartB, level, minecarts);
                     }
@@ -392,7 +412,8 @@ public class MinecartLinkTest
         @Override
         public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction dir)
         {
-            if (cap == CapabilityMinecartLink.MINECART_LINK_CAPABILITY) {
+            if (cap == CapabilityMinecartLink.MINECART_LINK_CAPABILITY)
+            {
                 return minecartLink.cast();
             }
 
@@ -424,14 +445,17 @@ public class MinecartLinkTest
         private static void adjustLinkedCart(AbstractMinecart cart)
         {
             Optional<IMinecartLink> linkOpt = cart.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).resolve();
-            if (linkOpt.isPresent()) {
+            if (linkOpt.isPresent())
+            {
                 IMinecartLink link = linkOpt.get();
                 AbstractMinecart cartA = (AbstractMinecart) ((ServerLevel) cart.level).getEntity(link.getLinkA());
-                if (cartA != null) {
+                if (cartA != null)
+                {
                     adjustVelocity(cartA, cart);
                 }
                 AbstractMinecart cartB = (AbstractMinecart) ((ServerLevel) cart.level).getEntity(link.getLinkB());
-                if (cartB != null) {
+                if (cartB != null)
+                {
                     adjustVelocity(cart, cartB);
                 }
             }
@@ -440,7 +464,8 @@ public class MinecartLinkTest
         protected static void adjustVelocity(AbstractMinecart cart1, AbstractMinecart cart2)
         {
             double dist = cart1.position().distanceTo(cart2.position());
-            if (dist > 8F) {
+            if (dist > 8F)
+            {
                 // BREAK LINK
                 return;
             }

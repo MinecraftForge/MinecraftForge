@@ -166,7 +166,6 @@ public class MinecartEvent extends Event
     /**
      * This event is called at the end of {@link AbstractMinecart#moveAlongTrack(BlockPos, BlockState)} to apply changes after movement has commenced.
      */
-    @net.minecraftforge.eventbus.api.Cancelable
     public static class PostMove extends MinecartEvent
     {
 
