@@ -63,7 +63,7 @@
           private final ItemProperties.CompassWobble f_117910_ = new ItemProperties.CompassWobble();
           private final ItemProperties.CompassWobble f_117911_ = new ItemProperties.CompassWobble();
  
-@@ -235,45 +_,45 @@
+@@ -235,26 +_,26 @@
              return Math.atan2(p_117919_.m_7094_() - p_117920_.m_20189_(), p_117919_.m_7096_() - p_117920_.m_20185_());
           }
        });
@@ -96,13 +96,7 @@
           if (p_174597_ == null) {
              return 0.0F;
           } else {
-             boolean flag = p_174597_.m_21205_() == p_174595_;
-             boolean flag1 = p_174597_.m_21206_() == p_174595_;
--            if (p_174597_.m_21205_().m_41720_() instanceof FishingRodItem) {
-+            if (p_174597_.m_21205_().m_150930_(Items.f_42523_)) {
-                flag1 = false;
-             }
- 
+@@ -267,13 +_,13 @@
              return (flag || flag1) && p_174597_ instanceof Player && ((Player)p_174597_).f_36083_ != null ? 1.0F : 0.0F;
           }
        });
