@@ -98,8 +98,8 @@ public class MinecartLinkTest
 
     private void onMinecartSteered(MinecartEvent.Steered event)
     {
-        event.setX(event.getX() * 10);
-        event.setZ(event.getZ() * 10);
+        event.setX(event.getX() * 30);
+        event.setZ(event.getZ() * 30);
     }
 
     public void onAttachCapability(AttachCapabilitiesEvent<Entity> event)
@@ -143,6 +143,72 @@ public class MinecartLinkTest
 
         boolean isLinkedB();
 
+        class MinecartLink implements IMinecartLink
+        {
+
+            private UUID linkA;
+            private UUID linkB;
+
+            public MinecartLink()
+            {
+                linkA = new UUID(0, 0);
+                linkB = new UUID(0, 0);
+            }
+
+            @Override
+            public CompoundTag serializeNBT()
+            {
+                CompoundTag tag = new CompoundTag();
+                tag.putUUID("LinkA", linkA);
+                tag.putUUID("LinkB", linkB);
+                return tag;
+            }
+
+            @Override
+            public void deserializeNBT(CompoundTag nbt)
+            {
+                this.linkA = nbt.getUUID("LinkA");
+                this.linkB = nbt.getUUID("LinkB");
+            }
+
+            @Override
+            public UUID getLinkA()
+            {
+                return this.linkA;
+            }
+
+            @Override
+            public void setLinkA(UUID linkId)
+            {
+                this.linkA = linkId;
+            }
+
+            @Override
+            public UUID getLinkB()
+            {
+                return this.linkB;
+            }
+
+            @Override
+            public void setLinkB(UUID linkId)
+            {
+                this.linkB = linkId;
+            }
+
+            @Override
+            public boolean isLinkedA()
+            {
+                return !(this.linkA.getLeastSignificantBits() == 0 && this.linkA.getMostSignificantBits() == 0);
+            }
+
+            @Override
+            public boolean isLinkedB()
+            {
+                return !(this.linkB.getLeastSignificantBits() == 0 && this.linkB.getMostSignificantBits() == 0);
+            }
+
+        }
+
     }
 
     private static class LinkerItem extends Item
@@ -174,21 +240,14 @@ public class MinecartLinkTest
                         AbstractMinecart firstCart = (AbstractMinecart) world.getEntity(firstCartId);
                         if (firstCart != null)
                         {
-                            switch (linkMinecarts(world, firstCart, cart))
-                            {
-                                case LINK_EXISTS -> {
-                                    player.displayClientMessage(new TextComponent("These carts are already linked!"), true);
-                                }
-                                case LINK_CREATED_A, LINK_CREATED_B -> {
-                                    player.displayClientMessage(new TextComponent("Linked successfully!"), true);
-                                }
-                                case LINK_FAILED -> {
-                                    player.displayClientMessage(new TextComponent("Failed to create link!"), true);
-                                }
-                                case LINK_OCCUPIED -> {
-                                    player.displayClientMessage(new TextComponent("These carts' links are occupied!"), true);
-                                }
-                            }
+                            String message = switch (LinkageManager.INSTANCE.linkMinecarts(world, firstCart, cart))
+                                    {
+                                        case LINK_EXISTS -> "These carts are already linked!";
+                                        case LINK_CREATED_A, LINK_CREATED_B -> "Linked successfully!";
+                                        case LINK_FAILED -> "Failed to create link!";
+                                        case LINK_OCCUPIED -> "These carts' links are occupied!";
+                                    };
+                            player.displayClientMessage(new TextComponent(message), true);
                         } else
                         {
                             player.displayClientMessage(new TextComponent("Failed to create link!"), true);
@@ -200,18 +259,6 @@ public class MinecartLinkTest
                 tag.putInt("FirstCartID", cart.getId());
             }
             return InteractionResult.CONSUME;
-        }
-
-        private LinkageManager.LinkState linkMinecarts(Level level, AbstractMinecart cartA, AbstractMinecart cartB)
-        {
-            if (cartA == cartB) return LinkageManager.LinkState.LINK_FAILED;
-            Optional<IMinecartLink> cartLinkOptA = cartA.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).resolve();
-            Optional<IMinecartLink> cartLinkOptB = cartB.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).resolve();
-            if (cartLinkOptA.isPresent() && cartLinkOptB.isPresent())
-            {
-                return LinkageManager.INSTANCE.linkCarts(level, cartA, cartLinkOptA.get(), cartB, cartLinkOptB.get());
-            }
-            return LinkageManager.LinkState.LINK_FAILED;
         }
 
     }
@@ -302,6 +349,18 @@ public class MinecartLinkTest
             });
         }
 
+        private LinkState linkMinecarts(Level level, AbstractMinecart cartA, AbstractMinecart cartB)
+        {
+            if (cartA == cartB) return LinkState.LINK_FAILED;
+            Optional<IMinecartLink> cartLinkOptA = cartA.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).resolve();
+            Optional<IMinecartLink> cartLinkOptB = cartB.getCapability(CapabilityMinecartLink.MINECART_LINK_CAPABILITY).resolve();
+            if (cartLinkOptA.isPresent() && cartLinkOptB.isPresent())
+            {
+                return linkCarts(level, cartA, cartLinkOptA.get(), cartB, cartLinkOptB.get());
+            }
+            return LinkState.LINK_FAILED;
+        }
+
         private enum LinkState
         {
             LINK_EXISTS,
@@ -332,72 +391,6 @@ public class MinecartLinkTest
 
     }
 
-    private static class MinecartLink implements IMinecartLink
-    {
-
-        private UUID linkA;
-        private UUID linkB;
-
-        public MinecartLink()
-        {
-            linkA = new UUID(0, 0);
-            linkB = new UUID(0, 0);
-        }
-
-        @Override
-        public CompoundTag serializeNBT()
-        {
-            CompoundTag tag = new CompoundTag();
-            tag.putUUID("LinkA", linkA);
-            tag.putUUID("LinkB", linkB);
-            return tag;
-        }
-
-        @Override
-        public void deserializeNBT(CompoundTag nbt)
-        {
-            this.linkA = nbt.getUUID("LinkA");
-            this.linkB = nbt.getUUID("LinkB");
-        }
-
-        @Override
-        public UUID getLinkA()
-        {
-            return this.linkA;
-        }
-
-        @Override
-        public void setLinkA(UUID linkId)
-        {
-            this.linkA = linkId;
-        }
-
-        @Override
-        public UUID getLinkB()
-        {
-            return this.linkB;
-        }
-
-        @Override
-        public void setLinkB(UUID linkId)
-        {
-            this.linkB = linkId;
-        }
-
-        @Override
-        public boolean isLinkedA()
-        {
-            return !(this.linkA.getLeastSignificantBits() == 0 && this.linkA.getMostSignificantBits() == 0);
-        }
-
-        @Override
-        public boolean isLinkedB()
-        {
-            return !(this.linkB.getLeastSignificantBits() == 0 && this.linkB.getMostSignificantBits() == 0);
-        }
-
-    }
-
     private static class MinecartLinkProvider extends CapabilityProvider<MinecartLinkProvider> implements ICapabilitySerializable<CompoundTag>
     {
         private final LazyOptional<IMinecartLink> minecartLink;
@@ -405,7 +398,7 @@ public class MinecartLinkTest
         protected MinecartLinkProvider()
         {
             super(MinecartLinkProvider.class);
-            minecartLink = LazyOptional.of(MinecartLink::new);
+            minecartLink = LazyOptional.of(IMinecartLink.MinecartLink::new);
         }
 
         @Nonnull
