@@ -19,7 +19,7 @@
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-@Deprecated(forRemoval = true)
+@Deprecated(since="1.17.1", forRemoval = true)
 package net.minecraftforge.resource;
 
 import net.minecraft.MethodsReturnNonnullByDefault;

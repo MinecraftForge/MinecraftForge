@@ -24,7 +24,7 @@ package net.minecraftforge.resource;
  * resources.
  * @deprecated Selective reloading is no longer supported due to vanilla now reloading resources in parallel
  */
-@Deprecated(forRemoval = true)
+@Deprecated(since="1.17.1", forRemoval = true)
 public enum VanillaResourceType implements IResourceType
 {
     /**

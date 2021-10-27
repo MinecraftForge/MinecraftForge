@@ -114,7 +114,7 @@ public class ForgeConfig {
         public final BooleanValue experimentalForgeLightPipelineEnabled;
 
         /** @deprecated Selective reloading is no longer supported due to vanilla now reloading resources in parallel */
-        @Deprecated(forRemoval = true)
+        @Deprecated(since="1.17.1", forRemoval = true)
         public final BooleanValue selectiveResourceReloadEnabled;
 
         public final BooleanValue showLoadWarnings;

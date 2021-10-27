@@ -702,7 +702,7 @@ public class ForgeHooksClient
     /**
      * @deprecated use {@link Minecraft#reloadResourcePacks()} instead
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(since="1.17.1", forRemoval = true)
     public static void refreshResources(Minecraft mc, VanillaResourceType... types) {
         mc.reloadResourcePacks();
     }

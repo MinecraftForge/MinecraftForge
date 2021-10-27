@@ -32,7 +32,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  * @deprecated Selective reloading is no longer supported due to vanilla now reloading resources in parallel
  */
 @OnlyIn(Dist.CLIENT)
-@Deprecated(forRemoval = true)
+@Deprecated(since="1.17.1", forRemoval = true)
 public final class ReloadRequirements
 {
     /**
