@@ -49,7 +49,6 @@ public class BackgroundScanHandler
     private final List<ModFile> scannedFiles;
     private final List<ModFile> allFiles;
     private final List<ModFile> modFiles;
-    private Instant deadline = Instant.EPOCH;
     private ScanStatus status;
     private LoadingModList loadingModList;
 
@@ -77,7 +76,6 @@ public class BackgroundScanHandler
             throw new IllegalStateException("Scanner has shutdown");
         }
         status = ScanStatus.RUNNING;
-        if(deadline == Instant.EPOCH) deadline = Instant.now().plus(Duration.ofMinutes(5));
         allFiles.add(file);
         pendingFiles.add(file);
         final CompletableFuture<ModFileScanData> future = CompletableFuture.supplyAsync(file::compileContent, modContentScanner)
@@ -106,6 +104,8 @@ public class BackgroundScanHandler
     }
 
     public void waitForScanToComplete(final Runnable ticker) {
+        boolean timeoutActive = System.getProperty("fml.disableScanTimeout") == null;
+        Instant deadline = Instant.now().plus(Duration.ofMinutes(10));
         modContentScanner.shutdown();
         do {
             ticker.run();
@@ -114,7 +114,7 @@ public class BackgroundScanHandler
             } catch (InterruptedException e) {
                 status = ScanStatus.INTERRUPTED;
             }
-            if(Instant.now().isAfter(deadline)) status = ScanStatus.TIMED_OUT;
+            if (timeoutActive && Instant.now().isAfter(deadline)) status = ScanStatus.TIMED_OUT;
         } while (status == ScanStatus.RUNNING);
         if (status == ScanStatus.INTERRUPTED) Thread.currentThread().interrupt();
         if (status != ScanStatus.COMPLETE) throw new IllegalStateException("Failed to complete mod scan");
