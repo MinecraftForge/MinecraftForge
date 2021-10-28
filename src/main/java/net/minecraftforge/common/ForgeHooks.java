@@ -1194,9 +1194,11 @@ public class ForgeHooks
         return generatedLoot;
     }
 
-    public static void modifyStructurePool(ResourceLocation structurePoolId, List<StructurePoolElement> elements) {
+    public static void modifyStructurePool(ResourceLocation structurePoolId, List<StructurePoolElement> elements)
+    {
         StructurePoolModifierManager manager = ForgeInternalHandler.getStructurePoolModifierManager();
-        for (IStructurePoolModifier mod : manager.getAllStructurePoolModifiers()) {
+        for (IStructurePoolModifier mod : manager.getAllStructurePoolModifiers())
+        {
             mod.apply(structurePoolId, elements);
         }
     }
