@@ -127,15 +127,15 @@ public class ForgeInternalHandler
     }
 
     private static LootModifierManager LOOT_MANAGER_INSTANCE;
-    private static StructurePoolModifierManager POOL_MANAGER_INSTANCE;
+    private static StructurePoolModifierManager STRUCTURE_MANAGER_INSTANCE;
 
     @SubscribeEvent
     public void onResourceReload(AddReloadListenerEvent event)
     {
         LOOT_MANAGER_INSTANCE = new LootModifierManager();
-        POOL_MANAGER_INSTANCE = new StructurePoolModifierManager();
+        STRUCTURE_MANAGER_INSTANCE = new StructurePoolModifierManager();
         event.addListener(LOOT_MANAGER_INSTANCE);
-        event.addListener(POOL_MANAGER_INSTANCE);
+        event.addListener(STRUCTURE_MANAGER_INSTANCE);
     }
 
     static LootModifierManager getLootModifierManager()
@@ -147,9 +147,9 @@ public class ForgeInternalHandler
 
     static StructurePoolModifierManager getStructurePoolModifierManager()
     {
-        if(POOL_MANAGER_INSTANCE == null)
+        if(STRUCTURE_MANAGER_INSTANCE == null)
             throw new IllegalStateException("Can not retrieve StructurePoolModifierManager until resources have loaded once.");
-        return POOL_MANAGER_INSTANCE;
+        return STRUCTURE_MANAGER_INSTANCE;
     }
 
     @SubscribeEvent

@@ -1,15 +1,27 @@
 --- a/net/minecraft/world/level/levelgen/feature/structures/StructureTemplatePool.java
 +++ b/net/minecraft/world/level/levelgen/feature/structures/StructureTemplatePool.java
-@@ -74,9 +_,15 @@
-       this.f_69251_ = p_69260_;
-    }
+@@ -41,6 +_,19 @@
+    private final ResourceLocation f_69251_;
+    private int f_69252_ = Integer.MIN_VALUE;
  
++   /* *************** FORGE START ************ */
 +   public List<StructurePoolElement> getTemplates() {
 +      List<StructurePoolElement> templatesCopy = Lists.newArrayList(f_69250_);
 +      net.minecraftforge.common.ForgeHooks.modifyStructurePool(f_69248_, templatesCopy);
 +      return templatesCopy;
 +   }
 +
++   public boolean isNotEmpty() {
++       if (!this.f_69250_.isEmpty()) return true;
++       return !this.getTemplates().isEmpty();
++   }
++   /* *************** FORGE END *************** */
++
+    public StructureTemplatePool(ResourceLocation p_69255_, ResourceLocation p_69256_, List<Pair<StructurePoolElement, Integer>> p_69257_) {
+       this.f_69248_ = p_69255_;
+       this.f_69249_ = p_69257_;
+@@ -76,7 +_,7 @@
+ 
     public int m_69268_(StructureManager p_69269_) {
        if (this.f_69252_ == Integer.MIN_VALUE) {
 -         this.f_69252_ = this.f_69250_.stream().filter((p_161681_) -> {
@@ -17,7 +29,7 @@
              return p_161681_ != EmptyPoolElement.f_68856_;
           }).mapToInt((p_161686_) -> {
              return p_161686_.m_6867_(p_69269_, BlockPos.f_121853_, Rotation.NONE).m_71057_();
-@@ -91,26 +_,27 @@
+@@ -91,11 +_,11 @@
     }
  
     public StructurePoolElement m_69273_(Random p_69274_) {
@@ -31,14 +43,8 @@
     }
  
     public ResourceLocation m_69275_() {
-       return this.f_69248_;
-    }
- 
--   public int m_69278_() {
--      return this.f_69250_.size();
-+   public boolean isNotEmpty() {
-+      if (!this.f_69250_.isEmpty()) return true; // FORGE: avoid running modifiers when this list has elements
-+      return !this.getTemplates().isEmpty();
+@@ -106,11 +_,11 @@
+       return this.f_69250_.size();
     }
  
 -   public static enum Projection implements StringRepresentable {
