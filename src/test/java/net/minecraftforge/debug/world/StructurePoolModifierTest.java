@@ -52,7 +52,7 @@ public class StructurePoolModifierTest
 
     public static final String MODID = "structure_pool_modifier_test";
 
-    private static final DeferredRegister<StructurePoolModifierSerializer<?>> SPM = DeferredRegister.create(ForgeRegistries.POOL_MODIFIER_SERIALIZERS, MODID);
+    private static final DeferredRegister<StructurePoolModifierSerializer<?>> SPM = DeferredRegister.create(ForgeRegistries.STRUCTURE_MODIFIER_SERIALIZERS, MODID);
 
     private static final RegistryObject<PoolAdder.Serializer> POOL_ADDER = SPM.register("pool_adder", PoolAdder.Serializer::new);
 

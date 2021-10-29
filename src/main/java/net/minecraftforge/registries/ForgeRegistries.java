@@ -112,7 +112,7 @@ public class ForgeRegistries
     // Custom forge registries
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
     public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
-    public static final IForgeRegistry<StructurePoolModifierSerializer<?>> POOL_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(StructurePoolModifierSerializer.class);
+    public static final IForgeRegistry<StructurePoolModifierSerializer<?>> STRUCTURE_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(StructurePoolModifierSerializer.class);
     public static final IForgeRegistry<ForgeWorldType> WORLD_TYPES = RegistryManager.ACTIVE.getRegistry(ForgeWorldType.class);
 
     public static final class Keys {
@@ -155,7 +155,7 @@ public class ForgeRegistries
         //Forge
         public static final ResourceKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final ResourceKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
-        public static final ResourceKey<Registry<StructurePoolModifierSerializer<?>>> STRUCTURE_MODIFIER_SERIALIZERS = key("forge:pool_modifier_serializers");
+        public static final ResourceKey<Registry<StructurePoolModifierSerializer<?>>> STRUCTURE_MODIFIER_SERIALIZERS = key("forge:structure_modifier_serializers");
         public static final ResourceKey<Registry<ForgeWorldType>> WORLD_TYPES = key("forge:world_types");
 
         private static <T> ResourceKey<Registry<T>> key(String name)

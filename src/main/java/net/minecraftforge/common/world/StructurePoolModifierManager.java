@@ -119,7 +119,7 @@ public class StructurePoolModifierManager extends SimpleJsonResourceReloadListen
         if (!element.isJsonObject()) return null;
         JsonObject object = element.getAsJsonObject();
         ResourceLocation serializer = new ResourceLocation(GsonHelper.getAsString(object, "type"));
-        return ForgeRegistries.POOL_MODIFIER_SERIALIZERS.getValue(serializer).read(location, object);
+        return ForgeRegistries.STRUCTURE_MODIFIER_SERIALIZERS.getValue(serializer).read(location, object);
     }
 
     /**
