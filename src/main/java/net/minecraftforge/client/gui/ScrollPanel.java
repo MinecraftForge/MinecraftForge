@@ -273,9 +273,9 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     }
 
     @Override
-    public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_)
+    public boolean mouseReleased(double mouseX, double mouseY, int button)
     {
-        if (super.mouseReleased(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_))
+        if (super.mouseReleased(mouseX, mouseY, button))
             return true;
         boolean ret = this.scrolling;
         this.scrolling = false;
