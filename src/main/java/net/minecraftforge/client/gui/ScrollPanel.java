@@ -54,13 +54,16 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     private final int barLeft;
     private final int bgColorFrom;
     private final int bgColorTo;
+    private final int barBgColor;
+    private final int barColor;
+    private final int barBorderColor;
 
     public ScrollPanel(Minecraft client, int width, int height, int top, int left)
     {
-        this(client, width, height, top, left, 4, 0xC0101010, 0xD0101010);
+        this(client, width, height, top, left, 4, 0xC0101010, 0xD0101010, 0xFF000000, 0xFF808080, 0xFFC0C0C0);
     }
 
-    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int bgColorFrom, int bgColorTo)
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int bgColorFrom, int bgColorTo, int barBgColor, int barColor, int barBorderColor)
     {
         this.client = client;
         this.width = width;
@@ -73,6 +76,9 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         this.border = border;
         this.bgColorFrom = bgColorFrom;
         this.bgColorTo = bgColorTo;
+        this.barBgColor = barBgColor;
+        this.barColor = barColor;
+        this.barBorderColor = barBorderColor;
     }
 
     protected abstract int getContentHeight();
@@ -244,25 +250,42 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
                 barTop = this.top;
             }
 
+            float barBgAlpha     = (float)(this.barBgColor >> 24 & 255) / 255.0F;
+            float barBgRed       = (float)(this.barBgColor >> 16 & 255) / 255.0F;
+            float barBgGreen     = (float)(this.barBgColor >>  8 & 255) / 255.0F;
+            float barBgBlue      = (float)(this.barBgColor       & 255) / 255.0F;
+
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
             RenderSystem.disableTexture();
             worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-            worldr.vertex(barLeft,            this.bottom, 0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth, this.bottom, 0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth, this.top,    0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
-            worldr.vertex(barLeft,            this.top,    0.0D).color(0x00, 0x00, 0x00, 0xFF).endVertex();
+            worldr.vertex(barLeft,            this.bottom, 0.0D).color(barBgRed, barBgGreen, barBgBlue, barBgAlpha).endVertex();
+            worldr.vertex(barLeft + barWidth, this.bottom, 0.0D).color(barBgRed, barBgGreen, barBgBlue, barBgAlpha).endVertex();
+            worldr.vertex(barLeft + barWidth, this.top,    0.0D).color(barBgRed, barBgGreen, barBgBlue, barBgAlpha).endVertex();
+            worldr.vertex(barLeft,            this.top,    0.0D).color(barBgRed, barBgGreen, barBgBlue, barBgAlpha).endVertex();
             tess.end();
+
+            float barAlpha       = (float)(this.barColor >> 24 & 255) / 255.0F;
+            float barRed         = (float)(this.barColor >> 16 & 255) / 255.0F;
+            float barGreen       = (float)(this.barColor >>  8 & 255) / 255.0F;
+            float barBlue        = (float)(this.barColor       & 255) / 255.0F;
+
             worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-            worldr.vertex(barLeft,            barTop + barHeight, 0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth, barTop + barHeight, 0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth, barTop,             0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
-            worldr.vertex(barLeft,            barTop,             0.0D).color(0x80, 0x80, 0x80, 0xFF).endVertex();
+            worldr.vertex(barLeft,            barTop + barHeight, 0.0D).color(barRed, barGreen, barBlue, barAlpha).endVertex();
+            worldr.vertex(barLeft + barWidth, barTop + barHeight, 0.0D).color(barRed, barGreen, barBlue, barAlpha).endVertex();
+            worldr.vertex(barLeft + barWidth, barTop,             0.0D).color(barRed, barGreen, barBlue, barAlpha).endVertex();
+            worldr.vertex(barLeft,            barTop,             0.0D).color(barRed, barGreen, barBlue, barAlpha).endVertex();
             tess.end();
+
+            float barBorderAlpha = (float)(this.barBorderColor >> 24 & 255) / 255.0F;
+            float barBorderRed   = (float)(this.barBorderColor >> 16 & 255) / 255.0F;
+            float barBorderGreen = (float)(this.barBorderColor >>  8 & 255) / 255.0F;
+            float barBorderBlue  = (float)(this.barBorderColor       & 255) / 255.0F;
+
             worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-            worldr.vertex(barLeft,                barTop + barHeight - 1, 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth - 1, barTop + barHeight - 1, 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
-            worldr.vertex(barLeft + barWidth - 1, barTop,                 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
-            worldr.vertex(barLeft,                barTop,                 0.0D).color(0xC0, 0xC0, 0xC0, 0xFF).endVertex();
+            worldr.vertex(barLeft,                barTop + barHeight - 1, 0.0D).color(barBorderRed, barBorderGreen, barBorderBlue, barBorderAlpha).endVertex();
+            worldr.vertex(barLeft + barWidth - 1, barTop + barHeight - 1, 0.0D).color(barBorderRed, barBorderGreen, barBorderBlue, barBorderAlpha).endVertex();
+            worldr.vertex(barLeft + barWidth - 1, barTop,                 0.0D).color(barBorderRed, barBorderGreen, barBorderBlue, barBorderAlpha).endVertex();
+            worldr.vertex(barLeft,                barTop,                 0.0D).color(barBorderRed, barBorderGreen, barBorderBlue, barBorderAlpha).endVertex();
             tess.end();
         }
 
