@@ -197,10 +197,8 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     }
 
     /**
-     * Draw anything special on the screen. GL_SCISSOR is enabled for anything that
-     * is rendered outside of the view box. Do not mess with SCISSOR unless you support this.
-     * @param mouseY
-     * @param mouseX
+     * Draw anything special on the screen. Scissor (RenderSystem.enableScissor) is enabled
+     * for anything that is rendered outside the view box. Do not mess with Scissor unless you support this.
      */
     protected abstract void drawPanel(PoseStack mStack, int entryRight, int relativeY, Tesselator tess, int mouseX, int mouseY);
 
