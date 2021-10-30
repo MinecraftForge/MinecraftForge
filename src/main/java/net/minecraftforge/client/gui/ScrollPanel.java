@@ -25,7 +25,6 @@ import java.util.List;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.GameRenderer;
-import org.lwjgl.opengl.GL11;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -50,7 +49,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     protected boolean captureMouse = true;
     protected final int border;
 
-    private final int barWidth = 6;
+    private final int barWidth;
     private final int barLeft;
     private final int bgColorFrom;
     private final int bgColorTo;
@@ -60,10 +59,10 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
 
     public ScrollPanel(Minecraft client, int width, int height, int top, int left)
     {
-        this(client, width, height, top, left, 4, 0xC0101010, 0xD0101010, 0xFF000000, 0xFF808080, 0xFFC0C0C0);
+        this(client, width, height, top, left, 4, 6, 0xC0101010, 0xD0101010, 0xFF000000, 0xFF808080, 0xFFC0C0C0);
     }
 
-    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int bgColorFrom, int bgColorTo, int barBgColor, int barColor, int barBorderColor)
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColorFrom, int bgColorTo, int barBgColor, int barColor, int barBorderColor)
     {
         this.client = client;
         this.width = width;
@@ -74,6 +73,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         this.right = width + this.left;
         this.barLeft = this.left + this.width - barWidth;
         this.border = border;
+        this.barWidth = barWidth;
         this.bgColorFrom = bgColorFrom;
         this.bgColorTo = bgColorTo;
         this.barBgColor = barBgColor;
