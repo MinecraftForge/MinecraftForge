@@ -174,6 +174,9 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     // TODO: 1.18 rename and add PoseStack parameter
     protected void drawBackground() {}
 
+    /**
+     * Draws the background of the scroll panel. This runs AFTER Scissors are enabled.
+     */
     protected void drawBackground(PoseStack matrix, Tesselator tess, float partialTicks)
     {
         BufferBuilder worldr = tess.getBuilder();
