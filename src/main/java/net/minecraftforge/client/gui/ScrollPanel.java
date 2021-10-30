@@ -59,7 +59,27 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
 
     public ScrollPanel(Minecraft client, int width, int height, int top, int left)
     {
-        this(client, width, height, top, left, 4, 6, 0xC0101010, 0xD0101010, 0xFF000000, 0xFF808080, 0xFFC0C0C0);
+        this(client, width, height, top, left, 4);
+    }
+
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border)
+    {
+        this(client, width, height, top, left, border, 6);
+    }
+
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth)
+    {
+        this(client, width, height, top, left, border, barWidth, 0xC0101010, 0xD0101010);
+    }
+
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColor)
+    {
+        this(client, width, height, top, left, border, barWidth, bgColor, bgColor);
+    }
+
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColorFrom, int bgColorTo)
+    {
+        this(client, width, height, top, left, border, barWidth, bgColorFrom, bgColorTo, 0xFF000000, 0xFF808080, 0xFFC0C0C0);
     }
 
     public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColorFrom, int bgColorTo, int barBgColor, int barColor, int barBorderColor)
