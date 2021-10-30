@@ -39,6 +39,9 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraftforge.fmlclient.gui.GuiUtils;
 
+/**
+ * Abstract scroll panel class.
+ */
 public abstract class ScrollPanel extends AbstractContainerEventHandler implements Widget, NarratableEntry
 {
     private final Minecraft client;
@@ -61,31 +64,92 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     private final int barColor;
     private final int barBorderColor;
 
+    /**
+     * @param client the minecraft instance this ScrollPanel should use
+     * @param width the width
+     * @param height the height
+     * @param top the offset from the top (y coord)
+     * @param left the offset from the left (x coord)
+     */
     public ScrollPanel(Minecraft client, int width, int height, int top, int left)
     {
         this(client, width, height, top, left, 4);
     }
 
+    /**
+     * @param client the minecraft instance this ScrollPanel should use
+     * @param width the width
+     * @param height the height
+     * @param top the offset from the top (y coord)
+     * @param left the offset from the left (x coord)
+     * @param border the size of the border
+     */
     public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border)
     {
         this(client, width, height, top, left, border, 6);
     }
 
+    /**
+     * @param client the minecraft instance this ScrollPanel should use
+     * @param width the width
+     * @param height the height
+     * @param top the offset from the top (y coord)
+     * @param left the offset from the left (x coord)
+     * @param border the size of the border
+     * @param barWidth the width of the scroll bar
+     */
     public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth)
     {
         this(client, width, height, top, left, border, barWidth, 0xC0101010, 0xD0101010);
     }
 
+    /**
+     * @param client the minecraft instance this ScrollPanel should use
+     * @param width the width
+     * @param height the height
+     * @param top the offset from the top (y coord)
+     * @param left the offset from the left (x coord)
+     * @param border the size of the border
+     * @param barWidth the width of the scroll bar
+     * @param bgColor the color for the background
+     */
     public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColor)
     {
         this(client, width, height, top, left, border, barWidth, bgColor, bgColor);
     }
 
+    /**
+     * @param client the minecraft instance this ScrollPanel should use
+     * @param width the width
+     * @param height the height
+     * @param top the offset from the top (y coord)
+     * @param left the offset from the left (x coord)
+     * @param border the size of the border
+     * @param barWidth the width of the scroll bar
+     * @param bgColorFrom the start color for the background gradient
+     * @param bgColorTo the end color for the background gradient
+     */
     public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColorFrom, int bgColorTo)
     {
         this(client, width, height, top, left, border, barWidth, bgColorFrom, bgColorTo, 0xFF000000, 0xFF808080, 0xFFC0C0C0);
     }
 
+    /**
+     * Base constructor
+     *
+     * @param client the minecraft instance this ScrollPanel should use
+     * @param width the width
+     * @param height the height
+     * @param top the offset from the top (y coord)
+     * @param left the offset from the left (x coord)
+     * @param border the size of the border
+     * @param barWidth the width of the scroll bar
+     * @param bgColorFrom the start color for the background gradient
+     * @param bgColorTo the end color for the background gradient
+     * @param barBgColor the color for the scroll bar background
+     * @param barColor the color for the scroll bar handle
+     * @param barBorderColor the border color for the scroll bar handle
+     */
     public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int barWidth, int bgColorFrom, int bgColorTo, int barBgColor, int barColor, int barBorderColor)
     {
         this.client = client;
