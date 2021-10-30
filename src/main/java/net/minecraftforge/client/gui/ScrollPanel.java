@@ -52,13 +52,15 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
 
     private final int barWidth = 6;
     private final int barLeft;
+    private final int bgColorFrom;
+    private final int bgColorTo;
 
     public ScrollPanel(Minecraft client, int width, int height, int top, int left)
     {
-        this(client, width, height, top, left, 4);
+        this(client, width, height, top, left, 4, 0xC0101010, 0xD0101010);
     }
 
-    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border)
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border, int bgColorFrom, int bgColorTo)
     {
         this.client = client;
         this.width = width;
@@ -69,11 +71,35 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         this.right = width + this.left;
         this.barLeft = this.left + this.width - barWidth;
         this.border = border;
+        this.bgColorFrom = bgColorFrom;
+        this.bgColorTo = bgColorTo;
     }
 
     protected abstract int getContentHeight();
 
     protected void drawBackground() {}
+
+    protected void drawBackground(PoseStack matrix, Tesselator tess, float partialTicks)
+    {
+        BufferBuilder worldr = tess.getBuilder();
+
+        if (this.client.level != null)
+        {
+            this.drawGradientRect(matrix, this.left, this.top, this.right, this.bottom, bgColorFrom, bgColorTo);
+        }
+        else // Draw dark dirt background
+        {
+            RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+            RenderSystem.setShaderTexture(0, GuiComponent.BACKGROUND_LOCATION);
+            final float texScale = 32.0F;
+            worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
+            worldr.vertex(this.left,  this.bottom, 0.0D).uv(this.left  / texScale, (this.bottom + (int)this.scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
+            worldr.vertex(this.right, this.bottom, 0.0D).uv(this.right / texScale, (this.bottom + (int)this.scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
+            worldr.vertex(this.right, this.top,    0.0D).uv(this.right / texScale, (this.top    + (int)this.scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
+            worldr.vertex(this.left,  this.top,    0.0D).uv(this.left  / texScale, (this.top    + (int)this.scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
+            tess.end();
+        }
+    }
 
     /**
      * Draw anything special on the screen. GL_SCISSOR is enabled for anything that
@@ -197,26 +223,10 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         BufferBuilder worldr = tess.getBuilder();
 
         double scale = client.getWindow().getGuiScale();
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int)(left  * scale), (int)(client.getWindow().getHeight() - (bottom * scale)),
-                       (int)(width * scale), (int)(height * scale));
+        RenderSystem.enableScissor((int)(left  * scale), (int)(client.getWindow().getHeight() - (bottom * scale)),
+                                   (int)(width * scale), (int)(height * scale));
 
-        if (this.client.level != null)
-        {
-            this.drawGradientRect(matrix, this.left, this.top, this.right, this.bottom, 0xC0101010, 0xD0101010);
-        }
-        else // Draw dark dirt background
-        {
-            RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-            RenderSystem.setShaderTexture(0, GuiComponent.BACKGROUND_LOCATION);
-            final float texScale = 32.0F;
-            worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-            worldr.vertex(this.left,  this.bottom, 0.0D).uv(this.left  / texScale, (this.bottom + (int)this.scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
-            worldr.vertex(this.right, this.bottom, 0.0D).uv(this.right / texScale, (this.bottom + (int)this.scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
-            worldr.vertex(this.right, this.top,    0.0D).uv(this.right / texScale, (this.top    + (int)this.scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
-            worldr.vertex(this.left,  this.top,    0.0D).uv(this.left  / texScale, (this.top    + (int)this.scrollDistance) / texScale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
-            tess.end();
-        }
+        this.drawBackground(matrix, tess, partialTicks);
 
         int baseY = this.top + border - (int)this.scrollDistance;
         this.drawPanel(matrix, right, baseY, tess, mouseX, mouseY);
@@ -258,7 +268,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
 
         RenderSystem.enableTexture();
         RenderSystem.disableBlend();
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        RenderSystem.disableScissor();
     }
 
     protected void drawGradientRect(PoseStack mStack, int left, int top, int right, int bottom, int color1, int color2)
