@@ -53,6 +53,11 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     private final int barWidth = 6;
     private final int barLeft;
 
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left)
+    {
+        this(client, width, height, top, left, 4);
+    }
+
     public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border)
     {
         this.client = client;
