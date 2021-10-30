@@ -104,6 +104,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.OBSIDIAN, Tags.Items.OBSIDIAN);
         copy(Tags.Blocks.ORES, Tags.Items.ORES);
         copy(Tags.Blocks.ORES_COAL, Tags.Items.ORES_COAL);
+        copy(Tags.Blocks.ORES_COPPER, Tags.Items.ORES_COPPER);
         copy(Tags.Blocks.ORES_DIAMOND, Tags.Items.ORES_DIAMOND);
         copy(Tags.Blocks.ORES_EMERALD, Tags.Items.ORES_EMERALD);
         copy(Tags.Blocks.ORES_GOLD, Tags.Items.ORES_GOLD);
