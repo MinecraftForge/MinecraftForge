@@ -167,7 +167,8 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    {
         if (super.mouseClicked(mouseX, mouseY, button))
             return true;
 
@@ -185,7 +186,8 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     }
 
     @Override
-    public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
+    public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_)
+    {
         if (super.mouseReleased(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_))
             return true;
         boolean ret = this.scrolling;
@@ -219,7 +221,6 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks)
     {
@@ -250,10 +251,10 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
                 barTop = this.top;
             }
 
-            float barBgAlpha     = (float)(this.barBgColor >> 24 & 255) / 255.0F;
-            float barBgRed       = (float)(this.barBgColor >> 16 & 255) / 255.0F;
-            float barBgGreen     = (float)(this.barBgColor >>  8 & 255) / 255.0F;
-            float barBgBlue      = (float)(this.barBgColor       & 255) / 255.0F;
+            int barBgAlpha = this.barBgColor >> 24 & 0xff;
+            int barBgRed   = this.barBgColor >> 16 & 0xff;
+            int barBgGreen = this.barBgColor >>  8 & 0xff;
+            int barBgBlue  = this.barBgColor       & 0xff;
 
             RenderSystem.setShader(GameRenderer::getPositionColorShader);
             RenderSystem.disableTexture();
@@ -264,10 +265,10 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
             worldr.vertex(barLeft,            this.top,    0.0D).color(barBgRed, barBgGreen, barBgBlue, barBgAlpha).endVertex();
             tess.end();
 
-            float barAlpha       = (float)(this.barColor >> 24 & 255) / 255.0F;
-            float barRed         = (float)(this.barColor >> 16 & 255) / 255.0F;
-            float barGreen       = (float)(this.barColor >>  8 & 255) / 255.0F;
-            float barBlue        = (float)(this.barColor       & 255) / 255.0F;
+            int barAlpha = this.barColor >> 24 & 0xff;
+            int barRed   = this.barColor >> 16 & 0xff;
+            int barGreen = this.barColor >>  8 & 0xff;
+            int barBlue  = this.barColor       & 0xff;
 
             worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
             worldr.vertex(barLeft,            barTop + barHeight, 0.0D).color(barRed, barGreen, barBlue, barAlpha).endVertex();
@@ -276,10 +277,10 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
             worldr.vertex(barLeft,            barTop,             0.0D).color(barRed, barGreen, barBlue, barAlpha).endVertex();
             tess.end();
 
-            float barBorderAlpha = (float)(this.barBorderColor >> 24 & 255) / 255.0F;
-            float barBorderRed   = (float)(this.barBorderColor >> 16 & 255) / 255.0F;
-            float barBorderGreen = (float)(this.barBorderColor >>  8 & 255) / 255.0F;
-            float barBorderBlue  = (float)(this.barBorderColor       & 255) / 255.0F;
+            int barBorderAlpha = this.barBorderColor >> 24 & 0xff;
+            int barBorderRed   = this.barBorderColor >> 16 & 0xff;
+            int barBorderGreen = this.barBorderColor >>  8 & 0xff;
+            int barBorderBlue  = this.barBorderColor       & 0xff;
 
             worldr.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
             worldr.vertex(barLeft,                barTop + barHeight - 1, 0.0D).color(barBorderRed, barBorderGreen, barBorderBlue, barBorderAlpha).endVertex();
