@@ -171,6 +171,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
 
     protected abstract int getContentHeight();
 
+    // TODO: 1.18 rename and add PoseStack parameter
     protected void drawBackground() {}
 
     protected void drawBackground(PoseStack matrix, Tesselator tess, float partialTicks)
