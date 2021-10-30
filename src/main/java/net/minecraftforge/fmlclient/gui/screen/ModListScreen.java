@@ -100,6 +100,7 @@ public class ModListScreen extends Screen
     }
 
     private static final int PADDING = 6;
+    private static final int BORDER = 4;
 
     private Screen parentScreen;
 
@@ -138,7 +139,7 @@ public class ModListScreen extends Screen
 
         InfoPanel(Minecraft mcIn, int widthIn, int heightIn, int topIn)
         {
-            super(mcIn, widthIn, heightIn, topIn, modList.getRight() + PADDING);
+            super(mcIn, widthIn, heightIn, topIn, modList.getRight() + PADDING, BORDER);
         }
 
         void setInfo(List<String> lines, ResourceLocation logoPath, Size2i logoDims)

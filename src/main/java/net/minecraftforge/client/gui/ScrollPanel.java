@@ -48,12 +48,12 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     private boolean scrolling;
     protected float scrollDistance;
     protected boolean captureMouse = true;
-    protected final int border = 4;
+    protected final int border;
 
     private final int barWidth = 6;
     private final int barLeft;
 
-    public ScrollPanel(Minecraft client, int width, int height, int top, int left)
+    public ScrollPanel(Minecraft client, int width, int height, int top, int left, int border)
     {
         this.client = client;
         this.width = width;
@@ -63,6 +63,7 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
         this.bottom = height + this.top;
         this.right = width + this.left;
         this.barLeft = this.left + this.width - barWidth;
+        this.border = border;
     }
 
     protected abstract int getContentHeight();
