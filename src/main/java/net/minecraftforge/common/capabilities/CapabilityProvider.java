@@ -69,7 +69,8 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     protected final void gatherCapabilities(@Nullable Supplier<ICapabilityProvider> parent)
     {
-        if (isLazy && !initialized) {
+        if (isLazy && !initialized)
+        {
             lazyParentSupplier = parent == null ? () -> null : parent;
             return;
         }
