@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:map"
+    },
+    "title": {
+      "translate": "advancements.test.root.title"
+    },
+    "description": {
+      "translate": "advancements.test.root.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png"
+  },
+  "rewards": {
+    "custom": [
+      {
+        "type": "custom_advancement_rewards_test:send_message",
+        "message": "Hello World!"
+      }
+    ]
+  },
+  "criteria": {
+    "use_ender_eye": {
+      "trigger": "minecraft:used_ender_eye",
+      "conditions": {}
+    }
+  },
+  "requirements": [
+    [
+      "use_ender_eye"
+    ]
+  ]
+}
