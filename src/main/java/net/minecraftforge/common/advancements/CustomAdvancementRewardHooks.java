@@ -30,7 +30,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 /**
  * Class holding the hooks for custom advancement rewards
  */
-public final class CustomAdvancementRewardHooks {
+public final class CustomAdvancementRewardHooks
+{
 
     /**
      * Hook for AdvancementRewards#grant

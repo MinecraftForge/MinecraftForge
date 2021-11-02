@@ -61,7 +61,7 @@
        private int f_9999_;
        private final List<ResourceLocation> f_10000_ = Lists.newArrayList();
        private final List<ResourceLocation> f_10001_ = Lists.newArrayList();
-+      private final List<net.minecraftforge.common.advancements.ICustomAdvancementReward> customRewards = Lists.newArrayList();
++      private final List<net.minecraftforge.common.advancements.ICustomAdvancementReward> customRewards = new java.util.ArrayList<>();
        @Nullable
        private ResourceLocation f_10002_;
  
