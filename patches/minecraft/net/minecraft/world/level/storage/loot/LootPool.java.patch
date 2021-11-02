@@ -96,7 +96,7 @@
           }
        }
     }
-@@ -170,19 +_,21 @@
+@@ -170,15 +_,17 @@
           LootItemFunction[] alootitemfunction = GsonHelper.m_13845_(jsonobject, "functions", new LootItemFunction[0], p_79092_, LootItemFunction[].class);
           NumberProvider numberprovider = GsonHelper.m_13836_(jsonobject, "rolls", p_79092_, NumberProvider.class);
           NumberProvider numberprovider1 = GsonHelper.m_13845_(jsonobject, "bonus_rolls", ConstantValue.m_165692_(0.0F), p_79092_, NumberProvider.class);
@@ -114,10 +114,5 @@
 -         if (!ArrayUtils.isEmpty((Object[])p_79094_.f_79024_)) {
 +         if (!p_79094_.f_79024_.isEmpty()) {
              jsonobject.add("conditions", p_79096_.serialize(p_79094_.f_79024_));
-          }
- 
--         if (!ArrayUtils.isEmpty((Object[])p_79094_.f_79026_)) {
-+         if (p_79094_.f_79026_.length > 0) {
-             jsonobject.add("functions", p_79096_.serialize(p_79094_.f_79026_));
           }
  
