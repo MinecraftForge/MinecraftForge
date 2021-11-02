@@ -32,21 +32,19 @@
        boolean flag = false;
  
        for(ResourceLocation resourcelocation : this.f_9980_) {
-@@ -68,7 +_,7 @@
-       if (this.f_9981_.length > 0) {
+@@ -69,6 +_,7 @@
           p_9990_.m_7902_(this.f_9981_);
        }
--
-+      net.minecraftforge.common.advancements.CustomAdvancementRewards.grant(p_9990_, this.customRewards);
+ 
++      net.minecraftforge.common.advancements.CustomAdvancementRewardHooks.grant(p_9990_, this.customRewards);
        MinecraftServer minecraftserver = p_9990_.f_8924_;
        this.f_9982_.m_78002_(minecraftserver.m_129890_()).ifPresent((p_9996_) -> {
           minecraftserver.m_129890_().m_136112_(p_9996_, p_9990_.m_20203_().m_81324_().m_81325_(2));
-@@ -107,7 +_,7 @@
- 
+@@ -108,6 +_,7 @@
              jsonobject.add("recipes", jsonarray1);
           }
--
-+         net.minecraftforge.common.advancements.CustomAdvancementRewards.serialize(jsonobject, this.customRewards);
+ 
++         net.minecraftforge.common.advancements.CustomAdvancementRewardHooks.serialize(jsonobject, this.customRewards);
           if (this.f_9982_.m_77999_() != null) {
              jsonobject.addProperty("function", this.f_9982_.m_77999_().toString());
           }
@@ -55,7 +53,7 @@
        }
  
 -      return new AdvancementRewards(i, aresourcelocation, aresourcelocation1, commandfunction$cacheablefunction);
-+      net.minecraftforge.common.advancements.ICustomAdvancementReward[] customRewards = net.minecraftforge.common.advancements.CustomAdvancementRewards.deserialize(p_9992_);
++      net.minecraftforge.common.advancements.ICustomAdvancementReward[] customRewards = net.minecraftforge.common.advancements.CustomAdvancementRewardHooks.deserialize(p_9992_);
 +      return new AdvancementRewards(i, aresourcelocation, aresourcelocation1, commandfunction$cacheablefunction, customRewards);
     }
  

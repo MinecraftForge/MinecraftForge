@@ -28,9 +28,9 @@ import net.minecraft.util.GsonHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 
 /**
- * Class holding the hooks and registry for custom advancement rewards
+ * Class holding the hooks for custom advancement rewards
  */
-public final class CustomAdvancementRewards {
+public final class CustomAdvancementRewardHooks {
 
     /**
      * Hook for AdvancementRewards#grant
@@ -52,8 +52,7 @@ public final class CustomAdvancementRewards {
         JsonArray arr = new JsonArray();
         for (ICustomAdvancementReward customReward : customRewards)
         {
-            @SuppressWarnings("unchecked")
-            ICustomAdvancementReward.Serializer<ICustomAdvancementReward> serializer = (ICustomAdvancementReward.Serializer<ICustomAdvancementReward>) customReward.getSerializer();
+            ICustomAdvancementReward.Serializer<ICustomAdvancementReward> serializer = customReward.getSerializer();
             JsonObject element = serializer.serialize(customReward);
             element.addProperty("type", serializer.getRegistryName().toString());
             arr.add(element);

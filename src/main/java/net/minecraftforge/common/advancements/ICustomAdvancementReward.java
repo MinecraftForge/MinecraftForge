@@ -41,7 +41,7 @@ public interface ICustomAdvancementReward
      * Get the serializer for this custom advancement reward
      * @return the serializer for this custom advancement reward
      */
-    Serializer<?> getSerializer();
+    <T extends ICustomAdvancementReward> Serializer<T> getSerializer();
 
     abstract class Serializer<T extends ICustomAdvancementReward> extends ForgeRegistryEntry<Serializer<?>>
     {

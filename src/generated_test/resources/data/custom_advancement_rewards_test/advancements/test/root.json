@@ -1,7 +1,7 @@
 {
   "display": {
     "icon": {
-      "item": "minecraft:map"
+      "item": "minecraft:ender_eye"
     },
     "title": {
       "translate": "advancements.test.root.title"
@@ -9,8 +9,8 @@
     "description": {
       "translate": "advancements.test.root.description"
     },
-    "frame": "task",
-    "show_toast": false,
+    "frame": "challenge",
+    "show_toast": true,
     "announce_to_chat": false,
     "hidden": false,
     "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png"
@@ -18,8 +18,8 @@
   "rewards": {
     "custom": [
       {
-        "type": "custom_advancement_rewards_test:send_message",
-        "message": "Hello World!"
+        "message": "Hello World!",
+        "type": "custom_advancement_rewards_test:send_message"
       }
     ]
   },
