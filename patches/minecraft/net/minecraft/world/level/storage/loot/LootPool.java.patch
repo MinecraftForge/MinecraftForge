@@ -117,7 +117,7 @@
           }
  
 -         if (!ArrayUtils.isEmpty((Object[])p_79094_.f_79026_)) {
-+         if (!p_79094_.f_79024_.isEmpty()) {
++         if (p_79094_.f_79026_.length > 0) {
              jsonobject.add("functions", p_79096_.serialize(p_79094_.f_79026_));
           }
  
