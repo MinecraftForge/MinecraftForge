@@ -42,7 +42,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
     private boolean valid = true;
 
     private boolean                       isLazy             = false;
-    private Supplier<ICapabilityProvider> lazyParentSupplier = null;
+    private Supplier<ICapabilityProvider> lazyParentSupplier = () -> null; //Items have a null delegate so this needs to be set to prevent a crash
     private CompoundNBT                   lazyData           = null;
     private boolean initialized = false;
 
