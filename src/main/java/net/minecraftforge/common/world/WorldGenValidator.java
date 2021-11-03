@@ -40,10 +40,12 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashSet;
 import java.util.Set;
 
-public class WorldGenValidator
+public final class WorldGenValidator
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+    private WorldGenValidator() {}
 
     /**
      * Will check all biomes for any unregistered or broken worldgen elements.
