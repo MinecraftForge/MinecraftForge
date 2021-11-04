@@ -47,7 +47,7 @@
  
        public LootPool.Builder m_165133_(NumberProvider p_165134_) {
           this.f_79070_ = p_165134_;
-@@ -153,11 +_,21 @@
+@@ -153,11 +_,22 @@
           return this;
        }
  
@@ -56,6 +56,7 @@
 +         return this;
 +      }
 +
++      @Deprecated(forRemoval = true, since = "1.17.1") // FORGE: Use #setBonusRolls instead with UniformGenerator
 +      public LootPool.Builder bonusRolls(float min, float max) {
 +         this.f_79071_ = net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.m_165780_(min, max);
 +         return this;
