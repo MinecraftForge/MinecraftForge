@@ -46,7 +46,7 @@
 +            net.minecraftforge.entity.PartEntity<?>[] aenderdragonpartentity = livingentity.getParts();
  
              for(int i = 0; i < aenderdragonpartentity.length; ++i) {
-                aenderdragonpartentity[i].func_145769_d((i + 1) + p_147281_1_.func_149024_d());
+                aenderdragonpartentity[i].func_145769_d((i + 1) + p_147281_1_.func_149024_d()); //Forge: Fixes MC-158205
 @@ -1004,8 +_,10 @@
           clientplayerentity1.func_233645_dx_().func_233784_a_(clientplayerentity.func_233645_dx_());
        }
