@@ -26,6 +26,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.data.BuiltinRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
@@ -62,9 +64,12 @@ public final class WorldGenValidator
 
         // Grab all registries we will need.
         Registry<Biome> biomeRegistry = registryHolder.registryOrThrow(Registry.BIOME_REGISTRY);
-        Registry<ConfiguredFeature<?, ?>> configuredFeatureRegistry = registryHolder.registryOrThrow(Registry.CONFIGURED_FEATURE_REGISTRY);
-        Registry<ConfiguredWorldCarver<?>> configuredCarverRegistry = registryHolder.registryOrThrow(Registry.CONFIGURED_CARVER_REGISTRY);
-        Registry<ConfiguredStructureFeature<?, ?>> configuredStructureRegistry = registryHolder.registryOrThrow(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
+        Registry<ConfiguredFeature<?, ?>> dynamicConfiguredFeatureRegistry = registryHolder.registryOrThrow(Registry.CONFIGURED_FEATURE_REGISTRY);
+        Registry<ConfiguredFeature<?, ?>> startupConfiguredFeatureRegistry = BuiltinRegistries.CONFIGURED_FEATURE;
+        Registry<ConfiguredWorldCarver<?>> dynamicConfiguredCarverRegistry = registryHolder.registryOrThrow(Registry.CONFIGURED_CARVER_REGISTRY);
+        Registry<ConfiguredWorldCarver<?>> startupConfiguredCarverRegistry = BuiltinRegistries.CONFIGURED_CARVER;
+        Registry<ConfiguredStructureFeature<?, ?>> dynamicConfiguredStructureRegistry = registryHolder.registryOrThrow(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
+        Registry<ConfiguredStructureFeature<?, ?>> startupConfiguredStructureRegistry = BuiltinRegistries.CONFIGURED_STRUCTURE_FEATURE;
 
         // Checks every biome for unregistered or broken worldgen elements.
         for (Biome biome : biomeRegistry)
@@ -77,7 +82,7 @@ public final class WorldGenValidator
                         ConfiguredFeature<?, ?> feature = configuredFeatureSupplier.get();
                         if (checkedElements.add(feature))
                         {
-                            validate(feature, configuredFeatureRegistry, "ConfiguredFeature", ConfiguredFeature.DIRECT_CODEC, biomeName);
+                            validate(feature, startupConfiguredFeatureRegistry, dynamicConfiguredFeatureRegistry, "ConfiguredFeature", ConfiguredFeature.DIRECT_CODEC, biomeName);
                         }
                     }));
 
@@ -87,7 +92,7 @@ public final class WorldGenValidator
                     ConfiguredWorldCarver<?> carver = configuredWorldCarverSupplier.get();
                     if (checkedElements.add(carver))
                     {
-                        validate(carver, configuredCarverRegistry, "ConfiguredWorldCarver", ConfiguredWorldCarver.DIRECT_CODEC, biomeName);
+                        validate(carver, startupConfiguredCarverRegistry, dynamicConfiguredCarverRegistry, "ConfiguredWorldCarver", ConfiguredWorldCarver.DIRECT_CODEC, biomeName);
                     }
                 });
             }
@@ -96,7 +101,7 @@ public final class WorldGenValidator
                 ConfiguredStructureFeature<?, ?> structureFeature = structureFeatureSupplier.get();
                 if (checkedElements.add(structureFeature))
                 {
-                    validate(structureFeature, configuredStructureRegistry, "ConfiguredStructureFeature", ConfiguredStructureFeature.DIRECT_CODEC, biomeName);
+                    validate(structureFeature, startupConfiguredStructureRegistry, dynamicConfiguredStructureRegistry, "ConfiguredStructureFeature", ConfiguredStructureFeature.DIRECT_CODEC, biomeName);
                 }
             });
         }
@@ -107,7 +112,7 @@ public final class WorldGenValidator
      * If an issue is found, this will pause the IDE so the modder can come here and see the error and the worldgenElement for which element is the issue.
      * The console output will have the Forge message as last thing when paused too.
      */
-    private static <T> void validate(T worldgenElement, Registry<T> registry, String worldgenElementType, Codec<T> codec, ResourceLocation biomeName)
+    private static <T> void validate(T worldgenElement, Registry<T> startupRegistry, Registry<T> dynamicRegistry, String worldgenElementType, Codec<T> codec, ResourceLocation biomeName)
     {
         // Checks to make sure the element can be turned into JSON safely or else Minecraft will explode with vague errors.
         JsonElement worldgenElementJSON = codec.encode(worldgenElement, JsonOps.INSTANCE, JsonOps.INSTANCE.empty())
@@ -127,7 +132,7 @@ public final class WorldGenValidator
 
         // Checks to make sure the element is registered.
         // If not, print out that it is unregistered.
-        if (registry.getResourceKey(worldgenElement).isEmpty())
+        if (startupRegistry.getResourceKey(worldgenElement).isEmpty() && dynamicRegistry.getResourceKey(worldgenElement).isEmpty())
         {
             throw new UnsupportedOperationException(
                     String.format("""
