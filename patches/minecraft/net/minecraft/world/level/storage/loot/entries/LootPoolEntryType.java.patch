@@ -1,37 +1,11 @@
 --- a/net/minecraft/world/level/storage/loot/entries/LootPoolEntryType.java
 +++ b/net/minecraft/world/level/storage/loot/entries/LootPoolEntryType.java
-@@ -3,8 +_,33 @@
+@@ -3,7 +_,7 @@
  import net.minecraft.world.level.storage.loot.Serializer;
  import net.minecraft.world.level.storage.loot.SerializerType;
  
 -public class LootPoolEntryType extends SerializerType<LootPoolEntryContainer> {
-+public class LootPoolEntryType extends SerializerType<LootPoolEntryContainer> implements net.minecraftforge.registries.IForgeRegistryEntry<LootPoolEntryType> {
++public class LootPoolEntryType extends net.minecraftforge.registries.ForgeSerializerTypeRegistryEntry<LootPoolEntryType, LootPoolEntryContainer> {
     public LootPoolEntryType(Serializer<? extends LootPoolEntryContainer> p_79674_) {
        super(p_79674_);
     }
-+
-+   private net.minecraft.resources.ResourceLocation registryName = null;
-+
-+   public final LootPoolEntryType setRegistryName(String name) {
-+      if (getRegistryName() != null)
-+         throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
-+
-+      this.registryName = checkRegistryName(name);
-+      return this;
-+   }
-+
-+   //Helper functions
-+   public final LootPoolEntryType setRegistryName(net.minecraft.resources.ResourceLocation name){ return setRegistryName(name.toString()); }
-+
-+   public final LootPoolEntryType setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
-+
-+   public final net.minecraft.resources.ResourceLocation getRegistryName()
-+   {
-+      return registryName;
-+   }
-+
-+   public final Class<LootPoolEntryType> getRegistryType() { return LootPoolEntryType.class; }
-+
-+   net.minecraft.resources.ResourceLocation checkRegistryName(String name) { return net.minecraftforge.registries.GameData.checkPrefix(name, true); }
-+
- }

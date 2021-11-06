@@ -1,37 +1,11 @@
 --- a/net/minecraft/world/level/storage/loot/providers/number/LootNumberProviderType.java
 +++ b/net/minecraft/world/level/storage/loot/providers/number/LootNumberProviderType.java
-@@ -3,8 +_,33 @@
+@@ -3,7 +_,7 @@
  import net.minecraft.world.level.storage.loot.Serializer;
  import net.minecraft.world.level.storage.loot.SerializerType;
  
 -public class LootNumberProviderType extends SerializerType<NumberProvider> {
-+public class LootNumberProviderType extends SerializerType<NumberProvider> implements net.minecraftforge.registries.IForgeRegistryEntry<LootNumberProviderType> {
++public class LootNumberProviderType extends net.minecraftforge.registries.ForgeSerializerTypeRegistryEntry<LootNumberProviderType, NumberProvider> {
     public LootNumberProviderType(Serializer<? extends NumberProvider> p_165728_) {
        super(p_165728_);
     }
-+
-+   private net.minecraft.resources.ResourceLocation registryName = null;
-+
-+   public final LootNumberProviderType setRegistryName(String name) {
-+      if (getRegistryName() != null)
-+         throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
-+
-+      this.registryName = checkRegistryName(name);
-+      return this;
-+   }
-+
-+   //Helper functions
-+   public final LootNumberProviderType setRegistryName(net.minecraft.resources.ResourceLocation name){ return setRegistryName(name.toString()); }
-+
-+   public final LootNumberProviderType setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
-+
-+   public final net.minecraft.resources.ResourceLocation getRegistryName()
-+   {
-+      return registryName;
-+   }
-+
-+   public final Class<LootNumberProviderType> getRegistryType() { return LootNumberProviderType.class; }
-+
-+   net.minecraft.resources.ResourceLocation checkRegistryName(String name) { return net.minecraftforge.registries.GameData.checkPrefix(name, true); }
-+
- }
