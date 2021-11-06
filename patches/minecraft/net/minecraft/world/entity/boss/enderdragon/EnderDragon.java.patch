@@ -9,12 +9,10 @@
                       flag1 = this.f_19853_.m_7471_(blockpos, false) || flag1;
                    } else {
                       flag = true;
-@@ -847,6 +_,16 @@
- 
-    public boolean m_6072_() {
+@@ -849,12 +_,22 @@
        return false;
-+   }
-+
+    }
+ 
 +   @Override
 +   public boolean isMultipartEntity() {
 +      return true;
@@ -23,6 +21,15 @@
 +   @Override
 +   public net.minecraftforge.entity.PartEntity<?>[] getParts() {
 +      return this.f_31089_;
-    }
- 
++   }
++
     public void m_142223_(ClientboundAddMobPacket p_149572_) {
+       super.m_142223_(p_149572_);
+       EnderDragonPart[] aenderdragonpart = this.m_31156_();
+ 
+       for(int i = 0; i < aenderdragonpart.length; ++i) {
+-         aenderdragonpart[i].m_20234_(i + p_149572_.m_131552_());
++         aenderdragonpart[i].m_20234_((i + 1) + p_149572_.m_131552_()); //Forge: Fixes MC-158205
+       }
+ 
+    }
