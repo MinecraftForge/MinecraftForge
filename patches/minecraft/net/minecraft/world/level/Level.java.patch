@@ -182,6 +182,28 @@
     }
  
     public boolean m_46749_(BlockPos p_46750_) {
+@@ -530,8 +_,8 @@
+             list.add(p_151522_);
+          }
+ 
+-         if (p_151522_ instanceof EnderDragon) {
+-            for(EnderDragonPart enderdragonpart : ((EnderDragon)p_151522_).m_31156_()) {
++         if (p_151522_.isMultipartEntity()) {
++            for(net.minecraftforge.entity.PartEntity<?> enderdragonpart : p_151522_.getParts()) {
+                if (p_151522_ != p_46536_ && p_46538_.test(enderdragonpart)) {
+                   list.add(enderdragonpart);
+                }
+@@ -550,8 +_,8 @@
+             list.add(p_151539_);
+          }
+ 
+-         if (p_151539_ instanceof EnderDragon) {
+-            for(EnderDragonPart enderdragonpart : ((EnderDragon)p_151539_).m_31156_()) {
++         if (p_151539_.isMultipartEntity()) {
++            for(net.minecraftforge.entity.PartEntity<?> enderdragonpart : p_151539_.getParts()) {
+                T t = p_151528_.m_141992_(enderdragonpart);
+                if (t != null && p_151530_.test(t)) {
+                   list.add(t);
 @@ -571,6 +_,7 @@
           this.m_46745_(p_151544_).m_6427_();
        }
