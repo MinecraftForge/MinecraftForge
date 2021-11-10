@@ -141,6 +141,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="send_datapacks_to_client"
 [[mods]]
+    modId="gui_layer_test"
+[[mods]]
     modId="codec_registry_test"
 
 # ADD ABOVE THIS LINE
