@@ -45,7 +45,7 @@ public class LibraryFinder {
     }
 
     // Not used anywhere in Forge's codebase, scheduled for deletion unless a good need is expressed.
-    @Deprecated(forRemoval = true, since = "1.171.1")
+    @Deprecated(forRemoval = true, since = "1.17.1")
     public static Path findJarPathFor(final String className, final String jarName) {
         final URL resource = LibraryFinder.class.getClassLoader().getResource(className);
         return findJarPathFor(className, jarName, resource);
@@ -55,7 +55,7 @@ public class LibraryFinder {
      * Only used in ClasspathLocator now, so moved too a private method and depreciated this.
      * Scheduled for deletion unless a good need is expressed.
      */
-    @Deprecated(forRemoval = true, since = "1.171.1")
+    @Deprecated(forRemoval = true, since = "1.17.1")
     public static Path findJarPathFor(final String resourceName, final String jarName, final URL resource) {
         try {
             Path path;

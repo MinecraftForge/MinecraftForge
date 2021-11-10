@@ -1,0 +1,38 @@
+--- a/net/minecraft/data/advancements/AdvancementProvider.java
++++ b/net/minecraft/data/advancements/AdvancementProvider.java
+@@ -22,11 +_,18 @@
+    private static final Gson f_123961_ = (new GsonBuilder()).setPrettyPrinting().create();
+    private final DataGenerator f_123962_;
+    private final List<Consumer<Consumer<Advancement>>> f_123963_ = ImmutableList.of(new TheEndAdvancements(), new HusbandryAdvancements(), new AdventureAdvancements(), new NetherAdvancements(), new StoryAdvancements());
++   protected net.minecraftforge.common.data.ExistingFileHelper fileHelper;
+ 
++   @Deprecated
+    public AdvancementProvider(DataGenerator p_123966_) {
+       this.f_123962_ = p_123966_;
+    }
+ 
++   public AdvancementProvider(DataGenerator generatorIn, net.minecraftforge.common.data.ExistingFileHelper fileHelperIn) {
++      this.f_123962_ = generatorIn;
++      this.fileHelper = fileHelperIn;
++   }
++
+    public void m_6865_(HashCache p_123969_) {
+       Path path = this.f_123962_.m_123916_();
+       Set<ResourceLocation> set = Sets.newHashSet();
+@@ -45,6 +_,16 @@
+          }
+       };
+ 
++      registerAdvancements(consumer, fileHelper);
++   }
++
++   /**
++    * Override this method for registering and generating custom {@link Advancement}s. <br>
++    * Just use {@link Advancement.Builder} to build your Advancements, you don't need an extra consumer like the vanilla classes.
++    * @param consumer used for the register function from {@link Advancement.Builder}
++    * @param fileHelper used for the register function from {@link Advancement.Builder}
++   */
++   protected void registerAdvancements(Consumer<Advancement> consumer, net.minecraftforge.common.data.ExistingFileHelper fileHelper) {
+       for(Consumer<Consumer<Advancement>> consumer1 : this.f_123963_) {
+          consumer1.accept(consumer);
+       }

@@ -1,7 +1,11 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -173,6 +_,7 @@
-    final Int2ObjectMap<EnderDragonPart> f_143247_ = new Int2ObjectOpenHashMap<>();
+@@ -170,9 +_,10 @@
+    private final List<CustomSpawner> f_8558_;
+    @Nullable
+    private final EndDragonFight f_8559_;
+-   final Int2ObjectMap<EnderDragonPart> f_143247_ = new Int2ObjectOpenHashMap<>();
++   final Int2ObjectMap<net.minecraftforge.entity.PartEntity<?>> f_143247_ = new Int2ObjectOpenHashMap<>();
     private final StructureFeatureManager f_8560_;
     private final boolean f_8561_;
 +   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
@@ -156,6 +160,20 @@
     }
  
     private boolean m_8872_(Entity p_8873_) {
+@@ -754,7 +_,12 @@
+          f_8566_.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.m_20613_(p_8873_.m_6095_()));
+          return false;
+       } else {
+-         return this.f_143244_.m_157533_(p_8873_);
++         if (this.f_143244_.m_157533_(p_8873_)) {
++            p_8873_.onAddedToWorld();
++            return true;
++         } else {
++            return false;
++         }
+       }
+    }
+ 
 @@ -790,10 +_,20 @@
     }
  
@@ -185,16 +203,38 @@
        explosion.m_46061_();
        explosion.m_46075_(false);
        if (p_8661_ == Explosion.BlockInteraction.NONE) {
-@@ -1355,6 +_,12 @@
-       BlockPos.m_121976_(i - 2, j, k - 2, i + 2, j, k + 2).forEach((p_143260_) -> {
-          p_8618_.m_46597_(p_143260_, Blocks.f_50080_.m_49966_());
+@@ -1357,6 +_,12 @@
        });
-+   }
-+
+    }
+ 
 +   protected void initCapabilities() {
 +      this.gatherCapabilities();
 +      capabilityData = this.m_8895_().m_164861_(e -> net.minecraftforge.common.util.WorldCapabilityData.load(e, getCapabilities()), () -> new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities()), net.minecraftforge.common.util.WorldCapabilityData.ID);
 +      capabilityData.setCapabilities(getCapabilities());
-    }
- 
++   }
++
     public LevelEntityGetter<Entity> m_142646_() {
+       return this.f_143244_.m_157567_();
+    }
+@@ -1422,8 +_,8 @@
+             ServerLevel.this.f_143246_.add((Mob)p_143371_);
+          }
+ 
+-         if (p_143371_ instanceof EnderDragon) {
+-            for(EnderDragonPart enderdragonpart : ((EnderDragon)p_143371_).m_31156_()) {
++         if (p_143371_.isMultipartEntity()) {
++            for(net.minecraftforge.entity.PartEntity<?> enderdragonpart : p_143371_.getParts()) {
+                ServerLevel.this.f_143247_.put(enderdragonpart.m_142049_(), enderdragonpart);
+             }
+          }
+@@ -1442,8 +_,8 @@
+             ServerLevel.this.f_143246_.remove(p_143375_);
+          }
+ 
+-         if (p_143375_ instanceof EnderDragon) {
+-            for(EnderDragonPart enderdragonpart : ((EnderDragon)p_143375_).m_31156_()) {
++         if (p_143375_.isMultipartEntity()) {
++            for(net.minecraftforge.entity.PartEntity<?> enderdragonpart : p_143375_.getParts()) {
+                ServerLevel.this.f_143247_.remove(enderdragonpart.m_142049_());
+             }
+          }

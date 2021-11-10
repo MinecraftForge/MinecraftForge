@@ -699,6 +699,10 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new InputUpdateEvent(player, movementInput));
     }
 
+    /**
+     * @deprecated use {@link Minecraft#reloadResourcePacks()} instead
+     */
+    @Deprecated(since="1.17.1", forRemoval = true)
     public static void refreshResources(Minecraft mc, VanillaResourceType... types) {
         mc.reloadResourcePacks();
     }
