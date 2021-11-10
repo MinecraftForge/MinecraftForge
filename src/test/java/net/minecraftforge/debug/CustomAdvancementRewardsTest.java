@@ -125,7 +125,7 @@ public class CustomAdvancementRewardsTest
                                     EntityPredicate.Composite.ANY,
                                     MinMaxBounds.Doubles.ANY))
                     .requirements(RequirementsStrategy.OR)
-                    .rewards(AdvancementRewards.Builder.custom(new SendMessageReward("Hello World!")))
+                    .rewards(AdvancementRewards.Builder.reward(new SendMessageReward("Hello World!")))
                     .save(consumer,
                             new ResourceLocation("custom_advancement_rewards_test", "test/root"),
                             fileHelper);

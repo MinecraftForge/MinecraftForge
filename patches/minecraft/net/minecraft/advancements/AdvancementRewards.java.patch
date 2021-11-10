@@ -61,7 +61,7 @@
        private int f_9999_;
        private final List<ResourceLocation> f_10000_ = Lists.newArrayList();
        private final List<ResourceLocation> f_10001_ = Lists.newArrayList();
-+      private final List<net.minecraftforge.common.advancements.IAdvancementReward> customRewards = new java.util.ArrayList<>();
++      private final List<net.minecraftforge.common.advancements.IAdvancementReward> rewards = new java.util.ArrayList<>();
        @Nullable
        private ResourceLocation f_10002_;
  
@@ -69,18 +69,18 @@
           return this;
        }
  
-+      public static AdvancementRewards.Builder custom(net.minecraftforge.common.advancements.IAdvancementReward customReward) {
-+         return (new AdvancementRewards.Builder()).addCustomReward(customReward);
++      public static AdvancementRewards.Builder reward(net.minecraftforge.common.advancements.IAdvancementReward reward) {
++         return (new AdvancementRewards.Builder()).addReward(reward);
 +      }
 +
-+      public AdvancementRewards.Builder addCustomReward(net.minecraftforge.common.advancements.IAdvancementReward customReward) {
-+         this.customRewards.add(customReward);
++      public AdvancementRewards.Builder addReward(net.minecraftforge.common.advancements.IAdvancementReward reward) {
++         this.rewards.add(reward);
 +         return this;
 +      }
 +
        public AdvancementRewards m_10004_() {
 -         return new AdvancementRewards(this.f_9999_, this.f_10000_.toArray(new ResourceLocation[0]), this.f_10001_.toArray(new ResourceLocation[0]), this.f_10002_ == null ? CommandFunction.CacheableFunction.f_77990_ : new CommandFunction.CacheableFunction(this.f_10002_));
-+         return new AdvancementRewards(this.f_9999_, this.f_10000_.toArray(new ResourceLocation[0]), this.f_10001_.toArray(new ResourceLocation[0]), this.f_10002_ == null ? CommandFunction.CacheableFunction.f_77990_ : new CommandFunction.CacheableFunction(this.f_10002_), this.customRewards.toArray(new net.minecraftforge.common.advancements.IAdvancementReward[0]));
++         return new AdvancementRewards(this.f_9999_, this.f_10000_.toArray(new ResourceLocation[0]), this.f_10001_.toArray(new ResourceLocation[0]), this.f_10002_ == null ? CommandFunction.CacheableFunction.f_77990_ : new CommandFunction.CacheableFunction(this.f_10002_), this.rewards.toArray(new net.minecraftforge.common.advancements.IAdvancementReward[0]));
        }
     }
  }
