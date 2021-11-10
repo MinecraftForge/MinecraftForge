@@ -1,25 +1,25 @@
 --- a/net/minecraft/advancements/AdvancementRewards.java
 +++ b/net/minecraft/advancements/AdvancementRewards.java
-@@ -29,12 +_,22 @@
+@@ -29,12 +_,18 @@
     private final ResourceLocation[] f_9980_;
     private final ResourceLocation[] f_9981_;
     private final CommandFunction.CacheableFunction f_9982_;
-+   private final net.minecraftforge.common.advancements.ICustomAdvancementReward[] customRewards;
++   private final net.minecraftforge.common.advancements.IAdvancementReward[] rewards;
 +
-+   public AdvancementRewards(int experience, ResourceLocation[] loot, ResourceLocation[] recipes, CommandFunction.CacheableFunction function, net.minecraftforge.common.advancements.ICustomAdvancementReward[] customRewards) {
++   public AdvancementRewards(int experience, ResourceLocation[] loot, ResourceLocation[] recipes, CommandFunction.CacheableFunction function, net.minecraftforge.common.advancements.IAdvancementReward[] rewards) {
 +      this.f_9979_ = experience;
 +      this.f_9980_ = loot;
 +      this.f_9981_ = recipes;
 +      this.f_9982_ = function;
-+      this.customRewards = customRewards;
++      this.rewards = rewards;
 +   }
  
     public AdvancementRewards(int p_9985_, ResourceLocation[] p_9986_, ResourceLocation[] p_9987_, CommandFunction.CacheableFunction p_9988_) {
-       this.f_9979_ = p_9985_;
-       this.f_9980_ = p_9986_;
-       this.f_9981_ = p_9987_;
-       this.f_9982_ = p_9988_;
-+      this.customRewards = new net.minecraftforge.common.advancements.ICustomAdvancementReward[0];
+-      this.f_9979_ = p_9985_;
+-      this.f_9980_ = p_9986_;
+-      this.f_9981_ = p_9987_;
+-      this.f_9982_ = p_9988_;
++      this(p_9985_, p_9986_, p_9987_, p_9988_, new net.minecraftforge.common.advancements.IAdvancementReward[0]);
     }
  
     public ResourceLocation[] m_144821_() {
@@ -36,7 +36,7 @@
           p_9990_.m_7902_(this.f_9981_);
        }
  
-+      net.minecraftforge.common.advancements.CustomAdvancementRewardHooks.grant(p_9990_, this.customRewards);
++      net.minecraftforge.common.advancements.AdvancementRewardHooks.grant(p_9990_, this.rewards);
        MinecraftServer minecraftserver = p_9990_.f_8924_;
        this.f_9982_.m_78002_(minecraftserver.m_129890_()).ifPresent((p_9996_) -> {
           minecraftserver.m_129890_().m_136112_(p_9996_, p_9990_.m_20203_().m_81324_().m_81325_(2));
@@ -44,7 +44,7 @@
              jsonobject.add("recipes", jsonarray1);
           }
  
-+         net.minecraftforge.common.advancements.CustomAdvancementRewardHooks.serialize(jsonobject, this.customRewards);
++         net.minecraftforge.common.advancements.AdvancementRewardHooks.serialize(jsonobject, this.rewards);
           if (this.f_9982_.m_77999_() != null) {
              jsonobject.addProperty("function", this.f_9982_.m_77999_().toString());
           }
@@ -53,7 +53,7 @@
        }
  
 -      return new AdvancementRewards(i, aresourcelocation, aresourcelocation1, commandfunction$cacheablefunction);
-+      net.minecraftforge.common.advancements.ICustomAdvancementReward[] customRewards = net.minecraftforge.common.advancements.CustomAdvancementRewardHooks.deserialize(p_9992_);
++      net.minecraftforge.common.advancements.IAdvancementReward[] customRewards = net.minecraftforge.common.advancements.AdvancementRewardHooks.deserialize(p_9992_);
 +      return new AdvancementRewards(i, aresourcelocation, aresourcelocation1, commandfunction$cacheablefunction, customRewards);
     }
  
@@ -61,7 +61,7 @@
        private int f_9999_;
        private final List<ResourceLocation> f_10000_ = Lists.newArrayList();
        private final List<ResourceLocation> f_10001_ = Lists.newArrayList();
-+      private final List<net.minecraftforge.common.advancements.ICustomAdvancementReward> customRewards = new java.util.ArrayList<>();
++      private final List<net.minecraftforge.common.advancements.IAdvancementReward> customRewards = new java.util.ArrayList<>();
        @Nullable
        private ResourceLocation f_10002_;
  
@@ -69,18 +69,18 @@
           return this;
        }
  
-+      public static AdvancementRewards.Builder custom(net.minecraftforge.common.advancements.ICustomAdvancementReward customReward) {
++      public static AdvancementRewards.Builder custom(net.minecraftforge.common.advancements.IAdvancementReward customReward) {
 +         return (new AdvancementRewards.Builder()).addCustomReward(customReward);
 +      }
 +
-+      public AdvancementRewards.Builder addCustomReward(net.minecraftforge.common.advancements.ICustomAdvancementReward customReward) {
++      public AdvancementRewards.Builder addCustomReward(net.minecraftforge.common.advancements.IAdvancementReward customReward) {
 +         this.customRewards.add(customReward);
 +         return this;
 +      }
 +
        public AdvancementRewards m_10004_() {
 -         return new AdvancementRewards(this.f_9999_, this.f_10000_.toArray(new ResourceLocation[0]), this.f_10001_.toArray(new ResourceLocation[0]), this.f_10002_ == null ? CommandFunction.CacheableFunction.f_77990_ : new CommandFunction.CacheableFunction(this.f_10002_));
-+         return new AdvancementRewards(this.f_9999_, this.f_10000_.toArray(new ResourceLocation[0]), this.f_10001_.toArray(new ResourceLocation[0]), this.f_10002_ == null ? CommandFunction.CacheableFunction.f_77990_ : new CommandFunction.CacheableFunction(this.f_10002_), this.customRewards.toArray(new net.minecraftforge.common.advancements.ICustomAdvancementReward[0]));
++         return new AdvancementRewards(this.f_9999_, this.f_10000_.toArray(new ResourceLocation[0]), this.f_10001_.toArray(new ResourceLocation[0]), this.f_10002_ == null ? CommandFunction.CacheableFunction.f_77990_ : new CommandFunction.CacheableFunction(this.f_10002_), this.customRewards.toArray(new net.minecraftforge.common.advancements.IAdvancementReward[0]));
        }
     }
  }

@@ -56,7 +56,7 @@ import net.minecraft.world.level.levelgen.placement.FeatureDecorator;
 import net.minecraft.world.level.levelgen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.advancements.ICustomAdvancementReward;
+import net.minecraftforge.common.advancements.IAdvancementReward;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldType;
 
@@ -113,7 +113,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
     public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
     public static final IForgeRegistry<ForgeWorldType> WORLD_TYPES = RegistryManager.ACTIVE.getRegistry(ForgeWorldType.class);
-    public static final IForgeRegistry<ICustomAdvancementReward.Serializer<?>> CUSTOM_ADVANCEMENT_REWARD_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(ICustomAdvancementReward.Serializer.class);
+    public static final IForgeRegistry<IAdvancementReward.Serializer<?>> CUSTOM_ADVANCEMENT_REWARD_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(IAdvancementReward.Serializer.class);
 
     public static final class Keys {
         //Vanilla
@@ -156,7 +156,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final ResourceKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
         public static final ResourceKey<Registry<ForgeWorldType>> WORLD_TYPES = key("forge:world_types");
-        public static final ResourceKey<Registry<ICustomAdvancementReward.Serializer<?>>> CUSTOM_ADVANCEMENT_REWARD_SERIALIZERS = key("forge:custom_advancement_reward_serializers");
+        public static final ResourceKey<Registry<IAdvancementReward.Serializer<?>>> CUSTOM_ADVANCEMENT_REWARD_SERIALIZERS = key("forge:custom_advancement_reward_serializers");
 
         private static <T> ResourceKey<Registry<T>> key(String name)
         {

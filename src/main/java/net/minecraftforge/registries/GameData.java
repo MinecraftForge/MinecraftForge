@@ -69,7 +69,7 @@ import net.minecraft.world.level.levelgen.surfacebuilders.SurfaceBuilder;
 import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorType;
 import net.minecraftforge.common.ForgeTagHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.advancements.ICustomAdvancementReward;
+import net.minecraftforge.common.advancements.IAdvancementReward;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.world.ForgeWorldType;
@@ -183,7 +183,7 @@ public class GameData
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
         makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync().create();
         makeRegistry(WORLD_TYPES, ForgeWorldType.class).disableSaving().disableSync().create();
-        makeRegistry(CUSTOM_ADVANCEMENT_REWARD_SERIALIZERS, c(ICustomAdvancementReward.Serializer.class)).disableSaving().disableSync().create();
+        makeRegistry(CUSTOM_ADVANCEMENT_REWARD_SERIALIZERS, c(IAdvancementReward.Serializer.class)).disableSaving().disableSync().create();
     }
     @SuppressWarnings("unchecked") //Ugly hack to let us pass in a typed Class object. Remove when we remove type specific references.
     private static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }

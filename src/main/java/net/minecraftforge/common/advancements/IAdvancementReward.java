@@ -26,7 +26,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 /**
  * Interface for a custom advancement reward
  */
-public interface ICustomAdvancementReward
+public interface IAdvancementReward
 {
 
     /**
@@ -41,9 +41,9 @@ public interface ICustomAdvancementReward
      * Get the serializer for this custom advancement reward
      * @return the serializer for this custom advancement reward
      */
-    <T extends ICustomAdvancementReward> Serializer<T> getSerializer();
+    <T extends IAdvancementReward> Serializer<T> getSerializer();
 
-    abstract class Serializer<T extends ICustomAdvancementReward> extends ForgeRegistryEntry<Serializer<?>>
+    abstract class Serializer<T extends IAdvancementReward> extends ForgeRegistryEntry<Serializer<?>>
     {
         public abstract T deserialize(JsonObject json);
         public abstract JsonObject serialize(T reward);

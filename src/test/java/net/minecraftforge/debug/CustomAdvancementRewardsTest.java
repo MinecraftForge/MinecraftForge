@@ -36,7 +36,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.common.advancements.ICustomAdvancementReward;
+import net.minecraftforge.common.advancements.IAdvancementReward;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -50,7 +50,7 @@ import java.util.function.Consumer;
 @Mod("custom_advancement_rewards_test")
 public class CustomAdvancementRewardsTest
 {
-    private static final DeferredRegister<ICustomAdvancementReward.Serializer<?>> DEFERRED_REGISTER = DeferredRegister.create(ForgeRegistries.CUSTOM_ADVANCEMENT_REWARD_SERIALIZERS, "custom_advancement_rewards_test");
+    private static final DeferredRegister<IAdvancementReward.Serializer<?>> DEFERRED_REGISTER = DeferredRegister.create(ForgeRegistries.CUSTOM_ADVANCEMENT_REWARD_SERIALIZERS, "custom_advancement_rewards_test");
     private static final RegistryObject<SendMessageReward.Serializer> SEND_MESSAGE = DEFERRED_REGISTER.register("send_message", SendMessageReward.Serializer::new);
 
     public CustomAdvancementRewardsTest()
@@ -67,7 +67,7 @@ public class CustomAdvancementRewardsTest
         }
     }
 
-    public record SendMessageReward(String message) implements ICustomAdvancementReward
+    public record SendMessageReward(String message) implements IAdvancementReward
     {
         @Override
         public void grant(ServerPlayer player)
@@ -82,7 +82,7 @@ public class CustomAdvancementRewardsTest
             return SEND_MESSAGE.get();
         }
 
-        public static class Serializer extends ICustomAdvancementReward.Serializer<SendMessageReward>
+        public static class Serializer extends IAdvancementReward.Serializer<SendMessageReward>
         {
 
             @Override

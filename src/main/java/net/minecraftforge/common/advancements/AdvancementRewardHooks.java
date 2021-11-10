@@ -30,15 +30,15 @@ import net.minecraftforge.registries.ForgeRegistries;
 /**
  * Class holding the hooks for custom advancement rewards
  */
-public final class CustomAdvancementRewardHooks
+public final class AdvancementRewardHooks
 {
 
     /**
      * Hook for AdvancementRewards#grant
      */
-    public static void grant(ServerPlayer player, ICustomAdvancementReward[] customRewards)
+    public static void grant(ServerPlayer player, IAdvancementReward[] customRewards)
     {
-        for (ICustomAdvancementReward reward : customRewards)
+        for (IAdvancementReward reward : customRewards)
         {
             reward.grant(player);
         }
@@ -47,13 +47,13 @@ public final class CustomAdvancementRewardHooks
     /**
      * Hook for AdvancementRewards#serialize
      */
-    public static void serialize(JsonObject jsonObject, ICustomAdvancementReward[] customRewards)
+    public static void serialize(JsonObject jsonObject, IAdvancementReward[] customRewards)
     {
         if (customRewards.length == 0) return;
         JsonArray arr = new JsonArray();
-        for (ICustomAdvancementReward customReward : customRewards)
+        for (IAdvancementReward customReward : customRewards)
         {
-            ICustomAdvancementReward.Serializer<ICustomAdvancementReward> serializer = customReward.getSerializer();
+            IAdvancementReward.Serializer<IAdvancementReward> serializer = customReward.getSerializer();
             JsonObject element = serializer.serialize(customReward);
             element.addProperty("type", serializer.getRegistryName().toString());
             arr.add(element);
@@ -64,16 +64,16 @@ public final class CustomAdvancementRewardHooks
     /**
      * Hook for AdvancementRewards#deserialize
      */
-    public static ICustomAdvancementReward[] deserialize(JsonObject jsonObject)
+    public static IAdvancementReward[] deserialize(JsonObject jsonObject)
     {
         JsonArray arr = GsonHelper.getAsJsonArray(jsonObject, "custom", new JsonArray());
-        ICustomAdvancementReward[] out = new ICustomAdvancementReward[arr.size()];
+        IAdvancementReward[] out = new IAdvancementReward[arr.size()];
         for (int i = 0; i < out.length; i++)
         {
             JsonObject element = GsonHelper.convertToJsonObject(arr.get(i), "custom[" + i + "]");
             ResourceLocation type = new ResourceLocation(GsonHelper.getAsString(element, "type"));
             element.remove("type");
-            ICustomAdvancementReward.Serializer<?> serializer = ForgeRegistries.CUSTOM_ADVANCEMENT_REWARD_SERIALIZERS.getValue(type);
+            IAdvancementReward.Serializer<?> serializer = ForgeRegistries.CUSTOM_ADVANCEMENT_REWARD_SERIALIZERS.getValue(type);
             if (serializer == null)
                 throw new JsonParseException("Unregistered custom advancement reward type: "+type);
             out[i] = serializer.deserialize(element);
