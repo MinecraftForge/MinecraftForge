@@ -1,5 +1,5 @@
 public class CheckVersion {
-    public static final boolean TESTING = true;
+    public static final boolean TESTING = false;
     public static final Runtime.Version MIN_JAVA_VERSION = Runtime.Version.parse("16.0.1");
     public static final Runtime.Version MAX_JAVA_VERSION = Runtime.Version.parse("17.0.1");
 
