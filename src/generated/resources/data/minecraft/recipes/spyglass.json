@@ -7,7 +7,7 @@
   ],
   "key": {
     "#": {
-      "item": "minecraft:amethyst_shard"
+      "tag": "forge:gems/amethyst"
     },
     "X": {
       "tag": "forge:ingots/copper"

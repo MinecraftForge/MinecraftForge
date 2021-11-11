@@ -72,6 +72,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
         replace(Items.IRON_INGOT,   Tags.Items.INGOTS_IRON);
         replace(Items.NETHERITE_INGOT, Tags.Items.INGOTS_NETHERITE);
         replace(Items.COPPER_INGOT, Tags.Items.INGOTS_COPPER);
+        replace(Items.AMETHYST_SHARD, Tags.Items.GEMS_AMETHYST);
         replace(Items.DIAMOND,      Tags.Items.GEMS_DIAMOND);
         replace(Items.EMERALD,      Tags.Items.GEMS_EMERALD);
         replace(Items.CHEST,        Tags.Items.CHESTS_WOODEN);
@@ -85,6 +86,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
         exclude(Blocks.EMERALD_BLOCK);
         exclude(Blocks.NETHERITE_BLOCK);
         exclude(Blocks.COPPER_BLOCK);
+        exclude(Blocks.AMETHYST_BLOCK);
 
         exclude(Blocks.COBBLESTONE_STAIRS);
         exclude(Blocks.COBBLESTONE_SLAB);
