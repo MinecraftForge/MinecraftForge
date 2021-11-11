@@ -19,20 +19,19 @@
 
 package net.minecraftforge.common;
 
-import java.util.Set;
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag.Named;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Fluid;
+
+import javax.annotation.Nullable;
+import java.util.Set;
+import java.util.function.Supplier;
 
 public class Tags
 {
@@ -110,15 +109,15 @@ public class Tags
         public static final IOptionalNamedTag<Block> NETHERRACK = tag("netherrack");
         public static final IOptionalNamedTag<Block> OBSIDIAN = tag("obsidian");
         /**
-         * Blocks which could be replaced by deepslate ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_DEEPSLATE}, during world generation
+         * Blocks which are often replaced by deepslate ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_DEEPSLATE}, during world generation
          */
         public static final IOptionalNamedTag<Block> ORE_BEARING_GROUND_DEEPSLATE = tag("ore_bearing_ground/deepslate");
         /**
-         * Blocks which could be replaced by netherrack ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_NETHERRACK}, during world generation
+         * Blocks which are often replaced by netherrack ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_NETHERRACK}, during world generation
          */
         public static final IOptionalNamedTag<Block> ORE_BEARING_GROUND_NETHERRACK = tag("ore_bearing_ground/netherrack");
         /**
-         * Blocks which could be replaced by stone ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_STONE}, during world generation
+         * Blocks which are often replaced by stone ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_STONE}, during world generation
          */
         public static final IOptionalNamedTag<Block> ORE_BEARING_GROUND_STONE = tag("ore_bearing_ground/stone");
         /**
@@ -313,15 +312,15 @@ public class Tags
         public static final IOptionalNamedTag<Item> NUGGETS_IRON = tag("nuggets/iron");
         public static final IOptionalNamedTag<Item> OBSIDIAN = tag("obsidian");
         /**
-         * Blocks which could be replaced by deepslate ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_DEEPSLATE}, during world generation.
+         * Blocks which are often replaced by deepslate ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_DEEPSLATE}, during world generation
          */
         public static final IOptionalNamedTag<Item> ORE_BEARING_GROUND_DEEPSLATE = tag("ore_bearing_ground/deepslate");
         /**
-         * Blocks which could be replaced by netherrack ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_NETHERRACK}, during world generation
+         * Blocks which are often replaced by netherrack ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_NETHERRACK}, during world generation
          */
         public static final IOptionalNamedTag<Item> ORE_BEARING_GROUND_NETHERRACK = tag("ore_bearing_ground/netherrack");
         /**
-         * Blocks which could be replaced by stone ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_STONE}, during world generation
+         * Blocks which are often replaced by stone ores, i.e. the ores in the tag {@link #ORES_IN_GROUND_STONE}, during world generation
          */
         public static final IOptionalNamedTag<Item> ORE_BEARING_GROUND_STONE = tag("ore_bearing_ground/stone");
         /**
