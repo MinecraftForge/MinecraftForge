@@ -29,7 +29,7 @@
        NONE("none") {
           public float m_8117_(BlockPos p_47767_, float p_47768_) {
              return p_47768_;
-@@ -635,10 +_,27 @@
+@@ -635,11 +_,30 @@
           return p_47753_;
        }));
  
@@ -38,23 +38,26 @@
  
        TemperatureModifier(String p_47745_) {
           this.f_47738_ = p_47745_;
-+      }
+       }
 +
++      /* ***** FORGE START ***** */
 +      private BiomeTemperatureModifier temperatureModifier;
 +      private TemperatureModifier(String modifierName, BiomeTemperatureModifier temperatureModifier) {
 +         this(modifierName);
 +         this.temperatureModifier = temperatureModifier;
 +      }
 +      public static TemperatureModifier create(String name, String modifierName, BiomeTemperatureModifier temperatureModifier) {
-+    	  throw new IllegalStateException("Enum not extended");
++          throw new IllegalStateException("Enum not extended");
 +      }
-+      @java.lang.Override
++      @Override
 +      public void init() {
 +         f_47739_.put(this.m_47758_(), this);
 +      }
-+      @java.lang.FunctionalInterface
++      @FunctionalInterface
 +      public interface BiomeTemperatureModifier {
 +         float modifyTemperature(BlockPos pos, float noise);
-       }
++      }
++      /* ***** FORGE END ***** */
  
        public String m_47758_() {
+          return this.f_47738_;

@@ -40,34 +40,51 @@ import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
-@Mod("biome_temperature_modifier_test")
+@Mod(BiomeTemperatureModifierTest.MOD_ID)
 public class BiomeTemperatureModifierTest 
 {
+	static final String MOD_ID = "biome_temperature_modifier_test";
     private static final boolean ENABLED = false;
-    public static final DeferredRegister<Biome> BIOMES = DeferredRegister.create(ForgeRegistries.BIOMES, "biome_temperature_modifier_test");
-    public static final ResourceKey<Biome> TEST_BIOME_KEY = ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation("biome_temperature_modifier_test", "test_biome"));
-    public static final RegistryObject<Biome> TEST_BIOME = BIOMES.register("test_biome", BiomeTemperatureModifierTest::makeTestBiome);
+    public static final DeferredRegister<Biome> BIOMES = DeferredRegister.create(ForgeRegistries.BIOMES, MOD_ID);
+    public static final ResourceKey<Biome> TEST_BIOME_KEY = ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(MOD_ID, "test_biome"));
+    public static final RegistryObject<Biome> TEST_BIOME = BIOMES.register("test_biome", () -> BiomeTemperatureModifierTest.TEST_BIOME_BIOME);
 
     public BiomeTemperatureModifierTest() 
     {
+    	if (!ENABLED) return;
         BIOMES.register(FMLJavaModLoadingContext.get().getModEventBus());
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
     }
 
     private void commonSetup(FMLCommonSetupEvent event) 
     {
-        if (!ENABLED) return;
         event.enqueueWork(() -> {
             BiomeDictionary.addTypes(TEST_BIOME_KEY, BiomeDictionary.Type.MODIFIED);
             BiomeManager.addBiome(BiomeManager.BiomeType.WARM, new BiomeEntry(TEST_BIOME_KEY, 100));
         });
     }
 
-    private static Biome makeTestBiome() 
-    {
-        Biome.TemperatureModifier temperatureModifier = Biome.TemperatureModifier.create("TEST_MODIFIER", "test_modifier", (pos, noise) -> 2.0F);
-        return new Biome.BiomeBuilder().biomeCategory(BiomeCategory.NONE).depth(0.1F).scale(0.1F).downfall(0.0F).generationSettings(new BiomeGenerationSettings.Builder().surfaceBuilder(SurfaceBuilders.GRASS).build())
-        .mobSpawnSettings(MobSpawnSettings.EMPTY).specialEffects(new BiomeSpecialEffects.Builder().waterColor(4159204).waterFogColor(329011).fogColor(12638463).skyColor(128)
-        .ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS).build()).precipitation(Precipitation.NONE).temperature(2.0F).temperatureAdjustment(temperatureModifier).build();
-    }
+    /*
+     * the Biome is only made for testing, the parameters which are used are test parameters
+     */
+	private static final Biome TEST_BIOME_BIOME = new Biome.BiomeBuilder()
+            .biomeCategory(BiomeCategory.NONE)
+            .depth(0.1F)
+            .scale(0.1F)
+            .downfall(0.0F)
+            .precipitation(Precipitation.NONE)
+            .temperature(2.0F)
+            .generationSettings(new BiomeGenerationSettings.Builder()
+                    .surfaceBuilder(SurfaceBuilders.GRASS)
+                    .build())
+            .mobSpawnSettings(MobSpawnSettings.EMPTY)
+            .specialEffects(new BiomeSpecialEffects.Builder()
+                    .waterColor(255)
+                    .waterFogColor(80)
+                    .fogColor(16777215)
+                    .skyColor(65535)
+                    .ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS)
+                    .build())
+            .temperatureAdjustment(Biome.TemperatureModifier.create("TEST_MODIFIER", "test_modifier", (pos, noise) -> 2.0F))
+            .build();
 }
