@@ -1,9 +1,9 @@
 @ECHO OFF
 
 REM Some versions of Java lack features necessary for Forge to function.
-REM CheckVersion.java will be invoked to check for these versions.
+REM jvmchecker.jar will be invoked to check for these versions.
 REM To skip this check, simply comment out the following line:
-java CheckVersion.java || EXIT
+java -jar jvmchecker.jar 16 17 || EXIT 10
 
 REM Forge requires a configured set of both JVM and program arguments.
 REM Add custom JVM arguments to the user_jvm_args.txt

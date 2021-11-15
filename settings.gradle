@@ -16,8 +16,10 @@ include ':mcp'
 include ':clean'
 include ':fmlonly'
 include ':forge'
+include ':jvmchecker'
 
 project(":mcp").projectDir = file("projects/mcp")
 project(":clean").projectDir = file("projects/clean")
 project(":fmlonly").projectDir = file("projects/fmlonly")
 project(":forge").projectDir = file("projects/forge")
+project(":jvmchecker").projectDir = file("projects/jvmchecker")

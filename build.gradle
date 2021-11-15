@@ -476,6 +476,10 @@ def sharedFmlonlyForge = { Project prj ->
                 filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
                 rename { 'data/unix_args.txt' }
             }
+
+            from(project(':jvmchecker').jar.archiveFile) {
+                into('data/')
+            }
         }
     }
 }
@@ -673,7 +677,11 @@ project(':fmlonly') {
                             '--to',   "{ROOT}/libraries/${MAVEN_PATH}/win_args.txt",
 
                             '--from', 'data/unix_args.txt',
-                            '--to',   "{ROOT}/libraries/${MAVEN_PATH}/unix_args.txt"
+                            '--to',   "{ROOT}/libraries/${MAVEN_PATH}/unix_args.txt",
+
+                            '--from', 'data/jvmchecker.jar',
+                            '--to',   '{ROOT}/jvmchecker.jar'
+
                         ]
                     ], [
                         jar: INSTALLER_TOOLS,
@@ -1197,7 +1205,10 @@ project(':forge') {
                             '--to',   "{ROOT}/libraries/${MAVEN_PATH}/win_args.txt",
 
                             '--from', 'data/unix_args.txt',
-                            '--to',   "{ROOT}/libraries/${MAVEN_PATH}/unix_args.txt"
+                            '--to',   "{ROOT}/libraries/${MAVEN_PATH}/unix_args.txt",
+
+                            '--from', 'data/jvmchecker.jar',
+                            '--to',   '{ROOT}/jvmchecker.jar'
                         ]
                     ], [
                         jar: INSTALLER_TOOLS,
@@ -1401,6 +1412,45 @@ project(':forge') {
     }
     // Since we need the modules in the bootstrap, we need to make sure they are compiled before we do each run
     afterEvaluate { prepareRuns.dependsOn(':fmlcore:jar', ':fmlloader:jar', ':javafmllanguage:jar', ':mclanguage:jar') }
+}
+
+project(":jvmchecker") {
+    sourceSets {
+        java9 {
+            java {
+                srcDirs = ['src/main/java9']
+            }
+        }
+    }
+
+    dependencies {
+        java9Implementation files(sourceSets.main.output.classesDirs) { builtBy compileJava }
+    }
+
+    compileJava {
+        targetCompatibility = sourceCompatibility = JavaLanguageVersion.of(8)
+        options.compilerArgs.addAll(['--release', '8'])
+    }
+
+    compileJava9Java {
+        targetCompatibility = sourceCompatibility = JavaLanguageVersion.of(9)
+        options.compilerArgs.addAll(['--release', '9'])
+    }
+
+    jar {
+        archiveFileName = 'jvmchecker.jar'
+
+        into('META-INF/versions/9') {
+            from sourceSets.java9.output
+        }
+
+        manifest {
+            attributes([
+                "Main-Class": 'net.minecraftforge.server.jvmchecker.Main',
+                "Multi-Release": true
+            ])
+        }
+    }
 }
 
 //evaluationDependsOnChildren()

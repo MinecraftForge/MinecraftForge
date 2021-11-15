@@ -1,9 +1,9 @@
 #!/usr/bin/env sh
 
 # Some versions of Java lack features necessary for Forge to function.
-# CheckVersion.java will be invoked to check for these versions.
+# jvmchecker.jar will be invoked to check for these versions.
 # To skip this check, simply comment out the following line:
-if ! java CheckVersion.java ; then exit 0; fi
+if ! java '-jar' 'jvmchecker.jar' '16' '17'; then return 126; fi
 
 # Forge requires a configured set of both JVM and program arguments.
 # Add custom JVM arguments to the user_jvm_args.txt
