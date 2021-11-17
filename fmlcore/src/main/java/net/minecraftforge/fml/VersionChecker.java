@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static net.minecraftforge.fml.VersionChecker.Status.*;
@@ -141,16 +142,10 @@ public class VersionChecker
                     int responseCode = response.statusCode();
                     if (responseCode >= 300 && responseCode <= 399)
                     {
-                        try
-                        {
-                            String newLocation = response.headers().map().get("Location").get(0);
-                            currentUrl = new URL(currentUrl, newLocation);
-                            continue;
-                        }
-                        catch (NullPointerException e)
-                        {
-                            throw new IOException("Got a 3xx response code but Location header was null while trying to fetch " + url);
-                        }
+                        String newLocation = Optional.ofNullable(response.headers().map().get("Location").get(0))
+                                .orElseThrow(() -> new IOException("Got a 3xx response code but Location header was null while trying to fetch " + url));
+                        currentUrl = new URL(currentUrl, newLocation);
+                        continue;
                     }
 
                     return response.body();
