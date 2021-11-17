@@ -27,7 +27,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ComparableVersion;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.http.HttpClient;
@@ -42,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.zip.GZIPInputStream;
 
 import static net.minecraftforge.fml.VersionChecker.Status.*;
 
@@ -134,10 +139,11 @@ public class VersionChecker
                     var request = HttpRequest.newBuilder()
                             .uri(currentUrl.toURI())
                             .timeout(Duration.ofSeconds(HTTP_TIMEOUT_SECS))
+                            .setHeader("Accept-Encoding", "gzip")
                             .GET()
                             .build();
 
-                    HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                    final HttpResponse<InputStream> response = client.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
                     int responseCode = response.statusCode();
                     if (responseCode >= 300 && responseCode <= 399)
@@ -148,7 +154,17 @@ public class VersionChecker
                         continue;
                     }
 
-                    return response.body();
+                    final boolean isGzipEncoded = response.headers().firstValue("Content-Encoding").orElse("").equals("gzip");
+
+                    final String bodyStr;
+                    try (InputStream inStream = isGzipEncoded ? new GZIPInputStream(response.body()) : response.body())
+                    {
+                        try (var bufferedReader = new BufferedReader(new InputStreamReader(inStream)))
+                        {
+                            bodyStr = bufferedReader.lines().collect(Collectors.joining("\n"));
+                        }
+                    }
+                    return bodyStr;
                 }
                 throw new IOException("Too many redirects while trying to fetch " + url);
             }
