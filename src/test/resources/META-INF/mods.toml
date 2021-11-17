@@ -169,6 +169,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="full_pots_accessor_demo"
 [[mods]]
+    modId="part_entity_test"
+[[mods]]
     modId="core_fluid_test"
 
 # ADD ABOVE THIS LINE

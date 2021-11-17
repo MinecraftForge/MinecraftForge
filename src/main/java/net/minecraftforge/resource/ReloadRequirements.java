@@ -29,8 +29,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Holds methods to create standard predicates to select {@link IResourceType}s that should be reloaded.
+ * @deprecated Selective reloading is no longer supported due to vanilla now reloading resources in parallel
  */
 @OnlyIn(Dist.CLIENT)
+@Deprecated(since="1.17.1", forRemoval = true)
 public final class ReloadRequirements
 {
     /**
