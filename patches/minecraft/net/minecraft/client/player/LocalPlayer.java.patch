@@ -65,12 +65,11 @@
              this.f_108617_.m_104955_(new ServerboundPlayerCommandPacket(this, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
           }
        }
-@@ -697,7 +_,7 @@
-       this.f_108614_ = this.m_21255_();
+@@ -698,6 +_,7 @@
        if (this.m_20069_() && this.f_108618_.f_108573_ && this.m_6129_()) {
           this.m_21208_();
--      }
-+      } else if (this.isInCustomFluid() && this.f_108618_.f_108573_ && this.m_6129_()) this.getTouchingCustomFluid().sink(this);
+       }
++      else if (this.isInCustomFluid() && this.f_108618_.f_108573_ && this.m_6129_()) this.getTouchingCustomFluid().sink(this);
  
        if (this.m_19941_(FluidTags.f_13131_)) {
           int i = this.m_5833_() ? 10 : 1;
