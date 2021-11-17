@@ -142,7 +142,7 @@ public class VersionChecker
                     int responseCode = response.statusCode();
                     if (responseCode >= 300 && responseCode <= 399)
                     {
-                        String newLocation = Optional.ofNullable(response.headers().map().get("Location").get(0))
+                        String newLocation = response.headers().firstValue("Location")
                                 .orElseThrow(() -> new IOException("Got a 3xx response code but Location header was null while trying to fetch " + url));
                         currentUrl = new URL(currentUrl, newLocation);
                         continue;
