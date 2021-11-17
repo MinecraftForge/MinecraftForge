@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/gui/screen/Screen.java
 +++ b/net/minecraft/client/gui/screen/Screen.java
+@@ -99,7 +_,7 @@
+    }
+ 
+    public void func_231175_as__() {
+-      this.field_230706_i_.func_147108_a((Screen)null);
++      this.field_230706_i_.popGuiLayer();
+    }
+ 
+    protected <T extends Widget> T func_230480_a_(T p_230480_1_) {
 @@ -113,7 +_,10 @@
     }
  
