@@ -46,7 +46,6 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.common.model.*;
-import net.minecraftforge.resource.IResourceType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;

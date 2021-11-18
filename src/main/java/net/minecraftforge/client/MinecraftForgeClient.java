@@ -27,12 +27,15 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.cache.CacheBuilder;
@@ -174,6 +177,26 @@ public class MinecraftForgeClient
     public static ITextureAtlasSpriteLoader getTextureAtlasSpriteLoader(ResourceLocation name)
     {
         return textureAtlasSpriteLoaders.get(name);
+    }
+
+    private static final Map<Class<? extends TooltipComponent>, Function<TooltipComponent, ClientTooltipComponent>> tooltipComponentFactories = new ConcurrentHashMap<>();
+
+    /**
+     * Register a factory for ClientTooltipComponents.
+     * @param cls the class for the component
+     * @param factory the factory for the ClientTooltipComponent
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends TooltipComponent> void registerTooltipComponentFactory(Class<T> cls, Function<? super T, ? extends ClientTooltipComponent> factory)
+    {
+        tooltipComponentFactories.put(cls, (Function<TooltipComponent, ClientTooltipComponent>) factory);
+    }
+
+    @Nullable
+    public static ClientTooltipComponent getClientTooltipComponent(TooltipComponent component)
+    {
+        var factory = tooltipComponentFactories.get(component.getClass());
+        return factory == null ? null : factory.apply(component);
     }
 
 }

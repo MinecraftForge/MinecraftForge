@@ -26,6 +26,20 @@
        }
     }
  
+@@ -840,11 +_,11 @@
+ 
+          Window window = this.f_109059_.m_91268_();
+          RenderSystem.m_69421_(256, Minecraft.f_91002_);
+-         Matrix4f matrix4f = Matrix4f.m_162203_(0.0F, (float)((double)window.m_85441_() / window.m_85449_()), 0.0F, (float)((double)window.m_85442_() / window.m_85449_()), 1000.0F, 3000.0F);
++         Matrix4f matrix4f = Matrix4f.m_162203_(0.0F, (float)((double)window.m_85441_() / window.m_85449_()), 0.0F, (float)((double)window.m_85442_() / window.m_85449_()), 1000.0F, net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane());
+          RenderSystem.m_157425_(matrix4f);
+          PoseStack posestack = RenderSystem.m_157191_();
+          posestack.m_166856_();
+-         posestack.m_85837_(0.0D, 0.0D, -2000.0D);
++         posestack.m_85837_(0.0D, 0.0D, 1000F-net.minecraftforge.client.ForgeHooksClient.getGuiFarPlane());
+          RenderSystem.m_157182_();
+          Lighting.m_84931_();
+          PoseStack posestack1 = new PoseStack();
 @@ -879,7 +_,7 @@
              }
           } else if (this.f_109059_.f_91080_ != null) {
@@ -53,15 +67,3 @@
        this.f_109059_.m_91307_().m_6182_("hand");
        if (this.f_109070_) {
           RenderSystem.m_69421_(256, Minecraft.f_91002_);
-@@ -1151,6 +_,11 @@
- 
-    public OverlayTexture m_109155_() {
-       return this.f_109075_;
-+   }
-+
-+   @Override
-+   public net.minecraftforge.resource.IResourceType getResourceType() {
-+      return net.minecraftforge.resource.VanillaResourceType.SHADERS;
-    }
- 
-    @Nullable
