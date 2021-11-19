@@ -42,7 +42,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
     private boolean valid = true;
 
     private boolean                       isLazy             = false;
-    private Supplier<ICapabilityProvider> lazyParentSupplier = () -> null; //Items have a null delegate so this needs to be set to prevent a crash
+    private Supplier<ICapabilityProvider> lazyParentSupplier = null;
     private CompoundNBT                   lazyData           = null;
     private boolean initialized = false;
 
@@ -88,7 +88,7 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
     {
         if(isLazy && !initialized)
         {
-            doGatherCapabilities(lazyParentSupplier.get());
+            doGatherCapabilities(lazyParentSupplier == null ? null : lazyParentSupplier.get());
             if (lazyData != null)
             {
                 deserializeCaps(lazyData);

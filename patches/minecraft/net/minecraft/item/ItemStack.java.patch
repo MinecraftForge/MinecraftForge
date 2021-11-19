@@ -19,7 +19,7 @@
     private static final Logger field_199558_c = LogManager.getLogger();
     public static final ItemStack field_190927_a = new ItemStack((Item)null);
     public static final DecimalFormat field_111284_a = Util.func_200696_a(new DecimalFormat("#.##"), (p_234699_0_) -> {
-@@ -109,14 +_,19 @@
+@@ -109,10 +_,15 @@
        p_i231596_3_.ifPresent(this::func_77982_d);
     }
  
@@ -32,16 +32,12 @@
 +      this.delegate = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j().delegate;
        this.field_77994_a = p_i48204_2_;
 -      if (this.field_151002_e != null && this.field_151002_e.func_77645_m()) {
++      this.forgeInit();
 +      if (this.field_151002_e != null && this.field_151002_e.isDamageable(this)) {
           this.func_196085_b(this.func_77952_i());
        }
  
-       this.func_190923_F();
-+      this.forgeInit();
-    }
- 
-    private void func_190923_F() {
-@@ -125,18 +_,23 @@
+@@ -125,14 +_,18 @@
     }
  
     private ItemStack(CompoundNBT p_i47263_1_) {
@@ -55,17 +51,13 @@
           this.field_77990_d = p_i47263_1_.func_74775_l("tag");
           this.func_77973_b().func_179215_a(p_i47263_1_);
        }
- 
+-
 -      if (this.func_77973_b().func_77645_m()) {
++      this.forgeInit();
 +      if (this.func_77973_b().isDamageable(this)) {
           this.func_196085_b(this.func_77952_i());
        }
  
-       this.func_190923_F();
-+      this.forgeInit();
-    }
- 
-    public static ItemStack func_199557_a(CompoundNBT p_199557_0_) {
 @@ -167,10 +_,19 @@
     }
  
