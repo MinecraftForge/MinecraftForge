@@ -55,6 +55,11 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
     {
         this.baseClass = baseClass;
         this.isLazy = SUPPORTS_LAZY_CAPABILITIES && isLazy;
+        
+        if (this.isLazy)
+        {
+            this.lazyParentSupplier = () -> null; //Items have a null delegate so this needs to be set to prevent a crash
+        }
     }
 
     protected final void gatherCapabilities()
