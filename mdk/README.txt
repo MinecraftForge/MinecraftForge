@@ -15,6 +15,7 @@ Setup Process:
 Step 1: Open your command-line and browse to the folder where you extracted the zip file.
 
 Step 2: You're left with a choice.
+
 If you prefer to use Eclipse:
 1. Run the following command: `gradlew genEclipseRuns` (`./gradlew genEclipseRuns` if you are on Mac/Linux)
 2. Open Eclipse, Import > Existing Gradle Project > Select Folder 
@@ -25,6 +26,12 @@ If you prefer to use IntelliJ:
 2. Select your build.gradle file and have it import.
 3. Run the following command: `gradlew genIntellijRuns` (`./gradlew genIntellijRuns` if you are on Mac/Linux)
 4. Refresh the Gradle Project in IDEA if required.
+
+If you prefer to use Visual Studio Code:
+1. Install the following 3 extensions from the VSCode marketplace:
+   Gradle for Java, Language Support for Java(TM) by Red Hat, Debugger for Java
+2. Open the folder in VSCode and have it import.
+3. Run the following command: `.\gradlew genVSCodeRuns` to generate the launch settings
 
 If at any point you are missing libraries in your IDE, or you've run into problems you can 
 run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
