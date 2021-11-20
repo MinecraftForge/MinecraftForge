@@ -592,7 +592,7 @@ public class ForgeHooks
         // Tell client the block is gone immediately then process events
         if (world.getBlockEntity(pos) == null)
         {
-            entityPlayer.connection.send(new SChangeBlockPacket(DUMMY_WORLD, pos));
+            entityPlayer.connection.send(new SChangeBlockPacket(pos, world.getFluidState(pos).createLegacyBlock()));
         }
 
         // Post the block break event
@@ -1146,26 +1146,6 @@ public class ForgeHooks
             Throwables.throwIfUnchecked(e);
             throw new RuntimeException(e);
         }
-    }
-
-    private static final DummyBlockReader DUMMY_WORLD = new DummyBlockReader();
-    private static class DummyBlockReader implements IBlockReader {
-
-        @Override
-        public TileEntity getBlockEntity(BlockPos pos) {
-            return null;
-        }
-
-        @Override
-        public BlockState getBlockState(BlockPos pos) {
-            return Blocks.AIR.defaultBlockState();
-        }
-
-        @Override
-        public FluidState getFluidState(BlockPos pos) {
-            return Fluids.EMPTY.defaultFluidState();
-        }
-
     }
 
     public static int onNoteChange(World world, BlockPos pos, BlockState state, int old, int _new) {
