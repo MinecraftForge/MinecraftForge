@@ -10,3 +10,11 @@
                       IResource iresource = null;
  
                       try {
+@@ -273,6 +_,7 @@
+    public void func_148020_a(String p_148020_1_, int p_148020_2_, int p_148020_3_) {
+       Framebuffer framebuffer = new Framebuffer(p_148020_2_, p_148020_3_, true, Minecraft.field_142025_a);
+       framebuffer.func_147604_a(0.0F, 0.0F, 0.0F, 0.0F);
++      if (field_148035_a.isStencilEnabled()) framebuffer.enableStencil();
+       this.field_148032_e.put(p_148020_1_, framebuffer);
+       if (p_148020_2_ == this.field_148038_h && p_148020_3_ == this.field_148039_i) {
+          this.field_148029_f.add(framebuffer);
