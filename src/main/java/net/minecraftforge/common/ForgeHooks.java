@@ -144,6 +144,7 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
+import net.minecraftforge.event.entity.player.DamageBonusEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
@@ -1239,6 +1240,13 @@ public class ForgeHooks
     public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)
     {
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
+    }
+
+    public static float getDamageBonus(Player player, ItemStack weapon, Entity target, float enchantmentBonus)
+    {
+        DamageBonusEvent event = new DamageBonusEvent(player, weapon, target, enchantmentBonus);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getBonus();
     }
 
 }
