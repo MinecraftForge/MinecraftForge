@@ -1,5 +1,14 @@
 --- a/net/minecraft/advancements/Advancement.java
 +++ b/net/minecraft/advancements/Advancement.java
+@@ -130,7 +_,7 @@
+       return this.field_193125_h;
+    }
+ 
+-   public static class Builder {
++   public static class Builder implements net.minecraftforge.common.extensions.IForgeAdvancementBuilder {
+       private ResourceLocation field_192061_a;
+       private Advancement field_192062_b;
+       private DisplayInfo field_192063_c;
 @@ -309,6 +_,7 @@
        }
  
