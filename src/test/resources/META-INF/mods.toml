@@ -139,6 +139,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="player_attack_knockback_test"
 [[mods]]
+    modId="lazy_capabilities_on_items"
+[[mods]]
     modId="send_datapacks_to_client"
 [[mods]]
     modId="gui_layer_test"
