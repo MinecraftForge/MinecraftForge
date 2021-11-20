@@ -36,7 +36,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public class ForgeSpawnEggItem extends SpawnEggItem
@@ -82,7 +85,16 @@ public class ForgeSpawnEggItem extends SpawnEggItem
             Direction face = source.getBlockState().getValue(DispenserBlock.FACING);
             EntityType<?> type = ((SpawnEggItem) stack.getItem()).getType(stack.getTag());
 
-            type.spawn(source.getLevel(), stack, null, source.getPos().relative(face), SpawnReason.DISPENSER, face != Direction.UP, false);
+            // FORGE: fix potential crash
+            try
+            {
+                type.spawn(source.getLevel(), stack, null, source.getPos().relative(face), SpawnReason.DISPENSER, face != Direction.UP, false);
+            }
+            catch (Exception exception)
+            {
+                DefaultDispenseItemBehavior.LOGGER.error("Error while dispensing spawn egg from dispenser at {}", source.getPos(), exception);
+                return ItemStack.EMPTY;
+            }
 
             stack.shrink(1);
             return stack;
