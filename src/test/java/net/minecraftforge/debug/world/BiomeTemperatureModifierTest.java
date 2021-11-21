@@ -51,7 +51,7 @@ public class BiomeTemperatureModifierTest
 
     public BiomeTemperatureModifierTest() 
     {
-    	if (!ENABLED) return;
+        if (!ENABLED) return;
         BIOMES.register(FMLJavaModLoadingContext.get().getModEventBus());
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
     }
