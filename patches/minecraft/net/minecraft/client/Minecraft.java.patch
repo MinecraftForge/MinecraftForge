@@ -185,7 +185,12 @@
        }
  
        if (this.f_91056_ != null) {
-@@ -1136,6 +_,7 @@
+@@ -1132,10 +_,12 @@
+       this.f_90990_.m_85378_((double)i);
+       if (this.f_91080_ != null) {
+          this.f_91080_.m_6574_(this, this.f_90990_.m_85445_(), this.f_90990_.m_85446_());
++         net.minecraftforge.client.ForgeHooksClient.resizeGuiLayers(this, this.f_90990_.m_85445_(), this.f_90990_.m_85446_());
+       }
  
        RenderTarget rendertarget = this.m_91385_();
        rendertarget.m_83941_(this.f_90990_.m_85441_(), this.f_90990_.m_85442_(), f_91002_);
