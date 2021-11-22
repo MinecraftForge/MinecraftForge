@@ -146,5 +146,7 @@ license="LGPL v2.1"
     modId="gui_layer_test"
 [[mods]]
     modId="full_pots_accessor_demo"
+[[mods]]
+    modId="forge_spawnegg_test"
 
 # ADD ABOVE THIS LINE

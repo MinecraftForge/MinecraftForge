@@ -40,6 +40,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.entity.PartEntity;
 
@@ -117,7 +118,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
             return new ItemStack(Items.END_CRYSTAL);
         else
         {
-            SpawnEggItem egg = SpawnEggItem.byId(getEntity().getType());
+            SpawnEggItem egg = ForgeSpawnEggItem.fromEntityType(getEntity().getType());
             if (egg != null) return new ItemStack(egg);
         }
         return ItemStack.EMPTY;
