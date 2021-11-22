@@ -139,6 +139,11 @@ public class ForgeHooksClient
      */
     private static final Stack<Screen> guiLayers = new Stack<>();
 
+    public static void resizeGuiLayers(Minecraft minecraft, int width, int height)
+    {
+        guiLayers.forEach(screen -> screen.resize(minecraft, width, height));
+    }
+
     public static void clearGuiLayers(Minecraft minecraft)
     {
         while(guiLayers.size() > 0)
