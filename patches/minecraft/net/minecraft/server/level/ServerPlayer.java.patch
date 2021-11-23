@@ -150,12 +150,11 @@
     }
  
     public boolean m_143432_() {
-@@ -1264,7 +_,7 @@
- 
+@@ -1265,6 +_,7 @@
     public void m_9213_(Entity p_9214_) {
        Entity entity = this.m_8954_();
--      this.f_8926_ = (Entity)(p_9214_ == null ? this : p_9214_);
-+      this.f_8926_ = (Entity)(p_9214_ == null ? this : p_9214_ instanceof net.minecraftforge.entity.PartEntity ? ((net.minecraftforge.entity.PartEntity<?>) p_9214_).getParent() : p_9214_); // FORGE: fix MC-46486
+       this.f_8926_ = (Entity)(p_9214_ == null ? this : p_9214_);
++      if (this.f_8926_ instanceof net.minecraftforge.entity.PartEntity<?>) this.f_8926_ = ((net.minecraftforge.entity.PartEntity<?>) f_8926_).getParent(); // FORGE: fix MC-46486
        if (entity != this.f_8926_) {
           this.f_8906_.m_141995_(new ClientboundSetCameraPacket(this.f_8926_));
           this.m_6021_(this.f_8926_.m_20185_(), this.f_8926_.m_20186_(), this.f_8926_.m_20189_());
