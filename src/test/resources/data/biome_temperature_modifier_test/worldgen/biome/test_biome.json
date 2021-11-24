@@ -1,0 +1,53 @@
+{
+  "effects": {
+    "mood_sound": {
+      "sound": "minecraft:ambient.cave",
+      "tick_delay": 6000,
+      "block_search_extent": 8,
+      "offset": 2.0
+    },
+    "sky_color": 16711680,
+    "fog_color": 16711935,
+    "water_color": 65535,
+    "water_fog_color": 0
+  },
+  "surface_builder": {
+    "config": {
+      "top_material": {
+        "Properties": {
+          "snowy": "false"
+        },
+        "Name": "minecraft:iron_block"
+      },
+      "under_material": {
+        "Name": "minecraft:stone"
+      },
+      "underwater_material": {
+        "Name": "minecraft:gravel"
+      }
+    },
+    "type": "minecraft:default"
+  },
+  "carvers": {},
+  "features": [],
+  "starts": [],
+  "spawners": {
+    "monster": [],
+    "creature": [],
+    "ambient": [],
+    "underground_water_creature": [],
+    "water_creature": [],
+    "water_ambient": [],
+    "misc": []
+  },
+  "spawn_costs": {},
+  "player_spawn_friendly": false,
+  "forge:registry_name": "biome_temperature_modifier_test:test_biome",
+  "precipitation": "none",
+  "temperature": -2.0,
+  "temperature_modifier": "test_modifier",
+  "downfall": 0.0,
+  "category": "none",
+  "depth": 0.4,
+  "scale": 1.0
+}

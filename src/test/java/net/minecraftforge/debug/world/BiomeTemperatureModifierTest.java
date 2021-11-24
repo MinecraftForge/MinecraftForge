@@ -43,31 +43,15 @@ import net.minecraftforge.registries.ForgeRegistries;
 @Mod(BiomeTemperatureModifierTest.MOD_ID)
 public class BiomeTemperatureModifierTest 
 {
-	static final String MOD_ID = "biome_temperature_modifier_test";
+    static final String MOD_ID = "biome_temperature_modifier_test";
     private static final boolean ENABLED = false;
     public static final DeferredRegister<Biome> BIOMES = DeferredRegister.create(ForgeRegistries.BIOMES, MOD_ID);
     public static final ResourceKey<Biome> TEST_BIOME_KEY = ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(MOD_ID, "test_biome"));
-    public static final RegistryObject<Biome> TEST_BIOME = BIOMES.register("test_biome", () -> BiomeTemperatureModifierTest.TEST_BIOME_BIOME);
-
-    public BiomeTemperatureModifierTest() 
-    {
-        if (!ENABLED) return;
-        BIOMES.register(FMLJavaModLoadingContext.get().getModEventBus());
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
-    }
-
-    private void commonSetup(FMLCommonSetupEvent event) 
-    {
-        event.enqueueWork(() -> {
-            BiomeDictionary.addTypes(TEST_BIOME_KEY, BiomeDictionary.Type.MODIFIED);
-            BiomeManager.addBiome(BiomeManager.BiomeType.WARM, new BiomeEntry(TEST_BIOME_KEY, 100));
-        });
-    }
-
+    
     /*
-     * the Biome is only made for testing, the parameters which are used are test parameters
+     * this is a dummy Biome it will be replace at runtime via a json Biome
      */
-	private static final Biome TEST_BIOME_BIOME = new Biome.BiomeBuilder()
+    public static final RegistryObject<Biome> TEST_BIOME = BIOMES.register("test_biome", () -> new Biome.BiomeBuilder()
             .biomeCategory(BiomeCategory.NONE)
             .depth(0.1F)
             .scale(0.1F)
@@ -86,5 +70,21 @@ public class BiomeTemperatureModifierTest
                     .ambientMoodSound(AmbientMoodSettings.LEGACY_CAVE_SETTINGS)
                     .build())
             .temperatureAdjustment(Biome.TemperatureModifier.create("TEST_MODIFIER", "test_modifier", (pos, noise) -> 2.0F))
-            .build();
+            .build());
+
+    public BiomeTemperatureModifierTest() 
+    {
+        if (!ENABLED) return;
+        BIOMES.register(FMLJavaModLoadingContext.get().getModEventBus());
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
+    }
+
+    private void commonSetup(FMLCommonSetupEvent event) 
+    {
+        event.enqueueWork(() -> {
+            BiomeDictionary.addTypes(TEST_BIOME_KEY, BiomeDictionary.Type.MODIFIED);
+            BiomeManager.addBiome(BiomeManager.BiomeType.WARM, new BiomeEntry(TEST_BIOME_KEY, 100));
+        });
+    }
+
 }
