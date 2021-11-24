@@ -105,7 +105,7 @@ public interface ITeleporter
     }
 
     /**
-     * Called when vanilla wants to spawn the obsidian platform in the End dimension. Return true to spawn the platform.
+     * Called when vanilla wants to spawn the End platform when changing dimension to the End. Return true to spawn the platform.
      * @param player the player
      * @param sourceWorld the source world
      * @param destWorld the target world
