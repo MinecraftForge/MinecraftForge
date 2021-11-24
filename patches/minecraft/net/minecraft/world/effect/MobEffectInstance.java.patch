@@ -72,9 +72,9 @@
 +      this.curativeItems = curativeItems;
 +   }
 +   private static MobEffectInstance readCurativeItems(MobEffectInstance effect, CompoundTag nbt) {
-+      if (nbt.m_128425_("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_LIST)) {
++      if (nbt.m_128425_("CurativeItems", net.minecraft.nbt.Tag.f_178202_)) {
 +         java.util.List<net.minecraft.world.item.ItemStack> items = new java.util.ArrayList<net.minecraft.world.item.ItemStack>();
-+         net.minecraft.nbt.ListTag list = nbt.m_128437_("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
++         net.minecraft.nbt.ListTag list = nbt.m_128437_("CurativeItems", net.minecraft.nbt.Tag.f_178203_);
 +         for (int i = 0; i < list.size(); i++) {
 +            items.add(net.minecraft.world.item.ItemStack.m_41712_(list.m_128728_(i)));
 +         }
