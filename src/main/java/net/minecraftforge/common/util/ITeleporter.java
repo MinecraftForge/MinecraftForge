@@ -104,4 +104,15 @@ public interface ITeleporter
         return true;
     }
 
+    /**
+     * Called when vanilla wants to spawn the obsidian platform in the End dimension. Return true to spawn the platform.
+     * @param player the player
+     * @param sourceWorld the source world
+     * @param destWorld the target world
+     * @return true to spawn the obsidian platform
+     */
+    default boolean spawnEndPlatform(ServerPlayerEntity player, ServerWorld sourceWorld, ServerWorld destWorld)
+    {
+        return true;   
+    }
 }
