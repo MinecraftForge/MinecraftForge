@@ -292,6 +292,9 @@ public class GuiScreenEvent extends Event
          *   <li><b>{@link Result#DENY}</b> - to force set the mouse click as not handled</li>
          * </ul>
          * </p>
+         *
+         * <p>Note that this event is currently pre-cancelled if {@link Screen#mouseClicked} returns {@code true}
+         * to retain old behavior. This will be changed in 1.18 when the event is made non-cancellable.</p>
          */
         @Cancelable // TODO: Make non-cancellable in 1.18.
         @HasResult
@@ -363,6 +366,9 @@ public class GuiScreenEvent extends Event
          *   <li><b>{@link Result#DENY}</b> - to force set the mouse release as not handled</li>
          * </ul>
          * </p>
+         *
+         * <p>Note that this event is currently pre-cancelled if {@link Screen#mouseReleased} returns {@code true}
+         * to retain old behavior. This will be changed in 1.18 when the event is made non-cancellable.</p>
          */
         @Cancelable // TODO: Make non-cancellable in 1.18.
         @HasResult

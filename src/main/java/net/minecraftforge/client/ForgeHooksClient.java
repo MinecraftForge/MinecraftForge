@@ -624,6 +624,7 @@ public class ForgeHooksClient
     public static boolean onGuiMouseClickedPost(Screen guiScreen, double mouseX, double mouseY, int button, boolean handled)
     {
         Event event = new GuiScreenEvent.MouseClickedEvent.Post(guiScreen, mouseX, mouseY, button, handled);
+        event.setCanceled(handled);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult() == Event.Result.DEFAULT ? handled : event.getResult() == Event.Result.ALLOW;
     }
@@ -637,6 +638,7 @@ public class ForgeHooksClient
     public static boolean onGuiMouseReleasedPost(Screen guiScreen, double mouseX, double mouseY, int button, boolean handled)
     {
         Event event = new GuiScreenEvent.MouseReleasedEvent.Post(guiScreen, mouseX, mouseY, button, handled);
+        event.setCanceled(handled);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult() == Event.Result.DEFAULT ? handled : event.getResult() == Event.Result.ALLOW;
     }
