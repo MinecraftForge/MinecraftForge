@@ -21,6 +21,7 @@ package net.minecraftforge.fluids;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.item.ItemStack;
@@ -29,7 +30,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IRegistryDelegate;
 
@@ -114,7 +114,7 @@ public class FluidStack
         {
             return EMPTY;
         }
-        if (!nbt.contains("FluidName", Constants.NBT.TAG_STRING))
+        if (!nbt.contains("FluidName", Tag.TAG_STRING))
         {
             return EMPTY;
         }
@@ -127,7 +127,7 @@ public class FluidStack
         }
         FluidStack stack = new FluidStack(fluid, nbt.getInt("Amount"));
 
-        if (nbt.contains("Tag", Constants.NBT.TAG_COMPOUND))
+        if (nbt.contains("Tag", Tag.TAG_COMPOUND))
         {
             stack.tag = nbt.getCompound("Tag");
         }
@@ -234,7 +234,7 @@ public class FluidStack
     {
         getOrCreateTag();
         CompoundTag child = tag.getCompound(childName);
-        if (!tag.contains(childName, Constants.NBT.TAG_COMPOUND))
+        if (!tag.contains(childName, Tag.TAG_COMPOUND))
         {
             tag.put(childName, child);
         }

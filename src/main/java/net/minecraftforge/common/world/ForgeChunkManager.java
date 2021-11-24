@@ -43,7 +43,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.ForcedChunksSavedData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.ModList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -263,8 +262,8 @@ public class ForgeChunkManager
         if (!blockForcedChunks.isEmpty() || !entityForcedChunks.isEmpty())
         {
             Map<String, Long2ObjectMap<CompoundTag>> forcedEntries = new HashMap<>();
-            writeForcedChunkOwners(forcedEntries, blockForcedChunks, "Blocks", Constants.NBT.TAG_COMPOUND, (pos, forcedBlocks) -> forcedBlocks.add(NbtUtils.writeBlockPos(pos)));
-            writeForcedChunkOwners(forcedEntries, entityForcedChunks, "Entities", Constants.NBT.TAG_INT_ARRAY, (uuid, forcedEntities) -> forcedEntities.add(NbtUtils.createUUID(uuid)));
+            writeForcedChunkOwners(forcedEntries, blockForcedChunks, "Blocks", Tag.TAG_COMPOUND, (pos, forcedBlocks) -> forcedBlocks.add(NbtUtils.writeBlockPos(pos)));
+            writeForcedChunkOwners(forcedEntries, entityForcedChunks, "Entities", Tag.TAG_INT_ARRAY, (uuid, forcedEntities) -> forcedEntities.add(NbtUtils.createUUID(uuid)));
             ListTag forcedChunks = new ListTag();
             for (Map.Entry<String, Long2ObjectMap<CompoundTag>> entry : forcedEntries.entrySet())
             {
@@ -316,14 +315,14 @@ public class ForgeChunkManager
      */
     public static void readForgeForcedChunks(CompoundTag nbt, TicketTracker<BlockPos> blockForcedChunks, TicketTracker<UUID> entityForcedChunks)
     {
-        ListTag forcedChunks = nbt.getList("ForgeForced", Constants.NBT.TAG_COMPOUND);
+        ListTag forcedChunks = nbt.getList("ForgeForced", Tag.TAG_COMPOUND);
         for (int i = 0; i < forcedChunks.size(); i++)
         {
             CompoundTag forcedEntry = forcedChunks.getCompound(i);
             String modId = forcedEntry.getString("Mod");
             if (ModList.get().isLoaded(modId))
             {
-                ListTag modForced = forcedEntry.getList("ModForced", Constants.NBT.TAG_COMPOUND);
+                ListTag modForced = forcedEntry.getList("ModForced", Tag.TAG_COMPOUND);
                 for (int j = 0; j < modForced.size(); j++)
                 {
                     CompoundTag modEntry = modForced.getCompound(j);
@@ -346,7 +345,7 @@ public class ForgeChunkManager
      */
     private static void readBlockForcedChunks(String modId, long chunkPos, CompoundTag modEntry, String key, Map<TicketOwner<BlockPos>, LongSet> blockForcedChunks)
     {
-        ListTag forcedBlocks = modEntry.getList(key, Constants.NBT.TAG_COMPOUND);
+        ListTag forcedBlocks = modEntry.getList(key, Tag.TAG_COMPOUND);
         for (int k = 0; k < forcedBlocks.size(); k++)
         {
             blockForcedChunks.computeIfAbsent(new TicketOwner<>(modId, NbtUtils.readBlockPos(forcedBlocks.getCompound(k))), owner -> new LongOpenHashSet()).add(chunkPos);
@@ -358,7 +357,7 @@ public class ForgeChunkManager
      */
     private static void readEntityForcedChunks(String modId, long chunkPos, CompoundTag modEntry, String key, Map<TicketOwner<UUID>, LongSet> entityForcedChunks)
     {
-        ListTag forcedEntities = modEntry.getList(key, Constants.NBT.TAG_INT_ARRAY);
+        ListTag forcedEntities = modEntry.getList(key, Tag.TAG_INT_ARRAY);
         for (Tag uuid : forcedEntities)
         {
             entityForcedChunks.computeIfAbsent(new TicketOwner<>(modId, NbtUtils.loadUUID(uuid)), owner -> new LongOpenHashSet()).add(chunkPos);

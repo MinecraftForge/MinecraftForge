@@ -64,14 +64,3 @@
           }
  
        }
-@@ -105,5 +_,10 @@
- 
-    public void m_6213_(ResourceManager p_110909_) {
-       this.f_110901_.m_110944_();
-+   }
-+
-+   @Override
-+   public net.minecraftforge.resource.IResourceType getResourceType() {
-+      return net.minecraftforge.resource.VanillaResourceType.MODELS;
-    }
- }

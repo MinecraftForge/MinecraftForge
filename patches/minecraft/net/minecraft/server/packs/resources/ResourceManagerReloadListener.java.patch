@@ -1,10 +1,12 @@
 --- a/net/minecraft/server/packs/resources/ResourceManagerReloadListener.java
 +++ b/net/minecraft/server/packs/resources/ResourceManagerReloadListener.java
-@@ -17,4 +_,9 @@
+@@ -17,4 +_,11 @@
     }
  
     void m_6213_(ResourceManager p_10758_);
 +
++   /** @deprecated Selective reloading is no longer supported due to vanilla now reloading resources in parallel, so this is no longer needed */
++   @Deprecated(since="1.17.1", forRemoval = true)
 +   @javax.annotation.Nullable
 +   default net.minecraftforge.resource.IResourceType getResourceType() {
 +      return null;
