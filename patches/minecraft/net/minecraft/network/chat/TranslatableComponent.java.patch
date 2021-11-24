@@ -9,7 +9,7 @@
  
     public TranslatableComponent(String p_131305_) {
        this.f_131298_ = p_131305_;
-@@ -70,23 +_,33 @@
+@@ -70,23 +_,30 @@
                 this.f_131301_.add(FormattedText.m_130775_(s));
              }
  
@@ -19,11 +19,9 @@
              if ("%".equals(s4) && "%%".equals(s1)) {
                 this.f_131301_.add(f_131296_);
              } else {
-+               /*
                 if (!"s".equals(s4)) {
-                   throw new TranslatableFormatException(this, "Unsupported format: '" + s1 + "'");
+-                  throw new TranslatableFormatException(this, "Unsupported format: '" + s1 + "'");
                 }
-+               */
  
                 String s2 = matcher.group(1);
                 int i1 = s2 != null ? Integer.parseInt(s2) - 1 : i++;
