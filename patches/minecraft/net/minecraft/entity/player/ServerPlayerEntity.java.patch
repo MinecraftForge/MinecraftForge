@@ -43,7 +43,9 @@
                 this.field_193110_cw = this.func_213303_ch();
 -            } else if (p_241206_1_.func_234923_W_() == World.field_234920_i_) {
 +            } else if (spawnPortal && p_241206_1_.func_234923_W_() == World.field_234920_i_) {
-                this.func_242110_a(p_241206_1_, new BlockPos(portalinfo.field_222505_a));
+                if (teleporter.spawnPlatform()) {
+                    this.func_242110_a(p_241206_1_, new BlockPos(portalinfo.field_222505_a));
+                }
              }
  
 @@ -657,6 +_,9 @@
