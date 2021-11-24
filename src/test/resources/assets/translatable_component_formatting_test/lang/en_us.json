@@ -1,0 +1,7 @@
+{
+  "translatable.formatting.test1": "%4$2s %3$2s %2$2s %1$2s",
+  "translatable.formatting.test2": "e = %+10.4f",
+  "translatable.formatting.test3": "Amount gained or lost since last statement: $ %(,.2f",
+  "translatable.formatting.test4": "Local time: %tT",
+  "translatable.formatting.test5": "Duke's Birthday: %1$tb %1$te, %1$tY"
+}
