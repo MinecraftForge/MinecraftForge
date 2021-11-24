@@ -95,7 +95,12 @@
        });
     }
  
-@@ -763,6 +_,7 @@
+@@ -759,10 +_,12 @@
+    }
+ 
+    public void m_156368_() {
++      this.f_62779_.values().forEach(BlockEntity::onChunkUnloaded);
+       this.f_62779_.values().forEach(this::m_156400_);
     }
  
     public void m_156369_() {
