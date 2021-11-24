@@ -58,6 +58,7 @@ import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorTy
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldType;
+import net.minecraftforge.fmllegacy.common.registry.GameRegistry;
 
 /**
  * A class that exposes static references to all vanilla and Forge registries.

@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.Collections;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * Fires after Potion Color Calculation.

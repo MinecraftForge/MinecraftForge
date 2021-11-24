@@ -24,7 +24,8 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.multiplayer.ClientLevel;
 
 /**
- * Call {@link net.minecraft.client.world.DimensionRenderInfo#setWeatherRenderHandler(IWeatherRenderHandler)}, obtained from a {@link ClientWorld} with an implementation of this to override all weather rendering with your own.
+ * Call {@link net.minecraft.client.renderer.DimensionSpecialEffects#setWeatherRenderHandler(IWeatherRenderHandler)},
+ * obtained from a {@link ClientLevel} with an implementation of this to override all weather rendering with your own.
  * This includes rain and snow.
  */
 @FunctionalInterface

@@ -68,7 +68,7 @@ public interface IForgeTagAppender<T>
     
     /**
      * Adds a registry entry to the tag json's remove list. Callable during datageneration.
-     * @param element The entry to remove
+     * @param entry The entry to remove
      * @return The builder for chaining
      */
     default TagsProvider.TagAppender<T> remove(final T entry)

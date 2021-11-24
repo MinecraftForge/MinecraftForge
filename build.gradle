@@ -111,6 +111,15 @@ subprojects {
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
+    tasks.withType(Javadoc).configureEach {
+        options.tags = [
+                'apiNote:a:<em>API Note:</em>',
+                'implSpec:a:<em>Implementation Requirements:</em>',
+                'implNote:a:<em>Implementation Note:</em>'
+        ]
+        options.addStringOption('Xdoclint:all,-missing', '-public')
+    }
+
     publishing {
         publications {
             mavenJava(MavenPublication) {

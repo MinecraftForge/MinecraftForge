@@ -21,6 +21,7 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraft.advancements.Advancement;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
 
 /**
  * This event is fired when a player gets an advancement.

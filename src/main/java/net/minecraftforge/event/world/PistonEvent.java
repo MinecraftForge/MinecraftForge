@@ -39,7 +39,6 @@ public abstract class PistonEvent extends BlockEvent
     /**
      * @param world
      * @param pos - The position of the piston
-     * @param direction - The direction of the piston
      * @param direction - The move direction of the piston
      */
     public PistonEvent(Level world, BlockPos pos, Direction direction, PistonMoveType moveType)
@@ -74,7 +73,7 @@ public abstract class PistonEvent extends BlockEvent
     }
 
     /**
-     * @return A piston structure helper for this movement. Returns null if the world stored is not a {@link World}
+     * @return A piston structure helper for this movement. Returns null if the world stored is not a {@link Level}
      */
     @Nullable
     public PistonStructureResolver getStructureHelper()

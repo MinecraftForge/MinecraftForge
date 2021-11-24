@@ -30,8 +30,7 @@ package net.minecraftforge.common.capabilities;
  * <pre>{@code
  *    public static Capability<IDataHolder> DATA_HOLDER_CAPABILITY
  *    		= CapabilityManager.get(new CapabilityToken<>(){});
- *
- * </pre>
+ * }</pre>
  *
  */
 public abstract class CapabilityToken<T>

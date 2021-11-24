@@ -40,7 +40,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
- * New implementation of {@link net.minecraft.advancements.PlayerAdvancements#ensureAllVisible()}
+ * New implementation of {@code PlayerAdvancements#ensureAllVisible()}
  */
 public class AdvancementLoadFix {
     private static final Logger LOGGER = LogManager.getLogger();

@@ -19,6 +19,21 @@
 
 package net.minecraftforge.common.util;
 
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagType;
+import net.minecraft.nbt.TagTypes;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelWriter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
+
 /**
  * A class containing constants for magic numbers used in the minecraft codebase.
  * Everything here should be checked each update, and have a comment relating to where to check it.
@@ -26,10 +41,10 @@ package net.minecraftforge.common.util;
 public class Constants
 {
     /**
-     * NBT Tag type IDS, used when storing the nbt to disc, Should align with {@link net.minecraft.nbt.INBT#create}
-     * and {@link net.minecraft.nbt.INBT#getTypeName}
+     * NBT Tag type IDS, used when storing the nbt to disc, Should align with {@link TagTypes#getType(int)}
+     * and {@link TagType#getPrettyName()}
      *
-     * Main use is checking tag type in {@link net.minecraft.nbt.CompoundNBT#contains(String, int)}
+     * Main use is checking tag type in {@link CompoundTag#contains(String, int)}
      *
      */
     public static class NBT
@@ -51,8 +66,8 @@ public class Constants
     }
 
     /**
-     * The world event IDS, used when calling {@link IWorld#playEvent(int, BlockPos, int)}. <br>
-     * Can be found from {@link net.minecraft.client.renderer.WorldRenderer#playEvent}<br>
+     * The world event IDS, used when calling {@link Level#globalLevelEvent(int, BlockPos, int)}. <br>
+     * Can be found from {@link LevelRenderer#globalLevelEvent(int, BlockPos, int)}<br>
      * Some of the events use the {@code data} parameter. If this is the case, an explanation of what {@code data} does is also provided
      */
     public static class WorldEvents {
@@ -113,12 +128,12 @@ public class Constants
         public static final int REDSTONE_TORCH_BURNOUT          = 1502;
         public static final int END_PORTAL_FRAME_FILL           = 1503;
         /**
-         * {@code data} is the {@link Direction#getIndex()} of the direction the smoke is to come out of.
+         * {@code data} is the {@link Direction#get3DDataValue()} of the direction the smoke is to come out of.
          */
         public static final int DISPENSER_SMOKE                 = 2000;
 
         /**
-         * {@code data} is the {@link net.minecraft.block.Block#getStateId state id} of the block broken
+         * {@code data} is the {@link Block#getId(BlockState)}  state id} of the block broken
          */
         public static final int BREAK_BLOCK_EFFECTS             = 2001;
         /**
@@ -146,21 +161,20 @@ public class Constants
 
     /**
      * The flags used when calling
-     * {@link net.minecraft.world.IWorldWriter#setBlockState(BlockPos, BlockState, int)}<br>
-     * Can be found from {@link World#setBlockState(BlockPos, BlockState, int)},
-     * {@link World#markAndNotifyBlock}, and
-     * {@link WorldRenderer#notifyBlockUpdate}<br>
+     * {@link LevelWriter#setBlock(BlockPos, BlockState, int)}<br>
+     * Can be found from {@link Level#setBlock(BlockPos, BlockState, int)} ,
+     * {@link Level#markAndNotifyBlock(BlockPos, LevelChunk, BlockState, BlockState, int, int)}, and
+     * {@link LevelRenderer#blockChanged(BlockGetter, BlockPos, BlockState, BlockState, int)}<br>
      * Flags can be combined with bitwise OR
      */
     public static class BlockFlags {
         /**
-         * Calls
-         * {@link Block#neighborChanged(BlockState, World, BlockPos, Block, BlockPos, boolean)
+         * Calls {@link Block#neighborChanged(BlockState, Level, BlockPos, Block, BlockPos, boolean)
          * neighborChanged} on surrounding blocks (with isMoving as false). Also updates comparator output state.
          */
         public static final int NOTIFY_NEIGHBORS     = (1 << 0);
         /**
-         * Calls {@link World#notifyBlockUpdate(BlockPos, BlockState, BlockState, int)}.<br>
+         * Calls {@link Level#sendBlockUpdated(BlockPos, BlockState, BlockState, int)}.<br>
          * Server-side, this updates all the path-finding navigators.
          */
         public static final int BLOCK_UPDATE         = (1 << 1);
@@ -176,23 +190,22 @@ public class Constants
         /**
          * Causes neighbor updates to be sent to all surrounding blocks (including
          * diagonals). This in turn will call
-         * {@link Block#updateDiagonalNeighbors(BlockState, IWorld, BlockPos, int)
-         * updateDiagonalNeighbors} on both old and new states, and
-         * {@link Block#updateNeighbors(BlockState, IWorld, BlockPos, int)
-         * updateNeighbors} on the new state.
+         * {@link Block#updateIndirectNeighbourShapes(BlockState, LevelAccessor, BlockPos, int, int)}
+         * on both old and new states, and
+         * {@link Block#updateOrDestroy(BlockState, BlockState, LevelAccessor, BlockPos, int, int)} on the new state.
          */
         public static final int UPDATE_NEIGHBORS     = (1 << 4);
 
         /**
          * Prevents neighbor changes from spawning item drops, used by
-         * {@link Block#replaceBlock(BlockState, BlockState, IWorld, BlockPos, int)}.
+         * {@link Block#updateOrDestroy(BlockState, BlockState, LevelAccessor, BlockPos, int)}.
          */
         public static final int NO_NEIGHBOR_DROPS    = (1 << 5);
 
         /**
          * Tell the block being changed that it was moved, rather than removed/replaced,
          * the boolean value is eventually passed to
-         * {@link Block#onReplaced(BlockState, World, BlockPos, BlockState, boolean)}
+         * {@link Block#onRemove(BlockState, Level, BlockPos, BlockState, boolean)}
          * as the last parameter.
          */
         public static final int IS_MOVING            = (1 << 6);

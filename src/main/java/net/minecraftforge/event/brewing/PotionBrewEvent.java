@@ -21,11 +21,11 @@ package net.minecraftforge.event.brewing;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.NonNullList;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
-
 
 public class PotionBrewEvent extends Event
 {
@@ -60,7 +60,7 @@ public class PotionBrewEvent extends Event
      * PotionBrewEvent.Pre is fired before vanilla brewing takes place.
      * All changes made to the event's array will be made to the TileEntity if the event is canceled.
      * <br>
-     * The event is fired during the {@link BrewingStandTileEntity#brewPotions()} method invocation.<br>
+     * The event is fired during the {@code BrewingStandBlockEntity#doBrew(Level, BlockPos, NonNullList)} method invocation.<br>
      * <br>
      * {@link #stacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
      * <br>
@@ -85,7 +85,7 @@ public class PotionBrewEvent extends Event
     /**
      * PotionBrewEvent.Post is fired when a potion is brewed in the brewing stand.
      * <br>
-     * The event is fired during the {@link BrewingStandTileEntity#brewPotions()} method invocation.<br>
+     * The event is fired during the {@code BrewingStandBlockEntity#doBrew(Level, BlockPos, NonNullList)} method invocation.<br>
      * <br>
      * {@link #stacks} contains the itemstack array from the TileEntityBrewer holding all items in Brewer.<br>
      * <br>

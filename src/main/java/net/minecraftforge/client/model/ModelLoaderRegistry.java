@@ -35,6 +35,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Transformation;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.client.model.geometry.ISimpleModelGeometry;
 import net.minecraftforge.client.model.obj.OBJLoader;
@@ -97,7 +98,7 @@ public class ModelLoaderRegistry
         // Minecraft recreates the ModelBakery on resource reload, but this should only run once during init.
         if (!registryFrozen)
         {
-            net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.ModelRegistryEvent());
+            net.minecraftforge.fml.ModLoader.get().postEvent(new ModelRegistryEvent());
             registryFrozen = true;
         }
     }

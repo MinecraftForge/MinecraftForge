@@ -33,8 +33,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 /**
  * Wrapper around any block, only accounts for fluid placement, otherwise the block acts a void.
- * If the block in question inherits from the default Vanilla or Forge implementations,
- * consider using {@link BlockLiquidWrapper} or {@link FluidBlockWrapper} respectively.
+ * If the block in question inherits from the Forge implementations,
+ * consider using {@link FluidBlockWrapper}.
  */
 public class BlockWrapper extends VoidFluidHandler
 {

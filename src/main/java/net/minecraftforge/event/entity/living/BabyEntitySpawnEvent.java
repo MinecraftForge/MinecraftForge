@@ -19,18 +19,22 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Fox;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import javax.annotation.Nullable;
 
 /**
  * BabyEntitySpawnEvent is fired just before a baby entity is about to be spawned. <br>
- * Parents will have disengaged their relationship. {@link @Cancelable} <br>
- * It is possible to change the child completely by using {@link #setChild(EntityAgeable)} <br>
- * This event is fired from {@link EntityAIMate#spawnBaby()} and {@link EntityAIVillagerMate#giveBirth()} <br>
+ * Parents will have disengaged their relationship. {@link Cancelable} <br>
+ * It is possible to change the child completely by using {@link #setChild(AgeableMob)} <br>
+ * This event is fired from {@link Animal#spawnChildFromBreeding(ServerLevel, Animal)} and
+ * {@link Fox#spawnChildFromBreeding(ServerLevel, Animal)} <br>
  * <br>
  * {@link #parentA} contains the initiating parent entity.<br>
  * {@link #parentB} contains the secondary parent entity.<br>

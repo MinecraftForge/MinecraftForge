@@ -22,16 +22,18 @@ package net.minecraftforge.event.entity.living;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 import javax.annotation.Nonnull;
 
 /**
  * {@link LivingEquipmentChangeEvent} is fired when the Equipment of a Entity changes. <br>
- * This event is fired whenever changes in Equipment are detected in {@link EntityLivingBase#onUpdate()}. <br>
+ * This event is fired whenever changes in Equipment are detected in {@link LivingEntity#tick()}. <br>
  * This also includes entities joining the World, as well as being cloned. <br>
  * This event is fired on server-side only. <br>
  * <br>
- * {@link #slot} contains the affected {@link EntityEquipmentSlot}. <br>
+ * {@link #slot} contains the affected {@link EquipmentSlot}. <br>
  * {@link #from} contains the {@link ItemStack} that was equipped previously. <br>
  * {@link #to} contains the {@link ItemStack} that is equipped now. <br>
  * <br>

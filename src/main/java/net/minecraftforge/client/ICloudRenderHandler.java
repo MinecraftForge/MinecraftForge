@@ -24,7 +24,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 
 /**
- * Call {@link net.minecraft.client.world.DimensionRenderInfo#setCloudRenderHandler(ICloudRenderHandler)}, obtained from a {@link ClientWorld} with an implementation of this to override all cloud rendering with your own.
+ * Call {@link net.minecraft.client.renderer.DimensionSpecialEffects#setCloudRenderHandler(ICloudRenderHandler)},
+ * obtained from a {@link ClientLevel} with an implementation of this to override all cloud rendering with your own.
  * This is only responsible for rendering clouds.
  */
 @FunctionalInterface

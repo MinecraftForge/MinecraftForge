@@ -93,7 +93,7 @@ public final class ConfiguredModel {
      * 
      * @throws NullPointerException     if {@code model} is {@code null}
      * @throws IllegalArgumentException if x and/or y rotation are not valid (see
-     *                                  {@link ModelRotation})
+     *                                  {@link BlockModelRotation})
      * @throws IllegalArgumentException if weight is less than or equal to zero
      */
     public ConfiguredModel(ModelFile model, int rotationX, int rotationY, boolean uvLock, int weight) {
@@ -118,7 +118,7 @@ public final class ConfiguredModel {
      * 
      * @throws NullPointerException     if {@code model} is {@code null}
      * @throws IllegalArgumentException if x and/or y rotation are not valid (see
-     *                                  {@link ModelRotation})
+     *                                  {@link BlockModelRotation})
      */
     public ConfiguredModel(ModelFile model, int rotationX, int rotationY, boolean uvLock) {
         this(model, rotationX, rotationY, uvLock, DEFAULT_WEIGHT);
@@ -228,7 +228,7 @@ public final class ConfiguredModel {
          * @param value the x-rotation value
          * @return this builder
          * @throws IllegalArgumentException if {@code value} is not a valid x-rotation
-         *                                  (see {@link ModelRotation})
+         *                                  (see {@link BlockModelRotation})
          */
         public Builder<T> rotationX(int value) {
             checkRotation(value, rotationY);
@@ -242,7 +242,7 @@ public final class ConfiguredModel {
          * @param value the y-rotation value
          * @return this builder
          * @throws IllegalArgumentException if {@code value} is not a valid y-rotation
-         *                                  (see {@link ModelRotation})
+         *                                  (see {@link BlockModelRotation})
          */
         public Builder<T> rotationY(int value) {
             checkRotation(rotationX, value);

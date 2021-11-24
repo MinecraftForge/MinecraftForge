@@ -1,17 +1,5 @@
 --- a/net/minecraft/server/packs/resources/ResourceManagerReloadListener.java
 +++ b/net/minecraft/server/packs/resources/ResourceManagerReloadListener.java
-@@ -5,6 +_,11 @@
- import net.minecraft.util.Unit;
- import net.minecraft.util.profiling.ProfilerFiller;
- 
-+/**
-+ * @deprecated Forge: {@link net.minecraftforge.resource.ISelectiveResourceReloadListener}, which selectively allows
-+ * individual resource types being reloaded should rather be used where possible.
-+ */
-+@Deprecated
- public interface ResourceManagerReloadListener extends PreparableReloadListener {
-    default CompletableFuture<Void> m_5540_(PreparableReloadListener.PreparationBarrier p_10752_, ResourceManager p_10753_, ProfilerFiller p_10754_, ProfilerFiller p_10755_, Executor p_10756_, Executor p_10757_) {
-       return p_10752_.m_6769_(Unit.INSTANCE).thenRunAsync(() -> {
 @@ -17,4 +_,9 @@
     }
  

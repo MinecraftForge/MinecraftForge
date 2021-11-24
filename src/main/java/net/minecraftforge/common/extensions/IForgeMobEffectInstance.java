@@ -21,6 +21,7 @@ package net.minecraftforge.common.extensions;
 
 import java.util.List;
 
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -31,7 +32,7 @@ public interface IForgeMobEffectInstance
 
     /***
      * Returns a list of curative items for the potion effect
-     * By default, this list is initialized using {@link Potion#getCurativeItems}
+     * By default, this list is initialized using {@link MobEffect#getCurativeItems()}
      *
      * @return The list (ItemStack) of curative items for the potion effect
      */
