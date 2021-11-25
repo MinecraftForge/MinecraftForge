@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/block/BlockModelShaper.java
 +++ b/net/minecraft/client/renderer/block/BlockModelShaper.java
-@@ -24,8 +_,14 @@
+@@ -24,8 +_,15 @@
        this.f_110878_ = p_110880_;
     }
  
@@ -12,7 +12,8 @@
 +
 +   public TextureAtlasSprite getTexture(BlockState p_110883_, net.minecraft.world.level.Level level, net.minecraft.core.BlockPos pos) {
 +      net.minecraftforge.client.model.data.IModelData data = net.minecraftforge.client.model.ModelDataManager.getModelData(level, pos);
-+      return this.m_110893_(p_110883_).getParticleIcon(data == null ? net.minecraftforge.client.model.data.EmptyModelData.INSTANCE : data);
++      BakedModel model = this.m_110893_(p_110883_);
++      return model.getParticleIcon(model.getModelData(level, pos, p_110883_, data == null ? net.minecraftforge.client.model.data.EmptyModelData.INSTANCE : data));
     }
  
     public BakedModel m_110893_(BlockState p_110894_) {
