@@ -137,7 +137,7 @@ public class VariantBlockStateBuilder implements IGeneratedBlockstate {
      * 
      * @param state  The {@link PartialBlockstate partial state} for which to set
      *               the models
-     * @param models A set of models to assign to this state
+     * @param model A set of models to assign to this state
      * @return this builder
      * @throws IllegalArgumentException if {@code state} has already been configured
      * @see #addModels(PartialBlockstate, ConfiguredModel...)

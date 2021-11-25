@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.block.Blocks;
@@ -52,6 +53,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 // TODO review most of the methods in this "patch"
 public interface IForgeItem
@@ -374,7 +376,7 @@ public interface IForgeItem
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
      * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.world.entity.LivingEntity#getEquipmentSlotForItem(ItemStack)}..</em>
+     * {@link LivingEntity#getEquipmentSlotForItem(ItemStack)}..</em>
      *
      * @param stack the ItemStack
      * @return the armor slot of the ItemStack, or {@code null} to let the default
@@ -501,7 +503,7 @@ public interface IForgeItem
 
     /**
      * Return if this itemstack is damaged. Note only called if
-     * {@link #isDamageable()} is true.
+     * {@link ItemStack#isDamageableItem()} is true.
      *
      * @param stack the stack
      * @return if the stack is damaged
@@ -525,7 +527,7 @@ public interface IForgeItem
 
     /**
      * Queries if an item can perform the given action.
-     * See {@link net.minecraftforge.common.ToolActions} for a description of each stock action
+     * See {@link ToolActions} for a description of each stock action
      * @param stack The stack being used
      * @param toolAction The action being queried
      * @return True if the stack can perform the action
@@ -537,7 +539,7 @@ public interface IForgeItem
     }
 
     /**
-     * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}
+     * ItemStack sensitive version of {@link Item#isCorrectToolForDrops(BlockState)}
      *
      * @param stack The itemstack used to harvest the block
      * @param state The block trying to harvest
@@ -577,7 +579,7 @@ public interface IForgeItem
      * applies specifically to enchanting an item in the enchanting table and is
      * called when retrieving the list of possible enchantments for an item.
      * Enchantments may additionally (or exclusively) be doing their own checks in
-     * {@link net.minecraft.enchantment.Enchantment#canApplyAtEnchantingTable(ItemStack)};
+     * {@link Enchantment#canApplyAtEnchantingTable(ItemStack)};
      * check the individual implementation for reference. By default this will check
      * if the enchantment type is valid for this item type.
      *
@@ -585,7 +587,7 @@ public interface IForgeItem
      * @param enchantment the enchantment to be applied
      * @return true if the enchantment can be applied to this item
      */
-    default boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.world.item.enchantment.Enchantment enchantment)
+    default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
     {
         return enchantment.category.canEnchant(stack.getItem());
     }
@@ -646,7 +648,7 @@ public interface IForgeItem
      *
      * @param itemStack the ItemStack to check
      * @return the Mod ID for the ItemStack, or null when there is no specially
-     *         associated mod and {@link #getRegistryName()} would return null.
+     *         associated mod and {@link IForgeRegistryEntry#getRegistryName()} would return null.
      */
     @Nullable
     default String getCreatorModId(ItemStack itemStack)
@@ -689,7 +691,7 @@ public interface IForgeItem
      * @param shield   The shield in question
      * @param entity   The LivingEntity holding the shield
      * @param attacker The LivingEntity holding the ItemStack
-     * @retrun True if this ItemStack can disable the shield in question.
+     * @return True if this ItemStack can disable the shield in question.
      */
     default boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker)
     {
@@ -722,7 +724,7 @@ public interface IForgeItem
     }
 
     /**
-     * Called every tick from {@link EntityHorse#onUpdate()} on the item in the
+     * Called every tick from {@code Horse#playGallopSound(SoundEvent)} on the item in the
      * armor slot.
      *
      * @param stack the armor itemstack
@@ -810,7 +812,7 @@ public interface IForgeItem
     /**
      * Get a bounding box ({@link AABB}) of a sweep attack.
      * 
-     * @param statck the stack held by the player.
+     * @param stack the stack held by the player.
      * @param player the performing the attack the attack.
      * @param target the entity targeted by the attack.
      * @return the bounding box.

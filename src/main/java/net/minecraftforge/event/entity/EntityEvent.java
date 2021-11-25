@@ -23,6 +23,8 @@ import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -69,7 +71,7 @@ public class EntityEvent extends Event
     /**
      * CanUpdate is fired when an Entity is being created. <br>
      * This event is fired whenever vanilla Minecraft determines that an entity<br>
-     * cannot update in {@link World#updateEntityWithOptionalForce(net.minecraft.entity.Entity, boolean)} <br>
+     * cannot update in {@code World#updateEntityWithOptionalForce(net.minecraft.entity.Entity, boolean)} <br>
      * <br>
      * {@link CanUpdate#canUpdate} contains the boolean value of whether this entity can update.<br>
      * If the modder decides that this Entity can be updated, they may change canUpdate to true, <br>

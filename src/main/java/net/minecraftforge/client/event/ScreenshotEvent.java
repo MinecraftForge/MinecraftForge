@@ -35,7 +35,7 @@ import java.io.IOException;
  *
  * {@link #screenshotFile} contains the file the screenshot will be/was saved to
  * {@link #image} contains the {@link NativeImage} that will be saved
- * {@link #resultMessage} contains the {@link ITextComponent} to be returned. If {@code null}, the default vanilla message will be used instead
+ * {@link #resultMessage} contains the {@link Component} to be returned. If {@code null}, the default vanilla message will be used instead
  */
 @Cancelable
 public class ScreenshotEvent extends Event

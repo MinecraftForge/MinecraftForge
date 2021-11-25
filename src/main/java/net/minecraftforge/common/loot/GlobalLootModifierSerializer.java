@@ -59,9 +59,9 @@ public abstract class GlobalLootModifierSerializer<T extends IGlobalLootModifier
      * Most mods will likely not need more than<br/>
      * <code>return new MyModifier(conditionsIn)</code><br/>
      * but any additional properties that are needed will need to be deserialized here.
-     * @param name The resource location (if needed)
-     * @param json The full json object (including ILootConditions)
-     * @param conditionsIn An already deserialized list of ILootConditions
+     * @param location The resource location (if needed)
+     * @param object The full json object (including ILootConditions)
+     * @param ailootcondition An already deserialized list of ILootConditions
      */
     public abstract T read(ResourceLocation location, JsonObject object, LootItemCondition[] ailootcondition);
 

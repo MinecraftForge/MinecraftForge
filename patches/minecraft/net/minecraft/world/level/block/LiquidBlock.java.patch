@@ -17,7 +17,7 @@
 +   }
 +
 +   /**
-+    * @param supplier A fluid supplier such as {@link net.minecraftforge.fmllegacy.RegistryObject<Fluid>}
++    * @param p_54694_ A fluid supplier such as {@link net.minecraftforge.fmllegacy.RegistryObject<net.minecraft.world.level.material.FlowingFluid>}
 +    */
 +   public LiquidBlock(java.util.function.Supplier<? extends FlowingFluid> p_54694_, BlockBehaviour.Properties p_54695_) {
 +      super(p_54695_);

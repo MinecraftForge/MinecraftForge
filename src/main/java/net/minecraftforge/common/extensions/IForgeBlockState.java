@@ -22,12 +22,15 @@ package net.minecraftforge.common.extensions;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
+import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacements.Type;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -61,9 +64,9 @@ public interface IForgeBlockState
      * between 0 and 1.
      * <p>
      * Note that entities may reduce slipperiness by a certain factor of their own;
-     * for {@link net.minecraft.entity.LivingEntity}, this is {@code .91}.
-     * {@link net.minecraft.entity.item.ItemEntity} uses {@code .98}, and
-     * {@link net.minecraft.entity.projectile.FishingBobberEntity} uses {@code .92}.
+     * for {@link LivingEntity}, this is {@code .91}.
+     * {@link ItemEntity} uses {@code .98}, and
+     * {@link FishingHook} uses {@code .92}.
      *
      * @param world the world
      * @param pos the position in the world
@@ -247,7 +250,7 @@ public interface IForgeBlockState
     }
    /**
     * Allows a block to override the standard vanilla running particles.
-    * This is called from {@link Entity#handleRunningEffect} and is called both,
+    * This is called from {@code Entity#spawnSprintParticle()} and is called both,
     * Client and server side, it's up to the implementor to client check / server check.
     * By default vanilla spawns particles only on the client and the server methods no-op.
     *
@@ -413,7 +416,7 @@ public interface IForgeBlockState
 
     /**
      * Used to determine the state 'viewed' by an entity (see
-     * {@link net.minecraft.client.Camera#getBlockAtCamera()}).
+     * {@link Camera#getBlockAtCamera()}).
      * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
      *
      * @param world     the world
@@ -621,7 +624,7 @@ public interface IForgeBlockState
      * @param pos The block position in world
      * @param player The player clicking the block
      * @param stack The stack being used by the player
-     * @param toolType The tool type to be considered when performing the action
+     * @param toolAction The tool type to be considered when performing the action
      * @return The resulting state after the action has been performed
      */
     @Nullable

@@ -40,7 +40,7 @@ import org.apache.logging.log4j.Logger;
  * run, but your own work will be run sequentially.
  * <p>
  * <strong>Use of this class after startup is not possible.</strong> At that
- * point, {@link IThreadListener} should be used instead.
+ * point, {@code ReentrantBlockableEventLoop} should be used instead.
  * <p>
  * Exceptions from tasks will be handled gracefully, causing a mod loading
  * error. Tasks that take egregiously long times to run will be logged.

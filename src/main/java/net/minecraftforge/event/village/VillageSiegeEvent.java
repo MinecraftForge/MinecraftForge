@@ -23,12 +23,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.entity.ai.village.VillageSiege;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
  * VillageSiegeEvent is fired just before a zombie siege finds a successful location in
- * {@link VillageSiege#trySetupSiege}, to give mods the chance to stop the siege.<br>
+ * {@code VillageSiege#tryToSetupSiege(ServerLevel)}, to give mods the chance to stop the siege.<br>
  * <br>
  * This event is {@link Cancelable}; canceling stops the siege.<br>
  * <br>

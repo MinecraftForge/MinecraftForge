@@ -45,7 +45,7 @@ import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.common.util.LazyOptional;
 
 /**
- * Generic {@link TileGameRenderer} that works with the Forge model system and animations.
+ * Generic {@link BlockEntityRenderer} that works with the Forge model system and animations.
  */
 public class AnimationBlockEntityRenderer<T extends BlockEntity> implements BlockEntityRenderer<T>, IEventHandler<T>
 {

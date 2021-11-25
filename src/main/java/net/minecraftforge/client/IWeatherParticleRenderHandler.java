@@ -24,7 +24,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 
 /**
- * Call {@link net.minecraft.client.world.DimensionRenderInfo#setWeatherParticleRenderHandler(net.minecraftforge.client.IWeatherParticleRenderHandler)}, obtained from a {@link ClientWorld} with an implementation of this to override all weather particle rendering with your own.
+ * Call {@link net.minecraft.client.renderer.DimensionSpecialEffects#setWeatherParticleRenderHandler(IWeatherParticleRenderHandler)},
+ * obtained from a {@link ClientLevel} with an implementation of this to override all weather particle rendering with your own.
  * This handles ground particles that can be seen when it's raining (splash/smoke particles).
  * This also includes playing rain sounds.
  */

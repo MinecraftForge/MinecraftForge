@@ -47,7 +47,7 @@ public class FarmlandWaterManager
 
     /**
      * Adds a custom ticket.
-     * Use {@link #addAABBTicket(World, AxisAlignedBB)} if you just need a ticket that can water a certain area.
+     * Use {@link #addAABBTicket(Level, AABB)} if you just need a ticket that can water a certain area.
      * <br>
      * If you don't want to water the region anymore, call {@link SimpleTicket#invalidate()}. Also call this
      * when the region this is unloaded (e.g. your TE is unloaded or the block is removed), and validate once it is loaded
@@ -126,7 +126,7 @@ public class FarmlandWaterManager
     }
 
     /**
-     * Tests if a block is in a region that is watered by blocks. This does not check vanilla water, see {@link net.minecraft.block.FarmlandBlock#hasWater(IWorldReader, BlockPos)}
+     * Tests if a block is in a region that is watered by blocks. This does not check vanilla water, see {@code net.minecraft.world.level.block.FarmBlock#isNearWater(LevelReader, BlockPos)}
      * @return true if there is a ticket with an AABB that includes your block
      */
     public static boolean hasBlockWaterTicket(LevelReader world, BlockPos pos)

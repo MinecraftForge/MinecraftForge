@@ -21,6 +21,7 @@ package net.minecraftforge.event.world;
 
 import java.util.List;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.world.entity.Entity;
