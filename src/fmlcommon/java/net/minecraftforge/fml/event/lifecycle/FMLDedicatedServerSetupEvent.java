@@ -21,8 +21,6 @@ package net.minecraftforge.fml.event.lifecycle;
 
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
-import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
 
 /**
  * This is the second of four commonly called events during mod core startup.
@@ -36,8 +34,8 @@ import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
  *
  * Do dedicated server specific activities with this event.
  *
- * <em>This event is fired before construction of the dedicated server. Use {@link FMLServerAboutToStartEvent}
- * or {@link FMLServerStartingEvent} to do stuff with the server, in both dedicated
+ * <em>This event is fired before construction of the dedicated server. Use {@code FMLServerAboutToStartEvent}
+ * or {@code FMLServerStartingEvent} to do stuff with the server, in both dedicated
  * and integrated server contexts</em>
  *
  * This is a parallel dispatch event.
