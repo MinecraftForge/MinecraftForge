@@ -1123,7 +1123,7 @@ public class ForgeHooksClient
         List<Either<FormattedText, TooltipComponent>> elements = textElements.stream()
                 .map((Function<FormattedText, Either<FormattedText, TooltipComponent>>) Either::left)
                 .collect(Collectors.toCollection(ArrayList::new));
-        itemComponent.ifPresent(c -> elements.add(Either.right(c)));
+        itemComponent.ifPresent(c -> elements.add(1, Either.right(c)));
 
         var event = new RenderTooltipEvent.GatherComponents(stack, screenWidth, screenHeight, elements, -1);
         MinecraftForge.EVENT_BUS.post(event);
