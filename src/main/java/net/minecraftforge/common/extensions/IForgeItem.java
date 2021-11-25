@@ -448,7 +448,9 @@ public interface IForgeItem
      *
      * @param stack The current Item Stack
      * @return True if it should render the 'durability' bar.
+     * @deprecated To be removed in 1.18. Override {@link Item#isBarVisible(ItemStack)} instead.
      */
+    @Deprecated(forRemoval = true, since = "1.17.1")
     default boolean showDurabilityBar(ItemStack stack)
     {
         return stack.isDamaged();
@@ -460,7 +462,10 @@ public interface IForgeItem
      * @param stack The current ItemStack
      * @return 0.0 for 100% (no damage / full bar), 1.0 for 0% (fully damaged /
      *         empty bar)
+     * @deprecated To be removed in 1.18. Override {@link Item#getBarWidth(ItemStack)} instead, with the notable difference
+     *             that the new method returns the width of the colored bar in pixels (where a full bar is 13px wide).
      */
+    @Deprecated(forRemoval = true, since = "1.17.1")
     default double getDurabilityForDisplay(ItemStack stack)
     {
         return (double) stack.getDamageValue() / (double) stack.getMaxDamage();
@@ -473,7 +478,9 @@ public interface IForgeItem
      *
      * @param stack Stack to get durability from
      * @return A packed RGB value for the durability colour (0x00RRGGBB)
+     * @deprecated To be removed in 1.18. Override {@link Item#getBarColor(ItemStack)} instead.
      */
+    @Deprecated(forRemoval = true, since = "1.17.1")
     default int getRGBDurabilityForDisplay(ItemStack stack)
     {
         return Mth.hsvToRgb(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
