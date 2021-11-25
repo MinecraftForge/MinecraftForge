@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/feature/structures/StructureTemplatePool.java
 +++ b/net/minecraft/world/level/levelgen/feature/structures/StructureTemplatePool.java
-@@ -41,6 +_,19 @@
+@@ -41,6 +_,18 @@
     private final ResourceLocation f_69251_;
     private int f_69252_ = Integer.MIN_VALUE;
  
@@ -12,7 +12,6 @@
 +   }
 +
 +   public boolean isNotEmpty() {
-+       if (!this.f_69250_.isEmpty()) return true;
 +       return !this.getTemplates().isEmpty();
 +   }
 +   /* *************** FORGE END *************** */
