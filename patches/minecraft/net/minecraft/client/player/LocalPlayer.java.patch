@@ -37,6 +37,14 @@
              this.f_108617_.m_104955_(new ServerboundPlayerCommandPacket(this, ServerboundPlayerCommandPacket.Action.START_FALL_FLYING));
           }
        }
+@@ -807,6 +_,7 @@
+ 
+    public void m_6083_() {
+       super.m_6083_();
++      if (this.m_36342_() && this.m_20159_()) this.f_108618_.f_108573_ = false;
+       this.f_108611_ = false;
+       if (this.m_20202_() instanceof Boat) {
+          Boat boat = (Boat)this.m_20202_();
 @@ -1004,6 +_,18 @@
        } else {
           return super.m_7398_(p_108758_);
