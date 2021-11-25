@@ -284,15 +284,47 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link GuiEventListener#mouseClicked(double, double, int)} if the click was not already handled.
-         * Cancel this event when you successfully use the mouse click, to prevent other handlers from using the same input.
+         * This event fires after {@link GuiEventListener#mouseClicked(double, double, int)}.
+         *
+         * <p>This event {@linkplain HasResult has a result}.<br>
+         * <ul>
+         *   <li><b>{@link Result#ALLOW}</b> - to force set the mouse click as handled</li>
+         *   <li><b>{@link Result#DEFAULT}</b> - to use the default value of {@link #handled}</li>
+         *   <li><b>{@link Result#DENY}</b> - to force set the mouse click as not handled</li>
+         * </ul>
+         * </p>
+         *
+         * <p>Note that this event is currently pre-cancelled if {@link Screen#mouseClicked} returns {@code true}
+         * to retain old behavior. This will be changed in 1.18 when the event is made non-cancellable.</p>
          */
-        @Cancelable
+        @Cancelable // TODO: Make non-cancellable in 1.18.
+        @HasResult
         public static class Post extends MouseClickedEvent
         {
-            public Post(Screen gui, double mouseX, double mouseY, int button)
+            private final boolean handled;
+
+            public Post(Screen gui, double mouseX, double mouseY, int button, boolean handled)
             {
                 super(gui, mouseX, mouseY, button);
+                this.handled = handled;
+            }
+
+            /**
+             * @deprecated event now has a result instead and will no longer be cancellable in 1.18; use {@link #setResult(Result)}
+             */
+            @Override
+            @Deprecated
+            public void setCanceled(boolean cancel)
+            {
+                this.setResult(cancel ? Result.ALLOW : Result.DEFAULT);
+            }
+
+            /**
+             * @return {@code true} if the mouse click was already handled by its screen
+             */
+            public boolean wasHandled()
+            {
+                return handled;
             }
         }
     }
@@ -326,15 +358,47 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link GuiEventListener#mouseReleased(double, double, int)} if the release was not already handled.
-         * Cancel this event when you successfully use the mouse release, to prevent other handlers from using the same input.
+         * This event fires after {@link GuiEventListener#mouseReleased(double, double, int)}.
+         *
+         * <p>This event {@linkplain HasResult has a result}.<br>
+         * <ul>
+         *   <li><b>{@link Result#ALLOW}</b> - to force set the mouse release as handled</li>
+         *   <li><b>{@link Result#DEFAULT}</b> - to use the default value of {@link #handled}</li>
+         *   <li><b>{@link Result#DENY}</b> - to force set the mouse release as not handled</li>
+         * </ul>
+         * </p>
+         *
+         * <p>Note that this event is currently pre-cancelled if {@link Screen#mouseReleased} returns {@code true}
+         * to retain old behavior. This will be changed in 1.18 when the event is made non-cancellable.</p>
          */
-        @Cancelable
+        @Cancelable // TODO: Make non-cancellable in 1.18.
+        @HasResult
         public static class Post extends MouseReleasedEvent
         {
-            public Post(Screen gui, double mouseX, double mouseY, int button)
+            private final boolean handled;
+
+            public Post(Screen gui, double mouseX, double mouseY, int button, boolean handled)
             {
                 super(gui, mouseX, mouseY, button);
+                this.handled = handled;
+            }
+
+            /**
+             * @deprecated event now has a result instead and will no longer be cancellable in 1.18; use {@link #setResult(Result)}
+             */
+            @Override
+            @Deprecated
+            public void setCanceled(boolean cancel)
+            {
+                this.setResult(cancel ? Result.ALLOW : Result.DEFAULT);
+            }
+
+            /**
+             * @return {@code true} if the mouse release was already handled by its screen
+             */
+            public boolean wasHandled()
+            {
+                return handled;
             }
         }
     }
