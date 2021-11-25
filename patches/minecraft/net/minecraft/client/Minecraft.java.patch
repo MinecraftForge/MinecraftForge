@@ -170,7 +170,12 @@
        }
  
        if (this.field_238174_aV_ != null) {
-@@ -1065,6 +_,7 @@
+@@ -1061,10 +_,12 @@
+       this.field_195558_d.func_216525_a((double)i);
+       if (this.field_71462_r != null) {
+          this.field_71462_r.func_231152_a_(this, this.field_195558_d.func_198107_o(), this.field_195558_d.func_198087_p());
++         net.minecraftforge.client.ForgeHooksClient.resizeGuiLayers(this, this.field_195558_d.func_198107_o(), this.field_195558_d.func_198087_p());
+       }
  
        Framebuffer framebuffer = this.func_147110_a();
        framebuffer.func_216491_a(this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l(), field_142025_a);

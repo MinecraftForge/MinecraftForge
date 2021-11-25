@@ -147,6 +147,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="full_pots_accessor_demo"
 [[mods]]
+    modId="forge_spawnegg_test"
+[[mods]]
     modId="codec_registry_test"
 
 # ADD ABOVE THIS LINE

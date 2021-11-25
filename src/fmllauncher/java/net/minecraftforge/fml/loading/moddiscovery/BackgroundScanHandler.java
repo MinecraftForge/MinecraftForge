@@ -25,6 +25,8 @@ import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,12 +39,22 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class BackgroundScanHandler
 {
+    private enum ScanStatus {
+        NOT_STARTED,
+        RUNNING,
+        COMPLETE,
+        TIMED_OUT,
+        INTERRUPTED,
+        ERRORED
+    }
+
     private static final Logger LOGGER = LogManager.getLogger();
     private final ExecutorService modContentScanner;
     private final List<ModFile> pendingFiles;
     private final List<ModFile> scannedFiles;
     private final List<ModFile> allFiles;
     private final Map<IModFile.Type, List<ModFile>> modFiles;
+    private ScanStatus status;
     private LoadingModList loadingModList;
 
     public BackgroundScanHandler(final Map<IModFile.Type, List<ModFile>> modFiles) {
@@ -55,6 +67,7 @@ public class BackgroundScanHandler
         scannedFiles = new ArrayList<>();
         pendingFiles = new ArrayList<>();
         allFiles = new ArrayList<>();
+        status = ScanStatus.NOT_STARTED;
     }
 
     public Map<IModFile.Type, List<ModFile>> getModFiles() {
@@ -63,8 +76,10 @@ public class BackgroundScanHandler
 
     public void submitForScanning(final ModFile file) {
         if (modContentScanner.isShutdown()) {
+            status = ScanStatus.ERRORED;
             throw new IllegalStateException("Scanner has shutdown");
         }
+        status = ScanStatus.RUNNING;
         allFiles.add(file);
         pendingFiles.add(file);
         final CompletableFuture<ModFileScanData> future = CompletableFuture.supplyAsync(file::compileContent, modContentScanner)
@@ -75,6 +90,7 @@ public class BackgroundScanHandler
 
     private void addCompletedFile(final ModFile file, final ModFileScanData modFileScanData, final Throwable throwable) {
         if (throwable != null) {
+            status = ScanStatus.ERRORED;
             LOGGER.error(SCAN,"An error occurred scanning file {}", file, throwable);
         }
         pendingFiles.remove(file);
@@ -92,14 +108,19 @@ public class BackgroundScanHandler
     }
 
     public void waitForScanToComplete(final Runnable ticker) {
+        boolean timeoutActive = System.getProperty("fml.disableScanTimeout") == null;
+        Instant deadline = Instant.now().plus(Duration.ofMinutes(10));
         modContentScanner.shutdown();
         do {
             ticker.run();
             try {
-                modContentScanner.awaitTermination(50, TimeUnit.MILLISECONDS);
+                status = modContentScanner.awaitTermination(50, TimeUnit.MILLISECONDS) ? ScanStatus.COMPLETE : ScanStatus.RUNNING;
             } catch (InterruptedException e) {
-                Thread.interrupted();
+                status = ScanStatus.INTERRUPTED;
             }
-        } while (!modContentScanner.isShutdown());
+            if (timeoutActive && Instant.now().isAfter(deadline)) status = ScanStatus.TIMED_OUT;
+        } while (status == ScanStatus.RUNNING);
+        if (status == ScanStatus.INTERRUPTED) Thread.currentThread().interrupt();
+        if (status != ScanStatus.COMPLETE) throw new IllegalStateException("Failed to complete mod scan");
     }
 }

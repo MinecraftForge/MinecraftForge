@@ -1,0 +1,26 @@
+--- a/net/minecraft/item/SpawnEggItem.java
++++ b/net/minecraft/item/SpawnEggItem.java
+@@ -39,11 +_,14 @@
+    private final int field_195989_d;
+    private final EntityType<?> field_200890_d;
+ 
++   /** @deprecated Forge: Use {@link net.minecraftforge.common.ForgeSpawnEggItem} instead for suppliers */
++   @Deprecated
+    public SpawnEggItem(EntityType<?> p_i48465_1_, int p_i48465_2_, int p_i48465_3_, Item.Properties p_i48465_4_) {
+       super(p_i48465_4_);
+       this.field_200890_d = p_i48465_1_;
+       this.field_195988_c = p_i48465_2_;
+       this.field_195989_d = p_i48465_3_;
++      if (p_i48465_1_ != null)
+       field_195987_b.put(p_i48465_1_, this);
+    }
+ 
+@@ -124,6 +_,8 @@
+       return p_195983_1_ == 0 ? this.field_195988_c : this.field_195989_d;
+    }
+ 
++   /** @deprecated Forge: call {@link net.minecraftforge.common.ForgeSpawnEggItem#fromEntityType(EntityType)} instead */
++   @Deprecated
+    @Nullable
+    public static SpawnEggItem func_200889_b(@Nullable EntityType<?> p_200889_0_) {
+       return field_195987_b.get(p_200889_0_);
