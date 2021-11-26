@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerChunkCache.java
 +++ b/net/minecraft/server/level/ServerChunkCache.java
-@@ -161,6 +_,7 @@
+@@ -163,6 +_,7 @@
           if (chunkholder == null) {
              return null;
           } else {
@@ -8,16 +8,16 @@
              Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure> either = chunkholder.m_140080_(ChunkStatus.f_62326_).getNow((Either<ChunkAccess, ChunkHolder.ChunkLoadingFailure>)null);
              if (either == null) {
                 return null;
-@@ -337,7 +_,7 @@
-             if (optional.isPresent()) {
-                LevelChunk levelchunk = optional.get();
-                ChunkPos chunkpos = levelchunk.m_7697_();
--               if (this.f_8329_.m_143275_(chunkpos) && !this.f_8325_.m_140397_(chunkpos)) {
-+               if ((this.f_8329_.m_143275_(chunkpos) && !this.f_8325_.m_140397_(chunkpos)) || this.f_8327_.shouldForceTicks(chunkpos.m_45588_())) {
-                   levelchunk.m_6141_(levelchunk.m_6319_() + j);
-                   if (flag1 && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos)) {
-                      NaturalSpawner.m_47029_(this.f_8329_, levelchunk, naturalspawner$spawnstate, this.f_8336_, this.f_8335_, flag2);
-@@ -414,6 +_,14 @@
+@@ -348,7 +_,7 @@
+          for(ServerChunkCache.ChunkAndHolder serverchunkcache$chunkandholder : list) {
+             LevelChunk levelchunk1 = serverchunkcache$chunkandholder.f_184028_;
+             ChunkPos chunkpos = levelchunk1.m_7697_();
+-            if (this.f_8329_.m_143275_(chunkpos) && this.f_8325_.m_183879_(chunkpos)) {
++            if ((this.f_8329_.m_143275_(chunkpos) && this.f_8325_.m_183879_(chunkpos)) || this.f_8327_.shouldForceTicks(chunkpos.m_45588_())) {
+                levelchunk1.m_187632_(j);
+                if (flag2 && (this.f_8335_ || this.f_8336_) && this.f_8329_.m_6857_().m_61927_(chunkpos)) {
+                   NaturalSpawner.m_47029_(this.f_8329_, levelchunk1, naturalspawner$spawnstate, this.f_8336_, this.f_8335_, flag1);
+@@ -426,6 +_,14 @@
  
     public <T> void m_8438_(TicketType<T> p_8439_, ChunkPos p_8440_, int p_8441_, T p_8442_) {
        this.f_8327_.m_140849_(p_8439_, p_8440_, p_8441_, p_8442_);

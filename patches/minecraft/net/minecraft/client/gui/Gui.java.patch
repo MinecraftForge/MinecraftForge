@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/Gui.java
 +++ b/net/minecraft/client/gui/Gui.java
-@@ -446,6 +_,10 @@
+@@ -463,6 +_,10 @@
  
           for(MobEffectInstance mobeffectinstance : Ordering.natural().reverse().sortedCopy(collection)) {
              MobEffect mobeffect = mobeffectinstance.m_19544_();
@@ -9,17 +9,17 @@
 +            // Rebind in case previous renderHUDEffect changed texture
 +            RenderSystem.m_157456_(0, AbstractContainerScreen.f_97725_);
              if (mobeffectinstance.m_19575_()) {
-                int k = this.f_92977_;
-                int l = 1;
-@@ -483,6 +_,7 @@
+                int i = this.f_92977_;
+                int j = 1;
+@@ -500,6 +_,7 @@
                    RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, f1);
-                   m_93200_(p_93029_, j1 + 3, k1 + 3, this.m_93252_(), 18, 18, textureatlassprite);
+                   m_93200_(p_93029_, l + 3, i1 + 3, this.m_93252_(), 18, 18, textureatlassprite);
                 });
-+               renderer.renderHUDEffect(mobeffectinstance,this, p_93029_, k, l, this.m_93252_(), f);
++               renderer.renderHUDEffect(mobeffectinstance,this, p_93029_, i, j, this.m_93252_(), f);
              }
           }
  
-@@ -608,7 +_,8 @@
+@@ -625,7 +_,8 @@
              mutablecomponent.m_130940_(ChatFormatting.ITALIC);
           }
  
@@ -29,7 +29,7 @@
           int j = (this.f_92977_ - i) / 2;
           int k = this.f_92978_ - 59;
           if (!this.f_92986_.f_91072_.m_105205_()) {
-@@ -624,7 +_,13 @@
+@@ -641,7 +_,13 @@
              RenderSystem.m_69478_();
              RenderSystem.m_69453_();
              m_93172_(p_93070_, j - 2, k - 2, j + i + 2, k + 9 + 2, this.f_92986_.f_91066_.m_92143_(0));
@@ -44,7 +44,7 @@
              RenderSystem.m_69461_();
           }
        }
-@@ -1128,7 +_,7 @@
+@@ -1153,7 +_,7 @@
           ItemStack itemstack = this.f_92986_.f_91074_.m_150109_().m_36056_();
           if (itemstack.m_41619_()) {
              this.f_92993_ = 0;

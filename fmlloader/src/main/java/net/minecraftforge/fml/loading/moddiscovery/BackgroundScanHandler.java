@@ -19,8 +19,9 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.loading.LoadingModList;
+import net.minecraftforge.fml.loading.LogMarkers;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,8 +30,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-
-import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class BackgroundScanHandler
 {
@@ -87,7 +86,7 @@ public class BackgroundScanHandler
     private void addCompletedFile(final ModFile file, final ModFileScanData modFileScanData, final Throwable throwable) {
         if (throwable != null) {
             status = ScanStatus.ERRORED;
-            LOGGER.error(SCAN,"An error occurred scanning file {}", file, throwable);
+            LOGGER.error(LogMarkers.SCAN,"An error occurred scanning file {}", file, throwable);
         }
         pendingFiles.remove(file);
         scannedFiles.add(file);

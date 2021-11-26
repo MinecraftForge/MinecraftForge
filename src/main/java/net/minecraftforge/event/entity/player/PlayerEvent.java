@@ -219,7 +219,7 @@ public class PlayerEvent extends LivingEvent
     }
 
     /**
-     * Fired when the EntityPlayer is cloned, typically caused by the network sending a RESPAWN_PLAYER event.
+     * Fired when the EntityPlayer is cloned, typically caused by the impl sending a RESPAWN_PLAYER event.
      * Either caused by death, or by traveling from the End to the overworld.
      */
     public static class Clone extends PlayerEvent

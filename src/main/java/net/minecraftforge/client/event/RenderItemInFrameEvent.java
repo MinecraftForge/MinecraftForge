@@ -37,33 +37,33 @@ import javax.annotation.Nonnull;
 @Cancelable
 public class RenderItemInFrameEvent extends Event
 {
-    private final ItemStack item;
-    private final ItemFrame entityItemFrame;
+    private final ItemStack itemStack;
+    private final ItemFrame itemFrameEntity;
     private final ItemFrameRenderer renderer;
-    private final PoseStack matrix;
-    private final MultiBufferSource buffers;
-    private final int light;
+    private final PoseStack poseStack;
+    private final MultiBufferSource multiBufferSource;
+    private final int packedLight;
 
-    public RenderItemInFrameEvent(ItemFrame itemFrame, ItemFrameRenderer renderItemFrame, PoseStack matrix,
-                                  MultiBufferSource buffers, int light)
+    public RenderItemInFrameEvent(ItemFrame itemFrame, ItemFrameRenderer renderItemFrame, PoseStack poseStack,
+                                  MultiBufferSource multiBufferSource, int packedLight)
     {
-        item = itemFrame.getItem();
-        entityItemFrame = itemFrame;
+        itemStack = itemFrame.getItem();
+        itemFrameEntity = itemFrame;
         renderer = renderItemFrame;
-        this.matrix = matrix;
-        this.buffers = buffers;
-        this.light = light;
+        this.poseStack = poseStack;
+        this.multiBufferSource = multiBufferSource;
+        this.packedLight = packedLight;
     }
 
     @Nonnull
-    public ItemStack getItem()
+    public ItemStack getItemStack()
     {
-        return item;
+        return itemStack;
     }
 
-    public ItemFrame getEntityItemFrame()
+    public ItemFrame getItemFrameEntity()
     {
-        return entityItemFrame;
+        return itemFrameEntity;
     }
 
     public ItemFrameRenderer getRenderer()
@@ -71,15 +71,15 @@ public class RenderItemInFrameEvent extends Event
         return renderer;
     }
 
-    public PoseStack getMatrix() {
-        return matrix;
+    public PoseStack getPoseStack() {
+        return poseStack;
     }
 
-    public MultiBufferSource getBuffers() {
-        return buffers;
+    public MultiBufferSource getMultiBufferSource() {
+        return multiBufferSource;
     }
 
-    public int getLight() {
-        return light;
+    public int getPackedLight() {
+        return packedLight;
     }
 }

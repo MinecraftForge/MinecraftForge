@@ -27,7 +27,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -43,14 +43,14 @@ public class GuiLayeringTest
     public static class ClientEvents
     {
         @SubscribeEvent
-        public static void guiOpen(GuiScreenEvent.InitGuiEvent event)
+        public static void guiOpen(ScreenEvent.InitScreenEvent event)
         {
-            if (event.getGui() instanceof AbstractContainerScreen)
+            if (event.getScreen() instanceof AbstractContainerScreen)
             {
-                event.addWidget(new Button(2, 2, 150, 20, new TextComponent("Test Gui Layering"), btn -> {
+                event.addListener(new Button(2, 2, 150, 20, new TextComponent("Test Gui Layering"), btn -> {
                     Minecraft.getInstance().pushGuiLayer(new TestLayer(new TextComponent("LayerScreen")));
                 }));
-                event.addWidget(new Button(2, 25, 150, 20, new TextComponent("Test Gui Normal"), btn -> {
+                event.addListener(new Button(2, 25, 150, 20, new TextComponent("Test Gui Normal"), btn -> {
                     Minecraft.getInstance().setScreen(new TestLayer(new TextComponent("LayerScreen")));
                 }));
             }

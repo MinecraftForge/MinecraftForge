@@ -5,7 +5,7 @@
  import net.minecraft.resources.ResourceLocation;
  
 -public class ServerboundCustomPayloadPacket implements Packet<ServerGamePacketListener> {
-+public class ServerboundCustomPayloadPacket implements Packet<ServerGamePacketListener>, net.minecraftforge.fmllegacy.network.ICustomPacket<ServerboundCustomPayloadPacket> {
++public class ServerboundCustomPayloadPacket implements Packet<ServerGamePacketListener>, net.minecraftforge.network.ICustomPacket<ServerboundCustomPayloadPacket> {
     private static final int f_179586_ = 32767;
     public static final ResourceLocation f_133979_ = new ResourceLocation("brand");
     private final ResourceLocation f_133980_;

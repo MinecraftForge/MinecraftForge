@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/Bootstrap.java
 +++ b/net/minecraft/server/Bootstrap.java
-@@ -50,6 +_,8 @@
+@@ -56,6 +_,8 @@
                 CauldronInteraction.m_175649_();
                 ArgumentTypes.m_121586_();
                 StaticTags.m_13282_();
@@ -9,11 +9,11 @@
                 m_135890_();
              }
           }
-@@ -122,7 +_,6 @@
-          Commands.m_82138_();
+@@ -129,7 +_,6 @@
+          m_197757_();
        }
  
 -      DefaultAttributes.m_22296_();
     }
  
-    private static void m_135890_() {
+    private static void m_197757_() {

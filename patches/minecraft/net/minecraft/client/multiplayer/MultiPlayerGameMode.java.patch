@@ -15,7 +15,7 @@
 -               block.m_5707_(level, p_105268_, blockstate, this.f_105189_.f_91074_);
                 FluidState fluidstate = level.m_6425_(p_105268_);
 -               boolean flag = level.m_7731_(p_105268_, fluidstate.m_76188_(), 11);
-+               boolean flag = blockstate.removedByPlayer(level, p_105268_, f_105189_.f_91074_, false, fluidstate);
++               boolean flag = blockstate.onDestroyedByPlayer(level, p_105268_, f_105189_.f_91074_, false, fluidstate);
                 if (flag) {
                    block.m_6786_(level, p_105268_, blockstate);
                 }

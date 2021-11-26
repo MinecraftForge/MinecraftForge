@@ -29,13 +29,12 @@ public class ForgeCommand
     {
         dispatcher.register(
             LiteralArgumentBuilder.<CommandSourceStack>literal("forge")
-            .then(CommandTps.register())
-            .then(CommandTrack.register())
-            .then(CommandEntity.register())
-            .then(CommandGenerate.register())
-            .then(CommandDimensions.register())
-            .then(CommandSetDimension.register())
-            .then(CommandModList.register())
+            .then(TPSCommand.register())
+            .then(TrackCommand.register())
+            .then(EntityCommand.register())
+            .then(GenerateCommand.register())
+            .then(DimensionsCommand.register())
+            .then(ModListCommand.register())
         );
     }
 }

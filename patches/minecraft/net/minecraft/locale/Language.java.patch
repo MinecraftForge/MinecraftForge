@@ -6,7 +6,7 @@
  
 -      final Map<String, String> map = builder.build();
 +      final Map<String, String> map = new java.util.HashMap<>(builder.build());
-+      net.minecraftforge.fmllegacy.server.LanguageHook.captureLanguageMap(map);
++      net.minecraftforge.server.LanguageHook.captureLanguageMap(map);
        return new Language() {
           public String m_6834_(String p_128127_) {
              return map.getOrDefault(p_128127_, p_128127_);

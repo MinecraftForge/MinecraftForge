@@ -56,13 +56,12 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.data.*;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -194,7 +193,7 @@ public class FullPotsAccessorDemo
         {
             this.plant = plant;
             //noinspection ConstantConditions
-            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Constants.BlockFlags.DEFAULT);
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
             setChanged();
         }
 
@@ -220,7 +219,7 @@ public class FullPotsAccessorDemo
         @Override
         public ClientboundBlockEntityDataPacket getUpdatePacket()
         {
-            return new ClientboundBlockEntityDataPacket(getBlockPos(), -1, getUpdateTag());
+            return ClientboundBlockEntityDataPacket.create(this, be -> be.getUpdateTag());
         }
 
         @Override
@@ -228,7 +227,7 @@ public class FullPotsAccessorDemo
         {
             handleUpdateTag(pkt.getTag());
             //noinspection ConstantConditions
-            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Constants.BlockFlags.DEFAULT);
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
 
         @Override

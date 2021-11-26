@@ -9,7 +9,7 @@
     private boolean f_98515_;
     private final Map<ResourceLocation, Tag<Item>> f_98516_ = Maps.newTreeMap();
  
-@@ -242,6 +_,12 @@
+@@ -233,6 +_,12 @@
     protected void m_7856_() {
        if (this.f_96541_.f_91072_.m_105290_()) {
           super.m_7856_();
@@ -22,7 +22,7 @@
           this.f_96541_.f_91068_.m_90926_(true);
           this.f_98510_ = new EditBox(this.f_96547_, this.f_97735_ + 82, this.f_97736_ + 6, 80, 9, new TranslatableComponent("itemGroup.search"));
           this.f_98510_.m_94199_(50);
-@@ -283,7 +_,7 @@
+@@ -274,7 +_,7 @@
     public boolean m_5534_(char p_98521_, int p_98522_) {
        if (this.f_98514_) {
           return false;
@@ -31,7 +31,7 @@
           return false;
        } else {
           String s = this.f_98510_.m_94155_();
-@@ -301,7 +_,7 @@
+@@ -292,7 +_,7 @@
  
     public boolean m_7933_(int p_98547_, int p_98548_, int p_98549_) {
        this.f_98514_ = false;
@@ -40,7 +40,7 @@
           if (this.f_96541_.f_91066_.f_92098_.m_90832_(p_98547_, p_98548_)) {
              this.f_98514_ = true;
              this.m_98560_(CreativeModeTab.f_40754_);
-@@ -338,6 +_,32 @@
+@@ -329,6 +_,32 @@
     private void m_98630_() {
        (this.f_97732_).f_98639_.clear();
        this.f_98516_.clear();
@@ -73,7 +73,7 @@
        String s = this.f_98510_.m_94155_();
        if (s.isEmpty()) {
           for(Item item : Registry.f_122827_) {
-@@ -383,9 +_,9 @@
+@@ -374,9 +_,9 @@
  
     protected void m_7027_(PoseStack p_98616_, int p_98617_, int p_98618_) {
        CreativeModeTab creativemodetab = CreativeModeTab.f_40748_[f_98507_];
@@ -85,7 +85,7 @@
        }
  
     }
-@@ -396,7 +_,7 @@
+@@ -387,7 +_,7 @@
           double d1 = p_98532_ - (double)this.f_97736_;
  
           for(CreativeModeTab creativemodetab : CreativeModeTab.f_40748_) {
@@ -94,7 +94,7 @@
                 return true;
              }
           }
-@@ -417,7 +_,7 @@
+@@ -408,7 +_,7 @@
           this.f_98509_ = false;
  
           for(CreativeModeTab creativemodetab : CreativeModeTab.f_40748_) {
@@ -103,7 +103,7 @@
                 this.m_98560_(creativemodetab);
                 return true;
              }
-@@ -428,12 +_,15 @@
+@@ -419,12 +_,15 @@
     }
  
     private boolean m_98631_() {
@@ -119,7 +119,7 @@
        this.f_97737_.clear();
        (this.f_97732_).f_98639_.clear();
        if (p_98561_ == CreativeModeTab.f_40760_) {
-@@ -510,13 +_,15 @@
+@@ -501,13 +_,15 @@
        }
  
        if (this.f_98510_ != null) {
@@ -136,7 +136,7 @@
  
              this.m_98630_();
           } else {
-@@ -576,16 +_,34 @@
+@@ -567,16 +_,34 @@
        this.m_7333_(p_98577_);
        super.m_6305_(p_98577_, p_98578_, p_98579_, p_98580_);
  
@@ -173,7 +173,7 @@
        RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
        this.m_7025_(p_98577_, p_98578_, p_98579_);
     }
-@@ -620,7 +_,7 @@
+@@ -611,7 +_,7 @@
              list1.add(1, creativemodetab.m_40786_().m_6881_().m_130940_(ChatFormatting.BLUE));
           }
  
@@ -182,7 +182,7 @@
        } else {
           super.m_6057_(p_98590_, p_98591_, p_98592_, p_98593_);
        }
-@@ -631,16 +_,32 @@
+@@ -622,16 +_,32 @@
        RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
        CreativeModeTab creativemodetab = CreativeModeTab.f_40748_[f_98507_];
  
@@ -219,7 +219,7 @@
        this.m_93228_(p_98572_, this.f_97735_, this.f_97736_, 0, 0, this.f_97726_, this.f_97727_);
        this.f_98510_.m_6305_(p_98572_, p_98574_, p_98575_, p_98573_);
        RenderSystem.m_157429_(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -648,11 +_,14 @@
+@@ -639,11 +_,14 @@
        int j = this.f_97736_ + 18;
        int k = j + 112;
        RenderSystem.m_157427_(GameRenderer::m_172817_);
@@ -235,7 +235,7 @@
        this.m_98581_(p_98572_, creativemodetab);
        if (creativemodetab == CreativeModeTab.f_40761_) {
           InventoryScreen.m_98850_(this.f_97735_ + 88, this.f_97736_ + 45, 20, (float)(this.f_97735_ + 88 - p_98574_), (float)(this.f_97736_ + 45 - 30 - p_98575_), this.f_96541_.f_91074_);
-@@ -661,6 +_,7 @@
+@@ -652,6 +_,7 @@
     }
  
     protected boolean m_98562_(CreativeModeTab p_98563_, double p_98564_, double p_98565_) {
@@ -243,15 +243,15 @@
        int i = p_98563_.m_40793_();
        int j = 28 * i;
        int k = 0;
-@@ -729,6 +_,7 @@
-          i1 = i1 + (this.f_97727_ - 4);
+@@ -720,6 +_,7 @@
+          i1 += this.f_97727_ - 4;
        }
  
 +      RenderSystem.m_69478_(); //Forge: Make sure blend is enabled else tabs show a white border.
        this.m_93228_(p_98582_, l, i1, j, k, 28, 32);
        this.f_96542_.f_115093_ = 100.0F;
-       l = l + 6;
-@@ -918,6 +_,22 @@
+       l += 6;
+@@ -909,6 +_,22 @@
  
        public boolean m_8010_(Player p_98665_) {
           return this.f_98655_.m_8010_(p_98665_);

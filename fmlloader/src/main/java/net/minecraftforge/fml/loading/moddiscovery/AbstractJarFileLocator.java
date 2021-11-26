@@ -21,6 +21,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import cpw.mods.jarhandling.SecureJar;
 import cpw.mods.jarhandling.JarMetadata;
+import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.IConfigurable;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
@@ -42,8 +43,6 @@ import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
-
 public abstract class AbstractJarFileLocator implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
     protected static final String MODS_TOML = "META-INF/mods.toml";
@@ -51,14 +50,14 @@ public abstract class AbstractJarFileLocator implements IModLocator {
 
     @Override
     public void scanFile(final IModFile file, final Consumer<Path> pathConsumer) {
-        LOGGER.debug(SCAN,"Scan started: {}", file);
+        LOGGER.debug(LogMarkers.SCAN,"Scan started: {}", file);
         final Function<Path, SecureJar.Status> status = p->file.getSecureJar().verifyPath(p);
         try (Stream<Path> files = Files.find(file.getSecureJar().getRootPath(), Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             file.setSecurityStatus(files.peek(pathConsumer).map(status).reduce((s1, s2)-> SecureJar.Status.values()[Math.min(s1.ordinal(), s2.ordinal())]).orElse(SecureJar.Status.INVALID));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        LOGGER.debug(SCAN,"Scan finished: {}", file);
+        LOGGER.debug(LogMarkers.SCAN,"Scan finished: {}", file);
     }
 
     @Override
@@ -89,10 +88,10 @@ public abstract class AbstractJarFileLocator implements IModLocator {
         IModFile mod = null;
         var type = sj.getManifest().getMainAttributes().getValue(ModFile.TYPE);
         if (sj.findFile(MODS_TOML).isPresent()) {
-            LOGGER.debug(SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
-            mod = ModFile.newFMLInstance(this, sj);
+            LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MODS_TOML, type, path);
+            mod = new ModFile(sj, this, ModFileParser::modsTomlParser);
         } else if (type != null) {
-            LOGGER.debug(SCAN, "Found {} mod of type {}: {}", MANIFEST, type, path);
+            LOGGER.debug(LogMarkers.SCAN, "Found {} mod of type {}: {}", MANIFEST, type, path);
             mod = new ModFile(sj, this, this::manifestParser);
         } else {
             return Optional.empty();

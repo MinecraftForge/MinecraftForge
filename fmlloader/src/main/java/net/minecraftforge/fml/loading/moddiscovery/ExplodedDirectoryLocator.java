@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.logging.log4j.LogManager;
@@ -34,9 +35,6 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
-import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
-
 public class ExplodedDirectoryLocator implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -47,8 +45,12 @@ public class ExplodedDirectoryLocator implements IModLocator {
 
     @Override
     public List<IModFile> scanMods() {
-        explodedMods.forEach(explodedMod -> ModJarMetadata.buildFile(this, jar ->jar.findFile("/META-INF/mods.toml").isPresent(), explodedMod.paths().toArray(Path[]::new))
-                .ifPresentOrElse(f->mods.put(explodedMod, f), () -> LOGGER.warn(LOADING, "Failed to find exploded resource mods.toml in directory {}", explodedMod.paths().get(0).toString())));
+        explodedMods.forEach(explodedMod ->
+                ModJarMetadata.buildFile(this,
+                        jar->jar.findFile("/META-INF/mods.toml").isPresent(),
+                        (a,b) -> true,
+                        explodedMod.paths().toArray(Path[]::new))
+                .ifPresentOrElse(f->mods.put(explodedMod, f), () -> LOGGER.warn(LogMarkers.LOADING, "Failed to find exploded resource mods.toml in directory {}", explodedMod.paths().get(0).toString())));
         return List.copyOf(mods.values());
     }
 
@@ -59,13 +61,13 @@ public class ExplodedDirectoryLocator implements IModLocator {
 
     @Override
     public void scanFile(final IModFile file, final Consumer<Path> pathConsumer) {
-        LOGGER.debug(SCAN,"Scanning exploded directory {}", file.getFilePath().toString());
+        LOGGER.debug(LogMarkers.SCAN,"Scanning exploded directory {}", file.getFilePath().toString());
         try (Stream<Path> files = Files.find(file.getSecureJar().getRootPath(), Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        LOGGER.debug(SCAN,"Exploded directory scan complete {}", file.getFilePath().toString());
+        LOGGER.debug(LogMarkers.SCAN,"Exploded directory scan complete {}", file.getFilePath().toString());
     }
 
     @Override

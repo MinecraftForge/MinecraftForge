@@ -8,7 +8,7 @@
 -                  TntBlock.m_57433_(level, blockpos);
 -                  level.m_7471_(blockpos, false);
 +               if (blockstate.isFlammable(level, blockpos, p_123412_.m_6414_().m_61143_(DispenserBlock.f_52659_).m_122424_())) {
-+                  blockstate.catchFire(level, blockpos, p_123412_.m_6414_().m_61143_(DispenserBlock.f_52659_).m_122424_(), null);
++                  blockstate.onCaughtFire(level, blockpos, p_123412_.m_6414_().m_61143_(DispenserBlock.f_52659_).m_122424_(), null);
 +                  if (blockstate.m_60734_() instanceof TntBlock)
 +                     level.m_7471_(blockpos, false);
                 } else {

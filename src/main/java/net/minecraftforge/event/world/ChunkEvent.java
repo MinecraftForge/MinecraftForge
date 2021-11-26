@@ -24,7 +24,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkBiomeContainer;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.MinecraftForge;
@@ -66,7 +65,7 @@ public class ChunkEvent extends WorldEvent
     /**
      * ChunkEvent.Load is fired when vanilla Minecraft attempts to load a Chunk into the world.<br>
      * This event is fired during chunk loading in <br>
-     * {@link ClientChunkCache#replaceWithPacketData(int, int, ChunkBiomeContainer, FriendlyByteBuf, CompoundTag, BitSet)}, <br>
+     * 
      * Chunk.onChunkLoad(). <br>
      * <strong>Note:</strong> This event may be called before the underlying {@link LevelChunk} is promoted to {@link ChunkStatus#FULL}. You will cause chunk loading deadlocks if you don't delay your world interactions.<br>
      * <br>

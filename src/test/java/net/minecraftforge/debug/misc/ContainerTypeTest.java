@@ -38,13 +38,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.extensions.IForgeContainerType;
+import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod("containertypetest")
@@ -101,7 +101,7 @@ public class ContainerTypeTest
 
     private void registerContainers(final RegistryEvent.Register<MenuType<?>> event)
     {
-        event.getRegistry().register(IForgeContainerType.create(TestContainer::new).setRegistryName("container"));
+        event.getRegistry().register(IForgeMenuType.create(TestContainer::new).setRegistryName("container"));
     }
     
     private void setup(FMLClientSetupEvent event)

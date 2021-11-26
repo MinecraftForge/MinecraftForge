@@ -23,18 +23,18 @@
  
 @@ -218,9 +_,9 @@
  
-    public CompoundTag m_6945_(CompoundTag p_58379_) {
-       super.m_6945_(p_58379_);
--      p_58379_.m_128376_("BurnTime", (short)this.f_58316_);
--      p_58379_.m_128376_("CookTime", (short)this.f_58318_);
--      p_58379_.m_128376_("CookTimeTotal", (short)this.f_58319_);
-+      p_58379_.m_128405_("BurnTime", this.f_58316_);
-+      p_58379_.m_128405_("CookTime", this.f_58318_);
-+      p_58379_.m_128405_("CookTimeTotal", this.f_58319_);
-       ContainerHelper.m_18973_(p_58379_, this.f_58310_);
+    protected void m_183515_(CompoundTag p_187452_) {
+       super.m_183515_(p_187452_);
+-      p_187452_.m_128376_("BurnTime", (short)this.f_58316_);
+-      p_187452_.m_128376_("CookTime", (short)this.f_58318_);
+-      p_187452_.m_128376_("CookTimeTotal", (short)this.f_58319_);
++      p_187452_.m_128405_("BurnTime", this.f_58316_);
++      p_187452_.m_128405_("CookTime", this.f_58318_);
++      p_187452_.m_128405_("CookTimeTotal", this.f_58319_);
+       ContainerHelper.m_18973_(p_187452_, this.f_58310_);
        CompoundTag compoundtag = new CompoundTag();
-       this.f_58320_.forEach((p_58382_, p_58383_) -> {
-@@ -239,30 +_,32 @@
+       this.f_58320_.forEach((p_187449_, p_187450_) -> {
+@@ -238,34 +_,35 @@
  
        ItemStack itemstack = p_155017_.f_58310_.get(1);
        if (p_155017_.m_58425_() || !itemstack.m_41619_() && !p_155017_.f_58310_.get(0).m_41619_()) {
@@ -73,7 +73,11 @@
                    p_155017_.m_6029_(recipe);
                 }
  
-@@ -287,9 +_,9 @@
+-               flag1 = true;
+             }
+          } else {
+             p_155017_.f_58318_ = 0;
+@@ -286,9 +_,9 @@
  
     }
  
@@ -85,7 +89,7 @@
           if (itemstack.m_41619_()) {
              return false;
           } else {
-@@ -298,10 +_,10 @@
+@@ -297,10 +_,10 @@
                 return true;
              } else if (!itemstack1.m_41656_(itemstack)) {
                 return false;
@@ -98,7 +102,7 @@
              }
           }
        } else {
-@@ -309,15 +_,15 @@
+@@ -308,15 +_,15 @@
        }
     }
  
@@ -118,7 +122,7 @@
           }
  
           if (itemstack.m_150930_(Blocks.f_50057_.m_5456_()) && !p_155028_.get(1).m_41619_() && p_155028_.get(1).m_150930_(Items.f_42446_)) {
-@@ -336,7 +_,7 @@
+@@ -335,7 +_,7 @@
           return 0;
        } else {
           Item item = p_58343_.m_41720_();
@@ -127,7 +131,7 @@
        }
     }
  
-@@ -345,7 +_,7 @@
+@@ -344,7 +_,7 @@
     }
  
     public static boolean m_58399_(ItemStack p_58400_) {
@@ -136,7 +140,7 @@
     }
  
     public int[] m_7071_(Direction p_58363_) {
-@@ -425,7 +_,7 @@
+@@ -424,7 +_,7 @@
           return true;
        } else {
           ItemStack itemstack = this.f_58310_.get(1);
@@ -145,7 +149,7 @@
        }
     }
  
-@@ -483,5 +_,34 @@
+@@ -482,5 +_,34 @@
           p_58342_.m_36491_(itemstack);
        }
  

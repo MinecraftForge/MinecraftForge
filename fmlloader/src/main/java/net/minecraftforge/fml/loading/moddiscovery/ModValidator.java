@@ -2,7 +2,10 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.api.ITransformationService;
-import net.minecraftforge.fml.loading.*;
+import net.minecraftforge.fml.loading.EarlyLoadingException;
+import net.minecraftforge.fml.loading.LoadingModList;
+import net.minecraftforge.fml.loading.LogMarkers;
+import net.minecraftforge.fml.loading.ModSorter;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
@@ -10,7 +13,6 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class ModValidator {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -34,7 +36,7 @@ public class ModValidator {
 
     public void stage1Validation() {
         brokenFiles = validateFiles(candidateMods);
-        LOGGER.debug(SCAN,"Found {} mod files with {} mods", candidateMods::size, ()-> candidateMods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
+        LOGGER.debug(LogMarkers.SCAN,"Found {} mod files with {} mods", candidateMods::size, ()-> candidateMods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found "+ candidateMods.size()+" modfiles to load"));
     }
 
@@ -45,7 +47,7 @@ public class ModValidator {
         {
             ModFile mod = iterator.next();
             if (!mod.getLocator().isValid(mod) || !mod.identifyMods()) {
-                LOGGER.warn(SCAN, "File {} has been ignored - it is invalid", mod.getFilePath());
+                LOGGER.warn(LogMarkers.SCAN, "File {} has been ignored - it is invalid", mod.getFilePath());
                 iterator.remove();
                 brokenFiles.add(mod);
             }

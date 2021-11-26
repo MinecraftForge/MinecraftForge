@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/HopperBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/HopperBlockEntity.java
-@@ -104,7 +_,7 @@
+@@ -103,7 +_,7 @@
           if (!p_155582_.m_59407_() && p_155581_.m_61143_(HopperBlock.f_54022_)) {
              boolean flag = false;
              if (!p_155582_.m_7983_()) {
@@ -9,7 +9,7 @@
              }
  
              if (!p_155582_.m_59404_()) {
-@@ -132,7 +_,8 @@
+@@ -131,7 +_,8 @@
        return true;
     }
  
@@ -19,7 +19,7 @@
        Container container = m_155592_(p_155563_, p_155564_, p_155565_);
        if (container == null) {
           return false;
-@@ -177,6 +_,8 @@
+@@ -176,6 +_,8 @@
     }
  
     public static boolean m_155552_(Level p_155553_, Hopper p_155554_) {
@@ -28,7 +28,7 @@
        Container container = m_155596_(p_155553_, p_155554_);
        if (container != null) {
           Direction direction = Direction.DOWN;
-@@ -400,5 +_,14 @@
+@@ -399,5 +_,14 @@
  
     protected AbstractContainerMenu m_6555_(int p_59312_, Inventory p_59313_) {
        return new HopperMenu(p_59312_, p_59313_, this);

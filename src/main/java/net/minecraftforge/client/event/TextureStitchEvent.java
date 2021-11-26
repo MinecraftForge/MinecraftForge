@@ -29,16 +29,16 @@ import java.util.Set;
 
 public class TextureStitchEvent extends Event implements IModBusEvent
 {
-    private final TextureAtlas map;
+    private final TextureAtlas atlas;
 
-    public TextureStitchEvent(TextureAtlas map)
+    public TextureStitchEvent(TextureAtlas atlas)
     {
-        this.map = map;
+        this.atlas = atlas;
     }
 
-    public TextureAtlas getMap()
+    public TextureAtlas getAtlas()
     {
-        return map;
+        return atlas;
     }
 
     /**

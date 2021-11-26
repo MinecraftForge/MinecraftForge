@@ -9,7 +9,7 @@
     }
  
     public boolean m_8045_() {
-@@ -89,7 +_,7 @@
+@@ -93,7 +_,7 @@
           this.f_25805_.m_21563_().m_24960_(livingentity, 30.0F, 30.0F);
           if (this.f_25806_ == RangedCrossbowAttackGoal.CrossbowState.UNCHARGED) {
              if (!flag2) {
@@ -18,7 +18,7 @@
                 this.f_25806_ = RangedCrossbowAttackGoal.CrossbowState.CHARGING;
                 this.f_25805_.m_6136_(true);
              }
-@@ -113,7 +_,7 @@
+@@ -117,7 +_,7 @@
              }
           } else if (this.f_25806_ == RangedCrossbowAttackGoal.CrossbowState.READY_TO_ATTACK && flag) {
              this.f_25805_.m_6504_(livingentity, 1.0F);

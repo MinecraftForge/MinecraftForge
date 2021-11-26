@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/MapRenderer.java
 +++ b/net/minecraft/client/gui/MapRenderer.java
-@@ -123,6 +_,7 @@
+@@ -118,6 +_,7 @@
  
           for(MapDecoration mapdecoration : this.f_93280_.m_164811_()) {
              if (!p_93294_ || mapdecoration.m_77809_()) {

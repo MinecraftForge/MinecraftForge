@@ -1,9 +1,9 @@
 --- a/net/minecraft/world/level/levelgen/structure/StructurePiece.java
 +++ b/net/minecraft/world/level/levelgen/structure/StructurePiece.java
-@@ -70,6 +_,9 @@
+@@ -72,6 +_,9 @@
     }
  
-    public final CompoundTag m_163549_(ServerLevel p_163550_) {
+    public final CompoundTag m_192644_(StructurePieceSerializationContext p_192645_) {
 +      if (Registry.f_122843_.m_7981_(this.m_73550_()) == null) { // FORGE: Friendlier error then the Null String error below.
 +         throw new RuntimeException("StructurePiece \"" + this.getClass().getName() + "\": \"" + this.m_73550_() + "\" missing ID Mapping, Modder see MapGenStructureIO");
 +      }

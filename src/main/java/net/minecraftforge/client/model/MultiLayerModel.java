@@ -149,7 +149,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         @Override
         public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData)
         {
-            RenderType layer = MinecraftForgeClient.getRenderLayer();
+            RenderType layer = MinecraftForgeClient.getRenderType();
             if (layer == null)
             {
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
@@ -175,7 +175,7 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         }
 
         @Override
-        public boolean isAmbientOcclusion(BlockState state)
+        public boolean useAmbientOcclusion(BlockState state)
         {
             return ambientOcclusion;
         }

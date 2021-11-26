@@ -100,7 +100,7 @@ public interface IForgeFluid
 
     /**
      * Queries if this fluid should render in a given layer.
-     * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
+     * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderType()} to alter the model based on layer.
      */
     /* TODO: reimplement
     default boolean canRenderInLayer(IFluidState state, BlockRenderLayer layer)

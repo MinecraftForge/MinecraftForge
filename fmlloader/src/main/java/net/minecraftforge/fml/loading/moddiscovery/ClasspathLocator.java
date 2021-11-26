@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.fml.loading.LogMarkers;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,7 +37,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class ClasspathLocator extends AbstractJarFileLocator {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -62,7 +62,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
 
             return paths.build();
         } catch (IOException e) {
-            LOGGER.fatal(SCAN, "Error trying to find resources", e);
+            LOGGER.fatal(LogMarkers.SCAN, "Error trying to find resources", e);
             throw new RuntimeException(e);
         }
     }
@@ -99,7 +99,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
             //LOGGER.debug(CORE, "Found JAR {} at path {}", jarName, path.toString());
             return path;
         } catch (NullPointerException | URISyntaxException e) {
-            LOGGER.fatal(SCAN, "Failed to find JAR for class {} - {}", resourceName, jarName);
+            LOGGER.fatal(LogMarkers.SCAN, "Failed to find JAR for class {} - {}", resourceName, jarName);
             throw new RuntimeException("Unable to locate "+resourceName+" - "+jarName, e);
         }
     }

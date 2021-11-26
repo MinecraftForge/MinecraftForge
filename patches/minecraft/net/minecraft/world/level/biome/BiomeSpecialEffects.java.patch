@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/biome/BiomeSpecialEffects.java
 +++ b/net/minecraft/world/level/biome/BiomeSpecialEffects.java
-@@ -202,7 +_,7 @@
+@@ -203,7 +_,7 @@
        }
     }
  
@@ -9,7 +9,7 @@
        NONE("none") {
           public int m_6583_(double p_48081_, double p_48082_, int p_48083_) {
              return p_48083_;
-@@ -221,17 +_,35 @@
+@@ -222,17 +_,35 @@
        };
  
        private final String f_48051_;

@@ -35,7 +35,7 @@ public class BlockInfo
     private static final Direction[] SIDES = Direction.values();
 
     private final BlockColors colors;
-    private BlockAndTintGetter world;
+    private BlockAndTintGetter level;
     private BlockState state;
     private BlockPos blockPos;
 
@@ -62,18 +62,13 @@ public class BlockInfo
     {
         if(cachedTint == tint) return cachedMultiplier;
         cachedTint = tint;
-        cachedMultiplier = colors.getColor(state, world, blockPos, tint);
+        cachedMultiplier = colors.getColor(state, level, blockPos, tint);
         return cachedMultiplier;
     }
 
-    @Deprecated
-    public void updateShift()
+    public void setLevel(BlockAndTintGetter level)
     {
-    }
-
-    public void setWorld(BlockAndTintGetter world)
-    {
-        this.world = world;
+        this.level = level;
         cachedTint = -1;
         cachedMultiplier = -1;
     }
@@ -94,7 +89,7 @@ public class BlockInfo
 
     public void reset()
     {
-        this.world = null;
+        this.level = null;
         this.state = null;
         this.blockPos = null;
         cachedTint = -1;
@@ -119,24 +114,24 @@ public class BlockInfo
                 for(int z = 0; z <= 2; z++)
                 {
                     BlockPos pos = blockPos.offset(x - 1, y - 1, z - 1);
-                    BlockState state = world.getBlockState(pos);
-                    t[x][y][z] = state.getLightBlock(world, pos) < 15;
-                    int brightness = LevelRenderer.getLightColor(world, pos);
+                    BlockState state = level.getBlockState(pos);
+                    t[x][y][z] = state.getLightBlock(level, pos) < 15;
+                    int brightness = LevelRenderer.getLightColor(level, pos);
                     s[x][y][z] = LightTexture.sky(brightness);
                     b[x][y][z] = LightTexture.block(brightness);
-                    ao[x][y][z] = state.getShadeBrightness(world, pos);
+                    ao[x][y][z] = state.getShadeBrightness(level, pos);
                 }
             }
         }
         for(Direction side : SIDES)
         {
             BlockPos pos = blockPos.relative(side);
-            BlockState state = world.getBlockState(pos);
+            BlockState state = level.getBlockState(pos);
 
             BlockState thisStateShape = this.state.canOcclude() && this.state.useShapeForLightOcclusion() ? this.state : Blocks.AIR.defaultBlockState();
             BlockState otherStateShape = state.canOcclude() && state.useShapeForLightOcclusion() ? state : Blocks.AIR.defaultBlockState();
 
-            if(state.getLightBlock(world, pos) == 15 || Shapes.faceShapeOccludes(thisStateShape.getFaceOcclusionShape(world, blockPos, side), otherStateShape.getFaceOcclusionShape(world, pos, side.getOpposite())))
+            if(state.getLightBlock(level, pos) == 15 || Shapes.faceShapeOccludes(thisStateShape.getFaceOcclusionShape(level, blockPos, side), otherStateShape.getFaceOcclusionShape(level, pos, side.getOpposite())))
             {
                 int x = side.getStepX() + 1;
                 int y = side.getStepY() + 1;
@@ -188,19 +183,19 @@ public class BlockInfo
 
     public void updateFlatLighting()
     {
-        full = Block.isShapeFullBlock(state.getCollisionShape(world, blockPos));
-        packed[0] = LevelRenderer.getLightColor(world, blockPos);
+        full = Block.isShapeFullBlock(state.getCollisionShape(level, blockPos));
+        packed[0] = LevelRenderer.getLightColor(level, blockPos);
 
         for (Direction side : SIDES)
         {
             int i = side.ordinal() + 1;
-            packed[i] = LevelRenderer.getLightColor(world, blockPos.relative(side));
+            packed[i] = LevelRenderer.getLightColor(level, blockPos.relative(side));
         }
     }
 
-    public BlockAndTintGetter getWorld()
+    public BlockAndTintGetter getLevel()
     {
-        return world;
+        return level;
     }
 
     public BlockState getState()
@@ -241,24 +236,6 @@ public class BlockInfo
     public boolean isFullCube()
     {
         return full;
-    }
-
-    @Deprecated
-    public float getShx()
-    {
-        return 0;
-    }
-
-    @Deprecated
-    public float getShy()
-    {
-        return 0;
-    }
-
-    @Deprecated
-    public float getShz()
-    {
-        return 0;
     }
 
     public int getCachedTint()

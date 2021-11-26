@@ -25,10 +25,10 @@
              this.f_25543_ = this.f_25540_.m_21573_().m_6570_(livingentity, 0);
              if (this.f_25543_ != null) {
                 return true;
-@@ -93,6 +_,18 @@
-          this.f_25545_ = livingentity.m_20186_();
-          this.f_25546_ = livingentity.m_20189_();
-          this.f_25547_ = 4 + this.f_25540_.m_21187_().nextInt(7);
+@@ -98,6 +_,18 @@
+             this.f_25545_ = livingentity.m_20186_();
+             this.f_25546_ = livingentity.m_20189_();
+             this.f_25547_ = 4 + this.f_25540_.m_21187_().nextInt(7);
 +         if (this.canPenalize) {
 +            this.f_25547_ += failedPathFindingPenalty;
 +            if (this.f_25540_.m_21573_().m_26570_() != null) {
@@ -41,6 +41,6 @@
 +               failedPathFindingPenalty += 10;
 +            }
 +         }
-          if (d0 > 1024.0D) {
-             this.f_25547_ += 10;
-          } else if (d0 > 256.0D) {
+             if (d0 > 1024.0D) {
+                this.f_25547_ += 10;
+             } else if (d0 > 256.0D) {

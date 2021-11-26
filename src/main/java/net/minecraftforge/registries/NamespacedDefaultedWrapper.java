@@ -111,6 +111,12 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     }
 
     @Override
+    public Optional<ResourceKey<T>> getResourceKey(T p_122755_)
+    {
+        return this.delegate.getResourceKey(p_122755_);
+    }
+
+    @Override
     public boolean containsKey(ResourceLocation key)
     {
         return this.delegate.containsKey(key);
@@ -127,6 +133,11 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     public T byId(int id)
     {
         return this.delegate.getValue(id);
+    }
+
+    @Override
+    public Lifecycle lifecycle(T p_122764_) {
+        return Lifecycle.stable();
     }
 
     @Override

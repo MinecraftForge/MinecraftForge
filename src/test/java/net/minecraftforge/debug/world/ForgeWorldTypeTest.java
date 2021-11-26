@@ -23,14 +23,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ForgeWorldTypeScreens;
-import net.minecraftforge.common.world.ForgeWorldType;
+import net.minecraftforge.client.ForgeWorldPresetScreens;
+import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -43,26 +44,26 @@ import net.minecraftforge.registries.ObjectHolder;
 public class ForgeWorldTypeTest
 {
     @ObjectHolder("forge_world_type_test:test_world_type")
-    public static ForgeWorldType testWorldType;
+    public static ForgeWorldPreset testWorldType;
 
     public ForgeWorldTypeTest()
     {
-        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ForgeWorldType.class, this::registerWorldTypes);
+        FMLJavaModLoadingContext.get().getModEventBus().addGenericListener(ForgeWorldPreset.class, this::registerWorldTypes);
     }
 
-    private void registerWorldTypes(RegistryEvent.Register<ForgeWorldType> event)
+    private void registerWorldTypes(RegistryEvent.Register<ForgeWorldPreset> event)
     {
         event.getRegistry().registerAll(
-                new ForgeWorldType(WorldGenSettings::makeDefaultOverworld).setRegistryName("test_world_type")
+                new ForgeWorldPreset(WorldGenSettings::makeDefaultOverworld).setRegistryName("test_world_type")
         );
         event.getRegistry().registerAll(
-                new ForgeWorldType(this::createChunkGenerator).setRegistryName("test_world_type2")
+                new ForgeWorldPreset(this::createChunkGenerator).setRegistryName("test_world_type2")
         );
     }
 
-    private ChunkGenerator createChunkGenerator(Registry<Biome> biomes, Registry<NoiseGeneratorSettings> dimensionSettings, long seed, String settings)
+    private ChunkGenerator createChunkGenerator(RegistryAccess registry, long seed, String settings)
     {
-        return WorldGenSettings.makeDefaultOverworld(biomes, dimensionSettings, seed);
+        return WorldGenSettings.makeDefaultOverworld(registry, seed);
     }
 
     @Mod.EventBusSubscriber(modid="forge_world_type_test", value=Dist.CLIENT, bus=Bus.MOD)
@@ -71,7 +72,7 @@ public class ForgeWorldTypeTest
         @SubscribeEvent
         public static void registerWorldTypeScreenFactories(FMLClientSetupEvent event)
         {
-            ForgeWorldTypeScreens.registerFactory(testWorldType, (returnTo, dimensionGeneratorSettings) -> new Screen(testWorldType.getDisplayName())
+            ForgeWorldPresetScreens.registerPresetEditor(testWorldType, (returnTo, dimensionGeneratorSettings) -> new Screen(testWorldType.getDisplayName())
             {
                 @Override
                 protected void init()

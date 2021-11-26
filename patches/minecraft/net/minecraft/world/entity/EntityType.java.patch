@@ -16,7 +16,7 @@
 +   private final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier;
 +   private final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier;
 +   private final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier;
-+   private final java.util.function.BiFunction<net.minecraftforge.fmllegacy.network.FMLPlayMessages.SpawnEntity, Level, T> customClientFactory;
++   private final java.util.function.BiFunction<net.minecraftforge.network.PlayMessages.SpawnEntity, Level, T> customClientFactory;
 +   private final net.minecraftforge.common.util.ReverseTagWrapper<EntityType<?>> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.EntityTypeTags::m_13126_);
 +
     private static <T extends Entity> EntityType<T> m_20634_(String p_20635_, EntityType.Builder<T> p_20636_) {
@@ -28,7 +28,7 @@
     public EntityType(EntityType.EntityFactory<T> p_20574_, MobCategory p_20575_, boolean p_20576_, boolean p_20577_, boolean p_20578_, boolean p_20579_, ImmutableSet<Block> p_20580_, EntityDimensions p_20581_, int p_20582_, int p_20583_) {
 +       this(p_20574_, p_20575_, p_20576_, p_20577_, p_20578_, p_20579_, p_20580_, p_20581_, p_20582_, p_20583_, EntityType::defaultVelocitySupplier, EntityType::defaultTrackingRangeSupplier, EntityType::defaultUpdateIntervalSupplier, null);
 +   }
-+   public EntityType(EntityType.EntityFactory<T> p_20574_, MobCategory p_20575_, boolean p_20576_, boolean p_20577_, boolean p_20578_, boolean p_20579_, ImmutableSet<Block> p_20580_, EntityDimensions p_20581_, int p_20582_, int p_20583_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.fmllegacy.network.FMLPlayMessages.SpawnEntity, Level, T> customClientFactory) {
++   public EntityType(EntityType.EntityFactory<T> p_20574_, MobCategory p_20575_, boolean p_20576_, boolean p_20577_, boolean p_20578_, boolean p_20579_, ImmutableSet<Block> p_20580_, EntityDimensions p_20581_, int p_20582_, int p_20583_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.network.PlayMessages.SpawnEntity, Level, T> customClientFactory) {
        this.f_20535_ = p_20574_;
        this.f_20536_ = p_20575_;
        this.f_20541_ = p_20579_;
@@ -51,7 +51,7 @@
           p_20601_.m_47205_(t);
        }
  
-@@ -543,14 +_,23 @@
+@@ -541,14 +_,23 @@
     }
  
     public int m_20681_() {
@@ -75,11 +75,11 @@
        return this != f_20532_ && this != f_20467_ && this != f_20496_ && this != f_20549_ && this != f_20462_ && this != f_147033_ && this != f_20464_ && this != f_20506_ && this != f_20564_ && this != f_20569_;
     }
  
-@@ -567,6 +_,19 @@
+@@ -565,6 +_,19 @@
        return Entity.class;
     }
  
-+   public T customClientSpawn(net.minecraftforge.fmllegacy.network.FMLPlayMessages.SpawnEntity packet, Level world) {
++   public T customClientSpawn(net.minecraftforge.network.PlayMessages.SpawnEntity packet, Level world) {
 +       if (customClientFactory == null) return this.m_20615_(world);
 +       return customClientFactory.apply(packet, world);
 +   }
@@ -95,19 +95,19 @@
     public static class Builder<T extends Entity> {
        private final EntityType.EntityFactory<T> f_20685_;
        private final MobCategory f_20686_;
-@@ -579,6 +_,11 @@
+@@ -577,6 +_,11 @@
        private int f_20693_ = 3;
        private EntityDimensions f_20694_ = EntityDimensions.m_20395_(0.6F, 1.8F);
  
 +      private java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier = EntityType::defaultVelocitySupplier;
 +      private java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier = EntityType::defaultTrackingRangeSupplier;
 +      private java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier = EntityType::defaultUpdateIntervalSupplier;
-+      private java.util.function.BiFunction<net.minecraftforge.fmllegacy.network.FMLPlayMessages.SpawnEntity, Level, T> customClientFactory;
++      private java.util.function.BiFunction<net.minecraftforge.network.PlayMessages.SpawnEntity, Level, T> customClientFactory;
 +
        private Builder(EntityType.EntityFactory<T> p_20696_, MobCategory p_20697_) {
           this.f_20685_ = p_20696_;
           this.f_20686_ = p_20697_;
-@@ -635,12 +_,36 @@
+@@ -633,12 +_,36 @@
           return this;
        }
  
@@ -130,7 +130,7 @@
 +       * By default, entities are spawned clientside via {@link EntityType#create(Level)}}.
 +       * If you need finer control over the spawning process, use this to get read access to the spawn packet.
 +       */
-+      public EntityType.Builder<T> setCustomClientFactory(java.util.function.BiFunction<net.minecraftforge.fmllegacy.network.FMLPlayMessages.SpawnEntity, Level, T> customClientFactory) {
++      public EntityType.Builder<T> setCustomClientFactory(java.util.function.BiFunction<net.minecraftforge.network.PlayMessages.SpawnEntity, Level, T> customClientFactory) {
 +          this.customClientFactory = customClientFactory;
 +          return this;
 +      }

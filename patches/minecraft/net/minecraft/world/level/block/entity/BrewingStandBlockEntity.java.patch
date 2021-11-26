@@ -37,7 +37,7 @@
  
        p_155293_.set(3, itemstack);
        p_155291_.m_46796_(1035, p_155292_, 0);
-@@ -230,11 +_,11 @@
+@@ -229,11 +_,11 @@
  
     public boolean m_7013_(int p_59017_, ItemStack p_59018_) {
        if (p_59017_ == 3) {
@@ -51,7 +51,7 @@
        }
     }
  
-@@ -260,5 +_,34 @@
+@@ -259,5 +_,34 @@
  
     protected AbstractContainerMenu m_6555_(int p_58990_, Inventory p_58991_) {
        return new BrewingStandMenu(p_58990_, p_58991_, this, this.f_58971_);

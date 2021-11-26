@@ -22,14 +22,8 @@ package net.minecraftforge.fml.loading;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class LibraryFinder {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -44,39 +38,9 @@ public class LibraryFinder {
         return libsPath;
     }
 
-    // Not used anywhere in Forge's codebase, scheduled for deletion unless a good need is expressed.
-    @Deprecated(forRemoval = true, since = "1.17.1")
-    public static Path findJarPathFor(final String className, final String jarName) {
-        final URL resource = LibraryFinder.class.getClassLoader().getResource(className);
-        return findJarPathFor(className, jarName, resource);
-    }
-
-    /*
-     * Only used in ClasspathLocator now, so moved too a private method and depreciated this.
-     * Scheduled for deletion unless a good need is expressed.
-     */
-    @Deprecated(forRemoval = true, since = "1.17.1")
-    public static Path findJarPathFor(final String resourceName, final String jarName, final URL resource) {
-        try {
-            Path path;
-            final URI uri = resource.toURI();
-            if (uri.getScheme().equals("jar") && uri.getRawSchemeSpecificPart().contains("!/")) {
-                int lastExcl = uri.getRawSchemeSpecificPart().lastIndexOf("!/");
-                path = Paths.get(new URI(uri.getRawSchemeSpecificPart().substring(0, lastExcl)));
-            } else {
-                path = Paths.get(new URI("file://"+uri.getRawSchemeSpecificPart().substring(0, uri.getRawSchemeSpecificPart().length()-resourceName.length())));
-            }
-            LOGGER.debug(CORE, "Found JAR {} at path {}", jarName, path.toString());
-            return path;
-        } catch (NullPointerException | URISyntaxException e) {
-            LOGGER.fatal(CORE, "Failed to find JAR for class {} - {}", resourceName, jarName);
-            throw new RuntimeException("Unable to locate "+resourceName+" - "+jarName, e);
-        }
-    }
-
     static Path getForgeLibraryPath(final String mcVersion, final String forgeVersion, final String forgeGroup) {
         Path forgePath = findLibsPath().resolve(MavenCoordinateResolver.get(forgeGroup, "forge", "", "universal", mcVersion+"-"+forgeVersion));
-        LOGGER.debug(CORE, "Found forge path {} is {}", forgePath, pathStatus(forgePath));
+        LOGGER.debug(LogMarkers.CORE, "Found forge path {} is {}", forgePath, pathStatus(forgePath));
         return forgePath;
     }
 
@@ -88,9 +52,9 @@ public class LibraryFinder {
         Path srgMcPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "srg", mcVersion+"-"+mcpVersion));
         Path mcExtrasPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "extra", mcVersion+"-"+mcpVersion));
         Path patchedBinariesPath = findLibsPath().resolve(MavenCoordinateResolver.get(forgeGroup, "forge", "", type, mcVersion+"-"+forgeVersion));
-        LOGGER.debug(CORE,"SRG MC at {} is {}", srgMcPath.toString(), pathStatus(srgMcPath));
-        LOGGER.debug(CORE,"MC Extras at {} is {}", mcExtrasPath.toString(), pathStatus(mcExtrasPath));
-        LOGGER.debug(CORE,"Forge patches at {} is {}", patchedBinariesPath.toString(), pathStatus(patchedBinariesPath));
+        LOGGER.debug(LogMarkers.CORE,"SRG MC at {} is {}", srgMcPath.toString(), pathStatus(srgMcPath));
+        LOGGER.debug(LogMarkers.CORE,"MC Extras at {} is {}", mcExtrasPath.toString(), pathStatus(mcExtrasPath));
+        LOGGER.debug(LogMarkers.CORE,"Forge patches at {} is {}", patchedBinariesPath.toString(), pathStatus(patchedBinariesPath));
         return new Path[] { patchedBinariesPath, mcExtrasPath, srgMcPath };
     }
 

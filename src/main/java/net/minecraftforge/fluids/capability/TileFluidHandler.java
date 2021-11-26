@@ -54,7 +54,7 @@ public class TileFluidHandler extends BlockEntity
     @Override
     public CompoundTag save(CompoundTag tag)
     {
-        tag = super.save(tag);
+        super.save(tag);
         tank.writeToNBT(tag);
         return tag;
     }

@@ -13,7 +13,7 @@
 +   }
 +
 +   /**
-+    * @param supplier A fluid supplier such as {@link net.minecraftforge.fmllegacy.RegistryObject<Fluid>}
++    * @param supplier A fluid supplier such as {@link net.minecraftforge.registries.RegistryObject<Fluid>}
 +    */
 +   public BucketItem(java.util.function.Supplier<? extends Fluid> supplier, Item.Properties builder) {
 +      super(builder);

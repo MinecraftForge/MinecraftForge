@@ -36,29 +36,29 @@ import net.minecraft.client.renderer.LevelRenderer;
 @Cancelable
 public class DrawSelectionEvent extends Event
 {
-    private final LevelRenderer context;
-    private final Camera info;
+    private final LevelRenderer levelRenderer;
+    private final Camera camera;
     private final HitResult target;
     private final float partialTicks;
-    private final PoseStack matrix;
-    private final MultiBufferSource buffers;
+    private final PoseStack poseStack;
+    private final MultiBufferSource multiBufferSource;
 
-    public DrawSelectionEvent(LevelRenderer context, Camera info, HitResult target, float partialTicks, PoseStack matrix, MultiBufferSource buffers)
+    public DrawSelectionEvent(LevelRenderer levelRenderer, Camera camera, HitResult target, float partialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource)
     {
-        this.context = context;
-        this.info = info;
+        this.levelRenderer = levelRenderer;
+        this.camera = camera;
         this.target = target;
-        this.partialTicks= partialTicks;
-        this.matrix = matrix;
-        this.buffers = buffers;
+        this.partialTicks = partialTicks;
+        this.poseStack = poseStack;
+        this.multiBufferSource = multiBufferSource;
     }
 
-    public LevelRenderer getContext() { return context; }
-    public Camera getInfo() { return info; }
+    public LevelRenderer getLevelRenderer() { return levelRenderer; }
+    public Camera getCamera() { return camera; }
     public HitResult getTarget() { return target; }
     public float getPartialTicks() { return partialTicks; }
-    public PoseStack getMatrix() { return matrix; }
-    public MultiBufferSource getBuffers() { return buffers; }
+    public PoseStack getPoseStack() { return poseStack; }
+    public MultiBufferSource getMultiBufferSource() { return multiBufferSource; }
 
     /**
      * A variant of the DrawSelectionEvent only called when a block is highlighted.

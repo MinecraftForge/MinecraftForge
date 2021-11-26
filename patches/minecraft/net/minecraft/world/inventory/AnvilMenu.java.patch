@@ -20,7 +20,7 @@
                 p_150479_.m_7471_(p_150480_, false);
 @@ -100,8 +_,11 @@
           Map<Enchantment, Integer> map = EnchantmentHelper.m_44831_(itemstack1);
-          j = j + itemstack.m_41610_() + (itemstack2.m_41619_() ? 0 : itemstack2.m_41610_());
+          j += itemstack.m_41610_() + (itemstack2.m_41619_() ? 0 : itemstack2.m_41610_());
           this.f_39000_ = 0;
 +         boolean flag = false;
 +

@@ -14,7 +14,7 @@
                 }
  
 +               entity.m_6021_(event.getTargetX(), event.getTargetY(), event.getTargetZ());
-                entity.f_19789_ = 0.0F;
+                entity.m_183634_();
 -               entity.m_6469_(DamageSource.f_19315_, 5.0F);
 +               entity.m_6469_(DamageSource.f_19315_, event.getAttackDamage());
 +               } //Forge: End

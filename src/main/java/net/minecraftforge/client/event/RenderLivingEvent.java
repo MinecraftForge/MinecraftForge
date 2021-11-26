@@ -32,28 +32,28 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
 
     private final LivingEntity entity;
     private final LivingEntityRenderer<T, M> renderer;
-    private final float partialRenderTick;
-    private final PoseStack matrixStack;
-    private final MultiBufferSource buffers;
-    private final int light;
+    private final float partialTick;
+    private final PoseStack poseStack;
+    private final MultiBufferSource multiBufferSource;
+    private final int packedLight;
 
-    public RenderLivingEvent(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialRenderTick, PoseStack matrixStack,
-                             MultiBufferSource buffers, int light)
+    public RenderLivingEvent(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack,
+                             MultiBufferSource multiBufferSource, int packedLight)
     {
         this.entity = entity;
         this.renderer = renderer;
-        this.partialRenderTick = partialRenderTick;
-        this.matrixStack = matrixStack;
-        this.buffers = buffers;
-        this.light = light;
+        this.partialTick = partialTick;
+        this.poseStack = poseStack;
+        this.multiBufferSource = multiBufferSource;
+        this.packedLight = packedLight;
     }
 
     public LivingEntity getEntity() { return entity; }
     public LivingEntityRenderer<T, M> getRenderer() { return renderer; }
-    public float getPartialRenderTick() { return partialRenderTick; }
-    public PoseStack getMatrixStack() { return matrixStack; }
-    public MultiBufferSource getBuffers() { return buffers; }
-    public int getLight() { return light; }
+    public float getPartialTick() { return partialTick; }
+    public PoseStack getPoseStack() { return poseStack; }
+    public MultiBufferSource getMultiBufferSource() { return multiBufferSource; }
+    public int getPackedLight() { return packedLight; }
 
     @Cancelable
     public static class Pre<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>

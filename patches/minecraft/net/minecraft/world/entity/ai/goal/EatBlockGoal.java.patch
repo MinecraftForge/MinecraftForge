@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
 +++ b/net/minecraft/world/entity/ai/goal/EatBlockGoal.java
 @@ -61,7 +_,7 @@
-       if (this.f_25204_ == 4) {
+       if (this.f_25204_ == this.m_183277_(4)) {
           BlockPos blockpos = this.f_25202_.m_142538_();
           if (f_25201_.test(this.f_25203_.m_8055_(blockpos))) {
 -            if (this.f_25203_.m_46469_().m_46207_(GameRules.f_46132_)) {

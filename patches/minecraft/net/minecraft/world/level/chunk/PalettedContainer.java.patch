@@ -1,40 +1,10 @@
 --- a/net/minecraft/world/level/chunk/PalettedContainer.java
 +++ b/net/minecraft/world/level/chunk/PalettedContainer.java
-@@ -62,6 +_,9 @@
-    }
+@@ -24,6 +_,7 @@
+ import net.minecraft.util.ZeroBitStorage;
  
-    private void m_63121_(int p_63122_) {
-+      setBits(p_63122_, false);
-+   }
-+   private void setBits(int p_63122_, boolean forceBits) {
-       if (p_63122_ != this.f_63076_) {
-          this.f_63076_ = p_63122_;
-          if (this.f_63076_ <= 4) {
-@@ -72,6 +_,8 @@
-          } else {
-             this.f_63075_ = this.f_63069_;
-             this.f_63076_ = Mth.m_14163_(this.f_63071_.m_122659_());
-+            if (forceBits)
-+               this.f_63076_ = p_63122_;
-          }
- 
-          this.f_63075_.m_6796_(this.f_63074_);
-@@ -147,7 +_,7 @@
-          this.m_63084_();
-          int i = p_63119_.readByte();
-          if (this.f_63076_ != i) {
--            this.m_63121_(i);
-+            this.setBits(i, true); //Forge, Force bit density to fix network issues, resize below if needed.
-          }
- 
-          this.f_63075_.m_5680_(p_63119_);
-@@ -156,6 +_,9 @@
-          this.m_63120_();
-       }
- 
-+      int regSize = Mth.m_14163_(this.f_63071_.m_122659_());
-+      if (this.f_63075_ == f_63069_ && this.f_63076_ != regSize) // Resize bits to fit registry.
-+         this.m_7248_(regSize, f_63074_);
-    }
- 
-    public void m_63135_(FriendlyByteBuf p_63136_) {
+ public class PalettedContainer<T> implements PaletteResize<T> {
++   // TODO: forceBits-parametered setBits function. -C
+    private static final int f_188031_ = 0;
+    private final PaletteResize<T> f_63070_ = (p_63139_, p_63140_) -> {
+       return 0;

@@ -17,7 +17,7 @@
 @@ -113,6 +_,7 @@
              TransientEntitySectionManager.this.m_157648_(this.f_157669_, this.f_157670_);
              EntitySection<T> entitysection = TransientEntitySectionManager.this.f_157638_.m_156893_(i);
-             entitysection.m_156840_(this.f_157668_);
+             entitysection.m_188346_(this.f_157668_);
 +            long oldSectionKey = f_157669_;
              this.f_157670_ = entitysection;
              this.f_157669_ = i;

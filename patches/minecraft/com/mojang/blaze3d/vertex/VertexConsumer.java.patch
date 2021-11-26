@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/vertex/VertexConsumer.java
 +++ b/com/mojang/blaze3d/vertex/VertexConsumer.java
-@@ -15,7 +_,7 @@
+@@ -16,7 +_,7 @@
  import org.lwjgl.system.MemoryStack;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,7 +9,7 @@
     Logger f_85943_ = LogManager.getLogger();
  
     VertexConsumer m_5483_(double p_85945_, double p_85946_, double p_85947_);
-@@ -100,11 +_,12 @@
+@@ -105,11 +_,12 @@
                 f5 = afloat[k] * p_86001_;
              }
  

@@ -31,15 +31,12 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModWorkManager;
-import net.minecraftforge.fml.VersionChecker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-
-import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientModLoader

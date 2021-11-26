@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/navigation/PathNavigation.java
 +++ b/net/minecraft/world/entity/ai/navigation/PathNavigation.java
-@@ -223,10 +_,10 @@
+@@ -229,10 +_,10 @@
        Vec3 vec3 = this.m_7475_();
        this.f_26505_ = this.f_26494_.m_20205_() > 0.75F ? this.f_26494_.m_20205_() / 2.0F : 0.75F - this.f_26494_.m_20205_() / 2.0F;
        Vec3i vec3i = this.f_26496_.m_77400_();

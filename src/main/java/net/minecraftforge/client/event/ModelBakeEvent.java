@@ -24,7 +24,7 @@ import java.util.Map;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 
@@ -37,9 +37,9 @@ public class ModelBakeEvent extends Event implements IModBusEvent
 {
     private final ModelManager modelManager;
     private final Map<ResourceLocation, BakedModel> modelRegistry;
-    private final ModelLoader modelLoader;
+    private final ForgeModelBakery modelLoader;
 
-    public ModelBakeEvent(ModelManager modelManager, Map<ResourceLocation, BakedModel> modelRegistry, ModelLoader modelLoader)
+    public ModelBakeEvent(ModelManager modelManager, Map<ResourceLocation, BakedModel> modelRegistry, ForgeModelBakery modelLoader)
     {
         this.modelManager = modelManager;
         this.modelRegistry = modelRegistry;
@@ -56,7 +56,7 @@ public class ModelBakeEvent extends Event implements IModBusEvent
         return modelRegistry;
     }
 
-    public ModelLoader getModelLoader()
+    public ForgeModelBakery getModelLoader()
     {
         return modelLoader;
     }

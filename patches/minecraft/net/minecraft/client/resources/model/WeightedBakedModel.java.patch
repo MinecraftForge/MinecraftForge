@@ -29,8 +29,8 @@
     }
  
 +   @Override
-+   public boolean isAmbientOcclusion(BlockState state) {
-+      return this.f_119542_.isAmbientOcclusion(state);
++   public boolean useAmbientOcclusion(BlockState state) {
++      return this.f_119542_.useAmbientOcclusion(state);
 +   }
 +
     public boolean m_7539_() {

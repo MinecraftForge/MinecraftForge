@@ -4,7 +4,7 @@
        int i = this.f_97735_;
        int j = this.f_97736_;
        this.m_7286_(p_97795_, p_97798_, p_97796_, p_97797_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawBackground(this, p_97795_, p_97796_, p_97797_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ContainerScreenEvent.DrawBackground(this, p_97795_, p_97796_, p_97797_));
        RenderSystem.m_69465_();
        super.m_6305_(p_97795_, p_97796_, p_97797_, p_97798_);
        PoseStack posestack = RenderSystem.m_157191_();
@@ -18,7 +18,7 @@
        }
  
        this.m_7027_(p_97795_, p_97796_, p_97797_);
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiContainerEvent.DrawForeground(this, p_97795_, p_97796_, p_97797_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ContainerScreenEvent.DrawForeground(this, p_97795_, p_97796_, p_97797_));
        ItemStack itemstack = this.f_97711_.m_41619_() ? this.f_97732_.m_142621_() : this.f_97711_;
        if (!itemstack.m_41619_()) {
           int l1 = 8;
@@ -53,7 +53,7 @@
        if (super.m_6375_(p_97748_, p_97749_, p_97750_)) {
           return true;
        } else {
--         boolean flag = this.f_96541_.f_91066_.f_92097_.m_90830_(p_97750_);
+-         boolean flag = this.f_96541_.f_91066_.f_92097_.m_90830_(p_97750_) && this.f_96541_.f_91072_.m_105290_();
 +         InputConstants.Key mouseKey = InputConstants.Type.MOUSE.m_84895_(p_97750_);
 +         boolean flag = this.f_96541_.f_91066_.f_92097_.isActiveAndMatches(mouseKey);
           Slot slot = this.m_97744_(p_97748_, p_97749_);
@@ -71,7 +71,7 @@
                    }
                 } else if (!this.f_97738_) {
                    if (this.f_97732_.m_142621_().m_41619_()) {
--                     if (this.f_96541_.f_91066_.f_92097_.m_90830_(p_97750_)) {
+-                     if (flag) {
 +                     if (this.f_96541_.f_91066_.f_92097_.isActiveAndMatches(mouseKey)) {
                          this.m_6597_(slot, l, p_97750_, ClickType.CLONE);
                       } else {
@@ -80,7 +80,7 @@
                          this.f_97717_ = 0;
                       } else if (p_97750_ == 1) {
                          this.f_97717_ = 1;
--                     } else if (this.f_96541_.f_91066_.f_92097_.m_90830_(p_97750_)) {
+-                     } else if (flag) {
 +                     } else if (this.f_96541_.f_91066_.f_92097_.isActiveAndMatches(mouseKey)) {
                          this.f_97717_ = 2;
                       }

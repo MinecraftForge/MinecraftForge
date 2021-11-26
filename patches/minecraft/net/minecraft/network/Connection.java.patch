@@ -31,7 +31,7 @@
     public static Connection m_178300_(InetSocketAddress p_178301_, boolean p_178302_) {
 +      if (p_178301_.getAddress() instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
        final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
-+      connection.activationHandler = net.minecraftforge.fmllegacy.network.NetworkHooks::registerClientLoginChannel;
++      connection.activationHandler = net.minecraftforge.network.NetworkHooks::registerClientLoginChannel;
        Class<? extends SocketChannel> oclass;
        LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;
        if (Epoll.isAvailable() && p_178302_) {
@@ -39,7 +39,7 @@
  
     public static Connection m_129493_(SocketAddress p_129494_) {
        final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
-+      connection.activationHandler = net.minecraftforge.fmllegacy.network.NetworkHooks::registerClientLoginChannel;
++      connection.activationHandler = net.minecraftforge.network.NetworkHooks::registerClientLoginChannel;
        (new Bootstrap()).group(f_129464_.m_13971_()).handler(new ChannelInitializer<Channel>() {
           protected void initChannel(Channel p_129557_) {
              p_129557_.pipeline().addLast("packet_handler", connection);

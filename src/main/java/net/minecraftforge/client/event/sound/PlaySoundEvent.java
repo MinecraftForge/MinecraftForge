@@ -31,15 +31,15 @@ import net.minecraft.client.sounds.SoundEngine;
 public class PlaySoundEvent extends SoundEvent
 {
     private final String name;
-    private final SoundInstance sound;
-    private SoundInstance result;
+    private final SoundInstance originalSound;
+    private SoundInstance sound;
 
     public PlaySoundEvent(SoundEngine manager, SoundInstance sound)
     {
         super(manager);
-        this.sound = sound;
+        this.originalSound = sound;
         this.name = sound.getLocation().getPath();
-        this.setResultSound(sound);
+        this.setSound(sound);
     }
 
     public String getName()
@@ -47,18 +47,18 @@ public class PlaySoundEvent extends SoundEvent
         return name;
     }
 
+    public SoundInstance getOriginalSound()
+    {
+        return originalSound;
+    }
+
     public SoundInstance getSound()
     {
         return sound;
     }
 
-    public SoundInstance getResultSound()
+    public void setSound(SoundInstance result)
     {
-        return result;
-    }
-
-    public void setResultSound(SoundInstance result)
-    {
-        this.result = result;
+        this.sound = result;
     }
 }

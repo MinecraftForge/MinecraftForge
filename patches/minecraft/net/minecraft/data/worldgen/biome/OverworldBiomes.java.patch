@@ -1,0 +1,11 @@
+--- a/net/minecraft/data/worldgen/biome/OverworldBiomes.java
++++ b/net/minecraft/data/worldgen/biome/OverworldBiomes.java
+@@ -19,6 +_,8 @@
+ import net.minecraft.world.level.levelgen.GenerationStep;
+ 
+ public class OverworldBiomes {
++   // TODO: getAdditionalOverworldBiomes, likely in this class. -C
++
+    protected static final int f_194836_ = 4159204;
+    protected static final int f_194837_ = 329011;
+    private static final int f_194838_ = 12638463;

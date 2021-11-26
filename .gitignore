@@ -24,7 +24,7 @@
 /projects/clean/
 /projects/forge/
 /projects/fmlonly/
-#/patches/
+#/patches/*
 
 #occupational hazards
 /projects/**/build/
@@ -36,7 +36,7 @@ src/generated/resources/.cache/
 
 #Patch rejects
 /patches-/
-#*.patch.rej
+*.patch.rej
 /projects/*/rejects/
 
 # FML changelog
@@ -44,3 +44,4 @@ changelog.txt
 *.py
 *.7z
 /logs/
+

@@ -30,7 +30,7 @@
 +         java.util.Set<String> existingMods = new java.util.HashSet<>(optionset.valuesOf(existingMod));
 +         java.util.Set<String> mods = new java.util.HashSet<>(optionset.valuesOf(mod));
 +         boolean isFlat = mods.isEmpty() || optionset.has(flat);
-+         net.minecraftforge.fmllegacy.DatagenModLoader.begin(mods, path, inputs, existingPacks, existingMods, flag2, flag1, flag3, flag4, flag5, isFlat, optionset.valueOf(assetIndex), optionset.valueOf(assetsDir));
++         net.minecraftforge.data.loading.DatagenModLoader.begin(mods, path, inputs, existingPacks, existingMods, flag2, flag1, flag3, flag4, flag5, isFlat, optionset.valueOf(assetIndex), optionset.valueOf(assetsDir));
 +         if (mods.contains("minecraft") || mods.isEmpty())
 +            m_129660_(isFlat ? path : path.resolve("minecraft"), inputs, flag1, flag2, flag3, flag4, flag5).m_123917_();
        } else {

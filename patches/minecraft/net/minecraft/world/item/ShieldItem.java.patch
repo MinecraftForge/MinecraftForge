@@ -1,8 +1,8 @@
 --- a/net/minecraft/world/item/ShieldItem.java
 +++ b/net/minecraft/world/item/ShieldItem.java
-@@ -49,4 +_,11 @@
-    public static DyeColor m_43102_(ItemStack p_43103_) {
-       return DyeColor.m_41053_(p_43103_.m_41698_("BlockEntityTag").m_128451_("Base"));
+@@ -51,4 +_,11 @@
+       CompoundTag compoundtag = BlockItem.m_186336_(p_43103_);
+       return compoundtag != null ? DyeColor.m_41053_(compoundtag.m_128451_("Base")) : DyeColor.WHITE;
     }
 +
 +   /* ******************** FORGE START ******************** */

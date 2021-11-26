@@ -22,7 +22,7 @@
           }
  
 -         return d0;
-+         return net.minecraftforge.client.ForgeHooksClient.getFOVModifier(this, p_109142_, p_109143_, d0);
++         return net.minecraftforge.client.ForgeHooksClient.getFieldOfView(this, p_109142_, p_109143_, d0);
        }
     }
  

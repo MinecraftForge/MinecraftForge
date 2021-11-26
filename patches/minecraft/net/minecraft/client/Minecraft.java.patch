@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
-@@ -257,7 +_,7 @@
+@@ -254,7 +_,7 @@
  import org.lwjgl.util.tinyfd.TinyFileDialogs;
  
  @OnlyIn(Dist.CLIENT)
--public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements SnooperPopulator, WindowEventHandler {
-+public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements SnooperPopulator, WindowEventHandler, net.minecraftforge.client.extensions.IForgeMinecraft {
+-public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler {
++public class Minecraft extends ReentrantBlockableEventLoop<Runnable> implements WindowEventHandler, net.minecraftforge.client.extensions.IForgeMinecraft {
     private static Minecraft f_90981_;
     private static final Logger f_90982_ = LogManager.getLogger();
     public static final boolean f_91002_ = Util.m_137581_() == Util.OS.OSX;
-@@ -397,14 +_,13 @@
+@@ -394,14 +_,13 @@
        this.f_91029_ = p_91084_.f_101908_.f_101928_;
        this.f_90986_ = p_91084_.f_101905_.f_101944_;
        this.f_91037_ = new ClientPackSource(new File(this.f_91069_, "server-resource-packs"), p_91084_.f_101907_.m_101925_());
@@ -18,14 +18,14 @@
        this.f_91030_ = p_91084_.f_101905_.f_101945_;
        YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(this.f_91030_);
        this.f_91048_ = yggdrasilauthenticationservice.createMinecraftSessionService();
-       this.f_91049_ = this.m_91130_(yggdrasilauthenticationservice, p_91084_);
+       this.f_193584_ = this.m_193585_(yggdrasilauthenticationservice, p_91084_);
        this.f_90998_ = p_91084_.f_101905_.f_101942_;
        f_90982_.info("Setting user: {}", (Object)this.f_90998_.m_92546_());
 -      f_90982_.debug("(Session ID is {})", (Object)this.f_90998_.m_92544_());
        this.f_91033_ = p_91084_.f_101908_.f_101926_;
        this.f_91034_ = !p_91084_.f_101908_.f_101929_;
        this.f_91035_ = !p_91084_.f_101908_.f_101930_;
-@@ -436,6 +_,7 @@
+@@ -433,6 +_,7 @@
        }
  
        Util.f_137440_ = RenderSystem.m_69576_();
@@ -33,7 +33,7 @@
        this.f_90989_ = new VirtualScreen(this);
        this.f_90990_ = this.f_90989_.m_110872_(displaydata, this.f_91066_.f_92123_, this.m_91270_());
        this.m_7440_(true);
-@@ -450,7 +_,6 @@
+@@ -448,7 +_,6 @@
  
        this.f_90990_.m_85380_(this.f_91066_.f_92113_);
        this.f_91067_ = new MouseHandler(this);
@@ -41,15 +41,15 @@
        this.f_91068_ = new KeyboardHandler(this);
        this.f_91068_.m_90887_(this.f_90990_.m_85439_());
        RenderSystem.m_69580_(this.f_91066_.f_92035_, false);
-@@ -458,6 +_,7 @@
+@@ -456,6 +_,7 @@
        this.f_91042_.m_83931_(0.0F, 0.0F, 0.0F, 0.0F);
        this.f_91042_.m_83954_(f_91002_);
        this.f_91036_ = new SimpleReloadableResourceManager(PackType.CLIENT_RESOURCES);
-+      net.minecraftforge.fmlclient.ClientModLoader.begin(this, this.f_91038_, this.f_91036_, this.f_91037_);
++      net.minecraftforge.client.loading.ClientModLoader.begin(this, this.f_91038_, this.f_91036_, this.f_91037_);
        this.f_91038_.m_10506_();
        this.f_91066_.m_92145_(this.f_91038_);
        this.f_91039_ = new LanguageManager(this.f_91066_.f_92075_);
-@@ -506,6 +_,7 @@
+@@ -504,6 +_,7 @@
        this.m_91271_();
        this.f_91036_.m_7217_(this.f_90997_);
        this.f_91061_ = new ParticleEngine(this.f_91073_, this.f_90987_);
@@ -57,7 +57,7 @@
        this.f_91036_.m_7217_(this.f_91061_);
        this.f_91053_ = new PaintingTextureManager(this.f_90987_);
        this.f_91036_.m_7217_(this.f_91053_);
-@@ -513,7 +_,8 @@
+@@ -511,7 +_,8 @@
        this.f_91036_.m_7217_(this.f_91054_);
        this.f_91047_ = new GpuWarnlistManager();
        this.f_91036_.m_7217_(this.f_91047_);
@@ -67,7 +67,7 @@
        this.f_91064_ = new DebugRenderer(this);
        RenderSystem.m_69900_(this::m_91113_);
        if (this.f_91042_.f_83915_ == this.f_90990_.m_85441_() && this.f_91042_.f_83916_ == this.f_90990_.m_85442_()) {
-@@ -531,6 +_,10 @@
+@@ -529,6 +_,10 @@
           TinyFileDialogs.tinyfd_messageBox("Minecraft", stringbuilder.toString(), "ok", "error", false);
        }
  
@@ -78,11 +78,11 @@
        this.f_90990_.m_85409_(this.f_91066_.f_92041_);
        this.f_90990_.m_85424_(this.f_91066_.f_92034_);
        this.f_90990_.m_85426_();
-@@ -546,13 +_,16 @@
+@@ -544,13 +_,16 @@
              }
  
              this.f_167847_.m_168556_();
-+            if (net.minecraftforge.fmlclient.ClientModLoader.completeModLoading()) return; // Do not overwrite the error screen
++            if (net.minecraftforge.client.loading.ClientModLoader.completeModLoading()) return; // Do not overwrite the error screen
 +            // FORGE: Move opening initial screen to after startup and events are enabled.
 +            // Also Fixes MC-145102
 +            if (s != null) {
@@ -100,16 +100,16 @@
  
     }
  
-@@ -587,6 +_,8 @@
+@@ -585,6 +_,8 @@
  
-    private SocialInteractionsService m_91130_(YggdrasilAuthenticationService p_91131_, GameConfig p_91132_) {
+    private UserApiService m_193585_(YggdrasilAuthenticationService p_193586_, GameConfig p_193587_) {
        try {
-+         if ("0".equals(p_91132_.f_101905_.f_101942_.m_92547_())) // Forge: We use "0" in dev. Short circuit to stop exception spam.
-+            return new OfflineSocialInteractions();
-          return p_91131_.createSocialInteractionsService(p_91132_.f_101905_.f_101942_.m_92547_());
++         if ("0".equals(p_193587_.f_101905_.f_101942_.m_92547_())) // Forge: We use "0" in dev. Short circuit to stop exception spam.
++            return UserApiService.OFFLINE;
+          return p_193586_.createUserApiService(p_193587_.f_101905_.f_101942_.m_92547_());
        } catch (AuthenticationException authenticationexception) {
           f_90982_.error("Failed to verify authentication", (Throwable)authenticationexception);
-@@ -599,7 +_,7 @@
+@@ -597,7 +_,7 @@
     }
  
     private void m_91239_(Throwable p_91240_) {
@@ -118,7 +118,7 @@
           Component component;
           if (p_91240_ instanceof SimpleReloadableResourceManager.ResourcePackLoadingFailure) {
              component = new TextComponent(((SimpleReloadableResourceManager.ResourcePackLoadingFailure)p_91240_).m_10921_().m_8017_());
-@@ -690,7 +_,7 @@
+@@ -691,7 +_,7 @@
           return Stream.of(Registry.f_122827_.m_7981_(p_91317_.m_41720_()));
        });
        ReloadableIdSearchTree<ItemStack> reloadableidsearchtree = new ReloadableIdSearchTree<>((p_91121_) -> {
@@ -127,24 +127,24 @@
        });
        NonNullList<ItemStack> nonnulllist = NonNullList.m_122779_();
  
-@@ -760,13 +_,13 @@
+@@ -761,13 +_,13 @@
        Bootstrap.m_135875_(p_91333_.m_127526_());
        if (p_91333_.m_127527_() != null) {
           Bootstrap.m_135875_("#@!@# Game crashed! Crash report saved to: #@!@# " + p_91333_.m_127527_());
 -         System.exit(-1);
-+         net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleExit(-1);
++         net.minecraftforge.server.ServerLifecycleHooks.handleExit(-1);
        } else if (p_91333_.m_127512_(file2)) {
           Bootstrap.m_135875_("#@!@# Game crashed! Crash report saved to: #@!@# " + file2.getAbsolutePath());
 -         System.exit(-1);
-+         net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleExit(-1);
++         net.minecraftforge.server.ServerLifecycleHooks.handleExit(-1);
        } else {
           Bootstrap.m_135875_("#@?@# Game crashed! Crash report could not be saved. #@?@#");
 -         System.exit(-2);
-+         net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleExit(-2);
++         net.minecraftforge.server.ServerLifecycleHooks.handleExit(-2);
        }
  
     }
-@@ -876,10 +_,6 @@
+@@ -877,10 +_,6 @@
           f_90982_.error("setScreen called from non-game thread");
        }
  
@@ -155,37 +155,37 @@
        if (p_91153_ == null && this.f_91073_ == null) {
           p_91153_ = new TitleScreen();
        } else if (p_91153_ == null && this.f_91074_.m_21224_()) {
-@@ -890,6 +_,15 @@
+@@ -891,6 +_,15 @@
           }
        }
  
 +      net.minecraftforge.client.ForgeHooksClient.clearGuiLayers(this);
 +      Screen old = this.f_91080_;
-+      net.minecraftforge.client.event.GuiOpenEvent event = new net.minecraftforge.client.event.GuiOpenEvent(p_91153_);
++      net.minecraftforge.client.event.ScreenOpenEvent event = new net.minecraftforge.client.event.ScreenOpenEvent(p_91153_);
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
 +
-+      p_91153_ = event.getGui();
++      p_91153_ = event.getScreen();
 +      if (old != null && p_91153_ != old)
 +         old.m_7861_();
 +
        this.f_91080_ = p_91153_;
        BufferUploader.m_166835_();
        if (p_91153_ != null) {
-@@ -1018,11 +_,13 @@
+@@ -1019,11 +_,13 @@
        RenderSystem.m_69481_();
        this.f_91026_.m_7238_();
        if (!this.f_91079_) {
-+         net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onRenderTickStart(this.f_91012_ ? this.f_91013_ : this.f_90991_.f_92518_);
++         net.minecraftforge.event.ForgeEventFactory.onRenderTickStart(this.f_91012_ ? this.f_91013_ : this.f_90991_.f_92518_);
           this.f_91026_.m_6182_("gameRenderer");
           this.f_91063_.m_109093_(this.f_91012_ ? this.f_91013_ : this.f_90991_.f_92518_, i, p_91384_);
           this.f_91026_.m_6182_("toasts");
           this.f_91003_.m_94920_(new PoseStack());
           this.f_91026_.m_7238_();
-+         net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onRenderTickEnd(this.f_91012_ ? this.f_91013_ : this.f_90991_.f_92518_);
++         net.minecraftforge.event.ForgeEventFactory.onRenderTickEnd(this.f_91012_ ? this.f_91013_ : this.f_90991_.f_92518_);
        }
  
        if (this.f_91056_ != null) {
-@@ -1132,10 +_,12 @@
+@@ -1129,10 +_,12 @@
        this.f_90990_.m_85378_((double)i);
        if (this.f_91080_ != null) {
           this.f_91080_.m_6574_(this, this.f_90990_.m_85445_(), this.f_90990_.m_85446_());
@@ -198,7 +198,7 @@
        this.f_91063_.m_109097_(this.f_90990_.m_85441_(), this.f_90990_.m_85442_());
        this.f_91067_.m_91599_();
     }
-@@ -1432,11 +_,21 @@
+@@ -1429,11 +_,21 @@
           if (p_91387_ && this.f_91077_ != null && this.f_91077_.m_6662_() == HitResult.Type.BLOCK) {
              BlockHitResult blockhitresult = (BlockHitResult)this.f_91077_;
              BlockPos blockpos = blockhitresult.m_82425_();
@@ -222,7 +222,7 @@
                 }
              }
  
-@@ -1455,6 +_,8 @@
+@@ -1452,6 +_,8 @@
              }
  
           } else if (!this.f_91074_.m_108637_()) {
@@ -231,7 +231,7 @@
              switch(this.f_91077_.m_6662_()) {
              case ENTITY:
                 this.f_91072_.m_105223_(this.f_91074_, ((EntityHitResult)this.f_91077_).m_82443_());
-@@ -1462,7 +_,7 @@
+@@ -1459,7 +_,7 @@
              case BLOCK:
                 BlockHitResult blockhitresult = (BlockHitResult)this.f_91077_;
                 BlockPos blockpos = blockhitresult.m_82425_();
@@ -240,7 +240,7 @@
                    this.f_91072_.m_105269_(blockpos, blockhitresult.m_82434_());
                    break;
                 }
-@@ -1472,8 +_,10 @@
+@@ -1469,8 +_,10 @@
                 }
  
                 this.f_91074_.m_36334_();
@@ -251,7 +251,7 @@
              this.f_91074_.m_6674_(InteractionHand.MAIN_HAND);
           }
        }
-@@ -1488,6 +_,11 @@
+@@ -1485,6 +_,11 @@
              }
  
              for(InteractionHand interactionhand : InteractionHand.values()) {
@@ -263,7 +263,7 @@
                 ItemStack itemstack = this.f_91074_.m_21120_(interactionhand);
                 if (this.f_91077_ != null) {
                    switch(this.f_91077_.m_6662_()) {
-@@ -1501,6 +_,7 @@
+@@ -1502,6 +_,7 @@
  
                       if (interactionresult.m_19077_()) {
                          if (interactionresult.m_19080_()) {
@@ -271,7 +271,7 @@
                             this.f_91074_.m_6674_(interactionhand);
                          }
  
-@@ -1513,6 +_,7 @@
+@@ -1514,6 +_,7 @@
                       InteractionResult interactionresult1 = this.f_91072_.m_105262_(this.f_91074_, this.f_91073_, interactionhand, blockhitresult);
                       if (interactionresult1.m_19077_()) {
                          if (interactionresult1.m_19080_()) {
@@ -279,7 +279,7 @@
                             this.f_91074_.m_6674_(interactionhand);
                             if (!itemstack.m_41619_() && (itemstack.m_41613_() != i || this.f_91072_.m_105290_())) {
                                this.f_91063_.f_109055_.m_109320_(interactionhand);
-@@ -1528,6 +_,9 @@
+@@ -1529,6 +_,9 @@
                    }
                 }
  
@@ -289,25 +289,25 @@
                 if (!itemstack.m_41619_()) {
                    InteractionResult interactionresult2 = this.f_91072_.m_105235_(this.f_91074_, this.f_91073_, interactionhand);
                    if (interactionresult2.m_19077_()) {
-@@ -1554,6 +_,8 @@
+@@ -1555,6 +_,8 @@
           --this.f_91011_;
        }
  
-+      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onPreClientTick();
++      net.minecraftforge.event.ForgeEventFactory.onPreClientTick();
 +
        this.f_91026_.m_6180_("gui");
-       if (!this.f_91012_) {
-          this.f_91065_.m_93066_();
-@@ -1679,6 +_,8 @@
+       this.f_91065_.m_193832_(this.f_91012_);
+       this.f_91026_.m_7238_();
+@@ -1683,6 +_,8 @@
        this.f_91026_.m_6182_("keyboard");
        this.f_91068_.m_90931_();
        this.f_91026_.m_7238_();
 +
-+      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onPostClientTick();
++      net.minecraftforge.event.ForgeEventFactory.onPostClientTick();
     }
  
     private boolean m_91278_() {
-@@ -1814,11 +_,11 @@
+@@ -1821,11 +_,11 @@
     }
  
     public void m_91200_(String p_91201_) {
@@ -321,7 +321,7 @@
           return p_91204_.m_46934_();
        }, (p_167886_, p_167887_, p_167888_, p_167889_) -> {
           RegistryWriteOps<JsonElement> registrywriteops = RegistryWriteOps.m_135767_(JsonOps.INSTANCE, p_91205_);
-@@ -1828,10 +_,10 @@
+@@ -1835,10 +_,10 @@
           });
           WorldGenSettings worldgensettings = dataresult.resultOrPartial(Util.m_137489_("Error reading worldgen settings after loading data packs: ", f_90982_::error)).orElse(p_91206_);
           return new PrimaryLevelData(p_91204_, worldgensettings, dataresult.lifecycle());
@@ -334,7 +334,7 @@
        LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess;
        try {
           levelstoragesource$levelstorageaccess = this.f_91031_.m_78260_(p_91220_);
-@@ -1843,12 +_,17 @@
+@@ -1850,12 +_,17 @@
        }
  
        Minecraft.ServerStem minecraft$serverstem;
@@ -354,7 +354,7 @@
           }));
  
           try {
-@@ -1868,7 +_,7 @@
+@@ -1875,7 +_,7 @@
           this.f_90999_.set((StoringChunkProgressListener)null);
  
           try {
@@ -363,8 +363,8 @@
              minecraft$serverstem.m_91433_().m_136179_();
              YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(this.f_91030_);
              MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
-@@ -1880,7 +_,7 @@
-             SkullBlockEntity.m_182462_(this);
+@@ -1885,7 +_,7 @@
+             SkullBlockEntity.m_196700_(gameprofilecache, minecraftsessionservice, this);
              GameProfileCache.m_11004_(false);
              this.f_91007_ = MinecraftServer.m_129872_((p_167898_) -> {
 -               return new IntegratedServer(p_167898_, this, p_91221_, levelstoragesource$levelstorageaccess, minecraft$serverstem.m_91432_(), minecraft$serverstem.m_91433_(), worlddata, minecraftsessionservice, gameprofilerepository, gameprofilecache, (p_168000_) -> {
@@ -372,7 +372,7 @@
                    StoringChunkProgressListener storingchunkprogresslistener = new StoringChunkProgressListener(p_168000_ + 0);
                    this.f_90999_.set(storingchunkprogresslistener);
                    return ProcessorChunkProgressListener.m_143583_(storingchunkprogresslistener, this.f_91023_::add);
-@@ -1924,11 +_,16 @@
+@@ -1929,11 +_,16 @@
           connection.m_129505_(new ClientHandshakePacketListenerImpl(connection, this, (Screen)null, (p_167998_) -> {
           }));
           connection.m_129512_(new ClientIntentionPacket(socketaddress.toString(), 0, ConnectionProtocol.LOGIN));
@@ -391,7 +391,7 @@
           });
           minecraft$serverstem.close();
  
-@@ -2016,6 +_,7 @@
+@@ -2021,6 +_,7 @@
     }
  
     public void m_91156_(ClientLevel p_91157_) {
@@ -399,7 +399,7 @@
        ProgressScreen progressscreen = new ProgressScreen(true);
        progressscreen.m_6309_(new TranslatableComponent("connect.joining"));
        this.m_91362_(progressscreen);
-@@ -2049,10 +_,12 @@
+@@ -2053,10 +_,12 @@
        IntegratedServer integratedserver = this.f_91007_;
        this.f_91007_ = null;
        this.f_91063_.m_109150_();
@@ -412,23 +412,15 @@
           if (integratedserver != null) {
              this.f_91026_.m_6180_("waitForServer");
  
-@@ -2067,6 +_,7 @@
+@@ -2071,6 +_,7 @@
           this.f_91065_.m_93089_();
           this.f_91008_ = null;
           this.f_91010_ = false;
-+         net.minecraftforge.client.ForgeHooksClient.handleClientWorldClosing(f_91073_);
++         net.minecraftforge.client.ForgeHooksClient.handleClientLevelClosing(f_91073_);
           this.f_91004_.m_90740_();
        }
  
-@@ -2097,6 +_,7 @@
-       this.f_91061_.m_107342_(p_91325_);
-       this.f_167845_.m_112257_(p_91325_);
-       this.m_91341_();
-+      net.minecraftforge.client.MinecraftForgeClient.clearRenderCache();
-    }
- 
-    public boolean m_91400_() {
-@@ -2152,66 +_,9 @@
+@@ -2157,66 +_,9 @@
  
     private void m_91280_() {
        if (this.f_91077_ != null && this.f_91077_.m_6662_() != HitResult.Type.MISS) {
@@ -498,7 +490,7 @@
        }
     }
  
-@@ -2768,7 +_,7 @@
+@@ -2707,7 +_,7 @@
        return this.f_90993_;
     }
  
@@ -507,7 +499,7 @@
        int i = p_167938_.m_10374_();
        Supplier<PackResources> supplier = p_167937_;
        if (i <= 3) {
-@@ -2779,7 +_,7 @@
+@@ -2718,7 +_,7 @@
           supplier = m_91352_(supplier);
        }
  
@@ -516,7 +508,7 @@
     }
  
     private static Supplier<PackResources> m_91330_(Supplier<PackResources> p_91331_) {
-@@ -2796,6 +_,14 @@
+@@ -2735,6 +_,14 @@
  
     public void m_91312_(int p_91313_) {
        this.f_91051_.m_119410_(p_91313_);

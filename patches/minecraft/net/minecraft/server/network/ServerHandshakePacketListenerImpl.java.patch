@@ -4,7 +4,7 @@
     }
  
     public void m_7322_(ClientIntentionPacket p_9975_) {
-+      if (!net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.f_9966_)) return;
++      if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerLogin(p_9975_, this.f_9966_)) return;
        switch(p_9975_.m_134735_()) {
        case LOGIN:
           this.f_9966_.m_129498_(ConnectionProtocol.LOGIN);

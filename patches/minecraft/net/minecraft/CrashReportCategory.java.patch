@@ -22,7 +22,7 @@
 -            p_128169_.append("\n\tat ");
 -            p_128169_.append((Object)stacktraceelement);
 -         }
-+         p_128169_.append(net.minecraftforge.fmllegacy.CrashReportExtender.generateEnhancedStackTrace(this.f_128139_));
++         p_128169_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.f_128139_));
        }
  
     }
