@@ -25,8 +25,20 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
+/**
+ * RenderItemEvent is fired if rendering a Item.
+ * <br>
+ * This event is {@link Cancelable}. <br>
+ * If the event is canceled, the item render not anymore.<br>
+ * <br>
+ * This event does not have a result. {@link HasResult}<br>
+ * <br>
+ * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+ **/
 public class RenderItemEvent extends Event {
     private LivingEntity entity;
     private HandSide handSide;
@@ -72,17 +84,5 @@ public class RenderItemEvent extends Event {
 
     public HandSide getHandSide() {
         return this.handSide;
-    }
-
-    public static class Post extends RenderItemEvent {
-        public Post(LivingEntity entity, ItemStack heldItem, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, HandSide handSide, int p_2291357) {
-            super(entity, heldItem, transformType, matrixStack, renderTypeBuffer, handSide, p_2291357);
-        }
-    }
-
-    public static class Pre extends RenderItemEvent {
-        public Pre(LivingEntity entity, ItemStack heldItem, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, HandSide handSide, int p_2291357) {
-            super(entity, heldItem, transformType, matrixStack, renderTypeBuffer, handSide, p_2291357);
-        }
     }
 }
