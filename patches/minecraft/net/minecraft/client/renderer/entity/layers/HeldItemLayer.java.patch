@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/renderer/entity/layers/HeldItemLayer.java
++++ b/net/minecraft/client/renderer/entity/layers/HeldItemLayer.java
+@@ -13,6 +_,8 @@
+ import net.minecraft.util.math.vector.Vector3f;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.RenderItemEvent;
+ 
+ @OnlyIn(Dist.CLIENT)
+ public class HeldItemLayer<T extends LivingEntity, M extends EntityModel<T> & IHasArm> extends LayerRenderer<T, M> {
+@@ -39,7 +_,7 @@
+    }
+ 
+    private void func_229135_a_(LivingEntity p_229135_1_, ItemStack p_229135_2_, ItemCameraTransforms.TransformType p_229135_3_, HandSide p_229135_4_, MatrixStack p_229135_5_, IRenderTypeBuffer p_229135_6_, int p_229135_7_) {
+-      if (!p_229135_2_.func_190926_b()) {
++      if (!p_229135_2_.func_190926_b() && MinecraftForge.EVENT_BUS.post(new RenderItemEvent(p_229135_1_, p_229135_2_, p_229135_3_, p_229135_5_, p_229135_6_, p_229135_4_, p_229135_7_))) {
+          p_229135_5_.func_227860_a_();
+          this.func_215332_c().func_225599_a_(p_229135_4_, p_229135_5_);
+          p_229135_5_.func_227863_a_(Vector3f.field_229179_b_.func_229187_a_(-90.0F));
