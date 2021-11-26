@@ -34,16 +34,16 @@ public class RenderItemEvent extends Event {
     private ItemCameraTransforms.TransformType transformType;
     private MatrixStack matrixStack;
     private IRenderTypeBuffer renderTypeBuffer;
-    private int p_2291357;
+    private int light;
 
-    public RenderItemEvent(LivingEntity entity, ItemStack heldItem, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, HandSide handSide, int p_2291357) {
+    public RenderItemEvent(LivingEntity entity, ItemStack heldItem, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, HandSide handSide, int light) {
         this.entity = entity;
         this.handSide = handSide;
         this.heldItem = heldItem;
         this.transformType = transformType;
         this.matrixStack = matrixStack;
         this.renderTypeBuffer = renderTypeBuffer;
-        this.p_2291357 = p_2291357;
+        this.light = light;
     }
 
     public ItemStack getItem() {
@@ -62,8 +62,8 @@ public class RenderItemEvent extends Event {
         return this.renderTypeBuffer;
     }
 
-    public int getP_2291357() {
-        return this.p_2291357;
+    public int getLight() {
+        return this.light;
     }
 
     public LivingEntity getEntity() {
