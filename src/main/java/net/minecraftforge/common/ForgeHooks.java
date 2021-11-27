@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
@@ -94,6 +95,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
@@ -191,6 +193,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.RegistryReadOps.ResourceAccess;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.GameType;
@@ -1333,29 +1336,41 @@ public class ForgeHooks
     {
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
-
     
     /**
-     * Determines and returns the correct RegistryOps to return when returning early from creating a RegistryOps without importing datapacks
-     * @deprecated FORGE INTERNAL USE ONLY, DO NOT CALL DIRECTLY
+     * Called when datapacks are being imported into a RegistryAccess instance via
+     * RegistryReadOps.createAndLoad(...ResourceManager...)
+     * 
+     * This does these things:
+     * 1) if datapacks have already been imported into these registries (on top of builtin registered-in-java objects from vanilla),
+     *  then don't import them again (this prevents modifications in the dynamic registries loaded event from being applied multiple times)
+     *  (vanilla makes fresh registry sets whenever datapacks actually do need to be reimported, so vanilla only reimports when it doesn't need to)
+     * 2) if datapacks haven't already been imported, them import them into the registries, mark the registries as having imports loaded,
+     *  and fire the dynamic registries loaded event
      */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public static <T> RegistryReadOps<T> getCachedRegistryOps(DynamicOps<T> delegateOps, RegistryReadOps<?> registryOps, RegistryReadOps.ResourceAccess resources, RegistryAccess registries) 
+    public static <T> RegistryReadOps<T> importDatapacksIntoDynamicRegistries(DynamicOps<T> delegateOps, ResourceManager resourceManager, RegistryAccess registries)
     {
-        // if we return early from the ops creator, we need to return a previously-created RegistryReadOps -- so we need to figure out what ops type needs to be returned
-        if (delegateOps == JsonOps.INSTANCE) // same check vanilla uses
-            return (RegistryReadOps<T>) registryOps.jsonOps;
-        Map<DynamicOps<?>, RegistryReadOps<?>> extraOps = registryOps.extraOps;
-        return (RegistryReadOps<T>) extraOps.computeIfAbsent(delegateOps, ops -> new RegistryReadOps<T>(delegateOps, resources, registries, (IdentityHashMap<ResourceKey<? extends Registry<?>>, RegistryReadOps.ReadCache<?>>) registryOps.readCache, extraOps));
-    }
-    
-    /** @deprecated FORGE INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
-    @Deprecated
-    public static void onDynamicRegistriesLoaded(final @Nonnull RegistryReadOps<?> imports, final @Nonnull RegistryAccess registries)
-    {
+        ResourceAccess resources = RegistryReadOps.ResourceAccess.forResourceManager(resourceManager);
+        if (registries.datapackImports != null)
+        {
+            RegistryReadOps<?> registryOps = registries.datapackImports;
+            // if we've already imported datapacks into these registries,
+            // we must return a previously cached registries ops instead of importing again
+            // first, we need to figure out what ops type needs to be returned
+            // the vanilla registry ops has a field for cached jsonops, check that first
+            if (delegateOps == JsonOps.INSTANCE) // same check vanilla uses
+                return (RegistryReadOps<T>) registryOps.jsonOps;
+            // otherwise check our forge-added ops cache
+            Map<DynamicOps<?>, RegistryReadOps<?>> extraOps = registryOps.extraOps;
+            return (RegistryReadOps<T>) extraOps.computeIfAbsent(delegateOps, ops -> new RegistryReadOps<T>(delegateOps, resources, registries, (IdentityHashMap<ResourceKey<? extends Registry<?>>, RegistryReadOps.ReadCache<?>>) registryOps.readCache, extraOps));
+        }
+        RegistryReadOps<T> imports = new RegistryReadOps<T>(delegateOps, resources, registries, Maps.newIdentityHashMap(), new HashMap<>());
+        RegistryAccess.load(registries, imports);
+
         // mark the registries as having had datapacks imported into them
         registries.datapackImports = imports;
+        
+        // now we prepare data for the load event, fire the event, and process it
         
         // make a mutable copy of all biomes and provide these copies via the event
         final Registry<Biome> biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);
@@ -1366,6 +1381,7 @@ public class ForgeHooks
         final Map<ResourceKey<NoiseGeneratorSettings>, Map<StructureFeature<?>, StructureFeatureConfiguration>> structureConfigs = noiseGenerators.entrySet().stream()
             .collect(Collectors.toMap(Entry::getKey, entry -> new HashMap<>(entry.getValue().structureSettings().structureConfig())));
         
+        // fire the load event
         MinecraftForge.EVENT_BUS.post(new DynamicRegistriesLoadedEvent(registries, biomeModifiers, structureConfigs));
         
         // copy the new biome parameters back into the actual registered biome instances
@@ -1397,5 +1413,6 @@ public class ForgeHooks
                 noiseGenerator.structureSettings().structureConfig = structureMap;
             }
         });
+        return imports;
     }
 }
