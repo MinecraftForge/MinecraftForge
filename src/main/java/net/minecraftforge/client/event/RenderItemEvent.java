@@ -95,4 +95,21 @@ public class RenderItemEvent extends Event {
     {
         return this.handSide;
     }
+
+    @Cancelable
+    public static class Pre extends RenderItemEvent
+    {
+        public Pre(LivingEntity entity, ItemStack heldItem, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, HandSide handSide, int light)
+        {
+            super(entity, heldItem, transformType, matrixStack, renderTypeBuffer, handSide, light);
+        }
+    }
+
+    public static class Post extends RenderItemEvent
+    {
+        public Post(LivingEntity entity, ItemStack heldItem, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, HandSide handSide, int light)
+        {
+            super(entity, heldItem, transformType, matrixStack, renderTypeBuffer, handSide, light);
+        }
+    }
 }
