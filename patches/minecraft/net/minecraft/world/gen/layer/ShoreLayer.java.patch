@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/gen/layer/ShoreLayer.java
++++ b/net/minecraft/world/gen/layer/ShoreLayer.java
+@@ -12,6 +_,11 @@
+    private static final IntSet field_242943_c = new IntOpenHashSet(new int[]{168, 169, 21, 22, 23, 149, 151});
+ 
+    public int func_202748_a(INoiseRandom p_202748_1_, int p_202748_2_, int p_202748_3_, int p_202748_4_, int p_202748_5_, int p_202748_6_) {
++      net.minecraftforge.registries.ForgeRegistry<net.minecraft.world.biome.Biome> registry = (net.minecraftforge.registries.ForgeRegistry<net.minecraft.world.biome.Biome>) net.minecraftforge.registries.ForgeRegistries.BIOMES;
++      java.util.Optional<net.minecraft.util.RegistryKey<net.minecraft.world.biome.Biome>> shore = net.minecraftforge.common.BiomeManager.getShoreBiome(registry.getKey(p_202748_6_), registry.getKey(p_202748_2_), registry.getKey(p_202748_3_), registry.getKey(p_202748_4_), registry.getKey(p_202748_5_));
++      if(shore.isPresent()) {
++         return net.minecraft.util.registry.WorldGenRegistries.field_243657_i.func_148757_b(net.minecraft.util.registry.WorldGenRegistries.field_243657_i.func_230516_a_(shore.get()));
++      }
+       if (p_202748_6_ == 14) {
+          if (LayerUtil.func_203631_b(p_202748_2_) || LayerUtil.func_203631_b(p_202748_3_) || LayerUtil.func_203631_b(p_202748_4_) || LayerUtil.func_203631_b(p_202748_5_)) {
+             return 15;

@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/gen/layer/EdgeBiomeLayer.java
++++ b/net/minecraft/world/gen/layer/EdgeBiomeLayer.java
+@@ -20,6 +_,11 @@
+                }
+             }
+ 
++            net.minecraftforge.registries.ForgeRegistry<net.minecraft.world.biome.Biome> registry = (net.minecraftforge.registries.ForgeRegistry<net.minecraft.world.biome.Biome>) net.minecraftforge.registries.ForgeRegistries.BIOMES;
++            java.util.Optional<net.minecraft.util.RegistryKey <net.minecraft.world.biome.Biome>> edge = net.minecraftforge.common.BiomeManager.getEdgeBiome(registry.getKey(p_202748_6_), registry.getKey(p_202748_2_), registry.getKey(p_202748_3_), registry.getKey(p_202748_4_), registry.getKey(p_202748_5_));
++            if(edge.isPresent()) {
++               return net.minecraft.util.registry.WorldGenRegistries.field_243657_i.func_148757_b(net.minecraft.util.registry.WorldGenRegistries.field_243657_i.func_230516_a_(edge.get()));
++            }
+             return p_202748_6_;
+          } else {
+             return 34;

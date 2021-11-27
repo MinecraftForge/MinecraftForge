@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/gen/layer/HillsLayer.java
++++ b/net/minecraft/world/gen/layer/HillsLayer.java
+@@ -51,6 +_,10 @@
+       } else {
+          if (p_215723_1_.func_202696_a(3) == 0 || k == 0) {
+             int l = i;
++            java.util.Optional<net.minecraft.util.RegistryKey<net.minecraft.world.biome.Biome>> hills = net.minecraftforge.common.BiomeManager.getHillsBiome(((net.minecraftforge.registries.ForgeRegistry<net.minecraft.world.biome.Biome>)net.minecraftforge.registries.ForgeRegistries.BIOMES).getKey(i));
++            if(hills.isPresent()) {
++               l = net.minecraft.util.registry.WorldGenRegistries.field_243657_i.func_148757_b(net.minecraft.util.registry.WorldGenRegistries.field_243657_i.func_230516_a_(hills.get()));
++            } else
+             if (i == 2) {
+                l = 17;
+             } else if (i == 4) {

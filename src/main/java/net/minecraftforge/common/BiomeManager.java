@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 
@@ -257,6 +258,56 @@ public class BiomeManager
         public boolean isModded()
         {
             return isModded;
+        }
+    }
+
+    private static final List<IBiomeLayerModifier> biomeLayerModifiers = new ArrayList<>();
+
+    public static void addBiomeLayerModifier(IBiomeLayerModifier modifier)
+    {
+        biomeLayerModifiers.add(modifier);
+    }
+
+    public static Optional<RegistryKey<Biome>> getHillsBiome(RegistryKey<Biome> biome)
+    {
+        return biomeLayerModifiers.stream().map( mod -> mod.getHillsBiome(biome)).filter(Optional::isPresent).map(Optional::get).findFirst();
+    }
+
+    public static Optional<RegistryKey<Biome>> getRiverBiome(RegistryKey<Biome> biome)
+    {
+        return biomeLayerModifiers.stream().map( mod -> mod.getRiverBiome(biome)).filter(Optional::isPresent).map(Optional::get).findFirst();
+    }
+
+    public static Optional<RegistryKey<Biome>> getEdgeBiome(RegistryKey<Biome> biome, RegistryKey<Biome> north, RegistryKey<Biome> west, RegistryKey<Biome> south, RegistryKey<Biome> east)
+    {
+        return biomeLayerModifiers.stream().map( mod -> mod.getEdgeBiome(biome, north, west, south, east)).filter(Optional::isPresent).map(Optional::get).findFirst();
+    }
+
+    public static Optional<RegistryKey<Biome>> getShoreBiome(RegistryKey<Biome> biome, RegistryKey<Biome> north, RegistryKey<Biome> west, RegistryKey<Biome> south, RegistryKey<Biome> east)
+    {
+        return biomeLayerModifiers.stream().map( mod -> mod.getShoreBiome(biome, north, west, south, east)).filter(Optional::isPresent).map(Optional::get).findFirst();
+    }
+
+    public interface IBiomeLayerModifier
+    {
+        default Optional<RegistryKey<Biome>> getHillsBiome(RegistryKey<Biome> biome)
+        {
+            return Optional.empty();
+        }
+
+        default Optional<RegistryKey<Biome>> getRiverBiome(RegistryKey<Biome> biome)
+        {
+            return Optional.empty();
+        }
+
+        default Optional<RegistryKey<Biome>> getShoreBiome(RegistryKey<Biome> biome, RegistryKey<Biome> north, RegistryKey<Biome> west, RegistryKey<Biome> south, RegistryKey<Biome> east)
+        {
+            return Optional.empty();
+        }
+
+        default Optional<RegistryKey<Biome>> getEdgeBiome(RegistryKey<Biome> biome, RegistryKey<Biome> north, RegistryKey<Biome> west, RegistryKey<Biome> south, RegistryKey<Biome> east)
+        {
+            return Optional.empty();
         }
     }
 }
