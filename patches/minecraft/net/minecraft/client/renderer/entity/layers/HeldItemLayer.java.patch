@@ -5,7 +5,7 @@
  
     private void func_229135_a_(LivingEntity p_229135_1_, ItemStack p_229135_2_, ItemCameraTransforms.TransformType p_229135_3_, HandSide p_229135_4_, MatrixStack p_229135_5_, IRenderTypeBuffer p_229135_6_, int p_229135_7_) {
 -      if (!p_229135_2_.func_190926_b()) {
-+      if (!p_229135_2_.func_190926_b() && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemEvent.Pre(p_229135_1_, p_229135_2_, p_229135_3_, p_229135_5_, p_229135_6_, p_229135_4_, p_229135_7_))) {
++      if (!p_229135_2_.func_190926_b() && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemEvent.Pre(p_229135_1_, p_229135_4_, p_229135_2_, p_229135_3_, p_229135_5_, p_229135_6_, p_229135_7_))) {
           p_229135_5_.func_227860_a_();
           this.func_215332_c().func_225599_a_(p_229135_4_, p_229135_5_);
           p_229135_5_.func_227863_a_(Vector3f.field_229179_b_.func_229187_a_(-90.0F));
@@ -13,7 +13,7 @@
           p_229135_5_.func_227861_a_((double)((float)(flag ? -1 : 1) / 16.0F), 0.125D, -0.625D);
           Minecraft.func_71410_x().func_175597_ag().func_228397_a_(p_229135_1_, p_229135_2_, p_229135_3_, flag, p_229135_5_, p_229135_6_, p_229135_7_);
           p_229135_5_.func_227865_b_();
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemEvent.Post(p_229135_1_, p_229135_2_, p_229135_3_, p_229135_5_, p_229135_6_, p_229135_4_, p_229135_7_));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemEvent.Post(p_229135_1_, p_229135_4_, p_229135_2_, p_229135_3_, p_229135_5_, p_229135_6_, p_229135_7_));
        }
     }
  }
