@@ -25,12 +25,14 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * This event is fired whenever a player attacks an Entity in
- * Player#attack(Entity).<br>
- * <br>
- * This event is not {@link Cancelable}.<br>
- * <br>
- * This allows adding to the base damage like DamageEnchantments do, but also considering the attacked Entity object including capabilities, not just the Entity's MobType
- * <br>
+ * Player#attack(Entity).<p>
+ *
+ * This event is not {@link Cancelable}.<p>
+ *
+ * This allows adding to the base damage like DamageEnchantments do,
+ * but also considering the attacked Entity object including capabilities,
+ * not just the Entity's MobType<p>
+ *
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
 public class DamageBonusEvent extends PlayerEvent
@@ -69,6 +71,14 @@ public class DamageBonusEvent extends PlayerEvent
     public void addBonus(float additionalDamage)
     {
         this.bonus += additionalDamage;
+    }
+
+    /**
+     * Set the absolute bonus damage, overwriting any damage added by enchantments or other event handlers.
+     */
+    public void setBonus(float damage)
+    {
+        this.bonus = damage;
     }
 
     /**
