@@ -40,7 +40,6 @@ import net.minecraftforge.eventbus.api.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 
-@Cancelable
 public class RenderItemEvent extends Event {
     private LivingEntity entity;
     private HandSide handSide;
