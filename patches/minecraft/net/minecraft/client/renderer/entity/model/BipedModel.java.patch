@@ -1,0 +1,18 @@
+--- a/net/minecraft/client/renderer/entity/model/BipedModel.java
++++ b/net/minecraft/client/renderer/entity/model/BipedModel.java
+@@ -79,6 +_,7 @@
+    }
+ 
+    public void func_225597_a_(T p_225597_1_, float p_225597_2_, float p_225597_3_, float p_225597_4_, float p_225597_5_, float p_225597_6_) {
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.SetupLivingBipedAnimEvent.Pre(p_225597_1_, this, p_225597_2_, p_225597_3_, p_225597_4_, p_225597_5_, p_225597_6_))) return;
+       boolean flag = p_225597_1_.func_184599_cB() > 4;
+       boolean flag1 = p_225597_1_.func_213314_bj();
+       this.field_78116_c.field_78796_g = p_225597_5_ * ((float)Math.PI / 180F);
+@@ -206,6 +_,7 @@
+       }
+ 
+       this.field_178720_f.func_217177_a(this.field_78116_c);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.SetupLivingBipedAnimEvent.Post(p_225597_1_, this, p_225597_2_, p_225597_3_, p_225597_4_, p_225597_5_, p_225597_6_));
+    }
+ 
+    private void func_241654_b_(T p_241654_1_) {
