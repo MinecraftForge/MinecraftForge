@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
+@@ -241,7 +_,7 @@
+ import org.apache.logging.log4j.Logger;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperInfo, IWindowEventListener {
++public class Minecraft extends RecursiveEventLoop<Runnable> implements ISnooperInfo, IWindowEventListener, net.minecraftforge.client.extensions.IForgeMinecraft {
+    private static Minecraft field_71432_P;
+    private static final Logger field_147123_G = LogManager.getLogger();
+    public static final boolean field_142025_a = Util.func_110647_a() == Util.OS.OSX;
 @@ -368,6 +_,7 @@
     public Minecraft(GameConfiguration p_i45547_1_) {
        super("Client");
@@ -131,10 +140,11 @@
        if (p_147108_1_ == null && this.field_71441_e == null) {
           p_147108_1_ = new MainMenuScreen();
        } else if (p_147108_1_ == null && this.field_71439_g.func_233643_dh_()) {
-@@ -831,6 +_,14 @@
+@@ -831,6 +_,15 @@
           }
        }
  
++      net.minecraftforge.client.ForgeHooksClient.clearGuiLayers(this);
 +      Screen old = this.field_71462_r;
 +      net.minecraftforge.client.event.GuiOpenEvent event = new net.minecraftforge.client.event.GuiOpenEvent(p_147108_1_);
 +      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return;
@@ -160,7 +170,12 @@
        }
  
        if (this.field_238174_aV_ != null) {
-@@ -1065,6 +_,7 @@
+@@ -1061,10 +_,12 @@
+       this.field_195558_d.func_216525_a((double)i);
+       if (this.field_71462_r != null) {
+          this.field_71462_r.func_231152_a_(this, this.field_195558_d.func_198107_o(), this.field_195558_d.func_198087_p());
++         net.minecraftforge.client.ForgeHooksClient.resizeGuiLayers(this, this.field_195558_d.func_198107_o(), this.field_195558_d.func_198087_p());
+       }
  
        Framebuffer framebuffer = this.func_147110_a();
        framebuffer.func_216491_a(this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l(), field_142025_a);

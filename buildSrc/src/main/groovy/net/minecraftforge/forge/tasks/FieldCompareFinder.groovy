@@ -1,30 +1,21 @@
 package net.minecraftforge.forge.tasks
 
 import groovy.transform.EqualsAndHashCode
-
-import java.util.ArrayList
-import java.util.HashMap
-import java.util.TreeMap
-import java.util.TreeSet
-import java.util.function.BiConsumer
-
-import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
-
-import org.objectweb.asm.Opcodes
-import org.objectweb.asm.Type
 import org.objectweb.asm.tree.ClassNode
-import org.objectweb.asm.tree.FieldNode
 import org.objectweb.asm.tree.MethodNode
 
 import static org.objectweb.asm.Opcodes.*
 
-public class FieldCompareFinder extends BytecodeFinder {
+abstract class FieldCompareFinder extends BytecodeFinder {
     @Nested
     Map<String, Search> fields = [:] as HashMap
+    @Internal
     Map<Search, String> fieldsReverse = [:] as HashMap
+    @Internal
     Map<String, Set<ObjectTarget>> targets = [:] as TreeMap
     
     @Override
@@ -53,6 +44,7 @@ public class FieldCompareFinder extends BytecodeFinder {
         }
     }
     
+    @Internal
     @Override
     protected Object getData() {
 		def ret = [:] as HashMap

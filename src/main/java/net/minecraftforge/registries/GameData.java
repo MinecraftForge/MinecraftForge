@@ -843,6 +843,8 @@ public class GameData
             // the block comes back later
             missing.forEach((name, m) ->
             {
+                if (m.isEmpty())
+                    return;
                 ForgeRegistry<?> reg = STAGING.getRegistry(name);
                 m.forEach((rl, id) -> reg.markDummy(rl, id));
             });

@@ -9,15 +9,43 @@
                       return;
                    }
                 } else if (blockstate.func_185904_a().func_76230_c()) {
-@@ -86,7 +_,7 @@
+@@ -85,8 +_,8 @@
+                   return;
                 }
  
-                if (p_207186_1_.func_175623_d(blockpos1.func_177984_a()) && this.func_176368_m(p_207186_1_, blockpos1)) {
+-               if (p_207186_1_.func_175623_d(blockpos1.func_177984_a()) && this.func_176368_m(p_207186_1_, blockpos1)) {
 -                  p_207186_1_.func_175656_a(blockpos1.func_177984_a(), AbstractFireBlock.func_235326_a_(p_207186_1_, blockpos1));
++               if (p_207186_1_.func_175623_d(blockpos1.func_177984_a()) && this.isFlammable(p_207186_1_, blockpos1, Direction.UP)) {
 +                  p_207186_1_.func_175656_a(blockpos1.func_177984_a(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_207186_1_, blockpos1.func_177984_a(), p_207186_2_, Blocks.field_150480_ab.func_176223_P()));
                 }
              }
           }
+@@ -96,7 +_,7 @@
+ 
+    private boolean func_176369_e(IWorldReader p_176369_1_, BlockPos p_176369_2_) {
+       for(Direction direction : Direction.values()) {
+-         if (this.func_176368_m(p_176369_1_, p_176369_2_.func_177972_a(direction))) {
++         if (this.isFlammable(p_176369_1_, p_176369_2_.func_177972_a(direction), direction.func_176734_d())) {
+             return true;
+          }
+       }
+@@ -104,10 +_,16 @@
+       return false;
+    }
+ 
++   /** @deprecated Forge: use {@link LavaFluid#isFlammable(IWorldReader,BlockPos,Direction)} instead */
++   @Deprecated
+    private boolean func_176368_m(IWorldReader p_176368_1_, BlockPos p_176368_2_) {
+       return p_176368_2_.func_177956_o() >= 0 && p_176368_2_.func_177956_o() < 256 && !p_176368_1_.func_175667_e(p_176368_2_) ? false : p_176368_1_.func_180495_p(p_176368_2_).func_185904_a().func_76217_h();
+    }
+ 
++   private boolean isFlammable(IWorldReader world, BlockPos pos, Direction face) {
++      return pos.func_177956_o() >= 0 && pos.func_177956_o() < 256 && !world.func_175667_e(pos) ? false : world.func_180495_p(pos).isFlammable(world, pos, face);
++   }
++
+    @Nullable
+    @OnlyIn(Dist.CLIENT)
+    public IParticleData func_204521_c() {
 @@ -164,7 +_,7 @@
           FluidState fluidstate = p_205574_1_.func_204610_c(p_205574_2_);
           if (this.func_207185_a(FluidTags.field_206960_b) && fluidstate.func_206884_a(FluidTags.field_206959_a)) {

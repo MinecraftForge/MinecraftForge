@@ -55,7 +55,7 @@
           }
  
           return ActionResultType.func_233537_a_(p_225533_2_.field_72995_K);
-@@ -77,10 +_,27 @@
+@@ -77,10 +_,31 @@
     }
  
     public Block func_220276_d() {
@@ -81,6 +81,10 @@
 +           throw new IllegalArgumentException("Cannot add plant to non-empty pot: " + this);
 +       }
 +       fullPots.put(flower, fullPot);
++   }
++
++   public Map<net.minecraft.util.ResourceLocation, java.util.function.Supplier<? extends Block>> getFullPotsView() {
++      return java.util.Collections.unmodifiableMap(fullPots);
 +   }
 +   //Forge End
  }

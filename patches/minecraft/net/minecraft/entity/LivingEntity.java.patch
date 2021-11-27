@@ -387,6 +387,14 @@
           if (itemstack.func_77973_b() == Items.field_185160_cR && ElytraItem.func_185069_d(itemstack)) {
              flag = true;
              if (!this.field_70170_p.field_72995_K && (this.field_184629_bo + 1) % 20 == 0) {
+@@ -2581,6 +_,7 @@
+    public boolean func_70685_l(Entity p_70685_1_) {
+       Vector3d vector3d = new Vector3d(this.func_226277_ct_(), this.func_226280_cw_(), this.func_226281_cx_());
+       Vector3d vector3d1 = new Vector3d(p_70685_1_.func_226277_ct_(), p_70685_1_.func_226280_cw_(), p_70685_1_.func_226281_cx_());
++      if (p_70685_1_.field_70170_p != this.field_70170_p || vector3d1.func_72436_e(vector3d) > 128.0D * 128.0D) return false; //Forge Backport MC-209819
+       return this.field_70170_p.func_217299_a(new RayTraceContext(vector3d, vector3d1, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this)).func_216346_c() == RayTraceResult.Type.MISS;
+    }
+ 
 @@ -2668,8 +_,16 @@
  
     private void func_184608_ct() {

@@ -1,33 +1,27 @@
 package net.minecraftforge.forge.tasks
 
-import java.util.ArrayList
-import java.util.TreeMap
-
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
-
-import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.MethodVisitor
-import org.objectweb.asm.Opcodes
-import org.objectweb.asm.Type
+import org.objectweb.asm.*
 
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-public class CheckExcs extends DefaultTask {
-	@InputFile File binary
-	@InputFiles File[] excs
+abstract class CheckExcs extends DefaultTask {
+	@InputFile abstract RegularFileProperty getBinary()
+	@InputFiles abstract ConfigurableFileCollection getExcs()
 	
     @TaskAction
     protected void exec() {
 		Util.init()
 		def known = []
-		binary.withInputStream { i -> 
+		binary.get().asFile.withInputStream { i ->
 			new ZipInputStream(i).withCloseable { zin ->
-				def visitor = new ClassVisitor(Opcodes.ASM7) {
+				def visitor = new ClassVisitor(Opcodes.ASM9) {
 					private String cls
 					@Override
 					public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
@@ -68,8 +62,7 @@ public class CheckExcs extends DefaultTask {
 				
 				def (key, value) = line.split('=', 2)
 				if (!known.contains(key)) {
-					println(key)
-					println('Invalid: ' + line)
+					println('Unknown: ' + line)
 					return
 				}
 				
