@@ -35,6 +35,7 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
+
 public class SetupLivingBipedAnimEvent extends Event
 {
     private LivingEntity entity;

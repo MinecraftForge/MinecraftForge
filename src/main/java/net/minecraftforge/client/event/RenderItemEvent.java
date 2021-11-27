@@ -61,6 +61,16 @@ public class RenderItemEvent extends Event {
         this.light = light;
     }
 
+    public LivingEntity getEntity()
+    {
+        return this.entity;
+    }
+
+    public HandSide getHandSide()
+    {
+        return this.handSide;
+    }
+
     public ItemStack getItem()
     {
         return this.heldItem;
@@ -84,16 +94,6 @@ public class RenderItemEvent extends Event {
     public int getLight()
     {
         return this.light;
-    }
-
-    public LivingEntity getEntity()
-    {
-        return this.entity;
-    }
-
-    public HandSide getHandSide()
-    {
-        return this.handSide;
     }
 
     @Cancelable
