@@ -39,16 +39,19 @@ import net.minecraftforge.eventbus.api.Event;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
+
+@Cancelable
 public class RenderItemEvent extends Event {
     private LivingEntity entity;
     private HandSide handSide;
     private ItemStack heldItem;
-    private ItemCameraTransforms.TransformType transformType;
-    private MatrixStack matrixStack;
-    private IRenderTypeBuffer renderTypeBuffer;
-    private int light;
+    private final ItemCameraTransforms.TransformType transformType;
+    private final MatrixStack matrixStack;
+    private final IRenderTypeBuffer renderTypeBuffer;
+    private final int light;
 
-    public RenderItemEvent(LivingEntity entity, ItemStack heldItem, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, HandSide handSide, int light) {
+    public RenderItemEvent(LivingEntity entity, ItemStack heldItem, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, HandSide handSide, int light)
+    {
         this.entity = entity;
         this.handSide = handSide;
         this.heldItem = heldItem;
@@ -58,31 +61,38 @@ public class RenderItemEvent extends Event {
         this.light = light;
     }
 
-    public ItemStack getItem() {
+    public ItemStack getItem()
+    {
         return this.heldItem;
     }
 
-    public ItemCameraTransforms.TransformType getTransformType() {
+    public ItemCameraTransforms.TransformType getTransformType()
+    {
         return this.transformType;
     }
 
-    public MatrixStack getMatrixStack() {
+    public MatrixStack getMatrixStack()
+    {
         return this.matrixStack;
     }
 
-    public IRenderTypeBuffer getRenderTypeBuffer() {
+    public IRenderTypeBuffer getRenderTypeBuffer()
+    {
         return this.renderTypeBuffer;
     }
 
-    public int getLight() {
+    public int getLight()
+    {
         return this.light;
     }
 
-    public LivingEntity getEntity() {
+    public LivingEntity getEntity()
+    {
         return this.entity;
     }
 
-    public HandSide getHandSide() {
+    public HandSide getHandSide()
+    {
         return this.handSide;
     }
 }
