@@ -129,7 +129,7 @@
  
     protected void m_7909_(float p_36383_) {
 -      if (this.f_20935_.m_150930_(Items.f_42740_)) {
-+      if (this.f_20935_.isShield(this)) {
++      if (this.f_20935_.canPerformAction(net.minecraftforge.common.ToolActions.SHIELD_BLOCK)) {
           if (!this.f_19853_.f_46443_) {
              this.m_36246_(Stats.f_12982_.m_12902_(this.f_20935_.m_41720_()));
           }
@@ -221,6 +221,26 @@
                 }
  
                 f = f + f1;
+@@ -1064,9 +_,7 @@
+                double d0 = (double)(this.f_19787_ - this.f_19867_);
+                if (flag && !flag2 && !flag1 && this.f_19861_ && d0 < (double)this.m_6113_()) {
+                   ItemStack itemstack = this.m_21120_(InteractionHand.MAIN_HAND);
+-                  if (itemstack.m_41720_() instanceof SwordItem) {
+-                     flag3 = true;
+-                  }
++                  flag3 = itemstack.canPerformAction(net.minecraftforge.common.ToolActions.SWORD_SWEEP);
+                }
+ 
+                float f4 = 0.0F;
+@@ -1097,7 +_,7 @@
+                   if (flag3) {
+                      float f3 = 1.0F + EnchantmentHelper.m_44821_(this) * f;
+ 
+-                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, p_36347_.m_142469_().m_82377_(1.0D, 0.25D, 1.0D))) {
++                     for(LivingEntity livingentity : this.f_19853_.m_45976_(LivingEntity.class, this.m_21120_(InteractionHand.MAIN_HAND).getSweepHitBox(this, p_36347_))) {
+                         if (livingentity != this && livingentity != p_36347_ && !this.m_7307_(livingentity) && (!(livingentity instanceof ArmorStand) || !((ArmorStand)livingentity).m_31677_()) && this.m_20280_(livingentity) < 9.0D) {
+                            livingentity.m_147240_((double)0.4F, (double)Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F)), (double)(-Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F))));
+                            livingentity.m_6469_(DamageSource.m_19344_(this), f3);
 @@ -1139,13 +_,15 @@
                    EnchantmentHelper.m_44896_(this, p_36347_);
                    ItemStack itemstack1 = this.m_21205_();
@@ -248,18 +268,6 @@
           this.m_5810_();
           this.f_19853_.m_7605_(this, (byte)30);
        }
-@@ -1212,8 +_,9 @@
-    public void m_7583_() {
-    }
- 
--   public void m_142687_(Entity.RemovalReason p_150097_) {
--      super.m_142687_(p_150097_);
-+   @Override
-+   public void remove(boolean keepData) {
-+      super.remove(keepData);
-       this.f_36095_.m_6877_(this);
-       if (this.f_36096_ != null) {
-          this.f_36096_.m_6877_(this);
 @@ -1247,6 +_,7 @@
     }
  

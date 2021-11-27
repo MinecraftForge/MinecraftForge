@@ -19,11 +19,11 @@
 
 package net.minecraftforge.common.model.animation;
 
-import net.minecraft.nbt.Tag;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 
@@ -32,12 +32,11 @@ import javax.annotation.Nullable;
 
 public class CapabilityAnimation
 {
-    @CapabilityInject(IAnimationStateMachine.class)
-    public static Capability<IAnimationStateMachine> ANIMATION_CAPABILITY = null;
+    public static Capability<IAnimationStateMachine> ANIMATION_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
-    public static void register()
+    public static void register(RegisterCapabilitiesEvent event)
     {
-        CapabilityManager.INSTANCE.register(IAnimationStateMachine.class);
+        event.register(IAnimationStateMachine.class);
     }
 
     public static class DefaultItemAnimationCapabilityProvider implements ICapabilityProvider

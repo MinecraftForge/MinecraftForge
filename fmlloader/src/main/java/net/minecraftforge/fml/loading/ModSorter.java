@@ -92,6 +92,7 @@ public class ModSorter
         AtomicInteger counter = new AtomicInteger();
         Map<IModFileInfo, Integer> infos = modFiles.stream()
                 .map(ModFile::getModFileInfo)
+                .filter(ModFileInfo.class::isInstance)
                 .collect(toMap(Function.identity(), e -> counter.incrementAndGet()));
         infos.keySet().forEach(i -> graph.addNode((ModFileInfo) i));
         modFiles.stream()
@@ -150,9 +151,9 @@ public class ModSorter
 
     private void buildUniqueList()
     {
-        // Collect mod files by first modid in the file. This will be used for deduping purposes
+        // Collect mod files by module name. This will be used for deduping purposes
         final Map<String, List<IModFile>> modFilesByFirstId = modFiles.stream()
-                .collect(groupingBy(mf -> mf.getModInfos().get(0).getModId()));
+                .collect(groupingBy(mf -> mf.getModFileInfo().moduleName()));
 
         // Capture forge and MC here, so we can keep them for later
         forgeAndMC = new ArrayList<>();
@@ -161,6 +162,10 @@ public class ModSorter
             forgeAndMC.add((ModFile) mc.get(0));
         else
             throw new IllegalStateException("Failed to find minecraft somehow?");
+        // TODO: remove this hardcoding and make it more flexible
+        var forge = modFilesByFirstId.get("forge");
+        if (forge != null && !forge.isEmpty())
+            forgeAndMC.add((ModFile) forge.get(0)); // Silently ignore if Forge isn't present
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         this.modFiles = modFilesByFirstId.entrySet().stream()

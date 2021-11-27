@@ -1,0 +1,36 @@
+--- a/net/minecraft/client/renderer/RenderType.java
++++ b/net/minecraft/client/renderer/RenderType.java
+@@ -288,27 +_,27 @@
+    }
+ 
+    public static RenderType m_110497_(ResourceLocation p_110498_) {
+-      return f_173173_.apply(p_110498_);
++      return net.minecraftforge.client.ForgeRenderTypes.getText(p_110498_);
+    }
+ 
+    public static RenderType m_173237_(ResourceLocation p_173238_) {
+-      return f_173174_.apply(p_173238_);
++      return net.minecraftforge.client.ForgeRenderTypes.getTextIntensity(p_173238_);
+    }
+ 
+    public static RenderType m_181444_(ResourceLocation p_181445_) {
+-      return f_181442_.apply(p_181445_);
++      return net.minecraftforge.client.ForgeRenderTypes.getTextPolygonOffset(p_181445_);
+    }
+ 
+    public static RenderType m_181446_(ResourceLocation p_181447_) {
+-      return f_181443_.apply(p_181447_);
++      return net.minecraftforge.client.ForgeRenderTypes.getTextIntensityPolygonOffset(p_181447_);
+    }
+ 
+    public static RenderType m_110500_(ResourceLocation p_110501_) {
+-      return f_173175_.apply(p_110501_);
++      return net.minecraftforge.client.ForgeRenderTypes.getTextSeeThrough(p_110501_);
+    }
+ 
+    public static RenderType m_173240_(ResourceLocation p_173241_) {
+-      return f_173176_.apply(p_173241_);
++      return net.minecraftforge.client.ForgeRenderTypes.getTextIntensitySeeThrough(p_173241_);
+    }
+ 
+    public static RenderType m_110502_() {

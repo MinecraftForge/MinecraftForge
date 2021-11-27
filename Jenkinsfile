@@ -7,7 +7,7 @@ pipeline {
     agent {
         docker {
             image 'gradle:7-jdk16'
-            args '-v forgegc:/home/gradle/.gradle/'
+            //args '-v forgegc:/home/gradle/.gradle_cache/'
         }
     }
     environment {
@@ -34,6 +34,15 @@ pipeline {
                 )
             }
         }
+        /*
+        stage('pull_cache') {
+            steps {
+                sh 'cp -r /home/gradle/.gradle_cache/jdks/ /home/gradle/.gradle/jdks/'
+                sh 'cp -r /home/gradle/.gradle_cache/wrapper/ /home/gradle/.gradle/wrapper/'
+                sh 'cp -r /home/gradle/.gradle_cache/caches/ /home/gradle/.gradle/caches/'
+            }
+        }
+        */
         stage('setup') {
             steps {
                 withGradle {
@@ -41,6 +50,7 @@ pipeline {
                 }
                 script {
                     env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "^version:" | cut -d" " -f2').trim()
+                    env.FMLONLY_VERSION = sh(returnStdout: true, script: './gradlew :fmlonly:properties -q | grep "^version:" | cut -d" " -f2').trim()
                 }
             }
         }
@@ -76,6 +86,7 @@ pipeline {
             post {
                 success {
                     build job: 'filegenerator', parameters: [string(name: 'COMMAND', value: "promote net.minecraftforge:forge ${env.MYVERSION} latest")], propagate: false, wait: false
+                    build job: 'filegenerator', parameters: [string(name: 'COMMAND', value: "promote net.minecraftforge:fmlonly ${env.FMLONLY_VERSION} latest")], propagate: false, wait: false
                 }
             }
         }

@@ -29,8 +29,6 @@ import javax.annotation.Nonnull;
 /**
  * Implement this interface on Block classes which represent world-placeable Fluids.
  *
- * NOTE: Using/extending the reference implementations {@link BlockFluidBase} is encouraged.
- *
  */
 public interface IFluidBlock
 {

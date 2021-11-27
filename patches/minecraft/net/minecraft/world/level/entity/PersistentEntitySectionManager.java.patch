@@ -1,0 +1,45 @@
+--- a/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
++++ b/net/minecraft/world/level/entity/PersistentEntitySectionManager.java
+@@ -72,7 +_,16 @@
+       return this.m_157538_(p_157534_, false);
+    }
+ 
++   public boolean addNewEntityWithoutEvent(T entity) {
++      return this.addEntityWithoutEvent(entity, false);
++   }
++
+    private boolean m_157538_(T p_157539_, boolean p_157540_) {
++      if (p_157539_ instanceof Entity entity && net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(entity, entity.f_19853_, p_157540_))) return false;
++      return addEntityWithoutEvent(p_157539_, p_157540_);
++   }
++
++   private boolean addEntityWithoutEvent(T p_157539_, boolean p_157540_) {
+       if (!this.m_157557_(p_157539_)) {
+          return false;
+       } else {
+@@ -350,11 +_,13 @@
+ 
+    class Callback implements EntityInLevelCallback {
+       private final T f_157609_;
++      private final Entity realEntity;
+       private long f_157610_;
+       private EntitySection<T> f_157611_;
+ 
+       Callback(T p_157614_, long p_157615_, EntitySection<T> p_157616_) {
+          this.f_157609_ = p_157614_;
++         this.realEntity = p_157614_ instanceof Entity ? (Entity) p_157614_ : null;
+          this.f_157610_ = p_157615_;
+          this.f_157611_ = p_157616_;
+       }
+@@ -371,9 +_,11 @@
+             PersistentEntitySectionManager.this.m_157509_(this.f_157610_, this.f_157611_);
+             EntitySection<T> entitysection = PersistentEntitySectionManager.this.f_157495_.m_156893_(i);
+             entitysection.m_156840_(this.f_157609_);
++            long oldSectionKey = f_157610_;
+             this.f_157611_ = entitysection;
+             this.f_157610_ = i;
+             this.m_157620_(visibility, entitysection.m_156848_());
++            if (this.realEntity != null) net.minecraftforge.common.ForgeHooks.onEntityEnterSection(this.realEntity, oldSectionKey, i);
+          }
+ 
+       }

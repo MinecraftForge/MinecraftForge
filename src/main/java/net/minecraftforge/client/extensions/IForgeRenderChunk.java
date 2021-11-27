@@ -30,7 +30,7 @@ public interface IForgeRenderChunk
      * Extending classes can change the behavior of the cache, allowing to visually change
      * blocks (schematics etc).
      *
-     * @see RegionRenderCache
+     * @see RenderChunkRegion
      * @param world The world to cache.
      * @param from The starting position of the chunk minus one on each axis.
      * @param to The ending position of the chunk plus one on each axis.

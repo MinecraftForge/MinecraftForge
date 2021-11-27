@@ -148,7 +148,7 @@ public class RenderGameOverlayEvent extends Event
         }
 
         /**
-         * @return The {@link ClientBossInfo} currently being rendered
+         * @return The {@link LerpingBossEvent} currently being rendered
          */
         public LerpingBossEvent getBossInfo()
         {

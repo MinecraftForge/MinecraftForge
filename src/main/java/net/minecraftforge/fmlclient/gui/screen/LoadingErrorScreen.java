@@ -83,7 +83,6 @@ public class LoadingErrorScreen extends ErrorScreen {
         this.addRenderableWidget(new ExtendedButton(this.width / 2 + 5, this.height - yOffset, this.width / 2 - 55, 20, new TextComponent(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), b -> Util.getPlatform().openFile(logFile.toFile())));
         if (this.modLoadErrors.isEmpty()) {
             this.addRenderableWidget(new ExtendedButton(this.width / 4, this.height - 24, this.width / 2, 20, new TextComponent(ForgeI18n.parseMessage("fml.button.continue.launch")), b -> {
-                ClientHooks.logMissingTextureErrors();
                 this.minecraft.setScreen(null);
             }));
         } else {
@@ -91,7 +90,7 @@ public class LoadingErrorScreen extends ErrorScreen {
         }
 
         this.entryList = new LoadingEntryList(this, this.modLoadErrors, this.modLoadWarnings);
-        this.addRenderableWidget(this.entryList);
+        this.addWidget(this.entryList);
         this.setFocused(this.entryList);
     }
 

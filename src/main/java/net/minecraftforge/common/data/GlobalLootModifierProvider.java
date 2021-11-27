@@ -30,6 +30,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.common.loot.LootModifier;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -40,7 +41,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Provider for forge's GlobalLootModifier system. See {@link net.minecraftforge.common.loot.LootModifier} and {@link GlobalLootModifierSerializer}.
+ * Provider for forge's GlobalLootModifier system. See {@link LootModifier} and {@link GlobalLootModifierSerializer}.
  *
  * This provider only requires implementing {@link #start()} and calling {@link #add} from it.
  */
@@ -103,7 +104,6 @@ public abstract class GlobalLootModifierProvider implements DataProvider
      *
      * @param modifier      The name of the modifier, which will be the file name.
      * @param serializer    The serializer of this modifier.
-     * @param conditions    The loot conditions before {@link LootModifier#doApply} is called.
      */
     public <T extends IGlobalLootModifier> void add(String modifier, GlobalLootModifierSerializer<T> serializer, T instance)
     {

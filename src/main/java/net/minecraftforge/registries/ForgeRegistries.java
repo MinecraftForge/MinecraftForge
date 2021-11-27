@@ -58,6 +58,7 @@ import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorTy
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldType;
+import net.minecraftforge.fmllegacy.common.registry.GameRegistry;
 
 /**
  * A class that exposes static references to all vanilla and Forge registries.
@@ -72,9 +73,9 @@ public class ForgeRegistries
     public static final IForgeRegistry<Block> BLOCKS = RegistryManager.ACTIVE.getRegistry(Block.class);
     public static final IForgeRegistry<Fluid> FLUIDS = RegistryManager.ACTIVE.getRegistry(Fluid.class);
     public static final IForgeRegistry<Item> ITEMS = RegistryManager.ACTIVE.getRegistry(Item.class);
-    public static final IForgeRegistry<MobEffect> POTIONS = RegistryManager.ACTIVE.getRegistry(MobEffect.class);
+    public static final IForgeRegistry<MobEffect> MOB_EFFECTS = RegistryManager.ACTIVE.getRegistry(MobEffect.class);
     public static final IForgeRegistry<SoundEvent> SOUND_EVENTS = RegistryManager.ACTIVE.getRegistry(SoundEvent.class);
-    public static final IForgeRegistry<Potion> POTION_TYPES = RegistryManager.ACTIVE.getRegistry(Potion.class);
+    public static final IForgeRegistry<Potion> POTIONS = RegistryManager.ACTIVE.getRegistry(Potion.class);
     public static final IForgeRegistry<Enchantment> ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Enchantment.class);
     public static final IForgeRegistry<EntityType<?>> ENTITIES = RegistryManager.ACTIVE.getRegistry(EntityType.class);
     public static final IForgeRegistry<BlockEntityType<?>> BLOCK_ENTITIES = RegistryManager.ACTIVE.getRegistry(BlockEntityType.class);
@@ -118,7 +119,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<Block>>  BLOCKS  = key("block");
         public static final ResourceKey<Registry<Fluid>>  FLUIDS  = key("fluid");
         public static final ResourceKey<Registry<Item>>   ITEMS   = key("item");
-        public static final ResourceKey<Registry<MobEffect>> EFFECTS = key("mob_effect");
+        public static final ResourceKey<Registry<MobEffect>> MOB_EFFECTS = key("mob_effect");
         public static final ResourceKey<Registry<Potion>> POTIONS = key("potion");
         public static final ResourceKey<Registry<Attribute>> ATTRIBUTES = key("attribute");
         public static final ResourceKey<Registry<StatType<?>>> STAT_TYPES = key("stat_type");

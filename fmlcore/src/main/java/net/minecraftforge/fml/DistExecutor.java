@@ -46,7 +46,7 @@ public final class DistExecutor
     private DistExecutor() {}
 
     /**
-     * Run the callable in the supplier only on the specified {@link Side}.
+     * Run the callable in the supplier only on the specified {@link Dist}.
      * This method is NOT sided-safe and special care needs to be taken in code using this method that implicit class
      * loading is not triggered by the Callable.
      *

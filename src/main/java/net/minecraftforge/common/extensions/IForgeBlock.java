@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 
+import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,27 +31,23 @@ import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.WitherSkull;
-import net.minecraft.world.level.block.LadderBlock;
-import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.common.ToolType;
 
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.BlockGetter;
@@ -58,18 +55,9 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.block.BeaconBeamBlock;
-import net.minecraft.world.level.block.BedBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FarmBlock;
-import net.minecraft.world.level.block.FenceGateBlock;
-import net.minecraft.world.level.block.FireBlock;
-import net.minecraft.world.level.block.HalfTransparentBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.LeavesBlock;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 
 @SuppressWarnings("deprecation")
 public interface IForgeBlock
@@ -84,9 +72,9 @@ public interface IForgeBlock
      * between 0 and 1.
      * <p>
      * Note that entities may reduce slipperiness by a certain factor of their own;
-     * for {@link net.minecraft.world.entity.LivingEntity}, this is {@code .91}.
-     * {@link net.minecraft.world.entity.item.ItemEntity} uses {@code .98}, and
-     * {@link net.minecraft.world.entity.projectile.FishingHook} uses {@code .92}.
+     * for {@link LivingEntity}, this is {@code .91}.
+     * {@link ItemEntity} uses {@code .98}, and
+     * {@link FishingHook} uses {@code .92}.
      *
      * @param state state of the block
      * @param world the world
@@ -163,7 +151,7 @@ public interface IForgeBlock
      */
     default public boolean canHarvestBlock(BlockState state, BlockGetter world, BlockPos pos, Player player)
     {
-        return ForgeHooks.canHarvestBlock(state, player, world, pos);
+        return ForgeHooks.isCorrectToolForDrops(state, player);
     }
 
     /**
@@ -462,31 +450,6 @@ public interface IForgeBlock
     }
 
     /**
-     * Queries the class of tool required to harvest this block, if null is returned
-     * we assume that anything can harvest this block.
-     */
-    ToolType getHarvestTool(BlockState state);
-
-    /**
-     * Queries the harvest level of this item stack for the specified tool class,
-     * Returns -1 if this tool is not of the specified type
-     *
-     * @return Harvest level, or -1 if not the specified tool type.
-     */
-    int getHarvestLevel(BlockState state);
-
-    /**
-     * Checks if the specified tool type is efficient on this block,
-     * meaning that it digs at full speed.
-     */
-    default boolean isToolEffective(BlockState state, ToolType tool)
-    {
-        if (tool == ToolType.PICKAXE && (self() == Blocks.REDSTONE_ORE || self() == Blocks.REDSTONE_LAMP || self() == Blocks.OBSIDIAN))
-            return false;
-        return tool == getHarvestTool(state);
-    }
-
-    /**
      * Sensitive version of getSoundType
      * @param state The state
      * @param world The world
@@ -516,7 +479,7 @@ public interface IForgeBlock
 
     /**
      * Used to determine the state 'viewed' by an entity (see
-     * {@link ActiveRenderInfo#getBlockStateAtEntityViewpoint(World, Entity, float)}).
+     * {@link Camera#getBlockAtCamera()}).
      * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
      *
      * @param state     the state
@@ -729,14 +692,21 @@ public interface IForgeBlock
      * @param pos The block position in world
      * @param player The player clicking the block
      * @param stack The stack being used by the player
+     * @param toolAction The action being performed by the tool
      * @return The resulting state after the action has been performed
      */
     @Nullable
-    default BlockState getToolModifiedState(BlockState state, Level world, BlockPos pos, Player player, ItemStack stack, ToolType toolType)
+    default BlockState getToolModifiedState(BlockState state, Level world, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
-        if (toolType == ToolType.AXE) return AxeItem.getAxeStrippingState(state);
-//        else if(toolType == ToolType.HOE) return HoeItem.getHoeTillingState(state); //TODO HoeItem bork
-        else return toolType == ToolType.SHOVEL ? ShovelItem.getShovelPathingState(state) : null;
+        if (!stack.canPerformAction(toolAction)) return null;
+        if (ToolActions.AXE_STRIP.equals(toolAction)) return AxeItem.getAxeStrippingState(state);
+        else if(ToolActions.AXE_SCRAPE.equals(toolAction)) return WeatheringCopper.getPrevious(state).orElse(null);
+        else if(ToolActions.AXE_WAX_OFF.equals(toolAction)) return Optional.ofNullable(HoneycombItem.WAX_OFF_BY_BLOCK.get().get(state.getBlock())).map((p_150694_) -> {
+            return p_150694_.withPropertiesOf(state);
+        }).orElse(null);
+        //else if(ToolActions.HOE_TILL.equals(toolAction)) return HoeItem.getHoeTillingState(state); //TODO HoeItem bork
+        else if (ToolActions.SHOVEL_FLATTEN.equals(toolAction)) return ShovelItem.getShovelPathingState(state);
+        return null;
     }
 
     /**
@@ -751,5 +721,55 @@ public interface IForgeBlock
     default boolean isScaffolding(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity)
     {
         return state.is(Blocks.SCAFFOLDING);
+    }
+
+    /**
+     * Whether redstone dust should visually connect to this block on a given side
+     * <p>
+     * The default implementation is identical to
+     * {@code RedStoneWireBlock#shouldConnectTo(BlockState, Direction)}
+     *
+     * <p>
+     * {@link RedStoneWireBlock} updates its visual connection when
+     * {@link BlockState#updateShape(Direction, BlockState, LevelAccessor, BlockPos, BlockPos)}
+     * is called, this callback is used during the evaluation of its new shape.
+     *
+     * @param state The current state
+     * @param world The world
+     * @param pos The block position in world
+     * @param direction The coming direction of the redstone dust connection (with respect to the block at pos)
+     * @return True if redstone dust should visually connect on the side passed
+     * <p>
+     * If the return value is evaluated based on world and pos (e.g. from BlockEntity), then the implementation of
+     * this block should notify its neighbors to update their shapes when necessary. Consider using
+     * {@link BlockState#updateNeighbourShapes(LevelAccessor, BlockPos, int, int)} or
+     * {@link BlockState#updateShape(Direction, BlockState, LevelAccessor, BlockPos, BlockPos)}.
+     * <p>
+     * Example:
+     * <p>
+     * 1. {@code yourBlockState.updateNeighbourShapes(world, yourBlockPos, UPDATE_ALL);}
+     * <p>
+     * 2. {@code neighborState.updateShape(fromDirection, stateOfYourBlock, world, neighborBlockPos, yourBlockPos)},
+     * where {@code fromDirection} is defined from the neighbor block's point of view.
+     */
+    default boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction direction)
+    {
+        if (state.is(Blocks.REDSTONE_WIRE))
+        {
+            return true;
+        }
+        else if (state.is(Blocks.REPEATER))
+        {
+            Direction facing = state.getValue(RepeaterBlock.FACING);
+            return facing == direction || facing.getOpposite() == direction;
+        }
+        else if (state.is(Blocks.OBSERVER))
+        {
+            return direction == state.getValue(ObserverBlock.FACING);
+        }
+        else
+        {
+            return state.isSignalSource() && direction != null;
+        }
     }
 }

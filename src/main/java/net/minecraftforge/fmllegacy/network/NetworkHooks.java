@@ -32,8 +32,8 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.tags.TagCollection;
 import net.minecraft.tags.TagContainer;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.common.extensions.IForgeTagContainer;
 import net.minecraftforge.fml.util.thread.EffectiveSide;
+import net.minecraftforge.fmlclient.ConfigGuiHandler.ConfigGuiFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -159,12 +159,8 @@ public class NetworkHooks
     /**
      * Request to open a GUI on the client, from the server
      *
-     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#CONFIGGUIFACTORY} for how to provide a function to consume
+     * Refer to {@link ConfigGuiFactory} for how to provide a function to consume
      * these GUI requests on the client.
-     *
-     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
-     * It should refer to a valid modId namespace, to trigger opening on the client.
-     * The namespace is directly used to lookup the modId in the client side.
      *
      * @param player The player to open the GUI for
      * @param containerSupplier A supplier of container properties including the registry name of the container
@@ -177,12 +173,8 @@ public class NetworkHooks
     /**
      * Request to open a GUI on the client, from the server
      *
-     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#CONFIGGUIFACTORY} for how to provide a function to consume
+     * Refer to {@link ConfigGuiFactory} for how to provide a function to consume
      * these GUI requests on the client.
-     *
-     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
-     * It should refer to a valid modId namespace, to trigger opening on the client.
-     * The namespace is directly used to lookup the modId in the client side.
      *
      * @param player The player to open the GUI for
      * @param containerSupplier A supplier of container properties including the registry name of the container
@@ -195,12 +187,9 @@ public class NetworkHooks
     /**
      * Request to open a GUI on the client, from the server
      *
-     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#CONFIGGUIFACTORY} for how to provide a function to consume
+     * Refer to {@link ConfigGuiFactory} for how to provide a function to consume
      * these GUI requests on the client.
      *
-     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
-     * It should refer to a valid modId namespace, to trigger opening on the client.
-     * The namespace is directly used to lookup the modId in the client side.
      * The maximum size for #extraDataWriter is 32600 bytes.
      *
      * @param player The player to open the GUI for
@@ -232,33 +221,6 @@ public class NetworkHooks
         player.containerMenu = c;
         player.initMenu(player.containerMenu);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
-    }
-
-    /**
-     * Syncs the custom tag types attached to a {@link IForgeTagContainer} to all connected players.
-     * @param tagCollectionSupplier The tag collection supplier containing the custom tags
-     */
-    public static void syncCustomTagTypes(TagContainer tagCollectionSupplier)
-    {
-        Map<ResourceLocation, TagCollection<?>> customTagTypes = tagCollectionSupplier.getCustomTagTypes();
-        if (!customTagTypes.isEmpty())
-        {
-            FMLNetworkConstants.playChannel.send(PacketDistributor.ALL.noArg(), new FMLPlayMessages.SyncCustomTagTypes(customTagTypes));
-        }
-    }
-
-    /**
-     * Syncs the custom tag types attached to a {@link IForgeTagContainer} to the given player.
-     * @param player                The player to sync the custom tags to.
-     * @param tagCollectionSupplier The tag collection supplier containing the custom tags
-     */
-    public static void syncCustomTagTypes(ServerPlayer player, TagContainer tagCollectionSupplier)
-    {
-        Map<ResourceLocation, TagCollection<?>> customTagTypes = tagCollectionSupplier.getCustomTagTypes();
-        if (!customTagTypes.isEmpty())
-        {
-            FMLNetworkConstants.playChannel.sendTo(new FMLPlayMessages.SyncCustomTagTypes(customTagTypes), player.connection.getConnection(), NetworkDirection.PLAY_TO_CLIENT);
-        }
     }
 
     @Nullable

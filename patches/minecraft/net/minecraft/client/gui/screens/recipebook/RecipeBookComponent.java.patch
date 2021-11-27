@@ -9,12 +9,12 @@
           this.f_100279_.add(new RecipeBookTabButton(recipebookcategories));
        }
  
-@@ -462,7 +_,7 @@
- 
-          languagemanager.m_118974_(languageinfo);
-          this.f_100272_.f_91066_.f_92075_ = languageinfo.getCode();
--         this.f_100272_.m_91391_();
-+         net.minecraftforge.client.ForgeHooksClient.refreshResources(this.f_100272_, net.minecraftforge.resource.VanillaResourceType.LANGUAGES);
-          this.f_100272_.f_91066_.m_92169_();
+@@ -319,7 +_,7 @@
        }
  
+       if (itemstack != null && this.f_100272_.f_91080_ != null) {
+-         this.f_100272_.f_91080_.m_96597_(p_100375_, this.f_100272_.f_91080_.m_96555_(itemstack), p_100378_, p_100379_);
++         this.f_100272_.f_91080_.renderComponentTooltip(p_100375_, this.f_100272_.f_91080_.m_96555_(itemstack), p_100378_, p_100379_, itemstack);
+       }
+ 
+    }

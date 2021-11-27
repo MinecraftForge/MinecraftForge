@@ -21,13 +21,8 @@ package net.minecraftforge.client.model;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
-import net.minecraftforge.resource.IResourceType;
-import net.minecraftforge.resource.VanillaResourceType;
-
-import java.util.function.Predicate;
 
 public interface IModelLoader<T extends IModelGeometry<T>> extends ResourceManagerReloadListener
 {

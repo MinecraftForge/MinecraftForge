@@ -34,8 +34,8 @@ import net.minecraftforge.fml.ModLoadingStage;
  *
  * Do dedicated server specific activities with this event.
  *
- * <em>This event is fired before construction of the dedicated server. Use {@link FMLServerAboutToStartEvent}
- * or {@link FMLServerStartingEvent} to do stuff with the server, in both dedicated
+ * <em>This event is fired before construction of the dedicated server. Use {@code FMLServerAboutToStartEvent}
+ * or {@code FMLServerStartingEvent} to do stuff with the server, in both dedicated
  * and integrated server contexts</em>
  *
  * This is a parallel dispatch event.

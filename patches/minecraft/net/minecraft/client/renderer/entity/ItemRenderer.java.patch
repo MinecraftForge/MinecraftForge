@@ -57,26 +57,7 @@
              crashreportcategory.m_128165_("Item Damage", () -> {
                 return String.valueOf(p_174237_.m_41773_());
              });
-@@ -332,14 +_,15 @@
-             multibuffersource$buffersource.m_109911_();
-          }
- 
--         if (p_115176_.m_150947_()) {
-+         if (p_115176_.m_41720_().showDurabilityBar(p_115176_)) {
-             RenderSystem.m_69465_();
-             RenderSystem.m_69472_();
-             RenderSystem.m_69461_();
-             Tesselator tesselator = Tesselator.m_85913_();
-             BufferBuilder bufferbuilder = tesselator.m_85915_();
--            int i = p_115176_.m_150948_();
--            int j = p_115176_.m_150949_();
-+            double health = p_115176_.m_41720_().getDurabilityForDisplay(p_115176_);
-+            int i = Math.round(13.0F - (float)health * 13.0F);
-+            int j = p_115176_.m_41720_().getRGBDurabilityForDisplay(p_115176_);
-             this.m_115152_(bufferbuilder, p_115177_ + 2, p_115178_ + 13, 13, 2, 0, 0, 0, 255);
-             this.m_115152_(bufferbuilder, p_115177_ + 2, p_115178_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
-             RenderSystem.m_69478_();
-@@ -377,5 +_,14 @@
+@@ -377,5 +_,9 @@
  
     public void m_6213_(ResourceManager p_115105_) {
        this.f_115095_.m_109403_();
@@ -84,10 +65,5 @@
 +
 +   public BlockEntityWithoutLevelRenderer getBlockEntityRenderer() {
 +       return f_174223_;
-+   }
-+
-+   @Override
-+   public net.minecraftforge.resource.IResourceType getResourceType() {
-+      return net.minecraftforge.resource.VanillaResourceType.MODELS;
     }
  }

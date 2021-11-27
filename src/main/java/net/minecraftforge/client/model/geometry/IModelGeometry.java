@@ -38,7 +38,7 @@ import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.client.resources.model.UnbakedModel;
 
 /**
- * General interface for any model that can be baked, superset of vanilla {@link net.minecraft.client.renderer.model.IUnbakedModel}.
+ * General interface for any model that can be baked, superset of vanilla {@link UnbakedModel}.
  * Models can be baked to different vertex formats and with different state.
  */
 public interface IModelGeometry<T extends IModelGeometry<T>>

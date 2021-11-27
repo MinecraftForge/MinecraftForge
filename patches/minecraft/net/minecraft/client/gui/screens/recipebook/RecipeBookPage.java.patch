@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screens/recipebook/RecipeBookPage.java
++++ b/net/minecraft/client/gui/screens/recipebook/RecipeBookPage.java
+@@ -115,7 +_,7 @@
+ 
+    public void m_100417_(PoseStack p_100418_, int p_100419_, int p_100420_) {
+       if (this.f_100397_.f_91080_ != null && this.f_100395_ != null && !this.f_100396_.m_100212_()) {
+-         this.f_100397_.f_91080_.m_96597_(p_100418_, this.f_100395_.m_100477_(this.f_100397_.f_91080_), p_100419_, p_100420_);
++         this.f_100397_.f_91080_.renderComponentTooltip(p_100418_, this.f_100395_.m_100477_(this.f_100397_.f_91080_), p_100419_, p_100420_, this.f_100395_.m_100488_().m_8043_());
+       }
+ 
+    }

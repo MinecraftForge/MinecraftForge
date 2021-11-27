@@ -63,6 +63,14 @@
        }
  
        return blockentity;
+@@ -379,6 +_,7 @@
+       if (this.m_156370_()) {
+          this.m_156404_(p_156391_);
+          this.m_156406_(p_156391_);
++         p_156391_.onLoad();
+       }
+ 
+    }
 @@ -418,9 +_,14 @@
     public CompoundTag m_8051_(BlockPos p_62932_) {
        BlockEntity blockentity = this.m_7702_(p_62932_);
@@ -87,6 +95,19 @@
        });
     }
  
+@@ -759,10 +_,12 @@
+    }
+ 
+    public void m_156368_() {
++      this.f_62779_.values().forEach(BlockEntity::onChunkUnloaded);
+       this.f_62779_.values().forEach(this::m_156400_);
+    }
+ 
+    public void m_156369_() {
++      this.f_62776_.addFreshBlockEntities(this.f_62779_.values());
+       this.f_62779_.values().forEach((p_156409_) -> {
+          this.m_156404_(p_156409_);
+          this.m_156406_(p_156409_);
 @@ -826,6 +_,7 @@
              if (LevelChunk.this.m_156410_(blockpos)) {
                 try {

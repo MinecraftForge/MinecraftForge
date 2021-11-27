@@ -44,11 +44,18 @@ public class LibraryFinder {
         return libsPath;
     }
 
+    // Not used anywhere in Forge's codebase, scheduled for deletion unless a good need is expressed.
+    @Deprecated(forRemoval = true, since = "1.17.1")
     public static Path findJarPathFor(final String className, final String jarName) {
         final URL resource = LibraryFinder.class.getClassLoader().getResource(className);
         return findJarPathFor(className, jarName, resource);
     }
 
+    /*
+     * Only used in ClasspathLocator now, so moved too a private method and depreciated this.
+     * Scheduled for deletion unless a good need is expressed.
+     */
+    @Deprecated(forRemoval = true, since = "1.17.1")
     public static Path findJarPathFor(final String resourceName, final String jarName, final URL resource) {
         try {
             Path path;
@@ -92,8 +99,5 @@ public class LibraryFinder {
     }
     public static Path findPathForMaven(final String maven) {
         return findLibsPath().resolve(MavenCoordinateResolver.get(maven));
-    }
-    public static Path getFMLCorePath() {
-        return findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraftforge:fmlcore:1.0"));
     }
 }

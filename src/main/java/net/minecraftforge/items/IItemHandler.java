@@ -19,7 +19,11 @@
 
 package net.minecraftforge.items;
 
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+
 import javax.annotation.Nonnull;
 
 
@@ -59,7 +63,7 @@ public interface IItemHandler
      * Inserts an ItemStack into the given slot and return the remainder.
      * The ItemStack <em>should not</em> be modified in this function!
      * </p>
-     * Note: This behaviour is subtly different from {@link IFluidHandler#fill(FluidStack, boolean)}
+     * Note: This behaviour is subtly different from {@link IFluidHandler#fill(FluidStack, IFluidHandler.FluidAction)}
      *
      * @param slot     Slot to insert into.
      * @param stack    ItemStack to insert. This must not be modified by the item handler.
@@ -97,7 +101,7 @@ public interface IItemHandler
 
     /**
      * <p>
-     * This function re-implements the vanilla function {@link IInventory#isItemValidForSlot(int, ItemStack)}.
+     * This function re-implements the vanilla function {@link Container#canPlaceItem(int, ItemStack)}.
      * It should be used instead of simulated insertions in cases where the contents and state of the inventory are
      * irrelevant, mainly for the purpose of automation and logic (for instance, testing if a minecart can wait
      * to deposit its items into a full inventory, or if the items in the minecart can never be placed into the

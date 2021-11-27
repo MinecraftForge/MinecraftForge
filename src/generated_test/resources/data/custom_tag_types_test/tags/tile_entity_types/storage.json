@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "minecraft:barrel",
-    "minecraft:chest",
-    "minecraft:ender_chest"
-  ]
-}

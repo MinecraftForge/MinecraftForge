@@ -22,13 +22,15 @@ package net.minecraftforge.event.village;
 import java.util.List;
 
 import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
+import net.minecraftforge.common.BasicTrade;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
 
 /**
  * WandererTradesEvent is fired during the {@link FMLServerAboutToStartEvent}.  It is used to gather the trade lists for the wandering merchant.
  * It is fired on the {@link MinecraftForge#EVENT_BUS}.
- * The wandering merchant picks a few trades from {@link TradeType#GENERIC} and a single trade from {@link TradeType#RARE}.
+ * The wandering merchant picks a few trades from {@code generic} and a single trade from {@code rare}.
  * To add trades to the merchant, simply add new trades to the list. {@link BasicTrade} provides a default implementation.
 */
 public class WandererTradesEvent extends Event

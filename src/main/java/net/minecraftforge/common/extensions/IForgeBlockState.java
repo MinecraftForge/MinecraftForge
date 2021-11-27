@@ -22,12 +22,15 @@ package net.minecraftforge.common.extensions;
 import java.util.Optional;
 import javax.annotation.Nullable;
 
+import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.SpawnPlacements.Type;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
@@ -36,7 +39,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.ToolType;
 
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockAndTintGetter;
@@ -48,6 +50,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ToolAction;
 
 public interface IForgeBlockState
 {
@@ -61,9 +64,9 @@ public interface IForgeBlockState
      * between 0 and 1.
      * <p>
      * Note that entities may reduce slipperiness by a certain factor of their own;
-     * for {@link net.minecraft.entity.LivingEntity}, this is {@code .91}.
-     * {@link net.minecraft.entity.item.ItemEntity} uses {@code .98}, and
-     * {@link net.minecraft.entity.projectile.FishingBobberEntity} uses {@code .92}.
+     * for {@link LivingEntity}, this is {@code .91}.
+     * {@link ItemEntity} uses {@code .98}, and
+     * {@link FishingHook} uses {@code .92}.
      *
      * @param world the world
      * @param pos the position in the world
@@ -247,7 +250,7 @@ public interface IForgeBlockState
     }
    /**
     * Allows a block to override the standard vanilla running particles.
-    * This is called from {@link Entity#handleRunningEffect} and is called both,
+    * This is called from {@code Entity#spawnSprintParticle()} and is called both,
     * Client and server side, it's up to the implementor to client check / server check.
     * By default vanilla spawns particles only on the client and the server methods no-op.
     *
@@ -388,29 +391,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * Queries the class of tool required to harvest this block, if null is returned
-     * we assume that anything can harvest this block.
-     */
-    default ToolType getHarvestTool()
-    {
-        return self().getBlock().getHarvestTool(self());
-    }
-
-    default int getHarvestLevel()
-    {
-        return self().getBlock().getHarvestLevel(self());
-    }
-
-    /**
-     * Checks if the specified tool type is efficient on this block,
-     * meaning that it digs at full speed.
-     */
-    default boolean isToolEffective(ToolType tool)
-    {
-        return self().getBlock().isToolEffective(self(), tool);
-    }
-
-    /**
      * Sensitive version of getSoundType
      * @param world The world
      * @param pos The position. Note that the world may not necessarily have {@code state} here!
@@ -436,7 +416,7 @@ public interface IForgeBlockState
 
     /**
      * Used to determine the state 'viewed' by an entity (see
-     * {@link net.minecraft.client.Camera#getBlockAtCamera()}).
+     * {@link Camera#getBlockAtCamera()}).
      * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
      *
      * @param world     the world
@@ -644,14 +624,14 @@ public interface IForgeBlockState
      * @param pos The block position in world
      * @param player The player clicking the block
      * @param stack The stack being used by the player
-     * @param toolType The tool type to be considered when performing the action
+     * @param toolAction The tool type to be considered when performing the action
      * @return The resulting state after the action has been performed
      */
     @Nullable
-    default BlockState getToolModifiedState(Level world, BlockPos pos, Player player, ItemStack stack, ToolType toolType)
+    default BlockState getToolModifiedState(Level world, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
-        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), world, pos, player, stack, toolType);
-        return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), world, pos, player, stack, toolType);
+        BlockState eventState = net.minecraftforge.event.ForgeEventFactory.onToolUse(self(), world, pos, player, stack, toolAction);
+        return eventState != self() ? eventState : self().getBlock().getToolModifiedState(self(), world, pos, player, stack, toolAction);
     }
 
     /**
@@ -663,5 +643,20 @@ public interface IForgeBlockState
     default boolean isScaffolding(LivingEntity entity)
     {
         return self().getBlock().isScaffolding(self(), entity.level, entity.blockPosition(), entity);
+    }
+
+    /**
+     * Whether redstone dust should visually connect to this block on a side.
+     * <p>
+     * Modded redstone wire blocks should call this function to determine visual connections.
+     *
+     * @param world The world
+     * @param pos The block position in world
+     * @param direction The coming direction of the redstone dust connection (with respect to the block at pos)
+     * @return True if redstone dust should visually connect on the side passed
+     */
+    default boolean canRedstoneConnectTo(BlockGetter world, BlockPos pos, @Nullable Direction direction)
+    {
+        return self().getBlock().canConnectRedstone(self(), world, pos, direction);
     }
 }

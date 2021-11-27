@@ -54,7 +54,7 @@ import java.util.stream.StreamSupport;
  *     "mods": [
  *          {
  *              "modid": "modid",
- *              "modmarker": "<somestring>"
+ *              "modmarker": "{@literal <somestring>}"
  *          }
  *     ]
  * }

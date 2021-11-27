@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/item/enchantment/DiggingEnchantment.java
++++ b/net/minecraft/world/item/enchantment/DiggingEnchantment.java
+@@ -22,6 +_,6 @@
+    }
+ 
+    public boolean m_6081_(ItemStack p_44668_) {
+-      return p_44668_.m_150930_(Items.f_42574_) ? true : super.m_6081_(p_44668_);
++      return p_44668_.m_41720_() instanceof net.minecraft.world.item.ShearsItem ? true : super.m_6081_(p_44668_);
+    }
+ }

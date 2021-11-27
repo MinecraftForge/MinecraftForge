@@ -31,9 +31,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.fmlclient.gui.GuiUtils;
 import net.minecraftforge.fmlclient.gui.widget.ModListWidget;
+import net.minecraftforge.resource.PathResourcePack;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,7 +67,6 @@ import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fmlclient.ConfigGuiHandler;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.fmllegacy.packs.ModFileResourcePack;
 import net.minecraftforge.fmllegacy.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 
@@ -223,6 +224,9 @@ public class ModListScreen extends Screen
         }
 
         private Style findTextLine(final int mouseX, final int mouseY) {
+            if (!isMouseOver(mouseX, mouseY))
+                return null;
+
             double offset = (mouseY - top) + border + scrollDistance + 1;
             if (logoPath != null) {
                 offset -= 50;
@@ -255,6 +259,15 @@ public class ModListScreen extends Screen
         @Override
         protected void drawBackground() {
         }
+
+        @Override
+        public NarrationPriority narrationPriority() {
+            return NarrationPriority.NONE;
+        }
+
+        @Override
+        public void updateNarration(NarrationElementOutput p_169152_) {
+        }
     }
 
     @Override
@@ -285,7 +298,7 @@ public class ModListScreen extends Screen
         this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height - PADDING - fullButtonHeight, PADDING);
 
         this.addRenderableWidget(modList);
-        this.addRenderableOnly(modInfo);
+        this.addRenderableWidget(modInfo);
         this.addRenderableWidget(search);
         this.addRenderableWidget(doneButton);
         this.addRenderableWidget(configButton);
@@ -415,8 +428,8 @@ public class ModListScreen extends Screen
         Pair<ResourceLocation, Size2i> logoData = selectedMod.getLogoFile().map(logoFile->
         {
             TextureManager tm = this.minecraft.getTextureManager();
-            final ModFileResourcePack resourcePack = ResourcePackLoader.getResourcePackFor(selectedMod.getModId())
-                    .orElse(ResourcePackLoader.getResourcePackFor("forge").
+            final PathResourcePack resourcePack = ResourcePackLoader.getPackFor(selectedMod.getModId())
+                    .orElse(ResourcePackLoader.getPackFor("forge").
                             orElseThrow(()->new RuntimeException("Can't find forge, WHAT!")));
             try
             {

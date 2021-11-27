@@ -60,7 +60,7 @@ public class ForgeInternalHandler
                 Entity newEntity = item.createEntity(event.getWorld(), entity, stack);
                 if (newEntity != null)
                 {
-                    entity.remove(false);
+                    entity.discard();
                     event.setCanceled(true);
                     BlockableEventLoop<Runnable> executor = LogicalSidedProvider.WORKQUEUE.get(event.getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
                     executor.tell(new TickTask(0, () -> event.getWorld().addFreshEntity(newEntity)));
@@ -113,7 +113,7 @@ public class ForgeInternalHandler
     }
 
     @SubscribeEvent
-    public synchronized void tagsUpdated(TagsUpdatedEvent.VanillaTagTypes event)
+    public synchronized void tagsUpdated(TagsUpdatedEvent event)
     {
         ForgeHooks.updateBurns();
     }
@@ -124,7 +124,7 @@ public class ForgeInternalHandler
         new ForgeCommand(event.getDispatcher());
         ConfigCommand.register(event.getDispatcher());
     }
-    
+
     private static LootModifierManager INSTANCE;
 
     @SubscribeEvent
@@ -139,6 +139,12 @@ public class ForgeInternalHandler
         if(INSTANCE == null)
             throw new IllegalStateException("Can not retrieve LootModifierManager until resources have loaded once.");
         return INSTANCE;
+    }
+
+    @SubscribeEvent
+    public void resourceReloadListeners(AddReloadListenerEvent event)
+    {
+        event.addListener(TierSortingRegistry.getReloadListener());
     }
 }
 

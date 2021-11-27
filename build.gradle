@@ -46,15 +46,16 @@ ext {
     MAPPING_VERSION = '1.17.1'
     MC_VERSION = '1.17.1'
     MCP_VERSION = '20210706.113038'
-    SPI_VERSION = '4.0.9'
+    SPI_VERSION = '4.0.10'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
     EVENTBUS_VERSION = '5.0.3'
     MODLAUNCHER_VERSION = '9.0.7'
-    SECUREJARHANDLER_VERSION = '0.9.46'
-    BOOTSTRAPLAUNCHER_VERSION = '0.1.16'
+    SECUREJARHANDLER_VERSION = '0.9.54'
+    BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
     ASM_VERSION = '9.1'
-    INSTALLER_VERSION = '2.1.4'
+    INSTALLER_VERSION = '2.1.+'
+    MIXIN_VERSION = '0.8.4'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
@@ -109,6 +110,15 @@ subprojects {
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+
+    tasks.withType(Javadoc).configureEach {
+        options.tags = [
+                'apiNote:a:<em>API Note:</em>',
+                'implSpec:a:<em>Implementation Requirements:</em>',
+                'implNote:a:<em>Implementation Note:</em>'
+        ]
+        options.addStringOption('Xdoclint:all,-missing', '-public')
+    }
 
     publishing {
         publications {
@@ -248,8 +258,8 @@ def sharedDeps = {
     installer 'org.jline:jline-reader:3.12.+'   //Dep of TerminaalConsoleeAppender
     installer 'org.jline:jline-terminal:3.12.+' //Dep of TerminaalConsoleeAppender
     installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
-    // installer 'org.spongepowered:mixin:0.8.3'
-    installer 'org.openjdk.nashorn:nashorn-core:15.1.1'
+    installer "org.spongepowered:mixin:${MIXIN_VERSION}"
+    installer 'org.openjdk.nashorn:nashorn-core:15.3'
     installer 'com.google.guava:guava:21.0'
     installer 'com.google.code.gson:gson:2.8.0'
 
@@ -586,7 +596,7 @@ project(':fmlonly') {
         }
     }
 
-    task installerJson(type: InstallerJson) {
+    task installerJson(type: InstallerJson, dependsOn: 'signUniversalJar') {
         icon = rootProject.file('icon.ico')
         packedDependencies = PACKED_DEPS
 
@@ -930,6 +940,7 @@ project(':forge') {
                             '--mod', 'scaffolding_test',
                             '--mod', 'custom_tag_types_test',
                             '--mod', 'new_model_loader_test',
+                            '--mod', 'remove_tag_datagen_test',
                             '--output', rootProject.file('src/generated_test/resources/'),
                             '--existing', sourceSets.main.resources.srcDirs[0],
                             '--existing', sourceSets.test.resources.srcDirs[0]
@@ -1093,7 +1104,7 @@ project(':forge') {
         }
     }
 
-    task installerJson(type: InstallerJson, dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches]) {
+    task installerJson(type: InstallerJson, dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches, 'signUniversalJar']) {
         ext {
             // remove :fatjar
             BIN_PATCHER = BINPATCH_TOOL.substring(0, BINPATCH_TOOL.length() - 1 - BINPATCH_TOOL.split(':')[3].length())

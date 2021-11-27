@@ -43,7 +43,7 @@
        } else {
 -         int i = p_60467_.m_36298_(p_60466_) ? 30 : 100;
 -         return p_60467_.m_36281_(p_60466_) / f / (float)i;
-+         int i = net.minecraftforge.common.ForgeHooks.canHarvestBlock(p_60466_, p_60467_, p_60468_, p_60469_) ? 30 : 100;
++         int i = net.minecraftforge.common.ForgeHooks.isCorrectToolForDrops(p_60466_, p_60467_) ? 30 : 100;
 +         return p_60467_.getDigSpeed(p_60466_, p_60469_) / f / (float)i;
        }
     }
@@ -77,7 +77,7 @@
           return this.f_60595_;
        }
  
-+      /** @deprecated use {@link BlockState#getLightValue(IBlockReader, BlockPos)} */
++      /** @deprecated use {@link BlockState#getLightEmission(BlockGetter, BlockPos)} */
 +      @Deprecated
        public int m_60791_() {
           return this.f_60594_;
@@ -92,17 +92,15 @@
           return this.f_60598_;
        }
  
-+      /** @deprecated use {@link BlockState#rotate(IWorld, BlockPos, Rotation)} */
++      /** @deprecated use {@link BlockState#rotate(LevelAccessor, BlockPos, Rotation)} */
 +      @Deprecated
        public BlockState m_60717_(Rotation p_60718_) {
           return this.m_60734_().m_6843_(this.m_7160_(), p_60718_);
        }
-@@ -821,8 +_,11 @@
+@@ -821,8 +_,9 @@
        ResourceLocation f_60894_;
        boolean f_60895_ = true;
        boolean f_60896_;
-+      private int harvestLevel = -1;
-+      private net.minecraftforge.common.ToolType harvestTool;
 +      private java.util.function.Supplier<ResourceLocation> lootTableSupplier;
        BlockBehaviour.StateArgumentPredicate<EntityType<?>> f_60897_ = (p_60935_, p_60936_, p_60937_, p_60938_) -> {
 -         return p_60935_.m_60783_(p_60936_, p_60937_, Direction.UP) && p_60935_.m_60791_() < 14;
@@ -110,40 +108,6 @@
        };
        BlockBehaviour.StatePredicate f_60898_ = (p_60985_, p_60986_, p_60987_) -> {
           return p_60985_.m_60767_().m_76337_() && p_60985_.m_60838_(p_60986_, p_60987_);
-@@ -882,6 +_,8 @@
-          blockbehaviour$properties.f_60895_ = p_60927_.f_60439_.f_60895_;
-          blockbehaviour$properties.f_60896_ = p_60927_.f_60439_.f_60896_;
-          blockbehaviour$properties.f_60889_ = p_60927_.f_60439_.f_60889_;
-+         blockbehaviour$properties.harvestLevel = p_60927_.f_60439_.harvestLevel;
-+         blockbehaviour$properties.harvestTool = p_60927_.f_60439_.harvestTool;
-          return blockbehaviour$properties;
-       }
- 
-@@ -896,6 +_,24 @@
-          return this;
-       }
- 
-+      public BlockBehaviour.Properties harvestLevel(int harvestLevel) {
-+         this.harvestLevel = harvestLevel;
-+         return this;
-+      }
-+
-+      public BlockBehaviour.Properties harvestTool(net.minecraftforge.common.ToolType harvestTool) {
-+         this.harvestTool = harvestTool;
-+         return this;
-+      }
-+
-+      public int getHarvestLevel() {
-+         return this.harvestLevel;
-+      }
-+
-+      public net.minecraftforge.common.ToolType getHarvestTool() {
-+         return this.harvestTool;
-+      }
-+
-       public BlockBehaviour.Properties m_60911_(float p_60912_) {
-          this.f_60891_ = p_60912_;
-          return this;
 @@ -949,9 +_,15 @@
           return this;
        }

@@ -21,15 +21,22 @@ package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 import javax.annotation.Nonnull;
@@ -65,10 +72,10 @@ public class PlayerInteractEvent extends PlayerEvent
      * This event is fired on both sides whenever a player right clicks an entity.
      *
      * "Interact at" is an interact where the local vector (which part of the entity you clicked) is known.
-     * The state of this event affects whether {@link Entity#applyPlayerInteraction} is called.
+     * The state of this event affects whether {@link Entity#interactAt(Player, Vec3, InteractionHand)} is called.
      *
-     * Let result be the return value of {@link Entity#applyPlayerInteraction}, or {@link #cancellationResult} if the event is cancelled.
-     * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link EntityInteract}.
+     * Let result be the return value of {@link Entity#interactAt(Player, Vec3, InteractionHand)}, or {@link #cancellationResult} if the event is cancelled.
+     * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then try {@link EntityInteract}.
      */
     @Cancelable
     public static class EntityInteractSpecific extends PlayerInteractEvent
@@ -104,12 +111,14 @@ public class PlayerInteractEvent extends PlayerEvent
      * This event is fired on both sides when the player right clicks an entity.
      * It is responsible for all general entity interactions.
      *
-     * This event is fired only if the result of the above {@link EntityInteractSpecific} is not {@link EnumActionResult#SUCCESS}.
-     * This event's state affects whether {@link Entity#processInitialInteract} and {@link net.minecraft.item.Item#itemInteractionForEntity} are called.
+     * This event is fired only if the result of the above {@link EntityInteractSpecific} is not {@link InteractionResult#SUCCESS}.
+     * This event's state affects whether {@link Entity#interact(Player, InteractionHand)} and
+     * {@link Item#interactLivingEntity(ItemStack, Player, LivingEntity, InteractionHand)} are called.
      *
-     * Let result be {@link EnumActionResult#SUCCESS} if {@link Entity#processInitialInteract} or {@link net.minecraft.item.Item#itemInteractionForEntity} return true,
+     * Let result be {@link InteractionResult#SUCCESS} if {@link Entity#interact(Player, InteractionHand)} or
+     * {@link Item#interactLivingEntity(ItemStack, Player, LivingEntity, InteractionHand)} return true,
      * or {@link #cancellationResult} if the event is cancelled.
-     * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
+     * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then try {@link RightClickItem}.
      */
     @Cancelable
     public static class EntityInteract extends PlayerInteractEvent
@@ -130,13 +139,13 @@ public class PlayerInteractEvent extends PlayerEvent
 
     /**
      * This event is fired on both sides whenever the player right clicks while targeting a block. <br>
-     * This event controls which of {@link Item#onItemUseFirst}, {@link Block#onBlockActivated}, and {@link Item#onItemUse}
-     * will be called. <br>
+     * This event controls which of {@link Item#onItemUseFirst}, {@link Block#use(BlockState, Level, BlockPos, Player, InteractionHand, BlockHitResult)},
+     * and {@link Item#useOn(UseOnContext)} will be called. <br>
      * Canceling the event will cause none of the above three to be called. <br>
      * <br>
      * Let result be the first non-pass return value of the above three methods, or pass, if they all pass. <br>
      * Or {@link #cancellationResult} if the event is cancelled. <br>
-     * If result equals {@link ActionResultType#PASS}, we proceed to {@link RightClickItem}.  <br>
+     * If result equals {@link InteractionResult#PASS}, we proceed to {@link RightClickItem}.  <br>
      * <br>
      * There are various results to this event, see the getters below.  <br>
      * Note that handling things differently on the client vs server may cause desynchronizations! 
@@ -154,7 +163,7 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * @return If {@link net.minecraft.block.Block#onBlockActivated} should be called
+         * @return If {@link Block#use(BlockState, Level, BlockPos, Player, InteractionHand, BlockHitResult)} should be called
          */
         public Result getUseBlock()
         {
@@ -162,7 +171,7 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * @return If {@link net.minecraft.item.Item#onItemUseFirst} and {@link net.minecraft.item.Item#onItemUse} should be called
+         * @return If {@link Item#onItemUseFirst} and {@link Item#useOn(UseOnContext)} should be called
          */
         public Result getUseItem()
         {
@@ -178,10 +187,10 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * DENY: {@link Block#onBlockActivated} will never be called. <br>
-         * DEFAULT: {@link Block#onBlockActivated} will be called if {@link Item#onItemUseFirst} passes. <br>
+         * DENY: {@link Block#use(BlockState, Level, BlockPos, Player, InteractionHand, BlockHitResult)} will never be called. <br>
+         * DEFAULT: {@link Block#use(BlockState, Level, BlockPos, Player, InteractionHand, BlockHitResult)} will be called if {@link Item#onItemUseFirst} passes. <br>
          * Note that default activation can be blocked if the user is sneaking and holding an item that does not return true to {@link Item#doesSneakBypassUse}. <br>
-         * ALLOW: {@link Block#onBlockActivated} will always be called, unless {@link Item#onItemUseFirst} does not pass. <br>
+         * ALLOW: {@link Block#updateOrDestroy(BlockState, BlockState, LevelAccessor, BlockPos, int, int)} will always be called, unless {@link Item#onItemUseFirst} does not pass. <br>
          */
         public void setUseBlock(Result triggerBlock)
         {
@@ -189,9 +198,9 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * DENY: Neither {@link Item#onItemUse} or {@link Item#onItemUseFirst} will be called. <br>
-         * DEFAULT: {@link Item#onItemUseFirst} will always be called, and {@link Item#onItemUse} will be called if the block passes. <br>
-         * ALLOW: {@link Item#onItemUseFirst} will always be called, and {@link Item#onItemUse} will be called if the block passes, regardless of cooldowns or emptiness. <br>
+         * DENY: Neither {@link Item#useOn(UseOnContext)} or {@link Item#onItemUseFirst} will be called. <br>
+         * DEFAULT: {@link Item#onItemUseFirst} will always be called, and {@link Item#useOn(UseOnContext)} will be called if the block passes. <br>
+         * ALLOW: {@link Item#onItemUseFirst} will always be called, and {@link Item#useOn(UseOnContext)} will be called if the block passes, regardless of cooldowns or emptiness. <br>
          */
         public void setUseItem(Result triggerItem)
         {
@@ -211,11 +220,11 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
-     * This event is fired on both sides before the player triggers {@link net.minecraft.item.Item#onItemRightClick}.
+     * This event is fired on both sides before the player triggers {@link Item#use(Level, Player, InteractionHand)}.
      * Note that this is NOT fired if the player is targeting a block {@link RightClickBlock} or entity {@link EntityInteract} {@link EntityInteractSpecific}.
      *
-     * Let result be the return value of {@link net.minecraft.item.Item#onItemRightClick}, or {@link #cancellationResult} if the event is cancelled.
-     * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then continue to other hands.
+     * Let result be the return value of {@link Item#use(Level, Player, InteractionHand)}, or {@link #cancellationResult} if the event is cancelled.
+     * If we are on the client and result is not {@link InteractionResult#SUCCESS}, the client will then continue to other hands.
      */
     @Cancelable
     public static class RightClickItem extends PlayerInteractEvent
@@ -241,7 +250,7 @@ public class PlayerInteractEvent extends PlayerEvent
 
     /**
      * This event is fired when a player left clicks while targeting a block.
-     * This event controls which of {@link net.minecraft.block.Block#onBlockClicked} and/or the item harvesting methods will be called
+     * This event controls which of {@link Block#attack(BlockState, Level, BlockPos, Player)} and/or the item harvesting methods will be called
      * Canceling the event will cause none of the above noted methods to be called.
      * There are various results to this event, see the getters below.
      *
@@ -263,7 +272,7 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * @return If {@link net.minecraft.block.Block#onBlockClicked} should be called. Changing this has no effect in creative mode
+         * @return If {@link Block#attack(BlockState, Level, BlockPos, Player)} should be called. Changing this has no effect in creative mode
          */
         public Result getUseBlock()
         {
@@ -370,8 +379,8 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
-     * @return The EnumActionResult that will be returned to vanilla if the event is cancelled, instead of calling the relevant
-     * method of the event. By default, this is {@link EnumActionResult#PASS}, meaning cancelled events will cause
+     * @return The InteractionResult that will be returned to vanilla if the event is cancelled, instead of calling the relevant
+     * method of the event. By default, this is {@link InteractionResult#PASS}, meaning cancelled events will cause
      * the client to keep trying more interactions until something works.
      */
     public InteractionResult getCancellationResult()
@@ -380,7 +389,7 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
-     * Set the EnumActionResult that will be returned to vanilla if the event is cancelled, instead of calling the relevant
+     * Set the InteractionResult that will be returned to vanilla if the event is cancelled, instead of calling the relevant
      * method of the event.
      * Note that this only has an effect on {@link RightClickBlock}, {@link RightClickItem}, {@link EntityInteract}, and {@link EntityInteractSpecific}.
      */
