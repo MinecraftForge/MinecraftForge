@@ -20,17 +20,21 @@
 package net.minecraftforge.event.entity.living;
 
 import javax.annotation.Nullable;
+
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * LivingSpawnEvent is fired for any events associated with Living Entities spawn status. <br>
- * If a method utilizes this {@link Event} as its parameter, the method will
+ * If a method utilizes this event as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * {@link #world} contains the world in which this living Entity is being spawned.<br>
@@ -114,7 +118,7 @@ public class LivingSpawnEvent extends LivingEvent
      * SpecialSpawn is fired when an Entity is to be spawned.<br>
      * This allows you to do special inializers in the new entity.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(EntityLiving, World, float, float, float)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(Mob, Level, float, float, float, BaseSpawner, MobSpawnType)}.<br>
      * <br>
      * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * If this event is canceled, the Entity is not spawned.<br>
@@ -160,7 +164,7 @@ public class LivingSpawnEvent extends LivingEvent
      * This is fired every tick for every despawnable entity. Be efficient in your handlers.
      *
      * Note: this is not fired <em>if</em> the mob is definitely going to otherwise despawn. It is fired to check if
-     * the mob can be allowed to despawn. See {@link EntityLiving#despawnEntity}
+     * the mob can be allowed to despawn. See {@link LivingEntity#checkDespawn()}
      *
      * @author cpw
      *

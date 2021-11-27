@@ -20,17 +20,19 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.MinecraftForge;
 
 import javax.annotation.Nonnull;
 
 /**
  * ArrowNockEvent is fired when a player begins using a bow.<br>
  * This event is fired whenever a player begins using a bow in
- * {@link ItemBow#onItemRightClick(World, EntityPlayer, EnumHand)}.<br>
+ * {@link BowItem#use(Level, Player, InteractionHand)}.<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/

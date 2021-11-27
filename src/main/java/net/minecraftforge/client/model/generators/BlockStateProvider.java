@@ -29,6 +29,10 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.world.level.block.ButtonBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.StandingSignBlock;
+import net.minecraft.world.level.block.WallSignBlock;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -352,6 +356,49 @@ public abstract class BlockStateProvider implements DataProvider {
             .partialState().with(SlabBlock.TYPE, SlabType.BOTTOM).addModels(new ConfiguredModel(bottom))
             .partialState().with(SlabBlock.TYPE, SlabType.TOP).addModels(new ConfiguredModel(top))
             .partialState().with(SlabBlock.TYPE, SlabType.DOUBLE).addModels(new ConfiguredModel(doubleslab));
+    }
+
+    public void buttonBlock(ButtonBlock block, ResourceLocation texture) {
+        ModelFile button = models().button(name(block), texture);
+        ModelFile buttonPressed = models().buttonPressed(name(block) + "_pressed", texture);
+        buttonBlock(block, button, buttonPressed);
+    }
+
+    public void buttonBlock(ButtonBlock block, ModelFile button, ModelFile buttonPressed) {
+        getVariantBuilder(block).forAllStates(state -> {
+            Direction facing = state.getValue(ButtonBlock.FACING);
+            AttachFace face = state.getValue(ButtonBlock.FACE);
+            boolean powered = state.getValue(ButtonBlock.POWERED);
+
+            return ConfiguredModel.builder()
+                    .modelFile(powered ? buttonPressed : button)
+                    .rotationX(face == AttachFace.FLOOR ? 0 : (face == AttachFace.WALL ? 90 : 180))
+                    .rotationY((int) (face == AttachFace.CEILING ? facing : facing.getOpposite()).toYRot())
+                    .uvLock(face == AttachFace.WALL)
+                    .build();
+        });
+    }
+
+    public void pressurePlateBlock(PressurePlateBlock block, ResourceLocation texture) {
+        ModelFile pressurePlate = models().pressurePlate(name(block), texture);
+        ModelFile pressurePlateDown = models().pressurePlateDown(name(block) + "_down", texture);
+        pressurePlateBlock(block, pressurePlate, pressurePlateDown);
+    }
+
+    public void pressurePlateBlock(PressurePlateBlock block, ModelFile pressurePlate, ModelFile pressurePlateDown) {
+        getVariantBuilder(block)
+                .partialState().with(PressurePlateBlock.POWERED, true).addModels(new ConfiguredModel(pressurePlateDown))
+                .partialState().with(PressurePlateBlock.POWERED, false).addModels(new ConfiguredModel(pressurePlate));
+    }
+
+    public void signBlock(StandingSignBlock signBlock, WallSignBlock wallSignBlock, ResourceLocation texture) {
+        ModelFile sign = models().sign(name(signBlock), texture);
+        signBlock(signBlock, wallSignBlock, sign);
+    }
+
+    public void signBlock(StandingSignBlock signBlock, WallSignBlock wallSignBlock, ModelFile sign) {
+        simpleBlock(signBlock, sign);
+        simpleBlock(wallSignBlock, sign);
     }
 
     public void fourWayBlock(CrossCollisionBlock block, ModelFile post, ModelFile side) {

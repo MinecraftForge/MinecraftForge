@@ -24,15 +24,16 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.screens.Screen;
 
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * Event classes for GuiScreen events.
@@ -91,10 +92,10 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just after initializing {@link GuiScreen#mc}, {@link GuiScreen#fontRenderer},
-         * {@link GuiScreen#width}, and {@link GuiScreen#height}.<br/><br/>
+         * This event fires just after initializing the {@link Minecraft}, font renderer, width,
+         * and height fields.<br/><br/>
          *
-         * If canceled the following lines are skipped in {@link GuiScreen#setWorldAndResolution(Minecraft, int, int)}:<br/>
+         * If canceled the following lines are skipped in {@link Screen#init(Minecraft, int, int)}:<br/>
          * {@code this.buttonList.clear();}<br/>
          * {@code this.children.clear();}<br/>
          * {@code this.initGui();}<br/>
@@ -109,7 +110,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires right after {@link GuiScreen#initGui()}.
+         * This event fires right after {@code Screen#init()}.
          * This is a good place to alter a GuiScreen's component layout if desired.
          */
         public static class Post extends InitGuiEvent
@@ -170,8 +171,8 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just before {@link GuiScreen#render(int, int, float)} is called.
-         * Cancel this event to skip {@link GuiScreen#render(int, int, float)}.
+         * This event fires just before {@link Screen#render(PoseStack, int, int, float)} is called.
+         * Cancel this event to skip the render method.
          */
         @Cancelable
         public static class Pre extends DrawScreenEvent
@@ -183,7 +184,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just after {@link GuiScreen#render(int, int, float)} is called.
+         * This event fires just after {@link Screen#render(PoseStack, int, int, float)} is called.
          */
         public static class Post extends DrawScreenEvent
         {
@@ -195,7 +196,7 @@ public class GuiScreenEvent extends Event
     }
 
     /**
-     * This event fires at the end of {@link GuiScreen#drawBackground(int)} and before the rest of the Gui draws.
+     * This event fires at the end of {@link Screen#renderBackground(PoseStack, int)} and before the rest of the Gui draws.
      * This allows drawing next to Guis, above the background but below any tooltips.
      */
     public static class BackgroundDrawnEvent extends GuiScreenEvent
@@ -218,8 +219,8 @@ public class GuiScreenEvent extends Event
     }
 
     /**
-     * This event fires in {@link InventoryEffectRenderer#updateActivePotionEffects()}
-     * when potion effects are active and the gui wants to move over.
+     * This event fires in {@link EffectRenderingInventoryScreen} in the
+     * {@code checkEffectRendering} method when potion effects are active and the gui wants to move over.
      * Cancel this event to prevent the Gui from being moved.
      */
     @Cancelable
@@ -271,7 +272,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires when a mouse click is detected for a GuiScreen, before it is handled.
-         * Cancel this event to bypass {@link IGuiEventListener#mouseClicked(double, double, int)}.
+         * Cancel this event to bypass {@link GuiEventListener#mouseClicked(double, double, int)}.
          */
         @Cancelable
         public static class Pre extends MouseClickedEvent
@@ -283,15 +284,47 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link IGuiEventListener#mouseClicked(double, double, int)} if the click was not already handled.
-         * Cancel this event when you successfully use the mouse click, to prevent other handlers from using the same input.
+         * This event fires after {@link GuiEventListener#mouseClicked(double, double, int)}.
+         *
+         * <p>This event {@linkplain HasResult has a result}.<br>
+         * <ul>
+         *   <li><b>{@link Result#ALLOW}</b> - to force set the mouse click as handled</li>
+         *   <li><b>{@link Result#DEFAULT}</b> - to use the default value of {@link #handled}</li>
+         *   <li><b>{@link Result#DENY}</b> - to force set the mouse click as not handled</li>
+         * </ul>
+         * </p>
+         *
+         * <p>Note that this event is currently pre-cancelled if {@link Screen#mouseClicked} returns {@code true}
+         * to retain old behavior. This will be changed in 1.18 when the event is made non-cancellable.</p>
          */
-        @Cancelable
+        @Cancelable // TODO: Make non-cancellable in 1.18.
+        @HasResult
         public static class Post extends MouseClickedEvent
         {
-            public Post(Screen gui, double mouseX, double mouseY, int button)
+            private final boolean handled;
+
+            public Post(Screen gui, double mouseX, double mouseY, int button, boolean handled)
             {
                 super(gui, mouseX, mouseY, button);
+                this.handled = handled;
+            }
+
+            /**
+             * @deprecated event now has a result instead and will no longer be cancellable in 1.18; use {@link #setResult(Result)}
+             */
+            @Override
+            @Deprecated
+            public void setCanceled(boolean cancel)
+            {
+                this.setResult(cancel ? Result.ALLOW : Result.DEFAULT);
+            }
+
+            /**
+             * @return {@code true} if the mouse click was already handled by its screen
+             */
+            public boolean wasHandled()
+            {
+                return handled;
             }
         }
     }
@@ -313,7 +346,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires when a mouse release is detected for a GuiScreen, before it is handled.
-         * Cancel this event to bypass {@link IGuiEventListener#mouseReleased(double, double, int)}.
+         * Cancel this event to bypass {@link GuiEventListener#mouseReleased(double, double, int)}.
          */
         @Cancelable
         public static class Pre extends MouseReleasedEvent
@@ -325,15 +358,47 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link IGuiEventListener#mouseReleased(double, double, int)} if the release was not already handled.
-         * Cancel this event when you successfully use the mouse release, to prevent other handlers from using the same input.
+         * This event fires after {@link GuiEventListener#mouseReleased(double, double, int)}.
+         *
+         * <p>This event {@linkplain HasResult has a result}.<br>
+         * <ul>
+         *   <li><b>{@link Result#ALLOW}</b> - to force set the mouse release as handled</li>
+         *   <li><b>{@link Result#DEFAULT}</b> - to use the default value of {@link #handled}</li>
+         *   <li><b>{@link Result#DENY}</b> - to force set the mouse release as not handled</li>
+         * </ul>
+         * </p>
+         *
+         * <p>Note that this event is currently pre-cancelled if {@link Screen#mouseReleased} returns {@code true}
+         * to retain old behavior. This will be changed in 1.18 when the event is made non-cancellable.</p>
          */
-        @Cancelable
+        @Cancelable // TODO: Make non-cancellable in 1.18.
+        @HasResult
         public static class Post extends MouseReleasedEvent
         {
-            public Post(Screen gui, double mouseX, double mouseY, int button)
+            private final boolean handled;
+
+            public Post(Screen gui, double mouseX, double mouseY, int button, boolean handled)
             {
                 super(gui, mouseX, mouseY, button);
+                this.handled = handled;
+            }
+
+            /**
+             * @deprecated event now has a result instead and will no longer be cancellable in 1.18; use {@link #setResult(Result)}
+             */
+            @Override
+            @Deprecated
+            public void setCanceled(boolean cancel)
+            {
+                this.setResult(cancel ? Result.ALLOW : Result.DEFAULT);
+            }
+
+            /**
+             * @return {@code true} if the mouse release was already handled by its screen
+             */
+            public boolean wasHandled()
+            {
+                return handled;
             }
         }
     }
@@ -369,7 +434,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires when a mouse drag is detected for a GuiScreen, before it is handled.
-         * Cancel this event to bypass {@link IGuiEventListener#mouseDragged(double, double, int, double, double)}.
+         * Cancel this event to bypass {@link GuiEventListener#mouseDragged(double, double, int, double, double)}.
          */
         @Cancelable
         public static class Pre extends MouseDragEvent
@@ -381,7 +446,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link IGuiEventListener#mouseDragged(double, double, int, double, double)} if the drag was not already handled.
+         * This event fires after {@link GuiEventListener#mouseDragged(double, double, int, double, double)} if the drag was not already handled.
          * Cancel this event when you successfully use the mouse drag, to prevent other handlers from using the same input.
          */
         @Cancelable
@@ -411,7 +476,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires when a mouse scroll is detected for a GuiScreen, before it is handled.
-         * Cancel this event to bypass {@link IGuiEventListener#mouseScrolled(double)}.
+         * Cancel this event to bypass {@link GuiEventListener#mouseScrolled(double, double, double)}.
          */
         @Cancelable
         public static class Pre extends MouseScrollEvent
@@ -423,7 +488,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link IGuiEventListener#mouseScrolled(double)} if the scroll was not already handled.
+         * This event fires after {@link GuiEventListener#mouseScrolled(double, double, double)} if the scroll was not already handled.
          * Cancel this event when you successfully use the mouse scroll, to prevent other handlers from using the same input.
          */
         @Cancelable
@@ -463,7 +528,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * Platform-specific scan code.
-         * Used for {@link InputMappings#getInputByCode(int, int)}
+         * Used for {@link com.mojang.blaze3d.platform.InputConstants#getKey(int, int)}
          *
          * The scan code is unique for every key, regardless of whether it has a key code.
          * Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending
@@ -498,7 +563,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires when keyboard input is detected for a GuiScreen, before it is handled.
-         * Cancel this event to bypass {@link IGuiEventListener#keyPressed(int, int, int)}.
+         * Cancel this event to bypass {@link GuiEventListener#keyPressed(int, int, int)}.
          */
         @Cancelable
         public static class Pre extends KeyboardKeyPressedEvent
@@ -510,7 +575,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link IGuiEventListener#keyPressed(int, int, int)} if the key was not already handled.
+         * This event fires after {@link GuiEventListener#keyPressed(int, int, int)} if the key was not already handled.
          * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
          */
         @Cancelable
@@ -532,7 +597,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires when keyboard input is detected for a GuiScreen, before it is handled.
-         * Cancel this event to bypass {@link IGuiEventListener#keyReleased(int, int, int)}.
+         * Cancel this event to bypass {@link GuiEventListener#keyReleased(int, int, int)}.
          */
         @Cancelable
         public static class Pre extends KeyboardKeyReleasedEvent
@@ -544,7 +609,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link IGuiEventListener#keyReleased(int, int, int)} if the key was not already handled.
+         * This event fires after {@link GuiEventListener#keyReleased(int, int, int)} if the key was not already handled.
          * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
          */
         @Cancelable
@@ -592,7 +657,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires when keyboard character input is detected for a GuiScreen, before it is handled.
-         * Cancel this event to bypass {@link IGuiEventListener#charTyped(char, int)}.
+         * Cancel this event to bypass {@link GuiEventListener#charTyped(char, int)}.
          */
         @Cancelable
         public static class Pre extends KeyboardCharTypedEvent
@@ -604,7 +669,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires after {@link IGuiEventListener#charTyped(char, int)} if the character was not already handled.
+         * This event fires after {@link GuiEventListener#charTyped(char, int)} if the character was not already handled.
          * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
          */
         @Cancelable

@@ -23,6 +23,7 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.portal.PortalInfo;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,7 +37,7 @@ import net.minecraft.server.level.ServerLevel;
  * An implementation of this interface can be used to place the entity
  * in a safe location, or generate a return portal, for instance.
  * <p>
- * See the {@link net.minecraft.world.Teleporter} class, which has
+ * See the {@link PortalForcer} class, which has
  * been patched to implement this interface, for a vanilla example.
  */
 public interface ITeleporter
@@ -57,7 +58,7 @@ public interface ITeleporter
      * @param yaw the suggested yaw value to apply
      * @param repositionEntity a function to reposition the entity, which returns the new entity in the new dimension. This is the vanilla implementation of the dimension travel logic. If the supplied boolean is true, it is attempted to spawn a new portal.
      *
-     * @return the entity in the new World. Vanilla creates for most {@link Entity}s a new instance and copy the data. But <b>you are not allowed</b> to create a new instance for {@link PlayerEntity}s! Move the player and update its state, see {@link ServerPlayerEntity#changeDimension(net.minecraft.world.server.ServerWorld, ITeleporter)}
+     * @return the entity in the new World. Vanilla creates for most {@link Entity}s a new instance and copy the data. But <b>you are not allowed</b> to create a new instance for {@link Player}s! Move the player and update its state, see {@link ServerPlayer#changeDimension(ServerLevel, ITeleporter)}
      */
     default Entity placeEntity(Entity entity, ServerLevel currentWorld, ServerLevel destWorld, float yaw, Function<Boolean, Entity> repositionEntity)
     {

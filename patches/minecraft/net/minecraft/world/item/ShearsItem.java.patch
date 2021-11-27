@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/item/ShearsItem.java
 +++ b/net/minecraft/world/item/ShearsItem.java
-@@ -38,4 +_,25 @@
+@@ -38,4 +_,30 @@
           return 15.0F;
        }
     }
@@ -24,5 +24,10 @@
 +         return net.minecraft.world.InteractionResult.SUCCESS;
 +      }
 +      return net.minecraft.world.InteractionResult.PASS;
++   }
++
++   @Override
++   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
++      return net.minecraftforge.common.ToolActions.DEFAULT_SHEARS_ACTIONS.contains(toolAction);
 +   }
  }

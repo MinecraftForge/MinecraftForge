@@ -33,8 +33,10 @@ import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ForgeFluidTagsProvider;
+import net.minecraftforge.common.loot.CanToolPerformAction;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -156,6 +158,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         WorldPersistenceHooks.addHook(this);
         WorldPersistenceHooks.addHook(new FMLWorldPersistenceHook());
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(this::registerCapabilities);
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::gatherData);
         modEventBus.addListener(this::loadComplete);
@@ -201,13 +204,16 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         registerDirectoryWithDefaultPlural.accept(Registry.DIMENSION_REGISTRY);
     }
 
+    public void registerCapabilities(RegisterCapabilitiesEvent event)
+    {
+        CapabilityItemHandler.register(event);
+        CapabilityFluidHandler.register(event);
+        CapabilityAnimation.register(event);
+        CapabilityEnergy.register(event);
+    }
+
     public void preInit(FMLCommonSetupEvent evt)
     {
-        CapabilityItemHandler.register();
-        CapabilityFluidHandler.register();
-        CapabilityAnimation.register();
-        CapabilityEnergy.register();
-
         VersionChecker.startVersionCheck();
 
         registerArgumentTypes();
@@ -347,5 +353,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         // Ignore the event itself: this is done only not to statically initialize our custom LootConditionType
         Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
+        Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
     }
 }

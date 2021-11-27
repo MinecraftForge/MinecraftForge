@@ -21,12 +21,20 @@ package net.minecraftforge.event.entity;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * EntityJoinWorldEvent is fired when an Entity joins the world. <br>
  * This event is fired whenever an Entity is added to the world in 
- * {@link World#loadEntities(Collection)}, {@link net.minecraft.world.ServerWorld#loadEntities(Collection)} {@link World#joinEntityInSurroundings(Entity)}, and {@link World#spawnEntity(Entity)}. <br>
- * <strong>Note:</strong> This event may be called before the underlying {@link net.minecraft.world.chunk.Chunk} is promoted to {@link net.minecraft.world.chunk.ChunkStatus#FULL}. You will cause chunk loading deadlocks if you don't delay your world interactions.<br>
+ * {@code Level#loadEntities(Collection)},
+ * {@code net.minecraft.world.ServerWorld#loadEntities(Collection)}
+ * {@code World#joinEntityInSurroundings(Entity)}, and
+ * {@code World#spawnEntity(Entity)}. <br>
+ * <strong>Note:</strong> This event may be called before the underlying {@link LevelChunk} is promoted to {@link ChunkStatus#FULL}.
+ * You will cause chunk loading deadlocks if you don't delay your world interactions.<br>
  * <br>
  * {@link #world} contains the world in which the entity is to join.<br>
  * <br>
@@ -42,15 +50,30 @@ public class EntityJoinWorldEvent extends EntityEvent
 {
 
     private final Level world;
+    private final boolean loadedFromDisk;
 
     public EntityJoinWorldEvent(Entity entity, Level world)
     {
+        this(entity, world, false);
+    }
+
+    public EntityJoinWorldEvent(Entity entity, Level world, boolean loadedFromDisk)
+    {
         super(entity);
         this.world = world;
+        this.loadedFromDisk = loadedFromDisk;
     }
 
     public Level getWorld()
     {
         return world;
+    }
+
+    /**
+     * @return {@code true} if the entity was loaded from disk. On client entities, the info isn't available and this will always return {@code false}.
+     */
+    public boolean loadedFromDisk()
+    {
+        return loadedFromDisk;
     }
 }

@@ -149,6 +149,28 @@ license="LGPL v2.1"
 [[mods]]
     modId="check_spawn_event_test"
 [[mods]]
+    modId="redstone_sided_connectivity_test"
+[[mods]]
+    modId="permissions_changed_event_test"
+[[mods]]
+    modId="custom_shield_test"
+[[mods]]
+    modId="lazy_capabilities_on_items"
+[[mods]]
+    modId="gui_layer_test"
+[[mods]]
+    modId="add_pack_finders_test"
+[[mods]]
+    modId="be_onload_test"
+[[mods]]
+    modId="forge_spawnegg_test"
+[[mods]]
+    modId="custom_tooltip_test"
+[[mods]]
+    modId="full_pots_accessor_demo"
+[[mods]]
+    modId="part_entity_test"
+[[mods]]
     modId="dynamic_registries_loaded_event_test"
 
 # ADD ABOVE THIS LINE

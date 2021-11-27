@@ -37,7 +37,7 @@
           p_58895_.m_128405_("x", this.f_58858_.m_123341_());
           p_58895_.m_128405_("y", this.f_58858_.m_123342_());
           p_58895_.m_128405_("z", this.f_58858_.m_123343_());
-+         if (this.customTileData != null) p_58895_.m_128365_("ForgeData", this.customTileData);
++         if (this.customTileData != null) p_58895_.m_128365_("ForgeData", this.customTileData.m_6426_());
 +         if (getCapabilities() != null) p_58895_.m_128365_("ForgeCaps", serializeCaps());
           return p_58895_;
        }

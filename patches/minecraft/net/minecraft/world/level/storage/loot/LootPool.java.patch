@@ -1,50 +1,24 @@
 --- a/net/minecraft/world/level/storage/loot/LootPool.java
 +++ b/net/minecraft/world/level/storage/loot/LootPool.java
-@@ -31,17 +_,19 @@
+@@ -31,6 +_,7 @@
  import org.apache.commons.lang3.mutable.MutableInt;
  
  public class LootPool {
--   final LootPoolEntryContainer[] f_79023_;
--   final LootItemCondition[] f_79024_;
 +   private final String name;
-+   private final List<LootPoolEntryContainer> f_79023_;
-+   private final List<LootItemCondition> f_79024_;
+    final LootPoolEntryContainer[] f_79023_;
+    final LootItemCondition[] f_79024_;
     private final Predicate<LootContext> f_79025_;
-    final LootItemFunction[] f_79026_;
-    private final BiFunction<ItemStack, LootContext, ItemStack> f_79027_;
+@@ -39,7 +_,8 @@
     NumberProvider f_79028_;
     NumberProvider f_79029_;
  
 -   LootPool(LootPoolEntryContainer[] p_165128_, LootItemCondition[] p_165129_, LootItemFunction[] p_165130_, NumberProvider p_165131_, NumberProvider p_165132_) {
--      this.f_79023_ = p_165128_;
--      this.f_79024_ = p_165129_;
-+   private LootPool(LootPoolEntryContainer[] p_165128_, LootItemCondition[] p_165129_, LootItemFunction[] p_165130_, NumberProvider p_165131_, NumberProvider p_165132_, String name) {
++   LootPool(LootPoolEntryContainer[] p_165128_, LootItemCondition[] p_165129_, LootItemFunction[] p_165130_, NumberProvider p_165131_, NumberProvider p_165132_, String name) {
 +      this.name = name;
-+      this.f_79023_ = Lists.newArrayList(p_165128_);
-+      this.f_79024_ = Lists.newArrayList(p_165129_);
+       this.f_79023_ = p_165128_;
+       this.f_79024_ = p_165129_;
        this.f_79025_ = LootItemConditions.m_81834_(p_165129_);
-       this.f_79026_ = p_165130_;
-       this.f_79027_ = LootItemFunctions.m_80770_(p_165130_);
-@@ -97,21 +_,35 @@
-    }
- 
-    public void m_79051_(ValidationContext p_79052_) {
--      for(int i = 0; i < this.f_79024_.length; ++i) {
--         this.f_79024_[i].m_6169_(p_79052_.m_79365_(".condition[" + i + "]"));
-+      for(int i = 0; i < this.f_79024_.size(); ++i) {
-+         this.f_79024_.get(i).m_6169_(p_79052_.m_79365_(".condition[" + i + "]"));
-       }
- 
-       for(int j = 0; j < this.f_79026_.length; ++j) {
-          this.f_79026_[j].m_6169_(p_79052_.m_79365_(".functions[" + j + "]"));
-       }
- 
--      for(int k = 0; k < this.f_79023_.length; ++k) {
--         this.f_79023_[k].m_6165_(p_79052_.m_79365_(".entries[" + k + "]"));
-+      for(int k = 0; k < this.f_79023_.size(); ++k) {
-+         this.f_79023_.get(k).m_6165_(p_79052_.m_79365_(".entries[" + k + "]"));
-       }
- 
+@@ -112,6 +_,20 @@
        this.f_79028_.m_6169_(p_79052_.m_79365_(".rolls"));
        this.f_79029_.m_6169_(p_79052_.m_79365_(".bonusRolls"));
     }
@@ -73,7 +47,7 @@
  
        public LootPool.Builder m_165133_(NumberProvider p_165134_) {
           this.f_79070_ = p_165134_;
-@@ -153,11 +_,21 @@
+@@ -153,11 +_,22 @@
           return this;
        }
  
@@ -82,6 +56,7 @@
 +         return this;
 +      }
 +
++      @Deprecated(forRemoval = true, since = "1.17.1") // FORGE: Use #setBonusRolls instead with UniformGenerator
 +      public LootPool.Builder bonusRolls(float min, float max) {
 +         this.f_79071_ = net.minecraft.world.level.storage.loot.providers.number.UniformGenerator.m_165780_(min, max);
 +         return this;
@@ -96,7 +71,7 @@
           }
        }
     }
-@@ -170,19 +_,21 @@
+@@ -170,11 +_,13 @@
           LootItemFunction[] alootitemfunction = GsonHelper.m_13845_(jsonobject, "functions", new LootItemFunction[0], p_79092_, LootItemFunction[].class);
           NumberProvider numberprovider = GsonHelper.m_13836_(jsonobject, "rolls", p_79092_, NumberProvider.class);
           NumberProvider numberprovider1 = GsonHelper.m_13845_(jsonobject, "bonus_rolls", ConstantValue.m_165692_(0.0F), p_79092_, NumberProvider.class);
@@ -111,13 +86,3 @@
           jsonobject.add("rolls", p_79096_.serialize(p_79094_.f_79028_));
           jsonobject.add("bonus_rolls", p_79096_.serialize(p_79094_.f_79029_));
           jsonobject.add("entries", p_79096_.serialize(p_79094_.f_79023_));
--         if (!ArrayUtils.isEmpty((Object[])p_79094_.f_79024_)) {
-+         if (!p_79094_.f_79024_.isEmpty()) {
-             jsonobject.add("conditions", p_79096_.serialize(p_79094_.f_79024_));
-          }
- 
--         if (!ArrayUtils.isEmpty((Object[])p_79094_.f_79026_)) {
-+         if (!p_79094_.f_79024_.isEmpty()) {
-             jsonobject.add("functions", p_79096_.serialize(p_79094_.f_79026_));
-          }
- 

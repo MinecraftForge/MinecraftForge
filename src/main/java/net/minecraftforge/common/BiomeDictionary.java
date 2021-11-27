@@ -162,6 +162,19 @@ public class BiomeDictionary
         }
 
         /**
+         * Checks if a type instance exists for a given name. Does not have any side effects if a type does not already exist.
+         * This can be used for checking if a user-defined type is valid, for example, in a codec which accepts biome dictionary names.
+         * @param name The name.
+         * @return {@code true} if a type exists with this name.
+         *
+         * @see #getType(String, Type...) #getType for type naming conventions.
+         */
+        public static boolean hasType(String name)
+        {
+            return byName.containsKey(name.toUpperCase());
+        }
+
+        /**
          * @return An unmodifiable collection of all current biome types.
          */
         public static Collection<Type> getAll()

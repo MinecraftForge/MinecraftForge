@@ -13,7 +13,7 @@
           File file1 = path.toFile();
           if (this.f_100832_ == null) {
              this.f_100832_ = new PackRepository(PackType.SERVER_DATA, new ServerPacksSource(), new FolderRepositorySource(file1, PackSource.f_10527_));
-+            net.minecraftforge.fmllegacy.packs.ResourcePackLoader.loadResourcePacks(this.f_100832_, net.minecraftforge.fmllegacy.server.ServerLifecycleHooks::buildPackFinder);
++            net.minecraftforge.fmllegacy.packs.ResourcePackLoader.loadResourcePacks(this.f_100832_, net.minecraftforge.fmllegacy.server.ServerLifecycleHooks::buildPackFinderNew);
              this.f_100832_.m_10506_();
           }
  

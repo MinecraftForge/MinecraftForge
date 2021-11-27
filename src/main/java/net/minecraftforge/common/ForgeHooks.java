@@ -142,6 +142,7 @@ import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -544,7 +545,7 @@ public class ForgeHooks
         // Tell client the block is gone immediately then process events
         if (world.getBlockEntity(pos) == null)
         {
-            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(DUMMY_WORLD, pos));
+            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(pos, world.getFluidState(pos).createLegacyBlock()));
         }
 
         // Post the block break event
@@ -1004,7 +1005,7 @@ public class ForgeHooks
     }
 
     /**
-     * Hook to fire {@link ItemAttributeModifierEvent}. Modders should use {@link ItemStack#getAttributeModifiers(EquipmentSlotType)} instead.
+     * Hook to fire {@link ItemAttributeModifierEvent}. Modders should use {@link ItemStack#getAttributeModifiers(EquipmentSlot)} instead.
      */
     public static Multimap<Attribute,AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot equipmentSlot, Multimap<Attribute,AttributeModifier> attributes)
     {
@@ -1067,36 +1068,6 @@ public class ForgeHooks
             return !event.isCanceled();
         }
         return false;
-    }
-
-
-    private static final DummyBlockReader DUMMY_WORLD = new DummyBlockReader();
-    private static class DummyBlockReader implements BlockGetter {
-
-        @Override
-        public BlockEntity getBlockEntity(BlockPos pos) {
-            return null;
-        }
-
-        @Override
-        public BlockState getBlockState(BlockPos pos) {
-            return Blocks.AIR.defaultBlockState();
-        }
-
-        @Override
-        public FluidState getFluidState(BlockPos pos) {
-            return Fluids.EMPTY.defaultFluidState();
-        }
-
-        @Override
-        public int getHeight() {
-            return 0;
-        }
-
-        @Override
-        public int getMinBuildHeight() {
-            return 0;
-        }
     }
 
     public static int onNoteChange(Level world, BlockPos pos, BlockState state, int old, int _new) {
@@ -1357,6 +1328,12 @@ public class ForgeHooks
             FORGE_ATTRIBUTES.put(k, newBuilder.build());
         });
     }
+
+    public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)
+    {
+        MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
+    }
+
     
     /**
      * Determines and returns the correct RegistryOps to return when returning early from creating a RegistryOps without importing datapacks

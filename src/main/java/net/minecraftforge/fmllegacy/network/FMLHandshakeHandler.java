@@ -21,8 +21,12 @@ package net.minecraftforge.fmllegacy.network;
 
 import com.google.common.collect.Multimap;
 import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.handshake.ClientIntentionPacket;
+import net.minecraft.network.protocol.login.ClientboundCustomQueryPacket;
+import net.minecraft.network.protocol.login.ServerboundCustomQueryPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 import net.minecraftforge.fmllegacy.util.ThreeConsumer;
@@ -47,24 +51,24 @@ import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 /**
  * Instance responsible for handling the overall FML network handshake.
  *
- * <p>An instance is created during {@link net.minecraft.network.handshake.client.CHandshakePacket} handling, and attached
- * to the {@link NetworkManager#channel} via {@link FMLNetworkConstants#FML_HANDSHAKE_HANDLER}.
+ * <p>An instance is created during {@link ClientIntentionPacket} handling, and attached
+ * to the {@link Connection#channel()} via {@link FMLNetworkConstants#FML_HANDSHAKE_HANDLER}.
  *
  * <p>The {@link FMLNetworkConstants#handshakeChannel} is a {@link SimpleChannel} with standard messages flowing in both directions.
  *
- * <p>The {@link #loginWrapper} transforms these messages into {@link net.minecraft.network.login.client.CCustomPayloadLoginPacket}
- * and {@link net.minecraft.network.login.server.SCustomPayloadLoginPacket} compatible messages, by means of wrapping.
+ * <p>The {@link #loginWrapper} transforms these messages into {@link ServerboundCustomQueryPacket}
+ * and {@link ClientboundCustomQueryPacket} compatible messages, by means of wrapping.
  *
- * <p>The handshake is ticked {@link #tickLogin(NetworkManager)} from the {@link ServerLoginNetHandler#update()} method,
- * utilizing the {@link ServerLoginNetHandler.State#NEGOTIATING} state, which is otherwise unused in vanilla code.
+ * <p>The handshake is ticked {@code #tickLogin(NetworkManager)} from the {@link ServerLoginPacketListenerImpl#tick()} method,
+ * utilizing the {@code ServerLoginPacketListenerImpl.State#NEGOTIATING} state, which is otherwise unused in vanilla code.
  *
  * <p>During client to server initiation, on the <em>server</em>, the {@link NetworkEvent.GatherLoginPayloadsEvent} is fired,
  * which solicits all registered channels at the {@link NetworkRegistry} for any
  * {@link NetworkRegistry.LoginPayload} they wish to supply.
  *
  * <p>The collected {@link NetworkRegistry.LoginPayload} are sent, one per tick, via
- * the {@link FMLLoginWrapper#wrapPacket(ResourceLocation, PacketBuffer)} mechanism to the incoming client connection. Each
- * packet is indexed via {@link net.minecraft.network.login.client.CCustomPayloadLoginPacket#transaction}, which is
+ * the {@code FMLLoginWrapper#wrapPacket(ResourceLocation, net.minecraft.network.FriendlyByteBuf)} mechanism to the incoming client connection. Each
+ * packet is indexed via {@link ServerboundCustomQueryPacket#getTransactionId()}, which is
  * the only mechanism available for tracking request/response pairs.
  *
  * <p>Each packet sent from the server should be replied by the client, though not necessarily in sent order. The reply
@@ -84,7 +88,7 @@ public class FMLHandshakeHandler {
     }
 
     /**
-     * Create a new handshake instance. Called when connection is first created during the {@link net.minecraft.network.handshake.client.CHandshakePacket}
+     * Create a new handshake instance. Called when connection is first created during the {@link ClientIntentionPacket}
      * handling.
      *
      * @param manager The network manager for this connection
@@ -141,7 +145,7 @@ public class FMLHandshakeHandler {
     }
 
     /**
-     * Transforms a two-argument instance method reference into a {@link BiConsumer} {@link #biConsumerFor(ThreeConsumer)}, first calling the {@link #handleIndexedMessage(FMLHandshakeMessages.LoginIndexedMessage, Supplier)}
+     * Transforms a two-argument instance method reference into a {@link BiConsumer} {@link #biConsumerFor(ThreeConsumer)}, first calling the {@link #handleIndexedMessage(IntSupplier, Supplier)}
      * method to handle index tracking. Used for client to server replies.
      *
      * This should only be used for login messages.

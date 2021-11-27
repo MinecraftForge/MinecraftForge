@@ -140,6 +140,7 @@ public class GuiUtils
     public static void drawContinuousTexturedBox(PoseStack matrixStack, ResourceLocation res, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
                                                  int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
     {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, res);
         drawContinuousTexturedBox(matrixStack, x, y, u, v, width, height, textureWidth, textureHeight, topBorder, bottomBorder, leftBorder, rightBorder, zLevel);
     }
@@ -164,13 +165,12 @@ public class GuiUtils
      * @param rightBorder the size of the box's right border
      * @param zLevel the zLevel to draw at
      */
-    @SuppressWarnings("deprecation")
     public static void drawContinuousTexturedBox(PoseStack matrixStack, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight,
                                                  int topBorder, int bottomBorder, int leftBorder, int rightBorder, float zLevel)
     {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        RenderSystem.defaultBlendFunc();
 
         int fillerWidth = textureWidth - leftBorder - rightBorder;
         int fillerHeight = textureHeight - topBorder - bottomBorder;
@@ -237,6 +237,7 @@ public class GuiUtils
      *
      * @param stack The stack for which a tooltip is about to be drawn.
      */
+    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
     public static void preItemToolTip(@Nonnull ItemStack stack)
     {
         cachedTooltipStack = stack;
@@ -245,11 +246,13 @@ public class GuiUtils
     /**
      * Must be called from {@code GuiScreen.renderToolTip} after {@code GuiScreen.drawHoveringText} is called.
      */
+    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
     public static void postItemToolTip()
     {
         cachedTooltipStack = ItemStack.EMPTY;
     }
 
+    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
     public static void drawHoveringText(PoseStack mStack, List<? extends FormattedText> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, Font font)
     {
         drawHoveringText(mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
@@ -274,12 +277,14 @@ public class GuiUtils
      *                       between the start and end values.
      * @param font the font for drawing the text in the tooltip box
      */
+    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
     public static void drawHoveringText(PoseStack mStack, List<? extends FormattedText> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight,
                                         int maxTextWidth, int backgroundColor, int borderColorStart, int borderColorEnd, Font font)
     {
         drawHoveringText(cachedTooltipStack, mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, backgroundColor, borderColorStart, borderColorEnd, font);
     }
 
+    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
     public static void drawHoveringText(@Nonnull final ItemStack stack, PoseStack mStack, List<? extends FormattedText> textLines, int mouseX, int mouseY, int screenWidth, int screenHeight, int maxTextWidth, Font font)
     {
         drawHoveringText(stack, mStack, textLines, mouseX, mouseY, screenWidth, screenHeight, maxTextWidth, DEFAULT_BACKGROUND_COLOR, DEFAULT_BORDER_COLOR_START, DEFAULT_BORDER_COLOR_END, font);
@@ -288,9 +293,9 @@ public class GuiUtils
     /**
      * Use this version if calling from somewhere where ItemStack context is available.
      *
-     * @see #drawHoveringText(MatrixStack, List, int, int, int, int, int, int, int, int, FontRenderer)
+     * @see #drawHoveringText(PoseStack, List, int, int, int, int, int, int, int, int, Font)
      */
-    //TODO, Validate rendering is the same as the original
+    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
     public static void drawHoveringText(@Nonnull final ItemStack stack, PoseStack pStack, List<? extends FormattedText> textLines, int mouseX, int mouseY,
                                         int screenWidth, int screenHeight, int maxTextWidth,
                                         int backgroundColor, int borderColorStart, int borderColorEnd, Font font)
@@ -433,7 +438,6 @@ public class GuiUtils
         }
     }
 
-    @SuppressWarnings("deprecation")
     public static void drawGradientRect(Matrix4f mat, int zLevel, int left, int top, int right, int bottom, int startColor, int endColor)
     {
         float startAlpha = (float)(startColor >> 24 & 255) / 255.0F;

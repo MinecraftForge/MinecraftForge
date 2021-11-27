@@ -21,7 +21,9 @@ package net.minecraftforge.fluids;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
@@ -44,6 +46,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -186,7 +189,7 @@ public class FluidAttributes
      * Determines if this fluid should vaporize in dimensions where water vaporizes when placed.
      * To preserve the intentions of vanilla, fluids that can turn lava into obsidian should vaporize.
      * This prevents players from making the nether safe with a single bucket.
-     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Based on {@link BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult)}
      *
      * @param fluidStack The fluidStack is trying to be placed.
      * @return true if this fluid should vaporize in dimensions where water vaporizes when placed.
@@ -200,9 +203,9 @@ public class FluidAttributes
     }
 
     /**
-     * Called instead of placing the fluid block if {@link net.minecraft.world.dimension.Dimension#doesWaterVaporize()} and {@link #doesVaporize(FluidStack)} are true.
+     * Called instead of placing the fluid block if {@link DimensionType#ultraWarm()} and {@link #doesVaporize(BlockAndTintGetter, BlockPos, FluidStack)} are true.
      * Override this to make your explosive liquid blow up instead of the default smoke, etc.
-     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
+     * Based on {@link BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult)}
      *
      * @param player     Player who tried to place the fluid. May be null for blocks like dispensers.
      * @param worldIn    World to vaporize the fluid in.

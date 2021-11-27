@@ -21,6 +21,7 @@ package net.minecraftforge.fmllegacy.network;
 
 import io.netty.util.AttributeKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fml.IExtensionPoint.DisplayTest;
 import net.minecraftforge.fmllegacy.network.event.EventNetworkChannel;
 import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 import org.apache.logging.log4j.Marker;
@@ -50,7 +51,7 @@ public class FMLNetworkConstants
     static final SimpleChannel playChannel = NetworkInitialization.getPlayChannel();
     static final List<EventNetworkChannel> mcRegChannels = NetworkInitialization.buildMCRegistrationChannels();
     /**
-     * Return this value in your {@link net.minecraftforge.fml.ExtensionPoint#DISPLAYTEST} function to be ignored.
+     * Return this value in your {@link DisplayTest} function to be ignored.
      */
     public static final String IGNORESERVERONLY = "OHNOES\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31";
 

@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.block.Blocks;
@@ -51,6 +52,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 // TODO review most of the methods in this "patch"
 public interface IForgeItem
@@ -373,7 +376,7 @@ public interface IForgeItem
     /**
      * Override this to set a non-default armor slot for an ItemStack, but <em>do
      * not use this to get the armor slot of said stack; for that, use
-     * {@link net.minecraft.entity.LivingEntity#getSlotForItemStack(ItemStack)}.</em>
+     * {@link LivingEntity#getEquipmentSlotForItem(ItemStack)}..</em>
      *
      * @param stack the ItemStack
      * @return the armor slot of the ItemStack, or {@code null} to let the default
@@ -447,7 +450,9 @@ public interface IForgeItem
      *
      * @param stack The current Item Stack
      * @return True if it should render the 'durability' bar.
+     * @deprecated To be removed in 1.18. Override {@link Item#isBarVisible(ItemStack)} instead.
      */
+    @Deprecated(forRemoval = true, since = "1.17.1")
     default boolean showDurabilityBar(ItemStack stack)
     {
         return stack.isDamaged();
@@ -459,7 +464,10 @@ public interface IForgeItem
      * @param stack The current ItemStack
      * @return 0.0 for 100% (no damage / full bar), 1.0 for 0% (fully damaged /
      *         empty bar)
+     * @deprecated To be removed in 1.18. Override {@link Item#getBarWidth(ItemStack)} instead, with the notable difference
+     *             that the new method returns the width of the colored bar in pixels (where a full bar is 13px wide).
      */
+    @Deprecated(forRemoval = true, since = "1.17.1")
     default double getDurabilityForDisplay(ItemStack stack)
     {
         return (double) stack.getDamageValue() / (double) stack.getMaxDamage();
@@ -472,7 +480,9 @@ public interface IForgeItem
      *
      * @param stack Stack to get durability from
      * @return A packed RGB value for the durability colour (0x00RRGGBB)
+     * @deprecated To be removed in 1.18. Override {@link Item#getBarColor(ItemStack)} instead.
      */
+    @Deprecated(forRemoval = true, since = "1.17.1")
     default int getRGBDurabilityForDisplay(ItemStack stack)
     {
         return Mth.hsvToRgb(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
@@ -493,7 +503,7 @@ public interface IForgeItem
 
     /**
      * Return if this itemstack is damaged. Note only called if
-     * {@link #isDamageable()} is true.
+     * {@link ItemStack#isDamageableItem()} is true.
      *
      * @param stack the stack
      * @return if the stack is damaged
@@ -517,18 +527,19 @@ public interface IForgeItem
 
     /**
      * Queries if an item can perform the given action.
-     * See {@link net.minecraftforge.common.ToolActions} for a description of each stock action
+     * See {@link ToolActions} for a description of each stock action
      * @param stack The stack being used
      * @param toolAction The action being queried
      * @return True if the stack can perform the action
      */
     default boolean canPerformAction(ItemStack stack, ToolAction toolAction)
     {
-        return false;
+        // Temporary patch to keep #isShield working until its removed; change to `return false` once removed
+        return isShield(stack, null) && ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction);
     }
 
     /**
-     * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}
+     * ItemStack sensitive version of {@link Item#isCorrectToolForDrops(BlockState)}
      *
      * @param stack The itemstack used to harvest the block
      * @param state The block trying to harvest
@@ -568,7 +579,7 @@ public interface IForgeItem
      * applies specifically to enchanting an item in the enchanting table and is
      * called when retrieving the list of possible enchantments for an item.
      * Enchantments may additionally (or exclusively) be doing their own checks in
-     * {@link net.minecraft.enchantment.Enchantment#canApplyAtEnchantingTable(ItemStack)};
+     * {@link Enchantment#canApplyAtEnchantingTable(ItemStack)};
      * check the individual implementation for reference. By default this will check
      * if the enchantment type is valid for this item type.
      *
@@ -576,7 +587,7 @@ public interface IForgeItem
      * @param enchantment the enchantment to be applied
      * @return true if the enchantment can be applied to this item
      */
-    default boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.world.item.enchantment.Enchantment enchantment)
+    default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
     {
         return enchantment.category.canEnchant(stack.getItem());
     }
@@ -637,7 +648,7 @@ public interface IForgeItem
      *
      * @param itemStack the ItemStack to check
      * @return the Mod ID for the ItemStack, or null when there is no specially
-     *         associated mod and {@link #getRegistryName()} would return null.
+     *         associated mod and {@link IForgeRegistryEntry#getRegistryName()} would return null.
      */
     @Nullable
     default String getCreatorModId(ItemStack itemStack)
@@ -680,7 +691,7 @@ public interface IForgeItem
      * @param shield   The shield in question
      * @param entity   The LivingEntity holding the shield
      * @param attacker The LivingEntity holding the ItemStack
-     * @retrun True if this ItemStack can disable the shield in question.
+     * @return True if this ItemStack can disable the shield in question.
      */
     default boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker)
     {
@@ -688,12 +699,15 @@ public interface IForgeItem
     }
 
     /**
-     * Is this Item a shield
+     * {@return {@code true} if this item is considered a shield}
      *
-     * @param stack  The ItemStack
-     * @param entity The Entity holding the ItemStack
-     * @return True if the ItemStack is considered a shield
+     * @param stack  the item stack
+     * @param entity the entity holding the item stack
+     * @deprecated To be removed in 1.18. Override {@link #canPerformAction(ItemStack, ToolAction)} and return
+     * {@code true} if the passed in tool action is contained in {@link ToolActions#DEFAULT_SHIELD_ACTIONS} or is
+     * equals to {@link ToolActions#SHIELD_BLOCK}.
      */
+    @Deprecated(since = "1.17.1", forRemoval = true)
     default boolean isShield(ItemStack stack, @Nullable LivingEntity entity)
     {
         return stack.getItem() == Items.SHIELD;
@@ -710,7 +724,7 @@ public interface IForgeItem
     }
 
     /**
-     * Called every tick from {@link EntityHorse#onUpdate()} on the item in the
+     * Called every tick from {@code Horse#playGallopSound(SoundEvent)} on the item in the
      * armor slot.
      *
      * @param stack the armor itemstack
@@ -798,7 +812,7 @@ public interface IForgeItem
     /**
      * Get a bounding box ({@link AABB}) of a sweep attack.
      * 
-     * @param statck the stack held by the player.
+     * @param stack the stack held by the player.
      * @param player the performing the attack the attack.
      * @param target the entity targeted by the attack.
      * @return the bounding box.

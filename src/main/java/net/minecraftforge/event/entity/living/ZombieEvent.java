@@ -22,13 +22,13 @@ package net.minecraftforge.event.entity.living;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.EntityEvent;
-
-import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * ZombieEvent is fired whenever a zombie is spawned for aid.
- * If a method utilizes this {@link Event} as its parameter, the method will
+ * If a method utilizes this event as its parameter, the method will
  * receive every child event of this class.
  * 
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.
@@ -48,9 +48,9 @@ public class ZombieEvent extends EntityEvent {
     /**
      * SummonAidEvent is fired when a Zombie Entity is summoned.
      * This event is fired whenever a Zombie Entity is summoned in 
-     * {@link EntityZombie#attackEntityFrom(DamageSource, float)}.
+     * {@code Zombie#actuallyHurt(DamageSource, float)}.
      * 
-     * This event is fired via the {@link ForgeEventFactory#fireZombieSummonAid(EntityZombie, World, int, int, int, EntityLivingBase, double)}.
+     * This event is fired via the {@link ForgeEventFactory#fireZombieSummonAid(Zombie, Level, int, int, int, LivingEntity, double)}.
      * 
      * {@link #customSummonedAid} remains null, but can be populated with a custom EntityZombie which will be spawned.
      * {@link #world} contains the world that this summoning is occurring in.

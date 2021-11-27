@@ -9,14 +9,22 @@
           atomicreference.get().m_130011_();
        }, "Server thread");
        thread.setUncaughtExceptionHandler((p_177909_, p_177910_) -> {
-@@ -402,6 +_,7 @@
+@@ -365,6 +_,7 @@
+       this.f_129732_ = new CommandStorage(dimensiondatastorage);
+       WorldBorder worldborder = serverlevel.m_6857_();
+       worldborder.m_61931_(serverleveldata.m_5813_());
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(Level.f_46428_)));
+       if (!serverleveldata.m_6535_()) {
+          try {
+             m_177896_(serverlevel, serverleveldata, worldgensettings.m_64660_(), flag);
+@@ -401,6 +_,7 @@
+             ServerLevel serverlevel1 = new ServerLevel(this, this.f_129738_, this.f_129744_, derivedleveldata, resourcekey1, dimensiontype1, p_129816_, chunkgenerator1, flag, j, ImmutableList.of(), false);
              worldborder.m_61929_(new BorderChangeListener.DelegateBorderChangeListener(serverlevel1.m_6857_()));
              this.f_129762_.put(resourcekey1, serverlevel1);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(resourcekey)));
           }
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(f_129762_.get(resourcekey)));
        }
  
-    }
 @@ -411,6 +_,7 @@
           p_177898_.m_7250_(BlockPos.f_121853_.m_6630_(80), 0.0F);
        } else {
@@ -167,7 +175,7 @@
     }
  
     public static DataPackConfig m_129819_(PackRepository p_129820_, DataPackConfig p_129821_, boolean p_129822_) {
-+      net.minecraftforge.fmllegacy.packs.ResourcePackLoader.loadResourcePacks(p_129820_, net.minecraftforge.fmllegacy.server.ServerLifecycleHooks::buildPackFinder);
++      net.minecraftforge.fmllegacy.packs.ResourcePackLoader.loadResourcePacks(p_129820_, net.minecraftforge.fmllegacy.server.ServerLifecycleHooks::buildPackFinderNew);
        p_129820_.m_10506_();
 +      DataPackConfig.f_45842_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
 +      p_129821_.addModPacks(net.minecraftforge.common.ForgeHooks.getModPacks());
