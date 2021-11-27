@@ -1355,7 +1355,7 @@ public class ForgeHooks
             LevelStem dimension = entry.getValue();
             if (dimension.useServerSeed)
             {
-                seededRegistry.register(key, new LevelStem(dimension.typeSupplier(), dimension.generator().withSeed(seed)), originalRegistry.lifecycle(entry.getValue()));
+                seededRegistry.register(key, new LevelStem(dimension.typeSupplier(), dimension.generator().withSeed(seed), true), originalRegistry.lifecycle(entry.getValue()));
             }
             else
             {
