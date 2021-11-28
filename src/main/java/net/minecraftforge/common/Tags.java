@@ -246,6 +246,7 @@ public class Tags
         public static final IOptionalNamedTag<Item> HEADS = tag("heads");
         public static final IOptionalNamedTag<Item> INGOTS = tag("ingots");
         public static final IOptionalNamedTag<Item> INGOTS_BRICK = tag("ingots/brick");
+        public static final IOptionalNamedTag<Item> INGOTS_COPPER = tag("ingots/copper");
         public static final IOptionalNamedTag<Item> INGOTS_GOLD = tag("ingots/gold");
         public static final IOptionalNamedTag<Item> INGOTS_IRON = tag("ingots/iron");
         public static final IOptionalNamedTag<Item> INGOTS_NETHERITE = tag("ingots/netherite");

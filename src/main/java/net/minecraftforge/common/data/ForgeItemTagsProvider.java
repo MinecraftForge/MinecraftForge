@@ -88,8 +88,9 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.GRAVEL, Tags.Items.GRAVEL);
         tag(Tags.Items.GUNPOWDER).add(Items.GUNPOWDER);
         tag(Tags.Items.HEADS).add(Items.CREEPER_HEAD, Items.DRAGON_HEAD, Items.PLAYER_HEAD, Items.SKELETON_SKULL, Items.WITHER_SKELETON_SKULL, Items.ZOMBIE_HEAD);
-        tag(Tags.Items.INGOTS).addTags(Tags.Items.INGOTS_IRON, Tags.Items.INGOTS_GOLD, Tags.Items.INGOTS_BRICK, Tags.Items.INGOTS_NETHER_BRICK, Tags.Items.INGOTS_NETHERITE);
+        tag(Tags.Items.INGOTS).addTags(Tags.Items.INGOTS_BRICK, Tags.Items.INGOTS_COPPER, Tags.Items.INGOTS_GOLD, Tags.Items.INGOTS_IRON, Tags.Items.INGOTS_NETHERITE, Tags.Items.INGOTS_NETHER_BRICK);
         tag(Tags.Items.INGOTS_BRICK).add(Items.BRICK);
+        tag(Tags.Items.INGOTS_COPPER).add(Items.COPPER_INGOT);
         tag(Tags.Items.INGOTS_GOLD).add(Items.GOLD_INGOT);
         tag(Tags.Items.INGOTS_IRON).add(Items.IRON_INGOT);
         tag(Tags.Items.INGOTS_NETHERITE).add(Items.NETHERITE_INGOT);

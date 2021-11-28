@@ -74,6 +74,7 @@ public final class ForgeRecipeProvider extends RecipeProvider
     protected void buildCraftingRecipes(Consumer<FinishedRecipe> consumer)
     {
         replace(Items.STICK,        Tags.Items.RODS_WOODEN);
+        replace(Items.COPPER_INGOT, Tags.Items.INGOTS_COPPER);
         replace(Items.GOLD_INGOT,   Tags.Items.INGOTS_GOLD);
         replace(Items.IRON_INGOT,   Tags.Items.INGOTS_IRON);
         replace(Items.NETHERITE_INGOT, Tags.Items.INGOTS_NETHERITE);
