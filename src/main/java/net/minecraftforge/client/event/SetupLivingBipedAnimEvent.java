@@ -38,7 +38,7 @@ import net.minecraftforge.eventbus.api.Event;
 
 public class SetupLivingBipedAnimEvent extends Event
 {
-    private LivingEntity entity;
+    private LivingEntity livingEntity;
     private BipedModel model;
     private float limbSwing;
     private float limbSwingAmount;
@@ -46,9 +46,9 @@ public class SetupLivingBipedAnimEvent extends Event
     private float netHeadYaw;
     private float headPitch;
 
-    public SetupLivingBipedAnimEvent(LivingEntity entity, BipedModel model, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+    public SetupLivingBipedAnimEvent(LivingEntity livingEntity, BipedModel model, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
     {
-        this.entity = entity;
+        this.livingEntity = livingEntity;
         this.model = model;
         this.limbSwing = limbSwing;
         this.limbSwingAmount = limbSwingAmount;
@@ -57,9 +57,9 @@ public class SetupLivingBipedAnimEvent extends Event
         this.headPitch = headPitch;
     }
 
-    public LivingEntity getEntity()
+    public LivingEntity getLivingEntity()
     {
-        return entity;
+        return livingEntity;
     }
 
     public BipedModel getModel()
