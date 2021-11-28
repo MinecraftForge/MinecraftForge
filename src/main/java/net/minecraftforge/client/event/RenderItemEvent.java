@@ -42,9 +42,9 @@ import net.minecraftforge.eventbus.api.Event;
 
 public class RenderItemEvent extends Event {
     private LivingEntity livingEntity;
-    private HandSide handSide;
     private ItemStack itemStack;
     private final ItemCameraTransforms.TransformType transformType;
+    private HandSide handSide;
     private final MatrixStack matrixStack;
     private final IRenderTypeBuffer renderTypeBuffer;
     private final int light;
