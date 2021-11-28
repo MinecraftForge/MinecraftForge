@@ -94,17 +94,17 @@ public class SetupLivingBipedAnimEvent extends Event
     @Cancelable
     public static class Pre extends SetupLivingBipedAnimEvent
     {
-        public Pre(LivingEntity entity, BipedModel model, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+        public Pre(LivingEntity livingEntity, BipedModel model, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
         {
-            super(entity, model, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+            super(livingEntity, model, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         }
     }
 
     public static class Post extends SetupLivingBipedAnimEvent
     {
-        public Post(LivingEntity entity, BipedModel model, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+        public Post(LivingEntity livingEntity, BipedModel model, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
         {
-            super(entity, model, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+            super(livingEntity, model, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
         }
     }
 }
