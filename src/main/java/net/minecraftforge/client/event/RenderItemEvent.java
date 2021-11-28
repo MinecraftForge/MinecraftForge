@@ -41,43 +41,43 @@ import net.minecraftforge.eventbus.api.Event;
  **/
 
 public class RenderItemEvent extends Event {
-    private LivingEntity entity;
+    private LivingEntity livingEntity;
     private HandSide handSide;
-    private ItemStack heldItem;
+    private ItemStack itemStack;
     private final ItemCameraTransforms.TransformType transformType;
     private final MatrixStack matrixStack;
     private final IRenderTypeBuffer renderTypeBuffer;
     private final int light;
 
-    public RenderItemEvent(LivingEntity entity, HandSide handSide, ItemStack heldItem, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int light)
+    public RenderItemEvent(LivingEntity livingEntity, ItemStack itemStack, ItemCameraTransforms.TransformType transformType, HandSide handSide, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int light)
     {
-        this.entity = entity;
-        this.handSide = handSide;
-        this.heldItem = heldItem;
+        this.livingEntity = livingEntity;
+        this.itemStack = itemStack;
         this.transformType = transformType;
+        this.handSide = handSide;
         this.matrixStack = matrixStack;
         this.renderTypeBuffer = renderTypeBuffer;
         this.light = light;
     }
 
-    public LivingEntity getEntity()
+    public LivingEntity getLivingEntity()
     {
-        return this.entity;
+        return this.livingEntity;
     }
 
-    public HandSide getHandSide()
+    public ItemStack getItemStack()
     {
-        return this.handSide;
-    }
-
-    public ItemStack getItem()
-    {
-        return this.heldItem;
+        return this.itemStack;
     }
 
     public ItemCameraTransforms.TransformType getTransformType()
     {
         return this.transformType;
+    }
+
+    public HandSide getHandSide()
+    {
+        return this.handSide;
     }
 
     public MatrixStack getMatrixStack()
@@ -98,17 +98,17 @@ public class RenderItemEvent extends Event {
     @Cancelable
     public static class Pre extends RenderItemEvent
     {
-        public Pre(LivingEntity entity, HandSide handSide, ItemStack heldItem, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int light)
+        public Pre(LivingEntity livingEntity, ItemStack itemStack, ItemCameraTransforms.TransformType transformType, HandSide handSide, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int light)
         {
-            super(entity, handSide, heldItem, transformType, matrixStack, renderTypeBuffer, light);
+            super(livingEntity, itemStack, transformType, handSide, matrixStack, renderTypeBuffer, light);
         }
     }
 
     public static class Post extends RenderItemEvent
     {
-        public Post(LivingEntity entity, HandSide handSide, ItemStack heldItem, ItemCameraTransforms.TransformType transformType, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int light)
+        public Post(LivingEntity livingEntity, ItemStack itemStack, ItemCameraTransforms.TransformType transformType, HandSide handSide, MatrixStack matrixStack, IRenderTypeBuffer renderTypeBuffer, int light)
         {
-            super(entity, handSide, heldItem, transformType, matrixStack, renderTypeBuffer, light);
+            super(livingEntity, itemStack, transformType, handSide, matrixStack, renderTypeBuffer, light);
         }
     }
 }
