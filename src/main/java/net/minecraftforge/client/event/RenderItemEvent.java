@@ -40,7 +40,8 @@ import net.minecraftforge.eventbus.api.Event;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 
-public class RenderItemEvent extends Event {
+public class RenderItemEvent extends Event
+{
     private LivingEntity livingEntity;
     private ItemStack itemStack;
     private final ItemCameraTransforms.TransformType transformType;
