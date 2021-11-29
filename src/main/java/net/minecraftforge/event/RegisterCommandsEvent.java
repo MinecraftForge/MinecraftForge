@@ -20,6 +20,8 @@
 package net.minecraftforge.event;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.server.ServerResources;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
 
 
@@ -27,8 +29,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
 /**
- * Commands are rebuilt whenever {@link DataPackRegistries} is recreated.
- * You can use this event to register your commands whenever the {@link net.minecraft.command.Commands} class in constructed.
+ * Commands are rebuilt whenever {@link ServerResources} is recreated.
+ * You can use this event to register your commands whenever the {@link Commands} class in constructed.
  *
  * The event is fired on the {@link MinecraftForge#EVENT_BUS}
  */

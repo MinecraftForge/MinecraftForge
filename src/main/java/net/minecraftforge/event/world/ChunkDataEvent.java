@@ -20,9 +20,17 @@
 package net.minecraftforge.event.world;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.ai.village.poi.PoiManager;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.chunk.ChunkStatus;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.storage.ChunkSerializer;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureManager;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * ChunkDataEvent is fired when an event involving chunk data occurs.<br>
@@ -57,7 +65,7 @@ public class ChunkDataEvent extends ChunkEvent
     /**
      * ChunkDataEvent.Load is fired when vanilla Minecraft attempts to load Chunk data.<br>
      * This event is fired during chunk loading in
-     * {@link net.minecraft.world.chunk.storage.ChunkSerializer.read(ServerWorld, TemplateManager, PointOfInterestManager, ChunkPos, CompoundNBT)} which means it is async, so be careful.<br>
+     * {@link ChunkSerializer#read(ServerLevel, StructureManager, PoiManager, ChunkPos, CompoundTag)} which means it is async, so be careful.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>
@@ -84,7 +92,7 @@ public class ChunkDataEvent extends ChunkEvent
     /**
      * ChunkDataEvent.Save is fired when vanilla Minecraft attempts to save Chunk data.<br>
      * This event is fired during chunk saving in
-     * {@link AnvilChunkLoader#saveChunk(World, Chunk)}. <br>
+     * {@code ChunkMap#save(ChunkAccess)}. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>

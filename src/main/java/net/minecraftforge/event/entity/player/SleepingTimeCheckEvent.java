@@ -21,6 +21,7 @@ package net.minecraftforge.event.entity.player;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
 import java.util.Optional;
@@ -32,7 +33,7 @@ import java.util.Optional;
  * This event has a result. {@link HasResult}<br>
  *
  * setResult(ALLOW) informs game that player can sleep at this time.<br>
- * setResult(DEFAULT) causes game to check !{@link World#isDaytime()} instead.
+ * setResult(DEFAULT) causes game to check !{@link Level#isDay()} instead.
  */
 @HasResult
 public class SleepingTimeCheckEvent extends PlayerEvent

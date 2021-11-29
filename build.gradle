@@ -54,7 +54,7 @@ ext {
     SECUREJARHANDLER_VERSION = '0.9.54'
     BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
     ASM_VERSION = '9.1'
-    INSTALLER_VERSION = '2.1.5'
+    INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.4'
 
     GIT_INFO = gradleutils.gitInfo
@@ -110,6 +110,15 @@ subprojects {
     }
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+
+    tasks.withType(Javadoc).configureEach {
+        options.tags = [
+                'apiNote:a:<em>API Note:</em>',
+                'implSpec:a:<em>Implementation Requirements:</em>',
+                'implNote:a:<em>Implementation Note:</em>'
+        ]
+        options.addStringOption('Xdoclint:all,-missing', '-public')
+    }
 
     publishing {
         publications {

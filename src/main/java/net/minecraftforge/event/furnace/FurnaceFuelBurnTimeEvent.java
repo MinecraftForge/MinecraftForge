@@ -33,9 +33,9 @@ import net.minecraftforge.eventbus.api.Event;
 /**
  * {@link FurnaceFuelBurnTimeEvent} is fired when determining the fuel value for an ItemStack. <br>
  * <br>
- * To set the burn time of your own item, use {@link Item#getBurnTime(ItemStack)} instead.<br>
+ * To set the burn time of your own item, use {@link Item#getBurnTime(ItemStack, RecipeType)} instead.<br>
  * <br>
- * This event is fired from {@link ForgeEventFactory#getItemBurnTime(ItemStack)}.<br>
+ * This event is fired from {@link ForgeEventFactory#getItemBurnTime(ItemStack, int, RecipeType)}.<br>
  * <br>
  * This event is {@link Cancelable} to prevent later handlers from changing the value.<br>
  * <br>

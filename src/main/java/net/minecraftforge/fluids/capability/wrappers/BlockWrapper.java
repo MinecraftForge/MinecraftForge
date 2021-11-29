@@ -19,11 +19,11 @@
 
 package net.minecraftforge.fluids.capability.wrappers;
 
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.LiquidBlockContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
@@ -33,8 +33,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 
 /**
  * Wrapper around any block, only accounts for fluid placement, otherwise the block acts a void.
- * If the block in question inherits from the default Vanilla or Forge implementations,
- * consider using {@link BlockLiquidWrapper} or {@link FluidBlockWrapper} respectively.
+ * If the block in question inherits from the Forge implementations,
+ * consider using {@link FluidBlockWrapper}.
  */
 public class BlockWrapper extends VoidFluidHandler
 {
@@ -60,7 +60,7 @@ public class BlockWrapper extends VoidFluidHandler
         if (action.execute())
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, blockPos);
-            world.setBlock(blockPos, state, Constants.BlockFlags.DEFAULT_AND_RERENDER);
+            world.setBlock(blockPos, state, Block.UPDATE_ALL_IMMEDIATE);
         }
         return FluidAttributes.BUCKET_VOLUME;
     }

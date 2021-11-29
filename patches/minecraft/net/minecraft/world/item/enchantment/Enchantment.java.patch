@@ -42,7 +42,7 @@
 +   }
 +
 +   /**
-+    * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
++    * This applies specifically to applying at the enchanting table. The other method {@link #canEnchant(ItemStack)}
 +    * applies for <i>all possible</i> enchantments.
 +    * @param stack
 +    * @return

@@ -41,7 +41,7 @@ import static net.minecraftforge.fml.Logging.LOADING;
 /**
  * Automatic eventbus subscriber - reads {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber}
  * annotations and passes the class instances to the {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus}
- * defined by the annotation. Defaults to {@link MinecraftForge#EVENT_BUS}
+ * defined by the annotation. Defaults to {@code MinecraftForge#EVENT_BUS}
  */
 public class AutomaticEventSubscriber
 {

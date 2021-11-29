@@ -35,6 +35,26 @@
     public final int m_41462_() {
        return this.f_41371_;
     }
+@@ -151,16 +_,15 @@
+    }
+ 
+    public boolean m_142522_(ItemStack p_150899_) {
+-      return p_150899_.m_41768_();
++      return p_150899_.m_41720_().showDurabilityBar(p_150899_);
+    }
+ 
+    public int m_142158_(ItemStack p_150900_) {
+-      return Math.round(13.0F - (float)p_150900_.m_41773_() * 13.0F / (float)this.f_41371_);
++      return Math.round(13.0F - ((float) p_150900_.m_41720_().getDurabilityForDisplay(p_150900_) * 13.0F));
+    }
+ 
+    public int m_142159_(ItemStack p_150901_) {
+-      float f = Math.max(0.0F, ((float)this.f_41371_ - (float)p_150901_.m_41773_()) / (float)this.f_41371_);
+-      return Mth.m_14169_(f / 3.0F, 1.0F, 1.0F);
++      return p_150901_.m_41720_().getRGBDurabilityForDisplay(p_150901_);
+    }
+ 
+    public boolean m_142207_(ItemStack p_150888_, Slot p_150889_, ClickAction p_150890_, Player p_150891_) {
 @@ -216,10 +_,12 @@
     }
  

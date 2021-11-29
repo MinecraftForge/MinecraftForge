@@ -49,11 +49,11 @@ public interface IForgeStructureFeature
     }
 
     /**
-     * Gets the default list of {@link EntityClassification#MONSTER} spawns for this structure.
+     * Gets the default list of {@link MobCategory#MONSTER} spawns for this structure.
      *
-     * @apiNote Implement this over {@link Structure#getSpawnList()}
+     * @apiNote Implement this over {@link StructureFeature#getSpecialEnemies()}
      *
-     * @Deprecated Use {@link IForgeStructureFeature#getDefaultSpawnList(MobCategory)}
+     * @deprecated Use {@link IForgeStructureFeature#getDefaultSpawnList(MobCategory)}
      * TODO: Remove in 1.18
      */
     default List<MobSpawnSettings.SpawnerData> getDefaultSpawnList()
@@ -62,11 +62,11 @@ public interface IForgeStructureFeature
     }
 
     /**
-     * Gets the default list of {@link EntityClassification#CREATURE} spawns for this structure.
+     * Gets the default list of {@link MobCategory#CREATURE} spawns for this structure.
      *
-     * @apiNote Implement this over {@link Structure#getCreatureSpawnList()}
+     * @apiNote Implement this over {@link StructureFeature#getSpecialAnimals()}
      *
-     * @Deprecated Use {@link IForgeStructureFeature#getDefaultSpawnList(MobCategory)}
+     * @deprecated Use {@link IForgeStructureFeature#getDefaultSpawnList(MobCategory)}
      * TODO: Remove in 1.18
      */
     default List<MobSpawnSettings.SpawnerData> getDefaultCreatureSpawnList()
@@ -88,7 +88,7 @@ public interface IForgeStructureFeature
     /**
      * Helper method to get the list of entity spawns for this structure for the given classification.
      * @param classification The classification of entities.
-     * @apiNote This method is marked as final in {@link Structure} so as to not be overridden by modders and breaking support for
+     * @apiNote This method is marked as final in {@link StructureFeature} so as to not be overridden by modders and breaking support for
      * {@link net.minecraftforge.event.world.StructureSpawnListGatherEvent}.
      */
     WeightedRandomList<MobSpawnSettings.SpawnerData> getSpawnList(MobCategory classification);

@@ -64,10 +64,10 @@ public class EntitySelectorManager
     }
 
     /**
-     * This method is called in {@link EntitySelectorParser#parse} <br>
+     * This method is called in {@link EntitySelectorParser#parse()} <br>
      *
      * If the REGISTRY does not contain a custom selector for the command being parsed,
-     * this method returns {@code null} and the vanilla logic in {@link EntitySelectorParser#parseSelector} is used.
+     * this method returns {@code null} and the vanilla logic in {@code EntitySelectorParser#parseSelector()} is used.
      */
     public static EntitySelector parseSelector(EntitySelectorParser parser) throws CommandSyntaxException
     {
@@ -88,7 +88,7 @@ public class EntitySelectorManager
     }
 
     /**
-     * This method is called in {@link EntitySelectorParser#fillSelectorSuggestions}
+     * This method is called in {@code EntitySelectorParser#fillSelectorSuggestions(SuggestionsBuilder)}
      */
     public static void fillSelectorSuggestions(SuggestionsBuilder suggestionBuilder)
     {

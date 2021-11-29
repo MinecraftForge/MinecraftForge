@@ -33,7 +33,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 /**
  * This defines a Mod to FML.
  * Any class found with this annotation applied will be loaded as a Mod. The instance that is loaded will
- * represent the mod to other Mods in the system. It will be sent various subclasses of {@link ModLifecycleEvent}
+ * represent the mod to other Mods in the system. It will be sent various subclasses of {@code ModLifecycleEvent}
  * at pre-defined times during the loading of the game.
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -51,7 +51,7 @@ public @interface Mod
 
     /**
      * Annotate a class which will be subscribed to an Event Bus at mod construction time.
-     * Defaults to subscribing the current modid to the {@link MinecraftForge#EVENT_BUS}
+     * Defaults to subscribing the current modid to the {@code MinecraftForge#EVENT_BUS}
      * on both sides.
      *
      * @see Bus
@@ -84,7 +84,8 @@ public @interface Mod
         enum Bus {
             /**
              * The main Forge Event Bus.
-             * @see MinecraftForge#EVENT_BUS
+             *
+             * <p>See {@code MinecraftForge#EVENT_BUS}</p>
              */
             FORGE(Bindings.getForgeBus()),
             /**
