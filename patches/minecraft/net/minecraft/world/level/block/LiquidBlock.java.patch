@@ -1,10 +1,11 @@
 --- a/net/minecraft/world/level/block/LiquidBlock.java
 +++ b/net/minecraft/world/level/block/LiquidBlock.java
-@@ -30,11 +_,12 @@
+@@ -30,11 +_,13 @@
  
  public class LiquidBlock extends Block implements BucketPickup {
     public static final IntegerProperty f_54688_ = BlockStateProperties.f_61422_;
 -   protected final FlowingFluid f_54689_;
++   @Deprecated // Use getFluid
 +   private final FlowingFluid f_54689_;
     private final List<FluidState> f_54691_;
     public static final VoxelShape f_54690_ = Block.m_49796_(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D);
