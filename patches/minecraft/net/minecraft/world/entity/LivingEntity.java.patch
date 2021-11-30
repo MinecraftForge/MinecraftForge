@@ -588,3 +588,21 @@
           }
        } else {
           return EquipmentSlot.HEAD;
+@@ -3287,5 +_,17 @@
+    }
+ 
+    public static record Fallsounds(SoundEvent f_196626_, SoundEvent f_196627_) {
++   }
++
++   /**
++    * Exposes the experience value of the entity after the getExperienceDrop event.
++    * @param player The attacking player involved in obtaining this experience, typically lastHurtByPlayer.
++    * @return The amount of experience
++    */
++   public int getTotalExperienceValue(Player player){
++      if(!this.m_6149_())
++         return 0;
++      int i = this.m_6552_(player);
++      return net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, player, i);
+    }
+ }

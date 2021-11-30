@@ -1,5 +1,18 @@
 --- a/net/minecraft/world/entity/monster/Zombie.java
 +++ b/net/minecraft/world/entity/monster/Zombie.java
+@@ -156,11 +_,7 @@
+    }
+ 
+    protected int m_6552_(Player p_34322_) {
+-      if (this.m_6162_()) {
+-         this.f_21364_ = (int)((float)this.f_21364_ * 2.5F);
+-      }
+-
+-      return super.m_6552_(p_34322_);
++      return this.m_6162_() ? (int) (super.m_6552_(p_34322_) * 2.5F) : super.m_6552_(p_34322_);
+    }
+ 
+    public void m_6863_(boolean p_34309_) {
 @@ -191,7 +_,7 @@
        if (!this.f_19853_.f_46443_ && this.m_6084_() && !this.m_21525_()) {
           if (this.m_34329_()) {
