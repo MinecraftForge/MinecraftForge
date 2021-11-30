@@ -250,7 +250,7 @@ def sharedDeps = {
     installer 'com.electronwill.night-config:core:3.6.3'
     installer 'com.electronwill.night-config:toml:3.6.3'
     installer 'org.apache.maven:maven-artifact:3.6.3'
-    installer 'org.apache.commons:commons-lang3:3.8.1'
+    installer 'org.apache.commons:commons-lang3:3.12.0'
     installer 'net.jodah:typetools:0.8.3'
     installer 'org.apache.logging.log4j:log4j-api:2.14.1'
     installer 'org.apache.logging.log4j:log4j-core:2.14.1'
@@ -260,8 +260,8 @@ def sharedDeps = {
     installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
-    installer 'com.google.guava:guava:21.0'
-    installer 'com.google.code.gson:gson:2.8.0'
+    installer 'com.google.guava:guava:31.0.1'
+    installer 'com.google.code.gson:gson:2.8.8'
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
