@@ -25,7 +25,7 @@
        if (p_130056_.m_41619_()) {
           this.writeBoolean(false);
        } else {
-@@ -447,8 +_,8 @@
+@@ -447,9 +_,11 @@
           this.m_130130_(Item.m_41393_(item));
           this.writeByte(p_130056_.m_41613_());
           CompoundTag compoundtag = null;
@@ -34,14 +34,19 @@
 +         if (item.isDamageable(p_130056_) || item.m_41468_()) {
 +            compoundtag = limitedTag ? p_130056_.getShareTag() : p_130056_.m_41783_();
           }
++         var capBytes = p_130056_.write(true);
++         if (capBytes.length > 0) (compoundtag == null ? (compoundtag = new CompoundTag()) : compoundtag).m_128365_("__FORGE_CAPABILITIES__", new net.minecraft.nbt.ByteArrayTag(capBytes));
  
           this.m_130079_(compoundtag);
-@@ -464,7 +_,7 @@
+       }
+@@ -464,7 +_,9 @@
           int i = this.m_130242_();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.m_41445_(i), j);
 -         itemstack.m_41751_(this.m_130260_());
-+         itemstack.readShareTag(this.m_130260_());
++         var compoundTag = this.m_130260_();
++         itemstack.readShareTag(compoundTag);
++         if (compoundTag != null && compoundTag.m_128425_("__FORGE_CAPABILITIES__", net.minecraft.nbt.Tag.f_178200_)) itemstack.readTag(compoundTag.m_128463_("__FORGE_CAPABILITIES__"));
           return itemstack;
        }
     }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/inventory/ContainerSynchronizer.java
++++ b/net/minecraft/world/inventory/ContainerSynchronizer.java
+@@ -11,4 +_,8 @@
+    void m_142529_(AbstractContainerMenu p_150533_, ItemStack p_150534_);
+ 
+    void m_142145_(AbstractContainerMenu p_150527_, int p_150528_, int p_150529_);
++   
++   default void sendDirtySlotCapabilities(AbstractContainerMenu menu, int slotIndex, ItemStack itemStack) {
++      this.m_142074_(menu, slotIndex, itemStack);
++   }
+ }

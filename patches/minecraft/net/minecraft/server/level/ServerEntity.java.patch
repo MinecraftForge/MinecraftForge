@@ -29,7 +29,7 @@
        if (this.f_8521_ % this.f_8511_ == 0 || this.f_8510_.f_19812_ || this.f_8510_.m_20088_().m_135352_()) {
           if (this.f_8510_.m_20159_()) {
              int i1 = Mth.m_14143_(this.f_8510_.m_146908_() * 256.0F / 360.0F);
-@@ -189,11 +_,13 @@
+@@ -189,11 +_,14 @@
     public void m_8534_(ServerPlayer p_8535_) {
        this.f_8510_.m_6452_(p_8535_);
        p_8535_.f_8906_.m_141995_(new ClientboundRemoveEntitiesPacket(this.f_8510_.m_142049_()));
@@ -38,8 +38,17 @@
  
     public void m_8541_(ServerPlayer p_8542_) {
        this.m_8536_(p_8542_.f_8906_::m_141995_);
++      net.minecraftforge.network.ForgeNetwork.sendEntityCapabilities(this.f_8510_, true, false, java.util.stream.Stream.of(p_8542_.f_8906_.m_6198_()));
        this.f_8510_.m_6457_(p_8542_);
 +      net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(this.f_8510_, p_8542_);
     }
  
     public void m_8536_(Consumer<Packet<?>> p_8537_) {
+@@ -270,6 +_,7 @@
+       if (synchedentitydata.m_135352_()) {
+          this.m_8538_(new ClientboundSetEntityDataPacket(this.f_8510_.m_142049_(), synchedentitydata, false));
+       }
++      net.minecraftforge.network.ForgeNetwork.sendEntityCapabilities(this.f_8510_, false);
+ 
+       if (this.f_8510_ instanceof LivingEntity) {
+          Set<AttributeInstance> set = ((LivingEntity)this.f_8510_).m_21204_().m_22145_();

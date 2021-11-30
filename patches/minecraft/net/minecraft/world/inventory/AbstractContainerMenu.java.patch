@@ -1,17 +1,53 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -204,9 +_,11 @@
-    private void m_150407_(int p_150408_, ItemStack p_150409_, Supplier<ItemStack> p_150410_) {
-       ItemStack itemstack = this.f_38841_.get(p_150408_);
-       if (!ItemStack.m_41728_(itemstack, p_150409_)) {
-+         boolean clientStackChanged = !p_150409_.equals(itemstack, true);
-          ItemStack itemstack1 = p_150410_.get();
-          this.f_38841_.set(p_150408_, itemstack1);
+@@ -202,28 +_,29 @@
+    }
  
-+         if(clientStackChanged)
-          for(ContainerListener containerlistener : this.f_38848_) {
-             containerlistener.m_7934_(this, p_150408_, itemstack1);
+    private void m_150407_(int p_150408_, ItemStack p_150409_, Supplier<ItemStack> p_150410_) {
+-      ItemStack itemstack = this.f_38841_.get(p_150408_);
+-      if (!ItemStack.m_41728_(itemstack, p_150409_)) {
+-         ItemStack itemstack1 = p_150410_.get();
+-         this.f_38841_.set(p_150408_, itemstack1);
++       ItemStack itemstack = this.f_38841_.get(p_150408_);
++       if (!ItemStack.m_41728_(itemstack, p_150409_)) {
++          ItemStack itemstack1 = p_150410_.get();
++          this.f_38841_.set(p_150408_, itemstack1);
+ 
+-         for(ContainerListener containerlistener : this.f_38848_) {
+-            containerlistener.m_7934_(this, p_150408_, itemstack1);
+-         }
+-      }
++          for(ContainerListener containerlistener : this.f_38848_) {
++             containerlistener.m_7934_(this, p_150408_, itemstack1);
++          }
++       }
+ 
+    }
+ 
+    private void m_150435_(int p_150436_, ItemStack p_150437_, Supplier<ItemStack> p_150438_) {
+       if (!this.f_150398_) {
+          ItemStack itemstack = this.f_150394_.get(p_150436_);
+-         if (!ItemStack.m_41728_(itemstack, p_150437_)) {
++         if (!itemstack.equals(p_150437_, true)) {
+             ItemStack itemstack1 = p_150438_.get();
+             this.f_150394_.set(p_150436_, itemstack1);
+             if (this.f_150397_ != null) {
+                this.f_150397_.m_142074_(this, p_150436_, itemstack1);
+             }
           }
++         else if(this.f_150397_ != null && p_150437_.requiresSync()) this.f_150397_.sendDirtySlotCapabilities(this, p_150436_, p_150437_);
+ 
+       }
+    }
+@@ -243,7 +_,7 @@
+ 
+    private void m_150445_() {
+       if (!this.f_150398_) {
+-         if (!ItemStack.m_41728_(this.m_142621_(), this.f_150396_)) {
++         if (!this.m_142621_().equals(this.f_150396_, true) || this.m_142621_().requiresSync()) {
+             this.f_150396_ = this.m_142621_().m_41777_();
+             if (this.f_150397_ != null) {
+                this.f_150397_.m_142529_(this, this.f_150396_);
 @@ -592,14 +_,15 @@
              ItemStack itemstack = slot.m_7993_();
              if (!itemstack.m_41619_() && ItemStack.m_150942_(p_38904_, itemstack)) {
