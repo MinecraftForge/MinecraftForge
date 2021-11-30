@@ -19,6 +19,7 @@
 
 package net.minecraftforge.resource;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -43,6 +44,9 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.resource.PathResourcePack;
+import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nonnull;
 
 public class ResourcePackLoader {
     private static Map<IModFile, PathResourcePack> modResourcePacks;
@@ -60,9 +64,23 @@ public class ResourcePackLoader {
     public static void loadResourcePacks(PackRepository resourcePacks, Function<Map<IModFile, ? extends PathResourcePack>, ? extends RepositorySource> packFinder) {
         modResourcePacks = ModList.get().getModFiles().stream()
                 .filter(mf->mf.requiredLanguageLoaders().stream().noneMatch(ls->ls.languageName().equals("minecraft")))
-                .map(mf -> Pair.of(mf, new PathResourcePack(mf.getFile().getFileName(), mf.getFile().getFilePath())))
+                .map(mf -> Pair.of(mf, createPackForMod(mf)))
                 .collect(Collectors.toMap(p -> p.getFirst().getFile(), Pair::getSecond, (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },  LinkedHashMap::new));
         resourcePacks.addPackFinder(packFinder.apply(modResourcePacks));
+    }
+
+    @NotNull
+    public static PathResourcePack createPackForMod(IModFileInfo mf)
+    {
+        return new PathResourcePack(mf.getFile().getFileName(), mf.getFile().getFilePath()){
+            final IModFile modFile = mf.getFile();
+            @Nonnull
+            @Override
+            protected Path resolve(@Nonnull String... paths)
+            {
+                return modFile.findResource(paths);
+            }
+        };
     }
 
     public static List<String> getPackNames() {
