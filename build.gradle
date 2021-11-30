@@ -397,6 +397,15 @@ def sharedFmlonlyForge = { Project prj ->
                 args '--launchTarget', "${launchPrefix}serveruserdev"
             }
 
+            if (prj.name == 'forge') {
+                gametest {
+                    environment 'MOD_CLASSES', '{source_roots}'
+                    environment 'MCP_MAPPINGS', '{mcp_mappings}'
+
+                    args '--launchTarget', "${launchPrefix}gametestuserdev"
+                }
+            }
+
             data {
                 environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
@@ -941,6 +950,7 @@ project(':forge') {
                 parent runs.forge_client
                 taskName 'forge_test_client'
 
+                property 'forge.enablegametest', 'true'
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
 
                 ideaModule "${rootProject.name}.${project.name}.test"
@@ -963,7 +973,29 @@ project(':forge') {
                 parent runs.forge_server
                 taskName 'forge_test_server'
 
+                property 'forge.enablegametest', 'true'
                 environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                ideaModule "${rootProject.name}.${project.name}.test"
+
+                mods {
+                    tests { sources sourceSets.test }
+                }
+            }
+
+            forge_gametest {
+                taskName 'forge_gametest'
+                args '--launchTarget', 'forgegametestdev'
+                ideaModule "${rootProject.name}.${project.name}.main"
+
+                mods {
+                    minecraft { source sourceSets.main }
+                }
+            }
+
+            forge_test_gametest {
+                parent runs.forge_gametest
+                taskName 'forge_test_gametest'
 
                 ideaModule "${rootProject.name}.${project.name}.test"
 
