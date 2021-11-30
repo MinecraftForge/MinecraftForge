@@ -21,10 +21,8 @@ package net.minecraftforge.network;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSyntaxException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -81,7 +79,7 @@ import java.util.stream.StreamSupport;
  * the "d" property of the resulting JSON.
  *
  * <p>
- * For the format of the binary data see {@link Serializer#serialize(FMLStatusPing)}.
+ * For the format of the binary data see {@link Serializer#serialize(ServerStatusPing)}.
  *
  * <p>
  * The "channels" and "mods" properties are retained for backwards compatibility,
@@ -129,9 +127,6 @@ public class ServerStatusPing
         this.truncated = truncated;
     }
 
-    public static class Serializer {
-        public static ServerStatusPing deserialize(JsonObject forgeData, JsonDeserializationContext ctx) {
-            try {
     @Override
     public String toString()
     {
@@ -148,7 +143,7 @@ public class ServerStatusPing
     public boolean equals(Object o)
     {
         if (this == o) return true;
-        if (!(o instanceof FMLStatusPing that)) return false;
+        if (!(o instanceof ServerStatusPing that)) return false;
         return fmlNetworkVer == that.fmlNetworkVer && channels.equals(that.channels) && mods.equals(that.mods);
     }
 
@@ -174,12 +169,7 @@ public class ServerStatusPing
 
     public static class Serializer
     {
-        public static FMLStatusPing deserialize(JsonObject forgeData, JsonDeserializationContext ctx)
-        {
-            return deserialize(forgeData);
-        }
-
-        public static FMLStatusPing deserialize(JsonObject forgeData)
+        public static ServerStatusPing deserialize(JsonObject forgeData)
         {
             try
             {
@@ -203,18 +193,13 @@ public class ServerStatusPing
             }
             catch (JsonSyntaxException e)
             {
-                LOGGER.debug(FMLNetworkConstants.NETWORK, "Encountered an error parsing status ping data", e);
+                LOGGER.debug(NetworkConstants.NETWORK, "Encountered an error parsing status ping data", e);
                 return null;
             }
         }
 
 
-        public static JsonObject serialize(FMLStatusPing forgeData, JsonSerializationContext ctx)
-        {
-            return serialize(forgeData);
-        }
-
-        public static JsonObject serialize(FMLStatusPing forgeData)
+        public static JsonObject serialize(ServerStatusPing forgeData)
         {
             // The following techniques are used to keep the size down:
             // 1. Try and group channels by ModID, this relies on the assumption that a mod "examplemod" uses a channel
@@ -225,7 +210,7 @@ public class ServerStatusPing
             buf.writeVarInt(forgeData.mods.size());
             for (var modEntry : forgeData.mods.entrySet())
             {
-                var isIgnoreServerOnly = modEntry.getValue().equals(FMLNetworkConstants.IGNORESERVERONLY);
+                var isIgnoreServerOnly = modEntry.getValue().equals(NetworkConstants.IGNORESERVERONLY);
 
                 var channelsForMod = forgeData.getChannelsForMod(modEntry.getKey());
                 var channelSizeAndVersionFlag = channelsForMod.size() << 1;
@@ -272,7 +257,7 @@ public class ServerStatusPing
 
         private static final int VERSION_FLAG_IGNORESERVERONLY = 0b1;
 
-        private static FMLStatusPing deserializeOptimized(JsonObject forgeData)
+        private static ServerStatusPing deserializeOptimized(JsonObject forgeData)
         {
             int remoteFMLVersion = GsonHelper.getAsInt(forgeData, "fmlNetworkVersion");
             var buf = new FriendlyByteBuf(decodeOptimized(GsonHelper.getAsString(forgeData, "d")));
@@ -286,7 +271,7 @@ public class ServerStatusPing
                 var channelSize = channelSizeAndVersionFlag >>> 1;
                 var isIgnoreServerOnly = (channelSizeAndVersionFlag & VERSION_FLAG_IGNORESERVERONLY) != 0;
                 var modId = buf.readUtf();
-                var modVersion = isIgnoreServerOnly ? FMLNetworkConstants.IGNORESERVERONLY : buf.readUtf();
+                var modVersion = isIgnoreServerOnly ? NetworkConstants.IGNORESERVERONLY : buf.readUtf();
                 for (var i1 = 0; i1 < channelSize; i1++)
                 {
                     var channelName = buf.readUtf();
@@ -307,7 +292,7 @@ public class ServerStatusPing
                 channels.put(channelName, Pair.of(channelVersion, requiredOnClient));
             }
 
-            return new FMLStatusPing(channels, mods, remoteFMLVersion, false);
+            return new ServerStatusPing(channels, mods, remoteFMLVersion, false);
         }
 
         /**
