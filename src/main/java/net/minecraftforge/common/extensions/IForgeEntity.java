@@ -35,9 +35,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.INetworkCapability;
 import net.minecraftforge.entity.PartEntity;
 
-public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
+public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>, INetworkCapability
 {
     private Entity self() { return (Entity) this; }
 

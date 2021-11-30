@@ -26,6 +26,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import com.google.common.annotations.VisibleForTesting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
@@ -156,6 +157,34 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         }
     }
 
+    public final void write(FriendlyByteBuf out, boolean writeAll)
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            disp.write(out, writeAll);
+        }
+    }
+
+    public final void read(FriendlyByteBuf in)
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            disp.read(in);
+        }
+    }
+
+    public final boolean requiresSync()
+    {
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+        {
+            return disp.requiresSync();
+        }
+        return false;
+    }
+    
     /*
      * Invalidates all the contained caps, and prevents getCapability from returning a value.
      * This is usually called when the object in question is removed from the world.
