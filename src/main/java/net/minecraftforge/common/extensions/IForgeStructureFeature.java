@@ -41,36 +41,6 @@ public interface IForgeStructureFeature
     @SuppressWarnings("incomplete-switch")
     default List<MobSpawnSettings.SpawnerData> getDefaultSpawnList(MobCategory category)
     {
-        if (category == MobCategory.MONSTER)
-            return getDefaultSpawnList();
-        else if (category == MobCategory.CREATURE)
-            return getDefaultCreatureSpawnList();
-        return Collections.emptyList();
-    }
-
-    /**
-     * Gets the default list of {@link EntityClassification#MONSTER} spawns for this structure.
-     *
-     * @apiNote Implement this over {@link Structure#getSpawnList()}
-     *
-     * @Deprecated Use {@link IForgeStructureFeature#getDefaultSpawnList(MobCategory)}
-     * TODO: Remove in 1.18
-     */
-    default List<MobSpawnSettings.SpawnerData> getDefaultSpawnList()
-    {
-        return Collections.emptyList();
-    }
-
-    /**
-     * Gets the default list of {@link EntityClassification#CREATURE} spawns for this structure.
-     *
-     * @apiNote Implement this over {@link Structure#getCreatureSpawnList()}
-     *
-     * @Deprecated Use {@link IForgeStructureFeature#getDefaultSpawnList(MobCategory)}
-     * TODO: Remove in 1.18
-     */
-    default List<MobSpawnSettings.SpawnerData> getDefaultCreatureSpawnList()
-    {
         return Collections.emptyList();
     }
 
@@ -88,7 +58,7 @@ public interface IForgeStructureFeature
     /**
      * Helper method to get the list of entity spawns for this structure for the given classification.
      * @param classification The classification of entities.
-     * @apiNote This method is marked as final in {@link Structure} so as to not be overridden by modders and breaking support for
+     * @apiNote This method is marked as final in {@link StructureFeature} so as to not be overridden by modders and breaking support for
      * {@link net.minecraftforge.event.world.StructureSpawnListGatherEvent}.
      */
     WeightedRandomList<MobSpawnSettings.SpawnerData> getSpawnList(MobCategory classification);

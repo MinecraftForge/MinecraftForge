@@ -52,7 +52,7 @@ public interface IForgeRawTagBuilder
     
     /**
      * Adds a tag entry to the remove list.
-     * @param entry The tag entry to add to the remove list
+     * @param tagEntry The tag entry to add to the remove list
      * @param source The source of the caller for logging purposes (generally a modid)
      * @return The builder for chaining purposes
      */

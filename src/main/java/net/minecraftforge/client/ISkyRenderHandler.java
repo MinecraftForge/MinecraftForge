@@ -24,7 +24,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 
 /**
- * Call {@link net.minecraft.client.world.DimensionRenderInfo#setSkyRenderHandler(ISkyRenderHandler)}, obtained from a {@link ClientWorld} with an implementation of this to override all sky rendering with your own.
+ * Call {@link net.minecraft.client.renderer.DimensionSpecialEffects#setSkyRenderHandler(ISkyRenderHandler)}, obtained
+ * from a {@link ClientLevel} with an implementation of this to override all sky rendering with your own.
  * This includes the sun, moon, stars, and sky-coloring.
  */
 @FunctionalInterface

@@ -55,7 +55,7 @@
     public int compareTo(MobEffectInstance p_19566_) {
        int i = 32147;
 -      return (this.m_19557_() <= 32147 || p_19566_.m_19557_() <= 32147) && (!this.m_19571_() || !p_19566_.m_19571_()) ? ComparisonChain.start().compare(this.m_19571_(), p_19566_.m_19571_()).compare(this.m_19557_(), p_19566_.m_19557_()).compare(this.m_19544_().m_19484_(), p_19566_.m_19544_().m_19484_()).result() : ComparisonChain.start().compare(this.m_19571_(), p_19566_.m_19571_()).compare(this.m_19544_().m_19484_(), p_19566_.m_19544_().m_19484_()).result();
-+      return (this.m_19557_() <= 32147 || p_19566_.m_19557_() <= 32147) && (!this.m_19571_() || !p_19566_.m_19571_()) ? ComparisonChain.start().compare(this.m_19571_(), p_19566_.m_19571_()).compare(this.m_19557_(), p_19566_.m_19557_()).compare(this.m_19544_().getGuiSortColor(this), p_19566_.m_19544_().getGuiSortColor(this)).result() : ComparisonChain.start().compare(this.m_19571_(), p_19566_.m_19571_()).compare(this.m_19544_().getGuiSortColor(this), p_19566_.m_19544_().getGuiSortColor(this)).result();
++      return (this.m_19557_() <= 32147 || p_19566_.m_19557_() <= 32147) && (!this.m_19571_() || !p_19566_.m_19571_()) ? ComparisonChain.start().compare(this.m_19571_(), p_19566_.m_19571_()).compare(this.m_19557_(), p_19566_.m_19557_()).compare(this.m_19544_().getSortOrder(this), p_19566_.m_19544_().getSortOrder(this)).result() : ComparisonChain.start().compare(this.m_19571_(), p_19566_.m_19571_()).compare(this.m_19544_().getSortOrder(this), p_19566_.m_19544_().getSortOrder(this)).result();
 +   }
 +
 +   //======================= FORGE START ===========================
@@ -72,9 +72,9 @@
 +      this.curativeItems = curativeItems;
 +   }
 +   private static MobEffectInstance readCurativeItems(MobEffectInstance effect, CompoundTag nbt) {
-+      if (nbt.m_128425_("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_LIST)) {
++      if (nbt.m_128425_("CurativeItems", net.minecraft.nbt.Tag.f_178202_)) {
 +         java.util.List<net.minecraft.world.item.ItemStack> items = new java.util.ArrayList<net.minecraft.world.item.ItemStack>();
-+         net.minecraft.nbt.ListTag list = nbt.m_128437_("CurativeItems", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
++         net.minecraft.nbt.ListTag list = nbt.m_128437_("CurativeItems", net.minecraft.nbt.Tag.f_178203_);
 +         for (int i = 0; i < list.size(); i++) {
 +            items.add(net.minecraft.world.item.ItemStack.m_41712_(list.m_128728_(i)));
 +         }

@@ -1,15 +1,15 @@
 --- a/net/minecraft/world/item/ItemStack.java
 +++ b/net/minecraft/world/item/ItemStack.java
-@@ -74,7 +_,7 @@
+@@ -71,7 +_,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 -public final class ItemStack {
 +public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider<ItemStack> implements net.minecraftforge.common.extensions.IForgeItemStack {
     public static final Codec<ItemStack> f_41582_ = RecordCodecBuilder.create((p_41697_) -> {
-       return p_41697_.group(Registry.f_122827_.fieldOf("id").forGetter((p_150946_) -> {
+       return p_41697_.group(Registry.f_122827_.m_194605_().fieldOf("id").forGetter((p_150946_) -> {
           return p_150946_.f_41589_;
-@@ -84,6 +_,9 @@
+@@ -81,6 +_,9 @@
           return Optional.ofNullable(p_150939_.f_41590_);
        })).apply(p_41697_, ItemStack::new);
     });
@@ -217,7 +217,7 @@
        return multimap;
     }
  
-@@ -1005,6 +_,23 @@
+@@ -955,6 +_,23 @@
  
     public boolean m_41614_() {
        return this.m_41720_().m_41472_();

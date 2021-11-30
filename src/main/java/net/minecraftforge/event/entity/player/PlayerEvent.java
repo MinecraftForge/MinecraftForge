@@ -21,12 +21,15 @@ package net.minecraftforge.event.entity.player;
 
 import java.io.File;
 
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
@@ -61,11 +64,11 @@ public class PlayerEvent extends LivingEvent
     /**
      * HarvestCheck is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
-     * {@link EntityPlayer#canHarvestBlock(IBlockState)}.<br>
+     * {@link Player#hasCorrectToolForDrops(BlockState)}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#doPlayerHarvestCheck(EntityPlayer, IBlockState, boolean)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#doPlayerHarvestCheck(Player, BlockState, boolean)}.<br>
      * <br>
-     * {@link #state} contains the {@link IBlockState} that is being checked for harvesting. <br>
+     * {@link #state} contains the {@link BlockState} that is being checked for harvesting. <br>
      * {@link #success} contains the boolean value for whether the Block will be successfully harvested. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
@@ -94,9 +97,9 @@ public class PlayerEvent extends LivingEvent
     /**
      * BreakSpeed is fired when a player attempts to harvest a block.<br>
      * This event is fired whenever a player attempts to harvest a block in
-     * {@link EntityPlayer#canHarvestBlock(IBlockState)}.<br>
+     * {@link Player#getDigSpeed(BlockState, BlockPos)}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(EntityPlayer, IBlockState, float, BlockPos)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#getBreakSpeed(Player, BlockState, float, BlockPos)}.<br>
      * <br>
      * {@link #state} contains the block being broken. <br>
      * {@link #originalSpeed} contains the original speed at which the player broke the block. <br>
@@ -137,9 +140,9 @@ public class PlayerEvent extends LivingEvent
     /**
      * NameFormat is fired when a player's display name is retrieved.<br>
      * This event is fired whenever a player's name is retrieved in
-     * {@link EntityPlayer#getDisplayName()} or {@link EntityPlayer#refreshDisplayName()}.<br>
+     * {@link Player#getDisplayName()} or {@link Player#refreshDisplayName()}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerDisplayName(EntityPlayer, String)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#getPlayerDisplayName(Player, Component)}.<br>
      * <br>
      * {@link #username} contains the username of the player.
      * {@link #displayname} contains the display name of the player.
@@ -181,9 +184,9 @@ public class PlayerEvent extends LivingEvent
     /**
      * TabListNameFormat is fired when a player's display name for the tablist is retrieved.<br>
      * This event is fired whenever a player's display name for the tablist is retrieved in
-     * {@link ServerPlayerEntity#getTabListDisplayName()} or {@link ServerPlayerEntity#refreshTabListName()}.<br>
+     * {@link ServerPlayer#getTabListDisplayName()} or {@link ServerPlayer#refreshTabListName()}.<br>
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(PlayerEntity)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(Player)}.<br>
      * <br>
      * {@link #getDisplayName()} contains the display name of the player or null if the client should determine the display name itself.
      * <br>
@@ -216,7 +219,7 @@ public class PlayerEvent extends LivingEvent
     }
 
     /**
-     * Fired when the EntityPlayer is cloned, typically caused by the network sending a RESPAWN_PLAYER event.
+     * Fired when the EntityPlayer is cloned, typically caused by the impl sending a RESPAWN_PLAYER event.
      * Either caused by death, or by traveling from the End to the overworld.
      */
     public static class Clone extends PlayerEvent

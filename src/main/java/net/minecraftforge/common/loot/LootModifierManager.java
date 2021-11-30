@@ -128,15 +128,7 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
         JsonObject object = element.getAsJsonObject();
         LootItemCondition[] lootConditions = GSON_INSTANCE.fromJson(object.get("conditions"), LootItemCondition[].class);
 
-        // For backward compatibility with the initial implementation, fall back to using the location as the type.
-        // TODO: Remove fallback in 1.16
-        ResourceLocation serializer = location;
-        if (object.has("type"))
-        {
-            serializer = new ResourceLocation(GsonHelper.getAsString(object, "type"));
-        }
-
-        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(serializer).read(location, object, lootConditions);
+        return ForgeRegistries.LOOT_MODIFIER_SERIALIZERS.getValue(location).read(location, object, lootConditions);
     }
 
     public static GlobalLootModifierSerializer<?> getSerializerForName(ResourceLocation resourcelocation) {

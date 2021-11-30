@@ -20,9 +20,17 @@
 package net.minecraftforge.event;
 
 import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.registries.RegistryBuilder;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.ImmutableList;
@@ -42,7 +50,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
         super(clazz);
     }
     /**
-     * Register new registries when you receive this event, through the {@link RecipeBuilder}
+     * Register new registries when you receive this event, through the {@link RegistryBuilder}
      */
     public static class NewRegistry extends net.minecraftforge.eventbus.api.Event implements IModBusEvent
     {
@@ -250,6 +258,65 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
                 if (ret ==0) ret = this.key.compareNamespaced(o.key);
                 return ret;
             }
+        }
+    }
+
+    /**
+     * Called whenever the ID mapping might have changed. If you register for this event, you
+     * will be called back whenever the client or server loads an ID set. This includes both
+     * when the ID maps are loaded from disk, as well as when the ID maps revert to the initial
+     * state.
+     *
+     * Note: you cannot change the IDs that have been allocated, but you might want to use
+     * this event to update caches or other in-mod artifacts that might be impacted by an ID
+     * change.
+     *
+     * Fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
+     */
+    public static class IdMappingEvent extends Event
+    {
+        public static class ModRemapping
+        {
+            public final ResourceLocation registry;
+            public final ResourceLocation key;
+            public final int oldId;
+            public final int newId;
+
+            private ModRemapping(ResourceLocation registry, ResourceLocation key, int oldId, int newId)
+            {
+                this.registry = registry;
+                this.key = key;
+                this.oldId = oldId;
+                this.newId = newId;
+            }
+        }
+
+        private final Map<ResourceLocation, ImmutableList<ModRemapping>> remaps;
+        private final ImmutableSet<ResourceLocation> keys;
+
+        public final boolean isFrozen;
+        public IdMappingEvent(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, boolean isFrozen)
+        {
+            this.isFrozen = isFrozen;
+            this.remaps = Maps.newHashMap();
+            remaps.forEach((name, rm) ->
+            {
+                List<ModRemapping> tmp = Lists.newArrayList();
+                rm.forEach((key, value) -> tmp.add(new ModRemapping(name, key, value[0], value[1])));
+                tmp.sort(Comparator.comparingInt(o -> o.newId));
+                this.remaps.put(name, ImmutableList.copyOf(tmp));
+            });
+            this.keys = ImmutableSet.copyOf(this.remaps.keySet());
+        }
+
+        public ImmutableSet<ResourceLocation> getRegistries()
+        {
+            return this.keys;
+        }
+
+        public ImmutableList<ModRemapping> getRemaps(ResourceLocation registry)
+        {
+            return this.remaps.get(registry);
         }
     }
 }

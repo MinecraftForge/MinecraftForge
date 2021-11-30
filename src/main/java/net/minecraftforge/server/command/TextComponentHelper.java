@@ -26,8 +26,8 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.fmllegacy.network.ConnectionType;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.network.ConnectionType;
+import net.minecraftforge.network.NetworkHooks;
 
 public class TextComponentHelper
 {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/BlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/BlockEntity.java
-@@ -12,7 +_,7 @@
+@@ -15,7 +_,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
     private static final Logger f_58854_ = LogManager.getLogger();
     private final BlockEntityType<?> f_58855_;
     @Nullable
-@@ -20,11 +_,14 @@
+@@ -23,11 +_,14 @@
     protected final BlockPos f_58858_;
     protected boolean f_58859_;
     private BlockState f_58856_;
@@ -23,26 +23,31 @@
 +      this.gatherCapabilities();
     }
  
-    @Nullable
-@@ -41,6 +_,8 @@
+    public static BlockPos m_187472_(CompoundTag p_187473_) {
+@@ -48,6 +_,13 @@
     }
  
     public void m_142466_(CompoundTag p_155245_) {
 +      if (p_155245_.m_128441_("ForgeData")) this.customTileData = p_155245_.m_128469_("ForgeData");
 +      if (getCapabilities() != null && p_155245_.m_128441_("ForgeCaps")) deserializeCaps(p_155245_.m_128469_("ForgeCaps"));
++   }
++
++   public CompoundTag save(CompoundTag tag) {
++      m_187478_(tag);
++      return tag;
     }
  
-    public CompoundTag m_6945_(CompoundTag p_58888_) {
-@@ -56,6 +_,8 @@
-          p_58895_.m_128405_("x", this.f_58858_.m_123341_());
-          p_58895_.m_128405_("y", this.f_58858_.m_123342_());
-          p_58895_.m_128405_("z", this.f_58858_.m_123343_());
-+         if (this.customTileData != null) p_58895_.m_128365_("ForgeData", this.customTileData.m_6426_());
-+         if (getCapabilities() != null) p_58895_.m_128365_("ForgeCaps", serializeCaps());
-          return p_58895_;
-       }
+    protected void m_183515_(CompoundTag p_187471_) {
+@@ -93,6 +_,8 @@
+       p_187479_.m_128405_("x", this.f_58858_.m_123341_());
+       p_187479_.m_128405_("y", this.f_58858_.m_123342_());
+       p_187479_.m_128405_("z", this.f_58858_.m_123343_());
++         if (this.customTileData != null) p_187479_.m_128365_("ForgeData", this.customTileData.m_6426_());
++         if (getCapabilities() != null) p_187479_.m_128365_("ForgeCaps", serializeCaps());
     }
-@@ -128,6 +_,13 @@
+ 
+    @Nullable
+@@ -163,6 +_,13 @@
  
     public void m_7651_() {
        this.f_58859_ = true;
@@ -56,7 +61,7 @@
     }
  
     public void m_6339_() {
-@@ -154,6 +_,13 @@
+@@ -189,6 +_,13 @@
  
     public BlockEntityType<?> m_58903_() {
        return this.f_58855_;
@@ -69,4 +74,4 @@
 +      return this.customTileData;
     }
  
-    @Deprecated
+    /** @deprecated */

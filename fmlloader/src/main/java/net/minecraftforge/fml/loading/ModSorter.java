@@ -32,14 +32,12 @@ import net.minecraftforge.fml.loading.toposort.TopologicalSort;
 import net.minecraftforge.forgespi.locating.IModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.StringBuilderFormattable;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
@@ -92,6 +90,7 @@ public class ModSorter
         AtomicInteger counter = new AtomicInteger();
         Map<IModFileInfo, Integer> infos = modFiles.stream()
                 .map(ModFile::getModFileInfo)
+                .filter(ModFileInfo.class::isInstance)
                 .collect(toMap(Function.identity(), e -> counter.incrementAndGet()));
         infos.keySet().forEach(i -> graph.addNode((ModFileInfo) i));
         modFiles.stream()
@@ -150,9 +149,9 @@ public class ModSorter
 
     private void buildUniqueList()
     {
-        // Collect mod files by first modid in the file. This will be used for deduping purposes
+        // Collect mod files by module name. This will be used for deduping purposes
         final Map<String, List<IModFile>> modFilesByFirstId = modFiles.stream()
-                .collect(groupingBy(mf -> mf.getModInfos().get(0).getModId()));
+                .collect(groupingBy(mf -> mf.getModFileInfo().moduleName()));
 
         // Capture forge and MC here, so we can keep them for later
         forgeAndMC = new ArrayList<>();

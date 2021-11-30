@@ -1,15 +1,15 @@
 --- a/net/minecraft/server/Main.java
 +++ b/net/minecraft/server/Main.java
 @@ -76,6 +_,8 @@
-       OptionSpec<Integer> optionspec11 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
        OptionSpec<String> optionspec12 = optionparser.accepts("serverId").withRequiredArg();
-       OptionSpec<String> optionspec13 = optionparser.nonOptions();
+       OptionSpec<Void> optionspec13 = optionparser.accepts("jfrProfile");
+       OptionSpec<String> optionspec14 = optionparser.nonOptions();
 +      optionparser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
 +      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
  
        try {
           OptionSet optionset = optionparser.parse(p_129699_);
-@@ -83,33 +_,38 @@
+@@ -83,6 +_,13 @@
              optionparser.printHelpOn(System.err);
              return;
           }
@@ -22,10 +22,12 @@
 +         }
  
           CrashReport.m_127529_();
+          if (optionset.has(optionspec13)) {
+@@ -92,28 +_,26 @@
           Bootstrap.m_135870_();
           Bootstrap.m_135889_();
           Util.m_137584_();
-+         if (!optionset.has(optionspec1)) net.minecraftforge.fmllegacy.server.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
++         if (!optionset.has(optionspec1)) net.minecraftforge.server.loading.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
           RegistryAccess.RegistryHolder registryaccess$registryholder = RegistryAccess.m_123086_();
           Path path = Paths.get("server.properties");
           DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path);
@@ -54,8 +56,8 @@
 +         }
           LevelStorageSource levelstoragesource = LevelStorageSource.m_78242_(file1.toPath());
           LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.m_78260_(s);
-          MinecraftServer.m_129845_(levelstoragesource$levelstorageaccess);
-@@ -154,6 +_,8 @@
+          LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
+@@ -164,6 +_,8 @@
                 worldgensettings = optionset.has(optionspec3) ? dedicatedserverproperties.m_180927_(registryaccess$registryholder).m_64671_() : dedicatedserverproperties.m_180927_(registryaccess$registryholder);
              }
  
@@ -64,7 +66,7 @@
              worlddata = new PrimaryLevelData(levelsettings, worldgensettings, Lifecycle.stable());
           }
  
-@@ -181,6 +_,7 @@
+@@ -191,6 +_,7 @@
           Thread thread = new Thread("Server Shutdown Thread") {
              public void run() {
                 dedicatedserver.m_7570_(true);

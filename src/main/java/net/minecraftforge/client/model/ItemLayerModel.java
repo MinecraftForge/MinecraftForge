@@ -25,6 +25,7 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.ItemModelGenerator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormatElement;
@@ -55,7 +56,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 /**
  * Forge reimplementation of vanilla {@link ItemModelGenerator}, i.e. builtin/generated models,
  * with the following changes:
- * - Represented as a true {@link IUnbakedModel} so it can be baked as usual instead of using
+ * - Represented as a true {@link UnbakedModel} so it can be baked as usual instead of using
  *   special-case logic like vanilla does.
  * - Various fixes in the baking logic.
  * - Not limited to 4 layers maximum.

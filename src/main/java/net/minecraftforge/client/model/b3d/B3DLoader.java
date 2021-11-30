@@ -19,39 +19,6 @@
 
 package net.minecraftforge.client.model.b3d;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Transformation;
-import com.mojang.math.Vector3f;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
-import net.minecraftforge.client.model.*;
-import net.minecraftforge.common.model.*;
-import net.minecraftforge.resource.IResourceType;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.Triple;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.common.base.Objects;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -61,37 +28,47 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-
-import net.minecraft.world.level.block.state.BlockState;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexFormatElement;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Transformation;
+import com.mojang.math.Vector3f;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.client.resources.model.*;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.model.b3d.B3DModel.Animation;
-import net.minecraftforge.client.model.b3d.B3DModel.Face;
-import net.minecraftforge.client.model.b3d.B3DModel.Key;
-import net.minecraftforge.client.model.b3d.B3DModel.Mesh;
-import net.minecraftforge.client.model.b3d.B3DModel.Node;
-import net.minecraftforge.client.model.b3d.B3DModel.Texture;
-import net.minecraftforge.client.model.b3d.B3DModel.Vertex;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.client.model.CompositeModelState;
+import net.minecraftforge.client.model.ForgeModelBakery;
+import net.minecraftforge.client.model.ModelLoadingException;
+import net.minecraftforge.client.model.PerspectiveMapWrapper;
+import net.minecraftforge.client.model.b3d.B3DModel.*;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.pipeline.BakedQuadBuilder;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
-import net.minecraftforge.common.model.animation.IClip;
-import net.minecraftforge.common.model.animation.IJoint;
+import net.minecraftforge.common.model.TransformationHelper;
 import net.minecraftforge.common.property.Properties;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Triple;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.resources.model.BakedModel;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.UnbakedModel;
+import javax.annotation.Nullable;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /*
  * Loader for Blitz3D models.
@@ -342,7 +319,7 @@ public enum B3DLoader
         }
     }
 
-    static final class NodeJoint implements IJoint
+    static final class NodeJoint
     {
         private final Node<?> node;
 
@@ -351,7 +328,6 @@ public enum B3DLoader
             this.node = node;
         }
 
-        @Override
         public Transformation getInvBindPose()
         {
             Matrix4f m = new Transformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
@@ -366,7 +342,6 @@ public enum B3DLoader
             return pose;
         }
 
-        @Override
         public Optional<NodeJoint> getParent()
         {
             // FIXME cache?
@@ -379,13 +354,11 @@ public enum B3DLoader
             return node;
         }
 
-        @Override
         public int hashCode()
         {
             return node.hashCode();
         }
 
-        @Override
         public boolean equals(Object obj)
         {
             if (this == obj) return true;
@@ -559,16 +532,6 @@ public enum B3DLoader
             return hasChanged ? new ModelWrapper(modelLocation, model, newMeshes, smooth, gui3d, isSideLit, newDefaultKey, textures) : this;
         }
 
-        @Override
-        public Optional<IClip> getClip(String name)
-        {
-            if(name.equals("main"))
-            {
-                return Optional.of(B3DClip.INSTANCE);
-            }
-            return Optional.empty();
-        }
-
         public ModelState getDefaultState()
         {
             return new B3DState(model.getRoot().getAnimation(), defaultKey, defaultKey, 0);
@@ -605,6 +568,8 @@ public enum B3DLoader
         private final LoadingCache<Integer, B3DState> cache;
 
         private ImmutableList<BakedQuad> quads;
+
+        public record HiddenModelPart(ImmutableList<String> path) { }
 
         public BakedWrapper(final Node<?> node, final ModelState state, final boolean smooth, final boolean gui3d, boolean isSideLit, final ImmutableSet<String> meshes, final ImmutableMap<String, TextureAtlasSprite> textures)
         {
@@ -690,7 +655,7 @@ public enum B3DLoader
             {
                 generateQuads(builder, child, state, newPath);
             }
-            if(node.getKind() instanceof Mesh && meshes.contains(node.getName()) && state.getPartTransformation(Models.getHiddenModelPart(newPath)).isIdentity())
+            if(node.getKind() instanceof Mesh && meshes.contains(node.getName()) && state.getPartTransformation(new HiddenModelPart(newPath)).isIdentity())
             {
                 Mesh mesh = (Mesh)node.getKind();
                 Collection<Face> faces = mesh.bake(new Function<Node<?>, Matrix4f>()
@@ -719,7 +684,7 @@ public enum B3DLoader
                     if(f.getBrush() != null) textures = f.getBrush().getTextures();
                     TextureAtlasSprite sprite;
                     if(textures == null || textures.isEmpty()) sprite = this.textures.get("missingno");
-                    else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.instance();
+                    else if(textures.get(0) == B3DModel.Texture.White) sprite = ForgeModelBakery.White.instance();
                     else sprite = this.textures.get(textures.get(0).getPath());
                     BakedQuadBuilder quadBuilder = new BakedQuadBuilder(sprite);
                     quadBuilder.setContractUVs(true);

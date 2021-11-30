@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 
+import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,7 +31,9 @@ import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.wither.WitherBoss;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.WitherSkull;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.*;
@@ -69,9 +72,9 @@ public interface IForgeBlock
      * between 0 and 1.
      * <p>
      * Note that entities may reduce slipperiness by a certain factor of their own;
-     * for {@link net.minecraft.world.entity.LivingEntity}, this is {@code .91}.
-     * {@link net.minecraft.world.entity.item.ItemEntity} uses {@code .98}, and
-     * {@link net.minecraft.world.entity.projectile.FishingHook} uses {@code .92}.
+     * for {@link LivingEntity}, this is {@code .91}.
+     * {@link ItemEntity} uses {@code .98}, and
+     * {@link FishingHook} uses {@code .92}.
      *
      * @param state state of the block
      * @param world the world
@@ -171,7 +174,7 @@ public interface IForgeBlock
      * @param fluid The current fluid state at current position
      * @return True if the block is actually destroyed.
      */
-    default boolean removedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid)
+    default boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid)
     {
         self().playerWillDestroy(world, pos, state, player);
         return world.setBlock(pos, fluid.createLegacyBlock(), world.isClientSide ? 11 : 3);
@@ -224,7 +227,7 @@ public interface IForgeBlock
      * @param type The Mob Category Type
      * @return True to allow a mob of the specified category to spawn, false to prevent it.
      */
-    default boolean canCreatureSpawn(BlockState state, BlockGetter world, BlockPos pos, SpawnPlacements.Type type, EntityType<?> entityType)
+    default boolean isValidSpawn(BlockState state, BlockGetter world, BlockPos pos, SpawnPlacements.Type type, EntityType<?> entityType)
     {
         return state.isValidSpawn(world, pos, entityType);
     }
@@ -277,7 +280,7 @@ public interface IForgeBlock
      * @param target The full target the player is looking at
      * @return A ItemStack to add to the player's inventory, empty itemstack if nothing should be added.
      */
-    default ItemStack getPickBlock(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player)
+    default ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player)
     {
         return self().getCloneItemStack(world, pos, state);
     }
@@ -476,7 +479,7 @@ public interface IForgeBlock
 
     /**
      * Used to determine the state 'viewed' by an entity (see
-     * {@link ActiveRenderInfo#getBlockStateAtEntityViewpoint(World, Entity, float)}).
+     * {@link Camera#getBlockAtCamera()}).
      * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
      *
      * @param state     the state
@@ -571,7 +574,7 @@ public interface IForgeBlock
      * @param face The face that the fire is coming from
      * @param igniter The entity that lit the fire
      */
-    default void catchFire(BlockState state, Level world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {}
+    default void onCaughtFire(BlockState state, Level world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter) {}
 
     /**
      * Called when fire is updating on a neighbor block.
@@ -724,7 +727,7 @@ public interface IForgeBlock
      * Whether redstone dust should visually connect to this block on a given side
      * <p>
      * The default implementation is identical to
-     * {@link RedStoneWireBlock#shouldConnectTo(BlockState, Direction)}
+     * {@code RedStoneWireBlock#shouldConnectTo(BlockState, Direction)}
      *
      * <p>
      * {@link RedStoneWireBlock} updates its visual connection when

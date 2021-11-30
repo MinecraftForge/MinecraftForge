@@ -22,6 +22,7 @@ package net.minecraftforge.common.util;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +31,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fmllegacy.server.ServerLifecycleHooks;
+import net.minecraftforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nullable;
 
@@ -53,10 +54,10 @@ public class BlockSnapshot
     private final CompoundTag nbt;
 
     @Nullable
-    private WeakReference<LevelAccessor> world;
+    private WeakReference<LevelAccessor> level;
     private String toString = null;
 
-    private BlockSnapshot(ResourceKey<Level> dim, LevelAccessor world, BlockPos pos, BlockState state, @Nullable CompoundTag nbt, int flags)
+    private BlockSnapshot(ResourceKey<Level> dim, LevelAccessor level, BlockPos pos, BlockState state, @Nullable CompoundTag nbt, int flags)
     {
         this.dim = dim;
         this.pos = pos.immutable();
@@ -64,7 +65,7 @@ public class BlockSnapshot
         this.flags = flags;
         this.nbt = nbt;
 
-        this.world = new WeakReference<>(world);
+        this.level = new WeakReference<>(level);
 
         if (DEBUG)
             System.out.println("Created " + this.toString());
@@ -77,29 +78,29 @@ public class BlockSnapshot
 
     public static BlockSnapshot create(ResourceKey<Level> dim, LevelAccessor world, BlockPos pos, int flag)
     {
-        return new BlockSnapshot(dim, world, pos, world.getBlockState(pos), getTileNBT(world.getBlockEntity(pos)), flag);
+        return new BlockSnapshot(dim, world, pos, world.getBlockState(pos), getBlockEntityTag(world.getBlockEntity(pos)), flag);
     }
 
     @Nullable
-    private static CompoundTag getTileNBT(@Nullable BlockEntity te)
+    private static CompoundTag getBlockEntityTag(@Nullable BlockEntity te)
     {
         return te == null ? null : te.save(new CompoundTag());
     }
 
     public BlockState getCurrentBlock()
     {
-        LevelAccessor world = getWorld();
+        LevelAccessor world = getLevel();
         return world == null ? Blocks.AIR.defaultBlockState() : world.getBlockState(this.pos);
     }
 
     @Nullable
-    public LevelAccessor getWorld()
+    public LevelAccessor getLevel()
     {
-        LevelAccessor world = this.world != null ? this.world.get() : null;
+        LevelAccessor world = this.level != null ? this.level.get() : null;
         if (world == null)
         {
             world = ServerLifecycleHooks.getCurrentServer().getLevel(this.dim);
-            this.world = new WeakReference<LevelAccessor>(world);
+            this.level = new WeakReference<LevelAccessor>(world);
         }
         return world;
     }
@@ -112,7 +113,7 @@ public class BlockSnapshot
     @Nullable
     public BlockEntity getBlockEntity()
     {
-        return getNbt() != null ? BlockEntity.loadStatic(getPos(), getReplacedBlock(), getNbt()) : null;
+        return getTag() != null ? BlockEntity.loadStatic(getPos(), getReplacedBlock(), getTag()) : null;
     }
 
     public boolean restore()
@@ -127,7 +128,7 @@ public class BlockSnapshot
 
     public boolean restore(boolean force, boolean notifyNeighbors)
     {
-        return restoreToLocation(getWorld(), getPos(), force, notifyNeighbors);
+        return restoreToLocation(getLevel(), getPos(), force, notifyNeighbors);
     }
 
     public boolean restoreToLocation(LevelAccessor world, BlockPos pos, boolean force, boolean notifyNeighbors)
@@ -135,7 +136,7 @@ public class BlockSnapshot
         BlockState current = getCurrentBlock();
         BlockState replaced = getReplacedBlock();
 
-        int flags = notifyNeighbors ? Constants.BlockFlags.DEFAULT : Constants.BlockFlags.BLOCK_UPDATE;
+        int flags = notifyNeighbors ? Block.UPDATE_ALL : Block.UPDATE_CLIENTS;
 
         if (current != replaced)
         {
@@ -150,12 +151,12 @@ public class BlockSnapshot
             ((Level)world).sendBlockUpdated(pos, current, replaced, flags);
 
         BlockEntity te = null;
-        if (getNbt() != null)
+        if (getTag() != null)
         {
             te = world.getBlockEntity(pos);
             if (te != null)
             {
-                te.load(getNbt());
+                te.load(getTag());
                 te.setChanged();
             }
         }
@@ -189,7 +190,7 @@ public class BlockSnapshot
         hash = 73 * hash + this.pos.hashCode();
         hash = 73 * hash + this.block.hashCode();
         hash = 73 * hash + this.flags;
-        hash = 73 * hash + Objects.hashCode(this.getNbt());
+        hash = 73 * hash + Objects.hashCode(this.getTag());
         return hash;
     }
 
@@ -216,6 +217,6 @@ public class BlockSnapshot
     public int getFlag() { return flags; }
 
     @Nullable
-    public CompoundTag getNbt() { return nbt; }
+    public CompoundTag getTag() { return nbt; }
 
 }

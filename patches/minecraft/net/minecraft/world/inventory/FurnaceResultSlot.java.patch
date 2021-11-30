@@ -4,6 +4,6 @@
        }
  
        this.f_39540_ = 0;
-+      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerSmeltedEvent(this.f_39539_, p_39558_);
++      net.minecraftforge.event.ForgeEventFactory.firePlayerSmeltedEvent(this.f_39539_, p_39558_);
     }
  }

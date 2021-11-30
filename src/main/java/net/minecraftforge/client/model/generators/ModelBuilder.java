@@ -62,7 +62,6 @@ import net.minecraftforge.common.data.ExistingFileHelper;
  *
  * @param <T> Self type, for simpler chaining of methods.
  */
-@SuppressWarnings("deprecation")
 public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     @Nullable
@@ -162,16 +161,6 @@ public class ModelBuilder<T extends ModelBuilder<T>> extends ModelFile {
 
     public T ao(boolean ao) {
         this.ambientOcclusion = ao;
-        return self();
-    }
-
-    /**
-     * @param gui3d
-     * @return this builder
-     * @deprecated Unused in 1.15, use {@link #guiLight(GuiLight)} instead.
-     */
-    @Deprecated
-    public T gui3d(boolean gui3d) {
         return self();
     }
 

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/components/DebugScreenOverlay.java
 +++ b/net/minecraft/client/gui/components/DebugScreenOverlay.java
-@@ -354,7 +_,7 @@
+@@ -363,7 +_,7 @@
                 list.add(this.m_94071_(entry));
              }
  
@@ -9,7 +9,7 @@
                 list.add("#" + resourcelocation);
              }
           }
-@@ -370,7 +_,7 @@
+@@ -379,7 +_,7 @@
                 list.add(this.m_94071_(entry1));
              }
  
@@ -18,7 +18,7 @@
                 list.add("#" + resourcelocation1);
              }
           }
-@@ -380,6 +_,7 @@
+@@ -389,6 +_,7 @@
              list.add("");
              list.add(ChatFormatting.UNDERLINE + "Targeted Entity");
              list.add(String.valueOf((Object)Registry.f_122826_.m_7981_(entity.m_6095_())));

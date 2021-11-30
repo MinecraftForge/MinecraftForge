@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent.java
 +++ b/net/minecraft/client/gui/screens/inventory/tooltip/ClientTooltipComponent.java
-@@ -22,6 +_,8 @@
+@@ -21,6 +_,8 @@
        if (p_169951_ instanceof BundleTooltip) {
           return new ClientBundleTooltip((BundleTooltip)p_169951_);
        } else {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/core/Registry.java
 +++ b/net/minecraft/core/Registry.java
-@@ -105,6 +_,10 @@
+@@ -106,6 +_,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -8,10 +8,10 @@
 + * Attention Modders: This SHOULD NOT be used, you should use ForgeRegistries instead. As it has a cleaner modder facing API.
 + * We will be wrapping all of these in our API as necessary for syncing and management.
 + */
- public abstract class Registry<T> implements Codec<T>, Keyable, IdMap<T> {
+ public abstract class Registry<T> implements Keyable, IdMap<T> {
     protected static final Logger f_122894_ = LogManager.getLogger();
     private static final Map<ResourceLocation, Supplier<?>> f_122834_ = Maps.newLinkedHashMap();
-@@ -152,43 +_,43 @@
+@@ -153,43 +_,43 @@
     public static final DefaultedRegistry<GameEvent> f_175412_ = m_122995_(f_175423_, "step", () -> {
        return GameEvent.f_157785_;
     });
@@ -67,7 +67,7 @@
        return ChunkStatus.f_62314_;
     });
     public static final Registry<RuleTestType<?>> f_122861_ = m_122999_(f_122911_, () -> {
-@@ -197,43 +_,43 @@
+@@ -198,43 +_,43 @@
     public static final Registry<PosRuleTestType<?>> f_122862_ = m_122999_(f_122912_, () -> {
        return PosRuleTestType.f_74205_;
     });
@@ -121,14 +121,9 @@
        return Activity.f_37979_;
     });
     public static final Registry<LootPoolEntryType> f_122875_ = m_122999_(f_122815_, () -> {
-@@ -275,19 +_,19 @@
-    public static final ResourceKey<Registry<StructureTemplatePool>> f_122884_ = m_122978_("worldgen/template_pool");
+@@ -281,15 +_,15 @@
     public static final ResourceKey<Registry<Biome>> f_122885_ = m_122978_("worldgen/biome");
-    public static final ResourceKey<Registry<SurfaceBuilder<?>>> f_122886_ = m_122978_("worldgen/surface_builder");
--   public static final Registry<SurfaceBuilder<?>> f_122835_ = m_122999_(f_122886_, () -> {
-+   @Deprecated public static final Registry<SurfaceBuilder<?>> f_122835_ = forge(f_122886_, () -> {
-       return SurfaceBuilder.f_75214_;
-    });
+    public static final ResourceKey<Registry<NormalNoise.NoiseParameters>> f_194568_ = m_122978_("worldgen/noise");
     public static final ResourceKey<Registry<WorldCarver<?>>> f_122836_ = m_122978_("worldgen/carver");
 -   public static final Registry<WorldCarver<?>> f_122837_ = m_122999_(f_122836_, () -> {
 +   @Deprecated public static final Registry<WorldCarver<?>> f_122837_ = forge(f_122836_, () -> {
@@ -145,40 +140,16 @@
        return StructureFeature.f_67014_;
     });
     public static final ResourceKey<Registry<StructurePieceType>> f_122842_ = m_122978_("worldgen/structure_piece");
-@@ -295,7 +_,7 @@
-       return StructurePieceType.f_67138_;
-    });
-    public static final ResourceKey<Registry<FeatureDecorator<?>>> f_122844_ = m_122978_("worldgen/decorator");
--   public static final Registry<FeatureDecorator<?>> f_122845_ = m_122999_(f_122844_, () -> {
-+   @Deprecated public static final Registry<FeatureDecorator<?>> f_122845_ = forge(f_122844_, () -> {
-       return FeatureDecorator.f_70681_;
-    });
-    public static final ResourceKey<Registry<BlockStateProviderType<?>>> f_122846_ = m_122978_("worldgen/block_state_provider_type");
-@@ -308,19 +_,19 @@
-    public static final ResourceKey<Registry<Codec<? extends ChunkGenerator>>> f_122853_ = m_122978_("worldgen/chunk_generator");
+@@ -311,7 +_,7 @@
+    public static final ResourceKey<Registry<Codec<? extends SurfaceRules.RuleSource>>> f_194572_ = m_122978_("worldgen/material_rule");
     public static final ResourceKey<Registry<StructureProcessorType<?>>> f_122854_ = m_122978_("worldgen/structure_processor");
     public static final ResourceKey<Registry<StructurePoolElementType<?>>> f_122855_ = m_122978_("worldgen/structure_pool_element");
 -   public static final Registry<BlockStateProviderType<?>> f_122856_ = m_122999_(f_122846_, () -> {
 +   @Deprecated public static final Registry<BlockStateProviderType<?>> f_122856_ = forge(f_122846_, () -> {
        return BlockStateProviderType.f_68752_;
     });
--   public static final Registry<BlockPlacerType<?>> f_122857_ = m_122999_(f_122847_, () -> {
-+   @Deprecated public static final Registry<BlockPlacerType<?>> f_122857_ = forge(f_122847_, () -> {
-       return BlockPlacerType.f_67487_;
-    });
--   public static final Registry<FoliagePlacerType<?>> f_122858_ = m_122999_(f_122848_, () -> {
-+   @Deprecated public static final Registry<FoliagePlacerType<?>> f_122858_ = forge(f_122848_, () -> {
-       return FoliagePlacerType.f_68591_;
-    });
-    public static final Registry<TrunkPlacerType<?>> f_122859_ = m_122999_(f_122849_, () -> {
-       return TrunkPlacerType.f_70315_;
-    });
--   public static final Registry<TreeDecoratorType<?>> f_122860_ = m_122999_(f_122850_, () -> {
-+   @Deprecated public static final Registry<TreeDecoratorType<?>> f_122860_ = forge(f_122850_, () -> {
-       return TreeDecoratorType.f_70043_;
-    });
-    public static final Registry<FeatureSizeType<?>> f_122888_ = m_122999_(f_122851_, () -> {
-@@ -363,16 +_,32 @@
+    public static final Registry<FoliagePlacerType<?>> f_122858_ = m_122999_(f_122848_, () -> {
+@@ -365,16 +_,32 @@
        return m_122981_(p_123000_, Lifecycle.experimental(), p_123001_);
     }
  

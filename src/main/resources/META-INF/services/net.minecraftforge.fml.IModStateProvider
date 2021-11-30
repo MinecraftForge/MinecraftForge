@@ -1,2 +1,2 @@
 net.minecraftforge.fml.core.ModStateProvider
-net.minecraftforge.fmllegacy.ForgeStatesProvider
+net.minecraftforge.common.ForgeStatesProvider

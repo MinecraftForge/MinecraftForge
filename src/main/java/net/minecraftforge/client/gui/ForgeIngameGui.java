@@ -80,10 +80,10 @@ public class ForgeIngameGui extends Gui
     public int left_height = 39;
     public int right_height = 39;
 
-    private Font fontrenderer = null;
+    private Font font = null;
     private RenderGameOverlayEvent eventParent;
 
-    private GuiOverlayDebugForge debugOverlay;
+    private ForgeDebugScreenOverlay debugOverlay;
 
     public void setupOverlayRenderState(boolean blend, boolean depthText)
     {
@@ -164,7 +164,7 @@ public class ForgeIngameGui extends Gui
             gui.setupOverlayRenderState(true, false);
             if (gui.minecraft.gameMode.getPlayerMode() == GameType.SPECTATOR)
             {
-                gui.spectatorGui.renderHotbar(mStack, partialTicks);
+                gui.spectatorGui.renderHotbar(mStack);
             }
             else
             {
@@ -335,7 +335,7 @@ public class ForgeIngameGui extends Gui
     public ForgeIngameGui(Minecraft mc)
     {
         super(mc);
-        debugOverlay = new GuiOverlayDebugForge(mc);
+        debugOverlay = new ForgeDebugScreenOverlay(mc);
     }
 
     @Override
@@ -350,7 +350,7 @@ public class ForgeIngameGui extends Gui
 
         if (pre(ALL, pStack)) return;
 
-        fontrenderer = minecraft.font;
+        font = minecraft.font;
 
         this.random.setSeed(tickCount * 312871L);
 
@@ -689,20 +689,20 @@ public class ForgeIngameGui extends Gui
             for (String msg : listL)
             {
                 if (msg == null) continue;
-                fill(mStack, 1, top - 1, 2 + fontrenderer.width(msg) + 1, top + fontrenderer.lineHeight - 1, -1873784752);
-                fontrenderer.draw(mStack, msg, 2, top, 14737632);
-                top += fontrenderer.lineHeight;
+                fill(mStack, 1, top - 1, 2 + font.width(msg) + 1, top + font.lineHeight - 1, -1873784752);
+                font.draw(mStack, msg, 2, top, 14737632);
+                top += font.lineHeight;
             }
 
             top = 2;
             for (String msg : listR)
             {
                 if (msg == null) continue;
-                int w = fontrenderer.width(msg);
+                int w = font.width(msg);
                 int left = width - 2 - w;
-                fill(mStack, left - 1, top - 1, left + w + 1, top + fontrenderer.lineHeight - 1, -1873784752);
-                fontrenderer.draw(mStack, msg, left, top, 14737632);
-                top += fontrenderer.lineHeight;
+                fill(mStack, left - 1, top - 1, left + w + 1, top + font.lineHeight - 1, -1873784752);
+                font.draw(mStack, msg, left, top, 14737632);
+                top += font.lineHeight;
             }
         }
 
@@ -734,8 +734,8 @@ public class ForgeIngameGui extends Gui
                 RenderSystem.enableBlend();
                 RenderSystem.defaultBlendFunc();
                 int color = (animateOverlayMessageColor ? Mth.hsvToRgb(hue / 50.0F, 0.7F, 0.6F) & WHITE : WHITE);
-                drawBackdrop(pStack, fontrenderer, -4, fontrenderer.width(overlayMessageString), 16777215 | (opacity << 24));
-                fontrenderer.draw(pStack, overlayMessageString.getVisualOrderText(), -fontrenderer.width(overlayMessageString) / 2, -4, color | (opacity << 24));
+                drawBackdrop(pStack, font, -4, font.width(overlayMessageString), 16777215 | (opacity << 24));
+                font.draw(pStack, overlayMessageString.getVisualOrderText(), -font.width(overlayMessageString) / 2, -4, color | (opacity << 24));
                 RenderSystem.disableBlend();
                 pStack.popPose();
             }
@@ -892,10 +892,10 @@ public class ForgeIngameGui extends Gui
         RenderSystem.setShaderTexture(0, res);
     }
 
-    private class GuiOverlayDebugForge extends DebugScreenOverlay
+    private class ForgeDebugScreenOverlay extends DebugScreenOverlay
     {
         private Minecraft mc;
-        private GuiOverlayDebugForge(Minecraft mc)
+        private ForgeDebugScreenOverlay(Minecraft mc)
         {
             super(mc);
             this.mc = mc;

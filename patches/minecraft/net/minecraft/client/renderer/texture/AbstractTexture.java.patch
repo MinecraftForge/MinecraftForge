@@ -19,5 +19,5 @@
 +   }
 +
     public int m_117963_() {
-       RenderSystem.m_69393_(RenderSystem::m_69587_);
+       RenderSystem.m_187555_();
        if (this.f_117950_ == -1) {

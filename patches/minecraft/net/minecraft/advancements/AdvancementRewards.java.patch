@@ -4,8 +4,8 @@
  
     public void m_9989_(ServerPlayer p_9990_) {
        p_9990_.m_6756_(this.f_9979_);
--      LootContext lootcontext = (new LootContext.Builder(p_9990_.m_9236_())).m_78972_(LootContextParams.f_81455_, p_9990_).m_78972_(LootContextParams.f_81460_, p_9990_.m_20182_()).m_78977_(p_9990_.m_21187_()).m_78975_(LootContextParamSets.f_81418_);
-+      LootContext lootcontext = (new LootContext.Builder(p_9990_.m_9236_())).m_78972_(LootContextParams.f_81455_, p_9990_).m_78972_(LootContextParams.f_81460_, p_9990_.m_20182_()).m_78977_(p_9990_.m_21187_()).m_78963_(p_9990_.m_36336_()).m_78975_(LootContextParamSets.f_81418_); // FORGE: luck to LootContext
+-      LootContext lootcontext = (new LootContext.Builder(p_9990_.m_183503_())).m_78972_(LootContextParams.f_81455_, p_9990_).m_78972_(LootContextParams.f_81460_, p_9990_.m_20182_()).m_78977_(p_9990_.m_21187_()).m_78975_(LootContextParamSets.f_81418_);
++      LootContext lootcontext = (new LootContext.Builder(p_9990_.m_183503_())).m_78972_(LootContextParams.f_81455_, p_9990_).m_78972_(LootContextParams.f_81460_, p_9990_.m_20182_()).m_78977_(p_9990_.m_21187_()).m_78963_(p_9990_.m_36336_()).m_78975_(LootContextParamSets.f_81418_); // FORGE: luck to LootContext
        boolean flag = false;
  
        for(ResourceLocation resourcelocation : this.f_9980_) {

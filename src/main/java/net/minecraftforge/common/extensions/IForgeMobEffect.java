@@ -36,7 +36,7 @@ public interface IForgeMobEffect
     /**
      * Get a fresh list of items that can cure this Potion.
      * All new PotionEffects created from this Potion will call this to initialize the default curative items
-     * @see PotionEffect#getCurativeItems
+     * @see MobEffectInstance#getCurativeItems()
      * @return A list of items that can cure this Potion
      */
     default List<ItemStack> getCurativeItems() {
@@ -51,7 +51,7 @@ public interface IForgeMobEffect
      * @param potionEffect the {@code PotionEffect} instance containing the potion
      * @return a value used to sort {@code PotionEffect}s in GUIs
      */
-    default int getGuiSortColor(MobEffectInstance potionEffect) {
+    default int getSortOrder(MobEffectInstance potionEffect) {
        return self().getColor();
     }
 }

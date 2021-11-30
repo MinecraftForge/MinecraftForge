@@ -30,16 +30,16 @@ import javax.annotation.Nullable;
  * Client side player connectivity events.
  */
 public class ClientPlayerNetworkEvent extends Event {
-    private final MultiPlayerGameMode controller;
+    private final MultiPlayerGameMode multiPlayerGameMode;
     private final LocalPlayer player;
-    private final Connection networkManager;
+    private final Connection connection;
 
     /**
      * @return the player controller for the client side
      */
     @Nullable
-    public MultiPlayerGameMode getController() {
-        return controller;
+    public MultiPlayerGameMode getMultiPlayerGameMode() {
+        return multiPlayerGameMode;
     }
 
     /**
@@ -51,17 +51,17 @@ public class ClientPlayerNetworkEvent extends Event {
     }
 
     /**
-     * @return the network connection (if present - may be null)
+     * @return the impl connection (if present - may be null)
      */
     @Nullable
-    public Connection getNetworkManager() {
-        return networkManager;
+    public Connection getConnection() {
+        return connection;
     }
 
-    ClientPlayerNetworkEvent(final MultiPlayerGameMode controller, final LocalPlayer player, final Connection networkManager) {
-        this.controller = controller;
+    ClientPlayerNetworkEvent(final MultiPlayerGameMode multiPlayerGameMode, final LocalPlayer player, final Connection connection) {
+        this.multiPlayerGameMode = multiPlayerGameMode;
         this.player = player;
-        this.networkManager = networkManager;
+        this.connection = connection;
     }
 
     /**

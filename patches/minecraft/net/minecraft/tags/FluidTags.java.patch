@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/FluidTags.java
 +++ b/net/minecraft/tags/FluidTags.java
-@@ -28,4 +_,12 @@
+@@ -29,4 +_,12 @@
     public static List<Tag<Fluid>> m_144300_() {
        return f_144297_;
     }

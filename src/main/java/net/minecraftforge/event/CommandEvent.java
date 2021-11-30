@@ -21,12 +21,14 @@ package net.minecraftforge.event;
 
 import com.mojang.brigadier.ParseResults;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
  * CommandEvent is fired after a command is parsed, but before it is executed.
- * This event is fired during the invocation of {@link Commands#handleCommand(CommandSource, String)}. <br>
+ * This event is fired during the invocation of {@link Commands#performCommand(CommandSourceStack, String)}. <br>
  * <br>
  * {@link #parse} contains the instance of {@link ParseResults} for the parsed command.<br>
  * {@link #exception} begins null, but can be populated with an exception to be thrown within the command.<br>

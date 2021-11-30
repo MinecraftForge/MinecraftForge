@@ -1,12 +1,15 @@
 --- a/net/minecraft/core/MappedRegistry.java
 +++ b/net/minecraft/core/MappedRegistry.java
-@@ -219,7 +_,8 @@
+@@ -218,9 +_,10 @@
     }
  
     public static <T> Codec<MappedRegistry<T>> m_122756_(ResourceKey<? extends Registry<T>> p_122757_, Lifecycle p_122758_, Codec<T> p_122759_) {
--      return Codec.unboundedMap(ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(p_122757_), ResourceKey::m_135782_), p_122759_).xmap((p_122726_) -> {
+-      return Codec.unboundedMap(ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(p_122757_), ResourceKey::m_135782_), p_122759_).xmap((p_194547_) -> {
 +      // FORGE: Fix MC-197860
 +      return new net.minecraftforge.common.LenientUnboundedMapCodec<>(ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(p_122757_), ResourceKey::m_135782_), p_122759_).xmap((p_122726_) -> {
           MappedRegistry<T> mappedregistry = new MappedRegistry<>(p_122757_, p_122758_);
-          p_122726_.forEach((p_175387_, p_175388_) -> {
-             mappedregistry.m_7135_(p_175387_, p_175388_, p_122758_);
+-         p_194547_.forEach((p_194536_, p_194537_) -> {
++         p_122726_.forEach((p_194536_, p_194537_) -> {
+             mappedregistry.m_7135_(p_194536_, p_194537_, p_122758_);
+          });
+          return mappedregistry;

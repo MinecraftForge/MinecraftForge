@@ -39,6 +39,7 @@ public final class TransformationHelper
 {
     @Deprecated
     @OnlyIn(Dist.CLIENT)
+    // TODO: this is used in 3 places, not a trivial refactor. Needs investigating. -C
     public static Transformation toTransformation(ItemTransform transform)
     {
         if (transform.equals(ItemTransform.NO_TRANSFORM)) return Transformation.identity();
@@ -177,7 +178,7 @@ public final class TransformationHelper
             Quaternion rightRot = null;
             // TODO: Default origin is opposing corner, due to a mistake.
             // This should probably be replaced with center in future versions.
-            Vector3f origin = ORIGIN_OPPOSING_CORNER;
+            Vector3f origin = ORIGIN_OPPOSING_CORNER; // TODO: Changing this to ORIGIN_CENTER breaks models, function content needs changing too -C
             if (obj.has("translation"))
             {
                 translation = new Vector3f(parseFloatArray(obj.get("translation"), 3, "Translation"));

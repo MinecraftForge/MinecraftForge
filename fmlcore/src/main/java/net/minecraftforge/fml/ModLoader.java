@@ -34,7 +34,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,7 @@ import static net.minecraftforge.fml.Logging.LOADING;
 /**
  * Loads mods.
  *
- * Dispatch cycle is seen in {@link #loadMods()} and {@link #finishMods()}
+ * Dispatch cycle is seen in {@code #loadMods()} and {@code #finishMods()}
  *
  * Overall sequence for loadMods is:
  * <dl>
@@ -61,28 +60,28 @@ import static net.minecraftforge.fml.Logging.LOADING;
  *     <dd>Constructs the mod instance. Mods can typically setup basic environment such as Event listeners
  *     and Configuration specifications here.</dd>
  *     <dt>Automated dispatches</dt>
- *     <dd>Dispatches automated elements : {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber},
- *     {@link net.minecraftforge.event.RegistryEvent}, {@link net.minecraftforge.common.capabilities.CapabilityInject}
+ *     <dd>Dispatches automated elements : {@code net.minecraftforge.fml.common.Mod.EventBusSubscriber},
+ *     {@code net.minecraftforge.event.RegistryEvent}, {@code net.minecraftforge.common.capabilities.CapabilityInject}
  *     and others</dd>
  *     <dt>CONFIG_LOAD</dt>
  *     <dd>Dispatches ConfigLoadEvent to mods</dd>
  *     <dt>COMMON_SETUP</dt>
- *     <dd>Dispatches {@link net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent} to mods</dd>
+ *     <dd>Dispatches {@code net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent} to mods</dd>
  *     <dt>SIDED_SETUP</dt>
- *     <dd>Dispatches {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent} or
- *     {@link net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent} to mods</dd>
+ *     <dd>Dispatches {@code net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent} or
+ *     {@code net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent} to mods</dd>
  * </dl>
  *
  * Overall sequence for finishMods is:
  * <dl>
  *     <dt>ENQUEUE_IMC</dt>
- *     <dd>Dispatches {@link net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent} to mods,
+ *     <dd>Dispatches {@code net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent} to mods,
  *     for enqueuing {@link InterModComms} messages for other mods to receive subsequently</dd>
  *     <dt>PROCESS_IMC</dt>
- *     <dd>Dispatches {@link net.minecraftforge.fml.event.lifecycle.InterModProcessEvent} to mods,
+ *     <dd>Dispatches {@code net.minecraftforge.fml.event.lifecycle.InterModProcessEvent} to mods,
  *     for processing {@link InterModComms} messages received from other mods prior to this event</dd>
  *     <dt>COMPLETE</dt>
- *     <dd>Dispatches {@link net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent} to mods,
+ *     <dd>Dispatches {@code net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent} to mods,
  *     and completes the mod loading sequence.</dd>
  * </dl>
  */

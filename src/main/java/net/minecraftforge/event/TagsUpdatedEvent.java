@@ -26,7 +26,7 @@ import net.minecraftforge.eventbus.api.Event;
 /**
  * Fired on the client when :
  *      {@link TagContainer} has all of its tags synced from the server to the client (just after a client has connected).
- *      The integrated server is about to be created see {@link net.minecraft.client.Minecraft#doLoadLevel}
+ *      The integrated server is about to be created see {@code net.minecraft.client.Minecraft#doLoadLevel}
  * Fired on the server when {@link TagContainer} has read all tags from disk, during initial load and after the reload command is used
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}
  * On the client, this event fires on the Client Thread.
@@ -42,7 +42,7 @@ public class TagsUpdatedEvent extends Event
     }
 
     /**
-     * @return The network tag manager that has been updated with newly received tags.
+     * @return The impl tag manager that has been updated with newly received tags.
      */
     public TagContainer getTagManager()
     {

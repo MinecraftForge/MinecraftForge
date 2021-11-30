@@ -19,19 +19,18 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraftforge.eventbus.api.Cancelable;
-
-import net.minecraftforge.eventbus.api.Event.HasResult;
-
 /**
- * This Event and its subevents gets fired from  {@link EntityLivingBase} on the  {@link MinecraftForge#EVENT_BUS}.<br>
+ * This Event and its subevents gets fired from  {@link LivingEntity} on the  {@link MinecraftForge#EVENT_BUS}.<br>
  */
 public class PotionEvent extends LivingEvent
 {
@@ -83,7 +82,7 @@ public class PotionEvent extends LivingEvent
         }
         
         /**
-         * @return the PotionEffect. In the remove event this can be null if the Entity does not have a {@link Potion} of the right type active.
+         * @return the PotionEffect. In the remove event this can be null if the Entity does not have a {@link MobEffect} of the right type active.
          */
         @Override
         @Nullable
@@ -129,12 +128,6 @@ public class PotionEvent extends LivingEvent
     {
         private final MobEffectInstance oldEffect;
         private final Entity source;
-
-        @Deprecated(forRemoval = true, since = "1.17.1")
-        public PotionAddedEvent(LivingEntity living, MobEffectInstance oldEffect, MobEffectInstance newEffect)
-        {
-            this(living, oldEffect, newEffect, null);
-        }
 
         public PotionAddedEvent(LivingEntity living, MobEffectInstance oldEffect, MobEffectInstance newEffect, Entity source)
         {

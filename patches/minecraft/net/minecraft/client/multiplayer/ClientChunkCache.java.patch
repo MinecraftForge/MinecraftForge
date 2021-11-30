@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ClientChunkCache.java
 +++ b/net/minecraft/client/multiplayer/ClientChunkCache.java
-@@ -60,6 +_,7 @@
+@@ -59,6 +_,7 @@
           int i = this.f_104410_.m_104481_(p_104456_, p_104457_);
           LevelChunk levelchunk = this.f_104410_.m_104479_(i);
           if (m_104438_(levelchunk, p_104456_, p_104457_)) {
@@ -8,7 +8,7 @@
              this.f_104410_.m_104487_(i, levelchunk, (LevelChunk)null);
           }
  
-@@ -110,6 +_,7 @@
+@@ -99,6 +_,7 @@
           }
  
           this.f_104411_.m_171649_(chunkpos);

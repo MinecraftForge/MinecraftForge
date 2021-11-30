@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2021.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.debug.block;
 
 import com.google.gson.JsonDeserializationContext;
@@ -37,13 +56,12 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.data.*;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -175,7 +193,7 @@ public class FullPotsAccessorDemo
         {
             this.plant = plant;
             //noinspection ConstantConditions
-            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Constants.BlockFlags.DEFAULT);
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
             setChanged();
         }
 
@@ -201,7 +219,7 @@ public class FullPotsAccessorDemo
         @Override
         public ClientboundBlockEntityDataPacket getUpdatePacket()
         {
-            return new ClientboundBlockEntityDataPacket(getBlockPos(), -1, getUpdateTag());
+            return ClientboundBlockEntityDataPacket.create(this, be -> be.getUpdateTag());
         }
 
         @Override
@@ -209,7 +227,7 @@ public class FullPotsAccessorDemo
         {
             handleUpdateTag(pkt.getTag());
             //noinspection ConstantConditions
-            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Constants.BlockFlags.DEFAULT);
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
 
         @Override

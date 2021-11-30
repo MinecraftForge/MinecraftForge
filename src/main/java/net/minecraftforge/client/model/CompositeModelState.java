@@ -24,7 +24,7 @@ import com.mojang.math.Transformation;
 import net.minecraft.client.resources.model.ModelState;
 
 /**
- * An {@link IModelTransform} that combines the transforms from two child {@link IModelTransform}.
+ * An {@link ModelState} that combines the transforms from two child {@link ModelState}.
  */
 public class CompositeModelState implements ModelState
 {

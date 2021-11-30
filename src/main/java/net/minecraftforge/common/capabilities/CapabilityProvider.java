@@ -27,6 +27,7 @@ import com.google.common.annotations.VisibleForTesting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
 
@@ -34,7 +35,7 @@ import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implements ICapabilityProvider
+public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> implements ICapabilityProviderImpl<B>
 {
     @VisibleForTesting
     static boolean SUPPORTS_LAZY_CAPABILITIES = true;
@@ -188,4 +189,38 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         final CapabilityDispatcher disp = getCapabilities();
         return !valid || disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);
     }
+
+    /**
+     * Special implementation for cases which have a superclass and can't extend CapabilityProvider directly.
+     * See {@link LevelChunk}
+     */
+    public static class AsField<B extends ICapabilityProviderImpl<B>> extends CapabilityProvider<B>
+    {
+        public AsField(Class<B> baseClass)
+        {
+            super(baseClass);
+        }
+
+        public AsField(Class<B> baseClass, boolean isLazy)
+        {
+            super(baseClass, isLazy);
+        }
+
+        public void initInternal()
+        {
+            gatherCapabilities();
+        }
+
+        @Nullable
+        public CompoundTag serializeInternal()
+        {
+            return serializeCaps();
+        }
+
+        public void deserializeInternal(CompoundTag tag)
+        {
+            deserializeCaps(tag);
+        }
+    };
+
 }

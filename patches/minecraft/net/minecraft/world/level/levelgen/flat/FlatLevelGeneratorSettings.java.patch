@@ -1,29 +1,11 @@
 --- a/net/minecraft/world/level/levelgen/flat/FlatLevelGeneratorSettings.java
 +++ b/net/minecraft/world/level/levelgen/flat/FlatLevelGeneratorSettings.java
-@@ -153,8 +_,16 @@
-          biomegenerationsettings$builder.m_47842_(GenerationStep.Decoration.LAKES, Features.f_126876_);
-       }
- 
-+      Map<StructureFeature<?>, ConfiguredStructureFeature<?, ?>> map = new java.util.HashMap<>(f_70349_);
-+      net.minecraft.data.BuiltinRegistries.f_123862_.m_123024_().filter(f -> !map.containsKey(f.f_65403_)).forEach(f -> map.put(f.f_65403_, f));
-       for(Entry<StructureFeature<?>, StructureFeatureConfiguration> entry : this.f_70351_.m_64590_().entrySet()) {
--         biomegenerationsettings$builder.m_47849_(biomegenerationsettings.m_47803_(f_70349_.get(entry.getKey())));
-+         if (!map.containsKey(entry.getKey())) {
-+            f_70348_.error("FORGE: There's no known StructureFeature for {} when preparing the {} flatworld biome." +
-+                    " The structure will be skipped and may not spawn." +
-+                    " Please register your StructureFeatures in the WorldGenRegistries!", entry.getKey().m_67098_(), biome.getRegistryName());
-+            continue;
-+         }
-+         biomegenerationsettings$builder.m_47849_(biomegenerationsettings.m_47803_(map.get(entry.getKey())));
-       }
- 
-       boolean flag = (!this.f_70355_ || this.f_70350_.m_7854_(biome).equals(Optional.of(Biomes.f_48173_))) && this.f_70356_;
-@@ -180,7 +_,7 @@
+@@ -152,7 +_,7 @@
           }
        }
  
--      return (new Biome.BiomeBuilder()).m_47597_(biome.m_47530_()).m_47595_(biome.m_47567_()).m_47593_(biome.m_47545_()).m_47607_(biome.m_47551_()).m_47609_(biome.m_47554_()).m_47611_(biome.m_47548_()).m_47603_(biome.m_47557_()).m_47601_(biomegenerationsettings$builder.m_47831_()).m_47605_(biome.m_47518_()).m_47592_();
-+      return (new Biome.BiomeBuilder()).m_47597_(biome.m_47530_()).m_47595_(biome.m_47567_()).m_47593_(biome.m_47545_()).m_47607_(biome.m_47551_()).m_47609_(biome.m_47554_()).m_47611_(biome.m_47548_()).m_47603_(biome.m_47557_()).m_47601_(biomegenerationsettings$builder.m_47831_()).m_47605_(biome.m_47518_()).m_47592_().setRegistryName(biome.getRegistryName());
+-      return (new Biome.BiomeBuilder()).m_47597_(biome.m_47530_()).m_47595_(biome.m_47567_()).m_47609_(biome.m_47554_()).m_47611_(biome.m_47548_()).m_47603_(biome.m_47557_()).m_47601_(biomegenerationsettings$builder.m_47831_()).m_47605_(biome.m_47518_()).m_47592_();
++      return (new Biome.BiomeBuilder()).m_47597_(biome.m_47530_()).m_47595_(biome.m_47567_()).m_47609_(biome.m_47554_()).m_47611_(biome.m_47548_()).m_47603_(biome.m_47557_()).m_47601_(biomegenerationsettings$builder.m_47831_()).m_47605_(biome.m_47518_()).m_47592_().setRegistryName(biome.getRegistryName());
     }
  
     public StructureSettings m_70395_() {

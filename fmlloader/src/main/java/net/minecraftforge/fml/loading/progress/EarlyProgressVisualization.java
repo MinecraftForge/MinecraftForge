@@ -20,8 +20,8 @@
 package net.minecraftforge.fml.loading.progress;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.api.distmarker.Dist;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.IntConsumer;
@@ -58,7 +58,7 @@ public enum EarlyProgressVisualization {
 
         default long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, LongSupplier monitorSupplier) {
             return FMLLoader.getGameLayer().findModule("forge")
-                    .map(l->Class.forName(l, "net.minecraftforge.fmllegacy.NoVizFallback"))
+                    .map(l->Class.forName(l, "net.minecraftforge.client.loading.NoVizFallback"))
                     .map(LamdbaExceptionUtils.rethrowFunction(c->c.getMethod("fallback", IntSupplier.class, IntSupplier.class, Supplier.class, LongSupplier.class)))
                     .map(LamdbaExceptionUtils.rethrowFunction(m->(LongSupplier)m.invoke(null, width, height, title, monitorSupplier)))
                     .map(LongSupplier::getAsLong)

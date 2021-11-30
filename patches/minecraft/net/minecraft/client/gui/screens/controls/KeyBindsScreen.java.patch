@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/gui/screens/controls/KeyBindsScreen.java
++++ b/net/minecraft/client/gui/screens/controls/KeyBindsScreen.java
+@@ -31,7 +_,7 @@
+       this.m_7787_(this.f_193977_);
+       this.f_193978_ = this.m_142416_(new Button(this.f_96543_ / 2 - 155, this.f_96544_ - 29, 150, 20, new TranslatableComponent("controls.resetAll"), (p_193999_) -> {
+          for(KeyMapping keymapping : this.f_96282_.f_92059_) {
+-            keymapping.m_90848_(keymapping.m_90861_());
++            keymapping.setToDefault();
+          }
+ 
+          KeyMapping.m_90854_();
+@@ -55,11 +_,14 @@
+    public boolean m_7933_(int p_193987_, int p_193988_, int p_193989_) {
+       if (this.f_193975_ != null) {
+          if (p_193987_ == 256) {
++            this.f_193975_.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.getActiveModifier(), InputConstants.f_84822_);
+             this.f_96282_.m_92159_(this.f_193975_, InputConstants.f_84822_);
+          } else {
++            this.f_193975_.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.getActiveModifier(), InputConstants.m_84827_(p_193987_, p_193988_));
+             this.f_96282_.m_92159_(this.f_193975_, InputConstants.m_84827_(p_193987_, p_193988_));
+          }
+ 
++         if(!net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(this.f_193975_.getKey()))
+          this.f_193975_ = null;
+          this.f_193976_ = Util.m_137550_();
+          KeyMapping.m_90854_();

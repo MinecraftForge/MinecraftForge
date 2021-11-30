@@ -19,13 +19,7 @@
 
 package net.minecraftforge.registries;
 
-import java.util.BitSet;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
@@ -35,8 +29,6 @@ import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.apache.commons.lang3.Validate;
-
-import java.util.Set;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
@@ -76,6 +68,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final Map<ResourceLocation, ResourceLocation> aliases = Maps.newHashMap();
     final Map<ResourceLocation, ?> slaves = Maps.newHashMap();
     private final ResourceLocation defaultKey;
+    private final ResourceKey<V> defaultResourceKey;
     private final CreateCallback<V> create;
     private final AddCallback<V> add;
     private final ClearCallback<V> clear;
@@ -111,6 +104,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.stage = stage;
         this.superType = builder.getType();
         this.defaultKey = builder.getDefault();
+        this.defaultResourceKey = ResourceKey.create(key, defaultKey);
         this.min = builder.getMinId();
         this.max = builder.getMaxId();
         this.availabilityMap = new BitSet(Math.min(max + 1, 0x0FFF));
@@ -235,6 +229,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     {
         ResourceLocation ret = this.names.inverse().get(value);
         return ret == null ? this.defaultKey : ret;
+    }
+
+    @Override
+    public Optional<ResourceKey<V>> getResourceKey(V value)
+    {
+        return Optional.ofNullable(this.keys.inverse().get(value));
     }
 
     @Override
@@ -663,7 +663,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     /**
      * Used to control the times where people can modify this registry.
-     * Users should only ever register things in the Register<?> events!
+     * Users should only ever register things in the {@literal Register<?>} events!
      */
     public void freeze()
     {

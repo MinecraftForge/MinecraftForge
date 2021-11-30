@@ -5,7 +5,7 @@
  import net.minecraft.resources.ResourceLocation;
  
 -public class ClientboundCustomPayloadPacket implements Packet<ClientGamePacketListener> {
-+public class ClientboundCustomPayloadPacket implements Packet<ClientGamePacketListener>, net.minecraftforge.fmllegacy.network.ICustomPacket<ClientboundCustomPayloadPacket> {
++public class ClientboundCustomPayloadPacket implements Packet<ClientGamePacketListener>, net.minecraftforge.network.ICustomPacket<ClientboundCustomPayloadPacket> {
     private static final int f_178834_ = 1048576;
     public static final ResourceLocation f_132012_ = new ResourceLocation("brand");
     public static final ResourceLocation f_132013_ = new ResourceLocation("debug/path");
@@ -13,7 +13,7 @@
  
     public void m_5797_(ClientGamePacketListener p_132041_) {
        p_132041_.m_7413_(this);
-+      this.f_132030_.release(); // FORGE: Fix network buffer leaks (MC-121884)
++      this.f_132030_.release(); // FORGE: Fix impl buffer leaks (MC-121884)
     }
  
     public ResourceLocation m_132042_() {

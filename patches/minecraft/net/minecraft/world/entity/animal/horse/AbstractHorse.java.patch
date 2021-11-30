@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/horse/AbstractHorse.java
 +++ b/net/minecraft/world/entity/animal/horse/AbstractHorse.java
-@@ -286,6 +_,7 @@
+@@ -288,6 +_,7 @@
  
        this.f_30520_.m_19164_(this);
        this.m_7493_();
@@ -8,7 +8,7 @@
     }
  
     protected void m_7493_() {
-@@ -344,9 +_,9 @@
+@@ -346,9 +_,9 @@
     protected void m_7355_(BlockPos p_30584_, BlockState p_30585_) {
        if (!p_30585_.m_60767_().m_76332_()) {
           BlockState blockstate = this.f_19853_.m_8055_(p_30584_.m_7494_());
@@ -20,7 +20,7 @@
           }
  
           if (this.m_20160_() && this.f_30523_) {
-@@ -698,6 +_,7 @@
+@@ -700,6 +_,7 @@
                 this.m_20334_(vec3.f_82479_, d1, vec3.f_82481_);
                 this.m_30655_(true);
                 this.f_19812_ = true;
@@ -28,7 +28,7 @@
                 if (f1 > 0.0F) {
                    float f2 = Mth.m_14031_(this.m_146908_() * ((float)Math.PI / 180F));
                    float f3 = Mth.m_14089_(this.m_146908_() * ((float)Math.PI / 180F));
-@@ -1027,6 +_,25 @@
+@@ -1029,6 +_,25 @@
  
        this.m_7505_();
        return super.m_6518_(p_30555_, p_30556_, p_30557_, p_30558_, p_30559_);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/LevelRenderer.java
 +++ b/net/minecraft/client/renderer/LevelRenderer.java
-@@ -241,6 +_,11 @@
+@@ -257,6 +_,11 @@
     }
  
     private void m_109703_(LightTexture p_109704_, float p_109705_, double p_109706_, double p_109707_, double p_109708_) {
@@ -12,7 +12,7 @@
        float f = this.f_109461_.f_91073_.m_46722_(p_109705_);
        if (!(f <= 0.0F)) {
           p_109704_.m_109896_();
-@@ -362,6 +_,11 @@
+@@ -377,6 +_,11 @@
     }
  
     public void m_109693_(Camera p_109694_) {
@@ -24,33 +24,23 @@
        float f = this.f_109461_.f_91073_.m_46722_(1.0F) / (Minecraft.m_91405_() ? 1.0F : 2.0F);
        if (!(f <= 0.0F)) {
           Random random = new Random((long)this.f_109477_ * 312987231L);
-@@ -804,7 +_,7 @@
-             this.f_109448_ = true;
-             BlockPos blockpos2 = chunkrenderdispatcher$renderchunk1.m_112839_().m_142082_(8, 8, 8);
-             boolean flag = blockpos2.m_123331_(blockpos) < 768.0D;
--            if (!chunkrenderdispatcher$renderchunk1.m_112842_() && !flag) {
-+            if (net.minecraftforge.common.ForgeConfig.CLIENT.alwaysSetupTerrainOffThread.get() || !chunkrenderdispatcher$renderchunk1.m_112842_() && !flag) {
-                this.f_109466_.add(chunkrenderdispatcher$renderchunk1);
-             } else {
-                this.f_109461_.m_91307_().m_6180_("build near");
-@@ -980,13 +_,14 @@
+@@ -1148,20 +_,23 @@
        RenderSystem.m_69421_(16640, Minecraft.f_91002_);
        float f = p_109605_.m_109152_();
-       boolean flag1 = this.f_109461_.f_91073_.m_104583_().m_5781_(Mth.m_14107_(d0), Mth.m_14107_(d1)) || this.f_109461_.f_91065_.m_93090_().m_93715_();
+       boolean flag2 = this.f_109461_.f_91073_.m_104583_().m_5781_(Mth.m_14107_(d0), Mth.m_14107_(d1)) || this.f_109461_.f_91065_.m_93090_().m_93715_();
 +      FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag1, p_109601_);
        profilerfiller.m_6182_("sky");
        RenderSystem.m_157427_(GameRenderer::m_172808_);
        this.m_181409_(p_109600_, p_109607_, p_109601_, () -> {
-          FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag1);
+          FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag2);
        });
        profilerfiller.m_6182_("fog");
--      FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f - 16.0F, 32.0F), flag1);
+-      FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f - 16.0F, 32.0F), flag2);
 +      FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f - 16.0F, 32.0F), flag1, p_109601_);
        profilerfiller.m_6182_("terrain_setup");
-       this.m_109695_(p_109604_, frustum, flag, this.f_109449_++, this.f_109461_.f_91074_.m_5833_());
-       profilerfiller.m_6182_("updatechunks");
-@@ -1007,7 +_,9 @@
-       this.m_109510_(p_109602_ + l1);
+       this.m_194338_(p_109604_, frustum, flag1, this.f_109461_.f_91074_.m_5833_());
+       profilerfiller.m_6182_("compilechunks");
+       this.m_194370_(p_109604_);
        profilerfiller.m_6182_("terrain");
        this.m_172993_(RenderType.m_110451_(), p_109600_, d0, d1, d2, p_109607_);
 +      this.f_109461_.m_91304_().m_119428_(TextureAtlas.f_118259_).setBlurMipmap(false, this.f_109461_.f_91066_.f_92027_ > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
@@ -59,7 +49,7 @@
        this.m_172993_(RenderType.m_110463_(), p_109600_, d0, d1, d2, p_109607_);
        if (this.f_109465_.m_104583_().m_108885_()) {
           Lighting.m_84925_(p_109600_.m_85850_().m_85861_());
-@@ -1037,7 +_,7 @@
+@@ -1191,7 +_,7 @@
        MultiBufferSource.BufferSource multibuffersource$buffersource = this.f_109464_.m_110104_();
  
        for(Entity entity : this.f_109465_.m_104735_()) {
@@ -68,7 +58,7 @@
              ++this.f_109439_;
              if (entity.f_19797_ == 0) {
                 entity.f_19790_ = entity.m_20185_();
-@@ -1076,6 +_,7 @@
+@@ -1230,6 +_,7 @@
           List<BlockEntity> list = levelrenderer$renderchunkinfo.f_109839_.m_112835_().m_112773_();
           if (!list.isEmpty()) {
              for(BlockEntity blockentity1 : list) {
@@ -76,7 +66,7 @@
                 BlockPos blockpos3 = blockentity1.m_58899_();
                 MultiBufferSource multibuffersource1 = multibuffersource$buffersource;
                 p_109600_.m_85836_();
-@@ -1101,6 +_,7 @@
+@@ -1255,6 +_,7 @@
  
        synchronized(this.f_109468_) {
           for(BlockEntity blockentity : this.f_109468_) {
@@ -84,21 +74,21 @@
              BlockPos blockpos2 = blockentity.m_58899_();
              p_109600_.m_85836_();
              p_109600_.m_85837_((double)blockpos2.m_123341_() - d0, (double)blockpos2.m_123342_() - d1, (double)blockpos2.m_123343_() - d2);
-@@ -1152,10 +_,13 @@
+@@ -1306,10 +_,13 @@
           profilerfiller.m_6182_("outline");
           BlockPos blockpos = ((BlockHitResult)hitresult).m_82425_();
           BlockState blockstate = this.f_109465_.m_8055_(blockpos);
-+         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_109604_, hitresult, p_109601_, p_109600_, multibuffersource$buffersource))
++         if (!net.minecraftforge.client.ForgeHooksClient.onDrawHighlight(this, p_109604_, hitresult, p_109601_, p_109600_, multibuffersource$buffersource))
           if (!blockstate.m_60795_() && this.f_109465_.m_6857_().m_61937_(blockpos)) {
              VertexConsumer vertexconsumer2 = multibuffersource$buffersource.m_6299_(RenderType.m_110504_());
              this.m_109637_(p_109600_, vertexconsumer2, p_109604_.m_90592_(), d0, d1, d2, blockpos, blockstate);
           }
 +      } else if (hitresult != null && hitresult.m_6662_() == HitResult.Type.ENTITY) {
-+         net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(this, p_109604_, hitresult, p_109601_, p_109600_, multibuffersource$buffersource);
++         net.minecraftforge.client.ForgeHooksClient.onDrawHighlight(this, p_109604_, hitresult, p_109601_, p_109600_, multibuffersource$buffersource);
        }
  
        PoseStack posestack = RenderSystem.m_157191_();
-@@ -1190,7 +_,7 @@
+@@ -1344,7 +_,7 @@
           this.f_109415_.m_83945_(this.f_109461_.m_91385_());
           RenderStateShard.f_110126_.m_110185_();
           profilerfiller.m_6182_("particles");
@@ -107,7 +97,7 @@
           RenderStateShard.f_110126_.m_110188_();
        } else {
           profilerfiller.m_6182_("translucent");
-@@ -1204,7 +_,7 @@
+@@ -1358,7 +_,7 @@
           profilerfiller.m_6182_("string");
           this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_109607_);
           profilerfiller.m_6182_("particles");
@@ -116,7 +106,7 @@
        }
  
        posestack.m_85836_();
-@@ -1632,6 +_,11 @@
+@@ -1790,6 +_,11 @@
  
     public void m_181409_(PoseStack p_181410_, Matrix4f p_181411_, float p_181412_, Runnable p_181413_) {
        p_181413_.run();
@@ -128,7 +118,7 @@
        if (this.f_109461_.f_91073_.m_104583_().m_108883_() == DimensionSpecialEffects.SkyType.END) {
           this.m_109780_(p_181410_);
        } else if (this.f_109461_.f_91073_.m_104583_().m_108883_() == DimensionSpecialEffects.SkyType.NORMAL) {
-@@ -1746,6 +_,11 @@
+@@ -1904,6 +_,11 @@
     }
  
     public void m_172954_(PoseStack p_172955_, Matrix4f p_172956_, float p_172957_, double p_172958_, double p_172959_, double p_172960_) {
@@ -140,16 +130,16 @@
        float f = this.f_109465_.m_104583_().m_108871_();
        if (!Float.isNaN(f)) {
           RenderSystem.m_69464_();
-@@ -1923,7 +_,7 @@
- 
-          while(iterator.hasNext()) {
-             ChunkRenderDispatcher.RenderChunk chunkrenderdispatcher$renderchunk = iterator.next();
--            if (chunkrenderdispatcher$renderchunk.m_112842_()) {
-+            if (!net.minecraftforge.common.ForgeConfig.CLIENT.alwaysSetupTerrainOffThread.get() && chunkrenderdispatcher$renderchunk.m_112842_()) {
-                this.f_109436_.m_112715_(chunkrenderdispatcher$renderchunk);
+@@ -2089,7 +_,7 @@
+                }
              } else {
-                chunkrenderdispatcher$renderchunk.m_112820_(this.f_109436_);
-@@ -2216,7 +_,12 @@
+                BlockPos blockpos1 = chunkrenderdispatcher$renderchunk.m_112839_().m_142082_(8, 8, 8);
+-               flag = blockpos1.m_123331_(blockpos) < 768.0D || chunkrenderdispatcher$renderchunk.m_112842_();
++               flag = !net.minecraftforge.common.ForgeConfig.CLIENT.alwaysSetupTerrainOffThread.get() && (blockpos1.m_123331_(blockpos) < 768.0D || chunkrenderdispatcher$renderchunk.m_112842_()); // the target is the else block below, so invert the forge addition to get there early
+             }
+ 
+             if (flag) {
+@@ -2387,7 +_,12 @@
        this.f_109469_.m_110859_(p_109502_, p_109503_, p_109504_, p_109505_);
     }
  
@@ -162,7 +152,7 @@
        SoundInstance soundinstance = this.f_109410_.get(p_109516_);
        if (soundinstance != null) {
           this.f_109461_.m_91106_().m_120399_(soundinstance);
-@@ -2224,7 +_,7 @@
+@@ -2395,7 +_,7 @@
        }
  
        if (p_109515_ != null) {
@@ -171,7 +161,7 @@
           if (recorditem != null) {
              this.f_109461_.f_91065_.m_93055_(recorditem.m_43050_());
           }
-@@ -2376,7 +_,7 @@
+@@ -2547,7 +_,7 @@
           break;
        case 1010:
           if (Item.m_41445_(p_109536_) instanceof RecordItem) {
@@ -180,7 +170,7 @@
           } else {
              this.m_109514_((SoundEvent)null, p_109535_);
           }
-@@ -2546,7 +_,7 @@
+@@ -2717,7 +_,7 @@
        case 2001:
           BlockState blockstate = Block.m_49803_(p_109536_);
           if (!blockstate.m_60795_()) {
@@ -189,7 +179,7 @@
              this.f_109465_.m_104677_(p_109535_, soundtype.m_56775_(), SoundSource.BLOCKS, (soundtype.m_56773_() + 1.0F) / 2.0F, soundtype.m_56774_() * 0.8F, false);
           }
  
-@@ -2711,7 +_,7 @@
+@@ -2882,7 +_,7 @@
        } else {
           int i = p_109538_.m_45517_(LightLayer.SKY, p_109540_);
           int j = p_109538_.m_45517_(LightLayer.BLOCK, p_109540_);
@@ -198,15 +188,3 @@
           if (j < k) {
              j = k;
           }
-@@ -2748,6 +_,11 @@
-    @Nullable
-    public RenderTarget m_109832_() {
-       return this.f_109417_;
-+   }
-+
-+   @Override
-+   public net.minecraftforge.resource.IResourceType getResourceType() {
-+      return net.minecraftforge.resource.VanillaResourceType.MODELS;
-    }
- 
-    @OnlyIn(Dist.CLIENT)

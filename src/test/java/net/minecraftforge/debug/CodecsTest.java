@@ -33,11 +33,15 @@ import org.apache.logging.log4j.Logger;
 @Mod("forge_codecs_test")
 public class CodecsTest
 {
+    public static final boolean ENABLE = true;
     private static final Logger LOGGER = LogManager.getLogger();
 
     public CodecsTest()
     {
-        testFluidStackCodec();
+        if (ENABLE)
+        {
+            testFluidStackCodec();
+        }
     }
 
     /**

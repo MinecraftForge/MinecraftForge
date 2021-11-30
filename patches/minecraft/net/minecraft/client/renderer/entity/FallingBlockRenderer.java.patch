@@ -7,11 +7,11 @@
 -            blockrenderdispatcher.m_110937_().m_111047_(level, blockrenderdispatcher.m_110910_(blockstate), blockstate, blockpos, p_114637_, p_114638_.m_6299_(ItemBlockRenderTypes.m_109293_(blockstate)), false, new Random(), blockstate.m_60726_(p_114634_.m_31978_()), OverlayTexture.f_118083_);
 +            for (net.minecraft.client.renderer.RenderType type : net.minecraft.client.renderer.RenderType.m_110506_()) {
 +               if (ItemBlockRenderTypes.canRenderInLayer(blockstate, type)) {
-+                  net.minecraftforge.client.ForgeHooksClient.setRenderLayer(type);
++                  net.minecraftforge.client.ForgeHooksClient.setRenderType(type);
 +                  blockrenderdispatcher.m_110937_().m_111047_(level, blockrenderdispatcher.m_110910_(blockstate), blockstate, blockpos, p_114637_, p_114638_.m_6299_(type), false, new Random(), blockstate.m_60726_(p_114634_.m_31978_()), OverlayTexture.f_118083_);
 +               }
 +            }
-+            net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
++            net.minecraftforge.client.ForgeHooksClient.setRenderType(null);
              p_114637_.m_85849_();
              super.m_7392_(p_114634_, p_114635_, p_114636_, p_114637_, p_114638_, p_114639_);
           }

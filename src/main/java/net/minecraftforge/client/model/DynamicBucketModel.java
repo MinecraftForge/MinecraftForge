@@ -39,8 +39,6 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.resource.IResourceType;
-import net.minecraftforge.resource.VanillaResourceType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,7 +46,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.resources.model.BakedModel;
@@ -193,12 +190,6 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         INSTANCE;
 
         @Override
-        public IResourceType getResourceType()
-        {
-            return VanillaResourceType.MODELS;
-        }
-
-        @Override
         public void onResourceManagerReload(ResourceManager resourceManager)
         {
             // no need to clear cache since we create a new model instance
@@ -272,7 +263,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
                         if (!cache.containsKey(name))
                         {
                             DynamicBucketModel unbaked = this.parent.withFluid(fluid);
-                            BakedModel bakedModel = unbaked.bake(owner, bakery, ModelLoader.defaultTextureGetter(), BlockModelRotation.X0_Y0, this, new ResourceLocation("forge:bucket_override"));
+                            BakedModel bakedModel = unbaked.bake(owner, bakery, ForgeModelBakery.defaultTextureGetter(), BlockModelRotation.X0_Y0, this, new ResourceLocation("forge:bucket_override"));
                             cache.put(name, bakedModel);
                             return bakedModel;
                         }

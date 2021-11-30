@@ -5,6 +5,6 @@
     @DontObfuscate
     public static String m_129629_() {
 -      return "vanilla";
-+      return net.minecraftforge.fmllegacy.BrandingControl.getClientBranding();
++      return net.minecraftforge.internal.BrandingControl.getClientBranding();
     }
  }

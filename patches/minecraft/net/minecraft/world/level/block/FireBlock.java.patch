@@ -83,7 +83,7 @@
 -            TntBlock tntblock = (TntBlock)block;
 -            TntBlock.m_57433_(p_53432_, p_53433_);
 -         }
-+         blockstate.catchFire(p_53432_, p_53433_, face, null);
++         blockstate.onCaughtFire(p_53432_, p_53433_, face, null);
        }
  
     }

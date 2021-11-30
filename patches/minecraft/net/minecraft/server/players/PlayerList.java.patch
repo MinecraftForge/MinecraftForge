@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/players/PlayerList.java
 +++ b/net/minecraft/server/players/PlayerList.java
-@@ -115,6 +_,7 @@
+@@ -117,6 +_,7 @@
     private boolean f_11209_;
     private static final boolean f_143988_ = false;
     private int f_11210_;
@@ -8,15 +8,15 @@
  
     public PlayerList(MinecraftServer p_11213_, RegistryAccess.RegistryHolder p_11214_, PlayerDataStorage p_11215_, int p_11216_) {
        this.f_11195_ = p_11213_;
-@@ -150,6 +_,7 @@
+@@ -152,6 +_,7 @@
        LevelData leveldata = serverlevel1.m_6106_();
        p_11263_.m_143427_(compoundtag);
        ServerGamePacketListenerImpl servergamepacketlistenerimpl = new ServerGamePacketListenerImpl(this.f_11195_, p_11262_, p_11263_);
-+      net.minecraftforge.fmllegacy.network.NetworkHooks.sendMCRegistryPackets(p_11262_, "PLAY_TO_CLIENT");
++      net.minecraftforge.network.NetworkHooks.sendMCRegistryPackets(p_11262_, "PLAY_TO_CLIENT");
        GameRules gamerules = serverlevel1.m_46469_();
        boolean flag = gamerules.m_46207_(GameRules.f_46156_);
        boolean flag1 = gamerules.m_46207_(GameRules.f_46145_);
-@@ -158,6 +_,7 @@
+@@ -160,6 +_,7 @@
        servergamepacketlistenerimpl.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
        servergamepacketlistenerimpl.m_141995_(new ClientboundPlayerAbilitiesPacket(p_11263_.m_150110_()));
        servergamepacketlistenerimpl.m_141995_(new ClientboundSetCarriedItemPacket(p_11263_.m_150109_().f_35977_));
@@ -24,7 +24,7 @@
        servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
        servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
        this.m_11289_(p_11263_);
-@@ -174,7 +_,7 @@
+@@ -176,7 +_,7 @@
  
        this.m_11264_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
        servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
@@ -33,15 +33,15 @@
        this.f_11197_.put(p_11263_.m_142081_(), p_11263_);
        this.m_11268_(new ClientboundPlayerInfoPacket(ClientboundPlayerInfoPacket.Action.ADD_PLAYER, p_11263_));
  
-@@ -229,6 +_,7 @@
+@@ -231,6 +_,7 @@
        }
  
        p_11263_.m_143429_();
-+      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerLoggedIn( p_11263_ );
++      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedIn( p_11263_ );
     }
  
     protected void m_11273_(ServerScoreboard p_11274_, ServerPlayer p_11275_) {
-@@ -289,6 +_,7 @@
+@@ -291,6 +_,7 @@
           compoundtag1 = compoundtag;
           p_11225_.m_20258_(compoundtag);
           f_11188_.debug("loading single player");
@@ -49,7 +49,7 @@
        } else {
           compoundtag1 = this.f_11204_.m_78435_(p_11225_);
        }
-@@ -297,6 +_,7 @@
+@@ -299,6 +_,7 @@
     }
  
     protected void m_6765_(ServerPlayer p_11277_) {
@@ -57,15 +57,15 @@
        this.f_11204_.m_78433_(p_11277_);
        ServerStatsCounter serverstatscounter = this.f_11202_.get(p_11277_.m_142081_());
        if (serverstatscounter != null) {
-@@ -311,6 +_,7 @@
+@@ -313,6 +_,7 @@
     }
  
     public void m_11286_(ServerPlayer p_11287_) {
-+      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerLoggedOut(p_11287_);
-       ServerLevel serverlevel = p_11287_.m_9236_();
++      net.minecraftforge.event.ForgeEventFactory.firePlayerLoggedOut(p_11287_);
+       ServerLevel serverlevel = p_11287_.m_183503_();
        p_11287_.m_36220_(Stats.f_12989_);
        this.m_6765_(p_11287_);
-@@ -447,10 +_,11 @@
+@@ -449,10 +_,11 @@
        this.m_11229_(serverplayer, serverlevel1);
        this.m_11289_(serverplayer);
        serverlevel1.m_8845_(serverplayer);
@@ -74,11 +74,11 @@
        this.f_11197_.put(serverplayer.m_142081_(), serverplayer);
        serverplayer.m_143429_();
        serverplayer.m_21153_(serverplayer.m_21223_());
-+      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerRespawnEvent(serverplayer, p_11238_);
++      net.minecraftforge.event.ForgeEventFactory.firePlayerRespawnEvent(serverplayer, p_11238_);
        if (flag2) {
           serverplayer.f_8906_.m_141995_(new ClientboundSoundPacket(SoundEvents.f_12377_, SoundSource.BLOCKS, (double)blockpos.m_123341_(), (double)blockpos.m_123342_(), (double)blockpos.m_123343_(), 1.0F, 1.0F));
        }
-@@ -535,6 +_,7 @@
+@@ -537,6 +_,7 @@
     }
  
     public void m_5749_(GameProfile p_11254_) {
@@ -86,7 +86,7 @@
        this.f_11200_.m_11381_(new ServerOpListEntry(p_11254_, this.f_11195_.m_7022_(), this.f_11200_.m_11351_(p_11254_)));
        ServerPlayer serverplayer = this.m_11259_(p_11254_.getId());
        if (serverplayer != null) {
-@@ -544,6 +_,7 @@
+@@ -546,6 +_,7 @@
     }
  
     public void m_5750_(GameProfile p_11281_) {
@@ -94,7 +94,7 @@
        this.f_11200_.m_11393_(p_11281_);
        ServerPlayer serverplayer = this.m_11259_(p_11281_.getId());
        if (serverplayer != null) {
-@@ -726,13 +_,6 @@
+@@ -733,13 +_,6 @@
        if (serverstatscounter == null) {
           File file1 = this.f_11195_.m_129843_(LevelResource.f_78175_).toFile();
           File file2 = new File(file1, uuid + ".json");
@@ -108,7 +108,7 @@
  
           serverstatscounter = new ServerStatsCounter(this.f_11195_, file2);
           this.f_11202_.put(uuid, serverstatscounter);
-@@ -751,6 +_,8 @@
+@@ -758,6 +_,8 @@
           this.f_11203_.put(uuid, playeradvancements);
        }
  
@@ -117,7 +117,7 @@
        playeradvancements.m_135979_(p_11297_);
        return playeradvancements;
     }
-@@ -768,7 +_,7 @@
+@@ -787,7 +_,7 @@
     }
  
     public List<ServerPlayer> m_11314_() {
@@ -126,7 +126,7 @@
     }
  
     @Nullable
-@@ -785,6 +_,7 @@
+@@ -804,6 +_,7 @@
           playeradvancements.m_135981_(this.f_11195_.m_129889_());
        }
  
@@ -134,7 +134,7 @@
        this.m_11268_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
        ClientboundUpdateRecipesPacket clientboundupdaterecipespacket = new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_());
  
-@@ -797,5 +_,13 @@
+@@ -816,5 +_,13 @@
  
     public boolean m_11316_() {
        return this.f_11209_;

@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/level/chunk/ProtoChunk.java
 +++ b/net/minecraft/world/level/chunk/ProtoChunk.java
-@@ -142,13 +_,13 @@
-          if (this.f_63156_[l] == LevelChunk.f_62770_ && p_63218_.m_60713_(Blocks.f_50016_)) {
+@@ -122,13 +_,13 @@
+          if (this.f_187612_[l].m_188008_() && p_63218_.m_60713_(Blocks.f_50016_)) {
              return p_63218_;
           } else {
 -            if (p_63218_.m_60791_() > 0) {
@@ -9,7 +9,7 @@
                 this.f_63158_.add(new BlockPos((i & 15) + this.m_7697_().m_45604_(), j, (k & 15) + this.m_7697_().m_45605_()));
              }
  
-             LevelChunkSection levelchunksection = this.m_156115_(l);
+             LevelChunkSection levelchunksection = this.m_183278_(l);
              BlockState blockstate = levelchunksection.m_62986_(i & 15, j & 15, k & 15, p_63218_);
 -            if (this.f_63153_.m_62427_(ChunkStatus.f_62322_) && p_63218_ != blockstate && (p_63218_.m_60739_(this, p_63217_) != blockstate.m_60739_(this, p_63217_) || p_63218_.m_60791_() != blockstate.m_60791_() || p_63218_.m_60787_() || blockstate.m_60787_())) {
 +            if (this.f_63153_.m_62427_(ChunkStatus.f_62322_) && p_63218_ != blockstate && (p_63218_.m_60739_(this, p_63217_) != blockstate.m_60739_(this, p_63217_) || p_63218_.getLightEmission(this, p_63217_) != blockstate.getLightEmission(this, p_63217_) || p_63218_.m_60787_() || blockstate.m_60787_())) {

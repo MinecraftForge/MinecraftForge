@@ -24,11 +24,14 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
  * EntityTeleportEvent is fired when an event involving any teleportation of an Entity occurs.<br>
- * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
+ * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * {@link #getTarget()} contains the target destination.<br>
@@ -64,16 +67,16 @@ public class EntityTeleportEvent extends EntityEvent
 
     /**
      * EntityTeleportEvent.TeleportCommand is fired before a living entity is teleported
-     * from use of {@link net.minecraft.command.impl.TeleportCommand}.
+     * from use of {@link net.minecraft.server.commands.TeleportCommand}.
      * <br>
-     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * This event is {@link Cancelable}.<br>
      * If the event is not canceled, the entity will be teleported.
      * <br>
      * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      * <br>
-     * This event is only fired on the {@link net.minecraftforge.fml.LogicalSide#SERVER} side.<br>
+     * This event is only fired on the {@link LogicalSide#SERVER} side.<br>
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */
@@ -88,16 +91,16 @@ public class EntityTeleportEvent extends EntityEvent
 
     /**
      * EntityTeleportEvent.SpreadPlayersCommand is fired before a living entity is teleported
-     * from use of {@link net.minecraft.command.impl.SpreadPlayersCommand}.
+     * from use of {@link net.minecraft.server.commands.SpreadPlayersCommand}.
      * <br>
-     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * This event is {@link Cancelable}.<br>
      * If the event is not canceled, the entity will be teleported.
      * <br>
      * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      * <br>
-     * This event is only fired on the {@link net.minecraftforge.fml.LogicalSide#SERVER} side.<br>
+     * This event is only fired on the {@link LogicalSide#SERVER} side.<br>
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */
@@ -113,14 +116,14 @@ public class EntityTeleportEvent extends EntityEvent
     /**
      * EntityTeleportEvent.EnderEntity is fired before an Enderman or Shulker randomly teleports.
      * <br>
-     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * This event is {@link Cancelable}.<br>
      * If the event is not canceled, the entity will be teleported.
      * <br>
      * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      * <br>
-     * This event is only fired on the {@link net.minecraftforge.fml.LogicalSide#SERVER} side.<br>
+     * This event is only fired on the {@link LogicalSide#SERVER} side.<br>
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */
@@ -144,14 +147,14 @@ public class EntityTeleportEvent extends EntityEvent
     /**
      * EntityTeleportEvent.EnderPearl is fired before an Entity is teleported from an EnderPearlEntity.
      * <br>
-     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * This event is {@link Cancelable}.<br>
      * If the event is not canceled, the entity will be teleported.
      * <br>
      * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      * <br>
-     * This event is only fired on the {@link net.minecraftforge.fml.LogicalSide#SERVER} side.<br>
+     * This event is only fired on the {@link LogicalSide#SERVER} side.<br>
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */
@@ -194,14 +197,14 @@ public class EntityTeleportEvent extends EntityEvent
     /**
      * EntityTeleportEvent.ChorusFruit is fired before a LivingEntity is teleported due to consuming Chorus Fruit.
      * <br>
-     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * This event is {@link Cancelable}.<br>
      * If the event is not canceled, the entity will be teleported.
      * <br>
      * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
      * <br>
-     * This event is only fired on the {@link net.minecraftforge.fml.LogicalSide#SERVER} side.<br>
+     * This event is only fired on the {@link LogicalSide#SERVER} side.<br>
      * <br>
      * If this event is canceled, the entity will not be teleported.
      */

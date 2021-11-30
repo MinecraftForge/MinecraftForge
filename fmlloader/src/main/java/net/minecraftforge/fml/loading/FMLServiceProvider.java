@@ -78,7 +78,7 @@ public class FMLServiceProvider implements ITransformationService
         LOGGER.debug(CORE, "Loading configuration");
         FMLConfig.load();
         LOGGER.debug(CORE, "Preparing ModFile");
-        environment.computePropertyIfAbsent(Environment.Keys.MODFILEFACTORY.get(), k->ModFile.buildFactory());
+        environment.computePropertyIfAbsent(Environment.Keys.MODFILEFACTORY.get(), k->ModFile::new);
         arguments = new HashMap<>();
         arguments.put("modLists", modListsArgumentList);
         arguments.put("mods", modsArgumentList);

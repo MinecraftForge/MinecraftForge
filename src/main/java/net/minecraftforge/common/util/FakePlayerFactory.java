@@ -36,12 +36,12 @@ public class FakePlayerFactory
     private static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
     private static WeakReference<FakePlayer> MINECRAFT_PLAYER = null;
 
-    public static FakePlayer getMinecraft(ServerLevel world)
+    public static FakePlayer getMinecraft(ServerLevel level)
     {
         FakePlayer ret = MINECRAFT_PLAYER != null ? MINECRAFT_PLAYER.get() : null;
         if (ret == null)
         {
-            ret = FakePlayerFactory.get(world,  MINECRAFT);
+            ret = FakePlayerFactory.get(level,  MINECRAFT);
             MINECRAFT_PLAYER = new WeakReference<FakePlayer>(ret);
         }
         return ret;
@@ -52,24 +52,24 @@ public class FakePlayerFactory
      * Mods should either hold weak references to the return value, or listen for a
      * WorldEvent.Unload and kill all references to prevent worlds staying in memory.
      */
-    public static FakePlayer get(ServerLevel world, GameProfile username)
+    public static FakePlayer get(ServerLevel level, GameProfile username)
     {
         if (!fakePlayers.containsKey(username))
         {
-            FakePlayer fakePlayer = new FakePlayer(world, username);
+            FakePlayer fakePlayer = new FakePlayer(level, username);
             fakePlayers.put(username, fakePlayer);
         }
 
         return fakePlayers.get(username);
     }
 
-    public static void unloadWorld(ServerLevel world)
+    public static void unloadLevel(ServerLevel level)
     {
-        fakePlayers.entrySet().removeIf(entry -> entry.getValue().level == world);
-        if (MINECRAFT_PLAYER != null && MINECRAFT_PLAYER.get() != null && MINECRAFT_PLAYER.get().level == world) // This shouldn't be strictly necessary, but lets be aggressive.
+        fakePlayers.entrySet().removeIf(entry -> entry.getValue().level == level);
+        if (MINECRAFT_PLAYER != null && MINECRAFT_PLAYER.get() != null && MINECRAFT_PLAYER.get().level == level) // This shouldn't be strictly necessary, but lets be aggressive.
         {
             FakePlayer mc = MINECRAFT_PLAYER.get();
-            if (mc != null && mc.level == world)
+            if (mc != null && mc.level == level)
             {
                 MINECRAFT_PLAYER = null;
             }

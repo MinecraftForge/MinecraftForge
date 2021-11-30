@@ -19,12 +19,22 @@
 
 package net.minecraftforge.event.world;
 
+import net.minecraft.client.multiplayer.ClientChunkCache;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.chunk.ChunkAccess;
+import net.minecraft.world.level.chunk.ChunkStatus;
+import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
+
+import java.util.BitSet;
 
 /**
  * ChunkEvent is fired when an event involving a chunk occurs.<br>
- * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
+ * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * {@link #chunk} contains the Chunk this event is affecting.<br>
@@ -55,11 +65,11 @@ public class ChunkEvent extends WorldEvent
     /**
      * ChunkEvent.Load is fired when vanilla Minecraft attempts to load a Chunk into the world.<br>
      * This event is fired during chunk loading in <br>
-     * {@link ChunkProviderClient#loadChunk(int, int)}, <br>
+     * 
      * Chunk.onChunkLoad(). <br>
-     * <strong>Note:</strong> This event may be called before the underlying {@link net.minecraft.world.chunk.Chunk} is promoted to {@link net.minecraft.world.chunk.ChunkStatus#FULL}. You will cause chunk loading deadlocks if you don't delay your world interactions.<br>
+     * <strong>Note:</strong> This event may be called before the underlying {@link LevelChunk} is promoted to {@link ChunkStatus#FULL}. You will cause chunk loading deadlocks if you don't delay your world interactions.<br>
      * <br>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * This event is not {@link Cancelable}.<br>
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
@@ -78,7 +88,7 @@ public class ChunkEvent extends WorldEvent
      * This event is fired during chunk unloading in <br>
      * Chunk.onChunkUnload(). <br>
      * <br>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * This event is not {@link Cancelable}.<br>
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>

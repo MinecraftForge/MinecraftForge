@@ -23,7 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fmllegacy.RegistryObject;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,7 +39,7 @@ import java.util.function.Supplier;
  * Suppliers should return NEW instances every time.
  *
  *Example Usage:
- *<pre>
+ *<pre>{@code
  *   private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
  *   private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
  *
@@ -51,7 +50,7 @@ import java.util.function.Supplier;
  *       ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
  *       BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
  *   }
- *</pre>
+ *}</pre>
  *
  * @param <T> The base registry type, must be a concrete base class, do not use subclasses or wild cards.
  */

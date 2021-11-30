@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/ChestBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ChestBlockEntity.java
-@@ -162,6 +_,45 @@
+@@ -161,6 +_,45 @@
        return ChestMenu.m_39237_(p_59082_, p_59083_, this);
     }
  

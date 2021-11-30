@@ -58,9 +58,9 @@ public abstract class BakedModelWrapper<T extends BakedModel> implements BakedMo
     }
 
     @Override
-    public boolean isAmbientOcclusion(BlockState state)
+    public boolean useAmbientOcclusion(BlockState state)
     {
-        return originalModel.isAmbientOcclusion(state);
+        return originalModel.useAmbientOcclusion(state);
     }
 
     @Override

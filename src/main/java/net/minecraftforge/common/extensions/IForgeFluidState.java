@@ -52,8 +52,6 @@ public interface IForgeFluidState
         return self().getType().isEntityInside(self(), world, pos, entity, yToTest, tag, testingHead);
     }
 
-
-
     /**
      * Location sensitive version of getExplosionResistance
      *
@@ -67,13 +65,4 @@ public interface IForgeFluidState
         return self().getType().getExplosionResistance(self(), world, pos, explosion);
     }
 
-    /**
-     * Queries if this fluidstate should render in a given layer.
-     * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
-     */
-    /* TODO: reimplement
-    default boolean canRenderInLayer(BlockRenderLayer layer)
-    {
-        return getFluidState().getFluid().canRenderInLayer(getFluidState(), layer);
-    }*/
 }

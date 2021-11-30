@@ -17,7 +17,7 @@
     public static final Block f_50031_ = m_50795_("detector_rail", new DetectorRailBlock(BlockBehaviour.Properties.m_60939_(Material.f_76310_).m_60910_().m_60978_(0.7F).m_60918_(SoundType.f_56743_)));
     public static final Block f_50032_ = m_50795_("sticky_piston", m_50798_(true));
     public static final Block f_50033_ = m_50795_("cobweb", new WebBlock(BlockBehaviour.Properties.m_60939_(Material.f_76311_).m_60910_().m_60999_().m_60978_(4.0F)));
-@@ -1107,16 +_,5 @@
+@@ -1111,16 +_,5 @@
  
     public static void m_50758_() {
        Block.f_49791_.forEach(BlockBehaviour.BlockStateBase::m_60611_);

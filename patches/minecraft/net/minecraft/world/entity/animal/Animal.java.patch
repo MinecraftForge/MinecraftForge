@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Animal.java
 +++ b/net/minecraft/world/entity/animal/Animal.java
-@@ -201,6 +_,17 @@
+@@ -208,6 +_,17 @@
  
     public void m_27563_(ServerLevel p_27564_, Animal p_27565_) {
        AgeableMob ageablemob = this.m_142606_(p_27564_, p_27565_);

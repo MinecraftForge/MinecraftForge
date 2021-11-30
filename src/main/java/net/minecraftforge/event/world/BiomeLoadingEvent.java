@@ -23,8 +23,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
-import net.minecraftforge.common.world.MobSpawnInfoBuilder;
+import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 import javax.annotation.Nullable;
 
@@ -47,19 +48,15 @@ public class BiomeLoadingEvent extends Event
     private final ResourceLocation name;
     private Biome.ClimateSettings climate;
     private Biome.BiomeCategory category;
-    private float depth;
-    private float scale;
     private BiomeSpecialEffects effects;
     private final BiomeGenerationSettingsBuilder gen;
-    private final MobSpawnInfoBuilder spawns;
+    private final MobSpawnSettingsBuilder spawns;
 
-    public BiomeLoadingEvent(@Nullable final ResourceLocation name, final Biome.ClimateSettings climate, final Biome.BiomeCategory category, final float depth, final float scale, final BiomeSpecialEffects effects, final BiomeGenerationSettingsBuilder gen, final MobSpawnInfoBuilder spawns)
+    public BiomeLoadingEvent(@Nullable final ResourceLocation name, final Biome.ClimateSettings climate, final Biome.BiomeCategory category, final BiomeSpecialEffects effects, final BiomeGenerationSettingsBuilder gen, final MobSpawnSettingsBuilder spawns)
     {
         this.name = name;
         this.climate = climate;
         this.category = category;
-        this.depth = depth;
-        this.scale = scale;
         this.effects = effects;
         this.gen = gen;
         this.spawns = spawns;
@@ -96,26 +93,6 @@ public class BiomeLoadingEvent extends Event
         this.category = value;
     }
 
-    public float getDepth()
-    {
-        return depth;
-    }
-
-    public void setDepth(final float value)
-    {
-        this.depth = value;
-    }
-
-    public float getScale()
-    {
-        return scale;
-    }
-
-    public void setScale(final float value)
-    {
-        this.scale = value;
-    }
-
     public BiomeSpecialEffects getEffects()
     {
         return effects;
@@ -131,7 +108,7 @@ public class BiomeLoadingEvent extends Event
         return gen;
     }
 
-    public MobSpawnInfoBuilder getSpawns()
+    public MobSpawnSettingsBuilder getSpawns()
     {
         return spawns;
     }

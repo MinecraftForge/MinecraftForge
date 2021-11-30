@@ -41,7 +41,7 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.ServerTickEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fmllegacy.LogicalSidedProvider;
+import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.server.command.ConfigCommand;
 
@@ -62,7 +62,7 @@ public class ForgeInternalHandler
                 {
                     entity.discard();
                     event.setCanceled(true);
-                    BlockableEventLoop<Runnable> executor = LogicalSidedProvider.WORKQUEUE.get(event.getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
+                    var executor = LogicalSidedProvider.WORKQUEUE.get(event.getWorld().isClientSide ? LogicalSide.CLIENT : LogicalSide.SERVER);
                     executor.tell(new TickTask(0, () -> event.getWorld().addFreshEntity(newEntity)));
                 }
             }
@@ -74,7 +74,7 @@ public class ForgeInternalHandler
     public void onDimensionUnload(WorldEvent.Unload event)
     {
         if (event.getWorld() instanceof ServerLevel)
-            FakePlayerFactory.unloadWorld((ServerLevel) event.getWorld());
+            FakePlayerFactory.unloadLevel((ServerLevel) event.getWorld());
     }
 
     @SubscribeEvent

@@ -43,9 +43,9 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.17.1'
-    MC_VERSION = '1.17.1'
-    MCP_VERSION = '20210706.113038'
+    MAPPING_VERSION = '1.18'
+    MC_VERSION = '1.18'
+    MCP_VERSION = '20211130.085255'
     SPI_VERSION = '4.0.10'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
@@ -54,7 +54,7 @@ ext {
     SECUREJARHANDLER_VERSION = '0.9.54'
     BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
     ASM_VERSION = '9.1'
-    INSTALLER_VERSION = '2.1.5'
+    INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.4'
 
     GIT_INFO = gradleutils.gitInfo
@@ -63,10 +63,10 @@ ext {
     FORGE_VERSION = VERSION.substring(MC_VERSION.length() + 1)
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
-    VIGNETTE = 'net.minecraftforge.lex:vignette:0.2.0.16'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.7'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
+    FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.17:all'
 }
 
 println('Version: ' + VERSION +
@@ -109,7 +109,16 @@ subprojects {
         }
     }
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+    tasks.withType(Javadoc).configureEach {
+        options.tags = [
+                'apiNote:a:<em>API Note:</em>',
+                'implSpec:a:<em>Implementation Requirements:</em>',
+                'implNote:a:<em>Implementation Note:</em>'
+        ]
+        options.addStringOption('Xdoclint:all,-missing', '-public')
+    }
 
     publishing {
         publications {
@@ -276,18 +285,16 @@ def sharedFmlonlyForge = { Project prj ->
             }
         } else {
             prj.task([type: RenameJar, dependsOn: prj.tasks.createMcp2Srg], "create${side}SRG") {
-                tool = VIGNETTE
+                tool = FART
                 args = [
-                        '--jar-in', '{input}',
-                        '--jar-out', '{output}',
-                        '--mapping-format', 'tsrg2',
-                        '--mappings', '{mappings}',
-                        // '--stable',
-                        '--create-inits', '--fix-param-annotations', '--fernflower-meta'
+                        '--input', '{input}',
+                        '--output', '{output}',
+                        '--names', '{mappings}',
+                        '--ann-fix', '--ids-fix', '--src-fix', '--record-fix'
                 ]
                 mappings = prj.tasks.createMcp2Srg.srg
                 input = prj.tasks.getByName("download${side}Slim").output
-                output = file("build/create${side}SRG/output.jar")
+                output = prj.file("build/create${side}SRG/output.jar")
             }
         }
 
@@ -717,15 +724,13 @@ project(':fmlonly') {
                             '{MC_EXTRA}': '{MC_EXTRA_SHA}'
                         ]
                     ], [
-                        jar: VIGNETTE,
-                        classpath: getClasspath(project, libs, VIGNETTE),
+                        jar: FART,
+                        classpath: getClasspath(project, libs, FART),
                         args: [
-                            '--jar-in', '{MC_SLIM}',
-                            '--jar-out', '{MC_SRG}',
-                            '--mapping-format', 'tsrg2',
-                            '--mappings', '{MERGED_MAPPINGS}',
-                            // '--stable',
-                            '--create-inits', '--fix-param-annotations', '--fernflower-meta'
+                            '--input', '{MC_SLIM}',
+                            '--output', '{MC_SRG}',
+                            '--names', '{MERGED_MAPPINGS}',
+                            '--ann-fix', '--ids-fix', '--src-fix', '--record-fix'
                         ]/*,
                         outputs: [
                             '{MC_SRG}': '{MC_SRG_SHA}'
@@ -1241,15 +1246,13 @@ project(':forge') {
                             '{MC_EXTRA}': '{MC_EXTRA_SHA}'
                         ]
                     ], [
-                        jar: VIGNETTE,
-                        classpath: getClasspath(project, libs, VIGNETTE),
+                        jar: FART,
+                        classpath: getClasspath(project, libs, FART),
                         args: [
-                            '--jar-in', '{MC_SLIM}',
-                            '--jar-out', '{MC_SRG}',
-                            '--mapping-format', 'tsrg2',
-                            '--mappings', '{MERGED_MAPPINGS}',
-                            // '--stable',
-                            '--create-inits', '--fix-param-annotations', '--fernflower-meta'
+                            '--input', '{MC_SLIM}',
+                            '--output', '{MC_SRG}',
+                            '--names', '{MERGED_MAPPINGS}',
+                            '--ann-fix', '--ids-fix', '--src-fix', '--record-fix'
                         ]/*,
                         outputs: [
                             '{MC_SRG}': '{MC_SRG_SHA}'
@@ -1332,7 +1335,7 @@ project(':forge') {
                 MAPPING_CHANNEL: MAPPING_CHANNEL,
                 MAPPING_VERSION: MAPPING_VERSION,
                 FORGE_SPEC_VERSION: SPEC_VERSION.split("\\.")[0],
-                MC_NEXT_VERSION: "1."+((MC_VERSION.split("\\.")[1] as int)+1)
+                MC_NEXT_VERSION: "1."+((MC_VERSION.split("[\\.-]")[1] as int)+1)
             ])
             rename 'gitignore\\.txt', '.gitignore'
             rename 'gitattributes\\.txt', '.gitattributes'

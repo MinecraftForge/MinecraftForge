@@ -1,7 +1,7 @@
 --- a/net/minecraft/network/PacketEncoder.java
 +++ b/net/minecraft/network/PacketEncoder.java
-@@ -44,7 +_,7 @@
-                   throw new IllegalArgumentException("Packet too big (is " + j + ", should be less than 8388608): " + p_130546_);
+@@ -48,7 +_,7 @@
+                   JvmProfiler.f_185340_.m_183508_(k, integer, p_130545_.channel().remoteAddress(), j);
                 }
              } catch (Throwable throwable) {
 -               f_130538_.error(throwable);

@@ -35,7 +35,7 @@ import com.google.common.collect.Sets.SetView;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.Registry;
-import net.minecraftforge.fmllegacy.network.FMLHandshakeMessages;
+import net.minecraftforge.network.HandshakeMessages;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -190,10 +190,10 @@ public class RegistryManager
         this.superTypes.clear();
     }
 
-    public static List<Pair<String, FMLHandshakeMessages.S2CRegistry>> generateRegistryPackets(boolean isLocal)
+    public static List<Pair<String, HandshakeMessages.S2CRegistry>> generateRegistryPackets(boolean isLocal)
     {
         return !isLocal ? ACTIVE.takeSnapshot(false).entrySet().stream().
-                map(e->Pair.of("Registry " + e.getKey(), new FMLHandshakeMessages.S2CRegistry(e.getKey(), e.getValue()))).
+                map(e->Pair.of("Registry " + e.getKey(), new HandshakeMessages.S2CRegistry(e.getKey(), e.getValue()))).
                 collect(Collectors.toList()) : Collections.emptyList();
     }
 

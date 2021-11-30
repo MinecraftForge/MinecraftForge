@@ -98,7 +98,7 @@ public class StructureSpawnManager
             StructureFeature<?> structure = entry.getKey();
             StructureSpawnInfo spawnInfo = entry.getValue();
             //Note: We check if the structure has spawns for a type first before looking at the world as it should be a cheaper check
-            if (spawnInfo.spawns.containsKey(classification) && structureManager.getStructureAt(pos, spawnInfo.insideOnly, structure).isValid())
+            if (spawnInfo.spawns.containsKey(classification) && structureManager.getStructureAt(pos, structure).isValid())
                 return spawnInfo.spawns.get(classification);
         }
         return null;

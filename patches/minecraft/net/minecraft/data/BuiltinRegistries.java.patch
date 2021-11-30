@@ -1,6 +1,6 @@
 --- a/net/minecraft/data/BuiltinRegistries.java
 +++ b/net/minecraft/data/BuiltinRegistries.java
-@@ -48,13 +_,17 @@
+@@ -44,7 +_,7 @@
        return ProcessorLists.f_127199_;
     });
     public static final Registry<StructureTemplatePool> f_123864_ = m_123893_(Registry.f_122884_, Pools::m_127189_);
@@ -9,6 +9,7 @@
        return Biomes.f_127321_;
     });
     public static final Registry<NoiseGeneratorSettings> f_123866_ = m_123893_(Registry.f_122878_, NoiseGeneratorSettings::m_64488_);
+@@ -52,6 +_,10 @@
  
     private static <T> Registry<T> m_123893_(ResourceKey<? extends Registry<T>> p_123894_, Supplier<T> p_123895_) {
        return m_123884_(p_123894_, Lifecycle.stable(), p_123895_);

@@ -32,7 +32,7 @@ import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
 import net.minecraft.core.NonNullList;
 import net.minecraftforge.event.village.VillagerTradesEvent;
 import net.minecraftforge.event.village.WandererTradesEvent;
-import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
+import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class VillagerTradingManager
@@ -52,7 +52,7 @@ public class VillagerTradingManager
         VillagerTrades.WANDERING_TRADER_TRADES.int2ObjectEntrySet().forEach(e -> WANDERER_TRADES.put(e.getIntKey(), Arrays.copyOf(e.getValue(), e.getValue().length)));
     }
 
-    static void loadTrades(FMLServerAboutToStartEvent e)
+    static void loadTrades(ServerAboutToStartEvent e)
     {
         postWandererEvent();
         postVillagerEvents();

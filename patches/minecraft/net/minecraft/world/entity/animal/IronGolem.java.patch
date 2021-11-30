@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/IronGolem.java
 +++ b/net/minecraft/world/entity/animal/IronGolem.java
-@@ -119,9 +_,10 @@
+@@ -120,9 +_,10 @@
           int i = Mth.m_14107_(this.m_20185_());
           int j = Mth.m_14107_(this.m_20186_() - (double)0.2F);
           int k = Mth.m_14107_(this.m_20189_());

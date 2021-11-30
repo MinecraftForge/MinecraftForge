@@ -19,6 +19,9 @@
 
 package net.minecraftforge.event.entity.living;
 
+import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,10 +29,10 @@ import net.minecraft.world.entity.LivingEntity;
 /**
  * LivingAttackEvent is fired when a living Entity is attacked. <br>
  * This event is fired whenever an Entity is attacked in
- * {@link EntityLivingBase#attackEntityFrom(DamageSource, float)} and
- * {@link EntityPlayer#attackEntityFrom(DamageSource, float)}. <br>
+ * {@link LivingEntity#hurt(DamageSource, float)} and
+ * {@link Player#hurt(DamageSource, float)}. <br>
  * <br>
- * This event is fired via the {@link ForgeHooks#onLivingAttack(EntityLivingBase, DamageSource, float)}.<br>
+ * This event is fired via the {@link ForgeHooks#onLivingAttack(LivingEntity, DamageSource, float)}.<br>
  * <br>
  * {@link #source} contains the DamageSource of the attack. <br>
  * {@link #amount} contains the amount of damage dealt to the entity. <br>

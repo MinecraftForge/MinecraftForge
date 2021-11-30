@@ -21,6 +21,7 @@ package net.minecraftforge.event.entity.player;
 
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -37,8 +38,8 @@ public class ItemTooltipEvent extends PlayerEvent
     private final List<Component> toolTip;
 
     /**
-     * This event is fired in {@link ItemStack#getTooltip(EntityPlayer, ITooltipFlag)}, which in turn is called from it's respective GUIContainer.
-     * Tooltips are also gathered with a null entityPlayer during startup by {@link Minecraft#populateSearchTreeManager()}.
+     * This event is fired in {@link ItemStack#getTooltipLines(Player, TooltipFlag)}, which in turn is called from it's respective GUIContainer.
+     * Tooltips are also gathered with a null entityPlayer during startup by {@link Minecraft#createSearchTrees()}.
      */
     public ItemTooltipEvent(@Nonnull ItemStack itemStack, @Nullable Player entityPlayer, List<Component> list, TooltipFlag flags)
     {

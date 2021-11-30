@@ -19,13 +19,17 @@
 
 package net.minecraftforge.event.entity;
 
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * EntityLeaveWorldEvent is fired when an Entity leaves the world. <br>
  * This event is fired whenever an Entity is removed from the world in
- * {@link ClientWorld#removeEntity(Entity)}, {@link ServerWorld#removeEntityComplete(Entity,Boolean)}. <br>
+ * {@link ClientLevel#removeEntity(int, Entity.RemovalReason)}, {@link ServerLevel#removeEntityComplete(Entity, boolean)}. <br>
  * <br>
  * {@link #world} contains the world from which the entity is removed. <br>
  * <br>
