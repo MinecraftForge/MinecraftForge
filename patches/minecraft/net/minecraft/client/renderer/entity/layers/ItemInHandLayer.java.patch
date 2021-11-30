@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/renderer/entity/layers/ItemInHandLayer.java
++++ b/net/minecraft/client/renderer/entity/layers/ItemInHandLayer.java
+@@ -39,7 +_,7 @@
+    }
+ 
+    protected void m_117184_(LivingEntity p_117185_, ItemStack p_117186_, ItemTransforms.TransformType p_117187_, HumanoidArm p_117188_, PoseStack p_117189_, MultiBufferSource p_117190_, int p_117191_) {
+-      if (!p_117186_.m_41619_()) {
++      if (!p_117186_.m_41619_() && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemEvent.Pre(p_117185_, p_117186_, p_117187_, p_117188_, p_117189_, p_117190_, p_117191_))) {
+          p_117189_.m_85836_();
+          this.m_117386_().m_6002_(p_117188_, p_117189_);
+          p_117189_.m_85845_(Vector3f.f_122223_.m_122240_(-90.0F));
+@@ -48,6 +_,8 @@
+          p_117189_.m_85837_((double)((float)(flag ? -1 : 1) / 16.0F), 0.125D, -0.625D);
+          Minecraft.m_91087_().m_91292_().m_109322_(p_117185_, p_117186_, p_117187_, flag, p_117189_, p_117190_, p_117191_);
+          p_117189_.m_85849_();
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderItemEvent.Post(p_117185_, p_117186_, p_117187_, p_117188_, p_117189_, p_117190_, p_117191_));
++
+       }
+    }
+ }

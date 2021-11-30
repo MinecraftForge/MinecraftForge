@@ -1,0 +1,18 @@
+--- a/net/minecraft/client/model/HumanoidModel.java
++++ b/net/minecraft/client/model/HumanoidModel.java
+@@ -79,6 +_,7 @@
+    }
+ 
+    public void m_6973_(T p_102866_, float p_102867_, float p_102868_, float p_102869_, float p_102870_, float p_102871_) {
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.SetupLivingBipedAnimEvent.Pre(p_102866_, this, p_102867_, p_102868_, p_102869_, p_102870_, p_102871_))) return;
+       boolean flag = p_102866_.m_21256_() > 4;
+       boolean flag1 = p_102866_.m_6067_();
+       this.f_102808_.f_104204_ = p_102870_ * ((float)Math.PI / 180F);
+@@ -224,6 +_,7 @@
+       }
+ 
+       this.f_102809_.m_104315_(this.f_102808_);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.SetupLivingBipedAnimEvent.Post(p_102866_, this, p_102867_, p_102868_, p_102869_, p_102870_, p_102871_));
+    }
+ 
+    private void m_102875_(T p_102876_) {
