@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -61,6 +63,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -115,6 +118,7 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.util.MavenVersionStringHelper;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
@@ -151,6 +155,8 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
@@ -158,6 +164,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
+import net.minecraftforge.registries.RegistryManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -188,6 +195,7 @@ public class ForgeHooks
     private static final Logger LOGGER = LogManager.getLogger();
     @SuppressWarnings("unused")
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
+    private static final Marker WORLDPERSISTENCE = MarkerManager.getMarker("WP");
 
     public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to)
     {
@@ -1239,6 +1247,87 @@ public class ForgeHooks
     public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)
     {
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
+    }
+
+    public static void writeAdditionalLevelSaveData(WorldData worldData, CompoundTag levelTag)
+    {
+        CompoundTag fmlData = new CompoundTag();
+        ListTag modList = new ListTag();
+        ModList.get().getMods().forEach(mi ->
+        {
+            final CompoundTag mod = new CompoundTag();
+            mod.putString("ModId", mi.getModId());
+            mod.putString("ModVersion", MavenVersionStringHelper.artifactVersionToString(mi.getVersion()));
+            modList.add(mod);
+        });
+        fmlData.put("LoadingModList", modList);
+
+        CompoundTag registries = new CompoundTag();
+        fmlData.put("Registries", registries);
+        LOGGER.debug(WORLDPERSISTENCE, "Gathering id map for writing to world save {}", worldData.getLevelName());
+
+        for (Map.Entry<ResourceLocation, ForgeRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
+        {
+            registries.put(e.getKey().toString(), e.getValue().write());
+        }
+        LOGGER.debug(WORLDPERSISTENCE, "ID Map collection complete {}", worldData.getLevelName());
+        levelTag.put("fml", fmlData);
+    }
+
+    public static void readAdditionalLevelSaveData(CompoundTag rootTag)
+    {
+        CompoundTag tag = rootTag.getCompound("fml");
+        if (tag.contains("LoadingModList"))
+        {
+            ListTag modList = tag.getList("LoadingModList", net.minecraft.nbt.Tag.TAG_COMPOUND);
+            for (int i = 0; i < modList.size(); i++)
+            {
+                CompoundTag mod = modList.getCompound(i);
+                String modId = mod.getString("ModId");
+                if (Objects.equals("minecraft",  modId)) {
+                    continue;
+                }
+                String modVersion = mod.getString("ModVersion");
+                Optional<? extends ModContainer> container = ModList.get().getModContainerById(modId);
+                if (container.isEmpty())
+                {
+                    LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing, things may not work well", modId);
+                    continue;
+                }
+                if (!Objects.equals(modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion())))
+                {
+                    LOGGER.warn(WORLDPERSISTENCE,"This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion()));
+                }
+            }
+        }
+
+        Multimap<ResourceLocation, ResourceLocation> failedElements = null;
+
+        if (tag.contains("Registries"))
+        {
+            Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = new HashMap<>();
+            CompoundTag regs = tag.getCompound("Registries");
+            for (String key : regs.getAllKeys())
+            {
+                snapshot.put(new ResourceLocation(key), ForgeRegistry.Snapshot.read(regs.getCompound(key)));
+            }
+            failedElements = GameData.injectSnapshot(snapshot, true, true);
+        }
+
+        if (failedElements != null && !failedElements.isEmpty())
+        {
+            StringBuilder buf = new StringBuilder();
+            buf.append("Forge Mod Loader could not load this save.\n\n")
+                .append("There are ").append(failedElements.size()).append(" unassigned registry entries in this save.\n")
+                .append("You will not be able to load until they are present again.\n\n");
+
+            failedElements.asMap().forEach((name, entries) ->
+            {
+                buf.append("Missing ").append(name).append(":\n");
+                entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
+            });
+            LOGGER.error(WORLDPERSISTENCE, buf.toString());
+        }
     }
 
 }

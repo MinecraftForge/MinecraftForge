@@ -1,42 +1,30 @@
 --- a/net/minecraft/world/level/storage/LevelStorageSource.java
 +++ b/net/minecraft/world/level/storage/LevelStorageSource.java
-@@ -178,6 +_,10 @@
-    }
- 
-    static BiFunction<File, DataFixer, PrimaryLevelData> m_78247_(DynamicOps<Tag> p_78248_, DataPackConfig p_78249_) {
-+       return getReader(p_78248_, p_78249_, null);
-+   }
-+
-+   private static BiFunction<File, DataFixer, PrimaryLevelData> getReader(DynamicOps<Tag> p_78248_, DataPackConfig p_78249_, @Nullable LevelStorageAccess levelSave) {
-       return (p_193010_, p_193011_) -> {
-          try {
-             CompoundTag compoundtag = NbtIo.m_128937_(p_193010_);
-@@ -189,7 +_,10 @@
-             Pair<WorldGenSettings, Lifecycle> pair = m_78204_(dynamic, p_193011_, i);
-             LevelVersion levelversion = LevelVersion.m_78390_(dynamic);
-             LevelSettings levelsettings = LevelSettings.m_46924_(dynamic, p_78249_);
--            return PrimaryLevelData.m_78530_(dynamic, p_193011_, i, compoundtag2, levelsettings, levelversion, pair.getFirst(), pair.getSecond());
-+            PrimaryLevelData info = PrimaryLevelData.m_78530_(dynamic, p_193011_, i, compoundtag2, levelsettings, levelversion, pair.getFirst(), pair.getSecond());
-+            if (levelSave != null)
-+               net.minecraftforge.internal.WorldPersistenceHooks.handleWorldDataLoad(levelSave, info, compoundtag);
-+            return info;
-          } catch (Exception exception) {
-             f_78191_.error("Exception reading {}", p_193010_, exception);
-             return null;
-@@ -296,7 +_,7 @@
-       @Nullable
-       public WorldData m_78280_(DynamicOps<Tag> p_78281_, DataPackConfig p_78282_) {
-          this.m_78313_();
--         return LevelStorageSource.this.m_78229_(this.f_78271_.toFile(), LevelStorageSource.m_78247_(p_78281_, p_78282_));
-+         return LevelStorageSource.this.m_78229_(this.f_78271_.toFile(), LevelStorageSource.getReader(p_78281_, p_78282_, this));
+@@ -299,6 +_,19 @@
+          return LevelStorageSource.this.m_78229_(this.f_78271_.toFile(), LevelStorageSource.m_78247_(p_78281_, p_78282_));
        }
  
++      public void readAdditionalLevelSaveData() {
++         m_78313_();
++         LevelStorageSource.this.m_78229_(this.f_78271_.toFile(), (file, dataFixer) -> {
++            try {
++               CompoundTag compoundTag = NbtIo.m_128937_(file);
++               net.minecraftforge.common.ForgeHooks.readAdditionalLevelSaveData(compoundTag);
++            } catch (Exception e) {
++                f_78191_.error("Exception reading {}", file, e);
++            }
++            return null;
++         });
++      }
++
        @Nullable
+       public DataPackConfig m_78309_() {
+          this.m_78313_();
 @@ -315,6 +_,8 @@
           CompoundTag compoundtag1 = new CompoundTag();
           compoundtag1.m_128365_("Data", compoundtag);
  
-+         net.minecraftforge.internal.WorldPersistenceHooks.handleWorldDataSave(this, p_78292_, compoundtag1);
++         net.minecraftforge.common.ForgeHooks.writeAdditionalLevelSaveData(p_78292_, compoundtag1);
 +
           try {
              File file2 = File.createTempFile("level", ".dat", file1);
