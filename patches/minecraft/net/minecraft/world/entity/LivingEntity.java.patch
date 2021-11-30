@@ -600,9 +600,9 @@
 +    * @return The amount of experience
 +    */
 +   public int getTotalExperienceValue(Player player){
-+      if(!this.m_6149_())
++      if(!m_6149_())
 +         return 0;
-+      int i = this.m_6552_(player);
++      int i = m_6552_(player);
 +      return net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, player, i);
     }
  }
