@@ -247,8 +247,8 @@ def sharedDeps = {
     installer "net.minecraftforge:coremods:${COREMODS_VERSION}"
     installer "cpw.mods:modlauncher:${MODLAUNCHER_VERSION}"
     installer 'net.minecraftforge:unsafe:0.2.+'
-    installer 'com.electronwill.night-config:core:3.6.3'
-    installer 'com.electronwill.night-config:toml:3.6.3'
+    installer 'com.electronwill.night-config:core:3.6.4'
+    installer 'com.electronwill.night-config:toml:3.6.4'
     installer 'org.apache.maven:maven-artifact:3.6.3'
     installer 'org.apache.commons:commons-lang3:3.12.0'
     installer 'net.jodah:typetools:0.8.3'
@@ -260,7 +260,7 @@ def sharedDeps = {
     installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
-    installer 'com.google.guava:guava:31.0.1'
+    installer 'com.google.guava:guava:31.0.1-jre'
     installer 'com.google.code.gson:gson:2.8.8'
 
     /*
