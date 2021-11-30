@@ -12,7 +12,6 @@ function initializeCoreMod() {
                 return classNode;
             }
         },
-        /* TODO
         'flowing_fluid_block': {
             'target': {
                 'type': 'CLASS',
@@ -23,7 +22,6 @@ function initializeCoreMod() {
                 return classNode;
             }
         },
-        */
         'bucketitem': {
             'target': {
                 'type': 'CLASS',
