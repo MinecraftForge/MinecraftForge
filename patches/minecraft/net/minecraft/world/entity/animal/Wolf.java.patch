@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Wolf.java
 +++ b/net/minecraft/world/entity/animal/Wolf.java
-@@ -348,7 +_,7 @@
+@@ -353,7 +_,7 @@
                 itemstack.m_41774_(1);
              }
  

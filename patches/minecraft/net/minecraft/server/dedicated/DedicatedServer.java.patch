@@ -8,11 +8,11 @@
              BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
  
              String s1;
-@@ -171,11 +_,13 @@
-          SkullBlockEntity.m_59771_(this.m_129925_());
-          SkullBlockEntity.m_182462_(this);
+@@ -169,11 +_,13 @@
+          long i = Util.m_137569_();
+          SkullBlockEntity.m_196700_(this.m_129927_(), this.m_129925_(), this);
           GameProfileCache.m_11004_(this.m_129797_());
-+         if (!net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
++         if (!net.minecraftforge.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
           f_139598_.info("Preparing level \"{}\"", (Object)this.m_7123_());
           this.m_130006_();
           long j = Util.m_137569_() - i;
@@ -22,7 +22,7 @@
           if (dedicatedserverproperties.f_139744_ != null) {
              this.m_129900_().m_46170_(GameRules.f_46153_).m_46246_(dedicatedserverproperties.f_139744_, this);
           }
-@@ -199,12 +_,13 @@
+@@ -197,12 +_,13 @@
           }
  
           Items.f_41852_.m_6787_(CreativeModeTab.f_40754_, NonNullList.m_122779_());
@@ -33,11 +33,11 @@
           }
  
 -         return true;
-+         return net.minecraftforge.fmllegacy.server.ServerLifecycleHooks.handleServerStarting(this);
++         return net.minecraftforge.server.ServerLifecycleHooks.handleServerStarting(this);
        }
     }
  
-@@ -556,6 +_,11 @@
+@@ -545,6 +_,11 @@
  
     public boolean m_7779_(GameProfile p_139642_) {
        return false;

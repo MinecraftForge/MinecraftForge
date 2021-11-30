@@ -1,7 +1,6 @@
 package net.minecraftforge.fml;
 
 import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;

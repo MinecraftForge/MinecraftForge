@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
 +++ b/net/minecraft/world/level/block/entity/ShulkerBoxBlockEntity.java
-@@ -241,6 +_,11 @@
+@@ -236,6 +_,11 @@
        return this.f_59647_ == ShulkerBoxBlockEntity.AnimationStatus.CLOSED;
     }
  

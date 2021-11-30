@@ -6,11 +6,11 @@
  
 -public final class FluidState extends StateHolder<Fluid, FluidState> {
 +public final class FluidState extends StateHolder<Fluid, FluidState> implements net.minecraftforge.common.extensions.IForgeFluidState {
-    public static final Codec<FluidState> f_76146_ = m_61127_(Registry.f_122822_, Fluid::m_76145_).stable();
+    public static final Codec<FluidState> f_76146_ = m_61127_(Registry.f_122822_.m_194605_(), Fluid::m_76145_).stable();
     public static final int f_164510_ = 9;
     public static final int f_164511_ = 8;
-@@ -102,6 +_,7 @@
-       return this.m_76152_().m_76108_(p_76154_);
+@@ -106,6 +_,7 @@
+       return this.m_76152_() == p_192918_;
     }
  
 +   @Deprecated //Forge: Use more sensitive version

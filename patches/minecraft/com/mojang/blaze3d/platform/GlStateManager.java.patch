@@ -1,6 +1,6 @@
 --- a/com/mojang/blaze3d/platform/GlStateManager.java
 +++ b/com/mojang/blaze3d/platform/GlStateManager.java
-@@ -530,9 +_,16 @@
+@@ -539,9 +_,16 @@
        f_84077_[f_84076_].f_84800_ = false;
     }
  
@@ -8,7 +8,7 @@
 +   public static float lastBrightnessX = 0.0f;
 +   public static float lastBrightnessY = 0.0f;
     public static void m_84160_(int p_84161_, int p_84162_, float p_84163_) {
-       RenderSystem.m_69393_(RenderSystem::m_69587_);
+       RenderSystem.m_187555_();
        GL11.glTexParameterf(p_84161_, p_84162_, p_84163_);
 +      if (p_84161_ == GL13.GL_TEXTURE1) {
 +          lastBrightnessX = p_84162_;

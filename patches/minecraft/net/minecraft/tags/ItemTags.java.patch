@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/ItemTags.java
 +++ b/net/minecraft/tags/ItemTags.java
-@@ -82,6 +_,14 @@
+@@ -84,6 +_,14 @@
        return f_13163_.m_13244_(p_13195_);
     }
  

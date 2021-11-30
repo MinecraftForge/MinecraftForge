@@ -31,7 +31,7 @@
     }
  
     public void m_8119_() {
-+      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onPlayerPreTick(this);
++      net.minecraftforge.event.ForgeEventFactory.onPlayerPreTick(this);
        this.f_19794_ = this.m_5833_();
        if (this.m_5833_()) {
           this.f_19861_ = false;
@@ -48,7 +48,7 @@
        this.m_36372_();
        this.f_36087_.m_41518_();
        this.m_7594_();
-+      net.minecraftforge.fmllegacy.hooks.BasicEventHooks.onPlayerPostTick(this);
++      net.minecraftforge.event.ForgeEventFactory.onPlayerPostTick(this);
     }
  
     public boolean m_36341_() {
@@ -206,7 +206,7 @@
                 boolean flag1 = false;
 -               int i = 0;
 +               float i = (float)this.m_21133_(Attributes.f_22282_); // Forge: Initialize this value to the attack knockback attribute of the player, which is by default 0
-                i = i + EnchantmentHelper.m_44894_(this);
+                i += EnchantmentHelper.m_44894_(this);
                 if (this.m_20142_() && flag) {
                    this.f_19853_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12314_, this.m_5720_(), 1.0F, 1.0F);
 @@ -1055,8 +_,10 @@
@@ -220,7 +220,7 @@
 +                  f *= hitResult.getDamageModifier();
                 }
  
-                f = f + f1;
+                f += f1;
 @@ -1064,9 +_,7 @@
                 double d0 = (double)(this.f_19787_ - this.f_19867_);
                 if (flag && !flag2 && !flag1 && this.f_19861_ && d0 < (double)this.m_6113_()) {

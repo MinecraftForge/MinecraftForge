@@ -38,9 +38,9 @@ import net.minecraftforge.eventbus.api.Event;
 public class RenderHandEvent extends Event
 {
     private final InteractionHand hand;
-    private final PoseStack mat;
-    private final MultiBufferSource buffers;
-    private final int light;
+    private final PoseStack poseStack;
+    private final MultiBufferSource multiBufferSource;
+    private final int packedLight;
     private final float partialTicks;
     private final float interpolatedPitch;
     private final float swingProgress;
@@ -48,14 +48,14 @@ public class RenderHandEvent extends Event
     @Nonnull
     private final ItemStack stack;
 
-    public RenderHandEvent(InteractionHand hand, PoseStack mat, MultiBufferSource buffers, int light,
+    public RenderHandEvent(InteractionHand hand, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight,
                            float partialTicks, float interpolatedPitch,
                            float swingProgress, float equipProgress, @Nonnull ItemStack stack)
     {
         this.hand = hand;
-        this.mat = mat;
-        this.buffers = buffers;
-        this.light = light;
+        this.poseStack = poseStack;
+        this.multiBufferSource = multiBufferSource;
+        this.packedLight = packedLight;
         this.partialTicks = partialTicks;
         this.interpolatedPitch = interpolatedPitch;
         this.swingProgress = swingProgress;
@@ -68,17 +68,17 @@ public class RenderHandEvent extends Event
         return hand;
     }
 
-    public PoseStack getMatrixStack()
+    public PoseStack getPoseStack()
     {
-        return mat;
+        return poseStack;
     }
 
-    public MultiBufferSource getBuffers() {
-        return buffers;
+    public MultiBufferSource getMultiBufferSource() {
+        return multiBufferSource;
     }
 
-    public int getLight() {
-        return light;
+    public int getPackedLight() {
+        return packedLight;
     }
 
     public float getPartialTicks()

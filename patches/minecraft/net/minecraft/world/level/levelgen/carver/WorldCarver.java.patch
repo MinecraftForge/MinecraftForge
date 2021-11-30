@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/carver/WorldCarver.java
 +++ b/net/minecraft/world/level/levelgen/carver/WorldCarver.java
-@@ -27,7 +_,7 @@
+@@ -24,7 +_,7 @@
  import net.minecraft.world.level.material.Fluids;
  import org.apache.commons.lang3.mutable.MutableBoolean;
  

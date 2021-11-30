@@ -78,7 +78,7 @@
 +
 +   private boolean removeBlock(BlockPos p_180235_1_, boolean canHarvest) {
 +      BlockState state = this.f_9244_.m_8055_(p_180235_1_);
-+      boolean removed = state.removedByPlayer(this.f_9244_, p_180235_1_, this.f_9245_, canHarvest, this.f_9244_.m_6425_(p_180235_1_));
++      boolean removed = state.onDestroyedByPlayer(this.f_9244_, p_180235_1_, this.f_9245_, canHarvest, this.f_9244_.m_6425_(p_180235_1_));
 +      if (removed)
 +         state.m_60734_().m_6786_(this.f_9244_, p_180235_1_, state);
 +      return removed;

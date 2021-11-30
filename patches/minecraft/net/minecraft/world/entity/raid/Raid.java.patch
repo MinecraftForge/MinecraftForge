@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/raid/Raid.java
 +++ b/net/minecraft/world/entity/raid/Raid.java
-@@ -809,7 +_,7 @@
+@@ -812,7 +_,7 @@
        }
     }
  
@@ -9,7 +9,7 @@
        VINDICATOR(EntityType.f_20493_, new int[]{0, 0, 2, 0, 1, 4, 2, 5}),
        EVOKER(EntityType.f_20568_, new int[]{0, 0, 0, 0, 0, 1, 1, 2}),
        PILLAGER(EntityType.f_20513_, new int[]{0, 4, 3, 3, 4, 4, 4, 2}),
-@@ -823,6 +_,20 @@
+@@ -826,6 +_,20 @@
        private RaiderType(EntityType<? extends Raider> p_37821_, int[] p_37822_) {
           this.f_37814_ = p_37821_;
           this.f_37815_ = p_37822_;

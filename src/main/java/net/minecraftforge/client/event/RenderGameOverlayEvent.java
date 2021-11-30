@@ -134,14 +134,14 @@ public class RenderGameOverlayEvent extends Event
 
     public static class BossInfo extends Pre
     {
-        private final LerpingBossEvent bossInfo;
+        private final LerpingBossEvent bossEvent;
         private final int x;
         private final int y;
         private int increment;
-        public BossInfo(PoseStack mStack, RenderGameOverlayEvent parent, ElementType type, LerpingBossEvent bossInfo, int x, int y, int increment)
+        public BossInfo(PoseStack mStack, RenderGameOverlayEvent parent, ElementType type, LerpingBossEvent bossEvent, int x, int y, int increment)
         {
             super(mStack, parent, type);
-            this.bossInfo = bossInfo;
+            this.bossEvent = bossEvent;
             this.x = x;
             this.y = y;
             this.increment = increment;
@@ -150,9 +150,9 @@ public class RenderGameOverlayEvent extends Event
         /**
          * @return The {@link LerpingBossEvent} currently being rendered
          */
-        public LerpingBossEvent getBossInfo()
+        public LerpingBossEvent getBossEvent()
         {
-            return bossInfo;
+            return bossEvent;
         }
 
         /**

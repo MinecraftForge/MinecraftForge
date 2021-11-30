@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.loading;
 
-import net.minecraftforge.forgespi.language.MavenVersionAdapter;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;

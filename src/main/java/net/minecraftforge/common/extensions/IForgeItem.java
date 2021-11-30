@@ -55,7 +55,7 @@ import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-// TODO review most of the methods in this "patch"
+// TODO systemic review of all extension functions. lots of unused -C
 public interface IForgeItem
 {
     private Item self()
@@ -325,19 +325,6 @@ public interface IForgeItem
     }
 
     /**
-     * Determines the base experience for a player when they remove this item from a
-     * furnace slot. This number must be between 0 and 1 for it to be valid. This
-     * number will be multiplied by the stack size to get the total experience.
-     *
-     * @param item The item stack the player is picking up.
-     * @return The amount to award for each item.
-     */
-    default float getSmeltingExperience(ItemStack item)
-    {
-        return -1; // -1 will default to the old lookups.
-    }
-
-    /**
      *
      * Should this item, when held, allow sneak-clicks to pass through to the
      * underlying block?
@@ -444,51 +431,6 @@ public interface IForgeItem
     }
 
     /**
-     * Determines if the durability bar should be rendered for this item. Defaults
-     * to vanilla stack.isDamaged behavior. But modders can use this for any data
-     * they wish.
-     *
-     * @param stack The current Item Stack
-     * @return True if it should render the 'durability' bar.
-     * @deprecated To be removed in 1.18. Override {@link Item#isBarVisible(ItemStack)} instead.
-     */
-    @Deprecated(forRemoval = true, since = "1.17.1")
-    default boolean showDurabilityBar(ItemStack stack)
-    {
-        return stack.isDamaged();
-    }
-
-    /**
-     * Queries the percentage of the 'Durability' bar that should be drawn.
-     *
-     * @param stack The current ItemStack
-     * @return 0.0 for 100% (no damage / full bar), 1.0 for 0% (fully damaged /
-     *         empty bar)
-     * @deprecated To be removed in 1.18. Override {@link Item#getBarWidth(ItemStack)} instead, with the notable difference
-     *             that the new method returns the width of the colored bar in pixels (where a full bar is 13px wide).
-     */
-    @Deprecated(forRemoval = true, since = "1.17.1")
-    default double getDurabilityForDisplay(ItemStack stack)
-    {
-        return (double) stack.getDamageValue() / (double) stack.getMaxDamage();
-    }
-
-    /**
-     * Returns the packed int RGB value used to render the durability bar in the
-     * GUI. Defaults to a value based on the hue scaled based on
-     * {@link #getDurabilityForDisplay}, but can be overriden.
-     *
-     * @param stack Stack to get durability from
-     * @return A packed RGB value for the durability colour (0x00RRGGBB)
-     * @deprecated To be removed in 1.18. Override {@link Item#getBarColor(ItemStack)} instead.
-     */
-    @Deprecated(forRemoval = true, since = "1.17.1")
-    default int getRGBDurabilityForDisplay(ItemStack stack)
-    {
-        return Mth.hsvToRgb(Math.max(0.0F, (float) (1.0F - getDurabilityForDisplay(stack))) / 3.0F, 1.0F, 1.0F);
-    }
-
-    /**
      * Return the maxDamage for this ItemStack. Defaults to the maxDamage field in
      * this item, but can be overridden here for other sources such as NBT.
      *
@@ -534,8 +476,7 @@ public interface IForgeItem
      */
     default boolean canPerformAction(ItemStack stack, ToolAction toolAction)
     {
-        // Temporary patch to keep #isShield working until its removed; change to `return false` once removed
-        return isShield(stack, null) && ToolActions.DEFAULT_SHIELD_ACTIONS.contains(toolAction);
+        return false;
     }
 
     /**
@@ -676,14 +617,6 @@ public interface IForgeItem
         return null;
     }
 
-    //TODO, properties dont exist anymore
-//    default ImmutableMap<String, ITimeValue> getAnimationParameters(final ItemStack stack, final World world, final LivingEntity entity)
-//    {
-//        com.google.common.collect.ImmutableMap.Builder<String, ITimeValue> builder = ImmutableMap.builder();
-//        getItem().properties.forEach((k,v) -> builder.put(k.toString(), input -> v.call(stack, world, entity)));
-//        return builder.build();
-//    }
-
     /**
      * Can this Item disable a shield
      *
@@ -696,21 +629,6 @@ public interface IForgeItem
     default boolean canDisableShield(ItemStack stack, ItemStack shield, LivingEntity entity, LivingEntity attacker)
     {
         return this instanceof AxeItem;
-    }
-
-    /**
-     * {@return {@code true} if this item is considered a shield}
-     *
-     * @param stack  the item stack
-     * @param entity the entity holding the item stack
-     * @deprecated To be removed in 1.18. Override {@link #canPerformAction(ItemStack, ToolAction)} and return
-     * {@code true} if the passed in tool action is contained in {@link ToolActions#DEFAULT_SHIELD_ACTIONS} or is
-     * equals to {@link ToolActions#SHIELD_BLOCK}.
-     */
-    @Deprecated(since = "1.17.1", forRemoval = true)
-    default boolean isShield(ItemStack stack, @Nullable LivingEntity entity)
-    {
-        return stack.getItem() == Items.SHIELD;
     }
 
     /**

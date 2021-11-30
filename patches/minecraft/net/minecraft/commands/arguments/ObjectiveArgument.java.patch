@@ -1,6 +1,6 @@
 --- a/net/minecraft/commands/arguments/ObjectiveArgument.java
 +++ b/net/minecraft/commands/arguments/ObjectiveArgument.java
-@@ -34,7 +_,7 @@
+@@ -31,7 +_,7 @@
  
     public static Objective m_101960_(CommandContext<CommandSourceStack> p_101961_, String p_101962_) throws CommandSyntaxException {
        String s = p_101961_.getArgument(p_101962_, String.class);
@@ -9,7 +9,7 @@
        Objective objective = scoreboard.m_83477_(s);
        if (objective == null) {
           throw f_101953_.create(s);
-@@ -63,7 +_,7 @@
+@@ -55,7 +_,7 @@
  
     public <S> CompletableFuture<Suggestions> listSuggestions(CommandContext<S> p_101974_, SuggestionsBuilder p_101975_) {
        if (p_101974_.getSource() instanceof CommandSourceStack) {

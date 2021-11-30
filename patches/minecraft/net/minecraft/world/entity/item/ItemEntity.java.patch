@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/entity/item/ItemEntity.java
 +++ b/net/minecraft/world/entity/item/ItemEntity.java
-@@ -41,6 +_,10 @@
-    private UUID f_31988_;
+@@ -43,6 +_,10 @@
+    @Nullable
     private UUID f_31982_;
     public final float f_31983_;
 +   /**
@@ -11,7 +11,7 @@
  
     public ItemEntity(EntityType<? extends ItemEntity> p_31991_, Level p_31992_) {
        super(p_31991_, p_31992_);
-@@ -57,6 +_,7 @@
+@@ -59,6 +_,7 @@
        this.m_6034_(p_149664_, p_149665_, p_149666_);
        this.m_20334_(p_149668_, p_149669_, p_149670_);
        this.m_32045_(p_149667_);
@@ -19,7 +19,7 @@
     }
  
     private ItemEntity(ItemEntity p_31994_) {
-@@ -80,6 +_,7 @@
+@@ -82,6 +_,7 @@
     }
  
     public void m_8119_() {
@@ -101,7 +101,7 @@
 +         ItemStack copy = itemstack.m_41777_();
 +         if (this.f_31986_ == 0 && (this.f_31982_ == null || lifespan - this.f_31985_ <= 200 || this.f_31982_.equals(p_32040_.m_142081_())) && (hook == 1 || i <= 0 || p_32040_.m_150109_().m_36054_(itemstack))) {
 +            copy.m_41764_(copy.m_41613_() - m_32055_().m_41613_());
-+            net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerItemPickupEvent(p_32040_, this, copy);
++            net.minecraftforge.event.ForgeEventFactory.firePlayerItemPickupEvent(p_32040_, this, copy);
              p_32040_.m_7938_(this, i);
              if (itemstack.m_41619_()) {
                 this.m_146870_();

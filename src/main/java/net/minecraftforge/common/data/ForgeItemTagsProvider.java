@@ -82,9 +82,9 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         tag(Tags.Items.GEMS_PRISMARINE).add(Items.PRISMARINE_CRYSTALS);
         tag(Tags.Items.GEMS_QUARTZ).add(Items.QUARTZ);
         copy(Tags.Blocks.GLASS, Tags.Items.GLASS);
-        func_240521_a_Colored(Tags.Blocks.GLASS, Tags.Items.GLASS);
+        copyColored(Tags.Blocks.GLASS, Tags.Items.GLASS);
         copy(Tags.Blocks.GLASS_PANES, Tags.Items.GLASS_PANES);
-        func_240521_a_Colored(Tags.Blocks.GLASS_PANES, Tags.Items.GLASS_PANES);
+        copyColored(Tags.Blocks.GLASS_PANES, Tags.Items.GLASS_PANES);
         copy(Tags.Blocks.GRAVEL, Tags.Items.GRAVEL);
         tag(Tags.Items.GUNPOWDER).add(Items.GUNPOWDER);
         tag(Tags.Items.HEADS).add(Items.CREEPER_HEAD, Items.DRAGON_HEAD, Items.PLAYER_HEAD, Items.SKELETON_SKULL, Items.WITHER_SKELETON_SKULL, Items.ZOMBIE_HEAD);
@@ -157,7 +157,7 @@ public final class ForgeItemTagsProvider extends ItemTagsProvider
         }
     }
 
-    private void func_240521_a_Colored(Tag.Named<Block> blockGroup, Tag.Named<Item> itemGroup)
+    private void copyColored(Tag.Named<Block> blockGroup, Tag.Named<Item> itemGroup)
     {
         String blockPre = blockGroup.getName().getPath().toUpperCase(Locale.ENGLISH) + '_';
         String itemPre = itemGroup.getName().getPath().toUpperCase(Locale.ENGLISH) + '_';

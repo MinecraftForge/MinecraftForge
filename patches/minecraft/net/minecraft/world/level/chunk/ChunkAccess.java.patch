@@ -1,12 +1,10 @@
 --- a/net/minecraft/world/level/chunk/ChunkAccess.java
 +++ b/net/minecraft/world/level/chunk/ChunkAccess.java
-@@ -158,4 +_,9 @@
-    boolean m_6332_();
+@@ -410,4 +_,7 @@
  
-    void m_8094_(boolean p_62100_);
+    public static record TicksToSave(SerializableTickContainer<Block> f_187680_, SerializableTickContainer<Fluid> f_187681_) {
+    }
 +
 +   @Nullable
-+   default net.minecraft.world.level.LevelAccessor getWorldForge() {
-+      return null;
-+   }
++   public net.minecraft.world.level.LevelAccessor getWorldForge() { return null; }
  }

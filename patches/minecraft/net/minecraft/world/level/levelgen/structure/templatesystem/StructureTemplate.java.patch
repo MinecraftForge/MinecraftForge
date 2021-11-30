@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
 +++ b/net/minecraft/world/level/levelgen/structure/templatesystem/StructureTemplate.java
-@@ -204,6 +_,10 @@
+@@ -200,6 +_,10 @@
        return m_74593_(p_74565_, p_74564_.m_74401_(), p_74564_.m_74404_(), p_74564_.m_74407_());
     }
  
@@ -11,7 +11,7 @@
     public boolean m_74536_(ServerLevelAccessor p_74537_, BlockPos p_74538_, BlockPos p_74539_, StructurePlaceSettings p_74540_, Random p_74541_, int p_74542_) {
        if (this.f_74482_.isEmpty()) {
           return false;
-@@ -221,7 +_,7 @@
+@@ -217,7 +_,7 @@
              int i1 = Integer.MIN_VALUE;
              int j1 = Integer.MIN_VALUE;
  
@@ -20,7 +20,7 @@
                 BlockPos blockpos = structuretemplate$structureblockinfo.f_74675_;
                 if (boundingbox == null || boundingbox.m_71051_(blockpos)) {
                    FluidState fluidstate = p_74540_.m_74413_() ? p_74537_.m_6425_(blockpos) : null;
-@@ -336,7 +_,7 @@
+@@ -329,7 +_,7 @@
              }
  
              if (!p_74540_.m_74408_()) {
@@ -29,7 +29,7 @@
              }
  
              return true;
-@@ -365,14 +_,19 @@
+@@ -358,14 +_,19 @@
        });
     }
  
@@ -50,7 +50,7 @@
           }
  
           if (structuretemplate$structureblockinfo1 != null) {
-@@ -383,13 +_,30 @@
+@@ -376,13 +_,30 @@
        return list;
     }
  
@@ -87,12 +87,12 @@
              ListTag listtag = new ListTag();
              listtag.add(DoubleTag.m_128500_(vec31.f_82479_));
              listtag.add(DoubleTag.m_128500_(vec31.f_82480_));
-@@ -397,10 +_,10 @@
+@@ -390,10 +_,10 @@
              compoundtag.m_128365_("Pos", listtag);
              compoundtag.m_128473_("UUID");
              m_74543_(p_74524_, compoundtag).ifPresent((p_74553_) -> {
 -               float f = p_74553_.m_6961_(p_74526_);
--               f = f + (p_74553_.m_146908_() - p_74553_.m_7890_(p_74527_));
+-               f += p_74553_.m_146908_() - p_74553_.m_7890_(p_74527_);
 +               float f = p_74553_.m_6961_(placementIn.m_74401_());
 +               f = f + (p_74553_.m_146908_() - p_74553_.m_7890_(placementIn.m_74404_()));
                 p_74553_.m_7678_(vec31.f_82479_, vec31.f_82480_, vec31.f_82481_, f, p_74553_.m_146909_());

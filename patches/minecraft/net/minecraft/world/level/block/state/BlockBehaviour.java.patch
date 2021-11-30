@@ -18,9 +18,9 @@
 +      this.lootTableSupplier = lootTableCache != null ? () -> lootTableCache : p_60452_.lootTableSupplier != null ? p_60452_.lootTableSupplier : () -> new ResourceLocation(this.getRegistryName().m_135827_(), "blocks/" + this.getRegistryName().m_135815_());
     }
  
-    @Deprecated
-@@ -132,7 +_,7 @@
- 
+    /** @deprecated */
+@@ -139,7 +_,7 @@
+    /** @deprecated */
     @Deprecated
     public void m_6810_(BlockState p_60515_, Level p_60516_, BlockPos p_60517_, BlockState p_60518_, boolean p_60519_) {
 -      if (p_60515_.m_155947_() && !p_60515_.m_60713_(p_60518_.m_60734_())) {
@@ -28,16 +28,16 @@
           p_60516_.m_46747_(p_60517_);
        }
  
-@@ -202,7 +_,7 @@
- 
+@@ -220,7 +_,7 @@
+    /** @deprecated */
     @Deprecated
     public boolean m_6864_(BlockState p_60470_, BlockPlaceContext p_60471_) {
 -      return this.f_60442_.m_76336_() && (p_60471_.m_43722_().m_41619_() || !p_60471_.m_43722_().m_150930_(this.m_5456_()));
 +      return p_60470_.m_60767_().m_76336_() && (p_60471_.m_43722_().m_41619_() || p_60471_.m_43722_().m_41720_() != this.m_5456_());
     }
  
-    @Deprecated
-@@ -308,8 +_,8 @@
+    /** @deprecated */
+@@ -344,8 +_,8 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -48,7 +48,7 @@
        }
     }
  
-@@ -337,8 +_,7 @@
+@@ -378,8 +_,7 @@
  
     public final ResourceLocation m_60589_() {
        if (this.f_60440_ == null) {
@@ -58,7 +58,7 @@
        }
  
        return this.f_60440_;
-@@ -360,6 +_,14 @@
+@@ -402,6 +_,14 @@
        return this.f_60439_.f_60888_;
     }
  
@@ -73,7 +73,7 @@
     public abstract static class BlockStateBase extends StateHolder<Block, BlockState> {
        private final int f_60594_;
        private final boolean f_60595_;
-@@ -438,18 +_,22 @@
+@@ -480,18 +_,22 @@
           return this.f_60595_;
        }
  
@@ -97,7 +97,7 @@
        public BlockState m_60717_(Rotation p_60718_) {
           return this.m_60734_().m_6843_(this.m_7160_(), p_60718_);
        }
-@@ -821,8 +_,9 @@
+@@ -863,8 +_,9 @@
        ResourceLocation f_60894_;
        boolean f_60895_ = true;
        boolean f_60896_;
@@ -108,7 +108,7 @@
        };
        BlockBehaviour.StatePredicate f_60898_ = (p_60985_, p_60986_, p_60987_) -> {
           return p_60985_.m_60767_().m_76337_() && p_60985_.m_60838_(p_60986_, p_60987_);
-@@ -949,9 +_,15 @@
+@@ -991,9 +_,15 @@
           return this;
        }
  

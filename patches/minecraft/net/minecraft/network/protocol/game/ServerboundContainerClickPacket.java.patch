@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/protocol/game/ServerboundContainerClickPacket.java
 +++ b/net/minecraft/network/protocol/game/ServerboundContainerClickPacket.java
-@@ -47,7 +_,7 @@
+@@ -49,7 +_,7 @@
        p_133961_.writeByte(this.f_133941_);
        p_133961_.m_130068_(this.f_133944_);
        p_133961_.m_178355_(this.f_179569_, FriendlyByteBuf::writeShort, FriendlyByteBuf::m_130055_);

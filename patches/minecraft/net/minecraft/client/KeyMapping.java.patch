@@ -105,7 +105,7 @@
  
     public boolean m_90864_() {
 -      return this.f_90816_.equals(this.f_90814_);
-+      return this.f_90816_.equals(this.f_90814_) && getKeyModifier() == getKeyModifierDefault();
++      return this.f_90816_.equals(this.f_90814_) && getKeyModifier() == getDefaultKeyModifier();
     }
  
     public String m_90865_() {
@@ -174,7 +174,7 @@
 +   }
 +
 +   @Override
-+   public net.minecraftforge.client.settings.KeyModifier getKeyModifierDefault() {
++   public net.minecraftforge.client.settings.KeyModifier getDefaultKeyModifier() {
 +       return keyModifierDefault;
 +   }
 +

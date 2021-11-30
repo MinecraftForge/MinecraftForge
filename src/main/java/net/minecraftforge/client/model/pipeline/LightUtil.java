@@ -117,7 +117,6 @@ public class LightUtil
         }
     }
 
-    // TODO: probably useless now, remove?
     private static final VertexFormat DEFAULT_FROM = VertexLighterFlat.withNormal(DefaultVertexFormat.BLOCK);
     private static final VertexFormat DEFAULT_TO = DefaultVertexFormat.BLOCK;
     private static final int[] DEFAULT_MAPPING = generateMapping(DEFAULT_FROM, DEFAULT_TO);

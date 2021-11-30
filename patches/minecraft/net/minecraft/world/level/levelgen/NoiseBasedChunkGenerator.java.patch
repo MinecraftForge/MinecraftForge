@@ -1,20 +1,20 @@
 --- a/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
 +++ b/net/minecraft/world/level/levelgen/NoiseBasedChunkGenerator.java
-@@ -464,6 +_,9 @@
-    }
- 
-    public WeightedRandomList<MobSpawnSettings.SpawnerData> m_142184_(Biome p_158433_, StructureFeatureManager p_158434_, MobCategory p_158435_, BlockPos p_158436_) {
+@@ -387,6 +_,9 @@
+       if (!p_158434_.m_186605_(p_158436_)) {
+          return super.m_142184_(p_158433_, p_158434_, p_158435_, p_158436_);
+       } else {
 +      WeightedRandomList<MobSpawnSettings.SpawnerData> spawns = net.minecraftforge.common.world.StructureSpawnManager.getStructureSpawns(p_158434_, p_158435_, p_158436_);
 +      if (spawns != null) return spawns;
 +      if (false) {//Forge: We handle these hardcoded cases above in StructureSpawnManager#getStructureSpawns, but allow for insideOnly to be changed and allow for creatures to be spawned in ones other than just the witch hut
-       if (p_158434_.m_47285_(p_158436_, true, StructureFeature.f_67021_).m_73603_()) {
-          if (p_158435_ == MobCategory.MONSTER) {
-             return StructureFeature.f_67021_.m_142494_();
-@@ -486,6 +_,7 @@
-          if (p_158434_.m_47285_(p_158436_, true, StructureFeature.f_67025_).m_73603_()) {
-             return StructureFeature.f_67025_.m_142494_();
+          if (p_158434_.m_186613_(p_158436_, StructureFeature.f_67021_).m_73603_()) {
+             if (p_158435_ == MobCategory.MONSTER) {
+                return SwamplandHutFeature.f_67169_;
+@@ -410,6 +_,7 @@
+                return NetherFortressFeature.f_66381_;
+             }
           }
 +      }
-       }
  
-       return p_158435_ == MobCategory.UNDERGROUND_WATER_CREATURE && p_158434_.m_47285_(p_158436_, false, StructureFeature.f_67023_).m_73603_() ? StructureFeature.f_67023_.m_160477_() : super.m_142184_(p_158433_, p_158434_, p_158435_, p_158436_);
+          return (p_158435_ == MobCategory.UNDERGROUND_WATER_CREATURE || p_158435_ == MobCategory.AXOLOTLS) && p_158434_.m_186607_(p_158436_, StructureFeature.f_67023_).m_73603_() ? MobSpawnSettings.f_151796_ : super.m_142184_(p_158433_, p_158434_, p_158435_, p_158436_);
+       }

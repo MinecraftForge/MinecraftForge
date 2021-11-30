@@ -4,15 +4,15 @@
        this.f_104521_.accept(new TranslatableComponent("connect.joining"));
        this.f_104523_ = p_104547_.m_134774_();
        this.f_104522_.m_129498_(ConnectionProtocol.PLAY);
-+      net.minecraftforge.fmllegacy.network.NetworkHooks.handleClientLoginSuccess(this.f_104522_);
-       this.f_104522_.m_129505_(new ClientPacketListener(this.f_104519_, this.f_104520_, this.f_104522_, this.f_104523_));
++      net.minecraftforge.network.NetworkHooks.handleClientLoginSuccess(this.f_104522_);
+       this.f_104522_.m_129505_(new ClientPacketListener(this.f_104519_, this.f_104520_, this.f_104522_, this.f_104523_, this.f_104519_.m_193590_()));
     }
  
 @@ -143,6 +_,7 @@
     }
  
     public void m_7254_(ClientboundCustomQueryPacket p_104545_) {
-+      if (net.minecraftforge.fmllegacy.network.NetworkHooks.onCustomPayload(p_104545_, this.f_104522_)) return;
++      if (net.minecraftforge.network.NetworkHooks.onCustomPayload(p_104545_, this.f_104522_)) return;
        this.f_104521_.accept(new TranslatableComponent("connect.negotiating"));
        this.f_104522_.m_129512_(new ServerboundCustomQueryPacket(p_104545_.m_134755_(), (FriendlyByteBuf)null));
     }

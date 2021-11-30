@@ -9,7 +9,7 @@
     MONSTER("monster", 70, false, false, 128),
     CREATURE("creature", 10, true, true, 128),
     AMBIENT("ambient", 15, true, false, 128),
-@@ -15,7 +_,7 @@
+@@ -16,7 +_,7 @@
     WATER_AMBIENT("water_ambient", 20, true, false, 64),
     MISC("misc", -1, true, true, 128);
  
@@ -18,7 +18,7 @@
     private static final Map<String, MobCategory> f_21585_ = Arrays.stream(values()).collect(Collectors.toMap(MobCategory::m_21607_, (p_21604_) -> {
        return p_21604_;
     }));
-@@ -56,6 +_,16 @@
+@@ -57,6 +_,16 @@
  
     public boolean m_21610_() {
        return this.f_21588_;

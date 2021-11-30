@@ -4,7 +4,7 @@
        int k1 = (int)((double)this.f_96163_.m_91268_().m_85446_() * 0.8325D);
        float f6 = this.f_96164_.m_7750_();
        this.f_96167_ = Mth.m_14036_(this.f_96167_ * 0.95F + f6 * 0.050000012F, 0.0F, 1.0F);
-+      net.minecraftforge.fmlclient.ClientModLoader.renderProgressText();
++      net.minecraftforge.client.loading.ClientModLoader.renderProgressText();
        if (f < 1.0F) {
           this.m_96182_(p_96178_, i / 2 - j1, k1 - 5, i / 2 + j1, k1 + 5, 1.0F - Mth.m_14036_(f, 0.0F, 1.0F));
        }

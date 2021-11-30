@@ -21,8 +21,9 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
 import cpw.mods.jarhandling.SecureJar;
-import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.LogMarkers;
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
@@ -46,11 +47,9 @@ import java.util.function.Supplier;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
-
 public class ModFile implements IModFile {
     // Mods either must have a mods.toml or a manifest. We can no longer just put any jar on the classpath.
-    @Deprecated(forRemoval = true, since = "1.17.1")
+    @Deprecated(forRemoval = true, since = "1.18")
     public static final Manifest DEFAULTMANIFEST;
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -74,8 +73,7 @@ public class ModFile implements IModFile {
     private List<CoreModFile> coreMods;
     private Path accessTransformer;
 
-    //TODO: Make package private in 1.18+
-    public static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
+    static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
     private SecureJar.Status securityStatus;
 
     public ModFile(final SecureJar jar, final IModLocator locator, final ModFileFactory.ModFileInfoParser parser) {
@@ -120,9 +118,9 @@ public class ModFile implements IModFile {
     public boolean identifyMods() {
         this.modFileInfo = ModFileParser.readModList(this, this.parser);
         if (this.modFileInfo == null) return this.getType() != Type.MOD;
-        LOGGER.debug(LOADING,"Loading mod file {} with languages {}", this.getFilePath(), this.modFileInfo.requiredLanguageLoaders());
+        LOGGER.debug(LogMarkers.LOADING,"Loading mod file {} with languages {}", this.getFilePath(), this.modFileInfo.requiredLanguageLoaders());
         this.coreMods = ModFileParser.getCoreMods(this);
-        this.coreMods.forEach(mi-> LOGGER.debug(LOADING,"Found coremod {}", mi.getPath()));
+        this.coreMods.forEach(mi-> LOGGER.debug(LogMarkers.LOADING,"Found coremod {}", mi.getPath()));
         this.accessTransformer = findResource("META-INF", "accesstransformer.cfg");
         return true;
     }
@@ -189,7 +187,7 @@ public class ModFile implements IModFile {
 
     public void identifyLanguage() {
         this.loaders = this.modFileInfo.requiredLanguageLoaders().stream()
-                .map(spec->FMLLoader.getLanguageLoadingProvider().findLanguage(this, spec.languageName(), spec.acceptedVersions()))
+                .map(spec-> FMLLoader.getLanguageLoadingProvider().findLanguage(this, spec.languageName(), spec.acceptedVersions()))
                 .toList();
     }
 
@@ -211,24 +209,6 @@ public class ModFile implements IModFile {
     @Override
     public IModFileInfo getModFileInfo() {
         return modFileInfo;
-    }
-
-    // TODO: Remove concept of factory from forgeapi.. Why expose this?
-    @Deprecated(forRemoval = true, since="1.17.1")
-    public static ModFileFactory buildFactory() {
-        return ModFile::new;
-    }
-
-    // TODO: Remove helper functions to cleanup api
-    @Deprecated(forRemoval = true, since="1.17.1")
-    public static ModFile newFMLInstance(final IModLocator locator, final SecureJar jar) {
-        return (ModFile) ModFileFactory.FACTORY.build(jar, locator, ModFileParser::modsTomlParser);
-    }
-
-    // TODO: Remove helper functions to cleanup api
-    @Deprecated(forRemoval = true, since="1.17.1")
-    public static ModFile newFMLInstance(final IModLocator locator, final Path... paths) {
-        return (ModFile) ModJarMetadata.buildFile(locator, paths);
     }
 
     @Override

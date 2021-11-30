@@ -4,7 +4,7 @@
     protected void m_5845_(ItemStack p_40185_) {
        if (this.f_40164_ > 0) {
           p_40185_.m_41678_(this.f_40163_.f_19853_, this.f_40163_, this.f_40164_);
-+         net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerCraftingEvent(this.f_40163_, p_40185_, this.f_40162_);
++         net.minecraftforge.event.ForgeEventFactory.firePlayerCraftingEvent(this.f_40163_, p_40185_, this.f_40162_);
        }
  
        if (this.f_40218_ instanceof RecipeHolder) {

@@ -37,7 +37,6 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.components.Widget;
-import net.minecraftforge.fmlclient.gui.GuiUtils;
 
 /**
  * Abstract scroll panel class.
@@ -170,9 +169,6 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     }
 
     protected abstract int getContentHeight();
-
-    // TODO: 1.18 rename and add PoseStack parameter
-    protected void drawBackground() {}
 
     /**
      * Draws the background of the scroll panel. This runs AFTER Scissors are enabled.
@@ -314,8 +310,6 @@ public abstract class ScrollPanel extends AbstractContainerEventHandler implemen
     @Override
     public void render(PoseStack matrix, int mouseX, int mouseY, float partialTicks)
     {
-        this.drawBackground();
-
         Tesselator tess = Tesselator.getInstance();
         BufferBuilder worldr = tess.getBuilder();
 

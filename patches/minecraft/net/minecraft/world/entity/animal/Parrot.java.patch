@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/Parrot.java
 +++ b/net/minecraft/world/entity/animal/Parrot.java
-@@ -235,7 +_,7 @@
+@@ -240,7 +_,7 @@
           }
  
           if (!this.f_19853_.f_46443_) {

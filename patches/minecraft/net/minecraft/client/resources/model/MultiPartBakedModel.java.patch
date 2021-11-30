@@ -45,8 +45,8 @@
        return this.f_119453_;
     }
  
-+   public boolean isAmbientOcclusion(BlockState state) {
-+      return this.defaultModel.isAmbientOcclusion(state);
++   public boolean useAmbientOcclusion(BlockState state) {
++      return this.defaultModel.useAmbientOcclusion(state);
 +   }
 +
     public boolean m_7539_() {

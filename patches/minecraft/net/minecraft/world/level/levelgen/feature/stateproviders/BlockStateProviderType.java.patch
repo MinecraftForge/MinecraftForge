@@ -8,4 +8,4 @@
 +public class BlockStateProviderType<P extends BlockStateProvider> extends net.minecraftforge.registries.ForgeRegistryEntry<BlockStateProviderType<?>> {
     public static final BlockStateProviderType<SimpleStateProvider> f_68752_ = m_68762_("simple_state_provider", SimpleStateProvider.f_68797_);
     public static final BlockStateProviderType<WeightedStateProvider> f_68753_ = m_68762_("weighted_state_provider", WeightedStateProvider.f_68808_);
-    public static final BlockStateProviderType<PlainFlowerProvider> f_68754_ = m_68762_("plain_flower_provider", PlainFlowerProvider.f_68775_);
+    public static final BlockStateProviderType<NoiseThresholdProvider> f_191386_ = m_68762_("noise_threshold_provider", NoiseThresholdProvider.f_191463_);

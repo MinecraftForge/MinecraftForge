@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/PostChain.java
 +++ b/net/minecraft/client/renderer/PostChain.java
-@@ -168,7 +_,8 @@
+@@ -169,7 +_,8 @@
                          throw new ChainedJsonException("Render target '" + s4 + "' can't be used as depth buffer");
                       }
  
@@ -10,7 +10,7 @@
                       Resource resource = null;
  
                       try {
-@@ -278,6 +_,7 @@
+@@ -279,6 +_,7 @@
     public void m_110038_(String p_110039_, int p_110040_, int p_110041_) {
        RenderTarget rendertarget = new TextureTarget(p_110040_, p_110041_, true, Minecraft.f_91002_);
        rendertarget.m_83931_(0.0F, 0.0F, 0.0F, 0.0F);

@@ -13,19 +13,19 @@
                    screen.m_169415_();
                    Screen.m_96579_(() -> {
 -                     aboolean[0] = screen.m_6375_(d0, d1, i);
-+                     aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseClickedPre(this.f_91503_.f_91080_, d0, d1, i);
++                     aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onScreenMouseClickedPre(this.f_91503_.f_91080_, d0, d1, i);
 +                     if (!aboolean[0]) {
 +                        aboolean[0] = this.f_91503_.f_91080_.m_6375_(d0, d1, i);
-+                        aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseClickedPost(this.f_91503_.f_91080_, d0, d1, i, aboolean[0]);
++                        aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onScreenMouseClickedPost(this.f_91503_.f_91080_, d0, d1, i, aboolean[0]);
 +                     }
                    }, "mouseClicked event handler", screen.getClass().getCanonicalName());
                 } else {
                    Screen.m_96579_(() -> {
 -                     aboolean[0] = screen.m_6348_(d0, d1, i);
-+                     aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseReleasedPre(this.f_91503_.f_91080_, d0, d1, i);
++                     aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onScreenMouseReleasedPre(this.f_91503_.f_91080_, d0, d1, i);
 +                     if (!aboolean[0]) {
 +                        aboolean[0] = this.f_91503_.f_91080_.m_6348_(d0, d1, i);
-+                        aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseReleasedPost(this.f_91503_.f_91080_, d0, d1, i, aboolean[0]);
++                        aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onScreenMouseReleasedPost(this.f_91503_.f_91080_, d0, d1, i, aboolean[0]);
 +                     }
                    }, "mouseReleased event handler", screen.getClass().getCanonicalName());
                 }
@@ -54,9 +54,9 @@
                 double d2 = this.f_91508_ * (double)this.f_91503_.m_91268_().m_85446_() / (double)this.f_91503_.m_91268_().m_85444_();
 -               this.f_91503_.f_91080_.m_6050_(d1, d2, d0);
                 this.f_91503_.f_91080_.m_169415_();
-+               if (net.minecraftforge.client.ForgeHooksClient.onGuiMouseScrollPre(this, this.f_91503_.f_91080_, d0)) return;
++               if (net.minecraftforge.client.ForgeHooksClient.onScreenMouseScrollPre(this, this.f_91503_.f_91080_, d0)) return;
 +               if (this.f_91503_.f_91080_.m_6050_(d1, d2, d0)) return;
-+               net.minecraftforge.client.ForgeHooksClient.onGuiMouseScrollPost(this, this.f_91503_.f_91080_, d0);
++               net.minecraftforge.client.ForgeHooksClient.onScreenMouseScrollPost(this, this.f_91503_.f_91080_, d0);
              } else if (this.f_91503_.f_91074_ != null) {
                 if (this.f_91518_ != 0.0D && Math.signum(d0) != Math.signum(this.f_91518_)) {
                    this.f_91518_ = 0.0D;
@@ -73,9 +73,9 @@
                 double d3 = (p_91564_ - this.f_91508_) * (double)this.f_91503_.m_91268_().m_85446_() / (double)this.f_91503_.m_91268_().m_85444_();
                 Screen.m_96579_(() -> {
 -                  screen.m_7979_(d0, d1, this.f_91510_, d2, d3);
-+                  if (net.minecraftforge.client.ForgeHooksClient.onGuiMouseDragPre(this.f_91503_.f_91080_, d0, d1, this.f_91510_, d2, d3)) return;
++                  if (net.minecraftforge.client.ForgeHooksClient.onScreenMouseDragPre(this.f_91503_.f_91080_, d0, d1, this.f_91510_, d2, d3)) return;
 +                  if (screen.m_7979_(d0, d1, this.f_91510_, d2, d3)) return;
-+                  net.minecraftforge.client.ForgeHooksClient.onGuiMouseDragPost(this.f_91503_.f_91080_, d0, d1, this.f_91510_, d2, d3);
++                  net.minecraftforge.client.ForgeHooksClient.onScreenMouseDragPost(this.f_91503_.f_91080_, d0, d1, this.f_91510_, d2, d3);
                 }, "mouseDragged event handler", screen.getClass().getCanonicalName());
              }
  

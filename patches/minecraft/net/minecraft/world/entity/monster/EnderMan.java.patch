@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/EnderMan.java
 +++ b/net/minecraft/world/entity/monster/EnderMan.java
-@@ -98,7 +_,6 @@
+@@ -105,7 +_,6 @@
     }
  
     public void m_6710_(@Nullable LivingEntity p_32537_) {
@@ -8,7 +8,7 @@
        AttributeInstance attributeinstance = this.m_21051_(Attributes.f_22279_);
        if (p_32537_ == null) {
           this.f_32477_ = 0;
-@@ -113,6 +_,7 @@
+@@ -120,6 +_,7 @@
           }
        }
  
@@ -16,7 +16,7 @@
     }
  
     protected void m_8097_() {
-@@ -186,7 +_,7 @@
+@@ -194,7 +_,7 @@
  
     boolean m_32534_(Player p_32535_) {
        ItemStack itemstack = p_32535_.m_150109_().f_35975_.get(3);
@@ -25,7 +25,7 @@
           return false;
        } else {
           Vec3 vec3 = p_32535_.m_20252_(1.0F).m_82541_();
-@@ -265,7 +_,9 @@
+@@ -273,7 +_,9 @@
        boolean flag = blockstate.m_60767_().m_76334_();
        boolean flag1 = blockstate.m_60819_().m_76153_(FluidTags.f_13131_);
        if (flag && !flag1) {
@@ -36,7 +36,7 @@
           if (flag2 && !this.m_20067_()) {
              this.f_19853_.m_6263_((Player)null, this.f_19854_, this.f_19855_, this.f_19856_, SoundEvents.f_11852_, this.m_5720_(), 1.0F, 1.0F);
              this.m_5496_(SoundEvents.f_11852_, 1.0F, 1.0F);
-@@ -382,7 +_,7 @@
+@@ -407,7 +_,7 @@
        public boolean m_8036_() {
           if (this.f_32554_.m_32530_() == null) {
              return false;
@@ -44,8 +44,8 @@
 +         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_32554_.f_19853_, this.f_32554_)) {
              return false;
           } else {
-             return this.f_32554_.m_21187_().nextInt(2000) == 0;
-@@ -402,7 +_,7 @@
+             return this.f_32554_.m_21187_().nextInt(m_186073_(2000)) == 0;
+@@ -427,7 +_,7 @@
           BlockState blockstate2 = this.f_32554_.m_32530_();
           if (blockstate2 != null) {
              blockstate2 = Block.m_49931_(blockstate2, this.f_32554_.f_19853_, blockpos);
@@ -54,7 +54,7 @@
                 level.m_7731_(blockpos, blockstate2, 3);
                 level.m_142346_(this.f_32554_, GameEvent.f_157797_, blockpos);
                 this.f_32554_.m_32521_((BlockState)null);
-@@ -412,7 +_,7 @@
+@@ -437,7 +_,7 @@
        }
  
        private boolean m_32558_(Level p_32559_, BlockPos p_32560_, BlockState p_32561_, BlockState p_32562_, BlockState p_32563_, BlockPos p_32564_) {
@@ -63,7 +63,7 @@
        }
     }
  
-@@ -501,7 +_,7 @@
+@@ -527,7 +_,7 @@
        public boolean m_8036_() {
           if (this.f_32583_.m_32530_() != null) {
              return false;
@@ -71,4 +71,4 @@
 +         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.f_32583_.f_19853_, this.f_32583_)) {
              return false;
           } else {
-             return this.f_32583_.m_21187_().nextInt(20) == 0;
+             return this.f_32583_.m_21187_().nextInt(m_186073_(20)) == 0;

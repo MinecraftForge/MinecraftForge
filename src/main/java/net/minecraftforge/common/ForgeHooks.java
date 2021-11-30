@@ -28,13 +28,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
@@ -45,9 +43,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -83,7 +79,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.context.UseOnContext;
@@ -97,16 +92,11 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.Registry;
 import net.minecraft.core.MappedRegistry;
-import net.minecraft.resources.RegistryReadOps;
-import net.minecraft.resources.RegistryWriteOps;
 import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -126,8 +116,8 @@ import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
-import net.minecraftforge.common.world.ForgeWorldType;
-import net.minecraftforge.common.world.MobSpawnInfoBuilder;
+import net.minecraftforge.common.world.ForgeWorldPreset;
+import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -162,13 +152,12 @@ import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fmllegacy.packs.ResourcePackLoader;
+import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
-import net.minecraftforge.versions.mcp.MCPVersion;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -184,17 +173,13 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.material.EmptyFluid;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.LavaFluid;
 import net.minecraft.world.level.material.WaterFluid;
 
@@ -242,7 +227,7 @@ public class ForgeHooks
             if (isCreative && Screen.hasControlDown() && state.hasBlockEntity())
                 te = world.getBlockEntity(pos);
 
-            result = state.getPickBlock(target, world, pos, player);
+            result = state.getCloneItemStack(target, world, pos, player);
 
             if (result.isEmpty())
                 LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), state.getBlock().getRegistryName());
@@ -846,9 +831,9 @@ public class ForgeHooks
         throw new RuntimeException("Mod fluids must override createAttributes.");
     }
 
-    public static String getDefaultWorldType()
+    public static String getDefaultWorldPreset()
     {
-        ForgeWorldType def = ForgeWorldType.getDefaultWorldType();
+        ForgeWorldPreset def = ForgeWorldPreset.getDefaultWorldPreset();
         if (def != null)
             return def.getRegistryName().toString();
         return "default";
@@ -870,16 +855,16 @@ public class ForgeHooks
     @FunctionalInterface
     public interface BiomeCallbackFunction
     {
-        Biome apply(final Biome.ClimateSettings climate, final Biome.BiomeCategory category, final Float depth, final Float scale, final BiomeSpecialEffects effects, final BiomeGenerationSettings gen, final MobSpawnSettings spawns);
+        Biome apply(final Biome.ClimateSettings climate, final Biome.BiomeCategory category, final BiomeSpecialEffects effects, final BiomeGenerationSettings gen, final MobSpawnSettings spawns);
     }
 
-    public static Biome enhanceBiome(@Nullable final ResourceLocation name, final Biome.ClimateSettings climate, final Biome.BiomeCategory category, final Float depth, final Float scale, final BiomeSpecialEffects effects, final BiomeGenerationSettings gen, final MobSpawnSettings spawns, final RecordCodecBuilder.Instance<Biome> codec, final BiomeCallbackFunction callback)
+    public static Biome enhanceBiome(@Nullable final ResourceLocation name, final Biome.ClimateSettings climate, final Biome.BiomeCategory category, final BiomeSpecialEffects effects, final BiomeGenerationSettings gen, final MobSpawnSettings spawns, final RecordCodecBuilder.Instance<Biome> codec, final BiomeCallbackFunction callback)
     {
         BiomeGenerationSettingsBuilder genBuilder = new BiomeGenerationSettingsBuilder(gen);
-        MobSpawnInfoBuilder spawnBuilder = new MobSpawnInfoBuilder(spawns);
-        BiomeLoadingEvent event = new BiomeLoadingEvent(name, climate, category, depth, scale, effects, genBuilder, spawnBuilder);
+        MobSpawnSettingsBuilder spawnBuilder = new MobSpawnSettingsBuilder(spawns);
+        BiomeLoadingEvent event = new BiomeLoadingEvent(name, climate, category, effects, genBuilder, spawnBuilder);
         MinecraftForge.EVENT_BUS.post(event);
-        return callback.apply(event.getClimate(), event.getCategory(), event.getDepth(), event.getScale(), event.getEffects(), event.getGeneration().build(), event.getSpawns().build()).setRegistryName(name);
+        return callback.apply(event.getClimate(), event.getCategory(), event.getEffects(), event.getGeneration().build(), event.getSpawns().build()).setRegistryName(name);
     }
 
     private static class LootTableContext
@@ -1225,76 +1210,6 @@ public class ForgeHooks
     private static final String SEED_KEY = "seed";
     //No to static init!
     private static final Supplier<Codec<MappedRegistry<LevelStem>>> CODEC = Suppliers.memoize(() -> MappedRegistry.dataPackCodec(Registry.LEVEL_STEM_REGISTRY, Lifecycle.stable(), LevelStem.CODEC).xmap(LevelStem::sortMap, Function.identity()));
-
-    /**
-     * Restores previously "deleted" dimensions to the world.
-     * The {@link LenientUnboundedMapCodec} prevents this from happening, this is to fix any world from before the fix.
-     * TODO: Remove in 1.18
-     */
-    public static <T> Dynamic<T> fixUpDimensionsData(Dynamic<T> data)
-    {
-        if (!"1.17.1".equals(MCPVersion.getMCVersion()))
-            throw new IllegalStateException("Calling deprecated code that was scheduled for removal after 1.17.1 in version: " + MCPVersion.getMCVersion());
-
-        if(!(data.getOps() instanceof RegistryReadOps))
-            return data;
-
-        RegistryReadOps<T> ops = (RegistryReadOps<T>) data.getOps();
-        Dynamic<T> dymData = data.get(DIMENSIONS_KEY).orElseEmptyMap();
-        Dynamic<T> withInjected = dymData.asMapOpt().map(current ->
-        {
-            List<Pair<String, T>> currentList = current.map(p -> p.mapFirst(dyn -> dyn.asString().result().orElse("")).mapSecond(Dynamic::getValue)).collect(Collectors.toList());
-            Set<String> currentDimNames = currentList.stream().map(Pair::getFirst).collect(Collectors.toSet());
-
-            // FixUp deleted vanilla dims.
-            if (!currentDimNames.containsAll(VANILLA_DIMS))
-            {
-                LOGGER.warn("Detected missing vanilla dimensions from the world!");
-                RegistryAccess regs = ops.registryAccess;
-                if (regs == null) // should not happen, but it could after a MC version update.
-                    throw new RuntimeException("Could not access dynamic registries using reflection. " +
-                            "The world was detected to have missing vanilla dimensions and the attempted fix did not work.");
-
-                long seed = data.get(SEED_KEY).get().result().map(d -> d.asLong(0L)).orElse(0L);
-                Registry<Biome> biomeReg = regs.registryOrThrow(Registry.BIOME_REGISTRY);
-                Registry<DimensionType> typeReg = regs.registryOrThrow(Registry.DIMENSION_TYPE_REGISTRY);
-                Registry<NoiseGeneratorSettings> noiseReg = regs.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
-
-                //Loads the default nether and end
-                MappedRegistry<LevelStem> dimReg = DimensionType.defaultDimensions(typeReg, biomeReg, noiseReg, seed);
-                //Loads the default overworld
-                dimReg = WorldGenSettings.withOverworld(typeReg, dimReg, WorldGenSettings.makeDefaultOverworld(biomeReg, noiseReg, seed));
-
-                // Encode and decode the registry. This adds any dimensions from datapacks (see SimpleRegistryCodec#decode), but only the vanilla overrides are needed.
-                // This assumes that the datapacks for the vanilla dimensions have not changed since they were "deleted"
-                // If they did, this will be seen in newly generated chunks.
-                // Since this is to fix an older world, from before the fixes by forge, there is no way to know the state of the dimension when it was "deleted".
-                dimReg = CODEC.get().encodeStart(RegistryWriteOps.create(ops, regs), dimReg).flatMap(t -> CODEC.get().parse(ops, t)).result().orElse(dimReg);
-                for (String name : VANILLA_DIMS)
-                {
-                    if (currentDimNames.contains(name))
-                        continue;
-                    LevelStem dim = dimReg.get(new ResourceLocation(name));
-                    if (dim == null)
-                    {
-                        LOGGER.error("The world is missing dimension: " + name + ", but the attempt to re-inject it failed.");
-                        continue;
-                    }
-                    LOGGER.info("Fixing world: re-injected dimension: " + name);
-                    Optional<T> dimT = LevelStem.CODEC.encodeStart(RegistryWriteOps.create(ops, regs), dim).resultOrPartial(s->{});
-                    if (dimT.isPresent())
-                        currentList.add(Pair.of(name, dimT.get()));
-                    else
-                        LOGGER.error("Could not re-encode dimension " + name + ", can not be re-injected.");
-                }
-            }
-            else
-                return dymData;
-
-            return new Dynamic<>(ops, ops.createMap(currentList.stream().map(p -> p.mapFirst(ops::createString))));
-        }).result().orElse(dymData);
-        return data.set(DIMENSIONS_KEY, withInjected);
-    }
 
     private static final Map<EntityType<? extends LivingEntity>, AttributeSupplier> FORGE_ATTRIBUTES = new HashMap<>();
     /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */

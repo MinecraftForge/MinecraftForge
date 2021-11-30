@@ -42,14 +42,14 @@ public interface IForgeKeyMapping
     
     default void setToDefault()
     {
-        setKeyModifierAndCode(getKeyModifierDefault(), self().getDefaultKey());
+        setKeyModifierAndCode(getDefaultKeyModifier(), self().getDefaultKey());
     }
 
     void setKeyConflictContext(IKeyConflictContext keyConflictContext);
 
     IKeyConflictContext getKeyConflictContext();
 
-    KeyModifier getKeyModifierDefault();
+    KeyModifier getDefaultKeyModifier();
 
     KeyModifier getKeyModifier();
 
@@ -63,7 +63,7 @@ public interface IForgeKeyMapping
     /**
      * Returns true when one of the bindings' key codes conflicts with the other's modifier.
      */
-    default boolean hasKeyCodeModifierConflict(KeyMapping other)
+    default boolean hasKeyModifierConflict(KeyMapping other)
     {
         if (getKeyConflictContext().conflicts(other.getKeyConflictContext()) || other.getKeyConflictContext().conflicts(getKeyConflictContext()))
         {

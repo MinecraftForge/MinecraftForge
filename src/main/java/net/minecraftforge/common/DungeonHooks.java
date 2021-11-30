@@ -23,8 +23,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
+import net.minecraft.util.random.WeightedEntry;
+import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.util.WeighedRandom;
 
 public class DungeonHooks
 {
@@ -58,7 +59,7 @@ public class DungeonHooks
             if (type == mob.type)
             {
                 itr.remove();
-                rarity = mob.weight + rarity;
+                rarity = /* mob.weight */ 0 + rarity;
                 break;
             }
         }
@@ -80,7 +81,7 @@ public class DungeonHooks
             if (name == mob.type)
             {
                 dungeonMobs.remove(mob);
-                return mob.weight;
+                return 0; // mob.weight;
             }
         }
         return 0;
@@ -93,12 +94,12 @@ public class DungeonHooks
      */
     public static EntityType<?> getRandomDungeonMob(Random rand)
     {
-        DungeonMob mob = WeighedRandom.getRandomItem(rand, dungeonMobs).orElseThrow();
-        return mob.type;
+        DungeonMob mob = WeightedRandom.getRandomItem(rand, dungeonMobs).orElseThrow();
+        return null; // mob.type;
     }
 
 
-    public static class DungeonMob extends WeighedRandom.WeighedRandomItem
+    public static class DungeonMob extends WeightedEntry.IntrusiveBase
     {
         public final EntityType<?> type;
         public DungeonMob(int weight, EntityType<?> type)

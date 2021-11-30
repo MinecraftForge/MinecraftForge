@@ -131,9 +131,9 @@ public interface IForgeBlockState
      * @param fluid The current fluid and block state for the position in the world.
      * @return True if the block is actually destroyed.
      */
-    default boolean removedByPlayer(Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid)
+    default boolean onDestroyedByPlayer(Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid)
     {
-        return self().getBlock().removedByPlayer(self(), world, pos, player, willHarvest, fluid);
+        return self().getBlock().onDestroyedByPlayer(self(), world, pos, player, willHarvest, fluid);
     }
 
     /**
@@ -160,9 +160,9 @@ public interface IForgeBlockState
      * @param type The Mob Category Type
      * @return True to allow a mob of the specified category to spawn, false to prevent it.
      */
-    default boolean canCreatureSpawn(LevelReader world, BlockPos pos, Type type, EntityType<?> entityType)
+    default boolean isValidSpawn(LevelReader world, BlockPos pos, Type type, EntityType<?> entityType)
     {
-        return self().getBlock().canCreatureSpawn(self(), world, pos, type, entityType);
+        return self().getBlock().isValidSpawn(self(), world, pos, type, entityType);
     }
 
     /**
@@ -227,9 +227,9 @@ public interface IForgeBlockState
      * @param target The full target the player is looking at
      * @return A ItemStack to add to the player's inventory, empty itemstack if nothing should be added.
      */
-    default ItemStack getPickBlock(HitResult target, BlockGetter world, BlockPos pos, Player player)
+    default ItemStack getCloneItemStack(HitResult target, BlockGetter world, BlockPos pos, Player player)
     {
-        return self().getBlock().getPickBlock(self(), target, world, pos, player);
+        return self().getBlock().getCloneItemStack(self(), target, world, pos, player);
     }
 
     /**
@@ -490,9 +490,9 @@ public interface IForgeBlockState
      * @param face The face that the fire is coming from
      * @param igniter The entity that lit the fire
      */
-    default void catchFire(Level world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter)
+    default void onCaughtFire(Level world, BlockPos pos, @Nullable Direction face, @Nullable LivingEntity igniter)
     {
-        self().getBlock().catchFire(self(), world, pos, face, igniter);
+        self().getBlock().onCaughtFire(self(), world, pos, face, igniter);
     }
 
     /**
@@ -550,14 +550,14 @@ public interface IForgeBlockState
     }
 
     /**
-     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
+     * Get the {@code BlockPathTypes} for this block. Return {@code null} for vanilla behavior.
      *
      * @return the PathNodeType
      */
     @Nullable
-    default BlockPathTypes getAiPathNodeType(BlockGetter world, BlockPos pos)
+    default BlockPathTypes getBlockPathType(BlockGetter world, BlockPos pos)
     {
-        return getAiPathNodeType(world, pos, null);
+        return getBlockPathType(world, pos, null);
     }
 
     /**
@@ -566,7 +566,7 @@ public interface IForgeBlockState
      * @return the PathNodeType
      */
     @Nullable
-    default BlockPathTypes getAiPathNodeType(BlockGetter world, BlockPos pos, @Nullable Mob entity)
+    default BlockPathTypes getBlockPathType(BlockGetter world, BlockPos pos, @Nullable Mob entity)
     {
         return self().getBlock().getAiPathNodeType(self(), world, pos, entity);
     }

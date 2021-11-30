@@ -25,14 +25,14 @@ import com.google.common.collect.Multimap;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import org.apache.logging.log4j.message.SimpleMessage;
 
 import java.util.Collection;
 
-import static net.minecraftforge.client.model.ModelLoader.getInventoryVariant;
+import static net.minecraftforge.client.model.ForgeModelBakery.getInventoryVariant;
 
 public class ModelLoaderErrorMessage extends SimpleMessage
 {
@@ -93,9 +93,9 @@ public class ModelLoaderErrorMessage extends SimpleMessage
                 errorMsg += " for items [\"" + Joiner.on("\", \"").join(items) + "\"]";
             }
         }
-        if(exception instanceof ModelLoader.ItemLoadingException)
+        if(exception instanceof ForgeModelBakery.ItemLoadingException)
         {
-            ModelLoader.ItemLoadingException ex = (ModelLoader.ItemLoadingException)exception;
+            ForgeModelBakery.ItemLoadingException ex = (ForgeModelBakery.ItemLoadingException)exception;
 //            LOGGER.error("{}, normal location exception: ", errorMsg, ex.normalException);
 //            LOGGER.error("{}, blockstate location exception: ", errorMsg, ex.blockstateException);
         }

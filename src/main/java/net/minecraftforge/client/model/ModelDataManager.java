@@ -45,7 +45,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 @EventBusSubscriber(modid = "forge", bus = Bus.FORGE, value = Dist.CLIENT)
 public class ModelDataManager
 {
-    private static WeakReference<Level> currentWorld = new WeakReference<>(null);
+    private static WeakReference<Level> currentLevel = new WeakReference<>(null);
     
     private static final Map<ChunkPos, Set<BlockPos>> needModelDataRefresh = new ConcurrentHashMap<>();
     
@@ -55,9 +55,9 @@ public class ModelDataManager
     {
         Preconditions.checkNotNull(world, "World must not be null");
         Preconditions.checkArgument(world == Minecraft.getInstance().level, "Cannot use model data for a world other than the current client world");
-        if (world != currentWorld.get())
+        if (world != currentLevel.get())
         {
-            currentWorld = new WeakReference<>(world);
+            currentLevel = new WeakReference<>(world);
             needModelDataRefresh.clear();
             modelDataCache.clear();
         }

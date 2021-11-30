@@ -12,7 +12,7 @@
     protected static final UUID f_41374_ = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
     protected static final UUID f_41375_ = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
     public static final int f_150884_ = 64;
-@@ -92,7 +_,8 @@
+@@ -95,7 +_,8 @@
              f_150883_.error("Item classes should end with Item and {} doesn't.", (Object)s);
           }
        }
@@ -22,7 +22,7 @@
     }
  
     public void m_5929_(Level p_41428_, LivingEntity p_41429_, ItemStack p_41430_, int p_41431_) {
-@@ -138,10 +_,12 @@
+@@ -141,10 +_,12 @@
        return this.m_41472_() ? p_41411_.m_5584_(p_41410_, p_41409_) : p_41409_;
     }
  
@@ -35,27 +35,7 @@
     public final int m_41462_() {
        return this.f_41371_;
     }
-@@ -151,16 +_,15 @@
-    }
- 
-    public boolean m_142522_(ItemStack p_150899_) {
--      return p_150899_.m_41768_();
-+      return p_150899_.m_41720_().showDurabilityBar(p_150899_);
-    }
- 
-    public int m_142158_(ItemStack p_150900_) {
--      return Math.round(13.0F - (float)p_150900_.m_41773_() * 13.0F / (float)this.f_41371_);
-+      return Math.round(13.0F - ((float) p_150900_.m_41720_().getDurabilityForDisplay(p_150900_) * 13.0F));
-    }
- 
-    public int m_142159_(ItemStack p_150901_) {
--      float f = Math.max(0.0F, ((float)this.f_41371_ - (float)p_150901_.m_41773_()) / (float)this.f_41371_);
--      return Mth.m_14169_(f / 3.0F, 1.0F, 1.0F);
-+      return p_150901_.m_41720_().getRGBDurabilityForDisplay(p_150901_);
-    }
- 
-    public boolean m_142207_(ItemStack p_150888_, Slot p_150889_, ClickAction p_150890_, Player p_150891_) {
-@@ -216,10 +_,12 @@
+@@ -219,10 +_,12 @@
     }
  
     @Nullable
@@ -68,7 +48,7 @@
     public boolean m_41470_() {
        return this.f_41378_ != null;
     }
-@@ -282,7 +_,7 @@
+@@ -285,7 +_,7 @@
     }
  
     public boolean m_8120_(ItemStack p_41456_) {
@@ -77,7 +57,7 @@
     }
  
     protected static BlockHitResult m_41435_(Level p_41436_, Player p_41437_, ClipContext.Fluid p_41438_) {
-@@ -295,8 +_,8 @@
+@@ -298,8 +_,8 @@
        float f5 = Mth.m_14031_(-f * ((float)Math.PI / 180F));
        float f6 = f3 * f4;
        float f7 = f2 * f4;
@@ -88,7 +68,7 @@
        return p_41436_.m_45547_(new ClipContext(vec3, vec31, ClipContext.Block.OUTLINE, p_41438_, p_41437_));
     }
  
-@@ -312,6 +_,7 @@
+@@ -315,6 +_,7 @@
     }
  
     protected boolean m_41389_(CreativeModeTab p_41390_) {
@@ -96,7 +76,7 @@
        CreativeModeTab creativemodetab = this.m_41471_();
        return creativemodetab != null && (p_41390_ == CreativeModeTab.f_40754_ || p_41390_ == creativemodetab);
     }
-@@ -325,12 +_,26 @@
+@@ -328,12 +_,26 @@
        return false;
     }
  
@@ -124,7 +104,7 @@
     }
  
     public ItemStack m_7968_() {
-@@ -371,6 +_,32 @@
+@@ -374,6 +_,32 @@
        return true;
     }
  
@@ -157,15 +137,15 @@
     public static class Properties {
        int f_41478_ = 64;
        int f_41479_;
-@@ -379,6 +_,7 @@
-       Rarity f_41482_ = Rarity.COMMON;
+@@ -385,6 +_,7 @@
+       @Nullable
        FoodProperties f_41483_;
        boolean f_41484_;
 +      private boolean canRepair = true;
  
        public Item.Properties m_41489_(FoodProperties p_41490_) {
           this.f_41483_ = p_41490_;
-@@ -421,6 +_,11 @@
+@@ -427,6 +_,11 @@
  
        public Item.Properties m_41486_() {
           this.f_41484_ = true;
