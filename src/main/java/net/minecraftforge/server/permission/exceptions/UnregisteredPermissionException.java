@@ -17,20 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.server.permission;
+package net.minecraftforge.server.permission.exceptions;
 
-/**
- * <table><caption>Default Permission Levels</caption>
- * <thead><tr><th>Level</th><th>Player</th><th>OP</th></tr>
- * </thead><tbody>
- * <tr><td>ALL</td><td>true</td><td>true</td></tr>
- * <tr><td>OP</td><td>false</td><td>true</td></tr>
- * <tr><td>NONE</td><td>false</td><td>false</td></tr>
- * </tbody></table>
- */
-public enum DefaultPermissionLevel
+import net.minecraftforge.server.permission.nodes.PermissionNode;
+
+public class UnregisteredPermissionException extends RuntimeException
 {
-    ALL,
-    OP,
-    NONE
+    private PermissionNode node;
+
+    public UnregisteredPermissionException(PermissionNode node)
+    {
+        super(String.format("Tried to query PermissionNode '%s' although it has not been Registered", node.getNodeName()));
+        this.node = node;
+    }
+
+    public PermissionNode getNode()
+    {
+        return node;
+    }
 }

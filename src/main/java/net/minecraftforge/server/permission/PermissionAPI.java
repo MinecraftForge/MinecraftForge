@@ -19,80 +19,101 @@
 
 package net.minecraftforge.server.permission;
 
-import com.google.common.base.Preconditions;
-import com.mojang.authlib.GameProfile;
-import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.server.permission.context.IContext;
-import net.minecraftforge.server.permission.context.PlayerContext;
-
-import javax.annotation.Nullable;
-
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringRepresentable;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.server.permission.events.PermissionGatherEvent;
+import net.minecraftforge.server.permission.exceptions.UnregisteredPermissionException;
+import net.minecraftforge.server.permission.handler.DefaultPermissionHandler;
+import net.minecraftforge.server.permission.handler.IPermissionHandler;
+import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
+import net.minecraftforge.server.permission.nodes.PermissionNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class PermissionAPI
+import java.util.Collection;
+import java.util.UUID;
+
+public final class PermissionAPI
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    
-    private static IPermissionHandler permissionHandler = DefaultPermissionHandler.INSTANCE;
+    private static IPermissionHandler activeHandler = new DefaultPermissionHandler();
 
-    /**
-     * <b>Only use this in PreInit state!</b>
-     */
-    public static void setPermissionHandler(IPermissionHandler handler)
+    public static Collection<PermissionNode<?>> getRegisteredNodes()
     {
-        Preconditions.checkNotNull(handler, "Permission handler can't be null!");
-        // TODO Loader states Preconditions.checkState(Loader.instance().getLoaderState().ordinal() <= LoaderState.PREINITIALIZATION.ordinal(), "Can't register after IPermissionHandler PreInit!");
-        LOGGER.warn("Replacing {} with {}", permissionHandler.getClass().getName(), handler.getClass().getName());
-        permissionHandler = handler;
+        return activeHandler.getRegisteredNodes();
     }
 
-    public static IPermissionHandler getPermissionHandler()
+    private PermissionAPI()
     {
-        return permissionHandler;
     }
 
     /**
-     * <b>Only use this after PreInit state!</b>
+     * <p>Queries a player's permission for a given node and contexts</p>
+     * <p><strong>Warning:</strong> PermissionNodes <strong>must</strong> be registered using the
+     * {@link PermissionGatherEvent.Nodes} event before querying.</p>
      *
-     * @param node  Permission node, best if it's lowercase and contains '.' (e.g. <code>"modid.subgroup.permission_id"</code>)
-     * @param level Default permission level for this node. If not isn't registered, it's level is going to be 'NONE'
-     * @param desc  Optional description of the node
+     * @param player  player for which you want to check permissions
+     * @param node    the PermissionNode for which you want to query
+     * @param context optional array of PermissionDynamicContext, single entries will be ignored if they weren't
+     *                registered to the node
+     * @param <T>     type of the queried PermissionNode
+     * @return a value of type {@code <T>}, that the combination of Player and PermissionNode map to, defaults to the
+     * PermissionNodes default handler.
+     * @throws UnregisteredPermissionException when the PermissionNode wasn't registered properly
      */
-    public static String registerNode(String node, DefaultPermissionLevel level, String desc)
+    public static <T> T getPermission(ServerPlayer player, PermissionNode<T> node, PermissionDynamicContext<? extends StringRepresentable>... context)
     {
-        Preconditions.checkNotNull(node, "Permission node can't be null!");
-        Preconditions.checkNotNull(level, "Permission level can't be null!");
-        Preconditions.checkNotNull(desc, "Permission description can't be null!");
-        Preconditions.checkArgument(!node.isEmpty(), "Permission node can't be empty!");
-        // TODO Loader states Preconditions.checkState(Loader.instance().getLoaderState().ordinal() > LoaderState.PREINITIALIZATION.ordinal(), "Can't register permission nodes before Init!");
-        permissionHandler.registerNode(node, level, desc);
-        return node;
+        if (!activeHandler.getRegisteredNodes().contains(node)) throw new UnregisteredPermissionException(node);
+        return activeHandler.getPermission(player, node, context);
     }
 
     /**
-     * @param profile GameProfile of the player who is requesting permission. The player doesn't have to be online
-     * @param node    Permission node. See {@link #registerNode(String, DefaultPermissionLevel, String)}
-     * @param context Context for this permission. Highly recommended to not be null. See {@link IContext}
-     * @return true, if player has permission, false if he does not.
-     * @see DefaultPermissionHandler
-     */
-    public static boolean hasPermission(GameProfile profile, String node, @Nullable IContext context)
-    {
-        Preconditions.checkNotNull(profile, "GameProfile can't be null!");
-        Preconditions.checkNotNull(node, "Permission node can't be null!");
-        Preconditions.checkArgument(!node.isEmpty(), "Permission node can't be empty!");
-        return permissionHandler.hasPermission(profile, node, context);
-    }
-
-    /**
-     * Shortcut method using EntityPlayer and creating PlayerContext
+     * See {@link PermissionAPI#getPermission(ServerPlayer, PermissionNode, PermissionDynamicContext[])}
      *
-     * @see PermissionAPI#hasPermission(GameProfile, String, IContext)
+     * @param player  offline player for which you want to check permissions
+     * @param node    the PermissionNode for which you want to query
+     * @param context optional array of PermissionDynamicContext, single entries will be ignored if they weren't
+     *                registered to the node
+     * @param <T>     type of the queried PermissionNode
+     * @return a value of type {@code <T>}, that the combination of Player and PermissionNode map to, defaults to the
+     * PermissionNodes default handler.
+     * @throws UnregisteredPermissionException when the PermissionNode wasn't registered properly
      */
-    public static boolean hasPermission(Player player, String node)
+    public static <T> T getOfflinePermission(UUID player, PermissionNode<T> node, PermissionDynamicContext<? extends StringRepresentable>... context)
     {
-        Preconditions.checkNotNull(player, "Player can't be null!");
-        return hasPermission(player.getGameProfile(), node, new PlayerContext(player));
+        if (!activeHandler.getRegisteredNodes().contains(node)) throw new UnregisteredPermissionException(node);
+        return activeHandler.getOfflinePermission(player, node, context);
+    }
+
+
+    /**
+     * <p>Helper method for internal use only!</p>
+     * <p>Fires the {@link PermissionGatherEvent.Handler}  event,
+     * and replaced the current PermissionHandler with the one returned by the event.</p>
+     */
+    public static void gatherPermissionHandler()
+    {
+        PermissionGatherEvent.Handler event = new PermissionGatherEvent.Handler(activeHandler);
+        MinecraftForge.EVENT_BUS.post(event);
+        IPermissionHandler newHandler = event.getCurrentHandler();
+        LOGGER.info("Replacing {} with {}", activeHandler.getIdentifier(), newHandler.getIdentifier());
+        activeHandler = newHandler;
+    }
+
+    /**
+     * <p>Helper method for internal use only!</p>
+     * <p>Fires the {@link PermissionGatherEvent.Nodes} event,
+     * and registers them to the currently active PermissionHandler</p>
+     */
+    public static void gatherPermissionNodes()
+    {
+        PermissionGatherEvent.Nodes event = new PermissionGatherEvent.Nodes();
+        MinecraftForge.EVENT_BUS.post(event);
+
+        for (PermissionNode<?> node : event.getNodes())
+        {
+            activeHandler.registerNode(node);
+        }
     }
 }
