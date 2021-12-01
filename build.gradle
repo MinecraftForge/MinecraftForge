@@ -56,7 +56,7 @@ ext {
     BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
     ASM_VERSION = '9.1'
     INSTALLER_VERSION = '2.1.+'
-    MIXIN_VERSION = '0.8.4'
+    MIXIN_VERSION = '0.8.5'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
@@ -285,7 +285,7 @@ def sharedDeps = {
     installer 'org.jline:jline-reader:3.12.+'   //Dep of TerminaalConsoleeAppender
     installer 'org.jline:jline-terminal:3.12.+' //Dep of TerminaalConsoleeAppender
     installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
-    //installer "org.spongepowered:mixin:${MIXIN_VERSION}"
+    installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
     installer 'com.google.guava:guava:31.0.1-jre'
     installer 'com.google.code.gson:gson:2.8.8'
