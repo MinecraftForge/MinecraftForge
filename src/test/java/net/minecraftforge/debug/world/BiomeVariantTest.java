@@ -34,9 +34,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import java.util.Optional;
 
 /**
- * Manually enable to test.
+ * To test:
  *
- * When generated the "biome_variant_test:main" biome should generate in the overworld.
+ * Set ENABLED to true
+ * When enabled the "biome_variant_test:main" biome should generate in the overworld.
  * Within the "biome area" there should be hills ("biome_variant_test:hills") and potentially rivers ("biome_variant_test:river") flowing to/from other biomes.
  * At the edge of the "biome area" there should be an edge biome ("biome_variant_test:edge").
  * If the "biome area" is next to an ocean there should be a shore ("biome_variant_test:shore").
