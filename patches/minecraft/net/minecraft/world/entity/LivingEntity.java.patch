@@ -1,6 +1,11 @@
 --- a/net/minecraft/world/entity/LivingEntity.java
 +++ b/net/minecraft/world/entity/LivingEntity.java
-@@ -118,7 +_,9 @@
+@@ -114,11 +_,13 @@
+ import net.minecraft.world.phys.Vec3;
+ import net.minecraft.world.scores.PlayerTeam;
+ 
+-public abstract class LivingEntity extends Entity {
++public abstract class LivingEntity extends Entity implements net.minecraftforge.common.extensions.IForgeLivingEntity{
     private static final UUID f_20929_ = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final UUID f_20959_ = UUID.fromString("87f46a96-686f-4796-b035-22e16ee9e038");
     private static final UUID f_147184_ = UUID.fromString("1eaf83ff-7207-4596-b37a-d7a07b3ec4ce");
@@ -205,6 +210,17 @@
     }
  
     protected void m_5907_() {
+@@ -1306,7 +_,9 @@
+ 
+    protected void m_21226_() {
+       if (this.f_19853_ instanceof ServerLevel && (this.m_6124_() || this.f_20889_ > 0 && this.m_6149_() && this.f_19853_.m_46469_().m_46207_(GameRules.f_46135_))) {
+-         ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), this.m_6552_(this.f_20888_));
++         int i = this.m_6552_(this.f_20888_);
++         i = net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, this.f_20888_, i);
++         ExperienceOrb.m_147082_((ServerLevel)this.f_19853_, this.m_20182_(), i);
+       }
+ 
+    }
 @@ -1322,7 +_,8 @@
        ResourceLocation resourcelocation = this.m_5743_();
        LootTable loottable = this.f_19853_.m_142572_().m_129898_().m_79217_(resourcelocation);
@@ -588,19 +604,15 @@
           }
        } else {
           return EquipmentSlot.HEAD;
-@@ -3287,5 +_,17 @@
+@@ -3287,5 +_,13 @@
     }
  
     public static record Fallsounds(SoundEvent f_196626_, SoundEvent f_196627_) {
 +   }
 +
-+   /**
-+    * Exposes the experience value of the entity after the getExperienceDrop event.
-+    * @param player The attacking player involved in obtaining this experience, typically lastHurtByPlayer.
-+    * @return The amount of experience
-+    */
++   @Override
 +   public int getTotalExperienceValue(Player player){
-+      if(!m_6149_())
++      if(!m_6149_() && !m_6124_())
 +         return 0;
 +      int i = m_6552_(player);
 +      return net.minecraftforge.event.ForgeEventFactory.getExperienceDrop(this, player, i);
