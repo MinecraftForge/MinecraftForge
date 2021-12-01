@@ -78,6 +78,15 @@
        } else {
           CompoundTag compoundtag = this.f_187609_.get(p_62932_);
           if (compoundtag != null) {
+@@ -433,7 +_,7 @@
+       p_187974_.accept((p_187968_, p_187969_, p_187970_) -> {
+          BlockEntity blockentity = this.m_5685_(p_187968_, LevelChunk.EntityCreationType.IMMEDIATE);
+          if (blockentity != null && p_187970_ != null && blockentity.m_58903_() == p_187969_) {
+-            blockentity.m_142466_(p_187970_);
++            blockentity.handleUpdateTag(p_187970_);
+          }
+ 
+       });
 @@ -453,7 +_,7 @@
  
     public Stream<BlockPos> m_6267_() {
