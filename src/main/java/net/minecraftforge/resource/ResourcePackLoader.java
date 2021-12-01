@@ -25,11 +25,9 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,12 +36,10 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.server.packs.repository.RepositorySource;
 import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.Pack.PackConstructor;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.resource.PathResourcePack;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
