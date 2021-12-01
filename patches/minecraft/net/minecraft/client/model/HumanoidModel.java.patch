@@ -1,0 +1,29 @@
+--- a/net/minecraft/client/model/HumanoidModel.java
++++ b/net/minecraft/client/model/HumanoidModel.java
+@@ -19,7 +_,8 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public class HumanoidModel<T extends LivingEntity> extends AgeableListModel<T> implements ArmedModel, HeadedModel {
++public class HumanoidModel<T extends LivingEntity> extends AgeableListModel<T> implements ArmedModel, HeadedModel, net.minecraftforge.client.extensions.IForgeEntityModel<T>
++{
+    public static final float f_170673_ = 0.25F;
+    public static final float f_170674_ = 0.5F;
+    private static final float f_170671_ = 0.2617994F;
+@@ -43,6 +_,7 @@
+ 
+    public HumanoidModel(ModelPart p_170679_, Function<ResourceLocation, RenderType> p_170680_) {
+       super(p_170680_, true, 16.0F, 0.0F, 2.0F, 2.0F, 24.0F);
++      this.modelRoot = p_170679_;
+       this.f_102808_ = p_170679_.m_171324_("head");
+       this.f_102809_ = p_170679_.m_171324_("hat");
+       this.f_102810_ = p_170679_.m_171324_("body");
+@@ -406,4 +_,8 @@
+          return this.f_102890_;
+       }
+    }
++
++   protected ModelPart modelRoot;
++
++   @Override public ModelPart getModelRoot(){ return this.modelRoot; }
+ }

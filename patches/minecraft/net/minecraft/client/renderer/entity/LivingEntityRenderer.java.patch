@@ -29,6 +29,14 @@
           f8 = Mth.m_14179_(p_115310_, p_115308_.f_20923_, p_115308_.f_20924_);
           f5 = p_115308_.f_20925_ - p_115308_.f_20924_ * (1.0F - p_115310_);
           if (p_115308_.m_6162_()) {
+@@ -111,6 +_,7 @@
+       }
+ 
+       this.f_115290_.m_6839_(p_115308_, f5, f8, p_115310_);
++      if(this.f_115290_ instanceof net.minecraftforge.client.extensions.IForgeEntityModel forgeModel) forgeModel.prepareAnim(p_115308_, f5, f8, f7, f2, f6); else
+       this.f_115290_.m_6973_(p_115308_, f5, f8, f7, f2, f6);
+       Minecraft minecraft = Minecraft.m_91087_();
+       boolean flag = this.m_5933_(p_115308_);
 @@ -131,6 +_,7 @@
  
        p_115311_.m_85849_();
