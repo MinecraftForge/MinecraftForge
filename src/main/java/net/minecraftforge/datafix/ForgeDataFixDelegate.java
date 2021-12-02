@@ -2,6 +2,7 @@ package net.minecraftforge.datafix;
 
 import com.mojang.datafixers.DataFix;
 import com.mojang.datafixers.TypeRewriteRule;
+import com.mojang.datafixers.schemas.Schema;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +17,7 @@ class ForgeDataFixDelegate extends DataFix
 
     ForgeDataFixDelegate(final DataFix wrapped)
     {
-        super(null, false);
+        super(new ForgeSchema(wrapped.getVersionKey(), null, null), false);
         this.wrapped = wrapped;
     }
 
