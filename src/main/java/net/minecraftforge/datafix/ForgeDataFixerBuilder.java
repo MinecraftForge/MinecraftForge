@@ -12,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 
@@ -31,7 +30,7 @@ public class ForgeDataFixerBuilder extends DataFixerBuilder
     private final     int    dataVersion;
     private final     List<ForgeSchema> allSchemas = new ArrayList<>();
     private final     Int2ObjectSortedMap<ForgeSchema> schemas       = new Int2ObjectAVLTreeMap<>();
-    private final     List<DataFix>               globalList    = Lists.newArrayList();
+    private final     List<ForgeDataFixDelegate>               globalList    = Lists.newArrayList();
     private final     IntSortedSet                fixerVersions = new IntAVLTreeSet();
 
     public ForgeDataFixerBuilder(final int dataVersion)
@@ -71,7 +70,7 @@ public class ForgeDataFixerBuilder extends DataFixerBuilder
             return;
         }
 
-        globalList.add(fix);
+        globalList.add(new ForgeDataFixDelegate(fix));
         fixerVersions.add(fix.getVersionKey());
     }
 

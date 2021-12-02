@@ -1,42 +1,38 @@
 package net.minecraftforge.datafix;
 
-import com.google.common.collect.Lists;
 import com.mojang.datafixers.*;
 import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.*;
-import net.minecraftforge.event.datafix.ConfigureDatafixSchemaEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
-import java.util.function.Function;
 
 /**
  * A delegate handler which can rebuild a data fixer on the fly.
  */
-public class ForgeDataFixerDelegateHandler extends DataFixerUpper
+class ForgeDataFixerDelegateHandler extends DataFixerUpper
 {
-    private static final Logger     LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
-    private final     int    dataVersion;
-    private final     List<ForgeSchema> allSchemas;
-    private final     Int2ObjectSortedMap<ForgeSchema> schemas       ;
-    private final     List<DataFix>               globalList  ;
-    private final     IntSortedSet                fixerVersions;
+    private final int                              dataVersion;
+    private final List<ForgeSchema>                allSchemas;
+    private final Int2ObjectSortedMap<ForgeSchema> schemas;
+    private final List<ForgeDataFixDelegate>       globalList;
+    private final IntSortedSet                     fixerVersions;
 
-    private              InnerFixer activeFixer;
+    private InnerFixer activeFixer;
 
-    protected ForgeDataFixerDelegateHandler(
+    ForgeDataFixerDelegateHandler(
       final int dataVersion,
       final Int2ObjectSortedMap<ForgeSchema> schemas,
       final List<ForgeSchema> allSchemas,
-      final List<DataFix> globalList,
+      final List<ForgeDataFixDelegate> globalList,
       final Executor executor,
       final IntSortedSet fixerVersions)
     {
@@ -55,6 +51,8 @@ public class ForgeDataFixerDelegateHandler extends DataFixerUpper
       final Executor executor
     )
     {
+        this.globalList.forEach(ForgeDataFixDelegate::resetRule);
+
         //All schemas are already reset via the mod event bus as this time.
         //Rebuild of those is not needed.
         this.activeFixer = new InnerFixer(new Int2ObjectAVLTreeMap<Schema>(schemas), new ArrayList<>(globalList), new IntAVLTreeSet(fixerVersions));

@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  * A partial carbon copy of the {@link Schema} class.
  * But this allows us to delay the setup of the type hierarchy until we need it.
  */
-public class ForgeSchema extends Schema
+class ForgeSchema extends Schema
 {
     //Can not be final, needs to be initialized on the fly!
     private Map<String, Supplier<TypeTemplate>> TYPE_TEMPLATES = Maps.newHashMap();
@@ -30,7 +30,7 @@ public class ForgeSchema extends Schema
     private final String name;
     private final Schema wrapped;
 
-    public ForgeSchema(final int versionKey, final Schema parent, final Schema wrapped)
+    ForgeSchema(final int versionKey, final Schema parent, final Schema wrapped)
     {
         super(versionKey, parent);
         this.wrapped = wrapped;
