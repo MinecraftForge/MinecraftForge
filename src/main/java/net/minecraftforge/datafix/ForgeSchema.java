@@ -12,7 +12,8 @@ import com.mojang.datafixers.types.templates.RecursivePoint;
 import com.mojang.datafixers.types.templates.TaggedChoice;
 import com.mojang.datafixers.types.templates.TypeTemplate;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraftforge.event.datafix.ConfigureDatafixSchemaEvent;
+import net.minecraftforge.fml.ModLoader;
 
 import java.util.List;
 import java.util.Map;
@@ -178,7 +179,19 @@ public class ForgeSchema extends Schema
         this.TYPES.clear();
         this.RECURSIVE_TYPES.clear();
 
-        registerTypes(this, registerEntities(this), registerBlockEntities(this));
+        final Map<String, Supplier<TypeTemplate>> entityTypes = registerEntities(this);
+        final Map<String, Supplier<TypeTemplate>> blockEntityTypes = registerBlockEntities(this);
+
+        //This needs to be checked else we run into issues where the log is spammed.
+        //Since this can be invoked before mod loading.
+        if (ModLoader.isLoadingStateValid()) {
+            final ConfigureDatafixSchemaEvent event = new ConfigureDatafixSchemaEvent(getVersionKey());
+            ModLoader.get().postEvent(event);
+            entityTypes.putAll(event.getEntityTypes());
+            blockEntityTypes.putAll(event.getBlockEntityTypes());
+        }
+
+        registerTypes(this, entityTypes, blockEntityTypes);
 
         TYPES = buildTypes();
     }
