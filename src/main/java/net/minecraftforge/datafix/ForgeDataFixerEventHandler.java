@@ -2,6 +2,7 @@ package net.minecraftforge.datafix;
 
 import com.google.common.collect.Lists;
 import com.mojang.datafixers.schemas.Schema;
+import net.minecraft.Util;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraftforge.event.datafix.ConfigureDatafixSchemaEvent;
 import net.minecraftforge.fml.IModStateTransition;
@@ -66,7 +67,9 @@ public class ForgeDataFixerEventHandler
                 LOGGER.fatal("Detected errors during dfu setup. DFU might not be available.", except);
             } else {
                 if (DataFixers.getDataFixer() instanceof ForgeDataFixerDelegateHandler forgeDataFixerDelegateHandler) {
-                    forgeDataFixerDelegateHandler.rebuildFixer(executor);
+                    //Do not do this on the mod executor!
+                    //This will crash the game.
+                    forgeDataFixerDelegateHandler.rebuildFixer(Util.bootstrapExecutor());
                 }
             }
         }, executor);
