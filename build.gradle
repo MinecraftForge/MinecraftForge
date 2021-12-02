@@ -599,6 +599,10 @@ project(':fmlonly') {
     }
 
     sharedFmlonlyForge.call(project)
+    def userdevRuns = tasks.userdevConfig.runs
+    for (def run : patcher.runs + userdevRuns) {
+        run.args '--fml.coreGameMods', 'minecraft'
+    }
 
     task launcherJson(type: LauncherJson) {
         packedDependencies = [':fmlloader:jar']
@@ -618,7 +622,8 @@ project(':fmlonly') {
                            '--fml.forgeVersion', FORGE_VERSION,
                            '--fml.mcVersion', MC_VERSION,
                            '--fml.forgeGroup', project.group,
-                           '--fml.mcpVersion', MCP_VERSION],
+                           '--fml.mcpVersion', MCP_VERSION,
+                           '--fml.coreGameMods', 'minecraft'],
                     jvm: ["-DignoreList=${fmlonly_client.properties.ignoreList},\${version_name}.jar",
                           "-DmergeModules=${fmlonly_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
@@ -1080,6 +1085,10 @@ project(':forge') {
     }
 
     sharedFmlonlyForge.call(project)
+    def userdevRuns = tasks.userdevConfig.runs
+    for (def run : patcher.runs + userdevRuns) {
+        run.args '--fml.coreGameMods', 'minecraft,forge'
+    }
 
     task downloadLibraries(type: DownloadLibraries, dependsOn: ':mcp:setupMCP') {
         input = VERSION_JSON
@@ -1163,7 +1172,8 @@ project(':forge') {
                            '--fml.forgeVersion', FORGE_VERSION,
                            '--fml.mcVersion', MC_VERSION,
                            '--fml.forgeGroup', project.group,
-                           '--fml.mcpVersion', MCP_VERSION],
+                           '--fml.mcpVersion', MCP_VERSION,
+                           '--fml.coreGameMods', 'minecraft,forge'],
                     jvm: ["-DignoreList=${forge_client.properties.ignoreList},\${version_name}.jar",
                           "-DmergeModules=${forge_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',

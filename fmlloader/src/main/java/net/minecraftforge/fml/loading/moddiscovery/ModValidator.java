@@ -17,13 +17,15 @@ import java.util.*;
 public class ModValidator {
     private static final Logger LOGGER = LogManager.getLogger();
     private final Map<IModFile.Type, List<ModFile>> modFiles;
+    private final Set<String> coreGameMods;
     private final List<ModFile> candidatePlugins;
     private final List<ModFile> candidateMods;
     private LoadingModList loadingModList;
     private List<ModFile> brokenFiles;
 
-    public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles) {
+    public ModValidator(final Map<IModFile.Type, List<ModFile>> modFiles, final Set<String> coreGameMods) {
         this.modFiles = modFiles;
+        this.coreGameMods = coreGameMods;
         this.candidateMods = lst(modFiles.get(IModFile.Type.MOD));
         this.candidateMods.addAll(lst(modFiles.get(IModFile.Type.GAMELIBRARY)));
         this.candidatePlugins = lst(modFiles.get(IModFile.Type.LANGPROVIDER));
@@ -79,7 +81,7 @@ public class ModValidator {
 
     public BackgroundScanHandler stage2Validation() {
         var errors = validateLanguages();
-        loadingModList = ModSorter.sort(candidateMods, errors);
+        loadingModList = ModSorter.sort(candidateMods, coreGameMods, errors);
         loadingModList.addCoreMods();
         loadingModList.addAccessTransformers();
         loadingModList.setBrokenFiles(brokenFiles);

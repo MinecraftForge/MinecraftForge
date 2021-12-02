@@ -49,27 +49,27 @@ public class ModSorter
     private List<ModFile> modFiles;
     private List<ModInfo> sortedList;
     private Map<String, ModInfo> modIdNameLookup;
-    private List<ModFile> forgeAndMC;
+    private List<ModFile> coreGameMods;
 
     private ModSorter(final List<ModFile> modFiles)
     {
         this.modFiles = modFiles;
     }
 
-    public static LoadingModList sort(List<ModFile> mods, final List<ExceptionData> errors)
+    public static LoadingModList sort(List<ModFile> mods, final Set<String> coreGameMods, final List<ExceptionData> errors)
     {
         final ModSorter ms = new ModSorter(mods);
         try {
-            ms.buildUniqueList();
+            ms.buildUniqueList(coreGameMods);
         } catch (EarlyLoadingException e) {
             // We cannot build any list with duped mods. We have to abort immediately and report it
-            return LoadingModList.of(ms.forgeAndMC, ms.forgeAndMC.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), e);
+            return LoadingModList.of(ms.coreGameMods, ms.coreGameMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), e);
         }
         // try and validate dependencies
         final List<ExceptionData> failedList = Stream.concat(ms.verifyDependencyVersions().stream(), errors.stream()).toList();
         // if we miss one or the other, we abort now
         if (!failedList.isEmpty()) {
-            return LoadingModList.of(ms.forgeAndMC, ms.forgeAndMC.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), new EarlyLoadingException("failure to validate mod list", null, failedList));
+            return LoadingModList.of(ms.coreGameMods, ms.coreGameMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), new EarlyLoadingException("failure to validate mod list", null, failedList));
         } else {
             // Otherwise, lets try and sort the modlist and proceed
             EarlyLoadingException earlyLoadingException = null;
@@ -147,23 +147,24 @@ public class ModSorter
         }
     }
 
-    private void buildUniqueList()
+    private void buildUniqueList(Set<String> coreGameMods)
     {
         // Collect mod files by module name. This will be used for deduping purposes
         final Map<String, List<IModFile>> modFilesByFirstId = modFiles.stream()
                 .collect(groupingBy(mf -> mf.getModFileInfo().moduleName()));
 
-        // Capture forge and MC here, so we can keep them for later
-        forgeAndMC = new ArrayList<>();
-        var mc = modFilesByFirstId.get("minecraft");
-        if (mc != null && !mc.isEmpty())
-            forgeAndMC.add((ModFile) mc.get(0));
-        else
-            throw new IllegalStateException("Failed to find minecraft somehow?");
-        // TODO: remove this hardcoding and make it more flexible
-        var forge = modFilesByFirstId.get("forge");
-        if (forge != null && !forge.isEmpty())
-            forgeAndMC.add((ModFile) forge.get(0)); // Silently ignore if Forge isn't present
+        // Capture core game mods (ex. MC, Forge) here, so we can keep them for later
+        this.coreGameMods = new ArrayList<>();
+        coreGameMods = coreGameMods != null ? coreGameMods : Set.of("minecraft");
+        for (String coreGameMod : coreGameMods) {
+            var container = modFilesByFirstId.get(coreGameMod);
+            if (container != null && !container.isEmpty()) {
+                LOGGER.debug("Found core game mod: " + coreGameMod);
+                this.coreGameMods.add((ModFile) container.get(0));
+            } else {
+                throw new IllegalStateException("Failed to find core game mod: " + coreGameMod);
+            }
+        }
 
         // Select the newest by artifact version sorting of non-unique files thus identified
         this.modFiles = modFilesByFirstId.entrySet().stream()
