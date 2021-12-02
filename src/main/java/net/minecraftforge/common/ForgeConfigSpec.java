@@ -824,7 +824,37 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             return Lists.newArrayList(path);
         }
 
+        /**
+         * Returns the actual value for the configuration setting, throwing if the config has not yet been loaded.
+         * <p>
+         * For retrieving the value of the setting regardless of whether the associated config has been loaded, use
+         * {@link #getRaw()} instead.
+         *
+         * @return the actual value for the setting
+         * @throws NullPointerException if the {@link ForgeConfigSpec config spec} object that will contain this has
+         *                              not yet been built
+         * @throws IllegalStateException if the associated config has not yet been loaded
+         */
         public T get()
+        {
+            Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
+            Preconditions.checkState(spec.childConfig != null, "Cannot get config value before config is loaded");
+            return getRaw();
+        }
+
+        /**
+         * Returns the actual value for the configuration setting, or the default value if the associated config has not
+         * yet been loaded.
+         *
+         * <p>Calling this method should be avoided in favor of using {@link #get()}, as this method will always return
+         * the default value if called before the associated config has not yet been loaded, which may be the cause of
+         * silent unnoticeable issues.</p>
+         *
+         * @return the actual value for the setting, or the default value if the config is not yet loaded
+         * @throws NullPointerException if the {@link ForgeConfigSpec config spec} object that will contain this has
+         *                              not yet been built
+         */
+        public T getRaw()
         {
             Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
             if (spec.childConfig == null)
