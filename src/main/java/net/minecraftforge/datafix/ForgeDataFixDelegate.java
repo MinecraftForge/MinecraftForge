@@ -10,6 +10,21 @@ import java.lang.reflect.Method;
 
 class ForgeDataFixDelegate extends DataFix
 {
+
+    private static final Method makeRuleMethod;
+    static {
+        try
+        {
+            makeRuleMethod = DataFix.class.getDeclaredMethod("makeRule");
+            makeRuleMethod.setAccessible(true);
+        }
+        catch (NoSuchMethodException e)
+        {
+            throw new IllegalStateException("Could not get or invoke makeRule() Method on data fixer!", e);
+        }
+    }
+
+
     private final DataFix wrapped;
 
     @Nullable
@@ -34,16 +49,13 @@ class ForgeDataFixDelegate extends DataFix
     private TypeRewriteRule rebuildRuleReflectively() {
         try
         {
-            final Method makeRuleMethod = DataFix.class.getDeclaredMethod("makeRule");
-            makeRuleMethod.setAccessible(true);
             final Object candidate = makeRuleMethod.invoke(this.wrapped);
             if (candidate instanceof TypeRewriteRule typeRewriteRule) {
                 return typeRewriteRule;
             }
-
             throw new IllegalStateException("Failed to get a rewrite rule. The returned object was not a TypeRewriteRule!"); //Should never be reached.
         }
-        catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e)
+        catch (IllegalAccessException | InvocationTargetException e)
         {
             throw new IllegalStateException("Could not get or invoke makeRule() Method on data fixer!", e);
         }
