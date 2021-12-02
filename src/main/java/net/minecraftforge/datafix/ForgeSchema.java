@@ -13,10 +13,7 @@ import com.mojang.datafixers.types.templates.TaggedChoice;
 import com.mojang.datafixers.types.templates.TypeTemplate;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -40,6 +37,12 @@ public class ForgeSchema extends Schema
 
         final int subVersion = DataFixUtils.getSubVersion(versionKey);
         name = "V" + DataFixUtils.getVersion(versionKey) + (subVersion == 0 ? "" : "." + subVersion);
+
+        resetSchema();
+        rebuildSchema(
+          Collections.emptyMap(),
+          Collections.emptyMap()
+        );
     }
 
     protected Map<String, Type<?>> buildTypes() {
