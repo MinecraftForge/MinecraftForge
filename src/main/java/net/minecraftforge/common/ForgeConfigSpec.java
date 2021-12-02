@@ -826,9 +826,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
 
         /**
          * Returns the actual value for the configuration setting, throwing if the config has not yet been loaded.
-         * <p>
-         * For retrieving the value of the setting regardless of whether the associated config has been loaded, use
-         * {@link #getRaw()} instead.
+         *
+         * <p>For retrieving the value of the setting regardless of whether the associated config has been loaded, use
+         * {@link #getRaw()} instead.</p>
          *
          * @return the actual value for the setting
          * @throws NullPointerException if the {@link ForgeConfigSpec config spec} object that will contain this has
