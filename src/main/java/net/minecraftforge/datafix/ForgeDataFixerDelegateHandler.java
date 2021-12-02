@@ -6,13 +6,16 @@ import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.types.Type;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.*;
+import net.minecraftforge.event.datafix.ConfigureDatafixSchemaEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
 
 /**
  * A delegate handler which can rebuild a data fixer on the fly.
@@ -28,8 +31,6 @@ public class ForgeDataFixerDelegateHandler extends DataFixerUpper
     private final     IntSortedSet                fixerVersions;
 
     private              InnerFixer activeFixer;
-
-
 
     protected ForgeDataFixerDelegateHandler(
       final int dataVersion,
@@ -54,8 +55,8 @@ public class ForgeDataFixerDelegateHandler extends DataFixerUpper
       final Executor executor
     )
     {
-        this.allSchemas.forEach(ForgeSchema::resetSchema);
-
+        //All schemas are already reset via the mod event bus as this time.
+        //Rebuild of those is not needed.
         this.activeFixer = new InnerFixer(new Int2ObjectAVLTreeMap<Schema>(schemas), new ArrayList<>(globalList), new IntAVLTreeSet(fixerVersions));
 
         final IntBidirectionalIterator iterator = activeFixer.fixerVersions().iterator();
@@ -90,6 +91,11 @@ public class ForgeDataFixerDelegateHandler extends DataFixerUpper
     public Schema getSchema(final int key)
     {
         return activeFixer.getSchema(key);
+    }
+
+    public List<ForgeSchema> getAllSchemas()
+    {
+        return allSchemas;
     }
 
     private static final class InnerFixer extends DataFixerUpper
