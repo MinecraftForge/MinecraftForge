@@ -155,7 +155,6 @@ public class ModSorter
 
         // Capture core game mods (ex. MC, Forge) here, so we can keep them for later
         this.coreGameMods = new ArrayList<>();
-        coreGameMods = coreGameMods != null ? coreGameMods : Set.of("minecraft");
         for (String coreGameMod : coreGameMods) {
             var container = modFilesByFirstId.get(coreGameMod);
             if (container != null && !container.isEmpty()) {
