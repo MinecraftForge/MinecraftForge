@@ -5,7 +5,6 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.extensions.IForgeEntityModel;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -25,10 +24,11 @@ public class AnimationModifierTest
 
     public void registerLayersEvent(EntityRenderersEvent.AddLayers event)
     {
-        LivingEntityRenderer[] renderers = {
-            event.getSkin("default"),
-            event.getSkin("slim")
-        };
+        LivingEntityRenderer[] renderers =
+            {
+                event.getSkin("default"),
+                event.getSkin("slim")
+            };
 
         for (LivingEntityRenderer renderer : renderers)
         {
@@ -36,9 +36,10 @@ public class AnimationModifierTest
 
             if (m instanceof IForgeEntityModel fModel)
             {
-                fModel.addAnimationModifier((entity, modelPart) -> {
+                fModel.addAnimationModifier((entity, modelPart) ->
+                {
                     ModelPart leftArm = modelPart.getChild("left_arm");
-                    leftArm.xRot = (float)Math.PI;
+                    leftArm.xRot = (float) Math.PI;
                 });
             }
         }
