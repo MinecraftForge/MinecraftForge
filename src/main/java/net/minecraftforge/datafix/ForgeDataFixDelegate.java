@@ -35,7 +35,7 @@ class ForgeDataFixDelegate extends DataFix
         final Class<? extends DataFix> dataFixClass = this.wrapped.getClass();
         try
         {
-            final Method makeRuleMethod = dataFixClass.getMethod("makeRule");
+            final Method makeRuleMethod = DataFix.class.getDeclaredMethod("makeRule");
             makeRuleMethod.setAccessible(true);
             final Object candidate = makeRuleMethod.invoke(this.wrapped);
             if (candidate instanceof TypeRewriteRule typeRewriteRule) {
