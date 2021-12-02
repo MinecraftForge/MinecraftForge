@@ -33,22 +33,14 @@ import javax.annotation.Nullable;
 
 public class ItemHandlerHelper
 {
+    /**
+     * @deprecated Use {@link IItemHandler#bulkInsertItem} instead.
+     */
+    @Deprecated(since = "1.18")
     @Nonnull
-    public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, boolean simulate)
-    {
-        if (dest == null || stack.isEmpty())
-            return stack;
-
-        for (int i = 0; i < dest.getSlots(); i++)
-        {
-            stack = dest.insertItem(i, stack, simulate);
-            if (stack.isEmpty())
-            {
-                return ItemStack.EMPTY;
-            }
-        }
-
-        return stack;
+    public static ItemStack insertItem(IItemHandler dest, @Nonnull ItemStack stack, boolean simulate) {
+        if (dest == null || stack.isEmpty()) return stack;
+        return dest.bulkInsertItem(stack, simulate);
     }
 
     public static boolean canItemStacksStack(@Nonnull ItemStack a, @Nonnull ItemStack b)

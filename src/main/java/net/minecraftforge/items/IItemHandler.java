@@ -19,6 +19,7 @@
 
 package net.minecraftforge.items;
 
+import com.google.common.base.Preconditions;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
@@ -26,7 +27,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 
 import javax.annotation.Nonnull;
 
-
+// TODO: replace all the boolean parameters by FluidAction (renamed to also fit items and energy)
 public interface IItemHandler
 {
     /**
@@ -61,12 +62,13 @@ public interface IItemHandler
     /**
      * <p>
      * Inserts an ItemStack into the given slot and return the remainder.
-     * The ItemStack <em>should not</em> be modified in this function!
+     * The given stack's size may be greater than the itemstack's max size.
      * </p>
-     * Note: This behaviour is subtly different from {@link IFluidHandler#fill(FluidStack, IFluidHandler.FluidAction)}
+     * Note: This function returns the REMAINDER - what was NOT inserted!
+     * This behaviour is subtly different from {@link IFluidHandler#fill(FluidStack, IFluidHandler.FluidAction)}, which returns what was inserted.
      *
      * @param slot     Slot to insert into.
-     * @param stack    ItemStack to insert. This must not be modified by the item handler.
+     * @param stack    ItemStack to insert. Its ownership is given to the item handler. It must never be used or modified by the caller afterwards!
      * @param simulate If true, the insertion is only simulated
      * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return an empty ItemStack).
      *         May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
@@ -76,7 +78,38 @@ public interface IItemHandler
     ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate);
 
     /**
+     * Tries to insert as many of the given item as possible into this item handler, spreading it across slots as needed.
+     * This should be preferred over {@link #insertItem} if the caller doesn't care about the slot the item goes into,
+     * as it gives the handler the opportunity to optimize this operation.
+     *
+     * @param stack    The stack that should be inserted. {@link ItemStack#EMPTY} is not valid.
+     *                 Ownership of this stack is transferred to the item handler and may not be reused by the caller afterwards.
+     *                 This stack does not need to adhere to {@link ItemStack#getMaxStackSize()}.
+     * @param simulate If true, the insertion is only simulated
+     * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return an empty ItemStack).
+     *         May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
+     *         The returned ItemStack can be safely modified after.
+     */
+    @Nonnull
+    default ItemStack bulkInsertItem(@Nonnull ItemStack stack, boolean simulate) {
+        Preconditions.checkArgument(!stack.isEmpty(), "stack may not be empty");
+
+        for (int i = 0; i < getSlots(); i++)
+        {
+            stack = insertItem(i, stack, simulate);
+            if (stack.isEmpty())
+            {
+                return ItemStack.EMPTY;
+            }
+        }
+
+        return stack;
+    }
+
+    /**
      * Extracts an ItemStack from the given slot.
+     * If there is more than the max stack size in the current slot and more than the max stack size is requested,
+     * then more than the max stack size may be returned.
      * <p>
      * The returned value must be empty if nothing is extracted,
      * otherwise its stack size must be less than or equal to {@code amount} and {@link ItemStack#getMaxStackSize()}.
@@ -90,6 +123,47 @@ public interface IItemHandler
      **/
     @Nonnull
     ItemStack extractItem(int slot, int amount, boolean simulate);
+
+    /**
+     * Extracts an ItemStack from the given slot, but limiting the amount extracted to {@link ItemStack#getMaxStackSize()}.
+     * @see #extractItem
+     */
+    @Nonnull
+    default ItemStack limitedExtractItem(int slot, int amount, boolean simulate) {
+        int limitedAmount = Math.min(amount, getStackInSlot(slot).getMaxStackSize());
+        return extractItem(slot, limitedAmount, simulate);
+    }
+
+    /**
+     * Tries to extract as many items that can be stacked with the given template item as requested from this
+     * item handler. Will extract regardless of slot and does not respect {@link ItemStack#getMaxStackSize()}.
+     *
+     * @param template The template item for the items that should be extracted.
+     *                 Only items matching this templates item, tags and caps will be extracted.
+     *                 {@link ItemStack#EMPTY} is not a valid template.
+     *                 The handler must not modify this template.
+     * @param amount   The maximum amount to extract. Must be 0 or greater.
+     * @param simulate If true, the extraction is only simulated
+     * @return The stack of items that could be extracted. This stack does not adhere to {@link ItemStack#getMaxStackSize()}
+     *         if the input amount doesn't.
+     */
+    @Nonnull
+    default ItemStack bulkExtractItem(ItemStack template, int amount, boolean simulate) {
+        Preconditions.checkArgument(!template.isEmpty(), "template may not be empty");
+        if (amount < 0) throw new IllegalArgumentException("amount may not be negative: " + amount);
+
+        int extracted = 0;
+        for (int i = 0; i < getSlots(); i++)
+        {
+            if (ItemHandlerHelper.canItemStacksStack(getStackInSlot(i), template))
+            {
+                extracted += extractItem(i, amount - extracted, simulate).getCount();
+                if (extracted >= amount) break;
+            }
+        }
+
+        return ItemHandlerHelper.copyStackWithSize(template, extracted);
+    }
 
     /**
      * Retrieves the maximum stack size allowed to exist in the given slot.

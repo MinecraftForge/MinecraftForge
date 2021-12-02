@@ -28,6 +28,7 @@ package net.minecraftforge.energy;
  * Created with consent and permission of King Lemming and Team CoFH. Released with permission under LGPL 2.1 when bundled with Forge.
  *
  */
+// TODO: replace all the boolean parameters by FluidAction (renamed to also fit items and energy)
 public interface IEnergyStorage
 {
     /**
