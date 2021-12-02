@@ -29,7 +29,7 @@
        }
  
        Util.f_137440_ = RenderSystem.m_69576_();
-+      if (net.minecraftforge.common.ForgeConfig.CLIENT.forceSystemNanoTime.get()) Util.f_137440_ = System::nanoTime;
++      if (net.minecraftforge.common.ForgeConfig.CLIENT.forceSystemNanoTime.getRaw()) Util.f_137440_ = System::nanoTime;
        this.f_90989_ = new VirtualScreen(this);
        this.f_90990_ = this.f_90989_.m_110872_(displaydata, this.f_91066_.f_92123_, this.m_91270_());
        this.m_7440_(true);
