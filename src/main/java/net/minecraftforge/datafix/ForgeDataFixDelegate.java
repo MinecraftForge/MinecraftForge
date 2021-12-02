@@ -32,7 +32,6 @@ class ForgeDataFixDelegate extends DataFix
     }
 
     private TypeRewriteRule rebuildRuleReflectively() {
-        final Class<? extends DataFix> dataFixClass = this.wrapped.getClass();
         try
         {
             final Method makeRuleMethod = DataFix.class.getDeclaredMethod("makeRule");
