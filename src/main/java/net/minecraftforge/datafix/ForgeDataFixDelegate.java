@@ -3,6 +3,7 @@ package net.minecraftforge.datafix;
 import com.mojang.datafixers.DataFix;
 import com.mojang.datafixers.TypeRewriteRule;
 import com.mojang.datafixers.schemas.Schema;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -11,19 +12,10 @@ import java.lang.reflect.Method;
 class ForgeDataFixDelegate extends DataFix
 {
 
-    private static final Method makeRuleMethod;
-    static {
-        try
-        {
-            makeRuleMethod = DataFix.class.getDeclaredMethod("makeRule");
-            makeRuleMethod.setAccessible(true);
-        }
-        catch (NoSuchMethodException e)
-        {
-            throw new IllegalStateException("Could not get or invoke makeRule() Method on data fixer!", e);
-        }
-    }
-
+    private static final Method makeRuleMethod = ObfuscationReflectionHelper.findMethod(
+      DataFix.class,
+      "makeRule"
+    );
 
     private final DataFix wrapped;
 
