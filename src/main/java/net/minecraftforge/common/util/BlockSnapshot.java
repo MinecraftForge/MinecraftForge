@@ -84,7 +84,7 @@ public class BlockSnapshot
     @Nullable
     private static CompoundTag getBlockEntityTag(@Nullable BlockEntity te)
     {
-        return te == null ? null : te.save(new CompoundTag());
+        return te == null ? null : te.saveWithFullMetadata();
     }
 
     public BlockState getCurrentBlock()
