@@ -148,10 +148,13 @@ public class ForgeDataFixerEventHandler
     {
         return listCompletableFuture.whenCompleteAsync((errors, except) -> {
             //Check for errors.
-            if (except != null) {
+            if (except != null)
+            {
                 //Ouch that failed, log it and escape.
                 LOGGER.fatal("Detected errors during dfu setup. DFU might not be available.", except);
-            } else {
+            }
+            else
+            {
                 //Success, check for a compatible DFU instance and then rebuild it.
                 if (DataFixers.getDataFixer() instanceof ForgeDataFixerDelegateHandler forgeDataFixerDelegateHandler)
                 {

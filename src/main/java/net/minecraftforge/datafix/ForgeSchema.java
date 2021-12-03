@@ -11,14 +11,12 @@ import com.mojang.datafixers.types.families.TypeFamily;
 import com.mojang.datafixers.types.templates.RecursivePoint;
 import com.mojang.datafixers.types.templates.TaggedChoice;
 import com.mojang.datafixers.types.templates.TypeTemplate;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 /**
@@ -29,8 +27,9 @@ class ForgeSchema extends Schema
 {
     //Can not be final, needs to be initialized on the fly!
     //Constructor invocation order and the what not!
-    private Map<String, Supplier<TypeTemplate>> TYPE_TEMPLATES = Maps.newHashMap();
-    private Map<String, Type<?>>                TYPES          = Maps.newHashMap();
+    private Map<String, Supplier<TypeTemplate>> TYPE_TEMPLATES = Maps.newConcurrentMap();
+    private Map<String, Type<?>>                TYPES          = Maps.newConcurrentMap();
+    private Map<String, Integer>                RECURSIVE_TYPES = Maps.newConcurrentMap();
 
     //Store some data we can not access later anymore.
     private final String name;
@@ -68,10 +67,10 @@ class ForgeSchema extends Schema
         final List<TypeTemplate> templates = Lists.newArrayList();
 
         //Check all recursion types
-        for (final Object2IntMap.Entry<String> entry : RECURSIVE_TYPES.object2IntEntrySet())
+        for (final Map.Entry<String, Integer> entry : RECURSIVE_TYPES.entrySet())
         {
             //Generate a template for the type.
-            templates.add(DSL.check(entry.getKey(), entry.getIntValue(), getTemplate(entry.getKey())));
+            templates.add(DSL.check(entry.getKey(), entry.getValue(), getTemplate(entry.getKey())));
         }
 
         //Merge them all together into one root recursive type.
