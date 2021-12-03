@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * A partial carbon copy of the {@link Schema} class.
@@ -30,6 +31,9 @@ class ForgeSchema extends Schema
     private Map<String, Supplier<TypeTemplate>> TYPE_TEMPLATES = Maps.newConcurrentMap();
     private Map<String, Type<?>>                TYPES          = Maps.newConcurrentMap();
     private Map<String, Integer>                RECURSIVE_TYPES = Maps.newConcurrentMap();
+
+    private final Map<String, Supplier<TypeTemplate>> MODDED_ENTITY_TYPES = Maps.newConcurrentMap();
+    private final Map<String, Supplier<TypeTemplate>> MODDED_BLOCK_ENTITY_TYPES = Maps.newConcurrentMap();
 
     //Store some data we can not access later anymore.
     private final String name;
@@ -242,6 +246,8 @@ class ForgeSchema extends Schema
         this.TYPE_TEMPLATES.clear();
         this.TYPES.clear();
         this.RECURSIVE_TYPES.clear();
+        this.MODDED_ENTITY_TYPES.clear();
+        this.MODDED_BLOCK_ENTITY_TYPES.clear();
     }
 
     /**
@@ -255,13 +261,33 @@ class ForgeSchema extends Schema
       final Map<String, Supplier<TypeTemplate>> modEntityTypes,
       final Map<String, Supplier<TypeTemplate>> modBlockEntityTypes
     ) {
+        //First grab the parent's additional modded types, if the parent is compatible.
+        if (this.parent != null && this.parent instanceof ForgeSchema parentForgeSchema)
+        {
+            //Compatible parent found, add its modded types.
+            this.MODDED_ENTITY_TYPES.putAll(parentForgeSchema.MODDED_ENTITY_TYPES);
+            this.MODDED_BLOCK_ENTITY_TYPES.putAll(parentForgeSchema.MODDED_BLOCK_ENTITY_TYPES);
+        }
+
+        //Now add our own modded types, and potentially override the data.
+        this.MODDED_ENTITY_TYPES.putAll(modEntityTypes);
+        this.MODDED_BLOCK_ENTITY_TYPES.putAll(modBlockEntityTypes);
+
+        //Find all types which the event marked as removed.
+        final Set<String> removedEntityTypes = this.MODDED_ENTITY_TYPES.keySet().stream().filter(key -> this.MODDED_ENTITY_TYPES.get(key) == null).collect(Collectors.toSet());
+        final Set<String> removedBlockEntityTypes = this.MODDED_BLOCK_ENTITY_TYPES.keySet().stream().filter(key -> this.MODDED_BLOCK_ENTITY_TYPES.get(key) == null).collect(Collectors.toSet());
+
+        //And remove those from the type maps.
+        removedEntityTypes.forEach(this.MODDED_ENTITY_TYPES::remove);
+        removedBlockEntityTypes.forEach(this.MODDED_BLOCK_ENTITY_TYPES::remove);
+        
         //Grab the vanilla entities.
         final Map<String, Supplier<TypeTemplate>> entityTypes = registerEntities(this);
         final Map<String, Supplier<TypeTemplate>> blockEntityTypes = registerBlockEntities(this);
 
         //Add all modded entities and block entities.
-        entityTypes.putAll(modEntityTypes);
-        blockEntityTypes.putAll(modBlockEntityTypes);
+        entityTypes.putAll(this.MODDED_ENTITY_TYPES);
+        blockEntityTypes.putAll(this.MODDED_BLOCK_ENTITY_TYPES);
 
         //Re-register them.
         registerTypes(this, entityTypes, blockEntityTypes);

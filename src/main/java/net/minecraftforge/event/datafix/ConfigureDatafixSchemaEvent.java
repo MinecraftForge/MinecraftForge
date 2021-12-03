@@ -62,7 +62,7 @@ public class ConfigureDatafixSchemaEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Registers a new simple (catch-all-nbt) block entity to the CURRENT schema.
+     * Registers a new simple (catch-all-nbt) block entity to the current schema and all its descendent versions.
      *
      * @param registryName The registry name of the block entity.
      */
@@ -71,7 +71,7 @@ public class ConfigureDatafixSchemaEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Registers a new simple (catch-all-nbt) block entity with an item inventory array on the nbt field with the given name to the CURRENT schema.
+     * Registers a new simple (catch-all-nbt) block entity with an item inventory array on the nbt field with the given name to the current schema and all its descendent versions.
      *
      * @param registryName The registry name of the block entity.
      * @param nbtKey The name of the nbt field to where the item array is located.
@@ -81,7 +81,7 @@ public class ConfigureDatafixSchemaEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Allows for the custom definition of a new block entity type and registration of it to the CURRENT schema.
+     * Allows for the custom definition of a new block entity type and registration of it to the current schema and all its descendent versions.
      * The function is given the registry name of the block entity type template to produce.
      *
      * @param registryName The registry name of the block entity type.
@@ -92,7 +92,7 @@ public class ConfigureDatafixSchemaEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Allows for the custom definition of a new block entity type and registration of it to the CURRENT schema.
+     * Allows for the custom definition of a new block entity type and registration of it to the current schema and all its descendent versions.
      * The supplier is invoked to produce the block entity type template.
      *
      * @param registryName The registry name of the block entity type.
@@ -103,7 +103,17 @@ public class ConfigureDatafixSchemaEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Registers a new simple (catch-all-nbt) entity to the CURRENT schema.
+     * Removes an already registered block entity from the current schema and all its descendent versions.
+     * This allows for the removal of a custom block entity type when it is registered in a parent version and is no longer needed.
+     *
+     * @param registryName The registry name of the block entity to remove.
+     */
+    public void removeBlockEntity(final ResourceLocation registryName) {
+        blockEntityTypes.put(registryName.toString(), null);
+    }
+
+    /**
+     * Registers a new simple (catch-all-nbt) entity to the current schema and all its descendent versions.
      *
      * @param registryName The registry name of the entity.
      */
@@ -112,7 +122,7 @@ public class ConfigureDatafixSchemaEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Allows for the custom definition of a new entity type and registration of it to the CURRENT schema.
+     * Allows for the custom definition of a new entity type and registration of it to the current schema and all its descendent versions.
      * The function is given the registry name of the entity type template to produce.
      *
      * @param registryName The registry name of the entity type.
@@ -123,7 +133,7 @@ public class ConfigureDatafixSchemaEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Allows for the custom definition of a new entity type and registration of it to the CURRENT schema.
+     * Allows for the custom definition of a new entity type and registration of it to the current schema and all its descendent versions.
      * The supplier is invoked to produce the entity type template.
      *
      * @param registryName The registry name of the entity type.
@@ -134,7 +144,19 @@ public class ConfigureDatafixSchemaEvent extends Event implements IModBusEvent
     }
 
     /**
+     * Removes an already registered entity from the current schema and all its descendent versions.
+     * This allows for the removal of a custom entity type when it is registered in a parent version and is no longer needed.
+     * 
+     * @param registryName The registry name of the entity to remove.
+     */
+    public void removeEntity(final ResourceLocation registryName) {
+        entityTypes.put(registryName.toString(), null);
+    }
+
+    /**
      * An unmodifiable map of all registered additional modded block entity types.
+     * A key maybe mapped to a null value, if it is supposed to be removed from the schema and its descendant versions, overriding the
+     * type specification added in a parent version.
      *
      * @return The already registered additional modded block entity types.
      */
@@ -145,6 +167,8 @@ public class ConfigureDatafixSchemaEvent extends Event implements IModBusEvent
 
     /**
      * An unmodifiable map of all registered additional modded entity types.
+     * A key maybe mapped to a null value, if it is supposed to be removed from the schema and its descendant versions, overriding the
+     * type specification added in a parent version.
      *
      * @return The already registered additional modded entity types.
      */
