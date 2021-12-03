@@ -36,7 +36,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @SuppressWarnings("rawtypes")
-public class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
+class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
 {
     private static final Logger LOGGER  = LogManager.getLogger();
     private Field field;

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
 +++ b/net/minecraft/client/gui/screens/multiplayer/ServerSelectionList.java
-@@ -333,6 +_,8 @@
+@@ -334,6 +_,8 @@
              this.f_99855_.m_99707_(list1);
           }
  

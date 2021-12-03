@@ -28,13 +28,13 @@ public interface IExtensionPoint<T extends Record>
      * Compatibility display test for the mod.
      * Used for displaying compatibility with remote servers with the same mod, and on disk saves.
      *
-     * The supplier provides my "local" version for sending across the network or writing to disk
-     * The predicate tests the version from a remote instance or save for acceptability (Boolean is true for network, false for local save)
+     * The supplier provides my "local" version for sending across the impl or writing to disk
+     * The predicate tests the version from a remote instance or save for acceptability (Boolean is true for impl, false for local save)
      * and returns true if the version is compatible.
      *
-     * <p>Return {@code net.minecraftforge.fmllegacy.network.FMLNetworkConstants#IGNORESERVERONLY} in the supplier, if you wish to be ignored
+     * <p>Return {@code net.minecraftforge.impl.impl.FMLNetworkConstants#IGNORESERVERONLY} in the supplier, if you wish to be ignored
      * as a server side only mod.</p>
-     * <p>Return true in the predicate for all values of the input string (when network boolean is true) if you are client side,
+     * <p>Return true in the predicate for all values of the input string (when impl boolean is true) if you are client side,
      * and don't care about matching any potential server version.</p>
      *
      * <p>

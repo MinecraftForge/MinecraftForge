@@ -20,10 +20,10 @@
 package net.minecraftforge.fml.loading.targets;
 
 import cpw.mods.jarhandling.SecureJar;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LibraryFinder;
 import net.minecraftforge.fml.loading.VersionInfo;
+import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -1,10 +1,9 @@
 --- a/net/minecraft/world/item/ShearsItem.java
 +++ b/net/minecraft/world/item/ShearsItem.java
-@@ -38,4 +_,30 @@
-          return 15.0F;
+@@ -48,6 +_,32 @@
        }
     }
-+
+ 
 +   @Override
 +   public net.minecraft.world.InteractionResult m_6880_(ItemStack stack, net.minecraft.world.entity.player.Player playerIn, LivingEntity entity, net.minecraft.world.InteractionHand hand) {
 +      if (entity.f_19853_.f_46443_) return net.minecraft.world.InteractionResult.PASS;
@@ -30,4 +29,7 @@
 +   public boolean canPerformAction(ItemStack stack, net.minecraftforge.common.ToolAction toolAction) {
 +      return net.minecraftforge.common.ToolActions.DEFAULT_SHEARS_ACTIONS.contains(toolAction);
 +   }
- }
++
+    public InteractionResult m_6225_(UseOnContext p_186371_) {
+       Level level = p_186371_.m_43725_();
+       BlockPos blockpos = p_186371_.m_8083_();

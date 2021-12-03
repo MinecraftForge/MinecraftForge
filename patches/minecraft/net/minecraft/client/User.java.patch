@@ -1,16 +1,16 @@
 --- a/net/minecraft/client/User.java
 +++ b/net/minecraft/client/User.java
-@@ -18,8 +_,22 @@
-    private final String f_92536_;
-    private final String f_92537_;
+@@ -21,8 +_,22 @@
+    private final Optional<String> f_193796_;
+    private final Optional<String> f_193797_;
     private final User.Type f_92538_;
 +   /** Forge: Cache of the local session's GameProfile properties. */
 +   private com.mojang.authlib.properties.PropertyMap properties;
  
-    public User(String p_92540_, String p_92541_, String p_92542_, String p_92543_) {
-+      if (p_92540_ == null || p_92540_.isEmpty()) {
-+         p_92540_ = "MissingName";
-+         p_92541_ = p_92542_ = "NotValid";
+    public User(String p_193799_, String p_193800_, String p_193801_, Optional<String> p_193802_, Optional<String> p_193803_, User.Type p_193804_) {
++      if (p_193799_ == null || p_193799_.isEmpty()) {
++         p_193799_ = "MissingName";
++         p_193800_ = p_193801_ = "NotValid";
 +         org.apache.logging.log4j.Logger logger = org.apache.logging.log4j.LogManager.getLogger(getClass().getName());
 +         logger.warn("=========================================================");
 +         logger.warn("WARNING!! the username was not set for this session, typically");
@@ -20,10 +20,10 @@
 +         logger.warn("when asking for help!");
 +         logger.warn("=========================================================");
 +      }
-       this.f_92535_ = p_92540_;
-       this.f_92536_ = p_92541_;
-       this.f_92537_ = p_92542_;
-@@ -45,10 +_,22 @@
+       this.f_92535_ = p_193799_;
+       this.f_92536_ = p_193800_;
+       this.f_92537_ = p_193801_;
+@@ -58,10 +_,22 @@
     public GameProfile m_92548_() {
        try {
           UUID uuid = UUIDTypeAdapter.fromString(this.m_92545_());

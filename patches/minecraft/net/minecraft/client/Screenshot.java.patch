@@ -11,7 +11,7 @@
 +      }
 +      final File target = event.getScreenshotFile();
 +
-       Util.m_137579_().execute(() -> {
+       Util.m_183992_().execute(() -> {
           try {
 -            nativeimage.m_85056_(file2);
 +            nativeimage.m_85056_(target);

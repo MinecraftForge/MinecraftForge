@@ -112,16 +112,14 @@ public class DimensionSettingsTest {
                 overworld.noiseSettings(),
                 overworld.getDefaultBlock(),
                 overworld.getDefaultFluid(),
-                overworld.getBedrockRoofPosition(),
-                overworld.getBedrockFloorPosition(),
+                overworld.surfaceRule(),
                 overworld.seaLevel(),
-                overworld.getMinSurfaceLevel(),
                 overworld.disableMobGeneration(),
                 overworld.isAquifersEnabled(),
                 overworld.isNoiseCavesEnabled(),
-                overworld.isDeepslateEnabled(),
                 overworld.isOreVeinsEnabled(),
-                overworld.isNoodleCavesEnabled()
+                overworld.isNoodleCavesEnabled(),
+                overworld.useLegacyRandomSource()
                 );
     }
 }

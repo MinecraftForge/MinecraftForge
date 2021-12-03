@@ -131,7 +131,7 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
     }
 
     @Override public boolean useAmbientOcclusion() { return parent.useAmbientOcclusion(); }
-    @Override public boolean isAmbientOcclusion(BlockState state) { return parent.isAmbientOcclusion(state); }
+    @Override public boolean useAmbientOcclusion(BlockState state) { return parent.useAmbientOcclusion(state); }
     @Override public boolean isGui3d() { return parent.isGui3d(); }
     @Override public boolean usesBlockLight() { return parent.usesBlockLight(); }
     @Override public boolean isCustomRenderer() { return parent.isCustomRenderer(); }

@@ -21,6 +21,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.FileUtils;
+import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.fml.loading.MavenCoordinateResolver;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -34,8 +35,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class ModListHandler {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -59,22 +58,22 @@ public class ModListHandler {
                         filter(path -> Files.exists(path.getLeft())).
                         findFirst().
                         orElseGet(()->{
-                            LOGGER.warn(CORE, "Failed to find coordinate {}", mc);
+                            LOGGER.warn(LogMarkers.CORE, "Failed to find coordinate {}", mc);
                             return null;
                 })).
                 filter(Objects::nonNull).
                 collect(Collectors.toList());
 
         final List<String> found = foundCoordinates.stream().map(Pair::getRight).collect(Collectors.toList());
-        LOGGER.debug(CORE, "Found mod coordinates from lists: {}", found);
+        LOGGER.debug(LogMarkers.CORE, "Found mod coordinates from lists: {}", found);
         return found;
     }
 
     private static List<String> transformPathToList(final String path) {
-        LOGGER.debug(CORE, "Reading mod list {}", path);
+        LOGGER.debug(LogMarkers.CORE, "Reading mod list {}", path);
         Path filePath = FMLPaths.GAMEDIR.get().resolve(path);
         if (!Files.exists(filePath)) {
-            LOGGER.warn(CORE, "Failed to find modlist file at {}", filePath);
+            LOGGER.warn(LogMarkers.CORE, "Failed to find modlist file at {}", filePath);
             return Collections.emptyList();
         }
 
@@ -82,7 +81,7 @@ public class ModListHandler {
         if (Objects.equals("list",extension)) {
             return readListFile(filePath).stream().filter(s -> !s.isEmpty()).collect(Collectors.toList());
         } else {
-            LOGGER.warn(CORE, "Failed to read unknown file list type {} for file {}", extension, filePath);
+            LOGGER.warn(LogMarkers.CORE, "Failed to read unknown file list type {} for file {}", extension, filePath);
         }
         return Collections.emptyList();
     }
@@ -96,7 +95,7 @@ public class ModListHandler {
         try {
             return Files.readAllLines(filePath);
         } catch (IOException e) {
-            LOGGER.warn(CORE, "Failed to read file list {}", filePath, e);
+            LOGGER.warn(LogMarkers.CORE, "Failed to read file list {}", filePath, e);
             return Collections.emptyList();
         }
     }

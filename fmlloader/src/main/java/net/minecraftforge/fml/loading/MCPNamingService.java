@@ -14,8 +14,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-import static net.minecraftforge.fml.loading.LogMarkers.CORE;
-
 public class MCPNamingService implements INameMappingService {
     private static final Logger LOGGER = LogManager.getLogger();
     private HashMap<String, String> methods;
@@ -58,7 +56,7 @@ public class MCPNamingService implements INameMappingService {
             HashMap<String,String> tmpmethods = new HashMap<>(1000);
             loadMappings("methods.csv", tmpmethods::put);
             methods = tmpmethods;
-            LOGGER.debug(CORE, "Loaded {} method mappings from methods.csv", methods.size());
+            LOGGER.debug(LogMarkers.CORE, "Loaded {} method mappings from methods.csv", methods.size());
         }
         return methods.getOrDefault(origin, origin);
     }
@@ -68,7 +66,7 @@ public class MCPNamingService implements INameMappingService {
             HashMap<String,String> tmpfields = new HashMap<>(1000);
             loadMappings("fields.csv", tmpfields::put);
             fields = tmpfields;
-            LOGGER.debug(CORE, "Loaded {} field mappings from fields.csv", fields.size());
+            LOGGER.debug(LogMarkers.CORE, "Loaded {} field mappings from fields.csv", fields.size());
         }
         return fields.getOrDefault(origin, origin);
     }
@@ -81,7 +79,7 @@ public class MCPNamingService implements INameMappingService {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(path.openStream()))) {
             reader.lines().skip(1).map(e -> e.split(",")).forEach(e -> mapStore.accept(e[0], e[1]));
         } catch (IOException e1) {
-            LOGGER.error(CORE, "Error reading mappings", e1);
+            LOGGER.error(LogMarkers.CORE, "Error reading mappings", e1);
         }
     }
 }

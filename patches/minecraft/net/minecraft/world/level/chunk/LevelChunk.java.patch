@@ -1,69 +1,61 @@
 --- a/net/minecraft/world/level/chunk/LevelChunk.java
 +++ b/net/minecraft/world/level/chunk/LevelChunk.java
-@@ -57,7 +_,7 @@
+@@ -49,7 +_,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
--public class LevelChunk implements ChunkAccess {
-+public class LevelChunk extends net.minecraftforge.common.capabilities.CapabilityProvider<LevelChunk> implements ChunkAccess, net.minecraftforge.common.extensions.IForgeLevelChunk {
+-public class LevelChunk extends ChunkAccess {
++public class LevelChunk extends ChunkAccess implements net.minecraftforge.common.capabilities.ICapabilityProviderImpl<LevelChunk> {
     static final Logger f_62771_ = LogManager.getLogger();
     private static final TickingBlockEntity f_156361_ = new TickingBlockEntity() {
        public void m_142224_() {
-@@ -106,6 +_,7 @@
+@@ -97,6 +_,7 @@
+       this.f_62791_ = p_196861_;
+       this.f_62784_ = p_196857_;
+       this.f_187943_ = p_196858_;
++      this.capProvider.initInternal();
     }
  
-    public LevelChunk(Level p_62800_, ChunkPos p_62801_, ChunkBiomeContainer p_62802_, UpgradeData p_62803_, TickList<Block> p_62804_, TickList<Fluid> p_62805_, long p_62806_, @Nullable LevelChunkSection[] p_62807_, @Nullable Consumer<LevelChunk> p_62808_) {
-+      super(LevelChunk.class);
-       this.f_62776_ = p_62800_;
-       this.f_62792_ = p_62801_;
-       this.f_62778_ = p_62803_;
-@@ -132,6 +_,7 @@
-       }
- 
-       this.f_62783_ = new ShortList[p_62800_.m_151559_()];
-+      this.gatherCapabilities();
-    }
- 
-    public LevelChunk(ServerLevel p_156365_, ProtoChunk p_156366_, @Nullable Consumer<LevelChunk> p_156367_) {
-@@ -279,14 +_,14 @@
-          boolean flag2 = blockstate.m_155947_();
-          if (!this.f_62776_.f_46443_) {
-             blockstate.m_60753_(this.f_62776_, p_62865_, p_62866_, p_62867_);
--         } else if (!blockstate.m_60713_(block) && flag2) {
+    public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {
+@@ -233,14 +_,14 @@
+             boolean flag2 = blockstate.m_155947_();
+             if (!this.f_62776_.f_46443_) {
+                blockstate.m_60753_(this.f_62776_, p_62865_, p_62866_, p_62867_);
+-            } else if (!blockstate.m_60713_(block) && flag2) {
 +         } else if ((!blockstate.m_60713_(block) || !p_62866_.m_155947_()) && flag2) {
-             this.m_8114_(p_62865_);
-          }
- 
-          if (!levelchunksection.m_62982_(k, l, i1).m_60713_(block)) {
-             return null;
-          } else {
--            if (!this.f_62776_.f_46443_) {
-+            if (!this.f_62776_.f_46443_ && !this.f_62776_.captureBlockSnapshots) {
-                p_62866_.m_60696_(this.f_62776_, p_62865_, blockstate, p_62867_);
+                this.m_8114_(p_62865_);
              }
  
-@@ -349,6 +_,10 @@
+             if (!levelchunksection.m_62982_(j, k, l).m_60713_(block)) {
+                return null;
+             } else {
+-               if (!this.f_62776_.f_46443_) {
++            if (!this.f_62776_.f_46443_ && !this.f_62776_.captureBlockSnapshots) {
+                   p_62866_.m_60696_(this.f_62776_, p_62865_, blockstate, p_62867_);
+                }
+ 
+@@ -283,6 +_,10 @@
     @Nullable
     public BlockEntity m_5685_(BlockPos p_62868_, LevelChunk.EntityCreationType p_62869_) {
-       BlockEntity blockentity = this.f_62779_.get(p_62868_);
+       BlockEntity blockentity = this.f_187610_.get(p_62868_);
 +      if (blockentity != null && blockentity.m_58901_()) {
-+         f_62779_.remove(p_62868_);
++         f_187610_.remove(p_62868_);
 +         blockentity = null;
 +      }
        if (blockentity == null) {
-          CompoundTag compoundtag = this.f_62774_.remove(p_62868_);
+          CompoundTag compoundtag = this.f_187609_.remove(p_62868_);
           if (compoundtag != null) {
-@@ -366,9 +_,6 @@
+@@ -300,9 +_,6 @@
                 this.m_142170_(blockentity);
              }
           }
 -      } else if (blockentity.m_58901_()) {
--         this.f_62779_.remove(p_62868_);
+-         this.f_187610_.remove(p_62868_);
 -         return null;
        }
  
        return blockentity;
-@@ -379,6 +_,7 @@
+@@ -313,6 +_,7 @@
        if (this.m_156370_()) {
           this.m_156404_(p_156391_);
           this.m_156406_(p_156391_);
@@ -71,12 +63,12 @@
        }
  
     }
-@@ -418,9 +_,14 @@
+@@ -352,9 +_,14 @@
     public CompoundTag m_8051_(BlockPos p_62932_) {
        BlockEntity blockentity = this.m_7702_(p_62932_);
        if (blockentity != null && !blockentity.m_58901_()) {
 +         try {
-          CompoundTag compoundtag1 = blockentity.m_6945_(new CompoundTag());
+          CompoundTag compoundtag1 = blockentity.m_187480_();
           compoundtag1.m_128379_("keepPacked", false);
           return compoundtag1;
 +         } catch (Exception e) {
@@ -84,31 +76,76 @@
 +            return null;
 +         }
        } else {
-          CompoundTag compoundtag = this.f_62774_.get(p_62932_);
+          CompoundTag compoundtag = this.f_187609_.get(p_62932_);
           if (compoundtag != null) {
-@@ -567,7 +_,7 @@
+@@ -453,7 +_,7 @@
  
     public Stream<BlockPos> m_6267_() {
-       return StreamSupport.stream(BlockPos.m_121976_(this.f_62792_.m_45604_(), this.m_141937_(), this.f_62792_.m_45605_(), this.f_62792_.m_45608_(), this.m_151558_() - 1, this.f_62792_.m_45609_()).spliterator(), false).filter((p_156419_) -> {
--         return this.m_8055_(p_156419_).m_60791_() != 0;
-+         return this.m_8055_(p_156419_).getLightEmission(m_62953_(), p_156419_) != 0;
+       return StreamSupport.stream(BlockPos.m_121976_(this.f_187604_.m_45604_(), this.m_141937_(), this.f_187604_.m_45605_(), this.f_187604_.m_45608_(), this.m_151558_() - 1, this.f_187604_.m_45609_()).spliterator(), false).filter((p_187990_) -> {
+-         return this.m_8055_(p_187990_).m_60791_() != 0;
++         return this.m_8055_(p_187990_).getLightEmission(m_62953_(), p_187990_) != 0;
        });
     }
  
-@@ -759,10 +_,12 @@
+@@ -541,6 +_,7 @@
     }
  
-    public void m_156368_() {
-+      this.f_62779_.values().forEach(BlockEntity::onChunkUnloaded);
-       this.f_62779_.values().forEach(this::m_156400_);
+    public void m_187957_() {
++      this.f_187610_.values().forEach(BlockEntity::onChunkUnloaded);
+       this.f_187610_.values().forEach(BlockEntity::m_7651_);
+       this.f_187610_.clear();
+       this.f_156362_.values().forEach((p_187966_) -> {
+@@ -550,6 +_,7 @@
     }
  
     public void m_156369_() {
-+      this.f_62776_.addFreshBlockEntities(this.f_62779_.values());
-       this.f_62779_.values().forEach((p_156409_) -> {
-          this.m_156404_(p_156409_);
-          this.m_156406_(p_156409_);
-@@ -826,6 +_,7 @@
++      this.f_62776_.addFreshBlockEntities(this.f_187610_.values());
+       this.f_187610_.values().forEach((p_187988_) -> {
+          this.m_156404_(p_187988_);
+          this.m_156406_(p_187988_);
+@@ -605,6 +_,41 @@
+       this.f_196848_ = p_196865_;
+    }
+ 
++   // FORGE START
++   private final net.minecraftforge.common.capabilities.CapabilityProvider.AsField<LevelChunk> capProvider = new net.minecraftforge.common.capabilities.CapabilityProvider.AsField<>(LevelChunk.class, this);
++
++   @org.jetbrains.annotations.NotNull
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(@org.jetbrains.annotations.NotNull net.minecraftforge.common.capabilities.Capability<T> cap, @org.jetbrains.annotations.Nullable net.minecraft.core.Direction side)
++   {
++      return capProvider.getCapability(cap, side);
++   }
++
++   @Override
++   public boolean areCapsCompatible(net.minecraftforge.common.capabilities.CapabilityProvider<LevelChunk> other)
++   {
++      return capProvider.areCapsCompatible(other);
++   }
++
++   @Override
++   public boolean areCapsCompatible(@org.jetbrains.annotations.Nullable net.minecraftforge.common.capabilities.CapabilityDispatcher other)
++   {
++      return capProvider.areCapsCompatible(other);
++   }
++
++   @Override
++   public void invalidateCaps()
++   {
++      capProvider.invalidateCaps();
++   }
++
++   @Override
++   public void reviveCaps()
++   {
++      capProvider.reviveCaps();
++   }
++   // FORGE END
++
+    class BoundTickingBlockEntity<T extends BlockEntity> implements TickingBlockEntity {
+       private final T f_156428_;
+       private final BlockEntityTicker<T> f_156429_;
+@@ -621,6 +_,7 @@
              if (LevelChunk.this.m_156410_(blockpos)) {
                 try {
                    ProfilerFiller profilerfiller = LevelChunk.this.f_62776_.m_46473_();
@@ -116,7 +153,7 @@
                    profilerfiller.m_6521_(this::m_142280_);
                    BlockState blockstate = LevelChunk.this.m_8055_(blockpos);
                    if (this.f_156428_.m_58903_().m_155262_(blockstate)) {
-@@ -843,6 +_,12 @@
+@@ -638,6 +_,12 @@
                    CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking block entity");
                    CrashReportCategory crashreportcategory = crashreport.m_127514_("Block entity being ticked");
                    this.f_156428_.m_58886_(crashreportcategory);
@@ -129,11 +166,12 @@
                    throw new ReportedException(crashreport);
                 }
              }
-@@ -871,6 +_,32 @@
+@@ -666,6 +_,34 @@
        IMMEDIATE,
        QUEUED,
        CHECK;
 +   }
++
 +
 +   /**
 +    * <strong>FOR INTERNAL USE ONLY</strong>
@@ -143,17 +181,18 @@
 +   @java.lang.Deprecated
 +   @javax.annotation.Nullable
 +   public final CompoundTag writeCapsToNBT() {
-+      return this.serializeCaps();
++      return capProvider.serializeInternal();
 +   }
 +
 +   /**
 +    * <strong>FOR INTERNAL USE ONLY</strong>
 +    * <p>
 +    * Only public for use in {@link net.minecraft.world.level.chunk.storage.ChunkSerializer}.
++    *
 +    */
 +   @java.lang.Deprecated
 +   public final void readCapsFromNBT(CompoundTag tag) {
-+      this.deserializeCaps(tag);
++      capProvider.deserializeInternal(tag);
 +   }
 +
 +   @Override
@@ -161,4 +200,4 @@
 +      return m_62953_();
     }
  
-    class RebindableTickingBlockEntityWrapper implements TickingBlockEntity {
+    @FunctionalInterface

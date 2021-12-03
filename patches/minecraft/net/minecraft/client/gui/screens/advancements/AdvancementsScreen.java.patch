@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
 +++ b/net/minecraft/client/gui/screens/advancements/AdvancementsScreen.java
-@@ -42,6 +_,7 @@
-    private final Map<Advancement, AdvancementTab> f_97335_ = Maps.newLinkedHashMap();
+@@ -43,6 +_,7 @@
+    @Nullable
     private AdvancementTab f_97336_;
     private boolean f_97337_;
 +   private static int tabPage, maxPages;
  
     public AdvancementsScreen(ClientAdvancements p_97340_) {
        super(NarratorChatListener.f_93310_);
-@@ -57,7 +_,13 @@
+@@ -58,7 +_,13 @@
        } else {
           this.f_97334_.m_104401_(this.f_97336_ == null ? null : this.f_97336_.m_97182_(), true);
        }
@@ -23,7 +23,7 @@
     }
  
     public void m_7861_() {
-@@ -75,7 +_,7 @@
+@@ -76,7 +_,7 @@
           int j = (this.f_96544_ - 140) / 2;
  
           for(AdvancementTab advancementtab : this.f_97335_.values()) {
@@ -32,7 +32,7 @@
                 this.f_97334_.m_104401_(advancementtab.m_97182_(), true);
                 break;
              }
-@@ -99,6 +_,11 @@
+@@ -100,6 +_,11 @@
        int i = (this.f_96543_ - 252) / 2;
        int j = (this.f_96544_ - 140) / 2;
        this.m_7333_(p_97361_);
@@ -44,7 +44,7 @@
        this.m_97373_(p_97361_, p_97362_, p_97363_, i, j);
        this.m_97356_(p_97361_, i, j);
        this.m_97381_(p_97361_, p_97362_, p_97363_, i, j);
-@@ -149,12 +_,14 @@
+@@ -150,12 +_,14 @@
           RenderSystem.m_157456_(0, f_97330_);
  
           for(AdvancementTab advancementtab : this.f_97335_.values()) {
@@ -59,7 +59,7 @@
              advancementtab1.m_97159_(p_97358_, p_97359_, this.f_96542_);
           }
  
-@@ -180,7 +_,7 @@
+@@ -181,7 +_,7 @@
  
        if (this.f_97335_.size() > 1) {
           for(AdvancementTab advancementtab : this.f_97335_.values()) {

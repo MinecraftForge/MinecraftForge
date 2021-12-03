@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/DebugLevelSource.java
 +++ b/net/minecraft/world/level/levelgen/DebugLevelSource.java
-@@ -107,4 +_,10 @@
+@@ -107,6 +_,12 @@
  
        return blockstate;
     }
@@ -10,4 +10,6 @@
 +      f_64115_ = Mth.m_14167_(Mth.m_14116_(f_64114_.size()));
 +      f_64116_ = Mth.m_14167_((float) (f_64114_.size() / f_64115_));
 +   }
- }
+ 
+    public Climate.Sampler m_183403_() {
+       return (p_188507_, p_188508_, p_188509_) -> {

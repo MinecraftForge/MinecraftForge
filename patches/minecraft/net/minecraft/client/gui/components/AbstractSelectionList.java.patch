@@ -13,4 +13,4 @@
 +
     @OnlyIn(Dist.CLIENT)
     public abstract static class Entry<E extends AbstractSelectionList.Entry<E>> implements GuiEventListener {
-       @Deprecated
+       /** @deprecated */

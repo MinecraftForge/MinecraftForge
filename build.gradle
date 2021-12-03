@@ -5,7 +5,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:5.1.+'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:[5.1.26,)'
     }
 }
 
@@ -29,6 +29,7 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.36.0'
     id 'net.minecraftforge.gradleutils' version '1.+'
     id 'eclipse'
+    id 'de.undercouch.download' version '4.1.2'
 }
 
 Util.init() //Init all our extension methods!
@@ -43,9 +44,9 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'official'
-    MAPPING_VERSION = '1.17.1'
-    MC_VERSION = '1.17.1'
-    MCP_VERSION = '20210706.113038'
+    MAPPING_VERSION = '1.18'
+    MC_VERSION = '1.18'
+    MCP_VERSION = '20211130.085255'
     SPI_VERSION = '4.0.10'
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
@@ -55,7 +56,7 @@ ext {
     BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
     ASM_VERSION = '9.1'
     INSTALLER_VERSION = '2.1.+'
-    MIXIN_VERSION = '0.8.4'
+    MIXIN_VERSION = '0.8.5'
 
     GIT_INFO = gradleutils.gitInfo
     VERSION = gradleutils.getFilteredMCTagOffsetBranchVersion(true, '[0-9]', MC_VERSION)
@@ -63,10 +64,10 @@ ext {
     FORGE_VERSION = VERSION.substring(MC_VERSION.length() + 1)
 
     SPECIAL_SOURCE = 'net.md-5:SpecialSource:1.10.0'
-    VIGNETTE = 'net.minecraftforge.lex:vignette:0.2.0.16'
     BINPATCH_TOOL = 'net.minecraftforge:binarypatcher:1.0.12:fatjar'
-    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.7'
+    INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.10'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
+    FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.17:all'
 }
 
 println('Version: ' + VERSION +
@@ -82,6 +83,32 @@ def extraTxts = [
 def changelog = rootProject.file('build/changelog.txt')
 if (changelog.exists())
     extraTxts += changelog
+
+task downloadVersionManifest(type: Download) {
+    src 'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json'
+    dest file('build/versions/version_manifest.json')
+    useETag 'all'
+    onlyIfModified true
+    quiet true
+}
+task downloadJson(type: Download, dependsOn: downloadVersionManifest) {
+    inputs.file downloadVersionManifest.dest
+    src { downloadVersionManifest.dest.json.versions.find{ it.id == MC_VERSION }.url }
+    dest file("build/versions/${MC_VERSION}/version.json")
+    useETag 'all'
+    onlyIfModified true
+    quiet true
+}
+['client', 'server'].each { id ->
+    task "download${id.capitalize()}Raw"(type: Download, dependsOn: downloadJson) {
+        inputs.file downloadJson.dest
+        src { downloadJson.dest.json.downloads.get(id).url }
+        dest file("build/versions/${MC_VERSION}/${id}.jar")
+        useETag 'all'
+        onlyIfModified true
+        quiet true
+    }
+}
 
 subprojects {
     apply plugin: 'maven-publish'
@@ -109,7 +136,7 @@ subprojects {
         }
     }
 
-    java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
     tasks.withType(Javadoc).configureEach {
         options.tags = [
@@ -247,10 +274,10 @@ def sharedDeps = {
     installer "net.minecraftforge:coremods:${COREMODS_VERSION}"
     installer "cpw.mods:modlauncher:${MODLAUNCHER_VERSION}"
     installer 'net.minecraftforge:unsafe:0.2.+'
-    installer 'com.electronwill.night-config:core:3.6.3'
-    installer 'com.electronwill.night-config:toml:3.6.3'
+    installer 'com.electronwill.night-config:core:3.6.4'
+    installer 'com.electronwill.night-config:toml:3.6.4'
     installer 'org.apache.maven:maven-artifact:3.6.3'
-    installer 'org.apache.commons:commons-lang3:3.8.1'
+    installer 'org.apache.commons:commons-lang3:3.12.0'
     installer 'net.jodah:typetools:0.8.3'
     installer 'org.apache.logging.log4j:log4j-api:2.14.1'
     installer 'org.apache.logging.log4j:log4j-core:2.14.1'
@@ -260,8 +287,8 @@ def sharedDeps = {
     installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
     installer "org.spongepowered:mixin:${MIXIN_VERSION}"
     installer 'org.openjdk.nashorn:nashorn-core:15.3'
-    installer 'com.google.guava:guava:21.0'
-    installer 'com.google.code.gson:gson:2.8.0'
+    installer 'com.google.guava:guava:31.0.1-jre'
+    installer 'com.google.code.gson:gson:2.8.8'
 
     /*
     installer 'org.lwjgl:lwjgl:3.2.2'
@@ -285,18 +312,16 @@ def sharedFmlonlyForge = { Project prj ->
             }
         } else {
             prj.task([type: RenameJar, dependsOn: prj.tasks.createMcp2Srg], "create${side}SRG") {
-                tool = VIGNETTE
+                tool = FART
                 args = [
-                        '--jar-in', '{input}',
-                        '--jar-out', '{output}',
-                        '--mapping-format', 'tsrg2',
-                        '--mappings', '{mappings}',
-                        // '--stable',
-                        '--create-inits', '--fix-param-annotations', '--fernflower-meta'
+                        '--input', '{input}',
+                        '--output', '{output}',
+                        '--names', '{mappings}',
+                        '--ann-fix', '--ids-fix', '--src-fix', '--record-fix'
                 ]
                 mappings = prj.tasks.createMcp2Srg.srg
                 input = prj.tasks.getByName("download${side}Slim").output
-                output = file("build/create${side}SRG/output.jar")
+                output = prj.file("build/create${side}SRG/output.jar")
             }
         }
 
@@ -450,11 +475,6 @@ def sharedFmlonlyForge = { Project prj ->
     }
 
     def MODULE_PATH = Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{"libraries/${it.downloads.artifact.path}"}
-    def CLASS_PATH = Util.getArtifacts(prj, prj.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
-            [
-                    'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
-                    "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
-            ]
     def tokens = [
             TASK:          prj.name.equals('forge') ? 'forgeserver' : 'fmlserver',
             MAVEN_PATH:    prj.ext.MAVEN_PATH.toString(),
@@ -465,25 +485,43 @@ def sharedFmlonlyForge = { Project prj ->
             IGNORE_LIST: Util.getArtifacts(prj, prj.configurations.moduleonly, false).values().collect{it.downloads.artifact.path.rsplit('/', 1)[1]}.join(','),
             MODULES: 'ALL-MODULE-PATH'
     ]
+    
+    prj.task([dependsOn: rootProject.downloadServerRaw], 'makeClasspathFiles') {
+        doLast {
+            def CLASS_PATH = Util.getArtifacts(prj, prj.configurations.installer, false).values().collect{"libraries/${it.downloads.artifact.path}"} +
+            [
+                'libraries/' + Util.getMavenPath(rootProject.tasks.findByPath(':fmlloader:jar')),
+                "libraries/net/minecraft/server/${MC_VERSION}-${MCP_VERSION}/server-${MC_VERSION}-${MCP_VERSION}-extra.jar"
+            ]
+            def claimed = CLASS_PATH.collect{ it.rsplit('/', 2)[0] }.toSet() // Allow us to override versions
+            try (def zip = new java.util.zip.ZipFile(rootProject.downloadServerRaw.dest)) {
+                CLASS_PATH += zip.getInputStream(zip.getEntry('META-INF/classpath-joined')).text.split(';')
+                    .findAll{ it.startsWith('libraries/') && !claimed.contains(it.rsplit('/', 2)[0]) }
+            }
+
+            configure(prj.installerJar) {
+                from(rootProject.file('server_files/args.txt')) {
+                    filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
+                    rename { 'data/win_args.txt' }
+                }
+
+                from(rootProject.file('server_files/args.txt')) {
+                    filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
+                    rename { 'data/unix_args.txt' }
+                }
+            }
+        }
+    }
 
     prj.afterEvaluate {
         prj.installerJar {
+            dependsOn('makeClasspathFiles')
             from(rootProject.file('server_files/')) {
                 exclude 'args.txt'
                 filter(ReplaceTokens, tokens: tokens)
                 into('data/')
                 //rename 'run.sh',  "run_forge_${VERSION.replace('-', '_').sh"
                 //rename 'run.bat', "run_forge_${VERSION.replace('-', '_').bat"
-            }
-
-            from(rootProject.file('server_files/args.txt')) {
-                filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(';'), CLASS_PATH: CLASS_PATH.join(';')])
-                rename { 'data/win_args.txt' }
-            }
-
-            from(rootProject.file('server_files/args.txt')) {
-                filter(ReplaceTokens, tokens: tokens + [MODULE_PATH: MODULE_PATH.join(':'), CLASS_PATH: CLASS_PATH.join(':')])
-                rename { 'data/unix_args.txt' }
             }
         }
     }
@@ -624,6 +662,10 @@ project(':fmlonly') {
                         client: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings-merged@txt]",
                         server: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings-merged@txt]"
                     ],
+                    MC_UNPACKED: [
+                        client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:unpacked]",
+                        server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:unpacked]"
+                    ],
                     MC_SLIM: [
                         client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:slim]",
                         server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:slim]"
@@ -685,6 +727,26 @@ project(':fmlonly') {
                             '--to',   "{ROOT}/libraries/${MAVEN_PATH}/unix_args.txt"
                         ]
                     ], [
+                        sides: ['server'],
+                        jar: INSTALLER_TOOLS,
+                        classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                        args: [
+                            '--task', 'BUNDLER_EXTRACT',
+                            '--input', '{MINECRAFT_JAR}',
+                            '--output', '{ROOT}/libraries/',
+                            '--libraries'
+                        ]
+                    ], [
+                        sides: ['server'],
+                        jar: INSTALLER_TOOLS,
+                        classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                        args: [
+                            '--task', 'BUNDLER_EXTRACT',
+                            '--input', '{MINECRAFT_JAR}',
+                            '--output', '{MC_UNPACKED}',
+                            '--jar-only'
+                        ]
+                    ], [
                         jar: INSTALLER_TOOLS,
                         classpath: getClasspath(project, libs, INSTALLER_TOOLS),
                         args: [
@@ -713,11 +775,12 @@ project(':fmlonly') {
                             '--classes', '--reverse-right'
                         ]
                     ], [
+                        sides: ['client'],
                         jar: JAR_SPLITTER,
                         classpath: getClasspath(project, libs, JAR_SPLITTER),
                         args: [
                             '--input', '{MINECRAFT_JAR}',
-                            '--slim', '{MC_SLIM}',
+                            '--slim',  '{MC_SLIM}',
                             '--extra', '{MC_EXTRA}',
                             '--srg', '{MERGED_MAPPINGS}'
                         ],
@@ -726,15 +789,27 @@ project(':fmlonly') {
                             '{MC_EXTRA}': '{MC_EXTRA_SHA}'
                         ]
                     ], [
-                        jar: VIGNETTE,
-                        classpath: getClasspath(project, libs, VIGNETTE),
+                        sides: ['server'],
+                        jar: JAR_SPLITTER,
+                        classpath: getClasspath(project, libs, JAR_SPLITTER),
                         args: [
-                            '--jar-in', '{MC_SLIM}',
-                            '--jar-out', '{MC_SRG}',
-                            '--mapping-format', 'tsrg2',
-                            '--mappings', '{MERGED_MAPPINGS}',
-                            // '--stable',
-                            '--create-inits', '--fix-param-annotations', '--fernflower-meta'
+                            '--input', '{MC_UNPACKED}',
+                            '--slim',  '{MC_SLIM}',
+                            '--extra', '{MC_EXTRA}',
+                            '--srg', '{MERGED_MAPPINGS}'
+                        ],
+                        outputs: [
+                            '{MC_SLIM}': '{MC_SLIM_SHA}',
+                            '{MC_EXTRA}': '{MC_EXTRA_SHA}'
+                        ]
+                    ], [
+                        jar: FART,
+                        classpath: getClasspath(project, libs, FART),
+                        args: [
+                            '--input', '{MC_SLIM}',
+                            '--output', '{MC_SRG}',
+                            '--names', '{MERGED_MAPPINGS}',
+                            '--ann-fix', '--ids-fix', '--src-fix', '--record-fix'
                         ]/*,
                         outputs: [
                             '{MC_SRG}': '{MC_SRG_SHA}'
@@ -1140,6 +1215,10 @@ project(':forge') {
                         client: '/data/client.lzma',
                         server: '/data/server.lzma'
                     ],
+                    MC_UNPACKED: [
+                        client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:unpacked]",
+                        server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:unpacked]"
+                    ],
                     MC_SLIM: [
                         client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:slim]",
                         server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:slim]"
@@ -1209,6 +1288,26 @@ project(':forge') {
                             '--to',   "{ROOT}/libraries/${MAVEN_PATH}/unix_args.txt"
                         ]
                     ], [
+                        sides: ['server'],
+                        jar: INSTALLER_TOOLS,
+                        classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                        args: [
+                            '--task', 'BUNDLER_EXTRACT',
+                            '--input', '{MINECRAFT_JAR}',
+                            '--output', '{ROOT}/libraries/',
+                            '--libraries'
+                        ]
+                    ], [
+                        sides: ['server'],
+                        jar: INSTALLER_TOOLS,
+                        classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                        args: [
+                            '--task', 'BUNDLER_EXTRACT',
+                            '--input', '{MINECRAFT_JAR}',
+                            '--output', '{MC_UNPACKED}',
+                            '--jar-only'
+                        ]
+                    ], [
                         jar: INSTALLER_TOOLS,
                         classpath: getClasspath(project, libs, INSTALLER_TOOLS),
                         args: [
@@ -1237,6 +1336,7 @@ project(':forge') {
                             '--classes', '--reverse-right'
                         ]
                     ], [
+                        sides: ['client'],
                         jar: JAR_SPLITTER,
                         classpath: getClasspath(project, libs, JAR_SPLITTER),
                         args: [
@@ -1250,15 +1350,27 @@ project(':forge') {
                             '{MC_EXTRA}': '{MC_EXTRA_SHA}'
                         ]
                     ], [
-                        jar: VIGNETTE,
-                        classpath: getClasspath(project, libs, VIGNETTE),
+                        sides: ['server'],
+                        jar: JAR_SPLITTER,
+                        classpath: getClasspath(project, libs, JAR_SPLITTER),
                         args: [
-                            '--jar-in', '{MC_SLIM}',
-                            '--jar-out', '{MC_SRG}',
-                            '--mapping-format', 'tsrg2',
-                            '--mappings', '{MERGED_MAPPINGS}',
-                            // '--stable',
-                            '--create-inits', '--fix-param-annotations', '--fernflower-meta'
+                            '--input', '{MC_UNPACKED}',
+                            '--slim',  '{MC_SLIM}',
+                            '--extra', '{MC_EXTRA}',
+                            '--srg', '{MERGED_MAPPINGS}'
+                        ],
+                        outputs: [
+                            '{MC_SLIM}': '{MC_SLIM_SHA}',
+                            '{MC_EXTRA}': '{MC_EXTRA_SHA}'
+                        ]
+                    ], [
+                        jar: FART,
+                        classpath: getClasspath(project, libs, FART),
+                        args: [
+                            '--input', '{MC_SLIM}',
+                            '--output', '{MC_SRG}',
+                            '--names', '{MERGED_MAPPINGS}',
+                            '--ann-fix', '--ids-fix', '--src-fix', '--record-fix'
                         ]/*,
                         outputs: [
                             '{MC_SRG}': '{MC_SRG_SHA}'
@@ -1341,7 +1453,7 @@ project(':forge') {
                 MAPPING_CHANNEL: MAPPING_CHANNEL,
                 MAPPING_VERSION: MAPPING_VERSION,
                 FORGE_SPEC_VERSION: SPEC_VERSION.split("\\.")[0],
-                MC_NEXT_VERSION: "1."+((MC_VERSION.split("\\.")[1] as int)+1)
+                MC_NEXT_VERSION: "1."+((MC_VERSION.split("[\\.-]")[1] as int)+1)
             ])
             rename 'gitignore\\.txt', '.gitignore'
             rename 'gitattributes\\.txt', '.gitattributes'
@@ -1375,7 +1487,8 @@ project(':forge') {
     }
 
     reobfJar {
-        tool = SPECIAL_SOURCE + ':shaded'
+        tool = FART
+        args = ['--input', '{input}', '--output', '{output}', '--map', '{srg}']
     }
 
     tasks.eclipse.dependsOn('genEclipseRuns')

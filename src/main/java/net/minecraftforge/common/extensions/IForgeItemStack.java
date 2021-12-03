@@ -207,20 +207,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * {@return {@code true} if this item is considered a shield}
-     *
-     * @param entity the entity holding the item stack
-     * @deprecated To be removed in 1.18. Call {@link #canPerformAction(ToolAction)} with
-     * {@link ToolActions#SHIELD_BLOCK} instead.
-     */
-    @SuppressWarnings("removal")
-    @Deprecated(since = "1.17.1", forRemoval = true)
-    default boolean isShield(@Nullable LivingEntity entity)
-    {
-        return self().getItem().isShield(self(), entity);
-    }
-
-    /**
      * Called when a entity tries to play the 'swing' animation.
      *
      * @param entity The entity swinging the item.

@@ -43,11 +43,6 @@ public class ConditionalAdvancement
         return new Builder();
     }
 
-    @Deprecated
-    public static boolean processConditions(JsonObject json) {
-        return processConditional(json) != null;
-    }
-
     /**
      * Processes the conditional advancement during loading.
      * @param json The incoming json from the advancement file.

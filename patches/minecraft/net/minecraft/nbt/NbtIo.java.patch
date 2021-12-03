@@ -1,6 +1,6 @@
 --- a/net/minecraft/nbt/NbtIo.java
 +++ b/net/minecraft/nbt/NbtIo.java
-@@ -194,10 +_,12 @@
+@@ -218,10 +_,12 @@
  
     private static Tag m_128930_(DataInput p_128931_, int p_128932_, NbtAccounter p_128933_) throws IOException {
        byte b0 = p_128931_.readByte();
@@ -8,7 +8,7 @@
        if (b0 == 0) {
           return EndTag.f_128534_;
        } else {
--         p_128931_.readUTF();
+-         StringTag.m_197563_(p_128931_);
 +         p_128933_.readUTF(p_128931_.readUTF()); //Forge: Count this string.
 +         p_128933_.m_6800_(32); //Forge: 4 extra bytes for the object allocation.
  

@@ -113,10 +113,6 @@ public class ForgeConfig {
 
         public final BooleanValue experimentalForgeLightPipelineEnabled;
 
-        /** @deprecated Selective reloading is no longer supported due to vanilla now reloading resources in parallel */
-        @Deprecated(since="1.17.1", forRemoval = true)
-        public final BooleanValue selectiveResourceReloadEnabled;
-
         public final BooleanValue showLoadWarnings;
 
         public final BooleanValue useCombinedDepthStencilAttachment;
@@ -138,11 +134,6 @@ public class ForgeConfig {
                 .comment("EXPERIMENTAL: Enable the Forge block rendering pipeline - fixes the lighting of custom models.")
                 .translation("forge.configgui.forgeLightPipelineEnabled")
                 .define("experimentalForgeLightPipelineEnabled", false);
-
-            selectiveResourceReloadEnabled = builder
-                .comment("When enabled, makes specific reload tasks such as language changing quicker to run.")
-                .translation("forge.configgui.selectiveResourceReloadEnabled")
-                .define("selectiveResourceReloadEnabled", true);
 
             showLoadWarnings = builder
                 .comment("When enabled, Forge will show any warnings that occurred during loading.")

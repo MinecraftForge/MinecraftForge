@@ -27,9 +27,10 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.util.random.WeightedRandom;
+import net.minecraft.world.entity.ai.behavior.ShufflingList;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.WeighedRandom;
 import net.minecraft.world.level.biome.Biome;
 
 public class BiomeManager
@@ -46,7 +47,6 @@ public class BiomeManager
         currentBiomes[BiomeType.DESERT_LEGACY.ordinal()] = new TrackedList<>(
             new BiomeEntry(Biomes.DESERT, 10),
             new BiomeEntry(Biomes.FOREST, 10),
-            new BiomeEntry(Biomes.MOUNTAINS, 10),
             new BiomeEntry(Biomes.SWAMP, 10),
             new BiomeEntry(Biomes.PLAINS, 10),
             new BiomeEntry(Biomes.TAIGA, 10)
@@ -61,7 +61,6 @@ public class BiomeManager
         currentBiomes[BiomeType.WARM.ordinal()] = new TrackedList<>(
             new BiomeEntry(Biomes.FOREST, 10),
             new BiomeEntry(Biomes.DARK_FOREST, 10),
-            new BiomeEntry(Biomes.MOUNTAINS, 10),
             new BiomeEntry(Biomes.PLAINS, 10),
             new BiomeEntry(Biomes.BIRCH_FOREST, 10),
             new BiomeEntry(Biomes.SWAMP, 10)
@@ -69,36 +68,16 @@ public class BiomeManager
 
         currentBiomes[BiomeType.COOL.ordinal()] = new TrackedList<>(
             new BiomeEntry(Biomes.FOREST, 10),
-            new BiomeEntry(Biomes.MOUNTAINS, 10),
             new BiomeEntry(Biomes.TAIGA, 10),
             new BiomeEntry(Biomes.PLAINS, 10)
         );
 
         currentBiomes[BiomeType.ICY.ordinal()] = new TrackedList<>(
-            new BiomeEntry(Biomes.SNOWY_TUNDRA, 30),
             new BiomeEntry(Biomes.SNOWY_TAIGA, 10)
         );
 
         return currentBiomes;
     }
-
-    /*
-    public static void addSpawnBiome(Biome biome)
-    {
-        if (!BiomeProvider.BIOMES_TO_SPAWN_IN.contains(biome))
-        {
-            BiomeProvider.BIOMES_TO_SPAWN_IN.add(biome);
-        }
-    }
-
-    public static void removeSpawnBiome(Biome biome)
-    {
-        if (BiomeProvider.BIOMES_TO_SPAWN_IN.contains(biome))
-        {
-            BiomeProvider.BIOMES_TO_SPAWN_IN.remove(biome);
-        }
-    }
-    */
 
     /**
      * Add biomes that you add to the overworld without using {@link BiomeManager#addBiome(BiomeType, BiomeEntry)}
@@ -157,13 +136,12 @@ public class BiomeManager
         DESERT, DESERT_LEGACY, WARM, COOL, ICY;
     }
 
-    public static class BiomeEntry extends WeighedRandom.WeighedRandomItem
+    public static class BiomeEntry
     {
         private final ResourceKey<Biome> key;
 
         public BiomeEntry(ResourceKey<Biome> key, int weight)
         {
-            super(weight);
             this.key = key;
         }
 

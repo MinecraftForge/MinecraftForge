@@ -1,11 +1,11 @@
 --- a/net/minecraft/core/RegistryAccess.java
 +++ b/net/minecraft/core/RegistryAccess.java
-@@ -100,6 +_,8 @@
-       ResourceKey<? extends Registry<E>> resourcekey = p_123074_.m_123108_();
+@@ -109,6 +_,8 @@
+       ResourceKey<? extends Registry<E>> resourcekey = p_194617_.f_123101_();
        boolean flag = !resourcekey.equals(Registry.f_122878_) && !resourcekey.equals(Registry.f_122818_);
        Registry<E> registry = f_123049_.m_175515_(resourcekey);
 +      if (!resourcekey.equals(Registry.f_122818_))
 +         registry = ((Registry<Registry<E>>)BuiltinRegistries.f_123858_).m_6246_((ResourceKey<Registry<E>>)resourcekey);
-       WritableRegistry<E> writableregistry = p_123072_.m_175512_(resourcekey);
+       WritableRegistry<E> writableregistry = p_194615_.m_175512_(resourcekey);
  
        for(Entry<ResourceKey<E>, E> entry : registry.m_6579_()) {

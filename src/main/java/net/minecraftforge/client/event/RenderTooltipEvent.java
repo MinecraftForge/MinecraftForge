@@ -42,66 +42,45 @@ import net.minecraftforge.eventbus.api.Event;
  * Do not use this event directly, use one of the subclasses:
  * <ul>
  * <li>{@link RenderTooltipEvent.Pre}</li>
- * <li>{@link RenderTooltipEvent.PostBackground}</li>
- * <li>{@link RenderTooltipEvent.PostText}</li>
+ * <li>{@link RenderTooltipEvent.GatherComponents}</li>
+ * <li>{@link RenderTooltipEvent.Color}</li>
  * </ul>
  */
 public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api.Event
 {
     @Nonnull
-    protected final ItemStack stack;
-    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-    protected final List<? extends FormattedText> lines;
-    protected final PoseStack matrixStack; // TODO: rename in 1.18
+    protected final ItemStack itemStack;
+    protected final PoseStack poseStack;
     protected int x;
     protected int y;
-    protected Font fr;
+    protected Font font;
     protected final List<ClientTooltipComponent> components;
 
-    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-    public RenderTooltipEvent(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, @Nonnull Font fr)
-    {
-        this.stack = stack;
-        this.lines = Collections.unmodifiableList(lines);
-        this.matrixStack = matrixStack;
-        this.x = x;
-        this.y = y;
-        this.fr = fr;
-        this.components = List.of();
-    }
 
-    public RenderTooltipEvent(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
+    public RenderTooltipEvent(@Nonnull ItemStack itemStack, PoseStack poseStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
     {
-        this.stack = stack;
-        this.lines = List.of();
+        this.itemStack = itemStack;
+        this.poseStack = poseStack;
         this.components = Collections.unmodifiableList(components);
-        this.matrixStack = poseStack;
         this.x = x;
         this.y = y;
-        this.fr = font;
+        this.font = font;
     }
 
     /**
      * @return The stack which the tooltip is being rendered for. As tooltips can be drawn without itemstacks, this stack may be empty.
      */
     @Nonnull
-    public ItemStack getStack()
+    public ItemStack getItemStack()
     {
-        return stack;
+        return itemStack;
     }
-    
+
+
     /**
-     * The lines to be drawn. May change between {@link RenderTooltipEvent.Pre} and {@link RenderTooltipEvent.Post}.
-     * 
-     * @return An <i>unmodifiable</i> list of strings. Use {@link net.minecraftforge.event.entity.player.ItemTooltipEvent} to modify tooltip text.
-     * @deprecated use {@link #getComponents()}
+     * @return The PoseStack rendering context.
      */
-    @Nonnull
-    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-    public List<? extends FormattedText> getLines()
-    {
-        return lines;
-    }
+    public PoseStack getPoseStack() { return poseStack; }
 
     /**
      * The components to be drawn.
@@ -112,14 +91,6 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     public List<ClientTooltipComponent> getComponents()
     {
         return components;
-    }
-
-    /**
-     * @return The MatrixStack of the current rendering context
-     */
-    public PoseStack getMatrixStack()
-    {
-        return matrixStack;
     }
 
     /**
@@ -142,9 +113,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
      * @return The {@link Font} instance the current render is using.
      */
     @Nonnull
-    public Font getFontRenderer()
+    public Font getFont()
     {
-        return fr;
+        return font;
     }
 
     /**
@@ -156,15 +127,15 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     @Cancelable
     public static class GatherComponents extends Event
     {
-        private final ItemStack stack;
+        private final ItemStack itemStack;
         private final int screenWidth;
         private final int screenHeight;
         private final List<Either<FormattedText, TooltipComponent>> tooltipElements;
         private int maxWidth;
 
-        public GatherComponents(ItemStack stack, int screenWidth, int screenHeight, List<Either<FormattedText, TooltipComponent>> tooltipElements, int maxWidth)
+        public GatherComponents(ItemStack itemStack, int screenWidth, int screenHeight, List<Either<FormattedText, TooltipComponent>> tooltipElements, int maxWidth)
         {
-            this.stack = stack;
+            this.itemStack = itemStack;
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
             this.tooltipElements = tooltipElements;
@@ -174,9 +145,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         /**
          * @return the ItemStack whose tooltip is being rendered or an empty stack if this tooltip is not for a stack
          */
-        public ItemStack getStack()
+        public ItemStack getItemStack()
         {
-            return stack;
+            return itemStack;
         }
 
         /**
@@ -231,23 +202,12 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     {
         private int screenWidth;
         private int screenHeight;
-        private int maxWidth;
 
-        @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-        public Pre(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> lines, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, int maxWidth, @Nonnull Font fr)
+        public Pre(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, int screenWidth, int screenHeight, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
         {
-            super(stack, lines, matrixStack, x, y, fr);
+            super(stack, poseStack, x, y, font, components);
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
-            this.maxWidth = maxWidth;
-        }
-
-        public Pre(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
-        {
-            super(stack, matrixStack, x, y, font, components);
-            this.screenWidth = screenWidth;
-            this.screenHeight = screenHeight;
-            this.maxWidth = -1;
         }
 
         public int getScreenWidth()
@@ -255,49 +215,17 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             return screenWidth;
         }
 
-        @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-        public void setScreenWidth(int screenWidth)
-        {
-            this.screenWidth = screenWidth;
-        }
-
         public int getScreenHeight()
         {
             return screenHeight;
         }
 
-        @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-        public void setScreenHeight(int screenHeight)
-        {
-            this.screenHeight = screenHeight;
-        }
-
-        /**
-         * @return The max width the tooltip can be. Defaults to -1 (unlimited).
-         * @deprecated use {@link GatherComponents}
-         */
-        @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-        public int getMaxWidth()
-        {
-            return maxWidth;
-        }
-
-        /**
-         * Sets the max width of the tooltip. Use -1 for unlimited.
-         * @deprecated use {@link GatherComponents}
-         */
-        @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-        public void setMaxWidth(int maxWidth)
-        {
-            this.maxWidth = maxWidth;
-        }
-        
         /**
          * Sets the {@link Font} to be used to render text.
          */
-        public void setFontRenderer(@Nonnull Font fr)
+        public void setFont(@Nonnull Font fr)
         {
-            this.fr = fr;
+            this.font = fr;
         }
 
         /**
@@ -318,65 +246,6 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     }
 
     /**
-     * Events inheriting from this class are fired at different stages during the tooltip rendering.
-     * <p>
-     * Do not use this event directly, use one of its subclasses:
-     * <ul>
-     * <li>{@link RenderTooltipEvent.PostBackground}</li>
-     * <li>{@link RenderTooltipEvent.PostText}</li>
-     * </ul>
-     */
-    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-    protected static abstract class Post extends RenderTooltipEvent
-    {
-        private final int width;
-        private final int height;
-        
-        public Post(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack,int x, int y, @Nonnull Font fr, int width, int height)
-        {
-            super(stack, textLines, matrixStack, x, y, fr);
-            this.width = width;
-            this.height = height;
-        }
-
-        /**
-         * @return The width of the tooltip box. This is the width of the <i>inner</i> box, not including the border.
-         */
-        public int getWidth()
-        {
-            return width;
-        }
-
-        /**
-         * @return The height of the tooltip box. This is the height of the <i>inner</i> box, not including the border.
-         */
-        public int getHeight()
-        {
-            return height;
-        }
-    }
-    
-    /**
-     * This event is fired directly after the tooltip background is drawn, but before any text is drawn.
-     */
-    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-    public static class PostBackground extends Post 
-    {
-        public PostBackground(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int width, int height)
-            { super(stack, textLines, matrixStack, x, y, fr, width, height); }
-    }
-
-    /**
-     * This event is fired directly after the tooltip text is drawn, but before the GL state is reset.
-     */
-    @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-    public static class PostText extends Post
-    {
-        public PostText(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int width, int height)
-            { super(stack, textLines, matrixStack, x, y, fr, width, height); }
-    }
-    
-    /**
      * This event is fired when the colours for the tooltip background are determined. 
      */
     public static class Color extends RenderTooltipEvent
@@ -389,10 +258,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int borderStart;
         private int borderEnd;
 
-        @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-        public Color(@Nonnull ItemStack stack, @Nonnull List<? extends FormattedText> textLines, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int background, int borderStart, int borderEnd)
+        public Color(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, @Nonnull Font fr, int background, int borderStart, int borderEnd, @Nonnull List<ClientTooltipComponent> components)
         {
-            super(stack, textLines, matrixStack, x, y, fr);
+            super(stack, poseStack, x, y, fr, components);
             this.originalBackground = background;
             this.originalBorderStart = borderStart;
             this.originalBorderEnd = borderEnd;
@@ -400,27 +268,6 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
             this.backgroundEnd = background;
             this.borderStart = borderStart;
             this.borderEnd = borderEnd;
-        }
-
-        public Color(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int background, int borderStart, int borderEnd, @Nonnull List<ClientTooltipComponent> components)
-        {
-            super(stack, matrixStack, x, y, fr, components);
-            this.originalBackground = background;
-            this.originalBorderStart = borderStart;
-            this.originalBorderEnd = borderEnd;
-            this.backgroundStart = background;
-            this.backgroundEnd = background;
-            this.borderStart = borderStart;
-            this.borderEnd = borderEnd;
-        }
-
-        /**
-         * @deprecated use {@link #getBackgroundStart()} and {@link #getBackgroundEnd}
-         */
-        @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-        public int getBackground()
-        {
-            return backgroundStart;
         }
 
         public int getBackgroundStart()
@@ -467,12 +314,6 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         public void setBorderEnd(int borderEnd)
         {
             this.borderEnd = borderEnd;
-        }
-
-        @Deprecated(since = "1.18", forRemoval = true) // TODO: remove in 1.18
-        public int getOriginalBackground()
-        {
-            return originalBackground;
         }
 
         public int getOriginalBackgroundStart()

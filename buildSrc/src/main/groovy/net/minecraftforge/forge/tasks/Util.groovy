@@ -1,5 +1,6 @@
 package net.minecraftforge.forge.tasks
 
+import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 
 import java.io.File
@@ -16,8 +17,11 @@ public class Util {
 			}
 			return md.digest().collect {String.format "%02x", it}.join()
 		}
+        File.metaClass.getSha1 = { !delegate.exists() ? null : delegate.sha1() }
 	
 		File.metaClass.json = { -> new JsonSlurper().parseText(delegate.text) }
+        File.metaClass.getJson = { return delegate.exists() ? new JsonSlurper().parse(delegate) : [:] }
+        File.metaClass.setJson = { json -> delegate.text = new JsonBuilder(json).toPrettyString() }
 		
 		Date.metaClass.iso8601 = { ->
 			def format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")

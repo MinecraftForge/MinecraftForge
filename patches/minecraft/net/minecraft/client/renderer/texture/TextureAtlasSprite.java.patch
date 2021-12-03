@@ -1,14 +1,5 @@
 --- a/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
 +++ b/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
-@@ -24,7 +_,7 @@
- import org.apache.logging.log4j.Logger;
- 
- @OnlyIn(Dist.CLIENT)
--public class TextureAtlasSprite implements AutoCloseable {
-+public class TextureAtlasSprite implements AutoCloseable, net.minecraftforge.client.extensions.IForgeTextureAtlasSprite {
-    private static final Logger f_174721_ = LogManager.getLogger();
-    private final TextureAtlas f_118343_;
-    private final ResourceLocation f_174722_;
 @@ -145,6 +_,7 @@
  
     void m_118375_(int p_118376_, int p_118377_, NativeImage[] p_118378_) {

@@ -263,7 +263,7 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
                         if (!cache.containsKey(name))
                         {
                             DynamicBucketModel unbaked = this.parent.withFluid(fluid);
-                            BakedModel bakedModel = unbaked.bake(owner, bakery, ModelLoader.defaultTextureGetter(), BlockModelRotation.X0_Y0, this, new ResourceLocation("forge:bucket_override"));
+                            BakedModel bakedModel = unbaked.bake(owner, bakery, ForgeModelBakery.defaultTextureGetter(), BlockModelRotation.X0_Y0, this, new ResourceLocation("forge:bucket_override"));
                             cache.put(name, bakedModel);
                             return bakedModel;
                         }

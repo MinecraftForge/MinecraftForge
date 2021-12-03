@@ -13,7 +13,7 @@
 -
 -         p_127520_.append("\n");
 +         p_127520_.append("Stacktrace:");
-+         p_127520_.append(net.minecraftforge.fmllegacy.CrashReportExtender.generateEnhancedStackTrace(this.f_127506_));
++         p_127520_.append(net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(this.f_127506_));
        }
  
        for(CrashReportCategory crashreportcategory : this.f_127503_) {
@@ -21,7 +21,7 @@
           p_127520_.append("\n\n");
        }
  
-+      net.minecraftforge.fmllegacy.CrashReportExtender.extendSystemReport(f_178624_);
++      net.minecraftforge.logging.CrashReportExtender.extendSystemReport(f_178624_);
        this.f_178624_.m_143525_(p_127520_);
     }
  
@@ -41,13 +41,13 @@
 -      }
 -
 -      return s;
-+      return net.minecraftforge.fmllegacy.CrashReportExtender.generateEnhancedStackTrace(throwable);
++      return net.minecraftforge.logging.CrashReportExtender.generateEnhancedStackTrace(throwable);
     }
  
     public String m_127526_() {
        StringBuilder stringbuilder = new StringBuilder();
        stringbuilder.append("---- Minecraft Crash Report ----\n");
-+      net.minecraftforge.fmllegacy.CrashReportExtender.addCrashReportHeader(stringbuilder, this);
++      net.minecraftforge.logging.CrashReportExtender.addCrashReportHeader(stringbuilder, this);
        stringbuilder.append("// ");
        stringbuilder.append(m_127531_());
        stringbuilder.append("\n\n");

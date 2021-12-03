@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/ai/navigation/WallClimberNavigation.java
 +++ b/net/minecraft/world/entity/ai/navigation/WallClimberNavigation.java
-@@ -39,7 +_,8 @@
+@@ -41,7 +_,8 @@
           super.m_7638_();
        } else {
           if (this.f_26578_ != null) {

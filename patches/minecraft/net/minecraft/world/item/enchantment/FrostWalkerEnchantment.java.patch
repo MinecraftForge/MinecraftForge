@@ -8,5 +8,5 @@
 +                  boolean isFull = blockstate2.m_60734_() == Blocks.f_49990_ && blockstate2.m_61143_(LiquidBlock.f_54688_) == 0; //TODO: Forge, modded waters?
 +                  if (blockstate2.m_60767_() == Material.f_76305_ && isFull && blockstate.m_60710_(p_45020_, blockpos) && p_45020_.m_45752_(blockstate, blockpos, CollisionContext.m_82749_()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(p_45019_, net.minecraftforge.common.util.BlockSnapshot.create(p_45020_.m_46472_(), p_45020_, blockpos), net.minecraft.core.Direction.UP)) {
                       p_45020_.m_46597_(blockpos, blockstate);
-                      p_45020_.m_6219_().m_5945_(blockpos, Blocks.f_50449_, Mth.m_14072_(p_45019_.m_21187_(), 60, 120));
+                      p_45020_.m_186460_(blockpos, Blocks.f_50449_, Mth.m_14072_(p_45019_.m_21187_(), 60, 120));
                    }

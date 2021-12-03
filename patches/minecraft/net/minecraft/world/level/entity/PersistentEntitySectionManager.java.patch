@@ -34,7 +34,7 @@
 @@ -371,9 +_,11 @@
              PersistentEntitySectionManager.this.m_157509_(this.f_157610_, this.f_157611_);
              EntitySection<T> entitysection = PersistentEntitySectionManager.this.f_157495_.m_156893_(i);
-             entitysection.m_156840_(this.f_157609_);
+             entitysection.m_188346_(this.f_157609_);
 +            long oldSectionKey = f_157610_;
              this.f_157611_ = entitysection;
              this.f_157610_ = i;

@@ -129,12 +129,6 @@ public class PotionEvent extends LivingEvent
         private final MobEffectInstance oldEffect;
         private final Entity source;
 
-        @Deprecated(forRemoval = true, since = "1.17.1")
-        public PotionAddedEvent(LivingEntity living, MobEffectInstance oldEffect, MobEffectInstance newEffect)
-        {
-            this(living, oldEffect, newEffect, null);
-        }
-
         public PotionAddedEvent(LivingEntity living, MobEffectInstance oldEffect, MobEffectInstance newEffect, Entity source)
         {
             super(living, newEffect);

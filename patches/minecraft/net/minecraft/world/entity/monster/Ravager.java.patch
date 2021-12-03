@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/monster/Ravager.java
 +++ b/net/minecraft/world/entity/monster/Ravager.java
-@@ -142,7 +_,7 @@
+@@ -144,7 +_,7 @@
              this.m_21051_(Attributes.f_22279_).m_22100_(Mth.m_14139_(0.1D, d1, d0));
           }
  

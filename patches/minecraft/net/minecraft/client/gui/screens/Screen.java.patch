@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/screens/Screen.java
 +++ b/net/minecraft/client/gui/screens/Screen.java
-@@ -125,7 +_,7 @@
+@@ -126,7 +_,7 @@
     }
  
     public void m_7379_() {
@@ -9,7 +9,7 @@
     }
  
     protected <T extends GuiEventListener & Widget & NarratableEntry> T m_142416_(T p_169406_) {
-@@ -162,15 +_,29 @@
+@@ -163,15 +_,29 @@
        this.f_169368_.clear();
     }
  
@@ -43,7 +43,7 @@
        this.m_169383_(p_169389_, list, p_169392_, p_169393_);
     }
  
-@@ -183,20 +_,48 @@
+@@ -184,20 +_,44 @@
     }
  
     public void m_96597_(PoseStack p_96598_, List<Component> p_96599_, int p_96600_, int p_96601_) {
@@ -57,9 +57,7 @@
 +   public void renderComponentTooltip(PoseStack poseStack, List<? extends net.minecraft.network.chat.FormattedText> tooltips, int mouseX, int mouseY, @Nullable Font font) {
 +      this.renderComponentTooltip(poseStack, tooltips, mouseX, mouseY, font, ItemStack.f_41583_);
 +   }
-+   @Deprecated(forRemoval = true, since = "1.17.1") public void renderComponentToolTip(PoseStack poseStack, List<? extends net.minecraft.network.chat.FormattedText> tooltips, int mouseX, int mouseY, @Nullable Font font) {
-+      renderComponentTooltip(poseStack, tooltips, mouseX, mouseY, font);
-+   }
++
 +   public void renderComponentTooltip(PoseStack poseStack, List<? extends net.minecraft.network.chat.FormattedText> tooltips, int mouseX, int mouseY, @Nullable Font font, ItemStack stack) {
 +      this.tooltipFont = font;
 +      this.tooltipStack = stack;
@@ -72,29 +70,27 @@
     public void m_96617_(PoseStack p_96618_, List<? extends FormattedCharSequence> p_96619_, int p_96620_, int p_96621_) {
        this.m_169383_(p_96618_, p_96619_.stream().map(ClientTooltipComponent::m_169948_).collect(Collectors.toList()), p_96620_, p_96621_);
     }
-+   @Deprecated(forRemoval = true, since = "1.17.1") public void renderToolTip(PoseStack p_96618_, List<? extends FormattedCharSequence> p_96619_, int p_96620_, int p_96621_, Font font) {
-+      renderTooltip(p_96618_, p_96619_, p_96620_, p_96621_, font);
-+   }
+ 
 +   public void renderTooltip(PoseStack poseStack, List<? extends FormattedCharSequence> lines, int x, int y, Font font) {
 +      this.tooltipFont = font;
 +      this.m_96617_(poseStack, lines, x, y);
 +      this.tooltipFont = null;
 +   }
- 
++
     private void m_169383_(PoseStack p_169384_, List<ClientTooltipComponent> p_169385_, int p_169386_, int p_169387_) {
        if (!p_169385_.isEmpty()) {
-+         net.minecraftforge.client.event.RenderTooltipEvent.Pre preEvent = net.minecraftforge.client.ForgeHooksClient.preTooltipEvent(this.tooltipStack, p_169384_, p_169386_, p_169387_, f_96543_, f_96544_, p_169385_, this.tooltipFont, this.f_96547_);
++         net.minecraftforge.client.event.RenderTooltipEvent.Pre preEvent = net.minecraftforge.client.ForgeHooksClient.onRenderTooltipPre(this.tooltipStack, p_169384_, p_169386_, p_169387_, f_96543_, f_96544_, p_169385_, this.tooltipFont, this.f_96547_);
 +         if (preEvent.isCanceled()) return;
           int i = 0;
           int j = p_169385_.size() == 1 ? -2 : 0;
  
           for(ClientTooltipComponent clienttooltipcomponent : p_169385_) {
 -            int k = clienttooltipcomponent.m_142069_(this.f_96547_);
-+            int k = clienttooltipcomponent.m_142069_(preEvent.getFontRenderer());
++            int k = clienttooltipcomponent.m_142069_(preEvent.getFont());
              if (k > i) {
                 i = k;
              }
-@@ -204,8 +_,8 @@
+@@ -205,8 +_,8 @@
              j += clienttooltipcomponent.m_142103_();
           }
  
@@ -105,7 +101,7 @@
           if (j2 + i > this.f_96543_) {
              j2 -= 28 + i;
           }
-@@ -226,15 +_,16 @@
+@@ -227,15 +_,16 @@
           RenderSystem.m_157427_(GameRenderer::m_172811_);
           bufferbuilder.m_166779_(VertexFormat.Mode.QUADS, DefaultVertexFormat.f_85815_);
           Matrix4f matrix4f = p_169384_.m_85850_().m_85861_();
@@ -118,7 +114,7 @@
 -         m_93123_(matrix4f, bufferbuilder, j2 + i + 2, k2 - 3 + 1, j2 + i + 3, k2 + j + 3 - 1, 400, 1347420415, 1344798847);
 -         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 3, j2 + i + 3, k2 - 3 + 1, 400, 1347420415, 1347420415);
 -         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 + j + 2, j2 + i + 3, k2 + j + 3, 400, 1344798847, 1344798847);
-+         net.minecraftforge.client.event.RenderTooltipEvent.Color colorEvent = net.minecraftforge.client.ForgeHooksClient.colorTooltipEvent(this.tooltipStack, p_169384_, j2, k2, preEvent.getFontRenderer(), p_169385_);
++         net.minecraftforge.client.event.RenderTooltipEvent.Color colorEvent = net.minecraftforge.client.ForgeHooksClient.onRenderTooltipColor(this.tooltipStack, p_169384_, j2, k2, preEvent.getFont(), p_169385_);
 +         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 4, j2 + i + 3, k2 - 3, 400, colorEvent.getBackgroundStart(), colorEvent.getBackgroundStart());
 +         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 + j + 3, j2 + i + 3, k2 + j + 4, 400, colorEvent.getBackgroundEnd(), colorEvent.getBackgroundEnd());
 +         m_93123_(matrix4f, bufferbuilder, j2 - 3, k2 - 3, j2 + i + 3, k2 + j + 3, 400, colorEvent.getBackgroundStart(), colorEvent.getBackgroundEnd());
@@ -131,25 +127,25 @@
           RenderSystem.m_69482_();
           RenderSystem.m_69472_();
           RenderSystem.m_69478_();
-@@ -249,7 +_,7 @@
+@@ -250,7 +_,7 @@
  
           for(int i2 = 0; i2 < p_169385_.size(); ++i2) {
              ClientTooltipComponent clienttooltipcomponent1 = p_169385_.get(i2);
 -            clienttooltipcomponent1.m_142440_(this.f_96547_, j2, l1, matrix4f, multibuffersource$buffersource);
-+            clienttooltipcomponent1.m_142440_(preEvent.getFontRenderer(), j2, l1, matrix4f, multibuffersource$buffersource);
++            clienttooltipcomponent1.m_142440_(preEvent.getFont(), j2, l1, matrix4f, multibuffersource$buffersource);
              l1 += clienttooltipcomponent1.m_142103_() + (i2 == 0 ? 2 : 0);
           }
  
-@@ -259,7 +_,7 @@
+@@ -260,7 +_,7 @@
  
           for(int l2 = 0; l2 < p_169385_.size(); ++l2) {
              ClientTooltipComponent clienttooltipcomponent2 = p_169385_.get(l2);
--            clienttooltipcomponent2.m_142162_(this.f_96547_, j2, l1, p_169384_, this.f_96542_, 400, this.f_96541_.m_91097_());
-+            clienttooltipcomponent2.m_142162_(preEvent.getFontRenderer(), j2, l1, p_169384_, this.f_96542_, 400, this.f_96541_.m_91097_());
+-            clienttooltipcomponent2.m_183452_(this.f_96547_, j2, l1, p_169384_, this.f_96542_, 400);
++            clienttooltipcomponent2.m_183452_(preEvent.getFont(), j2, l1, p_169384_, this.f_96542_, 400);
              l1 += clienttooltipcomponent2.m_142103_() + (l2 == 0 ? 2 : 0);
           }
  
-@@ -353,9 +_,12 @@
+@@ -354,9 +_,12 @@
     }
  
     public void m_96612_(String p_96613_, boolean p_96614_) {
@@ -162,7 +158,7 @@
  
        this.f_96541_.f_91074_.m_108739_(p_96613_);
     }
-@@ -366,11 +_,21 @@
+@@ -367,11 +_,21 @@
        this.f_96547_ = p_96607_.f_91062_;
        this.f_96543_ = p_96608_;
        this.f_96544_ = p_96609_;
@@ -173,34 +169,34 @@
 +            this.f_169368_.add(ne);
 +         f_96540_.add(b);
 +      };
-+      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.f_96540_, add, this::m_169411_))) {
++      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.InitScreenEvent.Pre(this, this.f_96540_, add, this::m_169411_))) {
        this.m_169413_();
        this.m_7522_((GuiEventListener)null);
        this.m_7856_();
        this.m_169407_(false);
        this.m_169378_(f_169370_);
 +      }
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post(this, this.f_96540_, add, this::m_169411_));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.InitScreenEvent.Post(this, this.f_96540_, add, this::m_169411_));
     }
  
     public List<? extends GuiEventListener> m_6702_() {
-@@ -393,6 +_,7 @@
+@@ -394,6 +_,7 @@
     public void m_96558_(PoseStack p_96559_, int p_96560_) {
        if (this.f_96541_.f_91073_ != null) {
           this.m_93179_(p_96559_, 0, 0, this.f_96543_, this.f_96544_, -1072689136, -804253680);
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this, p_96559_));
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.BackgroundDrawnEvent(this, p_96559_));
        } else {
           this.m_96626_(p_96560_);
        }
-@@ -412,6 +_,7 @@
+@@ -413,6 +_,7 @@
        bufferbuilder.m_5483_((double)this.f_96543_, 0.0D, 0.0D).m_7421_((float)this.f_96543_ / 32.0F, (float)p_96627_).m_6122_(64, 64, 64, 255).m_5752_();
        bufferbuilder.m_5483_(0.0D, 0.0D, 0.0D).m_7421_(0.0F, (float)p_96627_).m_6122_(64, 64, 64, 255).m_5752_();
        tesselator.m_85914_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this, new PoseStack()));
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.ScreenEvent.BackgroundDrawnEvent(this, new PoseStack()));
     }
  
     public boolean m_7043_() {
-@@ -497,6 +_,10 @@
+@@ -498,6 +_,10 @@
     }
  
     public void m_7400_(List<Path> p_96591_) {

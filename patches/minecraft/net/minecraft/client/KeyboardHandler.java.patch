@@ -1,44 +1,44 @@
 --- a/net/minecraft/client/KeyboardHandler.java
 +++ b/net/minecraft/client/KeyboardHandler.java
-@@ -312,7 +_,9 @@
+@@ -307,7 +_,9 @@
           }
  
           Screen screen = this.f_90867_.f_91080_;
--         if (p_90897_ == 1 && (!(this.f_90867_.f_91080_ instanceof ControlsScreen) || ((ControlsScreen)screen).f_97515_ <= Util.m_137550_() - 20L)) {
+-         if (p_90897_ == 1 && (!(this.f_90867_.f_91080_ instanceof KeyBindsScreen) || ((KeyBindsScreen)screen).f_193976_ <= Util.m_137550_() - 20L)) {
 +
-+         if ((!(this.f_90867_.f_91080_ instanceof ControlsScreen) || ((ControlsScreen)screen).f_97515_ <= Util.m_137550_() - 20L)) {
++         if ((!(this.f_90867_.f_91080_ instanceof KeyBindsScreen) || ((KeyBindsScreen)screen).f_193976_ <= Util.m_137550_() - 20L)) {
 +            if (p_90897_ == 1) {
              if (this.f_90867_.f_91066_.f_92105_.m_90832_(p_90895_, p_90896_)) {
                 this.f_90867_.m_91268_().m_85438_();
                 this.f_90867_.f_91066_.f_92052_ = this.f_90867_.m_91268_().m_85440_();
-@@ -331,6 +_,8 @@
+@@ -326,6 +_,8 @@
                 });
                 return;
              }
-+            } else if (p_90897_ == 0 /*GLFW_RELEASE*/ && this.f_90867_.f_91080_ instanceof ControlsScreen)
-+               ((ControlsScreen)this.f_90867_.f_91080_).f_97514_ = null; //Forge: Unset pure modifiers.
++            } else if (p_90897_ == 0 /*GLFW_RELEASE*/ && this.f_90867_.f_91080_ instanceof KeyBindsScreen)
++               ((KeyBindsScreen)this.f_90867_.f_91080_).f_193975_ = null; //Forge: Unset pure modifiers.
           }
  
           if (NarratorChatListener.f_93311_.m_93316_()) {
-@@ -354,11 +_,15 @@
+@@ -349,11 +_,15 @@
              Screen.m_96579_(() -> {
                 if (p_90897_ != 1 && (p_90897_ != 2 || !this.f_90868_)) {
                    if (p_90897_ == 0) {
 -                     aboolean[0] = screen.m_7920_(p_90895_, p_90896_, p_90898_);
-+                     aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiKeyReleasedPre(this.f_90867_.f_91080_, p_90895_, p_90896_, p_90898_);
++                     aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onScreenKeyReleasedPre(this.f_90867_.f_91080_, p_90895_, p_90896_, p_90898_);
 +                     if (!aboolean[0]) aboolean[0] = screen.m_7920_(p_90895_, p_90896_, p_90898_);
-+                     if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiKeyReleasedPost(this.f_90867_.f_91080_, p_90895_, p_90896_, p_90898_);
++                     if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onScreenKeyReleasedPost(this.f_90867_.f_91080_, p_90895_, p_90896_, p_90898_);
                    }
                 } else {
                    screen.m_169416_();
 -                  aboolean[0] = screen.m_7933_(p_90895_, p_90896_, p_90898_);
-+                  aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiKeyPressedPre(this.f_90867_.f_91080_, p_90895_, p_90896_, p_90898_);
++                  aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onScreenKeyPressedPre(this.f_90867_.f_91080_, p_90895_, p_90896_, p_90898_);
 +                  if (!aboolean[0]) aboolean[0] = screen.m_7933_(p_90895_, p_90896_, p_90898_);
-+                  if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiKeyPressedPost(this.f_90867_.f_91080_, p_90895_, p_90896_, p_90898_);
++                  if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onScreenKeyPressedPost(this.f_90867_.f_91080_, p_90895_, p_90896_, p_90898_);
                 }
  
              }, "keyPressed event handler", screen.getClass().getCanonicalName());
-@@ -411,7 +_,7 @@
+@@ -406,7 +_,7 @@
                 }
              }
           }
@@ -47,22 +47,22 @@
        }
     }
  
-@@ -421,12 +_,16 @@
+@@ -416,12 +_,16 @@
           if (guieventlistener != null && this.f_90867_.m_91265_() == null) {
              if (Character.charCount(p_90891_) == 1) {
                 Screen.m_96579_(() -> {
 -                  guieventlistener.m_5534_((char)p_90891_, p_90892_);
-+                  if (net.minecraftforge.client.ForgeHooksClient.onGuiCharTypedPre(this.f_90867_.f_91080_, (char)p_90891_, p_90892_)) return;
++                  if (net.minecraftforge.client.ForgeHooksClient.onScreenCharTypedPre(this.f_90867_.f_91080_, (char)p_90891_, p_90892_)) return;
 +                  if (guieventlistener.m_5534_((char)p_90891_, p_90892_)) return;
-+                  net.minecraftforge.client.ForgeHooksClient.onGuiCharTypedPost(this.f_90867_.f_91080_, (char)p_90891_, p_90892_);
++                  net.minecraftforge.client.ForgeHooksClient.onScreenCharTypedPost(this.f_90867_.f_91080_, (char)p_90891_, p_90892_);
                 }, "charTyped event handler", guieventlistener.getClass().getCanonicalName());
              } else {
                 for(char c0 : Character.toChars(p_90891_)) {
                    Screen.m_96579_(() -> {
 -                     guieventlistener.m_5534_(c0, p_90892_);
-+                     if (net.minecraftforge.client.ForgeHooksClient.onGuiCharTypedPre(this.f_90867_.f_91080_, c0, p_90892_)) return;
++                     if (net.minecraftforge.client.ForgeHooksClient.onScreenCharTypedPre(this.f_90867_.f_91080_, c0, p_90892_)) return;
 +                     if (guieventlistener.m_5534_(c0, p_90892_)) return;
-+                     net.minecraftforge.client.ForgeHooksClient.onGuiCharTypedPost(this.f_90867_.f_91080_, c0, p_90892_);
++                     net.minecraftforge.client.ForgeHooksClient.onScreenCharTypedPost(this.f_90867_.f_91080_, c0, p_90892_);
                    }, "charTyped event handler", guieventlistener.getClass().getCanonicalName());
                 }
              }

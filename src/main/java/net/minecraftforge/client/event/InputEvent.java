@@ -36,13 +36,13 @@ public class InputEvent extends Event
     {
         private final int button;
         private final int action;
-        private final int mods;
+        private final int modifiers;
 
-        public RawMouseEvent(int button, int action, int mods)
+        public RawMouseEvent(int button, int action, int modifiers)
         {
             this.button = button;
             this.action = action;
-            this.mods = mods;
+            this.modifiers = modifiers;
         }
 
         /**
@@ -76,9 +76,9 @@ public class InputEvent extends Event
          * @see GLFW#GLFW_MOD_ALT
          * @see GLFW#GLFW_MOD_SUPER
          */
-        public int getMods()
+        public int getModifiers()
         {
-            return this.mods;
+            return this.modifiers;
         }
     }
 
@@ -89,12 +89,12 @@ public class InputEvent extends Event
     {
         private final int button;
         private final int action;
-        private final int mods;
-        public MouseInputEvent(int button, int action, int mods)
+        private final int modifiers;
+        public MouseInputEvent(int button, int action, int modifiers)
         {
             this.button = button;
             this.action = action;
-            this.mods = mods;
+            this.modifiers = modifiers;
         }
 
         /**
@@ -128,9 +128,9 @@ public class InputEvent extends Event
          * @see GLFW#GLFW_MOD_ALT
          * @see GLFW#GLFW_MOD_SUPER
          */
-        public int getMods()
+        public int getModifiers()
         {
-            return this.mods;
+            return this.modifiers;
         }
     }
 
@@ -266,13 +266,13 @@ public class InputEvent extends Event
     public static class ClickInputEvent extends InputEvent
     {
         private final int button;
-        private final KeyMapping keyBinding;
+        private final KeyMapping keyMapping;
         private final InteractionHand hand;
         private boolean handSwing = true;
-        public ClickInputEvent(int button, KeyMapping keyBinding, InteractionHand hand)
+        public ClickInputEvent(int button, KeyMapping keyMapping, InteractionHand hand)
         {
             this.button = button;
-            this.keyBinding = keyBinding;
+            this.keyMapping = keyMapping;
             this.hand = hand;
         }
 
@@ -316,9 +316,9 @@ public class InputEvent extends Event
             return button == 2;
         }
 
-        public KeyMapping getKeyBinding()
+        public KeyMapping getKeyMapping()
         {
-            return keyBinding;
+            return keyMapping;
         }
     }
 }

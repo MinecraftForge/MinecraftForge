@@ -9,7 +9,7 @@
     private final Queue<Particle> f_107294_ = Queues.newArrayDeque();
     private final Map<ResourceLocation, ParticleEngine.MutableSpriteSet> f_107295_ = Maps.newHashMap();
     private final TextureAtlas f_107296_;
-@@ -177,13 +_,13 @@
+@@ -176,13 +_,13 @@
     }
  
     public <T extends ParticleOptions> void m_107381_(ParticleType<T> p_107382_, ParticleProvider<T> p_107383_) {
@@ -25,7 +25,7 @@
     }
  
     public CompletableFuture<Void> m_5540_(PreparableReloadListener.PreparationBarrier p_107305_, ResourceManager p_107306_, ProfilerFiller p_107307_, ProfilerFiller p_107308_, Executor p_107309_, Executor p_107310_) {
-@@ -301,7 +_,7 @@
+@@ -300,7 +_,7 @@
  
     @Nullable
     private <T extends ParticleOptions> Particle m_107395_(T p_107396_, double p_107397_, double p_107398_, double p_107399_, double p_107400_, double p_107401_, double p_107402_) {
@@ -34,7 +34,7 @@
        return particleprovider == null ? null : particleprovider.m_6966_(p_107396_, this.f_107287_, p_107397_, p_107398_, p_107399_, p_107400_, p_107401_, p_107402_);
     }
  
-@@ -382,7 +_,13 @@
+@@ -381,7 +_,13 @@
        }
     }
  
@@ -48,7 +48,7 @@
        p_107339_.m_109896_();
        RenderSystem.m_69482_();
        PoseStack posestack = RenderSystem.m_157191_();
-@@ -390,7 +_,8 @@
+@@ -389,7 +_,8 @@
        posestack.m_166854_(p_107337_.m_85850_().m_85861_());
        RenderSystem.m_157182_();
  
@@ -58,7 +58,7 @@
           Iterable<Particle> iterable = this.f_107289_.get(particlerendertype);
           if (iterable != null) {
              RenderSystem.m_157427_(GameRenderer::m_172829_);
-@@ -400,6 +_,7 @@
+@@ -399,6 +_,7 @@
              particlerendertype.m_6505_(bufferbuilder, this.f_107291_);
  
              for(Particle particle : iterable) {
@@ -66,7 +66,7 @@
                 try {
                    particle.m_5744_(bufferbuilder, p_107340_, p_107341_);
                 } catch (Throwable throwable) {
-@@ -430,7 +_,7 @@
+@@ -429,7 +_,7 @@
     }
  
     public void m_107355_(BlockPos p_107356_, BlockState p_107357_) {
@@ -75,7 +75,7 @@
           VoxelShape voxelshape = p_107357_.m_60808_(this.f_107287_, p_107356_);
           double d0 = 0.25D;
           voxelshape.m_83286_((p_172273_, p_172274_, p_172275_, p_172276_, p_172277_, p_172278_) -> {
-@@ -450,7 +_,7 @@
+@@ -449,7 +_,7 @@
                       double d7 = d4 * d1 + p_172273_;
                       double d8 = d5 * d2 + p_172274_;
                       double d9 = d6 * d3 + p_172275_;
@@ -84,7 +84,7 @@
                    }
                 }
              }
-@@ -494,12 +_,18 @@
+@@ -493,12 +_,18 @@
              d0 = (double)i + aabb.f_82291_ + (double)0.1F;
           }
  

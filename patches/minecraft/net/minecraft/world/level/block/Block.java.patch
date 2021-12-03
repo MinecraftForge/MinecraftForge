@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/Block.java
 +++ b/net/minecraft/world/level/block/Block.java
-@@ -62,9 +_,10 @@
+@@ -61,9 +_,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -13,7 +13,7 @@
     private static final LoadingCache<VoxelShape, Boolean> f_49785_ = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_49972_) {
           return !Shapes.m_83157_(Shapes.m_83144_(), p_49972_, BooleanOp.f_82687_);
-@@ -177,7 +_,7 @@
+@@ -176,7 +_,7 @@
              f_49790_.error("Block classes should end with Block and {} doesn't.", (Object)s);
           }
        }
@@ -22,7 +22,7 @@
     }
  
     public static boolean m_152463_(BlockState p_152464_) {
-@@ -323,7 +_,7 @@
+@@ -322,7 +_,7 @@
     }
  
     private static void m_152440_(Level p_152441_, Supplier<ItemEntity> p_152442_, ItemStack p_152443_) {
@@ -31,7 +31,7 @@
           ItemEntity itementity = p_152442_.get();
           itementity.m_32060_();
           p_152441_.m_7967_(itementity);
-@@ -331,12 +_,13 @@
+@@ -330,12 +_,13 @@
     }
  
     public void m_49805_(ServerLevel p_49806_, BlockPos p_49807_, int p_49808_) {
@@ -46,7 +46,7 @@
     public float m_7325_() {
        return this.f_60444_;
     }
-@@ -383,8 +_,10 @@
+@@ -382,8 +_,10 @@
  
     public void m_5548_(BlockGetter p_49821_, Entity p_49822_) {
        p_49822_.m_20256_(p_49822_.m_20184_().m_82542_(1.0D, 0.0D, 1.0D));
@@ -57,7 +57,7 @@
     public ItemStack m_7397_(BlockGetter p_49823_, BlockPos p_49824_, BlockState p_49825_) {
        return new ItemStack(this);
     }
-@@ -421,6 +_,7 @@
+@@ -420,6 +_,7 @@
     public void m_141997_(BlockState p_152450_, Level p_152451_, BlockPos p_152452_, Biome.Precipitation p_152453_) {
     }
  
@@ -65,7 +65,7 @@
     public boolean m_6903_(Explosion p_49826_) {
        return true;
     }
-@@ -456,6 +_,7 @@
+@@ -455,6 +_,7 @@
        return p_152456_.m_61124_(p_152457_, p_152455_.m_61143_(p_152457_));
     }
  
@@ -73,7 +73,7 @@
     public SoundType m_49962_(BlockState p_49963_) {
        return this.f_60446_;
     }
-@@ -465,7 +_,7 @@
+@@ -464,7 +_,7 @@
           this.f_49788_ = Item.m_41439_(this);
        }
  
@@ -82,7 +82,7 @@
     }
  
     public boolean m_49967_() {
-@@ -473,7 +_,7 @@
+@@ -472,7 +_,7 @@
     }
  
     public String toString() {
@@ -91,7 +91,7 @@
     }
  
     public void m_5871_(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> p_49818_, TooltipFlag p_49819_) {
-@@ -486,6 +_,82 @@
+@@ -485,6 +_,82 @@
     protected ImmutableMap<BlockState, VoxelShape> m_152458_(Function<BlockState, VoxelShape> p_152459_) {
        return this.f_49792_.m_61056_().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }

@@ -4,7 +4,7 @@
     @Nullable
     private String f_105372_;
     private boolean f_105373_;
-+   public net.minecraftforge.fmlclient.ExtendedServerListData forgeData = null;
++   public net.minecraftforge.client.ExtendedServerListData forgeData = null;
  
     public ServerData(String p_105375_, String p_105376_, boolean p_105377_) {
        this.f_105362_ = p_105375_;

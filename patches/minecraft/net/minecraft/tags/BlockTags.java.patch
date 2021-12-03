@@ -1,6 +1,6 @@
 --- a/net/minecraft/tags/BlockTags.java
 +++ b/net/minecraft/tags/BlockTags.java
-@@ -131,6 +_,14 @@
+@@ -145,6 +_,14 @@
        return f_13053_.m_13244_(p_13117_);
     }
  

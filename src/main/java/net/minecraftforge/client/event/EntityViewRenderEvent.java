@@ -25,8 +25,6 @@ import net.minecraft.client.renderer.FogRenderer.FogMode;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraftforge.eventbus.api.Cancelable;
 
-import net.minecraftforge.eventbus.api.Event.HasResult;
-
 /**
  * Event that hooks into GameRenderer, allowing any feature to customize visual attributes
  *  the player sees.
@@ -34,14 +32,14 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
 public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final GameRenderer renderer;
-    private final Camera info;
-    private final double renderPartialTicks;
+    private final Camera camera;
+    private final double partialTicks;
 
-    public EntityViewRenderEvent(GameRenderer renderer, Camera info, double renderPartialTicks)
+    public EntityViewRenderEvent(GameRenderer renderer, Camera camera, double partialTicks)
     {
         this.renderer = renderer;
-        this.info = info;
-        this.renderPartialTicks = renderPartialTicks;
+        this.camera = camera;
+        this.partialTicks = partialTicks;
     }
 
     public GameRenderer getRenderer()
@@ -49,27 +47,27 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         return renderer;
     }
 
-    public Camera getInfo()
+    public Camera getCamera()
     {
-        return info;
+        return camera;
     }
 
-    public double getRenderPartialTicks()
+    public double getPartialTicks()
     {
-        return renderPartialTicks;
+        return partialTicks;
     }
 
     private static class FogEvent extends EntityViewRenderEvent
     {
-        private final FogMode type;
+        private final FogMode mode;
         @SuppressWarnings("resource")
-        protected FogEvent(FogMode type, Camera info, double renderPartialTicks)
+        protected FogEvent(FogMode mode, Camera info, double renderPartialTicks)
         {
             super(Minecraft.getInstance().gameRenderer, info, renderPartialTicks);
-            this.type = type;
+            this.mode = mode;
         }
 
-        public FogMode getType() { return type; }
+        public FogMode getMode() { return mode; }
     }
 
     /**
@@ -174,11 +172,11 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
      * Event that allows mods to alter the raw FOV itself.
      * This directly affects to the FOV without being modified.
      * */
-    public static class FOVModifier extends EntityViewRenderEvent
+    public static class FieldOfView extends EntityViewRenderEvent
     {
         private double fov;
 
-        public FOVModifier(GameRenderer renderer, Camera info, double renderPartialTicks, double fov) {
+        public FieldOfView(GameRenderer renderer, Camera info, double renderPartialTicks, double fov) {
             super(renderer, info, renderPartialTicks);
             this.setFOV(fov);
         }

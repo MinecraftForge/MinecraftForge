@@ -56,7 +56,7 @@ public class FluidStack
 
     public static final Codec<FluidStack> CODEC = RecordCodecBuilder.create(
             instance -> instance.group(
-                    Registry.FLUID.fieldOf("FluidName").forGetter(FluidStack::getFluid),
+                    Registry.FLUID.byNameCodec().fieldOf("FluidName").forGetter(FluidStack::getFluid),
                     Codec.INT.fieldOf("Amount").forGetter(FluidStack::getAmount),
                     CompoundTag.CODEC.optionalFieldOf("Tag").forGetter(stack -> Optional.ofNullable(stack.getTag()))
             ).apply(instance, (fluid, amount, tag) -> {

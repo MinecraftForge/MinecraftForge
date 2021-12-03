@@ -29,26 +29,26 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 public abstract class RenderPlayerEvent extends PlayerEvent
 {
     private final PlayerRenderer renderer;
-    private final float partialRenderTick;
-    private final PoseStack stack;
-    private final MultiBufferSource buffers;
-    private final int light;
+    private final float partialTick;
+    private final PoseStack poseStack;
+    private final MultiBufferSource multiBufferSource;
+    private final int packedLight;
 
-    public RenderPlayerEvent(Player player, PlayerRenderer renderer, float partialRenderTick, PoseStack stack, MultiBufferSource buffers, int light)
+    public RenderPlayerEvent(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight)
     {
         super(player);
         this.renderer = renderer;
-        this.partialRenderTick = partialRenderTick;
-        this.stack = stack;
-        this.buffers = buffers;
-        this.light = light;
+        this.partialTick = partialTick;
+        this.poseStack = poseStack;
+        this.multiBufferSource = multiBufferSource;
+        this.packedLight = packedLight;
     }
 
     public PlayerRenderer getRenderer() { return renderer; }
-    public float getPartialRenderTick() { return partialRenderTick; }
-    public PoseStack getMatrixStack() { return stack; }
-    public MultiBufferSource getBuffers() { return buffers; }
-    public int getLight() { return light; }
+    public float getPartialTick() { return partialTick; }
+    public PoseStack getPoseStack() { return poseStack; }
+    public MultiBufferSource getMultiBufferSource() { return multiBufferSource; }
+    public int getPackedLight() { return packedLight; }
 
     @Cancelable
     public static class Pre extends RenderPlayerEvent

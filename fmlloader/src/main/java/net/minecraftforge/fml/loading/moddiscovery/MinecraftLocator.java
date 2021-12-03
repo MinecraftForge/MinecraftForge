@@ -1,11 +1,10 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.Config;
-import com.electronwill.nightconfig.core.file.FileConfig;
 import cpw.mods.jarhandling.SecureJar;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.LogMarkers;
 import net.minecraftforge.forgespi.language.IModFileInfo;
-import net.minecraftforge.forgespi.language.MavenVersionAdapter;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.forgespi.locating.IModLocator;
 import net.minecraftforge.forgespi.locating.ModFileFactory;
@@ -18,8 +17,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
-import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class MinecraftLocator implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -29,8 +26,13 @@ public class MinecraftLocator implements IModLocator {
         final var launchHandler = FMLLoader.getLaunchHandler();
         var baseMC = launchHandler.getMinecraftPaths();
         var mcjar = ModJarMetadata.buildFile(j->ModFileFactory.FACTORY.build(j, this, this::buildMinecraftTOML), j->true, baseMC.minecraftFilter(), baseMC.minecraftPaths().toArray(Path[]::new)).orElseThrow();
-        var artifacts = baseMC.otherArtifacts().stream().map(SecureJar::from).map(sj->ModFile.newFMLInstance(this, sj)).collect(Collectors.<IModFile>toList());
-        var othermods = baseMC.otherModPaths().stream().map(p->ModJarMetadata.buildFile(this, p.toArray(Path[]::new))).toList();
+        var artifacts = baseMC.otherArtifacts().stream()
+                .map(SecureJar::from)
+                .map(sj -> new ModFile(sj, this, ModFileParser::modsTomlParser))
+                .collect(Collectors.<IModFile>toList());
+        var othermods = baseMC.otherModPaths().stream()
+                .map(p->ModJarMetadata.buildFile(this, p.toArray(Path[]::new)))
+                .toList();
         artifacts.add(mcjar);
         artifacts.addAll(othermods);
         return artifacts;
@@ -97,13 +99,13 @@ public class MinecraftLocator implements IModLocator {
 
     @Override
     public void scanFile(final IModFile modFile, final Consumer<Path> pathConsumer) {
-        LOGGER.debug(SCAN, "Scan started: {}", modFile);
+        LOGGER.debug(LogMarkers.SCAN, "Scan started: {}", modFile);
         try (Stream<Path> files = Files.find(modFile.getSecureJar().getRootPath(), Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        LOGGER.debug(SCAN, "Scan finished: {}", modFile);
+        LOGGER.debug(LogMarkers.SCAN, "Scan finished: {}", modFile);
     }
 
     @Override

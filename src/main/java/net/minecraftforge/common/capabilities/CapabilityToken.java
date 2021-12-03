@@ -19,9 +19,11 @@
 
 package net.minecraftforge.common.capabilities;
 
+import net.minecraftforge.fml.common.asm.CapabilityTokenSubclass;
+
 /**
  * Inspired by {@link com.google.common.reflect.TypeToken TypeToken}, use a subclass to capture
- * generic types. Then uses {@link net.minecraftforge.common.asm.CapabilityTokenSubclass a transformer}
+ * generic types. Then uses {@link CapabilityTokenSubclass a transformer}
  * to convert that generic into a string returned by {@link #getType}
  * This allows us to know the generic type, without having a hard reference to the
  * class.

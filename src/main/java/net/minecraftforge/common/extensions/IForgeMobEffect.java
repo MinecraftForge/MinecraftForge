@@ -51,7 +51,7 @@ public interface IForgeMobEffect
      * @param potionEffect the {@code PotionEffect} instance containing the potion
      * @return a value used to sort {@code PotionEffect}s in GUIs
      */
-    default int getGuiSortColor(MobEffectInstance potionEffect) {
+    default int getSortOrder(MobEffectInstance potionEffect) {
        return self().getColor();
     }
 }

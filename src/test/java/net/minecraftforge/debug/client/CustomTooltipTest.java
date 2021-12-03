@@ -55,7 +55,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fmllegacy.RegistryObject;
+import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -110,7 +110,7 @@ public class CustomTooltipTest
         }
 
         @Override
-        public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_, int zIndex, TextureManager textureManager)
+        public void renderImage(Font font, int x, int y, PoseStack poseStack, ItemRenderer itemRenderer_, int zIndex)
         {
             GuiComponent.fill(poseStack, x, y,  x + 10, y+ 10, tooltip.color);
         }
@@ -174,11 +174,11 @@ public class CustomTooltipTest
         @SubscribeEvent
         public static void gatherTooltips(RenderTooltipEvent.GatherComponents event)
         {
-            if (event.getStack().getItem() == Items.STICK)
+            if (event.getItemStack().getItem() == Items.STICK)
             {
                 event.getTooltipElements().add(Either.right(new CustomTooltip(0xFF0000FF)));
             }
-            if (event.getStack().getItem() == Items.CLOCK)
+            if (event.getItemStack().getItem() == Items.CLOCK)
             {
                 event.setMaxWidth(30);
             }
@@ -187,7 +187,7 @@ public class CustomTooltipTest
         @SubscribeEvent
         public static void preTooltip(RenderTooltipEvent.Color event)
         {
-            if (event.getStack().getItem() == Items.APPLE)
+            if (event.getItemStack().getItem() == Items.APPLE)
             {
                 event.setBackgroundStart(0xFF0000FF);
                 event.setBackgroundEnd(0xFFFFFF00);
@@ -335,13 +335,13 @@ public class CustomTooltipTest
         @SuppressWarnings("removal")
         private void test13(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderToolTip(poseStack, List.of(new TextComponent("test").getVisualOrderText()), mouseX, mouseY, this.testFont);
+            renderTooltip(poseStack, List.of(new TextComponent("test").getVisualOrderText()), mouseX, mouseY, this.testFont);
         }
 
         @SuppressWarnings("removal")
         private void test14(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
-            renderComponentToolTip(poseStack, List.of(new TextComponent("test")), mouseX, mouseY, this.testFont);
+            renderComponentTooltip(poseStack, List.of(new TextComponent("test")), mouseX, mouseY, this.testFont, ItemStack.EMPTY);
         }
     }
 

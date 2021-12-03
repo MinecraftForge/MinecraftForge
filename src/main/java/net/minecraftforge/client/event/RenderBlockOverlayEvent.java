@@ -39,17 +39,17 @@ public class RenderBlockOverlayEvent extends Event
     }
     
     private final Player player;
-    private final PoseStack mat;
+    private final PoseStack poseStack;
     private final OverlayType overlayType;
-    private final BlockState blockForOverlay;
+    private final BlockState blockState;
     private final BlockPos blockPos;
     
-    public RenderBlockOverlayEvent(Player player, PoseStack mat, OverlayType type, BlockState block, BlockPos blockPos)
+    public RenderBlockOverlayEvent(Player player, PoseStack poseStack, OverlayType type, BlockState block, BlockPos blockPos)
     {
         this.player = player;
-        this.mat = mat;
+        this.poseStack = poseStack;
         this.overlayType = type;
-        this.blockForOverlay = block;
+        this.blockState = block;
         this.blockPos = blockPos;
         
     }
@@ -58,7 +58,7 @@ public class RenderBlockOverlayEvent extends Event
      * The player which the overlay will apply to
      */
     public Player getPlayer() { return player; }
-    public PoseStack getMatrixStack() { return mat; }
+    public PoseStack getPoseStack() { return poseStack; }
     /**
      * The type of overlay to occur
      */
@@ -66,6 +66,6 @@ public class RenderBlockOverlayEvent extends Event
     /**
      * If the overlay type is BLOCK, then this is the block which the overlay is getting it's icon from
      */
-    public BlockState getBlockForOverlay() { return blockForOverlay; }
+    public BlockState getBlockState() { return blockState; }
     public BlockPos getBlockPos() { return blockPos; }
 }

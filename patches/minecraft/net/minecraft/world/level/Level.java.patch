@@ -9,10 +9,10 @@
     protected static final Logger f_46426_ = LogManager.getLogger();
     public static final Codec<ResourceKey<Level>> f_46427_ = ResourceLocation.f_135803_.xmap(ResourceKey.m_135797_(Registry.f_122819_), ResourceKey::m_135782_);
     public static final ResourceKey<Level> f_46428_ = ResourceKey.m_135785_(Registry.f_122819_, new ResourceLocation("overworld"));
-@@ -99,8 +_,14 @@
-    private final WorldBorder f_46447_;
+@@ -100,8 +_,14 @@
     private final BiomeManager f_46420_;
     private final ResourceKey<Level> f_46421_;
+    private long f_186455_;
 +   public boolean restoringBlockSnapshots = false;
 +   public boolean captureBlockSnapshots = false;
 +   public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<>();
@@ -24,7 +24,7 @@
        this.f_46446_ = p_46453_;
        this.f_46442_ = p_46450_;
        this.f_46445_ = p_46452_;
-@@ -180,17 +_,45 @@
+@@ -181,17 +_,45 @@
        } else {
           LevelChunk levelchunk = this.m_46745_(p_46605_);
           Block block = p_46606_.m_60734_();
@@ -71,7 +71,7 @@
              if (blockstate1 == p_46606_) {
                 if (blockstate != blockstate1) {
                    this.m_6550_(p_46605_, blockstate, blockstate1);
-@@ -216,8 +_,6 @@
+@@ -217,8 +_,6 @@
  
                 this.m_6559_(p_46605_, blockstate, blockstate1);
              }
@@ -80,7 +80,7 @@
           }
        }
     }
-@@ -267,6 +_,8 @@
+@@ -268,6 +_,8 @@
     }
  
     public void m_46672_(BlockPos p_46673_, Block p_46674_) {
@@ -89,7 +89,7 @@
        this.m_46586_(p_46673_.m_142125_(), p_46674_, p_46673_);
        this.m_46586_(p_46673_.m_142126_(), p_46674_, p_46673_);
        this.m_46586_(p_46673_.m_7495_(), p_46674_, p_46673_);
-@@ -276,6 +_,11 @@
+@@ -277,6 +_,11 @@
     }
  
     public void m_46590_(BlockPos p_46591_, Block p_46592_, Direction p_46593_) {
@@ -101,7 +101,7 @@
        if (p_46593_ != Direction.WEST) {
           this.m_46586_(p_46591_.m_142125_(), p_46592_, p_46591_);
        }
-@@ -313,9 +_,9 @@
+@@ -314,9 +_,9 @@
              CrashReportCategory crashreportcategory = crashreport.m_127514_("Block being updated");
              crashreportcategory.m_128165_("Source block type", () -> {
                 try {
@@ -113,7 +113,7 @@
                 }
              });
              CrashReportCategory.m_178950_(crashreportcategory, this, p_46587_, blockstate);
-@@ -401,10 +_,26 @@
+@@ -402,10 +_,26 @@
        (this.f_151504_ ? this.f_151503_ : this.f_151512_).add(p_151526_);
     }
  
@@ -140,7 +140,7 @@
        if (!this.f_151503_.isEmpty()) {
           this.f_151512_.addAll(this.f_151503_);
           this.f_151503_.clear();
-@@ -427,12 +_,15 @@
+@@ -428,12 +_,15 @@
  
     public <T extends Entity> void m_46653_(Consumer<T> p_46654_, T p_46655_) {
        try {
@@ -156,7 +156,7 @@
        }
     }
  
-@@ -446,6 +_,7 @@
+@@ -455,6 +_,7 @@
  
     public Explosion m_7703_(@Nullable Entity p_46526_, @Nullable DamageSource p_46527_, @Nullable ExplosionDamageCalculator p_46528_, double p_46529_, double p_46530_, double p_46531_, float p_46532_, boolean p_46533_, Explosion.BlockInteraction p_46534_) {
        Explosion explosion = new Explosion(this, p_46526_, p_46527_, p_46528_, p_46529_, p_46530_, p_46531_, p_46532_, p_46533_, p_46534_);
@@ -164,7 +164,7 @@
        explosion.m_46061_();
        explosion.m_46075_(true);
        return explosion;
-@@ -473,6 +_,7 @@
+@@ -482,6 +_,7 @@
        if (!this.m_151570_(p_46748_)) {
           this.m_46745_(p_46748_).m_8114_(p_46748_);
        }
@@ -172,7 +172,7 @@
     }
  
     public boolean m_46749_(BlockPos p_46750_) {
-@@ -530,8 +_,8 @@
+@@ -539,8 +_,8 @@
              list.add(p_151522_);
           }
  
@@ -183,26 +183,28 @@
                 if (p_151522_ != p_46536_ && p_46538_.test(enderdragonpart)) {
                    list.add(enderdragonpart);
                 }
-@@ -550,8 +_,8 @@
+@@ -559,10 +_,8 @@
              list.add(p_151539_);
           }
  
 -         if (p_151539_ instanceof EnderDragon) {
--            for(EnderDragonPart enderdragonpart : ((EnderDragon)p_151539_).m_31156_()) {
+-            EnderDragon enderdragon = (EnderDragon)p_151539_;
+-
+-            for(EnderDragonPart enderdragonpart : enderdragon.m_31156_()) {
 +         if (p_151539_.isMultipartEntity()) {
 +            for(net.minecraftforge.entity.PartEntity<?> enderdragonpart : p_151539_.getParts()) {
                 T t = p_151528_.m_141992_(enderdragonpart);
                 if (t != null && p_151530_.test(t)) {
                    list.add(t);
-@@ -571,6 +_,7 @@
-          this.m_46745_(p_151544_).m_6427_();
+@@ -582,6 +_,7 @@
+          this.m_46745_(p_151544_).m_8092_(true);
        }
  
 +      this.m_46717_(p_151544_, m_8055_(p_151544_).m_60734_()); //Notify neighbors of changes
     }
  
     public int m_5736_() {
-@@ -615,7 +_,7 @@
+@@ -626,7 +_,7 @@
     public int m_46681_(BlockPos p_46682_, Direction p_46683_) {
        BlockState blockstate = this.m_8055_(p_46682_);
        int i = blockstate.m_60746_(this, p_46682_, p_46683_);
@@ -211,7 +213,7 @@
     }
  
     public boolean m_46753_(BlockPos p_46754_) {
-@@ -768,16 +_,15 @@
+@@ -779,16 +_,15 @@
     public abstract Scoreboard m_6188_();
  
     public void m_46717_(BlockPos p_46718_, Block p_46719_) {
@@ -232,7 +234,7 @@
                    blockstate.m_60690_(this, blockpos, p_46719_, p_46718_, false);
                 }
              }
-@@ -856,6 +_,18 @@
+@@ -867,6 +_,18 @@
  
     public BiomeManager m_7062_() {
        return this.f_46420_;

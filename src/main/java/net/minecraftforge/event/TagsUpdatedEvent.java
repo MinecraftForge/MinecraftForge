@@ -42,7 +42,7 @@ public class TagsUpdatedEvent extends Event
     }
 
     /**
-     * @return The network tag manager that has been updated with newly received tags.
+     * @return The impl tag manager that has been updated with newly received tags.
      */
     public TagContainer getTagManager()
     {

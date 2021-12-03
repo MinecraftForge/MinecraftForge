@@ -54,9 +54,19 @@ import net.minecraftforge.client.textures.ITextureAtlasSpriteLoader;
 
 public class MinecraftForgeClient
 {
-    public static RenderType getRenderLayer()
+    public static RenderType getRenderType()
     {
-        return ForgeHooksClient.renderLayer.get();
+        return ForgeHooksClient.renderType.get();
+    }
+
+    private static float partialTick;
+
+    public static float getPartialTick() {
+        return partialTick;
+    }
+
+    public static void setPartialTick(float partialTick) {
+        MinecraftForgeClient.partialTick = partialTick;
     }
 
     /**
@@ -103,47 +113,6 @@ public class MinecraftForgeClient
         {
             stencilBits.set(bit);
         }
-    }
-
-    private static final LoadingCache<Pair<Level, BlockPos>, Optional<RenderChunkRegion>> regionCache = CacheBuilder.newBuilder()
-        .maximumSize(500)
-        .concurrencyLevel(5)
-        .expireAfterAccess(1, TimeUnit.SECONDS)
-        .build(new CacheLoader<Pair<Level, BlockPos>, Optional<RenderChunkRegion>>()
-        {
-            @Override
-            public Optional<RenderChunkRegion> load(Pair<Level, BlockPos> key)
-            {
-                return Optional.ofNullable(RenderChunkRegion.createIfNotEmpty(key.getLeft(), key.getRight().offset(-1, -1, -1), key.getRight().offset(16, 16, 16), 1));
-            }
-        });
-
-    public static void onRebuildChunk(Level world, BlockPos position, RenderChunkRegion cache)
-    {
-        if (cache == null)
-            regionCache.invalidate(Pair.of(world, position));
-        else
-            regionCache.put(Pair.of(world, position), Optional.of(cache));
-    }
-
-    @Nullable
-    public static RenderChunkRegion getRegionRenderCache(Level world, BlockPos pos)
-    {
-        return getRegionRenderCacheOptional(world, pos).orElse(null);
-    }
-
-    public static Optional<RenderChunkRegion> getRegionRenderCacheOptional(Level world, BlockPos pos)
-    {
-        int x = pos.getX() & ~0xF;
-        int y = pos.getY() & ~0xF;
-        int z = pos.getZ() & ~0xF;
-        return regionCache.getUnchecked(Pair.of(world, new BlockPos(x, y, z)));
-    }
-
-    public static void clearRenderCache()
-    {
-        regionCache.invalidateAll();
-        regionCache.cleanUp();
     }
 
     private static HashMap<ResourceLocation, Supplier<NativeImage>> bufferedImageSuppliers = new HashMap<ResourceLocation, Supplier<NativeImage>>();

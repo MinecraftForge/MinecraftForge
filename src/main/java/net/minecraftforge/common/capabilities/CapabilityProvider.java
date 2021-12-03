@@ -27,14 +27,16 @@ import com.google.common.annotations.VisibleForTesting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implements ICapabilityProvider
+public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> implements ICapabilityProviderImpl<B>
 {
     @VisibleForTesting
     static boolean SUPPORTS_LAZY_CAPABILITIES = true;
@@ -82,8 +84,14 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     private void doGatherCapabilities(@Nullable ICapabilityProvider parent)
     {
-        this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, this, parent);
+        this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, getProvider(), parent);
         this.initialized = true;
+    }
+
+    @NotNull
+    B getProvider()
+    {
+        return (B)this;
     }
 
     protected final @Nullable CapabilityDispatcher getCapabilities()
@@ -188,4 +196,49 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         final CapabilityDispatcher disp = getCapabilities();
         return !valid || disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);
     }
+
+    /**
+     * Special implementation for cases which have a superclass and can't extend CapabilityProvider directly.
+     * See {@link LevelChunk}
+     */
+    public static class AsField<B extends ICapabilityProviderImpl<B>> extends CapabilityProvider<B>
+    {
+        private final B owner;
+
+        public AsField(Class<B> baseClass, B owner)
+        {
+            super(baseClass);
+            this.owner = owner;
+        }
+
+        public AsField(Class<B> baseClass, B owner, boolean isLazy)
+        {
+            super(baseClass, isLazy);
+            this.owner = owner;
+        }
+
+        public void initInternal()
+        {
+            gatherCapabilities();
+        }
+
+        @Nullable
+        public CompoundTag serializeInternal()
+        {
+            return serializeCaps();
+        }
+
+        public void deserializeInternal(CompoundTag tag)
+        {
+            deserializeCaps(tag);
+        }
+
+        @Override
+        @NotNull
+        B getProvider()
+        {
+            return owner;
+        }
+    };
+
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/levelgen/feature/Feature.java
 +++ b/net/minecraft/world/level/levelgen/feature/Feature.java
-@@ -49,7 +_,7 @@
+@@ -50,7 +_,7 @@
  import net.minecraft.world.level.levelgen.feature.configurations.UnderwaterMagmaConfiguration;
  import net.minecraft.world.level.levelgen.feature.configurations.VegetationPatchConfiguration;
  
@@ -8,7 +8,7 @@
 +public abstract class Feature<FC extends FeatureConfiguration> extends net.minecraftforge.registries.ForgeRegistryEntry<Feature<?>> {
     public static final Feature<NoneFeatureConfiguration> f_65759_ = m_65807_("no_op", new NoOpFeature(NoneFeatureConfiguration.f_67815_));
     public static final Feature<TreeConfiguration> f_65760_ = m_65807_("tree", new TreeFeature(TreeConfiguration.f_68184_));
-    public static final AbstractFlowerFeature<RandomPatchConfiguration> f_65761_ = m_65807_("flower", new DefaultFlowerFeature(RandomPatchConfiguration.f_67902_));
+    public static final Feature<RandomPatchConfiguration> f_65761_ = m_65807_("flower", new RandomPatchFeature(RandomPatchConfiguration.f_67902_));
 @@ -157,11 +_,11 @@
     public abstract boolean m_142674_(FeaturePlaceContext<FC> p_159749_);
  

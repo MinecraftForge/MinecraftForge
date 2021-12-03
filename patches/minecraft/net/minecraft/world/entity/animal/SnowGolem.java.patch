@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/animal/SnowGolem.java
 +++ b/net/minecraft/world/entity/animal/SnowGolem.java
-@@ -39,7 +_,7 @@
+@@ -40,7 +_,7 @@
  import net.minecraft.world.level.gameevent.GameEvent;
  import net.minecraft.world.phys.Vec3;
  
@@ -9,7 +9,7 @@
     private static final EntityDataAccessor<Byte> f_29899_ = SynchedEntityData.m_135353_(SnowGolem.class, EntityDataSerializers.f_135027_);
     private static final byte f_149047_ = 16;
     private static final float f_149048_ = 1.7F;
-@@ -94,7 +_,7 @@
+@@ -97,7 +_,7 @@
              this.m_6469_(DamageSource.f_19307_, 1.0F);
           }
  
@@ -18,16 +18,16 @@
              return;
           }
  
-@@ -105,7 +_,7 @@
+@@ -108,7 +_,7 @@
              j = Mth.m_14107_(this.m_20186_());
              k = Mth.m_14107_(this.m_20189_() + (double)((float)(l / 2 % 2 * 2 - 1) * 0.25F));
-             BlockPos blockpos = new BlockPos(i, j, k);
--            if (this.f_19853_.m_8055_(blockpos).m_60795_() && this.f_19853_.m_46857_(blockpos).m_47505_(blockpos) < 0.8F && blockstate.m_60710_(this.f_19853_, blockpos)) {
-+            if (this.f_19853_.m_46859_(blockpos) && this.f_19853_.m_46857_(blockpos).m_47505_(blockpos) < 0.8F && blockstate.m_60710_(this.f_19853_, blockpos)) {
-                this.f_19853_.m_46597_(blockpos, blockstate);
+             BlockPos blockpos1 = new BlockPos(i, j, k);
+-            if (this.f_19853_.m_8055_(blockpos1).m_60795_() && blockstate.m_60710_(this.f_19853_, blockpos1)) {
++            if (this.f_19853_.m_46859_(blockpos) && blockstate.m_60710_(this.f_19853_, blockpos)) {
+                this.f_19853_.m_46597_(blockpos1, blockstate);
              }
           }
-@@ -131,7 +_,7 @@
+@@ -134,7 +_,7 @@
  
     protected InteractionResult m_6071_(Player p_29920_, InteractionHand p_29921_) {
        ItemStack itemstack = p_29920_.m_21120_(p_29921_);
@@ -36,7 +36,7 @@
           this.m_5851_(SoundSource.PLAYERS);
           this.m_146852_(GameEvent.f_157781_, p_29920_);
           if (!this.f_19853_.f_46443_) {
-@@ -190,5 +_,21 @@
+@@ -193,5 +_,21 @@
  
     public Vec3 m_7939_() {
        return new Vec3(0.0D, (double)(0.75F * this.m_20192_()), (double)(this.m_20205_() * 0.4F));

@@ -23,6 +23,8 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -66,7 +68,13 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      * @param net The NetworkManager the packet originated from
      * @param pkt The data packet
      */
-    default void onDataPacket(net.minecraft.network.Connection net, net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket pkt){ }
+    default void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt)
+    {
+        CompoundTag compoundtag = pkt.getTag();
+        if (compoundtag != null) {
+            self().load(compoundtag);
+        }
+    }
 
     /**
      * Called when the chunk's TE update tag, gotten from {@link BlockEntity#getUpdateTag()}, is received on the client.

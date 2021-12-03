@@ -1,26 +1,24 @@
 --- a/net/minecraft/world/level/dimension/LevelStem.java
 +++ b/net/minecraft/world/level/dimension/LevelStem.java
-@@ -23,7 +_,9 @@
+@@ -24,7 +_,9 @@
  
  public final class LevelStem {
     public static final Codec<LevelStem> f_63970_ = RecordCodecBuilder.create((p_63986_) -> {
 +      return net.minecraftforge.common.ForgeHooks.expandLevelStemCodec(p_63986_, () -> { // forge: reroute the codec builder here to add extra json fields
        return p_63986_.group(DimensionType.f_63853_.fieldOf("type").flatXmap(ExtraCodecs.m_181037_(), ExtraCodecs.m_181037_()).forGetter(LevelStem::m_63981_), ChunkGenerator.f_62136_.fieldOf("generator").forGetter(LevelStem::m_63990_)).apply(p_63986_, p_63986_.stable(LevelStem::new));
-+      });
++      }); // forge: we're wrapping the original codec builder in our expansion up there
     });
     public static final ResourceKey<LevelStem> f_63971_ = ResourceKey.m_135785_(Registry.f_122820_, new ResourceLocation("overworld"));
     public static final ResourceKey<LevelStem> f_63972_ = ResourceKey.m_135785_(Registry.f_122820_, new ResourceLocation("the_nether"));
-@@ -33,8 +_,13 @@
+@@ -34,6 +_,11 @@
     private final ChunkGenerator f_63976_;
  
     public LevelStem(Supplier<DimensionType> p_63979_, ChunkGenerator p_63980_) {
 +      this(p_63979_, p_63980_, false); // forge: by default, dimension jsons use the fixed seed required by the vanilla format
-+   }
++   } // forge: reroute the vanilla constructor to our expanded constructor with default args
 +   public final boolean useServerSeed; // forge: whether the dimension parser should use the server seed instead of the fixed seed
 +   public LevelStem(Supplier<DimensionType> p_63979_, ChunkGenerator p_63980_, boolean useServerSeed) { // forge: allow dimension jsons to specify that they should use the server seed instead of the fixed seed field
++      this.useServerSeed = useServerSeed; // forge
        this.f_63975_ = p_63979_;
        this.f_63976_ = p_63980_;
-+      this.useServerSeed = useServerSeed; // forge: if true, dimension json parser will use the server seed instead of the fixed seed for this dimension
     }
- 
-    public Supplier<DimensionType> m_63981_() {

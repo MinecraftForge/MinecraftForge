@@ -55,7 +55,7 @@ public interface IForgeBakedModel
         return self().getQuads(state, side, rand);
     }
 
-    default boolean isAmbientOcclusion(BlockState state) { return self().useAmbientOcclusion(); }
+    default boolean useAmbientOcclusion(BlockState state) { return self().useAmbientOcclusion(); }
 
     /**
      * Override to tell the new model loader that it shouldn't wrap this model

@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerPlayer.java
 +++ b/net/minecraft/server/level/ServerPlayer.java
-@@ -500,6 +_,7 @@
+@@ -541,6 +_,7 @@
     }
  
     public void m_6667_(DamageSource p_9035_) {
@@ -8,7 +8,7 @@
        boolean flag = this.f_19853_.m_46469_().m_46207_(GameRules.f_46142_);
        if (flag) {
           Component component = this.m_21231_().m_19293_();
-@@ -644,13 +_,14 @@
+@@ -685,13 +_,14 @@
     }
  
     @Nullable
@@ -16,17 +16,17 @@
 +   public Entity changeDimension(ServerLevel p_9180_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9180_.m_46472_())) return null;
        this.f_8927_ = true;
-       ServerLevel serverlevel = this.m_9236_();
+       ServerLevel serverlevel = this.m_183503_();
        ResourceKey<Level> resourcekey = serverlevel.m_46472_();
 -      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_) {
 +      if (resourcekey == Level.f_46430_ && p_9180_.m_46472_() == Level.f_46428_ && teleporter.isVanilla()) { //Forge: Fix non-vanilla teleporters triggering end credits
           this.m_19877_();
--         this.m_9236_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
-+         this.m_9236_().removePlayer(this, true); //Forge: The player entity is cloned so keep the data until after cloning calls copyFrom
+-         this.m_183503_().m_143261_(this, Entity.RemovalReason.CHANGED_DIMENSION);
++         this.m_183503_().removePlayer(this, true); //Forge: The player entity is cloned so keep the data until after cloning calls copyFrom
           if (!this.f_8944_) {
              this.f_8944_ = true;
              this.f_8906_.m_141995_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132157_, this.f_8928_ ? 0.0F : 1.0F));
-@@ -664,14 +_,15 @@
+@@ -705,14 +_,15 @@
           this.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
           PlayerList playerlist = this.f_8924_.m_6846_();
           playerlist.m_11289_(this);
@@ -46,7 +46,7 @@
                 this.m_9006_(p_9180_, new BlockPos(portalinfo.f_77676_));
              }
  
-@@ -683,6 +_,9 @@
+@@ -724,6 +_,9 @@
              this.m_6027_(portalinfo.f_77676_.f_82479_, portalinfo.f_77676_.f_82480_, portalinfo.f_77676_.f_82481_);
              serverlevel.m_46473_().m_7238_();
              this.m_9209_(serverlevel);
@@ -56,7 +56,7 @@
              this.f_8906_.m_141995_(new ClientboundPlayerAbilitiesPacket(this.m_150110_()));
              playerlist.m_11229_(this, p_9180_);
              playerlist.m_11292_(this);
-@@ -691,10 +_,12 @@
+@@ -732,10 +_,12 @@
                 this.f_8906_.m_141995_(new ClientboundUpdateMobEffectPacket(this.m_142049_(), mobeffectinstance));
              }
  
@@ -65,11 +65,11 @@
              this.f_8920_ = -1;
              this.f_8917_ = -1.0F;
              this.f_8918_ = -1;
-+            net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, resourcekey, p_9180_.m_46472_());
++            net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, resourcekey, p_9180_.m_46472_());
           }
  
           return this;
-@@ -768,6 +_,9 @@
+@@ -799,6 +_,9 @@
     }
  
     public Either<Player.BedSleepingProblem, Unit> m_7720_(BlockPos p_9115_) {
@@ -79,7 +79,7 @@
        Direction direction = this.f_19853_.m_8055_(p_9115_).m_61143_(HorizontalDirectionalBlock.f_54117_);
        if (!this.m_5803_() && this.m_6084_()) {
           if (!this.f_19853_.m_6042_().m_63956_()) {
-@@ -778,7 +_,7 @@
+@@ -809,7 +_,7 @@
              return Either.left(Player.BedSleepingProblem.OBSTRUCTED);
           } else {
              this.m_9158_(this.f_19853_.m_46472_(), p_9115_, this.m_146908_(), false, true);
@@ -88,7 +88,7 @@
                 return Either.left(Player.BedSleepingProblem.NOT_POSSIBLE_NOW);
              } else {
                 if (!this.m_7500_()) {
-@@ -816,6 +_,7 @@
+@@ -847,6 +_,7 @@
     }
  
     private boolean m_9116_(BlockPos p_9117_, Direction p_9118_) {
@@ -96,7 +96,7 @@
        return this.m_9222_(p_9117_) || this.m_9222_(p_9117_.m_142300_(p_9118_.m_122424_()));
     }
  
-@@ -924,6 +_,7 @@
+@@ -955,6 +_,7 @@
              this.f_8906_.m_141995_(new ClientboundOpenScreenPacket(abstractcontainermenu.f_38840_, abstractcontainermenu.m_6772_(), p_9033_.m_5446_()));
              this.m_143399_(abstractcontainermenu);
              this.f_36096_ = abstractcontainermenu;
@@ -104,7 +104,7 @@
              return OptionalInt.of(this.f_8940_);
           }
        }
-@@ -942,6 +_,7 @@
+@@ -973,6 +_,7 @@
        this.f_8906_.m_141995_(new ClientboundHorseScreenOpenPacket(this.f_8940_, p_9060_.m_6643_(), p_9059_.m_142049_()));
        this.f_36096_ = new HorseInventoryMenu(this.f_8940_, this.m_150109_(), p_9060_, p_9059_);
        this.m_143399_(this.f_36096_);
@@ -112,7 +112,7 @@
     }
  
     public void m_6986_(ItemStack p_9082_, InteractionHand p_9083_) {
-@@ -968,6 +_,7 @@
+@@ -998,6 +_,7 @@
     public void m_9230_() {
        this.f_36096_.m_6877_(this);
        this.f_36095_.m_150414_(this.f_36096_);
@@ -120,7 +120,7 @@
        this.f_36096_ = this.f_36095_;
     }
  
-@@ -1093,6 +_,13 @@
+@@ -1123,6 +_,13 @@
        this.f_8933_ = p_9016_.f_8933_;
        this.m_36362_(p_9016_.m_36331_());
        this.m_36364_(p_9016_.m_36332_());
@@ -134,7 +134,7 @@
     }
  
     protected void m_142540_(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
-@@ -1151,6 +_,7 @@
+@@ -1181,6 +_,7 @@
     }
  
     public boolean m_143403_(GameType p_143404_) {
@@ -142,23 +142,23 @@
        if (!this.f_8941_.m_143473_(p_143404_)) {
           return false;
        } else {
-@@ -1206,6 +_,7 @@
-       this.f_143378_ = p_9157_.m_179563_();
-       this.m_20088_().m_135381_(f_36089_, (byte)p_9157_.m_133887_());
-       this.m_20088_().m_135381_(f_36090_, (byte)(p_9157_.m_133888_() == HumanoidArm.LEFT ? 0 : 1));
-+      this.language = p_9157_.m_179561_();
+@@ -1237,6 +_,7 @@
+       this.f_184127_ = p_9157_.f_195812_();
+       this.m_20088_().m_135381_(f_36089_, (byte)p_9157_.f_133867_());
+       this.m_20088_().m_135381_(f_36090_, (byte)(p_9157_.f_133868_() == HumanoidArm.LEFT ? 0 : 1));
++      this.language = p_9157_.f_133863_();
     }
  
     public boolean m_143432_() {
-@@ -1265,6 +_,7 @@
-    public void m_9213_(Entity p_9214_) {
+@@ -1296,6 +_,7 @@
+    public void m_9213_(@Nullable Entity p_9214_) {
        Entity entity = this.m_8954_();
        this.f_8926_ = (Entity)(p_9214_ == null ? this : p_9214_);
 +      while (this.f_8926_ instanceof net.minecraftforge.entity.PartEntity<?> partEntity) this.f_8926_ = partEntity.getParent(); // FORGE: fix MC-46486
        if (entity != this.f_8926_) {
           this.f_8906_.m_141995_(new ClientboundSetCameraPacket(this.f_8926_));
           this.m_6021_(this.f_8926_.m_20185_(), this.f_8926_.m_20186_(), this.f_8926_.m_20189_());
-@@ -1294,7 +_,11 @@
+@@ -1325,7 +_,11 @@
  
     @Nullable
     public Component m_8957_() {
@@ -171,13 +171,13 @@
     }
  
     public void m_6674_(InteractionHand p_9031_) {
-@@ -1319,21 +_,23 @@
+@@ -1350,21 +_,23 @@
        this.m_8127_();
        if (p_9000_ == this.f_19853_) {
           this.f_8906_.m_9774_(p_9001_, p_9002_, p_9003_, p_9004_, p_9005_);
 -      } else {
 +      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_9000_.m_46472_())) {
-          ServerLevel serverlevel = this.m_9236_();
+          ServerLevel serverlevel = this.m_183503_();
           LevelData leveldata = p_9000_.m_6106_();
           this.f_8906_.m_141995_(new ClientboundRespawnPacket(p_9000_.m_6042_(), p_9000_.m_46472_(), BiomeManager.m_47877_(p_9000_.m_7328_()), this.f_8941_.m_9290_(), this.f_8941_.m_9293_(), p_9000_.m_46659_(), p_9000_.m_8584_(), true));
           this.f_8906_.m_141995_(new ClientboundChangeDifficultyPacket(leveldata.m_5472_(), leveldata.m_5474_()));
@@ -194,11 +194,11 @@
 +         this.f_8941_.m_9260_(p_9000_);
           this.f_8924_.m_6846_().m_11229_(this, p_9000_);
           this.f_8924_.m_6846_().m_11292_(this);
-+         net.minecraftforge.fmllegacy.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, serverlevel.m_46472_(), p_9000_.m_46472_());
++         net.minecraftforge.event.ForgeEventFactory.firePlayerChangedDimensionEvent(this, serverlevel.m_46472_(), p_9000_.m_46472_());
        }
  
     }
-@@ -1356,6 +_,7 @@
+@@ -1387,6 +_,7 @@
     }
  
     public void m_9158_(ResourceKey<Level> p_9159_, @Nullable BlockPos p_9160_, float p_9161_, boolean p_9162_, boolean p_9163_) {
@@ -206,7 +206,7 @@
        if (p_9160_ != null) {
           boolean flag = p_9160_.equals(this.f_8936_) && p_9159_.equals(this.f_8935_);
           if (p_9163_ && !flag) {
-@@ -1408,6 +_,8 @@
+@@ -1438,6 +_,8 @@
        if (itementity == null) {
           return null;
        } else {
@@ -215,7 +215,7 @@
           this.f_19853_.m_7967_(itementity);
           ItemStack itemstack = itementity.m_32055_();
           if (p_9087_) {
-@@ -1422,6 +_,29 @@
+@@ -1452,6 +_,29 @@
        }
     }
  
@@ -245,7 +245,7 @@
     public TextFilter m_8967_() {
        return this.f_8939_;
     }
-@@ -1481,10 +_,12 @@
+@@ -1511,11 +_,13 @@
  
     public boolean m_182294_(boolean p_182295_) {
        Inventory inventory = this.m_150109_();
@@ -258,4 +258,5 @@
 -      return this.m_7197_(itemstack, false, true) != null;
 +      return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, itemstack, true) != null;
     }
- }
+ 
+    public boolean m_184128_() {

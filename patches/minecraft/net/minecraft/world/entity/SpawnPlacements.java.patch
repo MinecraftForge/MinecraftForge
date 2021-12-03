@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/entity/SpawnPlacements.java
 +++ b/net/minecraft/world/entity/SpawnPlacements.java
-@@ -151,10 +_,26 @@
+@@ -153,10 +_,26 @@
        boolean m_21780_(EntityType<T> p_21781_, ServerLevelAccessor p_21782_, MobSpawnType p_21783_, BlockPos p_21784_, Random p_21785_);
     }
  
