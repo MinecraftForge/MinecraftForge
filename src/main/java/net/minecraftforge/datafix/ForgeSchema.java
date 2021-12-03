@@ -13,7 +13,11 @@ import com.mojang.datafixers.types.templates.TaggedChoice;
 import com.mojang.datafixers.types.templates.TypeTemplate;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -24,9 +28,11 @@ import java.util.function.Supplier;
 class ForgeSchema extends Schema
 {
     //Can not be final, needs to be initialized on the fly!
+    //Constructor invocation order and the what not!
     private Map<String, Supplier<TypeTemplate>> TYPE_TEMPLATES = Maps.newHashMap();
-    private Map<String, Type<?>> TYPES = Maps.newHashMap();
+    private Map<String, Type<?>>                TYPES          = Maps.newHashMap();
 
+    //Store some data we can not access later anymore.
     private final String name;
     private final Schema wrapped;
 
@@ -38,6 +44,8 @@ class ForgeSchema extends Schema
         final int subVersion = DataFixUtils.getSubVersion(versionKey);
         name = "V" + DataFixUtils.getVersion(versionKey) + (subVersion == 0 ? "" : "." + subVersion);
 
+        //Now with the vanilla data in the schema, lets build our first version again.
+        //Yes this executes the type resolve multiple times per schema (but it's not a big deal)
         resetSchema();
         rebuildSchema(
           Collections.emptyMap(),
@@ -45,26 +53,44 @@ class ForgeSchema extends Schema
         );
     }
 
-    protected Map<String, Type<?>> buildTypes() {
+    /**
+     * Rebuilds the types, with support for the case that no types exists.
+     * (Which should never happen, but you never know!)
+     *
+     * @return The type map.
+     */
+    protected Map<String, Type<?>> buildTypes()
+    {
+        //Result map.
         final Map<String, Type<?>> types = Maps.newHashMap();
 
+        //All the core templates into which recursion of data is possible.
         final List<TypeTemplate> templates = Lists.newArrayList();
 
-        for (final Object2IntMap.Entry<String> entry : RECURSIVE_TYPES.object2IntEntrySet()) {
+        //Check all recursion types
+        for (final Object2IntMap.Entry<String> entry : RECURSIVE_TYPES.object2IntEntrySet())
+        {
+            //Generate a template for the type.
             templates.add(DSL.check(entry.getKey(), entry.getIntValue(), getTemplate(entry.getKey())));
         }
 
+        //Merge them all together into one root recursive type.
         final Optional<TypeTemplate> availableTypeTemplate = templates.stream().reduce(DSL::or);
-        if (availableTypeTemplate.isEmpty()) {
+        if (availableTypeTemplate.isEmpty())
+        {
+            //Check for its existence or nuke.
             return Maps.newHashMap();
         }
+        //Build a type family for our recursive types.
         final TypeTemplate choice = availableTypeTemplate.get();
         final TypeFamily family = new RecursiveTypeFamily(name, choice);
 
+        //Now process all other known types, taking care of recursion.
         for (final String name : TYPE_TEMPLATES.keySet()) {
             final Type<?> type;
             final int recurseId = RECURSIVE_TYPES.getOrDefault(name, -1);
-            if (recurseId != -1) {
+            if (recurseId != -1)
+            {
                 type = family.apply(recurseId);
             } else {
                 type = getTemplate(name).apply(family).apply(-1);
@@ -74,49 +100,59 @@ class ForgeSchema extends Schema
         return types;
     }
 
-    public Set<String> types() {
+    public Set<String> types()
+    {
         return TYPES.keySet();
     }
 
-    public Type<?> getTypeRaw(final DSL.TypeReference type) {
+    public Type<?> getTypeRaw(final DSL.TypeReference type)
+    {
         final String name = type.typeName();
         return TYPES.computeIfAbsent(name, key -> {
             throw new IllegalArgumentException("Unknown type: " + name);
         });
     }
 
-    public Type<?> getType(final DSL.TypeReference type) {
+    public Type<?> getType(final DSL.TypeReference type)
+    {
         final String name = type.typeName();
         final Type<?> type1 = TYPES.computeIfAbsent(name, key -> {
             throw new IllegalArgumentException("Unknown type: " + name);
         });
-        if (type1 instanceof RecursivePoint.RecursivePointType<?>) {
+        if (type1 instanceof RecursivePoint.RecursivePointType<?>)
+        {
             return type1.findCheckedType(-1).orElseThrow(() -> new IllegalStateException("Could not find choice type in the recursive type"));
         }
         return type1;
     }
 
-    public TypeTemplate resolveTemplate(final String name) {
+    public TypeTemplate resolveTemplate(final String name)
+    {
         return TYPE_TEMPLATES.getOrDefault(name, () -> {
             throw new IllegalArgumentException("Unknown type: " + name);
         }).get();
     }
 
-    public TypeTemplate id(final String name) {
+    public TypeTemplate id(final String name)
+    {
         final int id = RECURSIVE_TYPES.getOrDefault(name, -1);
-        if (id != -1) {
+        if (id != -1)
+        {
             return DSL.id(id);
         }
         return getTemplate(name);
     }
 
-    protected TypeTemplate getTemplate(final String name) {
+    protected TypeTemplate getTemplate(final String name)
+    {
         return DSL.named(name, resolveTemplate(name));
     }
 
-    public Type<?> getChoiceType(final DSL.TypeReference type, final String choiceName) {
+    public Type<?> getChoiceType(final DSL.TypeReference type, final String choiceName)
+    {
         final TaggedChoice.TaggedChoiceType<?> choiceType = findChoiceType(type);
-        if (!choiceType.types().containsKey(choiceName)) {
+        if (!choiceType.types().containsKey(choiceName))
+        {
             throw new IllegalArgumentException("Data fixer not registered for: " + choiceName + " in " + type.typeName());
         }
         return choiceType.types().get(choiceName);
@@ -127,42 +163,67 @@ class ForgeSchema extends Schema
     }
 
     public void registerTypes(final Schema schema, final Map<String, Supplier<TypeTemplate>> entityTypes, final Map<String, Supplier<TypeTemplate>> blockEntityTypes) {
+        //This is a bit wonky, in vanilla it suffices to register the types to one single version
+        //And all newer versions will have this type.
+        //Due to the way we set up the schemas with events later, that is not possible anymore.
+        //Modders will need to register their types on all versions that they should exist in,
+        //not just in the oldest version.
+
         if (wrapped != null)
+        {
             wrapped.registerTypes(schema, entityTypes, blockEntityTypes);
+        }
         else if (parent != null)
+        {
             parent.registerTypes(schema, entityTypes, blockEntityTypes);
+        }
     }
 
     public Map<String, Supplier<TypeTemplate>> registerEntities(final Schema schema) {
+        //This is a bit wonky, in vanilla it suffices to register the types to one single version
+        //And all newer versions will have this type.
+        //Due to the way we set up the schemas with events later, that is not possible anymore.
+        //Modders will need to register their types on all versions that they should exist in,
+        //not just in the oldest version.
+
         if (wrapped != null)
+        {
             return wrapped.registerEntities(schema);
+        }
         if (parent != null)
+        {
             return parent.registerEntities(schema);
+        }
 
         return Maps.newHashMap();
     }
 
     public Map<String, Supplier<TypeTemplate>> registerBlockEntities(final Schema schema) {
+        //This is a bit wonky, in vanilla it suffices to register the types to one single version
+        //And all newer versions will have this type.
+        //Due to the way we set up the schemas with events later, that is not possible anymore.
+        //Modders will need to register their types on all versions that they should exist in,
+        //not just in the oldest version.
+
         if (wrapped != null)
+        {
             return wrapped.registerBlockEntities(schema);
+        }
         if (parent != null)
+        {
             return parent.registerBlockEntities(schema);
+        }
 
         return Maps.newHashMap();
     }
 
-    public void registerSimple(final Map<String, Supplier<TypeTemplate>> map, final String name) {
-        register(map, name, DSL::remainder);
-    }
-
-    public void register(final Map<String, Supplier<TypeTemplate>> map, final String name, final Function<String, TypeTemplate> template) {
-        register(map, name, () -> template.apply(name));
-    }
-
-    public void register(final Map<String, Supplier<TypeTemplate>> map, final String name, final Supplier<TypeTemplate> template) {
-        map.put(name, template);
-    }
-
+    /**
+     * Registers a new type to the Schema with its type template.
+     *
+     * @param recursive Indicates if the type is potentially recursive.
+     * @param type The type in question.
+     * @param template Its template.
+     */
     public void registerType(final boolean recursive, final DSL.TypeReference type, final Supplier<TypeTemplate> template)
     {
         if (TYPE_TEMPLATES == null)
@@ -175,28 +236,38 @@ class ForgeSchema extends Schema
         }
     }
 
+    /**
+     * Resets the schema so that the type map can be properly rebuild.
+     */
     public void resetSchema() {
         this.TYPE_TEMPLATES.clear();
         this.TYPES.clear();
         this.RECURSIVE_TYPES.clear();
     }
 
+    /**
+     * Rebuilds the schema's type map.
+     * This also injects custom types for entities and block entities.
+     *
+     * @param modEntityTypes The mod entity types to inject.
+     * @param modBlockEntityTypes The block entity types to inject.
+     */
     public void rebuildSchema(
       final Map<String, Supplier<TypeTemplate>> modEntityTypes,
       final Map<String, Supplier<TypeTemplate>> modBlockEntityTypes
     ) {
-        this.TYPE_TEMPLATES.clear();
-        this.TYPES.clear();
-        this.RECURSIVE_TYPES.clear();
-
+        //Grab the vanilla entities.
         final Map<String, Supplier<TypeTemplate>> entityTypes = registerEntities(this);
         final Map<String, Supplier<TypeTemplate>> blockEntityTypes = registerBlockEntities(this);
 
+        //Add all modded entities and block entities.
         entityTypes.putAll(modEntityTypes);
         blockEntityTypes.putAll(modBlockEntityTypes);
 
+        //Re-register them.
         registerTypes(this, entityTypes, blockEntityTypes);
 
+        //Build the type map again.
         TYPES = buildTypes();
     }
 }
