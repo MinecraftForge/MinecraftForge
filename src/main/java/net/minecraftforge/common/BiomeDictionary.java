@@ -96,6 +96,7 @@ public class BiomeDictionary
         public static final Type WASTELAND = new Type("WASTELAND");
         public static final Type BEACH = new Type("BEACH");
         public static final Type VOID = new Type("VOID");
+        public static final Type UNDERGROUND = new Type("UNDERGROUND");
 
         /*Tags specifying the dimension a biome generates in. Specifying none implies a biome that generates in a modded dimension*/
         public static final Type OVERWORLD = new Type("OVERWORLD");
@@ -328,6 +329,12 @@ public class BiomeDictionary
         addTypes(Biomes.SAVANNA_PLATEAU, HOT, SAVANNA, PLAINS, SPARSE, RARE, OVERWORLD, PLATEAU);
         addTypes(Biomes.BADLANDS, MESA, SANDY, DRY, OVERWORLD);
         addTypes(Biomes.WOODED_BADLANDS, MESA, SANDY, DRY, SPARSE, OVERWORLD, PLATEAU);
+        addTypes(Biomes.MEADOW, PLAINS, PLATEAU, OVERWORLD);
+        addTypes(Biomes.GROVE, COLD, CONIFEROUS, FOREST, SNOWY, MOUNTAIN, OVERWORLD);
+        addTypes(Biomes.SNOWY_SLOPES, COLD, SPARSE, SNOWY, MOUNTAIN, OVERWORLD);
+        addTypes(Biomes.JAGGED_PEAKS, COLD, SPARSE, SNOWY, MOUNTAIN, OVERWORLD);
+        addTypes(Biomes.FROZEN_PEAKS, COLD, SPARSE, SNOWY, HILLS, OVERWORLD);
+        addTypes(Biomes.STONY_PEAKS, HOT, MOUNTAIN, OVERWORLD);
         addTypes(Biomes.SMALL_END_ISLANDS, END);
         addTypes(Biomes.END_MIDLANDS, END);
         addTypes(Biomes.END_HIGHLANDS, END);
@@ -348,6 +355,8 @@ public class BiomeDictionary
         addTypes(Biomes.WINDSWEPT_SAVANNA, HOT, DRY, SPARSE, SAVANNA, MOUNTAIN, RARE, OVERWORLD);
         addTypes(Biomes.ERODED_BADLANDS, HOT, DRY, SPARSE, MOUNTAIN, RARE, OVERWORLD);
         addTypes(Biomes.BAMBOO_JUNGLE, HOT, WET, RARE, JUNGLE, OVERWORLD);
+        addTypes(Biomes.LUSH_CAVES, UNDERGROUND, LUSH, WET, OVERWORLD);
+        addTypes(Biomes.DRIPSTONE_CAVES, UNDERGROUND, SPARSE, OVERWORLD);
         addTypes(Biomes.SOUL_SAND_VALLEY, HOT, DRY, NETHER);
         addTypes(Biomes.CRIMSON_FOREST, HOT, DRY, NETHER, FOREST);
         addTypes(Biomes.WARPED_FOREST, HOT, DRY, NETHER, FOREST);
