@@ -125,6 +125,16 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
     }
 
     @Override
+    @Nonnull
+    public ItemStack extractItemIgnoreStackSize(int slot, int amount, boolean simulate)
+    {
+        int index = getIndexForSlot(slot);
+        IItemHandlerModifiable handler = getHandlerFromIndex(index);
+        slot = getSlotFromIndex(slot, index);
+        return handler.extractItemIgnoreStackSize(slot, amount, simulate);
+    }
+
+    @Override
     public int getSlotLimit(int slot)
     {
         int index = getIndexForSlot(slot);

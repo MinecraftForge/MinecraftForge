@@ -110,8 +110,7 @@ public interface IItemHandler
 
     /**
      * Extracts an ItemStack from the given slot.
-     * If there is more than the max stack size in the current slot and more than the max stack size is requested,
-     * then more than the max stack size may be returned.
+     * The returned stack's count may not exceed the max stack size of the item stack.
      * <p>
      * The returned value must be empty if nothing is extracted,
      * otherwise its stack size must be less than or equal to {@code amount} and {@link ItemStack#getMaxStackSize()}.
@@ -127,13 +126,18 @@ public interface IItemHandler
     ItemStack extractItem(int slot, int amount, boolean simulate);
 
     /**
-     * Extracts an ItemStack from the given slot, but limiting the amount extracted to {@link ItemStack#getMaxStackSize()}.
+     * Extracts an ItemStack from the given slot, completely ignoring the max stack size.
+     * If there is more than the max stack size in the current slot and more than the max stack size is requested,
+     * then more than the max stack size may be returned.
+     * <p>
+     * By default, this calls the usual extractItem that limits the amount to the max stack size.
+     * Handlers that can store more items in each slot should override both methods.
+     * </p>
      * @see #extractItem
      */
     @Nonnull
-    default ItemStack limitedExtractItem(int slot, int amount, boolean simulate) {
-        int limitedAmount = Math.min(amount, getStackInSlot(slot).getMaxStackSize());
-        return extractItem(slot, limitedAmount, simulate);
+    default ItemStack extractItemIgnoreStackSize(int slot, int amount, boolean simulate) {
+        return extractItem(slot, amount, simulate);
     }
 
     /**
@@ -159,7 +163,7 @@ public interface IItemHandler
         {
             if (ItemHandlerHelper.canItemStacksStack(getStackInSlot(i), template))
             {
-                extracted += extractItem(i, amount - extracted, simulate).getCount();
+                extracted += extractItemIgnoreStackSize(i, amount - extracted, simulate).getCount();
                 if (extracted >= amount) break;
             }
         }

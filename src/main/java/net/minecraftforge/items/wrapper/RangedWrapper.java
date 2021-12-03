@@ -86,6 +86,18 @@ public class RangedWrapper implements IItemHandlerModifiable {
     }
 
     @Override
+    @Nonnull
+    public ItemStack extractItemIgnoreStackSize(int slot, int amount, boolean simulate)
+    {
+        if (checkSlot(slot))
+        {
+            return compose.extractItemIgnoreStackSize(slot + minSlot, amount, simulate);
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
         if (checkSlot(slot))
