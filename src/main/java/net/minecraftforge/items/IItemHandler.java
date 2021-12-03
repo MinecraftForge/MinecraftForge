@@ -63,12 +63,13 @@ public interface IItemHandler
      * <p>
      * Inserts an ItemStack into the given slot and return the remainder.
      * The given stack's size may be greater than the itemstack's max size.
+     * The ItemStack <em>should not</em> be modified in this function!
      * </p>
      * Note: This function returns the REMAINDER - what was NOT inserted!
      * This behaviour is subtly different from {@link IFluidHandler#fill(FluidStack, IFluidHandler.FluidAction)}, which returns what was inserted.
      *
      * @param slot     Slot to insert into.
-     * @param stack    ItemStack to insert. Its ownership is given to the item handler. It must never be used or modified by the caller afterwards!
+     * @param stack    ItemStack to insert. This must not be modified by the item handler.
      * @param simulate If true, the insertion is only simulated
      * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return an empty ItemStack).
      *         May be the same as the input ItemStack if unchanged, otherwise a new ItemStack.
@@ -81,9 +82,10 @@ public interface IItemHandler
      * Tries to insert as many of the given item as possible into this item handler, spreading it across slots as needed.
      * This should be preferred over {@link #insertItem} if the caller doesn't care about the slot the item goes into,
      * as it gives the handler the opportunity to optimize this operation.
+     * The ItemStack <em>should not</em> be modified in this function!
      *
      * @param stack    The stack that should be inserted. {@link ItemStack#EMPTY} is not valid.
-     *                 Ownership of this stack is transferred to the item handler and may not be reused by the caller afterwards.
+     *                 This must not be modified by the item handler.
      *                 This stack does not need to adhere to {@link ItemStack#getMaxStackSize()}.
      * @param simulate If true, the insertion is only simulated
      * @return The remaining ItemStack that was not inserted (if the entire stack is accepted, then return an empty ItemStack).

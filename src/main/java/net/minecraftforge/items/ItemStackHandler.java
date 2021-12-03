@@ -107,7 +107,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
         {
             if (existing.isEmpty())
             {
-                this.stacks.set(slot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack);
+                this.stacks.set(slot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack.copy());
             }
             else
             {
