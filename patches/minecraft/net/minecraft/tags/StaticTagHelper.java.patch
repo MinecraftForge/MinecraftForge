@@ -63,7 +63,7 @@
 +         OptionalNamedTag<T> optionalNamedTag = (OptionalNamedTag<T>) namedTag;
 +         optionalNamedTag.defaulted = true;
 +         return optionalNamedTag.resolveDefaulted();
-+      }, (existingTag, newTag) -> SetTag.m_13222_(com.google.common.collect.ImmutableSet.<T>builder().addAll(existingTag.m_6497_()).addAll(newTag.m_6497_()).build())));
++      }, (existingTag, newTag) -> SetTag.m_13222_(ImmutableSet.<T>builder().addAll(existingTag.m_6497_()).addAll(newTag.m_6497_()).build())));
 +      if (!missingOptionals.isEmpty()) {
 +         missingOptionals.putAll(currentTags);
 +         return TagCollection.m_13396_(missingOptionals);
