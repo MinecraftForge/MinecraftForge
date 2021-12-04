@@ -333,7 +333,7 @@ public class BiomeDictionary
         addTypes(Biomes.GROVE, COLD, CONIFEROUS, FOREST, SNOWY, MOUNTAIN, OVERWORLD);
         addTypes(Biomes.SNOWY_SLOPES, COLD, SPARSE, SNOWY, MOUNTAIN, OVERWORLD);
         addTypes(Biomes.JAGGED_PEAKS, COLD, SPARSE, SNOWY, MOUNTAIN, OVERWORLD);
-        addTypes(Biomes.FROZEN_PEAKS, COLD, SPARSE, SNOWY, HILLS, OVERWORLD);
+        addTypes(Biomes.FROZEN_PEAKS, COLD, SPARSE, SNOWY, MOUNTAIN, OVERWORLD);
         addTypes(Biomes.STONY_PEAKS, HOT, MOUNTAIN, OVERWORLD);
         addTypes(Biomes.SMALL_END_ISLANDS, END);
         addTypes(Biomes.END_MIDLANDS, END);
