@@ -10,15 +10,17 @@ import com.mojang.datafixers.types.Type;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectSortedMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectSortedMaps;
 import it.unimi.dsi.fastutil.ints.IntAVLTreeSet;
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
+import it.unimi.dsi.fastutil.ints.IntSortedSets;
 import it.unimi.dsi.fastutil.ints.IntBidirectionalIterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -32,8 +34,8 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
     private final int                              dataVersion;
     private final List<ForgeSchema>                allSchemas;
     private final Int2ObjectSortedMap<ForgeSchema> schemas;
-    private final List<ForgeDataFixDelegate> globalList;
-    private final IntSortedSet               fixerVersions;
+    private final List<ForgeDataFixDelegate>       globalList;
+    private final IntSortedSet                     fixerVersions;
 
     private InnerFixer activeFixer;
 
@@ -48,11 +50,11 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
     {
         //Supply dummy data to the super constructor
         //We never invoke and method on the super and so this data does not matter.
-        super(new Int2ObjectAVLTreeMap<>(), new ArrayList<>(), new IntAVLTreeSet());
+        super(Int2ObjectSortedMaps.emptyMap(), Collections.emptyList(), IntSortedSets.EMPTY_SET);
 
         //Store the builders input so we can rebuild it later if needed.
         this.dataVersion = dataVersion;
-        this.allSchemas = allSchemas;
+        this.allSchemas = Collections.unmodifiableList(allSchemas);
         this.schemas = schemas;
         this.globalList = globalList;
         this.fixerVersions = fixerVersions;
@@ -71,7 +73,7 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
         //Rebuild of those is not needed.
         this.activeFixer = new InnerFixer(new Int2ObjectAVLTreeMap<Schema>(schemas), new ArrayList<>(globalList), new IntAVLTreeSet(fixerVersions));
 
-        //This section was added to make it easier to debug the rule set at runtime, since it is now not pre-computed off thread anymore,
+        //This section was added to make it easier to debug the rule set at runtime, since it is no longer pre-computed off thread,
         //But only on the main thread, at the moment it is needed.
         //This basically disables the REWRITE_CACHE prefill and fills it on-demand.
         //Although it is mainly used for debugging, it also provides a good way of reducing DFU's memory footprint, when it is not needed.
@@ -80,7 +82,7 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
         //to fill up the cache.
         //To enable it start the JVM with the system property set to true, -Dforge.datafixer.disablePreCompute=true needs to be added as
         //a JVM Launch argument.
-        if (System.getProperty("forge.datafixer.disablePreCompute", "false").trim().toLowerCase(Locale.ROOT).equals("true")) {
+        if (Boolean.getBoolean("forge.datafixer.disablePreCompute")) {
             LOGGER.warn("The pre-compute of the data fixer rules is disabled, this is not recommended for normal use, but can be useful for debugging or in low-memory situations.");
             return;
         }
@@ -149,7 +151,7 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
     }
 
     /**
-     * Represents an DFU that gives access to the protected sub methods so data can be properly extracted.
+     * Represents a DFU that gives access to the protected sub methods so data can be properly extracted.
      * Delegates all of its method invocations to the super DFU instance.
      */
     private static final class InnerFixer extends DataFixerUpper
@@ -160,9 +162,7 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
         }
 
         @Override
-        public <T> Dynamic<T> update(
-          final DSL.TypeReference type, final Dynamic<T> input, final int version, final int newVersion
-        )
+        public <T> Dynamic<T> update(final DSL.TypeReference type, final Dynamic<T> input, final int version, final int newVersion)
         {
             return super.update(type, input, version, newVersion);
         }

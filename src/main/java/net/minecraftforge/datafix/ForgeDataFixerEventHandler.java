@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.mojang.datafixers.schemas.Schema;
 import net.minecraft.Util;
 import net.minecraft.util.datafix.DataFixers;
-import net.minecraftforge.event.datafix.ConfigureDatafixSchemaEvent;
+import net.minecraftforge.event.datafix.ConfigureDataFixSchemaEvent;
 import net.minecraftforge.fml.IModStateTransition;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +67,7 @@ public class ForgeDataFixerEventHandler
         //Make one event per schema, and return it reference based from the event generator,
         //regardless of which mod the generator is invoked for.
         return schemas.stream()
-                 .map(ConfigureDatafixSchemaEvent::new)
+                 .map(ConfigureDataFixSchemaEvent::new)
                  .map(event -> IModStateTransition.EventGenerator.fromFunction(modContainer -> event));
     }
 
@@ -82,12 +82,12 @@ public class ForgeDataFixerEventHandler
      * @return A future that indicates success or failure.
      */
     public static CompletableFuture<List<Throwable>> preDispatch(
-      final Executor executor, final IModStateTransition.EventGenerator<ConfigureDatafixSchemaEvent> eventGenerator
+      final Executor executor, final IModStateTransition.EventGenerator<ConfigureDataFixSchemaEvent> eventGenerator
     )
     {
         return CompletableFuture.runAsync(()-> {
             //Grab the event, with a null container (is reference equals anyways for all containers).
-            final ConfigureDatafixSchemaEvent event = eventGenerator.apply(null);
+            final ConfigureDataFixSchemaEvent event = eventGenerator.apply(null);
 
             //Log that we are processing that particular event.
             LOGGER.debug("Registering DFU Schema updates: {}", event.getSchema().getVersionKey());
@@ -110,12 +110,12 @@ public class ForgeDataFixerEventHandler
      * @return The future that indicates success or failure.
      */
     public static CompletableFuture<List<Throwable>> postDispatch(
-      final Executor executor, final IModStateTransition.EventGenerator<ConfigureDatafixSchemaEvent> eventGenerator
+      final Executor executor, final IModStateTransition.EventGenerator<ConfigureDataFixSchemaEvent> eventGenerator
     )
     {
         return CompletableFuture.runAsync(()-> {
             //Grab the event again, with a null container (is reference equals anyways for all containers).
-            final ConfigureDatafixSchemaEvent event = eventGenerator.apply(null);
+            final ConfigureDataFixSchemaEvent event = eventGenerator.apply(null);
 
             //Notify about the completion of the event firing.
             LOGGER.debug("Registered DFU Schema updates: {}", event.getSchema().getVersionKey());

@@ -25,7 +25,7 @@ import java.util.function.Supplier;
  *
  * We suggest instead of checking for version equality to check for a greater or equal version.
  */
-public class ConfigureDatafixSchemaEvent extends Event implements IModBusEvent
+public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
 {
 
     private final Schema schema;
@@ -37,7 +37,7 @@ public class ConfigureDatafixSchemaEvent extends Event implements IModBusEvent
     private final Map<String, Supplier<TypeTemplate>> entityTypesView = Collections.unmodifiableMap(entityTypes);
     private final Map<String, Supplier<TypeTemplate>> blockEntityTypesView = Collections.unmodifiableMap(blockEntityTypes);
 
-    public ConfigureDatafixSchemaEvent(final Schema schema)
+    public ConfigureDataFixSchemaEvent(final Schema schema)
     {
         this.schema = schema;
     }

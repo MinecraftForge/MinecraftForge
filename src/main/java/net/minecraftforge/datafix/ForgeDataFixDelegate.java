@@ -10,6 +10,8 @@ import java.lang.reflect.Method;
 
 /**
  * This delegate allows for rebuilding of the cached rule, which is needed since it is
+ * cached in {@link DataFix} and the recompute of schema will need to invalidate this cached
+ * type rewrite rule.
  */
 class ForgeDataFixDelegate extends DataFix
 {
@@ -62,10 +64,10 @@ class ForgeDataFixDelegate extends DataFix
         {
             //Just invoke it via reflection.
             final Object candidate = makeRuleMethod.invoke(this.wrapped);
-            //Check if we have a rule.
+            //Check if we have a rule, this is just a security barrier to just crash hard if in the future the schema changes,
+            //so that this is noted during the initial porting phase.
             if (candidate instanceof TypeRewriteRule typeRewriteRule)
             {
-                //Yep, returning.
                 return typeRewriteRule;
             }
 

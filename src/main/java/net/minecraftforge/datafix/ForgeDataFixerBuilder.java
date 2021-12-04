@@ -43,25 +43,26 @@ public class ForgeDataFixerBuilder extends DataFixerBuilder
     }
 
     @Override
-    public Schema addSchema(
-      final int version, final int subVersion, final BiFunction<Integer, Schema, Schema> factory
-    )
+    public Schema addSchema(final int version, final int subVersion, final BiFunction<Integer, Schema, Schema> factory)
     {
         final int key = DataFixUtils.makeKey(version, subVersion);
         final Schema parent = schemas.isEmpty() ? null : schemas.get(getLowestSchemaSameVersion(schemas, key - 1));
-        final ForgeSchema wrapped = new ForgeSchema(key, parent, factory.apply(key, parent));
-        schemas.put(wrapped.getVersionKey(), wrapped);
-        allSchemas.add(wrapped);
-        return wrapped;
+        return addWrappedSchema(factory.apply(key, parent), parent);
     }
 
     @Override
     public void addSchema(final Schema schema)
     {
         final Schema parent = schemas.isEmpty() ? null : schemas.get(getLowestSchemaSameVersion(schemas, schema.getVersionKey() - 1));
+        addWrappedSchema(schema, parent);
+    }
+
+    private ForgeSchema addWrappedSchema(final Schema schema, final Schema parent)
+    {
         final ForgeSchema wrapped = new ForgeSchema(schema.getVersionKey(), parent, schema);
         schemas.put(wrapped.getVersionKey(), wrapped);
         allSchemas.add(wrapped);
+        return wrapped;
     }
 
     @Override

@@ -65,7 +65,7 @@ class ForgeSchema extends Schema
     protected Map<String, Type<?>> buildTypes()
     {
         //Result map.
-        final Map<String, Type<?>> types = Maps.newHashMap();
+        final Map<String, Type<?>> types = Maps.newConcurrentMap();
 
         //All the core templates into which recursion of data is possible.
         final List<TypeTemplate> templates = Lists.newArrayList();
@@ -103,11 +103,13 @@ class ForgeSchema extends Schema
         return types;
     }
 
+    @Override
     public Set<String> types()
     {
         return TYPES.keySet();
     }
 
+    @Override
     public Type<?> getTypeRaw(final DSL.TypeReference type)
     {
         final String name = type.typeName();
@@ -116,6 +118,7 @@ class ForgeSchema extends Schema
         });
     }
 
+    @Override
     public Type<?> getType(final DSL.TypeReference type)
     {
         final String name = type.typeName();
@@ -129,6 +132,7 @@ class ForgeSchema extends Schema
         return type1;
     }
 
+    @Override
     public TypeTemplate resolveTemplate(final String name)
     {
         return TYPE_TEMPLATES.getOrDefault(name, () -> {
@@ -136,6 +140,7 @@ class ForgeSchema extends Schema
         }).get();
     }
 
+    @Override
     public TypeTemplate id(final String name)
     {
         final int id = RECURSIVE_TYPES.getOrDefault(name, -1);
@@ -146,11 +151,13 @@ class ForgeSchema extends Schema
         return getTemplate(name);
     }
 
+    @Override
     protected TypeTemplate getTemplate(final String name)
     {
         return DSL.named(name, resolveTemplate(name));
     }
 
+    @Override
     public Type<?> getChoiceType(final DSL.TypeReference type, final String choiceName)
     {
         final TaggedChoice.TaggedChoiceType<?> choiceType = findChoiceType(type);
@@ -161,10 +168,12 @@ class ForgeSchema extends Schema
         return choiceType.types().get(choiceName);
     }
 
+    @Override
     public TaggedChoice.TaggedChoiceType<?> findChoiceType(final DSL.TypeReference type) {
         return getType(type).findChoiceType("id", -1).orElseThrow(() -> new IllegalArgumentException("Not a choice type"));
     }
 
+    @Override
     public void registerTypes(final Schema schema, final Map<String, Supplier<TypeTemplate>> entityTypes, final Map<String, Supplier<TypeTemplate>> blockEntityTypes) {
         //This is a bit wonky, in vanilla it suffices to register the types to one single version
         //And all newer versions will have this type.
@@ -182,6 +191,7 @@ class ForgeSchema extends Schema
         }
     }
 
+    @Override
     public Map<String, Supplier<TypeTemplate>> registerEntities(final Schema schema) {
         //This is a bit wonky, in vanilla it suffices to register the types to one single version
         //And all newer versions will have this type.
@@ -201,6 +211,7 @@ class ForgeSchema extends Schema
         return Maps.newHashMap();
     }
 
+    @Override
     public Map<String, Supplier<TypeTemplate>> registerBlockEntities(final Schema schema) {
         //This is a bit wonky, in vanilla it suffices to register the types to one single version
         //And all newer versions will have this type.
@@ -227,6 +238,7 @@ class ForgeSchema extends Schema
      * @param type The type in question.
      * @param template Its template.
      */
+    @Override
     public void registerType(final boolean recursive, final DSL.TypeReference type, final Supplier<TypeTemplate> template)
     {
         if (TYPE_TEMPLATES == null)

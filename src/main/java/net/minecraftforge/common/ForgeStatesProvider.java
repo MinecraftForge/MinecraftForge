@@ -22,7 +22,7 @@ package net.minecraftforge.common;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.datafix.ForgeDataFixerEventHandler;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.datafix.ConfigureDatafixSchemaEvent;
+import net.minecraftforge.event.datafix.ConfigureDataFixSchemaEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.event.IModBusEvent;
@@ -58,7 +58,7 @@ public class ForgeStatesProvider implements IModStateProvider {
             return new SerialTransition<T>(eventStream, (t, f)->CompletableFuture.completedFuture(Collections.emptyList()), (t, f)->CompletableFuture.completedFuture(Collections.emptyList()), (e, prev) ->prev.thenApplyAsync(Function.identity(), e));
         }
 
-        private static SerialTransition<ConfigureDatafixSchemaEvent> forDFU() {
+        private static SerialTransition<ConfigureDataFixSchemaEvent> forDFU() {
             return new SerialTransition<>(
               ForgeDataFixerEventHandler::generateConfigureEvents,
               ForgeDataFixerEventHandler::preDispatch,
@@ -83,6 +83,4 @@ public class ForgeStatesProvider implements IModStateProvider {
             return ModLoadingStage::currentState;
         }
     }
-
-
 }
