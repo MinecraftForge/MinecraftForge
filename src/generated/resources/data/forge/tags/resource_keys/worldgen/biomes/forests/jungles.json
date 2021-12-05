@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:forests/jungles/bamboo",
+    "minecraft:jungle",
+    "minecraft:sparse_jungle"
+  ]
+}

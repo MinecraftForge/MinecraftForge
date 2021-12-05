@@ -52,6 +52,7 @@ import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.registries.*;
 import net.minecraftforge.internal.WorldPersistenceHooks;
 import net.minecraftforge.network.NetworkConstants;
+import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -69,6 +70,7 @@ import net.minecraft.data.DataGenerator;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CompoundIngredient;
 import net.minecraftforge.common.crafting.ConditionalRecipe;
@@ -87,6 +89,7 @@ import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.data.ForgeLootTableProvider;
 import net.minecraftforge.common.data.ForgeRecipeProvider;
+import net.minecraftforge.common.data.ForgeResourceKeyTagsProvider;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -96,6 +99,12 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.util.*;
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Consumer;
 
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
@@ -156,6 +165,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.register(this);
         ATTRIBUTES.register(modEventBus);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
+        MinecraftForge.EVENT_BUS.addListener(this::serverStopped);
         MinecraftForge.EVENT_BUS.addGenericListener(SoundEvent.class, this::missingSoundMapping);
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
@@ -168,6 +178,32 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         BiomeDictionary.init();
+        registerDefaultResourceKeyTagDirectories();
+    }
+    
+    private static void registerDefaultResourceKeyTagDirectories()
+    {
+        Consumer<ResourceKey<? extends Registry<?>>> registerDirectoryWithDefaultPlural =
+            registryKey -> ResourceKeyTags.registerResourceKeyTagDirectory(registryKey, registryKey.location().getPath() + "s");
+        Consumer<ResourceKey<? extends Registry<?>>> registerDirectoryWithoutPlural =
+            registryKey -> ResourceKeyTags.registerResourceKeyTagDirectory(registryKey, registryKey.location().getPath());
+            
+        // resource key tag directories for vanilla dynamic registries -- we register all of these whether we need them or not
+        // this enforces the directory names for these so we don't have mods registering different directory names for them,
+        // e.g. ten mods registering "template_pools" and then three more registering "template_pool"
+        registerDirectoryWithDefaultPlural.accept(Registry.DIMENSION_TYPE_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.BIOME_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.CONFIGURED_CARVER_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.CONFIGURED_FEATURE_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.PLACED_FEATURE_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.CONFIGURED_STRUCTURE_FEATURE_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.PROCESSOR_LIST_REGISTRY);
+        registerDirectoryWithDefaultPlural.accept(Registry.TEMPLATE_POOL_REGISTRY);
+        registerDirectoryWithoutPlural.accept(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY); // "noise_settings" already ends with an "s"
+        registerDirectoryWithDefaultPlural.accept(Registry.NOISE_REGISTRY);
+        
+        // other vanilla data that uses/needs resource keys
+        registerDirectoryWithDefaultPlural.accept(Registry.DIMENSION_REGISTRY);
     }
 
     public void registerCapabilities(RegisterCapabilitiesEvent event)
@@ -201,6 +237,13 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public void serverStopping(ServerStoppingEvent evt)
     {
         WorldWorkerManager.clear();
+    }
+    
+    public void serverStopped(ServerStoppedEvent evt)
+    {
+        // clean up the resource key tag registry when the server stops
+        // otherwise it can end up in an incorrect state if a client leaves a singleplayer world and then joins a vanilla server
+        ResourceKeyTags.INSTANCE.updateTags(ImmutableMap.of());
     }
 
     @Override
@@ -248,6 +291,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
             gen.addProvider(new ForgeFluidTagsProvider(gen, existingFileHelper));
             gen.addProvider(new ForgeRecipeProvider(gen));
             gen.addProvider(new ForgeLootTableProvider(gen));
+            gen.addProvider(new ForgeResourceKeyTagsProvider(gen, existingFileHelper));
         }
     }
 

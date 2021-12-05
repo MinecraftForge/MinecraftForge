@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:flower_forest",
+    "minecraft:ice_spikes",
+    "minecraft:windswept_hills",
+    "minecraft:windswept_gravelly_hills",
+    "minecraft:old_growth_birch_forest"
+  ]
+}
