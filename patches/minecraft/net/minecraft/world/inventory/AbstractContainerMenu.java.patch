@@ -1,32 +1,6 @@
 --- a/net/minecraft/world/inventory/AbstractContainerMenu.java
 +++ b/net/minecraft/world/inventory/AbstractContainerMenu.java
-@@ -202,28 +_,29 @@
-    }
- 
-    private void m_150407_(int p_150408_, ItemStack p_150409_, Supplier<ItemStack> p_150410_) {
--      ItemStack itemstack = this.f_38841_.get(p_150408_);
--      if (!ItemStack.m_41728_(itemstack, p_150409_)) {
--         ItemStack itemstack1 = p_150410_.get();
--         this.f_38841_.set(p_150408_, itemstack1);
--
--         for(ContainerListener containerlistener : this.f_38848_) {
--            containerlistener.m_7934_(this, p_150408_, itemstack1);
--         }
--      }
--
--   }
-+       ItemStack itemstack = this.f_38841_.get(p_150408_);
-+       if (!ItemStack.m_41728_(itemstack, p_150409_)) {
-+          ItemStack itemstack1 = p_150410_.get();
-+          this.f_38841_.set(p_150408_, itemstack1);
-+
-+          for(ContainerListener containerlistener : this.f_38848_) {
-+             containerlistener.m_7934_(this, p_150408_, itemstack1);
-+          }
-+       }
-+
-+    }
- 
+@@ -217,13 +_,14 @@
     private void m_150435_(int p_150436_, ItemStack p_150437_, Supplier<ItemStack> p_150438_) {
        if (!this.f_150398_) {
           ItemStack itemstack = this.f_150394_.get(p_150436_);
