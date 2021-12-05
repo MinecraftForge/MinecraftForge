@@ -157,21 +157,21 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         }
     }
 
-    public final void write(FriendlyByteBuf out, boolean writeAll)
+    public final void writeCapabilities(FriendlyByteBuf out, boolean writeAll)
     {
         final CapabilityDispatcher disp = getCapabilities();
         if (disp != null)
         {
-            disp.write(out, writeAll);
+            disp.writeCapabilities(out, writeAll);
         }
     }
 
-    public final void read(FriendlyByteBuf in)
+    public final void readCapabilities(FriendlyByteBuf in)
     {
         final CapabilityDispatcher disp = getCapabilities();
         if (disp != null)
         {
-            disp.read(in);
+            disp.readCapabilities(in);
         }
     }
 

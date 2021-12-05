@@ -1,10 +1,11 @@
 package net.minecraftforge.common.capabilities;
+
 import io.netty.buffer.Unpooled;
 import net.minecraft.network.FriendlyByteBuf;
 
 /**
- * An interface providing the ability for {@link ICapabilityProvider}s to
- * encode/decode capabilities over the network.
+ * Provides the ability for {@link ICapabilityProvider}s to synchronize
+ * capabilities over the network.
  */
 public interface INetworkCapability {
 
@@ -15,29 +16,50 @@ public interface INetworkCapability {
      * @param writeAll - {@code true} if all data should be written, {@code false}
      *                 if only dirty data should be written
      */
-    void write(FriendlyByteBuf out, boolean writeAll);
-
-    void read(FriendlyByteBuf in);
+    void writeCapabilities(FriendlyByteBuf out, boolean writeAll);
 
     /**
-     * Whether this capability's data is 'dirty' and needs to be sent to the client.
+     * Read capabilities from the specified {@link FriendlyByteBuf}.
+     * 
+     * @param in - {@link FriendlyByteBuf} to read from
+     */
+    void readCapabilities(FriendlyByteBuf in);
+
+    /**
+     * Whether capability data is 'dirty' and needs to be sent to the client.
      */
     boolean requiresSync();
 
-    default byte[] write(boolean writeAll)
+    /**
+     * A version of {@link #writeCapabilities(FriendlyByteBuf, boolean)} which
+     * returns a {@code byte[]}. This is intended for use with {@link ByteArrayTag},
+     * generally {@link #writeCapabilities(FriendlyByteBuf, boolean)} should be used
+     * to avoid unnecessarily creating a {@link byte[]}.
+     * 
+     * @param writeAll - {@code true} if all data should be written, {@code false}
+     *                 if only dirty data should be written
+     * @return a {@code byte[]} containing the serialized capability data
+     */
+    default byte[] writeCapabilities(boolean writeAll)
     {
         var buf = new FriendlyByteBuf(Unpooled.buffer());
-        this.write(buf, writeAll);
+        this.writeCapabilities(buf, writeAll);
         var bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
         buf.release();
         return bytes;
     }
 
-    default void readTag(byte[] bytes)
+    /**
+     * A version of {@link #readCapabilities(FriendlyByteBuf)} which accepts a
+     * {@code byte[]}.
+     * 
+     * @param bytes - the {@link byte[]} to read from
+     */
+    default void readCapabilities(byte[] bytes)
     {
         var buf = new FriendlyByteBuf(Unpooled.wrappedBuffer(bytes));
-        this.read(buf);
+        this.readCapabilities(buf);
         buf.release();
     }
-} 
+}

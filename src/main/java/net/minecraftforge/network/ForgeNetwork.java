@@ -96,7 +96,7 @@ public class ForgeNetwork {
             && (writeAll || blockEntity.requiresSync()))
         {
             FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            blockEntity.write(capabilityData, writeAll);
+            blockEntity.writeCapabilities(capabilityData, writeAll);
             if (!capabilityData.isReadable())
             {
                 return;
@@ -118,7 +118,7 @@ public class ForgeNetwork {
             && (writeAll || blockEntity.requiresSync()))
         {
             FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            blockEntity.write(capabilityData, writeAll);
+            blockEntity.writeCapabilities(capabilityData, writeAll);
             if (!capabilityData.isReadable())
             {
                 return;
@@ -159,7 +159,7 @@ public class ForgeNetwork {
         if (!entity.level.isClientSide() && (writeAll || entity.requiresSync()))
         {
             FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            entity.write(capabilityData, writeAll);
+            entity.writeCapabilities(capabilityData, writeAll);
             if (!capabilityData.isReadable())
             {
                 return;
@@ -202,7 +202,7 @@ public class ForgeNetwork {
         if (writeAll || itemStack.requiresSync())
         {
             FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            itemStack.write(capabilityData, writeAll);
+            itemStack.writeCapabilities(capabilityData, writeAll);
             if (!capabilityData.isReadable())
             {
                 return;
@@ -248,7 +248,7 @@ public class ForgeNetwork {
         if (!livingEntity.level.isClientSide() && (writeAll || itemStack.requiresSync()))
         {
             FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            itemStack.write(capabilityData, writeAll);
+            itemStack.writeCapabilities(capabilityData, writeAll);
             if (!capabilityData.isReadable())
             {
                 return;

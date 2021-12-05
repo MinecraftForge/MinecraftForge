@@ -39,7 +39,7 @@ public class BlockEntityCapabilitiesMessage {
         ctx.get()
             .enqueueWork(() -> LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide())
                 .map(level -> level.getBlockEntity(this.blockPos))
-                .ifPresent(blockEntity -> blockEntity.read(this.capabilityData)))
+                .ifPresent(blockEntity -> blockEntity.readCapabilities(this.capabilityData)))
             .thenRun(this.capabilityData::release);
         return true;
     }

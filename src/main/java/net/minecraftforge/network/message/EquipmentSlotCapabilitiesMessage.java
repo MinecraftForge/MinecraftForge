@@ -45,7 +45,7 @@ public class EquipmentSlotCapabilitiesMessage {
                 .map(level -> level.getEntity(this.entityId))
                 .filter(LivingEntity.class::isInstance)
                 .map(LivingEntity.class::cast)
-                .ifPresent(livingEntity -> livingEntity.getItemBySlot(this.slot).read(this.capabilityData)))
+                .ifPresent(livingEntity -> livingEntity.getItemBySlot(this.slot).readCapabilities(this.capabilityData)))
             .thenRun(this.capabilityData::release);
         return true;
     }

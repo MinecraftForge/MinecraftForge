@@ -56,7 +56,7 @@ public class NetworkCapabilityTest {
         private final LazyOptional<TestCapability> cap = LazyOptional.of(() -> new TestCapability());
 
         @Override
-        public void write(FriendlyByteBuf out, boolean writeAll)
+        public void writeCapabilities(FriendlyByteBuf out, boolean writeAll)
         {
             this.cap.ifPresent(cap ->
             {
@@ -66,7 +66,7 @@ public class NetworkCapabilityTest {
         }
 
         @Override
-        public void read(FriendlyByteBuf in)
+        public void readCapabilities(FriendlyByteBuf in)
         {
             this.cap.ifPresent(cap ->
             {
