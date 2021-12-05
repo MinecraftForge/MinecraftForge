@@ -961,16 +961,16 @@ public class ForgeHooksClient
         return stackFont == null ? fallbackFont : stackFont;
     }
 
-    public static RenderTooltipEvent.Pre onRenderTooltipPre(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, @Nonnull List<ClientTooltipComponent> components, @Nullable Font forcedFont, @Nonnull Font fallbackFont)
+    public static RenderTooltipEvent.Pre onRenderTooltipPre(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, int screenWidth, int screenHeight, @Nonnull List<ClientTooltipComponent> components, @Nullable Font forcedFont, @Nonnull Font fallbackFont)
     {
-        var preEvent = new RenderTooltipEvent.Pre(stack, matrixStack, x, y, screenWidth, screenHeight, getTooltipFont(forcedFont, stack, fallbackFont), components);
+        var preEvent = new RenderTooltipEvent.Pre(stack, poseStack, x, y, screenWidth, screenHeight, getTooltipFont(forcedFont, stack, fallbackFont), components);
         MinecraftForge.EVENT_BUS.post(preEvent);
         return preEvent;
     }
 
-    public static RenderTooltipEvent.Color onRenderTooltipColor(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
+    public static RenderTooltipEvent.Color onRenderTooltipColor(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
     {
-        var colorEvent = new RenderTooltipEvent.Color(stack, matrixStack, x, y, font, 0xf0100010, 0x505000FF, 0x5028007f, components);
+        var colorEvent = new RenderTooltipEvent.Color(stack, poseStack, x, y, font, 0xf0100010, 0x505000FF, 0x5028007f, components);
         MinecraftForge.EVENT_BUS.post(colorEvent);
         return colorEvent;
     }

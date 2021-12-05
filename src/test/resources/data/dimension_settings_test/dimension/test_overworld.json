@@ -12,8 +12,8 @@
     "seed": 12345,
     "settings": "dimension_settings_test:test_overworld",
     "biome_source": {
-      "seed": 12345,
-      "type": "minecraft:vanilla_layered"
+      "preset": "minecraft:overworld",
+      "type": "minecraft:multi_noise"
     }
   }
 }

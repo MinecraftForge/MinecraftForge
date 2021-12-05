@@ -59,7 +59,7 @@ public class DungeonHooks
             if (type == mob.type)
             {
                 itr.remove();
-                rarity = /* mob.weight */ 0 + rarity;
+                rarity = mob.getWeight().asInt() + rarity;
                 break;
             }
         }
@@ -81,7 +81,7 @@ public class DungeonHooks
             if (name == mob.type)
             {
                 dungeonMobs.remove(mob);
-                return 0; // mob.weight;
+                return mob.getWeight().asInt();
             }
         }
         return 0;
@@ -95,7 +95,7 @@ public class DungeonHooks
     public static EntityType<?> getRandomDungeonMob(Random rand)
     {
         DungeonMob mob = WeightedRandom.getRandomItem(rand, dungeonMobs).orElseThrow();
-        return null; // mob.type;
+        return mob.type;
     }
 
 
