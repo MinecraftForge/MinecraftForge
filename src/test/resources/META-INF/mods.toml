@@ -172,5 +172,7 @@ license="LGPL v2.1"
     modId="part_entity_test"
 [[mods]]
     modId="capabilities_test"
+[[mods]]
+    modId="resource_key_tags_test"
 
 # ADD ABOVE THIS LINE
