@@ -398,7 +398,7 @@
                 this.m_21204_().m_22178_(itemstack1.m_41638_(equipmentslot));
              }
           }
-+         else net.minecraftforge.network.ForgeNetwork.sendEquipmentSlotCapabilities(this, equipmentslot, itemstack1, false);
++         else if (itemstack1.requiresSync()) net.minecraftforge.network.ForgeNetwork.sendEquipmentSlotCapabilities(this, equipmentslot, itemstack1, false);
        }
  
        return map;

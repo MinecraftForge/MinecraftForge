@@ -19,7 +19,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.network.message.BlockEntityCapabilitiesMessage;
 import net.minecraftforge.network.message.EntityCapabilitiesMessage;
 import net.minecraftforge.network.message.EquipmentSlotCapabilitiesMessage;
@@ -29,9 +28,9 @@ import net.minecraftforge.network.simple.SimpleChannel;
 public class ForgeNetwork {
 
     public static final String PROTOCOL_VERSION = "0.0.1";
-    public static final ResourceLocation CHANNEL_NAME = new ResourceLocation(ForgeMod.ID, "main");
-    public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(CHANNEL_NAME, () -> PROTOCOL_VERSION,
-        NetworkRegistry.acceptMissingOr(PROTOCOL_VERSION), PROTOCOL_VERSION::equals);
+    public static final ResourceLocation GAME_CHANNEL_NAME = new ResourceLocation("forge", "game");
+    public static final SimpleChannel gameChannel = NetworkRegistry.newSimpleChannel(GAME_CHANNEL_NAME,
+        () -> PROTOCOL_VERSION, NetworkRegistry.acceptMissingOr(PROTOCOL_VERSION), PROTOCOL_VERSION::equals);
 
     private static boolean initialized = false;
 
@@ -40,25 +39,25 @@ public class ForgeNetwork {
         if (initialized)
             throw new IllegalStateException("Forge network already initialized");
 
-        CHANNEL.messageBuilder(SlotCapabilitiesMessage.class, 0x00, NetworkDirection.PLAY_TO_CLIENT)
+        gameChannel.messageBuilder(SlotCapabilitiesMessage.class, 0x00, NetworkDirection.PLAY_TO_CLIENT)
             .encoder(SlotCapabilitiesMessage::encode)
             .decoder(SlotCapabilitiesMessage::decode)
             .consumer(SlotCapabilitiesMessage::handle)
             .add();
 
-        CHANNEL.messageBuilder(EntityCapabilitiesMessage.class, 0x01, NetworkDirection.PLAY_TO_CLIENT)
+        gameChannel.messageBuilder(EntityCapabilitiesMessage.class, 0x01, NetworkDirection.PLAY_TO_CLIENT)
             .encoder(EntityCapabilitiesMessage::encode)
             .decoder(EntityCapabilitiesMessage::decode)
             .consumer(EntityCapabilitiesMessage::handle)
             .add();
 
-        CHANNEL.messageBuilder(BlockEntityCapabilitiesMessage.class, 0x03, NetworkDirection.PLAY_TO_CLIENT)
+        gameChannel.messageBuilder(BlockEntityCapabilitiesMessage.class, 0x03, NetworkDirection.PLAY_TO_CLIENT)
             .encoder(BlockEntityCapabilitiesMessage::encode)
             .decoder(BlockEntityCapabilitiesMessage::decode)
             .consumer(BlockEntityCapabilitiesMessage::handle)
             .add();
 
-        CHANNEL.messageBuilder(EquipmentSlotCapabilitiesMessage.class, 0x04, NetworkDirection.PLAY_TO_CLIENT)
+        gameChannel.messageBuilder(EquipmentSlotCapabilitiesMessage.class, 0x04, NetworkDirection.PLAY_TO_CLIENT)
             .encoder(EquipmentSlotCapabilitiesMessage::encode)
             .decoder(EquipmentSlotCapabilitiesMessage::decode)
             .consumer(EquipmentSlotCapabilitiesMessage::handle)
@@ -67,7 +66,7 @@ public class ForgeNetwork {
 
     private static void broadcast(Object message, Stream<Connection> players)
     {
-        broadcast(CHANNEL.toVanillaPacket(message, NetworkDirection.PLAY_TO_CLIENT), players);
+        broadcast(gameChannel.toVanillaPacket(message, NetworkDirection.PLAY_TO_CLIENT), players);
     }
 
     private static void broadcast(Packet<?> packet, Stream<Connection> connections)
@@ -77,7 +76,7 @@ public class ForgeNetwork {
 
     private static void sendIfPresent(Packet<?> packet, Connection connection)
     {
-        if (CHANNEL.isRemotePresent(connection))
+        if (gameChannel.isRemotePresent(connection))
             connection.send(packet);
     }
 
@@ -92,17 +91,15 @@ public class ForgeNetwork {
     public static void sendBlockEntityCapabilities(BlockEntity blockEntity, boolean writeAll,
         Stream<Connection> connections)
     {
-        if (blockEntity.hasLevel() && !blockEntity.getLevel().isClientSide()
-            && (writeAll || blockEntity.requiresSync()))
-        {
-            FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            blockEntity.writeCapabilities(capabilityData, writeAll);
-            if (!capabilityData.isReadable())
-            {
-                return;
-            }
-            broadcast(new BlockEntityCapabilitiesMessage(blockEntity.getBlockPos(), capabilityData), connections);
-        }
+        if (!blockEntity.hasLevel() || blockEntity.getLevel().isClientSide())
+            return;
+
+        FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
+        blockEntity.writeCapabilities(capabilityData, writeAll);
+        if (!capabilityData.isReadable())
+            return;
+
+        broadcast(new BlockEntityCapabilitiesMessage(blockEntity.getBlockPos(), capabilityData), connections);
     }
 
     /**
@@ -114,21 +111,19 @@ public class ForgeNetwork {
      */
     public static void sendBlockEntityCapabilities(BlockEntity blockEntity, boolean writeAll)
     {
-        if (blockEntity.hasLevel() && !blockEntity.getLevel().isClientSide()
-            && (writeAll || blockEntity.requiresSync()))
-        {
-            FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            blockEntity.writeCapabilities(capabilityData, writeAll);
-            if (!capabilityData.isReadable())
-            {
-                return;
-            }
-            ServerChunkCache chunkSource = ((ServerLevel) blockEntity.getLevel()).getChunkSource();
-            broadcast(new BlockEntityCapabilitiesMessage(blockEntity.getBlockPos(), capabilityData),
-                chunkSource.chunkMap.getPlayers(new ChunkPos(blockEntity.getBlockPos()), false)
-                    .stream()
-                    .map(player -> player.connection.getConnection()));
-        }
+        if (!blockEntity.hasLevel() || blockEntity.getLevel().isClientSide())
+            return;
+
+        FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
+        blockEntity.writeCapabilities(capabilityData, writeAll);
+        if (!capabilityData.isReadable())
+            return;
+
+        ServerChunkCache chunkSource = ((ServerLevel) blockEntity.getLevel()).getChunkSource();
+        broadcast(new BlockEntityCapabilitiesMessage(blockEntity.getBlockPos(), capabilityData),
+            chunkSource.chunkMap.getPlayers(new ChunkPos(blockEntity.getBlockPos()), false)
+                .stream()
+                .map(player -> player.connection.getConnection()));
     }
 
     /**
@@ -156,22 +151,21 @@ public class ForgeNetwork {
     public static void sendEntityCapabilities(Entity entity, boolean writeAll, boolean sendToSelf,
         Stream<Connection> connections)
     {
-        if (!entity.level.isClientSide() && (writeAll || entity.requiresSync()))
+        if (entity.level.isClientSide())
+            return;
+
+        FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
+        entity.writeCapabilities(capabilityData, writeAll);
+        if (!capabilityData.isReadable())
+            return;
+
+        Packet<?> packet = gameChannel.toVanillaPacket(
+            new EntityCapabilitiesMessage(entity.getId(), capabilityData), NetworkDirection.PLAY_TO_CLIENT);
+        if (sendToSelf && entity instanceof ServerPlayer player)
         {
-            FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            entity.writeCapabilities(capabilityData, writeAll);
-            if (!capabilityData.isReadable())
-            {
-                return;
-            }
-            Packet<?> packet = CHANNEL.toVanillaPacket(
-                new EntityCapabilitiesMessage(entity.getId(), capabilityData), NetworkDirection.PLAY_TO_CLIENT);
-            if (sendToSelf && entity instanceof ServerPlayer player)
-            {
-                sendIfPresent(packet, player.connection.getConnection());
-            }
-            broadcast(packet, connections);
+            sendIfPresent(packet, player.connection.getConnection());
         }
+        broadcast(packet, connections);
     }
 
     /**
@@ -199,17 +193,13 @@ public class ForgeNetwork {
             }
         }
 
-        if (writeAll || itemStack.requiresSync())
-        {
-            FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            itemStack.writeCapabilities(capabilityData, writeAll);
-            if (!capabilityData.isReadable())
-            {
-                return;
-            }
-            broadcast(new SlotCapabilitiesMessage(target.getId(), slotIndex, capabilityData),
-                Stream.of(target.connection.getConnection()));
-        }
+        FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
+        itemStack.writeCapabilities(capabilityData, writeAll);
+        if (!capabilityData.isReadable())
+            return;
+
+        broadcast(new SlotCapabilitiesMessage(target.getId(), slotIndex, capabilityData),
+            Stream.of(target.connection.getConnection()));
     }
 
     /**
@@ -245,23 +235,22 @@ public class ForgeNetwork {
     public static void sendEquipmentSlotCapabilities(LivingEntity livingEntity, EquipmentSlot equipmentSlotType,
         ItemStack itemStack, boolean writeAll, boolean sendToSelf, Stream<Connection> players)
     {
-        if (!livingEntity.level.isClientSide() && (writeAll || itemStack.requiresSync()))
+        if (livingEntity.level.isClientSide())
+            return;
+
+        FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
+        itemStack.writeCapabilities(capabilityData, writeAll);
+        if (!capabilityData.isReadable())
+            return;
+
+        Packet<?> packet = gameChannel.toVanillaPacket(
+            new EquipmentSlotCapabilitiesMessage(livingEntity.getId(), equipmentSlotType, capabilityData),
+            NetworkDirection.PLAY_TO_CLIENT);
+        if (sendToSelf && livingEntity instanceof ServerPlayer player)
         {
-            FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
-            itemStack.writeCapabilities(capabilityData, writeAll);
-            if (!capabilityData.isReadable())
-            {
-                return;
-            }
-            Packet<?> packet = CHANNEL.toVanillaPacket(
-                new EquipmentSlotCapabilitiesMessage(livingEntity.getId(), equipmentSlotType, capabilityData),
-                NetworkDirection.PLAY_TO_CLIENT);
-            if (sendToSelf && livingEntity instanceof ServerPlayer player)
-            {
-                sendIfPresent(packet, player.connection.getConnection());
-            }
-            broadcast(packet, players);
+            sendIfPresent(packet, player.connection.getConnection());
         }
+        broadcast(packet, players);
     }
 
     public static Stream<Connection> getTrackingConnections(Entity entity)

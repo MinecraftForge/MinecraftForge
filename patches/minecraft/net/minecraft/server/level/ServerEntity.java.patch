@@ -48,7 +48,7 @@
        if (synchedentitydata.m_135352_()) {
           this.m_8538_(new ClientboundSetEntityDataPacket(this.f_8510_.m_142049_(), synchedentitydata, false));
        }
-+      net.minecraftforge.network.ForgeNetwork.sendEntityCapabilities(this.f_8510_, false);
++      if (this.f_8510_.requiresSync()) net.minecraftforge.network.ForgeNetwork.sendEntityCapabilities(this.f_8510_, false);
  
        if (this.f_8510_ instanceof LivingEntity) {
           Set<AttributeInstance> set = ((LivingEntity)this.f_8510_).m_21204_().m_22145_();
