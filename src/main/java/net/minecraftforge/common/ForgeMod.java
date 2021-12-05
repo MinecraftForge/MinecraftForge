@@ -101,11 +101,6 @@ import org.apache.logging.log4j.MarkerManager;
 import java.util.*;
 import com.google.common.collect.ImmutableMap;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Consumer;
-
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 {
