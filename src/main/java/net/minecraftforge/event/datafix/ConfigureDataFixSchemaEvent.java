@@ -76,7 +76,8 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      *
      * @return The version.
      */
-    public int getVersion() {
+    public int getVersion()
+    {
         return getSchema().getVersionKey();
     }
 
@@ -85,7 +86,8 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      *
      * @param registryName The registry name of the block entity.
      */
-    public void registerSimpleBlockEntity(final ResourceLocation registryName) {
+    public void registerSimpleBlockEntity(final ResourceLocation registryName)
+    {
         registerBlockEntity(registryName, DSL::remainder);
     }
 
@@ -95,7 +97,8 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      * @param registryName The registry name of the block entity.
      * @param nbtKey The name of the nbt field to where the item array is located.
      */
-    public void registerSimpleItemInventory(final ResourceLocation registryName, final String nbtKey) {
+    public void registerSimpleItemInventory(final ResourceLocation registryName, final String nbtKey)
+    {
         registerBlockEntity(registryName, () -> DSL.optionalFields(nbtKey, DSL.list(References.ITEM_STACK.in(getSchema()))));
     }
 
@@ -106,7 +109,8 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      * @param registryName The registry name of the block entity type.
      * @param template The function to produce the block entity type template.
      */
-    public void registerBlockEntity(final ResourceLocation registryName, final Function<String, TypeTemplate> template) {
+    public void registerBlockEntity(final ResourceLocation registryName, final Function<String, TypeTemplate> template)
+    {
         registerBlockEntity(registryName, () -> template.apply(registryName.toString()));
     }
 
@@ -117,7 +121,8 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      * @param registryName The registry name of the block entity type.
      * @param template The supplier of the type template.
      */
-    public void registerBlockEntity(final ResourceLocation registryName, final Supplier<TypeTemplate> template) {
+    public void registerBlockEntity(final ResourceLocation registryName, final Supplier<TypeTemplate> template)
+    {
         blockEntityTypes.put(registryName.toString(), template);
     }
 
@@ -127,7 +132,8 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      *
      * @param registryName The registry name of the block entity to remove.
      */
-    public void removeBlockEntity(final ResourceLocation registryName) {
+    public void removeBlockEntity(final ResourceLocation registryName)
+    {
         blockEntityTypes.put(registryName.toString(), null);
     }
 
@@ -136,7 +142,8 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      *
      * @param registryName The registry name of the entity.
      */
-    public void registerSimpleEntity(final ResourceLocation registryName) {
+    public void registerSimpleEntity(final ResourceLocation registryName)
+    {
         registerEntity(registryName, DSL::remainder);
     }
 
@@ -147,7 +154,8 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      * @param registryName The registry name of the entity type.
      * @param template The function to produce the entity type template.
      */
-    public void registerEntity(final ResourceLocation registryName, final Function<String, TypeTemplate> template) {
+    public void registerEntity(final ResourceLocation registryName, final Function<String, TypeTemplate> template)
+    {
         registerEntity(registryName, () -> template.apply(registryName.toString()));
     }
 
@@ -158,7 +166,8 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      * @param registryName The registry name of the entity type.
      * @param template The supplier of the type template.
      */
-    public void registerEntity(final ResourceLocation registryName, final Supplier<TypeTemplate> template) {
+    public void registerEntity(final ResourceLocation registryName, final Supplier<TypeTemplate> template)
+    {
         entityTypes.put(registryName.toString(), template);
     }
 
@@ -168,7 +177,8 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
      * 
      * @param registryName The registry name of the entity to remove.
      */
-    public void removeEntity(final ResourceLocation registryName) {
+    public void removeEntity(final ResourceLocation registryName)
+    {
         entityTypes.put(registryName.toString(), null);
     }
 

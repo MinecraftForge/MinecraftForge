@@ -101,7 +101,8 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
         //to fill up the cache.
         //To enable it start the JVM with the system property set to true, -Dforge.datafixer.disablePreCompute=true needs to be added as
         //a JVM Launch argument.
-        if (Boolean.getBoolean("forge.datafixer.disablePreCompute")) {
+        if (Boolean.getBoolean("forge.datafixer.disablePreCompute"))
+        {
             LOGGER.warn("The pre-compute of the data fixer rules is disabled, this is not recommended for normal use, but can be useful for debugging or in low-memory situations.");
             return;
         }

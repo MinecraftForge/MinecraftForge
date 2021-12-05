@@ -108,13 +108,16 @@ class ForgeSchema extends Schema
         final TypeFamily family = new RecursiveTypeFamily(name, choice);
 
         //Now process all other known types, taking care of recursion.
-        for (final String name : TYPE_TEMPLATES.keySet()) {
+        for (final String name : TYPE_TEMPLATES.keySet())
+        {
             final Type<?> type;
             final int recurseId = RECURSIVE_TYPES.getOrDefault(name, -1);
             if (recurseId != -1)
             {
                 type = family.apply(recurseId);
-            } else {
+            }
+            else
+            {
                 type = getTemplate(name).apply(family).apply(-1);
             }
             types.put(name, type);
@@ -188,12 +191,16 @@ class ForgeSchema extends Schema
     }
 
     @Override
-    public TaggedChoice.TaggedChoiceType<?> findChoiceType(final DSL.TypeReference type) {
+    public TaggedChoice.TaggedChoiceType<?> findChoiceType(final DSL.TypeReference type)
+    {
         return getType(type).findChoiceType("id", -1).orElseThrow(() -> new IllegalArgumentException("Not a choice type"));
     }
 
     @Override
-    public void registerTypes(final Schema schema, final Map<String, Supplier<TypeTemplate>> entityTypes, final Map<String, Supplier<TypeTemplate>> blockEntityTypes) {
+    public void registerTypes(
+      final Schema schema, final Map<String, Supplier<TypeTemplate>> entityTypes, final Map<String, Supplier<TypeTemplate>> blockEntityTypes
+    )
+    {
         //This is a bit wonky, in vanilla it suffices to register the types to one single version
         //And all newer versions will have this type.
         //Due to the way we set up the schemas with events later, that is not possible anymore.
@@ -211,7 +218,8 @@ class ForgeSchema extends Schema
     }
 
     @Override
-    public Map<String, Supplier<TypeTemplate>> registerEntities(final Schema schema) {
+    public Map<String, Supplier<TypeTemplate>> registerEntities(final Schema schema)
+    {
         //This is a bit wonky, in vanilla it suffices to register the types to one single version
         //And all newer versions will have this type.
         //Due to the way we set up the schemas with events later, that is not possible anymore.
@@ -231,7 +239,8 @@ class ForgeSchema extends Schema
     }
 
     @Override
-    public Map<String, Supplier<TypeTemplate>> registerBlockEntities(final Schema schema) {
+    public Map<String, Supplier<TypeTemplate>> registerBlockEntities(final Schema schema)
+    {
         //This is a bit wonky, in vanilla it suffices to register the types to one single version
         //And all newer versions will have this type.
         //Due to the way we set up the schemas with events later, that is not possible anymore.
@@ -273,7 +282,8 @@ class ForgeSchema extends Schema
     /**
      * Resets the schema so that the type map can be properly rebuild.
      */
-    public void resetSchema() {
+    public void resetSchema()
+    {
         this.TYPE_TEMPLATES.clear();
         this.TYPES.clear();
         this.RECURSIVE_TYPES.clear();
@@ -291,7 +301,8 @@ class ForgeSchema extends Schema
     public void rebuildSchema(
       final Map<String, Supplier<TypeTemplate>> modEntityTypes,
       final Map<String, Supplier<TypeTemplate>> modBlockEntityTypes
-    ) {
+    )
+    {
         //First grab the parent's additional modded types, if the parent is compatible.
         if (this.parent != null && this.parent instanceof ForgeSchema parentForgeSchema)
         {
