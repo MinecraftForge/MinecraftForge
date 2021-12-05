@@ -204,7 +204,7 @@
                 f1 = EnchantmentHelper.m_44833_(this.m_21205_(), MobType.f_21640_);
              }
  
-+            f1 = net.minecraftforge.common.ForgeHooks.getDamageBonus(this, this.m_21205_(), p_36347_, f1);
++            f1 = net.minecraftforge.common.ForgeHooks.getDamageBonus(this, p_36347_, f1);
              float f2 = this.m_36403_(0.5F);
              f *= 0.2F + f2 * f2 * 0.8F;
              f1 *= f2;

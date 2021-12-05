@@ -37,14 +37,12 @@ import net.minecraft.world.item.ItemStack;
  **/
 public class DamageBonusEvent extends PlayerEvent
 {
-    private final ItemStack weapon;
     private final Entity target;
     private float bonus;
 
-    public DamageBonusEvent(Player player, ItemStack weapon, Entity target, float enchantmentBonus)
+    public DamageBonusEvent(Player player, Entity target, float enchantmentBonus)
     {
         super(player);
-        this.weapon = weapon;
         this.target = target;
         this.bonus = enchantmentBonus;
     }
@@ -55,14 +53,6 @@ public class DamageBonusEvent extends PlayerEvent
     public Entity getTarget()
     {
         return target;
-    }
-
-    /**
-     * @return The item used for the attack
-     */
-    public ItemStack getWeapon()
-    {
-        return weapon;
     }
 
     /**

@@ -45,7 +45,7 @@ public class PlayerBonusDamageEventTest
     public static void onDamageBonusEvent(DamageBonusEvent event)
     {
         if (!ENABLE) return;
-        if(EnchantmentHelper.getEnchantments(event.getWeapon()).containsKey(Enchantments.SMITE))
+        if(EnchantmentHelper.getEnchantments(event.getPlayer().getMainHandItem()).containsKey(Enchantments.SMITE))
         {
             if(event.getTarget() instanceof Pig pig)
             {

@@ -1242,9 +1242,9 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 
-    public static float getDamageBonus(Player player, ItemStack weapon, Entity target, float enchantmentBonus)
+    public static float getDamageBonus(Player player, Entity target, float enchantmentBonus)
     {
-        DamageBonusEvent event = new DamageBonusEvent(player, weapon, target, enchantmentBonus);
+        DamageBonusEvent event = new DamageBonusEvent(player, target, enchantmentBonus);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getBonus();
     }
