@@ -34,6 +34,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
+import org.jetbrains.annotations.NotNull;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
@@ -85,8 +86,14 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
 
     private void doGatherCapabilities(@Nullable ICapabilityProvider parent)
     {
-        this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, this, parent);
+        this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, getProvider(), parent);
         this.initialized = true;
+    }
+
+    @NotNull
+    B getProvider()
+    {
+        return (B)this;
     }
 
     protected final @Nullable CapabilityDispatcher getCapabilities()
@@ -228,14 +235,18 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
      */
     public static class AsField<B extends ICapabilityProviderImpl<B>> extends CapabilityProvider<B>
     {
-        public AsField(Class<B> baseClass)
+        private final B owner;
+
+        public AsField(Class<B> baseClass, B owner)
         {
             super(baseClass);
+            this.owner = owner;
         }
 
-        public AsField(Class<B> baseClass, boolean isLazy)
+        public AsField(Class<B> baseClass, B owner, boolean isLazy)
         {
             super(baseClass, isLazy);
+            this.owner = owner;
         }
 
         public void initInternal()
@@ -252,6 +263,13 @@ public abstract class CapabilityProvider<B extends ICapabilityProviderImpl<B>> i
         public void deserializeInternal(CompoundTag tag)
         {
             deserializeCaps(tag);
+        }
+
+        @Override
+        @NotNull
+        B getProvider()
+        {
+            return owner;
         }
     };
 

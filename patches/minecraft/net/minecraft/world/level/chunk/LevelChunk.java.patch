@@ -9,14 +9,14 @@
     static final Logger f_62771_ = LogManager.getLogger();
     private static final TickingBlockEntity f_156361_ = new TickingBlockEntity() {
        public void m_142224_() {
-@@ -123,6 +_,7 @@
- 
-       this.m_8094_(p_196851_.m_6332_());
-       this.f_187603_ = true;
+@@ -97,6 +_,7 @@
+       this.f_62791_ = p_196861_;
+       this.f_62784_ = p_196857_;
+       this.f_187943_ = p_196858_;
 +      this.capProvider.initInternal();
     }
  
-    public TickContainerAccess<Block> m_183531_() {
+    public LevelChunk(ServerLevel p_196850_, ProtoChunk p_196851_, @Nullable LevelChunk.PostLoadProcessor p_196852_) {
 @@ -233,14 +_,14 @@
              boolean flag2 = blockstate.m_155947_();
              if (!this.f_62776_.f_46443_) {
@@ -78,6 +78,15 @@
        } else {
           CompoundTag compoundtag = this.f_187609_.get(p_62932_);
           if (compoundtag != null) {
+@@ -433,7 +_,7 @@
+       p_187974_.accept((p_187968_, p_187969_, p_187970_) -> {
+          BlockEntity blockentity = this.m_5685_(p_187968_, LevelChunk.EntityCreationType.IMMEDIATE);
+          if (blockentity != null && p_187970_ != null && blockentity.m_58903_() == p_187969_) {
+-            blockentity.m_142466_(p_187970_);
++            blockentity.handleUpdateTag(p_187970_);
+          }
+ 
+       });
 @@ -453,7 +_,7 @@
  
     public Stream<BlockPos> m_6267_() {
@@ -108,7 +117,7 @@
     }
  
 +   // FORGE START
-+   private final net.minecraftforge.common.capabilities.CapabilityProvider.AsField<LevelChunk> capProvider = new net.minecraftforge.common.capabilities.CapabilityProvider.AsField<>(LevelChunk.class);
++   private final net.minecraftforge.common.capabilities.CapabilityProvider.AsField<LevelChunk> capProvider = new net.minecraftforge.common.capabilities.CapabilityProvider.AsField<>(LevelChunk.class, this);
 +
 +   @org.jetbrains.annotations.NotNull
 +   @Override
