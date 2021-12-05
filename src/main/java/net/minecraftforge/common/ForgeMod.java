@@ -99,6 +99,8 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.util.*;
+import java.util.function.Consumer;
+
 import com.google.common.collect.ImmutableMap;
 
 @Mod("forge")
