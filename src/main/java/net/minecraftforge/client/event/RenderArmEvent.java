@@ -29,7 +29,7 @@ import net.minecraftforge.eventbus.api.Event;
 /**
  * This is a more targeted version of {@link RenderHandEvent} event that is fired specifically when
  * a player's arm is being rendered in first person, and should be used instead if the desired
- * outcome is just to replace the rendering of the arm, such as to add make armor render on it or
+ * outcome is just to replace the rendering of the arm, such as to make armor render on it or
  * instead of it.
  *
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
@@ -77,7 +77,7 @@ public class RenderArmEvent extends Event
     }
 
     /**
-     * @return the Client player that is having their arm rendered. In general this will be the same as {@link net.minecraft.client.Minecraft#getInstance()#getPlayer()}.
+     * @return the client player that is having their arm rendered. In general this will be the same as {@link net.minecraft.client.Minecraft#player}.
      */
     public AbstractClientPlayer getPlayer()
     {
