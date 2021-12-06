@@ -10,3 +10,16 @@
     }
  
     public Vec3 m_7860_(AbstractClientPlayer p_117785_, float p_117786_) {
+@@ -158,10 +_,12 @@
+    }
+ 
+    public void m_117770_(PoseStack p_117771_, MultiBufferSource p_117772_, int p_117773_, AbstractClientPlayer p_117774_) {
++      if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonArm(p_117771_, p_117772_, p_117773_, p_117774_, HumanoidArm.RIGHT))
+       this.m_117775_(p_117771_, p_117772_, p_117773_, p_117774_, (this.f_115290_).f_102811_, (this.f_115290_).f_103375_);
+    }
+ 
+    public void m_117813_(PoseStack p_117814_, MultiBufferSource p_117815_, int p_117816_, AbstractClientPlayer p_117817_) {
++      if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonArm(p_117814_, p_117815_, p_117816_, p_117817_, HumanoidArm.LEFT))
+       this.m_117775_(p_117814_, p_117815_, p_117816_, p_117817_, (this.f_115290_).f_102812_, (this.f_115290_).f_103374_);
+    }
+ 
