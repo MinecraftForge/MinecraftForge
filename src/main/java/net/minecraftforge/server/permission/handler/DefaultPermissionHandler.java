@@ -19,10 +19,8 @@
 
 package net.minecraftforge.server.permission.handler;
 
-import com.mojang.datafixers.util.Either;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.StringRepresentable;
 import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 
@@ -35,6 +33,7 @@ public final class DefaultPermissionHandler implements IPermissionHandler
 {
     private final ResourceLocation name = new ResourceLocation("forge", "default_handler");;
     private final Set<PermissionNode<?>> registeredNodes = new HashSet<>();
+    private Set<PermissionNode<?>> immutableRegisteredNodes;
 
     public DefaultPermissionHandler()
     {
@@ -50,12 +49,15 @@ public final class DefaultPermissionHandler implements IPermissionHandler
     public void registerNode(PermissionNode<?> node)
     {
         this.registeredNodes.add(node);
+        this.immutableRegisteredNodes = null;
     }
 
     @Override
     public Set<PermissionNode<?>> getRegisteredNodes()
     {
-        return Collections.unmodifiableSet(this.registeredNodes);
+        if(this.immutableRegisteredNodes == null)
+            this.immutableRegisteredNodes = Collections.unmodifiableSet(this.registeredNodes);
+        return immutableRegisteredNodes;
     }
 
     @Override
