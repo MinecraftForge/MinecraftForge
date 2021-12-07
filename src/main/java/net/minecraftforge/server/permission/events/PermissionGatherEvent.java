@@ -20,14 +20,12 @@
 package net.minecraftforge.server.permission.events;
 
 import com.google.common.base.Preconditions;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.server.permission.handler.IPermissionHandler;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Fired to gather information for the permissions API, such as the {@link IPermissionHandler} and {@link PermissionNode}s.
@@ -42,28 +40,27 @@ public class PermissionGatherEvent extends Event
 {
 
     /**
-     * Used to register a new PermissionHandler, last set one is chosen
+     * Used to register a new PermissionHandler, a server config value exists to choose which one to use.
      * <p>Note: Create a new instance when registering a PermissionHandler.
      * If you cache it, make sure that your PermissionHandler is actually used after this event.</p>
      */
     public static class Handler extends PermissionGatherEvent
     {
-        private IPermissionHandler currentHandler;
+        private Set<IPermissionHandler> availableHandlers;
 
-        public Handler(IPermissionHandler currentHandler)
+        public Handler()
         {
-            this.currentHandler = currentHandler;
         }
 
-        public IPermissionHandler getCurrentHandler()
+        public Set<IPermissionHandler> getAvailablePermissionHandlers()
         {
-            return currentHandler;
+            return availableHandlers;
         }
 
-        public void setCurrentHandler(IPermissionHandler newHandler)
+        public void addPermissionHandler(IPermissionHandler newHandler)
         {
             Preconditions.checkNotNull(newHandler, "Permission handler cannot be null!");
-            this.currentHandler = newHandler;
+            this.availableHandlers.add(newHandler);
         }
     }
 

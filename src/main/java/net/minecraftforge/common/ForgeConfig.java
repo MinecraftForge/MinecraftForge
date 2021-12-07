@@ -21,6 +21,7 @@ package net.minecraftforge.common;
 
 import static net.minecraftforge.fml.Logging.FORGEMOD;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
@@ -28,6 +29,8 @@ import org.apache.logging.log4j.LogManager;
 
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+
 
 public class ForgeConfig {
     public static class Server {
@@ -41,6 +44,8 @@ public class ForgeConfig {
         public final BooleanValue treatEmptyTagsAsAir;
 
         public final BooleanValue fixAdvancementLoading;
+
+        public final ConfigValue<String> permissionHandler;
 
         Server(ForgeConfigSpec.Builder builder) {
             builder.comment("Server configuration settings")
@@ -79,6 +84,11 @@ public class ForgeConfig {
                     .comment("Fix advancement loading to use a proper topological sort. This may have visibility side-effects and can thus be turned off if needed for data-pack compatibility.")
                     .translation("forge.configgui.fixAdvancementLoading")
                     .define("fixAdvancementLoading", true);
+
+            permissionHandler = builder
+                    .comment("")
+                    .translation("forge.configgui.permissionHandler")
+                    .define("permissionHandler", "forge:default_handler");
 
             builder.pop();
         }

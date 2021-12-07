@@ -19,8 +19,11 @@
 
 package net.minecraftforge.server.permission;
 
+import net.minecraft.ResourceLocationException;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.StringRepresentable;
+import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.permission.exceptions.UnregisteredPermissionException;
@@ -32,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
 
 public final class PermissionAPI
@@ -90,15 +94,34 @@ public final class PermissionAPI
     /**
      * <p>Helper method for internal use only!</p>
      * <p>Fires the {@link PermissionGatherEvent.Handler}  event,
-     * and replaced the current PermissionHandler with the one returned by the event.</p>
+     * and replaced the current PermissionHandler with the one specified by the user</p>
      */
     public static void gatherPermissionHandler()
     {
-        PermissionGatherEvent.Handler event = new PermissionGatherEvent.Handler(activeHandler);
+        PermissionGatherEvent.Handler event = new PermissionGatherEvent.Handler();
         MinecraftForge.EVENT_BUS.post(event);
-        IPermissionHandler newHandler = event.getCurrentHandler();
-        LOGGER.info("Replacing {} with {}", activeHandler.getIdentifier(), newHandler.getIdentifier());
-        activeHandler = newHandler;
+        Set<IPermissionHandler> availableHandlers = event.getAvailablePermissionHandlers();
+
+        try
+        {
+            ResourceLocation selectedPermissionHandler = new ResourceLocation(ForgeConfig.SERVER.permissionHandler.get());
+
+            for(IPermissionHandler handler : availableHandlers)
+            {
+                if(selectedPermissionHandler.equals(handler.getIdentifier()))
+                {
+                    LOGGER.info("Replacing permission handler {} with {}", activeHandler.getIdentifier(), selectedPermissionHandler);
+                    activeHandler = handler;
+                    return;
+                }
+            }
+
+            LOGGER.error("Unable to find configured permission handler {}, will use {}", selectedPermissionHandler, activeHandler.getIdentifier());
+        }
+        catch(ResourceLocationException e)
+        {
+            LOGGER.error("Error parsing config value 'permissionHandler'", e);
+        }
     }
 
     /**
