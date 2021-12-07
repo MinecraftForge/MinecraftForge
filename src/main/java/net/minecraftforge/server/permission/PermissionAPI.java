@@ -53,6 +53,13 @@ public final class PermissionAPI
     }
 
     /**
+     * @return the Identifier of the currently active permission handler
+     */
+    public static ResourceLocation getActivePermissionHandler(){
+        return activeHandler.getIdentifier();
+    }
+
+    /**
      * <p>Queries a player's permission for a given node and contexts</p>
      * <p><strong>Warning:</strong> PermissionNodes <strong>must</strong> be registered using the
      * {@link PermissionGatherEvent.Nodes} event before querying.</p>
