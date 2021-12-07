@@ -45,7 +45,7 @@
                 if (keymapping != this.f_193910_ && this.f_193910_.m_90850_(keymapping)) {
                    flag1 = true;
 -                  break;
-+                  keyCodeModifierConflict &= keymapping.hasKeyModifierConflict(keymapping);
++                  keyCodeModifierConflict &= this.f_193910_.hasKeyModifierConflict(keymapping);
                 }
              }
           }
