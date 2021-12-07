@@ -45,7 +45,7 @@
                 if (keybinding != this.field_148282_b && this.field_148282_b.func_197983_b(keybinding)) {
                    flag1 = true;
 -                  break;
-+                  keyCodeModifierConflict &= this.field_148282_b.hasKeyCodeModifierConflict(keybinding);
++                  keyCodeModifierConflict &= keybinding.hasKeyCodeModifierConflict(this.field_148282_b);
                 }
              }
           }
