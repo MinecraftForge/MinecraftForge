@@ -21,7 +21,6 @@ package net.minecraftforge.common;
 
 import static net.minecraftforge.fml.Logging.FORGEMOD;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import org.apache.commons.lang3.tuple.Pair;
