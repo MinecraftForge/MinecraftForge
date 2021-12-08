@@ -342,7 +342,6 @@ public class PlayerInteractEvent extends PlayerEvent
         {
             return this.ctx;
         }
-
     }
 
     /**
