@@ -323,6 +323,29 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
+     * This event is fired when an item would be used via {@link Item#useOn}<br>
+     * It allows for the usage to be changed or cancelled.<br>
+     * This event allows finer-tuned control over the actual item usage that cannot be achieved by using {@link RightClickBlock}
+     */
+    @Cancelable
+    public static class ItemUseEvent extends PlayerInteractEvent
+    {
+        protected final UseOnContext ctx;
+
+        public ItemUseEvent(UseOnContext ctx)
+        {
+            super(ctx.getPlayer(), ctx.getHand(), ctx.getClickedPos(), ctx.getClickedFace());
+            this.ctx = ctx;
+        }
+
+        public UseOnContext getContext()
+        {
+            return this.ctx;
+        }
+
+    }
+
+    /**
      * @return The hand involved in this interaction. Will never be null.
      */
     @Nonnull

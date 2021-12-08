@@ -80,7 +80,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AnvilMenu;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -146,6 +145,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.ItemUseEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
@@ -748,6 +748,14 @@ public class ForgeHooks
     public static void onEmptyLeftClick(Player player)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
+    }
+    
+    public static InteractionResult onItemUse(ItemStack stack, UseOnContext ctx)
+    {
+        ItemUseEvent event = new ItemUseEvent(ctx);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.isCanceled()) return event.getCancellationResult();
+        return null;
     }
 
     public static boolean onChangeGameMode(Player player, GameType currentGameMode, GameType newGameMode)
