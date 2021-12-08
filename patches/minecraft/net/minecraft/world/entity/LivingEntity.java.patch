@@ -138,12 +138,11 @@
              if (!p_21016_.m_19360_()) {
                 Entity entity = p_21016_.m_7640_();
                 if (entity instanceof LivingEntity) {
-@@ -1009,7 +_,7 @@
-             }
+@@ -1010,6 +_,7 @@
  
              flag = true;
--         }
-+         }}
+          }
++         }
  
           this.f_20924_ = 1.5F;
           boolean flag1 = true;
