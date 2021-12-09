@@ -45,14 +45,14 @@ public class RegistryAccessExtensionTest {
     public static final String MODID = "registry_access_extension_test";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static final ResourceLocation REGISTRY_NAME = new ResourceLocation(MODID, "worldgen/example");
-    public static final RegistryAccessExtension<ExampleComponent> BIOME_FEATURE_PAIR = new RegistryAccessExtension<>(REGISTRY_NAME, ExampleComponent.class, ExampleComponent.CODEC);
+    public static final RegistryAccessExtension<ExampleComponent> EXAMPLE_COMPONENT = new RegistryAccessExtension<>(REGISTRY_NAME, ExampleComponent.class, ExampleComponent.CODEC);
 
     public RegistryAccessExtensionTest() {
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addGenericListener(RegistryAccessExtension.class, this::registerExtension);
 
-        BIOME_FEATURE_PAIR.getRegister().register(modBus);
-        BIOME_FEATURE_PAIR.getRegister().register("builtin_example", builtinSupplier());
+        EXAMPLE_COMPONENT.getRegister().register(modBus);
+        EXAMPLE_COMPONENT.getRegister().register("builtin_example", builtinSupplier());
 
         MinecraftForge.EVENT_BUS.addListener(this::onServerStart);
     }
@@ -62,7 +62,7 @@ public class RegistryAccessExtensionTest {
 
         var biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);
         var features = registries.registryOrThrow(Registry.PLACED_FEATURE_REGISTRY);
-        var biomeFeatures = registries.registryOrThrow(BIOME_FEATURE_PAIR.getRegistryKey());
+        var biomeFeatures = registries.registryOrThrow(EXAMPLE_COMPONENT.getRegistryKey());
 
         LOGGER.info("RegistryAccessExtensionTest - ExampleComponent registry:");
         for (var entry : biomeFeatures.entrySet()) {
@@ -79,7 +79,7 @@ public class RegistryAccessExtensionTest {
     }
 
     private void registerExtension(RegistryEvent.Register<RegistryAccessExtension<?>> event) {
-        event.getRegistry().register(BIOME_FEATURE_PAIR);
+        event.getRegistry().register(EXAMPLE_COMPONENT);
     }
 
     private static Supplier<ExampleComponent> builtinSupplier() {
