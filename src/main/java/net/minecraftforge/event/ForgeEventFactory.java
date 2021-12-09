@@ -32,7 +32,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
@@ -43,7 +42,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -71,7 +69,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
@@ -87,7 +84,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraftforge.api.distmarker.Dist;
@@ -105,7 +101,6 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.event.entity.EntityFinalizeSpawnEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -888,11 +883,5 @@ public class ForgeEventFactory
     public static void onPostServerTick()
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END));
-    }
-    
-    public static void onFinalizeSpawn(Mob entity, DifficultyInstance difficulty, MobSpawnType spawnType, SpawnGroupData groupData, CompoundTag tag) 
-    {
-        EntityFinalizeSpawnEvent e = new EntityFinalizeSpawnEvent(entity, difficulty, spawnType, groupData, tag);
-        MinecraftForge.EVENT_BUS.post(e);
     }
 }
