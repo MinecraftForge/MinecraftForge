@@ -15,25 +15,25 @@ public class EntityFinalizeSpawnEvent extends EntityEvent
 {
     
     private final DifficultyInstance instance;
-    private final MobSpawnType spawnReason;
+    private final MobSpawnType mobSpawnType;
     @Nullable
     private final SpawnGroupData groupData;
     @Nullable
     private final CompoundTag tag;
 
-    public EntityFinalizeSpawnEvent(Mob entity, DifficultyInstance instance, MobSpawnType spawnReason, SpawnGroupData data, CompoundTag tag)
+    public EntityFinalizeSpawnEvent(Mob entity, DifficultyInstance instance, MobSpawnType mobSpawnType, SpawnGroupData data, CompoundTag tag)
     {
         super(entity);
         this.instance = instance;
-        this.spawnReason = spawnReason;
+        this.mobSpawnType = mobSpawnType;
         this.groupData = data;
         this.tag = tag;
 
     }
 
-    public MobSpawnType getSpawnReason()
+    public MobSpawnType getMobSpawnType()
     {
-        return spawnReason;
+        return mobSpawnType;
     }
 
     public DifficultyInstance getInstance()

@@ -37,7 +37,7 @@
           this.m_21559_(false);
        }
 -
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityFinalizeSpawnEvent(this, p_21435_, p_21436_, p_21437_, p_21438_));
++      net.minecraftforge.event.ForgeEventFactory.onFinalizeSpawn(this, p_21435_, p_21436_, p_21437_, p_21438_);
        return p_21437_;
     }
  
