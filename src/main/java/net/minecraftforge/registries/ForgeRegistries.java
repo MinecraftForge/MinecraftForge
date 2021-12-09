@@ -55,6 +55,7 @@ import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecoratorTy
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.world.ForgeWorldPreset;
+import net.minecraftforge.common.world.RegistryAccessExtension;
 
 /**
  * A class that exposes static references to all vanilla and Forge registries.
@@ -106,6 +107,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
     public static final IForgeRegistry<GlobalLootModifierSerializer<?>> LOOT_MODIFIER_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(GlobalLootModifierSerializer.class);
     public static final IForgeRegistry<ForgeWorldPreset> WORLD_TYPES = RegistryManager.ACTIVE.getRegistry(ForgeWorldPreset.class);
+    public static final IForgeRegistry<RegistryAccessExtension<?>> REGISTRY_ACCESS_EXTENSIONS = RegistryManager.ACTIVE.getRegistry(RegistryAccessExtension.class);
 
     public static final class Keys {
         //Vanilla
@@ -145,6 +147,7 @@ public class ForgeRegistries
         public static final ResourceKey<Registry<DataSerializerEntry>> DATA_SERIALIZERS = key("data_serializers");
         public static final ResourceKey<Registry<GlobalLootModifierSerializer<?>>> LOOT_MODIFIER_SERIALIZERS = key("forge:loot_modifier_serializers");
         public static final ResourceKey<Registry<ForgeWorldPreset>> WORLD_TYPES = key("forge:world_types");
+        public static final ResourceKey<Registry<RegistryAccessExtension<?>>> REGISTRY_ACCESS_EXTENSIONS = key("forge:registry_access_extensions");
 
         private static <T> ResourceKey<Registry<T>> key(String name)
         {
