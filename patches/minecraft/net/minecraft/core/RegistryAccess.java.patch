@@ -1,5 +1,13 @@
 --- a/net/minecraft/core/RegistryAccess.java
 +++ b/net/minecraft/core/RegistryAccess.java
+@@ -101,6 +_,7 @@
+          m_194614_(registryaccess$registryholder, registryresourceaccess$inmemorystorage, registrydata);
+       }
+ 
++      net.minecraftforge.common.ForgeRegistryAccessHooks.injectBuiltins(f_123049_, registryresourceaccess$inmemorystorage); // Note: BUILTIN is used for adding to the InMemoryStorage - refer to loop in addBuiltinElements
+       RegistryReadOps.m_195841_(JsonOps.INSTANCE, registryresourceaccess$inmemorystorage, registryaccess$registryholder);
+       return registryaccess$registryholder;
+    }
 @@ -109,6 +_,8 @@
        ResourceKey<? extends Registry<E>> resourcekey = p_194617_.f_123101_();
        boolean flag = !resourcekey.equals(Registry.f_122878_) && !resourcekey.equals(Registry.f_122818_);
@@ -9,3 +17,21 @@
        WritableRegistry<E> writableregistry = p_194615_.m_175512_(resourcekey);
  
        for(Entry<ResourceKey<E>, E> entry : registry.m_6579_()) {
+@@ -143,7 +_,7 @@
+       for(RegistryAccess.RegistryData<?> registrydata : f_123048_.values()) {
+          m_175503_(p_175502_, p_175501_, registrydata);
+       }
+-
++      net.minecraftforge.common.ForgeRegistryAccessHooks.loadExtensions(p_175501_, p_175502_);
+    }
+ 
+    private static <E> void m_175503_(RegistryReadOps<?> p_175504_, RegistryAccess p_175505_, RegistryAccess.RegistryData<E> p_175506_) {
+@@ -211,7 +_,7 @@
+       }
+ 
+       private RegistryHolder(Map<? extends ResourceKey<? extends Registry<?>>, ? extends MappedRegistry<?>> p_123117_) {
+-         this.f_123113_ = p_123117_;
++         this.f_123113_ = net.minecraftforge.common.ForgeRegistryAccessHooks.extendHolderRegistries(p_123117_);
+       }
+ 
+       private static <E> MappedRegistry<?> m_123140_(ResourceKey<? extends Registry<?>> p_123141_) {

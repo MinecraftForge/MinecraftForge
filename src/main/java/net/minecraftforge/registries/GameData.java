@@ -69,6 +69,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.common.world.ForgeWorldPreset;
+import net.minecraftforge.common.world.RegistryAccessExtension;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -175,6 +176,7 @@ public class GameData
         makeRegistry(DATA_SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
         makeRegistry(LOOT_MODIFIER_SERIALIZERS, c(GlobalLootModifierSerializer.class)).disableSaving().disableSync().create();
         makeRegistry(WORLD_TYPES, ForgeWorldPreset.class).disableSaving().disableSync().create();
+        makeRegistry(REGISTRY_ACCESS_EXTENSIONS, c(RegistryAccessExtension.class)).disableSaving().disableSync().create();
     }
     @SuppressWarnings("unchecked") //Ugly hack to let us pass in a typed Class object. Remove when we remove type specific references.
     private static <T> Class<T> c(Class<?> cls) { return (Class<T>)cls; }
