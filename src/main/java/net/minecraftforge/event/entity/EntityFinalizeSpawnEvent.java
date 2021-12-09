@@ -30,7 +30,6 @@ public class EntityFinalizeSpawnEvent extends EntityEvent
         this.mobSpawnType = mobSpawnType;
         this.groupData = data;
         this.tag = tag;
-
     }
 
     public MobSpawnType getMobSpawnType()
