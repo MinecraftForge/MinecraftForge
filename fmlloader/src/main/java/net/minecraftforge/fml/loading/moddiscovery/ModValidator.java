@@ -1,5 +1,6 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.google.common.collect.ImmutableList;
 import cpw.mods.modlauncher.api.IModuleLayerManager;
 import cpw.mods.modlauncher.api.ITransformationService;
 import net.minecraftforge.fml.loading.*;
@@ -38,13 +39,23 @@ public class ModValidator {
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Found "+ candidateMods.size()+" modfiles to load"));
     }
 
+    public List<IModFile> getInitialValidModFiles() {
+        stage1Validation();
+
+        return ImmutableList.<IModFile>builder().addAll(
+          candidateMods
+        ).addAll(
+          candidatePlugins
+        ).build();
+    }
+
     @NotNull
     private List<ModFile> validateFiles(final List<ModFile> mods) {
         final List<ModFile> brokenFiles = new ArrayList<>();
         for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
         {
             ModFile mod = iterator.next();
-            if (!mod.getLocator().isValid(mod) || !mod.identifyMods()) {
+            if (!mod.getProvider().isValid(mod) || !mod.identifyMods()) {
                 LOGGER.warn(SCAN, "File {} has been ignored - it is invalid", mod.getFilePath());
                 iterator.remove();
                 brokenFiles.add(mod);

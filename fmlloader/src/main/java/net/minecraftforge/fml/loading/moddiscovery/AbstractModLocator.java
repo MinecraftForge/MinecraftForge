@@ -29,14 +29,11 @@ import net.minecraftforge.forgespi.locating.IModLocator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
@@ -44,40 +41,28 @@ import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
-public abstract class AbstractJarFileLocator implements IModLocator {
+public abstract class AbstractModLocator extends AbstractModProvider implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
     protected static final String MODS_TOML = "META-INF/mods.toml";
     protected static final String MANIFEST = "META-INF/MANIFEST.MF";
 
-    @Override
-    public void scanFile(final IModFile file, final Consumer<Path> pathConsumer) {
-        LOGGER.debug(SCAN,"Scan started: {}", file);
-        final Function<Path, SecureJar.Status> status = p->file.getSecureJar().verifyPath(p);
-        try (Stream<Path> files = Files.find(file.getSecureJar().getRootPath(), Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
-            file.setSecurityStatus(files.peek(pathConsumer).map(status).reduce((s1, s2)-> SecureJar.Status.values()[Math.min(s1.ordinal(), s2.ordinal())]).orElse(SecureJar.Status.INVALID));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        LOGGER.debug(SCAN,"Scan finished: {}", file);
+    public AbstractModLocator(final String name) {
+        super(name);
     }
 
-    @Override
-    public List<IModFile> scanMods() {
+
+    public List<IModFile> scanMods()
+    {
         return scanCandidates()
-                .map(this::createMod)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+          .map(this::createMod)
+          .filter(Optional::isPresent)
+          .map(Optional::get)
+          .collect(Collectors.toList());
     }
 
     public abstract Stream<Path> scanCandidates();
 
-    @Override
-    public boolean isValid(final IModFile modFile) {
-        return true;
-    }
-
-    private Optional<IModFile> createMod(Path path) {
+    protected Optional<IModFile> createMod(Path path) {
         var mjm = new ModJarMetadata();
         var sj = SecureJar.from(
             Manifest::new,

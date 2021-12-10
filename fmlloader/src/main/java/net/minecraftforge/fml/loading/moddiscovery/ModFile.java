@@ -21,14 +21,14 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
 import cpw.mods.jarhandling.SecureJar;
-import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.progress.StartupMessageManager;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.forgespi.locating.IModLocator;
+import net.minecraftforge.forgespi.locating.IModProvider;
 import net.minecraftforge.forgespi.locating.ModFileFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +67,7 @@ public class ModFile implements IModFile {
     private final SecureJar jar;
     private final Type modFileType;
     private final Manifest manifest;
-    private final IModLocator locator;
+    private final IModProvider locator;
     private IModFileInfo modFileInfo;
     private ModFileScanData fileModFileScanData;
     private CompletableFuture<ModFileScanData> futureScanResult;
@@ -78,7 +78,7 @@ public class ModFile implements IModFile {
     public static final Attributes.Name TYPE = new Attributes.Name("FMLModType");
     private SecureJar.Status securityStatus;
 
-    public ModFile(final SecureJar jar, final IModLocator locator, final ModFileFactory.ModFileInfoParser parser) {
+    public ModFile(final SecureJar jar, final IModProvider locator, final ModFileFactory.ModFileInfoParser parser) {
         this.locator = locator;
         this.jar = jar;
         this.parser = parser;
@@ -204,7 +204,7 @@ public class ModFile implements IModFile {
     }
 
     @Override
-    public IModLocator getLocator() {
+    public IModProvider getProvider() {
         return locator;
     }
 
@@ -221,14 +221,14 @@ public class ModFile implements IModFile {
 
     // TODO: Remove helper functions to cleanup api
     @Deprecated(forRemoval = true, since="1.17.1")
-    public static ModFile newFMLInstance(final IModLocator locator, final SecureJar jar) {
-        return (ModFile) ModFileFactory.FACTORY.build(jar, locator, ModFileParser::modsTomlParser);
+    public static ModFile newFMLInstance(final IModProvider provider, final SecureJar jar) {
+        return (ModFile) ModFileFactory.FACTORY.build(jar, provider, ModFileParser::modsTomlParser);
     }
 
     // TODO: Remove helper functions to cleanup api
     @Deprecated(forRemoval = true, since="1.17.1")
-    public static ModFile newFMLInstance(final IModLocator locator, final Path... paths) {
-        return (ModFile) ModJarMetadata.buildFile(locator, paths);
+    public static ModFile newFMLInstance(final IModProvider provider, final Path... paths) {
+        return (ModFile) ModJarMetadata.buildFile(provider, paths);
     }
 
     @Override

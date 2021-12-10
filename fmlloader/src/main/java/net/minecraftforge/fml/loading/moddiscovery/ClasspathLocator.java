@@ -38,15 +38,14 @@ import java.util.Map;
 import java.util.stream.Stream;
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
-public class ClasspathLocator extends AbstractJarFileLocator {
+public class ClasspathLocator extends AbstractModLocator
+{
     private static final Logger LOGGER = LogManager.getLogger();
+    public static final String USERDEV_CLASSPATH = "userdev classpath";
     private final List<Path> legacyClasspath = Arrays.stream(System.getProperty("legacyClassPath", "").split(File.pathSeparator)).map(Path::of).toList();
     private boolean enabled = false;
 
-    @Override
-    public String name() {
-        return "userdev classpath";
-    }
+    public ClasspathLocator() {super(USERDEV_CLASSPATH);}
 
     @Override
     public Stream<Path> scanCandidates() {
