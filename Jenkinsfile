@@ -6,8 +6,8 @@ pipeline {
     }
     agent {
         docker {
-            image 'gradlewrapper:latest'
-            args '-v gradlecache:/gradlecache'
+            image 'gradle:jdk8'
+            args '-v forgegc:/home/gradle/.gradle/'
         }
     }
     environment {
@@ -18,13 +18,6 @@ pipeline {
     }
 
     stages {
-        /* This resets the checkout on jenkins, but doesn't take branch into account... 
-        stage('fetch') {
-            steps {
-                checkout scm
-            }
-        }
-        */
         stage('notify_start') {
             when {
                 not {
@@ -39,16 +32,6 @@ pipeline {
                     thumbnail: JENKINS_HEAD,
                     webhookURL: DISCORD_WEBHOOK
                 )
-            }
-        }
-        stage('ciWriteBuildNumber') {
-            steps {
-                sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue ciWriteBuildNumber'
-                script {
-                    env.MYGROUP = sh(returnStdout: true, script: './gradlew properties -q | grep "group:" | awk \'{print $2}\'').trim()
-                    env.MYARTIFACT = sh(returnStdout: true, script: './gradlew properties -q | grep "name:" | awk \'{print $2}\'').trim()
-                    env.MYVERSION = sh(returnStdout: true, script: './gradlew properties -q | grep "version:" | awk \'{print $2}\'').trim()
-                }
             }
         }
         stage('setup') {
@@ -66,7 +49,7 @@ pipeline {
                 }
             }
             steps {
-                writeChangelog(currentBuild, 'build/changelog_new.txt')
+                writeChangelog(currentBuild, 'build/changelog.txt')
             }
         }
         stage('publish') {
@@ -83,8 +66,16 @@ pipeline {
                 KEYSTORE_STOREPASS = credentials('forge-jenkins-keystore-old-keypass')
             }
             steps {
-                sh './gradlew ${GRADLE_ARGS} :forge:publish -PforgeMavenUser=${FORGE_MAVEN_USR} -PforgeMavenPassword=${FORGE_MAVEN_PSW} -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
-                sh 'curl --user ${FORGE_MAVEN} http://files.minecraftforge.net/maven/manage/promote/latest/${MYGROUP}.${MYARTIFACT}/${MYVERSION}'
+                withCredentials([usernamePassword(credentialsId: 'maven-forge-user', usernameVariable: 'MAVEN_USER', passwordVariable: 'MAVEN_PASSWORD')]) {
+                    withGradle {
+                        sh './gradlew ${GRADLE_ARGS} :forge:publish -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
+                    }
+                }
+            }
+            post {
+                success {
+                    build job: 'filegenerator', parameters: [string(name: 'COMMAND', value: "promote net.minecraftforge:forge ${env.MYVERSION} latest")], propagate: false, wait: false
+                }
             }
         }
         stage('test_publish_pr') { //Publish to local repo to test full process, but don't include credentials so it can't sign/publish to maven
@@ -95,17 +86,15 @@ pipeline {
                 CROWDIN = credentials('forge-crowdin')
             }
             steps {
-                sh './gradlew ${GRADLE_ARGS} uploadArchives -PcrowdinKey=${CROWDIN}'
+                sh './gradlew ${GRADLE_ARGS} :forge:publish -PcrowdinKey=${CROWDIN}'
             }
         }
     }
     post {
         always {
             script {
-                //archiveArtifacts artifacts: 'projects/forge/build/libs/**/*.*', fingerprint: true, onlyIfSuccessful: true, allowEmptyArchive: true
-                //junit 'build/test-results/*/*.xml'
-                //jacoco sourcePattern: '**/src/*/java'
-                
+                archiveArtifacts artifacts: 'projects/forge/build/libs/**/*.*', fingerprint: true, onlyIfSuccessful: true, allowEmptyArchive: true
+
                 if (env.CHANGE_ID == null) { // This is unset for non-PRs
                     discordSend(
                         title: "${DISCORD_PREFIX} Finished ${currentBuild.currentResult}",

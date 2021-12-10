@@ -200,7 +200,7 @@ project(':forge') {
             branch = null
         SPEC_VERSION = tag
         BUILD_NUMBER = LEGACY_BUILD + offset.toInteger()
-        return "${MC_VERSION}-${LEGACY_MAJOR}.${tag}.${BUILD_NUMBER}${t -> if (branch != null) t << '-' + branch}".toString() //Bake the response instead of making it dynamic
+        return ("${MC_VERSION}-${LEGACY_MAJOR}.${tag}.${BUILD_NUMBER}${t -> if (branch != null) t << '-' + branch}".toString()).replace("/", "-") //Bake the response instead of making it dynamic
     }
 
     version = getVersion()
@@ -874,12 +874,15 @@ project(':forge') {
         }
         repositories {
             maven {
-                if (project.hasProperty('forgeMavenPassword')) {
-                    credentials {
-                        username project.properties.forgeMavenUser
-                        password project.properties.forgeMavenPassword
+                if (System.env.MAVEN_USER) {
+                    url "https://maven.minecraftforge.net/releases/"
+                    authentication {
+                        basic(BasicAuthentication)
                     }
-                    url 'https://files.minecraftforge.net/maven/manage/upload'
+                    credentials {
+                        username = System.env.MAVEN_USER ?: 'not'
+                        password = System.env.MAVEN_PASSWORD ?: 'set'
+                    }
                 } else {
                     url 'file://' + rootProject.file('repo').getAbsolutePath()
                 }
