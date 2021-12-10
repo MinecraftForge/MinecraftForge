@@ -6,8 +6,8 @@ pipeline {
     }
     agent {
         docker {
-            image 'gradlewrapper:latest'
-            args '-v gradlecache:/gradlecache'
+            image 'gradle:jdk8'
+            args '-v forgegc:/home/gradle/.gradle/'
         }
     }
     environment {
@@ -18,11 +18,6 @@ pipeline {
     }
 
     stages {
-        stage('fetch') {
-            steps {
-                checkout scm
-            }
-        }
         stage('notify_start') {
             when {
                 not {
@@ -64,15 +59,22 @@ pipeline {
                 }
             }
             environment {
-                FORGE_MAVEN = credentials('forge-maven-forge-user')
                 CROWDIN = credentials('forge-crowdin')
                 KEYSTORE = credentials('forge-jenkins-keystore-old')
                 KEYSTORE_KEYPASS = credentials('forge-jenkins-keystore-old-keypass')
                 KEYSTORE_STOREPASS = credentials('forge-jenkins-keystore-old-keypass')
             }
             steps {
-                sh './gradlew ${GRADLE_ARGS} :forge:publish -PforgeMavenUser=${FORGE_MAVEN_USR} -PforgeMavenPassword=${FORGE_MAVEN_PSW} -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
-                sh 'curl --user ${FORGE_MAVEN} http://files.minecraftforge.net/maven/manage/promote/latest/net.minecraftforge.forge/${MYVERSION}'
+                withCredentials([usernamePassword(credentialsId: 'maven-forge-user', usernameVariable: 'MAVEN_USER', passwordVariable: 'MAVEN_PASSWORD')]) {
+                    withGradle {
+                        sh './gradlew ${GRADLE_ARGS} :forge:publish -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
+                    }
+                }
+            }
+            post {
+                success {
+                    build job: 'filegenerator', parameters: [string(name: 'COMMAND', value: "promote net.minecraftforge:forge ${env.MYVERSION} latest")], propagate: false, wait: false
+                }
             }
         }
         stage('test_publish_pr') { //Publish to local repo to test full process, but don't include credentials so it can't sign/publish to maven
@@ -83,7 +85,9 @@ pipeline {
                 CROWDIN = credentials('forge-crowdin')
             }
             steps {
-                sh './gradlew ${GRADLE_ARGS} :forge:publish -PcrowdinKey=${CROWDIN}'
+                withGradle {
+                    sh './gradlew ${GRADLE_ARGS} :forge:publish -PcrowdinKey=${CROWDIN}'
+                }
             }
         }
     }
@@ -91,9 +95,7 @@ pipeline {
         always {
             script {
                 archiveArtifacts artifacts: 'projects/forge/build/libs/**/*.*', fingerprint: true, onlyIfSuccessful: true, allowEmptyArchive: true
-                //junit 'build/test-results/*/*.xml'
-                //jacoco sourcePattern: '**/src/*/java'
-                
+
                 if (env.CHANGE_ID == null) { // This is unset for non-PRs
                     discordSend(
                         title: "${DISCORD_PREFIX} Finished ${currentBuild.currentResult}",
