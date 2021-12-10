@@ -19,6 +19,8 @@
 
 package net.minecraftforge.server.terminalconsole;
 
+import javax.annotation.Nullable;
+
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
@@ -58,7 +60,7 @@ import java.util.List;
 @Plugin(name = "minecraftFormatting", category = PatternConverter.CATEGORY)
 @ConverterKeys({ "minecraftFormatting" })
 @PerformanceSensitive("allocation")
-public final class MinecraftFormattingConverter extends LogEventPatternConverter
+public class MinecraftFormattingConverter extends LogEventPatternConverter
 {
 
     /**
@@ -75,7 +77,7 @@ public final class MinecraftFormattingConverter extends LogEventPatternConverter
 
     private static final boolean KEEP_FORMATTING = PropertiesUtil.getProperties().getBooleanProperty(KEEP_FORMATTING_PROPERTY);
 
-    static final String ANSI_RESET = "\u001B[m";
+    private static final String ANSI_RESET = "\u001B[m";
 
     private static final char COLOR_CHAR = '\u00A7'; // §
     private static final String LOOKUP = "0123456789abcdefklmnor";
@@ -141,7 +143,7 @@ public final class MinecraftFormattingConverter extends LogEventPatternConverter
         format(content, toAppendTo, start, ansi && TerminalConsoleAppender.isAnsiSupported());
     }
 
-    static void format(String s, StringBuilder result, int start, boolean ansi)
+    private static void format(String s, StringBuilder result, int start, boolean ansi)
     {
         int next = s.indexOf(COLOR_CHAR);
         int last = s.length() - 1;
@@ -174,8 +176,7 @@ public final class MinecraftFormattingConverter extends LogEventPatternConverter
             }
 
             next = s.indexOf(COLOR_CHAR, next);
-        }
-        while (next != -1 && next < last);
+        } while (next != -1 && next < last);
 
         result.append(s, pos, s.length());
         if (ansi)
@@ -194,6 +195,7 @@ public final class MinecraftFormattingConverter extends LogEventPatternConverter
      *
      * @see MinecraftFormattingConverter
      */
+    @Nullable
     public static MinecraftFormattingConverter newInstance(Configuration config, String[] options)
     {
         if (options.length < 1 || options.length > 2)
@@ -212,5 +214,4 @@ public final class MinecraftFormattingConverter extends LogEventPatternConverter
         boolean strip = options.length > 1 && "strip".equals(options[1]);
         return new MinecraftFormattingConverter(formatters, strip);
     }
-
 }
