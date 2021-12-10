@@ -6,7 +6,8 @@ pipeline {
     }
     agent {
         docker {
-            image 'gradle:4.9-jdk8'
+            image 'gradle:jdk8'
+            args '-v forgegc:/home/gradle/.gradle/'
         }
     }
     environment {
@@ -17,7 +18,6 @@ pipeline {
     }
 
     stages {
-
         stage('notify_start') {
             when {
                 not {
@@ -38,7 +38,7 @@ pipeline {
             steps {
                 sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue setup'
                 script {
-                    env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "^version:" | cut -d" " -f2').trim()
+                    env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "version:" | awk \'{print $2}\'').trim()
                 }
             }
         }
@@ -67,14 +67,13 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'maven-forge-user', usernameVariable: 'MAVEN_USER', passwordVariable: 'MAVEN_PASSWORD')]) {
                     withGradle {
-                        sh './gradlew ${GRADLE_ARGS} publish -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
+                        sh './gradlew ${GRADLE_ARGS} :forge:publish -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
                     }
                 }
             }
             post {
                 success {
                     build job: 'filegenerator', parameters: [string(name: 'COMMAND', value: "promote net.minecraftforge:forge ${env.MYVERSION} latest")], propagate: false, wait: false
-                    build job: 'filegenerator', parameters: [string(name: 'COMMAND', value: "promote net.minecraftforge:fmlonly ${env.FMLONLY_VERSION} latest")], propagate: false, wait: false
                 }
             }
         }
@@ -87,7 +86,7 @@ pipeline {
             }
             steps {
                 withGradle {
-                    sh './gradlew ${GRADLE_ARGS} publish -PcrowdinKey=${CROWDIN}'
+                    sh './gradlew ${GRADLE_ARGS} :forge:publish -PcrowdinKey=${CROWDIN}'
                 }
             }
         }
@@ -96,9 +95,7 @@ pipeline {
         always {
             script {
                 archiveArtifacts artifacts: 'projects/forge/build/libs/**/*.*', fingerprint: true, onlyIfSuccessful: true, allowEmptyArchive: true
-                //junit 'build/test-results/*/*.xml'
-                //jacoco sourcePattern: '**/src/*/java'
-                
+
                 if (env.CHANGE_ID == null) { // This is unset for non-PRs
                     discordSend(
                         title: "${DISCORD_PREFIX} Finished ${currentBuild.currentResult}",
