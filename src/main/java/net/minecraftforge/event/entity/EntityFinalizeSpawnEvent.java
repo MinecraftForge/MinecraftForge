@@ -16,20 +16,20 @@ import net.minecraft.world.entity.SpawnGroupData;
 public class EntityFinalizeSpawnEvent extends EntityEvent
 {
     
-    private final DifficultyInstance instance;
+    private final DifficultyInstance difficultyInstance;
     private final MobSpawnType mobSpawnType;
     @Nullable
     private final SpawnGroupData groupData;
     @Nullable
-    private final CompoundTag tag;
+    private final CompoundTag compoundTag;
 
-    public EntityFinalizeSpawnEvent(Mob entity, DifficultyInstance instance, MobSpawnType mobSpawnType, SpawnGroupData data, CompoundTag tag)
+    public EntityFinalizeSpawnEvent(Mob entity, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, SpawnGroupData data, CompoundTag compoundTag)
     {
         super(entity);
-        this.instance = instance;
+        this.difficultyInstance = difficultyInstance;
         this.mobSpawnType = mobSpawnType;
         this.groupData = data;
-        this.tag = tag;
+        this.compoundTag = compoundTag;
     }
 
     public MobSpawnType getMobSpawnType()
@@ -37,9 +37,9 @@ public class EntityFinalizeSpawnEvent extends EntityEvent
         return mobSpawnType;
     }
 
-    public DifficultyInstance getInstance()
+    public DifficultyInstance getDifficultyInstance()
     {
-        return instance;
+        return difficultyInstance;
     }
     
     @Nullable
@@ -49,8 +49,8 @@ public class EntityFinalizeSpawnEvent extends EntityEvent
     }
 
     @Nullable
-    public final CompoundTag getTag()
+    public final CompoundTag getCompoundTag()
     {
-        return tag;
+        return compoundTag;
     }
 }
