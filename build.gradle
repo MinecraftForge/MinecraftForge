@@ -339,8 +339,9 @@ project(':forge') {
         installer 'org.apache.maven:maven-artifact:3.6.0'
         installer 'net.jodah:typetools:0.6.0'
         installer 'java3d:vecmath:1.5.2'
-        installer 'org.apache.logging.log4j:log4j-api:2.11.2'
-        installer 'org.apache.logging.log4j:log4j-core:2.11.2'
+        installer 'org.apache.logging.log4j:log4j-api:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
+        installer 'org.apache.logging.log4j:log4j-core:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
+        installer 'org.apache.logging.log4j:log4j-slf4j18-impl:2.15.0' //TODO: Unpin in 1.18.1 or when Mojang bumps the Log4J version
         installer 'net.minecrell:terminalconsoleappender:1.1.+'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
         fmllauncherImplementation 'com.google.guava:guava:21.0'
