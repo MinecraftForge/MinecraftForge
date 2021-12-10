@@ -20,8 +20,6 @@
 package net.minecraftforge.common.extensions;
 
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -56,17 +54,6 @@ public interface IForgeAbstractMinecart
      * This code handles minecart movement and speed capping when on a rail.
      */
     void moveMinecartOnRail(BlockPos pos);
-
-    /**
-     * This function returns an ItemStack that represents this cart.
-     * This should be an ItemStack that can be used by the player to place the cart,
-     * but is not necessary the item the cart drops when destroyed.
-     * @return An ItemStack that can be used to place the cart.
-     */
-    default ItemStack getCartItem()
-    {
-        return new ItemStack(Items.MINECART);
-    }
 
     /**
      * Returns true if this cart can currently use rails.

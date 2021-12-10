@@ -5,7 +5,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'ForgeRoot'
+rootProject.name = 'MinecraftForge'
 
 include 'fmlloader'
 include 'fmlcore'

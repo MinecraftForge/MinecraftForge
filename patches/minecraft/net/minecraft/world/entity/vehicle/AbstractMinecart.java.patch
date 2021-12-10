@@ -224,10 +224,11 @@
                          p_38165_.m_20256_(vec33.m_82542_(0.2D, 1.0D, 0.2D));
                          p_38165_.m_5997_(vec32.f_82479_ + d0, 0.0D, vec32.f_82481_ + d1);
                          this.m_20256_(vec32.m_82542_(0.95D, 1.0D, 0.95D));
-@@ -807,6 +_,42 @@
+@@ -806,6 +_,42 @@
+    public Packet<?> m_5654_() {
        return new ClientboundAddEntityPacket(this);
     }
- 
++
 +   // Forge Start
 +   private boolean canUseRail = true;
 +   @Override public boolean canUseRail() { return canUseRail; }
@@ -263,17 +264,6 @@
 +      mc.m_6478_(MoverType.SELF, new Vec3(Mth.m_14008_(d24 * vec3d1.f_82479_, -d25, d25), 0.0D, Mth.m_14008_(d24 * vec3d1.f_82481_, -d25, d25)));
 +   }
 +   // Forge end
-+
+ 
     public ItemStack m_142340_() {
        Item item;
-       switch(this.m_6064_()) {
-@@ -828,7 +_,8 @@
-       default:
-          item = Items.f_42449_;
-       }
--
-+      // TODO, should this be above?
-+      if (item == null) return getCartItem();
-       return new ItemStack(item);
-    }
- 
