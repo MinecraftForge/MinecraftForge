@@ -1,25 +1,28 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016-2020.
+ * The MIT License (MIT)
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
+ * Copyright (c) 2017 Minecrell <https://github.com/Minecrell>
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 package net.minecraftforge.server.terminalconsole;
-
-import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.config.Configuration;
@@ -60,8 +63,9 @@ import java.util.List;
 @Plugin(name = "minecraftFormatting", category = PatternConverter.CATEGORY)
 @ConverterKeys({ "minecraftFormatting" })
 @PerformanceSensitive("allocation")
-public class MinecraftFormattingConverter extends LogEventPatternConverter
+public final class MinecraftFormattingConverter extends LogEventPatternConverter
 {
+
     /**
      * System property that allows disabling the replacement of Minecraft
      * formatting codes entirely, keeping them in the console output. For
@@ -76,34 +80,34 @@ public class MinecraftFormattingConverter extends LogEventPatternConverter
 
     private static final boolean KEEP_FORMATTING = PropertiesUtil.getProperties().getBooleanProperty(KEEP_FORMATTING_PROPERTY);
 
-    private static final String ANSI_RESET = "\u001B[39;0m";
+    static final String ANSI_RESET = "\u001B[m";
 
     private static final char COLOR_CHAR = '\u00A7'; // §
     private static final String LOOKUP = "0123456789abcdefklmnor";
 
     private static final String[] ansiCodes = new String[] {
-            "\u001B[0;30;22m", // Black §0
-            "\u001B[0;34;22m", // Dark Blue §1
-            "\u001B[0;32;22m", // Dark Green §2
-            "\u001B[0;36;22m", // Dark Aqua §3
-            "\u001B[0;31;22m", // Dark Red §4
-            "\u001B[0;35;22m", // Dark Purple §5
-            "\u001B[0;33;22m", // Gold §6
-            "\u001B[0;37;22m", // Gray §7
-            "\u001B[0;30;1m",  // Dark Gray §8
-            "\u001B[0;34;1m",  // Blue §9
-            "\u001B[0;32;1m",  // Green §a
-            "\u001B[0;36;1m",  // Aqua §b
-            "\u001B[0;31;1m",  // Red §c
-            "\u001B[0;35;1m",  // Light Purple §d
-            "\u001B[0;33;1m",  // Yellow §e
-            "\u001B[0;37;1m",  // White §f
-            "\u001B[5m",       // Obfuscated §k
-            "\u001B[21m",      // Bold §l
-            "\u001B[9m",       // Strikethrough §m
-            "\u001B[4m",       // Underline §n
-            "\u001B[3m",       // Italic §o
-            ANSI_RESET,        // Reset §r
+      "\u001B[0;30m", // Black §0
+      "\u001B[0;34m", // Dark Blue §1
+      "\u001B[0;32m", // Dark Green §2
+      "\u001B[0;36m", // Dark Aqua §3
+      "\u001B[0;31m", // Dark Red §4
+      "\u001B[0;35m", // Dark Purple §5
+      "\u001B[0;33m", // Gold §6
+      "\u001B[0;37m", // Gray §7
+      "\u001B[0;30;1m",  // Dark Gray §8
+      "\u001B[0;34;1m",  // Blue §9
+      "\u001B[0;32;1m",  // Green §a
+      "\u001B[0;36;1m",  // Aqua §b
+      "\u001B[0;31;1m",  // Red §c
+      "\u001B[0;35;1m",  // Light Purple §d
+      "\u001B[0;33;1m",  // Yellow §e
+      "\u001B[0;37;1m",  // White §f
+      "\u001B[5m",       // Obfuscated §k
+      "\u001B[21m",      // Bold §l
+      "\u001B[9m",       // Strikethrough §m
+      "\u001B[4m",       // Underline §n
+      "\u001B[3m",       // Italic §o
+      ANSI_RESET,        // Reset §r
     };
 
     private final boolean ansi;
@@ -142,7 +146,7 @@ public class MinecraftFormattingConverter extends LogEventPatternConverter
         format(content, toAppendTo, start, ansi && TerminalConsoleAppender.isAnsiSupported());
     }
 
-    private static void format(String s, StringBuilder result, int start, boolean ansi)
+    static void format(String s, StringBuilder result, int start, boolean ansi)
     {
         int next = s.indexOf(COLOR_CHAR);
         int last = s.length() - 1;
@@ -154,16 +158,15 @@ public class MinecraftFormattingConverter extends LogEventPatternConverter
         result.setLength(start + next);
 
         int pos = next;
-        int format;
-        do {
-            if (pos != next)
-            {
-                result.append(s, pos, next);
-            }
-
-            format = LOOKUP.indexOf(s.charAt(next + 1));
+        do
+        {
+            int format = LOOKUP.indexOf(Character.toLowerCase(s.charAt(next + 1)));
             if (format != -1)
             {
+                if (pos != next)
+                {
+                    result.append(s, pos, next);
+                }
                 if (ansi)
                 {
                     result.append(ansiCodes[format]);
@@ -176,7 +179,8 @@ public class MinecraftFormattingConverter extends LogEventPatternConverter
             }
 
             next = s.indexOf(COLOR_CHAR, next);
-        } while (next != -1 && next < last);
+        }
+        while (next != -1 && next < last);
 
         result.append(s, pos, s.length());
         if (ansi)
@@ -195,7 +199,6 @@ public class MinecraftFormattingConverter extends LogEventPatternConverter
      *
      * @see MinecraftFormattingConverter
      */
-    @Nullable
     public static MinecraftFormattingConverter newInstance(Configuration config, String[] options)
     {
         if (options.length < 1 || options.length > 2)
