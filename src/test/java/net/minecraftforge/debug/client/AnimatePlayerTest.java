@@ -84,5 +84,22 @@ public class AnimatePlayerTest
             model.rightArm.xRot = (float) Math.toRadians(-90F);
             model.leftArm.xRot = (float) Math.toRadians(-90F);
         }
+        else if (player.getMainHandItem().getItem() == Items.NETHERITE_AXE)
+        {
+            /* Just to show how messed up modders can make the model and it will be restored correctly next call */
+            PlayerModel<?> model = event.getModel();
+            model.head.y += 5;
+            model.head.yRot = (float) Math.toRadians(45F);
+            model.rightArm.x -= 5;
+            model.rightArm.yRot = (float) Math.toRadians(153F);
+            model.leftArm.x += 5;
+            model.leftArm.zRot = (float) Math.toRadians(-44F);
+            model.rightLeg.x -= 5;
+            model.rightLeg.xRot = (float) Math.toRadians(180F);
+            model.leftLeg.x += 5;
+            model.leftLeg.xRot = (float) Math.toRadians(-90F);
+            model.body.z += 5;
+            model.body.zRot = (float) Math.toRadians(45F);
+        }
     }
 }
