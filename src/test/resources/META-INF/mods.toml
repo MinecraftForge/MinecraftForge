@@ -172,5 +172,6 @@ license="LGPL v2.1"
     modId="part_entity_test"
 [[mods]]
     modId="capabilities_test"
-
+[[mods]]
+    modId="animate_player_test"
 # ADD ABOVE THIS LINE

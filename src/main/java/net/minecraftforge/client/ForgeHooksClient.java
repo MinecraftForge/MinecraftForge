@@ -26,6 +26,7 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -1038,4 +1039,37 @@ public class ForgeHooksClient
                 .toList();
     }
 
+    public static boolean onAnimatePlayerBlank(LivingEntity entity, PlayerModel<?> model)
+    {
+        if (entity instanceof Player player)
+        {
+            if (isAnimatingFirstPersonArms(player)) return false;
+            return MinecraftForge.EVENT_BUS.post(new AnimatePlayerEvent.Blank(player, model));
+        }
+        return false;
+    }
+
+    public static boolean onAnimatePlayerPre(LivingEntity entity, PlayerModel<?> model)
+    {
+        if (entity instanceof Player player)
+        {
+            if (isAnimatingFirstPersonArms(player)) return false;
+            return MinecraftForge.EVENT_BUS.post(new AnimatePlayerEvent.Pre(player, model));
+        }
+        return false;
+    }
+
+    public static void onAnimatePlayerPost(LivingEntity entity, PlayerModel<?> model)
+    {
+        if (entity instanceof Player player)
+        {
+            if (isAnimatingFirstPersonArms(player)) return;
+            MinecraftForge.EVENT_BUS.post(new AnimatePlayerEvent.Post(player, model));
+        }
+    }
+
+    private static boolean isAnimatingFirstPersonArms(Player player)
+    {
+        return player.isLocalPlayer() && Minecraft.getInstance().options.getCameraType().isFirstPerson();
+    }
 }
