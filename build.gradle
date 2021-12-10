@@ -200,7 +200,7 @@ project(':forge') {
             branch = null
         SPEC_VERSION = tag
         BUILD_NUMBER = LEGACY_BUILD + offset.toInteger()
-        return ("${MC_VERSION}-${LEGACY_MAJOR}.${tag}.${BUILD_NUMBER}${t -> if (branch != null) t << '-' + branch}".toString()).replace("/", "-") //Bake the response instead of making it dynamic
+        return "${MC_VERSION}-${LEGACY_MAJOR}.${tag}.${BUILD_NUMBER}${t -> if (branch != null) t << '-' + branch}".toString() //Bake the response instead of making it dynamic
     }
 
     version = getVersion()

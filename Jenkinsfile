@@ -34,12 +34,19 @@ pipeline {
                 )
             }
         }
+        stage('ciWriteBuildNumber') {
+            steps {
+                sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue ciWriteBuildNumber'
+                script {
+                    env.MYGROUP = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "group:" | awk \'{print $2}\'').trim()
+                    env.MYARTIFACT = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "name:" | awk \'{print $2}\'').trim()
+                    env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "version:" | awk \'{print $2}\'').trim()
+                }
+            }
+        }
         stage('setup') {
             steps {
                 sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue setup'
-                script {
-                    env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "version:" | awk \'{print $2}\'').trim()
-                }
             }
         }
         stage('changelog') {
