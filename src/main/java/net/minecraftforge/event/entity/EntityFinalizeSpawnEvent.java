@@ -22,7 +22,7 @@ public class EntityFinalizeSpawnEvent extends EntityEvent
     @Nullable
     private final CompoundTag compoundTag;
 
-    public EntityFinalizeSpawnEvent(Mob entity, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, SpawnGroupData data, CompoundTag compoundTag)
+    public EntityFinalizeSpawnEvent(Mob entity, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData data, @Nullable CompoundTag compoundTag)
     {
         super(entity);
         this.difficultyInstance = difficultyInstance;
