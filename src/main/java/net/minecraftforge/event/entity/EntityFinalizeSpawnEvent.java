@@ -15,7 +15,6 @@ import net.minecraft.world.entity.SpawnGroupData;
  */
 public class EntityFinalizeSpawnEvent extends EntityEvent
 {
-    
     private final DifficultyInstance difficultyInstance;
     private final MobSpawnType mobSpawnType;
     @Nullable
