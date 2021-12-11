@@ -65,7 +65,7 @@ ext {
     MCP_VERSION = '20200226.224830'
     POST_PROCESSOR = [
         tool: 'net.minecraftforge:mcpcleanup:2.3.2:fatjar',
-        repo: 'https://files.minecraftforge.net/maven/',
+        repo: 'https://maven.minecraftforge.net/',
         args: ['--input', '{input}', '--output', '{output}']
     ]
 }
@@ -652,7 +652,7 @@ project(':forge') {
     }
     
     task downloadInstaller(type: DownloadMavenArtifact) {
-        artifact = 'net.minecraftforge:installer:2.0.+:shrunk'
+        artifact = 'net.minecraftforge:installer:2.1.+:shrunk'
         changing = true
     }
     
@@ -935,7 +935,7 @@ def getArtifacts(project, config, classifiers) {
         def path = "${folder}${filename}"
         def url = "https://libraries.minecraft.net/${path}"
         if (!checkExists(url)) {
-            url = "https://files.minecraftforge.net/maven/${path}"
+            url = "https://maven.minecraftforge.net/${path}"
         }
         //TODO remove when Mojang launcher is updated
         if (!classifiers && art.classifier != null) { //Mojang launcher doesn't currently support classifiers, so... move it to part of the version, and force the extension to 'jar'
