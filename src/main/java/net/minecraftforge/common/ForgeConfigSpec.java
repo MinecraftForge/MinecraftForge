@@ -420,16 +420,20 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter) {
             return defineEnum(path, defaultValue, converter, defaultValue.getDeclaringClass().getEnumConstants());
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
+        @SuppressWarnings("unchecked")
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, V... acceptableValues) {
             return defineEnum(split(path), defaultValue, acceptableValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
+        @SuppressWarnings("unchecked")
+        public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, EnumGetMethod converter, V... acceptableValues) {
             return defineEnum(split(path), defaultValue, converter, acceptableValues);
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, @SuppressWarnings("unchecked") V... acceptableValues) {
+        @SuppressWarnings("unchecked")
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, V... acceptableValues) {
             return defineEnum(path, defaultValue, (Collection<V>) Arrays.asList(acceptableValues));
         }
-        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, @SuppressWarnings("unchecked") V... acceptableValues) {
+        @SuppressWarnings("unchecked")
+        public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, V... acceptableValues) {
             return defineEnum(path, defaultValue, converter, Arrays.asList(acceptableValues));
         }
         public <V extends Enum<V>> EnumValue<V> defineEnum(String path, V defaultValue, Collection<V> acceptableValues) {
@@ -441,7 +445,6 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, Collection<V> acceptableValues) {
             return defineEnum(path, defaultValue, EnumGetMethod.NAME_IGNORECASE, acceptableValues);
         }
-        @SuppressWarnings("unchecked")
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
             return defineEnum(path, defaultValue, converter, obj -> {
                 if (obj instanceof Enum) {

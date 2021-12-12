@@ -63,7 +63,6 @@ public class NotificationModUpdateScreen extends Screen
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void render(PoseStack mStack, int mouseX, int mouseY, float partialTicks)
     {

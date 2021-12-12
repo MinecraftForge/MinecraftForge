@@ -332,13 +332,11 @@ public class CustomTooltipTest
         }
 
         // legacy ToolTip methods
-        @SuppressWarnings("removal")
         private void test13(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
             renderTooltip(poseStack, List.of(new TextComponent("test").getVisualOrderText()), mouseX, mouseY, this.testFont);
         }
 
-        @SuppressWarnings("removal")
         private void test14(Button button, PoseStack poseStack, int mouseX, int mouseY)
         {
             renderComponentTooltip(poseStack, List.of(new TextComponent("test")), mouseX, mouseY, this.testFont, ItemStack.EMPTY);

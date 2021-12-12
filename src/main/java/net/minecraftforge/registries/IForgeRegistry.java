@@ -41,7 +41,8 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 
     void register(V value);
 
-    void registerAll(@SuppressWarnings("unchecked") V... values);
+    @SuppressWarnings("unchecked")
+    void registerAll(V... values);
 
     boolean containsKey(ResourceLocation key);
     boolean containsValue(V value);

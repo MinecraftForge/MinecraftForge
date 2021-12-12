@@ -180,8 +180,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return tagFolder;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public void registerAll(@SuppressWarnings("unchecked") V... values)
+    public void registerAll(V... values)
     {
         for (V value : values)
             register(value);

@@ -65,7 +65,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import javax.annotation.Nullable;
 
-@SuppressWarnings("deprecation")
 public class ForgeIngameGui extends Gui
 {
     private static final Logger LOGGER = LogManager.getLogger();

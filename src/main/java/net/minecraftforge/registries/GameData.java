@@ -336,7 +336,6 @@ public class GameData
         LOGGER.debug(REGISTRIES, "Reverting complete");
     }
 
-    @SuppressWarnings("rawtypes") //Eclipse compiler generics issue.
     public static Stream<IModStateTransition.EventGenerator<?>> generateRegistryEvents() {
         List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
         keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
