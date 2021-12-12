@@ -34,7 +34,7 @@
        return particleprovider == null ? null : particleprovider.m_6966_(p_107396_, this.f_107287_, p_107397_, p_107398_, p_107399_, p_107400_, p_107401_, p_107402_);
     }
  
-@@ -381,7 +_,13 @@
+@@ -381,15 +_,25 @@
        }
     }
  
@@ -47,8 +47,11 @@
 +   public void render(PoseStack p_107337_, MultiBufferSource.BufferSource p_107338_, LightTexture p_107339_, Camera p_107340_, float p_107341_, @Nullable net.minecraft.client.renderer.culling.Frustum clippingHelper) {
        p_107339_.m_109896_();
        RenderSystem.m_69482_();
++      RenderSystem.m_69388_(org.lwjgl.opengl.GL13.GL_TEXTURE2);
++      RenderSystem.m_69493_();
++      RenderSystem.m_69388_(org.lwjgl.opengl.GL13.GL_TEXTURE0);
        PoseStack posestack = RenderSystem.m_157191_();
-@@ -389,7 +_,8 @@
+       posestack.m_85836_();
        posestack.m_166854_(p_107337_.m_85850_().m_85861_());
        RenderSystem.m_157182_();
  
