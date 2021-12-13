@@ -1,0 +1,8 @@
+{
+  "test_a": "registry_access_extension_test:data_example_1",
+  "test_a_list": [
+    "registry_access_extension_test:data_example_2",
+    "registry_access_extension_test:test_a_builtin",
+    "registry_access_extension_test:test_a_builtin_overridden"
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "string_value": "This example overrides the builtin entry!",
+  "int_value": 1,
+  "biome": "minecraft:beach"
+}
