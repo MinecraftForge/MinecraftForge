@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2021.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.model.renderable;
 
 import com.google.common.collect.ImmutableList;
@@ -17,18 +36,30 @@ import net.minecraftforge.client.model.data.IModelData;
 import java.util.Random;
 import java.util.function.Function;
 
+/**
+ * Wrapper to make it easier to draw baked models in renderers.
+ */
 public class BakedRenderable implements IRenderable<IModelData>
 {
-    public static final ImmutableList<Direction> ALL_AND_NULL = Util.make(ImmutableList.<Direction>builder(), builder -> {
+    private static final ImmutableList<Direction> MODEL_FACINGS = Util.make(ImmutableList.<Direction>builder(), builder -> {
         builder.add(Direction.values());
         builder.add((Direction)null);
     }).build();
 
+    /**
+     * Constructs a BakedRenderable from the given model location.
+     * The model is expected to have been baked ahead of time.
+     * You can ensure the model is baked by calling {@link net.minecraftforge.client.model.ForgeModelBakery#addSpecialModel(ResourceLocation)}
+     * from within {@link net.minecraftforge.client.event.ModelRegistryEvent}.
+     */
     public static BakedRenderable of(ResourceLocation model)
     {
         return of(Minecraft.getInstance().getModelManager().getModel(model));
     }
 
+    /**
+     * Constructs a BakedRenderable from the given model.
+     */
     public static BakedRenderable of(BakedModel model)
     {
         return new BakedRenderable(model);
@@ -47,7 +78,7 @@ public class BakedRenderable implements IRenderable<IModelData>
     {
         var rt = renderTypeFunction.apply(InventoryMenu.BLOCK_ATLAS);
         VertexConsumer bb = bufferSource.getBuffer(rt);
-        for(Direction direction : ALL_AND_NULL)
+        for(Direction direction : MODEL_FACINGS)
         {
             for (BakedQuad quad : model.getQuads(null, direction, rand, renderValues))
             {

@@ -121,11 +121,11 @@ public class SimpleRenderable implements IRenderable<MultipartTransforms>
         {
         }
 
-        public PartBuilder child(String name)
+        public PartBuilder<Builder> child(String name)
         {
             var child = new Part(name);
             renderable.parts.add(child);
-            return new PartBuilder(child);
+            return new PartBuilder<>(this, child);
         }
 
         public SimpleRenderable get()
@@ -134,28 +134,35 @@ public class SimpleRenderable implements IRenderable<MultipartTransforms>
         }
     }
 
-    public static class PartBuilder
+    public static class PartBuilder<T>
     {
+        private final T parent;
         private final Part part;
 
-        private PartBuilder(Part part)
+        private PartBuilder(T parent, Part part)
         {
+            this.parent = parent;
             this.part = part;
         }
 
-        public PartBuilder child(String name)
+        public PartBuilder<PartBuilder<T>> child(String name)
         {
             var child = new Part(part.name + "/" + name);
             this.part.parts.add(child);
-            return new PartBuilder(child);
+            return new PartBuilder<>(this, child);
         }
 
-        public PartBuilder addMesh(ResourceLocation texture, List<BakedQuad> quads)
+        public PartBuilder<T> addMesh(ResourceLocation texture, List<BakedQuad> quads)
         {
             var mesh = new Mesh(texture);
             mesh.quads.addAll(quads);
             part.meshes.add(mesh);
             return this;
+        }
+
+        public T end()
+        {
+            return parent;
         }
     }
 }

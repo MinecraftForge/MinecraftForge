@@ -553,7 +553,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             }
         }
 
-        public void bake(SimpleRenderable.PartBuilder builder, IModelConfiguration configuration)
+        public void bake(SimpleRenderable.PartBuilder<?> builder, IModelConfiguration configuration)
         {
             for (ModelMesh mesh : this.meshes)
             {
@@ -596,7 +596,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
         }
 
         @Override
-        public void bake(SimpleRenderable.PartBuilder builder, IModelConfiguration configuration)
+        public void bake(SimpleRenderable.PartBuilder<?> builder, IModelConfiguration configuration)
         {
             super.bake(builder, configuration);
 
@@ -651,7 +651,7 @@ public class OBJModel implements IMultipartModelGeometry<OBJModel>
             }
         }
 
-        public void bake(SimpleRenderable.PartBuilder builder, IModelConfiguration configuration)
+        public void bake(SimpleRenderable.PartBuilder<?> builder, IModelConfiguration configuration)
         {
             MaterialLibrary.Material mat = this.mat;
             if (mat == null)
