@@ -19,7 +19,6 @@
 
 package net.minecraftforge.common.world;
 
-import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
@@ -67,22 +66,6 @@ public class RegistryAccessExtension<T extends IForgeRegistryEntry<T>> extends F
         this.elementCodec = codec;
         this.register = DeferredRegister.create(type, name.getNamespace());
         this.registry = register.makeRegistry(name.getPath(), () -> new RegistryBuilder<T>().disableSaving().disableSync());
-    }
-
-    /**
-     * Creates a new RegistryAccessExtension from the given IForgeRegistry and element Codec.
-     * The registry name of the RegistryAccessExtension is derived from the name of the provided IForgeRegistry.
-     *
-     * @param registry The registry that elements will be registered to.
-     * @param codec    The codec for serializing/deserializing the entry to/from data formats (namely json).
-     */
-    public RegistryAccessExtension(IForgeRegistry<T> registry, Codec<T> codec)
-    {
-        setRegistryName(registry.getRegistryName());
-        this.registryKey = ResourceKey.createRegistryKey(registry.getRegistryName());
-        this.elementCodec = codec;
-        this.register = DeferredRegister.create(registry, registry.getRegistryName().getNamespace());
-        this.registry = Suppliers.memoize(() -> registry);
     }
 
     public Codec<T> getCodec()
