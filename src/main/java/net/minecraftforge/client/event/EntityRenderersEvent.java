@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.event;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -37,12 +38,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.IEntityAnimation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class EntityRenderersEvent extends Event implements IModBusEvent
@@ -142,6 +148,30 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
         public EntityModelSet getEntityModels()
         {
             return entityModels;
+        }
+    }
+
+    public static class AddAnimations extends EntityRenderersEvent
+    {
+        private final Map<EntityType<?>, List<Consumer<LivingEntityRenderer<?, ?>>>> animations = new HashMap<>();
+
+        /**
+         * Adds an animation
+         * @param type
+         * @param animation
+         * @param <T>
+         */
+        @SuppressWarnings("unchecked")
+        public <T extends LivingEntity> void addAnimation(EntityType<T> type, IEntityAnimation<T> animation)
+        {
+            this.animations.computeIfAbsent(type, t -> new ArrayList<>()).add(renderer -> {
+                ((LivingEntityRenderer<T, ?>) renderer).addAnimation(animation);
+            });
+        }
+
+        public Map<EntityType<?>, List<Consumer<LivingEntityRenderer<?, ?>>>> getAnimations()
+        {
+            return ImmutableMap.copyOf(animations);
         }
     }
 }

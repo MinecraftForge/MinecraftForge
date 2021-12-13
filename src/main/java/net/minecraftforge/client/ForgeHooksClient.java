@@ -26,8 +26,13 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
-import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.AgeableListModel;
+import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.HierarchicalModel;
+import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -1039,37 +1044,45 @@ public class ForgeHooksClient
                 .toList();
     }
 
-    public static boolean onAnimatePlayerBlank(LivingEntity entity, PlayerModel<?> model)
+    public static <T extends LivingEntity> Map<ModelPart, PartPose> generateDefaultPoseMap(EntityModel<T> entityModel)
     {
-        if (entity instanceof Player player)
+        Map<ModelPart, PartPose> map = new HashMap<>();
+        if (entityModel instanceof AgeableListModel<T> model)
         {
-            if (isAnimatingFirstPersonArms(player)) return false;
-            return MinecraftForge.EVENT_BUS.post(new AnimatePlayerEvent.Blank(player, model));
+            model.allParts().forEach(part -> storePartPoseAndSearch(map, part));
         }
-        return false;
+        else if (entityModel instanceof HierarchicalModel<T> model)
+        {
+            storePartPoseAndSearch(map, model.root());
+        }
+        else if (entityModel instanceof ListModel<T> model)
+        {
+            model.parts().forEach(part -> storePartPoseAndSearch(map, part));
+        }
+        return map;
     }
 
-    public static boolean onAnimatePlayerPre(LivingEntity entity, PlayerModel<?> model)
+    private static void storePartPoseAndSearch(Map<ModelPart, PartPose> map, ModelPart part)
     {
-        if (entity instanceof Player player)
-        {
-            if (isAnimatingFirstPersonArms(player)) return false;
-            return MinecraftForge.EVENT_BUS.post(new AnimatePlayerEvent.Pre(player, model));
-        }
-        return false;
+        map.put(part, part.storePose());
+        part.getAllParts().filter(p -> p != part).forEach(p -> storePartPoseAndSearch(map, p));
     }
 
-    public static void onAnimatePlayerPost(LivingEntity entity, PlayerModel<?> model)
+    public static <T extends LivingEntity> void applyEntityAnimations(T entity, EntityModel<T> model, List<net.minecraftforge.client.IEntityAnimation<T>> animations, float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float partialTicks)
     {
-        if (entity instanceof Player player)
+        if (animations.isEmpty()) return;
+        IEntityAnimation.Context context = new IEntityAnimation.Context(animateTicks, animateSpeed, bobAnimateTicks, headYaw, headPitch, partialTicks);
+        for (IEntityAnimation<T> animation : animations)
         {
-            if (isAnimatingFirstPersonArms(player)) return;
-            MinecraftForge.EVENT_BUS.post(new AnimatePlayerEvent.Post(player, model));
+            if (animation.canRun(entity))
+            {
+                animation.apply(entity, model, context);
+                if (animation.getMode() == IEntityAnimation.Mode.ACTIVE)
+                {
+                    break;
+                }
+            }
         }
     }
 
-    private static boolean isAnimatingFirstPersonArms(Player player)
-    {
-        return player.isLocalPlayer() && Minecraft.getInstance().options.getCameraType().isFirstPerson();
-    }
 }

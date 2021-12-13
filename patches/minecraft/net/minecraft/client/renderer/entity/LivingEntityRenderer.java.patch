@@ -1,5 +1,20 @@
 --- a/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
+@@ -33,11 +_,14 @@
+    private static final float f_174287_ = 0.1F;
+    protected M f_115290_;
+    protected final List<RenderLayer<T, M>> f_115291_ = Lists.newArrayList();
++   protected final List<net.minecraftforge.client.IEntityAnimation<T>> animations = new java.util.ArrayList<>();
++   protected final java.util.Map<net.minecraft.client.model.geom.ModelPart, net.minecraft.client.model.geom.PartPose> defaultPoseMap;
+ 
+    public LivingEntityRenderer(EntityRendererProvider.Context p_174289_, M p_174290_, float p_174291_) {
+       super(p_174289_);
+       this.f_115290_ = p_174290_;
+       this.f_114477_ = p_174291_;
++      this.defaultPoseMap = net.minecraftforge.client.ForgeHooksClient.generateDefaultPoseMap(this.f_115290_);
+    }
+ 
+    public final boolean m_115326_(RenderLayer<T, M> p_115327_) {
 @@ -49,14 +_,17 @@
     }
  
@@ -29,6 +44,17 @@
           f8 = Mth.m_14179_(p_115310_, p_115308_.f_20923_, p_115308_.f_20924_);
           f5 = p_115308_.f_20925_ - p_115308_.f_20924_ * (1.0F - p_115310_);
           if (p_115308_.m_6162_()) {
+@@ -110,8 +_,10 @@
+          }
+       }
+ 
++      this.restoreDefaultPoses();
+       this.f_115290_.m_6839_(p_115308_, f5, f8, p_115310_);
+       this.f_115290_.m_6973_(p_115308_, f5, f8, f7, f2, f6);
++      net.minecraftforge.client.ForgeHooksClient.applyEntityAnimations(p_115308_, this.f_115290_, this.animations, f5, f8, f7, p_115309_, f6, p_115310_);
+       Minecraft minecraft = Minecraft.m_91087_();
+       boolean flag = this.m_5933_(p_115308_);
+       boolean flag1 = !flag && !p_115308_.m_20177_(minecraft.f_91074_);
 @@ -131,6 +_,7 @@
  
        p_115311_.m_85849_();
@@ -37,3 +63,18 @@
     }
  
     @Nullable
+@@ -267,5 +_,14 @@
+       }
+ 
+       return false;
++   }
++
++   protected void restoreDefaultPoses() {
++      this.defaultPoseMap.forEach(net.minecraft.client.model.geom.ModelPart::m_171322_);
++   }
++
++   public void addAnimation(net.minecraftforge.client.IEntityAnimation<T> animation) {
++      this.animations.add(animation);
++      java.util.Collections.sort(this.animations);
+    }
+ }

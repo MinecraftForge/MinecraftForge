@@ -1,0 +1,17 @@
+--- a/net/minecraft/client/model/AgeableListModel.java
++++ b/net/minecraft/client/model/AgeableListModel.java
+@@ -73,7 +_,11 @@
+ 
+    }
+ 
+-   public abstract Iterable<ModelPart> m_5607_();
+-
+-   public abstract Iterable<ModelPart> m_5608_();
++   protected abstract Iterable<ModelPart> m_5607_();
++
++   protected abstract Iterable<ModelPart> m_5608_();
++
++   public Iterable<ModelPart> allParts() {
++      return com.google.common.collect.Iterables.concat(this.m_5607_(), this.m_5608_());
++   }
+ }
