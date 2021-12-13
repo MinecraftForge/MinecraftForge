@@ -41,13 +41,15 @@ import org.apache.logging.log4j.Logger;
 import java.util.function.Supplier;
 
 @Mod(RegistryAccessExtensionTest.MODID)
-public class RegistryAccessExtensionTest {
+public class RegistryAccessExtensionTest
+{
     public static final String MODID = "registry_access_extension_test";
     public static final Logger LOGGER = LogManager.getLogger(MODID);
     public static final ResourceLocation REGISTRY_NAME = new ResourceLocation(MODID, "worldgen/example");
     public static final RegistryAccessExtension<ExampleComponent> EXAMPLE_COMPONENT = new RegistryAccessExtension<>(REGISTRY_NAME, ExampleComponent.class, ExampleComponent.CODEC);
 
-    public RegistryAccessExtensionTest() {
+    public RegistryAccessExtensionTest()
+    {
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
         modBus.addGenericListener(RegistryAccessExtension.class, this::registerExtension);
 
@@ -57,7 +59,8 @@ public class RegistryAccessExtensionTest {
         MinecraftForge.EVENT_BUS.addListener(this::onServerStart);
     }
 
-    private void onServerStart(ServerAboutToStartEvent event) {
+    private void onServerStart(ServerAboutToStartEvent event)
+    {
         var registries = event.getServer().registryAccess();
 
         var biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);
@@ -65,7 +68,8 @@ public class RegistryAccessExtensionTest {
         var biomeFeatures = registries.registryOrThrow(EXAMPLE_COMPONENT.getRegistryKey());
 
         LOGGER.info("RegistryAccessExtensionTest - ExampleComponent registry:");
-        for (var entry : biomeFeatures.entrySet()) {
+        for (var entry : biomeFeatures.entrySet())
+        {
             var name = entry.getKey().location();
             var pair = entry.getValue();
 
@@ -78,18 +82,21 @@ public class RegistryAccessExtensionTest {
         }
     }
 
-    private void registerExtension(RegistryEvent.Register<RegistryAccessExtension<?>> event) {
+    private void registerExtension(RegistryEvent.Register<RegistryAccessExtension<?>> event)
+    {
         event.getRegistry().register(EXAMPLE_COMPONENT);
     }
 
-    private static Supplier<ExampleComponent> builtinSupplier() {
+    private static Supplier<ExampleComponent> builtinSupplier()
+    {
         return () -> new ExampleComponent(
                 () -> ForgeRegistries.BIOMES.getValue(Biomes.TAIGA.location()),
                 () -> VegetationPlacements.BAMBOO_VEGETATION
         );
     }
 
-    public static class ExampleComponent extends ForgeRegistryEntry<ExampleComponent> {
+    public static class ExampleComponent extends ForgeRegistryEntry<ExampleComponent>
+    {
         public static final Codec<ExampleComponent> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Biome.CODEC.fieldOf("biome").forGetter(p -> p.biome),
                 PlacedFeature.CODEC.fieldOf("feature").forGetter(p -> p.feature)
@@ -98,16 +105,19 @@ public class RegistryAccessExtensionTest {
         private final Supplier<Biome> biome;
         private final Supplier<PlacedFeature> feature;
 
-        public ExampleComponent(Supplier<Biome> biome, Supplier<PlacedFeature> feature) {
+        public ExampleComponent(Supplier<Biome> biome, Supplier<PlacedFeature> feature)
+        {
             this.biome = biome;
             this.feature = feature;
         }
 
-        public Supplier<Biome> getBiome() {
+        public Supplier<Biome> getBiome()
+        {
             return biome;
         }
 
-        public Supplier<PlacedFeature> getFeature() {
+        public Supplier<PlacedFeature> getFeature()
+        {
             return feature;
         }
     }
