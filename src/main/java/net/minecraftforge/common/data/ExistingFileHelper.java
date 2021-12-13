@@ -104,12 +104,11 @@ public class ExistingFileHelper {
      * <p>
      * Only create a new helper if you intentionally want to ignore the existence of
      * other generated files.
-     * 
-     * @param existingPacks
-     * @param existingMods
-     * @param enable
-     * @param assetIndex
-     * @param assetsDir
+     * @param existingPacks a collection of paths to existing packs
+     * @param existingMods a set of mod IDs for existing mods
+     * @param enable {@code true} if validation is enabled
+     * @param assetIndex the identifier for the asset index, generally Minecraft's current major version
+     * @param assetsDir the directory in which to find vanilla assets and indexes
      */
     public ExistingFileHelper(Collection<Path> existingPacks, final Set<String> existingMods, boolean enable, @Nullable final String assetIndex, @Nullable final File assetsDir) {
         this.clientResources = new SimpleReloadableResourceManager(PackType.CLIENT_RESOURCES);

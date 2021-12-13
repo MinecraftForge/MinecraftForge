@@ -90,9 +90,6 @@ public interface IForgeBlock
     /**
      * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
      *
-     * @param state
-     * @param world
-     * @param pos
      * @return The light value
      */
     default int getLightEmission(BlockState state, BlockGetter world, BlockPos pos)
@@ -235,7 +232,6 @@ public interface IForgeBlock
     /**
      * Called when a user either starts or stops sleeping in the bed.
      *
-     * @param state
      * @param world The current world
      * @param pos Block position in world
      * @param sleeper The sleeper or camera entity, null in some cases.
@@ -391,7 +387,8 @@ public interface IForgeBlock
     * @param state The current state
     * @param world The world
     * @param pos Block position
-    * @param fortune
+    * @param fortune fortune enchantment level of tool being used
+    * @param silktouch silk touch enchantment level of tool being used
     * @return Amount of XP from breaking this block.
     */
     default int getExpDrop(BlockState state, LevelReader world, BlockPos pos, int fortune, int silktouch)

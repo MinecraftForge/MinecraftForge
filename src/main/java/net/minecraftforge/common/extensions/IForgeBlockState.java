@@ -329,7 +329,8 @@ public interface IForgeBlockState
     *
     * @param world The world
     * @param pos Block position
-    * @param fortune
+    * @param fortune fortune enchantment level of tool being used
+    * @param silktouch silk touch enchantment level of tool being used
     * @return Amount of XP from breaking this block.
     */
     default int getExpDrop(LevelReader world, BlockPos pos, int fortune, int silktouch)

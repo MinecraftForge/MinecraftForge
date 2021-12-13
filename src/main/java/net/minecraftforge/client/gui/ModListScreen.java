@@ -118,9 +118,6 @@ public class ModListScreen extends Screen
     private boolean sorted = false;
     private SortType sortType = SortType.NORMAL;
 
-    /**
-     * @param parentScreen
-     */
     public ModListScreen(Screen parentScreen)
     {
         super(new TranslatableComponent("fml.menu.mods.title"));

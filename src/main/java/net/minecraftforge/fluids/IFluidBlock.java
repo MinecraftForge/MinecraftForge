@@ -58,7 +58,7 @@ public interface IFluidBlock
      *
      * @param action
      *            If SIMULATE, the drain will only be simulated.
-     * @return
+     * @return the fluid stack after draining the block
      */
     @Nonnull
     FluidStack drain(Level world, BlockPos pos, IFluidHandler.FluidAction action);
@@ -66,8 +66,6 @@ public interface IFluidBlock
     /**
      * Check to see if a block can be drained. This method should be called by devices such as
      * pumps.
-     *
-     * @return
      */
     boolean canDrain(Level world, BlockPos pos);
 
@@ -77,8 +75,6 @@ public interface IFluidBlock
      *
      * If the return value is negative. It will be treated as filling the block
      * from the top down instead of bottom up.
-     *
-     * @return
      */
     float getFilledPercentage(Level world, BlockPos pos);
 }

@@ -370,7 +370,6 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
      * @param world The world
      * @param pos Block position in world
      * @param player The Player that is wielding the item
-     * @return
      */
     default boolean doesSneakBypassUse(net.minecraft.world.level.LevelReader world, BlockPos pos, Player player)
     {

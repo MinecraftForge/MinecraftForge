@@ -65,7 +65,7 @@ public class ChunkDataEvent extends ChunkEvent
     /**
      * ChunkDataEvent.Load is fired when vanilla Minecraft attempts to load Chunk data.<br>
      * This event is fired during chunk loading in
-     * {@link ChunkSerializer#read(ServerLevel, StructureManager, PoiManager, ChunkPos, CompoundTag)} which means it is async, so be careful.<br>
+     * {@link ChunkSerializer#read(ServerLevel, PoiManager, ChunkPos, CompoundTag)} which means it is async, so be careful.<br>
      * <br>
      * This event is not {@link Cancelable}.<br>
      * <br>

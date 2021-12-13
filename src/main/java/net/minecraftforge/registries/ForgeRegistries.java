@@ -59,11 +59,11 @@ import net.minecraftforge.common.world.ForgeWorldPreset;
 /**
  * A class that exposes static references to all vanilla and Forge registries.
  * Created to have a central place to access the registries directly if modders need.
- * It is still advised that if you are registering things to go through {@link GameRegistry} register methods, but queries and iterations can use this.
+ * It is still advised that if you are registering things to use {@link net.minecraftforge.event.RegistryEvent.Register} or {@link net.minecraftforge.registries.DeferredRegister}, but queries and iterations can use this.
  */
 public class ForgeRegistries
 {
-    static { init(); } // This must be above the fields so we guarantee it's run before findRegistry is called. Yay static inializers
+    static { init(); } // This must be above the fields so we guarantee it's run before getRegistry is called. Yay static inializers
 
     // Game objects
     public static final IForgeRegistry<Block> BLOCKS = RegistryManager.ACTIVE.getRegistry(Block.class);

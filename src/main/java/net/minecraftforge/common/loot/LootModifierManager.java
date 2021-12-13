@@ -139,7 +139,6 @@ public class LootModifierManager extends SimpleJsonResourceReloadListener {
 
     /**
      * An immutable collection of the registered loot modifiers in layered order.
-     * @return
      */
     public Collection<IGlobalLootModifier> getAllLootMods() {
         return registeredLootModifiers.values();
