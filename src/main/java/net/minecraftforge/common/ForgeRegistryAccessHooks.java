@@ -37,6 +37,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Contains hooks for RegistryAccess creation, injection and loading.
@@ -186,7 +187,7 @@ public class ForgeRegistryAccessHooks
     private static <T> void copy(ResourceKey<? extends Registry<T>> key, RegistryAccess source, RegistryAccess dest)
     {
         var input = source.ownedRegistryOrThrow(key);
-        copy(key, input.entrySet(), dest);
+        copy(key, input.entrySet(), input::lifecycle, dest);
     }
 
     /*
@@ -195,18 +196,18 @@ public class ForgeRegistryAccessHooks
     private static <T extends IForgeRegistryEntry<T>> void copy(RegistryAccessExtension<T> extension, RegistryAccess dest)
     {
         var input = extension.getRegistry().get();
-        copy(extension.getRegistryKey(), input.getEntries(), dest);
+        copy(extension.getRegistryKey(), input.getEntries(), t -> Lifecycle.stable(), dest);
     }
 
     /*
      * Helper for copying an Iterable of ResourceKey-to-value mappings to a RegistryAccess.
      */
-    private static <T> void copy(ResourceKey<? extends Registry<T>> key, Iterable<Map.Entry<ResourceKey<T>, T>> source, RegistryAccess dest)
+    private static <T> void copy(ResourceKey<? extends Registry<T>> key, Iterable<Map.Entry<ResourceKey<T>, T>> source, Function<T, Lifecycle> lifeCycleProvider, RegistryAccess dest)
     {
         var registry = dest.ownedRegistryOrThrow(key);
         for (var entry : source)
         {
-            registry.register(entry.getKey(), entry.getValue(), Lifecycle.stable());
+            registry.register(entry.getKey(), entry.getValue(), lifeCycleProvider.apply(entry.getValue()));
         }
     }
 
