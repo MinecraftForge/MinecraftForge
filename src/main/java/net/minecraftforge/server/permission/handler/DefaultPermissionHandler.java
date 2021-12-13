@@ -33,7 +33,7 @@ public final class DefaultPermissionHandler implements IPermissionHandler
 {
     private final ResourceLocation name = new ResourceLocation("forge", "default_handler");;
     private final Set<PermissionNode<?>> registeredNodes = new HashSet<>();
-    private Set<PermissionNode<?>> immutableRegisteredNodes;
+    private Set<PermissionNode<?>> immutableRegisteredNodes = Collections.unmodifiableSet(this.registeredNodes);
 
     public DefaultPermissionHandler()
     {
@@ -49,14 +49,11 @@ public final class DefaultPermissionHandler implements IPermissionHandler
     public void registerNode(PermissionNode<?> node)
     {
         this.registeredNodes.add(node);
-        this.immutableRegisteredNodes = null;
     }
 
     @Override
     public Set<PermissionNode<?>> getRegisteredNodes()
     {
-        if(this.immutableRegisteredNodes == null)
-            this.immutableRegisteredNodes = Collections.unmodifiableSet(this.registeredNodes);
         return immutableRegisteredNodes;
     }
 
