@@ -51,32 +51,16 @@ public class AnimateEntityLivingTest
 
     private void registerAnimations(EntityRenderersEvent.AddAnimations event)
     {
-        // Custom player pose when riding a pig.
-        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.PASSIVE, EntityAnimation.Priority.FIRST)
-        {
-            @Override
-            public boolean canRun(Player entity)
-            {
-                return entity.getVehicle() != null && entity.getVehicle().getType() == EntityType.PIG;
-            }
+        this.setupPlayerEmoteAnimationTest(event);
+        this.setupPassiveAnimationPriorityTest(event);
+        this.setupZombieAnimationTest(event);
+        this.setupArmorStandAnimationTest(event);
+    }
 
-            @Override
-            public void apply(Player player, EntityModel<Player> model, Context context)
-            {
-                if (model instanceof PlayerModel<?> playerModel)
-                {
-                    playerModel.leftLeg.xRot = (float) Math.toRadians(-90F);
-                    playerModel.rightLeg.xRot = (float) Math.toRadians(-90F);
-                    playerModel.leftLeg.yRot = (float) Math.toRadians(-45F);
-                    playerModel.rightLeg.yRot = (float) Math.toRadians(45F);
-                    playerModel.leftPants.copyFrom(playerModel.leftLeg);
-                    playerModel.rightPants.copyFrom(playerModel.rightLeg);
-                }
-            }
-        });
-
+    private void setupPlayerEmoteAnimationTest(EntityRenderersEvent.AddAnimations event)
+    {
         // Player waving animation when holding a cookie
-        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.LAST)
+        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.FIRST)
         {
             @Override
             public boolean canRun(Player entity)
@@ -96,8 +80,87 @@ public class AnimateEntityLivingTest
                 }
             }
         });
+    }
 
-        event.addAnimation(EntityType.ARMOR_STAND, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.DEFAULT)
+    /* Creates a test to demonstrate priority in passive animations */
+    private void setupPassiveAnimationPriorityTest(EntityRenderersEvent.AddAnimations event)
+    {
+        // Custom player pose when riding a pig.
+        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.PASSIVE, EntityAnimation.Priority.FIRST)
+        {
+            @Override
+            public boolean canRun(Player entity)
+            {
+                return entity.getVehicle() != null && entity.getVehicle().getType() == EntityType.PIG;
+            }
+
+            @Override
+            public void apply(Player player, EntityModel<Player> model, Context context)
+            {
+                if (model instanceof PlayerModel<?> playerModel)
+                {
+                    playerModel.leftLeg.xRot = (float) Math.toRadians(-90F);
+                    playerModel.rightLeg.xRot = (float) Math.toRadians(-90F);
+                    playerModel.leftLeg.yRot = (float) Math.toRadians(-45F);
+                    playerModel.rightLeg.yRot = (float) Math.toRadians(45F);
+                    playerModel.leftLeg.zRot = 0;
+                    playerModel.rightLeg.zRot = 0;
+                    playerModel.leftPants.copyFrom(playerModel.leftLeg);
+                    playerModel.rightPants.copyFrom(playerModel.rightLeg);
+                }
+            }
+        });
+
+        // This should overlay an animation on top of the animation defined above
+        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.PASSIVE, EntityAnimation.Priority.DEFAULT)
+        {
+            @Override
+            public boolean canRun(Player entity)
+            {
+                return entity.getVehicle() != null && entity.getVehicle().getType() == EntityType.PIG && entity.getMainHandItem().getItem() == Items.PIG_SPAWN_EGG;
+            }
+
+            @Override
+            public void apply(Player player, EntityModel<Player> model, Context context)
+            {
+                if (model instanceof PlayerModel<?> playerModel)
+                {
+                    playerModel.leftLeg.yRot = (float) Math.toRadians(-90F);
+                    playerModel.rightLeg.yRot = (float) Math.toRadians(90F);
+                    playerModel.leftPants.copyFrom(playerModel.leftLeg);
+                    playerModel.rightPants.copyFrom(playerModel.rightLeg);
+                }
+            }
+        });
+    }
+
+    private void setupZombieAnimationTest(EntityRenderersEvent.AddAnimations event)
+    {
+        event.addAnimation(EntityType.ZOMBIE, new EntityAnimation<>(EntityAnimation.Mode.PASSIVE, EntityAnimation.Priority.FIRST)
+        {
+            @Override
+            public boolean canRun(Zombie entity)
+            {
+                return entity.isOnFire();
+            }
+
+            @Override
+            public void apply(Zombie entity, EntityModel<Zombie> model, Context context)
+            {
+                if (model instanceof ZombieModel<?> zombieModel)
+                {
+                    float rotation = (entity.tickCount + context.partialTicks()) * 20F;
+                    zombieModel.rightArm.xRot = (float) Math.toRadians(rotation);
+                    zombieModel.leftArm.xRot = (float) Math.toRadians(rotation + 180F);
+                }
+            }
+        });
+    }
+
+    // Creates a test to show active animations cancelling later priority active animations
+    private void setupArmorStandAnimationTest(EntityRenderersEvent.AddAnimations event)
+    {
+        event.addAnimation(EntityType.ARMOR_STAND, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.FIRST)
         {
             @Override
             public boolean canRun(ArmorStand entity)
@@ -119,22 +182,22 @@ public class AnimateEntityLivingTest
             }
         });
 
-        event.addAnimation(EntityType.ZOMBIE, new EntityAnimation<>(EntityAnimation.Mode.PASSIVE, EntityAnimation.Priority.FIRST)
+        // This should never be able to execute since the active animation above is running
+        event.addAnimation(EntityType.ARMOR_STAND, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.DEFAULT)
         {
             @Override
-            public boolean canRun(Zombie entity)
+            public boolean canRun(ArmorStand entity)
             {
-                return entity.isOnFire();
+                return entity.getItemBySlot(EquipmentSlot.HEAD).getItem() == Items.NETHERITE_HELMET;
             }
 
             @Override
-            public void apply(Zombie entity, EntityModel<Zombie> model, Context context)
+            public void apply(ArmorStand entity, EntityModel<ArmorStand> model, Context context)
             {
-                if (model instanceof ZombieModel<?> zombieModel)
+                if (model instanceof ArmorStandModel standModel)
                 {
-                    float rotation = (entity.tickCount + context.partialTicks()) * 20F;
-                    zombieModel.rightArm.xRot = (float) Math.toRadians(rotation);
-                    zombieModel.leftArm.xRot = (float) Math.toRadians(rotation + 180F);
+                    standModel.rightArm.zRot = 0;
+                    standModel.leftArm.zRot = 0;
                 }
             }
         });
