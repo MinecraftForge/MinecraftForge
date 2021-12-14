@@ -1,17 +1,16 @@
 --- a/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/LivingEntityRenderer.java
-@@ -33,11 +_,14 @@
+@@ -33,11 +_,13 @@
     private static final float f_174287_ = 0.1F;
     protected M f_115290_;
     protected final List<RenderLayer<T, M>> f_115291_ = Lists.newArrayList();
-+   protected final List<net.minecraftforge.client.animation.IEntityAnimation<T>> animations = new java.util.ArrayList<>();
-+   protected final java.util.Map<net.minecraft.client.model.geom.ModelPart, net.minecraft.client.model.geom.PartPose> defaultPoseMap;
++   protected final net.minecraftforge.client.animation.EntityAnimator<T> animator;
  
     public LivingEntityRenderer(EntityRendererProvider.Context p_174289_, M p_174290_, float p_174291_) {
        super(p_174289_);
        this.f_115290_ = p_174290_;
        this.f_114477_ = p_174291_;
-+      this.defaultPoseMap = net.minecraftforge.client.ForgeHooksClient.generateDefaultPoseMap(this.f_115290_);
++      this.animator = new net.minecraftforge.client.animation.EntityAnimator<>(this.f_115290_);
     }
  
     public final boolean m_115326_(RenderLayer<T, M> p_115327_) {
@@ -48,10 +47,10 @@
           }
        }
  
-+      this.restoreDefaultPoses();
++      this.animator.restoreDefaultPose();
        this.f_115290_.m_6839_(p_115308_, f5, f8, p_115310_);
        this.f_115290_.m_6973_(p_115308_, f5, f8, f7, f2, f6);
-+      net.minecraftforge.client.ForgeHooksClient.applyEntityAnimations(p_115308_, this.f_115290_, this.animations, f5, f8, f7, p_115309_, f6, p_115310_);
++      this.animator.execute(p_115308_, this.f_115290_, f5, f8, f7, p_115309_, f6, p_115310_);
        Minecraft minecraft = Minecraft.m_91087_();
        boolean flag = this.m_5933_(p_115308_);
        boolean flag1 = !flag && !p_115308_.m_20177_(minecraft.f_91074_);
@@ -63,18 +62,13 @@
     }
  
     @Nullable
-@@ -267,5 +_,14 @@
+@@ -267,5 +_,9 @@
        }
  
        return false;
 +   }
 +
-+   protected void restoreDefaultPoses() {
-+      this.defaultPoseMap.forEach(net.minecraft.client.model.geom.ModelPart::m_171322_);
-+   }
-+
-+   public void addAnimation(net.minecraftforge.client.animation.IEntityAnimation<T> animation) {
-+      this.animations.add(animation);
-+      java.util.Collections.sort(this.animations);
++   public net.minecraftforge.client.animation.EntityAnimator<T> getAnimator() {
++      return this.animator;
     }
  }

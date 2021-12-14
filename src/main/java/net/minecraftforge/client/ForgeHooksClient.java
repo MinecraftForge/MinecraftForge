@@ -1069,45 +1069,4 @@ public class ForgeHooksClient
         });
     }
 
-    public static <T extends LivingEntity> Map<ModelPart, PartPose> generateDefaultPoseMap(EntityModel<T> entityModel)
-    {
-        Map<ModelPart, PartPose> map = new HashMap<>();
-        if (entityModel instanceof AgeableListModel<T> model)
-        {
-            model.allParts().forEach(part -> storePartPoseAndSearch(map, part));
-        }
-        else if (entityModel instanceof HierarchicalModel<T> model)
-        {
-            storePartPoseAndSearch(map, model.root());
-        }
-        else if (entityModel instanceof ListModel<T> model)
-        {
-            model.parts().forEach(part -> storePartPoseAndSearch(map, part));
-        }
-        return map;
-    }
-
-    private static void storePartPoseAndSearch(Map<ModelPart, PartPose> map, ModelPart part)
-    {
-        map.put(part, part.storePose());
-        part.getAllParts().filter(p -> p != part).forEach(p -> storePartPoseAndSearch(map, p));
-    }
-
-    public static <T extends LivingEntity> void applyEntityAnimations(T entity, EntityModel<T> model, List<IEntityAnimation<T>> animations, float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float partialTicks)
-    {
-        if (animations.isEmpty()) return;
-        IEntityAnimation.Context context = new IEntityAnimation.Context(animateTicks, animateSpeed, bobAnimateTicks, headYaw, headPitch, partialTicks);
-        for (IEntityAnimation<T> animation : animations)
-        {
-            if (animation.canRun(entity))
-            {
-                animation.apply(entity, model, context);
-                if (animation.getMode() == IEntityAnimation.Mode.ACTIVE)
-                {
-                    break;
-                }
-            }
-        }
-    }
-
 }

@@ -165,7 +165,7 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
         public <T extends LivingEntity> void addAnimation(EntityType<T> type, IEntityAnimation<T> animation)
         {
             this.animations.computeIfAbsent(type, t -> new ArrayList<>()).add(renderer -> {
-                ((LivingEntityRenderer<T, ?>) renderer).addAnimation(animation);
+                ((LivingEntityRenderer<T, ?>) renderer).getAnimator().addAnimation(animation);
             });
         }
 
