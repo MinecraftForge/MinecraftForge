@@ -115,7 +115,7 @@ public class AnimateEntityLivingTest
             {
                 if (model instanceof PlayerModel<?> playerModel)
                 {
-                    float angle = (float) Math.sin(player.tickCount + context.getPartialTicks()) * 20F;
+                    float angle = (float) Math.sin(player.tickCount + context.partialTicks()) * 20F;
                     playerModel.rightArm.x -= 1;
                     playerModel.rightArm.zRot = (float) Math.toRadians(150F + angle);
                     playerModel.rightSleeve.copyFrom(playerModel.rightArm);
@@ -136,7 +136,7 @@ public class AnimateEntityLivingTest
             {
                 if (model instanceof ArmorStandModel standModel)
                 {
-                    float angle = (float) Math.sin(entity.tickCount + context.getPartialTicks()) * 20F;
+                    float angle = (float) Math.sin(entity.tickCount + context.partialTicks()) * 20F;
                     standModel.rightArm.zRot = (float) Math.toRadians(90F + angle);
                     standModel.leftArm.zRot = (float) Math.toRadians(-90F + angle);
                     standModel.rightLeg.zRot = (float) Math.toRadians(25F + angle);
@@ -170,7 +170,7 @@ public class AnimateEntityLivingTest
             {
                 if (model instanceof ZombieModel<?> zombieModel)
                 {
-                    float rotation = (entity.tickCount + context.getPartialTicks()) * 20F;
+                    float rotation = (entity.tickCount + context.partialTicks()) * 20F;
                     zombieModel.rightArm.xRot = (float) Math.toRadians(rotation);
                     zombieModel.leftArm.xRot = (float) Math.toRadians(rotation + 180F);
                 }
