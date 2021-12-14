@@ -106,6 +106,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.animation.IEntityAnimation;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ForgeModelBakery;
@@ -1092,7 +1093,7 @@ public class ForgeHooksClient
         part.getAllParts().filter(p -> p != part).forEach(p -> storePartPoseAndSearch(map, p));
     }
 
-    public static <T extends LivingEntity> void applyEntityAnimations(T entity, EntityModel<T> model, List<net.minecraftforge.client.IEntityAnimation<T>> animations, float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float partialTicks)
+    public static <T extends LivingEntity> void applyEntityAnimations(T entity, EntityModel<T> model, List<IEntityAnimation<T>> animations, float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float partialTicks)
     {
         if (animations.isEmpty()) return;
         IEntityAnimation.Context context = new IEntityAnimation.Context(animateTicks, animateSpeed, bobAnimateTicks, headYaw, headPitch, partialTicks);

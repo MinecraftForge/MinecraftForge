@@ -38,7 +38,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.IEntityAnimation;
+import net.minecraftforge.client.animation.IEntityAnimation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 

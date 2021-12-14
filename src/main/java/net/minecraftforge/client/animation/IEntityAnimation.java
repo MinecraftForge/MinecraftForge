@@ -1,4 +1,4 @@
-package net.minecraftforge.client;
+package net.minecraftforge.client.animation;
 
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.world.entity.LivingEntity;
