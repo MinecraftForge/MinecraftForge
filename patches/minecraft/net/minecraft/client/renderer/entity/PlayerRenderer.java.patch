@@ -10,3 +10,16 @@
     }
  
     public Vector3d func_225627_b_(AbstractClientPlayerEntity p_225627_1_, float p_225627_2_) {
+@@ -156,10 +_,12 @@
+    }
+ 
+    public void func_229144_a_(MatrixStack p_229144_1_, IRenderTypeBuffer p_229144_2_, int p_229144_3_, AbstractClientPlayerEntity p_229144_4_) {
++      if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonArm(p_229144_1_, p_229144_2_, p_229144_3_, p_229144_4_, HandSide.RIGHT))
+       this.func_229145_a_(p_229144_1_, p_229144_2_, p_229144_3_, p_229144_4_, (this.field_77045_g).field_178723_h, (this.field_77045_g).field_178732_b);
+    }
+ 
+    public void func_229146_b_(MatrixStack p_229146_1_, IRenderTypeBuffer p_229146_2_, int p_229146_3_, AbstractClientPlayerEntity p_229146_4_) {
++      if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonArm(p_229146_1_, p_229146_2_, p_229146_3_, p_229146_4_, HandSide.LEFT))
+       this.func_229145_a_(p_229146_1_, p_229146_2_, p_229146_3_, p_229146_4_, (this.field_77045_g).field_178724_i, (this.field_77045_g).field_178734_a);
+    }
+ 
