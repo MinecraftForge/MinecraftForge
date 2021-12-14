@@ -1,7 +1,7 @@
 --- a/com/mojang/realmsclient/gui/screens/RealmsGenericErrorScreen.java
 +++ b/com/mojang/realmsclient/gui/screens/RealmsGenericErrorScreen.java
-@@ -69,6 +_,15 @@
-       return (new TextComponent("")).m_7220_(this.f_88666_).m_130946_(": ").m_7220_(this.f_88667_);
+@@ -67,6 +_,15 @@
+       return (new TextComponent("")).m_7220_(this.f_200947_.getFirst()).m_130946_(": ").m_7220_(this.f_200947_.getSecond());
     }
  
 +    @Override
@@ -15,4 +15,4 @@
 +
     public void m_6305_(PoseStack p_88679_, int p_88680_, int p_88681_, float p_88682_) {
        this.m_7333_(p_88679_);
-       m_93215_(p_88679_, this.f_96547_, this.f_88666_, this.f_96543_ / 2, 80, 16777215);
+       m_93215_(p_88679_, this.f_96547_, this.f_200947_.getFirst(), this.f_96543_ / 2, 80, 16777215);

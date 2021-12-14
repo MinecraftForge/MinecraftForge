@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/ServerAdvancementManager.java
 +++ b/net/minecraft/server/ServerAdvancementManager.java
-@@ -39,6 +_,10 @@
+@@ -38,6 +_,10 @@
           try {
              JsonObject jsonobject = GsonHelper.m_13918_(p_136040_, "advancement");
              Advancement.Builder advancement$builder = Advancement.Builder.m_138380_(jsonobject, new DeserializationContext(p_136039_, this.f_136024_));
@@ -9,5 +9,5 @@
 +                return;
 +            }
              map.put(p_136039_, advancement$builder);
-          } catch (IllegalArgumentException | JsonParseException jsonparseexception) {
-             f_136021_.error("Parsing error loading custom advancement {}: {}", p_136039_, jsonparseexception.getMessage());
+          } catch (Exception exception) {
+             f_136021_.error("Parsing error loading custom advancement {}: {}", p_136039_, exception.getMessage());
