@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Options.java
 +++ b/net/minecraft/client/Options.java
-@@ -186,6 +_,7 @@
+@@ -187,6 +_,7 @@
     public boolean f_92076_;
  
     public Options(Minecraft p_92138_, File p_92139_) {
@@ -8,7 +8,7 @@
        this.f_92060_ = p_92138_;
        this.f_92110_ = new File(p_92139_, "options.txt");
        if (p_92138_.m_91103_() && Runtime.getRuntime().maxMemory() >= 1000000000L) {
-@@ -299,10 +_,14 @@
+@@ -300,10 +_,14 @@
        this.f_193762_ = p_168428_.m_142682_("allowServerListing", this.f_193762_);
  
        for(KeyMapping keymapping : this.f_92059_) {
@@ -25,7 +25,7 @@
           }
        }
  
-@@ -490,6 +_,7 @@
+@@ -491,6 +_,7 @@
     }
  
     public void m_92169_() {
@@ -33,7 +33,7 @@
        try {
           final PrintWriter printwriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(this.f_92110_), StandardCharsets.UTF_8));
  
-@@ -638,6 +_,23 @@
+@@ -639,6 +_,23 @@
        }
  
        p_92146_.m_10509_(set);
