@@ -36,7 +36,8 @@ public class ResourceKeyTagsTest
     {
         event.getDispatcher().register(
             Commands.literal("resource_key_tags_test_am_i_in_a_swamp")
-            .executes(context ->{
+            .executes(context ->
+            {
                 CommandSourceStack source = context.getSource();
                 Vec3 vec = context.getSource().getPosition();
                 BlockPos pos = new BlockPos(vec);

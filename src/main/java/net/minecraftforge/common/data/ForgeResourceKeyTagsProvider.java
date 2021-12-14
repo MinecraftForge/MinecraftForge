@@ -229,6 +229,4 @@ public final class ForgeResourceKeyTagsProvider implements DataProvider
     {
         return "Forge Resource Key Tags Provider";
     }
-    
-    
 }

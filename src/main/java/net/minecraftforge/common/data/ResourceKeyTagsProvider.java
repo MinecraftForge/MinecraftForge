@@ -101,7 +101,8 @@ public abstract class ResourceKeyTagsProvider<T> implements DataProvider
         Tag<ResourceKey<T>> tag = SetTag.empty();
         Function<ResourceLocation, Tag<ResourceKey<T>>> tagFromID = id -> this.tagBuilders.containsKey(id) ? tag : null;
         Function<ResourceLocation, ResourceKey<T>> resourceKeyFromID = ResourceKey.elementKey(this.registryKey);
-        this.tagBuilders.forEach((id,builder) ->{
+        this.tagBuilders.forEach((id,builder) ->
+        {
             List<Tag.BuilderEntry> missingReferences = builder.getEntries()
                 .filter(this::missing)
                 .collect(Collectors.toList());
@@ -268,11 +269,13 @@ public abstract class ResourceKeyTagsProvider<T> implements DataProvider
          * (the default is replace=false, indicating that the tags should be merged -- invoke this to set replace=true)
          * @return this
          */
-        public Builder<T> replace() {
+        public Builder<T> replace()
+        {
             return replace(true);
         }
 
-        public Builder<T> replace(boolean value) {
+        public Builder<T> replace(boolean value)
+        {
             this.getInternalBuilder().replace(value);
             return this;
         }
