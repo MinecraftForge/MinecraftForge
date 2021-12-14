@@ -1284,7 +1284,8 @@ public class ForgeHooks
             {
                 CompoundTag mod = modList.getCompound(i);
                 String modId = mod.getString("ModId");
-                if (Objects.equals("minecraft",  modId)) {
+                if (Objects.equals("minecraft",  modId))
+                {
                     continue;
                 }
                 String modVersion = mod.getString("ModVersion");
