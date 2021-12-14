@@ -28,7 +28,7 @@ import java.util.List;
 
 public class EntityAnimator<T extends LivingEntity>
 {
-    protected final List<IEntityAnimation<T>> animations = new ArrayList<>();
+    protected final List<EntityAnimation<T>> animations = new ArrayList<>();
     protected final DefaultPoseHolder<T> defaultPoseHolder;
 
     public EntityAnimator(EntityModel<T> model)
@@ -36,22 +36,43 @@ public class EntityAnimator<T extends LivingEntity>
         this.defaultPoseHolder = new DefaultPoseHolder<>(model);
     }
 
-    public void addAnimation(IEntityAnimation<T> animation)
+    /**
+     * Adds an animation to this animator and sorts based on mode and priority.
+     * See {@link EntityAnimation#compareTo(EntityAnimation)} for an explanation on the ordering.
+     *
+     * @param animation an animation instance for the specific entity
+     */
+    public void addAnimation(EntityAnimation<T> animation)
     {
         this.animations.add(animation);
         Collections.sort(this.animations);
     }
 
+    /**
+     * Executes this animator and applies the registered animations to given entity/model. Only the
+     * animations that can run will be applied. If the animation is active, it will be applied then
+     * all remaining active animations will be ignored. The execution order of animations is based
+     * on mode and priority. See {@link EntityAnimation#compareTo(EntityAnimation)} for an explanation.
+     *
+     * @param entity          the entity currently being rendered
+     * @param model           the model to apply the animations to
+     * @param animateTicks    the current movement ticks
+     * @param animateSpeed    the speed of the movement ticks
+     * @param bobAnimateTicks the ticks of the bob animation
+     * @param headYaw         the yaw of the entity
+     * @param headPitch       the pitch of the entity
+     * @param partialTicks    the current partial ticks
+     */
     public void execute(T entity, EntityModel<T> model, float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float partialTicks)
     {
         if (this.animations.isEmpty()) return;
-        IEntityAnimation.Context context = new IEntityAnimation.Context(animateTicks, animateSpeed, bobAnimateTicks, headYaw, headPitch, partialTicks);
-        for (IEntityAnimation<T> animation : this.animations)
+        EntityAnimation.Context context = new EntityAnimation.Context(animateTicks, animateSpeed, bobAnimateTicks, headYaw, headPitch, partialTicks);
+        for (EntityAnimation<T> animation : this.animations)
         {
             if (animation.canRun(entity))
             {
                 animation.apply(entity, model, context);
-                if (animation.getMode() == IEntityAnimation.Mode.ACTIVE)
+                if (animation.getMode() == EntityAnimation.Mode.ACTIVE)
                 {
                     break;
                 }
@@ -59,6 +80,9 @@ public class EntityAnimator<T extends LivingEntity>
         }
     }
 
+    /**
+     * Restores the default pose of this entity
+     */
     public void restoreDefaultPose()
     {
         this.defaultPoseHolder.restoreDefaultPose();

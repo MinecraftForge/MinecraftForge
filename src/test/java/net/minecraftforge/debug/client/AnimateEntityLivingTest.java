@@ -30,7 +30,7 @@ import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.animation.IEntityAnimation;
+import net.minecraftforge.client.animation.EntityAnimation;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -52,24 +52,12 @@ public class AnimateEntityLivingTest
     private void registerAnimations(EntityRenderersEvent.AddAnimations event)
     {
         // Custom player pose when riding a pig.
-        event.addAnimation(EntityType.PLAYER, new IEntityAnimation<>()
+        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.PASSIVE, EntityAnimation.Priority.FIRST)
         {
             @Override
             public boolean canRun(Player entity)
             {
                 return entity.getVehicle() != null && entity.getVehicle().getType() == EntityType.PIG;
-            }
-
-            @Override
-            public Priority getPriority()
-            {
-                return Priority.FIRST;
-            }
-
-            @Override
-            public Mode getMode()
-            {
-                return Mode.PASSIVE;
             }
 
             @Override
@@ -88,24 +76,12 @@ public class AnimateEntityLivingTest
         });
 
         // Player waving animation when holding a cookie
-        event.addAnimation(EntityType.PLAYER, new IEntityAnimation<>()
+        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.LAST)
         {
             @Override
             public boolean canRun(Player entity)
             {
                 return entity.getMainHandItem().getItem() == Items.COOKIE;
-            }
-
-            @Override
-            public Priority getPriority()
-            {
-                return Priority.LAST;
-            }
-
-            @Override
-            public Mode getMode()
-            {
-                return Mode.ACTIVE;
             }
 
             @Override
@@ -121,7 +97,7 @@ public class AnimateEntityLivingTest
             }
         });
 
-        event.addAnimation(EntityType.ARMOR_STAND, new IEntityAnimation<>()
+        event.addAnimation(EntityType.ARMOR_STAND, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.DEFAULT)
         {
             @Override
             public boolean canRun(ArmorStand entity)
@@ -143,24 +119,12 @@ public class AnimateEntityLivingTest
             }
         });
 
-        event.addAnimation(EntityType.ZOMBIE, new IEntityAnimation<>()
+        event.addAnimation(EntityType.ZOMBIE, new EntityAnimation<>(EntityAnimation.Mode.PASSIVE, EntityAnimation.Priority.FIRST)
         {
             @Override
             public boolean canRun(Zombie entity)
             {
                 return entity.isOnFire();
-            }
-
-            @Override
-            public Mode getMode()
-            {
-                return Mode.PASSIVE;
-            }
-
-            @Override
-            public Priority getPriority()
-            {
-                return Priority.FIRST;
             }
 
             @Override

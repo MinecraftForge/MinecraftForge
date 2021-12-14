@@ -40,6 +40,21 @@ public class DefaultPoseHolder<T extends Entity>
         this.defaultPoseMap = this.generatePoseMap(entityModel);
     }
 
+    /**
+     * Generates a map containing all parts of the model (including children) and the default pose
+     * associated with them. Entries will only be added for select entity model classes since there
+     * is no standard way to get all the model parts from an entity model.
+     * <p>
+     * The classes that are supported are:
+     * <ul>
+     *     <li>AgeableListModel</li>
+     *     <li>HierarchicalModel</li>
+     *     <li>ListModel</li>
+     * </ul>
+     *
+     * @param entityModel the entity model
+     * @return a map containing all the default poses
+     */
     private ImmutableMap<ModelPart, PartPose> generatePoseMap(EntityModel<T> entityModel)
     {
         // Obviously it would be better if there was a common interface instead of this
@@ -59,12 +74,23 @@ public class DefaultPoseHolder<T extends Entity>
         return ImmutableMap.copyOf(map);
     }
 
+    /**
+     * Adds the given model part to the given map and searches it children.
+     * <p>
+     * <b>Note:</b> This method is recursive and exits based on a model part not having any children.
+     *
+     * @param map  the map to put the model part and pose
+     * @param part the model part to add and search
+     */
     private void storeModelPoseAndSearch(Map<ModelPart, PartPose> map, ModelPart part)
     {
         map.put(part, part.storePose());
         part.getAllParts().filter(p -> p != part).forEach(p -> this.storeModelPoseAndSearch(map, p));
     }
 
+    /**
+     * Restores the default pose
+     */
     public void restoreDefaultPose()
     {
         this.defaultPoseMap.forEach(ModelPart::loadPose);
