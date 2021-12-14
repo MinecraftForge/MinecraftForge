@@ -4,7 +4,7 @@
     private static final float f_174287_ = 0.1F;
     protected M f_115290_;
     protected final List<RenderLayer<T, M>> f_115291_ = Lists.newArrayList();
-+   protected final List<net.minecraftforge.client.IEntityAnimation<T>> animations = new java.util.ArrayList<>();
++   protected final List<net.minecraftforge.client.animation.IEntityAnimation<T>> animations = new java.util.ArrayList<>();
 +   protected final java.util.Map<net.minecraft.client.model.geom.ModelPart, net.minecraft.client.model.geom.PartPose> defaultPoseMap;
  
     public LivingEntityRenderer(EntityRendererProvider.Context p_174289_, M p_174290_, float p_174291_) {
@@ -73,7 +73,7 @@
 +      this.defaultPoseMap.forEach(net.minecraft.client.model.geom.ModelPart::m_171322_);
 +   }
 +
-+   public void addAnimation(net.minecraftforge.client.IEntityAnimation<T> animation) {
++   public void addAnimation(net.minecraftforge.client.animation.IEntityAnimation<T> animation) {
 +      this.animations.add(animation);
 +      java.util.Collections.sort(this.animations);
     }
