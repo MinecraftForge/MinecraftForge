@@ -38,12 +38,15 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.blaze3d.platform.Window;
@@ -1042,6 +1045,27 @@ public class ForgeHooksClient
                         ClientTooltipComponent::create
                 ))
                 .toList();
+    }
+
+    public static void onAddEntityAnimations(Map<String, EntityRenderer<? extends Player>> playerRenders, Map<EntityType<?>, EntityRenderer<?>> entityRenders)
+    {
+        var event = new net.minecraftforge.client.event.EntityRenderersEvent.AddAnimations();
+        net.minecraftforge.fml.ModLoader.get().postEvent(event);
+        event.getAnimations().forEach((entityType, consumers) ->
+        {
+            if (entityType == EntityType.PLAYER)
+            {
+                playerRenders.forEach((s, renderer) -> consumers.forEach(consumer -> consumer.accept((LivingEntityRenderer<?, ?>) renderer)));
+            }
+            else
+            {
+                EntityRenderer<?> renderer = entityRenders.get(entityType);
+                if (renderer instanceof LivingEntityRenderer<?, ?> livingRenderer)
+                {
+                    consumers.forEach(consumer -> consumer.accept(livingRenderer));
+                }
+            }
+        });
     }
 
     public static <T extends LivingEntity> Map<ModelPart, PartPose> generateDefaultPoseMap(EntityModel<T> entityModel)
