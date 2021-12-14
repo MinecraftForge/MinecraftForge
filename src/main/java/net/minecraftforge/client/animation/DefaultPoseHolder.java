@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.animation;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.HierarchicalModel;
@@ -27,17 +27,18 @@ import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.world.entity.Entity;
+import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DefaultPoseHolder<T extends Entity>
 {
-    private final ImmutableMap<ModelPart, PartPose> defaultPoseMap;
+    private final ImmutableList<Pair<ModelPart, PartPose>> defaultPoseList;
 
     public DefaultPoseHolder(EntityModel<T> entityModel)
     {
-        this.defaultPoseMap = this.generatePoseMap(entityModel);
+        this.defaultPoseList = this.generatePoseList(entityModel);
     }
 
     /**
@@ -55,23 +56,23 @@ public class DefaultPoseHolder<T extends Entity>
      * @param entityModel the entity model
      * @return a map containing all the default poses
      */
-    private ImmutableMap<ModelPart, PartPose> generatePoseMap(EntityModel<T> entityModel)
+    private ImmutableList<Pair<ModelPart, PartPose>> generatePoseList(EntityModel<T> entityModel)
     {
         // Obviously it would be better if there was a common interface instead of this
-        Map<ModelPart, PartPose> map = new HashMap<>();
+        List<Pair<ModelPart, PartPose>> list = new ArrayList<>();
         if (entityModel instanceof AgeableListModel<T> model)
         {
-            model.allParts().forEach(part -> this.storeModelPoseAndSearch(map, part));
+            model.allParts().forEach(part -> this.storeModelPoseAndSearch(list, part));
         }
         else if (entityModel instanceof HierarchicalModel<T> model)
         {
-            this.storeModelPoseAndSearch(map, model.root());
+            this.storeModelPoseAndSearch(list, model.root());
         }
         else if (entityModel instanceof ListModel<T> model)
         {
-            model.parts().forEach(part -> this.storeModelPoseAndSearch(map, part));
+            model.parts().forEach(part -> this.storeModelPoseAndSearch(list, part));
         }
-        return ImmutableMap.copyOf(map);
+        return ImmutableList.copyOf(list);
     }
 
     /**
@@ -79,13 +80,13 @@ public class DefaultPoseHolder<T extends Entity>
      * <p>
      * <b>Note:</b> This method is recursive and exits based on a model part not having any children.
      *
-     * @param map  the map to put the model part and pose
+     * @param list the list to add the model part and pose pair
      * @param part the model part to add and search
      */
-    private void storeModelPoseAndSearch(Map<ModelPart, PartPose> map, ModelPart part)
+    private void storeModelPoseAndSearch(List<Pair<ModelPart, PartPose>> list, ModelPart part)
     {
-        map.put(part, part.storePose());
-        part.getAllParts().filter(p -> p != part).forEach(p -> this.storeModelPoseAndSearch(map, p));
+        list.add(Pair.of(part, part.storePose()));
+        part.getAllParts().filter(p -> p != part).forEach(p -> this.storeModelPoseAndSearch(list, p));
     }
 
     /**
@@ -93,6 +94,6 @@ public class DefaultPoseHolder<T extends Entity>
      */
     public void restoreDefaultPose()
     {
-        this.defaultPoseMap.forEach(ModelPart::loadPose);
+        this.defaultPoseList.forEach(pair -> pair.getLeft().loadPose(pair.getRight()));
     }
 }
