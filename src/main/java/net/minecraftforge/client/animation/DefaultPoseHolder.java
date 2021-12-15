@@ -20,25 +20,20 @@
 package net.minecraftforge.client.animation;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.model.AgeableListModel;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.world.entity.Entity;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DefaultPoseHolder<T extends Entity>
+public class DefaultPoseHolder
 {
     private final ImmutableList<Pair<ModelPart, PartPose>> defaultPoseList;
 
-    public DefaultPoseHolder(EntityModel<T> entityModel)
+    public DefaultPoseHolder(ModelComponent root)
     {
-        this.defaultPoseList = this.generatePoseList(entityModel);
+        this.defaultPoseList = this.generatePoseList(root);
     }
 
     /**
@@ -53,25 +48,14 @@ public class DefaultPoseHolder<T extends Entity>
      *     <li>ListModel</li>
      * </ul>
      *
-     * @param entityModel the entity model
+     * @param root the root model component
      * @return a map containing all the default poses
      */
-    private ImmutableList<Pair<ModelPart, PartPose>> generatePoseList(EntityModel<T> entityModel)
+    private ImmutableList<Pair<ModelPart, PartPose>> generatePoseList(ModelComponent root)
     {
         // Obviously it would be better if there was a common interface instead of this
         List<Pair<ModelPart, PartPose>> list = new ArrayList<>();
-        if (entityModel instanceof AgeableListModel<T> model)
-        {
-            model.allParts().forEach(part -> this.storeModelPoseAndSearch(list, part));
-        }
-        else if (entityModel instanceof HierarchicalModel<T> model)
-        {
-            this.storeModelPoseAndSearch(list, model.root());
-        }
-        else if (entityModel instanceof ListModel<T> model)
-        {
-            model.parts().forEach(part -> this.storeModelPoseAndSearch(list, part));
-        }
+        root.children().forEach((component) -> this.storeModelPoseAndSearch(list, component.asPart()));
         return ImmutableList.copyOf(list);
     }
 

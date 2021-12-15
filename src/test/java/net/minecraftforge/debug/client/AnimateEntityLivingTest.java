@@ -23,6 +23,7 @@ import net.minecraft.client.model.ArmorStandModel;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.ZombieModel;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -31,6 +32,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.animation.EntityAnimation;
+import net.minecraftforge.client.animation.ModelComponent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -69,15 +71,13 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Player player, EntityModel<Player> model, Context context)
+            public void apply(Player player, ModelComponent root, Context context)
             {
-                if (model instanceof PlayerModel<?> playerModel)
-                {
-                    float angle = (float) Math.sin(player.tickCount + context.partialTicks()) * 20F;
-                    playerModel.rightArm.x -= 1;
-                    playerModel.rightArm.zRot = (float) Math.toRadians(150F + angle);
-                    playerModel.rightSleeve.copyFrom(playerModel.rightArm);
-                }
+                float angle = (float) Math.sin(player.tickCount + context.partialTicks()) * 20F;
+                ModelPart rightArm = root.get("right_arm").asPart();
+                rightArm.x -= 1;
+                rightArm.zRot = (float) Math.toRadians(150F + angle);
+                root.get("right_sleeve").asPart().copyFrom(rightArm);
             }
         });
     }
@@ -95,19 +95,18 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Player player, EntityModel<Player> model, Context context)
+            public void apply(Player player, ModelComponent root, Context context)
             {
-                if (model instanceof PlayerModel<?> playerModel)
-                {
-                    playerModel.leftLeg.xRot = (float) Math.toRadians(-90F);
-                    playerModel.rightLeg.xRot = (float) Math.toRadians(-90F);
-                    playerModel.leftLeg.yRot = (float) Math.toRadians(-45F);
-                    playerModel.rightLeg.yRot = (float) Math.toRadians(45F);
-                    playerModel.leftLeg.zRot = 0;
-                    playerModel.rightLeg.zRot = 0;
-                    playerModel.leftPants.copyFrom(playerModel.leftLeg);
-                    playerModel.rightPants.copyFrom(playerModel.rightLeg);
-                }
+                ModelPart leftLeg = root.get("left_leg").asPart();
+                ModelPart rightLeg = root.get("right_leg").asPart();
+                leftLeg.xRot = (float) Math.toRadians(-90F);
+                rightLeg.xRot = (float) Math.toRadians(-90F);
+                leftLeg.yRot = (float) Math.toRadians(-45F);
+                rightLeg.yRot = (float) Math.toRadians(45F);
+                leftLeg.zRot = 0;
+                rightLeg.zRot = 0;
+                root.get("left_pants").asPart().copyFrom(leftLeg);
+                root.get("right_pants").asPart().copyFrom(rightLeg);
             }
         });
 
@@ -121,15 +120,14 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Player player, EntityModel<Player> model, Context context)
+            public void apply(Player player, ModelComponent root, Context context)
             {
-                if (model instanceof PlayerModel<?> playerModel)
-                {
-                    playerModel.leftLeg.yRot = (float) Math.toRadians(-90F);
-                    playerModel.rightLeg.yRot = (float) Math.toRadians(90F);
-                    playerModel.leftPants.copyFrom(playerModel.leftLeg);
-                    playerModel.rightPants.copyFrom(playerModel.rightLeg);
-                }
+                ModelPart leftLeg = root.get("left_leg").asPart();
+                ModelPart rightLeg = root.get("right_leg").asPart();
+                leftLeg.yRot = (float) Math.toRadians(-90F);
+                rightLeg.yRot = (float) Math.toRadians(90F);
+                root.get("left_pants").asPart().copyFrom(leftLeg);
+                root.get("right_pants").asPart().copyFrom(rightLeg);
             }
         });
     }
@@ -145,14 +143,11 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Zombie entity, EntityModel<Zombie> model, Context context)
+            public void apply(Zombie entity, ModelComponent root, Context context)
             {
-                if (model instanceof ZombieModel<?> zombieModel)
-                {
-                    float rotation = (entity.tickCount + context.partialTicks()) * 20F;
-                    zombieModel.rightArm.xRot = (float) Math.toRadians(rotation);
-                    zombieModel.leftArm.xRot = (float) Math.toRadians(rotation + 180F);
-                }
+                float rotation = (entity.tickCount + context.partialTicks()) * 20F;
+                root.get("right_arm").asPart().xRot = (float) Math.toRadians(rotation);
+                root.get("left_arm").asPart().xRot = (float) Math.toRadians(rotation + 180F);
             }
         });
     }
@@ -169,16 +164,13 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(ArmorStand entity, EntityModel<ArmorStand> model, Context context)
+            public void apply(ArmorStand entity, ModelComponent root, Context context)
             {
-                if (model instanceof ArmorStandModel standModel)
-                {
-                    float angle = (float) Math.sin(entity.tickCount + context.partialTicks()) * 20F;
-                    standModel.rightArm.zRot = (float) Math.toRadians(90F + angle);
-                    standModel.leftArm.zRot = (float) Math.toRadians(-90F + angle);
-                    standModel.rightLeg.zRot = (float) Math.toRadians(25F + angle);
-                    standModel.leftLeg.zRot = (float) Math.toRadians(-25F + angle);
-                }
+                float angle = (float) Math.sin(entity.tickCount + context.partialTicks()) * 20F;
+                root.get("right_arm").asPart().zRot = (float) Math.toRadians(90F + angle);
+                root.get("left_arm").asPart().zRot = (float) Math.toRadians(-90F + angle);
+                root.get("right_leg").asPart().zRot = (float) Math.toRadians(25F + angle);
+                root.get("left_leg").asPart().zRot = (float) Math.toRadians(-25F + angle);
             }
         });
 
@@ -192,13 +184,10 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(ArmorStand entity, EntityModel<ArmorStand> model, Context context)
+            public void apply(ArmorStand entity, ModelComponent root, Context context)
             {
-                if (model instanceof ArmorStandModel standModel)
-                {
-                    standModel.rightArm.zRot = 0;
-                    standModel.leftArm.zRot = 0;
-                }
+                root.get("right_arm").asPart().zRot = 0;
+                root.get("left_arm").asPart().zRot = 0;
             }
         });
     }

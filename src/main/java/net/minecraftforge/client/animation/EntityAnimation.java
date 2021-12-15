@@ -19,7 +19,6 @@
 
 package net.minecraftforge.client.animation;
 
-import net.minecraft.client.model.EntityModel;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 
@@ -84,10 +83,10 @@ public abstract class EntityAnimation<E extends LivingEntity> implements Compara
      * order animations are applied.
      *
      * @param entity the entity currently being rendered
-     * @param model the model to apply animations
+     * @param root the root model component contain
      * @param context additional data used for calculating animations
      */
-    public abstract void apply(E entity, EntityModel<E> model, Context context);
+    public abstract void apply(E entity, ModelComponent root, Context context);
 
     /**
      * Determines how animations are executed. The order is based on the mode and priority

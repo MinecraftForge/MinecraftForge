@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/model/geom/ModelPart.java
++++ b/net/minecraft/client/model/geom/ModelPart.java
+@@ -152,6 +_,10 @@
+       return Stream.concat(Stream.of(this), this.f_104213_.values().stream().flatMap(ModelPart::m_171331_));
+    }
+ 
++   public Map<String, ModelPart> getChildren() {
++      return this.f_104213_;
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    public static class Cube {
+       private final ModelPart.Polygon[] f_104341_;

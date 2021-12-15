@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/model/HierarchicalModel.java
++++ b/net/minecraft/client/model/HierarchicalModel.java
+@@ -25,4 +_,9 @@
+    }
+ 
+    public abstract ModelPart m_142109_();
++
++   @Override
++   public void gatherAnimatedParts(java.util.Map<String, ModelPart> partMap) {
++      this.m_142109_().getChildren().forEach(partMap::put);
++   }
+ }

@@ -1,11 +1,14 @@
 --- a/net/minecraft/client/model/AgeableListModel.java
 +++ b/net/minecraft/client/model/AgeableListModel.java
-@@ -76,4 +_,8 @@
+@@ -76,4 +_,11 @@
     protected abstract Iterable<ModelPart> m_5607_();
  
     protected abstract Iterable<ModelPart> m_5608_();
 +
-+   public Iterable<ModelPart> allParts() {
-+      return com.google.common.collect.Iterables.concat(this.m_5607_(), this.m_5608_());
++   @Override
++   public void gatherAnimatedParts(java.util.Map<String, ModelPart> partMap) {
++      // This might be bad since changes in the iterables
++      net.minecraftforge.client.animation.IAnimatedModel.fillFromIterable(partMap, this.m_5607_(), "head_part");
++      net.minecraftforge.client.animation.IAnimatedModel.fillFromIterable(partMap, this.m_5608_(), "body_part");
 +   }
  }

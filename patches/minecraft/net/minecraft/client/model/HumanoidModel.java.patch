@@ -1,0 +1,30 @@
+--- a/net/minecraft/client/model/HumanoidModel.java
++++ b/net/minecraft/client/model/HumanoidModel.java
+@@ -25,6 +_,7 @@
+    private static final float f_170671_ = 0.2617994F;
+    private static final float f_170672_ = 1.9198622F;
+    private static final float f_170675_ = 0.2617994F;
++   private final ModelPart root;
+    public final ModelPart f_102808_;
+    public final ModelPart f_102809_;
+    public final ModelPart f_102810_;
+@@ -43,6 +_,7 @@
+ 
+    public HumanoidModel(ModelPart p_170679_, Function<ResourceLocation, RenderType> p_170680_) {
+       super(p_170680_, true, 16.0F, 0.0F, 2.0F, 2.0F, 24.0F);
++      this.root = p_170679_;
+       this.f_102808_ = p_170679_.m_171324_("head");
+       this.f_102809_ = p_170679_.m_171324_("hat");
+       this.f_102810_ = p_170679_.m_171324_("body");
+@@ -383,6 +_,11 @@
+    private HumanoidArm m_102856_(T p_102857_) {
+       HumanoidArm humanoidarm = p_102857_.m_5737_();
+       return p_102857_.f_20912_ == InteractionHand.MAIN_HAND ? humanoidarm : humanoidarm.m_20828_();
++   }
++
++   @Override
++   public void gatherAnimatedParts(java.util.Map<String, ModelPart> partMap) {
++      this.root.getChildren().forEach(partMap::put);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)

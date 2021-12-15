@@ -28,12 +28,14 @@ import java.util.List;
 
 public class EntityAnimator<T extends LivingEntity>
 {
+    protected final ModelComponent root;
     protected final List<EntityAnimation<T>> animations = new ArrayList<>();
-    protected final DefaultPoseHolder<T> defaultPoseHolder;
+    protected final DefaultPoseHolder defaultPoseHolder;
 
     public EntityAnimator(EntityModel<T> model)
     {
-        this.defaultPoseHolder = new DefaultPoseHolder<>(model);
+        this.root = new ModelComponent(model);
+        this.defaultPoseHolder = new DefaultPoseHolder(this.root);
     }
 
     /**
@@ -55,7 +57,6 @@ public class EntityAnimator<T extends LivingEntity>
      * on mode and priority. See {@link EntityAnimation#compareTo(EntityAnimation)} for an explanation.
      *
      * @param entity          the entity currently being rendered
-     * @param model           the model to apply the animations to
      * @param animateTicks    the current movement ticks
      * @param animateSpeed    the speed of the movement ticks
      * @param bobAnimateTicks the ticks of the bob animation
@@ -63,7 +64,7 @@ public class EntityAnimator<T extends LivingEntity>
      * @param headPitch       the pitch of the entity
      * @param partialTicks    the current partial ticks
      */
-    public void execute(T entity, EntityModel<T> model, float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float partialTicks)
+    public void execute(T entity, float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float partialTicks)
     {
         if (this.animations.isEmpty()) return;
         EntityAnimation.Context context = new EntityAnimation.Context(animateTicks, animateSpeed, bobAnimateTicks, headYaw, headPitch, partialTicks);
@@ -71,7 +72,7 @@ public class EntityAnimator<T extends LivingEntity>
         {
             if (animation.canRun(entity))
             {
-                animation.apply(entity, model, context);
+                animation.apply(entity, this.root, context);
                 if (animation.getMode() == EntityAnimation.Mode.ACTIVE)
                 {
                     break;
