@@ -40,6 +40,6 @@ public interface IAnimatedModel
     static void fillFromIterable(Map<String, ModelPart> partMap, Iterable<ModelPart> parts, String prefix)
     {
         int i = 0;
-        for(ModelPart part : parts) partMap.put(prefix + "_" + i, part);
+        for(ModelPart part : parts) partMap.put(prefix + "_" + i++, part);
     }
 }
