@@ -13,7 +13,7 @@
 +            } catch (Exception e) {
 +                f_78191_.error("Exception reading {}", file, e);
 +            }
-+            return null;
++            return ""; // Return non-null to prevent level.dat-old inject
 +         });
 +      }
 +
