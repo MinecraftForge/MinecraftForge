@@ -330,7 +330,7 @@ public class PlayerInteractEvent extends PlayerEvent
     @Cancelable
     public static class ItemUseEvent extends PlayerInteractEvent
     {
-        protected final UseOnContext ctx;
+        private final UseOnContext ctx;
 
         public ItemUseEvent(UseOnContext ctx)
         {
