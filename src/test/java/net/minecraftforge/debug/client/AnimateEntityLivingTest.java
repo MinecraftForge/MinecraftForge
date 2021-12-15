@@ -19,10 +19,6 @@
 
 package net.minecraftforge.debug.client;
 
-import net.minecraft.client.model.ArmorStandModel;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.model.ZombieModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -74,10 +70,10 @@ public class AnimateEntityLivingTest
             public void apply(Player player, ModelComponent root, Context context)
             {
                 float angle = (float) Math.sin(player.tickCount + context.partialTicks()) * 20F;
-                ModelPart rightArm = root.get("right_arm").asPart();
+                ModelPart rightArm = root.get("right_arm");
                 rightArm.x -= 1;
                 rightArm.zRot = (float) Math.toRadians(150F + angle);
-                root.get("right_sleeve").asPart().copyFrom(rightArm);
+                root.get("right_sleeve").copyFrom(rightArm);
             }
         });
     }
@@ -97,16 +93,16 @@ public class AnimateEntityLivingTest
             @Override
             public void apply(Player player, ModelComponent root, Context context)
             {
-                ModelPart leftLeg = root.get("left_leg").asPart();
-                ModelPart rightLeg = root.get("right_leg").asPart();
+                ModelPart leftLeg = root.get("left_leg");
+                ModelPart rightLeg = root.get("right_leg");
                 leftLeg.xRot = (float) Math.toRadians(-90F);
                 rightLeg.xRot = (float) Math.toRadians(-90F);
                 leftLeg.yRot = (float) Math.toRadians(-45F);
                 rightLeg.yRot = (float) Math.toRadians(45F);
                 leftLeg.zRot = 0;
                 rightLeg.zRot = 0;
-                root.get("left_pants").asPart().copyFrom(leftLeg);
-                root.get("right_pants").asPart().copyFrom(rightLeg);
+                root.get("left_pants").copyFrom(leftLeg);
+                root.get("right_pants").copyFrom(rightLeg);
             }
         });
 
@@ -122,12 +118,12 @@ public class AnimateEntityLivingTest
             @Override
             public void apply(Player player, ModelComponent root, Context context)
             {
-                ModelPart leftLeg = root.get("left_leg").asPart();
-                ModelPart rightLeg = root.get("right_leg").asPart();
+                ModelPart leftLeg = root.get("left_leg");
+                ModelPart rightLeg = root.get("right_leg");
                 leftLeg.yRot = (float) Math.toRadians(-90F);
                 rightLeg.yRot = (float) Math.toRadians(90F);
-                root.get("left_pants").asPart().copyFrom(leftLeg);
-                root.get("right_pants").asPart().copyFrom(rightLeg);
+                root.get("left_pants").copyFrom(leftLeg);
+                root.get("right_pants").copyFrom(rightLeg);
             }
         });
     }
@@ -146,8 +142,8 @@ public class AnimateEntityLivingTest
             public void apply(Zombie entity, ModelComponent root, Context context)
             {
                 float rotation = (entity.tickCount + context.partialTicks()) * 20F;
-                root.get("right_arm").asPart().xRot = (float) Math.toRadians(rotation);
-                root.get("left_arm").asPart().xRot = (float) Math.toRadians(rotation + 180F);
+                root.get("right_arm").xRot = (float) Math.toRadians(rotation);
+                root.get("left_arm").xRot = (float) Math.toRadians(rotation + 180F);
             }
         });
     }
@@ -167,10 +163,10 @@ public class AnimateEntityLivingTest
             public void apply(ArmorStand entity, ModelComponent root, Context context)
             {
                 float angle = (float) Math.sin(entity.tickCount + context.partialTicks()) * 20F;
-                root.get("right_arm").asPart().zRot = (float) Math.toRadians(90F + angle);
-                root.get("left_arm").asPart().zRot = (float) Math.toRadians(-90F + angle);
-                root.get("right_leg").asPart().zRot = (float) Math.toRadians(25F + angle);
-                root.get("left_leg").asPart().zRot = (float) Math.toRadians(-25F + angle);
+                root.get("right_arm").zRot = (float) Math.toRadians(90F + angle);
+                root.get("left_arm").zRot = (float) Math.toRadians(-90F + angle);
+                root.get("right_leg").zRot = (float) Math.toRadians(25F + angle);
+                root.get("left_leg").zRot = (float) Math.toRadians(-25F + angle);
             }
         });
 
@@ -186,8 +182,8 @@ public class AnimateEntityLivingTest
             @Override
             public void apply(ArmorStand entity, ModelComponent root, Context context)
             {
-                root.get("right_arm").asPart().zRot = 0;
-                root.get("left_arm").asPart().zRot = 0;
+                root.get("right_arm").zRot = 0;
+                root.get("left_arm").zRot = 0;
             }
         });
     }

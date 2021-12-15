@@ -55,7 +55,7 @@ public class DefaultPoseHolder
     {
         // Obviously it would be better if there was a common interface instead of this
         List<Pair<ModelPart, PartPose>> list = new ArrayList<>();
-        root.children().forEach((component) -> this.storeModelPoseAndSearch(list, component.asPart()));
+        root.children().forEach((component) -> this.storeModelPoseAndSearch(list, component.getPart()));
         return ImmutableList.copyOf(list);
     }
 

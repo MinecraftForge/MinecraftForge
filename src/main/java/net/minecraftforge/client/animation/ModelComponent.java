@@ -67,15 +67,21 @@ public class ModelComponent
         return ImmutableMap.copyOf(map);
     }
 
-    public ModelPart asPart()
+    @Nonnull
+    public ModelPart get(String path)
     {
-        return this.part;
+        String[] splitPath = path.split("\\.");
+        ModelComponent c = this;
+        for(String s : splitPath)
+        {
+            c = c.children.getOrDefault(s, FALLBACK_COMPONENT);
+        }
+        return c.part;
     }
 
-    @Nonnull
-    public ModelComponent get(String name)
+    ModelPart getPart()
     {
-        return this.children.getOrDefault(name, FALLBACK_COMPONENT);
+        return this.part;
     }
 
     Collection<ModelComponent> children()
