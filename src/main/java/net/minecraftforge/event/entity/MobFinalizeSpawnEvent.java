@@ -43,10 +43,10 @@ public class MobFinalizeSpawnEvent extends EntityEvent
     @Nullable
     private final CompoundTag compoundTag;
 
-    public MobFinalizeSpawnEvent(Mob entity, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData data, @Nullable CompoundTag compoundTag)
+    public MobFinalizeSpawnEvent(Mob mob, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData data, @Nullable CompoundTag compoundTag)
     {
-        super(entity);
-        this.mob = entity;
+        super(mob);
+        this.mob = mob;
         this.difficultyInstance = difficultyInstance;
         this.mobSpawnType = mobSpawnType;
         this.groupData = data;
