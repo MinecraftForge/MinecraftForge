@@ -172,5 +172,7 @@ license="LGPL v2.1"
     modId="part_entity_test"
 [[mods]]
     modId="capabilities_test"
+[[mods]]
+    modId="shield_block_event"
 
 # ADD ABOVE THIS LINE

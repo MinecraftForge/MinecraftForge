@@ -133,8 +133,8 @@
 +            net.minecraftforge.event.entity.living.ShieldBlockEvent ev = net.minecraftforge.common.ForgeHooks.onShieldBlock(this, p_21016_, p_21017_);
 +            if(!ev.isCanceled()) {
 +            if(ev.shieldTakesDamage()) this.m_7909_(p_21017_);
-+            f1 = ev.getBlocked();
-+            p_21017_ -= ev.getBlocked();
++            f1 = ev.getBlockedDamage();
++            p_21017_ -= ev.getBlockedDamage();
              if (!p_21016_.m_19360_()) {
                 Entity entity = p_21016_.m_7640_();
                 if (entity instanceof LivingEntity) {

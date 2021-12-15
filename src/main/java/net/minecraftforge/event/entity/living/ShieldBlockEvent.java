@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2021.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.util.Mth;
@@ -15,10 +34,10 @@ import net.minecraftforge.eventbus.api.Cancelable;
 @Cancelable
 public class ShieldBlockEvent extends LivingEvent
 {
-    protected final DamageSource source;
-    protected final float originalBlocked;
-    protected float dmgBlocked;
-    protected boolean shieldTakesDamage = true;
+    private final DamageSource source;
+    private final float originalBlocked;
+    private float dmgBlocked;
+    private boolean shieldTakesDamage = true;
 
     public ShieldBlockEvent(LivingEntity blocker, DamageSource source, float blocked)
     {
@@ -31,7 +50,7 @@ public class ShieldBlockEvent extends LivingEvent
     /**
      * @return The damage source.
      */
-    public DamageSource getSource()
+    public DamageSource getDamageSource()
     {
         return this.source;
     }
@@ -40,7 +59,7 @@ public class ShieldBlockEvent extends LivingEvent
      * @return The original amount of damage blocked, which is the same as the original
      * incoming damage value.
      */
-    public float getOriginalBlocked()
+    public float getOriginalBlockedDamage()
     {
         return this.originalBlocked;
     }
@@ -48,7 +67,7 @@ public class ShieldBlockEvent extends LivingEvent
     /**
      * @return The current amount of damage blocked, as a result of this event.
      */
-    public float getBlocked()
+    public float getBlockedDamage()
     {
         return this.dmgBlocked;
     }
@@ -66,7 +85,7 @@ public class ShieldBlockEvent extends LivingEvent
      * Set how much damage is blocked by this action.<br>
      * Note that initially the blocked amount is the entire attack.<br>
      */
-    public void setBlocked(float blocked)
+    public void setBlockedDamage(float blocked)
     {
         this.dmgBlocked = Mth.clamp(blocked, 0, this.originalBlocked);
     }
@@ -74,7 +93,7 @@ public class ShieldBlockEvent extends LivingEvent
     /**
      * Set if the shield will take durability damage or not.
      */
-    public void setTakesDamage(boolean damage)
+    public void setShieldTakesDamage(boolean damage)
     {
         this.shieldTakesDamage = damage;
     }
