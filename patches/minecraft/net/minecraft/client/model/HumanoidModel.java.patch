@@ -23,8 +23,8 @@
 +   }
 +
 +   @Override
-+   public void gatherAnimatedParts(java.util.Map<String, ModelPart> partMap) {
-+      this.root.getChildren().forEach(partMap::put);
++   public void gatherAnimatedParts(java.util.function.BiConsumer<String, ModelPart> consumer) {
++      this.root.getChildren().forEach(consumer);
     }
  
     @OnlyIn(Dist.CLIENT)

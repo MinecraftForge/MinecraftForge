@@ -6,7 +6,7 @@
     public abstract Iterable<ModelPart> m_6195_();
 +
 +   @Override
-+   public void gatherAnimatedParts(java.util.Map<String, ModelPart> partMap) {
-+      net.minecraftforge.client.animation.IAnimatedModel.fillFromIterable(partMap, this.m_6195_(), "part");
++   public void gatherAnimatedParts(java.util.function.BiConsumer<String, ModelPart> consumer) {
++      net.minecraftforge.client.animation.IAnimatedModel.fillFromIterable(consumer, this.m_6195_(), "part");
 +   }
  }

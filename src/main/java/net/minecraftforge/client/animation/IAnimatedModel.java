@@ -21,25 +21,31 @@ package net.minecraftforge.client.animation;
 
 import net.minecraft.client.model.geom.ModelPart;
 
-import java.util.Map;
+import java.util.function.BiConsumer;
 
 public interface IAnimatedModel
 {
-    default void gatherAnimatedParts(Map<String, ModelPart> partMap)
+    /**
+     * Gathers model parts that can be animated. Use the consumer to submit model parts
+     * with an associated name.
+     *
+     * @param consumer a bi consumer that handles the accepted inputs
+     */
+    default void gatherAnimatedParts(BiConsumer<String, ModelPart> consumer)
     {}
 
     /**
      * Helper method to fill part map from an iterable of model parts. The name is of each part is
-     * created with the provided prefix plus it's index. For instance, a prefix of "body" will create
-     * the name "body_0", "body_1" and so on.
+     * created with the provided prefix plus the count at which it was retrieved from the iterable.
+     * For instance, a prefix of "body" will create the name "body_0", "body_1" and so on.
      *
-     * @param partMap the map to put the parts
+     * @param consumer a bi consumer that handles the accepted inputs
      * @param parts an iterable of model parts
      * @param prefix the name to prefix for each part
      */
-    static void fillFromIterable(Map<String, ModelPart> partMap, Iterable<ModelPart> parts, String prefix)
+    static void fillFromIterable(BiConsumer<String, ModelPart> consumer, Iterable<ModelPart> parts, String prefix)
     {
         int i = 0;
-        for(ModelPart part : parts) partMap.put(prefix + "_" + i++, part);
+        for(ModelPart part : parts) consumer.accept(prefix + "_" + i++, part);
     }
 }

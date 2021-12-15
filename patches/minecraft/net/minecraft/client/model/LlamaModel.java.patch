@@ -6,14 +6,14 @@
     }
 +
 +   @Override
-+   public void gatherAnimatedParts(java.util.Map<String, ModelPart> partMap) {
-+      partMap.put("head", this.f_103031_);
-+      partMap.put("body", this.f_103032_);
-+      partMap.put("right_front_leg", this.f_170719_);
-+      partMap.put("left_front_leg", this.f_170720_);
-+      partMap.put("right_hind_leg", this.f_170718_);
-+      partMap.put("left_hind_leg", this.f_170718_);
-+      partMap.put("right_chest", this.f_170721_);
-+      partMap.put("left_chest", this.f_170722_);
++   public void gatherAnimatedParts(java.util.function.BiConsumer<String, ModelPart> consumer) {
++      consumer.accept("head", this.f_103031_);
++      consumer.accept("body", this.f_103032_);
++      consumer.accept("right_front_leg", this.f_170719_);
++      consumer.accept("left_front_leg", this.f_170720_);
++      consumer.accept("right_hind_leg", this.f_170718_);
++      consumer.accept("left_hind_leg", this.f_170718_);
++      consumer.accept("right_chest", this.f_170721_);
++      consumer.accept("left_chest", this.f_170722_);
 +   }
  }

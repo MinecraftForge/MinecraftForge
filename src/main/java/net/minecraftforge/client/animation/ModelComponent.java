@@ -51,7 +51,7 @@ public class ModelComponent
     private Map<String, ModelComponent> generateComponentMap(IAnimatedModel model)
     {
         Map<String, ModelPart> partMap = new HashMap<>();
-        model.gatherAnimatedParts(partMap);
+        model.gatherAnimatedParts(partMap::put);
         return this.generateComponentMap(partMap);
     }
 

@@ -6,7 +6,7 @@
     public abstract ModelPart m_142109_();
 +
 +   @Override
-+   public void gatherAnimatedParts(java.util.Map<String, ModelPart> partMap) {
-+      this.m_142109_().getChildren().forEach(partMap::put);
++   public void gatherAnimatedParts(java.util.function.BiConsumer<String, ModelPart> consumer) {
++      this.m_142109_().getChildren().forEach(consumer);
 +   }
  }
