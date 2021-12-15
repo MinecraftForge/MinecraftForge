@@ -67,6 +67,15 @@ public class ModelComponent
         return ImmutableMap.copyOf(map);
     }
 
+    /**
+     * Looks up and retrieves a model part for the given path. It should be noted that if no model
+     * part exist at the specified path, a fallback model will be returned. Editing the fallback
+     * model part will have no effect on the model animation. This method returns non-null for the
+     * convenience of not having to constantly null check before using model parts.
+     *
+     * @param path the path of the model part
+     * @return a model part from the model or a fallback model if no model part existed at the path
+     */
     @Nonnull
     public ModelPart get(String path)
     {
