@@ -52,7 +52,7 @@ public class AnimateEntityLivingTest
         this.setupPlayerEmoteAnimationTest(event);
         this.setupPassiveAnimationPriorityTest(event);
         this.setupZombieAnimationTest(event);
-        this.setupArmorStandAnimationTest(event);
+        this.setupArmorStandActiveAnimationTest(event);
     }
 
     private void setupPlayerEmoteAnimationTest(EntityRenderersEvent.AddAnimations event)
@@ -130,6 +130,8 @@ public class AnimateEntityLivingTest
 
     private void setupZombieAnimationTest(EntityRenderersEvent.AddAnimations event)
     {
+        /* A simple example of creating an animation for an entity. In this case, when a zombie is
+         * on fire it will spin it's arms around. */
         event.addAnimation(EntityType.ZOMBIE, new EntityAnimation<>(EntityAnimation.Mode.PASSIVE, EntityAnimation.Priority.FIRST)
         {
             @Override
@@ -148,9 +150,10 @@ public class AnimateEntityLivingTest
         });
     }
 
-    // Creates a test to show active animations cancelling later priority active animations
-    private void setupArmorStandAnimationTest(EntityRenderersEvent.AddAnimations event)
+    // Creates a test to show an active animation preventing a later priority active animation
+    private void setupArmorStandActiveAnimationTest(EntityRenderersEvent.AddAnimations event)
     {
+        // Creates an active animation for an armour stand with a first priority
         event.addAnimation(EntityType.ARMOR_STAND, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.FIRST)
         {
             @Override
@@ -162,6 +165,7 @@ public class AnimateEntityLivingTest
             @Override
             public void apply(ArmorStand entity, ModelComponent root, Context context)
             {
+                // Makes the limbs move like creating an angel in snow
                 float angle = (float) Math.sin(entity.tickCount + context.partialTick()) * 20F;
                 root.get("right_arm").zRot = (float) Math.toRadians(90F + angle);
                 root.get("left_arm").zRot = (float) Math.toRadians(-90F + angle);
@@ -170,7 +174,9 @@ public class AnimateEntityLivingTest
             }
         });
 
-        // This should never be able to execute since the active animation above is running
+        /* Another active animation for the armour stand with the same canRun condition. Since the
+         * animation created above will run first due to it's first priority, this animation will
+         * never run as default priority runs after first priority */
         event.addAnimation(EntityType.ARMOR_STAND, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.DEFAULT)
         {
             @Override
@@ -182,6 +188,7 @@ public class AnimateEntityLivingTest
             @Override
             public void apply(ArmorStand entity, ModelComponent root, Context context)
             {
+                // This code will never be executed
                 root.get("right_arm").zRot = 0;
                 root.get("left_arm").zRot = 0;
             }

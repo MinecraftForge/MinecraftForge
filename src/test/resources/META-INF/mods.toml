@@ -174,4 +174,5 @@ license="LGPL v2.1"
     modId="capabilities_test"
 [[mods]]
     modId="animate_entity_test"
+
 # ADD ABOVE THIS LINE
