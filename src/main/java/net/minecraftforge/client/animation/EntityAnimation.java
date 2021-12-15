@@ -169,5 +169,6 @@ public abstract class EntityAnimation<E extends LivingEntity> implements Compara
     /**
      * A record containing data used when calculating animations with the addition of partial ticks
      */
-    protected record Context(float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float partialTicks) {}
+    protected record Context(float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float partialTick)
+    {}
 }

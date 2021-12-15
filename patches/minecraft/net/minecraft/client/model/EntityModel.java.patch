@@ -1,12 +1,11 @@
 --- a/net/minecraft/client/model/EntityModel.java
 +++ b/net/minecraft/client/model/EntityModel.java
-@@ -8,7 +_,8 @@
+@@ -8,7 +_,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
 -public abstract class EntityModel<T extends Entity> extends Model {
-+public abstract class EntityModel<T extends Entity> extends Model implements net.minecraftforge.client.animation.IAnimatedModel
-+{
++public abstract class EntityModel<T extends Entity> extends Model implements net.minecraftforge.client.animation.IAnimatedModel {
     public float f_102608_;
     public boolean f_102609_;
     public boolean f_102610_ = true;

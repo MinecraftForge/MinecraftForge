@@ -69,7 +69,7 @@ public class AnimateEntityLivingTest
             @Override
             public void apply(Player player, ModelComponent root, Context context)
             {
-                float angle = (float) Math.sin(player.tickCount + context.partialTicks()) * 20F;
+                float angle = (float) Math.sin(player.tickCount + context.partialTick()) * 20F;
                 ModelPart rightArm = root.get("right_arm");
                 rightArm.x -= 1;
                 rightArm.zRot = (float) Math.toRadians(150F + angle);
@@ -141,7 +141,7 @@ public class AnimateEntityLivingTest
             @Override
             public void apply(Zombie entity, ModelComponent root, Context context)
             {
-                float rotation = (entity.tickCount + context.partialTicks()) * 20F;
+                float rotation = (entity.tickCount + context.partialTick()) * 20F;
                 root.get("right_arm").xRot = (float) Math.toRadians(rotation);
                 root.get("left_arm").xRot = (float) Math.toRadians(rotation + 180F);
             }
@@ -162,7 +162,7 @@ public class AnimateEntityLivingTest
             @Override
             public void apply(ArmorStand entity, ModelComponent root, Context context)
             {
-                float angle = (float) Math.sin(entity.tickCount + context.partialTicks()) * 20F;
+                float angle = (float) Math.sin(entity.tickCount + context.partialTick()) * 20F;
                 root.get("right_arm").zRot = (float) Math.toRadians(90F + angle);
                 root.get("left_arm").zRot = (float) Math.toRadians(-90F + angle);
                 root.get("right_leg").zRot = (float) Math.toRadians(25F + angle);
