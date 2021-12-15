@@ -23,7 +23,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.SpawnGroupData;
@@ -35,7 +34,6 @@ import net.minecraft.world.entity.SpawnGroupData;
  */
 public class MobFinalizeSpawnEvent extends EntityEvent
 {
-    private final Mob mob;
     private final DifficultyInstance difficultyInstance;
     private final MobSpawnType mobSpawnType;
     @Nullable
@@ -46,7 +44,6 @@ public class MobFinalizeSpawnEvent extends EntityEvent
     public MobFinalizeSpawnEvent(Mob mob, DifficultyInstance difficultyInstance, MobSpawnType mobSpawnType, @Nullable SpawnGroupData data, @Nullable CompoundTag compoundTag)
     {
         super(mob);
-        this.mob = mob;
         this.difficultyInstance = difficultyInstance;
         this.mobSpawnType = mobSpawnType;
         this.groupData = data;
@@ -78,6 +75,6 @@ public class MobFinalizeSpawnEvent extends EntityEvent
     @Override
     public Mob getEntity()
     {
-        return mob;
+        return (Mob)super.getEntity();
     }
 }
