@@ -42,7 +42,6 @@ import java.util.function.Function;
 /**
  * Contains hooks for RegistryAccess creation, injection and loading.
  */
-@SuppressWarnings("JavadocReference")
 public class ForgeRegistryAccessHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -196,7 +195,7 @@ public class ForgeRegistryAccessHooks
     private static <T extends IForgeRegistryEntry<T>> void copy(RegistryAccessExtension<T> extension, RegistryAccess dest)
     {
         var input = extension.getRegistry().get();
-        copy(extension.getRegistryKey(), input.getEntries(), t -> Lifecycle.stable(), dest);
+        copy(extension.getRegistryKey(), input.getEntries(), t -> Lifecycle.experimental(), dest);
     }
 
     /*
