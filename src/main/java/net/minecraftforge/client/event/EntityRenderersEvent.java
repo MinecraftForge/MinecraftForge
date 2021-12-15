@@ -19,7 +19,11 @@
 
 package net.minecraftforge.client.event;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -156,7 +160,7 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
      */
     public static class AddAnimations extends EntityRenderersEvent
     {
-        private final Map<EntityType<?>, List<Consumer<LivingEntityRenderer<?, ?>>>> animations = new HashMap<>();
+        private final Multimap<EntityType<?>, Consumer<LivingEntityRenderer<?, ?>>> animations = ArrayListMultimap.create();
 
         /**
          * Prepares an animation to be added to the given entity type. Animations are registered when
@@ -169,17 +173,15 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
         @SuppressWarnings("unchecked")
         public <T extends LivingEntity> void addAnimation(EntityType<T> type, EntityAnimation<T> animation)
         {
-            this.animations.computeIfAbsent(type, t -> new ArrayList<>()).add(renderer -> {
-                ((LivingEntityRenderer<T, ?>) renderer).getAnimator().addAnimation(animation);
-            });
+            this.animations.put(type, renderer -> ((LivingEntityRenderer<T, ?>) renderer).getAnimator().addAnimation(animation));
         }
 
         /**
          * Gets a map of the registered animations. Used internally.
          */
-        public Map<EntityType<?>, List<Consumer<LivingEntityRenderer<?, ?>>>> getAnimations()
+        public Multimap<EntityType<?>, Consumer<LivingEntityRenderer<?, ?>>> getAnimations()
         {
-            return ImmutableMap.copyOf(animations);
+            return ImmutableListMultimap.copyOf(animations);
         }
     }
 }

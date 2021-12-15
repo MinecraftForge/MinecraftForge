@@ -1058,18 +1058,18 @@ public class ForgeHooksClient
     {
         var event = new net.minecraftforge.client.event.EntityRenderersEvent.AddAnimations();
         net.minecraftforge.fml.ModLoader.get().postEvent(event);
-        event.getAnimations().forEach((entityType, consumers) ->
+        event.getAnimations().forEach((entityType, consumer) ->
         {
             if (entityType == EntityType.PLAYER)
             {
-                playerRenders.forEach((s, renderer) -> consumers.forEach(consumer -> consumer.accept((LivingEntityRenderer<?, ?>) renderer)));
+                playerRenders.forEach((s, renderer) -> consumer.accept((LivingEntityRenderer<?, ?>) renderer));
             }
             else
             {
                 EntityRenderer<?> renderer = entityRenders.get(entityType);
                 if (renderer instanceof LivingEntityRenderer<?, ?> livingRenderer)
                 {
-                    consumers.forEach(consumer -> consumer.accept(livingRenderer));
+                    consumer.accept(livingRenderer);
                 }
             }
         });
