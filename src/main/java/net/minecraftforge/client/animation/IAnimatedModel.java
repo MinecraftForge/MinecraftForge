@@ -25,7 +25,8 @@ import java.util.Map;
 
 public interface IAnimatedModel
 {
-    void gatherAnimatedParts(Map<String, ModelPart> partMap);
+    default void gatherAnimatedParts(Map<String, ModelPart> partMap)
+    {}
 
     /**
      * Helper method to fill part map from an iterable of model parts. The name is of each part is
