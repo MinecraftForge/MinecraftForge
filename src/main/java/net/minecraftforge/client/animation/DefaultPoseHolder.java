@@ -29,7 +29,7 @@ import java.util.List;
 
 public class DefaultPoseHolder
 {
-    private final ImmutableList<Pair<ModelPart, PartPose>> defaultPoseList;
+    private final List<Pair<ModelPart, PartPose>> defaultPoseList;
 
     public DefaultPoseHolder(ModelComponent root)
     {
