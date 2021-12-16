@@ -27,6 +27,8 @@ import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.animation.AnimationData;
+import net.minecraftforge.client.animation.AnimationKey;
 import net.minecraftforge.client.animation.EntityAnimation;
 import net.minecraftforge.client.animation.ModelComponent;
 import net.minecraftforge.client.event.EntityRenderersEvent;
@@ -53,6 +55,7 @@ public class AnimateEntityLivingTest
         this.setupPassiveAnimationPriorityTest(event);
         this.setupZombieAnimationTest(event);
         this.setupArmorStandActiveAnimationTest(event);
+        this.setupAnimationDataKeyTest(event);
     }
 
     private void setupPlayerEmoteAnimationTest(EntityRenderersEvent.AddAnimations event)
@@ -67,9 +70,9 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Player player, ModelComponent root, Context context)
+            public void apply(Player player, ModelComponent root, AnimationData data, float partialTick)
             {
-                float angle = (float) Math.sin(player.tickCount + context.partialTick()) * 20F;
+                float angle = (float) Math.sin(player.tickCount + partialTick) * 20F;
                 ModelPart rightArm = root.get("right_arm");
                 rightArm.x -= 1;
                 rightArm.zRot = (float) Math.toRadians(150F + angle);
@@ -91,7 +94,7 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Player player, ModelComponent root, Context context)
+            public void apply(Player player, ModelComponent root, AnimationData data, float partialTick)
             {
                 ModelPart leftLeg = root.get("left_leg");
                 ModelPart rightLeg = root.get("right_leg");
@@ -116,7 +119,7 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Player player, ModelComponent root, Context context)
+            public void apply(Player player, ModelComponent root, AnimationData data, float partialTick)
             {
                 ModelPart leftLeg = root.get("left_leg");
                 ModelPart rightLeg = root.get("right_leg");
@@ -141,9 +144,9 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Zombie entity, ModelComponent root, Context context)
+            public void apply(Zombie entity, ModelComponent root, AnimationData data, float partialTick)
             {
-                float rotation = (entity.tickCount + context.partialTick()) * 20F;
+                float rotation = (entity.tickCount + partialTick) * 20F;
                 root.get("right_arm").xRot = (float) Math.toRadians(rotation);
                 root.get("left_arm").xRot = (float) Math.toRadians(rotation + 180F);
             }
@@ -163,10 +166,10 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(ArmorStand entity, ModelComponent root, Context context)
+            public void apply(ArmorStand entity, ModelComponent root, AnimationData data, float partialTick)
             {
                 // Makes the limbs move like creating an angel in snow
-                float angle = (float) Math.sin(entity.tickCount + context.partialTick()) * 20F;
+                float angle = (float) Math.sin(entity.tickCount + partialTick) * 20F;
                 root.get("right_arm").zRot = (float) Math.toRadians(90F + angle);
                 root.get("left_arm").zRot = (float) Math.toRadians(-90F + angle);
                 root.get("right_leg").zRot = (float) Math.toRadians(25F + angle);
@@ -186,11 +189,31 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(ArmorStand entity, ModelComponent root, Context context)
+            public void apply(ArmorStand entity, ModelComponent root, AnimationData data, float partialTick)
             {
                 // This code will never be executed
                 root.get("right_arm").zRot = 0;
                 root.get("left_arm").zRot = 0;
+            }
+        });
+    }
+
+    private void setupAnimationDataKeyTest(EntityRenderersEvent.AddAnimations event)
+    {
+        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.FIRST)
+        {
+            @Override
+            public boolean canStart(Player entity)
+            {
+                return entity.getMainHandItem().getItem() == Items.ARROW;
+            }
+
+            @Override
+            public void apply(Player entity, ModelComponent root, AnimationData data, float partialTick)
+            {
+                float movement = data.get(AnimationKey.MOVEMENT_TICKS);
+                root.get("right_arm").xRot = (float) Math.toRadians(movement * 90F);
+                root.get("left_arm").xRot = (float) Math.toRadians(movement * 90F + 180F);
             }
         });
     }

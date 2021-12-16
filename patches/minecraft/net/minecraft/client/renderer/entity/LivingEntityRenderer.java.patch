@@ -43,14 +43,15 @@
           f8 = Mth.m_14179_(p_115310_, p_115308_.f_20923_, p_115308_.f_20924_);
           f5 = p_115308_.f_20925_ - p_115308_.f_20924_ * (1.0F - p_115310_);
           if (p_115308_.m_6162_()) {
-@@ -110,8 +_,10 @@
+@@ -110,8 +_,11 @@
           }
        }
  
 +      this.animator.restoreDefaultPose();
        this.f_115290_.m_6839_(p_115308_, f5, f8, p_115310_);
        this.f_115290_.m_6973_(p_115308_, f5, f8, f7, f2, f6);
-+      this.animator.execute(p_115308_, f5, f8, f7, p_115309_, f6, p_115310_);
++      net.minecraftforge.client.animation.AnimationData.fillFromLivingEntity(this.animator, f5, f8, f7, p_115309_, f6, f2);
++      this.animator.execute(p_115308_, p_115310_);
        Minecraft minecraft = Minecraft.m_91087_();
        boolean flag = this.m_5933_(p_115308_);
        boolean flag1 = !flag && !p_115308_.m_20177_(minecraft.f_91074_);

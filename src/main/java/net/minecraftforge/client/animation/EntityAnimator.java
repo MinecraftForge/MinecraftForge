@@ -31,11 +31,13 @@ public class EntityAnimator<T extends LivingEntity>
     protected final ModelComponent root;
     protected final List<EntityAnimation<T>> animations = new ArrayList<>();
     protected final DefaultPoseHolder defaultPoseHolder;
+    protected final AnimationData data;
 
     public EntityAnimator(EntityModel<T> model)
     {
         this.root = new ModelComponent(model);
         this.defaultPoseHolder = new DefaultPoseHolder(this.root);
+        this.data = new AnimationData();
     }
 
     /**
@@ -48,6 +50,11 @@ public class EntityAnimator<T extends LivingEntity>
     {
         this.animations.add(animation);
         Collections.sort(this.animations);
+    }
+
+    public <V> void pushData(AnimationKey<V> key, V value)
+    {
+        this.data.push(key, value);
     }
 
     /**
@@ -64,21 +71,25 @@ public class EntityAnimator<T extends LivingEntity>
      * @param headPitch       the pitch of the entity
      * @param partialTicks    the current partial ticks
      */
-    public void execute(T entity, float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float partialTicks)
+    public void execute(T entity, float partialTick)
     {
         if (this.animations.isEmpty()) return;
-        EntityAnimation.Context context = new EntityAnimation.Context(animateTicks, animateSpeed, bobAnimateTicks, headYaw, headPitch, partialTicks);
         for (EntityAnimation<T> animation : this.animations)
         {
             if (animation.canStart(entity))
             {
-                animation.apply(entity, this.root, context);
+                animation.apply(entity, this.root, this.data, partialTick);
                 if (animation.getMode() == EntityAnimation.Mode.ACTIVE)
                 {
                     break;
                 }
             }
         }
+    }
+
+    public boolean hasAnimations()
+    {
+        return !this.animations.isEmpty();
     }
 
     /**

@@ -86,7 +86,7 @@ public abstract class EntityAnimation<E extends LivingEntity> implements Compara
      * @param root the root model component contain
      * @param context additional data used for calculating animations
      */
-    public abstract void apply(E entity, ModelComponent root, Context context);
+    public abstract void apply(E entity, ModelComponent root, AnimationData data, float partialTick);
 
     /**
      * Determines how animations are executed. The order is based on the mode and priority
@@ -165,10 +165,4 @@ public abstract class EntityAnimation<E extends LivingEntity> implements Compara
          */
         LAST
     }
-
-    /**
-     * A record containing data used when calculating animations with the addition of partial ticks
-     */
-    protected record Context(float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float partialTick)
-    {}
 }
