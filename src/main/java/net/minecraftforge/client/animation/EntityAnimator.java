@@ -70,7 +70,7 @@ public class EntityAnimator<T extends LivingEntity>
         EntityAnimation.Context context = new EntityAnimation.Context(animateTicks, animateSpeed, bobAnimateTicks, headYaw, headPitch, partialTicks);
         for (EntityAnimation<T> animation : this.animations)
         {
-            if (animation.canRun(entity))
+            if (animation.canStart(entity))
             {
                 animation.apply(entity, this.root, context);
                 if (animation.getMode() == EntityAnimation.Mode.ACTIVE)

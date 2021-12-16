@@ -55,14 +55,14 @@ public abstract class EntityAnimation<E extends LivingEntity> implements Compara
     }
 
     /**
-     * The condition to test to determine if the animation can be executed. This is where a test like
-     * holding or using a particular item, riding an entity, etc should be used. There should always
-     * be a condition and never just true.
+     * The condition to test if the animation can start. This is where a test like holding or using
+     * a particular item, riding an entity, etc can be used. If this animation's mode is active,
+     * returning true here will cancel remaining active animations from executing.
      *
      * @param entity the entity the animation is being applied to
      * @return the result of the test
      */
-    public abstract boolean canRun(E entity);
+    public abstract boolean canStart(E entity);
 
     /**
      * Executes and applies the animation to the specified model. The model will need to be cast to
