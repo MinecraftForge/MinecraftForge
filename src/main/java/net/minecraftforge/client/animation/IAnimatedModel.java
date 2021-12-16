@@ -43,7 +43,7 @@ public interface IAnimatedModel
      * @param parts an iterable of model parts
      * @param prefix the name to prefix for each part
      */
-    static void fillFromIterable(BiConsumer<String, ModelPart> consumer, Iterable<ModelPart> parts, String prefix)
+    static void fillAnimatedPartsFromIterable(BiConsumer<String, ModelPart> consumer, Iterable<ModelPart> parts, String prefix)
     {
         int i = 0;
         for(ModelPart part : parts) consumer.accept(prefix + "_" + i++, part);
