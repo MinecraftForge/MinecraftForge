@@ -8,7 +8,7 @@
 +   @Override
 +   public void gatherAnimatedParts(java.util.function.BiConsumer<String, ModelPart> consumer) {
 +      // This might be bad since changes in the iterables
-+      net.minecraftforge.client.animation.IAnimatedModel.fillFromIterable(consumer, this.m_5607_(), "head_part");
-+      net.minecraftforge.client.animation.IAnimatedModel.fillFromIterable(consumer, this.m_5608_(), "body_part");
++      net.minecraftforge.client.animation.IAnimatedModel.fillAnimatedPartsFromIterable(consumer, this.m_5607_(), "head_part");
++      net.minecraftforge.client.animation.IAnimatedModel.fillAnimatedPartsFromIterable(consumer, this.m_5608_(), "body_part");
 +   }
  }

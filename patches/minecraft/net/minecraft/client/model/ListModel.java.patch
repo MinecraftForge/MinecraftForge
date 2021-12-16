@@ -7,6 +7,6 @@
 +
 +   @Override
 +   public void gatherAnimatedParts(java.util.function.BiConsumer<String, ModelPart> consumer) {
-+      net.minecraftforge.client.animation.IAnimatedModel.fillFromIterable(consumer, this.m_6195_(), "part");
++      net.minecraftforge.client.animation.IAnimatedModel.fillAnimatedPartsFromIterable(consumer, this.m_6195_(), "part");
 +   }
  }
