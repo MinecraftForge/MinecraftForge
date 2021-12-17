@@ -203,7 +203,8 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
     /**
      * Reasons for the removal of a {@link BlockEntity} from the level.
      */
-    enum RemovalReason {
+    enum RemovalReason
+    {
         /**
          * Removed from the level, either manually, cleared alongside all block entities in the level, or by some other
          * unknown reason.
@@ -211,25 +212,25 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
          * @see LevelChunk#removeBlockEntity(BlockPos)
          * @see LevelChunk#clearAllBlockEntities()
          */
-         REMOVED,
+        REMOVED,
         /**
          * Replaced by a new block entity at the same position in the level.
          *
          * @see LevelChunk#setBlockEntity(BlockEntity)
          */
-         REPLACED_IN_WORLD,
+        REPLACED_IN_WORLD,
         /**
          * Removed as the chunk the block entity resides in was unloaded.
          *
          * @see net.minecraft.client.multiplayer.ClientLevel#unload(LevelChunk)
          * @see net.minecraft.server.level.ServerLevel#unload(LevelChunk)
          */
-         UNLOADED_TO_CHUNK,
+        UNLOADED_TO_CHUNK,
         /**
          * Removed as the contents of the resident chunk was replaced from a chunk packet.
          *
          * @see LevelChunk#replaceWithPacketData(FriendlyByteBuf, CompoundTag, Consumer)
          */
-         REPLACED_FROM_PACKET
-     }
+        REPLACED_FROM_PACKET
+    }
 }
