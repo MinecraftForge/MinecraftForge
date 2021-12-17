@@ -99,7 +99,12 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      */
      CompoundTag getTileData();
 
-     default void onChunkUnloaded(){}
+    /**
+     * @deprecated Override {@link #setRemoved(RemovalReason)} and check for the {@link RemovalReason#UNLOADED_TO_CHUNK}
+     * instead.
+     */
+    @Deprecated(forRemoval = true, since = "1.18.1")
+    default void onChunkUnloaded(){}
 
     /**
      * Called when this is first added to the world (by {@link LevelChunk#addAndRegisterBlockEntity(BlockEntity)})
