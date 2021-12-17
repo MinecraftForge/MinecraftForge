@@ -25,18 +25,30 @@ import net.minecraft.client.model.geom.PartPose;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A class that stores a pose for an entire model
  */
-public class DefaultPoseHolder
+public class ModelPoseHolder
 {
     private final List<Pair<ModelPart, PartPose>> defaultPoseList;
 
-    public DefaultPoseHolder(ModelComponent root)
+    public ModelPoseHolder(ModelComponent root)
     {
-        this.defaultPoseList = this.generatePoseList(root);
+        this.defaultPoseList = this.generatePoseList(root.children().stream().map(ModelComponent::getPart).collect(Collectors.toList()));
+    }
+
+    public ModelPoseHolder(ModelPart root)
+    {
+        this.defaultPoseList = this.generatePoseList(Collections.singleton(root));
+    }
+
+    public ModelPoseHolder(Iterable<ModelPart> parts)
+    {
+        this.defaultPoseList = this.generatePoseList(parts);
     }
 
     /**
@@ -59,6 +71,17 @@ public class DefaultPoseHolder
         // Obviously it would be better if there was a common interface instead of this
         List<Pair<ModelPart, PartPose>> list = new ArrayList<>();
         root.children().forEach((component) -> this.storeModelPoseAndSearch(list, component.getPart()));
+        return ImmutableList.copyOf(list);
+    }
+
+    private ImmutableList<Pair<ModelPart, PartPose>> generatePoseList(Iterable<ModelPart> parts)
+    {
+        // Obviously it would be better if there was a common interface instead of this
+        List<Pair<ModelPart, PartPose>> list = new ArrayList<>();
+        parts.forEach(part -> {
+            list.add(Pair.of(part, part.storePose()));
+            part.getChildren().forEach((name, child) -> this.storeModelPoseAndSearch(list, child));
+        });
         return ImmutableList.copyOf(list);
     }
 

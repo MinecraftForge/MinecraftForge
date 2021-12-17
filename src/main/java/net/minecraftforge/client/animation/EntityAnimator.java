@@ -44,13 +44,13 @@ public class EntityAnimator<T extends LivingEntity>
 {
     protected final ModelComponent root;
     protected final List<EntityAnimation<T>> animations = new ArrayList<>();
-    protected final DefaultPoseHolder defaultPoseHolder;
+    protected final ModelPoseHolder defaultPose;
     protected final AnimationData data;
 
     public EntityAnimator(EntityModel<T> model)
     {
         this.root = new ModelComponent(model);
-        this.defaultPoseHolder = new DefaultPoseHolder(this.root);
+        this.defaultPose = new ModelPoseHolder(this.root);
         this.data = new AnimationData();
     }
 
@@ -124,6 +124,6 @@ public class EntityAnimator<T extends LivingEntity>
      */
     public void restoreDefaultPose()
     {
-        this.defaultPoseHolder.restoreDefaultPose();
+        this.defaultPose.restoreDefaultPose();
     }
 }
