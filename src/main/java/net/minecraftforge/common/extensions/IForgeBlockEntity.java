@@ -206,13 +206,22 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
     enum RemovalReason
     {
         /**
-         * Removed from the level, either manually, cleared alongside all block entities in the level, or by some other
-         * unknown reason.
+         * Marked as removed for some unknown reason. The likely case is outdated code calling
+         * {@link BlockEntity#setRemoved()} instead of {@link #setRemoved(RemovalReason)}.
+         */
+        UNKNOWN,
+        /**
+         * Removed from the chunk manually by position.
          *
          * @see LevelChunk#removeBlockEntity(BlockPos)
-         * @see LevelChunk#clearAllBlockEntities()
          */
         REMOVED,
+        /**
+         * Removed as part of a block entity clearing operation on the chunk this block entity resides in.
+         *
+         * @see LevelChunk#clearAllBlockEntities()
+         */
+        CLEARED_CHUNK,
         /**
          * Replaced by a new block entity at the same position in the level.
          *
