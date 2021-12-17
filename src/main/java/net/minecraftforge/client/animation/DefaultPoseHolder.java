@@ -27,6 +27,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A class that stores a pose for an entire model
+ */
 public class DefaultPoseHolder
 {
     private final List<Pair<ModelPart, PartPose>> defaultPoseList;

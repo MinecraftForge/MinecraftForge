@@ -26,6 +26,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * A class that provides a standardised animation system for entity model's that utilise model parts.
+ * This system brings greater compatibility by providing a dynamic environment by allow animations
+ * to be added by anyone and not just the owner of the entity. Animations are registered using
+ * {@link net.minecraftforge.client.event.EntityRenderersEvent.AddAnimations}. This class is to be
+ * utilized inside of a {@link net.minecraft.client.renderer.entity.EntityRenderer} implementation.
+ * See {@link net.minecraft.client.renderer.entity.LivingEntityRenderer} for an example.
+ *
+ * This animation system has been implemented into most vanilla entities. This means that entities
+ * like the player, zombies, etc can have custom animations applied to them safely while still being
+ * compatible with other mods.
+ *
+ * @param <T> a living entity
+ */
 public class EntityAnimator<T extends LivingEntity>
 {
     protected final ModelComponent root;
@@ -52,6 +66,16 @@ public class EntityAnimator<T extends LivingEntity>
         Collections.sort(this.animations);
     }
 
+    /**
+     * Pushes custom data into the animator for the given key. The data is then stored in a {@link AnimationData}
+     * instance which is passed to {@link EntityAnimation#apply(LivingEntity, ModelComponent, AnimationData, float)}.
+     * The data can then be retrieved with the same key using {@link AnimationData#get(AnimationKey)}
+     * See {@link AnimationKey} for creating custom keys.
+     *
+     * @param key   the animation key
+     * @param value a value matching the same type from the key
+     * @param <V>   the animation key type
+     */
     public <V> void pushData(AnimationKey<V> key, V value)
     {
         this.data.push(key, value);
@@ -87,6 +111,9 @@ public class EntityAnimator<T extends LivingEntity>
         }
     }
 
+    /**
+     * Returns if this animator has any registered animations
+     */
     public boolean hasAnimations()
     {
         return !this.animations.isEmpty();

@@ -19,6 +19,10 @@
 
 package net.minecraftforge.client.animation;
 
+/**
+ * Record used for creating animation keys. Keys are used for storing and retrieving data in {@link AnimationData}
+ * @param <T> any type
+ */
 public record AnimationKey<T>(T defaultValue)
 {
     public static final AnimationKey<Float> YAW = new AnimationKey<>(0F);

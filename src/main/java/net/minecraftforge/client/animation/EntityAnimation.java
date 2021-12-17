@@ -20,8 +20,15 @@
 package net.minecraftforge.client.animation;
 
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraftforge.client.event.EntityRenderersEvent;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * A class used for creating animations for a specific entity. Use {@link EntityRenderersEvent.AddAnimations}
+ * to register the animations safely.
+ *
+ * @param <E> a living entity
+ */
 public abstract class EntityAnimation<E extends LivingEntity> implements Comparable<EntityAnimation<E>>
 {
     private final Mode mode;
@@ -65,26 +72,23 @@ public abstract class EntityAnimation<E extends LivingEntity> implements Compara
     public abstract boolean canStart(E entity);
 
     /**
-     * Executes and applies the animation to the specified model. The model will need to be cast to
-     * the entity specific model in order to access additional fields and methods.
+     * Executes and applies the animation. This is where modifications to the entity model are to be
+     * applied. Model Parts from the model have been broken down into ModelComponent; an intermediate
+     * layer that allows model parts to be retrieved using a string path. See {@link ModelComponent#get}
+     * for details. TODO The structure of the model can be dumped using {@link ModelComponent#dump()}
      *
-     * <p>
-     * For players this would look like:
-     * <p>
-     * <code>if (model instanceof PlayerModel<?> playerModel) {</code>
-     * <p>
-     * <code>// your animation code</code>
-     * <p>
-     * <code>}</code>
-     * <p>
-     * The context parameter contains additional data for calculating animations should it be used.
+     * The {@link AnimationData} parameter is used for retrieving custom data that has been passed
+     * from the entity renderer implementation this animation is targeting.
+     * TODO The data can be dumped using {@link AnimationData#dump()}
+     *
      * It should be noted that another animation may have already been applied before this animation
-     * is executed. See {@link EntityAnimation#compareTo(EntityAnimation)} for an explanation on
+     * is executed. See {@link EntityAnimation#compareTo(EntityAnimation)} for an explanation on the
      * order animations are applied.
      *
      * @param entity the entity currently being rendered
      * @param root the root model component contain
-     * @param context additional data used for calculating animations
+     * @param data additional data passed by the specific entity renderer
+     * @param partialTick the current partial ticks
      */
     public abstract void apply(E entity, ModelComponent root, AnimationData data, float partialTick);
 
