@@ -221,17 +221,17 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
          */
         REMOVED(false),
         /**
-         * Removed as part of a block entity clearing operation on the chunk this block entity resides in.
-         *
-         * @see LevelChunk#clearAllBlockEntities()
-         */
-        CLEARED_CHUNK(true),
-        /**
          * Replaced by a new block entity at the same position in the level.
          *
          * @see LevelChunk#setBlockEntity(BlockEntity)
          */
         REPLACED_IN_WORLD(false),
+        /**
+         * Removed as part of a block entity clearing operation on the chunk this block entity resides in.
+         *
+         * @see LevelChunk#clearAllBlockEntities()
+         */
+        CLEARED_CHUNK(true),
         /**
          * Removed as the chunk the block entity resides in was unloaded.
          *
