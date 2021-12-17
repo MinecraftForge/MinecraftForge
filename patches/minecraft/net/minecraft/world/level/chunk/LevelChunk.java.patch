@@ -128,7 +128,7 @@
  
     public void m_187957_() {
 -      this.f_187610_.values().forEach(BlockEntity::m_7651_);
-+      this.clearAllBlockEntities(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.REMOVED);
++      this.clearAllBlockEntities(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.CLEARED_CHUNK);
 +   }
 +
 +   public void clearAllBlockEntities(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason removalReason) {

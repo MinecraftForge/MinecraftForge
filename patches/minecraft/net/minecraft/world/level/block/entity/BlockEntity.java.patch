@@ -53,7 +53,7 @@
  
 +   @Deprecated // Forge: Override IForgeBlockEntity#setRemoved(RemovalReason) instead.
     public void m_7651_() {
-+      setRemoved(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.REMOVED);
++      setRemoved(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.UNKNOWN);
 +   }
 +
 +   public void setRemoved(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason reason) {
