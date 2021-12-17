@@ -63,6 +63,15 @@
        }
  
     }
+@@ -342,7 +_,7 @@
+          p_156374_.m_6339_();
+          BlockEntity blockentity = this.f_187610_.put(blockpos.m_7949_(), p_156374_);
+          if (blockentity != null && blockentity != p_156374_) {
+-            blockentity.m_7651_();
++            blockentity.setRemoved(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.REPLACED_IN_WORLD);
+          }
+ 
+       }
 @@ -352,9 +_,14 @@
     public CompoundTag m_8051_(BlockPos p_62932_) {
        BlockEntity blockentity = this.m_7702_(p_62932_);
@@ -78,6 +87,24 @@
        } else {
           CompoundTag compoundtag = this.f_187609_.get(p_62932_);
           if (compoundtag != null) {
+@@ -371,7 +_,7 @@
+          BlockEntity blockentity = this.f_187610_.remove(p_62919_);
+          if (blockentity != null) {
+             this.m_156396_(blockentity);
+-            blockentity.m_7651_();
++            blockentity.setRemoved(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.REMOVED);
+          }
+       }
+ 
+@@ -417,7 +_,7 @@
+    }
+ 
+    public void m_187971_(FriendlyByteBuf p_187972_, CompoundTag p_187973_, Consumer<ClientboundLevelChunkPacketData.BlockEntityTagOutput> p_187974_) {
+-      this.m_187957_();
++      this.clearAllBlockEntities(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.REPLACED_FROM_PACKET);
+ 
+       for(LevelChunkSection levelchunksection : this.f_187612_) {
+          levelchunksection.m_63004_(p_187972_);
 @@ -433,7 +_,7 @@
        p_187974_.accept((p_187968_, p_187969_, p_187970_) -> {
           BlockEntity blockentity = this.m_5685_(p_187968_, LevelChunk.EntityCreationType.IMMEDIATE);
@@ -96,14 +123,20 @@
        });
     }
  
-@@ -541,6 +_,7 @@
+@@ -541,7 +_,12 @@
     }
  
     public void m_187957_() {
+-      this.f_187610_.values().forEach(BlockEntity::m_7651_);
++      this.clearAllBlockEntities(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.REMOVED);
++   }
++
++   public void clearAllBlockEntities(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason removalReason) {
 +      this.f_187610_.values().forEach(BlockEntity::onChunkUnloaded);
-       this.f_187610_.values().forEach(BlockEntity::m_7651_);
++      this.f_187610_.values().forEach(t -> t.setRemoved(removalReason));
        this.f_187610_.clear();
        this.f_156362_.values().forEach((p_187966_) -> {
+          p_187966_.m_156449_(f_156361_);
 @@ -550,6 +_,7 @@
     }
  

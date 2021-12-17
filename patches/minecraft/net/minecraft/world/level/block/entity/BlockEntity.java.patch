@@ -47,9 +47,16 @@
     }
  
     @Nullable
-@@ -163,6 +_,13 @@
+@@ -161,8 +_,20 @@
+       return this.f_58859_;
+    }
  
++   @Deprecated // Forge: Override IForgeBlockEntity#setRemoved(RemovalReason) instead.
     public void m_7651_() {
++      setRemoved(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.REMOVED);
++   }
++
++   public void setRemoved(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason reason) {
        this.f_58859_ = true;
 +      this.invalidateCaps();
 +      requestModelDataUpdate();

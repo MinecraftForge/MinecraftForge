@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.Connection;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -40,6 +41,8 @@ import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+
+import java.util.function.Consumer;
 
 public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
 {
@@ -188,5 +191,45 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      default @Nonnull IModelData getModelData()
      {
          return EmptyModelData.INSTANCE;
+     }
+
+    /**
+     * Marks this block entity as having been removed from the level for the given reason.
+     *
+     * @param reason the reason for the block entity's removal
+     */
+     void setRemoved(RemovalReason reason);
+
+    /**
+     * Reasons for the removal of a {@link BlockEntity} from the level.
+     */
+    enum RemovalReason {
+        /**
+         * Removed from the level, either manually, cleared alongside all block entities in the level, or by some other
+         * unknown reason.
+         *
+         * @see LevelChunk#removeBlockEntity(BlockPos)
+         * @see LevelChunk#clearAllBlockEntities()
+         */
+         REMOVED,
+        /**
+         * Replaced by a new block entity at the same position in the level.
+         *
+         * @see LevelChunk#setBlockEntity(BlockEntity)
+         */
+         REPLACED_IN_WORLD,
+        /**
+         * Removed as the chunk the block entity resides in was unloaded.
+         *
+         * @see net.minecraft.client.multiplayer.ClientLevel#unload(LevelChunk)
+         * @see net.minecraft.server.level.ServerLevel#unload(LevelChunk)
+         */
+         UNLOADED_TO_CHUNK,
+        /**
+         * Removed as the contents of the resident chunk was replaced from a chunk packet.
+         *
+         * @see LevelChunk#replaceWithPacketData(FriendlyByteBuf, CompoundTag, Consumer)
+         */
+         REPLACED_FROM_PACKET
      }
 }

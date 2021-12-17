@@ -17,6 +17,15 @@
        p_104640_.m_8119_();
        this.m_46473_().m_7238_();
  
+@@ -243,7 +_,7 @@
+    }
+ 
+    public void m_104665_(LevelChunk p_104666_) {
+-      p_104666_.m_187957_();
++      p_104666_.clearAllBlockEntities(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.UNLOADED_TO_CHUNK);
+       this.f_104559_.m_7827_().m_141940_(p_104666_.m_7697_(), false);
+       this.f_171631_.m_157658_(p_104666_.m_7697_());
+    }
 @@ -278,8 +_,10 @@
     }
  
