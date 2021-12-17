@@ -19,29 +19,28 @@
 
 package net.minecraftforge.common.extensions;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.level.Level;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 
 public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
@@ -214,37 +213,52 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
          * Marked as removed for some unknown reason. The likely case is outdated code calling
          * {@link BlockEntity#setRemoved()} instead of {@link #setRemoved(RemovalReason)}.
          */
-        UNKNOWN,
+        UNKNOWN(false),
         /**
          * Removed from the chunk manually by position.
          *
          * @see LevelChunk#removeBlockEntity(BlockPos)
          */
-        REMOVED,
+        REMOVED(false),
         /**
          * Removed as part of a block entity clearing operation on the chunk this block entity resides in.
          *
          * @see LevelChunk#clearAllBlockEntities()
          */
-        CLEARED_CHUNK,
+        CLEARED_CHUNK(true),
         /**
          * Replaced by a new block entity at the same position in the level.
          *
          * @see LevelChunk#setBlockEntity(BlockEntity)
          */
-        REPLACED_IN_WORLD,
+        REPLACED_IN_WORLD(false),
         /**
          * Removed as the chunk the block entity resides in was unloaded.
          *
          * @see net.minecraft.client.multiplayer.ClientLevel#unload(LevelChunk)
          * @see net.minecraft.server.level.ServerLevel#unload(LevelChunk)
          */
-        UNLOADED_TO_CHUNK,
+        UNLOADED_TO_CHUNK(true),
         /**
          * Removed as the contents of the resident chunk was replaced from a chunk packet.
          *
          * @see LevelChunk#replaceWithPacketData(FriendlyByteBuf, CompoundTag, Consumer)
          */
-        REPLACED_FROM_PACKET
+        REPLACED_FROM_PACKET(true);
+
+        private final boolean chunk;
+
+        RemovalReason(boolean chunk)
+        {
+            this.chunk = chunk;
+        }
+
+        /**
+         * {@return whether this reason was due to a chunk-wide operation}
+         */
+        public boolean isChunk()
+        {
+            return chunk;
+        }
     }
 }
