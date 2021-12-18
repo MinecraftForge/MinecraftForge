@@ -79,7 +79,7 @@ public class ModelAnimator<T>
         if (this.animations.isEmpty()) return;
         for (ModelAnimation<T> animation : this.animations)
         {
-            if (animation.canStart(t))
+            if (animation.canStart(t, this.data))
             {
                 animation.apply(t, this.root, this.data, partialTick);
                 if (animation.getMode() == ModelAnimation.Mode.ACTIVE)

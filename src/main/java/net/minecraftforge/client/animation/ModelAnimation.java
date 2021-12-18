@@ -43,7 +43,7 @@ public abstract class ModelAnimation<T> implements Comparable<ModelAnimation<T>>
      * @param t an instance of T
      * @return the result of the test
      */
-    public abstract boolean canStart(T t);
+    public abstract boolean canStart(T t, AnimationData data);
 
     /**
      * Executes and applies the animation. This is where modifications to the model are to be
