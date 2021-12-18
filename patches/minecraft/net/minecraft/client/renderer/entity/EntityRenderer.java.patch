@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/renderer/entity/EntityRenderer.java
 +++ b/net/minecraft/client/renderer/entity/EntityRenderer.java
+@@ -18,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public abstract class EntityRenderer<T extends Entity> {
++public abstract class EntityRenderer<T extends Entity> implements net.minecraftforge.client.animation.ModelAnimator.Getter<T> {
+    protected static final float f_174006_ = 0.025F;
+    protected final EntityRenderDispatcher f_114476_;
+    private final Font f_174005_;
 @@ -63,8 +_,10 @@
     }
  

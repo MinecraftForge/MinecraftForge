@@ -28,42 +28,42 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ModelComponent
+public class ModelTree
 {
     private static final ModelPart FALLBACK_MODEL_PART = new ModelPart(Collections.emptyList(), Collections.emptyMap());
-    private static final ModelComponent FALLBACK_COMPONENT = new ModelComponent(FALLBACK_MODEL_PART);
+    private static final ModelTree FALLBACK_COMPONENT = new ModelTree(FALLBACK_MODEL_PART);
 
     private final ModelPart part;
-    private final Map<String, ModelComponent> children;
+    private final Map<String, ModelTree> children;
 
-    public ModelComponent(IAnimatedModel model)
+    public ModelTree(IAnimatedModel model)
     {
         this.part = FALLBACK_MODEL_PART;
         this.children = this.generateComponentMap(model);
     }
 
-    private ModelComponent(ModelPart part)
+    private ModelTree(ModelPart part)
     {
         this.part = part;
         this.children = this.generateComponentMap(part);
     }
 
-    private Map<String, ModelComponent> generateComponentMap(IAnimatedModel model)
+    private Map<String, ModelTree> generateComponentMap(IAnimatedModel model)
     {
         Map<String, ModelPart> partMap = new HashMap<>();
         model.gatherAnimatedParts(partMap::put);
         return this.generateComponentMap(partMap);
     }
 
-    private Map<String, ModelComponent> generateComponentMap(ModelPart root)
+    private Map<String, ModelTree> generateComponentMap(ModelPart root)
     {
         return this.generateComponentMap(root.getChildren());
     }
 
-    private Map<String, ModelComponent> generateComponentMap(Map<String, ModelPart> parts)
+    private Map<String, ModelTree> generateComponentMap(Map<String, ModelPart> parts)
     {
-        Map<String, ModelComponent> map = new HashMap<>();
-        parts.forEach((name, part) -> map.put(name, new ModelComponent(part)));
+        Map<String, ModelTree> map = new HashMap<>();
+        parts.forEach((name, part) -> map.put(name, new ModelTree(part)));
         return ImmutableMap.copyOf(map);
     }
 
@@ -80,7 +80,7 @@ public class ModelComponent
     public ModelPart get(String path)
     {
         String[] splitPath = path.split("\\.");
-        ModelComponent c = this;
+        ModelTree c = this;
         for(String s : splitPath)
         {
             c = c.children.getOrDefault(s, FALLBACK_COMPONENT);
@@ -93,7 +93,7 @@ public class ModelComponent
         return this.part;
     }
 
-    Collection<ModelComponent> children()
+    Collection<ModelTree> children()
     {
         return this.children.values();
     }

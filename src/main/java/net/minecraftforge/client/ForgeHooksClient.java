@@ -26,13 +26,7 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
-import net.minecraft.client.model.AgeableListModel;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.HierarchicalModel;
-import net.minecraft.client.model.ListModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
@@ -40,7 +34,6 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.FormattedText;
@@ -108,6 +101,7 @@ import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.animation.ModelAnimator;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ForgeModelBakery;
@@ -146,6 +140,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -1062,17 +1057,24 @@ public class ForgeHooksClient
         {
             if (entityType == EntityType.PLAYER)
             {
-                playerRenders.forEach((s, renderer) -> consumer.accept((LivingEntityRenderer<?, ?>) renderer));
+                playerRenders.forEach((s, renderer) -> processAnimatorConsumer(entityType, renderer, consumer));
             }
             else
             {
-                EntityRenderer<?> renderer = entityRenders.get(entityType);
-                if (renderer instanceof LivingEntityRenderer<?, ?> livingRenderer)
-                {
-                    consumer.accept(livingRenderer);
-                }
+                processAnimatorConsumer(entityType, entityRenders.get(entityType), consumer);
             }
         });
     }
 
+    private static void processAnimatorConsumer(EntityType<?> type, EntityRenderer<?> renderer, Consumer<ModelAnimator<?>> consumer)
+    {
+        if (renderer != null && renderer.getModelAnimator() != null)
+        {
+            consumer.accept(renderer.getModelAnimator());
+        }
+        else
+        {
+            LOGGER.warn("Unable to add animation to {} since it doesn't support animations", type.getRegistryName());
+        }
+    }
 }

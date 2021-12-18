@@ -21,8 +21,6 @@ package net.minecraftforge.client.event;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableListMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
@@ -42,14 +40,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.animation.EntityAnimation;
+import net.minecraftforge.client.animation.ModelAnimation;
+import net.minecraftforge.client.animation.ModelAnimator;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -160,7 +156,7 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
      */
     public static class AddAnimations extends EntityRenderersEvent
     {
-        private final Multimap<EntityType<?>, Consumer<LivingEntityRenderer<?, ?>>> animations = ArrayListMultimap.create();
+        private final Multimap<EntityType<?>, Consumer<ModelAnimator<?>>> animations = ArrayListMultimap.create();
 
         /**
          * Prepares an animation to be added to the given entity type. Animations are registered when
@@ -171,15 +167,15 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
          * @param <T> an entity that extends living entity
          */
         @SuppressWarnings("unchecked")
-        public <T extends LivingEntity> void addAnimation(EntityType<T> type, EntityAnimation<T> animation)
+        public <T extends Entity> void addAnimation(EntityType<T> type, ModelAnimation<T> animation)
         {
-            this.animations.put(type, renderer -> ((LivingEntityRenderer<T, ?>) renderer).getAnimator().addAnimation(animation));
+            this.animations.put(type, animator -> ((ModelAnimator<T>) animator).addAnimation(animation));
         }
 
         /**
          * Gets a map of the registered animations. Used internally.
          */
-        public Multimap<EntityType<?>, Consumer<LivingEntityRenderer<?, ?>>> getAnimations()
+        public Multimap<EntityType<?>, Consumer<ModelAnimator<?>>> getAnimations()
         {
             return ImmutableListMultimap.copyOf(animations);
         }

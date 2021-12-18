@@ -1,46 +1,19 @@
-/*
- * Minecraft Forge
- * Copyright (c) 2016-2021.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
-
 package net.minecraftforge.client.animation;
 
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
-/**
- * A class used for creating animations for a specific entity. Use {@link EntityRenderersEvent.AddAnimations}
- * to register the animations safely.
- *
- * @param <E> a living entity
- */
-public abstract class EntityAnimation<E extends LivingEntity> implements Comparable<EntityAnimation<E>>
+public abstract class ModelAnimation<T> implements Comparable<ModelAnimation<T>>
 {
     private final Mode mode;
     private final Priority priority;
 
-    public EntityAnimation(Mode mode, Priority priority)
+    public ModelAnimation(Mode mode, Priority priority)
     {
         this.mode = mode;
         this.priority = priority;
     }
 
-    public EntityAnimation(Mode mode)
+    public ModelAnimation(Mode mode)
     {
         this(mode, Priority.DEFAULT);
     }
@@ -62,35 +35,36 @@ public abstract class EntityAnimation<E extends LivingEntity> implements Compara
     }
 
     /**
-     * The condition to test if the animation can start. This is where a test like holding or using
-     * a particular item, riding an entity, etc can be used. If this animation's mode is active,
-     * returning true here will cancel remaining active animations from executing.
+     * The condition to test if the animation can start. This is where a test using {@link T} can be
+     * applied. For example, if this animation is for an entity, this could check for a particular
+     * held item, riding an entity, etc. If this animation's mode is active, returning true here
+     * will cancel remaining active animations from executing.
      *
-     * @param entity the entity the animation is being applied to
+     * @param t an instance of T
      * @return the result of the test
      */
-    public abstract boolean canStart(E entity);
+    public abstract boolean canStart(T t);
 
     /**
-     * Executes and applies the animation. This is where modifications to the entity model are to be
+     * Executes and applies the animation. This is where modifications to the model are to be
      * applied. Model Parts from the model have been broken down into ModelComponent; an intermediate
-     * layer that allows model parts to be retrieved using a string path. See {@link ModelComponent#get}
-     * for details. TODO The structure of the model can be dumped using {@link ModelComponent#dump()}
-     *
+     * layer that allows model parts to be retrieved using a string path. See {@link ModelTree#get}
+     * for details. TODO The structure of the model can be dumped using {@link ModelTree#dump()}
+     * <p>
      * The {@link AnimationData} parameter is used for retrieving custom data that has been passed
-     * from the entity renderer implementation this animation is targeting.
+     * to the {@link ModelAnimator} implementation that handles the rendering of {@link T}
      * TODO The data can be dumped using {@link AnimationData#dump()}
-     *
+     * <p>
      * It should be noted that another animation may have already been applied before this animation
-     * is executed. See {@link EntityAnimation#compareTo(EntityAnimation)} for an explanation on the
+     * is executed. See {@link ModelAnimation#compareTo(ModelAnimation)} for an explanation on the
      * order animations are applied.
      *
-     * @param entity the entity currently being rendered
+     * @param t an instance of T
      * @param root the root model component contain
-     * @param data additional data passed by the specific entity renderer
+     * @param data additional data passed by the animator
      * @param partialTick the current partial ticks
      */
-    public abstract void apply(E entity, ModelComponent root, AnimationData data, float partialTick);
+    public abstract void apply(T t, ModelTree root, AnimationData data, float partialTick);
 
     /**
      * Determines how animations are executed. The order is based on the mode and priority
@@ -103,11 +77,11 @@ public abstract class EntityAnimation<E extends LivingEntity> implements Compara
      * <li>ACTIVE - DEFAULT (Cancelled if an ACTIVE - FIRST is executed)</li>
      * <li>ACTIVE - LAST (Cancelled if an ACTIVE - FIRST/DEFAULT is executed)</li>
      * </ul>
-     * @param o an entity animation
+     * @param o a model animation
      * @return See {@link Comparable} documentation
      */
     @Override
-    public final int compareTo(@NotNull EntityAnimation<E> o)
+    public final int compareTo(@Nonnull ModelAnimation<T> o)
     {
         if (this.getMode() == o.getMode())
         {
@@ -146,9 +120,9 @@ public abstract class EntityAnimation<E extends LivingEntity> implements Compara
     public enum Priority
     {
         /**
-         * Marks the animation to execute first. If the animation mode is {@link Mode#PASSIVE}, it
+         * Marks the animation to execute first. If the animation mode is {@link ModelAnimation.Mode#PASSIVE}, it
          * may be overridden by animations with the same or later priority. Otherwise if the mode is
-         * {@link Mode#ACTIVE} and the animation is executed, active animations with the same or
+         * {@link ModelAnimation.Mode#ACTIVE} and the animation is executed, active animations with the same or
          * later priority will not be executed.
          */
         FIRST,

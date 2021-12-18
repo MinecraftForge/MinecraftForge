@@ -21,12 +21,11 @@ package net.minecraftforge.client.animation;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
-import net.minecraft.world.entity.LivingEntity;
 
 import javax.annotation.Nonnull;
 
 /**
- * A class to pass custom data for animations. Used in {@link EntityAnimation#apply(LivingEntity, ModelComponent, AnimationData, float)}.
+ * A class to pass custom data for animations. Used in {@link ModelAnimation#apply(Object, ModelTree, AnimationData, float)}.
  * Also see {@link AnimationKey} to create custom keys.
  */
 public class AnimationData
@@ -35,7 +34,7 @@ public class AnimationData
 
     /**
      * Pushes a value into the data map with the given key. This is an internal method. Modders
-     * use {@link EntityAnimator#pushData(AnimationKey, Object)} to push animation data.
+     * use {@link ModelAnimator#pushData(AnimationKey, Object)} to push animation data.
      *
      * @param key an animation key
      * @param value a value that matches the type from the animation key
@@ -65,7 +64,7 @@ public class AnimationData
     /**
      * Fills animation data from living entity renderer. Used internally.
      */
-    public static void fillFromLivingEntity(EntityAnimator<?> animator, float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float deltaBodyYaw)
+    public static void fillFromLivingEntity(ModelAnimator<?> animator, float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float deltaBodyYaw)
     {
         if (!animator.hasAnimations()) return; // No point filling if no animations exist
         animator.pushData(AnimationKey.MOVEMENT_TICKS, animateTicks);

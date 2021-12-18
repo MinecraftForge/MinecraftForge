@@ -29,8 +29,8 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.animation.AnimationData;
 import net.minecraftforge.client.animation.AnimationKey;
-import net.minecraftforge.client.animation.EntityAnimation;
-import net.minecraftforge.client.animation.ModelComponent;
+import net.minecraftforge.client.animation.ModelAnimation;
+import net.minecraftforge.client.animation.ModelTree;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -61,7 +61,7 @@ public class AnimateEntityLivingTest
     private void setupPlayerEmoteAnimationTest(EntityRenderersEvent.AddAnimations event)
     {
         // Player waving animation when holding a cookie
-        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.FIRST)
+        event.addAnimation(EntityType.PLAYER, new ModelAnimation<>(ModelAnimation.Mode.ACTIVE, ModelAnimation.Priority.FIRST)
         {
             @Override
             public boolean canStart(Player entity)
@@ -70,7 +70,7 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Player player, ModelComponent root, AnimationData data, float partialTick)
+            public void apply(Player player, ModelTree root, AnimationData data, float partialTick)
             {
                 float angle = (float) Math.sin(player.tickCount + partialTick) * 20F;
                 ModelPart rightArm = root.get("right_arm");
@@ -85,7 +85,7 @@ public class AnimateEntityLivingTest
     private void setupPassiveAnimationPriorityTest(EntityRenderersEvent.AddAnimations event)
     {
         // Custom player pose when riding a pig.
-        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.PASSIVE, EntityAnimation.Priority.FIRST)
+        event.addAnimation(EntityType.PLAYER, new ModelAnimation<>(ModelAnimation.Mode.PASSIVE, ModelAnimation.Priority.FIRST)
         {
             @Override
             public boolean canStart(Player entity)
@@ -94,7 +94,7 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Player player, ModelComponent root, AnimationData data, float partialTick)
+            public void apply(Player player, ModelTree root, AnimationData data, float partialTick)
             {
                 ModelPart leftLeg = root.get("left_leg");
                 ModelPart rightLeg = root.get("right_leg");
@@ -110,7 +110,7 @@ public class AnimateEntityLivingTest
         });
 
         // This should overlay an animation on top of the animation defined above
-        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.PASSIVE, EntityAnimation.Priority.DEFAULT)
+        event.addAnimation(EntityType.PLAYER, new ModelAnimation<>(ModelAnimation.Mode.PASSIVE, ModelAnimation.Priority.DEFAULT)
         {
             @Override
             public boolean canStart(Player entity)
@@ -119,7 +119,7 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Player player, ModelComponent root, AnimationData data, float partialTick)
+            public void apply(Player player, ModelTree root, AnimationData data, float partialTick)
             {
                 ModelPart leftLeg = root.get("left_leg");
                 ModelPart rightLeg = root.get("right_leg");
@@ -135,7 +135,7 @@ public class AnimateEntityLivingTest
     {
         /* A simple example of creating an animation for an entity. In this case, when a zombie is
          * on fire it will spin it's arms around. */
-        event.addAnimation(EntityType.ZOMBIE, new EntityAnimation<>(EntityAnimation.Mode.PASSIVE, EntityAnimation.Priority.FIRST)
+        event.addAnimation(EntityType.ZOMBIE, new ModelAnimation<>(ModelAnimation.Mode.PASSIVE, ModelAnimation.Priority.FIRST)
         {
             @Override
             public boolean canStart(Zombie entity)
@@ -144,7 +144,7 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Zombie entity, ModelComponent root, AnimationData data, float partialTick)
+            public void apply(Zombie entity, ModelTree root, AnimationData data, float partialTick)
             {
                 float rotation = (entity.tickCount + partialTick) * 20F;
                 root.get("right_arm").xRot = (float) Math.toRadians(rotation);
@@ -157,7 +157,7 @@ public class AnimateEntityLivingTest
     private void setupArmorStandActiveAnimationTest(EntityRenderersEvent.AddAnimations event)
     {
         // Creates an active animation for an armour stand with a first priority
-        event.addAnimation(EntityType.ARMOR_STAND, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.FIRST)
+        event.addAnimation(EntityType.ARMOR_STAND, new ModelAnimation<>(ModelAnimation.Mode.ACTIVE, ModelAnimation.Priority.FIRST)
         {
             @Override
             public boolean canStart(ArmorStand entity)
@@ -166,7 +166,7 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(ArmorStand entity, ModelComponent root, AnimationData data, float partialTick)
+            public void apply(ArmorStand entity, ModelTree root, AnimationData data, float partialTick)
             {
                 // Makes the limbs move like creating an angel in snow
                 float angle = (float) Math.sin(entity.tickCount + partialTick) * 20F;
@@ -180,7 +180,7 @@ public class AnimateEntityLivingTest
         /* Another active animation for the armour stand with the same canRun condition. Since the
          * animation created above will run first due to it's first priority, this animation will
          * never run as default priority runs after first priority */
-        event.addAnimation(EntityType.ARMOR_STAND, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.DEFAULT)
+        event.addAnimation(EntityType.ARMOR_STAND, new ModelAnimation<>(ModelAnimation.Mode.ACTIVE, ModelAnimation.Priority.DEFAULT)
         {
             @Override
             public boolean canStart(ArmorStand entity)
@@ -189,7 +189,7 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(ArmorStand entity, ModelComponent root, AnimationData data, float partialTick)
+            public void apply(ArmorStand entity, ModelTree root, AnimationData data, float partialTick)
             {
                 // This code will never be executed
                 root.get("right_arm").zRot = 0;
@@ -200,7 +200,7 @@ public class AnimateEntityLivingTest
 
     private void setupAnimationDataKeyTest(EntityRenderersEvent.AddAnimations event)
     {
-        event.addAnimation(EntityType.PLAYER, new EntityAnimation<>(EntityAnimation.Mode.ACTIVE, EntityAnimation.Priority.FIRST)
+        event.addAnimation(EntityType.PLAYER, new ModelAnimation<>(ModelAnimation.Mode.ACTIVE, ModelAnimation.Priority.FIRST)
         {
             @Override
             public boolean canStart(Player entity)
@@ -209,7 +209,7 @@ public class AnimateEntityLivingTest
             }
 
             @Override
-            public void apply(Player entity, ModelComponent root, AnimationData data, float partialTick)
+            public void apply(Player entity, ModelTree root, AnimationData data, float partialTick)
             {
                 float movement = data.get(AnimationKey.MOVEMENT_TICKS);
                 root.get("right_arm").xRot = (float) Math.toRadians(movement * 90F);

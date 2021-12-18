@@ -4,13 +4,13 @@
     private static final float f_174287_ = 0.1F;
     protected M f_115290_;
     protected final List<RenderLayer<T, M>> f_115291_ = Lists.newArrayList();
-+   protected final net.minecraftforge.client.animation.EntityAnimator<T> animator;
++   protected final net.minecraftforge.client.animation.ModelAnimator<T> animator;
  
     public LivingEntityRenderer(EntityRendererProvider.Context p_174289_, M p_174290_, float p_174291_) {
        super(p_174289_);
        this.f_115290_ = p_174290_;
        this.f_114477_ = p_174291_;
-+      this.animator = new net.minecraftforge.client.animation.EntityAnimator<>(this.f_115290_);
++      this.animator = new net.minecraftforge.client.animation.ModelAnimator<>(this.f_115290_);
     }
  
     public final boolean m_115326_(RenderLayer<T, M> p_115327_) {
@@ -63,13 +63,14 @@
     }
  
     @Nullable
-@@ -267,5 +_,9 @@
+@@ -267,5 +_,10 @@
        }
  
        return false;
 +   }
 +
-+   public net.minecraftforge.client.animation.EntityAnimator<T> getAnimator() {
++   @Override
++   public net.minecraftforge.client.animation.ModelAnimator<T> getModelAnimator() {
 +      return this.animator;
     }
  }

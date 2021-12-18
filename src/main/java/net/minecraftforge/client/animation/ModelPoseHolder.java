@@ -36,9 +36,9 @@ public class ModelPoseHolder
 {
     private final List<Pair<ModelPart, PartPose>> defaultPoseList;
 
-    public ModelPoseHolder(ModelComponent root)
+    public ModelPoseHolder(ModelTree root)
     {
-        this.defaultPoseList = this.generatePoseList(root.children().stream().map(ModelComponent::getPart).collect(Collectors.toList()));
+        this.defaultPoseList = this.generatePoseList(root.children().stream().map(ModelTree::getPart).collect(Collectors.toList()));
     }
 
     public ModelPoseHolder(ModelPart root)
@@ -52,21 +52,13 @@ public class ModelPoseHolder
     }
 
     /**
-     * Generates a map containing all parts of the model (including children) and the default pose
-     * associated with them. Entries will only be added for select entity model classes since there
-     * is no standard way to get all the model parts from an entity model.
-     * <p>
-     * The classes that are supported are:
-     * <ul>
-     *     <li>AgeableListModel</li>
-     *     <li>HierarchicalModel</li>
-     *     <li>ListModel</li>
-     * </ul>
+     * Generates a list pair of all the animated model parts (including children) of a model and the
+     * default pose associated with them.
      *
      * @param root the root model component
      * @return a map containing all the default poses
      */
-    private ImmutableList<Pair<ModelPart, PartPose>> generatePoseList(ModelComponent root)
+    private ImmutableList<Pair<ModelPart, PartPose>> generatePoseList(ModelTree root)
     {
         // Obviously it would be better if there was a common interface instead of this
         List<Pair<ModelPart, PartPose>> list = new ArrayList<>();
