@@ -63,7 +63,7 @@
 +         OptionalNamedTag<T> optionalNamedTag = (OptionalNamedTag<T>) namedTag;
 +         optionalNamedTag.defaulted = true;
 +         return optionalNamedTag.resolveDefaulted();
-+      }));
++      }, (existingTag, newTag) -> Tag.func_241286_a_(ImmutableSet.<T>builder().addAll(existingTag.func_230236_b_()).addAll(newTag.func_230236_b_()).build())));
 +      if (!missingOptionals.isEmpty()) {
 +         missingOptionals.putAll(currentTags);
 +         return ITagCollection.func_242202_a(missingOptionals);
