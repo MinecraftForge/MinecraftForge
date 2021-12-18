@@ -64,7 +64,7 @@ public class AnimateEntityLivingTest
         event.addAnimation(EntityType.PLAYER, new ModelAnimation<>(ModelAnimation.Mode.ACTIVE, ModelAnimation.Priority.FIRST)
         {
             @Override
-            public boolean canStart(Player entity)
+            public boolean canStart(Player entity, AnimationData data)
             {
                 return entity.getMainHandItem().getItem() == Items.COOKIE;
             }
@@ -88,7 +88,7 @@ public class AnimateEntityLivingTest
         event.addAnimation(EntityType.PLAYER, new ModelAnimation<>(ModelAnimation.Mode.PASSIVE, ModelAnimation.Priority.FIRST)
         {
             @Override
-            public boolean canStart(Player entity)
+            public boolean canStart(Player entity, AnimationData data)
             {
                 return entity.getVehicle() != null && entity.getVehicle().getType() == EntityType.PIG;
             }
@@ -113,7 +113,7 @@ public class AnimateEntityLivingTest
         event.addAnimation(EntityType.PLAYER, new ModelAnimation<>(ModelAnimation.Mode.PASSIVE, ModelAnimation.Priority.DEFAULT)
         {
             @Override
-            public boolean canStart(Player entity)
+            public boolean canStart(Player entity, AnimationData data)
             {
                 return entity.getVehicle() != null && entity.getVehicle().getType() == EntityType.PIG && entity.getMainHandItem().getItem() == Items.PIG_SPAWN_EGG;
             }
@@ -138,7 +138,7 @@ public class AnimateEntityLivingTest
         event.addAnimation(EntityType.ZOMBIE, new ModelAnimation<>(ModelAnimation.Mode.PASSIVE, ModelAnimation.Priority.FIRST)
         {
             @Override
-            public boolean canStart(Zombie entity)
+            public boolean canStart(Zombie entity, AnimationData data)
             {
                 return entity.isOnFire();
             }
@@ -160,7 +160,7 @@ public class AnimateEntityLivingTest
         event.addAnimation(EntityType.ARMOR_STAND, new ModelAnimation<>(ModelAnimation.Mode.ACTIVE, ModelAnimation.Priority.FIRST)
         {
             @Override
-            public boolean canStart(ArmorStand entity)
+            public boolean canStart(ArmorStand entity, AnimationData data)
             {
                 return entity.getItemBySlot(EquipmentSlot.HEAD).getItem() == Items.NETHERITE_HELMET;
             }
@@ -183,7 +183,7 @@ public class AnimateEntityLivingTest
         event.addAnimation(EntityType.ARMOR_STAND, new ModelAnimation<>(ModelAnimation.Mode.ACTIVE, ModelAnimation.Priority.DEFAULT)
         {
             @Override
-            public boolean canStart(ArmorStand entity)
+            public boolean canStart(ArmorStand entity, AnimationData data)
             {
                 return entity.getItemBySlot(EquipmentSlot.HEAD).getItem() == Items.NETHERITE_HELMET;
             }
@@ -203,7 +203,7 @@ public class AnimateEntityLivingTest
         event.addAnimation(EntityType.PLAYER, new ModelAnimation<>(ModelAnimation.Mode.ACTIVE, ModelAnimation.Priority.FIRST)
         {
             @Override
-            public boolean canStart(Player entity)
+            public boolean canStart(Player entity, AnimationData data)
             {
                 return entity.getMainHandItem().getItem() == Items.ARROW;
             }
