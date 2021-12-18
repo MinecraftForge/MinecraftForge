@@ -49,7 +49,7 @@ public class AnimateEntityLivingTest
         }
     }
 
-    private void registerAnimations(EntityRenderersEvent.AddAnimations event)
+    private void registerAnimations(EntityRenderersEvent.AddAnimations.Entity event)
     {
         this.setupPlayerEmoteAnimationTest(event);
         this.setupPassiveAnimationPriorityTest(event);
@@ -58,7 +58,7 @@ public class AnimateEntityLivingTest
         this.setupAnimationDataKeyTest(event);
     }
 
-    private void setupPlayerEmoteAnimationTest(EntityRenderersEvent.AddAnimations event)
+    private void setupPlayerEmoteAnimationTest(EntityRenderersEvent.AddAnimations.Entity event)
     {
         // Player waving animation when holding a cookie
         event.addAnimation(EntityType.PLAYER, new ModelAnimation<>(ModelAnimation.Mode.ACTIVE, ModelAnimation.Priority.FIRST)
@@ -82,7 +82,7 @@ public class AnimateEntityLivingTest
     }
 
     /* Creates a test to demonstrate priority in passive animations */
-    private void setupPassiveAnimationPriorityTest(EntityRenderersEvent.AddAnimations event)
+    private void setupPassiveAnimationPriorityTest(EntityRenderersEvent.AddAnimations.Entity event)
     {
         // Custom player pose when riding a pig.
         event.addAnimation(EntityType.PLAYER, new ModelAnimation<>(ModelAnimation.Mode.PASSIVE, ModelAnimation.Priority.FIRST)
@@ -131,7 +131,7 @@ public class AnimateEntityLivingTest
         });
     }
 
-    private void setupZombieAnimationTest(EntityRenderersEvent.AddAnimations event)
+    private void setupZombieAnimationTest(EntityRenderersEvent.AddAnimations.Entity event)
     {
         /* A simple example of creating an animation for an entity. In this case, when a zombie is
          * on fire it will spin it's arms around. */
@@ -154,7 +154,7 @@ public class AnimateEntityLivingTest
     }
 
     // Creates a test to show an active animation preventing a later priority active animation
-    private void setupArmorStandActiveAnimationTest(EntityRenderersEvent.AddAnimations event)
+    private void setupArmorStandActiveAnimationTest(EntityRenderersEvent.AddAnimations.Entity event)
     {
         // Creates an active animation for an armour stand with a first priority
         event.addAnimation(EntityType.ARMOR_STAND, new ModelAnimation<>(ModelAnimation.Mode.ACTIVE, ModelAnimation.Priority.FIRST)
@@ -198,7 +198,7 @@ public class AnimateEntityLivingTest
         });
     }
 
-    private void setupAnimationDataKeyTest(EntityRenderersEvent.AddAnimations event)
+    private void setupAnimationDataKeyTest(EntityRenderersEvent.AddAnimations.Entity event)
     {
         event.addAnimation(EntityType.PLAYER, new ModelAnimation<>(ModelAnimation.Mode.ACTIVE, ModelAnimation.Priority.FIRST)
         {

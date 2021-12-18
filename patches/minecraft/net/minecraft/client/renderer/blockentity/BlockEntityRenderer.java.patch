@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/blockentity/BlockEntityRenderer.java
++++ b/net/minecraft/client/renderer/blockentity/BlockEntityRenderer.java
+@@ -8,7 +_,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public interface BlockEntityRenderer<T extends BlockEntity> {
++public interface BlockEntityRenderer<T extends BlockEntity> extends net.minecraftforge.client.animation.ModelAnimator.Getter<T> {
+    void m_6922_(T p_112307_, float p_112308_, PoseStack p_112309_, MultiBufferSource p_112310_, int p_112311_, int p_112312_);
+ 
+    default boolean m_5932_(T p_112306_) {

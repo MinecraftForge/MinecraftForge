@@ -1,0 +1,9 @@
+--- a/net/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher.java
++++ b/net/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher.java
+@@ -113,5 +_,6 @@
+    public void m_6213_(ResourceManager p_173563_) {
+       BlockEntityRendererProvider.Context blockentityrendererprovider$context = new BlockEntityRendererProvider.Context(this, this.f_173557_.get(), this.f_173556_, this.f_112253_);
+       this.f_112251_ = BlockEntityRenderers.m_173598_(blockentityrendererprovider$context);
++      net.minecraftforge.client.ForgeHooksClient.handleBlockEntityAnimations(this.f_112251_);
+    }
+ }

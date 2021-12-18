@@ -154,30 +154,49 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
     /**
      * An event to provide a safe place to register entity animations
      */
-    public static class AddAnimations extends EntityRenderersEvent
+    public abstract static class AddAnimations<T> extends EntityRenderersEvent
     {
-        private final Multimap<EntityType<?>, Consumer<ModelAnimator<?>>> animations = ArrayListMultimap.create();
+        protected final Multimap<T, Consumer<ModelAnimator<?>>> animations = ArrayListMultimap.create();
 
-        /**
-         * Prepares an animation to be added to the given entity type. Animations are registered when
-         * the resource manager is reloading.
-         *
-         * @param type the entity type
-         * @param animation an animation implementation that matches the entity type
-         * @param <T> an entity that extends living entity
-         */
-        @SuppressWarnings("unchecked")
-        public <T extends Entity> void addAnimation(EntityType<T> type, ModelAnimation<T> animation)
-        {
-            this.animations.put(type, animator -> ((ModelAnimator<T>) animator).addAnimation(animation));
-        }
-
-        /**
-         * Gets a map of the registered animations. Used internally.
-         */
-        public Multimap<EntityType<?>, Consumer<ModelAnimator<?>>> getAnimations()
+        public Multimap<T, Consumer<ModelAnimator<?>>> getAnimations()
         {
             return ImmutableListMultimap.copyOf(animations);
+        }
+
+        public static class Entity extends AddAnimations<EntityType<?>>
+        {
+            /**
+             * Prepares an animation to be added to the given entity type. Animations are registered when
+             * the resource manager is reloading.
+             *
+             * @param type the entity type
+             * @param animation an animation implementation that matches the entity type
+             * @param <E> an entity that extends living entity
+             */
+            @SuppressWarnings("unchecked")
+            public <E extends net.minecraft.world.entity.Entity> void addAnimation(EntityType<E> type, ModelAnimation<E> animation)
+            {
+                this.animations.put(type, animator -> ((ModelAnimator<E>) animator).addAnimation(animation));
+            }
+        }
+
+        public static class BlockEntity extends AddAnimations<BlockEntityType<?>>
+        {
+            /**
+             * Prepares an animation to be added to the given block entity type. If the
+             * {@link net.minecraft.client.renderer.blockentity.BlockEntityRenderer} that handles
+             * rendering the given block entity type does not exist, the animation will simply be
+             * ignored.
+             *
+             * @param type the block entity type
+             * @param animation an animation implementation that matches the block entity type
+             * @param <B> a block entity
+             */
+            @SuppressWarnings("unchecked")
+            public <B extends net.minecraft.world.level.block.entity.BlockEntity> void addAnimation(BlockEntityType<B> type, ModelAnimation<B> animation)
+            {
+                this.animations.put(type, animator -> ((ModelAnimator<B>) animator).addAnimation(animation));
+            }
         }
     }
 }

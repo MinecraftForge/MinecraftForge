@@ -28,6 +28,6 @@
        this.f_114362_ = EntityRenderers.m_174049_(entityrendererprovider$context);
        this.f_114363_ = EntityRenderers.m_174051_(entityrendererprovider$context);
 +      net.minecraftforge.fml.ModLoader.get().postEvent(new net.minecraftforge.client.event.EntityRenderersEvent.AddLayers(f_114362_, f_114363_));
-+      net.minecraftforge.client.ForgeHooksClient.onAddEntityAnimations(this.f_114363_, this.f_114362_);
++      net.minecraftforge.client.ForgeHooksClient.handleEntityAnimations(this.f_114363_, this.f_114362_);
     }
  }

@@ -33,6 +33,7 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
@@ -43,6 +44,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
@@ -117,6 +119,7 @@ import net.minecraftforge.common.ForgeI18n;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.commons.lang3.tuple.Pair;
@@ -1049,28 +1052,35 @@ public class ForgeHooksClient
                 .toList();
     }
 
-    public static void onAddEntityAnimations(Map<String, EntityRenderer<? extends Player>> playerRenders, Map<EntityType<?>, EntityRenderer<?>> entityRenders)
+    public static void handleBlockEntityAnimations(Map<BlockEntityType<?>, BlockEntityRenderer<?>> renderers)
     {
-        var event = new net.minecraftforge.client.event.EntityRenderersEvent.AddAnimations();
+        var event = new EntityRenderersEvent.AddAnimations.BlockEntity();
+        net.minecraftforge.fml.ModLoader.get().postEvent(event);
+        event.getAnimations().forEach((blockEntityType, consumer) -> handleAnimationConsumer(blockEntityType, renderers.get(blockEntityType), consumer));
+    }
+
+    public static void handleEntityAnimations(Map<String, EntityRenderer<? extends Player>> playerRenders, Map<EntityType<?>, EntityRenderer<?>> entityRenders)
+    {
+        var event = new EntityRenderersEvent.AddAnimations.Entity();
         net.minecraftforge.fml.ModLoader.get().postEvent(event);
         event.getAnimations().forEach((entityType, consumer) ->
         {
             if (entityType == EntityType.PLAYER)
             {
-                playerRenders.forEach((s, renderer) -> processAnimatorConsumer(entityType, renderer, consumer));
+                playerRenders.forEach((s, renderer) -> handleAnimationConsumer(entityType, renderer, consumer));
             }
             else
             {
-                processAnimatorConsumer(entityType, entityRenders.get(entityType), consumer);
+                handleAnimationConsumer(entityType, entityRenders.get(entityType), consumer);
             }
         });
     }
 
-    private static void processAnimatorConsumer(EntityType<?> type, EntityRenderer<?> renderer, Consumer<ModelAnimator<?>> consumer)
+    private static void handleAnimationConsumer(ForgeRegistryEntry<?> type, Object source, Consumer<ModelAnimator<?>> consumer)
     {
-        if (renderer != null && renderer.getModelAnimator() != null)
+        if (source instanceof ModelAnimator.Getter<?> getter)
         {
-            consumer.accept(renderer.getModelAnimator());
+            consumer.accept(getter.getModelAnimator());
         }
         else
         {
