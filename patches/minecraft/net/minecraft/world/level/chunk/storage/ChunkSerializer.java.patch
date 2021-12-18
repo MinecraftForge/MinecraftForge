@@ -51,7 +51,7 @@
 +          LevelChunk levelChunk = (LevelChunk) p_63456_;
 +          try {
 +              final CompoundTag capTag = levelChunk.writeCapsToNBT();
-+              if (capTag != null) capTag.m_128365_("ForgeCaps", capTag);
++              if (capTag != null) compoundtag.m_128365_("ForgeCaps", capTag);
 +          } catch (Exception exception) {
 +              LogManager.getLogger().error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
 +          }

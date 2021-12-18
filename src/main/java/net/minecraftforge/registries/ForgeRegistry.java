@@ -79,7 +79,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final Set<ResourceLocation> dummies = Sets.newHashSet();
     private final Set<Integer> blocked = Sets.newHashSet();
     private final Multimap<ResourceLocation, V> overrides = ArrayListMultimap.create();
-    private final BiMap<OverrideOwner, V> owners = HashBiMap.create();
+    private final BiMap<OverrideOwner<V>, V> owners = HashBiMap.create();
     private final DummyFactory<V> dummyFactory;
     private final boolean isDelegated;
     private final int min;
@@ -228,14 +228,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     @Override
     public ResourceLocation getKey(V value)
     {
-        ResourceLocation ret = this.names.inverse().get(value);
-        return ret == null ? this.defaultKey : ret;
+        return getResourceKey(value).map(ResourceKey::location).orElse(this.defaultKey);
     }
 
     @Override
     public Optional<ResourceKey<V>> getResourceKey(V value)
     {
-        return Optional.ofNullable(this.keys.inverse().get(value));
+        // We use 'owners' here because we want to return the key for the inactive overridden items, not just the active set.
+        return Optional.ofNullable(this.owners.inverse().get(value)).map(OverrideOwner::key);
     }
 
     @Override
@@ -375,11 +375,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             this.defaultValue = value;
         }
 
+        ResourceKey<V> rkey = ResourceKey.create(this.key, key);
         this.names.put(key, value);
-        this.keys.put(ResourceKey.create(this.key, key), value);
+        this.keys.put(rkey, value);
         this.ids.put(idToUse, value);
         this.availabilityMap.set(idToUse);
-        this.owners.put(new OverrideOwner(owner == null ? key.getPath() : owner, key), value);
+        this.owners.put(new OverrideOwner<V>(owner == null ? key.getPath() : owner, rkey), value);
 
         if (isDelegated)
         {
@@ -575,7 +576,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 overrides.add(entry.getValue());
                 for (V value : overrides)
                 {
-                    OverrideOwner owner = from.owners.inverse().get(value);
+                    OverrideOwner<V> owner = from.owners.inverse().get(value);
                     if (owner == null)
                     {
                         LOGGER.warn(REGISTRIES,"Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.name, entry.getKey(), value);
@@ -599,8 +600,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (errored)
             throw new RuntimeException("One of more entry values did not copy to the correct id. Check log for details!");
     }
-
-
 
     @Override
     public void clear()
@@ -763,7 +762,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
             for (V value : lst)
             {
-                OverrideOwner owner = old.owners.inverse().get(value);
+                OverrideOwner<V> owner = old.owners.inverse().get(value);
                 if (owner == null)
                 {
                     LOGGER.warn(REGISTRIES,"Registry {}: Override did not have an associated owner object. Name: {} Value: {}", this.name, entry.getKey(), value);
@@ -791,7 +790,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             String current = this.owners.inverse().get(this.getRaw(itemName)).owner;
             if (!owner.equals(current))
             {
-                V _new = this.owners.get(new OverrideOwner(owner, itemName));
+                V _new = this.owners.get(new OverrideOwner<V>(owner, ResourceKey.create(this.key, itemName)));
                 if (_new == null)
                 {
                     LOGGER.warn(REGISTRIES,"Registry {}: Skipping override for {}, Unknown owner {}", this.name, itemName, owner);
@@ -865,7 +864,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         for (ResourceLocation key : this.overrides.keySet())
         {
             V obj = this.names.get(key);
-            OverrideOwner owner = this.owners.inverse().get(obj);
+            OverrideOwner<V> owner = this.owners.inverse().get(obj);
             if (owner == null)
                 LOGGER.debug(REGISTRIES,"Registry {} {}: Invalid override {} {}", this.name, this.stage.getName(), key, obj);
             ret.put(key, owner.owner);
@@ -1105,31 +1104,5 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             LOGGER.debug(REGISTRIES,"There were {} missing mappings that have been ignored", ignored);
     }
 
-    private static class OverrideOwner
-    {
-        final String owner;
-        final ResourceLocation key;
-        private OverrideOwner(String owner, ResourceLocation key)
-        {
-            this.owner = owner;
-            this.key = key;
-        }
-
-        public boolean equals(Object o)
-        {
-            if (this == o)
-                return true;
-
-            if (!(o instanceof OverrideOwner))
-                return false;
-
-            OverrideOwner oo = (OverrideOwner)o;
-            return this.owner.equals(oo.owner) && this.key.equals(oo.key);
-        }
-
-        public int hashCode()
-        {
-            return 31 * this.key.hashCode() + this.owner.hashCode();
-        }
-    }
+    private record OverrideOwner<V>(String owner, ResourceKey<V> key){};
 }

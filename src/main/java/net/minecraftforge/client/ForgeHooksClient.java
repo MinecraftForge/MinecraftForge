@@ -31,6 +31,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
@@ -38,6 +39,7 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.blaze3d.platform.Window;
@@ -236,6 +238,11 @@ public class ForgeHooksClient
     public static boolean renderSpecificFirstPersonHand(InteractionHand hand, PoseStack mat, MultiBufferSource buffers, int light, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
     {
         return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(hand, mat, buffers, light, partialTicks, interpPitch, swingProgress, equipProgress, stack));
+    }
+
+    public static boolean renderSpecificFirstPersonArm(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, AbstractClientPlayer player, HumanoidArm arm)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderArmEvent(poseStack, multiBufferSource, packedLight, player, arm));
     }
 
     public static void onTextureStitchedPre(TextureAtlas map, Set<ResourceLocation> resourceLocations)
