@@ -59,7 +59,8 @@ public final class PermissionAPI
      * @return the Identifier of the currently active permission handler
      */
     @Nullable
-    public static ResourceLocation getActivePermissionHandler(){
+    public static ResourceLocation getActivePermissionHandler()
+    {
         return activeHandler == null ? null : activeHandler.getIdentifier();
     }
 
@@ -108,7 +109,7 @@ public final class PermissionAPI
      */
     public static void initializePermissionAPI()
     {
-        if(PermissionAPI.activeHandler != null) throw new IllegalStateException("Tried to initialize PermissionAPI multiple times!");
+        if (PermissionAPI.activeHandler != null) throw new IllegalStateException("Tried to initialize PermissionAPI multiple times!");
 
         PermissionGatherEvent.Handler handlerEvent = new PermissionGatherEvent.Handler();
         MinecraftForge.EVENT_BUS.post(handlerEvent);
@@ -119,7 +120,8 @@ public final class PermissionAPI
             ResourceLocation selectedPermissionHandler = new ResourceLocation(ForgeConfig.SERVER.permissionHandler.get());
 
             IPermissionHandlerFactory factory = availableHandlers.get(selectedPermissionHandler);
-            if(factory == null){
+            if (factory == null)
+            {
                 LOGGER.error("Unable to find configured permission handler {}, will use {}", selectedPermissionHandler, DefaultPermissionHandler.IDENTIFIER);
                 factory = DefaultPermissionHandler::new;
             }
@@ -131,7 +133,7 @@ public final class PermissionAPI
 
             LOGGER.info("Successfully initialized permission handler {}", PermissionAPI.activeHandler.getIdentifier());
         }
-        catch(ResourceLocationException e)
+        catch (ResourceLocationException e)
         {
             LOGGER.error("Error parsing config value 'permissionHandler'", e);
         }
@@ -141,7 +143,8 @@ public final class PermissionAPI
      * <p>Helper method for internal use only!</p>
      * <p>Resets the active permission handler.</p>
      */
-    public static void resetPermissionAPI(){
+    public static void resetPermissionAPI()
+    {
         PermissionAPI.activeHandler = null;
         LOGGER.info("Reset PermissionAPI");
     }
