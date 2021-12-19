@@ -37,18 +37,18 @@ import net.minecraftforge.server.permission.nodes.PermissionTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod("permission_test")
+@Mod("permissiontest")
 public class PermissionTest
 {
     private static final boolean ENABLED = true;
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static final PermissionNode<Boolean> boolPerm = new PermissionNode<>("permission_test", "test.blob", PermissionTypes.BOOLEAN, (player, playerUUID, context) -> true);
-    private static final PermissionNode<String> stringPerm = new PermissionNode<>("permission_test", "test.blobText", PermissionTypes.STRING, (player, playerUUID, context) -> "Hello World");
-    private static final PermissionNode<Integer> intPerm = new PermissionNode<>("permission_test", "test.blob.integer", PermissionTypes.INTEGER, (player, playerUUID, context) -> 3);
-    private static final PermissionNode<Component> componentPerm = new PermissionNode<>("permission_test", "test.blob.component", PermissionTypes.COMPONENT, (player, playerUUID, context) -> new TextComponent("This is a component"));
+    private static final PermissionNode<Boolean> boolPerm = new PermissionNode<>("permissiontest", "test.blob", PermissionTypes.BOOLEAN, (player, playerUUID, context) -> true);
+    private static final PermissionNode<String> stringPerm = new PermissionNode<>("permissiontest", "test.blobText", PermissionTypes.STRING, (player, playerUUID, context) -> "Hello World");
+    private static final PermissionNode<Integer> intPerm = new PermissionNode<>("permissiontest", "test.blob.integer", PermissionTypes.INTEGER, (player, playerUUID, context) -> 3);
+    private static final PermissionNode<Component> componentPerm = new PermissionNode<>("permissiontest", "test.blob.component", PermissionTypes.COMPONENT, (player, playerUUID, context) -> new TextComponent("This is a component"));
 
-    private static final PermissionNode<Boolean> unregisteredPerm = new PermissionNode<>("permission_test", "test.unregistered", PermissionTypes.BOOLEAN, (player, playerUUID, context) -> false);
+    private static final PermissionNode<Boolean> unregisteredPerm = new PermissionNode<>("permissiontest", "test.unregistered", PermissionTypes.BOOLEAN, (player, playerUUID, context) -> false);
 
 
     public PermissionTest()
