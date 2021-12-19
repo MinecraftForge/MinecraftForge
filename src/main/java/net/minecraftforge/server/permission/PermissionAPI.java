@@ -118,18 +118,21 @@ public final class PermissionAPI
         try
         {
             ResourceLocation selectedPermissionHandler = new ResourceLocation(ForgeConfig.SERVER.permissionHandler.get());
-
-            IPermissionHandlerFactory factory = availableHandlers.get(selectedPermissionHandler);
-            if (factory == null)
+            if (!availableHandlers.containsKey(selectedPermissionHandler))
             {
                 LOGGER.error("Unable to find configured permission handler {}, will use {}", selectedPermissionHandler, DefaultPermissionHandler.IDENTIFIER);
-                factory = DefaultPermissionHandler::new;
+                selectedPermissionHandler = DefaultPermissionHandler.IDENTIFIER;
             }
+
+            IPermissionHandlerFactory factory = availableHandlers.get(selectedPermissionHandler);
 
             PermissionGatherEvent.Nodes nodesEvent = new PermissionGatherEvent.Nodes();
             MinecraftForge.EVENT_BUS.post(nodesEvent);
 
             PermissionAPI.activeHandler = factory.create(nodesEvent.getNodes());
+
+            if(!selectedPermissionHandler.equals(activeHandler.getIdentifier()))
+                LOGGER.warn("Identifier for permission handler {} does not match registered one {}", activeHandler.getIdentifier(), selectedPermissionHandler);
 
             LOGGER.info("Successfully initialized permission handler {}", PermissionAPI.activeHandler.getIdentifier());
         }
