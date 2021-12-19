@@ -47,21 +47,12 @@ public interface IPermissionHandler
     ResourceLocation getIdentifier();
 
     /**
-     * <strong>Mods must use {@link PermissionGatherEvent.Nodes}</strong>
-     *
-     * <p>It is guaranteed that all permission nodes passed in here have a unique name.</p>
-     *
-     * @param node PermissionNode to be registered
-     */
-    void registerNode(PermissionNode<?> node);
-
-    /**
      * {@return an unmodifiable view of the collection of registered permission nodes}
      */
     Set<PermissionNode<?>> getRegisteredNodes();
 
     /**
-     * <strong>Mods must use {@link PermissionAPI#getPermissions(ServerPlayer, PermissionNode, PermissionDynamicContext[])}</strong>
+     * <strong>Mods must use {@link PermissionAPI#getPermission(ServerPlayer, PermissionNode, PermissionDynamicContext[])}</strong>
      *
      * <p>Queries a player's permission for a given node and contexts</p>
      * <p><strong>Warning:</strong> PermissionNodes <strong>must</strong> be registered using the

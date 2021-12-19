@@ -19,6 +19,8 @@
 
 package net.minecraftforge.server.permission;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,23 +31,24 @@ import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.permission.exceptions.UnregisteredPermissionException;
 import net.minecraftforge.server.permission.handler.DefaultPermissionHandler;
 import net.minecraftforge.server.permission.handler.IPermissionHandler;
+import net.minecraftforge.server.permission.handler.IPermissionHandlerFactory;
 import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collection;
-import java.util.Set;
-import java.util.UUID;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public final class PermissionAPI
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static IPermissionHandler activeHandler = new DefaultPermissionHandler();
+    private static final Collection<PermissionNode<?>> EMPTY_PERMISSIONS = Collections.EMPTY_LIST;
+    private static IPermissionHandler activeHandler = null;
 
     public static Collection<PermissionNode<?>> getRegisteredNodes()
     {
-        return activeHandler.getRegisteredNodes();
+        return activeHandler == null ? EMPTY_PERMISSIONS : activeHandler.getRegisteredNodes();
     }
 
     private PermissionAPI()
@@ -55,8 +58,9 @@ public final class PermissionAPI
     /**
      * @return the Identifier of the currently active permission handler
      */
+    @Nullable
     public static ResourceLocation getActivePermissionHandler(){
-        return activeHandler.getIdentifier();
+        return activeHandler == null ? null : activeHandler.getIdentifier();
     }
 
     /**
@@ -100,30 +104,32 @@ public final class PermissionAPI
 
     /**
      * <p>Helper method for internal use only!</p>
-     * <p>Fires the {@link PermissionGatherEvent.Handler}  event,
-     * and replaced the current PermissionHandler with the one specified by the user</p>
+     * <p>Initializes the active permission handler based on the users config.</p>
      */
-    public static void gatherPermissionHandler()
+    public static void initializePermissionAPI()
     {
-        PermissionGatherEvent.Handler event = new PermissionGatherEvent.Handler();
-        MinecraftForge.EVENT_BUS.post(event);
-        Set<IPermissionHandler> availableHandlers = event.getAvailablePermissionHandlers();
+        if(PermissionAPI.activeHandler != null) throw new IllegalStateException("Tried to initialize PermissionAPI multiple times!");
+
+        PermissionGatherEvent.Handler handlerEvent = new PermissionGatherEvent.Handler();
+        MinecraftForge.EVENT_BUS.post(handlerEvent);
+        Map<ResourceLocation, IPermissionHandlerFactory> availableHandlers = handlerEvent.getAvailablePermissionHandlerFactories();
 
         try
         {
             ResourceLocation selectedPermissionHandler = new ResourceLocation(ForgeConfig.SERVER.permissionHandler.get());
 
-            for(IPermissionHandler handler : availableHandlers)
-            {
-                if(selectedPermissionHandler.equals(handler.getIdentifier()))
-                {
-                    LOGGER.info("Replacing permission handler {} with {}", activeHandler.getIdentifier(), selectedPermissionHandler);
-                    activeHandler = handler;
-                    return;
-                }
+            IPermissionHandlerFactory factory = availableHandlers.get(selectedPermissionHandler);
+            if(factory == null){
+                LOGGER.error("Unable to find configured permission handler {}, will use {}", selectedPermissionHandler, DefaultPermissionHandler.IDENTIFIER);
+                factory = DefaultPermissionHandler::new;
             }
 
-            LOGGER.error("Unable to find configured permission handler {}, will use {}", selectedPermissionHandler, activeHandler.getIdentifier());
+            PermissionGatherEvent.Nodes nodesEvent = new PermissionGatherEvent.Nodes();
+            MinecraftForge.EVENT_BUS.post(nodesEvent);
+
+            PermissionAPI.activeHandler = factory.create(nodesEvent.getNodes());
+
+            LOGGER.info("Successfully initialized permission handler {}", PermissionAPI.activeHandler.getIdentifier());
         }
         catch(ResourceLocationException e)
         {
@@ -133,17 +139,10 @@ public final class PermissionAPI
 
     /**
      * <p>Helper method for internal use only!</p>
-     * <p>Fires the {@link PermissionGatherEvent.Nodes} event,
-     * and registers them to the currently active PermissionHandler</p>
+     * <p>Resets the active permission handler.</p>
      */
-    public static void gatherPermissionNodes()
-    {
-        PermissionGatherEvent.Nodes event = new PermissionGatherEvent.Nodes();
-        MinecraftForge.EVENT_BUS.post(event);
-
-        for (PermissionNode<?> node : event.getNodes())
-        {
-            activeHandler.registerNode(node);
-        }
+    public static void resetPermissionAPI(){
+        PermissionAPI.activeHandler = null;
+        LOGGER.info("Reset PermissionAPI");
     }
 }

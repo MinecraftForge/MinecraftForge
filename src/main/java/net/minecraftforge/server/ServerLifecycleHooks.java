@@ -98,8 +98,7 @@ public class ServerLifecycleHooks
     public static boolean handleServerStarting(final MinecraftServer server)
     {
         DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->LanguageHook.loadLanguagesOnServer(server));
-        PermissionAPI.gatherPermissionHandler();
-        PermissionAPI.gatherPermissionNodes();
+        PermissionAPI.initializePermissionAPI();
         return !MinecraftForge.EVENT_BUS.post(new ServerStartingEvent(server));
     }
 
@@ -112,6 +111,7 @@ public class ServerLifecycleHooks
     public static void handleServerStopping(final MinecraftServer server)
     {
         allowLogins.set(false);
+        PermissionAPI.resetPermissionAPI();
         MinecraftForge.EVENT_BUS.post(new ServerStoppingEvent(server));
     }
 

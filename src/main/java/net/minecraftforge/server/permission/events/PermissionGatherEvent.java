@@ -22,10 +22,13 @@ package net.minecraftforge.server.permission.events;
 import com.google.common.base.Preconditions;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.server.permission.handler.DefaultPermissionHandler;
 import net.minecraftforge.server.permission.handler.IPermissionHandler;
+import net.minecraftforge.server.permission.handler.IPermissionHandlerFactory;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Fired to gather information for the permissions API, such as the {@link IPermissionHandler} and {@link PermissionNode}s.
@@ -46,21 +49,22 @@ public class PermissionGatherEvent extends Event
      */
     public static class Handler extends PermissionGatherEvent
     {
-        private Set<IPermissionHandler> availableHandlers;
+        private Map<ResourceLocation, IPermissionHandlerFactory> availableHandlers = new HashMap<>();
 
         public Handler()
         {
+            availableHandlers.put(DefaultPermissionHandler.IDENTIFIER, DefaultPermissionHandler::new);
         }
 
-        public Set<IPermissionHandler> getAvailablePermissionHandlers()
+        public Map<ResourceLocation, IPermissionHandlerFactory> getAvailablePermissionHandlerFactories()
         {
             return availableHandlers;
         }
 
-        public void addPermissionHandler(IPermissionHandler newHandler)
+        public void addPermissionHandler(ResourceLocation identifier, IPermissionHandlerFactory handlerFactory)
         {
-            Preconditions.checkNotNull(newHandler, "Permission handler cannot be null!");
-            this.availableHandlers.add(newHandler);
+            Preconditions.checkNotNull(handlerFactory, "Permission handler cannot be null!");
+            this.availableHandlers.put(identifier, handlerFactory);
         }
     }
 

@@ -24,31 +24,24 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.server.permission.nodes.PermissionDynamicContext;
 import net.minecraftforge.server.permission.nodes.PermissionNode;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public final class DefaultPermissionHandler implements IPermissionHandler
 {
-    private final ResourceLocation name = new ResourceLocation("forge", "default_handler");;
+    public static final ResourceLocation IDENTIFIER = new ResourceLocation("forge", "default_handler");;
     private final Set<PermissionNode<?>> registeredNodes = new HashSet<>();
     private Set<PermissionNode<?>> immutableRegisteredNodes = Collections.unmodifiableSet(this.registeredNodes);
 
-    public DefaultPermissionHandler()
+
+    public DefaultPermissionHandler(Collection<PermissionNode<?>> permissions)
     {
+        this.registeredNodes.addAll(permissions);
     }
 
     @Override
     public ResourceLocation getIdentifier()
     {
-        return this.name;
-    }
-
-    @Override
-    public void registerNode(PermissionNode<?> node)
-    {
-        this.registeredNodes.add(node);
+        return IDENTIFIER;
     }
 
     @Override
