@@ -126,8 +126,8 @@ public abstract class BakedModelWrapper<T extends BakedModel> implements BakedMo
 
     @Nonnull
     @Override
-    public IModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData)
+    public IModelData getModelData(@Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData modelData)
     {
-        return originalModel.getModelData(world, pos, state, tileData);
+        return originalModel.getModelData(level, pos, state, modelData);
     }
 }

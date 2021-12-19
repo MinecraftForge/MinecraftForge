@@ -30,5 +30,5 @@ import net.minecraft.client.multiplayer.ClientLevel;
  */
 @FunctionalInterface
 public interface ISkyRenderHandler {
-    void render(int ticks, float partialTicks, PoseStack matrixStack, ClientLevel world, Minecraft mc);
+    void render(int ticks, float partialTick, PoseStack poseStack, ClientLevel level, Minecraft minecraft);
 }

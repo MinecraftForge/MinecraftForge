@@ -30,5 +30,5 @@ import net.minecraft.client.multiplayer.ClientLevel;
  */
 @FunctionalInterface
 public interface IWeatherRenderHandler {
-    void render(int ticks, float partialTicks, ClientLevel world, Minecraft mc, LightTexture lightmapIn, double xIn, double yIn, double zIn);
+    void render(int ticks, float partialTick, ClientLevel level, Minecraft minecraft, LightTexture lightTexture, double camX, double camY, double camZ);
 }

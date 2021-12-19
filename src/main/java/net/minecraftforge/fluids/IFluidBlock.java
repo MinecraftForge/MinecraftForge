@@ -43,13 +43,13 @@ public interface IFluidBlock
      * This method should be called by fluid containers such as buckets, but it is recommended
      * to use {@link FluidUtil}.
      *
-     * @param world      the world to place the block in
+     * @param level      the level to place the block in
      * @param pos        the position to place the block at
      * @param fluidStack the fluid stack to get the required data from
      * @param action     If SIMULATE, the placement will only be simulated
      * @return the amount of fluid extracted from the provided stack to achieve some fluid level
      */
-    int place(Level world, BlockPos pos, @Nonnull FluidStack fluidStack, IFluidHandler.FluidAction action);
+    int place(Level level, BlockPos pos, @Nonnull FluidStack fluidStack, IFluidHandler.FluidAction action);
 
     /**
      * Attempt to drain the block. This method should be called by devices such as pumps.
@@ -61,13 +61,13 @@ public interface IFluidBlock
      * @return the fluid stack after draining the block
      */
     @Nonnull
-    FluidStack drain(Level world, BlockPos pos, IFluidHandler.FluidAction action);
+    FluidStack drain(Level level, BlockPos pos, IFluidHandler.FluidAction action);
 
     /**
      * Check to see if a block can be drained. This method should be called by devices such as
      * pumps.
      */
-    boolean canDrain(Level world, BlockPos pos);
+    boolean canDrain(Level level, BlockPos pos);
 
     /**
      * Returns the amount of a single block is filled. Value between 0 and 1.
@@ -76,5 +76,5 @@ public interface IFluidBlock
      * If the return value is negative. It will be treated as filling the block
      * from the top down instead of bottom up.
      */
-    float getFilledPercentage(Level world, BlockPos pos);
+    float getFilledPercentage(Level level, BlockPos pos);
 }

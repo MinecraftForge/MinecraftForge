@@ -87,9 +87,9 @@ public class CustomRespawnTest
         }
 
         @Override
-        public Optional<Vec3> getRespawnPosition(BlockState state, EntityType<?> type, LevelReader world, BlockPos pos, float orientation, @Nullable LivingEntity entity)
+        public Optional<Vec3> getRespawnPosition(BlockState state, EntityType<?> type, LevelReader levelReader, BlockPos pos, float orientation, @Nullable LivingEntity entity)
         {
-            return RespawnAnchorBlock.findStandUpPosition(type, world, pos);
+            return RespawnAnchorBlock.findStandUpPosition(type, levelReader, pos);
         }
     }
 

@@ -96,9 +96,9 @@ public class BlockEvent extends Event
             }
             else
             {
-                int bonusLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
-                int silklevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
-                this.exp = state.getExpDrop(world, pos, bonusLevel, silklevel);
+                int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
+                int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
+                this.exp = state.getExpDrop(world, pos, fortuneLevel, silkTouchLevel);
             }
         }
 

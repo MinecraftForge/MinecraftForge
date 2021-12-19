@@ -259,10 +259,10 @@ public interface IForgeItem
      * as a EntityItem. This is in ticks, standard result is 6000, or 5 mins.
      *
      * @param itemStack The current ItemStack
-     * @param world     The world the entity is in
+     * @param level     The level the entity is in
      * @return The normal lifespan in ticks.
      */
-    default int getEntityLifespan(ItemStack itemStack, Level world)
+    default int getEntityLifespan(ItemStack itemStack, Level level)
     {
         return 6000;
     }
@@ -285,16 +285,16 @@ public interface IForgeItem
     /**
      * This function should return a new entity to replace the dropped item.
      * Returning null here will not kill the EntityItem and will leave it to
-     * function normally. Called when the item it placed in a world.
+     * function normally. Called when the item it placed in a level.
      *
-     * @param world     The world object
+     * @param level     The level object
      * @param location  The EntityItem object, useful for getting the position of
      *                  the entity
-     * @param itemstack The current item stack
+     * @param stack The current item stack
      * @return A new Entity object to spawn or null
      */
     @Nullable
-    default Entity createEntity(Level world, Entity location, ItemStack itemstack)
+    default Entity createEntity(Level level, Entity location, ItemStack stack)
     {
         return null;
     }
@@ -329,11 +329,11 @@ public interface IForgeItem
      * Should this item, when held, allow sneak-clicks to pass through to the
      * underlying block?
      *
-     * @param world  The world
-     * @param pos    Block position in world
+     * @param level  The level
+     * @param pos    Block position in level
      * @param player The Player that is wielding the item
      */
-    default boolean doesSneakBypassUse(ItemStack stack, net.minecraft.world.level.LevelReader world, BlockPos pos, Player player)
+    default boolean doesSneakBypassUse(ItemStack stack, net.minecraft.world.level.LevelReader level, BlockPos pos, Player player)
     {
         return false;
     }
@@ -341,7 +341,7 @@ public interface IForgeItem
     /**
      * Called to tick armor in the armor slot. Override to do something
      */
-    default void onArmorTick(ItemStack stack, Level world, Player player)
+    default void onArmorTick(ItemStack stack, Level level, Player player)
     {
     }
 
@@ -645,10 +645,10 @@ public interface IForgeItem
      * armor slot.
      *
      * @param stack the armor itemstack
-     * @param world the world the horse is in
+     * @param level the level the horse is in
      * @param horse the horse wearing this armor
      */
-    default void onHorseArmorTick(ItemStack stack, Level world, Mob horse)
+    default void onHorseArmorTick(ItemStack stack, Level level, Mob horse)
     {
     }
 

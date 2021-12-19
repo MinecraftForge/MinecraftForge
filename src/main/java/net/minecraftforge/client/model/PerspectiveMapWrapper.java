@@ -170,9 +170,9 @@ public class PerspectiveMapWrapper implements IDynamicBakedModel
 
         @Nullable
         @Override
-        public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel worldIn, @Nullable LivingEntity entityIn, int seed)
+        public BakedModel resolve(BakedModel model, ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed)
         {
-            model = parent.getOverrides().resolve(parent, stack, worldIn, entityIn, seed);
+            model = parent.getOverrides().resolve(parent, stack, level, entity, seed);
             return new PerspectiveMapWrapper(model, transforms);
         }
 

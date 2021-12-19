@@ -85,12 +85,12 @@ class EntityCommand
             if (names.isEmpty())
                 throw INVALID_FILTER.create();
 
-            ServerLevel world = sender.getServer().getLevel(dim); //TODO: DimensionManager so we can hotload? DimensionManager.getWorld(sender.getServer(), dim, false, false);
-            if (world == null)
+            ServerLevel level = sender.getServer().getLevel(dim); //TODO: DimensionManager so we can hotload? DimensionManager.getWorld(sender.getServer(), dim, false, false);
+            if (level == null)
                 throw INVALID_DIMENSION.create(dim);
 
             Map<ResourceLocation, MutablePair<Integer, Map<ChunkPos, Integer>>> list = Maps.newHashMap();
-            world.getEntities().getAll().forEach(e -> {
+            level.getEntities().getAll().forEach(e -> {
                 MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(e.getType().getRegistryName(), k -> MutablePair.of(0, Maps.newHashMap()));
                 ChunkPos chunk = new ChunkPos(e.blockPosition());
                 info.left++;

@@ -39,30 +39,30 @@ public interface IForgeFluidState
      * Called when the entity is inside this block, may be used to determined if the entity can breathing,
      * display material overlays, or if the entity can swim inside a block.
      *
-     * @param world that is being tested.
+     * @param level that is being tested.
      * @param pos position thats being tested.
      * @param entity that is being tested.
      * @param yToTest, primarily for testingHead, which sends the the eye level of the entity, other wise it sends a y that can be tested vs liquid height.
      * @param tag to test for.
      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
      */
-    default boolean isEntityInside(LevelReader world, BlockPos pos, Entity entity, double yToTest, SetTag<Fluid> tag, boolean testingHead)
+    default boolean isEntityInside(LevelReader level, BlockPos pos, Entity entity, double yToTest, SetTag<Fluid> tag, boolean testingHead)
     {
-//        return ifluidstate.isTagged(p_213290_1_) && d0 < (double)((float)blockpos.getY() + ifluidstate.getActualHeight(this.world, blockpos) + 0.11111111F);
-        return self().getType().isEntityInside(self(), world, pos, entity, yToTest, tag, testingHead);
+//        return ifluidstate.isTagged(p_213290_1_) && d0 < (double)((float)blockpos.getY() + ifluidstate.getActualHeight(this.level, blockpos) + 0.11111111F);
+        return self().getType().isEntityInside(self(), level, pos, entity, yToTest, tag, testingHead);
     }
 
     /**
      * Location sensitive version of getExplosionResistance
      *
-     * @param world The current world
-     * @param pos Block position in world
+     * @param level The current level
+     * @param pos Block position in level
      * @param explosion The explosion
      * @return The amount of the explosion absorbed.
      */
-    default float getExplosionResistance(BlockGetter world, BlockPos pos, Explosion explosion)
+    default float getExplosionResistance(BlockGetter level, BlockPos pos, Explosion explosion)
     {
-        return self().getType().getExplosionResistance(self(), world, pos, explosion);
+        return self().getType().getExplosionResistance(self(), level, pos, explosion);
     }
 
 }

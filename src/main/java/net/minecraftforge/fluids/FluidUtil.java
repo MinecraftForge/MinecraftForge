@@ -72,17 +72,17 @@ public class FluidUtil
      *
      * @param player The player doing the interaction between the item and fluid handler block.
      * @param hand   The player's hand that is holding an item that should interact with the fluid handler block.
-     * @param world  The world that contains the fluid handler block.
-     * @param pos    The position of the fluid handler block in the world.
+     * @param level  The level that contains the fluid handler block.
+     * @param pos    The position of the fluid handler block in the level.
      * @param side   The side of the block to interact with. May be null.
      * @return true if the interaction succeeded and updated the item held by the player, false otherwise.
      */
-    public static boolean interactWithFluidHandler(@Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Level world, @Nonnull BlockPos pos, @Nullable Direction side)
+    public static boolean interactWithFluidHandler(@Nonnull Player player, @Nonnull InteractionHand hand, @Nonnull Level level, @Nonnull BlockPos pos, @Nullable Direction side)
     {
-        Preconditions.checkNotNull(world);
+        Preconditions.checkNotNull(level);
         Preconditions.checkNotNull(pos);
 
-        return getFluidHandler(world, pos, side).map(handler -> interactWithFluidHandler(player, hand, handler)).orElse(false);
+        return getFluidHandler(level, pos, side).map(handler -> interactWithFluidHandler(player, hand, handler)).orElse(false);
     }
 
     /**
@@ -456,14 +456,14 @@ public class FluidUtil
     /**
      * Helper method to get an IFluidHandler for at a block position.
      */
-    public static LazyOptional<IFluidHandler> getFluidHandler(Level world, BlockPos blockPos, @Nullable Direction side)
+    public static LazyOptional<IFluidHandler> getFluidHandler(Level level, BlockPos blockPos, @Nullable Direction side)
     {
-        BlockState state = world.getBlockState(blockPos);
+        BlockState state = level.getBlockState(blockPos);
         Block block = state.getBlock();
 
         if (state.hasBlockEntity())
         {
-            BlockEntity blockEntity = world.getBlockEntity(blockPos);
+            BlockEntity blockEntity = level.getBlockEntity(blockPos);
             if (blockEntity != null)
             {
                 return blockEntity.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, side);
@@ -473,38 +473,38 @@ public class FluidUtil
     }
 
     /**
-     * Attempts to pick up a fluid in the world and put it in an empty container item.
+     * Attempts to pick up a fluid in the level and put it in an empty container item.
      *
      * @param emptyContainer The empty container to fill.
      *                       Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
      * @param playerIn       The player filling the container. Optional.
-     * @param worldIn        The world the fluid is in.
-     * @param pos            The position of the fluid in the world.
+     * @param level          The level the fluid is in.
+     * @param pos            The position of the fluid in the level.
      * @param side           The side of the fluid that is being drained.
      * @return a {@link FluidActionResult} holding the result and the resulting container.
      */
     @Nonnull
-    public static FluidActionResult tryPickUpFluid(@Nonnull ItemStack emptyContainer, @Nullable Player playerIn, Level worldIn, BlockPos pos, Direction side)
+    public static FluidActionResult tryPickUpFluid(@Nonnull ItemStack emptyContainer, @Nullable Player playerIn, Level level, BlockPos pos, Direction side)
     {
-        if (emptyContainer.isEmpty() || worldIn == null || pos == null)
+        if (emptyContainer.isEmpty() || level == null || pos == null)
         {
             return FluidActionResult.FAILURE;
         }
 
-        BlockState state = worldIn.getBlockState(pos);
+        BlockState state = level.getBlockState(pos);
         Block block = state.getBlock();
         IFluidHandler targetFluidHandler;
         if (block instanceof IFluidBlock)
         {
-            targetFluidHandler = new FluidBlockWrapper((IFluidBlock) block, worldIn, pos);
+            targetFluidHandler = new FluidBlockWrapper((IFluidBlock) block, level, pos);
         }
         else if (block instanceof BucketPickup)
         {
-            targetFluidHandler = new BucketPickupHandlerWrapper((BucketPickup) block, worldIn, pos);
+            targetFluidHandler = new BucketPickupHandlerWrapper((BucketPickup) block, level, pos);
         }
         else
         {
-            Optional<IFluidHandler> fluidHandler = getFluidHandler(worldIn, pos, side).resolve();
+            Optional<IFluidHandler> fluidHandler = getFluidHandler(level, pos, side).resolve();
             if (!fluidHandler.isPresent())
             {
                 return FluidActionResult.FAILURE;
@@ -519,26 +519,26 @@ public class FluidUtil
      * Use the returned {@link FluidActionResult} to update the container ItemStack.
      *
      * @param player    Player who places the fluid. May be null for blocks like dispensers.
-     * @param world     Level to place the fluid in
+     * @param level     Level to place the fluid in
      * @param hand      hand of the player to place the fluid with
-     * @param pos       The position in the world to place the fluid block
+     * @param pos       The position in the level to place the fluid block
      * @param container The fluid container holding the fluidStack to place
      * @param resource  The fluidStack to place
      * @return the container's ItemStack with the remaining amount of fluid if the placement was successful, null otherwise
      */
     @Nonnull
-    public static FluidActionResult tryPlaceFluid(@Nullable Player player, Level world, InteractionHand hand, BlockPos pos, @Nonnull ItemStack container, FluidStack resource)
+    public static FluidActionResult tryPlaceFluid(@Nullable Player player, Level level, InteractionHand hand, BlockPos pos, @Nonnull ItemStack container, FluidStack resource)
     {
         ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1); // do not modify the input
         return getFluidHandler(containerCopy)
-            .filter(handler -> tryPlaceFluid(player, world, hand, pos, handler, resource))
+            .filter(handler -> tryPlaceFluid(player, level, hand, pos, handler, resource))
             .map(IFluidHandlerItem::getContainer)
             .map(FluidActionResult::new)
             .orElse(FluidActionResult.FAILURE);
     }
 
     /**
-     * Tries to place a fluid resource into the world as a block and drains the fluidSource.
+     * Tries to place a fluid resource into the level as a block and drains the fluidSource.
      * Makes a fluid emptying or vaporization sound when successful.
      * Honors the amount of fluid contained by the used container.
      * Checks if water-like fluids should vaporize like in the nether.
@@ -546,22 +546,22 @@ public class FluidUtil
      * Modeled after {@link BucketItem#emptyContents(Player, Level, BlockPos, BlockHitResult)}
      *
      * @param player      Player who places the fluid. May be null for blocks like dispensers.
-     * @param world       Level to place the fluid in
+     * @param level       Level to place the fluid in
      * @param hand        hand of the player to place the fluid with
-     * @param pos         The position in the world to place the fluid block
+     * @param pos         The position in the level to place the fluid block
      * @param fluidSource The fluid source holding the fluidStack to place
      * @param resource    The fluidStack to place.
      * @return true if the placement was successful, false otherwise
      */
-    public static boolean tryPlaceFluid(@Nullable Player player, Level world, InteractionHand hand, BlockPos pos, IFluidHandler fluidSource, FluidStack resource)
+    public static boolean tryPlaceFluid(@Nullable Player player, Level level, InteractionHand hand, BlockPos pos, IFluidHandler fluidSource, FluidStack resource)
     {
-        if (world == null || pos == null)
+        if (level == null || pos == null)
         {
             return false;
         }
 
         Fluid fluid = resource.getFluid();
-        if (fluid == Fluids.EMPTY || !fluid.getAttributes().canBePlacedInWorld(world, pos, resource))
+        if (fluid == Fluids.EMPTY || !fluid.getAttributes().canBePlacedInWorld(level, pos, resource))
         {
             return false;
         }
@@ -571,25 +571,25 @@ public class FluidUtil
             return false;
         }
 
-        BlockPlaceContext context = new BlockPlaceContext(world, player, hand, player == null ? ItemStack.EMPTY : player.getItemInHand(hand), new BlockHitResult(Vec3.ZERO, Direction.UP, pos, false));
+        BlockPlaceContext context = new BlockPlaceContext(level, player, hand, player == null ? ItemStack.EMPTY : player.getItemInHand(hand), new BlockHitResult(Vec3.ZERO, Direction.UP, pos, false));
 
         // check that we can place the fluid at the destination
-        BlockState destBlockState = world.getBlockState(pos);
+        BlockState destBlockState = level.getBlockState(pos);
         Material destMaterial = destBlockState.getMaterial();
         boolean isDestNonSolid = !destMaterial.isSolid();
         boolean isDestReplaceable = destBlockState.canBeReplaced(context);
-        boolean canDestContainFluid = destBlockState.getBlock() instanceof LiquidBlockContainer && ((LiquidBlockContainer) destBlockState.getBlock()).canPlaceLiquid(world, pos, destBlockState, fluid);
-        if (!world.isEmptyBlock(pos) && !isDestNonSolid && !isDestReplaceable && !canDestContainFluid)
+        boolean canDestContainFluid = destBlockState.getBlock() instanceof LiquidBlockContainer && ((LiquidBlockContainer) destBlockState.getBlock()).canPlaceLiquid(level, pos, destBlockState, fluid);
+        if (!level.isEmptyBlock(pos) && !isDestNonSolid && !isDestReplaceable && !canDestContainFluid)
         {
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.
         }
 
-        if (world.dimensionType().ultraWarm() && fluid.getAttributes().doesVaporize(world, pos, resource))
+        if (level.dimensionType().ultraWarm() && fluid.getAttributes().doesVaporize(level, pos, resource))
         {
             FluidStack result = fluidSource.drain(resource, IFluidHandler.FluidAction.EXECUTE);
             if (!result.isEmpty())
             {
-                result.getFluid().getAttributes().vaporize(player, world, pos, result);
+                result.getFluid().getAttributes().vaporize(player, level, pos, result);
                 return true;
             }
         }
@@ -599,17 +599,17 @@ public class FluidUtil
             IFluidHandler handler;
             if (canDestContainFluid)
             {
-                handler = new BlockWrapper.LiquidContainerBlockWrapper((LiquidBlockContainer) destBlockState.getBlock(), world, pos);
+                handler = new BlockWrapper.LiquidContainerBlockWrapper((LiquidBlockContainer) destBlockState.getBlock(), level, pos);
             }
             else
             {
-                handler = getFluidBlockHandler(fluid, world, pos);
+                handler = getFluidBlockHandler(fluid, level, pos);
             }
             FluidStack result = tryFluidTransfer(handler, fluidSource, resource, true);
             if (!result.isEmpty())
             {
                 SoundEvent soundevent = resource.getFluid().getAttributes().getEmptySound(resource);
-                world.playSound(player, pos, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(player, pos, soundevent, SoundSource.BLOCKS, 1.0F, 1.0F);
                 return true;
             }
         }
@@ -622,10 +622,10 @@ public class FluidUtil
      * Modders: Instead of this method, use {@link #tryPlaceFluid(Player, Level, InteractionHand, BlockPos, ItemStack, FluidStack)}
      * or {@link #tryPlaceFluid(Player, Level, InteractionHand, BlockPos, IFluidHandler, FluidStack)}
      */
-    private static IFluidHandler getFluidBlockHandler(Fluid fluid, Level world, BlockPos pos)
+    private static IFluidHandler getFluidBlockHandler(Fluid fluid, Level level, BlockPos pos)
     {
-        BlockState state = fluid.getAttributes().getBlock(world, pos, fluid.defaultFluidState());
-        return new BlockWrapper(state, world, pos);
+        BlockState state = fluid.getAttributes().getBlock(level, pos, fluid.defaultFluidState());
+        return new BlockWrapper(state, level, pos);
     }
 
     /**
@@ -634,20 +634,20 @@ public class FluidUtil
      *
      * This is a helper method for implementing {@link IFluidBlock#place(Level, BlockPos, FluidStack, IFluidHandler.FluidAction)}.
      *
-     * @param world the world that the fluid will be placed in
+     * @param level the level that the fluid will be placed in
      * @param pos   the location that the fluid will be placed
      */
-    public static void destroyBlockOnFluidPlacement(Level world, BlockPos pos)
+    public static void destroyBlockOnFluidPlacement(Level level, BlockPos pos)
     {
-        if (!world.isClientSide)
+        if (!level.isClientSide)
         {
-            BlockState destBlockState = world.getBlockState(pos);
+            BlockState destBlockState = level.getBlockState(pos);
             Material destMaterial = destBlockState.getMaterial();
             boolean isDestNonSolid = !destMaterial.isSolid();
-            boolean isDestReplaceable = false; //TODO: Needs BlockItemUseContext destBlockState.getBlock().isReplaceable(world, pos);
+            boolean isDestReplaceable = false; //TODO: Needs BlockItemUseContext destBlockState.getBlock().isReplaceable(level, pos);
             if ((isDestNonSolid || isDestReplaceable) && !destMaterial.isLiquid())
             {
-                world.destroyBlock(pos, true);
+                level.destroyBlock(pos, true);
             }
         }
     }

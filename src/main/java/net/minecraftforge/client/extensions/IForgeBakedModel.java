@@ -71,9 +71,9 @@ public interface IForgeBakedModel
         return net.minecraftforge.client.ForgeHooksClient.handlePerspective(self(), cameraTransformType, poseStack);
     }
 
-    default @Nonnull IModelData getModelData(@Nonnull BlockAndTintGetter world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData)
+    default @Nonnull IModelData getModelData(@Nonnull BlockAndTintGetter level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData modelData)
     {
-        return tileData;
+        return modelData;
     }
 
     default TextureAtlasSprite getParticleIcon(@Nonnull IModelData data)

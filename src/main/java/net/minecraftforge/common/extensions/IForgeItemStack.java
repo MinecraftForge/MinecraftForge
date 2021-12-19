@@ -233,12 +233,12 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
      * Retrieves the normal 'lifespan' of this item when it is dropped on the ground
      * as a EntityItem. This is in ticks, standard result is 6000, or 5 mins.
      *
-     * @param world     The world the entity is in
+     * @param level     The level the entity is in
      * @return The normal lifespan in ticks.
      */
-    default int getEntityLifespan(Level world)
+    default int getEntityLifespan(Level level)
     {
-        return self().getItem().getEntityLifespan(self(), world);
+        return self().getItem().getEntityLifespan(self(), level);
     }
 
     /**
@@ -266,21 +266,21 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     /**
      * Called to tick armor in the armor slot. Override to do something
      */
-    default void onArmorTick(Level world, Player player)
+    default void onArmorTick(Level level, Player player)
     {
-        self().getItem().onArmorTick(self(), world, player);
+        self().getItem().onArmorTick(self(), level, player);
     }
 
     /**
      * Called every tick from {@code Horse#playGallopSound(SoundEvent)} on the item in the
      * armor slot.
      *
-     * @param world the world the horse is in
+     * @param level the level the horse is in
      * @param horse the horse wearing this armor
      */
-    default void onHorseArmorTick(Level world, Mob horse)
+    default void onHorseArmorTick(Level level, Mob horse)
     {
-        self().getItem().onHorseArmorTick(self(), world, horse);
+        self().getItem().onHorseArmorTick(self(), level, horse);
     }
 
     /**
@@ -367,13 +367,13 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
      *
      * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
      *
-     * @param world The world
-     * @param pos Block position in world
+     * @param level The level
+     * @param pos Block position in level
      * @param player The Player that is wielding the item
      */
-    default boolean doesSneakBypassUse(net.minecraft.world.level.LevelReader world, BlockPos pos, Player player)
+    default boolean doesSneakBypassUse(net.minecraft.world.level.LevelReader level, BlockPos pos, Player player)
     {
-        return self().isEmpty() || self().getItem().doesSneakBypassUse(self(), world, pos, player);
+        return self().isEmpty() || self().getItem().doesSneakBypassUse(self(), level, pos, player);
     }
 
     /**

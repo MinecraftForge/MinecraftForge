@@ -171,8 +171,8 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
      default void requestModelDataUpdate()
      {
          BlockEntity te = self();
-         Level world = te.getLevel();
-         if (world != null && world.isClientSide)
+         Level level = te.getLevel();
+         if (level != null && level.isClientSide)
          {
              ModelDataManager.requestModelDataRefresh(te);
          }

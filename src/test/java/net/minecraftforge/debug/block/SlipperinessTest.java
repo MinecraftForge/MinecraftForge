@@ -50,9 +50,9 @@ public class SlipperinessTest
         e.getRegistry().register((new Block(Block.Properties.of(Material.ICE_SOLID))
         {
             @Override
-            public float getFriction(BlockState state, LevelReader world, BlockPos pos, Entity entity)
+            public float getFriction(BlockState state, LevelReader level, BlockPos pos, Entity entity)
             {
-                return entity instanceof Boat ? 2 : super.getFriction(state, world, pos, entity);
+                return entity instanceof Boat ? 2 : super.getFriction(state, level, pos, entity);
             }
         }).setRegistryName(MOD_ID, BLOCK_ID));
     }

@@ -322,17 +322,17 @@ public class FluidAttributes
     public SoundEvent getEmptySound(FluidStack stack) { return getEmptySound(); }
 
     /* World-based Accessors */
-    public int getLuminosity(BlockAndTintGetter world, BlockPos pos){ return getLuminosity(); }
-    public int getDensity(BlockAndTintGetter world, BlockPos pos){ return getDensity(); }
-    public int getTemperature(BlockAndTintGetter world, BlockPos pos){ return getTemperature(); }
-    public int getViscosity(BlockAndTintGetter world, BlockPos pos){ return getViscosity(); }
-    public boolean isGaseous(BlockAndTintGetter world, BlockPos pos){ return isGaseous(); }
-    public Rarity getRarity(BlockAndTintGetter world, BlockPos pos){ return getRarity(); }
-    public int getColor(BlockAndTintGetter world, BlockPos pos){ return getColor(); }
-    public ResourceLocation getStillTexture(BlockAndTintGetter world, BlockPos pos) { return getStillTexture(); }
-    public ResourceLocation getFlowingTexture(BlockAndTintGetter world, BlockPos pos) { return getFlowingTexture(); }
-    public SoundEvent getFillSound(BlockAndTintGetter world, BlockPos pos) { return getFillSound(); }
-    public SoundEvent getEmptySound(BlockAndTintGetter world, BlockPos pos) { return getEmptySound(); }
+    public int getLuminosity(BlockAndTintGetter level, BlockPos pos){ return getLuminosity(); }
+    public int getDensity(BlockAndTintGetter level, BlockPos pos){ return getDensity(); }
+    public int getTemperature(BlockAndTintGetter level, BlockPos pos){ return getTemperature(); }
+    public int getViscosity(BlockAndTintGetter level, BlockPos pos){ return getViscosity(); }
+    public boolean isGaseous(BlockAndTintGetter level, BlockPos pos){ return isGaseous(); }
+    public Rarity getRarity(BlockAndTintGetter level, BlockPos pos){ return getRarity(); }
+    public int getColor(BlockAndTintGetter level, BlockPos pos){ return getColor(); }
+    public ResourceLocation getStillTexture(BlockAndTintGetter level, BlockPos pos) { return getStillTexture(); }
+    public ResourceLocation getFlowingTexture(BlockAndTintGetter level, BlockPos pos) { return getFlowingTexture(); }
+    public SoundEvent getFillSound(BlockAndTintGetter level, BlockPos pos) { return getFillSound(); }
+    public SoundEvent getEmptySound(BlockAndTintGetter level, BlockPos pos) { return getEmptySound(); }
 
     public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {
         return new Builder(stillTexture, flowingTexture, FluidAttributes::new);
@@ -449,9 +449,9 @@ public class FluidAttributes
         }
 
         @Override
-        public int getColor(BlockAndTintGetter world, BlockPos pos)
+        public int getColor(BlockAndTintGetter level, BlockPos pos)
         {
-            return BiomeColors.getAverageWaterColor(world, pos) | 0xFF000000;
+            return BiomeColors.getAverageWaterColor(level, pos) | 0xFF000000;
         }
 
         public static Builder builder(ResourceLocation stillTexture, ResourceLocation flowingTexture) {

@@ -39,18 +39,18 @@ public interface IBlockRenderProperties
     };
 
     /**
-     * Spawn a digging particle effect in the Level, this is a wrapper
+     * Spawn a digging particle effect in the level, this is a wrapper
      * around EffectRenderer.addBlockHitEffects to allow the block more
      * control over the particles. Useful when you have entirely different
-     * texture sheets for different sides/locations in the Level.
+     * texture sheets for different sides/locations in the level.
      *
      * @param state   The current state
-     * @param Level   The current Level
+     * @param level   The current level
      * @param target  The target the player is looking at {x/y/z/side/sub}
      * @param manager A reference to the current particle manager.
      * @return True to prevent vanilla digging particles form spawning.
      */
-    default boolean addHitEffects(BlockState state, Level Level, HitResult target, ParticleEngine manager)
+    default boolean addHitEffects(BlockState state, Level level, HitResult target, ParticleEngine manager)
     {
         return false;
     }
@@ -77,14 +77,14 @@ public interface IBlockRenderProperties
      * Use this to change the fog color used when the entity is "inside" a material.
      * Vec3d is used here as "r/g/b" 0 - 1 values.
      *
-     * @param Level         The Level.
+     * @param level         The level.
      * @param pos           The position at the entity viewport.
      * @param state         The state at the entity viewport.
      * @param entity        the entity
      * @param originalColor The current fog color, You are not expected to use this, Return as the default if applicable.
      * @return The new fog color.
      */
-    default Vector3d getFogColor(BlockState state, LevelReader Level, BlockPos pos, Entity entity, Vector3d originalColor, float partialTicks)
+    default Vector3d getFogColor(BlockState state, LevelReader level, BlockPos pos, Entity entity, Vector3d originalColor, float partialTick)
     {
         if (state.getMaterial() == Material.WATER)
         {

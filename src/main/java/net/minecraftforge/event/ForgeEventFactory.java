@@ -170,9 +170,9 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
-    public static NeighborNotifyEvent onNeighborNotify(Level world, BlockPos pos, BlockState state, EnumSet<Direction> notifiedSides, boolean forceRedstoneUpdate)
+    public static NeighborNotifyEvent onNeighborNotify(Level level, BlockPos pos, BlockState state, EnumSet<Direction> notifiedSides, boolean forceRedstoneUpdate)
     {
-        NeighborNotifyEvent event = new NeighborNotifyEvent(world, pos, state, notifiedSides, forceRedstoneUpdate);
+        NeighborNotifyEvent event = new NeighborNotifyEvent(level, pos, state, notifiedSides, forceRedstoneUpdate);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
@@ -195,27 +195,27 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
 
-    public static Result canEntitySpawn(Mob entity, LevelAccessor world, double x, double y, double z, BaseSpawner spawner, MobSpawnType spawnReason)
+    public static Result canEntitySpawn(Mob entity, LevelAccessor level, double x, double y, double z, BaseSpawner spawner, MobSpawnType spawnReason)
     {
         if (entity == null)
             return Result.DEFAULT;
-        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z, spawner, spawnReason);
+        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, level, x, y, z, spawner, spawnReason);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult();
     }
 
-    public static boolean canEntitySpawnSpawner(Mob entity, Level world, float x, float y, float z, BaseSpawner spawner)
+    public static boolean canEntitySpawnSpawner(Mob entity, Level level, float x, float y, float z, BaseSpawner spawner)
     {
-        Result result = canEntitySpawn(entity, world, x, y, z, spawner, MobSpawnType.SPAWNER);
+        Result result = canEntitySpawn(entity, level, x, y, z, spawner, MobSpawnType.SPAWNER);
         if (result == Result.DEFAULT)
-            return entity.checkSpawnRules(world, MobSpawnType.SPAWNER) && entity.checkSpawnObstruction(world); // vanilla logic (inverted)
+            return entity.checkSpawnRules(level, MobSpawnType.SPAWNER) && entity.checkSpawnObstruction(level); // vanilla logic (inverted)
         else
             return result == Result.ALLOW;
     }
 
-    public static boolean doSpecialSpawn(Mob entity, Level world, float x, float y, float z, BaseSpawner spawner, MobSpawnType spawnReason)
+    public static boolean doSpecialSpawn(Mob entity, Level level, float x, float y, float z, BaseSpawner spawner, MobSpawnType spawnReason)
     {
-        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, spawner, spawnReason));
+        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, level, x, y, z, spawner, spawnReason));
     }
 
     public static Result canEntityDespawn(Mob entity)
@@ -263,9 +263,9 @@ public class ForgeEventFactory
         return event.getDisplayName();
     }
 
-    public static BlockState fireFluidPlaceBlockEvent(LevelAccessor world, BlockPos pos, BlockPos liquidPos, BlockState state)
+    public static BlockState fireFluidPlaceBlockEvent(LevelAccessor level, BlockPos pos, BlockPos liquidPos, BlockState state)
     {
-        BlockEvent.FluidPlaceBlockEvent event = new BlockEvent.FluidPlaceBlockEvent(world, pos, liquidPos, state);
+        BlockEvent.FluidPlaceBlockEvent event = new BlockEvent.FluidPlaceBlockEvent(level, pos, liquidPos, state);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getNewState();
     }
@@ -277,9 +277,9 @@ public class ForgeEventFactory
         return event;
     }
 
-    public static SummonAidEvent fireZombieSummonAid(Zombie zombie, Level world, int x, int y, int z, LivingEntity attacker, double summonChance)
+    public static SummonAidEvent fireZombieSummonAid(Zombie zombie, Level level, int x, int y, int z, LivingEntity attacker, double summonChance)
     {
-        SummonAidEvent summonEvent = new SummonAidEvent(zombie, world, x, y, z, attacker, summonChance);
+        SummonAidEvent summonEvent = new SummonAidEvent(zombie, level, x, y, z, attacker, summonChance);
         MinecraftForge.EVENT_BUS.post(summonEvent);
         return summonEvent;
     }
@@ -367,19 +367,19 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static BlockState onToolUse(BlockState originalState, Level world, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
+    public static BlockState onToolUse(BlockState originalState, Level level, BlockPos pos, Player player, ItemStack stack, ToolAction toolAction)
     {
-        BlockToolInteractEvent event = new BlockToolInteractEvent(world, pos, originalState, player, stack, toolAction);
+        BlockToolInteractEvent event = new BlockToolInteractEvent(level, pos, originalState, player, stack, toolAction);
         return MinecraftForge.EVENT_BUS.post(event) ? null : event.getFinalState();
     }
 
-    public static int onApplyBonemeal(@Nonnull Player player, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ItemStack stack)
+    public static int onApplyBonemeal(@Nonnull Player player, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull ItemStack stack)
     {
-        BonemealEvent event = new BonemealEvent(player, world, pos, state, stack);
+        BonemealEvent event = new BonemealEvent(player, level, pos, state, stack);
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         if (event.getResult() == Result.ALLOW)
         {
-            if (!world.isClientSide)
+            if (!level.isClientSide)
                 stack.shrink(1);
             return 1;
         }
@@ -387,9 +387,9 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static InteractionResultHolder<ItemStack> onBucketUse(@Nonnull Player player, @Nonnull Level world, @Nonnull ItemStack stack, @Nullable HitResult target)
+    public static InteractionResultHolder<ItemStack> onBucketUse(@Nonnull Player player, @Nonnull Level level, @Nonnull ItemStack stack, @Nullable HitResult target)
     {
-        FillBucketEvent event = new FillBucketEvent(player, stack, world, target);
+        FillBucketEvent event = new FillBucketEvent(player, stack, level, target);
         if (MinecraftForge.EVENT_BUS.post(event)) return new InteractionResultHolder<ItemStack>(InteractionResult.FAIL, stack);
 
         if (event.getResult() == Result.ALLOW)
@@ -473,9 +473,9 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerFlyableFallEvent(player, distance, multiplier));
     }
 
-    public static boolean onPlayerSpawnSet(Player player, ResourceKey<Level> world, BlockPos pos, boolean forced)
+    public static boolean onPlayerSpawnSet(Player player, ResourceKey<Level> levelKey, BlockPos pos, boolean forced)
     {
-        return MinecraftForge.EVENT_BUS.post(new PlayerSetSpawnEvent(player, world, pos, forced));
+        return MinecraftForge.EVENT_BUS.post(new PlayerSetSpawnEvent(player, levelKey, pos, forced));
     }
 
     public static void onPlayerClone(Player player, Player oldPlayer, boolean wasDeath)
@@ -483,12 +483,12 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerEvent.Clone(player, oldPlayer, wasDeath));
     }
 
-    public static boolean onExplosionStart(Level world, Explosion explosion)
+    public static boolean onExplosionStart(Level level, Explosion explosion)
     {
-        return MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Start(world, explosion));
+        return MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Start(level, explosion));
     }
 
-    public static void onExplosionDetonate(Level world, Explosion explosion, List<Entity> list, double diameter)
+    public static void onExplosionDetonate(Level level, Explosion explosion, List<Entity> list, double diameter)
     {
         //Filter entities to only those who are effected, to prevent modders from seeing more then will be hurt.
         /* Enable this if we get issues with modders looping to much.
@@ -501,12 +501,12 @@ public class ForgeEventFactory
             if (e.isImmuneToExplosions() || dist > 1.0F) itr.remove();
         }
         */
-        MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Detonate(world, explosion, list));
+        MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Detonate(level, explosion, list));
     }
 
-    public static boolean onCreateWorldSpawn(Level world, ServerLevelData settings)
+    public static boolean onCreateWorldSpawn(Level level, ServerLevelData settings)
     {
-        return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(world, settings));
+        return MinecraftForge.EVENT_BUS.post(new WorldEvent.CreateSpawnPosition(level, settings));
     }
 
     public static float onLivingHeal(LivingEntity entity, float amount)
@@ -614,17 +614,17 @@ public class ForgeEventFactory
             return canContinueSleep == Result.ALLOW;
     }
 
-    public static InteractionResultHolder<ItemStack> onArrowNock(ItemStack item, Level world, Player player, InteractionHand hand, boolean hasAmmo)
+    public static InteractionResultHolder<ItemStack> onArrowNock(ItemStack item, Level level, Player player, InteractionHand hand, boolean hasAmmo)
     {
-        ArrowNockEvent event = new ArrowNockEvent(player, item, hand, world, hasAmmo);
+        ArrowNockEvent event = new ArrowNockEvent(player, item, hand, level, hasAmmo);
         if (MinecraftForge.EVENT_BUS.post(event))
             return new InteractionResultHolder<ItemStack>(InteractionResult.FAIL, item);
         return event.getAction();
     }
 
-    public static int onArrowLoose(ItemStack stack, Level world, Player player, int charge, boolean hasAmmo)
+    public static int onArrowLoose(ItemStack stack, Level level, Player player, int charge, boolean hasAmmo)
     {
-        ArrowLooseEvent event = new ArrowLooseEvent(player, stack, world, charge, hasAmmo);
+        ArrowLooseEvent event = new ArrowLooseEvent(player, stack, level, charge, hasAmmo);
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
         return event.getCharge();
@@ -643,24 +643,24 @@ public class ForgeEventFactory
         return event.getTable();
     }
 
-    public static boolean canCreateFluidSource(LevelReader world, BlockPos pos, BlockState state, boolean def)
+    public static boolean canCreateFluidSource(LevelReader level, BlockPos pos, BlockState state, boolean def)
     {
-        CreateFluidSourceEvent evt = new CreateFluidSourceEvent(world, pos, state);
+        CreateFluidSourceEvent evt = new CreateFluidSourceEvent(level, pos, state);
         MinecraftForge.EVENT_BUS.post(evt);
 
         Result result = evt.getResult();
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
     }
 
-    public static Optional<PortalShape> onTrySpawnPortal(LevelAccessor world, BlockPos pos, Optional<PortalShape> size)
+    public static Optional<PortalShape> onTrySpawnPortal(LevelAccessor level, BlockPos pos, Optional<PortalShape> size)
     {
         if (!size.isPresent()) return size;
-        return !MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size.get())) ? size : Optional.empty();
+        return !MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(level, pos, level.getBlockState(pos), size.get())) ? size : Optional.empty();
     }
 
-    public static int onEnchantmentLevelSet(Level world, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int level)
+    public static int onEnchantmentLevelSet(Level level, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int enchantmentLevel)
     {
-        net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent e = new net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent(world, pos, enchantRow, power, itemStack, level);
+        net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent e = new net.minecraftforge.event.enchanting.EnchantmentLevelSetEvent(level, pos, enchantRow, power, itemStack, enchantmentLevel);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e);
         return e.getLevel();
     }
@@ -670,49 +670,49 @@ public class ForgeEventFactory
         return !MinecraftForge.EVENT_BUS.post(new LivingDestroyBlockEvent(entity, pos, state));
     }
 
-    public static boolean getMobGriefingEvent(Level world, Entity entity)
+    public static boolean getMobGriefingEvent(Level level, Entity entity)
     {
         EntityMobGriefingEvent event = new EntityMobGriefingEvent(entity);
         MinecraftForge.EVENT_BUS.post(event);
 
         Result result = event.getResult();
-        return result == Result.DEFAULT ? world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : result == Result.ALLOW;
+        return result == Result.DEFAULT ? level.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING) : result == Result.ALLOW;
     }
 
-    public static boolean saplingGrowTree(LevelAccessor world, Random rand, BlockPos pos)
+    public static boolean saplingGrowTree(LevelAccessor level, Random rand, BlockPos pos)
     {
-        SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);
+        SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(level, rand, pos);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
 
-    public static void fireChunkWatch(boolean watch, ServerPlayer entity, ChunkPos chunkpos, ServerLevel world)
+    public static void fireChunkWatch(boolean watch, ServerPlayer entity, ChunkPos chunkpos, ServerLevel level)
     {
         if (watch)
-            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, world));
+            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.Watch(entity, chunkpos, level));
         else
-            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, world));
+            MinecraftForge.EVENT_BUS.post(new ChunkWatchEvent.UnWatch(entity, chunkpos, level));
     }
 
-    public static void fireChunkWatch(boolean wasLoaded, boolean load, ServerPlayer entity, ChunkPos chunkpos, ServerLevel world)
+    public static void fireChunkWatch(boolean wasLoaded, boolean load, ServerPlayer entity, ChunkPos chunkpos, ServerLevel level)
     {
         if (wasLoaded != load)
-            fireChunkWatch(load, entity, chunkpos, world);
+            fireChunkWatch(load, entity, chunkpos, level);
     }
 
-    public static boolean onPistonMovePre(Level world, BlockPos pos, Direction direction, boolean extending)
+    public static boolean onPistonMovePre(Level level, BlockPos pos, Direction direction, boolean extending)
     {
-        return MinecraftForge.EVENT_BUS.post(new PistonEvent.Pre(world, pos, direction, extending ? PistonEvent.PistonMoveType.EXTEND : PistonEvent.PistonMoveType.RETRACT));
+        return MinecraftForge.EVENT_BUS.post(new PistonEvent.Pre(level, pos, direction, extending ? PistonEvent.PistonMoveType.EXTEND : PistonEvent.PistonMoveType.RETRACT));
     }
 
-    public static boolean onPistonMovePost(Level world, BlockPos pos, Direction direction, boolean extending)
+    public static boolean onPistonMovePost(Level level, BlockPos pos, Direction direction, boolean extending)
     {
-        return MinecraftForge.EVENT_BUS.post(new PistonEvent.Post(world, pos, direction, extending ? PistonEvent.PistonMoveType.EXTEND : PistonEvent.PistonMoveType.RETRACT));
+        return MinecraftForge.EVENT_BUS.post(new PistonEvent.Post(level, pos, direction, extending ? PistonEvent.PistonMoveType.EXTEND : PistonEvent.PistonMoveType.RETRACT));
     }
 
-    public static long onSleepFinished(ServerLevel world, long newTime, long minTime)
+    public static long onSleepFinished(ServerLevel level, long newTime, long minTime)
     {
-        SleepFinishedTimeEvent event = new SleepFinishedTimeEvent(world, newTime, minTime);
+        SleepFinishedTimeEvent event = new SleepFinishedTimeEvent(level, newTime, minTime);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getNewTime();
     }
@@ -856,14 +856,14 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(TickEvent.Phase.END, player));
     }
 
-    public static void onPreWorldTick(Level world)
+    public static void onPreWorldTick(Level level)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(LogicalSide.SERVER, TickEvent.Phase.START, world));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(LogicalSide.SERVER, TickEvent.Phase.START, level));
     }
 
-    public static void onPostWorldTick(Level world)
+    public static void onPostWorldTick(Level level)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(LogicalSide.SERVER, TickEvent.Phase.END, world));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.WorldTickEvent(LogicalSide.SERVER, TickEvent.Phase.END, level));
     }
 
     public static void onPreClientTick()

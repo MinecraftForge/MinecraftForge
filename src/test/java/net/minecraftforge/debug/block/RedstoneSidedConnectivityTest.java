@@ -73,12 +73,12 @@ public class RedstoneSidedConnectivityTest
         }
 
         @Override
-        public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction direction)
+        public boolean canConnectRedstone(BlockState state, BlockGetter level, BlockPos pos, @Nullable Direction direction)
         {
             //The passed direction is relative to the redstone dust
             //This block connects on the east side relative to this block, which is west for the dust
             return direction == Direction.WEST &&
-                    world.getBlockEntity(pos.relative(Direction.UP)) instanceof FurnaceBlockEntity;
+                    level.getBlockEntity(pos.relative(Direction.UP)) instanceof FurnaceBlockEntity;
         }
 
         @SuppressWarnings("deprecation")

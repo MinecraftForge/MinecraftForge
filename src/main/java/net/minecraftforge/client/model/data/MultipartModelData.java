@@ -35,7 +35,7 @@ public class MultipartModelData implements IModelData
 {
     public static final ModelProperty<MultipartModelData> MULTIPART_DATA = new ModelProperty<>();
 
-    public static IModelData create(List<Pair<Predicate<BlockState>, BakedModel>> selectors, BlockAndTintGetter world, BlockPos pos, BlockState state, IModelData tileData)
+    public static IModelData create(List<Pair<Predicate<BlockState>, BakedModel>> selectors, BlockAndTintGetter level, BlockPos pos, BlockState state, IModelData tileData)
     {
         MultipartModelData multipartData = new MultipartModelData(tileData);
         for (Pair<Predicate<BlockState>, BakedModel> selector : selectors)
@@ -43,7 +43,7 @@ public class MultipartModelData implements IModelData
             if (selector.getLeft().test(state))
             {
                 BakedModel part = selector.getRight();
-                IModelData partData = part.getModelData(world, pos, state, tileData);
+                IModelData partData = part.getModelData(level, pos, state, tileData);
                 multipartData.setPartData(part, partData);
             }
         }

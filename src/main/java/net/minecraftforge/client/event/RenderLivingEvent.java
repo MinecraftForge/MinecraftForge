@@ -58,15 +58,15 @@ public abstract class RenderLivingEvent<T extends LivingEntity, M extends Entity
     @Cancelable
     public static class Pre<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
-        public Pre(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialRenderTick, PoseStack matrixStack, MultiBufferSource buffers, int light) {
-            super(entity, renderer, partialRenderTick, matrixStack, buffers, light);
+        public Pre(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+            super(entity, renderer, partialTick, poseStack, multiBufferSource, packedLight);
         }
     }
 
     public static class Post<T extends LivingEntity, M extends EntityModel<T>> extends RenderLivingEvent<T, M>
     {
-        public Post(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialRenderTick, PoseStack matrixStack, MultiBufferSource buffers, int light) {
-            super(entity, renderer, partialRenderTick, matrixStack, buffers, light);
+        public Post(LivingEntity entity, LivingEntityRenderer<T, M> renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+            super(entity, renderer, partialTick, poseStack, multiBufferSource, packedLight);
         }
     }
 }

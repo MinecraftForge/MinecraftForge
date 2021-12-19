@@ -29,7 +29,7 @@ import net.minecraft.world.level.BlockGetter;
 
 public interface IPlantable
 {
-    default PlantType getPlantType(BlockGetter world, BlockPos pos) {
+    default PlantType getPlantType(BlockGetter level, BlockPos pos) {
         if (this instanceof CropBlock) return PlantType.CROP;
         if (this instanceof SaplingBlock) return PlantType.PLAINS;
         if (this instanceof FlowerBlock) return PlantType.PLAINS;
@@ -42,5 +42,5 @@ public interface IPlantable
         return net.minecraftforge.common.PlantType.PLAINS;
     }
 
-    BlockState getPlant(BlockGetter world, BlockPos pos);
+    BlockState getPlant(BlockGetter level, BlockPos pos);
 }

@@ -68,9 +68,9 @@ public interface IItemRenderProperties
      * @param player       Reference to the current client entity
      * @param width        Viewport width
      * @param height       Viewport height
-     * @param partialTicks Partial ticks for the renderer, useful for interpolation
+     * @param partialTick  Partial tick for the renderer, useful for interpolation
      */
-    default void renderHelmetOverlay(ItemStack stack, Player player, int width, int height, float partialTicks)
+    default void renderHelmetOverlay(ItemStack stack, Player player, int width, int height, float partialTick)
     {
 
     }

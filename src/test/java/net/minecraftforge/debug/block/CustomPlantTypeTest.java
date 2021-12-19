@@ -74,14 +74,14 @@ public class CustomPlantTypeTest
         }
 
         @Override
-        public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable)
+        public boolean canSustainPlant(BlockState state, BlockGetter level, BlockPos pos, Direction facing, IPlantable plantable)
         {
-            PlantType type = plantable.getPlantType(world, pos.relative(facing));
+            PlantType type = plantable.getPlantType(level, pos.relative(facing));
             if (type != null && type == CustomPlantBlock.pt)
             {
                 return true;
             }
-            return super.canSustainPlant(state, world, pos, facing, plantable);
+            return super.canSustainPlant(state, level, pos, facing, plantable);
         }
     }
 
@@ -96,13 +96,13 @@ public class CustomPlantTypeTest
         }
 
         @Override
-        public PlantType getPlantType(BlockGetter world, BlockPos pos)
+        public PlantType getPlantType(BlockGetter level, BlockPos pos)
         {
             return pt;
         }
 
         @Override
-        public BlockState getPlant(BlockGetter world, BlockPos pos)
+        public BlockState getPlant(BlockGetter level, BlockPos pos)
         {
             return defaultBlockState();
         }

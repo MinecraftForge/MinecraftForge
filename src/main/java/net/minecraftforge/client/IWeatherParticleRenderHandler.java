@@ -31,5 +31,5 @@ import net.minecraft.client.multiplayer.ClientLevel;
  */
 @FunctionalInterface
 public interface IWeatherParticleRenderHandler {
-    void render(int ticks, ClientLevel world, Minecraft mc, Camera activeRenderInfoIn);
+    void render(int ticks, ClientLevel level, Minecraft minecraft, Camera camera);
 }

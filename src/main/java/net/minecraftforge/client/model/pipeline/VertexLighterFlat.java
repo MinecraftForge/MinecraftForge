@@ -309,9 +309,9 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         this.diffuse = diffuse;
     }
 
-    public void setWorld(BlockAndTintGetter world)
+    public void setWorld(BlockAndTintGetter level)
     {
-        blockInfo.setLevel(world);
+        blockInfo.setLevel(level);
     }
 
     public void setState(BlockState state)

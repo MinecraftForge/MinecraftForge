@@ -95,7 +95,7 @@ public class ScaffoldingTest
         }
 
         @Override
-        public boolean isScaffolding(BlockState state, LevelReader world, BlockPos pos, LivingEntity entity)
+        public boolean isScaffolding(BlockState state, LevelReader level, BlockPos pos, LivingEntity entity)
         {
             return true;
         }

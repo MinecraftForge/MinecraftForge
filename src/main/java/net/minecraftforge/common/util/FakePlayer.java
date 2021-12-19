@@ -90,10 +90,10 @@ import java.util.UUID;
 //Preliminary, simple Fake Player class
 public class FakePlayer extends ServerPlayer
 {
-    public FakePlayer(ServerLevel world, GameProfile name)
+    public FakePlayer(ServerLevel level, GameProfile name)
     {
-        super(world.getServer(), world, name);
-        this.connection = new FakePlayerNetHandler(world.getServer(), this);
+        super(level.getServer(), level, name);
+        this.connection = new FakePlayerNetHandler(level.getServer(), this);
     }
 
     @Override public Vec3 position(){ return new Vec3(0, 0, 0); }

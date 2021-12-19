@@ -41,27 +41,27 @@ import net.minecraft.core.Vec3i;
 public interface IForgeVertexConsumer
 {
     // Copy of putBulkData, but enables tinting and per-vertex alpha
-    default void putBulkData(PoseStack.Pose matrixStack, BakedQuad bakedQuad, float red, float green, float blue, int lightmapCoord, int overlayColor, boolean readExistingColor) {
-        putBulkData(matrixStack, bakedQuad, red, green, blue, 1.0f, lightmapCoord, overlayColor, readExistingColor);
+    default void putBulkData(PoseStack.Pose poseStack, BakedQuad bakedQuad, float red, float green, float blue, int packedLight, int packedOverlay, boolean readExistingColor) {
+        putBulkData(poseStack, bakedQuad, red, green, blue, 1.0f, packedLight, packedOverlay, readExistingColor);
     }
 
     // Copy of putBulkData with alpha support
-    default void putBulkData(PoseStack.Pose matrixEntry, BakedQuad bakedQuad, float red, float green, float blue, float alpha, int lightmapCoord, int overlayColor) {
-        putBulkData(matrixEntry, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, alpha, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColor, false);
+    default void putBulkData(PoseStack.Pose pose, BakedQuad bakedQuad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay) {
+        putBulkData(pose, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, alpha, new int[]{packedLight, packedLight, packedLight, packedLight}, packedOverlay, false);
     }
 
     // Copy of putBulkData with alpha support
-    default void putBulkData(PoseStack.Pose matrixEntry, BakedQuad bakedQuad, float red, float green, float blue, float alpha, int lightmapCoord, int overlayColor, boolean readExistingColor) {
-        putBulkData(matrixEntry, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, alpha, new int[]{lightmapCoord, lightmapCoord, lightmapCoord, lightmapCoord}, overlayColor, readExistingColor);
+    default void putBulkData(PoseStack.Pose pose, BakedQuad bakedQuad, float red, float green, float blue, float alpha, int packedLight, int packedOverlay, boolean readExistingColor) {
+        putBulkData(pose, bakedQuad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, red, green, blue, alpha, new int[]{packedLight, packedLight, packedLight, packedLight}, packedOverlay, readExistingColor);
     }
 
     // Copy of putBulkData with alpha support
-    default void putBulkData(PoseStack.Pose matrixEntry, BakedQuad bakedQuad, float[] baseBrightness, float red, float green, float blue, float alpha, int[] lightmapCoords, int overlayCoords, boolean readExistingColor) {
+    default void putBulkData(PoseStack.Pose pose, BakedQuad bakedQuad, float[] baseBrightness, float red, float green, float blue, float alpha, int[] lightmap, int packedOverlay, boolean readExistingColor) {
         int[] aint = bakedQuad.getVertices();
         Vec3i faceNormal = bakedQuad.getDirection().getNormal();
         Vector3f normal = new Vector3f((float)faceNormal.getX(), (float)faceNormal.getY(), (float)faceNormal.getZ());
-        Matrix4f matrix4f = matrixEntry.pose();
-        normal.transform(matrixEntry.normal());
+        Matrix4f matrix4f = pose.pose();
+        normal.transform(pose.normal());
         int intSize = DefaultVertexFormat.BLOCK.getIntegerSize();
         int vertexCount = aint.length / intSize;
 
@@ -95,20 +95,20 @@ public interface IForgeVertexConsumer
                     ca = alpha;
                 }
 
-                int lightmapCoord = applyBakedLighting(lightmapCoords[v], bytebuffer);
+                int lightmapCoord = applyBakedLighting(lightmap[v], bytebuffer);
                 float f9 = bytebuffer.getFloat(16);
                 float f10 = bytebuffer.getFloat(20);
                 Vector4f pos = new Vector4f(f, f1, f2, 1.0F);
                 pos.transform(matrix4f);
-                applyBakedNormals(normal, bytebuffer, matrixEntry.normal());
-                ((VertexConsumer)this).vertex(pos.x(), pos.y(), pos.z(), cr, cg, cb, ca, f9, f10, overlayCoords, lightmapCoord, normal.x(), normal.y(), normal.z());
+                applyBakedNormals(normal, bytebuffer, pose.normal());
+                ((VertexConsumer)this).vertex(pos.x(), pos.y(), pos.z(), cr, cg, cb, ca, f9, f10, packedOverlay, lightmapCoord, normal.x(), normal.y(), normal.z());
             }
         }
     }
 
-    default int applyBakedLighting(int lightmapCoord, ByteBuffer data) {
-        int bl = lightmapCoord&0xFFFF;
-        int sl = (lightmapCoord>>16)&0xFFFF;
+    default int applyBakedLighting(int packedLight, ByteBuffer data) {
+        int bl = packedLight&0xFFFF;
+        int sl = (packedLight>>16)&0xFFFF;
         int offset = LightUtil.getLightOffset(0) * 4; // int offset for vertex 0 * 4 bytes per int
         int blBaked = Short.toUnsignedInt(data.getShort(offset));
         int slBaked = Short.toUnsignedInt(data.getShort(offset + 2));

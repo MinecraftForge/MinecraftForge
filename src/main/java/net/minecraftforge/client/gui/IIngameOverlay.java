@@ -23,5 +23,5 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 public interface IIngameOverlay
 {
-    void render(ForgeIngameGui gui, PoseStack mStack, float partialTicks, int width, int height);
+    void render(ForgeIngameGui gui, PoseStack poseStack, float partialTick, int width, int height);
 }

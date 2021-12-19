@@ -48,10 +48,10 @@ public interface IForgeMobEffect
     /**
      * Used for determining {@code PotionEffect} sort order in GUIs.
      * Defaults to the {@code PotionEffect}'s liquid color.
-     * @param potionEffect the {@code PotionEffect} instance containing the potion
+     * @param effectInstance the {@code PotionEffect} instance containing the potion
      * @return a value used to sort {@code PotionEffect}s in GUIs
      */
-    default int getSortOrder(MobEffectInstance potionEffect) {
+    default int getSortOrder(MobEffectInstance effectInstance) {
        return self().getColor();
     }
 }

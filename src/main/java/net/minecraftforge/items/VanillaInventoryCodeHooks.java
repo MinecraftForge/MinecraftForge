@@ -84,11 +84,11 @@ public class VanillaInventoryCodeHooks
     /**
      * Copied from BlockDropper#dispense and added capability support
      */
-    public static boolean dropperInsertHook(Level world, BlockPos pos, DispenserBlockEntity dropper, int slot, @Nonnull ItemStack stack)
+    public static boolean dropperInsertHook(Level level, BlockPos pos, DispenserBlockEntity dropper, int slot, @Nonnull ItemStack stack)
     {
-        Direction enumfacing = world.getBlockState(pos).getValue(DropperBlock.FACING);
+        Direction enumfacing = level.getBlockState(pos).getValue(DropperBlock.FACING);
         BlockPos blockpos = pos.relative(enumfacing);
-        return getItemHandler(world, (double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), enumfacing.getOpposite())
+        return getItemHandler(level, (double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), enumfacing.getOpposite())
                 .map(destinationResult -> {
                     IItemHandler itemHandler = destinationResult.getKey();
                     Object destination = destinationResult.getValue();

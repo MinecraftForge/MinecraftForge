@@ -51,7 +51,7 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
     }
 
     @Override
-    public boolean tesselateWithoutAO(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack matrixStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int combinedOverlayIn, IModelData modelData)
+    public boolean tesselateWithoutAO(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int packedOverlay, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
@@ -60,18 +60,18 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
 
             VertexLighterFlat lighter = lighterFlat.get();
             lighter.setParent(consumer);
-            lighter.setTransform(matrixStack.last());
+            lighter.setTransform(poseStack.last());
 
-            return render(lighter, world, model, state, pos, matrixStack, checkSides, rand, seed, modelData);
+            return render(lighter, level, model, state, pos, poseStack, checkSides, rand, seed, modelData);
         }
         else
         {
-            return super.tesselateWithoutAO(world, model, state, pos, matrixStack, buffer, checkSides, rand, seed, combinedOverlayIn, modelData);
+            return super.tesselateWithoutAO(level, model, state, pos, poseStack, buffer, checkSides, rand, seed, packedOverlay, modelData);
         }
     }
 
     @Override
-    public boolean tesselateWithAO(BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack matrixStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int combinedOverlayIn, IModelData modelData)
+    public boolean tesselateWithAO(BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, VertexConsumer buffer, boolean checkSides, Random rand, long seed, int packedOverlay, IModelData modelData)
     {
         if(ForgeConfig.CLIENT.experimentalForgeLightPipelineEnabled.get())
         {
@@ -80,19 +80,19 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
 
             VertexLighterSmoothAo lighter = lighterSmooth.get();
             lighter.setParent(consumer);
-            lighter.setTransform(matrixStack.last());
+            lighter.setTransform(poseStack.last());
 
-            return render(lighter, world, model, state, pos, matrixStack, checkSides, rand, seed, modelData);
+            return render(lighter, level, model, state, pos, poseStack, checkSides, rand, seed, modelData);
         }
         else
         {
-            return super.tesselateWithAO(world, model, state, pos, matrixStack, buffer, checkSides, rand, seed, combinedOverlayIn, modelData);
+            return super.tesselateWithAO(level, model, state, pos, poseStack, buffer, checkSides, rand, seed, packedOverlay, modelData);
         }
     }
 
-    public static boolean render(VertexLighterFlat lighter, BlockAndTintGetter world, BakedModel model, BlockState state, BlockPos pos, PoseStack matrixStack, boolean checkSides, Random rand, long seed, IModelData modelData)
+    public static boolean render(VertexLighterFlat lighter, BlockAndTintGetter level, BakedModel model, BlockState state, BlockPos pos, PoseStack poseStack, boolean checkSides, Random rand, long seed, IModelData modelData)
     {
-        lighter.setWorld(world);
+        lighter.setWorld(level);
         lighter.setState(state);
         lighter.setBlockPos(pos);
         boolean empty = true;
@@ -113,7 +113,7 @@ public class ForgeBlockModelRenderer extends ModelBlockRenderer
             quads = model.getQuads(state, side, rand, modelData);
             if(!quads.isEmpty())
             {
-                if(!checkSides || Block.shouldRenderFace(state, world, pos, side, pos.relative(side)))
+                if(!checkSides || Block.shouldRenderFace(state, level, pos, side, pos.relative(side)))
                 {
                     if(empty) lighter.updateBlockInfo();
                     empty = false;

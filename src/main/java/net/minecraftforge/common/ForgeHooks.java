@@ -210,7 +210,7 @@ public class ForgeHooks
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
     @SuppressWarnings("resource")
-    public static boolean onPickBlock(HitResult target, Player player, Level world)
+    public static boolean onPickBlock(HitResult target, Player player, Level level)
     {
         ItemStack result = ItemStack.EMPTY;
         boolean isCreative = player.getAbilities().instabuild;
@@ -219,15 +219,15 @@ public class ForgeHooks
         if (target.getType() == HitResult.Type.BLOCK)
         {
             BlockPos pos = ((BlockHitResult)target).getBlockPos();
-            BlockState state = world.getBlockState(pos);
+            BlockState state = level.getBlockState(pos);
 
             if (state.isAir())
                 return false;
 
             if (isCreative && Screen.hasControlDown() && state.hasBlockEntity())
-                te = world.getBlockEntity(pos);
+                te = level.getBlockEntity(pos);
 
-            result = state.getCloneItemStack(target, world, pos, player);
+            result = state.getCloneItemStack(target, level, pos, player);
 
             if (result.isEmpty())
                 LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), state.getBlock().getRegistryName());
@@ -352,13 +352,13 @@ public class ForgeHooks
         return Math.max(0,event.getVisibilityModifier());
     }
 
-    public static boolean isLivingOnLadder(@Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity)
+    public static boolean isLivingOnLadder(@Nonnull BlockState state, @Nonnull Level level, @Nonnull BlockPos pos, @Nonnull LivingEntity entity)
     {
         boolean isSpectator = (entity instanceof Player && ((Player)entity).isSpectator());
         if (isSpectator) return false;
         if (!ForgeConfig.SERVER.fullBoundingBoxLadders.get())
         {
-            return state.isLadder(world, pos, entity);
+            return state.isLadder(level, pos, entity);
         }
         else
         {
@@ -373,8 +373,8 @@ public class ForgeHooks
                     for (int z2 = mZ; z2 < bb.maxZ; z2++)
                     {
                         BlockPos tmp = new BlockPos(x2, y2, z2);
-                        state = world.getBlockState(tmp);
-                        if (state.isLadder(world, tmp, entity))
+                        state = level.getBlockState(tmp);
+                        if (state.isLadder(level, tmp, entity))
                         {
                             return true;
                         }
@@ -497,12 +497,12 @@ public class ForgeHooks
         return ichat;
     }
 
-    public static int onBlockBreakEvent(Level world, GameType gameType, ServerPlayer entityPlayer, BlockPos pos)
+    public static int onBlockBreakEvent(Level level, GameType gameType, ServerPlayer entityPlayer, BlockPos pos)
     {
         // Logic from tryHarvestBlock for pre-canceling the event
         boolean preCancelEvent = false;
         ItemStack itemstack = entityPlayer.getMainHandItem();
-        if (!itemstack.isEmpty() && !itemstack.getItem().canAttackBlock(world.getBlockState(pos), world, pos, entityPlayer))
+        if (!itemstack.isEmpty() && !itemstack.getItem().canAttackBlock(level.getBlockState(pos), level, pos, entityPlayer))
         {
             preCancelEvent = true;
         }
@@ -514,20 +514,20 @@ public class ForgeHooks
 
             if (!entityPlayer.mayBuild())
             {
-                if (itemstack.isEmpty() || !itemstack.hasAdventureModeBreakTagForBlock(world.getTagManager(), new BlockInWorld(world, pos, false)))
+                if (itemstack.isEmpty() || !itemstack.hasAdventureModeBreakTagForBlock(level.getTagManager(), new BlockInWorld(level, pos, false)))
                     preCancelEvent = true;
             }
         }
 
         // Tell client the block is gone immediately then process events
-        if (world.getBlockEntity(pos) == null)
+        if (level.getBlockEntity(pos) == null)
         {
-            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(pos, world.getFluidState(pos).createLegacyBlock()));
+            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(pos, level.getFluidState(pos).createLegacyBlock()));
         }
 
         // Post the block break event
-        BlockState state = world.getBlockState(pos);
-        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(world, pos, state, entityPlayer);
+        BlockState state = level.getBlockState(pos);
+        BlockEvent.BreakEvent event = new BlockEvent.BreakEvent(level, pos, state, entityPlayer);
         event.setCanceled(preCancelEvent);
         MinecraftForge.EVENT_BUS.post(event);
 
@@ -535,10 +535,10 @@ public class ForgeHooks
         if (event.isCanceled())
         {
             // Let the client know the block still exists
-            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(world, pos));
+            entityPlayer.connection.send(new ClientboundBlockUpdatePacket(level, pos));
 
             // Update any tile entity data for this block
-            BlockEntity blockEntity = world.getBlockEntity(pos);
+            BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity != null)
             {
                 Packet<?> pkt = blockEntity.getUpdatePacket();
@@ -554,10 +554,10 @@ public class ForgeHooks
     public static InteractionResult onPlaceItemIntoWorld(@Nonnull UseOnContext context)
     {
         ItemStack itemstack = context.getItemInHand();
-        Level world = context.getLevel();
+        Level level = context.getLevel();
 
         Player player = context.getPlayer();
-        if (player != null && !player.getAbilities().mayBuild && !itemstack.hasAdventureModePlaceTagForBlock(world.getTagManager(), new BlockInWorld(world, context.getClickedPos(), false)))
+        if (player != null && !player.getAbilities().mayBuild && !itemstack.hasAdventureModePlaceTagForBlock(level.getTagManager(), new BlockInWorld(level, context.getClickedPos(), false)))
             return InteractionResult.PASS;
 
         // handle all placement events here
@@ -568,14 +568,14 @@ public class ForgeHooks
             nbt = itemstack.getTag().copy();
 
         if (!(itemstack.getItem() instanceof BucketItem)) // if not bucket
-            world.captureBlockSnapshots = true;
+            level.captureBlockSnapshots = true;
 
         ItemStack copy = itemstack.copy();
         InteractionResult ret = itemstack.getItem().useOn(context);
         if (itemstack.isEmpty())
             ForgeEventFactory.onPlayerDestroyItem(player, copy, context.getHand());
 
-        world.captureBlockSnapshots = false;
+        level.captureBlockSnapshots = false;
 
         if (ret.consumesAction())
         {
@@ -587,8 +587,8 @@ public class ForgeHooks
                 newNBT = itemstack.getTag().copy();
             }
             @SuppressWarnings("unchecked")
-            List<BlockSnapshot> blockSnapshots = (List<BlockSnapshot>)world.capturedBlockSnapshots.clone();
-            world.capturedBlockSnapshots.clear();
+            List<BlockSnapshot> blockSnapshots = (List<BlockSnapshot>)level.capturedBlockSnapshots.clone();
+            level.capturedBlockSnapshots.clear();
 
             // make sure to set pre-placement item data for event
             itemstack.setCount(size);
@@ -612,9 +612,9 @@ public class ForgeHooks
                 // revert back all captured blocks
                 for (BlockSnapshot blocksnapshot : Lists.reverse(blockSnapshots))
                 {
-                    world.restoringBlockSnapshots = true;
+                    level.restoringBlockSnapshots = true;
                     blocksnapshot.restore(true, false);
-                    world.restoringBlockSnapshots = false;
+                    level.restoringBlockSnapshots = false;
                 }
             }
             else
@@ -627,16 +627,16 @@ public class ForgeHooks
                 {
                     int updateFlag = snap.getFlag();
                     BlockState oldBlock = snap.getReplacedBlock();
-                    BlockState newBlock = world.getBlockState(snap.getPos());
-                    newBlock.onPlace(world, snap.getPos(), oldBlock, false);
+                    BlockState newBlock = level.getBlockState(snap.getPos());
+                    newBlock.onPlace(level, snap.getPos(), oldBlock, false);
 
-                    world.markAndNotifyBlock(snap.getPos(), world.getChunkAt(snap.getPos()), oldBlock, newBlock, updateFlag, 512);
+                    level.markAndNotifyBlock(snap.getPos(), level.getChunkAt(snap.getPos()), oldBlock, newBlock, updateFlag, 512);
                 }
                 if (player != null)
                     player.awardStat(Stats.ITEM_USED.get(item));
             }
         }
-        world.capturedBlockSnapshots.clear();
+        level.capturedBlockSnapshots.clear();
 
         return ret;
     }
@@ -952,16 +952,16 @@ public class ForgeHooks
         return ctx.validateEntryName(name);
     }
 
-    public static boolean onCropsGrowPre(Level worldIn, BlockPos pos, BlockState state, boolean def)
+    public static boolean onCropsGrowPre(Level level, BlockPos pos, BlockState state, boolean def)
     {
-        BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(worldIn,pos,state);
+        BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(level,pos,state);
         MinecraftForge.EVENT_BUS.post(ev);
         return (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && def));
     }
 
-    public static void onCropsGrowPost(Level worldIn, BlockPos pos, BlockState state)
+    public static void onCropsGrowPost(Level level, BlockPos pos, BlockState state)
     {
-        MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+        MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(level, pos, state, level.getBlockState(pos)));
     }
 
     @Nullable
@@ -1036,19 +1036,19 @@ public class ForgeHooks
         return modId;
     }
 
-    public static boolean onFarmlandTrample(Level world, BlockPos pos, BlockState state, float fallDistance, Entity entity)
+    public static boolean onFarmlandTrample(Level level, BlockPos pos, BlockState state, float fallDistance, Entity entity)
     {
         if (entity.canTrample(state, pos, fallDistance))
         {
-            BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
+            BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(level, pos, state, fallDistance, entity);
             MinecraftForge.EVENT_BUS.post(event);
             return !event.isCanceled();
         }
         return false;
     }
 
-    public static int onNoteChange(Level world, BlockPos pos, BlockState state, int old, int _new) {
-        NoteBlockEvent.Change event = new NoteBlockEvent.Change(world, pos, state, old, _new);
+    public static int onNoteChange(Level level, BlockPos pos, BlockState state, int old, int _new) {
+        NoteBlockEvent.Change event = new NoteBlockEvent.Change(level, pos, state, old, _new);
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
         return event.getVanillaNoteId();
@@ -1103,10 +1103,10 @@ public class ForgeHooks
         return id;
     }
 
-    public static boolean canEntityDestroy(Level world, BlockPos pos, LivingEntity entity)
+    public static boolean canEntityDestroy(Level level, BlockPos pos, LivingEntity entity)
     {
-        BlockState state = world.getBlockState(pos);
-        return ForgeEventFactory.getMobGriefingEvent(world, entity) && state.canEntityDestroy(world, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
+        BlockState state = level.getBlockState(pos);
+        return ForgeEventFactory.getMobGriefingEvent(level, entity) && state.canEntityDestroy(level, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
     }
 
     private static final Map<IRegistryDelegate<Item>, Integer> VANILLA_BURNS = new HashMap<>();

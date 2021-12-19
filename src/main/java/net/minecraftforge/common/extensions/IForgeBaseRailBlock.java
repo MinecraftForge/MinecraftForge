@@ -34,20 +34,20 @@ public interface IForgeBaseRailBlock
     /**
      * Return true if the rail can make corners.
      * Used by placement logic.
-     * @param world The world.
-     * @param pos Block's position in world
+     * @param level The level.
+     * @param pos Block's position in level
      * @return True if the rail can make corners.
      */
-    boolean isFlexibleRail(BlockState state, BlockGetter world, BlockPos pos);
+    boolean isFlexibleRail(BlockState state, BlockGetter level, BlockPos pos);
 
     /**
      * Returns true if the rail can make up and down slopes.
      * Used by placement logic.
-     * @param world The world.
-     * @param pos Block's position in world
+     * @param level The level.
+     * @param pos Block's position in level
      * @return True if the rail can make slopes.
      */
-    default boolean canMakeSlopes(BlockState state, BlockGetter world, BlockPos pos)
+    default boolean canMakeSlopes(BlockState state, BlockGetter level, BlockPos pos)
     {
         return true;
     }
@@ -58,22 +58,22 @@ public interface IForgeBaseRailBlock
     * for example when making diamond junctions or switches.
     * The cart parameter will often be null unless it it called from EntityMinecart.
     *
-    * @param world The world.
-    * @param pos Block's position in world
+    * @param level The level.
+    * @param pos Block's position in level
     * @param state The BlockState
     * @param cart The cart asking for the metadata, null if it is not called by EntityMinecart.
     * @return The direction.
     */
-    RailShape getRailDirection(BlockState state, BlockGetter world, BlockPos pos, @Nullable AbstractMinecart cart);
+    RailShape getRailDirection(BlockState state, BlockGetter level, BlockPos pos, @Nullable AbstractMinecart cart);
 
     /**
      * Returns the max speed of the rail at the specified position.
-     * @param world The world.
+     * @param level The level.
      * @param cart The cart on the rail, may be null.
-     * @param pos Block's position in world
+     * @param pos Block's position in level
      * @return The max speed of the current rail.
      */
-    default float getRailMaxSpeed(BlockState state, Level world, BlockPos pos, AbstractMinecart cart)
+    default float getRailMaxSpeed(BlockState state, Level level, BlockPos pos, AbstractMinecart cart)
     {
         return 0.4f;
     }
@@ -81,9 +81,9 @@ public interface IForgeBaseRailBlock
     /**
       * This function is called by any minecart that passes over this rail.
       * It is called once per update tick that the minecart is on the rail.
-      * @param world The world.
+      * @param level The level.
       * @param cart The cart on the rail.
-      * @param pos Block's position in world
+      * @param pos Block's position in level
       */
-    default void onMinecartPass(BlockState state, Level world, BlockPos pos, AbstractMinecart cart){}
+    default void onMinecartPass(BlockState state, Level level, BlockPos pos, AbstractMinecart cart){}
 }

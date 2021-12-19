@@ -30,13 +30,13 @@ public abstract class EffectRenderer
     public static final EffectRenderer DUMMY = new EffectRenderer()
     {
         @Override
-        public void renderInventoryEffect(MobEffectInstance effect, EffectRenderingInventoryScreen<?> gui, PoseStack mStack, int x, int y, float z)
+        public void renderInventoryEffect(MobEffectInstance effectInstance, EffectRenderingInventoryScreen<?> gui, PoseStack poseStack, int x, int y, float z)
         {
 
         }
 
         @Override
-        public void renderHUDEffect(MobEffectInstance effect, GuiComponent gui, PoseStack mStack, int x, int y, float z, float alpha)
+        public void renderHUDEffect(MobEffectInstance effectInstance, GuiComponent gui, PoseStack poseStack, int x, int y, float z, float alpha)
         {
 
         }
@@ -79,26 +79,26 @@ public abstract class EffectRenderer
      * Called to draw the this Potion onto the player's inventory when it's active.
      * This can be used to e.g. render Potion icons from your own texture.
      *
-     * @param effect the active PotionEffect
-     * @param gui    the gui instance
-     * @param mStack The PoseStack
-     * @param x      the x coordinate
-     * @param y      the y coordinate
-     * @param z      the z level
+     * @param effectInstance the effect instance
+     * @param gui            the gui instance
+     * @param poseStack      the pose stack
+     * @param x              the x coordinate
+     * @param y              the y coordinate
+     * @param z              the z level
      */
-    public abstract void renderInventoryEffect(MobEffectInstance effect, EffectRenderingInventoryScreen<?> gui, PoseStack mStack, int x, int y, float z);
+    public abstract void renderInventoryEffect(MobEffectInstance effectInstance, EffectRenderingInventoryScreen<?> gui, PoseStack poseStack, int x, int y, float z);
 
     /**
      * Called to draw the this Potion onto the player's ingame HUD when it's active.
      * This can be used to e.g. render Potion icons from your own texture.
      *
-     * @param effect the active PotionEffect
-     * @param gui    the gui instance
-     * @param mStack The PoseStack
-     * @param x      the x coordinate
-     * @param y      the y coordinate
-     * @param z      the z level
-     * @param alpha  the alpha value, blinks when the potion is about to run out
+     * @param effectInstance the active PotionEffect
+     * @param gui            the gui instance
+     * @param poseStack      the pose stack
+     * @param x              the x coordinate
+     * @param y              the y coordinate
+     * @param z              the z level
+     * @param alpha          the alpha value, blinks when the potion is about to run out
      */
-    public abstract void renderHUDEffect(MobEffectInstance effect, GuiComponent gui, PoseStack mStack, int x, int y, float z, float alpha);
+    public abstract void renderHUDEffect(MobEffectInstance effectInstance, GuiComponent gui, PoseStack poseStack, int x, int y, float z, float alpha);
 }

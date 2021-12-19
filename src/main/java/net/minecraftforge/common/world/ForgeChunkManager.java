@@ -58,7 +58,7 @@ public class ForgeChunkManager
     private static final Map<String, LoadingValidationCallback> callbacks = new HashMap<>();
 
     /**
-     * Sets the forced chunk loading validation callback for the given mod. This allows for validating and removing no longer valid tickets on world load.
+     * Sets the forced chunk loading validation callback for the given mod. This allows for validating and removing no longer valid tickets on level load.
      *
      * @apiNote This method should be called from a {@link net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent} using one of the {@link
      * net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent} enqueueWork methods.
@@ -72,11 +72,11 @@ public class ForgeChunkManager
     }
 
     /**
-     * Checks if a world has any forced chunks. Mainly used for seeing if a world should continue ticking with no players in it.
+     * Checks if a level has any forced chunks. Mainly used for seeing if a level should continue ticking with no players in it.
      */
-    public static boolean hasForcedChunks(ServerLevel world)
+    public static boolean hasForcedChunks(ServerLevel level)
     {
-        ForcedChunksSavedData data = world.getDataStorage().get(ForcedChunksSavedData::load, "chunks");
+        ForcedChunksSavedData data = level.getDataStorage().get(ForcedChunksSavedData::load, "chunks");
         if (data == null) return false;
         return !data.getChunks().isEmpty() || !data.getBlockForcedChunks().isEmpty() || !data.getEntityForcedChunks().isEmpty();
     }
@@ -87,9 +87,9 @@ public class ForgeChunkManager
      * @param add     {@code true} to force the chunk, {@code false} to unforce the chunk.
      * @param ticking {@code true} to make the chunk receive full chunk ticks even if there is no player nearby.
      */
-    public static boolean forceChunk(ServerLevel world, String modId, BlockPos owner, int chunkX, int chunkZ, boolean add, boolean ticking)
+    public static boolean forceChunk(ServerLevel level, String modId, BlockPos owner, int chunkX, int chunkZ, boolean add, boolean ticking)
     {
-        return forceChunk(world, modId, owner, chunkX, chunkZ, add, ticking, ticking ? BLOCK_TICKING : BLOCK, ForcedChunksSavedData::getBlockForcedChunks);
+        return forceChunk(level, modId, owner, chunkX, chunkZ, add, ticking, ticking ? BLOCK_TICKING : BLOCK, ForcedChunksSavedData::getBlockForcedChunks);
     }
 
     /**
@@ -98,9 +98,9 @@ public class ForgeChunkManager
      * @param add     {@code true} to force the chunk, {@code false} to unforce the chunk.
      * @param ticking {@code true} to make the chunk receive full chunk ticks even if there is no player nearby.
      */
-    public static boolean forceChunk(ServerLevel world, String modId, Entity owner, int chunkX, int chunkZ, boolean add, boolean ticking)
+    public static boolean forceChunk(ServerLevel level, String modId, Entity owner, int chunkX, int chunkZ, boolean add, boolean ticking)
     {
-        return forceChunk(world, modId, owner.getUUID(), chunkX, chunkZ, add, ticking);
+        return forceChunk(level, modId, owner.getUUID(), chunkX, chunkZ, add, ticking);
     }
 
     /**
@@ -109,9 +109,9 @@ public class ForgeChunkManager
      * @param add     {@code true} to force the chunk, {@code false} to unforce the chunk.
      * @param ticking {@code true} to make the chunk receive full chunk ticks even if there is no player nearby.
      */
-    public static boolean forceChunk(ServerLevel world, String modId, UUID owner, int chunkX, int chunkZ, boolean add, boolean ticking)
+    public static boolean forceChunk(ServerLevel level, String modId, UUID owner, int chunkX, int chunkZ, boolean add, boolean ticking)
     {
-        return forceChunk(world, modId, owner, chunkX, chunkZ, add, ticking, ticking ? ENTITY_TICKING : ENTITY, ForcedChunksSavedData::getEntityForcedChunks);
+        return forceChunk(level, modId, owner, chunkX, chunkZ, add, ticking, ticking ? ENTITY_TICKING : ENTITY, ForcedChunksSavedData::getEntityForcedChunks);
     }
 
     /**
@@ -121,7 +121,7 @@ public class ForgeChunkManager
      *
      * @implNote Based on {@link ServerLevel#setChunkForced(int, int, boolean)}
      */
-    private static <T extends Comparable<? super T>> boolean forceChunk(ServerLevel world, String modId, T owner, int chunkX, int chunkZ, boolean add, boolean ticking,
+    private static <T extends Comparable<? super T>> boolean forceChunk(ServerLevel level, String modId, T owner, int chunkX, int chunkZ, boolean add, boolean ticking,
           TicketType<TicketOwner<T>> type, Function<ForcedChunksSavedData, TicketTracker<T>> ticketGetter)
     {
         if (!ModList.get().isLoaded(modId))
@@ -129,7 +129,7 @@ public class ForgeChunkManager
             LOGGER.warn("A mod attempted to force a chunk for an unloaded mod of id: {}", modId);
             return false;
         }
-        ForcedChunksSavedData saveData = world.getDataStorage().computeIfAbsent(ForcedChunksSavedData::load, ForcedChunksSavedData::new, "chunks");
+        ForcedChunksSavedData saveData = level.getDataStorage().computeIfAbsent(ForcedChunksSavedData::load, ForcedChunksSavedData::new, "chunks");
         ChunkPos pos = new ChunkPos(chunkX, chunkZ);
         long chunk = pos.toLong();
         TicketTracker<T> tickets = ticketGetter.apply(saveData);
@@ -139,7 +139,7 @@ public class ForgeChunkManager
         {
             success = tickets.add(ticketOwner, chunk, ticking);
             if (success)
-                world.getChunk(chunkX, chunkZ);
+                level.getChunk(chunkX, chunkZ);
         }
         else
         {
@@ -148,13 +148,13 @@ public class ForgeChunkManager
         if (success)
         {
             saveData.setDirty(true);
-            forceChunk(world, pos, type, ticketOwner, add, ticking);
+            forceChunk(level, pos, type, ticketOwner, add, ticking);
         }
         return success;
     }
 
     /**
-     * Adds/Removes a ticket from the world's chunk provider with the proper levels to match the forced chunks.
+     * Adds/Removes a ticket from the level's chunk provider with the proper levels to match the forced chunks.
      *
      * @param add     {@code true} to force the chunk, {@code false} to unforce the chunk.
      * @param ticking {@code true} to make the chunk receive full chunk ticks even if there is no player nearby.
@@ -162,29 +162,29 @@ public class ForgeChunkManager
      * @implNote We use distance 2 for what we pass, as when using register/releaseTicket the ticket's level is set to 33 - distance and the level that forced chunks use
      * is 31.
      */
-    private static <T extends Comparable<? super T>> void forceChunk(ServerLevel world, ChunkPos pos, TicketType<TicketOwner<T>> type, TicketOwner<T> owner, boolean add,
+    private static <T extends Comparable<? super T>> void forceChunk(ServerLevel level, ChunkPos pos, TicketType<TicketOwner<T>> type, TicketOwner<T> owner, boolean add,
           boolean ticking)
     {
         if (add)
         {
             if (ticking)
-                world.getChunkSource().registerTickingTicket(type, pos, 2, owner);
+                level.getChunkSource().registerTickingTicket(type, pos, 2, owner);
             else
-                world.getChunkSource().addRegionTicket(type, pos, 2, owner);
+                level.getChunkSource().addRegionTicket(type, pos, 2, owner);
         }
         else if (ticking)
-            world.getChunkSource().releaseTickingTicket(type, pos, 2, owner);
+            level.getChunkSource().releaseTickingTicket(type, pos, 2, owner);
         else
-            world.getChunkSource().removeRegionTicket(type, pos, 2, owner);
+            level.getChunkSource().removeRegionTicket(type, pos, 2, owner);
     }
 
     /**
-     * Reinstates forge's forced chunks when vanilla initially loads a world and reinstates their forced chunks. This method also will validate all of forge's forced
+     * Reinstates forge's forced chunks when vanilla initially loads a level and reinstates their forced chunks. This method also will validate all of forge's forced
      * chunks using and registered {@link LoadingValidationCallback}.
      *
      * @apiNote Internal
      */
-    public static void reinstatePersistentChunks(ServerLevel world, ForcedChunksSavedData saveData)
+    public static void reinstatePersistentChunks(ServerLevel level, ForcedChunksSavedData saveData)
     {
         if (!callbacks.isEmpty())
         {
@@ -201,15 +201,15 @@ public class ForgeChunkManager
                 {
                     Map<BlockPos, Pair<LongSet, LongSet>> ownedBlockTickets = hasBlockTicket ? Collections.unmodifiableMap(blockTickets.get(modId)) : Collections.emptyMap();
                     Map<UUID, Pair<LongSet, LongSet>> ownedEntityTickets = hasEntityTicket ? Collections.unmodifiableMap(entityTickets.get(modId)) : Collections.emptyMap();
-                    entry.getValue().validateTickets(world, new TicketHelper(saveData, modId, ownedBlockTickets, ownedEntityTickets));
+                    entry.getValue().validateTickets(level, new TicketHelper(saveData, modId, ownedBlockTickets, ownedEntityTickets));
                 }
             }
         }
         //Reinstate the chunks that we want to load
-        reinstatePersistentChunks(world, BLOCK, saveData.getBlockForcedChunks().chunks, false);
-        reinstatePersistentChunks(world, BLOCK_TICKING, saveData.getBlockForcedChunks().tickingChunks, true);
-        reinstatePersistentChunks(world, ENTITY, saveData.getEntityForcedChunks().chunks, false);
-        reinstatePersistentChunks(world, ENTITY_TICKING, saveData.getEntityForcedChunks().tickingChunks, true);
+        reinstatePersistentChunks(level, BLOCK, saveData.getBlockForcedChunks().chunks, false);
+        reinstatePersistentChunks(level, BLOCK_TICKING, saveData.getBlockForcedChunks().tickingChunks, true);
+        reinstatePersistentChunks(level, ENTITY, saveData.getEntityForcedChunks().chunks, false);
+        reinstatePersistentChunks(level, ENTITY_TICKING, saveData.getEntityForcedChunks().tickingChunks, true);
     }
 
     /**
@@ -238,16 +238,16 @@ public class ForgeChunkManager
     }
 
     /**
-     * Adds back any persistent forced chunks to the world's chunk provider.
+     * Adds back any persistent forced chunks to the level's chunk provider.
      */
-    private static <T extends Comparable<? super T>> void reinstatePersistentChunks(ServerLevel world, TicketType<TicketOwner<T>> type,
+    private static <T extends Comparable<? super T>> void reinstatePersistentChunks(ServerLevel level, TicketType<TicketOwner<T>> type,
           Map<TicketOwner<T>, LongSet> tickets, boolean ticking)
     {
         for (Map.Entry<TicketOwner<T>, LongSet> entry : tickets.entrySet())
         {
             for (long chunk : entry.getValue())
             {
-                forceChunk(world, new ChunkPos(chunk), type, entry.getKey(), true, ticking);
+                forceChunk(level, new ChunkPos(chunk), type, entry.getKey(), true, ticking);
             }
         }
     }
@@ -335,7 +335,7 @@ public class ForgeChunkManager
             }
             else
             {
-                LOGGER.warn("Found chunk loading data for mod {} which is currently not available or active - it will be removed from the world save.", modId);
+                LOGGER.warn("Found chunk loading data for mod {} which is currently not available or active - it will be removed from the level save.", modId);
             }
         }
     }
@@ -369,10 +369,10 @@ public class ForgeChunkManager
         /**
          * Called back when tickets are about to be loaded and reinstated to allow mods to invalidate and remove specific tickets that may no longer be valid.
          *
-         * @param world        The world
+         * @param level        The level
          * @param ticketHelper Ticket helper to remove any invalid tickets.
          */
-        void validateTickets(ServerLevel world, TicketHelper ticketHelper);
+        void validateTickets(ServerLevel level, TicketHelper ticketHelper);
     }
 
     /**

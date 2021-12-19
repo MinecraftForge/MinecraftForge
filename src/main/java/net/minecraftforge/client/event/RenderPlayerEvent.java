@@ -53,15 +53,15 @@ public abstract class RenderPlayerEvent extends PlayerEvent
     @Cancelable
     public static class Pre extends RenderPlayerEvent
     {
-        public Pre(Player player, PlayerRenderer renderer, float tick, PoseStack stack, MultiBufferSource buffers, int light) {
-            super(player, renderer, tick, stack, buffers, light);
+        public Pre(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+            super(player, renderer, partialTick, poseStack, multiBufferSource, packedLight);
         }
     }
 
     public static class Post extends RenderPlayerEvent
     {
-        public Post(Player player, PlayerRenderer renderer, float tick, PoseStack stack, MultiBufferSource buffers, int light) {
-            super(player, renderer, tick, stack, buffers, light);
+        public Post(Player player, PlayerRenderer renderer, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+            super(player, renderer, partialTick, poseStack, multiBufferSource, packedLight);
         }
     }
 

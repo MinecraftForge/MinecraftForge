@@ -251,9 +251,9 @@ public final class DynamicBucketModel implements IModelGeometry<DynamicBucketMod
         }
 
         @Override
-        public BakedModel resolve(BakedModel originalModel, ItemStack stack, @Nullable ClientLevel world, @Nullable LivingEntity entity, int seed)
+        public BakedModel resolve(BakedModel originalModel, ItemStack stack, @Nullable ClientLevel level, @Nullable LivingEntity entity, int seed)
         {
-            BakedModel overriden = nested.resolve(originalModel, stack, world, entity, seed);
+            BakedModel overriden = nested.resolve(originalModel, stack, level, entity, seed);
             if (overriden != originalModel) return overriden;
             return FluidUtil.getFluidContained(stack)
                     .map(fluidStack -> {

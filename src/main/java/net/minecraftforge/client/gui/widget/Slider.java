@@ -108,7 +108,7 @@ public class Slider extends ExtendedButton
      * Fired when the mouse button is dragged. Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void renderBg(PoseStack mStack, Minecraft par1Minecraft, int par2, int par3)
+    protected void renderBg(PoseStack poseStack, Minecraft minecraft, int par2, int par3)
     {
         if (this.visible)
         {
@@ -118,7 +118,7 @@ public class Slider extends ExtendedButton
                 updateSlider();
             }
 
-            GuiUtils.drawContinuousTexturedBox(mStack, WIDGETS_LOCATION, this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 8, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
+            GuiUtils.drawContinuousTexturedBox(poseStack, WIDGETS_LOCATION, this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 8, this.height, 200, 20, 2, 3, 2, 2, this.getBlitOffset());
         }
     }
 

@@ -69,11 +69,11 @@ public class DispenseFluidContainer extends DefaultDispenseItemBehavior
     @Nonnull
     private ItemStack fillContainer(@Nonnull BlockSource source, @Nonnull ItemStack stack)
     {
-        Level world = source.getLevel();
+        Level level = source.getLevel();
         Direction dispenserFacing = source.getBlockState().getValue(DispenserBlock.FACING);
         BlockPos blockpos = source.getPos().relative(dispenserFacing);
 
-        FluidActionResult actionResult = FluidUtil.tryPickUpFluid(stack, null, world, blockpos, dispenserFacing.getOpposite());
+        FluidActionResult actionResult = FluidUtil.tryPickUpFluid(stack, null, level, blockpos, dispenserFacing.getOpposite());
         ItemStack resultStack = actionResult.getResult();
 
         if (!actionResult.isSuccess() || resultStack.isEmpty())
