@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/level/block/GrassBlock.java
++++ b/net/minecraft/world/level/block/GrassBlock.java
+@@ -64,4 +_,6 @@
+       }
+ 
+    }
++
++   public net.minecraftforge.common.block.spreader.SpreaderType getSpreadingType(BlockState state){ return net.minecraftforge.common.block.spreader.SpreaderType.GRASS; }
+ }

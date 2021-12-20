@@ -1,0 +1,9 @@
+--- a/net/minecraft/world/level/block/MyceliumBlock.java
++++ b/net/minecraft/world/level/block/MyceliumBlock.java
+@@ -19,4 +_,6 @@
+       }
+ 
+    }
++
++   public net.minecraftforge.common.block.spreader.SpreaderType getSpreadingType(BlockState state){ return net.minecraftforge.common.block.spreader.SpreaderType.MYCELIUM; }
+ }

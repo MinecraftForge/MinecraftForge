@@ -75,7 +75,7 @@ public class SpreadBehaviors
     @Nullable
     private static ISpreadingBehavior getSpreadingBehavior(Block block, SpreaderType type)
     {
-        return SPREADERS.containsKey(block) ? SPREADERS.get(block).get(type) : null;
+        return SPREADERS.containsKey(block.delegate) ? SPREADERS.get(block.delegate).get(type) : null;
     }
 
     private static void setupVanillaBehavior()
@@ -88,7 +88,7 @@ public class SpreadBehaviors
             Blocks.DIRT.defaultBlockState()));
 
         addSpreaderBehavior(Blocks.DIRT, SpreaderType.MYCELIUM, ((state, level, pos) ->
-            Blocks.GRASS_BLOCK.defaultBlockState()
+            Blocks.MYCELIUM.defaultBlockState()
                 .setValue(BlockStateProperties.SNOWY, level.getBlockState(pos.above()).is(Blocks.SNOW))));
 
         addSpreaderBehavior(Blocks.MYCELIUM, SpreaderType.REVERT, ((state, level, pos) ->
