@@ -26,13 +26,13 @@ public final class SpreaderType
 {
     private static final Map<String, SpreaderType> TYPES = new HashMap<>();
 
-    public static final SpreaderType GRASS = getType("grass");
-    public static final SpreaderType MYCELIUM = getType("mycelium");
-    public static final SpreaderType CRIMSON = getType("crimson");
-    public static final SpreaderType WARPED = getType("warped");
-    public static final SpreaderType REVERT = getType("revert");
+    public static final SpreaderType GRASS = get("grass");
+    public static final SpreaderType MYCELIUM = get("mycelium");
+    public static final SpreaderType CRIMSON = get("crimson");
+    public static final SpreaderType WARPED = get("warped");
+    public static final SpreaderType REVERT = get("revert");
 
-    public static SpreaderType getType(String name)
+    public static SpreaderType get(String name)
     {
         return TYPES.computeIfAbsent(name, key -> new SpreaderType(key));
     }

@@ -19,6 +19,9 @@
 
 package net.minecraftforge.common.block.spreader;
 
+import com.google.common.collect.ForwardingTable;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -38,7 +41,7 @@ public class SpreadBehaviors
 {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Map<IRegistryDelegate<Block>, Map<SpreaderType, ISpreadingBehavior>> SPREADERS = new HashMap<>();
+    private static final Table<IRegistryDelegate<Block>, SpreaderType, ISpreadingBehavior> SPREADERS = HashBasedTable.create();
 
     static
     {
@@ -54,10 +57,9 @@ public class SpreadBehaviors
      */
     public static void addSpreaderBehavior(Block block, SpreaderType type, ISpreadingBehavior behavior)
     {
-        Map<SpreaderType, ISpreadingBehavior> blockSpecificSpreaders = SPREADERS.computeIfAbsent(block.delegate, key -> new HashMap<>());
-        if (blockSpecificSpreaders.containsKey(type))
+        if (SPREADERS.contains(block.delegate, type))
             LOGGER.info("Replacing spreading behavior for block '{}' and spreader type '{}'", block.getRegistryName(), type.getName());
-        blockSpecificSpreaders.put(type, behavior);
+        SPREADERS.put(block.delegate, type, behavior);
     }
 
     public static boolean canSpread(BlockState state, SpreaderType type)
@@ -75,7 +77,7 @@ public class SpreadBehaviors
     @Nullable
     private static ISpreadingBehavior getSpreadingBehavior(Block block, SpreaderType type)
     {
-        return SPREADERS.containsKey(block.delegate) ? SPREADERS.get(block.delegate).get(type) : null;
+        return SPREADERS.get(block.delegate, type);
     }
 
     private static void setupVanillaBehavior()
