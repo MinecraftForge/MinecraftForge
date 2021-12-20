@@ -29,7 +29,7 @@ import java.util.Random;
 
 public interface IForgeSpreadingBlock
 {
-
+    SpreaderType getSpreadingType(BlockState state);
 
     default void spread(BlockState state, ServerLevel level, BlockPos pos, Random random, int tries, int range){
         if (!level.isAreaLoaded(pos, range + 1)) return;
@@ -37,8 +37,8 @@ public interface IForgeSpreadingBlock
         for(int i = 0; i < tries; ++i) {
             BlockPos blockpos = pos.offset(random.nextInt(range) - 1, random.nextInt(5) - 3, random.nextInt(range) - 1);
             BlockState targetState = level.getBlockState(blockpos);
-            if(SpreadBehaviors.canSpread(targetState, SpreaderType.GRASS)){
-                level.setBlockAndUpdate(blockpos, SpreadBehaviors.getSpreadState(targetState, level, pos, SpreaderType.GRASS));
+            if(SpreadBehaviors.canSpread(targetState, getSpreadingType(state))){
+                level.setBlockAndUpdate(blockpos, SpreadBehaviors.getSpreadState(targetState, level, pos, getSpreadingType(state)));
             }
         }
     }
