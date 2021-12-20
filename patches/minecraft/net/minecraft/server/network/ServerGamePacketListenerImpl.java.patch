@@ -36,7 +36,7 @@
     public void m_7026_(Component p_9825_) {
        f_9744_.info("{} lost connection: {}", this.f_9743_.m_7755_().getString(), p_9825_.getString());
        this.f_9745_.m_129929_();
-+      net.minecraft.network.chat.MutableComponent mutableComponent = net.minecraftforge.event.ForgeEventFactory.getPlayerJoinMessage( this.f_9743_ );
++      net.minecraft.network.chat.MutableComponent mutableComponent = net.minecraftforge.event.ForgeEventFactory.getPlayerLeaveMessage( this.f_9743_ );
 +      if(mutableComponent == null) mutableComponent = new TranslatableComponent("multiplayer.player.left", this.f_9743_.m_5446_()).m_130940_(ChatFormatting.YELLOW);
 +      if(!mutableComponent.getString().isEmpty()) this.f_9745_.m_6846_().m_11264_(mutableComponent, ChatType.SYSTEM, Util.f_137441_);
        this.f_9745_.m_6846_().m_11264_((new TranslatableComponent("multiplayer.player.left", this.f_9743_.m_5446_())).m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
