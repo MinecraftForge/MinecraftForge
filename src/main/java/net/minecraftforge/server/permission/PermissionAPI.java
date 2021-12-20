@@ -43,12 +43,11 @@ import java.util.*;
 public final class PermissionAPI
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Collection<PermissionNode<?>> EMPTY_PERMISSIONS = Collections.EMPTY_LIST;
     private static IPermissionHandler activeHandler = null;
 
     public static Collection<PermissionNode<?>> getRegisteredNodes()
     {
-        return activeHandler == null ? EMPTY_PERMISSIONS : activeHandler.getRegisteredNodes();
+        return activeHandler == null ? Collections.emptySet() : activeHandler.getRegisteredNodes();
     }
 
     private PermissionAPI()
@@ -149,6 +148,6 @@ public final class PermissionAPI
     public static void resetPermissionAPI()
     {
         PermissionAPI.activeHandler = null;
-        LOGGER.info("Reset PermissionAPI");
+        LOGGER.debug("Reset PermissionAPI");
     }
 }
