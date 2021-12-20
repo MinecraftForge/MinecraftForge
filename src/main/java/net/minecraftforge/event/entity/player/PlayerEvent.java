@@ -219,14 +219,13 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
-    /** TODO
-     * TabListNameFormat is fired when a player's display name for the tablist is retrieved.<br>
-     * This event is fired whenever a player's display name for the tablist is retrieved in
-     * {@link ServerPlayer#getTabListDisplayName()} or {@link ServerPlayer#refreshTabListName()}.<br>
+    /**
+     * JoinMessageFormat is fired when a player's join message is retrieved.<br>
+     * This event is fired whenever a player's join message is retrieved, when a player tries to join
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(Player)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#getPlayerJoinMessage(Player)}.<br>
      * <br>
-     * {@link #getJoinMessage()} contains the display name of the player or null if the client should determine the display name itself.
+     * {@link #getJoinMessage()} contains the join message of the player or null if the default join message should be displayed
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
      * <br>
@@ -256,14 +255,13 @@ public class PlayerEvent extends LivingEvent
         }
     }
 
-    /** TODO
-     * TabListNameFormat is fired when a player's display name for the tablist is retrieved.<br>
-     * This event is fired whenever a player's display name for the tablist is retrieved in
-     * {@link ServerPlayer#getTabListDisplayName()} or {@link ServerPlayer#refreshTabListName()}.<br>
+    /**
+     * LeaveMessageFormat is fired when a player's leave message is retrieved.<br>
+     * This event is fired whenever a player's leave message is retrieved, when a player tries to leave
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(Player)}.<br>
+     * This event is fired via the {@link ForgeEventFactory#getPlayerLeaveMessage(Player)}.<br>
      * <br>
-     * {@link #getJoinMessage()} contains the display name of the player or null if the client should determine the display name itself.
+     * {@link #getLeaveMessage()} contains the leave message of the player or null if the default leave message should be displayed
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
      * <br>
