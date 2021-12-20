@@ -30,6 +30,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
@@ -261,6 +262,20 @@ public class ForgeEventFactory
         PlayerEvent.TabListNameFormat event = new PlayerEvent.TabListNameFormat(player);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getDisplayName();
+    }
+
+    public static MutableComponent getPlayerJoinMessage(Player player)
+    {
+        PlayerEvent.JoinMessageFormat event = new PlayerEvent.JoinMessageFormat(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getJoinMessage();
+    }
+
+    public static MutableComponent getPlayerLeaveMessage(Player player)
+    {
+        PlayerEvent.LeaveMessageFormat event = new PlayerEvent.LeaveMessageFormat(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getLeaveMessage();
     }
 
     public static BlockState fireFluidPlaceBlockEvent(LevelAccessor world, BlockPos pos, BlockPos liquidPos, BlockState state)

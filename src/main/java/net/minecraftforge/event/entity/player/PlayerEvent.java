@@ -21,6 +21,7 @@ package net.minecraftforge.event.entity.player;
 
 import java.io.File;
 
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.Container;
@@ -215,6 +216,80 @@ public class PlayerEvent extends LivingEvent
         public void setDisplayName(@Nullable Component displayName)
         {
             this.displayName = displayName;
+        }
+    }
+
+    /** TODO
+     * TabListNameFormat is fired when a player's display name for the tablist is retrieved.<br>
+     * This event is fired whenever a player's display name for the tablist is retrieved in
+     * {@link ServerPlayer#getTabListDisplayName()} or {@link ServerPlayer#refreshTabListName()}.<br>
+     * <br>
+     * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(Player)}.<br>
+     * <br>
+     * {@link #getJoinMessage()} contains the display name of the player or null if the client should determine the display name itself.
+     * <br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
+     * <br>
+     * This event does not have a result. {@link HasResult}
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     **/
+    public static class JoinMessageFormat extends PlayerEvent
+    {
+        @Nullable
+        private MutableComponent joinMessage;
+
+        public JoinMessageFormat(Player player)
+        {
+            super(player);
+        }
+
+        @Nullable
+        public MutableComponent getJoinMessage()
+        {
+            return joinMessage;
+        }
+
+        public void setJoinMessage(@Nullable MutableComponent joinMessage)
+        {
+            this.joinMessage = joinMessage;
+        }
+    }
+
+    /** TODO
+     * TabListNameFormat is fired when a player's display name for the tablist is retrieved.<br>
+     * This event is fired whenever a player's display name for the tablist is retrieved in
+     * {@link ServerPlayer#getTabListDisplayName()} or {@link ServerPlayer#refreshTabListName()}.<br>
+     * <br>
+     * This event is fired via the {@link ForgeEventFactory#getPlayerTabListDisplayName(Player)}.<br>
+     * <br>
+     * {@link #getJoinMessage()} contains the display name of the player or null if the client should determine the display name itself.
+     * <br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
+     * <br>
+     * This event does not have a result. {@link HasResult}
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     **/
+    public static class LeaveMessageFormat extends PlayerEvent
+    {
+        @Nullable
+        private MutableComponent leaveMessage;
+
+        public LeaveMessageFormat(Player player)
+        {
+            super(player);
+        }
+
+        @Nullable
+        public MutableComponent getLeaveMessage()
+        {
+            return leaveMessage;
+        }
+
+        public void setLeaveMessage(@Nullable MutableComponent leaveMessage)
+        {
+            this.leaveMessage = leaveMessage;
         }
     }
 
