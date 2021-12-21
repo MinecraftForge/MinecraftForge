@@ -227,12 +227,13 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * {@link #getJoinMessage()} contains the join message of the player or null if the default join message should be displayed
      * <br>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
+     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.
      * <br>
      * This event does not have a result. {@link HasResult}
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
+    @Cancelable
     public static class JoinMessageFormat extends PlayerEvent
     {
         @Nullable
@@ -263,12 +264,13 @@ public class PlayerEvent extends LivingEvent
      * <br>
      * {@link #getLeaveMessage()} contains the leave message of the player or null if the default leave message should be displayed
      * <br>
-     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
+     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.
      * <br>
      * This event does not have a result. {@link HasResult}
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
+    @Cancelable
     public static class LeaveMessageFormat extends PlayerEvent
     {
         @Nullable
