@@ -59,7 +59,7 @@ function initializeCoreMod() {
                 'name': 'net.minecraft.world.item.MobBucketItem'
             },
             'transformer': function(classNode) {
-                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_151134_'), ASMAPI.mapMethod('getFishType')) // type - Not implemented
+                ASMAPI.redirectFieldToMethod(classNode, ASMAPI.mapField('f_151134_'), ASMAPI.mapMethod('getFishType')) // type
                 return classNode;
             }
         },
