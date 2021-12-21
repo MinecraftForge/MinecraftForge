@@ -68,6 +68,9 @@ public class TickEvent extends Event
         }
     }
 
+    /**
+     * Called before and after a chunk is ticked for things like random ticks and weather. Useful for random-tick and weather based actions.
+     */
     public static class EnvironmentTickEvent extends TickEvent
     {
         public final Level level;
