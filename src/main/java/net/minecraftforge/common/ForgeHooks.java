@@ -51,7 +51,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
+import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.network.chat.*;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -106,7 +109,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
@@ -166,10 +168,6 @@ import org.apache.logging.log4j.MarkerManager;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -1241,4 +1239,24 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 
+    public static void onJoinMessageFormat(Player player, PlayerList playerList, @Nullable String cachedName)
+    {
+        PlayerEvent.JoinMessageFormat event = new PlayerEvent.JoinMessageFormat(player);
+        MinecraftForge.EVENT_BUS.post(event);
+
+        if(event.isCanceled()) return;
+
+        MutableComponent mutablecomponent = event.getJoinMessage();
+        if(mutablecomponent == null) {
+            if (cachedName == null || player.getGameProfile().getName().equalsIgnoreCase(cachedName)) {
+                mutablecomponent = new TranslatableComponent("multiplayer.player.joined", player.getDisplayName());
+            } else {
+                mutablecomponent = new TranslatableComponent("multiplayer.player.joined.renamed", player.getDisplayName(), cachedName);
+            }
+            mutablecomponent = mutablecomponent.withStyle(ChatFormatting.YELLOW);
+        }
+
+        playerList.broadcastMessage(mutablecomponent, ChatType.SYSTEM, Util.NIL_UUID);
+    }
+    
 }
