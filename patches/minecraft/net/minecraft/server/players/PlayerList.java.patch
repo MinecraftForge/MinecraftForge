@@ -24,7 +24,7 @@
        servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateRecipesPacket(this.f_11195_.m_129894_().m_44051_()));
        servergamepacketlistenerimpl.m_141995_(new ClientboundUpdateTagsPacket(this.f_11195_.m_129895_().m_144442_(this.f_11206_)));
        this.m_11289_(p_11263_);
-@@ -167,16 +_,9 @@
+@@ -167,16 +_,11 @@
        p_11263_.m_8952_().m_12789_(p_11263_);
        this.m_11273_(serverlevel1.m_6188_(), p_11263_);
        this.f_11195_.m_129929_();
@@ -34,9 +34,10 @@
 -      } else {
 -         mutablecomponent = new TranslatableComponent("multiplayer.player.joined.renamed", p_11263_.m_5446_(), s);
 -      }
--
++      MutableComponent mutablecomponent = net.minecraftforge.common.ForgeHooks.getJoinMessage(p_11263_,s);
++      if(mutablecomponent != null) this.m_11264_(mutablecomponent, ChatType.SYSTEM, Util.f_137441_);
+ 
 -      this.m_11264_(mutablecomponent.m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
-+      net.minecraftforge.common.ForgeHooks.onJoinMessageFormat(p_11263_,this, s);
        servergamepacketlistenerimpl.m_9774_(p_11263_.m_20185_(), p_11263_.m_20186_(), p_11263_.m_20189_(), p_11263_.m_146908_(), p_11263_.m_146909_());
 -      this.f_11196_.add(p_11263_);
 +      this.addPlayer(p_11263_);
