@@ -54,6 +54,7 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.network.chat.*;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -1258,5 +1259,19 @@ public class ForgeHooks
 
         playerList.broadcastMessage(mutablecomponent, ChatType.SYSTEM, Util.NIL_UUID);
     }
-    
+
+    public static void onLeaveMessageFormat(Player player, MinecraftServer server)
+    {
+        PlayerEvent.LeaveMessageFormat event = new PlayerEvent.LeaveMessageFormat(player);
+        MinecraftForge.EVENT_BUS.post(event);
+
+        if(event.isCanceled()) return;
+
+        MutableComponent mutableComponent = event.getLeaveMessage();
+        if(mutableComponent == null) {
+            mutableComponent = new TranslatableComponent("multiplayer.player.left", player.getDisplayName()).withStyle(ChatFormatting.YELLOW);
+        }
+
+        server.getPlayerList().broadcastMessage(mutableComponent, ChatType.SYSTEM, Util.NIL_UUID);
+    }
 }

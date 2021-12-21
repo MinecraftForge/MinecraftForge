@@ -32,16 +32,15 @@
              InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
              if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                 Component component = (new TranslatableComponent("build.tooHigh", i - 1)).m_130940_(ChatFormatting.RED);
-@@ -1038,6 +_,9 @@
+@@ -1038,7 +_,7 @@
     public void m_7026_(Component p_9825_) {
        f_9744_.info("{} lost connection: {}", this.f_9743_.m_7755_().getString(), p_9825_.getString());
        this.f_9745_.m_129929_();
-+      net.minecraft.network.chat.MutableComponent mutableComponent = net.minecraftforge.event.ForgeEventFactory.getPlayerLeaveMessage( this.f_9743_ );
-+      if(mutableComponent == null) mutableComponent = new TranslatableComponent("multiplayer.player.left", this.f_9743_.m_5446_()).m_130940_(ChatFormatting.YELLOW);
-+      if(!mutableComponent.getString().isEmpty()) this.f_9745_.m_6846_().m_11264_(mutableComponent, ChatType.SYSTEM, Util.f_137441_);
-       this.f_9745_.m_6846_().m_11264_((new TranslatableComponent("multiplayer.player.left", this.f_9743_.m_5446_())).m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
+-      this.f_9745_.m_6846_().m_11264_((new TranslatableComponent("multiplayer.player.left", this.f_9743_.m_5446_())).m_130940_(ChatFormatting.YELLOW), ChatType.SYSTEM, Util.f_137441_);
++      net.minecraftforge.common.ForgeHooks.onLeaveMessageFormat(this.f_9743_,this.f_9745_);
        this.f_9743_.m_9231_();
        this.f_9745_.m_6846_().m_11286_(this.f_9743_);
+       this.f_9743_.m_8967_().m_7670_();
 @@ -1081,7 +_,7 @@
     }
  
