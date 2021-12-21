@@ -1246,16 +1246,17 @@ public class ForgeHooks
         PlayerEvent.JoinMessageFormat event = new PlayerEvent.JoinMessageFormat(player);
         MinecraftForge.EVENT_BUS.post(event);
 
-        if(event.isCanceled()) return null;
+        if(event.isCanceled())
+            return null;
 
         MutableComponent mutablecomponent = event.getJoinMessage();
-        if(mutablecomponent == null) {
-            if (cachedName == null || player.getGameProfile().getName().equalsIgnoreCase(cachedName)) {
-                mutablecomponent = new TranslatableComponent("multiplayer.player.joined", player.getDisplayName());
-            } else {
-                mutablecomponent = new TranslatableComponent("multiplayer.player.joined.renamed", player.getDisplayName(), cachedName);
-            }
-            mutablecomponent = mutablecomponent.withStyle(ChatFormatting.YELLOW);
+        if(mutablecomponent == null)
+        {
+            mutablecomponent =
+                    (player.getGameProfile().getName().equalsIgnoreCase(cachedName)
+                    ? new TranslatableComponent("multiplayer.player.joined", player.getDisplayName())
+                    : new TranslatableComponent("multiplayer.player.joined.renamed", player.getDisplayName(), cachedName))
+                    .withStyle(ChatFormatting.YELLOW);
         }
         return mutablecomponent;
     }
@@ -1265,11 +1266,13 @@ public class ForgeHooks
     {
         PlayerEvent.LeaveMessageFormat event = new PlayerEvent.LeaveMessageFormat(player);
         MinecraftForge.EVENT_BUS.post(event);
-
-        if(event.isCanceled()) return null;
+        
+        if(event.isCanceled())
+            return null;
 
         MutableComponent mutableComponent = event.getLeaveMessage();
-        if(mutableComponent == null) {
+        if(mutableComponent == null)
+        {
             mutableComponent = new TranslatableComponent("multiplayer.player.left", player.getDisplayName()).withStyle(ChatFormatting.YELLOW);
         }
         return mutableComponent;
