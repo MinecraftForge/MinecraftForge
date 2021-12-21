@@ -22,6 +22,7 @@ package net.minecraftforge.event.entity.player;
 import java.io.File;
 
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.Container;
@@ -223,7 +224,7 @@ public class PlayerEvent extends LivingEvent
      * JoinMessageFormat is fired when a player's join message is retrieved.<br>
      * This event is fired whenever a player's join message is retrieved, when a player tries to join
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerJoinMessage(Player)}.<br>
+     * This event is fired via the {@link net.minecraftforge.common.ForgeHooks#getJoinMessage(Player, String)}.<br>
      * <br>
      * {@link #getJoinMessage()} contains the join message of the player or null if the default join message should be displayed
      * <br>
@@ -260,7 +261,7 @@ public class PlayerEvent extends LivingEvent
      * LeaveMessageFormat is fired when a player's leave message is retrieved.<br>
      * This event is fired whenever a player's leave message is retrieved, when a player tries to leave
      * <br>
-     * This event is fired via the {@link ForgeEventFactory#getPlayerLeaveMessage(Player)}.<br>
+     * This event is fired via the {@link net.minecraftforge.common.ForgeHooks#getLeaveMessage(Player, MinecraftServer)}.<br>
      * <br>
      * {@link #getLeaveMessage()} contains the leave message of the player or null if the default leave message should be displayed
      * <br>
