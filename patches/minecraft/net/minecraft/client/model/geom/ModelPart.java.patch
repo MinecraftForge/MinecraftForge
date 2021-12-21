@@ -5,7 +5,7 @@
     }
  
 +   public Map<String, ModelPart> getChildren() {
-+      return this.f_104213_;
++      return com.google.common.collect.ImmutableMap.copyOf(this.f_104213_);
 +   }
 +
     @OnlyIn(Dist.CLIENT)
