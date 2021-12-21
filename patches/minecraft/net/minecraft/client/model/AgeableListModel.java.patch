@@ -1,13 +1,12 @@
 --- a/net/minecraft/client/model/AgeableListModel.java
 +++ b/net/minecraft/client/model/AgeableListModel.java
-@@ -76,4 +_,11 @@
+@@ -76,4 +_,10 @@
     protected abstract Iterable<ModelPart> m_5607_();
  
     protected abstract Iterable<ModelPart> m_5608_();
 +
 +   @Override
 +   public void gatherAnimatedParts(java.util.function.BiConsumer<String, ModelPart> consumer) {
-+      // This might be bad since changes in the iterables
 +      net.minecraftforge.client.animation.IAnimatedModel.fillAnimatedPartsFromIterable(consumer, this.m_5607_(), "head_part");
 +      net.minecraftforge.client.animation.IAnimatedModel.fillAnimatedPartsFromIterable(consumer, this.m_5608_(), "body_part");
 +   }
