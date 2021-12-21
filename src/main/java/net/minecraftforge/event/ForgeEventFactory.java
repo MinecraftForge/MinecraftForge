@@ -264,18 +264,20 @@ public class ForgeEventFactory
         return event.getDisplayName();
     }
 
+    @Nullable
     public static MutableComponent getPlayerJoinMessage(Player player)
     {
         PlayerEvent.JoinMessageFormat event = new PlayerEvent.JoinMessageFormat(player);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getJoinMessage();
+        return event.isCanceled() ? null : event.getJoinMessage();
     }
 
+    @Nullable
     public static MutableComponent getPlayerLeaveMessage(Player player)
     {
         PlayerEvent.LeaveMessageFormat event = new PlayerEvent.LeaveMessageFormat(player);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getLeaveMessage();
+        return  event.isCanceled() ? null : event.getLeaveMessage();
     }
 
     public static BlockState fireFluidPlaceBlockEvent(LevelAccessor world, BlockPos pos, BlockPos liquidPos, BlockState state)
