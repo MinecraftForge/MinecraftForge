@@ -174,4 +174,5 @@ license="LGPL v2.1"
     modId="capabilities_test"
 [[mods]]
     modId="client_join_leave_message_test"
+
 # ADD ABOVE THIS LINE
