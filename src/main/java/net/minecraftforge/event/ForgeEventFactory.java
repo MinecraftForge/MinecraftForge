@@ -35,6 +35,7 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.level.portal.PortalShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.TooltipFlag;
@@ -884,5 +885,15 @@ public class ForgeEventFactory
     public static void onPostServerTick()
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END));
+    }
+
+    public static void onPreEnvironmentTick(Level level, LevelChunk chunk, int randomTickSpeed)
+    {
+        MinecraftForge.EVENT_BUS.post(new TickEvent.EnvironmentTickEvent(LogicalSide.SERVER, TickEvent.Phase.START, level, chunk, randomTickSpeed));
+    }
+
+    public static void onPostEnvironmentTick(Level level, LevelChunk chunk, int randomTickSpeed)
+    {
+        MinecraftForge.EVENT_BUS.post(new TickEvent.EnvironmentTickEvent(LogicalSide.SERVER, TickEvent.Phase.END, level, chunk, randomTickSpeed));
     }
 }

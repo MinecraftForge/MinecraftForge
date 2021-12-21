@@ -45,6 +45,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="chunkwatchworldtest"
 [[mods]]
+    modId="environment_tick_event_test"
+[[mods]]
     modId="trsr_transformer_test"
 [[mods]]
     modId="nameplate_render_test"
