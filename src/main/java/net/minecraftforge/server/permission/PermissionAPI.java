@@ -77,7 +77,7 @@ public final class PermissionAPI
      * PermissionNodes default handler.
      * @throws UnregisteredPermissionException when the PermissionNode wasn't registered properly
      */
-    public static <T> T getPermission(ServerPlayer player, PermissionNode<T> node, PermissionDynamicContext<? extends StringRepresentable>... context)
+    public static <T> T getPermission(ServerPlayer player, PermissionNode<T> node, PermissionDynamicContext<?>... context)
     {
         if (!activeHandler.getRegisteredNodes().contains(node)) throw new UnregisteredPermissionException(node);
         return activeHandler.getPermission(player, node, context);
@@ -95,7 +95,7 @@ public final class PermissionAPI
      * PermissionNodes default handler.
      * @throws UnregisteredPermissionException when the PermissionNode wasn't registered properly
      */
-    public static <T> T getOfflinePermission(UUID player, PermissionNode<T> node, PermissionDynamicContext<? extends StringRepresentable>... context)
+    public static <T> T getOfflinePermission(UUID player, PermissionNode<T> node, PermissionDynamicContext<?>... context)
     {
         if (!activeHandler.getRegisteredNodes().contains(node)) throw new UnregisteredPermissionException(node);
         return activeHandler.getOfflinePermission(player, node, context);
