@@ -26,6 +26,15 @@
     }
  
     private static <E> void m_175503_(RegistryReadOps<?> p_175504_, RegistryAccess p_175505_, RegistryAccess.RegistryData<E> p_175506_) {
+@@ -180,7 +_,7 @@
+ 
+       private static <K extends ResourceKey<? extends Registry<?>>, V extends MappedRegistry<?>> Codec<RegistryAccess.RegistryHolder> m_123118_(UnboundedMapCodec<K, V> p_123119_) {
+          return p_123119_.xmap(RegistryAccess.RegistryHolder::new, (p_123136_) -> {
+-            return ((Map<K, V>)p_123136_.f_123113_).entrySet().stream().filter((p_175526_) -> {
++            return ((Map<K, V>)p_123136_.f_123113_).entrySet().stream().filter(e -> RegistryAccess.f_123048_.containsKey(e.getKey())).filter((p_175526_) -> {
+                return RegistryAccess.f_123048_.get(p_175526_.getKey()).m_123111_();
+             }).collect(ImmutableMap.toImmutableMap(Entry::getKey, Entry::getValue));
+          });
 @@ -211,7 +_,7 @@
        }
  
