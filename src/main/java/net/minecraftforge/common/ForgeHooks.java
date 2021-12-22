@@ -21,6 +21,7 @@ package net.minecraftforge.common;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
@@ -28,6 +29,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -43,6 +45,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -93,6 +97,7 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkAccess;
@@ -109,8 +114,12 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
+import net.minecraft.world.level.biome.Climate.ParameterList;
+import net.minecraft.world.level.biome.Climate.ParameterPoint;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.biome.MultiNoiseBiomeSource;
+import net.minecraft.world.level.biome.MultiNoiseBiomeSource.PresetInstance;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
@@ -148,6 +157,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.MultiNoiseBiomeSourceLoadingEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
@@ -1241,4 +1251,37 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 
+    /** @deprecated Forge internal use; use {@link MultiNoiseBiomeSource.CODEC} instead **/
+    @Deprecated
+    public static final Codec<MultiNoiseBiomeSource> makeMultiNoiseBiomeSourceCodec()
+    {
+        return Codec.mapEither(Codec.mapPair(PresetInstance.CODEC, RegistryAccessCodec.INSTANCE), MultiNoiseBiomeSource.DIRECT_CODEC)
+            .xmap(either -> either.map(pair -> net.minecraftforge.common.ForgeHooks.enhancePresetMultiNoiseBiomeSource(pair.getFirst(), pair.getSecond()), Function.identity()),
+                source -> source.preset().map((PresetInstance preset) -> Either.<Pair<PresetInstance,RegistryAccess>,MultiNoiseBiomeSource>left(Pair.of(preset, (RegistryAccess)null))).orElseGet(() -> Either.right(source)))
+            .codec();
+    }
+
+    /** @deprecated Forge internal use **/
+    @Deprecated
+    public static MultiNoiseBiomeSource enhancePresetMultiNoiseBiomeSource(PresetInstance presetInstance, RegistryAccess registryAccess)
+    {
+        ParameterList<Supplier<Biome>> parameters = presetInstance.biomeSource().parameters;
+        List<Pair<ParameterPoint, Supplier<Biome>>> parameterBuilder = new ArrayList<>(parameters.values());
+        ResourceLocation name = presetInstance.preset().name;
+        MultiNoiseBiomeSourceLoadingEvent event = new MultiNoiseBiomeSourceLoadingEvent(parameterBuilder, name, registryAccess);
+        MinecraftForge.EVENT_BUS.post(event);
+        ParameterList<Supplier<Biome>> actualParameters = event.isCanceled() ? parameters : new ParameterList<>(parameterBuilder);
+        return new MultiNoiseBiomeSource(actualParameters, Optional.of(presetInstance), Optional.empty());
+    }
+
+    /** Forge internal use, called via the {@link MultiNoiseBiomeSource.DIRECT_CODEC} used for non-preset sources **/
+    @Deprecated
+    public static MultiNoiseBiomeSource enhanceMultiNoiseBiomeSource(ParameterList<Supplier<Biome>> parameters, @Nullable ResourceLocation name, RegistryAccess registryAccess)
+    {
+        List<Pair<ParameterPoint, Supplier<Biome>>> parameterBuilder = new ArrayList<>(parameters.values());
+        MultiNoiseBiomeSourceLoadingEvent event = new MultiNoiseBiomeSourceLoadingEvent(parameterBuilder, name, registryAccess);
+        MinecraftForge.EVENT_BUS.post(event);
+        ParameterList<Supplier<Biome>> actualParameters = event.isCanceled() ? parameters : new ParameterList<>(parameterBuilder);
+        return new MultiNoiseBiomeSource(actualParameters, Optional.empty(), Optional.ofNullable(name));
+    }
 }

@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/level/biome/MultiNoiseBiomeSource.java
++++ b/net/minecraft/world/level/biome/MultiNoiseBiomeSource.java
+@@ -33,9 +_,13 @@
+          return p_187078_.group(Climate.ParameterPoint.f_186862_.fieldOf("parameters").forGetter(Pair::getFirst), Biome.f_47431_.fieldOf("biome").forGetter(Pair::getSecond)).apply(p_187078_, Pair::of);
+       }).listOf()).xmap(Climate.ParameterList::new, (Function<Climate.ParameterList<Supplier<Biome>>, List<Pair<Climate.ParameterPoint, Supplier<Biome>>>>) Climate.ParameterList::m_186850_).fieldOf("biomes").forGetter((p_187080_) -> {
+          return p_187080_.f_48435_;
+-      })).apply(p_187070_, MultiNoiseBiomeSource::new);
++      }), ResourceLocation.f_135803_.optionalFieldOf("forge:name").forGetter(source -> {return source.dimensionName; // forge: add optional name field to MultiNoiseBiomeSource codec
++      }), net.minecraftforge.common.RegistryAccessCodec.INSTANCE.forGetter(x -> {return null; // forge: add registry access via registryreadops (doesn't need to be reserialized)
++      })).apply(p_187070_, (parameters, name, registryAccess) ->
++         net.minecraftforge.common.ForgeHooks.enhanceMultiNoiseBiomeSource(parameters, name.orElse(null), registryAccess));
+    });
+-   public static final Codec<MultiNoiseBiomeSource> f_48425_ = Codec.mapEither(MultiNoiseBiomeSource.PresetInstance.f_48540_, f_48424_).xmap((p_187068_) -> {
++   public static final Codec<MultiNoiseBiomeSource> f_48425_ = net.minecraftforge.common.ForgeHooks.makeMultiNoiseBiomeSourceCodec(); // forge: replace the vanilla codec with one that supports the relevant hooks
++   private static final Codec<MultiNoiseBiomeSource> VANILLA_CODEC = Codec.mapEither(MultiNoiseBiomeSource.PresetInstance.f_48540_, f_48424_).xmap((p_187068_) -> {
+       return p_187068_.map(MultiNoiseBiomeSource.PresetInstance::m_48565_, Function.identity());
+    }, (p_187066_) -> {
+       return p_187066_.m_48490_().map(Either::<MultiNoiseBiomeSource.PresetInstance, MultiNoiseBiomeSource>left).orElseGet(() -> {
+@@ -44,15 +_,20 @@
+    }).codec();
+    public final Climate.ParameterList<Supplier<Biome>> f_48435_;
+    private final Optional<MultiNoiseBiomeSource.PresetInstance> f_48438_;
++   private final Optional<ResourceLocation> dimensionName; // forge: preserve dimension name so it can be datagenerated
+ 
+    private MultiNoiseBiomeSource(Climate.ParameterList<Supplier<Biome>> p_187057_) {
+       this(p_187057_, Optional.empty());
+    }
+ 
+    MultiNoiseBiomeSource(Climate.ParameterList<Supplier<Biome>> p_187059_, Optional<MultiNoiseBiomeSource.PresetInstance> p_187060_) {
++      this(p_187059_, p_187060_, null); // forge expands the constructor (below) to take a nullable name field
++   }
++   public MultiNoiseBiomeSource(Climate.ParameterList<Supplier<Biome>> p_187059_, Optional<MultiNoiseBiomeSource.PresetInstance> p_187060_, Optional<ResourceLocation> dimensionName) {
+       super(p_187059_.m_186850_().stream().map(Pair::getSecond));
+       this.f_48438_ = p_187060_;
+       this.f_48435_ = p_187059_;
++      this.dimensionName = dimensionName;
+    }
+ 
+    protected Codec<? extends BiomeSource> m_5820_() {
