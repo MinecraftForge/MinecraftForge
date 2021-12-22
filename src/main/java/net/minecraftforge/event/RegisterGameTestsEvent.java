@@ -23,9 +23,9 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestGenerator;
 import net.minecraft.gametest.framework.GameTestRegistry;
 import net.minecraft.gametest.framework.GameTestServer;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
+import net.minecraftforge.gametest.ForgeGameTestHooks;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ import java.util.Set;
 
 /**
  * Game tests are registered on client or server startup.
- * It is only run once for a given instance of the game if {@link ForgeHooks#isGametestEnabled} returns true.
+ * It is only run once for a given instance of the game if {@link ForgeGameTestHooks#isGametestEnabled} returns true.
  * This is the preferred way to register your game tests.
  * <p>
  * Fired on the Mod bus, see {@link IModBusEvent}.
