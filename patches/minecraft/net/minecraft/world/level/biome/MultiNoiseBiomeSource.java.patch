@@ -1,13 +1,14 @@
 --- a/net/minecraft/world/level/biome/MultiNoiseBiomeSource.java
 +++ b/net/minecraft/world/level/biome/MultiNoiseBiomeSource.java
-@@ -33,9 +_,13 @@
+@@ -33,9 +_,14 @@
           return p_187078_.group(Climate.ParameterPoint.f_186862_.fieldOf("parameters").forGetter(Pair::getFirst), Biome.f_47431_.fieldOf("biome").forGetter(Pair::getSecond)).apply(p_187078_, Pair::of);
        }).listOf()).xmap(Climate.ParameterList::new, (Function<Climate.ParameterList<Supplier<Biome>>, List<Pair<Climate.ParameterPoint, Supplier<Biome>>>>) Climate.ParameterList::m_186850_).fieldOf("biomes").forGetter((p_187080_) -> {
           return p_187080_.f_48435_;
 -      })).apply(p_187070_, MultiNoiseBiomeSource::new);
-+      }), ResourceLocation.f_135803_.optionalFieldOf("forge:name").forGetter(source -> {return source.dimensionName; // forge: add optional name field to MultiNoiseBiomeSource codec
-+      }), net.minecraftforge.common.RegistryAccessCodec.INSTANCE.forGetter(x -> {return null; // forge: add registry access via registryreadops (doesn't need to be reserialized)
-+      })).apply(p_187070_, (parameters, name, registryAccess) ->
++      }),
++         ResourceLocation.f_135803_.optionalFieldOf("forge:name").forGetter(source -> source.dimensionName), // forge: add optional name field to MultiNoiseBiomeSource codec}),
++         net.minecraftforge.common.RegistryAccessCodec.INSTANCE.forGetter(x -> null) // forge: add registry access via registryreadops (doesn't need to be reserialized)
++      ).apply(p_187070_, (parameters, name, registryAccess) ->
 +         net.minecraftforge.common.ForgeHooks.enhanceMultiNoiseBiomeSource(parameters, name.orElse(null), registryAccess));
     });
 -   public static final Codec<MultiNoiseBiomeSource> f_48425_ = Codec.mapEither(MultiNoiseBiomeSource.PresetInstance.f_48540_, f_48424_).xmap((p_187068_) -> {
