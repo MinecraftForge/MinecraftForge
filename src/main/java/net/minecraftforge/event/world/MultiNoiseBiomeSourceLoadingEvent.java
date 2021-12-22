@@ -31,6 +31,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate.ParameterPoint;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
@@ -46,10 +47,11 @@ import net.minecraftforge.eventbus.api.EventPriority;
  * Removals during {@link EventPriority#NORMAL}
  * Modifications during {@link EventPriority#LOW}
  * 
- * This event is cancellable; cancelling the event will prevent the biome source from being modified.
+ * Cancelling this event will prevent the biome source from being modified.
  * 
  * This event is fired on the {@link MinecraftForge.EVENT_BUS}.
  */
+@Cancelable
 public class MultiNoiseBiomeSourceLoadingEvent extends Event
 {
     private final List<Pair<ParameterPoint, Supplier<Biome>>> parameters;
