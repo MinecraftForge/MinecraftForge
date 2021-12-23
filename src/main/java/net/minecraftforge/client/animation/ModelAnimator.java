@@ -53,7 +53,8 @@ public class ModelAnimator<T>
     /**
      * Pushes custom data into the animator for the given key. The data is then stored in a {@link AnimationData}
      * instance which is passed to {@link ModelAnimation#apply(Object, ModelTree, AnimationData, float)}.
-     * The data can then be retrieved with the same key using {@link AnimationData#get(AnimationKey)}
+     * The data can then be retrieved with the same key using {@link AnimationData#get(AnimationKey)}.
+     * Data should be pushed before calling {@link #execute} otherwise it won't be available for animations.
      * See {@link AnimationKey} for creating custom keys.
      *
      * @param key   the animation key
