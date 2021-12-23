@@ -17,30 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.server.permission.context;
+package net.minecraftforge.server.permission.exceptions;
 
-import com.google.common.base.Preconditions;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraftforge.server.permission.nodes.PermissionNode;
 
-public class PlayerContext extends Context
+public class UnregisteredPermissionException extends RuntimeException
 {
-    private final Player player;
+    private PermissionNode node;
 
-    public PlayerContext(Player ep)
+    public UnregisteredPermissionException(PermissionNode node)
     {
-        player = Preconditions.checkNotNull(ep, "Player can't be null in PlayerContext!");
+        super(String.format("Tried to query PermissionNode '%s' although it has not been Registered", node.getNodeName()));
+        this.node = node;
     }
 
-    @Override
-    public Level getWorld()
+    public PermissionNode getNode()
     {
-        return player.getCommandSenderWorld();
-    }
-
-    @Override
-    public Player getPlayer()
-    {
-        return player;
+        return node;
     }
 }

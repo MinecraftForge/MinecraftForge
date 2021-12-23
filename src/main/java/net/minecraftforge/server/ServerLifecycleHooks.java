@@ -44,6 +44,7 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.forgespi.locating.IModFile;
 import net.minecraftforge.resource.PathResourcePack;
+import net.minecraftforge.server.permission.PermissionAPI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -97,6 +98,7 @@ public class ServerLifecycleHooks
     public static boolean handleServerStarting(final MinecraftServer server)
     {
         DistExecutor.runWhenOn(Dist.DEDICATED_SERVER, ()->()->LanguageHook.loadLanguagesOnServer(server));
+        PermissionAPI.initializePermissionAPI();
         return !MinecraftForge.EVENT_BUS.post(new ServerStartingEvent(server));
     }
 
@@ -109,6 +111,7 @@ public class ServerLifecycleHooks
     public static void handleServerStopping(final MinecraftServer server)
     {
         allowLogins.set(false);
+        PermissionAPI.resetPermissionAPI();
         MinecraftForge.EVENT_BUS.post(new ServerStoppingEvent(server));
     }
 
