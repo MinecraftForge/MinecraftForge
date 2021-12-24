@@ -53,7 +53,6 @@ public class Tags
         public static final IOptionalNamedTag<Block> CHESTS_TRAPPED = tag("chests/trapped");
         public static final IOptionalNamedTag<Block> CHESTS_WOODEN = tag("chests/wooden");
         public static final IOptionalNamedTag<Block> COBBLESTONE = tag("cobblestone");
-        public static final IOptionalNamedTag<Block> DIRT = tag("dirt");
         public static final IOptionalNamedTag<Block> END_STONES = tag("end_stones");
         public static final IOptionalNamedTag<Block> ENDERMAN_PLACE_ON_BLACKLIST = tag("enderman_place_on_blacklist");
         public static final IOptionalNamedTag<Block> FENCE_GATES = tag("fence_gates");

@@ -53,7 +53,6 @@ public final class ForgeBlockTagsProvider extends BlockTagsProvider
         tag(CHESTS_TRAPPED).add(Blocks.TRAPPED_CHEST);
         tag(CHESTS_WOODEN).add(Blocks.CHEST, Blocks.TRAPPED_CHEST);
         tag(COBBLESTONE).add(Blocks.COBBLESTONE, Blocks.INFESTED_COBBLESTONE, Blocks.MOSSY_COBBLESTONE, Blocks.COBBLED_DEEPSLATE);
-        tag(DIRT).add(Blocks.DIRT, Blocks.GRASS_BLOCK, Blocks.COARSE_DIRT, Blocks.PODZOL, Blocks.MYCELIUM, Blocks.ROOTED_DIRT);
         tag(END_STONES).add(Blocks.END_STONE);
         tag(ENDERMAN_PLACE_ON_BLACKLIST);
         tag(FENCE_GATES).addTags(FENCE_GATES_WOODEN);
