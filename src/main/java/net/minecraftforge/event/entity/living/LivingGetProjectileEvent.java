@@ -72,6 +72,10 @@ public class LivingGetProjectileEvent extends LivingEvent
      * If the entity is a player: whenever the projectile is fired/consumed the stack will be shrunk by
      * one. To disable this behaviour you can copy the stack before giving it to the event. For bows, you can use
      * {@link net.minecraftforge.event.entity.player.ArrowLooseEvent} to remove the arrow yourself.
+     * <p>
+     * Be aware that since this event fires every time a living entity gets a projectile, whether or not its
+     * {@link LivingEntity#level} is client-side, you will want to make a conditional to always set the item stack to
+     * what you'd want it to be to avoid client-server desyncs.
      */
     public void setProjectileItemStack(ItemStack projectileItemStack)
     {

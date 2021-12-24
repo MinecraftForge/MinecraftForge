@@ -26,12 +26,9 @@ public class LivingGetProjectileEventTest
 
     public void onPlayerGetProjectile(LivingGetProjectileEvent event)
     {
-        if (event.getEntityLiving() instanceof Player)
+        if (event.getEntityLiving() instanceof Player && event.getProjectileItemStack().getItem().equals(Items.ARROW))
         {
-            if (!event.getEntityLiving().level.isClientSide && event.getProjectileItemStack().getItem().equals(Items.ARROW))
-            {
-                event.setProjectileItemStack(new ItemStack(Items.SPECTRAL_ARROW));
-            }
+            event.setProjectileItemStack(new ItemStack(Items.SPECTRAL_ARROW));
         }
     }
 
