@@ -145,7 +145,7 @@ import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerFindProjectileEvent;
+import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -993,18 +993,18 @@ public class ForgeHooks
     }
 
     /**
-     * Hook to fire {@link PlayerFindProjectileEvent}. Returns the ammo to be used.
+     * Hook to fire {@link LivingGetProjectileEvent}. Returns the ammo to be used.
      */
-    public static ItemStack findProjectile(Player player, ItemStack shootable, ItemStack ammo)
+    public static ItemStack findProjectile(LivingEntity entity, ItemStack projectileWeaponItem, ItemStack projectile)
     {
-        PlayerFindProjectileEvent event = new PlayerFindProjectileEvent(player, shootable, ammo);
+        LivingGetProjectileEvent event = new LivingGetProjectileEvent(entity, projectileWeaponItem, projectile);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
-            return player.isCreative() ? new ItemStack(Items.ARROW) : ItemStack.EMPTY;
+            return projectile;
         }
         else
         {
-            return event.getProjectile();
+            return event.getProjectileItemStack();
         }
     }
 

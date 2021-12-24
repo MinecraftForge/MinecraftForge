@@ -505,6 +505,15 @@
     }
  
     public boolean m_5830_() {
+@@ -3147,7 +_,7 @@
+    }
+ 
+    public ItemStack m_6298_(ItemStack p_21272_) {
+-      return ItemStack.f_41583_;
++      return net.minecraftforge.common.ForgeHooks.findProjectile(this, p_21272_, ItemStack.f_41583_);
+    }
+ 
+    public ItemStack m_5584_(Level p_21067_, ItemStack p_21068_) {
 @@ -3204,6 +_,64 @@
        this.m_21166_(p_21191_ == InteractionHand.MAIN_HAND ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND);
     }
