@@ -62,6 +62,14 @@ public class AnimationData
     }
 
     /**
+     * Clears all animation data. Used internally.
+     */
+    void clear()
+    {
+        this.dataMap.clear();
+    }
+
+    /**
      * Fills animation data from living entity renderer. Used internally.
      */
     public static void fillFromLivingEntity(ModelAnimator<?> animator, float animateTicks, float animateSpeed, float bobAnimateTicks, float headYaw, float headPitch, float deltaBodyYaw)

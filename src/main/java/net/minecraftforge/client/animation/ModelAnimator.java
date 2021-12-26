@@ -78,18 +78,16 @@ public class ModelAnimator<T>
      */
     public void execute(T t, float partialTick)
     {
-        if (this.animations.isEmpty()) return;
-        for (ModelAnimation<T> animation : this.animations)
+        if (!this.animations.isEmpty())
         {
-            if (animation.canStart(t, this.data))
+            for(ModelAnimation<T> animation : this.animations)
             {
+                if (!animation.canStart(t, this.data)) continue;
                 animation.apply(t, this.root, this.data, partialTick);
-                if (animation.getMode() == ModelAnimation.Mode.ACTIVE)
-                {
-                    break;
-                }
+                if(animation.getMode() == ModelAnimation.Mode.ACTIVE) break;
             }
         }
+        this.data.clear();
     }
 
     /**
