@@ -17,20 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.server.permission;
+package net.minecraftforge.server.permission.handler;
 
-/**
- * <table><caption>Default Permission Levels</caption>
- * <thead><tr><th>Level</th><th>Player</th><th>OP</th></tr>
- * </thead><tbody>
- * <tr><td>ALL</td><td>true</td><td>true</td></tr>
- * <tr><td>OP</td><td>false</td><td>true</td></tr>
- * <tr><td>NONE</td><td>false</td><td>false</td></tr>
- * </tbody></table>
- */
-public enum DefaultPermissionLevel
+import net.minecraftforge.server.permission.nodes.PermissionNode;
+
+import java.util.Collection;
+
+@FunctionalInterface
+public interface IPermissionHandlerFactory
 {
-    ALL,
-    OP,
-    NONE
+    IPermissionHandler create(Collection<PermissionNode<?>> permissions);
 }
