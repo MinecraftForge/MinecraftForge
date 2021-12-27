@@ -29,6 +29,7 @@ import net.minecraftforge.gametest.ForgeGameTestHooks;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -41,17 +42,18 @@ import java.util.Set;
 public class RegisterGameTestsEvent extends Event implements IModBusEvent
 {
     private final Set<String> enabledNamespaces;
+    private
 
     public RegisterGameTestsEvent(Set<String> enabledNamespaces)
     {
-        this.enabledNamespaces = enabledNamespaces;
+        this.enabledNamespaces = new HashSet<>(enabledNamespaces);
     }
 
     /**
      * Returns the mutable set of enabled namespaces.
      * If a game test's template does not have a namespace inside this set, it will not be registered.
      * An empty set means all namespaces are enabled.
-     * This can only be non-empty when running through {@link GameTestServer}.
+     * By default, this can only be non-empty when running through {@link GameTestServer}.
      *
      * @return the mutable set of enabled namespaces
      */
