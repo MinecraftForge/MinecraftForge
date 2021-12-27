@@ -21,10 +21,18 @@ package net.minecraftforge.client.event;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.arguments.ObjectiveArgument;
+import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Register commands to be executed on the client using this event.
+ * 
+ * Some arguments behave differently:
+ * <ul>
+ * <li>{@link ResourceLocationArgument#getAdvancement(com.mojang.brigadier.context.CommandContext, String)} only returns advancements that are shown on the advancements screen
+ * <li>{@link ObjectiveArgument#getObjective(com.mojang.brigadier.context.CommandContext, String)} only returns objectives that are set to display
+ * </ul>
  */
 public class RegisterClientCommandsEvent extends Event
 {
