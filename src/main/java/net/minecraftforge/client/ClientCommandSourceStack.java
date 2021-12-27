@@ -42,10 +42,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ClientCommandSource extends CommandSourceStack
+public class ClientCommandSourceStack extends CommandSourceStack
 {
 
-    public ClientCommandSource(CommandSource source, Vec3 position, Vec2 rotation, int permission, String plainTextName, Component displayName,
+    public ClientCommandSourceStack(CommandSource source, Vec3 position, Vec2 rotation, int permission, String plainTextName, Component displayName,
             Entity executing)
     {
         super(source, position, rotation, null, permission, plainTextName, displayName, null, executing);

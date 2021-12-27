@@ -18,7 +18,6 @@
  */
 
 package net.minecraftforge.debug.chat;
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -46,26 +45,31 @@ public class ClientCommandTest
     {
         event.getDispatcher().register(
                 Commands.literal("clientcommandtest")
+                        // Used for checking suggestion providers that aren't registered
                         .then(Commands.literal("rawsuggest")
                                 .then(Commands.argument("block", ResourceLocationArgument.id())
                                         .suggests((c, b) -> SharedSuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), b))
-                                        .executes(new TestCommand())))
+                                        .executes(this::testCommand)))
+                        // Used for checking suggestion providers that are registered
                         .then(Commands.literal("registeredsuggest").then(
                                 Commands.argument("block", ResourceLocationArgument.id())
                                         .suggests(SuggestionProviders.AVAILABLE_BIOMES)
-                                        .executes(new TestCommand())))
+                                        .executes(this::testCommand)))
+                        // Used for checking if attempting to get the server on the client side errors
                         .then(Commands.literal("server")
                                 .executes((context) -> {
                                     context.getSource().getServer();
                                     context.getSource().sendSuccess(new TextComponent("Successfully called getServer should have errored"), false);
                                     return 1;
                                 }))
+                        // Used for checking if attempting to get the server level on the client side errors
                         .then(Commands.literal("level")
                                 .executes((context) -> {
                                     context.getSource().getLevel();
                                     context.getSource().sendSuccess(new TextComponent("Successfully called getLevel should have errored"), false);
                                     return 1;
                                 }))
+                        // Used for checking if getting a known objective argument works on the client side
                         .then(Commands.literal("get_objective")
                                 .then(Commands.argument("objective", ObjectiveArgument.objective())
                                         .executes((context) -> {
@@ -73,6 +77,7 @@ public class ClientCommandTest
                                                     .append(ObjectiveArgument.getObjective(context, "objective").getFormattedDisplayName()), false);
                                             return 1;
                                         })))
+                        // Used for checking if getting a known advancement works on the client side
                         .then(Commands.literal("get_advancement")
                                 .then(Commands.argument("advancement", ResourceLocationArgument.id())
                                         .executes((context) -> {
@@ -80,6 +85,7 @@ public class ClientCommandTest
                                                     false);
                                             return 1;
                                         })))
+                        // Used for checking if getting a known recipe works on the client side
                         .then(Commands.literal("get_recipe")
                                 .then(Commands.argument("recipe", ResourceLocationArgument.id())
                                         .executes((context) -> {
@@ -87,12 +93,14 @@ public class ClientCommandTest
                                                     .sendSuccess(ResourceLocationArgument.getRecipe(context, "recipe").getResultItem().getDisplayName(), false);
                                             return 1;
                                         })))
+                        // Used for checking if getting a team works on the client side
                         .then(Commands.literal("get_team")
                                 .then(Commands.argument("team", TeamArgument.team())
                                         .executes((context) -> {
                                             context.getSource().sendSuccess(TeamArgument.getTeam(context, "team").getFormattedDisplayName(), false);
                                             return 1;
                                         })))
+                        // Used for checking if a block position is valid works on the client side
                         .then(Commands.literal("get_loaded_blockpos")
                                 .then(Commands.argument("blockpos", BlockPosArgument.blockPos())
                                         .executes((context) -> {
@@ -102,19 +110,14 @@ public class ClientCommandTest
                                         }))));
     }
 
-    private static class TestCommand implements Command<CommandSourceStack>
+    private int testCommand(CommandContext<CommandSourceStack> context)
     {
-        @Override
-        public int run(CommandContext<CommandSourceStack> context)
-        {
-            context.getSource().sendSuccess(new TextComponent("Input: " + ResourceLocationArgument.getId(context, "block")), false);
-            context.getSource().sendSuccess(new TextComponent("Teams: " + context.getSource().getAllTeams()), false);
-            context.getSource().sendSuccess(new TextComponent("Players: " + context.getSource().getOnlinePlayerNames()), false);
-            context.getSource().sendSuccess(new TextComponent("First recipe: " + context.getSource().getRecipeNames().findFirst().get()), false);
-            context.getSource().sendSuccess(new TextComponent("Levels: " + context.getSource().levels()), false);
-            context.getSource().sendSuccess(
-                    new TextComponent("Registry Access: " + context.getSource().registryAccess()), false);
-            return 0;
-        }
+        context.getSource().sendSuccess(new TextComponent("Input: " + ResourceLocationArgument.getId(context, "block")), false);
+        context.getSource().sendSuccess(new TextComponent("Teams: " + context.getSource().getAllTeams()), false);
+        context.getSource().sendSuccess(new TextComponent("Players: " + context.getSource().getOnlinePlayerNames()), false);
+        context.getSource().sendSuccess(new TextComponent("First recipe: " + context.getSource().getRecipeNames().findFirst().get()), false);
+        context.getSource().sendSuccess(new TextComponent("Levels: " + context.getSource().levels()), false);
+        context.getSource().sendSuccess(new TextComponent("Registry Access: " + context.getSource().registryAccess()), false);
+        return 0;
     }
 }
