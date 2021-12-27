@@ -26,15 +26,17 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod("client_join_leave_message_test")
 @Mod.EventBusSubscriber
-public class JoinLeaveMessageTest {
-
+public class JoinLeaveMessageTest
+{
     @SubscribeEvent
-    public static void onPlayerJoinChat(PlayerEvent.JoinMessageFormat event) {
+    public static void onPlayerJoinChat(PlayerEvent.JoinMessageFormat event)
+    {
         event.setJoinMessage(new TextComponent("Hello " + event.getPlayer().getDisplayName()));
     }
 
     @SubscribeEvent
-    public static void onPlayerLeaveChat(PlayerEvent.LeaveMessageFormat event) {
+    public static void onPlayerLeaveChat(PlayerEvent.LeaveMessageFormat event)
+    {
         event.setLeaveMessage(new TextComponent("Goodbye " + event.getPlayer().getDisplayName()));
     }
 }
