@@ -887,13 +887,13 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END));
     }
 
-    public static void onPreEnvironmentTick(Level level, LevelChunk chunk, int randomTickSpeed)
+    public static void onPreEnvironmentTick(ServerLevel level, LevelChunk chunk, int randomTickSpeed)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.EnvironmentTickEvent(LogicalSide.SERVER, TickEvent.Phase.START, level, chunk, randomTickSpeed));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.EnvironmentTickEvent(TickEvent.Phase.START, level, chunk, randomTickSpeed));
     }
 
-    public static void onPostEnvironmentTick(Level level, LevelChunk chunk, int randomTickSpeed)
+    public static void onPostEnvironmentTick(ServerLevel level, LevelChunk chunk, int randomTickSpeed)
     {
-        MinecraftForge.EVENT_BUS.post(new TickEvent.EnvironmentTickEvent(LogicalSide.SERVER, TickEvent.Phase.END, level, chunk, randomTickSpeed));
+        MinecraftForge.EVENT_BUS.post(new TickEvent.EnvironmentTickEvent(TickEvent.Phase.END, level, chunk, randomTickSpeed));
     }
 }

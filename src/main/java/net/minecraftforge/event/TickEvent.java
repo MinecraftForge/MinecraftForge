@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
@@ -73,16 +74,31 @@ public class TickEvent extends Event
      */
     public static class EnvironmentTickEvent extends TickEvent
     {
-        public final Level level;
-        public final LevelChunk chunk;
-        public final int randomTickSpeed;
+        private final ServerLevel level;
+        private final LevelChunk chunk;
+        private final int randomTickSpeed;
 
-        public EnvironmentTickEvent(LogicalSide side, Phase phase, Level level, LevelChunk chunk, int randomTickSpeed)
+        public EnvironmentTickEvent(Phase phase, ServerLevel level, LevelChunk chunk, int randomTickSpeed)
         {
-            super(Type.ENVIRONMENT, side, phase);
+            super(Type.ENVIRONMENT, LogicalSide.SERVER, phase);
             this.level = level;
             this.chunk = chunk;
             this.randomTickSpeed = randomTickSpeed;
+        }
+
+        public ServerLevel getLevel()
+        {
+            return level;
+        }
+
+        public LevelChunk getChunk()
+        {
+            return chunk;
+        }
+
+        public int getRandomTickSpeed()
+        {
+            return randomTickSpeed;
         }
     }
 

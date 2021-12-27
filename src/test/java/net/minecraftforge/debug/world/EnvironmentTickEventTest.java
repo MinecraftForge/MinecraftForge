@@ -34,7 +34,7 @@ import net.minecraftforge.fml.common.Mod;
 public class EnvironmentTickEventTest
 {
     public static final String MODID = "environment_tick_event_test";
-    public static final boolean ENABLED = true;
+    public static final boolean ENABLED = false;
 
     public EnvironmentTickEventTest()
     {
@@ -46,10 +46,10 @@ public class EnvironmentTickEventTest
     {
         if (ENABLED && event.phase == TickEvent.Phase.END) // recreate snowing logic
         {
-            Level level = event.level;
+            Level level = event.getLevel();
             if (level.isRaining() && level.random.nextInt(16) == 0)
             {
-                ChunkPos chunkPos = event.chunk.getPos();
+                ChunkPos chunkPos = event.getChunk().getPos();
                 BlockPos pos = level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, level.getBlockRandomPos(chunkPos.getMinBlockX(), 0, chunkPos.getMinBlockZ(), 15));
                 BlockPos belowPos = pos.below();
                 Biome biome = level.getBiome(pos);
