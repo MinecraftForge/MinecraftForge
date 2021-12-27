@@ -107,7 +107,14 @@ public class ClientCommandTest
                                             context.getSource()
                                                     .sendSuccess(new TextComponent(BlockPosArgument.getLoadedBlockPos(context, "blockpos").toString()), false);
                                             return 1;
-                                        }))));
+                                        })))
+                        // Used for checking if a command can have a requirement
+                        .then(Commands.literal("requires")
+                                .requires((source) -> false)
+                                .executes((context) -> {
+                                    context.getSource().sendSuccess(new TextComponent("Executed command"), false);
+                                    return 1;
+                                })));
     }
 
     private int testCommand(CommandContext<CommandSourceStack> context)
