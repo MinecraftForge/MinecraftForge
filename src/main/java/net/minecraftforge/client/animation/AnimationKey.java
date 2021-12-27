@@ -19,12 +19,18 @@
 
 package net.minecraftforge.client.animation;
 
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+
+import java.util.function.Function;
+
 /**
  * Record used for creating animation keys. Keys are used for storing and retrieving data in {@link AnimationData}
  * @param <T> any type
  */
 public record AnimationKey<T>(String name, T defaultValue)
 {
+    public static final AnimationKey<Function<ModelPart, PartPose>> DEFAULT_POSE_FUNCTION = new AnimationKey<>("default_pose", part -> PartPose.ZERO);
     public static final AnimationKey<Float> YAW = new AnimationKey<>("yaw", 0F);
     public static final AnimationKey<Float> PITCH = new AnimationKey<>("pitch", 0F);
     public static final AnimationKey<Float> DELTA_BODY_YAW = new AnimationKey<>("delta_body_yaw", 0F);

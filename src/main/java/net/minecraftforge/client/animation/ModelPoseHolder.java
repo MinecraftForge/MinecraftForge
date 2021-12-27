@@ -19,14 +19,14 @@
 
 package net.minecraftforge.client.animation;
 
-import com.google.common.collect.ImmutableList;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceMap;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceMaps;
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
+import javax.annotation.Nonnull;
 import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -34,47 +34,33 @@ import java.util.stream.Collectors;
  */
 public class ModelPoseHolder
 {
-    private final List<Pair<ModelPart, PartPose>> defaultPoseList;
+    public static final ModelPoseHolder EMPTY = new ModelPoseHolder(Collections.emptyList());
+
+    private final Reference2ReferenceMap<ModelPart, PartPose> defaultPoseMap;
 
     public ModelPoseHolder(ModelTree root)
     {
-        this.defaultPoseList = this.generatePoseList(root.children().stream().map(ModelTree::getPart).collect(Collectors.toList()));
+        this(root.children().stream().map(ModelTree::getPart).collect(Collectors.toList()));
     }
 
     public ModelPoseHolder(ModelPart root)
     {
-        this.defaultPoseList = this.generatePoseList(Collections.singleton(root));
+        this(Collections.singleton(root));
     }
 
     public ModelPoseHolder(Iterable<ModelPart> parts)
     {
-        this.defaultPoseList = this.generatePoseList(parts);
+        this.defaultPoseMap = this.generatePoseMap(parts);
     }
 
-    /**
-     * Generates a list pair of all the animated model parts (including children) of a model and the
-     * default pose associated with them.
-     *
-     * @param root the root model component
-     * @return a map containing all the default poses
-     */
-    private ImmutableList<Pair<ModelPart, PartPose>> generatePoseList(ModelTree root)
+    private Reference2ReferenceMap<ModelPart, PartPose> generatePoseMap(Iterable<ModelPart> parts)
     {
-        // Obviously it would be better if there was a common interface instead of this
-        List<Pair<ModelPart, PartPose>> list = new ArrayList<>();
-        root.children().forEach((component) -> this.storeModelPoseAndSearch(list, component.getPart()));
-        return ImmutableList.copyOf(list);
-    }
-
-    private ImmutableList<Pair<ModelPart, PartPose>> generatePoseList(Iterable<ModelPart> parts)
-    {
-        // Obviously it would be better if there was a common interface instead of this
-        List<Pair<ModelPart, PartPose>> list = new ArrayList<>();
+        Reference2ReferenceMap<ModelPart, PartPose> map = new Reference2ReferenceOpenHashMap<>();
         parts.forEach(part -> {
-            list.add(Pair.of(part, part.storePose()));
-            part.getChildren().forEach((name, child) -> this.storeModelPoseAndSearch(list, child));
+            map.put(part, part.storePose());
+            part.getChildren().forEach((name, child) -> this.storeModelPoseAndSearch(map, child));
         });
-        return ImmutableList.copyOf(list);
+        return Reference2ReferenceMaps.unmodifiable(map);
     }
 
     /**
@@ -85,17 +71,30 @@ public class ModelPoseHolder
      * @param list the list to add the model part and pose pair
      * @param part the model part to add and search
      */
-    private void storeModelPoseAndSearch(List<Pair<ModelPart, PartPose>> list, ModelPart part)
+    private void storeModelPoseAndSearch(Reference2ReferenceMap<ModelPart, PartPose> map, ModelPart part)
     {
-        list.add(Pair.of(part, part.storePose()));
-        part.getAllParts().filter(p -> p != part).forEach(p -> this.storeModelPoseAndSearch(list, p));
+        map.put(part, part.storePose());
+        part.getAllParts().filter(p -> p != part).forEach(p -> this.storeModelPoseAndSearch(map, p));
     }
 
     /**
-     * Restores the default pose
+     * Restores the default pose of the entire model
      */
     public void restoreDefaultPose()
     {
-        this.defaultPoseList.forEach(pair -> pair.getLeft().loadPose(pair.getRight()));
+        this.defaultPoseMap.forEach(ModelPart::loadPose);
+    }
+
+    /**
+     * Gets the pose for the given model part. If the model part does not exist in the lookup map,
+     * an empty part pose will be returned instead.
+     *
+     * @param part the model part to use for the lookup
+     * @return the part pose of the model part otherwise an empty part pose if model part doesn't have a pose
+     */
+    @Nonnull
+    public PartPose getPose(ModelPart part)
+    {
+        return this.defaultPoseMap.getOrDefault(part, PartPose.ZERO);
     }
 }

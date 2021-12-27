@@ -80,6 +80,7 @@ public class ModelAnimator<T>
     {
         if (!this.animations.isEmpty())
         {
+            this.data.push(AnimationKey.DEFAULT_POSE_FUNCTION, this.defaultPose::getPose);
             for(ModelAnimation<T> animation : this.animations)
             {
                 if (!animation.canStart(t, this.data)) continue;
