@@ -20,6 +20,7 @@
 package net.minecraftforge.client.animation;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonObject;
 import net.minecraft.client.model.geom.ModelPart;
 
 import javax.annotation.Nonnull;
@@ -98,7 +99,16 @@ public class ModelTree
         return this.children.values();
     }
 
-    ///////////////////////////////////////////////////////
-    // Maybe a method to dump the structure for modders? //
-    ///////////////////////////////////////////////////////
+    private JsonObject serialize()
+    {
+        JsonObject object = new JsonObject();
+        this.children.forEach((name, model) -> object.add(name, model.serialize()));
+        return object;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ModelTree" + this.serialize();
+    }
 }

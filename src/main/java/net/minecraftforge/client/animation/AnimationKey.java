@@ -23,12 +23,14 @@ package net.minecraftforge.client.animation;
  * Record used for creating animation keys. Keys are used for storing and retrieving data in {@link AnimationData}
  * @param <T> any type
  */
-public record AnimationKey<T>(T defaultValue)
+public record AnimationKey<T>(String name, T defaultValue)
 {
-    public static final AnimationKey<Float> YAW = new AnimationKey<>(0F);
-    public static final AnimationKey<Float> PITCH = new AnimationKey<>(0F);
-    public static final AnimationKey<Float> DELTA_BODY_YAW = new AnimationKey<>(0F);
-    public static final AnimationKey<Float> MOVEMENT_TICKS = new AnimationKey<>(0F);
-    public static final AnimationKey<Float> MOVEMENT_SPEED = new AnimationKey<>(0F);
-    public static final AnimationKey<Float> BOB_TICKS = new AnimationKey<>(0F);
+    public static final AnimationKey<Float> YAW = new AnimationKey<>("yaw", 0F);
+    public static final AnimationKey<Float> PITCH = new AnimationKey<>("pitch", 0F);
+    public static final AnimationKey<Float> DELTA_BODY_YAW = new AnimationKey<>("delta_body_yaw", 0F);
+    public static final AnimationKey<Float> MOVEMENT_TICKS = new AnimationKey<>("movement_ticks", 0F);
+    public static final AnimationKey<Float> MOVEMENT_SPEED = new AnimationKey<>("movement_speed", 0F);
+    public static final AnimationKey<Float> BOB_TICKS = new AnimationKey<>("bob_ticks", 0F);
+
+    // Should there be more common keys?
 }

@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.animation;
 
+import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 
@@ -67,6 +68,19 @@ public class AnimationData
     void clear()
     {
         this.dataMap.clear();
+    }
+
+    private JsonObject serialize()
+    {
+        JsonObject object = new JsonObject();
+        this.dataMap.forEach((key, value) -> object.addProperty(key.name(), value.toString()));
+        return object;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "AnimationData" + this.serialize();
     }
 
     /**
