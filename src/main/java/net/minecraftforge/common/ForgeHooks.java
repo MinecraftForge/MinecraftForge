@@ -53,7 +53,12 @@ import javax.annotation.Nullable;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.Util;
 import net.minecraft.advancements.Advancement;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.tags.BlockTags;
@@ -1266,7 +1271,7 @@ public class ForgeHooks
     {
         PlayerEvent.LeaveMessageFormat event = new PlayerEvent.LeaveMessageFormat(player);
         MinecraftForge.EVENT_BUS.post(event);
-        
+
         if(event.isCanceled())
             return null;
 
