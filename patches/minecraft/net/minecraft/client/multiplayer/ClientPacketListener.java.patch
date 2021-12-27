@@ -54,7 +54,7 @@
     public void m_7443_(ClientboundCommandsPacket p_104990_) {
        PacketUtils.m_131363_(p_104990_, this, this.f_104888_);
        this.f_104899_ = new CommandDispatcher<>(p_104990_.m_131884_());
-+      net.minecraftforge.client.ClientCommandHandler.mergeServerCommands(p_104990_.m_131884_());
++      this.f_104899_ = net.minecraftforge.client.ClientCommandHandler.mergeServerCommands(this.f_104899_);
     }
  
     public void m_7183_(ClientboundStopSoundPacket p_105116_) {

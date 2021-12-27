@@ -18,6 +18,8 @@
  */
 
 package net.minecraftforge.debug.chat;
+
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -32,6 +34,8 @@ import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
+
+import java.util.List;
 
 @Mod("client_command_test")
 public class ClientCommandTest
@@ -115,6 +119,15 @@ public class ClientCommandTest
                                     context.getSource().sendSuccess(new TextComponent("Executed command"), false);
                                     return 1;
                                 })));
+
+        // Used for testing that client command redirects can only be used with client commands
+        LiteralArgumentBuilder<CommandSourceStack> fork = Commands.literal("clientcommandfork");
+        fork.fork(event.getDispatcher().getRoot(), (context) -> List.of(context.getSource(), context.getSource()))
+                .executes((context) -> {
+                    context.getSource().sendSuccess(new TextComponent("Executing forked command"), false);
+                    return 1;
+                });
+        event.getDispatcher().register(fork);
     }
 
     private int testCommand(CommandContext<CommandSourceStack> context)

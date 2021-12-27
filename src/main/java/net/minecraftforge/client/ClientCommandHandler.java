@@ -52,7 +52,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -67,18 +67,27 @@ public class ClientCommandHandler
      * Merges command dispatcher use for suggestions to the command dispatcher used for client commands so they can be sent to the server, and vice versa so client commands appear
      * with server commands in suggestions
      */
-    public static void mergeServerCommands(RootCommandNode<SharedSuggestionProvider> serverCommands)
+    public static CommandDispatcher<SharedSuggestionProvider> mergeServerCommands(CommandDispatcher<SharedSuggestionProvider> serverCommands)
     {
+        CommandDispatcher<CommandSourceStack> commandsTemp = new CommandDispatcher<>();
+        MinecraftForge.EVENT_BUS.post(new RegisterClientCommandsEvent(commandsTemp));
+
+        // Copies the client commands into another RootCommandNode so that redirects can't be used with server commands
         commands = new CommandDispatcher<>();
-        MinecraftForge.EVENT_BUS.post(new RegisterClientCommandsEvent(commands));
+        copy(commandsTemp.getRoot(), commands.getRoot());
+
+        // Copies the server commands into another RootCommandNode so that redirects can't be used with client commands
+        RootCommandNode<SharedSuggestionProvider> serverCommandsRoot = serverCommands.getRoot();
+        CommandDispatcher<SharedSuggestionProvider> newServerCommands = new CommandDispatcher<>();
+        copy(serverCommandsRoot, newServerCommands.getRoot());
 
         // Copies the server side commands into a temporary server side commands root node to be used later without the client commands
         RootCommandNode<SharedSuggestionProvider> serverCommandsCopy = new RootCommandNode<>();
-        mergeCommandNode(serverCommands, serverCommandsCopy, new HashMap<>(), Minecraft.getInstance().getConnection().getSuggestionsProvider(),
-                (suggestions) -> 0, (suggestions) -> null);
+        mergeCommandNode(newServerCommands.getRoot(), serverCommandsCopy, new IdentityHashMap<>(),
+                Minecraft.getInstance().getConnection().getSuggestionsProvider(), (suggestions) -> 0, (suggestions) -> null);
 
         // Copies the client side commands into the server side commands to be used for suggestions
-        mergeCommandNode(commands.getRoot(), serverCommands, new HashMap<>(), getSource(), (suggestions) -> 0, (client) -> {
+        mergeCommandNode(commands.getRoot(), newServerCommands.getRoot(), new IdentityHashMap<>(), getSource(), (suggestions) -> 0, (client) -> {
             SuggestionProvider<SharedSuggestionProvider> suggestionProvider = SuggestionProviders
                     .safelySwap((SuggestionProvider<SharedSuggestionProvider>) (SuggestionProvider<?>) client);
             if (suggestionProvider == SuggestionProviders.ASK_SERVER)
@@ -99,11 +108,12 @@ public class ClientCommandHandler
         });
 
         // Copies the server side commands into the client side commands so that they can be sent to the server as a chat message
-        mergeCommandNode(serverCommandsCopy, commands.getRoot(), new HashMap<>(), Minecraft.getInstance().getConnection().getSuggestionsProvider(),
+        mergeCommandNode(serverCommandsCopy, commands.getRoot(), new IdentityHashMap<>(), Minecraft.getInstance().getConnection().getSuggestionsProvider(),
                 (source) -> {
                     Minecraft.getInstance().player.chat((source.getInput().startsWith("/") ? "" : "/") + source.getInput());
                     return 0;
                 }, (suggestions) -> null);
+        return newServerCommands;
     }
 
     /**
@@ -122,6 +132,26 @@ public class ClientCommandHandler
         LocalPlayer player = Minecraft.getInstance().player;
         return new ClientCommandSourceStack(player, player.position(), player.getRotationVector(), player.getPermissionLevel(),
                 player.getName().getString(), player.getDisplayName(), player);
+    }
+
+    /**
+     * 
+     * Creates a deep copy of the sourceNode while keeping the redirects referring to the old command tree
+     * 
+     * @param sourceNode
+     *            the original
+     * @param resultNode
+     *            the result
+     */
+    private static <S> void copy(CommandNode<S> sourceNode, CommandNode<S> resultNode)
+    {
+        for (CommandNode<S> child : sourceNode.getChildren())
+        {
+            ArgumentBuilder<S, ?> builder = child.createBuilder();
+            CommandNode<S> copy = builder.build();
+            copy(child, copy);
+            resultNode.addChild(copy);
+        }
     }
 
     /**
@@ -191,6 +221,12 @@ public class ClientCommandHandler
         {
             LiteralCommandNode<S> sourceLiteral = (LiteralCommandNode<S>) sourceNode;
             resultBuilder = LiteralArgumentBuilder.literal(sourceLiteral.getLiteral());
+        }
+        else if (sourceNode instanceof RootCommandNode<?>)
+        {
+            CommandNode<T> resultNode = new RootCommandNode<>();
+            mergeCommandNode(sourceNode, resultNode, sourceToResult, canUse, execute, sourceToResultSuggestion);
+            return resultNode;
         }
         else
         {
