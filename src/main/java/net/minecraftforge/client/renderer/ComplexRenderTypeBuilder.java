@@ -29,8 +29,7 @@ public final class ComplexRenderTypeBuilder
       final boolean affectsCrumbling,
       final boolean sortOnUpload,
       final RenderType.CompositeState compositeState
-    )
-    {
+    ) {
         return new ComplexRenderType(
             name, vertexFormat, mode, bufferSize, affectsCrumbling, sortOnUpload, compositeState, beforeChunkRenderCallback
         );

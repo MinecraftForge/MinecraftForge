@@ -137,8 +137,8 @@ public class LayerRenderTypeTest
             double cameraX,
             double cameraY,
             double cameraZ,
-            Matrix4f projectionMatrix)
-        {
+            Matrix4f projectionMatrix
+        ) {
             final Uniform TIME = CUSTOM_SHADER.getUniform("SysTime");
             Objects.requireNonNull(TIME).set((Util.getMillis() % 1000) / 1000f);
         }

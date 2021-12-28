@@ -15,7 +15,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Manager which deals with rendering phases used during level rendering.
+ * Manager for the different phases of static geometry rendering in a level.
  * This class is only in use when the {@link LevelRendererAdapter} is used.
  */
 public final class LevelRenderPhaseManager
@@ -63,15 +63,9 @@ public final class LevelRenderPhaseManager
         tripwirePhases = tripwireBuilder.build();
 
         allKnownTypes.clear();
-        allKnownTypes.putAll(
-          solidPhases.getUnorderedEntries()
-        );
-        allKnownTypes.putAll(
-          translucentPhases.getUnorderedEntries()
-        );
-        allKnownTypes.putAll(
-          tripwirePhases.getUnorderedEntries()
-        );
+        allKnownTypes.putAll(solidPhases.getUnorderedEntries());
+        allKnownTypes.putAll(translucentPhases.getUnorderedEntries());
+        allKnownTypes.putAll(tripwirePhases.getUnorderedEntries());
 
         knownTypes.clear();
         knownTypes.addAll(allKnownTypes.values());

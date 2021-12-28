@@ -43,7 +43,7 @@
        profilerfiller.m_6182_("compilechunks");
        this.m_194370_(p_109604_);
        profilerfiller.m_6182_("terrain");
-+      if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderSolids(this, p_109600_, p_109604_, p_109607_, profilerfiller)) {
++      if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderSolids(this, p_109600_, p_109604_, p_109607_)) {
        this.m_172993_(RenderType.m_110451_(), p_109600_, d0, d1, d2, p_109607_);
        this.m_172993_(RenderType.m_110457_(), p_109600_, d0, d1, d2, p_109607_);
        this.m_172993_(RenderType.m_110463_(), p_109600_, d0, d1, d2, p_109607_);
@@ -94,11 +94,11 @@
           this.f_109413_.m_83954_(Minecraft.f_91002_);
           this.f_109413_.m_83945_(this.f_109461_.m_91385_());
           profilerfiller.m_6182_("translucent");
-+         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTranslucent(this, p_109600_, p_109604_, p_109607_, profilerfiller)) {
++         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTranslucent(this, p_109600_, p_109604_, p_109607_)) {
           this.m_172993_(RenderType.m_110466_(), p_109600_, d0, d1, d2, p_109607_);
 +         }
           profilerfiller.m_6182_("string");
-+         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTripwire(this, p_109600_, p_109604_, p_109607_, profilerfiller)) {
++         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTripwire(this, p_109600_, p_109604_, p_109607_)) {
           this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_109607_);
 +         }
           this.f_109415_.m_83954_(Minecraft.f_91002_);
@@ -114,13 +114,13 @@
              this.f_109413_.m_83954_(Minecraft.f_91002_);
           }
  
-+         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTranslucent(this, p_109600_, p_109604_, p_109607_, profilerfiller)) {
++         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTranslucent(this, p_109600_, p_109604_, p_109607_)) {
           this.m_172993_(RenderType.m_110466_(), p_109600_, d0, d1, d2, p_109607_);
 +         }
           multibuffersource$buffersource.m_109912_(RenderType.m_110504_());
           multibuffersource$buffersource.m_109911_();
           profilerfiller.m_6182_("string");
-+         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTripwire(this, p_109600_, p_109604_, p_109607_, profilerfiller)) {
++         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTripwire(this, p_109600_, p_109604_, p_109607_)) {
           this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_109607_);
 +         }
           profilerfiller.m_6182_("particles");

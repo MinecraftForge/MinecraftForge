@@ -37,7 +37,8 @@ public class SortedRegistry<T>
     private final ImmutableList<T> elements;
     private final ImmutableBiMap<ResourceLocation, T> names;
 
-    private SortedRegistry(ImmutableList<T> elements, ImmutableBiMap<ResourceLocation, T> names) {
+    private SortedRegistry(ImmutableList<T> elements, ImmutableBiMap<ResourceLocation, T> names)
+    {
         this.elements = elements;
         this.names = names;
     }
@@ -55,7 +56,8 @@ public class SortedRegistry<T>
      * Returns the unordered collection of entries.
      * @return An immutable bimap of unordered entries
      */
-    public ImmutableBiMap<ResourceLocation, T> getUnorderedEntries() {
+    public ImmutableBiMap<ResourceLocation, T> getUnorderedEntries()
+    {
         return names;
     }
 
@@ -149,7 +151,8 @@ public class SortedRegistry<T>
         private final BiMap<ResourceLocation, T> entries = HashBiMap.create();
         private final Multimap<ResourceLocation, ResourceLocation> edges = HashMultimap.create();
 
-        public Builder(Class<T> type) {
+        public Builder(Class<T> type)
+        {
             this.type = type;
         }
 

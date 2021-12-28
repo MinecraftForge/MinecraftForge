@@ -12,7 +12,8 @@ import net.minecraftforge.common.ForgeConfig;
 import java.util.Collection;
 
 /**
- * Adapter class which is used to manage the custom render types when they are rendered in the world.
+ * Adapter class used to dispatch draw calls for vanilla and user-provided static
+ * render types during level rendering.
  */
 public final class LevelRendererAdapter
 {
@@ -36,13 +37,12 @@ public final class LevelRendererAdapter
       final LevelRenderer levelRenderer,
       final PoseStack poseStack,
       final Camera camera,
-      final Matrix4f projectionMatrix,
-      final ProfilerFiller profilerFiller
+      final Matrix4f projectionMatrix
     ) {
         if (!ForgeConfig.CLIENT.useLevelRendererAdapter.get())
             return false;
 
-        doRenderPhases(LevelRenderPhaseManager.getInstance().getSolidPhases(), camera, levelRenderer, poseStack, projectionMatrix, profilerFiller);
+        doRenderPhases(LevelRenderPhaseManager.getInstance().getSolidPhases(), camera, levelRenderer, poseStack, projectionMatrix);
 
         return true;
     }
@@ -56,13 +56,12 @@ public final class LevelRendererAdapter
       final LevelRenderer levelRenderer,
       final PoseStack poseStack,
       final Camera camera,
-      final Matrix4f projectionMatrix,
-      final ProfilerFiller profilerFiller
+      final Matrix4f projectionMatrix
     ) {
         if (!ForgeConfig.CLIENT.useLevelRendererAdapter.get())
             return false;
 
-        doRenderPhases(LevelRenderPhaseManager.getInstance().getTranslucentPhases(), camera, levelRenderer, poseStack, projectionMatrix, profilerFiller);
+        doRenderPhases(LevelRenderPhaseManager.getInstance().getTranslucentPhases(), camera, levelRenderer, poseStack, projectionMatrix);
 
         return true;
     }
@@ -76,13 +75,12 @@ public final class LevelRendererAdapter
       final LevelRenderer levelRenderer,
       final PoseStack poseStack,
       final Camera camera,
-      final Matrix4f projectionMatrix,
-      final ProfilerFiller profilerFiller
+      final Matrix4f projectionMatrix
     ) {
         if (!ForgeConfig.CLIENT.useLevelRendererAdapter.get())
             return false;
 
-        doRenderPhases(LevelRenderPhaseManager.getInstance().getTripwirePhases(), camera, levelRenderer, poseStack, projectionMatrix, profilerFiller);
+        doRenderPhases(LevelRenderPhaseManager.getInstance().getTripwirePhases(), camera, levelRenderer, poseStack, projectionMatrix);
 
         return true;
     }
@@ -92,26 +90,11 @@ public final class LevelRendererAdapter
       final Camera camera,
       final LevelRenderer levelRenderer,
       final PoseStack poseStack,
-      final Matrix4f projectionMatrix,
-      final ProfilerFiller profilerFiller
+      final Matrix4f projectionMatrix
     ) {
         final Vec3 cameraPos = camera.getPosition();
-        final double cameraX = cameraPos.x;
-        final double cameraY = cameraPos.y;
-        final double cameraZ = cameraPos.z;
-
+        final double cameraX = cameraPos.x, cameraY = cameraPos.y, cameraZ = cameraPos.z;
         for (final RenderType renderType : phases)
-        {
-            profilerFiller.push(renderType.name);
-            levelRenderer.renderChunkLayer(
-              renderType,
-              poseStack,
-              cameraX,
-              cameraY,
-              cameraZ,
-              projectionMatrix
-            );
-            profilerFiller.pop();
-        }
+            levelRenderer.renderChunkLayer(renderType, poseStack, cameraX, cameraY, cameraZ, projectionMatrix);
     }
 }

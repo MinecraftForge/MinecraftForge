@@ -1,9 +1,10 @@
 package net.minecraftforge.client.renderer;
 
 /**
- * Interface which needs to be implemented by custom render types
- * which are used inside the {@link LevelRendererAdapter} when it
- * performs the rendering of chunk sections.
+ * Interface which implemented by custom render types which are to be
+ * notified when a chunk section is rendered using them.
+ *
+ * @see ComplexRenderType
  */
 public interface IComplexRenderType extends IBeforeChunkRenderCallback
 {

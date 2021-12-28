@@ -6,13 +6,13 @@ import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
 
 /**
- * Interface which describes a callback that is invoked by the {@link LevelRenderer} before
- * a none empty chunk is rendered. This is useful for uploading additional uniforms to the GPU,
+ * Interface which represents a callback that is invoked by the {@link LevelRenderer} before
+ * a non-empty chunk is rendered. This is useful for uploading additional uniforms to the GPU,
  * or modifying the current GPU state based on what chunk is being rendered.
  *
- * Has to be passed to a {@link ComplexRenderType} during creation of said render type so that it is picked up.
- * The render type then needs to be registered via a {@link net.minecraftforge.client.event.LayerRenderTypeRegisterEvent} of
- * the appropriate phase, and a set of blocks need to use the render type before the callback is invoked.
+ * For use with render types, must be passed to a {@link ComplexRenderTypeBuilder}.
+ * This render type must be registered via a {@link net.minecraftforge.client.event.LayerRenderTypeRegisterEvent}
+ * of the appropriate phase.
  */
 @FunctionalInterface
 public interface IBeforeChunkRenderCallback

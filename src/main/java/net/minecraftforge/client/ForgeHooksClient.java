@@ -1045,7 +1045,8 @@ public class ForgeHooksClient
                 .toList();
     }
 
-    public static void fireRegisterRenderTypes() {
+    public static void fireRegisterRenderTypes()
+    {
         ModLoader.get().postEvent(new RenderTypeRegisterEvent());
     }
 

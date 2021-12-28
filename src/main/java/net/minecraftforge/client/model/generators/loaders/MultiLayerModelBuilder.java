@@ -49,9 +49,10 @@ public class MultiLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoa
     public MultiLayerModelBuilder<T> submodel(RenderType layer, T modelBuilder)
     {
         Preconditions.checkNotNull(layer, "layer must not be null");
-        Preconditions.checkArgument(LevelRenderPhaseManager.getInstance().getAllKnownTypes().containsValue(layer), "layer must be supported by MultiLayerModel");
+        var name = LevelRenderPhaseManager.getInstance().getAllKnownTypes().inverse().get(layer);
+        Preconditions.checkArgument(name != null, "layer must be supported by MultiLayerModel");
         Preconditions.checkNotNull(modelBuilder, "modelBuilder must not be null");
-        childModels.put(LevelRenderPhaseManager.getInstance().getAllKnownTypes().inverse().get(layer), modelBuilder);
+        childModels.put(name, modelBuilder);
         return this;
     }
 
