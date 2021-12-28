@@ -1274,7 +1274,7 @@ public class ForgeHooks
         return new MultiNoiseBiomeSource(actualParameters, Optional.of(presetInstance), Optional.empty());
     }
 
-    /** Forge internal use, called via the {@link MultiNoiseBiomeSource.DIRECT_CODEC} used for non-preset sources **/
+    /** @deprecated Forge internal use, called via the {@link MultiNoiseBiomeSource.DIRECT_CODEC} used for non-preset sources **/
     @Deprecated
     public static MultiNoiseBiomeSource enhanceMultiNoiseBiomeSource(ParameterList<Supplier<Biome>> parameters, @Nullable ResourceLocation name, RegistryAccess registryAccess)
     {
