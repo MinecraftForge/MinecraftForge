@@ -23,9 +23,10 @@ import com.google.common.base.Preconditions;
 import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.MultiLayerModel;
+import net.minecraftforge.client.event.LayerRenderTypeRegisterEvent;
 import net.minecraftforge.client.model.generators.CustomLoaderBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder;
+import net.minecraftforge.client.renderer.LevelRenderPhaseManager;
 import net.minecraftforge.common.data.ExistingFileHelper;
 
 import java.util.LinkedHashMap;
@@ -38,7 +39,7 @@ public class MultiLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoa
         return new MultiLayerModelBuilder<>(parent, existingFileHelper);
     }
 
-    private final Map<String, T> childModels = new LinkedHashMap<>();
+    private final Map<ResourceLocation, T> childModels = new LinkedHashMap<>();
 
     protected MultiLayerModelBuilder(T parent, ExistingFileHelper existingFileHelper)
     {
@@ -48,9 +49,9 @@ public class MultiLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoa
     public MultiLayerModelBuilder<T> submodel(RenderType layer, T modelBuilder)
     {
         Preconditions.checkNotNull(layer, "layer must not be null");
-        Preconditions.checkArgument(MultiLayerModel.Loader.BLOCK_LAYERS.containsValue(layer), "layer must be supported by MultiLayerModel");
+        Preconditions.checkArgument(LevelRenderPhaseManager.getInstance().getAllKnownTypes().containsValue(layer), "layer must be supported by MultiLayerModel");
         Preconditions.checkNotNull(modelBuilder, "modelBuilder must not be null");
-        childModels.put(MultiLayerModel.Loader.BLOCK_LAYERS.inverse().get(layer), modelBuilder);
+        childModels.put(LevelRenderPhaseManager.getInstance().getAllKnownTypes().inverse().get(layer), modelBuilder);
         return this;
     }
 
@@ -60,9 +61,9 @@ public class MultiLayerModelBuilder<T extends ModelBuilder<T>> extends CustomLoa
         json = super.toJson(json);
 
         JsonObject parts = new JsonObject();
-        for(Map.Entry<String, T> entry : childModels.entrySet())
+        for(Map.Entry<ResourceLocation, T> entry : childModels.entrySet())
         {
-            parts.add(entry.getKey(), entry.getValue().toJson());
+            parts.add(entry.getKey().toString(), entry.getValue().toJson());
         }
         json.add("layers", parts);
 

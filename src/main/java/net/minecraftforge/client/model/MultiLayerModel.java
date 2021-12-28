@@ -44,6 +44,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
+import net.minecraftforge.client.renderer.LevelRenderPhaseManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -246,6 +247,10 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
 
     public static final class Loader implements IModelLoader<MultiLayerModel>
     {
+        /**
+         * Replaced by {@link LevelRenderPhaseManager#getAllKnownTypes()}
+         */
+        @Deprecated(forRemoval = true)
         public static final ImmutableBiMap<String, RenderType> BLOCK_LAYERS = ImmutableBiMap.<String, RenderType>builder()
                 .put("solid", RenderType.solid())
                 .put("cutout", RenderType.cutout())
@@ -269,13 +274,11 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
         {
             ImmutableList.Builder<Pair<RenderType, UnbakedModel>> builder = ImmutableList.builder();
             JsonObject layersObject = GsonHelper.getAsJsonObject(modelContents, "layers");
-            for(Map.Entry<String, RenderType> layer : BLOCK_LAYERS.entrySet()) // block layers
-            {
-                String layerName = layer.getKey(); // mc overrides toString to return the ID for the layer
-                if(layersObject.has(layerName))
-                {
-                    builder.add(Pair.of(layer.getValue(), deserializationContext.deserialize(GsonHelper.getAsJsonObject(layersObject, layerName), BlockModel.class)));
-                }
+            var renderTypes = LevelRenderPhaseManager.getInstance().getAllKnownTypes();
+            for (var key : layersObject.keySet()) {
+                var renderType = renderTypes.get(new ResourceLocation(key));
+                if (renderType != null)
+                    builder.add(Pair.of(renderType, deserializationContext.deserialize(GsonHelper.getAsJsonObject(layersObject, key), BlockModel.class)));
             }
             boolean convertRenderTypes = GsonHelper.getAsBoolean(modelContents, "convert_render_types", true);
             return new MultiLayerModel(builder.build(), convertRenderTypes);
