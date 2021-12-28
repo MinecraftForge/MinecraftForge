@@ -560,13 +560,9 @@ public interface IForgeItem
     default boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack)
     {
         // Fix MC-176559 mending resets mining progress / breaking animation
-        if (newStack.getItem() == oldStack.getItem() && newStack.isDamageableItem())
-        {
-            oldStack = oldStack.copy();
-            oldStack.setDamageValue(newStack.getDamageValue());
-        }
-        return !(newStack.getItem() == oldStack.getItem() && ItemStack.tagMatches(newStack, oldStack)
-                && (newStack.isDamageableItem() || newStack.getDamageValue() == oldStack.getDamageValue()));
+        return !ItemStack.isSameIgnoreDurability(oldStack, newStack);
+        // return !(newStack.is(oldStack.getItem()) && ItemStack.tagMatches(newStack, oldStack)
+        //         && (newStack.isDamageableItem() || newStack.getDamageValue() == oldStack.getDamageValue()));
     }
 
     /**
