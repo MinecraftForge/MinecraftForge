@@ -42,7 +42,6 @@ import java.util.Set;
 public class RegisterGameTestsEvent extends Event implements IModBusEvent
 {
     private final Set<String> enabledNamespaces;
-    private
 
     public RegisterGameTestsEvent(Set<String> enabledNamespaces)
     {
