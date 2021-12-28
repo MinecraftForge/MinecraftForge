@@ -34,9 +34,11 @@ import org.apache.logging.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.JsonOps;
 
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
@@ -93,6 +95,14 @@ public class MultiNoiseBiomeSourceLoadingEventTest
     
     private void onGatherData(GatherDataEvent event)
     {
+        if (event.includeServer())
+        {
+            this.onGatherServerData(event);
+        }
+    }
+    
+    private void onGatherServerData(GatherDataEvent event)
+    {
         // need dynamic registries to do worldgen datagen
         RegistryHolder registries = RegistryAccess.builtin();
         RegistryWriteOps<JsonElement> writeOps = RegistryWriteOps.create(JsonOps.INSTANCE, registries);
@@ -109,7 +119,7 @@ public class MultiNoiseBiomeSourceLoadingEventTest
         NoiseGeneratorSettings overworldNoiseSettings = noiseSettings.get(NoiseGeneratorSettings.OVERWORLD);
         Biome desert = biomes.get(Biomes.DESERT);
         
-        // make two three dimensions for testing
+        // make three dimensions for testing
         // one with a preset biome source, one with a fully custom biome source and a dimension name, one with a fully custom source without name
         
         // preset biome source dimension
@@ -117,7 +127,7 @@ public class MultiNoiseBiomeSourceLoadingEventTest
         ChunkGenerator presetGenerator = new NoiseBasedChunkGenerator(noiseParameters, presetSource, 0, () -> overworldNoiseSettings);
         LevelStem presetDimension = new LevelStem(() -> overworldDimensionType, presetGenerator);
         
-        // fully custom biome source dimension with forge:name field
+        // some sample points used for the latter dimensions
         List<Pair<ParameterPoint, Supplier<Biome>>> parameterPoints = new ArrayList<>();
         parameterPoints.add(Pair.of(new ParameterPoint(
             Parameter.span(0.2F, 0.55F), // temperature
@@ -129,6 +139,8 @@ public class MultiNoiseBiomeSourceLoadingEventTest
             0L // offset
             ), () -> desert));
         ParameterList<Supplier<Biome>> biomeParams = new ParameterList<>(parameterPoints);
+        
+        // fully custom biome source dimension with forge:name field
         BiomeSource namedSource =  new MultiNoiseBiomeSource(biomeParams, Optional.empty(), Optional.of(NAMED_TEST));
         ChunkGenerator namedGenerator = new NoiseBasedChunkGenerator(noiseParameters, namedSource, 0, () -> overworldNoiseSettings);
         LevelStem namedDimension = new LevelStem(() -> overworldDimensionType, namedGenerator);
@@ -236,24 +248,27 @@ public class MultiNoiseBiomeSourceLoadingEventTest
     
     private void onRegisterCommands(RegisterCommandsEvent event)
     {
-        event.getDispatcher().register(
-            Commands.literal(MODID)
+        event.getDispatcher()
+            .register(Commands.literal(MODID)
                 .then(Commands.literal("biomes")
-                    .executes(context ->{
-                        var commandSource = context.getSource();
-                        ServerLevel level = commandSource.getLevel();
-                        BiomeSource biomeSource = level.getChunkSource().getGenerator().getBiomeSource();
-                        if (biomeSource instanceof MultiNoiseBiomeSource multiSource)
-                        {
-                            var values = multiSource.parameters.values();
-                            LOGGER.info(values);
-                            commandSource.sendSuccess(new TextComponent("Your biome source has " + values.size() + " parameters"), false);
-                        }
-                        else
-                        {
-                            commandSource.sendFailure(new TextComponent("Not a multi-noise biome source"));
-                        }
-                        return 1;
-                    })));
+                    .executes(this::printBiomes)));
+    }
+    
+    private int printBiomes(CommandContext<CommandSourceStack> context)
+    {
+        CommandSourceStack commandSource = context.getSource();
+        ServerLevel level = commandSource.getLevel();
+        BiomeSource biomeSource = level.getChunkSource().getGenerator().getBiomeSource();
+        if (biomeSource instanceof MultiNoiseBiomeSource multiSource)
+        {
+            var values = multiSource.parameters.values();
+            LOGGER.info(values);
+            commandSource.sendSuccess(new TextComponent("Your biome source has " + values.size() + " parameters"), false);
+        }
+        else
+        {
+            commandSource.sendFailure(new TextComponent("Not a multi-noise biome source"));
+        }
+        return 1;
     }
 }
