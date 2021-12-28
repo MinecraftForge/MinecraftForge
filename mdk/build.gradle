@@ -84,6 +84,9 @@ minecraft {
             }
         }
 
+        // This run config runs GameTestServer and the gametest system.
+        // By default, the server will crash when no gametests are provided.
+        // The gametest system can be enabled for other run configs under the /test command by specifying the system property "forge.enablegametest" as "true".
         gametest {
             workingDirectory project.file('run')
 
