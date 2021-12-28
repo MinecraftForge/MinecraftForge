@@ -21,7 +21,6 @@ package net.minecraftforge.event;
 
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestGenerator;
-import net.minecraft.gametest.framework.GameTestRegistry;
 import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
@@ -29,6 +28,7 @@ import net.minecraftforge.gametest.ForgeGameTestHooks;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,10 +42,14 @@ import java.util.Set;
 public class RegisterGameTestsEvent extends Event implements IModBusEvent
 {
     private final Set<String> enabledNamespaces;
+    private final Set<Method> gameTestMethods;
+    private final Set<Method> gameTestMethodsView;
 
     public RegisterGameTestsEvent(Set<String> enabledNamespaces)
     {
         this.enabledNamespaces = new HashSet<>(enabledNamespaces);
+        this.gameTestMethods = new HashSet<>();
+        this.gameTestMethodsView = Collections.unmodifiableSet(this.gameTestMethods);
     }
 
     /**
@@ -59,6 +63,15 @@ public class RegisterGameTestsEvent extends Event implements IModBusEvent
     public Set<String> getEnabledNamespaces()
     {
         return enabledNamespaces;
+    }
+
+    /**
+     * Returns an immutable view of all registered gametest methods.
+     *
+     * @return an immutable view of all registered gametest methods
+     */
+    public Set<Method> getGameTestMethods() {
+        return this.gameTestMethodsView;
     }
 
     /**
@@ -82,9 +95,8 @@ public class RegisterGameTestsEvent extends Event implements IModBusEvent
      *
      * @param testMethod the test method to register to the game test registry
      */
-    @SuppressWarnings("deprecation")
     public void register(Method testMethod)
     {
-        GameTestRegistry.register(testMethod, this.getEnabledNamespaces());
+        this.gameTestMethods.add(testMethod);
     }
 }

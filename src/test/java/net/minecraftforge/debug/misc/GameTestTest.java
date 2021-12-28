@@ -23,7 +23,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestGenerator;
 import net.minecraft.gametest.framework.GameTestHelper;
-import net.minecraft.gametest.framework.GameTestRegistry;
 import net.minecraft.gametest.framework.TestFunction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
@@ -39,11 +38,11 @@ import java.util.List;
 public class GameTestTest
 {
     public static final String MODID = "gametest_test";
-    public static final boolean ENABLE = true;
+    public static final boolean ENABLED = true;
 
     public GameTestTest()
     {
-        if (ENABLE)
+        if (ENABLED)
         {
             FMLJavaModLoadingContext.get().getModEventBus().register(this);
         }
@@ -79,7 +78,8 @@ public class GameTestTest
         // If the predicate fails, the String supplier will be used to construct an exception message, which is thrown
         helper.assertBlockState(woodPos, b -> b.is(Blocks.OAK_LOG), () -> "Block was not an oak log");
 
-        // If we got to this point, the assert succeeded, so the test has succeeded
+        // If we got to this point, the assert succeeded, so the test has succeeded.
+        // Game tests require explicitly declaring success, otherwise they fail from timeout.
         helper.succeed();
     }
 

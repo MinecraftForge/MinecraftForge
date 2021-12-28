@@ -20,9 +20,11 @@
 package net.minecraftforge.gametest;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.gametest.framework.GameTestRegistry;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.ModLoader;
 
+import java.lang.reflect.Method;
 import java.util.Set;
 
 public class ForgeGameTestHooks
@@ -32,11 +34,16 @@ public class ForgeGameTestHooks
         return SharedConstants.IS_RUNNING_IN_IDE || Boolean.getBoolean("forge.enablegametest");
     }
 
+    @SuppressWarnings("deprecation")
     public static void registerGametests(Set<String> enabledNamespaces)
     {
         if (isGametestEnabled())
         {
-            ModLoader.get().postEvent(new RegisterGameTestsEvent(enabledNamespaces));
+            RegisterGameTestsEvent event = new RegisterGameTestsEvent(enabledNamespaces);
+            ModLoader.get().postEvent(event);
+            for (Method gameTestMethod : event.getGameTestMethods()) {
+                GameTestRegistry.register(gameTestMethod, event.getEnabledNamespaces());
+            }
         }
     }
 }
