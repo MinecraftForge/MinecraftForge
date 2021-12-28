@@ -34,3 +34,12 @@
     }
  
     public static RenderType m_110502_() {
+@@ -375,7 +_,7 @@
+    }
+ 
+    public static List<RenderType> m_110506_() {
+-      return ImmutableList.of(m_110451_(), m_110457_(), m_110463_(), m_110466_(), m_110503_());
++      return net.minecraftforge.client.renderer.LevelRenderPhaseManager.getInstance().getKnownTypes();
+    }
+ 
+    public int m_110507_() {

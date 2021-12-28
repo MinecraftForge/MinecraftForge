@@ -20,30 +20,20 @@
 package net.minecraftforge.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraftforge.client.event.RegisterShadersEvent;
 import net.minecraftforge.common.util.NonNullLazy;
 import net.minecraftforge.common.util.NonNullSupplier;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.util.List;
 import java.util.function.BiFunction;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -378,6 +368,25 @@ public enum ForgeRenderTypes
                 TextureManager texturemanager = Minecraft.getInstance().getTextureManager();
                 texturemanager.getTexture(resLoc).setFilter(this.blur, this.mipmap);
                 RenderSystem.setShaderTexture(0, resLoc);
+            };
+        }
+    }
+
+    public static class MipmapFixTextureShard extends RenderStateShard.TextureStateShard
+    {
+        public MipmapFixTextureShard(ResourceLocation texture, boolean blur, boolean mipmap)
+        {
+            super(texture, blur, mipmap);
+            this.setupState = () -> {
+                var mc = Minecraft.getInstance();
+                mc.getModelManager().getAtlas(texture).setBlurMipmap(blur, mc.options.mipmapLevels > 0);
+                RenderSystem.enableTexture();
+                var texturemanager = mc.getTextureManager();
+                texturemanager.getTexture(texture).setFilter(blur, mipmap);
+                RenderSystem.setShaderTexture(0, texture);
+            };
+            this.clearState = () -> {
+                Minecraft.getInstance().getModelManager().getAtlas(texture).restoreLastBlurMipmap();
             };
         }
     }

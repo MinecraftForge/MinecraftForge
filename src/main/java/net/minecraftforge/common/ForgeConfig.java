@@ -128,6 +128,8 @@ public class ForgeConfig {
 
         public final BooleanValue forceSystemNanoTime;
 
+        public final BooleanValue useLevelRendererAdapter;
+
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -158,6 +160,11 @@ public class ForgeConfig {
                     .comment("Forces the use of System.nanoTime instead of glfwGetTime, as the main Util time provider")
                     .translation("forge.configgui.forceSystemNanoTime")
                     .define("forceSystemNanoTime", false);
+
+            useLevelRendererAdapter = builder
+                    .comment("Set to true to use the Forge LevelRendererAdapter instead of the default one.")
+                    .translation("forge.configgui.useLevelRendererAdapter")
+                    .define("useLevelRendererAdapter", true);
 
             builder.pop();
         }

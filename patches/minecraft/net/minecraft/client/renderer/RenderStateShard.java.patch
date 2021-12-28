@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/RenderStateShard.java
++++ b/net/minecraft/client/renderer/RenderStateShard.java
+@@ -115,7 +_,7 @@
+    protected static final RenderStateShard.ShaderStateShard f_173093_ = new RenderStateShard.ShaderStateShard(GameRenderer::m_172755_);
+    protected static final RenderStateShard.ShaderStateShard f_173094_ = new RenderStateShard.ShaderStateShard(GameRenderer::m_172756_);
+    protected static final RenderStateShard.ShaderStateShard f_173095_ = new RenderStateShard.ShaderStateShard(GameRenderer::m_172757_);
+-   protected static final RenderStateShard.TextureStateShard f_110145_ = new RenderStateShard.TextureStateShard(TextureAtlas.f_118259_, false, true);
++   protected static final RenderStateShard.TextureStateShard f_110145_ = new net.minecraftforge.client.ForgeRenderTypes.MipmapFixTextureShard(TextureAtlas.f_118259_, false, true); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
+    protected static final RenderStateShard.TextureStateShard f_110146_ = new RenderStateShard.TextureStateShard(TextureAtlas.f_118259_, false, false);
+    protected static final RenderStateShard.EmptyTextureStateShard f_110147_ = new RenderStateShard.EmptyTextureStateShard();
+    protected static final RenderStateShard.TexturingStateShard f_110148_ = new RenderStateShard.TexturingStateShard("default_texturing", () -> {

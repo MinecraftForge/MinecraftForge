@@ -24,7 +24,7 @@
        float f = this.f_109461_.f_91073_.m_46722_(1.0F) / (Minecraft.m_91405_() ? 1.0F : 2.0F);
        if (!(f <= 0.0F)) {
           Random random = new Random((long)this.f_109477_ * 312987231L);
-@@ -1148,20 +_,23 @@
+@@ -1148,21 +_,24 @@
        RenderSystem.m_69421_(16640, Minecraft.f_91002_);
        float f = p_109605_.m_109152_();
        boolean flag2 = this.f_109461_.f_91073_.m_104583_().m_5781_(Mth.m_14107_(d0), Mth.m_14107_(d1)) || this.f_109461_.f_91065_.m_93090_().m_93715_();
@@ -43,13 +43,14 @@
        profilerfiller.m_6182_("compilechunks");
        this.m_194370_(p_109604_);
        profilerfiller.m_6182_("terrain");
++      if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderSolids(this, p_109600_, p_109604_, p_109607_, profilerfiller)) {
        this.m_172993_(RenderType.m_110451_(), p_109600_, d0, d1, d2, p_109607_);
-+      this.f_109461_.m_91304_().m_119428_(TextureAtlas.f_118259_).setBlurMipmap(false, this.f_109461_.f_91066_.f_92027_ > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
        this.m_172993_(RenderType.m_110457_(), p_109600_, d0, d1, d2, p_109607_);
-+      this.f_109461_.m_91304_().m_119428_(TextureAtlas.f_118259_).restoreLastBlurMipmap();
        this.m_172993_(RenderType.m_110463_(), p_109600_, d0, d1, d2, p_109607_);
++      }
        if (this.f_109465_.m_104583_().m_108885_()) {
           Lighting.m_84925_(p_109600_.m_85850_().m_85861_());
+       } else {
 @@ -1191,7 +_,7 @@
        MultiBufferSource.BufferSource multibuffersource$buffersource = this.f_109464_.m_110104_();
  
@@ -89,7 +90,18 @@
        }
  
        PoseStack posestack = RenderSystem.m_157191_();
-@@ -1344,7 +_,7 @@
+@@ -1337,14 +_,18 @@
+          this.f_109413_.m_83954_(Minecraft.f_91002_);
+          this.f_109413_.m_83945_(this.f_109461_.m_91385_());
+          profilerfiller.m_6182_("translucent");
++         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTranslucent(this, p_109600_, p_109604_, p_109607_, profilerfiller)) {
+          this.m_172993_(RenderType.m_110466_(), p_109600_, d0, d1, d2, p_109607_);
++         }
+          profilerfiller.m_6182_("string");
++         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTripwire(this, p_109600_, p_109604_, p_109607_, profilerfiller)) {
+          this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_109607_);
++         }
+          this.f_109415_.m_83954_(Minecraft.f_91002_);
           this.f_109415_.m_83945_(this.f_109461_.m_91385_());
           RenderStateShard.f_110126_.m_110185_();
           profilerfiller.m_6182_("particles");
@@ -98,15 +110,33 @@
           RenderStateShard.f_110126_.m_110188_();
        } else {
           profilerfiller.m_6182_("translucent");
-@@ -1358,7 +_,7 @@
+@@ -1352,13 +_,17 @@
+             this.f_109413_.m_83954_(Minecraft.f_91002_);
+          }
+ 
++         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTranslucent(this, p_109600_, p_109604_, p_109607_, profilerfiller)) {
+          this.m_172993_(RenderType.m_110466_(), p_109600_, d0, d1, d2, p_109607_);
++         }
+          multibuffersource$buffersource.m_109912_(RenderType.m_110504_());
+          multibuffersource$buffersource.m_109911_();
           profilerfiller.m_6182_("string");
++         if (!net.minecraftforge.client.renderer.LevelRendererAdapter.getInstance().onRenderTripwire(this, p_109600_, p_109604_, p_109607_, profilerfiller)) {
           this.m_172993_(RenderType.m_110503_(), p_109600_, d0, d1, d2, p_109607_);
++         }
           profilerfiller.m_6182_("particles");
 -         this.f_109461_.f_91061_.m_107336_(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_);
 +         this.f_109461_.f_91061_.render(p_109600_, multibuffersource$buffersource, p_109606_, p_109604_, p_109601_, frustum);
        }
  
        posestack.m_85836_();
+@@ -1511,6 +_,7 @@
+                uniform.m_85633_();
+             }
+ 
++            if (p_172994_ instanceof net.minecraftforge.client.renderer.IComplexRenderType complexRenderType) { complexRenderType.beforeChunkRender(this, chunkrenderdispatcher$renderchunk, p_172995_, p_172996_, p_172997_, p_172998_, p_172999_); }
+             vertexbuffer.m_166887_();
+             flag1 = true;
+          }
 @@ -1790,6 +_,11 @@
  
     public void m_181409_(PoseStack p_181410_, Matrix4f p_181411_, float p_181412_, Runnable p_181413_) {
