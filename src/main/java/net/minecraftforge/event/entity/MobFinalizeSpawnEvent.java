@@ -75,6 +75,6 @@ public class MobFinalizeSpawnEvent extends EntityEvent
     @Override
     public Mob getEntity()
     {
-        return (Mob)super.getEntity();
+        return (Mob) super.getEntity();
     }
 }
