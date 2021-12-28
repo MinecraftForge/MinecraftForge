@@ -19,10 +19,6 @@
 
 package net.minecraftforge.common;
 
-import com.google.common.collect.*;
-import com.google.common.graph.ElementOrder;
-import com.google.common.graph.GraphBuilder;
-import com.google.common.graph.MutableGraph;
 import com.google.gson.*;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -44,9 +40,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.common.util.SortedRegistry;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.toposort.TopologicalSort;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
@@ -73,16 +69,13 @@ public class TierSortingRegistry
      * Registers a tier into the tier sorting registry.
      * @param tier The tier to register
      * @param name The name to use internally for dependency resolution
-     * @param after List of tiers to place this tier after (the tiers in the list will be considered lesser tiers)
-     * @param before List of tiers to place this tier before (the tiers in the list will be considered better tiers)
+     * @param predecessors List of tiers to place this tier after (the tiers in the list will be considered lesser tiers)
+     * @param successors List of tiers to place this tier before (the tiers in the list will be considered better tiers)
      */
-    public static synchronized Tier registerTier(Tier tier, ResourceLocation name, List<Object> after, List<Object> before)
+    public static synchronized Tier registerTier(Tier tier, ResourceLocation name, List<Object> predecessors, List<Object> successors)
     {
-        if (tiers.containsKey(name))
-            throw new IllegalStateException("Duplicate tier name " + name);
-
-        processTier(tier, name, after, before);
-
+        registryBuilder.add(tier, name, predecessors, successors);
+        registry = null;
         hasCustomTiers = true;
         return tier;
     }
@@ -105,7 +98,7 @@ public class TierSortingRegistry
     @Nullable
     public static Tier byName(ResourceLocation name)
     {
-        return tiers.get(name);
+        return getRegistry().get(name);
     }
 
     /**
@@ -116,7 +109,7 @@ public class TierSortingRegistry
     @Nullable
     public static ResourceLocation getName(Tier tier)
     {
-        return tiers.inverse().get(tier);
+        return getRegistry().getName(tier);
     }
 
     /**
@@ -126,7 +119,7 @@ public class TierSortingRegistry
      */
     public static boolean isTierSorted(Tier tier)
     {
-        return getName(tier) != null;
+        return getRegistry().contains(tier);
     }
 
     /**
@@ -140,8 +133,8 @@ public class TierSortingRegistry
         if (!isTierSorted(tier))
             return isCorrectTierVanilla(tier, state);
 
-        for (int x = sortedTiers.indexOf(tier) + 1; x < sortedTiers.size(); x++) {
-            Tag<Block> tag = sortedTiers.get(x).getTag();
+        for (Tier t : getRegistry().getAllAfter(tier)) {
+            Tag<Block> tag = t.getTag();
             if (tag != null && state.is(tag))
                 return false;
         }
@@ -155,8 +148,7 @@ public class TierSortingRegistry
      */
     public static List<Tier> getTiersLowerThan(Tier tier)
     {
-        if (!isTierSorted(tier)) return List.of();
-        return sortedTiers.stream().takeWhile(t -> t != tier).toList();
+        return getRegistry().getAllBefore(tier);
     }
 
     // ===================== PRIVATE INTERNAL STUFFS BELOW THIS LINE =====================
@@ -182,36 +174,9 @@ public class TierSortingRegistry
         return true;
     }
 
-    private static void processTier(Tier tier, ResourceLocation name, List<Object> afters, List<Object> befores)
-    {
-        tiers.put(name, tier);
-        for(Object after : afters)
-        {
-            ResourceLocation other = getTierName(after);
-            edges.put(other, name);
-        }
-        for(Object before : befores)
-        {
-            ResourceLocation other = getTierName(before);
-            edges.put(name, other);
-        }
-    }
-
-    private static ResourceLocation getTierName(Object entry)
-    {
-        if (entry instanceof String s)
-            return new ResourceLocation(s);
-        if (entry instanceof ResourceLocation rl)
-            return rl;
-        if (entry instanceof Tier t)
-            return Objects.requireNonNull(getName(t), "Can't have sorting dependencies for tiers not registered in the TierSortingRegistry");
-        throw new IllegalStateException("Invalid object type passed into the tier dependencies " + entry.getClass());
-    }
-
     private static boolean hasCustomTiers = false;
-    private static final BiMap<ResourceLocation, Tier> tiers = HashBiMap.create();
-    private static final Multimap<ResourceLocation, ResourceLocation> edges = HashMultimap.create();
-    private static final Multimap<ResourceLocation, ResourceLocation> vanillaEdges = HashMultimap.create();
+    private static final SortedRegistry.Builder<Tier> registryBuilder = new SortedRegistry.Builder<>(Tier.class);
+    private static SortedRegistry<Tier> registry;
 
     static {
         var wood = new ResourceLocation("wood");
@@ -220,13 +185,12 @@ public class TierSortingRegistry
         var diamond = new ResourceLocation("diamond");
         var netherite = new ResourceLocation("netherite");
         var gold = new ResourceLocation("gold");
-        processTier(Tiers.WOOD, wood, List.of(), List.of());
-        processTier(Tiers.GOLD, gold, List.of(wood), List.of(stone));
-        processTier(Tiers.STONE, stone, List.of(wood), List.of(iron));
-        processTier(Tiers.IRON, iron, List.of(stone), List.of(diamond));
-        processTier(Tiers.DIAMOND, diamond, List.of(iron), List.of(netherite));
-        processTier(Tiers.NETHERITE, netherite, List.of(diamond), List.of());
-        vanillaEdges.putAll(edges);
+        registryBuilder.add(Tiers.WOOD, wood, List.of(), List.of());
+        registryBuilder.add(Tiers.GOLD, gold, List.of(wood), List.of(stone));
+        registryBuilder.add(Tiers.STONE, stone, List.of(wood), List.of(iron));
+        registryBuilder.add(Tiers.IRON, iron, List.of(stone), List.of(diamond));
+        registryBuilder.add(Tiers.DIAMOND, diamond, List.of(iron), List.of(netherite));
+        registryBuilder.add(Tiers.NETHERITE, netherite, List.of(diamond), List.of());
     }
 
     private static final List<Tier> sortedTiers = new ArrayList<>();
@@ -295,7 +259,7 @@ public class TierSortingRegistry
                             customOrder.add(tier);
                         }
 
-                        List<Tier> missingTiers = tiers.values().stream().filter(tier -> !customOrder.contains(tier)).toList();
+                        List<Tier> missingTiers = getRegistry().getElements().stream().filter(tier -> !customOrder.contains(tier)).toList();
                         if (missingTiers.size() > 0)
                             throw new IllegalStateException("Tiers missing from the ordered list: " + missingTiers.stream().map(tier -> Objects.toString(TierSortingRegistry.getName(tier))).collect(Collectors.joining(", ")));
 
@@ -313,22 +277,19 @@ public class TierSortingRegistry
         };
     }
 
-    @SuppressWarnings("UnstableApiUsage")
+    private static SortedRegistry<Tier> getRegistry()
+    {
+        if (registry == null) {
+            registry = registryBuilder.build();
+            setTierOrder(registry.getElements());
+        }
+        return registry;
+    }
+
     private static void recalculateItemTiers()
     {
-        final MutableGraph<Tier> graph = GraphBuilder.directed().nodeOrder(ElementOrder.<Tier>insertion()).build();
-
-        for(Tier tier : tiers.values())
-        {
-            graph.addNode(tier);
-        }
-        edges.forEach((key, value) -> {
-            if (tiers.containsKey(key) && tiers.containsKey(value))
-                graph.putEdge(tiers.get(key), tiers.get(value));
-        });
-        List<Tier> tierList = TopologicalSort.topologicalSort(graph, null);
-
-        setTierOrder(tierList);
+        registry = null;
+        getRegistry();
     }
 
     private static void setTierOrder(List<Tier> tierList)
