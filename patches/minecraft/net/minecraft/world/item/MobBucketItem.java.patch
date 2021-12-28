@@ -47,21 +47,18 @@
           CompoundTag compoundtag = p_151155_.m_41783_();
           if (compoundtag != null && compoundtag.m_128425_("BucketVariantTag", 3)) {
              int i = compoundtag.m_128451_("BucketVariantTag");
-@@ -80,6 +_,16 @@
-             p_151157_.add(mutablecomponent);
+@@ -81,5 +_,14 @@
           }
        }
--
+ 
 +   }
 +
 +   // Forge Start
-+   protected EntityType<?> getFishType()
-+   {
++   protected EntityType<?> getFishType() {
 +      return entityTypeSupplier.get();
 +   }
 +
-+   protected SoundEvent getEmptySound()
-+   {
++   protected SoundEvent getEmptySound() {
 +      return emptySoundSupplier.get();
     }
  }
