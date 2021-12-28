@@ -174,5 +174,7 @@ license="LGPL v2.1"
     modId="part_entity_test"
 [[mods]]
     modId="capabilities_test"
+[[mods]]
+    modId="layer_render_type_test"
 
 # ADD ABOVE THIS LINE
