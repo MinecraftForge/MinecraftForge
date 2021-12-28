@@ -36,26 +36,29 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 
 /**
- * Event for modifying multi-noise biome sources.
+ * <p>Event for modifying multi-noise biome sources.
  * This event is fired whenever a MultiNoiseBiomeSource is deserialized during dimension loading.
  * This occurs after datapacks and worldgen registries load, but before chunk generators are constructed
  * (and before the biome source itself is constructed).
- * Standard tag wrappers are not resolvable at this time.
+ * Standard tag wrappers are not resolvable at this time.</p>
  * 
- * Best practice for use of this event:
- * Additions during {@link EventPriority#HIGH}
- * Removals during {@link EventPriority#NORMAL}
- * Modifications during {@link EventPriority#LOW}
+ * <p>Best practice for use of this event:</p>
+ * <ul>
+ * <li>Additions during {@link EventPriority#HIGH}</li>
+ * <li>Removals during {@link EventPriority#NORMAL}</li>
+ * <li>Modifications during {@link EventPriority#LOW}</li>
+ * </ul>
  * 
- * Cancelling this event will prevent the biome source from being modified.
+ * <p>Cancelling this event will prevent the biome source from being modified.</p>
  * 
- * This event is fired on the {@link MinecraftForge.EVENT_BUS}.
+ * <p>This event is fired on the {@link MinecraftForge.EVENT_BUS}.</p>
  */
 @Cancelable
 public class MultiNoiseBiomeSourceLoadingEvent extends Event
 {
     private final List<Pair<ParameterPoint, Supplier<Biome>>> parameters;
-    private final @Nullable ResourceLocation name;
+    @Nullable
+    private final ResourceLocation name;
     private final RegistryAccess registries;
     
     public MultiNoiseBiomeSourceLoadingEvent(List<Pair<ParameterPoint, Supplier<Biome>>> parameters, ResourceLocation name, RegistryAccess registries)
@@ -63,6 +66,16 @@ public class MultiNoiseBiomeSourceLoadingEvent extends Event
         this.parameters = parameters;
         this.name = name;
         this.registries = registries;
+    }
+    
+    /**
+     * Convenience method for adding a single biome entry to the parameter list
+     * @param point Biome entry parameters
+     * @param biomeSupplier Biome supplier
+     */
+    public void addParameter(ParameterPoint point, Supplier<Biome> biomeSupplier)
+    {
+        this.getParameters().add(Pair.of(point, biomeSupplier));
     }
 
     /**
@@ -81,7 +94,8 @@ public class MultiNoiseBiomeSourceLoadingEvent extends Event
      * If this is not present, this indicates that a datapack has defined this biome source and has not specified a name.
      * @return Biome source name, if present.
      */
-    public @Nullable ResourceLocation getName()
+    @Nullable
+    public ResourceLocation getName()
     {
         return name;
     }
