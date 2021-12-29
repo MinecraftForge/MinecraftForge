@@ -84,12 +84,12 @@ public class ClientCommandHandler
         // Copies the server side commands into a temporary server side commands root node to be used later without the client commands
         RootCommandNode<SharedSuggestionProvider> serverCommandsCopy = new RootCommandNode<>();
         mergeCommandNode(newServerCommands.getRoot(), serverCommandsCopy, new IdentityHashMap<>(),
-                Minecraft.getInstance().getConnection().getSuggestionsProvider(), (suggestions) -> 0, (suggestions) -> null);
+                Minecraft.getInstance().getConnection().getSuggestionsProvider(), (context) -> 0, (suggestions) -> null);
 
         // Copies the client side commands into the server side commands to be used for suggestions
-        mergeCommandNode(commands.getRoot(), newServerCommands.getRoot(), new IdentityHashMap<>(), getSource(), (suggestions) -> 0, (client) -> {
+        mergeCommandNode(commands.getRoot(), newServerCommands.getRoot(), new IdentityHashMap<>(), getSource(), (context) -> 0, (suggestions) -> {
             SuggestionProvider<SharedSuggestionProvider> suggestionProvider = SuggestionProviders
-                    .safelySwap((SuggestionProvider<SharedSuggestionProvider>) (SuggestionProvider<?>) client);
+                    .safelySwap((SuggestionProvider<SharedSuggestionProvider>) (SuggestionProvider<?>) suggestions);
             if (suggestionProvider == SuggestionProviders.ASK_SERVER)
             {
                 suggestionProvider = (context, builder) -> {
@@ -109,8 +109,8 @@ public class ClientCommandHandler
 
         // Copies the server side commands into the client side commands so that they can be sent to the server as a chat message
         mergeCommandNode(serverCommandsCopy, commands.getRoot(), new IdentityHashMap<>(), Minecraft.getInstance().getConnection().getSuggestionsProvider(),
-                (source) -> {
-                    Minecraft.getInstance().player.chat((source.getInput().startsWith("/") ? "" : "/") + source.getInput());
+                (context) -> {
+                    Minecraft.getInstance().player.chat((context.getInput().startsWith("/") ? "" : "/") + context.getInput());
                     return 0;
                 }, (suggestions) -> null);
         return newServerCommands;
@@ -206,7 +206,7 @@ public class ClientCommandHandler
         if (sourceToResult.containsKey(sourceNode))
             return sourceToResult.get(sourceNode);
 
-        ArgumentBuilder<T, ?> resultBuilder = null;
+        ArgumentBuilder<T, ?> resultBuilder;
         if (sourceNode instanceof ArgumentCommandNode<?, ?>)
         {
             ArgumentCommandNode<S, ?> sourceArgument = (ArgumentCommandNode<S, ?>) sourceNode;
@@ -254,9 +254,9 @@ public class ClientCommandHandler
      * 
      * {@link net.minecraft.commands.Commands#performCommand(CommandSourceStack, String)} for reference
      * 
-     * @param currentParse
-     *            current state of the parser for the message
-     * @return false leaves the message to be sent to the server, true means it should be caught before {@link net.minecraft.client.gui.screen.ChatScreen#func_231161_c_(String)}
+     * @param sendMessage
+     *            the chat message
+     * @return false leaves the message to be sent to the server, true means it should be caught before {@link LocalPlayer#chat(String)}
      */
     public static boolean sendMessage(String sendMessage)
     {
@@ -305,7 +305,7 @@ public class ClientCommandHandler
             Component component = new TranslatableComponent("command.failed");
             component.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, message));
             Minecraft.getInstance().player.sendMessage(new TextComponent("").append(component).withStyle(ChatFormatting.RED), Util.NIL_UUID);
-            LOGGER.error("Error executing client command", generic);
+            LOGGER.error("Error executing client command \"{}\"", sendMessage, generic);
         }
         return true;
     }
