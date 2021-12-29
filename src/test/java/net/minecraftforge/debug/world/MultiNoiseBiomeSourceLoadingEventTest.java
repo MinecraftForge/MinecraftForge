@@ -201,10 +201,10 @@ public class MultiNoiseBiomeSourceLoadingEventTest
         // and the named test dimension has an extra nether biome
         if (Objects.equals(event.getName(), Preset.OVERWORLD.name))
         {
-            Biome end = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).get(Biomes.SMALL_END_ISLANDS);
+            Biome biome = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).get(Biomes.SMALL_END_ISLANDS);
             var parameters = event.getParameters();
             LOGGER.info("Adding end islands biome to overworld biome source with {} biomes", parameters.size());
-            parameters.add(Pair.of(new ParameterPoint(
+            event.addParameter(new ParameterPoint(
                 Parameter.span(-0.5F, 0.5F), // temperature
                 Parameter.span(0F, 0.5F), // humidity
                 Parameter.span(0.5F, 1F), // continentalness
@@ -212,14 +212,14 @@ public class MultiNoiseBiomeSourceLoadingEventTest
                 Parameter.span(0.5F, 1F), // depth
                 Parameter.span(0.5F, 1F), // weirdness
                 0L // offset
-                ), () -> end));
+                ), () -> biome);
         }
         else if (Objects.equals(event.getName(), Preset.NETHER.name))
         {
-            Biome end = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).get(Biomes.JUNGLE);
+            Biome biome = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).get(Biomes.JUNGLE);
             var parameters = event.getParameters();
             LOGGER.info("Adding jungle biome to nether biome source with {} biomes", parameters.size());
-            parameters.add(Pair.of(new ParameterPoint(
+            event.addParameter(new ParameterPoint(
                 Parameter.point(0.5F), // temperature
                 Parameter.point(0.5F), // humidity
                 Parameter.point(0.5F), // continentalness
@@ -227,14 +227,14 @@ public class MultiNoiseBiomeSourceLoadingEventTest
                 Parameter.point(0.5F), // depth
                 Parameter.point(0.5F), // weirdness
                 0L // offset
-                ), () -> end));
+                ), () -> biome);
         }
         else if (Objects.equals(event.getName(), NAMED_TEST))
         {
-            Biome end = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).get(Biomes.BASALT_DELTAS);
+            Biome biome = event.getRegistries().registryOrThrow(Registry.BIOME_REGISTRY).get(Biomes.BASALT_DELTAS);
             var parameters = event.getParameters();
             LOGGER.info("Adding basalt deltas biome to test biome source with {} biomes", parameters.size());
-            parameters.add(Pair.of(new ParameterPoint(
+            event.addParameter(new ParameterPoint(
                 Parameter.point(0.5F), // temperature
                 Parameter.point(0.5F), // humidity
                 Parameter.point(0.5F), // continentalness
@@ -242,7 +242,7 @@ public class MultiNoiseBiomeSourceLoadingEventTest
                 Parameter.point(0.5F), // depth
                 Parameter.point(0.5F), // weirdness
                 0L // offset
-                ), () -> end));
+                ), () -> biome);
         }
     }
     
