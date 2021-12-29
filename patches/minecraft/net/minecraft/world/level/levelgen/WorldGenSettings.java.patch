@@ -1,5 +1,75 @@
 --- a/net/minecraft/world/level/levelgen/WorldGenSettings.java
 +++ b/net/minecraft/world/level/levelgen/WorldGenSettings.java
+@@ -36,9 +_,9 @@
+ 
+ public class WorldGenSettings {
+    public static final Codec<WorldGenSettings> f_64600_ = RecordCodecBuilder.<WorldGenSettings>create((p_64626_) -> {
+-      return p_64626_.group(Codec.LONG.fieldOf("seed").stable().forGetter(WorldGenSettings::m_64619_), Codec.BOOL.fieldOf("generate_features").orElse(true).stable().forGetter(WorldGenSettings::m_64657_), Codec.BOOL.fieldOf("bonus_chest").orElse(false).stable().forGetter(WorldGenSettings::m_64660_), MappedRegistry.m_122747_(Registry.f_122820_, Lifecycle.stable(), LevelStem.f_63970_).xmap(LevelStem::m_63987_, Function.identity()).fieldOf("dimensions").forGetter(WorldGenSettings::m_64663_), Codec.STRING.optionalFieldOf("legacy_custom_options").stable().forGetter((p_158959_) -> {
++      return p_64626_.group(Codec.LONG.fieldOf("seed").stable().forGetter(WorldGenSettings::m_64619_), Codec.BOOL.fieldOf("generate_features").orElse(true).stable().forGetter(WorldGenSettings::m_64657_), Codec.BOOL.fieldOf("bonus_chest").orElse(false).stable().forGetter(WorldGenSettings::m_64660_), net.minecraftforge.common.ForgeHooks.tryAllDimensionsCodec(MappedRegistry.m_122747_(Registry.f_122820_, Lifecycle.stable(), LevelStem.f_63970_).xmap(LevelStem::m_63987_, Function.identity())).fieldOf("dimensions").forGetter(WorldGenSettings::m_64663_), Codec.STRING.optionalFieldOf("legacy_custom_options").stable().forGetter((p_158959_) -> {
+          return p_158959_.f_64606_;
+-      })).apply(p_64626_, p_64626_.stable(WorldGenSettings::new));
++      }), net.minecraftforge.common.ForgeHooks.ALL_DIMENSIONS_CODEC.forGetter(wgs -> wgs.forgeAllDimensionsTag)).apply(p_64626_, p_64626_.stable(WorldGenSettings::new));
+    }).comapFlatMap(WorldGenSettings::m_64674_, Function.identity());
+    private static final Logger f_64601_ = LogManager.getLogger();
+    private final long f_64602_;
+@@ -46,6 +_,7 @@
+    private final boolean f_64604_;
+    private final MappedRegistry<LevelStem> f_64605_;
+    private final Optional<String> f_64606_;
++   private final net.minecraft.nbt.CompoundTag forgeAllDimensionsTag;
+ 
+    private DataResult<WorldGenSettings> m_64674_() {
+       LevelStem levelstem = this.f_64605_.m_6246_(LevelStem.f_63971_);
+@@ -61,7 +_,10 @@
+    }
+ 
+    public WorldGenSettings(long p_64609_, boolean p_64610_, boolean p_64611_, MappedRegistry<LevelStem> p_64612_) {
+-      this(p_64609_, p_64610_, p_64611_, p_64612_, Optional.empty());
++      this(p_64609_, p_64610_, p_64611_, p_64612_, new net.minecraft.nbt.CompoundTag());
++   }
++   public WorldGenSettings(long p_64609_, boolean p_64610_, boolean p_64611_, MappedRegistry<LevelStem> p_64612_, net.minecraft.nbt.CompoundTag forgeAllDimensionsTag) {
++      this(p_64609_, p_64610_, p_64611_, p_64612_, Optional.empty(), forgeAllDimensionsTag);
+       LevelStem levelstem = p_64612_.m_6246_(LevelStem.f_63971_);
+       if (levelstem == null) {
+          throw new IllegalStateException("Overworld settings missing");
+@@ -69,10 +_,14 @@
+    }
+ 
+    private WorldGenSettings(long p_64614_, boolean p_64615_, boolean p_64616_, MappedRegistry<LevelStem> p_64617_, Optional<String> p_64618_) {
+-      this.f_64602_ = p_64614_;
+-      this.f_64603_ = p_64615_;
+-      this.f_64604_ = p_64616_;
+-      this.f_64605_ = p_64617_;
++      this(p_64614_, p_64615_, p_64616_, p_64617_, p_64618_, new net.minecraft.nbt.CompoundTag());
++   }
++   private WorldGenSettings(long p_64609_, boolean p_64610_, boolean p_64611_, MappedRegistry<LevelStem> p_64612_, Optional<String> p_64618_, net.minecraft.nbt.CompoundTag forgeAllDimensionsTag) {
++      this.forgeAllDimensionsTag = forgeAllDimensionsTag;
++      this.f_64602_ = p_64609_;
++      this.f_64603_ = p_64610_;
++      this.f_64604_ = p_64611_;
++      this.f_64605_ = p_64612_;
+       this.f_64606_ = p_64618_;
+    }
+ 
+@@ -176,15 +_,15 @@
+    }
+ 
+    public WorldGenSettings m_64671_() {
+-      return new WorldGenSettings(this.f_64602_, this.f_64603_, true, this.f_64605_, this.f_64606_);
++      return new WorldGenSettings(this.f_64602_, this.f_64603_, true, this.f_64605_, this.f_64606_, this.forgeAllDimensionsTag);
+    }
+ 
+    public WorldGenSettings m_64672_() {
+-      return new WorldGenSettings(this.f_64602_, !this.f_64603_, this.f_64604_, this.f_64605_);
++      return new WorldGenSettings(this.f_64602_, !this.f_64603_, this.f_64604_, this.f_64605_, this.forgeAllDimensionsTag);
+    }
+ 
+    public WorldGenSettings m_64673_() {
+-      return new WorldGenSettings(this.f_64602_, this.f_64603_, !this.f_64604_, this.f_64605_);
++      return new WorldGenSettings(this.f_64602_, this.f_64603_, !this.f_64604_, this.f_64605_, this.forgeAllDimensionsTag);
+    }
+ 
+    public static WorldGenSettings m_64647_(RegistryAccess p_64648_, Properties p_64649_) {
 @@ -198,7 +_,7 @@
        String s3 = (String)p_64649_.get("level-type");
        String s4 = Optional.ofNullable(s3).map((p_190047_) -> {
@@ -18,3 +88,15 @@
        switch(s4) {
        case "flat":
           JsonObject jsonobject = !s.isEmpty() ? GsonHelper.m_13864_(s) : new JsonObject();
+@@ -250,9 +_,9 @@
+ 
+       WorldGenSettings worldgensettings;
+       if (this.m_64668_()) {
+-         worldgensettings = new WorldGenSettings(i, false, false, mappedregistry);
++         worldgensettings = new WorldGenSettings(i, false, false, mappedregistry, this.forgeAllDimensionsTag);
+       } else {
+-         worldgensettings = new WorldGenSettings(i, this.m_64657_(), this.m_64660_() && !p_64655_, mappedregistry);
++         worldgensettings = new WorldGenSettings(i, this.m_64657_(), this.m_64660_() && !p_64655_, mappedregistry, this.forgeAllDimensionsTag);
+       }
+ 
+       return worldgensettings;

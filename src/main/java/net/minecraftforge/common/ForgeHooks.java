@@ -33,6 +33,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
@@ -44,7 +45,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.Lifecycle;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.MapLike;
+import com.mojang.serialization.RecordBuilder;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import javax.annotation.Nonnull;
@@ -52,6 +58,7 @@ import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -1241,4 +1248,114 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 
+    private static final String ALL_DIMS_KEY = "all_dimensions_forge";
+    private static final String CODEC_DIM_KEY = "dimensions"; // key for the dim reg in WorldGenSettings
+
+    /**
+     * Codec that tries to decode the registry of all dimensions.
+     */
+    public static MapCodec<MappedRegistry<LevelStem>> tryAllDimensionsCodec(Codec<MappedRegistry<LevelStem>> base)
+    {
+        return new MapCodec<>()
+        {
+            @Override
+            public <T> DataResult<MappedRegistry<LevelStem>> decode(DynamicOps<T> ops, MapLike<T> input)
+            {
+                return base.parse(ops, input.get(ALL_DIMS_KEY) != null ? input.get(ALL_DIMS_KEY) : input.get(CODEC_DIM_KEY));
+            }
+
+            @Override
+            public <T> RecordBuilder<T> encode(MappedRegistry<LevelStem> input, DynamicOps<T> ops, RecordBuilder<T> prefix)
+            {
+                return prefix.add(CODEC_DIM_KEY, base.encodeStart(ops, input));
+            }
+
+            @Override
+            public <T> Stream<T> keys(DynamicOps<T> ops)
+            {
+                return Stream.of(ops.createString(ALL_DIMS_KEY), ops.createString(CODEC_DIM_KEY));
+            }
+        };
+    }
+
+    /**
+     * Decodes/Encodes all dimensions, without verifying if they work (e.g. the necessary data objects are not present)
+     * The DataResults returned all specify a stable lifecycle, to prevent "vanilla" worlds from being experimental.
+     */
+    public static final MapCodec<CompoundTag> ALL_DIMENSIONS_CODEC = new MapCodec<>()
+    {
+        @Override
+        public <T> DataResult<CompoundTag> decode(DynamicOps<T> ops, MapLike<T> input)
+        {
+            T allDims = input.get(ALL_DIMS_KEY);
+            if (allDims != null)
+            {
+                net.minecraft.nbt.Tag allNbt = ops.convertTo(NbtOps.INSTANCE, allDims);
+                if (allNbt instanceof CompoundTag)
+                    return DataResult.success((CompoundTag)allNbt, Lifecycle.stable());
+            }
+            else // will happen when "porting" worlds to this version.
+            {
+                T curr = input.get(CODEC_DIM_KEY);
+                if (curr == null)
+                    return DataResult.error("Could not find \"dimensions\" object while decoding world gen settings, impossible!", new CompoundTag());
+
+                net.minecraft.nbt.Tag nbt = ops.convertTo(NbtOps.INSTANCE, curr);
+                if (nbt instanceof CompoundTag)
+                    return DataResult.success((CompoundTag) nbt, Lifecycle.stable());
+            }
+            return DataResult.error("tag: " + ALL_DIMS_KEY + " is not a compound.", new CompoundTag());
+        }
+
+        /**
+         * When encoding, merge the loaded dimensions with the ones in the "all" tag,
+         * This is to be aware of dimensions that are added in a datapack after world creation.
+         *
+         * This works because the encoding of the dimension registry is done before and is available in the
+         * prefix. This might change between versions if any keys are added, as DFU processes the decoding in smaller batches,
+         * in which case a reordering of the keys might be needed. It would require a moderate patch, but will maintain
+         * vanilla compatibility.
+         */
+        @Override
+        public <T> RecordBuilder<T> encode(CompoundTag input, DynamicOps<T> ops, RecordBuilder<T> prefix)
+        {
+            CompoundTag nbt = prefix.build(ops.empty()).flatMap(ops::getMap).flatMap(map ->
+            {
+                //Building the map is the only way to access its contents, but it nukes itself so refill it.
+                map.entries().forEach(p -> prefix.add(p.getFirst(), p.getSecond()));
+
+                T currDims = map.get(CODEC_DIM_KEY);
+
+                if (currDims == null)
+                    return DataResult.error("Could not find \"dimensions\" object while decoding world gen settings, impossible!", new CompoundTag());
+
+                net.minecraft.nbt.Tag currNbt = ops.convertTo(NbtOps.INSTANCE, currDims);
+                if (!(currNbt instanceof CompoundTag currMap))
+                    return DataResult.error("Could not find \"dimensions\" object while decoding world gen settings, impossible!", new CompoundTag());
+
+                if (input.getAllKeys().isEmpty()) // Empty on world load.
+                    return DataResult.success(currMap, Lifecycle.stable());
+
+                if (input.getAllKeys().containsAll(currMap.getAllKeys()))
+                    return DataResult.success(input, Lifecycle.stable());
+
+                CompoundTag allDims = input.copy();
+                for (String dim : currMap.getAllKeys())
+                {
+                    if (!allDims.getAllKeys().contains(dim))
+                        allDims.put(dim, currMap.get(dim));
+                }
+
+                return DataResult.success(allDims, Lifecycle.stable());
+            }).resultOrPartial(LOGGER::warn).orElse(new CompoundTag());
+
+            return prefix.add(ALL_DIMS_KEY, NbtOps.INSTANCE.convertTo(ops, nbt));
+        }
+
+        @Override
+        public <T> Stream<T> keys(DynamicOps<T> ops)
+        {
+            return Stream.of(ops.createString(ALL_DIMS_KEY));
+        }
+    };
 }
