@@ -41,7 +41,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.network.chat.ClickEvent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
@@ -260,14 +259,14 @@ public class ClientCommandHandler
      */
     public static boolean sendMessage(String sendMessage)
     {
-        ClientCommandSourceStack source = getSource();
-
         StringReader reader = new StringReader(sendMessage);
 
         if (!reader.canRead() || reader.read() != '/')
         {
             return false;
         }
+
+        ClientCommandSourceStack source = getSource();
 
         try
         {
@@ -284,8 +283,10 @@ public class ClientCommandHandler
             if (syntax.getInput() != null && syntax.getCursor() >= 0)
             {
                 int position = Math.min(syntax.getInput().length(), syntax.getCursor());
-                MutableComponent details = new TextComponent("").withStyle(ChatFormatting.GRAY);
-                details.getStyle().withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, reader.getString()));
+                MutableComponent details = new TextComponent("")
+                        .withStyle(ChatFormatting.GRAY)
+                        .withStyle((style) -> style
+                                .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, reader.getString())));
                 if (position > 10)
                 {
                     details.append("...");
@@ -302,9 +303,11 @@ public class ClientCommandHandler
         catch (Exception generic)// Probably thrown by the command
         {
             TextComponent message = new TextComponent(generic.getMessage() == null ? generic.getClass().getName() : generic.getMessage());
-            Component component = new TranslatableComponent("command.failed");
-            component.getStyle().withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, message));
-            Minecraft.getInstance().player.sendMessage(new TextComponent("").append(component).withStyle(ChatFormatting.RED), Util.NIL_UUID);
+            Minecraft.getInstance().player.sendMessage(new TranslatableComponent("command.failed")
+                    .withStyle(ChatFormatting.RED)
+                    .withStyle((style) -> style
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, message))),
+                    Util.NIL_UUID);
             LOGGER.error("Error executing client command \"{}\"", sendMessage, generic);
         }
         return true;
