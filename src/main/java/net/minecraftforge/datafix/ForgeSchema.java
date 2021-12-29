@@ -31,11 +31,7 @@ import com.mojang.datafixers.types.templates.RecursivePoint;
 import com.mojang.datafixers.types.templates.TaggedChoice;
 import com.mojang.datafixers.types.templates.TypeTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -49,8 +45,8 @@ class ForgeSchema extends Schema
     //Constructor invocation order and the what not!
     private Map<String, Supplier<TypeTemplate>> TYPE_TEMPLATES = Maps.newConcurrentMap();
     private Map<String, Type<?>>                TYPES          = Maps.newConcurrentMap();
-    private Map<String, Integer>                RECURSIVE_TYPES = Maps.newConcurrentMap();
 
+    private final Map<String, Integer>                RECURSIVE_TYPES = Maps.newConcurrentMap();
     private final Map<String, Supplier<TypeTemplate>> MODDED_ENTITY_TYPES = Maps.newConcurrentMap();
     private final Map<String, Supplier<TypeTemplate>> MODDED_BLOCK_ENTITY_TYPES = Maps.newConcurrentMap();
 
@@ -101,7 +97,7 @@ class ForgeSchema extends Schema
         if (availableTypeTemplate.isEmpty())
         {
             //Check for its existence or nuke.
-            return Maps.newHashMap();
+            return Maps.newConcurrentMap();
         }
         //Build a type family for our recursive types.
         final TypeTemplate choice = availableTypeTemplate.get();
@@ -171,29 +167,6 @@ class ForgeSchema extends Schema
             return DSL.id(id);
         }
         return getTemplate(name);
-    }
-
-    @Override
-    protected TypeTemplate getTemplate(final String name)
-    {
-        return DSL.named(name, resolveTemplate(name));
-    }
-
-    @Override
-    public Type<?> getChoiceType(final DSL.TypeReference type, final String choiceName)
-    {
-        final TaggedChoice.TaggedChoiceType<?> choiceType = findChoiceType(type);
-        if (!choiceType.types().containsKey(choiceName))
-        {
-            throw new IllegalArgumentException("Data fixer not registered for: " + choiceName + " in " + type.typeName());
-        }
-        return choiceType.types().get(choiceName);
-    }
-
-    @Override
-    public TaggedChoice.TaggedChoiceType<?> findChoiceType(final DSL.TypeReference type)
-    {
-        return getType(type).findChoiceType("id", -1).orElseThrow(() -> new IllegalArgumentException("Not a choice type"));
     }
 
     @Override
@@ -269,8 +242,12 @@ class ForgeSchema extends Schema
     @Override
     public void registerType(final boolean recursive, final DSL.TypeReference type, final Supplier<TypeTemplate> template)
     {
+        //This is invoked from the super constructor, so our field init code has not run yet.
+        //Set it to a none null value, so the super type can do its initial construction.
         if (TYPE_TEMPLATES == null)
+        {
             TYPE_TEMPLATES = Maps.newHashMap();
+        }
 
         TYPE_TEMPLATES.put(type.typeName(), template);
         if (recursive && !RECURSIVE_TYPES.containsKey(type.typeName()))
@@ -282,7 +259,7 @@ class ForgeSchema extends Schema
     /**
      * Resets the schema so that the type map can be properly rebuild.
      */
-    public void resetSchema()
+    void resetSchema()
     {
         this.TYPE_TEMPLATES.clear();
         this.TYPES.clear();
@@ -298,13 +275,13 @@ class ForgeSchema extends Schema
      * @param modEntityTypes The mod entity types to inject.
      * @param modBlockEntityTypes The block entity types to inject.
      */
-    public void rebuildSchema(
+    void rebuildSchema(
       final Map<String, Supplier<TypeTemplate>> modEntityTypes,
       final Map<String, Supplier<TypeTemplate>> modBlockEntityTypes
     )
     {
         //First grab the parent's additional modded types, if the parent is compatible.
-        if (this.parent != null && this.parent instanceof ForgeSchema parentForgeSchema)
+        if (this.parent instanceof ForgeSchema parentForgeSchema)
         {
             //Compatible parent found, add its modded types.
             this.MODDED_ENTITY_TYPES.putAll(parentForgeSchema.MODDED_ENTITY_TYPES);
@@ -315,14 +292,10 @@ class ForgeSchema extends Schema
         this.MODDED_ENTITY_TYPES.putAll(modEntityTypes);
         this.MODDED_BLOCK_ENTITY_TYPES.putAll(modBlockEntityTypes);
 
-        //Find all types which the event marked as removed.
-        final Set<String> removedEntityTypes = this.MODDED_ENTITY_TYPES.keySet().stream().filter(key -> this.MODDED_ENTITY_TYPES.get(key) == null).collect(Collectors.toSet());
-        final Set<String> removedBlockEntityTypes = this.MODDED_BLOCK_ENTITY_TYPES.keySet().stream().filter(key -> this.MODDED_BLOCK_ENTITY_TYPES.get(key) == null).collect(Collectors.toSet());
+        //Remove those types from the map, which the event marked for removal.
+        this.MODDED_ENTITY_TYPES.values().removeIf(Objects::isNull);
+        this.MODDED_BLOCK_ENTITY_TYPES.values().removeIf(Objects::isNull);
 
-        //And remove those from the type maps.
-        removedEntityTypes.forEach(this.MODDED_ENTITY_TYPES::remove);
-        removedBlockEntityTypes.forEach(this.MODDED_BLOCK_ENTITY_TYPES::remove);
-        
         //Grab the vanilla entities.
         final Map<String, Supplier<TypeTemplate>> entityTypes = registerEntities(this);
         final Map<String, Supplier<TypeTemplate>> blockEntityTypes = registerBlockEntities(this);

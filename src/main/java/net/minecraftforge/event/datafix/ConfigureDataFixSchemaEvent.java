@@ -40,9 +40,10 @@ import java.util.function.Supplier;
  * If used to register a new entity or block entity to a particular version,
  * then this also will need to be registered to all newer versions to persist properly!
  * As opposed to vanilla which automatically transfers the entities and block entities from older
- * schemas to newer ones, this event does not do that and the modder is on his own to implement this properly.
+ * schemas to newer ones, this event does not do that and the modder is on their own to implement this properly.
  *
- * We suggest instead of checking for version equality to check for a greater or equal version.
+ * We suggest instead of checking for version equality to check for a greater or equal version, and to unregister (or override with a newer version)
+ * when the type changes again in a newer version.
  */
 public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
 {
@@ -184,7 +185,7 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
 
     /**
      * An unmodifiable map of all registered additional modded block entity types.
-     * A key maybe mapped to a null value, if it is supposed to be removed from the schema and its descendant versions, overriding the
+     * Keys may be mapped to a null value if they are supposed to be removed from the schema and its descendant versions, overriding the
      * type specification added in a parent version.
      *
      * @return The already registered additional modded block entity types.
@@ -196,7 +197,7 @@ public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
 
     /**
      * An unmodifiable map of all registered additional modded entity types.
-     * A key maybe mapped to a null value, if it is supposed to be removed from the schema and its descendant versions, overriding the
+     * Keys may be mapped to a null value if they are supposed to be removed from the schema and its descendant versions, overriding the
      * type specification added in a parent version.
      *
      * @return The already registered additional modded entity types.
