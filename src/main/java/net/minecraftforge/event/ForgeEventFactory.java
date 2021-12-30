@@ -429,9 +429,9 @@ public class ForgeEventFactory
         return event.getCanUpdate();
     }
 
-    public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch)
+    public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch, World level, double x, double y, double z)
     {
-        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, category, volume, pitch);
+        PlaySoundAtEntityEvent event = new PlaySoundAtEntityEvent(entity, name, category, volume, pitch, level, x, y, z);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }

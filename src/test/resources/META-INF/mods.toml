@@ -148,5 +148,7 @@ license="LGPL v2.1"
     modId="full_pots_accessor_demo"
 [[mods]]
     modId="forge_spawnegg_test"
+[[mods]]
+    modId="play_sound_at_entity_test"
 
 # ADD ABOVE THIS LINE

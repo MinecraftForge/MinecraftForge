@@ -38,6 +38,10 @@ import net.minecraft.util.SoundEvent;
  * {@link #pitch} contains the pitch at which the sound is to be played originally.<br>
  * {@link #newVolume} contains the volume at which the sound is actually played.<br>
  * {@link #newPitch} contains the pitch at which the sound is actually played.<br>
+ * {@link #level} contains the world in which the sound is to be played.<br>
+ * {@link #x} contains the x coordinate at which the sound is to be played.<br>
+ * {@link #y} contains the y coordinate at which the sound is to be played.<br>
+ * {@link #z} contains the x coordinate at which the sound is to be played.<br>
  * Changing the {@link #name} field will cause the sound of this name to be played instead of the originally intended sound.<br>
  * <br>
  * This event is {@link Cancelable}.<br>
@@ -56,8 +60,12 @@ public class PlaySoundAtEntityEvent extends EntityEvent
     private final float pitch;
     private float newVolume;
     private float newPitch;
+    private final World level;
+    private final double x;
+    private final double y;
+    private final double z;
 
-    public PlaySoundAtEntityEvent(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch)
+    public PlaySoundAtEntityEvent(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch, World level, double x, double y, double z)
     {
         super(entity);
         this.name = name;
@@ -66,6 +74,10 @@ public class PlaySoundAtEntityEvent extends EntityEvent
         this.pitch = pitch;
         this.newVolume = volume;
         this.newPitch = pitch;
+        this.level = level;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     public SoundEvent getSound() { return this.name; }
@@ -74,8 +86,12 @@ public class PlaySoundAtEntityEvent extends EntityEvent
     public float getDefaultPitch() { return this.pitch; }
     public float getVolume() { return this.newVolume; }
     public float getPitch() { return this.newPitch; }
+    public World getLevel() { return this.level; }
+    public double getX() { return this.x; }
+    public double getY() { return this.y; }
+    public double getZ() { return this.z; }
+    public void setVolume(float value) { this.newVolume = value; }
     public void setSound(SoundEvent value) { this.name = value; }
     public void setCategory(SoundCategory category) { this.category = category; }
-    public void setVolume(float value) { this.newVolume = value; }
     public void setPitch(float value) { this.newPitch = value; }
 }
