@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 @Mod("play_sound_at_entity_test")
 public class PlaySoundAtEntityEventTest {
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     private static final Logger LOGGER = LogManager.getLogger("Sound Event Test Test");
     public PlaySoundAtEntityEventTest() {
         if (ENABLED) {
