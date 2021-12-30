@@ -91,7 +91,7 @@ public class PlaySoundAtEntityEvent extends EntityEvent
     public double getY() { return this.y; }
     public double getZ() { return this.z; }
     public void setSound(SoundEvent value) { this.name = value; }
-    public void setVolume(float value) { this.newVolume = value; }
     public void setCategory(SoundCategory category) { this.category = category; }
+    public void setVolume(float value) { this.newVolume = value; }
     public void setPitch(float value) { this.newPitch = value; }
 }
