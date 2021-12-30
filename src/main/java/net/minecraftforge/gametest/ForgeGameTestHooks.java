@@ -48,7 +48,8 @@ public class ForgeGameTestHooks
             Set<Method> gameTestMethods = new HashSet<>();
             RegisterGameTestsEvent event = new RegisterGameTestsEvent(gameTestMethods);
             ModLoader.get().postEvent(event);
-            for (Method gameTestMethod : gameTestMethods) {
+            for (Method gameTestMethod : gameTestMethods)
+            {
                 GameTestRegistry.register(gameTestMethod, enabledNamespaces);
             }
         }
