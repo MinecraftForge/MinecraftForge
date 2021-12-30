@@ -383,6 +383,7 @@ def sharedFmlonlyForge = { Project prj ->
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
                 property 'nativesDirectory', '{natives}'
+                property 'forge.enablegametest', 'true'
 
                 args '--launchTarget', "${launchPrefix}clientuserdev"
                 args '--version', 'MOD_DEV'
@@ -393,6 +394,8 @@ def sharedFmlonlyForge = { Project prj ->
             server {
                 environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
+
+                property 'forge.enablegametest', 'true'
 
                 args '--launchTarget', "${launchPrefix}serveruserdev"
             }
