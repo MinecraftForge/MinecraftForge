@@ -23,6 +23,8 @@ import net.minecraft.SharedConstants;
 import net.minecraft.gametest.framework.GameTestRegistry;
 import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.ModLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -30,6 +32,8 @@ import java.util.Set;
 
 public class ForgeGameTestHooks
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public static boolean isGametestEnabled()
     {
         return SharedConstants.IS_RUNNING_IN_IDE || Boolean.getBoolean("forge.enablegametest");
@@ -40,6 +44,7 @@ public class ForgeGameTestHooks
     {
         if (isGametestEnabled())
         {
+            LOGGER.info("Enabled Gametest Namespaces: {}", enabledNamespaces);
             Set<Method> gameTestMethods = new HashSet<>();
             RegisterGameTestsEvent event = new RegisterGameTestsEvent(gameTestMethods);
             ModLoader.get().postEvent(event);
