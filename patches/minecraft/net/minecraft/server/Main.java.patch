@@ -6,8 +6,8 @@
        OptionSpec<String> optionspec14 = optionparser.nonOptions();
 +      optionparser.accepts("allowUpdates").withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.TRUE); // Forge: allow mod updates to proceed
 +      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
-+      OptionSpec<net.minecraft.core.BlockPos> spawnPosOpt;
-+      OptionSpec<String> enableNamespaceOpt;
++      final OptionSpec<net.minecraft.core.BlockPos> spawnPosOpt;
++      final OptionSpec<String> enableNamespaceOpt;
 +      boolean gametestEnabled = net.minecraftforge.gametest.ForgeGameTestHooks.isGametestEnabled();
 +      if (gametestEnabled) {
 +         spawnPosOpt = optionparser.accepts("spawnPos").withRequiredArg().withValuesConvertedBy(new net.minecraftforge.gametest.BlockPosValueConverter()).defaultsTo(new net.minecraft.core.BlockPos(0, 60, 0));
