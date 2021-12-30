@@ -25,6 +25,7 @@ import net.minecraftforge.event.RegisterGameTestsEvent;
 import net.minecraftforge.fml.ModLoader;
 
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Set;
 
 public class ForgeGameTestHooks
@@ -39,10 +40,11 @@ public class ForgeGameTestHooks
     {
         if (isGametestEnabled())
         {
-            RegisterGameTestsEvent event = new RegisterGameTestsEvent(enabledNamespaces);
+            Set<Method> gameTestMethods = new HashSet<>();
+            RegisterGameTestsEvent event = new RegisterGameTestsEvent(gameTestMethods);
             ModLoader.get().postEvent(event);
-            for (Method gameTestMethod : event.getGameTestMethods()) {
-                GameTestRegistry.register(gameTestMethod, event.getEnabledNamespaces());
+            for (Method gameTestMethod : gameTestMethods) {
+                GameTestRegistry.register(gameTestMethod, enabledNamespaces);
             }
         }
     }

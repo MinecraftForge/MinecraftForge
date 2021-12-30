@@ -21,15 +21,12 @@ package net.minecraftforge.event;
 
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestGenerator;
-import net.minecraft.gametest.framework.GameTestServer;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
 import net.minecraftforge.gametest.ForgeGameTestHooks;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -41,43 +38,17 @@ import java.util.Set;
  */
 public class RegisterGameTestsEvent extends Event implements IModBusEvent
 {
-    private final Set<String> enabledNamespaces;
     private final Set<Method> gameTestMethods;
-    private final Set<Method> gameTestMethodsView;
 
-    public RegisterGameTestsEvent(Set<String> enabledNamespaces)
+    public RegisterGameTestsEvent(Set<Method> gameTestMethods)
     {
-        this.enabledNamespaces = new HashSet<>(enabledNamespaces);
-        this.gameTestMethods = new HashSet<>();
-        this.gameTestMethodsView = Collections.unmodifiableSet(this.gameTestMethods);
-    }
-
-    /**
-     * Returns the mutable set of enabled namespaces.
-     * If a game test's template does not have a namespace inside this set, it will not be registered.
-     * An empty set means all namespaces are enabled.
-     * By default, this can only be non-empty when running through {@link GameTestServer}.
-     *
-     * @return the mutable set of enabled namespaces
-     */
-    public Set<String> getEnabledNamespaces()
-    {
-        return enabledNamespaces;
-    }
-
-    /**
-     * Returns an immutable view of all registered gametest methods.
-     *
-     * @return an immutable view of all registered gametest methods
-     */
-    public Set<Method> getGameTestMethods() {
-        return this.gameTestMethodsView;
+        this.gameTestMethods = gameTestMethods;
     }
 
     /**
      * Registers an entire class to the game test registry.
      * All methods annotated with {@link GameTest} or {@link GameTestGenerator} will be registered.
-     * If {@link #getEnabledNamespaces()} is non-empty,
+     * If the set of enabled namespaces is non-empty,
      * a method will only be registered if its {@link GameTest#templateNamespace() template namespace} is in an enabled namespace.
      *
      * @param testClass the test class to register to the game test registry
@@ -90,7 +61,7 @@ public class RegisterGameTestsEvent extends Event implements IModBusEvent
     /**
      * Registers a single method to the game test registry.
      * The method will only be registered if it is annotated with {@link GameTest} or {@link GameTestGenerator}.
-     * If {@link #getEnabledNamespaces()} is non-empty,
+     * If the set of enabled namespaces is non-empty,
      * the method will only be registered if its {@link GameTest#templateNamespace() template namespace} is an enabled namespace.
      *
      * @param testMethod the test method to register to the game test registry
