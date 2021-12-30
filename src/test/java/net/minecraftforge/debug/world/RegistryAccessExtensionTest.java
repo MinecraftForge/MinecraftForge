@@ -22,9 +22,9 @@ package net.minecraftforge.debug.world;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraftforge.common.MinecraftForge;
@@ -33,6 +33,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
@@ -45,34 +46,58 @@ import java.util.function.Supplier;
 public class RegistryAccessExtensionTest
 {
     public static final String MODID = "registry_access_extension_test";
-    public static final Logger LOGGER = LogManager.getLogger(MODID);
 
-    public static final ResourceLocation TEST_A_NAME = new ResourceLocation(MODID, "worldgen/test_a");
-    public static final ResourceLocation TEST_B_NAME = new ResourceLocation(MODID, "worldgen/test_b");
-    public static final RegistryAccessExtension<TestA> TEST_A = new RegistryAccessExtension<>(TEST_A_NAME, TestA.class, TestA.DIRECT_CODEC);
-    public static final RegistryAccessExtension<TestB> TEST_B = new RegistryAccessExtension<>(TEST_B_NAME, TestB.class, TestB.DIRECT_CODEC);
+    private static final Logger LOGGER = LogManager.getLogger(MODID);
+
+    private static final DeferredRegister<TestA> TEST_A_REGISTER = RegistryAccessExtension.createRegister(TestA.class, TestA.REGISTRY);
+    private static final DeferredRegister<TestB> TEST_B_REGISTER = RegistryAccessExtension.createRegister(TestB.class, TestB.REGISTRY);
+
+    private static final Supplier<TestA> BUILTIN_A = TEST_A_REGISTER.register("builtin_a", RegistryAccessExtensionTest::createBuiltinA);
+    private static final Supplier<TestA> BUILTIN_A_OVERRIDDEN = TEST_A_REGISTER.register("builtin_a_overridden", RegistryAccessExtensionTest::createBuiltinA);
+    private static final Supplier<TestB> BUILTIN_B = TEST_B_REGISTER.register("builtin_b", RegistryAccessExtensionTest::createBuiltinB);
 
     public RegistryAccessExtensionTest()
     {
+        MinecraftForge.EVENT_BUS.addListener(this::onServerAboutToStart);
+
         var modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        TEST_A_REGISTER.register(modBus);
+        TEST_B_REGISTER.register(modBus);
+
         modBus.addGenericListener(RegistryAccessExtension.class, this::registerExtension);
-
-        TEST_A.getRegister().register(modBus);
-        TEST_B.getRegister().register(modBus);
-
-        TEST_A.getRegister().register("test_a_builtin", builtinASupplier());
-        TEST_A.getRegister().register("test_a_builtin_overridden", builtinASupplier());
-
-        MinecraftForge.EVENT_BUS.addListener(this::onServerStart);
     }
 
-    private void onServerStart(ServerAboutToStartEvent event)
+    private void onServerAboutToStart(ServerAboutToStartEvent event)
     {
         var registries = event.getServer().registryAccess();
+        printTestRegistries(registries);
+    }
 
+    private void registerExtension(RegistryEvent.Register<RegistryAccessExtension<?>> event)
+    {
+        event.getRegistry().register(new RegistryAccessExtension<>(TestA.REGISTRY, TestA.DIRECT_CODEC));
+        event.getRegistry().register(new RegistryAccessExtension<>(TestB.REGISTRY, TestB.DIRECT_CODEC));
+    }
+
+    private static TestA createBuiltinA()
+    {
+        return new TestA(
+                "This is the default string value",
+                12345,
+                () -> ForgeRegistries.BIOMES.getValue(Biomes.PLAINS.location())
+        );
+    }
+
+    private static TestB createBuiltinB()
+    {
+        return new TestB(BUILTIN_A, List.of());
+    }
+
+    private static void printTestRegistries(RegistryAccess registries)
+    {
         var biomeRegistry = registries.registryOrThrow(Registry.BIOME_REGISTRY);
-        var testARegistry = registries.ownedRegistryOrThrow(TEST_A.getRegistryKey());
-        var testBRegistry = registries.ownedRegistryOrThrow(TEST_B.getRegistryKey());
+        var testARegistry = registries.ownedRegistryOrThrow(TestA.REGISTRY);
+        var testBRegistry = registries.ownedRegistryOrThrow(TestB.REGISTRY);
 
         LOGGER.info("RegistryAccessExtension TestA:");
         for (var entry : testARegistry.entrySet())
@@ -105,32 +130,18 @@ public class RegistryAccessExtensionTest
         }
     }
 
-    private void registerExtension(RegistryEvent.Register<RegistryAccessExtension<?>> event)
-    {
-        event.getRegistry().register(TEST_A);
-        event.getRegistry().register(TEST_B);
-    }
-
-    private static Supplier<TestA> builtinASupplier()
-    {
-        return () -> new TestA(
-                "This is the default string value",
-                12345,
-                () -> ForgeRegistries.BIOMES.getValue(Biomes.PLAINS.location())
-        );
-    }
-
     public static class TestA extends ForgeRegistryEntry<TestA>
     {
+        public static final ResourceKey<Registry<TestA>> REGISTRY = RegistryAccessExtension.createRegistryKey(MODID, "worldgen/test_a");
+
         public static final Codec<TestA> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("string_value").forGetter(TestA::getStringValue),
                 Codec.INT.fieldOf("int_value").forGetter(TestA::getIntValue),
                 Biome.CODEC.fieldOf("biome").forGetter(TestA::getBiome)
         ).apply(instance, TestA::new));
 
-        public static final ResourceKey<Registry<TestA>> REGISTRY_KEY = ResourceKey.createRegistryKey(TEST_A_NAME);
-        public static final Codec<Supplier<TestA>> CODEC = RegistryFileCodec.create(REGISTRY_KEY, DIRECT_CODEC);
-        public static final Codec<List<Supplier<TestA>>> LIST_CODEC = RegistryFileCodec.homogeneousList(REGISTRY_KEY, DIRECT_CODEC);
+        public static final Codec<Supplier<TestA>> CODEC = RegistryFileCodec.create(REGISTRY, DIRECT_CODEC);
+        public static final Codec<List<Supplier<TestA>>> LIST_CODEC = RegistryFileCodec.homogeneousList(REGISTRY, DIRECT_CODEC);
 
         private final String stringValue;
         private final int intValue;
@@ -161,6 +172,8 @@ public class RegistryAccessExtensionTest
 
     public static class TestB extends ForgeRegistryEntry<TestB>
     {
+        public static final ResourceKey<Registry<TestB>> REGISTRY = RegistryAccessExtension.createRegistryKey(MODID, "worldgen/test_b");
+
         public static final Codec<TestB> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 TestA.CODEC.fieldOf("test_a").forGetter(TestB::getTestA),
                 TestA.LIST_CODEC.fieldOf("test_a_list").forGetter(TestB::getTestAList)
