@@ -63,6 +63,13 @@ public abstract class GatherGeometryEvent extends Event
             return origin;
         }
 
+        /**
+         * The visibility graph for this 16x16x16 section of a chunk.
+         *
+         * This is used to mark areas of a chunk as opaque, and is used by
+         * Minecraft to determine whether other chunks are being occluded
+         * by this one or not, and thus whether they need to be rendered.
+         */
         public VisGraph getVisibilityGraph()
         {
             return visibilityGraph;
