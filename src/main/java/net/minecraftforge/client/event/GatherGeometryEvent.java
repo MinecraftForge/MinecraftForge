@@ -9,6 +9,8 @@ import net.minecraft.client.renderer.chunk.VisGraph;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.eventbus.api.Event;
 
+import javax.annotation.Nullable;
+
 /**
  * Fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
  * on {@link net.minecraftforge.api.distmarker.Dist#CLIENT} when geometry
@@ -37,11 +39,12 @@ public abstract class GatherGeometryEvent extends Event
      */
     public static class ChunkSectionStatic extends GatherGeometryEvent
     {
+        @Nullable
         private final RenderChunkRegion region;
         private final BlockPos.MutableBlockPos origin;
         private final VisGraph visibilityGraph;
 
-        public ChunkSectionStatic(MultiBufferSource bufferSource, RenderChunkRegion region, BlockPos.MutableBlockPos origin, VisGraph visibilityGraph)
+        public ChunkSectionStatic(MultiBufferSource bufferSource, @Nullable RenderChunkRegion region, BlockPos.MutableBlockPos origin, VisGraph visibilityGraph)
         {
             super(bufferSource);
             this.region = region;
@@ -49,6 +52,7 @@ public abstract class GatherGeometryEvent extends Event
             this.visibilityGraph = visibilityGraph;
         }
 
+        @Nullable
         public RenderChunkRegion getRegion()
         {
             return region;
