@@ -26,6 +26,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -191,7 +192,7 @@ public class ServerStatusPing
                 final boolean truncated = GsonHelper.getAsBoolean(forgeData, "truncated", false);
                 return new ServerStatusPing(channels, mods, remoteFMLVersion, truncated);
             }
-            catch (JsonSyntaxException e)
+            catch (JsonSyntaxException | IndexOutOfBoundsException | ResourceLocationException e)
             {
                 LOGGER.debug(NetworkConstants.NETWORK, "Encountered an error parsing status ping data", e);
                 return null;
@@ -205,8 +206,20 @@ public class ServerStatusPing
             // 1. Try and group channels by ModID, this relies on the assumption that a mod "examplemod" uses a channel
             //    like "examplemod:network". In that case only the "path" of the ResourceLocation is written
             // 2. Avoid sending IGNORESERVERONLY in plain text, instead use a flag (if set, no version string is sent)
+            //
+            // The size can be estimated as follows (assuming there are no non-mod network channels)
+            // bytes = 2
+            //          + mod_count * (avg_mod_id_length + avg_mod_version_length + 1)
+            //          + (mod_count * avg_channel_count_per_mod) * (avg_mod_channel_length + avg_mod_channel_version_length + 1)
+            //          + 1
+            // for 600 mods with an average ModID and channel length of 20, an average channel of 1 per mod and an
+            // average version length of 5 this turns out to be 31203 bytes, which easily fits into the upper limit of
+            // roughly 60000 bytes. As such it is estimated that the upper limit will never be reached.
+            // we still check though and potentially truncate the list
 
+            var reachedSizeLimit = false;
             var buf = new FriendlyByteBuf(Unpooled.buffer());
+            buf.writeBoolean(false); // placeholder for whether we are truncating
             buf.writeVarInt(forgeData.mods.size());
             for (var modEntry : forgeData.mods.entrySet())
             {
@@ -233,17 +246,28 @@ public class ServerStatusPing
                     buf.writeUtf(entry.getValue().getLeft());
                     buf.writeBoolean(entry.getValue().getRight());
                 }
+
+                if (buf.readableBytes() >= 60000) {
+                    reachedSizeLimit = true;
+                    break;
+                }
             }
 
-            // write any channels that don't match up with a ModID.
-            var nonModChannels = forgeData.getNonModChannels();
-            buf.writeVarInt(nonModChannels.size());
-            for (var entry : nonModChannels)
-            {
-                buf.writeResourceLocation(entry.getKey());
-                buf.writeUtf(entry.getValue().getLeft());
-                buf.writeBoolean(entry.getValue().getRight());
+            if (!reachedSizeLimit) {
+                // write any channels that don't match up with a ModID.
+                var nonModChannels = forgeData.getNonModChannels();
+                buf.writeVarInt(nonModChannels.size());
+                for (var entry : nonModChannels)
+                {
+                    buf.writeResourceLocation(entry.getKey());
+                    buf.writeUtf(entry.getValue().getLeft());
+                    buf.writeBoolean(entry.getValue().getRight());
+                }
+            } else {
+                buf.writeVarInt(0);
             }
+
+            buf.setBoolean(0, reachedSizeLimit);
 
             var obj = new JsonObject();
             obj.addProperty("fmlNetworkVersion", forgeData.fmlNetworkVer);
@@ -264,6 +288,7 @@ public class ServerStatusPing
             int remoteFMLVersion = GsonHelper.getAsInt(forgeData, "fmlNetworkVersion");
             var buf = new FriendlyByteBuf(decodeOptimized(GsonHelper.getAsString(forgeData, "d")));
 
+            var truncated = buf.readBoolean();
             var modsSize = buf.readVarInt();
             var mods = new HashMap<String, String>();
             var channels = new HashMap<ResourceLocation, Pair<String, Boolean>>();
@@ -294,7 +319,7 @@ public class ServerStatusPing
                 channels.put(channelName, Pair.of(channelVersion, requiredOnClient));
             }
 
-            return new ServerStatusPing(channels, mods, remoteFMLVersion, false);
+            return new ServerStatusPing(channels, mods, remoteFMLVersion, truncated);
         }
 
         /**
