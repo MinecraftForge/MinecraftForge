@@ -59,7 +59,15 @@
              ++this.f_109439_;
              if (entity.f_19797_ == 0) {
                 entity.f_19790_ = entity.m_20185_();
-@@ -1230,6 +_,7 @@
+@@ -1224,12 +_,15 @@
+       multibuffersource$buffersource.m_109912_(RenderType.m_110452_(TextureAtlas.f_118259_));
+       multibuffersource$buffersource.m_109912_(RenderType.m_110458_(TextureAtlas.f_118259_));
+       multibuffersource$buffersource.m_109912_(RenderType.m_110476_(TextureAtlas.f_118259_));
++      profilerfiller.m_6182_("forge_dynamic_geometry");
++      net.minecraftforge.client.ForgeHooksClient.onGatherDynamicLevelGeometry(multibuffersource$buffersource, this, p_109600_, p_109601_, p_109604_);
+       profilerfiller.m_6182_("blockentities");
+ 
+       for(LevelRenderer.RenderChunkInfo levelrenderer$renderchunkinfo : this.f_194297_) {
           List<BlockEntity> list = levelrenderer$renderchunkinfo.f_109839_.m_112835_().m_112773_();
           if (!list.isEmpty()) {
              for(BlockEntity blockentity1 : list) {

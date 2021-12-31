@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -33,6 +34,9 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
+import net.minecraft.client.renderer.chunk.RenderChunkRegion;
+import net.minecraft.client.renderer.chunk.VisGraph;
 import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.FormattedText;
@@ -137,6 +141,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -1043,6 +1048,43 @@ public class ForgeHooksClient
                         ClientTooltipComponent::create
                 ))
                 .toList();
+    }
+
+    public static void onGatherStaticChunkGeometry(
+            ChunkBufferBuilderPack chunkBufferBuilderPack,
+            RenderChunkRegion region,
+            BlockPos.MutableBlockPos origin,
+            VisGraph visibilityGraph,
+            ChunkRenderDispatcher.CompiledChunk compiledChunk,
+            Consumer<BufferBuilder> beginLayer
+    ) {
+        MinecraftForge.EVENT_BUS.post(new GatherGeometryEvent.ChunkSectionStatic(
+                t -> {
+                    var buf = chunkBufferBuilderPack.builder(t);
+                    Preconditions.checkNotNull(buf, "The requested render type is not configured for static rendering: " + t);
+                    if (compiledChunk.hasLayer.add(t)) {
+                        beginLayer.accept(buf);
+                    }
+                    return buf;
+                },
+                region,
+                origin,
+                visibilityGraph
+        ));
+        for (RenderType type : compiledChunk.hasLayer)
+        {
+            var buf = chunkBufferBuilderPack.builder(type);
+            if (buf.getSortState().vertices > 0)
+            {
+                compiledChunk.hasBlocks.add(type);
+                compiledChunk.isCompletelyEmpty = false;
+            }
+        }
+    }
+
+    public static void onGatherDynamicLevelGeometry(MultiBufferSource bufferSource, LevelRenderer levelRenderer, PoseStack poseStack, float partialTicks, Camera camera)
+    {
+        MinecraftForge.EVENT_BUS.post(new GatherGeometryEvent.LevelDynamic(bufferSource, levelRenderer, poseStack, partialTicks, camera));
     }
 
 }

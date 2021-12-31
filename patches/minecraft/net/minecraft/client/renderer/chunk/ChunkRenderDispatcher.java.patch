@@ -82,6 +82,14 @@
              this.f_112858_ = p_194428_;
           }
  
+@@ -562,6 +_,7 @@
+             this.f_112858_ = null;
+             PoseStack posestack = new PoseStack();
+             if (renderchunkregion != null) {
++               net.minecraftforge.client.ForgeHooksClient.onGatherStaticChunkGeometry(p_112870_, renderchunkregion, RenderChunk.this.f_112793_, visgraph, p_112869_, RenderChunk.this::m_112805_);
+                ModelBlockRenderer.m_111000_();
+                Random random = new Random();
+                BlockRenderDispatcher blockrenderdispatcher = Minecraft.m_91087_().m_91289_();
 @@ -580,8 +_,10 @@
                    }
  
