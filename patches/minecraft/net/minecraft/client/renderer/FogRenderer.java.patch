@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -176,16 +_,32 @@
+@@ -176,16 +_,33 @@
           f_109012_ = f_109012_ * (1.0F - f6) + f_109012_ * f8 * f6;
        }
  
@@ -30,6 +30,7 @@
 +      if (hook >= 0) {
 +         RenderSystem.m_157445_(-8.0F);
 +         RenderSystem.m_157443_(hook * 0.5F);
++         net.minecraftforge.client.ForgeHooksClient.onFogRender(p_109026_, p_109025_, partialTicks, hook * 0.5F);
 +      } else
        if (fogtype == FogType.WATER) {
           float f = 192.0F;
