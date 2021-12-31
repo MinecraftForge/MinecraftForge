@@ -220,7 +220,8 @@ public class ServerStatusPing
             var reachedSizeLimit = false;
             var buf = new FriendlyByteBuf(Unpooled.buffer());
             buf.writeBoolean(false); // placeholder for whether we are truncating
-            buf.writeVarInt(forgeData.mods.size());
+            buf.writeShort(forgeData.mods.size()); // short so that we can replace it later in case of truncation
+            int writtenCount = 0;
             for (var modEntry : forgeData.mods.entrySet())
             {
                 var isIgnoreServerOnly = modEntry.getValue().equals(NetworkConstants.IGNORESERVERONLY);
@@ -247,6 +248,8 @@ public class ServerStatusPing
                     buf.writeBoolean(entry.getValue().getRight());
                 }
 
+                writtenCount++;
+
                 if (buf.readableBytes() >= 60000) {
                     reachedSizeLimit = true;
                     break;
@@ -264,6 +267,7 @@ public class ServerStatusPing
                     buf.writeBoolean(entry.getValue().getRight());
                 }
             } else {
+                buf.setShort(1, writtenCount);
                 buf.writeVarInt(0);
             }
 
@@ -289,7 +293,7 @@ public class ServerStatusPing
             var buf = new FriendlyByteBuf(decodeOptimized(GsonHelper.getAsString(forgeData, "d")));
 
             var truncated = buf.readBoolean();
-            var modsSize = buf.readVarInt();
+            var modsSize = buf.readUnsignedShort();
             var mods = new HashMap<String, String>();
             var channels = new HashMap<ResourceLocation, Pair<String, Boolean>>();
             for (var i = 0; i < modsSize; i++)
@@ -368,7 +372,7 @@ public class ServerStatusPing
 
             var buf = Unpooled.buffer(size);
 
-            int stringIndex = 1;
+            int stringIndex = 2;
             int buffer = 0; // we will need at most 8 + 14 = 22 bits of buffer, so an int is enough
             int bitsInBuf = 0;
             while (stringIndex < s.length())
