@@ -252,6 +252,8 @@ public class ServerStatusPing
             // add dummy properties, so only versions do not crash when deserializing
             obj.add("channels", new JsonArray());
             obj.add("mods", new JsonArray());
+            // legacy versions see truncated lists, modern versions ignore the truncated flag
+            obj.addProperty("truncated", true);
             return obj;
         }
 

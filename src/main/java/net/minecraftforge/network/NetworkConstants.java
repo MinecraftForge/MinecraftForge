@@ -34,7 +34,7 @@ import java.util.List;
 public class NetworkConstants
 {
     public static final String FMLNETMARKER = "FML";
-    public static final int FMLNETVERSION = 3;
+    public static final int FMLNETVERSION = 2;
     public static final String NETVERSION = FMLNETMARKER + FMLNETVERSION;
     public static final String NOVERSION = "NONE";
 
