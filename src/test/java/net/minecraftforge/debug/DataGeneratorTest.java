@@ -53,6 +53,7 @@ import net.minecraftforge.common.data.SoundDefinitionsProvider;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 import org.jline.utils.InputStreamReader;
 
 import com.google.common.collect.HashMultimap;
@@ -297,14 +298,14 @@ public class DataGeneratorTest
             //item.trident.return
             this.add(SoundEvents.TRIDENT_RETURN, definition().with(
                     sound("item/trident/return1").volume(0.8),
-                    sound("item/trident/return2").pitch(1.2).volume(0.8),
-                    sound("item/trident/return3").pitch(0.8).volume(0.8),
                     sound("item/trident/return2").volume(0.8),
-                    sound("item/trident/return2").pitch(1.2).volume(0.8),
                     sound("item/trident/return2").pitch(0.8).volume(0.8),
+                    sound("item/trident/return2").pitch(1.2).volume(0.8),
+                    sound("item/trident/return2").pitch(1.2).volume(0.8),
                     sound("item/trident/return3").volume(0.8),
-                    sound("item/trident/return3").pitch(1.2).volume(0.8),
-                    sound("item/trident/return3").pitch(0.8).volume(0.8)
+                    sound("item/trident/return3").pitch(0.8).volume(0.8),
+                    sound("item/trident/return3").pitch(0.8).volume(0.8),
+                    sound("item/trident/return3").pitch(1.2).volume(0.8)
             ).subtitle("subtitles.item.trident.return"));
 
             //music_disc.blocks
@@ -362,12 +363,16 @@ public class DataGeneratorTest
 
         private List<String> compareAndGatherErrors(final Triple<String, JsonElement, JsonElement> triple)
         {
-            return this.compare(triple.getRight(), triple.getMiddle()).stream().map(it -> triple.getLeft() + ": " + it).collect(Collectors.toList());
+            return this.compare(triple.getMiddle(), triple.getRight()).stream().map(it -> triple.getLeft() + ": " + it).collect(Collectors.toList());
         }
 
-        private List<String> compare(final JsonElement vanilla, final JsonElement generated)
+        private List<String> compare(final JsonElement vanilla, @Nullable final JsonElement generated)
         {
-            if (vanilla.isJsonPrimitive())
+            if (generated == null)
+            {
+                return Collections.singletonList("vanilla element has no generated counterpart");
+            }
+            else if (vanilla.isJsonPrimitive())
             {
                 return this.comparePrimitives(vanilla.getAsJsonPrimitive(), generated);
             }

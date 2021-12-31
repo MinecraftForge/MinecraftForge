@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/network/ServerGamePacketListenerImpl.java
 +++ b/net/minecraft/server/network/ServerGamePacketListenerImpl.java
-@@ -379,9 +_,11 @@
+@@ -380,9 +_,11 @@
              }
  
              entity.m_19890_(d3, d4, d5, f, f1);
@@ -12,7 +12,7 @@
                 this.f_9742_.m_129512_(new ClientboundMoveVehiclePacket(entity));
                 return;
              }
-@@ -398,7 +_,7 @@
+@@ -399,7 +_,7 @@
     }
  
     private boolean m_9793_(Entity p_9794_) {
@@ -21,7 +21,7 @@
     }
  
     public void m_7376_(ServerboundAcceptTeleportationPacket p_9835_) {
-@@ -966,7 +_,9 @@
+@@ -967,7 +_,9 @@
        this.f_9743_.m_9243_();
        int i = this.f_9743_.f_19853_.m_151558_();
        if (blockpos.m_123342_() < i) {
@@ -32,7 +32,7 @@
              InteractionResult interactionresult = this.f_9743_.f_8941_.m_7179_(this.f_9743_, serverlevel, itemstack, interactionhand, blockhitresult);
              if (direction == Direction.UP && !interactionresult.m_19077_() && blockpos.m_123342_() >= i - 1 && m_9790_(this.f_9743_, itemstack)) {
                 Component component = (new TranslatableComponent("build.tooHigh", i - 1)).m_130940_(ChatFormatting.RED);
-@@ -1080,7 +_,7 @@
+@@ -1081,7 +_,7 @@
     }
  
     public void m_7388_(ServerboundChatPacket p_9841_) {
@@ -41,7 +41,7 @@
  
        for(int i = 0; i < s.length(); ++i) {
           if (!SharedConstants.m_136188_(s.charAt(i))) {
-@@ -1110,8 +_,10 @@
+@@ -1111,8 +_,10 @@
              String s1 = p_143629_.m_143722_();
              Component component = s1.isEmpty() ? null : new TranslatableComponent("chat.type.text", this.f_9743_.m_5446_(), s1);
              Component component1 = new TranslatableComponent("chat.type.text", this.f_9743_.m_5446_(), s);
@@ -53,7 +53,7 @@
              }, ChatType.CHAT, this.f_9743_.m_142081_());
           }
  
-@@ -1203,6 +_,7 @@
+@@ -1204,6 +_,7 @@
                 private void m_143678_(InteractionHand p_143679_, ServerGamePacketListenerImpl.EntityInteraction p_143680_) {
                    ItemStack itemstack = ServerGamePacketListenerImpl.this.f_9743_.m_21120_(p_143679_).m_41777_();
                    InteractionResult interactionresult = p_143680_.m_143694_(ServerGamePacketListenerImpl.this.f_9743_, entity, p_143679_);
@@ -61,7 +61,7 @@
                    if (interactionresult.m_19077_()) {
                       CriteriaTriggers.f_10565_.m_61494_(ServerGamePacketListenerImpl.this.f_9743_, itemstack, entity);
                       if (interactionresult.m_19080_()) {
-@@ -1404,6 +_,8 @@
+@@ -1405,6 +_,8 @@
     }
  
     public void m_7423_(ServerboundCustomPayloadPacket p_9860_) {

@@ -50,6 +50,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
 {
     @Nonnull
     protected final ItemStack itemStack;
+    protected final PoseStack poseStack;
     protected int x;
     protected int y;
     protected Font font;
@@ -59,6 +60,7 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     public RenderTooltipEvent(@Nonnull ItemStack itemStack, PoseStack poseStack, int x, int y, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
     {
         this.itemStack = itemStack;
+        this.poseStack = poseStack;
         this.components = Collections.unmodifiableList(components);
         this.x = x;
         this.y = y;
@@ -73,6 +75,12 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
     {
         return itemStack;
     }
+
+
+    /**
+     * @return The PoseStack rendering context.
+     */
+    public PoseStack getPoseStack() { return poseStack; }
 
     /**
      * The components to be drawn.
@@ -195,9 +203,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int screenWidth;
         private int screenHeight;
 
-        public Pre(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, int screenWidth, int screenHeight, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
+        public Pre(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, int screenWidth, int screenHeight, @Nonnull Font font, @Nonnull List<ClientTooltipComponent> components)
         {
-            super(stack, matrixStack, x, y, font, components);
+            super(stack, poseStack, x, y, font, components);
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
         }
@@ -250,9 +258,9 @@ public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api
         private int borderStart;
         private int borderEnd;
 
-        public Color(@Nonnull ItemStack stack, PoseStack matrixStack, int x, int y, @Nonnull Font fr, int background, int borderStart, int borderEnd, @Nonnull List<ClientTooltipComponent> components)
+        public Color(@Nonnull ItemStack stack, PoseStack poseStack, int x, int y, @Nonnull Font fr, int background, int borderStart, int borderEnd, @Nonnull List<ClientTooltipComponent> components)
         {
-            super(stack, matrixStack, x, y, fr, components);
+            super(stack, poseStack, x, y, fr, components);
             this.originalBackground = background;
             this.originalBorderStart = borderStart;
             this.originalBorderEnd = borderEnd;
