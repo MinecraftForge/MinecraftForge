@@ -277,10 +277,10 @@ public class ServerStatusPing
             obj.addProperty("fmlNetworkVersion", forgeData.fmlNetworkVer);
             obj.addProperty("d", encodeOptimized(buf));
 
-            // add dummy properties, so only versions do not crash when deserializing
+            // add dummy properties, so old versions do not crash when deserializing
             obj.add("channels", new JsonArray());
             obj.add("mods", new JsonArray());
-            // legacy versions see truncated lists, modern versions ignore the truncated flag
+            // legacy versions see truncated lists, modern versions ignore this truncated flag (binary data has its own)
             obj.addProperty("truncated", true);
             return obj;
         }
