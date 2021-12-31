@@ -109,9 +109,10 @@ public final class PermissionAPI
      */
     public static void initializePermissionAPI()
     {
-        if(StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass() != ServerLifecycleHooks.class)
+        Class callerClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        if (callerClass != ServerLifecycleHooks.class)
         {
-            LOGGER.warn("Another mod tried to initialize the PermissionAPI, this is not allowed!");
+            LOGGER.warn("{} tried to initialize the PermissionAPI, this call will be ignored.", callerClass.getName());
             return;
         }
 
