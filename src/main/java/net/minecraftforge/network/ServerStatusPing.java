@@ -299,15 +299,16 @@ public class ServerStatusPing
 
         /**
          * Encode given ByteBuf to a String. This is optimized for UTF-16 Code-Point count.
-         * Supports at most 2^15 bytes in length
+         * Supports at most 2^30 bytes in length
          */
         private static String encodeOptimized(ByteBuf buf)
         {
             var byteLength = buf.readableBytes();
             var sb = new StringBuilder();
-            sb.append((char) byteLength);
+            sb.append((char) (byteLength & 0x7FFF));
+            sb.append((char) ((byteLength >>> 15) & 0x7FFF));
 
-            var buffer = 0; // we will need at most 8 + 14 = 22 bits of buffer
+            int buffer = 0; // we will need at most 8 + 14 = 22 bits of buffer, so an int is enough
             int bitsInBuf = 0;
             while (buf.isReadable())
             {
@@ -336,11 +337,14 @@ public class ServerStatusPing
          */
         private static ByteBuf decodeOptimized(String s)
         {
-            var size = ((int) s.charAt(0));
+            var size0 = ((int) s.charAt(0));
+            var size1 = ((int) s.charAt(1));
+            var size = size0 | (size1 << 15);
+
             var buf = Unpooled.buffer(size);
 
             int stringIndex = 1;
-            var buffer = 0; // we will need at most 8 + 14 = 22 bits of buffer
+            int buffer = 0; // we will need at most 8 + 14 = 22 bits of buffer, so an int is enough
             int bitsInBuf = 0;
             while (stringIndex < s.length())
             {
