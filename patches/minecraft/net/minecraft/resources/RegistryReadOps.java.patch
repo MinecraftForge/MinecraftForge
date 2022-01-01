@@ -1,0 +1,32 @@
+--- a/net/minecraft/resources/RegistryReadOps.java
++++ b/net/minecraft/resources/RegistryReadOps.java
+@@ -27,7 +_,8 @@
+    public final RegistryReadOps<JsonElement> f_135638_;
+ 
+    public static <T> RegistryReadOps<T> m_179866_(DynamicOps<T> p_179867_, ResourceManager p_179868_, RegistryAccess p_179869_) {
+-      return m_195841_(p_179867_, RegistryResourceAccess.m_195881_(p_179868_), p_179869_);
++      // FORGE -- when importing datapacks into dynamic registries, ensure imports aren't done redundantly (needed for the dynamic registries loaded hook)
++      return net.minecraftforge.common.ForgeHooks.importDatapacksIntoRegistryAccess(p_179867_, p_179868_, p_179869_);
+    }
+ 
+    public static <T> RegistryReadOps<T> m_195841_(DynamicOps<T> p_195842_, RegistryResourceAccess p_195843_, RegistryAccess p_195844_) {
+@@ -45,11 +_,18 @@
+    }
+ 
+    private RegistryReadOps(DynamicOps<T> p_195837_, RegistryResourceAccess p_195838_, RegistryAccess p_195839_, IdentityHashMap<ResourceKey<? extends Registry<?>>, RegistryReadOps.ReadCache<?>> p_195840_) {
++      this(p_195837_, p_195838_, p_195839_, p_195840_, new java.util.HashMap<>()); // FORGE -- we need a separate constructor that accepts a map of cached ops types for the dynamic registries loaded hook
++   }
++   /** @deprecated forge internal field -- cache RegistryReadOps so we can provide the correct one in the importDatapacksIntoRegistryAccess hook **/
++   @Deprecated public final Map<DynamicOps<?>, RegistryReadOps<?>> extraOps;
++   public RegistryReadOps(DynamicOps<T> p_195837_, RegistryResourceAccess p_195838_, RegistryAccess p_195839_, IdentityHashMap<ResourceKey<? extends Registry<?>>, RegistryReadOps.ReadCache<?>> p_195840_, final Map<DynamicOps<?>, RegistryReadOps<?>> extraOps) {
+       super(p_195837_);
+       this.f_135635_ = p_195838_;
+       this.f_179860_ = p_195839_;
+       this.f_135637_ = p_195840_;
+-      this.f_135638_ = p_195837_ == JsonOps.INSTANCE ? (RegistryReadOps<JsonElement>) this : new RegistryReadOps<>(JsonOps.INSTANCE, p_195838_, p_195839_, p_195840_);
++      // forge -- ensure related RegistryReadOps share the same extraOps map
++      this.f_135638_ = p_195837_ == JsonOps.INSTANCE ? (RegistryReadOps<JsonElement>)this : new RegistryReadOps<>(JsonOps.INSTANCE, p_195838_, p_195839_, p_195840_, extraOps);
++      this.extraOps = extraOps;
+    }
+ 
+    protected <E> DataResult<Pair<Supplier<E>, T>> m_135677_(T p_135678_, ResourceKey<? extends Registry<E>> p_135679_, Codec<E> p_135680_, boolean p_135681_) {

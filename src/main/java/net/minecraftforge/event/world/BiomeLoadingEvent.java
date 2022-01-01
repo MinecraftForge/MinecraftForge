@@ -42,7 +42,10 @@ import javax.annotation.Nullable;
  *
  * Be aware that another mod could have done an operation beforehand, so an expected value out of a vanilla biome might not
  * always be the same, depending on other mods.
+ * 
+ * @deprecated Use the {@link RegistryAccessLoadedEvent} as it's sensitive to datapack overrides. TODO remove BiomeLoadingEvent in 1.19
  */
+@Deprecated
 public class BiomeLoadingEvent extends Event
 {
     private final ResourceLocation name;

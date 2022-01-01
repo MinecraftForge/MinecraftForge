@@ -1,0 +1,8 @@
+{
+  "config": {
+    "state": {
+      "Name": "minecraft:red_wool"
+    }
+  },
+  "type": "registry_access_loaded_event_test:single_block"
+}

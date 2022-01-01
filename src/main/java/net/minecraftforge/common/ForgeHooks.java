@@ -26,16 +26,20 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
@@ -44,6 +48,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DynamicOps;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -85,6 +91,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
@@ -93,10 +100,13 @@ import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.StructureFeatureConfiguration;
+import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -115,8 +125,10 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
+import net.minecraftforge.common.world.BiomeBuilder;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldPreset;
+import net.minecraftforge.common.world.IBiomeParameters;
 import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -147,6 +159,7 @@ import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
+import net.minecraftforge.event.world.RegistryAccessLoadedEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -170,6 +183,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.RegistryReadOps;
+import net.minecraft.resources.RegistryResourceAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
@@ -1240,5 +1255,70 @@ public class ForgeHooks
     {
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
+    
+    /**
+     * Called when datapacks are being imported into a RegistryAccess instance via
+     * RegistryReadOps.createAndLoad(...ResourceManager...)
+     * 
+     * This does these things:
+     * 1) if datapacks have already been imported into these registries (on top of builtin registered-in-java objects from vanilla),
+     *  then don't import them again (this prevents modifications in the dynamic registries loaded event from being applied multiple times)
+     *  (vanilla makes a fresh RegistryAccess instance when datapacks actually do need to be reimported due to having been changed,
+     *  so vanilla only reimports into the same RegistryAccess instance twice when it doesn't need to)
+     * 2) if datapacks haven't already been imported, them import them into the registries, mark the registries as having imports loaded,
+     *  and fire the dynamic registries loaded event
+     */
+    public static <T> RegistryReadOps<T> importDatapacksIntoRegistryAccess(DynamicOps<T> delegateOps, ResourceManager resourceManager, RegistryAccess registries)
+    {
+        RegistryResourceAccess resources = RegistryResourceAccess.forResourceManager(resourceManager);
+        if (registries.datapackImports != null)
+        {
+            RegistryReadOps<?> registryOps = registries.datapackImports;
+            // if we've already imported datapacks into these registries,
+            // we must return a previously cached registries ops instead of importing again
+            // first, we need to figure out what ops type needs to be returned
+            // the vanilla registry ops has a field for cached jsonops, check that first
+            if (delegateOps == JsonOps.INSTANCE) // same check vanilla uses
+                return (RegistryReadOps<T>) registryOps.jsonOps;
+            // otherwise check our forge-added ops cache
+            Map<DynamicOps<?>, RegistryReadOps<?>> extraOps = registryOps.extraOps;
+            return (RegistryReadOps<T>) extraOps.computeIfAbsent(delegateOps, ops -> new RegistryReadOps<T>(delegateOps, resources, registries, (IdentityHashMap<ResourceKey<? extends Registry<?>>, RegistryReadOps.ReadCache<?>>) registryOps.readCache, extraOps));
+        }
+        RegistryReadOps<T> imports = new RegistryReadOps<T>(delegateOps, resources, registries, Maps.newIdentityHashMap(), new HashMap<>());
+        RegistryAccess.load(registries, imports);
 
+        // mark the registries as having had datapacks imported into them
+        registries.datapackImports = imports;
+        
+        // now we prepare data for the load event, fire the event, and process it
+        
+        // make a mutable copy of all biomes and provide these copies via the event
+        final Registry<Biome> biomes = registries.registryOrThrow(Registry.BIOME_REGISTRY);
+        final Map<ResourceKey<Biome>, IBiomeParameters> biomeModifiers = biomes.entrySet().stream()
+            .collect(Collectors.toMap(Entry::getKey, entry -> (IBiomeParameters)BiomeBuilder.copyFrom(entry.getValue())));
+        // make a mutable copy of each noise settings's structure seperation entries
+        final Registry<NoiseGeneratorSettings> noiseGenerators = registries.registryOrThrow(Registry.NOISE_GENERATOR_SETTINGS_REGISTRY);
+        final Map<ResourceKey<NoiseGeneratorSettings>, Map<StructureFeature<?>, StructureFeatureConfiguration>> structureConfigs = noiseGenerators.entrySet().stream()
+            .collect(Collectors.toMap(Entry::getKey, entry -> new HashMap<>(entry.getValue().structureSettings().structureConfig())));
+        
+        // fire the load event
+        MinecraftForge.EVENT_BUS.post(new RegistryAccessLoadedEvent(registries, biomeModifiers));
+        
+        // copy the new biome parameters back into the actual registered biome instances
+        biomes.entrySet().forEach(entry ->
+        {
+            final ResourceKey<Biome> key = entry.getKey();
+            final @Nullable IBiomeParameters modifier = biomeModifiers.get(key);
+            if (modifier != null) // if this is null, somebody removed the modifier from the map during the event (can't modify biome)
+            {
+                final Biome biome = entry.getValue();
+                biome.biomeCategory = modifier.getCategory();
+                biome.climateSettings = new Biome.ClimateSettings(modifier.getPrecipitation(), modifier.getTemperature(), modifier.getTemperatureModifier(), modifier.getDownfall());
+                biome.specialEffects = modifier.getEffectsBuilder().build();
+                biome.generationSettings = modifier.getGenerationBuilder().build();
+                biome.mobSettings = modifier.getSpawnBuilder().build();
+            }
+        });
+        return imports;
+    }
 }

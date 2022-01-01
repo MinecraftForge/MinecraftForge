@@ -1,0 +1,12 @@
+{
+  "feature": "registry_access_loaded_event_test:red_wool",
+  "placement": [
+    {
+      "type": "registry_access_loaded_event_test:limited_square"
+    },
+    {
+      "heightmap": "MOTION_BLOCKING",
+      "type": "minecraft:heightmap"
+    }
+  ]
+}
