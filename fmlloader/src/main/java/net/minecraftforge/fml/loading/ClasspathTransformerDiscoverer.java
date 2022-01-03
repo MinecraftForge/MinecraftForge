@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,24 +23,27 @@ import cpw.mods.modlauncher.api.NamedPath;
 import cpw.mods.modlauncher.serviceapi.ITransformerDiscoveryService;
 import org.apache.logging.log4j.LogManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 
 public class ClasspathTransformerDiscoverer implements ITransformerDiscoveryService {
 
-    private static final List<String> ignoreList = Arrays.stream(System.getProperty("ignoreList", "").split(",")).toList();
-    
+    private final List<Path> legacyClasspath = Arrays.stream(System.getProperty("legacyClassPath", "").split(File.pathSeparator)).map(Path::of).toList();
+
     @Override
-    public List<NamedPath> candidates(final Path gameDirectory) {
-        // TODO needs a way to access arguments that early to only enable this with a dev launch target
-        //  as done in ClasspathLocator.
-        ClasspathTransformerDiscoverer.scan(gameDirectory);
+    public List<NamedPath> candidates(Path gameDirectory) {
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<NamedPath> candidates(final Path gameDirectory, final String launchTarget) {
+        if (launchTarget != null && launchTarget.contains("dev")) {
+            this.scan(gameDirectory);
+        }
         return List.copyOf(found);
     }
 
@@ -50,21 +53,21 @@ public class ClasspathTransformerDiscoverer implements ITransformerDiscoveryServ
         return found.stream().map(np->np.paths()[0]).toList();
     }
     
-    private static void scan(final Path gameDirectory) {
+    private void scan(final Path gameDirectory) {
         try {
-            locateTransformers("META-INF/services/cpw.mods.modlauncher.api.ITransformationService", "transform_service");
-            locateTransformers("META-INF/services/net.minecraftforge.forgespi.locating.IModLocator", "mod_locator");
+            locateTransformers("META-INF/services/cpw.mods.modlauncher.api.ITransformationService");
+            locateTransformers("META-INF/services/net.minecraftforge.forgespi.locating.IModLocator");
         } catch (IOException e) {
             LogManager.getLogger().error("Error during discovery of transform services from the classpath", e);
         }
     }
 
-    private static void locateTransformers(String resource, String name) throws IOException {
+    private void locateTransformers(String resource) throws IOException {
         final Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources(resource);
         while (resources.hasMoreElements()) {
             URL url = resources.nextElement();
-            Path path = LibraryFinder.findJarPathFor(resource, name, url);
-            if (ignoreList.stream().anyMatch(path.toString()::contains) || Files.isDirectory(path))
+            Path path = ClasspathLocatorUtils.findJarPathFor(resource, url.toString(), url);
+            if (legacyClasspath.stream().anyMatch(path::equals) || !Files.exists(path) || Files.isDirectory(path))
                 continue;
             found.add(new NamedPath(path.toUri().toString(), path));
         }
