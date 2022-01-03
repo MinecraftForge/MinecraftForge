@@ -91,7 +91,7 @@
     }
  
     public void m_5871_(ItemStack p_49816_, @Nullable BlockGetter p_49817_, List<Component> p_49818_, TooltipFlag p_49819_) {
-@@ -485,6 +_,82 @@
+@@ -485,6 +_,51 @@
     protected ImmutableMap<BlockState, VoxelShape> m_152458_(Function<BlockState, VoxelShape> p_152459_) {
        return this.f_49792_.m_61056_().stream().collect(ImmutableMap.toImmutableMap(Function.identity(), p_152459_));
     }
@@ -125,44 +125,13 @@
 +
 +   @Override
 +   public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, net.minecraftforge.common.IPlantable plantable) {
-+      BlockState plant = plantable.getPlant(world, pos.m_142300_(facing));
 +      net.minecraftforge.common.PlantType type = plantable.getPlantType(world, pos.m_142300_(facing));
 +
-+      if (plant.m_60734_() == Blocks.f_50128_)
-+         return state.m_60713_(Blocks.f_50128_) || state.m_60713_(Blocks.f_49992_) || state.m_60713_(Blocks.f_49993_);
-+
-+      if (plant.m_60734_() == Blocks.f_50130_ && this == Blocks.f_50130_)
-+         return true;
-+
++      // Here to not break old code
 +      if (plantable instanceof BushBlock && ((BushBlock)plantable).m_6266_(state, world, pos))
 +         return true;
 +
-+      if (net.minecraftforge.common.PlantType.DESERT.equals(type)) {
-+         return this == Blocks.f_49992_ || this == Blocks.f_50352_ || this instanceof GlazedTerracottaBlock;
-+      } else if (net.minecraftforge.common.PlantType.NETHER.equals(type)) {
-+         return this == Blocks.f_50135_;
-+      } else if (net.minecraftforge.common.PlantType.CROP.equals(type)) {
-+         return state.m_60713_(Blocks.f_50093_);
-+      } else if (net.minecraftforge.common.PlantType.CAVE.equals(type)) {
-+         return state.m_60783_(world, pos, Direction.UP);
-+      } else if (net.minecraftforge.common.PlantType.PLAINS.equals(type)) {
-+         return this == Blocks.f_50440_ || net.minecraftforge.common.Tags.Blocks.DIRT.m_8110_(this) || this == Blocks.f_50093_;
-+      } else if (net.minecraftforge.common.PlantType.WATER.equals(type)) {
-+         return state.m_60767_() == net.minecraft.world.level.material.Material.f_76305_; //&& state.getValue(BlockLiquidWrapper)
-+      } else if (net.minecraftforge.common.PlantType.BEACH.equals(type)) {
-+         boolean isBeach = state.m_60713_(Blocks.f_50440_) || net.minecraftforge.common.Tags.Blocks.DIRT.m_8110_(this) || state.m_60713_(Blocks.f_49992_) || state.m_60713_(Blocks.f_49993_);
-+         boolean hasWater = false;
-+         for (Direction face : Direction.Plane.HORIZONTAL) {
-+            BlockState blockState = world.m_8055_(pos.m_142300_(face));
-+            net.minecraft.world.level.material.FluidState fluidState = world.m_6425_(pos.m_142300_(face));
-+            hasWater |= blockState.m_60713_(Blocks.f_50449_);
-+            hasWater |= fluidState.m_76153_(net.minecraft.tags.FluidTags.f_13131_);
-+            if (hasWater)
-+               break; //No point continuing.
-+         }
-+         return isBeach && hasWater;
-+      }
-+      return false;
++      return type.mayPlace(state, world, pos, facing, plantable);
 +   }
 +
 +   @Override

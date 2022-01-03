@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/level/block/FlowerBlock.java
++++ b/net/minecraft/world/level/block/FlowerBlock.java
+@@ -42,4 +_,9 @@
+    public int m_53522_() {
+       return this.f_53509_;
+    }
++
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.PLAINS;
++   }
+ }

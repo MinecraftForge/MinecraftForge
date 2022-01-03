@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/RootsBlock.java
++++ b/net/minecraft/world/level/block/RootsBlock.java
+@@ -20,8 +_,9 @@
+       return f_55909_;
+    }
+ 
+-   protected boolean m_6266_(BlockState p_55920_, BlockGetter p_55921_, BlockPos p_55922_) {
+-      return p_55920_.m_60620_(BlockTags.f_13077_) || p_55920_.m_60713_(Blocks.f_50136_) || super.m_6266_(p_55920_, p_55921_, p_55922_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.NETHER_PLANTS;
+    }
+ 
+    public BlockBehaviour.OffsetType m_5858_() {

@@ -1,5 +1,17 @@
 --- a/net/minecraft/world/level/block/CropBlock.java
 +++ b/net/minecraft/world/level/block/CropBlock.java
+@@ -35,8 +_,9 @@
+       return f_52243_[p_52297_.m_61143_(this.m_7959_())];
+    }
+ 
+-   protected boolean m_6266_(BlockState p_52302_, BlockGetter p_52303_, BlockPos p_52304_) {
+-      return p_52302_.m_60713_(Blocks.f_50093_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.CROP;
+    }
+ 
+    public IntegerProperty m_7959_() {
 @@ -64,12 +_,14 @@
     }
  

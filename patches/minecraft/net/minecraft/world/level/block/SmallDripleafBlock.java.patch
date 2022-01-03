@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/SmallDripleafBlock.java
++++ b/net/minecraft/world/level/block/SmallDripleafBlock.java
+@@ -40,8 +_,9 @@
+       return f_154579_;
+    }
+ 
+-   protected boolean m_6266_(BlockState p_154636_, BlockGetter p_154637_, BlockPos p_154638_) {
+-      return p_154636_.m_60620_(BlockTags.f_144278_) || p_154637_.m_6425_(p_154638_.m_7494_()).m_164512_(Fluids.f_76193_) && super.m_6266_(p_154636_, p_154637_, p_154638_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.SMALL_DRIPLEAF;
+    }
+ 
+    @Nullable

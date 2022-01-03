@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/WitherRoseBlock.java
++++ b/net/minecraft/world/level/block/WitherRoseBlock.java
+@@ -23,8 +_,9 @@
+       super(p_58235_, 8, p_58236_);
+    }
+ 
+-   protected boolean m_6266_(BlockState p_58248_, BlockGetter p_58249_, BlockPos p_58250_) {
+-      return super.m_6266_(p_58248_, p_58249_, p_58250_) || p_58248_.m_60713_(Blocks.f_50134_) || p_58248_.m_60713_(Blocks.f_50135_) || p_58248_.m_60713_(Blocks.f_50136_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.WITHER_ROSE;
+    }
+ 
+    public void m_7100_(BlockState p_58243_, Level p_58244_, BlockPos p_58245_, Random p_58246_) {

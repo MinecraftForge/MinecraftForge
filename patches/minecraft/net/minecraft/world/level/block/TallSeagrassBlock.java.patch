@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/TallSeagrassBlock.java
++++ b/net/minecraft/world/level/block/TallSeagrassBlock.java
+@@ -32,8 +_,9 @@
+       return f_154742_;
+    }
+ 
+-   protected boolean m_6266_(BlockState p_154774_, BlockGetter p_154775_, BlockPos p_154776_) {
+-      return p_154774_.m_60783_(p_154775_, p_154776_, Direction.UP) && !p_154774_.m_60713_(Blocks.f_50450_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.SEAGRASS;
+    }
+ 
+    public ItemStack m_7397_(BlockGetter p_154749_, BlockPos p_154750_, BlockState p_154751_) {

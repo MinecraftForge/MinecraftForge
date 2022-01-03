@@ -9,3 +9,15 @@
     protected static final float f_154492_ = 6.0F;
     protected static final VoxelShape f_154493_ = Block.m_49796_(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
  
+@@ -31,8 +_,9 @@
+       return f_154493_;
+    }
+ 
+-   protected boolean m_6266_(BlockState p_154539_, BlockGetter p_154540_, BlockPos p_154541_) {
+-      return p_154539_.m_60783_(p_154540_, p_154541_, Direction.UP) && !p_154539_.m_60713_(Blocks.f_50450_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.SEAGRASS;
+    }
+ 
+    @Nullable

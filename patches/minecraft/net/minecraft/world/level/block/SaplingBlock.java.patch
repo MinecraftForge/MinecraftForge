@@ -16,3 +16,14 @@
           this.f_55975_.m_6334_(p_55981_, p_55981_.m_7726_().m_8481_(), p_55982_, p_55983_, p_55984_);
        }
  
+@@ -60,5 +_,10 @@
+ 
+    protected void m_7926_(StateDefinition.Builder<Block, BlockState> p_56001_) {
+       p_56001_.m_61104_(f_55973_);
++   }
++
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.PLAINS;
+    }
+ }

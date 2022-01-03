@@ -9,3 +9,14 @@
     protected static final float f_154739_ = 6.0F;
     protected static final VoxelShape f_57315_ = Block.m_49796_(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
  
+@@ -40,5 +_,10 @@
+ 
+    public BlockBehaviour.OffsetType m_5858_() {
+       return BlockBehaviour.OffsetType.XYZ;
++   }
++
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.PLAINS;
+    }
+ }

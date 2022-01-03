@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/AzaleaBlock.java
++++ b/net/minecraft/world/level/block/AzaleaBlock.java
+@@ -24,8 +_,9 @@
+       return f_152064_;
+    }
+ 
+-   protected boolean m_6266_(BlockState p_152089_, BlockGetter p_152090_, BlockPos p_152091_) {
+-      return p_152089_.m_60713_(Blocks.f_50129_) || super.m_6266_(p_152089_, p_152090_, p_152091_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.AZELEA;
+    }
+ 
+    public boolean m_7370_(BlockGetter p_152074_, BlockPos p_152075_, BlockState p_152076_, boolean p_152077_) {

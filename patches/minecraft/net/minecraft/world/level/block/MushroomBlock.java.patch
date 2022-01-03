@@ -1,5 +1,17 @@
 --- a/net/minecraft/world/level/block/MushroomBlock.java
 +++ b/net/minecraft/world/level/block/MushroomBlock.java
+@@ -59,8 +_,9 @@
+ 
+    }
+ 
+-   protected boolean m_6266_(BlockState p_54894_, BlockGetter p_54895_, BlockPos p_54896_) {
+-      return p_54894_.m_60804_(p_54895_, p_54896_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.MUSHROOM;
+    }
+ 
+    public boolean m_7898_(BlockState p_54880_, LevelReader p_54881_, BlockPos p_54882_) {
 @@ -69,7 +_,7 @@
        if (blockstate.m_60620_(BlockTags.f_13057_)) {
           return true;

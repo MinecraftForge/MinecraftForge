@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/level/block/BushBlock.java
 +++ b/net/minecraft/world/level/block/BushBlock.java
-@@ -10,7 +_,7 @@
+@@ -10,13 +_,18 @@
  import net.minecraft.world.level.block.state.BlockState;
  import net.minecraft.world.level.pathfinder.PathComputationType;
  
@@ -9,6 +9,18 @@
     public BushBlock(BlockBehaviour.Properties p_51021_) {
        super(p_51021_);
     }
+ 
+    protected boolean m_6266_(BlockState p_51042_, BlockGetter p_51043_, BlockPos p_51044_) {
+-      return p_51042_.m_60620_(BlockTags.f_144274_) || p_51042_.m_60713_(Blocks.f_50093_);
++      return getPlantType(p_51043_, p_51044_).mayPlace(p_51042_, p_51043_, p_51044_, Direction.UP, this);
++   }
++
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.BUSH;
+    }
+ 
+    public BlockState m_7417_(BlockState p_51032_, Direction p_51033_, BlockState p_51034_, LevelAccessor p_51035_, BlockPos p_51036_, BlockPos p_51037_) {
 @@ -25,6 +_,8 @@
  
     public boolean m_7898_(BlockState p_51028_, LevelReader p_51029_, BlockPos p_51030_) {

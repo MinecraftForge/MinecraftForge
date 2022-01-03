@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/FungusBlock.java
++++ b/net/minecraft/world/level/block/FungusBlock.java
+@@ -28,8 +_,9 @@
+       return f_53596_;
+    }
+ 
+-   protected boolean m_6266_(BlockState p_53623_, BlockGetter p_53624_, BlockPos p_53625_) {
+-      return p_53623_.m_60620_(BlockTags.f_13077_) || p_53623_.m_60713_(Blocks.f_50195_) || p_53623_.m_60713_(Blocks.f_50136_) || super.m_6266_(p_53623_, p_53624_, p_53625_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.FUNGUS;
+    }
+ 
+    public boolean m_7370_(BlockGetter p_53608_, BlockPos p_53609_, BlockState p_53610_, boolean p_53611_) {

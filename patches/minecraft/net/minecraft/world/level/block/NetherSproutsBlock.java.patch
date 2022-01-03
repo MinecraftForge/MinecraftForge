@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/NetherSproutsBlock.java
++++ b/net/minecraft/world/level/block/NetherSproutsBlock.java
+@@ -19,8 +_,9 @@
+       return f_54949_;
+    }
+ 
+-   protected boolean m_6266_(BlockState p_54960_, BlockGetter p_54961_, BlockPos p_54962_) {
+-      return p_54960_.m_60620_(BlockTags.f_13077_) || p_54960_.m_60713_(Blocks.f_50136_) || super.m_6266_(p_54960_, p_54961_, p_54962_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.NETHER_PLANTS;
+    }
+ 
+    public BlockBehaviour.OffsetType m_5858_() {

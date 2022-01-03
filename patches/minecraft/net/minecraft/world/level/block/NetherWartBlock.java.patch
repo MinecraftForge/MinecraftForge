@@ -1,5 +1,17 @@
 --- a/net/minecraft/world/level/block/NetherWartBlock.java
 +++ b/net/minecraft/world/level/block/NetherWartBlock.java
+@@ -28,8 +_,9 @@
+       return f_54968_[p_54986_.m_61143_(f_54967_)];
+    }
+ 
+-   protected boolean m_6266_(BlockState p_54991_, BlockGetter p_54992_, BlockPos p_54993_) {
+-      return p_54991_.m_60713_(Blocks.f_50135_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.NETHER;
+    }
+ 
+    public boolean m_6724_(BlockState p_54979_) {
 @@ -38,9 +_,10 @@
  
     public void m_7455_(BlockState p_54981_, ServerLevel p_54982_, BlockPos p_54983_, Random p_54984_) {

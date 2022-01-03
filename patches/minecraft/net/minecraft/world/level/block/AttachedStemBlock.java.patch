@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/level/block/AttachedStemBlock.java
++++ b/net/minecraft/world/level/block/AttachedStemBlock.java
+@@ -39,8 +_,9 @@
+       return !p_48850_.m_60713_(this.f_48831_) && p_48849_ == p_48848_.m_61143_(f_48830_) ? this.f_48831_.m_7161_().m_49966_().m_61124_(StemBlock.f_57013_, Integer.valueOf(7)) : super.m_7417_(p_48848_, p_48849_, p_48850_, p_48851_, p_48852_, p_48853_);
+    }
+ 
+-   protected boolean m_6266_(BlockState p_48863_, BlockGetter p_48864_, BlockPos p_48865_) {
+-      return p_48863_.m_60713_(Blocks.f_50093_);
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(BlockGetter world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.CROP;
+    }
+ 
+    public ItemStack m_7397_(BlockGetter p_48838_, BlockPos p_48839_, BlockState p_48840_) {
