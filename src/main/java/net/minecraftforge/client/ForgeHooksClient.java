@@ -797,6 +797,7 @@ public class ForgeHooksClient
 
     private static final Map<ModelLayerLocation, Supplier<LayerDefinition>> layerDefinitions = new HashMap<>();
 
+    /** Call during {@link EntityRenderersEvent.RegisterLayerDefinitions} via the event method */
     public static void registerLayerDefinition(ModelLayerLocation layerLocation, Supplier<LayerDefinition> supplier)
     {
         layerDefinitions.put(layerLocation, supplier);
@@ -808,12 +809,14 @@ public class ForgeHooksClient
 
     private static final Map<SkullBlock.Type, Function<EntityModelSet,SkullModelBase>> skullModelConstructors = new HashMap<>();
 
+    /** Call during {@link EntityRenderersEvent.RegisterLayerDefinitions} via the event method */
     public static void registerSkullModel(SkullBlock.Type type, Function<EntityModelSet,SkullModelBase> constructor)
     {
         skullModelConstructors.put(type, constructor);
     }
 
-    public static void loadSkullModels(ImmutableMap.Builder<SkullBlock.Type, SkullModelBase> builder, EntityModelSet modelSet) {
+    public static void loadSkullModels(ImmutableMap.Builder<SkullBlock.Type, SkullModelBase> builder, EntityModelSet modelSet)
+    {
         skullModelConstructors.forEach((k, v) -> builder.put(k, v.apply(modelSet)));
     }
 

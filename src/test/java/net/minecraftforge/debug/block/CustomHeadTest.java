@@ -127,6 +127,7 @@ public class CustomHeadTest
         static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
         {
             event.registerLayerDefinition(BLAZE_HEAD_LAYER, Lazy.of(SkullModel::createMobHeadLayer));
+            event.registerSkullModel(SkullType.BLAZE, models -> new SkullModel(models.bakeLayer(BLAZE_HEAD_LAYER)));
         }
 
         @SubscribeEvent
@@ -138,10 +139,7 @@ public class CustomHeadTest
         @SubscribeEvent
         static void clientSetupEvent(FMLClientSetupEvent event)
         {
-            event.enqueueWork(() -> {
-                ForgeHooksClient.registerSkullModel(SkullType.BLAZE, models -> new SkullModel(models.bakeLayer(BLAZE_HEAD_LAYER)));
-                SkullBlockRenderer.SKIN_BY_TYPE.put(SkullType.BLAZE, new ResourceLocation("textures/entity/blaze.png"));
-            });
+            event.enqueueWork(() -> SkullBlockRenderer.SKIN_BY_TYPE.put(SkullType.BLAZE, new ResourceLocation("textures/entity/blaze.png")));
         }
     }
 }

@@ -21,6 +21,7 @@ package net.minecraftforge.client.event;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.EntityModel;
+import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -34,6 +35,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -43,6 +45,7 @@ import net.minecraftforge.fml.event.IModBusEvent;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class EntityRenderersEvent extends Event implements IModBusEvent
@@ -59,6 +62,18 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
         public void registerLayerDefinition(ModelLayerLocation layerLocation, Supplier<LayerDefinition> supplier)
         {
             ForgeHooksClient.registerLayerDefinition(layerLocation, supplier);
+        }
+
+        /**
+         * Registers the constructor for a skull block with the given {@link SkullBlock.Type}.
+         * These will be inserted into the maps used by the item, entity, and block model renderers at the appropiate time.
+         *
+         * @param type         Unique skull type. Cannot be used to replace vanilla skull models
+         * @param constructor  Constructor to create the model. A typical implementation will simply do {@code modelSet -> new SkullModel(modelSet.bakeLayer(layerLocation))}
+         */
+        public void registerSkullModel(SkullBlock.Type type, Function<EntityModelSet,SkullModelBase> constructor)
+        {
+            ForgeHooksClient.registerSkullModel(type, constructor);
         }
     }
 
