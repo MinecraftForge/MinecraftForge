@@ -26,6 +26,7 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -277,9 +278,9 @@ public class ForgeHooksClient
         renderType.set(layer);
     }
 
-    public static <A extends HumanoidModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, A _default)
+    public static Model getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, HumanoidModel<?> _default)
     {
-        A model = RenderProperties.get(itemStack).getArmorModel(entityLiving, itemStack, slot, _default);
+        Model model = RenderProperties.get(itemStack).getArmorModel(entityLiving, itemStack, slot, _default);
         return model == null ? _default : model;
     }
 
