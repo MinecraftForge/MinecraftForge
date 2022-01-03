@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MinecraftLocator implements IModLocator {
+public class MinecraftLocator extends AbstractModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
@@ -31,7 +31,8 @@ public class MinecraftLocator implements IModLocator {
                 .map(sj -> new ModFile(sj, this, ModFileParser::modsTomlParser))
                 .collect(Collectors.<IModFile>toList());
         var othermods = baseMC.otherModPaths().stream()
-                .map(p->ModJarMetadata.buildFile(this, p.toArray(Path[]::new)))
+                .map(p -> createMod(p.toArray(Path[]::new)).orElse(null))
+                .filter(Objects::nonNull)
                 .toList();
         artifacts.add(mcjar);
         artifacts.addAll(othermods);
@@ -111,10 +112,5 @@ public class MinecraftLocator implements IModLocator {
     @Override
     public void initArguments(final Map<String, ?> arguments) {
         // no op
-    }
-
-    @Override
-    public boolean isValid(final IModFile modFile) {
-        return true;
     }
 }
