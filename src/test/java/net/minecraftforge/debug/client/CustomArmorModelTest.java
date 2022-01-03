@@ -43,9 +43,9 @@ public class CustomArmorModelTest
 
 	private static class CustomArmorItem extends ArmorItem
 	{
-		public CustomArmorItem(ArmorMaterial p_40386_, EquipmentSlot p_40387_, Properties p_40388_)
+		public CustomArmorItem(ArmorMaterial material, EquipmentSlot slot, Properties props)
 		{
-			super(p_40386_, p_40387_, p_40388_);
+			super(material, slot, props);
 		}
 
 		@Nullable
@@ -75,9 +75,9 @@ public class CustomArmorModelTest
 		private static final OverallsModel INSTANCE = new OverallsModel(RenderType::entityCutoutNoCull);
 
 		private HumanoidModel<?> base;
-		private OverallsModel(Function<ResourceLocation,RenderType> p_103110_)
+		private OverallsModel(Function<ResourceLocation,RenderType> renderTypeFunction)
 		{
-			super(p_103110_);
+			super(renderTypeFunction);
 		}
 
 		@Override
