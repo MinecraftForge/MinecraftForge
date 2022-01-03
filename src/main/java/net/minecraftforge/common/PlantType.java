@@ -178,7 +178,7 @@ public final class PlantType
     private PlantType(String name)
     {
         this.name = name;
-        this.mayPlace = (t, u, v, w, x) -> true;
+        this.mayPlace = (state, world, pos, facing, plantable) -> true;
     }
 
     private PlantType(String name, PlantTypePredicate predicate)
@@ -201,20 +201,6 @@ public final class PlantType
     public interface PlantTypePredicate
     {
         boolean test(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable);
-
-        default PlantTypePredicate and(PlantTypePredicate other) {
-            Objects.requireNonNull(other);
-            return (state, world, pos, facing, plantable) -> test(state, world, pos, facing, plantable) && other.test(state, world, pos, facing, plantable);
-        }
-
-        default PlantTypePredicate negate() {
-            return (BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable) -> !test(state, world, pos, facing, plantable);
-        }
-
-        default PlantTypePredicate or(PlantTypePredicate other) {
-            Objects.requireNonNull(other);
-            return (state, world, pos, facing, plantable) -> test(state, world, pos, facing, plantable) || other.test(state, world, pos, facing, plantable);
-        }
     }
 
 }
