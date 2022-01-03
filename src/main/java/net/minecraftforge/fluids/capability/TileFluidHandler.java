@@ -37,7 +37,7 @@ public class TileFluidHandler extends BlockEntity
 {
     protected FluidTank tank = new FluidTank(FluidAttributes.BUCKET_VOLUME);
     
-    private final LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> tank);
+    private LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> tank);
 
     public TileFluidHandler(@Nonnull BlockEntityType<?> blockEntityType, BlockPos pos, BlockState state)
     {
@@ -72,5 +72,12 @@ public class TileFluidHandler extends BlockEntity
     {
         super.invalidateCaps();
         holder.invalidate();
+    }
+
+    @Override
+    public void reviveCaps()
+    {
+        super.reviveCaps();
+        holder = LazyOptional.of(() -> tank);
     }
 }
