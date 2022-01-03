@@ -52,11 +52,10 @@ public class TileFluidHandler extends BlockEntity
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag)
+    public void saveAdditional(CompoundTag tag)
     {
         super.save(tag);
         tank.writeToNBT(tag);
-        return tag;
     }
 
     @Override
@@ -66,5 +65,12 @@ public class TileFluidHandler extends BlockEntity
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
             return holder.cast();
         return super.getCapability(capability, facing);
+    }
+
+    @Override
+    public void invalidateCaps()
+    {
+        super.invalidateCaps();
+        holder.invalidate();
     }
 }
