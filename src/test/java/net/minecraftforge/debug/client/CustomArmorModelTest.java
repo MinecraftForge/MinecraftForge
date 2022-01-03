@@ -50,63 +50,63 @@ import java.util.function.Function;
 @Mod(CustomArmorModelTest.MOD_ID)
 public class CustomArmorModelTest
 {
-	static final String MOD_ID = "custom_armor_model_test";
-	private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
-	private static final RegistryObject<Item> CUSTOM_ARMOR_MODEL = ITEMS.register("test_custom_armor_model", () -> new CustomArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.LEGS, new Properties().stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
+    static final String MOD_ID = "custom_armor_model_test";
+    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
+    private static final RegistryObject<Item> CUSTOM_ARMOR_MODEL = ITEMS.register("test_custom_armor_model", () -> new CustomArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.LEGS, new Properties().stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
 
-	public CustomArmorModelTest()
-	{
-		final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
-		ITEMS.register(modBus);
-	}
+    public CustomArmorModelTest()
+    {
+        final IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ITEMS.register(modBus);
+    }
 
-	private static class CustomArmorItem extends ArmorItem
-	{
-		public CustomArmorItem(ArmorMaterial material, EquipmentSlot slot, Properties props)
-		{
-			super(material, slot, props);
-		}
+    private static class CustomArmorItem extends ArmorItem
+    {
+        public CustomArmorItem(ArmorMaterial material, EquipmentSlot slot, Properties props)
+        {
+            super(material, slot, props);
+        }
 
-		@Nullable
-		@Override
-		public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type)
-		{
-			return "textures/models/armor/diamond_layer_1.png";
-		}
+        @Nullable
+        @Override
+        public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type)
+        {
+            return "textures/models/armor/diamond_layer_1.png";
+        }
 
-		@Override
-		public void initializeClient(Consumer<IItemRenderProperties> consumer)
-		{
-			consumer.accept(new IItemRenderProperties()
-			{
-				@Override
-				public Model getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
-				{
-					OverallsModel.INSTANCE.base = _default;
-					return OverallsModel.INSTANCE;
-				}
-			});
-		}
-	}
+        @Override
+        public void initializeClient(Consumer<IItemRenderProperties> consumer)
+        {
+            consumer.accept(new IItemRenderProperties()
+            {
+                @Override
+                public Model getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
+                {
+                    OverallsModel.INSTANCE.base = _default;
+                    return OverallsModel.INSTANCE;
+                }
+            });
+        }
+    }
 
-	private static class OverallsModel extends Model
-	{
-		private static final OverallsModel INSTANCE = new OverallsModel(RenderType::entityCutoutNoCull);
+    private static class OverallsModel extends Model
+    {
+        private static final OverallsModel INSTANCE = new OverallsModel(RenderType::entityCutoutNoCull);
 
-		private HumanoidModel<?> base;
-		private OverallsModel(Function<ResourceLocation,RenderType> renderTypeFunction)
-		{
-			super(renderTypeFunction);
-		}
+        private HumanoidModel<?> base;
+        private OverallsModel(Function<ResourceLocation,RenderType> renderTypeFunction)
+        {
+            super(renderTypeFunction);
+        }
 
-		@Override
-		public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha)
-		{
-			if (base != null)
-			{
-				base.setAllVisible(true);
-				base.renderToBuffer(poseStack, consumer, light, overlay, red, green, blue, alpha);
-			}
-		}
-	}
+        @Override
+        public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha)
+        {
+            if (base != null)
+            {
+                base.setAllVisible(true);
+                base.renderToBuffer(poseStack, consumer, light, overlay, red, green, blue, alpha);
+            }
+        }
+    }
 }
