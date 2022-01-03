@@ -128,7 +128,11 @@ public final class PlantType
     });
     public static final PlantType CACTUS = get("cactus", (state, world, pos, facing, plantable) ->
     {
-        return state.is(Blocks.CACTUS) || state.is(Blocks.SAND) || state.is(Blocks.RED_SAND);
+        BlockState plant = plantable.getPlant(world, pos.relative(facing));
+        if (plant.is(Blocks.CACTUS))
+            return state.is(Blocks.CACTUS) || state.is(Blocks.SAND) || state.is(Blocks.RED_SAND);
+        else
+            return DESERT.mayPlace(state, world, pos, facing, plantable);
     });
     public static final PlantType SUGAR_CANE = get("sugar_cane", (state, world, pos, facing, plantable) ->
     {
