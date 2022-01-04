@@ -20,6 +20,7 @@
 package net.minecraftforge.debug.block;
 
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -44,7 +45,7 @@ import net.minecraftforge.registries.ObjectHolder;
 public class CustomPlantTypeTest
 {
     static final String MODID = "custom_plant_type_test";
-    private static final String CUSTOM_SOIL_BLOCK = "test_custom_block";
+    private static final String CUSTOM_SOIL_BLOCK = "test_custom_soil";
     private static final String CUSTOM_PLANT_BLOCK = "test_custom_plant";
 
     @ObjectHolder(CUSTOM_SOIL_BLOCK)
@@ -55,7 +56,7 @@ public class CustomPlantTypeTest
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().registerAll(new CustomBlock(), new CustomPlantBlock());
+        event.getRegistry().registerAll(new Block(BlockBehaviour.Properties.of(Material.STONE)).setRegistryName(MODID, CUSTOM_SOIL_BLOCK), new CustomPlantBlock());
     }
 
     @SubscribeEvent
@@ -65,60 +66,28 @@ public class CustomPlantTypeTest
                 new BlockItem(CUSTOM_PLANT, (new Item.Properties())).setRegistryName(MODID, CUSTOM_PLANT_BLOCK));
     }
 
-    public static class CustomBlock extends Block
-    {
-        public CustomBlock()
-        {
-            super(Properties.of(Material.STONE));
-            this.setRegistryName(MODID, CUSTOM_SOIL_BLOCK);
-        }
-
-        @Override
-        public boolean canSustainPlant(BlockState state, BlockGetter world, BlockPos pos, Direction facing, IPlantable plantable)
-        {
-            PlantType type = plantable.getPlantType(world, pos.relative(facing));
-            if (type != null && type == CustomPlantBlock.pt)
-            {
-                return true;
-            }
-            return super.canSustainPlant(state, world, pos, facing, plantable);
-        }
-    }
-
     public static class CustomPlantBlock extends FlowerBlock implements IPlantable
     {
-        public static PlantType pt = PlantType.get("custom_plant_type");
+        public static final PlantType CUSTOM_PLANT_TYPE = PlantType.get("custom_plant_type", (state, world, pos, facing, plantable) -> {
+            return state.is(CUSTOM_SOIL);
+        });
 
         public CustomPlantBlock()
         {
-            super(MobEffects.WEAKNESS, 9, Properties.of(Material.PLANT).noCollission().sound(SoundType.GRASS));
+            super(MobEffects.UNLUCK, 14, Properties.of(Material.PLANT).noCollission().sound(SoundType.GRASS));
             this.setRegistryName(MODID, CUSTOM_PLANT_BLOCK);
         }
 
         @Override
         public PlantType getPlantType(BlockGetter world, BlockPos pos)
         {
-            return pt;
+            return CUSTOM_PLANT_TYPE;
         }
 
         @Override
         public BlockState getPlant(BlockGetter world, BlockPos pos)
         {
             return defaultBlockState();
-        }
-
-        @Override
-        public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos)
-        {
-            BlockState soil = world.getBlockState(pos.below());
-            return soil.canSustainPlant(world, pos, Direction.UP, this);
-        }
-
-        @Override
-        public boolean mayPlaceOn(BlockState state, BlockGetter worldIn, BlockPos pos)
-        {
-            Block block = state.getBlock();
-            return block == CUSTOM_SOIL;
         }
     }
 }

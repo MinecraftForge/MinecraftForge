@@ -83,7 +83,7 @@ public final class PlantType
     {
         return state.is(BlockTags.DIRT) || state.is(Blocks.FARMLAND);
     });
-    public static final PlantType AZELEA = get("azelea", (state, world, pos, facing, plantable) ->
+    public static final PlantType AZALEA = get("azalea", (state, world, pos, facing, plantable) ->
     {
         return state.is(BlockTags.DIRT) || state.is(Blocks.FARMLAND) || BUSH.mayPlace(state, world, pos, facing, plantable);
     });
