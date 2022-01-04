@@ -36,17 +36,13 @@
     }
  
     private WorldGenSettings(long p_64614_, boolean p_64615_, boolean p_64616_, MappedRegistry<LevelStem> p_64617_, Optional<String> p_64618_) {
--      this.f_64602_ = p_64614_;
--      this.f_64603_ = p_64615_;
--      this.f_64604_ = p_64616_;
--      this.f_64605_ = p_64617_;
 +      this(p_64614_, p_64615_, p_64616_, p_64617_, p_64618_, new net.minecraft.nbt.CompoundTag());
 +   }
-+   private WorldGenSettings(long p_64609_, boolean p_64610_, boolean p_64611_, MappedRegistry<LevelStem> p_64612_, Optional<String> p_64618_, net.minecraft.nbt.CompoundTag forgeAllDimensionsTag) {
-+      this.f_64602_ = p_64609_;
-+      this.f_64603_ = p_64610_;
-+      this.f_64604_ = p_64611_;
-+      this.f_64605_ = p_64612_;
++   private WorldGenSettings(long p_64614_, boolean p_64615_, boolean p_64616_, MappedRegistry<LevelStem> p_64617_, Optional<String> p_64618_, net.minecraft.nbt.CompoundTag forgeAllDimensionsTag) {
+       this.f_64602_ = p_64614_;
+       this.f_64603_ = p_64615_;
+       this.f_64604_ = p_64616_;
+       this.f_64605_ = p_64617_;
        this.f_64606_ = p_64618_;
 +      this.forgeAllDimensionsTag = forgeAllDimensionsTag;
     }
