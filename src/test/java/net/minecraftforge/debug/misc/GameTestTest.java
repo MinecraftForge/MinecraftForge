@@ -22,7 +22,6 @@ package net.minecraftforge.debug.misc;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
-import net.minecraft.gametest.framework.GameTestAssertPosException;
 import net.minecraft.gametest.framework.GameTestGenerator;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.TestFunction;
@@ -185,12 +184,14 @@ public class GameTestTest
         energyHolder.ifPresent(energyStorage -> energyStorage.receiveEnergy(2000, false));
 
         // Fails test if stored energy is not equal to 1000 FE
-        helper.succeedIf(() -> {
-            int energy = energyHolder.map(IEnergyStorage::getEnergyStored).orElse(0);
-            if (energy != 1000) {
-                throw new GameTestAssertPosException("Expected energy=1000 but it was energy=" + energy, energyPos, helper.absolutePos(energyPos), helper.getTick());
-            }
-        });
+        int energy = energyHolder.map(IEnergyStorage::getEnergyStored).orElse(0);
+        int target = 1000;
+        if (energy != target)
+        {
+            helper.fail("Expected energy=" + target + " but it was energy=" + energy, energyPos);
+        }
+
+        helper.succeed();
     }
 
     private static class EnergyBlock extends Block implements EntityBlock
