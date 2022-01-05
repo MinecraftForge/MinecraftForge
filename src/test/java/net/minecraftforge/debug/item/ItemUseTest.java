@@ -20,20 +20,19 @@
 package net.minecraftforge.debug.item;
 
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.ItemUseEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod("item_use_event")
-@Mod.EventBusSubscriber
 /**
  * The ItemUseTest will allow Wooden Pickaxes to place torches as if they were a torch item, taking durability damage in the process.
  * The use of the pickaxe should be completely seamless - as if you were physically holding a torch item, including all block-interactions.
  * The pickaxe will not take durability damage in creative.
  */
+@Mod("item_use_event")
+@Mod.EventBusSubscriber
 public class ItemUseTest
 {
 
@@ -41,16 +40,12 @@ public class ItemUseTest
     public static void itemUse(ItemUseEvent event)
     {
         UseOnContext ctx = event.getContext();
-        if (ctx.getItemInHand().getItem() == Items.WOODEN_PICKAXE)
+        if (ctx.getItemInHand().getItem() == Items.WOODEN_PICKAXE && Items.TORCH.useOn(ctx).consumesAction())
         {
-            if (Items.TORCH.useOn(ctx).consumesAction())
-            {
-                ctx.getItemInHand().grow(1); // Grow call is because the torch will shrink the stack. The "clean" way is to make a new context.
-                ctx.getPlayer().getItemInHand(ctx.getHand()).hurtAndBreak((int) 1, ctx.getPlayer(),
-                        p -> p.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-                event.setCanceled(true);
-                event.setCancellationResult(InteractionResult.SUCCESS);
-            }
+            ctx.getItemInHand().grow(1); // Grow call is because the torch will shrink the stack. The "clean" way is to make a new context.
+            ctx.getPlayer().getItemInHand(ctx.getHand()).hurtAndBreak(1, ctx.getPlayer(), p -> p.broadcastBreakEvent(ctx.getHand()));
+            event.setCanceled(true);
+            event.setCancellationResult(InteractionResult.SUCCESS);
         }
     }
 }

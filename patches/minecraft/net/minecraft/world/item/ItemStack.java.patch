@@ -74,7 +74,7 @@
  
     public InteractionResult m_41661_(UseOnContext p_41662_) {
 +      InteractionResult itemUseEventRes = net.minecraftforge.common.ForgeHooks.onItemUse(this, p_41662_);
-+      if(itemUseEventRes != null) return itemUseEventRes;
++      if (itemUseEventRes != null) return itemUseEventRes;
 +      if (!p_41662_.m_43725_().f_46443_) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_41662_);
 +      return onItemUse(p_41662_, (c) -> m_41720_().m_6225_(p_41662_));
 +   }

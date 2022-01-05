@@ -413,7 +413,7 @@ public class PlayerInteractEvent extends PlayerEvent
     /**
      * Set the InteractionResult that will be returned to vanilla if the event is cancelled, instead of calling the relevant
      * method of the event.
-     * Note that this only has an effect on {@link RightClickBlock}, {@link RightClickItem}, {@link EntityInteract}, and {@link EntityInteractSpecific}.
+     * Note that this only has an effect on {@link RightClickBlock}, {@link RightClickItem}, {@link ItemUseEvent}, {@link EntityInteract}, and {@link EntityInteractSpecific}.
      */
     public void setCancellationResult(InteractionResult result)
     {
