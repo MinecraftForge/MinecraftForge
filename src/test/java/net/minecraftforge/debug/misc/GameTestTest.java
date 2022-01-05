@@ -191,8 +191,6 @@ public class GameTestTest
                 throw new GameTestAssertPosException("Expected energy=1000 but it was energy=" + energy, energyPos, helper.absolutePos(energyPos), helper.getTick());
             }
         });
-
-        helper.succeed();
     }
 
     private static class EnergyBlock extends Block implements EntityBlock
