@@ -1,10 +1,61 @@
 --- a/net/minecraft/world/level/LevelSettings.java
 +++ b/net/minecraft/world/level/LevelSettings.java
-@@ -62,6 +_,7 @@
+@@ -11,8 +_,12 @@
+    private final boolean f_46906_;
+    private final GameRules f_46907_;
+    private final DataPackConfig f_46908_;
++   private final com.mojang.serialization.Lifecycle lifecycle;
+ 
+    public LevelSettings(String p_46910_, GameType p_46911_, boolean p_46912_, Difficulty p_46913_, boolean p_46914_, GameRules p_46915_, DataPackConfig p_46916_) {
++      this(p_46910_, p_46911_, p_46912_, p_46913_, p_46914_, p_46915_, p_46916_, com.mojang.serialization.Lifecycle.stable());
++   }
++   public LevelSettings(String p_46910_, GameType p_46911_, boolean p_46912_, Difficulty p_46913_, boolean p_46914_, GameRules p_46915_, DataPackConfig p_46916_, com.mojang.serialization.Lifecycle lifecycle) {
+       this.f_46902_ = p_46910_;
+       this.f_46903_ = p_46911_;
+       this.f_46904_ = p_46912_;
+@@ -20,13 +_,14 @@
+       this.f_46906_ = p_46914_;
+       this.f_46907_ = p_46915_;
+       this.f_46908_ = p_46916_;
++      this.lifecycle = lifecycle;
+    }
+ 
+    public static LevelSettings m_46924_(Dynamic<?> p_46925_, DataPackConfig p_46926_) {
+       GameType gametype = GameType.m_46393_(p_46925_.get("GameType").asInt(0));
+       return new LevelSettings(p_46925_.get("LevelName").asString(""), gametype, p_46925_.get("hardcore").asBoolean(false), p_46925_.get("Difficulty").asNumber().map((p_46928_) -> {
+          return Difficulty.m_19029_(p_46928_.byteValue());
+-      }).result().orElse(Difficulty.NORMAL), p_46925_.get("allowCommands").asBoolean(gametype == GameType.CREATIVE), new GameRules(p_46925_.get("GameRules")), p_46926_);
++      }).result().orElse(Difficulty.NORMAL), p_46925_.get("allowCommands").asBoolean(gametype == GameType.CREATIVE), new GameRules(p_46925_.get("GameRules")), p_46926_, net.minecraftforge.common.ForgeHooks.parseLifecycle(p_46925_.get("forgeLifecycle").asString("stable")));
+    }
+ 
+    public String m_46917_() {
+@@ -58,18 +_,25 @@
+    }
+ 
+    public LevelSettings m_46922_(GameType p_46923_) {
+-      return new LevelSettings(this.f_46902_, p_46923_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_, this.f_46908_);
++      return new LevelSettings(this.f_46902_, p_46923_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_, this.f_46908_, this.lifecycle);
     }
  
     public LevelSettings m_46918_(Difficulty p_46919_) {
+-      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, p_46919_, this.f_46906_, this.f_46907_, this.f_46908_);
 +      net.minecraftforge.common.ForgeHooks.onDifficultyChange(p_46919_, this.f_46905_);
-       return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, p_46919_, this.f_46906_, this.f_46907_, this.f_46908_);
++      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, p_46919_, this.f_46906_, this.f_46907_, this.f_46908_, this.lifecycle);
     }
  
+    public LevelSettings m_46920_(DataPackConfig p_46921_) {
+-      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_, p_46921_);
++      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_, p_46921_, this.lifecycle);
+    }
+ 
+    public LevelSettings m_46935_() {
+-      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_.m_46202_(), this.f_46908_);
++      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_.m_46202_(), this.f_46908_, this.lifecycle);
++   }
++   public LevelSettings withLifeCycle(com.mojang.serialization.Lifecycle lifecycle) {
++      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_, this.f_46908_, lifecycle);
++   }
++   public com.mojang.serialization.Lifecycle getLifecycle() {
++      return this.lifecycle;
+    }
+ }

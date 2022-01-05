@@ -23,7 +23,10 @@ import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Function4;
 import net.minecraft.client.gui.chat.NarratorChatListener;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -33,14 +36,15 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.level.DataPackConfig;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
@@ -84,6 +88,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.client.player.Input;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.storage.LevelData;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.PrimaryLevelData;
+import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -91,9 +99,7 @@ import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Transformation;
 import com.mojang.math.Vector3f;
-import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.Level;
@@ -1045,4 +1051,47 @@ public class ForgeHooksClient
                 .toList();
     }
 
+    public static void createWorldConfirmationScreen(
+            LevelStorageSource save, String worldName, boolean creatingWorld,
+            Function4<LevelStorageSource.LevelStorageAccess, RegistryAccess.RegistryHolder, ResourceManager, DataPackConfig, WorldData> f4,
+            Function<Function4<LevelStorageSource.LevelStorageAccess, RegistryAccess.RegistryHolder, ResourceManager, DataPackConfig, WorldData>, Runnable> runAfter)
+    {
+        Component title = new TranslatableComponent("selectWorld.backupQuestion.experimental");
+        Component msg = new TranslatableComponent("selectWorld.backupWarning.experimental");
+
+        Screen screen = new ConfirmScreen(confirmed ->
+        {
+            if (confirmed)
+            {
+                //The WorldData is re-created when re-running the runnable,
+                // so make sure to be setting the field to true on the right instance.
+                runAfter.apply((a,b,c,d) ->
+                {
+                    WorldData worldData = f4.apply(a,b,c,d);
+                    if (worldData instanceof PrimaryLevelData pld) //instance check should always be true.
+                        pld.setExperimentalWarningConfirmation(true);
+                    return worldData;
+                }).run();
+            }
+            else
+            {
+                Minecraft.getInstance().setScreen(null);
+
+                if (creatingWorld) // delete save when cancelling creation.
+                {
+                    try (LevelStorageSource.LevelStorageAccess levelSave = save.createAccess(worldName))
+                    {
+                        levelSave.deleteLevel();
+                    }
+                    catch (IOException e)
+                    {
+                        SystemToast.onWorldDeleteFailure(Minecraft.getInstance(), worldName);
+                        LOGGER.error("Failed to delete world {}", worldName, e);
+                    }
+                }
+            }
+        }, title, msg, CommonComponents.GUI_PROCEED, CommonComponents.GUI_CANCEL);
+
+        Minecraft.getInstance().setScreen(screen);
+    }
 }

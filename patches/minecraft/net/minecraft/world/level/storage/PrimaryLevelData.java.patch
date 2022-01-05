@@ -1,0 +1,54 @@
+--- a/net/minecraft/world/level/storage/PrimaryLevelData.java
++++ b/net/minecraft/world/level/storage/PrimaryLevelData.java
+@@ -74,6 +_,7 @@
+    private final Set<String> f_78439_;
+    private boolean f_78440_;
+    private final TimerQueue<MinecraftServer> f_78441_;
++   private boolean confirmedExperimentalWarning = false;
+ 
+    private PrimaryLevelData(@Nullable DataFixer p_164942_, int p_164943_, @Nullable CompoundTag p_164944_, boolean p_164945_, int p_164946_, int p_164947_, int p_164948_, float p_164949_, long p_164950_, long p_164951_, int p_164952_, int p_164953_, int p_164954_, boolean p_164955_, int p_164956_, boolean p_164957_, boolean p_164958_, boolean p_164959_, WorldBorder.Settings p_164960_, int p_164961_, int p_164962_, @Nullable UUID p_164963_, Set<String> p_164964_, TimerQueue<MinecraftServer> p_164965_, @Nullable CompoundTag p_164966_, CompoundTag p_164967_, LevelSettings p_164968_, WorldGenSettings p_164969_, Lifecycle p_164970_) {
+       this.f_78452_ = p_164942_;
+@@ -102,7 +_,7 @@
+       this.f_78441_ = p_164965_;
+       this.f_78466_ = p_164966_;
+       this.f_78465_ = p_164967_;
+-      this.f_78443_ = p_164968_;
++      this.f_78443_ = p_164968_.withLifeCycle(p_164970_);
+       this.f_78444_ = p_164969_;
+       this.f_78445_ = p_164970_;
+    }
+@@ -118,7 +_,7 @@
+       });
+       return new PrimaryLevelData(p_78532_, p_78533_, p_78534_, p_78531_.get("WasModded").asBoolean(false), p_78531_.get("SpawnX").asInt(0), p_78531_.get("SpawnY").asInt(0), p_78531_.get("SpawnZ").asInt(0), p_78531_.get("SpawnAngle").asFloat(0.0F), i, p_78531_.get("DayTime").asLong(i), p_78536_.m_78389_(), p_78531_.get("clearWeatherTime").asInt(0), p_78531_.get("rainTime").asInt(0), p_78531_.get("raining").asBoolean(false), p_78531_.get("thunderTime").asInt(0), p_78531_.get("thundering").asBoolean(false), p_78531_.get("initialized").asBoolean(true), p_78531_.get("DifficultyLocked").asBoolean(false), WorldBorder.Settings.m_62037_(p_78531_, WorldBorder.f_61907_), p_78531_.get("WanderingTraderSpawnDelay").asInt(0), p_78531_.get("WanderingTraderSpawnChance").asInt(0), p_78531_.get("WanderingTraderId").read(SerializableUUID.f_123272_).result().orElse((UUID)null), p_78531_.get("ServerBrands").asStream().flatMap((p_78529_) -> {
+          return Util.m_137519_(p_78529_.asString().result());
+-      }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), new TimerQueue<>(TimerCallbacks.f_82226_, p_78531_.get("ScheduledEvents").asStream()), (CompoundTag)p_78531_.get("CustomBossEvents").orElseEmptyMap().getValue(), compoundtag, p_78535_, p_78537_, p_78538_);
++      }).collect(Collectors.toCollection(Sets::newLinkedHashSet)), new TimerQueue<>(TimerCallbacks.f_82226_, p_78531_.get("ScheduledEvents").asStream()), (CompoundTag)p_78531_.get("CustomBossEvents").orElseEmptyMap().getValue(), compoundtag, p_78535_, p_78537_, p_78538_).withConfirmedWarning(p_78531_.get("confirmedExperimentalSettings").asBoolean(false));
+    }
+ 
+    public CompoundTag m_6626_(RegistryAccess p_78543_, @Nullable CompoundTag p_78544_) {
+@@ -189,6 +_,8 @@
+          p_78547_.m_128362_("WanderingTraderId", this.f_78438_);
+       }
+ 
++      p_78547_.m_128359_("forgeLifecycle", net.minecraftforge.common.ForgeHooks.encodeLifecycle(this.f_78443_.getLifecycle()));
++      p_78547_.m_128379_("confirmedExperimentalSettings", this.confirmedExperimentalWarning);
+    }
+ 
+    public int m_6789_() {
+@@ -451,5 +_,16 @@
+ 
+    public LevelSettings m_5926_() {
+       return this.f_78443_.m_46935_();
++   }
++   //FORGE
++   public boolean hasConfirmedExperimentalWarning() {
++      return confirmedExperimentalWarning;
++   }
++   public PrimaryLevelData withConfirmedWarning(boolean confirmedExperimentalWarning) { //builder-like to not patch ctor
++      this.confirmedExperimentalWarning = confirmedExperimentalWarning;
++      return this;
++   }
++   public void setExperimentalWarningConfirmation(boolean confirmedExperimentalWarning) {
++      this.confirmedExperimentalWarning = confirmedExperimentalWarning;
+    }
+ }

@@ -354,7 +354,15 @@
           }));
  
           try {
-@@ -1875,7 +_,7 @@
+@@ -1870,12 +_,14 @@
+       WorldData worlddata = minecraft$serverstem.m_91434_();
+       boolean flag = worlddata.m_5961_().m_64670_();
+       boolean flag1 = worlddata.m_5754_() != Lifecycle.stable();
+-      if (p_91225_ == Minecraft.ExperimentalDialogType.NONE || !flag && !flag1) {
++      //Skip confirmation if it has been done already for this world and that the registries have not changed on client.
++      boolean skipConfirmation = worlddata instanceof PrimaryLevelData pld && pld.hasConfirmedExperimentalWarning();
++      if (skipConfirmation || p_91225_ == Minecraft.ExperimentalDialogType.NONE || !flag && !flag1) {
+          this.m_91399_();
           this.f_90999_.set((StoringChunkProgressListener)null);
  
           try {
@@ -372,7 +380,7 @@
                    StoringChunkProgressListener storingchunkprogresslistener = new StoringChunkProgressListener(p_168000_ + 0);
                    this.f_90999_.set(storingchunkprogresslistener);
                    return ProcessorChunkProgressListener.m_143583_(storingchunkprogresslistener, this.f_91023_::add);
-@@ -1929,11 +_,16 @@
+@@ -1929,12 +_,19 @@
           connection.m_129505_(new ClientHandshakePacketListenerImpl(connection, this, (Screen)null, (p_167998_) -> {
           }));
           connection.m_129512_(new ClientIntentionPacket(socketaddress.toString(), 0, ConnectionProtocol.LOGIN));
@@ -385,12 +393,15 @@
 +         connection.m_129512_(new ServerboundHelloPacket(gameProfile));
           this.f_91009_ = connection;
        } else {
++         if(flag) //For legacy world options, let vanilla handle it.
           this.m_91143_(p_91225_, p_91220_, flag, () -> {
 -            this.m_91219_(p_91220_, p_91221_, p_91222_, p_91223_, p_91224_, Minecraft.ExperimentalDialogType.NONE);
 +            this.doLoadLevel(p_91220_, dyn_f, p_91222_, p_91223_, p_91224_, Minecraft.ExperimentalDialogType.NONE, creating);
           });
++         else net.minecraftforge.client.ForgeHooksClient.createWorldConfirmationScreen(f_91031_, p_91220_, creating, p_91223_, f4 -> () -> this.doLoadLevel(p_91220_, dyn_f, p_91222_, f4, p_91224_, ExperimentalDialogType.NONE, false)); //pass creating as false bcs the RegistryAccess was already-recreated anyway.
           minecraft$serverstem.close();
  
+          try {
 @@ -2021,6 +_,7 @@
     }
  
