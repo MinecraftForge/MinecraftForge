@@ -37,19 +37,19 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber
 public class ShieldBlockTest
 {
-	static final String MOD_ID = "shield_block_event";
+    static final String MOD_ID = "shield_block_event";
 
-	@SubscribeEvent
-	public static void shieldBlock(ShieldBlockEvent event)
-	{
-		if (event.getDamageSource().getDirectEntity() instanceof AbstractArrow arrow)
-		{
-			if (event.getEntityLiving() instanceof Player player)
-			{
-				player.getInventory().add(new ItemStack(Items.ARROW));
-				event.setBlockedDamage(event.getOriginalBlockedDamage() / 2);
-				arrow.discard();
-			}
-		}
-	}
+    @SubscribeEvent
+    public static void shieldBlock(ShieldBlockEvent event)
+    {
+        if (event.getDamageSource().getDirectEntity() instanceof AbstractArrow arrow)
+        {
+            if (event.getEntityLiving() instanceof Player player)
+            {
+                player.getInventory().add(new ItemStack(Items.ARROW));
+                event.setBlockedDamage(event.getOriginalBlockedDamage() / 2);
+                arrow.discard();
+            }
+        }
+    }
 }
