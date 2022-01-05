@@ -25,6 +25,7 @@ import net.minecraft.gametest.framework.GameTestGenerator;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.gametest.framework.TestFunction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraftforge.event.RegisterGameTestsEvent;
@@ -112,5 +113,21 @@ public class GameTestTest
                     helper.succeed();
                 });
         return List.of(testStone);
+    }
+
+    @GameTest(templateNamespace = MODID, prefixTemplateWithClassname = false, template = "empty3x3x3")
+    public static void testHopperPickup(GameTestHelper helper)
+    {
+        BlockPos hopperPos = new BlockPos(1, 1, 1);
+
+        // Sets (1,1,1) to a hopper and spawns a golden apple one block above it
+        helper.setBlock(hopperPos, Blocks.HOPPER);
+        helper.spawnItem(Items.GOLDEN_APPLE, 1, 2, 1);
+
+        // Waits 20 ticks before checking that the hopper contains the golden apple
+        helper.assertAtTickTimeContainerContains(20, hopperPos, Items.GOLDEN_APPLE);
+
+        // Succeeds at 21 ticks if the previous check didn't throw an exception
+        helper.runAtTickTime(21, helper::succeed);
     }
 }
