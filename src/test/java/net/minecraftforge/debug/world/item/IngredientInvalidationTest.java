@@ -38,7 +38,8 @@ import java.util.stream.Stream;
 
 @Mod(IngredientInvalidationTest.MOD_ID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = IngredientInvalidationTest.MOD_ID)
-public class IngredientInvalidationTest {
+public class IngredientInvalidationTest
+{
     public static final String MOD_ID = "ingredient_invalidation";
 
     private static final boolean ENABLED = true;
@@ -49,32 +50,43 @@ public class IngredientInvalidationTest {
     private static boolean invalidateExpected = false;
     private static boolean gotInvalidate = false;
 
-    private static final Ingredient TEST_INGREDIENT = new Ingredient(Stream.of(new Ingredient.ItemValue(new ItemStack(Items.WHEAT)))) {
+    private static final Ingredient TEST_INGREDIENT = new Ingredient(Stream.of(new Ingredient.ItemValue(new ItemStack(Items.WHEAT))))
+    {
         @Override
-        protected void invalidate() {
+        protected void invalidate()
+        {
             super.invalidate();
             gotInvalidate = true;
         }
     };
 
-    public IngredientInvalidationTest() {
+    public IngredientInvalidationTest()
+    {
         if (!ENABLED)
             return;
 
         MinecraftForge.EVENT_BUS.register(ForgeEventListener.class);
     }
 
-    private static class ForgeEventListener {
+    private static class ForgeEventListener
+    {
 
         @SubscribeEvent
-        public static void worldLoad(WorldEvent.Load event) {
-            if (event.getWorld() instanceof ServerLevel level && level.dimension().equals(Level.OVERWORLD)) {
+        public static void worldLoad(WorldEvent.Load event)
+        {
+            if (event.getWorld() instanceof ServerLevel level && level.dimension().equals(Level.OVERWORLD))
+            {
                 TEST_INGREDIENT.getStackingIds(); // force invalidation if necessary
-                if (!invalidateExpected) {
+                if (!invalidateExpected)
+                {
                     invalidateExpected = true;
-                } else if (!gotInvalidate) {
+                }
+                else if (!gotInvalidate)
+                {
                     throw new IllegalStateException("Ingredient.invalidate was not called.");
-                } else {
+                }
+                else
+                {
                     gotInvalidate = false;
                 }
             }
