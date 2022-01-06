@@ -75,7 +75,8 @@ public class CompoundIngredient extends Ingredient
     public IntList getStackingIds()
     {
         boolean needInvalidation = false;
-        for (Ingredient child : children) {
+        for (Ingredient child : children)
+        {
             needInvalidation |= child.checkInvalidation();
         }
         needInvalidation |= checkInvalidation();
