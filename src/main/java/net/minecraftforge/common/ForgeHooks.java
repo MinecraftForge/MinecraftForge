@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -1239,6 +1239,16 @@ public class ForgeHooks
     public static void onEntityEnterSection(Entity entity, long packedOldPos, long packedNewPos)
     {
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
+    }
+
+    public static int getDefaultHideFlags(ItemStack stack)
+    {
+        int flags = 0;
+        for (var part : stack.getItem().getHiddenTooltipParts(stack))
+        {
+            flags |= part.getMask();
+        }
+        return flags;
     }
 
 }

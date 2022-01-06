@@ -205,6 +205,16 @@
        return list;
     }
  
+@@ -736,7 +_,8 @@
+    }
+ 
+    private int m_41618_() {
+-      return this.m_41782_() && this.f_41590_.m_128425_("HideFlags", 99) ? this.f_41590_.m_128451_("HideFlags") : 0;
++      int stackFlags = this.m_41782_() && this.f_41590_.m_128425_("HideFlags", 99) ? this.f_41590_.m_128451_("HideFlags") : 0;
++      return stackFlags | net.minecraftforge.common.ForgeHooks.getDefaultHideFlags(this);
+    }
+ 
+    public void m_41654_(ItemStack.TooltipPart p_41655_) {
 @@ -865,9 +_,10 @@
              }
           }

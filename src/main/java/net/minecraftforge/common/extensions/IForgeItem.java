@@ -740,4 +740,17 @@ public interface IForgeItem
     {
         return target.getBoundingBox().inflate(1.0D, 0.25D, 1.0D);
     }
+
+    /**
+     * Get the tooltip parts that should be hidden by default on the given stack. This is in addition to any
+     * {@linkplain ItemStack#getHideFlags() HideFlags} that might already be set on the stack.
+     * @param stack the stack
+     * @return the tooltip parts that should be hidden
+     */
+    @Nonnull
+    default Set<ItemStack.TooltipPart> getHiddenTooltipParts(@Nonnull ItemStack stack)
+    {
+        return Set.of();
+    }
+
 }

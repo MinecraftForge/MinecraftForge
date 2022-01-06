@@ -174,5 +174,7 @@ license="LGPL v2.1"
     modId="part_entity_test"
 [[mods]]
     modId="capabilities_test"
+[[mods]]
+    modId="hidden_tooltip_parts"
 
 # ADD ABOVE THIS LINE
