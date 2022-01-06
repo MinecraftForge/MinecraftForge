@@ -178,5 +178,7 @@
   "generic.reachDistance": "Reach Distance",
 
   "fluid.minecraft.milk": "Milk",
-  "fluid.minecraft.flowing_milk": "Milk"
+  "fluid.minecraft.flowing_milk": "Milk",
+
+  "forge.experimentalsettings.tooltip": "This world uses experimental settings."
 }
