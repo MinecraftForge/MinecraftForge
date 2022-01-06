@@ -71,7 +71,7 @@ public class RegistryAccessExtension<T extends IForgeRegistryEntry<T>> extends F
         return registryKey;
     }
 
-    public Codec<T> getCodec()
+    public Codec<T> getDirectCodec()
     {
         return directCodec;
     }

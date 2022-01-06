@@ -52,6 +52,7 @@ import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -118,6 +119,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
+import net.minecraftforge.common.world.RegistryAccessExtension;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -152,6 +154,8 @@ import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
 import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -1241,4 +1245,38 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 
+    /**  FOR INTERNAL USE ONLY, DO NOT CALL DIRECTLY */
+    public static void injectRegistryAccessExtensions(Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> registryData, Map<ResourceKey<? extends Registry<?>>, MappedRegistry<?>> builtin)
+    {
+        for (var extension : ForgeRegistries.REGISTRY_ACCESS_EXTENSIONS)
+        {
+            var key = extension.getRegistryKey();
+            var data = createExtensionData(extension);
+            var registry = copyExtensionRegistry(extension);
+
+            // Injects the ResourceKey and Codec to the RegistryAccess.REGISTRIES map
+            registryData.put(key, data);
+
+            // Injects the mod-provided built-in registry elements to RegistryAccess.BUILTIN
+            builtin.put(key, registry);
+
+            LOGGER.info("Injected RegistryAccessExtension: {}", key);
+        }
+    }
+
+    private static <E extends IForgeRegistryEntry<E>> RegistryAccess.RegistryData<E> createExtensionData(RegistryAccessExtension<E> extension)
+    {
+        return new RegistryAccess.RegistryData<>(extension.getRegistryKey(), extension.getDirectCodec(), null);
+    }
+
+    private static <E extends IForgeRegistryEntry<E>> MappedRegistry<E> copyExtensionRegistry(RegistryAccessExtension<E> extension)
+    {
+        var registry = RegistryManager.ACTIVE.getRegistry(extension.getRegistryKey());
+        var mapped = new MappedRegistry<>(extension.getRegistryKey(), extension.getDefaultElementLifecycle());
+        for (var entry : registry.getEntries())
+        {
+            mapped.register(entry.getKey(), entry.getValue(), extension.getDefaultElementLifecycle());
+        }
+        return mapped;
+    }
 }

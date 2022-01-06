@@ -23,6 +23,7 @@ import com.google.common.collect.Multimap;
 import net.minecraft.commands.synchronization.EmptyArgumentSerializer;
 import net.minecraft.commands.synchronization.ArgumentTypes;
 import net.minecraft.commands.synchronization.ArgumentSerializer;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.RangedAttribute;
@@ -196,6 +197,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         if (FMLEnvironment.dist == Dist.CLIENT)
             ForgeHooksClient.registerForgeWorldPresetScreens();
+
+        RegistryAccess.addExtensions();
     }
 
     public void serverStopping(ServerStoppingEvent evt)

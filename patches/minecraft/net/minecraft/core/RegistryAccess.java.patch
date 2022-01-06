@@ -1,46 +1,36 @@
 --- a/net/minecraft/core/RegistryAccess.java
 +++ b/net/minecraft/core/RegistryAccess.java
-@@ -101,6 +_,7 @@
-          m_194614_(registryaccess$registryholder, registryresourceaccess$inmemorystorage, registrydata);
-       }
+@@ -37,7 +_,7 @@
  
-+      net.minecraftforge.common.ForgeRegistryAccessHooks.injectBuiltins(f_123049_, registryresourceaccess$inmemorystorage); // Note: BUILTIN is used for adding to the InMemoryStorage - refer to loop in addBuiltinElements
-       RegistryReadOps.m_195841_(JsonOps.INSTANCE, registryresourceaccess$inmemorystorage, registryaccess$registryholder);
-       return registryaccess$registryholder;
-    }
+ public abstract class RegistryAccess {
+    static final Logger f_123047_ = LogManager.getLogger();
+-   static final Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> f_123048_ = Util.m_137537_(() -> {
++   static final Map<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> f_123048_ = new java.util.HashMap<>(Util.m_137537_(() -> {
+       Builder<ResourceKey<? extends Registry<?>>, RegistryAccess.RegistryData<?>> builder = ImmutableMap.builder();
+       m_123057_(builder, Registry.f_122818_, DimensionType.f_63843_, DimensionType.f_63843_);
+       m_123057_(builder, Registry.f_122885_, Biome.f_47429_, Biome.f_47430_);
+@@ -50,7 +_,7 @@
+       m_123053_(builder, Registry.f_122878_, NoiseGeneratorSettings.f_64430_);
+       m_123053_(builder, Registry.f_194568_, NormalNoise.NoiseParameters.f_192851_);
+       return builder.build();
+-   });
++   }));
+    private static final RegistryAccess.RegistryHolder f_123049_ = Util.m_137537_(() -> {
+       RegistryAccess.RegistryHolder registryaccess$registryholder = new RegistryAccess.RegistryHolder();
+       DimensionType.m_188315_(registryaccess$registryholder);
 @@ -109,6 +_,8 @@
        ResourceKey<? extends Registry<E>> resourcekey = p_194617_.f_123101_();
        boolean flag = !resourcekey.equals(Registry.f_122878_) && !resourcekey.equals(Registry.f_122818_);
        Registry<E> registry = f_123049_.m_175515_(resourcekey);
-+      if (!resourcekey.equals(Registry.f_122818_))
++      if (BuiltinRegistries.f_123858_.m_7804_(resourcekey.m_135782_()))
 +         registry = ((Registry<Registry<E>>)BuiltinRegistries.f_123858_).m_6246_((ResourceKey<Registry<E>>)resourcekey);
        WritableRegistry<E> writableregistry = p_194615_.m_175512_(resourcekey);
  
        for(Entry<ResourceKey<E>, E> entry : registry.m_6579_()) {
-@@ -143,7 +_,7 @@
-       for(RegistryAccess.RegistryData<?> registrydata : f_123048_.values()) {
-          m_175503_(p_175502_, p_175501_, registrydata);
-       }
--
-+      net.minecraftforge.common.ForgeRegistryAccessHooks.loadExtensions(p_175501_, p_175502_);
-    }
- 
-    private static <E> void m_175503_(RegistryReadOps<?> p_175504_, RegistryAccess p_175505_, RegistryAccess.RegistryData<E> p_175506_) {
-@@ -180,7 +_,7 @@
- 
-       private static <K extends ResourceKey<? extends Registry<?>>, V extends MappedRegistry<?>> Codec<RegistryAccess.RegistryHolder> m_123118_(UnboundedMapCodec<K, V> p_123119_) {
-          return p_123119_.xmap(RegistryAccess.RegistryHolder::new, (p_123136_) -> {
--            return ((Map<K, V>)p_123136_.f_123113_).entrySet().stream().filter((p_175526_) -> {
-+            return ((Map<K, V>)p_123136_.f_123113_).entrySet().stream().filter(e -> RegistryAccess.f_123048_.containsKey(e.getKey())).filter((p_175526_) -> {
-                return RegistryAccess.f_123048_.get(p_175526_.getKey()).m_123111_();
-             }).collect(ImmutableMap.toImmutableMap(Entry::getKey, Entry::getValue));
+@@ -224,4 +_,6 @@
           });
-@@ -211,7 +_,7 @@
        }
- 
-       private RegistryHolder(Map<? extends ResourceKey<? extends Registry<?>>, ? extends MappedRegistry<?>> p_123117_) {
--         this.f_123113_ = p_123117_;
-+         this.f_123113_ = net.minecraftforge.common.ForgeRegistryAccessHooks.extendHolderRegistries(p_123117_);
-       }
- 
-       private static <E> MappedRegistry<?> m_123140_(ResourceKey<? extends Registry<?>> p_123141_) {
+    }
++
++   public static void addExtensions() { net.minecraftforge.common.ForgeHooks.injectRegistryAccessExtensions(f_123048_, (Map<ResourceKey<? extends Registry<?>>, MappedRegistry<?>>) f_123049_.f_123113_); }
+ }
