@@ -383,7 +383,9 @@ def sharedFmlonlyForge = { Project prj ->
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
                 property 'nativesDirectory', '{natives}'
-                property 'forge.enablegametest', 'true'
+                if (prj.name == 'forge') {
+                    property 'forge.enablegametest', 'true'
+                }
 
                 args '--launchTarget', "${launchPrefix}clientuserdev"
                 args '--version', 'MOD_DEV'
@@ -395,13 +397,15 @@ def sharedFmlonlyForge = { Project prj ->
                 environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
-                property 'forge.enablegametest', 'true'
+                if (prj.name == 'forge') {
+                    property 'forge.enablegametest', 'true'
+                }
 
                 args '--launchTarget', "${launchPrefix}serveruserdev"
             }
 
             if (prj.name == 'forge') {
-                gametest {
+                gametestserver {
                     environment 'MOD_CLASSES', '{source_roots}'
                     environment 'MCP_MAPPINGS', '{mcp_mappings}'
 
@@ -986,8 +990,8 @@ project(':forge') {
                 }
             }
 
-            forge_gametest {
-                taskName 'forge_gametest'
+            forge_gametestserver {
+                taskName 'forge_gametestserver'
                 args '--launchTarget', 'forgegametestdev'
                 ideaModule "${rootProject.name}.${project.name}.main"
 
@@ -996,9 +1000,9 @@ project(':forge') {
                 }
             }
 
-            forge_test_gametest {
-                parent runs.forge_gametest
-                taskName 'forge_test_gametest'
+            forge_test_gametestserver {
+                parent runs.forge_gametestserver
+                taskName 'forge_test_gametestserver'
 
                 ideaModule "${rootProject.name}.${project.name}.test"
 

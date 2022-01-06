@@ -84,10 +84,10 @@ minecraft {
             }
         }
 
-        // This run config runs GameTestServer and the gametest system.
+        // This run config launches GameTestServer and runs all registered gametests, then exits.
         // By default, the server will crash when no gametests are provided.
-        // The gametest system can be enabled for other run configs under the /test command by specifying the system property "forge.enablegametest" as "true".
-        gametest {
+        // The gametest system is also enabled by default for other run configs under the /test command.
+        gametestserver {
             workingDirectory project.file('run')
 
             // Recommended logging data for a userdev environment
@@ -101,6 +101,9 @@ minecraft {
             // You can set various levels here.
             // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
+
+            // Only runs gametests which use "examplemod" as the namespace
+            args '--enableNamespace', 'examplemod'
 
             mods {
                 examplemod {
