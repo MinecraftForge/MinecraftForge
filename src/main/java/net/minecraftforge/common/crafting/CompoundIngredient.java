@@ -74,9 +74,14 @@ public class CompoundIngredient extends Ingredient
     @Nonnull
     public IntList getStackingIds()
     {
-        //TODO: Add a child.isInvalid()?
-        if (this.itemIds == null)
+        boolean needInvalidation = false;
+        for (Ingredient child : children) {
+            needInvalidation |= child.checkInvalidation();
+        }
+        needInvalidation |= checkInvalidation();
+        if (needInvalidation || this.itemIds == null)
         {
+            this.markValid();
             this.itemIds = new IntArrayList();
             for (Ingredient child : children)
                 this.itemIds.addAll(child.getStackingIds());
@@ -100,7 +105,6 @@ public class CompoundIngredient extends Ingredient
     {
         this.itemIds = null;
         this.stacks = null;
-        //Shouldn't need to invalidate children as this is only called form invalidateAll..
     }
 
     @Override
