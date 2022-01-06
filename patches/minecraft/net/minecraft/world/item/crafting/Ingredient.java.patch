@@ -27,12 +27,12 @@
     }
  
     public ItemStack[] m_43908_() {
-@@ -78,7 +_,9 @@
+@@ -78,7 +_,8 @@
     }
  
     public IntList m_43931_() {
-+      checkInvalidation();
-       if (this.f_43904_ == null) {
+-      if (this.f_43904_ == null) {
++      if (this.f_43904_ == null || checkInvalidation()) {
 +         this.markValid();
           this.m_43948_();
           this.f_43904_ = new IntArrayList(this.f_43903_.length);

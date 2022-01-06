@@ -74,13 +74,12 @@ public class CompoundIngredient extends Ingredient
     @Nonnull
     public IntList getStackingIds()
     {
-        boolean needInvalidation = false;
+        boolean childrenNeedInvalidation = false;
         for (Ingredient child : children)
         {
-            needInvalidation |= child.checkInvalidation();
+            childrenNeedInvalidation |= child.checkInvalidation();
         }
-        needInvalidation |= checkInvalidation();
-        if (needInvalidation || this.itemIds == null)
+        if (childrenNeedInvalidation || this.itemIds == null || checkInvalidation())
         {
             this.markValid();
             this.itemIds = new IntArrayList();
