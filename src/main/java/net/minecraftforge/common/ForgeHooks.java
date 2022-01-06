@@ -1012,6 +1012,15 @@ public class ForgeHooks
     }
 
     /**
+     * @deprecated See {@linkplain ForgeEventFactory}
+     */
+    @Deprecated //todo: remove and use ForgeEventFactory.onAdvancementEarned instead in 1.19
+    public static void onAdvancement(ServerPlayer player, Advancement advancement)
+    {
+        MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
+    }
+
+    /**
      * Hook to fire {@link ItemAttributeModifierEvent}. Modders should use {@link ItemStack#getAttributeModifiers(EquipmentSlot)} instead.
      */
     public static Multimap<Attribute,AttributeModifier> getAttributeModifiers(ItemStack stack, EquipmentSlot equipmentSlot, Multimap<Attribute,AttributeModifier> attributes)

@@ -4,10 +4,10 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.AdvancementEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementEarnEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent.AdvancementProgressEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent.ProgressType;
+import net.minecraftforge.event.entity.player.AdvancementEvents;
+import net.minecraftforge.event.entity.player.AdvancementEvents.AdvancementEarnEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvents.AdvancementProgressEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvents.AdvancementProgressEvent.ProgressType;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 
@@ -21,7 +21,8 @@ public class AdvancementEventTest
     public static final boolean ENABLED = false;
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public AdvancementEventTest(){
+    public AdvancementEventTest()
+    {
         IEventBus forgeBus = MinecraftForge.EVENT_BUS;
         if(ENABLED)
         {
@@ -34,7 +35,7 @@ public class AdvancementEventTest
     {
         Advancement advancement = event.getAdvancement();
         Player player = event.getPlayer();
-        LOGGER.info("Player {} earned advancement {} and was awarded {}",player,advancement.getId(), advancement.getRewards().toString());
+        LOGGER.info("Player {} earned advancement {} and was awarded {}", player, advancement.getId(), advancement.getRewards().toString());
     }
     public void onAdvancementProgressEvent(AdvancementProgressEvent event)
     {
@@ -42,13 +43,16 @@ public class AdvancementEventTest
         Player player = event.getPlayer();
         AdvancementProgress advancementProgress = event.advancementProgress;
         String criterion = event.criterion;
-        AdvancementEvent.ProgressType progressType= event.progressType;
+        AdvancementEvents.AdvancementProgressEvent.ProgressType progressType = event.progressType;
         String action;
-        if(progressType == ProgressType.GRANT){
+        if(progressType == ProgressType.GRANT)
+        {
             action = "granted";
-        }else{
+        }
+        else
+        {
             action = "revoked";
         }
-        LOGGER.info("Player {} progressed advancement {}. It was {} progress on {} criterion. It has completed {}% of the achievement",player,advancement.getId(),action, criterion,advancementProgress.getPercent()*100);
+        LOGGER.info("Player {} progressed advancement {}. It was {} progress on {} criterion. It has completed {}% of the achievement", player, advancement.getId(), action, criterion, advancementProgress.getPercent()*100);
     }
 }
