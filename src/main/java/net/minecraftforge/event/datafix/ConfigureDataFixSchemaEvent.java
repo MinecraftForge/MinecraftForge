@@ -44,6 +44,11 @@ import java.util.function.Supplier;
  *
  * We suggest instead of checking for version equality to check for a greater or equal version, and to unregister (or override with a newer version)
  * when the type changes again in a newer version.
+ *
+ * If a DFU touches a vanilla type (like a list of block entities in a chunk), then all the possible variations of that type need to be known,
+ * in other words, when mojang changes the type signature of a vanilla type, all the mods that touch that type need also to register their types in that schema to persist.
+ * En example of this is when Mojang moved the block entity list in the chunk during the upgrade from 1.17 to 1.18, any block entity type which is
+ * not registered to the 1.18 schema will be lost, since the rule considers a not registered block entity type, as a type that got removed from the game.
  */
 public class ConfigureDataFixSchemaEvent extends Event implements IModBusEvent
 {
