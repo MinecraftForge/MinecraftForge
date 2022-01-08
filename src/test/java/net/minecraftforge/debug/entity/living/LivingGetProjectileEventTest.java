@@ -12,28 +12,24 @@ import org.apache.logging.log4j.Logger;
 @Mod("living_get_projectile_event_test")
 public class LivingGetProjectileEventTest
 {
-    public static final boolean ENABLE = true;
+    public static final boolean ENABLED = true;
     public static final Logger LOGGER = LogManager.getLogger();
 
     public LivingGetProjectileEventTest()
     {
-        if (ENABLE)
+        if (ENABLED)
         {
-            MinecraftForge.EVENT_BUS.addListener(this::onPlayerGetProjectile);
             MinecraftForge.EVENT_BUS.addListener(this::onLivingGetProjectile);
-        }
-    }
-
-    public void onPlayerGetProjectile(LivingGetProjectileEvent event)
-    {
-        if (event.getEntityLiving() instanceof Player && event.getProjectileItemStack().getItem().equals(Items.ARROW))
-        {
-            event.setProjectileItemStack(new ItemStack(Items.SPECTRAL_ARROW));
         }
     }
 
     public void onLivingGetProjectile(LivingGetProjectileEvent event)
     {
         LOGGER.info("{} about to fire {} with a {}", event.getEntity(), event.getProjectileItemStack(), event.getProjectileWeaponItemStack());
+
+        if (event.getEntityLiving() instanceof Player && event.getProjectileItemStack().getItem() == Items.ARROW)
+        {
+            event.setProjectileItemStack(new ItemStack(Items.SPECTRAL_ARROW));
+        }
     }
 }
