@@ -32,7 +32,13 @@ project {
     buildType(PullRequests)
 
     params {
-        text("git_main_branch", "main", label = "Git Main Branch", description = "The git main or default branch to use in VCS operations.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
+        text("git_main_branch", "1.18.x", label = "Git Main Branch", description = "The git main or default branch to use in VCS operations.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
+        text("git_branch_spec", """
+                +:refs/heads/(main*)
+                +:refs/heads/(master*)
+                +:refs/heads/(develop|release|staging|main|master)
+                +:refs/heads/(1.*)
+            """.trimIndent(), label = "The branch specification of the repository", description = "By default all main branches are build by the configuration. Modify this value to adapt the branches build.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
         text("github_repository_name", "MinecraftForge", label = "The github repository name. Used to connect to it in VCS Roots.", description = "This is the repository slug on github. So for example `MinecraftForge` or `MinecraftForge`. It is interpolated into the global VCS Roots.", display = ParameterDisplay.HIDDEN, allowEmpty = false)
         text("env.PUBLISHED_JAVA_ARTIFACT_ID", "forge", label = "Published artifact id", description = "The maven coordinate artifact id that has been published by this build. Can not be empty.", allowEmpty = false)
         text("env.PUBLISHED_JAVA_FML_ARTIFACT_ID", "fmlonly", label = "Published fmlonly artifact id", description = "The maven coordinate artifact id for fml only that has been published by this build. Can not be empty.", allowEmpty = false)
@@ -74,6 +80,18 @@ object BuildSecondaryBranches : BuildType({
     id("MinecraftForge_MinecraftForge__BuildSecondaryBranches")
     name = "Build - Secondary Branches"
     description = "Builds and Publishes the secondary branches of the project."
+
+    vcs {
+        branchFilter = """
+            +:*             
+            -:refs/heads/(develop|release|staging|main|master)
+            -:<default>
+            -:refs/heads/%git_main_branch%
+            -:refs/heads/main*
+            -:refs/heads/master*
+            -:refs/heads/1.*
+        """.trimIndent()
+    }
 })
 
 object PullRequests : BuildType({

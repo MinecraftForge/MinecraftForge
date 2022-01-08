@@ -68,6 +68,7 @@ ext {
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.10'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.17:all'
+    MIN_TAG_FOR_CHANGELOG = "39.0"
 }
 
 println('Version: ' + VERSION +
@@ -1524,5 +1525,5 @@ if (System.env.TEAMCITY_VERSION) {
 }
 
 changelog {
-    fromTag "39.0"
+    fromTag MIN_TAG_FOR_CHANGELOG
 }
