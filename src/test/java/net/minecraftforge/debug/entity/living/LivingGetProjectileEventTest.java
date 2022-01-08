@@ -5,6 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingGetProjectileEvent;
+import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,9 +28,13 @@ public class LivingGetProjectileEventTest
     {
         LOGGER.info("{} about to fire {} with a {}", event.getEntity(), event.getProjectileItemStack(), event.getProjectileWeaponItemStack());
 
-        if (event.getEntityLiving() instanceof Player && event.getProjectileItemStack().getItem() == Items.ARROW)
+        // for this test, we're checking if the player has a spectral arrow itemstack in their offhand and if they're firing a normal arrow.
+        // if they do, we're going to use that itemstack. if not, we will create a spectral arrow itemstack
+        // this demonstrates the usage of specific itemstacks with this event. you can use specific itemstacks from the player's inventory in this similar style
+        if (event.getEntityLiving() instanceof Player player && event.getProjectileItemStack().getItem() == Items.ARROW)
         {
-            event.setProjectileItemStack(new ItemStack(Items.SPECTRAL_ARROW));
+            ItemStack offhandItem = player.getOffhandItem();
+            event.setProjectileItemStack(offhandItem.getItem() == Items.SPECTRAL_ARROW ? offhandItem : new ItemStack(Items.SPECTRAL_ARROW));
         }
     }
 }
