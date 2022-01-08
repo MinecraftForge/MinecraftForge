@@ -11,3 +11,15 @@
              if (p_155111_.f_58649_.size() <= 1) {
                 beaconblockentity$beaconbeamsection = new BeaconBlockEntity.BeaconBeamSection(afloat);
                 p_155111_.f_58649_.add(beaconblockentity$beaconbeamsection);
+@@ -204,9 +_,9 @@
+       return i;
+    }
+ 
+-   public void m_7651_() {
++   public void setRemoved(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason reason) {
+       m_155103_(this.f_58857_, this.f_58858_, SoundEvents.f_11738_);
+-      super.m_7651_();
++      super.setRemoved(reason);
+    }
+ 
+    private static void m_155097_(Level p_155098_, BlockPos p_155099_, int p_155100_, @Nullable MobEffect p_155101_, @Nullable MobEffect p_155102_) {
