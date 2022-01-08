@@ -1,22 +1,11 @@
 --- a/net/minecraft/world/item/HoneycombItem.java
 +++ b/net/minecraft/world/item/HoneycombItem.java
-@@ -1,8 +_,8 @@
- package net.minecraft.world.item;
- 
- import com.google.common.base.Suppliers;
--import com.google.common.collect.BiMap;
--import com.google.common.collect.ImmutableBiMap;
-+import com.google.common.collect.*;
-+
- import java.util.Optional;
- import java.util.function.Supplier;
- import net.minecraft.advancements.CriteriaTriggers;
 @@ -18,7 +_,7 @@
  
  public class HoneycombItem extends Item {
     public static final Supplier<BiMap<Block, Block>> f_150863_ = Suppliers.memoize(() -> {
 -      return ImmutableBiMap.<Block, Block>builder().put(Blocks.f_152504_, Blocks.f_152571_).put(Blocks.f_152503_, Blocks.f_152573_).put(Blocks.f_152502_, Blocks.f_152572_).put(Blocks.f_152501_, Blocks.f_152574_).put(Blocks.f_152510_, Blocks.f_152578_).put(Blocks.f_152509_, Blocks.f_152577_).put(Blocks.f_152508_, Blocks.f_152576_).put(Blocks.f_152507_, Blocks.f_152575_).put(Blocks.f_152570_, Blocks.f_152586_).put(Blocks.f_152569_, Blocks.f_152585_).put(Blocks.f_152568_, Blocks.f_152584_).put(Blocks.f_152567_, Blocks.f_152583_).put(Blocks.f_152566_, Blocks.f_152582_).put(Blocks.f_152565_, Blocks.f_152581_).put(Blocks.f_152564_, Blocks.f_152580_).put(Blocks.f_152563_, Blocks.f_152579_).build();
-+      return HashBiMap.create(ImmutableBiMap.<Block, Block>builder().put(Blocks.f_152504_, Blocks.f_152571_).put(Blocks.f_152503_, Blocks.f_152573_).put(Blocks.f_152502_, Blocks.f_152572_).put(Blocks.f_152501_, Blocks.f_152574_).put(Blocks.f_152510_, Blocks.f_152578_).put(Blocks.f_152509_, Blocks.f_152577_).put(Blocks.f_152508_, Blocks.f_152576_).put(Blocks.f_152507_, Blocks.f_152575_).put(Blocks.f_152570_, Blocks.f_152586_).put(Blocks.f_152569_, Blocks.f_152585_).put(Blocks.f_152568_, Blocks.f_152584_).put(Blocks.f_152567_, Blocks.f_152583_).put(Blocks.f_152566_, Blocks.f_152582_).put(Blocks.f_152565_, Blocks.f_152581_).put(Blocks.f_152564_, Blocks.f_152580_).put(Blocks.f_152563_, Blocks.f_152579_).build());
++      return com.google.common.collect.HashBiMap.create(ImmutableBiMap.<Block, Block>builder().put(Blocks.f_152504_, Blocks.f_152571_).put(Blocks.f_152503_, Blocks.f_152573_).put(Blocks.f_152502_, Blocks.f_152572_).put(Blocks.f_152501_, Blocks.f_152574_).put(Blocks.f_152510_, Blocks.f_152578_).put(Blocks.f_152509_, Blocks.f_152577_).put(Blocks.f_152508_, Blocks.f_152576_).put(Blocks.f_152507_, Blocks.f_152575_).put(Blocks.f_152570_, Blocks.f_152586_).put(Blocks.f_152569_, Blocks.f_152585_).put(Blocks.f_152568_, Blocks.f_152584_).put(Blocks.f_152567_, Blocks.f_152583_).put(Blocks.f_152566_, Blocks.f_152582_).put(Blocks.f_152565_, Blocks.f_152581_).put(Blocks.f_152564_, Blocks.f_152580_).put(Blocks.f_152563_, Blocks.f_152579_).build());
     });
     public static final Supplier<BiMap<Block, Block>> f_150864_ = Suppliers.memoize(() -> {
        return f_150863_.get().inverse();
