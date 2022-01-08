@@ -51,7 +51,7 @@ public class LivingGetProjectileEvent extends LivingEvent
     }
 
     /**
-     * Gets the itemstack of the projectile weapon item that is looking for a projectile.
+     * @return The itemstack of the projectile weapon item that is looking for a projectile.
      */
     public ItemStack getProjectileWeaponItemStack()
     {
@@ -59,7 +59,8 @@ public class LivingGetProjectileEvent extends LivingEvent
     }
 
     /**
-     * Gets the itemstack of the projectile found. Initially this is set to the projectile found by vanilla behaviour.
+     * @return The itemstack of the projectile found. Initially this is set to the projectile found by vanilla
+     * behaviour.
      */
     public ItemStack getProjectileItemStack()
     {
