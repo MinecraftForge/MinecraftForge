@@ -9,3 +9,21 @@
              Iterator iterator = list.iterator();
  
              while(true) {
+@@ -252,7 +_,7 @@
+          this.f_60339_ = 1.0F;
+          this.f_60340_ = this.f_60339_;
+          this.f_58857_.m_46747_(this.f_58858_);
+-         this.m_7651_();
++         this.setRemoved(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.REMOVED);
+          if (this.f_58857_.m_8055_(this.f_58858_).m_60713_(Blocks.f_50110_)) {
+             BlockState blockstate;
+             if (this.f_60337_) {
+@@ -276,7 +_,7 @@
+             ++p_155919_.f_60342_;
+          } else {
+             p_155916_.m_46747_(p_155917_);
+-            p_155919_.m_7651_();
++            p_155919_.setRemoved(net.minecraftforge.common.extensions.IForgeBlockEntity.RemovalReason.REMOVED);
+             if (p_155916_.m_8055_(p_155917_).m_60713_(Blocks.f_50110_)) {
+                BlockState blockstate = Block.m_49931_(p_155919_.f_60334_, p_155916_, p_155917_);
+                if (blockstate.m_60795_()) {
