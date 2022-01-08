@@ -998,14 +998,8 @@ public class ForgeHooks
     public static ItemStack findProjectile(LivingEntity entity, ItemStack projectileWeaponItem, ItemStack projectile)
     {
         LivingGetProjectileEvent event = new LivingGetProjectileEvent(entity, projectileWeaponItem, projectile);
-        if (MinecraftForge.EVENT_BUS.post(event))
-        {
-            return projectile;
-        }
-        else
-        {
-            return event.getProjectileItemStack();
-        }
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getProjectileItemStack();
     }
 
     /**

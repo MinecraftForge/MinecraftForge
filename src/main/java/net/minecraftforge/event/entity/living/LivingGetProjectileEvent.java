@@ -30,14 +30,12 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * {@link net.minecraft.world.item.ProjectileWeaponItem} and the item stack returned is usually the item stack of a
  * {@link net.minecraft.world.entity.projectile.Projectile}.
  * <p>
- * This event is {@link net.minecraftforge.eventbus.api.Cancelable}. If the event is cancelled, the original itemstack
- * provided to the event will be returned.
+ * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
  * <p>
  * This event does not have a result. {@link net.minecraftforge.eventbus.api.Event.HasResult}
  * <p>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-@Cancelable
 public class LivingGetProjectileEvent extends LivingEvent
 {
     private final ItemStack projectileWeaponItemStack;
