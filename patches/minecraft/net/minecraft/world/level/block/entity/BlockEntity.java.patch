@@ -47,7 +47,7 @@
     }
  
     @Nullable
-@@ -161,8 +_,21 @@
+@@ -161,8 +_,16 @@
        return this.f_58859_;
     }
  
@@ -61,11 +61,6 @@
        this.f_58859_ = true;
 +      this.invalidateCaps();
 +      requestModelDataUpdate();
-+   }
-+
-+   @Override
-+   public void onChunkUnloaded() {
-+      this.invalidateCaps();
     }
  
     public void m_6339_() {
