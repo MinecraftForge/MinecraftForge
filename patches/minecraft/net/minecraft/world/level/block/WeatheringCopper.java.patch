@@ -1,11 +1,14 @@
 --- a/net/minecraft/world/level/block/WeatheringCopper.java
 +++ b/net/minecraft/world/level/block/WeatheringCopper.java
-@@ -9,7 +_,7 @@
+@@ -8,9 +_,9 @@
+ import net.minecraft.world.level.block.state.BlockState;
  
  public interface WeatheringCopper extends ChangeOverTimeBlock<WeatheringCopper.WeatherState> {
-    Supplier<BiMap<Block, Block>> f_154886_ = Suppliers.memoize(() -> {
--      return ImmutableBiMap.<Block, Block>builder().put(Blocks.f_152504_, Blocks.f_152503_).put(Blocks.f_152503_, Blocks.f_152502_).put(Blocks.f_152502_, Blocks.f_152501_).put(Blocks.f_152510_, Blocks.f_152509_).put(Blocks.f_152509_, Blocks.f_152508_).put(Blocks.f_152508_, Blocks.f_152507_).put(Blocks.f_152570_, Blocks.f_152569_).put(Blocks.f_152569_, Blocks.f_152568_).put(Blocks.f_152568_, Blocks.f_152567_).put(Blocks.f_152566_, Blocks.f_152565_).put(Blocks.f_152565_, Blocks.f_152564_).put(Blocks.f_152564_, Blocks.f_152563_).build();
-+      return com.google.common.collect.HashBiMap.create(ImmutableBiMap.<Block, Block>builder().put(Blocks.f_152504_, Blocks.f_152503_).put(Blocks.f_152503_, Blocks.f_152502_).put(Blocks.f_152502_, Blocks.f_152501_).put(Blocks.f_152510_, Blocks.f_152509_).put(Blocks.f_152509_, Blocks.f_152508_).put(Blocks.f_152508_, Blocks.f_152507_).put(Blocks.f_152570_, Blocks.f_152569_).put(Blocks.f_152569_, Blocks.f_152568_).put(Blocks.f_152568_, Blocks.f_152567_).put(Blocks.f_152566_, Blocks.f_152565_).put(Blocks.f_152565_, Blocks.f_152564_).put(Blocks.f_152564_, Blocks.f_152563_).build());
-    });
+-   Supplier<BiMap<Block, Block>> f_154886_ = Suppliers.memoize(() -> {
++   Supplier<BiMap<Block, Block>> f_154886_ = Suppliers.memoize(() -> net.minecraftforge.common.ForgeHooks.wrapImmutableBiMap(() -> {
+       return ImmutableBiMap.<Block, Block>builder().put(Blocks.f_152504_, Blocks.f_152503_).put(Blocks.f_152503_, Blocks.f_152502_).put(Blocks.f_152502_, Blocks.f_152501_).put(Blocks.f_152510_, Blocks.f_152509_).put(Blocks.f_152509_, Blocks.f_152508_).put(Blocks.f_152508_, Blocks.f_152507_).put(Blocks.f_152570_, Blocks.f_152569_).put(Blocks.f_152569_, Blocks.f_152568_).put(Blocks.f_152568_, Blocks.f_152567_).put(Blocks.f_152566_, Blocks.f_152565_).put(Blocks.f_152565_, Blocks.f_152564_).put(Blocks.f_152564_, Blocks.f_152563_).build();
+-   });
++   }));
     Supplier<BiMap<Block, Block>> f_154887_ = Suppliers.memoize(() -> {
        return f_154886_.get().inverse();
+    });

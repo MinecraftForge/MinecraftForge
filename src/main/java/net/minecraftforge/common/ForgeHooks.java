@@ -35,6 +35,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Suppliers;
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
@@ -1133,6 +1135,11 @@ public class ForgeHooks
     {
         VANILLA_BURNS.clear();
         FurnaceBlockEntity.getFuel().entrySet().forEach(e -> VANILLA_BURNS.put(e.getKey().delegate, e.getValue()));
+    }
+
+    public static HashBiMap<Block, Block> wrapImmutableBiMap(Supplier<ImmutableBiMap<Block, Block>> map)
+    {
+        return HashBiMap.create(map.get());
     }
 
     /**
