@@ -77,12 +77,9 @@ println('Version: ' + VERSION +
 
 def extraTxts = [
     rootProject.file('CREDITS.txt'),
-    rootProject.file('LICENSE.txt')
+    rootProject.file('LICENSE.txt'),
+    rootProject.file('build/changelog.txt') //Now gets generated on build.
 ]
-
-def changelog = rootProject.file('build/changelog.txt')
-if (changelog.exists())
-    extraTxts += changelog
 
 task downloadVersionManifest(type: Download) {
     src 'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json'
@@ -1496,11 +1493,6 @@ project(':forge') {
         publications {
             mavenJava(MavenPublication) {
                 artifact universalJar
-                if (changelog.exists()) {
-                    artifact(changelog) {
-                        classifier = 'changelog'
-                    }
-                }
                 artifact installerJar
                 //TODO: installer-win
                 artifact makeMdk
@@ -1529,4 +1521,8 @@ if (System.env.TEAMCITY_VERSION) {
             println "##teamcity[setParameter name='env.PUBLISHED_JAVA_FML_ARTIFACT_VERSION' value='${project(':fmlonly').version}']"
         }
     }
+}
+
+changelog {
+    fromTag "39.0"
 }
