@@ -196,14 +196,13 @@
                    profilerfiller.m_6521_(this::m_142280_);
                    BlockState blockstate = LevelChunk.this.m_8055_(blockpos);
                    if (this.f_156428_.m_58903_().m_155262_(blockstate)) {
-@@ -638,6 +_,12 @@
+@@ -638,6 +_,11 @@
                    CrashReport crashreport = CrashReport.m_127521_(throwable, "Ticking block entity");
                    CrashReportCategory crashreportcategory = crashreport.m_127514_("Block entity being ticked");
                    this.f_156428_.m_58886_(crashreportcategory);
 +
 +                  if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringBlockEntities.get()) {
 +                     LogManager.getLogger().fatal("{}", crashreport.m_127526_());
-+                     f_156428_.m_7651_();
 +                     LevelChunk.this.m_8114_(f_156428_.m_58899_());
 +                  } else
                    throw new ReportedException(crashreport);
