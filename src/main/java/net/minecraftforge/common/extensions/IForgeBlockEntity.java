@@ -213,44 +213,46 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
          * Marked as removed for some unknown reason. The likely case is outdated code calling
          * {@link BlockEntity#setRemoved()} instead of {@link #setRemoved(RemovalReason)}.
          */
-        UNKNOWN(false),
+        UNKNOWN(false, false),
         /**
          * Removed from the chunk manually by position.
          *
          * @see LevelChunk#removeBlockEntity(BlockPos)
          */
-        REMOVED(false),
+        REMOVED(false, true),
         /**
          * Replaced by a new block entity at the same position in the level.
          *
          * @see LevelChunk#setBlockEntity(BlockEntity)
          */
-        REPLACED_IN_WORLD(false),
+        REPLACED_IN_WORLD(false, true),
         /**
          * Removed as part of a block entity clearing operation on the chunk this block entity resides in.
          *
          * @see LevelChunk#clearAllBlockEntities()
          */
-        CLEARED_CHUNK(true),
+        CLEARED_CHUNK(true, true),
         /**
          * Removed as the chunk the block entity resides in was unloaded.
          *
          * @see net.minecraft.client.multiplayer.ClientLevel#unload(LevelChunk)
          * @see net.minecraft.server.level.ServerLevel#unload(LevelChunk)
          */
-        UNLOADED_TO_CHUNK(true),
+        UNLOADED_TO_CHUNK(true, false),
         /**
          * Removed as the contents of the resident chunk was replaced from a chunk packet.
          *
          * @see LevelChunk#replaceWithPacketData(FriendlyByteBuf, CompoundTag, Consumer)
          */
-        REPLACED_FROM_PACKET(true);
+        REPLACED_FROM_PACKET(true, false);
 
         private final boolean chunk;
+        private final boolean removedPermanently;
 
-        RemovalReason(boolean chunk)
+        RemovalReason(boolean chunk, boolean removedPermanently)
         {
             this.chunk = chunk;
+            this.removedPermanently = removedPermanently;
         }
 
         /**
@@ -259,6 +261,14 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
         public boolean isChunk()
         {
             return chunk;
+        }
+
+        /**
+         * {@return whether this reason means the block entity has been removed permanently from the level}
+         */
+        public boolean isRemovedPermanently()
+        {
+            return removedPermanently;
         }
     }
 }
