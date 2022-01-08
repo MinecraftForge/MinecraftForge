@@ -27,7 +27,7 @@ import org.gradle.plugins.ide.eclipse.model.SourceFolder
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.github.ben-manes.versions' version '0.36.0'
-    id 'net.minecraftforge.gradleutils' version '1.+'
+    id 'net.minecraftforge.gradleutils' version '2.0.9-preview'
     id 'eclipse'
     id 'de.undercouch.download' version '4.1.2'
 }
@@ -181,20 +181,7 @@ subprojects {
             }
         }
         repositories {
-            maven {
-                if (System.env.MAVEN_USER) {
-                    url 'https://maven.minecraftforge.net/releases/'
-                    authentication {
-                        basic(BasicAuthentication)
-                    }
-                    credentials {
-                        username = System.env.MAVEN_USER ?: 'not'
-                        password = System.env.MAVEN_PASSWORD ?: 'set'
-                    }
-                } else {
-                    url 'file://' + rootProject.file('repo').getAbsolutePath()
-                }
-            }
+            maven gradleutils.getPublishingForgeMaven()
         }
     }
 }
@@ -1532,4 +1519,14 @@ task setup() {  //These must be strings so that we can do lazy resolution. Else 
     if (symlinkValid)
         dependsOn ':fmlonly:extractMapped'
     dependsOn ':forge:extractMapped'
+}
+
+//Also output FMLOnly when building a version.
+if (System.env.TEAMCITY_VERSION) {
+    //Only setup the CI environment if and only if the environment variables are set.
+    tasks.configureTeamCity {
+        doLast {
+            println "##teamcity[setParameter name='env.PUBLISHED_JAVA_FML_ARTIFACT_VERSION' value='${project(':fmlonly').version}']"
+        }
+    }
 }
