@@ -1,0 +1,17 @@
+{
+  "type": "recipe_book_extension_test:test_recipe",
+  "result": {
+    "id": "stone",
+    "Count" : 1
+  },
+  "group": "test_2",
+  "pattern": [
+    "AA",
+    "AA"
+  ],
+  "key": {
+    "A" : {
+      "item" : "gold_ingot"
+    }
+  }
+}
