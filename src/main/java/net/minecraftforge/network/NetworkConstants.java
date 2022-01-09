@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.util.List;
-
 /**
  * Constants related to networking
  */

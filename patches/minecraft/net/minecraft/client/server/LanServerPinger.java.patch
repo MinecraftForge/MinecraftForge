@@ -1,13 +1,5 @@
 --- a/net/minecraft/client/server/LanServerPinger.java
 +++ b/net/minecraft/client/server/LanServerPinger.java
-@@ -4,6 +_,7 @@
- import java.net.DatagramPacket;
- import java.net.DatagramSocket;
- import java.net.InetAddress;
-+import java.net.InetSocketAddress;
- import java.nio.charset.StandardCharsets;
- import java.util.concurrent.atomic.AtomicInteger;
- import net.minecraft.DefaultUncaughtExceptionHandler;
 @@ -16,7 +_,8 @@
  public class LanServerPinger extends Thread {
     private static final AtomicInteger f_120101_ = new AtomicInteger(0);
