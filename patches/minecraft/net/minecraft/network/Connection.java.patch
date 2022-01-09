@@ -1,6 +1,15 @@
 --- a/net/minecraft/network/Connection.java
 +++ b/net/minecraft/network/Connection.java
 @@ -87,6 +_,7 @@
+@@ -42,6 +_,7 @@
+ import net.minecraft.server.network.ServerLoginPacketListenerImpl;
+ import net.minecraft.util.LazyLoadedValue;
+ import net.minecraft.util.Mth;
++import net.minecraftforge.network.DualStackUtils;
+ import org.apache.commons.lang3.Validate;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -77,6 +_,7 @@
     private float f_129477_;
     private int f_129478_;
     private boolean f_129479_;
@@ -29,7 +38,7 @@
     }
  
     public static Connection m_178300_(InetSocketAddress p_178301_, boolean p_178302_) {
-+      if (p_178301_.getAddress() instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
++      net.minecraftforge.network.DualStackUtils.isIPv6(p_178301_.getAddress());
        final Connection connection = new Connection(PacketFlow.CLIENTBOUND);
 +      connection.activationHandler = net.minecraftforge.network.NetworkHooks::registerClientLoginChannel;
        Class<? extends SocketChannel> oclass;

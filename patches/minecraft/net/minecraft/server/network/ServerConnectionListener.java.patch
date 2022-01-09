@@ -1,5 +1,13 @@
 --- a/net/minecraft/server/network/ServerConnectionListener.java
 +++ b/net/minecraft/server/network/ServerConnectionListener.java
+@@ -25,6 +_,7 @@
+ import io.netty.util.Timer;
+ import java.io.IOException;
+ import java.net.InetAddress;
++import java.net.InetSocketAddress;
+ import java.net.SocketAddress;
+ import java.util.Collections;
+ import java.util.Iterator;
 @@ -50,11 +_,12 @@
  
  public class ServerConnectionListener {
@@ -15,11 +23,12 @@
     });
     final MinecraftServer f_9702_;
     public volatile boolean f_9700_;
-@@ -67,6 +_,7 @@
+@@ -67,6 +_,8 @@
     }
  
     public void m_9711_(@Nullable InetAddress p_9712_, int p_9713_) throws IOException {
-+      if (p_9712_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
++      if (p_9712_ == null) p_9712_ = new InetSocketAddress(p_9713_).getAddress();
++      net.minecraftforge.network.DualStackUtils.isIPv6(p_9712_);
        synchronized(this.f_9703_) {
           Class<? extends ServerSocketChannel> oclass;
           LazyLoadedValue<? extends EventLoopGroup> lazyloadedvalue;

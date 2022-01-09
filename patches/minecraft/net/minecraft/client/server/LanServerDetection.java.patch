@@ -5,21 +5,26 @@
           this.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(LanServerDetection.f_120082_));
           this.f_120088_ = new MulticastSocket(4445);
 -         this.f_120087_ = InetAddress.getByName("224.0.2.60");
-+         if (net.minecraftforge.network.NetworkConstants.USE_IPV6) {
-+            this.f_120087_ = InetAddress.getByName("FF7E:230::60"); // todo: contact IANA and ask if this is the right equiv and compliant with the IPv6 Multicast Address Space Registry
++         if (net.minecraftforge.network.DualStackUtils.isIPv6(net.minecraftforge.network.DualStackUtils.getLocalAddress())) {
++            this.f_120087_ = InetAddress.getByName("FF75:230::60"); // todo: determine the correct/ideal multicast IPv6 address
 +         } else {
 +            this.f_120087_ = InetAddress.getByName("224.0.2.60");
 +         }
           this.f_120088_.setSoTimeout(5000);
           this.f_120088_.joinGroup(this.f_120087_);
        }
-@@ -88,7 +_,11 @@
+@@ -88,7 +_,16 @@
           String s = LanServerPinger.m_120111_(p_120097_);
           String s1 = LanServerPinger.m_120116_(p_120097_);
           if (s1 != null) {
 -            s1 = p_120098_.getHostAddress() + ":" + s1;
-+            if (net.minecraftforge.network.NetworkConstants.USE_IPV6) {
-+               s1 = "[" + p_120098_.getHostAddress() + "]:" + s1;
++            if (net.minecraftforge.network.DualStackUtils.isIPv6(p_120098_)) {
++               // compress to short form
++               final String compressedIP = p_120098_.getHostAddress();/*
++                       .replaceAll("((?::0\\b){2,}):?(?!\\S*\\b\\1:0\\b)(\\S*)", "::$2")
++                       .replaceFirst("^0::","::");*/
++
++               s1 = "[" + compressedIP + "]:" + s1;
 +            } else {
 +               s1 = p_120098_.getHostAddress() + ":" + s1;
 +            }

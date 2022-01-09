@@ -1,11 +1,20 @@
 --- a/net/minecraft/client/server/LanServerPinger.java
 +++ b/net/minecraft/client/server/LanServerPinger.java
-@@ -16,7 +_,7 @@
+@@ -4,6 +_,7 @@
+ import java.net.DatagramPacket;
+ import java.net.DatagramSocket;
+ import java.net.InetAddress;
++import java.net.InetSocketAddress;
+ import java.nio.charset.StandardCharsets;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import net.minecraft.DefaultUncaughtExceptionHandler;
+@@ -16,7 +_,8 @@
  public class LanServerPinger extends Thread {
     private static final AtomicInteger f_120101_ = new AtomicInteger(0);
     private static final Logger f_120102_ = LogManager.getLogger();
 -   public static final String f_174974_ = "224.0.2.60";
-+   public static final String f_174974_ = net.minecraftforge.network.NetworkConstants.USE_IPV6 ? "FF7E:230::60" : "224.0.2.60";
++   public static final String f_174974_ =
++           net.minecraftforge.network.DualStackUtils.isIPv6(net.minecraftforge.network.DualStackUtils.getLocalAddress()) ? "FF75:230::60" : "224.0.2.60";
     public static final int f_174975_ = 4445;
     private static final long f_174976_ = 1500L;
     private final String f_120103_;
