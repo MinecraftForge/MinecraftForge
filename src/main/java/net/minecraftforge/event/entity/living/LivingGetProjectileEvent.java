@@ -21,8 +21,6 @@ package net.minecraftforge.event.entity.living;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * This event is fired when a living entity attempts to get a projectile with the
@@ -34,7 +32,7 @@ import net.minecraftforge.eventbus.api.Cancelable;
  * <p>
  * This event does not have a result. {@link net.minecraftforge.eventbus.api.Event.HasResult}
  * <p>
- * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+ * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.
  */
 public class LivingGetProjectileEvent extends LivingEvent
 {
