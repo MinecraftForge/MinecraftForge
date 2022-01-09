@@ -422,13 +422,20 @@ public class ForgeHooks
         return Math.max(0,event.getVisibilityModifier());
     }
 
+    /** @deprecated Use {@link #isLivingOnLadderPos(BlockState, World, BlockPos, LivingEntity)} instead in 1.16. */
+    @Deprecated
     public static boolean isLivingOnLadder(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity)
     {
-        boolean isSpectator = (entity instanceof PlayerEntity && ((PlayerEntity)entity).isSpectator());
-        if (isSpectator) return false;
+        return isLivingOnLadderPos(state, world, pos, entity).isPresent();
+    }
+
+    public static Optional<BlockPos> isLivingOnLadderPos(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity)
+    {
+        boolean isSpectator = (entity instanceof PlayerEntity && entity.isSpectator());
+        if (isSpectator) return Optional.empty();
         if (!ForgeConfig.SERVER.fullBoundingBoxLadders.get())
         {
-            return state.isLadder(world, pos, entity);
+            return state.isLadder(world, pos, entity) ? Optional.of(pos) : Optional.empty();
         }
         else
         {
@@ -446,12 +453,12 @@ public class ForgeHooks
                         state = world.getBlockState(tmp);
                         if (state.isLadder(world, tmp, entity))
                         {
-                            return true;
+                            return Optional.of(tmp);
                         }
                     }
                 }
             }
-            return false;
+            return Optional.empty();
         }
     }
 
