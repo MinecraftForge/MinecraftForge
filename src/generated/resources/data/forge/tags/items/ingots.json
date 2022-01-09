@@ -3,6 +3,7 @@
   "values": [
     "#forge:ingots/iron",
     "#forge:ingots/gold",
+    "#forge:ingots/copper",
     "#forge:ingots/brick",
     "#forge:ingots/nether_brick",
     "#forge:ingots/netherite"
