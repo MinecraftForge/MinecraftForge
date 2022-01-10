@@ -39,7 +39,7 @@ public class ManyMobEffectsTest
 
     static final String MODID = "many_mob_effects_test";
 
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     private static final Logger LOGGER = LogManager.getLogger();
 
