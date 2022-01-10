@@ -47,7 +47,7 @@ public class ModStateProvider implements IModStateProvider {
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
     });
-    private final ModLoadingState COMMON_SETUP = ModLoadingState.withTransition("COMMON_SETUP", "CONFIG_LOAD", ModLoadingPhase.LOAD, new ParallelTransition(ModLoadingStage.CONSTRUCT, FMLCommonSetupEvent.class));
+    private final ModLoadingState COMMON_SETUP = ModLoadingState.withTransition("COMMON_SETUP", "CONFIG_LOAD", ModLoadingPhase.LOAD, new ParallelTransition(ModLoadingStage.COMMON_SETUP, FMLCommonSetupEvent.class));
     private final ModLoadingState SIDED_SETUP = ModLoadingState.withTransition("SIDED_SETUP", "COMMON_SETUP", ModLoadingPhase.LOAD, new ParallelTransition(ModLoadingStage.SIDED_SETUP, DistExecutor.unsafeRunForDist(()->()-> FMLClientSetupEvent.class, ()->()-> FMLDedicatedServerSetupEvent.class)));
     private final ModLoadingState ENQUEUE_IMC = ModLoadingState.withTransition("ENQUEUE_IMC", "", ModLoadingPhase.COMPLETE, new ParallelTransition(ModLoadingStage.ENQUEUE_IMC, InterModEnqueueEvent.class));
     private final ModLoadingState PROCESS_IMC = ModLoadingState.withTransition("PROCESS_IMC", "ENQUEUE_IMC",ModLoadingPhase.COMPLETE, new ParallelTransition(ModLoadingStage.PROCESS_IMC, InterModProcessEvent.class));

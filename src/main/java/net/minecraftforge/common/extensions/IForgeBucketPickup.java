@@ -17,30 +17,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.server.permission.context;
+package net.minecraftforge.common.extensions;
 
-import com.google.common.base.Preconditions;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import java.util.Optional;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class PlayerContext extends Context
+public interface IForgeBucketPickup
 {
-    private final Player player;
 
-    public PlayerContext(Player ep)
+    private BucketPickup self()
     {
-        player = Preconditions.checkNotNull(ep, "Player can't be null in PlayerContext!");
+        return (BucketPickup) this;
     }
 
-    @Override
-    public Level getWorld()
+    /**
+     * State sensitive variant of {@link BucketPickup#getPickupSound()}.
+     *
+     * Override to change the pickup sound based on the {@link BlockState} of the object being picked up.
+     *
+     * @param state State
+     *
+     * @return Sound event for pickup sound or empty if there isn't a pickup sound.
+     */
+    default Optional<SoundEvent> getPickupSound(BlockState state)
     {
-        return player.getCommandSenderWorld();
-    }
-
-    @Override
-    public Player getPlayer()
-    {
-        return player;
+        return self().getPickupSound();
     }
 }

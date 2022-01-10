@@ -17,10 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
-package net.minecraftforge.server.permission.context;
+package net.minecraftforge.server.permission.exceptions;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import net.minecraftforge.server.permission.nodes.PermissionNode;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+public class UnregisteredPermissionException extends RuntimeException
+{
+    private PermissionNode node;
+
+    public UnregisteredPermissionException(PermissionNode node)
+    {
+        super(String.format("Tried to query PermissionNode '%s' although it has not been Registered", node.getNodeName()));
+        this.node = node;
+    }
+
+    public PermissionNode getNode()
+    {
+        return node;
+    }
+}
