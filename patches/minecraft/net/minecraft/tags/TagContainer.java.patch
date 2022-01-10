@@ -16,3 +16,11 @@
              if (optional.isPresent()) {
                 map.put(p_144481_, p_144482_.m_144411_(optional.get()));
              } else {
+@@ -102,6 +_,7 @@
+ 
+    private static <T> void m_144444_(RegistryAccess p_144445_, TagContainer.Builder p_144446_, ResourceKey<? extends Registry<? extends T>> p_144447_, TagCollection.NetworkPayload p_144448_) {
+       Optional<? extends Registry<? extends T>> optional = p_144445_.m_6632_(p_144447_);
++      optional = net.minecraftforge.common.ForgeTagHandler.getWrapperRegistry((ResourceKey<? extends Registry<T>>) p_144447_, (Optional<? extends Registry<T>>) optional);
+       if (optional.isPresent()) {
+          p_144446_.m_144486_(p_144447_, TagCollection.m_144408_(p_144448_, optional.get()));
+       } else {
