@@ -20,32 +20,27 @@
 package net.minecraftforge.debug.world.item;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
 
 import java.util.stream.Stream;
 
+/**
+ * This class validates that {@link Ingredient#invalidate()} is called correctly.<br>
+ * To verify, join a world, then leave it. Then join a world again in the same game session. If invalidation is not working,
+ * the 2nd world join will trigger an exception.
+ */
 @Mod(IngredientInvalidationTest.MOD_ID)
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = IngredientInvalidationTest.MOD_ID)
 public class IngredientInvalidationTest
 {
     public static final String MOD_ID = "ingredient_invalidation";
 
     private static final boolean ENABLED = true;
-
-    private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
-    private static final RegistryObject<Item> TEST_ITEM = ITEMS.register("test_item", () -> new Item(new Item.Properties()));
 
     private static boolean invalidateExpected = false;
     private static boolean gotInvalidate = false;
@@ -65,31 +60,27 @@ public class IngredientInvalidationTest
         if (!ENABLED)
             return;
 
-        MinecraftForge.EVENT_BUS.register(ForgeEventListener.class);
+        MinecraftForge.EVENT_BUS.addListener(IngredientInvalidationTest::worldLoad);
     }
 
-    private static class ForgeEventListener
+    private static void worldLoad(WorldEvent.Load event)
     {
-
-        @SubscribeEvent
-        public static void worldLoad(WorldEvent.Load event)
+        if (event.getWorld() instanceof ServerLevel level && level.dimension().equals(Level.OVERWORLD))
         {
-            if (event.getWorld() instanceof ServerLevel level && level.dimension().equals(Level.OVERWORLD))
+            TEST_INGREDIENT.getStackingIds(); // force invalidation if necessary
+            if (!invalidateExpected)
             {
-                TEST_INGREDIENT.getStackingIds(); // force invalidation if necessary
-                if (!invalidateExpected)
-                {
-                    invalidateExpected = true;
-                }
-                else if (!gotInvalidate)
-                {
-                    throw new IllegalStateException("Ingredient.invalidate was not called.");
-                }
-                else
-                {
-                    gotInvalidate = false;
-                }
+                invalidateExpected = true;
+            }
+            else if (!gotInvalidate)
+            {
+                throw new IllegalStateException("Ingredient.invalidate was not called.");
+            }
+            else
+            {
+                gotInvalidate = false;
             }
         }
     }
+
 }
