@@ -45,7 +45,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * Replacement for vanilla packets {@link ClientboundUpdateMobEffectPacket} and {@link  ClientboundRemoveMobEffectPacket}
+ * Replacement for vanilla packets {@link ClientboundUpdateMobEffectPacket} and {@link ClientboundRemoveMobEffectPacket}
  * to remove 255 ID limit
  */
 public class ExtendedMobEffectChannel
