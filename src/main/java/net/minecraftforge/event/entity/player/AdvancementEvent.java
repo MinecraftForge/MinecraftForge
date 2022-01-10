@@ -6,12 +6,11 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementProgress;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
- * @deprecated Consider using {@link AdvancementEvents}.
- * <br>
  * This event is fired when a player gets an advancement.
  * <br>
  * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
@@ -20,7 +19,6 @@ import net.minecraftforge.common.MinecraftForge;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  */
-@Deprecated()//todo : remove and use AdvancementEvents instead in 1.19
 public class AdvancementEvent extends PlayerEvent
 {
     private final Advancement advancement;
@@ -34,5 +32,75 @@ public class AdvancementEvent extends PlayerEvent
     public Advancement getAdvancement()
     {
         return advancement;
+    }
+
+    /**
+     * This event is fired when a player earns an advancement/recipe.
+     * <br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}<br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     */
+    public static class AdvancementEarnEvent extends AdvancementEvent
+    {
+        public AdvancementEarnEvent(Player player, Advancement earned)
+        {
+            super(player, earned);
+        }
+    }
+
+    /**
+     * This event is fired when a player progresses on an advancement criterionName.
+     * <br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}<br>
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
+     */
+    public static class AdvancementProgressEvent extends AdvancementEvent
+    {
+        public enum ProgressType
+        {
+            GRANT, REVOKE
+        }
+
+        private final AdvancementProgress advancementProgress;
+        private final String criterionName;
+        private final AdvancementEvent.AdvancementProgressEvent.ProgressType progressType;
+
+        public AdvancementProgressEvent(Player player, Advancement progressed, AdvancementProgress advancementProgress, String criterionName, AdvancementEvent.AdvancementProgressEvent.ProgressType progressType)
+        {
+            super(player, progressed);
+            this.advancementProgress = advancementProgress;
+            this.criterionName = criterionName;
+            this.progressType = progressType;
+        }
+
+        /**
+         * {@return The AdvancementProgress of the Advancement}
+         */
+        public AdvancementProgress getAdvancementProgress()
+        {
+            return advancementProgress;
+        }
+
+        /**
+         * {@return The Criterion's name that was progressed}
+         */
+        public String getCriterionName()
+        {
+            return criterionName;
+        }
+
+        /**
+         * {@return The ProgressType of the progressed Advancement}
+         */
+        public ProgressType getProgressType()
+        {
+            return progressType;
+        }
     }
 }

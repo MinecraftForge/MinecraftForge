@@ -1014,7 +1014,7 @@ public class ForgeHooks
     /**
      * @deprecated See {@linkplain ForgeEventFactory}
      */
-    @Deprecated //todo: remove and use ForgeEventFactory.onAdvancementEarned instead in 1.19
+    @Deprecated(forRemoval = true, since = "1.18.1") //todo: remove and use ForgeEventFactory.onAdvancementEarned instead in 1.19
     public static void onAdvancement(ServerPlayer player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
