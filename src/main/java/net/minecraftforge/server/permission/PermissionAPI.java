@@ -19,14 +19,12 @@
 
 package net.minecraftforge.server.permission;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.StringRepresentable;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.server.ServerLifecycleHooks;
 import net.minecraftforge.server.permission.events.PermissionGatherEvent;
 import net.minecraftforge.server.permission.exceptions.UnregisteredPermissionException;
 import net.minecraftforge.server.permission.handler.DefaultPermissionHandler;
@@ -38,7 +36,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
 
 public final class PermissionAPI
 {
@@ -108,7 +109,14 @@ public final class PermissionAPI
      */
     public static void initializePermissionAPI()
     {
-        if (PermissionAPI.activeHandler != null) throw new IllegalStateException("Tried to initialize PermissionAPI multiple times!");
+        Class callerClass = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE).getCallerClass();
+        if (callerClass != ServerLifecycleHooks.class)
+        {
+            LOGGER.warn("{} tried to initialize the PermissionAPI, this call will be ignored.", callerClass.getName());
+            return;
+        }
+
+        PermissionAPI.activeHandler = null;
 
         PermissionGatherEvent.Handler handlerEvent = new PermissionGatherEvent.Handler();
         MinecraftForge.EVENT_BUS.post(handlerEvent);
@@ -139,15 +147,5 @@ public final class PermissionAPI
         {
             LOGGER.error("Error parsing config value 'permissionHandler'", e);
         }
-    }
-
-    /**
-     * <p>Helper method for internal use only!</p>
-     * <p>Resets the active permission handler.</p>
-     */
-    public static void resetPermissionAPI()
-    {
-        PermissionAPI.activeHandler = null;
-        LOGGER.debug("Reset PermissionAPI");
     }
 }
