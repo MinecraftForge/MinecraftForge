@@ -36,6 +36,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingBreatheEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -97,7 +98,7 @@ public class LivingBreatheEventTest
             }
         }
 
-        @SubscribeEvent
+        @SubscribeEvent(priority = EventPriority.LOW)
         public static void onBreathe(LivingBreatheEvent e)
         {
             LivingEntity entity = e.getEntityLiving();
