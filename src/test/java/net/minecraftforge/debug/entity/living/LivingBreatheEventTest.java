@@ -117,6 +117,15 @@ public class LivingBreatheEventTest
             return true;
         }
 
+        @Override
+        public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged)
+        {
+            if (!slotChanged && oldStack.getItem() == this && newStack.getItem() == this) {
+                return false;
+            }
+            return super.shouldCauseReequipAnimation(oldStack, newStack, slotChanged);
+        }
+
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onBreathe(LivingBreatheEvent e)
         {
