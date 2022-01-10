@@ -79,6 +79,8 @@ public class LivingBreatheEventTest
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
     public static class MagicalAirBottleItem extends Item
     {
+        static final int CAPACITY = 100;
+
         public MagicalAirBottleItem()
         {
             super(new Item.Properties().stacksTo(1).tab(CreativeModeTab.TAB_TOOLS));
@@ -130,7 +132,7 @@ public class LivingBreatheEventTest
         public static int receiveAir(ItemStack stack, int amount)
         {
             CompoundTag nbt = stack.getOrCreateTag();
-            amount = Mth.clamp(amount, 0, 100 - nbt.getInt("air"));
+            amount = Mth.clamp(amount, 0, CAPACITY - nbt.getInt("air"));
             if (amount == 0)
             {
                 return 0;
