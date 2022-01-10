@@ -32,7 +32,7 @@ public class MinecraftLocator implements IModLocator {
                 .collect(Collectors.<IModFile>toList());
         var testSourcesPaths = TestModLocator.getTestSources().paths();
         var othermods = baseMC.otherModPaths().stream()
-                .filter(paths -> testSourcesPaths.stream().noneMatch(paths::contains))
+                .filter(paths -> testSourcesPaths.stream().noneMatch(paths::contains)) // Exclude test sources from scanning
                 .map(p->ModJarMetadata.buildFile(this, p.toArray(Path[]::new)))
                 .toList();
         artifacts.add(mcjar);

@@ -127,7 +127,8 @@ public class TestModLocator implements IModLocator
     public void scanFile(IModFile modFile, Consumer<Path> pathConsumer)
     {
         LOGGER.debug(LogMarkers.SCAN, "Scan started: {}", modFile);
-        try (Stream<Path> files = Files.find(modFile.getSecureJar().getRootPath(), Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class")))
+        try (Stream<Path> files = Files.find(modFile.getSecureJar().getRootPath(), Integer.MAX_VALUE,
+                (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class")))
         {
             files.forEach(pathConsumer);
         } catch (IOException e)
