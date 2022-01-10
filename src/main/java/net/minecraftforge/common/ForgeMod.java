@@ -49,6 +49,7 @@ import net.minecraftforge.fluids.ForgeFlowingFluid;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
+import net.minecraftforge.network.filters.ExtendedMobEffectChannel;
 import net.minecraftforge.registries.*;
 import net.minecraftforge.internal.WorldPersistenceHooks;
 import net.minecraftforge.network.NetworkConstants;
@@ -183,6 +184,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         registerArgumentTypes();
         VanillaPacketSplitter.register();
+        ExtendedMobEffectChannel.register();
+
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

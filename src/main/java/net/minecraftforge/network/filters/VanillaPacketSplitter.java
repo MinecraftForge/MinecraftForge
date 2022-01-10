@@ -21,8 +21,10 @@ package net.minecraftforge.network.filters;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
+import com.google.common.collect.ImmutableMap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
@@ -31,6 +33,9 @@ import net.minecraft.network.*;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientboundCustomPayloadPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateAdvancementsPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
+import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.*;
 import net.minecraftforge.network.event.EventNetworkChannel;
@@ -64,6 +69,19 @@ public class VanillaPacketSplitter
         Predicate<String> versionCheck = NetworkRegistry.acceptMissingOr(VERSION);
         EventNetworkChannel channel = NetworkRegistry.newEventChannel(CHANNEL, () -> VERSION, versionCheck, versionCheck);
         channel.addListener(VanillaPacketSplitter::onClientPacket);
+    }
+
+    public static void registerHandlers(ImmutableMap.Builder<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> builder)
+    {
+        builder
+                .put(ClientboundUpdateRecipesPacket.class, VanillaPacketSplitter::splitPacket)
+                .put(ClientboundUpdateTagsPacket.class, VanillaPacketSplitter::splitPacket)
+                .put(ClientboundUpdateAdvancementsPacket.class, VanillaPacketSplitter::splitPacket);
+    }
+
+    private static void splitPacket(Packet<?> packet, List<? super Packet<?>> out)
+    {
+        VanillaPacketSplitter.appendPackets(ConnectionProtocol.PLAY, PacketFlow.CLIENTBOUND, packet, out);
     }
 
     /**
@@ -194,4 +212,11 @@ public class VanillaPacketSplitter
     {
         return getRemoteCompatibility(manager) != RemoteCompatibility.ABSENT;
     }
+
+    public static boolean shouldBeUsed(Connection connection)
+    {
+        // not needed on local connections, because packets are not encoded to bytes there
+        return !connection.isMemoryConnection() && isRemoteCompatible(connection);
+    }
+
 }

@@ -28,11 +28,6 @@ import javax.annotation.Nullable;
 import io.netty.channel.ChannelHandler;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.ConnectionProtocol;
-import net.minecraft.network.protocol.game.ClientboundUpdateAdvancementsPacket;
-import net.minecraft.network.protocol.game.ClientboundUpdateTagsPacket;
-import net.minecraft.network.protocol.game.ClientboundUpdateRecipesPacket;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -47,34 +42,30 @@ public class ForgeConnectionNetworkFilter extends VanillaPacketFilter
         super(buildHandlers(manager));
     }
 
-    private static Map<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> buildHandlers(@Nullable Connection manager)
+    private static Map<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> buildHandlers(@Nullable Connection connection)
     {
-
-        VanillaPacketSplitter.RemoteCompatibility compatibility = manager == null ? VanillaPacketSplitter.RemoteCompatibility.ABSENT : VanillaPacketSplitter.getRemoteCompatibility(manager);
-        if (compatibility == VanillaPacketSplitter.RemoteCompatibility.ABSENT)
+        if (connection == null)
         {
             return ImmutableMap.of();
         }
-        ImmutableMap.Builder<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> builder = ImmutableMap.<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>>builder()
-                .put(ClientboundUpdateRecipesPacket.class, ForgeConnectionNetworkFilter::splitPacket)
-                .put(ClientboundUpdateTagsPacket.class, ForgeConnectionNetworkFilter::splitPacket)
-                .put(ClientboundUpdateAdvancementsPacket.class, ForgeConnectionNetworkFilter::splitPacket);
+
+        ImmutableMap.Builder<Class<? extends Packet<?>>, BiConsumer<Packet<?>, List<? super Packet<?>>>> builder = ImmutableMap.builder();
+        if (VanillaPacketSplitter.shouldBeUsed(connection))
+        {
+            VanillaPacketSplitter.registerHandlers(builder);
+        }
+        if (ExtendedMobEffectChannel.shouldBeUsed(connection))
+        {
+            ExtendedMobEffectChannel.registerHandlers(builder);
+        }
 
         return builder.build();
     }
 
     @Override
-    protected boolean isNecessary(Connection manager)
+    protected boolean isNecessary(Connection connection)
     {
-        // not needed on local connections, because packets are not encoded to bytes there
-        return !manager.isMemoryConnection() && VanillaPacketSplitter.isRemoteCompatible(manager);
-    }
-
-    private static void splitPacket(Packet<?> packet, List<? super Packet<?>> out)
-    {
-        VanillaPacketSplitter.appendPackets(
-                ConnectionProtocol.PLAY, PacketFlow.CLIENTBOUND, packet, out
-        );
+        return ExtendedMobEffectChannel.shouldBeUsed(connection) || VanillaPacketSplitter.shouldBeUsed(connection);
     }
 
 }
