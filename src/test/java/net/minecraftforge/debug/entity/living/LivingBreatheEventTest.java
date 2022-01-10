@@ -98,6 +98,25 @@ public class LivingBreatheEventTest
             }
         }
 
+        @Override
+        public int getBarColor(ItemStack stack)
+        {
+            return Mth.color(0, 200, 225);
+        }
+
+        @Override
+        public int getBarWidth(ItemStack stack)
+        {
+            CompoundTag nbt = stack.getOrCreateTag();
+            return Math.round(13.0F * (float) nbt.getInt("air") / CAPACITY);
+        }
+
+        @Override
+        public boolean isBarVisible(ItemStack stack)
+        {
+            return true;
+        }
+
         @SubscribeEvent(priority = EventPriority.LOW)
         public static void onBreathe(LivingBreatheEvent e)
         {
