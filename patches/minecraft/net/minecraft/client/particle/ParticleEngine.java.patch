@@ -1,6 +1,11 @@
 --- a/net/minecraft/client/particle/ParticleEngine.java
 +++ b/net/minecraft/client/particle/ParticleEngine.java
-@@ -70,7 +_,7 @@
+@@ -66,11 +_,11 @@
+    private static final int f_172264_ = 16384;
+    private static final List<ParticleRenderType> f_107288_ = ImmutableList.of(ParticleRenderType.f_107429_, ParticleRenderType.f_107430_, ParticleRenderType.f_107432_, ParticleRenderType.f_107431_, ParticleRenderType.f_107433_);
+    protected ClientLevel f_107287_;
+-   private final Map<ParticleRenderType, Queue<Particle>> f_107289_ = Maps.newIdentityHashMap();
++   private final Map<ParticleRenderType, Queue<Particle>> f_107289_ = Maps.newTreeMap(net.minecraftforge.client.ForgeHooksClient.makeParticleRenderTypeComparator(f_107288_));
     private final Queue<TrackingEmitter> f_107290_ = Queues.newArrayDeque();
     private final TextureManager f_107291_;
     private final Random f_107292_ = new Random();
