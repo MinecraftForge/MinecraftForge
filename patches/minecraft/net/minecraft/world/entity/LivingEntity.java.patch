@@ -236,7 +236,7 @@
        p_147241_ *= 1.0D - this.m_21133_(Attributes.f_22278_);
        if (!(p_147241_ <= 0.0D)) {
           this.f_19812_ = true;
-@@ -1388,15 +_,7 @@
+@@ -1388,15 +_,9 @@
        } else {
           BlockPos blockpos = this.m_142538_();
           BlockState blockstate = this.m_146900_();
@@ -249,7 +249,9 @@
 -         } else {
 -            return false;
 -         }
-+         return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(blockstate, f_19853_, blockpos, this);
++         Optional<BlockPos> ladderPos = net.minecraftforge.common.ForgeHooks.isLivingOnLadder(blockstate, f_19853_, blockpos, this);
++         if (ladderPos.isPresent()) this.f_20957_ = ladderPos;
++         return ladderPos.isPresent();
        }
     }
  

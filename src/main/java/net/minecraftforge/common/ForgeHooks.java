@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -357,13 +358,13 @@ public class ForgeHooks
         return Math.max(0,event.getVisibilityModifier());
     }
 
-    public static boolean isLivingOnLadder(@Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity)
+    public static Optional<BlockPos> isLivingOnLadder(@Nonnull BlockState state, @Nonnull Level world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity)
     {
-        boolean isSpectator = (entity instanceof Player && ((Player)entity).isSpectator());
-        if (isSpectator) return false;
+        boolean isSpectator = (entity instanceof Player && entity.isSpectator());
+        if (isSpectator) return Optional.empty();
         if (!ForgeConfig.SERVER.fullBoundingBoxLadders.get())
         {
-            return state.isLadder(world, pos, entity);
+            return state.isLadder(world, pos, entity) ? Optional.of(pos) : Optional.empty();
         }
         else
         {
@@ -381,12 +382,12 @@ public class ForgeHooks
                         state = world.getBlockState(tmp);
                         if (state.isLadder(world, tmp, entity))
                         {
-                            return true;
+                            return Optional.of(tmp);
                         }
                     }
                 }
             }
-            return false;
+            return Optional.empty();
         }
     }
 
