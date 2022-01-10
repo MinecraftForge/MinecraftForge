@@ -162,7 +162,8 @@ public class ExtendedMobEffectChannel
         public boolean handle(Supplier<NetworkEvent.Context> contextSupplier)
         {
             var level = LogicalSidedProvider.CLIENTWORLD.get(LogicalSide.CLIENT).orElseThrow();
-            if (effect != null && level.getEntity(entityId) instanceof LivingEntity entity) {
+            if (effect != null && level.getEntity(entityId) instanceof LivingEntity entity)
+            {
                 MobEffectInstance effectInstance = new MobEffectInstance(
                         effect, durationTicks, amplifier,
                         (flags & FLAG_AMBIENT) != 0, (flags & FLAG_VISIBLE) != 0, (flags & FLAG_SHOW_ICON) != 0
@@ -198,7 +199,8 @@ public class ExtendedMobEffectChannel
         public boolean handle(Supplier<NetworkEvent.Context> contextSupplier)
         {
             var level = LogicalSidedProvider.CLIENTWORLD.get(LogicalSide.CLIENT).orElseThrow();
-            if (effect != null && level.getEntity(entityId) instanceof LivingEntity entity) {
+            if (effect != null && level.getEntity(entityId) instanceof LivingEntity entity)
+            {
                 entity.removeEffectNoUpdate(effect);
             }
             return true;
