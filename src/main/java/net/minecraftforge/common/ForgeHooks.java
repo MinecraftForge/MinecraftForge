@@ -1273,10 +1273,17 @@ public class ForgeHooks
     {
         var registry = RegistryManager.ACTIVE.getRegistry(extension.getRegistryKey());
         var mapped = new MappedRegistry<>(extension.getRegistryKey(), extension.getDefaultElementLifecycle());
+
+        if (registry == null)
+        {
+            return mapped;
+        }
+
         for (var entry : registry.getEntries())
         {
             mapped.register(entry.getKey(), entry.getValue(), extension.getDefaultElementLifecycle());
         }
+
         return mapped;
     }
 }

@@ -46,7 +46,7 @@ import net.minecraftforge.registries.RegistryBuilder;
  *
  * @param <T> The type of world-gen component.
  */
-public class RegistryAccessExtension<T extends IForgeRegistryEntry<T>> extends ForgeRegistryEntry<RegistryAccessExtension<?>>
+public final class RegistryAccessExtension<T extends IForgeRegistryEntry<T>> extends ForgeRegistryEntry<RegistryAccessExtension<?>>
 {
     private final ResourceKey<Registry<T>> registryKey;
     private final Codec<T> directCodec;
