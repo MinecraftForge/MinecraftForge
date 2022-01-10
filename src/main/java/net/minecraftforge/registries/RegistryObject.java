@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -78,6 +78,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
             if (pred.test(registry.getRegistryName()))
                 this.value = registry.containsKey(this.name) ? (T)registry.getValue(this.name) : null;
         });
+        updateReference(((IForgeRegistry<? extends T>) registry));
     }
 
     @SuppressWarnings("unchecked")
@@ -102,6 +103,12 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>> impl
                     RegistryObject.this.value = registry.containsKey(RegistryObject.this.name) ? (T)registry.getValue(RegistryObject.this.name) : null;
             }
         });
+        IForgeRegistry<V> registry = RegistryManager.ACTIVE.getRegistry(baseType);
+        // allow registry to be null, this might be for a custom registry that does not exist yet
+        if (registry != null)
+        {
+            updateReference(((IForgeRegistry<? extends T>) registry));
+        }
     }
 
     /**

@@ -176,5 +176,7 @@ license="LGPL v2.1"
     modId="capabilities_test"
 [[mods]]
     modId="custom_particle_type_test"
+[[mods]]
+    modId="registry_object_test"
 
 # ADD ABOVE THIS LINE
