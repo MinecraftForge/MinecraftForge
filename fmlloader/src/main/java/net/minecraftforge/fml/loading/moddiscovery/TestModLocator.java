@@ -54,7 +54,7 @@ import java.util.stream.Stream;
  *
  * <p>This locator is hardcoded to look for mods using the FML Java built-in language provider, whose mods are marked
  * with the {@code net.minecraftforge.fml.common.Mod} annotation. A sizeable portion of code in this class is inspired
- * by and borrowed from {@link MinecraftLocator}</p>
+ * by and borrowed from {@link MinecraftLocator}.</p>
  */
 public class TestModLocator implements IModLocator
 {
