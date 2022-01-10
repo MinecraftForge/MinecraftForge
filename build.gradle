@@ -945,6 +945,7 @@ project(':forge') {
 
                 ideaModule "${rootProject.name}.${project.name}.test"
 
+                property 'forge.test.id', 'tests'
                 mods {
                     tests { sources sourceSets.test }
                 }
@@ -967,6 +968,7 @@ project(':forge') {
 
                 ideaModule "${rootProject.name}.${project.name}.test"
 
+                property 'forge.test.id', 'tests'
                 mods {
                     tests { sources sourceSets.test }
                 }
@@ -999,6 +1001,7 @@ project(':forge') {
 
                 ideaModule "${rootProject.name}.${project.name}.test"
 
+                property 'forge.test.id', 'tests'
                 mods {
                     tests { sources sourceSets.test }
                 }

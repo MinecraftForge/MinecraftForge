@@ -21,9 +21,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
-import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.locating.IModFile;
@@ -32,15 +30,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.annotation.ElementType;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -59,24 +60,30 @@ public class TestModLocator implements IModLocator
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Type MOD_ANNOTATION = Type.getType("Lnet/minecraftforge/fml/common/Mod;");
-    private boolean enabled = false;
 
     @SuppressWarnings("removal")
     @Override
     public List<IModFile> scanMods()
     {
-        if (!enabled) return List.of();
-        LOGGER.info("Test mod locator is enabled; run for the hills!");
+        final TestSources testSources = getTestSources();
+        if (testSources == TestSources.EMPTY) return List.of();
 
-        final CommonLaunchHandler.LocatedPaths locatedPaths = FMLLoader.getLaunchHandler().getMinecraftPaths();
+        LOGGER.info("Test mod locator is active and looking at the test sources for ID {} at paths: {}",
+                testSources.id(), testSources.paths());
 
-        return locatedPaths.otherModPaths().stream()
-                // TODO: find a way to supply the test source set paths without resorting to string comparison
-                .filter(paths -> paths.stream().anyMatch(path -> path.toString().contains("test")))
-                // TODO: find out the non-deprecated replacement for ModJarMetadata#buildFile
-                .map(p -> ModJarMetadata.buildFile(jar -> new ModFile(jar, this, this::buildTestModsTOML), jar -> true, (path, base) -> true, p.toArray(Path[]::new)).orElse(null))
-                .filter(Objects::nonNull)
-                .toList();
+        // TODO: find out the non-deprecated replacement for ModJarMetadata#buildFile
+        final List<IModFile> modFile = ModJarMetadata.buildFile(
+                jar -> new ModFile(jar, this, this::buildTestModsTOML),
+                jar -> true,
+                (path, base) -> true,
+                testSources.paths().toArray(Path[]::new)).stream().toList();
+
+        if (modFile.isEmpty())
+        {
+            LOGGER.warn("Could not build test mod file from configured test sources");
+        }
+
+        return modFile;
     }
 
     private IModFileInfo buildTestModsTOML(IModFile modFileIn)
@@ -133,14 +140,6 @@ public class TestModLocator implements IModLocator
     @Override
     public void initArguments(Map<String, ?> arguments)
     {
-        final String launchTarget = Objects.toString(arguments.get("launchTarget"));
-        // TODO: find a better way to conditionally enable this locator for only our test sourceset
-        enabled = launchTarget.contains("dev") && !launchTarget.contains("userdev");
-    }
-
-    public boolean isEnabled()
-    {
-        return enabled;
     }
 
     @Override
@@ -153,5 +152,40 @@ public class TestModLocator implements IModLocator
     public String name()
     {
         return "test mods locator";
+    }
+
+    // See CommonLaunchHandler#getModClasses
+    static TestSources getTestSources()
+    {
+        final String modClasses = System.getenv("MOD_CLASSES");
+        final String testId = System.getProperty("forge.test.id");
+        if (modClasses == null || testId == null) return TestSources.EMPTY;
+
+        // modid%%path;modid%%path
+        // where ';' is File.pathSeparator
+
+        record ExplodedModDirectory(String modId, Path path) {
+            static ExplodedModDirectory create(String modClassesPart) {
+                final String[] split = modClassesPart.split("%%", 2);
+                final String modId = split.length == 1 ? "defaultmodid" : split[0];
+                final Path path = Path.of(split[split.length - 1]);
+                return new ExplodedModDirectory(modId, path);
+            }
+        }
+
+        final Map<String, List<Path>> modClassPaths = Arrays.stream(modClasses.split(File.pathSeparator))
+                .map(ExplodedModDirectory::create)
+                .collect(Collectors.groupingBy(ExplodedModDirectory::modId, Collectors.mapping(ExplodedModDirectory::path, Collectors.toList())));
+
+        return new TestSources(testId, modClassPaths.getOrDefault(testId, List.of()));
+    }
+
+    /**
+     * @param id the named ID for the test sources
+     * @param paths the paths to the test sources
+     */
+    record TestSources(String id, List<Path> paths)
+    {
+        public static final TestSources EMPTY = new TestSources("blank", List.of());
     }
 }
