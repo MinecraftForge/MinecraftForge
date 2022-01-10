@@ -63,7 +63,6 @@ public class LivingBreatheEventTest
             ItemStack stack = entity.getMainHandItem();
             if (entity.isEyeInFluid(FluidTags.WATER) && stack.getItem() instanceof WaterbreathingRelicItem)
             {
-                e.setCanceled(true);
                 e.setCanBreathe(true);
             }
         }
@@ -114,7 +113,6 @@ public class LivingBreatheEventTest
             ItemStack stack = entity.getMainHandItem();
             if (stack.getItem() instanceof MagicalAirBottleItem)
             {
-                e.setCanceled(true);
                 if (e.canBreathe())
                 {
                     int i = Math.max(e.getRefillAirAmount() - (entity.getMaxAirSupply() - entity.getAirSupply()), 0);

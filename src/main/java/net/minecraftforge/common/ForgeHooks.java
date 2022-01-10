@@ -53,6 +53,7 @@ import javax.annotation.Nullable;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -61,6 +62,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -134,6 +136,7 @@ import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingDrownEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
@@ -1208,33 +1211,50 @@ public class ForgeHooks
     }
 
     /**
-     * @return true if breathing was handled by forge
+     * Handles living entities being under water. This fires the {@link LivingBreatheEvent} and also the
+     * {@link LivingDrownEvent} if the entity's air supply is less than or equal to zero. Additionally when the entity is
+     * under water it will dismount if {@link Entity#canBeRiddenInWater(Entity)} returns false.
+     * 
+     * @param entity           The living entity which is currently updated
+     * @param consumeAirAmount The amount of air to consume when the entity is unable to breathe
+     * @param refillAirAmount  The amount of air to refill when the entity is able to breathe
      */
-    public static boolean onLivingBreathe(LivingEntity entity, int consumeAirAmount, int refillAirAmount)
+    public static void onLivingBreathe(LivingEntity entity, int consumeAirAmount, int refillAirAmount)
     {
         LivingBreatheEvent event = new LivingBreatheEvent(entity, consumeAirAmount, refillAirAmount);
-        if (!MinecraftForge.EVENT_BUS.post(event))
-        {
-            return false;
-        }
+        MinecraftForge.EVENT_BUS.post(event);
         int newAirSupply = entity.getAirSupply() + (event.canBreathe() ? event.getRefillAirAmount() : -event.getConsumeAirAmount());
-        entity.setAirSupply(Mth.clamp(newAirSupply, -20, entity.getMaxAirSupply()));
-        if (entity.getAirSupply() == -20)
+        entity.setAirSupply(Math.min(newAirSupply, entity.getMaxAirSupply()));
+
+        if (entity.getAirSupply() <= 0)
         {
-            entity.setAirSupply(0);
-            Vec3 vec3 = entity.getDeltaMovement();
-
-            for (int i = 0; i < 8; ++i)
+            LivingDrownEvent drownEvent = new LivingDrownEvent(entity, entity.getAirSupply() <= -20);
+            if (!MinecraftForge.EVENT_BUS.post(drownEvent) && drownEvent.isDrowning())
             {
-                double d2 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
-                double d3 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
-                double d4 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
-                entity.level.addParticle(ParticleTypes.BUBBLE, entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4, vec3.x, vec3.y, vec3.z);
-            }
+                entity.setAirSupply(0);
+                Vec3 vec3 = entity.getDeltaMovement();
 
-            entity.hurt(DamageSource.DROWN, 2.0F);
+                for (int i = 0; i < 8; ++i)
+                {
+                    double d2 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
+                    double d3 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
+                    double d4 = entity.getRandom().nextDouble() - entity.getRandom().nextDouble();
+                    entity.level.addParticle(ParticleTypes.BUBBLE, entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4, vec3.x, vec3.y, vec3.z);
+                }
+
+                entity.hurt(DamageSource.DROWN, 2.0F);
+            }
         }
-        return true;
+
+        if (!entity.level.isClientSide
+                && entity.isPassenger()
+                && entity.getVehicle() != null
+                && entity.isEyeInFluid(FluidTags.WATER)
+                && !entity.level.getBlockState(new BlockPos(entity.getX(), entity.getEyeY(), entity.getZ())).is(Blocks.BUBBLE_COLUMN)
+                && !entity.getVehicle().canBeRiddenInWater(entity))
+        {
+            entity.stopRiding();
+        }
     }
 
     private static final Set<String> VANILLA_DIMS = Sets.newHashSet("minecraft:overworld", "minecraft:the_nether", "minecraft:the_end");

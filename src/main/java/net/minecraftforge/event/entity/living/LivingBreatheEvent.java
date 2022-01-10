@@ -25,9 +25,7 @@ import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.eventbus.api.Cancelable;
 
-@Cancelable
 public class LivingBreatheEvent extends LivingEvent
 {
     private boolean canBreathe;

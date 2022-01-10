@@ -29,19 +29,16 @@
           }
        }
  
-@@ -331,9 +_,10 @@
+@@ -331,6 +_,8 @@
              }
           }
  
-+         boolean skipVanillaAirHandling = net.minecraftforge.common.ForgeHooks.onLivingBreathe(this, -this.m_7302_(0), this.m_7305_(0));
++         net.minecraftforge.common.ForgeHooks.onLivingBreathe(this, -this.m_7302_(0), this.m_7305_(0));
++         if (false) // Forge: Handled in ForgeHooks#onLivingBreathe(LivingEntity, int, int)
           if (this.m_19941_(FluidTags.f_13131_) && !this.f_19853_.m_8055_(new BlockPos(this.m_20185_(), this.m_20188_(), this.m_20189_())).m_60713_(Blocks.f_50628_)) {
              boolean flag1 = !this.m_6040_() && !MobEffectUtil.m_19588_(this) && (!flag || !((Player)this).m_150110_().f_35934_);
--            if (flag1) {
-+            if (!skipVanillaAirHandling && flag1) {
-                this.m_20301_(this.m_7302_(this.m_20146_()));
-                if (this.m_20146_() == -20) {
-                   this.m_20301_(0);
-@@ -350,10 +_,10 @@
+             if (flag1) {
+@@ -350,7 +_,7 @@
                 }
              }
  
@@ -49,11 +46,7 @@
 +            if (!this.f_19853_.f_46443_ && this.m_20159_() && this.m_20202_() != null && !this.m_20202_().canBeRiddenInWater(this)) {
                 this.m_8127_();
              }
--         } else if (this.m_20146_() < this.m_6062_()) {
-+         } else if (!skipVanillaAirHandling && this.m_20146_() < this.m_6062_()) {
-             this.m_20301_(this.m_7305_(this.m_20146_()));
-          }
- 
+          } else if (this.m_20146_() < this.m_6062_()) {
 @@ -714,7 +_,7 @@
              if (!mobeffectinstance.m_19552_(this, () -> {
                 this.m_141973_(mobeffectinstance, true, (Entity)null);
