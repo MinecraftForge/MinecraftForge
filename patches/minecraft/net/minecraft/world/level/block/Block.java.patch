@@ -146,11 +146,11 @@
 +      } else if (net.minecraftforge.common.PlantType.CAVE.equals(type)) {
 +         return state.m_60783_(world, pos, Direction.UP);
 +      } else if (net.minecraftforge.common.PlantType.PLAINS.equals(type)) {
-+         return this == Blocks.f_50440_ || net.minecraftforge.common.Tags.Blocks.DIRT.m_8110_(this) || this == Blocks.f_50093_;
++         return this == Blocks.f_50440_ || BlockTags.f_144274_.m_8110_(this) || this == Blocks.f_50093_;
 +      } else if (net.minecraftforge.common.PlantType.WATER.equals(type)) {
 +         return state.m_60767_() == net.minecraft.world.level.material.Material.f_76305_; //&& state.getValue(BlockLiquidWrapper)
 +      } else if (net.minecraftforge.common.PlantType.BEACH.equals(type)) {
-+         boolean isBeach = state.m_60713_(Blocks.f_50440_) || net.minecraftforge.common.Tags.Blocks.DIRT.m_8110_(this) || state.m_60713_(Blocks.f_49992_) || state.m_60713_(Blocks.f_49993_);
++         boolean isBeach = state.m_60713_(Blocks.f_50440_) || BlockTags.f_144274_.m_8110_(this) || state.m_60713_(Blocks.f_49992_) || state.m_60713_(Blocks.f_49993_);
 +         boolean hasWater = false;
 +         for (Direction face : Direction.Plane.HORIZONTAL) {
 +            BlockState blockState = world.m_8055_(pos.m_142300_(face));
