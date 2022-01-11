@@ -1243,23 +1243,23 @@ public class ForgeHooks
 
     public static String encodeLifecycle(Lifecycle lifecycle)
     {
-        if(lifecycle == Lifecycle.stable())
+        if (lifecycle == Lifecycle.stable())
             return "stable";
-        if(lifecycle == Lifecycle.experimental())
+        if (lifecycle == Lifecycle.experimental())
             return "experimental";
-        if(lifecycle instanceof Lifecycle.Deprecated dep)
+        if (lifecycle instanceof Lifecycle.Deprecated dep)
             return "deprecated=" + dep.since();
         throw new IllegalArgumentException("Unknown lifecycle.");
     }
 
     public static Lifecycle parseLifecycle(String lifecycle)
     {
-        if(lifecycle.equals("stable"))
+        if (lifecycle.equals("stable"))
             return Lifecycle.stable();
-        if(lifecycle.equals("experimental"))
+        if (lifecycle.equals("experimental"))
             return Lifecycle.experimental();
-        if(lifecycle.startsWith("deprecated="))
-            return Lifecycle.deprecated(Integer.parseInt(lifecycle.substring(lifecycle.indexOf('=')+1)));
+        if (lifecycle.startsWith("deprecated="))
+            return Lifecycle.deprecated(Integer.parseInt(lifecycle.substring(lifecycle.indexOf('=') + 1)));
         throw new IllegalArgumentException("Unknown lifecycle.");
     }
 

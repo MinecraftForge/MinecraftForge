@@ -52,7 +52,7 @@
 -      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_.m_46202_(), this.f_46908_);
 +      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_.m_46202_(), this.f_46908_, this.lifecycle);
 +   }
-+   public LevelSettings withLifeCycle(com.mojang.serialization.Lifecycle lifecycle) {
++   public LevelSettings withLifecycle(com.mojang.serialization.Lifecycle lifecycle) {
 +      return new LevelSettings(this.f_46902_, this.f_46903_, this.f_46904_, this.f_46905_, this.f_46906_, this.f_46907_, this.f_46908_, lifecycle);
 +   }
 +   public com.mojang.serialization.Lifecycle getLifecycle() {
