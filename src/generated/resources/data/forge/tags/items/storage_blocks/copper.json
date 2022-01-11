@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:copper_block",
+    "minecraft:cut_copper"
+  ]
+}
