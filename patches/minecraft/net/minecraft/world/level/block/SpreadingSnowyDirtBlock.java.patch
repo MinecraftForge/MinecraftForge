@@ -1,10 +1,13 @@
 --- a/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
 +++ b/net/minecraft/world/level/block/SpreadingSnowyDirtBlock.java
-@@ -35,6 +_,7 @@
+@@ -35,8 +_,10 @@
  
     public void m_7455_(BlockState p_56819_, ServerLevel p_56820_, BlockPos p_56821_, Random p_56822_) {
        if (!m_56823_(p_56819_, p_56820_, p_56821_)) {
-+         if (!p_56820_.isAreaLoaded(p_56821_, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
++         if (!p_56820_.isAreaLoaded(p_56821_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
           p_56820_.m_46597_(p_56821_, Blocks.f_50493_.m_49966_());
        } else {
++         if (!p_56820_.isAreaLoaded(p_56821_, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
           if (p_56820_.m_46803_(p_56821_.m_7494_()) >= 9) {
+             BlockState blockstate = this.m_49966_();
+ 

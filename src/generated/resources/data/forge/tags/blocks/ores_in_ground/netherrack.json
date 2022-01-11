@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:nether_gold_ore",
+    "minecraft:nether_quartz_ore"
+  ]
+}
