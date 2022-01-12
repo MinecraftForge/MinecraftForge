@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,7 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.locale.Language;
@@ -129,6 +130,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1046,4 +1048,19 @@ public class ForgeHooksClient
                 .toList();
     }
 
+    public static Comparator<ParticleRenderType> makeParticleRenderTypeComparator(List<ParticleRenderType> renderOrder)
+    {
+        Comparator<ParticleRenderType> vanillaComparator = Comparator.comparingInt(renderOrder::indexOf);
+        return (typeOne, typeTwo) ->
+        {
+            boolean vanillaOne = renderOrder.contains(typeOne);
+            boolean vanillaTwo = renderOrder.contains(typeTwo);
+
+            if (vanillaOne && vanillaTwo)
+            {
+                return vanillaComparator.compare(typeOne, typeTwo);
+            }
+            return Boolean.compare(vanillaTwo, vanillaOne);
+        };
+    }
 }
