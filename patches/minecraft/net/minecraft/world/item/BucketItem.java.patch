@@ -29,6 +29,15 @@
        if (blockhitresult.m_6662_() == HitResult.Type.MISS) {
           return InteractionResultHolder.m_19098_(itemstack);
        } else if (blockhitresult.m_6662_() != HitResult.Type.BLOCK) {
+@@ -56,7 +_,7 @@
+                   ItemStack itemstack1 = bucketpickup.m_142598_(p_40703_, blockpos, blockstate1);
+                   if (!itemstack1.m_41619_()) {
+                      p_40704_.m_36246_(Stats.f_12982_.m_12902_(this));
+-                     bucketpickup.m_142298_().ifPresent((p_150709_) -> {
++                     bucketpickup.getPickupSound(blockstate1).ifPresent((p_150709_) -> {
+                         p_40704_.m_5496_(p_150709_, 1.0F, 1.0F);
+                      });
+                      p_40703_.m_142346_(p_40704_, GameEvent.f_157816_, blockpos);
 @@ -72,7 +_,7 @@
                 return InteractionResultHolder.m_19100_(itemstack);
              } else {
