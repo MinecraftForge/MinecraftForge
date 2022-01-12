@@ -47,7 +47,9 @@ public class LivingGetProjectileEvent extends LivingEvent
     }
 
     /**
-     * @return The itemstack of the projectile weapon item that is looking for a projectile.
+     * @return The itemstack of the itrm that is looking for a projectile. With vanilla behavior, this usually returns
+     * an itemstack of a {@link net.minecraft.world.item.ProjectileWeaponItem}, but it's possible for that to not be the
+     * case if modder uses a different implementation of {@link LivingEntity#getProjectile(ItemStack)}.
      */
     public ItemStack getProjectileWeaponItemStack()
     {
@@ -56,7 +58,8 @@ public class LivingGetProjectileEvent extends LivingEvent
 
     /**
      * @return The itemstack of the projectile found. Initially this is set to the projectile found by vanilla
-     * behaviour.
+     * behaviour, but it's possible for thatnot to be the case if a modder uses a different implementation of
+     * {@link LivingEntity#getProjectile(ItemStack)}.
      */
     public ItemStack getProjectileItemStack()
     {
