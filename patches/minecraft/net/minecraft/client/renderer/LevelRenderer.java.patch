@@ -28,15 +28,16 @@
        RenderSystem.m_69421_(16640, Minecraft.f_91002_);
        float f = p_109605_.m_109152_();
        boolean flag2 = this.f_109461_.f_91073_.m_104583_().m_5781_(Mth.m_14107_(d0), Mth.m_14107_(d1)) || this.f_109461_.f_91065_.m_93090_().m_93715_();
-+      FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag1, p_109601_);
++      FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag2, p_109601_);
        profilerfiller.m_6182_("sky");
        RenderSystem.m_157427_(GameRenderer::m_172808_);
        this.m_181409_(p_109600_, p_109607_, p_109601_, () -> {
-          FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag2);
+-         FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag2);
++         FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_SKY, f, flag2, p_109601_);
        });
        profilerfiller.m_6182_("fog");
--      FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f - 16.0F, 32.0F), flag2);
-+      FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f - 16.0F, 32.0F), flag1, p_109601_);
+-      FogRenderer.m_109024_(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f, 32.0F), flag2);
++      FogRenderer.setupFog(p_109604_, FogRenderer.FogMode.FOG_TERRAIN, Math.max(f, 32.0F), flag2, p_109601_);
        profilerfiller.m_6182_("terrain_setup");
        this.m_194338_(p_109604_, frustum, flag1, this.f_109461_.f_91074_.m_5833_());
        profilerfiller.m_6182_("compilechunks");
