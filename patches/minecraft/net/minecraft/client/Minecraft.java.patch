@@ -397,7 +397,7 @@
 -            this.m_91219_(p_91220_, p_91221_, p_91222_, p_91223_, p_91224_, Minecraft.ExperimentalDialogType.NONE);
 +            this.doLoadLevel(p_91220_, registryHolder, p_91222_, p_91223_, p_91224_, Minecraft.ExperimentalDialogType.NONE, creating);
           });
-+         else net.minecraftforge.client.ForgeHooksClient.createWorldConfirmationScreen(f_91031_, p_91220_, creating, p_91223_, f4 -> () -> this.doLoadLevel(p_91220_, dyn_f, p_91222_, f4, p_91224_, ExperimentalDialogType.NONE, creating));
++         else net.minecraftforge.client.ForgeHooksClient.createWorldConfirmationScreen(f_91031_, p_91220_, creating, p_91223_, f4 -> () -> this.doLoadLevel(p_91220_, registryHolder, p_91222_, f4, p_91224_, ExperimentalDialogType.NONE, creating));
           minecraft$serverstem.close();
  
           try {
