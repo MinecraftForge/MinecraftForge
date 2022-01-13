@@ -75,6 +75,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="ender_mask_test"
 [[mods]]
+    modId="custom_head_test"
+[[mods]]
     modId="raid_enum_test"
 [[mods]]
     modId="player_name_event_test"
@@ -175,6 +177,6 @@ license="LGPL v2.1"
 [[mods]]
     modId="capabilities_test"
 [[mods]]
-    modId="custom_head_test"
+    modId="custom_particle_type_test"
 
 # ADD ABOVE THIS LINE
