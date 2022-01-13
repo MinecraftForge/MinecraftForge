@@ -49,7 +49,7 @@
 +   /*=================================== FORGE START =========================================*/
 +
 +   /**
-+    * Hook to allow item-sensitive armor model. for LayerBipedArmor.
++    * Hook to allow item-sensitive armor model. for HumanoidArmorLayer.
 +    */
 +   protected net.minecraft.client.model.Model getArmorModelHook(T entity, ItemStack itemStack, EquipmentSlot slot, A model) {
 +      return net.minecraftforge.client.ForgeHooksClient.getArmorModel(entity, itemStack, slot, model);

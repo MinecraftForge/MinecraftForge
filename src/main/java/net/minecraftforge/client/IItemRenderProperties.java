@@ -57,7 +57,9 @@ public interface IItemRenderProperties
      * @param itemStack    The itemStack to render the model of
      * @param armorSlot    The slot the armor is in
      * @param _default     Original armor model. Will have attributes set.
-     * @return A HumanoidModel to render instead of the default, will have the relevant properties copied in
+     * @return A HumanoidModel to render instead of the default, will have the relevant properties copied in {@link #getBaseArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel).
+     *         Returning null will cause the default to render.
+     * @see #getBaseArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)
      */
     @Nullable
     default HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
@@ -66,13 +68,16 @@ public interface IItemRenderProperties
     }
 
     /**
-     * Override this method to return a generic model rather than a {@link HumanoidModel}. More ideal for wrapping the original model or returning non-standard models like elytra wings
+     * Override this method to return a generic model rather than a {@link HumanoidModel}. More ideal for wrapping the original model or returning non-standard models like elytra wings.
+     * By default, this hook copies in the model properties from the default into the model returned by {@link #getArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)},
+     * so if you override this method you are responsible for copying properties you care about
      *
      * @param entityLiving The entity wearing the armor
      * @param itemStack    The itemStack to render the model of
      * @param armorSlot    The slot the armor is in
      * @param _default     Original armor model. Will have attributes set.
-     * @return A Model to render instead of the default, will not copy in properties
+     * @return A Model to render instead of the default
+     * @see #getArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)
      */
     @Nonnull
     default Model getBaseArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
