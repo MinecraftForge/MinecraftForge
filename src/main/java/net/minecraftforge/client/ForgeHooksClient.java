@@ -282,8 +282,22 @@ public class ForgeHooksClient
 
     public static Model getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, HumanoidModel<?> _default)
     {
-        Model model = RenderProperties.get(itemStack).getArmorModel(entityLiving, itemStack, slot, _default);
-        return model == null ? _default : model;
+        return RenderProperties.get(itemStack).getBaseArmorModel(entityLiving, itemStack, slot, _default);
+    }
+
+    /** Copies humanoid model properties from the original model to another, used for armor models */
+    @SuppressWarnings("unchecked")
+    public static <T extends LivingEntity> void copyModelProperties(HumanoidModel<T> original, HumanoidModel<?> replacement)
+    {
+        // this function does not make use of the <T> generic, so the unchecked cast should be safe
+        original.copyPropertiesTo((HumanoidModel<T>)replacement);
+        replacement.head.visible = original.head.visible;
+        replacement.hat.visible = original.hat.visible;
+        replacement.body.visible = original.body.visible;
+        replacement.rightArm.visible = original.rightArm.visible;
+        replacement.leftArm.visible = original.leftArm.visible;
+        replacement.rightLeg.visible = original.rightLeg.visible;
+        replacement.leftLeg.visible = original.leftLeg.visible;
     }
 
     //This properly moves the domain, if provided, to the front of the string before concatenating

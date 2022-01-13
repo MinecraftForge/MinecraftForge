@@ -21,8 +21,11 @@ package net.minecraftforge.debug.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.EndermanModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -36,14 +39,17 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import javax.annotation.Nonnull;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -52,7 +58,11 @@ public class CustomArmorModelTest
 {
     static final String MOD_ID = "custom_armor_model_test";
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
-    private static final RegistryObject<Item> CUSTOM_ARMOR_MODEL = ITEMS.register("test_custom_armor_model", () -> new CustomArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.LEGS, new Properties().stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
+    // demonstrates custom non-humanoid model
+    private static final RegistryObject<Item> RED_LEGGINGS = ITEMS.register("red_leggings", () -> new TintedArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.LEGS, new Properties().stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
+    // demonstrates the properties are copied from the vanilla model
+    private static final RegistryObject<Item> ENDERMAN_CHESTPLATE = ITEMS.register("enderman_chestplate", () -> new EndermanArmorItem(ArmorMaterials.GOLD, EquipmentSlot.CHEST, new Properties().stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
+    private static final RegistryObject<Item> ENDERMAN_BOOTS = ITEMS.register("enderman_boots", () -> new EndermanArmorItem(ArmorMaterials.GOLD, EquipmentSlot.FEET, new Properties().stacksTo(1).tab(CreativeModeTab.TAB_MISC)));
 
     public CustomArmorModelTest()
     {
@@ -60,9 +70,31 @@ public class CustomArmorModelTest
         ITEMS.register(modBus);
     }
 
-    private static class CustomArmorItem extends ArmorItem
+    private static class TintedArmorItem extends ArmorItem
     {
-        public CustomArmorItem(ArmorMaterial material, EquipmentSlot slot, Properties props)
+        public TintedArmorItem(ArmorMaterial material, EquipmentSlot slot, Properties props)
+        {
+            super(material, slot, props);
+        }
+
+        @Override
+        public void initializeClient(Consumer<IItemRenderProperties> consumer)
+        {
+            consumer.accept(new IItemRenderProperties()
+            {
+                @Override @Nonnull
+                public Model getBaseArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
+                {
+                    TintedArmorModel.INSTANCE.base = _default;
+                    return TintedArmorModel.INSTANCE;
+                }
+            });
+        }
+    }
+
+    private static class EndermanArmorItem extends ArmorItem
+    {
+        public EndermanArmorItem(ArmorMaterial material, EquipmentSlot slot, Properties props)
         {
             super(material, slot, props);
         }
@@ -71,7 +103,7 @@ public class CustomArmorModelTest
         @Override
         public String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type)
         {
-            return "textures/models/armor/diamond_layer_1.png";
+            return "textures/entity/enderman/enderman.png";
         }
 
         @Override
@@ -80,32 +112,31 @@ public class CustomArmorModelTest
             consumer.accept(new IItemRenderProperties()
             {
                 @Override
-                public Model getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
+                public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot, HumanoidModel<?> _default)
                 {
-                    OverallsModel.INSTANCE.base = _default;
-                    return OverallsModel.INSTANCE;
+                    return TintedArmorModel.ENDERMAN.get();
                 }
             });
         }
     }
 
-    private static class OverallsModel extends Model
+    private static class TintedArmorModel extends Model
     {
-        private static final OverallsModel INSTANCE = new OverallsModel(RenderType::entityCutoutNoCull);
+        private static final TintedArmorModel INSTANCE = new TintedArmorModel(RenderType::entityCutoutNoCull);
+        private static final Lazy<HumanoidModel<LivingEntity>> ENDERMAN = Lazy.of(() -> new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.ENDERMAN)));
 
         private HumanoidModel<?> base;
-        private OverallsModel(Function<ResourceLocation,RenderType> renderTypeFunction)
+        private TintedArmorModel(Function<ResourceLocation,RenderType> renderTypeFunction)
         {
             super(renderTypeFunction);
         }
 
         @Override
-        public void renderToBuffer(PoseStack poseStack, VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha)
+        public void renderToBuffer(@Nonnull PoseStack poseStack, @Nonnull VertexConsumer consumer, int light, int overlay, float red, float green, float blue, float alpha)
         {
             if (base != null)
             {
-                base.setAllVisible(true);
-                base.renderToBuffer(poseStack, consumer, light, overlay, red, green, blue, alpha);
+                base.renderToBuffer(poseStack, consumer, light, overlay, red, 0, 0, alpha);
             }
         }
     }
