@@ -30,6 +30,8 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.network.Connection;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.projectile.FireworkRocketEntity;
@@ -803,6 +805,18 @@ public class ForgeEventFactory
     public static void firePlayerChangedDimensionEvent(Player player, ResourceKey<Level> fromDim, ResourceKey<Level> toDim)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
+    }
+
+    public static Component firePrePlayerLoggedIn(Player player, Connection connection)
+    {
+        PlayerEvent.PrePlayerLoggedInEvent event = new PlayerEvent.PrePlayerLoggedInEvent(player, connection);
+        MinecraftForge.EVENT_BUS.post(event);
+
+        if (event.getResult() == Result.DENY) {
+            return event.getDenyMessage();
+        }
+
+        return null;
     }
 
     public static void firePlayerLoggedIn(Player player)

@@ -21,6 +21,7 @@ package net.minecraftforge.event.entity.player;
 
 import java.io.File;
 
+import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.Container;
@@ -459,6 +460,36 @@ public class PlayerEvent extends LivingEvent
         public ItemStack getSmelting()
         {
             return this.smelting;
+        }
+    }
+
+    /**
+     *
+     * Event fired before the player is accepted to the world
+     *
+     */
+    @HasResult
+    public static class PrePlayerLoggedInEvent extends PlayerEvent {
+        private Component denyMessage = null;
+        private Connection connection;
+
+        public PrePlayerLoggedInEvent(Player player, Connection connection)
+        {
+            super(player);
+
+            this.connection = connection;
+        }
+
+        public Connection getConnection() {
+            return this.connection;
+        }
+
+        public Component getDenyMessage() {
+            return this.denyMessage;
+        }
+
+        public void setDenyMessage(Component denyMessage) {
+            this.denyMessage = denyMessage;
         }
     }
 
