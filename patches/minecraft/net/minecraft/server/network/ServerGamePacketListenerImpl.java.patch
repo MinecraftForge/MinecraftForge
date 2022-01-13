@@ -61,6 +61,21 @@
                    if (interactionresult.m_19077_()) {
                       CriteriaTriggers.f_10565_.m_61494_(ServerGamePacketListenerImpl.this.f_9743_, itemstack, entity);
                       if (interactionresult.m_19080_()) {
+@@ -1345,7 +_,13 @@
+    }
+ 
+    public void m_5527_(ServerboundSignUpdatePacket p_9921_) {
+-      List<String> list = Stream.of(p_9921_.m_134663_()).map(ChatFormatting::m_126649_).collect(Collectors.toList());
++      List<String> list = net.minecraftforge.event.ForgeEventFactory.fireSignChange(this.f_9743_, p_9921_.m_134660_(), p_9921_.m_134663_());
++
++      for (int i = 0; i < list.size(); i++) {
++         String strippedLine = ChatFormatting.m_126649_(list.get(i));
++         list.set(i, strippedLine);
++      }
++
+       this.m_9815_(list, (p_184205_) -> {
+          this.m_9922_(p_9921_, p_184205_);
+       });
 @@ -1405,6 +_,8 @@
     }
  

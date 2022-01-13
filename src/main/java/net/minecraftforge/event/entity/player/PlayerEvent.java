@@ -19,27 +19,27 @@
 
 package net.minecraftforge.event.entity.player;
 
-import java.io.File;
-
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.Container;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
+import java.util.List;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
@@ -551,6 +551,42 @@ public class PlayerEvent extends LivingEvent
         public void setNewGameMode(GameType newGameMode)
         {
             this.newGameMode = newGameMode;
+        }
+    }
+
+    /**
+     *
+     * Fired when a player clicks the "done" button in the sign edit UI.
+     * Cancelling will set the edited sign to be blank (i.e. lines will be an empty list)
+     *
+     */
+    @Cancelable
+    public static class SignChangeEvent extends PlayerEvent {
+
+        private final BlockPos pos;
+        private List<String> lines;
+
+        public SignChangeEvent(Player player, BlockPos pos, List<String> lines) {
+            super(player);
+
+            this.pos = pos;
+            this.lines = lines;
+        }
+
+        public BlockPos getPos() {
+            return this.pos;
+        }
+
+        public List<String> getLines() {
+            return this.lines;
+        }
+
+        public void setLine(int index, String line) {
+            if (index < 0 || index > 3) {
+                throw new RuntimeException("Cannot set a line greater than index 4 on a sign!");
+            }
+
+            this.lines.set(index, line);
         }
     }
 }
