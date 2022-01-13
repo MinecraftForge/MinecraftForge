@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/level/pathfinder/AmphibiousNodeEvaluator.java
++++ b/net/minecraft/world/level/pathfinder/AmphibiousNodeEvaluator.java
+@@ -45,7 +_,7 @@
+       BlockPathTypes blockpathtypes1 = this.m_77567_(this.f_77313_, p_164677_.f_77271_, p_164677_.f_77272_, p_164677_.f_77273_);
+       int j;
+       if (this.f_77313_.m_21439_(blockpathtypes) >= 0.0F && blockpathtypes1 != BlockPathTypes.STICKY_HONEY) {
+-         j = Mth.m_14143_(Math.max(1.0F, this.f_77313_.f_19793_));
++         j = Mth.m_14143_(Math.max(1.0F, this.f_77313_.getStepHeight()));
+       } else {
+          j = 0;
+       }
