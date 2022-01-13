@@ -1068,6 +1068,7 @@ public class ForgeHooksClient
             return Boolean.compare(vanillaTwo, vanillaOne);
         };
     }
+
     public static void createWorldConfirmationScreen(
             LevelStorageSource save, String worldName, boolean creatingWorld,
             Function4<LevelStorageSource.LevelStorageAccess, RegistryAccess.RegistryHolder, ResourceManager, DataPackConfig, WorldData> f4,
