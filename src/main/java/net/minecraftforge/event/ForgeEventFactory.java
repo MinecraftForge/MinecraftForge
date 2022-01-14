@@ -31,10 +31,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.network.Connection;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
-import net.minecraft.world.entity.projectile.FireworkRocketEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ThrownEnderpearl;
 import net.minecraft.world.level.portal.PortalShape;
@@ -49,7 +47,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.Zombie;
@@ -86,7 +83,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.PlayerDataStorage;
 import net.minecraftforge.api.distmarker.Dist;
@@ -809,10 +805,11 @@ public class ForgeEventFactory
 
     public static Component firePrePlayerLoggedIn(Player player, Connection connection)
     {
-        PlayerEvent.PrePlayerLoggedInEvent event = new PlayerEvent.PrePlayerLoggedInEvent(player, connection);
+        PlayerEvent.PrePlayerLoginEvent event = new PlayerEvent.PrePlayerLoginEvent(player, connection);
         MinecraftForge.EVENT_BUS.post(event);
 
-        if (event.getResult() == Result.DENY) {
+        if (event.getResult() == Result.DENY)
+        {
             return event.getDenyMessage();
         }
 

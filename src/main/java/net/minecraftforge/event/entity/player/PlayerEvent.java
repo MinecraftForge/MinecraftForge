@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -469,26 +469,29 @@ public class PlayerEvent extends LivingEvent
      *
      */
     @HasResult
-    public static class PrePlayerLoggedInEvent extends PlayerEvent {
+    public static class PrePlayerLoginEvent extends PlayerEvent {
         private Component denyMessage = null;
         private Connection connection;
 
-        public PrePlayerLoggedInEvent(Player player, Connection connection)
+        public PrePlayerLoginEvent(Player player, Connection connection)
         {
             super(player);
 
             this.connection = connection;
         }
 
-        public Connection getConnection() {
+        public Connection getConnection()
+        {
             return this.connection;
         }
 
-        public Component getDenyMessage() {
+        public Component getDenyMessage()
+        {
             return this.denyMessage;
         }
 
-        public void setDenyMessage(Component denyMessage) {
+        public void setDenyMessage(Component denyMessage)
+        {
             this.denyMessage = denyMessage;
         }
     }
