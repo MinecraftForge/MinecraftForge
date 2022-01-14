@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,9 +19,11 @@
 
 package net.minecraftforge.event;
 
+import java.io.File;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.BlockPos;
@@ -831,11 +833,19 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new TickEvent.ServerTickEvent(TickEvent.Phase.END));
     }
 
-    public static List<String> fireSignChange(Player player, BlockPos pos, String[] lines) {
+    public static List<String> fireSignChange(Player player, BlockPos pos, String[] lines)
+    {
+        for (int i = 0; i < lines.length; i++)
+        {
+            String strippedLine = ChatFormatting.stripFormatting(lines[i]);
+            lines[i] = strippedLine;
+        }
+
         PlayerEvent.SignChangeEvent signChangeEvent = new PlayerEvent.SignChangeEvent(player, pos, Arrays.asList(lines));
         MinecraftForge.EVENT_BUS.post(signChangeEvent);
 
-        if (signChangeEvent.isCanceled()) {
+        if (signChangeEvent.isCanceled())
+        {
             return Collections.emptyList();
         }
 

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -561,28 +561,34 @@ public class PlayerEvent extends LivingEvent
      *
      */
     @Cancelable
-    public static class SignChangeEvent extends PlayerEvent {
+    public static class SignChangeEvent extends PlayerEvent
+    {
 
         private final BlockPos pos;
         private List<String> lines;
 
-        public SignChangeEvent(Player player, BlockPos pos, List<String> lines) {
+        public SignChangeEvent(Player player, BlockPos pos, List<String> lines)
+        {
             super(player);
 
             this.pos = pos;
             this.lines = lines;
         }
 
-        public BlockPos getPos() {
+        public BlockPos getPos()
+        {
             return this.pos;
         }
 
-        public List<String> getLines() {
+        public List<String> getLines()
+        {
             return this.lines;
         }
 
-        public void setLine(int index, String line) {
-            if (index < 0 || index > 3) {
+        public void setLine(int index, String line)
+        {
+            if (index < 0 || index > 3)
+            {
                 throw new RuntimeException("Cannot set a line greater than index 4 on a sign!");
             }
 
