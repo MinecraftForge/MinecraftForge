@@ -9,6 +9,15 @@ To apply the patch, change the buildType with id = 'MinecraftForge_MinecraftForg
 accordingly, and delete the patch script.
 */
 changeBuildType(RelativeId("MinecraftForge_MinecraftForge__BuildSecondaryBranches")) {
+    params {
+        add {
+            param("git_branch_spec", """
+                +:refs/heads/(*)
+                -:refs/heads/noci*
+            """.trimIndent())
+        }
+    }
+
     vcs {
 
         check(branchFilter == """
