@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -250,13 +250,15 @@ public class ServerStatusPing
 
                 writtenCount++;
 
-                if (buf.readableBytes() >= 60000) {
+                if (buf.readableBytes() >= 60000)
+                {
                     reachedSizeLimit = true;
                     break;
                 }
             }
 
-            if (!reachedSizeLimit) {
+            if (!reachedSizeLimit)
+            {
                 // write any channels that don't match up with a ModID.
                 var nonModChannels = forgeData.getNonModChannels();
                 buf.writeVarInt(nonModChannels.size());
@@ -266,7 +268,9 @@ public class ServerStatusPing
                     buf.writeUtf(entry.getValue().getLeft());
                     buf.writeBoolean(entry.getValue().getRight());
                 }
-            } else {
+            }
+            else
+            {
                 buf.setShort(1, writtenCount);
                 buf.writeVarInt(0);
             }
