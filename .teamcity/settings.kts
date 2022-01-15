@@ -89,21 +89,17 @@ object BuildSecondaryBranches : BuildType({
     id("MinecraftForge_MinecraftForge__BuildSecondaryBranches")
     name = "Build - Secondary Branches"
     description = "Builds and Publishes the secondary branches of the project."
-
+    params {
+        text("git_branch_spec", """
+                +:refs/heads/(*)
+                -:refs/heads/noci*
+            """.trimIndent(), label = "The branch specification of the repository", description = "By default all main branches are build by the configuration. Modify this value to adapt the branches build.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
+    }
     vcs {
         branchFilter = """
-            +:*             
-            -:refs/heads/(develop|release|staging|main|master)
+            +:*
+            -:1.*
             -:<default>
-            -:refs/heads/%git_main_branch%
-            -:refs/heads/main*
-            -:refs/heads/master*
-            -:refs/heads/1.*
-            -:(develop|release|staging|main|master)
-            -:%git_main_branch%
-            -:main*
-            -:master*
-            -:1.*            
         """.trimIndent()
     }
 })
