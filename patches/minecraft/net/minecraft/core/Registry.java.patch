@@ -140,7 +140,7 @@
        return StructureFeature.f_67014_;
     });
     public static final ResourceKey<Registry<StructurePieceType>> f_122842_ = m_122978_("worldgen/structure_piece");
-@@ -311,7 +_,7 @@
+@@ -311,10 +_,10 @@
     public static final ResourceKey<Registry<Codec<? extends SurfaceRules.RuleSource>>> f_194572_ = m_122978_("worldgen/material_rule");
     public static final ResourceKey<Registry<StructureProcessorType<?>>> f_122854_ = m_122978_("worldgen/structure_processor");
     public static final ResourceKey<Registry<StructurePoolElementType<?>>> f_122855_ = m_122978_("worldgen/structure_pool_element");
@@ -148,7 +148,11 @@
 +   @Deprecated public static final Registry<BlockStateProviderType<?>> f_122856_ = forge(f_122846_, () -> {
        return BlockStateProviderType.f_68752_;
     });
-    public static final Registry<FoliagePlacerType<?>> f_122858_ = m_122999_(f_122848_, () -> {
+-   public static final Registry<FoliagePlacerType<?>> f_122858_ = m_122999_(f_122848_, () -> {
++   public static final Registry<FoliagePlacerType<?>> f_122858_ = forge(f_122848_, () -> {
+       return FoliagePlacerType.f_68591_;
+    });
+    public static final Registry<TrunkPlacerType<?>> f_122859_ = m_122999_(f_122849_, () -> {
 @@ -365,16 +_,32 @@
        return m_122981_(p_123000_, Lifecycle.experimental(), p_123001_);
     }
