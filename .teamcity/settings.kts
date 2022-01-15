@@ -47,12 +47,10 @@ project {
         text("env.PUBLISHED_JAVA_FML_ARTIFACT_VERSION", "0.0.0-SNAPSHOT", label = "Published fmlonly artifact version", description = "The version for fml only that has been published by this build. Can not be empty.", allowEmpty = false)
         text("env.PUBLISHED_JAVA_GROUP", "net.minecraftforge", label = "Published group", description = "The maven coordinate group that has been published by this build. Can not be empty.", allowEmpty = false)
 
-        params {
-            checkbox("should_execute_build", "false", label = "Should build", description = "Indicates if the build task should be executed.", display = ParameterDisplay.HIDDEN,
-                checked = "true", unchecked = "false")
-            checkbox("should_execute_test", "false", label = "Should build", description = "Indicates if the build task should be executed.", display = ParameterDisplay.HIDDEN,
-                checked = "true", unchecked = "false")
-        }
+        checkbox("should_execute_build", "false", label = "Should build", description = "Indicates if the build task should be executed.", display = ParameterDisplay.HIDDEN,
+            checked = "true", unchecked = "false")
+        checkbox("should_execute_test", "false", label = "Should build", description = "Indicates if the build task should be executed.", display = ParameterDisplay.HIDDEN,
+            checked = "true", unchecked = "false")
     }
 
     features {
