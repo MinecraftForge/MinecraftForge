@@ -33,6 +33,9 @@ changeBuildType(RelativeId("MinecraftForge_MinecraftForge__BuildSecondaryBranche
         """.trimIndent()) {
             "Unexpected option value: branchFilter = $branchFilter"
         }
-        branchFilter = "+:*"
+        branchFilter = """
+            +:*
+            -:1.*
+        """.trimIndent()
     }
 }
