@@ -174,5 +174,9 @@ license="LGPL v2.1"
     modId="part_entity_test"
 [[mods]]
     modId="capabilities_test"
+[[mods]]
+    modId="custom_particle_type_test"
+[[mods]]
+    modId="ingredient_invalidation"
 
 # ADD ABOVE THIS LINE
