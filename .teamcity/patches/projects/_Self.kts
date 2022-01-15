@@ -13,8 +13,11 @@ accordingly, and delete the patch script.
 */
 changeProject(DslContext.projectId) {
     params {
-        add {
+        expect {
             password("env.CROWDIN_KEY", "credentialsJSON:dfdc0764-ae34-4ce2-972b-6e9ce730cbd2", display = ParameterDisplay.HIDDEN, readOnly = true)
+        }
+        update {
+            password("env.CROWDIN_KEY", "credentialsJSON:a3102dbe-805d-4177-9f54-3d2c2eb08fd5", display = ParameterDisplay.HIDDEN)
         }
     }
 
