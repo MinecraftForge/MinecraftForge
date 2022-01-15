@@ -36,6 +36,7 @@ changeBuildType(RelativeId("MinecraftForge_MinecraftForge__BuildSecondaryBranche
         branchFilter = """
             +:*
             -:1.*
+            -:<default>
         """.trimIndent()
     }
 }
