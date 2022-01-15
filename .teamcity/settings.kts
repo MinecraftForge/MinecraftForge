@@ -58,7 +58,7 @@ project {
 }
 
 object Build : BuildType({
-    templates(AbsoluteId("MinecraftForge_SetupGradleUtilsCiEnvironmen"), AbsoluteId("MinecraftForge_BuildWithDiscordNotifications"), AbsoluteId("MinecraftForge_BuildMainBranches"), AbsoluteId("MinecraftForge_BuildUsingGradle"), AbsoluteId("MinecraftForge_PublishProjectUsingGradle"), AbsoluteId("MinecraftForge_TriggersStaticFilesWebpageGenerator"))
+    templates(AbsoluteId("MinecraftForge_SetupGradleUtilsCiEnvironmen"), AbsoluteId("MinecraftForge_BuildWithDiscordNotifications"), AbsoluteId("MinecraftForge_BuildMainBranches"), AbsoluteId("MinecraftForge_SetupProjectUsingGradle"), AbsoluteId("MinecraftForge_BuildUsingGradle"), AbsoluteId("MinecraftForge_PublishProjectUsingGradle"), AbsoluteId("MinecraftForge_TriggersStaticFilesWebpageGenerator"))
     id("MinecraftForge_MinecraftForge__Build")
     name = "Build"
     description = "Builds and Publishes the main branches of the project."
@@ -78,7 +78,7 @@ object Build : BuildType({
 })
 
 object BuildSecondaryBranches : BuildType({
-    templates(AbsoluteId("MinecraftForge_ExcludesBuildingDefaultBranch"), AbsoluteId("MinecraftForge_SetupGradleUtilsCiEnvironmen"), AbsoluteId("MinecraftForge_BuildWithDiscordNotifications"), AbsoluteId("MinecraftForge_BuildMainBranches"), AbsoluteId("MinecraftForge_BuildUsingGradle"))
+    templates(AbsoluteId("MinecraftForge_ExcludesBuildingDefaultBranch"), AbsoluteId("MinecraftForge_SetupGradleUtilsCiEnvironmen"), AbsoluteId("MinecraftForge_BuildWithDiscordNotifications"), AbsoluteId("MinecraftForge_BuildMainBranches"), AbsoluteId("MinecraftForge_SetupProjectUsingGradle"), AbsoluteId("MinecraftForge_BuildUsingGradle"))
     id("MinecraftForge_MinecraftForge__BuildSecondaryBranches")
     name = "Build - Secondary Branches"
     description = "Builds and Publishes the secondary branches of the project."
@@ -97,7 +97,7 @@ object BuildSecondaryBranches : BuildType({
 })
 
 object PullRequests : BuildType({
-    templates(AbsoluteId("MinecraftForge_BuildPullRequests"), AbsoluteId("MinecraftForge_SetupGradleUtilsCiEnvironmen"), AbsoluteId("MinecraftForge_BuildWithDiscordNotifications"), AbsoluteId("MinecraftForge_BuildUsingGradle"))
+    templates(AbsoluteId("MinecraftForge_BuildPullRequests"), AbsoluteId("MinecraftForge_SetupGradleUtilsCiEnvironmen"), AbsoluteId("MinecraftForge_BuildWithDiscordNotifications"), AbsoluteId("MinecraftForge_SetupProjectUsingGradle"), AbsoluteId("MinecraftForge_BuildUsingGradle"))
     id("MinecraftForge_MinecraftForge__PullRequests")
     name = "Pull Requests"
     description = "Builds pull requests for the project"
