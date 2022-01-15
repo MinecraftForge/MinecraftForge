@@ -97,6 +97,11 @@ object BuildSecondaryBranches : BuildType({
             -:refs/heads/main*
             -:refs/heads/master*
             -:refs/heads/1.*
+            -:(develop|release|staging|main|master)
+            -:%git_main_branch%
+            -:main*
+            -:master*
+            -:1.*            
         """.trimIndent()
     }
 })
