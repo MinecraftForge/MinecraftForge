@@ -48,11 +48,10 @@ import java.util.stream.StreamSupport;
 /**
  * Represents additional data sent by FML when a server is pinged.
  * Previous versions used the following format:
- * <code>
- * <pre>
+ * <pre>{@code
  * {
- *      "fmlNetworkVersion" : FMLNETVERSION,
- *      "channels": [
+ *     "fmlNetworkVersion" : FMLNETVERSION,
+ *     "channels": [
  *          {
  *              "res": "fml:handshake",
  *              "version": "1.2.3.4",
@@ -66,8 +65,7 @@ import java.util.stream.StreamSupport;
  *          }
  *     ]
  * }
- * </pre>
- * </code>
+ * }</pre>
  * <p>
  * Due to size of the ping packet (32767 UTF-16 code points of JSON data) this could exceed this limit and
  * cause issues. To work around this, a truncation mechanism was introduced, to heuristically truncate the size of the
@@ -87,16 +85,14 @@ import java.util.stream.StreamSupport;
  * but left empty. A client that cannot read the old format would not be able to connect anyways, but the properties
  * must exist to not cause exceptions.
  *
- * <code>
- * <pre>
+ * <pre>{@code
  * {
  *     "fmlNetworkVersion": FMLNETVERSION,
  *     "channels": [],
  *     "mods": [],
  *     "d": "&lt;binary data&gt;"
  * }
- * </pre>
- * </code>
+ * }</pre>
  *
  */
 public class ServerStatusPing
