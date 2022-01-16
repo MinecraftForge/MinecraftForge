@@ -107,6 +107,9 @@ public final class ForgeLootTableProvider extends LootTableProvider {
         }
 
         for (LootPoolEntryContainer lootEntry : lootEntries) {
+            if (findAndReplaceInLootEntry(lootEntry, from, toolAction)) {
+                found = true;
+            }
             if (lootEntry instanceof CompositeEntryBase) {
                 if (findAndReplaceInParentedLootEntry((CompositeEntryBase) lootEntry, from, toolAction)) {
                     found = true;

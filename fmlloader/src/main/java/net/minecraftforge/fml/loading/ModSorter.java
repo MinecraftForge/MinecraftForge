@@ -38,6 +38,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
@@ -233,6 +234,13 @@ public class ModSorter
         LOGGER.debug(LOADING, "Found {} mod requirements missing ({} mandatory, {} optional)", missingVersions.size(), mandatoryMissing, missingVersions.size() - mandatoryMissing);
 
         if (!missingVersions.isEmpty()) {
+            if (mandatoryMissing > 0) {
+                LOGGER.error(LOADING, "Missing mandatory dependencies: {}", missingVersions.stream().filter(IModInfo.ModVersion::isMandatory).map(IModInfo.ModVersion::getModId).collect(Collectors.joining(", ")));
+            }
+            if (missingVersions.size() - mandatoryMissing > 0) {
+                LOGGER.error(LOADING, "Unsupported installed optional dependencies: {}", missingVersions.stream().filter(ver -> !ver.isMandatory()).map(IModInfo.ModVersion::getModId).collect(Collectors.joining(", ")));
+            }
+
             return missingVersions.stream()
                     .map(mv -> new ExceptionData(mv.isMandatory() ? "fml.modloading.missingdependency" : "fml.modloading.missingdependency.optional",
                             mv.getOwner(), mv.getModId(), mv.getOwner().getModId(), mv.getVersionRange(),
