@@ -292,35 +292,43 @@ public class ServerStatusPing
             int remoteFMLVersion = GsonHelper.getAsInt(forgeData, "fmlNetworkVersion");
             var buf = new FriendlyByteBuf(decodeOptimized(GsonHelper.getAsString(forgeData, "d")));
 
-            var truncated = buf.readBoolean();
-            var modsSize = buf.readUnsignedShort();
-            var mods = new HashMap<String, String>();
-            var channels = new HashMap<ResourceLocation, Pair<String, Boolean>>();
-            for (var i = 0; i < modsSize; i++)
+            boolean truncated;
+            Map<ResourceLocation, Pair<String, Boolean>> channels;
+            Map<String, String> mods;
+
+            try
             {
-                var channelSizeAndVersionFlag = buf.readVarInt();
-                var channelSize = channelSizeAndVersionFlag >>> 1;
-                var isIgnoreServerOnly = (channelSizeAndVersionFlag & VERSION_FLAG_IGNORESERVERONLY) != 0;
-                var modId = buf.readUtf();
-                var modVersion = isIgnoreServerOnly ? NetworkConstants.IGNORESERVERONLY : buf.readUtf();
-                for (var i1 = 0; i1 < channelSize; i1++)
-                {
-                    var channelName = buf.readUtf();
-                    var channelVersion = buf.readUtf();
-                    var requiredOnClient = buf.readBoolean();
-                    channels.put(new ResourceLocation(modId, channelName), Pair.of(channelVersion, requiredOnClient));
+                truncated = buf.readBoolean();
+                var modsSize = buf.readUnsignedShort();
+                mods = new HashMap<>();
+                channels = new HashMap<>();
+                for (var i = 0; i < modsSize; i++) {
+                    var channelSizeAndVersionFlag = buf.readVarInt();
+                    var channelSize = channelSizeAndVersionFlag >>> 1;
+                    var isIgnoreServerOnly = (channelSizeAndVersionFlag & VERSION_FLAG_IGNORESERVERONLY) != 0;
+                    var modId = buf.readUtf();
+                    var modVersion = isIgnoreServerOnly ? NetworkConstants.IGNORESERVERONLY : buf.readUtf();
+                    for (var i1 = 0; i1 < channelSize; i1++) {
+                        var channelName = buf.readUtf();
+                        var channelVersion = buf.readUtf();
+                        var requiredOnClient = buf.readBoolean();
+                        channels.put(new ResourceLocation(modId, channelName), Pair.of(channelVersion, requiredOnClient));
+                    }
+
+                    mods.put(modId, modVersion);
                 }
 
-                mods.put(modId, modVersion);
+                var nonModChannelCount = buf.readVarInt();
+                for (var i = 0; i < nonModChannelCount; i++) {
+                    var channelName = buf.readResourceLocation();
+                    var channelVersion = buf.readUtf();
+                    var requiredOnClient = buf.readBoolean();
+                    channels.put(channelName, Pair.of(channelVersion, requiredOnClient));
+                }
             }
-
-            var nonModChannelCount = buf.readVarInt();
-            for (var i = 0; i < nonModChannelCount; i++)
+            finally
             {
-                var channelName = buf.readResourceLocation();
-                var channelVersion = buf.readUtf();
-                var requiredOnClient = buf.readBoolean();
-                channels.put(channelName, Pair.of(channelVersion, requiredOnClient));
+                buf.release();
             }
 
             return new ServerStatusPing(channels, mods, remoteFMLVersion, truncated);
