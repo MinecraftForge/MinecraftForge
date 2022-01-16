@@ -587,7 +587,7 @@ project(':fmlonly') {
     sharedFmlonlyForge.call(project)
     def userdevRuns = tasks.userdevConfig.runs
     for (def run : patcher.runs + userdevRuns) {
-        run.args '--fml.coreGameMods', 'minecraft'
+        run.args '--fml.systemMods', 'minecraft'
     }
 
     task launcherJson(type: LauncherJson) {
@@ -609,7 +609,7 @@ project(':fmlonly') {
                            '--fml.mcVersion', MC_VERSION,
                            '--fml.forgeGroup', project.group,
                            '--fml.mcpVersion', MCP_VERSION,
-                           '--fml.coreGameMods', 'minecraft'],
+                           '--fml.systemMods', 'minecraft'],
                     jvm: ["-DignoreList=${fmlonly_client.properties.ignoreList},\${version_name}.jar",
                           "-DmergeModules=${fmlonly_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
@@ -1073,7 +1073,7 @@ project(':forge') {
     sharedFmlonlyForge.call(project)
     def userdevRuns = tasks.userdevConfig.runs
     for (def run : patcher.runs + userdevRuns) {
-        run.args '--fml.coreGameMods', 'minecraft,forge'
+        run.args '--fml.systemMods', 'minecraft,forge'
     }
 
     task downloadLibraries(type: DownloadLibraries, dependsOn: ':mcp:setupMCP') {
@@ -1159,7 +1159,7 @@ project(':forge') {
                            '--fml.mcVersion', MC_VERSION,
                            '--fml.forgeGroup', project.group,
                            '--fml.mcpVersion', MCP_VERSION,
-                           '--fml.coreGameMods', 'minecraft,forge'],
+                           '--fml.systemMods', 'minecraft,forge'],
                     jvm: ["-DignoreList=${forge_client.properties.ignoreList},\${version_name}.jar",
                           "-DmergeModules=${forge_client.properties.mergeModules}",
                           '-DlibraryDirectory=${library_directory}',
