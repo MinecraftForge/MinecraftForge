@@ -149,7 +149,7 @@
        return BlockStateProviderType.f_68752_;
     });
 -   public static final Registry<FoliagePlacerType<?>> f_122858_ = m_122999_(f_122848_, () -> {
-+   public static final Registry<FoliagePlacerType<?>> f_122858_ = forge(f_122848_, () -> {
++   @Deprecated public static final Registry<FoliagePlacerType<?>> f_122858_ = forge(f_122848_, () -> {
        return FoliagePlacerType.f_68591_;
     });
     public static final Registry<TrunkPlacerType<?>> f_122859_ = m_122999_(f_122849_, () -> {
