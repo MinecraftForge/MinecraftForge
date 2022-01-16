@@ -17,7 +17,7 @@ changeProject(DslContext.projectId) {
             password("env.KEYSTORE_URL", "credentialsJSON:b5b933de-054e-4503-b6ea-d5939a500356", display = ParameterDisplay.HIDDEN)
         }
         add {
-            password("env.KEYSTORE_PASSWORD", "credentialsJSON:6db55d20-d23c-44ee-9fa4-25a2937e2944", display = ParameterDisplay.HIDDEN)
+            password("env.KEYSTORE_PASSWORD", "credentialsJSON:6c5b69bf-cf7f-4979-a124-ccafc0df2623", display = ParameterDisplay.HIDDEN)
         }
     }
 
