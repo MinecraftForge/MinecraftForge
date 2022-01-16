@@ -41,7 +41,6 @@ public class ModDiscoverer {
     private final ServiceLoader<IModLocator> locators;
     private final List<IModLocator> locatorList;
 
-    @SuppressWarnings("unchecked")
     public ModDiscoverer(Map<String, ?> arguments) {
         Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.MODDIRECTORYFACTORY.get(), v->ModsFolderLocator::new);
         Launcher.INSTANCE.environment().computePropertyIfAbsent(Environment.Keys.PROGRESSMESSAGE.get(), v-> StartupMessageManager.locatorConsumer().orElseGet(()-> s->{}));
