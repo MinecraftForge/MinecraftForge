@@ -14,7 +14,7 @@ accordingly, and delete the patch script.
 changeProject(DslContext.projectId) {
     params {
         add {
-            password("env.KEYSTORE_URL", "credentialsJSON:b5b933de-054e-4503-b6ea-d5939a500356", display = ParameterDisplay.HIDDEN)
+            password("env.KEYSTORE_URL", "credentialsJSON:a7ae1c82-8058-4061-8d12-7f6bc2618d2e", display = ParameterDisplay.HIDDEN)
         }
         add {
             password("env.KEYSTORE_PASSWORD", "credentialsJSON:d7b964e3-a1fd-47a8-b892-6f601fe47479", display = ParameterDisplay.HIDDEN)
