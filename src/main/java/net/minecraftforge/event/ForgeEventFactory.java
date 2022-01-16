@@ -83,6 +83,7 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.SpawnData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.storage.ServerLevelData;
@@ -204,11 +205,11 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
-    public static boolean canEntitySpawnSpawner(Mob entity, Level world, float x, float y, float z, BaseSpawner spawner)
+    public static boolean canEntitySpawnSpawner(SpawnData spawnData, Mob entity, Level world, float x, float y, float z, BaseSpawner spawner)
     {
         Result result = canEntitySpawn(entity, world, x, y, z, spawner, MobSpawnType.SPAWNER);
         if (result == Result.DEFAULT)
-            return entity.checkSpawnRules(world, MobSpawnType.SPAWNER) && entity.checkSpawnObstruction(world); // vanilla logic (inverted)
+            return !(spawnData.getCustomSpawnRules().isEmpty() && !entity.checkSpawnRules(world, MobSpawnType.SPAWNER) || !entity.checkSpawnObstruction(world)); // vanilla logic (inverted)
         else
             return result == Result.ALLOW;
     }
