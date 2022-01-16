@@ -49,11 +49,9 @@ public class FMLServiceProvider implements ITransformationService
     private ArgumentAcceptingOptionSpec<String> forgeGroupOption;
     private ArgumentAcceptingOptionSpec<String> mcpOption;
     private ArgumentAcceptingOptionSpec<String> mappingsOption;
-    private ArgumentAcceptingOptionSpec<String> systemModsOption;
     private List<String> modsArgumentList;
     private List<String> modListsArgumentList;
     private List<String> mavenRootsArgumentList;
-    private List<String> systemMods;
     private String targetForgeVersion;
     private String targetMcVersion;
     private String targetMcpVersion;
@@ -85,7 +83,6 @@ public class FMLServiceProvider implements ITransformationService
         arguments.put("modLists", modListsArgumentList);
         arguments.put("mods", modsArgumentList);
         arguments.put("mavenRoots", mavenRootsArgumentList);
-        arguments.put("systemMods", systemMods);
         arguments.put("forgeVersion", targetForgeVersion);
         arguments.put("forgeGroup", targetForgeGroup);
         arguments.put("mcVersion", targetMcVersion);
@@ -128,7 +125,6 @@ public class FMLServiceProvider implements ITransformationService
         modsOption = argumentBuilder.apply("mods", "List of mods to add").withRequiredArg().ofType(String.class).withValuesSeparatedBy(",");
         modListsOption = argumentBuilder.apply("modLists", "JSON modlists").withRequiredArg().ofType(String.class).withValuesSeparatedBy(",");
         mavenRootsOption = argumentBuilder.apply("mavenRoots", "Maven root directories").withRequiredArg().ofType(String.class).withValuesSeparatedBy(",");
-        systemModsOption = argumentBuilder.apply("systemMods", "Set of system mods (fundamentally existing mods)").withRequiredArg().ofType(String.class).withValuesSeparatedBy(",");
     }
 
     @Override
@@ -142,7 +138,6 @@ public class FMLServiceProvider implements ITransformationService
         targetMcVersion = option.value(mcOption);
         targetMcpVersion = option.value(mcpOption);
         targetMcpMappings = option.value(mappingsOption);
-        systemMods = option.values(systemModsOption);
     }
 
     @Override

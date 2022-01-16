@@ -34,14 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ModDiscoverer {
     private static final Logger LOGGER = LogManager.getLogger();
     private final ServiceLoader<IModLocator> locators;
     private final List<IModLocator> locatorList;
-    private final Set<String> systemMods;
 
     @SuppressWarnings("unchecked")
     public ModDiscoverer(Map<String, ?> arguments) {
@@ -52,14 +50,11 @@ public class ModDiscoverer {
         locatorList = ServiceLoaderUtils.streamServiceLoader(()->locators, sce->LOGGER.error("Failed to load locator list", sce)).collect(Collectors.toList());
         locatorList.forEach(l->l.initArguments(arguments));
         LOGGER.debug(LogMarkers.CORE,"Found Mod Locators : {}", ()->locatorList.stream().map(iModLocator -> "("+iModLocator.name() + ":" + iModLocator.getClass().getPackage().getImplementationVersion()+")").collect(Collectors.joining(",")));
-        systemMods = Set.copyOf(((Map<String, List<String>>) arguments).getOrDefault("systemMods", List.of()));
-        LOGGER.debug(LogMarkers.CORE, "Configured system mods: {}", String.join(",", systemMods));
     }
 
     ModDiscoverer(List<IModLocator> locatorList) {
         this.locatorList = locatorList;
         this.locators = null;
-        this.systemMods = Set.of();
     }
 
     public ModValidator discoverMods() {
@@ -78,7 +73,7 @@ public class ModDiscoverer {
                 .map(ModFile.class::cast)
                 .collect(Collectors.groupingBy(IModFile::getType));
 
-        var validator = new ModValidator(modFilesMap, systemMods);
+        var validator = new ModValidator(modFilesMap);
         validator.stage1Validation();
         return validator;
     }

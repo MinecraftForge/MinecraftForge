@@ -21,6 +21,8 @@ package net.minecraftforge.fml.loading;
 
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
+import cpw.mods.jarhandling.SecureJar;
+import net.minecraftforge.fml.loading.moddiscovery.MinecraftLocator;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
@@ -38,6 +40,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,11 +60,11 @@ public class ModSorter
         this.modFiles = modFiles;
     }
 
-    public static LoadingModList sort(List<ModFile> mods, final Set<String> systemMods, final List<ExceptionData> errors)
+    public static LoadingModList sort(List<ModFile> mods, final List<ExceptionData> errors)
     {
         final ModSorter ms = new ModSorter(mods);
         try {
-            ms.buildUniqueList(systemMods);
+            ms.buildUniqueList();
         } catch (EarlyLoadingException e) {
             // We cannot build any list with duped mods. We have to abort immediately and report it
             return LoadingModList.of(ms.systemMods, ms.systemMods.stream().map(mf->(ModInfo)mf.getModInfos().get(0)).collect(toList()), e);
@@ -148,13 +151,28 @@ public class ModSorter
         }
     }
 
-    private void buildUniqueList(Set<String> systemMods)
+    private void buildUniqueList()
     {
         // Collect mod files by module name. This will be used for deduping purposes
         final Map<String, List<IModFile>> modFilesByFirstId = modFiles.stream()
                 .collect(groupingBy(mf -> mf.getModFileInfo().moduleName()));
 
         // Capture system mods (ex. MC, Forge) here, so we can keep them for later
+        final Set<String> systemMods = new HashSet<>();
+        // The minecraft mod is always a system mod
+        systemMods.add("minecraft");
+        // Find find mod file from MinecraftLocator to define the system mods
+        modFiles.stream()
+                .filter(modFile -> modFile.getLocator() instanceof MinecraftLocator)
+                .map(ModFile::getSecureJar)
+                .map(SecureJar::getManifest)
+                .map(Manifest::getMainAttributes)
+                .map(mf -> mf.getValue("FML-System-Mods"))
+                .filter(Objects::nonNull)
+                .findFirst()
+                .ifPresent(value -> systemMods.addAll(Arrays.asList(value.split(","))));
+        LOGGER.debug("Configured system mods: {}", systemMods);
+
         this.systemMods = new ArrayList<>();
         for (String systemMod : systemMods) {
             var container = modFilesByFirstId.get(systemMod);
