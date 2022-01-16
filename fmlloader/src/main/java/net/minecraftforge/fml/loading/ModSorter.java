@@ -159,7 +159,7 @@ public class ModSorter
         for (String systemMod : systemMods) {
             var container = modFilesByFirstId.get(systemMod);
             if (container != null && !container.isEmpty()) {
-                LOGGER.debug("Found system mod: " + systemMod);
+                LOGGER.debug("Found system mod: {}", systemMod);
                 this.systemMods.add((ModFile) container.get(0));
             } else {
                 throw new IllegalStateException("Failed to find system mod: " + systemMod);
