@@ -161,7 +161,7 @@ public class ModSorter
         final Set<String> systemMods = new HashSet<>();
         // The minecraft mod is always a system mod
         systemMods.add("minecraft");
-        // Find find mod file from MinecraftLocator to define the system mods
+        // Find mod file from MinecraftLocator to define the system mods
         modFiles.stream()
                 .filter(modFile -> modFile.getLocator() instanceof MinecraftLocator)
                 .map(ModFile::getSecureJar)
