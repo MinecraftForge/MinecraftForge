@@ -35,13 +35,21 @@ public interface IForgeStructureFeature
 
     /**
      * Gets the default list of spawns for this structure, of the specified category.
-     *
-     * @apiNote Implement this over any of the type specific getSpecial functions in StructureFeature.
      */
-    @SuppressWarnings("incomplete-switch")
     default List<MobSpawnSettings.SpawnerData> getDefaultSpawnList(MobCategory category)
     {
         return Collections.emptyList();
+    }
+
+    /**
+     * Allows for an empty spawn list from {@link #getDefaultSpawnList(MobCategory)} to be used. Effectively prevents mob spawning
+     * in this structure for a given category, as long as the spawn list hasn't had anything added to it.
+     * @param category
+     * @return True if an empty spawn list can be used.
+     */
+    default boolean allowEmptySpawnsForCategory(MobCategory category)
+    {
+        return false;
     }
 
     /**

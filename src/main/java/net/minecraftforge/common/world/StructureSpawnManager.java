@@ -22,6 +22,7 @@ package net.minecraftforge.common.world;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.Nullable;
@@ -73,11 +74,14 @@ public class StructureSpawnManager
     {
         StructureSpawnListGatherEvent event = new StructureSpawnListGatherEvent(structure);
         MinecraftForge.EVENT_BUS.post(event);
-        ImmutableMap.Builder<net.minecraft.world.entity.MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> builder = ImmutableMap.builder();
-        event.getEntitySpawns().forEach((classification, spawns) -> {
-            if (!spawns.isEmpty())
-                builder.put(classification, WeightedRandomList.create(spawns));
-        });
+        ImmutableMap.Builder<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> builder = ImmutableMap.builder();
+        Map<MobCategory, List<MobSpawnSettings.SpawnerData>> spawnMap = event.getEntitySpawns();
+        for (MobCategory category : MobCategory.values())
+        {
+            List<MobSpawnSettings.SpawnerData> spawns = spawnMap.getOrDefault(category, Collections.emptyList());
+            if (!spawns.isEmpty() || structure.allowEmptySpawnsForCategory(category))
+                builder.put(category, WeightedRandomList.create(spawns));
+        }
         ImmutableMap<MobCategory, WeightedRandomList<MobSpawnSettings.SpawnerData>> entitySpawns = builder.build();
         if (!entitySpawns.isEmpty())
             structuresWithSpawns.put(structure, new StructureSpawnInfo(entitySpawns, event.isInsideOnly()));
@@ -98,13 +102,14 @@ public class StructureSpawnManager
             StructureFeature<?> structure = entry.getKey();
             StructureSpawnInfo spawnInfo = entry.getValue();
             //Note: We check if the structure has spawns for a type first before looking at the world as it should be a cheaper check
-            if (spawnInfo.spawns.containsKey(classification))
+            WeightedRandomList<MobSpawnSettings.SpawnerData> spawnList = spawnInfo.spawns.get(classification);
+            if (spawnList != null)
             {
                 boolean valid = spawnInfo.insideOnly
                         ? structureManager.getStructureWithPieceAt(pos, structure).isValid()
                         : structureManager.getStructureAt(pos, structure).isValid();
                 if (valid)
-                    return spawnInfo.spawns.get(classification);
+                    return spawnList;
             }
         }
         return null;
