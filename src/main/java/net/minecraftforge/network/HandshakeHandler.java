@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,9 +28,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraftforge.common.util.LogMessageAdapter;
+import net.minecraftforge.network.ConnectionData.ModMismatchData;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -39,11 +41,14 @@ import org.apache.logging.log4j.MarkerManager;
 import com.google.common.collect.Maps;
 
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
@@ -179,10 +184,11 @@ public class HandshakeHandler
     void handleServerModListOnClient(HandshakeMessages.S2CModList serverModList, Supplier<NetworkEvent.Context> c)
     {
         LOGGER.debug(FMLHSMARKER, "Logging into server with mod list [{}]", String.join(", ", serverModList.getModList()));
-        boolean accepted = NetworkRegistry.validateClientChannels(serverModList.getChannels());
+        Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateClientChannels(serverModList.getChannels());
         c.get().setPacketHandled(true);
-        if (!accepted) {
+        if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
+            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, NetworkRegistry.buildChannelVersions(), true));
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
             return;
         }
@@ -211,16 +217,30 @@ public class HandshakeHandler
     void handleClientModListOnServer(HandshakeMessages.C2SModListReply clientModList, Supplier<NetworkEvent.Context> c)
     {
         LOGGER.debug(FMLHSMARKER, "Received client connection with modlist [{}]",  String.join(", ", clientModList.getModList()));
-        boolean accepted = NetworkRegistry.validateServerChannels(clientModList.getChannels());
+        Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateServerChannels(clientModList.getChannels());
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA)
                 .set(new ConnectionData(clientModList.getModList(), clientModList.getChannels()));
         c.get().setPacketHandled(true);
-        if (!accepted) {
+        if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
+            NetworkConstants.handshakeChannel.reply(new HandshakeMessages.S2CModMismatchData(
+                    mismatchedChannels.entrySet().stream().map(r -> ModMismatchData.getModDataFromChannel(r.getKey(), r.getValue())).filter(Objects::nonNull).collect(Collectors.toMap(Pair::getLeft, Pair::getRight)),
+                    NetworkRegistry.buildChannelVersions().entrySet().stream().filter(e -> mismatchedChannels.containsKey(e.getKey())).collect(Collectors.toMap(Entry::getKey, Entry::getValue))), c.get());
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
             return;
         }
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
+    }
+
+    void handleModMismatchData(HandshakeMessages.S2CModMismatchData modMismatchData, Supplier<NetworkEvent.Context> c)
+    {
+        if (!modMismatchData.getMismatchedChannelData().isEmpty()) {
+            LOGGER.error(FMLHSMARKER, "Channels [{}] rejected their client side version number",
+                    modMismatchData.getMismatchedChannelData().keySet().stream().map(Object::toString).collect(Collectors.joining(",")));
+            LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
+            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(new ModMismatchData(modMismatchData.getMismatchedChannelData(), modMismatchData.getPresentChannelData(), new HashMap<>(), false));
+            c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
+        }
     }
 
     void handleRegistryMessage(final HandshakeMessages.S2CRegistry registryPacket, final Supplier<NetworkEvent.Context> contextSupplier){
@@ -244,6 +264,7 @@ public class HandshakeHandler
     private boolean handleRegistryLoading(final Supplier<NetworkEvent.Context> contextSupplier) {
         // We use a countdown latch to suspend the impl thread pending the client thread processing the registry data
         AtomicBoolean successfulConnection = new AtomicBoolean(false);
+        AtomicReference<Multimap<ResourceLocation, ResourceLocation>> registryMismatches = new AtomicReference<>();
         CountDownLatch block = new CountDownLatch(1);
         contextSupplier.get().enqueueWork(() -> {
             LOGGER.debug(FMLHSMARKER, "Injecting registry snapshot from server.");
@@ -254,6 +275,7 @@ public class HandshakeHandler
                         missingData.forEach((reg, entry)-> sb.append("\t").append(reg).append(": ").append(entry).append('\n'))));
             }
             successfulConnection.set(missingData.isEmpty());
+            registryMismatches.set(missingData);
             block.countDown();
         });
         LOGGER.debug(FMLHSMARKER, "Waiting for registries to load.");
@@ -266,6 +288,7 @@ public class HandshakeHandler
             LOGGER.debug(FMLHSMARKER, "Registry load complete, continuing handshake.");
         } else {
             LOGGER.error(FMLHSMARKER, "Failed to load registry, closing connection.");
+            this.manager.channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.registry(registryMismatches.get()));
             this.manager.disconnect(new TextComponent("Failed to synchronize registry data from server, closing connection"));
         }
         return successfulConnection.get();

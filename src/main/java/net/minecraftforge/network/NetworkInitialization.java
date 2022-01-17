@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -72,6 +72,13 @@ class NetworkInitialization {
                 encoder(HandshakeMessages.S2CConfigData::encode).
                 buildLoginPacketList(ConfigSync.INSTANCE::syncConfigs).
                 consumer(HandshakeHandler.biConsumerFor(HandshakeHandler::handleConfigSync)).
+                add();
+
+        handshakeChannel.messageBuilder(HandshakeMessages.S2CModMismatchData.class, 5, NetworkDirection.LOGIN_TO_CLIENT).
+                loginIndex(HandshakeMessages.LoginIndexedMessage::getLoginIndex, HandshakeMessages.LoginIndexedMessage::setLoginIndex).
+                decoder(HandshakeMessages.S2CModMismatchData::decode).
+                encoder(HandshakeMessages.S2CModMismatchData::encode).
+                consumer(HandshakeHandler.biConsumerFor(HandshakeHandler::handleModMismatchData)).
                 add();
 
         return handshakeChannel;

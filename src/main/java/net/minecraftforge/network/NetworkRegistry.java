@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -215,7 +215,7 @@ public class NetworkRegistry
      * @param channels An @{@link Map} of name->version pairs for testing
      * @return true if all channels accept themselves
      */
-    static boolean validateClientChannels(final Map<ResourceLocation, String> channels) {
+    static Map<ResourceLocation, String> validateClientChannels(final Map<ResourceLocation, String> channels) {
         return validateChannels(channels, "server", NetworkInstance::tryServerVersionOnClient);
     }
 
@@ -225,7 +225,7 @@ public class NetworkRegistry
      * @param channels An @{@link Map} of name->version pairs for testing
      * @return true if all channels accept themselves
      */
-    static boolean validateServerChannels(final Map<ResourceLocation, String> channels) {
+    static Map<ResourceLocation, String> validateServerChannels(final Map<ResourceLocation, String> channels) {
         return validateChannels(channels, "client", NetworkInstance::tryClientVersionOnServer);
     }
 
@@ -237,23 +237,23 @@ public class NetworkRegistry
      * @param testFunction The test function to use for testing
      * @return true if all channels accept themselves
      */
-    private static boolean validateChannels(final Map<ResourceLocation, String> incoming, final String originName, BiFunction<NetworkInstance, String, Boolean> testFunction) {
-        final List<Pair<ResourceLocation, Boolean>> results = instances.values().stream().
+    private static Map<ResourceLocation, String> validateChannels(final Map<ResourceLocation, String> incoming, final String originName, BiFunction<NetworkInstance, String, Boolean> testFunction) {
+        final Map<ResourceLocation, String> results = instances.values().stream().
                 map(ni -> {
                     final String incomingVersion = incoming.getOrDefault(ni.getChannelName(), ABSENT);
                     final boolean test = testFunction.apply(ni, incomingVersion);
                     LOGGER.debug(NETREGISTRY, "Channel '{}' : Version test of '{}' from {} : {}", ni.getChannelName(), incomingVersion, originName, test ? "ACCEPTED" : "REJECTED");
-                    return Pair.of(ni.getChannelName(), test);
-                }).filter(p->!p.getRight()).collect(Collectors.toList());
+                    return Pair.of(Pair.of(ni.getChannelName(), incomingVersion), test);
+                }).filter(p->!p.getRight()).map(Pair::getLeft).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
         if (!results.isEmpty()) {
             LOGGER.error(NETREGISTRY, "Channels [{}] rejected their {} side version number",
-                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")),
+                    results.keySet().stream().map(Object::toString).collect(Collectors.joining(",")),
                     originName);
-            return false;
+            return results;
         }
         LOGGER.debug(NETREGISTRY, "Accepting channel list from {}", originName);
-        return true;
+        return results;
     }
 
     /**

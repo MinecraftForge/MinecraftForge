@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 
@@ -35,6 +34,8 @@ import java.util.function.IntSupplier;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Maps;
 
@@ -273,6 +274,44 @@ public class HandshakeMessages
 
         public byte[] getBytes() {
             return fileData;
+        }
+    }
+
+    public static class S2CModMismatchData extends LoginIndexedMessage {
+        private final Map<ResourceLocation, Pair<String, String>> mismatchedChannelData;
+        private final Map<ResourceLocation, String> presentChannelData;
+
+        public S2CModMismatchData(Map<ResourceLocation, Pair<String, String>> mismatchedChannelData, Map<ResourceLocation, String> presentChannelData)
+        {
+            this.mismatchedChannelData = mismatchedChannelData;
+            this.presentChannelData = presentChannelData;
+        }
+
+        public static S2CModMismatchData decode(FriendlyByteBuf input)
+        {
+            Map<ResourceLocation, Pair<String, String>> mismatchedMods = input.readMap(i -> new ResourceLocation(i.readUtf(0x100)), i -> Pair.of(i.readUtf(0x100), i.readUtf(0x100)));
+            Map<ResourceLocation, String> presentMods = input.readMap(i -> new ResourceLocation(i.readUtf(0x100)), i -> i.readUtf(0x100));
+
+            return new S2CModMismatchData(mismatchedMods, presentMods);
+        }
+
+        public void encode(FriendlyByteBuf output)
+        {
+            output.writeMap(mismatchedChannelData, (o, r) -> o.writeUtf(r.toString(), 0x100), (o, p) -> {
+                o.writeUtf(p.getLeft(), 0x100);
+                o.writeUtf(p.getRight(), 0x100);
+            });
+            output.writeMap(presentChannelData, (o, r) -> o.writeUtf(r.toString(), 0x100), (o, p) -> o.writeUtf(p, 0x100));
+        }
+
+        public Map<ResourceLocation, Pair<String, String>> getMismatchedChannelData()
+        {
+            return mismatchedChannelData;
+        }
+
+        public Map<ResourceLocation, String> getPresentChannelData()
+        {
+            return presentChannelData;
         }
     }
 }
