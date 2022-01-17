@@ -51,7 +51,6 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.network.filters.ExtendedMobEffectChannel;
 import net.minecraftforge.registries.*;
-import net.minecraftforge.internal.WorldPersistenceHooks;
 import net.minecraftforge.network.NetworkConstants;
 import net.minecraftforge.event.server.ServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -99,7 +98,7 @@ import org.apache.logging.log4j.MarkerManager;
 import java.util.*;
 
 @Mod("forge")
-public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
+public class ForgeMod
 {
     public static final String VERSION_CHECK_CAT = "version_checking";
     private static final Logger LOGGER = LogManager.getLogger();
@@ -146,8 +145,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CrashReportCallables.registerCrashCallable("FML", ForgeVersion::getSpec);
         CrashReportCallables.registerCrashCallable("Forge", ()->ForgeVersion.getGroup()+":"+ForgeVersion.getVersion());
 
-        WorldPersistenceHooks.addHook(this);
-        WorldPersistenceHooks.addHook(new FMLWorldPersistenceHook());
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
         modEventBus.addListener(this::registerCapabilities);
         modEventBus.addListener(this::preInit);
@@ -168,6 +165,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
+        MinecraftForge.EVENT_BUS.addListener(this::mappingChanged);
         BiomeDictionary.init();
     }
 
@@ -206,36 +204,9 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         WorldWorkerManager.clear();
     }
 
-    @Override
-    public CompoundTag getDataForWriting(LevelStorageSource.LevelStorageAccess levelSave, WorldData serverInfo)
-    {
-        CompoundTag forgeData = new CompoundTag();
-        CompoundTag dims = new CompoundTag();
-        //TODO Dimensions
-//        DimensionManager.writeRegistry(dims);
-        if (!dims.isEmpty())
-            forgeData.put("dims", dims);
-        return forgeData;
-    }
-
-    @Override
-    public void readData(LevelStorageSource.LevelStorageAccess levelSave, WorldData serverInfo, CompoundTag tag)
-    {
-        //TODO Dimensions
-//        if (tag.contains("dims", 10))
-//            DimensionManager.readRegistry(tag.getCompound("dims"));
-//        DimensionManager.processScheduledDeletions(levelSave);
-    }
-
     public void mappingChanged(RegistryEvent.IdMappingEvent evt)
     {
         Ingredient.invalidateAll();
-    }
-
-    @Override
-    public String getModId()
-    {
-        return ForgeVersion.MOD_ID;
     }
 
     public void gatherData(GatherDataEvent event)
@@ -314,99 +285,5 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         // Ignore the event itself: this is done only not to statically initialize our custom LootConditionType
         Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:loot_table_id"), LootTableIdCondition.LOOT_TABLE_ID);
         Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation("forge:can_tool_perform_action"), CanToolPerformAction.LOOT_CONDITION_TYPE);
-    }
-
-    private static final class FMLWorldPersistenceHook implements WorldPersistenceHooks.WorldPersistenceHook
-    {
-
-        private static final Logger LOGGER = LogManager.getLogger();
-        private static final Marker WORLDPERSISTENCE = MarkerManager.getMarker("WP");
-
-        @Override
-        public String getModId()
-        {
-            return "fml";
-        }
-
-        @Override
-        public CompoundTag getDataForWriting(LevelStorageSource.LevelStorageAccess levelSave, WorldData serverInfo)
-        {
-            CompoundTag fmlData = new CompoundTag();
-            ListTag modList = new ListTag();
-            ModList.get().getMods().forEach(mi->
-            {
-                final CompoundTag mod = new CompoundTag();
-                mod.putString("ModId", mi.getModId());
-                mod.putString("ModVersion", MavenVersionStringHelper.artifactVersionToString(mi.getVersion()));
-                modList.add(mod);
-            });
-            fmlData.put("LoadingModList", modList);
-
-            CompoundTag registries = new CompoundTag();
-            fmlData.put("Registries", registries);
-            LOGGER.debug(WORLDPERSISTENCE,"Gathering id map for writing to world save {}", serverInfo.getLevelName());
-
-            for (Map.Entry<ResourceLocation, ForgeRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
-            {
-                registries.put(e.getKey().toString(), e.getValue().write());
-            }
-            LOGGER.debug(WORLDPERSISTENCE,"ID Map collection complete {}", serverInfo.getLevelName());
-            return fmlData;
-        }
-
-        @Override
-        public void readData(LevelStorageSource.LevelStorageAccess levelSave, WorldData serverInfo, CompoundTag tag)
-        {
-            if (tag.contains("LoadingModList"))
-            {
-                ListTag modList = tag.getList("LoadingModList", (byte)10);
-                for (int i = 0; i < modList.size(); i++)
-                {
-                    CompoundTag mod = modList.getCompound(i);
-                    String modId = mod.getString("ModId");
-                    if (Objects.equals("minecraft",  modId)) {
-                        continue;
-                    }
-                    String modVersion = mod.getString("ModVersion");
-                    Optional<? extends ModContainer> container = ModList.get().getModContainerById(modId);
-                    if (!container.isPresent())
-                    {
-                        LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing, things may not work well", modId);
-                        continue;
-                    }
-                    if (!Objects.equals(modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion())))
-                    {
-                        LOGGER.warn(WORLDPERSISTENCE,"This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion()));
-                    }
-                }
-            }
-
-            Multimap<ResourceLocation, ResourceLocation> failedElements = null;
-
-            if (tag.contains("Registries")) // 1.8, genericed out the 'registries' list
-            {
-                Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = new HashMap<>();
-                CompoundTag regs = tag.getCompound("Registries");
-                for (String key : regs.getAllKeys())
-                {
-                    snapshot.put(new ResourceLocation(key), ForgeRegistry.Snapshot.read(regs.getCompound(key)));
-                }
-                failedElements = GameData.injectSnapshot(snapshot, true, true);
-            }
-
-            if (failedElements != null && !failedElements.isEmpty())
-            {
-                StringBuilder buf = new StringBuilder();
-                buf.append("Forge Mod Loader could not load this save.\n\n")
-                   .append("There are ").append(failedElements.size()).append(" unassigned registry entries in this save.\n")
-                   .append("You will not be able to load until they are present again.\n\n");
-
-                failedElements.asMap().forEach((name, entries) ->
-                {
-                    buf.append("Missing ").append(name).append(":\n");
-                    entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
-                });
-            }
-        }
     }
 }

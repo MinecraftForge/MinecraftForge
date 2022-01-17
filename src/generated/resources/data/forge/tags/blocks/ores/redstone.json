@@ -1,6 +1,6 @@
 {
   "replace": false,
   "values": [
-    "minecraft:redstone_ore"
+    "#minecraft:redstone_ores"
   ]
 }
