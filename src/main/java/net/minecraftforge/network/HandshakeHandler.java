@@ -191,7 +191,7 @@ public class HandshakeHandler
         Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateClientChannels(serverModList.getChannels());
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
-            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, NetworkRegistry.buildChannelVersions(), serverMods, true));
+            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, serverMods, true));
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
             return;
         }
@@ -227,8 +227,8 @@ public class HandshakeHandler
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
             NetworkConstants.handshakeChannel.reply(new HandshakeMessages.S2CModMismatchData(
-                    mismatchedChannels.entrySet().stream().map(e -> ModMismatchData.getModDataFromChannel(e.getKey(), e.getValue())).collect(Collectors.toMap(Pair::getLeft, Pair::getRight)),
-                    NetworkRegistry.buildChannelVersions().keySet().stream().filter(mismatchedChannels::containsKey).map(id -> Pair.of(id, ModList.get().getMods().stream().filter(mod -> mod.getModId().equals(id.getNamespace())).findFirst().map(mod -> mod.getVersion().toString()).orElse(NetworkRegistry.ABSENT))).collect(Collectors.toMap(Entry::getKey, Entry::getValue))),
+                    ModMismatchData.toRemoteChannelData(mismatchedChannels, new HashMap<>()),
+                    ModMismatchData.getLocalChannelData(mismatchedChannels)),
                     c.get());
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
             return;

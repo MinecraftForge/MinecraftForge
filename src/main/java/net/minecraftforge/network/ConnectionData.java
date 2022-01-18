@@ -77,16 +77,16 @@ public class ConnectionData
     /**
      * A class for holding the mod mismatch data of a failed handshake.
      * Contains a list of mismatched channels, the channels present on the side the handshake failed on, the mods with mismatching registries (if available) and the information of whether the mismatching data's origin is the server.
-     * @param mismatchedChannelData The ids and respective mod names and versions of the mismatched or missing channels, stored like this: [channelId -> [modName, modVersion]]
-     * @param presentChannelData The ids and respective mod versions of the present channels
+     * @param mismatchedChannelData The ids and respective mod versions of the mismatched or missing channels
+     * @param presentChannelData The ids and respective mod names and versions of the present channels corresponding to the mismatched channels, stored like this: [channelId -> [modName, modVersion]]
      * @param missingRegistryModData The ids and names of mods that have mismatched registry data
      */
-    public record ModMismatchData(Map<ResourceLocation, Pair<String, String>> mismatchedChannelData, Map<ResourceLocation, String> presentChannelData, Map<String, String> missingRegistryModData, boolean mismatchedDataFromServer)
+    public record ModMismatchData(Map<ResourceLocation, String> mismatchedChannelData, Map<ResourceLocation, Pair<String, String>> presentChannelData, Map<String, String> missingRegistryModData, boolean mismatchedDataFromServer)
     {
-        public static ModMismatchData channel(Map<ResourceLocation, String> mismatchedChannels, Map<ResourceLocation, String> presentChannels, Map<String, String> serverMods, boolean mismatchedDataFromServer)
+        public static ModMismatchData channel(Map<ResourceLocation, String> mismatchedChannels, Map<String, String> serverMods, boolean mismatchedDataFromServer)
         {
-            Map<ResourceLocation, Pair<String, String>> mismatchedChannelData = mismatchedChannels.entrySet().stream().map(e -> getModDataFromChannel(e.getKey(), e.getValue())).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-            Map<ResourceLocation, String> presentChannelData = presentChannels.keySet().stream().filter(mismatchedChannels::containsKey).map(id -> Pair.of(id, serverMods.get(id.getNamespace()))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+            Map<ResourceLocation, String> mismatchedChannelData = toRemoteChannelData(mismatchedChannels, serverMods);
+            Map<ResourceLocation, Pair<String, String>> presentChannelData = getLocalChannelData(mismatchedChannels);
 
             return new ModMismatchData(mismatchedChannelData, presentChannelData, new HashMap<>(), mismatchedDataFromServer);
         }
@@ -98,11 +98,24 @@ public class ConnectionData
             return new ModMismatchData(new HashMap<>(), new HashMap<>(), missingRegistryModData, true);
         }
 
-        public static Pair<ResourceLocation, Pair<String, String>> getModDataFromChannel(ResourceLocation id, String channelVersion)
+        public static Map<ResourceLocation, String> toRemoteChannelData(Map<ResourceLocation, String> mismatchedChannels, Map<String, String> serverMods)
         {
-            Optional<? extends ModContainer> mod = ModList.get().getModContainerById(id.getNamespace());
+            return mismatchedChannels.keySet().stream().map(s -> getRemoteModVersionFromChannel(s, serverMods)).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+        }
 
-            return mod.map(modContainer -> Pair.of(id, Pair.of(modContainer.getModInfo().getDisplayName(), channelVersion.equals(NetworkRegistry.ABSENT) ? channelVersion : modContainer.getModInfo().getVersion().toString()))).orElse(Pair.of(id, Pair.of(id.getNamespace(), channelVersion)));
+        public static Map<ResourceLocation, Pair<String, String>> getLocalChannelData(Map<ResourceLocation, String> mismastchedChannelsFilter)
+        {
+            return NetworkRegistry.buildChannelVersions().keySet().stream().filter(mismastchedChannelsFilter::containsKey).map(ModMismatchData::getOwnModDataFromChannel).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+        }
+
+        public static Pair<ResourceLocation, String> getRemoteModVersionFromChannel(ResourceLocation channel, Map<String, String> remoteMods)
+        {
+            return Pair.of(channel, remoteMods.getOrDefault(channel.getNamespace(), NetworkRegistry.ABSENT));
+        }
+
+        public static Pair<ResourceLocation, Pair<String, String>> getOwnModDataFromChannel(ResourceLocation channel)
+        {
+            return ModList.get().getModContainerById(channel.getNamespace()).map(modContainer -> Pair.of(channel, Pair.of(modContainer.getModInfo().getDisplayName(), modContainer.getModInfo().getVersion().toString()))).orElse(Pair.of(channel, Pair.of(channel.getNamespace(), "")));
         }
 
         public static Pair<String, String> getModDataFromId(String id)

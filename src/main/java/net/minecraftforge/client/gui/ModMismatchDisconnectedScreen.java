@@ -63,9 +63,9 @@ public class ModMismatchDisconnectedScreen extends Screen
     private int listHeight;
     private final ModMismatchData modMismatchData;
     private final Path logFile;
-    private Map<ResourceLocation, String> presentChannels;
-    private Map<ResourceLocation, String> missingChannels;
-    private Map<ResourceLocation, Pair<String, String>> mismatchedChannels;
+    private Map<ResourceLocation, Pair<String, String>> presentChannelData;
+    private List<ResourceLocation> missingChannelData;
+    private Map<ResourceLocation, String> mismatchedChannelData;
     private Map<String, String> missingRegistryMods;
     private boolean mismatchedDataFromServer;
     private String mismatchedDataOrigin;
@@ -88,9 +88,9 @@ public class ModMismatchDisconnectedScreen extends Screen
 
         this.mismatchedDataFromServer = modMismatchData.mismatchedDataFromServer();
         this.mismatchedDataOrigin = modMismatchData.mismatchedDataFromServer() ? "server" : "client";
-        this.presentChannels = modMismatchData.presentChannelData();
-        this.missingChannels = modMismatchData.mismatchedChannelData().entrySet().stream().filter(e -> e.getValue().getRight().equals(NetworkRegistry.ABSENT)).map(e -> Pair.of(e.getKey(), e.getValue().getLeft())).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-        this.mismatchedChannels = modMismatchData.mismatchedChannelData().entrySet().stream().filter(e -> !e.getValue().getRight().equals(NetworkRegistry.ABSENT)).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+        this.presentChannelData = modMismatchData.presentChannelData();
+        this.missingChannelData = modMismatchData.mismatchedChannelData().entrySet().stream().filter(e -> e.getValue().equals(NetworkRegistry.ABSENT)).map(Entry::getKey).collect(Collectors.toList());
+        this.mismatchedChannelData = modMismatchData.mismatchedChannelData().entrySet().stream().filter(e -> !e.getValue().equals(NetworkRegistry.ABSENT)).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
         this.missingRegistryMods = modMismatchData.missingRegistryModData();
 
         if (modMismatchData.containsMismatches())
@@ -130,24 +130,24 @@ public class ModMismatchDisconnectedScreen extends Screen
             {
                 rawTable.put(new TextComponent("The " + mismatchedDataOrigin + " is missing the following mods, consider " + (mismatchedDataFromServer ? "removing" : "downloading") + " them to play on this server:"), null);
                 int i = 0;
-                for (Map.Entry<ResourceLocation, String> channel : missingChannels.entrySet()) {
-                    rawTable.put(new TextComponent(channel.getValue()).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channel.getKey().toString())))),
-                            Pair.of(mismatchedDataFromServer ? presentChannels.getOrDefault(channel.getKey(), "") : "", mismatchedDataFromServer ? "" : presentChannels.getOrDefault(channel.getKey(), "")));
+                for (ResourceLocation channel : missingChannelData) {
+                    rawTable.put(new TextComponent(presentChannelData.get(channel).getLeft()).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channel.toString())))),
+                            Pair.of(mismatchedDataFromServer ? presentChannelData.getOrDefault(channel, Pair.of("", "")).getRight() : "", mismatchedDataFromServer ? "" : presentChannelData.getOrDefault(channel, Pair.of("", "")).getRight()));
                     if (++i > 10) {
-                        rawTable.put(new TextComponent("[" + (missingChannels.size() - i) + " additional, see latest.log for the full list]"), Pair.of("", ""));
+                        rawTable.put(new TextComponent("[" + (missingChannelData.size() - i) + " additional, see latest.log for the full list]"), Pair.of("", ""));
                         break;
                     }
                 }
             }
-            if (!mismatchedChannels.isEmpty())
+            if (!mismatchedChannelData.isEmpty())
             {
                 rawTable.put(new TextComponent("The following mod versions do not match, consider downloading a matching version of these mods:").withStyle(ChatFormatting.GRAY), null);
                 int i = 0;
-                for (Map.Entry<ResourceLocation, Pair<String, String>> channel : mismatchedChannels.entrySet()) {
-                    rawTable.put(new TextComponent(channel.getValue().getLeft()).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channel.getKey().toString())))),
-                            Pair.of(presentChannels.getOrDefault(channel.getKey(), ""), channel.getValue().getRight()));
+                for (Map.Entry<ResourceLocation,  String> channelData : mismatchedChannelData.entrySet()) {
+                    rawTable.put(new TextComponent(presentChannelData.get(channelData.getKey()).getLeft()).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channelData.getKey().toString())))),
+                            Pair.of(presentChannelData.getOrDefault(channelData.getKey(), Pair.of("", "")).getRight(), channelData.getValue()));
                     if (++i > 10) {
-                        rawTable.put(new TextComponent("[" + (mismatchedChannels.size() - i) + " additional, see latest.log for the full list]"), Pair.of("", ""));
+                        rawTable.put(new TextComponent("[" + (mismatchedChannelData.size() - i) + " additional, see latest.log for the full list]"), Pair.of("", ""));
                         break;
                     }
                 }

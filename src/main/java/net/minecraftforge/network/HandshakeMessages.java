@@ -278,10 +278,10 @@ public class HandshakeMessages
     }
 
     public static class S2CModMismatchData extends LoginIndexedMessage {
-        private final Map<ResourceLocation, Pair<String, String>> mismatchedChannelData;
-        private final Map<ResourceLocation, String> presentChannelData;
+        private final Map<ResourceLocation, String> mismatchedChannelData;
+        private final Map<ResourceLocation, Pair<String, String>> presentChannelData;
 
-        public S2CModMismatchData(Map<ResourceLocation, Pair<String, String>> mismatchedChannelData, Map<ResourceLocation, String> presentChannelData)
+        public S2CModMismatchData(Map<ResourceLocation, String> mismatchedChannelData, Map<ResourceLocation, Pair<String, String>> presentChannelData)
         {
             this.mismatchedChannelData = mismatchedChannelData;
             this.presentChannelData = presentChannelData;
@@ -289,27 +289,27 @@ public class HandshakeMessages
 
         public static S2CModMismatchData decode(FriendlyByteBuf input)
         {
-            Map<ResourceLocation, Pair<String, String>> mismatchedMods = input.readMap(i -> new ResourceLocation(i.readUtf(0x100)), i -> Pair.of(i.readUtf(0x100), i.readUtf(0x100)));
-            Map<ResourceLocation, String> presentMods = input.readMap(i -> new ResourceLocation(i.readUtf(0x100)), i -> i.readUtf(0x100));
+            Map<ResourceLocation, String> mismatchedMods = input.readMap(i -> new ResourceLocation(i.readUtf(0x100)), i -> i.readUtf(0x100));
+            Map<ResourceLocation, Pair<String, String>> presentMods = input.readMap(i -> new ResourceLocation(i.readUtf(0x100)), i -> Pair.of(i.readUtf(0x100), i.readUtf(0x100)));
 
             return new S2CModMismatchData(mismatchedMods, presentMods);
         }
 
         public void encode(FriendlyByteBuf output)
         {
-            output.writeMap(mismatchedChannelData, (o, r) -> o.writeUtf(r.toString(), 0x100), (o, p) -> {
+            output.writeMap(mismatchedChannelData, (o, r) -> o.writeUtf(r.toString(), 0x100), (o, v) -> o.writeUtf(v, 0x100));
+            output.writeMap(presentChannelData, (o, r) -> o.writeUtf(r.toString(), 0x100), (o, p) -> {
                 o.writeUtf(p.getLeft(), 0x100);
                 o.writeUtf(p.getRight(), 0x100);
             });
-            output.writeMap(presentChannelData, (o, r) -> o.writeUtf(r.toString(), 0x100), (o, p) -> o.writeUtf(p, 0x100));
         }
 
-        public Map<ResourceLocation, Pair<String, String>> getMismatchedChannelData()
+        public Map<ResourceLocation, String> getMismatchedChannelData()
         {
             return mismatchedChannelData;
         }
 
-        public Map<ResourceLocation, String> getPresentChannelData()
+        public Map<ResourceLocation, Pair<String, String>> getPresentChannelData()
         {
             return presentChannelData;
         }
