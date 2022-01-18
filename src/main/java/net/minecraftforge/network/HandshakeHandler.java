@@ -28,6 +28,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraftforge.common.util.LogMessageAdapter;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.ConnectionData.ModMismatchData;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -46,6 +47,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -184,11 +186,12 @@ public class HandshakeHandler
     void handleServerModListOnClient(HandshakeMessages.S2CModList serverModList, Supplier<NetworkEvent.Context> c)
     {
         LOGGER.debug(FMLHSMARKER, "Logging into server with mod list [{}]", String.join(", ", serverModList.getModList()));
-        Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateClientChannels(serverModList.getChannels());
+		Map<String, String> serverMods = serverModList.getModList().stream().map(s -> s.split("#")).map(a -> Pair.of(a[0], a.length > 1 ? a[1] : "")).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         c.get().setPacketHandled(true);
+        Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateClientChannels(serverModList.getChannels());
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
-            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, NetworkRegistry.buildChannelVersions(), true));
+            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, NetworkRegistry.buildChannelVersions(), serverMods, true));
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
             return;
         }
@@ -198,7 +201,7 @@ public class HandshakeHandler
         // Set the modded marker on the channel so we know we got packets
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_NETVERSION).set(NetworkConstants.NETVERSION);
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA)
-                .set(new ConnectionData(serverModList.getModList(), serverModList.getChannels()));
+                .set(new ConnectionData(serverMods, serverModList.getChannels()));
 
         this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
         this.registrySnapshots = Maps.newHashMap();
@@ -219,13 +222,14 @@ public class HandshakeHandler
         LOGGER.debug(FMLHSMARKER, "Received client connection with modlist [{}]",  String.join(", ", clientModList.getModList()));
         Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateServerChannels(clientModList.getChannels());
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA)
-                .set(new ConnectionData(clientModList.getModList(), clientModList.getChannels()));
+                .set(new ConnectionData(clientModList.getModList().stream().collect(Collectors.toMap(Function.identity(), s -> "")), clientModList.getChannels()));
         c.get().setPacketHandled(true);
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
             NetworkConstants.handshakeChannel.reply(new HandshakeMessages.S2CModMismatchData(
-                    mismatchedChannels.entrySet().stream().map(r -> ModMismatchData.getModDataFromChannel(r.getKey(), r.getValue())).filter(Objects::nonNull).collect(Collectors.toMap(Pair::getLeft, Pair::getRight)),
-                    NetworkRegistry.buildChannelVersions().entrySet().stream().filter(e -> mismatchedChannels.containsKey(e.getKey())).collect(Collectors.toMap(Entry::getKey, Entry::getValue))), c.get());
+                    mismatchedChannels.entrySet().stream().map(e -> ModMismatchData.getModDataFromChannel(e.getKey(), e.getValue())).collect(Collectors.toMap(Pair::getLeft, Pair::getRight)),
+                    NetworkRegistry.buildChannelVersions().keySet().stream().filter(mismatchedChannels::containsKey).map(id -> Pair.of(id, ModList.get().getMods().stream().filter(mod -> mod.getModId().equals(id.getNamespace())).findFirst().map(mod -> mod.getVersion().toString()).orElse(NetworkRegistry.ABSENT))).collect(Collectors.toMap(Entry::getKey, Entry::getValue))),
+                    c.get());
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
             return;
         }

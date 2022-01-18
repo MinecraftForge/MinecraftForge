@@ -69,7 +69,7 @@ public class HandshakeMessages
 
         public S2CModList()
         {
-            this.mods = ModList.get().getMods().stream().map(IModInfo::getModId).collect(Collectors.toList());
+            this.mods = ModList.get().getMods().stream().map(mod -> mod.getModId() + "#" + mod.getVersion().toString()).collect(Collectors.toList());
             this.channels = NetworkRegistry.buildChannelVersions();
             this.registries = RegistryManager.getRegistryNamesForSyncToClient();
         }

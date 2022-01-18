@@ -124,11 +124,11 @@ public class ModMismatchDisconnectedScreen extends Screen
             super(client, width, height, top, left);
 
             Map<MutableComponent, Pair<String, String>> rawTable = new LinkedHashMap<>();
-            rawTable.put(new TextComponent("Mod name"), Pair.of("Client channel version", "Server channel version"));
+            rawTable.put(new TextComponent("Mod name"), Pair.of("Client version", "Server version"));
             rawTable.put(new TextComponent(" "), null); //padding
             if (!missingChannels.isEmpty())
             {
-                rawTable.put(new TextComponent("The " + mismatchedDataOrigin + " is missing the following mods:"), null);
+                rawTable.put(new TextComponent("The " + mismatchedDataOrigin + " is missing the following mods, consider " + (mismatchedDataFromServer ? "removing" : "downloading") + " them to play on this server:"), null);
                 int i = 0;
                 for (Map.Entry<ResourceLocation, String> channel : missingChannels.entrySet()) {
                     rawTable.put(new TextComponent(channel.getValue()).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channel.getKey().toString())))),
@@ -141,7 +141,7 @@ public class ModMismatchDisconnectedScreen extends Screen
             }
             if (!mismatchedChannels.isEmpty())
             {
-                rawTable.put(new TextComponent("The following mods have a mismatching client and server channel version, please consider updating either mod version:").withStyle(ChatFormatting.GRAY), null);
+                rawTable.put(new TextComponent("The following mod versions do not match, consider downloading a matching version of these mods:").withStyle(ChatFormatting.GRAY), null);
                 int i = 0;
                 for (Map.Entry<ResourceLocation, Pair<String, String>> channel : mismatchedChannels.entrySet()) {
                     rawTable.put(new TextComponent(channel.getValue().getLeft()).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channel.getKey().toString())))),
@@ -154,7 +154,7 @@ public class ModMismatchDisconnectedScreen extends Screen
             }
             if (!missingRegistryMods.isEmpty())
             {
-                rawTable.put(new TextComponent("The following mods shipped registry entries unknown to the client, this is usually caused by a mod not being present on the client, or a version mismatch:").withStyle(ChatFormatting.GRAY), null);
+                rawTable.put(new TextComponent("The following mods are either not installed, or the installed mod version does not match with the server:").withStyle(ChatFormatting.GRAY), null);
                 int i = 0;
                 for (Map.Entry<String, String> mod : missingRegistryMods.entrySet()) {
                     rawTable.put(new TextComponent(mod.getValue()).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(mod.getKey())))), Pair.of("", ""));

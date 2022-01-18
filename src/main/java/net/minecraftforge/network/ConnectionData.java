@@ -19,7 +19,6 @@
 
 package net.minecraftforge.network;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
@@ -28,10 +27,7 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,12 +35,12 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class ConnectionData
 {
-    private ImmutableList<String> modList;
+    private ImmutableMap<String, String> modList;
     private ImmutableMap<ResourceLocation, String> channels;
 
-    /* package private */ ConnectionData(List<String> modList, Map<ResourceLocation, String> channels)
+    /* package private */ ConnectionData(Map<String, String> modList, Map<ResourceLocation, String> channels)
     {
-        this.modList = ImmutableList.copyOf(modList);
+        this.modList = ImmutableMap.copyOf(modList);
         this.channels = ImmutableMap.copyOf(channels);
     }
 
@@ -56,9 +52,9 @@ public class ConnectionData
      *    People using hacked clients WILL hack the mod lists to make them look correct.
      *    Do not use this as an anti-cheat feature!
      *  </b>
-     * @return An immutable list of MODIDs
+     * @return An immutable list of MODIDs and their respective mod versions.
      */
-    public ImmutableList<String> getModList()
+    public ImmutableMap<String, String> getModList()
     {
         return modList;
     }
@@ -81,21 +77,22 @@ public class ConnectionData
     /**
      * A class for holding the mod mismatch data of a failed handshake.
      * Contains a list of mismatched channels, the channels present on the side the handshake failed on, the mods with mismatching registries (if available) and the information of whether the mismatching data's origin is the server.
-     * @param mismatchedChannelData The ids, versions and respective mod names of the mismatched or missing channels, stored like this: [channelId -> [modName, channelVersion]]
-     * @param presentChannelData The ids and versions of the present channels
+     * @param mismatchedChannelData The ids and respective mod names and versions of the mismatched or missing channels, stored like this: [channelId -> [modName, modVersion]]
+     * @param presentChannelData The ids and respective mod versions of the present channels
      * @param missingRegistryModData The ids and names of mods that have mismatched registry data
      */
     public record ModMismatchData(Map<ResourceLocation, Pair<String, String>> mismatchedChannelData, Map<ResourceLocation, String> presentChannelData, Map<String, String> missingRegistryModData, boolean mismatchedDataFromServer)
     {
-        public static ModMismatchData channel(Map<ResourceLocation, String> mismatchedChannels, Map<ResourceLocation, String> presentChannels, boolean mismatchedDataFromServer)
+        public static ModMismatchData channel(Map<ResourceLocation, String> mismatchedChannels, Map<ResourceLocation, String> presentChannels, Map<String, String> serverMods, boolean mismatchedDataFromServer)
         {
-            Map<ResourceLocation, Pair<String, String>> mismatchedChannelData = mismatchedChannels.entrySet().stream().map(e -> getModDataFromChannel(e.getKey(), e.getValue())).filter(Objects::nonNull).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-            Map<ResourceLocation, String> presentChannelData = presentChannels.entrySet().stream().filter(e -> mismatchedChannels.containsKey(e.getKey())).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+            Map<ResourceLocation, Pair<String, String>> mismatchedChannelData = mismatchedChannels.entrySet().stream().map(e -> getModDataFromChannel(e.getKey(), e.getValue())).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+            Map<ResourceLocation, String> presentChannelData = presentChannels.keySet().stream().filter(mismatchedChannels::containsKey).map(id -> Pair.of(id, serverMods.get(id.getNamespace()))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
             return new ModMismatchData(mismatchedChannelData, presentChannelData, new HashMap<>(), mismatchedDataFromServer);
         }
 
-        public static ModMismatchData registry(Multimap<ResourceLocation, ResourceLocation> missingRegistries) {
+        public static ModMismatchData registry(Multimap<ResourceLocation, ResourceLocation> missingRegistries)
+        {
             Map<String, String> missingRegistryModData = missingRegistries.values().stream().map(ResourceLocation::getNamespace).distinct().map(ModMismatchData::getModDataFromId).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
             return new ModMismatchData(new HashMap<>(), new HashMap<>(), missingRegistryModData, true);
@@ -105,7 +102,7 @@ public class ConnectionData
         {
             Optional<? extends ModContainer> mod = ModList.get().getModContainerById(id.getNamespace());
 
-            return mod.map(modContainer -> Pair.of(id, Pair.of(modContainer.getModInfo().getDisplayName(), channelVersion))).orElse(Pair.of(id, Pair.of(id.getNamespace(), channelVersion)));
+            return mod.map(modContainer -> Pair.of(id, Pair.of(modContainer.getModInfo().getDisplayName(), channelVersion.equals(NetworkRegistry.ABSENT) ? channelVersion : modContainer.getModInfo().getVersion().toString()))).orElse(Pair.of(id, Pair.of(id.getNamespace(), channelVersion)));
         }
 
         public static Pair<String, String> getModDataFromId(String id)
