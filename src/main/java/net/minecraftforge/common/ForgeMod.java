@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -165,6 +165,7 @@ public class ForgeMod
 
         MinecraftForge.EVENT_BUS.addListener(VillagerTradingManager::loadTrades);
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
+        MinecraftForge.EVENT_BUS.addListener(this::mappingChanged);
         BiomeDictionary.init();
     }
 
