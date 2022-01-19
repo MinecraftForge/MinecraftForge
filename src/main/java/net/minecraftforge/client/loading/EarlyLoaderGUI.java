@@ -57,6 +57,5 @@ public class EarlyLoaderGUI {
         glClear(GL_COLOR_BUFFER_BIT);
         
         renderer.render(window.getScreenWidth(), window.getScreenHeight(), 2, isDarkMode);
-        window.updateDisplay();
     }
 }
