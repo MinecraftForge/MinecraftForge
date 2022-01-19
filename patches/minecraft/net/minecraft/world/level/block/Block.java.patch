@@ -56,6 +56,15 @@
     public float m_7325_() {
        return this.f_60444_;
     }
+@@ -355,7 +_,7 @@
+ 
+    public void m_6240_(Level p_49827_, Player p_49828_, BlockPos p_49829_, BlockState p_49830_, @Nullable BlockEntity p_49831_, ItemStack p_49832_) {
+       p_49828_.m_36246_(Stats.f_12949_.m_12902_(this));
+-      p_49828_.m_36399_(0.005F);
++      p_49828_.m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(p_49828_, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.HARVEST_BLOCK, 0.005F));
+       m_49881_(p_49830_, p_49827_, p_49829_, p_49831_, p_49828_, p_49832_);
+    }
+ 
 @@ -384,8 +_,10 @@
  
     public void m_5548_(BlockGetter p_49821_, Entity p_49822_) {

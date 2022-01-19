@@ -8,6 +8,15 @@
     public static final String f_150081_ = "OfflinePlayer:";
     public static final int f_150082_ = 16;
     public static final int f_150083_ = 20;
+@@ -136,7 +_,7 @@
+    protected PlayerEnderChestContainer f_36094_ = new PlayerEnderChestContainer();
+    public final InventoryMenu f_36095_;
+    public AbstractContainerMenu f_36096_;
+-   protected FoodData f_36097_ = new FoodData();
++   protected FoodData f_36097_ = new FoodData(this);
+    protected int f_36098_;
+    public float f_36099_;
+    public float f_36100_;
 @@ -162,6 +_,9 @@
     private final ItemCooldowns f_36087_ = this.m_7478_();
     @Nullable
@@ -63,6 +72,22 @@
        if (this.m_20175_(Pose.SWIMMING)) {
           Pose pose;
           if (this.m_21255_()) {
+@@ -469,11 +_,13 @@
+ 
+       if (this.f_19853_.m_46791_() == Difficulty.PEACEFUL && this.f_19853_.m_46469_().m_46207_(GameRules.f_46139_)) {
+          if (this.m_21223_() < this.m_21233_() && this.f_19797_ % 20 == 0) {
+-            this.m_5634_(1.0F);
++            net.minecraftforge.event.hunger.HealthRegenEvent.PeacefulRegen peacefulHealthRegenEvent = net.minecraftforge.event.ForgeEventFactory.onPeacefulHealthRegen(this);
++            if (!peacefulHealthRegenEvent.isCanceled()) this.m_5634_(peacefulHealthRegenEvent.getDeltaHealth());
+          }
+ 
+          if (this.f_36097_.m_38721_() && this.f_19797_ % 10 == 0) {
+-            this.f_36097_.m_38705_(this.f_36097_.m_38702_() + 1);
++            net.minecraftforge.event.hunger.HungerRegenEvent.PeacefulRegen peacefulHungerRegenEvent = net.minecraftforge.event.ForgeEventFactory.onPeacefulHungerRegen(this);
++            if (!peacefulHungerRegenEvent.isCanceled()) this.f_36097_.addFood(peacefulHungerRegenEvent.getDeltaHunger());
+          }
+       }
+ 
 @@ -569,6 +_,7 @@
     }
  
@@ -141,7 +166,7 @@
              });
              if (this.f_20935_.m_41619_()) {
                 if (interactionhand == InteractionHand.MAIN_HAND) {
-@@ -877,10 +_,13 @@
+@@ -877,20 +_,23 @@
  
     protected void m_6475_(DamageSource p_36312_, float p_36313_) {
        if (!this.m_6673_(p_36312_)) {
@@ -155,9 +180,11 @@
           float f = p_36313_ - f2;
           if (f > 0.0F && f < 3.4028235E37F) {
              this.m_36222_(Stats.f_12933_, Math.round(f * 10.0F));
-@@ -889,8 +_,8 @@
+          }
+ 
           if (f2 != 0.0F) {
-             this.m_36399_(p_36312_.m_19377_());
+-            this.m_36399_(p_36312_.m_19377_());
++            this.m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.DAMAGE_TAKEN, p_36312_.m_19377_()));
              float f1 = this.m_21223_();
 -            this.m_21153_(this.m_21223_() - f2);
              this.m_21231_().m_19289_(p_36312_, f1, f2);
@@ -259,6 +286,15 @@
                          this.m_21008_(InteractionHand.MAIN_HAND, ItemStack.f_41583_);
                       }
                    }
+@@ -1176,7 +_,7 @@
+                      }
+                   }
+ 
+-                  this.m_36399_(0.1F);
++                  this.m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.ATTACK_ENTITY, 0.1F));
+                } else {
+                   this.f_19853_.m_6263_((Player)null, this.m_20185_(), this.m_20186_(), this.m_20189_(), SoundEvents.f_12315_, this.m_5720_(), 1.0F, 1.0F);
+                   if (flag4) {
 @@ -1200,7 +_,7 @@
        }
  
@@ -285,6 +321,58 @@
        } else {
           boolean flag = block.m_5568_();
           boolean flag1 = p_36131_.m_8055_(p_36132_.m_7494_()).m_60734_().m_5568_();
+@@ -1337,9 +_,9 @@
+       super.m_6135_();
+       this.m_36220_(Stats.f_12926_);
+       if (this.m_20142_()) {
+-         this.m_36399_(0.2F);
++         this.m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.SPRINTING_JUMP, 0.2F));
+       } else {
+-         this.m_36399_(0.05F);
++         this.m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.NORMAL_JUMP, 0.05F));
+       }
+ 
+    }
+@@ -1397,19 +_,19 @@
+             int i = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
+             if (i > 0) {
+                this.m_36222_(Stats.f_12924_, i);
+-               this.m_36399_(0.01F * (float)i * 0.01F);
++               this.m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_SWIM, 0.01F * (float)i * 0.01F));
+             }
+          } else if (this.m_204029_(FluidTags.f_13131_)) {
+             int j = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36380_ * p_36380_ + p_36381_ * p_36381_) * 100.0F);
+             if (j > 0) {
+                this.m_36222_(Stats.f_13001_, j);
+-               this.m_36399_(0.01F * (float)j * 0.01F);
++               this.m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_WALK_UNDERWATER, 0.01F * (float)j * 0.01F));
+             }
+          } else if (this.m_20069_()) {
+             int k = Math.round((float)Math.sqrt(p_36379_ * p_36379_ + p_36381_ * p_36381_) * 100.0F);
+             if (k > 0) {
+                this.m_36222_(Stats.f_12997_, k);
+-               this.m_36399_(0.01F * (float)k * 0.01F);
++               this.m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_WALK_ONWATER, 0.01F * (float)k * 0.01F));
+             }
+          } else if (this.m_6147_()) {
+             if (p_36380_ > 0.0D) {
+@@ -1420,13 +_,13 @@
+             if (l > 0) {
+                if (this.m_20142_()) {
+                   this.m_36222_(Stats.f_12996_, l);
+-                  this.m_36399_(0.1F * (float)l * 0.01F);
++                  this.m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_SPRINT, 0.1F * (float)l * 0.01F));
+                } else if (this.m_6047_()) {
+                   this.m_36222_(Stats.f_12995_, l);
+-                  this.m_36399_(0.0F * (float)l * 0.01F);
++                  this.m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_CROUCH, 0.0F * (float)l * 0.01F));
+                } else {
+                   this.m_36222_(Stats.f_12994_, l);
+-                  this.m_36399_(0.0F * (float)l * 0.01F);
++                  this.m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded(this, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.MOVEMENT_WALK_ONLAND, 0.0F * (float)l * 0.01F));
+                }
+             }
+          } else if (this.m_21255_()) {
 @@ -1465,6 +_,7 @@
  
     public boolean m_142535_(float p_150093_, float p_150094_, DamageSource p_150095_) {

@@ -17,6 +17,15 @@
     }
  
     public void m_6742_(LivingEntity p_19467_, int p_19468_) {
+@@ -51,7 +_,7 @@
+       } else if (this == MobEffects.f_19615_) {
+          p_19467_.m_6469_(DamageSource.f_19320_, 1.0F);
+       } else if (this == MobEffects.f_19612_ && p_19467_ instanceof Player) {
+-         ((Player)p_19467_).m_36399_(0.005F * (float)(p_19468_ + 1));
++         ((Player)p_19467_).m_36399_(net.minecraftforge.event.ForgeEventFactory.onExhaustionAdded((Player)p_19467_, net.minecraftforge.event.hunger.ExhaustionEvent.ExhaustingActions.EFFECT_HUNGER, 0.005F * (float)(p_19468_ + 1)));
+       } else if (this == MobEffects.f_19618_ && p_19467_ instanceof Player) {
+          if (!p_19467_.f_19853_.f_46443_) {
+             ((Player)p_19467_).m_36324_().m_38707_(p_19468_ + 1, 1.0F);
 @@ -179,4 +_,29 @@
     public boolean m_19486_() {
        return this.f_19447_ == MobEffectCategory.BENEFICIAL;

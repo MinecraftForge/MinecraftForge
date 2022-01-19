@@ -1,0 +1,41 @@
+--- a/net/minecraft/world/level/block/CakeBlock.java
++++ b/net/minecraft/world/level/block/CakeBlock.java
+@@ -26,7 +_,7 @@
+ import net.minecraft.world.phys.shapes.CollisionContext;
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ 
+-public class CakeBlock extends Block {
++public class CakeBlock extends Block implements net.minecraftforge.common.hunger.IEdible {
+    public static final int f_152742_ = 6;
+    public static final IntegerProperty f_51180_ = BlockStateProperties.f_61412_;
+    public static final int f_152743_ = m_152746_(0);
+@@ -75,11 +_,12 @@
+    }
+ 
+    protected static InteractionResult m_51185_(LevelAccessor p_51186_, BlockPos p_51187_, BlockState p_51188_, Player p_51189_) {
+-      if (!p_51189_.m_36391_(false)) {
++      CakeBlock block = (CakeBlock)p_51188_.m_60734_();
++      if (!p_51189_.m_36391_(block.canAlwaysEat())) {
+          return InteractionResult.PASS;
+       } else {
+          p_51189_.m_36220_(Stats.f_12942_);
+-         p_51189_.m_36324_().m_38707_(2, 0.1F);
++         p_51189_.m_36324_().m_38712_(block.m_5456_(), new ItemStack(block));
+          int i = p_51188_.m_61143_(f_51180_);
+          p_51186_.m_142346_(p_51189_, GameEvent.f_157806_, p_51187_);
+          if (i < 6) {
+@@ -120,4 +_,14 @@
+    public boolean m_7357_(BlockState p_51193_, BlockGetter p_51194_, BlockPos p_51195_, PathComputationType p_51196_) {
+       return false;
+    }
++
++   /* ============================== FORGE START ============================== */
++   public net.minecraftforge.common.hunger.FoodValues getFoodValues(ItemStack stack) {
++      return new net.minecraftforge.common.hunger.FoodValues(2, 0.1F);
++   }
++
++   public boolean canAlwaysEat() {
++      return false;
++   }
++   /* =============================== FORGE END =============================== */
+ }
