@@ -25,7 +25,13 @@ import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Event that is fired when an enderman checks if the player is looking at him.
- * If cancelled the enderman does not get angry at the player.
+ * This Event has a result to determine what to do.
+ * The result values mean:
+ * <p>
+ * {@link Event.Result#DEFAULT}: the vanilla/forge logic is used ({@link net.minecraft.world.item.ItemStack#isEnderMask})<br>
+ * {@link Event.Result#ALLOW}: the enderman gets angry no matter what<br>
+ * {@link Event.Result#DENY}: the enderman won't get angry
+ * </p>
  */
 @Event.HasResult
 public class EnderManAngerEvent extends LivingEvent
