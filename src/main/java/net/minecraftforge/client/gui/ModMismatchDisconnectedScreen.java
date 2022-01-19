@@ -22,10 +22,10 @@ package net.minecraftforge.client.gui;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -45,6 +45,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.HoverEvent.Action;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -69,6 +70,8 @@ public class ModMismatchDisconnectedScreen extends Screen
     private Map<String, String> missingRegistryMods;
     private boolean mismatchedDataFromServer;
     private String mismatchedDataOrigin;
+    private String presentDataOrigin;
+    private MismatchInfoPanel mismatchInfoPanel;
 
     public ModMismatchDisconnectedScreen(Screen parentScreen, Component title, Component reason, ModMismatchData modMismatchData)
     {
@@ -84,21 +87,22 @@ public class ModMismatchDisconnectedScreen extends Screen
     {
         this.message = MultiLineLabel.create(this.font, this.reason, this.width - 50);
         this.textHeight = this.message.getLineCount() * 9;
-        this.listHeight = 140;
+        this.listHeight = 160;
 
         this.mismatchedDataFromServer = modMismatchData.mismatchedDataFromServer();
-        this.mismatchedDataOrigin = modMismatchData.mismatchedDataFromServer() ? "server" : "client";
+        this.mismatchedDataOrigin = modMismatchData.mismatchedDataFromServer() ? "Server" : "Client";
+        this.presentDataOrigin = modMismatchData.mismatchedDataFromServer() ? "Client" : "Server";
         this.presentChannelData = modMismatchData.presentChannelData();
         this.missingChannelData = modMismatchData.mismatchedChannelData().entrySet().stream().filter(e -> e.getValue().equals(NetworkRegistry.ABSENT)).map(Entry::getKey).collect(Collectors.toList());
         this.mismatchedChannelData = modMismatchData.mismatchedChannelData().entrySet().stream().filter(e -> !e.getValue().equals(NetworkRegistry.ABSENT)).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
         this.missingRegistryMods = modMismatchData.missingRegistryModData();
 
         if (modMismatchData.containsMismatches())
-            this.addRenderableWidget(new MismatchInfoPanel(minecraft, Math.min(420, this.width - 16), listHeight, this.height / 2 - this.listHeight / 2, Math.max(8, this.width / 2 - 210)));
+            this.addRenderableWidget(mismatchInfoPanel = new MismatchInfoPanel(minecraft, Math.min(440, this.width - 16), listHeight, this.height / 2 - this.listHeight / 2, Math.max(8, this.width / 2 - 220)));
 
-        int buttonWidth = Math.min(200, this.width / 2 - 20);
-        this.addRenderableWidget(new Button(this.width / 4 - buttonWidth / 2, Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 18, this.height - 30), buttonWidth, 20, new TextComponent(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), button -> Util.getPlatform().openFile(logFile.toFile())));
-        this.addRenderableWidget(new Button(this.width * 3 / 4 - buttonWidth / 2, Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 18, this.height - 30), buttonWidth, 20, new TranslatableComponent("gui.toMenu"), button -> this.minecraft.setScreen(this.parent)));
+        int buttonWidth = Math.min(210, this.width / 2 - 20);
+        this.addRenderableWidget(new Button(Math.max(this.width / 4 - buttonWidth / 2, mismatchInfoPanel.left), Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 18, this.height - 30), buttonWidth, 20, new TextComponent(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), button -> Util.getPlatform().openFile(logFile.toFile())));
+        this.addRenderableWidget(new Button(Math.min(this.width * 3 / 4 - buttonWidth / 2, mismatchInfoPanel.left + mismatchInfoPanel.width - buttonWidth), Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 18, this.height - 30), buttonWidth, 20, new TranslatableComponent("gui.toMenu"), button -> this.minecraft.setScreen(this.parent)));
     }
 
     @Override
@@ -123,57 +127,69 @@ public class ModMismatchDisconnectedScreen extends Screen
         {
             super(client, width, height, top, left);
 
-            Map<MutableComponent, Pair<String, String>> rawTable = new LinkedHashMap<>();
-            rawTable.put(new TextComponent("Mod name"), Pair.of("Client version", "Server version"));
-            rawTable.put(new TextComponent(" "), null); //padding
-            if (!missingChannels.isEmpty())
+            List<Pair<MutableComponent, Pair<String, String>>> rawTable = new ArrayList<>();
+            if (!missingChannelData.isEmpty())
             {
-                rawTable.put(new TextComponent("The " + mismatchedDataOrigin + " is missing the following mods, consider " + (mismatchedDataFromServer ? "removing" : "downloading") + " them to play on this server:"), null);
+                rawTable.add(Pair.of(new TextComponent("The " + mismatchedDataOrigin + " is missing the following mods, consider " + (mismatchedDataFromServer ? "removing" : "downloading") + " them to play on this server:").withStyle(ChatFormatting.GRAY), null));
+                rawTable.add(Pair.of(new TextComponent("Mod name").withStyle(ChatFormatting.UNDERLINE), Pair.of("", presentDataOrigin + " version")));
                 int i = 0;
                 for (ResourceLocation channel : missingChannelData) {
-                    rawTable.put(new TextComponent(presentChannelData.get(channel).getLeft()).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channel.toString())))),
-                            Pair.of(mismatchedDataFromServer ? presentChannelData.getOrDefault(channel, Pair.of("", "")).getRight() : "", mismatchedDataFromServer ? "" : presentChannelData.getOrDefault(channel, Pair.of("", "")).getRight()));
-                    if (++i > 10) {
-                        rawTable.put(new TextComponent("[" + (missingChannelData.size() - i) + " additional, see latest.log for the full list]"), Pair.of("", ""));
+                    rawTable.add(Pair.of(new TextComponent(presentChannelData.get(channel).getLeft()).withStyle(i % 2 == 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channel.toString())))),
+                            Pair.of("", presentChannelData.getOrDefault(channel, Pair.of("", "")).getRight())));
+                    if (++i >= 10) {
+                        rawTable.add(Pair.of(new TextComponent("[" + (missingChannelData.size() - i) + " additional, see latest.log for the full list]").withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
                         break;
                     }
                 }
+                rawTable.add(Pair.of(new TextComponent(" "), null)); //padding
             }
             if (!mismatchedChannelData.isEmpty())
             {
-                rawTable.put(new TextComponent("The following mod versions do not match, consider downloading a matching version of these mods:").withStyle(ChatFormatting.GRAY), null);
+                rawTable.add(Pair.of(new TextComponent("The following mod versions do not match, consider downloading a matching version of these mods:").withStyle(ChatFormatting.GRAY), null));
+                rawTable.add(Pair.of(new TextComponent("Mod name").withStyle(ChatFormatting.UNDERLINE), Pair.of(presentDataOrigin + " version", mismatchedDataOrigin + " version")));
                 int i = 0;
                 for (Map.Entry<ResourceLocation,  String> channelData : mismatchedChannelData.entrySet()) {
-                    rawTable.put(new TextComponent(presentChannelData.get(channelData.getKey()).getLeft()).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channelData.getKey().toString())))),
-                            Pair.of(presentChannelData.getOrDefault(channelData.getKey(), Pair.of("", "")).getRight(), channelData.getValue()));
-                    if (++i > 10) {
-                        rawTable.put(new TextComponent("[" + (mismatchedChannelData.size() - i) + " additional, see latest.log for the full list]"), Pair.of("", ""));
+                    rawTable.add(Pair.of(new TextComponent(presentChannelData.get(channelData.getKey()).getLeft()).withStyle(i % 2 == 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channelData.getKey().toString())))),
+                            Pair.of(presentChannelData.getOrDefault(channelData.getKey(), Pair.of("", "")).getRight(), channelData.getValue())));
+                    if (++i >= 10) {
+                        rawTable.add(Pair.of(new TextComponent("[" + (mismatchedChannelData.size() - i) + " additional, see latest.log for the full list]").withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
                         break;
                     }
                 }
+                rawTable.add(Pair.of(new TextComponent(" "), null)); //padding
             }
             if (!missingRegistryMods.isEmpty())
             {
-                rawTable.put(new TextComponent("The following mods are either not installed, or the installed mod version does not match with the server:").withStyle(ChatFormatting.GRAY), null);
+                rawTable.add(Pair.of(new TextComponent("Mismatched registry entries of the following mods were detected, this means that they are either not installed, or the installed mod version does not match with the server:").withStyle(ChatFormatting.GRAY), null));
                 int i = 0;
+                boolean logMessage = false;
+                TextComponent mods = new TextComponent("");
                 for (Map.Entry<String, String> mod : missingRegistryMods.entrySet()) {
-                    rawTable.put(new TextComponent(mod.getValue()).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(mod.getKey())))), Pair.of("", ""));
-                    if (++i > 10) {
-                        rawTable.put(new TextComponent("[" + (missingRegistryMods.size() - i) + " additional, see latest.log for the full list]"), Pair.of("", ""));
+                    mods.append(new TextComponent(mod.getValue()).withStyle(i % 2 == 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(mod.getKey())))));
+                    if (++i >= 10) {
+                        logMessage = true;
                         break;
                     }
+                    else if (missingRegistryMods.size() > i)
+                        mods.append(new TextComponent(", ").withStyle(ChatFormatting.WHITE));
                 }
+                rawTable.add(Pair.of(mods, Pair.of("", "")));
+                if (logMessage)
+                    rawTable.add(Pair.of(new TextComponent("[" + (missingRegistryMods.size() - i) + " additional, see latest.log for the full list]").withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
+                rawTable.add(Pair.of(new TextComponent(" "), null)); //padding
             }
 
-            this.lineTable = rawTable.entrySet().stream().flatMap(e -> getFormattedLines(e.getKey(), e.getValue()).stream()).collect(Collectors.toList());
+            this.lineTable = rawTable.stream().flatMap(p -> getFormattedLines(p.getKey(), p.getValue()).stream()).collect(Collectors.toList());
             this.contentSize = lineTable.size();
         }
 
         private List<Pair<FormattedCharSequence, Pair<FormattedCharSequence, FormattedCharSequence>>> getFormattedLines(MutableComponent name, Pair<String, String> versions)
         {
-            List<FormattedCharSequence> nameLines = font.split(name, versions == null ? width - border * 2 - 6 : nameWidth);
-            List<FormattedCharSequence> clientVersionLines = font.split(new TextComponent(versions != null ? versions.getLeft() : ""), versionWidth);
-            List<FormattedCharSequence> serverVersionLines = font.split(new TextComponent(versions != null ? versions.getRight() : ""), versionWidth);
+            Style style = name.getStyle();
+            int versionColumns = versions == null ? 0 : (versions.getLeft().isEmpty() ? (versions.getRight().isEmpty() ? 0 : 1) : 2);
+            List<FormattedCharSequence> nameLines = font.split(name,nameWidth + versionWidth * (2 - versionColumns));
+            List<FormattedCharSequence> clientVersionLines = font.split(new TextComponent(versions != null ? versions.getLeft() : "").setStyle(style), versionWidth);
+            List<FormattedCharSequence> serverVersionLines = font.split(new TextComponent(versions != null ? versions.getRight() : "").setStyle(style), versionWidth);
             List<Pair<FormattedCharSequence, Pair<FormattedCharSequence, FormattedCharSequence>>> splitLines = new ArrayList<>();
             int lineCount = Math.max(nameLines.size(), Math.max(clientVersionLines.size(), serverVersionLines.size()));
             for (int i = 0; i < lineCount; i++) {
@@ -201,11 +217,12 @@ public class ModMismatchDisconnectedScreen extends Screen
             for (Pair<FormattedCharSequence, Pair<FormattedCharSequence, FormattedCharSequence>> line : lineTable) {
                 FormattedCharSequence name = line.getLeft();
                 Pair<FormattedCharSequence, FormattedCharSequence> versions = line.getRight();
-                font.draw(stack, name, left + border + (versions == null ? 0 : nameIndent), relativeY + i * 12, versions == null ? 0xAAAAAA : 0xFFFFFF);
+                int color = Optional.ofNullable(font.getSplitter().componentStyleAtWidth(name, 0)).map(Style::getColor).map(TextColor::getValue).orElse(0xFFFFFF);
+                font.draw(stack, name, left + border + (versions == null ? 0 : nameIndent), relativeY + i * 12, color);
                 if (versions != null)
                 {
-                    font.draw(stack, versions.getLeft(), left + border + nameIndent + nameWidth, relativeY + i * 12, 0xFFFFFF);
-                    font.draw(stack, versions.getRight(), left + border + nameIndent + nameWidth + versionWidth, relativeY + i * 12, 0xFFFFFF);
+                    font.draw(stack, versions.getLeft(), left + border + nameIndent + nameWidth, relativeY + i * 12, color);
+                    font.draw(stack, versions.getRight(), left + border + nameIndent + nameWidth + versionWidth, relativeY + i * 12, color);
                 }
 
                 i++;
