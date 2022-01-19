@@ -68,7 +68,7 @@ public class ModelPoseHolder
      * <p>
      * <b>Note:</b> This method is recursive and exits based on a model part not having any children.
      *
-     * @param list the list to add the model part and pose pair
+     * @param map the map to put the model part and pose
      * @param part the model part to add and search
      */
     private void storeModelPoseAndSearch(Reference2ReferenceMap<ModelPart, PartPose> map, ModelPart part)
