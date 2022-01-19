@@ -63,6 +63,7 @@ public class ModMismatchDisconnectedScreen extends Screen
     private int textHeight;
     private int listHeight;
     private final ModMismatchData modMismatchData;
+    private final Path modsDir;
     private final Path logFile;
     private Map<ResourceLocation, Pair<String, String>> presentChannelData;
     private List<ResourceLocation> missingChannelData;
@@ -79,6 +80,7 @@ public class ModMismatchDisconnectedScreen extends Screen
         this.parent = parentScreen;
         this.reason = reason;
         this.modMismatchData = modMismatchData;
+        this.modsDir = FMLPaths.MODSDIR.get();
         this.logFile = FMLPaths.GAMEDIR.get().resolve(Paths.get("logs","latest.log"));
     }
 
@@ -87,7 +89,7 @@ public class ModMismatchDisconnectedScreen extends Screen
     {
         this.message = MultiLineLabel.create(this.font, this.reason, this.width - 50);
         this.textHeight = this.message.getLineCount() * 9;
-        this.listHeight = 160;
+        this.listHeight = 140;
 
         this.mismatchedDataFromServer = modMismatchData.mismatchedDataFromServer();
         this.mismatchedDataOrigin = modMismatchData.mismatchedDataFromServer() ? "Server" : "Client";
@@ -101,8 +103,9 @@ public class ModMismatchDisconnectedScreen extends Screen
             this.addRenderableWidget(mismatchInfoPanel = new MismatchInfoPanel(minecraft, Math.min(440, this.width - 16), listHeight, this.height / 2 - this.listHeight / 2, Math.max(8, this.width / 2 - 220)));
 
         int buttonWidth = Math.min(210, this.width / 2 - 20);
-        this.addRenderableWidget(new Button(Math.max(this.width / 4 - buttonWidth / 2, mismatchInfoPanel.left), Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 18, this.height - 30), buttonWidth, 20, new TextComponent(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), button -> Util.getPlatform().openFile(logFile.toFile())));
-        this.addRenderableWidget(new Button(Math.min(this.width * 3 / 4 - buttonWidth / 2, mismatchInfoPanel.left + mismatchInfoPanel.width - buttonWidth), Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 18, this.height - 30), buttonWidth, 20, new TranslatableComponent("gui.toMenu"), button -> this.minecraft.setScreen(this.parent)));
+        this.addRenderableWidget(new Button(Math.max(this.width / 4 - buttonWidth / 2, mismatchInfoPanel.left), Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 10, this.height - 50), buttonWidth, 20, new TextComponent(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), button -> Util.getPlatform().openFile(logFile.toFile())));
+        this.addRenderableWidget(new Button(Math.min(this.width * 3 / 4 - buttonWidth / 2, mismatchInfoPanel.left + mismatchInfoPanel.width - buttonWidth), Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 10, this.height - 50), buttonWidth, 20, new TextComponent(ForgeI18n.parseMessage("fml.button.open.mods.folder")), b -> Util.getPlatform().openFile(modsDir.toFile())));
+        this.addRenderableWidget(new Button(this.width / 2 - buttonWidth / 2, Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 35, this.height - 25), buttonWidth, 20, new TranslatableComponent("gui.toMenu"), button -> this.minecraft.setScreen(this.parent)));
     }
 
     @Override
