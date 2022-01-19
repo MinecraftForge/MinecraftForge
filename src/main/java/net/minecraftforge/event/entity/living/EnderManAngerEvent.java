@@ -28,10 +28,12 @@ import net.minecraftforge.eventbus.api.Event;
  * If cancelled the enderman does not get angry at the player.
  */
 @Event.HasResult
-public class EnderManAngerEvent extends LivingEvent {
+public class EnderManAngerEvent extends LivingEvent
+{
     private final Player player;
 
-    public EnderManAngerEvent(EnderMan enderman, Player player) {
+    public EnderManAngerEvent(EnderMan enderman, Player player)
+    {
         super(enderman);
         this.player = player;
     }
@@ -39,7 +41,8 @@ public class EnderManAngerEvent extends LivingEvent {
     /**
      * @return the player that is being checked
      */
-    public Player getPlayer() {
+    public Player getPlayer()
+    {
         return player;
     }
 }
