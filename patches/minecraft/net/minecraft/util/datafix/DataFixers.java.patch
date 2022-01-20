@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/datafix/DataFixers.java
++++ b/net/minecraft/util/datafix/DataFixers.java
+@@ -222,7 +_,7 @@
+    private static final DataFixer f_14510_ = m_14529_();
+ 
+    private static DataFixer m_14529_() {
+-      DataFixerBuilder datafixerbuilder = new DataFixerBuilder(SharedConstants.m_183709_().getWorldVersion());
++      DataFixerBuilder datafixerbuilder = new net.minecraftforge.datafix.ForgeDataFixerBuilder(SharedConstants.m_183709_().getWorldVersion());
+       m_14513_(datafixerbuilder);
+       return datafixerbuilder.build(Util.m_183988_());
+    }
