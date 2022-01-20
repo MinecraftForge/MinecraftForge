@@ -5,7 +5,7 @@
  import net.minecraft.world.scores.PlayerTeam;
  
 -public abstract class LivingEntity extends Entity {
-+public abstract class LivingEntity extends Entity implements net.minecraftforge.common.extensions.IForgeLivingEntity{
++public abstract class LivingEntity extends Entity implements net.minecraftforge.common.extensions.IForgeLivingEntity {
     private static final UUID f_20929_ = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final UUID f_20959_ = UUID.fromString("87f46a96-686f-4796-b035-22e16ee9e038");
     private static final UUID f_147184_ = UUID.fromString("1eaf83ff-7207-4596-b37a-d7a07b3ec4ce");
