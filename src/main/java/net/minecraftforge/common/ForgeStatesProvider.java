@@ -20,9 +20,7 @@
 package net.minecraftforge.common;
 
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.datafix.ForgeDataFixerEventHandler;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.datafix.ConfigureDataFixSchemaEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.event.IModBusEvent;
@@ -40,8 +38,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class ForgeStatesProvider implements IModStateProvider {
-    final ModLoadingState SETUP_DFU = ModLoadingState.withTransition("SETUP_DFU", "CONSTRUCT", ModLoadingPhase.GATHER, SerialTransition.forDFU());
-    final ModLoadingState CREATE_REGISTRIES = ModLoadingState.withTransition("CREATE_REGISTRIES", "SETUP_DFU", ModLoadingPhase.GATHER, SerialTransition.of(()-> Stream.of(IModStateTransition.EventGenerator.fromFunction(RegistryEvent.NewRegistry::new))));
+    final ModLoadingState CREATE_REGISTRIES = ModLoadingState.withTransition("CREATE_REGISTRIES", "CONSTRUCT", ModLoadingPhase.GATHER, SerialTransition.of(()-> Stream.of(IModStateTransition.EventGenerator.fromFunction(RegistryEvent.NewRegistry::new))));
     final ModLoadingState OBJECT_HOLDERS = ModLoadingState.withInline("OBJECT_HOLDERS", "CREATE_REGISTRIES", ModLoadingPhase.GATHER, ml-> ObjectHolderRegistry.findObjectHolders());
     final ModLoadingState INJECT_CAPABILITIES = ModLoadingState.withInline("INJECT_CAPABILITIES", "OBJECT_HOLDERS", ModLoadingPhase.GATHER, ml-> CapabilityManager.INSTANCE.injectCapabilities(ml.getAllScanData()));
     final ModLoadingState CUSTOM_TAGS = ModLoadingState.withInline("CUSTOM_TAGS", "INJECT_CAPABILITIES", ModLoadingPhase.GATHER, ml-> GameData.setCustomTagTypesFromRegistries());
@@ -50,23 +47,13 @@ public class ForgeStatesProvider implements IModStateProvider {
     final ModLoadingState NETLOCK = ModLoadingState.withInline("NETWORK_LOCK", "FREEZE_DATA", ModLoadingPhase.COMPLETE, ml-> NetworkRegistry.lock());
     @Override
     public List<IModLoadingState> getAllStates() {
-        return List.of(SETUP_DFU, CREATE_REGISTRIES, OBJECT_HOLDERS, INJECT_CAPABILITIES, CUSTOM_TAGS, LOAD_REGISTRIES, FREEZE, NETLOCK);
+        return List.of(CREATE_REGISTRIES, OBJECT_HOLDERS, INJECT_CAPABILITIES, CUSTOM_TAGS, LOAD_REGISTRIES, FREEZE, NETLOCK);
     }
 
     static record SerialTransition<T extends Event & IModBusEvent>(Supplier<Stream<EventGenerator<?>>> eventStream, BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> preDispatchHook, BiFunction<Executor, ? extends EventGenerator<T>, CompletableFuture<List<Throwable>>> postDispatchHook, BiFunction<Executor, CompletableFuture<List<Throwable>>, CompletableFuture<List<Throwable>>> finalActivityGenerator) implements IModStateTransition {
         public static <T extends Event & IModBusEvent> SerialTransition<T> of(Supplier<Stream<EventGenerator<?>>> eventStream) {
             return new SerialTransition<T>(eventStream, (t, f)->CompletableFuture.completedFuture(Collections.emptyList()), (t, f)->CompletableFuture.completedFuture(Collections.emptyList()), (e, prev) ->prev.thenApplyAsync(Function.identity(), e));
         }
-
-        private static SerialTransition<ConfigureDataFixSchemaEvent> forDFU() {
-            return new SerialTransition<>(
-              ForgeDataFixerEventHandler::generateConfigureEvents,
-              ForgeDataFixerEventHandler::preDispatch,
-              ForgeDataFixerEventHandler::postDispatch,
-              ForgeDataFixerEventHandler::rebuildFixer
-            );
-        }
-
         @Override
         public Supplier<Stream<EventGenerator<?>>> eventFunctionStream() {
             return eventStream;
