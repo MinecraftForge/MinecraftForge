@@ -163,7 +163,7 @@ public class GameData
         makeRegistry(WORLD_CARVERS, c(WorldCarver.class)).disableSaving().disableSync().create();
         makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, ChunkStatus.class, "empty").disableSaving().disableSync().create();
-        makeRegistry(STRUCTURE_FEATURES, c(StructureFeature.class)).disableSaving().disableSync().tagFolder("worldgen/features/structure").create();
+        makeRegistry(STRUCTURE_FEATURES, c(StructureFeature.class)).disableSaving().disableSync().tagFolder("structure_features").create();
         makeRegistry(BLOCK_STATE_PROVIDER_TYPES, c(BlockStateProviderType.class)).disableSaving().disableSync().create();
         makeRegistry(FOLIAGE_PLACER_TYPES, c(FoliagePlacerType.class)).disableSaving().disableSync().create();
         makeRegistry(TREE_DECORATOR_TYPES, c(TreeDecoratorType.class)).disableSaving().disableSync().create();
