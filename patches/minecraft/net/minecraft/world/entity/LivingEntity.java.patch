@@ -611,7 +611,7 @@
 +   }
 +
 +   @Override
-+   public int getTotalExperienceValue(Player player){
++   public int getTotalExperienceValue(Player player) {
 +      if(!m_6149_() && !m_6124_())
 +         return 0;
 +      int i = m_6552_(player);
