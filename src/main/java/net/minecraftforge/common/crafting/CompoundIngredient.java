@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -74,9 +74,14 @@ public class CompoundIngredient extends Ingredient
     @Nonnull
     public IntList getStackingIds()
     {
-        //TODO: Add a child.isInvalid()?
-        if (this.itemIds == null)
+        boolean childrenNeedInvalidation = false;
+        for (Ingredient child : children)
         {
+            childrenNeedInvalidation |= child.checkInvalidation();
+        }
+        if (childrenNeedInvalidation || this.itemIds == null || checkInvalidation())
+        {
+            this.markValid();
             this.itemIds = new IntArrayList();
             for (Ingredient child : children)
                 this.itemIds.addAll(child.getStackingIds());
@@ -100,7 +105,6 @@ public class CompoundIngredient extends Ingredient
     {
         this.itemIds = null;
         this.stacks = null;
-        //Shouldn't need to invalidate children as this is only called form invalidateAll..
     }
 
     @Override

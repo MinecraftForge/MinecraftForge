@@ -64,6 +64,7 @@ import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import net.minecraft.world.phys.Vec2;
 
+@Deprecated(forRemoval = true, since = "1.18")
 public class B3DModel
 {
     static final Logger logger = LogManager.getLogger(ForgeVersion.MOD_ID + ".B3DModel");
