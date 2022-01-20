@@ -179,6 +179,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="custom_particle_type_test"
 [[mods]]
+    modId="renderable_test"
+[[mods]]
     modId="ingredient_invalidation"
 [[mods]]
     modId="client_command_test"
