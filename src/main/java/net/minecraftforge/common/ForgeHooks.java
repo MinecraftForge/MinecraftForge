@@ -153,6 +153,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
+import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -1257,7 +1258,14 @@ public class ForgeHooks
     {
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
-    
+
+    public static ShieldBlockEvent onShieldBlock(LivingEntity blocker, DamageSource source, float blocked)
+    {
+        ShieldBlockEvent e = new ShieldBlockEvent(blocker, source, blocked);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e;
+    }
+
     /**
      * Called when dimension jsons are parsed.
      * Creates a copy of the worldgen settings and its dimension registry,
