@@ -129,14 +129,14 @@ public class ModMismatchDisconnectedScreen extends Screen
             List<Pair<MutableComponent, Pair<String, String>>> rawTable = new ArrayList<>();
             if (!missingChannelData.isEmpty())
             {
-                rawTable.add(Pair.of(new TextComponent((mismatchedDataFromServer ? "The server" : "Your client") + " is missing the following mods, you need to " + (mismatchedDataFromServer ? "remove them from your client" : "download them") + " to play on this server:").withStyle(ChatFormatting.GRAY), null));
-                rawTable.add(Pair.of(new TextComponent("Mod name").withStyle(ChatFormatting.UNDERLINE), Pair.of("", (mismatchedDataFromServer ? "You have" : "You need"))));
+                rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage(mismatchedDataFromServer ? "fml.modmismatchscreen.missingmods.server" : "fml.modmismatchscreen.missingmods.client")).withStyle(ChatFormatting.GRAY), null));
+                rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.table.modname")).withStyle(ChatFormatting.UNDERLINE), Pair.of("", ForgeI18n.parseMessage(mismatchedDataFromServer ? "fml.modmismatchscreen.table.youhave" : "fml.modmismatchscreen.table.youneed"))));
                 int i = 0;
                 for (ResourceLocation channel : missingChannelData) {
                     rawTable.add(Pair.of(new TextComponent(presentChannelData.get(channel).getLeft()).withStyle(i % 2 == 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channel.toString())))),
                             Pair.of("", presentChannelData.getOrDefault(channel, Pair.of("", "")).getRight())));
                     if (++i >= 10) {
-                        rawTable.add(Pair.of(new TextComponent("[" + (missingChannelData.size() - i) + " additional, see latest.log for the full list]").withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
+                        rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.additional", missingChannelData.size() - i)).withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
                         break;
                     }
                 }
@@ -144,14 +144,14 @@ public class ModMismatchDisconnectedScreen extends Screen
             }
             if (!mismatchedChannelData.isEmpty())
             {
-                rawTable.add(Pair.of(new TextComponent("The following mod versions do not match, you need to download a matching version of these mods to play on this server:").withStyle(ChatFormatting.GRAY), null));
-                rawTable.add(Pair.of(new TextComponent("Mod name").withStyle(ChatFormatting.UNDERLINE), Pair.of((mismatchedDataFromServer ? "You have" : "Server has"), (mismatchedDataFromServer ? "Server has" : "You have"))));
+                rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.mismatchedmods")).withStyle(ChatFormatting.GRAY), null));
+                rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.table.modname")).withStyle(ChatFormatting.UNDERLINE), Pair.of(ForgeI18n.parseMessage(mismatchedDataFromServer ? "fml.modmismatchscreen.table.youhave" : "fml.modmismatchscreen.table.serverhas"), ForgeI18n.parseMessage(mismatchedDataFromServer ? "fml.modmismatchscreen.table.serverhas" : "fml.modmismatchscreen.table.youhave"))));
                 int i = 0;
                 for (Map.Entry<ResourceLocation,  String> channelData : mismatchedChannelData.entrySet()) {
                     rawTable.add(Pair.of(new TextComponent(presentChannelData.get(channelData.getKey()).getLeft()).withStyle(i % 2 == 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channelData.getKey().toString())))),
                             Pair.of(presentChannelData.getOrDefault(channelData.getKey(), Pair.of("", "")).getRight(), channelData.getValue())));
                     if (++i >= 10) {
-                        rawTable.add(Pair.of(new TextComponent("[" + (mismatchedChannelData.size() - i) + " additional, see latest.log for the full list]").withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
+                        rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.additional", mismatchedChannelData.size() - i)).withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
                         break;
                     }
                 }
@@ -159,7 +159,7 @@ public class ModMismatchDisconnectedScreen extends Screen
             }
             if (!missingRegistryMods.isEmpty())
             {
-                rawTable.add(Pair.of(new TextComponent("The following mods provided mismatched registry data, this means that they are either not installed, or the installed mod version does not match with the one on the server:").withStyle(ChatFormatting.GRAY), null));
+                rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.registrymismatch")).withStyle(ChatFormatting.GRAY), null));
                 int i = 0;
                 boolean logMessage = false;
                 TextComponent mods = new TextComponent("");
@@ -174,7 +174,7 @@ public class ModMismatchDisconnectedScreen extends Screen
                 }
                 rawTable.add(Pair.of(mods, Pair.of("", "")));
                 if (logMessage)
-                    rawTable.add(Pair.of(new TextComponent("[" + (missingRegistryMods.size() - i) + " additional, see latest.log for the full list]").withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
+                    rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.additional", missingRegistryMods.size() - i)).withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
                 rawTable.add(Pair.of(new TextComponent(" "), null)); //padding
             }
 
