@@ -25,6 +25,8 @@ import javax.annotation.Nullable;
 import net.minecraft.core.Registry;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
@@ -76,6 +78,7 @@ public class CustomTagTypesTest
     private static final Tag.Named<Enchantment> FIRE = ForgeTagHandler.createOptionalTag(ForgeRegistries.ENCHANTMENTS, new ResourceLocation(MODID, "fire"));
     private static final Tag.Named<Potion> DAMAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.POTIONS, new ResourceLocation(MODID, "damage"));
     private static final Tag.Named<BlockEntityType<?>> STORAGE = ForgeTagHandler.createOptionalTag(ForgeRegistries.BLOCK_ENTITIES, new ResourceLocation(MODID, "storage"));
+    private static final Tag.Named<MobEffect> BEACON = ForgeTagHandler.createOptionalTag(ForgeRegistries.MOB_EFFECTS, new ResourceLocation(MODID, "beacon"));
 
     public CustomTagTypesTest()
     {
@@ -95,6 +98,7 @@ public class CustomTagTypesTest
             gen.addProvider(new EnchantmentTags(gen, existingFileHelper));
             gen.addProvider(new PotionTags(gen, existingFileHelper));
             gen.addProvider(new BlockEntityTypeTags(gen, existingFileHelper));
+            gen.addProvider(new MobEffectTypeTags(gen, existingFileHelper));
         }
     }
 
@@ -109,6 +113,7 @@ public class CustomTagTypesTest
             if (itemStack.getItem() instanceof PotionItem) logTagsIfPresent(PotionUtils.getPotion(itemStack).getTags());
             BlockEntity blockEntity = event.getWorld().getBlockEntity(event.getPos());
             if (blockEntity != null) logTagsIfPresent(blockEntity.getType().getTags());
+            event.getEntityLiving().getActiveEffects().forEach((mobEffectInstance) -> logTagsIfPresent(mobEffectInstance.getEffect().getTags()));
         }
     }
 
@@ -207,6 +212,26 @@ public class CustomTagTypesTest
         public String getName()
         {
             return "Block Entity Type Tags";
+        }
+    }
+
+    public static class MobEffectTypeTags extends ForgeRegistryTagsProvider<MobEffect>
+    {
+        public MobEffectTypeTags(DataGenerator gen, @Nullable ExistingFileHelper existingFileHelper)
+        {
+            super(gen, ForgeRegistries.MOB_EFFECTS, MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags()
+        {
+            tag(BEACON).add(MobEffects.MOVEMENT_SPEED, MobEffects.JUMP, MobEffects.DIG_SPEED, MobEffects.REGENERATION, MobEffects.DAMAGE_RESISTANCE, MobEffects.DAMAGE_BOOST);
+        }
+
+        @Override
+        public String getName()
+        {
+            return "Mob Effect Tags";
         }
     }
 }

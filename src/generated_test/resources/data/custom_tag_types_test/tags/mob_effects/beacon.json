@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:speed",
+    "minecraft:jump_boost",
+    "minecraft:haste",
+    "minecraft:regeneration",
+    "minecraft:resistance",
+    "minecraft:strength"
+  ]
+}

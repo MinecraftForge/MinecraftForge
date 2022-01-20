@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/level/ServerLevel.java
 +++ b/net/minecraft/server/level/ServerLevel.java
-@@ -176,10 +_,11 @@
+@@ -179,10 +_,11 @@
     private final List<CustomSpawner> f_8558_;
     @Nullable
     private final EndDragonFight f_8559_;
@@ -13,7 +13,7 @@
  
     public ServerLevel(MinecraftServer p_8571_, Executor p_8572_, LevelStorageSource.LevelStorageAccess p_8573_, ServerLevelData p_8574_, ResourceKey<Level> p_8575_, DimensionType p_8576_, ChunkProgressListener p_8577_, ChunkGenerator p_8578_, boolean p_8579_, long p_8580_, List<CustomSpawner> p_8581_, boolean p_8582_) {
        super(p_8574_, p_8575_, p_8576_, p_8571_::m_129905_, false, p_8579_, p_8580_);
-@@ -217,6 +_,7 @@
+@@ -220,6 +_,7 @@
        }
  
        this.f_143245_ = new SleepStatus();
@@ -21,7 +21,7 @@
     }
  
     public void m_8606_(int p_8607_, int p_8608_, boolean p_8609_, boolean p_8610_) {
-@@ -245,8 +_,8 @@
+@@ -248,8 +_,8 @@
        int i = this.m_46469_().m_46215_(GameRules.f_151486_);
        if (this.f_143245_.m_144002_(i) && this.f_143245_.m_144004_(i, this.f_8546_)) {
           if (this.m_46469_().m_46207_(GameRules.f_46140_)) {
@@ -32,7 +32,7 @@
           }
  
           this.m_8804_();
-@@ -275,7 +_,7 @@
+@@ -278,7 +_,7 @@
        this.m_8807_();
        this.f_8557_ = false;
        profilerfiller.m_7238_();
@@ -41,7 +41,7 @@
        if (flag) {
           this.m_8886_();
        }
-@@ -307,7 +_,9 @@
+@@ -310,7 +_,9 @@
                       }
  
                       profilerfiller.m_6180_("tick");
@@ -52,7 +52,7 @@
                       profilerfiller.m_7238_();
                    }
                 }
-@@ -396,6 +_,7 @@
+@@ -399,6 +_,7 @@
           BlockPos blockpos2 = this.m_5452_(Heightmap.Types.MOTION_BLOCKING, this.m_46496_(i, 0, j, 15));
           BlockPos blockpos3 = blockpos2.m_7495_();
           Biome biome = this.m_46857_(blockpos2);
@@ -60,7 +60,7 @@
           if (biome.m_47477_(this, blockpos3)) {
              this.m_46597_(blockpos3, Blocks.f_50126_.m_49966_());
           }
-@@ -586,15 +_,19 @@
+@@ -589,15 +_,19 @@
           this.f_8548_.m_6846_().m_11270_(new ClientboundGameEventPacket(ClientboundGameEventPacket.f_132161_, this.f_46440_), this.m_46472_());
        }
  
@@ -84,7 +84,7 @@
        }
  
     }
-@@ -650,9 +_,10 @@
+@@ -653,9 +_,10 @@
              ++p_8664_.f_19797_;
              ProfilerFiller profilerfiller = this.m_46473_();
              profilerfiller.m_6521_(() -> {
@@ -96,7 +96,7 @@
              p_8664_.m_6083_();
              profilerfiller.m_7238_();
  
-@@ -689,6 +_,7 @@
+@@ -692,6 +_,7 @@
              this.f_143244_.m_157554_();
           }
  
@@ -104,7 +104,7 @@
        }
     }
  
-@@ -761,7 +_,48 @@
+@@ -764,7 +_,48 @@
        this.m_8853_(p_8846_);
     }
  
@@ -153,7 +153,7 @@
        Entity entity = this.m_142646_().m_142694_(p_8854_.m_142081_());
        if (entity != null) {
           f_8566_.warn("Force-added player with duplicate UUID {}", (Object)p_8854_.m_142081_().toString());
-@@ -769,7 +_,8 @@
+@@ -772,7 +_,8 @@
           this.m_143261_((ServerPlayer)entity, Entity.RemovalReason.DISCARDED);
        }
  
@@ -163,7 +163,7 @@
     }
  
     private boolean m_8872_(Entity p_8873_) {
-@@ -777,7 +_,12 @@
+@@ -780,7 +_,12 @@
           f_8566_.warn("Tried to add entity {} but it was marked as removed already", (Object)EntityType.m_20613_(p_8873_.m_6095_()));
           return false;
        } else {
@@ -177,7 +177,7 @@
        }
     }
  
-@@ -814,10 +_,20 @@
+@@ -817,10 +_,20 @@
     }
  
     public void m_6263_(@Nullable Player p_8675_, double p_8676_, double p_8677_, double p_8678_, SoundEvent p_8679_, SoundSource p_8680_, float p_8681_, float p_8682_) {
@@ -198,7 +198,7 @@
        this.f_8548_.m_6846_().m_11241_(p_8689_, p_8690_.m_20185_(), p_8690_.m_20186_(), p_8690_.m_20189_(), p_8693_ > 1.0F ? (double)(16.0F * p_8693_) : 16.0D, this.m_46472_(), new ClientboundSoundEntityPacket(p_8691_, p_8692_, p_8690_, p_8693_, p_8694_));
     }
  
-@@ -862,6 +_,7 @@
+@@ -882,6 +_,7 @@
  
     public Explosion m_7703_(@Nullable Entity p_8653_, @Nullable DamageSource p_8654_, @Nullable ExplosionDamageCalculator p_8655_, double p_8656_, double p_8657_, double p_8658_, float p_8659_, boolean p_8660_, Explosion.BlockInteraction p_8661_) {
        Explosion explosion = new Explosion(this, p_8653_, p_8654_, p_8655_, p_8656_, p_8657_, p_8658_, p_8659_, p_8660_, p_8661_);
@@ -206,7 +206,7 @@
        explosion.m_46061_();
        explosion.m_46075_(false);
        if (p_8661_ == Explosion.BlockInteraction.NONE) {
-@@ -1389,6 +_,12 @@
+@@ -1409,6 +_,12 @@
        });
     }
  
@@ -219,23 +219,27 @@
     public LevelEntityGetter<Entity> m_142646_() {
        return this.f_143244_.m_157567_();
     }
-@@ -1463,8 +_,8 @@
-             ServerLevel.this.f_143246_.add((Mob)p_143371_);
+@@ -1490,10 +_,8 @@
+             ServerLevel.this.f_143246_.add(mob);
           }
  
 -         if (p_143371_ instanceof EnderDragon) {
--            for(EnderDragonPart enderdragonpart : ((EnderDragon)p_143371_).m_31156_()) {
+-            EnderDragon enderdragon = (EnderDragon)p_143371_;
+-
+-            for(EnderDragonPart enderdragonpart : enderdragon.m_31156_()) {
 +         if (p_143371_.isMultipartEntity()) {
 +            for(net.minecraftforge.entity.PartEntity<?> enderdragonpart : p_143371_.getParts()) {
                 ServerLevel.this.f_143247_.put(enderdragonpart.m_142049_(), enderdragonpart);
              }
           }
-@@ -1483,8 +_,8 @@
-             ServerLevel.this.f_143246_.remove(p_143375_);
+@@ -1518,10 +_,8 @@
+             ServerLevel.this.f_143246_.remove(mob);
           }
  
 -         if (p_143375_ instanceof EnderDragon) {
--            for(EnderDragonPart enderdragonpart : ((EnderDragon)p_143375_).m_31156_()) {
+-            EnderDragon enderdragon = (EnderDragon)p_143375_;
+-
+-            for(EnderDragonPart enderdragonpart : enderdragon.m_31156_()) {
 +         if (p_143375_.isMultipartEntity()) {
 +            for(net.minecraftforge.entity.PartEntity<?> enderdragonpart : p_143375_.getParts()) {
                 ServerLevel.this.f_143247_.remove(enderdragonpart.m_142049_());
