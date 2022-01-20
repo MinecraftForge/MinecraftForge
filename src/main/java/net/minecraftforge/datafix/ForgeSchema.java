@@ -47,9 +47,9 @@ class ForgeSchema extends Schema
     //Can not be final, needs to be initialized on the fly!
     //Constructor invocation order and the what not!
     private Map<String, Supplier<TypeTemplate>> TYPE_TEMPLATES = Maps.newConcurrentMap();
-    private Map<String, Type<?>>                TYPES          = Maps.newConcurrentMap();
+    private Map<String, Type<?>>                TYPES;
+    private Map<String, Integer>                RECURSIVE_TYPES;
 
-    private final Map<String, Integer>                RECURSIVE_TYPES = Maps.newConcurrentMap();
     private final Map<String, Supplier<TypeTemplate>> MODDED_ENTITY_TYPES = Maps.newConcurrentMap();
     private final Map<String, Supplier<TypeTemplate>> MODDED_BLOCK_ENTITY_TYPES = Maps.newConcurrentMap();
 
@@ -60,6 +60,16 @@ class ForgeSchema extends Schema
     ForgeSchema(final int versionKey, final Schema parent, final Schema wrapped)
     {
         super(versionKey, parent);
+        if (RECURSIVE_TYPES == null)
+        {
+            RECURSIVE_TYPES = Maps.newConcurrentMap();
+        }
+
+        if (TYPE_TEMPLATES == null)
+        {
+            TYPE_TEMPLATES = Maps.newConcurrentMap();
+        }
+
         this.wrapped = wrapped;
 
         final int subVersion = DataFixUtils.getSubVersion(versionKey);
@@ -82,6 +92,20 @@ class ForgeSchema extends Schema
      */
     protected Map<String, Type<?>> buildTypes()
     {
+        //This is potentially invoked from the super constructor, so our field init code has not run yet.
+        //Set it to a none null value, so the super type can do its initial construction.
+        if (RECURSIVE_TYPES == null)
+        {
+            RECURSIVE_TYPES = Maps.newConcurrentMap();
+        }
+
+        //This is potentially invoked from the super constructor, so our field init code has not run yet.
+        //Set it to a none null value, so the super type can do its initial construction.
+        if (TYPE_TEMPLATES == null)
+        {
+            TYPE_TEMPLATES = Maps.newConcurrentMap();
+        }
+
         //Result map.
         final Map<String, Type<?>> types = Maps.newConcurrentMap();
 
@@ -156,6 +180,13 @@ class ForgeSchema extends Schema
     @Override
     public TypeTemplate resolveTemplate(final String name)
     {
+        //This is potentially invoked from the super constructor, so our field init code has not run yet.
+        //Set it to a none null value, so the super type can do its initial construction.
+        if (TYPE_TEMPLATES == null)
+        {
+            TYPE_TEMPLATES = Maps.newConcurrentMap();
+        }
+
         return TYPE_TEMPLATES.getOrDefault(name, () -> {
             throw new IllegalArgumentException("Unknown type: " + name);
         }).get();
@@ -164,6 +195,13 @@ class ForgeSchema extends Schema
     @Override
     public TypeTemplate id(final String name)
     {
+        //This is potentially invoked from the super constructor, so our field init code has not run yet.
+        //Set it to a none null value, so the super type can do its initial construction.
+        if (RECURSIVE_TYPES == null)
+        {
+            RECURSIVE_TYPES = Maps.newConcurrentMap();
+        }
+
         final int id = RECURSIVE_TYPES.getOrDefault(name, -1);
         if (id != -1)
         {
@@ -249,7 +287,14 @@ class ForgeSchema extends Schema
         //Set it to a none null value, so the super type can do its initial construction.
         if (TYPE_TEMPLATES == null)
         {
-            TYPE_TEMPLATES = Maps.newHashMap();
+            TYPE_TEMPLATES = Maps.newConcurrentMap();
+        }
+
+        //This is invoked from the super constructor, so our field init code has not run yet.
+        //Set it to a none null value, so the super type can do its initial construction.
+        if (RECURSIVE_TYPES == null)
+        {
+            RECURSIVE_TYPES = Maps.newConcurrentMap();
         }
 
         TYPE_TEMPLATES.put(type.typeName(), template);
