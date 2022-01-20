@@ -70,8 +70,6 @@ public class ModMismatchDisconnectedScreen extends Screen
     private Map<ResourceLocation, String> mismatchedChannelData;
     private Map<String, String> missingRegistryMods;
     private boolean mismatchedDataFromServer;
-    private String mismatchedDataOrigin;
-    private String presentDataOrigin;
     private MismatchInfoPanel mismatchInfoPanel;
 
     public ModMismatchDisconnectedScreen(Screen parentScreen, Component title, Component reason, ModMismatchData modMismatchData)
@@ -92,8 +90,6 @@ public class ModMismatchDisconnectedScreen extends Screen
         this.listHeight = 140;
 
         this.mismatchedDataFromServer = modMismatchData.mismatchedDataFromServer();
-        this.mismatchedDataOrigin = modMismatchData.mismatchedDataFromServer() ? "Server" : "Client";
-        this.presentDataOrigin = modMismatchData.mismatchedDataFromServer() ? "Client" : "Server";
         this.presentChannelData = modMismatchData.presentChannelData();
         this.missingChannelData = modMismatchData.mismatchedChannelData().entrySet().stream().filter(e -> e.getValue().equals(NetworkRegistry.ABSENT)).map(Entry::getKey).collect(Collectors.toList());
         this.mismatchedChannelData = modMismatchData.mismatchedChannelData().entrySet().stream().filter(e -> !e.getValue().equals(NetworkRegistry.ABSENT)).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
@@ -133,8 +129,8 @@ public class ModMismatchDisconnectedScreen extends Screen
             List<Pair<MutableComponent, Pair<String, String>>> rawTable = new ArrayList<>();
             if (!missingChannelData.isEmpty())
             {
-                rawTable.add(Pair.of(new TextComponent("The " + mismatchedDataOrigin + " is missing the following mods, consider " + (mismatchedDataFromServer ? "removing" : "downloading") + " them to play on this server:").withStyle(ChatFormatting.GRAY), null));
-                rawTable.add(Pair.of(new TextComponent("Mod name").withStyle(ChatFormatting.UNDERLINE), Pair.of("", presentDataOrigin + " version")));
+                rawTable.add(Pair.of(new TextComponent((mismatchedDataFromServer ? "The server" : "Your client") + " is missing the following mods, you need to " + (mismatchedDataFromServer ? "remove them from your client" : "download them") + " to play on this server:").withStyle(ChatFormatting.GRAY), null));
+                rawTable.add(Pair.of(new TextComponent("Mod name").withStyle(ChatFormatting.UNDERLINE), Pair.of("", (mismatchedDataFromServer ? "You have" : "You need"))));
                 int i = 0;
                 for (ResourceLocation channel : missingChannelData) {
                     rawTable.add(Pair.of(new TextComponent(presentChannelData.get(channel).getLeft()).withStyle(i % 2 == 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channel.toString())))),
@@ -148,8 +144,8 @@ public class ModMismatchDisconnectedScreen extends Screen
             }
             if (!mismatchedChannelData.isEmpty())
             {
-                rawTable.add(Pair.of(new TextComponent("The following mod versions do not match, consider downloading a matching version of these mods:").withStyle(ChatFormatting.GRAY), null));
-                rawTable.add(Pair.of(new TextComponent("Mod name").withStyle(ChatFormatting.UNDERLINE), Pair.of(presentDataOrigin + " version", mismatchedDataOrigin + " version")));
+                rawTable.add(Pair.of(new TextComponent("The following mod versions do not match, you need to download a matching version of these mods to play on this server:").withStyle(ChatFormatting.GRAY), null));
+                rawTable.add(Pair.of(new TextComponent("Mod name").withStyle(ChatFormatting.UNDERLINE), Pair.of((mismatchedDataFromServer ? "You have" : "Server has"), (mismatchedDataFromServer ? "Server has" : "You have"))));
                 int i = 0;
                 for (Map.Entry<ResourceLocation,  String> channelData : mismatchedChannelData.entrySet()) {
                     rawTable.add(Pair.of(new TextComponent(presentChannelData.get(channelData.getKey()).getLeft()).withStyle(i % 2 == 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW).withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(channelData.getKey().toString())))),
@@ -163,7 +159,7 @@ public class ModMismatchDisconnectedScreen extends Screen
             }
             if (!missingRegistryMods.isEmpty())
             {
-                rawTable.add(Pair.of(new TextComponent("Mismatched registry entries of the following mods were detected, this means that they are either not installed, or the installed mod version does not match with the server:").withStyle(ChatFormatting.GRAY), null));
+                rawTable.add(Pair.of(new TextComponent("The following mods provided mismatched registry data, this means that they are either not installed, or the installed mod version does not match with the one on the server:").withStyle(ChatFormatting.GRAY), null));
                 int i = 0;
                 boolean logMessage = false;
                 TextComponent mods = new TextComponent("");
