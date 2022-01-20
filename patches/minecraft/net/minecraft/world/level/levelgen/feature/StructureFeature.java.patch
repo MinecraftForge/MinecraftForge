@@ -9,15 +9,27 @@
     public static final BiMap<String, StructureFeature<?>> f_67012_ = HashBiMap.create();
     private static final Map<StructureFeature<?>, GenerationStep.Decoration> f_67032_ = Maps.newHashMap();
     private static final Logger f_67033_ = LogManager.getLogger();
-@@ -256,6 +_,11 @@
- 
-    public String m_67098_() {
+@@ -258,7 +_,23 @@
        return f_67012_.inverse().get(this);
-+   }
-+
+    }
+ 
 +   @Override
 +   public final net.minecraft.util.random.WeightedRandomList<net.minecraft.world.level.biome.MobSpawnSettings.SpawnerData> getSpawnList(net.minecraft.world.entity.MobCategory classification) {
 +      return net.minecraftforge.common.world.StructureSpawnManager.getSpawnList(this, classification);
-    }
- 
++   }
++
     public BoundingBox m_183606_(BoundingBox p_191127_) {
+       return p_191127_;
++   }
++
++   // FORGE START
++   private final net.minecraftforge.common.util.ReverseTagWrapper<StructureFeature<?>> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, () -> net.minecraft.tags.SerializationTags.m_13199_().m_144452_(Registry.f_122840_));
++
++   public java.util.Set<net.minecraft.resources.ResourceLocation> getTags() {
++      return reverseTags.getTagNames();
++   }
++
++   public boolean is(net.minecraft.tags.Tag<StructureFeature<?>> tag) {
++      return tag.m_8110_(this);
+    }
+ }
