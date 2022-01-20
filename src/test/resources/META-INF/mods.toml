@@ -180,4 +180,5 @@ license="LGPL v2.1"
     modId="player_login_event_test"
 [[mods]]
     modId="ingredient_invalidation"
+
 # ADD ABOVE THIS LINE

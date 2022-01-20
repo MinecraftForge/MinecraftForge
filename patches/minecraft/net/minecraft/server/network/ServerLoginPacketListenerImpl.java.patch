@@ -15,15 +15,11 @@
           this.m_10055_();
        } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.DELAY_ACCEPT) {
           ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
-@@ -116,6 +_,14 @@
+@@ -116,6 +_,10 @@
                 this.f_10019_ = ServerLoginPacketListenerImpl.State.DELAY_ACCEPT;
                 this.f_10024_ = serverplayer1;
              } else {
-+               Component reason = net.minecraftforge.event.ForgeEventFactory.firePrePlayerLoggedIn(serverplayer1, this.f_10013_);
-+               if (reason != null) {
-+                  this.f_10013_.m_129514_(new ClientboundDisconnectPacket(reason), (p_9828_) -> this.f_10013_.m_129507_(reason));
-+                  this.f_10013_.m_129540_();
-+                  this.f_10018_.m_18709_(this.f_10013_::m_129541_);
++               if (!net.minecraftforge.event.ForgeEventFactory.firePrePlayerLoggedIn(serverplayer1, this.f_10013_)) {
 +                  return;
 +               }
 +

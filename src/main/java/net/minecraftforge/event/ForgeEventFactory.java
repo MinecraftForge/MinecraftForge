@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundDisconnectPacket;
+import net.minecraft.network.protocol.login.ClientboundLoginDisconnectPacket;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -803,17 +805,19 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
     }
 
-    public static Component firePrePlayerLoggedIn(Player player, Connection connection)
+    public static boolean firePrePlayerLoggedIn(Player player, Connection connection)
     {
         PlayerEvent.PrePlayerLoginEvent event = new PlayerEvent.PrePlayerLoginEvent(player, connection);
         MinecraftForge.EVENT_BUS.post(event);
 
-        if (event.getResult() == Result.DENY)
+        if (event.isCanceled())
         {
-            return event.getDenyMessage();
+            connection.send(new ClientboundDisconnectPacket(event.getDenyMessage()));
+            connection.disconnect(event.getDenyMessage());
+            return false;
         }
 
-        return null;
+        return true;
     }
 
     public static void firePlayerLoggedIn(Player player)

@@ -468,10 +468,10 @@ public class PlayerEvent extends LivingEvent
      * Event fired before the player is accepted to the world
      *
      */
-    @HasResult
+    @Cancelable
     public static class PrePlayerLoginEvent extends PlayerEvent {
         private Component denyMessage = null;
-        private Connection connection;
+        private final Connection connection;
 
         public PrePlayerLoginEvent(Player player, Connection connection)
         {
