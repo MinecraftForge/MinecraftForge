@@ -182,7 +182,7 @@ public class ForgeDataFixerEventHandler
                     //Do not do this on the mod executor!
                     //This will crash the game.
                     //Rebuild the DFU wrapper on the bootstrap executor
-                    forgeDataFixerDelegateHandler.rebuildFixer(Util.bootstrapExecutor());
+                    forgeDataFixerDelegateHandler.rebuildFixer(Util.bootstrapExecutor(), true);
                 }
             }
         }, executor);

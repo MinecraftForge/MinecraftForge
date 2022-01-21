@@ -186,5 +186,7 @@ license="LGPL v2.1"
     modId="ingredient_invalidation"
 [[mods]]
     modId="client_command_test"
+[[mods]]
+    modId="forge_datafix_test"
 
 # ADD ABOVE THIS LINE

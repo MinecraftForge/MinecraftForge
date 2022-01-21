@@ -78,11 +78,11 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
         this.globalList = globalList;
         this.fixerVersions = fixerVersions;
 
-        //Rebuild the setup immediately.
-        rebuildFixer(executor);
+        //Rebuild the setup immediately, don't trigger the lazy rebuild, it causes NPE's.
+        rebuildFixer(executor, false);
     }
 
-    public void rebuildFixer(final Executor executor)
+    public void rebuildFixer(final Executor executor, final boolean triggerOffThreadCompute)
     {
         //Reset our rules, normal vanilla rules (ours too) keep a cache of their schemas
         //We can not use that and need to forcefully recompute them.
@@ -104,6 +104,11 @@ class ForgeDataFixerDelegateHandler extends DataFixerUpper
         if (Boolean.getBoolean("forge.datafixer.disablePreCompute"))
         {
             LOGGER.warn("The pre-compute of the data fixer rules is disabled, this is not recommended for normal use, but can be useful for debugging or in low-memory situations.");
+            return;
+        }
+
+        //We only rebuild once we are told to do so.
+        if (!triggerOffThreadCompute) {
             return;
         }
 
