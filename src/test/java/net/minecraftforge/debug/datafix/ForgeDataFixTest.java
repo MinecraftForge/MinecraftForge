@@ -1,5 +1,6 @@
 package net.minecraftforge.debug.datafix;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.datafix.ConfigureDataFixSchemaEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -30,5 +31,8 @@ public class ForgeDataFixTest
 
     private void onDataFixSchemaTypeConfiguration(ConfigureDataFixSchemaEvent configureDataFixSchemaEvent) {
         LOGGER.info("Initializing DFU schema: " + configureDataFixSchemaEvent.getSchema().getVersionKey());
+
+        //Register something to all the schemas.
+        configureDataFixSchemaEvent.registerSimpleBlockEntity(new ResourceLocation("forge_datafix_test:simple_block_entity"));
     }
 }
