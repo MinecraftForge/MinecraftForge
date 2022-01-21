@@ -19,6 +19,7 @@
 
 package net.minecraftforge.network;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
@@ -52,9 +53,24 @@ public class ConnectionData
      *    People using hacked clients WILL hack the mod lists to make them look correct.
      *    Do not use this as an anti-cheat feature!
      *  </b>
-     * @return An immutable list of MODIDs and their respective mod versions.
+     * @return An immutable list of MODIDs
      */
-    public ImmutableMap<String, String> getModList()
+    public ImmutableList<String> getModList()
+    {
+        return modList.keySet().asList();
+    }
+
+    /**
+     * Returns the list of mods and mod versions present in the remote.
+     * <b>WARNING: This list is not authoritative.
+     *    A mod missing from the list does not mean the mod isn't there,
+     *    and similarly a mod present in the list does not mean it is there.
+     *    People using hacked clients WILL hack the mod lists to make them look correct.
+     *    Do not use this as an anti-cheat feature!
+     *  </b>
+     * @return An immutable map of MODIDs and their respective mod versions
+     */
+    public ImmutableMap<String, String> getModVersions()
     {
         return modList;
     }
