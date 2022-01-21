@@ -46,8 +46,8 @@ class ForgeSchema extends Schema
 {
     //Can not be final, needs to be initialized on the fly!
     //Constructor invocation order and the what not!
-    private Map<String, Supplier<TypeTemplate>> TYPE_TEMPLATES = Maps.newConcurrentMap();
     private Map<String, Type<?>>                TYPES;
+    private Map<String, Supplier<TypeTemplate>> TYPE_TEMPLATES;
     private Map<String, Integer>                RECURSIVE_TYPES;
 
     private final Map<String, Supplier<TypeTemplate>> MODDED_ENTITY_TYPES = Maps.newConcurrentMap();
@@ -77,6 +77,7 @@ class ForgeSchema extends Schema
 
         //Now with the vanilla data in the schema, lets build our first version again.
         //Yes this executes the type resolve multiple times per schema (but it's not a big deal)
+        TYPES = buildTypes();
         resetSchema();
         rebuildSchema(
           Collections.emptyMap(),
