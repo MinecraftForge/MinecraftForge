@@ -1076,7 +1076,7 @@ public class ForgeHooksClient
             }
             if (!vanillaOne && !vanillaTwo)
             {
-                return Integer.compare(typeOne.hashCode(), typeTwo.hashCode());
+                return Integer.compare(System.identityHashCode(typeOne), System.identityHashCode(typeTwo));
             }
             return vanillaOne ? -1 : 1;
         };
