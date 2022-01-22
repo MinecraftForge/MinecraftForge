@@ -94,7 +94,7 @@ public class PermissionTest
      * Without that, the expected UnregisteredPermissionNode exception, triggers further exceptions and therefore isn't visible anymore.
      * This is only required to handle the intended error in the permission API, and should not be necessary with correct use.
      */
-    private static boolean canUseCommand(CommandSourceStack src, PermissionNode<Boolean> booleanPermission, PermissionDynamicContext<? extends StringRepresentable>... context)
+    private static boolean canUseCommand(CommandSourceStack src, PermissionNode<Boolean> booleanPermission, PermissionDynamicContext<?>... context)
     {
         try
         {
