@@ -122,10 +122,12 @@ public class CustomTagTypesTest
             event.getEntityLiving().getActiveEffects().forEach((mobEffectInstance) -> logTagsIfPresent(mobEffectInstance.getEffect().getTags()));
         }
 
-        if (event.getPlayer().getLevel() instanceof ServerLevel serverLevel) {
+        if (event.getPlayer().getLevel() instanceof ServerLevel serverLevel)
+        {
             OVERWORLD_TEMPLE.getValues().forEach(temple -> {
                   final BlockPos found = serverLevel.findNearestMapFeature(temple, event.getPos(), 100, false);
-                  if (found != null) {
+                  if (found != null)
+                  {
                       LOGGER.info("Found {} at {}", temple.getRegistryName(), found);
                   }
                   else
@@ -254,7 +256,8 @@ public class CustomTagTypesTest
         }
     }
 
-    public static class StructureFeatureTags extends ForgeRegistryTagsProvider<StructureFeature<?>> {
+    public static class StructureFeatureTags extends ForgeRegistryTagsProvider<StructureFeature<?>>
+    {
 
         public StructureFeatureTags(DataGenerator gen, @Nullable ExistingFileHelper existingFileHelper)
         {
@@ -264,7 +267,7 @@ public class CustomTagTypesTest
         @Override
         public String getName()
         {
-            return "StructureFeature Tags";
+            return "Structure Feature Tags";
         }
 
         @Override
