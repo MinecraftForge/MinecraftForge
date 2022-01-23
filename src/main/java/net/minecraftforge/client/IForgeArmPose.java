@@ -17,23 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.extensions;
+package net.minecraftforge.client;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.UseAnim;
 
 /**
- * An ArmPose that can be defined by the user. Register one to a {@link net.minecraft.world.item.UseAnim}
- * using {@link net.minecraftforge.client.ClientRegistry#registerUseAnimation(UseAnim, IForgeArmPose)}.
+ * An ArmPose that can be defined by the user.
+ * Register one by creating a custom {@link net.minecraft.client.model.HumanoidModel.ArmPose}
+ * and use {@link net.minecraftforge.client.ClientRegistry#registerArmPose(UseAnim, HumanoidModel.ArmPose)} to bind it to a UseAnim.
  */
 public interface IForgeArmPose
 {
-
-    /**
-     * @return Whether this pose should disable off-hand animations
-     */
-    boolean isPoseTwoHanded();
 
     /**
      * This method should be used to apply all wanted transformations to the player if when the UseAnim is active.
@@ -41,8 +37,7 @@ public interface IForgeArmPose
      *
      * @param model  The humanoid model
      * @param entity The humanoid entity
-     * @param <T>    The exact entity type. Since HumanoidModel is generic, this must be generic as well.
      */
-    <T extends LivingEntity> void applyTransform(HumanoidModel<T> model, T entity);
+    void applyTransform(HumanoidModel<?> model, LivingEntity entity);
 
 }
