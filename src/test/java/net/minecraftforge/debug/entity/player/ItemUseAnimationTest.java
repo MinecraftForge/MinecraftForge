@@ -25,8 +25,11 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ClientRegistry;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -42,13 +45,11 @@ public class ItemUseAnimationTest
 
     private static final RegistryObject<Item> THING = ITEMS.register("thing", () -> new ThingItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).food(new FoodProperties.Builder().nutrition(4).build())));
 
-    private static final HumanoidModel.ArmPose SWING_POSE = HumanoidModel.ArmPose.create("SWING", false, (model, entity) -> model.rightArm.xRot = (float) (Math.random() * Math.PI * 2));
     private static final UseAnim SWING = UseAnim.create("SWING");
 
     public ItemUseAnimationTest()
     {
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        ClientRegistry.registerArmPose(SWING, SWING_POSE);
     }
 
     private static class ThingItem extends Item
@@ -66,4 +67,19 @@ public class ItemUseAnimationTest
         }
 
     }
+
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = MOD_ID, value = Dist.CLIENT)
+    private static class ClientEvents
+    {
+
+        private static final HumanoidModel.ArmPose SWING_POSE = HumanoidModel.ArmPose.create("SWING", false, (model, entity) -> model.rightArm.xRot = (float) (Math.random() * Math.PI * 2));
+
+        @SubscribeEvent
+        public static void clientSetup(FMLClientSetupEvent event)
+        {
+            ClientRegistry.registerArmPose(SWING, SWING_POSE);
+        }
+
+    }
+
 }
