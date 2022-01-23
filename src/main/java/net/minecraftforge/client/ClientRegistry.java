@@ -19,13 +19,14 @@
 
 package net.minecraftforge.client;
 
-import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.UseAnim;
-import net.minecraftforge.common.extensions.IForgeArmPose;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.KeyMapping;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientRegistry
 {
     private static Map<Class<? extends Entity>, ResourceLocation> entityShaderMap = new ConcurrentHashMap<>();
-    private static Map<UseAnim, IForgeArmPose> useAnimationMap = new ConcurrentHashMap<>();
+    private static Map<UseAnim, HumanoidModel.ArmPose> useAnimationMap = new ConcurrentHashMap<>();
 
     /**
      * Registers a KeyBinding.
@@ -61,14 +62,13 @@ public class ClientRegistry
         return entityShaderMap.get(entityClass);
     }
 
-    public static void registerUseAnimation(UseAnim animation, IForgeArmPose pose)
+    public static void registerArmPose(UseAnim animation, HumanoidModel.ArmPose pose)
     {
         useAnimationMap.put(animation, pose);
     }
 
-    public static IForgeArmPose getUseAnimation(UseAnim animation)
+    public static HumanoidModel.ArmPose getArmPose(UseAnim animation)
     {
         return useAnimationMap.get(animation);
     }
-
 }
