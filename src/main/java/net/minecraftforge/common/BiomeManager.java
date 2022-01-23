@@ -222,7 +222,7 @@ public class BiomeManager
      * @see ClimateParameterSampler
      * @return An array of {@link ClimateParameterSampler} instances with each element corresponding to an added {@link ClimateParameterExtension}.
      */
-    public static ClimateParameterSampler[] setupClimateParameterExtensionFunctions(NoiseSettings settings, Registry<NoiseParameters> registry, PositionalRandomFactory positionalRandomFactory)
+    public static ClimateParameterSampler[] setupClimateParameterExtensionSamplers(NoiseSettings settings, Registry<NoiseParameters> registry, PositionalRandomFactory positionalRandomFactory)
     {
         int count = getClimateParameterExtensionsCount();
         ClimateParameterSampler[] climateParameterSamplers = new ClimateParameterSampler[count];

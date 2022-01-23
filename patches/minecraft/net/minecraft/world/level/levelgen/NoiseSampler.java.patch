@@ -12,7 +12,7 @@
        this.f_188919_ = m_189068_(Noises.m_189305_(p_188953_, positionalrandomfactory, Noises.f_189253_), k, l, 0, 2.6666666666666665D);
        this.f_188921_ = m_189068_(Noises.m_189305_(p_188953_, positionalrandomfactory, Noises.f_189254_), k, l, 0, 2.6666666666666665D);
        this.f_188941_ = Noises.m_189305_(p_188953_, positionalrandomfactory, Noises.f_189255_);
-+      this.climateParameterExtensionSamplers = net.minecraftforge.common.BiomeManager.setupClimateParameterExtensionFunctions(p_188950_, p_188953_, positionalrandomfactory);
++      this.climateParameterExtensionSamplers = net.minecraftforge.common.BiomeManager.setupClimateParameterExtensionSamplers(p_188950_, p_188953_, positionalrandomfactory);
     }
  
     private static NoiseChunk.InterpolatableNoise m_189068_(NormalNoise p_189069_, int p_189070_, int p_189071_, int p_189072_, double p_189073_) {
