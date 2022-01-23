@@ -57,7 +57,7 @@ public class ItemUseAnimationTest
         ClientRegistry.registerUseAnimation(SWING, new IForgeArmPose()
         {
             @Override
-            public boolean isTwoHanded()
+            public boolean isPoseTwoHanded()
             {
                 return false;
             }

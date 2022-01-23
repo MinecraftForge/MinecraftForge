@@ -16,7 +16,7 @@
           }
        } else {
 -         boolean flag4 = flag2 ? this.f_102815_.m_102897_() : this.f_102816_.m_102897_();
-+         boolean flag4 = flag2 ? this.f_102815_.isTwoHanded() : this.f_102816_.isTwoHanded();
++         boolean flag4 = flag2 ? this.f_102815_.isPoseTwoHanded() : this.f_102816_.isPoseTwoHanded();
           if (flag2 != flag4) {
              this.m_102878_(p_102866_);
              this.m_102875_(p_102866_);
@@ -177,13 +177,14 @@
        EMPTY(false),
        ITEM(false),
        BLOCK(false),
-@@ -402,8 +_,13 @@
-          this.f_102890_ = p_102896_;
-       }
+@@ -404,6 +_,15 @@
  
--      public boolean m_102897_() {
-+      public boolean isTwoHanded() {
+       public boolean m_102897_() {
           return this.f_102890_;
++      }
++
++      public boolean isPoseTwoHanded() {
++         return this.m_102897_();
 +      }
 +
 +      public <T extends LivingEntity> void applyTransform(HumanoidModel<T> model, T entity)

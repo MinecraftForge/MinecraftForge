@@ -19,7 +19,7 @@
 -         if (humanoidmodel$armpose.m_102897_()) {
 +         net.minecraftforge.common.extensions.IForgeArmPose humanoidmodel$armpose = getArmPose(p_117819_, InteractionHand.MAIN_HAND);
 +         net.minecraftforge.common.extensions.IForgeArmPose humanoidmodel$armpose1 = getArmPose(p_117819_, InteractionHand.OFF_HAND);
-+         if (humanoidmodel$armpose.isTwoHanded()) {
++         if (humanoidmodel$armpose.isPoseTwoHanded()) {
              humanoidmodel$armpose1 = p_117819_.m_21206_().m_41619_() ? HumanoidModel.ArmPose.EMPTY : HumanoidModel.ArmPose.ITEM;
           }
  
