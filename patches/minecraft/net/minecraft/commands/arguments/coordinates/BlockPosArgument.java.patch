@@ -1,0 +1,14 @@
+--- a/net/minecraft/commands/arguments/coordinates/BlockPosArgument.java
++++ b/net/minecraft/commands/arguments/coordinates/BlockPosArgument.java
+@@ -30,9 +_,9 @@
+ 
+    public static BlockPos m_118242_(CommandContext<CommandSourceStack> p_118243_, String p_118244_) throws CommandSyntaxException {
+       BlockPos blockpos = p_118243_.getArgument(p_118244_, Coordinates.class).m_119568_(p_118243_.getSource());
+-      if (!p_118243_.getSource().m_81372_().m_46805_(blockpos)) {
++      if (!p_118243_.getSource().getUnsidedLevel().m_46805_(blockpos)) {
+          throw f_118234_.create();
+-      } else if (!p_118243_.getSource().m_81372_().m_46739_(blockpos)) {
++      } else if (!p_118243_.getSource().getUnsidedLevel().m_46739_(blockpos)) {
+          throw f_118235_.create();
+       } else {
+          return blockpos;

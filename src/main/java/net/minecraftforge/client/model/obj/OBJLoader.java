@@ -72,7 +72,7 @@ public class OBJLoader implements IModelLoader<OBJModel>
     {
         return modelCache.computeIfAbsent(settings, (data) -> {
 
-            try(Resource resource = manager.getResource(settings.modelLocation);
+            try(Resource resource = manager.getResource(settings.modelLocation());
                 LineReader rdr = new LineReader(resource))
             {
                 return new OBJModel(rdr, settings);
