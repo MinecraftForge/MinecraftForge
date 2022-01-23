@@ -33,7 +33,7 @@ public interface IForgeArmPose
     /**
      * @return Whether this pose should disable off-hand animations
      */
-    boolean isTwoHanded();
+    boolean isPoseTwoHanded();
 
     /**
      * This method should be used to apply all wanted transformations to the player if when the UseAnim is active.
