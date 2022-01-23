@@ -24,17 +24,12 @@
     }
  
     public static BlockPos m_187472_(CompoundTag p_187473_) {
-@@ -48,6 +_,13 @@
+@@ -48,6 +_,8 @@
     }
  
     public void m_142466_(CompoundTag p_155245_) {
 +      if (p_155245_.m_128441_("ForgeData")) this.customTileData = p_155245_.m_128469_("ForgeData");
 +      if (getCapabilities() != null && p_155245_.m_128441_("ForgeCaps")) deserializeCaps(p_155245_.m_128469_("ForgeCaps"));
-+   }
-+
-+   public CompoundTag save(CompoundTag tag) {
-+      m_187478_(tag);
-+      return tag;
     }
  
     protected void m_183515_(CompoundTag p_187471_) {
