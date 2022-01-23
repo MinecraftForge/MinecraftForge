@@ -169,8 +169,24 @@ license="LGPL v2.1"
 [[mods]]
     modId="full_pots_accessor_demo"
 [[mods]]
+    modId="permissiontest"
+[[mods]]
     modId="part_entity_test"
 [[mods]]
     modId="capabilities_test"
+[[mods]]
+    modId="custom_armor_model_test"
+[[mods]]
+    modId="duplicate_optional_tag_test"
+[[mods]]
+    modId="custom_particle_type_test"
+[[mods]]
+    modId="shield_block_event"
+[[mods]]
+    modId="renderable_test"
+[[mods]]
+    modId="ingredient_invalidation"
+[[mods]]
+    modId="client_command_test"
 
 # ADD ABOVE THIS LINE
