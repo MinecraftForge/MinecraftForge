@@ -1,0 +1,88 @@
+--- a/net/minecraft/world/level/biome/Climate.java
++++ b/net/minecraft/world/level/biome/Climate.java
+@@ -145,7 +_,7 @@
+       }
+    }
+ 
+-   public static record ParameterPoint(Climate.Parameter f_186863_, Climate.Parameter f_186864_, Climate.Parameter f_186865_, Climate.Parameter f_186866_, Climate.Parameter f_186867_, Climate.Parameter f_186868_, long f_186869_) {
++   public static record ParameterPoint(Climate.Parameter temperature, Climate.Parameter humidity, Climate.Parameter continentalness, Climate.Parameter erosion, Climate.Parameter depth, Climate.Parameter weirdness, long offset, net.minecraftforge.common.BiomeManager.ParameterPointExtensions extensions) {
+       public static final Codec<Climate.ParameterPoint> f_186862_ = RecordCodecBuilder.create((p_186885_) -> {
+          return p_186885_.group(Climate.Parameter.f_186812_.fieldOf("temperature").forGetter((p_186905_) -> {
+             return p_186905_.f_186863_;
+@@ -161,15 +_,18 @@
+             return p_186888_.f_186868_;
+          }), Codec.floatRange(0.0F, 1.0F).fieldOf("offset").xmap(Climate::m_186779_, Climate::m_186796_).forGetter((p_186881_) -> {
+             return p_186881_.f_186869_;
+-         })).apply(p_186885_, Climate.ParameterPoint::new);
++         }), net.minecraftforge.common.BiomeManager.ParameterPointExtensions.CODEC.optionalFieldOf("extensions").xmap(o -> o.orElse(net.minecraftforge.common.BiomeManager.ParameterPointExtensions.getDefault()), a -> java.util.Objects.equals(a, net.minecraftforge.common.BiomeManager.ParameterPointExtensions.getDefault()) ? java.util.Optional.empty() : java.util.Optional.of(a)).forGetter(ParameterPoint::extensions)).apply(p_186885_, Climate.ParameterPoint::new);
+       });
+ 
++      public ParameterPoint(Climate.Parameter f_186863_, Climate.Parameter f_186864_, Climate.Parameter f_186865_, Climate.Parameter f_186866_, Climate.Parameter f_186867_, Climate.Parameter f_186868_, long f_186869_) {
++         this(f_186863_, f_186864_, f_186865_, f_186866_, f_186867_, f_186868_, f_186869_, net.minecraftforge.common.BiomeManager.ParameterPointExtensions.getDefault());
++      }
+       long m_186882_(Climate.TargetPoint p_186883_) {
+-         return Mth.m_184643_(this.f_186863_.m_186825_(p_186883_.f_187003_)) + Mth.m_184643_(this.f_186864_.m_186825_(p_186883_.f_187004_)) + Mth.m_184643_(this.f_186865_.m_186825_(p_186883_.f_187005_)) + Mth.m_184643_(this.f_186866_.m_186825_(p_186883_.f_187006_)) + Mth.m_184643_(this.f_186867_.m_186825_(p_186883_.f_187007_)) + Mth.m_184643_(this.f_186868_.m_186825_(p_186883_.f_187008_)) + Mth.m_184643_(this.f_186869_);
++         return Mth.m_184643_(this.f_186863_.m_186825_(p_186883_.f_187003_)) + Mth.m_184643_(this.f_186864_.m_186825_(p_186883_.f_187004_)) + Mth.m_184643_(this.f_186865_.m_186825_(p_186883_.f_187005_)) + Mth.m_184643_(this.f_186866_.m_186825_(p_186883_.f_187006_)) + Mth.m_184643_(this.f_186867_.m_186825_(p_186883_.f_187007_)) + Mth.m_184643_(this.f_186868_.m_186825_(p_186883_.f_187008_)) + Mth.m_184643_(this.f_186869_) + p_186883_.extensions.fitness(this.extensions);
+       }
+ 
+       protected List<Climate.Parameter> m_186879_() {
+-         return ImmutableList.of(this.f_186863_, this.f_186864_, this.f_186865_, this.f_186866_, this.f_186867_, this.f_186868_, new Climate.Parameter(this.f_186869_, this.f_186869_));
++         return this.extensions.extendedParameterSpace(this.f_186863_, this.f_186864_, this.f_186865_, this.f_186866_, this.f_186867_, this.f_186868_, this.f_186869_);
+       }
+    }
+ 
+@@ -187,8 +_,8 @@
+             throw new IllegalArgumentException("Need at least one value to build the search tree.");
+          } else {
+             int i = p_186936_.get(0).getFirst().m_186879_().size();
+-            if (i != 7) {
+-               throw new IllegalStateException("Expecting parameter space to be 7, got " + i);
++            if (i != 7 + net.minecraftforge.common.BiomeManager.getClimateParameterExtensionsCount()) {
++               throw new IllegalStateException("Expecting parameter space to be " + (7 + net.minecraftforge.common.BiomeManager.getClimateParameterExtensionsCount()) + ", got " + i);
+             } else {
+                List<Climate.RTree.Leaf<T>> list = p_186936_.stream().map((p_186934_) -> {
+                   return new Climate.RTree.Leaf<T>(p_186934_.getFirst(), p_186934_.getSecond());
+@@ -295,15 +_,15 @@
+          if (p_186947_.isEmpty()) {
+             throw new IllegalArgumentException("SubTree needs at least one child");
+          } else {
+-            int i = 7;
++            int i = 7 + net.minecraftforge.common.BiomeManager.getClimateParameterExtensionsCount();
+             List<Climate.Parameter> list = Lists.newArrayList();
+ 
+-            for(int j = 0; j < 7; ++j) {
++            for(int j = 0; j < i; ++j) {
+                list.add((Climate.Parameter)null);
+             }
+ 
+             for(Climate.RTree.Node<T> node : p_186947_) {
+-               for(int k = 0; k < 7; ++k) {
++               for(int k = 0; k < i; ++k) {
+                   list.set(k, node.f_186956_[k].m_186836_(list.get(k)));
+                }
+             }
+@@ -344,7 +_,7 @@
+          protected long m_186959_(long[] p_186960_) {
+             long i = 0L;
+ 
+-            for(int j = 0; j < 7; ++j) {
++            for(int j = 0; j < 7 + net.minecraftforge.common.BiomeManager.getClimateParameterExtensionsCount(); ++j) {
+                i += Mth.m_184643_(this.f_186956_[j].m_186825_(p_186960_[j]));
+             }
+ 
+@@ -447,10 +_,13 @@
+       }
+    }
+ 
+-   public static record TargetPoint(long f_187003_, long f_187004_, long f_187005_, long f_187006_, long f_187007_, long f_187008_) {
++   public static record TargetPoint(long temperature, long humidity, long continentalness, long erosion, long depth, long weirdness, net.minecraftforge.common.BiomeManager.TargetPointExtensions extensions) {
++      public TargetPoint(long f_187003_, long f_187004_, long f_187005_, long f_187006_, long f_187007_, long f_187008_) {
++         this(f_187003_, f_187004_, f_187005_, f_187006_, f_187007_, f_187008_, net.minecraftforge.common.BiomeManager.TargetPointExtensions.zero());
++      }
+       @VisibleForTesting
+       protected long[] m_187016_() {
+-         return new long[]{this.f_187003_, this.f_187004_, this.f_187005_, this.f_187006_, this.f_187007_, this.f_187008_, 0L};
++         return this.extensions.extendParameterArray(this.f_187003_, this.f_187004_, this.f_187005_, this.f_187006_, this.f_187007_, this.f_187008_);
+       }
+    }
+ }

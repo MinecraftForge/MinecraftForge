@@ -1,0 +1,198 @@
+{
+  "type": "minecraft:overworld",
+  "generator": {
+    "type": "minecraft:noise",
+    "seed": 0,
+    "settings": {
+      "ore_veins_enabled": false,
+      "noodle_caves_enabled": true,
+      "legacy_random_source": false,
+      "disable_mob_generation": true,
+      "aquifers_enabled": true,
+      "noise_caves_enabled": true,
+      "surface_rule": {
+        "sequence": [
+          {
+            "if_true": {
+              "random_name": "minecraft:bedrock_floor",
+              "true_at_and_below": {
+                "above_bottom": 0
+              },
+              "false_at_and_above": {
+                "above_bottom": 6
+              },
+              "type": "minecraft:vertical_gradient"
+            },
+            "then_run": {
+              "result_state": {
+                "Name": "minecraft:bedrock"
+              },
+              "type": "minecraft:block"
+            },
+            "type": "minecraft:condition"
+          }
+        ],
+        "type": "minecraft:sequence"
+      },
+      "sea_level": 128,
+      "structures": {
+        "structures": {}
+      },
+      "noise": {
+        "terrain_shaper": {
+          "offset": {
+            "coordinate": "continents",
+            "points": [
+              {
+                "location": -1.25,
+                "value": 0.0,
+                "derivative": 0.0
+              },
+              {
+                "location": -0.25,
+                "value": 0.25,
+                "derivative": 0.0
+              },
+              {
+                "location": 0.0,
+                "value": 1.0,
+                "derivative": 0.25
+              },
+              {
+                "location": 1.25,
+                "value": 1.25,
+                "derivative": 0.0
+              }
+            ]
+          },
+          "factor": 2.0,
+          "jaggedness": 0.0
+        },
+        "size_horizontal": 1,
+        "size_vertical": 1,
+        "sampling": {
+          "xz_scale": 1.0,
+          "y_scale": 1.0,
+          "xz_factor": 80.0,
+          "y_factor": 160.0
+        },
+        "top_slide": {
+          "target": -0.075,
+          "size": 2,
+          "offset": 3
+        },
+        "bottom_slide": {
+          "target": 0.125,
+          "size": 3,
+          "offset": 0
+        },
+        "min_y": -64,
+        "height": 384
+      },
+      "default_block": {
+        "Name": "minecraft:stone"
+      },
+      "default_fluid": {
+        "Properties": {
+          "level": "0"
+        },
+        "Name": "minecraft:water"
+      }
+    },
+    "biome_source": {
+      "biomes": [
+        {
+          "parameters": {
+            "erosion": 0.0,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0,
+            "temperature": 0.0,
+            "humidity": 0.0,
+            "continentalness": [
+              -1.25,
+              -0.35
+            ],
+            "extensions": {
+              "climate_parameter_extensions_test:height": [
+                0.0,
+                0.65
+              ]
+            }
+          },
+          "biome": "minecraft:ocean"
+        },
+        {
+          "parameters": {
+            "erosion": 0.0,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0,
+            "temperature": 0.0,
+            "humidity": 0.0,
+            "continentalness": [
+              -1.25,
+              -0.35
+            ],
+            "extensions": {
+              "climate_parameter_extensions_test:height": [
+                0.0,
+                0.65
+              ],
+              "climate_parameter_extensions_test:moddedness": [
+                0.4,
+                1.0
+              ]
+            }
+          },
+          "biome": "minecraft:frozen_ocean"
+        },
+        {
+          "parameters": {
+            "erosion": 0.0,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0,
+            "temperature": 0.0,
+            "humidity": 0.0,
+            "continentalness": 0,
+            "extensions": {
+              "climate_parameter_extensions_test:height": [
+                0.0,
+                0.65
+              ],
+              "climate_parameter_extensions_test:moddedness": [
+                -1.0,
+                1.0
+              ]
+            }
+          },
+          "biome": "minecraft:forest"
+        },
+        {
+          "parameters": {
+            "erosion": 0.0,
+            "depth": 0.0,
+            "weirdness": 0.0,
+            "offset": 0.0,
+            "temperature": 0.0,
+            "humidity": 0.0,
+            "continentalness": 0,
+            "extensions": {
+              "climate_parameter_extensions_test:height": [
+                0.65,
+                1.0
+              ],
+              "climate_parameter_extensions_test:moddedness": [
+                -1.0,
+                1.0
+              ]
+            }
+          },
+          "biome": "minecraft:snowy_slopes"
+        }
+      ],
+      "type": "minecraft:multi_noise"
+    }
+  }
+}

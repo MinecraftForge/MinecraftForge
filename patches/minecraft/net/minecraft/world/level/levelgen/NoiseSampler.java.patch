@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/level/levelgen/NoiseSampler.java
++++ b/net/minecraft/world/level/levelgen/NoiseSampler.java
+@@ -84,6 +_,7 @@
+    private final PositionalRandomFactory f_188924_;
+    private final List<Climate.ParameterPoint> f_188925_ = (new OverworldBiomeBuilder()).m_187154_();
+    private final boolean f_188926_;
++   private final net.minecraftforge.common.BiomeManager.ClimateParameterSampler[] climateParameterExtensionSamplers;
+ 
+    public NoiseSampler(NoiseSettings p_188950_, boolean p_188951_, long p_188952_, Registry<NormalNoise.NoiseParameters> p_188953_, WorldgenRandom.Algorithm p_188954_) {
+       this.f_158643_ = p_188950_;
+@@ -162,6 +_,7 @@
+       this.f_188919_ = m_189068_(Noises.m_189305_(p_188953_, positionalrandomfactory, Noises.f_189253_), k, l, 0, 2.6666666666666665D);
+       this.f_188921_ = m_189068_(Noises.m_189305_(p_188953_, positionalrandomfactory, Noises.f_189254_), k, l, 0, 2.6666666666666665D);
+       this.f_188941_ = Noises.m_189305_(p_188953_, positionalrandomfactory, Noises.f_189255_);
++      this.climateParameterExtensionSamplers = net.minecraftforge.common.BiomeManager.setupClimateParameterExtensionFunctions(p_188950_, p_188953_, positionalrandomfactory);
+    }
+ 
+    private static NoiseChunk.InterpolatableNoise m_189068_(NormalNoise p_189069_, int p_189070_, int p_189071_, int p_189072_, double p_189073_) {
+@@ -362,7 +_,7 @@
+       double d1 = (double)p_188978_ + this.m_188972_(p_188978_, p_188979_, p_188977_);
+       double d2 = p_188980_.f_189137_();
+       double d3 = this.m_189013_(QuartPos.m_175402_(p_188978_), p_188980_.f_189141_());
+-      return Climate.m_186781_((float)this.m_189107_(d0, d1, d2), (float)this.m_189116_(d0, d1, d2), (float)p_188980_.f_189138_(), (float)p_188980_.f_189140_(), (float)d3, (float)p_188980_.f_189139_());
++      return net.minecraftforge.common.BiomeManager.TargetPointExtensions.extendedTargetPoint(p_188977_, p_188978_, p_188979_, d0, d1, d2, (float)this.m_189107_(d0, d1, d2), (float)this.m_189116_(d0, d1, d2), (float)p_188980_.f_189138_(), (float)p_188980_.f_189140_(), (float)d3, (float)p_188980_.f_189139_(), this.climateParameterExtensionSamplers);
+    }
+ 
+    public TerrainInfo m_188965_(int p_188966_, int p_188967_, float p_188968_, float p_188969_, float p_188970_, Blender p_188971_) {
