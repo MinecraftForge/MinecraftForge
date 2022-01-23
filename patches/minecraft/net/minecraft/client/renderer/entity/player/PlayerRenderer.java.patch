@@ -10,6 +10,40 @@
     }
  
     public Vec3 m_7860_(AbstractClientPlayer p_117785_, float p_117786_) {
+@@ -80,9 +_,9 @@
+          playermodel.f_103374_.f_104207_ = p_117819_.m_36170_(PlayerModelPart.LEFT_SLEEVE);
+          playermodel.f_103375_.f_104207_ = p_117819_.m_36170_(PlayerModelPart.RIGHT_SLEEVE);
+          playermodel.f_102817_ = p_117819_.m_6047_();
+-         HumanoidModel.ArmPose humanoidmodel$armpose = m_117794_(p_117819_, InteractionHand.MAIN_HAND);
+-         HumanoidModel.ArmPose humanoidmodel$armpose1 = m_117794_(p_117819_, InteractionHand.OFF_HAND);
+-         if (humanoidmodel$armpose.m_102897_()) {
++         net.minecraftforge.common.extensions.IForgeArmPose humanoidmodel$armpose = getArmPose(p_117819_, InteractionHand.MAIN_HAND);
++         net.minecraftforge.common.extensions.IForgeArmPose humanoidmodel$armpose1 = getArmPose(p_117819_, InteractionHand.OFF_HAND);
++         if (humanoidmodel$armpose.isTwoHanded()) {
+             humanoidmodel$armpose1 = p_117819_.m_21206_().m_41619_() ? HumanoidModel.ArmPose.EMPTY : HumanoidModel.ArmPose.ITEM;
+          }
+ 
+@@ -97,7 +_,7 @@
+ 
+    }
+ 
+-   private static HumanoidModel.ArmPose m_117794_(AbstractClientPlayer p_117795_, InteractionHand p_117796_) {
++   private static net.minecraftforge.common.extensions.IForgeArmPose getArmPose(AbstractClientPlayer p_117795_, InteractionHand p_117796_) {
+       ItemStack itemstack = p_117795_.m_21120_(p_117796_);
+       if (itemstack.m_41619_()) {
+          return HumanoidModel.ArmPose.EMPTY;
+@@ -123,6 +_,11 @@
+             if (useanim == UseAnim.SPYGLASS) {
+                return HumanoidModel.ArmPose.SPYGLASS;
+             }
++
++            net.minecraftforge.common.extensions.IForgeArmPose forgeArmPose = net.minecraftforge.client.ClientRegistry.getUseAnimation(useanim);
++            if(forgeArmPose != null) {
++               return forgeArmPose;
++            }
+          } else if (!p_117795_.f_20911_ && itemstack.m_150930_(Items.f_42717_) && CrossbowItem.m_40932_(itemstack)) {
+             return HumanoidModel.ArmPose.CROSSBOW_HOLD;
+          }
 @@ -158,10 +_,12 @@
     }
  
