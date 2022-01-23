@@ -130,7 +130,8 @@ public class HandshakeHandler
         }
     }
 
-    interface HandshakeConsumer<MSG extends IntSupplier>
+    @FunctionalInterface
+    public interface HandshakeConsumer<MSG extends IntSupplier>
     {
         void accept(HandshakeHandler handler, MSG msg, Supplier<NetworkEvent.Context> context);
     }
