@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.pattern.BlockInWorld;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -45,6 +46,8 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+
+import java.util.Map;
 
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
@@ -176,6 +179,24 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default int getItemEnchantability()
     {
         return self().getItem().getItemEnchantability(self());
+    }
+
+    /**
+     * Gets the level of the enchantment currently present on the stack. Equivalent to calling {@link EnchantmentHelper#getItemEnchantmentLevel(Enchantment, ItemStack)}
+     * @param enchantment  the enchantment being checked for
+     * @return  Level of the enchantment, or 0 if not present
+     */
+    default int getEnchantmentLevel(Enchantment enchantment)
+    {
+        return self().getItem().getEnchantmentLevel(self(), enchantment);
+    }
+
+    /**
+     * Gets a map of all enchantments present on the stack. Call this over {@link EnchantmentHelper#getEnchantments(ItemStack)} when not directly modifiying enchantments
+     */
+    default Map<Enchantment,Integer> getAllEnchantments()
+    {
+        return self().getItem().getAllEnchantments(self());
     }
 
     /**

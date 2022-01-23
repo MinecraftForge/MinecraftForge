@@ -75,6 +75,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="ender_mask_test"
 [[mods]]
+    modId="enchantment_level_test"
+[[mods]]
     modId="raid_enum_test"
 [[mods]]
     modId="player_name_event_test"

@@ -109,7 +109,7 @@ public class CustomTagTypesTest
         {
             LOGGER.info("{} {} {}", Items.BONE.getTags(), OPTIONAL_TEST.getValues().size(), SerializationTags.getInstance().getOrEmpty(Registry.ITEM_REGISTRY).getTag(new ResourceLocation(MODID, "optional_test")));
             LOGGER.info("{} {}", CUSTOM.get().getTags(), TESTS.getValues().size());
-            EnchantmentHelper.getEnchantments(itemStack).forEach((enchantment, level) -> logTagsIfPresent(enchantment.getTags()));
+            itemStack.getAllEnchantments().forEach((enchantment, level) -> logTagsIfPresent(enchantment.getTags()));
             if (itemStack.getItem() instanceof PotionItem) logTagsIfPresent(PotionUtils.getPotion(itemStack).getTags());
             BlockEntity blockEntity = event.getWorld().getBlockEntity(event.getPos());
             if (blockEntity != null) logTagsIfPresent(blockEntity.getType().getTags());

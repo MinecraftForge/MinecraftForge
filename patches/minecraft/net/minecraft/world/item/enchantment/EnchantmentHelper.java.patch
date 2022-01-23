@@ -1,5 +1,16 @@
 --- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
+@@ -60,6 +_,10 @@
+    }
+ 
+    public static int m_44843_(Enchantment p_44844_, ItemStack p_44845_) {
++      return p_44845_.getEnchantmentLevel(p_44844_);
++   }
++
++   public static int getTagEnchantmentLevel(Enchantment p_44844_, ItemStack p_44845_) {
+       if (p_44845_.m_41619_()) {
+          return 0;
+       } else {
 @@ -298,7 +_,7 @@
  
     public static int m_44872_(Random p_44873_, int p_44874_, int p_44875_, ItemStack p_44876_) {

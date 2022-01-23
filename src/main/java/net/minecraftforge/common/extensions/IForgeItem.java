@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -29,6 +30,7 @@ import com.google.common.collect.Multimap;
 
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.block.Blocks;
@@ -531,6 +533,33 @@ public interface IForgeItem
     default boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment)
     {
         return enchantment.category.canEnchant(stack.getItem());
+    }
+
+    /**
+     * Gets the level of the enchantment currently present on the stack. By default, returns the enchantment level present in NBT.
+     * Most enchantment implementations rely upon this method.
+     * For consistency, results of this method should be the same as getting the enchantment from {@link #getAllEnchantments(ItemStack)}
+     *
+     * @param stack        the item stack being checked
+     * @param enchantment  the enchantment being checked for
+     * @return  Level of the enchantment, or 0 if not present
+     */
+    default int getEnchantmentLevel(ItemStack stack, Enchantment enchantment)
+    {
+        return EnchantmentHelper.getTagEnchantmentLevel(enchantment, stack);
+    }
+
+    /**
+     * Gets a map of all enchantments present on the stack. By default, returns the enchantments present in NBT.
+     *
+     * For consistency, any enchantments in the map should include the same level in {@link #getEnchantmentLevel(ItemStack, Enchantment)}
+     *
+     * @param stack        the item stack being checked
+     * @return  Map of all enchantments on the stack, empty if no enchantments are present
+     */
+    default Map<Enchantment,Integer> getAllEnchantments(ItemStack stack)
+    {
+        return EnchantmentHelper.getEnchantments(stack);
     }
 
     /**

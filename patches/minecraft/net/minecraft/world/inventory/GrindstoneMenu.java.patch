@@ -19,3 +19,12 @@
                 if (!ItemStack.m_41728_(itemstack, itemstack1)) {
                    this.f_39559_.m_6836_(0, ItemStack.f_41583_);
                    this.m_38946_();
+@@ -176,7 +_,7 @@
+ 
+       for(Entry<Enchantment, Integer> entry : map.entrySet()) {
+          Enchantment enchantment = entry.getKey();
+-         if (!enchantment.m_6589_() || EnchantmentHelper.m_44843_(enchantment, itemstack) == 0) {
++         if (!enchantment.m_6589_() || EnchantmentHelper.getTagEnchantmentLevel(enchantment, itemstack) == 0) {
+             itemstack.m_41663_(enchantment, entry.getValue());
+          }
+       }
