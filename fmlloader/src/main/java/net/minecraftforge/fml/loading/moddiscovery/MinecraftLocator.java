@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2022.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.Config;
@@ -18,7 +37,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MinecraftLocator implements IModLocator {
+public class MinecraftLocator extends AbstractModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
@@ -33,7 +52,8 @@ public class MinecraftLocator implements IModLocator {
         var testSourcesPaths = TestModLocator.getTestSources().paths();
         var othermods = baseMC.otherModPaths().stream()
                 .filter(paths -> testSourcesPaths.stream().noneMatch(paths::contains)) // Exclude test sources from scanning
-                .map(p->ModJarMetadata.buildFile(this, p.toArray(Path[]::new)))
+                .map(p -> createMod(p.toArray(Path[]::new)).orElse(null))
+                .filter(Objects::nonNull)
                 .toList();
         artifacts.add(mcjar);
         artifacts.addAll(othermods);
@@ -113,10 +133,5 @@ public class MinecraftLocator implements IModLocator {
     @Override
     public void initArguments(final Map<String, ?> arguments) {
         // no op
-    }
-
-    @Override
-    public boolean isValid(final IModFile modFile) {
-        return true;
     }
 }
