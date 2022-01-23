@@ -1,0 +1,194 @@
+--- a/net/minecraft/client/model/HumanoidModel.java
++++ b/net/minecraft/client/model/HumanoidModel.java
+@@ -32,8 +_,8 @@
+    public final ModelPart f_102812_;
+    public final ModelPart f_102813_;
+    public final ModelPart f_102814_;
+-   public HumanoidModel.ArmPose f_102815_ = HumanoidModel.ArmPose.EMPTY;
+-   public HumanoidModel.ArmPose f_102816_ = HumanoidModel.ArmPose.EMPTY;
++   public net.minecraftforge.common.extensions.IForgeArmPose f_102815_ = HumanoidModel.ArmPose.EMPTY;
++   public net.minecraftforge.common.extensions.IForgeArmPose f_102816_ = HumanoidModel.ArmPose.EMPTY;
+    public boolean f_102817_;
+    public float f_102818_;
+ 
+@@ -142,7 +_,7 @@
+             this.m_102878_(p_102866_);
+          }
+       } else {
+-         boolean flag4 = flag2 ? this.f_102815_.m_102897_() : this.f_102816_.m_102897_();
++         boolean flag4 = flag2 ? this.f_102815_.isTwoHanded() : this.f_102816_.isTwoHanded();
+          if (flag2 != flag4) {
+             this.m_102878_(p_102866_);
+             this.m_102875_(p_102866_);
+@@ -227,73 +_,85 @@
+    }
+ 
+    private void m_102875_(T p_102876_) {
+-      switch(this.f_102816_) {
+-      case EMPTY:
+-         this.f_102811_.f_104204_ = 0.0F;
+-         break;
+-      case BLOCK:
+-         this.f_102811_.f_104203_ = this.f_102811_.f_104203_ * 0.5F - 0.9424779F;
+-         this.f_102811_.f_104204_ = (-(float)Math.PI / 6F);
+-         break;
+-      case ITEM:
+-         this.f_102811_.f_104203_ = this.f_102811_.f_104203_ * 0.5F - ((float)Math.PI / 10F);
+-         this.f_102811_.f_104204_ = 0.0F;
+-         break;
+-      case THROW_SPEAR:
+-         this.f_102811_.f_104203_ = this.f_102811_.f_104203_ * 0.5F - (float)Math.PI;
+-         this.f_102811_.f_104204_ = 0.0F;
+-         break;
+-      case BOW_AND_ARROW:
+-         this.f_102811_.f_104204_ = -0.1F + this.f_102808_.f_104204_;
+-         this.f_102812_.f_104204_ = 0.1F + this.f_102808_.f_104204_ + 0.4F;
+-         this.f_102811_.f_104203_ = (-(float)Math.PI / 2F) + this.f_102808_.f_104203_;
+-         this.f_102812_.f_104203_ = (-(float)Math.PI / 2F) + this.f_102808_.f_104203_;
+-         break;
+-      case CROSSBOW_CHARGE:
+-         AnimationUtils.m_102086_(this.f_102811_, this.f_102812_, p_102876_, true);
+-         break;
+-      case CROSSBOW_HOLD:
+-         AnimationUtils.m_102097_(this.f_102811_, this.f_102812_, this.f_102808_, true);
+-         break;
+-      case SPYGLASS:
+-         this.f_102811_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_ - 1.9198622F - (p_102876_.m_6047_() ? 0.2617994F : 0.0F), -2.4F, 3.3F);
+-         this.f_102811_.f_104204_ = this.f_102808_.f_104204_ - 0.2617994F;
++      if(this.f_102816_ instanceof ArmPose rightArmPose)
++      {
++         switch (rightArmPose)
++         {
++            case EMPTY:
++               this.f_102811_.f_104204_ = 0.0F;
++               break;
++            case BLOCK:
++               this.f_102811_.f_104203_ = this.f_102811_.f_104203_ * 0.5F - 0.9424779F;
++               this.f_102811_.f_104204_ = (-(float) Math.PI / 6F);
++               break;
++            case ITEM:
++               this.f_102811_.f_104203_ = this.f_102811_.f_104203_ * 0.5F - ((float) Math.PI / 10F);
++               this.f_102811_.f_104204_ = 0.0F;
++               break;
++            case THROW_SPEAR:
++               this.f_102811_.f_104203_ = this.f_102811_.f_104203_ * 0.5F - (float) Math.PI;
++               this.f_102811_.f_104204_ = 0.0F;
++               break;
++            case BOW_AND_ARROW:
++               this.f_102811_.f_104204_ = -0.1F + this.f_102808_.f_104204_;
++               this.f_102812_.f_104204_ = 0.1F + this.f_102808_.f_104204_ + 0.4F;
++               this.f_102811_.f_104203_ = (-(float) Math.PI / 2F) + this.f_102808_.f_104203_;
++               this.f_102812_.f_104203_ = (-(float) Math.PI / 2F) + this.f_102808_.f_104203_;
++               break;
++            case CROSSBOW_CHARGE:
++               AnimationUtils.m_102086_(this.f_102811_, this.f_102812_, p_102876_, true);
++               break;
++            case CROSSBOW_HOLD:
++               AnimationUtils.m_102097_(this.f_102811_, this.f_102812_, this.f_102808_, true);
++               break;
++            case SPYGLASS:
++               this.f_102811_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_ - 1.9198622F - (p_102876_.m_6047_() ? 0.2617994F : 0.0F), -2.4F, 3.3F);
++               this.f_102811_.f_104204_ = this.f_102808_.f_104204_ - 0.2617994F;
++         }
++      } else {
++         this.f_102816_.applyTransform(this, p_102876_);
+       }
+ 
+    }
+ 
+    private void m_102878_(T p_102879_) {
+-      switch(this.f_102815_) {
+-      case EMPTY:
+-         this.f_102812_.f_104204_ = 0.0F;
+-         break;
+-      case BLOCK:
+-         this.f_102812_.f_104203_ = this.f_102812_.f_104203_ * 0.5F - 0.9424779F;
+-         this.f_102812_.f_104204_ = ((float)Math.PI / 6F);
+-         break;
+-      case ITEM:
+-         this.f_102812_.f_104203_ = this.f_102812_.f_104203_ * 0.5F - ((float)Math.PI / 10F);
+-         this.f_102812_.f_104204_ = 0.0F;
+-         break;
+-      case THROW_SPEAR:
+-         this.f_102812_.f_104203_ = this.f_102812_.f_104203_ * 0.5F - (float)Math.PI;
+-         this.f_102812_.f_104204_ = 0.0F;
+-         break;
+-      case BOW_AND_ARROW:
+-         this.f_102811_.f_104204_ = -0.1F + this.f_102808_.f_104204_ - 0.4F;
+-         this.f_102812_.f_104204_ = 0.1F + this.f_102808_.f_104204_;
+-         this.f_102811_.f_104203_ = (-(float)Math.PI / 2F) + this.f_102808_.f_104203_;
+-         this.f_102812_.f_104203_ = (-(float)Math.PI / 2F) + this.f_102808_.f_104203_;
+-         break;
+-      case CROSSBOW_CHARGE:
+-         AnimationUtils.m_102086_(this.f_102811_, this.f_102812_, p_102879_, false);
+-         break;
+-      case CROSSBOW_HOLD:
+-         AnimationUtils.m_102097_(this.f_102811_, this.f_102812_, this.f_102808_, false);
+-         break;
+-      case SPYGLASS:
+-         this.f_102812_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_ - 1.9198622F - (p_102879_.m_6047_() ? 0.2617994F : 0.0F), -2.4F, 3.3F);
+-         this.f_102812_.f_104204_ = this.f_102808_.f_104204_ + 0.2617994F;
++      if(this.f_102815_ instanceof ArmPose leftArmPose)
++      {
++         switch (leftArmPose)
++         {
++            case EMPTY:
++               this.f_102812_.f_104204_ = 0.0F;
++               break;
++            case BLOCK:
++               this.f_102812_.f_104203_ = this.f_102812_.f_104203_ * 0.5F - 0.9424779F;
++               this.f_102812_.f_104204_ = ((float) Math.PI / 6F);
++               break;
++            case ITEM:
++               this.f_102812_.f_104203_ = this.f_102812_.f_104203_ * 0.5F - ((float) Math.PI / 10F);
++               this.f_102812_.f_104204_ = 0.0F;
++               break;
++            case THROW_SPEAR:
++               this.f_102812_.f_104203_ = this.f_102812_.f_104203_ * 0.5F - (float) Math.PI;
++               this.f_102812_.f_104204_ = 0.0F;
++               break;
++            case BOW_AND_ARROW:
++               this.f_102811_.f_104204_ = -0.1F + this.f_102808_.f_104204_ - 0.4F;
++               this.f_102812_.f_104204_ = 0.1F + this.f_102808_.f_104204_;
++               this.f_102811_.f_104203_ = (-(float) Math.PI / 2F) + this.f_102808_.f_104203_;
++               this.f_102812_.f_104203_ = (-(float) Math.PI / 2F) + this.f_102808_.f_104203_;
++               break;
++            case CROSSBOW_CHARGE:
++               AnimationUtils.m_102086_(this.f_102811_, this.f_102812_, p_102879_, false);
++               break;
++            case CROSSBOW_HOLD:
++               AnimationUtils.m_102097_(this.f_102811_, this.f_102812_, this.f_102808_, false);
++               break;
++            case SPYGLASS:
++               this.f_102812_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_ - 1.9198622F - (p_102879_.m_6047_() ? 0.2617994F : 0.0F), -2.4F, 3.3F);
++               this.f_102812_.f_104204_ = this.f_102808_.f_104204_ + 0.2617994F;
++         }
++      } else {
++         this.f_102815_.applyTransform(this, p_102879_);
+       }
+ 
+    }
+@@ -386,7 +_,7 @@
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+-   public static enum ArmPose {
++   public static enum ArmPose implements net.minecraftforge.common.extensions.IForgeArmPose {
+       EMPTY(false),
+       ITEM(false),
+       BLOCK(false),
+@@ -402,8 +_,13 @@
+          this.f_102890_ = p_102896_;
+       }
+ 
+-      public boolean m_102897_() {
++      public boolean isTwoHanded() {
+          return this.f_102890_;
++      }
++
++      public <T extends LivingEntity> void applyTransform(HumanoidModel<T> model, T entity)
++      {
++
+       }
+    }
+ }

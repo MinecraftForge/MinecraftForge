@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/item/UseAnim.java
++++ b/net/minecraft/world/item/UseAnim.java
+@@ -1,6 +_,7 @@
+ package net.minecraft.world.item;
+ 
+-public enum UseAnim {
++public enum UseAnim implements net.minecraftforge.common.IExtensibleEnum
++{
+    NONE,
+    EAT,
+    DRINK,
+@@ -9,4 +_,9 @@
+    SPEAR,
+    CROSSBOW,
+    SPYGLASS;
++
++   public static UseAnim create(String name)
++   {
++       throw new IllegalStateException("Enum not extended");
++   }
+ }
