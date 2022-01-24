@@ -27,7 +27,7 @@
        EMPTY(false),
        ITEM(false),
        BLOCK(false),
-@@ -405,5 +_,28 @@
+@@ -405,5 +_,22 @@
        public boolean m_102897_() {
           return this.f_102890_;
        }
@@ -39,19 +39,13 @@
 +         this.forgeArmPose = forgeArmPose;
 +      }
 +
-+      public static ArmPose create(String name, boolean twoHanded) {
-+         throw new IllegalStateException("Enum not extended");
-+      }
-+
-+      public static ArmPose create(String name, boolean twoHanded, net.minecraftforge.client.IForgeArmPose forgeArmPose) {
++      public static ArmPose create(String name, boolean twoHanded, @javax.annotation.Nonnull net.minecraftforge.client.IForgeArmPose forgeArmPose) {
 +         throw new IllegalStateException("Enum not extended");
 +      }
 +
 +      public <T extends LivingEntity> void applyTransform(HumanoidModel<T> model, T entity) {
-+         if (this.forgeArmPose != null)
-+         {
-+            this.forgeArmPose.applyTransform(model, entity);
-+         }
++         com.google.common.base.Preconditions.checkNotNull(this.forgeArmPose, "applyTransform() must not be called on a vanilla ArmPose!");
++         this.forgeArmPose.applyTransform(model, entity);
 +      }
 +      // FORGE END
     }
