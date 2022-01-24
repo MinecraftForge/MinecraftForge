@@ -347,7 +347,7 @@ public class ForgeHooks
         return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
     }
 
-    public static int getLootingLevel(Entity target, @Nullable Entity killer, DamageSource cause)
+    public static int getLootingLevel(Entity target, @Nullable Entity killer, @Nullable DamageSource cause)
     {
         int looting = 0;
         if (killer instanceof LivingEntity)
@@ -357,7 +357,7 @@ public class ForgeHooks
         return looting;
     }
 
-    public static int getLootingLevel(LivingEntity target, DamageSource cause, int level)
+    public static int getLootingLevel(LivingEntity target, @Nullable DamageSource cause, int level)
     {
         LootingLevelEvent event = new LootingLevelEvent(target, cause, level);
         MinecraftForge.EVENT_BUS.post(event);
