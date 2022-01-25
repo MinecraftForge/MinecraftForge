@@ -59,7 +59,7 @@ public interface IItemRenderProperties
      * @param armorSlot    The slot the armor is in
      * @param _default     Original armor model. Will have attributes set.
      * @return A HumanoidModel to render instead of the default, will have the relevant properties copied in {@link #getBaseArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel).
-     * Returning null will cause the default to render.
+     *         Returning null will cause the default to render.
      * @see #getBaseArmorModel(LivingEntity, ItemStack, EquipmentSlot, HumanoidModel)
      */
     @Nullable
