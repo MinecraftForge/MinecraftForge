@@ -217,7 +217,7 @@
        return multimap;
     }
  
-@@ -954,6 +_,23 @@
+@@ -954,6 +_,28 @@
  
     public boolean m_41614_() {
        return this.m_41720_().m_41472_();
@@ -238,6 +238,11 @@
 +         this.gatherCapabilities(() -> f_41589_.initCapabilities(this, this.capNBT));
 +         if (this.capNBT != null) deserializeCaps(this.capNBT);
 +      }
++   }
++
++   public void stopUsingItem(net.minecraft.world.entity.LivingEntity entity)
++   {
++      this.m_41720_().stopUsingItem(entity, this);
     }
  
     public SoundEvent m_41615_() {

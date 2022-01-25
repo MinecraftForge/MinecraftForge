@@ -489,6 +489,14 @@
           if (this.f_20935_.m_41781_()) {
              this.m_21329_();
           }
+@@ -2951,6 +_,7 @@
+          this.m_21155_(1, false);
+       }
+ 
++      this.f_20935_.stopUsingItem(this);
+       this.f_20935_ = ItemStack.f_41583_;
+       this.f_20936_ = 0;
+    }
 @@ -3084,8 +_,8 @@
        }
  
