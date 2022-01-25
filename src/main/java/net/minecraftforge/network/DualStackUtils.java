@@ -55,6 +55,7 @@ public class DualStackUtils {
      * Get the device's local IP address, taking into account scenarios where the client's network adapter
      * supports IPv6 and has it enabled but the router's LAN does not.
      *
+     * @author Paint_Ninja
      * @return the client's local IP address or null if unable
      */
     @Nullable
