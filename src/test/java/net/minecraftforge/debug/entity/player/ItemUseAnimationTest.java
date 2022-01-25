@@ -20,20 +20,21 @@
 package net.minecraftforge.debug.entity.player;
 
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ClientRegistry;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.client.IItemRenderProperties;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.function.Consumer;
 
 @Mod(ItemUseAnimationTest.MOD_ID)
 public class ItemUseAnimationTest
@@ -66,20 +67,27 @@ public class ItemUseAnimationTest
             return SWING;
         }
 
-    }
-
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD, modid = MOD_ID, value = Dist.CLIENT)
-    private static class ClientEvents
-    {
-
-        private static final HumanoidModel.ArmPose SWING_POSE = HumanoidModel.ArmPose.create("SWING", false, (model, entity) -> model.rightArm.xRot = (float) (Math.random() * Math.PI * 2));
-
-        @SubscribeEvent
-        public static void clientSetup(FMLClientSetupEvent event)
+        @Override
+        public void initializeClient(Consumer<IItemRenderProperties> consumer)
         {
-            ClientRegistry.registerArmPose(SWING, SWING_POSE);
-        }
+            consumer.accept(new IItemRenderProperties()
+            {
 
+                private final HumanoidModel.ArmPose SWING_POSE = HumanoidModel.ArmPose.create("SWING", false, this::applyTransform);
+
+                @Override
+                public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack)
+                {
+                    return SWING_POSE;
+                }
+
+                private void applyTransform(HumanoidModel<?> model, LivingEntity entity)
+                {
+                    model.rightArm.xRot = (float) (Math.random() * Math.PI * 2);
+                }
+
+            });
+        }
     }
 
 }
