@@ -188,5 +188,7 @@ license="LGPL v2.1"
     modId="ingredient_invalidation"
 [[mods]]
     modId="client_command_test"
+[[mods]]
+    modId="custom_fishing_rod_test"
 
 # ADD ABOVE THIS LINE
