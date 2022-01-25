@@ -137,7 +137,7 @@ public class LivingSpawnEvent extends LivingEvent
         /**
          * @param spawner the position of a tileentity or approximate position of an entity that initiated the spawn if any
          */
-        public SpecialSpawn(Mob entity, Level world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
+        public SpecialSpawn(Mob entity, LevelAccessor world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
         {
             super(entity, world, x, y, z);
             this.spawner = spawner;

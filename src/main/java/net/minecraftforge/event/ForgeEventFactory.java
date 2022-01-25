@@ -205,7 +205,7 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
-    public static boolean canEntitySpawnSpawner(SpawnData spawnData, Mob entity, Level world, float x, float y, float z, BaseSpawner spawner)
+    public static boolean canEntitySpawnSpawner(SpawnData spawnData, Mob entity, LevelAccessor world, float x, float y, float z, BaseSpawner spawner)
     {
         Result result = canEntitySpawn(entity, world, x, y, z, spawner, MobSpawnType.SPAWNER);
         if (result == Result.DEFAULT)
@@ -214,7 +214,7 @@ public class ForgeEventFactory
             return result == Result.ALLOW;
     }
 
-    public static boolean doSpecialSpawn(Mob entity, Level world, float x, float y, float z, BaseSpawner spawner, MobSpawnType spawnReason)
+    public static boolean doSpecialSpawn(Mob entity, LevelAccessor world, float x, float y, float z, BaseSpawner spawner, MobSpawnType spawnReason)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, spawner, spawnReason));
     }
