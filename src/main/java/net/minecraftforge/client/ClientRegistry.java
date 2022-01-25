@@ -44,5 +44,4 @@ public class ClientRegistry
     {
         return entityShaderMap.get(entityClass);
     }
-
 }
