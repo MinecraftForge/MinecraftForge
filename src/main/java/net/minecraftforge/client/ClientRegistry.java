@@ -5,9 +5,7 @@
 
 package net.minecraftforge.client;
 
-import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.UseAnim;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -20,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ClientRegistry
 {
     private static Map<Class<? extends Entity>, ResourceLocation> entityShaderMap = new ConcurrentHashMap<>();
-    private static Map<UseAnim, HumanoidModel.ArmPose> useAnimationMap = new ConcurrentHashMap<>();
 
     /**
      * Registers a KeyBinding.
@@ -48,13 +45,4 @@ public class ClientRegistry
         return entityShaderMap.get(entityClass);
     }
 
-    public static void registerArmPose(UseAnim animation, HumanoidModel.ArmPose pose)
-    {
-        useAnimationMap.put(animation, pose);
-    }
-
-    public static HumanoidModel.ArmPose getArmPose(UseAnim animation)
-    {
-        return useAnimationMap.get(animation);
-    }
 }
