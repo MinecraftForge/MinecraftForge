@@ -6,8 +6,8 @@
        ItemStack itemstack1 = p_37137_.m_21206_();
 -      boolean flag = itemstack.m_150930_(Items.f_42523_);
 -      boolean flag1 = itemstack1.m_150930_(Items.f_42523_);
-+      boolean flag = itemstack.m_41720_() instanceof net.minecraft.world.item.FishingRodItem;
-+      boolean flag1 = itemstack1.m_41720_() instanceof net.minecraft.world.item.FishingRodItem;
++      boolean flag = itemstack.canPerformAction(net.minecraftforge.common.ToolActions.FISHING_ROD_CAST);
++      boolean flag1 = itemstack1.canPerformAction(net.minecraftforge.common.ToolActions.FISHING_ROD_CAST);
        if (!p_37137_.m_146910_() && p_37137_.m_6084_() && (flag || flag1) && !(this.m_20280_(p_37137_) > 1024.0D)) {
           return false;
        } else {
