@@ -35,9 +35,10 @@ public interface IForgeArmPose
      * This method should be used to apply all wanted transformations to the player when the ArmPose is active.
      * You can use {@link LivingEntity#getTicksUsingItem()} and {@link LivingEntity#getUseItemRemainingTicks()} for moving animations.
      *
-     * @param model  The humanoid model
-     * @param entity The humanoid entity
+     * @param model   The humanoid model
+     * @param entity  The humanoid entity
+     * @param isRight True if the animation is applied to the right arm, false if to the left arm.
      */
-    void applyTransform(HumanoidModel<?> model, LivingEntity entity);
+    void applyTransform(HumanoidModel<?> model, LivingEntity entity, boolean isRight);
 
 }
