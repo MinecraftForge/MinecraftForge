@@ -50,6 +50,14 @@
  
           if (p_194239_ instanceof CommandBlockEntity && this.f_104888_.f_91080_ instanceof CommandBlockEditScreen) {
              ((CommandBlockEditScreen)this.f_104888_.f_91080_).m_98398_();
+@@ -1139,6 +_,7 @@
+    public void m_7443_(ClientboundCommandsPacket p_104990_) {
+       PacketUtils.m_131363_(p_104990_, this, this.f_104888_);
+       this.f_104899_ = new CommandDispatcher<>(p_104990_.m_131884_());
++      this.f_104899_ = net.minecraftforge.client.ClientCommandHandler.mergeServerCommands(this.f_104899_);
+    }
+ 
+    public void m_7183_(ClientboundStopSoundPacket p_105116_) {
 @@ -1160,6 +_,7 @@
        clientrecipebook.m_90625_(this.f_104900_.m_44051_());
        clientrecipebook.m_90639_().forEach(mutablesearchtree::m_8080_);
