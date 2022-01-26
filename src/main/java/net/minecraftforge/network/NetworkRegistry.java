@@ -330,10 +330,20 @@ public class NetworkRegistry
          */
         private final String messageContext;
 
+        /**
+         * If the connection should await a response to this packet to continue
+         */
+        private final boolean needsResponse;
+
         public LoginPayload(final FriendlyByteBuf buffer, final ResourceLocation channelName, final String messageContext) {
+            this(buffer, channelName, messageContext, true);
+        }
+
+        public LoginPayload(final FriendlyByteBuf buffer, final ResourceLocation channelName, final String messageContext, final boolean needsResponse) {
             this.data = buffer;
             this.channelName = channelName;
             this.messageContext = messageContext;
+            this.needsResponse = needsResponse;
         }
 
         public FriendlyByteBuf getData() {
@@ -346,6 +356,10 @@ public class NetworkRegistry
 
         public String getMessageContext() {
             return messageContext;
+        }
+
+        public boolean needsResponse() {
+            return needsResponse;
         }
     }
 

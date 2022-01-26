@@ -150,6 +150,7 @@ public class IndexedMessageCodec
     void consume(FriendlyByteBuf payload, int payloadIndex, Supplier<NetworkEvent.Context> context) {
         if (payload == null) {
             LOGGER.error(SIMPLENET, "Received empty payload on channel {}", Optional.ofNullable(networkInstance).map(NetworkInstance::getChannelName).map(Objects::toString).orElse("MISSING CHANNEL"));
+            context.get().setPacketHandled(true); //don't disconnect because of empty packets
             return;
         }
         short discriminator = payload.readUnsignedByte();

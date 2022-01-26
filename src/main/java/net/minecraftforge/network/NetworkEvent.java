@@ -121,6 +121,10 @@ public class NetworkEvent extends Event
             collected.add(new NetworkRegistry.LoginPayload(buffer, channelName, context));
         }
 
+        public void add(FriendlyByteBuf buffer, ResourceLocation channelName, String context, boolean needsResponse) {
+            collected.add(new NetworkRegistry.LoginPayload(buffer, channelName, context, needsResponse));
+        }
+
         public boolean isLocal() {
             return isLocal;
         }

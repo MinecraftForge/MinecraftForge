@@ -24,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraftforge.network.HandshakeMessages.INoResponse;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkInstance;
@@ -70,7 +71,7 @@ public class SimpleChannel
             packetGenerator.apply(gatherEvent.isLocal()).forEach(p->{
                 FriendlyByteBuf pb = new FriendlyByteBuf(Unpooled.buffer());
                 this.indexedCodec.build(p.getRight(), pb);
-                gatherEvent.add(pb, this.instance.getChannelName(), p.getLeft());
+                gatherEvent.add(pb, this.instance.getChannelName(), p.getLeft(), !(p.getRight() instanceof INoResponse));
             });
         });
     }
