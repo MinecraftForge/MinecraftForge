@@ -37,7 +37,7 @@
  
     public void m_5797_(ClientGamePacketListener p_132041_) {
        p_132041_.m_7413_(this);
-+      if (this.shouldRelease) this.f_132030_.release();
++      if (this.shouldRelease) this.f_132030_.release(); // FORGE: Fix impl buffer leaks (MC-121884), can only be fixed partially, because else you get problems in LAN-Worlds
     }
  
     public ResourceLocation m_132042_() {
