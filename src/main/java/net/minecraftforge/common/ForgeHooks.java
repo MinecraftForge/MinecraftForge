@@ -818,7 +818,7 @@ public class ForgeHooks
 
             if (lootTable != null && lootTable.has("forge:conditions"))
             {
-                final JsonArray conditions = GsonHelper.getAsJsonArray(lootTable, "conditions");
+                final JsonArray conditions = GsonHelper.getAsJsonArray(lootTable, "forge:conditions");
 
                 if (!CraftingHelper.processConditions(conditions))
                 {
