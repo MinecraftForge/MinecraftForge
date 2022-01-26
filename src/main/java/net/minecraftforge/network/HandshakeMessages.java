@@ -59,7 +59,7 @@ public class HandshakeMessages
         }
     }
     /**
-     * Server to client "list of mods". Always first handshake message.
+     * Server to client "list of mods". Always first handshake message after the data sent by S2CModData.
      */
     public static class S2CModList extends LoginIndexedMessage
     {
@@ -69,7 +69,7 @@ public class HandshakeMessages
 
         public S2CModList()
         {
-            this.mods = ModList.get().getMods().stream().map(mod -> mod.getModId() + "#" + mod.getVersion().toString()).collect(Collectors.toList());
+            this.mods = ModList.get().getMods().stream().map(mod -> mod.getModId()).collect(Collectors.toList());
             this.channels = NetworkRegistry.buildChannelVersions();
             this.registries = RegistryManager.getRegistryNamesForSyncToClient();
         }
@@ -126,6 +126,43 @@ public class HandshakeMessages
 
         public Map<ResourceLocation, String> getChannels() {
             return this.channels;
+        }
+    }
+
+    /**
+     * Prefixes S2CModList by sending additional data about the mods installed on the server to the client
+     * The mod data is stored as follows: [modId -> [modName, modVersion]]
+     */
+    public static class S2CModData extends LoginIndexedMessage implements INoResponse
+    {
+        private final Map<String, Pair<String, String>> mods;
+
+        public S2CModData()
+        {
+            this.mods = ModList.get().getMods().stream().map(info -> Pair.of(info.getModId(), Pair.of(info.getDisplayName(), info.getVersion().toString()))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+        }
+
+        private S2CModData(Map<String, Pair<String, String>> mods) {
+            this.mods = mods;
+        }
+
+        public static S2CModData decode(FriendlyByteBuf input)
+        {
+            Map<String, Pair<String, String>> mods = input.readMap(o -> o.readUtf(0x100), o -> Pair.of(o.readUtf(0x100), o.readUtf(0x100)));
+            return new S2CModData(mods);
+        }
+
+        public void encode(FriendlyByteBuf output)
+        {
+            output.writeMap(mods, (o, s) -> o.writeUtf(s, 0x100), (o, p) -> {
+                o.writeUtf(p.getLeft(), 0x100);
+                o.writeUtf(p.getRight(), 0x100);
+            });
+        }
+
+        public Map<String, Pair<String, String>> getMods()
+        {
+            return mods;
         }
     }
 

@@ -23,12 +23,14 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 
+import net.minecraft.network.Connection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -36,12 +38,12 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class ConnectionData
 {
-    private ImmutableMap<String, String> modList;
+    private ImmutableMap<String, Pair<String, String>> modData;
     private ImmutableMap<ResourceLocation, String> channels;
 
-    /* package private */ ConnectionData(Map<String, String> modList, Map<ResourceLocation, String> channels)
+    /* package private */ ConnectionData(Map<String, Pair<String, String>> modData, Map<ResourceLocation, String> channels)
     {
-        this.modList = ImmutableMap.copyOf(modList);
+        this.modData = ImmutableMap.copyOf(modData);
         this.channels = ImmutableMap.copyOf(channels);
     }
 
@@ -57,11 +59,11 @@ public class ConnectionData
      */
     public ImmutableList<String> getModList()
     {
-        return modList.keySet().asList();
+        return modData.keySet().asList();
     }
 
     /**
-     * Returns the list of mods and mod versions present in the remote.
+     * Returns the list of mods and respective mod names and versions present in the remote.
      * <b>WARNING: This list is not authoritative.
      *    A mod missing from the list does not mean the mod isn't there,
      *    and similarly a mod present in the list does not mean it is there.
@@ -70,9 +72,9 @@ public class ConnectionData
      *  </b>
      * @return An immutable map of MODIDs and their respective mod versions
      */
-    public ImmutableMap<String, String> getModVersions()
+    public ImmutableMap<String, Pair<String, String>> getModData()
     {
-        return modList;
+        return modData;
     }
 
     /**
@@ -99,9 +101,9 @@ public class ConnectionData
      */
     public record ModMismatchData(Map<ResourceLocation, String> mismatchedChannelData, Map<ResourceLocation, Pair<String, String>> presentChannelData, Map<String, String> missingRegistryModData, boolean mismatchedDataFromServer)
     {
-        public static ModMismatchData channel(Map<ResourceLocation, String> mismatchedChannels, Map<String, String> serverMods, boolean mismatchedDataFromServer)
+        public static ModMismatchData channel(Map<ResourceLocation, String> mismatchedChannels, Connection connection, boolean mismatchedDataFromServer)
         {
-            Map<ResourceLocation, String> mismatchedChannelData = toRemoteChannelData(mismatchedChannels, serverMods);
+            Map<ResourceLocation, String> mismatchedChannelData = toRemoteChannelData(mismatchedChannels, connection, mismatchedDataFromServer);
             Map<ResourceLocation, Pair<String, String>> presentChannelData = getLocalChannelData(mismatchedChannels);
 
             return new ModMismatchData(mismatchedChannelData, presentChannelData, new HashMap<>(), mismatchedDataFromServer);
@@ -114,19 +116,16 @@ public class ConnectionData
             return new ModMismatchData(new HashMap<>(), new HashMap<>(), missingRegistryModData, true);
         }
 
-        public static Map<ResourceLocation, String> toRemoteChannelData(Map<ResourceLocation, String> mismatchedChannels, Map<String, String> serverMods)
+        public static Map<ResourceLocation, String> toRemoteChannelData(Map<ResourceLocation, String> mismatchedChannels, Connection connection, boolean mismatchedDataFromServer)
         {
-            return mismatchedChannels.keySet().stream().map(s -> getRemoteModVersionFromChannel(s, serverMods)).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+            ConnectionData data = NetworkHooks.getConnectionData(connection);
+            Map<String, String> remoteModVersions = mismatchedDataFromServer && data != null ? data.getModData().entrySet().stream().collect(Collectors.toMap(Entry::getKey, e -> e.getValue().getRight())) : new HashMap<>();
+            return mismatchedChannels.keySet().stream().map(channel -> Pair.of(channel, remoteModVersions.getOrDefault(channel.getNamespace(), NetworkRegistry.ABSENT))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         }
 
-        public static Map<ResourceLocation, Pair<String, String>> getLocalChannelData(Map<ResourceLocation, String> mismastchedChannelsFilter)
+        public static Map<ResourceLocation, Pair<String, String>> getLocalChannelData(Map<ResourceLocation, String> mismatchedChannelsFilter)
         {
-            return NetworkRegistry.buildChannelVersions().keySet().stream().filter(mismastchedChannelsFilter::containsKey).map(ModMismatchData::getOwnModDataFromChannel).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-        }
-
-        public static Pair<ResourceLocation, String> getRemoteModVersionFromChannel(ResourceLocation channel, Map<String, String> remoteMods)
-        {
-            return Pair.of(channel, remoteMods.getOrDefault(channel.getNamespace(), NetworkRegistry.ABSENT));
+            return NetworkRegistry.buildChannelVersions().keySet().stream().filter(mismatchedChannelsFilter::containsKey).map(ModMismatchData::getOwnModDataFromChannel).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         }
 
         public static Pair<ResourceLocation, Pair<String, String>> getOwnModDataFromChannel(ResourceLocation channel)

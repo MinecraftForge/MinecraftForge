@@ -186,12 +186,11 @@ public class HandshakeHandler
     void handleServerModListOnClient(HandshakeMessages.S2CModList serverModList, Supplier<NetworkEvent.Context> c)
     {
         LOGGER.debug(FMLHSMARKER, "Logging into server with mod list [{}]", String.join(", ", serverModList.getModList()));
-		Map<String, String> serverMods = serverModList.getModList().stream().map(s -> s.split("#")).map(a -> Pair.of(a[0], a.length > 1 ? a[1] : "")).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-        c.get().setPacketHandled(true);
         Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateClientChannels(serverModList.getChannels());
+        c.get().setPacketHandled(true);
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
-            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, serverMods, true));
+            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, c.get().getNetworkManager(), true));
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
             return;
         }
@@ -200,12 +199,17 @@ public class HandshakeHandler
         LOGGER.debug(FMLHSMARKER, "Accepted server connection");
         // Set the modded marker on the channel so we know we got packets
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_NETVERSION).set(NetworkConstants.NETVERSION);
-        c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA)
-                .set(new ConnectionData(serverMods, serverModList.getChannels()));
+        NetworkHooks.appendConnectionData(c.get().getNetworkManager(), serverModList.getModList().stream().collect(Collectors.toMap(Function.identity(), s -> Pair.of("", ""))), serverModList.getChannels());
 
         this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
         this.registrySnapshots = Maps.newHashMap();
         LOGGER.debug(REGISTRIES, "Expecting {} registries: {}", ()->this.registriesToReceive.size(), ()->this.registriesToReceive);
+    }
+
+    void handleModData(HandshakeMessages.S2CModData modData, Supplier<NetworkEvent.Context> c)
+    {
+        c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(new ConnectionData(modData.getMods(), Map.of()));
+        c.get().setPacketHandled(true);
     }
 
     <MSG extends IntSupplier> void handleIndexedMessage(MSG message, Supplier<NetworkEvent.Context> c)
@@ -222,12 +226,12 @@ public class HandshakeHandler
         LOGGER.debug(FMLHSMARKER, "Received client connection with modlist [{}]",  String.join(", ", clientModList.getModList()));
         Map<ResourceLocation, String> mismatchedChannels = NetworkRegistry.validateServerChannels(clientModList.getChannels());
         c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA)
-                .set(new ConnectionData(clientModList.getModList().stream().collect(Collectors.toMap(Function.identity(), s -> "")), clientModList.getChannels()));
+                .set(new ConnectionData(clientModList.getModList().stream().collect(Collectors.toMap(Function.identity(), s -> Pair.of("", ""))), clientModList.getChannels()));
         c.get().setPacketHandled(true);
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
             NetworkConstants.handshakeChannel.reply(new HandshakeMessages.S2CModMismatchData(
-                    ModMismatchData.toRemoteChannelData(mismatchedChannels, new HashMap<>()),
+                    ModMismatchData.toRemoteChannelData(mismatchedChannels, c.get().getNetworkManager(), false),
                     ModMismatchData.getLocalChannelData(mismatchedChannels)),
                     c.get());
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
@@ -242,6 +246,7 @@ public class HandshakeHandler
             LOGGER.error(FMLHSMARKER, "Channels [{}] rejected their client side version number",
                     modMismatchData.getMismatchedChannelData().keySet().stream().map(Object::toString).collect(Collectors.joining(",")));
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
+            c.get().setPacketHandled(true);
             c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(new ModMismatchData(modMismatchData.getMismatchedChannelData(), modMismatchData.getPresentChannelData(), new HashMap<>(), false));
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
         }

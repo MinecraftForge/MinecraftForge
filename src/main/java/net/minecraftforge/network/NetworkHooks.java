@@ -19,6 +19,7 @@
 
 package net.minecraftforge.network;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -33,6 +34,7 @@ import net.minecraftforge.fml.util.thread.EffectiveSide;
 import net.minecraftforge.client.ConfigGuiHandler.ConfigGuiFactory;
 import net.minecraftforge.network.ConnectionData.ModMismatchData;
 import net.minecraftforge.network.filters.NetworkFilters;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -219,6 +221,14 @@ public class NetworkHooks
         player.containerMenu = c;
         player.initMenu(player.containerMenu);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
+    }
+
+    static void appendConnectionData(Connection mgr, Map<String, Pair<String, String>> modData, Map<ResourceLocation, String> channels)
+    {
+        ConnectionData data = mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).get();
+
+        data = data != null ? new ConnectionData(data.getModData().isEmpty() ? modData : data.getModData(), data.getChannels().isEmpty() ? channels : data.getChannels()) : new ConnectionData(modData, channels);
+        mgr.channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(data);
     }
 
     @Nullable
