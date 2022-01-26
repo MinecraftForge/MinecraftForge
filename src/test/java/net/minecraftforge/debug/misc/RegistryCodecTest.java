@@ -46,12 +46,14 @@ public class RegistryCodecTest
     private static final Logger LOGGER = LogManager.getLogger("Codec Registry Test");
 
     /**
-     *     This Codec can serialize and deserialize a Pair<Item, Block>
-     *     The result Json (or nbt equivalent) will have this structure :
-     *     {
-     *         "block": "block_registry_name",
-     *         "item": "item_registry_name"
-     *     }
+     * This Codec can serialize and deserialize a {@code Pair<Item, Block>}.
+     * The resulting JSON (or NBT equivalent) will have this structure:
+     * <pre>{@code
+     * {
+     *     "block": "block_registry_name",
+     *     "item": "item_registry_name"
+     * }
+     * }</pre>
      */
     private static final Codec<Pair<Block, Item>> CODEC = RecordCodecBuilder.create(codecInstance -> codecInstance.group(
             ForgeRegistries.BLOCKS.getCodec().fieldOf("block").forGetter(Pair::getFirst),
@@ -79,11 +81,11 @@ public class RegistryCodecTest
 
         //Serialize the Pair to NBT, and log an info in case of success or a warning in case of error
         DataResult<Tag> result2 = CODEC.encodeStart(NbtOps.INSTANCE, pair);
-        result2.resultOrPartial(LOGGER::warn).ifPresent(tag -> LOGGER.info("Successfully encoded a Pair<Block, Item> to a nbt tag: " + tag));
+        result2.resultOrPartial(LOGGER::warn).ifPresent(tag -> LOGGER.info("Successfully encoded a Pair<Block, Item> to a nbt tag: {}", tag));
 
         //Serialize the Pair to JSON using the COMPRESSED JsonOps, this will use the int registry id instead of the ResourceLocation one,
         // this is not recommended because int IDs can change, so you should not rely on them
         DataResult<JsonElement> result3 = CODEC.encodeStart(JsonOps.COMPRESSED, pair);
-        result3.resultOrPartial(LOGGER::warn).ifPresent(compressedJson -> LOGGER.info("Successfully encoded a Pair<Block, Item> to a compressed json: " + compressedJson));
+        result3.resultOrPartial(LOGGER::warn).ifPresent(compressedJson -> LOGGER.info("Successfully encoded a Pair<Block, Item> to a compressed json: {}", compressedJson));
     }
 }

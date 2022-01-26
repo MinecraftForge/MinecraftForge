@@ -888,12 +888,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         @Override
         public <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input)
         {
-            if(ops.compressMaps())
+            if (ops.compressMaps())
             {
                 return ops.getNumberValue(input).flatMap(n ->
                 {
                     int id = n.intValue();
-                    if(ids.get(id) == null)
+                    if (ids.get(id) == null)
                     {
                         return DataResult.error("Unknown registry id " + n);
                     }
@@ -903,9 +903,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             }
             else
             {
-                return ResourceLocation.CODEC.decode(ops, input).flatMap(keyValuePair -> !ForgeRegistry.this.containsKey(keyValuePair.getFirst()) ?
-                        DataResult.error("Unknown registry key: " + keyValuePair.getFirst()) :
-                        DataResult.success(keyValuePair.mapFirst(ForgeRegistry.this::getValue)));
+                return ResourceLocation.CODEC.decode(ops, input).flatMap(keyValuePair -> !ForgeRegistry.this.containsKey(keyValuePair.getFirst())
+                        ? DataResult.error("Unknown registry key: " + keyValuePair.getFirst())
+                        : DataResult.success(keyValuePair.mapFirst(ForgeRegistry.this::getValue)));
             }
         }
 
@@ -913,7 +913,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         public <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix)
         {
             ResourceLocation key = getKey(input);
-            if(key == null)
+            if (key == null)
             {
                 return DataResult.error("Unknown registry element: " + input);
             }
