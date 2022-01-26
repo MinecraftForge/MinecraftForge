@@ -17,10 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.loading;
+package net.minecraftforge.fml.loading.gui;
 
+import net.minecraftforge.fml.client.loading.IStartupMessageRenderer;
 import net.minecraftforge.fml.loading.progress.StartupMessageManager;
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.stb.STBEasyFont;
 import org.lwjgl.system.MemoryUtil;
 
@@ -31,7 +31,8 @@ import java.util.List;
 
 import static org.lwjgl.opengl.GL30C.*;
 
-public class StartupMessageRenderer {
+public class StartupMessageRenderer implements IStartupMessageRenderer
+{
     private static final String vertexShaderSource = """
             #version 150 core
         
@@ -58,92 +59,103 @@ public class StartupMessageRenderer {
                 color = colorIn;
             }
             """;
+
+    private boolean initialized = false;
+    private int program;
+    private int posMultiplierLocation;
+    private int posShiftLocation;
+    private int colorInLocation;
+    private int sizeLocation;
     
-    private final int program;
-    private final int posMultiplierLocation;
-    private final int posShiftLocation;
-    private final int colorInLocation;
-    private final int sizeLocation;
+    private int VAO;
     
-    private final int VAO;
-    
-    private final int dataBuffer;
+    private int dataBuffer;
     private int bufferLength = 27000;
     private ByteBuffer charBuffer;
     
     private int quadCount = 0;
-    private final int elementBuffer;
+    private int elementBuffer;
     
     private float height;
     
     public StartupMessageRenderer() {
+
+    }
+
+    @Override
+    public void startup() {
+        if (initialized)
+            return;
+
+        initialized = true;
+
         int previousVAO = glGetInteger(GL_VERTEX_ARRAY_BINDING);
         int previousArrayBuffer = glGetInteger(GL_ARRAY_BUFFER_BINDING);
         int previousElementBuffer = glGetInteger(GL_ELEMENT_ARRAY_BUFFER_BINDING);
-        
+
         int vertexShader = glCreateShader(GL_VERTEX_SHADER);
         int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        
+
         glShaderSource(vertexShader, vertexShaderSource);
         glShaderSource(fragmentShader, fragmentShaderSource);
-        
+
         glCompileShader(vertexShader);
         glCompileShader(fragmentShader);
-        
+
         if (glGetShaderi(vertexShader, GL_COMPILE_STATUS) != GL_TRUE || glGetShaderi(fragmentShader, GL_COMPILE_STATUS) != GL_TRUE) {
             System.err.println("Shader compilation failed");
             System.err.println("Vertex shader log\n" + glGetShaderInfoLog(vertexShader));
             System.err.println("Fragment shader log\n" + glGetShaderInfoLog(fragmentShader));
             throw new IllegalStateException("Shader compilation failed");
         }
-        
+
         program = glCreateProgram();
         glAttachShader(program, vertexShader);
         glAttachShader(program, fragmentShader);
         glLinkProgram(program);
-        
+
         if (glGetProgrami(program, GL_LINK_STATUS) != GL_TRUE) {
             System.err.println("Program linking failed");
             System.err.println("Program link log\n" + glGetProgramInfoLog(program));
             throw new IllegalStateException("Program link failed");
         }
-        
+
         glDetachShader(program, vertexShader);
         glDetachShader(program, fragmentShader);
-        
+
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
-        
+
         posMultiplierLocation = glGetUniformLocation(program, "posMultiplier");
         posShiftLocation = glGetUniformLocation(program, "posShift");
         colorInLocation = glGetUniformLocation(program, "colorIn");
         sizeLocation = glGetUniformLocation(program, "size");
-        
+
         int inputLocation = glGetAttribLocation(program, "position");
-        
+
         VAO = glGenVertexArrays();
         dataBuffer = glGenBuffers();
         elementBuffer = glGenBuffers();
-        
+
         glBindVertexArray(VAO);
-        
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBuffer);
-        
+
         glBindBuffer(GL_ARRAY_BUFFER, dataBuffer);
         glVertexAttribPointer(inputLocation, 2, GL_FLOAT, false, 16, 0);
         glEnableVertexAttribArray(inputLocation);
-        
+
         glBindVertexArray(0);
-        
+
         glBufferData(GL_ARRAY_BUFFER, bufferLength, GL_DYNAMIC_DRAW);
         charBuffer = MemoryUtil.memAlloc(bufferLength);
-        
+
         glBindBuffer(GL_ARRAY_BUFFER, previousArrayBuffer);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, previousElementBuffer);
         glBindVertexArray(previousVAO);
     }
     
-    public void close() {
+    public void shutdown() {
         MemoryUtil.memFree(charBuffer);
         
         glDeleteBuffers(elementBuffer);
@@ -153,6 +165,7 @@ public class StartupMessageRenderer {
         glDeleteProgram(program);
     }
     
+    @Override
     public void render(float width, float height, float textSize, boolean isDarkMode) {
         this.height = height;
         
@@ -181,15 +194,15 @@ public class StartupMessageRenderer {
             float size = Math.min(width / 854, height / 480) * textSize;
             glUniform1f(sizeLocation, size);
             
-            List<Pair<Integer, StartupMessageManager.Message>> messages = StartupMessageManager.getMessages();
+            List<StartupMessageManager.MessageEntry> messages = StartupMessageManager.getMessages();
             for (int i = 0; i < messages.size(); i++) {
                 boolean nofade = i == 0;
-                final Pair<Integer, StartupMessageManager.Message> pair = messages.get(i);
-                final float fade = nofade ? 1.0f : clamp((4000.0f - (float) pair.getLeft() - (i - 4) * 1000.0f) / 5000.0f, 0.0f, 1.0f);
+                final StartupMessageManager.MessageEntry entry = messages.get(i);
+                final float fade = nofade ? 1.0f : clamp((4000.0f - (float) entry.age() - (i - 4) * 1000.0f) / 5000.0f, 0.0f, 1.0f);
                 if (fade < 0.01f) {
                     continue;
                 }
-                StartupMessageManager.Message msg = pair.getRight();
+                StartupMessageManager.Message msg = entry.message();
                 renderMessage(msg.getText(), msg.getTypeColor(isDarkMode), 1, i, size, true, fade);
             }
             renderMemoryInfo(size);
@@ -257,7 +270,7 @@ public class StartupMessageRenderer {
         if (num < min) {
             return min;
         } else {
-            return num > max ? max : num;
+            return Math.min(num, max);
         }
     }
     

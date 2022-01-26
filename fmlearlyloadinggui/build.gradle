@@ -1,0 +1,72 @@
+plugins {
+    id 'com.github.ben-manes.versions'
+    id 'org.javamodularity.moduleplugin' version '1.8.3' apply false
+}
+apply plugin: 'java-library'
+apply plugin: 'jacoco'
+apply plugin: 'org.javamodularity.moduleplugin'
+
+dependencyUpdates.rejectVersionIf { isNonStable(it.candidate.version) }
+configurations.forEach{ it.transitive = false }
+
+ext {
+    LWJGL_VERSION = '3.2.2'
+    LOG4J_VERSION = "2.17.1"
+    GUAVA_VERSION = "21.0"
+}
+
+dependencies {
+    implementation project(':fmlloader')
+    compileOnly('org.jetbrains:annotations:21.0.0')
+
+    implementation "org.lwjgl:lwjgl:${LWJGL_VERSION}"
+    implementation "org.lwjgl:lwjgl-glfw:${LWJGL_VERSION}"
+    implementation "org.lwjgl:lwjgl-opengl:${LWJGL_VERSION}"
+    implementation "org.lwjgl:lwjgl-stb:${LWJGL_VERSION}"
+    implementation "org.apache.logging.log4j:log4j-api:${LOG4J_VERSION}"
+    implementation "com.google.guava:guava:${GUAVA_VERSION}"
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+ext {
+    MANIFESTS = [
+            '/': [
+                    'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                    'Git-Commit': GIT_INFO.abbreviatedId,
+                    'Git-Branch': GIT_INFO.branch,
+                    'Build-Number': "${System.getenv('BUILD_NUMBER')?:0}",
+            ] as LinkedHashMap,
+            'net/minecraftforge/fml/loading/': [
+                    'Specification-Title':      'FMLEarlyLoadingGui',
+                    'Specification-Vendor':     'Forge Development LLC',
+                    'Specification-Version':    '1',
+                    'Implementation-Title':     'FML Early Loading Gui',
+                    'Implementation-Version':   '1.0',
+                    'Implementation-Vendor':    'Forge'
+            ] as LinkedHashMap
+    ]
+}
+
+jar.doFirst {
+    MANIFESTS.each { pkg, values ->
+        manifest.attributes(values, pkg)
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-Xlint:unchecked'
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+}
+
+publishing.publications.mavenJava(MavenPublication) {
+    from components.java
+    artifact sourcesJar
+}

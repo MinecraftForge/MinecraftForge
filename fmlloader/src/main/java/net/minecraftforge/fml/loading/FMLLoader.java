@@ -23,6 +23,7 @@ import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.api.*;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 import cpw.mods.modlauncher.util.ServiceLoaderUtils;
+import net.minecraftforge.fml.client.loading.StartupMessageRendererManager;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -166,6 +167,8 @@ public class FMLLoader
 
         versionInfo = new VersionInfo(arguments);
 
+        StartupMessageRendererManager.getInstance().setup(dist, Launcher.INSTANCE.findLayerManager().orElseThrow());
+        progressWindowTick = EarlyProgressVisualization.INSTANCE.accept(dist, commonLaunchHandler.isData(), versionInfo.mcVersion(), Launcher.INSTANCE.findLayerManager().orElseThrow());
         StartupMessageManager.modLoaderConsumer().ifPresent(c->c.accept("Early Loading!"));
         accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
 
@@ -183,7 +186,6 @@ public class FMLLoader
     }
 
     public static List<ITransformationService.Resource> completeScan(IModuleLayerManager layerManager) {
-        progressWindowTick = EarlyProgressVisualization.INSTANCE.accept(dist, commonLaunchHandler.isData(), versionInfo.mcVersion());
         moduleLayerManager = layerManager;
         languageLoadingProvider = new LanguageLoadingProvider();
         backgroundScanHandler = modValidator.stage2Validation();

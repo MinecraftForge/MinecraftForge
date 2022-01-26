@@ -21,6 +21,8 @@ package net.minecraftforge.client.loading;
 
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.client.loading.IStartupMessageRenderer;
+import net.minecraftforge.fml.client.loading.StartupMessageRendererManager;
 
 import static org.lwjgl.opengl.GL30C.*;
 
@@ -29,12 +31,13 @@ public class EarlyLoaderGUI {
     private final Window window;
     private boolean handledElsewhere;
     
-    private final StartupMessageRenderer renderer;
+    private final IStartupMessageRenderer renderer;
     
     public EarlyLoaderGUI(final Minecraft minecraft) {
         this.minecraft = minecraft;
         this.window = minecraft.getWindow();
-        renderer = new StartupMessageRenderer();
+        renderer = StartupMessageRendererManager.getInstance().get().orElse(null);
+        if (renderer != null) renderer.startup();
     }
     
     public void handleElsewhere() {
@@ -42,11 +45,13 @@ public class EarlyLoaderGUI {
     }
     
     void renderFromGUI() {
-        renderer.render(window.getScreenWidth(), window.getScreenHeight(), 2, minecraft.options.darkMojangStudiosBackground);
+        if (renderer != null) {
+            renderer.render(window.getScreenWidth(), window.getScreenHeight(), 2, minecraft.options.darkMojangStudiosBackground);
+        }
     }
     
     void renderTick() {
-        if (handledElsewhere) {
+        if (handledElsewhere || renderer == null) {
             return;
         }
         int guiScale = window.calculateScale(0, false);
@@ -57,5 +62,6 @@ public class EarlyLoaderGUI {
         glClear(GL_COLOR_BUFFER_BIT);
         
         renderer.render(window.getScreenWidth(), window.getScreenHeight(), 2, isDarkMode);
+        window.updateDisplay();
     }
 }

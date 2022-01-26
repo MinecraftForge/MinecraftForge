@@ -29,13 +29,15 @@ import java.util.stream.Collectors;
 
 public class StartupMessageManager {
 
+    public record MessageEntry(int age, Message message) {}
+
     private static volatile EnumMap<MessageType, List<Message>> messages = new EnumMap<>(MessageType.class);
 
-    public static List<Pair<Integer,Message>> getMessages() {
+    public static List<MessageEntry> getMessages() {
         final long ts = System.nanoTime();
         return messages.values().stream().flatMap(Collection::stream).
                 sorted(Comparator.comparingLong(Message::getTimestamp).thenComparing(Message::getText).reversed()).
-                map(m -> Pair.of((int) ((ts - m.timestamp) / 1e6), m)).
+                map(m -> new MessageEntry((int) ((ts - m.timestamp) / 1e6), m)).
                 limit(5).
                 collect(Collectors.toList());
     }

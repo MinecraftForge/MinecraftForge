@@ -9,6 +9,7 @@ rootProject.name = 'ForgeRoot'
 
 include 'fmlloader'
 include 'fmlcore'
+include 'fmlearlyloadinggui'
 include 'mclanguage'
 include 'javafmllanguage'
 

@@ -19,29 +19,65 @@
 
 package net.minecraftforge.fml.loading.progress;
 
-import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
-import net.minecraftforge.fml.loading.FMLLoader;
+import cpw.mods.modlauncher.api.IModuleLayerManager;
+import cpw.mods.modlauncher.util.ServiceLoaderUtils;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.client.loading.IStartupMessageRenderer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ServiceLoader;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
 import java.util.function.LongSupplier;
 import java.util.function.Supplier;
 
-public enum EarlyProgressVisualization {
+public enum EarlyProgressVisualization implements Visualization
+{
     INSTANCE;
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private Visualization visualization;
 
-    public Runnable accept(Dist dist, boolean isData)
+    public Runnable accept(Dist dist, boolean isData, IModuleLayerManager moduleLayerManager)
     {
-        return accept(dist, isData, null);
+        return accept(dist, isData, null, moduleLayerManager);
     }
 
-    public Runnable accept(final Dist dist, final boolean isData, @Nullable String mcVersion) {
-//        visualization = !isData && dist.isClient() && Boolean.parseBoolean(System.getProperty("fml.earlyprogresswindow", "true")) ? new ClientVisualization() : new NoVisualization();
-        visualization = new NoVisualization();
+    public Runnable accept(final Dist dist, final boolean isData, @Nullable String mcVersion, IModuleLayerManager moduleLayerManager) {
+        if (dist != Dist.CLIENT || isData) {
+            visualization = new NoVisualization();
+            return start(mcVersion);
+        }
+
+        var serviceLayer = moduleLayerManager.getLayer(IModuleLayerManager.Layer.SERVICE);
+        visualization = serviceLayer.flatMap(moduleLayer -> ServiceLoaderUtils.streamServiceLoader(
+            () -> ServiceLoader.load(moduleLayer, Visualization.class),
+            sce -> LOGGER.fatal("Encountered serious error loading visualisation service, skipping.", sce)
+          )
+          .findFirst())
+          .orElseGet(NoVisualization::new);
+
+        return start(mcVersion);
+    }
+
+    @Override
+    public int windowWidth()
+    {
+        return visualization.windowWidth();
+    }
+
+    @Override
+    public int windowHeight()
+    {
+        return visualization.windowHeight();
+    }
+
+    @Override
+    public Runnable start(@Nullable final String mcVersion)
+    {
         return visualization.start(mcVersion);
     }
 
@@ -53,28 +89,9 @@ public enum EarlyProgressVisualization {
         visualization.updateFBSize(width, height);
     }
 
-    interface Visualization {
-        Runnable start(@Nullable String mcVersion);
-
-        default long handOffWindow(final IntSupplier width, final IntSupplier height, final Supplier<String> title, LongSupplier monitorSupplier) {
-            return FMLLoader.getGameLayer().findModule("forge")
-                    .map(l->Class.forName(l, "net.minecraftforge.client.loading.NoVizFallback"))
-                    .map(LamdbaExceptionUtils.rethrowFunction(c->c.getMethod("fallback", IntSupplier.class, IntSupplier.class, Supplier.class, LongSupplier.class)))
-                    .map(LamdbaExceptionUtils.rethrowFunction(m->(LongSupplier)m.invoke(null, width, height, title, monitorSupplier)))
-                    .map(LongSupplier::getAsLong)
-                    .orElseThrow(()->new IllegalStateException("Why are you here?"));
-        }
-
-        default void updateFBSize(IntConsumer width, IntConsumer height) {
-        }
+    public boolean enabled()
+    {
+        return !(visualization instanceof NoVisualization);
     }
-
-    private static class NoVisualization implements Visualization {
-        @Override
-        public Runnable start(@Nullable String mcVersion) {
-            return () -> {};
-        }
-    }
-
 }
 
