@@ -207,8 +207,8 @@ public class ModMismatchDisconnectedScreen extends Screen
         {
             String modid = id.split(":")[0];
             return new TextComponent(name).withStyle(color % 2 == 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW)
-                    .withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(id + (modUrls.get(modid) != null ? "\n" + ForgeI18n.parseMessage("fml.modmismatchscreen.homepage") : "")))))
-                    .withStyle(s -> s.withClickEvent(modUrls.get(modid) != null ? new ClickEvent(ClickEvent.Action.OPEN_URL, modUrls.get(modid)) : null));
+                    .withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(id + (!modUrls.getOrDefault(modid, "").isEmpty() ? "\n" + ForgeI18n.parseMessage("fml.modmismatchscreen.homepage") : "")))))
+                    .withStyle(s -> s.withClickEvent(!modUrls.getOrDefault(modid, "").isEmpty() ? new ClickEvent(ClickEvent.Action.OPEN_URL, modUrls.get(modid)) : null));
         }
 
         @Override
