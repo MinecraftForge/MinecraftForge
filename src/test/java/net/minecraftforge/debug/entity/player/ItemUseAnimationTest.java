@@ -73,17 +73,27 @@ public class ItemUseAnimationTest
             consumer.accept(new IItemRenderProperties()
             {
 
-                private final HumanoidModel.ArmPose SWING_POSE = HumanoidModel.ArmPose.create("SWING", false, this::applyTransform);
+                private static final HumanoidModel.ArmPose SWING_POSE = HumanoidModel.ArmPose.create("SWING", false, (model, entity, isRight) -> {
+                    if (isRight)
+                    {
+                        model.rightArm.xRot = (float) (Math.random() * Math.PI * 2);
+                    } else
+                    {
+                        model.leftArm.xRot = (float) (Math.random() * Math.PI * 2);
+                    }
+                });
 
                 @Override
                 public HumanoidModel.ArmPose getArmPose(LivingEntity entityLiving, InteractionHand hand, ItemStack itemStack)
                 {
-                    return SWING_POSE;
-                }
-
-                private void applyTransform(HumanoidModel<?> model, LivingEntity entity)
-                {
-                    model.rightArm.xRot = (float) (Math.random() * Math.PI * 2);
+                    if (!itemStack.isEmpty())
+                    {
+                        if (entityLiving.getUsedItemHand() == hand && entityLiving.getUseItemRemainingTicks() > 0)
+                        {
+                            return SWING_POSE;
+                        }
+                    }
+                    return HumanoidModel.ArmPose.EMPTY;
                 }
 
             });
