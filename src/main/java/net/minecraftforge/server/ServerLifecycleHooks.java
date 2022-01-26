@@ -111,7 +111,6 @@ public class ServerLifecycleHooks
     public static void handleServerStopping(final MinecraftServer server)
     {
         allowLogins.set(false);
-        PermissionAPI.resetPermissionAPI();
         MinecraftForge.EVENT_BUS.post(new ServerStoppingEvent(server));
     }
 
