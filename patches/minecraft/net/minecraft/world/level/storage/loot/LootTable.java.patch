@@ -9,7 +9,7 @@
     final LootItemFunction[] f_79110_;
     private final BiFunction<ItemStack, LootContext, ItemStack> f_79111_;
  
-    LootTable(LootContextParamSet p_79114_, LootPool[] p_79115_, LootItemFunction[] p_79116_) {
+    protected LootTable(LootContextParamSet p_79114_, LootPool[] p_79115_, LootItemFunction[] p_79116_) {
        this.f_79108_ = p_79114_;
 -      this.f_79109_ = p_79115_;
 +      this.f_79109_ = Lists.newArrayList(p_79115_);
@@ -92,6 +92,14 @@
     public static class Builder implements FunctionUserBuilder<LootTable.Builder> {
        private final List<LootPool> f_79156_ = Lists.newArrayList();
        private final List<LootItemFunction> f_79157_ = Lists.newArrayList();
+@@ -221,6 +_,7 @@
+ 
+       public JsonElement serialize(LootTable p_79177_, Type p_79178_, JsonSerializationContext p_79179_) {
+          JsonObject jsonobject = new JsonObject();
++         if(p_79177_ instanceof net.minecraftforge.common.loot.ConditionalLootTable conditionalLootTable) net.minecraftforge.common.loot.ConditionalLootTable.serialize(conditionalLootTable, jsonobject);
+          if (p_79177_.f_79108_ != LootTable.f_79106_) {
+             ResourceLocation resourcelocation = LootContextParamSets.m_81426_(p_79177_.f_79108_);
+             if (resourcelocation != null) {
 @@ -230,7 +_,7 @@
              }
           }

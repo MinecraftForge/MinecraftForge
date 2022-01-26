@@ -45,9 +45,11 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import com.mojang.datafixers.kinds.App;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
@@ -123,6 +125,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.BiomeSpecialEffects;
 import net.minecraft.world.level.biome.BiomeGenerationSettings;
 import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
@@ -800,25 +803,54 @@ public class ForgeHooks
             lootContext.set(que);
         }
 
-        LootTable ret = null;
+        LootTable ret;
         try
         {
             que.push(new LootTableContext(name, custom));
-            ret = gson.fromJson(data, LootTable.class);
-            ret.setLootTableId(name);
+
+            JsonObject lootTable = null;
+            try
+            {
+                lootTable = GsonHelper.convertToJsonObject(data, "loot table");
+            } catch (JsonSyntaxException ignored)
+            {
+            }
+
+            if (lootTable != null && lootTable.has("forge:conditions"))
+            {
+                final JsonArray conditions = GsonHelper.getAsJsonArray(lootTable, "conditions");
+
+                if (!CraftingHelper.processConditions(conditions))
+                {
+                    return LootTable.EMPTY;
+                }
+
+                lootTable.remove("forge:conditions");
+
+                ret = gson.fromJson(lootTable, LootTable.class);
+                ret.setLootTableId(name);
+            } else
+            {
+                ret = gson.fromJson(data, LootTable.class);
+                ret.setLootTableId(name);
+            }
+
             que.pop();
-        }
-        catch (JsonParseException e)
+        } catch (JsonParseException e)
         {
             que.pop();
             throw e;
         }
 
         if (!custom)
+        {
             ret = ForgeEventFactory.loadLootTable(name, ret, lootTableManager);
+        }
 
         if (ret != null)
-           ret.freeze();
+        {
+            ret.freeze();
+        }
 
         return ret;
     }
