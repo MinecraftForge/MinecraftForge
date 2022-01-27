@@ -28,7 +28,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.network.ServerLoginPacketListenerImpl;
 import net.minecraftforge.common.util.LogMessageAdapter;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.network.ConnectionData.ModMismatchData;
 import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -42,7 +41,6 @@ import org.apache.logging.log4j.MarkerManager;
 import com.google.common.collect.Maps;
 
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -208,7 +206,7 @@ public class HandshakeHandler
 
     void handleModData(HandshakeMessages.S2CModData serverModData, Supplier<NetworkEvent.Context> c)
     {
-        c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(new ConnectionData(serverModData.getMods(), Map.of()));
+        c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(new ConnectionData(serverModData.getMods(), new HashMap<>()));
         c.get().setPacketHandled(true);
     }
 

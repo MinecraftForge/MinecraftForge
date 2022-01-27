@@ -343,7 +343,6 @@ public class HandshakeMessages
     /**
      * Marker interface for all server -> client packets that the server should not await a response from the client for
      */
-
     public interface INoResponse {
     }
 }
