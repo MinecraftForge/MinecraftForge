@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -121,7 +121,8 @@ public class NetworkEvent extends Event
             collected.add(new NetworkRegistry.LoginPayload(buffer, channelName, context));
         }
 
-        public void add(FriendlyByteBuf buffer, ResourceLocation channelName, String context, boolean needsResponse) {
+        public void add(FriendlyByteBuf buffer, ResourceLocation channelName, String context, boolean needsResponse)
+        {
             collected.add(new NetworkRegistry.LoginPayload(buffer, channelName, context, needsResponse));
         }
 
