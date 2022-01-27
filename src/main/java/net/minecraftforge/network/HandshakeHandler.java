@@ -237,7 +237,8 @@ public class HandshakeHandler
 
     void handleModMismatchData(HandshakeMessages.S2CModMismatchData modMismatchData, Supplier<NetworkEvent.Context> c)
     {
-        if (!modMismatchData.getMismatchedChannelData().isEmpty()) {
+        if (!modMismatchData.getMismatchedChannelData().isEmpty())
+        {
             LOGGER.error(FMLHSMARKER, "Channels [{}] rejected their client side version number",
                     modMismatchData.getMismatchedChannelData().keySet().stream().map(Object::toString).collect(Collectors.joining(",")));
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");

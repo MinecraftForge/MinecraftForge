@@ -69,7 +69,7 @@ public class HandshakeMessages
 
         public S2CModList()
         {
-            this.mods = ModList.get().getMods().stream().map(mod -> mod.getModId()).collect(Collectors.toList());
+            this.mods = ModList.get().getMods().stream().map(IModInfo::getModId).collect(Collectors.toList());
             this.channels = NetworkRegistry.buildChannelVersions();
             this.registries = RegistryManager.getRegistryNamesForSyncToClient();
         }
@@ -142,7 +142,8 @@ public class HandshakeMessages
             this.mods = ModList.get().getMods().stream().map(info -> Pair.of(info.getModId(), Pair.of(info.getDisplayName(), info.getVersion().toString()))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         }
 
-        private S2CModData(Map<String, Pair<String, String>> mods) {
+        private S2CModData(Map<String, Pair<String, String>> mods)
+        {
             this.mods = mods;
         }
 

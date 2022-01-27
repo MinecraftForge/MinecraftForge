@@ -339,7 +339,8 @@ public class NetworkRegistry
             this(buffer, channelName, messageContext, true);
         }
 
-        public LoginPayload(final FriendlyByteBuf buffer, final ResourceLocation channelName, final String messageContext, final boolean needsResponse) {
+        public LoginPayload(final FriendlyByteBuf buffer, final ResourceLocation channelName, final String messageContext, final boolean needsResponse)
+        {
             this.data = buffer;
             this.channelName = channelName;
             this.messageContext = messageContext;
@@ -358,7 +359,8 @@ public class NetworkRegistry
             return messageContext;
         }
 
-        public boolean needsResponse() {
+        public boolean needsResponse()
+        {
             return needsResponse;
         }
     }
