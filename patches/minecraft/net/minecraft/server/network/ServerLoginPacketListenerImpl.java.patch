@@ -15,13 +15,11 @@
           this.m_10055_();
        } else if (this.f_10019_ == ServerLoginPacketListenerImpl.State.DELAY_ACCEPT) {
           ServerPlayer serverplayer = this.f_10018_.m_6846_().m_11259_(this.f_10021_.getId());
-@@ -116,6 +_,10 @@
+@@ -116,6 +_,8 @@
                 this.f_10019_ = ServerLoginPacketListenerImpl.State.DELAY_ACCEPT;
                 this.f_10024_ = serverplayer1;
              } else {
-+               if (!net.minecraftforge.event.ForgeEventFactory.firePrePlayerLoggedIn(serverplayer1, this.f_10013_)) {
-+                  return;
-+               }
++               if (!net.minecraftforge.event.ForgeEventFactory.firePrePlayerLoggedIn(serverplayer1, this.f_10013_)) return;
 +
                 this.m_143699_(serverplayer1);
              }
