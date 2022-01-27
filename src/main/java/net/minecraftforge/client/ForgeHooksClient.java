@@ -26,6 +26,7 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -279,10 +280,24 @@ public class ForgeHooksClient
         renderType.set(layer);
     }
 
-    public static <A extends HumanoidModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, A _default)
+    public static Model getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, HumanoidModel<?> _default)
     {
-        A model = RenderProperties.get(itemStack).getArmorModel(entityLiving, itemStack, slot, _default);
-        return model == null ? _default : model;
+        return RenderProperties.get(itemStack).getBaseArmorModel(entityLiving, itemStack, slot, _default);
+    }
+
+    /** Copies humanoid model properties from the original model to another, used for armor models */
+    @SuppressWarnings("unchecked")
+    public static <T extends LivingEntity> void copyModelProperties(HumanoidModel<T> original, HumanoidModel<?> replacement)
+    {
+        // this function does not make use of the <T> generic, so the unchecked cast should be safe
+        original.copyPropertiesTo((HumanoidModel<T>)replacement);
+        replacement.head.visible = original.head.visible;
+        replacement.hat.visible = original.hat.visible;
+        replacement.body.visible = original.body.visible;
+        replacement.rightArm.visible = original.rightArm.visible;
+        replacement.leftArm.visible = original.leftArm.visible;
+        replacement.rightLeg.visible = original.rightLeg.visible;
+        replacement.leftLeg.visible = original.leftLeg.visible;
     }
 
     //This properly moves the domain, if provided, to the front of the string before concatenating
