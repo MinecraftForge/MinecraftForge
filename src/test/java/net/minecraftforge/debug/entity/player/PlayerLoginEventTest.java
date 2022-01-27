@@ -37,11 +37,13 @@ public class PlayerLoginEventTest
     private static final boolean ENABLED = true;
 
     @SubscribeEvent
-    public static void onPlayerChangeGameModeEvent(PlayerEvent.PrePlayerLoginEvent event)
+    public static void onPrePlayerLoginEvent(PlayerEvent.PrePlayerLoginEvent event)
     {
-        if (ENABLED) {
+        if (ENABLED)
+        {
             LOGGER.info("{} logged in with connection {}.", event.getPlayer().getName(), event.getConnection());
-            if (KICK_ENABLED) {
+            if (KICK_ENABLED)
+            {
                 event.setDenyMessage(new TextComponent("This is a test disconnect\nTesting the new line").withStyle(ChatFormatting.BLUE));
                 event.setResult(Event.Result.DENY);
             }
