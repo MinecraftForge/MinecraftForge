@@ -190,7 +190,7 @@ public class HandshakeHandler
         c.get().setPacketHandled(true);
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
-            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, c.get().getNetworkManager(), true));
+            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(mismatchedChannels, NetworkHooks.getConnectionData(c.get().getNetworkManager()), true));
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
             return;
         }
@@ -206,9 +206,9 @@ public class HandshakeHandler
         LOGGER.debug(REGISTRIES, "Expecting {} registries: {}", ()->this.registriesToReceive.size(), ()->this.registriesToReceive);
     }
 
-    void handleModData(HandshakeMessages.S2CModData modData, Supplier<NetworkEvent.Context> c)
+    void handleModData(HandshakeMessages.S2CModData serverModData, Supplier<NetworkEvent.Context> c)
     {
-        c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(new ConnectionData(modData.getMods(), Map.of()));
+        c.get().getNetworkManager().channel().attr(NetworkConstants.FML_CONNECTION_DATA).set(new ConnectionData(serverModData.getMods(), Map.of()));
         c.get().setPacketHandled(true);
     }
 
@@ -230,10 +230,7 @@ public class HandshakeHandler
         c.get().setPacketHandled(true);
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
-            NetworkConstants.handshakeChannel.reply(new HandshakeMessages.S2CModMismatchData(
-                    ModMismatchData.toRemoteChannelData(mismatchedChannels, c.get().getNetworkManager(), false),
-                    ModMismatchData.getLocalChannelData(mismatchedChannels)),
-                    c.get());
+            NetworkConstants.handshakeChannel.reply(new HandshakeMessages.S2CModMismatchData(mismatchedChannels), c.get());
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
             return;
         }
@@ -247,7 +244,7 @@ public class HandshakeHandler
                     modMismatchData.getMismatchedChannelData().keySet().stream().map(Object::toString).collect(Collectors.joining(",")));
             LOGGER.error(FMLHSMARKER, "Terminating connection with server, mismatched mod list");
             c.get().setPacketHandled(true);
-            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(new ModMismatchData(modMismatchData.getMismatchedChannelData(), modMismatchData.getPresentChannelData(), new HashMap<>(), false));
+            c.get().getNetworkManager().channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.channel(modMismatchData.getMismatchedChannelData(), NetworkHooks.getConnectionData(c.get().getNetworkManager()), false));
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
         }
     }

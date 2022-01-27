@@ -316,39 +316,27 @@ public class HandshakeMessages
 
     public static class S2CModMismatchData extends LoginIndexedMessage {
         private final Map<ResourceLocation, String> mismatchedChannelData;
-        private final Map<ResourceLocation, Pair<String, String>> presentChannelData;
 
-        public S2CModMismatchData(Map<ResourceLocation, String> mismatchedChannelData, Map<ResourceLocation, Pair<String, String>> presentChannelData)
+        public S2CModMismatchData(Map<ResourceLocation, String> mismatchedChannelData)
         {
             this.mismatchedChannelData = mismatchedChannelData;
-            this.presentChannelData = presentChannelData;
         }
 
         public static S2CModMismatchData decode(FriendlyByteBuf input)
         {
             Map<ResourceLocation, String> mismatchedMods = input.readMap(i -> new ResourceLocation(i.readUtf(0x100)), i -> i.readUtf(0x100));
-            Map<ResourceLocation, Pair<String, String>> presentMods = input.readMap(i -> new ResourceLocation(i.readUtf(0x100)), i -> Pair.of(i.readUtf(0x100), i.readUtf(0x100)));
 
-            return new S2CModMismatchData(mismatchedMods, presentMods);
+            return new S2CModMismatchData(mismatchedMods);
         }
 
         public void encode(FriendlyByteBuf output)
         {
             output.writeMap(mismatchedChannelData, (o, r) -> o.writeUtf(r.toString(), 0x100), (o, v) -> o.writeUtf(v, 0x100));
-            output.writeMap(presentChannelData, (o, r) -> o.writeUtf(r.toString(), 0x100), (o, p) -> {
-                o.writeUtf(p.getLeft(), 0x100);
-                o.writeUtf(p.getRight(), 0x100);
-            });
         }
 
         public Map<ResourceLocation, String> getMismatchedChannelData()
         {
             return mismatchedChannelData;
-        }
-
-        public Map<ResourceLocation, Pair<String, String>> getPresentChannelData()
-        {
-            return presentChannelData;
         }
     }
 
