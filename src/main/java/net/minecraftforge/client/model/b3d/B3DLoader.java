@@ -72,11 +72,8 @@ import java.util.stream.Collectors;
 
 /*
  * Loader for Blitz3D models.
- * To enable for your mod call instance.addDomain(modId).
- * If you need more control over accepted resources - extend the class, and register a new instance with ModelLoaderRegistry.
  */
-// TODO: Implement as a new model loader
-@SuppressWarnings("unused")
+@Deprecated(forRemoval = true, since = "1.18")
 public enum B3DLoader
 {
     INSTANCE;
