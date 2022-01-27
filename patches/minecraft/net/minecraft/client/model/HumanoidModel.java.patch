@@ -5,7 +5,7 @@
           this.f_102811_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_ - 1.9198622F - (p_102876_.m_6047_() ? 0.2617994F : 0.0F), -2.4F, 3.3F);
           this.f_102811_.f_104204_ = this.f_102808_.f_104204_ - 0.2617994F;
 +      default:
-+         this.f_102816_.applyTransform(this, p_102876_, true);
++         this.f_102816_.applyTransform(this, p_102876_, net.minecraft.world.entity.HumanoidArm.RIGHT);
        }
  
     }
@@ -14,7 +14,7 @@
           this.f_102812_.f_104203_ = Mth.m_14036_(this.f_102808_.f_104203_ - 1.9198622F - (p_102879_.m_6047_() ? 0.2617994F : 0.0F), -2.4F, 3.3F);
           this.f_102812_.f_104204_ = this.f_102808_.f_104204_ + 0.2617994F;
 +      default:
-+         this.f_102815_.applyTransform(this, p_102879_, false);
++         this.f_102815_.applyTransform(this, p_102879_, HumanoidArm.LEFT);
        }
  
     }
@@ -43,9 +43,9 @@
 +         throw new IllegalStateException("Enum not extended");
 +      }
 +
-+      public <T extends LivingEntity> void applyTransform(HumanoidModel<T> model, T entity, boolean isRight) {
++      public <T extends LivingEntity> void applyTransform(HumanoidModel<T> model, T entity, net.minecraft.world.entity.HumanoidArm arm) {
 +         com.google.common.base.Preconditions.checkNotNull(this.forgeArmPose, "applyTransform() must not be called on a vanilla ArmPose!");
-+         this.forgeArmPose.applyTransform(model, entity, isRight);
++         this.forgeArmPose.applyTransform(model, entity, arm);
 +      }
 +      // FORGE END
     }
