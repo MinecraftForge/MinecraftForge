@@ -171,7 +171,7 @@ public class ModMismatchDisconnectedScreen extends Screen
                 TextComponent mods = new TextComponent("");
                 for (Map.Entry<String, String> mod : missingRegistryMods.entrySet()) {
                     mods.append(getModComponent(mod.getKey(), mod.getValue(), i));
-                    if (++i >= 10) {
+                    if (++i >= 20) {
                         logMessage = true;
                         break;
                     }
