@@ -487,7 +487,7 @@ public class PlayerEvent extends LivingEvent
         /**
          *
          * Cancels the player logging into the server
-         * This will throw a {@link RuntimeException} if you attempt to uncancel a previously cancelled event
+         * This will throw a {@link IllegalArgumentException} if you attempt to uncancel a previously cancelled event
          *
          * @param cancel If the event should be cancelled (default false)
          */
