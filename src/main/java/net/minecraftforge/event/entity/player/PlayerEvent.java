@@ -495,7 +495,7 @@ public class PlayerEvent extends LivingEvent
         {
             if (this.isCanceled() && !cancel)
             {
-                throw new RuntimeException("You cannot un-cancel the PrePlayerLogin event");
+                throw new IllegalArgumentException("You cannot un-cancel the PrePlayerLogin event");
             }
 
             super.setCanceled(cancel);
