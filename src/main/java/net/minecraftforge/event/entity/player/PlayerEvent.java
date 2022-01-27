@@ -22,6 +22,7 @@ package net.minecraftforge.event.entity.player;
 import java.io.File;
 
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.Container;
@@ -466,11 +467,13 @@ public class PlayerEvent extends LivingEvent
     /**
      *
      * Event fired before the player is accepted to the world
+     * Cancelling this event will deny the player entry to the server and display the specified reason on their screen
      *
      */
     @Cancelable
-    public static class PrePlayerLoginEvent extends PlayerEvent {
-        private Component denyMessage = null;
+    public static class PrePlayerLoginEvent extends PlayerEvent
+    {
+        private Component denyMessage = new TextComponent("PrePlayerLoginEvent cancelled");
         private final Connection connection;
 
         public PrePlayerLoginEvent(Player player, Connection connection)
@@ -480,6 +483,13 @@ public class PlayerEvent extends LivingEvent
             this.connection = connection;
         }
 
+        /**
+         *
+         * Cancels the player logging into the server
+         * This will throw a {@link RuntimeException} if you attempt to uncancel a previously cancelled event
+         *
+         * @param cancel If the event should be cancelled (default false)
+         */
         @Override
         public void setCanceled(boolean cancel)
         {
@@ -501,6 +511,16 @@ public class PlayerEvent extends LivingEvent
             return this.denyMessage;
         }
 
+        /**
+         *
+         * Sets the message that will appear on the screen when the event is cancelled and the player is denied
+         * entry to the server
+         *
+         * The default message is "PrePlayerLogin event cancelled" - This should always be changed however the
+         * default exists to prevent an {@link NullPointerException} occurring
+         *
+         * @param denyMessage The message to show on the screen
+         */
         public void setDenyMessage(Component denyMessage)
         {
             this.denyMessage = denyMessage;
