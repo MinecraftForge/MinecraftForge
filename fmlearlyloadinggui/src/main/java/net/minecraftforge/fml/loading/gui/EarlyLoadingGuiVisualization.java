@@ -37,13 +37,16 @@ public class EarlyLoadingGuiVisualization implements Visualization
 {
     private int screenWidth;
     private int screenHeight;
-    private final boolean isDarkMode;
+    private boolean isDarkMode;
     private       long   window;
     private final Thread renderThread = new Thread(this::renderThreadFunc);
 
     private boolean running = true;
 
     public EarlyLoadingGuiVisualization() {
+    }
+
+    private void loadWindowConfig() {
         final Path gameDir = FMLLoader.getGamePath();
         Path optionsPath = gameDir.resolve("options.txt");
         boolean isDarkMode = false;
@@ -88,6 +91,8 @@ public class EarlyLoadingGuiVisualization implements Visualization
     }
 
     private void initWindow(@Nullable String mcVersion) {
+        loadWindowConfig();
+
         GLFWErrorCallback.createPrint(System.err).set();
 
         long glfwInitBegin = System.nanoTime();
