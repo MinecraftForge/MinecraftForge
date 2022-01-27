@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 package net.minecraftforge.debug.misc;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
@@ -36,9 +37,21 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * This test mod show a few example usages of {@link IForgeRegistry#getCodec()} to serialize and deserialize {@link IForgeRegistryEntry} to json or nbt.
+ * There are 4 tested cases :
+ * 1. json -> Pair
+ * 2. Pair -> nbt
+ * 3. Pair -> compressed json
+ * 4. compressed json -> Pair
+ * For each test the result will be logged.
+ */
 @Mod("registry_codec_test")
 public class RegistryCodecTest
 {
@@ -84,8 +97,17 @@ public class RegistryCodecTest
         result2.resultOrPartial(LOGGER::warn).ifPresent(tag -> LOGGER.info("Successfully encoded a Pair<Block, Item> to a nbt tag: {}", tag));
 
         //Serialize the Pair to JSON using the COMPRESSED JsonOps, this will use the int registry id instead of the ResourceLocation one,
-        // this is not recommended because int IDs can change, so you should not rely on them
+        //This is not recommended because int IDs can change, so you should not rely on them
         DataResult<JsonElement> result3 = CODEC.encodeStart(JsonOps.COMPRESSED, pair);
         result3.resultOrPartial(LOGGER::warn).ifPresent(compressedJson -> LOGGER.info("Successfully encoded a Pair<Block, Item> to a compressed json: {}", compressedJson));
+
+        //Create a json to decode using numerical IDs, to be decoded by JsonOps.COMPRESSED
+        JsonArray jsonCompressed = new JsonArray();
+        jsonCompressed.add(((ForgeRegistry<Block>) ForgeRegistries.BLOCKS).getID(Blocks.DIAMOND_BLOCK));
+        jsonCompressed.add(((ForgeRegistry<Item>) ForgeRegistries.ITEMS).getID(Items.DIAMOND_PICKAXE));
+
+        //Decode a compressed json to the corresponding Pair<Block, Item>, this time using Codec#parse
+        DataResult<Pair<Block, Item>> result4 = CODEC.parse(JsonOps.COMPRESSED, jsonCompressed);
+        result4.resultOrPartial(LOGGER::warn).ifPresent(pair2 -> LOGGER.info("Successfully decoded a diamond block and a diamond pickaxe from compressed json to Block/Item"));
     }
 }

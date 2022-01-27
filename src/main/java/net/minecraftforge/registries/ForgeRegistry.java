@@ -895,7 +895,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                     int id = n.intValue();
                     if (ids.get(id) == null)
                     {
-                        return DataResult.error("Unknown registry id " + n);
+                        return DataResult.error("Unknown registry id in " + ForgeRegistry.this.key + ": " + n);
                     }
                     V val = ForgeRegistry.this.getValue(id);
                     return DataResult.success(val);
@@ -904,7 +904,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             else
             {
                 return ResourceLocation.CODEC.decode(ops, input).flatMap(keyValuePair -> !ForgeRegistry.this.containsKey(keyValuePair.getFirst())
-                        ? DataResult.error("Unknown registry key: " + keyValuePair.getFirst())
+                        ? DataResult.error("Unknown registry key in " + ForgeRegistry.this.key + ": " + keyValuePair.getFirst())
                         : DataResult.success(keyValuePair.mapFirst(ForgeRegistry.this::getValue)));
             }
         }
@@ -915,7 +915,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             ResourceLocation key = getKey(input);
             if (key == null)
             {
-                return DataResult.error("Unknown registry element: " + input);
+                return DataResult.error("Unknown registry element in " + ForgeRegistry.this.key + ": " + input);
             }
             T toMerge = ops.compressMaps() ? ops.createInt(getID(input)) : ops.createString(key.toString());
             return ops.mergeToPrimitive(prefix, toMerge);
