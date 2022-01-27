@@ -20,6 +20,7 @@
 package net.minecraftforge.event.entity.player;
 
 import java.io.File;
+import java.util.Objects;
 
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.TextComponent;
@@ -523,6 +524,7 @@ public class PlayerEvent extends LivingEvent
          */
         public void setDenyMessage(Component denyMessage)
         {
+            Objects.requireNonNull(denyMessage);
             this.denyMessage = denyMessage;
         }
     }
