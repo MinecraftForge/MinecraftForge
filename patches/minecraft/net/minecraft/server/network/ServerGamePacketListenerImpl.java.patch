@@ -66,7 +66,7 @@
  
     public void m_5527_(ServerboundSignUpdatePacket p_9921_) {
 -      List<String> list = Stream.of(p_9921_.m_134663_()).map(ChatFormatting::m_126649_).collect(Collectors.toList());
-+      List<String> list = net.minecraftforge.event.ForgeEventFactory.fireSignChange(this.f_9743_, p_9921_.m_134660_(), p_9921_.m_134663_());
++      List<String> list = net.minecraftforge.event.ForgeEventFactory.fireSignChange(this.f_9743_, this.f_9743_.m_183503_(), p_9921_.m_134660_(), p_9921_.m_134663_());
        this.m_9815_(list, (p_184205_) -> {
           this.m_9922_(p_9921_, p_184205_);
        });

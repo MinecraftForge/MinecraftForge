@@ -19,27 +19,32 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraftforge.event.entity.living.LivingEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.File;
-import java.util.List;
 
 /**
  * PlayerEvent is fired whenever an event involving Living entities occurs. <br>
@@ -556,35 +561,78 @@ public class PlayerEvent extends LivingEvent
 
     /**
      *
-     * Fired when a player clicks the "done" button in the sign edit UI.
+     * Fired on the logical server after receiving the packet sent when a player clicks the "done" button in the sign
+     * edit UI.
      * Cancelling will set the edited sign to be blank (i.e. lines will be an empty list)
+     * Event is fired before Minecraft checks for editability so if you do not want to receive events that would later
+     * be cancelled by Minecraft please use {@link SignChangeEvent#isEditableByPlayer}
      *
      */
     @Cancelable
     public static class SignChangeEvent extends PlayerEvent
     {
 
+        private final ServerLevel serverLevel;
         private final BlockPos pos;
         private List<String> lines;
 
-        public SignChangeEvent(Player player, BlockPos pos, List<String> lines)
+        public SignChangeEvent(Player player, ServerLevel serverLevel, BlockPos pos, List<String> lines)
         {
             super(player);
 
+            this.serverLevel = serverLevel;
             this.pos = pos;
             this.lines = lines;
         }
 
+        @Override
+        public ServerPlayer getPlayer()
+        {
+            return (ServerPlayer) super.getPlayer();
+        }
+
+        /**
+         *
+         * Gets the level that the sign being edited exists in
+         *
+         * @return The level instance
+         */
+        public ServerLevel getLevel()
+        {
+            return this.serverLevel;
+        }
+
+        /**
+         *
+         * Gets the position of the block where the sign should exist
+         *
+         * @return The position of the sign
+         */
         public BlockPos getPos()
         {
             return this.pos;
         }
 
+        /**
+         *
+         * Gets the lines that will be displayed on the sign
+         * Note: This list will be a maximum length of 4 (as a sign can only have 4 lines)
+         *
+         * @return The lines on the sign
+         */
         public List<String> getLines()
         {
-            return this.lines;
+            return Collections.unmodifiableList(this.lines);
         }
 
+        /**
+         *
+         * Sets the line at the given index on the sign
+         * Note: only accepts values from 0 (inclusive) to 4 (exclusive)
+         *
+         * @param index The index of the line
+         * @param line The new value of the line
+         */
         public void setLine(int index, String line)
         {
             if (index < 0 || index > 3)
@@ -593,6 +641,28 @@ public class PlayerEvent extends LivingEvent
             }
 
             this.lines.set(index, line);
+        }
+
+
+        /**
+         *
+         * Performs the Minecraft validity checks for if the given player can edit the (sign) block at the given
+         * location
+         *
+         * @return True if they can edit - false if not (false if not a sign)
+         */
+        public boolean isEditableByPlayer()
+        {
+            BlockState blockState = this.getLevel().getBlockState(this.getPos());
+            BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPos());
+
+            if (!(blockEntity instanceof SignBlockEntity)) {
+                return false;
+            }
+
+            SignBlockEntity signBlockEntity = (SignBlockEntity) blockEntity;
+
+            return !signBlockEntity.isEditable() || !this.getPlayer().getUUID().equals(signBlockEntity.getPlayerWhoMayEdit());
         }
     }
 }
