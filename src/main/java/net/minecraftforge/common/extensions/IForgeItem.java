@@ -110,6 +110,15 @@ public interface IForgeItem
     }
 
     /**
+     * @param entity    The entity using the item
+     * @param itemStack The last {@link ItemStack} held before it stopped being used.
+     */
+    default void stopUsingItem(net.minecraft.world.entity.LivingEntity entity, ItemStack itemStack)
+    {
+
+    }
+
+    /**
      * Called by Piglins when checking to see if they will give an item or something in exchange for this item.
      *
      * @return True if this item can be used as "currency" by piglins

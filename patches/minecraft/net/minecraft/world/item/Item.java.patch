@@ -104,18 +104,12 @@
     }
  
     public ItemStack m_7968_() {
-@@ -374,6 +_,38 @@
+@@ -374,6 +_,32 @@
        return true;
     }
  
 +   // FORGE START
 +   private Object renderProperties;
-+
-+   /**
-+    * @param entity    The entity using the item
-+    * @param itemStack The last {@link ItemStack} held before it stopped being used.
-+    */
-+   public void stopUsingItem(net.minecraft.world.entity.LivingEntity entity, ItemStack itemStack) {}
 +
 +   /*
 +      DO NOT CALL, IT WILL DISAPPEAR IN THE FUTURE
