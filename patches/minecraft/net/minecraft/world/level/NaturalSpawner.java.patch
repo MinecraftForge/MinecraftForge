@@ -35,6 +35,15 @@
                                return;
                             }
  
+@@ -263,7 +_,7 @@
+    }
+ 
+    private static WeightedRandomList<MobSpawnSettings.SpawnerData> m_151591_(ServerLevel p_151592_, StructureFeatureManager p_151593_, ChunkGenerator p_151594_, MobCategory p_151595_, BlockPos p_151596_, @Nullable Biome p_151597_) {
+-      return m_186529_(p_151596_, p_151592_, p_151595_, p_151593_) ? NetherFortressFeature.f_66381_ : p_151594_.m_142184_(p_151597_ != null ? p_151597_ : p_151592_.m_46857_(p_151596_), p_151593_, p_151595_, p_151596_);
++      return m_186529_(p_151596_, p_151592_, p_151595_, p_151593_) ? StructureFeature.f_67025_.getSpawnList(MobCategory.MONSTER) : p_151594_.m_142184_(p_151597_ != null ? p_151597_ : p_151592_.m_46857_(p_151596_), p_151593_, p_151595_, p_151596_);
+    }
+ 
+    public static boolean m_186529_(BlockPos p_186530_, ServerLevel p_186531_, MobCategory p_186532_, StructureFeatureManager p_186533_) {
 @@ -297,6 +_,13 @@
        if (p_47052_ == SpawnPlacements.Type.NO_RESTRICTIONS) {
           return true;
