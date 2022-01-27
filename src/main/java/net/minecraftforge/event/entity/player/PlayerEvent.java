@@ -480,6 +480,17 @@ public class PlayerEvent extends LivingEvent
             this.connection = connection;
         }
 
+        @Override
+        public void setCanceled(boolean cancel)
+        {
+            if (this.isCanceled() && !cancel)
+            {
+                throw new RuntimeException("You cannot un-cancel the PrePlayerLogin event");
+            }
+
+            super.setCanceled(cancel);
+        }
+
         public Connection getConnection()
         {
             return this.connection;
