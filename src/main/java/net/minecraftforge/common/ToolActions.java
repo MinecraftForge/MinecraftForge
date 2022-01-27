@@ -114,6 +114,9 @@ public class ToolActions
      */
     public static final ToolAction SHIELD_BLOCK = ToolAction.get("shield_block");
 
+    /**
+     * This action corresponds to right-clicking the fishing rod.
+     */
     public static final ToolAction FISHING_ROD_CAST = ToolAction.get("fishing_rod_cast");
 
     // Default actions supported by each tool type

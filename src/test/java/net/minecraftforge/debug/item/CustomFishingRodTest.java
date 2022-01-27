@@ -44,7 +44,7 @@ public class CustomFishingRodTest
     public static final String MOD_ID = "custom_fishing_rod_test";
 
     private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
-    private static final RegistryObject<Item> FISHING_ROD = ITEMS.register("fishing_rod", () -> new CustomFishingRodItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).stacksTo(1)));
+    private static final RegistryObject<Item> FISHING_ROD = ITEMS.register("fishing_rod", () -> new FishingRodItem(new Item.Properties().tab(CreativeModeTab.TAB_TOOLS).stacksTo(1)));
 
     public CustomFishingRodTest()
     {
@@ -78,22 +78,6 @@ public class CustomFishingRodTest
                 }
                 return 0.0F;
             }));
-        }
-
-    }
-
-    private static class CustomFishingRodItem extends FishingRodItem
-    {
-
-        public CustomFishingRodItem(Item.Properties props)
-        {
-            super(props);
-        }
-
-        @Override
-        public boolean canPerformAction(ItemStack stack, ToolAction toolAction)
-        {
-            return toolAction.equals(ToolActions.FISHING_ROD_CAST);
         }
 
     }
