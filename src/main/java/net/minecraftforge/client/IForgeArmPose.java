@@ -20,13 +20,15 @@
 package net.minecraftforge.client;
 
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * An ArmPose that can be defined by the user.
  * Register one by creating a custom {@link net.minecraft.client.model.HumanoidModel.ArmPose}
- * and use {@link net.minecraftforge.client.ClientRegistry#registerArmPose(UseAnim, HumanoidModel.ArmPose)} to bind it to a UseAnim.
+ * and returning it in {@link IItemRenderProperties#getArmPose(LivingEntity, InteractionHand, ItemStack)}.
  */
 public interface IForgeArmPose
 {
@@ -39,6 +41,6 @@ public interface IForgeArmPose
      * @param entity  The humanoid entity
      * @param isRight True if the animation is applied to the right arm, false if to the left arm.
      */
-    void applyTransform(HumanoidModel<?> model, LivingEntity entity, boolean isRight);
+    void applyTransform(HumanoidModel<?> model, LivingEntity entity, HumanoidArm isRight);
 
 }

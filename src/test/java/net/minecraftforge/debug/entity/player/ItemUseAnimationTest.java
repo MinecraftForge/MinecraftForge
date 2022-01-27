@@ -21,6 +21,7 @@ package net.minecraftforge.debug.entity.player;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.CreativeModeTab;
@@ -73,8 +74,8 @@ public class ItemUseAnimationTest
             consumer.accept(new IItemRenderProperties()
             {
 
-                private static final HumanoidModel.ArmPose SWING_POSE = HumanoidModel.ArmPose.create("SWING", false, (model, entity, isRight) -> {
-                    if (isRight)
+                private static final HumanoidModel.ArmPose SWING_POSE = HumanoidModel.ArmPose.create("SWING", false, (model, entity, arm) -> {
+                    if (arm == HumanoidArm.RIGHT)
                     {
                         model.rightArm.xRot = (float) (Math.random() * Math.PI * 2);
                     } else
