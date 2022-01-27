@@ -33,15 +33,18 @@ import org.apache.logging.log4j.Logger;
 public class PlayerLoginEventTest
 {
     private static final Logger LOGGER = LogManager.getLogger(PlayerLoginEventTest.class);
-    private static final boolean ENABLED = false;
+    private static final boolean KICK_ENABLED = false;
+    private static final boolean ENABLED = true;
 
     @SubscribeEvent
     public static void onPlayerChangeGameModeEvent(PlayerEvent.PrePlayerLoginEvent event)
     {
-        LOGGER.info("{} logged in with connection {}.", event.getPlayer().getName(), event.getConnection());
         if (ENABLED) {
-            event.setDenyMessage(new TextComponent("This is a test disconnect\nTesting the new line").withStyle(ChatFormatting.BLUE));
-            event.setResult(Event.Result.DENY);
+            LOGGER.info("{} logged in with connection {}.", event.getPlayer().getName(), event.getConnection());
+            if (KICK_ENABLED) {
+                event.setDenyMessage(new TextComponent("This is a test disconnect\nTesting the new line").withStyle(ChatFormatting.BLUE));
+                event.setResult(Event.Result.DENY);
+            }
         }
     }
 }
