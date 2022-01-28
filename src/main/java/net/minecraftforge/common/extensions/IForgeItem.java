@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -110,10 +110,12 @@ public interface IForgeItem
     }
 
     /**
-     * @param entity    The entity using the item
-     * @param itemStack The last {@link ItemStack} held before it stopped being used.
+     * When an item stops being used, by switching slots, releasing the mouse button or whatever, this method is called.
+     *
+     * @param stack  The last {@link ItemStack} held before it stopped being used.
+     * @param entity The entity (no longer) using the item
      */
-    default void stopUsingItem(net.minecraft.world.entity.LivingEntity entity, ItemStack itemStack)
+    default void stopUsingItem(ItemStack stack, net.minecraft.world.entity.LivingEntity entity)
     {
 
     }

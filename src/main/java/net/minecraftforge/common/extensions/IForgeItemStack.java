@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -122,6 +122,17 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     default boolean canPerformAction(ToolAction toolAction)
     {
         return self().getItem().canPerformAction(self(), toolAction);
+    }
+
+    /**
+     * This method is called in {@link LivingEntity#stopUsingItem()}.
+     * When an item stops being used, by switching slots, releasing the mouse button or whatever, this method is called.
+     *
+     * @param entity The entity (no longer) using the item
+     */
+    default void stopUsingItem(LivingEntity entity)
+    {
+        self().getItem().stopUsingItem(self(), entity);
     }
 
     /**
