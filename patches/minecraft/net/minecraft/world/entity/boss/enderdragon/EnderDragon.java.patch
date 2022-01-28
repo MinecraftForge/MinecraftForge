@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
 +++ b/net/minecraft/world/entity/boss/enderdragon/EnderDragon.java
-@@ -150,7 +_,10 @@
+@@ -150,7 +_,11 @@
        return adouble;
     }
  
 +   @javax.annotation.Nullable private Player unlimitedLastHurtByPlayer = null;
     public void m_8107_() {
++      // lastHurtByPlayer is cleared after 100 ticks, capture it indefinitely in unlimitedLastHurtByPlayer for LivingExperienceDropEvent
 +      if (this.f_20888_ != null) this.unlimitedLastHurtByPlayer = f_20888_;
 +      if (this.unlimitedLastHurtByPlayer != null && this.unlimitedLastHurtByPlayer.m_146910_()) this.unlimitedLastHurtByPlayer = null;
        this.m_146874_();
