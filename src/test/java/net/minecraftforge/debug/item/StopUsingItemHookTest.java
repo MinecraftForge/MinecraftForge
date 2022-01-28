@@ -75,7 +75,7 @@ public class StopUsingItemHookTest
         }
 
         @Override
-        public void stopUsingItem(ItemStack stack, LivingEntity e)
+        public void onStopUsingItem(ItemStack stack, LivingEntity e)
         {
             if (!e.getLevel().isClientSide())
             {

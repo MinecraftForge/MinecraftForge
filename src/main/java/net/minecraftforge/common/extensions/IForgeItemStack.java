@@ -125,14 +125,13 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * This method is called in {@link LivingEntity#stopUsingItem()}.
-     * When an item stops being used, by switching slots, releasing the mouse button or whatever, this method is called.
+     * This method is called when this item stops being used by switching slots, releasing the "use item" button or any other means.
      *
      * @param entity The entity (no longer) using the item
      */
-    default void stopUsingItem(LivingEntity entity)
+    default void onStopUsingItem(LivingEntity entity)
     {
-        self().getItem().stopUsingItem(self(), entity);
+        self().getItem().onStopUsingItem(self(), entity);
     }
 
     /**

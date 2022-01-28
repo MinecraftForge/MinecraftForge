@@ -489,11 +489,14 @@
           if (this.f_20935_.m_41781_()) {
              this.m_21329_();
           }
-@@ -2951,6 +_,7 @@
+@@ -2951,6 +_,10 @@
           this.m_21155_(1, false);
        }
  
-+      this.f_20935_.stopUsingItem(this);
++      if (!this.f_20935_.m_41619_())
++      {
++         this.f_20935_.onStopUsingItem(this);
++      }
        this.f_20935_ = ItemStack.f_41583_;
        this.f_20936_ = 0;
     }
