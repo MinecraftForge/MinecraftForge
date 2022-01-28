@@ -76,7 +76,8 @@ public final class ForgeRecipeProvider extends RecipeProvider
         replace(Items.DIAMOND,      Tags.Items.GEMS_DIAMOND);
         replace(Items.EMERALD,      Tags.Items.GEMS_EMERALD);
         replace(Items.CHEST,        Tags.Items.CHESTS_WOODEN);
-        replace(Blocks.COBBLESTONE, Tags.Items.COBBLESTONE);
+        replace(Blocks.COBBLESTONE, Tags.Items.COBBLESTONE_NORMAL);
+        replace(Blocks.COBBLED_DEEPSLATE, Tags.Items.COBBLESTONE_DEEPSLATE);
 
         exclude(Blocks.GOLD_BLOCK);
         exclude(Items.GOLD_NUGGET);

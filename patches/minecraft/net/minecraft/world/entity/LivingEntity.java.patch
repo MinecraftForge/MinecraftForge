@@ -123,6 +123,29 @@
        if (this.m_6673_(p_21016_)) {
           return false;
        } else if (this.f_19853_.f_46443_) {
+@@ -998,9 +_,11 @@
+          boolean flag = false;
+          float f1 = 0.0F;
+          if (p_21017_ > 0.0F && this.m_21275_(p_21016_)) {
+-            this.m_7909_(p_21017_);
+-            f1 = p_21017_;
+-            p_21017_ = 0.0F;
++            net.minecraftforge.event.entity.living.ShieldBlockEvent ev = net.minecraftforge.common.ForgeHooks.onShieldBlock(this, p_21016_, p_21017_);
++            if(!ev.isCanceled()) {
++            if(ev.shieldTakesDamage()) this.m_7909_(p_21017_);
++            f1 = ev.getBlockedDamage();
++            p_21017_ -= ev.getBlockedDamage();
+             if (!p_21016_.m_19360_()) {
+                Entity entity = p_21016_.m_7640_();
+                if (entity instanceof LivingEntity) {
+@@ -1010,6 +_,7 @@
+ 
+             flag = true;
+          }
++         }
+ 
+          this.f_20924_ = 1.5F;
+          boolean flag1 = true;
 @@ -1044,11 +_,11 @@
              if (entity1 instanceof Player) {
                 this.f_20889_ = 100;
