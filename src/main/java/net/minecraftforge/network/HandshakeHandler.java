@@ -293,7 +293,7 @@ public class HandshakeHandler
             LOGGER.debug(FMLHSMARKER, "Registry load complete, continuing handshake.");
         } else {
             LOGGER.error(FMLHSMARKER, "Failed to load registry, closing connection.");
-            this.manager.channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.registry(registryMismatches.get()));
+            this.manager.channel().attr(NetworkConstants.FML_MOD_MISMATCH_DATA).set(ModMismatchData.registry(registryMismatches.get(), NetworkHooks.getConnectionData(contextSupplier.get().getNetworkManager())));
             this.manager.disconnect(new TextComponent("Failed to synchronize registry data from server, closing connection"));
         }
         return successfulConnection.get();

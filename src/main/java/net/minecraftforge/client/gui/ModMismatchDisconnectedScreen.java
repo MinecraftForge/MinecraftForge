@@ -67,10 +67,9 @@ public class ModMismatchDisconnectedScreen extends Screen
     private final ModMismatchData modMismatchData;
     private final Path modsDir;
     private final Path logFile;
-    private Map<ResourceLocation, Pair<String, String>> presentChannelData;
-    private List<ResourceLocation> missingChannelData;
-    private Map<ResourceLocation, String> mismatchedChannelData;
-    private Map<String, String> missingRegistryMods;
+    private Map<ResourceLocation, Pair<String, String>> presentModData;
+    private List<ResourceLocation> missingModData;
+    private Map<ResourceLocation, String> mismatchedModData;
     private List<String> modIds;
     private Map<String, String> modUrls;
     private boolean mismatchedDataFromServer;
@@ -94,13 +93,10 @@ public class ModMismatchDisconnectedScreen extends Screen
         this.listHeight = 140;
 
         this.mismatchedDataFromServer = modMismatchData.mismatchedDataFromServer();
-        this.presentChannelData = modMismatchData.presentChannelData();
-        this.missingChannelData = modMismatchData.mismatchedChannelData().entrySet().stream().filter(e -> e.getValue().equals(NetworkRegistry.ABSENT)).map(Entry::getKey).collect(Collectors.toList());
-        this.mismatchedChannelData = modMismatchData.mismatchedChannelData().entrySet().stream().filter(e -> !e.getValue().equals(NetworkRegistry.ABSENT)).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-        this.missingRegistryMods = modMismatchData.missingRegistryModData();
-        this.modIds = presentChannelData.keySet().stream().map(ResourceLocation::getNamespace).distinct().collect(Collectors.toList());
-
-        this.modIds.addAll(missingRegistryMods.keySet());
+        this.presentModData = modMismatchData.presentModData();
+        this.missingModData = modMismatchData.mismatchedModData().entrySet().stream().filter(e -> e.getValue().equals(NetworkRegistry.ABSENT)).map(Entry::getKey).collect(Collectors.toList());
+        this.mismatchedModData = modMismatchData.mismatchedModData().entrySet().stream().filter(e -> !e.getValue().equals(NetworkRegistry.ABSENT)).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+        this.modIds = presentModData.keySet().stream().map(ResourceLocation::getNamespace).distinct().collect(Collectors.toList());
         this.modUrls = ModList.get().getMods().stream().filter(info -> modIds.contains(info.getModId())).map(info -> Pair.of(info.getModId(), (String)info.getConfig().getConfigElement("displayURL").orElse(""))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
         if (modMismatchData.containsMismatches())
@@ -135,52 +131,32 @@ public class ModMismatchDisconnectedScreen extends Screen
             super(client, width, height, top, left);
 
             List<Pair<MutableComponent, Pair<String, String>>> rawTable = new ArrayList<>();
-            if (!missingChannelData.isEmpty())
+            if (!missingModData.isEmpty())
             {
                 rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage(mismatchedDataFromServer ? "fml.modmismatchscreen.missingmods.server" : "fml.modmismatchscreen.missingmods.client")).withStyle(ChatFormatting.GRAY), null));
                 rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.table.modname")).withStyle(ChatFormatting.UNDERLINE), Pair.of("", ForgeI18n.parseMessage(mismatchedDataFromServer ? "fml.modmismatchscreen.table.youhave" : "fml.modmismatchscreen.table.youneed"))));
                 int i = 0;
-                for (ResourceLocation channel : missingChannelData) {
-                    rawTable.add(Pair.of(getModComponent(channel.toString(), presentChannelData.get(channel).getLeft(), i), Pair.of("", presentChannelData.getOrDefault(channel, Pair.of("", "")).getRight())));
+                for (ResourceLocation mod : missingModData) {
+                    rawTable.add(Pair.of(toModComponent(mod, presentModData.get(mod).getLeft(), i), Pair.of("", presentModData.getOrDefault(mod, Pair.of("", "")).getRight())));
                     if (++i >= 10) {
-                        rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.additional", missingChannelData.size() - i)).withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
+                        rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.additional", missingModData.size() - i)).withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
                         break;
                     }
                 }
                 rawTable.add(Pair.of(new TextComponent(" "), null)); //padding
             }
-            if (!mismatchedChannelData.isEmpty())
+            if (!mismatchedModData.isEmpty())
             {
                 rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.mismatchedmods")).withStyle(ChatFormatting.GRAY), null));
                 rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.table.modname")).withStyle(ChatFormatting.UNDERLINE), Pair.of(ForgeI18n.parseMessage(mismatchedDataFromServer ? "fml.modmismatchscreen.table.youhave" : "fml.modmismatchscreen.table.serverhas"), ForgeI18n.parseMessage(mismatchedDataFromServer ? "fml.modmismatchscreen.table.serverhas" : "fml.modmismatchscreen.table.youhave"))));
                 int i = 0;
-                for (Map.Entry<ResourceLocation,  String> channelData : mismatchedChannelData.entrySet()) {
-                    rawTable.add(Pair.of(getModComponent(channelData.getKey().toString(), presentChannelData.get(channelData.getKey()).getLeft(), i), Pair.of(presentChannelData.getOrDefault(channelData.getKey(), Pair.of("", "")).getRight(), channelData.getValue())));
+                for (Map.Entry<ResourceLocation,  String> modData : mismatchedModData.entrySet()) {
+                    rawTable.add(Pair.of(toModComponent(modData.getKey(), presentModData.get(modData.getKey()).getLeft(), i), Pair.of(presentModData.getOrDefault(modData.getKey(), Pair.of("", "")).getRight(), modData.getValue())));
                     if (++i >= 10) {
-                        rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.additional", mismatchedChannelData.size() - i)).withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
+                        rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.additional", mismatchedModData.size() - i)).withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
                         break;
                     }
                 }
-                rawTable.add(Pair.of(new TextComponent(" "), null)); //padding
-            }
-            if (!missingRegistryMods.isEmpty())
-            {
-                rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.registrymismatch")).withStyle(ChatFormatting.GRAY), null));
-                int i = 0;
-                boolean logMessage = false;
-                TextComponent mods = new TextComponent("");
-                for (Map.Entry<String, String> mod : missingRegistryMods.entrySet()) {
-                    mods.append(getModComponent(mod.getKey(), mod.getValue(), i));
-                    if (++i >= 20) {
-                        logMessage = true;
-                        break;
-                    }
-                    else if (missingRegistryMods.size() > i)
-                        mods.append(new TextComponent(", ").withStyle(ChatFormatting.WHITE));
-                }
-                rawTable.add(Pair.of(mods, Pair.of("", "")));
-                if (logMessage)
-                    rawTable.add(Pair.of(new TextComponent(ForgeI18n.parseMessage("fml.modmismatchscreen.additional", missingRegistryMods.size() - i)).withStyle(ChatFormatting.ITALIC), Pair.of("", "")));
                 rawTable.add(Pair.of(new TextComponent(" "), null)); //padding
             }
 
@@ -203,12 +179,13 @@ public class ModMismatchDisconnectedScreen extends Screen
             return splitLines;
         }
 
-        private MutableComponent getModComponent(String id, String name, int color)
+        private MutableComponent toModComponent(ResourceLocation id, String name, int color)
         {
-            String modid = id.split(":")[0];
+            String modId = id.getNamespace();
+            String tooltipId = id.getPath().isEmpty() ? id.getNamespace() : id.toString();
             return new TextComponent(name).withStyle(color % 2 == 0 ? ChatFormatting.GOLD : ChatFormatting.YELLOW)
-                    .withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(id + (!modUrls.getOrDefault(modid, "").isEmpty() ? "\n" + ForgeI18n.parseMessage("fml.modmismatchscreen.homepage") : "")))))
-                    .withStyle(s -> s.withClickEvent(!modUrls.getOrDefault(modid, "").isEmpty() ? new ClickEvent(ClickEvent.Action.OPEN_URL, modUrls.get(modid)) : null));
+                    .withStyle(s -> s.withHoverEvent(new HoverEvent(Action.SHOW_TEXT, new TextComponent(tooltipId + (!modUrls.getOrDefault(modId, "").isEmpty() ? "\n" + ForgeI18n.parseMessage("fml.modmismatchscreen.homepage") : "")))))
+                    .withStyle(s -> s.withClickEvent(!modUrls.getOrDefault(modId, "").isEmpty() ? new ClickEvent(ClickEvent.Action.OPEN_URL, modUrls.get(modId)) : null));
         }
 
         @Override
