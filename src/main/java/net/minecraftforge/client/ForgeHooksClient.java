@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,11 +26,14 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.locale.Language;
 import net.minecraft.network.Connection;
@@ -38,6 +41,7 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.blaze3d.platform.Window;
@@ -126,6 +130,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -238,6 +243,11 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(hand, mat, buffers, light, partialTicks, interpPitch, swingProgress, equipProgress, stack));
     }
 
+    public static boolean renderSpecificFirstPersonArm(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, AbstractClientPlayer player, HumanoidArm arm)
+    {
+        return MinecraftForge.EVENT_BUS.post(new RenderArmEvent(poseStack, multiBufferSource, packedLight, player, arm));
+    }
+
     public static void onTextureStitchedPre(TextureAtlas map, Set<ResourceLocation> resourceLocations)
     {
         StartupMessageManager.mcLoaderConsumer().ifPresent(c->c.accept("Atlas Stitching : "+map.location().toString()));
@@ -270,10 +280,24 @@ public class ForgeHooksClient
         renderType.set(layer);
     }
 
-    public static <A extends HumanoidModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, A _default)
+    public static Model getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot slot, HumanoidModel<?> _default)
     {
-        A model = RenderProperties.get(itemStack).getArmorModel(entityLiving, itemStack, slot, _default);
-        return model == null ? _default : model;
+        return RenderProperties.get(itemStack).getBaseArmorModel(entityLiving, itemStack, slot, _default);
+    }
+
+    /** Copies humanoid model properties from the original model to another, used for armor models */
+    @SuppressWarnings("unchecked")
+    public static <T extends LivingEntity> void copyModelProperties(HumanoidModel<T> original, HumanoidModel<?> replacement)
+    {
+        // this function does not make use of the <T> generic, so the unchecked cast should be safe
+        original.copyPropertiesTo((HumanoidModel<T>)replacement);
+        replacement.head.visible = original.head.visible;
+        replacement.hat.visible = original.hat.visible;
+        replacement.body.visible = original.body.visible;
+        replacement.rightArm.visible = original.rightArm.visible;
+        replacement.leftArm.visible = original.leftArm.visible;
+        replacement.rightLeg.visible = original.rightLeg.visible;
+        replacement.leftLeg.visible = original.leftLeg.visible;
     }
 
     //This properly moves the domain, if provided, to the front of the string before concatenating
@@ -1038,4 +1062,19 @@ public class ForgeHooksClient
                 .toList();
     }
 
+    public static Comparator<ParticleRenderType> makeParticleRenderTypeComparator(List<ParticleRenderType> renderOrder)
+    {
+        Comparator<ParticleRenderType> vanillaComparator = Comparator.comparingInt(renderOrder::indexOf);
+        return (typeOne, typeTwo) ->
+        {
+            boolean vanillaOne = renderOrder.contains(typeOne);
+            boolean vanillaTwo = renderOrder.contains(typeTwo);
+
+            if (vanillaOne && vanillaTwo)
+            {
+                return vanillaComparator.compare(typeOne, typeTwo);
+            }
+            return Boolean.compare(vanillaTwo, vanillaOne);
+        };
+    }
 }
