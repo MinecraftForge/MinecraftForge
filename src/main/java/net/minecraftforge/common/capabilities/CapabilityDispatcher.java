@@ -156,7 +156,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
     @Override
     public void writeCapabilities(FriendlyByteBuf out, boolean writeAll)
     {
-        for (Map.Entry<String, INetworkCapability> entry : networkCapabilities.entrySet())
+        for (var entry : networkCapabilities.entrySet())
         {
             if (!writeAll && !entry.getValue().requiresSync())
                 continue;
@@ -176,9 +176,9 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundTag>
     {
         while (in.readBoolean())
         {
-            String name = in.readUtf();
+            var name = in.readUtf();
             int dataSize = in.readVarInt();
-            INetworkCapability cap = networkCapabilities.get(name);
+            var cap = networkCapabilities.get(name);
             if (cap == null)
             {
                 in.readerIndex(in.readerIndex() + dataSize);

@@ -1,6 +1,5 @@
 package net.minecraftforge.network;
 
-import java.util.Set;
 import java.util.stream.Stream;
 
 import io.netty.buffer.Unpooled;
@@ -8,7 +7,6 @@ import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerChunkCache;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerPlayerConnection;
@@ -94,7 +92,7 @@ public class ForgeNetwork {
         if (!blockEntity.hasLevel() || blockEntity.getLevel().isClientSide())
             return;
 
-        FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
+        var capabilityData = new FriendlyByteBuf(Unpooled.buffer());
         blockEntity.writeCapabilities(capabilityData, writeAll);
         if (!capabilityData.isReadable())
             return;
@@ -114,12 +112,12 @@ public class ForgeNetwork {
         if (!blockEntity.hasLevel() || blockEntity.getLevel().isClientSide())
             return;
 
-        FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
+        var capabilityData = new FriendlyByteBuf(Unpooled.buffer());
         blockEntity.writeCapabilities(capabilityData, writeAll);
         if (!capabilityData.isReadable())
             return;
 
-        ServerChunkCache chunkSource = ((ServerLevel) blockEntity.getLevel()).getChunkSource();
+        var chunkSource = ((ServerLevel) blockEntity.getLevel()).getChunkSource();
         broadcast(new BlockEntityCapabilitiesMessage(blockEntity.getBlockPos(), capabilityData),
             chunkSource.chunkMap.getPlayers(new ChunkPos(blockEntity.getBlockPos()), false)
                 .stream()
@@ -154,12 +152,12 @@ public class ForgeNetwork {
         if (entity.level.isClientSide())
             return;
 
-        FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
+        var capabilityData = new FriendlyByteBuf(Unpooled.buffer());
         entity.writeCapabilities(capabilityData, writeAll);
         if (!capabilityData.isReadable())
             return;
 
-        Packet<?> packet = gameChannel.toVanillaPacket(
+        var packet = gameChannel.toVanillaPacket(
             new EntityCapabilitiesMessage(entity.getId(), capabilityData), NetworkDirection.PLAY_TO_CLIENT);
         if (sendToSelf && entity instanceof ServerPlayer player)
         {
@@ -181,7 +179,7 @@ public class ForgeNetwork {
     {
         if (menu == target.inventoryMenu)
         {
-            for (ItemStack equipmentStack : target.getAllSlots())
+            for (var equipmentStack : target.getAllSlots())
             {
                 // If the item is equipment we don't need to sync it as Minecraft does
                 // that in a separate method (and if we sync it twice the capability wont think
@@ -193,7 +191,7 @@ public class ForgeNetwork {
             }
         }
 
-        FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
+        var capabilityData = new FriendlyByteBuf(Unpooled.buffer());
         itemStack.writeCapabilities(capabilityData, writeAll);
         if (!capabilityData.isReadable())
             return;
@@ -238,12 +236,12 @@ public class ForgeNetwork {
         if (livingEntity.level.isClientSide())
             return;
 
-        FriendlyByteBuf capabilityData = new FriendlyByteBuf(Unpooled.buffer());
+        var capabilityData = new FriendlyByteBuf(Unpooled.buffer());
         itemStack.writeCapabilities(capabilityData, writeAll);
         if (!capabilityData.isReadable())
             return;
 
-        Packet<?> packet = gameChannel.toVanillaPacket(
+        var packet = gameChannel.toVanillaPacket(
             new EquipmentSlotCapabilitiesMessage(livingEntity.getId(), equipmentSlotType, capabilityData),
             NetworkDirection.PLAY_TO_CLIENT);
         if (sendToSelf && livingEntity instanceof ServerPlayer player)
@@ -257,8 +255,8 @@ public class ForgeNetwork {
     {
         if (entity.level instanceof ServerLevel level)
         {
-            ServerChunkCache chunkSource = level.getChunkSource();
-            Set<ServerPlayerConnection> players = chunkSource.chunkMap.getSeenBy(entity);
+            var chunkSource = level.getChunkSource();
+            var players = chunkSource.chunkMap.getSeenBy(entity);
             if (players != null)
             {
                 return players.stream()

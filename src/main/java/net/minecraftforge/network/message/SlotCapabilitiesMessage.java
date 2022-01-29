@@ -7,18 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.network.NetworkEvent;
 
-public class SlotCapabilitiesMessage {
-
-    private final int entityId;
-    private final int slotIndex;
-    private final FriendlyByteBuf capabilityData;
-
-    public SlotCapabilitiesMessage(int entityId, int slotIndex, FriendlyByteBuf capabilityData)
-    {
-        this.entityId = entityId;
-        this.slotIndex = slotIndex;
-        this.capabilityData = capabilityData;
-    }
+public record SlotCapabilitiesMessage(int entityId, int slotIndex, FriendlyByteBuf capabilityData) {
 
     public void encode(FriendlyByteBuf out)
     {

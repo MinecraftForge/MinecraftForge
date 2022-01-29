@@ -6,16 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.network.NetworkEvent;
 
-public class EntityCapabilitiesMessage {
-
-    private final int entityId;
-    private final FriendlyByteBuf capabilityData;
-
-    public EntityCapabilitiesMessage(int entityId, FriendlyByteBuf capabilityData)
-    {
-        this.entityId = entityId;
-        this.capabilityData = capabilityData;
-    }
+public record EntityCapabilitiesMessage(int entityId, FriendlyByteBuf capabilityData) {
 
     public void encode(FriendlyByteBuf out)
     {

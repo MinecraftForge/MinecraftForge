@@ -8,18 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.network.NetworkEvent;
 
-public class EquipmentSlotCapabilitiesMessage {
-
-    private final int entityId;
-    private final EquipmentSlot slot;
-    private final FriendlyByteBuf capabilityData;
-
-    public EquipmentSlotCapabilitiesMessage(int entityId, EquipmentSlot slot, FriendlyByteBuf capabilityData)
-    {
-        this.entityId = entityId;
-        this.slot = slot;
-        this.capabilityData = capabilityData;
-    }
+public record EquipmentSlotCapabilitiesMessage(int entityId, EquipmentSlot slot, FriendlyByteBuf capabilityData) {
 
     public void encode(FriendlyByteBuf out)
     {

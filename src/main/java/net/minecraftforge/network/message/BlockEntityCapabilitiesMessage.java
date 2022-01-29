@@ -7,16 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.util.LogicalSidedProvider;
 import net.minecraftforge.network.NetworkEvent;
 
-public class BlockEntityCapabilitiesMessage {
-
-    private final BlockPos blockPos;
-    private final FriendlyByteBuf capabilityData;
-
-    public BlockEntityCapabilitiesMessage(BlockPos blockPos, FriendlyByteBuf capabilityData)
-    {
-        this.blockPos = blockPos;
-        this.capabilityData = capabilityData;
-    }
+public record BlockEntityCapabilitiesMessage(BlockPos blockPos, FriendlyByteBuf capabilityData) {
 
     public void encode(FriendlyByteBuf out)
     {
