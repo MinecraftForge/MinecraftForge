@@ -148,6 +148,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      *
      * @return True if this entity is being tracked by a world
      */
+    // TODO: rename in 1.19 to isAddedToLevel
     boolean isAddedToWorld();
 
     /**
@@ -155,6 +156,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      * ticking list. Can be overriden, but needs to call super
      * to prevent MC-136995.
      */
+    // TODO: rename in 1.19 to onAddedToLevel
     void onAddedToWorld();
 
     /**
@@ -162,6 +164,7 @@ public interface IForgeEntity extends ICapabilitySerializable<CompoundTag>
      * ticking list. Can be overriden, but needs to call super
      * to prevent MC-136995.
      */
+    // TODO: rename in 1.19 to onRemovedFromLevel
     void onRemovedFromWorld();
 
     /**
