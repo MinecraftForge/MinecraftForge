@@ -104,15 +104,19 @@
        }
     }
  
-@@ -764,7 +_,48 @@
+@@ -764,7 +_,56 @@
        this.m_8853_(p_8846_);
     }
  
++   /** @deprecated To be removed in 1.19. See {@link #removePlayerImmediately(ServerPlayer, Entity.RemovalReason)} as a possible replacement. */
++   @Deprecated(forRemoval = true, since = "1.18.1")
 +   public void removePlayer(ServerPlayer p_8850_, boolean keepData) {
 +      p_8850_.m_146870_();
 +      this.removeEntity(p_8850_, keepData);
 +   }
 +
++   /** @deprecated To be removed in 1.19. See {@link Entity#setRemoved(Entity.RemovalReason)} as a possible replacement. */
++   @Deprecated(forRemoval = true, since = "1.18.1")
 +   public void removeEntityComplete(Entity p_8865_, boolean keepData) {
 +      if(p_8865_.isMultipartEntity()) {
 +         for(net.minecraftforge.entity.PartEntity<?> parts : p_8865_.getParts()) {
@@ -136,10 +140,14 @@
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_8865_, this));
 +   }
 +
++   /** @deprecated To be removed in 1.19. See {@link Entity#setRemoved(Entity.RemovalReason)} as a possible replacement. */
++   @Deprecated(forRemoval = true, since = "1.18.1")
 +   public void removeEntity(Entity entity) {
 +      removeEntity(entity, false);
 +   }
 +
++   /** @deprecated To be removed in 1.19. See {@link Entity#setRemoved(Entity.RemovalReason)} as a possible replacement. */
++   @Deprecated(forRemoval = true, since = "1.18.1")
 +   public void removeEntity(Entity p_8868_, boolean keepData) {
 +      if (this.f_8557_) {
 +         throw (IllegalStateException) net.minecraft.Util.m_137570_(new IllegalStateException("Removing entity while ticking!"));
