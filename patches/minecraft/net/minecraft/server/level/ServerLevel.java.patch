@@ -104,7 +104,7 @@
        }
     }
  
-@@ -764,7 +_,56 @@
+@@ -764,7 +_,55 @@
        this.m_8853_(p_8846_);
     }
  
@@ -135,9 +135,8 @@
 +         this.f_143246_.remove(((Mob)p_8865_).m_21573_());
 +      }
 +
-+      p_8865_.onRemovedFromWorld();
 +      p_8865_.m_146870_();
-+      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityLeaveWorldEvent(p_8865_, this));
++      // onRemovedFromWorld and EntityLeaveWorldEvent are called by discard, so no need to do it ourselves here lest we double-call
 +   }
 +
 +   /** @deprecated To be removed in 1.19. See {@link Entity#setRemoved(Entity.RemovalReason)} as a possible replacement. */
