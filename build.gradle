@@ -1010,7 +1010,7 @@ project(':forge') {
         header = file("$rootDir/LICENSE-header.txt")
 
         ext {
-            year = new Date().format("yyyy") - 1
+            year = new Date().format("yyyy")
         }
 
         include 'net/minecraftforge/'
