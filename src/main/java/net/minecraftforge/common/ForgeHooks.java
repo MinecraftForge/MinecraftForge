@@ -786,7 +786,7 @@ public class ForgeHooks
             MinecraftForge.EVENT_BUS.post(evt);
             return evt.isCanceled() ? null : evt.getNewGameMode();
         }
-        return null;
+        return newGameType;
     }
 
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
