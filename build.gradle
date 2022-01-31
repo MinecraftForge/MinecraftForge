@@ -115,7 +115,7 @@ project(':forge') {
     apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.patcher'
-    //apply plugin: 'org.cadixdev.licenser'
+    apply plugin: 'org.cadixdev.licenser'
 
     java.toolchain.languageVersion = JavaLanguageVersion.of(8)
     group = 'net.minecraftforge'
@@ -802,6 +802,10 @@ project(':forge') {
                 }
             }
         }
+
+        afterEvaluate {
+            dependsOn project.rootProject.tasks.createChangelog
+        }
     }
     
     task launcherJar(type: Jar) {
@@ -870,6 +874,10 @@ project(':forge') {
                 duplicatesStrategy = 'exclude'
             }
         }
+
+        afterEvaluate {
+            dependsOn project.rootProject.tasks.createChangelog
+        }
     }
     
     [universalJar, launcherJar, installerJar].each { t -> 
@@ -920,6 +928,10 @@ project(':forge') {
             ])
             rename 'gitignore\\.txt', '.gitignore'
             rename 'gitattributes\\.txt', '.gitattributes'
+        }
+
+        afterEvaluate {
+            dependsOn project.rootProject.tasks.createChangelog
         }
     }
     
@@ -993,7 +1005,7 @@ project(':forge') {
             }
         }
     }
-    /*
+
     license {
         header = file("$rootDir/LICENSE-header.txt")
 
@@ -1018,7 +1030,7 @@ project(':forge') {
                 files.from files("$rootDir/src/test/java")
             }
         }
-    }*/
+    }
 
     task userdevExtras(type:Jar) {
         dependsOn classes
@@ -1079,6 +1091,7 @@ project(':forge') {
                 artifact userdevJar
                 artifact sourcesJar
                 artifact launcherJar
+                artifact rootProject.createChangelog
 
                 pom {
                     name = 'forge'
