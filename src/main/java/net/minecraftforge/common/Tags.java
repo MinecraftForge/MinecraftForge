@@ -21,15 +21,18 @@ package net.minecraftforge.common;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag.Named;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
 import javax.annotation.Nullable;
+
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -39,6 +42,7 @@ public class Tags
     {
         Blocks.init();
         Items.init();
+        EntityTypes.init();
         Fluids.init();
     }
 
@@ -405,6 +409,29 @@ public class Tags
         private static IOptionalNamedTag<Item> tag(String name)
         {
             return tag(name, null);
+        }
+    }
+
+    public static class EntityTypes
+    {
+        private static void init() {}
+
+        public static final Tags.IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> CONSTRUCTS = tag("constructs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> END_MOBS = tag("end_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> FLYING_MOBS = tag("flying_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> INANIMATE_ENTITIES = tag("inanimate_entities");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> MINECARTS = tag("minecarts");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> NETHER_MOBS = tag("nether_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> OVERWORLD_MOBS = tag("overworld_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> SAPIENT_MOBS = tag("sapient_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> SUMMONED_MOBS = tag("summoned_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> THROWN_ENTITIES = tag("thrown_entities");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ZOMBIES = tag("zombies");
+
+        private static Tags.IOptionalNamedTag<EntityType<?>> tag(String name)
+        {
+            return EntityTypeTags.createOptional(new ResourceLocation("forge", name));
         }
     }
 
