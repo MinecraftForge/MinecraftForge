@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:bat",
+    "minecraft:bee",
+    "minecraft:ender_dragon",
+    "minecraft:ghast",
+    "minecraft:parrot",
+    "minecraft:phantom",
+    "minecraft:vex",
+    "minecraft:wither"
+  ]
+}

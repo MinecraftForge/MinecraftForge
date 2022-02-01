@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:ender_dragon",
+    "minecraft:endermite",
+    "minecraft:iron_golem",
+    "minecraft:snow_golem",
+    "minecraft:wither"
+  ]
+}

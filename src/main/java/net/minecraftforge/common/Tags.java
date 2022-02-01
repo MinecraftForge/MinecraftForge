@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Fluid;
 
 import javax.annotation.Nullable;
+
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -56,10 +57,6 @@ public class Tags
         public static final IOptionalNamedTag<Block> CHESTS_TRAPPED = tag("chests/trapped");
         public static final IOptionalNamedTag<Block> CHESTS_WOODEN = tag("chests/wooden");
         public static final IOptionalNamedTag<Block> COBBLESTONE = tag("cobblestone");
-        public static final IOptionalNamedTag<Block> COBBLESTONE_NORMAL = tag("cobblestone/normal");
-        public static final IOptionalNamedTag<Block> COBBLESTONE_INFESTED = tag("cobblestone/infested");
-        public static final IOptionalNamedTag<Block> COBBLESTONE_MOSSY = tag("cobblestone/mossy");
-        public static final IOptionalNamedTag<Block> COBBLESTONE_DEEPSLATE = tag("cobblestone/deepslate");
         public static final IOptionalNamedTag<Block> END_STONES = tag("end_stones");
         public static final IOptionalNamedTag<Block> ENDERMAN_PLACE_ON_BLACKLIST = tag("enderman_place_on_blacklist");
         public static final IOptionalNamedTag<Block> FENCE_GATES = tag("fence_gates");
@@ -209,10 +206,6 @@ public class Tags
         public static final IOptionalNamedTag<Item> CHESTS_TRAPPED = tag("chests/trapped");
         public static final IOptionalNamedTag<Item> CHESTS_WOODEN = tag("chests/wooden");
         public static final IOptionalNamedTag<Item> COBBLESTONE = tag("cobblestone");
-        public static final IOptionalNamedTag<Item> COBBLESTONE_NORMAL = tag("cobblestone/normal");
-        public static final IOptionalNamedTag<Item> COBBLESTONE_INFESTED = tag("cobblestone/infested");
-        public static final IOptionalNamedTag<Item> COBBLESTONE_MOSSY = tag("cobblestone/mossy");
-        public static final IOptionalNamedTag<Item> COBBLESTONE_DEEPSLATE = tag("cobblestone/deepslate");
         public static final IOptionalNamedTag<Item> CROPS = tag("crops");
         public static final IOptionalNamedTag<Item> CROPS_BEETROOT = tag("crops/beetroot");
         public static final IOptionalNamedTag<Item> CROPS_CARROT = tag("crops/carrot");
@@ -423,9 +416,20 @@ public class Tags
     {
         private static void init() {}
 
-        public static final IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> CONSTRUCTS = tag("constructs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> END_MOBS = tag("end_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> FLYING_MOBS = tag("flying_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> INANIMATE_ENTITIES = tag("inanimate_entities");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> MINECARTS = tag("minecarts");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> NETHER_MOBS = tag("nether_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> OVERWORLD_MOBS = tag("overworld_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> SAPIENT_MOBS = tag("sapient_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> SUMMONED_MOBS = tag("summoned_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> THROWN_ENTITIES = tag("thrown_entities");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ZOMBIES = tag("zombies");
 
-        private static final IOptionalNamedTag<EntityType<?>> tag(String name)
+        private static Tags.IOptionalNamedTag<EntityType<?>> tag(String name)
         {
             return EntityTypeTags.createOptional(new ResourceLocation("forge", name));
         }

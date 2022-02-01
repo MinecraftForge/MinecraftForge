@@ -1,0 +1,12 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:snowball",
+    "minecraft:egg",
+    "minecraft:ender_pearl",
+    "minecraft:experience_bottle",
+    "minecraft:potion",
+    "minecraft:trident",
+    "minecraft:fishing_bobber"
+  ]
+}
