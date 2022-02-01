@@ -228,14 +228,14 @@ public class HandshakeHandler
         c.get().setPacketHandled(true);
         if (!mismatchedChannels.isEmpty()) {
             LOGGER.error(FMLHSMARKER, "Terminating connection with client, mismatched mod list");
-            NetworkConstants.handshakeChannel.reply(new HandshakeMessages.S2CModMismatchData(mismatchedChannels), c.get());
+            NetworkConstants.handshakeChannel.reply(new HandshakeMessages.S2CChannelMismatchData(mismatchedChannels), c.get());
             c.get().getNetworkManager().disconnect(new TextComponent("Connection closed - mismatched mod channel list"));
             return;
         }
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
     }
 
-    void handleModMismatchData(HandshakeMessages.S2CModMismatchData modMismatchData, Supplier<NetworkEvent.Context> c)
+    void handleModMismatchData(HandshakeMessages.S2CChannelMismatchData modMismatchData, Supplier<NetworkEvent.Context> c)
     {
         if (!modMismatchData.getMismatchedChannelData().isEmpty())
         {

@@ -133,7 +133,7 @@ public class HandshakeMessages
      * Prefixes S2CModList by sending additional data about the mods installed on the server to the client
      * The mod data is stored as follows: [modId -> [modName, modVersion]]
      */
-    public static class S2CModData extends LoginIndexedMessage implements INoResponse
+    public static class S2CModData extends LoginIndexedMessage
     {
         private final Map<String, Pair<String, String>> mods;
 
@@ -315,19 +315,24 @@ public class HandshakeMessages
         }
     }
 
-    public static class S2CModMismatchData extends LoginIndexedMessage {
+    /**
+     * Notifies the client of a channel mismatch on the server, so a {@link net.minecraftforge.client.gui.ModMismatchDisconnectedScreen} is used to notify the user of the disconnection.
+     * This packet also sends the data of a channel mismatch (currently, the ids and versions of the mismatched channels) to the client for it to display the correct information in said screen.
+     */
+    public static class S2CChannelMismatchData extends LoginIndexedMessage
+    {
         private final Map<ResourceLocation, String> mismatchedChannelData;
 
-        public S2CModMismatchData(Map<ResourceLocation, String> mismatchedChannelData)
+        public S2CChannelMismatchData(Map<ResourceLocation, String> mismatchedChannelData)
         {
             this.mismatchedChannelData = mismatchedChannelData;
         }
 
-        public static S2CModMismatchData decode(FriendlyByteBuf input)
+        public static S2CChannelMismatchData decode(FriendlyByteBuf input)
         {
             Map<ResourceLocation, String> mismatchedMods = input.readMap(i -> new ResourceLocation(i.readUtf(0x100)), i -> i.readUtf(0x100));
 
-            return new S2CModMismatchData(mismatchedMods);
+            return new S2CChannelMismatchData(mismatchedMods);
         }
 
         public void encode(FriendlyByteBuf output)
@@ -339,11 +344,5 @@ public class HandshakeMessages
         {
             return mismatchedChannelData;
         }
-    }
-
-    /**
-     * Marker interface for all server -> client packets that the server should not await a response from the client for
-     */
-    public interface INoResponse {
     }
 }
