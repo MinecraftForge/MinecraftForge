@@ -26,7 +26,7 @@ import org.gradle.plugins.ide.eclipse.model.SourceFolder
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.github.ben-manes.versions' version '0.36.0'
-    id 'net.minecraftforge.gradleutils' version '1.+'
+    id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
 }
 
@@ -48,7 +48,10 @@ ext {
     MC_VERSION = '1.16.5'
     MCP_VERSION = '20210115.111550'
     SPI_VERSION = '3.2.0'
+    MIN_TAG_FOR_CHANGELOG = "36.0"
 }
+
+version = gradleutils.getMCTagOffsetBranchVersion(MC_VERSION)
 
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.mcp'
@@ -450,13 +453,10 @@ project(':forge') {
     
     def extraTxts = [
         rootProject.file('CREDITS.txt'),
-        rootProject.file('LICENSE.txt')
+        rootProject.file('LICENSE.txt'),
+        rootProject.file('build/changelog.txt'),
     ]
-    
-    def changelog = rootProject.file('build/changelog.txt')
-    if (changelog.exists())
-        extraTxts += changelog
-    
+
     task crowdin(type: Crowdin) {
         key = project.hasProperty('crowdinKey') ? project.crowdinKey : null
         //TODO: Merge our english.json?
@@ -804,6 +804,10 @@ project(':forge') {
                 }
             }
         }
+
+        afterEvaluate {
+            dependsOn project.rootProject.tasks.createChangelog
+        }
     }
     
     task launcherJar(type: Jar) {
@@ -872,6 +876,10 @@ project(':forge') {
                 duplicatesStrategy = 'exclude'
             }
         }
+
+        afterEvaluate {
+            dependsOn project.rootProject.tasks.createChangelog
+        }
     }
     
     [universalJar, launcherJar, installerJar].each { t -> 
@@ -922,6 +930,10 @@ project(':forge') {
             ])
             rename 'gitignore\\.txt', '.gitignore'
             rename 'gitattributes\\.txt', '.gitattributes'
+        }
+
+        afterEvaluate {
+            dependsOn project.rootProject.tasks.createChangelog
         }
     }
     
@@ -995,7 +1007,7 @@ project(':forge') {
             }
         }
     }
-    
+
     license {
         header = file("$rootDir/LICENSE-header.txt")
 
@@ -1075,11 +1087,6 @@ project(':forge') {
         publications {
             mavenJava(MavenPublication) {
                 artifact universalJar
-                if (changelog.exists()) {
-                    artifact(changelog) {
-                        classifier = 'changelog'
-                    }
-                }
                 artifact installerJar
                 //TODO: installer-win
                 artifact makeMdk
@@ -1114,20 +1121,7 @@ project(':forge') {
             }
         }
         repositories {
-            maven {
-                if (System.env.MAVEN_USER) {
-                    url "https://maven.minecraftforge.net/releases/"
-                    authentication {
-                        basic(BasicAuthentication)
-                    }
-                    credentials {
-                        username = System.env.MAVEN_USER ?: 'not'
-                        password = System.env.MAVEN_PASSWORD ?: 'set'
-                    }
-                } else {
-                    url 'file://' + rootProject.file('repo').getAbsolutePath()
-                }
-            }
+            maven gradleutils.getPublishingForgeMaven()
         }
     }
 }
@@ -1136,4 +1130,8 @@ project(':forge') {
 task setup() {
     dependsOn ':clean:extractMapped'
     dependsOn ':forge:extractMapped' //These must be strings so that we can do lazy resolution. Else we need evaluationDependsOnChildren above
+}
+
+changelog {
+    fromTag MIN_TAG_FOR_CHANGELOG
 }
