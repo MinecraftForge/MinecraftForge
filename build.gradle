@@ -51,6 +51,8 @@ ext {
     MIN_TAG_FOR_CHANGELOG = "36.0"
 }
 
+version = gradleutils.getMCTagOffsetBranchVersion(MC_VERSION)
+
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.mcp'
     repositories {
