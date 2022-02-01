@@ -418,16 +418,6 @@ public class Tags
 
         public static final Tags.IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
         public static final Tags.IOptionalNamedTag<EntityType<?>> CONSTRUCTS = tag("constructs");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> END_MOBS = tag("end_mobs");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> FLYING_MOBS = tag("flying_mobs");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> INANIMATE_ENTITIES = tag("inanimate_entities");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> MINECARTS = tag("minecarts");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> NETHER_MOBS = tag("nether_mobs");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> OVERWORLD_MOBS = tag("overworld_mobs");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> SAPIENT_MOBS = tag("sapient_mobs");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> SUMMONED_MOBS = tag("summoned_mobs");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> THROWN_ENTITIES = tag("thrown_entities");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ZOMBIES = tag("zombies");
 
         private static Tags.IOptionalNamedTag<EntityType<?>> tag(String name)
         {
