@@ -99,6 +99,9 @@ public class ConnectionData
      */
     public record ModMismatchData(Map<ResourceLocation, String> mismatchedModData, Map<ResourceLocation, Pair<String, String>> presentModData, boolean mismatchedDataFromServer)
     {
+        /**
+         * Creates a ModMismatchData instance from given channel mismatch data, which is processed side-aware depending on the value of mismatchedDataFromServer
+         */
         public static ModMismatchData channel(Map<ResourceLocation, String> mismatchedChannels, ConnectionData connectionData, boolean mismatchedDataFromServer)
         {
             Map<ResourceLocation, String> mismatchedChannelData = enhanceWithModData(mismatchedChannels, connectionData, mismatchedDataFromServer);
@@ -107,16 +110,27 @@ public class ConnectionData
             return new ModMismatchData(mismatchedChannelData, presentChannelData, mismatchedDataFromServer);
         }
 
+        /**
+         * Creates a ModMismatchData instance from given mismatched registry entries
+         */
         public static ModMismatchData registry(Multimap<ResourceLocation, ResourceLocation> mismatchedRegistryData, ConnectionData connectionData)
         {
             List<ResourceLocation> mismatchedRegistryMods = mismatchedRegistryData.values().stream().map(ResourceLocation::getNamespace).distinct().map(id -> new ResourceLocation(id, "")).toList();
             Map<ResourceLocation, String> mismatchedRegistryModData = mismatchedRegistryMods.stream().map(id -> ModList.get().getModContainerById(id.getNamespace()).map(modContainer -> Pair.of(id, modContainer.getModInfo().getVersion().toString())).orElse(Pair.of(id, NetworkRegistry.ABSENT))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
-            Map<ResourceLocation, Pair<String, String>> presentModData = getServersideModData(mismatchedRegistryModData.keySet(), connectionData).entrySet().stream().collect(Collectors.toMap(e -> new ResourceLocation(e.getKey().getNamespace(), ""), Entry::getValue));
+            Map<ResourceLocation, Pair<String, String>> presentModData = getServerSideModData(mismatchedRegistryModData.keySet(), connectionData).entrySet().stream().collect(Collectors.toMap(e -> new ResourceLocation(e.getKey().getNamespace(), ""), Entry::getValue));
 
             return new ModMismatchData(mismatchedRegistryModData, presentModData, false); //false because mods marked with NetworkRegistry.ABSENT should be displayed as missing from the client, not the server
         }
 
-        public static Map<ResourceLocation, String> enhanceWithModData(Map<ResourceLocation, String> mismatchedChannels, ConnectionData connectionData, boolean mismatchedDataFromServer)
+        /**
+         * Returns true if this ModMismatchData instance contains channel or registry mismatches
+         */
+        public boolean containsMismatches()
+        {
+            return mismatchedModData != null && !mismatchedModData.isEmpty();
+        }
+
+        private static Map<ResourceLocation, String> enhanceWithModData(Map<ResourceLocation, String> mismatchedChannels, ConnectionData connectionData, boolean mismatchedDataFromServer)
         {
             Map<String, String> remoteModVersions;
 
@@ -131,7 +145,7 @@ public class ConnectionData
             return mismatchedChannels.keySet().stream().map(channel -> Pair.of(channel, mismatchedChannels.get(channel).equals(NetworkRegistry.ABSENT) ? NetworkRegistry.ABSENT : remoteModVersions.getOrDefault(channel.getNamespace(), NetworkRegistry.ABSENT))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         }
 
-        public static Map<ResourceLocation, Pair<String, String>> getChannelDataFromSide(Set<ResourceLocation> mismatchedChannelsFilter, ConnectionData connectionData, boolean fromClientSide)
+        private static Map<ResourceLocation, Pair<String, String>> getChannelDataFromSide(Set<ResourceLocation> mismatchedChannelsFilter, ConnectionData connectionData, boolean fromClientSide)
         {
             Map<ResourceLocation, String> channelData;
 
@@ -146,7 +160,7 @@ public class ConnectionData
             return channelData.keySet().stream().filter(mismatchedChannelsFilter::contains).map(id -> getModDataFromChannel(id, connectionData, fromClientSide)).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
         }
 
-        public static Pair<ResourceLocation, Pair<String, String>> getModDataFromChannel(ResourceLocation channel, ConnectionData connectionData, boolean fromClientSide)
+        private static Pair<ResourceLocation, Pair<String, String>> getModDataFromChannel(ResourceLocation channel, ConnectionData connectionData, boolean fromClientSide)
         {
             if (fromClientSide)
             {
@@ -159,16 +173,11 @@ public class ConnectionData
             }
         }
 
-        public static Map<ResourceLocation, Pair<String, String>> getServersideModData(Set<ResourceLocation> mismatchedModsFilter, ConnectionData connectionData)
+        private static Map<ResourceLocation, Pair<String, String>> getServerSideModData(Set<ResourceLocation> mismatchedModsFilter, ConnectionData connectionData)
         {
             Map<String, Pair<String, String>> localChannelData = connectionData != null ? connectionData.getModData() : Map.of();
             Set<String> modIdFilter = mismatchedModsFilter.stream().map(ResourceLocation::getNamespace).collect(Collectors.toSet());
             return localChannelData.entrySet().stream().filter(e -> modIdFilter.contains(e.getKey())).collect(Collectors.toMap(e -> new ResourceLocation(e.getKey(), ""), Entry::getValue));
-        }
-
-        public boolean containsMismatches()
-        {
-            return mismatchedModData != null && !mismatchedModData.isEmpty();
         }
     }
 }
