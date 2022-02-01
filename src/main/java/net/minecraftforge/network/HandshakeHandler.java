@@ -342,4 +342,14 @@ public class HandshakeHandler
         }
         return false;
     }
+
+    public static boolean packetNeedsResponse(Connection mgr, int packetIndex)
+    {
+        HandshakeHandler handler = mgr.channel().attr(NetworkConstants.FML_HANDSHAKE_HANDLER).get();
+        if (handler != null)
+        {
+            return handler.sentMessages.contains(packetIndex);
+        }
+        return false;
+    }
 }
