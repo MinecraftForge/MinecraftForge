@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "minecraft:elder_guardian",
-    "minecraft:guardian",
-    "minecraft:iron_golem",
-    "minecraft:snow_golem"
-  ]
-}

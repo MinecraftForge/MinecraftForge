@@ -35,7 +35,6 @@ public class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider {
     public void addTags()
     {
         tag(Tags.EntityTypes.BOSSES).add(EntityType.ENDER_DRAGON, EntityType.WITHER);
-        tag(Tags.EntityTypes.CONSTRUCTS).add(EntityType.ELDER_GUARDIAN, EntityType.GUARDIAN, EntityType.IRON_GOLEM, EntityType.SNOW_GOLEM);
     }
 
     @Override
