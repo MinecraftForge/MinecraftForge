@@ -48,7 +48,7 @@ class NetworkInitialization {
                 decoder(HandshakeMessages.S2CModData::decode).
                 encoder(HandshakeMessages.S2CModData::encode).
                 markAsLoginPacket().
-				noResponse().
+                noResponse().
                 consumer(HandshakeHandler.biConsumerFor(HandshakeHandler::handleModData)).
                 add();
 
