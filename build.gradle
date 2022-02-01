@@ -1091,7 +1091,6 @@ project(':forge') {
                 artifact userdevJar
                 artifact sourcesJar
                 artifact launcherJar
-                artifact rootProject.createChangelog
 
                 pom {
                     name = 'forge'
