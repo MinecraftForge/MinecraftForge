@@ -26,15 +26,16 @@ import net.minecraftforge.common.Tags;
 
 public class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider {
 
-    public ForgeEntityTypeTagsProvider(DataGenerator generator, String modId, ExistingFileHelper existingFileHelper)
+    public ForgeEntityTypeTagsProvider(DataGenerator generator, ExistingFileHelper existingFileHelper)
     {
-        super(generator, modId, existingFileHelper);
+        super(generator, "forge", existingFileHelper);
     }
 
     @Override
     public void addTags()
     {
         tag(Tags.EntityTypes.BOSSES).add(EntityType.ENDER_DRAGON, EntityType.WITHER);
+        tag(Tags.EntityTypes.FISH).add(EntityType.COD, EntityType.PUFFERFISH, EntityType.SALMON, EntityType.TROPICAL_FISH);
     }
 
     @Override

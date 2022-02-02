@@ -425,6 +425,7 @@ public class Tags
         private static void init() {}
 
         public static final Tags.IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> FISH = tag("fish");
 
         private static Tags.IOptionalNamedTag<EntityType<?>> tag(String name)
         {
