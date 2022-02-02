@@ -46,9 +46,9 @@ project {
         text("env.PUBLISHED_JAVA_GROUP", "net.minecraftforge", label = "Published group", description = "The maven coordinate group that has been published by this build. Can not be empty.", allowEmpty = false)
         //These are references and not actually keys
         password("env.CROWDIN_KEY", "credentialsJSON:a3102dbe-805d-4177-9f54-3d2c2eb08fd5", display = ParameterDisplay.HIDDEN)
-        password("env.KEYSTORE_URL", "credentialsJSON:a7ae1c82-8058-4061-8d12-7f6bc2618d2e", display = ParameterDisplay.HIDDEN)
-        password("env.KEYSTORE_PASSWORD", "credentialsJSON:d7b964e3-a1fd-47a8-b892-6f601fe47479", display = ParameterDisplay.HIDDEN)
-        text("additional_publishing_gradle_parameters", "-PcrowdinKey=%env.CROWDIN_KEY% -PkeystoreKeyPass=%env.KEYSTORE_PASSWORD% -PkeystoreStorePass=%env.KEYSTORE_PASSWORD% -Pkeystore=%env.KEYSTORE_URL%", label = "Additional gradle parameters for publish", description = "Contains the additional gradle parameters used during publishing.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
+        password("env.LEGACY_KEYSTORE_URL", "credentialsJSON:a2d2efc7-4492-47b6-9826-d14b2c1243a0", display = ParameterDisplay.HIDDEN)
+        password("env.LEGACY_KEYSTORE_PASSWORD", "credentialsJSON:9f9a1a9e-f91b-40d5-b888-8ebc79a99ded", display = ParameterDisplay.HIDDEN)
+        text("additional_publishing_gradle_parameters", "-PcrowdinKey=%env.CROWDIN_KEY% -PkeystoreKeyPass=%env.LEGACY_KEYSTORE_PASSWORD% -PkeystoreStorePass=%env.LEGACY_KEYSTORE_PASSWORD% -Pkeystore=%env.LEGACY_KEYSTORE_URL%", label = "Additional gradle parameters for publish", description = "Contains the additional gradle parameters used during publishing.", display = ParameterDisplay.HIDDEN, allowEmpty = true)
 
         checkbox("should_execute_build", "false", label = "Should build", description = "Indicates if the build task should be executed.", display = ParameterDisplay.HIDDEN,
             checked = "true", unchecked = "false")
