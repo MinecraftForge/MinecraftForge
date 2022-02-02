@@ -73,7 +73,6 @@ public class ModMismatchDisconnectedScreen extends Screen
     private List<String> modIds;
     private Map<String, String> modUrls;
     private boolean mismatchedDataFromServer;
-    private MismatchInfoPanel mismatchInfoPanel;
 
     public ModMismatchDisconnectedScreen(Screen parentScreen, Component title, Component reason, ModMismatchData modMismatchData)
     {
@@ -90,7 +89,7 @@ public class ModMismatchDisconnectedScreen extends Screen
     {
         this.message = MultiLineLabel.create(this.font, this.reason, this.width - 50);
         this.textHeight = this.message.getLineCount() * 9;
-        this.listHeight = 140;
+        this.listHeight = modMismatchData.containsMismatches() ? 140 : 0;
 
         this.mismatchedDataFromServer = modMismatchData.mismatchedDataFromServer();
         this.presentModData = modMismatchData.presentModData();
@@ -99,12 +98,14 @@ public class ModMismatchDisconnectedScreen extends Screen
         this.modIds = presentModData.keySet().stream().map(ResourceLocation::getNamespace).distinct().collect(Collectors.toList());
         this.modUrls = ModList.get().getMods().stream().filter(info -> modIds.contains(info.getModId())).map(info -> Pair.of(info.getModId(), (String)info.getConfig().getConfigElement("displayURL").orElse(""))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
 
+        int listLeft = Math.max(8, this.width / 2 - 220);
+        int listWidth = Math.min(440, this.width - 16);
         if (modMismatchData.containsMismatches())
-            this.addRenderableWidget(mismatchInfoPanel = new MismatchInfoPanel(minecraft, Math.min(440, this.width - 16), listHeight, this.height / 2 - this.listHeight / 2, Math.max(8, this.width / 2 - 220)));
+            this.addRenderableWidget(new MismatchInfoPanel(minecraft, listWidth, listHeight, this.height / 2 - this.listHeight / 2, listLeft));
 
         int buttonWidth = Math.min(210, this.width / 2 - 20);
-        this.addRenderableWidget(new Button(Math.max(this.width / 4 - buttonWidth / 2, mismatchInfoPanel.left), Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 10, this.height - 50), buttonWidth, 20, new TextComponent(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), button -> Util.getPlatform().openFile(logFile.toFile())));
-        this.addRenderableWidget(new Button(Math.min(this.width * 3 / 4 - buttonWidth / 2, mismatchInfoPanel.left + mismatchInfoPanel.width - buttonWidth), Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 10, this.height - 50), buttonWidth, 20, new TextComponent(ForgeI18n.parseMessage("fml.button.open.mods.folder")), b -> Util.getPlatform().openFile(modsDir.toFile())));
+        this.addRenderableWidget(new Button(Math.max(this.width / 4 - buttonWidth / 2, listLeft), Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 10, this.height - 50), buttonWidth, 20, new TextComponent(ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName())), button -> Util.getPlatform().openFile(logFile.toFile())));
+        this.addRenderableWidget(new Button(Math.min(this.width * 3 / 4 - buttonWidth / 2, listLeft + listWidth - buttonWidth), Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 10, this.height - 50), buttonWidth, 20, new TextComponent(ForgeI18n.parseMessage("fml.button.open.mods.folder")), b -> Util.getPlatform().openFile(modsDir.toFile())));
         this.addRenderableWidget(new Button(this.width / 2 - buttonWidth / 2, Math.min(this.height / 2 + this.listHeight / 2 + this.textHeight / 2 + 35, this.height - 25), buttonWidth, 20, new TranslatableComponent("gui.toMenu"), button -> this.minecraft.setScreen(this.parent)));
     }
 
@@ -112,8 +113,9 @@ public class ModMismatchDisconnectedScreen extends Screen
     public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks)
     {
         this.renderBackground(stack);
-        drawCenteredString(stack, this.font, this.title, this.width / 2, this.height / 2 - this.listHeight / 2 - this.textHeight / 2 - 9 * 4, 0xAAAAAA);
-        this.message.renderCentered(stack, this.width / 2, this.height / 2 - this.listHeight / 2 - this.textHeight / 2 - 9 * 2);
+        int textOffset = listHeight > 0 ? 18 : 0;
+        drawCenteredString(stack, this.font, this.title, this.width / 2, this.height / 2 - this.listHeight / 2 - this.textHeight / 2 - textOffset - 9 * 2, 0xAAAAAA);
+        this.message.renderCentered(stack, this.width / 2, this.height / 2 - this.listHeight / 2 - this.textHeight / 2 - textOffset);
         super.render(stack, mouseX, mouseY, partialTicks);
     }
 
