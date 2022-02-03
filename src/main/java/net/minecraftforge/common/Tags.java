@@ -429,20 +429,23 @@ public class Tags
         public static final IOptionalNamedTag<EntityType<?>> DRACONIC_MOBS = tag("draconic_mobs");
 
         /**
-         * Mobs or other entities that are logically composed of an element
-         * If your mob is made of a combination of these elements, feel free to add all appropriate tags to it
+         * Mobs that are logically composed of an element
+         * If your mob is made of a different element, and you want cross-compatibility between mods, feel free to make a new tag
+         * If your mob is made of a combination of elements, feel free to add all appropriate tags to it
          */
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS = tag("elementals");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_AIR = tag("elementals/air");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_DARK = tag("elementals/dark");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_EARTH = tag("elementals/earth");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_ELECTRIC = tag("elementals/electric");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_FIRE = tag("elementals/fire");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_ICE = tag("elementals/ice");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_LIGHT = tag("elementals/light");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_METAL = tag("elementals/metal");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_PLANT = tag("elementals/plant");
-        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_WATER = tag("elementals/water");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTAL_MOBS = tag("elemental_mobs");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTAL_MOBS_FIRE = tag("elemental_mobs/fire");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTAL_MOBS_ICE = tag("elemental_mobs/ice");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTAL_MOBS_METAL = tag("elemental_mobs/metal");
+        /**
+         * Attack entities that have logical elemental properties
+         * If your attack entity is made of a different element, and you want cross-compatibility between mods, feel free to make a new tag
+         * If your attack entity is made of a combination of elements, feel free to add all appropriate tags to it
+         */
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTAL_ATTACKS = tag("elemental_attacks");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTAL_ATTACKS_ELECTRIC = tag("elemental_attacks/electric");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTAL_ATTACKS_FIRE = tag("elemental_attacks/fire");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTAL_ATTACKS_ICE = tag("elemental_attacks/ice");
 
         public static final Tags.IOptionalNamedTag<EntityType<?>> FISH = tag("fish");
         public static final Tags.IOptionalNamedTag<EntityType<?>> GHOSTS = tag("ghosts");
