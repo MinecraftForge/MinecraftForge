@@ -1,6 +1,10 @@
 --- a/net/minecraft/world/entity/Entity.java
 +++ b/net/minecraft/world/entity/Entity.java
-@@ -114,7 +_,7 @@
+@@ -111,10 +_,11 @@
+ import net.minecraft.world.phys.shapes.VoxelShape;
+ import net.minecraft.world.scores.PlayerTeam;
+ import net.minecraft.world.scores.Team;
++import net.minecraftforge.common.Tags;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -125,6 +129,33 @@
           this.m_5496_(soundtype.m_56776_(), soundtype.m_56773_() * 0.15F, soundtype.m_56774_());
        }
     }
+@@ -1042,7 +_,7 @@
+       if (this.m_6069_()) {
+          this.m_20282_(this.m_20142_() && this.m_20069_() && !this.m_20159_());
+       } else {
+-         this.m_20282_(this.m_20142_() && this.m_5842_() && !this.m_20159_() && this.f_19853_.m_6425_(this.f_19826_).m_76153_(FluidTags.f_13131_));
++         this.m_20282_(this.m_20142_() && this.m_5842_() && !this.m_20159_() && this.f_19853_.m_6425_(this.f_19826_).m_76153_(FluidTags.f_13131_) || this.f_19853_.m_6425_(this.f_19826_).m_76153_(Tags.Fluids.DEFAULT_FLUID_PHYSIC));
+       }
+ 
+    }
+@@ -1058,7 +_,7 @@
+    void m_20074_() {
+       if (this.m_20202_() instanceof Boat) {
+          this.f_19798_ = false;
+-      } else if (this.m_19943_(FluidTags.f_13131_, 0.014D)) {
++      } else if (this.m_19943_(FluidTags.f_13131_, 0.014D) || this.m_19943_(Tags.Fluids.DEFAULT_FLUID_PHYSIC, 0.014D)) {
+          if (!this.f_19798_ && !this.f_19803_) {
+             this.m_5841_();
+          }
+@@ -1073,7 +_,7 @@
+    }
+ 
+    private void m_20323_() {
+-      this.f_19800_ = this.m_19941_(FluidTags.f_13131_);
++      this.f_19800_ = this.m_19941_(FluidTags.f_13131_) || this.m_19941_(Tags.Fluids.DEFAULT_FLUID_PHYSIC);
+       this.f_19801_ = null;
+       double d0 = this.m_20188_() - (double)0.11111111F;
+       Entity entity = this.m_20202_();
 @@ -1142,9 +_,10 @@
        int k = Mth.m_14107_(this.m_20189_());
        BlockPos blockpos = new BlockPos(i, j, k);

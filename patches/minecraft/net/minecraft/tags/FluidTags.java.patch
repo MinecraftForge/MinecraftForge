@@ -1,20 +1,9 @@
 --- a/net/minecraft/tags/FluidTags.java
 +++ b/net/minecraft/tags/FluidTags.java
-@@ -11,6 +_,9 @@
-    public static final Tag.Named<Fluid> f_13131_ = m_13134_("water");
-    public static final Tag.Named<Fluid> f_13132_ = m_13134_("lava");
- 
-+   /** Default Fluid Tag for Physics */
-+   public static final Tag.Named<Fluid> DEFAULT = m_13134_("default");
-+
-    private FluidTags() {
-    }
- 
-@@ -28,5 +_,13 @@
-    @Deprecated
+@@ -29,4 +_,12 @@
     public static List<Tag<Fluid>> m_144300_() {
        return f_144297_;
-+   }
+    }
 +
 +   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Fluid> createOptional(net.minecraft.resources.ResourceLocation name) {
 +      return createOptional(name, null);
@@ -22,5 +11,5 @@
 +
 +   public static net.minecraftforge.common.Tags.IOptionalNamedTag<Fluid> createOptional(net.minecraft.resources.ResourceLocation name, @javax.annotation.Nullable java.util.Set<java.util.function.Supplier<Fluid>> defaults) {
 +      return f_13130_.createOptional(name, defaults);
-    }
++   }
  }
