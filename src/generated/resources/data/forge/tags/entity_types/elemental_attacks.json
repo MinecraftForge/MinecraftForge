@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:elemental_attacks/electric",
+    "#forge:elemental_attacks/fire",
+    "#forge:elemental_attacks/ice"
+  ]
+}
