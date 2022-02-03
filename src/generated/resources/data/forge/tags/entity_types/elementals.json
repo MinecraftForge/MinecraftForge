@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:elementals/air",
+    "#forge:elementals/dark",
+    "#forge:elementals/earth",
+    "#forge:elementals/electric",
+    "#forge:elementals/fire",
+    "#forge:elementals/ice",
+    "#forge:elementals/light",
+    "#forge:elementals/metal",
+    "#forge:elementals/plant",
+    "#forge:elementals/water"
+  ]
+}
