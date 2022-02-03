@@ -416,8 +416,28 @@ public class Tags
     {
         private static void init() {}
 
-        public static final Tags.IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
+        public static final IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
+        public static final IOptionalNamedTag<EntityType<?>> CREEPERS = tag("creepers");
+        public static final IOptionalNamedTag<EntityType<?>> DRACONIC_MOBS = tag("draconic_mobs");
+
+        /**
+         * Mobs or other entities that are logically composed of an element
+         * If your mob is made of a combination of these elements, feel free to add all appropriate tags to it
+         */
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS = tag("elementals");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_AIR = tag("elementals/air");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_DARK = tag("elementals/dark");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_EARTH = tag("elementals/earth");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_ELECTRIC = tag("elementals/electric");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_FIRE = tag("elementals/fire");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_ICE = tag("elementals/ice");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_LIGHT = tag("elementals/light");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_METAL = tag("elementals/metal");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_PLANT = tag("elementals/plant");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> ELEMENTALS_WATER = tag("elementals/water");
+
         public static final Tags.IOptionalNamedTag<EntityType<?>> FISH = tag("fish");
+        public static final Tags.IOptionalNamedTag<EntityType<?>> GHOSTS = tag("ghosts");
 
         private static Tags.IOptionalNamedTag<EntityType<?>> tag(String name)
         {
