@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#forge:elemental_mobs/fire",
-    "#forge:elemental_mobs/ice",
-    "#forge:elemental_mobs/metal"
-  ]
-}

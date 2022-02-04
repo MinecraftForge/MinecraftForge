@@ -424,42 +424,10 @@ public class Tags
     {
         private static void init() {}
 
-        public static final IOptionalNamedTag<EntityType<?>> BEARS = tag("bears");
         public static final IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
-        public static final IOptionalNamedTag<EntityType<?>> BOVINES = tag("bovines");
-        public static final IOptionalNamedTag<EntityType<?>> CAMELIDS = tag("camelids");
-        public static final IOptionalNamedTag<EntityType<?>> CANINES = tag("canines");
-        public static final IOptionalNamedTag<EntityType<?>> CAPRINES = tag("caprines");
         public static final IOptionalNamedTag<EntityType<?>> CREEPERS = tag("creepers");
-        public static final IOptionalNamedTag<EntityType<?>> DRACONIC_MOBS = tag("draconic_mobs");
-
-        /**
-         * Mobs that are logically composed of an element
-         * If your mob is made of a different element, and you want cross-compatibility between mods, feel free to make a new tag
-         * If your mob is made of a combination of elements, feel free to add all appropriate tags to it
-         */
-        public static final IOptionalNamedTag<EntityType<?>> ELEMENTAL_MOBS = tag("elemental_mobs");
-        public static final IOptionalNamedTag<EntityType<?>> ELEMENTAL_MOBS_FIRE = tag("elemental_mobs/fire");
-        public static final IOptionalNamedTag<EntityType<?>> ELEMENTAL_MOBS_ICE = tag("elemental_mobs/ice");
-        public static final IOptionalNamedTag<EntityType<?>> ELEMENTAL_MOBS_METAL = tag("elemental_mobs/metal");
-        /**
-         * Attack entities that logically have elemental properties
-         * If your attack entity is made of a different element, and you want cross-compatibility between mods, feel free to make a new tag
-         * If your attack entity is made of a combination of elements, feel free to add all appropriate tags to it
-         */
-        public static final IOptionalNamedTag<EntityType<?>> ELEMENTAL_ATTACKS = tag("elemental_attacks");
-        public static final IOptionalNamedTag<EntityType<?>> ELEMENTAL_ATTACKS_ELECTRIC = tag("elemental_attacks/electric");
-        public static final IOptionalNamedTag<EntityType<?>> ELEMENTAL_ATTACKS_FIRE = tag("elemental_attacks/fire");
-        public static final IOptionalNamedTag<EntityType<?>> ELEMENTAL_ATTACKS_ICE = tag("elemental_attacks/ice");
-
-
-        public static final IOptionalNamedTag<EntityType<?>> EQUINES = tag("equines");
-        public static final IOptionalNamedTag<EntityType<?>> FELINES = tag("felines");
-        public static final IOptionalNamedTag<EntityType<?>> FISH = tag("fish");
-        public static final IOptionalNamedTag<EntityType<?>> FOWLS = tag("fowls");
-        public static final IOptionalNamedTag<EntityType<?>> FOWLS_LAND = tag("fowls/land");
-        public static final IOptionalNamedTag<EntityType<?>> GHOSTS = tag("ghosts");
-        public static final IOptionalNamedTag<EntityType<?>> SWINES = tag("swines");
+        public static final IOptionalNamedTag<EntityType<?>> DRAGONS = tag("dragons");
+        public static final IOptionalNamedTag<EntityType<?>> FISHES = tag("fishes");
 
         private static IOptionalNamedTag<EntityType<?>> tag(String name)
         {
