@@ -39,6 +39,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.core.Direction;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
@@ -234,14 +235,13 @@ public final class MultiLayerModel implements IModelGeometry<MultiLayerModel>
             return itemLayers;
         }
 
-        public static BiMap<RenderType, RenderType> ITEM_RENDER_TYPE_MAPPING = HashBiMap.create();
-        // TODO ForgeRenderTypes
-/*        static {
+        public static final BiMap<RenderType, RenderType> ITEM_RENDER_TYPE_MAPPING = HashBiMap.create();
+        static {
             ITEM_RENDER_TYPE_MAPPING.put(RenderType.solid(), ForgeRenderTypes.ITEM_LAYERED_SOLID.get());
             ITEM_RENDER_TYPE_MAPPING.put(RenderType.cutout(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT.get());
             ITEM_RENDER_TYPE_MAPPING.put(RenderType.cutoutMipped(), ForgeRenderTypes.ITEM_LAYERED_CUTOUT_MIPPED.get());
             ITEM_RENDER_TYPE_MAPPING.put(RenderType.translucent(), ForgeRenderTypes.ITEM_LAYERED_TRANSLUCENT.get());
-        }*/
+        }
     }
 
     public static final class Loader implements IModelLoader<MultiLayerModel>
