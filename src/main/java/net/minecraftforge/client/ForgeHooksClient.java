@@ -1094,7 +1094,9 @@ public class ForgeHooksClient
             Function<Function4<LevelStorageSource.LevelStorageAccess, RegistryAccess.RegistryHolder, ResourceManager, DataPackConfig, WorldData>, Runnable> runAfter)
     {
         Component title = new TranslatableComponent("selectWorld.backupQuestion.experimental");
-        Component msg = new TranslatableComponent("forge.selectWorld.backupWarning.experimental");
+        Component msg = new TranslatableComponent("selectWorld.backupWarning.experimental")
+                .append("\n\n")
+                .append(new TranslatableComponent("forge.selectWorld.backupWarning.experimental.additional"));
 
         Screen screen = new ConfirmScreen(confirmed ->
         {
@@ -1106,7 +1108,7 @@ public class ForgeHooksClient
                 {
                     WorldData worldData = f4.apply(a, b, c, d);
                     if (worldData instanceof PrimaryLevelData pld) //instance check should always be true.
-                        pld.setExperimentalWarningConfirmation(true);
+                        pld.withConfirmedWarning(true);
                     return worldData;
                 }).run();
             }
