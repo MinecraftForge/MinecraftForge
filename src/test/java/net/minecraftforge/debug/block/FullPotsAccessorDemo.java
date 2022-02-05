@@ -205,7 +205,7 @@ public class FullPotsAccessorDemo
         @Override
         public CompoundTag getUpdateTag()
         {
-            return save(new CompoundTag());
+            return saveWithFullMetadata();
         }
 
         @Override
@@ -238,11 +238,11 @@ public class FullPotsAccessorDemo
         }
 
         @Override
-        public CompoundTag save(CompoundTag tag)
+        protected void saveAdditional(CompoundTag tag)
         {
             //noinspection ConstantConditions
             tag.putString("plant", plant.getRegistryName().toString());
-            return super.save(tag);
+            super.saveAdditional(tag);
         }
     }
 
