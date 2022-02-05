@@ -27,7 +27,10 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 @Mod(RecipeBookExtensionTest.MOD_ID)
-public class RecipeBookExtensionTest {
+public class RecipeBookExtensionTest
+{
+    public static final boolean ENABLED = false;
+
     public static final String MOD_ID = "recipe_book_extension_test";
     public static final RecipeBookType TEST_TYPE = RecipeBookType.create("TESTING");
 
@@ -39,42 +42,54 @@ public class RecipeBookExtensionTest {
     public static final RegistryObject<MenuType<RecipeBookTestMenu>> RECIPE_BOOK_TEST_MENU_TYPE =
             MENU_TYPE.register("test_recipe_menu", () -> IForgeMenuType.create(RecipeBookTestMenu::new));
 
-    public RecipeBookExtensionTest() {
+    public RecipeBookExtensionTest()
+    {
+        if (!ENABLED)
+            return;
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::commonSetup);
         RECIPE_SERIALIZER.register(FMLJavaModLoadingContext.get().getModEventBus());
         MENU_TYPE.register(FMLJavaModLoadingContext.get().getModEventBus());
         MinecraftForge.EVENT_BUS.addListener(this::onRightClick);
     }
 
-    private void commonSetup(FMLCommonSetupEvent event) {
+    private void commonSetup(FMLCommonSetupEvent event)
+    {
         event.enqueueWork(() -> {
             RecipeType.register(getId("test_recipe").toString());
         });
     }
 
-    private void onRightClick(PlayerInteractEvent.RightClickBlock event) {
+    private void onRightClick(PlayerInteractEvent.RightClickBlock event)
+    {
         if (event.getWorld().isClientSide)
             return;
         if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.GRASS_BLOCK)
             NetworkHooks.openGui((ServerPlayer) event.getPlayer(), new SimpleMenuProvider((id, inv, p) -> new RecipeBookTestMenu(id, inv, ContainerLevelAccess.create(event.getWorld(), event.getPos())), new TextComponent("Test")));
     }
 
-    public static ResourceLocation getId(String name) {
+    public static ResourceLocation getId(String name)
+    {
         return new ResourceLocation(MOD_ID, name);
     }
 
     @Mod.EventBusSubscriber(modid = MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class ClientHandler {
+    public static class ClientHandler
+    {
         @SubscribeEvent
-        public static void clientSetup(FMLClientSetupEvent event) {
-            event.enqueueWork(() -> {
+        public static void clientSetup(FMLClientSetupEvent event)
+        {
+            if (!ENABLED)
+                return;
+            event.enqueueWork(() ->
+            {
                 MenuScreens.register(RECIPE_BOOK_TEST_MENU_TYPE.get(), RecipeBookTestScreen::new);
                 RecipeBookExtensionClientHelper.init();
             });
         }
     }
 
-    public static class RecipeBookTestContainer extends SimpleContainer {
+    public static class RecipeBookTestContainer extends SimpleContainer
+    {
         public RecipeBookTestContainer() {
             super(8);
         }

@@ -26,7 +26,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.RecipeBookTestContainer> {
+public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.RecipeBookTestContainer>
+{
     @SuppressWarnings("unchecked")
     public static final Supplier<RecipeType<RecipeBookTestRecipe>> TYPE = Suppliers.memoize(() -> (RecipeType<RecipeBookTestRecipe>) Registry.RECIPE_TYPE.get(RecipeBookExtensionTest.getId("test_recipe")));
 
@@ -36,7 +37,8 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
     private final int height;
     private final NonNullList<Ingredient> items;
 
-    public RecipeBookTestRecipe(ResourceLocation id, Ingredients ingredients) {
+    public RecipeBookTestRecipe(ResourceLocation id, Ingredients ingredients)
+    {
         this.id = id;
         this.ingredients = ingredients;
         this.width = ingredients.pattern.get(0).length();
@@ -55,9 +57,12 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
      * Taken from {@link ShapedRecipe}
      */
     @Override
-    public boolean matches(RecipeBookExtensionTest.RecipeBookTestContainer container, Level level) {
-        for (int i = 0; i <= 2 - this.width; ++i) {
-            for (int j = 0; j <= 4 - this.height; ++j) {
+    public boolean matches(RecipeBookExtensionTest.RecipeBookTestContainer container, Level level)
+    {
+        for (int i = 0; i <= 2 - this.width; ++i)
+        {
+            for (int j = 0; j <= 4 - this.height; ++j)
+            {
                 if (this.matches(container, i, j, true) || this.matches(container, i, j, false))
                     return true;
             }
@@ -66,13 +71,17 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
         return false;
     }
 
-    private boolean matches(RecipeBookExtensionTest.RecipeBookTestContainer container, int x, int y, boolean mirror) { //unsure about the last boolean
-        for (int i = 0; i < 2; ++i) {
-            for (int j = 0; j < 4; ++j) {
+    private boolean matches(RecipeBookExtensionTest.RecipeBookTestContainer container, int x, int y, boolean mirror) //unsure about the last boolean
+    {
+        for (int i = 0; i < 2; ++i)
+        {
+            for (int j = 0; j < 4; ++j)
+            {
                 int curX = i - x;
                 int curY = j - y;
                 Ingredient ingredient = Ingredient.EMPTY;
-                if (curX >= 0 && curY >= 0 && curX < this.width && curY < this.height) {
+                if (curX >= 0 && curY >= 0 && curX < this.width && curY < this.height)
+                {
                     int idx = mirror ? this.width - curX - 1 + curY * this.width : curX + curY * this.width;
                     ingredient = this.items.get(idx);
                 }
@@ -86,47 +95,56 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
     }
 
     @Override
-    public ItemStack assemble(RecipeBookExtensionTest.RecipeBookTestContainer p_44001_) {
+    public ItemStack assemble(RecipeBookExtensionTest.RecipeBookTestContainer p_44001_)
+    {
         return this.getResultItem().copy();
     }
 
     @Override
-    public boolean canCraftInDimensions(int p_43999_, int p_44000_) {
-        return width <= 2 && height <= 4; //used for recipe book
+    public boolean canCraftInDimensions(int p_43999_, int p_44000_)
+    {
+        return this.width <= p_43999_ && this.height <= p_44000_; //used for recipe book
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem()
+    {
         return this.ingredients.result();
     }
 
     @Override
-    public ResourceLocation getId() {
+    public ResourceLocation getId()
+    {
         return this.id;
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer()
+    {
         return RecipeBookExtensionTest.RECIPE_BOOK_TEST_RECIPE_SERIALIZER.get();
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<?> getType()
+    {
         return TYPE.get();
     }
 
     @Override
-    public String getGroup() {
+    public String getGroup()
+    {
         return this.ingredients.group;
     }
 
     @Override
-    public NonNullList<Ingredient> getIngredients() {
+    public NonNullList<Ingredient> getIngredients()
+    {
         return this.items;
     }
 
     @Override
-    public boolean isIncomplete() {
+    public boolean isIncomplete()
+    {
         return this.getIngredients().isEmpty() ||
                 this.getIngredients().stream()
                         .filter((ingredient) -> !ingredient.isEmpty())
@@ -134,15 +152,19 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
     }
 
     @Override
-    public ItemStack getToastSymbol() {
+    public ItemStack getToastSymbol()
+    {
         return new ItemStack(Items.NETHERITE_BLOCK);
     }
 
-    public record Ingredients(String group, List<String> pattern, Map<String, Ingredient> recipe, ItemStack result) {
+    public record Ingredients(String group, List<String> pattern, Map<String, Ingredient> recipe, ItemStack result)
+    {
         private static final Function<String, DataResult<String>> VERIFY_LENGTH_2 = s -> s.length() == 2 ? DataResult.success(s) :
                 DataResult.error("Key row length must be of 2!");
-        private static final Function<List<String>, DataResult<List<String>>> VERIFY_SIZE = l -> {
-            if (l.size() <= 4 && l.size() >= 1) {
+        private static final Function<List<String>, DataResult<List<String>>> VERIFY_SIZE = l ->
+        {
+            if (l.size() <= 4 && l.size() >= 1)
+            {
                 List<String> temp = new ArrayList<>(l);
                 Collections.reverse(temp); //reverse so the first row is at the bottom in the json.
                 return DataResult.success(ImmutableList.copyOf(temp));
@@ -152,11 +174,15 @@ public class RecipeBookTestRecipe implements Recipe<RecipeBookExtensionTest.Reci
         private static final Function<String, DataResult<String>> VERIFY_LENGTH_1 = s -> s.length() == 1 ? DataResult.success(s) :
                 DataResult.error("Key must be a single character!");
 
-        public static final Codec<Ingredient> INGREDIENT_CODEC = Codec.PASSTHROUGH.comapFlatMap(obj -> {
+        public static final Codec<Ingredient> INGREDIENT_CODEC = Codec.PASSTHROUGH.comapFlatMap(obj ->
+        {
             JsonElement json = obj.convert(JsonOps.INSTANCE).getValue();
-            try {
+            try
+            {
                 return DataResult.success(Ingredient.fromJson(json));
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 return DataResult.error("Failed to parse ingredient: " + e.getMessage());
             }
         }, ingredient -> new Dynamic<>(JsonOps.INSTANCE, ingredient.toJson()));

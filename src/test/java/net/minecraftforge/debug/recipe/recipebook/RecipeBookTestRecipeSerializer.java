@@ -10,22 +10,26 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 
-public class RecipeBookTestRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<RecipeBookTestRecipe> {
+public class RecipeBookTestRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<RecipeBookTestRecipe>
+{
     @Override
-    public RecipeBookTestRecipe fromJson(ResourceLocation id, JsonObject json) {
+    public RecipeBookTestRecipe fromJson(ResourceLocation id, JsonObject json)
+    {
         Ingredients ingredients = Ingredients.CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, s->{});
         return new RecipeBookTestRecipe(id, ingredients);
     }
 
     @Nullable
     @Override
-    public RecipeBookTestRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf) {
+    public RecipeBookTestRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf buf)
+    {
         Ingredients ingredients = buf.readWithCodec(Ingredients.CODEC);
         return new RecipeBookTestRecipe(id, ingredients);
     }
 
     @Override
-    public void toNetwork(FriendlyByteBuf buffer, RecipeBookTestRecipe recipe) {
+    public void toNetwork(FriendlyByteBuf buffer, RecipeBookTestRecipe recipe)
+    {
         buffer.writeWithCodec(Ingredients.CODEC, recipe.ingredients);
     }
 }
