@@ -278,26 +278,34 @@ public class ClientCommandHandler
         }
         catch (CommandSyntaxException syntax)// Usually thrown by the CommandDispatcher
         {
-            Minecraft.getInstance().player.sendMessage(
-                    new TextComponent("").append(ComponentUtils.fromMessage(syntax.getRawMessage())).withStyle(ChatFormatting.RED), Util.NIL_UUID);
-            if (syntax.getInput() != null && syntax.getCursor() >= 0)
+            if (syntax.getType() == CommandSyntaxException.BUILT_IN_EXCEPTIONS.dispatcherUnknownCommand())
             {
-                int position = Math.min(syntax.getInput().length(), syntax.getCursor());
-                MutableComponent details = new TextComponent("")
-                        .withStyle(ChatFormatting.GRAY)
-                        .withStyle((style) -> style
-                                .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, reader.getString())));
-                if (position > 10)
+                // in case of unknown command, let the server try and handle it
+                Minecraft.getInstance().player.chat(sendMessage);
+            }
+            else
+            {
+                Minecraft.getInstance().player.sendMessage(
+                        new TextComponent("").append(ComponentUtils.fromMessage(syntax.getRawMessage())).withStyle(ChatFormatting.RED), Util.NIL_UUID);
+                if (syntax.getInput() != null && syntax.getCursor() >= 0)
                 {
-                    details.append("...");
+                    int position = Math.min(syntax.getInput().length(), syntax.getCursor());
+                    MutableComponent details = new TextComponent("")
+                            .withStyle(ChatFormatting.GRAY)
+                            .withStyle((style) -> style
+                                    .withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, reader.getString())));
+                    if (position > 10)
+                    {
+                        details.append("...");
+                    }
+                    details.append(syntax.getInput().substring(Math.max(0, position - 10), position));
+                    if (position < syntax.getInput().length())
+                    {
+                        details.append(new TextComponent(syntax.getInput().substring(position)).withStyle(ChatFormatting.RED, ChatFormatting.UNDERLINE));
+                    }
+                    details.append(new TranslatableComponent("command.context.here").withStyle(ChatFormatting.RED, ChatFormatting.ITALIC));
+                    Minecraft.getInstance().player.sendMessage(new TextComponent("").append(details).withStyle(ChatFormatting.RED), Util.NIL_UUID);
                 }
-                details.append(syntax.getInput().substring(Math.max(0, position - 10), position));
-                if (position < syntax.getInput().length())
-                {
-                    details.append(new TextComponent(syntax.getInput().substring(position)).withStyle(ChatFormatting.RED, ChatFormatting.UNDERLINE));
-                }
-                details.append(new TranslatableComponent("command.context.here").withStyle(ChatFormatting.RED, ChatFormatting.ITALIC));
-                Minecraft.getInstance().player.sendMessage(new TextComponent("").append(details).withStyle(ChatFormatting.RED), Util.NIL_UUID);
             }
         }
         catch (Exception generic)// Probably thrown by the command
