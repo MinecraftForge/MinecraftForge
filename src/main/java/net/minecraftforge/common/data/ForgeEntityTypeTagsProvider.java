@@ -31,13 +31,20 @@ public class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider {
         super(generator, "forge", existingFileHelper);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void addTags()
     {
+        tag(Tags.EntityTypes.ANIMALS).addTag(Tags.EntityTypes.ANIMALS_FISH);
+        tag(Tags.EntityTypes.ANIMALS_FISH).add(EntityType.COD, EntityType.PUFFERFISH, EntityType.SALMON, EntityType.TROPICAL_FISH);
+
         tag(Tags.EntityTypes.BOSSES).add(EntityType.ENDER_DRAGON, EntityType.WITHER);
         tag(Tags.EntityTypes.CREEPERS).add(EntityType.CREEPER);
         tag(Tags.EntityTypes.DRAGONS).add(EntityType.ENDER_DRAGON);
-        tag(Tags.EntityTypes.FISHES).add(EntityType.COD, EntityType.PUFFERFISH, EntityType.SALMON, EntityType.TROPICAL_FISH);
+
+        tag(Tags.EntityTypes.ELEMENTALS).addTags(Tags.EntityTypes.ELEMENTALS_FIRE, Tags.EntityTypes.ELEMENTALS_ICE);
+        tag(Tags.EntityTypes.ELEMENTALS_FIRE).add(EntityType.BLAZE);
+        tag(Tags.EntityTypes.ELEMENTALS_ICE).add(EntityType.SNOW_GOLEM);
     }
 
     @Override
