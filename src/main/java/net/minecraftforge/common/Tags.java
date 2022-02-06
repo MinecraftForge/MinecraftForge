@@ -424,10 +424,20 @@ public class Tags
     {
         private static void init() {}
 
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS = tag("animals");
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_FISH = tag("animals/fish");
+
         public static final IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
         public static final IOptionalNamedTag<EntityType<?>> CREEPERS = tag("creepers");
         public static final IOptionalNamedTag<EntityType<?>> DRAGONS = tag("dragons");
-        public static final IOptionalNamedTag<EntityType<?>> FISHES = tag("fishes");
+
+        /**
+         * Mobs that are logically composed of a single element
+         * If your mob is a combination of these elements, feel free to add all appropriate tags to it
+         */
+        public static final IOptionalNamedTag<EntityType<?>> ELEMENTALS = tag("elementals");
+        public static final IOptionalNamedTag<EntityType<?>> ELEMENTALS_FIRE = tag("elementals/fire");
+        public static final IOptionalNamedTag<EntityType<?>> ELEMENTALS_ICE = tag("elementals/ice");
 
         private static IOptionalNamedTag<EntityType<?>> tag(String name)
         {
