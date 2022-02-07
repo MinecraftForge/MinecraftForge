@@ -35,6 +35,7 @@ import com.mojang.brigadier.tree.RootCommandNode;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandRuntimeException;
 import net.minecraft.commands.CommandSourceStack;
@@ -46,6 +47,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
@@ -59,6 +61,22 @@ public class ClientCommandHandler
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static CommandDispatcher<CommandSourceStack> commands = null;
+
+    public static void init()
+    {
+        MinecraftForge.EVENT_BUS.addListener(ClientCommandHandler::handleClientPlayerLogin);
+    }
+
+    private static void handleClientPlayerLogin(ClientPlayerNetworkEvent.LoggedInEvent event)
+    {
+        // some custom server implementations do not send ClientboundCommandsPacket, provide a fallback
+        var suggestionDispatcher = mergeServerCommands(new CommandDispatcher<>());
+        if (event.getConnection().getPacketListener() instanceof ClientPacketListener listener)
+        {
+            // Must set this, so that suggestions for client-only commands work, if server never sends commands packet
+            listener.commands = suggestionDispatcher;
+        }
+    }
 
     /*
      * For internal use
@@ -148,7 +166,11 @@ public class ClientCommandHandler
         {
             ArgumentBuilder<S, ?> builder = child.createBuilder();
             CommandNode<S> copy = builder.build();
-            copy(child, copy);
+            // prevent infinite recursion
+            if (child != sourceNode)
+            {
+                copy(child, copy);
+            }
             resultNode.addChild(copy);
         }
     }
