@@ -162,15 +162,17 @@ public class ClientCommandHandler
      */
     private static <S> void copy(CommandNode<S> sourceNode, CommandNode<S> resultNode)
     {
+        Map<CommandNode<S>, CommandNode<S>> newNodes = new IdentityHashMap<>();
+        newNodes.put(sourceNode, resultNode);
         for (CommandNode<S> child : sourceNode.getChildren())
         {
-            ArgumentBuilder<S, ?> builder = child.createBuilder();
-            CommandNode<S> copy = builder.build();
-            // prevent infinite recursion
-            if (child != sourceNode)
+            CommandNode<S> copy = newNodes.computeIfAbsent(child, innerChild ->
             {
-                copy(child, copy);
-            }
+                ArgumentBuilder<S, ?> builder = innerChild.createBuilder();
+                CommandNode<S> innerCopy = builder.build();
+                copy(innerChild, innerCopy);
+                return innerCopy;
+            });
             resultNode.addChild(copy);
         }
     }
