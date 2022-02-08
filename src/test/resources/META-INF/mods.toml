@@ -190,5 +190,7 @@ license="LGPL v2.1"
     modId="ingredient_invalidation"
 [[mods]]
     modId="client_command_test"
+[[mods]]
+    modId="registry_codec_test"
 
 # ADD ABOVE THIS LINE
