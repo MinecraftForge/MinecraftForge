@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -41,8 +41,16 @@ public class PlayerGameModeEventTest
     {
         if (!ENABLE) return;
         LOGGER.info("{} changed game mode. Current GameType: {}. New Game Type: {}", event.getPlayer(), event.getCurrentGameMode(), event.getNewGameMode());
+        // prevent changing to SURVIVAL
         if (event.getNewGameMode() == GameType.SURVIVAL)
+        {
             event.setCanceled(true);
+        }
+        else if (event.getNewGameMode() == GameType.SPECTATOR)
+        {
+            // when changing to SPECTATOR, change to SURVIVAL instead
+            event.setNewGameMode(GameType.SURVIVAL);
+        }
     }
 
     @Mod.EventBusSubscriber(modid="player_game_mode_event_test", value=Dist.CLIENT, bus=Mod.EventBusSubscriber.Bus.FORGE)
