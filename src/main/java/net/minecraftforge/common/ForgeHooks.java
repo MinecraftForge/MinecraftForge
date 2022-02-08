@@ -828,7 +828,7 @@ public class ForgeHooks
             ret = ForgeEventFactory.loadLootTable(name, ret, lootTableManager);
 
         if (ret != null)
-           ret.freeze();
+            ret.freeze();
 
         return ret;
     }
@@ -841,8 +841,8 @@ public class ForgeHooks
                     .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build(fluid);
         if (fluid instanceof WaterFluid)
             return net.minecraftforge.fluids.FluidAttributes.Water.builder(
-                    new ResourceLocation("block/water_still"),
-                    new ResourceLocation("block/water_flow"))
+                            new ResourceLocation("block/water_still"),
+                            new ResourceLocation("block/water_flow"))
                     .overlay(new ResourceLocation("block/water_overlay"))
                     .translationKey("block.minecraft.water")
                     .color(0xFF3F76E4)
@@ -850,8 +850,8 @@ public class ForgeHooks
                     .build(fluid);
         if (fluid instanceof LavaFluid)
             return net.minecraftforge.fluids.FluidAttributes.builder(
-                    new ResourceLocation("block/lava_still"),
-                    new ResourceLocation("block/lava_flow"))
+                            new ResourceLocation("block/lava_still"),
+                            new ResourceLocation("block/lava_flow"))
                     .translationKey("block.minecraft.lava")
                     .luminosity(15).density(3000).viscosity(6000).temperature(1300)
                     .sound(SoundEvents.BUCKET_FILL_LAVA, SoundEvents.BUCKET_EMPTY_LAVA)
@@ -1314,9 +1314,9 @@ public class ForgeHooks
     /** Called in the LevelStem codec builder to add extra fields to dimension jsons **/
     public static App<Mu<LevelStem>, LevelStem> expandLevelStemCodec(RecordCodecBuilder.Instance<LevelStem> builder, Supplier<App<Mu<LevelStem>, LevelStem>> vanillaFieldsSupplier)
     {
-            App<Mu<LevelStem>, LevelStem> vanillaFields = vanillaFieldsSupplier.get();
-            return builder.group(vanillaFields).and(
-                    Codec.BOOL.optionalFieldOf("forge:use_server_seed", false).stable().forGetter(levelStem -> levelStem.useServerSeed()))
+        App<Mu<LevelStem>, LevelStem> vanillaFields = vanillaFieldsSupplier.get();
+        return builder.group(vanillaFields).and(
+                        Codec.BOOL.optionalFieldOf("forge:use_server_seed", false).stable().forGetter(levelStem -> levelStem.useServerSeed()))
                 .apply(builder, builder.stable((stem, useServerSeed) -> new LevelStem(stem.typeSupplier(), stem.generator(), useServerSeed)));
     }
 
@@ -1390,8 +1390,8 @@ public class ForgeHooks
         {
             StringBuilder buf = new StringBuilder();
             buf.append("Forge Mod Loader could not load this save.\n\n")
-                .append("There are ").append(failedElements.size()).append(" unassigned registry entries in this save.\n")
-                .append("You will not be able to load until they are present again.\n\n");
+                    .append("There are ").append(failedElements.size()).append(" unassigned registry entries in this save.\n")
+                    .append("You will not be able to load until they are present again.\n\n");
 
             failedElements.asMap().forEach((name, entries) ->
             {
