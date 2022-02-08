@@ -175,6 +175,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="capabilities_test"
 [[mods]]
+    modId="custom_mob_bucket_test"
+[[mods]]
     modId="custom_armor_model_test"
 [[mods]]
     modId="duplicate_optional_tag_test"
@@ -188,6 +190,8 @@ license="LGPL v2.1"
     modId="ingredient_invalidation"
 [[mods]]
     modId="client_command_test"
+[[mods]]
+    modId="registry_codec_test"
 [[mods]]
     modId="registry_object_test"
 

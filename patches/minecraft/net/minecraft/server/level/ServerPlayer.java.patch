@@ -134,11 +134,12 @@
     }
  
     protected void m_142540_(MobEffectInstance p_143393_, @Nullable Entity p_143394_) {
-@@ -1181,6 +_,7 @@
+@@ -1181,6 +_,8 @@
     }
  
     public boolean m_143403_(GameType p_143404_) {
-+      if (!net.minecraftforge.common.ForgeHooks.onChangeGameMode(this, this.f_8941_.m_9290_(), p_143404_)) return false;
++      p_143404_ = net.minecraftforge.common.ForgeHooks.onChangeGameType(this, this.f_8941_.m_9290_(), p_143404_);
++      if (p_143404_ == null) return false;
        if (!this.f_8941_.m_143473_(p_143404_)) {
           return false;
        } else {
