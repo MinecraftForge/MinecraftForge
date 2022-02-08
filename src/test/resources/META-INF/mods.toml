@@ -192,5 +192,7 @@ license="LGPL v2.1"
     modId="client_command_test"
 [[mods]]
     modId="registry_codec_test"
+[[mods]]
+    modId="registry_object_test"
 
 # ADD ABOVE THIS LINE
