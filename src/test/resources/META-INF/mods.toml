@@ -193,6 +193,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="registry_codec_test"
 [[mods]]
+    modId="registry_object_test"
+[[mods]]
     modId="hidden_tooltip_parts"
 
 # ADD ABOVE THIS LINE
