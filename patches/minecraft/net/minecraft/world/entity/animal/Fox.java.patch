@@ -6,7 +6,7 @@
     protected void m_6668_(DamageSource p_28536_) {
 +      super.m_6668_(p_28536_);
 +   }
-+   protected void m_5907_() {
++   protected void m_5907_() { // Forge: move extra drops to dropEquipment to allow them to be captured by LivingDropsEvent
        ItemStack itemstack = this.m_6844_(EquipmentSlot.MAINHAND);
        if (!itemstack.m_41619_()) {
           this.m_19983_(itemstack);
