@@ -742,15 +742,14 @@ public interface IForgeItem
     }
 
     /**
-     * Get the tooltip parts that should be hidden by default on the given stack. This is in addition to any
-     * {@linkplain ItemStack#getHideFlags() HideFlags} that might already be set on the stack.
+     * Get the tooltip parts that should be hidden by default on the given stack if the {@code HideFlags} tag is not set.
+     * @see ItemStack.TooltipPart
      * @param stack the stack
-     * @return the tooltip parts that should be hidden
+     * @return the default hide flags
      */
-    @Nonnull
-    default Set<ItemStack.TooltipPart> getHiddenTooltipParts(@Nonnull ItemStack stack)
+    default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack)
     {
-        return Set.of();
+        return 0;
     }
 
 }

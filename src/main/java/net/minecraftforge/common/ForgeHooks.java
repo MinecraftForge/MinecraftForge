@@ -1401,14 +1401,4 @@ public class ForgeHooks
             LOGGER.error(WORLDPERSISTENCE, buf.toString());
         }
     }
-
-    public static int getDefaultHideFlags(ItemStack stack)
-    {
-        int flags = 0;
-        for (var part : stack.getItem().getHiddenTooltipParts(stack))
-        {
-            flags |= part.getMask();
-        }
-        return flags;
-    }
 }

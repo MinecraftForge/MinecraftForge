@@ -69,11 +69,10 @@ public class HiddenTooltipPartsTest
                     .build();
         }
 
-        @NotNull
         @Override
-        public Set<ItemStack.TooltipPart> getHiddenTooltipParts(@NotNull ItemStack stack)
+        public int getDefaultTooltipHideFlags(@NotNull ItemStack stack)
         {
-            return Set.of(ItemStack.TooltipPart.MODIFIERS);
+            return ItemStack.TooltipPart.MODIFIERS.getMask();
         }
     }
 }
