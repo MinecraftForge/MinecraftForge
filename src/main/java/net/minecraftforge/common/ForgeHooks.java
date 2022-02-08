@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2022.
+ * Copyright (c) 2016-2021.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,11 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
@@ -48,12 +44,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.mojang.datafixers.kinds.App;
-import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.mojang.serialization.codecs.RecordCodecBuilder.Mu;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -69,7 +62,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.storage.WorldData;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.LootTables;
@@ -105,9 +97,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.MappedRegistry;
 import net.minecraft.world.*;
 import net.minecraft.world.level.chunk.ChunkAccess;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.levelgen.NoiseGeneratorSettings;
-import net.minecraft.world.level.levelgen.WorldGenSettings;
 import net.minecraft.world.level.levelgen.feature.StructureFeature;
 import net.minecraft.world.level.BaseSpawner;
 import net.minecraft.world.level.block.entity.FurnaceBlockEntity;
@@ -127,7 +116,6 @@ import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifierManager;
 import net.minecraftforge.common.loot.LootTableIdCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.common.util.MavenVersionStringHelper;
 import net.minecraftforge.common.world.BiomeGenerationSettingsBuilder;
 import net.minecraftforge.common.world.ForgeWorldPreset;
 import net.minecraftforge.common.world.MobSpawnSettingsBuilder;
@@ -153,7 +141,6 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
-import net.minecraftforge.event.entity.living.ShieldBlockEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
@@ -165,8 +152,6 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.FluidAttributes;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.resource.ResourcePackLoader;
 import net.minecraftforge.registries.DataSerializerEntry;
@@ -174,7 +159,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
-import net.minecraftforge.registries.RegistryManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -205,7 +189,6 @@ public class ForgeHooks
     private static final Logger LOGGER = LogManager.getLogger();
     @SuppressWarnings("unused")
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
-    private static final Marker WORLDPERSISTENCE = MarkerManager.getMarker("WP");
 
     public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to)
     {
@@ -768,25 +751,15 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
     }
 
-    @Deprecated(forRemoval = true, since = "1.18")
     public static boolean onChangeGameMode(Player player, GameType currentGameMode, GameType newGameMode)
     {
-        return onChangeGameType(player, currentGameMode, newGameMode) != null;
-    }
-
-    /**
-     * @return null if game type should not be changed, desired new GameType otherwise
-     */
-    @Nullable
-    public static GameType onChangeGameType(Player player, GameType currentGameType, GameType newGameType)
-    {
-        if (currentGameType != newGameType)
+        if (currentGameMode != newGameMode)
         {
-            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameType, newGameType);
+            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameMode, newGameMode);
             MinecraftForge.EVENT_BUS.post(evt);
-            return evt.isCanceled() ? null : evt.getNewGameMode();
+            return !evt.isCanceled();
         }
-        return newGameType;
+        return true;
     }
 
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
@@ -828,7 +801,7 @@ public class ForgeHooks
             ret = ForgeEventFactory.loadLootTable(name, ret, lootTableManager);
 
         if (ret != null)
-            ret.freeze();
+           ret.freeze();
 
         return ret;
     }
@@ -841,8 +814,8 @@ public class ForgeHooks
                     .color(0).density(0).temperature(0).luminosity(0).viscosity(0).build(fluid);
         if (fluid instanceof WaterFluid)
             return net.minecraftforge.fluids.FluidAttributes.Water.builder(
-                            new ResourceLocation("block/water_still"),
-                            new ResourceLocation("block/water_flow"))
+                    new ResourceLocation("block/water_still"),
+                    new ResourceLocation("block/water_flow"))
                     .overlay(new ResourceLocation("block/water_overlay"))
                     .translationKey("block.minecraft.water")
                     .color(0xFF3F76E4)
@@ -850,8 +823,8 @@ public class ForgeHooks
                     .build(fluid);
         if (fluid instanceof LavaFluid)
             return net.minecraftforge.fluids.FluidAttributes.builder(
-                            new ResourceLocation("block/lava_still"),
-                            new ResourceLocation("block/lava_flow"))
+                    new ResourceLocation("block/lava_still"),
+                    new ResourceLocation("block/lava_flow"))
                     .translationKey("block.minecraft.lava")
                     .luminosity(15).density(3000).viscosity(6000).temperature(1300)
                     .sound(SoundEvents.BUCKET_FILL_LAVA, SoundEvents.BUCKET_EMPTY_LAVA)
@@ -1269,136 +1242,4 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 
-    public static ShieldBlockEvent onShieldBlock(LivingEntity blocker, DamageSource source, float blocked)
-    {
-        ShieldBlockEvent e = new ShieldBlockEvent(blocker, source, blocked);
-        MinecraftForge.EVENT_BUS.post(e);
-        return e;
-    }
-
-    /**
-     * Called when dimension jsons are parsed.
-     * Creates a copy of the worldgen settings and its dimension registry,
-     * where dimensions that specify that they should use the server seed will use the server seed
-     * instead of the seed that mojang requires be specified in the json.
-     **/
-    public static WorldGenSettings loadDimensionsWithServerSeed(WorldGenSettings wgs)
-    {
-        // get the original worldgen settings' settings
-        long seed = wgs.seed();
-        boolean generateFeatures = wgs.generateFeatures();
-        boolean generateBonusChest = wgs.generateBonusChest();
-        MappedRegistry<LevelStem> originalRegistry = wgs.dimensions();
-        Optional<String> legacyCustomOptions = wgs.legacyCustomOptions;
-
-        // make a copy of the dimension registry; for dimensions that specify that they should use the server seed instead
-        // of the hardcoded json seed, recreate them with the correct seed
-        MappedRegistry<LevelStem> seededRegistry = new MappedRegistry<>(Registry.LEVEL_STEM_REGISTRY, Lifecycle.experimental());
-        for (Entry<ResourceKey<LevelStem>, LevelStem> entry : originalRegistry.entrySet())
-        {
-            ResourceKey<LevelStem> key = entry.getKey();
-            LevelStem dimension = entry.getValue();
-            if (dimension.useServerSeed())
-            {
-                seededRegistry.register(key, new LevelStem(dimension.typeSupplier(), dimension.generator().withSeed(seed), true), originalRegistry.lifecycle(entry.getValue()));
-            }
-            else
-            {
-                seededRegistry.register(key, dimension, originalRegistry.lifecycle(dimension));
-            }
-        }
-
-        return new WorldGenSettings(seed, generateFeatures, generateBonusChest, seededRegistry, legacyCustomOptions);
-    }
-
-    /** Called in the LevelStem codec builder to add extra fields to dimension jsons **/
-    public static App<Mu<LevelStem>, LevelStem> expandLevelStemCodec(RecordCodecBuilder.Instance<LevelStem> builder, Supplier<App<Mu<LevelStem>, LevelStem>> vanillaFieldsSupplier)
-    {
-        App<Mu<LevelStem>, LevelStem> vanillaFields = vanillaFieldsSupplier.get();
-        return builder.group(vanillaFields).and(
-                        Codec.BOOL.optionalFieldOf("forge:use_server_seed", false).stable().forGetter(levelStem -> levelStem.useServerSeed()))
-                .apply(builder, builder.stable((stem, useServerSeed) -> new LevelStem(stem.typeSupplier(), stem.generator(), useServerSeed)));
-    }
-
-    public static void writeAdditionalLevelSaveData(WorldData worldData, CompoundTag levelTag)
-    {
-        CompoundTag fmlData = new CompoundTag();
-        ListTag modList = new ListTag();
-        ModList.get().getMods().forEach(mi ->
-        {
-            final CompoundTag mod = new CompoundTag();
-            mod.putString("ModId", mi.getModId());
-            mod.putString("ModVersion", MavenVersionStringHelper.artifactVersionToString(mi.getVersion()));
-            modList.add(mod);
-        });
-        fmlData.put("LoadingModList", modList);
-
-        CompoundTag registries = new CompoundTag();
-        fmlData.put("Registries", registries);
-        LOGGER.debug(WORLDPERSISTENCE, "Gathering id map for writing to world save {}", worldData.getLevelName());
-
-        for (Map.Entry<ResourceLocation, ForgeRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
-        {
-            registries.put(e.getKey().toString(), e.getValue().write());
-        }
-        LOGGER.debug(WORLDPERSISTENCE, "ID Map collection complete {}", worldData.getLevelName());
-        levelTag.put("fml", fmlData);
-    }
-
-    public static void readAdditionalLevelSaveData(CompoundTag rootTag)
-    {
-        CompoundTag tag = rootTag.getCompound("fml");
-        if (tag.contains("LoadingModList"))
-        {
-            ListTag modList = tag.getList("LoadingModList", net.minecraft.nbt.Tag.TAG_COMPOUND);
-            for (int i = 0; i < modList.size(); i++)
-            {
-                CompoundTag mod = modList.getCompound(i);
-                String modId = mod.getString("ModId");
-                if (Objects.equals("minecraft",  modId))
-                {
-                    continue;
-                }
-                String modVersion = mod.getString("ModVersion");
-                Optional<? extends ModContainer> container = ModList.get().getModContainerById(modId);
-                if (container.isEmpty())
-                {
-                    LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing, things may not work well", modId);
-                    continue;
-                }
-                if (!Objects.equals(modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion())))
-                {
-                    LOGGER.warn(WORLDPERSISTENCE,"This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion()));
-                }
-            }
-        }
-
-        Multimap<ResourceLocation, ResourceLocation> failedElements = null;
-
-        if (tag.contains("Registries"))
-        {
-            Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = new HashMap<>();
-            CompoundTag regs = tag.getCompound("Registries");
-            for (String key : regs.getAllKeys())
-            {
-                snapshot.put(new ResourceLocation(key), ForgeRegistry.Snapshot.read(regs.getCompound(key)));
-            }
-            failedElements = GameData.injectSnapshot(snapshot, true, true);
-        }
-
-        if (failedElements != null && !failedElements.isEmpty())
-        {
-            StringBuilder buf = new StringBuilder();
-            buf.append("Forge Mod Loader could not load this save.\n\n")
-                    .append("There are ").append(failedElements.size()).append(" unassigned registry entries in this save.\n")
-                    .append("You will not be able to load until they are present again.\n\n");
-
-            failedElements.asMap().forEach((name, entries) ->
-            {
-                buf.append("Missing ").append(name).append(":\n");
-                entries.forEach(rl -> buf.append("    ").append(rl).append("\n"));
-            });
-            LOGGER.error(WORLDPERSISTENCE, buf.toString());
-        }
-    }
 }
