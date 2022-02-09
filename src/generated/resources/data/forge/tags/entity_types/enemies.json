@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:enemies/animals",
+    "#forge:enemies/bosses",
+    "#forge:enemies/creepers",
+    "#minecraft:raiders",
+    "#forge:enemies/undead",
+    "minecraft:blaze",
+    "minecraft:elder_guardian",
+    "minecraft:enderman",
+    "minecraft:ghast",
+    "minecraft:guardian",
+    "minecraft:magma_cube",
+    "minecraft:piglin",
+    "minecraft:piglin_brute",
+    "minecraft:shulker",
+    "minecraft:slime",
+    "minecraft:vex"
+  ]
+}
