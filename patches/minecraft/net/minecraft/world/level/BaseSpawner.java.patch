@@ -5,7 +5,7 @@
                    if (entity instanceof Mob) {
                       Mob mob = (Mob)entity;
 -                     if (this.f_45444_.m_186574_().isEmpty() && !mob.m_5545_(p_151312_, MobSpawnType.SPAWNER) || !mob.m_6914_(p_151312_)) {
-+                     if (!net.minecraftforge.event.ForgeEventFactory.canEntitySpawnSpawner(this.f_45444_, mob, p_151312_, (float)entity.m_20185_(), (float)entity.m_20186_(), (float)entity.m_20189_(), this)) {
++                     if (!net.minecraftforge.event.ForgeEventFactory.canEntitySpawnSpawner(mob, p_151312_, (float)entity.m_20185_(), (float)entity.m_20186_(), (float)entity.m_20189_(), this, this.f_45444_.f_186562_())) {
                          continue;
                       }
  

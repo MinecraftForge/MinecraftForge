@@ -144,6 +144,13 @@ public class LivingSpawnEvent extends LivingEvent
             this.spawnReason = spawnReason;
         }
 
+        // TODO remove 1.18.2/1.19 in favor of LevelAccessor version
+        @Deprecated
+        public SpecialSpawn(Mob entity, Level world, double x, double y, double z, @Nullable BaseSpawner spawner, MobSpawnType spawnReason)
+        {
+            this(entity, (LevelAccessor) world, x, y, z, spawner, spawnReason);
+        }
+
         @Nullable
         public BaseSpawner getSpawner()
         {

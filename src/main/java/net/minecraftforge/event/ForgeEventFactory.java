@@ -205,13 +205,27 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
-    public static boolean canEntitySpawnSpawner(SpawnData spawnData, Mob entity, LevelAccessor world, float x, float y, float z, BaseSpawner spawner)
+    // TODO 1.18.2/1.19 remove in favor of LevelAccessor & CustomSpawnRules version
+    @Deprecated
+    public static boolean canEntitySpawnSpawner(Mob entity, Level world, float x, float y, float z, BaseSpawner spawner)
+    {
+        return canEntitySpawnSpawner(entity, world, x, y, z, spawner, Optional.empty());
+    }
+
+    public static boolean canEntitySpawnSpawner(Mob entity, LevelAccessor world, float x, float y, float z, BaseSpawner spawner, Optional<SpawnData.CustomSpawnRules> spawnRules)
     {
         Result result = canEntitySpawn(entity, world, x, y, z, spawner, MobSpawnType.SPAWNER);
         if (result == Result.DEFAULT)
-            return !(spawnData.getCustomSpawnRules().isEmpty() && !entity.checkSpawnRules(world, MobSpawnType.SPAWNER) || !entity.checkSpawnObstruction(world)); // vanilla logic (inverted)
+            return !(spawnRules.isEmpty() && !entity.checkSpawnRules(world, MobSpawnType.SPAWNER) || !entity.checkSpawnObstruction(world)); // vanilla logic (inverted)
         else
             return result == Result.ALLOW;
+    }
+
+    // TODO 1.18.2/1.19 remove in favor of LevelAccessor version
+    @Deprecated
+    public static boolean doSpecialSpawn(Mob entity, Level world, float x, float y, float z, BaseSpawner spawner, MobSpawnType spawnReason)
+    {
+        return doSpecialSpawn(entity, (LevelAccessor) world, x, y, z, spawner, spawnReason);
     }
 
     public static boolean doSpecialSpawn(Mob entity, LevelAccessor world, float x, float y, float z, BaseSpawner spawner, MobSpawnType spawnReason)
