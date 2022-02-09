@@ -151,7 +151,7 @@ public class EntityRenderersEvent extends Event implements IModBusEvent
     }
 
     /**
-     * Provides a safe place to register models for the skull block. Fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
+     * Provides a safe place to register models for the skull block
      */
     public static class CreateSkullModels extends EntityRenderersEvent
     {
