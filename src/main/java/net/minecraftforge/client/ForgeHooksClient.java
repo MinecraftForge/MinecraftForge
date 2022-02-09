@@ -26,8 +26,6 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.client.gui.chat.NarratorChatListener;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
-import net.minecraft.client.model.SkullModelBase;
-import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
@@ -45,7 +43,6 @@ import net.minecraft.network.protocol.status.ServerStatus;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
@@ -814,7 +811,6 @@ public class ForgeHooksClient
 
     private static final Map<ModelLayerLocation, Supplier<LayerDefinition>> layerDefinitions = new HashMap<>();
 
-    /** Call during {@link EntityRenderersEvent.RegisterLayerDefinitions} via the event method */
     public static void registerLayerDefinition(ModelLayerLocation layerLocation, Supplier<LayerDefinition> supplier)
     {
         layerDefinitions.put(layerLocation, supplier);
@@ -822,19 +818,6 @@ public class ForgeHooksClient
 
     public static void loadLayerDefinitions(ImmutableMap.Builder<ModelLayerLocation, LayerDefinition> builder) {
         layerDefinitions.forEach((k, v) -> builder.put(k, v.get()));
-    }
-
-    private static final Map<SkullBlock.Type, Function<EntityModelSet,SkullModelBase>> skullModelConstructors = new HashMap<>();
-
-    /** Call during {@link EntityRenderersEvent.RegisterLayerDefinitions} via the event method */
-    public static void registerSkullModel(SkullBlock.Type type, Function<EntityModelSet,SkullModelBase> constructor)
-    {
-        skullModelConstructors.put(type, constructor);
-    }
-
-    public static void loadSkullModels(ImmutableMap.Builder<SkullBlock.Type, SkullModelBase> builder, EntityModelSet modelSet)
-    {
-        skullModelConstructors.forEach((k, v) -> builder.put(k, v.apply(modelSet)));
     }
 
     public static void processForgeListPingData(ServerStatus packet, ServerData target)

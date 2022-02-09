@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -42,6 +42,8 @@ import net.minecraft.world.level.material.Material;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.common.ForgeConfig.Client;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.debug.block.CustomSignsTest.CustomSignBlockEntity;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -121,13 +123,12 @@ public class CustomHeadTest
     @Mod.EventBusSubscriber(value= Dist.CLIENT, bus = Bus.MOD, modid = MODID)
     private static class ClientEvents
     {
-        private static final ModelLayerLocation BLAZE_HEAD_LAYER = new ModelLayerLocation(BLAZE_HEAD.getId(), "main");
+        static final ModelLayerLocation BLAZE_HEAD_LAYER = new ModelLayerLocation(BLAZE_HEAD.getId(), "main");
 
         @SubscribeEvent
         static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event)
         {
             event.registerLayerDefinition(BLAZE_HEAD_LAYER, Lazy.of(SkullModel::createMobHeadLayer));
-            event.registerSkullModel(SkullType.BLAZE, models -> new SkullModel(models.bakeLayer(BLAZE_HEAD_LAYER)));
         }
 
         @SubscribeEvent
@@ -140,6 +141,12 @@ public class CustomHeadTest
         static void clientSetupEvent(FMLClientSetupEvent event)
         {
             event.enqueueWork(() -> SkullBlockRenderer.SKIN_BY_TYPE.put(SkullType.BLAZE, new ResourceLocation("textures/entity/blaze.png")));
+        }
+
+        @SubscribeEvent
+        static void registerSkullModel(EntityRenderersEvent.CreateSkullModels event)
+        {
+            event.registerSkullModel(SkullType.BLAZE, new SkullModel(event.getEntityModelSet().bakeLayer(ClientEvents.BLAZE_HEAD_LAYER)));
         }
     }
 }

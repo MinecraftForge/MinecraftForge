@@ -4,7 +4,7 @@
        builder.put(SkullBlock.Types.ZOMBIE, new SkullModel(p_173662_.m_171103_(ModelLayers.f_171224_)));
        builder.put(SkullBlock.Types.CREEPER, new SkullModel(p_173662_.m_171103_(ModelLayers.f_171130_)));
        builder.put(SkullBlock.Types.DRAGON, new DragonHeadModel(p_173662_.m_171103_(ModelLayers.f_171135_)));
-+      net.minecraftforge.client.ForgeHooksClient.loadSkullModels(builder, p_173662_);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.EntityRenderersEvent.CreateSkullModels(builder, p_173662_));
        return builder.build();
     }
  
