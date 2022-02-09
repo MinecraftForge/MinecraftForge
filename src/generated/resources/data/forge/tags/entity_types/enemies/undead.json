@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:enemies/undead/skeletons",
+    "#forge:enemies/undead/zombies",
+    "minecraft:phantom",
+    "minecraft:wither"
+  ]
+}

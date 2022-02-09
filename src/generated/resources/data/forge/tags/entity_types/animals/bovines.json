@@ -1,8 +1,7 @@
 {
   "replace": false,
   "values": [
-    "minecraft:cow",
-    "minecraft:mooshroom",
+    "#forge:animals/bovines/cattle",
     "minecraft:sheep"
   ]
 }

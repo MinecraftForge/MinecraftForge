@@ -2,7 +2,18 @@
   "replace": false,
   "values": [
     "#forge:animals/amphibians",
-    "#forge:animals/aquatic_mammals",
-    "#forge:animals/fish"
+    "#forge:animals/arthropods",
+    "#forge:animals/aquatic",
+    "#forge:animals/avians",
+    "#forge:animals/bovines",
+    "#forge:animals/camelids",
+    "#forge:animals/canids",
+    "#forge:animals/caprines",
+    "#forge:animals/cephalopods",
+    "#forge:animals/equines",
+    "#forge:animals/felids",
+    "#forge:animals/reptiles",
+    "#forge:animals/swines",
+    "#forge:animals/ursids"
   ]
 }

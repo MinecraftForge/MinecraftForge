@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:piglin",
+    "minecraft:villager",
+    "minecraft:wandering_trader"
+  ]
+}
