@@ -306,6 +306,13 @@ public class ForgeHooksClient
 
     public static float getFieldOfView(Player entity, float fov)
     {
+        // Necessary to make the spyglass scoping hook apply the zoom effect in all cases.
+        // Like the vanilla spyglass zoom, it takes precedence over other FOV modifiers.
+        if (Minecraft.getInstance().options.getCameraType().isFirstPerson() && entity.isScoping())
+        {
+            return 0.1F;
+        }
+
         FOVModifierEvent fovModifierEvent = new FOVModifierEvent(entity, fov);
         MinecraftForge.EVENT_BUS.post(fovModifierEvent);
         return fovModifierEvent.getNewfov();

@@ -1241,4 +1241,24 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new EntityEvent.EnteringSection(entity, packedOldPos, packedNewPos));
     }
 
+    private static Collection<SpyglassCondition> SPYGLASS_PREDICATES;
+
+    public static boolean isPlayerScoping(Player player)
+    {
+        if (SPYGLASS_PREDICATES == null)
+        {
+            // On the first call, we initialize a cache of the registered conditions.
+            // Assumes that registration has completed before the first call of this method.
+            SPYGLASS_PREDICATES = ForgeRegistries.SPYGLASS_CONDITIONS.getValues();
+        }
+
+        for (SpyglassCondition spyglassPredicate : SPYGLASS_PREDICATES)
+        {
+            if (spyglassPredicate.test(player))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
