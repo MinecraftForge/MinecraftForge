@@ -62,7 +62,10 @@ public interface IForgeAbstractMinecart
      * This should be an ItemStack that can be used by the player to place the cart,
      * but is not necessary the item the cart drops when destroyed.
      * @return An ItemStack that can be used to place the cart.
+     * 
+     * @deprecated TODO Remove in 1.19 - use {@link AbstractMinecart#getPickResult()} instead
      */
+    @Deprecated(forRemoval = true)
     default ItemStack getCartItem()
     {
         return new ItemStack(Items.MINECART);

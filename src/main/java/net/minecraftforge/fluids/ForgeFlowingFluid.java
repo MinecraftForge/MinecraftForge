@@ -19,6 +19,9 @@
 
 package net.minecraftforge.fluids;
 
+import java.util.Optional;
+import javax.annotation.Nonnull;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
@@ -141,6 +144,13 @@ public abstract class ForgeFlowingFluid extends FlowingFluid
     @Override
     public boolean isSame(Fluid fluidIn) {
         return fluidIn == still.get() || fluidIn == flowing.get();
+    }
+
+    @Nonnull
+    @Override
+    public Optional<SoundEvent> getPickupSound()
+    {
+        return Optional.ofNullable(getAttributes().getFillSound());
     }
 
     @Override

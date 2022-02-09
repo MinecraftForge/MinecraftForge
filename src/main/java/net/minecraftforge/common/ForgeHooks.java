@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -768,15 +768,25 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
     }
 
+    @Deprecated(forRemoval = true, since = "1.18")
     public static boolean onChangeGameMode(Player player, GameType currentGameMode, GameType newGameMode)
     {
-        if (currentGameMode != newGameMode)
+        return onChangeGameType(player, currentGameMode, newGameMode) != null;
+    }
+
+    /**
+     * @return null if game type should not be changed, desired new GameType otherwise
+     */
+    @Nullable
+    public static GameType onChangeGameType(Player player, GameType currentGameType, GameType newGameType)
+    {
+        if (currentGameType != newGameType)
         {
-            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameMode, newGameMode);
+            PlayerEvent.PlayerChangeGameModeEvent evt = new PlayerEvent.PlayerChangeGameModeEvent(player, currentGameType, newGameType);
             MinecraftForge.EVENT_BUS.post(evt);
-            return !evt.isCanceled();
+            return evt.isCanceled() ? null : evt.getNewGameMode();
         }
-        return true;
+        return newGameType;
     }
 
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();

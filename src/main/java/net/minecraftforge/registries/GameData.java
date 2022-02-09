@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -163,7 +163,7 @@ public class GameData
         makeRegistry(WORLD_CARVERS, c(WorldCarver.class)).disableSaving().disableSync().create();
         makeRegistry(FEATURES, c(Feature.class)).addCallback(FeatureCallbacks.INSTANCE).disableSaving().disableSync().create();
         makeRegistry(CHUNK_STATUS, ChunkStatus.class, "empty").disableSaving().disableSync().create();
-        makeRegistry(STRUCTURE_FEATURES, c(StructureFeature.class)).disableSaving().disableSync().create();
+        makeRegistry(STRUCTURE_FEATURES, c(StructureFeature.class)).disableSaving().disableSync().tagFolder("structure_features").create();
         makeRegistry(BLOCK_STATE_PROVIDER_TYPES, c(BlockStateProviderType.class)).disableSaving().disableSync().create();
         makeRegistry(FOLIAGE_PLACER_TYPES, c(FoliagePlacerType.class)).disableSaving().disableSync().create();
         makeRegistry(TREE_DECORATOR_TYPES, c(TreeDecoratorType.class)).disableSaving().disableSync().create();

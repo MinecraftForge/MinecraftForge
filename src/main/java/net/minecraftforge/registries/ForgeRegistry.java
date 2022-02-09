@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,10 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.DynamicOps;
 import net.minecraftforge.common.util.LogMessageAdapter;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
@@ -95,6 +99,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final ResourceLocation name;
     private final ResourceKey<Registry<V>> key;
     private final RegistryBuilder<V> builder;
+
+    private final Codec<V> codec = new RegistryCodec();
 
     ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
@@ -178,6 +184,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     public String getTagFolder()
     {
         return tagFolder;
+    }
+
+    public Codec<V> getCodec()
+    {
+        return this.codec;
     }
 
     @SuppressWarnings("unchecked")
@@ -870,6 +881,45 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             ret.put(key, owner.owner);
         }
         return ret;
+    }
+
+    private class RegistryCodec implements Codec<V>
+    {
+        @Override
+        public <T> DataResult<Pair<V, T>> decode(DynamicOps<T> ops, T input)
+        {
+            if (ops.compressMaps())
+            {
+                return ops.getNumberValue(input).flatMap(n ->
+                {
+                    int id = n.intValue();
+                    if (ids.get(id) == null)
+                    {
+                        return DataResult.error("Unknown registry id in " + ForgeRegistry.this.key + ": " + n);
+                    }
+                    V val = ForgeRegistry.this.getValue(id);
+                    return DataResult.success(val);
+                }).map(v -> Pair.of(v, ops.empty()));
+            }
+            else
+            {
+                return ResourceLocation.CODEC.decode(ops, input).flatMap(keyValuePair -> !ForgeRegistry.this.containsKey(keyValuePair.getFirst())
+                        ? DataResult.error("Unknown registry key in " + ForgeRegistry.this.key + ": " + keyValuePair.getFirst())
+                        : DataResult.success(keyValuePair.mapFirst(ForgeRegistry.this::getValue)));
+            }
+        }
+
+        @Override
+        public <T> DataResult<T> encode(V input, DynamicOps<T> ops, T prefix)
+        {
+            ResourceLocation key = getKey(input);
+            if (key == null)
+            {
+                return DataResult.error("Unknown registry element in " + ForgeRegistry.this.key + ": " + input);
+            }
+            T toMerge = ops.compressMaps() ? ops.createInt(getID(input)) : ops.createString(key.toString());
+            return ops.mergeToPrimitive(prefix, toMerge);
+        }
     }
 
     public static class Snapshot
