@@ -1,21 +1,34 @@
 {
   "replace": false,
   "values": [
-    "#forge:enemies/animals",
     "#forge:enemies/bosses",
     "#forge:enemies/creepers",
     "#minecraft:raiders",
-    "#forge:enemies/undead",
     "minecraft:blaze",
+    "minecraft:cave_spider",
+    "minecraft:drowned",
     "minecraft:elder_guardian",
     "minecraft:enderman",
+    "minecraft:endermite",
     "minecraft:ghast",
     "minecraft:guardian",
+    "minecraft:hoglin",
+    "minecraft:husk",
     "minecraft:magma_cube",
+    "minecraft:phantom",
     "minecraft:piglin",
     "minecraft:piglin_brute",
     "minecraft:shulker",
+    "minecraft:silverfish",
+    "minecraft:skeleton",
     "minecraft:slime",
-    "minecraft:vex"
+    "minecraft:spider",
+    "minecraft:stray",
+    "minecraft:vex",
+    "minecraft:wither_skeleton",
+    "minecraft:zoglin",
+    "minecraft:zombie",
+    "minecraft:zombie_villager",
+    "minecraft:zombified_piglin"
   ]
 }
