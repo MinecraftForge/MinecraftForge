@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "#forge:animals/avians/fowls",
+    "#forge:avians/fowls",
     "minecraft:parrot"
   ]
 }
