@@ -1,9 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "#forge:animals/aquatic/fish",
-    "#forge:animals/aquatic/mammals",
-    "minecraft:glow_squid",
-    "minecraft:squid"
-  ]
-}

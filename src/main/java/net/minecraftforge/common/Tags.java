@@ -425,46 +425,31 @@ public class Tags
         private static void init() {}
 
         /**
-         * Mobs that are based on real-world animals, or that at least resemble them enough
+         * Mobs that are based on real-world animals, have a semblance to real-world animals, or that aren't just straight-up monsters
          * These categorizations are mostly based on current scientific categorizations
          */
         public static final IOptionalNamedTag<EntityType<?>> ANIMALS = tag("animals");
         public static final IOptionalNamedTag<EntityType<?>> ANIMALS_AMPHIBIANS = tag("animals/amphibians");
         public static final IOptionalNamedTag<EntityType<?>> ANIMALS_ARTHROPODS = tag("animals/arthropods");
-
-        /**
-         * Animal mobs that spend their whole lives in water, and will die when removed from water
-         * It is possible for mobs under this tag to be in other tags (i.e. squid and glow squid)
-         */
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_AQUATIC = tag("animals/aquatic");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_AQUATIC_FISH = tag("animals/aquatic/fish");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_AQUATIC_MAMMALS = tag("animals/aquatic/mammals");
-
         public static final IOptionalNamedTag<EntityType<?>> ANIMALS_AVIANS = tag("animals/avians");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_AVIANS_FLYING = tag("animals/avians/flying");
         public static final IOptionalNamedTag<EntityType<?>> ANIMALS_AVIANS_FOWLS = tag("animals/avians/fowls");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_AVIANS_FOWLS_LAND = tag("animals/avians/fowls/land");
-        /**
-         * This subtag is reserved for when the ostrich is eventually added to vanilla Minecraft, but modders may manually create it for their own mobs
-         */
-//        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_AVIANS_GROUNDED = tag("animals/avians/grounded");
-
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_BOVINES = tag("animals/bovines");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_BOVINES_CATTLE = tag("animals/bovines/cattle");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_CAMELIDS = tag("animals/camelids");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_CANIDS = tag("animals/canids");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_CAPRINES = tag("animals/caprines");
         public static final IOptionalNamedTag<EntityType<?>> ANIMALS_CEPHALOPODS = tag("animals/cephalopods");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_EQUINES = tag("animals/equines");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_FELIDS = tag("animals/felids");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_FELIDS_SMALL = tag("animals/felids/small");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_REPTILES = tag("animals/reptiles");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_SWINES = tag("animals/swines");
-        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_URSIDS = tag("animals/ursids");
-
         /**
-         * Mobs that are dragons, draconic, or close enough to being dragons
+         * Mobs that have an associated item with the 'fish' tag
          */
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_FISH = tag("animals/fish");
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_MAMMALS = tag("animals/mammals");
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_MAMMALS_BOVINES = tag("animals/mammals/bovines");
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_MAMMALS_CAMELIDS = tag("animals/mammals/camelids");
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_MAMMALS_CANIDS = tag("animals/mammals/canids");
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_MAMMALS_CAPRINES = tag("animals/mammals/caprines");
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_MAMMALS_EQUINES = tag("animals/mammals/equines");
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_MAMMALS_FELIDS = tag("animals/mammals/felids");
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_MAMMALS_SWINES = tag("animals/mammals/swines");
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_MAMMALS_URSIDS = tag("animals/mammals/ursids");
+        public static final IOptionalNamedTag<EntityType<?>> ANIMALS_REPTILES = tag("animals/reptiles");
+
+        public static final IOptionalNamedTag<EntityType<?>> AQUATIC = tag("aquatic");
         public static final IOptionalNamedTag<EntityType<?>> DRAGONS = tag("dragons");
 
         /**
@@ -479,17 +464,24 @@ public class Tags
          * Mobs that are meant to be antagonistic to the player
          */
         public static final IOptionalNamedTag<EntityType<?>> ENEMIES = tag("enemies");
-        public static final IOptionalNamedTag<EntityType<?>> ENEMIES_ANIMALS = tag("enemies/animals");
         public static final IOptionalNamedTag<EntityType<?>> ENEMIES_BOSSES = tag("enemies/bosses");
         public static final IOptionalNamedTag<EntityType<?>> ENEMIES_CREEPERS = tag("enemies/creepers");
-        public static final IOptionalNamedTag<EntityType<?>> ENEMIES_UNDEAD = tag("enemies/undead");
-        public static final IOptionalNamedTag<EntityType<?>> ENEMIES_UNDEAD_SKELETONS = tag("enemies/undead/skeletons");
-        public static final IOptionalNamedTag<EntityType<?>> ENEMIES_UNDEAD_ZOMBIES = tag("enemies/undead/zombies");
- 
+
+        public static final IOptionalNamedTag<EntityType<?>> FLYING = tag("flying");
+        public static final IOptionalNamedTag<EntityType<?>> LAND = tag("land");
         /**
          * Mobs that simulate an intelligent, independent relationship of some sort with the player
          */
         public static final IOptionalNamedTag<EntityType<?>> NPC = tag("npc");
+
+        public static final IOptionalNamedTag<EntityType<?>> UNDEAD = tag("undead");
+        public static final IOptionalNamedTag<EntityType<?>> UNDEAD_SKELETONS = tag("undead/skeletons");
+        public static final IOptionalNamedTag<EntityType<?>> UNDEAD_ZOMBIES = tag("undead/zombies");
+
+        /**
+         * Mobs that prefer to live in lava
+         */
+        public static final IOptionalNamedTag<EntityType<?>> VOLCANIC = tag("volcanic");
 
         private static IOptionalNamedTag<EntityType<?>> tag(String name)
         {

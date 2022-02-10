@@ -36,48 +36,45 @@ public class ForgeEntityTypeTagsProvider extends EntityTypeTagsProvider {
     @Override
     public void addTags()
     {
-        tag(Tags.EntityTypes.ANIMALS).addTags(Tags.EntityTypes.ANIMALS_AMPHIBIANS, Tags.EntityTypes.ANIMALS_ARTHROPODS, Tags.EntityTypes.ANIMALS_AQUATIC, Tags.EntityTypes.ANIMALS_AVIANS, Tags.EntityTypes.ANIMALS_BOVINES, Tags.EntityTypes.ANIMALS_CAMELIDS, Tags.EntityTypes.ANIMALS_CANIDS, Tags.EntityTypes.ANIMALS_CAPRINES, Tags.EntityTypes.ANIMALS_CEPHALOPODS, Tags.EntityTypes.ANIMALS_EQUINES, Tags.EntityTypes.ANIMALS_FELIDS, Tags.EntityTypes.ANIMALS_REPTILES, Tags.EntityTypes.ANIMALS_SWINES, Tags.EntityTypes.ANIMALS_URSIDS);
+        tag(Tags.EntityTypes.ANIMALS).addTags(Tags.EntityTypes.ANIMALS_AMPHIBIANS, Tags.EntityTypes.ANIMALS_ARTHROPODS, Tags.EntityTypes.ANIMALS_AVIANS, Tags.EntityTypes.ANIMALS_CEPHALOPODS, Tags.EntityTypes.ANIMALS_FISH, Tags.EntityTypes.ANIMALS_MAMMALS, Tags.EntityTypes.ANIMALS_REPTILES).add(EntityType.STRIDER);
         tag(Tags.EntityTypes.ANIMALS_AMPHIBIANS).add(EntityType.AXOLOTL); // TODO Add frog and tadpole tags when they come to Minecraft Java
         tag(Tags.EntityTypes.ANIMALS_ARTHROPODS).add(EntityType.BEE, EntityType.CAVE_SPIDER, EntityType.ENDERMITE, EntityType.SILVERFISH, EntityType.SPIDER);
-
-        tag(Tags.EntityTypes.ANIMALS_AQUATIC).addTags(Tags.EntityTypes.ANIMALS_AQUATIC_FISH, Tags.EntityTypes.ANIMALS_AQUATIC_MAMMALS).add(EntityType.GLOW_SQUID, EntityType.SQUID); // TODO Add tadpole tag when it comes to Minecraft Java
-        tag(Tags.EntityTypes.ANIMALS_AQUATIC_FISH).add(EntityType.COD, EntityType.PUFFERFISH, EntityType.SALMON, EntityType.TROPICAL_FISH);
-        tag(Tags.EntityTypes.ANIMALS_AQUATIC_MAMMALS).add(EntityType.DOLPHIN);
-
-        tag(Tags.EntityTypes.ANIMALS_AVIANS).addTags(Tags.EntityTypes.ANIMALS_AVIANS_FLYING, Tags.EntityTypes.ANIMALS_AVIANS_FOWLS);
-        tag(Tags.EntityTypes.ANIMALS_AVIANS_FLYING).add(EntityType.PARROT);
-        tag(Tags.EntityTypes.ANIMALS_AVIANS_FOWLS).addTag(Tags.EntityTypes.ANIMALS_AVIANS_FOWLS_LAND);
-        tag(Tags.EntityTypes.ANIMALS_AVIANS_FOWLS_LAND).add(EntityType.CHICKEN);
-//        tag(Tags.EntityTypes.ANIMALS_AVIANS_GROUNDED).add(EntityType.OSTRICH); // Uncomment when the ostrich is added to vanilla Minecraft Java
-
-        tag(Tags.EntityTypes.ANIMALS_BOVINES).addTag(Tags.EntityTypes.ANIMALS_BOVINES_CATTLE).add(EntityType.SHEEP);
-        tag(Tags.EntityTypes.ANIMALS_BOVINES_CATTLE).add(EntityType.COW, EntityType.MOOSHROOM);
-        tag(Tags.EntityTypes.ANIMALS_CAMELIDS).add(EntityType.LLAMA, EntityType.TRADER_LLAMA);
-        tag(Tags.EntityTypes.ANIMALS_CANIDS).add(EntityType.FOX, EntityType.WOLF);
-        tag(Tags.EntityTypes.ANIMALS_CAPRINES).add(EntityType.GOAT);
+        tag(Tags.EntityTypes.ANIMALS_AVIANS).addTag(Tags.EntityTypes.ANIMALS_AVIANS_FOWLS).add(EntityType.PARROT);
+        tag(Tags.EntityTypes.ANIMALS_AVIANS_FOWLS).add(EntityType.CHICKEN);
         tag(Tags.EntityTypes.ANIMALS_CEPHALOPODS).add(EntityType.GLOW_SQUID, EntityType.SQUID);
-        tag(Tags.EntityTypes.ANIMALS_EQUINES).add(EntityType.DONKEY, EntityType.HORSE, EntityType.MULE);
-        tag(Tags.EntityTypes.ANIMALS_FELIDS).addTag(Tags.EntityTypes.ANIMALS_FELIDS_SMALL);
-        tag(Tags.EntityTypes.ANIMALS_FELIDS_SMALL).add(EntityType.CAT, EntityType.OCELOT);
+        tag(Tags.EntityTypes.ANIMALS_FISH).add(EntityType.COD, EntityType.PUFFERFISH, EntityType.SALMON, EntityType.TROPICAL_FISH);
+        tag(Tags.EntityTypes.ANIMALS_MAMMALS).addTags(Tags.EntityTypes.ANIMALS_MAMMALS_BOVINES, Tags.EntityTypes.ANIMALS_MAMMALS_CAMELIDS, Tags.EntityTypes.ANIMALS_MAMMALS_CANIDS, Tags.EntityTypes.ANIMALS_MAMMALS_CAPRINES, Tags.EntityTypes.ANIMALS_MAMMALS_EQUINES, Tags.EntityTypes.ANIMALS_MAMMALS_FELIDS, Tags.EntityTypes.ANIMALS_MAMMALS_SWINES, Tags.EntityTypes.ANIMALS_MAMMALS_URSIDS).add(EntityType.BAT, EntityType.RABBIT);
+        tag(Tags.EntityTypes.ANIMALS_MAMMALS_BOVINES).add(EntityType.COW, EntityType.MOOSHROOM, EntityType.SHEEP);
+        tag(Tags.EntityTypes.ANIMALS_MAMMALS_CAMELIDS).add(EntityType.LLAMA, EntityType.TRADER_LLAMA);
+        tag(Tags.EntityTypes.ANIMALS_MAMMALS_CANIDS).add(EntityType.FOX, EntityType.WOLF);
+        tag(Tags.EntityTypes.ANIMALS_MAMMALS_CAPRINES).add(EntityType.GOAT);
+        tag(Tags.EntityTypes.ANIMALS_MAMMALS_EQUINES).add(EntityType.DONKEY, EntityType.HORSE, EntityType.MULE);
+        tag(Tags.EntityTypes.ANIMALS_MAMMALS_FELIDS).add(EntityType.CAT, EntityType.OCELOT);
+        tag(Tags.EntityTypes.ANIMALS_MAMMALS_SWINES).add(EntityType.HOGLIN, EntityType.PIG);
+        tag(Tags.EntityTypes.ANIMALS_MAMMALS_URSIDS).add(EntityType.PANDA, EntityType.POLAR_BEAR);
         tag(Tags.EntityTypes.ANIMALS_REPTILES).add(EntityType.TURTLE);
-        tag(Tags.EntityTypes.ANIMALS_SWINES).add(EntityType.HOGLIN, EntityType.PIG);
-        tag(Tags.EntityTypes.ANIMALS_URSIDS).add(EntityType.PANDA, EntityType.POLAR_BEAR);
 
+        tag(Tags.EntityTypes.AQUATIC).add(EntityType.AXOLOTL, EntityType.COD, EntityType.DOLPHIN, EntityType.ELDER_GUARDIAN, EntityType.GLOW_SQUID, EntityType.GUARDIAN, EntityType.PUFFERFISH, EntityType.SALMON, EntityType.SQUID, EntityType.TROPICAL_FISH, EntityType.TURTLE); // TODO Add frog and tadpole tags when they come to Minecraft Java
         tag(Tags.EntityTypes.DRAGONS).add(EntityType.ENDER_DRAGON);
 
         tag(Tags.EntityTypes.ELEMENTALS).addTags(Tags.EntityTypes.ELEMENTALS_FIRE, Tags.EntityTypes.ELEMENTALS_ICE);
         tag(Tags.EntityTypes.ELEMENTALS_FIRE).add(EntityType.BLAZE);
         tag(Tags.EntityTypes.ELEMENTALS_ICE).add(EntityType.SNOW_GOLEM);
 
-        tag(Tags.EntityTypes.ENEMIES).addTags(Tags.EntityTypes.ENEMIES_ANIMALS, Tags.EntityTypes.ENEMIES_BOSSES, Tags.EntityTypes.ENEMIES_CREEPERS, EntityTypeTags.RAIDERS, Tags.EntityTypes.ENEMIES_UNDEAD).add(EntityType.BLAZE, EntityType.ELDER_GUARDIAN, EntityType.ENDERMAN, EntityType.GHAST, EntityType.GUARDIAN, EntityType.MAGMA_CUBE, EntityType.PIGLIN, EntityType.PIGLIN_BRUTE, EntityType.SHULKER, EntityType.SLIME, EntityType.VEX);
-        tag(Tags.EntityTypes.ENEMIES_ANIMALS).add(EntityType.CAVE_SPIDER, EntityType.ENDERMITE, EntityType.HOGLIN, EntityType.SPIDER);
+        tag(Tags.EntityTypes.ENEMIES).addTags(Tags.EntityTypes.ENEMIES_BOSSES, Tags.EntityTypes.ENEMIES_CREEPERS, EntityTypeTags.RAIDERS).add(EntityType.BLAZE, EntityType.CAVE_SPIDER, EntityType.DROWNED, EntityType.ELDER_GUARDIAN, EntityType.ENDERMAN, EntityType.ENDERMITE, EntityType.GHAST, EntityType.GUARDIAN, EntityType.HOGLIN, EntityType.HUSK, EntityType.MAGMA_CUBE, EntityType.PHANTOM, EntityType.PIGLIN, EntityType.PIGLIN_BRUTE, EntityType.SHULKER, EntityType.SILVERFISH, EntityType.SKELETON, EntityType.SLIME, EntityType.SPIDER, EntityType.STRAY, EntityType.VEX, EntityType.WITHER_SKELETON, EntityType.ZOGLIN, EntityType.ZOMBIE, EntityType.ZOMBIE_VILLAGER, EntityType.ZOMBIFIED_PIGLIN);
         tag(Tags.EntityTypes.ENEMIES_BOSSES).add(EntityType.ENDER_DRAGON, EntityType.WITHER);
         tag(Tags.EntityTypes.ENEMIES_CREEPERS).add(EntityType.CREEPER);
-        tag(Tags.EntityTypes.ENEMIES_UNDEAD).addTags(Tags.EntityTypes.ENEMIES_UNDEAD_SKELETONS, Tags.EntityTypes.ENEMIES_UNDEAD_ZOMBIES).add(EntityType.PHANTOM, EntityType.WITHER);
-        tag(Tags.EntityTypes.ENEMIES_UNDEAD_SKELETONS).addTag(EntityTypeTags.SKELETONS);
-        tag(Tags.EntityTypes.ENEMIES_UNDEAD_ZOMBIES).add(EntityType.DROWNED, EntityType.HUSK, EntityType.ZOGLIN, EntityType.ZOMBIE, EntityType.ZOMBIE_VILLAGER, EntityType.ZOMBIFIED_PIGLIN);
-        
+
+        tag(Tags.EntityTypes.FLYING).add(EntityType.BAT, EntityType.BEE, EntityType.ENDER_DRAGON, EntityType.GHAST, EntityType.PARROT, EntityType.PHANTOM, EntityType.VEX, EntityType.WITHER);
+        tag(Tags.EntityTypes.LAND).add(EntityType.BLAZE, EntityType.CAT, EntityType.CAVE_SPIDER, EntityType.CHICKEN, EntityType.CREEPER, EntityType.DONKEY, EntityType.DROWNED, EntityType.ENDERMAN, EntityType.ENDERMITE, EntityType.EVOKER, EntityType.FOX, EntityType.GOAT, EntityType.HOGLIN, EntityType.HORSE, EntityType.HUSK, EntityType.ILLUSIONER, EntityType.IRON_GOLEM, EntityType.LLAMA, EntityType.MAGMA_CUBE, EntityType.MULE, EntityType.OCELOT, EntityType.PANDA, EntityType.PIG, EntityType.PIGLIN, EntityType.PIGLIN_BRUTE, EntityType.PILLAGER, EntityType.PLAYER, EntityType.POLAR_BEAR, EntityType.RABBIT, EntityType.RAVAGER, EntityType.SHEEP, EntityType.SHULKER, EntityType.SILVERFISH, EntityType.SKELETON, EntityType.SKELETON_HORSE, EntityType.SLIME, EntityType.SNOW_GOLEM, EntityType.SPIDER, EntityType.STRAY, EntityType.TRADER_LLAMA, EntityType.VILLAGER, EntityType.VINDICATOR, EntityType.WANDERING_TRADER, EntityType.WITCH, EntityType.WITHER_SKELETON, EntityType.WOLF, EntityType.ZOGLIN, EntityType.ZOMBIE, EntityType.ZOMBIE_HORSE, EntityType.ZOMBIE_VILLAGER, EntityType.ZOMBIFIED_PIGLIN);
+
         tag(Tags.EntityTypes.NPC).add(EntityType.PIGLIN, EntityType.VILLAGER, EntityType.WANDERING_TRADER);
+
+        tag(Tags.EntityTypes.UNDEAD).addTags(Tags.EntityTypes.UNDEAD_SKELETONS, Tags.EntityTypes.UNDEAD_ZOMBIES).add(EntityType.PHANTOM, EntityType.WITHER);
+        tag(Tags.EntityTypes.UNDEAD_SKELETONS).addTag(EntityTypeTags.SKELETONS).add(EntityType.SKELETON_HORSE);
+        tag(Tags.EntityTypes.UNDEAD_ZOMBIES).add(EntityType.DROWNED, EntityType.HUSK, EntityType.ZOGLIN, EntityType.ZOMBIE, EntityType.ZOMBIE_HORSE, EntityType.ZOMBIE_VILLAGER, EntityType.ZOMBIFIED_PIGLIN);
+
+        tag(Tags.EntityTypes.VOLCANIC).add(EntityType.STRIDER);
     }
 
     @Override

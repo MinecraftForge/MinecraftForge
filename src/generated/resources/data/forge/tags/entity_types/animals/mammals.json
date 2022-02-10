@@ -1,0 +1,15 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:animals/mammals/bovines",
+    "#forge:animals/mammals/camelids",
+    "#forge:animals/mammals/canids",
+    "#forge:animals/mammals/caprines",
+    "#forge:animals/mammals/equines",
+    "#forge:animals/mammals/felids",
+    "#forge:animals/mammals/swines",
+    "#forge:animals/mammals/ursids",
+    "minecraft:bat",
+    "minecraft:rabbit"
+  ]
+}
