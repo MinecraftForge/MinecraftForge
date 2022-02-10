@@ -1,8 +1,8 @@
 {
   "replace": false,
   "values": [
-    "#forge:enemies/bosses",
-    "#forge:enemies/creepers",
+    "#forge:bosses",
+    "#forge:creepers",
     "#minecraft:raiders",
     "minecraft:blaze",
     "minecraft:cave_spider",
