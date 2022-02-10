@@ -11,6 +11,19 @@
        if (p_44845_.m_41619_()) {
           return 0;
        } else {
+@@ -120,6 +_,12 @@
+ 
+    private static void m_44850_(EnchantmentHelper.EnchantmentVisitor p_44851_, ItemStack p_44852_) {
+       if (!p_44852_.m_41619_()) {
++         if (true) { // forge: redirect enchantment logic to allow non-NBT enchants
++            for (Entry<Enchantment, Integer> entry : p_44852_.getAllEnchantments().entrySet()) {
++               p_44851_.m_44944_(entry.getKey(), entry.getValue());
++            }
++            return;
++         }
+          ListTag listtag = p_44852_.m_41785_();
+ 
+          for(int i = 0; i < listtag.size(); ++i) {
 @@ -298,7 +_,7 @@
  
     public static int m_44872_(Random p_44873_, int p_44874_, int p_44875_, ItemStack p_44876_) {

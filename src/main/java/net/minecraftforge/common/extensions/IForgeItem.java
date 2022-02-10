@@ -559,7 +559,7 @@ public interface IForgeItem
      */
     default Map<Enchantment,Integer> getAllEnchantments(ItemStack stack)
     {
-        return EnchantmentHelper.getEnchantments(stack);
+        return EnchantmentHelper.deserializeEnchantments(stack.getEnchantmentTags());
     }
 
     /**

@@ -192,7 +192,8 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * Gets a map of all enchantments present on the stack. Call this over {@link EnchantmentHelper#getEnchantments(ItemStack)} when not directly modifiying enchantments
+     * Gets a map of all enchantments present on the stack.
+     * Use in place of {@link EnchantmentHelper#getEnchantments(ItemStack)} for gameplay enchantments, as this enforces the enchantment is not from an enchanted book.
      */
     default Map<Enchantment,Integer> getAllEnchantments()
     {
