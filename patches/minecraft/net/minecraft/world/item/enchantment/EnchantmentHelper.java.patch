@@ -1,8 +1,10 @@
 --- a/net/minecraft/world/item/enchantment/EnchantmentHelper.java
 +++ b/net/minecraft/world/item/enchantment/EnchantmentHelper.java
-@@ -60,6 +_,10 @@
+@@ -59,7 +_,12 @@
+       return Registry.f_122825_.m_7981_(p_182433_);
     }
  
++   @Deprecated // forge: use getTagEnchantmentLevel or ItemStack::getEnchantmentLevel
     public static int m_44843_(Enchantment p_44844_, ItemStack p_44845_) {
 +      return p_44845_.getEnchantmentLevel(p_44844_);
 +   }
