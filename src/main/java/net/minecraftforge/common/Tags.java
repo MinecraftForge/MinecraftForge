@@ -424,11 +424,6 @@ public class Tags
         private static void init() {}
 
         public static final IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
-        public static final IOptionalNamedTag<EntityType<?>> CREEPERS = tag("creepers");
-        /**
-         * Mobs that have an associated item with the 'fish' tag
-         */
-        public static final IOptionalNamedTag<EntityType<?>> FISH = tag("fish");
 
         private static final IOptionalNamedTag<EntityType<?>> tag(String name)
         {
