@@ -216,7 +216,7 @@ public class ForgeEventFactory
     {
         Result result = canEntitySpawn(entity, world, x, y, z, spawner, MobSpawnType.SPAWNER);
         if (result == Result.DEFAULT)
-            return !(spawnRules.isEmpty() && !entity.checkSpawnRules(world, MobSpawnType.SPAWNER) || !entity.checkSpawnObstruction(world)); // vanilla logic (inverted)
+            return (!spawnRules.isEmpty() || entity.checkSpawnRules(world, MobSpawnType.SPAWNER)) && entity.checkSpawnObstruction(world); // vanilla logic (inverted)
         else
             return result == Result.ALLOW;
     }
