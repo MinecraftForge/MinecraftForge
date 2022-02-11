@@ -21,9 +21,11 @@ package net.minecraftforge.common;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag.Named;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -39,6 +41,7 @@ public class Tags
     {
         Blocks.init();
         Items.init();
+        EntityTypes.init();
         Fluids.init();
     }
 
@@ -413,6 +416,23 @@ public class Tags
         private static IOptionalNamedTag<Item> tag(String name)
         {
             return tag(name, null);
+        }
+    }
+
+    public static class EntityTypes
+    {
+        private static void init() {}
+
+        public static final IOptionalNamedTag<EntityType<?>> BOSSES = tag("bosses");
+        public static final IOptionalNamedTag<EntityType<?>> CREEPERS = tag("creepers");
+        /**
+         * Mobs that have an associated item with the 'fish' tag
+         */
+        public static final IOptionalNamedTag<EntityType<?>> FISH = tag("fish");
+
+        private static final IOptionalNamedTag<EntityType<?>> tag(String name)
+        {
+            return EntityTypeTags.createOptional(new ResourceLocation("forge", name));
         }
     }
 
