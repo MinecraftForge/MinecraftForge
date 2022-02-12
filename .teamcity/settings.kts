@@ -125,4 +125,12 @@ object PullRequests : BuildType({
             allowEmpty = false
         )
     }
+
+    vcs {
+        branchFilter = """
+            +:*
+            -:1.*
+            -:<default>
+        """.trimIndent()
+    }
 })
