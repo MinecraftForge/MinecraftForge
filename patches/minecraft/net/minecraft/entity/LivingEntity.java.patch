@@ -225,7 +225,7 @@
        p_233627_1_ = (float)((double)p_233627_1_ * (1.0D - this.func_233637_b_(Attributes.field_233820_c_)));
        if (!(p_233627_1_ <= 0.0F)) {
           this.field_70160_al = true;
-@@ -1322,16 +_,7 @@
+@@ -1322,16 +_,9 @@
        } else {
           BlockPos blockpos = this.func_233580_cy_();
           BlockState blockstate = this.func_213339_cH();
@@ -239,7 +239,9 @@
 -         } else {
 -            return false;
 -         }
-+         return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(blockstate, field_70170_p, blockpos, this);
++         Optional<BlockPos> ladderPos = net.minecraftforge.common.ForgeHooks.isLivingOnLadderPos(blockstate, field_70170_p, blockpos, this);
++         if (ladderPos.isPresent()) this.field_233624_bE_ = ladderPos;
++         return ladderPos.isPresent();
        }
     }
  
