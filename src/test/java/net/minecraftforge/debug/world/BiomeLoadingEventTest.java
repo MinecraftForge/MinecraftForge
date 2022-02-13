@@ -40,6 +40,6 @@ public class BiomeLoadingEventTest {
     }
     public void onBiomeLoading(BiomeLoadingEvent event){
         ResourceLocation biome = event.getName();
-        LOGGER.info(String.format(Locale.ENGLISH, "Biome loaded: %s", biome.toString()));
+        LOGGER.info("Biome loaded: {}", biome);
     }
 }
