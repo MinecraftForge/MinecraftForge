@@ -1,12 +1,13 @@
 --- a/net/minecraft/world/entity/animal/Fox.java
 +++ b/net/minecraft/world/entity/animal/Fox.java
-@@ -646,13 +_,15 @@
+@@ -646,13 +_,16 @@
     }
  
     protected void m_6668_(DamageSource p_28536_) {
 +      super.m_6668_(p_28536_);
 +   }
 +   protected void m_5907_() { // Forge: move extra drops to dropEquipment to allow them to be captured by LivingDropsEvent
++      super.m_5907_();
        ItemStack itemstack = this.m_6844_(EquipmentSlot.MAINHAND);
        if (!itemstack.m_41619_()) {
           this.m_19983_(itemstack);
