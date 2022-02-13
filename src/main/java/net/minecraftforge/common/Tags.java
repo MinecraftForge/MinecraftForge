@@ -56,6 +56,10 @@ public class Tags
         public static final IOptionalNamedTag<Block> CHESTS_TRAPPED = tag("chests/trapped");
         public static final IOptionalNamedTag<Block> CHESTS_WOODEN = tag("chests/wooden");
         public static final IOptionalNamedTag<Block> COBBLESTONE = tag("cobblestone");
+        public static final IOptionalNamedTag<Block> COBBLESTONE_NORMAL = tag("cobblestone/normal");
+        public static final IOptionalNamedTag<Block> COBBLESTONE_INFESTED = tag("cobblestone/infested");
+        public static final IOptionalNamedTag<Block> COBBLESTONE_MOSSY = tag("cobblestone/mossy");
+        public static final IOptionalNamedTag<Block> COBBLESTONE_DEEPSLATE = tag("cobblestone/deepslate");
         public static final IOptionalNamedTag<Block> END_STONES = tag("end_stones");
         public static final IOptionalNamedTag<Block> ENDERMAN_PLACE_ON_BLACKLIST = tag("enderman_place_on_blacklist");
         public static final IOptionalNamedTag<Block> FENCE_GATES = tag("fence_gates");
@@ -205,6 +209,10 @@ public class Tags
         public static final IOptionalNamedTag<Item> CHESTS_TRAPPED = tag("chests/trapped");
         public static final IOptionalNamedTag<Item> CHESTS_WOODEN = tag("chests/wooden");
         public static final IOptionalNamedTag<Item> COBBLESTONE = tag("cobblestone");
+        public static final IOptionalNamedTag<Item> COBBLESTONE_NORMAL = tag("cobblestone/normal");
+        public static final IOptionalNamedTag<Item> COBBLESTONE_INFESTED = tag("cobblestone/infested");
+        public static final IOptionalNamedTag<Item> COBBLESTONE_MOSSY = tag("cobblestone/mossy");
+        public static final IOptionalNamedTag<Item> COBBLESTONE_DEEPSLATE = tag("cobblestone/deepslate");
         public static final IOptionalNamedTag<Item> CROPS = tag("crops");
         public static final IOptionalNamedTag<Item> CROPS_BEETROOT = tag("crops/beetroot");
         public static final IOptionalNamedTag<Item> CROPS_CARROT = tag("crops/carrot");
