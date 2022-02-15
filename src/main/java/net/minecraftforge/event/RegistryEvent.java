@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ package net.minecraftforge.event;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -235,7 +236,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             public void remap(T target)
             {
                 Validate.notNull(target, "Remap target can not be null");
-                Validate.isTrue(pool.getKey(target) != null, String.format("The specified entry %s hasn't been registered in registry yet.", target));
+                Validate.isTrue(pool.getKey(target) != null, String.format(Locale.ENGLISH, "The specified entry %s hasn't been registered in registry yet.", target));
                 action = Action.REMAP;
                 this.target = target;
             }

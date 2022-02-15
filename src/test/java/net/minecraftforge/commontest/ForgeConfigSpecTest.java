@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,6 +33,7 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 public class ForgeConfigSpecTest
@@ -82,7 +83,7 @@ public class ForgeConfigSpecTest
         final ForgeConfigSpec.ConfigValue<T> simpleValue = builder.define(configKey, defaultKeyValue);
         final ForgeConfigSpec spec = builder.build();
 
-        final String configPath = String.format(TEST_CONFIG_PATH_TEMPLATE, testName);
+        final String configPath = String.format(Locale.ROOT, TEST_CONFIG_PATH_TEMPLATE, testName);
         final File configFile = new File(configPath);
         configFile.getParentFile().mkdirs();
         configFile.createNewFile();
