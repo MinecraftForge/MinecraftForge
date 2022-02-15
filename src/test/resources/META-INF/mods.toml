@@ -195,6 +195,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="registry_object_test"
 [[mods]]
+    modId="hidden_tooltip_parts"
+[[mods]]
     modId="many_mob_effects_test"
 
 # ADD ABOVE THIS LINE
