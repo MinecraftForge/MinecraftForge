@@ -205,6 +205,15 @@
        return list;
     }
  
+@@ -736,7 +_,7 @@
+    }
+ 
+    private int m_41618_() {
+-      return this.m_41782_() && this.f_41590_.m_128425_("HideFlags", 99) ? this.f_41590_.m_128451_("HideFlags") : 0;
++      return this.m_41782_() && this.f_41590_.m_128425_("HideFlags", 99) ? this.f_41590_.m_128451_("HideFlags") : this.m_41720_().getDefaultTooltipHideFlags(this);
+    }
+ 
+    public void m_41654_(ItemStack.TooltipPart p_41655_) {
 @@ -865,9 +_,10 @@
              }
           }
