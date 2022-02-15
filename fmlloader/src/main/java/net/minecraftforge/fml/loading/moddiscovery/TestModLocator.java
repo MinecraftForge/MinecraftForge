@@ -21,7 +21,11 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LogMarkers;
+import net.minecraftforge.fml.loading.targets.CommonDevLaunchHandler;
+import net.minecraftforge.fml.loading.targets.CommonLaunchHandler;
+import net.minecraftforge.fml.loading.targets.CommonUserdevLaunchHandler;
 import net.minecraftforge.forgespi.language.IModFileInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.forgespi.locating.IModFile;
@@ -158,6 +162,11 @@ public class TestModLocator implements IModLocator
     // See CommonLaunchHandler#getModClasses
     static TestSources getTestSources()
     {
+        final CommonLaunchHandler launchTarget = FMLLoader.getLaunchHandler();
+        // Ensure that this only functions in a Forge development environment
+        if (!(launchTarget instanceof CommonDevLaunchHandler) || launchTarget instanceof CommonUserdevLaunchHandler)
+            return TestSources.EMPTY;
+
         final String modClasses = System.getenv("MOD_CLASSES");
         final String testId = System.getProperty("forge.test.id");
         if (modClasses == null || testId == null) return TestSources.EMPTY;
