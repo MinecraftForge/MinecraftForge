@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -64,6 +65,7 @@ import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import net.minecraft.world.phys.Vec2;
 
+@Deprecated(forRemoval = true, since = "1.18")
 public class B3DModel
 {
     static final Logger logger = LogManager.getLogger(ForgeVersion.MOD_ID + ".B3DModel");
@@ -156,7 +158,7 @@ public class B3DModel
         {
             if(brush > brushes.size())
             {
-                throw new IOException(String.format("brush %s is out of range", brush));
+                throw new IOException(String.format(Locale.ENGLISH, "brush %s is out of range", brush));
             }
             else if(brush == -1) return null;
             return brushes.get(brush);
@@ -168,7 +170,7 @@ public class B3DModel
         {
             if(vertex > vertices.size())
             {
-                throw new IOException(String.format("vertex %s is out of range", vertex));
+                throw new IOException(String.format(Locale.ENGLISH, "vertex %s is out of range", vertex));
             }
             return vertices.get(vertex);
         }
@@ -224,7 +226,7 @@ public class B3DModel
             if(version / 100 > Parser.version / 100)
                 throw new IOException("Unsupported major model version: " + ((float)version / 100));
             if(version % 100 > Parser.version % 100)
-                logger.warn(String.format("Minor version difference in model: %s", ((float)version / 100)));
+                logger.warn(String.format(Locale.ENGLISH, "Minor version difference in model: %s", ((float)version / 100)));
             List<Texture> textures = Collections.emptyList();
             List<Brush> brushes = Collections.emptyList();
             Node<?> root = null;
@@ -324,7 +326,7 @@ public class B3DModel
                         tex_coords[i] = new Vector4f(buf.getFloat(), buf.getFloat(), buf.getFloat(), buf.getFloat());
                         break;
                     default:
-                        logger.error(String.format("Unsupported number of texture coords: %s", tex_coord_set_size));
+                        logger.error(String.format(Locale.ENGLISH, "Unsupported number of texture coords: %s", tex_coord_set_size));
                         tex_coords[i] = new Vector4f(0, 0, 0, 1);
                     }
                 }
@@ -585,7 +587,7 @@ public class B3DModel
         @Override
         public String toString()
         {
-            return String.format("Texture [path=%s, flags=%s, blend=%s, pos=%s, scale=%s, rot=%s]", path, flags, blend, pos, scale, rot);
+            return String.format(Locale.ENGLISH, "Texture [path=%s, flags=%s, blend=%s, pos=%s, scale=%s, rot=%s]", path, flags, blend, pos, scale, rot);
         }
     }
 
@@ -641,7 +643,7 @@ public class B3DModel
         @Override
         public String toString()
         {
-            return String.format("Brush [name=%s, color=%s, shininess=%s, blend=%s, fx=%s, textures=%s]", name, color, shininess, blend, fx, textures);
+            return String.format(Locale.ENGLISH, "Brush [name=%s, color=%s, shininess=%s, blend=%s, fx=%s, textures=%s]", name, color, shininess, blend, fx, textures);
         }
     }
 
@@ -730,7 +732,7 @@ public class B3DModel
         @Override
         public String toString()
         {
-            return String.format("Vertex [pos=%s, normal=%s, color=%s, texCoords=%s]", pos, normal, color, java.util.Arrays.toString(texCoords));
+            return String.format(Locale.ENGLISH, "Vertex [pos=%s, normal=%s, color=%s, texCoords=%s]", pos, normal, color, java.util.Arrays.toString(texCoords));
         }
     }
 
@@ -779,7 +781,7 @@ public class B3DModel
         @Override
         public String toString()
         {
-            return String.format("Face [v1=%s, v2=%s, v3=%s]", v1, v2, v3);
+            return String.format(Locale.ENGLISH, "Face [v1=%s, v2=%s, v3=%s]", v1, v2, v3);
         }
 
         public Vector3f getNormal()
@@ -837,7 +839,7 @@ public class B3DModel
         @Override
         public String toString()
         {
-            return String.format("Key [pos=%s, scale=%s, rot=%s]", pos, scale, rot);
+            return String.format(Locale.ENGLISH, "Key [pos=%s, scale=%s, rot=%s]", pos, scale, rot);
         }
     }
 
@@ -879,7 +881,7 @@ public class B3DModel
         @Override
         public String toString()
         {
-            return String.format("Animation [flags=%s, frames=%s, fps=%s, keys=...]", flags, frames, fps);
+            return String.format(Locale.ENGLISH, "Animation [flags=%s, frames=%s, fps=%s, keys=...]", flags, frames, fps);
         }
     }
 
@@ -1006,7 +1008,7 @@ public class B3DModel
         @Override
         public String toString()
         {
-            return String.format("Node [name=%s, kind=%s, pos=%s, scale=%s, rot=%s, keys=..., nodes=..., animation=%s]", name, kind, pos, scale, rot, animation);
+            return String.format(Locale.ENGLISH, "Node [name=%s, kind=%s, pos=%s, scale=%s, rot=%s, keys=..., nodes=..., animation=%s]", name, kind, pos, scale, rot, animation);
         }
     }
 
@@ -1080,7 +1082,7 @@ public class B3DModel
         @Override
         public String toString()
         {
-            return String.format("Mesh [pivot=%s, brush=%s, data=...]", super.toString(), brush);
+            return String.format(Locale.ENGLISH, "Mesh [pivot=%s, brush=%s, data=...]", super.toString(), brush);
         }
 
         @Override

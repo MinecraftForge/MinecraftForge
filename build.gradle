@@ -27,7 +27,7 @@ import org.gradle.plugins.ide.eclipse.model.SourceFolder
 plugins {
     id 'org.cadixdev.licenser' version '0.6.1'
     id 'com.github.ben-manes.versions' version '0.36.0'
-    id 'net.minecraftforge.gradleutils' version '1.+'
+    id 'net.minecraftforge.gradleutils' version '2.+'
     id 'eclipse'
     id 'de.undercouch.download' version '4.1.2'
 }
@@ -51,10 +51,10 @@ ext {
     ACCESSTRANSFORMERS_VERSION = '8.0.4'
     COREMODS_VERSION = '5.0.1'
     EVENTBUS_VERSION = '5.0.3'
-    MODLAUNCHER_VERSION = '9.0.21'
-    SECUREJARHANDLER_VERSION = '0.9.54'
-    BOOTSTRAPLAUNCHER_VERSION = '0.1.17'
-    ASM_VERSION = '9.1'
+    MODLAUNCHER_VERSION = '9.1.0'
+    SECUREJARHANDLER_VERSION = '1.0.1'
+    BOOTSTRAPLAUNCHER_VERSION = '1.0.0'
+    ASM_VERSION = '9.2'
     INSTALLER_VERSION = '2.1.+'
     MIXIN_VERSION = '0.8.5'
 
@@ -68,6 +68,7 @@ ext {
     INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.2.10'
     JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.4'
     FART = 'net.minecraftforge:ForgeAutoRenamingTool:0.1.17:all'
+    MIN_TAG_FOR_CHANGELOG = "39.0"
 }
 
 println('Version: ' + VERSION +
@@ -77,12 +78,9 @@ println('Version: ' + VERSION +
 
 def extraTxts = [
     rootProject.file('CREDITS.txt'),
-    rootProject.file('LICENSE.txt')
+    rootProject.file('LICENSE.txt'),
+    rootProject.file('build/changelog.txt') //Now gets generated on build.
 ]
-
-def changelog = rootProject.file('build/changelog.txt')
-if (changelog.exists())
-    extraTxts += changelog
 
 task downloadVersionManifest(type: Download) {
     src 'https://launchermeta.mojang.com/mc/game/version_manifest_v2.json'
@@ -181,20 +179,7 @@ subprojects {
             }
         }
         repositories {
-            maven {
-                if (System.env.MAVEN_USER) {
-                    url 'https://maven.minecraftforge.net/releases/'
-                    authentication {
-                        basic(BasicAuthentication)
-                    }
-                    credentials {
-                        username = System.env.MAVEN_USER ?: 'not'
-                        password = System.env.MAVEN_PASSWORD ?: 'set'
-                    }
-                } else {
-                    url 'file://' + rootProject.file('repo').getAbsolutePath()
-                }
-            }
+            maven gradleutils.getPublishingForgeMaven()
         }
     }
 }
@@ -1509,11 +1494,6 @@ project(':forge') {
         publications {
             mavenJava(MavenPublication) {
                 artifact universalJar
-                if (changelog.exists()) {
-                    artifact(changelog) {
-                        classifier = 'changelog'
-                    }
-                }
                 artifact installerJar
                 //TODO: installer-win
                 artifact makeMdk
@@ -1532,4 +1512,20 @@ task setup() {  //These must be strings so that we can do lazy resolution. Else 
     if (symlinkValid)
         dependsOn ':fmlonly:extractMapped'
     dependsOn ':forge:extractMapped'
+}
+
+//Also output FMLOnly when building a version.
+if (System.env.TEAMCITY_VERSION) {
+    //Only setup the CI environment if and only if the environment variables are set.
+    tasks.configureTeamCity {
+        doLast {
+            println "##teamcity[buildNumber '${project(':forge').version}']"
+            println "##teamcity[setParameter name='env.PUBLISHED_JAVA_ARTIFACT_VERSION' value='${project(':forge').version}']"
+            println "##teamcity[setParameter name='env.PUBLISHED_JAVA_FML_ARTIFACT_VERSION' value='${project(':fmlonly').version}']"
+        }
+    }
+}
+
+changelog {
+    fromTag MIN_TAG_FOR_CHANGELOG
 }

@@ -54,9 +54,7 @@ public interface IForgeBlockEntity extends ICapabilitySerializable<CompoundTag>
     @Override
     default CompoundTag serializeNBT()
     {
-        CompoundTag ret = new CompoundTag();
-        self().save(ret);
-        return ret;
+        return self().saveWithFullMetadata();
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -740,4 +740,16 @@ public interface IForgeItem
     {
         return target.getBoundingBox().inflate(1.0D, 0.25D, 1.0D);
     }
+
+    /**
+     * Get the tooltip parts that should be hidden by default on the given stack if the {@code HideFlags} tag is not set.
+     * @see ItemStack.TooltipPart
+     * @param stack the stack
+     * @return the default hide flags
+     */
+    default int getDefaultTooltipHideFlags(@Nonnull ItemStack stack)
+    {
+        return 0;
+    }
+
 }
