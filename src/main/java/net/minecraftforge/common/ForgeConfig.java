@@ -85,7 +85,7 @@ public class ForgeConfig {
                     .define("fixAdvancementLoading", true);
 
             permissionHandler = builder
-                    .comment("")
+                    .comment("The permission handler used by the server. Defaults to forge:default_handler if no such handler with that name is registered.")
                     .translation("forge.configgui.permissionHandler")
                     .define("permissionHandler", "forge:default_handler");
 
