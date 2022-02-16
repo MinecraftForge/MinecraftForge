@@ -549,7 +549,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public Builder comment(String comment)
         {
             hasInvalidComment = comment == null || comment.isEmpty();
-            if(hasInvalidComment)
+            if (hasInvalidComment)
             {
                 comment = "No comment";
             }
@@ -559,7 +559,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
         public Builder comment(String... comment)
         {
             hasInvalidComment = comment == null || comment.length < 1 || (comment.length == 1 && comment[0].isEmpty());
-            if(hasInvalidComment)
+            if (hasInvalidComment)
             {
                 comment = new String[] {"No comment"};
             }
@@ -628,7 +628,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<UnmodifiableConfi
             if (hasInvalidComment)
             {
                 hasInvalidComment = false;
-                if(!FMLEnvironment.production)
+                if (!FMLEnvironment.production)
                 {
                     LogManager.getLogger().error(CORE, "Null comment for config option {}, this is invalid and may be disallowed in the future.",
                             DOT_JOINER.join(path));
