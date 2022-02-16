@@ -351,7 +351,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             idToUse = availabilityMap.nextClearBit(min);
 
         if (idToUse > max)
-            throw new RuntimeException(String.format("Invalid id %d - maximum id range exceeded.", idToUse));
+            throw new RuntimeException(String.format(Locale.ENGLISH, "Invalid id %d - maximum id range exceeded.", idToUse));
 
         V oldEntry = getRaw(key);
         if (oldEntry == value) // already registered, return prev registration's id
@@ -362,9 +362,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (oldEntry != null) // duplicate name
         {
             if (!this.allowOverrides)
-                throw new IllegalArgumentException(String.format("The name %s has been registered twice, for %s and %s.", key, getRaw(key), value));
+                throw new IllegalArgumentException(String.format(Locale.ENGLISH, "The name %s has been registered twice, for %s and %s.", key, getRaw(key), value));
             if (owner == null)
-                throw new IllegalStateException(String.format("Could not determine owner for the override on %s. Value: %s", key, value));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Could not determine owner for the override on %s. Value: %s", key, value));
             LOGGER.debug(REGISTRIES,"Registry {} Override: {} {} -> {}", this.name, key, oldEntry, value);
             idToUse = this.getID(oldEntry);
         }
@@ -373,16 +373,16 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         if (foundId != null)
         {
             V otherThing = this.ids.get(foundId);
-            throw new IllegalArgumentException(String.format("The object %s{%x} has been registered twice, using the names %s and %s. (Other object at this id is %s{%x})", value, System.identityHashCode(value), getKey(value), key, otherThing, System.identityHashCode(otherThing)));
+            throw new IllegalArgumentException(String.format(Locale.ENGLISH, "The object %s{%x} has been registered twice, using the names %s and %s. (Other object at this id is %s{%x})", value, System.identityHashCode(value), getKey(value), key, otherThing, System.identityHashCode(otherThing)));
         }
 
         if (isLocked())
-            throw new IllegalStateException(String.format("The object %s (name %s) is being added too late.", value, key));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "The object %s (name %s) is being added too late.", value, key));
 
         if (defaultKey != null && defaultKey.equals(key))
         {
             if (this.defaultValue != null)
-                throw new IllegalStateException(String.format("Attemped to override already set default value. This is not allowed: The object %s (name %s)", value, key));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Attemped to override already set default value. This is not allowed: The object %s (name %s)", value, key));
             this.defaultValue = value;
         }
 
@@ -432,7 +432,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     void addAlias(ResourceLocation from, ResourceLocation to)
     {
         if (this.isLocked())
-            throw new IllegalStateException(String.format("Attempted to register the alias %s -> %s to late", from, to));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Attempted to register the alias %s -> %s to late", from, to));
 
         if (from.equals(to))
         {
@@ -447,7 +447,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     void addDummy(ResourceLocation key)
     {
         if (this.isLocked())
-            throw new IllegalStateException(String.format("Attempted to register the dummy %s to late", key));
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Attempted to register the dummy %s to late", key));
         this.dummies.add(key);
         LOGGER.trace(REGISTRIES,"Registry {} dummy: {}", this.name, key);
     }
@@ -502,23 +502,23 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
             // name lookup failed -> obj is not in the obj<->name map
             if (name == null)
-                throw new IllegalStateException(String.format("Registry entry for %s %s, id %d, doesn't yield a name.", registryName, obj, id));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for %s %s, id %d, doesn't yield a name.", registryName, obj, id));
 
             // id is too high
             if (id > max)
-                throw new IllegalStateException(String.format("Registry entry for %s %s, name %s uses the too large id %d.", registryName, obj, name, id));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for %s %s, name %s uses the too large id %d.", registryName, obj, name, id));
 
             // id -> obj lookup is inconsistent
             if (getValue(id) != obj)
-                throw new IllegalStateException(String.format("Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, registryName, obj));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for id %d, name %s, doesn't yield the expected %s %s.", id, name, registryName, obj));
 
             // name -> obj lookup is inconsistent
             if (getValue(name) != obj)
-                throw new IllegalStateException(String.format("Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, registryName, obj));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for name %s, id %d, doesn't yield the expected %s %s.", name, id, registryName, obj));
 
             // name -> id lookup is inconsistent
             if (getID(name) != id)
-                throw new IllegalStateException(String.format("Registry entry for name %s doesn't yield the expected id %d.", name, id));
+                throw new IllegalStateException(String.format(Locale.ENGLISH, "Registry entry for name %s doesn't yield the expected id %d.", name, id));
 
             /*
             // entry is blocked, thus should be empty
