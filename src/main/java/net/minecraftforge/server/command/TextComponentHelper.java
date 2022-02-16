@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,8 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.network.ConnectionType;
 import net.minecraftforge.network.NetworkHooks;
 
+import java.util.Locale;
+
 public class TextComponentHelper
 {
     private TextComponentHelper() {}
@@ -41,7 +43,7 @@ public class TextComponentHelper
     {
         if (isVanillaClient(source))
         {
-            return new TextComponent(String.format(Language.getInstance().getOrDefault(translation), args));
+            return new TextComponent(String.format(Locale.ENGLISH, Language.getInstance().getOrDefault(translation), args));
         }
         return new TranslatableComponent(translation, args);
     }
