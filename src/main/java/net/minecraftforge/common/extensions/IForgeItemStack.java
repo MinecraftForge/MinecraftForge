@@ -182,9 +182,12 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * Gets the level of the enchantment currently present on the stack. Equivalent to calling {@link EnchantmentHelper#getItemEnchantmentLevel(Enchantment, ItemStack)}
+     * Gets the level of the enchantment currently present on the stack. By default, returns the enchantment level present in NBT.
+     * Equivalent to calling {@link EnchantmentHelper#getItemEnchantmentLevel(Enchantment, ItemStack)}
+     * 
      * @param enchantment  the enchantment being checked for
      * @return  Level of the enchantment, or 0 if not present
+     * @see #getAllEnchantments() 
      */
     default int getEnchantmentLevel(Enchantment enchantment)
     {
@@ -192,8 +195,11 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
     }
 
     /**
-     * Gets a map of all enchantments present on the stack.
-     * Use in place of {@link EnchantmentHelper#getEnchantments(ItemStack)} for gameplay enchantments, as this enforces the enchantment is not from an enchanted book.
+     * Gets a map of all enchantments present on the stack. By default, returns the enchantments present in NBT, ignoring book enchantments.
+     * Use in place of {@link EnchantmentHelper#getEnchantments(ItemStack)} for gameplay enchantments, as this enforces the enchantment is not from an enchanted book.     *
+     *
+     * @return  Map of all enchantments on the stack, empty if no enchantments are present
+     * @see #getEnchantmentLevel(Enchantment) 
      */
     default Map<Enchantment,Integer> getAllEnchantments()
     {

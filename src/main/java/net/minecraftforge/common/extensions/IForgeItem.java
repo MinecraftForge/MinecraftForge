@@ -543,6 +543,7 @@ public interface IForgeItem
      * @param stack        the item stack being checked
      * @param enchantment  the enchantment being checked for
      * @return  Level of the enchantment, or 0 if not present
+     * @see #getAllEnchantments(ItemStack) 
      */
     default int getEnchantmentLevel(ItemStack stack, Enchantment enchantment)
     {
@@ -551,11 +552,12 @@ public interface IForgeItem
 
     /**
      * Gets a map of all enchantments present on the stack. By default, returns the enchantments present in NBT.
-     *
-     * For consistency, any enchantments in the map should include the same level in {@link #getEnchantmentLevel(ItemStack, Enchantment)}
+     * Used in several places in code including armor enchantment hooks.
+     * For consistency, any enchantments in the returned map should include the same level in {@link #getEnchantmentLevel(ItemStack, Enchantment)}
      *
      * @param stack        the item stack being checked
      * @return  Map of all enchantments on the stack, empty if no enchantments are present
+     * @see #getEnchantmentLevel(ItemStack, Enchantment) 
      */
     default Map<Enchantment,Integer> getAllEnchantments(ItemStack stack)
     {

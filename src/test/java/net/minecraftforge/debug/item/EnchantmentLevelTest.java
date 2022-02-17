@@ -61,9 +61,9 @@ public class EnchantmentLevelTest
             }
 
             @Override
-            public Map<Enchantment,Integer> getAllEnchantments(ItemStack stack)
+            public Map<Enchantment, Integer> getAllEnchantments(ItemStack stack)
             {
-                Map<Enchantment,Integer> map = super.getAllEnchantments(stack);
+                Map<Enchantment, Integer> map = super.getAllEnchantments(stack);
                 map.put(Enchantments.SOUL_SPEED, 3);
                 map.put(Enchantments.BINDING_CURSE, 1);
                 return map;
