@@ -559,7 +559,7 @@ public interface IForgeItem
      * @return  Map of all enchantments on the stack, empty if no enchantments are present
      * @see #getEnchantmentLevel(ItemStack, Enchantment) 
      */
-    default Map<Enchantment,Integer> getAllEnchantments(ItemStack stack)
+    default Map<Enchantment, Integer> getAllEnchantments(ItemStack stack)
     {
         return EnchantmentHelper.deserializeEnchantments(stack.getEnchantmentTags());
     }

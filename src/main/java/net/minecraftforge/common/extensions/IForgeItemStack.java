@@ -208,7 +208,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundTag>
      * @see #getEnchantmentLevel(Enchantment)
      * @see EnchantmentHelper#getEnchantments(ItemStack)
      */
-    default Map<Enchantment,Integer> getAllEnchantments()
+    default Map<Enchantment, Integer> getAllEnchantments()
     {
         return self().getItem().getAllEnchantments(self());
     }
