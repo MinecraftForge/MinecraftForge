@@ -58,10 +58,9 @@ public class TickEvent extends Event
         }
 
         /**
-         * Returns whether the server has enough time to perform any
-         * additional tasks (usually IO related) during the current tick.
-         * 
-         * @return <code>true</code> if there is time, <code>false</code> otherwise
+         * @return {@code true} whether the server has enough time to perform any
+         *         additional tasks (usually IO related) during the current tick,
+         *         otherwise {@code false}
          */
         public boolean haveTime()
         {
@@ -87,12 +86,11 @@ public class TickEvent extends Event
         }
 
         /**
-         * Returns whether the server has enough time to perform any
-         * additional tasks (usually IO related) during the current tick.
+         * @return {@code true} whether the server has enough time to perform any
+         *         additional tasks (usually IO related) during the current tick,
+         *         otherwise {@code false}
          * 
-         * @return <code>true</code> if there is time, <code>false</code> otherwise
-         * 
-         * @see {@link ServerTickEvent#haveTime()}.
+         * @see ServerTickEvent#haveTime()
          */
         public boolean haveTime()
         {
