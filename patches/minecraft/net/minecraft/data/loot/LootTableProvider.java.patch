@@ -24,12 +24,11 @@
        Multimap<String, String> multimap = validationcontext.m_79352_();
        if (!multimap.isEmpty()) {
           multimap.forEach((p_124446_, p_124447_) -> {
-@@ -76,6 +_,20 @@
- 
-          });
+@@ -78,7 +_,21 @@
        }
-+   }
-+
+    }
+ 
+-   protected static Path m_124453_(Path p_124454_, ResourceLocation p_124455_) {
 +   protected List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootContextParamSet>> getTables() {
 +      return f_124434_;
 +   }
@@ -42,6 +41,9 @@
 +      map.forEach((p_218436_2_, p_218436_3_) -> {
 +         LootTables.m_79202_(validationtracker, p_218436_2_, p_218436_3_);
 +      });
++   }
++
++   protected Path m_124453_(Path p_124454_, ResourceLocation p_124455_) {
+       return p_124454_.resolve("data/" + p_124455_.m_135827_() + "/loot_tables/" + p_124455_.m_135815_() + ".json");
     }
  
-    private static Path m_124453_(Path p_124454_, ResourceLocation p_124455_) {

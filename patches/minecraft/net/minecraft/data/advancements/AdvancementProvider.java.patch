@@ -19,7 +19,7 @@
     public void m_6865_(HashCache p_123969_) {
        Path path = this.f_123962_.m_123916_();
        Set<ResourceLocation> set = Sets.newHashSet();
-@@ -45,6 +_,16 @@
+@@ -45,13 +_,23 @@
           }
        };
  
@@ -36,3 +36,11 @@
        for(Consumer<Consumer<Advancement>> consumer1 : this.f_123963_) {
           consumer1.accept(consumer);
        }
+ 
+    }
+ 
+-   protected static Path m_123970_(Path p_123971_, Advancement p_123972_) {
++   protected Path m_123970_(Path p_123971_, Advancement p_123972_) {
+       return p_123971_.resolve("data/" + p_123972_.m_138327_().m_135827_() + "/advancements/" + p_123972_.m_138327_().m_135815_() + ".json");
+    }
+ 

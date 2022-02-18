@@ -43,13 +43,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.effect.MobEffect;
 
+import javax.annotation.Nonnull;
+
 @SuppressWarnings("deprecation")
 public abstract class LanguageProvider implements DataProvider {
     private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private final Map<String, String> data = new TreeMap<>();
-    private final DataGenerator gen;
-    private final String modid;
-    private final String locale;
+    protected final DataGenerator gen;
+    protected final String modid;
+    protected final String locale;
 
     public LanguageProvider(DataGenerator gen, String modid, String locale) {
         this.gen = gen;
@@ -59,11 +61,16 @@ public abstract class LanguageProvider implements DataProvider {
 
     protected abstract void addTranslations();
 
+    @Nonnull
+    protected Path getPath() {
+        return this.gen.getOutputFolder().resolve("assets/" + this.modid + "/lang/" + this.locale + ".json");
+    }
+
     @Override
     public void run(HashCache cache) throws IOException {
         addTranslations();
         if (!data.isEmpty())
-            save(cache, data, this.gen.getOutputFolder().resolve("assets/" + modid + "/lang/" + locale + ".json"));
+            save(cache, data, this.getPath());
     }
 
     @Override

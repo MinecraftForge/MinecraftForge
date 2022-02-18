@@ -32,6 +32,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
@@ -48,8 +49,8 @@ public abstract class SoundDefinitionsProvider implements DataProvider
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private final DataGenerator generator;
-    private final String modId;
+    protected final DataGenerator generator;
+    protected final String modId;
     private final ExistingFileHelper helper;
 
     private final Map<String, SoundDefinition> sounds = new LinkedHashMap<>();
@@ -73,6 +74,11 @@ public abstract class SoundDefinitionsProvider implements DataProvider
      */
     public abstract void registerSounds();
 
+    @Nonnull
+    protected Path getPath() {
+        return this.generator.getOutputFolder().resolve("assets/" + this.modId + "/sounds.json");
+    }
+
     @Override
     public void run(HashCache cache) throws IOException
     {
@@ -81,7 +87,7 @@ public abstract class SoundDefinitionsProvider implements DataProvider
         this.validate();
         if (!this.sounds.isEmpty())
         {
-            this.save(cache, this.generator.getOutputFolder().resolve("assets/" + this.modId + "/sounds.json"));
+            this.save(cache, this.getPath());
         }
     }
 

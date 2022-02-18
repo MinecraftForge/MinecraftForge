@@ -32,6 +32,7 @@ import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.common.loot.LootModifier;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -72,19 +73,24 @@ public abstract class GlobalLootModifierProvider implements DataProvider
      */
     protected abstract void start();
 
+    @Nonnull
+    protected Path getPath(ResourceLocation loc) {
+        return this.gen.getOutputFolder().resolve("data/" + loc.getNamespace() + "/loot_modifiers/" + loc.getPath() + ".json");
+    }
+
     @Override
     public void run(HashCache cache) throws IOException
     {
         start();
 
         Path forgePath = gen.getOutputFolder().resolve("data/forge/loot_modifiers/global_loot_modifiers.json");
-        String modPath = "data/" + modid + "/loot_modifiers/";
         List<ResourceLocation> entries = new ArrayList<>();
 
         toSerialize.forEach(LamdbaExceptionUtils.rethrowBiConsumer((name, pair) ->
         {
-            entries.add(new ResourceLocation(modid, name));
-            Path modifierPath = gen.getOutputFolder().resolve(modPath + name + ".json");
+            ResourceLocation loc = new ResourceLocation(this.modid, name);
+            entries.add(loc);
+            Path modifierPath = this.getPath(loc);
 
             JsonObject json = pair.getB();
             json.addProperty("type", pair.getA().getRegistryName().toString());
