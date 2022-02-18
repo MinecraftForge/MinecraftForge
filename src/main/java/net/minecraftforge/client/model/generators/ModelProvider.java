@@ -39,6 +39,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.ExistingFileHelper.ResourceType;
 
+import javax.annotation.Nonnull;
+
 public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataProvider {
 
     public static final String BLOCK_FOLDER = "block";
@@ -395,7 +397,7 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
 
     protected void generateAll(HashCache cache) {
         for (T model : generatedModels.values()) {
-            Path target = getPath(model);
+            Path target = getPath(model.getLocation());
             try {
                 DataProvider.save(GSON, cache, model.toJson(), target);
             } catch (IOException e) {
@@ -404,8 +406,8 @@ public abstract class ModelProvider<T extends ModelBuilder<T>> implements DataPr
         }
     }
 
-    private Path getPath(T model) {
-        ResourceLocation loc = model.getLocation();
+    @Nonnull
+    protected Path getPath(final ResourceLocation loc) {
         return generator.getOutputFolder().resolve("assets/" + loc.getNamespace() + "/models/" + loc.getPath() + ".json");
     }
 }

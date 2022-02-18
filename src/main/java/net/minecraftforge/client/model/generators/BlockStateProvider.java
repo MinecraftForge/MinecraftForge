@@ -601,11 +601,14 @@ public abstract class BlockStateProvider implements DataProvider {
         }, TrapDoorBlock.POWERED, TrapDoorBlock.WATERLOGGED);
     }
 
+    @Nonnull
+    protected Path getPath(@Nonnull final ResourceLocation blockName) {
+        return generator.getOutputFolder().resolve("assets/" + blockName.getNamespace() + "/blockstates/" + blockName.getPath() + ".json");
+    }
+
     private void saveBlockState(HashCache cache, JsonObject stateJson, Block owner) {
         ResourceLocation blockName = Preconditions.checkNotNull(owner.getRegistryName());
-        Path mainOutput = generator.getOutputFolder();
-        String pathSuffix = "assets/" + blockName.getNamespace() + "/blockstates/" + blockName.getPath() + ".json";
-        Path outputPath = mainOutput.resolve(pathSuffix);
+        Path outputPath = getPath(blockName);
         try {
             DataProvider.save(GSON, cache, stateJson, outputPath);
         } catch (IOException e) {
