@@ -39,6 +39,7 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.BiConsumer;
 import java.util.function.IntConsumer;
 import java.util.function.IntSupplier;
@@ -125,30 +126,9 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
                         (vidmode.height() - pHeight.get(0)) / 2 + monPosTop.get(0)
                 );
             }
-            IntBuffer iconWidth = stack.mallocInt(1);
-            IntBuffer iconHeight = stack.mallocInt(1);
-            IntBuffer iconChannels = stack.mallocInt(1);
-            final GLFWImage.Buffer glfwImages = GLFWImage.mallocStack(1, stack);
-            byte[] icon;
-            try {
-                icon = ByteStreams.toByteArray(getClass().getClassLoader().getResourceAsStream("forge_icon.png"));
-                final ByteBuffer iconBuf = stack.malloc(icon.length);
-                iconBuf.put(icon);
-                ((Buffer)iconBuf).position(0);
-                final ByteBuffer imgBuffer = STBImage.stbi_load_from_memory(iconBuf, iconWidth, iconHeight, iconChannels, 4);
-                if (imgBuffer == null) {
-                    throw new NullPointerException("Failed to load window icon"); // fall down to catch block
-                }
-                glfwImages.position(0);
-                glfwImages.width(iconWidth.get(0));
-                glfwImages.height(iconHeight.get(0));
-                ((Buffer)imgBuffer).position(0);
-                glfwImages.pixels(imgBuffer);
-                glfwImages.position(0);
-                glfwSetWindowIcon(window, glfwImages);
-                STBImage.stbi_image_free(imgBuffer);
-            } catch (NullPointerException | IOException e) {
-                System.err.println("Failed to load forge logo");
+
+            if (!System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("mac")) {
+                setWindowIcon(stack);
             }
         }
         int[] w = new int[1];
@@ -158,6 +138,34 @@ class ClientVisualization implements EarlyProgressVisualization.Visualization {
         glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
         glfwShowWindow(window);
         glfwPollEvents();
+    }
+
+    private void setWindowIcon(MemoryStack stack) {
+        IntBuffer iconWidth = stack.mallocInt(1);
+        IntBuffer iconHeight = stack.mallocInt(1);
+        IntBuffer iconChannels = stack.mallocInt(1);
+        final GLFWImage.Buffer glfwImages = GLFWImage.mallocStack(1, stack);
+        byte[] icon;
+        try {
+            icon = ByteStreams.toByteArray(getClass().getClassLoader().getResourceAsStream("forge_icon.png"));
+            final ByteBuffer iconBuf = stack.malloc(icon.length);
+            iconBuf.put(icon);
+            ((Buffer) iconBuf).position(0);
+            final ByteBuffer imgBuffer = STBImage.stbi_load_from_memory(iconBuf, iconWidth, iconHeight, iconChannels, 4);
+            if (imgBuffer == null) {
+                throw new NullPointerException("Failed to load window icon"); // fall down to catch block
+            }
+            glfwImages.position(0);
+            glfwImages.width(iconWidth.get(0));
+            glfwImages.height(iconHeight.get(0));
+            ((Buffer) imgBuffer).position(0);
+            glfwImages.pixels(imgBuffer);
+            glfwImages.position(0);
+            glfwSetWindowIcon(window, glfwImages);
+            STBImage.stbi_image_free(imgBuffer);
+        } catch (NullPointerException | IOException e) {
+            System.err.println("Failed to load forge logo");
+        }
     }
 
     private void renderProgress() {
