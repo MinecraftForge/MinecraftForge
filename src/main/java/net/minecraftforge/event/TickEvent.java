@@ -57,6 +57,12 @@ public class TickEvent extends Event
             this.haveTime = haveTime;
         }
 
+        /**
+         * Returns whether the server has enough time to perform any
+         * additional tasks (usually IO related) during the current tick.
+         * 
+         * @return <code>true</code> if there is time, <code>false</code> otherwise
+         */
         public boolean haveTime()
         {
             return this.haveTime.getAsBoolean();
@@ -79,7 +85,10 @@ public class TickEvent extends Event
             this.world = world;
             this.haveTime = haveTime;
         }
-        
+
+        /**
+         * See {@link ServerTickEvent#haveTime()}.
+         */
         public boolean haveTime()
         {
             return this.haveTime.getAsBoolean();
