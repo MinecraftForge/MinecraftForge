@@ -17,6 +17,8 @@ license="LGPL v2.1"
 [[mods]]
     modId="slipperiness_test"
 [[mods]]
+    modId="vanilla_game_event_test"
+[[mods]]
     modId="custom_slime_block_test"
 [[mods]]
     modId="client_chat_event_test"
