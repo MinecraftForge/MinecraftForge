@@ -20,6 +20,9 @@
 package net.minecraftforge.event;
 
 import net.minecraft.world.entity.player.Player;
+
+import java.util.function.BooleanSupplier;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.Event;
@@ -45,9 +48,18 @@ public class TickEvent extends Event
     }
 
     public static class ServerTickEvent extends TickEvent {
-        public ServerTickEvent(Phase phase)
+
+        private final BooleanSupplier haveTime;
+
+        public ServerTickEvent(Phase phase, BooleanSupplier haveTime)
         {
             super(Type.SERVER, LogicalSide.SERVER, phase);
+            this.haveTime = haveTime;
+        }
+
+        public boolean haveTime()
+        {
+            return this.haveTime.getAsBoolean();
         }
     }
 
@@ -60,10 +72,17 @@ public class TickEvent extends Event
 
     public static class WorldTickEvent extends TickEvent {
         public final Level world;
-        public WorldTickEvent(LogicalSide side, Phase phase, Level world)
+        private final BooleanSupplier haveTime;
+        public WorldTickEvent(LogicalSide side, Phase phase, Level world, BooleanSupplier haveTime)
         {
             super(Type.WORLD, side, phase);
             this.world = world;
+            this.haveTime = haveTime;
+        }
+        
+        public boolean haveTime()
+        {
+            return this.haveTime.getAsBoolean();
         }
     }
     public static class PlayerTickEvent extends TickEvent {

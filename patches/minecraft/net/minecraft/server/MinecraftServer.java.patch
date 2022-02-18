@@ -96,7 +96,7 @@
  
     public void m_5705_(BooleanSupplier p_129871_) {
        long i = Util.m_137569_();
-+      net.minecraftforge.event.ForgeEventFactory.onPreServerTick();
++      net.minecraftforge.event.ForgeEventFactory.onPreServerTick(p_129871_);
        ++this.f_129766_;
        this.m_5703_(p_129871_);
        if (i - this.f_129724_ >= 5000000000L) {
@@ -112,7 +112,7 @@
        long i1 = Util.m_137569_();
        this.f_129735_.m_13755_(i1 - i);
        this.f_129754_.m_7238_();
-+      net.minecraftforge.event.ForgeEventFactory.onPostServerTick();
++      net.minecraftforge.event.ForgeEventFactory.onPostServerTick(p_129871_);
     }
  
     public void m_5703_(BooleanSupplier p_129954_) {
@@ -130,7 +130,7 @@
           }
  
           this.f_129754_.m_6180_("tick");
-+         net.minecraftforge.event.ForgeEventFactory.onPreWorldTick(serverlevel);
++         net.minecraftforge.event.ForgeEventFactory.onPreWorldTick(serverlevel, p_129954_);
  
           try {
              serverlevel.m_8793_(p_129954_);
@@ -138,7 +138,7 @@
              serverlevel.m_6026_(crashreport);
              throw new ReportedException(crashreport);
           }
-+         net.minecraftforge.event.ForgeEventFactory.onPostWorldTick(serverlevel);
++         net.minecraftforge.event.ForgeEventFactory.onPostWorldTick(serverlevel, p_129954_);
  
           this.f_129754_.m_7238_();
           this.f_129754_.m_7238_();
