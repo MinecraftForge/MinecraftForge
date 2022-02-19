@@ -196,5 +196,7 @@ license="LGPL v2.1"
     modId="registry_object_test"
 [[mods]]
     modId="hidden_tooltip_parts"
+[[mods]]
+    modId="ender_masking_attribute_test"
 
 # ADD ABOVE THIS LINE

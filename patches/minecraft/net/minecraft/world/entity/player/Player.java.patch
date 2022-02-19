@@ -23,7 +23,7 @@
  
     public static AttributeSupplier.Builder m_36340_() {
 -      return LivingEntity.m_21183_().m_22268_(Attributes.f_22281_, 1.0D).m_22268_(Attributes.f_22279_, (double)0.1F).m_22266_(Attributes.f_22283_).m_22266_(Attributes.f_22286_);
-+       return LivingEntity.m_21183_().m_22268_(Attributes.f_22281_, 1.0D).m_22268_(Attributes.f_22279_, (double) 0.1F).m_22266_(Attributes.f_22283_).m_22266_(Attributes.f_22286_).m_22266_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22266_(Attributes.f_22282_);
++       return LivingEntity.m_21183_().m_22268_(Attributes.f_22281_, 1.0D).m_22268_(Attributes.f_22279_, (double) 0.1F).m_22266_(Attributes.f_22283_).m_22266_(Attributes.f_22286_).m_22266_(net.minecraftforge.common.ForgeMod.REACH_DISTANCE.get()).m_22266_(net.minecraftforge.common.ForgeMod.ENDER_MASKING.get()).m_22266_(Attributes.f_22282_);
     }
  
     protected void m_8097_() {
