@@ -33,12 +33,13 @@
  
           CrashReport.m_127529_();
           if (optionset.has(optionspec13)) {
-@@ -92,28 +_,26 @@
+@@ -92,30 +_,30 @@
           Bootstrap.m_135870_();
           Bootstrap.m_135889_();
           Util.m_137584_();
+-         RegistryAccess.RegistryHolder registryaccess$registryholder = RegistryAccess.m_123086_();
 +         if (!optionset.has(optionspec1)) net.minecraftforge.server.loading.ServerModLoader.load(); // Load mods before we load almost anything else anymore. Single spot now. Only loads if they haven't passed the initserver param
-          RegistryAccess.RegistryHolder registryaccess$registryholder = RegistryAccess.m_123086_();
++         RegistryAccess.RegistryHolder registryaccess$registryholder; // RegistryAccess.builtin(); // Delay initialization until after we read additional save data
           Path path = Paths.get("server.properties");
           DedicatedServerSettings dedicatedserversettings = new DedicatedServerSettings(path);
           dedicatedserversettings.m_139780_();
@@ -66,7 +67,11 @@
 +         }
           LevelStorageSource levelstoragesource = LevelStorageSource.m_78242_(file1.toPath());
           LevelStorageSource.LevelStorageAccess levelstoragesource$levelstorageaccess = levelstoragesource.m_78260_(s);
++         levelstoragesource$levelstorageaccess.readAdditionalLevelSaveData();
++         registryaccess$registryholder = RegistryAccess.m_123086_();
           LevelSummary levelsummary = levelstoragesource$levelstorageaccess.m_78308_();
+          if (levelsummary != null) {
+             if (levelsummary.m_193020_()) {
 @@ -164,6 +_,8 @@
                 worldgensettings = optionset.has(optionspec3) ? dedicatedserverproperties.m_180927_(registryaccess$registryholder).m_64671_() : dedicatedserverproperties.m_180927_(registryaccess$registryholder);
              }

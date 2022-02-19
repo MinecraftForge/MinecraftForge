@@ -154,7 +154,7 @@
        if (p_96614_) {
           this.f_96541_.f_91065_.m_93076_().m_93783_(p_96613_);
        }
-+      //if (net.minecraftforge.client.ClientCommandHandler.instance.executeCommand(mc.player, msg) != 0) return; //Forge: TODO Client command re-write
++      if (net.minecraftforge.client.ClientCommandHandler.sendMessage(p_96613_)) return;
  
        this.f_96541_.f_91074_.m_108739_(p_96613_);
     }

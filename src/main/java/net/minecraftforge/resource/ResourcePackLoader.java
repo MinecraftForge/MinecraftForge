@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -61,7 +62,7 @@ public class ResourcePackLoader {
         modResourcePacks = ModList.get().getModFiles().stream()
                 .filter(mf->mf.requiredLanguageLoaders().stream().noneMatch(ls->ls.languageName().equals("minecraft")))
                 .map(mf -> Pair.of(mf, createPackForMod(mf)))
-                .collect(Collectors.toMap(p -> p.getFirst().getFile(), Pair::getSecond, (u,v) -> { throw new IllegalStateException(String.format("Duplicate key %s", u)); },  LinkedHashMap::new));
+                .collect(Collectors.toMap(p -> p.getFirst().getFile(), Pair::getSecond, (u,v) -> { throw new IllegalStateException(String.format(Locale.ENGLISH, "Duplicate key %s", u)); },  LinkedHashMap::new));
         resourcePacks.addPackFinder(packFinder.apply(modResourcePacks));
     }
 

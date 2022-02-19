@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2021.
+ * Copyright (c) 2016-2022.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 package net.minecraftforge.debug.block;
 
 import java.util.List;
+import java.util.Locale;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -93,7 +94,7 @@ public class PistonEventTest
             {
                 if (pistonHelper.resolve())
                 {
-                    player.sendMessage(new TextComponent(String.format("Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getToPush().size(), pistonHelper.getToDestroy().size())), player.getUUID());
+                    player.sendMessage(new TextComponent(String.format(Locale.ENGLISH, "Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getToPush().size(), pistonHelper.getToDestroy().size())), player.getUUID());
                 }
                 else
                 {
@@ -138,7 +139,7 @@ public class PistonEventTest
                     BlockPos targetPos = event.getFaceOffsetPos().relative(event.getDirection());
                     boolean canPush = PistonBaseBlock.isPushable(event.getWorld().getBlockState(targetPos), (Level) event.getWorld(), event.getFaceOffsetPos(), event.getDirection().getOpposite(), false, event.getDirection());
                     boolean isAir = event.getWorld().isEmptyBlock(targetPos);
-                    player.sendMessage(new TextComponent(String.format("Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)), player.getUUID());
+                    player.sendMessage(new TextComponent(String.format(Locale.ENGLISH, "Piston will retract moving %d blocks", !isAir && canPush ? 1 : 0)), player.getUUID());
                 }
                 else
                 {
