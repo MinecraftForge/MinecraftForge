@@ -30,13 +30,16 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 @Mod("ender_masking_attribute_test")
-public class EnderMaskingAttributeTest {
+public class EnderMaskingAttributeTest
+{
     private static final boolean ENABLED = true;
     private static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, "ender_masking_attribute_test");
     private static final RegistryObject<MobEffect> ENDER_MASKING = EFFECTS.register("ender_masking", () -> new MobEffect(MobEffectCategory.BENEFICIAL, 0x6900a1){}.addAttributeModifier(ForgeMod.ENDER_MASKING.get(), "9bbcc190-1257-470c-9c86-3ddf0157c681", 1, AttributeModifier.Operation.ADDITION));
 
-    public EnderMaskingAttributeTest() {
-        if (ENABLED) {
+    public EnderMaskingAttributeTest()
+    {
+        if (ENABLED)
+        {
             EFFECTS.register(FMLJavaModLoadingContext.get().getModEventBus());
         }
     }
