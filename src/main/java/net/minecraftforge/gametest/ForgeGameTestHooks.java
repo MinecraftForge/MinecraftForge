@@ -20,19 +20,27 @@
 package net.minecraftforge.gametest;
 
 import net.minecraft.SharedConstants;
+import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestRegistry;
 import net.minecraftforge.event.RegisterGameTestsEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.forgespi.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.ModFileScanData.AnnotationData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.objectweb.asm.Type;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 public class ForgeGameTestHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Type GAME_TEST_HOLDER = Type.getType(GameTestHolder.class);
 
     public static boolean isGametestEnabled()
     {
@@ -47,11 +55,53 @@ public class ForgeGameTestHooks
             LOGGER.info("Enabled Gametest Namespaces: {}", enabledNamespaces);
             Set<Method> gameTestMethods = new HashSet<>();
             RegisterGameTestsEvent event = new RegisterGameTestsEvent(gameTestMethods);
+
             ModLoader.get().postEvent(event);
+
+            ModList.get().getAllScanData().stream()
+                    .map(ModFileScanData::getAnnotations)
+                    .flatMap(Collection::stream)
+                    .filter(a -> GAME_TEST_HOLDER.equals(a.annotationType()))
+                    .forEach(a -> addGameTestMethods(a, gameTestMethods));
+
             for (Method gameTestMethod : gameTestMethods)
             {
                 GameTestRegistry.register(gameTestMethod, enabledNamespaces);
             }
         }
+    }
+
+    private static void addGameTestMethods(AnnotationData annotationData, Set<Method> gameTestMethods)
+    {
+        try
+        {
+            Class<?> clazz = Class.forName(annotationData.clazz().getClassName(), true, ForgeGameTestHooks.class.getClassLoader());
+
+            gameTestMethods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
+        }
+        catch (ClassNotFoundException e)
+        {
+            // Should not be possible
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String getTemplateNamespace(Method method)
+    {
+        GameTest gameTest = method.getAnnotation(GameTest.class);
+
+        if (gameTest != null && !gameTest.templateNamespace().isEmpty())
+        {
+            return gameTest.templateNamespace();
+        }
+
+        GameTestHolder gameTestHolder = method.getDeclaringClass().getAnnotation(GameTestHolder.class);
+
+        if (gameTestHolder != null)
+        {
+            return gameTestHolder.value();
+        }
+
+        return "minecraft";
     }
 }

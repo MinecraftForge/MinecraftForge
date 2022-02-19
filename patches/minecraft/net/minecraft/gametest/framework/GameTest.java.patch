@@ -7,7 +7,7 @@
 +   /**
 +    * The namespace of where to grab the structure from, generally a mod id.
 +    */
-+   String templateNamespace() default "minecraft";
++   String templateNamespace() default "";
 +
 +   /**
 +    * Controls whether to prefix the template structure and test name with the containing class' name.

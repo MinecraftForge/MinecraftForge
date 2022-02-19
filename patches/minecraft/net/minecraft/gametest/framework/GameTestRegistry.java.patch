@@ -21,7 +21,7 @@
        String s = p_177504_.getDeclaringClass().getSimpleName();
        GameTest gametest = p_177504_.getAnnotation(GameTest.class);
 -      if (gametest != null) {
-+      if (gametest != null && (allowedNamespaces.isEmpty() || allowedNamespaces.contains(gametest.templateNamespace()))) {
++      if (gametest != null && (allowedNamespaces.isEmpty() || allowedNamespaces.contains(net.minecraftforge.gametest.ForgeGameTestHooks.getTemplateNamespace(p_177504_)))) {
           f_177495_.add(m_177515_(p_177504_));
           f_177496_.add(s);
        }
@@ -54,7 +54,7 @@
 -      String s2 = s1 + "." + p_177516_.getName().toLowerCase();
 -      String s3 = gametest.m_177046_().isEmpty() ? s2 : s1 + "." + gametest.m_177046_();
 +      String s2 = (gametest.prefixTemplateWithClassname() ? s1 + "." : "") + p_177516_.getName().toLowerCase();
-+      String s3 = gametest.templateNamespace() + ":" + (gametest.m_177046_().isEmpty() ? s2 : (gametest.prefixTemplateWithClassname() ? s1 + "." : "") + gametest.m_177046_());
++      String s3 = net.minecraftforge.gametest.ForgeGameTestHooks.getTemplateNamespace(p_177516_) + ":" + (gametest.m_177046_().isEmpty() ? s2 : (gametest.prefixTemplateWithClassname() ? s1 + "." : "") + gametest.m_177046_());
        String s4 = gametest.m_177043_();
        Rotation rotation = StructureUtils.m_127835_(gametest.m_177044_());
        return new TestFunction(s4, s2, s3, rotation, gametest.m_177042_(), gametest.m_177047_(), gametest.m_177045_(), gametest.m_177049_(), gametest.m_177048_(), (Consumer<net.minecraft.gametest.framework.GameTestHelper>)m_177519_(p_177516_));
