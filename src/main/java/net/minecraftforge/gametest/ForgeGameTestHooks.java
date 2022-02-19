@@ -36,7 +36,7 @@ public class ForgeGameTestHooks
 
     public static boolean isGametestEnabled()
     {
-        return SharedConstants.IS_RUNNING_IN_IDE || Boolean.getBoolean("forge.enablegametest");
+        return SharedConstants.IS_RUNNING_IN_IDE || Boolean.getBoolean("forge.gameTestServer") || Boolean.getBoolean("forge.enableGameTest");
     }
 
     @SuppressWarnings("deprecation")

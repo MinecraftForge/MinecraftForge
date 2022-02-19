@@ -25,7 +25,8 @@ public class GameTestMain
 {
     public static void main(String[] args)
     {
-        System.setProperty("forge.enablegametest", "true");
+        System.setProperty("forge.enableGameTest", "true");
+        System.setProperty("forge.gameTestServer", "true");
         Main.main(args);
     }
 }
