@@ -13,6 +13,8 @@ import java.lang.annotation.Target;
  * <p>
  * When used on a method, this defines whether the specific method should be prefixed with the simple class name or not.
  * <p>
+ * If this annotation cannot be found on a game test method or its containing class, the default behavior is to prefix the class name.
+ * <p>
  * Method annotations override any class annotations.
  *
  * @see GameTestHolder
