@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 
 public class ForgeGameTestHooks
 {
+    private static boolean registeredGametests = false;
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Type GAME_TEST_HOLDER = Type.getType(GameTestHolder.class);
 
@@ -51,7 +52,7 @@ public class ForgeGameTestHooks
     @SuppressWarnings("deprecation")
     public static void registerGametests()
     {
-        if (isGametestEnabled())
+        if (!registeredGametests && isGametestEnabled())
         {
             String enabledNamespacesStr = System.getProperty("forge.enabledGameTestNamespaces");
             Set<String> enabledNamespaces;
@@ -80,6 +81,8 @@ public class ForgeGameTestHooks
             {
                 GameTestRegistry.register(gameTestMethod, enabledNamespaces);
             }
+
+            registeredGametests = true;
         }
     }
 
