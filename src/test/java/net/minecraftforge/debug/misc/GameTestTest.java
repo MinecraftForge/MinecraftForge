@@ -50,6 +50,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -153,7 +154,8 @@ public class GameTestTest
         return List.of(testStone);
     }
 
-    @GameTest(templateNamespace = MODID, prefixTemplateWithClassname = false, template = "empty3x3x3")
+    @PrefixGameTestTemplate(false)
+    @GameTest(templateNamespace = MODID, template = "empty3x3x3")
     public static void testHopperPickup(GameTestHelper helper)
     {
         BlockPos hopperPos = new BlockPos(1, 1, 1);
@@ -169,7 +171,8 @@ public class GameTestTest
         helper.runAtTickTime(21, helper::succeed);
     }
 
-    @GameTest(templateNamespace = MODID, prefixTemplateWithClassname = false, template = "empty3x3x3")
+    @PrefixGameTestTemplate(false)
+    @GameTest(templateNamespace = MODID, template = "empty3x3x3")
     public static void testEnergyStorage(GameTestHelper helper)
     {
         BlockPos energyPos = new BlockPos(1, 1, 1);

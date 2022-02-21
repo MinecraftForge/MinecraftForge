@@ -1,6 +1,6 @@
 --- a/net/minecraft/gametest/framework/GameTest.java
 +++ b/net/minecraft/gametest/framework/GameTest.java
-@@ -16,6 +_,20 @@
+@@ -16,6 +_,11 @@
  
     boolean m_177045_() default true;
  
@@ -8,15 +8,6 @@
 +    * The namespace of where to grab the structure from, generally a mod id.
 +    */
 +   String templateNamespace() default "";
-+
-+   /**
-+    * Controls whether to prefix the template structure and test name with the containing class' name.
-+    *
-+    * When true, the annotated method's containing class will have its {@link Class#getSimpleName() simple name} made lowercase
-+    * and prefixed along with a period to the method's lowercase name.
-+    * When false, the method's name will be made lowercase and used by itself as both the template structure's path and test name.
-+    */
-+   boolean prefixTemplateWithClassname() default true;
 +
     String m_177046_() default "";
  

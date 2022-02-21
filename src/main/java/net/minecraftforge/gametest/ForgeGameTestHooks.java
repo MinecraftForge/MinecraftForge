@@ -119,4 +119,17 @@ public class ForgeGameTestHooks
 
         return "minecraft";
     }
+
+    public static boolean prefixGameTestTemplate(Method method)
+    {
+        PrefixGameTestTemplate annotation = method.getAnnotation(PrefixGameTestTemplate.class);
+
+        if (annotation == null)
+        {
+            annotation = method.getDeclaringClass().getAnnotation(PrefixGameTestTemplate.class);
+        }
+
+        // The vanilla game test system prefixes the classname by default, so we preserve that behavior here.
+        return annotation == null || annotation.value();
+    }
 }

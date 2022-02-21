@@ -47,14 +47,15 @@
           return (Collection)p_177514_.invoke(object);
        } catch (ReflectiveOperationException reflectiveoperationexception) {
           throw new RuntimeException(reflectiveoperationexception);
-@@ -115,8 +_,8 @@
+@@ -115,8 +_,9 @@
        GameTest gametest = p_177516_.getAnnotation(GameTest.class);
        String s = p_177516_.getDeclaringClass().getSimpleName();
        String s1 = s.toLowerCase();
 -      String s2 = s1 + "." + p_177516_.getName().toLowerCase();
 -      String s3 = gametest.m_177046_().isEmpty() ? s2 : s1 + "." + gametest.m_177046_();
-+      String s2 = (gametest.prefixTemplateWithClassname() ? s1 + "." : "") + p_177516_.getName().toLowerCase();
-+      String s3 = net.minecraftforge.gametest.ForgeGameTestHooks.getTemplateNamespace(p_177516_) + ":" + (gametest.m_177046_().isEmpty() ? s2 : (gametest.prefixTemplateWithClassname() ? s1 + "." : "") + gametest.m_177046_());
++      boolean prefixGameTestTemplate = net.minecraftforge.gametest.ForgeGameTestHooks.prefixGameTestTemplate(p_177516_);
++      String s2 = (prefixGameTestTemplate ? s1 + "." : "") + p_177516_.getName().toLowerCase();
++      String s3 = net.minecraftforge.gametest.ForgeGameTestHooks.getTemplateNamespace(p_177516_) + ":" + (gametest.m_177046_().isEmpty() ? s2 : (prefixGameTestTemplate ? s1 + "." : "") + gametest.m_177046_());
        String s4 = gametest.m_177043_();
        Rotation rotation = StructureUtils.m_127835_(gametest.m_177044_());
        return new TestFunction(s4, s2, s3, rotation, gametest.m_177042_(), gametest.m_177047_(), gametest.m_177045_(), gametest.m_177049_(), gametest.m_177048_(), (Consumer<net.minecraft.gametest.framework.GameTestHelper>)m_177519_(p_177516_));
