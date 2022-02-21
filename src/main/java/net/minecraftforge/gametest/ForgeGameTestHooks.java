@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ForgeGameTestHooks
 {
@@ -48,10 +49,21 @@ public class ForgeGameTestHooks
     }
 
     @SuppressWarnings("deprecation")
-    public static void registerGametests(Set<String> enabledNamespaces)
+    public static void registerGametests()
     {
         if (isGametestEnabled())
         {
+            String enabledNamespacesStr = System.getProperty("forge.enabledGameTestNamespaces");
+            Set<String> enabledNamespaces;
+            if (enabledNamespacesStr == null)
+            {
+                enabledNamespaces = Set.of();
+            }
+            else
+            {
+                enabledNamespaces = Arrays.stream(enabledNamespacesStr.split(",")).collect(Collectors.toUnmodifiableSet());
+            }
+
             LOGGER.info("Enabled Gametest Namespaces: {}", enabledNamespaces);
             Set<Method> gameTestMethods = new HashSet<>();
             RegisterGameTestsEvent event = new RegisterGameTestsEvent(gameTestMethods);

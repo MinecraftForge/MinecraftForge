@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
@@ -103,7 +102,7 @@ public class ServerLifecycleHooks
             LanguageHook.loadLanguagesOnServer(server);
             // GameTestServer requires the gametests to be registered earlier, so it is done in main and should not be done twice.
             if (!(server instanceof GameTestServer))
-                net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests(Set.of());
+                net.minecraftforge.gametest.ForgeGameTestHooks.registerGametests();
         });
         PermissionAPI.initializePermissionAPI();
         return !MinecraftForge.EVENT_BUS.post(new ServerStartingEvent(server));
